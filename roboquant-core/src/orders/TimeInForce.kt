@@ -1,0 +1,140 @@
+package org.roboquant.orders
+
+import java.time.Instant
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
+
+/**
+ * Time in force (TiF) allows to put an expiration and fill policy on an order. It determined how long an order remains
+ * active before it is executed or expires. There are two aspects that can determine if an order expires:
+ *
+ * - How much time has passed since it was first placed.
+ * - Is the order completely filled or net yet
+ *
+ */
+interface TimeInForce {
+
+    /**
+     * Is the order expired give the current time (now) and when it was originally placed and the fill in comparison
+     * to total fill
+     *
+     * @param now
+     * @return
+     */
+    fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double): Boolean
+
+}
+
+
+/**
+ * Good Till Cancelled policy. The order will remain active until fully filled or is cancelled.
+ *
+ * In practice, most brokers allow such order to remain active for 90 days max. That is also what is
+ * used a default value for this implementation
+ *
+ * @constructor Create new GTC tif
+ */
+class GTC(private val maxDays: Int = 90) : TimeInForce {
+
+    /**
+     * @see TimeInForce.isExpired
+     *
+     */
+    override fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double): Boolean {
+        if (now == placed) return false
+        val max = placed.plus(maxDays.toLong(), ChronoUnit.DAYS)
+        return now > max
+    }
+
+    override fun toString(): String {
+        return "GTC"
+    }
+
+}
+
+
+/**
+ * Good Till Date policy. The order will remain active until fully filled or a specified date
+ *
+ * @property date
+ * @constructor Create new GTD tif
+ */
+class GTD(private val date: Instant) : TimeInForce {
+
+    /**
+     * @see TimeInForce.isExpired
+     *
+     */
+    override fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double) = now > date
+
+    override fun toString(): String {
+        return "GTD($date)"
+    }
+}
+
+
+/**
+ * Immediate or Cancel (IOC) policy. An immediate or cancel order is an order to buy or sell an asset that attempts
+ * to execute all or part immediately and then cancels any unfilled portion of the order.
+ *
+ * @constructor Create new IOC tif
+ */
+class IOC : TimeInForce {
+
+    /**
+     *
+     */
+    override fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double) = now > placed
+
+    override fun toString(): String {
+        return "IOC"
+    }
+}
+
+/**
+ * A DAY order is a stipulation placed on an order to a broker to execute a trade at a specific price
+ * that expires at the end of the trading day if it is not completed.
+ *
+ * TODO make zone info part of OrderAction
+ *
+ * @constructor Create new DAY tif
+ */
+class DAY(private val zone: ZoneId) : TimeInForce {
+
+    /**
+     *
+     */
+    override fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double): Boolean {
+        val placedDate = placed.atZone(zone).toLocalDate()
+        val currentDate = now.atZone(zone).toLocalDate()
+        return currentDate != placedDate
+
+    }
+
+    override fun toString(): String {
+        return "DAY"
+    }
+
+}
+
+
+/**
+ * Fill or Kill (FOK) policy. A Fill or Kill policy is to be executed immediately at the market or a specified price
+ * or canceled if not filled.
+ *
+ * @constructor Create new FOK tif
+ */
+class FOK : TimeInForce {
+
+    /**
+     * @see TimeInForce.isExpired
+     *
+     */
+    override fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double) : Boolean  {
+        return fill != 0.0 && fill != total
+    }
+
+    override fun toString(): String {
+        return "FOK"
+    }
+}

@@ -1,0 +1,135 @@
+package org.roboquant.feeds.csv
+
+import de.siegmar.fastcsv.reader.CsvReader
+import org.roboquant.common.Asset
+import org.roboquant.common.Logging
+import org.roboquant.feeds.*
+import java.io.File
+import java.io.FileReader
+import java.time.Instant
+import java.util.*
+import java.util.logging.Logger
+
+
+/**
+ * Feed that can handle large CSV files. The difference compared to the regular [CSVFeed] is that this feeds only loads
+ * data from disk when required and disposes of it afterwards. So it has lower memory consumption, at the cost of
+ * lower overall throughput. This feed doesn't implement the HistoricFeed interface since it doesn't know upfront
+ * what the timeline will be.
+ *
+ * The individual lines in the CSV files are expected to be ordered from oldest to newest according to the included
+ * timestamp and timestamps are unique in a single CSV file.
+ *
+ * The LazyCSVFeed keeps files open to ensure good performance. So make sure your OS has enough open file descriptors
+ * configured. For example on Linux you can check this with:
+ *
+ *      cat /proc/sys/fs/file-max
+ *
+ *
+ * If you use the same large sets of CSV regular, you might consider converting them onetime to an Avro file instead. This
+ * has the same low memory usage but no negative performance impact.
+ *
+ * @constructor
+ *
+ * @param path The directory that contains the CSV files
+ */
+class LazyCSVFeed(val path: String, val config: CSVConfig = CSVConfig.fromFile(path)) : AssetFeed {
+
+    private val logger: Logger = Logging.getLogger("LazyCSVFeed")
+    private val files: Map<Asset, File>
+
+    override val assets
+        get() = files.keys
+
+    init {
+        logger.fine { "Scanning $path" }
+        files = File(path)
+            .walk()
+            .filter { config.shouldParse(it) }
+            .map { it.absoluteFile }
+            .map {
+                Asset(it.name.substringBefore(config.fileExtension).uppercase()) to it
+            }.toMap()
+
+        logger.info { "Scanned $path found ${files.size} files" }
+        if (files.isEmpty()) logger.warning { "No files for processing" }
+    }
+
+    override suspend fun play(channel: EventChannel) {
+        var last = Instant.MIN
+        val readers = files.mapValues { IncrementalReader(it.key, it.value, config) }
+        if (readers.isEmpty()) {
+            logger.warning("No files for processing")
+            return
+        }
+
+        try {
+            val queue = PriorityQueue<PriceEntry>(readers.size)
+
+            // Initialize the queue by filling it with 1 entry from each reader
+            for (entries in readers.values) {
+                val entry = entries.next()
+                if (entry != null) queue.add(entry)
+            }
+
+            while (queue.isNotEmpty()) {
+                val now = queue.first().now
+                assert(now > last) { "Found unsorted time $now in ${queue.first().price.asset}" }
+                val actions = mutableListOf<Action>()
+                var done = false
+                while (!done) {
+                    val entry = queue.firstOrNull()
+                    if (entry != null && entry.now == now) {
+                        actions.add(entry.price)
+                        queue.remove()
+                        val asset = entry.price.asset
+                        val next = readers[asset]?.next()
+                        if (next != null) queue.add(next)
+                    } else {
+                        done = true
+                    }
+                }
+                val event = Event(actions, now)
+                channel.send(event)
+                last = now
+            }
+
+        } finally {
+            for (reader in readers.values) reader.close()
+        }
+    }
+
+}
+
+
+private class IncrementalReader(val asset: Asset, file: File, val config:CSVConfig) {
+
+    private val reader = CsvReader.builder().skipEmptyRows(true).build(FileReader(file)).iterator()
+    var errors = 0L
+
+    init {
+        if (reader.hasNext()) {
+            val line = reader.next().fields
+            config.detectColumns(line)
+        }
+    }
+
+    fun next(): PriceEntry? {
+        while (reader.hasNext()) {
+            val line = reader.next().fields
+            try {
+                return config.processLine(asset, line)
+            } catch (e: Exception) {
+                errors++
+            }
+        }
+        reader.close()
+        return null
+    }
+
+    fun close() = reader.close()
+
+
+
+
+}

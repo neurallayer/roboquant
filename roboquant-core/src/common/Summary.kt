@@ -1,0 +1,94 @@
+package org.roboquant.common
+
+import java.text.DecimalFormat
+import java.util.logging.Level
+
+/**
+ * Summary allows to represent nested data into a tree like format. This is supported by several of the components
+ * in roboquant if you invoke their summary() method.
+ *
+ * @property content The content for the summary
+ * @constructor Create new Summary
+ */
+class Summary(val content: String) {
+
+    private val children = mutableListOf<Summary>()
+    private val decimalFormatter = DecimalFormat(decimalPattern)
+
+    companion object {
+        private val logger = Logging.getLogger("Summary")
+        var decimalPattern = "#.000"
+        var sep = ": "
+    }
+
+    /**
+     * Add a new summary as a child
+     *
+     * @param child
+     */
+    fun add(child: Summary) = children.add(child)
+
+    /**
+     * Add a number. When adding this number is a Float or Double, the decimal formatter will be used
+     *
+     * @param label
+     * @param value
+     */
+    fun add(label: String, value: Number) {
+        when (value) {
+            is Double -> children.add(Summary("$label$sep${decimalFormatter.format(value)}"))
+            is Float -> children.add(Summary("$label$sep${decimalFormatter.format(value)}"))
+            else -> children.add(Summary("$label$sep$value"))
+        }
+    }
+
+    fun add(label: String, value: Any?) = children.add(Summary("$label$sep$value"))
+
+    fun add(label: String) = children.add(Summary(label))
+
+    /**
+     * Directly print this summary to the standard out.
+     */
+    fun print(maxChildren:Int = Int.MAX_VALUE) = print(toString(maxChildren))
+
+    /**
+     * Log this summary using the standard roboquant logger.
+     *
+     * @param level At which level this summary should be logged, default is INFO
+     */
+    fun log(maxChildren:Int = Int.MAX_VALUE, level: Level = Level.INFO) = logger.log(level) {
+        toString(maxChildren)
+    }
+
+    override fun toString(): String {
+        val buffer = StringBuilder(50)
+        generate(buffer, "", "")
+        return buffer.toString()
+    }
+
+    fun toString(maxChildren:Int): String {
+        val buffer = StringBuilder(50)
+        generate(buffer, "", "", maxChildren)
+        return buffer.toString()
+    }
+
+    private fun generate(buffer: StringBuilder, prefix: String, childrenPrefix: String, maxChildren:Int = Int.MAX_VALUE) {
+        buffer.append(prefix)
+        if (children.isNotEmpty()) buffer.append(Logging.LoggingFormatter.blue(content)) else buffer.append(content)
+        buffer.append('\n')
+        val it = children.iterator()
+        var cnt = 0
+        while (it.hasNext()) {
+            val next = it.next()
+            if (it.hasNext()) {
+                if (++cnt > maxChildren) {
+                    buffer.append("$childrenPrefix└── ... ")
+                    return
+                }
+                next.generate(buffer, "$childrenPrefix├── ", "$childrenPrefix│   ")
+            } else {
+                next.generate(buffer, "$childrenPrefix└── ", "$childrenPrefix    ")
+            }
+        }
+    }
+}

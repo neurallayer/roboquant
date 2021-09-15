@@ -1,0 +1,38 @@
+package org.roboquant.strategies
+
+
+import org.roboquant.Roboquant
+import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.logging.SilentLogger
+import org.roboquant.metrics.ProgressMetric
+import org.junit.Test
+import kotlin.test.assertTrue
+
+internal class CombinedAssetStrategyTest {
+
+    @Test
+    fun test() {
+        val feed = RandomWalk.lastYears(10)
+        val asset1 = feed.assets.first()
+        val asset2 = feed.assets.last()
+        val strategy = CombinedAssetStrategy {
+            when(it) {
+                asset1 -> EMACrossover(1,3)
+                asset2 -> EMACrossover(3, 5)
+                else -> {
+                   NoSignalStrategy()
+                }
+            }
+        }
+
+        strategy.enableRecording(false)
+
+        val logger = SilentLogger()
+        val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
+
+        roboquant.run(feed)
+        assertTrue(logger.events > 1)
+    }
+
+
+}

@@ -1,0 +1,9 @@
+# TA-Lib wrapper
+This directory contains the code used to generate wrappers for TA-Lib. It generates Kotlin code based on a JSON definition file that is also included in the same directory.
+
+## Background
+TA-Lib is great library for technical analysis. It comes with 200 indicators out of the box, ranging from moving averages to detecting candlestick patterns. It is available in many languages and used by many traders.
+
+The Java native version of the TA-Lib library is high performant, but can a bit difficult to use. So roboquant uses these wrappers to make it very easy to include the indicators in your own trading strategies.
+
+

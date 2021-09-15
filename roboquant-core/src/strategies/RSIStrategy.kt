@@ -1,0 +1,60 @@
+package org.roboquant.strategies
+
+import org.roboquant.Phase
+import org.roboquant.common.Asset
+import org.roboquant.strategies.utils.RSI
+import java.time.Instant
+
+/**
+ * Strategy using the Relative Strength Index of an asset to generate signals. RSI measures the magnitude of recent
+ * price changes to evaluate overbought or oversold conditions in the price of a stock or other asset.
+ *
+ * If the RSI raise above the configured high threshold (default 70), a sell signal will be generated. And if the RSI
+ * falls below the configured low threshold (default 30), a buy signal will be generated.
+ *
+ * @see RSI
+ *
+ * @property lowThreshold
+ * @property highThreshold
+ * @constructor Create a new RSI Strategy
+ *
+ */
+class RSIStrategy(
+    val lowThreshold: Double = 30.0,
+    val highThreshold: Double = 70.0,
+) : PriceStrategy(prefix = "rsi.") {
+
+    private val calculators = mutableMapOf<Asset, RSI>()
+
+    /**
+     * Subclasses need to implement this method and return optional a signal.
+     *
+     * @param asset
+     * @param price
+     * @param now
+     * @return
+     */
+    override fun generate(asset: Asset, price: Double, now: Instant): Signal? {
+        var result: Signal? = null
+
+        val rsi = calculators[asset]
+        if (rsi == null) {
+            calculators[asset] = RSI(price)
+        } else {
+            rsi.add(price)
+            if (rsi.isReady()) {
+                val value = rsi.calculate()
+                record(asset.symbol, value)
+                if (value > highThreshold)
+                    result = Signal(asset, Rating.SELL)
+                else if (value < lowThreshold)
+                    result = Signal(asset, Rating.BUY)
+            }
+        }
+        return result
+    }
+
+    override fun start(phase: Phase) {
+        calculators.clear()
+    }
+}
