@@ -2,6 +2,7 @@ name: notebook
 channels:
   - conda-forge
   - defaults
+  - jetbrains
 dependencies:
   - openjdk
   - kotlin-jupyter-kernel
