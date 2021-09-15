@@ -1,0 +1,8 @@
+name: notebook
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - openjdk
+  - kotlin-jupyter-kernel
+prefix: /srv/conda/envs/notebook
