@@ -57,7 +57,7 @@
         <dependency>
             <groupId>net.jacobpeterson</groupId>
             <artifactId>alpaca-java</artifactId>
-            <version>8.2</version>
+            <version>8.3</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
