@@ -5,9 +5,7 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks)
 [![Git](https://img.shields.io/github/release/neurallayer/roboquant.svg)](https://github.com/neurallayer/roboquant/releases)
 
-Roboquant is an algorithmic trading platform that is fast and flexible while at the same time strives to be easy to use. 
-It is fully open source and written in Kotlin. It can be used in Jupyter notebooks as well as standalone applications.
-It is meant to be used by anyone serious about algo trading, from retail traders to proprietary trading firms. 
+Roboquant is an algorithmic trading platform that is fast and flexible while at the same time strives to be easy to use. It is fully open source and written in Kotlin. It can be used in Jupyter notebooks as well as standalone applications. It is meant to be used by anyone serious about algo trading, from retail traders to proprietary trading firms.
 
 You can find out more at **[roboquant.org](https://roboquant.org)**
 ![roboquant Logo](/docs/roboquant_logo.png)
@@ -48,7 +46,11 @@ If you have already Docker installed, all it takes is a single command to have a
 docker run --rm -p 8888:8888 roboquant/jupyter 
 ```
 
-This also comes with several tutorials. See the [installation guide](/INSTALL.md) for more ways to install and use roboquant, for example if you want to use it in a standalone application.
+This also comes with several tutorials. And if you just want to try it without any installation, go to [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks), although it might be a bit slow to start the environment. 
+
+![Jupyter Lab](/docs/jupyter-lab.png)
+
+See the [installation guide](/INSTALL.md) for more ways to install and use roboquant, for example if you want to use it in a standalone application and want to include the libraries.
 
 ## License
 Roboquant is distributed under the [Apache 2.0 License](/LICENSE).  
