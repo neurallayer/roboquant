@@ -3,7 +3,10 @@
 [![Automated Build](https://github.com/neurallayer/roboquant/actions/workflows/maven.yml/badge.svg)](https://github.com/neurallayer/roboquant/actions/workflows/maven.yml)
 [![APL v2](https://img.shields.io/badge/license-Apache%202-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks)
-[![Git](https://img.shields.io/github/release/neurallayer/roboquant.svg)](https://github.com/neurallayer/roboquant/releases)
+![GitHub issues](https://img.shields.io/github/issues/neurallayer/roboquant)
+![GitHub last commit](https://img.shields.io/github/last-commit/neurallayer/roboquant)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/neurallayer/roboquant)
+
 
 Roboquant is an algorithmic trading platform that is fast and flexible while at the same time strives to be easy to use. It is fully open source and written in Kotlin. It can be used in Jupyter notebooks as well as standalone applications. It is meant to be used by anyone serious about algo trading, from retail traders to proprietary trading firms.
 
