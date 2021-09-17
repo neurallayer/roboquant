@@ -91,15 +91,14 @@ object Config {
      * load from environment file.
      */
     private val env by lazy {
-        val path: Path =  home / ".env"
         val prop = Properties()
-        if (Files.exists(path)) {
-            prop.load(path.toFile().inputStream())
+        fun load(path: Path) {
+            if (Files.exists(path)) prop.load(path.toFile().inputStream())
         }
-        val localPath = Path.of(".env")
-        if (Files.exists(localPath)) {
-            prop.load(localPath.toFile().inputStream())
-        }
+
+        load(home / ".env")
+        load(Path.of(".env"))
+        load(Path.of("dotenv"))
         prop.map { it.key.toString() to it.value.toString() }.toMap()
 
     }
