@@ -1,6 +1,7 @@
 package org.roboquant.feeds.iex
 
 import org.roboquant.common.Asset
+import org.roboquant.common.Config
 import org.roboquant.common.Exchange
 import org.roboquant.common.Logging
 import org.roboquant.feeds.*
@@ -19,39 +20,43 @@ import java.time.LocalDateTime
 import java.util.*
 
 /**
- * Feed of historic price data using IEX Cloud as the source.
+ * Feed of historic price data using IEX Cloud as the data source.
  *
  * @constructor
  *
- * @param publishableToken
- * @param secretToken
+ * @param publicKey
+ * @param secretKey
  */
 class IEXFeed(
-    publishableToken: String,
-    secretToken: String? = null,
+    publicKey: String? = null,
+    secretKey: String? = null,
     sandbox: Boolean = true,
     private val exchange: Exchange = Exchange.DEFAULT
 ) : HistoricFeed {
 
     private val events = TreeMap<Instant, MutableList<PriceAction>>()
     private val logger = Logging.getLogger("IEXFeed")
-    private val cloudClient: IEXCloudClient
+    private val client: IEXCloudClient
 
 
     override val timeline: List<Instant>
         get() = events.keys.toList()
 
     override val assets
-        get() = events.values.map { pricebars -> pricebars.map { it.asset }.distinct() }.flatten().distinct()
+        get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct()
 
 
     init {
-        var tokenBuilder = IEXCloudTokenBuilder().withPublishableToken(publishableToken)
-        if (secretToken != null)
-            tokenBuilder = tokenBuilder.withSecretToken(secretToken)
+        val pToken = publicKey ?: Config.getProperty("IEX_PUBLIC_KEY")
+        require(pToken != null)
+        val sToken = secretKey ?: Config.getProperty("IEX_SECRET_KEY")
+
+        var tokenBuilder = IEXCloudTokenBuilder().withPublishableToken(pToken)
+        if (sToken != null)
+            tokenBuilder = tokenBuilder.withSecretToken(sToken)
 
         val apiVersion = if (sandbox) IEXTradingApiVersion.IEX_CLOUD_V1_SANDBOX else IEXTradingApiVersion.IEX_CLOUD_V1
-        cloudClient = IEXTradingClient.create(apiVersion, tokenBuilder.build())
+        client = IEXTradingClient.create(apiVersion, tokenBuilder.build())
     }
 
     /**
@@ -74,7 +79,7 @@ class IEXFeed(
      */
     fun retrieveIntraday(vararg assets: Asset) {
         assets.forEach {
-            val quote = cloudClient.executeRequest(
+            val quote = client.executeRequest(
                 IntradayRequestBuilder()
                     .withSymbol(it.symbol)
                     .build()
@@ -90,7 +95,6 @@ class IEXFeed(
      * @param symbols
      */
     fun retrievePriceBar(vararg symbols: String, range: String = "5y")  {
-        // ChartRange.valueOf(range)
         val value = try {
             ChartRange.getValueFromCode(range)
         } catch (e:Exception) {
@@ -108,13 +112,13 @@ class IEXFeed(
     fun retrievePriceBar(vararg assets: Asset, range: ChartRange = ChartRange.FIVE_YEARS) {
 
         assets.forEach {
-            val chart = cloudClient.executeRequest(
+            val chart = client.executeRequest(
                 ChartRequestBuilder()
                     .withChartRange(range)
                     .withSymbol(it.symbol)
                     .build()
             )
-            handleChart(it, chart)
+            handlePriceBar(it, chart)
         }
     }
 
@@ -124,12 +128,13 @@ class IEXFeed(
             val dt = LocalDateTime.parse("${date}T$minute")
             exchange.getInstant(dt)
         } else {
+            println(date)
             val d = LocalDate.parse(date)
             exchange.getClosingTime(d)
         }
     }
 
-    private fun handleChart(asset: Asset, chart: List<Chart>) {
+    private fun handlePriceBar(asset: Asset, chart: List<Chart>) {
         chart.filter { it.open !== null }.forEach {
             val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
             val now = getInstant(it.date, it.minute)

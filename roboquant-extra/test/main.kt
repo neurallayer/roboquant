@@ -59,7 +59,7 @@ fun alpacaFeed() {
 }
 
 fun feedIEX() {
-    val token = Config.getProperty("IEX_PUBLISHABLE_TOKEN") ?: throw Exception("No token found")
+    val token = Config.getProperty("IEX_PUBLIC_KEY") ?: throw Exception("No token found")
     val feed = org.roboquant.feeds.iex.IEXFeed(token)
     feed.retrievePriceBar("AAPL", "GOOGL", "FB", range = "2y")
 
@@ -71,8 +71,7 @@ fun feedIEX() {
 
 
 fun feedIEXLive() {
-    val token = System.getenv("IEX_PUBLISHABLE_TOKEN") ?: throw Exception("No token found")
-    val feed = org.roboquant.feeds.iex.IEXLive(token)
+    val feed = org.roboquant.feeds.iex.IEXLive()
     val apple = Asset("AAPL")
     val google = Asset("GOOG")
     feed.subscribeTrades(apple, google)
@@ -101,7 +100,7 @@ fun feedYahoo() {
 }
 
 fun main() {
-    when ("ALPACA_FEED") {
+    when ("IEX_LIVE") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()

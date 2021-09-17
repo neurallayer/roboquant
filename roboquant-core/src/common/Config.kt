@@ -1,4 +1,5 @@
 @file:Suppress("SimplifiableCallChain")
+
 package org.roboquant.common
 
 import java.nio.file.Files
@@ -88,7 +89,7 @@ object Config {
     }
 
     /**
-     * load from environment file.
+     * load properties from an environment file.
      */
     private val env by lazy {
         val prop = Properties()
@@ -100,7 +101,6 @@ object Config {
         load(Path.of(".env"))
         load(Path.of("dotenv"))
         prop.map { it.key.toString() to it.value.toString() }.toMap()
-
     }
 
 }

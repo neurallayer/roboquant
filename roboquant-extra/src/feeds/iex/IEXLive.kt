@@ -1,6 +1,7 @@
 package org.roboquant.feeds.iex
 
 import org.roboquant.common.Asset
+import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Action
 import org.roboquant.feeds.Event
@@ -24,10 +25,10 @@ import java.time.Instant
  *
  * @constructor
  *
- * @param publishableToken
- * @param secretToken
+ * @param publicKey
+ * @param secretKey
  */
-class IEXLive(publishableToken: String, secretToken: String? = null, private val useMachineTime: Boolean = true) :
+class IEXLive(publicKey: String? = null, secretKey: String? = null, private val useMachineTime: Boolean = true) :
     LiveFeed() {
 
     private val logger = Logging.getLogger("IEXLive")
@@ -38,9 +39,13 @@ class IEXLive(publishableToken: String, secretToken: String? = null, private val
         get() = assetMap.values.distinct()
 
     init {
-        var tokenBuilder = IEXCloudTokenBuilder().withPublishableToken(publishableToken)
-        if (secretToken != null)
-            tokenBuilder = tokenBuilder.withSecretToken(secretToken)
+        val pToken = publicKey ?: Config.getProperty("IEX_PUBLIC_KEY")
+        require(pToken != null)
+        val sToken = secretKey ?: Config.getProperty("IEX_SECRET_KEY")
+
+        var tokenBuilder = IEXCloudTokenBuilder().withPublishableToken(pToken)
+        if (sToken != null)
+            tokenBuilder = tokenBuilder.withSecretToken(sToken)
 
         cloudClient = IEXTradingClient.create(IEXTradingApiVersion.IEX_CLOUD_V1, tokenBuilder.build())
     }
@@ -77,6 +82,7 @@ class IEXLive(publishableToken: String, secretToken: String? = null, private val
 
         cloudClient.subscribe(request, ::handleTrades)
     }
+
 
     private fun handleTrades(trades: List<DeepAsyncResponse<Trade>>) {
         var now = Instant.now()
