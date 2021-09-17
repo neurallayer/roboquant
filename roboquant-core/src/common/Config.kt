@@ -1,9 +1,11 @@
+@file:Suppress("SimplifiableCallChain")
 package org.roboquant.common
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-
+import java.util.*
+import kotlin.io.path.div
 
 /**
  * Configuration object for roboquant that contains shared properties.
@@ -69,14 +71,37 @@ object Config {
     }
 
     /**
-     * Get property value. This first tries to retrieve it from system properties and then from
-     * environment variables.
+     * Get property value. Tries to find the property in this order
      *
-     * @param name
+     *  1. system properties
+     *  2. System environment variables
+     *  3. ".env" file in working directory
+     *  4. ".env" file in roboquant home directory (normally $USER/.roboquant)
+     *
+     * If nothing is found, it will return the default value or if that is not provided null
+     *
+     * @param name of property
      * @return
      */
-    fun getProperty(name: String): String? {
-        return System.getProperty(name) ?: System.getenv(name)
+    fun getProperty(name: String, default: String? = null): String? {
+        return System.getProperty(name) ?: System.getenv(name) ?: env[name] ?: default
+    }
+
+    /**
+     * load from environment file.
+     */
+    private val env by lazy {
+        val path: Path =  home / ".env"
+        val prop = Properties()
+        if (Files.exists(path)) {
+            prop.load(path.toFile().inputStream())
+        }
+        val localPath = Path.of(".env")
+        if (Files.exists(localPath)) {
+            prop.load(localPath.toFile().inputStream())
+        }
+        prop.map { it.key.toString() to it.value.toString() }.toMap()
+
     }
 
 }
