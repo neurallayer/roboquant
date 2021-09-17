@@ -7,7 +7,7 @@ import org.roboquant.feeds.PriceAction
 import java.time.Instant
 
 /**
- * Base class for strategies that are only interested in a single asset.
+ * Base class for strategies that are only interested in a single asset and generate a Signal
  *
  * @property asset The asset for which to apply this strategy
  * @constructor Create new single asset strategy

@@ -1,0 +1,1 @@
+cp ~/docker/assets/roboquant.json  /opt/conda/lib/python3.9/site-packages/run_kotlin_kernel/libraries/
