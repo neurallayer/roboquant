@@ -2,6 +2,7 @@ package org.roboquant.feeds.alphavantage
 
 import com.crazzyghost.alphavantage.AlphaVantage
 import com.crazzyghost.alphavantage.Config
+import org.roboquant.common.Config as RConfig
 import com.crazzyghost.alphavantage.parameters.Interval
 import com.crazzyghost.alphavantage.parameters.OutputSize
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse
@@ -22,10 +23,10 @@ import java.time.format.DateTimeFormatter
  * @property generateSinglePrice generate a single price event (using the close price) or a price bar (OHLCV) event
  * @constructor
  *
- * @param key
+ * @param apiKey
  */
 class AlphaVantageFeed(
-    key: String,
+    apiKey: String? = null,
     val compensateTimeZone: Boolean = true,
     private val generateSinglePrice: Boolean = true
 ) : HistoricFeed {
@@ -41,6 +42,9 @@ class AlphaVantageFeed(
         get() = events.map { it.now }
 
     init {
+        val key = apiKey ?: RConfig.getProperty("ALPHA_VANTAGE_API_KEY")
+        require(key != null) { "No api key provided or set as environment variable ALPHA_VANTAGE_API_KEY" }
+
         val cfg = Config.builder()
             .key(key)
             .timeOut(10)

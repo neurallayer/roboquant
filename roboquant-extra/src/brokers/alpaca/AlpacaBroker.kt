@@ -30,7 +30,8 @@ import net.jacobpeterson.alpaca.model.endpoint.position.Position as AlpacaPositi
  *
  * @constructor Create new Alpaca broker
  */
-class AlpacaBroker(key: String? = null, secret: String? = null, accountType :String = "PAPER") : Broker {
+class AlpacaBroker(apiKey: String? = null, apiSecret: String? = null, accountType :String = "PAPER") : Broker {
+
 
     override val account: Account = Account()
     private val alpacaAPI: AlpacaAPI
@@ -43,8 +44,10 @@ class AlpacaBroker(key: String? = null, secret: String? = null, accountType :Str
 
     init {
         require(accountType in setOf("PAPER", "LIVE")) { "Unknown account type specified $accountType, use LIVE or PAPER instead"}
-        val finalKey = key ?: Config.getProperty("APCA_API_KEY_ID")
-        val finalSecret = secret ?: Config.getProperty("APCA_API_SECRET_KEY")
+        val finalKey = apiKey ?: Config.getProperty("APCA-API-KEY-ID")
+        val finalSecret = apiSecret ?: Config.getProperty("APCA-API-SECRET-KEY")
+        require(finalKey != null) { "No public key provided or set as environment variable APCA-API-KEY-ID" }
+        require(finalSecret != null) { "No secret key provided or set as environment variable APCA-API-SECRET-KEY" }
 
         val ept = if (accountType == "LIVE") EndpointAPIType.LIVE else EndpointAPIType.PAPER
         alpacaAPI = AlpacaAPI(finalKey, finalSecret, ept, DataAPIType.IEX)

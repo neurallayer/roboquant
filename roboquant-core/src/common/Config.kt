@@ -6,6 +6,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
+import java.util.logging.Logger
 import kotlin.io.path.div
 
 /**
@@ -14,18 +15,20 @@ import kotlin.io.path.div
  */
 object Config {
 
+    private val logger: Logger = Logging.getLogger("Config")
+
     /**
      * Current version of roboquant
      */
     const val version = "0.8-SNAPSHOT"
 
     /**
-     * Hint that memory is limited. This might cause certain components to choose low memory usage over performance
+     * Hint that memory is limited. This might cause certain components to prefer low memory usage over performance
      */
     var lowMemory = false
 
     /**
-     * Default seed to use, typically used when none is specified
+     * Default seed to use, typically used by methods as a default value when none is specified
      */
     var seed = 42L
 
@@ -66,7 +69,10 @@ object Config {
      */
     val home by lazy {
         val path: Path = Paths.get(System.getProperty("user.home"), ".roboquant")
-        if (Files.notExists(path)) Files.createDirectory(path)
+        if (Files.notExists(path)) {
+            Files.createDirectory(path)
+            logger.finer { "Created new home directory $path" }
+        }
         path
     }
 
@@ -88,14 +94,17 @@ object Config {
     }
 
     /**
-     * load properties from an environment file. We don't use lazy so any change to the file is picked-up
+     * Load properties from an environment file. We don't use lazy so any change to the file is picked-up
      * immediately.
      */
     private val env : Map<String, String>
         get() {
             val prop = Properties()
             fun load(path: Path) {
-                if (Files.exists(path)) prop.load(path.toFile().inputStream())
+                if (Files.exists(path)) {
+                    prop.load(path.toFile().inputStream())
+                    logger.finer { "Loaded environment properties from $path" }
+                }
             }
 
             load(home / ".env")

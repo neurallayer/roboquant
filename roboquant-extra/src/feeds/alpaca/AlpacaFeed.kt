@@ -18,10 +18,10 @@ import java.time.Instant
  *
  * @constructor
  *
- * @param key
- * @param secret
+ * @param apiKey
+ * @param apiSecret
  */
-class AlpacaFeed(key: String? = null, secret: String? = null, autoConnect: Boolean = true) : LiveFeed() {
+class AlpacaFeed(apiKey: String? = null, apiSecret: String? = null, autoConnect: Boolean = true) : LiveFeed() {
 
     private val alpacaAPI: AlpacaAPI
     private val assetsMap = mutableMapOf<String, Asset>()
@@ -33,10 +33,11 @@ class AlpacaFeed(key: String? = null, secret: String? = null, autoConnect: Boole
     private val listener = createListener()
 
     init {
-        val finalKey = key ?: Config.getProperty("APCA_API_KEY_ID")
-        val finalSecret = secret ?: Config.getProperty("APCA_API_SECRET_KEY")
-        require(finalKey != null) { "No key provided or set as environment variable APCA_API_KEY_ID" }
-        require(finalSecret != null) { "No secret provided or set as environment variable APCA_API_SECRET_KEY" }
+        val finalKey = apiKey ?: Config.getProperty("APCA-API-KEY-ID")
+        val finalSecret = apiSecret ?: Config.getProperty("APCA-API-SECRET-KEY")
+        require(finalKey != null) { "No public key provided or set as environment variable APCA-API-KEY-ID" }
+        require(finalSecret != null) { "No secret key provided or set as environment variable APCA-API-SECRET-KEY" }
+
 
         alpacaAPI = AlpacaAPI(finalKey, finalSecret)
 

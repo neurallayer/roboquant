@@ -8,7 +8,9 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 
 /**
- * Plot the price-bars (candlesticks) of an asset and optionally the trades made for that same asset.
+ * Plot the price-bars (candlesticks) of an asset and optionally the trades made for that same asset. This will only
+ * plot candlesticks if the feed also contains price actions of the type PriceBar. If this is not the case you can use
+ * the [PriceChart] instead to plot prices.
  */
 class PriceBarChart(
     val feed: Feed,
@@ -21,7 +23,6 @@ class PriceBarChart(
     init {
         height = 700
     }
-
 
     /**
      * Play a feed and filter the provided asset for price bar data. The output is suitable for candle stock charts

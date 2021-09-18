@@ -1,5 +1,22 @@
 # This property file contains environment settings that will be made available in roboquant
+# Many data providers and brokers require authentication and this is one of the ways to provide those credentials
+#
+# If you store credentials in here, make sure other people don't have access to it and for example don't version control
+# it to a public repo by mistake.
 
-# Samples
+# Sample entry
 SAMPLE_PUBLIC_KEY=some_key_value
 SAMPLE_PRIVATE_KEY=another_key_value
+
+# Uncomment the following two lines and change the values for Alpaca access
+# APCA_API_KEY_ID=your_api_key_id
+# APCA_API_SECRET_KEY=your_api_secret_key
+
+# Uncomment the following two lines and change values for IEX Cloud access
+# IEX_PUBLIC_KEY=your_publishable_key
+# IEX_SECRET_KEY=your_secret_key
+
+# Uncomment the following line and change the value for Alpha Vantage access
+# ALPHA_VANTAGE_API_KEY=your_api_key
+
+
