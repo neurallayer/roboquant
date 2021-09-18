@@ -4,7 +4,7 @@ import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -28,7 +28,7 @@ class PriceChart(
      * @return
      */
     private fun fromFeed(): List<Pair<String, BigDecimal>> {
-        val entries = feed.filter<PriceBar>(timeFrame) { it.asset == asset }
+        val entries = feed.filter<PriceAction>(timeFrame) { it.asset == asset }
         val data = entries.map {
             val value = BigDecimal(it.second.getPrice(priceType)).setScale(scale, RoundingMode.HALF_DOWN)
             it.first.toString() to value
@@ -40,23 +40,20 @@ class PriceChart(
 
     private fun markPoints(): List<Map<String, Any>> {
         val t = trades.filter { it.asset == asset && timeFrame.contains(it.time)}
-        val d = mutableListOf<Map<String, Any>>()
+        val result = mutableListOf<Map<String, Any>>()
         for (trade in t) {
             val entry = mapOf(
                 "value" to trade.quantity.toInt(), "xAxis" to trade.time.toString(), "yAxis" to trade.price
             )
-            d.add(entry)
+            result.add(entry)
         }
-
-        return d
+        return result
     }
 
     override fun renderOption(): String {
-
         val line = fromFeed()
         val lineData =  gsonBuilder.create().toJson(line)
         val timeFrame = TimeFrame.parse(line.first().first, line.last().first)
-
 
         val marks = markPoints()
         val markData =  gsonBuilder.create().toJson(marks)
@@ -88,7 +85,7 @@ class PriceChart(
                     scale: true
                 },
                  title: {
-                    text: text: '${asset.symbol} ${timeFrame.toPrettyString()}'
+                    text: '${asset.symbol} ${timeFrame.toPrettyString()}'
                 },
                 tooltip: {
                     trigger: 'axis'
