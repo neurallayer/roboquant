@@ -1,0 +1,5 @@
+# This property file contains environment settings that will be made available in roboquant
+
+# Samples
+SAMPLE_PUBLIC_KEY=some_key_value
+SAMPLE_PRIVATE_KEY=another_key_value
