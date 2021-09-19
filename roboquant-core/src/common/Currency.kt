@@ -4,7 +4,6 @@ package org.roboquant.common
 
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.text.DecimalFormat
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -29,27 +28,20 @@ class Currency private constructor(val currencyCode: String) {
             2
         }
 
-    private val formatter: DecimalFormat
-
-    init {
-        val decimals = "0".repeat(defaultFractionDigits)
-        formatter = DecimalFormat("#,##0.$decimals")
-    }
-
-
     /**
      * Format an amount based on the currency. For example USD would have two fraction digits
      * while JPY would have none.
      *
      * @param amount The amount as a Double
      * @param includeCurrency Include the currency code in the returned string
-     * @return The formatted amount
+     * @return The formatted amount as a string
      */
     fun format(amount: Double, includeCurrency: Boolean = false): String {
+        val amountStr = toBigDecimal(amount).toString()
         return if (includeCurrency)
-            formatter.format(amount) + " $displayName"
+            "$amountStr $displayName"
         else
-            formatter.format(amount)
+            amountStr
     }
 
     /**
@@ -58,11 +50,16 @@ class Currency private constructor(val currencyCode: String) {
      * @param amount
      * @return
      */
-    fun toBigDecimal(amount: Double) : BigDecimal = BigDecimal(amount).setScale(defaultFractionDigits, RoundingMode.HALF_DOWN)
+    fun toBigDecimal(amount: Double) : BigDecimal = BigDecimal(amount).setScale(defaultFractionDigits, roundingMode)
 
 
     companion object {
         private val currencies = ConcurrentHashMap<String, Currency>()
+
+        /**
+         * Rounding mode to use when displaying limited number of digits
+         */
+        var roundingMode = RoundingMode.HALF_DOWN
 
         /**
          * Returns the Currency instance for the given currency code.
