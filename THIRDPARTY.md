@@ -1,6 +1,6 @@
 # 3rd Party
-Roboquant couldn't have been developed without the use of free and open source software. This documents
-list some of these great libraries.
+Roboquant couldn't have been developed without the use of free and open source software. This document
+list some great libraries used in roboquant.
 
 
 # Software
