@@ -19,4 +19,14 @@ SAMPLE_PRIVATE_KEY=another_key_value
 # Uncomment the following line and change the value for Alpha Vantage access
 # ALPHA_VANTAGE_API_KEY=your_api_key
 
+# Uncomment the following two lines and change the values for Binance access
+# BINANCE_API_KEY=your_key
+# BINANCE_API_SECRET=you_secret
+
+# Uncomment the following lines for email authentication
+# mail.host=email_host
+# mail.username=your_email_username
+# mail.password=your_email_password
+# mail.to=your_email_password
+
 

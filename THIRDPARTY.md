@@ -1,9 +1,9 @@
 # 3rd Party
 Roboquant couldn't have been developed without the use of free and open source software. This document
-list some great libraries used in roboquant.
+list some great open source libraries and other artefacts used in roboquant.
 
 
-# Software
+## Software
 * [Kotlin](https://kotlinlang.org): modern, concise and safe programming language that makes writing code a joy
 * [TA-Lib](https://ta-lib.org): an extensive library of technical indicators
 * Several [Apache Software Foundation](https://www.apache.org/) libraries:
@@ -16,7 +16,6 @@ list some great libraries used in roboquant.
 * [FastCSV](https://github.com/osiegmar/FastCSV): an ulta-fast and easy to use CSV parser
 
 
-
-# Other artefacts
+## Other artefacts
 * Comfortaa font created by Johan Aakerlund, I love how *roboquant* looks like using Comfortaa font
-* Robot image from Free Vector Charactors (as seen on the README page)
+* Robot image from Free Vector Characters, as also seen on the README page and [roboquant.org](https://roboquant.org) website.

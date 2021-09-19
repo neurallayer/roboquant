@@ -54,7 +54,7 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
  *
  * @constructor Create empty E chart
  */
-abstract class EChart : Output() {
+abstract class Chart : Output() {
 
     var height = 500
 

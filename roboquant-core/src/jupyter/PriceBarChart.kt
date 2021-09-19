@@ -17,7 +17,7 @@ class PriceBarChart(
     val asset: Asset,
     val trades: List<Trade> = listOf(),
     val timeFrame: TimeFrame = TimeFrame.FULL
-) : EChart() {
+) : Chart() {
 
 
     init {

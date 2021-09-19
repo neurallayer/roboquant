@@ -17,7 +17,7 @@ class MetricChart(
     private val metricsData: Collection<MetricsEntry>,
     private val useTime: Boolean = true,
     private val scale: Int = 2
-) : EChart() {
+) : Chart() {
 
     override fun renderOption(): String {
 

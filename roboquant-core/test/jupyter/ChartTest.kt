@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 
-internal class EChartTest {
+internal class ChartTest {
 
 
     @Test

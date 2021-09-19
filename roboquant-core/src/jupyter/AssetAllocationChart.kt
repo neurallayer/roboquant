@@ -14,7 +14,7 @@ class AssetAllocationChart(
     val account: Account,
     private val includeCash: Boolean = true,
     private val includeAssetClass: Boolean = false
-) : EChart() {
+) : Chart() {
 
 
     private class Entry(val name: String, val value: BigDecimal, val type: String) {

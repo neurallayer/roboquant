@@ -21,7 +21,7 @@ class PriceChart(
     val timeFrame: TimeFrame = TimeFrame.FULL,
     val priceType: String = "DEFAULT",
     private val scale: Int = 2
-) : EChart() {
+) : Chart() {
 
     /**
      * Play a feed and filter the provided asset for price bar data. The output is suitable for candle stock charts

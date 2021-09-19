@@ -20,7 +20,7 @@ class MetricHistogram(
     private val metricData: Collection<MetricsEntry>,
     private val binCount: Int = 20,
     private val scale: Int = 2
-) : EChart() {
+) : Chart() {
 
     private fun toSeriesData(): List<Pair<String, Long>> {
         val result = mutableListOf<Pair<String, Long>>()

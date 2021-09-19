@@ -53,10 +53,12 @@
         </dependency>
 
         <dependency>
+            <!-- strangely Binance doesn't publish the client library to Maven central, but someone else did -->
             <groupId>tr.com.lucidcode</groupId>
             <artifactId>binance-api-client</artifactId>
             <version>1.0.1</version>
         </dependency>
+
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-core</artifactId>

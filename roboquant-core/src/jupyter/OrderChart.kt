@@ -21,7 +21,7 @@ class OrderChart(
     private val skipBuy: Boolean = false,
     val aspect: String = "quantity",
     private val scale: Int = 2
-) : EChart() {
+) : Chart() {
 
     private var max = Double.MIN_VALUE
 

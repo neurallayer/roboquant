@@ -11,7 +11,7 @@ class MetricBoxChart(
     private val lowPercentile: Double = 25.0,
     private val midPercentile: Double = 50.0,
     private val highPercentile: Double = 75.0,
-) : EChart() {
+) : Chart() {
 
     private fun toSeriesData(): List<Pair<String, DoubleArray>> {
         val result = mutableListOf<Pair<String, DoubleArray>>()

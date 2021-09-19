@@ -14,7 +14,7 @@ import kotlin.math.absoluteValue
  * @property scale
  * @constructor Create empty Trade chart
  */
-class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, val aspect:String = "pnl", private val scale:Int = 2) : EChart() {
+class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, val aspect:String = "pnl", private val scale:Int = 2) : Chart() {
 
     private var max = Double.MIN_VALUE
 

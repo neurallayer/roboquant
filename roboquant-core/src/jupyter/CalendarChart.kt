@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter
 import kotlin.collections.*
 import kotlin.math.absoluteValue
 
-class CalendarChart(private val metricsData: List<MetricsEntry>, val format: String = "#.00") : EChart() {
+class CalendarChart(private val metricsData: List<MetricsEntry>, val format: String = "#.00") : Chart() {
 
     private var max: Double = 1.0
     private val decimalFormatter = DecimalFormat(format)

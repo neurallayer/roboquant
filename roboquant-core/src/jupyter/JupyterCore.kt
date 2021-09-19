@@ -53,7 +53,7 @@ internal class JupyterCore : JupyterIntegration() {
         resources {
 
             js("echarts") {
-                url("https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js")
+                url("https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js")
             }
 
         }
