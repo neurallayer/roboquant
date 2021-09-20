@@ -75,11 +75,10 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 abstract class Chart : Output() {
 
     /**
-     * Default height for charts
+     * Default height for charts. Subclasses can override this value
      */
     var height = 500
 
-    
     companion object {
         var theme = "light"
 
@@ -99,7 +98,9 @@ abstract class Chart : Output() {
         }
     }
 
-
+    /**
+     * Generates the HTML required to draw a chart.
+     */
     override fun asHTML(): String {
         val fragment = renderOption()
 
@@ -127,7 +128,7 @@ abstract class Chart : Output() {
     override fun asHTMLPage(useCDN: Boolean): String {
         val fragment = asHTML()
         val script = if (useCDN)
-            """<script src='https://cdn.jsdelivr.net/npm/echarts@5.0.2/dist/echarts.min.js'></script>"""
+            """<script src='https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js'></script>"""
         else
             """<script type='text/javascript'>${loadScript()}</script>"""
 

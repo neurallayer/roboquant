@@ -74,7 +74,6 @@ class PriceChart(
             },
         """
 
-
         return """
             {
                 xAxis: {
@@ -98,8 +97,6 @@ class PriceChart(
             }
        """.trimStart()
     }
-
-
 
 
 }
