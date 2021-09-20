@@ -3,6 +3,7 @@ package org.roboquant.jupyter
 import org.roboquant.brokers.Trade
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.Instant
 import kotlin.math.absoluteValue
 
 /**
@@ -22,8 +23,8 @@ class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, 
         require(aspect in listOf("pnl", "fee", "amount", "quantity"))
     }
 
-    private fun toSeriesData(): List<Triple<String, BigDecimal, String>> {
-        val d = mutableListOf<Triple<String, BigDecimal, String>>()
+    private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
+        val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (trade in trades) {
             if (skipBuy && trade.quantity > 0) continue
             with(trade) {
@@ -40,7 +41,7 @@ class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, 
                 val roundedValue = BigDecimal(value).setScale(scale, RoundingMode.HALF_DOWN)
                 val amount = asset.currency.format(totalAmount)
                 val tooltip = "asset: $asset <br> qty: $quantity <br> pnl: $pnl <br> amount: $amount"
-                d.add(Triple(time.toString(), roundedValue, tooltip))
+                d.add(Triple(time, roundedValue, tooltip))
             }
         }
 

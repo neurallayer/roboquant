@@ -4,6 +4,7 @@ import org.roboquant.orders.Order
 import org.roboquant.orders.SingleOrder
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.Instant
 import kotlin.math.absoluteValue
 
 /**
@@ -29,10 +30,10 @@ class OrderChart(
         require(aspect in listOf("remaining", "direction", "quantity", "fill"))
     }
 
-    private fun toSeriesData(): List<Triple<String, BigDecimal, String>> {
+    private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val singleOrders = orders.filterIsInstance<SingleOrder>()
 
-        val d = mutableListOf<Triple<String, BigDecimal, String>>()
+        val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (order in singleOrders) {
             if (skipBuy && order.quantity > 0) continue
             with(order) {
@@ -48,7 +49,7 @@ class OrderChart(
                 if (value.absoluteValue > max) max = value.absoluteValue
                 val roundedValue = BigDecimal(value).setScale(scale, RoundingMode.HALF_DOWN)
                 val tooltip = "asset: $asset <br> qty: $quantity"
-                d.add(Triple(placed.toString(), roundedValue, tooltip))
+                d.add(Triple(placed, roundedValue, tooltip))
             }
         }
 

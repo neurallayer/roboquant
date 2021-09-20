@@ -33,7 +33,7 @@ class PriceBarChart(
         val data = entries.map {
             val (now, price) = it
             val direction = if (price.close >= price.open) 1 else -1
-            listOf(now.toString(), price.open, price.high, price.low, price.close, price.volume, direction)
+            listOf(now, price.open, price.high, price.low, price.close, price.volume, direction)
         }
         return data
     }
@@ -91,7 +91,7 @@ class PriceBarChart(
                 ],
                 xAxis: [
                     {
-                        type: 'category',
+                        type: 'time',
                         scale: true,
                         boundaryGap: true,
                         axisLine: {onZero: false},
@@ -101,7 +101,7 @@ class PriceBarChart(
                         max: 'dataMax'
                     },
                     {
-                        type: 'category',
+                        type: 'time',
                         gridIndex: 1,
                         scale: true,
                         boundaryGap: true,

@@ -8,6 +8,7 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import java.lang.reflect.Type
 import java.nio.charset.StandardCharsets
+import java.time.Instant
 
 
 /**
@@ -24,6 +25,23 @@ private class PairAdapter : JsonSerializer<Pair<*, *>> {
     ): JsonElement {
         val list = listOf(jsonElement.first, jsonElement.second)
         return jsonSerializationContext.serialize(list)
+    }
+
+}
+
+/**
+* Type adaptor for Gson that allows to use Instant that get serialized as a Long
+*
+* @constructor Create new Pair adapter
+*/
+private class InstantAdapter : JsonSerializer<Instant> {
+
+    override fun serialize(
+        jsonElement: Instant,
+        type: Type,
+        jsonSerializationContext: JsonSerializationContext
+    ): JsonElement {
+        return jsonSerializationContext.serialize(jsonElement.toEpochMilli())
     }
 
 }
@@ -56,17 +74,23 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
  */
 abstract class Chart : Output() {
 
+    /**
+     * Default height for charts
+     */
     var height = 500
 
-    protected val gsonBuilder = GsonBuilder()
-
-    init {
-        gsonBuilder.registerTypeAdapter(Pair::class.java, PairAdapter())
-        gsonBuilder.registerTypeAdapter(Triple::class.java, TripleAdapter())
-    }
-
+    
     companion object {
         var theme = "light"
+
+        val gsonBuilder = GsonBuilder()
+
+        init {
+            // register the three builders
+            gsonBuilder.registerTypeAdapter(Pair::class.java, PairAdapter())
+            gsonBuilder.registerTypeAdapter(Triple::class.java, TripleAdapter())
+            gsonBuilder.registerTypeAdapter(Instant::class.java, InstantAdapter())
+        }
 
         fun loadScript(): String {
             val classloader = Thread.currentThread().contextClassLoader

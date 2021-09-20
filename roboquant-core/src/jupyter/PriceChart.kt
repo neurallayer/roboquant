@@ -8,6 +8,7 @@ import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.Instant
 
 /**
  * Plot the price of an asset and optionally the trades made for that same asset.
@@ -27,11 +28,11 @@ class PriceChart(
      * Play a feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
      * @return
      */
-    private fun fromFeed(): List<Pair<String, BigDecimal>> {
+    private fun fromFeed(): List<Pair<Instant, BigDecimal>> {
         val entries = feed.filter<PriceAction>(timeFrame) { it.asset == asset }
         val data = entries.map {
             val value = BigDecimal(it.second.getPrice(priceType)).setScale(scale, RoundingMode.HALF_DOWN)
-            it.first.toString() to value
+            it.first to value
         }
 
         return data
@@ -53,7 +54,7 @@ class PriceChart(
     override fun renderOption(): String {
         val line = fromFeed()
         val lineData =  gsonBuilder.create().toJson(line)
-        val timeFrame = TimeFrame.parse(line.first().first, line.last().first)
+        val timeFrame = TimeFrame(line.first().first, line.last().first)
 
         val marks = markPoints()
         val markData =  gsonBuilder.create().toJson(marks)

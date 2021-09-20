@@ -71,14 +71,14 @@ class MetricChart(
      * Convert a list of entries to data-format suitable for chart series.
      * @return
      */
-    private fun List<MetricsEntry>.toSeriesData(): List<Pair<String, Number>> {
+    private fun List<MetricsEntry>.toSeriesData(): List<Pair<Any, Number>> {
 
-        val d = mutableListOf<Pair<String, Number>>()
+        val d = mutableListOf<Pair<Any, Number>>()
         for (entry in this) {
             val value = entry.value
             val roundedValue = BigDecimal(value.toDouble()).setScale(scale, RoundingMode.HALF_DOWN)
             if (useTime)
-                d.add(Pair(entry.info.time.toString(), roundedValue))
+                d.add(Pair(entry.info.time, roundedValue))
             else
                 d.add(Pair(entry.info.step.toString(), roundedValue))
 
