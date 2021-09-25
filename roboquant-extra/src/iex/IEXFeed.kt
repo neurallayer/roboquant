@@ -126,7 +126,6 @@ class IEXFeed(
             val dt = LocalDateTime.parse("${date}T$minute")
             exchange.getInstant(dt)
         } else {
-            println(date)
             val d = LocalDate.parse(date)
             exchange.getClosingTime(d)
         }
