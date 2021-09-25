@@ -1,18 +1,19 @@
 package org.roboquant
 
-import org.roboquant.brokers.alpaca.AlpacaBroker
+import org.roboquant.alpaca.*
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.TimeFrame
-import org.roboquant.feeds.alpaca.AlpacaFeed
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
-import org.roboquant.feeds.yahoo.YahooFinanceFeed
+import org.roboquant.iex.Range
+import org.roboquant.yahoo.YahooFinanceFeed
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.OpenPositions
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMACrossover
+import java.time.temporal.ChronoUnit
 
 
 fun alpacaBroker() {
@@ -42,7 +43,20 @@ fun allAlpaca() {
 }
 
 
+fun alpacaHistoricFeed() {
+    val feed = AlpacaHistoricFeed()
+    val tf = TimeFrame.pastPeriod(100, ChronoUnit.DAYS).minus(15)
+    feed.retrieve("AAPL", "IBM", timeFrame = tf, period = AlpacaPeriod.DAY)
+    val strategy = EMACrossover.midTerm()
+    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
+    roboquant.run(feed)
+    roboquant.broker.account.summary().log()
+    roboquant.logger.summary().log()
+
+}
+
 fun alpacaFeed() {
+    // Logging.setLevel(Level.FINER)
     val feed = AlpacaFeed()
     val assets = feed.assets.take(50)
     feed.subscribe(assets)
@@ -60,8 +74,8 @@ fun alpacaFeed() {
 
 fun feedIEX() {
     val token = Config.getProperty("IEX_PUBLIC_KEY") ?: throw Exception("No token found")
-    val feed = org.roboquant.feeds.iex.IEXFeed(token)
-    feed.retrievePriceBar("AAPL", "GOOGL", "FB", range = "2y")
+    val feed = org.roboquant.iex.IEXFeed(token)
+    feed.retrievePriceBar("AAPL", "GOOGL", "FB", range = Range.TWO_YEARS)
 
     val strategy = EMACrossover(10, 30)
     val roboquant = Roboquant(strategy, AccountSummary())
@@ -71,7 +85,7 @@ fun feedIEX() {
 
 
 fun feedIEXLive() {
-    val feed = org.roboquant.feeds.iex.IEXLive()
+    val feed = org.roboquant.iex.IEXLive()
     val apple = Asset("AAPL")
     val google = Asset("GOOG")
     feed.subscribeTrades(apple, google)
@@ -100,12 +114,13 @@ fun feedYahoo() {
 }
 
 fun main() {
-    when ("IEX_LIVE") {
+    when ("ALPACA_HISTORIC_FEED") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_FEED" -> alpacaFeed()
+        "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
         "ALPACA_ALL" -> allAlpaca()
     }
 }

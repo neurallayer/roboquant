@@ -90,6 +90,7 @@ object Config {
      * @return
      */
     fun getProperty(name: String, default: String? = null): String? {
+        logger.finer { "Finding property $name" }
         return System.getProperty(name) ?: System.getenv(name) ?: env[name] ?: default
     }
 
@@ -110,6 +111,7 @@ object Config {
             load(home / ".env")
             load(Path.of(".env"))
             load(Path.of("dotenv"))
+            logger.finer { "Loaded environment properties $prop" }
             return prop.map { it.key.toString() to it.value.toString() }.toMap()
     }
 

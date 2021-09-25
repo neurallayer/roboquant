@@ -8,7 +8,7 @@
 SAMPLE_PUBLIC_KEY=some_key_value
 SAMPLE_PRIVATE_KEY=another_key_value
 
-# Uncomment the following two lines and change the values for Alpaca access
+# Uncomment the following two lines and change the values for Alpaca API access
 # APCA_API_KEY_ID=your_api_key_id
 # APCA_API_SECRET_KEY=your_api_secret_key
 

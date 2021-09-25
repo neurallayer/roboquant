@@ -3,6 +3,7 @@ package org.roboquant.common
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalUnit
 
 /**
  * Time-frame represents a period of time defined by a start-time (inclusive) and stop-time (exclusive). It can be used
@@ -84,7 +85,6 @@ data class TimeFrame(val start: Instant, val end: Instant) {
             return TimeFrame(start, end)
         }
 
-
         /**
          * Create a timeframe starting with the current time and last for the specified number of minutes. This comes in
          * handy when you want to test a strategy against a live feed for a certain duration.
@@ -109,6 +109,11 @@ data class TimeFrame(val start: Instant, val end: Instant) {
      */
     fun contains(now: Instant): Boolean {
         return (now >= start) && (now < end)
+    }
+
+
+    fun minus(amount:Long, unit: TemporalUnit = ChronoUnit.MINUTES) : TimeFrame {
+        return TimeFrame(start.minus(amount, unit), end.minus(amount, unit))
     }
 
     /**
