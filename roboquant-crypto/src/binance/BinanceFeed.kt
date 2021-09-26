@@ -45,27 +45,29 @@ class BinanceFeed(client: BinanceApiWebSocketClient? = null, private val useMach
     /**
      * Subscribe to the [PriceBar] actions one or more currency pairs.
      *
-     * @param currencyPairs the currency pairs you want to subscribe to
+     * @param names the currency pairs you want to subscribe to
      * @param interval the interval of the PriceBar. Default is  1 minute
      */
     fun subscribePriceBar(
-        vararg currencyPairs: Pair<String, String>,
+        vararg names: String,
         interval: Interval = Interval.ONE_MINUTE
     ) {
-        require(currencyPairs.isNotEmpty())
+        require(names.isNotEmpty()) { "You need to provide at least 1 name"}
 
-        for (currencyPair in currencyPairs) {
-            val (symbol, currencyCode) = currencyPair
-            val upperCaseSymbol = symbol.uppercase()
-            logger.info { "Subscribing to $upperCaseSymbol" }
-            val asset = getAsset(upperCaseSymbol, currencyCode)
+        for (name in names) {
+            val nameSplit = name.split('-').map { it.uppercase() }
+            require(nameSplit.size == 2) { "Name needs to be of format XXX-YYY, for example BTC-BUSD"}
+            val (currency1, currency2) = nameSplit
+            val symbol = currency1 + currency2
+            logger.info { "Subscribing to $symbol" }
+            val asset = getAsset(symbol, currency2)
 
             // API required lowercase symbol
             val closable = client.onCandlestickEvent(symbol.lowercase(), interval) {
                 handle(it)
             }
             closeables.add(closable)
-            subscriptions[upperCaseSymbol] = asset
+            subscriptions[symbol] = asset
         }
     }
 

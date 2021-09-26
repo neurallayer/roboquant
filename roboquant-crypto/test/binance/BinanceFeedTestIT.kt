@@ -29,7 +29,7 @@ internal class BinanceFeedTestIT {
 
         val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), broker = broker)
         val feed = BinanceFeed()
-        feed.subscribePriceBar(Pair("BTCBUSD", "BUSD"))
+        feed.subscribePriceBar("BTC-BUSD")
         assert(feed.assets.isNotEmpty())
 
         val timeFrame = TimeFrame.nextMinutes(2)
@@ -60,7 +60,7 @@ internal class BinanceFeedTestIT {
 
         val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), policy = p, logger = InfoLogger(), broker = broker)
         val feed = BinanceFeed()
-        feed.subscribePriceBar(Pair("BTCBUSD", "BUSD"))
+        feed.subscribePriceBar("BTC-BUSD")
 
 
         val timeFrame = TimeFrame.nextMinutes(30)

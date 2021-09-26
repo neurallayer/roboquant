@@ -3,7 +3,7 @@ This directory contains a number of Jupyter notebook tutorials that demonstrate 
 
 ## Run
 
-You can run them without installing anything by just clicking the following link [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks)
+You can run the notebooks without installing anything on your local machine by just clicking the following link [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks)
 
 It might take some time before the MyBinder environment is setup and you can run the notebooks. This is mainly due to the limited resources that these free environments have available and the fact that Java/Kotlin isn't included in the default environment and needs to be installed first.   
 
