@@ -56,7 +56,7 @@ class PriceBarChart(
 
         val line = fromFeed()
         val lineData = gsonBuilder.create().toJson(line)
-        val timeFrame = TimeFrame.parse(line.first()[0].toString(), line.last()[0].toString())
+        val timeFrame = if (line.isNotEmpty()) TimeFrame.parse(line.first()[0].toString(), line.last()[0].toString()).toPrettyString() else ""
 
         val marks = markPoints()
         val markData = gsonBuilder.create().toJson(marks)
@@ -67,7 +67,7 @@ class PriceBarChart(
                     source: $lineData
                 },
                 title: {
-                    text: '${asset.symbol} ${timeFrame.toPrettyString()}'
+                    text: '${asset.symbol} $timeFrame'
                 },
                 tooltip: {
                     trigger: 'axis',

@@ -54,7 +54,7 @@ class PriceChart(
     override fun renderOption(): String {
         val line = fromFeed()
         val lineData =  gsonBuilder.create().toJson(line)
-        val timeFrame = TimeFrame(line.first().first, line.last().first)
+        val timeFrame = if (line.isNotEmpty()) TimeFrame(line.first().first, line.last().first).toPrettyString() else ""
 
         val marks = markPoints()
         val markData =  gsonBuilder.create().toJson(marks)
@@ -85,7 +85,7 @@ class PriceChart(
                     scale: true
                 },
                  title: {
-                    text: '${asset.symbol} ${timeFrame.toPrettyString()}'
+                    text: '${asset.symbol} $timeFrame'
                 },
                 tooltip: {
                     trigger: 'axis'
