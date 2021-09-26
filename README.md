@@ -39,8 +39,8 @@ Some key features of roboquant are:
 * [x]  Trade on multi-markets with multi-currencies
 * [x]  Developed under open source with a permissive Apache license
 * [x]  Use Jupyter notebooks with insightful charts if you prefer interactive development
-* [x]  Batteries included: over 200 indicators
-
+* [x]  Batteries included: over 200 technical indicators
+* [x]  Out of the box integration with  Alpaca, Interactive Brokers, IEX Cloud, Yahoo Finance, Alpha Vantage, Binance and most other crypto exchanges 
 
 ## Installation
 If you have already Docker installed, all it takes is a single command to have a fully functional notebook environment available:

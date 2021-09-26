@@ -15,17 +15,17 @@ docker run --rm -p 8888:8888 roboquant/jupyter
 
 ## Content
 
-The following content is included:
+The following content is included and if you click on the notebook name, the notebook will be automatically opened on MyBinder.org:
 
-- visualization.ipynb - Shows the charting capabilities of roboquant
-- alpaca.ipynb - Shows the integration with Alpaca broker
-- binance.ipynb - Shows the integration with Binance crypto exchange
-- crypto.ipynb - Shows the integration with many crypto exchange using the XChange library 
-- custom_strategies.ipynb - How to develop a custom strategy
+- [visualization.ipynb](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks/visualization.ipynb) - Shows the charting capabilities of roboquant
+- [alpaca.ipynb](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks/alpaca.ipynb) - Shows the integration with Alpaca broker
+- [binance.ipynb](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks/binance.ipynb) - Shows the integration with Binance crypto exchange
+- [crypto.ipynb](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks/crypto.ipynb) - Shows the integration with many crypto exchange using the XChange library 
+- [custom_strategies.ipynb](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks/custom_strategies.ipynb) - How to develop a custom strategy
 - dotenv - Example environment file that can hold keys and secrets that are often required to connect to third party data providers and brokers
-- iex_cloud.ipynb - Shows the integration with IEX Cloud data provider
-- introduction.ipynb - High level introduction
+- [iex_cloud.ipynb](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks/iex_cloud.ipynb) - Shows the integration with IEX Cloud data provider
+- [introduction.ipynb](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks/introduction.ipynb) - High level introduction
 - README.md - This README file
-- technical_analysis.ipynb - How to develop technical analysis strategies quickly 
+- [technical_analysis.ipynb](https://mybinder.org/v2/gh/neurallayer/roboquant/main?filepath=notebooks/technical_analysis.ipynb) - How to develop technical analysis strategies quickly 
 
 

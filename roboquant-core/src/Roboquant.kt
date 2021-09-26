@@ -79,7 +79,7 @@ class Roboquant<L : MetricsLogger>(
     }
 
     init {
-        kotlinLogger.info { "Created new roboquant instance" }
+        kotlinLogger.fine { "Created new roboquant instance" }
     }
 
     /**
