@@ -7,7 +7,7 @@ internal class BinanceHistoricFeedTest {
 
     @Test
     fun test() {
-        System.getProperty("binance") ?: return
+        System.getProperty("TEST_BINANCE") ?: return
         val feed = BinanceHistoricFeed()
         val tf = TimeFrame.pastPeriod(100)
         feed.retrieve("BTC-BUSD", timeFrame = tf)

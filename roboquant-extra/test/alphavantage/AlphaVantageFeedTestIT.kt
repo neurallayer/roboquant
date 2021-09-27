@@ -13,7 +13,7 @@ internal class AlphaVantageFeedTestIT {
 
     @Test
     fun alphaVantage() {
-        true && return
+        System.getProperty("TEST_ALPHAVANTAGE") ?: return
         val strategy = EMACrossover.shortTerm()
         val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), logger = SilentLogger())
 

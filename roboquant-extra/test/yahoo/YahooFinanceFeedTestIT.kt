@@ -9,7 +9,7 @@ internal class YahooFinanceFeedTestIT {
 
     @Test
     fun test() {
-        System.getProperty("yahoo") ?: return
+        System.getProperty("TEST_YAHOO") ?: return
         val feed = YahooFinanceFeed()
         val asset = Asset("AAPL")
         feed.retrieve(asset, timeFrame = TimeFrame.fromYears(2015, 2020))

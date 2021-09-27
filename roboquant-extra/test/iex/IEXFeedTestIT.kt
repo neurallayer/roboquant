@@ -15,7 +15,7 @@ internal class IEXFeedTestIT {
 
     @Test
     fun test() {
-        System.getProperty("IEX_TEST") ?: return
+        System.getProperty("TEST_IEX") ?: return
         val token = Config.getProperty("IEX_TOKEN")!!
         val feed = IEXFeed(token)
         val asset = Asset("AAPL")

@@ -21,7 +21,7 @@ internal class XChangeBrokerTestIT {
 
     @Test
     fun test() {
-        true && return
+        System.getProperty("TEST_XCHANGE") ?: return
         assertFails {
             val exchange2 = getExchange()
             XChangeBroker(exchange2)

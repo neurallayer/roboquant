@@ -8,7 +8,7 @@ internal class AlpacaFeedTestIT {
 
     @Test
     fun test() {
-        System.getProperty("alpaca") ?: return
+        System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaFeed()
         val asset = Asset("AAPL")
         feed.subscribe(listOf(asset))

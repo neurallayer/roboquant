@@ -14,7 +14,7 @@ internal class BinanceFeedTestIT {
 
     @Test
     fun testBinanceFeed() {
-        System.getProperty("binance") ?: return
+        System.getProperty("TEST_BINANCE") ?: return
 
         val broker = SimBroker.withDeposit(10_000.00, "BUSD")
         val strategy = TAStrategy(15)
@@ -46,12 +46,10 @@ internal class BinanceFeedTestIT {
         val strategy = TAStrategy(6)
 
         strategy.buy {
-            println("\nINSIDE BUY")
             ta.sma(it.close, 3) > ta.sma(it.close, 5)
         }
 
         strategy.sell {
-            println("INSIDE SELL")
             false
         }
 
@@ -61,7 +59,6 @@ internal class BinanceFeedTestIT {
         val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), policy = p, logger = InfoLogger(), broker = broker)
         val feed = BinanceFeed()
         feed.subscribePriceBar("BTC-BUSD")
-
 
         val timeFrame = TimeFrame.nextMinutes(30)
         roboquant.run(feed, timeFrame)

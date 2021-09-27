@@ -141,7 +141,7 @@ class Roboquant<L : MetricsLogger>(
     }
 
     /**
-     * Reset all state including that of the used components. This allows to start with a fres run with the same
+     * Reset all state including that of the used components. This allows to start with a fresh run with the same
      * configuration as the original instance.
      */
     fun reset() {

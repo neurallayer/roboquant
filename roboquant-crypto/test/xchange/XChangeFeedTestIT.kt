@@ -14,7 +14,7 @@ internal class XChangeFeedTestIT {
 
     @Test
     fun xchangeFeedIT() {
-        System.getProperty("xchange") ?: return
+        System.getProperty("TEST_XCHANGE") ?: return
 
         val exchange = StreamingExchangeFactory.INSTANCE.createExchange(BitstampStreamingExchange::class.java)
         exchange.connect().blockingAwait()

@@ -8,7 +8,7 @@ class AlpacaBrokerTestIT {
 
     @Test
     fun test() {
-        System.getProperty("ALPACA_TEST") ?: return
+        System.getProperty("TEST_ALPACA") ?: return
         val key = Config.getProperty("ALPACA_KEY")!!
         val secret = Config.getProperty("ALPACA_SECRET")!!
         val broker = AlpacaBroker(key, secret)

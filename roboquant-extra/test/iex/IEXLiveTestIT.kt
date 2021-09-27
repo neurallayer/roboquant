@@ -15,7 +15,7 @@ internal class IEXLiveTestIT {
 
     @Test
     fun test() {
-        System.getProperty("iex") ?: return
+        System.getProperty("TEST_IEX") ?: return
         val token = System.getProperty("IEX_PUBLISHABLE_TOKEN") ?: System.getenv("IEX_PUBLISHABLE_TOKEN")
         val feed = IEXLive(token)
         val asset = Asset("AAPL")

@@ -10,7 +10,7 @@ internal class BinanceBrokerTestIT {
 
     @Test
     fun test() {
-        true && return
+        System.getProperty("TEST_BINANCE") ?: return
         val client = BinanceApiClientFactory.newInstance().newRestClient()
         val broker = BinanceBroker(client)
         assertTrue(broker.toString().isNotEmpty())
