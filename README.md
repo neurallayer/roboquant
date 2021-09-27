@@ -43,7 +43,7 @@ Some key features of roboquant are:
 * [x]  Out of the box integration with  Alpaca, Interactive Brokers, IEX Cloud, Yahoo Finance, Alpha Vantage, Binance and most other crypto exchanges 
 
 ## Installation
-If you have already Docker installed, all it takes is a single command to have a fully functional notebook environment available:
+If you have already Docker installed, all it takes is a single command to have a fully functional Jupyter Lab environment available:
 
 ```shell
 docker run --rm -p 8888:8888 roboquant/jupyter 
@@ -64,8 +64,7 @@ Roboquant also comes with live trading and paper trading capabilities. Using thi
 ## Beta version
 Roboquant is in its pre-1.0 release and bugs are fore sure still present. Also expect API's to change without notice.  PR are more than welcome, see also the [Contribution Guide](/CONTRIBUTING.md) document. If you're missing some features, just open an issue on GitHub. 
 
-See also the [todo documentation](/TODO.md) for already identified backlog items if you look
-for something to work on.
+See also the [todo documentation](/TODO.md) for already identified backlog items if you look for something to work on.
 
 
 
