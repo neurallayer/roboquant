@@ -53,7 +53,7 @@ This also comes with several tutorials. And if you just want to try it without a
 
 ![Jupyter Lab](/docs/jupyter-lab.png)
 
-See the [installation guide](/INSTALL.md) for more ways to install and use roboquant, for example if you want to use it in a standalone application and want to include the libraries.
+See the [installation guide](/docs/INSTALL.md) for more ways to install and use roboquant, for example if you want to use it in a standalone application and want to include the libraries.
 
 ## License
 Roboquant is distributed under the [Apache 2.0 License](/LICENSE).  
@@ -62,9 +62,9 @@ Roboquant is distributed under the [Apache 2.0 License](/LICENSE).
 Roboquant also comes with live trading and paper trading capabilities. Using this is at your own risk and there are NO guarantees about the correct functioning of the software. 
 
 ## Beta version
-Roboquant is in its pre-1.0 release and bugs are fore sure still present. Also expect API's to change without notice.  PR are more than welcome, see also the [Contribution Guide](/CONTRIBUTING.md) document. If you're missing some features, just open an issue on GitHub. 
+Roboquant is in its pre-1.0 release and bugs are fore sure still present. Also expect API's to change without notice.  PR are more than welcome, see also the [Contribution Guide](/docs/CONTRIBUTING.md) document. If you're missing some features, just open an issue on GitHub. 
 
-See also the [todo documentation](/TODO.md) for already identified backlog items if you look for something to work on.
+See also the [todo documentation](/docs/TODO.md) for already identified backlog items if you look for something to work on.
 
 
 

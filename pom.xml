@@ -181,6 +181,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+
+                </configuration>
             </plugin>
 
             <!-- Make sure we clean the Ivy cache used by Kotlin kernel so new local mvn installs are found-->
