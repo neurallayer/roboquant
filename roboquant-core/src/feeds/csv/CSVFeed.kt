@@ -46,7 +46,7 @@ class CSVFeed(
         val startTime = Instant.now().toEpochMilli()
 
         runBlocking {
-            events = readFiles(path, config.assetBuilder)
+            events = readFiles(path)
         }
 
         val duration = Instant.now().toEpochMilli() - startTime
@@ -94,10 +94,9 @@ class CSVFeed(
      * Read and parse CSV files in parallel to ensure fast processing of large datasets.
      *
      * @param path
-     * @param assetBuilder
      * @return
      */
-    private suspend fun readFiles(path: String, assetBuilder: AssetBuilder): List<Event> {
+    private suspend fun readFiles(path: String): List<Event> {
         val files = readPath(path)
         if (files.isEmpty()) {
             logger.warning { "Found no CSV files at $path" }
@@ -108,8 +107,7 @@ class CSVFeed(
         val result = ConcurrentHashMap<Instant, MutableList<Action>>()
         val deferredList = mutableListOf<Deferred<Unit>>()
         for (file in files) {
-            val symbol = config.getSymbol(file.name)
-            val asset = assetBuilder(symbol)
+            val asset = config.getAsset(file.name)
             assets.add(asset)
             val deferred = Background.async {
                 val steps = readFile(asset, file)

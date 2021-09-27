@@ -4,6 +4,7 @@ package org.roboquant.feeds.csv
 
 import org.roboquant.common.*
 import org.roboquant.common.Currency
+import org.roboquant.feeds.AssetBuilderFactory
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.PriceBar
 import java.io.File
@@ -35,8 +36,8 @@ data class CSVConfig(
     var priceThreshold: Double = 0.5,
     var priceAdjust: Boolean = false,
     var skipZeroPrice: Boolean = true,
-    var assetBuilder: AssetBuilder = AssetBuilder.getInstance(AssetType.STOCK),
-    var assetCurrency: String = ""
+    var assetCurrency: String = "",
+    var template: Asset = Asset("TEMPLATE")
 ) {
 
     private val dateTimeParser: TimeParser by lazy {
@@ -95,11 +96,14 @@ data class CSVConfig(
 
     }
 
-    fun getSymbol(fileName: String) = fileName.substringBefore(fileExtension).uppercase()
+    fun getAsset(fileName: String): Asset {
+        val name = fileName.substringBefore(fileExtension).uppercase()
+        return AssetBuilderFactory.build(name, template)
+    }
 
 
     /**
-     * Should the provided file be parsed
+     * Should the provided file be parsed or skipped all together
      *
      * @param file
      */
@@ -109,25 +113,37 @@ data class CSVConfig(
     }
 
 
+    private fun getTemplateAsset(config: Map<String, String>) : Asset {
+        return Asset(
+            symbol = config.getOrDefault("symbol", "TEMPLATE"),
+            type = AssetType.valueOf(config.getOrDefault("type", "STOCK")),
+            currencyCode = config.getOrDefault("currency", "USD"),
+            exchangeCode = config.getOrDefault("exchange", ""),
+            multiplier = config.getOrDefault("multiplier", "1.0").toDouble(),
+            details = config.getOrDefault("details", ""),
+            name = config.getOrDefault("name", ""),
+            id = config.getOrDefault("id", ""),
+        )
+    }
+
     /**
      * Merge a config map into this CSV config
      *
      * @param config
      */
     fun merge(config: Map<String, String>) {
+        val newAssetConfig = config.filter { it.key.startsWith("asset.") }.mapKeys { it.key.substring(6) }
+        template = getTemplateAsset(newAssetConfig)
         for ((key, value) in config) {
             when (key) {
                 "file.extension" -> fileExtension = value
                 "file.pattern" -> filePattern = value
                 "file.skip" -> fileSkip = value.split(",")
-                "asset.type" -> assetBuilder = AssetBuilder.getInstance(AssetType.valueOf(value))
-                "asset.exchange" -> assetExchange = value
-                "asset.currency" -> assetCurrency = value
                 "price.adjust" -> priceAdjust = value.toBoolean()
                 "price.validate" -> priceValidate = value.toBoolean()
                 "price.threshold" -> priceThreshold = value.toDouble()
                 else -> {
-                    logger.warning("Found unknown property $key, skipping it.")
+                    logger.finer {"Found property $key with value $value"}
                 }
             }
         }

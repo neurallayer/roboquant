@@ -1,17 +1,19 @@
-package org.roboquant
+package org.roboquant.samples
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
-import org.roboquant.brokers.*
+import org.roboquant.Roboquant
+import org.roboquant.brokers.Account
+import org.roboquant.brokers.ECBExchangeRates
+import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
-import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.feeds.csv.StockBuilder
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.avro.AvroGenerator
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.LazyCSVFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.AccountSummary
@@ -21,16 +23,12 @@ import org.roboquant.policies.BettingAgainstBeta
 import org.roboquant.policies.NeverShortPolicy
 import org.roboquant.policies.TestPolicy
 import org.roboquant.strategies.*
-import org.roboquant.strategies.TAStrategy
-import org.roboquant.strategies.recordHigh
-import org.roboquant.strategies.recordLow
 import java.nio.file.Files
 import java.time.Instant
 import java.time.Period
 import kotlin.io.path.Path
 import kotlin.io.path.name
 import kotlin.system.measureTimeMillis
-
 
 
 fun small() {
@@ -145,9 +143,7 @@ fun large6() {
             fileExtension = ".us.txt",
             assetExchange = exchange,
             parsePattern = "??T?OHLCV?",
-            assetBuilder = {
-                Asset(it, exchangeCode = exchange)
-            },
+            template = Asset("TEMPLATE", exchangeCode = exchange)
         )
     }
 
@@ -205,6 +201,7 @@ fun oneMillionBars() {
     logger.summary().print()
 }
 
+/*
 fun crypto() {
     val config = CSVConfig(
         assetBuilder = {
@@ -222,11 +219,12 @@ fun crypto() {
     exp.broker.account.summary().log()
     exp.logger.summary().log()
 }
+*/
 
 fun multiCurrency() {
     val feed = CSVFeed("data/US", CSVConfig(priceAdjust = true))
-    val stockBuilderEU = StockBuilder("EUR", exchange = "AEB")
-    val feed2 = CSVFeed("data/EU",  CSVConfig(priceAdjust = true, assetBuilder = stockBuilderEU))
+    val template = Asset("TEMPLATE", currencyCode = "EUR")
+    val feed2 = CSVFeed("data/EU",  CSVConfig(priceAdjust = true, template = template))
     feed.merge(feed2)
 
     val euro = Currency.getInstance("EUR")
@@ -480,7 +478,7 @@ suspend fun main() {
     Config.info()
 
     when ("LARGE5") {
-        "CRYPTO" -> crypto()
+        // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()
         "BETA2" -> beta2()

@@ -5,9 +5,9 @@ import org.junit.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.common.Asset
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
-import org.roboquant.feeds.csv.StockBuilder
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.logging.SilentLogger
@@ -22,8 +22,8 @@ internal class FixedExchangeRatesTest {
     @Test
     fun multiCurrency() {
         val feed = CSVFeed(TestData.dataDir() + "US")
-        val stockBuilderEU = StockBuilder("EUR", exchange = "AEB")
-        val config = CSVConfig(assetBuilder = stockBuilderEU)
+        val asset = Asset("TEMPLATE", currencyCode = "EUR")
+        val config = CSVConfig(template = asset)
         val feed2 = CSVFeed(TestData.dataDir() +"EU", config)
         feed.merge(feed2)
 

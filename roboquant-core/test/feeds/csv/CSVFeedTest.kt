@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
+import org.roboquant.feeds.ForexBuilder
 import java.time.Instant
 import java.time.Period
 import kotlin.test.assertEquals
@@ -17,8 +18,8 @@ internal class CSVFeedTest {
     fun getContracts() {
         val feed = CSVFeed(TestData.dataDir() + "US")
         assertEquals(4, feed.assets.size )
-        val c= StockBuilder().invoke("AAPL")
-        assertTrue(feed.assets.contains(c))
+        // val c= StockBuilder().invoke("AAPL")
+        // assertTrue(feed.assets.contains(c))
         val c2 = feed.assets.find { it.symbol == "AAPL" }
         assertTrue(c2 !== null)
     }
@@ -34,14 +35,12 @@ internal class CSVFeedTest {
         assertTrue(feed1.assets.isEmpty())
     }
 
-    private fun customBuilder(name: String): Asset {
-        return Asset(name, exchangeCode = "TEST123")
-    }
+
 
     @Test
     fun customBuilder() {
-
-        val config = CSVConfig(assetBuilder = { x -> customBuilder(x) })
+        val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
+        val config = CSVConfig(template = asset)
         val feed =  CSVFeed(TestData.dataDir() + "US", config)
         assertEquals("TEST123", feed.assets.first().exchangeCode)
     }
@@ -83,16 +82,10 @@ internal class CSVFeedTest {
     @Test
     fun mergeCSVFeeds() {
         val feed = CSVFeed(TestData.dataDir() + "US")
-
-        val stockBuilder = StockBuilder("EUR", exchange = "AEB")
-        val stockConfig = CSVConfig(assetBuilder = stockBuilder)
-        val feed2 =  CSVFeed(TestData.dataDir() +"EU",stockConfig)
+        val feed2 =  CSVFeed(TestData.dataDir() +"EU")
         feed.merge(feed2)
         assertEquals(2, feed.assets.map {it.currency}.toHashSet().size)
-
-        val forexBuilder = ForexBuilder()
-        val forexConfig = CSVConfig(assetBuilder = forexBuilder)
-        val feed3 =  CSVFeed(TestData.dataDir() +"FX", forexConfig)
+        val feed3 =  CSVFeed(TestData.dataDir() + "FX")
         feed.merge(feed3)
         assertEquals(2, feed.assets.map {it.currency}.toHashSet().size)
 

@@ -10,6 +10,7 @@ import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.CryptoBuilder
 import java.io.Closeable
 import java.time.Instant
 
@@ -53,21 +54,17 @@ class BinanceFeed(client: BinanceApiWebSocketClient? = null, private val useMach
         interval: Interval = Interval.ONE_MINUTE
     ) {
         require(names.isNotEmpty()) { "You need to provide at least 1 name"}
-
+        val template = Asset("TEMPLATE", AssetType.CRYPTO, exchangeCode = "Binance")
         for (name in names) {
-            val nameSplit = name.split('-').map { it.uppercase() }
-            require(nameSplit.size == 2) { "Name needs to be of format XXX-YYY, for example BTC-BUSD"}
-            val (currency1, currency2) = nameSplit
-            val symbol = currency1 + currency2
-            logger.info { "Subscribing to $symbol" }
-            val asset = getAsset(symbol, currency2)
+            val asset = CryptoBuilder().invoke(name.uppercase(), template)
+            logger.info { "Subscribing to $asset" }
 
             // API required lowercase symbol
-            val closable = client.onCandlestickEvent(symbol.lowercase(), interval) {
+            val closable = client.onCandlestickEvent(asset.symbol.lowercase(), interval) {
                 handle(it)
             }
             closeables.add(closable)
-            subscriptions[symbol] = asset
+            subscriptions[asset.symbol] = asset
         }
     }
 
@@ -80,7 +77,7 @@ class BinanceFeed(client: BinanceApiWebSocketClient? = null, private val useMach
         if (! resp.barFinal) return
 
         logger.finer { "Received candlestick event for symbol ${resp.symbol}" }
-        val asset = subscriptions[resp.symbol]
+        val asset = subscriptions[resp.symbol.uppercase()]
         if (asset != null) {
             val action = PriceBar(
                 asset,

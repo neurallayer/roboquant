@@ -1,5 +1,6 @@
-package org.roboquant
+package org.roboquant.samples
 
+import org.roboquant.Roboquant
 import org.roboquant.alpaca.*
 import org.roboquant.common.Asset
 import org.roboquant.common.Config

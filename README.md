@@ -8,15 +8,14 @@
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/neurallayer/roboquant)
 
 
-Roboquant is an algorithmic trading platform that is fast and flexible while at the same time strives to be easy to use. It is fully open source and written in Kotlin. It can be used in Jupyter notebooks as well as standalone applications. It is meant to be used by anyone serious about algo trading, from retail traders to proprietary trading firms.
+Roboquant is an algorithmic trading platform that is fast and flexible while at the same time strives to be easy to use. It is fully open source and written in Kotlin. It can be used in Jupyter Notebooks as well as standalone applications. It is meant to be used by anyone serious about algo trading, from retail traders to proprietary trading firms.
 
 You can find out more at **[roboquant.org](https://roboquant.org)**
 ![roboquant Logo](/docs/roboquant_logo.png)
 
 
 ## Code sample
-To demonstrate how easy it is to get started, the following code snippet shows all the key 
-ingredients required to back-test a trading strategy:
+To demonstrate how easy it is to get started, the following code snippet shows all the key ingredients required to back-test a trading strategy:
 
 ```kotlin
 val strategy = EMACrossover()
@@ -31,14 +30,14 @@ roboquant.run(feed)
 ## Features
 Some key features of roboquant are:
 
-* [x]  Fast back-tests, even on large volumes of data.
+* [x]  Very fast back-testing, even on large volumes of data.
 * [x]  Easy to develop your own strategies and integrate with brokers and data feeds
 * [x]  Trade in multiple asset classes at the same time
 * [x]  Run anything from a technical indicator to complex deep learning based strategies
 * [x]  Easy to transition from back-testing to live trading
 * [x]  Trade on multi-markets with multi-currencies
 * [x]  Developed under open source with a permissive Apache license
-* [x]  Use Jupyter notebooks with insightful charts if you prefer interactive development
+* [x]  Use Jupyter Notebooks with insightful charts if you prefer interactive development
 * [x]  Batteries included: over 200 technical indicators
 * [x]  Out of the box integration with  Alpaca, Interactive Brokers, IEX Cloud, Yahoo Finance, Alpha Vantage, Binance and most other crypto exchanges 
 

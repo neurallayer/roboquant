@@ -182,7 +182,10 @@
                     </execution>
                 </executions>
                 <configuration>
-
+                    <!-- List of sample roots -->
+                    <samples>
+                        <dir>${basedir}/test/samples</dir>
+                    </samples>
                 </configuration>
             </plugin>
 

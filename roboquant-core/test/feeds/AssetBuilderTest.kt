@@ -1,4 +1,4 @@
-package org.roboquant.feeds.csv
+package org.roboquant.feeds
 
 import org.junit.Test
 import kotlin.test.*
@@ -32,14 +32,16 @@ internal class AssetBuilderTest {
 
     @Test
     fun testCryptoBuilder() {
-        var crypto = CryptoBuilder().invoke("BTCUSD")
-        assertEquals("BTC", crypto.symbol)
+        var crypto = CryptoBuilder().invoke("BTC_USD")
+        assertEquals("BTCUSD", crypto.symbol)
+        assertEquals("USD", crypto.currencyCode)
 
-        crypto = CryptoBuilder().invoke("BTC_USD")
-        assertEquals("BTC", crypto.symbol)
+        crypto = CryptoBuilder().invoke("BTC-USD")
+        assertEquals("BTCUSD", crypto.symbol)
+        assertEquals("USD", crypto.currencyCode)
 
         crypto = CryptoBuilder().invoke("BTC123USD")
-        assertEquals("BTC123", crypto.symbol)
+        assertEquals("BTC123USD", crypto.symbol)
         assertEquals("USD", crypto.currencyCode)
     }
 

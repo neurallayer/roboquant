@@ -33,6 +33,7 @@ import kotlin.random.asJavaRandom
  * @constructor Create a new RandomWalk feed
  *
  * @param nAssets
+ *
  */
 class RandomWalk(
     override val timeline: List<Instant>,
@@ -42,7 +43,8 @@ class RandomWalk(
     private val minVolume: Int = 100_000,
     private val maxVolume: Int = 1000_000,
     private val maxDayRange: Float = 4.0f,
-    private val symbolLength: Int = 4
+    private val symbolLength: Int = 4,
+    private val template: Asset = Asset("TEMPLATE")
 ) : HistoricFeed {
 
     private val random = Random(seed)
@@ -107,7 +109,7 @@ class RandomWalk(
             var asset: Asset?
             do {
                 val symbol = generateSymbol()
-                asset = Asset(symbol)
+                asset = AssetBuilderFactory.build(symbol, template)
             } while (asset in data)
 
             val prices = if (generateBars)
