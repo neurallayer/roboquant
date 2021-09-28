@@ -1,8 +1,10 @@
 package org.roboquant.binance
 
-import com.binance.api.client.BinanceApiClientFactory
 import com.binance.api.client.BinanceApiRestClient
-import org.roboquant.common.*
+import org.roboquant.common.Asset
+import org.roboquant.common.AssetType
+import org.roboquant.common.Logging
+import org.roboquant.common.TimeFrame
 import org.roboquant.feeds.*
 import java.time.Instant
 import java.util.*
@@ -28,9 +30,7 @@ class BinanceHistoricFeed(apiKey: String? = null, secret:String? = null, private
         get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct()
 
     init {
-        val finalKey = apiKey ?: Config.getProperty("BINANCE_API_KEY")
-        val finalSecret = secret ?: Config.getProperty("BINANCE_API_SECRET")
-        val factory = if (apiKey == null ) BinanceApiClientFactory.newInstance() else BinanceApiClientFactory.newInstance(finalKey, finalSecret)
+        val factory = BinanceConnection.getFactory(apiKey, secret)
         client = factory.newRestClient()
     }
 

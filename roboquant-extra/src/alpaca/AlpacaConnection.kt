@@ -16,27 +16,20 @@ typealias DataType = DataAPIType
 /**
  * Connect to Alpaca API, logic shared between the Alpaca Feeds and Alpaca Broker
  */
-class AlpacaConnection(
-    apiKey: String? = null,
-    apiSecret: String? = null,
-    private val accountType: AccountType = AccountType.PAPER,
-    private val dataType: DataType = DataType.IEX
-) {
-
-    private var finalKey: String?
-    private var finalSecret: String?
+internal object AlpacaConnection {
 
     private val logger: Logger = Logger.getLogger("AlpacaConnection")
 
-
-    init {
-        finalKey = apiKey ?: Config.getProperty("APCA_API_KEY_ID")
-        finalSecret = apiSecret ?: Config.getProperty("APCA_API_SECRET_KEY")
+    fun getAPI(
+        apiKey: String? = null,
+        apiSecret: String? = null,
+        accountType: AccountType = AccountType.PAPER,
+        dataType: DataType = DataType.IEX
+    ): AlpacaAPI {
+        val finalKey = apiKey ?: Config.getProperty("APCA_API_KEY_ID")
+        val finalSecret = apiSecret ?: Config.getProperty("APCA_API_SECRET_KEY")
         require(finalKey != null) { "No public key provided or set as environment variable APCA_API_KEY_ID" }
         require(finalSecret != null) { "No secret key provided or set as environment variable APCA_API_SECRET_KEY" }
-    }
-
-    fun getAPI(): AlpacaAPI {
         return AlpacaAPI(finalKey, finalSecret, accountType, dataType)
     }
 

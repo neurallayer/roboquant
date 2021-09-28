@@ -1,17 +1,13 @@
 package org.roboquant.iex
 
+import iex.IEXConnection
 import org.roboquant.common.Asset
-import org.roboquant.common.Config
-import org.roboquant.common.Exchange
 import org.roboquant.common.Logging
 import org.roboquant.feeds.*
 import pl.zankowski.iextrading4j.api.stocks.Chart
 import pl.zankowski.iextrading4j.api.stocks.ChartRange
 import pl.zankowski.iextrading4j.api.stocks.v1.Intraday
 import pl.zankowski.iextrading4j.client.IEXCloudClient
-import pl.zankowski.iextrading4j.client.IEXCloudTokenBuilder
-import pl.zankowski.iextrading4j.client.IEXTradingApiVersion
-import pl.zankowski.iextrading4j.client.IEXTradingClient
 import pl.zankowski.iextrading4j.client.rest.request.stocks.ChartRequestBuilder
 import pl.zankowski.iextrading4j.client.rest.request.stocks.v1.IntradayRequestBuilder
 import java.time.Instant
@@ -34,7 +30,7 @@ class IEXFeed(
     publicKey: String? = null,
     secretKey: String? = null,
     sandbox: Boolean = true,
-    private val exchange: Exchange = Exchange.DEFAULT
+    private val template: Asset = Asset("TEMPLATE")
 ) : HistoricFeed {
 
     private val events = TreeMap<Instant, MutableList<PriceAction>>()
@@ -50,16 +46,7 @@ class IEXFeed(
 
 
     init {
-        val pToken = publicKey ?: Config.getProperty("IEX_PUBLIC_KEY")
-        require(pToken != null)
-        val sToken = secretKey ?: Config.getProperty("IEX_SECRET_KEY")
-
-        var tokenBuilder = IEXCloudTokenBuilder().withPublishableToken(pToken)
-        if (sToken != null)
-            tokenBuilder = tokenBuilder.withSecretToken(sToken)
-
-        val apiVersion = if (sandbox) IEXTradingApiVersion.IEX_CLOUD_V1_SANDBOX else IEXTradingApiVersion.IEX_CLOUD_V1
-        client = IEXTradingClient.create(apiVersion, tokenBuilder.build())
+        client = IEXConnection.getClient(publicKey, secretKey, sandbox)
     }
 
     /**
@@ -91,6 +78,15 @@ class IEXFeed(
         }
     }
 
+    /**
+     * Retrieve historic end of day price bars for one or more symbols
+     *
+     * @param symbols
+     */
+    fun retrieveIntraday(vararg symbols: String)  {
+        val assets = symbols.map { template.copy(symbol = it.uppercase()) }
+        retrieveIntraday(*assets.toTypedArray())
+    }
 
     /**
      * Retrieve historic end of day price bars for one or more symbols
@@ -98,7 +94,7 @@ class IEXFeed(
      * @param symbols
      */
     fun retrievePriceBar(vararg symbols: String, range: Range = Range.FIVE_YEARS)  {
-        val assets = symbols.map { Asset(it) }
+        val assets = symbols.map { template.copy(symbol = it.uppercase()) }
         retrievePriceBar(*assets.toTypedArray(), range = range)
     }
 
@@ -121,20 +117,20 @@ class IEXFeed(
     }
 
 
-    private fun getInstant(date: String, minute: String?): Instant {
+    private fun getInstant(asset: Asset, date: String, minute: String?): Instant {
         return if (minute !== null) {
             val dt = LocalDateTime.parse("${date}T$minute")
-            exchange.getInstant(dt)
+            asset.exchange.getInstant(dt)
         } else {
             val d = LocalDate.parse(date)
-            exchange.getClosingTime(d)
+            asset.exchange.getClosingTime(d)
         }
     }
 
     private fun handlePriceBar(asset: Asset, chart: List<Chart>) {
         chart.filter { it.open !== null }.forEach {
             val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
-            val now = getInstant(it.date, it.minute)
+            val now = getInstant(asset, it.date, it.minute)
             val list = events.getOrPut(now) { mutableListOf() }
             list.add(action)
         }
@@ -146,7 +142,7 @@ class IEXFeed(
     private fun handleIntraday(asset: Asset, quotes: List<Intraday>) {
         quotes.filter { it.open !== null }.forEach {
             val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
-            val now = getInstant(it.date, it.minute)
+            val now = getInstant(asset, it.date, it.minute)
             val list = events.getOrPut(now) { mutableListOf() }
             list.add(action)
         }

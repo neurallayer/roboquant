@@ -1,32 +1,30 @@
 package org.roboquant.binance
 
-import com.binance.api.client.BinanceApiClientFactory
 import com.binance.api.client.BinanceApiWebSocketClient
 import com.binance.api.client.domain.event.CandlestickEvent
 import com.binance.api.client.domain.market.CandlestickInterval
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
+import org.roboquant.feeds.CryptoBuilder
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.CryptoBuilder
 import java.io.Closeable
 import java.time.Instant
 
 typealias Interval = CandlestickInterval
 
 /**
- * Create a new feed based on price actions coming from the Binance exchange.
+ * Create a new feed based on live price actions coming from the Binance exchange.
  *
  * @property useMachineTime
  * @constructor
  *
- * @param client
  */
-class BinanceFeed(client: BinanceApiWebSocketClient? = null, private val useMachineTime: Boolean = true) : LiveFeed() {
+class BinanceFeed(apiKey: String? = null, secret:String? = null, private val useMachineTime: Boolean = true) : LiveFeed() {
 
-    private val client = client ?: BinanceApiClientFactory.newInstance().newWebSocketClient()
+    private val client: BinanceApiWebSocketClient
     private val subscriptions = mutableMapOf<String, Asset>()
     private val logger = Logging.getLogger("BinanceFeed")
     private val closeables = mutableListOf<Closeable>()
@@ -39,7 +37,9 @@ class BinanceFeed(client: BinanceApiWebSocketClient? = null, private val useMach
         get() = subscriptions.values.distinct()
 
     init {
-        logger.info { "Started BinanceFeed using web-socket client" }
+        val factory = BinanceConnection.getFactory(apiKey, secret)
+        client = factory.newWebSocketClient()
+        logger.fine { "Started BinanceFeed using web-socket client" }
     }
 
 
@@ -54,9 +54,8 @@ class BinanceFeed(client: BinanceApiWebSocketClient? = null, private val useMach
         interval: Interval = Interval.ONE_MINUTE
     ) {
         require(names.isNotEmpty()) { "You need to provide at least 1 name"}
-        val template = Asset("TEMPLATE", AssetType.CRYPTO, exchangeCode = "Binance")
         for (name in names) {
-            val asset = CryptoBuilder().invoke(name.uppercase(), template)
+            val asset = CryptoBuilder().invoke(name.uppercase(), binanceTemplate)
             logger.info { "Subscribing to $asset" }
 
             // API required lowercase symbol

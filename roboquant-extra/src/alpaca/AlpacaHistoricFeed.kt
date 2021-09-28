@@ -74,9 +74,7 @@ class AlpacaHistoricFeed(apiKey: String? = null, apiSecret: String? = null,  acc
 
 
     init {
-        val connection = AlpacaConnection(apiKey, apiSecret, accountType, dataType)
-        alpacaAPI = connection.getAPI()
-
+        alpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
     }
 }
 

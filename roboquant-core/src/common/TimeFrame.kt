@@ -3,7 +3,7 @@ package org.roboquant.common
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
+
 
 /**
  * Time-frame represents a period of time defined by a start-time (inclusive) and stop-time (exclusive). It can be used
@@ -34,6 +34,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
          * Full time-frame, matches any time and is typically used when no filtering is required
          */
         val FULL = TimeFrame(Instant.MIN, Instant.MAX)
+
 
         // Time-frames for some significant events in history of trading
         fun blackMonday1987() = parse("1987-10-19T00:00:00Z", "1987-10-20T00:00:00Z")
@@ -112,7 +113,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
 
-    fun minus(amount:Long, unit: TemporalUnit = ChronoUnit.MINUTES) : TimeFrame {
+    fun minus(amount:Long, unit: ChronoUnit = ChronoUnit.MINUTES) : TimeFrame {
         return TimeFrame(start.minus(amount, unit), end.minus(amount, unit))
     }
 

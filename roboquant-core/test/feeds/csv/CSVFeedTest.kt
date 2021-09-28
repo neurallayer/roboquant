@@ -4,7 +4,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
-import org.roboquant.feeds.ForexBuilder
 import java.time.Instant
 import java.time.Period
 import kotlin.test.assertEquals

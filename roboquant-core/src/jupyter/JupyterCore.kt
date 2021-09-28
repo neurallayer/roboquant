@@ -40,7 +40,8 @@ internal class JupyterCore : JupyterIntegration() {
             "org.roboquant.policies.*",
             "org.roboquant.jupyter.*",
             "java.time.Period",
-            "java.time.Instant"
+            "java.time.Instant",
+            "java.time.temporal.ChronoUnit"
         )
 
         onLoaded {

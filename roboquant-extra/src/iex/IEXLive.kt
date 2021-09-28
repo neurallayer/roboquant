@@ -1,7 +1,7 @@
 package org.roboquant.iex
 
+import iex.IEXConnection
 import org.roboquant.common.Asset
-import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Action
 import org.roboquant.feeds.Event
@@ -10,9 +10,6 @@ import org.roboquant.feeds.TradePrice
 import pl.zankowski.iextrading4j.api.marketdata.Trade
 import pl.zankowski.iextrading4j.api.stocks.Quote
 import pl.zankowski.iextrading4j.client.IEXCloudClient
-import pl.zankowski.iextrading4j.client.IEXCloudTokenBuilder
-import pl.zankowski.iextrading4j.client.IEXTradingApiVersion
-import pl.zankowski.iextrading4j.client.IEXTradingClient
 import pl.zankowski.iextrading4j.client.socket.request.marketdata.deep.DeepAsyncResponse
 import pl.zankowski.iextrading4j.client.sse.request.marketdata.TradesSseRequestBuilder
 import pl.zankowski.iextrading4j.client.sse.request.stocks.QuoteInterval
@@ -31,26 +28,18 @@ typealias Interval = QuoteInterval
  * @param publicKey
  * @param secretKey
  */
-class IEXLive(publicKey: String? = null, secretKey: String? = null, private val useMachineTime: Boolean = true) :
+class IEXLive(publicKey: String? = null, secretKey: String? = null, sandbox : Boolean = true, private val useMachineTime: Boolean = true) :
     LiveFeed() {
 
     private val logger = Logging.getLogger("IEXLive")
-    private val cloudClient: IEXCloudClient
+    private val client: IEXCloudClient
     private val assetMap = mutableMapOf<String, Asset>()
 
     val assets
         get() = assetMap.values.distinct()
 
     init {
-        val pToken = publicKey ?: Config.getProperty("IEX_PUBLIC_KEY")
-        require(pToken != null)
-        val sToken = secretKey ?: Config.getProperty("IEX_SECRET_KEY")
-
-        var tokenBuilder = IEXCloudTokenBuilder().withPublishableToken(pToken)
-        if (sToken != null)
-            tokenBuilder = tokenBuilder.withSecretToken(sToken)
-
-        cloudClient = IEXTradingClient.create(IEXTradingApiVersion.IEX_CLOUD_V1, tokenBuilder.build())
+        client = IEXConnection.getClient(publicKey, secretKey, sandbox)
     }
 
     /**
@@ -70,7 +59,7 @@ class IEXLive(publicKey: String? = null, secretKey: String? = null, private val 
             .withQuoteInterval(interval)
             .build()
 
-        cloudClient.subscribe(request, ::handleQuotes)
+        client.subscribe(request, ::handleQuotes)
     }
 
     fun subscribeTrades(vararg assets: Asset) {
@@ -83,7 +72,7 @@ class IEXLive(publicKey: String? = null, secretKey: String? = null, private val 
             .withSymbols(*symbols)
             .build()
 
-        cloudClient.subscribe(request, ::handleTrades)
+        client.subscribe(request, ::handleTrades)
     }
 
 

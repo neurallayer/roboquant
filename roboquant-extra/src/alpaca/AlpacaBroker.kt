@@ -37,8 +37,7 @@ class AlpacaBroker(apiKey: String? = null, apiSecret: String? = null, accountTyp
         get() = assetsMap.values
 
     init {
-        val connection = AlpacaConnection(apiKey, apiSecret, accountType, dataType)
-        alpacaAPI = connection.getAPI()
+        alpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
         updateAssets()
         updateAccount()
         updatePositions()

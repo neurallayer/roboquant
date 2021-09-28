@@ -2,7 +2,6 @@ package org.roboquant.feeds
 
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
-import org.roboquant.common.Exchange
 
 interface AssetBuilder {
     operator fun invoke(name: String, template: Asset = Asset("TEMPLATE")) : Asset = template.copy(symbol = name.uppercase())
@@ -34,9 +33,7 @@ object AssetBuilderFactory {
  *
  * @constructor Create empty Stock builder
  */
-class StockBuilder :  AssetBuilder {
-
-}
+class StockBuilder :  AssetBuilder
 
 class ForexBuilder : AssetBuilder {
 
@@ -55,15 +52,10 @@ class ForexBuilder : AssetBuilder {
  *
  * @constructor Create empty Future builder
  */
-class FutureBuilder : AssetBuilder {
-
-}
+class FutureBuilder : AssetBuilder
 
 
-class BondBuilder : AssetBuilder {
-
-
-}
+class BondBuilder : AssetBuilder
 
 
 class CryptoBuilder : AssetBuilder {
