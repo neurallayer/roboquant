@@ -257,7 +257,7 @@ fun manyMinutes() {
 }
 
 fun minimal() {
-    val roboquant = Roboquant(RSIStrategy())
+    val roboquant = Roboquant(EMACrossover())
     val feed = CSVFeed("data/US")
     roboquant.run(feed)
 }
@@ -477,7 +477,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.info()
 
-    when ("LARGE5") {
+    when ("MIN") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()

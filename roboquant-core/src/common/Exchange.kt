@@ -75,6 +75,10 @@ class Exchange private constructor(
         return zdt.toInstant()
     }
 
+    override fun toString(): String {
+        return exchangeCode
+    }
+
     companion object {
 
         private val instances = ConcurrentHashMap<String, Exchange>()

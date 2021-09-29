@@ -1,5 +1,7 @@
 # Roboquant
 
+![roboquant](https://img.shields.io/badge/roboquant-0.8-blue.svg)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.5-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![Automated Build](https://github.com/neurallayer/roboquant/actions/workflows/maven.yml/badge.svg)](https://github.com/neurallayer/roboquant/actions/workflows/maven.yml)
 [![APL v2](https://img.shields.io/badge/license-Apache%202-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?filepath=tutorials)

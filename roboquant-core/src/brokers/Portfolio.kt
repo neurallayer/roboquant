@@ -164,6 +164,21 @@ class Portfolio : Cloneable {
         return s
     }
 
+    /*
+    fun asDataFrame(): AnyFrame {
+        return positions.values.toDataFrame {
+            "asset" { "${asset.type}:${asset.symbol}" }
+            "pos" {quantity.toBigDecimal().setScale(1, RoundingMode.HALF_DOWN)}
+            "cost" { asset.currency.toBigDecimal(cost)}
+            "price" { asset.currency.toBigDecimal(price)}
+            "pnl" { asset.currency.toBigDecimal(pnl)}
+            "short" { short}
+            "total cost" { asset.currency.toBigDecimal(totalCost)}
+            "updated" { lastUpdate }
+        }
+    }
+    */
+
     /**
      * Add the positions of another portfolio to this portfolio.
      *
