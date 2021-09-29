@@ -94,7 +94,7 @@ class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, 
                      }
                 },
                 ${renderDataZoom()},
-                ${renderToolbox()},
+                ${renderToolbox(false)},
                 ${renderGrid()},  
                 series : [$series]
             }

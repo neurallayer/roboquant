@@ -102,7 +102,7 @@ class OrderChart(
                      }
                 },
                 ${renderDataZoom()},
-                ${renderToolbox()},
+                ${renderToolbox(false)},
                 ${renderGrid()},  
                 series : [$series]
             }

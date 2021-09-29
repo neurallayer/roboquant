@@ -46,7 +46,7 @@ class MetricBoxChart(
                         text: 'BoxPlot ${metricData.getName()}',
                     },
                 ${renderDataZoom()},
-                ${renderToolbox()},
+                ${renderToolbox(false)},
                 xAxis: {
                     type: 'category',
                     data: $xData

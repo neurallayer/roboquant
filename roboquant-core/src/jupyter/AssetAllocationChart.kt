@@ -65,7 +65,7 @@ class AssetAllocationChart(
                 title: {
                     text: 'Asset allocation'
                 },
-                ${renderToolbox()},
+                ${renderToolbox(false)},
                 ${renderGrid()},  
                 series : [$series]
             }
@@ -95,7 +95,7 @@ class AssetAllocationChart(
                 title: {
                     text: 'Asset allocation'
                 },
-                ${renderToolbox()},
+                ${renderToolbox(false)},
                 ${renderGrid()},  
                 series : [$series]
             }

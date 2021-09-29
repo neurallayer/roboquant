@@ -80,7 +80,7 @@ abstract class Chart : Output() {
     var height = 500
 
     companion object {
-        var theme = "light"
+        var theme = "auto"
 
         val gsonBuilder = GsonBuilder()
 
@@ -103,16 +103,23 @@ abstract class Chart : Output() {
      */
     override fun asHTML(): String {
         val fragment = renderOption()
+        val theme_render = if (theme == "auto") {
+            "document.body.dataset.jpThemeLight == 'false' ? 'dark' : 'light'"
+        } else {
+            "'$theme'"
+        }
 
         return """
         <div style="width:100%;height:${height}px;" class="rqcharts"></div>
-
+        
         <script type="text/javascript">
             (function () {
                 let elem = document.currentScript.previousElementSibling;
                 let fn = function(a) {
-                    var myChart = echarts.init(elem, '$theme');
-                    var option = $fragment
+                    var theme = $theme_render;
+                    var myChart = echarts.init(elem, theme);
+                    var option = $fragment;
+                    option && (option.backgroundColor = 'rgba(0,0,0,0)');
                     option && myChart.setOption(option);
                     elem.ondblclick = function () { myChart.resize() };
                     console.log('rendered new chart');     
@@ -168,19 +175,8 @@ abstract class Chart : Output() {
         """.trimIndent()
     }
 
-    protected fun renderLegend(): String {
-        return """
-            legend: {
-                type: 'scroll',
-                orient: 'vertical',
-                right: 10,
-                top: 20,
-                bottom: 20
-            }
-        """.trimIndent()
-    }
-
-    protected fun renderToolbox(): String {
+    protected fun renderToolbox(includeMagicType: Boolean = true): String {
+        val mt = if (includeMagicType) "magicType: {type: ['line', 'bar']}," else ""
         return """
             toolbox: {
                 feature: {
@@ -188,7 +184,7 @@ abstract class Chart : Output() {
                         yAxisIndex: 'none'
                     },
                     dataView: {readOnly: true},
-                    magicType: {type: ['line', 'bar']},
+                    $mt
                     restore: {},
                     saveAsImage: {}
                 }
