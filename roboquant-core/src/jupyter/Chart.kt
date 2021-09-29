@@ -103,7 +103,7 @@ abstract class Chart : Output() {
      */
     override fun asHTML(): String {
         val fragment = renderOption()
-        val theme_render = if (theme == "auto") {
+        val themeDetector = if (theme == "auto") {
             "document.body.dataset.jpThemeLight == 'false' ? 'dark' : 'light'"
         } else {
             "'$theme'"
@@ -116,7 +116,7 @@ abstract class Chart : Output() {
             (function () {
                 let elem = document.currentScript.previousElementSibling;
                 let fn = function(a) {
-                    var theme = $theme_render;
+                    var theme = $themeDetector;
                     var myChart = echarts.init(elem, theme);
                     var option = $fragment;
                     option && (option.backgroundColor = 'rgba(0,0,0,0)');
