@@ -23,23 +23,12 @@ import java.time.Duration
 import java.time.Instant
 
 /**
- * Besides the name of the framework, Roboquant is also the engine that ties all components together.
+ * Roboquant is the engine of the framework that ties [strategy], [policy] and [broker] together and caters to a wide
+ * variety of testing and live trading scenarios. Through [metrics] and a [logger] it provides insights into the
+ * performance of a [run].
  *
- * It gets the data from the feed, runs the [Strategy] and [Policy], evaluates the performance through metrics and
- * finally logs the results. The following provides a schematic overview of this flow:
+ * Every instance has it own [name] that is also used when logging details.
  *
- * [Feed] -> [Strategy] -> [Policy] -> [Broker] -> [Metric] -> [MetricsLogger]
- *
- * The Roboquant engine is used for all the different stages of developing a new strategy, from back-testing to
- * live trading.
- *
- * @property strategy the strategy to use
- * @property metrics the metrics to calculate during the runs
- * @property policy the policy to use, default is [NeverShortPolicy]
- * @property broker the broker to use, default is [SimBroker]
- * @property logger the metrics logger to use, default is [MemoryLogger]
- * @property name the identifying name for this roboquant, available in logs
- * @constructor Create a new Roboquant
  */
 class Roboquant<L : MetricsLogger>(
     val strategy: Strategy,
@@ -152,25 +141,16 @@ class Roboquant<L : MetricsLogger>(
     }
 
     /**
-     * Start a new run using the provided feed as data.
+     * Start a new run using the provided [feed] as data. If no [timeFrame] is provided all the events in the feed
+     * will be used. Optionally you can provide a [validation] timeframe that will trigger a separate validation phase. You
+     * can also repeat the run for a number of [episodes].
      *
-     * You can optionally specify timeframes for the main phase and a validation phase.
-     * - If no timeframe is specified for the main phase, all the available data will be used.
-     * - If no timeframe is specified for the validation period, this phase will be skipped all together.
+     *  The following provides a schematic overview of the flow of a run:
      *
-     * Algorithms that are none-learning, typically only require a single (first) phase. But mor advanced algorithms,
-     * like machine learning ones, might require an out-of-sample validation period to avoid over-fitting.
-     *
-     * Finally, the episodes parameter indicates how often to repeat this sequence of main/validate.  Using a value of
-     * higher than 1 is most common in machine learning based strategies.
+     * [Feed] -> [Strategy] -> [Policy] -> [Broker] -> [Metric] -> [MetricsLogger]
      *
      * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
      * in parallel have also a look at [runAsync]
-     *
-     * @param feed Specify the feed to use
-     * @param timeFrame Specify a timeframe for the main phase, if none is specified all available events will be used.
-     * @param validation Optional specify a timeframe for the validation phase, if none is specified this will be skipped
-     * @param episodes How many repeats of the run
      */
     fun run(feed: Feed, timeFrame: TimeFrame = TimeFrame.FULL, validation: TimeFrame? = null, episodes: Int = 1) =
         runBlocking {
@@ -178,14 +158,9 @@ class Roboquant<L : MetricsLogger>(
         }
 
     /**
-     * This is exactly the same as the [run] method but as the name already suggest, this time asynchronously.
+     * This is exactly the same method as the [run] method but as the name already suggest, asynchronously.
      *
      * @see [run]
-     *
-     * @param feed Specify the feed to use
-     * @param timeFrame Specify a timeframe for the training, is none all available events will be used.
-     * @param validation Optional specify a timeframe for the validation
-     * @param episodes For how many episodes to run this training
      */
     suspend fun runAsync(
         feed: Feed,
@@ -211,9 +186,6 @@ class Roboquant<L : MetricsLogger>(
 
     /**
      * Take a single step in the timeline
-     *
-     * @param event the event to use for this step
-     * @return new orders (created by the policy), to be used in the next step
      */
     private fun step(orders: List<Order>, event: Event): List<Order> {
         val account = broker.place(orders, event)
@@ -223,9 +195,8 @@ class Roboquant<L : MetricsLogger>(
     }
 
     /**
-     * Run the configured metrics and log the results.
-     * This includes any metrics that are recorded by the strategy, policy and broker.
-     *
+     * Run the configured metrics and log the results. This includes any metrics that are recorded by the strategy,
+     * policy and broker.
      */
     private fun runMetrics(account: Account, event: Event) {
         val info = RunInfo(name, run, episode, this.step, event.now, _timeFrame, phase)
@@ -239,7 +210,7 @@ class Roboquant<L : MetricsLogger>(
     }
 
     /**
-     * Provide a short summary
+     * Provide a short summary of the state of this roboquant.
      */
     fun summary(): Summary {
         val s = Summary("Roboquant")
@@ -265,7 +236,7 @@ class Roboquant<L : MetricsLogger>(
  * @property time
  * @constructor Create new RunInfo object
  */
-data class RunInfo constructor(
+data class RunInfo internal constructor(
     val name: String,
     val run: Int,
     val episode: Int,
@@ -287,7 +258,7 @@ data class RunInfo constructor(
  * The different phases that a run can be in, MAIN and VALIDATE. Especially with self learning
  * strategies, it is important that you evaluate your strategy on yet unseen data, so you don't over-fit.
  *
- * See also [Roboquant.run] how to run your strategy with different phases turned on.
+ * See also [Roboquant.run] how to run your strategy with different phases enabled.
  *
  * @property value
  */

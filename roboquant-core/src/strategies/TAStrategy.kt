@@ -13,14 +13,12 @@ import org.roboquant.strategies.utils.PriceBarBuffer
 import java.util.logging.Logger
 
 /**
- * Strategy that makes it easy to implement different types strategies based on of technical analysis indicators.
- * This strategy requires [PriceBar] data and common use cases are candle stick patterns and moving average strategies.
+ * This strategy that makes it easy to implement different types strategies based on technical analysis indicators.
+ * This strategy requires [PriceBar] data and common use cases are candlestick patterns and moving average strategies.
  *
- * It is important that the strategy is initialized with a large enough history window to support the underlying
- * technical indicators you want to use.
+ * It is important that the strategy is initialized with a large enough [history] window to support the underlying
+ * technical indicators you want to use. If the [history] is too small, it will lead to a runtime exception.
  *
- * @property history The history to keep
- * @constructor Create a new TAStrategy
  */
 class TAStrategy(private val history: Int = 100) : Strategy {
 
@@ -139,15 +137,13 @@ class TAStrategy(private val history: Int = 100) : Strategy {
      *          ema(price.close, shortTerm) > ema(price.close, longTerm) && cdlMorningStar(price)
      *       }
      *
-     * @param block
-     * @receiver
      */
     fun buy(block: TAStrategy.(price: PriceBarBuffer) -> Boolean) {
         buyFn = block
     }
 
     /**
-     * Define the sell condition, return true if you want to generate a SELL signal, false otherwise
+     * Define the sell conditions, return true if you want to generate a SELL signal, false otherwise
      *
      * # Example
      *
@@ -155,19 +151,17 @@ class TAStrategy(private val history: Int = 100) : Strategy {
      *          cdl3BlackCrows(price) || cdl2Crows(price)
      *      }
      *
-     * @param block
-     * @receiver
      */
     fun sell(block: TAStrategy.(price: PriceBarBuffer) -> Boolean) {
         sellFn = block
     }
 
     /**
-     * Based on a step, return zero or more signals. Typically, they are for the assets in the event,
+     * Based on a [event], return zero or more signals. Typically, they are for the assets in the event,
      * but this is not a strict requirement.
      *
-     * @param event
-     * @return List of signals
+     * @see Strategy.generate
+     *
      */
     override fun generate(event: Event): List<Signal> {
         val results = mutableListOf<Signal>()

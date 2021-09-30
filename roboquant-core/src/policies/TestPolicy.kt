@@ -11,13 +11,15 @@ import org.roboquant.strategies.Signal
 import org.roboquant.strategies.resolve
 
 /**
- * Policy that just buys or sells a fixed quantity of an asset based on the received signals. Useful
+ * Policy that just buys or sells a fixed [quantity] of an asset based on the received signals. Useful
  * during testing a strategy, but should not be used in live trading of realistic back-tests.
  *
- * @constructor Create new Simple policy
  */
 class TestPolicy(private val quantity: Double = 1.0) : BasePolicy() {
 
+    /**
+     * @see Policy.act
+     */
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<SingleOrder>()
         for (signal in signals.resolve()) {

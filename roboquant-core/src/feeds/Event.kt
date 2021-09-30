@@ -4,12 +4,9 @@ import org.roboquant.common.Asset
 import java.time.Instant
 
 /**
- * Event contains a list of actions that all happened at the same moment in time ([now]). There are no restrictions
+ * Event contains a list of [actions] that all happened at the same moment in time ([now]). There are no restrictions
  * on the type of information contained in a [Action] and different type of actions can be mixed in a single event.
  *
- * @property actions The list of actions
- * @property now The moment in time this event became available
- * @constructor Create new Event
  */
 data class Event(val actions: List<Action>, val now: Instant) : Comparable<Event> {
 

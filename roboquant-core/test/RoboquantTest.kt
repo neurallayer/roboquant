@@ -12,6 +12,8 @@ import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.RandomStrategy
 import java.time.Period
 import org.junit.Test
+import org.roboquant.metrics.ProgressMetric
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class RoboquantTest {
@@ -85,6 +87,22 @@ internal class RoboquantTest {
         val strategy = EMACrossover()
         val roboquant = Roboquant(strategy, AccountSummary(), OpenPositions(), logger = SilentLogger())
         roboquant.run(feed)
+    }
+
+    @Test
+    fun reset() {
+        val feed = RandomWalk.lastYears()
+        val strategy = EMACrossover()
+        val roboquant = Roboquant(strategy, ProgressMetric())
+        roboquant.run(feed)
+        var runs = roboquant.logger.getRuns()
+        assertEquals(1, runs.size)
+
+        roboquant.reset()
+        roboquant.run(feed)
+        runs = roboquant.logger.getRuns()
+        assertEquals(1, runs.size)
+
     }
 
 

@@ -4,7 +4,7 @@ import kotlin.math.sign
 
 /**
  * Rating is the key component of a [Signal] that is a measure of the expected performance of an asset. It is an
- * enumeration  and is closely modelled on how traditional analyst ratings using a 5 point rating score:
+ * enumeration and is closely modelled after how traditional analyst rate, using a 5 point score:
  *
  * - Buy: Also known as strong buy and "on the recommended list". Buy is a recommendation to purchase a specific
  *   security.
@@ -16,7 +16,8 @@ import kotlin.math.sign
  * - Outperform: Also known as "moderate buy," "accumulate" and "overweight." Outperform is an analyst recommendation
  *   meaning a stock is expected to do slightly better than the market return.
  *
- * @constructor Create a new rating
+ *   The [value] of a rating goes from 2 (BUY) to -2 (SELL)
+ *
  */
 enum class Rating(val value: Int) {
     BUY(2),
@@ -27,13 +28,11 @@ enum class Rating(val value: Int) {
 
     /**
      * Is this a positive rating, so a BUY or an OUTPERFORM
-     *
      */
     fun isPositive() = this === BUY || this === OUTPEFORM
 
     /**
      * Is this a negative rating, so a SELL or UNDERPERFORM
-     *
      */
     fun isNegative() = this === SELL || this === UNDERPERFORM
 
@@ -53,7 +52,7 @@ enum class Rating(val value: Int) {
     }
 
     /**
-     * Does this rating conflict with another rating
+     * Does this rating conflict with an [other] rating
      *
      * @param other
      */

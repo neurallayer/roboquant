@@ -3,11 +3,11 @@ package org.roboquant.feeds
 import org.roboquant.common.Asset
 
 /**
- * An action is the lowest level of information provided by a Feed and can be anything from a price action for an asset
+ * An action is the lowest level of information contained in an Event and can be anything from a price action for an asset
  * to an annual report to a Twitter tweet. An action doesn't have to be linked to a particular asset, although many are.
  *
- * The content is determined by the class implementing this interface. Strategies are expected to filter on those
- * types of actions they are interested in.
+ * The content of the action is determined by the class implementing this interface. Strategies are expected to filter
+ * on those types of actions they are interested in.
  *
  * Actions are bundled in a [Event], that contain all the actions that happen at a certain moment in time.
  *
@@ -28,8 +28,8 @@ abstract class PriceAction(val asset: Asset) : Action {
 
 
     /**
-     * Get price from this PriceEvent. If more than one price is available, optionally the
-     * type can be passed as a parameter.
+     * Get the price from this PriceEvent. If more than one price is available, optionally the
+     * [type] of price can be passed as a parameter. For example "CLOSE" in case of a candlestick.
      *
      * Any implementation is expected to return a default price if the type is not recognised. This way strategies
      * can work on a wide variety of feeds. It is convention to use uppercase strings for different types.
@@ -41,19 +41,12 @@ abstract class PriceAction(val asset: Asset) : Action {
 }
 
 /**
- * Provides Open, High, Low, Close, and Volume properties for an asset. If the volume is not available, it will
- * return -1.0 instead.
+ * Provides [open], [high], [low], and [close] prices and volume for a single asset. If the volume is not available, it will
+ * return NaN instead. Sometimes this is also referred to as a candlestick.
  *
- * Internally it stores the values in a float array for efficiency and only transfers them to a double when
- * requesting the price
+ * Internally it stores the values in as floats for efficiency reasons and only transfers them to a double when requesting
+ * the price.
  *
- * @param asset
- * @param open
- * @param high
- * @param low
- * @param close
- * @param volume
- * @constructor Create new PriceBar
  */
 class PriceBar(
     asset: Asset,
@@ -78,16 +71,8 @@ class PriceBar(
     companion object {
 
         /**
-         * Compensate all prices and volume for adjusted close.
-         *
-         * @param asset
-         * @param open
-         * @param high
-         * @param low
-         * @param close
-         * @param adjustedClose
-         * @param volume
-         * @return
+         * Create a new PriceBar and compensate all prices and volume for the [adjustedClose]. This result in all prices
+         * being corrected with by a factor [adjustedClose]/[close] and the volume by a factor [close]/[adjustedClose]
          */
         fun fromAdjustedClose(
             asset: Asset,
@@ -115,13 +100,11 @@ class PriceBar(
     /**
      * Get the price for this price bar, default is the closing price. Supported types:
      *
-     *  CLOSE, OPEN. LOW, HIGH, TYPICAL
+     *  CLOSE, OPEN, LOW, HIGH, TYPICAL
      *
      * Example:
      *      val price = action.getPrice("OPEN")
      *
-     * @param type
-     * @return
      */
     override fun getPrice(type: String): Double {
         val result = when (type) {

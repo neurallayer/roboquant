@@ -6,15 +6,11 @@ import java.time.temporal.ChronoUnit
 
 
 /**
- * Time-frame represents a period of time defined by a start-time (inclusive) and stop-time (exclusive). It can be used
- * to limit the evaluation of a run to that specific time-frame.
+ * A timeframe represents a period of time defined by a [start] time (inclusive) and [stop] time (exclusive). It can be used
+ * to limit the evaluation of a run to that specific timeframe.
  *
- * Like all time related functionality in roboquant, it uses the [Instant] type to define a moment in time
- * in order to avoid potential timezone inconsistencies.
- *
- * @property start The start time for the time-frame (inclusive)
- * @property end The end time for the time-frame (exclusive)
- * @constructor Create new time-frame
+ * Like all time related data in roboquant, it uses the [Instant] type to define a moment in time, in order to avoid
+ * potential timezone inconsistencies.
  */
 data class TimeFrame(val start: Instant, val end: Instant) {
 
@@ -31,7 +27,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
 
     companion object {
         /**
-         * Full time-frame, matches any time and is typically used when no filtering is required
+         * Full timeframe, matches any time and is typically used when no filtering is required
          */
         val FULL = TimeFrame(Instant.MIN, Instant.MAX)
 
@@ -44,11 +40,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
         fun coronaCrash2020() = parse("2020-02-17T00:00:00Z", "2020-03-17T00:00:00Z")
 
         /**
-         * Create a timeframe for the provided years
-         *
-         * @param first First year to include, from january 1 onwards
-         * @param last Last year to include, till 31 December of that year
-         * @return
+         * Create a timeframe starting from 1 january of the [first] year until 31 december from the [last] year.
          */
         fun fromYears(first: Int, last: Int): TimeFrame {
             val start = Instant.parse("${first}-01-01T00:00:00Z")
@@ -57,7 +49,10 @@ data class TimeFrame(val start: Instant, val end: Instant) {
             return TimeFrame(start, stop)
         }
 
-
+        /**
+         * Create a timeframe based on the [first] and [last] time provided. The times are to be provided as a string
+         * and should be parsable by [Instant.parse]
+         */
         fun parse(first: String, last: String): TimeFrame {
             val start = Instant.parse(first)
             val stop = Instant.parse(last)
@@ -87,7 +82,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
         }
 
         /**
-         * Create a timeframe starting with the current time and last for the specified number of minutes. This comes in
+         * Create a timeframe starting with the current time and last for the specified number of [minutes]. This comes in
          * handy when you want to test a strategy against a live feed for a certain duration.
          *
          * See also [nextPeriod] for a more generic version of this method
@@ -95,21 +90,16 @@ data class TimeFrame(val start: Instant, val end: Instant) {
          * # Example
          *      roboquant.run(feed, TimeFrame.nextMinutes(30))
          *
-         * @param minutes
-         * @return
          */
         fun nextMinutes(minutes: Long): TimeFrame = nextPeriod(minutes, ChronoUnit.MINUTES)
 
     }
 
     /**
-     * Does the timeframe contain a certain time.
-     *
-     * @param now
-     * @return
+     * Does the timeframe contain a certain [time].
      */
-    fun contains(now: Instant): Boolean {
-        return (now >= start) && (now < end)
+    fun contains(time: Instant): Boolean {
+        return (time >= start) && (time < end)
     }
 
 
@@ -118,10 +108,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Is this timeframe in a single day given the provided time zoneId.
-     *
-     * @param zoneId
-     * @return
+     * Is this timeframe in a single day given the provided [zoneId].
      */
     fun isSingleDay(zoneId: String = "UTC"): Boolean {
         val z = ZoneId.of(zoneId)
@@ -130,30 +117,23 @@ data class TimeFrame(val start: Instant, val end: Instant) {
 
 
     /**
-     * Extend a timeframe, both before and after the current timeframe. The current timeframe
+     * Extend a timeframe, both [before] and [after] the current timeframe. The current timeframe
      * remains unchanged and a new one is returned.
      *
      * ### Usage
      *      // Add 1 week before and after the black monday event
      *      val tf = TimeFrame.BlackMonday1987().extend(7)
      *
-     *
-     * @param pre The amount to subtract to the beginning
-     * @param post The amount to add to the end, default is same as pre amount.
-     * @param unit The [ChronoUnit], default is DAYS
      */
-    fun extend(pre: Long, post: Long = pre, unit: ChronoUnit = ChronoUnit.DAYS) {
+    fun extend(before: Long, after: Long = before, unit: ChronoUnit = ChronoUnit.DAYS) {
         val s = start.atZone(ZoneId.of("UTC"))
         val e = end.atZone(ZoneId.of("UTC"))
-        TimeFrame(s.minus(pre, unit).toInstant(), e.plus(post, unit).toInstant())
+        TimeFrame(s.minus(before, unit).toInstant(), e.plus(after, unit).toInstant())
     }
 
     /**
-     * Calculate the intersection of this time-frame with another one and return
-     * the new time-frame
-     *
-     * @param other
-     * @return
+     * Calculate the intersection of this time-frame with an [other] timeframe and return
+     * the new timeframe
      */
     fun intersect(other: TimeFrame): TimeFrame {
         val startTime = if (start > other.start) start else other.start
@@ -162,10 +142,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Is there any overlap between timeframes
-     *
-     * @param other
-     * @return
+     * Is there any overlap between this timeframe an the [other] timeframe
      */
     fun overlap(other: TimeFrame): Boolean {
         val startTime = if (start > other.start) start else other.start
@@ -174,11 +151,8 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Calculate the union of this time-frame with another one and return
+     * Calculate the union of this timeframe with an [other] timeframe and return
      * the new time-frame
-     *
-     * @param other
-     * @return
      */
     fun union(other: TimeFrame): TimeFrame {
         val startTime = if (start > other.start) other.start else start
@@ -187,11 +161,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Convert a timeframe to a timeline of individual days
-     *
-     * @param excludeWeekends
-     * @param zoneId
-     * @return
+     * Convert a timeframe to a timeline of individual days, optionally [excludeWeekends]
      */
     fun toDays(excludeWeekends: Boolean = false, zoneId: ZoneId = ZoneOffset.UTC): List<Instant> {
         val timeline = mutableListOf<Instant>()
@@ -214,12 +184,8 @@ data class TimeFrame(val start: Instant, val end: Instant) {
 
 
     /**
-     * Convert a timeframe to a timeline with one minute intervals. Optionally a between a certain start and stop time
-     * in the day cna be configured.
-     *
-     * @param excludeWeekends
-     * @param zoneId
-     * @return
+     * Convert a timeframe to a timeline with one minute intervals. Optionally between a certain [startTime] and [stopTime]
+     * in a day.
      */
     fun toMinutes(
         excludeWeekends: Boolean = false,
@@ -248,10 +214,8 @@ data class TimeFrame(val start: Instant, val end: Instant) {
 
 
     /**
-     * Split a time-frame into two parts, one for training and one for test/validation
-     *
-     * @param testSize Value between 0 and 1 that determines the percentage to allocate for testing
-     * @return
+     * Split a time-frame into two parts, one for training and one for test using the provided [testSize]
+     * for determining the size of test. [testSize] should be a number between 0.0 and 1.0
      */
     fun splitTrainTest(testSize: Double): Pair<TimeFrame, TimeFrame> {
         assert(testSize < 1.0)
@@ -263,11 +227,8 @@ data class TimeFrame(val start: Instant, val end: Instant) {
 
 
     /**
-     * Split a time-frame in multiple parts. One common use case is to create a walk forward
-     * back-test.
-     *
-     * @param period
-     * @return
+     * Split a timeframe in multiple timeframes each of the fixed [period] length. One common use case is to create a
+     * walk forward back-test.
      */
     fun split(period: Period): List<TimeFrame> {
         val utc = ZoneOffset.UTC

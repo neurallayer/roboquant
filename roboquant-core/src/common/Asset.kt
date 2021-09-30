@@ -7,11 +7,11 @@ package org.roboquant.common
  *
  *
  * @property symbol symbol name
- * @property type type of asset, default is stock
- * @property currencyCode currency code, default is USD
+ * @property type type of asset class, default is [AssetType.STOCK]
+ * @property currencyCode currency code, default is "USD"
  * @property exchangeCode Exchange this asset is traded on, default is empty
  * @property multiplier contract multiplier, default is 1.0
- * @property details contract details, for example an option series or futures contract details
+ * @property details contract details, for example this could hold the option series or futures contract details
  * @property name Company name, default is empty
  * @property id asset identifier, default is empty
  * @constructor Create a new asset
@@ -47,7 +47,6 @@ data class Asset(
     override fun toString(): String {
         return "$type $symbol $details"
     }
-
 
     /**
      * Create a serialized string representation of this asset that can be later deserialized using the
@@ -111,10 +110,7 @@ data class Asset(
          */
 
         /**
-         * Deserialize a string into an asset. The string needs to have been created using [serialize]
-         *
-         * @param s
-         * @return
+         * Deserialize a string into an asset. The string needs to have been created using [serialize] method
          */
         fun deserialize(s: String): Asset {
             val e = s.split(SEP)
@@ -146,44 +142,31 @@ data class Asset(
 
 
 /**
- * Find an asset based on its symbol name. Will throw a NoSuchElementException if no asset is found. If there are
+ * Find an asset based on its [symbol] name. Will throw a NoSuchElementException if no asset is found. If there are
  * multiple assets with the same symbol, the first one will be returned.
- *
- * @param symbol
- * @return
  */
 fun Collection<Asset>.findBySymbol(symbol: String): Asset = first { it.symbol == symbol }
 
 /**
- * Find assets based on their currency code. Returns an empty list of no matches can be found.
- *
- * @param currencyCode
- * @return
+ * Find all assets based on their [currencyCode]. Returns an empty list of no matches can be found.
  */
 fun Collection<Asset>.findByCurrency(currencyCode: String): List<Asset> = filter { it.currencyCode == currencyCode }
 
 
 /**
- * Find  assets based on their exchange code. Returns an empty list of no matches can be found.
- *
- * @param exchangeCode
- * @return
+ * Find  all assets based on their [exchangeCode]. Returns an empty list of no matches can be found.
  */
 fun Collection<Asset>.findByExchange(exchangeCode: String): List<Asset> = filter { it.exchangeCode == exchangeCode }
 
 /**
- * Select a number of random assets, without duplicates. n has to equal or smaller than the size of the collection
- *
- * @param n
- * @return
+ * Select [n] random assets from a collection, without duplicates. [n] has to equal or smaller than the size of the
+ * collection
  */
 fun Collection<Asset>.random(n: Int): List<Asset> = shuffled().take(n)
 
 
 /**
  * Provide a [Summary] for a collection of assets
- *
- * @return
  */
 fun Collection<Asset>.summary(): Summary {
     val result = Summary("Assets")
