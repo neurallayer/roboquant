@@ -10,9 +10,7 @@ import kotlin.math.roundToInt
  * progress bar implementation works on the elapsed time. So how much time out the total time has passed, using the
  * time in the event as a reference.
  *
- * This implementation tries hard to avoid unnecessary updates.
- *
- * @constructor Create new Progress bar
+ * This implementation avoids unnecessary updates.
  */
 internal class ProgressBar {
 
@@ -23,7 +21,6 @@ internal class ProgressBar {
     private var nextUpdate = Instant.MIN
 
     private var lastOutput = ""
-
 
     fun reset() {
         currentPercent = -1

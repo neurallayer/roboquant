@@ -6,7 +6,7 @@ import java.time.temporal.ChronoUnit
 
 
 /**
- * A timeframe represents a period of time defined by a [start] time (inclusive) and [stop] time (exclusive). It can be used
+ * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time (exclusive). It can be used
  * to limit the evaluation of a run to that specific timeframe.
  *
  * Like all time related data in roboquant, it uses the [Instant] type to define a moment in time, in order to avoid
@@ -31,6 +31,8 @@ data class TimeFrame(val start: Instant, val end: Instant) {
          */
         val FULL = TimeFrame(Instant.MIN, Instant.MAX)
 
+        private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneOffset.UTC)
+        private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC)
 
         // Time-frames for some significant events in history of trading
         fun blackMonday1987() = parse("1987-10-19T00:00:00Z", "1987-10-20T00:00:00Z")
@@ -142,7 +144,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Is there any overlap between this timeframe an the [other] timeframe
+     * Is there any overlap between this timeframe and the [other] timeframe
      */
     fun overlap(other: TimeFrame): Boolean {
         val startTime = if (start > other.start) start else other.start
@@ -151,8 +153,8 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Calculate the union of this timeframe with an [other] timeframe and return
-     * the new time-frame
+     * Calculate the union of this timeframe with the [other] timeframe and return
+     * the new timeframe
      */
     fun union(other: TimeFrame): TimeFrame {
         val startTime = if (start > other.start) other.start else start
@@ -184,8 +186,9 @@ data class TimeFrame(val start: Instant, val end: Instant) {
 
 
     /**
-     * Convert a timeframe to a timeline with one minute intervals. Optionally between a certain [startTime] and [stopTime]
-     * in a day.
+     * Convert a timeframe to a timeline (is a list of Instant values) with one minute intervals. Optionally specify a
+     * different [startTime] and [endTime] in a day given the provided [zoneId]. You can also optionally exclude
+     * weekends by setting [excludeWeekends] to true.
      */
     fun toMinutes(
         excludeWeekends: Boolean = false,
@@ -214,8 +217,9 @@ data class TimeFrame(val start: Instant, val end: Instant) {
 
 
     /**
-     * Split a time-frame into two parts, one for training and one for test using the provided [testSize]
-     * for determining the size of test. [testSize] should be a number between 0.0 and 1.0
+     * Split a timeframe into two parts, one for training and one for test using the provided [testSize]
+     * for determining the size of test. [testSize] should be a number between 0.0 and 1.0, for example
+     * 0.25 means use last 25% as test timeframe.
      */
     fun splitTrainTest(testSize: Double): Pair<TimeFrame, TimeFrame> {
         assert(testSize < 1.0)
@@ -227,8 +231,8 @@ data class TimeFrame(val start: Instant, val end: Instant) {
 
 
     /**
-     * Split a timeframe in multiple timeframes each of the fixed [period] length. One common use case is to create a
-     * walk forward back-test.
+     * Split a timeframe in multiple individual timeframes each of the fixed [period] length. One common use case is
+     * to create timeframes that can be used for walk forward back-test.
      */
     fun split(period: Period): List<TimeFrame> {
         val utc = ZoneOffset.UTC
@@ -247,32 +251,24 @@ data class TimeFrame(val start: Instant, val end: Instant) {
         return result
     }
 
+    /**
+     * Provide a nicer string representation of the timeframe
+     */
     override fun toString(): String {
         return "[$start - $end]"
     }
 
     /**
-     * Depending on the duration of the time frame, format the time-frame either with seconds or days
+     * Depending on the duration of the timeframe, format the timeframe either with seconds or days
      * resolution.
-     *
-     * TODO: print singleDay timeframes a bit nicer
-     *
-     * @return
      */
     fun toPrettyString(): String {
+        val diff = end.epochSecond - start.epochSecond
+        val formatter = if (diff > 24 * 60 * 60) dayFormatter else secondFormatter
         val s1 = if (start == Instant.MIN) "MIN" else if (start == Instant.MAX) "MAX" else formatter.format(start)
         val s2 = if (end == Instant.MIN) "MIN" else if (end == Instant.MAX) "MAX" else formatter.format(end)
         return "$s1 - $s2"
     }
 
-
-    private val formatter by lazy {
-        val diff = end.epochSecond - start.epochSecond
-        if (diff > 24 * 60 * 60) {
-            DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneOffset.UTC)
-        } else {
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC)
-        }
-    }
 }
 

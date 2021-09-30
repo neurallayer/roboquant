@@ -10,9 +10,8 @@ import java.util.concurrent.CopyOnWriteArrayList
  *
  * 1) Support for plotting and tables
  * 2) Default imports
+ * 3) Nicer Expection handling
  *
- *
- * @constructor Create new Jupyter
  */
 internal class JupyterCore : JupyterIntegration() {
 

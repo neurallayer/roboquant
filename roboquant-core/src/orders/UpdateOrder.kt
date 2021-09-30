@@ -21,8 +21,8 @@ class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : O
         require(originalOrder.asset == updateOrder.asset)
     }
 
-    override fun execute(price: Double, now: Instant) : List<Execution> {
-        place(price, now)
+    override fun execute(price: Double, time: Instant) : List<Execution> {
+        place(price, time)
 
         when {
             originalOrder.status.closed -> status = OrderStatus.REJECTED

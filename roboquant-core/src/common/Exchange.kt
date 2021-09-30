@@ -6,14 +6,10 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Exchange contains the metadata about an exchange. The most important meta-data are the zoneId, opening and
- * closing times and the default currency.
+ * Exchange contains the metadata about an exchange. The most important meta-data are the [zoneId], [opening] and
+ * [closing] times and the default currency.
  *
- * It is used at several areas in roboquant, for example when loading CSV files
- *
- * @property exchangeCode
- * @property zoneId
- * @constructor Create new Exchange
+ * It is used at several areas in roboquant, for example when loading CSV files.
  */
 class Exchange private constructor(
     val exchangeCode: String,
@@ -23,18 +19,8 @@ class Exchange private constructor(
     val closing: LocalTime = LocalTime.parse("16:30")
 ) {
 
-
-    fun day(now: Instant): Int {
-        val dt = now.atZone(zoneId)
-        return dt.dayOfYear
-    }
-
     /**
-     * Do the two provided times belong to the same trading day.
-     *
-     * @param first
-     * @param second
-     * @return
+     * Do the two provided times ([first] and [second]) both belong to the same trading day.
      */
     fun sameDay(first: Instant, second: Instant): Boolean {
         val dt1 = LocalDate.ofInstant(first, zoneId)
@@ -43,10 +29,7 @@ class Exchange private constructor(
     }
 
     /**
-     * Get opening time at an Instant based on a local date
-     *
-     * @param date
-     * @return
+     * Get opening time for a [date]
      */
     fun getOpeningTime(date: LocalDate): Instant {
         val zdt = ZonedDateTime.of(date, opening, zoneId)
@@ -54,10 +37,7 @@ class Exchange private constructor(
     }
 
     /**
-     * Get closing time
-     *
-     * @param date
-     * @return
+     * Get closing time for a [date]
      */
     fun getClosingTime(date: LocalDate): Instant {
         val zdt = ZonedDateTime.of(date, closing, zoneId)
@@ -65,10 +45,7 @@ class Exchange private constructor(
     }
 
     /**
-     * Get closing time
-     *
-     * @param dateTime
-     * @return
+     * Convert a local [dateTime] to an Instant type
      */
     fun getInstant(dateTime: LocalDateTime): Instant {
         val zdt = ZonedDateTime.of(dateTime, zoneId)
@@ -106,30 +83,29 @@ class Exchange private constructor(
         }
 
         /**
-         * The default exchange
+         * The default exchange is the exchange with as exchangeCode an empty string
          */
         val DEFAULT = addInstance("", "America/New_York", "USD")
 
-        // Exchange for all US exchanges
+        // Main North American exchanges
         val US = addInstance("US", "America/New_York", "USD")
         val NYSE = addInstance("NYSE", "America/New_York", "USD")
         val NASDAQ = addInstance("NASDAQ", "America/New_York", "USD")
         val BATS = addInstance("BATS", "America/New_York", "USD")
         val ARCA = addInstance("ARCA", "America/New_York", "USD")
         val AMEX = addInstance("AMEX", "America/New_York", "USD")
-
         val TSX = addInstance("TSX", "America/Toronto", "CAD")
 
-        // European exchanges
+        // Main European exchanges
         val LSE = addInstance("LSE", "Europe/London", "GBP")
         val FSX = addInstance("FSX", "Europe/Berlin", "EUR")
         val SIX = addInstance("SIX", "Europe/Zurich", "CHF")
 
-        // Asian
+        // Main European exchanges
         val JPX = addInstance("JPX", "Asia/Tokyo", "JPY")
         val SSE = addInstance("SSE", "Asia/Shanghai", "CNY")
 
-        // Australia
+        // Main Australian exchanges
         val SSX = addInstance("SSX", "Australia/Sydney", "AUD")
 
         /**

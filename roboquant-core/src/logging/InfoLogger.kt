@@ -18,8 +18,8 @@ class InfoLogger(
 
     private val logger: Logger = Logger.getLogger(name)
 
-    override fun log(metrics: Map<String, Number>, info: RunInfo) {
-        if (metrics.isEmpty()) return
+    override fun log(results: Map<String, Number>, info: RunInfo) {
+        if (results.isEmpty()) return
 
         if (!splitMetrics)
             logger.log(level) {
@@ -29,11 +29,11 @@ class InfoLogger(
                     "epoch" to info.episode,
                     "time" to info.time,
                     "step" to info.step,
-                    "metrics" to metrics
+                    "metrics" to results
                 ).toString()
             }
         else
-            metrics.forEach {
+            results.forEach {
                 logger.log(level) {
                     mapOf(
                         "name" to info.name,

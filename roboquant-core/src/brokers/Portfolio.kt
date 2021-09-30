@@ -29,7 +29,9 @@ class Portfolio : Cloneable {
     val longPositions
         get() = _positions.filter { it.value.long }
 
-
+    /**
+     * The assets hold in this portfolio that currently have an open position
+     */
     val assets
         get() = positions.keys.toList()
 
@@ -40,18 +42,14 @@ class Portfolio : Cloneable {
         get() = _positions.filter { it.value.short }
 
     /**
-     * Is this portfolio empty? Or in other words does it not contain positions with a quantity unequal to zero.
-     *
-     * @return true is empty, false otherwise
+     * Is this portfolio empty? Or in other words does it not contain positions with a quantity unequal to zero
      */
     fun isEmpty(): Boolean = positions.isEmpty()
 
 
     /**
      * Create a clone of the portfolio and return it. A clone is guaranteed not to be mutated
-     * by an ongoing run and so reflects the portfolio at a moment in time.
-     *
-     * @return the cloned instance
+     * by an ongoing run and so reflects the portfolio at the moment in time this method is called.
      */
     public override fun clone(): Portfolio {
         val portfolio = Portfolio()
@@ -60,9 +58,7 @@ class Portfolio : Cloneable {
     }
 
     /**
-     * Update a position in the portfolio and return the realized PnL
-     *
-     * @param position
+     * Update the portfolio with the provided [position] and return the realized PnL.
      */
     fun updatePosition(position: Position): Double {
         val currentPos = _positions[position.asset]
@@ -75,11 +71,9 @@ class Portfolio : Cloneable {
     }
 
     /**
-     * Replace a position in the portfolio with a new position. So this overwrites the previous position
+     * Replace a position in the portfolio with a new [position]. So this overwrites the previous position
      * This will be used for example with live trading when the broker holds the true state of the positions
      * in a portfolio.
-     *
-     * @param position
      */
     fun setPosition(position: Position) {
         _positions[position.asset] = position.copy()
@@ -87,10 +81,8 @@ class Portfolio : Cloneable {
 
 
     /**
-     * Get total value of this portfolio. The total value is calculated based on the
-     * sum of the open positions and their last known price.
-     *
-     * @return the cash value
+     * Get total value of this portfolio. The total value is calculated based on the sum of the open positions and
+     * their last known price. The result is returned as a Cash object, so no currency conversion is applied.
      */
     fun getValue(): Cash {
         val result = Cash()
@@ -102,9 +94,8 @@ class Portfolio : Cloneable {
 
     /**
      * Get total unrealized PNL of this portfolio. The unrealized PNL is calculated based on the open positions and
-     * their average cost and last known price.
-     *
-     * @return the total unrealized PNL as a cash value
+     * their average cost and last known price. The result is returned as a Cash object, so no currency conversion
+     * is applied.
      */
     fun unrealizedPNL(): Cash {
         val result = Cash()
@@ -116,11 +107,8 @@ class Portfolio : Cloneable {
 
 
     /**
-     * Get the position for an asset. If the portfolio doesn't hold the asset, it returns
+     * Get the position for an [asset]. If the portfolio doesn't hold the asset, it returns
      * an empty position.
-     *
-     * @param asset
-     * @return
      */
     fun getPosition(asset: Asset): Position {
         return _positions.getOrElse(asset) { Position.empty(asset) }
@@ -134,7 +122,6 @@ class Portfolio : Cloneable {
 
     /**
      * Create a [Summary] of this portfolio that contains an overview the open positions.
-     *
      */
     fun summary(): Summary {
         val s = Summary("Portfolio")
@@ -180,30 +167,26 @@ class Portfolio : Cloneable {
     */
 
     /**
-     * Add the positions of another portfolio to this portfolio.
-     *
-     * @param portfolio The portfolio to merge
+     * Add all the positions of an [other] portfolio to this portfolio. Even closed positions are transferred.
      */
-    fun add(portfolio: Portfolio) {
-        for (position in portfolio._positions.values) {
+    fun add(other: Portfolio) {
+        for (position in other._positions.values) {
             updatePosition(position)
         }
     }
 
     /**
-     * Put the positions of another portfolio into this portfolio, overwriting existing position entries
-     *
-     * @param portfolio The portfolio to use
+     * Put the positions of an [other] portfolio to this portfolio, overwriting existing position entries
      */
-    fun put(portfolio: Portfolio) {
-        _positions.putAll(portfolio._positions.map { it.key to it.value.copy() })
+    fun put(other: Portfolio) {
+        _positions.putAll(other._positions.map { it.key to it.value.copy() })
     }
 
 
     /**
-     * Calculate the difference between current and a target portfolio. This can be useful when wanting to
+     * Calculate the difference between current and a [target] portfolio. This can be useful when wanting to
      * re-balance a portfolio. The returned map provides for required changes in position per asset. So the following
-     * holds true:
+     * rule holds true:
      *
      *      Target Portfolio = Current Portfolio + Diff
      *
@@ -212,8 +195,6 @@ class Portfolio : Cloneable {
      *      val diff = portfolio.diff(targetPortfolio)
      *      val orders = diff.map { MarketOrder(it.key, it.value) }
      *
-     *
-     * @param target The target portfolio to use for comparison
      */
     fun diff(target: Portfolio): Map<Asset, Double> {
         val result = mutableMapOf<Asset, Double>()

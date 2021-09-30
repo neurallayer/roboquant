@@ -47,8 +47,15 @@ internal class CashTest {
         wallet.withdraw(USD, 12.0)
         assertEquals(-12.0, wallet.getAmount(USD))
 
-        val metrics = wallet.toMetrics("test.")
-        assertContains(metrics, "test.USD")
+        var metrics = wallet.toMap(true)
+        assertContains(metrics, USD)
+
+        wallet.deposit(USD, 12.0)
+        metrics = wallet.toMap(true)
+        assertContains(metrics, USD)
+
+        metrics = wallet.toMap(false)
+        assertFalse(USD in metrics)
     }
 
     @Test

@@ -102,6 +102,7 @@ class AssetAllocationChart(
        """.trimStart()
     }
 
+    /** @suppress */
     override fun renderOption(): String {
         return if (includeAssetClass) renderSunburst() else renderPie()
     }

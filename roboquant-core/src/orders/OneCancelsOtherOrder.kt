@@ -29,18 +29,18 @@ class OneCancelsOtherOrder(
         return max(first.getValue(price), second.getValue(price))
     }
 
-    override fun execute(price: Double, now: Instant) : List<Execution> {
+    override fun execute(price: Double, time: Instant) : List<Execution> {
         var executions = listOf<Execution>()
-        place(price, now)
+        place(price, time)
 
         if (first.status.open) {
-            executions = first.execute(price, now)
+            executions = first.execute(price, time)
             status = first.status
             if (first.executed) second.status = OrderStatus.CANCELLED
         }
 
         if (second.status.open) {
-            executions = second.execute(price, now)
+            executions = second.execute(price, time)
             status = second.status
             if (second.executed) first.status = OrderStatus.CANCELLED
         }

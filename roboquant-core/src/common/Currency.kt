@@ -7,8 +7,10 @@ import java.math.RoundingMode
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Currency implementation that supports regular currencies as well as cryptocurrencies. This is a lite-weight
- * implementation since most of roboquant relies only on the currency code.
+ * Currency implementation that supports regular currencies as well as cryptocurrencies. So the [currencyCode] for the
+ * currency is not limited to ISO-4217 codes like regular Java Currency class.
+ *
+ * This is a lite-weight implementation since most of roboquant relies only on the currency code.
  *
  * When creating a new currency instance, use the [Currency.getInstance] method. This ensures only a single
  * instance of a currency exist for a given currency code and that allows for faster equality comparison and hashmap
@@ -29,12 +31,9 @@ class Currency private constructor(val currencyCode: String) {
         }
 
     /**
-     * Format an amount based on the currency. For example USD would have two fraction digits
-     * while JPY would have none.
-     *
-     * @param amount The amount as a Double
-     * @param includeCurrency Include the currency code in the returned string
-     * @return The formatted amount as a string
+     * Format an [amount] based on the currency. For example USD would have two fraction digits
+     * while JPY would have none. Set [includeCurrency] to true if the resulting string should also contain the
+     * currency display name.
      */
     fun format(amount: Double, includeCurrency: Boolean = false): String {
         val amountStr = toBigDecimal(amount).toString()
@@ -45,12 +44,10 @@ class Currency private constructor(val currencyCode: String) {
     }
 
     /**
-     * Convert double amount to BigDecimal using the currency number of fraction digits.
-     *
-     * @param amount
-     * @return
+     * Convert a Number [amount] to BigDecimal using the currency number of fraction digits. Internally roboquant doesn't
+     * use BigDecimals, but this method is used enable a nicer display of currency amounts.
      */
-    fun toBigDecimal(amount: Double) : BigDecimal = BigDecimal(amount).setScale(defaultFractionDigits, roundingMode)
+    fun toBigDecimal(amount: Number) : BigDecimal = BigDecimal(amount.toDouble()).setScale(defaultFractionDigits, roundingMode)
 
 
     companion object {
@@ -62,10 +59,7 @@ class Currency private constructor(val currencyCode: String) {
         var roundingMode = RoundingMode.HALF_DOWN
 
         /**
-         * Returns the Currency instance for the given currency code.
-         *
-         * @param currencyCode the currency code for the currency, not limited to ISO-4217 codes like regular Java Currencies
-         * @return Returns the Currency instance for the given currency code
+         * Returns the Currency instance for the given the provided [currencyCode].
          */
         fun getInstance(currencyCode: String): Currency = currencies.getOrPut(currencyCode) { Currency(currencyCode) }
 

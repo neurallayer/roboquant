@@ -10,15 +10,12 @@ import org.roboquant.feeds.PriceAction
 import java.time.Instant
 
 /**
- * Capture price actions for a particular asset. This can then be used to display it in a graph or perform
- * other post-run analysis. This metric also implements the Feed API.
+ * Capture price actions for a particular [asset]. This can then be used to display it in a graph or perform
+ * other post-run analysis. This metric also implements the [Feed] API.
  *
  * This metric is different from how most metrics work. It stores the result internally and does not
  * hand them over to a logger. However, just like other metrics it will reset its state at the beginning of a
  * phase.
- *
- * @property asset
- * @constructor Create new Asset price metric
  */
 class PriceMetric(val asset: Asset) : Metric, Feed {
 

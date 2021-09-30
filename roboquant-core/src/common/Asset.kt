@@ -148,13 +148,13 @@ data class Asset(
 fun Collection<Asset>.findBySymbol(symbol: String): Asset = first { it.symbol == symbol }
 
 /**
- * Find all assets based on their [currencyCode]. Returns an empty list of no matches can be found.
+ * Find all assets based on their [currencyCode]. Returns an empty list if no matching assets can be found.
  */
 fun Collection<Asset>.findByCurrency(currencyCode: String): List<Asset> = filter { it.currencyCode == currencyCode }
 
 
 /**
- * Find  all assets based on their [exchangeCode]. Returns an empty list of no matches can be found.
+ * Find  all assets based on their [exchangeCode]. Returns an empty list if no matching assets can be found.
  */
 fun Collection<Asset>.findByExchange(exchangeCode: String): List<Asset> = filter { it.exchangeCode == exchangeCode }
 

@@ -5,10 +5,10 @@ import org.roboquant.common.Asset
 import java.time.Instant
 
 /**
- * Order is an instruction for a broker to initiate a certain action. Within roboquant it is the
- * [policy][org.roboquant.policies.Policy] that generates the orders.
+ * Order is an instruction for a broker to initiate a certain action. An order is always associated with an [asset]
  *
- * An order can cover a wide variety of use cases:
+ * Within roboquant it is the [policy][org.roboquant.policies.Policy] that generates the orders. An order can cover a
+ * wide variety of use cases:
  *
  * - a new order (perhaps the most common use case), ranging from simple market orders to advanced order types
  * - cancellation of an existing order
@@ -46,8 +46,6 @@ abstract class Order(val asset: Asset) : Cloneable {
 
     /**
      * If the order is not yet placed, place it now.
-     *
-     * @param now
      */
     protected fun place(price:Double, now: Instant) {
         if (placed == Instant.MIN) placed = now
@@ -69,29 +67,22 @@ abstract class Order(val asset: Asset) : Cloneable {
     }
 
     /**
-     * Get the value of the order given the provided price. Used to see if there is enough buying power to place this order.
-     * The default returns 0.0, which means no (known) value.
-     *
-     * @param price
+     * Get the value of the order given the provided [price]. Used to see if there is enough buying power to place this order.
+     * The default returns 0.0, which means no (known) value and as a result will not be counting against buying power.
      */
     open fun getValue(price: Double = this.price) = 0.0
 
 
     /**
-     * Execute the order given the provided price and time. Any subclass of Order will need to implement
+     * Execute the order given the provided [price] and [time]. Any subclass of Order will need to implement
      * this method and return a list of [Execution]
-     *
-     * @param price
-     * @param now
-     * @return
      */
-    abstract fun execute(price: Double, now: Instant) : List<Execution>
+    abstract fun execute(price: Double, time: Instant) : List<Execution>
 
 
     /**
      * Copy current state into the passed object. This is used in the clone function of the subclasses
      *
-     * @param result
      */
     protected fun copyTo(result: Order)  {
         result.id = id

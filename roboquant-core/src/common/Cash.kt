@@ -4,24 +4,21 @@ import org.roboquant.brokers.Account
 
 
 /**
- * Cash can contain amounts of multiple currencies at the same time. So a single instance of Cash can
+ * Cash can contain amounts of multiple currencies at the same time. So for example a single instance of Cash can
  * contain both USD and EURO amounts.
  *
- * You can add other currencies to a Cash instance. If the currency is already contained in the cash instance, it will
+ * You can add other currencies to a Cash instance. If the currency is already contained in the Cash instance, it will
  * be added to the existing amount, otherwise the currency and amount will be added.
  *
  * It is used throughout roboquant in order to support trading in multiple assets with different currency denominations.
  *
- * For the monetary amounts internally it uses [Double] since it is accurate enough for trading while providing large
+ * For storing monetary amounts internally it uses [Double], since it is accurate enough for trading while providing large
  * performance benefits over BigDecimal.
  *
  * Cash itself will never convert the currencies it contains. However, an account can do this if required, provided the
- * appropriate conversion rates are available. See also [Account.convertToCurrency] on how to convert a cash value
- * to a single currency amount.
+ * appropriate conversion rates are available. See also [Account.convertToCurrency] on how to convert a Cash instance
+ * to a single amount value.
  *
- * @constructor create a new Cash instance with the provided amounts added to it
- *
- * @param amounts Any amounts that should be initially added to the instance
  */
 class Cash(vararg amounts: Pair<Currency, Double>) {
 
@@ -41,20 +38,16 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
 
 
     /**
-     * Get the amount for a certain currency. If the currency is not
-     * present, 0.0 will be returned instead.
+     * Get the amount for a certain [currency]. If the currency is not
+     * found, 0.0 will be returned.
      *
-     * @param currency
-     * @return
      */
     fun getAmount(currency: Currency): Double {
         return data.getOrDefault(currency, 0.0)
     }
 
     /**
-     * Is this cash instance empty, meaning it has zero entries with a non-zero balance
-     *
-     * @return
+     * Is this cash instance empty, meaning it has zero entries with a non-zero balance.
      */
     fun isEmpty(): Boolean {
         return !isNotEmpty()
@@ -62,19 +55,14 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
 
     /**
      * Is this cash instance not empty, meaning it has at least one entry that has a non-zero balance.
-     *
-     * @return
      */
     fun isNotEmpty(): Boolean {
         return data.any { it.value != 0.0 }
     }
 
     /**
-     * Deposit a monetary amount into the cash. If the currency already exist, it
+     * Deposit a monetary [amount] denominated in teh specified [currency]. If the currency already exist, it
      * will be added to the existing amount, otherwise a new entry will be created.
-     *
-     * @param currency
-     * @param amount
      */
     fun deposit(currency: Currency, amount: Double) {
         data[currency] = data.getOrDefault(currency, 0.0) + amount
@@ -82,16 +70,14 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
 
 
     /**
-     * Deposit the cash hold in another cash instance into this one.
-     *
-     * @param other
+     * Deposit the cash hold in an [other] Cash instance into this one.
      */
     fun deposit(other: Cash) {
         other.data.forEach { deposit(it.key, it.value) }
     }
 
     /**
-     * Withdraw a monetary amount from the Cash. If the currency already exist, it
+     * Withdraw  a monetary [amount] denominated in the specified [currency]. If the currency already exist, it
      * will be deducted from the existing amount, otherwise a new entry will be created.
      *
      * @param currency
@@ -103,9 +89,7 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
 
 
     /**
-     * Withdraw the cash hold in another cash object into this one.
-     *
-     * @param other
+     * Withdraw the cash hold in an [other] Cash instance into this one.
      */
     fun withdraw(other: Cash) {
         other.data.forEach { deposit(it.key, -it.value) }
@@ -114,8 +98,6 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
 
     /**
      * Does the wallet contain multiple currencies with a non-zero balance.
-     *
-     * @return
      */
     fun isMultiCurrency(): Boolean {
         return currencies.size > 1
@@ -123,9 +105,7 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
 
 
     /**
-     * Create a copy of the cash
-     *
-     * @return
+     * Create a copy of this cash instance
      */
     fun copy(): Cash {
         val wallet = Cash()
@@ -134,30 +114,21 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
     }
 
     /**
-     * Clear the cash, removing all entries.
+     * Clear this Cash instance, removing all entries.
      */
     fun clear() {
         data.clear()
     }
 
     /**
-     * Provide a map representation of the cash where the key is the Currency and the value is the amount.
-     * By default, empty values will not be included.
+     * Provide a map representation of the cash hold where the key is the [Currency] and the value is the amount.
+     * By default, empty values will not be included but this can be changed by setting [includeEmpty] to true.
      */
-    fun toMap(includeEmpty: Boolean = false) = if (includeEmpty) data.toMap() else data.filter { it.value != 0.0 }
+    fun toMap(includeEmpty: Boolean = false) : Map<Currency, Double> = if (includeEmpty) data.toMap() else data.filter { it.value != 0.0 }
 
-
-    /**
-     * Convert this cash to a format suitable for metric results. This does include zero cash
-     *
-     * @param prefix The prefix to use
-     */
-    fun toMetrics(prefix: String) = data.map { "${prefix}${it.key.currencyCode}" to it.value }.toMap()
 
     /**
      * Create a string representation with respecting currency preferred settings when formatting the amounts.
-     *
-     * @return the formatted string
      */
     override fun toString(): String {
         val sb = StringBuffer()
@@ -170,7 +141,6 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
 
     /**
      * Provide a short summary including all currencies, also the one that have a zero balance.
-     *
      */
     fun summary(): Summary {
         val s = Summary("Cash")

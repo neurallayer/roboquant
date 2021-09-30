@@ -8,7 +8,6 @@ import org.roboquant.feeds.Event
  * Captures metrics for all open positions within the portfolio, so you can see how these progresses over the
  * duration of the run. Per asset, it will record quantity, value, cost and unrealized P&L for that position.
  *
- * @constructor Create empty Open positions
  */
 class OpenPositions : SimpleMetric() {
 

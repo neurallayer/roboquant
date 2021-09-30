@@ -21,9 +21,6 @@ internal class ExchangeTest {
 
         assertTrue(exchange1 in Exchange.exchanges)
 
-        val day = exchange1.day(Instant.now())
-        assertTrue( day >= 0)
-
         val now = Instant.now()
         assertTrue( exchange1.sameDay(now, now))
 

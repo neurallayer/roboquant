@@ -8,14 +8,11 @@ import java.time.Instant
 import kotlin.math.absoluteValue
 
 /**
- * Trade chart that plots the orders over time. Right now this chart only displays orders of the type SingleOrder and
- * will ignore other order types.
+ * Trade chart that plots [orders] over time. By default, the quantity will be plotted, but you can change the [aspect]
+ * to plot other properties of an order ("remaining", "direction", "quantity", "fill").
  *
- * @property orders
- * @property skipBuy
- * @property aspect
- * @property scale
- * @constructor Create empty Trade chart
+ * Please not this chart only display orders of the type SingleOrder and will ignore other order types. Often trades are
+ * of more value, since these also cover advanced orders. You can use the [TradeChart] for that.
  */
 class OrderChart(
     val orders: List<Order>,
@@ -56,8 +53,10 @@ class OrderChart(
         return d
     }
 
+    /** @suppress */
     override fun renderOption(): String {
         val gson = gsonBuilder.create()
+        max = Double.MIN_VALUE
 
         val d = toSeriesData()
         val data = gson.toJson(d)

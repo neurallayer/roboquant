@@ -64,6 +64,7 @@ class CalendarChart(private val metricsData: List<MetricsEntry>, val format: Str
         return result.toString()
     }
 
+    /** @suppress */
     override fun renderOption(): String {
         val data = prepData()
         val calendar = genCalendar(data)

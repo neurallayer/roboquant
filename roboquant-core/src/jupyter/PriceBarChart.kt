@@ -51,7 +51,7 @@ class PriceBarChart(
         return d
     }
 
-
+    /** @suppress */
     override fun renderOption(): String {
 
         val line = fromFeed()

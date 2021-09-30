@@ -76,11 +76,11 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
         result.fill = fill
     }
 
-    override fun execute(price: Double, now: Instant): List<Execution> {
-        place(price, now)
+    override fun execute(price: Double, time: Instant): List<Execution> {
+        place(price, time)
         val qty = fill(price)
 
-        if (tif.isExpired(placed, now, qty, quantity)) {
+        if (tif.isExpired(placed, time, qty, quantity)) {
             status = OrderStatus.EXPIRED
             return listOf()
         }

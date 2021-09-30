@@ -51,6 +51,7 @@ class PriceChart(
         return result
     }
 
+    /** @suppress */
     override fun renderOption(): String {
         val line = fromFeed()
         val lineData =  gsonBuilder.create().toJson(line)

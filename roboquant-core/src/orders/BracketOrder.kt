@@ -38,12 +38,12 @@ class BracketOrder(
         return main.getValue(price)
     }
 
-    override fun execute(price: Double, now: Instant): List<Execution> {
+    override fun execute(price: Double, time: Instant): List<Execution> {
         val result = mutableListOf<Execution>()
-        place(price, now)
+        place(price, time)
 
         if (!main.status.closed) {
-            val e = main.execute(price, now)
+            val e = main.execute(price, time)
             result.addAll(e)
             if (main.status.aborted) {
                 status = main.status
@@ -54,13 +54,13 @@ class BracketOrder(
         if (main.status == OrderStatus.COMPLETED) {
 
             if (profit.remaining != 0.0) {
-                val e = profit.execute(price, now)
+                val e = profit.execute(price, time)
                 result.addAll(e)
                 loss.quantity = main.quantity - profit.fill
             }
 
             if (loss.remaining != 0.0) {
-                val e = loss.execute(price, now)
+                val e = loss.execute(price, time)
                 result.addAll(e)
                 profit.quantity = main.quantity - loss.fill
             }

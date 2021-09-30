@@ -19,6 +19,7 @@ class MetricChart(
     private val scale: Int = 2
 ) : Chart() {
 
+    /** @suppress */
     override fun renderOption(): String {
 
         // Every combination of a run and episode will be its own series

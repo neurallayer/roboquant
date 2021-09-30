@@ -34,6 +34,7 @@ class MetricBoxChart(
         return result
     }
 
+    /** @suppress */
     override fun renderOption(): String {
         val gson = gsonBuilder.create()
         val d = toSeriesData()

@@ -27,17 +27,17 @@ class OneTriggersOtherOrder(
         return max(first.getValue(price), 0.0) + max(second.getValue(price), 0.0)
     }
 
-    override fun execute(price: Double, now: Instant) : List<Execution> {
+    override fun execute(price: Double, time: Instant) : List<Execution> {
         val executions = mutableListOf<Execution>()
-        place(price, now)
+        place(price, time)
 
         if (first.status.open) {
-            executions.addAll(first.execute(price, now))
+            executions.addAll(first.execute(price, time))
             if (first.status.aborted) status = first.status
         }
 
         if (first.status == OrderStatus.COMPLETED) {
-            executions.addAll(second.execute(price, now))
+            executions.addAll(second.execute(price, time))
             status = second.status
         }
 

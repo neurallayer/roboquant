@@ -2,22 +2,16 @@ package org.roboquant.jupyter
 
 import org.roboquant.brokers.Trade
 import java.math.BigDecimal
-import java.math.RoundingMode
 import java.time.Instant
-import kotlin.math.absoluteValue
 
 /**
- * Trade chart plots the trades that have been generated during the run over time.
+ * Trade chart plots the [trades] that have been generated during a run. By default, the realized pnl of the trades will
+ * be plotted but this can be changed.
  *
- * @property trades
- * @property skipBuy
- * @property aspect
- * @property scale
- * @constructor Create empty Trade chart
  */
 class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, val aspect:String = "pnl", private val scale:Int = 2) : Chart() {
 
-    private var max = Double.MIN_VALUE
+    private var max = Double.MIN_VALUE.toBigDecimal()
 
     init {
         require(aspect in listOf("pnl", "fee", "amount", "quantity"))
@@ -28,20 +22,19 @@ class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, 
         for (trade in trades) {
             if (skipBuy && trade.quantity > 0) continue
             with(trade) {
-
+                val c = asset.currency
                 val value = when (aspect) {
-                    "pnl" -> pnl
-                    "fee" -> fee
-                    "amount" -> totalAmount
-                    "quantity" -> quantity
+                    "pnl" -> c.toBigDecimal(pnl)
+                    "fee" -> c.toBigDecimal(fee)
+                    "amount" -> c.toBigDecimal(totalAmount)
+                    "quantity" -> quantity.toBigDecimal()
                     else -> throw Exception("Unsupported aspect")
                 }
 
-                if (value.absoluteValue > max) max = value.absoluteValue
-                val roundedValue = BigDecimal(value).setScale(scale, RoundingMode.HALF_DOWN)
-                val amount = asset.currency.format(totalAmount)
+                if (value.abs() > max) max = value.abs()
+                val amount = c.format(totalAmount)
                 val tooltip = "asset: $asset <br> qty: $quantity <br> pnl: $pnl <br> amount: $amount"
-                d.add(Triple(time, roundedValue, tooltip))
+                d.add(Triple(time, value, tooltip))
             }
         }
 
@@ -50,6 +43,7 @@ class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, 
 
     override fun renderOption(): String {
         val gson = gsonBuilder.create()
+        max = Double.MIN_VALUE.toBigDecimal()
 
         val d = toSeriesData()
         val data = gson.toJson(d)
@@ -60,19 +54,6 @@ class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, 
                 data : $data
             }
         """
-
-        val visualMap = """
-            visualMap: {
-                   min: -$max,
-                   max: $max,
-                   calculable: true,
-                   orient: 'horizontal',
-                   left: 'center',
-                   dimension: 1,
-                   top: 'top',
-                   inRange : { color: ['#FF0000', '#00FF00'] }
-               }
-        """.trimIndent()
 
         return """
             {
@@ -87,7 +68,16 @@ class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, 
                     type: 'value',
                     scale: true
                 },
-                $visualMap,
+                visualMap: {
+                   min: -$max,
+                   max: $max,
+                   calculable: true,
+                   orient: 'horizontal',
+                   left: 'center',
+                   dimension: 1,
+                   top: 'top',
+                   inRange : { color: ['#FF0000', '#00FF00'] }
+                },
                 tooltip: {
                      formatter: function (params) {
                         return params.value[2];
