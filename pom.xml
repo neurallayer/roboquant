@@ -182,7 +182,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <!-- List of sample roots -->
+                    <suppressObviousFunctions>true</suppressObviousFunctions>
+                    <reportUndocumented>true</reportUndocumented>
+                    <suppressInheritedMembers>true</suppressInheritedMembers>
                     <samples>
                         <dir>${basedir}/test/samples</dir>
                     </samples>

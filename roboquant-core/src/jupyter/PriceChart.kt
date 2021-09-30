@@ -11,9 +11,8 @@ import java.math.RoundingMode
 import java.time.Instant
 
 /**
- * Plot the price of an asset and optionally the trades made for that same asset.
+ * Plot the prices of an [asset] found in the [feed] and optionally the [trades] made for that same asset.
  *
- * @constructor Create new metric chart
  */
 class PriceChart(
     val feed: Feed,
@@ -21,20 +20,19 @@ class PriceChart(
     val trades: List<Trade> = listOf(),
     val timeFrame: TimeFrame = TimeFrame.FULL,
     val priceType: String = "DEFAULT",
-    private val scale: Int = 2
 ) : Chart() {
 
     /**
      * Play a feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
-     * @return
      */
     private fun fromFeed(): List<Pair<Instant, BigDecimal>> {
         val entries = feed.filter<PriceAction>(timeFrame) { it.asset == asset }
+        val currency = asset.currency
         val data = entries.map {
-            val value = BigDecimal(it.second.getPrice(priceType)).setScale(scale, RoundingMode.HALF_DOWN)
+            val price = it.second.getPrice(priceType)
+            val value = currency.toBigDecimal(price)
             it.first to value
         }
-
         return data
     }
 

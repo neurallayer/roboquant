@@ -166,8 +166,7 @@ fun large6() {
         }
     }
 
-    val gen = AvroGenerator(6)
-    gen.capture(feed!!, "/tmp/us_2000_2020.avro", TimeFrame.fromYears(2000, 2020))
+    AvroGenerator.capture(feed!!, "/tmp/us_2000_2020.avro", TimeFrame.fromYears(2000, 2020), 6)
 
 }
 
@@ -385,7 +384,7 @@ fun avroGen() {
     val feed =  CSVFeed("/data/assets/individual_stocks_5yr", CSVConfig("_data.csv"))
     val t = measureTimeMillis {
         val file ="/tmp/5yr_sp500.avro"
-        AvroGenerator().capture(feed, file)
+        AvroGenerator.capture(feed, file)
     }
     println(t)
 }
@@ -411,8 +410,7 @@ fun trendFollowing2() {
 
 fun avroCapture() {
     val feed = CSVFeed("/data/assets/individual_stocks_5yr", CSVConfig("_data.csv"))
-    val gen = AvroGenerator()
-    gen.capture(feed, "/tmp/5yr_sp500.avro")
+    AvroGenerator.capture(feed, "/tmp/5yr_sp500.avro")
 
     val feed2 = AvroFeed("/tmp/5yr_sp500.avro", useIndex = true)
     val strategy = EMACrossover()

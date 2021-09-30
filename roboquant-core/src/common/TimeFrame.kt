@@ -6,8 +6,8 @@ import java.time.temporal.ChronoUnit
 
 
 /**
- * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time (exclusive). It can be used
- * to limit the evaluation of a run to that specific timeframe.
+ * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time (exclusive). It can be
+ * used to limit the duration of a run to that specific timeframe.
  *
  * Like all time related data in roboquant, it uses the [Instant] type to define a moment in time, in order to avoid
  * potential timezone inconsistencies.

@@ -10,18 +10,25 @@ import java.util.concurrent.ConcurrentHashMap
  * Currency implementation that supports regular currencies as well as cryptocurrencies. So the [currencyCode] for the
  * currency is not limited to ISO-4217 codes like regular Java Currency class.
  *
- * This is a lite-weight implementation since most of roboquant relies only on the currency code.
+ * This is a lightweight implementation since most of roboquant functionality only relies on the currency code.
  *
  * When creating a new currency instance, use the [Currency.getInstance] method. This ensures only a single
  * instance of a currency exist for a given currency code and that allows for faster equality comparison and hashmap
  * lookup.
  *
+ *  @property currencyCode The currency code for the currency.
  **/
 class Currency private constructor(val currencyCode: String) {
 
+    /**
+     * The name to use when displaying this currency, default is the currency code
+     */
     val displayName
         get() = currencyCode
 
+    /**
+     * The number of digits to use when formatting amounts denominated in this currency
+     */
     val defaultFractionDigits: Int =
         try {
             java.util.Currency.getInstance(currencyCode).defaultFractionDigits
@@ -44,8 +51,8 @@ class Currency private constructor(val currencyCode: String) {
     }
 
     /**
-     * Convert a Number [amount] to BigDecimal using the currency number of fraction digits. Internally roboquant doesn't
-     * use BigDecimals, but this method is used enable a nicer display of currency amounts.
+     * Convert a numeric [amount] to BigDecimal using the number of digits defined for the currency. Internally roboquant
+     * doesn't use BigDecimals, but this method is used enable a nicer display of currency amounts.
      */
     fun toBigDecimal(amount: Number) : BigDecimal = BigDecimal(amount.toDouble()).setScale(defaultFractionDigits, roundingMode)
 
@@ -54,7 +61,8 @@ class Currency private constructor(val currencyCode: String) {
         private val currencies = ConcurrentHashMap<String, Currency>()
 
         /**
-         * Rounding mode to use when displaying limited number of digits
+         * Rounding mode to use when displaying limited number of digits, default is [RoundingMode.HALF_DOWN]
+         * @see RoundingMode
          */
         var roundingMode = RoundingMode.HALF_DOWN
 
@@ -116,6 +124,7 @@ class Currency private constructor(val currencyCode: String) {
         val NZD = getInstance("NZD")
     }
 
+    /** @suppress */
     override fun toString(): String {
         return displayName
     }

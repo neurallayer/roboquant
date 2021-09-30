@@ -5,6 +5,11 @@ import org.roboquant.common.max
 import org.roboquant.common.min
 import org.roboquant.logging.*
 
+/**
+ * A box plot is a standardized way of displaying data based on: the minimum, the maximum, and the
+ * low-, mid- and high quartiles. It provides a good indication how a certain metric is distributed over a certain
+ * period of time.
+ */
 class MetricBoxChart(
     private val metricData: Collection<MetricsEntry>,
     val period: String = "month",

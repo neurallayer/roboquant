@@ -3,6 +3,7 @@ package org.roboquant.logging
 import org.roboquant.RunInfo
 import org.roboquant.Phase
 import org.roboquant.common.Summary
+import java.text.SimpleDateFormat
 import java.time.ZoneOffset
 import java.time.temporal.ChronoField
 import java.util.*
@@ -101,28 +102,28 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
 
 }
 
-
+/**
+ * Group a collection of metric entries by a certain period like "year" or "week"
+ */
 fun Collection<MetricsEntry>.groupBy(period: String): Map<String, Collection<MetricsEntry>> {
-    return when(period) {
-        "year" -> groupBy { it.info.time.atOffset(ZoneOffset.UTC).year.toString() }
-        "month" -> groupBy {
-            val d = it.info.time.atOffset(ZoneOffset.UTC)
-            val mStr = String.format("%02d", d.month.value)
-            "${d.year}-$mStr"
-        }
-        "week" -> groupBy {
-            val d = it.info.time.atOffset(ZoneOffset.UTC)
-            val wStr = String.format("%02d", d.get(ChronoField.ALIGNED_WEEK_OF_YEAR))
-            "${d.year}-$wStr"
-        }
+    val formatter = when(period) {
+        "year" -> SimpleDateFormat("yyyy")
+        "month" -> SimpleDateFormat("yyyy-MM")
+        "week" -> SimpleDateFormat("yyyy-ww")
+        "day" -> SimpleDateFormat("yyyy-DDD")
+        "hour" -> SimpleDateFormat("yyyy-DDD-HH")
         else -> throw Exception("Not supported $period")
     }
+    return groupBy {
+        formatter.format(Date.from(it.info.time))
+    }
 }
+
 
 fun Collection<MetricsEntry>.toDoubleArray() = map { it.value.toDouble() }.toDoubleArray()
 
 /**
- * remove non-finite values from a DoubleArray. These include Inf and NaN values.
+ * Remove non-finite values from a DoubleArray and return this new array. The removed values include Inf and NaN values.
  */
 fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 

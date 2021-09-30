@@ -17,49 +17,39 @@ import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceBar
 import java.io.File
 
-
 /**
- * Utility to create an Avro file based on a feed. Typically, use case is to turn a large set of CSV files into a
- * single Avro file. It will overwrite an existing file with the same name.
+ * Utility to create an Avro file based on feed. It only records actions of the type [PriceBar].
  *
- * @constructor Create empty Avro generator
+ * Typical use case is to turn a large set of CSV files into a single Avro file and use that for future back-tests.
  */
-class AvroGenerator(private val compressionLevel: Int = 1) {
+object AvroGenerator {
 
-
-    companion object {
-
-
-        private const val schemaDef = """
-                {
-                 "namespace": "org.roboquant",
-                 "type": "record",
-                 "name": "priceBars",
-                 "fields": [
-                     {"name": "time", "type": "long"},
-                     {"name": "asset", "type": "string"},
-                     {"name": "open",  "type": "float"},
-                     {"name": "high",  "type": "float"},
-                     {"name": "low",  "type": "float"},
-                     {"name": "close",  "type": "float"},
-                     {"name": "volume", "type": "float"}
-                 ] 
-                }  
-                """
-
-    }
-
-
-
+    private const val schemaDef = """
+            {
+             "namespace": "org.roboquant",
+             "type": "record",
+             "name": "priceBars",
+             "fields": [
+                 {"name": "time", "type": "long"},
+                 {"name": "asset", "type": "string"},
+                 {"name": "open",  "type": "float"},
+                 {"name": "high",  "type": "float"},
+                 {"name": "low",  "type": "float"},
+                 {"name": "close",  "type": "float"},
+                 {"name": "volume", "type": "float"}
+             ] 
+            }  
+            """
 
     /**
-     * Generate a new Avro file based on the event in the feed and optional limited to the provided timeframe
+     * Generate a new Avro file with the provided [fileName] based on the events in the [feed].
+     * Optional the capture can be limited to the provided [timeFrame] and a [compressionLevel] can be set.
      *
-     * @param feed
+     * It will overwrite an existing file with the same name.
      */
-    fun capture(feed: Feed, outputFile: String, timeFrame: TimeFrame = TimeFrame.FULL) = runBlocking {
+    fun capture(feed: Feed, fileName: String, timeFrame: TimeFrame = TimeFrame.FULL, compressionLevel: Int = 1) = runBlocking {
         val channel = EventChannel(timeFrame = timeFrame)
-        val file = File(outputFile)
+        val file = File(fileName)
         val schema = Schema.Parser().parse(schemaDef)
         val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
         val dataFileWriter = DataFileWriter(datumWriter)
@@ -83,8 +73,7 @@ class AvroGenerator(private val compressionLevel: Int = 1) {
             while (true) {
                 val event = channel.receive()
                 val now = event.now.toEpochMilli()
-                for (action in event.actions) {
-                    if (action is PriceBar) {
+                for (action in event.actions.filterIsInstance<PriceBar>()) {
                         val assetStr = cache.getOrPut(action.asset) { action.asset.serialize() }
                         record.put(0, now)
                         record.put(1, assetStr)
@@ -94,7 +83,6 @@ class AvroGenerator(private val compressionLevel: Int = 1) {
                         record.put(5, action.close)
                         record.put(6, action.volume)
                         dataFileWriter.append(record)
-                    }
                 }
 
                 // We sync after each event, so we can later create an index if required
