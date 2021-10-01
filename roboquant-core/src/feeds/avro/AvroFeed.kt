@@ -25,18 +25,16 @@ import java.time.Instant
 
 /**
  * Read price data from a single file in Avro format. Compared to CSV files, Avro files contain typed values, making the
- * parsing more efficient. Additionally, an Avro file can be compressed efficiently, reducing the overall disk space required.
+ * parsing more efficient. Additionally, an Avro file can be compressed efficiently, reducing the overall disk space
+ * required.
  *
  * This feed loads data lazy and disposes of it afterwards, so memory footprint is limited.
  *
  * Roboquant also comes with a utility to create an Avro file based on another feed, see [AvroGenerator]
  *
- * @property path
- * @property useIndex
- *
  * @constructor Create new Avro Feed
  */
-class AvroFeed(val path: String, val useIndex: Boolean = true) : HistoricFeed {
+class AvroFeed(private val path: String, private val useIndex: Boolean = true) : HistoricFeed {
 
     private val _timeFrame: TimeFrame
     private val assetLookup = mutableMapOf<String, Asset>()
@@ -44,7 +42,7 @@ class AvroFeed(val path: String, val useIndex: Boolean = true) : HistoricFeed {
     internal val index = mutableListOf<Pair<Instant, Long>>()
 
     override val assets
-        get() = assetLookup.values.toSet()
+        get() = assetLookup.values.toSortedSet()
 
 
     override val timeFrame: TimeFrame

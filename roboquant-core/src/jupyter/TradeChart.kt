@@ -9,12 +9,12 @@ import java.time.Instant
  * be plotted but this can be changed.
  *
  */
-class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, val aspect:String = "pnl", private val scale:Int = 2) : Chart() {
+class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, val aspect:String = "pnl") : Chart() {
 
     private var max = Double.MIN_VALUE.toBigDecimal()
 
     init {
-        require(aspect in listOf("pnl", "fee", "amount", "quantity"))
+        require(aspect in listOf("pnl", "fee", "amount", "quantity")) {"Unsupported aspect $aspect, valid options are pnl, fee, amount and quantity" }
     }
 
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
@@ -28,7 +28,7 @@ class TradeChart(val trades: List<Trade>, private val skipBuy: Boolean = false, 
                     "fee" -> c.toBigDecimal(fee)
                     "amount" -> c.toBigDecimal(totalAmount)
                     "quantity" -> quantity.toBigDecimal()
-                    else -> throw Exception("Unsupported aspect")
+                    else -> throw Exception("Unsupported aspect $aspect")
                 }
 
                 if (value.abs() > max) max = value.abs()

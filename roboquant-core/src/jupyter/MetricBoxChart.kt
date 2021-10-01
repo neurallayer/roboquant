@@ -6,8 +6,8 @@ import org.roboquant.common.min
 import org.roboquant.logging.*
 
 /**
- * A box plot is a standardized way of displaying data based on: the minimum, the maximum, and the
- * low-, mid- and high quartiles. It provides a good indication how a certain metric is distributed over a certain
+ * A box chart is a standardized way of displaying data based on: the minimum, the maximum, and the
+ * low-, mid- and high percentiles. It provides a good indication how a certain metric is distributed over a certain
  * period of time.
  */
 class MetricBoxChart(

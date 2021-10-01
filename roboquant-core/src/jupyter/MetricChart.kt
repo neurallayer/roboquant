@@ -7,11 +7,10 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
- * Metric chart will visualize a metric
+ * Metric chart will plot a metric
  *
  * @property metricsData
  * @property useTime
- * @constructor Create new metric chart
  */
 class MetricChart(
     private val metricsData: Collection<MetricsEntry>,

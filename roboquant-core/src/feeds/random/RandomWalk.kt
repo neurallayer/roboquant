@@ -14,7 +14,7 @@ import kotlin.random.asJavaRandom
 
 
 /**
- * Random walk creates a number of imaginary assets with a price history that follows a random walk using a
+ * Random walk creates a number of randomly named assets with a price history that follows a random walk using a
  * Normal distribution. It can be useful for testing, since if your strategy does well using this feed, there
  * might be something suspicious going on.
  *
@@ -28,43 +28,55 @@ import kotlin.random.asJavaRandom
  * In short, random walk theory proclaims that stocks take a random and unpredictable path that makes all methods of
  * predicting stock prices futile in the long run.
  *
- * @property timeline The timeline to use for this random walk.
- *
- * @constructor Create a new RandomWalk feed
- *
- * @param nAssets
+ * @property timeline The timeline of this random walk.
  *
  */
 class RandomWalk(
     override val timeline: List<Instant>,
     nAssets: Int = 10,
-    private val generateBars: Boolean = true,
+    generateBars: Boolean = true,
     seed: Long = Config.seed,
-    private val minVolume: Int = 100_000,
-    private val maxVolume: Int = 1000_000,
-    private val maxDayRange: Float = 4.0f,
-    private val symbolLength: Int = 4,
-    private val template: Asset = Asset("TEMPLATE")
+    minVolume: Int = 100_000,
+    maxVolume: Int = 1000_000,
+    maxDayRange: Float = 4.0f,
+    symbolLength: Int = 4,
+    template: Asset = Asset("TEMPLATE")
 ) : HistoricFeed {
 
     private val random = Random(seed)
-    private val data = walk(timeline.size, nAssets)
+    private val data = mutableMapOf<Asset, List<PriceAction>>()
 
     /**
-     * What are the assets in this feed
+     * The assets that are in this feed
      */
-    override val assets: Set<Asset>
-        get() = data.keys
+    override val assets
+        get() = data.keys.toSortedSet()
+
+
+    init {
+        val size = timeline.size
+        repeat(nAssets) {
+            var asset: Asset?
+            do {
+                val symbol = generateSymbol(symbolLength)
+                asset = AssetBuilderFactory.build(symbol, template)
+            } while (asset in data)
+
+            val prices = if (generateBars)
+                generateBars(asset!!, size, minVolume, maxVolume, maxDayRange)
+            else
+                generateSinglePrice(asset!!, size)
+            data[asset] = prices
+        }
+
+    }
 
     companion object {
 
         private val logger = Logging.getLogger("RandomWalk")
 
         /**
-         * Create a random walk for the last years, generating daily prices
-         *
-         * @param nAssets
-         * @return
+         * Create a random walk for the last [years], generating daily prices
          */
         fun lastYears(years: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalk {
             val lastYear = LocalDate.now().year - 1
@@ -73,10 +85,7 @@ class RandomWalk(
         }
 
         /**
-         * Create a random walk for the last days, generating minute prices.
-         *
-         * @param nAssets
-         * @return
+         * Create a random walk for the last [days], generating minute prices.
          */
         fun lastDays(days: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalk {
             val last = Instant.now()
@@ -95,42 +104,12 @@ class RandomWalk(
         }
     }
 
-    /**
-     * Perform a random walk for the given number of events and assets
-     *
-     * @param size
-     * @param nAssets
-     * @return
-     */
-    private fun walk(size: Int, nAssets: Int): Map<Asset, List<PriceAction>> {
-        val data = mutableMapOf<Asset, List<PriceAction>>()
 
-        repeat(nAssets) {
-            var asset: Asset?
-            do {
-                val symbol = generateSymbol()
-                asset = AssetBuilderFactory.build(symbol, template)
-            } while (asset in data)
-
-            val prices = if (generateBars)
-                generateBars(asset!!, size)
-            else
-                generateSinglePrice(
-                    asset!!, size
-                )
-            data[asset] = prices
-        }
-        return data
-    }
 
     /**
      * Generate random bars
-     *
-     * @param asset
-     * @param size
-     * @return
      */
-    private fun generateBars(asset: Asset, size: Int): List<PriceAction> {
+    private fun generateBars(asset: Asset, size: Int, minVolume: Int, maxVolume: Int, maxDayRange: Float): List<PriceAction> {
         val data = mutableListOf<PriceBar>()
         var prevPrice = 100.0f
         val plusVolume = maxVolume - minVolume
@@ -157,11 +136,7 @@ class RandomWalk(
     }
 
     /**
-     * Generate single price actions
-     *
-     * @param asset
-     * @param size
-     * @return
+     * Generate random single price actions
      */
     private fun generateSinglePrice(asset: Asset, size: Int): List<PriceAction> {
         val data = mutableListOf<TradePrice>()
@@ -178,10 +153,8 @@ class RandomWalk(
 
     /**
      * Generate a random symbol (ticker) name.
-     *
-     * @return
      */
-    private fun generateSymbol(): String {
+    private fun generateSymbol(symbolLength: Int): String {
         val alphabet = ('A'..'Z').toList()
         return List(symbolLength) { alphabet.random(random) }.joinToString("")
     }
@@ -189,8 +162,6 @@ class RandomWalk(
 
     /**
      * See [Feed.play]
-     *
-     * @param channel
      */
     override suspend fun play(channel: EventChannel) {
         for ((i, now) in timeline.withIndex()) {

@@ -13,6 +13,7 @@ import org.roboquant.feeds.*
 import java.io.File
 import java.io.FileReader
 import java.time.Instant
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.absoluteValue
 
@@ -34,7 +35,8 @@ class CSVFeed(
 ) : HistoricFeed {
 
     private var events = listOf<Event>()
-    override val assets = mutableSetOf<Asset>()
+    override val assets = TreeSet<Asset>()
+
     private val logger = Logging.getLogger("CSVFeed")
 
     override val timeline: List<Instant>

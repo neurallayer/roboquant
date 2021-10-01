@@ -48,6 +48,7 @@ object AvroGenerator {
      * It will overwrite an existing file with the same name.
      */
     fun capture(feed: Feed, fileName: String, timeFrame: TimeFrame = TimeFrame.FULL, compressionLevel: Int = 1) = runBlocking {
+
         val channel = EventChannel(timeFrame = timeFrame)
         val file = File(fileName)
         val schema = Schema.Parser().parse(schemaDef)

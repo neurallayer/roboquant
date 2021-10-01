@@ -42,7 +42,7 @@ class IEXFeed(
         get() = events.keys.toList()
 
     override val assets
-        get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct()
+        get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct().toSortedSet()
 
 
     init {

@@ -27,7 +27,7 @@ class BinanceHistoricFeed(apiKey: String? = null, secret:String? = null, private
         get() = events.keys.toList()
 
     override val assets
-        get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct()
+        get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct().toSortedSet()
 
     init {
         val factory = BinanceConnection.getFactory(apiKey, secret)

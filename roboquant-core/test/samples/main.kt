@@ -141,7 +141,6 @@ fun large6() {
         Exchange.getInstance(exchange)
         return CSVConfig(
             fileExtension = ".us.txt",
-            assetExchange = exchange,
             parsePattern = "??T?OHLCV?",
             template = Asset("TEMPLATE", exchangeCode = exchange)
         )
@@ -166,7 +165,7 @@ fun large6() {
         }
     }
 
-    AvroGenerator.capture(feed!!, "/tmp/us_2000_2020.avro", TimeFrame.fromYears(2000, 2020), 6)
+    AvroGenerator.capture(feed!!, "/data/tmp/us_2000_2020.avro", TimeFrame.fromYears(2000, 2020), 6)
 
 }
 
@@ -383,7 +382,7 @@ fun avroGen() {
     // val feed = CSVFeed("/data/assets/stock-market/stocks/")
     val feed =  CSVFeed("/data/assets/individual_stocks_5yr", CSVConfig("_data.csv"))
     val t = measureTimeMillis {
-        val file ="/tmp/5yr_sp500.avro"
+        val file ="/home/peter/tmp/5yr_sp500.avro"
         AvroGenerator.capture(feed, file)
     }
     println(t)
@@ -475,7 +474,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.info()
 
-    when ("MIN") {
+    when ("LARGE6") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()

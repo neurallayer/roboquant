@@ -4,7 +4,6 @@ import com.binance.api.client.BinanceApiWebSocketClient
 import com.binance.api.client.domain.event.CandlestickEvent
 import com.binance.api.client.domain.market.CandlestickInterval
 import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
 import org.roboquant.feeds.CryptoBuilder
 import org.roboquant.feeds.Event
@@ -34,7 +33,7 @@ class BinanceFeed(apiKey: String? = null, secret:String? = null, private val use
      * Get the assets that has been subscribed to
      */
     val assets
-        get() = subscriptions.values.distinct()
+        get() = subscriptions.values.distinct().toSortedSet()
 
     init {
         val factory = BinanceConnection.getFactory(apiKey, secret)
@@ -93,23 +92,6 @@ class BinanceFeed(apiKey: String? = null, secret:String? = null, private val use
             logger.warning { "Received CandlestickEvent for unexpected symbol ${resp.symbol}" }
         }
     }
-
-
-    /**
-     * Create an asset based on a currency pair.
-     *
-     * @param symbol
-     * @return
-     */
-    private fun getAsset(symbol: String, currencyCode: String): Asset {
-        return Asset(
-            symbol = symbol,
-            currencyCode = currencyCode,
-            exchangeCode = "Binance",
-            type = AssetType.CRYPTO
-        )
-    }
-
 
 }
 

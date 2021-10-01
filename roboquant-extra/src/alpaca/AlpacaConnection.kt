@@ -8,6 +8,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Config
 import org.roboquant.common.Exchange
+import java.util.*
 import java.util.logging.Logger
 
 typealias AccountType = EndpointAPIType
@@ -36,7 +37,7 @@ internal object AlpacaConnection {
     /**
      * Get the available assets
      */
-    fun getAssets(api: AlpacaAPI): List<Asset> {
+    fun getAvailableAssets(api: AlpacaAPI): SortedSet<Asset> {
         val availableAssets = api.assets().get(AssetStatus.ACTIVE, "us_equity")
         val exchangeCodes = Exchange.exchanges.map { e -> e.exchangeCode }
         val result = mutableListOf<Asset>()
@@ -44,7 +45,7 @@ internal object AlpacaConnection {
             if (it.exchange !in exchangeCodes) logger.warning("Exchange ${it.exchange} not known")
             result.add(Asset(it.symbol, AssetType.STOCK, "USD", it.exchange, id = it.id))
         }
-        return result
+        return result.toSortedSet()
     }
 
 }

@@ -26,9 +26,6 @@ data class CSVConfig(
     var fileExtension: String = ".csv",
     var filePattern: String = ".*",
     var fileSkip: List<String> = listOf(),
-
-    var assetExchange: String = "",
-
     var parsePattern: String = "",
     var parseTime: String = "",
     var parseIsDate: Boolean = true,
@@ -50,7 +47,7 @@ data class CSVConfig(
     private var hasColumnsDefined = false
 
     val exchange
-        get() = Exchange.getInstance(assetExchange)
+        get() = template.exchange
 
     val currency: Currency
         get() = if (assetCurrency.isNotEmpty())
@@ -103,9 +100,7 @@ data class CSVConfig(
 
 
     /**
-     * Should the provided file be parsed or skipped all together
-     *
-     * @param file
+     * Should the provided [file] be parsed or skipped all together, true is parsed
      */
     fun shouldParse(file: File): Boolean {
         val name = file.name

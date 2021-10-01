@@ -23,17 +23,20 @@ import java.time.Instant
  */
 class AlpacaFeed(apiKey: String? = null, apiSecret: String? = null, accountType :AccountType = AccountType.PAPER, dataType:DataType = DataType.IEX, autoConnect: Boolean = true) : LiveFeed() {
 
-    private val alpacaAPI: AlpacaAPI
+    private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
     private val assetsMap = mutableMapOf<String, Asset>()
 
     val assets
-        get() = assetsMap.values
+        get() = assetsMap.values.toSortedSet()
 
     val logger = Logging.getLogger("AlpacaFeed")
     private val listener = createListener()
 
+    val availableAssets by lazy {
+        AlpacaConnection.getAvailableAssets(alpacaAPI)
+    }
+
     init {
-        alpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
         if (autoConnect) connect()
         retrieveAssets()
         alpacaAPI.marketDataStreaming().setListener(listener)

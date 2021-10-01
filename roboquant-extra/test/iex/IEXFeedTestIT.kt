@@ -42,8 +42,19 @@ internal class IEXFeedTestIT {
         roboquant.run(feed)
         roboquant.broker.account.summary().log()
         roboquant.logger.summary().log()
-
     }
 
+    @Test
+    fun testIntraday() {
+        System.getProperty("IEX_TEST") ?: return
+        val token = Config.getProperty("IEX_TOKEN")!!
+        val feed = IEXFeed(token)
+        feed.retrieveIntraday("AAPL")
+        val strategy = EMACrossover()
+        val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
+        roboquant.run(feed)
+        roboquant.broker.account.summary().log()
+        roboquant.logger.summary().log()
+    }
 
 }

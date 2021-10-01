@@ -3,6 +3,7 @@ package org.roboquant.common
 import org.apache.commons.math3.stat.descriptive.moment.*
 import org.apache.commons.math3.stat.descriptive.rank.Max
 import org.apache.commons.math3.stat.descriptive.rank.Min
+import org.apache.commons.text.StringEscapeUtils
 import java.lang.Integer.max
 import java.lang.Integer.min
 import java.time.*
@@ -152,3 +153,4 @@ fun DoubleArray.kurtosis(): Double {
     return Kurtosis().evaluate(this)
 }
 
+fun String?.escapeHtml() : String  = StringEscapeUtils.escapeHtml4(this ?: "")

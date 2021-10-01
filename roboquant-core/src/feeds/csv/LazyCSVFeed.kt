@@ -39,7 +39,7 @@ class LazyCSVFeed(val path: String, val config: CSVConfig = CSVConfig.fromFile(p
     private val files: Map<Asset, File>
 
     override val assets
-        get() = files.keys
+        get() = files.keys.toSortedSet()
 
     init {
         logger.fine { "Scanning $path" }

@@ -106,7 +106,7 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
     }
 
 
-    fun List<Trade>.asTrades(): Trades {
+    private fun Collection<Trade>.asTrades(): Trades {
         val result = Trades()
         result.addAll(this)
         return result

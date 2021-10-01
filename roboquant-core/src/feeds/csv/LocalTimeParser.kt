@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
  * @constructor
  *
  */
-class LocalTimeParser(pattern: String, val dateFormat:Boolean = pattern.length < 11, val exchange:Exchange = Exchange.getInstance("") ) : TimeParser {
+internal class LocalTimeParser(pattern: String, val dateFormat:Boolean = pattern.length < 11, val exchange:Exchange = Exchange.getInstance("") ) : TimeParser {
 
     private val dtf: DateTimeFormatter
 

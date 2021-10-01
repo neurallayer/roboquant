@@ -1,11 +1,9 @@
 package org.roboquant.logging
 
-import org.roboquant.RunInfo
 import org.roboquant.Phase
+import org.roboquant.RunInfo
 import org.roboquant.common.Summary
 import java.text.SimpleDateFormat
-import java.time.ZoneOffset
-import java.time.temporal.ChronoField
 import java.util.*
 
 /**

@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
 import java.time.Instant
+import java.util.*
 
 /**
  * Interface that any feed needs to implement. A feed can deliver any type of information, ranging from
@@ -22,7 +23,9 @@ interface Feed {
         get() = TimeFrame.FULL
 
     /**
-     * (Re)play the events of the feed using the provided [channel] to publish the events
+     * (Re)play the events of the feed on put these events on the provided [channel]. Once done, return from this method.
+     * Implementations that hold resources like open file descriptors, should carefully handle Channel related exceptions
+     * and make sure these resources are released before returning from the method.
      */
     suspend fun play(channel: EventChannel)
 
@@ -38,7 +41,7 @@ interface AssetFeed : Feed {
     /**
      * Unique collection of assets contained in the feed
      */
-    val assets: Collection<Asset>
+    val assets: SortedSet<Asset>
 }
 
 

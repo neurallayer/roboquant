@@ -29,7 +29,7 @@ class YahooFinanceFeed(private val adjClose: Boolean = true) : HistoricFeed {
     override val timeline: List<Instant>
         get() = events.keys.toList()
 
-    override val assets = mutableSetOf<Asset>()
+    override val assets = TreeSet<Asset>()
 
     /**
      * (Re)play the events of the feed using the provided [EventChannel]

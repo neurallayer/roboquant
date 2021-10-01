@@ -38,7 +38,7 @@ class AlphaVantageFeed(
     private val events = mutableListOf<Event>()
 
     override val assets
-        get() = subscriptions.values.toSet()
+        get() = subscriptions.values.toSortedSet()
 
     override val timeline: List<Instant>
         get() = events.map { it.now }

@@ -20,7 +20,7 @@ typealias AlpacaPeriod =  BarTimePeriod
  */
 class AlpacaHistoricFeed(apiKey: String? = null, apiSecret: String? = null,  accountType :AccountType = AccountType.PAPER, dataType:DataType = DataType.IEX)  : HistoricFeed {
 
-    private val alpacaAPI: AlpacaAPI
+    private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
     private val logger: Logger = Logger.getLogger(this.javaClass.simpleName)
     private val events = TreeMap<Instant, MutableList<PriceAction>>()
     private val zoneId: ZoneId = ZoneId.of("America/New_York")
@@ -29,9 +29,11 @@ class AlpacaHistoricFeed(apiKey: String? = null, apiSecret: String? = null,  acc
         get() = events.keys.toList()
 
     override val assets
-        get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct()
+        get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct().toSortedSet()
 
-    lateinit var availableAssets: List<Asset>
+    val availableAssets by lazy {
+        AlpacaConnection.getAvailableAssets(alpacaAPI)
+    }
 
 
     /**
@@ -73,8 +75,6 @@ class AlpacaHistoricFeed(apiKey: String? = null, apiSecret: String? = null,  acc
     }
 
 
-    init {
-        alpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
-    }
+
 }
 
