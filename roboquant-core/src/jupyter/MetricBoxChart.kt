@@ -53,6 +53,7 @@ class MetricBoxChart(
                     },
                 ${renderDataZoom()},
                 ${renderToolbox(false)},
+                ${renderGrid()},
                 xAxis: {
                     type: 'category',
                     data: $xData
