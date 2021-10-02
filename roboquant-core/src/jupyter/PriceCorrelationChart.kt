@@ -14,12 +14,15 @@ import java.math.RoundingMode
 import java.util.*
 
 /**
- * Shows the correlation between the change in prices between two or more assets
+ * Shows the correlation matrix between the prices of two or more assets
  */
 class PriceCorrelationChart(
     private val feed: Feed,
     private val assets: Collection<Asset>,
-    private val timeFrame: TimeFrame = TimeFrame.FULL
+    private val timeFrame: TimeFrame = TimeFrame.FULL,
+    private val priceType: String = "DEFAULT",
+    private val scale:Int = 2,
+    private val minObservations: Int = 3
 ) : Chart() {
 
     init {
@@ -39,7 +42,7 @@ class PriceCorrelationChart(
             while (true) {
                 val o = channel.receive()
                 for (asset in assets) {
-                    val price = o.getPrice(asset) ?: Double.NaN
+                    val price = o.getPrice(asset, priceType) ?: Double.NaN
                     val list = result.getOrPut(asset) { mutableListOf()}
                     list.add(price)
                 }
@@ -59,10 +62,14 @@ class PriceCorrelationChart(
         val result = mutableListOf<Triple<Int, Int, BigDecimal>>()
         for ((x, data1) in prices.values.withIndex()) {
             for ((y, data2) in prices.values.withIndex()) {
+                if (y < x) continue
                 val data = Pair(data1, data2).clean()
-                val corr = calc.correlation(data.first, data.second)
-                val corrBD = BigDecimal(corr).setScale(2, RoundingMode.HALF_DOWN)
-                result.add((Triple(x, y, corrBD)))
+                if (data.first.size >= minObservations) {
+                    val corr = calc.correlation(data.first, data.second)
+                    val corrBD = BigDecimal(corr).setScale(scale, RoundingMode.HALF_DOWN)
+                    result.add((Triple(x, y, corrBD)))
+                    if (x != y) result.add((Triple(y, x, corrBD)))
+                }
             }
         }
         return result
