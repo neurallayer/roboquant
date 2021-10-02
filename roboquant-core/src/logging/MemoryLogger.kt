@@ -121,10 +121,6 @@ internal fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, C
 
 fun Collection<MetricsEntry>.toDoubleArray() = map { it.value.toDouble() }.toDoubleArray()
 
-/**
- * Remove non-finite values from a DoubleArray and return this new array. The removed values include Inf and NaN values.
- */
-fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 
 fun Collection<MetricsEntry>.getName(): String {
     return map { it.metric }.distinct().joinToString("/") { it.replace('.', ' ') }

@@ -4,13 +4,9 @@ import org.apache.commons.math3.stat.descriptive.moment.*
 import org.apache.commons.math3.stat.descriptive.rank.Max
 import org.apache.commons.math3.stat.descriptive.rank.Min
 import org.apache.commons.text.StringEscapeUtils
-import org.roboquant.logging.MetricsEntry
 import java.lang.Integer.max
 import java.lang.Integer.min
-import java.text.SimpleDateFormat
 import java.time.*
-import java.time.temporal.ChronoUnit
-import java.util.*
 
 /******************************************************************************
  * This file contains the extensions for classes that are part of standard
@@ -156,5 +152,25 @@ fun DoubleArray.skewness(): Double {
 fun DoubleArray.kurtosis(): Double {
     return Kurtosis().evaluate(this)
 }
+
+/**
+ * Remove non-finite values from a DoubleArray and return this new array. The removed values include Inf and NaN values.
+ */
+fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
+
+
+fun Pair<List<Double>, List<Double>>.clean(): Pair<DoubleArray, DoubleArray> {
+    val max = max(first.size, second.size)
+    val r1 = mutableListOf<Double>()
+    val r2 = mutableListOf<Double>()
+    for (i in 0 until max) {
+        if (first[i].isFinite() && second[i].isFinite()) {
+            r1.add(first[i])
+            r2.add(second[i])
+        }
+    }
+    return Pair(r1.toDoubleArray(), r2.toDoubleArray())
+}
+
 
 fun String?.escapeHtml() : String  = StringEscapeUtils.escapeHtml4(this ?: "")

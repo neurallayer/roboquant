@@ -2,6 +2,7 @@ package org.roboquant.logging
 
 import org.roboquant.RunInfo
 import org.roboquant.common.Summary
+import org.roboquant.common.clean
 import org.roboquant.common.std
 
 /**

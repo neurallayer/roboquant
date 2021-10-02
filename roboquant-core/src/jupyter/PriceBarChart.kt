@@ -16,11 +16,11 @@ import org.roboquant.feeds.filter
  * by setting [useTime] to false.
  */
 class PriceBarChart(
-    val feed: Feed,
-    val asset: Asset,
-    val trades: List<Trade> = listOf(),
-    val timeFrame: TimeFrame = TimeFrame.FULL,
-    val useTime: Boolean = true
+    private val feed: Feed,
+    private val asset: Asset,
+    private val trades: List<Trade> = listOf(),
+    private val timeFrame: TimeFrame = TimeFrame.FULL,
+    private val useTime: Boolean = true
 ) : Chart() {
 
 

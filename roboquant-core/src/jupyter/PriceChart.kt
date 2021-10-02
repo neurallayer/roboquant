@@ -14,11 +14,11 @@ import java.time.Instant
  *
  */
 class PriceChart(
-    val feed: Feed,
-    val asset: Asset,
-    val trades: List<Trade> = listOf(),
-    val timeFrame: TimeFrame = TimeFrame.FULL,
-    val priceType: String = "DEFAULT",
+    private val feed: Feed,
+    private val asset: Asset,
+    private val trades: List<Trade> = listOf(),
+    private val timeFrame: TimeFrame = TimeFrame.FULL,
+    private val priceType: String = "DEFAULT",
 ) : Chart() {
 
     /**

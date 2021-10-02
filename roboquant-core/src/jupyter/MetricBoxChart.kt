@@ -1,6 +1,7 @@
 package org.roboquant.jupyter
 
 import org.apache.commons.math3.stat.descriptive.rank.Percentile
+import org.roboquant.common.clean
 import org.roboquant.common.max
 import org.roboquant.common.min
 import org.roboquant.logging.*
@@ -13,7 +14,7 @@ import java.time.temporal.ChronoUnit
  */
 class MetricBoxChart(
     private val metricData: Collection<MetricsEntry>,
-    val period: ChronoUnit = ChronoUnit.MONTHS,
+    private val period: ChronoUnit = ChronoUnit.MONTHS,
     private val lowPercentile: Double = 25.0,
     private val midPercentile: Double = 50.0,
     private val highPercentile: Double = 75.0,

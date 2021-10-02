@@ -2,7 +2,7 @@ package org.roboquant.jupyter
 
 import org.apache.commons.math3.random.EmpiricalDistribution
 import org.roboquant.logging.MetricsEntry
-import org.roboquant.logging.clean
+import org.roboquant.common.clean
 import org.roboquant.logging.getName
 import org.roboquant.logging.toDoubleArray
 import java.math.BigDecimal

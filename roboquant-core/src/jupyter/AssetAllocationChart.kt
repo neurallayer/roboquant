@@ -11,7 +11,7 @@ import kotlin.math.absoluteValue
  * @constructor Create empty Asset allocation chart
  */
 class AssetAllocationChart(
-    val account: Account,
+    private val account: Account,
     private val includeCash: Boolean = true,
     private val includeAssetClass: Boolean = false
 ) : Chart() {

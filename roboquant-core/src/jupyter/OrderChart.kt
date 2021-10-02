@@ -15,9 +15,9 @@ import kotlin.math.absoluteValue
  * provide more insights, since these also cover advanced order types. You can use the [TradeChart] for that.
  */
 class OrderChart(
-    val orders: List<Order>,
+    private val orders: List<Order>,
     private val skipBuy: Boolean = false,
-    val aspect: String = "quantity",
+    private val aspect: String = "quantity",
     private val scale: Int = 2
 ) : Chart() {
 
