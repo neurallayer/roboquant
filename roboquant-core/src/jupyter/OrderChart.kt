@@ -8,11 +8,11 @@ import java.time.Instant
 import kotlin.math.absoluteValue
 
 /**
- * Trade chart that plots [orders] over time. By default, the quantity will be plotted, but you can change the [aspect]
+ * Order chart plots [orders] over time. By default, the quantity will be plotted, but you can change the [aspect]
  * to plot other properties of an order ("remaining", "direction", "quantity", "fill").
  *
- * Please not this chart only display orders of the type SingleOrder and will ignore other order types. Often trades are
- * of more value, since these also cover advanced orders. You can use the [TradeChart] for that.
+ * Please not this chart only display orders of the type [SingleOrder] and will ignore other order types. Often trades
+ * provide more insights, since these also cover advanced order types. You can use the [TradeChart] for that.
  */
 class OrderChart(
     val orders: List<Order>,

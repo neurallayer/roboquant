@@ -4,6 +4,7 @@ import org.roboquant.Phase
 import org.roboquant.RunInfo
 import org.roboquant.common.Summary
 import java.text.SimpleDateFormat
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 /**
@@ -100,17 +101,17 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
 
 }
 
-/**
- * Group a collection of metric entries by a certain period like "year" or "week"
- */
-fun Collection<MetricsEntry>.groupBy(period: String): Map<String, Collection<MetricsEntry>> {
+internal fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, Collection<MetricsEntry>> {
     val formatter = when(period) {
-        "year" -> SimpleDateFormat("yyyy")
-        "month" -> SimpleDateFormat("yyyy-MM")
-        "week" -> SimpleDateFormat("yyyy-ww")
-        "day" -> SimpleDateFormat("yyyy-DDD")
-        "hour" -> SimpleDateFormat("yyyy-DDD-HH")
-        else -> throw Exception("Not supported $period")
+        ChronoUnit.YEARS -> SimpleDateFormat("yyyy")
+        ChronoUnit.MONTHS -> SimpleDateFormat("yyyy-MM")
+        ChronoUnit.WEEKS -> SimpleDateFormat("yyyy-ww")
+        ChronoUnit.DAYS -> SimpleDateFormat("yyyy-DDD")
+        ChronoUnit.HOURS -> SimpleDateFormat("yyyy-DDD-HH")
+        ChronoUnit.MINUTES -> SimpleDateFormat("yyyy-DDD-HH-mm")
+        else -> {
+            throw IllegalArgumentException("Unsupported value $period")
+        }
     }
     return groupBy {
         formatter.format(Date.from(it.info.time))

@@ -4,9 +4,13 @@ import org.apache.commons.math3.stat.descriptive.moment.*
 import org.apache.commons.math3.stat.descriptive.rank.Max
 import org.apache.commons.math3.stat.descriptive.rank.Min
 import org.apache.commons.text.StringEscapeUtils
+import org.roboquant.logging.MetricsEntry
 import java.lang.Integer.max
 import java.lang.Integer.min
+import java.text.SimpleDateFormat
 import java.time.*
+import java.time.temporal.ChronoUnit
+import java.util.*
 
 /******************************************************************************
  * This file contains the extensions for classes that are part of standard

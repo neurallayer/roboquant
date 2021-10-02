@@ -4,6 +4,7 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile
 import org.roboquant.common.max
 import org.roboquant.common.min
 import org.roboquant.logging.*
+import java.time.temporal.ChronoUnit
 
 /**
  * A box chart is a standardized way of displaying data based on: the minimum, the maximum, and the
@@ -12,11 +13,12 @@ import org.roboquant.logging.*
  */
 class MetricBoxChart(
     private val metricData: Collection<MetricsEntry>,
-    val period: String = "month",
+    val period: ChronoUnit = ChronoUnit.MONTHS,
     private val lowPercentile: Double = 25.0,
     private val midPercentile: Double = 50.0,
     private val highPercentile: Double = 75.0,
 ) : Chart() {
+
 
     private fun toSeriesData(): List<Pair<String, DoubleArray>> {
         val result = mutableListOf<Pair<String, DoubleArray>>()

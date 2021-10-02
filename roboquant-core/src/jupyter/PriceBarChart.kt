@@ -9,14 +9,18 @@ import org.roboquant.feeds.filter
 
 /**
  * Plot the price-bars (candlesticks) of an asset found in a [feed] and optionally the [trades] made for that same asset.
- * This will only plot candlesticks if the feed also contains price actions of the type PriceBar. If this is not the case y
- * ou can use the [PriceChart] instead to plot prices.
+ * This will only plot candlesticks if the feed also contains price actions of the type PriceBar. If this is not the case
+ * you can use the [PriceChart] instead to plot prices.
+ *
+ * By default, the chart will use a linear timeline, meaning gaps like a weekend will show-up. this can be disabled
+ * by setting [useTime] to false.
  */
 class PriceBarChart(
     val feed: Feed,
     val asset: Asset,
     val trades: List<Trade> = listOf(),
-    val timeFrame: TimeFrame = TimeFrame.FULL
+    val timeFrame: TimeFrame = TimeFrame.FULL,
+    val useTime: Boolean = true
 ) : Chart() {
 
 
@@ -33,7 +37,8 @@ class PriceBarChart(
         val data = entries.map {
             val (now, price) = it
             val direction = if (price.close >= price.open) 1 else -1
-            listOf(now, price.open, price.high, price.low, price.close, price.volume, direction)
+            val time = if (useTime) now else now.toString()
+            listOf(time, price.open, price.high, price.low, price.close, price.volume, direction)
         }
         return data
     }
@@ -42,8 +47,9 @@ class PriceBarChart(
         val t = trades.filter { it.asset == asset && timeFrame.contains(it.time) }
         val d = mutableListOf<Map<String, Any>>()
         for (trade in t) {
+            val time = if (useTime) trade.time else trade.time.toString()
             val entry = mapOf(
-                "value" to trade.quantity.toInt(), "xAxis" to trade.time.toString(), "yAxis" to trade.price
+                "value" to trade.quantity.toInt(), "xAxis" to time, "yAxis" to trade.price
             )
             d.add(entry)
         }
@@ -60,6 +66,7 @@ class PriceBarChart(
 
         val marks = markPoints()
         val markData = gsonBuilder.create().toJson(marks)
+        val xAxisType = if (useTime) "time" else "category"
 
         return """
                 {
@@ -91,7 +98,7 @@ class PriceBarChart(
                 ],
                 xAxis: [
                     {
-                        type: 'time',
+                        type: '$xAxisType',
                         scale: true,
                         boundaryGap: true,
                         axisLine: {onZero: false},
@@ -101,7 +108,7 @@ class PriceBarChart(
                         max: 'dataMax'
                     },
                     {
-                        type: 'time',
+                        type: '$xAxisType',
                         gridIndex: 1,
                         scale: true,
                         boundaryGap: true,
@@ -135,7 +142,7 @@ class PriceBarChart(
                     {
                         type: 'inside',
                         xAxisIndex: [0, 1],
-                        start: 10,
+                        start: 0,
                         end: 100
                     },
                     {
@@ -143,7 +150,7 @@ class PriceBarChart(
                         xAxisIndex: [0, 1],
                         type: 'slider',
                         bottom: 10,
-                        start: 10,
+                        start: 0,
                         end: 100
                     }
                 ],

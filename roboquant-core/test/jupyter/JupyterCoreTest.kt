@@ -9,7 +9,7 @@ internal class JupyterCoreTest {
     @Test
     fun test() {
         JupyterCore()
-        Output.notebook(true)
+        Output.classic(true)
         Output.lab()
     }
 

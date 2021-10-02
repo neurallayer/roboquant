@@ -14,7 +14,7 @@ abstract class Output : Renderable {
 
     enum class Mode {
         LAB,
-        NOTEBOOK
+        CLASSIC
     }
 
     companion object {
@@ -26,8 +26,8 @@ abstract class Output : Renderable {
          *
          * @param useCDN
          */
-        fun notebook(useCDN: Boolean = true) {
-            mode = Mode.NOTEBOOK
+        fun classic(useCDN: Boolean = true) {
+            mode = Mode.CLASSIC
             Output.useCDN = useCDN
         }
 
@@ -45,7 +45,7 @@ abstract class Output : Renderable {
             } catch (e:Exception) {
                 // ignore
             }
-            return Mode.NOTEBOOK
+            return Mode.CLASSIC
         }
 
 
@@ -61,7 +61,7 @@ abstract class Output : Renderable {
     override fun render(notebook: Notebook): DisplayResult {
         return when (mode) {
             Mode.LAB -> HTML(asHTML())
-            Mode.NOTEBOOK -> HTML(asHTMLPage(), true)
+            Mode.CLASSIC -> HTML(asHTMLPage(), true)
         }
     }
 

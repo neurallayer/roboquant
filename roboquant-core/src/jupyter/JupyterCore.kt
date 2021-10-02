@@ -16,7 +16,6 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
         return true
     }
 
-
     override fun render(throwable: Throwable): Any {
         val output = StringWriter()
         PrintWriter(output).use { throwable.printStackTrace(it) }
@@ -26,23 +25,10 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
                 <pre style="background: transparent;">${output.toString().escapeHtml()}</pre>         
            </details>      
         """.trimIndent()
-        val isolated = Output.mode === Output.Mode.NOTEBOOK
+        val isolated = Output.mode === Output.Mode.CLASSIC
         return HTML(result, isolated)
     }
 
-    fun render2(throwable: Throwable): Any {
-        val output = StringWriter()
-        PrintWriter(output).use { throwable.printStackTrace(it) }
-        val result = """
-        <details>
-            <summary><span style="color: red;">Exception:</span>${throwable.message.escapeHtml()}</summary>
-            <h4>Full stack trace</h4>
-            <pre>${output.toString().escapeHtml()}</pre>
-        </details>
-        """.trimIndent()
-        val isolated = Output.mode === Output.Mode.NOTEBOOK
-        return HTML(result, isolated)
-    }
 }
 
 /**
