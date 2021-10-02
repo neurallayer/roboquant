@@ -9,6 +9,9 @@ import org.roboquant.common.TimeFrame
 import org.roboquant.common.clean
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.*
 
 /**
  * Shows the correlation between the change in prices between two or more assets
@@ -25,7 +28,7 @@ class PriceCorrelationChart(
 
     private fun collectPrices(): Map<Asset, List<Double>> = runBlocking {
         val channel = EventChannel(timeFrame = timeFrame)
-        val result = mutableMapOf<Asset, MutableList<Double>>()
+        val result = TreeMap<Asset, MutableList<Double>>()
 
         val job = launch {
             feed.play(channel)
@@ -51,20 +54,77 @@ class PriceCorrelationChart(
         return@runBlocking result
     }
 
-    private fun getMatrix() {
+    private fun getMatrix(prices: Map<Asset, List<Double>>): MutableList<Triple<Int, Int, BigDecimal>> {
         val calc = PearsonsCorrelation()
-        val prices = collectPrices()
-        for ((asset1, data1)  in prices)
-            for ((asset2, data2) in prices) {
+        val result = mutableListOf<Triple<Int, Int, BigDecimal>>()
+        for ((x, data1) in prices.values.withIndex()) {
+            for ((y, data2) in prices.values.withIndex()) {
                 val data = Pair(data1, data2).clean()
                 val corr = calc.correlation(data.first, data.second)
-                println("$asset1 $asset2 $corr")
+                val corrBD = BigDecimal(corr).setScale(2, RoundingMode.HALF_DOWN)
+                result.add((Triple(x, y, corrBD)))
             }
+        }
+        return result
     }
 
-
     override fun renderOption(): String {
-        val m = getMatrix()
-        return ""
+        val prices = collectPrices()
+        val labels = prices.keys.map { it.symbol }
+        val labelsData =  gsonBuilder.create().toJson(labels)
+
+        val data = getMatrix(prices)
+        val dataJson = gsonBuilder.create().toJson(data)
+
+        return """
+            {
+              tooltip: {
+                position: 'top',
+                formatter: function (p) {
+                      yLabel = option.yAxis.data[p.data[1]];    
+                      return p.name + ':' + yLabel +" = " + p.data[2];
+                }
+              },
+              ${renderGrid()},
+               toolbox: {
+                    feature: {
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+              xAxis: {
+                type: 'category',
+                data: $labelsData
+              },
+              yAxis: {
+                type: 'category',
+                data: $labelsData
+              },
+              visualMap: {
+                min: -1,
+                max: 1,
+                calculable: true,
+                orient: 'horizontal',
+                left: 'center',
+                top: 'top',
+                inRange : { color: ['#FF0000', '#00FF00'] }
+              },
+              series: [
+                {
+                  type: 'heatmap',
+                  data: $dataJson,
+                  label: {
+                    show: true
+                  },
+                  emphasis: {
+                    itemStyle: {
+                      shadowBlur: 10,
+                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                  }
+                }
+              ]
+            }
+        """.trimIndent()
     }
 }
