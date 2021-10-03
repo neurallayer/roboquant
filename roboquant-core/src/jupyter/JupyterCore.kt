@@ -73,6 +73,7 @@ internal class JupyterCore : JupyterIntegration() {
 
         onLoaded {
             addThrowableRenderer(RoboquantThrowableRenderer())
+            execute("%logLevel warn")
         }
 
         /**
