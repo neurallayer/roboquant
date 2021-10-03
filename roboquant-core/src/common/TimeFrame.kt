@@ -144,7 +144,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Is there any overlap between this timeframe and the [other] timeframe
+     * Is there overlap between this timeframe and the [other] timeframe
      */
     fun overlap(other: TimeFrame): Boolean {
         val startTime = if (start > other.start) start else other.start

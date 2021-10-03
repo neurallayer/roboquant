@@ -192,7 +192,10 @@ abstract class Chart : Output() {
         """.trimIndent()
     }
 
-
+    /**
+     * Subclasses will need to return the value of the option attribute. Although is can be a plain JSON string, this is
+     * not required, and it can be any valid JavaScript object including any JavaScript code.
+     */
     protected abstract fun renderOption(): String
 
 }

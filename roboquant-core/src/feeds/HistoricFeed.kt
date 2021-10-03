@@ -2,7 +2,7 @@ package org.roboquant.feeds
 
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
-import org.roboquant.common.findBySymbol
+import org.roboquant.common.getBySymbol
 import org.roboquant.common.split
 import java.time.Instant
 import java.time.Period
@@ -63,7 +63,7 @@ interface HistoricFeed : AssetFeed {
      * @param symbol
      * @return The found asset or an exception
      */
-    fun find(symbol: String): Asset = assets.findBySymbol(symbol)
+    fun find(symbol: String): Asset = assets.getBySymbol(symbol)
 
 }
 

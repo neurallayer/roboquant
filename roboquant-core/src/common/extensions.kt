@@ -174,3 +174,13 @@ fun Pair<List<Double>, List<Double>>.clean(): Pair<DoubleArray, DoubleArray> {
 
 
 fun String?.escapeHtml() : String  = StringEscapeUtils.escapeHtml4(this ?: "")
+
+
+/**
+ * Provide a [Summary] for a collection of any objects
+ */
+fun Collection<Any?>.summary(): Summary {
+    val result = Summary("${this.javaClass.simpleName}s")
+    for (obj in this) result.add(obj?.toString() ?: "NULL")
+    return result
+}

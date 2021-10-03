@@ -15,7 +15,7 @@
     <name>roboquant-crypto</name>
 
     <properties>
-        <xchange.version>5.0.9</xchange.version>
+        <xchange.version>5.0.11</xchange.version>
     </properties>
 
     <build>

@@ -8,10 +8,8 @@ internal class PriceCorrelationChartTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears(1)
+        val feed = RandomWalk.lastYears(1, 5)
         val chart = PriceCorrelationChart(feed, feed.assets)
-        chart.render()
-        println(chart.asHTML())
         assertTrue(chart.asHTML().isNotBlank())
     }
 

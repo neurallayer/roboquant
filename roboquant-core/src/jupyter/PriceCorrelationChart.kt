@@ -75,6 +75,7 @@ class PriceCorrelationChart(
         return result
     }
 
+    /** @suppress */
     override fun renderOption(): String {
         val prices = collectPrices()
         val labels = prices.keys.map { it.symbol }
@@ -92,13 +93,16 @@ class PriceCorrelationChart(
                       return p.name + ':' + yLabel +" = " + p.data[2];
                 }
               },
+              title: {
+                    text: '${assets.size} assets ${timeFrame.toPrettyString()}'
+              },
               ${renderGrid()},
-               toolbox: {
-                    feature: {
-                        restore: {},
-                        saveAsImage: {}
-                    }
-                },
+              toolbox: {
+                feature: {
+                    restore: {},
+                    saveAsImage: {}
+                }
+              },
               xAxis: {
                 type: 'category',
                 data: $labelsData
@@ -108,8 +112,9 @@ class PriceCorrelationChart(
                 data: $labelsData
               },
               visualMap: {
-                min: -1,
-                max: 1,
+                min: -1.0,
+                max: 1.0,
+                precision: 2,
                 calculable: true,
                 orient: 'horizontal',
                 left: 'center',

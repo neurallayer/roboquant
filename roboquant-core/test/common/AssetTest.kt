@@ -26,9 +26,10 @@ internal class AssetTest {
         val b = Asset("TEST2", AssetType.STOCK, "USD", "NYSE")
         val assets = listOf(a, b)
 
-        assertEquals(a, assets.findBySymbol("TEST"))
-        assertEquals(b, assets.findByExchange("NYSE")[0])
-        assertEquals(b, assets.findByCurrency("USD")[0])
+        assertEquals(a, assets.getBySymbol("TEST"))
+        assertEquals(a, assets.findBySymbols("TEST").first())
+        assertEquals(b, assets.findByExchanges("NYSE")[0])
+        assertEquals(b, assets.findByCurrencies("USD")[0])
     }
 
 }

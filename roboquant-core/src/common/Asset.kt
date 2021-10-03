@@ -142,21 +142,26 @@ data class Asset(
 
 
 /**
- * Find an asset based on its [symbol] name. Will throw a NoSuchElementException if no asset is found. If there are
+ * Get an asset based on its [symbol] name. Will throw a NoSuchElementException if no asset is found. If there are
  * multiple assets with the same symbol, the first one will be returned.
  */
-fun Collection<Asset>.findBySymbol(symbol: String): Asset = first { it.symbol == symbol }
+fun Collection<Asset>.getBySymbol(symbol: String): Asset = first { it.symbol == symbol }
 
 /**
- * Find all assets based on their [currencyCode]. Returns an empty list if no matching assets can be found.
+* Find an asset based on its [symbols] name. Will return an empty list if no assets are matched.
+*/
+fun Collection<Asset>.findBySymbols(vararg symbols: String): List<Asset> = filter { it.symbol in symbols }
+
+/**
+ * Find all assets based on their [currencyCodes]. Returns an empty list if no matching assets can be found.
  */
-fun Collection<Asset>.findByCurrency(currencyCode: String): List<Asset> = filter { it.currencyCode == currencyCode }
+fun Collection<Asset>.findByCurrencies(vararg currencyCodes: String): List<Asset> = filter { it.currencyCode in currencyCodes }
 
 
 /**
- * Find  all assets based on their [exchangeCode]. Returns an empty list if no matching assets can be found.
+ * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.
  */
-fun Collection<Asset>.findByExchange(exchangeCode: String): List<Asset> = filter { it.exchangeCode == exchangeCode }
+fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset> = filter { it.exchangeCode in exchangeCodes }
 
 /**
  * Select [n] random assets from a collection, without duplicates. [n] has to equal or smaller than the size of the

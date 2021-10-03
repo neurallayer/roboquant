@@ -1,7 +1,7 @@
 package org.roboquant.alpaca
 
 import org.roboquant.common.TimeFrame
-import org.roboquant.common.findBySymbol
+import org.roboquant.common.getBySymbol
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -13,7 +13,7 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaFeed()
         val assets = feed.availableAssets
-        val apple = assets.findBySymbol("AAPL")
+        val apple = assets.getBySymbol("AAPL")
         feed.subscribe(apple)
         feed.disconnect()
         feed.connect()
