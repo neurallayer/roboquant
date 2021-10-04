@@ -42,46 +42,70 @@ class Signal(
     constructor(asset: Asset, rating: Rating, strategy: Strategy) : this(asset, rating, source = "$strategy")
 
     /**
-     * Does this signal conflict with another signal? Two signals conflict if they contain the same asset but opposite
-     * ratings. So one has a positive outlook and the other one is  negative.
-     *
-     * @param other
+     * Does this signal conflict with an [other] signal. Two signals conflict if they contain the same asset but opposite
+     * ratings. So one signal has a positive outlook and the other one is negative.
      */
     fun conflicts(other: Signal) = asset == other.asset && rating.conflicts(other.rating)
 
     fun toMarketOrder(qty: Double) = MarketOrder(asset, qty, tag = source)
 
-    fun toLimitOrder(qty: Double) : LimitOrder {
-        require( ! takeProfit.isNaN()) { "Cannot create limit order since no take profit has been provided"}
+    fun toLimitOrder(qty: Double): LimitOrder {
+        require(!takeProfit.isNaN()) { "Cannot create limit order since no take profit has been provided" }
         return LimitOrder(asset, qty, takeProfit, tag = source)
     }
 
 }
 
 /**
- * Resolve conflicting signals. For many strategies this might not be necessary since there is only 1 signal per
- * asset, but as strategies are combined, this issue might pop up.
- *
- * Currently, the following rules are supported:
- *
- * - NONE: don't do anything
- * - FIRST: the first found signal for an asset will be returned
- * - LAST: the last found signal for an asset will be returned
- * - NO_CONFLICT: if there are conflicting signals, nothing will be returned for that asset
- *
- * @param rule
- * @return the filtered list of signals
+ * Different types of Signal Resolutions available
  */
-fun List<Signal>.resolve(rule: String = "FIRST"): List<Signal> {
+enum class SignalResolution {
+
+    /**
+     * Don't resolve any potential signal conflicts
+     */
+    NONE,
+
+    /**
+     * Select first signal found for an asset
+     */
+    FIRST,
+
+    /**
+     * Select last signal found for an asset
+     */
+    LAST,
+
+    /**
+     * Select the first signal for an asset assuming there are no conflicting signals, see also [Signal.conflicts]
+     */
+    NO_CONFLICTS,
+
+    /**
+     * Select a signal for an asset is there are no duplicate signals, even if the duplicate signals are not
+     * conflicting
+     */
+    NO_DUPLICATES,
+}
+
+/**
+ * Resolve conflicting signals. For many strategies this might not be necessary since there is only 1 signal per
+ * asset, but as strategies are combined, this issue might pop up. You can specify the resolution [rule] to apply
+ * when solving conflicts, the default being [SignalResolution.NO_CONFLICTS].
+ *
+ * It returns the list of signals without any conflicts.
+ */
+fun List<Signal>.resolve(rule: SignalResolution = SignalResolution.NO_CONFLICTS): List<Signal> {
     if (size < 2) return this
 
     return when (rule) {
-        "NONE" -> this
-        "FIRST" -> distinctBy { it.asset }
-        "LAST" -> asReversed().distinctBy { it.asset }.asReversed()
-        "NO_CONFLICTS" -> filter { none { f -> f.conflicts(it) } }
-        else -> {
-            throw Exception("Unknown resolve rule $rule")
+        SignalResolution.NONE -> this
+        SignalResolution.FIRST -> distinctBy { it.asset }
+        SignalResolution.LAST -> asReversed().distinctBy { it.asset }.asReversed()
+        SignalResolution.NO_CONFLICTS -> filter { none { f -> f.conflicts(it) } }.distinctBy { it.asset }
+        SignalResolution.NO_DUPLICATES -> {
+            val assets = this.groupBy { it.asset }
+            filter { assets[it.asset]!!.size == 1 }
         }
     }
 }

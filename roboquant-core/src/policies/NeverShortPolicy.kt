@@ -6,19 +6,23 @@ import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.orders.SingleOrder
 import org.roboquant.strategies.Signal
+import org.roboquant.strategies.SignalResolution
 import org.roboquant.strategies.resolve
 import kotlin.math.absoluteValue
 import kotlin.math.floor
 import kotlin.math.min
 
 /**
- * This policy will adhere to the following rules when it converts signals into orders:
+ * This is the default policy that will be used if no policy is specified.
+ *
+ * It will adhere to the following rules when it converts signals into orders:
  *
  * - Remove conflicting signals (configurable)
  * - If there still is an open order outstanding for the same asset, don't do anything
  * - If there is already an open position for the same asset, don't place an additional BUY order
- * - A SELL order will liquidate the complete position for that asset
- * - Never go short for an asset
+ * - A SELL order will liquidate the full position for that asset in the portfolio if available
+ * - Never go short for an asset (configurable)
+ * - Never create BUY orders of which the total value is below a minimum amount (configurable)
  *
  *
  * @property minAmount
@@ -28,7 +32,7 @@ import kotlin.math.min
 open class NeverShortPolicy(
     private val minAmount: Double = 5000.0,
     private val maxAmount: Double = 20_000.0,
-    private val signalResolve: String = "NO_CONFLICTS",
+    private val signalResolve: SignalResolution = SignalResolution.NO_CONFLICTS,
     private val  shorting: Boolean = false,
     private val  increasePosition : Boolean = false,
     private val  oneOrderPerAsset: Boolean = true

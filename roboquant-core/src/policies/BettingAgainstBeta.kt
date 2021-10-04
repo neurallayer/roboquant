@@ -7,9 +7,8 @@ import org.roboquant.brokers.Portfolio
 import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.SingleOrder
+import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.utils.AssetReturns
 import java.time.Instant
@@ -17,7 +16,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.min
 
 /**
- * Betting against Beta (BaB) is a strategy based on the premise that high beta stocks might be overvalued and
+ * Betting against Beta (BaB) is actually a strategy based on the premise that high beta stocks might be overvalued and
  * low beta stocks undervalued. So this strategy goes long on low beta stocks and short on high beta stocks.
  *
  * It will then hold these positions for a number of days before re-evaluating the strategy. After re-evaluation, the
@@ -25,15 +24,12 @@ import kotlin.math.min
  *
  * Since this strategy controls the complete [Portfolio] and not just generates signals, it is implemented as a [Policy].
  *
- * Betting against Beta was first described in
+ * > Betting against Beta was first described by Andrea Frazzinia and Lasse Heje Pedersen in Journal of Financial Economics
  *
- *      Andrea Frazzinia and Lasse Heje Pedersen
- *      Journal of Financial Economics
- *      Volume 111, Issue 1, January 2014, Pages 1-25
  *
  * @constructor Create empty Betting against beta
  */
-class BettingAgainstBeta(
+open class BettingAgainstBeta(
     assets: Collection<Asset>,
     val market: Asset,
     private val holdingPeriodDays: Int = 20,
@@ -47,7 +43,7 @@ class BettingAgainstBeta(
     val buffers = AssetReturns(assets, windowSize, Double.NaN)
 
     init {
-        require(market in assets)
+        require(market in assets) { "The selected market asset $market also has to be part of all assets" }
     }
 
     /**
@@ -78,7 +74,7 @@ class BettingAgainstBeta(
      * @param account
      * @return
      */
-    private fun rebalance(betas: List<Pair<Asset, Double>>, account: Account, event: Event): List<SingleOrder> {
+    private fun rebalance(betas: List<Pair<Asset, Double>>, account: Account, event: Event): List<Order> {
         // maximum number of short and long assets we want to have in portfolio
         val max = min(betas.size / 2, maxAssetsInPortfolio / 2)
 
@@ -100,7 +96,15 @@ class BettingAgainstBeta(
         val diff = account.portfolio.diff(targetPortfolio)
 
         // Transform difference into Market Orders
-        return diff.map { MarketOrder(it.key, it.value) }
+        return diff.map { getOrder(it.key, it.value, account, event) }
+    }
+
+    /**
+     * Override this method if you want to override the default generation of MarketOrders with a different
+     * order type like LimitOrders.
+     */
+    protected fun getOrder(asset: Asset, quantity: Double, account: Account, event: Event): Order {
+        return MarketOrder(asset, quantity)
     }
 
 
@@ -122,13 +126,7 @@ class BettingAgainstBeta(
 
             // Update the re-balance date
             rebalanceDate = event.now.plus(holdingPeriodDays.toLong(), ChronoUnit.DAYS)
-
-            val result = rebalance(betas, account, event)
-            if (recording) {
-                record("bab.sell", result.filter { it.quantity < 0 }.size)
-                record("bab.buy", result.filter { it.quantity > 0 }.size)
-            }
-            return result
+            return rebalance(betas, account, event)
         }
         return listOf()
     }
@@ -142,6 +140,5 @@ class BettingAgainstBeta(
         buffers.clear()
         rebalanceDate = Instant.MIN
     }
-
 
 }

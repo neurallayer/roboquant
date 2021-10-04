@@ -27,6 +27,7 @@ class BinanceFeed(apiKey: String? = null, secret:String? = null, private val use
     private val subscriptions = mutableMapOf<String, Asset>()
     private val logger = Logging.getLogger("BinanceFeed")
     private val closeables = mutableListOf<Closeable>()
+    private val factory = BinanceConnection.getFactory(apiKey, secret)
 
 
     /**
@@ -35,8 +36,12 @@ class BinanceFeed(apiKey: String? = null, secret:String? = null, private val use
     val assets
         get() = subscriptions.values.distinct().toSortedSet()
 
+
+    val availableAssets by lazy {
+        BinanceConnection.retrieveAssets(factory)
+    }
+
     init {
-        val factory = BinanceConnection.getFactory(apiKey, secret)
         client = factory.newWebSocketClient()
         logger.fine { "Started BinanceFeed using web-socket client" }
     }
@@ -45,15 +50,15 @@ class BinanceFeed(apiKey: String? = null, secret:String? = null, private val use
     /**
      * Subscribe to the [PriceBar] actions one or more currency pairs.
      *
-     * @param names the currency pairs you want to subscribe to
+     * @param currencyPairs the currency pairs you want to subscribe to
      * @param interval the interval of the PriceBar. Default is  1 minute
      */
     fun subscribePriceBar(
-        vararg names: String,
+        vararg currencyPairs: String,
         interval: Interval = Interval.ONE_MINUTE
     ) {
-        require(names.isNotEmpty()) { "You need to provide at least 1 name"}
-        for (name in names) {
+        require(currencyPairs.isNotEmpty()) { "You need to provide at least 1 currency pair"}
+        for (name in currencyPairs) {
             val asset = CryptoBuilder().invoke(name.uppercase(), binanceTemplate)
             logger.info { "Subscribing to $asset" }
 

@@ -5,7 +5,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Config
 
-internal val binanceTemplate = Asset("TEMPLATE", AssetType.CRYPTO, exchangeCode = "Binance")
+internal val binanceTemplate = Asset("TEMPLATE", AssetType.CRYPTO, exchangeCode = "BINANCE")
 
 internal object BinanceConnection {
 
@@ -17,6 +17,19 @@ internal object BinanceConnection {
         val finalSecret = secret ?: Config.getProperty(SECRET_NAME)
         return if (apiKey == null ) BinanceApiClientFactory.newInstance() else BinanceApiClientFactory.newInstance(finalKey, finalSecret)
     }
+
+    /**
+     * get available assets
+     *
+     * TODO currently broken, seems to be a Binance problem
+     */
+    fun retrieveAssets(api: BinanceApiClientFactory): List<Asset> {
+        val client = api.newRestClient()
+        return client.exchangeInfo.symbols.map {
+            binanceTemplate.copy(symbol = it.symbol, currencyCode = it.quoteAsset)
+        }
+    }
+
 
 
 }

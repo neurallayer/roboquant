@@ -63,8 +63,8 @@ class CryptoBuilder : AssetBuilder {
     override fun invoke(name: String, template: Asset): Asset {
         val symbol: String
         val currencyCode: String
-        if (name.contains('_') || name.contains('-') || name.contains(' ')) {
-            val items = name.split('_', '-', ' ')
+        val items = name.split('_', '-', ' ', '/')
+        if (items.size == 2) {
             symbol = items[0]
             currencyCode = items[1]
         } else {

@@ -1,14 +1,11 @@
 package org.roboquant.binance
 
-import org.roboquant.Roboquant
-import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.common.TimeFrame
-import org.roboquant.logging.InfoLogger
-import org.roboquant.metrics.AccountSummary
-import org.roboquant.metrics.ProgressMetric
-import org.roboquant.policies.NeverShortPolicy
-import org.roboquant.strategies.TAStrategy
 import org.junit.Test
+import org.roboquant.common.TimeFrame
+import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.filter
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class BinanceFeedTestIT {
 
@@ -16,53 +13,18 @@ internal class BinanceFeedTestIT {
     fun testBinanceFeed() {
         System.getProperty("TEST_BINANCE") ?: return
 
-        val broker = SimBroker.withDeposit(10_000.00, "BUSD")
-        val strategy = TAStrategy(15)
-
-        strategy.buy {
-            (ta.cdlMorningStar(it) || ta.cdlMorningDojiStar(it)) && ta.ema(it.close, 5) > ta.ema(it.close, 9)
-        }
-
-        strategy.sell {
-            ta.cdl2Crows(it) && ta.ema(it.close, 3) < ta.ema(it.close, 5)
-        }
-
-        val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), broker = broker)
         val feed = BinanceFeed()
+
+        val availableAssets = feed.availableAssets
+        assertTrue(availableAssets.isNotEmpty())
+
+        assertTrue(feed.assets.isEmpty())
         feed.subscribePriceBar("BTC-BUSD")
-        assert(feed.assets.isNotEmpty())
+        assertFalse(feed.assets.isEmpty())
 
-        val timeFrame = TimeFrame.nextMinutes(2)
-        roboquant.run(feed, timeFrame)
-        broker.account.summary().log()
-    }
-
-
-    @Test
-    fun testBinanceFeed2() {
-        System.getProperty("binance") ?: return
-
-        val broker = SimBroker.withDeposit(1_000_000.00, "BUSD")
-        val strategy = TAStrategy(6)
-
-        strategy.buy {
-            ta.sma(it.close, 3) > ta.sma(it.close, 5)
-        }
-
-        strategy.sell {
-            false
-        }
-
-        val p = NeverShortPolicy(10_000.0, 200_000.00)
-        p.recording = true
-
-        val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), policy = p, logger = InfoLogger(), broker = broker)
-        val feed = BinanceFeed()
-        feed.subscribePriceBar("BTC-BUSD")
-
-        val timeFrame = TimeFrame.nextMinutes(30)
-        roboquant.run(feed, timeFrame)
-        broker.account.summary().log()
+        val timeFrame = TimeFrame.nextMinutes(10)
+        val prices = feed.filter<PriceBar>(timeFrame = timeFrame)
+        assertTrue(prices.isNotEmpty())
         feed.disconnect()
     }
 

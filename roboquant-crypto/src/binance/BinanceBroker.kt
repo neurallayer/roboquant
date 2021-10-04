@@ -1,4 +1,4 @@
-@file:Suppress("unused", "unused", "unused", "unused")
+@file:Suppress("unused")
 
 package org.roboquant.binance
 
@@ -27,7 +27,7 @@ import kotlin.math.absoluteValue
  *
  */
 class BinanceBroker(
-    apiKey: String? = null, secret:String? = null,
+    apiKey: String? = null, secret: String? = null,
     baseCurrencyCode: String = "USD",
     private val useMachineTime: Boolean = true
 ) : Broker {
@@ -38,7 +38,9 @@ class BinanceBroker(
     private val placedOrders = mutableMapOf<Long, SingleOrder>()
     private var orderId = 0
 
-    val assets = retrieveAssets()
+    val assets by lazy {
+        retrieveAssets()
+    }
 
     init {
         val factory = BinanceConnection.getFactory(apiKey, secret)
@@ -52,7 +54,6 @@ class BinanceBroker(
             Asset(it.symbol, AssetType.CRYPTO, it.quoteAsset, "BINANCE")
         }
     }
-
 
     private fun updateAccount() {
         val balances = client.account.balances
@@ -70,15 +71,14 @@ class BinanceBroker(
         }
     }
 
-
     /**
-     * Place orders on a XChange supported exchange using the trade service.
      * @TODO test with a real account on BinanceBroker
      *
      * @param orders
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
+        true && TODO()
 
         for (order in orders) {
             val asset = order.asset
@@ -120,8 +120,8 @@ class BinanceBroker(
      */
     private fun cancelOrder(cancellation: CancellationOrder) {
         val c = cancellation.order
-        require(c.id.isNotEmpty()) {  "Require non empty id when cancelling and order $c"}
-        require(c.asset.type == AssetType.CRYPTO) {  "BinanceBroker only support CRYPTO orders ${c.asset}"}
+        require(c.id.isNotEmpty()) { "Require non empty id when cancelling and order $c" }
+        require(c.asset.type == AssetType.CRYPTO) { "BinanceBroker only support CRYPTO orders ${c.asset}" }
         val symbol = binanceSymbol(c.asset)
         val r = CancelOrderRequest(symbol, c.id)
         client.cancelOrder(r)
@@ -159,5 +159,5 @@ class BinanceBroker(
         logger.info { "$newOrder" }
         return newOrder
     }
-
 }
+

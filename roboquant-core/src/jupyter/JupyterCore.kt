@@ -9,7 +9,6 @@ import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.concurrent.CopyOnWriteArrayList
 
-
 internal class RoboquantThrowableRenderer : ThrowableRenderer {
 
     override fun accepts(throwable: Throwable): Boolean {
@@ -41,12 +40,10 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
  */
 internal class JupyterCore : JupyterIntegration() {
 
-
     companion object {
         private val outputs = CopyOnWriteArrayList<Output>()
         fun render(output: Output) = outputs.add(output)
     }
-
 
     override fun Builder.onLoaded() {
         import(
