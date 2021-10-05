@@ -27,13 +27,12 @@ import java.time.Instant
 class IBKRFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int = 2) : LiveFeed() {
 
     private var tickerId: Int = 0
-    private val wrapper: Wrapper
     private var client: EClientSocket
     private val subscriptions = mutableMapOf<Int, Asset>()
     val logger = Logging.getLogger("IBKRFeed")
 
     init {
-        wrapper = Wrapper()
+        val wrapper = Wrapper()
         client = IBKRConnection.connect(wrapper, host, port, clientId)
         client.reqCurrentTime()
     }

@@ -9,7 +9,7 @@ import java.time.Instant
  *
  * @constructor Create empty Auto c s v data time parser
  */
-internal class AutoDetectTimeParser(val exchangeCode: String = "NASDAQ") : TimeParser {
+class AutoDetectTimeParser(val exchangeCode: String = "NASDAQ") : TimeParser {
 
     private lateinit var parser: TimeParser
 

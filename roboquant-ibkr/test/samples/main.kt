@@ -1,5 +1,6 @@
 package org.roboquant.samples
 
+import ibkr.IBKRHistoricFeed
 import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.SimBroker
@@ -8,7 +9,6 @@ import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRFeed
-import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.PriceMetric
 import org.roboquant.metrics.ProgressMetric
@@ -70,12 +70,32 @@ fun ibkrFeed() {
 }
 
 
+
+fun ibkrHistoricFeed() {
+    val feed = IBKRHistoricFeed()
+    val template = Asset("", AssetType.STOCK, "EUR", "AEB")
+    feed.retrieve(template.copy(symbol = "ABN"), template.copy(symbol = "ASML"), template.copy(symbol = "KPN"))
+
+    val cash = Cash(Currency.EUR to 1_000_000.0)
+    val broker = SimBroker(cash)
+
+    val strategy = EMACrossover.shortTerm()
+    val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
+    roboquant.run(feed)
+    roboquant.logger.summary().log()
+    roboquant.broker.account.summary().log()
+    feed.disconnect()
+}
+
+
+
 fun main() {
 
-    when("BROKER_FEED") {
+    when("HISTORIC") {
         "BROKER" -> ibkrBroker()
         "FEED" -> ibkrFeed()
         "BROKER_FEED" -> ibkrBrokerFeed()
+        "HISTORIC" -> ibkrHistoricFeed()
     }
 
 }

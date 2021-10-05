@@ -4,6 +4,9 @@ import com.ib.client.*
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.util.*
 
 /**
  * Common utilities for both IBKR Broker and IBKR Feed implementations
@@ -41,6 +44,8 @@ internal object IBKRConnection {
         }.start()
         return client
     }
+
+    fun getFormattedTime(time: Instant): String = SimpleDateFormat("yyyyMMdd HH:mm:ss").format(Date.from(time))
 
     /**
      * Convert a roboquant asset to an IBKR contract.
