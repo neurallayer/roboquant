@@ -33,6 +33,7 @@
         <module>roboquant-core</module>
         <module>roboquant-extra</module>
         <module>roboquant-crypto</module>
+        <module>roboquant-ibkr</module>
     </modules>
 
     <properties>
