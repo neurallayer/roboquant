@@ -31,17 +31,13 @@ fun ibkrBroker() {
 
 fun ibkrBrokerFeed() {
 
-
     val currencyConverter = FixedExchangeRates(Currency.EUR, Currency.USD to 0.89)
     val broker = IBKRBroker(currencyConverter = currencyConverter)
-    broker.connect(port = 4002)
+    broker.account.portfolio.summary().log()
 
     // Subscribe to all assets in the portfolio
-    val feed = IBKRFeed(port = 4002)
+    val feed = IBKRFeed()
     val assets = broker.account.portfolio.assets
-    // val asset = Asset("ABN", AssetType.STK, "EUR", "AEB")
-    println(assets.first().serialize())
-    println(assets.last().serialize())
     feed.subscribe(*assets.toTypedArray())
 
     val strategy = EMACrossover.shortTerm()
@@ -65,8 +61,7 @@ fun ibkrFeed() {
     val broker = SimBroker(cash)
 
     val strategy = EMACrossover.shortTerm()
-    val roboquant =
-        Roboquant(strategy, AccountSummary(), ProgressMetric(), PriceMetric(asset), broker = broker)
+    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), PriceMetric(asset), broker = broker)
     val tf = TimeFrame.nextMinutes(10)
 
     roboquant.run(feed, tf)
@@ -77,7 +72,7 @@ fun ibkrFeed() {
 
 fun main() {
 
-    when("FEED") {
+    when("BROKER_FEED") {
         "BROKER" -> ibkrBroker()
         "FEED" -> ibkrFeed()
         "BROKER_FEED" -> ibkrBrokerFeed()

@@ -3,16 +3,15 @@ package org.roboquant.ibkr
 import com.ib.client.*
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
-import java.util.logging.Logger
+import org.roboquant.common.Logging
 
 /**
  * Common utilities for both IBKR Broker and IBKR Feed implementations
  *
  */
-internal class IBKRConnection(wrapper: EWrapper, private val logger: Logger) {
+internal object IBKRConnection {
 
-    private val signal = EJavaSignal()
-    val client = EClientSocket(wrapper, signal)
+    private val logger = Logging.getLogger("IBKRConnection")
 
     /**
      * Connect to a IBKR TWS or Gateway
@@ -21,7 +20,9 @@ internal class IBKRConnection(wrapper: EWrapper, private val logger: Logger) {
      * @param port
      * @param clientId
      */
-    fun connect(host: String, port: Int, clientId: Int) {
+    fun connect(wrapper: EWrapper, host: String, port: Int, clientId: Int): EClientSocket {
+        val signal = EJavaSignal()
+        val client = EClientSocket(wrapper, signal)
         client.isAsyncEConnect = false
         client.eConnect(host, port, clientId)
         logger.info { "Connected to IBKR on $host and port $port with clientId $clientId" }
@@ -38,10 +39,7 @@ internal class IBKRConnection(wrapper: EWrapper, private val logger: Logger) {
                 }
             }
         }.start()
-    }
-
-    fun disconnect() {
-        client.eDisconnect()
+        return client
     }
 
     /**
@@ -58,7 +56,7 @@ internal class IBKRConnection(wrapper: EWrapper, private val logger: Logger) {
         contract.currency(asset.currencyCode)
         if (asset.multiplier != 1.0) contract.multiplier(asset.multiplier.toString())
 
-        when(asset.type) {
+        when (asset.type) {
             AssetType.STOCK -> contract.secType(Types.SecType.STK)
             AssetType.FOREX -> contract.secType(Types.SecType.CASH)
             AssetType.BOND -> contract.secType(Types.SecType.BOND)
@@ -75,7 +73,6 @@ internal class IBKRConnection(wrapper: EWrapper, private val logger: Logger) {
         if (asset.id.isNotEmpty()) contract.conid(asset.id.toInt())
         return contract
     }
-
 
 }
 

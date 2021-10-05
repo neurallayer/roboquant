@@ -13,8 +13,6 @@ internal class IBKRBrokerTestIT {
         val broker = IBKRBroker()
         val past = Instant.now()
 
-        broker.reqOpenOrders()
-        broker.reqAccountUpdates()
         assertTrue(broker.account.time > past)
         broker.disconnect()
 

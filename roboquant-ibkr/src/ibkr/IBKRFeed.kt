@@ -1,6 +1,7 @@
 package org.roboquant.ibkr
 
 import com.ib.client.DefaultEWrapper
+import com.ib.client.EClientSocket
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
@@ -27,18 +28,17 @@ class IBKRFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int = 2) 
 
     private var tickerId: Int = 0
     private val wrapper: Wrapper
-    private val ibkrConnection: IBKRConnection
+    private var client: EClientSocket
     private val subscriptions = mutableMapOf<Int, Asset>()
     val logger = Logging.getLogger("IBKRFeed")
 
     init {
         wrapper = Wrapper()
-        ibkrConnection = IBKRConnection(wrapper, logger)
-        ibkrConnection.connect(host, port, clientId)
-        ibkrConnection.client.reqCurrentTime()
+        client = IBKRConnection.connect(wrapper, host, port, clientId)
+        client.reqCurrentTime()
     }
 
-    fun disconnect() = ibkrConnection.disconnect()
+    fun disconnect() = client.eDisconnect()
 
     /**
      * Subscribe to the realtime bars for a particular contract. Often IBKR platform requires a subscription in order
@@ -49,8 +49,8 @@ class IBKRFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int = 2) 
     fun subscribe(vararg assets: Asset, interval: Int = 5, type: String = "MIDPOINT") {
         for (asset in assets) {
             try {
-                val contract = ibkrConnection.getContract(asset)
-                ibkrConnection.client.reqRealTimeBars(++tickerId, contract, interval, type, false, arrayListOf())
+                val contract = IBKRConnection.getContract(asset)
+                client.reqRealTimeBars(++tickerId, contract, interval, type, false, arrayListOf())
                 subscriptions[tickerId] = asset
                 logger.info("Added subscription to receive realtime bars for ${contract.symbol()}")
             } catch (e: Exception) {

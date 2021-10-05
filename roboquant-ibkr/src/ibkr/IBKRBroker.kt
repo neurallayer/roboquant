@@ -32,41 +32,32 @@ import com.ib.client.Order as IBOrder
  *
  */
 class IBKRBroker(
+    host: String = "127.0.0.1",
+    port: Int = 4002,
+    clientId: Int = 1,
     currencyConverter: CurrencyConverter? = null,
     private val accountId: String? = null,
     private val enableOrders: Boolean = false,
 ) : Broker {
 
+    private var client: EClientSocket
     override val account: Account = Account(currencyConverter = currencyConverter)
     private var orderId = generateOrderId()
-    private val ibkrConnection: IBKRConnection
     private val placedOrders = mutableMapOf<Int, SingleOrder>()
     val logger = Logging.getLogger("IBKRBroker")
 
     init {
         if (enableOrders) logger.warning { "Enabled real orders, use at your own risk!!!" }
         val wrapper = Wrapper()
-        ibkrConnection = IBKRConnection(wrapper, logger)
-
+        client = IBKRConnection.connect(wrapper, host, port, clientId)
+        client.reqCurrentTime()
+        client.reqAccountUpdates(true, accountId)
+        client.reqOpenOrders()
+        waitTillSynced()
     }
 
-    fun disconnect() = ibkrConnection.disconnect()
+    fun disconnect() = client.eDisconnect()
 
-    /**
-     * Connect
-     *
-     * @param host
-     * @param port
-     * @param clientId
-     * @param waitTillSynced
-     */
-    fun connect(host: String = "127.0.0.1", port: Int = 4002, clientId: Int = 1, waitTillSynced: Boolean = true) {
-        ibkrConnection.connect(host, port, clientId)
-        ibkrConnection.client.reqCurrentTime()
-        reqAccountUpdates()
-        if (enableOrders) reqOpenOrders()
-        if (waitTillSynced) waitTillSynced()
-    }
 
     /**
      * Generate a starting orderId that most likely won't conflict with other orderIds already
@@ -81,9 +72,7 @@ class IBKRBroker(
         return (l1 - l2).toInt()
     }
 
-    fun reqAccountUpdates() {
-        ibkrConnection.client.reqAccountUpdates(true, accountId)
-    }
+
 
     /**
      * Wait till IBKR account is synchronized so roboquant has the correct assets and cash balance available.
@@ -95,10 +84,6 @@ class IBKRBroker(
     }
 
 
-    fun reqOpenOrders() {
-        ibkrConnection.client.reqOpenOrders()
-    }
-
     /**
      * Place a set of instruction
      *
@@ -107,12 +92,12 @@ class IBKRBroker(
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
+        if (! enableOrders) return account.clone()
+
 
         // First we place the cancellation orders
         for (cancellation in orders.filterIsInstance<CancellationOrder>()) {
-            if (enableOrders) {
-                ibkrConnection.client.cancelOrder(cancellation.order.id.toInt())
-            }
+            client.cancelOrder(cancellation.order.id.toInt())
         }
 
         // And now the regular new orders
@@ -121,14 +106,9 @@ class IBKRBroker(
             val ibOrder = getIBOrder(order)
             logger.fine("placing order $order")
             placedOrders[orderId] = order
-            val contract = ibkrConnection.getContract(order.asset)
-            if (enableOrders) {
-                ibkrConnection.client.placeOrder(orderId, contract, ibOrder)
-                account.orders.add(order)
-            } else {
-                logger.info("Would have placed order $ibOrder if enabled")
-            }
-
+            val contract = IBKRConnection.getContract(order.asset)
+            client.placeOrder(orderId, contract, ibOrder)
+            account.orders.add(order)
         }
 
         // We always return a clone so changes to account while running strategies don't cause inconsistencies.
@@ -239,7 +219,12 @@ class IBKRBroker(
         }
 
         private fun Contract.getAsset(): Asset {
-            val type = AssetType.valueOf(secType)
+            val type = when(secType()) {
+                Types.SecType.STK -> AssetType.STOCK
+                Types.SecType.BOND -> AssetType.BOND
+                Types.SecType.OPT -> AssetType.OPTION
+                else -> throw Exception("unknown type ${secType()}")
+            }
             val id = conid().toString()
             return Asset(
                 symbol = symbol(),
