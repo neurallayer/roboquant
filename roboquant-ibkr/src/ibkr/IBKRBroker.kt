@@ -60,7 +60,7 @@ class IBKRBroker(
      * @param clientId
      * @param waitTillSynced
      */
-    fun connect(host: String = "127.0.0.1", port: Int = 7497, clientId: Int = 1, waitTillSynced: Boolean = true) {
+    fun connect(host: String = "127.0.0.1", port: Int = 4002, clientId: Int = 1, waitTillSynced: Boolean = true) {
         ibkrConnection.connect(host, port, clientId)
         ibkrConnection.client.reqCurrentTime()
         reqAccountUpdates()

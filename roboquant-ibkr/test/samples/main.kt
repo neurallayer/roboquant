@@ -57,7 +57,7 @@ fun ibkrBrokerFeed() {
 
 
 fun ibkrFeed() {
-    val feed = IBKRFeed(port = 4002)
+    val feed = IBKRFeed()
     val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
     feed.subscribe(asset)
 
@@ -65,14 +65,13 @@ fun ibkrFeed() {
     val broker = SimBroker(cash)
 
     val strategy = EMACrossover.shortTerm()
-    val logger = MemoryLogger()
     val roboquant =
-        Roboquant(strategy, AccountSummary(), ProgressMetric(), PriceMetric(asset), broker = broker, logger = logger)
+        Roboquant(strategy, AccountSummary(), ProgressMetric(), PriceMetric(asset), broker = broker)
     val tf = TimeFrame.nextMinutes(10)
 
     roboquant.run(feed, tf)
     feed.disconnect()
-    logger.summary().log()
+    roboquant.logger.summary().log()
 }
 
 

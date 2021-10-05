@@ -15,6 +15,7 @@ Roboquant is an algorithmic trading platform that is fast and flexible while at 
 You can find out more at **[roboquant.org](https://roboquant.org)**
 ![roboquant Logo](/docs/roboquant_logo.png)
 
+Give this repository a star ⭐ if you like the project.
 
 ## Code sample
 To demonstrate how easy it is to get started, the following code snippet shows all the key ingredients required to back-test a trading strategy:
