@@ -1,15 +1,11 @@
 package org.roboquant.iex
 
-import org.roboquant.Roboquant
+import org.junit.Test
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
-import org.roboquant.logging.MemoryLogger
-import org.roboquant.metrics.AccountSummary
-import org.roboquant.metrics.OpenPositions
-import org.roboquant.strategies.EMACrossover
-import org.junit.Test
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
 import kotlin.test.assertTrue
-
 
 internal class IEXLiveTestIT {
 
@@ -22,12 +18,8 @@ internal class IEXLiveTestIT {
         feed.subscribeQuotes(asset)
         assertTrue(asset in feed.assets)
 
-        val strategy = EMACrossover()
-        val logger = MemoryLogger()
-        val roboquant = Roboquant(strategy, AccountSummary(), OpenPositions(), logger = logger)
-        val tf = TimeFrame.nextMinutes(3)
-        roboquant.run(feed, tf)
-        logger.summary()
+        val actions = feed.filter<PriceAction>(TimeFrame.nextMinutes(5))
+        assertTrue(actions.isNotEmpty())
     }
 
 }

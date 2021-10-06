@@ -1,6 +1,6 @@
 package org.roboquant.samples
 
-import ibkr.IBKRHistoricFeed
+import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.SimBroker

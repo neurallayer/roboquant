@@ -1,4 +1,4 @@
-package ibkr
+package org.roboquant.ibkr
 
 import com.ib.client.Bar
 import com.ib.client.DefaultEWrapper
@@ -6,7 +6,6 @@ import com.ib.client.EClientSocket
 import org.roboquant.common.Asset
 import org.roboquant.feeds.*
 import org.roboquant.feeds.csv.AutoDetectTimeParser
-import org.roboquant.ibkr.IBKRConnection
 import java.time.Instant
 import java.util.*
 import java.util.logging.Logger

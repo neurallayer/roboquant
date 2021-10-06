@@ -4,7 +4,7 @@
 [![Kotlin](https://img.shields.io/badge/kotlin-1.5-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![Automated Build](https://github.com/neurallayer/roboquant/actions/workflows/maven.yml/badge.svg)](https://github.com/neurallayer/roboquant/actions/workflows/maven.yml)
 [![APL v2](https://img.shields.io/badge/license-Apache%202-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?filepath=tutorials&urlpath=lab)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials)
 ![GitHub issues](https://img.shields.io/github/issues/neurallayer/roboquant)
 ![GitHub last commit](https://img.shields.io/github/last-commit/neurallayer/roboquant)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/neurallayer/roboquant)
@@ -51,7 +51,7 @@ If you have already Docker installed, all it takes is a single command to have a
 docker run --rm -p 8888:8888 roboquant/jupyter 
 ```
 
-This also comes with several tutorials. And if you just want to try it without any installation, go to[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?filepath=tutorials&urlpath=lab), although it might be a bit slow to start the environment. 
+This also comes with several tutorials. And if you just want to try it without any installation, go to[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials), although it might be a bit slow to start the environment. 
 
 ![Jupyter Lab](/docs/jupyter-lab.png)
 

@@ -1,14 +1,11 @@
 package org.roboquant.iex
 
-import org.roboquant.common.Config
-import org.roboquant.Roboquant
-import org.roboquant.common.Asset
-import org.roboquant.logging.MemoryLogger
-import org.roboquant.metrics.AccountSummary
-import org.roboquant.metrics.OpenPositions
-import org.roboquant.metrics.ProgressMetric
-import org.roboquant.strategies.EMACrossover
 import org.junit.Test
+import org.roboquant.common.Asset
+import org.roboquant.common.Config
+import org.roboquant.common.TimeFrame
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
 import kotlin.test.assertTrue
 
 internal class IEXFeedTestIT {
@@ -22,11 +19,8 @@ internal class IEXFeedTestIT {
         feed.retrieveIntraday(asset)
         assertTrue(asset in feed.assets)
 
-        val strategy = EMACrossover()
-        val logger = MemoryLogger()
-        val roboquant = Roboquant(strategy, AccountSummary(), OpenPositions(), logger = logger)
-        roboquant.run(feed)
-        logger.summary(10)
+        val actions = feed.filter<PriceAction>(TimeFrame.nextMinutes(5))
+        assertTrue(actions.isNotEmpty())
     }
 
     @Test
@@ -37,11 +31,8 @@ internal class IEXFeedTestIT {
         val asset = Asset("AAPL")
         feed.retrievePriceBar(asset)
         Thread.sleep(2000)
-        val strategy = EMACrossover()
-        val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
-        roboquant.run(feed)
-        roboquant.broker.account.summary().log()
-        roboquant.logger.summary().log()
+        val actions = feed.filter<PriceAction>(TimeFrame.nextMinutes(5))
+        assertTrue(actions.isNotEmpty())
     }
 
     @Test
@@ -50,11 +41,8 @@ internal class IEXFeedTestIT {
         val token = Config.getProperty("IEX_TOKEN")!!
         val feed = IEXFeed(token)
         feed.retrieveIntraday("AAPL")
-        val strategy = EMACrossover()
-        val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
-        roboquant.run(feed)
-        roboquant.broker.account.summary().log()
-        roboquant.logger.summary().log()
+        val actions = feed.filter<PriceAction>(TimeFrame.nextMinutes(5))
+        assertTrue(actions.isNotEmpty())
     }
 
 }

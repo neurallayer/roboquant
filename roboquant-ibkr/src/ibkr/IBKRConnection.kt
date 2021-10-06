@@ -9,8 +9,7 @@ import java.time.Instant
 import java.util.*
 
 /**
- * Common utilities for both IBKR Broker and IBKR Feed implementations
- *
+ * Shared utilities for both IBKR Broker Feed classes
  */
 internal object IBKRConnection {
 
@@ -48,12 +47,9 @@ internal object IBKRConnection {
     fun getFormattedTime(time: Instant): String = SimpleDateFormat("yyyyMMdd HH:mm:ss").format(Date.from(time))
 
     /**
-     * Convert a roboquant asset to an IBKR contract.
+     * Convert a roboquant [asset] to an IBKR contract.
      *
-     * TODO support more asset classes
-     *
-     * @param asset
-     * @return
+     * TODO support more asset types
      */
     fun getContract(asset: Asset): Contract {
         val contract = Contract()
