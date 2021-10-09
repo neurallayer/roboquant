@@ -36,7 +36,7 @@ class AlpacaBroker(
     private val logger: Logger = Logger.getLogger("AlpacaBroker")
     private val enableTrading = false
 
-    private val availableAssets by lazy {
+    val availableAssets by lazy {
         AlpacaConnection.getAvailableAssets(alpacaAPI)
     }
 

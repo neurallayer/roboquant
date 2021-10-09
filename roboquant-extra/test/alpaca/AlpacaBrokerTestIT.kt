@@ -14,7 +14,7 @@ class AlpacaBrokerTestIT {
         val broker = AlpacaBroker(key, secret)
         assertTrue(broker.account.cash.isNotEmpty())
         assertFalse(broker.account.cash.isMultiCurrency())
-        assertTrue(broker.assets.isNotEmpty())
+        assertTrue(broker.availableAssets.isNotEmpty())
     }
 
 }
