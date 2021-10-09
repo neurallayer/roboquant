@@ -10,7 +10,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 
-internal class XChangeFeedTestIT {
+internal class XChangeLiveFeedTestIT {
 
     @Test
     fun xchangeFeedIT() {
@@ -18,7 +18,7 @@ internal class XChangeFeedTestIT {
 
         val exchange = StreamingExchangeFactory.INSTANCE.createExchange(BitstampStreamingExchange::class.java)
         exchange.connect().blockingAwait()
-        val feed = XChangeFeed(exchange)
+        val feed = XChangeLiveFeed(exchange)
 
         // Mix three kind of price actions in a single feed
         feed.subscribeTrade(Pair("BTC", "USD"))

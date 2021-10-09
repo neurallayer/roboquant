@@ -4,10 +4,14 @@ import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.ThrowableRenderer
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
+import org.roboquant.common.Logging
 import org.roboquant.common.escapeHtml
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.logging.Handler
+import java.util.logging.Level
+import java.util.logging.LogRecord
 
 internal class RoboquantThrowableRenderer : ThrowableRenderer {
 
@@ -27,6 +31,26 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
         val isolated = Output.mode === Output.Mode.CLASSIC
         return HTML(result, isolated)
     }
+
+}
+
+/**
+ * Very simple logger handler that is installed when using notebooks and prints a line to standard out so it
+ * turns up in the cell output.
+ */
+internal class JupyterLogger : Handler() {
+
+    override fun publish(record: LogRecord) {
+        if (record.level.intValue() >= this.level.intValue()) {
+            println("${record.loggerName}:${record.level} => ${record.message}")
+        }
+    }
+
+    override fun flush() {}
+
+    override fun close() {
+    }
+
 
 }
 
@@ -71,6 +95,10 @@ internal class JupyterCore : JupyterIntegration() {
         onLoaded {
             addThrowableRenderer(RoboquantThrowableRenderer())
             execute("%logLevel warn")
+            val handler = JupyterLogger()
+            handler.level = Level.WARNING
+            Logging.resetHandler(handler)
+            Logging.setDefaultLevel(Level.WARNING)
         }
 
         /**

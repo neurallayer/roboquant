@@ -3,7 +3,6 @@ package org.roboquant.common
 
 import java.util.logging.*
 
-
 /**
  * Simple Logging object that provides utility methods to create and update loggers. Where many loggers APIs are
  * focused on serverside applications, this API is also suitable for interactive environments like notebooks.
@@ -14,7 +13,7 @@ import java.util.logging.*
  * - Can set log levels at runtime
  * - Use color syntax
  *
- * Please note this is a logger that can be used in your Kotlin source code, not to be confused with a MetricsLogger
+ * Please note this is a logger that can is used in Kotlin source code, not to be confused with a MetricsLogger
  * that can be used to log metrics during a run.
  */
 object Logging {
@@ -48,21 +47,24 @@ object Logging {
 
     init {
         // Install a modified formatter
-        LogManager.getLogManager().reset()
-        val rootLogger = Logger.getLogger("")
         val handler = ConsoleHandler()
         handler.level = Level.FINEST
         handler.formatter = LoggingFormatter()
-        rootLogger.addHandler(handler)
+        resetHandler(handler)
     }
 
+    fun resetHandler(handler: Handler) {
+        LogManager.getLogManager().reset()
+        val rootLogger = Logger.getLogger("")
+        rootLogger.addHandler(handler)
+    }
 
     fun getLogger(clazz: Class<*>): Logger {
         return getLogger(clazz.simpleName)
     }
 
     fun getLogger(obj: Any): Logger {
-        return getLogger(obj.javaClass)
+        return getLogger(obj.javaClass.simpleName)
     }
 
     fun getLogger(name: String): Logger {
@@ -72,22 +74,20 @@ object Logging {
     }
 
     /**
-     * Set the logging level for all loggers to specified level
-     *
-     * @param level The new level
-     * @param name Restrict the new level to names that start with name
+     * Set the logging level for all loggers to specified [level] and optionally restrict
+     * update to loggers whose name start with provided [prefix].
      */
-    fun setLevel(level: Level, name: String = "", updateDefault: Boolean = true) {
+    fun setLevel(level: Level, prefix: String = "", updateDefault: Boolean = true) {
         val manager = LogManager.getLogManager()
         if (updateDefault) defaultLevel = level
         LogManager.getLogManager().loggerNames.toList().forEach {
-            if (it.startsWith(name)) manager.getLogger(it).level = level
+            if (it.startsWith(prefix)) manager.getLogger(it).level = level
         }
     }
 
     /**
      * Set the default logging level for new Loggers. This won't change logging level of already created loggers,
-     * for that please see [setLevel].
+     * for that please use [setLevel].
      *
      * @param level
      */
@@ -98,4 +98,3 @@ object Logging {
     fun getLoggerNames() = LogManager.getLogManager().loggerNames.toList()
 
 }
-

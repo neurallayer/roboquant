@@ -21,7 +21,7 @@ typealias Interval = CandlestickInterval
  * @constructor
  *
  */
-class BinanceFeed(apiKey: String? = null, secret:String? = null, private val useMachineTime: Boolean = true) : LiveFeed() {
+class BinanceLiveFeed(apiKey: String? = null, secret:String? = null, private val useMachineTime: Boolean = true) : LiveFeed() {
 
     private val client: BinanceApiWebSocketClient
     private val subscriptions = mutableMapOf<String, Asset>()

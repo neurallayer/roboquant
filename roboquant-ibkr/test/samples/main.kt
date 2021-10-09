@@ -8,7 +8,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.ibkr.IBKRBroker
-import org.roboquant.ibkr.IBKRFeed
+import org.roboquant.ibkr.IBKRLiveFeed
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.PriceMetric
 import org.roboquant.metrics.ProgressMetric
@@ -36,7 +36,7 @@ fun ibkrBrokerFeed() {
     broker.account.portfolio.summary().log()
 
     // Subscribe to all assets in the portfolio
-    val feed = IBKRFeed()
+    val feed = IBKRLiveFeed()
     val assets = broker.account.portfolio.assets
     feed.subscribe(*assets.toTypedArray())
 
@@ -53,7 +53,7 @@ fun ibkrBrokerFeed() {
 
 
 fun ibkrFeed() {
-    val feed = IBKRFeed()
+    val feed = IBKRLiveFeed()
     val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
     feed.subscribe(asset)
 

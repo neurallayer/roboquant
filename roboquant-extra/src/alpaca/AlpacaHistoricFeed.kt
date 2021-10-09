@@ -5,49 +5,28 @@ import net.jacobpeterson.alpaca.model.endpoint.marketdata.historical.bar.enums.B
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.historical.bar.enums.BarTimePeriod
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
-import org.roboquant.feeds.*
-import java.time.Instant
+import org.roboquant.feeds.HistoricPriceFeed
+import org.roboquant.feeds.PriceBar
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.util.*
 import java.util.logging.Logger
-
 
 typealias AlpacaPeriod =  BarTimePeriod
 
 /**
  * Get historic data feed from Alpaca
  */
-class AlpacaHistoricFeed(apiKey: String? = null, apiSecret: String? = null,  accountType :AccountType = AccountType.PAPER, dataType:DataType = DataType.IEX)  : HistoricFeed {
+class AlpacaHistoricFeed(apiKey: String? = null, apiSecret: String? = null,  accountType :AccountType = AccountType.PAPER, dataType:DataType = DataType.IEX)  : HistoricPriceFeed() {
 
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
     private val logger: Logger = Logger.getLogger(this.javaClass.simpleName)
-    private val events = TreeMap<Instant, MutableList<PriceAction>>()
     private val zoneId: ZoneId = ZoneId.of("America/New_York")
 
-    override val timeline: List<Instant>
-        get() = events.keys.toList()
-
-    override val assets
-        get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct().toSortedSet()
 
     val availableAssets by lazy {
         AlpacaConnection.getAvailableAssets(alpacaAPI)
     }
 
-
-    /**
-     * (Re)play the events of the feed using the provided [EventChannel]
-     *
-     * @param channel
-     * @return
-     */
-    override suspend fun play(channel: EventChannel) {
-        events.forEach {
-            val event = Event(it.value, it.key)
-            channel.send(event)
-        }
-    }
 
 
     fun retrieve(vararg symbols: String, timeFrame:TimeFrame, period: AlpacaPeriod = AlpacaPeriod.DAY) {

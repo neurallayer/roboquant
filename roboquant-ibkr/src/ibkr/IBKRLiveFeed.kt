@@ -24,7 +24,7 @@ import java.time.Instant
  * @param port The port to connect to
  * @param clientId The client id to use. By default, roboquant uses clientId=2 for the IBKR feed
  */
-class IBKRFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int = 2) : LiveFeed() {
+class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int = 2) : LiveFeed() {
 
     private var tickerId: Int = 0
     private var client: EClientSocket
@@ -37,7 +37,8 @@ class IBKRFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int = 2) 
         client.reqCurrentTime()
     }
 
-    fun disconnect() = client.eDisconnect()
+    fun disconnect() = IBKRConnection.disconnect(client)
+
 
     /**
      * Subscribe to the realtime bars for a particular contract. Often IBKR platform requires a subscription in order

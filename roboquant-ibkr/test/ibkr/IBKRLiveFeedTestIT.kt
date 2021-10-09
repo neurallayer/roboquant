@@ -8,13 +8,13 @@ import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import kotlin.test.assertTrue
 
-internal class IBKRFeedTestIT {
+internal class IBKRLiveFeedTestIT {
 
     @Test
     fun ibkrFeed() {
         System.getProperty("TEST_IBKR") ?: return
 
-        val feed = IBKRFeed()
+        val feed = IBKRLiveFeed()
         val contract = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
         feed.subscribe(contract)
 

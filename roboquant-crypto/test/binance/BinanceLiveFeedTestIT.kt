@@ -7,13 +7,13 @@ import org.roboquant.feeds.filter
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class BinanceFeedTestIT {
+internal class BinanceLiveFeedTestIT {
 
     @Test
     fun testBinanceFeed() {
         System.getProperty("TEST_BINANCE") ?: return
 
-        val feed = BinanceFeed()
+        val feed = BinanceLiveFeed()
 
         val availableAssets = feed.availableAssets
         assertTrue(availableAssets.isNotEmpty())

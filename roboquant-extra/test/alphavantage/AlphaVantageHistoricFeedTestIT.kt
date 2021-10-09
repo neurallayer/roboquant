@@ -9,7 +9,7 @@ import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMACrossover
 import org.junit.Test
 
-internal class AlphaVantageFeedTestIT {
+internal class AlphaVantageHistoricFeedTestIT {
 
     @Test
     fun alphaVantage() {
@@ -17,9 +17,9 @@ internal class AlphaVantageFeedTestIT {
         val strategy = EMACrossover.shortTerm()
         val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), logger = SilentLogger())
 
-        val feed = AlphaVantageFeed("dummy", compensateTimeZone = true, generateSinglePrice = false)
+        val feed = AlphaVantageHistoricFeed("dummy", compensateTimeZone = true, generateSinglePrice = false)
         val asset = Asset("AAPL", AssetType.STOCK,"USD", "NASDAQ")
-        feed.subscribe(asset)
+        feed.retrieve(asset)
         roboquant.run(feed)
     }
 

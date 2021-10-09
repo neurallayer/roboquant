@@ -4,6 +4,7 @@ import com.ib.client.*
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.*
@@ -14,6 +15,14 @@ import java.util.*
 internal object IBKRConnection {
 
     private val logger = Logging.getLogger("IBKRConnection")
+    private val connections = mutableMapOf<Int, EClientSocket>()
+
+
+    fun disconnect(client: EClientSocket) {
+        try {
+            if (client.isConnected) client.eDisconnect()
+        } catch (e: IOException) {}
+    }
 
     /**
      * Connect to a IBKR TWS or Gateway
@@ -23,6 +32,9 @@ internal object IBKRConnection {
      * @param clientId
      */
     fun connect(wrapper: EWrapper, host: String, port: Int, clientId: Int): EClientSocket {
+        val oldClient = connections[clientId]
+        if (oldClient !== null) disconnect(oldClient)
+
         val signal = EJavaSignal()
         val client = EClientSocket(wrapper, signal)
         client.isAsyncEConnect = false
@@ -41,6 +53,7 @@ internal object IBKRConnection {
                 }
             }
         }.start()
+        connections[clientId] = client
         return client
     }
 
@@ -61,7 +74,7 @@ internal object IBKRConnection {
             AssetType.STOCK -> contract.secType(Types.SecType.STK)
             AssetType.FOREX -> contract.secType(Types.SecType.CASH)
             AssetType.BOND -> contract.secType(Types.SecType.BOND)
-            else -> throw Exception("${asset.type} is not supported")
+            else -> throw Exception("${asset.type} is not yet supported")
         }
 
         val exchange = when (asset.exchangeCode) {

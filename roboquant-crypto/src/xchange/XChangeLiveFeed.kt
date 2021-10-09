@@ -33,7 +33,7 @@ import org.knowm.xchange.dto.marketdata.OrderBook as CryptoOrderBook
  *
  * @param exchange the exchange to use. The connection to the provided exchange should already be live.
  */
-class XChangeFeed(
+class XChangeLiveFeed(
     exchange: StreamingExchange,
     private val useMachineTime: Boolean = true
 ) : LiveFeed() {

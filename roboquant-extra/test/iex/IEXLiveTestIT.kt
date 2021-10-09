@@ -13,7 +13,7 @@ internal class IEXLiveTestIT {
     fun test() {
         System.getProperty("TEST_IEX") ?: return
         val token = System.getProperty("IEX_PUBLISHABLE_TOKEN") ?: System.getenv("IEX_PUBLISHABLE_TOKEN")
-        val feed = IEXLive(token)
+        val feed = IEXLiveFeed(token)
         val asset = Asset("AAPL")
         feed.subscribeQuotes(asset)
         assertTrue(asset in feed.assets)

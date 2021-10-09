@@ -8,12 +8,12 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 
-internal class AlpacaFeedTestIT {
+internal class AlpacaLiveFeedTestIT {
 
     @Test
     fun test() {
         System.getProperty("TEST_ALPACA") ?: return
-        val feed = AlpacaFeed()
+        val feed = AlpacaLiveFeed()
         val assets = feed.availableAssets
         val apple = assets.getBySymbol("AAPL")
         feed.subscribe(apple)

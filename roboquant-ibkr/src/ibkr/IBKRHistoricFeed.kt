@@ -4,30 +4,23 @@ import com.ib.client.Bar
 import com.ib.client.DefaultEWrapper
 import com.ib.client.EClientSocket
 import org.roboquant.common.Asset
-import org.roboquant.feeds.*
+import org.roboquant.feeds.HistoricPriceFeed
+import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.csv.AutoDetectTimeParser
 import java.time.Instant
-import java.util.*
 import java.util.logging.Logger
 
 class IBKRHistoricFeed(
     host: String = "127.0.0.1",
     port: Int = 4002,
-    clientId: Int = 1,
-) : HistoricFeed {
+    clientId: Int = 3,
+) : HistoricPriceFeed() {
 
     private var tickerId: Int = 0
     private val subscriptions = mutableMapOf<Int, Asset>()
     private val logger: Logger = Logger.getLogger(this.javaClass.simpleName)
-    private val events = TreeMap<Instant, MutableList<PriceAction>>()
     private var client: EClientSocket
 
-    override val timeline: List<Instant>
-        get() = events.keys.toList()
-
-    override val assets
-        get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct()
-            .toSortedSet()
 
     init {
         val wrapper = Wrapper()
@@ -35,7 +28,8 @@ class IBKRHistoricFeed(
         client.reqCurrentTime()
     }
 
-    fun disconnect() = client.eDisconnect()
+    fun disconnect() = IBKRConnection.disconnect(client)
+
 
     /**
      * Historical Data requests need to be assembled in such a way that only a few thousand bars are returned at a time.
@@ -58,18 +52,7 @@ class IBKRHistoricFeed(
         while (subscriptions.isNotEmpty()) Thread.sleep(1_000)
     }
 
-    /**
-     * (Re)play the events of the feed using the provided [EventChannel]
-     *
-     * @param channel
-     * @return
-     */
-    override suspend fun play(channel: EventChannel) {
-        events.forEach {
-            val event = Event(it.value, it.key)
-            channel.send(event)
-        }
-    }
+
 
     inner class Wrapper : DefaultEWrapper() {
 

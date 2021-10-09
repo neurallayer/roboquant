@@ -21,7 +21,7 @@ import java.time.Instant
  * @param apiKey
  * @param apiSecret
  */
-class AlpacaFeed(apiKey: String? = null, apiSecret: String? = null, accountType :AccountType = AccountType.PAPER, dataType:DataType = DataType.IEX, autoConnect: Boolean = true) : LiveFeed() {
+class AlpacaLiveFeed(apiKey: String? = null, apiSecret: String? = null, accountType :AccountType = AccountType.PAPER, dataType:DataType = DataType.IEX, autoConnect: Boolean = true) : LiveFeed() {
 
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
     private val assetsMap = mutableMapOf<String, Asset>()

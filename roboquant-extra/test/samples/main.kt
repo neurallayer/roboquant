@@ -8,7 +8,7 @@ import org.roboquant.common.TimeFrame
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.iex.Range
-import org.roboquant.yahoo.YahooFinanceFeed
+import org.roboquant.yahoo.YahooHistoricFeed
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.OpenPositions
@@ -28,7 +28,7 @@ fun alpacaBroker() {
 
 
 fun allAlpaca() {
-    val feed = AlpacaFeed()
+    val feed = AlpacaLiveFeed()
     feed.subscribe()
 
     feed.timeMillis = 1000
@@ -58,7 +58,7 @@ fun alpacaHistoricFeed() {
 
 fun alpacaFeed() {
     // Logging.setLevel(Level.FINER)
-    val feed = AlpacaFeed()
+    val feed = AlpacaLiveFeed()
     val assets = feed.assets.take(50)
     feed.subscribe(assets)
     feed.timeMillis = 1000
@@ -75,7 +75,7 @@ fun alpacaFeed() {
 
 fun feedIEX() {
     val token = Config.getProperty("IEX_PUBLIC_KEY") ?: throw Exception("No token found")
-    val feed = org.roboquant.iex.IEXFeed(token)
+    val feed = org.roboquant.iex.IEXHistoricFeed(token)
     feed.retrievePriceBar("AAPL", "GOOGL", "FB", range = Range.TWO_YEARS)
 
     val strategy = EMACrossover(10, 30)
@@ -86,7 +86,7 @@ fun feedIEX() {
 
 
 fun feedIEXLive() {
-    val feed = org.roboquant.iex.IEXLive()
+    val feed = org.roboquant.iex.IEXLiveFeed()
     val apple = Asset("AAPL")
     val google = Asset("GOOG")
     feed.subscribeTrades(apple, google)
@@ -101,7 +101,7 @@ fun feedIEXLive() {
 
 fun feedYahoo() {
 
-    val feed = YahooFinanceFeed()
+    val feed = YahooHistoricFeed()
     val apple = Asset("AAPL")
     val google = Asset("GOOG")
     val last300Days = TimeFrame.pastPeriod(300)

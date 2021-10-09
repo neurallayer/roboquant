@@ -3,9 +3,10 @@ package org.roboquant.binance
 import com.binance.api.client.BinanceApiRestClient
 import org.roboquant.common.Logging
 import org.roboquant.common.TimeFrame
-import org.roboquant.feeds.*
+import org.roboquant.feeds.CryptoBuilder
+import org.roboquant.feeds.HistoricPriceFeed
+import org.roboquant.feeds.PriceBar
 import java.time.Instant
-import java.util.*
 
 /**
  * Create a new feed based on price actions coming from the Binance exchange.
@@ -14,18 +15,11 @@ import java.util.*
  * @constructor
  *
  */
-class BinanceHistoricFeed(apiKey: String? = null, secret:String? = null, private val useMachineTime: Boolean = true) : HistoricFeed {
+class BinanceHistoricFeed(apiKey: String? = null, secret:String? = null, private val useMachineTime: Boolean = true) : HistoricPriceFeed() {
 
     private var client: BinanceApiRestClient
     private val logger = Logging.getLogger(this)
     private val factory = BinanceConnection.getFactory(apiKey, secret)
-
-    private val events = TreeMap<Instant, MutableList<PriceAction>>()
-    override val timeline: List<Instant>
-        get() = events.keys.toList()
-
-    override val assets
-        get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct().toSortedSet()
 
     val availableAssets by lazy {
         BinanceConnection.retrieveAssets(factory)
@@ -33,19 +27,6 @@ class BinanceHistoricFeed(apiKey: String? = null, secret:String? = null, private
 
     init {
         client = factory.newRestClient()
-    }
-
-    /**
-     * (Re)play the events of the feed using the provided [EventChannel]
-     *
-     * @param channel
-     * @return
-     */
-    override suspend fun play(channel: EventChannel) {
-        events.forEach {
-            val event = Event(it.value, it.key)
-            channel.send(event)
-        }
     }
 
 

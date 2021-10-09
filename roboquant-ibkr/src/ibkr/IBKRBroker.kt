@@ -19,7 +19,6 @@ import java.time.ZoneOffset
 import kotlin.math.absoluteValue
 import com.ib.client.Order as IBOrder
 
-
 /**
  * Use your Interactive Brokers account for trading. Can be used with live trading or paper trading accounts of
  * Interactive Brokers. It is highly recommend to start with a paper trading account and validate your strategy and
@@ -56,7 +55,7 @@ class IBKRBroker(
         waitTillSynced()
     }
 
-    fun disconnect() = client.eDisconnect()
+    fun disconnect() = IBKRConnection.disconnect(client)
 
 
     /**

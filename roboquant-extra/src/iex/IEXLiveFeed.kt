@@ -28,7 +28,7 @@ typealias Interval = QuoteInterval
  * @param publicKey
  * @param secretKey
  */
-class IEXLive(publicKey: String? = null, secretKey: String? = null, sandbox : Boolean = true, private val useMachineTime: Boolean = true) :
+class IEXLiveFeed(publicKey: String? = null, secretKey: String? = null, sandbox : Boolean = true, private val useMachineTime: Boolean = true) :
     LiveFeed() {
 
     private val logger = Logging.getLogger("IEXLive")

@@ -3,7 +3,8 @@ package org.roboquant.iex
 import iex.IEXConnection
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
-import org.roboquant.feeds.*
+import org.roboquant.feeds.HistoricPriceFeed
+import org.roboquant.feeds.PriceBar
 import pl.zankowski.iextrading4j.api.stocks.Chart
 import pl.zankowski.iextrading4j.api.stocks.ChartRange
 import pl.zankowski.iextrading4j.api.stocks.v1.Intraday
@@ -13,8 +14,6 @@ import pl.zankowski.iextrading4j.client.rest.request.stocks.v1.IntradayRequestBu
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
-
 
 typealias Range = ChartRange
 
@@ -26,41 +25,22 @@ typealias Range = ChartRange
  * @param publicKey
  * @param secretKey
  */
-class IEXFeed(
+class IEXHistoricFeed(
     publicKey: String? = null,
     secretKey: String? = null,
     sandbox: Boolean = true,
     private val template: Asset = Asset("TEMPLATE")
-) : HistoricFeed {
+) : HistoricPriceFeed() {
 
-    private val events = TreeMap<Instant, MutableList<PriceAction>>()
+
     private val logger = Logging.getLogger("IEXFeed")
     private val client: IEXCloudClient
-
-
-    override val timeline: List<Instant>
-        get() = events.keys.toList()
-
-    override val assets
-        get() = events.values.map { priceBars -> priceBars.map { it.asset }.distinct() }.flatten().distinct().toSortedSet()
 
 
     init {
         client = IEXConnection.getClient(publicKey, secretKey, sandbox)
     }
 
-    /**
-     * (Re)play the events of the feed using the provided [EventChannel]
-     *
-     * @param channel
-     * @return
-     */
-    override suspend fun play(channel: EventChannel) {
-        events.forEach {
-            val event = Event(it.value, it.key)
-            channel.send(event)
-        }
-    }
 
     /**
      * Retrieve historic intraday price bars for one or more assets
