@@ -111,11 +111,10 @@ class IEXHistoricFeed(
         chart.filter { it.open !== null }.forEach {
             val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
             val now = getInstant(asset, it.date, it.minute)
-            val list = events.getOrPut(now) { mutableListOf() }
-            list.add(action)
+            add(now, action)
         }
         logger.info { "Received data for $asset" }
-        logger.info { "Total ${events.size} steps from ${timeline.first()} to ${timeline.last()}" }
+        logger.info { "Total ${timeline.size} steps from ${timeline.first()} to ${timeline.last()}" }
     }
 
 
@@ -123,11 +122,10 @@ class IEXHistoricFeed(
         quotes.filter { it.open !== null }.forEach {
             val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
             val now = getInstant(asset, it.date, it.minute)
-            val list = events.getOrPut(now) { mutableListOf() }
-            list.add(action)
+            add(now, action)
         }
         logger.info { "Received data for $asset" }
-        logger.info { "Total ${events.size} steps from ${timeline.first()} to ${timeline.last()}" }
+        logger.info { "Total ${timeline.size} steps from ${timeline.first()} to ${timeline.last()}" }
     }
 
 }

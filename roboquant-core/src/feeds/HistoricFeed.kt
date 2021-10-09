@@ -1,8 +1,6 @@
 package org.roboquant.feeds
 
-import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
-import org.roboquant.common.getBySymbol
 import org.roboquant.common.split
 import java.time.Instant
 import java.time.Period
@@ -56,14 +54,7 @@ interface HistoricFeed : AssetFeed {
      */
     fun split(size: Int) = timeline.split(size)
 
-    /**
-     * Find an asset by its symbol name. If there are multiple assets with the same symbol name,
-     * the first one will be returned. If no asset is found, exception will be thrown
-     *
-     * @param symbol
-     * @return The found asset or an exception
-     */
-    fun find(symbol: String): Asset = assets.getBySymbol(symbol)
+
 
 }
 

@@ -51,12 +51,11 @@ class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFee
                 PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
 
             val now = it.date.toInstant()
-            val list = events.getOrPut(now) { mutableListOf() }
-            list.add(action)
+            add(now, action)
         }
 
         logger.info { "Received data for $asset" }
-        logger.info { "Total ${events.size} events from ${timeline.first()} to ${timeline.last()}" }
+        logger.info { "Total ${timeline.size} steps from ${timeline.first()} to ${timeline.last()}" }
     }
 
 }

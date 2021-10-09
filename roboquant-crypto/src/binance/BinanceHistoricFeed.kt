@@ -40,8 +40,7 @@ class BinanceHistoricFeed(apiKey: String? = null, secret:String? = null, private
             for (bar in bars) {
                 val action = PriceBar(asset, bar.open.toDouble(), bar.high.toDouble(), bar.low.toDouble(), bar.close.toDouble(), bar.volume.toDouble())
                 val now = Instant.ofEpochMilli(bar.closeTime)
-                val list = events.getOrPut(now) { mutableListOf() }
-                list.add(action)
+                add(now, action)
             }
             logger.fine { "Retrieved $asset for $timeFrame"}
         }

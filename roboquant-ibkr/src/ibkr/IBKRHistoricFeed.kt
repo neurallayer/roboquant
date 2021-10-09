@@ -63,8 +63,7 @@ class IBKRHistoricFeed(
             )
             val parser = AutoDetectTimeParser(asset.exchangeCode)
             val time = parser.parse(bar.time())
-            val event = events.getOrPut(time) { mutableListOf() }
-            event.add(action)
+            add(time , action)
         }
 
         override fun historicalDataEnd(reqId: Int, startDateStr: String, endDateStr: String) {

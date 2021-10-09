@@ -5,6 +5,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
+import org.roboquant.common.getBySymbol
 import java.time.Instant
 import java.util.*
 
@@ -42,6 +43,15 @@ interface AssetFeed : Feed {
      * Unique collection of assets contained in the feed
      */
     val assets: SortedSet<Asset>
+
+    /**
+     * Find an asset by its symbol name. If there are multiple assets with the same symbol name,
+     * the first one will be returned. If no asset is found, exception will be thrown
+     *
+     * @param symbol
+     * @return The found asset or an exception
+     */
+    fun find(symbol: String): Asset = assets.getBySymbol(symbol)
 }
 
 

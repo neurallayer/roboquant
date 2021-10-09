@@ -1,13 +1,12 @@
 package org.roboquant.alpaca
 
-
 import net.jacobpeterson.alpaca.AlpacaAPI
-import net.jacobpeterson.alpaca.model.endpoint.asset.enums.AssetStatus
 import net.jacobpeterson.alpaca.model.endpoint.order.enums.OrderSide
 import net.jacobpeterson.alpaca.model.endpoint.order.enums.OrderTimeInForce
 import net.jacobpeterson.alpaca.rest.AlpacaClientException
 import org.roboquant.brokers.*
-import org.roboquant.common.*
+import org.roboquant.common.AssetType
+import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
@@ -25,20 +24,27 @@ import net.jacobpeterson.alpaca.model.endpoint.position.Position as AlpacaPositi
  *
  * @sample org.roboquant.samples.alpacaBroker
  */
-class AlpacaBroker(apiKey: String? = null, apiSecret: String? = null, accountType :AccountType = AccountType.PAPER, dataType:DataType = DataType.IEX) : Broker {
+class AlpacaBroker(
+    apiKey: String? = null,
+    apiSecret: String? = null,
+    accountType: AccountType = AccountType.PAPER,
+    dataType: DataType = DataType.IEX
+) : Broker {
 
     override val account: Account = Account()
-    private val alpacaAPI: AlpacaAPI
+    private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
     private val logger: Logger = Logger.getLogger("AlpacaBroker")
     private val enableTrading = false
-    private val assetsMap = mutableMapOf<String, Asset>()
 
-    val assets
-        get() = assetsMap.values
+    private val availableAssets by lazy {
+        AlpacaConnection.getAvailableAssets(alpacaAPI)
+    }
+
+    private val assetsMap by lazy {
+        availableAssets.associateBy { it.symbol }
+    }
 
     init {
-        alpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
-        updateAssets()
         updateAccount()
         updatePositions()
         updateOpenOrders()
@@ -60,21 +66,6 @@ class AlpacaBroker(apiKey: String? = null, apiSecret: String? = null, accountTyp
             logger.severe(e.stackTraceToString())
         }
     }
-
-    /**
-     * Get the available assets for trading and store them
-     *
-     * @return
-     */
-    private fun updateAssets() {
-        val availableAssets = alpacaAPI.assets().get(AssetStatus.ACTIVE, "us_equity")
-        val exchangeCodes = Exchange.exchanges.map { e -> e.exchangeCode }
-        availableAssets.forEach {
-            if (it.exchange !in exchangeCodes) logger.warning("Exchange ${it.exchange} not known")
-            assetsMap[it.symbol] = Asset(it.symbol, AssetType.STOCK, "USD", it.exchange, id = it.id)
-        }
-    }
-
 
     /**
      * Update positions in the portfolio based on positions received from Alpaca.
@@ -103,7 +94,7 @@ class AlpacaBroker(apiKey: String? = null, apiSecret: String? = null, accountTyp
      * @return
      */
     private fun convertPos(pos: AlpacaPosition): Position {
-        assert(pos.assetClass == "us_equity") {"Unsupported asset class found ${pos.assetClass} for position $pos"}
+        assert(pos.assetClass == "us_equity") { "Unsupported asset class found ${pos.assetClass} for position $pos" }
         val asset = assetsMap[pos.symbol]!!
         val qty = if (pos.side == "BUY") pos.qty.toDouble() else -(pos.qty.toDouble())
         return Position(asset, qty, pos.avgEntryPrice.toDouble(), pos.currentPrice.toDouble())
@@ -128,7 +119,6 @@ class AlpacaBroker(apiKey: String? = null, apiSecret: String? = null, accountTyp
             }
         }
     }
-
 
     /**
      * Place an order at Alpaca.
@@ -174,7 +164,6 @@ class AlpacaBroker(apiKey: String? = null, apiSecret: String? = null, accountTyp
             }
         }
     }
-
 
     /**
      * Place new instructions at this broker, the most common instruction being an order. After any processing,

@@ -3,9 +3,13 @@ package org.roboquant.feeds
 import java.time.Instant
 import java.util.*
 
+/**
+ * Base class that provides a foundation for data feeds that provide historic prices. It used a TreeMap to store
+ * for each event one or more PriceActions.
+ */
 open class HistoricPriceFeed : HistoricFeed {
 
-    protected val events = TreeMap<Instant, MutableList<PriceAction>>()
+    private val events = TreeMap<Instant, MutableList<PriceAction>>()
 
     override val timeline: List<Instant>
         get() = events.keys.toList()
@@ -25,6 +29,19 @@ open class HistoricPriceFeed : HistoricFeed {
             val event = Event(it.value, it.key)
             channel.send(event)
         }
+    }
+
+
+    protected fun add(time: Instant, action: PriceAction) {
+        val l = events.getOrPut(time) { mutableListOf()}
+        l.add(action)
+    }
+
+    /**
+     * Clear all events that are currently available
+     */
+    fun clear() {
+        events.clear()
     }
 
 }

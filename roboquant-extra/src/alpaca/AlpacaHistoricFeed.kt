@@ -28,7 +28,6 @@ class AlpacaHistoricFeed(apiKey: String? = null, apiSecret: String? = null,  acc
     }
 
 
-
     fun retrieve(vararg symbols: String, timeFrame:TimeFrame, period: AlpacaPeriod = AlpacaPeriod.DAY) {
         for (symbol in symbols) {
             val resp = alpacaAPI.marketData().getBars(
@@ -46,8 +45,7 @@ class AlpacaHistoricFeed(apiKey: String? = null, apiSecret: String? = null,  acc
             for (bar in resp.bars) {
                 val action = PriceBar(asset, bar.o, bar.h, bar.l, bar.c, bar.v)
                 val now = bar.t.toInstant()
-                val list = events.getOrPut(now) { mutableListOf() }
-                list.add(action)
+                add(now, action)
             }
             logger.fine { "Retrieved asset $asset for $timeFrame"}
         }

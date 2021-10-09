@@ -92,8 +92,7 @@ class AlphaVantageHistoricFeed(
                     PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
 
                 val now = ZonedDateTime.parse(it.date, dtf).toInstant()
-                val list = events.getOrPut(now) { mutableListOf() }
-                list.add(action)
+                add(now, action)
             }
             logger.info { "Received prices for $symbol" }
         } catch (e: Exception) {

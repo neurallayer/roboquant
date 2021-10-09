@@ -21,6 +21,11 @@ internal object AlpacaConnection {
 
     private val logger: Logger = Logger.getLogger("AlpacaConnection")
 
+    /**
+     * Should OTC assets be included, default is false
+     */
+    private var includeOTC = false
+
     fun getAPI(
         apiKey: String? = null,
         apiSecret: String? = null,
@@ -42,8 +47,10 @@ internal object AlpacaConnection {
         val exchangeCodes = Exchange.exchanges.map { e -> e.exchangeCode }
         val result = mutableListOf<Asset>()
         availableAssets.forEach {
-            if (it.exchange !in exchangeCodes) logger.warning("Exchange ${it.exchange} not known")
-            result.add(Asset(it.symbol, AssetType.STOCK, "USD", it.exchange, id = it.id))
+            if (it.exchange != "OTC" || includeOTC) {
+                if (it.exchange !in exchangeCodes) logger.warning("Exchange ${it.exchange} not configured")
+                result.add(Asset(it.symbol, AssetType.STOCK, "USD", it.exchange, id = it.id))
+            }
         }
         return result.toSortedSet()
     }

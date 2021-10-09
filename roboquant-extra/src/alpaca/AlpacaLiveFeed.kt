@@ -1,12 +1,13 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
-import net.jacobpeterson.alpaca.model.endpoint.asset.enums.AssetStatus
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.bar.BarMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.quote.QuoteMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.trade.TradeMessage
 import net.jacobpeterson.alpaca.websocket.marketdata.MarketDataListener
-import org.roboquant.common.*
+import org.roboquant.common.Asset
+import org.roboquant.common.AssetType
+import org.roboquant.common.Logging
 import org.roboquant.feeds.*
 import java.time.Instant
 
@@ -38,25 +39,9 @@ class AlpacaLiveFeed(apiKey: String? = null, apiSecret: String? = null, accountT
 
     init {
         if (autoConnect) connect()
-        retrieveAssets()
         alpacaAPI.marketDataStreaming().setListener(listener)
     }
 
-    /**
-     * Get the available assets for trading and store them
-     *
-     * @return
-     */
-    private fun retrieveAssets() {
-        val availableAssets = alpacaAPI.assets().get(AssetStatus.ACTIVE, "us_equity")
-        assetsMap.clear()
-        val exchangeCodes = Exchange.exchanges.map { e -> e.exchangeCode }
-        availableAssets.forEach {
-            if (it.exchange !in exchangeCodes) logger.warning("Exchange ${it.exchange} not known")
-            assetsMap[it.symbol] = Asset(it.symbol, AssetType.STOCK, "USD", it.exchange, id = it.id)
-        }
-        logger.info("Found ${assetsMap.size} assets")
-    }
 
     /**
      * Start listening for market data
@@ -71,7 +56,9 @@ class AlpacaLiveFeed(apiKey: String? = null, apiSecret: String? = null, accountT
      *
      */
     fun disconnect() {
-        alpacaAPI.marketDataStreaming().disconnect()
+        try {
+            alpacaAPI.marketDataStreaming().disconnect()
+        } catch (e: Exception) {}
     }
 
 
@@ -81,16 +68,16 @@ class AlpacaLiveFeed(apiKey: String? = null, apiSecret: String? = null, accountT
 
     fun subscribe(vararg assets: Asset) {
         for (asset in assets) {
-            require(asset.symbol in assetsMap) { "Asset $asset not active at Alpaca" }
             require(asset.type == AssetType.STOCK) { "Only stocks supported, received ${asset.type}" }
             require(asset.currencyCode == "USD") { "Only USD currency supported, received ${asset.currencyCode}" }
         }
         if (assets.isEmpty()) {
             alpacaAPI.marketDataStreaming().subscribe(null, null, listOf("*"))
-            logger.info("Subscribed to all assets")
+            logger.info("Subscribing to all assets")
         } else {
-            alpacaAPI.marketDataStreaming().subscribe(null, null, assets.map { it.symbol })
-            logger.info("Subscribed to ${assets.size} assets")
+            val symbols = assets.map { it.symbol }
+            alpacaAPI.marketDataStreaming().subscribe(null, null, symbols)
+            logger.info("Subscribing to ${assets.size} assets")
         }
     }
 
