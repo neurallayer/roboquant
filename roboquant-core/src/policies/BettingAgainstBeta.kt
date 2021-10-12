@@ -103,7 +103,7 @@ open class BettingAgainstBeta(
      * Override this method if you want to override the default generation of MarketOrders with a different
      * order type like LimitOrders.
      */
-    protected fun getOrder(asset: Asset, quantity: Double, account: Account, event: Event): Order {
+    open fun getOrder(asset: Asset, quantity: Double, account: Account, event: Event): Order {
         return MarketOrder(asset, quantity)
     }
 

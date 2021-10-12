@@ -170,7 +170,7 @@
             </plugin>
 
             <!-- Kotlin documentation plugin -->
-            <!-- plugin>
+            <plugin>
                 <groupId>org.jetbrains.dokka</groupId>
                 <artifactId>dokka-maven-plugin</artifactId>
                 <version>1.5.30</version>
@@ -183,6 +183,9 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <includes>
+                        <include>docs/roboquant-core.md</include>
+                    </includes>
                     <suppressObviousFunctions>true</suppressObviousFunctions>
                     <reportUndocumented>true</reportUndocumented>
                     <suppressInheritedMembers>true</suppressInheritedMembers>
@@ -190,7 +193,7 @@
                         <dir>${basedir}/test/samples</dir>
                     </samples>
                 </configuration>
-            </plugin -->
+            </plugin>
 
         </plugins>
     </build>

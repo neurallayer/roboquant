@@ -2,17 +2,21 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.alpaca.*
-import org.roboquant.common.Asset
-import org.roboquant.common.Config
-import org.roboquant.common.TimeFrame
+import org.roboquant.brokers.FixedExchangeRates
+import org.roboquant.common.*
+import org.roboquant.feeds.OrderBook
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
+import org.roboquant.feeds.filter
 import org.roboquant.iex.Range
 import org.roboquant.yahoo.YahooHistoricFeed
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.OpenPositions
 import org.roboquant.metrics.ProgressMetric
+import org.roboquant.oanda.OANDABroker
+import org.roboquant.oanda.OANDAHistoricFeed
+import org.roboquant.oanda.OANDALiveFeed
 import org.roboquant.strategies.EMACrossover
 import java.time.temporal.ChronoUnit
 
@@ -114,8 +118,37 @@ fun feedYahoo() {
     logger.summary(10)
 }
 
+fun oanda() {
+    val feed = OANDAHistoricFeed()
+    feed.retrieveCandles("EUR_USD", "USD_JPY", "GBP_USD")
+    feed.assets.summary().log()
+    println(feed.timeline.size)
+    println(feed.timeFrame)
+
+}
+
+
+
+fun oandaLive() {
+    val feed = OANDALiveFeed()
+    feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
+    val tf = TimeFrame.nextMinutes(2)
+    val actions = feed.filter<OrderBook>(tf)
+    println(actions.size)
+
+}
+
+fun oandaBroker() {
+    val currencyConverter = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
+    val broker = OANDABroker(currencyConverter = currencyConverter)
+    broker.account.summary().log()
+    broker.account.portfolio.summary().log()
+    broker.availableAssets.values.summary().log()
+}
+
+
 fun main() {
-    when ("ALPACA_HISTORIC_FEED") {
+    when ("OANDA_LIVE_FEED") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
@@ -123,5 +156,8 @@ fun main() {
         "ALPACA_FEED" -> alpacaFeed()
         "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
         "ALPACA_ALL" -> allAlpaca()
+        "OANDA_BROKER" -> oandaBroker()
+        "OANDA_FEED" -> oanda()
+        "OANDA_LIVE_FEED" -> oandaLive()
     }
 }

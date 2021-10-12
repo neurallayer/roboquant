@@ -38,9 +38,21 @@ class StockBuilder :  AssetBuilder
 class ForexBuilder : AssetBuilder {
 
     override fun invoke(name: String, template: Asset): Asset {
-        val symbol = name.substring(0, 3).uppercase()
-        val currency = name.substring(3, 6).uppercase()
-        return template.copy(symbol = symbol, currencyCode = currency)
+        val symbol: String
+        val currencyCode: String
+        val items = name.split('_', '-', ' ', '/')
+        if (items.size == 2) {
+            symbol = items[0]
+            currencyCode = items[1]
+        } else {
+            // Assume last 3 characters is the currency code and the rest is the symbol name
+            symbol = name.substring(0, name.lastIndex - 2)
+            currencyCode = name.substring(name.lastIndex - 2)
+        }
+        return template.copy(
+            symbol = symbol.uppercase()  + currencyCode.uppercase(),
+            currencyCode = currencyCode.uppercase(),
+        )
     }
 
 }

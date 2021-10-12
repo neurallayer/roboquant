@@ -19,8 +19,8 @@ internal class AssetBuilderTest {
 
     @Test
     fun testForexBuilder() {
-        val fx = ForexBuilder().invoke("USDEUR")
-        assertEquals("USD", fx.symbol)
+        val fx = ForexBuilder().invoke("USD_EUR")
+        assertEquals("EUR", fx.currencyCode)
     }
 
     @Test

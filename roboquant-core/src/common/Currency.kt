@@ -29,7 +29,7 @@ class Currency private constructor(val currencyCode: String) {
     /**
      * The number of digits to use when formatting amounts denominated in this currency
      */
-    val defaultFractionDigits: Int =
+    var defaultFractionDigits: Int =
         try {
             java.util.Currency.getInstance(currencyCode).defaultFractionDigits
         } catch (e: Exception) {
