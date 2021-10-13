@@ -11,7 +11,7 @@ image:https://img.shields.io/github/v/tag/neurallayer/roboquant[GitHub tag (late
 
 Roboquant is an algorithmic trading platform that is fast and flexible while at the same time strives to be easy to use. It is fully open source, written in Kotlin, and can be used in Jupyter Notebooks as well as standalone applications. It is meant to be used by anyone serious about algo trading, from retail traders to proprietary trading firms.
 
-image::/docs/roboquant_logo.png[roboquant Logo, align=center]
+image::/docs/roboquant_logo.png[roboquant Logo, 250, align=center]
 
 You can find out more at *https://roboquant.org[roboquant.org]*. Give this repository a star ⭐ if you like the project.
 
@@ -20,13 +20,18 @@ To demonstrate how easy it is to get started, the following code snippet shows a
 
 [source,kotlin]
 ----
-val strategy = EMACrossover()
-val metric = AccountSummary()
-val roboquant =  Roboquant(strategy, metric)
+val strategy = EMACrossover() <1>
+val metric = AccountSummary() <2>
+val roboquant = Roboquant(strategy, metric) <3>
 
-val feed = CSVFeed("data/US")
-roboquant.run(feed)
+val feed = CSVFeed("data/US") <4>
+roboquant.run(feed) <5>
 ----
+<1> Create the strategy that you want to validate
+<2> Define the metrics you want to use during the test
+<3> Create a Roboquant instance, the engine of the framework
+<4> What data should be used, in this case CSV files
+<5> Run the back test
 
 == Features
 Some key features of roboquant are:
