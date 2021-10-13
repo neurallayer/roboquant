@@ -3,6 +3,7 @@ package org.roboquant.brokers
 import org.roboquant.common.Asset
 import org.roboquant.common.Cash
 import org.roboquant.common.Summary
+import org.roboquant.feeds.Event
 import java.text.DecimalFormat
 
 /**
@@ -69,6 +70,23 @@ class Portfolio : Cloneable {
             currentPos.update(position)
         }
     }
+
+    /**
+     * Update the open positions in the portfolio with the current market prices as found in the [event]
+     */
+    fun updateMarketPrices(event: Event, priceType:String = "DEFAULT") {
+        val prices = event.prices
+        val now = event.now
+
+        for ((asset, position) in positions) {
+            val priceAction = prices[asset]
+            if (priceAction != null) {
+                position.price = priceAction.getPrice(priceType)
+                position.lastUpdate = now
+            }
+        }
+    }
+
 
     /**
      * Replace a position in the portfolio with a new [position]. So this overwrites the previous position

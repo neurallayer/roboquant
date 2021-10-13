@@ -1,31 +1,32 @@
 package org.roboquant.jupyter
 
 import org.roboquant.common.plusAssign
+import org.roboquant.common.round
 import org.roboquant.logging.MetricsEntry
 import org.roboquant.logging.getName
-import java.text.DecimalFormat
+import java.math.BigDecimal
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import kotlin.collections.*
 import kotlin.math.absoluteValue
 
-class CalendarChart(private val metricsData: List<MetricsEntry>, format: String = "#.00") : Chart() {
+class CalendarChart(private val metricsData: List<MetricsEntry>, private val fractionDigits: Int = 2) : Chart() {
 
     private var max: Double = 1.0
-    private val decimalFormatter = DecimalFormat(format)
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneOffset.UTC)
 
     private fun prepData(): MutableMap<Int, List<Any>> {
 
         max = metricsData.map { it.value }.map { it.toDouble().absoluteValue }.maxOrNull() ?: 1.0
         val perYear = metricsData.groupBy { it.info.time.atOffset(ZoneOffset.UTC).year }
-        val result = mutableMapOf<Int, List<Pair<String, String>>>()
+        val result = mutableMapOf<Int, List<Pair<String, BigDecimal>>>()
         perYear.forEach { (t, u) ->
-            result[t] = u.map { Pair(timeFormatter.format(it.info.time), decimalFormatter.format(it.value)) }
+            result[t] = u.map {
+                Pair(timeFormatter.format(it.info.time), it.value.round(fractionDigits))
+            }
         }
         return result.toSortedMap()
     }
-
 
     private fun genCalendar(data: MutableMap<Int, List<Any>>): String {
         var top = 100

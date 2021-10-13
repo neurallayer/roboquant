@@ -8,12 +8,10 @@ import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.CurrencyConverter
 import org.roboquant.brokers.Position
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Config
-import org.roboquant.common.Currency
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
+import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 class OANDABroker(
@@ -25,6 +23,7 @@ class OANDABroker(
 
     private lateinit var ctx: Context
     override val account: Account = Account(currencyConverter = currencyConverter)
+    private val logger = Logging.getLogger("OANDABroker")
 
     val availableAssets by lazy {
         val instruments = ctx.account.instruments(AccountID(accountID)).instruments
@@ -50,6 +49,7 @@ class OANDABroker(
             .build()
 
         initAccount()
+        logger.info("Retrieved account with id $accountID")
     }
 
 
@@ -81,7 +81,13 @@ class OANDABroker(
         account.time = Instant.now()
     }
 
+    /**
+     * TODO implement this logic, right now all orders will be rejected.
+     */
     override fun place(orders: List<Order>, event: Event): Account {
-        TODO("Not yet implemented")
+        orders.forEach { it.status = OrderStatus.REJECTED }
+        account.orders.addAll(orders)
+        account.portfolio.updateMarketPrices(event)
+        return account
     }
 }

@@ -19,6 +19,7 @@ class PriceChart(
     private val trades: List<Trade> = listOf(),
     private val timeFrame: TimeFrame = TimeFrame.FULL,
     private val priceType: String = "DEFAULT",
+    private val fractionDigits: Int = asset.currency.defaultFractionDigits
 ) : Chart() {
 
     /**
@@ -29,7 +30,7 @@ class PriceChart(
         val currency = asset.currency
         val data = entries.map {
             val price = it.second.getPrice(priceType)
-            val value = currency.toBigDecimal(price)
+            val value = currency.toBigDecimal(price, fractionDigits)
             it.first to value
         }
         return data

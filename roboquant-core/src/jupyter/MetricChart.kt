@@ -15,7 +15,7 @@ import java.math.RoundingMode
 class MetricChart(
     private val metricsData: Collection<MetricsEntry>,
     private val useTime: Boolean = true,
-    private val scale: Int = 2
+    private val fractionDigits: Int = 2
 ) : Chart() {
 
     /** @suppress */
@@ -76,7 +76,7 @@ class MetricChart(
         val d = mutableListOf<Pair<Any, Number>>()
         for (entry in this) {
             val value = entry.value
-            val roundedValue = BigDecimal(value.toDouble()).setScale(scale, RoundingMode.HALF_DOWN)
+            val roundedValue = BigDecimal(value.toDouble()).setScale(fractionDigits, RoundingMode.HALF_DOWN)
             if (useTime)
                 d.add(Pair(entry.info.time, roundedValue))
             else

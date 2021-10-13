@@ -42,8 +42,8 @@ class Currency private constructor(val currencyCode: String) {
      * while JPY would have none. Set [includeCurrency] to true if the resulting string should also contain the
      * currency display name.
      */
-    fun format(amount: Double, includeCurrency: Boolean = false): String {
-        val amountStr = toBigDecimal(amount).toString()
+    fun format(amount: Double, fractionDigits:Int = defaultFractionDigits, includeCurrency: Boolean = false): String {
+        val amountStr = toBigDecimal(amount, fractionDigits).toString()
         return if (includeCurrency)
             "$amountStr $displayName"
         else
@@ -54,7 +54,7 @@ class Currency private constructor(val currencyCode: String) {
      * Convert a numeric [amount] to BigDecimal using the number of digits defined for the currency. Internally roboquant
      * doesn't use BigDecimals, but this method is used enable a nicer display of currency amounts.
      */
-    fun toBigDecimal(amount: Number) : BigDecimal = BigDecimal(amount.toDouble()).setScale(defaultFractionDigits, roundingMode)
+    fun toBigDecimal(amount: Number, fractionDigits:Int = defaultFractionDigits) : BigDecimal = BigDecimal(amount.toDouble()).setScale(fractionDigits, roundingMode)
 
 
     companion object {

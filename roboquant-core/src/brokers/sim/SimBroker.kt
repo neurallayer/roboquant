@@ -136,30 +136,11 @@ class SimBroker(
         account.orders.addAll(orders)
         validateOrders(event)
         execute(event)
-        updateMarketPrices(event)
+        account.portfolio.updateMarketPrices(event)
         account.time = event.now
         return account
     }
 
-
-
-    /**
-     * Update the open positions in the portfolio with the current market prices.
-     *
-     * @param event
-     */
-    private fun updateMarketPrices(event: Event) {
-        val prices = event.prices
-        val now = event.now
-
-        for ((asset, position) in account.portfolio.positions) {
-            val priceAction = prices[asset]
-            if (priceAction != null) {
-                position.price = priceAction.getPrice()
-                position.lastUpdate = now
-            }
-        }
-    }
 
 
     /**

@@ -6,6 +6,8 @@ import org.apache.commons.math3.stat.descriptive.rank.Min
 import org.apache.commons.text.StringEscapeUtils
 import java.lang.Integer.max
 import java.lang.Integer.min
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.*
 
 /******************************************************************************
@@ -184,3 +186,5 @@ fun Collection<Any?>.summary(): Summary {
     for (obj in this) result.add(obj?.toString() ?: "NULL")
     return result
 }
+
+fun Number.round(fractions: Int = 2): BigDecimal = BigDecimal(this.toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)

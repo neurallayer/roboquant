@@ -144,11 +144,20 @@ fun oandaBroker() {
     broker.account.summary().log()
     broker.account.portfolio.summary().log()
     broker.availableAssets.values.summary().log()
+
+    val strategy = EMACrossover()
+    val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
+
+    val feed = OANDALiveFeed()
+    feed.subscribeOrderBook("EUR_USD", "GBP_USD")
+    val twoMinutes = TimeFrame.nextMinutes(2)
+    roboquant.run(feed, twoMinutes)
+    broker.account.portfolio.summary().log()
 }
 
 
 fun main() {
-    when ("OANDA_LIVE_FEED") {
+    when ("OANDA_BROKER") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
