@@ -30,8 +30,7 @@ internal class FixedExchangeRatesTest {
         val currencyConverter = FixedExchangeRates(USD, EUR to 1.2)
         assertEquals(USD, currencyConverter.baseCurrency)
 
-        val account =Account(currencyConverter = currencyConverter)
-        val broker = SimBroker(account = account)
+        val broker = SimBroker(currencyConverter = currencyConverter)
 
         val strategy = EMACrossover()
         val policy = TestPolicy()

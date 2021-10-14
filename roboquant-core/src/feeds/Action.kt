@@ -238,6 +238,8 @@ class OrderBook(
     private fun List<OrderBookEntry>.max() = this.maxOf { it.limit }
     private fun List<OrderBookEntry>.min() = this.minOf { it.limit }
 
+    override fun toString(): String = "$asset bids:${bids.size} asks:${asks.size}"
+
     /**
      * Order book entry contains the limit price and quantity
      *
@@ -245,7 +247,9 @@ class OrderBook(
      * @property limit
      * @constructor Create empty Order book entry
      */
-    class OrderBookEntry(val quantity: Double, val limit: Double)
+    class OrderBookEntry(val quantity: Double, val limit: Double) {
+        override fun toString(): String = "$quantity @ $limit"
+    }
 }
 
 /**

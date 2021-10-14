@@ -57,7 +57,6 @@ fun alpacaHistoricFeed() {
     roboquant.run(feed)
     roboquant.broker.account.summary().log()
     roboquant.logger.summary().log()
-
 }
 
 fun alpacaFeed() {
@@ -138,6 +137,17 @@ fun oandaLive() {
 
 }
 
+
+fun oandaLivePrices() {
+    val feed = OANDALiveFeed()
+
+    feed.subscribePrices("EUR_USD", "USD_JPY", "GBP_USD")
+    println("starting")
+    val data = feed.filter<OrderBook>(TimeFrame.nextMinutes(1))
+    data.summary().log()
+}
+
+
 fun oandaBroker() {
     val currencyConverter = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
     val broker = OANDABroker(currencyConverter = currencyConverter)
@@ -157,7 +167,7 @@ fun oandaBroker() {
 
 
 fun main() {
-    when ("OANDA_BROKER") {
+    when ("OANDA_LIVE_PRICES") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
@@ -168,5 +178,6 @@ fun main() {
         "OANDA_BROKER" -> oandaBroker()
         "OANDA_FEED" -> oanda()
         "OANDA_LIVE_FEED" -> oandaLive()
+        "OANDA_LIVE_PRICES" -> oandaLivePrices()
     }
 }

@@ -1,73 +1,48 @@
 package org.roboquant.oanda
 
 import com.oanda.v20.Context
-import com.oanda.v20.ContextBuilder
 import com.oanda.v20.account.AccountID
-import com.oanda.v20.primitives.InstrumentType
+import oanda.OANDAConnection
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.CurrencyConverter
 import org.roboquant.brokers.Position
-import org.roboquant.common.*
+import org.roboquant.common.Currency
+import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 class OANDABroker(
-    private var accountID: String? = null,
+    accountID: String? = null,
     token: String? = null,
-    url: String = "https://api-fxpractice.oanda.com/",
+    demoAccount: Boolean = true,
     currencyConverter: CurrencyConverter? = null,
 ) : Broker {
 
-    private lateinit var ctx: Context
+    private val ctx: Context = OANDAConnection.getContext(token, demoAccount)
     override val account: Account = Account(currencyConverter = currencyConverter)
     private val logger = Logging.getLogger("OANDABroker")
 
-    val availableAssets by lazy {
-        val instruments = ctx.account.instruments(AccountID(accountID)).instruments
-        instruments.map {
-            val currency = it.name.split('_').last()
-            val type = when (it.type!!) {
-                InstrumentType.CURRENCY -> AssetType.FOREX
-                InstrumentType.CFD -> AssetType.CFD
-                InstrumentType.METAL -> AssetType.CFD
-            }
-            Asset(it.name.toString(), type = type, currencyCode = currency)
-        }.associateBy { it.symbol }
-    }
-
+    val availableAssets = OANDAConnection.getAvailableAssets(ctx)
+    private val accountID = OANDAConnection.getAccountID(accountID, ctx)
 
     init {
-        val apiToken = token ?: Config.getProperty("OANDA_API_KEY")
-        require(apiToken != null) { "Couldn't locate API token OANDA_API_KEY" }
-        accountID = accountID ?: Config.getProperty("OANDA_ACCOUNT_ID")
-        ctx = ContextBuilder(url)
-            .setToken(apiToken)
-            .setApplication("roboquant")
-            .build()
-
         initAccount()
         logger.info("Retrieved account with id $accountID")
     }
 
 
     private fun initAccount() {
-        val accounts = ctx.account.list().accounts
-        if (accountID != null) {
-            assert(accountID in accounts.map { it.id.toString() })
-        } else {
-            accountID = accounts.first().id.toString()
-        }
-
         val summary = ctx.account.summary(AccountID(accountID)).account
         account.baseCurrency = Currency.getInstance(summary.currency.toString())
         account.cash.deposit(account.baseCurrency, summary.balance.doubleValue())
-        val positions = ctx.position.list(AccountID(accountID)).positions
+        val positions = ctx.position.listOpen(AccountID(accountID)).positions
 
         for (p in positions) {
-            val asset = availableAssets[p.instrument.toString()]!!
+            val symbol = p.instrument.toString()
+            val asset = availableAssets[symbol]!!
             if (p.long.units.doubleValue() != 0.0) {
                 val pos = Position(asset, p.long.units.doubleValue(), p.long.averagePrice.doubleValue())
                 account.portfolio.setPosition(pos)

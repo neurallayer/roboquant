@@ -1,10 +1,7 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.Phase
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.Broker
-import org.roboquant.brokers.Position
-import org.roboquant.brokers.Trade
+import org.roboquant.brokers.*
 import org.roboquant.common.Cash
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging
@@ -31,7 +28,8 @@ import java.util.logging.Logger
  */
 class SimBroker(
     private val initialDeposit: Cash = Cash(Currency.USD to 1_000_000.00),
-    override val account: Account = Account(baseCurrency = initialDeposit.currencies.first()),
+    currencyConverter: CurrencyConverter? = null,
+    baseCurrency: Currency = initialDeposit.currencies.first(),
     private val costModel: CostModel = DefaultCostModel(),
     private val validateBuyingPower: Boolean = false,
     private val recording: Boolean = false,
@@ -40,6 +38,7 @@ class SimBroker(
 ) : Broker {
 
     private val metrics = mutableMapOf<String, Number>()
+    override val account: Account = Account(baseCurrency, currencyConverter)
 
     companion object Factory {
 
