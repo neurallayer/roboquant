@@ -41,6 +41,7 @@
             <artifactId>roboquant-core</artifactId>
         </dependency>
         <dependency>
+            <!-- needs to be locally installed since not allowed to re-distribute-->
             <groupId>com.interactivebrokers</groupId>
             <artifactId>tws-api</artifactId>
             <version>9.76</version>
