@@ -21,6 +21,28 @@ import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.MarketOrder
 
 /**
+ * Is the signal generated meant for entry, exit or both.
+ */
+enum class SignalType {
+
+    /**
+     * Used only for entry of a position
+     */
+    ENTRY,
+
+    /**
+     * Used only to exit a position, so should not be processed if there is no open position in the portfolio already.
+     */
+    EXIT,
+
+    /**
+     * Used for both entry and exit a position
+     */
+    BOTH
+}
+
+
+/**
  * Signal provides a [Rating] for an [Asset] and is typically created by a strategy.
  *
  * Besides, the asset and rating, a signal can also optionally provide the following information:
@@ -37,6 +59,7 @@ import org.roboquant.orders.MarketOrder
  *
  * @property asset The asset for which this rating applies
  * @property rating The rating for the asset
+ * @property type The type of signal
  * @property takeProfit An optional take profit price in the same currency as the asset
  * @property stopLoss An optional stop loss price in the same currency as the asset
  * @property probability Optional the probability (value between 0.0 and 1.0) that the rating is correct.
@@ -46,6 +69,7 @@ import org.roboquant.orders.MarketOrder
 class Signal(
     val asset: Asset,
     val rating: Rating,
+    val type: SignalType = SignalType.BOTH,
     val takeProfit: Double = Double.NaN,
     val stopLoss: Double = Double.NaN,
     val probability: Double = Double.NaN,
@@ -70,58 +94,4 @@ class Signal(
         return LimitOrder(asset, qty, takeProfit, tag = source)
     }
 
-}
-
-/**
- * Different types of Signal Resolutions available
- */
-enum class SignalResolution {
-
-    /**
-     * Don't resolve any potential signal conflicts
-     */
-    NONE,
-
-    /**
-     * Select first signal found for an asset
-     */
-    FIRST,
-
-    /**
-     * Select last signal found for an asset
-     */
-    LAST,
-
-    /**
-     * Select the first signal for an asset assuming there are no conflicting signals, see also [Signal.conflicts]
-     */
-    NO_CONFLICTS,
-
-    /**
-     * Select a signal for an asset is there are no duplicate signals, even if the duplicate signals are not
-     * conflicting
-     */
-    NO_DUPLICATES,
-}
-
-/**
- * Resolve conflicting signals. For many strategies this might not be necessary since there is only 1 signal per
- * asset, but as strategies are combined, this issue might pop up. You can specify the resolution [rule] to apply
- * when solving conflicts, the default being [SignalResolution.NO_CONFLICTS].
- *
- * It returns the list of signals without any conflicts.
- */
-fun List<Signal>.resolve(rule: SignalResolution = SignalResolution.NO_CONFLICTS): List<Signal> {
-    if (size < 2) return this
-
-    return when (rule) {
-        SignalResolution.NONE -> this
-        SignalResolution.FIRST -> distinctBy { it.asset }
-        SignalResolution.LAST -> asReversed().distinctBy { it.asset }.asReversed()
-        SignalResolution.NO_CONFLICTS -> filter { none { f -> f.conflicts(it) } }.distinctBy { it.asset }
-        SignalResolution.NO_DUPLICATES -> {
-            val assets = this.groupBy { it.asset }
-            filter { assets[it.asset]!!.size == 1 }
-        }
-    }
 }

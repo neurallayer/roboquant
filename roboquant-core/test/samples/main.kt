@@ -19,7 +19,6 @@ package org.roboquant.samples
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
 import org.roboquant.Roboquant
-import org.roboquant.brokers.Account
 import org.roboquant.brokers.ECBExchangeRates
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.SimBroker
@@ -45,7 +44,6 @@ import java.time.Period
 import kotlin.io.path.Path
 import kotlin.io.path.name
 import kotlin.system.measureTimeMillis
-
 
 fun small() {
     val feed = CSVFeed("data/US")

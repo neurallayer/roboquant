@@ -19,12 +19,11 @@ package org.roboquant.policies
 import org.roboquant.brokers.Account
 import org.roboquant.common.addNotNull
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
 import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.Order
 import org.roboquant.orders.SingleOrder
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.resolve
 
 /**
  * Policy that just buys or sells a fixed [quantity] of an asset, generating only [MarketOrder]s

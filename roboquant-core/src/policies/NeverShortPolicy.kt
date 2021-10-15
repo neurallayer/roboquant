@@ -22,8 +22,6 @@ import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.orders.SingleOrder
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.SignalResolution
-import org.roboquant.strategies.resolve
 import kotlin.math.absoluteValue
 import kotlin.math.floor
 import kotlin.math.min

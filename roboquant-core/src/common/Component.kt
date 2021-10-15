@@ -20,30 +20,26 @@ import org.roboquant.Phase
 import org.roboquant.metrics.MetricResults
 
 /**
- * Interface implemented by all components used in a run. The component will be informed that a phase has been
- * started or ended. It provides the component with the opportunity to manage its state so a phase can be started
- * without any state remaining from previous runs.
+ * Interface implemented by all components used in a run (Strategy, Policy, Broker, Metric, MetricLogger). The component
+ * will be informed that a phase has been started or ended. It provides the component with the opportunity to manage
+ * its state so a phase can be started without any state remaining from previous runs.
  *
  * Additionally, it provides components the option to log metrics. So any component can log values if required and this
  * adds to the traceability during testing and live trading.
  *
- * The default implementation of all the methods is to do nothing, so you only have to implement relevant methods to
- * your use-case.
+ * The default implementation of all the methods is to do nothing, so you only have to implement the methods relevant to
+ * your component.
  *
  */
 interface Component {
 
     /**
-     * Signal the start of a [Phase]. Default implementation is to take no action.
-     *
-     * @param phase The phase that is going to start
+     * Signal the start of a [phase]. Default implementation is to take no action.
      */
     fun start(phase: Phase) {}
 
     /**
-     * Signal the end of a [Phase]. Default implementation is to take no action.
-     *
-     * @param phase The phase that has just ended
+     * Signal the end of a [phase]. Default implementation is to take no action.
      */
     fun end(phase: Phase) {}
 

@@ -21,15 +21,15 @@ package org.roboquant.common
  * or even a cryptocurrency. All of its properties are read-only, and assets are typically only created
  * once and reused thereafter.
  *
- *
  * @property symbol symbol name
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currencyCode currency code, default is "USD"
- * @property exchangeCode Exchange this asset is traded on, default is empty
+ * @property exchangeCode Exchange this asset is traded on, default is an empty string
  * @property multiplier contract multiplier, default is 1.0
- * @property details contract details, for example this could hold the option series or futures contract details
- * @property name Company name, default is empty
- * @property id asset identifier, default is empty
+ * @property details contract details, for example this could hold the option series or futures contract details. Default
+ * is an empty string.
+ * @property name Company name, default is an empty string
+ * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
  */
 data class Asset(
