@@ -16,7 +16,7 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
@@ -45,8 +45,8 @@ class PriceMetric(val asset: Asset) : Metric, Feed {
         if (price != null) _prices.add(Pair(event.now, price))
     }
 
-    override fun start(phase: Phase) {
-        super.start(phase)
+    override fun start(runPhase: RunPhase) {
+        super.start(runPhase)
         _prices.clear()
     }
 

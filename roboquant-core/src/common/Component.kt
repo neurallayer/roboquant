@@ -16,7 +16,7 @@
 
 package org.roboquant.common
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.metrics.MetricResults
 
 /**
@@ -28,21 +28,20 @@ import org.roboquant.metrics.MetricResults
  * adds to the traceability during testing and live trading.
  *
  * The default implementation of all the methods is to do nothing, so you only have to implement the methods relevant to
- * your component.
+ * your component and can safely ignore the rest.
  *
  */
 interface Component {
 
     /**
-     * Signal the start of a [phase]. Default implementation is to take no action.
+     * Signal the start of a [runPhase]. Default implementation is to take no action.
      */
-    fun start(phase: Phase) {}
+    fun start(runPhase: RunPhase) {}
 
     /**
-     * Signal the end of a [phase]. Default implementation is to take no action.
+     * Signal the end of a [runPhase]. Default implementation is to take no action.
      */
-    fun end(phase: Phase) {}
-
+    fun end(runPhase: RunPhase) {}
 
     /**
      * Reset any state of a component. Default implementation is to take no action.

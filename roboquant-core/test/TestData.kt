@@ -67,7 +67,7 @@ object TestData {
     }
 
     fun getRunInfo(): RunInfo {
-        return RunInfo("test", 1, 1, 10, Instant.now(), TimeFrame.FULL, Phase.MAIN)
+        return RunInfo("test", 1, 1, 10, Instant.now(), TimeFrame.FULL, RunPhase.MAIN)
     }
 
 

@@ -19,12 +19,12 @@ package org.roboquant
 
 import kotlin.test.*
 
-internal class PhaseTest {
+internal class RunPhaseTest {
 
     @Test
     fun test() {
-        assertEquals("VALIDATE", Phase.VALIDATE.value)
-        assertEquals("MAIN", Phase.MAIN.value)
+        assertEquals("VALIDATE", RunPhase.VALIDATE.value)
+        assertEquals("MAIN", RunPhase.MAIN.value)
     }
 
 

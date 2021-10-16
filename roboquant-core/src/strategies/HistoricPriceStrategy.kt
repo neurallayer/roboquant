@@ -16,7 +16,7 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.common.Asset
 import org.roboquant.common.addNotNull
 import org.roboquant.feeds.Event
@@ -64,8 +64,8 @@ abstract class HistoricPriceStrategy(
      */
     abstract fun generate(asset: Asset, data: DoubleArray): Signal?
 
-    override fun start(phase: Phase) {
-        super.start(phase)
+    override fun start(runPhase: RunPhase) {
+        super.start(runPhase)
         history.clear()
     }
 

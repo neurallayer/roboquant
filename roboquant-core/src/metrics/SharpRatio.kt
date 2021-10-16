@@ -17,7 +17,7 @@
 package org.roboquant.metrics
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 import java.time.Instant
@@ -78,7 +78,7 @@ class SharpRatio(
         }
     }
 
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         stats.clear()
         start = Instant.MIN
         lastValue = 0.0

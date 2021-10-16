@@ -20,7 +20,7 @@ import com.cronutils.model.CronType
 import com.cronutils.model.definition.CronDefinitionBuilder
 import com.cronutils.model.time.ExecutionTime
 import com.cronutils.parser.CronParser
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 import java.time.Instant
@@ -111,13 +111,13 @@ class MetricScheduler(
         return result
     }
 
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         lastFire = false
-        for (metric in metrics) metric.start(phase)
+        for (metric in metrics) metric.start(runPhase)
     }
 
-    override fun end(phase: Phase) {
-        for (metric in metrics) metric.end(phase)
+    override fun end(runPhase: RunPhase) {
+        for (metric in metrics) metric.end(runPhase)
     }
 
     override fun reset() {

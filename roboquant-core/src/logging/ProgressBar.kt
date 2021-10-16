@@ -51,7 +51,7 @@ internal class ProgressBar {
         // Avoid updating the progress meter too often
         val now = Instant.now()
         if (now < nextUpdate) return
-        nextUpdate = now.plusMillis(200)
+        nextUpdate = now.plusMillis(500)
 
         val totalDuration = info.timeFrame.duration
         var percent = ((info.duration.seconds * 100.0 / totalDuration.seconds)).roundToInt()
@@ -62,7 +62,7 @@ internal class ProgressBar {
         currentPercent = percent
 
         if (message1.isEmpty()) {
-            message1 = "${info.name} | run=${info.run} | phase=${info.phase} |"
+            message1 = "${info.name} | run=${info.run} | phase=${info.runPhase} |"
             message2 = info.timeFrame.toPrettyString() + " | "
         }
 
@@ -88,7 +88,6 @@ internal class ProgressBar {
             lastOutput = str
             System.out.flush()
         }
-
 
     }
 

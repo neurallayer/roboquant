@@ -39,7 +39,7 @@ import java.time.Duration
 import java.time.Instant
 
 /**
- * Roboquant is the engine of the framework that ties [strategy], [policy] and [broker] together and caters to a wide
+ * Roboquant is the engine of the platform that ties [strategy], [policy] and [broker] together and caters to a wide
  * variety of testing and live trading scenarios. Through [metrics] and a [logger] it provides insights into the
  * performance of a [run].
  *
@@ -57,11 +57,7 @@ class Roboquant<L : MetricsLogger>(
 ) {
 
     private val kotlinLogger = Logging.getLogger(name)
-    private var run = 0
-    private var episode = 0
-    private var step = 0
-    private lateinit var _timeFrame: TimeFrame
-    private lateinit var phase: Phase
+    private var runInfo = RunInfo(name)
     private val components = listOf(strategy, policy, broker, *metrics, logger)
 
     companion object {
@@ -93,10 +89,11 @@ class Roboquant<L : MetricsLogger>(
      *
      * Under the hood this method replies on the [step] method to take a single step.
      */
-    private suspend fun runPhase(feed: Feed, runTime: TimeFrame = TimeFrame.FULL, runPhase: Phase) {
+    private suspend fun runPhase(feed: Feed, runTime: TimeFrame = TimeFrame.FULL, runPhase: RunPhase) {
 
         if (!feed.timeFrame.overlap(runTime)) return
-        _timeFrame = runTime.intersect(feed.timeFrame)
+        runInfo.timeFrame = runTime.intersect(feed.timeFrame)
+        runInfo.runPhase = runPhase
 
         val channel = EventChannel(channelCapacity, runTime)
         val job = Background.ioJob {
@@ -111,7 +108,6 @@ class Roboquant<L : MetricsLogger>(
         try {
             var orders = listOf<Order>()
             while (true) {
-                step++
                 val event = channel.receive()
                 orders = step(orders, event)
             }
@@ -128,21 +124,20 @@ class Roboquant<L : MetricsLogger>(
      * Inform components of the start of a phase, this provides them with the opportunity to reset state and
      * re-initialize values if required.
      *
-     * @param phase
+     * @param runPhase
      */
-    private fun start(phase: Phase) {
-        this.phase = phase
-        for (component in components) component.start(this.phase)
+    private fun start(runPhase: RunPhase) {
+        for (component in components) component.start(runPhase)
     }
 
     /**
      * Inform components of the end of a phase, this provides them with the opportunity to release resources
      * if required or process aggregated results.
      *
-     * @param phase
+     * @param runPhase
      */
-    private fun end(phase: Phase) {
-        for (component in components) component.end(phase)
+    private fun end(runPhase: RunPhase) {
+        for (component in components) component.end(runPhase)
     }
 
     /**
@@ -151,9 +146,7 @@ class Roboquant<L : MetricsLogger>(
      */
     fun reset() {
         for (component in components) component.reset()
-        run = 0
-        episode = 0
-        step = 0
+        runInfo.reset()
     }
 
     /**
@@ -186,24 +179,26 @@ class Roboquant<L : MetricsLogger>(
     ) {
         require(episodes > 0) { "episodes need to be greater than zero"}
 
-        run++
-        episode = 0
-        step = 0
-        kotlinLogger.fine { "Starting run $run for $episodes episodes" }
+        runInfo.startRun()
+        kotlinLogger.fine { "Starting run $runInfo for $episodes episodes" }
 
         repeat(episodes) {
-            episode++
-            runPhase(feed, timeFrame, Phase.MAIN)
-            if (validation !== null) runPhase(feed, validation, Phase.VALIDATE)
+            runInfo.episode++
+            runPhase(feed, timeFrame, RunPhase.MAIN)
+            if (validation !== null) runPhase(feed, validation, RunPhase.VALIDATE)
         }
-        kotlinLogger.fine { "Finished run $run" }
+        kotlinLogger.fine { "Finished run $runInfo" }
     }
 
 
     /**
-     * Take a single step in the timeline
+     * Take a single step in the timeline. The broker is always invoked before the strategy and policy to ensure it is
+     * impossible to look ahead in the future.
      */
     private fun step(orders: List<Order>, event: Event): List<Order> {
+        runInfo.step++
+        runInfo.time = event.now
+
         val account = broker.place(orders, event)
         runMetrics(account, event)
         val signals = strategy.generate(event)
@@ -215,7 +210,7 @@ class Roboquant<L : MetricsLogger>(
      * policy and broker.
      */
     private fun runMetrics(account: Account, event: Event) {
-        val info = RunInfo(name, run, episode, this.step, event.now, _timeFrame, phase)
+        val info = runInfo.copy()
         for (metric in metrics) metric.calculate(account, event)
 
         for (component in components) {
@@ -231,7 +226,7 @@ class Roboquant<L : MetricsLogger>(
     fun summary(): Summary {
         val s = Summary("Roboquant")
         s.add("name", name)
-        s.add("run", run)
+        s.add("run", runInfo.run)
         s.add("strategy", strategy::class.simpleName)
         s.add("policy", policy::class.simpleName)
         s.add("logger", logger::class.simpleName)
@@ -243,23 +238,25 @@ class Roboquant<L : MetricsLogger>(
 
 
 /**
- * Run related info provided to loggers together with the metric results.
+ * Run related info provided to metrics loggers together with the metric results.
  *
  * @property name of the roboquant that created this object
- * @property run the run
- * @property episode
- * @property step
- * @property time
+ * @property startRun the run
+ * @property episode the episode
+ * @property step the step
+ * @property time the time
+ * @property timeFrame the total timeframe of the run
+ * @property runPhase the phase of the run
  * @constructor Create new RunInfo object
  */
 data class RunInfo internal constructor(
     val name: String,
-    val run: Int,
-    val episode: Int,
-    val step: Int,
-    val time: Instant,
-    val timeFrame: TimeFrame,
-    val phase: Phase
+    var run: Int = 0,
+    var episode: Int = 0,
+    var step: Int = 0,
+    var time: Instant = Instant.MIN,
+    var timeFrame: TimeFrame = TimeFrame.FULL,
+    var runPhase: RunPhase = RunPhase.MAIN
 ) {
 
     /**
@@ -268,17 +265,29 @@ data class RunInfo internal constructor(
     val duration: Duration
         get() = Duration.between(timeFrame.start, time)
 
+    fun startRun() {
+        run++
+        episode = 0
+        step = 0
+    }
+
+    fun reset() {
+        run = 0
+        episode = 0
+        step = 0
+    }
+
 }
 
 /**
- * The different phases that a run can be in, MAIN and VALIDATE. Especially with self learning
+ * Enumeration of fhe different phases that a run can be in, MAIN and VALIDATE. Especially with self learning
  * strategies, it is important that you evaluate your strategy on yet unseen data, so you don't over-fit.
  *
  * See also [Roboquant.run] how to run your strategy with different phases enabled.
  *
- * @property value
+ * @property value String value of the phase
  */
-enum class Phase(val value: String) {
+enum class RunPhase(val value: String) {
     MAIN("MAIN"),
     VALIDATE("VALIDATE"),
 }

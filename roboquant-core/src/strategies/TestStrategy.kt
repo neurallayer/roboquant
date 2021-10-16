@@ -16,7 +16,7 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 
@@ -54,7 +54,7 @@ class TestStrategy(private val skip: Int = 0) : Strategy {
         return signals
     }
 
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         nSignals.clear()
     }
 }

@@ -16,7 +16,7 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.brokers.*
 import org.roboquant.common.TimeFrame
 import org.roboquant.common.plus
@@ -70,7 +70,7 @@ class PNL(
     }
 
 
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         lastTime = Instant.MIN
     }
 

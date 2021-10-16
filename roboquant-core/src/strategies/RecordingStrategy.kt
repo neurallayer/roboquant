@@ -16,7 +16,7 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.metrics.MetricResults
 
 /**
@@ -61,7 +61,7 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", enabl
     /**
      * At the start of a phase, any recorded metrics will be cleared.
      */
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         metrics.clear()
     }
 }

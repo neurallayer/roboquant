@@ -16,7 +16,7 @@
 
 package org.roboquant.logging
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.RunInfo
 import org.roboquant.common.Summary
 import java.text.SimpleDateFormat
@@ -36,7 +36,7 @@ import java.util.*
 class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize: Int = Int.MAX_VALUE) : MetricsLogger {
 
     val history = LinkedList<MetricsEntry>()
-    private var progressBar = ProgressBar()
+    private val progressBar = ProgressBar()
 
     @Synchronized
     override fun log(results: Map<String, Number>, info: RunInfo) {
@@ -49,11 +49,11 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
         }
     }
 
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         if (showProgress) progressBar.reset()
     }
 
-    override fun end(phase: Phase) {
+    override fun end(runPhase: RunPhase) {
         if (showProgress) progressBar.done()
     }
 

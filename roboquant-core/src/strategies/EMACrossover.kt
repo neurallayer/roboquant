@@ -16,7 +16,7 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.common.Asset
 import java.time.Instant
 
@@ -109,7 +109,7 @@ class EMACrossover(fastPeriod: Int = 12, slowPeriod: Int = 26, smoothing: Double
         return null
     }
 
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         calculators.clear()
     }
 

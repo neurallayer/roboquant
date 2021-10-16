@@ -16,7 +16,7 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.common.Asset
 import org.roboquant.strategies.utils.RSI
 import java.time.Instant
@@ -70,7 +70,7 @@ class RSIStrategy(
         return result
     }
 
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         calculators.clear()
     }
 }

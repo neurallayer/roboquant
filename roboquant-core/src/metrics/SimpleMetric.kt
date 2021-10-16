@@ -16,7 +16,7 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 
@@ -51,7 +51,7 @@ abstract class SimpleMetric : Metric {
         return result
     }
 
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         values = emptyMap()
     }
 

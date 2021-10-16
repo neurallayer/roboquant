@@ -17,7 +17,7 @@
 package org.roboquant.binance
 
 import org.junit.Test
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
@@ -28,7 +28,7 @@ internal class BinanceBrokerTestIT {
         System.getProperty("TEST_BINANCE") ?: return
         val broker = BinanceBroker()
         assertTrue(broker.toString().isNotEmpty())
-        assertFails { broker.start(Phase.MAIN) }
+        assertFails { broker.start(RunPhase.MAIN) }
     }
 
 }

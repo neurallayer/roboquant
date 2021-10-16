@@ -18,7 +18,7 @@ package org.roboquant.logging
 
 
 import kotlin.test.*
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.TestData
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -31,7 +31,7 @@ internal class MemoryLoggerTest {
         assertTrue(logger.getMetricNames().isEmpty())
         val metrics = TestData.getMetrics()
         logger.log(metrics, TestData.getRunInfo())
-        logger.end(Phase.VALIDATE)
+        logger.end(RunPhase.VALIDATE)
         assertFalse(logger.getMetricNames().isEmpty())
         assertEquals(metrics.size, logger.getMetricNames().size)
 

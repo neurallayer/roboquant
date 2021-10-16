@@ -16,7 +16,7 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.brokers.*
 import org.roboquant.common.Cash
 import org.roboquant.common.Currency
@@ -192,9 +192,9 @@ class SimBroker(
     /**
      * At the start of a new phase the account and metrics will be reset
      *
-     * @param phase
+     * @param runPhase
      */
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         reset()
     }
 

@@ -16,7 +16,7 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
@@ -63,7 +63,7 @@ class AccountBeta(private val referenceAsset: Asset, val period: Int)  : SimpleM
         return mapOf()
     }
 
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         accountData.clear()
         assetData.clear()
     }

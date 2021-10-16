@@ -18,7 +18,7 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
@@ -201,8 +201,8 @@ class TAStrategy(private val history: Int = 100) : Strategy {
         return results
     }
 
-    override fun start(phase: Phase) {
-        super.start(phase)
+    override fun start(runPhase: RunPhase) {
+        super.start(runPhase)
         buffers.clear()
     }
 

@@ -39,12 +39,10 @@ typealias MetricResults = Map<String, Number>
 interface Metric : Component {
 
     /**
-     * Calculate the metric given the account and step. This method will be invoked at the end of each step in a
-     * run. After this the [getMetrics] method is invoked to retrieve the just calculated values.
+     * Calculate the metric given the [account] and [event]. This method will be invoked at the end of each step in a
+     * run. After this the [getMetrics] method is invoked, which is part of the [Component interface] to retrieve the
+     * just calculated values.
      *
-     * @param account
-     * @param event
-     * @return
      */
     fun calculate(account: Account, event: Event)
 

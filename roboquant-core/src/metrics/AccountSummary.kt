@@ -16,7 +16,7 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.Phase
+import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 
@@ -63,7 +63,7 @@ class AccountSummary(val includeValue: Boolean = true) : SimpleMetric() {
         return result
     }
 
-    override fun start(phase: Phase) {
+    override fun start(runPhase: RunPhase) {
         lastValue = null
     }
 }

@@ -17,10 +17,11 @@
 package org.roboquant.strategies
 
 
-import org.roboquant.common.Asset
 import org.junit.Test
+import org.roboquant.common.Asset
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class SignalTest {
@@ -49,6 +50,10 @@ internal class SignalTest {
 
         val lo = s2.toLimitOrder(100.0)
         assertEquals(110.0, lo.limit )
+
+
+        val s3 = Signal(c, Rating.SELL, SignalType.ENTRY)
+        assertNotEquals(s3.type, SignalType.EXIT)
 
     }
 

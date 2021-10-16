@@ -47,10 +47,10 @@ abstract class LiveFeed : Feed {
         this.channel = channel
         try {
             while (true) {
-                delay(timeMillis)
                 val event = Event(listOf(), Instant.now())
                 channel.send(event)
                 if (channel.done) break
+                delay(timeMillis)
             }
         } catch (e: ClosedSendChannelException) {
             // Expected exception
