@@ -45,12 +45,14 @@ enum class Rating(val value: Int) {
     /**
      * Is this a positive rating, so a BUY or an OUTPERFORM
      */
-    fun isPositive() = this === BUY || this === OUTPEFORM
+    val isPositive : Boolean get() = this === BUY || this === OUTPEFORM
+
+
 
     /**
      * Is this a negative rating, so a SELL or UNDERPERFORM
      */
-    fun isNegative() = this === SELL || this === UNDERPERFORM
+    val isNegative: Boolean get() = this === SELL || this === UNDERPERFORM
 
     /**
      * The inverse of this rating

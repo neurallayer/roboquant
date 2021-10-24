@@ -71,9 +71,9 @@ class WeightedPolicy(vararg weight: Pair<Asset, Double>) : Policy {
                 val price = event.getPrice(asset)
                 if (price !== null) {
                     val size = getSizing(asset, pos, totalValue, price)
-                    if (signal.rating.isPositive() && size > 0) {
+                    if (signal.rating.isPositive && size > 0) {
                         orders.add(MarketOrder(asset, size))
-                    } else if (signal.rating.isNegative() && size < 0) {
+                    } else if (signal.rating.isNegative && size < 0) {
                         orders.add(MarketOrder(asset, size))
                     }
                 }

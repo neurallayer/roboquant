@@ -27,13 +27,13 @@ internal class RatingTest {
     @Test
     fun isPositive() {
         val rating = Rating.BUY
-        assertTrue(rating.isPositive())
+        assertTrue(rating.isPositive)
     }
 
     @Test
     fun isNegative() {
         val rating = Rating.SELL
-        assertTrue(rating.isNegative())
+        assertTrue(rating.isNegative)
     }
 
     @Test

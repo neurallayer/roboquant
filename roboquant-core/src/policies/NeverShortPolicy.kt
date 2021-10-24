@@ -104,10 +104,10 @@ open class NeverShortPolicy(
             if (oneOrderPerAsset && openOrderAssets.contains(asset)) continue
             val price = event.getPrice(asset)
             if (price !== null) {
-                if (signal.rating.isNegative()) {
+                if (signal.rating.isNegative) {
                     val order = createSellOrder(account, signal, price, buyingPower)
                     orders.addNotNull(order)
-                } else if (signal.rating.isPositive() && buyingPower >= minAmount) {
+                } else if (signal.rating.isPositive && buyingPower >= minAmount) {
                     val order = createBuyOrder(account, signal, price, buyingPower)
                     if (order != null) {
                         orders.add(order)
