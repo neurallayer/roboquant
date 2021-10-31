@@ -34,7 +34,6 @@ class BettingAgainstAccountBetaTest {
         val logger = MemoryLogger(false)
         val exp = Roboquant(NoSignalStrategy(), policy = policy, logger = logger)
         exp.run(feed)
-        logger.summary(1).print()
         assertTrue(exp.broker.account.orders.closed.isNotEmpty())
     }
 

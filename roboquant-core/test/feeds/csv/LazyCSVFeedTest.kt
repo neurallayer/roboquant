@@ -16,9 +16,10 @@
 
 package org.roboquant.feeds.csv
 
-import kotlinx.coroutines.runBlocking
-import java.time.Instant
 import org.junit.Test
+import org.roboquant.TestData
+import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.filter
 import kotlin.test.assertTrue
 
 
@@ -26,14 +27,10 @@ internal class LazyCSVFeedTest {
 
     @Test
     fun play() {
-        val feed = LazyCSVFeed("../data/US")
-        var past = Instant.MIN
-        runBlocking {
-            for (event in org.roboquant.feeds.play(feed)) {
-                assertTrue(event.now > past)
-                past = event.now
-            }
-        }
+        val feed = LazyCSVFeed(TestData.dataDir() + "US")
+        val priceBars = feed.filter<PriceBar>()
+        assertTrue(priceBars.isNotEmpty())
+        assertTrue(priceBars[0].first < priceBars[1].first)
     }
 
 }

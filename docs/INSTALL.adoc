@@ -19,7 +19,7 @@ The installation comes with several tutorial-notebooks that demonstrate how to d
 
 If you don't want to install anything locally, you can use https://datalore.jetbrains.com/[JetBrains Datalore]. It supports Kotlin Notebooks and has a free tier available if you just want to try it out.
 
-Or try some same notebooks right now image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?filepath=tutorials]
+Or try some same notebooks right now image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials]
 
 == Standalone Application
 

@@ -21,27 +21,16 @@ import org.roboquant.TestData
 import org.junit.Test
 import kotlin.test.assertEquals
 
-
-internal class OrderRequestTest {
-
+internal class UpdateOrderTest {
 
     @Test
-    fun test() {
-        val asset = TestData.usStock()
-        var or:SingleOrder = MarketOrder(asset,100.0)
-        assertEquals(asset, or.asset)
-
-        or = MarketOrder(asset, 100.0)
-        assertEquals(asset, or.asset)
-
-        or = LimitOrder(asset, 100.0, 120.0)
-        assertEquals(asset, or.asset)
-
-        or = StopOrder(asset, 100.0, 110.0)
-        assertEquals(asset, or.asset)
-
-        or = StopLimitOrder(asset, 100.0, 110.0, 120.0)
-        assertEquals(asset, or.asset)
+    fun basic() {
+        val order = TestData.euMarketOrder()
+        val uOrder = MarketOrder(order.asset,100.0)
+        val orderUpdate = UpdateOrder(order, uOrder)
+        assertEquals(100.0, orderUpdate.updateOrder.quantity)
 
     }
+
+
 }
