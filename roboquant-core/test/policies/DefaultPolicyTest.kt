@@ -23,11 +23,11 @@ import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 import java.time.Instant
 
-internal class NeverShortPolicyTest {
+internal class DefaultPolicyTest {
 
     @Test
     fun order() {
-        val policy = NeverShortPolicy()
+        val policy = DefaultPolicy()
         val signals = mutableListOf<Signal>()
         val event = Event(listOf(), Instant.now())
         val account = Account()

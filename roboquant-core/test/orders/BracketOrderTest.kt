@@ -32,6 +32,11 @@ internal class BracketOrderTest {
             StopOrder(asset, -10.0, 99.0),
         )
         assertTrue(order.main is MarketOrder)
+
+
+        val order2 = BracketOrder.fromPercentage(asset, 10.0, 100.0, 0.01, 0.01)
+        assertTrue(order2.loss is StopOrder)
+        assertTrue(order2.profit is LimitOrder)
     }
 
 }

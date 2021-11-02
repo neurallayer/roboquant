@@ -32,7 +32,7 @@ import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.MetricsLogger
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.Order
-import org.roboquant.policies.NeverShortPolicy
+import org.roboquant.policies.DefaultPolicy
 import org.roboquant.policies.Policy
 import org.roboquant.strategies.Strategy
 import java.time.Duration
@@ -49,7 +49,7 @@ import java.time.Instant
 class Roboquant<L : MetricsLogger>(
     val strategy: Strategy,
     vararg val metrics: Metric,
-    val policy: Policy = NeverShortPolicy(),
+    val policy: Policy = DefaultPolicy(),
     val broker: Broker = SimBroker(),
     val logger: L,
     val name: String = "Roboquant-${instanceCounter++}",
@@ -73,7 +73,7 @@ class Roboquant<L : MetricsLogger>(
         operator fun invoke(
             strategy: Strategy,
             vararg metrics: Metric,
-            policy: Policy = NeverShortPolicy(),
+            policy: Policy = DefaultPolicy(),
             broker: Broker = SimBroker()
         ) = Roboquant(strategy, *metrics, policy = policy, broker = broker, logger = MemoryLogger())
 

@@ -35,7 +35,7 @@ import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.PNL
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.policies.BettingAgainstBeta
-import org.roboquant.policies.NeverShortPolicy
+import org.roboquant.policies.DefaultPolicy
 import org.roboquant.policies.TestPolicy
 import org.roboquant.strategies.*
 import java.nio.file.Files
@@ -247,7 +247,7 @@ fun multiCurrency() {
     val broker = SimBroker(cash, currencyConverter)
 
     val strategy = EMACrossover.midTerm()
-    val policy = NeverShortPolicy(minAmount = 1_000.0, maxAmount = 15_000.0)
+    val policy = DefaultPolicy(minAmount = 1_000.0, maxAmount = 15_000.0)
 
     val roboquant = Roboquant(strategy, AccountSummary(), policy = policy, broker = broker, logger = MemoryLogger())
     roboquant.run(feed)

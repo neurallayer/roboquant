@@ -17,6 +17,7 @@
 package org.roboquant.orders
 
 import org.roboquant.brokers.sim.Execution
+import org.roboquant.common.Asset
 import java.time.Instant
 
 /**
@@ -38,6 +39,22 @@ class BracketOrder(
     val profit: SingleOrder,
     val loss: SingleOrder,
 ) : Order(main.asset) {
+
+    companion object {
+
+        /**
+         * Create a bracket order with a Stop Loss Order and Limit Order to limit the loss and protect the profits.
+         * the boundaries are based on a percentage offset from the current price. 1% offset = 0.01.
+         */
+        fun fromPercentage(asset: Asset, qty: Double, price: Double, loss: Double, profit: Double): BracketOrder {
+            val mainOrder = MarketOrder(asset, qty)
+            val direction = mainOrder.direction
+            val stopLoss = StopOrder(asset, - qty, (1.0 - loss*direction)*price)
+            val takeProfit = LimitOrder(asset, - qty, (1.0 + profit*direction)*price)
+            return BracketOrder(mainOrder, takeProfit, stopLoss)
+        }
+
+    }
 
 
     init {
