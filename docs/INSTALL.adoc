@@ -50,7 +50,11 @@ Next to roboquant-core, the following additional modules are available for inclu
 
 == Interactive Brokers
 
-
+[source, shell]
+Download the TwsApi.jar file and install it in the local Maven repository
+----
+mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=9.76 -Dpackaging=jar
+----
 
 == Building from source
 

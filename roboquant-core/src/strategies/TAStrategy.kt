@@ -23,7 +23,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.metrics.MetricRecorder
+import org.roboquant.metrics.MetricResults
 import org.roboquant.strategies.ta.TALib
 import org.roboquant.strategies.utils.PriceBarBuffer
 import java.util.logging.Logger
@@ -44,10 +44,30 @@ class TAStrategy(private val history: Int = 100) : Strategy {
     private val logger: Logger = Logging.getLogger(this)
     val ta = TALib
 
-    private val recorder = MetricRecorder("ta.", true)
+    private var metrics = mutableMapOf<String, Number>()
 
-    fun record(key: String, value: Number) = recorder.record(key, value)
-    override fun getMetrics() = recorder.getMetrics()
+    /**
+     * Record a new metric. If there is already a metric recorded with the same key, it will be overwritten.
+     *
+     * @param key
+     * @param value
+     */
+    fun record(key: String, value: Number) {
+        metrics[key] = value
+    }
+
+    /**
+     * Get the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this method
+     * twice in a row won't return the same result.
+     *
+     * @return
+     */
+    override fun getMetrics(): MetricResults {
+        val result = metrics
+        metrics = mutableMapOf()
+        return result
+    }
+
 
     companion object {
 
@@ -204,6 +224,7 @@ class TAStrategy(private val history: Int = 100) : Strategy {
     override fun start(runPhase: RunPhase) {
         super.start(runPhase)
         buffers.clear()
+        metrics = mutableMapOf()
     }
 
 
