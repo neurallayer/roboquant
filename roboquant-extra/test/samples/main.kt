@@ -183,7 +183,7 @@ fun oandaBroker() {
 
 
 fun main() {
-    when ("OANDA_LIVE_PRICES") {
+    when ("OANDA_FEED") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()

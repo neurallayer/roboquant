@@ -77,14 +77,6 @@ data class TimeFrame(val start: Instant, val end: Instant) {
             return TimeFrame(start, stop)
         }
 
-        /*
-        fun pastPeriod(duration: Long, unit: ChronoUnit = ChronoUnit.DAYS): TimeFrame {
-            val end = Instant.now()
-            val start = end.minus(duration, unit)
-            return TimeFrame(start, end)
-        }
-         */
-
         fun pastPeriod(duration: Long, unit: ChronoUnit = ChronoUnit.DAYS): TimeFrame {
             val end = Instant.now()
             val ts = end.atZone(ZoneId.of("UTC"))
