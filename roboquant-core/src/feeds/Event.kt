@@ -57,7 +57,7 @@ data class Event(val actions: List<Action>, val now: Instant) : Comparable<Event
 /**
  * Merge this with a collection of [events] and return the result
  */
-fun List<Event>.merge(events: Collection<Event>): List<Event> {
+fun Collection<Event>.merge(events: Collection<Event>): List<Event> {
     val result = associate { it.now to it.actions }.toMutableMap()
     for ((actions, now) in events) {
         result[now] = result.getOrDefault(now, listOf()) + actions

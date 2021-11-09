@@ -24,14 +24,12 @@ import org.roboquant.metrics.MetricResults
  * With the recording flag you can enable or disable the actual recording of the metrics.
  *
  * @property prefix
+ * @property recording Should metrics be recorded or not. Some strategies can record a lot of metrics, so this disables that recording
+ * and as a consequence might be faster and/or use less memory.
+ *
  */
-abstract class RecordingStrategy(private val prefix: String = "strategy.", enabled: Boolean = false) : Strategy {
+abstract class RecordingStrategy(private val prefix: String = "strategy.", var recording: Boolean = false) : Strategy {
 
-    /**
-     * Should metrics be recorded or not. Some strategies can record a lot of metrics, so this disables that recording
-     * and as a consequence might be faster and/or use less memory.
-     */
-    var recording = enabled
 
     private val metrics = mutableMapOf<String, Number>()
 

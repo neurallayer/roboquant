@@ -19,30 +19,32 @@ package org.roboquant.feeds
 import org.junit.Test
 import kotlin.test.*
 import org.roboquant.TestData
+import org.roboquant.common.Asset
+import java.time.Instant
 
-internal class ActionTest {
+internal class EventTest {
+
 
     @Test
-    fun corporateAction() {
-        val asset = TestData.euStock()
-        val action = CorporateAction(asset, "SPLIT", 2.0)
-        assertEquals("SPLIT", action.type)
+    fun basic() {
+        val now = Instant.now()
+        val event = Event(listOf(), now)
+        assertTrue(event.prices.isEmpty())
+        val asset = Asset("Dummy")
+        assertTrue(event.getPrice(asset) == null)
+        assertTrue(event.actions.isEmpty())
     }
 
     @Test
-    fun priceAction() {
-        val asset = TestData.euStock()
-        val pb = PriceBar.fromAdjustedClose(asset, 2,1,1,1,0.5, 100)
-        assertEquals(1.0f, pb.open)
-        assertEquals(200f, pb.volume)
-    }
+    fun merge() {
+        val now = Instant.now()
+        val c1 = listOf(Event(listOf(), now))
+        val c2 = listOf(Event(listOf(), now.plusMillis(1)))
 
-    @Test
-    fun newsAction() {
-        val item = NewsAction.NewsItem("Some text", mapOf("source" to "TWITTER"))
-        val action = NewsAction(listOf(item))
-        assertEquals(1, action.items.size)
-        assertEquals(1, action.items[0].meta.size)
-        assertFalse(action.items.isEmpty())
+        val s1 = c1.merge(c1)
+        assert(s1.size == 1)
+
+        val s2 = c1.merge(c2)
+        assert(s2.size == 2)
     }
 }

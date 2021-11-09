@@ -27,10 +27,11 @@ import org.roboquant.feeds.Event
  * as the order of strategies that is provided in the constructor.
  *
  * This will typically improve performance for strategies that are CPU or IO intensive and take some time to complete.
- * For very fast strategies this might not speed up the overall performance.
+ * For very fast strategies this might not speed up the overall performance. Only the generate method is run in
+ * parallel, other methods like reset and getMetrics are run sequential.
  *
  * There is no additional logic to remove conflicting signals, for example one strategy generates a BUY signal
- * and another strategy generates a SELL signal for the same asset.
+ * and another strategy generates a SELL signal for the same asset. This is left yp yjr policy to resolve.
  *
  * @property strategies The strategies to process in parallel
  * @constructor Create a new parallel strategy

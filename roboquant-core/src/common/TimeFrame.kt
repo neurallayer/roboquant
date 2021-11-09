@@ -70,10 +70,15 @@ data class TimeFrame(val start: Instant, val end: Instant) {
         /**
          * Create a timeframe based on the [first] and [last] time provided. The times are to be provided as a string
          * and should be parsable by [Instant.parse]
+         *
+         * If the time component is omitted, the provided strings will be appended first with "T00:00:00" before
+         * being parsed.
          */
         fun parse(first: String, last: String): TimeFrame {
-            val start = Instant.parse(first)
-            val stop = Instant.parse(last)
+            val f1 = if (first.length == 10) first + "T00:00:00Z" else first
+            val f2 = if (last.length == 10) last + "T00:00:00Z" else last
+            val start = Instant.parse(f1)
+            val stop = Instant.parse(f2)
             return TimeFrame(start, stop)
         }
 

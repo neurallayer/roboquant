@@ -103,6 +103,8 @@ internal class RoboquantTest {
         val strategy = EMACrossover()
         val roboquant = Roboquant(strategy, AccountSummary(), OpenPositions(), logger = SilentLogger())
         roboquant.run(feed)
+        val summary = roboquant.summary()
+        assertTrue(summary.toString().isNotEmpty())
     }
 
     @Test

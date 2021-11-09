@@ -33,7 +33,7 @@ internal class EMACrossoverTest {
 
         val strategy = EMACrossover()
 
-        val roboquant = Roboquant(strategy, AccountSummary(), OpenPositions(), logger = SilentLogger() )
+        val roboquant = Roboquant(strategy, logger = SilentLogger() )
         roboquant.run( feed)
     }
 

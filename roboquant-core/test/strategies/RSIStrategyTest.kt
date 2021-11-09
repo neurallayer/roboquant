@@ -16,17 +16,26 @@
 
 package org.roboquant.strategies
 
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import org.roboquant.Roboquant
+import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.logging.SilentLogger
 import kotlin.test.assertEquals
 
 
 internal class RSIStrategyTest {
 
     @Test
-    fun test() {
+    fun test() = runBlocking  {
         val s = RSIStrategy()
         assertEquals(30.0, s.lowThreshold)
         assertEquals(70.0, s.highThreshold)
+
+        val feed = RandomWalk.lastYears()
+        val roboquant = Roboquant(s, logger = SilentLogger() )
+        roboquant.run( feed)
+
     }
 
 }
