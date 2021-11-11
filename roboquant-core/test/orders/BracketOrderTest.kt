@@ -18,6 +18,7 @@ package org.roboquant.orders
 
 import org.roboquant.TestData
 import org.junit.Test
+import java.time.Instant
 import kotlin.test.assertTrue
 
 
@@ -32,6 +33,9 @@ internal class BracketOrderTest {
             StopOrder(asset, -10.0, 99.0),
         )
         assertTrue(order.main is MarketOrder)
+
+        val e = order.execute(100.0, Instant.now())
+        assertTrue { e.isNotEmpty() }
 
 
         val order2 = BracketOrder.fromPercentage(asset, 10.0, 100.0, 0.01, 0.01)

@@ -23,7 +23,7 @@ import org.roboquant.metrics.MetricResults
  * Recording strategy allows subclasses to record metrics during their processing.
  * With the recording flag you can enable or disable the actual recording of the metrics.
  *
- * @property prefix
+ * @property prefix Prefix to use when logging a metric, default is "strategy."
  * @property recording Should metrics be recorded or not. Some strategies can record a lot of metrics, so this disables that recording
  * and as a consequence might be faster and/or use less memory.
  *
@@ -55,6 +55,7 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
         if (!recording) return
         metrics["$prefix$key"] = value
     }
+
 
     /**
      * At the start of a phase, any recorded metrics will be cleared.

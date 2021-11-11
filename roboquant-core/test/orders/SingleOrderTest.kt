@@ -17,8 +17,8 @@
 package org.roboquant.orders
 
 
-
 import org.roboquant.TestData
+import java.time.Instant
 import kotlin.test.*
 
 internal class SingleOrderTest {
@@ -30,9 +30,18 @@ internal class SingleOrderTest {
         assertEquals(100.0, mo.quantity )
         assertTrue(mo.tif is GTC)
 
+        var e = mo.execute(100.0, Instant.now())
+        assertTrue { e.isNotEmpty() }
+
         val lo = LimitOrder( asset,100.0, 20.0)
         assertEquals(100.0, lo.quantity )
         assertEquals(20.0, lo.limit )
+
+        e = lo.execute(21.0, Instant.now())
+        assertTrue { e.isEmpty() }
+
+        e = lo.execute(19.0, Instant.now())
+        assertTrue { e.isNotEmpty() }
 
         val so = StopOrder( asset,100.0, 20.0)
         assertEquals(100.0, so.quantity )

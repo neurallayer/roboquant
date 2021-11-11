@@ -49,6 +49,7 @@ class Orders : MutableList<Order>, LinkedList<Order>()  {
     val accepted
         get() = filter { it.status === OrderStatus.ACCEPTED }
 
+
     /**
      * Provide a summary for the orders, split by open and closed orders
      *

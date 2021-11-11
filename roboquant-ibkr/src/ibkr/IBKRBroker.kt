@@ -216,7 +216,7 @@ class IBKRBroker(
             realizedPNL: Double,
             accountName: String
         ) {
-            logger.fine("portfolio update $contract $position $marketPrice $averageCost")
+            logger.fine {"portfolio update $contract $position $marketPrice $averageCost" }
             val asset = contract.getAsset()
             val p = Position(asset, position, averageCost, marketPrice)
             account.portfolio.setPosition(p)
@@ -228,8 +228,8 @@ class IBKRBroker(
             account.time = now
         }
 
-        override fun updateAccountTime(timeStamp: String) {
-            logger.fine("Account time $timeStamp")
+        override fun updateAccountTime(timeStamp: String?) {
+            logger.fine {"Account time $timeStamp" }
             account.time = Instant.now()
         }
 
