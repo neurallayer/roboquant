@@ -39,7 +39,7 @@ class PriceChart(
 ) : Chart() {
 
     /**
-     * Play a feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
+     * Play the feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
      */
     private fun fromFeed(): List<Pair<Instant, BigDecimal>> {
         val entries = feed.filter<PriceAction>(timeFrame) { it.asset == asset }

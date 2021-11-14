@@ -134,10 +134,15 @@ internal fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, C
     }
 }
 
-
+/**
+ * Convert a collection of metric entries into a double array.
+ */
 fun Collection<MetricsEntry>.toDoubleArray() = map { it.value.toDouble() }.toDoubleArray()
 
 
-fun Collection<MetricsEntry>.getName(): String {
+/**
+ * Generate a name for a collection of metric entries
+ */
+internal fun Collection<MetricsEntry>.getName(): String {
     return map { it.metric }.distinct().joinToString("/") { it.replace('.', ' ') }
 }

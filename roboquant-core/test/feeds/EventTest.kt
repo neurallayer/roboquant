@@ -17,10 +17,9 @@
 package org.roboquant.feeds
 
 import org.junit.Test
-import kotlin.test.*
-import org.roboquant.TestData
 import org.roboquant.common.Asset
 import java.time.Instant
+import kotlin.test.assertTrue
 
 internal class EventTest {
 

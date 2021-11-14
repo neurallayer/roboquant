@@ -117,7 +117,6 @@ class CalendarChart(private val metricsData: List<MetricsEntry>, private val fra
                },
 
                calendar: [$calendar],
-
                series: [$series]
            };
        """.trimStart()

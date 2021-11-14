@@ -43,6 +43,7 @@ class OrderChart(
         require(aspect in listOf("remaining", "direction", "quantity", "fill"))
     }
 
+
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val singleOrders = orders.filterIsInstance<SingleOrder>()
 
@@ -61,7 +62,7 @@ class OrderChart(
 
                 if (value.absoluteValue > max) max = value.absoluteValue
                 val roundedValue = BigDecimal(value).setScale(scale, RoundingMode.HALF_DOWN)
-                val tooltip = "asset: $asset <br> qty: $quantity"
+                val tooltip = "asset: $asset <br> qty: $quantity <br> id: $id"
                 d.add(Triple(placed, roundedValue, tooltip))
             }
         }

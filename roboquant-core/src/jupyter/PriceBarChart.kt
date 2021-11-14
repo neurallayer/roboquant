@@ -69,7 +69,6 @@ class PriceBarChart(
             )
             d.add(entry)
         }
-
         return d
     }
 

@@ -17,12 +17,10 @@
 package org.roboquant.strategies
 
 import kotlinx.coroutines.runBlocking
+import org.junit.Test
 import org.roboquant.Roboquant
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.SilentLogger
-import org.roboquant.metrics.AccountSummary
-import org.roboquant.metrics.OpenPositions
-import org.junit.Test
 import kotlin.test.assertTrue
 
 internal class EMACrossoverTest {

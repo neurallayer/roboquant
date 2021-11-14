@@ -147,7 +147,6 @@ abstract class Chart : Output() {
     }
 
 
-
     override fun asHTMLPage(useCDN: Boolean): String {
         val fragment = asHTML()
         val script = if (useCDN)
@@ -196,9 +195,7 @@ abstract class Chart : Output() {
         return """
             toolbox: {
                 feature: {
-                    dataZoom: {
-                        yAxisIndex: 'none'
-                    },
+                    dataZoom: { yAxisIndex: 'none' },
                     dataView: {readOnly: true},
                     $mt
                     restore: {},
