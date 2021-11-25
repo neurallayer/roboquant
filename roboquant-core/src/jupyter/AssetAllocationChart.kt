@@ -23,7 +23,9 @@ import kotlin.math.absoluteValue
 /**
  * Plot the allocation of assets as a pie chart
 
- * @property account
+ * @property account the account to use
+ * @property includeCash also include cash balances next to the portfolio, default is true
+ * @property includeAssetClass group per assetClass, default is false
  * @constructor Create empty Asset allocation chart
  */
 class AssetAllocationChart(
@@ -87,6 +89,9 @@ class AssetAllocationChart(
        """
     }
 
+    /**
+     * This custom toolbox enables to switch between a sunburst and treemap view of the asset allocation
+     */
     private val toolbox = """
         toolbox: {
             feature: {

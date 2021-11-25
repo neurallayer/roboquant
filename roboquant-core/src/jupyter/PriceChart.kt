@@ -32,7 +32,7 @@ import java.time.Instant
 class PriceChart(
     private val feed: Feed,
     private val asset: Asset,
-    private val trades: List<Trade> = listOf(),
+    private val trades: Collection<Trade> = listOf(),
     private val timeFrame: TimeFrame = TimeFrame.FULL,
     private val priceType: String = "DEFAULT",
     private val fractionDigits: Int = asset.currency.defaultFractionDigits

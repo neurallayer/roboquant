@@ -60,11 +60,11 @@ data class TimeFrame(val start: Instant, val end: Instant) {
         /**
          * Create a timeframe starting from 1 january of the [first] year until 31 december from the [last] year.
          */
-        fun fromYears(first: Int, last: Int): TimeFrame {
-            val start = Instant.parse("${first}-01-01T00:00:00Z")
-            var stop = Instant.parse("${last + 1}-01-01T00:00:00Z")
-            if (stop <= start) stop = start
-            return TimeFrame(start, stop)
+        fun fromYears(first: Int, last: Int, zoneId: ZoneId = ZoneId.of("UTC")): TimeFrame {
+            require(last >= first)
+            val start = ZonedDateTime.of(first, 1, 1, 0, 0 , 0, 0, zoneId)
+            val stop = ZonedDateTime.of(last + 1, 1, 1, 0, 0 , 0, 0, zoneId)
+            return TimeFrame(start.toInstant(), stop.toInstant())
         }
 
         /**
@@ -126,6 +126,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
      * Is this timeframe in a single day given the provided [zoneId].
      */
     fun isSingleDay(zoneId: String = "UTC"): Boolean {
+        if (start == Instant.MIN || end == Instant.MAX) return false
         val z = ZoneId.of(zoneId)
         return start.atZone(z).toLocalDate() == end.minusMillis(1).atZone(z).toLocalDate()
     }
@@ -186,9 +187,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
         while (offset < end) {
             if (excludeWeekends) {
                 val zdt = ZonedDateTime.ofInstant(offset, zoneId)
-                // val ldt = LocalDateTime.ofInstant(offset, zoneOffset)
-                if (zdt.dayOfWeek !in weekend)
-                    timeline.add(offset)
+                if (zdt.dayOfWeek !in weekend) timeline.add(offset)
             } else {
                 timeline.add(offset)
             }
@@ -245,7 +244,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
 
     /**
      * Split a timeframe in multiple individual timeframes each of the fixed [period] length. One common use case is
-     * to create timeframes that can be used for walk forward back-test.
+     * to create timeframes that can be used in a walk forward back-test.
      */
     fun split(period: Period): List<TimeFrame> {
         val utc = ZoneOffset.UTC
@@ -276,8 +275,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
      * resolution.
      */
     fun toPrettyString(): String {
-        val diff = end.epochSecond - start.epochSecond
-        val formatter = if (diff > 24 * 60 * 60) dayFormatter else secondFormatter
+        val formatter = if (isSingleDay()) dayFormatter else secondFormatter
         val s1 = if (start == Instant.MIN) "MIN" else if (start == Instant.MAX) "MAX" else formatter.format(start)
         val s2 = if (end == Instant.MIN) "MIN" else if (end == Instant.MAX) "MAX" else formatter.format(end)
         return "$s1 - $s2"

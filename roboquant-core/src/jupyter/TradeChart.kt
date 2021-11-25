@@ -26,7 +26,7 @@ import java.time.Instant
  *
  */
 class TradeChart(
-    private val trades: List<Trade>,
+    private val trades: Collection<Trade>,
     private val skipBuy: Boolean = false,
     private val aspect: String = "pnl"
 ) : Chart() {

@@ -29,6 +29,9 @@ import java.util.logging.Handler
 import java.util.logging.Level
 import java.util.logging.LogRecord
 
+/**
+ * Make exceptions a bit nicer to deal with
+ */
 internal class RoboquantThrowableRenderer : ThrowableRenderer {
 
     override fun accepts(throwable: Throwable): Boolean {
@@ -51,8 +54,8 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
 }
 
 /**
- * Very simple logger handler that is installed when using notebooks and prints a line to standard out so it
- * turns up in the cell output.
+ * Very simple logger handler that is installed when using notebooks and prints a line to standard out, so log statements
+ * turn up in the cell output.
  */
 internal class JupyterLogger : Handler() {
 
@@ -64,9 +67,7 @@ internal class JupyterLogger : Handler() {
 
     override fun flush() {}
 
-    override fun close() {
-    }
-
+    override fun close() {}
 
 }
 
@@ -118,7 +119,7 @@ internal class JupyterCore : JupyterIntegration() {
         }
 
         /**
-         * The resources that need to be loaded
+         * The resources that need to be loaded.
          */
         resources {
 
