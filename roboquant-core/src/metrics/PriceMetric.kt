@@ -23,36 +23,38 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceAction
-import java.time.Instant
 
 /**
- * Capture price actions for a particular [asset]. This can then be used to display it in a graph or perform
+ * Capture price actions for [assets]. This can then be used to display them in a graph or perform
  * other post-run analysis. This metric also implements the [Feed] API.
  *
  * This metric is different from how most metrics work. It stores the result internally and does not
  * hand them over to a logger. However, just like other metrics it will reset its state at the beginning of a
  * phase.
  */
-class PriceMetric(val asset: Asset) : Metric, Feed {
+class PriceMetric(vararg val assets: Asset) : Metric, Feed {
 
-    private val _prices = mutableListOf<Pair<Instant, PriceAction>>()
-
-    val prices
-        get() = _prices.toList()
+    private val events = mutableListOf<Event>()
 
     override fun calculate(account: Account, event: Event) {
-        val price = event.prices[asset]
-        if (price != null) _prices.add(Pair(event.now, price))
+        val prices = mutableListOf<PriceAction>()
+        for (asset in assets) {
+            val action = event.prices[asset]
+            if (action != null) prices.add(action)
+        }
+        if (prices.isNotEmpty()) events.add(Event(prices, event.now))
     }
 
     override fun start(runPhase: RunPhase) {
-        super.start(runPhase)
-        _prices.clear()
+        reset()
+    }
+
+    override fun reset() {
+        events.clear()
     }
 
     override suspend fun play(channel: EventChannel) {
-        for ((now, price) in _prices) {
-            val event = Event(listOf(price), now)
+        for (event in events) {
             channel.send(event)
         }
     }

@@ -18,17 +18,50 @@ package org.roboquant.orders
 
 import org.roboquant.TestData
 import org.junit.Test
+import java.time.Instant
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 
 internal class TrailLimitOrderTest {
 
     @Test
-    fun test() {
+    fun testTrailOrder() {
         val asset = TestData.usStock()
-        val order = TrailLimitOrder(asset, 100.0, 0.01, -0.01)
+        val order = TrailOrder(asset, -100.0, 0.01)
 
-        assertTrue(order.quantity == 100.0)
+        var e1 = order.execute(100.0, Instant.now())
+        assertTrue { e1.isEmpty() }
+        assertFalse { order.executed}
+
+        e1 = order.execute(101.0, Instant.now())
+        assertTrue { e1.isEmpty() }
+        assertFalse { order.executed}
+
+        e1 = order.execute(99.0, Instant.now())
+        assertEquals(1, e1.size)
+        assertEquals(order.quantity, e1.first().size())
+
+    }
+
+
+    @Test
+    fun testTrailLimitOrder() {
+        val asset = TestData.usStock()
+        val order = TrailLimitOrder(asset, -100.0, 0.01, 0.01)
+
+        var e1 = order.execute(100.0, Instant.now())
+        assertTrue { e1.isEmpty() }
+        assertFalse { order.executed}
+
+        e1 = order.execute(101.0, Instant.now())
+        assertTrue { e1.isEmpty() }
+        assertFalse { order.executed}
+
+        e1 = order.execute(99.0, Instant.now())
+        assertEquals(1, e1.size)
+
     }
 
 }

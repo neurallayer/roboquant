@@ -16,9 +16,10 @@
 
 package org.roboquant.orders
 
+import org.junit.Test
 import org.roboquant.TestData
 import java.time.Instant
-import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class OneTriggersOtherOrderTest {
@@ -32,6 +33,10 @@ internal class OneTriggersOtherOrderTest {
         )
         assertTrue(order.first is MarketOrder)
         order.execute(100.0, Instant.now())
+
+        assertTrue(order.first.executed)
+        assertTrue(order.second.executed)
+        assertEquals(OrderStatus.COMPLETED, order.status)
 
     }
 
