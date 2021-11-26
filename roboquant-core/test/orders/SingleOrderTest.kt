@@ -24,34 +24,65 @@ import kotlin.test.*
 internal class SingleOrderTest {
 
     @Test
-    fun createOrders() {
+    fun testMarketOrder() {
         val asset = TestData.usStock()
         val mo = MarketOrder( asset,100.0)
         assertEquals(100.0, mo.quantity )
         assertTrue(mo.tif is GTC)
 
-        var e = mo.execute(100.0, Instant.now())
+        val e = mo.execute(100.0, Instant.now())
         assertTrue { e.isNotEmpty() }
-
-        val lo = LimitOrder( asset,100.0, 20.0)
-        assertEquals(100.0, lo.quantity )
-        assertEquals(20.0, lo.limit )
-
-        e = lo.execute(21.0, Instant.now())
-        assertTrue { e.isEmpty() }
-
-        e = lo.execute(19.0, Instant.now())
-        assertTrue { e.isNotEmpty() }
-
-        val so = StopOrder( asset,100.0, 20.0)
-        assertEquals(100.0, so.quantity )
-        assertEquals(20.0, so.stop )
-
-        val slo = StopLimitOrder( asset,100.0, 20.0, 25.0)
-        assertEquals(100.0, slo.quantity )
-        assertEquals(20.0, slo.stop )
-        assertEquals(25.0, slo.limit )
     }
 
+
+    @Test
+    fun testStopOrder()  {
+        val asset = TestData.usStock()
+        val order = StopOrder( asset,-10.0, 99.0)
+        assertEquals(-10.0, order.quantity )
+        assertEquals(99.0, order.stop )
+        val e1 = order.execute(100.0, Instant.now())
+        assertTrue { e1.isEmpty() }
+        assertFalse { order.executed}
+
+        val e2 = order.execute(98.0, Instant.now())
+        assertEquals(-10.0, e2.first().quantity)
+        assertTrue { order.executed }
+    }
+
+    @Test
+    fun testLimitOrder()  {
+        val asset = TestData.usStock()
+        val order = LimitOrder( asset,-10.0, 101.0)
+        assertEquals(-10.0, order.quantity )
+        assertEquals(101.0, order.limit )
+        val e1 = order.execute(100.0, Instant.now())
+        assertTrue { e1.isEmpty() }
+        assertFalse { order.executed}
+
+        val e2 = order.execute(102.0, Instant.now())
+        assertEquals(-10.0, e2.first().quantity)
+        assertTrue { order.executed }
+    }
+
+
+    @Test
+    fun testStopLimitOrder()  {
+        val asset = TestData.usStock()
+        val order = StopLimitOrder( asset,-10.0, 99.0, 98.0)
+        assertEquals(-10.0, order.quantity )
+        assertEquals(98.0, order.limit )
+        val e1 = order.execute(100.0, Instant.now())
+        assertTrue { e1.isEmpty() }
+        assertFalse { order.executed}
+
+        val e2 = order.execute(98.5, Instant.now())
+        assertTrue { e2.isEmpty() }
+        assertFalse { order.executed}
+
+        val e3 = order.execute(97.0, Instant.now())
+        assertEquals(-10.0, e3.first().quantity)
+        assertTrue { order.executed}
+    }
 
 }

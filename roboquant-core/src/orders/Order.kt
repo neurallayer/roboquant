@@ -18,6 +18,7 @@ package org.roboquant.orders
 
 import org.roboquant.brokers.sim.Execution
 import org.roboquant.common.Asset
+import org.roboquant.common.Logging
 import java.time.Instant
 
 /**
@@ -76,6 +77,9 @@ abstract class Order(val asset: Asset) : Cloneable {
                 return ID++
             }
         }
+
+        val logger = Logging.getLogger("Order")
+
     }
 
     public override fun clone(): Order {

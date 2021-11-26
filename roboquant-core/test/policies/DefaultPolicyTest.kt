@@ -21,6 +21,7 @@ import kotlin.test.*
 import org.roboquant.strategies.Signal
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
+import org.roboquant.orders.*
 import java.time.Instant
 
 internal class DefaultPolicyTest {
@@ -28,6 +29,33 @@ internal class DefaultPolicyTest {
     @Test
     fun order() {
         val policy = DefaultPolicy()
+        val signals = mutableListOf<Signal>()
+        val event = Event(listOf(), Instant.now())
+        val account = Account()
+        val orders = policy.act(signals, account, event)
+        assertTrue(orders.isEmpty())
+
+    }
+
+    @Test
+    fun order2() {
+
+        class MyPolicy(val percentage: Double=0.05) : DefaultPolicy() {
+
+            override fun createOrder(signal: Signal, qty: Double, price: Double): Order {
+                val asset = signal.asset
+                val direction = if (qty > 0) 1.0 else -1.0
+                val percentage = percentage * direction
+
+                return BracketOrder(
+                    MarketOrder(asset, qty),
+                    LimitOrder(asset, qty, price * (1 + percentage)),
+                    StopOrder(asset, qty, price* (1 - percentage))
+                )
+            }
+        }
+
+        val policy = MyPolicy()
         val signals = mutableListOf<Signal>()
         val event = Event(listOf(), Instant.now())
         val account = Account()

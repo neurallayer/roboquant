@@ -104,6 +104,7 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
         return if (qty != 0.0) {
             fill += qty
             if (remaining == 0.0) status = OrderStatus.COMPLETED
+            logger.fine { "executed order=$this qty=$qty price=$price"}
             listOf(Execution(asset, qty, price))
         } else listOf()
     }
@@ -187,9 +188,9 @@ class LimitOrder(
 
 
     override fun fill(price: Double): Double {
-        if (buy && price < limit) return quantity
-        if (sell && price > limit) return quantity
-        return 0.0
+        var qty = 0.0
+        if (buy && price < limit || sell && price > limit) qty = quantity
+        return qty
     }
 
     override fun toString(): String {
@@ -226,7 +227,9 @@ open class StopOrder(
 
     override fun fill(price: Double): Double {
         if (! triggered) {
-            if ((sell && price <= stop) || (buy && price >= stop)) triggered = true
+            if ((sell && price <= stop) || (buy && price >= stop)) {
+                triggered = true
+            }
         }
 
         return if (triggered) remaining else 0.0
@@ -268,12 +271,17 @@ class StopLimitOrder(
 
 
     override fun fill(price: Double): Double {
-        if (triggered) {
-            if ((sell && price <= stop) || (buy && price >= stop)) triggered = true
+        if ( ! triggered) {
+            if ((sell && price <= stop) || (buy && price >= stop)) {
+                logger.fine {"StopLimitOrder triggered order=$this price=$price"}
+                triggered = true
+            }
         }
 
         if (triggered) {
-            if ((sell && price <= limit) || buy && price >= limit) return remaining
+            if ((sell && price <= limit) || buy && price >= limit) {
+                return remaining
+            }
         }
 
         return 0.0
@@ -329,7 +337,10 @@ open class TrailOrder(
             val newStop = price * correction
             if (buy && newStop < stop) stop = newStop
             if (sell && newStop > stop) stop = newStop
-            if ((sell && price <= stop) || (buy && price >= stop)) triggered = true
+            if ((sell && price <= stop) || (buy && price >= stop)) {
+                logger.fine { "triggered order=$this price=$price   "}
+                triggered = true
+            }
         }
     }
 

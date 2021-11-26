@@ -27,6 +27,8 @@ import kotlin.math.absoluteValue
 import kotlin.math.floor
 import kotlin.math.min
 
+
+
 /**
  * This is the default policy that will be used if no other policy is specified. There are a number of parameters that
  * can be configured to change it behavior.
@@ -64,12 +66,12 @@ open class DefaultPolicy(
         if (!shorting && !position.long) return null
 
         return if (position.long) {
-            getOrder(signal, -position.quantity)
+            createOrder(signal, -position.quantity, price)
         } else {
             if (position.short && !increasePosition) return null
             val amount = min(buyingPower, maxAmount).absoluteValue
             val volume = floor(calcVolume(amount, signal.asset, price, account))
-            if (volume > 0) getOrder(signal, -volume) else null
+            if (volume > 0) createOrder(signal, -volume, price) else null
         }
 
     }
@@ -82,16 +84,16 @@ open class DefaultPolicy(
 
         val amount = min(buyingPower, maxAmount)
         val volume = floor(calcVolume(amount, signal.asset, price, account))
-        return if (volume > 0) getOrder(signal, volume) else null
+        return if (volume > 0) createOrder(signal, volume, price) else null
     }
 
     /**
-     * Get order. Overwrite this method if you want to create other orders types than the default Market Order
+     * Create the order. Overwrite this method if you want to create other orders types than the default Market Order
      *
      * @param signal
      * @param qty
      */
-    open fun getOrder(signal: Signal, qty: Double): Order = signal.toMarketOrder(qty)
+    open fun createOrder(signal: Signal, qty: Double, price: Double): Order? = signal.toMarketOrder(qty)
 
     /**
      * How many orders do we have for the current trading day. This takes into account that different orders may be
