@@ -52,7 +52,7 @@ class Roboquant<L : MetricsLogger>(
     val policy: Policy = DefaultPolicy(),
     val broker: Broker = SimBroker(),
     val logger: L,
-    val name: String = "Roboquant-${instanceCounter++}",
+    val name: String = "roboquant-${instanceCounter++}",
     private val channelCapacity: Int = 100,
 ) {
 
@@ -62,6 +62,7 @@ class Roboquant<L : MetricsLogger>(
 
     companion object {
 
+        // Used to generate a unique roboquant name
         private var instanceCounter = 0
 
         /**
@@ -89,12 +90,12 @@ class Roboquant<L : MetricsLogger>(
      *
      * Under the hood this method replies on the [step] method to take a single step.
      */
-    private suspend fun runPhase(feed: Feed, runTime: TimeFrame = TimeFrame.FULL,  runInfo: RunInfo) {
+    private suspend fun runPhase(feed: Feed, runInfo: RunInfo) {
 
-        if (!feed.timeFrame.overlap(runTime)) return
-        runInfo.timeFrame = runTime.intersect(feed.timeFrame)
+        if (!feed.timeFrame.overlap(runInfo.timeFrame)) return
+        runInfo.timeFrame = runInfo.timeFrame.intersect(feed.timeFrame)
 
-        val channel = EventChannel(channelCapacity, runTime)
+        val channel = EventChannel(channelCapacity, runInfo.timeFrame)
         val job = Background.ioJob {
             try {
                 feed.play(channel)
@@ -160,9 +161,15 @@ class Roboquant<L : MetricsLogger>(
      * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
      * in parallel have also a look at [runAsync]
      */
-    fun run(feed: Feed, timeFrame: TimeFrame = TimeFrame.FULL, validation: TimeFrame? = null, runName: String? = null, episodes: Int = 1) =
+    fun run(
+        feed: Feed,
+        timeFrame: TimeFrame = TimeFrame.FULL,
+        validation: TimeFrame? = null,
+        runName: String? = null,
+        episodes: Int = 1
+    ) =
         runBlocking {
-            runAsync(feed, timeFrame, validation, runName,  episodes)
+            runAsync(feed, timeFrame, validation, runName, episodes)
         }
 
     /**
@@ -177,7 +184,7 @@ class Roboquant<L : MetricsLogger>(
         runName: String? = null,
         episodes: Int = 1
     ) {
-        require(episodes > 0) { "episodes need to be greater than zero"}
+        require(episodes > 0) { "episodes need to be greater than zero" }
         val run = runName ?: runCounter++.toString()
         val runInfo = RunInfo(name, run)
         kotlinLogger.fine { "Starting run $runInfo for $episodes episodes" }
@@ -185,10 +192,12 @@ class Roboquant<L : MetricsLogger>(
         repeat(episodes) {
             runInfo.episode++
             runInfo.phase = RunPhase.MAIN
-            runPhase(feed, timeFrame, runInfo)
+            runInfo.timeFrame = timeFrame
+            runPhase(feed, runInfo)
             if (validation !== null) {
+                runInfo.timeFrame = validation
                 runInfo.phase = RunPhase.VALIDATE
-                runPhase(feed, validation,runInfo)
+                runPhase(feed, runInfo)
             }
         }
         kotlinLogger.fine { "Finished run $runInfo" }
@@ -213,7 +222,7 @@ class Roboquant<L : MetricsLogger>(
      * Run the configured metrics and log the results. This includes any metrics that are recorded by the strategy,
      * policy and broker.
      */
-    private fun runMetrics(account: Account, event: Event,  runInfo: RunInfo) {
+    private fun runMetrics(account: Account, event: Event, runInfo: RunInfo) {
         val info = runInfo.copy()
         for (metric in metrics) metric.calculate(account, event)
 
@@ -244,11 +253,11 @@ class Roboquant<L : MetricsLogger>(
  * Run related info provided to metrics loggers together with the metric results.
  *
  * @property roboquant name of the roboquant that created this object
- * @property run the name of this run
- * @property episode the episode
+ * @property run the name of the run
+ * @property episode the episode number
  * @property step the step
  * @property time the time
- * @property timeFrame the total timeframe of the run
+ * @property timeFrame the total timeframe of the run, if not known it will be [TimeFrame.FULL]
  * @property phase the phase of the run
  * @constructor Create new RunInfo object
  */
