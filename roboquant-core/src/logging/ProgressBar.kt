@@ -62,7 +62,7 @@ internal class ProgressBar {
         currentPercent = percent
 
         if (message1.isEmpty()) {
-            message1 = "${info.name} | run=${info.run} | phase=${info.runPhase} |"
+            message1 = "${info.roboquant} | run=${info.run} | phase=${info.phase} |"
             message2 = info.timeFrame.toPrettyString() + " | "
         }
 

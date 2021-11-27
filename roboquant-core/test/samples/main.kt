@@ -297,7 +297,7 @@ fun testingStrategies() {
 
     // Walk forward learning
     feed.split(Period.ofYears(2)).map { it.splitTrainTest(0.2) }.forEach { (train, test) ->
-        roboquant.run(feed, train, test, 100)
+        roboquant.run(feed, train, test, episodes = 100)
     }
 
 }
@@ -330,7 +330,7 @@ suspend fun runParallel() {
     val l = Logging.getLogger("ParallelRuns")
     loggers.forEach {
         val entry = it.getMetric("account.value").last()
-        l.info { "${entry.info.name}  ${entry.value}" }
+        l.info { "${entry.info.roboquant}  ${entry.value}" }
     }
 
 }

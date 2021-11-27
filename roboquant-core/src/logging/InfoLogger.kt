@@ -40,7 +40,7 @@ class InfoLogger(
         if (!splitMetrics)
             logger.log(level) {
                 mapOf(
-                    "name" to info.name,
+                    "name" to info.roboquant,
                     "run" to info.run,
                     "epoch" to info.episode,
                     "time" to info.time,
@@ -52,7 +52,7 @@ class InfoLogger(
             results.forEach {
                 logger.log(level) {
                     mapOf(
-                        "name" to info.name,
+                        "name" to info.roboquant,
                         "run" to info.run,
                         "epoch" to info.episode,
                         "time" to info.time,

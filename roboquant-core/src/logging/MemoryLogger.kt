@@ -98,7 +98,7 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
     /**
      * Get available episodes for a specific [run]
      */
-    fun getEpisodes(run: Int) = history.filter { it.info.run == run }.map { it.info.episode }.distinct().sorted()
+    fun getEpisodes(run: String) = history.filter { it.info.run == run }.map { it.info.episode }.distinct().sorted()
 
 
     /**

@@ -38,7 +38,7 @@ class MetricChart(
     override fun renderOption(): String {
 
         // Every combination of a run and episode will be its own series
-        val series = metricsData.groupBy { it.info.run.toString() + "/" + it.info.episode.toString() }
+        val series = metricsData.groupBy { it.info.run + "/" + it.info.episode.toString() }
         val result = StringBuffer()
         val gson = gsonBuilder.create()
         series.forEach { (name, entries) ->

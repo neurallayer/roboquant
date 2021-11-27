@@ -56,8 +56,8 @@ class Roboquant<L : MetricsLogger>(
     private val channelCapacity: Int = 100,
 ) {
 
+    private var runCounter = 0
     private val kotlinLogger = Logging.getLogger(name)
-    private var runInfo = RunInfo(name)
     private val components = listOf(strategy, policy, broker, *metrics, logger)
 
     companion object {
@@ -89,11 +89,10 @@ class Roboquant<L : MetricsLogger>(
      *
      * Under the hood this method replies on the [step] method to take a single step.
      */
-    private suspend fun runPhase(feed: Feed, runTime: TimeFrame = TimeFrame.FULL, runPhase: RunPhase) {
+    private suspend fun runPhase(feed: Feed, runTime: TimeFrame = TimeFrame.FULL,  runInfo: RunInfo) {
 
         if (!feed.timeFrame.overlap(runTime)) return
         runInfo.timeFrame = runTime.intersect(feed.timeFrame)
-        runInfo.runPhase = runPhase
 
         val channel = EventChannel(channelCapacity, runTime)
         val job = Background.ioJob {
@@ -104,17 +103,17 @@ class Roboquant<L : MetricsLogger>(
             }
         }
 
-        start(runPhase)
+        start(runInfo.phase)
         try {
             var orders = listOf<Order>()
             while (true) {
                 val event = channel.receive()
-                orders = step(orders, event)
+                orders = step(orders, event, runInfo)
             }
         } catch (exception: ClosedReceiveChannelException) {
             return
         } finally {
-            end(runPhase)
+            end(runInfo.phase)
             if (job.isActive) job.cancel()
             channel.close()
         }
@@ -146,7 +145,7 @@ class Roboquant<L : MetricsLogger>(
      */
     fun reset() {
         for (component in components) component.reset()
-        runInfo.reset()
+        runCounter = 0
     }
 
     /**
@@ -161,9 +160,9 @@ class Roboquant<L : MetricsLogger>(
      * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
      * in parallel have also a look at [runAsync]
      */
-    fun run(feed: Feed, timeFrame: TimeFrame = TimeFrame.FULL, validation: TimeFrame? = null, episodes: Int = 1) =
+    fun run(feed: Feed, timeFrame: TimeFrame = TimeFrame.FULL, validation: TimeFrame? = null, runName: String? = null, episodes: Int = 1) =
         runBlocking {
-            runAsync(feed, timeFrame, validation, episodes)
+            runAsync(feed, timeFrame, validation, runName,  episodes)
         }
 
     /**
@@ -175,17 +174,22 @@ class Roboquant<L : MetricsLogger>(
         feed: Feed,
         timeFrame: TimeFrame = TimeFrame.FULL,
         validation: TimeFrame? = null,
+        runName: String? = null,
         episodes: Int = 1
     ) {
         require(episodes > 0) { "episodes need to be greater than zero"}
-
-        runInfo.startRun()
+        val run = runName ?: runCounter++.toString()
+        val runInfo = RunInfo(name, run)
         kotlinLogger.fine { "Starting run $runInfo for $episodes episodes" }
 
         repeat(episodes) {
             runInfo.episode++
-            runPhase(feed, timeFrame, RunPhase.MAIN)
-            if (validation !== null) runPhase(feed, validation, RunPhase.VALIDATE)
+            runInfo.phase = RunPhase.MAIN
+            runPhase(feed, timeFrame, runInfo)
+            if (validation !== null) {
+                runInfo.phase = RunPhase.VALIDATE
+                runPhase(feed, validation,runInfo)
+            }
         }
         kotlinLogger.fine { "Finished run $runInfo" }
     }
@@ -195,12 +199,12 @@ class Roboquant<L : MetricsLogger>(
      * Take a single step in the timeline. The broker is always invoked before the strategy and policy to ensure it is
      * impossible to look ahead in the future.
      */
-    private fun step(orders: List<Order>, event: Event): List<Order> {
+    private fun step(orders: List<Order>, event: Event, runInfo: RunInfo): List<Order> {
         runInfo.step++
         runInfo.time = event.now
 
         val account = broker.place(orders, event)
-        runMetrics(account, event)
+        runMetrics(account, event, runInfo)
         val signals = strategy.generate(event)
         return policy.act(signals, account, event)
     }
@@ -209,7 +213,7 @@ class Roboquant<L : MetricsLogger>(
      * Run the configured metrics and log the results. This includes any metrics that are recorded by the strategy,
      * policy and broker.
      */
-    private fun runMetrics(account: Account, event: Event) {
+    private fun runMetrics(account: Account, event: Event,  runInfo: RunInfo) {
         val info = runInfo.copy()
         for (metric in metrics) metric.calculate(account, event)
 
@@ -226,7 +230,6 @@ class Roboquant<L : MetricsLogger>(
     fun summary(): Summary {
         val s = Summary("Roboquant")
         s.add("name", name)
-        s.add("run", runInfo.run)
         s.add("strategy", strategy::class.simpleName)
         s.add("policy", policy::class.simpleName)
         s.add("logger", logger::class.simpleName)
@@ -240,23 +243,23 @@ class Roboquant<L : MetricsLogger>(
 /**
  * Run related info provided to metrics loggers together with the metric results.
  *
- * @property name of the roboquant that created this object
- * @property startRun the run
+ * @property roboquant name of the roboquant that created this object
+ * @property run the name of this run
  * @property episode the episode
  * @property step the step
  * @property time the time
  * @property timeFrame the total timeframe of the run
- * @property runPhase the phase of the run
+ * @property phase the phase of the run
  * @constructor Create new RunInfo object
  */
 data class RunInfo internal constructor(
-    val name: String,
-    var run: Int = 0,
+    val roboquant: String,
+    var run: String,
     var episode: Int = 0,
     var step: Int = 0,
     var time: Instant = Instant.MIN,
     var timeFrame: TimeFrame = TimeFrame.FULL,
-    var runPhase: RunPhase = RunPhase.MAIN
+    var phase: RunPhase = RunPhase.MAIN
 ) {
 
     /**
@@ -265,17 +268,6 @@ data class RunInfo internal constructor(
     val duration: Duration
         get() = Duration.between(timeFrame.start, time)
 
-    fun startRun() {
-        run++
-        episode = 0
-        step = 0
-    }
-
-    fun reset() {
-        run = 0
-        episode = 0
-        step = 0
-    }
 
 }
 
