@@ -17,27 +17,23 @@
 package org.roboquant.jupyter
 
 import org.roboquant.brokers.Trade
-import java.math.BigDecimal
-import java.time.Instant
+import org.roboquant.common.Asset
 
 /**
- * Trade chart plots the [trades] that have been generated during a run. By default, the realized pnl of the trades will
- * be plotted but this can be changed.
+ * Trade chart plots the [trades] that have been generated during a run per Asset. By default, the realized pnl of the
+ * trades will be plotted but this is configurable
  *
  */
-class TradeChart(
+class TradeChartByAsset(
     private val trades: Collection<Trade>,
-    private val skipBuy: Boolean = false,
     private val aspect: String = "pnl"
 ) : Chart() {
 
-    private var max = Double.MIN_VALUE.toBigDecimal()
 
     init {
         val validAspects = listOf("pnl", "fee", "amount", "quantity")
         require(aspect in validAspects) { "Unsupported aspect $aspect, valid values are $validAspects" }
     }
-
 
     private fun getTooltip(trade: Trade): String {
         val c = trade.asset.currency
@@ -47,10 +43,9 @@ class TradeChart(
         return "asset: ${trade.asset} <br> time: ${trade.time} <br> qty: ${trade.quantity} <br> fee: $fee <br> pnl: $pnl <br> amount: $amount <br> order: ${trade.orderId}"
     }
 
-    private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
-        val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
+    private fun toSeriesData(assets: List<Asset>): List<List<Any>> {
+        val d = mutableListOf<List<Any>>()
         for (trade in trades) {
-            if (skipBuy && trade.quantity > 0) continue
             with(trade) {
                 val c = asset.currency
                 val value = when (aspect) {
@@ -61,9 +56,10 @@ class TradeChart(
                     else -> throw Exception("Unsupported aspect $aspect")
                 }
 
-                if (value.abs() > max) max = value.abs()
+                val y = assets.indexOf(asset)
+
                 val tooltip = getTooltip(this)
-                d.add(Triple(time, value, tooltip))
+                d.add(listOf(time, y, value, tooltip))
             }
         }
 
@@ -72,9 +68,9 @@ class TradeChart(
 
     override fun renderOption(): String {
         val gson = gsonBuilder.create()
-        max = Double.MIN_VALUE.toBigDecimal()
 
-        val d = toSeriesData()
+        val assets = trades.map { it.asset }.distinct().sortedBy { it.symbol }
+        val d = toSeriesData(assets)
         val data = gson.toJson(d)
         val series = """
             {
@@ -83,6 +79,9 @@ class TradeChart(
                 data : $data
             }
         """
+
+
+        val yAxisData = gson.toJson(assets.map { it.symbol })
 
         return """
             {
@@ -94,26 +93,26 @@ class TradeChart(
                     text: 'Trade Chart $aspect'
                 },
                 yAxis: {
-                    type: 'value',
-                    scale: true
-                },
-                visualMap: {
-                   min: -$max,
-                   max: $max,
-                   calculable: true,
-                   orient: 'horizontal',
-                   left: 'center',
-                   dimension: 1,
-                   top: 'top',
-                   inRange : { color: ['#FF0000', '#00FF00'] }
+                    type: 'category',
+                    data: $yAxisData,
+                    axisLine: {
+                      show: false
+                    }
                 },
                 tooltip: {
                      formatter: function (params) {
-                        return params.value[2];
+                        return params.value[3];
                      }
                 },
+                toolbox: {
+                    feature: {
+                        dataZoom: { },
+                        dataView: {readOnly: true},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
                 ${renderDataZoom()},
-                ${renderToolbox(false)},
                 ${renderGrid()},  
                 series : [$series]
             }

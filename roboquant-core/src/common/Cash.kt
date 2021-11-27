@@ -77,6 +77,25 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
     }
 
     /**
+     * Add operator + to allow for cash + cash
+     */
+    operator fun plus(other: Cash) : Cash {
+        val result = this.copy()
+        result.deposit(other)
+        return result
+    }
+
+    /**
+     * Add operator - to allow for cash - cash
+     */
+    operator fun minus(other: Cash) : Cash {
+        val result = this.copy()
+        result.withdraw(other)
+        return result
+    }
+
+
+    /**
      * Deposit a monetary [amount] denominated in teh specified [currency]. If the currency already exist, it
      * will be added to the existing amount, otherwise a new entry will be created.
      */
@@ -124,9 +143,9 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
      * Create a copy of this cash instance
      */
     fun copy(): Cash {
-        val wallet = Cash()
-        wallet.data.putAll(data)
-        return wallet
+        val result = Cash()
+        result.data.putAll(data)
+        return result
     }
 
     /**
