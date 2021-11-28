@@ -84,8 +84,6 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 /**
  * Base class for ECharts based charts
  *
- * TODO: use better approach to create the options for an e-chart
- *
  * @constructor Create empty E chart
  */
 abstract class Chart : Output() {

@@ -25,8 +25,8 @@ import org.roboquant.strategies.utils.MovingWindow
 
 /**
  * Beta is a measure of the volatility (or systematic risk) of the account compared to the market as a whole. This
- * implementation doesn't look only at assets, but looks at the volatility of the whole account so including the
- * cash positions.
+ * implementation doesn't look only at the assets in the portfolio, but looks at the volatility of the whole account
+ * so including the cash positions.
  *
  * @property referenceAsset Which asset to use for the market volatility, for example S&P 500
  * @property period Over how many events to calculate the beta

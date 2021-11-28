@@ -25,6 +25,7 @@ import java.lang.Integer.min
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.*
+import kotlin.math.pow
 
 /******************************************************************************
  * This file contains the extensions for classes that are part of standard
@@ -203,4 +204,14 @@ fun Collection<Any?>.summary(): Summary {
     return result
 }
 
-fun Number.round(fractions: Int = 2): BigDecimal = BigDecimal(this.toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)
+fun Number.round(fractions: Int = 2): BigDecimal = BigDecimal(toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)
+
+
+/**
+ * Annualize an amount based on the duration of this time frame.
+ */
+fun Number.annualize(tf: TimeFrame) : Double {
+        val period = tf.duration.toMillis()
+        val years = (365.0 * 24.0 * 3600.0 * 1000.0) / period
+        return (1.0 + toDouble()).pow(years) - 1.0
+}

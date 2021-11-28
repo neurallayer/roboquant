@@ -27,10 +27,10 @@ internal class PriceMetricTest {
     @Test
     fun basic() {
 
-        val (account, step) = TestData.metricInput()
+        val (account, event) = TestData.metricInput()
         val metric = PriceMetric(Asset("Dummy"))
 
-        metric.calculate(account, step)
+        metric.calculate(account, event)
         assertTrue(metric.getMetrics().isEmpty())
     }
 

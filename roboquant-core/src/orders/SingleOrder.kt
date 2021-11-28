@@ -96,7 +96,7 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
         place(price, time)
         val qty = fill(price)
 
-        if (tif.isExpired(placed, time, qty, quantity)) {
+        if (tif.isExpired(this, time, qty, quantity)) {
             status = OrderStatus.EXPIRED
             return listOf()
         }

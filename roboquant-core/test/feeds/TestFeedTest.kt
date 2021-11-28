@@ -22,7 +22,8 @@ import kotlin.test.*
 import org.roboquant.TestData
 import org.roboquant.common.Background
 import org.roboquant.common.TimeFrame
-import org.roboquant.feeds.test.TestFeed
+import org.roboquant.feeds.test.TestLiveFeed
+import org.roboquant.feeds.test.TestHistoricFeed
 
 fun play(feed:Feed, timeFrame: TimeFrame = TimeFrame.FULL): EventChannel {
     val channel = EventChannel(timeFrame = timeFrame)
@@ -38,7 +39,7 @@ internal class TestFeedTest {
 
     @Test
     fun testTestFeed() = runBlocking{
-        val feed = TestFeed(5..9)
+        val feed = TestLiveFeed(5..9)
         var cnt = 0
         for (step in play(feed)) {
             cnt++
@@ -48,7 +49,18 @@ internal class TestFeedTest {
 
     @Test
     fun testTestFeedWithItems() = runBlocking{
-        val feed = TestFeed(120..130, 130 downTo 120, asset = TestData.euStock())
+        val feed = TestLiveFeed(120..130, 130 downTo 120, asset = TestData.euStock())
+        var cnt = 0
+        for (step in play(feed)) {
+            cnt++
+            assertTrue(step.actions.first() is PriceAction)
+        }
+        assertEquals(22, cnt)
+    }
+
+    @Test
+    fun historicFeed() =  runBlocking{
+        val feed = TestHistoricFeed(120..130, 130 downTo 120, asset = TestData.euStock())
         var cnt = 0
         for (step in play(feed)) {
             cnt++

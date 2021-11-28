@@ -141,7 +141,7 @@ class Roboquant<L : MetricsLogger>(
     }
 
     /**
-     * Reset all state including that of the used components. This allows to start with a fresh run with the same
+     * Reset all state including that of the used components. This allows to start a fresh run with the same
      * configuration as the original instance.
      */
     fun reset() {
@@ -153,6 +153,9 @@ class Roboquant<L : MetricsLogger>(
      * Start a new run using the provided [feed] as data. If no [timeFrame] is provided all the events in the feed
      * will be used. Optionally you can provide a [validation] timeframe that will trigger a separate validation phase. You
      * can also repeat the run for a number of [episodes].
+     *
+     * If can provide a custom [runName] that will help to later identify this run. If none is provided, a name will
+     * be generated.
      *
      *  The following provides a schematic overview of the flow of a run:
      *
@@ -237,7 +240,7 @@ class Roboquant<L : MetricsLogger>(
      * Provide a short summary of the state of this roboquant.
      */
     fun summary(): Summary {
-        val s = Summary("Roboquant")
+        val s = Summary("roboquant")
         s.add("name", name)
         s.add("strategy", strategy::class.simpleName)
         s.add("policy", policy::class.simpleName)
@@ -252,7 +255,7 @@ class Roboquant<L : MetricsLogger>(
 /**
  * Run related info provided to metrics loggers together with the metric results.
  *
- * @property roboquant name of the roboquant that created this object
+ * @property roboquant name of the roboquant that started this run
  * @property run the name of the run
  * @property episode the episode number
  * @property step the step
@@ -263,7 +266,7 @@ class Roboquant<L : MetricsLogger>(
  */
 data class RunInfo internal constructor(
     val roboquant: String,
-    var run: String,
+    val run: String,
     var episode: Int = 0,
     var step: Int = 0,
     var time: Instant = Instant.MIN,

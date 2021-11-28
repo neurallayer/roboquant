@@ -43,7 +43,7 @@ import kotlin.math.min
  * > Betting against Beta was first described by Andrea Frazzinia and Lasse Heje Pedersen in Journal of Financial Economics
  *
  *
- * @constructor Create empty Betting against beta
+ * @constructor Create new Betting Against Beta strategy
  */
 open class BettingAgainstBeta(
     assets: Collection<Asset>,
@@ -55,8 +55,7 @@ open class BettingAgainstBeta(
 ) : BasePolicy() {
 
     private var rebalanceDate = Instant.MIN
-
-    val buffers = AssetReturns(assets, windowSize, Double.NaN)
+    private val buffers = AssetReturns(assets, windowSize, Double.NaN)
 
     init {
         require(market in assets) { "The selected market asset $market also has to be part of all assets" }
@@ -112,14 +111,14 @@ open class BettingAgainstBeta(
         val diff = account.portfolio.diff(targetPortfolio)
 
         // Transform difference into Market Orders
-        return diff.map { getOrder(it.key, it.value, account, event) }
+        return diff.map { createOrder(it.key, it.value, account, event) }.filterNotNull()
     }
 
     /**
      * Override this method if you want to override the default generation of MarketOrders with a different
      * order type like LimitOrders.
      */
-    open fun getOrder(asset: Asset, quantity: Double, account: Account, event: Event): Order {
+    open fun createOrder(asset: Asset, quantity: Double, account: Account, event: Event): Order? {
         return MarketOrder(asset, quantity)
     }
 

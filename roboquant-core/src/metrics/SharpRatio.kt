@@ -19,21 +19,27 @@ package org.roboquant.metrics
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
 import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
+import org.roboquant.common.TimeFrame
+import org.roboquant.common.annualize
 import org.roboquant.feeds.Event
 import java.time.Instant
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 private const val eps = 0.0000000001
 
 /**
- * Calculate the sharp ratio for the portfolio. The ratio is the average return earned in excess of the risk-free rate
+ * Calculate the sharp ratio for the returns made. The ratio is the average return earned in excess of the risk-free rate
  * per unit of volatility or total risk. Volatility is a measure of the price fluctuations of the portfolio.
  *
- * @TODO validate formula for time compensation
+ * The following metrics will be calculated:
+ *
+ * - mean
+ * - standard deviation
+ * - SharpRatio
+ *
+ * @TODO validate formula
  *
  * @property riskFreeRate The risk-free rate to use. For example 0.04 equals 4%
- * @property minSteps The minimal number of steps before calculating the sharp ratio
+ * @property minSteps The minimal number of observations before calculating the sharp ratio, default is 60
  * @constructor
  *
  */
@@ -43,34 +49,37 @@ class SharpRatio(
 ) : SimpleMetric() {
 
     private var stats = DescriptiveStatistics()
-    private var start: Instant = Instant.MIN
-    private var lastValue: Double = 0.0
+    private var lastValue: Double = Double.NaN
+    private var lastTime: Instant = Instant.MIN
 
 
     override fun calc(account: Account, event: Event): MetricResults {
         val values = account.getValue()
         val value = account.convertToCurrency(values, now = event.now)
 
-        if (start == Instant.MIN) {
-            start = event.now
+        if (lastTime == Instant.MIN) {
             lastValue = value
+            lastTime = event.now
             return mapOf()
         } else {
-            val portfolioReturn = (value - lastValue) / lastValue
-            stats.addValue(portfolioReturn)
+            val returns = (value - lastValue) / lastValue
+            val tf = TimeFrame(lastTime, event.now)
+            val annualReturns = returns.annualize(tf)
+            stats.addValue(annualReturns)
             lastValue = value
+            lastTime = event.now
 
             return if (stats.n >= minSteps) {
-                val avgSeconds = (event.now.epochSecond - start.epochSecond) / stats.n
-                val avgYears = avgSeconds / (365.0 * 24 * 3600)
-                val adjRiskFreeRate = (1.0 + riskFreeRate).pow(avgYears) - 1.0
+
+                // Calculate the three metrics
                 val mean = stats.mean
-                val std = stats.standardDeviation + eps
-                val sharpRatio = (mean - adjRiskFreeRate) / std * sqrt(1.0 / avgYears)
+                val std = stats.standardDeviation
+                val sharpRatio = (mean - riskFreeRate) / (std + eps)
+
                 mapOf(
                     "portfolio.mean" to mean,
                     "portfolio.std" to std,
-                    "portfolio.sharpRatio" to sharpRatio
+                    "portfolio.sharpratio" to sharpRatio
                 )
             } else {
                 mapOf()
@@ -80,7 +89,7 @@ class SharpRatio(
 
     override fun start(runPhase: RunPhase) {
         stats.clear()
-        start = Instant.MIN
-        lastValue = 0.0
+        lastTime = Instant.MIN
+        lastValue = Double.NaN
     }
 }

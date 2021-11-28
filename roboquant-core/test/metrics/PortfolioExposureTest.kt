@@ -25,8 +25,8 @@ internal class PortfolioExposureTest {
     @Test
     fun calc() {
         val metric = PortfolioExposure()
-        val (account, step) = TestData.metricInput()
-        val result = metric.calc(account, step)
+        val (account, event) = TestData.metricInput()
+        val result = metric.calc(account, event)
         assertTrue(result.isNotEmpty())
     }
 

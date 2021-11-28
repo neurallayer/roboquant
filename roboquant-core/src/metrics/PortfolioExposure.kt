@@ -30,7 +30,7 @@ import kotlin.math.absoluteValue
  * - Gross exposure refers to the absolute level of a portfolio investments. It takes into account the value of both a
  * portfolio's long positions and short positions and is expressed as a percentage of total account value.
  *
- * @constructor Create empty Portfolio exposure
+ * @constructor Create new Portfolio Exposure metric
  */
 class PortfolioExposure : SimpleMetric() {
     /**

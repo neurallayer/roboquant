@@ -23,16 +23,15 @@ import org.roboquant.feeds.Event
 /**
  * Capture the following statistics about the [Account]:
  *
- *
- * - account.orders.open
- * - account.orders.closed
- * - account.trades
- * - account.portfolio.assets
- * - account.cash.currencies
- * - account.cash.total
- * - account.buyingPower
- * - account.value
- * - account.change
+ * - account.orders  Total number of orders
+ * - account.orders.open Total number of open orders
+ * - account.trades Total number of trades
+ * - account.portfolio.assets Total number of assets in the portfolio
+ * - account.cash.currencies Number of currencies hold
+ * - account.cash.total Total cash value
+ * - account.buyingPower Buying power available in the account
+ * - account.value Total value of the account
+ * - account.change Change of value of the account
  *
  *
  * @property includeValue include the account value and account value change metrics, default is true

@@ -127,6 +127,19 @@ class Portfolio : Cloneable {
     }
 
     /**
+     * Get total exposure of this portfolio. The total value is calculated based on the sum of the open positions and
+     * their last known price. The result is returned as a Cash object, so no currency conversion is applied.
+     */
+    fun getExposure(): Cash {
+        val result = Cash()
+        for ((asset, position) in positions) {
+            result.deposit(asset.currency, position.exposure)
+        }
+        return result
+    }
+
+
+    /**
      * Get total unrealized PNL of this portfolio. The unrealized PNL is calculated based on the open positions and
      * their average cost and last known price. The result is returned as a Cash object, so no currency conversion
      * is applied.
@@ -185,20 +198,6 @@ class Portfolio : Cloneable {
         return s
     }
 
-    /*
-    fun asDataFrame(): AnyFrame {
-        return positions.values.toDataFrame {
-            "asset" { "${asset.type}:${asset.symbol}" }
-            "pos" {quantity.toBigDecimal().setScale(1, RoundingMode.HALF_DOWN)}
-            "cost" { asset.currency.toBigDecimal(cost)}
-            "price" { asset.currency.toBigDecimal(price)}
-            "pnl" { asset.currency.toBigDecimal(pnl)}
-            "short" { short}
-            "total cost" { asset.currency.toBigDecimal(totalCost)}
-            "updated" { lastUpdate }
-        }
-    }
-    */
 
     /**
      * Add all the positions of an [other] portfolio to this portfolio. Even closed positions are transferred.

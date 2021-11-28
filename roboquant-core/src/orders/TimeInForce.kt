@@ -17,7 +17,6 @@
 package org.roboquant.orders
 
 import java.time.Instant
-import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 /**
@@ -31,13 +30,13 @@ import java.time.temporal.ChronoUnit
 interface TimeInForce {
 
     /**
-     * Is the order expired give the current time (now) and when it was originally placed and the fill in comparison
+     * Is the order expired given the current time (now) and when it was originally placed and the fill in comparison
      * to total fill
      *
      * @param now
      * @return
      */
-    fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double): Boolean
+    fun isExpired(order: Order, now: Instant, fill: Double, total: Double): Boolean
 
 }
 
@@ -56,9 +55,9 @@ class GTC(private val maxDays: Int = 90) : TimeInForce {
      * @see TimeInForce.isExpired
      *
      */
-    override fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double): Boolean {
-        if (now == placed) return false
-        val max = placed.plus(maxDays.toLong(), ChronoUnit.DAYS)
+    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double): Boolean {
+        if (now == order.placed) return false
+        val max = order.placed.plus(maxDays.toLong(), ChronoUnit.DAYS)
         return now > max
     }
 
@@ -81,7 +80,7 @@ class GTD(private val date: Instant) : TimeInForce {
      * @see TimeInForce.isExpired
      *
      */
-    override fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double) = now > date
+    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double) = now > date
 
     override fun toString(): String {
         return "GTD($date)"
@@ -100,7 +99,7 @@ class IOC : TimeInForce {
     /**
      *
      */
-    override fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double) = now > placed
+    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double) = now > order.placed
 
     override fun toString(): String {
         return "IOC"
@@ -111,20 +110,16 @@ class IOC : TimeInForce {
  * A DAY order is a stipulation placed on an order to a broker to execute a trade at a specific price
  * that expires at the end of the trading day if it is not completed.
  *
- * TODO make zone info part of OrderAction
- *
  * @constructor Create new DAY tif
  */
-class DAY(private val zone: ZoneId) : TimeInForce {
+class DAY : TimeInForce {
 
     /**
      *
      */
-    override fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double): Boolean {
-        val placedDate = placed.atZone(zone).toLocalDate()
-        val currentDate = now.atZone(zone).toLocalDate()
-        return currentDate != placedDate
-
+    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double): Boolean {
+        val exchange = order.asset.exchange
+        return ! exchange.sameDay(order.placed, now)
     }
 
     override fun toString(): String {
@@ -146,7 +141,7 @@ class FOK : TimeInForce {
      * @see TimeInForce.isExpired
      *
      */
-    override fun isExpired(placed: Instant, now: Instant, fill: Double, total: Double) : Boolean  {
+    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double) : Boolean  {
         return fill != 0.0 && fill != total
     }
 

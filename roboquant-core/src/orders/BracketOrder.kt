@@ -47,11 +47,11 @@ class BracketOrder(
          * the boundaries are based on a percentage offset from the current price. 1% offset = 0.01.
          */
         fun fromPercentage(asset: Asset, qty: Double, price: Double, profit: Double, loss: Double): BracketOrder {
-            require (profit > 0.0 && loss > 0.0) { "Profit and Loss are values bigger than 0.0, for example 0.05 for 5%"}
+            require(profit > 0.0 && loss > 0.0) { "Profit and Loss are values bigger than 0.0, for example 0.05 for 5%" }
             val mainOrder = MarketOrder(asset, qty)
             val direction = mainOrder.direction
-            val stopLoss = StopOrder(asset, - qty, (1.0 - loss*direction)*price)
-            val takeProfit = LimitOrder(asset, - qty, (1.0 + profit*direction)*price)
+            val stopLoss = StopOrder(asset, -qty, (1.0 - loss * direction) * price)
+            val takeProfit = LimitOrder(asset, -qty, (1.0 + profit * direction) * price)
             return BracketOrder(mainOrder, takeProfit, stopLoss)
         }
 
@@ -90,13 +90,13 @@ class BracketOrder(
             if (profit.remaining != 0.0) {
                 val e = profit.execute(price, time)
                 result.addAll(e)
-                loss.quantity = - main.quantity - profit.fill
+                loss.quantity = -main.quantity - profit.fill
             }
 
             if (loss.remaining != 0.0) {
                 val e = loss.execute(price, time)
                 result.addAll(e)
-                profit.quantity = - main.quantity - loss.fill
+                profit.quantity = -main.quantity - loss.fill
             }
 
             if (profit.status.closed)
@@ -104,7 +104,7 @@ class BracketOrder(
             else if (loss.status.closed)
                 status = loss.status
 
-            if (loss.fill + profit.fill ==  - main.quantity) {
+            if (loss.fill + profit.fill == -main.quantity) {
                 status = OrderStatus.COMPLETED
             }
         }

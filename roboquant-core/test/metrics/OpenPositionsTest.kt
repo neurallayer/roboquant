@@ -25,8 +25,8 @@ internal class OpenPositionsTest {
     @Test
     fun calc() {
         val metric = OpenPositions()
-        val (account, step) = TestData.metricInput()
-        val result = metric.calc(account, step)
+        val (account, event) = TestData.metricInput()
+        val result = metric.calc(account, event)
         assertTrue(result.isEmpty())
     }
 }

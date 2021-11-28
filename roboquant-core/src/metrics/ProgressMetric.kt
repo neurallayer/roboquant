@@ -22,7 +22,7 @@ import org.roboquant.feeds.Event
 import java.time.Instant
 
 /**
- * Standard set of metric values that capture the progress of the run. The captured metrics are aggregated since
+ * Set of metric values that capture the progress of the run. The captured metrics are aggregated since
  * the start of a phase.
  *
  * The following metrics are captured:

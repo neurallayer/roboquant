@@ -50,7 +50,8 @@ interface Component {
 
     /**
      * Get any recorded metrics from the most recent step in the run. This will be invoked after each step and
-     * provides the component with the opportunity to log additional information.
+     * provides the component with the opportunity to log additional information. The default implementation is to
+     * return an empty map.
      *
      * @return the map containing the metrics. This map should NOT be mutated by the component afterwards
      */

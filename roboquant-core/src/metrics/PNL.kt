@@ -28,7 +28,9 @@ import java.time.Instant
  * on the assets in the portfolio and the last known market price. The realized PNL is based on actual trades made
  * and the profit they generated.
  *
- * @property cumulative Should the realized PNL be aggregated or not
+ * All amounts are converted to the base currency of the account.
+ *
+ * @property cumulative Should the realized PNL be aggregated or not, default is false
  * @constructor Create new PNL metric
  */
 class PNL(

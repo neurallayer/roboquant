@@ -62,7 +62,7 @@ abstract class Order(val asset: Asset) : Cloneable {
         protected set
 
     /**
-     * If the order is not yet placed, place it now.
+     * If the order is not yet placed, place it now. The price is always updated.
      */
     protected fun place(price:Double, now: Instant) {
         if (placed == Instant.MIN) placed = now
@@ -102,7 +102,6 @@ abstract class Order(val asset: Asset) : Cloneable {
 
     /**
      * Copy current state into the passed object. This is used in the clone function of the subclasses
-     *
      */
     protected fun copyTo(result: Order)  {
         result.id = id

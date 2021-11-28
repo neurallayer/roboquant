@@ -30,7 +30,7 @@ import java.time.Instant
  * @property delayInMillis How much delay between two events, default is 10ms
  * @constructor Create new Test feed
  */
-class TestFeed(
+class TestLiveFeed(
     private vararg val prices: IntProgression = arrayOf(90..100, 100 downTo 90),
     private val asset: Asset = Asset("TEST"),
     private val delayInMillis: Int = 10,

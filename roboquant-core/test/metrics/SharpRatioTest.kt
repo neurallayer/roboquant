@@ -18,7 +18,11 @@ package org.roboquant.metrics
 
 
 import org.junit.Test
+import org.roboquant.Roboquant
 import org.roboquant.TestData
+import org.roboquant.feeds.test.TestHistoricFeed
+import org.roboquant.logging.MemoryLogger
+import org.roboquant.strategies.TestStrategy
 import kotlin.test.assertTrue
 
 internal class SharpRatioTest {
@@ -26,9 +30,29 @@ internal class SharpRatioTest {
     @Test
     fun basic() {
         val metric = SharpRatio()
-        val (account, step) = TestData.metricInput()
-        val result = metric.calc(account, step)
+        val (account, event) = TestData.metricInput()
+        val result = metric.calc(account, event)
         assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun test2() {
+        val feed = TestHistoricFeed(100..200)
+        val strategy = TestStrategy()
+        val metric = SharpRatio()
+        val logger = MemoryLogger(false)
+        val roboquant = Roboquant(strategy, metric, logger = logger)
+        roboquant.run(feed)
+
+        val sharpRatio = logger.getMetric("portfolio.sharpratio").last().value as Double
+        assertTrue(! sharpRatio.isNaN())
+
+        val mean = logger.getMetric("portfolio.mean").last().value as Double
+        assertTrue(! mean.isNaN())
+
+        val std = logger.getMetric("portfolio.std").last().value as Double
+        assertTrue(! std.isNaN())
+
     }
 
 }

@@ -17,14 +17,20 @@
 package org.roboquant.metrics
 
 import org.junit.Test
+import org.roboquant.TestData
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class VWAPMetricTest {
 
     @Test
     fun test() {
-        val m = VWAPMetric()
-        assertEquals(2, m.minSize)
+        val metric = VWAPMetric()
+        assertEquals(2, metric.minSize)
+
+        val (account, event) = TestData.metricInput()
+        val result = metric.calc(account, event)
+        assertTrue(result.isEmpty())
     }
 
 }

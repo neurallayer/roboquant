@@ -21,6 +21,7 @@ import java.time.Instant
 import java.time.Period
 import java.util.*
 
+
 /**
  * List of trades. This is part of the [Account] and contains all the trades that occurred.
  *

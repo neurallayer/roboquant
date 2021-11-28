@@ -42,7 +42,6 @@ data class Position(
     var lastUpdate: Instant = Instant.MIN
 ) {
 
-
     /**
      * Total size of a position is the position quantity times the asset multiplier. For many asset classes the
      * multiplier will be 1, but for example for option contracts it will often be 100
@@ -52,20 +51,14 @@ data class Position(
 
     companion object Factory {
         /**
-         * Create an empty position for the provided asset
-         *
-         * @param asset the asset
-         * @return the empty position
+         * Create an empty position for the provided [asset] and return this.
          */
-        fun empty(asset: Asset): Position = Position(asset, 0.0, 0.0)
+        fun empty(asset: Asset): Position = Position(asset, 0.0, 0.0, 0.0)
     }
 
 
     /**
-     * Update the current position with a new position and return the P&L realized by this update.
-     *
-     * @param position The new position
-     * @return the realized P&L that results from this update.
+     * Update the current position with a new [position] and return the P&L realized by this update.
      */
     fun update(position: Position): Double {
         val newQuantity = quantity + position.quantity
@@ -110,38 +103,32 @@ data class Position(
         get() = quantity != 0.0
 
     /**
-     * The unrealized profit & loss for this position based on avg cost and last known market price,
+     * The unrealized profit & loss for this position based on the [cost] and last known market [price],
      * in the currency denoted by the asset
-     *
-     * @return the pnl amount
      */
     val pnl: Double
         get() = totalSize * (price - cost)
 
 
     /**
-     * The total value for this position based on last known market price, in the currency denoted by the asset. Please
-     * note that short positions will return a negative value.
-     *
-     * @return the value amount
+     * The total value for this position based on last known market price, in the currency denoted by the asset.
+     * Short positions will return a negative value.
      */
     val value: Double
         get() = totalSize * price
 
     /**
      * The gross exposure for this position based on last known market price, in the currency denoted by the asset.
-     *
      * The difference with the [value] property is that short positions also result in a positive exposure.
      *
-     * @return
      */
     val exposure: Double
         get() = totalSize.absoluteValue * price
 
 
     /**
-     * Total cost of this position, in the currency denoted by the asset. Please note that short positions will return
-     * a negative cost.
+     * The total cost of this position, in the currency denoted by the asset. Short positions will typically have a
+     * negative cost.
      *
      * @return
      */

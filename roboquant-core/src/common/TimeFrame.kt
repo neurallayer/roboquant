@@ -242,6 +242,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
 
+
     /**
      * Split a timeframe in multiple individual timeframes each of the fixed [period] length. One common use case is
      * to create timeframes that can be used in a walk forward back-test.
