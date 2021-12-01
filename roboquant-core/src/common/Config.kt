@@ -21,6 +21,7 @@ package org.roboquant.common
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.ZoneId
 import java.util.*
 import java.util.logging.Logger
 import kotlin.io.path.div
@@ -42,6 +43,11 @@ object Config {
      * Hint that memory is limited. This might cause certain components to prefer low memory usage over performance
      */
     var lowMemory = false
+
+    /**
+     * Default zoneId to use
+     */
+    var defaultZoneId: ZoneId = ZoneId.systemDefault()
 
     /**
      * Default seed to use, typically used by methods as a default value when none is specified

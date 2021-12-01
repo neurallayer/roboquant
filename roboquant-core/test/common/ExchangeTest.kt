@@ -29,36 +29,27 @@ internal class ExchangeTest {
     fun test() {
         assertEquals(Exchange.DEFAULT, Exchange.getInstance("DUMMY"))
 
-        val exchange1 = Exchange.addInstance("DUMMY", "CET/CEST")
+        Exchange.addInstance("DUMMY", "Europe/Paris")
         val exchange2 = Exchange.getInstance("DUMMY")
-        assertEquals(exchange1, exchange2)
         assertEquals("DUMMY", exchange2.exchangeCode)
         assertIs<ZoneId>(exchange2.zoneId)
 
-        assertTrue(exchange1 in Exchange.exchanges)
+        assertTrue(exchange2 in Exchange.exchanges)
 
         val now = Instant.now()
-        assertTrue( exchange1.sameDay(now, now))
+        assertTrue( exchange2.sameDay(now, now))
 
-        val exchange3 = Exchange.addInstance("DUMMY2", "CET/CEST")
+        Exchange.addInstance("DUMMY2", "Europe/Paris")
+        val exchange3 = Exchange.getInstance("DUMMY2")
         assertNotEquals(exchange2, exchange3)
 
-        assertIs<Exchange>(Exchange.FSX)
-        assertIs<Exchange>(Exchange.JPX)
-        assertIs<Exchange>(Exchange.LSE)
-        assertIs<Exchange>(Exchange.NASDAQ)
-        assertIs<Exchange>(Exchange.NYSE)
-        assertIs<Exchange>(Exchange.SIX)
-        assertIs<Exchange>(Exchange.SSE)
-        assertIs<Exchange>(Exchange.TSX)
-        assertIs<Exchange>(Exchange.SSX)
 
         val d = LocalDate.now()
-        val ct = exchange1.getClosingTime(d)
-        val ot = exchange1.getOpeningTime(d)
+        val ct = exchange2.getClosingTime(d)
+        val ot = exchange2.getOpeningTime(d)
         assertTrue(ct > ot)
 
-        assertTrue(exchange1.opening < exchange1.closing)
+        assertTrue(exchange2.opening < exchange2.closing)
 
     }
 

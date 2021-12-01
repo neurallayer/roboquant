@@ -36,7 +36,7 @@ import java.util.logging.Logger
  * technical indicators you want to use. If the [history] is too small, it will lead to a runtime exception.
  *
  */
-class TAStrategy(private val history: Int = 100) : Strategy {
+class TAStrategy(private val history: Int = 15) : Strategy {
 
     private var sellFn: TAStrategy.(price: PriceBarBuffer) -> Boolean = { false }
     private var buyFn: TAStrategy.(price: PriceBarBuffer) -> Boolean = { false }

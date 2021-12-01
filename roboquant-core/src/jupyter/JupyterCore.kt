@@ -99,7 +99,7 @@ internal class JupyterCore : JupyterIntegration() {
             "org.roboquant.feeds.csv.*",
             "org.roboquant.feeds.avro.*",
             "org.roboquant.feeds.random.*",
-            "org.roboquant.brokers.sim.SimBroker",
+            "org.roboquant.brokers.sim.*",
             "org.roboquant.brokers.*",
             "org.roboquant.policies.*",
             "org.roboquant.jupyter.*",

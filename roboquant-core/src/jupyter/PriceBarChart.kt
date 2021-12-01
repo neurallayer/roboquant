@@ -59,6 +59,10 @@ class PriceBarChart(
         return data
     }
 
+    /**
+     * Generate mark points that will highlight when a trade happened.
+     * TODO: add tooltip support so more info is available about the trade.
+     */
     private fun markPoints(): List<Map<String, Any>> {
         val t = trades.filter { it.asset == asset && timeFrame.contains(it.time) }
         val d = mutableListOf<Map<String, Any>>()
@@ -192,7 +196,10 @@ class PriceBarChart(
                             borderColor0: 'red'
                         },
                          markPoint: {
-                                data: $markData
+                                data: $markData,
+                                itemStyle : {
+                                    color: "yellow"
+                                }
                         },
                         encode: {
                             x: 0,

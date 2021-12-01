@@ -33,7 +33,6 @@ class Execution(val asset: Asset, val quantity: Double, val price: Double) {
         require(quantity != 0.0) { "Execution should have a non-zero quantity" }
     }
 
-
     fun cost(): Double  = asset.multiplier * quantity * price
     fun size(): Double  = asset.multiplier * quantity
 

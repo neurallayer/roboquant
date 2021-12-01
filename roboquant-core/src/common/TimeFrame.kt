@@ -47,14 +47,14 @@ data class TimeFrame(val start: Instant, val end: Instant) {
          */
         val FULL = TimeFrame(Instant.MIN, Instant.MAX)
 
-        private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneOffset.UTC)
-        private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneOffset.UTC)
+        private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
         // Time-frames for some significant events in history of trading
-        fun blackMonday1987() = parse("1987-10-19T00:00:00Z", "1987-10-20T00:00:00Z")
+        fun blackMonday1987() = parse("1987-10-19T14:30:00Z", "1987-10-19T21:00:00Z")
         fun financialCrisis2008() = parse("2008-09-08T00:00:00Z", "2009-03-10T00:00:00Z")
         fun tenYearBullMarket2009() = parse("2009-03-10T00:00:00Z", "2019-03-10T00:00:00Z")
-        fun flashCrash2010() = parse("2010-05-06T00:00:00Z", "2010-05-07T00:00:00Z")
+        fun flashCrash2010() = parse("2010-05-06T19:30:00Z", "2010-05-06T20:15:00Z")
         fun coronaCrash2020() = parse("2020-02-17T00:00:00Z", "2020-03-17T00:00:00Z")
 
         /**
@@ -125,10 +125,9 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     /**
      * Is this timeframe in a single day given the provided [zoneId].
      */
-    fun isSingleDay(zoneId: String = "UTC"): Boolean {
+    fun isSingleDay(zoneId: ZoneId = Config.defaultZoneId): Boolean {
         if (start == Instant.MIN || end == Instant.MAX) return false
-        val z = ZoneId.of(zoneId)
-        return start.atZone(z).toLocalDate() == end.minusMillis(1).atZone(z).toLocalDate()
+        return start.atZone(zoneId).toLocalDate() == end.minusMillis(1).atZone(zoneId).toLocalDate()
     }
 
 
@@ -276,9 +275,10 @@ data class TimeFrame(val start: Instant, val end: Instant) {
      * resolution.
      */
     fun toPrettyString(): String {
-        val formatter = if (isSingleDay()) dayFormatter else secondFormatter
-        val s1 = if (start == Instant.MIN) "MIN" else if (start == Instant.MAX) "MAX" else formatter.format(start)
-        val s2 = if (end == Instant.MIN) "MIN" else if (end == Instant.MAX) "MAX" else formatter.format(end)
+        val formatter = if (duration < Duration.ofHours(24)) secondFormatter else dayFormatter
+        val fmt = formatter.withZone(Config.defaultZoneId)
+        val s1 = if (start == Instant.MIN) "MIN" else if (start == Instant.MAX) "MAX" else fmt.format(start)
+        val s2 = if (end == Instant.MIN) "MIN" else if (end == Instant.MAX) "MAX" else fmt.format(end)
         return "$s1 - $s2"
     }
 

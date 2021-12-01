@@ -15,10 +15,10 @@
  */
 
 @file:Suppress("unused")
+
 package org.roboquant.common
 
 import java.time.*
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -31,12 +31,13 @@ class Exchange private constructor(
     val exchangeCode: String,
     val zoneId: ZoneId,
     val currency: Currency,
-    val opening: LocalTime = LocalTime.parse("09:00"),
-    val closing: LocalTime = LocalTime.parse("16:30")
+    val opening: LocalTime = LocalTime.parse("09:30"),
+    val closing: LocalTime = LocalTime.parse("16:00")
 ) {
 
     /**
-     * Do the two provided times ([first] and [second]) both belong to the same trading day.
+     * Do the two provided times ([first] and [second]) both belong to the same trading day. They can be outside
+     * trading hours.
      */
     fun sameDay(first: Instant, second: Instant): Boolean {
         val dt1 = LocalDate.ofInstant(first, zoneId)
@@ -45,7 +46,7 @@ class Exchange private constructor(
     }
 
     /**
-     * Get opening time for a [date]
+     * Get the opening time for a [date]
      */
     fun getOpeningTime(date: LocalDate): Instant {
         val zdt = ZonedDateTime.of(date, opening, zoneId)
@@ -53,7 +54,7 @@ class Exchange private constructor(
     }
 
     /**
-     * Get closing time for a [date]
+     * Get the closing time for a [date]
      */
     fun getClosingTime(date: LocalDate): Instant {
         val zdt = ZonedDateTime.of(date, closing, zoneId)
@@ -77,7 +78,8 @@ class Exchange private constructor(
         private val instances = ConcurrentHashMap<String, Exchange>()
 
         /**
-         * Returns the Currency instance for the given currency code.
+         * Returns the Exchange instance for the given [exchangeCode]. If no exchange is found, the default exchange
+         * is returned instead.
          *
          * @param exchangeCode the currency code for the currency, not limited to ISO-4217 codes like regular Java Currencies
          * @return Returns the Currency instance for the given currency code
@@ -85,44 +87,58 @@ class Exchange private constructor(
         fun getInstance(exchangeCode: String): Exchange = instances[exchangeCode] ?: DEFAULT
 
         /**
-         * Returns the Currency instance for the given currency code.
+         * add  the Exchange instance to the list.
          *
-         * @param exchangeCode the currency code for the currency, not limited to ISO-4217 codes like regular Java Currencies
-         * @return Returns the Currency instance for the given currency code
+         * @param exchangeCode the exchange code
          */
-        fun addInstance(exchangeCode: String, zone: String, currencyCode: String = "USD"): Exchange {
-            val zoneId = TimeZone.getTimeZone(zone).toZoneId()
+        fun addInstance(
+            exchangeCode: String,
+            zone: String,
+            currencyCode: String = "USD",
+            opening: String = "09:30",
+            closing: String = "16:00"
+        ) {
+            val zoneId = ZoneId.of(zone)
             val currency = Currency.getInstance(currencyCode)
-            val instance = Exchange(exchangeCode, zoneId, currency)
+            val instance = Exchange(exchangeCode, zoneId, currency, LocalTime.parse(opening), LocalTime.parse(closing))
             instances[exchangeCode] = instance
-            return instance
         }
 
+        init {
+            addInstance("", "America/New_York", "USD")
+
+            // Main North American exchanges
+            addInstance("US", "America/New_York", "USD")
+            addInstance("NYSE", "America/New_York", "USD")
+            addInstance("NASDAQ", "America/New_York", "USD")
+            addInstance("BATS", "America/New_York", "USD")
+            addInstance("ARCA", "America/New_York", "USD")
+            addInstance("AMEX", "America/New_York", "USD")
+            addInstance("TSX", "America/Toronto", "CAD")
+
+            // Main European exchanges
+            addInstance("AEB", "Europe/Amsterdam", "EUR", "09:00", "17:30")
+            addInstance("LSE", "Europe/London", "GBP", "08:00", "16:30")
+            addInstance("FSX", "Europe/Berlin", "EUR", "09:00", "17:30")
+            addInstance("SIX", "Europe/Zurich", "CHF", "09:00", "17:20")
+
+            // Main Asian exchanges
+            addInstance("JPX", "Asia/Tokyo", "JPY","09:00", "15:00")
+            addInstance("SSE", "Asia/Shanghai", "CNY","09:30", "15:00")
+            addInstance("SEHK", "Asia/Hong_Kong", "CNY","09:30", "16:00")
+
+            // Main Australian exchanges
+            addInstance("SSX", "Australia/Sydney", "AUD","10:00", "16:00")
+        }
+
+
         /**
-         * The default exchange is the exchange with as exchangeCode an empty string
+         * The default exchange is the exchange with as exchangeCode an empty string and used as a fallback if an
+         * exchange cannot be found.
          */
-        val DEFAULT = addInstance("", "America/New_York", "USD")
+        val DEFAULT
+            get() = getInstance("")
 
-        // Main North American exchanges
-        val US = addInstance("US", "America/New_York", "USD")
-        val NYSE = addInstance("NYSE", "America/New_York", "USD")
-        val NASDAQ = addInstance("NASDAQ", "America/New_York", "USD")
-        val BATS = addInstance("BATS", "America/New_York", "USD")
-        val ARCA = addInstance("ARCA", "America/New_York", "USD")
-        val AMEX = addInstance("AMEX", "America/New_York", "USD")
-        val TSX = addInstance("TSX", "America/Toronto", "CAD")
-
-        // Main European exchanges
-        val LSE = addInstance("LSE", "Europe/London", "GBP")
-        val FSX = addInstance("FSX", "Europe/Berlin", "EUR")
-        val SIX = addInstance("SIX", "Europe/Zurich", "CHF")
-
-        // Main European exchanges
-        val JPX = addInstance("JPX", "Asia/Tokyo", "JPY")
-        val SSE = addInstance("SSE", "Asia/Shanghai", "CNY")
-
-        // Main Australian exchanges
-        val SSX = addInstance("SSX", "Australia/Sydney", "AUD")
 
         /**
          * List of currently registered exchanges

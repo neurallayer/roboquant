@@ -21,6 +21,7 @@ package org.roboquant.common
 import org.junit.Test
 import java.time.Instant
 import java.time.Period
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -61,9 +62,9 @@ internal class TimeFrameTest {
         val tf2 = TimeFrame.FULL
         assertEquals(TimeFrame.FULL, tf2)
 
-        assertTrue(TimeFrame.blackMonday1987().isSingleDay())
+        assertTrue(TimeFrame.blackMonday1987().isSingleDay(ZoneId.of("America/New_York")))
         assertFalse(TimeFrame.coronaCrash2020().isSingleDay())
-        assertTrue(TimeFrame.flashCrash2010().isSingleDay())
+        assertTrue(TimeFrame.flashCrash2010().isSingleDay(ZoneId.of("America/New_York")))
         assertFalse(TimeFrame.financialCrisis2008().isSingleDay())
         assertFalse(TimeFrame.tenYearBullMarket2009().isSingleDay())
 

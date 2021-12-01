@@ -33,16 +33,17 @@ interface CostModel {
 }
 
 /**
- * Default cost model, using a fixed percentage slippage expressed in basis points and no additional commission fee.
+ * Default cost model, using a fixed percentage  expressed in basis points and no additional commission fee. This
+ * percentage would cover both spread and slippage. There is no fixed fee.
  *
- * @property slippage, default is 10 bips
+ * @property bips, default is 10 bips
  * @constructor Create new Default cost model
  */
-class DefaultCostModel(private val slippage: Int = 10) : CostModel {
+class DefaultCostModel(private val bips: Double = 10.0) : CostModel {
 
     override fun calculate(order: Order, execution: Execution, price: PriceAction): Pair<Double, Double> {
         val fee = 0.0
-        val correction = if (execution.quantity > 0) 1.0 + slippage / 10_000.0 else 1.0 - slippage / 10_000.0
+        val correction = if (execution.quantity > 0) 1.0 + bips / 10_000.0 else 1.0 - bips / 10_000.0
         val cost = execution.price * correction * execution.size()
         return Pair(cost, fee)
     }
