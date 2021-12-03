@@ -93,7 +93,7 @@ class SimBroker(
             for (execution in executions) {
                 record("order.${order.asset.symbol}", execution.quantity)
 
-                val (cost, fee) = costModel.calculate(order, execution, action)
+                val (cost, fee) = costModel.calculate(order, execution)
                 val totalCost = cost + fee
                 val avgCost = totalCost / execution.size()
 

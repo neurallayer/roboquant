@@ -65,6 +65,14 @@ internal class RandomWalkTest {
 
         val tf3 = feed.sample(10)
         assertFalse(tf3.isSingleDay())
+
+    }
+
+    @Test
+    fun historic2() {
+        val feed = RandomWalk.lastDays(1)
+        val tf = feed.split(100)
+        assertTrue(tf.isNotEmpty())
     }
 
 

@@ -17,19 +17,24 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.common.Cash
-import org.roboquant.feeds.PriceAction
 import org.roboquant.orders.Order
 import java.lang.Double.max
 import kotlin.math.absoluteValue
 import kotlin.math.min
 
 /**
- * Calculate the cost of an execution
+ * Calculate the final cost of an execution. Typically implemntations should cather for:
  *
+ * 1. Increase the price paid due to spread and slippage cost
+ * 2. Include a commision/fee in case you simulate a commision based broker
  */
 interface CostModel {
 
-    fun calculate(order: Order, execution: Execution, price: PriceAction): Pair<Double, Double>
+    /**
+     * Calcuate the final price and fee based on the [order] and the actual [execution]. The first returned
+     * parameter is the price and the second one the fee.
+     */
+    fun calculate(order: Order, execution: Execution): Pair<Double, Double>
 }
 
 /**
@@ -41,11 +46,10 @@ interface CostModel {
  */
 class DefaultCostModel(private val bips: Double = 10.0) : CostModel {
 
-    override fun calculate(order: Order, execution: Execution, price: PriceAction): Pair<Double, Double> {
-        val fee = 0.0
+    override fun calculate(order: Order, execution: Execution): Pair<Double, Double> {
         val correction = if (execution.quantity > 0) 1.0 + bips / 10_000.0 else 1.0 - bips / 10_000.0
         val cost = execution.price * correction * execution.size()
-        return Pair(cost, fee)
+        return Pair(cost, 0.0)
     }
 
 }
@@ -68,7 +72,7 @@ class CommissionBasedCostModel(
     private val maximumAmount: Cash = Cash()
 ) : CostModel {
 
-    override fun calculate(order: Order, execution: Execution, price: PriceAction): Pair<Double, Double> {
+    override fun calculate(order: Order, execution: Execution): Pair<Double, Double> {
         val correction = if (execution.quantity > 0) 1.0 + slippage / 10_000.0 else 1.0 - slippage / 10_000.0
         val cost = execution.price * correction * execution.size()
 

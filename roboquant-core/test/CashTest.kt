@@ -38,6 +38,8 @@ internal class CashTest {
 
         wallet = Cash(USD to 10.0, EUR to 0.0)
         assertEquals(1, wallet.currencies.size)
+
+        assertTrue { wallet.toString().contains("USD") }
     }
 
     @Test
@@ -72,6 +74,8 @@ internal class CashTest {
 
         metrics = wallet.toMap(false)
         assertFalse(USD in metrics)
+
+
     }
 
     @Test
@@ -79,5 +83,13 @@ internal class CashTest {
         val wallet = Cash(USD to 10.0, EUR to 20.0)
         val wallet2 = wallet.copy()
         assertEquals(wallet.getAmount(USD), wallet2.getAmount(USD))
+    }
+
+
+    @Test
+    fun operators() {
+        val wallet = Cash(USD to 10.0, EUR to 20.0)
+        val wallet2 = wallet + wallet - wallet
+        assertEquals(wallet, wallet2)
     }
 }

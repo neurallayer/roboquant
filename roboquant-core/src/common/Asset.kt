@@ -103,27 +103,6 @@ data class Asset(
          */
         private const val SEP = '\u001F'
 
-        /**
-         * Deserialize a string into an asset. The string needs to have been created using [serialize]
-         *
-         * @return
-        fun deserialize(s: String): Asset {
-            val e = s.split(SEP)
-            require(e.size == 10) { "$s has unexpected format" }
-            return Asset(
-                e[0],
-                AssetType.valueOf(e[1]),
-                e[2],
-                e[3],
-                e[4].toDouble(),
-                e[5],
-                e[6],
-                e[7].toDouble(),
-                e[8],
-                e[9]
-            )
-        }
-         */
 
         /**
          * Deserialize a string into an asset. The string needs to have been created using [serialize] method

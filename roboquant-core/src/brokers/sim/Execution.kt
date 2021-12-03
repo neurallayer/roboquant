@@ -22,6 +22,8 @@ import org.roboquant.common.Asset
  * Return how much (if any) of the order was filled and against what price. The price is in
  * the currency denoted by the asset underlying asset.
  *
+ * Typically a [CostModel] might still increase the price due to spread and slippage cost.
+ *
  * @property asset
  * @property quantity
  * @property price
@@ -33,7 +35,8 @@ class Execution(val asset: Asset, val quantity: Double, val price: Double) {
         require(quantity != 0.0) { "Execution should have a non-zero quantity" }
     }
 
-    fun cost(): Double  = asset.multiplier * quantity * price
+    /**
+     * Totol size of execution, including contract size
+     */
     fun size(): Double  = asset.multiplier * quantity
-
 }

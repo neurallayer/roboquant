@@ -21,7 +21,7 @@ import java.util.*
 
 /**
  * Base class that provides a foundation for data feeds that provide historic prices. It used a TreeMap to store
- * for each event one or more PriceActions.
+ * for each time one or more PriceActions.
  */
 open class HistoricPriceFeed : HistoricFeed {
 

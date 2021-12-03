@@ -185,4 +185,16 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
         return s
     }
 
+    override fun equals(other: Any?): Boolean {
+        return if (other is Cash) {
+            data.toMap() == other.toMap()
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        return data.toMap().hashCode()
+    }
+
 }
