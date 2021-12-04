@@ -21,9 +21,15 @@ import jakarta.mail.internet.InternetAddress
 import jakarta.mail.internet.MimeMessage
 import java.util.*
 
-
+/**
+ * Interface for sending notifications to the outside world. This can be for example emails, but also social media
+ * like Twitter and Telegram.
+ */
 interface Notifier {
 
+    /**
+     * Send out notifications using the provided [topic] and [msg]
+     */
     fun send(topic: String, msg: String)
 }
 
@@ -37,6 +43,9 @@ class ConsoleNotifier: Notifier {
     }
 }
 
+/**
+ * Send out email notifications
+ */
 class EmailNotifier(
     host: String,
     username: String,

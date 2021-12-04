@@ -16,9 +16,12 @@
 
 package org.roboquant.jupyter
 
+import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.junit.Test
 import org.roboquant.common.Logging
+import java.lang.Exception
 import java.util.logging.Level
+import kotlin.test.assertTrue
 
 internal class JupyterCoreTest {
 
@@ -39,6 +42,13 @@ internal class JupyterCoreTest {
         logger.info("Should not show up")
         logger.warning("Should show up")
 
+    }
+
+    @Test
+    fun exceptions() {
+        val t = RoboquantThrowableRenderer()
+        val output = t.render(Exception("Dummy"))
+        assertTrue { output is MimeTypedResult }
     }
 
 }

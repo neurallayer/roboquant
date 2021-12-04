@@ -27,8 +27,10 @@ import java.time.Instant
 
 /**
  * Notification policy sends out notifications (like emails) when it receives one or more signals. It doesn't create any
- * orders, so it is not suited for back testing. You normally would use it when you want you to run your strategy against
- * live data feed and get an alert as soon as your strategy generates a signal.
+ * orders, so it is not suited for back testing.
+ *
+ * You normally would use it when you want you to run your strategy against live data feed and get an alert as soon
+ * as your strategy generates a signal. You can then decide what to do and perhaps manually place an order.
  *
  * @constructor Create new Notification Policy
  */
