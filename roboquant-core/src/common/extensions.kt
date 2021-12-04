@@ -139,7 +139,7 @@ fun List<Instant>.split(size: Int): List<TimeFrame> {
 operator fun DoubleArray.div(a: Number): DoubleArray {
     val result = clone()
     val n = a.toDouble()
-    for (i in 0 until size) result[i] /= n
+    for (i in indices) result[i] /= n
     return result
 }
 

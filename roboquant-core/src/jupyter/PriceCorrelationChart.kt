@@ -64,7 +64,7 @@ class PriceCorrelationChart(
                 }
             }
 
-        } catch (e: ClosedReceiveChannelException) {
+        } catch (_: ClosedReceiveChannelException) {
 
         } finally {
             channel.close()

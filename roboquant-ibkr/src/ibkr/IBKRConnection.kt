@@ -37,7 +37,7 @@ internal object IBKRConnection {
     fun disconnect(client: EClientSocket) {
         try {
             if (client.isConnected) client.eDisconnect()
-        } catch (e: IOException) {}
+        } catch (_: IOException) {}
     }
 
     /**

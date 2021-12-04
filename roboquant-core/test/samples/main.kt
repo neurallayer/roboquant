@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("KotlinConstantConditions")
+
 package org.roboquant.samples
 
 import kotlinx.coroutines.Deferred

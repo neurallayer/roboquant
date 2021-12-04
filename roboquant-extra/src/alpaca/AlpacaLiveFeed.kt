@@ -74,7 +74,7 @@ class AlpacaLiveFeed(apiKey: String? = null, apiSecret: String? = null, accountT
     fun disconnect() {
         try {
             alpacaAPI.marketDataStreaming().disconnect()
-        } catch (e: Exception) {}
+        } catch (_: Exception) {}
     }
 
 

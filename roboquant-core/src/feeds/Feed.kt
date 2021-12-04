@@ -95,7 +95,7 @@ inline fun <reified T : Action> Feed.filter(
             result.addAll(newResults)
         }
 
-    } catch (e: ClosedReceiveChannelException) {
+    } catch (_: ClosedReceiveChannelException) {
 
     } finally {
         channel.close()
