@@ -70,7 +70,7 @@ internal class RandomWalkTest {
 
     @Test
     fun historic2() {
-        val feed = RandomWalk.lastDays(1)
+        val feed = RandomWalk.lastDays(5)
         val tf = feed.split(100)
         assertTrue(tf.isNotEmpty())
     }
