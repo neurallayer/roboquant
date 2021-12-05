@@ -22,7 +22,6 @@ import org.junit.Test
 import java.time.Instant
 import java.time.Period
 import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -81,7 +80,11 @@ internal class TimeFrameTest {
 
     @Test
     fun creation() {
-        val tf = TimeFrame.nextPeriod(1, ChronoUnit.MINUTES)
+        val tf = TimeFrame.next(1.minutes)
         assertEquals(60,tf.end.epochSecond - tf.start.epochSecond)
+
+        val tf2 = tf.extend(1.days)
+        assertTrue { tf2.contains(tf.start) }
+        assertTrue { tf2.contains(tf.end) }
     }
 }

@@ -215,3 +215,31 @@ fun Number.annualize(tf: TimeFrame) : Double {
         val years = (365.0 * 24.0 * 3600.0 * 1000.0) / period
         return (1.0 + toDouble()).pow(years) - 1.0
 }
+
+
+/**
+ * extensions on integer type to instantiation of periods and duration a bit easier
+ */
+val Int.years
+    get() = Period.ofYears(this)
+
+val Int.days
+    get() = Period.ofDays(this)
+
+val Int.months
+    get() = Period.ofMonths(this)
+
+val Int.weeks
+    get() = Period.ofWeeks(this)
+
+val Int.hours
+    get() =  Duration.ofHours(this.toLong())
+
+val Int.minutes
+    get() = Duration.ofMinutes(this.toLong())
+
+val Int.seconds
+    get() = Duration.ofSeconds(this.toLong())
+
+val Int.millis
+    get() = Duration.ofMillis(this.toLong())

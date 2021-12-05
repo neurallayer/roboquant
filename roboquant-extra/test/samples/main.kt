@@ -19,7 +19,10 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.alpaca.*
+import org.roboquant.alpaca.AlpacaBroker
+import org.roboquant.alpaca.AlpacaHistoricFeed
+import org.roboquant.alpaca.AlpacaLiveFeed
+import org.roboquant.alpaca.AlpacaPeriod
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.common.*
 import org.roboquant.feeds.OrderBook
@@ -27,7 +30,6 @@ import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
 import org.roboquant.iex.Range
-import org.roboquant.yahoo.YahooHistoricFeed
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.OpenPositions
@@ -36,7 +38,7 @@ import org.roboquant.oanda.OANDABroker
 import org.roboquant.oanda.OANDAHistoricFeed
 import org.roboquant.oanda.OANDALiveFeed
 import org.roboquant.strategies.EMACrossover
-import java.time.temporal.ChronoUnit
+import org.roboquant.yahoo.YahooHistoricFeed
 
 
 fun alpacaBroker() {
@@ -58,7 +60,7 @@ fun allAlpaca() {
     val broker = AlpacaBroker()
     broker.account.summary().print()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), broker = broker)
-    val tf = TimeFrame.nextMinutes(10)
+    val tf = TimeFrame.next(5.minutes)
     roboquant.run(feed, tf)
     roboquant.broker.account.summary().print()
     roboquant.logger.summary(3).print()
@@ -68,7 +70,7 @@ fun allAlpaca() {
 
 fun alpacaHistoricFeed() {
     val feed = AlpacaHistoricFeed()
-    val tf = TimeFrame.pastPeriod(100, ChronoUnit.DAYS).minus(15)
+    val tf = TimeFrame.past(100.days) - 15.minutes
     feed.retrieve("AAPL", "IBM", timeFrame = tf, period = AlpacaPeriod.DAY)
     val strategy = EMACrossover.midTerm()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
@@ -85,7 +87,7 @@ fun alpacaFeed() {
     feed.timeMillis = 1000
     val strategy = EMACrossover.midTerm()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
-    val tf = TimeFrame.nextMinutes(5)
+    val tf = TimeFrame.next(5.minutes)
     roboquant.run(feed, tf)
     feed.disconnect()
 
@@ -114,7 +116,7 @@ fun feedIEXLive() {
 
     val strategy = EMACrossover()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
-    roboquant.run(feed, TimeFrame.nextMinutes(2))
+    roboquant.run(feed, TimeFrame.next(5.minutes))
     roboquant.broker. account.summary().log()
     roboquant.logger.summary().log()
 }
@@ -125,7 +127,7 @@ fun feedYahoo() {
     val feed = YahooHistoricFeed()
     val apple = Asset("AAPL")
     val google = Asset("GOOG")
-    val last300Days = TimeFrame.pastPeriod(300)
+    val last300Days = TimeFrame.past(300.days)
     feed.retrieve(apple, google, timeFrame = last300Days)
 
     val strategy = EMACrossover()
@@ -149,7 +151,7 @@ fun oanda() {
 fun oandaLive() {
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
-    val tf = TimeFrame.nextMinutes(2)
+    val tf = TimeFrame.next(5.minutes)
     val actions = feed.filter<OrderBook>(tf)
     println(actions.size)
 
@@ -161,7 +163,7 @@ fun oandaLivePrices() {
 
     feed.subscribePrices("EUR_USD", "USD_JPY", "GBP_USD")
     println("starting")
-    val data = feed.filter<OrderBook>(TimeFrame.nextMinutes(1))
+    val data = feed.filter<OrderBook>(TimeFrame.next(5.minutes))
     data.summary().log()
 }
 
@@ -178,7 +180,7 @@ fun oandaBroker() {
 
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "GBP_USD")
-    val twoMinutes = TimeFrame.nextMinutes(2)
+    val twoMinutes = TimeFrame.next(5.minutes)
     roboquant.run(feed, twoMinutes)
     broker.account.portfolio.summary().log()
 }

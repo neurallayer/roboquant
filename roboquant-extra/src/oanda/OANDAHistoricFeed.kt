@@ -23,10 +23,10 @@ import com.oanda.v20.primitives.InstrumentName
 import oanda.OANDAConnection
 import org.roboquant.common.Logging
 import org.roboquant.common.TimeFrame
+import org.roboquant.common.days
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 /**
  * Retrieve historic FOREX data from OANDA.
@@ -39,7 +39,7 @@ class OANDAHistoricFeed(token: String? = null, demoAccount: Boolean = true) : Hi
 
     fun retrieveCandles(
         vararg symbols: String,
-        timeFrame: TimeFrame = TimeFrame.pastPeriod(1, ChronoUnit.DAYS),
+        timeFrame: TimeFrame = TimeFrame.past(1.days),
         granularity: String = "M1",
         priceType: String = "M",
     ) {

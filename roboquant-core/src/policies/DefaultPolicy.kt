@@ -33,7 +33,8 @@ import kotlin.math.min
  * This is the default policy that will be used if no other policy is specified. There are a number of parameters that
  * can be configured to change it behavior.
  *
- * By default, this policy will create Market Orders, but this can be changed by providing a different create order function
+ * By default, this policy will create Market Orders, but this can be changed by providing a different [createOrder]
+ * method.
  *
  * It will adhere to the following rules when it converts signals into orders:
  *
@@ -88,10 +89,8 @@ open class DefaultPolicy(
     }
 
     /**
-     * Create the order. Overwrite this method if you want to create other orders types than the default Market Order
-     *
-     * @param signal
-     * @param qty
+     * Create a new order based on the [signal], [qty] and current [price]. Overwrite this method if you want to
+     * create other orders types than the default MarketOrder.
      */
     open fun createOrder(signal: Signal, qty: Double, price: Double): Order? = signal.toMarketOrder(qty)
 

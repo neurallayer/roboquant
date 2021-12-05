@@ -57,6 +57,19 @@ class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFee
         this.assets.addAll(assets)
     }
 
+
+    /**
+     * Retrieve historic [PriceBar] data from Yahoo Finance
+     *
+     * @param symbols
+     * @param timeFrame
+     * @param interval
+     */
+    fun retrieve(vararg symbols: String, timeFrame: TimeFrame, interval: Interval = Interval.DAILY) {
+        val assets = symbols.map { Asset(it) }.toTypedArray()
+        retrieve(*assets, timeFrame = timeFrame, interval = interval)
+    }
+
     // TODO validate time offset
     private fun handle(asset: Asset, quotes: List<HistoricalQuote>) {
 

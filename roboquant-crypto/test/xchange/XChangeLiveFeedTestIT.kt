@@ -23,6 +23,7 @@ import org.roboquant.common.TimeFrame
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMACrossover
 import org.junit.Test
+import org.roboquant.common.minutes
 import kotlin.test.assertEquals
 
 
@@ -46,8 +47,8 @@ internal class XChangeLiveFeedTestIT {
         val strategy = EMACrossover.shortTerm()
         val roboquant = Roboquant(strategy, ProgressMetric())
 
-        /// Run it for 1 minute
-        val timeFrame = TimeFrame.nextMinutes(1)
+        /// Run it for 5 minutes
+        val timeFrame = TimeFrame.next(5.minutes)
         roboquant.run(feed, timeFrame)
         exchange.disconnect().blockingAwait()
     }

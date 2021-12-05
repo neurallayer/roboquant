@@ -17,7 +17,9 @@
 package org.roboquant.alpaca
 
 import org.roboquant.common.TimeFrame
+import org.roboquant.common.days
 import org.roboquant.common.getBySymbol
+import org.roboquant.common.minutes
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import kotlin.test.Test
@@ -34,7 +36,7 @@ internal class AlpacaLiveFeedTestIT {
         val apple = assets.getBySymbol("AAPL")
         feed.subscribe(apple)
         feed.disconnect()
-        val actions = feed.filter<PriceAction>(TimeFrame.nextMinutes(5))
+        val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
         assertTrue(actions.isNotEmpty())
         feed.connect()
         feed.disconnect()
@@ -46,7 +48,7 @@ internal class AlpacaLiveFeedTestIT {
         val feed = AlpacaHistoricFeed()
         val assets = feed.availableAssets
         assertTrue(assets.isNotEmpty())
-        feed.retrieve("AAPL", timeFrame = TimeFrame.pastPeriod(100))
+        feed.retrieve("AAPL", timeFrame = TimeFrame.past(100.days))
         val actions = feed.filter<PriceAction>()
         assertTrue(actions.isNotEmpty())
     }

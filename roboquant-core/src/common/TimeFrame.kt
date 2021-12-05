@@ -19,14 +19,16 @@ package org.roboquant.common
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalAmount
 
 
 /**
- * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time (exclusive). It can be
- * used to limit the duration of a run to that specific timeframe.
+ * A time-frame represents a period of time defined by a [start] time (inclusive) and [end] time (exclusive). The
+ * time-frame instance is immutable.  * Like all time related data in roboquant, it uses the [Instant] type to define
+ * a moment in time, in order to avoid potential timezone inconsistencies.
  *
- * Like all time related data in roboquant, it uses the [Instant] type to define a moment in time, in order to avoid
- * potential timezone inconsistencies.
+ * It can be used to limit the duration of a run to that specific time-frame, for example in a walk-forward. It can also
+ * serve to limit a live-feed to a certain duration.
  */
 data class TimeFrame(val start: Instant, val end: Instant) {
 
@@ -82,31 +84,27 @@ data class TimeFrame(val start: Instant, val end: Instant) {
             return TimeFrame(start, stop)
         }
 
-        fun pastPeriod(duration: Long, unit: ChronoUnit = ChronoUnit.DAYS): TimeFrame {
+        /**
+         * Create a time-frame from now for the previous period.
+         */
+        fun past(period: TemporalAmount): TimeFrame {
             val end = Instant.now()
-            val ts = end.atZone(ZoneId.of("UTC"))
-            val start = ts.minus(duration, unit).toInstant()
-            return TimeFrame(start, end)
-        }
-
-        fun nextPeriod(duration: Long, unit: ChronoUnit = ChronoUnit.DAYS): TimeFrame {
-            val start = Instant.now()
-            val ts = start.atZone(ZoneId.of("UTC"))
-            val end = ts.plus(duration, unit).toInstant()
-            return TimeFrame(start, end)
+            return TimeFrame(end-period, end)
         }
 
         /**
-         * Create a timeframe starting with the current time and last for the specified number of [minutes]. This comes in
-         * handy when you want to test a strategy against a live feed for a certain duration.
+         * Create a time-frame from now for the provided duration. This is useful to restrict a live feed so it
+         * won't run forever.
          *
-         * See also [nextPeriod] for a more generic version of this method
-         *
-         * # Example
-         *      roboquant.run(feed, TimeFrame.nextMinutes(30))
+         *      val tf = TimeFrame.nexy(60.minutes)
+         *      roboquant.run(feed, tf)
          *
          */
-        fun nextMinutes(minutes: Long): TimeFrame = nextPeriod(minutes, ChronoUnit.MINUTES)
+        fun next(period: TemporalAmount): TimeFrame {
+            val start = Instant.now()
+            return TimeFrame(start, start + period)
+        }
+
 
     }
 
@@ -115,11 +113,6 @@ data class TimeFrame(val start: Instant, val end: Instant) {
      */
     fun contains(time: Instant): Boolean {
         return (time >= start) && (time < end)
-    }
-
-
-    fun minus(amount:Long, unit: ChronoUnit = ChronoUnit.MINUTES) : TimeFrame {
-        return TimeFrame(start.minus(amount, unit), end.minus(amount, unit))
     }
 
     /**
@@ -137,18 +130,15 @@ data class TimeFrame(val start: Instant, val end: Instant) {
      *
      * ### Usage
      *      // Add 1 week before and after the black monday event
-     *      val tf = TimeFrame.BlackMonday1987().extend(7)
+     *      val tf = TimeFrame.BlackMonday1987().extend(1.weeks)
      *
      */
-    fun extend(before: Long, after: Long = before, unit: ChronoUnit = ChronoUnit.DAYS) {
-        val s = start.atZone(ZoneId.of("UTC"))
-        val e = end.atZone(ZoneId.of("UTC"))
-        TimeFrame(s.minus(before, unit).toInstant(), e.plus(after, unit).toInstant())
-    }
+    fun extend(before: TemporalAmount, after: TemporalAmount = before) = TimeFrame(start - before, end + after)
+
 
     /**
-     * Calculate the intersection of this time-frame with an [other] timeframe and return
-     * the new timeframe
+     * Calculate the intersection of this time-frame with an [other] time-frame and return
+     * the resulting time-frame
      */
     fun intersect(other: TimeFrame): TimeFrame {
         val startTime = if (start > other.start) start else other.start
@@ -157,7 +147,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Is there overlap between this timeframe and the [other] timeframe
+     * Is there any overlap between this timeframe and the [other] timeframe
      */
     fun overlap(other: TimeFrame): Boolean {
         val startTime = if (start > other.start) start else other.start
@@ -167,7 +157,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
 
     /**
      * Calculate the union of this timeframe with the [other] timeframe and return
-     * the new timeframe
+     * the resulting time-frame
      */
     fun union(other: TimeFrame): TimeFrame {
         val startTime = if (start > other.start) other.start else start
@@ -176,7 +166,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Convert a timeframe to a timeline of individual days, optionally [excludeWeekends]
+     * Convert a time-frame to a timeline of individual days, optionally [excludeWeekends]
      */
     fun toDays(excludeWeekends: Boolean = false, zoneId: ZoneId = ZoneOffset.UTC): List<Instant> {
         val timeline = mutableListOf<Instant>()
@@ -246,7 +236,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
      * Split a timeframe in multiple individual timeframes each of the fixed [period] length. One common use case is
      * to create timeframes that can be used in a walk forward back-test.
      */
-    fun split(period: Period): List<TimeFrame> {
+    fun split(period: TemporalAmount): List<TimeFrame> {
         val utc = ZoneOffset.UTC
         val start = LocalDateTime.ofInstant(start, utc)
         val stop = LocalDateTime.ofInstant(end, utc)
@@ -282,5 +272,31 @@ data class TimeFrame(val start: Instant, val end: Instant) {
         return "$s1 - $s2"
     }
 
+    /**
+     * Subtract a [period] from this time-frame and return the result
+     *
+     *      val newTimeFrame = timeFrame - 2.days
+     */
+    operator fun minus(period: TemporalAmount) : TimeFrame {
+        val end = Instant.now()
+        val ts = end.atZone(ZoneId.of("UTC"))
+        val start = ts.minus(period).toInstant()
+        return TimeFrame(start, end)
+    }
+
+    /**
+     * Add a [period] to this time-frame and return the result.
+     *
+     *      val newTimeFrame = timeFrame + 2.days
+     */
+    operator fun plus(period: TemporalAmount) : TimeFrame {
+        val end = Instant.now()
+        val ts = end.atZone(ZoneId.of("UTC"))
+        val start = ts.plus(period).toInstant()
+        return TimeFrame(start, end)
+    }
+
+
 }
+
 

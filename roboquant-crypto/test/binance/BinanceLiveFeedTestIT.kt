@@ -18,6 +18,7 @@ package org.roboquant.binance
 
 import org.junit.Test
 import org.roboquant.common.TimeFrame
+import org.roboquant.common.minutes
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import kotlin.test.assertFalse
@@ -38,7 +39,7 @@ internal class BinanceLiveFeedTestIT {
         feed.subscribePriceBar("BTC-BUSD")
         assertFalse(feed.assets.isEmpty())
 
-        val timeFrame = TimeFrame.nextMinutes(10)
+        val timeFrame = TimeFrame.next(10.minutes)
         val prices = feed.filter<PriceBar>(timeFrame = timeFrame)
         assertTrue(prices.isNotEmpty())
         feed.disconnect()
