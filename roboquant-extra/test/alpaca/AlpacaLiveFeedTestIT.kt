@@ -42,6 +42,19 @@ internal class AlpacaLiveFeedTestIT {
         feed.disconnect()
     }
 
+
+    @Test
+    fun test2() {
+        System.getProperty("TEST_ALPACA") ?: return
+        val feed = AlpacaLiveFeed()
+        feed.subscribe("AAPL")
+        feed.disconnect()
+        val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
+        assertTrue(actions.isNotEmpty())
+        feed.connect()
+        feed.disconnect()
+    }
+
     @Test
     fun testHistoric() {
         System.getProperty("TEST_ALPACA") ?: return

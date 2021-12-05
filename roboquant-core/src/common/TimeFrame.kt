@@ -277,24 +277,14 @@ data class TimeFrame(val start: Instant, val end: Instant) {
      *
      *      val newTimeFrame = timeFrame - 2.days
      */
-    operator fun minus(period: TemporalAmount) : TimeFrame {
-        val end = Instant.now()
-        val ts = end.atZone(ZoneId.of("UTC"))
-        val start = ts.minus(period).toInstant()
-        return TimeFrame(start, end)
-    }
+    operator fun minus(period: TemporalAmount) = TimeFrame(start - period, end - period)
 
     /**
      * Add a [period] to this time-frame and return the result.
      *
      *      val newTimeFrame = timeFrame + 2.days
      */
-    operator fun plus(period: TemporalAmount) : TimeFrame {
-        val end = Instant.now()
-        val ts = end.atZone(ZoneId.of("UTC"))
-        val start = ts.plus(period).toInstant()
-        return TimeFrame(start, end)
-    }
+    operator fun plus(period: TemporalAmount) = TimeFrame(start + period, end + period)
 
 
 }

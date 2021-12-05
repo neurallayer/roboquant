@@ -53,7 +53,7 @@ fun alpacaBroker() {
 
 fun allAlpaca() {
     val feed = AlpacaLiveFeed()
-    feed.subscribe()
+    feed.subscribeAll()
 
     feed.timeMillis = 1000
     val strategy = EMACrossover.shortTerm()
@@ -123,7 +123,6 @@ fun feedIEXLive() {
 
 
 fun feedYahoo() {
-
     val feed = YahooHistoricFeed()
     val apple = Asset("AAPL")
     val google = Asset("GOOG")
@@ -137,6 +136,7 @@ fun feedYahoo() {
     logger.summary(10)
 }
 
+
 fun oanda() {
     val feed = OANDAHistoricFeed()
     feed.retrieveCandles("EUR_USD", "USD_JPY", "GBP_USD")
@@ -147,14 +147,12 @@ fun oanda() {
 }
 
 
-
 fun oandaLive() {
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
     val tf = TimeFrame.next(5.minutes)
     val actions = feed.filter<OrderBook>(tf)
     println(actions.size)
-
 }
 
 

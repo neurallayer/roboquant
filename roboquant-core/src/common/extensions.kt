@@ -110,15 +110,15 @@ val List<Instant>.timeFrame
 
 fun List<Instant>.split(period: Period): List<TimeFrame> {
     val result = mutableListOf<TimeFrame>()
-    val utc = ZoneOffset.UTC
+    val zone = ZoneOffset.UTC
     var start = first()
-    var stop = (LocalDateTime.ofInstant(start, utc) + period).toInstant(utc)
+    var stop = (LocalDateTime.ofInstant(start, zone) + period).toInstant(zone)
     for (now in this) {
         if (now > stop) {
             val tf = TimeFrame(start, now)
             result.add(tf)
             start = now
-            stop = (LocalDateTime.ofInstant(start, utc) + period).toInstant(utc)
+            stop = (LocalDateTime.ofInstant(start, zone) + period).toInstant(zone)
         }
     }
     val tf = TimeFrame(start, stop)

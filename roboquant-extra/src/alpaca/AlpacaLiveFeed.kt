@@ -61,7 +61,6 @@ class AlpacaLiveFeed(apiKey: String? = null, apiSecret: String? = null, accountT
 
     /**
      * Start listening for market data
-     *
      */
     fun connect() {
         alpacaAPI.marketDataStreaming().connect()
@@ -69,7 +68,6 @@ class AlpacaLiveFeed(apiKey: String? = null, apiSecret: String? = null, accountT
 
     /**
      * Stop listening for market data
-     *
      */
     fun disconnect() {
         try {
@@ -82,21 +80,35 @@ class AlpacaLiveFeed(apiKey: String? = null, apiSecret: String? = null, accountT
         subscribe(*assets.toTypedArray())
     }
 
-    fun subscribe(vararg assets: Asset) {
-        for (asset in assets) {
-            require(asset.type == AssetType.STOCK) { "Only stocks supported, received ${asset.type}" }
-            require(asset.currencyCode == "USD") { "Only USD currency supported, received ${asset.currencyCode}" }
-        }
-        if (assets.isEmpty()) {
-            alpacaAPI.marketDataStreaming().subscribe(null, null, listOf("*"))
-            logger.info("Subscribing to all assets")
-        } else {
-            val symbols = assets.map { it.symbol }
-            alpacaAPI.marketDataStreaming().subscribe(null, null, symbols)
-            logger.info("Subscribing to ${assets.size} assets")
-        }
+    /**
+     * Subscribe to price data of all the assets
+     */
+    fun subscribeAll() {
+        alpacaAPI.marketDataStreaming().subscribe(null, null, listOf("*"))
+        logger.info("Subscribing to all assets")
     }
 
+    /**
+     * Subscribe to price data identified by their [assets]
+     */
+    fun subscribe(vararg assets: Asset) {
+        for (asset in assets) {
+            require(asset.type == AssetType.STOCK) { "Only stocks are supported, received ${asset.type}" }
+            require(asset.currencyCode == "USD") { "Only USD currency supported, received ${asset.currencyCode}" }
+        }
+
+        val symbols = assets.map { it.symbol }
+        alpacaAPI.marketDataStreaming().subscribe(null, null, symbols)
+        logger.info("Subscribing to ${assets.size} assets")
+    }
+
+    /**
+     * Subscribe to price data identified by their [symbols]
+     */
+    fun subscribe(vararg symbols: String) {
+        val assets = symbols.map { Asset(it) }.toTypedArray()
+        subscribe(*assets)
+    }
 
     private fun createListener(): MarketDataListener {
         return MarketDataListener { streamMessageType, msg ->
