@@ -239,7 +239,7 @@ fun TALib.recordLow(data: PriceBarBuffer, period: Int) = recordLow(data.low, per
 fun TALib.recordHigh(data: DoubleArray, period: Int) = maxIndex(data, period) == data.lastIndex
 fun TALib.recordHigh(data: PriceBarBuffer, period: Int) = recordHigh(data.high, period)
 
-fun TALib.vwap(data: PriceBarBuffer, period: Int) : Double {
+fun TALib.vwap(data: PriceBarBuffer, period: Int): Double {
     val size = data.windowSize
     val c = data.close
     val h = data.high

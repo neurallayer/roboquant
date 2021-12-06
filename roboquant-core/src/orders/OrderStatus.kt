@@ -76,7 +76,7 @@ enum class OrderStatus {
      * Is the order in an open state
      */
     val open: Boolean
-        get() = ! closed
+        get() = !closed
 
 
 }

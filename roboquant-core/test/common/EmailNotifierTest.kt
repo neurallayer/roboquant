@@ -33,7 +33,7 @@ internal class EmailNotifierTest {
         p = EmailNotifier.usingOutlook("dummy@gmail.com", "some_secret")
         assertEquals("dummy@gmail.com", p.fromAddress.address)
 
-        p = EmailNotifier("smtp.host.local","dummy@gmail.com", "some_secret")
+        p = EmailNotifier("smtp.host.local", "dummy@gmail.com", "some_secret")
         assertEquals("dummy@gmail.com", p.fromAddress.address)
 
     }

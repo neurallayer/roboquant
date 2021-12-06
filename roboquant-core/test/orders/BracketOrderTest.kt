@@ -43,7 +43,7 @@ internal class BracketOrderTest {
 
         val e2 = order.execute(95.0, Instant.now())
         assertEquals(1, e2.size)
-        assertEquals(-10.0 , e2.first().quantity)
+        assertEquals(-10.0, e2.first().quantity)
         assertTrue { order.status.closed }
 
 

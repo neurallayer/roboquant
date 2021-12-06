@@ -38,7 +38,12 @@ import java.time.Instant
  * @property minEvents minimal number of events observed before starting to execute the strategy, default is the same
  * as the slow period
  */
-class EMACrossover(fastPeriod: Int = 12, slowPeriod: Int = 26, smoothing: Double = 2.0, val minEvents: Int = slowPeriod) :
+class EMACrossover(
+    fastPeriod: Int = 12,
+    slowPeriod: Int = 26,
+    smoothing: Double = 2.0,
+    val minEvents: Int = slowPeriod
+) :
     PriceStrategy(prefix = "strategy.ema.") {
 
     val fast = 1.0 - (smoothing / (fastPeriod + 1))

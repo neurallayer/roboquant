@@ -36,7 +36,7 @@ interface Notifier {
 /**
  * Notifier that prints the message to the console
  */
-class ConsoleNotifier: Notifier {
+class ConsoleNotifier : Notifier {
     override fun send(topic: String, msg: String) {
         println("topic: $topic\n $msg\n")
         println("##############################################")

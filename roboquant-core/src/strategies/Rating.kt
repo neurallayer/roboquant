@@ -45,8 +45,7 @@ enum class Rating(val value: Int) {
     /**
      * Is this a positive rating, so a BUY or an OUTPERFORM
      */
-    val isPositive : Boolean get() = this === BUY || this === OUTPEFORM
-
+    val isPositive: Boolean get() = this === BUY || this === OUTPEFORM
 
 
     /**

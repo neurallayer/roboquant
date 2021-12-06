@@ -49,10 +49,14 @@ class AutoDetectTimeParser(val exchangeCode: String = "NASDAQ") : TimeParser {
                 // Map of regex and the corresponding parser for date/time string parsing
                 @Suppress("RegExpRepeatedSpace")
                 val matches = mutableMapOf(
-                    """\d{8}""".toRegex() to LocalTimeParser("yyyyMMdd", true, exchange) ,
+                    """\d{8}""".toRegex() to LocalTimeParser("yyyyMMdd", true, exchange),
                     """\d{4}-\d{2}-\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd", true, exchange),
                     """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".toRegex() to TimeParser { Instant.parse(it) },
-                    """\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm:ss", false, exchange),
+                    """\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser(
+                        "yyyy-MM-dd HH:mm:ss",
+                        false,
+                        exchange
+                    ),
                     """\d{8} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd  HH:mm:ss", false, exchange),
                     """\d{8}  \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd  HH:mm:ss", false, exchange),
                     """\d{13}""".toRegex() to TimeParser { Instant.ofEpochMilli(it.toLong()) }

@@ -32,11 +32,11 @@ internal class CombinedAssetStrategyTest {
         val asset1 = feed.assets.first()
         val asset2 = feed.assets.last()
         val strategy = CombinedAssetStrategy {
-            when(it) {
-                asset1 -> EMACrossover(1,3)
+            when (it) {
+                asset1 -> EMACrossover(1, 3)
                 asset2 -> EMACrossover(3, 5)
                 else -> {
-                   NoSignalStrategy()
+                    NoSignalStrategy()
                 }
             }
         }

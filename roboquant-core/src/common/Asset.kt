@@ -71,7 +71,7 @@ data class Asset(
      * @return
 
     fun serialize(): String {
-        return "$symbol$SEP$type$SEP$currencyCode$SEP$exchangeCode$SEP$multiplier$SEP$lastDate$SEP$right$SEP$strike$SEP$name$SEP$id"
+    return "$symbol$SEP$type$SEP$currencyCode$SEP$exchangeCode$SEP$multiplier$SEP$lastDate$SEP$right$SEP$strike$SEP$name$SEP$id"
     }
      */
 
@@ -143,20 +143,22 @@ data class Asset(
 fun Collection<Asset>.getBySymbol(symbol: String): Asset = first { it.symbol == symbol }
 
 /**
-* Find an asset based on its [symbols] name. Will return an empty list if no assets are matched.
-*/
+ * Find an asset based on its [symbols] name. Will return an empty list if no assets are matched.
+ */
 fun Collection<Asset>.findBySymbols(vararg symbols: String): List<Asset> = filter { it.symbol in symbols }
 
 /**
  * Find all assets based on their [currencyCodes]. Returns an empty list if no matching assets can be found.
  */
-fun Collection<Asset>.findByCurrencies(vararg currencyCodes: String): List<Asset> = filter { it.currencyCode in currencyCodes }
+fun Collection<Asset>.findByCurrencies(vararg currencyCodes: String): List<Asset> =
+    filter { it.currencyCode in currencyCodes }
 
 
 /**
  * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.
  */
-fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset> = filter { it.exchangeCode in exchangeCodes }
+fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset> =
+    filter { it.exchangeCode in exchangeCodes }
 
 /**
  * Select [n] random assets from a collection, without duplicates. [n] has to equal or smaller than the size of the

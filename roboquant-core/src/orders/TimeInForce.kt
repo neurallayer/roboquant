@@ -119,7 +119,7 @@ class DAY : TimeInForce {
      */
     override fun isExpired(order: Order, now: Instant, fill: Double, total: Double): Boolean {
         val exchange = order.asset.exchange
-        return ! exchange.sameDay(order.placed, now)
+        return !exchange.sameDay(order.placed, now)
     }
 
     override fun toString(): String {
@@ -141,7 +141,7 @@ class FOK : TimeInForce {
      * @see TimeInForce.isExpired
      *
      */
-    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double) : Boolean  {
+    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double): Boolean {
         return fill != 0.0 && fill != total
     }
 

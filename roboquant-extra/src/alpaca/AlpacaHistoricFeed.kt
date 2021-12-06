@@ -27,12 +27,17 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.logging.Logger
 
-typealias AlpacaPeriod =  BarTimePeriod
+typealias AlpacaPeriod = BarTimePeriod
 
 /**
  * Get historic data feed from Alpaca
  */
-class AlpacaHistoricFeed(apiKey: String? = null, apiSecret: String? = null,  accountType :AccountType = AccountType.PAPER, dataType:DataType = DataType.IEX)  : HistoricPriceFeed() {
+class AlpacaHistoricFeed(
+    apiKey: String? = null,
+    apiSecret: String? = null,
+    accountType: AccountType = AccountType.PAPER,
+    dataType: DataType = DataType.IEX
+) : HistoricPriceFeed() {
 
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
     private val logger: Logger = Logger.getLogger(this.javaClass.simpleName)
@@ -44,7 +49,7 @@ class AlpacaHistoricFeed(apiKey: String? = null, apiSecret: String? = null,  acc
     }
 
 
-    fun retrieve(vararg symbols: String, timeFrame:TimeFrame, period: AlpacaPeriod = AlpacaPeriod.DAY) {
+    fun retrieve(vararg symbols: String, timeFrame: TimeFrame, period: AlpacaPeriod = AlpacaPeriod.DAY) {
         for (symbol in symbols) {
             val resp = alpacaAPI.marketData().getBars(
                 symbol,
@@ -63,10 +68,9 @@ class AlpacaHistoricFeed(apiKey: String? = null, apiSecret: String? = null,  acc
                 val now = bar.t.toInstant()
                 add(now, action)
             }
-            logger.fine { "Retrieved asset $asset for $timeFrame"}
+            logger.fine { "Retrieved asset $asset for $timeFrame" }
         }
     }
-
 
 
 }

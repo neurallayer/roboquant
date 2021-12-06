@@ -120,7 +120,7 @@ object Config {
      * Load properties from an environment file. We don't use lazy so any change to the file is picked-up
      * immediately.
      */
-    private val env : Map<String, String>
+    private val env: Map<String, String>
         get() {
             val prop = Properties()
             fun load(path: Path) {
@@ -135,6 +135,6 @@ object Config {
             load(Path.of("dotenv"))
             logger.finer { "Loaded environment properties $prop" }
             return prop.map { it.key.toString() to it.value.toString() }.toMap()
-    }
+        }
 
 }

@@ -30,7 +30,7 @@ import java.text.DecimalFormat
  * @constructor Create a new empty Portfolio
  */
 class Portfolio : Cloneable {
-    
+
     private val _positions = mutableMapOf<Asset, Position>()
 
     /**
@@ -90,7 +90,7 @@ class Portfolio : Cloneable {
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]
      */
-    fun updateMarketPrices(event: Event, priceType:String = "DEFAULT") {
+    fun updateMarketPrices(event: Event, priceType: String = "DEFAULT") {
         val prices = event.prices
         val now = event.now
 

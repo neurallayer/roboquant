@@ -52,13 +52,13 @@ abstract class Output : Renderable {
          *
          * @return
          */
-        private fun autoDetectMode() : Mode {
+        private fun autoDetectMode(): Mode {
             try {
                 for (process in ProcessHandle.allProcesses()) {
                     val line = process.info().commandLine().toString()
                     if (line.contains("jupyter") && line.contains("lab")) return Mode.LAB
                 }
-            } catch (e:Exception) {
+            } catch (e: Exception) {
                 // ignore
             }
             return Mode.CLASSIC

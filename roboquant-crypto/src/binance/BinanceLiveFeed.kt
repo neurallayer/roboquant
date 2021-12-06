@@ -37,7 +37,8 @@ typealias Interval = CandlestickInterval
  * @constructor
  *
  */
-class BinanceLiveFeed(apiKey: String? = null, secret:String? = null, private val useMachineTime: Boolean = true) : LiveFeed() {
+class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private val useMachineTime: Boolean = true) :
+    LiveFeed() {
 
     private val client: BinanceApiWebSocketClient
     private val subscriptions = mutableMapOf<String, Asset>()
@@ -73,7 +74,7 @@ class BinanceLiveFeed(apiKey: String? = null, secret:String? = null, private val
         vararg currencyPairs: String,
         interval: Interval = Interval.ONE_MINUTE
     ) {
-        require(currencyPairs.isNotEmpty()) { "You need to provide at least 1 currency pair"}
+        require(currencyPairs.isNotEmpty()) { "You need to provide at least 1 currency pair" }
         for (name in currencyPairs) {
             val asset = CryptoBuilder().invoke(name.uppercase(), binanceTemplate)
             logger.info { "Subscribing to $asset" }
@@ -93,7 +94,7 @@ class BinanceLiveFeed(apiKey: String? = null, secret:String? = null, private val
     }
 
     private fun handle(resp: CandlestickEvent) {
-        if (! resp.barFinal) return
+        if (!resp.barFinal) return
 
         logger.finer { "Received candlestick event for symbol ${resp.symbol}" }
         val asset = subscriptions[resp.symbol.uppercase()]

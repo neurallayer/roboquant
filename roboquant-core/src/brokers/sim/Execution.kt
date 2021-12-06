@@ -38,5 +38,5 @@ class Execution(val asset: Asset, val quantity: Double, val price: Double) {
     /**
      * Totol size of execution, including contract size
      */
-    fun size(): Double  = asset.multiplier * quantity
+    fun size(): Double = asset.multiplier * quantity
 }

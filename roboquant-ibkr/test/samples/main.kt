@@ -88,7 +88,6 @@ fun ibkrFeed() {
 }
 
 
-
 fun ibkrHistoricFeed() {
     val feed = IBKRHistoricFeed()
     val template = Asset("", AssetType.STOCK, "EUR", "AEB")
@@ -106,10 +105,9 @@ fun ibkrHistoricFeed() {
 }
 
 
-
 fun main() {
 
-    when("HISTORIC") {
+    when ("HISTORIC") {
         "BROKER" -> ibkrBroker()
         "FEED" -> ibkrFeed()
         "BROKER_FEED" -> ibkrBrokerFeed()

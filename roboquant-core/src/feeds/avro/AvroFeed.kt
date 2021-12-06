@@ -84,7 +84,7 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
     private fun position(r: DataFileReader<GenericRecord>, now: Instant) {
         var idx = index.binarySearch { it.first.compareTo(now) }
         idx = if (idx < 0) -idx - 1 else idx
-        if (idx >= index.size) idx = index.size -1
+        if (idx >= index.size) idx = index.size - 1
         if (idx >= 0) r.seek(index[idx].second)
     }
 
@@ -98,7 +98,7 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
                 val rec = it.next()
                 val t = Instant.ofEpochMilli(rec[0] as Long)
                 val asset = rec[1].toString()
-                if (! assetLookup.containsKey(asset)) assetLookup[asset] = Asset.deserialize(asset)
+                if (!assetLookup.containsKey(asset)) assetLookup[asset] = Asset.deserialize(asset)
                 if (t > last) {
                     val pos = it.previousSync()
                     index.add(Pair(t, pos))
@@ -163,7 +163,8 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
 
     companion object {
         private val logger = Logging.getLogger("AvroFeed")
-        private const val sp500URL = "https://github.com/neurallayer/roboquant-data/blob/main/avro/5yr_sp500.avro?raw=true"
+        private const val sp500URL =
+            "https://github.com/neurallayer/roboquant-data/blob/main/avro/5yr_sp500.avro?raw=true"
 
         /**
          * 5 years worth of end of day data for companies listed in the S&P 500

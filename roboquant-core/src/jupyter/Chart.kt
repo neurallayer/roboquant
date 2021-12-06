@@ -46,10 +46,10 @@ private class PairAdapter : JsonSerializer<Pair<*, *>> {
 }
 
 /**
-* Type adaptor for Gson that allows to use Instant that get serialized as a Long
-*
-* @constructor Create new Pair adapter
-*/
+ * Type adaptor for Gson that allows to use Instant that get serialized as a Long
+ *
+ * @constructor Create new Pair adapter
+ */
 private class InstantAdapter : JsonSerializer<Instant> {
 
     override fun serialize(

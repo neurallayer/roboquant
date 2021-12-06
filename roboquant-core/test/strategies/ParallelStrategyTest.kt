@@ -26,10 +26,10 @@ internal class ParallelStrategyTest {
 
     @Test
     fun test() {
-        val strategy = ParallelStrategy(EMACrossover(1,3), EMACrossover(3, 5))
+        val strategy = ParallelStrategy(EMACrossover(1, 3), EMACrossover(3, 5))
         val feed = RandomWalk.lastYears()
-        val roboquant = Roboquant(strategy, logger = SilentLogger() )
-        roboquant.run( feed)
+        val roboquant = Roboquant(strategy, logger = SilentLogger())
+        roboquant.run(feed)
     }
 
 }

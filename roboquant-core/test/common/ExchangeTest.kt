@@ -37,7 +37,7 @@ internal class ExchangeTest {
         assertTrue(exchange2 in Exchange.exchanges)
 
         val now = Instant.now()
-        assertTrue( exchange2.sameDay(now, now))
+        assertTrue(exchange2.sameDay(now, now))
 
         Exchange.addInstance("DUMMY2", "Europe/Paris")
         val exchange3 = Exchange.getInstance("DUMMY2")

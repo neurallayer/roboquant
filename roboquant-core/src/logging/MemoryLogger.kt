@@ -118,7 +118,7 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
 }
 
 internal fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, Collection<MetricsEntry>> {
-    val formatter = when(period) {
+    val formatter = when (period) {
         ChronoUnit.YEARS -> SimpleDateFormat("yyyy")
         ChronoUnit.MONTHS -> SimpleDateFormat("yyyy-MM")
         ChronoUnit.WEEKS -> SimpleDateFormat("yyyy-ww")

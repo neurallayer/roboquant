@@ -43,7 +43,7 @@ abstract class SimpleMetric : Metric {
      * Based on the provided [account] and [event], calculate any metrics and return them directly. This method needs to
      * be implemented in sub-classes.
      */
-    abstract fun calc(account: Account, event: Event) : MetricResults
+    abstract fun calc(account: Account, event: Event): MetricResults
 
     override fun getMetrics(): MetricResults {
         val result = values

@@ -35,7 +35,7 @@ internal class SingleAssetStrategyTest {
 
 
     @Test
-    fun test()  {
+    fun test() {
         val asset = Asset("DUMMY")
         val strategy1 = MyStrategy(asset)
         val s = strategy1.generate(PriceQuote(asset, 100.0, 100.0, 100.0, 100.0), Instant.now())

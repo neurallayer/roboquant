@@ -77,7 +77,7 @@ class CommissionBasedCostModel(
         val cost = execution.price * correction * execution.size()
 
         val currency = order.asset.currency
-        var fee = cost.absoluteValue * (fee/10_000.0)
+        var fee = cost.absoluteValue * (fee / 10_000.0)
         fee = max(fee, minimumAmount.getAmount(currency))
         val maxAmount = maximumAmount.getAmount(currency)
         if (maxAmount != 0.0) fee = min(fee, maxAmount)

@@ -28,7 +28,7 @@ import java.util.*
  *
  * @constructor Create new Orders container
  */
-class Orders : MutableList<Order>, LinkedList<Order>()  {
+class Orders : MutableList<Order>, LinkedList<Order>() {
 
     /**
      * Closed orders, any order that is in a state that cannot be further processed
@@ -55,7 +55,7 @@ class Orders : MutableList<Order>, LinkedList<Order>()  {
      *
      * @return
      */
-    fun summary() : Summary {
+    fun summary(): Summary {
         val s = Summary("Orders")
 
         val c = Summary("closed")
@@ -70,7 +70,6 @@ class Orders : MutableList<Order>, LinkedList<Order>()  {
 
         return s
     }
-
 
 
     /**

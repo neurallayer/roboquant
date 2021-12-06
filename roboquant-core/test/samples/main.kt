@@ -149,8 +149,6 @@ fun large5() {
 }
 
 
-
-
 fun large6() {
 
     fun getConfig(exchange: String): CSVConfig {
@@ -238,7 +236,7 @@ fun crypto() {
 fun multiCurrency() {
     val feed = CSVFeed("data/US", CSVConfig(priceAdjust = true))
     val template = Asset("TEMPLATE", currencyCode = "EUR")
-    val feed2 = CSVFeed("data/EU",  CSVConfig(priceAdjust = true, template = template))
+    val feed2 = CSVFeed("data/EU", CSVConfig(priceAdjust = true, template = template))
     feed.merge(feed2)
 
     val euro = Currency.getInstance("EUR")
@@ -348,7 +346,10 @@ fun ta() {
     }
 
     strategy.sell { price ->
-        ta.cdl3BlackCrows(price) || (ta.cdl2Crows(price) && ta.ema(price.close, shortTerm) < ta.ema(price.close, longTerm))
+        ta.cdl3BlackCrows(price) || (ta.cdl2Crows(price) && ta.ema(price.close, shortTerm) < ta.ema(
+            price.close,
+            longTerm
+        ))
     }
 
     val logger = MemoryLogger()
@@ -365,7 +366,7 @@ fun taLarge() {
     val strategy = TAStrategy(longTerm)
 
     strategy.buy { price ->
-        with (ta) {
+        with(ta) {
             cdlMorningStar(price) || cdl3Inside(price) || cdl3Outside(price) || cdl3LineStrike(price) ||
                     cdlHammer(price) || cdlPiercing(price) || cdlSpinningTop(price) || cdlRiseFall3Methods(price) ||
                     cdl3StarsInSouth(price) || cdlOnNeck(price)
@@ -373,7 +374,10 @@ fun taLarge() {
     }
 
     strategy.sell { price ->
-        ta.cdl3BlackCrows(price) || (ta.cdl2Crows(price) && ta.ema(price.close, shortTerm) < ta.ema(price.close, longTerm))
+        ta.cdl3BlackCrows(price) || (ta.cdl2Crows(price) && ta.ema(price.close, shortTerm) < ta.ema(
+            price.close,
+            longTerm
+        ))
     }
 
     val logger = MemoryLogger()
@@ -395,9 +399,9 @@ fun avro() {
 
 fun avroGen() {
     // val feed = CSVFeed("/data/assets/stock-market/stocks/")
-    val feed =  CSVFeed("/data/assets/individual_stocks_5yr", CSVConfig("_data.csv"))
+    val feed = CSVFeed("/data/assets/individual_stocks_5yr", CSVConfig("_data.csv"))
     val t = measureTimeMillis {
-        val file ="/home/peter/tmp/5yr_sp500.avro"
+        val file = "/home/peter/tmp/5yr_sp500.avro"
         AvroGenerator.capture(feed, file)
     }
     println(t)
@@ -408,7 +412,7 @@ fun trendFollowing2() {
     val strategy = TAStrategy(200)
 
     strategy.buy {
-        ta.recordHigh(it.high, 200) ||   ta.recordHigh(it.high, 50)
+        ta.recordHigh(it.high, 200) || ta.recordHigh(it.high, 50)
     }
 
     strategy.sell {

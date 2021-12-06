@@ -79,7 +79,7 @@ class IEXHistoricFeed(
      *
      * @param symbols
      */
-    fun retrieveIntraday(vararg symbols: String)  {
+    fun retrieveIntraday(vararg symbols: String) {
         val assets = symbols.map { template.copy(symbol = it.uppercase()) }
         retrieveIntraday(*assets.toTypedArray())
     }
@@ -89,7 +89,7 @@ class IEXHistoricFeed(
      *
      * @param symbols
      */
-    fun retrievePriceBar(vararg symbols: String, range: Range = Range.FIVE_YEARS)  {
+    fun retrievePriceBar(vararg symbols: String, range: Range = Range.FIVE_YEARS) {
         val assets = symbols.map { template.copy(symbol = it.uppercase()) }
         retrievePriceBar(*assets.toTypedArray(), range = range)
     }
@@ -99,7 +99,7 @@ class IEXHistoricFeed(
      *
      * @param assets
      */
-    fun retrievePriceBar(vararg assets: Asset, range:Range = Range.FIVE_YEARS) {
+    fun retrievePriceBar(vararg assets: Asset, range: Range = Range.FIVE_YEARS) {
 
         assets.forEach {
             val chart = client.executeRequest(

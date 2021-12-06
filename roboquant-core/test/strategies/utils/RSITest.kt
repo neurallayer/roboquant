@@ -34,8 +34,8 @@ internal class RSITest {
             }
             assertTrue(rsi.isReady())
             val v = rsi.calculate()
-            assertTrue( v >= 0.0)
-            assertTrue( v <= 100.0)
+            assertTrue(v >= 0.0)
+            assertTrue(v <= 100.0)
         }
 
     }

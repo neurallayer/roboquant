@@ -44,7 +44,12 @@ typealias Interval = QuoteInterval
  * @param publicKey
  * @param secretKey
  */
-class IEXLiveFeed(publicKey: String? = null, secretKey: String? = null, sandbox : Boolean = true, private val useMachineTime: Boolean = true) :
+class IEXLiveFeed(
+    publicKey: String? = null,
+    secretKey: String? = null,
+    sandbox: Boolean = true,
+    private val useMachineTime: Boolean = true
+) :
     LiveFeed() {
 
     private val logger = Logging.getLogger("IEXLive")
@@ -97,7 +102,7 @@ class IEXLiveFeed(publicKey: String? = null, secretKey: String? = null, sandbox 
         var lastTime = Instant.MIN
         var actions = mutableListOf<Action>()
         for (trade in trades) {
-            val asset  = assetMap[trade.symbol]!!
+            val asset = assetMap[trade.symbol]!!
             val data = trade.data
             if (!useMachineTime) now = Instant.ofEpochMilli(trade.data.timestamp)
             val action = TradePrice(asset, data.price.toDouble(), data.size.toDouble())
@@ -123,7 +128,7 @@ class IEXLiveFeed(publicKey: String? = null, secretKey: String? = null, sandbox 
         println(quotes.size)
         var now = Instant.now()
         quotes.forEach {
-            val asset  = assetMap[it.symbol]!!
+            val asset = assetMap[it.symbol]!!
             val action = TradePrice(asset, it.iexRealtimePrice.toDouble(), it.iexRealtimeSize.toDouble())
             if (!useMachineTime) now = Instant.ofEpochMilli(it.iexLastUpdated)
             val event = Event(listOf(action), now)

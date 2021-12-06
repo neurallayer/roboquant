@@ -35,7 +35,7 @@ internal class TAStrategyTest {
         }
 
         strategy.sell { price ->
-            ta.cdl3BlackCrows(price) || (ta.cdl2Crows(price, 1)  && ta.ema(price.close, 30) < ta.ema(price.close, 50))
+            ta.cdl3BlackCrows(price) || (ta.cdl2Crows(price, 1) && ta.ema(price.close, 30) < ta.ema(price.close, 50))
         }
 
         val logger = SilentLogger()
@@ -46,7 +46,7 @@ internal class TAStrategyTest {
         assertTrue(logger.events > 0)
     }
 
-    private fun runStrategy(s : TAStrategy): SilentLogger {
+    private fun runStrategy(s: TAStrategy): SilentLogger {
         val logger = SilentLogger()
         val roboquant = Roboquant(s, ProgressMetric(), logger = logger)
         val feed = RandomWalk.lastYears()
@@ -55,7 +55,7 @@ internal class TAStrategyTest {
     }
 
 
-    private fun runStrategy2(s : TAStrategy): Roboquant<MemoryLogger> {
+    private fun runStrategy2(s: TAStrategy): Roboquant<MemoryLogger> {
         val roboquant = Roboquant(s, ProgressMetric(), logger = MemoryLogger(showProgress = false))
         val feed = RandomWalk.lastYears()
         roboquant.run(feed)

@@ -28,7 +28,11 @@ import java.time.format.DateTimeFormatter
  * @constructor
  *
  */
-internal class LocalTimeParser(pattern: String, val dateFormat:Boolean = pattern.length < 11, val exchange:Exchange = Exchange.getInstance("") ) : TimeParser {
+internal class LocalTimeParser(
+    pattern: String,
+    val dateFormat: Boolean = pattern.length < 11,
+    val exchange: Exchange = Exchange.getInstance("")
+) : TimeParser {
 
     private val dtf: DateTimeFormatter
 
@@ -41,7 +45,7 @@ internal class LocalTimeParser(pattern: String, val dateFormat:Boolean = pattern
         return if (dateFormat) {
             val date = LocalDate.parse(s, dtf)
             exchange.getClosingTime(date)
-         } else {
+        } else {
             ZonedDateTime.parse(s, dtf).toInstant()
         }
 

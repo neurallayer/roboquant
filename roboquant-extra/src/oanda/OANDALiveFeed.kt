@@ -157,7 +157,7 @@ class OANDALiveFeed(
             }
 
         }
-        logger.finer { "Started job $job"}
+        logger.finer { "Started job $job" }
     }
 
 }

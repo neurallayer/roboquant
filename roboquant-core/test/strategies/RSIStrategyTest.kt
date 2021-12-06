@@ -27,14 +27,14 @@ import kotlin.test.assertEquals
 internal class RSIStrategyTest {
 
     @Test
-    fun test() = runBlocking  {
+    fun test() = runBlocking {
         val s = RSIStrategy()
         assertEquals(30.0, s.lowThreshold)
         assertEquals(70.0, s.highThreshold)
 
         val feed = RandomWalk.lastYears()
-        val roboquant = Roboquant(s, logger = SilentLogger() )
-        roboquant.run( feed)
+        val roboquant = Roboquant(s, logger = SilentLogger())
+        roboquant.run(feed)
 
     }
 

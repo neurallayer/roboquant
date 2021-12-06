@@ -20,7 +20,8 @@ import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 
 interface AssetBuilder {
-    operator fun invoke(name: String, template: Asset = Asset("TEMPLATE")) : Asset = template.copy(symbol = name.uppercase())
+    operator fun invoke(name: String, template: Asset = Asset("TEMPLATE")): Asset =
+        template.copy(symbol = name.uppercase())
 }
 
 
@@ -28,7 +29,7 @@ object AssetBuilderFactory {
 
     val builders = mutableMapOf<AssetType, AssetBuilder>()
 
-    fun build(name: String, template: Asset = Asset("TEMPLATE")) : Asset {
+    fun build(name: String, template: Asset = Asset("TEMPLATE")): Asset {
         val builder = builders[template.type]
         return if (builder == null) {
             throw Exception("No registered AssetBuilder for type ${template.type}")
@@ -49,7 +50,7 @@ object AssetBuilderFactory {
  *
  * @constructor Create empty Stock builder
  */
-class StockBuilder :  AssetBuilder
+class StockBuilder : AssetBuilder
 
 class ForexBuilder : AssetBuilder {
 
@@ -93,7 +94,7 @@ class CryptoBuilder : AssetBuilder {
             currencyCode = name.substring(name.lastIndex - 2)
         }
         return template.copy(
-            symbol = symbol.uppercase()  + currencyCode.uppercase(),
+            symbol = symbol.uppercase() + currencyCode.uppercase(),
             currencyCode = currencyCode.uppercase(),
         )
     }

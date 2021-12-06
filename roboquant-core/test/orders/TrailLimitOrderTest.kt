@@ -33,11 +33,11 @@ internal class TrailLimitOrderTest {
 
         var e1 = order.execute(100.0, Instant.now())
         assertTrue { e1.isEmpty() }
-        assertFalse { order.executed}
+        assertFalse { order.executed }
 
         e1 = order.execute(101.0, Instant.now())
         assertTrue { e1.isEmpty() }
-        assertFalse { order.executed}
+        assertFalse { order.executed }
 
         e1 = order.execute(99.0, Instant.now())
         assertEquals(1, e1.size)
@@ -53,11 +53,11 @@ internal class TrailLimitOrderTest {
 
         var e1 = order.execute(100.0, Instant.now())
         assertTrue { e1.isEmpty() }
-        assertFalse { order.executed}
+        assertFalse { order.executed }
 
         e1 = order.execute(101.0, Instant.now())
         assertTrue { e1.isEmpty() }
-        assertFalse { order.executed}
+        assertFalse { order.executed }
 
         e1 = order.execute(99.0, Instant.now())
         assertEquals(1, e1.size)

@@ -157,7 +157,6 @@ class SimBroker(
     }
 
 
-
     /**
      * Validate if there is enough buying power to process the orders that are just received. If there is not enough
      * cash, the order will be rejected. If there is no price info to determine the required amount of cash, the order
@@ -167,7 +166,7 @@ class SimBroker(
         var buyingPower = account.buyingPower
         val initialOrders = account.orders.filter { it.status === OrderStatus.INITIAL }
         for (order in initialOrders) {
-            if (! validateBuyingPower) {
+            if (!validateBuyingPower) {
                 order.status = OrderStatus.ACCEPTED
             } else {
                 val price = event.prices[order.asset]?.getPrice()

@@ -32,6 +32,6 @@ internal class SilentLoggerTest {
         assertEquals(2, logger.events)
 
         logger.reset()
-        assertEquals(0L,logger.events)
+        assertEquals(0L, logger.events)
     }
 }

@@ -30,13 +30,13 @@ internal class AccountBetaTest {
         val feed = RandomWalk.lastYears(10, 20)
         val marketAsset = feed.assets.first()
         val strategy = EMACrossover.shortTerm()
-        val accountBetaMetric = AccountBeta(marketAsset,50)
+        val accountBetaMetric = AccountBeta(marketAsset, 50)
         val logger = MemoryLogger(false)
         val roboquant = Roboquant(strategy, accountBetaMetric, logger = logger)
         roboquant.run(feed)
         val beta = logger.getMetric("account.beta").last().value as Double
 
-        assertTrue(! beta.isNaN())
+        assertTrue(!beta.isNaN())
     }
 
 }

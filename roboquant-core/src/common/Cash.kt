@@ -79,7 +79,7 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
     /**
      * Add operator + to allow for cash + cash
      */
-    operator fun plus(other: Cash) : Cash {
+    operator fun plus(other: Cash): Cash {
         val result = this.copy()
         result.deposit(other)
         return result
@@ -88,7 +88,7 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
     /**
      * Add operator - to allow for cash - cash
      */
-    operator fun minus(other: Cash) : Cash {
+    operator fun minus(other: Cash): Cash {
         val result = this.copy()
         result.withdraw(other)
         return result
@@ -159,7 +159,8 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
      * Provide a map representation of the cash hold where the key is the [Currency] and the value is the amount.
      * By default, empty values will not be included but this can be changed by setting [includeEmpty] to true.
      */
-    fun toMap(includeEmpty: Boolean = false) : Map<Currency, Double> = if (includeEmpty) data.toMap() else data.filter { it.value != 0.0 }
+    fun toMap(includeEmpty: Boolean = false): Map<Currency, Double> =
+        if (includeEmpty) data.toMap() else data.filter { it.value != 0.0 }
 
 
     /**

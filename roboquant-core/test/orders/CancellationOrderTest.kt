@@ -29,7 +29,7 @@ internal class CancellationOrderTest {
     fun test() {
         val asset = TestData.usStock()
 
-        val openOrder = MarketOrder(asset,100.0)
+        val openOrder = MarketOrder(asset, 100.0)
         val oc = CancellationOrder(openOrder)
         assertEquals(OrderStatus.INITIAL, oc.status)
 

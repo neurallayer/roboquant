@@ -20,8 +20,6 @@ import java.time.Instant
 import java.util.*
 
 
-
-
 /**
  * Moving Window that holds double values an the time and is typically used by strategies for moving averages or
  * replay buffers.
@@ -31,7 +29,7 @@ import java.util.*
  * @property windowSize The size of the moving window
  * @constructor Create empty Circular buffer
  */
-open class MovingTimedWindow(val windowSize: Int)  {
+open class MovingTimedWindow(val windowSize: Int) {
 
     private val data = DoubleArray(windowSize) { Double.NaN }
     private val times = LongArray(windowSize) { Long.MIN_VALUE }

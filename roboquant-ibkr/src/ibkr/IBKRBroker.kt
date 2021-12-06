@@ -106,7 +106,7 @@ class IBKRBroker(
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        if (! enableOrders) return account.clone()
+        if (!enableOrders) return account.clone()
 
 
         // First we place the cancellation orders
@@ -139,8 +139,12 @@ class IBKRBroker(
         val result = IBOrder()
         when (order) {
             is MarketOrder -> result.orderType("MKT")
-            is LimitOrder -> { result.orderType("LMT"); result.lmtPrice(order.limit) }
-            is StopOrder -> { result.orderType("STP"); result.lmtPrice(order.stop)}
+            is LimitOrder -> {
+                result.orderType("LMT"); result.lmtPrice(order.limit)
+            }
+            is StopOrder -> {
+                result.orderType("STP"); result.lmtPrice(order.stop)
+            }
             else -> {
                 throw Exception("unsupported order type $order")
             }
@@ -178,7 +182,7 @@ class IBKRBroker(
             val id = orderId.toString()
             val openOrder = account.orders.open.filterIsInstance<SingleOrder>().find { it.id == id }
             if (openOrder == null)
-                    logger.warning { "Received unknown open order with orderId $orderId" }
+                logger.warning { "Received unknown open order with orderId $orderId" }
         }
 
         override fun openOrderEnd() {
@@ -215,7 +219,7 @@ class IBKRBroker(
             realizedPNL: Double,
             accountName: String
         ) {
-            logger.fine {"portfolio update $contract $position $marketPrice $averageCost" }
+            logger.fine { "portfolio update $contract $position $marketPrice $averageCost" }
             val asset = contract.getAsset()
             val p = Position(asset, position, averageCost, marketPrice)
             account.portfolio.setPosition(p)
@@ -228,12 +232,12 @@ class IBKRBroker(
         }
 
         override fun updateAccountTime(timeStamp: String?) {
-            logger.fine {"Account time $timeStamp" }
+            logger.fine { "Account time $timeStamp" }
             account.time = Instant.now()
         }
 
         private fun Contract.getAsset(): Asset {
-            val type = when(secType()) {
+            val type = when (secType()) {
                 Types.SecType.STK -> AssetType.STOCK
                 Types.SecType.BOND -> AssetType.BOND
                 Types.SecType.OPT -> AssetType.OPTION

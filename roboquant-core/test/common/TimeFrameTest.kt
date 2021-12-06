@@ -17,7 +17,6 @@
 package org.roboquant.common
 
 
-
 import org.junit.Test
 import java.time.Instant
 import java.time.Period
@@ -33,7 +32,7 @@ internal class TimeFrameTest {
         val tf = TimeFrame.fromYears(1900, 2000)
         val timeline1 = tf.toDays()
         val timeline2 = tf.toDays(excludeWeekends = true)
-        assertTrue( timeline1.size > timeline2.size)
+        assertTrue(timeline1.size > timeline2.size)
     }
 
     @Test
@@ -49,7 +48,7 @@ internal class TimeFrameTest {
     @Test
     fun split() {
         val i1 = Instant.parse("1980-01-01T09:00:00Z")
-        val i2 =  Instant.parse("2000-01-01T09:00:00Z")
+        val i2 = Instant.parse("2000-01-01T09:00:00Z")
         val tf = TimeFrame(i1, i2)
         val subFrames = tf.split(Period.ofYears(2))
         assertEquals(10, subFrames.size)
@@ -81,7 +80,7 @@ internal class TimeFrameTest {
     @Test
     fun creation() {
         val tf = TimeFrame.next(1.minutes)
-        assertEquals(60,tf.end.epochSecond - tf.start.epochSecond)
+        assertEquals(60, tf.end.epochSecond - tf.start.epochSecond)
 
         val tf2 = tf.extend(1.days)
         assertTrue { tf2.contains(tf.start) }

@@ -64,7 +64,7 @@ abstract class Order(val asset: Asset) : Cloneable {
     /**
      * If the order is not yet placed, place it now. The price is always updated.
      */
-    protected fun place(price:Double, now: Instant) {
+    protected fun place(price: Double, now: Instant) {
         if (placed == Instant.MIN) placed = now
         this.price = price
     }
@@ -97,13 +97,13 @@ abstract class Order(val asset: Asset) : Cloneable {
      * Execute the order given the provided [price] and [time]. Any subclass of Order will need to implement
      * this method and return a list of [Execution]
      */
-    abstract fun execute(price: Double, time: Instant) : List<Execution>
+    abstract fun execute(price: Double, time: Instant): List<Execution>
 
 
     /**
      * Copy current state into the passed object. This is used in the clone function of the subclasses
      */
-    protected fun copyTo(result: Order)  {
+    protected fun copyTo(result: Order) {
         result.id = id
         result.placed = placed
         result.status = status

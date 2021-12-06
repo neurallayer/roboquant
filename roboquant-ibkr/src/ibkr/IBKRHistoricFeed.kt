@@ -69,7 +69,6 @@ class IBKRHistoricFeed(
     }
 
 
-
     inner class Wrapper : DefaultEWrapper() {
 
         override fun historicalData(reqId: Int, bar: Bar) {
@@ -79,7 +78,7 @@ class IBKRHistoricFeed(
             )
             val parser = AutoDetectTimeParser(asset.exchangeCode)
             val time = parser.parse(bar.time())
-            add(time , action)
+            add(time, action)
         }
 
         override fun historicalDataEnd(reqId: Int, startDateStr: String, endDateStr: String) {

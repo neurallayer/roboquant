@@ -31,7 +31,8 @@ import java.time.Instant
  * @constructor
  *
  */
-class BinanceHistoricFeed(apiKey: String? = null, secret:String? = null, private val useMachineTime: Boolean = true) : HistoricPriceFeed() {
+class BinanceHistoricFeed(apiKey: String? = null, secret: String? = null, private val useMachineTime: Boolean = true) :
+    HistoricPriceFeed() {
 
     private var client: BinanceApiRestClient
     private val logger = Logging.getLogger(this)
@@ -46,19 +47,31 @@ class BinanceHistoricFeed(apiKey: String? = null, secret:String? = null, private
     }
 
 
-    fun retrieve(vararg currencyPairs:String, timeFrame: TimeFrame, interval: Interval = Interval.DAILY, limit: Int = 1000) {
-        require(currencyPairs.isNotEmpty()) { "You need to provide at least 1 currency pair"}
+    fun retrieve(
+        vararg currencyPairs: String,
+        timeFrame: TimeFrame,
+        interval: Interval = Interval.DAILY,
+        limit: Int = 1000
+    ) {
+        require(currencyPairs.isNotEmpty()) { "You need to provide at least 1 currency pair" }
         val startTime = timeFrame.start.toEpochMilli()
         val endTime = timeFrame.end.toEpochMilli() - 1 // Binance uses inclusive end-times, so we subtract 1 millis
         for (name in currencyPairs) {
             val asset = CryptoBuilder().invoke(name.uppercase(), binanceTemplate)
             val bars = client.getCandlestickBars(asset.symbol, interval, limit, startTime, endTime)
             for (bar in bars) {
-                val action = PriceBar(asset, bar.open.toDouble(), bar.high.toDouble(), bar.low.toDouble(), bar.close.toDouble(), bar.volume.toDouble())
+                val action = PriceBar(
+                    asset,
+                    bar.open.toDouble(),
+                    bar.high.toDouble(),
+                    bar.low.toDouble(),
+                    bar.close.toDouble(),
+                    bar.volume.toDouble()
+                )
                 val now = Instant.ofEpochMilli(bar.closeTime)
                 add(now, action)
             }
-            logger.fine { "Retrieved $asset for $timeFrame"}
+            logger.fine { "Retrieved $asset for $timeFrame" }
         }
     }
 

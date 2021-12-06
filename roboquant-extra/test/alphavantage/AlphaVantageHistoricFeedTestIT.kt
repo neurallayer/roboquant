@@ -34,7 +34,7 @@ internal class AlphaVantageHistoricFeedTestIT {
         val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), logger = SilentLogger())
 
         val feed = AlphaVantageHistoricFeed("dummy", compensateTimeZone = true, generateSinglePrice = false)
-        val asset = Asset("AAPL", AssetType.STOCK,"USD", "NASDAQ")
+        val asset = Asset("AAPL", AssetType.STOCK, "USD", "NASDAQ")
         feed.retrieve(asset)
         roboquant.run(feed)
     }

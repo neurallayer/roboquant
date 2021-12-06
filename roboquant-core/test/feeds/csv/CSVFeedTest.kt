@@ -32,7 +32,7 @@ internal class CSVFeedTest {
     @Test
     fun getContracts() {
         val feed = CSVFeed(TestData.dataDir() + "US")
-        assertEquals(4, feed.assets.size )
+        assertEquals(4, feed.assets.size)
         // val c= StockBuilder().invoke("AAPL")
         // assertTrue(feed.assets.contains(c))
         val c2 = feed.assets.find { it.symbol == "AAPL" }
@@ -51,18 +51,17 @@ internal class CSVFeedTest {
     }
 
 
-
     @Test
     fun customBuilder() {
         val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
         val config = CSVConfig(template = asset)
-        val feed =  CSVFeed(TestData.dataDir() + "US", config)
+        val feed = CSVFeed(TestData.dataDir() + "US", config)
         assertEquals("TEST123", feed.assets.first().exchangeCode)
     }
 
     @Test
     fun play() {
-        val feed =  CSVFeed(TestData.dataDir() + "US")
+        val feed = CSVFeed(TestData.dataDir() + "US")
         var past = Instant.MIN
         runBlocking {
             for (event in org.roboquant.feeds.play(feed)) {
@@ -74,7 +73,7 @@ internal class CSVFeedTest {
 
     @Test
     fun find() {
-        val feed =  CSVFeed(TestData.dataDir() + "US")
+        val feed = CSVFeed(TestData.dataDir() + "US")
         val apple = feed.find("AAPL")
         assertNotNull(apple)
     }
@@ -82,13 +81,13 @@ internal class CSVFeedTest {
 
     @Test
     fun split() {
-        val feed =  CSVFeed(TestData.dataDir() + "US")
+        val feed = CSVFeed(TestData.dataDir() + "US")
         val tfs = feed.split(Period.ofYears(1))
         var cnt = 0
         runBlocking {
             for (tf in tfs)
                 for (event in org.roboquant.feeds.play(feed, tf)) {
-                   cnt++
+                    cnt++
                 }
         }
         assertEquals(feed.timeline.size, cnt)
@@ -97,13 +96,12 @@ internal class CSVFeedTest {
     @Test
     fun mergeCSVFeeds() {
         val feed = CSVFeed(TestData.dataDir() + "US")
-        val feed2 =  CSVFeed(TestData.dataDir() +"EU")
+        val feed2 = CSVFeed(TestData.dataDir() + "EU")
         feed.merge(feed2)
-        assertEquals(2, feed.assets.map {it.currency}.toHashSet().size)
-        val feed3 =  CSVFeed(TestData.dataDir() + "FX")
+        assertEquals(2, feed.assets.map { it.currency }.toHashSet().size)
+        val feed3 = CSVFeed(TestData.dataDir() + "FX")
         feed.merge(feed3)
-        assertEquals(2, feed.assets.map {it.currency}.toHashSet().size)
-
+        assertEquals(2, feed.assets.map { it.currency }.toHashSet().size)
 
 
     }

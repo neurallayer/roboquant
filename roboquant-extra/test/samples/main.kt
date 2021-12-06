@@ -117,7 +117,7 @@ fun feedIEXLive() {
     val strategy = EMACrossover()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
     roboquant.run(feed, TimeFrame.next(5.minutes))
-    roboquant.broker. account.summary().log()
+    roboquant.broker.account.summary().log()
     roboquant.logger.summary().log()
 }
 

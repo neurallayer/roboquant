@@ -39,7 +39,7 @@ class CalendarChart(
     private fun prepData(): MutableMap<Int, List<Any>> {
 
         max = metricsData.map { it.value }.maxOfOrNull { it.toDouble().absoluteValue } ?: 1.0
-        val perYear = metricsData.groupBy { it.info.time.atZone(zoneId).year}
+        val perYear = metricsData.groupBy { it.info.time.atZone(zoneId).year }
         val result = mutableMapOf<Int, List<Pair<String, BigDecimal>>>()
         perYear.forEach { (t, u) ->
             result[t] = u.map {

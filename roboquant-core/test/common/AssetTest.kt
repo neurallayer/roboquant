@@ -48,7 +48,7 @@ internal class AssetTest {
         assertEquals(b, assets.findByCurrencies("USD")[0])
 
         val asset = assets.random(1)
-        assertTrue { assets.containsAll(asset)}
+        assertTrue { assets.containsAll(asset) }
 
         val s = assets.summary()
         assertTrue { s.content.isNotEmpty() }

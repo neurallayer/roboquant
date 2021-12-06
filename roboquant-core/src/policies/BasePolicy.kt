@@ -89,10 +89,9 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
      */
     protected fun calcVolume(buyingPower: Double, asset: Asset, price: Double, account: Account): Double {
         val cost = asset.multiplier * price
-        val availableAssetCash =  account.convertToCurrency(account.baseCurrency, buyingPower, asset.currency)
+        val availableAssetCash = account.convertToCurrency(account.baseCurrency, buyingPower, asset.currency)
         return availableAssetCash / cost
     }
-
 
 
     /**
@@ -101,18 +100,18 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
      *
 
     fun getPotentialPositions(account: Account): Map<Asset, Double> {
-        val result = mutableMapOf<Asset, Double>()
-        val op = account.portfolio.openPositions.map { it.key to it.value.quantity }
-        result.putAll(op)
-        account.openOrders.forEach {
-            val pos = result.getOrDefault(it.asset, 0.0)
-            val newPos = pos + it.remaining
+    val result = mutableMapOf<Asset, Double>()
+    val op = account.portfolio.openPositions.map { it.key to it.value.quantity }
+    result.putAll(op)
+    account.openOrders.forEach {
+    val pos = result.getOrDefault(it.asset, 0.0)
+    val newPos = pos + it.remaining
 
-            // Only in case of an increase of the exposed position we include an open order
-            if (newPos.absoluteValue > pos.absoluteValue)
-                result.get(it.asset) = newPos
-        }
-        return result
+    // Only in case of an increase of the exposed position we include an open order
+    if (newPos.absoluteValue > pos.absoluteValue)
+    result.get(it.asset) = newPos
+    }
+    return result
     }
      */
 

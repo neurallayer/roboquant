@@ -28,7 +28,6 @@ import kotlin.math.floor
 import kotlin.math.min
 
 
-
 /**
  * This is the default policy that will be used if no other policy is specified. There are a number of parameters that
  * can be configured to change it behavior.

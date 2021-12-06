@@ -54,7 +54,7 @@ class PriceChart(
 
 
     private fun markPoints(): List<Map<String, Any>> {
-        val t = trades.filter { it.asset == asset && timeFrame.contains(it.time)}
+        val t = trades.filter { it.asset == asset && timeFrame.contains(it.time) }
         val result = mutableListOf<Map<String, Any>>()
         for (trade in t) {
             val entry = mapOf(
@@ -68,11 +68,11 @@ class PriceChart(
     /** @suppress */
     override fun renderOption(): String {
         val line = fromFeed()
-        val lineData =  gsonBuilder.create().toJson(line)
+        val lineData = gsonBuilder.create().toJson(line)
         val timeFrame = if (line.isNotEmpty()) TimeFrame(line.first().first, line.last().first).toPrettyString() else ""
 
         val marks = markPoints()
-        val markData =  gsonBuilder.create().toJson(marks)
+        val markData = gsonBuilder.create().toJson(marks)
 
         val series = """
             {

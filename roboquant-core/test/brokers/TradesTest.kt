@@ -55,7 +55,7 @@ internal class TradesTest {
 
         val trades2 = trades[0..5]
         assertEquals(50.0, trades2.totalFee().getAmount(Currency.USD))
-        
+
         assertEquals(5, trades2.timeline.size)
 
     }

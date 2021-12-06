@@ -31,8 +31,8 @@ import java.time.Instant
  */
 class TestHistoricFeed(
     private vararg val prices: IntProgression = arrayOf(90..100, 100 downTo 90),
-    private val start:Instant = Instant.parse("1970-01-01T12:00:00Z"),
-    private val duration:Duration = Duration.ofDays(1),
+    private val start: Instant = Instant.parse("1970-01-01T12:00:00Z"),
+    private val duration: Duration = Duration.ofDays(1),
     private val asset: Asset = Asset("TEST"),
     private val priceBar: Boolean = false,
     private val volume: Double = 1000.0

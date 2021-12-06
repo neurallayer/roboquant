@@ -32,9 +32,9 @@ internal class SignalTest {
         val s = Signal(c, Rating.BUY)
 
         assertEquals(s.asset, c)
-        assertTrue( s.takeProfit.isNaN())
-        assertTrue( s.takeProfit.isNaN())
-        assertTrue( s.probability.isNaN())
+        assertTrue(s.takeProfit.isNaN())
+        assertTrue(s.takeProfit.isNaN())
+        assertTrue(s.probability.isNaN())
         assertEquals(s.rating, Rating.BUY)
 
         val mo = s.toMarketOrder(100.0)
@@ -46,10 +46,10 @@ internal class SignalTest {
 
         val s2 = Signal(c, Rating.SELL, takeProfit = 110.0)
         assertTrue(s2.conflicts(s))
-        assertTrue(! s2.conflicts(s2))
+        assertTrue(!s2.conflicts(s2))
 
         val lo = s2.toLimitOrder(100.0)
-        assertEquals(110.0, lo.limit )
+        assertEquals(110.0, lo.limit)
 
 
         val s3 = Signal(c, Rating.SELL, SignalType.ENTRY)

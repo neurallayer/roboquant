@@ -34,7 +34,6 @@ import org.roboquant.common.Asset
 interface Action
 
 
-
 /**
  * PriceAction represents an [Action] that contains pricing information for a single asset.
  *

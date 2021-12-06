@@ -37,7 +37,7 @@ class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : O
         require(originalOrder.asset == updateOrder.asset)
     }
 
-    override fun execute(price: Double, time: Instant) : List<Execution> {
+    override fun execute(price: Double, time: Instant): List<Execution> {
         place(price, time)
 
         when {

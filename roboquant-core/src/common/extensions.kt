@@ -48,7 +48,7 @@ operator fun Instant.plus(i: Int): Instant = plusMillis(i.toLong())
 fun Instant.toUTC(): ZonedDateTime = atZone(ZoneId.of("UTC"))
 
 
-fun Collection<String>.summary(header: String = "Values") : Summary {
+fun Collection<String>.summary(header: String = "Values"): Summary {
     val result = Summary(header)
     forEach { result.add(it) }
     return result
@@ -75,7 +75,7 @@ operator fun <T> List<T>.get(range: IntRange): List<T> = this.subList(max(0, ran
  * @param elem The element to be added
  * @return True is the collection has been modified, false otherwise
  */
-fun <T> MutableCollection<T>.addNotNull(elem: T?) : Boolean {
+fun <T> MutableCollection<T>.addNotNull(elem: T?): Boolean {
     return if (elem !== null) add(elem) else false
 }
 
@@ -192,7 +192,7 @@ fun Pair<List<Double>, List<Double>>.clean(): Pair<DoubleArray, DoubleArray> {
 }
 
 
-fun String?.escapeHtml() : String  = StringEscapeUtils.escapeHtml4(this ?: "")
+fun String?.escapeHtml(): String = StringEscapeUtils.escapeHtml4(this ?: "")
 
 
 /**
@@ -210,10 +210,10 @@ fun Number.round(fractions: Int = 2): BigDecimal = BigDecimal(toDouble()).setSca
 /**
  * Annualize an amount based on the duration of this time frame.
  */
-fun Number.annualize(tf: TimeFrame) : Double {
-        val period = tf.duration.toMillis()
-        val years = (365.0 * 24.0 * 3600.0 * 1000.0) / period
-        return (1.0 + toDouble()).pow(years) - 1.0
+fun Number.annualize(tf: TimeFrame): Double {
+    val period = tf.duration.toMillis()
+    val years = (365.0 * 24.0 * 3600.0 * 1000.0) / period
+    return (1.0 + toDouble()).pow(years) - 1.0
 }
 
 
@@ -233,7 +233,7 @@ val Int.weeks
     get() = Period.ofWeeks(this)
 
 val Int.hours
-    get() =  Duration.ofHours(this.toLong())
+    get() = Duration.ofHours(this.toLong())
 
 val Int.minutes
     get() = Duration.ofMinutes(this.toLong())

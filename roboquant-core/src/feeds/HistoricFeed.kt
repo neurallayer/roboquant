@@ -71,6 +71,5 @@ interface HistoricFeed : AssetFeed {
     fun split(size: Int) = timeline.split(size)
 
 
-
 }
 

@@ -124,8 +124,8 @@ class Account(
         val tradesSummary = Summary("Trades")
         tradesSummary.add("total", trades.size)
         val realizedPNL = convertToCurrency(trades.realizedPnL())
-        tradesSummary.add("realized p&l",  baseCurrency.format(realizedPNL))
-        tradesSummary.add("assets",  trades.assets.size)
+        tradesSummary.add("realized p&l", baseCurrency.format(realizedPNL))
+        tradesSummary.add("assets", trades.assets.size)
         val fee = convertToCurrency(trades.totalFee())
         tradesSummary.add("fee", baseCurrency.format(fee))
         s.add(tradesSummary)
@@ -172,7 +172,12 @@ class Account(
         return sum
     }
 
-    fun convertToCurrency(fromCurrency: Currency, amount: Double, toCurrency: Currency = baseCurrency, now: Instant = time): Double {
+    fun convertToCurrency(
+        fromCurrency: Currency,
+        amount: Double,
+        toCurrency: Currency = baseCurrency,
+        now: Instant = time
+    ): Double {
         return if (fromCurrency === toCurrency || amount == 0.0) {
             amount
         } else {

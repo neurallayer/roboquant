@@ -30,10 +30,10 @@ internal class SimBrokerTest {
     fun basicSimBrokerTest() {
         val broker = SimBroker()
         val event = TestData.event()
-        val account = broker.place(listOf(),event)
+        val account = broker.place(listOf(), event)
         assertTrue(account.orders.isEmpty())
 
-        broker.place(listOf(),event)
+        broker.place(listOf(), event)
 
         val broker2 = SimBroker.withDeposit(100_000.00)
         assertEquals(Currency.USD, broker2.account.baseCurrency)

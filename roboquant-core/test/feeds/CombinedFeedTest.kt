@@ -24,7 +24,7 @@ import kotlin.test.assertEquals
 internal class CombinedFeedTest {
 
     @Test
-    fun testCombinedFeed() = runBlocking{
+    fun testCombinedFeed() = runBlocking {
         val f1 = TestLiveFeed(10..19)
         val f2 = TestLiveFeed(60..69)
         val cf = CombinedFeed(f1, f2)

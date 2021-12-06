@@ -27,7 +27,7 @@ internal class PairBufferTest {
         val pb = PairBuffer(20)
         for (i in 1..25) {
             val d = i.toDouble()
-            pb.add(d * 2.0 , d)
+            pb.add(d * 2.0, d)
         }
         assertTrue(pb.isAvailable())
         // assertEquals(1.0, pb.covariance().absoluteValue)

@@ -46,15 +46,15 @@ object TestData {
 
     fun usMarketOrder() = MarketOrder(usStock(), 10.0)
 
-    private fun priceAction(asset:Asset = usStock()) = TradePrice(asset, 10.0)
+    private fun priceAction(asset: Asset = usStock()) = TradePrice(asset, 10.0)
 
-    fun priceBar(asset:Asset = usStock()) = PriceBar(asset, 10.0, 11.0, 9.0, 10.0, 1000.0)
+    fun priceBar(asset: Asset = usStock()) = PriceBar(asset, 10.0, 11.0, 9.0, 10.0, 1000.0)
 
     fun time() = Instant.parse("2020-01-03T12:00:00Z")!!
 
     fun event(time: Instant = time()) = Event(listOf(priceAction()), time)
 
-    fun event2(time: Instant = time()) = Event( listOf(priceAction(usStock()), priceAction(euStock())), time)
+    fun event2(time: Instant = time()) = Event(listOf(priceAction(usStock()), priceAction(euStock())), time)
 
     fun metricInput(time: Instant = time()): Pair<Account, Event> {
         val account = Account()

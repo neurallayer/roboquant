@@ -63,34 +63,35 @@ object AvroGenerator {
      *
      * It will overwrite an existing file with the same name.
      */
-    fun capture(feed: Feed, fileName: String, timeFrame: TimeFrame = TimeFrame.FULL, compressionLevel: Int = 1) = runBlocking {
+    fun capture(feed: Feed, fileName: String, timeFrame: TimeFrame = TimeFrame.FULL, compressionLevel: Int = 1) =
+        runBlocking {
 
-        val channel = EventChannel(timeFrame = timeFrame)
-        val file = File(fileName)
-        val schema = Schema.Parser().parse(schemaDef)
-        val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
-        val dataFileWriter = DataFileWriter(datumWriter)
-        dataFileWriter.setCodec(CodecFactory.deflateCodec(compressionLevel))
+            val channel = EventChannel(timeFrame = timeFrame)
+            val file = File(fileName)
+            val schema = Schema.Parser().parse(schemaDef)
+            val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
+            val dataFileWriter = DataFileWriter(datumWriter)
+            dataFileWriter.setCodec(CodecFactory.deflateCodec(compressionLevel))
 
-        val tf = feed.timeFrame.intersect(timeFrame)
-        dataFileWriter.setMeta("roboquant.start", tf.start.toEpochMilli())
-        dataFileWriter.setMeta("roboquant.end", tf.end.toEpochMilli())
+            val tf = feed.timeFrame.intersect(timeFrame)
+            dataFileWriter.setMeta("roboquant.start", tf.start.toEpochMilli())
+            dataFileWriter.setMeta("roboquant.end", tf.end.toEpochMilli())
 
-        dataFileWriter.create(schema, file)
+            dataFileWriter.create(schema, file)
 
-        val cache = mutableMapOf<Asset, String>()
+            val cache = mutableMapOf<Asset, String>()
 
-        val job = launch {
-            feed.play(channel)
-            channel.close()
-        }
+            val job = launch {
+                feed.play(channel)
+                channel.close()
+            }
 
-        try {
-            val record = GenericData.Record(schema)
-            while (true) {
-                val event = channel.receive()
-                val now = event.now.toEpochMilli()
-                for (action in event.actions.filterIsInstance<PriceBar>()) {
+            try {
+                val record = GenericData.Record(schema)
+                while (true) {
+                    val event = channel.receive()
+                    val now = event.now.toEpochMilli()
+                    for (action in event.actions.filterIsInstance<PriceBar>()) {
                         val assetStr = cache.getOrPut(action.asset) { action.asset.serialize() }
                         record.put(0, now)
                         record.put(1, assetStr)
@@ -100,19 +101,19 @@ object AvroGenerator {
                         record.put(5, action.close)
                         record.put(6, action.volume)
                         dataFileWriter.append(record)
+                    }
+
+                    // We sync after each event, so we can later create an index if required
+                    dataFileWriter.sync()
                 }
 
-                // We sync after each event, so we can later create an index if required
+            } catch (e: ClosedReceiveChannelException) {
+                // On purpose left empty, expected exception
+            } finally {
+                channel.close()
+                if (job.isActive) job.cancel()
                 dataFileWriter.sync()
+                dataFileWriter.close()
             }
-
-        } catch (e: ClosedReceiveChannelException) {
-            // On purpose left empty, expected exception
-        } finally {
-            channel.close()
-            if (job.isActive) job.cancel()
-            dataFileWriter.sync()
-            dataFileWriter.close()
         }
-    }
 }

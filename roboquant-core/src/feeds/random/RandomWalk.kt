@@ -121,11 +121,16 @@ class RandomWalk(
     }
 
 
-
     /**
      * Generate random bars
      */
-    private fun generateBars(asset: Asset, size: Int, minVolume: Int, maxVolume: Int, maxDayRange: Float): List<PriceAction> {
+    private fun generateBars(
+        asset: Asset,
+        size: Int,
+        minVolume: Int,
+        maxVolume: Int,
+        maxDayRange: Float
+    ): List<PriceAction> {
         val data = mutableListOf<PriceBar>()
         var prevPrice = 100.0f
         val plusVolume = maxVolume - minVolume

@@ -123,12 +123,12 @@ class Exchange private constructor(
             addInstance("SIX", "Europe/Zurich", "CHF", "09:00", "17:20")
 
             // Main Asian exchanges
-            addInstance("JPX", "Asia/Tokyo", "JPY","09:00", "15:00")
-            addInstance("SSE", "Asia/Shanghai", "CNY","09:30", "15:00")
-            addInstance("SEHK", "Asia/Hong_Kong", "CNY","09:30", "16:00")
+            addInstance("JPX", "Asia/Tokyo", "JPY", "09:00", "15:00")
+            addInstance("SSE", "Asia/Shanghai", "CNY", "09:30", "15:00")
+            addInstance("SEHK", "Asia/Hong_Kong", "CNY", "09:30", "16:00")
 
             // Main Australian exchanges
-            addInstance("SSX", "Australia/Sydney", "AUD","10:00", "16:00")
+            addInstance("SSX", "Australia/Sydney", "AUD", "10:00", "16:00")
         }
 
 

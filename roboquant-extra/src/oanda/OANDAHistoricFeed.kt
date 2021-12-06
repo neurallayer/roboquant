@@ -64,5 +64,4 @@ class OANDAHistoricFeed(token: String? = null, demoAccount: Boolean = true) : Hi
     }
 
 
-
 }

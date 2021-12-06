@@ -28,12 +28,12 @@ import java.time.Period
 internal class RandomWalkTest {
 
     @Test
-    fun randomly() = runBlocking{
+    fun randomly() = runBlocking {
         val feed = RandomWalk.lastYears(1, 20)
         var cnt = 0
         var now = Instant.MIN
         for (step in play(feed)) {
-            assertTrue( step.now >= now )
+            assertTrue(step.now >= now)
             now = step.now
             cnt++
         }
@@ -42,7 +42,7 @@ internal class RandomWalkTest {
     }
 
     @Test
-    fun itemTypes() = runBlocking{
+    fun itemTypes() = runBlocking {
         val feed = RandomWalk.lastYears(generateBars = false)
         val event = play(feed).receive()
         assertTrue(event.actions[0] is TradePrice)
@@ -50,7 +50,7 @@ internal class RandomWalkTest {
         val tl = TimeFrame.fromYears(2010, 2012).toDays()
         val feed2 = RandomWalk(tl, generateBars = true)
         val item2 = play(feed2).receive()
-        assertTrue( item2.actions[0] is PriceBar)
+        assertTrue(item2.actions[0] is PriceBar)
     }
 
 

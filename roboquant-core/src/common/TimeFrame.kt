@@ -64,8 +64,8 @@ data class TimeFrame(val start: Instant, val end: Instant) {
          */
         fun fromYears(first: Int, last: Int, zoneId: ZoneId = ZoneId.of("UTC")): TimeFrame {
             require(last >= first)
-            val start = ZonedDateTime.of(first, 1, 1, 0, 0 , 0, 0, zoneId)
-            val stop = ZonedDateTime.of(last + 1, 1, 1, 0, 0 , 0, 0, zoneId)
+            val start = ZonedDateTime.of(first, 1, 1, 0, 0, 0, 0, zoneId)
+            val stop = ZonedDateTime.of(last + 1, 1, 1, 0, 0, 0, 0, zoneId)
             return TimeFrame(start.toInstant(), stop.toInstant())
         }
 
@@ -89,7 +89,7 @@ data class TimeFrame(val start: Instant, val end: Instant) {
          */
         fun past(period: TemporalAmount): TimeFrame {
             val end = Instant.now()
-            return TimeFrame(end-period, end)
+            return TimeFrame(end - period, end)
         }
 
         /**
@@ -229,7 +229,6 @@ data class TimeFrame(val start: Instant, val end: Instant) {
         val border = start.plus(train, ChronoUnit.MILLIS)
         return Pair(TimeFrame(start, border), TimeFrame(border, end))
     }
-
 
 
     /**

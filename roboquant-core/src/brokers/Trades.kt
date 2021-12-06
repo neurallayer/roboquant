@@ -103,9 +103,9 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
         return result
     }
 
-    private fun Sequence<Trade>.filter(timeFrame: TimeFrame?) : Sequence<Trade> {
+    private fun Sequence<Trade>.filter(timeFrame: TimeFrame?): Sequence<Trade> {
         return if (timeFrame == null)
-           this
+            this
         else
             filter { timeFrame.contains(it.time) }
     }

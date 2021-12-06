@@ -37,7 +37,7 @@ class PriceCorrelationChart(
     private val assets: Collection<Asset>,
     private val timeFrame: TimeFrame = TimeFrame.FULL,
     private val priceType: String = "DEFAULT",
-    private val scale:Int = 2,
+    private val scale: Int = 2,
     private val minObservations: Int = 3
 ) : Chart() {
 
@@ -59,7 +59,7 @@ class PriceCorrelationChart(
                 val o = channel.receive()
                 for (asset in assets) {
                     val price = o.getPrice(asset, priceType) ?: Double.NaN
-                    val list = result.getOrPut(asset) { mutableListOf()}
+                    val list = result.getOrPut(asset) { mutableListOf() }
                     list.add(price)
                 }
             }
@@ -95,7 +95,7 @@ class PriceCorrelationChart(
     override fun renderOption(): String {
         val prices = collectPrices()
         val labels = prices.keys.map { it.symbol }
-        val labelsData =  gsonBuilder.create().toJson(labels)
+        val labelsData = gsonBuilder.create().toJson(labels)
 
         val data = getMatrix(prices)
         val dataJson = gsonBuilder.create().toJson(data)

@@ -49,14 +49,14 @@ internal class TimeInForceTest {
         val t2 = order.placed.plusSeconds(1000)
         assertFalse(tif.isExpired(order, t2, 10.0, 20.0))
 
-        val t3 = order.placed.plusSeconds(3600L*24*365)
+        val t3 = order.placed.plusSeconds(3600L * 24 * 365)
         assertTrue(tif.isExpired(order, t3, 10.0, 20.0))
     }
 
     @Test
     fun gtd() {
         // 5 days in future
-        val date =Instant.now().plusSeconds(3600L*24*5)
+        val date = Instant.now().plusSeconds(3600L * 24 * 5)
         val tif = GTD(date)
         assertEquals("GTD", tif.toString().slice(0..2))
 
@@ -67,8 +67,8 @@ internal class TimeInForceTest {
 
         assertFalse(tif.isExpired(order, t2, 1.0, 10.0))
 
-        val t3 = t1.plusSeconds((3600L*24*6))
-        assertTrue(tif.isExpired(order, t3,10.0, 10.0))
+        val t3 = t1.plusSeconds((3600L * 24 * 6))
+        assertTrue(tif.isExpired(order, t3, 10.0, 10.0))
     }
 
     @Test
@@ -79,8 +79,8 @@ internal class TimeInForceTest {
         val date = Instant.now()
         order.updatePlaced(date)
 
-        assertFalse(tif.isExpired(order, date,10.0, 20.0))
-        assertTrue(tif.isExpired(order, date.plus(1, ChronoUnit.DAYS),10.0, 20.0))
+        assertFalse(tif.isExpired(order, date, 10.0, 20.0))
+        assertTrue(tif.isExpired(order, date.plus(1, ChronoUnit.DAYS), 10.0, 20.0))
     }
 
     @Test

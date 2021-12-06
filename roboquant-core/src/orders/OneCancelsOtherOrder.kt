@@ -45,7 +45,7 @@ class OneCancelsOtherOrder(
         return max(first.getValue(price), second.getValue(price))
     }
 
-    override fun execute(price: Double, time: Instant) : List<Execution> {
+    override fun execute(price: Double, time: Instant): List<Execution> {
         var executions = listOf<Execution>()
         place(price, time)
 

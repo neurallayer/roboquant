@@ -29,7 +29,7 @@ internal class AccountTest {
     fun basis() {
         val account = Account()
         val wallet = account.getValue()
-        val amount = account.convertToCurrency(wallet, now=Instant.now())
+        val amount = account.convertToCurrency(wallet, now = Instant.now())
         assertEquals(0.00, amount)
         assertEquals(Currency.getInstance("USD"), account.baseCurrency)
         assertTrue(account.portfolio.isEmpty())
@@ -37,7 +37,7 @@ internal class AccountTest {
         assertTrue(account.trades.isEmpty())
         assertTrue(account.trades.realizedPnL().isEmpty())
 
-        val asset= Asset("Dummy")
+        val asset = Asset("Dummy")
         assertTrue(account.trades.realizedPnL(asset) == 0.0)
 
         val s = account.summary()

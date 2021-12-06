@@ -54,10 +54,10 @@ internal class PriceActionTest {
     fun testOrderBook() {
         val asset = Asset("DUMMY")
         val p = OrderBook(
-                asset,
-                listOf(OrderBook.OrderBookEntry(10.0, 11.0), OrderBook.OrderBookEntry(10.0, 11.1)),
-                listOf(OrderBook.OrderBookEntry(20.0, 10.0), OrderBook.OrderBookEntry(20.0, 10.1))
-            )
+            asset,
+            listOf(OrderBook.OrderBookEntry(10.0, 11.0), OrderBook.OrderBookEntry(10.0, 11.1)),
+            listOf(OrderBook.OrderBookEntry(20.0, 10.0), OrderBook.OrderBookEntry(20.0, 10.1))
+        )
 
         var price = p.getPrice()
         assertEquals(10.55, price)

@@ -60,7 +60,7 @@ class RSI(initialPrice: Double, private val periods: Int = 14, private val minSt
      */
     fun calculate(): Double {
 
-        return if ((! avgGain.isNaN()) && (! avgLoss.isNaN()))
+        return if ((!avgGain.isNaN()) && (!avgLoss.isNaN()))
             100.0 - (100.0 / (1.0 + (avgGain / -avgLoss)))
         else if (avgGain.isNaN() && avgLoss.isNaN())
             50.0

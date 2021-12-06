@@ -40,7 +40,7 @@ internal class FixedExchangeRatesTest {
         val feed = CSVFeed(TestData.dataDir() + "US")
         val asset = Asset("TEMPLATE", currencyCode = "EUR")
         val config = CSVConfig(template = asset)
-        val feed2 = CSVFeed(TestData.dataDir() +"EU", config)
+        val feed2 = CSVFeed(TestData.dataDir() + "EU", config)
         feed.merge(feed2)
 
         val currencyConverter = FixedExchangeRates(USD, EUR to 1.2)

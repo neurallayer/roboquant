@@ -32,7 +32,7 @@ internal class ActionTest {
     @Test
     fun priceAction() {
         val asset = TestData.euStock()
-        val pb = PriceBar.fromAdjustedClose(asset, 2,1,1,1,0.5, 100)
+        val pb = PriceBar.fromAdjustedClose(asset, 2, 1, 1, 1, 0.5, 100)
         assertEquals(1.0f, pb.open)
         assertEquals(200f, pb.volume)
     }

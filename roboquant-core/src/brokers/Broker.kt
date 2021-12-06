@@ -44,5 +44,4 @@ interface Broker : Component {
     fun place(orders: List<Order>, event: Event): Account
 
 
-
 }

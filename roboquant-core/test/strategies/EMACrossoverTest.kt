@@ -31,12 +31,12 @@ internal class EMACrossoverTest {
 
         val strategy = EMACrossover()
 
-        val roboquant = Roboquant(strategy, logger = SilentLogger() )
-        roboquant.run( feed)
+        val roboquant = Roboquant(strategy, logger = SilentLogger())
+        roboquant.run(feed)
     }
 
     @Test
-    fun simple2()  {
+    fun simple2() {
         val strategy1 = EMACrossover.shortTerm()
         val strategy2 = EMACrossover.longTerm()
         assertTrue(strategy1.fast < strategy2.fast)

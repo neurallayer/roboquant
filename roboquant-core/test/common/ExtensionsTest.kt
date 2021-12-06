@@ -30,7 +30,7 @@ class ExtensionsTest {
         assertEquals(0.0, a.skewness())
         assertEquals(0.6666666666666666, a.variance())
 
-        assertEquals(1.0, (a/2.0).mean())
+        assertEquals(1.0, (a / 2.0).mean())
     }
 
 
@@ -38,7 +38,6 @@ class ExtensionsTest {
     fun testInstant() {
 
     }
-
 
 
 }

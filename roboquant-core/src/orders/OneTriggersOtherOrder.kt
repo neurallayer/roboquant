@@ -43,7 +43,7 @@ class OneTriggersOtherOrder(
         return max(first.getValue(price), 0.0) + max(second.getValue(price), 0.0)
     }
 
-    override fun execute(price: Double, time: Instant) : List<Execution> {
+    override fun execute(price: Double, time: Instant): List<Execution> {
         val executions = mutableListOf<Execution>()
         place(price, time)
 

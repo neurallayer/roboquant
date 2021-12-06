@@ -40,7 +40,7 @@ internal class DefaultPolicyTest {
     @Test
     fun order2() {
 
-        class MyPolicy(val percentage: Double=0.05) : DefaultPolicy() {
+        class MyPolicy(val percentage: Double = 0.05) : DefaultPolicy() {
 
             override fun createOrder(signal: Signal, qty: Double, price: Double): Order {
                 val asset = signal.asset
@@ -50,7 +50,7 @@ internal class DefaultPolicyTest {
                 return BracketOrder(
                     MarketOrder(asset, qty),
                     LimitOrder(asset, qty, price * (1 + percentage)),
-                    StopOrder(asset, qty, price* (1 - percentage))
+                    StopOrder(asset, qty, price * (1 - percentage))
                 )
             }
         }

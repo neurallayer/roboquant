@@ -65,14 +65,14 @@ class Summary(val content: String) {
     /**
      * Directly print this summary to the standard out.
      */
-    fun print(maxChildren:Int = Int.MAX_VALUE) = print(toString(maxChildren))
+    fun print(maxChildren: Int = Int.MAX_VALUE) = print(toString(maxChildren))
 
     /**
      * Log this summary using the standard roboquant logger.
      *
      * @param level At which level this summary should be logged, default is INFO
      */
-    fun log(maxChildren:Int = Int.MAX_VALUE, level: Level = Level.INFO) = logger.log(level) {
+    fun log(maxChildren: Int = Int.MAX_VALUE, level: Level = Level.INFO) = logger.log(level) {
         toString(maxChildren)
     }
 
@@ -82,13 +82,18 @@ class Summary(val content: String) {
         return buffer.toString()
     }
 
-    fun toString(maxChildren:Int): String {
+    fun toString(maxChildren: Int): String {
         val buffer = StringBuilder(50)
         generate(buffer, "", "", maxChildren)
         return buffer.toString()
     }
 
-    private fun generate(buffer: StringBuilder, prefix: String, childrenPrefix: String, maxChildren:Int = Int.MAX_VALUE) {
+    private fun generate(
+        buffer: StringBuilder,
+        prefix: String,
+        childrenPrefix: String,
+        maxChildren: Int = Int.MAX_VALUE
+    ) {
         buffer.append(prefix)
         if (children.isNotEmpty()) buffer.append(Logging.LoggingFormatter.blue(content)) else buffer.append(content)
         buffer.append('\n')

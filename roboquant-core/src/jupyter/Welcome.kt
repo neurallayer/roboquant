@@ -54,7 +54,7 @@ class Welcome : Output() {
      * @return
      */
     override fun asHTMLPage(useCDN: Boolean): String {
-       return asHTML()
+        return asHTML()
     }
 
 

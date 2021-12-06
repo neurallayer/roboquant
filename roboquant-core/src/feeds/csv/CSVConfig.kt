@@ -59,7 +59,7 @@ data class CSVConfig(
 
 
     private val info = ColumnInfo()
-    private val pattern by lazy {  Pattern.compile(filePattern) }
+    private val pattern by lazy { Pattern.compile(filePattern) }
     private var hasColumnsDefined = false
 
     val exchange
@@ -67,9 +67,9 @@ data class CSVConfig(
 
     val currency: Currency
         get() = if (assetCurrency.isNotEmpty())
-                Currency.getInstance(assetCurrency)
-            else
-                exchange.currency
+            Currency.getInstance(assetCurrency)
+        else
+            exchange.currency
 
 
     init {
@@ -124,7 +124,7 @@ data class CSVConfig(
     }
 
 
-    private fun getTemplateAsset(config: Map<String, String>) : Asset {
+    private fun getTemplateAsset(config: Map<String, String>): Asset {
         return Asset(
             symbol = config.getOrDefault("symbol", "TEMPLATE"),
             type = AssetType.valueOf(config.getOrDefault("type", "STOCK")),
@@ -154,7 +154,7 @@ data class CSVConfig(
                 "price.validate" -> priceValidate = value.toBoolean()
                 "price.threshold" -> priceThreshold = value.toDouble()
                 else -> {
-                    logger.finer {"Found property $key with value $value"}
+                    logger.finer { "Found property $key with value $value" }
                 }
             }
         }

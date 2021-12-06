@@ -21,13 +21,13 @@ import org.roboquant.TestData
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class CostModelTest  {
+internal class CostModelTest {
 
     @Test
     fun testDefaultCostModel() {
         val model = DefaultCostModel()
         val order = TestData.usMarketOrder()
-        val exec = Execution(order.asset, order.quantity, 100.0 )
+        val exec = Execution(order.asset, order.quantity, 100.0)
         val (price, fee) = model.calculate(order, exec)
         assertTrue { price > exec.price }
         assertEquals(0.0, fee)
@@ -37,7 +37,7 @@ internal class CostModelTest  {
     fun testCommissionBasedCostModel() {
         val model = CommissionBasedCostModel()
         val order = TestData.usMarketOrder()
-        val exec = Execution(order.asset, order.quantity, 100.0 )
+        val exec = Execution(order.asset, order.quantity, 100.0)
         val (price, fee) = model.calculate(order, exec)
         assertTrue { price > exec.price }
         assertTrue { fee > 0.0 }

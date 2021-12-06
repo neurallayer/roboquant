@@ -31,7 +31,8 @@ open class HistoricPriceFeed : HistoricFeed {
         get() = events.keys.toList()
 
     override val assets
-        get() = events.values.map { priceAction -> priceAction.map { it.asset }.distinct() }.flatten().distinct().toSortedSet()
+        get() = events.values.map { priceAction -> priceAction.map { it.asset }.distinct() }.flatten().distinct()
+            .toSortedSet()
 
 
     /**
@@ -49,7 +50,7 @@ open class HistoricPriceFeed : HistoricFeed {
 
 
     protected fun add(time: Instant, action: PriceAction) {
-        val l = events.getOrPut(time) { mutableListOf()}
+        val l = events.getOrPut(time) { mutableListOf() }
         l.add(action)
     }
 
