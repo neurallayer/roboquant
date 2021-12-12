@@ -17,7 +17,9 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.MarketDataMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.bar.BarMessage
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.enums.MarketDataMessageType
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.quote.QuoteMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.trade.TradeMessage
 import net.jacobpeterson.alpaca.websocket.marketdata.MarketDataListener
@@ -26,6 +28,7 @@ import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
 import org.roboquant.feeds.*
 import java.time.Instant
+import java.util.concurrent.TimeUnit
 
 /**
  * Alpaca feed allows you to subscribe to live market data from Alpaca. Alpaca needs a key and secret in order to access
@@ -47,17 +50,22 @@ class AlpacaLiveFeed(
 ) : LiveFeed() {
 
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
-    private val assetsMap = mutableMapOf<String, Asset>()
 
-    val assets
-        get() = assetsMap.values.toSortedSet()
 
-    val logger = Logging.getLogger("AlpacaFeed")
+    val logger = Logging.getLogger(this)
     private val listener = createListener()
 
     val availableAssets by lazy {
         AlpacaConnection.getAvailableAssets(alpacaAPI)
     }
+
+    private val assetsMap by lazy {
+        availableAssets.associateBy { it.symbol }
+    }
+
+    val assets
+        get() = assetsMap.values.toSortedSet()
+
 
     init {
         if (autoConnect) connect()
@@ -69,7 +77,18 @@ class AlpacaLiveFeed(
      * Start listening for market data
      */
     fun connect() {
+        require(!alpacaAPI.marketDataStreaming().isConnected) { "Already connected, disconnect first" }
+
+        alpacaAPI.marketDataStreaming().subscribeToControl(
+            MarketDataMessageType.SUCCESS,
+            MarketDataMessageType.SUBSCRIPTION,
+            MarketDataMessageType.ERROR
+        )
         alpacaAPI.marketDataStreaming().connect()
+        alpacaAPI.marketDataStreaming().waitForAuthorization(5, TimeUnit.SECONDS)
+        if (!alpacaAPI.marketDataStreaming().isValid) {
+            logger.severe("Couldn't establish websocket connection")
+        }
     }
 
     /**
@@ -77,11 +96,17 @@ class AlpacaLiveFeed(
      */
     fun disconnect() {
         try {
-            alpacaAPI.marketDataStreaming().disconnect()
+            if (alpacaAPI.marketDataStreaming().isConnected) alpacaAPI.marketDataStreaming().disconnect()
         } catch (_: Exception) {
         }
     }
 
+    /**
+     * Just cleanup a any used connection
+     */
+    fun finalize() {
+        disconnect()
+    }
 
     fun subscribe(assets: Collection<Asset>) {
         subscribe(*assets.toTypedArray())
@@ -117,9 +142,9 @@ class AlpacaLiveFeed(
         subscribe(*assets)
     }
 
-    private fun createListener(): MarketDataListener {
-        return MarketDataListener { streamMessageType, msg ->
-            val action: PriceAction = when (msg) {
+    private fun handleMsg(msg: MarketDataMessage) {
+        try {
+            val action: PriceAction? = when (msg) {
                 is TradeMessage -> TradePrice(assetsMap[msg.symbol]!!, msg.price, msg.size.toDouble())
                 is QuoteMessage -> PriceQuote(
                     assetsMap[msg.symbol]!!,
@@ -137,14 +162,34 @@ class AlpacaLiveFeed(
                     msg.volume.toFloat()
                 )
                 else -> {
-                    throw Exception("Unexpected type $streamMessageType")
+                    logger.warning("Unexpected msg $msg")
+                    null
                 }
             }
-            val now = Instant.now()
-            val event = Event(listOf(action), now)
-            channel?.offer(event)
+
+            if (action != null) {
+                val now = Instant.now()
+                val event = Event(listOf(action), now)
+                channel?.offer(event)
+            }
+        } catch (e: Exception) {
+            logger.warning(e.message)
         }
     }
 
+
+    private fun createListener(): MarketDataListener {
+        return MarketDataListener { streamMessageType, msg ->
+            println(streamMessageType)
+
+            when (streamMessageType) {
+                MarketDataMessageType.ERROR -> logger.warning(msg.toString())
+                MarketDataMessageType.SUBSCRIPTION -> logger.info(msg.toString())
+                else -> handleMsg(msg)
+            }
+        }
+    }
 }
+
+
 

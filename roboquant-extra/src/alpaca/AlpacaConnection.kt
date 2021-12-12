@@ -20,12 +20,8 @@ import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.model.endpoint.asset.enums.AssetStatus
 import net.jacobpeterson.alpaca.model.properties.DataAPIType
 import net.jacobpeterson.alpaca.model.properties.EndpointAPIType
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Config
-import org.roboquant.common.Exchange
+import org.roboquant.common.*
 import java.util.*
-import java.util.logging.Logger
 
 typealias AccountType = EndpointAPIType
 typealias DataType = DataAPIType
@@ -35,7 +31,7 @@ typealias DataType = DataAPIType
  */
 internal object AlpacaConnection {
 
-    private val logger: Logger = Logger.getLogger("AlpacaConnection")
+    private val logger = Logging.getLogger("AlpacaConnection")
 
     /**
      * Should OTC assets be included, default is false

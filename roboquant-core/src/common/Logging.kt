@@ -57,6 +57,8 @@ object Logging {
         }
 
         override fun format(lr: LogRecord): String {
+            if (lr.thrown != null) lr.thrown.printStackTrace()
+
             return "[$ANSI_BLUE${lr.level.localizedName}$ANSI_RESET] $ANSI_GREEN${lr.loggerName}:$ANSI_RESET ${lr.message}\n"
         }
     }

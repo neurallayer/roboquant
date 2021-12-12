@@ -30,8 +30,6 @@ import org.roboquant.orders.*
 import org.roboquant.orders.OrderStatus
 import java.lang.Thread.sleep
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import kotlin.math.absoluteValue
 import com.ib.client.Order as IBOrder
 
@@ -57,35 +55,25 @@ class IBKRBroker(
 
     private var client: EClientSocket
     override val account: Account = Account(currencyConverter = currencyConverter)
-    private var orderId = generateOrderId()
-    private val placedOrders = mutableMapOf<Int, SingleOrder>()
     val logger = Logging.getLogger("IBKRBroker")
+    private var orderId = 0
+    private val orderMap = mutableMapOf<Int, Order>()
 
     init {
-        if (enableOrders) logger.warning { "Enabled real orders, use at your own risk!!!" }
+        if (enableOrders) logger.warning { "Enabling sending orders, use it at your own risk!!!" }
         val wrapper = Wrapper()
         client = IBKRConnection.connect(wrapper, host, port, clientId)
         client.reqCurrentTime()
         client.reqAccountUpdates(true, accountId)
+
+        // Only request orders created with this client, aka roboquant
+        // don't use client.reqAllOpenOrders()
         client.reqOpenOrders()
         waitTillSynced()
     }
 
     fun disconnect() = IBKRConnection.disconnect(client)
 
-
-    /**
-     * Generate a starting orderId that most likely won't conflict with other orderIds already
-     * in the system. Should be ok for roughly 68 year before an integer overflow. If generating on average more
-     * than 1 order per second with a quick restart also a conflict could arise.
-     *
-     * @return
-     */
-    private fun generateOrderId(): Int {
-        val l1 = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)
-        val l2 = LocalDateTime.parse("2020-01-01T00:00:00").toEpochSecond(ZoneOffset.UTC)
-        return (l1 - l2).toInt()
-    }
 
 
     /**
@@ -99,33 +87,34 @@ class IBKRBroker(
 
 
     /**
-     * Place a set of instruction
+     * Place on or more orders
      *
      * @param orders
      * @param event
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        if (!enableOrders) return account.clone()
+        account.orders.addAll(orders)
 
+        if (!enableOrders) return account.clone()
 
         // First we place the cancellation orders
         for (cancellation in orders.filterIsInstance<CancellationOrder>()) {
-            client.cancelOrder(cancellation.order.id.toInt())
+            logger.fine("received order $cancellation")
+            val id = orderMap.filterValues { it == cancellation.order }.keys.first()
+            client.cancelOrder(id)
         }
 
         // And now the regular new orders
         for (order in orders.filterIsInstance<SingleOrder>()) {
-            orderId += 1
-            val ibOrder = getIBOrder(order)
-            logger.fine("placing order $order")
-            placedOrders[orderId] = order
+            logger.fine("received order $order")
+            val ibOrder = createIBOrder(order)
+            logger.fine("placing order $ibOrder")
             val contract = IBKRConnection.getContract(order.asset)
-            client.placeOrder(orderId, contract, ibOrder)
-            account.orders.add(order)
+            client.placeOrder(ibOrder.orderId(), contract, ibOrder)
         }
 
-        // We always return a clone so changes to account while running strategies don't cause inconsistencies.
+        // Return a clone so changes to account while running policies don't cause inconsistencies.
         return account.clone()
     }
 
@@ -135,7 +124,7 @@ class IBKRBroker(
      * @param order
      * @return
      */
-    private fun getIBOrder(order: SingleOrder): IBOrder {
+    private fun createIBOrder(order: SingleOrder): IBOrder {
         val result = IBOrder()
         when (order) {
             is MarketOrder -> result.orderType("MKT")
@@ -153,23 +142,49 @@ class IBKRBroker(
         val action = if (order.quantity > 0) "BUY" else "SELL"
         result.action(action)
         result.totalQuantity(order.quantity.absoluteValue)
+        orderMap[orderId] = order
+        result.orderId(orderId++)
         if (accountId != null) result.account(accountId)
         return result
     }
 
+
+    /**
+     * Overwrite the default wrapper
+     */
     inner class Wrapper : DefaultEWrapper() {
 
 
+        /**
+         * Convert an IBOrder to a roboquant Order. This is only used during initial connect when retrieving any open
+         * orders linked to the account.
+         */
+        private fun toOrder(order: IBOrder, contract: Contract) : Order {
+            val asset = contract.getAsset()
+            val qty = if (order.action == "BUY") order.totalQuantity() else -order.totalQuantity()
+            val result =  MarketOrder(asset, qty)
+            result.status = OrderStatus.ACCEPTED
+            return result
+        }
+
+        /**
+         * What is the next valid orderID
+         */
+        override fun nextValidId(id: Int) {
+            orderId = id
+        }
+
         override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: OrderState) {
-            val openOrder = account.orders.open.filterIsInstance<SingleOrder>().find { it.id.toInt() == orderId }
+            logger.fine {"openOrder: $orderId $contract $order $orderState" }
+            val openOrder = orderMap[orderId]
             if (openOrder != null) {
-                logger.info("OpenOrder: $orderId $contract $order $orderState")
-                openOrder.fill = order.filledQuantity()
                 if (orderState.completedStatus() == "true") {
                     openOrder.status = OrderStatus.COMPLETED
                 }
             } else {
-                logger.warning { "Received unknown open order with orderId $orderId" }
+                val newOrder = toOrder(order, contract)
+                orderMap[orderId] = newOrder
+                account.orders.add(newOrder)
             }
         }
 
@@ -178,11 +193,14 @@ class IBKRBroker(
             remaining: Double, avgFillPrice: Double, permId: Int, parentId: Int,
             lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
         ) {
-            logger.info { "orderStatus: $orderId $status $filled $remaining" }
-            val id = orderId.toString()
-            val openOrder = account.orders.open.filterIsInstance<SingleOrder>().find { it.id == id }
+            logger.fine { "orderStatus: $orderId $status $filled $remaining" }
+            val openOrder = orderMap[orderId]
             if (openOrder == null)
                 logger.warning { "Received unknown open order with orderId $orderId" }
+            if (openOrder is SingleOrder) {
+                openOrder.fill = filled
+                openOrder.place(lastFillPrice, Instant.now())
+            }
         }
 
         override fun openOrderEnd() {
@@ -236,6 +254,9 @@ class IBKRBroker(
             account.time = Instant.now()
         }
 
+        /**
+         * Convert an IBKR contract to an asset
+         */
         private fun Contract.getAsset(): Asset {
             val type = when (secType()) {
                 Types.SecType.STK -> AssetType.STOCK
@@ -254,11 +275,11 @@ class IBKRBroker(
         }
 
         override fun error(var1: Exception) {
-            logger.warning { "$var1" }
+            logger.warning { "Received exception: $var1" }
         }
 
         override fun error(var1: String?) {
-            logger.warning { "$var1" }
+            logger.warning { "Received error: $var1" }
         }
 
         override fun error(var1: Int, var2: Int, var3: String?) {

@@ -52,19 +52,29 @@ fun alpacaBroker() {
 
 
 fun allAlpaca() {
-    val feed = AlpacaLiveFeed()
-    feed.subscribeAll()
-
-    feed.timeMillis = 1000
-    val strategy = EMACrossover.shortTerm()
     val broker = AlpacaBroker()
-    broker.account.summary().print()
-    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), broker = broker)
-    val tf = TimeFrame.next(5.minutes)
+    val account = broker.account
+    account.summary().log()
+    account.orders.summary().log()
+    account.portfolio.summary().log()
+
+    val feed = AlpacaLiveFeed()
+    feed.timeMillis = 1000
+
+
+    // Let trade all the assets that start with an A or are in our portfolio already
+    // val assets = feed.availableAssets.filter { it.symbol.startsWith("AA") } + account.portfolio.assets
+    val assets = account.portfolio.assets
+    feed.subscribe(assets.distinct())
+
+    val strategy = EMACrossover(3, 5)
+    val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
+    val tf = TimeFrame.next(15.minutes)
     roboquant.run(feed, tf)
-    roboquant.broker.account.summary().print()
-    roboquant.logger.summary(3).print()
     feed.disconnect()
+
+    roboquant.broker.account.summary().log()
+    roboquant.logger.summary(3).log()
 }
 
 
@@ -185,7 +195,7 @@ fun oandaBroker() {
 
 
 fun main() {
-    when ("OANDA_FEED") {
+    when ("ALPACA_ALL") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()

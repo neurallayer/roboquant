@@ -20,11 +20,11 @@ import com.ib.client.Bar
 import com.ib.client.DefaultEWrapper
 import com.ib.client.EClientSocket
 import org.roboquant.common.Asset
+import org.roboquant.common.Logging
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.csv.AutoDetectTimeParser
 import java.time.Instant
-import java.util.logging.Logger
 
 class IBKRHistoricFeed(
     host: String = "127.0.0.1",
@@ -34,7 +34,7 @@ class IBKRHistoricFeed(
 
     private var tickerId: Int = 0
     private val subscriptions = mutableMapOf<Int, Asset>()
-    private val logger: Logger = Logger.getLogger(this.javaClass.simpleName)
+    private val logger = Logging.getLogger(this)
     private var client: EClientSocket
 
 

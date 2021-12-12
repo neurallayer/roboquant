@@ -17,16 +17,19 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
+import net.jacobpeterson.alpaca.model.endpoint.order.enums.CurrentOrderStatus
 import net.jacobpeterson.alpaca.model.endpoint.order.enums.OrderSide
+import  net.jacobpeterson.alpaca.model.endpoint.order.Order as AlpacaOrder
 import net.jacobpeterson.alpaca.model.endpoint.order.enums.OrderTimeInForce
 import net.jacobpeterson.alpaca.rest.AlpacaClientException
 import org.roboquant.brokers.*
+import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
+import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
-import java.util.logging.Logger
 import net.jacobpeterson.alpaca.model.endpoint.order.enums.OrderStatus as AlpacaOrderStatus
 import net.jacobpeterson.alpaca.model.endpoint.position.Position as AlpacaPosition
 
@@ -49,21 +52,22 @@ class AlpacaBroker(
 
     override val account: Account = Account()
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
-    private val logger: Logger = Logger.getLogger("AlpacaBroker")
-    private val enableTrading = false
+    private val logger = Logging.getLogger(this)
+    var enableTrading = false
 
     val availableAssets by lazy {
         AlpacaConnection.getAvailableAssets(alpacaAPI)
     }
 
-    private val assetsMap by lazy {
-        availableAssets.associateBy { it.symbol }
+    private val assetsMap : Map<String, Asset> by lazy {
+        availableAssets.associateBy { it.id }
     }
 
     init {
         updateAccount()
         updatePositions()
-        updateOpenOrders()
+        loadInitialOrders()
+        // updateOpenOrders()
     }
 
     /**
@@ -104,6 +108,46 @@ class AlpacaBroker(
     }
 
     /**
+     * Load all the orders already linked to the account. This is only called once during initiatlization.
+     */
+    private fun loadInitialOrders() {
+        try {
+            for (order in alpacaAPI.orders().get(CurrentOrderStatus.ALL, null, null, null, null, false, null)) {
+                logger.fine { "received $order" }
+                account.orders.add(toOrder(order))
+            }
+        } catch (e: AlpacaClientException) {
+            logger.severe(e.stackTraceToString())
+        }
+    }
+
+    private fun toAsset(assetId: String) = assetsMap[assetId]!!
+
+
+    /**
+     * Convert an alpaca order to a roboquant order
+     */
+    private fun toOrder(order: AlpacaOrder): Order {
+        val asset = toAsset(order.assetId)
+        val qty = if (order.side == OrderSide.BUY) order.qty.toDouble() else - order.qty.toDouble()
+        val result = MarketOrder(asset, qty)
+        val fill = if (order.side == OrderSide.BUY) order.filledQty.toDouble() else - order.filledQty.toDouble()
+        result.fill = fill
+        result.place(order.filledAvgPrice.toDouble(), order.createdAt.toInstant())
+
+        when (order.status) {
+            AlpacaOrderStatus.CANCELED -> result.status = OrderStatus.CANCELLED
+            AlpacaOrderStatus.EXPIRED -> result.status = OrderStatus.EXPIRED
+            AlpacaOrderStatus.FILLED -> result.status = OrderStatus.COMPLETED
+            AlpacaOrderStatus.REJECTED -> result.status = OrderStatus.REJECTED
+            else -> {
+                logger.info { "Received order status ${order.status}" }
+            }
+        }
+        return result
+    }
+
+    /**
      * Convert an Alpaca position to a roboquant position
      *
      * @param pos the Alpaca position
@@ -111,9 +155,8 @@ class AlpacaBroker(
      */
     private fun convertPos(pos: AlpacaPosition): Position {
         assert(pos.assetClass == "us_equity") { "Unsupported asset class found ${pos.assetClass} for position $pos" }
-        val asset = assetsMap[pos.symbol]!!
-        val qty = if (pos.side == "BUY") pos.qty.toDouble() else -(pos.qty.toDouble())
-        return Position(asset, qty, pos.avgEntryPrice.toDouble(), pos.currentPrice.toDouble())
+        val asset = toAsset(pos.assetId)
+        return Position(asset, pos.qty.toDouble(), pos.avgEntryPrice.toDouble(), pos.currentPrice.toDouble())
     }
 
     /**
@@ -193,9 +236,11 @@ class AlpacaBroker(
      * @return the updated account that reflects the latest state
      */
     override fun place(orders: List<Order>, event: Event): Account {
+        updateOpenOrders()
         for (order in orders) {
             if (order is SingleOrder) {
                 placeOrder(order)
+                account.orders.add(order)
             } else {
                 throw Exception("Unsupported order type $order")
             }

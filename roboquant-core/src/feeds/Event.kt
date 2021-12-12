@@ -26,6 +26,16 @@ import java.time.Instant
  */
 data class Event(val actions: List<Action>, val now: Instant) : Comparable<Event> {
 
+
+    companion object {
+
+        /**
+         * Create an empty event with as default the current time
+         */
+        fun empty(now: Instant = Instant.now()) = Event(listOf(), now)
+    }
+
+
     /**
      * Convenience property for accessing all the price actions in this event. The result is cached so that accessing
      * this attribute many times is very quick.

@@ -20,12 +20,12 @@ import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.historical.bar.enums.BarAdjustment
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.historical.bar.enums.BarTimePeriod
 import org.roboquant.common.Asset
+import org.roboquant.common.Logging
 import org.roboquant.common.TimeFrame
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.util.logging.Logger
 
 typealias AlpacaPeriod = BarTimePeriod
 
@@ -40,7 +40,7 @@ class AlpacaHistoricFeed(
 ) : HistoricPriceFeed() {
 
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
-    private val logger: Logger = Logger.getLogger(this.javaClass.simpleName)
+    private val logger = Logging.getLogger(this)
     private val zoneId: ZoneId = ZoneId.of("America/New_York")
 
 

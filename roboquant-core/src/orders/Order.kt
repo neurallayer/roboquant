@@ -37,10 +37,11 @@ import java.time.Instant
 abstract class Order(val asset: Asset) : Cloneable {
 
     /**
-     * Unique ID across orders. When a JVM is (re)started, the ID reset again.
+     * OrderId, initially set when creating an order. This id will remain untill the JVM stops.
      */
     var id = getId().toString()
         private set
+
 
     /**
      * What is the status of this order
@@ -64,15 +65,17 @@ abstract class Order(val asset: Asset) : Cloneable {
     /**
      * If the order is not yet placed, place it now. The price is always updated.
      */
-    protected fun place(price: Double, now: Instant) {
+    fun place(price: Double, now: Instant) {
         if (placed == Instant.MIN) placed = now
         this.price = price
     }
 
     companion object {
+
+
         private var ID = 0L
 
-        fun getId(): Long {
+        private fun getId(): Long {
             synchronized(ID) {
                 return ID++
             }

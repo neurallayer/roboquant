@@ -35,10 +35,8 @@ internal class AlpacaLiveFeedTestIT {
         val assets = feed.availableAssets
         val apple = assets.getBySymbol("AAPL")
         feed.subscribe(apple)
-        feed.disconnect()
         val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
         assertTrue(actions.isNotEmpty())
-        feed.connect()
         feed.disconnect()
     }
 
@@ -48,10 +46,8 @@ internal class AlpacaLiveFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
         feed.subscribe("AAPL")
-        feed.disconnect()
         val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
         assertTrue(actions.isNotEmpty())
-        feed.connect()
         feed.disconnect()
     }
 
@@ -64,6 +60,17 @@ internal class AlpacaLiveFeedTestIT {
         feed.retrieve("AAPL", timeFrame = TimeFrame.past(100.days))
         val actions = feed.filter<PriceAction>()
         assertTrue(actions.isNotEmpty())
+    }
+
+    @Test
+    fun test3() {
+        System.getProperty("TEST_ALPACA") ?: return
+        val feed = AlpacaLiveFeed(autoConnect = false)
+        feed.connect()
+        feed.subscribeAll()
+        val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
+        assertTrue(actions.isNotEmpty())
+        feed.disconnect()
     }
 
 }

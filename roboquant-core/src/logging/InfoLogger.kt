@@ -17,6 +17,7 @@
 package org.roboquant.logging
 
 import org.roboquant.RunInfo
+import org.roboquant.common.Logging
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -32,7 +33,7 @@ class InfoLogger(
     private val level: Level = Level.INFO
 ) : MetricsLogger {
 
-    private val logger: Logger = Logger.getLogger(name)
+    private val logger = Logging.getLogger(name)
 
     override fun log(results: Map<String, Number>, info: RunInfo) {
         if (results.isEmpty()) return

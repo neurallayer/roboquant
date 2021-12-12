@@ -28,6 +28,8 @@ class AlpacaBrokerTestIT {
         val key = Config.getProperty("ALPACA_KEY")!!
         val secret = Config.getProperty("ALPACA_SECRET")!!
         val broker = AlpacaBroker(key, secret)
+        broker.enableTrading = false
+
         assertTrue(broker.account.cash.isNotEmpty())
         assertFalse(broker.account.cash.isMultiCurrency())
         assertTrue(broker.availableAssets.isNotEmpty())
