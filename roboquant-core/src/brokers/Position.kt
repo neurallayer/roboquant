@@ -29,16 +29,16 @@ import kotlin.math.sign
  *
  * @property asset the asset
  * @property quantity volume of the asset, not including any contract multiplier defined by the asset
- * @property cost average cost for an asset, in the currency denoted by the asset
- * @property price Last known market price for this asset
+ * @property avgPrice average price paid, in the currency denoted by the asset
+ * @property spotPrice Last known market price for this asset
  * @property lastUpdate When was the market price last updated
  * @constructor Create a new Position
  */
 data class Position(
     val asset: Asset,
     var quantity: Double,
-    var cost: Double = 0.0,
-    var price: Double = cost,
+    var avgPrice: Double = 0.0,
+    var spotPrice: Double = avgPrice,
     var lastUpdate: Instant = Instant.MIN
 ) {
 
@@ -67,16 +67,16 @@ data class Position(
         // Check if we need to update the average price and pnl
         when {
             quantity.sign != newQuantity.sign -> {
-                pnl = totalSize * (position.cost - cost)
-                cost = position.cost
+                pnl = totalSize * (position.avgPrice - avgPrice)
+                avgPrice = position.avgPrice
             }
 
             newQuantity.absoluteValue > quantity.absoluteValue -> {
-                cost = (cost * quantity + position.cost * position.quantity) / newQuantity
+                avgPrice = (avgPrice * quantity + position.avgPrice * position.quantity) / newQuantity
             }
 
             else -> {
-                pnl = position.quantity * asset.multiplier * (cost - position.cost)
+                pnl = position.quantity * asset.multiplier * (avgPrice - position.avgPrice)
             }
         }
 
@@ -103,37 +103,34 @@ data class Position(
         get() = quantity != 0.0
 
     /**
-     * The unrealized profit & loss for this position based on the [cost] and last known market [price],
+     * The unrealized profit & loss for this position based on the [avgPrice] and last known market [spotPrice],
      * in the currency denoted by the asset
      */
     val pnl: Double
-        get() = totalSize * (price - cost)
+        get() = totalSize * (spotPrice - avgPrice)
 
 
     /**
-     * The total value for this position based on last known market price, in the currency denoted by the asset.
-     * Short positions will return a negative value.
+     * The total value for this position based on last known spot price, in the currency denoted by the asset.
+     * Short positions will typically return a negative value.
      */
     val value: Double
-        get() = totalSize * price
+        get() = totalSize * spotPrice
 
     /**
      * The gross exposure for this position based on last known market price, in the currency denoted by the asset.
      * The difference with the [value] property is that short positions also result in a positive exposure.
-     *
      */
     val exposure: Double
-        get() = totalSize.absoluteValue * price
+        get() = totalSize.absoluteValue * spotPrice
 
 
     /**
-     * The total cost of this position, in the currency denoted by the asset. Short positions will typically have a
-     * negative cost.
-     *
-     * @return
+     * The total cost of this position, in the currency denoted by the asset. Short positions will typically return
+     * a negative value.
      */
     val totalCost: Double
-        get() = totalSize * cost
+        get() = totalSize * avgPrice
 
 
 }

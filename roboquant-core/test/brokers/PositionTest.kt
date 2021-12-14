@@ -31,7 +31,7 @@ internal class PositionTest {
         val p1 = Position(contract, 10.0, 10.0, 12.0)
         val p2 = Position(contract, 10.0, 12.0, 12.0)
         val pnl = p1.update(p2)
-        assertEquals(11.0, p1.cost)
+        assertEquals(11.0, p1.avgPrice)
         assertEquals(20.0, p1.quantity)
         assertEquals(0.0, pnl)
     }
@@ -43,7 +43,7 @@ internal class PositionTest {
         val p1 = Position(contract, 10.0, 10.0, 12.0)
         val p2 = Position(contract, -5.0, 11.0, 12.0)
         val pnl = p1.update(p2)
-        assertEquals(10.0, p1.cost)
+        assertEquals(10.0, p1.avgPrice)
         assertEquals(5.0, p1.quantity)
         assertEquals(5.0, pnl)
     }
@@ -54,7 +54,7 @@ internal class PositionTest {
         val p1 = Position(contract, 10.0, 10.0, 12.0)
         val p2 = Position(contract, -15.0, 11.0, 12.0)
         val pnl = p1.update(p2)
-        assertEquals(11.0, p1.cost)
+        assertEquals(11.0, p1.avgPrice)
         assertEquals(-5.0, p1.quantity)
         assertEquals(10.0, pnl)
     }

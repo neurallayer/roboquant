@@ -224,7 +224,8 @@ class IBKRBroker(
          */
         override fun commissionReport(report: CommissionReport) {
             logger.fine { "execId=${report.execId()} currency=${report.currency()} fee=${report.commission()} pnl=${report.realizedPNL()}" }
-            val trade = tradeMap[report.execId()]
+            val id = report.execId().substringBeforeLast('.')
+            val trade = tradeMap[id]
             if (trade != null) {
                 val i = account.trades.indexOf(trade)
                 val newTrade = trade.copy(
@@ -239,11 +240,14 @@ class IBKRBroker(
 
         override fun execDetails(reqId: Int, contract: Contract, execution: Execution) {
             logger.fine { "execId: ${execution.execId()} asset: ${contract.symbol()} side: ${execution.side()} qty: ${execution.cumQty()} price: ${execution.avgPrice()}" }
-            if (execution.execId() in tradeMap) logger.warning("Overwrite of existing trade")
+
+            // The last number is to correct an existing execution, so not a new execution
+            val id = execution.execId().substringBeforeLast('.')
+            if (id in tradeMap) logger.info("Overwrite of existing trade")
 
             // Possible values BOT and SLD
             val direction = if (execution.side() == "SLD") -1.0 else 1.0
-            val order = orderMap[execution.orderId()]!!
+            val orderId = orderMap[execution.orderId()]?.id ?: "UNKOWN" // Should not happen
             val trade = Trade(
                 Instant.now(),
                 contract.getAsset(),
@@ -251,9 +255,9 @@ class IBKRBroker(
                 execution.avgPrice(),
                 Double.NaN,
                 Double.NaN,
-                order.id
+                orderId
             )
-            tradeMap[execution.execId()] = trade
+            tradeMap[id] = trade
             account.trades.add(trade)
         }
 

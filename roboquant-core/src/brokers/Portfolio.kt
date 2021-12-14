@@ -97,7 +97,7 @@ class Portfolio : Cloneable {
         for ((asset, position) in positions) {
             val priceAction = prices[asset]
             if (priceAction != null) {
-                position.price = priceAction.getPrice(priceType)
+                position.spotPrice = priceAction.getPrice(priceType)
                 position.lastUpdate = now
             }
         }
@@ -179,17 +179,17 @@ class Portfolio : Cloneable {
             s.add("EMPTY")
         } else {
             val fmt = "│%14s│%6s│%11s│%11s│%11s│%11s│"
-            val header = String.format(fmt, "asset", "curr", "qty", "entry", "spot", "p&l")
+            val header = String.format(fmt, "asset", "curr", "qty", "avgPrice", "spot", "p&l")
             s.add(header)
 
             for ((p, v) in ps) {
                 val c = v.asset.currency
                 val pos = pf.format(v.quantity)
-                val cost = c.format(v.cost)
-                val price = c.format(v.price)
+                val avgPrice = c.format(v.avgPrice)
+                val price = c.format(v.spotPrice)
                 val pnl = c.format(v.pnl)
                 val asset = "${p.type}:${p.symbol}"
-                val line = String.format(fmt, asset, p.currencyCode, pos, cost, price, pnl)
+                val line = String.format(fmt, asset, p.currencyCode, pos, avgPrice, price, pnl)
                 s.add(line)
                 //s.add("${p.type}:${p.symbol}", "$pos @ $cost ($price)")
             }

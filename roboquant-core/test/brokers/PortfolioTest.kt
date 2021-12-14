@@ -29,18 +29,18 @@ internal class PortfolioTest {
         val position = Position(c, 100.0, 10.0)
         portfolio.updatePosition(position)
         assertEquals(100.0, portfolio.getPosition(c).quantity)
-        assertEquals(10.0, portfolio.getPosition(c).cost)
+        assertEquals(10.0, portfolio.getPosition(c).avgPrice)
 
 
         val position2 = Position(c, 100.0, 10.0)
         portfolio.updatePosition(position2)
         assertEquals(200.0, portfolio.getPosition(c).quantity)
-        assertEquals(10.0, portfolio.getPosition(c).cost)
+        assertEquals(10.0, portfolio.getPosition(c).avgPrice)
 
         val position3 = Position(c, -100.0, 10.0)
         portfolio.updatePosition(position3)
         assertEquals(100.0, portfolio.getPosition(c).quantity)
-        assertEquals(10.0, portfolio.getPosition(c).cost)
+        assertEquals(10.0, portfolio.getPosition(c).avgPrice)
 
         assertEquals(portfolio.positions.size, portfolio.longPositions.size + portfolio.shortPositions.size)
 

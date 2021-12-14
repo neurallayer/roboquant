@@ -120,7 +120,9 @@ class SimBroker(
     ) {
         val asset = execution.asset
         val position = Position(asset, execution.quantity, avgPrice)
-        val pnl = account.portfolio.updatePosition(position)
+
+        // PnL includes the fee
+        val pnl = account.portfolio.updatePosition(position) - fee
 
         val newTrade = Trade(
             now,
@@ -131,9 +133,8 @@ class SimBroker(
             pnl,
             order.id
         )
-
-        account.cash.withdraw(asset.currency, newTrade.totalCost)
         account.trades.add(newTrade)
+        account.cash.withdraw(asset.currency, newTrade.totalCost)
     }
 
 
