@@ -93,11 +93,10 @@ class SimBroker(
             for (execution in executions) {
                 record("order.${order.asset.symbol}", execution.quantity)
 
-                val (cost, fee) = costModel.calculate(order, execution)
-                val totalCost = cost + fee
-                val avgCost = totalCost / execution.size()
+                val (realPrice, fee) = costModel.calculate(order, execution)
+                val avgPrice = realPrice / execution.size()
 
-                updateAccount(execution, order, avgCost, totalCost, fee, now)
+                updateAccount(execution, order, avgPrice, fee, now)
             }
 
         }
@@ -115,26 +114,25 @@ class SimBroker(
     private fun updateAccount(
         execution: Execution,
         order: Order,
-        avgCost: Double,
-        totalCost: Double,
+        avgPrice: Double,
         fee: Double,
         now: Instant
     ) {
         val asset = execution.asset
-        val position = Position(asset, execution.quantity, avgCost)
-        account.cash.withdraw(asset.currency, totalCost)
+        val position = Position(asset, execution.quantity, avgPrice)
         val pnl = account.portfolio.updatePosition(position)
 
         val newTrade = Trade(
             now,
             execution.asset,
             execution.quantity,
-            execution.price,
-            totalCost,
+            avgPrice,
             fee,
             pnl,
             order.id
         )
+
+        account.cash.withdraw(asset.currency, newTrade.totalCost)
         account.trades.add(newTrade)
     }
 

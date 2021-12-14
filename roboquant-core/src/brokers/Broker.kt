@@ -21,25 +21,23 @@ import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 
 /**
- * Interface for any broker, both simulated and real live brokers.
+ * Interface for any broker, both used for simulated and real live brokers.
  *
  */
 interface Broker : Component {
 
     /**
-     * The client account
+     * The trading account
      */
     val account: Account
 
     /**
-     * Place new orders at this broker. After processing them, this method returns an instance of the
-     * updated account. It is important that the placed orders are indeed included in the account, as either open or
-     * closed.
+     * Place new [orders] at this broker. The [event] is usefull for simulated brokers, but can also function
+     * as a safeguard for other brokers (like not allowing to place orders is the current price is unknown).
      *
-     * See also [Order]
-     *
-     * @param orders list of orders to be placed at the broker
-     * @return the updated account that reflects the latest state
+     * After processing the [orders], this method returns an instance of the updated account. The returned instance of
+     * [Account] should reflect the latest status and be considered thread safe. It is important that the placed orders
+     * are already included in the account.
      */
     fun place(orders: List<Order>, event: Event): Account
 

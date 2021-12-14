@@ -34,7 +34,7 @@ class TradeChart(
     private var max = Double.MIN_VALUE.toBigDecimal()
 
     init {
-        val validAspects = listOf("pnl", "fee", "amount", "quantity")
+        val validAspects = listOf("pnl", "fee", "cost", "quantity")
         require(aspect in validAspects) { "Unsupported aspect $aspect, valid values are $validAspects" }
     }
 
@@ -42,9 +42,9 @@ class TradeChart(
     private fun getTooltip(trade: Trade): String {
         val c = trade.asset.currency
         val pnl = c.toBigDecimal(trade.pnl)
-        val amount = c.toBigDecimal(trade.totalAmount)
+        val totalCost = c.toBigDecimal(trade.totalCost)
         val fee = c.toBigDecimal(trade.fee)
-        return "asset: ${trade.asset} <br> time: ${trade.time} <br> qty: ${trade.quantity} <br> fee: $fee <br> pnl: $pnl <br> amount: $amount <br> order: ${trade.orderId}"
+        return "asset: ${trade.asset} <br> time: ${trade.time} <br> qty: ${trade.quantity} <br> fee: $fee <br> pnl: $pnl <br> cost: $totalCost <br> order: ${trade.orderId}"
     }
 
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
@@ -56,7 +56,7 @@ class TradeChart(
                 val value = when (aspect) {
                     "pnl" -> c.toBigDecimal(pnl)
                     "fee" -> c.toBigDecimal(fee)
-                    "amount" -> c.toBigDecimal(totalAmount)
+                    "cost" -> c.toBigDecimal(totalCost)
                     "quantity" -> quantity.toBigDecimal()
                     else -> throw Exception("Unsupported aspect $aspect")
                 }

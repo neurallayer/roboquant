@@ -22,6 +22,7 @@ import org.roboquant.common.Cash
 import org.roboquant.common.Currency
 import org.roboquant.common.Summary
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import javax.naming.ConfigurationException
 
 
@@ -108,14 +109,14 @@ class Account(
     }
 
     /**
-     * Provide a summary that contains the high level account information, the available cash balances and
+     * Provide a short summary that contains the high level account information, the available cash balances and
      * the open positions in the portfolio.
      *
      * @return The summary
      */
     fun summary(): Summary {
         val s = Summary("Account")
-        s.add("last update", time)
+        s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
         s.add("buying power", baseCurrency.format(buyingPower))
         val value = convertToCurrency(getValue())
@@ -147,6 +148,25 @@ class Account(
         s.add(portfolioSummary)
 
         s.add(cash.summary())
+        return s
+    }
+
+    /**
+     * Provide a full summary of the account that contains all cahs, orders, trades and open positions. During back
+     * testing this can become a long list of items, so look at [summary] for a shorter summary.
+     */
+    fun fullSummary(): Summary {
+        val s = Summary("Account")
+        s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
+        s.add("base currency", baseCurrency.displayName)
+        s.add("buying power", baseCurrency.format(buyingPower))
+        val value = convertToCurrency(getValue())
+        s.add("total value", baseCurrency.format(value))
+
+        s.add(cash.summary())
+        s.add(portfolio.summary())
+        s.add(orders.summary())
+        s.add(trades.summary())
         return s
     }
 

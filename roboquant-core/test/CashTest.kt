@@ -22,6 +22,8 @@ import kotlin.test.*
 
 import org.roboquant.common.Cash
 import org.roboquant.common.Currency
+import org.roboquant.common.EUR
+import org.roboquant.common.USD
 
 internal class CashTest {
 
@@ -92,4 +94,11 @@ internal class CashTest {
         val wallet2 = wallet + wallet - wallet
         assertEquals(wallet, wallet2)
     }
+
+    @Test
+    fun extensions() {
+        val cash = 100.EUR + 200.USD
+        assertTrue(cash.isMultiCurrency())
+    }
+
 }

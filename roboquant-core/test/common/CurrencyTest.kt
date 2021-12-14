@@ -19,7 +19,7 @@ package org.roboquant.common
 import org.junit.Test
 import kotlin.test.*
 
-internal class CurrenciesTest {
+internal class CurrencyTest {
 
     @Test
     fun test() {
@@ -38,5 +38,6 @@ internal class CurrenciesTest {
             true
         }
     }
+
 
 }

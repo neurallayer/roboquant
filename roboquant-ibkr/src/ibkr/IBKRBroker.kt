@@ -18,10 +18,7 @@ package org.roboquant.ibkr
 
 import com.ib.client.*
 import ibkr.IBKRCurrencyConverter
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.Broker
-import org.roboquant.brokers.CurrencyConverter
-import org.roboquant.brokers.Position
+import org.roboquant.brokers.*
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
@@ -58,7 +55,15 @@ class IBKRBroker(
     override val account: Account = Account(currencyConverter = currencyConverter)
     val logger = Logging.getLogger("IBKRBroker")
     private var orderId = 0
+
+    // Track IB orders ids with roboquant orders
     private val orderMap = mutableMapOf<Int, Order>()
+
+    // Track IB Trades and Feed ids with roboquant trades
+    private val tradeMap = mutableMapOf<String, Trade>()
+
+    // Holds mapping between contract Id and an asset.
+    private val assetMap = mutableMapOf<Int, Asset>()
 
     init {
         if (enableOrders) logger.warning { "Enabling sending orders, use it at your own risk!!!" }
@@ -207,10 +212,49 @@ class IBKRBroker(
                 openOrder.fill = filled
                 openOrder.place(lastFillPrice, Instant.now())
                 when (status) {
+                    "PreSubmitted" -> openOrder.status = OrderStatus.INITIAL
                     "Submitted" -> openOrder.status = OrderStatus.ACCEPTED
                     "Filled" -> openOrder.status = OrderStatus.COMPLETED
                 }
             }
+        }
+
+        /**
+         * This is called with fee and pnl of a trade
+         */
+        override fun commissionReport(report: CommissionReport) {
+            logger.fine { "execId=${report.execId()} currency=${report.currency()} fee=${report.commission()} pnl=${report.realizedPNL()}" }
+            val trade = tradeMap[report.execId()]
+            if (trade != null) {
+                val i = account.trades.indexOf(trade)
+                val newTrade = trade.copy(
+                    fee = report.commission(), pnl = report.realizedPNL()
+                )
+                account.trades[i] = newTrade
+            } else {
+                logger.warning("Commision for none existing trade ${report.execId()}")
+            }
+
+        }
+
+        override fun execDetails(reqId: Int, contract: Contract, execution: Execution) {
+            logger.fine { "execId: ${execution.execId()} asset: ${contract.symbol()} side: ${execution.side()} qty: ${execution.cumQty()} price: ${execution.avgPrice()}" }
+            if (execution.execId() in tradeMap) logger.warning("Overwrite of existing trade")
+
+            // Possible values BOT and SLD
+            val direction = if (execution.side() == "SLD") -1.0 else 1.0
+            val order = orderMap[execution.orderId()]!!
+            val trade = Trade(
+                Instant.now(),
+                contract.getAsset(),
+                execution.cumQty() * direction,
+                execution.avgPrice(),
+                Double.NaN,
+                Double.NaN,
+                order.id
+            )
+            tradeMap[execution.execId()] = trade
+            account.trades.add(trade)
         }
 
         override fun openOrderEnd() {
@@ -259,7 +303,7 @@ class IBKRBroker(
             logger.fine { "asset: ${contract.symbol()} position: $position price: $marketPrice cost: $averageCost" }
             logger.finer { "$contract $position $marketPrice $averageCost" }
             val asset = contract.getAsset()
-            val p = Position(asset, position, averageCost, marketPrice)
+            val p = Position(asset, position, averageCost, marketPrice, Instant.now())
             account.portfolio.setPosition(p)
         }
 
@@ -280,20 +324,24 @@ class IBKRBroker(
          * Convert an IBKR contract to an asset
          */
         private fun Contract.getAsset(): Asset {
-            val type = when (secType()) {
-                Types.SecType.STK -> AssetType.STOCK
-                Types.SecType.BOND -> AssetType.BOND
-                Types.SecType.OPT -> AssetType.OPTION
-                else -> throw Exception("unknown type ${secType()}")
+            if (!assetMap.containsKey(conid())) {
+                val type = when (secType()) {
+                    Types.SecType.STK -> AssetType.STOCK
+                    Types.SecType.BOND -> AssetType.BOND
+                    Types.SecType.OPT -> AssetType.OPTION
+                    else -> throw Exception("Unsupported asset type ${secType()}")
+                }
+                val asset = Asset(
+                    symbol = symbol(),
+                    currencyCode = currency(),
+                    exchangeCode = exchange() ?: primaryExch() ?: "",
+                    type = type,
+                    id = conid().toString()
+                )
+                assetMap[conid()] = asset
             }
-            val id = conid().toString()
-            return Asset(
-                symbol = symbol(),
-                currencyCode = currency(),
-                exchangeCode = exchange() ?: primaryExch() ?: "",
-                type = type,
-                id = id
-            )
+
+            return assetMap[conid()]!!
         }
 
         override fun error(var1: Exception) {
@@ -306,7 +354,7 @@ class IBKRBroker(
 
         override fun error(var1: Int, var2: Int, var3: String?) {
             if (var1 == -1)
-                logger.fine { "$var1 $var2 $var3" }
+                logger.finer { "$var1 $var2 $var3" }
             else
                 logger.warning { "$var1 $var2 $var3" }
         }

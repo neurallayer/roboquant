@@ -207,3 +207,12 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
     }
 
 }
+
+
+
+// Some extensions to make it easier to create cash objects with one currency
+val Number.EUR
+    get() = Cash(Currency.EUR to this.toDouble())
+
+val Number.USD
+    get() = Cash(Currency.USD to this.toDouble())

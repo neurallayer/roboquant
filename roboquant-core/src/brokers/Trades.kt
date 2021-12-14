@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.roboquant.common.*
 import java.time.Instant
 import java.time.Period
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 
@@ -152,16 +153,17 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
         if (isEmpty()) {
             s.add("EMPTY")
         } else {
-            val fmt = "%24s │%10s │%11s │%11s │%11s │%11s │%11s │"
-            val header = String.format(fmt, "time", "asset", "qty", "amount", "fee", "p&l", "price")
+            val fmt = "│%24s│%10s│%11s│%11s│%11s│%11s│%11s│"
+            val header = String.format(fmt, "time", "asset", "qty", "cost", "fee", "p&l", "price")
             s.add(header)
             forEach {
                 with(it) {
-                    val amount = asset.currency.format(totalAmount)
+                    val cost = asset.currency.format(totalCost)
                     val fee = asset.currency.format(fee)
                     val pnl = asset.currency.format(pnl)
                     val price = asset.currency.format(price)
-                    val line = String.format(fmt, time, asset.symbol, quantity, amount, fee, pnl, price)
+                    val t = time.truncatedTo(ChronoUnit.SECONDS)
+                    val line = String.format(fmt, t, asset.symbol, quantity, cost, fee, pnl, price)
                     s.add(line)
                 }
             }

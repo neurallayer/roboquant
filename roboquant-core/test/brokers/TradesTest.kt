@@ -35,11 +35,11 @@ internal class TradesTest {
         var now = Instant.now()
         for (i in 1..10) {
             now = now.plusSeconds(60)
-            val trade1 = Trade(now, asset, 10.0, 100.0, 1002.0, 10.0, 0.0, "id_$i")
+            val trade1 = Trade(now, asset, 10.0, 100.0, 10.0, 0.0, "id_$i")
             trades.add(trade1)
 
             now = now.plusSeconds(60)
-            val trade2 = Trade(now, asset, -10.0, 100.0, 1002.0, 10.0, 10.0, "id_$i")
+            val trade2 = Trade(now, asset, -10.0, 100.0, 10.0, 10.0, "id_$i")
             trades.add(trade2)
         }
 

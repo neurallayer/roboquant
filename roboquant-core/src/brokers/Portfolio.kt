@@ -178,14 +178,14 @@ class Portfolio : Cloneable {
         if (ps.isEmpty()) {
             s.add("EMPTY")
         } else {
-            val fmt = "%14s │%6s │%11s │%11s │%11s │%11s │"
+            val fmt = "│%14s│%6s│%11s│%11s│%11s│%11s│"
             val header = String.format(fmt, "asset", "curr", "qty", "entry", "spot", "p&l")
             s.add(header)
 
             for ((p, v) in ps) {
                 val c = v.asset.currency
                 val pos = pf.format(v.quantity)
-                val cost = c.format(v.cost) //+ " " + p.currencyCode
+                val cost = c.format(v.cost)
                 val price = c.format(v.price)
                 val pnl = c.format(v.pnl)
                 val asset = "${p.type}:${p.symbol}"
