@@ -17,6 +17,7 @@
 package org.roboquant.ibkr
 
 import com.ib.client.*
+import ibkr.IBKRCurrencyConverter
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.CurrencyConverter
@@ -48,7 +49,7 @@ class IBKRBroker(
     host: String = "127.0.0.1",
     port: Int = 4002,
     clientId: Int = 1,
-    currencyConverter: CurrencyConverter? = null,
+    private val currencyConverter: CurrencyConverter? = IBKRCurrencyConverter(),
     private val accountId: String? = null,
     private val enableOrders: Boolean = false,
 ) : Broker {
@@ -72,8 +73,11 @@ class IBKRBroker(
         waitTillSynced()
     }
 
-    fun disconnect() = IBKRConnection.disconnect(client)
 
+    /**
+     * Disconnect roboquant from TWS or IB Gateway
+     */
+    fun disconnect() = IBKRConnection.disconnect(client)
 
 
     /**
@@ -109,7 +113,7 @@ class IBKRBroker(
         for (order in orders.filterIsInstance<SingleOrder>()) {
             logger.fine("received order $order")
             val ibOrder = createIBOrder(order)
-            logger.fine("placing order $ibOrder")
+            logger.fine("placing IBKR order with orderId ${ibOrder.orderId()}")
             val contract = IBKRConnection.getContract(order.asset)
             client.placeOrder(ibOrder.orderId(), contract, ibOrder)
         }
@@ -159,10 +163,10 @@ class IBKRBroker(
          * Convert an IBOrder to a roboquant Order. This is only used during initial connect when retrieving any open
          * orders linked to the account.
          */
-        private fun toOrder(order: IBOrder, contract: Contract) : Order {
+        private fun toOrder(order: IBOrder, contract: Contract): Order {
             val asset = contract.getAsset()
             val qty = if (order.action == "BUY") order.totalQuantity() else -order.totalQuantity()
-            val result =  MarketOrder(asset, qty)
+            val result = MarketOrder(asset, qty)
             result.status = OrderStatus.ACCEPTED
             return result
         }
@@ -172,10 +176,12 @@ class IBKRBroker(
          */
         override fun nextValidId(id: Int) {
             orderId = id
+            logger.fine("$id")
         }
 
         override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: OrderState) {
-            logger.fine {"openOrder: $orderId $contract $order $orderState" }
+            logger.fine { "orderId: $orderId asset: ${contract.symbol()} qty: ${order.totalQuantity()} status: ${orderState.status}" }
+            logger.finer { "$orderId $contract $order $orderState" }
             val openOrder = orderMap[orderId]
             if (openOrder != null) {
                 if (orderState.completedStatus() == "true") {
@@ -193,13 +199,17 @@ class IBKRBroker(
             remaining: Double, avgFillPrice: Double, permId: Int, parentId: Int,
             lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
         ) {
-            logger.fine { "orderStatus: $orderId $status $filled $remaining" }
+            logger.fine { "oderId: $orderId status: $status filled: $filled" }
             val openOrder = orderMap[orderId]
             if (openOrder == null)
                 logger.warning { "Received unknown open order with orderId $orderId" }
-            if (openOrder is SingleOrder) {
+            else if (openOrder is SingleOrder) {
                 openOrder.fill = filled
                 openOrder.place(lastFillPrice, Instant.now())
+                when (status) {
+                    "Submitted" -> openOrder.status = OrderStatus.ACCEPTED
+                    "Filled" -> openOrder.status = OrderStatus.COMPLETED
+                }
             }
         }
 
@@ -207,24 +217,33 @@ class IBKRBroker(
             logger.fine("Open order ended")
         }
 
-        private fun deposit(currencyCode: String, value: String) {
+        private fun setCash(currencyCode: String, value: String) {
             if ("BASE" != currencyCode) {
                 val currency = Currency.getInstance(currencyCode)
                 val amount = value.toDouble()
-                account.cash.deposit(currency, amount)
+                account.cash.set(currency, amount)
             }
         }
 
         override fun updateAccountValue(key: String, value: String, currency: String?, accountName: String?) {
-            logger.fine { "account update $key $value $currency $accountName" }
-            if (currency != null)
+            logger.fine { "$key $value $currency $accountName" }
+            if (currency != null && "BASE" != currency) {
                 when (key) {
                     "BuyingPower" -> {
                         account.buyingPower = value.toDouble()
                         account.baseCurrency = Currency.getInstance(currency)
+                        if (currencyConverter is IBKRCurrencyConverter) currencyConverter.baseCurrency =
+                            account.baseCurrency
                     }
-                    "CashBalance" -> deposit(currency, value)
+                    "CashBalance" -> setCash(currency, value)
+                    "ExchangeRate" -> {
+                        if (currencyConverter is IBKRCurrencyConverter) {
+                            val c = Currency.getInstance(currency)
+                            currencyConverter.exchangeRates[c] = value.toDouble()
+                        }
+                    }
                 }
+            }
         }
 
         override fun updatePortfolio(
@@ -237,7 +256,8 @@ class IBKRBroker(
             realizedPNL: Double,
             accountName: String
         ) {
-            logger.fine { "portfolio update $contract $position $marketPrice $averageCost" }
+            logger.fine { "asset: ${contract.symbol()} position: $position price: $marketPrice cost: $averageCost" }
+            logger.finer { "$contract $position $marketPrice $averageCost" }
             val asset = contract.getAsset()
             val p = Position(asset, position, averageCost, marketPrice)
             account.portfolio.setPosition(p)
@@ -245,12 +265,14 @@ class IBKRBroker(
 
         override fun currentTime(time: Long) {
             logger.fine { EWrapperMsgGenerator.currentTime(time).toString() }
-            val now = Instant.ofEpochSecond(time)
-            account.time = now
+
+            // If more than 60 seconds difference, give a warning
+            val diff = Instant.now().epochSecond - time
+            if (diff.absoluteValue > 60) logger.warning("Time clocks out of sync: $diff seconds")
         }
 
         override fun updateAccountTime(timeStamp: String?) {
-            logger.fine { "Account time $timeStamp" }
+            logger.fine { "$timeStamp" }
             account.time = Instant.now()
         }
 
@@ -275,16 +297,16 @@ class IBKRBroker(
         }
 
         override fun error(var1: Exception) {
-            logger.warning { "Received exception: $var1" }
+            logger.warning { "$var1" }
         }
 
         override fun error(var1: String?) {
-            logger.warning { "Received error: $var1" }
+            logger.warning { "$var1" }
         }
 
         override fun error(var1: Int, var2: Int, var3: String?) {
             if (var1 == -1)
-                logger.info { "$var1 $var2 $var3" }
+                logger.fine { "$var1 $var2 $var3" }
             else
                 logger.warning { "$var1 $var2 $var3" }
         }

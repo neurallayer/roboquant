@@ -37,6 +37,11 @@ object Logging {
 
     private var defaultLevel = Level.INFO
 
+    /**
+     * Use a simple output format (default) or a more detailed format better suited for debugging purposes
+     */
+    var useSimpleFormat = true
+
     class LoggingFormatter : SimpleFormatter() {
 
         companion object {
@@ -54,12 +59,15 @@ object Logging {
 
             fun blue(msg: Any) = "$ANSI_BLUE$msg$ANSI_RESET"
             fun green(msg: Any) = "$ANSI_GREEN$msg$ANSI_RESET"
+
         }
 
-        override fun format(lr: LogRecord): String {
-            if (lr.thrown != null) lr.thrown.printStackTrace()
 
-            return "[$ANSI_BLUE${lr.level.localizedName}$ANSI_RESET] $ANSI_GREEN${lr.loggerName}:$ANSI_RESET ${lr.message}\n"
+        override fun format(lr: LogRecord): String {
+            return if (useSimpleFormat)
+                "[$ANSI_BLUE${lr.level.localizedName}$ANSI_RESET] $ANSI_GREEN${lr.loggerName}:$ANSI_RESET ${lr.message}\n"
+            else
+                "[$ANSI_BLUE${lr.level.localizedName}$ANSI_RESET] $ANSI_GREEN${lr.loggerName} ${lr.sourceClassName}.${lr.sourceMethodName}:$ANSI_RESET ${lr.message}\n"
         }
     }
 

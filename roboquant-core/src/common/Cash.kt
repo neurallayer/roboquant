@@ -96,6 +96,14 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
 
 
     /**
+     * Set a monetary [amount] denominated in the specified [currency]. If the currency already exist, its amount
+     * will be overwritten, otherwise a new entry will be created.
+     */
+    fun set(currency: Currency, amount: Double) {
+        data[currency] = amount
+    }
+
+    /**
      * Deposit a monetary [amount] denominated in teh specified [currency]. If the currency already exist, it
      * will be added to the existing amount, otherwise a new entry will be created.
      */

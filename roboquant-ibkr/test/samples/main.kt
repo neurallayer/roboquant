@@ -22,7 +22,6 @@ import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
-import org.roboquant.feeds.Event
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.ibkr.IBKRBroker
@@ -31,7 +30,6 @@ import org.roboquant.ibkr.IBKRLiveFeed
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.PriceMetric
 import org.roboquant.metrics.ProgressMetric
-import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMACrossover
 import java.util.logging.Level
 
@@ -52,19 +50,21 @@ fun ibkrBroker() {
 
 fun ibkrBroker2() {
     Logging.setLevel(Level.FINE)
-    val currencyConverter = FixedExchangeRates(Currency.USD, Currency.EUR to 1.2)
-    val broker = IBKRBroker(currencyConverter = currencyConverter, enableOrders = true)
+    Logging.useSimpleFormat = false
+    val broker = IBKRBroker(enableOrders = true)
     val account = broker.account
     account.summary().log()
     account.orders.summary().log()
     account.portfolio.summary().log()
 
     // Now lets place a new market sell order
-    val asset = account.portfolio.assets.first()
+    /*
+    val asset = account.portfolio.assets.last()
     val order = MarketOrder(asset, -1.0)
     broker.place(listOf(order), Event.empty())
     Thread.sleep(5000)
     account.orders.summary().log()
+    */
 
     broker.disconnect()
 }

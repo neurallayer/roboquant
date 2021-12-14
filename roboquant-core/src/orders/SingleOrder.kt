@@ -127,7 +127,7 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
     override fun getValue(price: Double) = asset.multiplier * remaining * price
 
     override fun toString(): String {
-        return "${this::class.simpleName} asset=${asset.symbol} qty=$quantity tif=$tif"
+        return "${this::class.simpleName} asset=${asset.symbol} qty=$quantity tif=$tif id=$id status=$status"
     }
 
 }
@@ -194,7 +194,7 @@ class LimitOrder(
     }
 
     override fun toString(): String {
-        return "${this::class.simpleName} asset=${asset.symbol} limit=$limit qty=$quantity tif=$tif"
+        return "${super.toString()} limit=$limit"
     }
 }
 
@@ -237,7 +237,7 @@ open class StopOrder(
 
 
     override fun toString(): String {
-        return "${this::class.simpleName} asset=${asset.symbol} stop=$stop qty=$quantity tif=$tif"
+        return "${super.toString()} stop=$stop"
     }
 
 }
@@ -289,7 +289,7 @@ class StopLimitOrder(
 
 
     override fun toString(): String {
-        return "${this::class.simpleName} asset=${asset.symbol} stop=$stop limit=$limit qty=$quantity tif=$tif"
+        return "${super.toString()} stop=$stop limit=$limit"
     }
 }
 
@@ -329,7 +329,7 @@ open class TrailOrder(
     }
 
     override fun toString(): String {
-        return "${this::class.simpleName} asset=${asset.symbol} trail=$trail qty=$quantity tif=$tif"
+        return "${super.toString()} trail=$trail"
     }
 
     protected fun updateStop(price: Double) {
@@ -388,7 +388,7 @@ class TrailLimitOrder(
     }
 
     override fun toString(): String {
-        return "${this::class.simpleName} asset=${asset.symbol} trail=$trail limit=$limit qty=$quantity tif=$tif"
+        return "${super.toString()} trail=$trail limit=$limit"
     }
 
     override fun fill(price: Double): Double {
