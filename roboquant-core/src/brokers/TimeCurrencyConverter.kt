@@ -18,22 +18,24 @@ package org.roboquant.brokers
 
 import org.roboquant.common.Currency
 import java.time.Instant
-
+import java.util.*
 
 /**
- * Currency converter that supports fixed exchange rates between currencies, so rates that don't change over the
- * duration of a run. It provides logic to convert between two currencies given this map of
- * exchange rates. It is smart in the sense that is able to convert between currencies even if there is no direct
- * exchange rate defined in the map for a given currency pair.
- *
- * It will throw an exception if a conversion is required for an unknown currency.
- *
- * @constructor Create a new  fixed currency converter
+ * Currency Convertor that supports different rates at different times. Abstract class that is used by
+ * FeedCurrencyConverter and ECBCurrencyConverter.
  */
-class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: Map<Currency, Double>) : CurrencyConverter {
+abstract class TimeCurrencyConverter(protected val baseCurrency: Currency) : CurrencyConverter {
 
-    constructor(baseCurrency: Currency, vararg rates: Pair<Currency, Double>) : this(baseCurrency, rates.toMap())
+    protected val exchangeRates = mutableMapOf<Currency, NavigableMap<Instant,Double>>()
 
+    val currencies: Collection<Currency>
+        get() = exchangeRates.keys
+
+    private fun find(currency: Currency, time: Instant): Double {
+        val rates = exchangeRates[currency]!!
+        val result = rates.floorEntry(time) ?: rates.firstEntry()
+        return result.value
+    }
 
     /**
      * Convert between two currencies.
@@ -48,12 +50,11 @@ class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: 
         (from === to) && return amount
 
         if (to === baseCurrency)
-            return exchangeRates[from]!! * amount
+            return find(from, now) * amount
 
         if (from === baseCurrency)
-            return 1 / exchangeRates[to]!! * amount
+            return 1 / find(to, now) * amount
 
-        return exchangeRates[from]!! * 1 / exchangeRates[to]!! * amount
+        return find(from, now) * 1 / find(to, now) * amount
     }
-
 }

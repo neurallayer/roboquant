@@ -60,6 +60,13 @@ class Summary(val content: String) {
 
     fun add(label: String, value: Any?) = children.add(Summary("$label$sep$value"))
 
+
+    fun add(label: String, value: Summary) {
+        val child = Summary(label)
+        child.add(value)
+        children.add(child)
+    }
+
     fun add(label: String) = children.add(Summary(label))
 
     /**

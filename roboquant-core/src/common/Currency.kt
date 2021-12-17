@@ -139,6 +139,16 @@ class Currency private constructor(val currencyCode: String) {
          * New Zealand Dollar
          */
         val NZD = getInstance("NZD")
+
+        /**
+         * For all already registered currencies increase the number of display digits with [extraDigits]. This doesn't
+         * change calculations, only the way currency amounts are displayed.
+         *
+         * TIP: For Forex trading this is often required since otherwise small differences can not be seen.
+         */
+        fun increaseDigits(extraDigits: Int = 3) {
+            for (currency in currencies.values) currency.defaultFractionDigits += extraDigits
+        }
     }
 
     /** @suppress */

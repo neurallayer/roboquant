@@ -60,12 +60,12 @@ class Orders : MutableList<Order>, LinkedList<Order>() {
 
         val c = Summary("closed")
         for (order in closed) c.add("$order")
-        if (closed.isEmpty()) c.add("Empty")
+        if (closed.isEmpty()) c.add("EMPTY")
         s.add(c)
 
         val o = Summary("open")
         for (order in open) o.add("$order")
-        if (open.isEmpty()) o.add("Empty")
+        if (open.isEmpty()) o.add("EMPTY")
         s.add(o)
 
         return s

@@ -26,7 +26,6 @@ import java.io.InputStreamReader
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -55,16 +54,13 @@ import kotlin.io.path.notExists
  *
  * @constructor Create a new  ECB exchange rates converter
  */
-class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) : CurrencyConverter {
+class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) : TimeCurrencyConverter(Currency.EUR) {
 
-    private val converters: NavigableMap<Instant, FixedExchangeRates>
+
     private val logger: Logger = Logging.getLogger("ECBExchangeRates")
 
-    val currencies: Collection<Currency>
-        get() = converters.map { it.value.exchangeRates.keys }.flatten().toSet()
 
-    val timeline: Collection<Instant>
-        get() = converters.keys
+
 
     companion object {
         private const val DEFAULT_ECB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.zip"
@@ -87,32 +83,12 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
 
 
     init {
-        converters = load(url, compressed, useCache)
+        load(url, compressed, useCache)
         logger.info {
-            "loaded conversion rates from ${timeline.first()} to ${timeline.last()}"
+            "loaded conversion rates for ${exchangeRates.size}} currencies"
         }
     }
 
-
-    /**
-     * See [CurrencyConverter.convert]
-     *
-     * @param from The currency to convert from
-     * @param to The currency that the money needs to be converted to
-     * @param amount The amount (in from currency denoted) that needs to be converted
-     * @param now The time of conversion
-     * @return
-     */
-    override fun convert(from: Currency, to: Currency, amount: Double, now: Instant): Double {
-        (from == to) && return amount
-
-        val entry = converters.floorEntry(now)?.value
-        if (entry == null) {
-            throw Exception("Couldn't convert currency at $now, conversion rates only start at ${converters.firstKey()}")
-        } else {
-            return entry.convert(from, to, amount, now)
-        }
-    }
 
     /**
      * Get the cache url of an asset. If not exist cache it now.
@@ -146,7 +122,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
      * @param compressed
      * @return
      */
-    private fun load(urlString: String, compressed: Boolean, cache: Boolean): TreeMap<Instant, FixedExchangeRates> {
+    private fun load(urlString: String, compressed: Boolean, cache: Boolean) {
         var url = URL(urlString)
 
         /**
@@ -181,27 +157,22 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
         // The timezone of the ECB
         val zoneId = ZoneId.of("Europe/Brussels")
         val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(zoneId)
-
-        val rates = TreeMap<Instant, FixedExchangeRates>()
-        for (line in lines.drop(1).reversed()) {
+        for (line in lines.drop(1)) {
 
             // According to the ECB website, the rates are published around 16:00 local time
             val instant = ZonedDateTime.parse(line[0] + " 16:00:00", dtf).toInstant()
-
-            val m = mutableMapOf<Currency, Double>()
             for ((i, rateStr) in line.drop(1).withIndex()) {
                 try {
                     val v = 1.0 / rateStr.toDouble()
                     val k = currencies[i]
-                    m[k] = v
+                    val map = exchangeRates.getOrPut(k) { TreeMap() }
+                    map[instant] = v
                 } catch (ex: NumberFormatException) {
                     // Will happen due to N/A values and trailing comma in the CSV file
                     logger.fine { "Encounter number format exception for string $rateStr" }
                 }
             }
-            rates[instant] = FixedExchangeRates(Currency.EUR, m)
         }
-        return rates
     }
 
 }

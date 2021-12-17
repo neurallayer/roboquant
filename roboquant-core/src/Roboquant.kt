@@ -37,6 +37,7 @@ import org.roboquant.policies.Policy
 import org.roboquant.strategies.Strategy
 import java.time.Duration
 import java.time.Instant
+import java.util.logging.Level
 
 /**
  * Roboquant is the engine of the platform that ties [strategy], [policy] and [broker] together and caters to a wide
@@ -227,7 +228,13 @@ class Roboquant<L : MetricsLogger>(
      */
     private fun runMetrics(account: Account, event: Event, runInfo: RunInfo) {
         val info = runInfo.copy()
-        for (metric in metrics) metric.calculate(account, event)
+        for (metric in metrics) {
+            try {
+                metric.calculate(account, event)
+            } catch (e: Exception) {
+                kotlinLogger.log(Level.WARNING, "Couldn't calculate metric", e)
+            }
+        }
 
         for (component in components) {
             val metrics = component.getMetrics()

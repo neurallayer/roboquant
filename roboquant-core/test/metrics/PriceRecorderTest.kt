@@ -22,13 +22,13 @@ import org.roboquant.TestData
 import org.roboquant.common.Asset
 import kotlin.test.assertTrue
 
-internal class PriceMetricTest {
+internal class PriceRecorderTest {
 
     @Test
     fun basic() {
 
         val (account, event) = TestData.metricInput()
-        val metric = PriceMetric(Asset("Dummy"))
+        val metric = PriceRecorder(Asset("Dummy"))
 
         metric.calculate(account, event)
         assertTrue(metric.getMetrics().isEmpty())

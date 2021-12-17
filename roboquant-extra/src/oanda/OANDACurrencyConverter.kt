@@ -14,26 +14,34 @@
  * limitations under the License.
  */
 
-package org.roboquant.brokers
+package org.roboquant.oanda
 
+import org.roboquant.brokers.CurrencyConverter
 import org.roboquant.common.Currency
+import org.roboquant.feeds.PriceAction
 import java.time.Instant
 
-
 /**
- * Currency converter that supports fixed exchange rates between currencies, so rates that don't change over the
- * duration of a run. It provides logic to convert between two currencies given this map of
- * exchange rates. It is smart in the sense that is able to convert between currencies even if there is no direct
- * exchange rate defined in the map for a given currency pair.
- *
- * It will throw an exception if a conversion is required for an unknown currency.
- *
- * @constructor Create a new  fixed currency converter
+ * Currency converter used by default by OANDA Broker that uses live feed data to update exchange rates.
  */
-class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: Map<Currency, Double>) : CurrencyConverter {
+class OANDACurrencyConverter(private val priceType: String = "DEFAULT") : CurrencyConverter {
 
-    constructor(baseCurrency: Currency, vararg rates: Pair<Currency, Double>) : this(baseCurrency, rates.toMap())
+    internal lateinit var baseCurrency: Currency
+    private val exchangeRates = mutableMapOf<Currency, Double>()
 
+
+    internal fun setRate(symbol: String, action :PriceAction) {
+        val codes = symbol.split("_")
+        if (codes.size == 2) {
+            val rate = action.getPrice(priceType)
+            val from = Currency.getInstance(codes.first())
+            val to = Currency.getInstance(codes.last())
+            if (to == baseCurrency)
+                exchangeRates[from] = rate
+            else if (from == baseCurrency)
+                exchangeRates[to] = 1.0/ rate
+        }
+    }
 
     /**
      * Convert between two currencies.
@@ -55,5 +63,4 @@ class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: 
 
         return exchangeRates[from]!! * 1 / exchangeRates[to]!! * amount
     }
-
 }

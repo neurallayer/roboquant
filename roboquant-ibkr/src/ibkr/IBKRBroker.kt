@@ -151,9 +151,10 @@ class IBKRBroker(
         val action = if (order.quantity > 0) "BUY" else "SELL"
         result.action(action)
         result.totalQuantity(order.quantity.absoluteValue)
+        if (accountId != null) result.account(accountId)
+
         orderMap[orderId] = order
         result.orderId(orderId++)
-        if (accountId != null) result.account(accountId)
         return result
     }
 
@@ -162,7 +163,6 @@ class IBKRBroker(
      * Overwrite the default wrapper
      */
     inner class Wrapper : DefaultEWrapper() {
-
 
         /**
          * Convert an IBOrder to a roboquant Order. This is only used during initial connect when retrieving any open
@@ -177,7 +177,7 @@ class IBKRBroker(
         }
 
         /**
-         * What is the next valid orderID
+         * What is the next valid IBKR orderID we can use
          */
         override fun nextValidId(id: Int) {
             orderId = id
@@ -220,7 +220,7 @@ class IBKRBroker(
         }
 
         /**
-         * This is called with fee and pnl of a trade
+         * This is called with fee and pnl of a trade.
          */
         override fun commissionReport(report: CommissionReport) {
             logger.fine { "execId=${report.execId()} currency=${report.currency()} fee=${report.commission()} pnl=${report.realizedPNL()}" }
@@ -316,11 +316,11 @@ class IBKRBroker(
 
             // If more than 60 seconds difference, give a warning
             val diff = Instant.now().epochSecond - time
-            if (diff.absoluteValue > 60) logger.warning("Time clocks out of sync: $diff seconds")
+            if (diff.absoluteValue > 60) logger.warning("Time clocks out of sync by $diff seconds")
         }
 
-        override fun updateAccountTime(timeStamp: String?) {
-            logger.fine { "$timeStamp" }
+        override fun updateAccountTime(timeStamp: String) {
+            logger.fine(timeStamp)
             account.time = Instant.now()
         }
 

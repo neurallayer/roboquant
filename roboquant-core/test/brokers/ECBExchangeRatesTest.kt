@@ -41,9 +41,9 @@ internal class ECBExchangeRatesTest {
         c = x.convert(eur, jpy, 100.0, Instant.now())
         assertTrue(c > 100.0)
 
-        assertFails {
-            c = x.convert(usd, jpy, 100.0, Instant.MIN)
-        }
+        val r1 = x.convert(usd, jpy, 100.0, Instant.MIN)
+        val r2 = x.convert(usd, jpy, 100.0, Instant.MIN.plusMillis(1L))
+        assertEquals(r1, r2)
 
         c = x.convert(usd, jpy, 100.0, Instant.MAX)
         assertTrue(c > 100.0)

@@ -5,9 +5,9 @@ import org.roboquant.common.Currency
 import java.time.Instant
 
 /**
- * Currency convertor that is filled by exchange rates provided by IBKR during the retrieval of account values
+ * Currency convertor that is filled by exchange rates provided by IBKR during the retrieval of the account values
  */
-class IBKRCurrencyConverter : CurrencyConverter {
+internal class IBKRCurrencyConverter : CurrencyConverter {
 
     lateinit var baseCurrency: Currency
     val exchangeRates = mutableMapOf<Currency, Double>()

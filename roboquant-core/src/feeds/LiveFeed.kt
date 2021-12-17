@@ -34,7 +34,7 @@ abstract class LiveFeed : Feed {
     /**
      * How many milliseconds between the heartbeat signals, default is 10_000ms (10 seconds)
      */
-    var timeMillis: Long = 10_000
+    var heartbeatInterval: Long = 10_000
     protected var channel: EventChannel? = null
 
     /**
@@ -47,10 +47,10 @@ abstract class LiveFeed : Feed {
         this.channel = channel
         try {
             while (true) {
+                delay(heartbeatInterval)
                 val event = Event(listOf(), Instant.now())
                 channel.send(event)
                 if (channel.done) break
-                delay(timeMillis)
             }
         } catch (e: ClosedSendChannelException) {
             // Expected exception

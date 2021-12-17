@@ -44,6 +44,7 @@ import java.nio.file.Files
 import java.time.Instant
 import java.time.Period
 import kotlin.io.path.Path
+import kotlin.io.path.div
 import kotlin.io.path.name
 import kotlin.system.measureTimeMillis
 
@@ -151,6 +152,8 @@ fun large5() {
 
 fun large6() {
 
+    val dataHome = Path("/Users/peter/data")
+
     fun getConfig(exchange: String): CSVConfig {
         Exchange.getInstance(exchange)
         return CSVConfig(
@@ -162,7 +165,7 @@ fun large6() {
 
     val config1 = getConfig("NASDAQ")
     val config2 = getConfig("NYSE")
-    val path = Path("/data/assets/stooq/data/daily/us/")
+    val path = dataHome / "stooq/daily/us/"
     var feed: CSVFeed? = null
 
     for (d in Files.list(path)) {
@@ -179,7 +182,8 @@ fun large6() {
         }
     }
 
-    AvroGenerator.capture(feed!!, "/data/tmp/us_2000_2020.avro", TimeFrame.fromYears(2000, 2020), 6)
+    val avroPath = dataHome / "avro/us_2000_2020.avro"
+    AvroGenerator.capture(feed!!, avroPath.toString(), TimeFrame.fromYears(2000, 2020), 6)
 
 }
 
@@ -382,9 +386,9 @@ fun taLarge() {
 
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
-    val feed = CSVFeed("data/US")
+    val feed = AvroFeed("/Users/peter/data/avro/us_2000_2020.avro")
     roboquant.run(feed)
-    logger.summary(10).print()
+    roboquant.broker.account.fullSummary().print()
 }
 
 fun avro() {
@@ -493,7 +497,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.info()
 
-    when ("LARGE6") {
+    when ("TA_LARGE") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()

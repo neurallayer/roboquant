@@ -29,7 +29,7 @@ import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
 import org.roboquant.metrics.AccountSummary
-import org.roboquant.metrics.PriceMetric
+import org.roboquant.metrics.PriceRecorder
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMACrossover
@@ -59,9 +59,9 @@ fun ibkrBroker2() {
 
     // Now lets place a new market sell order
     val asset = account.portfolio.assets.findBySymbols("AAPL").first()
-    val order = MarketOrder(asset, 2.0)
+    val order = MarketOrder(asset, -1.0)
     broker.place(listOf(order), Event.empty())
-    Thread.sleep(5000)
+    Thread.sleep(10000)
     account.fullSummary().print()
     broker.disconnect()
 }
@@ -98,7 +98,7 @@ fun ibkrFeed() {
     val broker = SimBroker(cash)
 
     val strategy = EMACrossover.shortTerm()
-    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), PriceMetric(asset), broker = broker)
+    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), PriceRecorder(asset), broker = broker)
     val tf = TimeFrame.next(10.minutes)
 
     roboquant.run(feed, tf)

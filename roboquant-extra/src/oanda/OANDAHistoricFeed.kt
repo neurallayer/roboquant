@@ -20,7 +20,6 @@ import com.oanda.v20.Context
 import com.oanda.v20.instrument.CandlestickGranularity
 import com.oanda.v20.instrument.InstrumentCandlesRequest
 import com.oanda.v20.primitives.InstrumentName
-import oanda.OANDAConnection
 import org.roboquant.common.Logging
 import org.roboquant.common.TimeFrame
 import org.roboquant.common.days
@@ -33,8 +32,12 @@ import java.time.Instant
  */
 class OANDAHistoricFeed(token: String? = null, demoAccount: Boolean = true) : HistoricPriceFeed() {
 
-    private val ctx: Context = OANDAConnection.getContext(token, demoAccount)
-    val availableAssets = OANDAConnection.getAvailableAssets(ctx)
+    private val ctx: Context = OANDA.getContext(token, demoAccount)
+    private val accountID = OANDA.getAccountID(null, ctx)
+
+    val availableAssets by lazy {
+        OANDA.getAvailableAssets(ctx,accountID)
+    }
     private val logger = Logging.getLogger("OANDAHistoricFeed")
 
     fun retrieveCandles(

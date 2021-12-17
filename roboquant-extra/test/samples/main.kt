@@ -23,8 +23,10 @@ import org.roboquant.alpaca.AlpacaBroker
 import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.alpaca.AlpacaLiveFeed
 import org.roboquant.alpaca.AlpacaPeriod
+import org.roboquant.brokers.FeedCurrencyConverter
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.common.*
+import org.roboquant.feeds.Event
 import org.roboquant.feeds.OrderBook
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
@@ -33,12 +35,18 @@ import org.roboquant.iex.Range
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.OpenPositions
+import org.roboquant.metrics.PriceRecorder
 import org.roboquant.metrics.ProgressMetric
+import org.roboquant.oanda.OANDA
 import org.roboquant.oanda.OANDABroker
 import org.roboquant.oanda.OANDAHistoricFeed
 import org.roboquant.oanda.OANDALiveFeed
+import org.roboquant.orders.FOK
+import org.roboquant.orders.MarketOrder
+import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.yahoo.YahooHistoricFeed
+import java.util.logging.Level
 
 
 fun alpacaBroker() {
@@ -59,7 +67,7 @@ fun allAlpaca() {
     account.portfolio.summary().log()
 
     val feed = AlpacaLiveFeed()
-    feed.timeMillis = 1000
+    feed.heartbeatInterval = 1000
 
 
     // Let trade all the assets that start with an A or are in our portfolio already
@@ -94,7 +102,7 @@ fun alpacaFeed() {
     val feed = AlpacaLiveFeed()
     val assets = feed.assets.take(50)
     feed.subscribe(assets)
-    feed.timeMillis = 1000
+    feed.heartbeatInterval = 1000
     val strategy = EMACrossover.midTerm()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
     val tf = TimeFrame.next(5.minutes)
@@ -157,6 +165,18 @@ fun oanda() {
 }
 
 
+fun oanda2() {
+    Currency.increaseDigits(3)
+    val feed = OANDAHistoricFeed()
+    feed.retrieveCandles("EUR_USD", "EUR_GBP", "GBP_USD")
+    val currencyConverter = FeedCurrencyConverter(feed)
+
+    val roboquant = OANDA.roboquant(EMACrossover(), currencyConverter = currencyConverter)
+    roboquant.run(feed)
+    roboquant.broker.account.fullSummary().print()
+}
+
+
 fun oandaLive() {
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
@@ -167,11 +187,10 @@ fun oandaLive() {
 
 
 fun oandaLivePrices() {
+    Logging.setLevel(Level.FINE, "org.roboquant")
     val feed = OANDALiveFeed()
-
     feed.subscribePrices("EUR_USD", "USD_JPY", "GBP_USD")
-    println("starting")
-    val data = feed.filter<OrderBook>(TimeFrame.next(5.minutes))
+    val data = feed.filter<OrderBook>(TimeFrame.next(1.minutes))
     data.summary().log()
 }
 
@@ -187,15 +206,50 @@ fun oandaBroker() {
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
 
     val feed = OANDALiveFeed()
-    feed.subscribeOrderBook("EUR_USD", "GBP_USD")
+    feed.subscribeOrderBook("EUR_USD", "GBP_USD", "GBP_EUR")
     val twoMinutes = TimeFrame.next(5.minutes)
     roboquant.run(feed, twoMinutes)
     broker.account.portfolio.summary().log()
 }
 
 
+fun oandaBroker3() {
+    Logging.setLevel(Level.FINE, "OANDABroker")
+    val broker = OANDABroker(enableOrders = true)
+    val account = broker.account
+    account.fullSummary().print()
+    val feed = OANDALiveFeed()
+    feed.subscribeOrderBook("GBP_USD", "EUR_USD", "EUR_GBP")
+    feed.heartbeatInterval = 30_000L
+
+    val strategy = EMACrossover(5, 9) // Use EMA Crossover strategy
+    val policy = DefaultPolicy(shorting = true) // We want to short if we do Forex trading
+    val assets = feed.assets.toTypedArray()
+    val priceRecorder = PriceRecorder(*assets)
+    val roboquant = Roboquant(strategy, AccountSummary(), priceRecorder, policy = policy, broker = broker)
+    val timeFrame = TimeFrame.next(5.minutes) // restrict the time time from now for the next minutes
+    roboquant.run(feed, timeFrame)
+}
+
+fun oandaBroker2() {
+    Logging.setLevel(Level.FINE, "OANDABroker")
+    // val currencyConverter = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
+    // val broker = OANDABroker(currencyConverter = currencyConverter, enableOrders = true)
+    val broker = OANDABroker(enableOrders = true)
+    broker.account.fullSummary().log()
+    broker.availableAssets.values.summary().log()
+
+
+    val asset = broker.availableAssets.values.findBySymbols("EUR_USD").first()
+    val order = MarketOrder(asset, -100.0, tif=FOK())
+    broker.place(listOf(order), Event.empty())
+    broker.account.fullSummary().log()
+}
+
+
+
 fun main() {
-    when ("ALPACA_ALL") {
+    when ("OANDA_FEED2") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
@@ -204,7 +258,10 @@ fun main() {
         "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
         "ALPACA_ALL" -> allAlpaca()
         "OANDA_BROKER" -> oandaBroker()
+        "OANDA_BROKER2" -> oandaBroker2()
+        "OANDA_BROKER3" -> oandaBroker3()
         "OANDA_FEED" -> oanda()
+        "OANDA_FEED2" -> oanda2()
         "OANDA_LIVE_FEED" -> oandaLive()
         "OANDA_LIVE_PRICES" -> oandaLivePrices()
     }

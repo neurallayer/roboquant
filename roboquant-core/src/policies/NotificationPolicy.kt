@@ -42,7 +42,7 @@ class NotificationPolicy(
 
     private val backlog = mutableListOf<Pair<Instant, Signal>>()
     private var nextAlert: Instant = Instant.MIN
-    private val logger = Logging.getLogger(this)
+    private val logger = Logging.getLogger(this::class)
 
     /**
      * used as subject header in the email

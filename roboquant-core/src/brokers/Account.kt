@@ -119,8 +119,6 @@ class Account(
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
         s.add("buying power", baseCurrency.format(buyingPower))
-        val value = convertToCurrency(getValue())
-        s.add("total value", baseCurrency.format(value))
 
         val tradesSummary = Summary("Trades")
         tradesSummary.add("total", trades.size)
@@ -160,9 +158,6 @@ class Account(
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
         s.add("buying power", baseCurrency.format(buyingPower))
-        val value = convertToCurrency(getValue())
-        s.add("total value", baseCurrency.format(value))
-
         s.add(cash.summary())
         s.add(portfolio.summary())
         s.add(orders.summary())

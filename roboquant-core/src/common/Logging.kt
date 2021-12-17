@@ -64,10 +64,12 @@ object Logging {
 
 
         override fun format(lr: LogRecord): String {
-            return if (useSimpleFormat)
-                "[$ANSI_BLUE${lr.level.localizedName}$ANSI_RESET] $ANSI_GREEN${lr.loggerName}:$ANSI_RESET ${lr.message}\n"
-            else
+            return if (useSimpleFormat) {
+                val shortLoggerName = lr.loggerName.split('.').last()
+                "[$ANSI_BLUE${lr.level.localizedName}$ANSI_RESET] $ANSI_GREEN${shortLoggerName}:$ANSI_RESET ${lr.message}\n"
+            } else {
                 "[$ANSI_BLUE${lr.level.localizedName}$ANSI_RESET] $ANSI_GREEN${lr.loggerName} ${lr.sourceClassName}.${lr.sourceMethodName}:$ANSI_RESET ${lr.message}\n"
+            }
         }
     }
 
@@ -87,11 +89,11 @@ object Logging {
     }
 
     fun getLogger(clazz: Class<*>): Logger {
-        return getLogger(clazz.simpleName)
+        return getLogger(clazz.name)
     }
 
     fun getLogger(obj: Any): Logger {
-        return getLogger(obj.javaClass.simpleName)
+        return getLogger(obj::class.qualifiedName!!)
     }
 
     fun getLogger(name: String): Logger {

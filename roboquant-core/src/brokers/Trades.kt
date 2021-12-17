@@ -153,7 +153,7 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
         if (isEmpty()) {
             s.add("EMPTY")
         } else {
-            val fmt = "│%24s│%10s│%11s│%11s│%11s│%11s│%11s│"
+            val fmt = "│%24s│%10s│%11s│%14s│%14s│%14s│%12s│"
             val header = String.format(fmt, "time", "asset", "qty", "cost", "fee", "p&l", "price")
             s.add(header)
             forEach {
