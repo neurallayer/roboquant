@@ -27,13 +27,10 @@ import java.math.RoundingMode
 import java.time.*
 import kotlin.math.pow
 
-/******************************************************************************
- * This file contains the extensions for classes that are part of standard
- * Java and Kotlin libraries.
- *
- * Extensions for classes that are part of roboquant should not be included in
- * this file.
- */
+/********************************************************************************************************************
+ * This file contains the extensions for classes that are part of standard Java and Kotlin libraries. Extensions for
+ * classes that are part of roboquant should not be included in this file.
+ *******************************************************************************************************************/
 
 /**
  * Make using string buffers a bit more pleasant
@@ -102,11 +99,10 @@ fun List<Instant>.earliestNotBefore(now: Instant): Int? {
 }
 
 /**
- * Get the timeframe for this timeline
+ * Get the timeframe for this timeline, it assumes a sorted list
  */
 val List<Instant>.timeFrame
     get() = TimeFrame(first(), last() + 1)
-
 
 fun List<Instant>.split(period: Period): List<TimeFrame> {
     val result = mutableListOf<TimeFrame>()
@@ -216,10 +212,30 @@ fun Number.annualize(tf: TimeFrame): Double {
     return (1.0 + toDouble()).pow(years) - 1.0
 }
 
-
 /**
- * extensions on integer type to instantiation of periods and duration a bit easier
+ * Convert a string to a currency pair. Return null if not possible
  */
+fun String.toCurrencyPair() : Pair<Currency, Currency>? {
+    val codes = split('_', '-', ' ', '/', ':')
+    if (codes.size == 2) {
+        val c1 = Currency.getInstance(codes.first().uppercase())
+        val c2 = Currency.getInstance(codes.last().uppercase())
+        return Pair(c1, c2)
+    } else if (codes.size == 1 && length == 6) {
+        val c1 = Currency.getInstance(substring(0, 3).uppercase())
+        val c2 = Currency.getInstance(substring(3, 6).uppercase())
+        return Pair(c1, c2)
+    }
+    return null
+}
+
+
+
+/*********************************************************************************************
+ * Extensions on Integer type to make instantiation of periods or duration more convenient
+ *********************************************************************************************/
+
+
 val Int.years
     get() = Period.ofYears(this)
 

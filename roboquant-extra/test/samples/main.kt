@@ -35,7 +35,6 @@ import org.roboquant.iex.Range
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.OpenPositions
-import org.roboquant.metrics.PriceRecorder
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.oanda.OANDA
 import org.roboquant.oanda.OANDABroker
@@ -215,6 +214,8 @@ fun oandaBroker() {
 
 fun oandaBroker3() {
     Logging.setLevel(Level.FINE, "OANDABroker")
+    Currency.increaseDigits(3)
+
     val broker = OANDABroker(enableOrders = true)
     val account = broker.account
     account.fullSummary().print()
@@ -222,23 +223,19 @@ fun oandaBroker3() {
     feed.subscribeOrderBook("GBP_USD", "EUR_USD", "EUR_GBP")
     feed.heartbeatInterval = 30_000L
 
-    val strategy = EMACrossover(5, 9) // Use EMA Crossover strategy
+    val strategy = EMACrossover() // Use EMA Crossover strategy
     val policy = DefaultPolicy(shorting = true) // We want to short if we do Forex trading
-    val assets = feed.assets.toTypedArray()
-    val priceRecorder = PriceRecorder(*assets)
-    val roboquant = Roboquant(strategy, AccountSummary(), priceRecorder, policy = policy, broker = broker)
-    val timeFrame = TimeFrame.next(5.minutes) // restrict the time time from now for the next minutes
+    val roboquant = Roboquant(strategy, AccountSummary(), policy = policy, broker = broker)
+    val timeFrame = TimeFrame.next(1.minutes) // restrict the time from now for the next minutes
     roboquant.run(feed, timeFrame)
+    account.fullSummary().print()
 }
 
 fun oandaBroker2() {
     Logging.setLevel(Level.FINE, "OANDABroker")
-    // val currencyConverter = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
-    // val broker = OANDABroker(currencyConverter = currencyConverter, enableOrders = true)
     val broker = OANDABroker(enableOrders = true)
     broker.account.fullSummary().log()
     broker.availableAssets.values.summary().log()
-
 
     val asset = broker.availableAssets.values.findBySymbols("EUR_USD").first()
     val order = MarketOrder(asset, -100.0, tif=FOK())
@@ -249,7 +246,7 @@ fun oandaBroker2() {
 
 
 fun main() {
-    when ("OANDA_FEED2") {
+    when ("OANDA_BROKER2") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()

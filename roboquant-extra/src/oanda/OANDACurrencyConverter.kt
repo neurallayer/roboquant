@@ -18,11 +18,12 @@ package org.roboquant.oanda
 
 import org.roboquant.brokers.CurrencyConverter
 import org.roboquant.common.Currency
+import org.roboquant.common.toCurrencyPair
 import org.roboquant.feeds.PriceAction
 import java.time.Instant
 
 /**
- * Currency converter used by default by OANDA Broker that uses live feed data to update exchange rates.
+ * Currency converter used by default by OANDA Broker that uses feed data to update exchange rates.
  */
 class OANDACurrencyConverter(private val priceType: String = "DEFAULT") : CurrencyConverter {
 
@@ -31,11 +32,10 @@ class OANDACurrencyConverter(private val priceType: String = "DEFAULT") : Curren
 
 
     internal fun setRate(symbol: String, action :PriceAction) {
-        val codes = symbol.split("_")
-        if (codes.size == 2) {
+        val currencyPair = symbol.toCurrencyPair()
+        if (currencyPair != null) {
+            val (from, to) = currencyPair
             val rate = action.getPrice(priceType)
-            val from = Currency.getInstance(codes.first())
-            val to = Currency.getInstance(codes.last())
             if (to == baseCurrency)
                 exchangeRates[from] = rate
             else if (from == baseCurrency)

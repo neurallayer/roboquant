@@ -19,6 +19,7 @@ package org.roboquant.oanda
 import com.google.gson.JsonParser
 import com.oanda.v20.Context
 import com.oanda.v20.pricing.PricingGetRequest
+import com.oanda.v20.primitives.DateTime
 import kotlinx.coroutines.delay
 import org.apache.http.client.methods.CloseableHttpResponse
 import org.apache.http.client.methods.HttpGet
@@ -34,6 +35,7 @@ import org.roboquant.feeds.OrderBook
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.time.Instant
+
 
 /**
  * Retrieve live  data from OANDA.
@@ -140,9 +142,12 @@ class OANDALiveFeed(
                 logger.warning("No asset found for symbol $it. See broker.availableAssets for all available assets")
         }
         val job = Background.ioJob {
+            var since: DateTime? = null
             while (true) {
+
                 if (channel != null) {
                     val request = PricingGetRequest(accountID, symbols.toList())
+                    if (since != null) request.setSince(since)
                     val resp = ctx.pricing[request]
                     val now = Instant.now()
                     val actions = resp.prices.map {
@@ -164,7 +169,7 @@ class OANDALiveFeed(
                         )
                     }
                     if (actions.isNotEmpty()) channel?.offer(Event(actions, now))
-                    request.setSince(resp.time)
+                    since = resp.time
                 }
                 delay(delay)
             }
@@ -172,5 +177,6 @@ class OANDALiveFeed(
         }
         logger.finer { "Started job $job" }
     }
+
 
 }

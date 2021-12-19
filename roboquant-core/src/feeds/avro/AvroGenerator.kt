@@ -101,6 +101,10 @@ object AvroGenerator {
                         record.put(5, action.close)
                         record.put(6, action.volume)
                         dataFileWriter.append(record)
+
+                        // Sample float
+                        // val a2 = GenericData.Array<Float>(2, Schema.createArray(Schema.create(Schema.Type.FLOAT)))
+                        // a2.add(100.0f)
                     }
 
                     // We sync after each event, so we can later create an index if required

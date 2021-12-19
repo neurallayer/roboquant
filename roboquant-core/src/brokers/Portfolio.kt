@@ -21,6 +21,7 @@ import org.roboquant.common.Cash
 import org.roboquant.common.Summary
 import org.roboquant.feeds.Event
 import java.text.DecimalFormat
+import java.util.*
 
 /**
  * Portfolio holds the [Assets][Asset] and their [Position] within an account. An asset can be anything from a stock
@@ -31,7 +32,8 @@ import java.text.DecimalFormat
  */
 class Portfolio : Cloneable {
 
-    private val _positions = mutableMapOf<Asset, Position>()
+    // Use a treemap to store positions in order to make results more reproducable
+    private val _positions = TreeMap<Asset, Position>()
 
     /**
      * Get the open positions in this portfolio, both short and long

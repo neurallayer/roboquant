@@ -47,6 +47,10 @@ class OANDAHistoricFeed(token: String? = null, demoAccount: Boolean = true) : Hi
         priceType: String = "M",
     ) {
         for (symbol in symbols) {
+            if (symbol !in availableAssets) {
+                logger.warning("$symbol not in available assets")
+                continue
+            }
             val request = InstrumentCandlesRequest(InstrumentName(symbol))
                 .setPrice(priceType)
                 .setFrom(timeFrame.start.toString())
