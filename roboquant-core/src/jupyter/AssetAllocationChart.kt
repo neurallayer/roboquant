@@ -48,8 +48,8 @@ class AssetAllocationChart(
                 result.add(Entry(entry.key.displayName, roundedValue, "CASH"))
             }
         }
-        val positions = account.portfolio.positions.values
-        for (position in positions) {
+
+        for (position in account.portfolio.positions) {
             val asset = position.asset
             val localAmount = account.convertToCurrency(asset.currency, position.exposure)
             val roundedValue = account.baseCurrency.toBigDecimal(localAmount)

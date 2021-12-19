@@ -40,30 +40,30 @@ class Portfolio : Cloneable {
      * positions will be returned.
      */
     val positions
-        get() = _positions.filter { it.value.open }
+        get() = _positions.values.filter { it.open }
 
     /**
      * Long positions contained in this portfolio
      */
     val longPositions
-        get() = _positions.filter { it.value.long }
+        get() = _positions.values.filter { it.long }
 
     /**
      * The assets hold in this portfolio that currently have an open position
      */
     val assets
-        get() = positions.keys.toList()
+        get() = _positions.keys.toList()
 
     /**
      * Short positions contained in this portfolio
      */
     val shortPositions
-        get() = _positions.filter { it.value.short }
+        get() = _positions.values.filter { it.short }
 
     /**
      * Is this portfolio empty? Or in other words does it not contain positions with a quantity unequal to zero
      */
-    fun isEmpty(): Boolean = positions.isEmpty()
+    fun isEmpty(): Boolean = ! _positions.values.any { it.open }
 
 
     /**
@@ -96,8 +96,8 @@ class Portfolio : Cloneable {
         val prices = event.prices
         val now = event.now
 
-        for ((asset, position) in positions) {
-            val priceAction = prices[asset]
+        for (position in positions) {
+            val priceAction = prices[position.asset]
             if (priceAction != null) {
                 position.spotPrice = priceAction.getPrice(priceType)
                 position.lastUpdate = now
@@ -122,8 +122,8 @@ class Portfolio : Cloneable {
      */
     fun getValue(): Cash {
         val result = Cash()
-        for ((asset, position) in positions) {
-            result.deposit(asset.currency, position.value)
+        for (position in positions) {
+            result.deposit(position.currency, position.value)
         }
         return result
     }
@@ -134,8 +134,8 @@ class Portfolio : Cloneable {
      */
     fun getExposure(): Cash {
         val result = Cash()
-        for ((asset, position) in positions) {
-            result.deposit(asset.currency, position.exposure)
+        for (position in positions) {
+            result.deposit(position.currency, position.exposure)
         }
         return result
     }
@@ -143,21 +143,20 @@ class Portfolio : Cloneable {
 
     /**
      * Get total unrealized PNL of this portfolio. The unrealized PNL is calculated based on the open positions and
-     * their average cost and last known price. The result is returned as a Cash object, so no currency conversion
+     * their average price and last known price. The result is returned as a Cash object, so no currency conversion
      * is applied.
      */
     fun unrealizedPNL(): Cash {
         val result = Cash()
-        for ((asset, position) in positions) {
-            result.deposit(asset.currency, position.pnl)
+        for (position in positions) {
+            result.deposit(position.currency, position.pnl)
         }
         return result
     }
 
 
     /**
-     * Get the position for an [asset]. If the portfolio doesn't hold the asset, it returns
-     * an empty position.
+     * Get the position for an [asset]. If the portfolio doesn't hold the asset, it returns an empty position.
      */
     fun getPosition(asset: Asset): Position {
         return _positions.getOrElse(asset) { Position.empty(asset) }
@@ -184,14 +183,14 @@ class Portfolio : Cloneable {
             val header = String.format(fmt, "asset", "curr", "qty", "avgPrice", "spot", "p&l")
             s.add(header)
 
-            for ((p, v) in ps) {
+            for (v in ps) {
                 val c = v.asset.currency
                 val pos = pf.format(v.quantity)
                 val avgPrice = c.format(v.avgPrice)
                 val price = c.format(v.spotPrice)
                 val pnl = c.format(v.pnl)
-                val asset = "${p.type}:${p.symbol}"
-                val line = String.format(fmt, asset, p.currencyCode, pos, avgPrice, price, pnl)
+                val asset = "${v.asset.type}:${v.asset.symbol}"
+                val line = String.format(fmt, asset, v.currency.currencyCode, pos, avgPrice, price, pnl)
                 s.add(line)
                 //s.add("${p.type}:${p.symbol}", "$pos @ $cost ($price)")
             }
@@ -220,7 +219,7 @@ class Portfolio : Cloneable {
 
     /**
      * Calculate the difference between current and a [target] portfolio. This can be useful when wanting to
-     * re-balance a portfolio. The returned map provides for required changes in position per asset. So the following
+     * re-balance a portfolio. The returned map provides the required changes for an asset. So the following
      * rule holds true:
      *
      *      Target Portfolio = Current Portfolio + Diff
@@ -234,13 +233,13 @@ class Portfolio : Cloneable {
     fun diff(target: Portfolio): Map<Asset, Double> {
         val result = mutableMapOf<Asset, Double>()
 
-        target.positions.forEach { (asset, position) ->
-            val value = position.quantity - getPosition(asset).quantity
-            if (value != 0.0) result[asset] = value
+        for (position in target.positions) {
+            val value = position.quantity - getPosition(position.asset).quantity
+            if (value != 0.0) result[position.asset] = value
         }
 
-        positions.forEach { (asset, position) ->
-            if (asset !in result) result[asset] = -position.quantity
+        for (position in positions) {
+            if (position.asset !in result) result[position.asset] = -position.quantity
         }
 
         return result

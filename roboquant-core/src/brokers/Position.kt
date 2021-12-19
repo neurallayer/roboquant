@@ -49,6 +49,9 @@ data class Position(
     val totalSize: Double
         get() = quantity * asset.multiplier
 
+    val currency
+        get() = asset.currency
+
     companion object Factory {
         /**
          * Create an empty position for the provided [asset] and return this.

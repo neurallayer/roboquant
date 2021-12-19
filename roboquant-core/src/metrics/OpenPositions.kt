@@ -29,8 +29,8 @@ class OpenPositions : SimpleMetric() {
 
     override fun calc(account: Account, event: Event): MetricResults {
         val result = mutableMapOf<String, Number>()
-        val positions = account.portfolio.positions.values
-        for (position in positions) {
+
+        for (position in account.portfolio.positions) {
             val asset = position.asset
             val name = "position.${asset.symbol}"
             result["$name.quantity"] = position.quantity
