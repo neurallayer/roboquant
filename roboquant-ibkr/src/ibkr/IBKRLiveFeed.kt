@@ -94,8 +94,7 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
             if (asset == null) {
                 logger.warning("unexpected realtimeBar received with request id $reqId")
             } else {
-                val action =
-                    PriceBar(asset, open.toFloat(), high.toFloat(), low.toFloat(), close.toFloat(), volume.toFloat())
+                val action = PriceBar(asset, open, high, low, close, volume.toDouble())
                 val now = Instant.ofEpochSecond(time) // IBKR uses seconds resolution
                 val event = Event(listOf(action), now)
                 channel?.offer(event)

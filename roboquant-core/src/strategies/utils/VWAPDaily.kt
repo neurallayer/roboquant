@@ -39,7 +39,7 @@ class VWAPDaily(private val minSteps: Int = 1) {
     fun add(action: PriceBar, now: Instant) {
         if (now > last.plus(8, ChronoUnit.HOURS)) clear()
         last = now
-        val v = action.volume.toDouble()
+        val v = action.volume
         total.add(action.getPrice("TYPICAL") * v)
         volume.add(v)
     }

@@ -64,7 +64,7 @@ class AlpacaHistoricFeed(
 
             val asset = Asset(symbol)
             for (bar in resp.bars) {
-                val action = PriceBar(asset, bar.o, bar.h, bar.l, bar.c, bar.v)
+                val action = PriceBar(asset, bar.o, bar.h, bar.l, bar.c, bar.v.toDouble())
                 val now = bar.t.toInstant()
                 add(now, action)
             }

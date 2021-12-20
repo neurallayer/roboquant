@@ -155,11 +155,11 @@ class AlpacaLiveFeed(
                 )
                 is BarMessage -> PriceBar(
                     assetsMap[msg.symbol]!!,
-                    msg.open.toFloat(),
-                    msg.high.toFloat(),
-                    msg.low.toFloat(),
-                    msg.close.toFloat(),
-                    msg.volume.toFloat()
+                    msg.open,
+                    msg.high,
+                    msg.low,
+                    msg.close,
+                    msg.volume.toDouble()
                 )
                 else -> {
                     logger.warning("Unexpected msg $msg")

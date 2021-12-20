@@ -173,22 +173,22 @@ data class CSVConfig(
     internal fun processLine(asset: Asset, line: List<String>): PriceEntry {
 
         val now = dateTimeParser.parse(line[info.time])
-        val volume = if (info.hasVolume) line[info.volume].toFloat() else Float.NaN
+        val volume = if (info.hasVolume) line[info.volume].toDouble() else Double.NaN
         val action: PriceAction = when {
             priceAdjust -> PriceBar.fromAdjustedClose(
                 asset,
-                line[info.open].toFloat(),
-                line[info.high].toFloat(),
-                line[info.low].toFloat(),
-                line[info.adjustedClose].toFloat(),
-                line[info.volume].toFloat()
+                line[info.open].toDouble(),
+                line[info.high].toDouble(),
+                line[info.low].toDouble(),
+                line[info.adjustedClose].toDouble(),
+                line[info.volume].toDouble()
             )
             else -> PriceBar(
                 asset,
-                line[info.open].toFloat(),
-                line[info.high].toFloat(),
-                line[info.low].toFloat(),
-                line[info.close].toFloat(),
+                line[info.open].toDouble(),
+                line[info.high].toDouble(),
+                line[info.low].toDouble(),
+                line[info.close].toDouble(),
                 volume
             )
         }

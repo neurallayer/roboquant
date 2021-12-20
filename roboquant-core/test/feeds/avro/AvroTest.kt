@@ -35,7 +35,7 @@ class AvroTest {
         val fileName = folder.newFile("test.avro").path
         val nAssets = 5
         val feed = RandomWalk.lastYears(1, nAssets = nAssets)
-        AvroGenerator.capture(feed, fileName)
+        AvroUtil.record(feed, fileName)
         assertTrue(File(fileName).isFile)
 
         val feed2 = AvroFeed(fileName)

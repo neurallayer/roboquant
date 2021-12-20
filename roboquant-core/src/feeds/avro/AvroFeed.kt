@@ -25,12 +25,10 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import org.roboquant.common.TimeFrame
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.EventChannel
-import org.roboquant.feeds.HistoricFeed
-import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.*
 import java.io.File
 import java.io.InputStream
+import java.lang.Exception
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
@@ -46,7 +44,7 @@ import java.time.Instant
  *
  * This feed loads data lazy and disposes of it afterwards, so memory footprint is limited.
  *
- * Roboquant also comes with a utility to create an Avro file based on another feed, see [AvroGenerator]
+ * Roboquant also comes with a utility to create an Avro file based on another feed, see [AvroUtil]
  *
  * @constructor Create new Avro Feed
  */
@@ -124,7 +122,7 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
         val lookup = assetLookup
         val tf = channel.timeFrame
         var last = Instant.MIN
-        var actions = mutableListOf<PriceBar>()
+        var actions = mutableListOf<PriceAction>()
 
         getReader().use {
             if (useIndex) position(it, tf.start)
@@ -144,18 +142,22 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
 
                 if (now >= tf.end) break
 
-                val id = rec.get(1).toString()
-                val asset = lookup.getOrPut(id) { Asset.deserialize(id) }
+                val assetId = rec.get(1).toString()
+                val asset = lookup.getOrPut(assetId) { Asset.deserialize(assetId) }
+                val actionType = rec.get(2) as Int
+                val values = rec.get(3) as List<Double>
 
-                val priceBar = PriceBar(
-                    asset,
-                    rec.get(2) as Float,
-                    rec.get(3) as Float,
-                    rec.get(4) as Float,
-                    rec.get(5) as Float,
-                    rec.get(6) as Float
-                )
-                actions.add(priceBar)
+                val action = when (actionType) {
+                    1 -> PriceBar.fromValues(asset, values)
+                    2 -> TradePrice.fromValues(asset, values)
+                    3 -> PriceQuote.fromValues(asset, values)
+                    4 -> OrderBook.fromValues(asset, values)
+                    else -> {
+                        throw Exception("unsupported price action found")
+                    }
+                }
+
+                actions.add(action)
             }
             if (actions.isNotEmpty()) channel.send(Event(actions, last))
         }

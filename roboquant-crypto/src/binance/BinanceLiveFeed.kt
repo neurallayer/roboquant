@@ -101,11 +101,11 @@ class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private va
         if (asset != null) {
             val action = PriceBar(
                 asset,
-                resp.open.toFloat(),
-                resp.high.toFloat(),
-                resp.low.toFloat(),
-                resp.close.toFloat(),
-                resp.volume.toFloat()
+                resp.open.toDouble(),
+                resp.high.toDouble(),
+                resp.low.toDouble(),
+                resp.close.toDouble(),
+                resp.volume.toDouble()
             )
             val now = if (useMachineTime) Instant.now() else Instant.ofEpochMilli(resp.closeTime)
             val event = Event(listOf(action), now)

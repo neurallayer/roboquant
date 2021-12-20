@@ -31,7 +31,7 @@ open class HistoricPriceFeed : HistoricFeed {
         get() = events.keys.toList()
 
     override val assets
-        get() = events.values.map { priceAction -> priceAction.map { it.asset }.distinct() }.flatten().distinct()
+        get() = events.values.map { action -> action.map { it.asset }.distinct() }.flatten().distinct()
             .toSortedSet()
 
 
@@ -48,7 +48,9 @@ open class HistoricPriceFeed : HistoricFeed {
         }
     }
 
-
+    /**
+     * Add a new action to this feed
+     */
     protected fun add(time: Instant, action: PriceAction) {
         val l = events.getOrPut(time) { mutableListOf() }
         l.add(action)

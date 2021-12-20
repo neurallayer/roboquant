@@ -27,10 +27,9 @@ import org.apache.avro.generic.GenericDatumWriter
 import org.apache.avro.generic.GenericRecord
 import org.apache.avro.io.DatumWriter
 import org.roboquant.common.Asset
+import org.roboquant.common.Logging
 import org.roboquant.common.TimeFrame
-import org.roboquant.feeds.EventChannel
-import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.*
 import java.io.File
 
 /**
@@ -38,7 +37,9 @@ import java.io.File
  *
  * Typical use case is to turn a large set of CSV files into a single Avro file and use that for future back-tests.
  */
-object AvroGenerator {
+object AvroUtil {
+
+    private val logger = Logging.getLogger(this::class)
 
     private const val schemaDef = """
             {
@@ -48,22 +49,16 @@ object AvroGenerator {
              "fields": [
                  {"name": "time", "type": "long"},
                  {"name": "asset", "type": "string"},
-                 {"name": "open",  "type": "float"},
-                 {"name": "high",  "type": "float"},
-                 {"name": "low",  "type": "float"},
-                 {"name": "close",  "type": "float"},
-                 {"name": "volume", "type": "float"}
+                 {"name": "type", "type": "int"},
+                 {"name": "values",  "type": {"type": "array", "items" : "double"}}
              ] 
             }  
             """
 
     /**
-     * Generate a new Avro file with the provided [fileName] based on the events in the [feed].
-     * Optional the capture can be limited to the provided [timeFrame] and a [compressionLevel] can be set.
-     *
-     * It will overwrite an existing file with the same name.
+     * Record the price actions in a feed and store them in a avro file that can be used with the AvroFeed
      */
-    fun capture(feed: Feed, fileName: String, timeFrame: TimeFrame = TimeFrame.FULL, compressionLevel: Int = 1) =
+    fun record(feed: Feed, fileName: String, timeFrame: TimeFrame = TimeFrame.FULL, compressionLevel: Int = 1) =
         runBlocking {
 
             val channel = EventChannel(timeFrame = timeFrame)
@@ -86,25 +81,31 @@ object AvroGenerator {
                 channel.close()
             }
 
+            val arraySchema = Schema.createArray(Schema.create(Schema.Type.DOUBLE))
             try {
                 val record = GenericData.Record(schema)
                 while (true) {
                     val event = channel.receive()
                     val now = event.now.toEpochMilli()
-                    for (action in event.actions.filterIsInstance<PriceBar>()) {
+                    for (action in event.actions.filterIsInstance<PriceAction>()) {
                         val assetStr = cache.getOrPut(action.asset) { action.asset.serialize() }
                         record.put(0, now)
                         record.put(1, assetStr)
-                        record.put(2, action.open)
-                        record.put(3, action.high)
-                        record.put(4, action.low)
-                        record.put(5, action.close)
-                        record.put(6, action.volume)
-                        dataFileWriter.append(record)
+                        val values : List<Double> = when (action) {
+                            is PriceBar -> { record.put(2, 1); action.values() }
+                            is TradePrice -> { record.put(2, 2); action.values() }
+                            is PriceQuote -> { record.put(2, 3); action.values() }
+                            is OrderBook -> { record.put(2, 4); action.values() }
+                            else -> {
+                                logger.warning("Unsupported price action encountered $action")
+                                continue
+                            }
+                        }
 
-                        // Sample float
-                        // val a2 = GenericData.Array<Float>(2, Schema.createArray(Schema.create(Schema.Type.FLOAT)))
-                        // a2.add(100.0f)
+                        val arr = GenericData.Array<Double>(values.size, arraySchema)
+                        arr.addAll(values)
+                        record.put(3, arr)
+                        dataFileWriter.append(record)
                     }
 
                     // We sync after each event, so we can later create an index if required

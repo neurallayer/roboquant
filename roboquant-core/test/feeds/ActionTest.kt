@@ -33,8 +33,26 @@ internal class ActionTest {
     fun priceAction() {
         val asset = TestData.euStock()
         val pb = PriceBar.fromAdjustedClose(asset, 2, 1, 1, 1, 0.5, 100)
-        assertEquals(1.0f, pb.open)
-        assertEquals(200f, pb.volume)
+        assertEquals(1.0, pb.open)
+        assertEquals(200.0, pb.volume)
+
+        val values = pb.values()
+        val pb2 = PriceBar.fromValues(pb.asset, values)
+        assertEquals(pb, pb2)
+    }
+
+    @Test
+    fun orderbook() {
+        val asset = TestData.euStock()
+        val action = OrderBook(
+            asset,
+            listOf(OrderBook.OrderBookEntry(100.0, 10.0), OrderBook.OrderBookEntry(100.0, 10.0)),
+            listOf(OrderBook.OrderBookEntry(100.0, 9.0), OrderBook.OrderBookEntry(100.0, 9.0))
+        )
+
+        val values = action.values()
+        val action2 = OrderBook.fromValues(action.asset, values)
+        assertEquals(action, action2)
     }
 
     @Test

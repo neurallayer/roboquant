@@ -54,7 +54,7 @@ class RandomWalk(
     seed: Long = Config.seed,
     minVolume: Int = 100_000,
     maxVolume: Int = 1000_000,
-    maxDayRange: Float = 4.0f,
+    maxDayRange: Double = 4.0,
     symbolLength: Int = 4,
     template: Asset = Asset("TEMPLATE")
 ) : HistoricFeed {
@@ -129,17 +129,17 @@ class RandomWalk(
         size: Int,
         minVolume: Int,
         maxVolume: Int,
-        maxDayRange: Float
+        maxDayRange: Double
     ): List<PriceAction> {
         val data = mutableListOf<PriceBar>()
-        var prevPrice = 100.0f
+        var prevPrice = 100.0
         val plusVolume = maxVolume - minVolume
         val javaRandom = random.asJavaRandom()
         repeat(size) {
-            val newValue = (javaRandom.nextGaussian() + prevPrice).toFloat()
+            val newValue = javaRandom.nextGaussian() + prevPrice
             val v = mutableListOf(newValue)
             repeat(3) {
-                v.add(newValue + (javaRandom.nextFloat() * maxDayRange) - (maxDayRange / 2.0f))
+                v.add(newValue + (javaRandom.nextDouble() * maxDayRange) - (maxDayRange / 2.0f))
             }
             v.sort()
 
@@ -151,7 +151,7 @@ class RandomWalk(
             }
             data.add(action)
 
-            prevPrice = if (newValue > 10.0f) newValue else 10.0f
+            prevPrice = if (newValue > 10.0) newValue else 10.0
         }
         return data
     }

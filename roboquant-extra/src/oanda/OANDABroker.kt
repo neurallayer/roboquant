@@ -35,6 +35,9 @@ import org.roboquant.orders.Order
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
+/**
+ * Implementation of the [Broker] API for OANDA that can be used for paper- en live-trading.
+ */
 class OANDABroker(
     accountID: String? = null,
     token: String? = null,
@@ -132,6 +135,7 @@ class OANDABroker(
         updatePositions2(acc.positions)
         account.time = Instant.now()
         lastTransactionId = acc.lastTransactionID
+
     }
 
     /**

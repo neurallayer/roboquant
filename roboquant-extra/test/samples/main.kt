@@ -28,6 +28,7 @@ import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.OrderBook
+import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
@@ -164,6 +165,25 @@ fun oanda() {
 }
 
 
+
+fun oandaLong() {
+    val feed = OANDAHistoricFeed()
+    val timeFrame = TimeFrame.parse("2020-01-01", "2020-02-01")
+
+    // There is a limit on what we can download per API call, so we split it in individual days
+    for (tf in timeFrame.split(1.days)) {
+        feed.retrieveCandles("EUR_USD", "USD_JPY", "GBP_USD", timeFrame = tf)
+    }
+    feed.assets.summary().log()
+    println(feed.timeline.size)
+    println(feed.timeFrame)
+
+    // Now we store it in a local Avro file
+    AvroUtil.record(feed, "/Users/peter/data/avro/forex.avro")
+
+}
+
+
 fun oanda2() {
     Currency.increaseDigits(3)
     val feed = OANDAHistoricFeed()
@@ -246,7 +266,7 @@ fun oandaBroker2() {
 
 
 fun main() {
-    when ("OANDA_BROKER2") {
+    when ("OANDA_FEED3") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
@@ -259,6 +279,7 @@ fun main() {
         "OANDA_BROKER3" -> oandaBroker3()
         "OANDA_FEED" -> oanda()
         "OANDA_FEED2" -> oanda2()
+        "OANDA_FEED3" -> oandaLong()
         "OANDA_LIVE_FEED" -> oandaLive()
         "OANDA_LIVE_PRICES" -> oandaLivePrices()
     }

@@ -62,7 +62,7 @@ class OANDAHistoricFeed(token: String? = null, demoAccount: Boolean = true) : Hi
             resp.candles.forEach {
                 with(it.mid) {
                     val action =
-                        PriceBar(asset, o.doubleValue(), h.doubleValue(), l.doubleValue(), c.doubleValue(), it.volume)
+                        PriceBar(asset, o.doubleValue(), h.doubleValue(), l.doubleValue(), c.doubleValue(), it.volume.toDouble())
                     val now = Instant.parse(it.time)
                     add(now, action)
                 }

@@ -26,7 +26,7 @@ import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.avro.AvroFeed
-import org.roboquant.feeds.avro.AvroGenerator
+import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.LazyCSVFeed
@@ -183,7 +183,7 @@ fun large6() {
     }
 
     val avroPath = dataHome / "avro/us_2000_2020.avro"
-    AvroGenerator.capture(feed!!, avroPath.toString(), TimeFrame.fromYears(2000, 2020), 6)
+    AvroUtil.record(feed!!, avroPath.toString(), TimeFrame.fromYears(2000, 2020), 6)
 
 }
 
@@ -403,10 +403,10 @@ fun avro() {
 
 fun avroGen() {
     // val feed = CSVFeed("/data/assets/stock-market/stocks/")
-    val feed = CSVFeed("/data/assets/individual_stocks_5yr", CSVConfig("_data.csv"))
+    val feed = CSVFeed("/Users/peter/data/individual_stocks_5yr", CSVConfig("_data.csv"))
     val t = measureTimeMillis {
-        val file = "/home/peter/tmp/5yr_sp500.avro"
-        AvroGenerator.capture(feed, file)
+        val file = "/Users/peter/tmp/5yr_sp500.avro"
+        AvroUtil.record(feed, file)
     }
     println(t)
 }
@@ -431,10 +431,13 @@ fun trendFollowing2() {
 
 
 fun avroCapture() {
-    val feed = CSVFeed("/data/assets/individual_stocks_5yr", CSVConfig("_data.csv"))
-    AvroGenerator.capture(feed, "/tmp/5yr_sp500.avro")
+    val feed = CSVFeed("data/US")
 
-    val feed2 = AvroFeed("/tmp/5yr_sp500.avro", useIndex = true)
+    val avroFile = "/Users/peter/data/avro/tmp.avro"
+    //val feed = CSVFeed("/data/assets/individual_stocks_5yr", CSVConfig("_data.csv"))
+    AvroUtil.record(feed, avroFile)
+
+    val feed2 = AvroFeed(avroFile, useIndex = true)
     val strategy = EMACrossover()
 
     val roboquant = Roboquant(strategy, ProgressMetric())
@@ -497,7 +500,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.info()
 
-    when ("TA_LARGE") {
+    when ("LARGE6") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()

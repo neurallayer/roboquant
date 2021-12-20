@@ -62,11 +62,11 @@ class PriceBarBuffer(val windowSize: Int, usePercentage: Boolean = false) {
      * @param now
      */
     fun update(priceBar: PriceBar, now: Instant) {
-        openBuffer.add(priceBar.open.toDouble())
-        highBuffer.add(priceBar.high.toDouble())
-        lowBuffer.add(priceBar.low.toDouble())
-        closeBuffer.add(priceBar.close.toDouble())
-        volumeBuffer.add(priceBar.volume.toDouble())
+        openBuffer.add(priceBar.open)
+        highBuffer.add(priceBar.high)
+        lowBuffer.add(priceBar.low)
+        closeBuffer.add(priceBar.close)
+        volumeBuffer.add(priceBar.volume)
         this.now = now
     }
 

@@ -45,7 +45,7 @@ object OANDA {
         val policy = DefaultPolicy(shorting = true)
 
         // We use a lower cost model, since the default of 10 BIPS is too much for Forex
-        // We select 2.0 BIPS (OANDA typically is around 1.5 which high peaks of 10.0)
+        // We select 2.0 BIPS
         val costModel = DefaultCostModel(2.0)
         val broker = SimBroker(costModel = costModel, currencyConverter = currencyConverter)
 

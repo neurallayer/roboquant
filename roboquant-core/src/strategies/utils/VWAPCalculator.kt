@@ -30,7 +30,7 @@ class VWAPCalculator(windowSize: Int = 100) {
     val volume = MovingWindow(windowSize)
 
     fun add(action: PriceBar) {
-        val v = action.volume.toDouble()
+        val v = action.volume
         total.add(action.getPrice("TYPICAL") * v)
         volume.add(v)
     }

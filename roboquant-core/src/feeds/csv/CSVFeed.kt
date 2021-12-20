@@ -37,11 +37,8 @@ import kotlin.math.absoluteValue
 /**
  * Read historic data from CSV files in a directory. It will traverse down if it finds subdirectories.
  *
- * This implementation will store the data in memory, using the more memory efficient Float32 type to limit
- * overall memory consumption. If the JVM has enough memory allocated to it (f.e -Xmx8G), even larger volumes
- * (> 5000 files with daily prices) are no issue.
- *
- * If you don't have enough memory available, consider using [LazyCSVFeed] instead.
+ * This implementation will store the data in memory, using Double type to limit overall memory consumption. If you
+ * don't have enough memory available, consider using [LazyCSVFeed] instead.
  *
  * @constructor
  */

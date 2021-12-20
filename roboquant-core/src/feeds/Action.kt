@@ -39,8 +39,9 @@ interface Action
  *
  * @constructor Create empty Price action
  */
-abstract class PriceAction(val asset: Asset) : Action {
+interface PriceAction : Action {
 
+    val asset: Asset
 
     /**
      * Get the price from this PriceEvent. If more than one price is available, optionally the
@@ -52,38 +53,43 @@ abstract class PriceAction(val asset: Asset) : Action {
      * @param type
      * @return
      */
-    abstract fun getPrice(type: String = "DEFAULT"): Double
+    fun getPrice(type: String = "DEFAULT"): Double
+
+
 }
 
 /**
- * Provides [open], [high], [low], and [close] prices and volume for a single asset. If the volume is not available, it will
- * return NaN instead. Sometimes this is also referred to as a candlestick.
+ * Provides [open], [high], [low], and [close] prices and volume for a single asset. If the volume is not available, it
+ * will return NaN instead.
  *
- * Internally it stores the values in as floats for efficiency reasons and only transfers them to a double when requesting
- * the price.
+ * Often this type of data is also referred to as a candlesticks.
  *
  */
-class PriceBar(
-    asset: Asset,
-    val open: Float,
-    val high: Float,
-    val low: Float,
-    val close: Float,
-    val volume: Float = Float.NaN
-) : PriceAction(asset) {
+data class PriceBar(
+    override val asset: Asset,
+    val open: Double,
+    val high: Double,
+    val low: Double,
+    val close: Double,
+    val volume: Double = Double.NaN
+) : PriceAction {
 
+    /**
+     * Convenience constructor to allow the instantiation with other types like BigDecimala.
+     */
     constructor(
         asset: Asset,
         open: Number,
         high: Number,
         low: Number,
         close: Number,
-        volume: Number = Float.NaN
-    ) : this(asset, open.toFloat(), high.toFloat(), low.toFloat(), close.toFloat(), volume.toFloat())
+        volume: Number = Double.NaN
+    ) : this(asset, open.toDouble(), high.toDouble(), low.toDouble(), close.toDouble(), volume.toDouble())
 
-    constructor(asset: Asset, values: List<Float>) : this(asset, values[0], values[1], values[2], values[3], values[4])
 
     companion object {
+
+        fun fromValues(asset: Asset, values: List<Double>) = PriceBar(asset, values[0], values[1], values[2], values[3], values[4])
 
         /**
          * Create a new PriceBar and compensate all prices and volume for the [adjustedClose]. This result in all prices
@@ -96,16 +102,16 @@ class PriceBar(
             low: Number,
             close: Number,
             adjustedClose: Number,
-            volume: Number = Float.NaN
+            volume: Number = Double.NaN
         ): PriceBar {
-            val adj = adjustedClose.toFloat() / close.toFloat()
+            val adj = adjustedClose.toDouble() / close.toDouble()
             return PriceBar(
                 asset,
-                open.toFloat() * adj,
-                high.toFloat() * adj,
-                low.toFloat() * adj,
-                close.toFloat() * adj,
-                volume.toFloat() / adj
+                open.toDouble() * adj,
+                high.toDouble() * adj,
+                low.toDouble() * adj,
+                close.toDouble() * adj,
+                volume.toDouble() / adj
             )
         }
 
@@ -122,7 +128,7 @@ class PriceBar(
      *
      */
     override fun getPrice(type: String): Double {
-        val result = when (type) {
+        return when (type) {
             "CLOSE" -> close
             "OPEN" -> open
             "LOW" -> low
@@ -130,13 +136,12 @@ class PriceBar(
             "TYPICAL" -> (high + low + close) / 3.0
             else -> close
         }
-        return result.toDouble()
     }
 
     /**
      * return the contained values (OHLCV) as a float array
      */
-    fun values() = floatArrayOf(open, high, low, close, volume)
+    fun values() = listOf(open, high, low, close, volume)
 
     override fun toString(): String {
         return "price-bar ${asset.symbol} $open $high $low $close $volume"
@@ -147,14 +152,27 @@ class PriceBar(
 
 /**
  * Holds a single price for an asset and optional the volume. Often this reflects an actual trade, but it can
- * also be used in other circumstances.
+ * also be used for other use cases.
  *
  * @property asset
  * @property price
  * @property volume
  * @constructor Create empty Single price
  */
-class TradePrice(asset: Asset, private val price: Double, val volume: Double = Double.NaN) : PriceAction(asset) {
+data class TradePrice(override val asset: Asset, private val price: Double, val volume: Double = Double.NaN) : PriceAction {
+
+
+    fun values() = listOf(price, volume)
+
+    companion object {
+        fun fromValues(asset: Asset, values: List<Double>) = TradePrice(
+            asset,
+            values[0],
+            values[1],
+        )
+    }
+
+
 
     /**
      * Return the underlying price. Since this event only holds a single price, the aspect
@@ -180,14 +198,25 @@ class TradePrice(asset: Asset, private val price: Double, val volume: Double = D
  * @property bidSize
  * @constructor Create empty Price quote
  */
-class PriceQuote(
-    asset: Asset,
+data class PriceQuote(
+    override val asset: Asset,
     val askPrice: Double,
     val askSize: Double,
     val bidPrice: Double,
     val bidSize: Double
-) : PriceAction(asset) {
+) : PriceAction {
 
+    fun values() = listOf(askPrice, askSize, bidPrice, bidSize)
+
+    companion object {
+        fun fromValues(asset: Asset, values: List<Double>) = PriceQuote(
+            asset,
+            values[0],
+            values[1],
+            values[2],
+            values[3]
+        )
+    }
     /**
      * Return the underlying price. The available types are:
      *
@@ -200,15 +229,15 @@ class PriceQuote(
      * @return
      */
     override fun getPrice(type: String): Double {
-        return when (type) {
+        val result = when (type) {
             "WEIGHTED" -> (askPrice * askSize + bidPrice * bidSize) / (askSize + bidSize)
             "ASK" -> askPrice
             "BID" -> bidPrice
             else -> (askPrice + bidPrice) / 2
         }
+        return  result
     }
 
-    fun toList() = listOf(askPrice, askSize, bidPrice, bidSize)
 }
 
 
@@ -221,11 +250,38 @@ class PriceQuote(
  * @property bids
  * @constructor Create empty Order book
  */
-class OrderBook(
-    asset: Asset,
+data class OrderBook(
+    override val asset: Asset,
     val asks: List<OrderBookEntry>,
     val bids: List<OrderBookEntry>
-) : PriceAction(asset) {
+) : PriceAction {
+
+
+    companion object {
+
+        fun fromValues(asset: Asset, values: List<Double>) : OrderBook {
+            val asks = mutableListOf<OrderBookEntry>()
+            val bids  = mutableListOf<OrderBookEntry>()
+            val endAsks =  1 + 2 * values[0].toInt()
+            for (i in 1 until endAsks step 2) {
+                val entry = OrderBookEntry(values[i], values[i + 1])
+                asks.add(entry)
+            }
+
+            for (i in endAsks until values.lastIndex step 2 ) {
+                val entry = OrderBookEntry(values[i], values[i + 1])
+                bids.add(entry)
+            }
+            return OrderBook(asset, asks, bids)
+        }
+    }
+
+
+    fun values() :List<Double> {
+        return listOf(asks.size.toDouble()) +
+                asks.map { listOf(it.quantity, it.limit) }.flatten() +
+                bids.map { listOf(it.quantity, it.limit) }.flatten()
+    }
 
     /**
      * Order book will by default return the unweighted MIDPOINT price. Other types that are supported are:
@@ -253,7 +309,7 @@ class OrderBook(
     private fun List<OrderBookEntry>.max() = this.maxOf { it.limit }
     private fun List<OrderBookEntry>.min() = this.minOf { it.limit }
 
-    override fun toString(): String = "$asset bids:${bids.size} asks:${asks.size}"
+    // override fun toString(): String = "$asset bids:${bids.size} asks:${asks.size}"
 
     /**
      * Order book entry contains the limit price and quantity
@@ -262,9 +318,7 @@ class OrderBook(
      * @property limit
      * @constructor Create empty Order book entry
      */
-    class OrderBookEntry(val quantity: Double, val limit: Double) {
-        override fun toString(): String = "$quantity @ $limit"
-    }
+    data class OrderBookEntry(val quantity: Double, val limit: Double)
 }
 
 /**
