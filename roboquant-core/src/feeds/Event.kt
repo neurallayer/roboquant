@@ -38,7 +38,7 @@ data class Event(val actions: List<Action>, val now: Instant) : Comparable<Event
 
     /**
      * Convenience property for accessing all the price actions in this event. The result is cached so that accessing
-     * this attribute many times is very quick.
+     * this attribute multiple times is quick.
      *
      * Please note this only supports a single price action per asset. If there are multiple price actions for a single
      * asset in the event, the last one found will be returned.
@@ -56,7 +56,7 @@ data class Event(val actions: List<Action>, val now: Instant) : Comparable<Event
     }
 
     /**
-     * Compare this to an [other] event based on their timestamp. This is used for sorting a list of events in their
+     * Compare this to an [other] event based on their timestamp. This is used for sorting a list of events by their
      * chronological order.
      */
     override fun compareTo(other: Event): Int = this.now.compareTo(other.now)

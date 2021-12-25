@@ -37,7 +37,7 @@ class PNL(
     private val cumulative: Boolean = false,
 ) : SimpleMetric() {
 
-    private var lastTime = Instant.MIN
+    private var lastTotalValue = Double.NaN
 
     /**
      * Calculate any metrics given the event of information. This will be called at the
@@ -51,18 +51,14 @@ class PNL(
         val now = event.now
         val result = mutableMapOf<String, Double>()
 
-        val pnl = if (cumulative) {
-            // If cumulative just add all the trades together
-            account.trades.realizedPnL()
+        if (lastTotalValue.isNaN()) {
+            lastTotalValue = account.getTotalCash()
         } else {
-            // If not cumulative. only look at last timeframe
-            val tf = TimeFrame(lastTime, now + 1)
-            lastTime = now + 1
-            account.trades.realizedPnL(tf)
+            val newTotalValue = account.getTotalCash()
+            val pnl = newTotalValue - lastTotalValue
+            if (! cumulative) lastTotalValue = newTotalValue
+            result["pnl.realized"] = pnl
         }
-
-        val realizedPNL = account.convertToCurrency(pnl, now = now)
-        result["pnl.realized"] = realizedPNL
 
         val totalValue = account.portfolio.unrealizedPNL()
         val unrealizedPNL = account.convertToCurrency(totalValue, now = now)
@@ -73,7 +69,7 @@ class PNL(
 
 
     override fun start(runPhase: RunPhase) {
-        lastTime = Instant.MIN
+        lastTotalValue = Double.NaN
     }
 
 }

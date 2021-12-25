@@ -19,7 +19,6 @@ package org.roboquant.brokers
 import org.roboquant.common.Summary
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderStatus
-import java.util.*
 
 /**
  * Optimized container for storing orders used by the Account.
@@ -28,7 +27,8 @@ import java.util.*
  *
  * @constructor Create new Orders container
  */
-class Orders : MutableList<Order>, LinkedList<Order>() {
+class Orders : ArrayList<Order>() {
+
 
     /**
      * Closed orders, any order that is in a state that cannot be further processed
@@ -41,7 +41,6 @@ class Orders : MutableList<Order>, LinkedList<Order>() {
      */
     val open
         get() = filter { it.status.open }
-
 
     /**
      * Orders that are in [OrderStatus.ACCEPTED] state, and so they are ready for execution
@@ -70,7 +69,6 @@ class Orders : MutableList<Order>, LinkedList<Order>() {
 
         return s
     }
-
 
     /**
      *

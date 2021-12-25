@@ -81,7 +81,7 @@ class RandomWalk(
             val prices = if (generateBars)
                 generateBars(asset!!, size, minVolume, maxVolume, maxDayRange)
             else
-                generateSinglePrice(asset!!, size)
+                generateSinglePrice(asset!!, size, minVolume, maxVolume)
             data[asset] = prices
         }
 
@@ -143,7 +143,7 @@ class RandomWalk(
             }
             v.sort()
 
-            val volume = round(minVolume + (plusVolume * javaRandom.nextFloat()))
+            val volume = round(minVolume + (plusVolume * javaRandom.nextDouble()))
             val action = if (javaRandom.nextBoolean()) {
                 PriceBar(asset, v[1], v[3], v[0], v[2], volume)
             } else {
@@ -159,13 +159,15 @@ class RandomWalk(
     /**
      * Generate random single price actions
      */
-    private fun generateSinglePrice(asset: Asset, size: Int): List<PriceAction> {
+    private fun generateSinglePrice(asset: Asset, size: Int, minVolume: Int, maxVolume: Int): List<PriceAction> {
         val data = mutableListOf<TradePrice>()
         var prevPrice = 100.0
         val javaRandom = random.asJavaRandom()
+        val plusVolume = maxVolume - minVolume
         repeat(size) {
             val newValue = javaRandom.nextGaussian() + prevPrice
-            val action = TradePrice(asset, newValue)
+            val volume = round(minVolume + (plusVolume * javaRandom.nextDouble()))
+            val action = TradePrice(asset, newValue, volume)
             data.add(action)
             prevPrice = if (newValue > 10.0) newValue else 10.0
         }

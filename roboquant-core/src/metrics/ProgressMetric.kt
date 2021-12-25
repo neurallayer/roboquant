@@ -22,16 +22,14 @@ import org.roboquant.feeds.Event
 import java.time.Instant
 
 /**
- * Set of metric values that capture the progress of the run. The captured metrics are aggregated since
- * the start of a phase.
+ * Set of metrics that capture the progress of the run. The captured metrics are aggregated since
+ * the start of a phase. The following metrics are captured:
  *
- * The following metrics are captured:
- *
- * - The number of actions
- * - The number of events (or steps)
- * - The number of trades
- * - The number of orders
- * - The wall time
+ * - progress.actions: The number of actions
+ * - progress.events: The number of events (or steps)
+ * - progress.trades: The number of trades
+ * - progress.orders: The number of orders
+ * - progress.walltime : The wall time
  */
 class ProgressMetric : SimpleMetric() {
 
@@ -46,7 +44,7 @@ class ProgressMetric : SimpleMetric() {
             "progress.events" to ++steps,
             "progress.trades" to account.trades.size,
             "progress.orders" to account.orders.size,
-            "progress.wallTime" to (Instant.now().toEpochMilli() - startTime.toEpochMilli()),
+            "progress.walltime" to (Instant.now().toEpochMilli() - startTime.toEpochMilli()),
         )
     }
 

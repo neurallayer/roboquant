@@ -188,6 +188,18 @@ fun large6() {
 }
 
 
+fun largeRead() {
+    val dataHome = Path("/Users/peter/data")
+    val avroPath = dataHome / "avro/us_2000_2020.avro"
+
+    val feed = AvroFeed(avroPath.toString())
+    val strategy = EMACrossover()
+
+    val roboquant = Roboquant(strategy, AccountSummary())
+    roboquant.run(feed)
+
+}
+
 fun intraday() {
     val path = "data/INTRA"
     // "/data/assets/INTRADAY/"
@@ -203,18 +215,18 @@ fun intraday() {
 fun oneMillionBars() {
     val timeline = mutableListOf<Instant>()
     var start = Instant.parse("2000-01-01T09:00:00Z")
+
     repeat(1_000_000) {
         timeline.add(start)
-        start = start.plusSeconds(60)
+        start += 1.seconds
     }
-    val feed = RandomWalk(timeline, 1, generateBars = true)
-    val strategy = EMACrossover.longTerm()
-    val policy = TestPolicy()
+    val feed = RandomWalk(timeline, 1)
+    val strategy = EMACrossover()
 
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, ProgressMetric(), AccountSummary(), policy = policy, logger = logger)
+    val broker = SimBroker(keepClosedOrders = false)
+    val roboquant = Roboquant(strategy, ProgressMetric(), broker = broker)
     roboquant.run(feed)
-    logger.summary().print()
+    roboquant.logger.summary().print()
 }
 
 /*
@@ -500,7 +512,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.info()
 
-    when ("LARGE6") {
+    when ("ONE_MILLION") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()
@@ -511,9 +523,10 @@ suspend fun main() {
         "LARGE4" -> large4()
         "LARGE5" -> large5()
         "LARGE6" -> large6()
+        "LARGEREAD" -> largeRead()
         "LARGE_LOW_MEM" -> largeLowMem()
         "INTRA" -> intraday()
-        "1e6" -> oneMillionBars()
+        "ONE_MILLION" -> oneMillionBars()
         "MC" -> multiCurrency()
         "ECB" -> ecbRates()
         "MIN" -> minimal()

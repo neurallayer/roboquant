@@ -17,10 +17,12 @@
 package org.roboquant.orders
 
 /**
- * Various state that an order can be in. The normal flow is straight forward:
+ * Various state that an order can be in. The  flow is straight forward:
  *
  *  - [INITIAL] -> [ACCEPTED] -> [COMPLETED] | [CANCELLED] | [EXPIRED]
  *  - [INITIAL] -> [REJECTED]
+ *
+ *  At any given time an order is either [open] or [closed]
  */
 enum class OrderStatus {
 
@@ -57,8 +59,7 @@ enum class OrderStatus {
 
     /**
      * Has the order been aborted. That implies it is in one of the following three "error" end states:
-     *
-     *      [CANCELLED], [EXPIRED], [REJECTED]
+     * [CANCELLED], [EXPIRED], [REJECTED]
      */
     val aborted: Boolean
         get() = this === CANCELLED || this === EXPIRED || this === REJECTED
@@ -66,14 +67,13 @@ enum class OrderStatus {
     /**
      * Is the order closed. This means it has reached an end-state that doesn't allow for any more trading. This implies it
      * is in one of these four possible end-states: [COMPLETED], [CANCELLED], [EXPIRED] or [REJECTED].
-     *
      */
     val closed: Boolean
         get() = this === COMPLETED || this === CANCELLED || this === EXPIRED || this === REJECTED
 
 
     /**
-     * Is the order in an open state
+     * Is the order in an open state, so [INITIAL] or [ACCEPTED]
      */
     val open: Boolean
         get() = !closed

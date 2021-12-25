@@ -145,6 +145,8 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
                 val assetId = rec.get(1).toString()
                 val asset = lookup.getOrPut(assetId) { Asset.deserialize(assetId) }
                 val actionType = rec.get(2) as Int
+
+                @Suppress("UNCHECKED_CAST")
                 val values = rec.get(3) as List<Double>
 
                 val action = when (actionType) {
