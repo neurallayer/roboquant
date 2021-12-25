@@ -59,7 +59,7 @@ internal class FixedExchangeRatesTest {
         )
         roboquant.run(feed)
 
-        assertEquals(2, broker.account.cash.currencies.size)
+        assertEquals(2, broker.account.total.currencies.size)
     }
 
 

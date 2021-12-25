@@ -186,8 +186,8 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
     /**
      * Provide a short summary including all currencies, also the one that have a zero balance.
      */
-    fun summary(): Summary {
-        val s = Summary("Cash")
+    fun summary(header: String = "Cash"): Summary {
+        val s = Summary(header)
         data.forEach {
             s.add(it.key.displayName, it.key.format(it.value))
         }

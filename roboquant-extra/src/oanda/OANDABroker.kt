@@ -24,6 +24,7 @@ import com.oanda.v20.position.PositionSide
 import com.oanda.v20.primitives.InstrumentName
 import com.oanda.v20.transaction.OrderFillTransaction
 import com.oanda.v20.transaction.TransactionID
+import oanda.OANDAUsageCalculator
 import org.roboquant.brokers.*
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
@@ -43,22 +44,26 @@ class OANDABroker(
     token: String? = null,
     demoAccount: Boolean = true,
     private val currencyConverter: CurrencyConverter = OANDACurrencyConverter(),
-    val enableOrders: Boolean = false
+    val enableOrders: Boolean = false,
+    private val maxLeverage: Double = 30.0
 ) : Broker {
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
-    override val account: Account = Account(currencyConverter = currencyConverter)
+    private val accountID = AccountID(OANDA.getAccountID(accountID, ctx))
+
+    private val usageCalculator = OANDAUsageCalculator(ctx, this.accountID)
+    override val account: Account = Account(currencyConverter = currencyConverter, usageCalculator = usageCalculator)
     private val logger = Logging.getLogger("OANDABroker")
     private lateinit var lastTransactionId: TransactionID
 
-    private val accountID = AccountID(OANDA.getAccountID(accountID, ctx))
+
     val availableAssets by lazy {
         OANDA.getAvailableAssets(ctx, this.accountID)
     }
 
     init {
-        if (enableOrders) logger.warning("Ordering enabled, use at your own risk!!!")
-        initAccount2()
+        if (! demoAccount) logger.warning("Using real account, use at your own risk!!!")
+        initAccount()
         logger.info("Retrieved account with id $accountID")
     }
 
@@ -91,51 +96,25 @@ class OANDABroker(
     }
 
 
-    private fun updatePositions2(positions: MutableList<com.oanda.v20.position.Position>) {
-        for (p in positions) {
-            logger.fine { "Update position $p"}
-            val symbol = p.instrument.toString()
-            if (p.long.units.doubleValue() != 0.0) {
-                val position = getPosition(symbol, p.long)
-                account.portfolio.setPosition(position)
-            }
-            if (p.short.units.doubleValue() != 0.0) {
-                // TODO does the short side use negative value for units
-                val position = getPosition(symbol, p.short)
-                account.portfolio.setPosition(position)
-            }
-        }
-    }
-
     /**
      * First time when connecting, update the state of roboquant account with broker account. Only cash and positions
      * are synced and it is assumed there are no open orders pending.
      */
     private fun initAccount() {
-        val summary = ctx.account.summary(accountID).account
-        account.baseCurrency = Currency.getInstance(summary.currency.toString())
-        if (currencyConverter is OANDACurrencyConverter) currencyConverter.baseCurrency = account.baseCurrency
-        account.cash.set(account.baseCurrency, summary.balance.doubleValue())
-        updatePositions()
-        account.time = Instant.now()
-        ctx.account.get(accountID).account
-    }
-
-    /**
-     * First time when connecting, update the state of roboquant account with broker account. Only cash and positions
-     * are synced and it is assumed there are no open orders pending.
-     */
-    private fun initAccount2() {
         val acc = ctx.account.get(accountID).account
         account.baseCurrency = Currency.getInstance(acc.currency.toString())
         if (currencyConverter is OANDACurrencyConverter) currencyConverter.baseCurrency = account.baseCurrency
-        account.cash.clear()
-        account.cash.set(account.baseCurrency, acc.balance.doubleValue())
-        account.portfolio.clear()
-        updatePositions2(acc.positions)
+        account.total.clear()
+
+        // Cash in roboquant is excluding the margin part
+        account.total.set(account.baseCurrency, acc.balance.doubleValue())
+        account.buyingPower = acc.marginAvailable.doubleValue() * maxLeverage
+        account.used.clear()
+        account.used.set(account.baseCurrency, acc.marginUsed.doubleValue())
         account.time = Instant.now()
         lastTransactionId = acc.lastTransactionID
-
+        account.portfolio.clear()
+        updatePositions()
     }
 
     /**
@@ -143,13 +122,15 @@ class OANDABroker(
      * are synced and it is assumed there are no open orders pending.
      */
     private fun updateAccount() {
-        val acc = ctx.account.changes(accountID).changes
-        updatePositions2(acc.positions)
+        val acc = ctx.account.get(accountID).account
+        account.total.clear()
+
+        // Cash in roboquant is excluding the margin part
+        account.total.set(account.baseCurrency, acc.balance.doubleValue())
+        account.used.clear()
+        account.used.set(account.baseCurrency, acc.marginUsed.doubleValue())
+        account.buyingPower = acc.marginAvailable.doubleValue() * maxLeverage
         account.time = Instant.now()
-        if (acc.transactions.isNotEmpty()) {
-            val trx = acc.transactions.last()
-            lastTransactionId = trx.id
-        }
     }
 
 
@@ -168,7 +149,7 @@ class OANDABroker(
             order.id
         )
         account.trades.add(trade)
-        account.cash.set(account.baseCurrency, trx.accountBalance.doubleValue())
+        account.total.set(account.baseCurrency, trx.accountBalance.doubleValue())
     }
 
     private fun updateExchangeRates(event: Event) {
@@ -233,6 +214,7 @@ class OANDABroker(
 
         // OONDA doesn't update positions quick enough and so don't reflect the trade yet.
         Thread.sleep(1000)
+        updateAccount()
         updatePositions()
         // No need to create a copy since an account only modified during this method
         return account

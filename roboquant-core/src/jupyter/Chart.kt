@@ -58,6 +58,7 @@ private class InstantAdapter : JsonSerializer<Instant> {
         jsonSerializationContext: JsonSerializationContext
     ): JsonElement {
         return jsonSerializationContext.serialize(jsonElement.toEpochMilli())
+        // return jsonSerializationContext.serialize(jsonElement.toString())
     }
 
 }

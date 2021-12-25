@@ -31,6 +31,7 @@ import java.lang.Double.min
 import java.time.Instant
 import java.util.logging.Logger
 
+
 /**
  * Simulated Broker that is used during back testing. It simulates both broker behavior and the exchange
  * where the orders are executed. It supports both [SingleOrder] and [CancellationOrder] orders.
@@ -47,18 +48,20 @@ class SimBroker(
     currencyConverter: CurrencyConverter? = null,
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val costModel: CostModel = DefaultCostModel(),
+    usageCalculator: UsageCalculator = BasicUsageCalculator(),
     private val validateBuyingPower: Boolean = false,
     private val recording: Boolean = false,
     private val prefix: String = "broker.",
-    private val priceType: String = "OPEN"
+    private val priceType: String = "OPEN",
+    private val keepClosedOrders: Boolean = true
 ) : Broker {
 
     private val metrics = mutableMapOf<String, Number>()
-    override val account: Account = Account(baseCurrency, currencyConverter)
+    override val account: Account = Account(baseCurrency, currencyConverter, usageCalculator)
 
     companion object Factory {
 
-        private val logger: Logger = Logging.getLogger("SimBroker")
+        private val logger: Logger = Logging.getLogger(this)
 
         /**
          * Create a new SimBroker instance with the provided initial deposit of cash in the account
@@ -121,8 +124,9 @@ class SimBroker(
         val asset = execution.asset
         val position = Position(asset, execution.quantity, avgPrice)
 
-        // PnL includes the fee
+        // PNL includes the fee
         val pnl = account.portfolio.updatePosition(position) - fee
+        account.total.deposit(asset.currency, pnl)
 
         val newTrade = Trade(
             now,
@@ -134,7 +138,15 @@ class SimBroker(
             order.id
         )
         account.trades.add(newTrade)
-        account.cash.withdraw(asset.currency, newTrade.totalCost)
+    }
+
+    /**
+     * Calculate the new margin requirements based on positions int the portfolio
+     */
+    fun updateMargin() {
+        val margin = account.getMarginRequirements()
+        account.used.clear()
+        account.used.deposit(margin)
     }
 
 
@@ -152,6 +164,8 @@ class SimBroker(
         execute(event)
         account.portfolio.updateMarketPrices(event)
         account.time = event.now
+        updateMargin()
+        if (! keepClosedOrders) account.orders.removeIf { it.status.closed }
         return account
     }
 
@@ -199,7 +213,7 @@ class SimBroker(
 
     override fun reset() {
         account.reset()
-        account.cash.deposit(initialDeposit)
+        account.total.deposit(initialDeposit)
         metrics.clear()
     }
 

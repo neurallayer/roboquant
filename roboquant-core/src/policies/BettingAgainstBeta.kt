@@ -95,13 +95,13 @@ open class BettingAgainstBeta(
 
         val targetPortfolio = Portfolio()
 
-        // Generate the orders for a long position in assets with a low beta
+        // Generate the positions for a long position in assets with a low beta
         betas.subList(0, max).forEach {
             val holding = sizer.size(it.first, account, event)
             targetPortfolio.setPosition(Position(it.first, holding))
         }
 
-        // Generate the orders for a short position in assets with a high beta
+        // Generate the positions for a short position in assets with a high beta
         betas.reversed().subList(0, max).forEach {
             val holding = sizer.size(it.first, account, event)
             targetPortfolio.setPosition(Position(it.first, -holding))

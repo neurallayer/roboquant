@@ -205,6 +205,14 @@ fun oandaLive() {
 }
 
 
+fun oandaLiveRecord() {
+    val feed = OANDALiveFeed()
+    feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
+    val tf = TimeFrame.next(5.minutes)
+    AvroUtil.record(feed, "/Users/peter/tmp/oanda.avro", tf)
+}
+
+
 fun oandaLivePrices() {
     Logging.setLevel(Level.FINE, "org.roboquant")
     val feed = OANDALiveFeed()
@@ -251,22 +259,24 @@ fun oandaBroker3() {
     account.fullSummary().print()
 }
 
-fun oandaBroker2() {
+fun oandaBroker2(createOrder: Boolean = true) {
     Logging.setLevel(Level.FINE, "OANDABroker")
     val broker = OANDABroker(enableOrders = true)
     broker.account.fullSummary().log()
     broker.availableAssets.values.summary().log()
 
-    val asset = broker.availableAssets.values.findBySymbols("EUR_USD").first()
-    val order = MarketOrder(asset, -100.0, tif=FOK())
-    broker.place(listOf(order), Event.empty())
-    broker.account.fullSummary().log()
+    if (createOrder) {
+        val asset = broker.availableAssets.values.findBySymbols("EUR_USD").first()
+        val order = MarketOrder(asset, -100.0, tif = FOK())
+        broker.place(listOf(order), Event.empty())
+        broker.account.fullSummary().log()
+    }
 }
 
 
 
 fun main() {
-    when ("OANDA_FEED3") {
+    when ("OANDA_BROKER2") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
@@ -281,6 +291,7 @@ fun main() {
         "OANDA_FEED2" -> oanda2()
         "OANDA_FEED3" -> oandaLong()
         "OANDA_LIVE_FEED" -> oandaLive()
+        "OANDA_LIVE_RECORD" -> oandaLiveRecord()
         "OANDA_LIVE_PRICES" -> oandaLivePrices()
     }
 }

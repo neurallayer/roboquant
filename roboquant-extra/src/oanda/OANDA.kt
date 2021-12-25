@@ -47,6 +47,7 @@ object OANDA {
         // We use a lower cost model, since the default of 10 BIPS is too much for Forex
         // We select 2.0 BIPS
         val costModel = DefaultCostModel(2.0)
+        // val marginCalculator = OANDAMarginCalculator()
         val broker = SimBroker(costModel = costModel, currencyConverter = currencyConverter)
 
         return Roboquant(strategy, *metrics, policy = policy, broker = broker)
@@ -73,6 +74,7 @@ object OANDA {
         }
         return AccountID(accountId)
     }
+
 
     internal fun getAvailableAssets(ctx: Context, accountID: AccountID): Map<String, Asset> {
         val instruments = ctx.account.instruments(accountID).instruments

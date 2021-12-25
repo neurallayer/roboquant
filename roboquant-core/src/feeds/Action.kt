@@ -17,6 +17,7 @@
 package org.roboquant.feeds
 
 import org.roboquant.common.Asset
+import kotlin.math.absoluteValue
 
 /**
  * An action is the lowest level of information contained in an Event and can be anything from a price action for an asset
@@ -161,7 +162,6 @@ data class PriceBar(
  */
 data class TradePrice(override val asset: Asset, private val price: Double, val volume: Double = Double.NaN) : PriceAction {
 
-
     fun values() = listOf(price, volume)
 
     companion object {
@@ -171,8 +171,6 @@ data class TradePrice(override val asset: Asset, private val price: Double, val 
             values[1],
         )
     }
-
-
 
     /**
      * Return the underlying price. Since this event only holds a single price, the aspect
@@ -276,6 +274,11 @@ data class OrderBook(
         }
     }
 
+    /**
+     * Totoal amount of entries (asks + bids)
+     */
+    val entries
+        get() = asks.size + bids.size
 
     fun values() :List<Double> {
         return listOf(asks.size.toDouble()) +
@@ -305,7 +308,7 @@ data class OrderBook(
         }
     }
 
-    private fun List<OrderBookEntry>.volume() = this.sumOf { it.quantity }
+    private fun List<OrderBookEntry>.volume() = this.sumOf { it.quantity.absoluteValue }
     private fun List<OrderBookEntry>.max() = this.maxOf { it.limit }
     private fun List<OrderBookEntry>.min() = this.minOf { it.limit }
 
@@ -316,7 +319,7 @@ data class OrderBook(
      *
      * @property quantity
      * @property limit
-     * @constructor Create empty Order book entry
+     * @constructor Create new Order book entry
      */
     data class OrderBookEntry(val quantity: Double, val limit: Double)
 }

@@ -51,7 +51,7 @@ class AccountBeta(private val referenceAsset: Asset, val period: Int) : SimpleMe
 
         if (action !== null) {
             val price = action.getPrice()
-            val value = account.convertToCurrency(account.getValue(), now = event.now)
+            val value = account.convertToCurrency(account.getMarketValue(), now = event.now)
             assetData.add(price)
             accountData.add(value)
 

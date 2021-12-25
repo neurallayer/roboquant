@@ -79,8 +79,8 @@ class AlpacaBroker(
             account.buyingPower = acc.buyingPower.toDouble()
             account.baseCurrency = Currency.getInstance(acc.currency)
 
-            account.cash.clear()
-            account.cash.deposit(account.baseCurrency, acc.cash.toDouble())
+            account.total.clear()
+            account.total.deposit(account.baseCurrency, acc.cash.toDouble())
             account.time = Instant.now()
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())

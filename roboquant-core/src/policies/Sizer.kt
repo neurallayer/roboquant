@@ -42,7 +42,7 @@ class FixedValueSizer(val percentage: Double = 0.01) : Sizer {
     override fun size(asset: Asset, account: Account, event: Event): Double {
 
         // TODO can cache the total value
-        val available = account.convertToCurrency(account.getValue(), now = event.now) * percentage
+        val available = account.convertToCurrency(account.getMarketValue(), now = event.now) * percentage
         val price = event.getPrice(asset)!!
 
         return floor(available / price)

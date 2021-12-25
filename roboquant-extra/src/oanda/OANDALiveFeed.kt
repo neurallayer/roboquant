@@ -168,6 +168,7 @@ class OANDALiveFeed(
                             }
                         )
                     }
+                    logger.fine("Got ${actions.size} orderbook actions")
                     if (actions.isNotEmpty()) channel?.offer(Event(actions, now))
                     since = resp.time
                 }
@@ -177,6 +178,7 @@ class OANDALiveFeed(
         }
         logger.finer { "Started job $job" }
     }
+
 
 
 }

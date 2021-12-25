@@ -28,7 +28,7 @@ internal class AccountTest {
     @Test
     fun basis() {
         val account = Account()
-        val wallet = account.getValue()
+        val wallet = account.getMarketValue()
         val amount = account.convertToCurrency(wallet, now = Instant.now())
         assertEquals(0.00, amount)
         assertEquals(Currency.getInstance("USD"), account.baseCurrency)
@@ -40,8 +40,13 @@ internal class AccountTest {
         val asset = Asset("Dummy")
         assertTrue(account.trades.realizedPnL(asset) == 0.0)
 
+        account.total.deposit(Currency.USD, 100.0)
+
         val s = account.summary()
         assertTrue(s.toString().isNotEmpty())
+
+        val s2 = account.fullSummary()
+        assertTrue(s2.toString().isNotEmpty())
 
         val o = account.orders
         assertTrue(o.summary().toString().isNotEmpty())

@@ -62,7 +62,7 @@ class WeightedPolicy(vararg weight: Pair<Asset, Double>) : Policy {
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<SingleOrder>()
-        val value = account.getValue()
+        val value = account.getMarketValue()
         val totalValue = account.convertToCurrency(value, now = event.now)
         for (signal in signals) {
             val asset = signal.asset

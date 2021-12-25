@@ -27,13 +27,12 @@ import javax.naming.ConfigurationException
 
 
 /**
- * Account represents a brokerage trading account and holds the following state:
+ * Account represents a unified brokerage trading account and holds the following state:
  *
- * - the total amount of cash in the account
- * - the portfolio with its assets
- * - The past trades
- * - The orders, both open (still in progress) and already closed ones
- * - optionally the buying power available
+ * - Cash balances in the account ([total], [free] and [used])
+ * - the [portfolio] with its assets
+ * - The past [trades]
+ * - The [orders], both open (still in progress) and already closed ones
  *
  * It also supports multi-currency trading through the use of a pluggable currency converter. Without configuring such
  * plug-in it still supports single currency trading, so when all assets and cash balances are denoted in a single
@@ -48,6 +47,7 @@ import javax.naming.ConfigurationException
 class Account(
     var baseCurrency: Currency = Currency.USD,
     private val currencyConverter: CurrencyConverter? = null,
+    private val usageCalculator: UsageCalculator = BasicUsageCalculator()
 ) : Cloneable {
 
     /**
@@ -66,9 +66,26 @@ class Account(
     val orders = Orders()
 
     /**
-     * Cash balances hold in this account
+     * Total cash balance hold in this account. This is the account cash deposits plus all realized PNL so far.
+     * PLase note that not all this cash is available.
      */
-    val cash = Cash()
+    val total = Cash()
+
+
+    /**
+     * Free available cash, this is a derived value for convenience and is calculated by
+     *
+     *      free = total - used
+     */
+    val free
+        get() = total - used
+
+    /**
+     * Cash being used, typically due to:
+     * - holding assets (open positions)
+     * - margin requirements
+     */
+    val used = Cash()
 
     /**
      * Portfolio with its positions
@@ -77,14 +94,13 @@ class Account(
 
     /**
      * How much cash (in base currency denoted) is still available to buy assets. Default implementation is just the
-     * amount of available cash. But with margin accounts there is typically more money available to
+     * amount of available cash. But with margin accounts there is typically more cash is available to
      * trade than just the total remaining cash balance.
      *
      * @return the available buying power
      */
     var buyingPower: Double = Double.NaN
-        get() = if (field.isNaN()) getTotalCash() else field
-
+        get() = if (field.isNaN()) convertToCurrency(free) else field
     /**
      * Reset the account to its initial state.
      */
@@ -93,20 +109,48 @@ class Account(
         trades.clear()
         orders.clear()
         portfolio.clear()
-        cash.clear()
+        total.clear()
+        used.clear()
     }
 
 
     /**
-     * Get the total cash balance hold in this account, converted to a single currency amount.
+     * Get the margin requirements for provided portfolio
+     */
+    fun getMarginRequirements(portfolio: Portfolio = this.portfolio) : Cash {
+        return usageCalculator.calculate(this.portfolio.positions)
+    }
+
+    /**
+     * Get the total cash balance hold in this account converted to a single currency amount.
      *
      * @param currency The currency to convert to, default is the account base currency
      * @param now The time to use for the conversion, default is the account last update time
      * @return The total amount
      */
     fun getTotalCash(currency: Currency = baseCurrency, now: Instant = time): Double {
-        return convertToCurrency(cash, currency, now)
+        return convertToCurrency(total, currency, now)
     }
+
+    /**
+     * Summary overview of the cash positions ([total], [free] and [used]).
+     */
+    fun cashSummary(): Summary {
+        val result = Summary("Cash")
+        val fmt = "│%10s│%14s│%14s│%14s│"
+        val header = String.format(fmt, "currency", "total", "free", "used")
+        result.add(header)
+        val currencies = total.currencies + free.currencies + used.currencies
+        for (currency in currencies.distinct().sortedBy { it.displayName }) {
+            val t =  currency.format(total.getAmount(currency))
+            val f =  currency.format(free.getAmount(currency))
+            val u =  currency.format(used.getAmount(currency))
+            val line = String.format(fmt,  currency.currencyCode, t, f, u)
+            result.add(line)
+        }
+        return result
+    }
+
 
     /**
      * Provide a short summary that contains the high level account information, the available cash balances and
@@ -119,6 +163,7 @@ class Account(
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
         s.add("buying power", baseCurrency.format(buyingPower))
+        s.add(cashSummary())
 
         val tradesSummary = Summary("Trades")
         tradesSummary.add("total", trades.size)
@@ -145,7 +190,6 @@ class Account(
         portfolioSummary.add("unrealized p&l", baseCurrency.format(unrealizedPNL))
         s.add(portfolioSummary)
 
-        s.add(cash.summary())
         return s
     }
 
@@ -158,7 +202,7 @@ class Account(
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
         s.add("buying power", baseCurrency.format(buyingPower))
-        s.add(cash.summary())
+        s.add(cashSummary())
         s.add(portfolio.summary())
         s.add(orders.summary())
         s.add(trades.summary())
@@ -202,19 +246,18 @@ class Account(
     }
 
     /**
-     * Get the total value of this account, where the total account value is defined as the sum of all
-     * the portfolio positions and the total of the cash balances.
+     * Get the total value of this account, where the total account value is defined as:
      *
-     *      Account Value = Portfolio Value + Cash
+     *      Account Value = Portfolio PNL + Cash + Margin
      *
      * The portfolio positions are evaluated against the last known price for that position and thus reflect the
      * unrealized P&L.
      *
      * @return the total value of the account as [Cash]
      */
-    fun getValue(): Cash {
-        val result = portfolio.getValue()
-        result.deposit(cash)
+    fun getMarketValue(): Cash {
+        val result = portfolio.getPNL()
+        result.deposit(total)
         return result
     }
 
@@ -230,8 +273,10 @@ class Account(
         account.time = time
         account.trades.addAll(trades)
         account.orders.put(orders)
-        account.cash.clear()
-        account.cash.deposit(cash)
+        account.total.clear()
+        account.total.deposit(total)
+        account.used.clear()
+        account.used.deposit(used)
         account.portfolio.put(portfolio)
         account.buyingPower = buyingPower
         return account
