@@ -44,7 +44,7 @@ class AccountSummary(val includeValue: Boolean = true) : SimpleMetric() {
     override fun calc(account: Account, event: Event): MetricResults {
         val result = mutableMapOf(
             "account.orders" to account.orders.size,
-            // "account.orders.open" to account.orders.open.size,
+            "account.orders.open" to account.orders.open.size,
             "account.trades" to account.trades.size,
             "account.portfolio.assets" to account.portfolio.positions.size,
             "account.cash.currencies" to account.total.currencies.size,

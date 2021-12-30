@@ -17,11 +17,8 @@
 package org.roboquant.metrics
 
 import org.roboquant.RunPhase
-import org.roboquant.brokers.*
-import org.roboquant.common.TimeFrame
-import org.roboquant.common.plus
+import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
-import java.time.Instant
 
 /**
  * Metric that calculates both the realized and unrealized Profit and Loss. The unrealized PNL is calculated based

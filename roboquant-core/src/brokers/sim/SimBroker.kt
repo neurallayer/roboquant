@@ -23,10 +23,8 @@ import org.roboquant.common.Currency
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.metrics.MetricResults
-import org.roboquant.orders.CancellationOrder
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderStatus
-import org.roboquant.orders.SingleOrder
 import java.lang.Double.min
 import java.time.Instant
 import java.util.logging.Logger
@@ -34,7 +32,7 @@ import java.util.logging.Logger
 
 /**
  * Simulated Broker that is used during back testing. It simulates both broker behavior and the exchange
- * where the orders are executed. It supports both [SingleOrder] and [CancellationOrder] orders.
+ * where the orders are executed. It can be configured with avrious plug-ins that determine its behavior.
  *
  * It is also possible to use this SimBroker in combination with live feeds to see how your strategy is performing with
  * realtime data without the need for a real broker.
@@ -56,7 +54,10 @@ class SimBroker(
     private val keepClosedOrders: Boolean = true
 ) : Broker {
 
+    // Used to store metrics of the simbroker itself
     private val metrics = mutableMapOf<String, Number>()
+
+
     override val account: Account = Account(baseCurrency, currencyConverter, usageCalculator)
 
     companion object Factory {
@@ -94,12 +95,12 @@ class SimBroker(
 
             val executions = order.execute(price, now)
             for (execution in executions) {
-                record("order.${order.asset.symbol}", execution.quantity)
-
                 val (realPrice, fee) = costModel.calculate(order, execution)
                 val avgPrice = realPrice / execution.size()
+                record("exec.${order.asset.symbol}.qty", execution.quantity)
+                record("exec.${order.asset.symbol}.price", avgPrice)
 
-                updateAccount(execution, order, avgPrice, fee, now)
+                updateAccount(execution, avgPrice, fee, now)
             }
 
         }
@@ -116,12 +117,11 @@ class SimBroker(
      */
     private fun updateAccount(
         execution: Execution,
-        order: Order,
         avgPrice: Double,
         fee: Double,
         now: Instant
     ) {
-        val asset = execution.asset
+        val asset = execution.order.asset
         val position = Position(asset, execution.quantity, avgPrice)
 
         // PNL includes the fee
@@ -130,12 +130,12 @@ class SimBroker(
 
         val newTrade = Trade(
             now,
-            execution.asset,
+            asset,
             execution.quantity,
             avgPrice,
             fee,
             pnl,
-            order.id
+            execution.order.id
         )
         account.trades.add(newTrade)
     }

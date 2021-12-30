@@ -22,7 +22,7 @@ import org.roboquant.orders.OrderStatus
 
 /**
  * Optimized container for storing orders used by the Account.
- *
+
  * @see Order
  *
  * @constructor Create new Orders container
@@ -38,6 +38,7 @@ class Orders : ArrayList<Order>() {
 
     /**
      * Open orders, these are orders that can still be processed
+     * TODO: Optimize the acces to open orders since that is called often and small subset of all orders in a large backtest
      */
     val open
         get() = filter { it.status.open }

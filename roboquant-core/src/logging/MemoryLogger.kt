@@ -104,12 +104,12 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
     /**
      * Get the unique list of metric names that have been captured
      */
-    fun getMetricNames(): List<String> {
-        return history.map { it.metric }.distinct()
-    }
+    val metricNames : List<String>
+        get() = history.map { it.metric }.distinct().sorted()
+
 
     /**
-     * Get results for a metric specified by its [name]. It will include all the runs and episodes.
+     * Get results for a metric specified by its [name]. It will include all the runs and episodes for that metric.
      */
     fun getMetric(name: String): List<MetricsEntry> {
         return history.filter { it.metric == name }

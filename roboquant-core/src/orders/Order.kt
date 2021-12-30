@@ -44,7 +44,7 @@ abstract class Order(val asset: Asset) : Cloneable {
 
 
     /**
-     * What is the status of this order
+     * What is the latest status of this order, see also [OrderStatus] for the possible values
      */
     var status = OrderStatus.INITIAL
 
@@ -57,7 +57,7 @@ abstract class Order(val asset: Asset) : Cloneable {
         protected set
 
     /**
-     * Last known price
+     * Last known market price for the asset contained in this order
      */
     var price: Double = Double.NaN
         protected set
@@ -72,7 +72,7 @@ abstract class Order(val asset: Asset) : Cloneable {
 
     companion object {
 
-
+        // Counter for unique order id
         private var ID = 0L
 
         private fun getId(): Long {
@@ -81,7 +81,7 @@ abstract class Order(val asset: Asset) : Cloneable {
             }
         }
 
-        val logger = Logging.getLogger("Order")
+        val logger = Logging.getLogger(Order::class)
 
     }
 
@@ -97,8 +97,8 @@ abstract class Order(val asset: Asset) : Cloneable {
 
 
     /**
-     * Execute the order given the provided [price] and [time]. Any subclass of Order will need to implement
-     * this method and return a list of [Execution]
+     * Execute the order given the provided [price] and [time]. Any subclass of [Order] will need to implement
+     * this method and return a list of [executions][Execution]
      */
     abstract fun execute(price: Double, time: Instant): List<Execution>
 

@@ -38,7 +38,6 @@ import org.roboquant.metrics.PNL
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.policies.BettingAgainstBeta
 import org.roboquant.policies.DefaultPolicy
-import org.roboquant.policies.TestPolicy
 import org.roboquant.strategies.*
 import java.nio.file.Files
 import java.time.Instant

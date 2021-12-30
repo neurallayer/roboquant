@@ -60,6 +60,7 @@ class Account(
      */
     val trades = Trades()
 
+
     /**
      * All orders
      */
@@ -69,7 +70,7 @@ class Account(
      * Total cash balance hold in this account. This is the account cash deposits plus all realized PNL so far.
      * PLase note that not all this cash is available.
      */
-    val total = Cash()
+    val total : Cash = Cash()
 
 
     /**
@@ -77,7 +78,7 @@ class Account(
      *
      *      free = total - used
      */
-    val free
+    val free : Cash
         get() = total - used
 
     /**
@@ -85,12 +86,12 @@ class Account(
      * - holding assets (open positions)
      * - margin requirements
      */
-    val used = Cash()
+    val used : Cash = Cash()
 
     /**
      * Portfolio with its positions
      */
-    val portfolio = Portfolio()
+    val portfolio : Portfolio = Portfolio()
 
     /**
      * How much cash (in base currency denoted) is still available to buy assets. Default implementation is just the

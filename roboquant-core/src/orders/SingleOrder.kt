@@ -92,6 +92,9 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
         result.fill = fill
     }
 
+    /**
+     * Implementaiton of execute for all single order types. Subclasses will need only to implement the [fill] method.
+     */
     override fun execute(price: Double, time: Instant): List<Execution> {
         place(price, time)
         val qty = fill(price)
@@ -105,10 +108,14 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
             fill += qty
             if (remaining == 0.0) status = OrderStatus.COMPLETED
             logger.fine { "executed order=$this qty=$qty price=$price" }
-            listOf(Execution(asset, qty, price))
+            listOf(Execution(this, qty, price))
         } else listOf()
     }
 
+    /**
+     * Subclasses only need to implement this method, given a certain [price] return how much of the order is
+     * filled.
+     */
     protected abstract fun fill(price: Double): Double
 
     /**

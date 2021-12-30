@@ -104,8 +104,9 @@ internal class TAStrategyTest {
 
         val exp = runStrategy2(strategy)
         exp.logger.summary().log()
-        assertTrue(exp.logger.getMetricNames().contains("sma.fast"))
-        assertTrue(exp.logger.getMetricNames().contains("sma.slow"))
+        assertTrue(exp.logger.metricNames.contains("sma.fast"))
+        assertTrue(exp.logger.metricNames.contains("sma.slow"))
+        assertTrue(exp.logger.metricNames.contains("sma.slow"))
 
     }
 }
