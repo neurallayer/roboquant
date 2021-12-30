@@ -17,11 +17,11 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.MarketDataMessage
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.bar.BarMessage
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.enums.MarketDataMessageType
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.quote.QuoteMessage
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.realtime.trade.TradeMessage
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.MarketDataMessage
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.bar.BarMessage
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.enums.MarketDataMessageType
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.quote.QuoteMessage
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.trade.TradeMessage
 import net.jacobpeterson.alpaca.websocket.marketdata.MarketDataListener
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
@@ -69,7 +69,7 @@ class AlpacaLiveFeed(
 
     init {
         if (autoConnect) connect()
-        alpacaAPI.marketDataStreaming().setListener(listener)
+        alpacaAPI.stockMarketDataStreaming().setListener(listener)
     }
 
 
@@ -77,16 +77,16 @@ class AlpacaLiveFeed(
      * Start listening for market data
      */
     fun connect() {
-        require(!alpacaAPI.marketDataStreaming().isConnected) { "Already connected, disconnect first" }
+        require(!alpacaAPI.stockMarketDataStreaming().isConnected) { "Already connected, disconnect first" }
 
-        alpacaAPI.marketDataStreaming().subscribeToControl(
+        alpacaAPI.stockMarketDataStreaming().subscribeToControl(
             MarketDataMessageType.SUCCESS,
             MarketDataMessageType.SUBSCRIPTION,
             MarketDataMessageType.ERROR
         )
-        alpacaAPI.marketDataStreaming().connect()
-        alpacaAPI.marketDataStreaming().waitForAuthorization(5, TimeUnit.SECONDS)
-        if (!alpacaAPI.marketDataStreaming().isValid) {
+        alpacaAPI.stockMarketDataStreaming().connect()
+        alpacaAPI.stockMarketDataStreaming().waitForAuthorization(5, TimeUnit.SECONDS)
+        if (!alpacaAPI.stockMarketDataStreaming().isValid) {
             logger.severe("Couldn't establish websocket connection")
         }
     }
@@ -96,7 +96,7 @@ class AlpacaLiveFeed(
      */
     fun disconnect() {
         try {
-            if (alpacaAPI.marketDataStreaming().isConnected) alpacaAPI.marketDataStreaming().disconnect()
+            if (alpacaAPI.stockMarketDataStreaming().isConnected) alpacaAPI.stockMarketDataStreaming().disconnect()
         } catch (_: Exception) {
         }
     }
@@ -116,7 +116,7 @@ class AlpacaLiveFeed(
      * Subscribe to price data of all the assets
      */
     fun subscribeAll() {
-        alpacaAPI.marketDataStreaming().subscribe(null, null, listOf("*"))
+        alpacaAPI.stockMarketDataStreaming().subscribe(null, null, listOf("*"))
         logger.info("Subscribing to all assets")
     }
 
@@ -130,7 +130,7 @@ class AlpacaLiveFeed(
         }
 
         val symbols = assets.map { it.symbol }
-        alpacaAPI.marketDataStreaming().subscribe(null, null, symbols)
+        alpacaAPI.stockMarketDataStreaming().subscribe(null, null, symbols)
         logger.info("Subscribing to ${assets.size} assets")
     }
 
@@ -145,13 +145,13 @@ class AlpacaLiveFeed(
     private fun handleMsg(msg: MarketDataMessage) {
         try {
             val action: PriceAction? = when (msg) {
-                is TradeMessage -> TradePrice(assetsMap[msg.symbol]!!, msg.price, msg.size.toDouble())
+                is TradeMessage -> TradePrice(assetsMap[msg.symbol]!!, msg.price)
                 is QuoteMessage -> PriceQuote(
                     assetsMap[msg.symbol]!!,
                     msg.askPrice,
-                    msg.askSize.toDouble(),
+                    Double.NaN,
                     msg.bidPrice,
-                    msg.bidSize.toDouble()
+                    Double.NaN
                 )
                 is BarMessage -> PriceBar(
                     assetsMap[msg.symbol]!!,
@@ -159,7 +159,7 @@ class AlpacaLiveFeed(
                     msg.high,
                     msg.low,
                     msg.close,
-                    msg.volume.toDouble()
+                    msg.tradeCount.toDouble()
                 )
                 else -> {
                     logger.warning("Unexpected msg $msg")

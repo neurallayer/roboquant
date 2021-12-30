@@ -17,10 +17,10 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
-import net.jacobpeterson.alpaca.model.endpoint.order.enums.CurrentOrderStatus
-import net.jacobpeterson.alpaca.model.endpoint.order.enums.OrderSide
-import  net.jacobpeterson.alpaca.model.endpoint.order.Order as AlpacaOrder
-import net.jacobpeterson.alpaca.model.endpoint.order.enums.OrderTimeInForce
+import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderSide
+import  net.jacobpeterson.alpaca.model.endpoint.orders.Order as AlpacaOrder
+import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce
+import net.jacobpeterson.alpaca.model.endpoint.orders.enums.CurrentOrderStatus
 import net.jacobpeterson.alpaca.rest.AlpacaClientException
 import org.roboquant.brokers.*
 import org.roboquant.common.Asset
@@ -30,8 +30,8 @@ import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
-import net.jacobpeterson.alpaca.model.endpoint.order.enums.OrderStatus as AlpacaOrderStatus
-import net.jacobpeterson.alpaca.model.endpoint.position.Position as AlpacaPosition
+import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderStatus as AlpacaOrderStatus
+import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosition
 
 /**
  * Broker implementation for Alpaca. This implementation allows using the Alpaca live- and paper-trading capabilities
@@ -129,11 +129,11 @@ class AlpacaBroker(
      */
     private fun toOrder(order: AlpacaOrder): Order {
         val asset = toAsset(order.assetId)
-        val qty = if (order.side == OrderSide.BUY) order.qty.toDouble() else - order.qty.toDouble()
+        val qty = if (order.side == OrderSide.BUY) order.quantity.toDouble() else - order.quantity.toDouble()
         val result = MarketOrder(asset, qty)
-        val fill = if (order.side == OrderSide.BUY) order.filledQty.toDouble() else - order.filledQty.toDouble()
+        val fill = if (order.side == OrderSide.BUY) order.filledQuantity.toDouble() else - order.filledQuantity.toDouble()
         result.fill = fill
-        result.place(order.filledAvgPrice.toDouble(), order.createdAt.toInstant())
+        result.place(order.averageFillPrice.toDouble(), order.createdAt.toInstant())
 
         when (order.status) {
             AlpacaOrderStatus.CANCELED -> result.status = OrderStatus.CANCELLED
@@ -156,7 +156,7 @@ class AlpacaBroker(
     private fun convertPos(pos: AlpacaPosition): Position {
         assert(pos.assetClass == "us_equity") { "Unsupported asset class found ${pos.assetClass} for position $pos" }
         val asset = toAsset(pos.assetId)
-        return Position(asset, pos.qty.toDouble(), pos.avgEntryPrice.toDouble(), pos.currentPrice.toDouble())
+        return Position(asset, pos.quantity.toDouble(), pos.averageEntryPrice.toDouble(), pos.currentPrice.toDouble())
     }
 
     /**
@@ -165,7 +165,7 @@ class AlpacaBroker(
     private fun updateOpenOrders() {
         account.orders.open.filterIsInstance<SingleOrder>().forEach {
             val order = alpacaAPI.orders().get(it.id, false)
-            it.fill = order.filledQty.toDouble()
+            it.fill = order.filledQuantity.toDouble()
 
             when (order.status) {
                 AlpacaOrderStatus.CANCELED -> it.status = OrderStatus.CANCELLED

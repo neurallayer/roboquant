@@ -57,7 +57,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
-        <kotlin.version>1.6.0</kotlin.version>
+        <kotlin.version>1.6.10</kotlin.version>
         <kotlinx.version>1.5.2</kotlinx.version>
     </properties>
 

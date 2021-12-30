@@ -17,8 +17,9 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.historical.bar.enums.BarAdjustment
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.historical.bar.enums.BarTimePeriod
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.historical.bar.enums.BarTimePeriod
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarAdjustment
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarFeed
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.TimeFrame
@@ -51,7 +52,7 @@ class AlpacaHistoricFeed(
 
     fun retrieve(vararg symbols: String, timeFrame: TimeFrame, period: AlpacaPeriod = AlpacaPeriod.DAY) {
         for (symbol in symbols) {
-            val resp = alpacaAPI.marketData().getBars(
+            val resp = alpacaAPI.stockMarketData().getBars(
                 symbol,
                 ZonedDateTime.ofInstant(timeFrame.start, zoneId),
                 ZonedDateTime.ofInstant(timeFrame.end, zoneId),
@@ -59,13 +60,14 @@ class AlpacaHistoricFeed(
                 null,
                 1,
                 period,
-                BarAdjustment.ALL
+                BarAdjustment.ALL,
+                BarFeed.IEX
             )
 
             val asset = Asset(symbol)
             for (bar in resp.bars) {
-                val action = PriceBar(asset, bar.o, bar.h, bar.l, bar.c, bar.v.toDouble())
-                val now = bar.t.toInstant()
+                val action = PriceBar(asset, bar.open, bar.high, bar.low, bar.close, bar.volume.toDouble())
+                val now = bar.timestamp.toInstant()
                 add(now, action)
             }
             logger.fine { "Retrieved asset $asset for $timeFrame" }

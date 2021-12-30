@@ -17,7 +17,8 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
-import net.jacobpeterson.alpaca.model.endpoint.asset.enums.AssetStatus
+import net.jacobpeterson.alpaca.model.endpoint.assets.enums.AssetClass
+import net.jacobpeterson.alpaca.model.endpoint.assets.enums.AssetStatus
 import net.jacobpeterson.alpaca.model.properties.DataAPIType
 import net.jacobpeterson.alpaca.model.properties.EndpointAPIType
 import org.roboquant.common.*
@@ -55,7 +56,7 @@ internal object AlpacaConnection {
      * Get the available assets
      */
     fun getAvailableAssets(api: AlpacaAPI): SortedSet<Asset> {
-        val availableAssets = api.assets().get(AssetStatus.ACTIVE, "us_equity")
+        val availableAssets = api.assets().get(AssetStatus.ACTIVE, AssetClass.US_EQUITY)
         val exchangeCodes = Exchange.exchanges.map { e -> e.exchangeCode }
         val result = mutableListOf<Asset>()
         availableAssets.forEach {
