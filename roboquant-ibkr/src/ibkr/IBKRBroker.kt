@@ -53,7 +53,7 @@ class IBKRBroker(
 
     private var client: EClientSocket
     override val account: Account = Account(currencyConverter = currencyConverter)
-    val logger = Logging.getLogger("IBKRBroker")
+    val logger = Logging.getLogger(this)
     private var orderId = 0
 
     // Track IB orders ids with roboquant orders
@@ -210,7 +210,7 @@ class IBKRBroker(
                 logger.warning { "Received unknown open order with orderId $orderId" }
             else if (openOrder is SingleOrder) {
                 openOrder.fill = filled
-                openOrder.place(lastFillPrice, Instant.now())
+                openOrder.price = lastFillPrice
                 when (status) {
                     "PreSubmitted" -> openOrder.status = OrderStatus.INITIAL
                     "Submitted" -> openOrder.status = OrderStatus.ACCEPTED

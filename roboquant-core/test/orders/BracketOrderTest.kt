@@ -33,6 +33,9 @@ internal class BracketOrderTest {
             LimitOrder(asset, -10.0, 101.0),
             StopOrder(asset, -10.0, 99.0),
         )
+        order.status = OrderStatus.ACCEPTED
+        order.placed = Instant.now()
+
         assertTrue(order.main is MarketOrder)
         assertTrue(order.loss is StopOrder)
 

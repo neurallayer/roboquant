@@ -33,10 +33,10 @@ class OpenPositions : SimpleMetric() {
         for (position in account.portfolio.positions) {
             val asset = position.asset
             val name = "position.${asset.symbol}"
-            result["$name.quantity"] = position.quantity
-            result["$name.value"] = position.value
+            result["$name.quantity"] = position.size
+            result["$name.value"] = position.marketValue
             result["$name.cost"] = position.totalCost
-            result["$name.pnl"] = position.pnl
+            result["$name.pnl"] = position.unrealizedPNL
         }
         return result
     }

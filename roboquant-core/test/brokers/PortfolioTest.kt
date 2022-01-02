@@ -28,18 +28,18 @@ internal class PortfolioTest {
         val c = TestData.usStock()
         val position = Position(c, 100.0, 10.0)
         portfolio.updatePosition(position)
-        assertEquals(100.0, portfolio.getPosition(c).quantity)
+        assertEquals(100.0, portfolio.getPosition(c).size)
         assertEquals(10.0, portfolio.getPosition(c).avgPrice)
 
 
         val position2 = Position(c, 100.0, 10.0)
         portfolio.updatePosition(position2)
-        assertEquals(200.0, portfolio.getPosition(c).quantity)
+        assertEquals(200.0, portfolio.getPosition(c).size)
         assertEquals(10.0, portfolio.getPosition(c).avgPrice)
 
         val position3 = Position(c, -100.0, 10.0)
         portfolio.updatePosition(position3)
-        assertEquals(100.0, portfolio.getPosition(c).quantity)
+        assertEquals(100.0, portfolio.getPosition(c).size)
         assertEquals(10.0, portfolio.getPosition(c).avgPrice)
 
         assertEquals(portfolio.positions.size, portfolio.longPositions.size + portfolio.shortPositions.size)
@@ -48,6 +48,35 @@ internal class PortfolioTest {
         assertTrue(s.toString().isNotEmpty())
 
     }
+
+    /*
+    @Test
+    fun testUpdatePortfolio2() {
+        val portfolio = Portfolio()
+        val c = TestData.usStock()
+        val position = Position(c, 100.0, 10.0)
+        portfolio.updatePosition2(position)
+        assertEquals(100.0, portfolio.getPosition(c).size)
+        assertEquals(10.0, portfolio.getPosition(c).avgPrice)
+
+
+        val position2 = Position(c, 100.0, 10.0)
+        portfolio.updatePosition2(position2)
+        assertEquals(200.0, portfolio.getPosition(c).size)
+        assertEquals(10.0, portfolio.getPosition(c).avgPrice)
+
+        val position3 = Position(c, -100.0, 10.0)
+        portfolio.updatePosition2(position3)
+        assertEquals(100.0, portfolio.getPosition(c).size)
+        assertEquals(10.0, portfolio.getPosition(c).avgPrice)
+
+        assertEquals(portfolio.positions.size, portfolio.longPositions.size + portfolio.shortPositions.size)
+
+        val s = portfolio.summary()
+        assertTrue(s.toString().isNotEmpty())
+
+    }
+     */
 
 
 }

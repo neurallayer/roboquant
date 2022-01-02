@@ -24,8 +24,8 @@ import java.text.DecimalFormat
 import java.util.*
 
 /**
- * Portfolio holds the [Assets][Asset] and their [Position] within an account. An asset can be anything from a stock
- * to an option contract.
+ * Portfolio holds the [positions][Position] within an account. For a given asset there can only be one position at
+ * a time.
  *
  *
  * @constructor Create a new empty Portfolio
@@ -52,7 +52,7 @@ class Portfolio : Cloneable {
      * The assets hold in this portfolio that currently have an open position
      */
     val assets
-        get() = _positions.keys.toList()
+        get() = positions.map { it.asset }.sorted()
 
     /**
      * Short positions contained in this portfolio
@@ -72,7 +72,7 @@ class Portfolio : Cloneable {
      */
     public override fun clone(): Portfolio {
         val portfolio = Portfolio()
-        portfolio._positions.putAll(_positions.map { it.key to it.value.copy() })
+        portfolio._positions.putAll(_positions)
         return portfolio
     }
 
@@ -80,14 +80,14 @@ class Portfolio : Cloneable {
      * Update the portfolio with the provided [position] and return the realized PnL.
      */
     fun updatePosition(position: Position): Double {
-        val currentPos = _positions[position.asset]
-        return if (currentPos == null) {
-            _positions[position.asset] = position.copy()
-            0.0
-        } else {
-            currentPos.update(position)
-        }
+        val asset = position.asset
+        val currentPos = _positions.getOrDefault(asset, Position.empty(asset))
+        val newPosition = currentPos + position
+        if (newPosition.isEmpty()) _positions.remove(asset) else  _positions[asset] = newPosition
+        return currentPos.realizedPNL(position)
     }
+
+
 
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]
@@ -99,8 +99,13 @@ class Portfolio : Cloneable {
         for (position in positions) {
             val priceAction = prices[position.asset]
             if (priceAction != null) {
-                position.spotPrice = priceAction.getPrice(priceType)
-                position.lastUpdate = now
+                val price = priceAction.getPrice(priceType)
+
+                // Unmutable prep
+                val newPosition = position.copy(spotPrice = price, lastUpdate = now)
+                _positions[position.asset] = newPosition
+                // position.spotPrice = price
+                // position.lastUpdate = now
             }
         }
     }
@@ -123,7 +128,7 @@ class Portfolio : Cloneable {
     fun getValue(): Cash {
         val result = Cash()
         for (position in positions) {
-            result.deposit(position.currency, position.value)
+            result.deposit(position.currency, position.marketValue)
         }
         return result
     }
@@ -136,7 +141,7 @@ class Portfolio : Cloneable {
     fun getPNL(): Cash {
         val result = Cash()
         for (position in positions) {
-            result.deposit(position.currency, position.pnl)
+            result.deposit(position.currency, position.unrealizedPNL)
         }
         return result
     }
@@ -162,7 +167,7 @@ class Portfolio : Cloneable {
     fun unrealizedPNL(): Cash {
         val result = Cash()
         for (position in positions) {
-            result.deposit(position.currency, position.pnl)
+            result.deposit(position.currency, position.unrealizedPNL)
         }
         return result
     }
@@ -198,10 +203,10 @@ class Portfolio : Cloneable {
 
             for (v in ps) {
                 val c = v.asset.currency
-                val pos = pf.format(v.quantity)
+                val pos = pf.format(v.size)
                 val avgPrice = c.format(v.avgPrice)
                 val price = c.format(v.spotPrice)
-                val pnl = c.format(v.pnl)
+                val pnl = c.format(v.unrealizedPNL)
                 val asset = "${v.asset.type}:${v.asset.symbol}"
                 val line = String.format(fmt, asset, v.currency.currencyCode, pos, avgPrice, price, pnl)
                 s.add(line)
@@ -247,12 +252,12 @@ class Portfolio : Cloneable {
         val result = mutableMapOf<Asset, Double>()
 
         for (position in target.positions) {
-            val value = position.quantity - getPosition(position.asset).quantity
+            val value = position.size - getPosition(position.asset).size
             if (value != 0.0) result[position.asset] = value
         }
 
         for (position in positions) {
-            if (position.asset !in result) result[position.asset] = -position.quantity
+            if (position.asset !in result) result[position.asset] = -position.size
         }
 
         return result

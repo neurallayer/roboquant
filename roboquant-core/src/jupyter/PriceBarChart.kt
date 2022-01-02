@@ -81,7 +81,7 @@ class PriceBarChart(
 
         val line = fromFeed()
         val lineData = gsonBuilder.create().toJson(line)
-        val timeFrame = if (line.isNotEmpty()) TimeFrame.parse(line.first()[0].toString(), line.last()[0].toString())
+        val timeFrame = if (line.size > 1) TimeFrame.parse(line.first()[0].toString(), line.last()[0].toString())
             .toPrettyString() else ""
 
         val marks = markPoints()

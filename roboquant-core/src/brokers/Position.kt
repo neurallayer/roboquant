@@ -22,13 +22,27 @@ import kotlin.math.absoluteValue
 import kotlin.math.sign
 
 /**
+ * The 3 possible position changes, that impact PNL and avg price calculations
+ */
+enum class PositionChange {
+
+    // Go from a long to short position or visa verse
+    DIRECTION,
+
+    // Increase the position size, either long or short
+    INCREASE,
+
+    // Decrease position size, either long or short
+    DECREASE
+
+}
+
+/**
  * Position of an asset in the portfolio. This implementation makes no assumptions about the asset class, so it supports
  * any type of asset class from stocks and options to crypto currencies.
  *
- * TODO: possible move to an read-only data structure for Position
- *
  * @property asset the asset
- * @property quantity volume of the asset, not including any contract multiplier defined by the asset
+ * @property size size of the position, not including any contract multiplier defined at asset level
  * @property avgPrice average price paid, in the currency denoted by the asset
  * @property spotPrice Last known market price for this asset
  * @property lastUpdate When was the market price last updated
@@ -36,23 +50,27 @@ import kotlin.math.sign
  */
 data class Position(
     val asset: Asset,
-    var quantity: Double,
-    var avgPrice: Double = 0.0,
-    var spotPrice: Double = avgPrice,
-    var lastUpdate: Instant = Instant.MIN
+    var size: Double,
+    val avgPrice: Double = 0.0,
+    val spotPrice: Double = avgPrice,
+    val lastUpdate: Instant = Instant.MIN
 ) {
 
     /**
-     * Total size of a position is the position quantity times the asset multiplier. For many asset classes the
+     * Total size of a position is the position size times the asset multiplier. For many asset classes the
      * multiplier will be 1, but for example for option contracts it will often be 100
      */
     val totalSize: Double
-        get() = quantity * asset.multiplier
+        get() = size * asset.multiplier
 
+    /**
+     * The currency of this position, aka the currency of the underlying asset
+     */
     val currency
         get() = asset.currency
 
     companion object Factory {
+
         /**
          * Create an empty position for the provided [asset] and return this.
          */
@@ -60,56 +78,74 @@ data class Position(
     }
 
 
-    /**
-     * Update the current position with a new [position] and return the P&L realized by this update.
-     */
-    fun update(position: Position): Double {
-        val newQuantity = quantity + position.quantity
-        var pnl = 0.0
+    fun getPositionChange(change: Position) : PositionChange {
+        return when {
+            size.sign == change.size.sign -> PositionChange.INCREASE
+            size.absoluteValue - change.size.absoluteValue > 0 -> PositionChange.DECREASE
+            else -> PositionChange.DIRECTION
+        }
+    }
 
-        // Check if we need to update the average price and pnl
-        when {
-            quantity.sign != newQuantity.sign -> {
-                pnl = totalSize * (position.avgPrice - avgPrice)
-                avgPrice = position.avgPrice
+    operator fun plus(p: Position) : Position {
+
+        val newQuantity = size + p.size
+
+        return when {
+            size.sign != newQuantity.sign -> p.copy(size = newQuantity)
+
+            newQuantity.absoluteValue > size.absoluteValue -> {
+                val newAvgPrice = (avgPrice * size + p.avgPrice * p.size) / newQuantity
+                p.copy(size = newQuantity, avgPrice = newAvgPrice)
             }
 
-            newQuantity.absoluteValue > quantity.absoluteValue -> {
-                avgPrice = (avgPrice * quantity + position.avgPrice * position.quantity) / newQuantity
-            }
-
-            else -> {
-                pnl = position.quantity * asset.multiplier * (avgPrice - position.avgPrice)
-            }
+            else -> p.copy(size = newQuantity, avgPrice = avgPrice)
         }
 
-        quantity = newQuantity
-        return pnl
     }
+
+    /**
+     * How much PNL would be realized when [update] a position. This doesn't change the position itself, just
+     * calculates the potential realized PNL.
+     */
+    fun realizedPNL(update: Position) : Double {
+        val newQuantity = size + update.size
+
+        return when {
+            size.sign != newQuantity.sign -> totalSize * (update.avgPrice - avgPrice)
+            newQuantity.absoluteValue > size.absoluteValue -> 0.0
+            else -> update.totalSize * (avgPrice - update.avgPrice)
+        }
+
+    }
+
+    /**
+     * Is this an empty position
+     */
+    fun isEmpty(): Boolean = size == 0.0
 
     /**
      * Is this a short position
      */
     val short: Boolean
-        get() = quantity < 0
+        get() = size < 0
 
     /**
      * is this a long position
      */
     val long: Boolean
-        get() = quantity > 0
+        get() = size > 0
 
     /**
      * Is this an open position
      */
     val open: Boolean
-        get() = quantity != 0.0
+        get() = size != 0.0
 
     /**
      * The unrealized profit & loss for this position based on the [avgPrice] and last known market [spotPrice],
      * in the currency denoted by the asset
      */
-    val pnl: Double
+    val unrealizedPNL: Double
         get() = totalSize * (spotPrice - avgPrice)
 
 
@@ -117,12 +153,12 @@ data class Position(
      * The total value for this position based on last known spot price, in the currency denoted by the asset.
      * Short positions will typically return a negative value.
      */
-    val value: Double
+    val marketValue: Double
         get() = totalSize * spotPrice
 
     /**
      * The gross exposure for this position based on last known market price, in the currency denoted by the asset.
-     * The difference with the [value] property is that short positions also result in a positive exposure.
+     * The difference with the [marketValue] property is that short positions also result in a positive exposure.
      */
     val exposure: Double
         get() = totalSize.absoluteValue * spotPrice

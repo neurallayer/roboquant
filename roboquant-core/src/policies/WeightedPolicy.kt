@@ -52,7 +52,7 @@ class WeightedPolicy(vararg weight: Pair<Asset, Double>) : Policy {
     private fun getSizing(asset: Asset, pos: Position, totalValue: Double, price: Double): Double {
         val prefValue = totalValue * weights[asset]!!
         val prefSize = prefValue / (price * asset.multiplier)
-        val diffSize = floor(pos.quantity - prefSize)
+        val diffSize = floor(pos.size - prefSize)
         if (diffSize.absoluteValue > 1.0) {
             return diffSize * price * asset.multiplier
         }

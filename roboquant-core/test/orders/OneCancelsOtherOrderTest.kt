@@ -32,6 +32,8 @@ class OneCancelsOtherOrderTest {
             LimitOrder(asset, 100.0, 10.9),
             LimitOrder(asset, 200.0, 11.1)
         )
+        order.placed = Instant.now()
+
         assertTrue(order.first is LimitOrder)
         order.execute(11.0, Instant.now())
 

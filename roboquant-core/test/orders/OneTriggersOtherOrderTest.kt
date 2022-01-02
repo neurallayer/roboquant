@@ -20,6 +20,7 @@ import org.junit.Test
 import org.roboquant.TestData
 import java.time.Instant
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
 internal class OneTriggersOtherOrderTest {
@@ -31,12 +32,29 @@ internal class OneTriggersOtherOrderTest {
             MarketOrder(asset, 100.0),
             MarketOrder(asset, 200.0)
         )
+        order.placed = Instant.now()
+
         assertTrue(order.first is MarketOrder)
         order.execute(100.0, Instant.now())
 
         assertTrue(order.first.executed)
         assertTrue(order.second.executed)
         assertEquals(OrderStatus.COMPLETED, order.status)
+
+    }
+
+
+    @Test
+    fun test2() {
+        val asset1 = TestData.usStock()
+        val asset2 = TestData.euStock()
+
+        assertFails {
+            OneTriggersOtherOrder(
+                MarketOrder(asset1, 100.0),
+                MarketOrder(asset2, 200.0)
+            )
+        }
 
     }
 

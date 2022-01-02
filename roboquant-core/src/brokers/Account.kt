@@ -73,6 +73,10 @@ class Account(
     val total : Cash = Cash()
 
 
+    val totalAmount : Double
+        get() = convertToCurrency(total)
+
+
     /**
      * Free available cash, this is a derived value for convenience and is calculated by
      *
@@ -80,6 +84,10 @@ class Account(
      */
     val free : Cash
         get() = total - used
+
+
+    var buyingPower : Double = Double.NaN
+        get() = if (field.isNaN()) freeAmount else field
 
     /**
      * Cash being used, typically due to:
@@ -98,10 +106,11 @@ class Account(
      * amount of available cash. But with margin accounts there is typically more cash is available to
      * trade than just the total remaining cash balance.
      *
-     * @return the available buying power
+     * @return the available free amount of cash denoted in base currency of account
      */
-    var buyingPower: Double = Double.NaN
-        get() = if (field.isNaN()) convertToCurrency(free) else field
+    val freeAmount: Double
+        get() = convertToCurrency(free)
+
     /**
      * Reset the account to its initial state.
      */
@@ -163,7 +172,7 @@ class Account(
         val s = Summary("Account")
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
-        s.add("buying power", baseCurrency.format(buyingPower))
+        s.add("buying power", baseCurrency.format(freeAmount))
         s.add(cashSummary())
 
         val tradesSummary = Summary("Trades")
@@ -202,7 +211,7 @@ class Account(
         val s = Summary("Account")
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
-        s.add("buying power", baseCurrency.format(buyingPower))
+        s.add("buying power", baseCurrency.format(freeAmount))
         s.add(cashSummary())
         s.add(portfolio.summary())
         s.add(orders.summary())
@@ -279,7 +288,6 @@ class Account(
         account.used.clear()
         account.used.deposit(used)
         account.portfolio.put(portfolio)
-        account.buyingPower = buyingPower
         return account
     }
 

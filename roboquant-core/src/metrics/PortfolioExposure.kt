@@ -49,9 +49,9 @@ class PortfolioExposure : SimpleMetric() {
 
         for (position in account.portfolio.positions) {
             if (position.long)
-                longExposure.deposit(position.currency, position.value)
+                longExposure.deposit(position.currency, position.marketValue)
             else
-                shortExposure.deposit(position.currency, position.value)
+                shortExposure.deposit(position.currency, position.marketValue)
         }
 
         val longExposureValue = account.convertToCurrency(longExposure, now = now)

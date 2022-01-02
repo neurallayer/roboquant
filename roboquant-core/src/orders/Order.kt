@@ -24,10 +24,10 @@ import java.time.Instant
 /**
  * Order is an instruction for a broker to initiate a certain action. An order is always associated with an [asset]
  *
- * Within roboquant it is the [policy][org.roboquant.policies.Policy] that generates the orders. An order can cover a
+ * Within roboquant it is the [policy][org.roboquant.policies.Policy] that creates the orders. An order can cover a
  * wide variety of use cases:
  *
- * - a new order (perhaps the most common use case), ranging from simple market orders to advanced order types
+ * - a new order (perhaps the most common use case), ranging from a simple market order to advanced order types
  * - cancellation of an existing order
  * - update of an existing order
  *
@@ -53,22 +53,14 @@ abstract class Order(val asset: Asset) : Cloneable {
      * When was the order first placed. This timestamp is used during simulation to deal with time-in-force policies.
      * Before the order is actually placed, this attribute will contain the value `Instant.MIN`
      */
-    var placed: Instant = Instant.MIN
-        protected set
+    open var placed: Instant = Instant.MIN
+
 
     /**
      * Last known market price for the asset contained in this order
      */
     var price: Double = Double.NaN
-        protected set
 
-    /**
-     * If the order is not yet placed, place it now. The price is always updated.
-     */
-    fun place(price: Double, now: Instant) {
-        if (placed == Instant.MIN) placed = now
-        this.price = price
-    }
 
     companion object {
 

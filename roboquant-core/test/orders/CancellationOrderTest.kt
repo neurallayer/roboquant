@@ -30,7 +30,10 @@ internal class CancellationOrderTest {
         val asset = TestData.usStock()
 
         val openOrder = MarketOrder(asset, 100.0)
+        openOrder.placed = Instant.now()
+
         val oc = CancellationOrder(openOrder)
+        oc.placed = Instant.now()
         assertEquals(OrderStatus.INITIAL, oc.status)
 
         oc.execute(100.0, Instant.now())

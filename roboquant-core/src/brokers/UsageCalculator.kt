@@ -1,6 +1,8 @@
 package org.roboquant.brokers
 
+import org.roboquant.common.Asset
 import org.roboquant.common.Cash
+import kotlin.math.absoluteValue
 
 /**
  * Interface for usage calculations. It is used to calculate how much cash is required for holding a set of
@@ -12,7 +14,7 @@ import org.roboquant.common.Cash
 interface UsageCalculator {
 
     /**
-     * Calculate the used cash for the provided account and possible changes
+     * Calculate the used cash for the existing [positions] and (possible) new [changes]
      */
     fun calculate(positions: List<Position>, changes: List<Position> = emptyList()) : Cash
 }
@@ -31,10 +33,46 @@ class BasicUsageCalculator : UsageCalculator {
             else if (p.short)
                 usage.deposit(p.asset.currency, p.exposure)
         }
+
+        for (p in changes) usage.deposit(p.asset.currency, p.totalCost.absoluteValue)
+
         return usage
     }
 
 }
+
+
+/**
+ * Usage calculator for T Reg accounts, using 50% for initial margin and 25% for maintance margin.
+ */
+class RegTCalculator : UsageCalculator {
+
+    override fun calculate(positions: List<Position>, changes: List<Position>): Cash {
+        val margin = Cash()
+        val currentPos = mutableMapOf<Asset, Double>()
+
+        // Maintance margin
+        for (p in positions) {
+            if (p.long)
+                margin.deposit(p.asset.currency,p.totalCost * 0.50)
+            else if (p.short)
+                margin.deposit(p.asset.currency,p.totalCost.absoluteValue * 1.50)
+
+            currentPos[p.asset] = p.size
+        }
+
+        // Initial margin
+        for (p in changes) {
+            if (p.long)
+                margin.deposit(p.asset.currency,p.totalCost * 0.5)
+            else if (p.short)
+                margin.deposit(p.asset.currency,p.exposure * 1.5)
+        }
+        return margin
+    }
+
+}
+
 
 /**
  * Basic usage calculator that support a fixed laverage

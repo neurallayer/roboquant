@@ -29,11 +29,8 @@ import java.time.Instant
 class OneTriggersOtherOrder(
     val first: SingleOrder,
     val second: SingleOrder,
-) : Order(first.asset) {
+) : CombinedOrder(first, second) {
 
-    init {
-        require(first.asset == second.asset) { "Assets need to be the same" }
-    }
 
     override fun clone(): OneCancelsOtherOrder {
         return OneCancelsOtherOrder(first.clone(), second.clone())
@@ -45,7 +42,6 @@ class OneTriggersOtherOrder(
 
     override fun execute(price: Double, time: Instant): List<Execution> {
         val executions = mutableListOf<Execution>()
-        place(price, time)
 
         if (first.status.open) {
             executions.addAll(first.execute(price, time))

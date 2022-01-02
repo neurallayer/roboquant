@@ -30,9 +30,10 @@ internal class PositionTest {
         val contract = TestData.usStock()
         val p1 = Position(contract, 10.0, 10.0, 12.0)
         val p2 = Position(contract, 10.0, 12.0, 12.0)
-        val pnl = p1.update(p2)
-        assertEquals(11.0, p1.avgPrice)
-        assertEquals(20.0, p1.quantity)
+        val newPos = p1 + p2
+        val pnl = p1.realizedPNL(p2)
+        assertEquals(11.0, newPos.avgPrice)
+        assertEquals(20.0, newPos.size)
         assertEquals(0.0, pnl)
     }
 
@@ -42,9 +43,10 @@ internal class PositionTest {
         val contract = TestData.usStock()
         val p1 = Position(contract, 10.0, 10.0, 12.0)
         val p2 = Position(contract, -5.0, 11.0, 12.0)
-        val pnl = p1.update(p2)
-        assertEquals(10.0, p1.avgPrice)
-        assertEquals(5.0, p1.quantity)
+        val newPos = p1 + p2
+        val pnl = p1.realizedPNL(p2)
+        assertEquals(10.0, newPos.avgPrice)
+        assertEquals(5.0, newPos.size)
         assertEquals(5.0, pnl)
     }
 
@@ -53,9 +55,10 @@ internal class PositionTest {
         val contract = TestData.usStock()
         val p1 = Position(contract, 10.0, 10.0, 12.0)
         val p2 = Position(contract, -15.0, 11.0, 12.0)
-        val pnl = p1.update(p2)
-        assertEquals(11.0, p1.avgPrice)
-        assertEquals(-5.0, p1.quantity)
+        val newPos = p1 + p2
+        val pnl = p1.realizedPNL(p2)
+        assertEquals(11.0, newPos.avgPrice)
+        assertEquals(-5.0, newPos.size)
         assertEquals(10.0, pnl)
     }
 
@@ -64,7 +67,7 @@ internal class PositionTest {
     fun pnl() {
         val contract = TestData.usStock()
         val p1 = Position(contract, 10.0, 10.0, 12.0)
-        val pnl = p1.pnl
+        val pnl = p1.unrealizedPNL
         assertEquals(20.0, pnl)
     }
 
@@ -91,7 +94,7 @@ internal class PositionTest {
     fun value() {
         val contract = TestData.usStock()
         val p1 = Position(contract, 10.0, 10.0, 12.0)
-        val value = p1.value
+        val value = p1.marketValue
         assertEquals(120.0, value)
     }
 

@@ -38,8 +38,6 @@ class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : O
     }
 
     override fun execute(price: Double, time: Instant): List<Execution> {
-        place(price, time)
-
         when {
             originalOrder.status.closed -> status = OrderStatus.REJECTED
             updateOrder.quantity < originalOrder.fill -> status = OrderStatus.REJECTED

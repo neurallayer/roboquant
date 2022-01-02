@@ -96,7 +96,6 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
      * Implementaiton of execute for all single order types. Subclasses will need only to implement the [fill] method.
      */
     override fun execute(price: Double, time: Instant): List<Execution> {
-        place(price, time)
         val qty = fill(price)
 
         if (tif.isExpired(this, time, qty, quantity)) {
@@ -327,8 +326,6 @@ open class TrailOrder(
 ) : SingleOrder(asset, quantity, tif, tag) {
 
     protected var triggered = false
-
-    private var correction: Double = if (buy) (1.0 + trail) else (1.0 - trail)
     private var stop: Double = if (buy) Double.MAX_VALUE else Double.MIN_VALUE
 
     companion object {
@@ -340,7 +337,8 @@ open class TrailOrder(
     }
 
     protected fun updateStop(price: Double) {
-        if (status == OrderStatus.INITIAL) {
+        if (! triggered) {
+            val correction = if (buy) (1.0 + trail) else (1.0 - trail)
             val newStop = price * correction
             if (buy && newStop < stop) stop = newStop
             if (sell && newStop > stop) stop = newStop

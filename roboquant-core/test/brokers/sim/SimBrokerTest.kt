@@ -49,13 +49,29 @@ internal class SimBrokerTest {
         var account = broker.place(listOf(TestData.euMarketOrder(), TestData.usMarketOrder()), event)
         assertEquals(2, account.orders.size)
         assertEquals(account.orders.closed.size, account.trades.size)
-
-
         assertEquals(1, account.orders.open.size)
+
         account = broker.place(listOf(), TestData.event2())
         assertEquals(0, account.orders.open.size)
+        assertEquals(2, account.portfolio.assets.size)
 
     }
+
+    @Test
+    fun liquidateTest() {
+        val broker = SimBroker()
+        val event = TestData.event()
+        var account = broker.place(listOf(TestData.usMarketOrder()), event)
+        assertEquals(1, account.portfolio.assets.size)
+        assertEquals(1, account.portfolio.assets.size)
+
+        account = broker.liquidatePortfolio()
+        assertEquals(0, account.orders.open.size)
+        assertEquals(0, account.portfolio.assets.size)
+        assertEquals(2, account.orders.size)
+
+    }
+
 
     @Test
     fun advancedPlaceOrder() {

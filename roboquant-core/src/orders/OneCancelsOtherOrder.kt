@@ -31,11 +31,8 @@ import java.time.Instant
 class OneCancelsOtherOrder(
     val first: SingleOrder,
     val second: SingleOrder,
-) : Order(first.asset) {
+) : CombinedOrder(first, second) {
 
-    init {
-        require(first.asset == second.asset) { "Assets need to be the same" }
-    }
 
     override fun clone(): OneCancelsOtherOrder {
         return OneCancelsOtherOrder(first.clone(), second.clone())
@@ -47,7 +44,6 @@ class OneCancelsOtherOrder(
 
     override fun execute(price: Double, time: Instant): List<Execution> {
         var executions = listOf<Execution>()
-        place(price, time)
 
         if (first.status.open) {
             executions = first.execute(price, time)

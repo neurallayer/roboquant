@@ -27,6 +27,8 @@ internal class SingleOrderTest {
     fun testMarketOrder() {
         val asset = TestData.usStock()
         val mo = MarketOrder(asset, 100.0)
+        mo.placed = Instant.now()
+
         assertEquals(100.0, mo.quantity)
         assertTrue(mo.tif is GTC)
 
@@ -39,6 +41,8 @@ internal class SingleOrderTest {
     fun testStopOrder() {
         val asset = TestData.usStock()
         val order = StopOrder(asset, -10.0, 99.0)
+        order.placed = Instant.now()
+
         assertEquals(-10.0, order.quantity)
         assertEquals(99.0, order.stop)
         val e1 = order.execute(100.0, Instant.now())
@@ -54,6 +58,8 @@ internal class SingleOrderTest {
     fun testLimitOrder() {
         val asset = TestData.usStock()
         val order = LimitOrder(asset, -10.0, 101.0)
+        order.placed = Instant.now()
+
         assertEquals(-10.0, order.quantity)
         assertEquals(101.0, order.limit)
         val e1 = order.execute(100.0, Instant.now())
@@ -70,6 +76,8 @@ internal class SingleOrderTest {
     fun testStopLimitOrder() {
         val asset = TestData.usStock()
         val order = StopLimitOrder(asset, -10.0, 99.0, 98.0)
+        order.placed = Instant.now()
+
         assertEquals(-10.0, order.quantity)
         assertEquals(98.0, order.limit)
         val e1 = order.execute(100.0, Instant.now())

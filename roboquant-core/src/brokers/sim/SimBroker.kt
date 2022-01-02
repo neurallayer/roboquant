@@ -22,7 +22,9 @@ import org.roboquant.common.Cash
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.TradePrice
 import org.roboquant.metrics.MetricResults
+import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderStatus
 import java.lang.Double.min
@@ -89,9 +91,15 @@ class SimBroker(
         val now = event.now
         logger.finer { "Executing at $now with ${prices.size} prices" }
 
-        for (order in account.orders.accepted) {
+        for (order in account.orders.open) {
             val action = prices[order.asset] ?: continue
             val price = action.getPrice(priceType)
+            if (order.status === OrderStatus.INITIAL) {
+                order.status = OrderStatus.ACCEPTED
+                order.placed = now
+            }
+
+            order.price = price
 
             val executions = order.execute(price, now)
             for (execution in executions) {
@@ -176,28 +184,37 @@ class SimBroker(
      * will not yet be accepted.
      **/
     private fun validateOrders(event: Event) {
+        if (!validateBuyingPower) return
         var buyingPower = account.buyingPower
         val initialOrders = account.orders.filter { it.status === OrderStatus.INITIAL }
         for (order in initialOrders) {
-            if (!validateBuyingPower) {
-                order.status = OrderStatus.ACCEPTED
-            } else {
-                val price = event.prices[order.asset]?.getPrice()
-                if (price != null) {
-                    val expectedCost = min(0.0, order.getValue(price))
-                    if (buyingPower > expectedCost) {
-                        buyingPower -= expectedCost
-                        order.status = OrderStatus.ACCEPTED
-                    } else {
-                        logger.fine { "Not enough buying power $buyingPower, required $expectedCost, rejecting order $order" }
-                        order.status = OrderStatus.REJECTED
-                    }
+            val price = event.prices[order.asset]?.getPrice()
+            if (price != null) {
+                val expectedCost = min(0.0, order.getValue(price))
+                if (buyingPower > expectedCost) {
+                    buyingPower -= expectedCost
                 } else {
-                    logger.fine { "No price found for order $order, keeping state to INITIAL" }
+                    logger.fine { "Not enough buying power $buyingPower, required $expectedCost, rejecting order $order" }
+                    order.status = OrderStatus.REJECTED
                 }
             }
         }
 
+    }
+
+    /**
+     * Liquidate the portfolio. It consist of the following two steps:
+     *
+     * 1. cancel all open orders
+     * 2. close all open positions by creating and process market orders for the required quantities
+     */
+    fun liquidatePortfolio(now:Instant = account.time): Account {
+        for (order in account.orders.open) order.status = OrderStatus.CANCELLED
+        val change = account.portfolio.diff(Portfolio())
+        val orders = change.map { MarketOrder(it.key, it.value, tag = "liquidate") }
+        val actions = account.portfolio.positions.map { TradePrice(it.asset, it.spotPrice) }
+        val event = Event(actions, now)
+        return place(orders, event)
     }
 
 

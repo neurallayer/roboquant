@@ -30,6 +30,8 @@ internal class TrailLimitOrderTest {
     fun testTrailOrder() {
         val asset = TestData.usStock()
         val order = TrailOrder(asset, -100.0, 0.01)
+        order.status = OrderStatus.ACCEPTED
+        order.placed = Instant.now()
 
         var e1 = order.execute(100.0, Instant.now())
         assertTrue { e1.isEmpty() }
@@ -50,6 +52,8 @@ internal class TrailLimitOrderTest {
     fun testTrailLimitOrder() {
         val asset = TestData.usStock()
         val order = TrailLimitOrder(asset, -100.0, 0.01, 0.01)
+        order.status = OrderStatus.ACCEPTED
+        order.placed = Instant.now()
 
         var e1 = order.execute(100.0, Instant.now())
         assertTrue { e1.isEmpty() }

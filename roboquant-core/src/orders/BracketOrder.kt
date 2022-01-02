@@ -38,7 +38,7 @@ class BracketOrder(
     val main: SingleOrder,
     val profit: SingleOrder,
     val loss: SingleOrder,
-) : Order(main.asset) {
+) : CombinedOrder(main, profit, loss) {
 
     companion object {
 
@@ -57,10 +57,16 @@ class BracketOrder(
 
     }
 
+    override var placed: Instant = Instant.MIN
+        set(value) {
+            field = value
+            main.placed = value
+            profit.placed = value
+            loss.placed = value
+        }
 
     init {
         // Some basic sanity checks
-        require(main.asset == profit.asset && profit.asset == loss.asset) { "Assets need to be identical" }
         require(main.quantity == -profit.quantity && profit.quantity == loss.quantity) { "Profit and loss order quantities need to be the same and opposite to the main order quantity" }
     }
 
@@ -74,9 +80,8 @@ class BracketOrder(
 
     override fun execute(price: Double, time: Instant): List<Execution> {
         val result = mutableListOf<Execution>()
-        place(price, time)
 
-        if (!main.status.closed) {
+        if (main.status.open) {
             val e = main.execute(price, time)
             result.addAll(e)
             if (main.status.aborted) {

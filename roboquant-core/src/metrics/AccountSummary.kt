@@ -48,8 +48,8 @@ class AccountSummary(val includeValue: Boolean = true) : SimpleMetric() {
             "account.trades" to account.trades.size,
             "account.portfolio.assets" to account.portfolio.positions.size,
             "account.cash.currencies" to account.total.currencies.size,
-            "account.cash.total" to account.getTotalCash(now = event.now),
-            "account.buyingPower" to account.buyingPower
+            "account.cash.total" to account.totalAmount,
+            "account.cash.free" to account.freeAmount
         )
 
         if (includeValue) {

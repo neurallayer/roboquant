@@ -66,7 +66,7 @@ open class DefaultPolicy(
         if (!shorting && !position.long) return null
 
         return if (position.long) {
-            createOrder(signal, -position.quantity, price)
+            createOrder(signal, -position.size, price)
         } else {
             if (position.short && !increasePosition) return null
             val amount = min(buyingPower, maxAmount).absoluteValue
@@ -87,6 +87,12 @@ open class DefaultPolicy(
         return if (volume > 0) createOrder(signal, volume, price) else null
     }
 
+
+    open fun getAvailableCash(account: Account) {
+
+    }
+
+
     /**
      * Create a new order based on the [signal], [qty] and current [price]. Overwrite this method if you want to
      * create other orders types than the default MarketOrder.
@@ -102,7 +108,7 @@ open class DefaultPolicy(
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<Order>()
-        var buyingPower = account.buyingPower
+        var buyingPower = account.freeAmount
         val openOrderAssets = account.orders.open.map { it.asset }
         val remainingDayOrders =
             if (maxOrdersPerDay == Int.MAX_VALUE) Int.MAX_VALUE else maxOrdersPerDay - getOrdersCurrentDay(
