@@ -89,7 +89,7 @@ class RandomWalk(
 
     companion object {
 
-        private val logger = Logging.getLogger("RandomWalk")
+        private val logger = Logging.getLogger(RandomWalk::class)
 
         /**
          * Create a random walk for the last [years], generating daily prices

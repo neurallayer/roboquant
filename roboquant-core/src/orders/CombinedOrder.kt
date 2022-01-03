@@ -3,7 +3,7 @@ package org.roboquant.orders
 import java.time.Instant
 
 /**
- * Base class for combined orders.
+ * Base class for combined orders that takes care of setting some of the properties
  */
 abstract class CombinedOrder(vararg val children: Order) : Order(children.first().asset) {
 
@@ -15,6 +15,12 @@ abstract class CombinedOrder(vararg val children: Order) : Order(children.first(
         set(value) {
             field = value
             for (order in children) order.placed = value
+        }
+
+    override var price: Double = Double.NaN
+        set(value) {
+            field = value
+            for (order in children) order.price = value
         }
 
 }

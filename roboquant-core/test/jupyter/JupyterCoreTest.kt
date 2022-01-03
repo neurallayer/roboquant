@@ -19,7 +19,6 @@ package org.roboquant.jupyter
 import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.junit.Test
 import org.roboquant.common.Logging
-import java.lang.Exception
 import java.util.logging.Level
 import kotlin.test.assertTrue
 
@@ -49,6 +48,24 @@ internal class JupyterCoreTest {
         val t = RoboquantThrowableRenderer()
         val output = t.render(Exception("Dummy"))
         assertTrue { output is MimeTypedResult }
+    }
+
+    @Test
+    fun core() {
+        class TestOutput : Output() {
+            override fun asHTML(): String {
+                TODO("Not yet implemented")
+            }
+
+            override fun asHTMLPage(useCDN: Boolean): String {
+                TODO("Not yet implemented")
+            }
+
+        }
+
+        val output = TestOutput()
+        val result = JupyterCore.render(output)
+        assertTrue(result)
     }
 
 }

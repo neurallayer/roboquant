@@ -144,6 +144,7 @@ class AlpacaLiveFeed(
 
     private fun handleMsg(msg: MarketDataMessage) {
         try {
+            logger.finer {"Received msg $msg"}
             val action: PriceAction? = when (msg) {
                 is TradeMessage -> TradePrice(assetsMap[msg.symbol]!!, msg.price)
                 is QuoteMessage -> PriceQuote(
@@ -180,7 +181,7 @@ class AlpacaLiveFeed(
 
     private fun createListener(): MarketDataListener {
         return MarketDataListener { streamMessageType, msg ->
-            println(streamMessageType)
+            logger.finer {"Received message of type $streamMessageType and msg $msg"}
 
             when (streamMessageType) {
                 MarketDataMessageType.ERROR -> logger.warning(msg.toString())

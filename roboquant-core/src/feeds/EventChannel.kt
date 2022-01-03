@@ -35,7 +35,7 @@ import java.util.logging.Logger
 open class EventChannel(capacity: Int = 100, val timeFrame: TimeFrame = TimeFrame.FULL) {
 
     private val channel = Channel<Event>(capacity)
-    private val logger: Logger = Logging.getLogger("EventChannel")
+    private val logger: Logger = Logging.getLogger(EventChannel::class)
 
     var done: Boolean = false
 

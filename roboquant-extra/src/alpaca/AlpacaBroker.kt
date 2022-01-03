@@ -55,6 +55,8 @@ class AlpacaBroker(
     private val logger = Logging.getLogger(this)
     var enableTrading = false
 
+    private val orderMapping = mutableMapOf<Order, AlpacaOrder>()
+
     val availableAssets by lazy {
         AlpacaConnection.getAvailableAssets(alpacaAPI)
     }
@@ -165,7 +167,8 @@ class AlpacaBroker(
      */
     private fun updateOpenOrders() {
         account.orders.open.filterIsInstance<SingleOrder>().forEach {
-            val order = alpacaAPI.orders().get(it.id, false)
+            val aOrder = orderMapping[it]!!
+            val order = alpacaAPI.orders().get(aOrder.id, false)
             it.fill = order.filledQuantity.toDouble()
 
             when (order.status) {
@@ -212,6 +215,7 @@ class AlpacaBroker(
                 throw Exception("Unsupported order type $order. Right now only Market and Limit orders are mapped")
             }
         }
+        orderMapping[order] = alpacaOrder
 
         // val action = OrderTicket(order, alpacaOrder.id)
         when (alpacaOrder.status) {
@@ -223,6 +227,7 @@ class AlpacaBroker(
                 logger.info { "Received order status ${order.status}" }
             }
         }
+
     }
 
     /**

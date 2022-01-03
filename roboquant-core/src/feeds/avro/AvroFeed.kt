@@ -166,17 +166,17 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
     }
 
     companion object {
-        private val logger = Logging.getLogger("AvroFeed")
+        private val logger = Logging.getLogger(AvroFeed::class)
         private const val sp500URL =
-            "https://github.com/neurallayer/roboquant-data/blob/main/avro/5yr_sp500.avro?raw=true"
+            "https://github.com/neurallayer/roboquant-data/blob/main/avro/5yr_sp500_v1.1.avro?raw=true"
 
         /**
          * 5 years worth of end of day data for companies listed in the S&P 500
          */
         fun sp500(): AvroFeed {
-            val path: Path = Paths.get(Config.home.toString(), "5yr_sp500.avro")
+            val path: Path = Paths.get(Config.home.toString(), "5yr_sp500_v1.1.avro")
             if (Files.notExists(path)) {
-                logger.info("Downloading S&P 500 price data ...")
+                logger.info("Downloading S&P 500 price data from $sp500URL...")
                 download(sp500URL, path)
                 require(Files.exists(path))
             }

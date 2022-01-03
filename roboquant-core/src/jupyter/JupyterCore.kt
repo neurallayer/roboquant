@@ -55,7 +55,7 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
 
 /**
  * Very simple logger handler that is installed when using notebooks and prints a line to standard out, so log statements
- * turn up in the cell output.
+ * turn up in the cell output by default.
  */
 internal class JupyterLogger : Handler() {
 
@@ -72,11 +72,11 @@ internal class JupyterLogger : Handler() {
 }
 
 /**
- * Integration with Kotlin based Jupyter notebook kernels. Main features:
+ * Integration with Kotlin based Jupyter notebook kernels. Some of the main features:
  *
- * 1) Support for charts
+ * 1) Support for charts using the Apacher ECharts library
  * 2) Default imports
- * 3) Nicer Exception handling
+ * 3) Nicer exception handling
  *
  */
 internal class JupyterCore : JupyterIntegration() {

@@ -124,8 +124,7 @@ class IEXLiveFeed(
 
     // TODO correct for timezone
     private fun handleQuotes(quotes: List<Quote>) {
-        logger.info { "Received callback" }
-        println(quotes.size)
+        logger.info { "Received callback with ${quotes.size} quotes" }
         var now = Instant.now()
         quotes.forEach {
             val asset = assetMap[it.symbol]!!

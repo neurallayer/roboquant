@@ -17,14 +17,14 @@
 package org.roboquant.jupyter
 
 import org.junit.Test
-import org.roboquant.brokers.Account
-import kotlin.test.*
+import org.roboquant.TestData
+import kotlin.test.assertTrue
 
 internal class AssetAllocationChartTest {
 
     @Test
     fun test() {
-        val account = Account()
+        val account = TestData.usAccount()
         val chart = AssetAllocationChart(account)
         assertTrue(chart.asHTML().isNotBlank())
     }

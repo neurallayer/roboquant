@@ -42,26 +42,22 @@ object Logging {
      */
     var useSimpleFormat = true
 
-    class LoggingFormatter : SimpleFormatter() {
+    // ANSI escape code
+    private const val ANSI_RESET = "\u001B[0m"
+    private const val ANSI_BLACK = "\u001B[30m"
+    private const val ANSI_RED = "\u001B[31m"
+    private const val ANSI_GREEN = "\u001B[32m"
+    private const val ANSI_YELLOW = "\u001B[33m"
+    private const val ANSI_BLUE = "\u001B[34m"
+    private const val ANSI_PURPLE = "\u001B[35m"
+    private const val ANSI_CYAN = "\u001B[36m"
+    private const val ANSI_WHITE = "\u001B[37m"
 
-        companion object {
+    fun blue(msg: Any) = "$ANSI_BLUE$msg$ANSI_RESET"
+    fun green(msg: Any) = "$ANSI_GREEN$msg$ANSI_RESET"
 
-            // ANSI escape code
-            const val ANSI_RESET = "\u001B[0m"
-            const val ANSI_BLACK = "\u001B[30m"
-            const val ANSI_RED = "\u001B[31m"
-            const val ANSI_GREEN = "\u001B[32m"
-            const val ANSI_YELLOW = "\u001B[33m"
-            const val ANSI_BLUE = "\u001B[34m"
-            const val ANSI_PURPLE = "\u001B[35m"
-            const val ANSI_CYAN = "\u001B[36m"
-            const val ANSI_WHITE = "\u001B[37m"
 
-            fun blue(msg: Any) = "$ANSI_BLUE$msg$ANSI_RESET"
-            fun green(msg: Any) = "$ANSI_GREEN$msg$ANSI_RESET"
-
-        }
-
+    private class LoggingFormatter : SimpleFormatter() {
 
         override fun format(lr: LogRecord): String {
             return if (useSimpleFormat) {

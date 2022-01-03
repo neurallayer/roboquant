@@ -102,7 +102,7 @@ class Summary(val content: String) {
         maxChildren: Int = Int.MAX_VALUE
     ) {
         buffer.append(prefix)
-        if (children.isNotEmpty()) buffer.append(Logging.LoggingFormatter.blue(content)) else buffer.append(content)
+        if (children.isNotEmpty()) buffer.append(Logging.blue(content)) else buffer.append(content)
         buffer.append('\n')
         val it = children.iterator()
         var cnt = 0

@@ -16,12 +16,14 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.Roboquant
-import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.logging.MemoryLogger
-import org.roboquant.logging.SilentLogger
-import org.roboquant.metrics.ProgressMetric
 import org.junit.Test
+import org.roboquant.TestData
+import org.roboquant.common.seconds
+import org.roboquant.feeds.Event
+import java.time.Instant
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 internal class TAStrategyTest {
@@ -38,43 +40,51 @@ internal class TAStrategyTest {
             ta.cdl3BlackCrows(price) || (ta.cdl2Crows(price, 1) && ta.ema(price.close, 30) < ta.ema(price.close, 50))
         }
 
-        val logger = SilentLogger()
-        val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
-
-        val feed = RandomWalk.lastYears()
-        roboquant.run(feed)
-        assertTrue(logger.events > 0)
+        val x = run(strategy, 60)
+        assertEquals(60,x.size)
     }
 
-    private fun runStrategy(s: TAStrategy): SilentLogger {
-        val logger = SilentLogger()
-        val roboquant = Roboquant(s, ProgressMetric(), logger = logger)
-        val feed = RandomWalk.lastYears()
-        roboquant.run(feed)
-        return logger
+    @Test
+    fun testFail() {
+        val strategy = TAStrategy(3)
+        strategy.buy { price -> ta.cdlMorningStar(price) }
+
+        assertFailsWith<InsufficientData> {
+            run(strategy)
+        }
     }
 
 
-    private fun runStrategy2(s: TAStrategy): Roboquant<MemoryLogger> {
-        val roboquant = Roboquant(s, ProgressMetric(), logger = MemoryLogger(showProgress = false))
-        val feed = RandomWalk.lastYears()
-        roboquant.run(feed)
-        return roboquant
+    private fun run(s: TAStrategy, n: Int = 100): Map<Instant, List<Signal>> {
+        val actions = listOf(TestData.priceBar())
+        val result = mutableMapOf<Instant, List<Signal>>()
+        var now =  Instant.now()
+       repeat(n) {
+           val event = Event(actions, now)
+           val signals = s.generate(event)
+           result[now] = signals
+           now += 1.seconds
+       }
+        return result
     }
 
     @Test
     fun testPredefined() {
         var strategy = TAStrategy.emaCrossover(50, 10)
-        var logger = runStrategy(strategy)
-        assertTrue(logger.events > 0)
+        var s = run(strategy)
+        assertTrue(s.isNotEmpty())
 
         strategy = TAStrategy.smaCrossover(50, 10)
-        logger = runStrategy(strategy)
-        assertTrue(logger.events > 0)
+        s = run(strategy)
+        assertTrue(s.isNotEmpty())
 
         strategy = TAStrategy.recordHighLow(100)
-        logger = runStrategy(strategy)
-        assertTrue(logger.events > 0)
+        s = run(strategy)
+        assertTrue(s.isNotEmpty())
+
+        strategy = TAStrategy.recordHighLow(20, 50, 100)
+        s = run(strategy)
+        assertTrue(s.isNotEmpty())
     }
 
 
@@ -85,9 +95,10 @@ internal class TAStrategyTest {
             true
         }
 
-        val exp = runStrategy2(strategy)
-        exp.logger.summary().log()
-        assertTrue(exp.broker.account.orders.size > 0)
+        val s = run(strategy, 10)
+        assertEquals(10, s.entries.size)
+        assertTrue(s.values.first().isEmpty())
+        assertTrue(s.values.last().isNotEmpty())
     }
 
 
@@ -102,11 +113,12 @@ internal class TAStrategyTest {
             a > b
         }
 
-        val exp = runStrategy2(strategy)
-        exp.logger.summary().log()
-        assertTrue(exp.logger.metricNames.contains("sma.fast"))
-        assertTrue(exp.logger.metricNames.contains("sma.slow"))
-        assertTrue(exp.logger.metricNames.contains("sma.slow"))
+        run(strategy)
+        var metrics = strategy.getMetrics()
+        assertContains(metrics,"sma.fast")
+        assertContains(metrics, "sma.slow")
 
+        metrics = strategy.getMetrics()
+        assertTrue(metrics.isEmpty())
     }
 }

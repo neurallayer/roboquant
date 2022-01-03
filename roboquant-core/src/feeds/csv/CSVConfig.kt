@@ -79,7 +79,7 @@ data class CSVConfig(
     companion object {
 
         private const val configFileName = "config.properties"
-        private val logger = Logging.getLogger("CSVConfig")
+        private val logger = Logging.getLogger(CSVConfig::class)
 
         fun fromFile(path: String): CSVConfig {
             val result = CSVConfig()

@@ -32,7 +32,12 @@ import org.roboquant.feeds.PriceAction
  * hand them over to a logger. However, just like other metrics it will reset its state at the beginning of a
  * phase.
  */
-class PriceRecorder(vararg val assets: Asset) : Metric, Feed {
+class PriceRecorder(val assets: Collection<Asset>) : Metric, Feed {
+
+    /**
+     * Convenient constructor that allows to pass individual assets
+     */
+    constructor(vararg assets: Asset) : this(assets.asList())
 
     private val events = mutableListOf<Event>()
 

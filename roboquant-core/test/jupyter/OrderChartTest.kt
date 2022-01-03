@@ -17,13 +17,15 @@
 package org.roboquant.jupyter
 
 import org.junit.Test
+import org.roboquant.TestData
 import kotlin.test.assertTrue
 
 internal class OrderChartTest {
 
     @Test
     fun test() {
-        val chart = OrderChart(listOf())
+        val account = TestData.usAccount()
+        val chart = OrderChart(account.orders)
         assertTrue(chart.asHTML().isNotBlank())
     }
 

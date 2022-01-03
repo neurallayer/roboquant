@@ -59,7 +59,7 @@ abstract class Order(val asset: Asset) : Cloneable {
     /**
      * Last known market price for the asset contained in this order
      */
-    var price: Double = Double.NaN
+    open var price: Double = Double.NaN
 
 
     companion object {

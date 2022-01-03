@@ -145,20 +145,37 @@ fun Collection<Asset>.getBySymbol(symbol: String): Asset = first { it.symbol == 
 /**
  * Find an asset based on its [symbols] name. Will return an empty list if no assets are matched.
  */
-fun Collection<Asset>.findBySymbols(vararg symbols: String): List<Asset> = filter { it.symbol in symbols }
+fun Collection<Asset>.findBySymbols(vararg symbols: String): List<Asset> = findBySymbols(symbols.asList())
+
+/**
+ * Find an asset based on its [symbols] name. Will return an empty list if no assets are matched.
+ */
+fun Collection<Asset>.findBySymbols(symbols: Collection<String>): List<Asset> = filter { it.symbol in symbols }
+
 
 /**
  * Find all assets based on their [currencyCodes]. Returns an empty list if no matching assets can be found.
  */
-fun Collection<Asset>.findByCurrencies(vararg currencyCodes: String): List<Asset> =
+fun Collection<Asset>.findByCurrencies(vararg currencyCodes: String): List<Asset> = findByCurrencies(currencyCodes.asList())
+
+/**
+ * Find all assets based on their [currencyCodes]. Returns an empty list if no matching assets can be found.
+ */
+fun Collection<Asset>.findByCurrencies(currencyCodes: Collection<String>): List<Asset> =
     filter { it.currencyCode in currencyCodes }
+
 
 
 /**
  * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.
  */
-fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset> =
+fun Collection<Asset>.findByExchanges(exchangeCodes: Collection<String>): List<Asset> =
     filter { it.exchangeCode in exchangeCodes }
+
+/**
+ * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.
+ */
+fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset> = findByExchanges(exchangeCodes.asList())
 
 /**
  * Select [n] random assets from a collection, without duplicates. [n] has to equal or smaller than the size of the
