@@ -41,7 +41,7 @@ class TAStrategy(private val history: Int = 15) : Strategy {
     private var sellFn: TAStrategy.(price: PriceBarBuffer) -> Boolean = { false }
     private var buyFn: TAStrategy.(price: PriceBarBuffer) -> Boolean = { false }
     private val buffers = mutableMapOf<Asset, PriceBarBuffer>()
-    private val logger: Logger = Logging.getLogger(this)
+    private val logger: Logger = Logging.getLogger(TAStrategy::class)
     val ta = TALib
 
     private var metrics = mutableMapOf<String, Number>()

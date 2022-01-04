@@ -35,7 +35,7 @@ class BinanceHistoricFeed(apiKey: String? = null, secret: String? = null, privat
     HistoricPriceFeed() {
 
     private var client: BinanceApiRestClient
-    private val logger = Logging.getLogger(this)
+    private val logger = Logging.getLogger(BinanceHistoricFeed::class)
     private val factory = BinanceConnection.getFactory(apiKey, secret)
 
     val availableAssets by lazy {

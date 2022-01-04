@@ -52,7 +52,7 @@ class AlpacaLiveFeed(
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
 
 
-    val logger = Logging.getLogger(this)
+    val logger = Logging.getLogger(AlpacaLiveFeed::class)
     private val listener = createListener()
 
     val availableAssets by lazy {

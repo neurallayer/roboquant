@@ -19,6 +19,7 @@
 package org.roboquant.common
 
 import java.util.logging.*
+import kotlin.reflect.KClass
 
 /**
  * Simple Logging object that provides utility methods to create and update loggers. Where many loggers APIs are
@@ -84,13 +85,14 @@ object Logging {
         rootLogger.addHandler(handler)
     }
 
-    fun getLogger(clazz: Class<*>): Logger {
-        return getLogger(clazz.name)
+    fun getLogger(clazz: KClass<*>): Logger {
+        return getLogger(clazz.qualifiedName!!)
     }
 
-    fun getLogger(obj: Any): Logger {
+    fun getLogger2(obj: Any): Logger {
         return getLogger(obj::class.qualifiedName!!)
     }
+
 
     fun getLogger(name: String): Logger {
         val mainLogger: Logger = Logger.getLogger(name)

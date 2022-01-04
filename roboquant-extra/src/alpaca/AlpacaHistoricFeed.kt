@@ -41,7 +41,7 @@ class AlpacaHistoricFeed(
 ) : HistoricPriceFeed() {
 
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
-    private val logger = Logging.getLogger(this)
+    private val logger = Logging.getLogger(AlpacaHistoricFeed::class)
     private val zoneId: ZoneId = ZoneId.of("America/New_York")
 
 

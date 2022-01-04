@@ -128,7 +128,7 @@ class Account(
      * Get the margin requirements for provided portfolio
      */
     fun getMarginRequirements(portfolio: Portfolio = this.portfolio) : Cash {
-        return usageCalculator.calculate(this.portfolio.positions)
+        return usageCalculator.calculate(portfolio.positions)
     }
 
     /**

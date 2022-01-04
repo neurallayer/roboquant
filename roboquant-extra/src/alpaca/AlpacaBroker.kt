@@ -52,7 +52,7 @@ class AlpacaBroker(
 
     override val account: Account = Account()
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
-    private val logger = Logging.getLogger(this)
+    private val logger = Logging.getLogger(AlpacaOrder::class)
     var enableTrading = false
 
     private val orderMapping = mutableMapOf<Order, AlpacaOrder>()

@@ -32,7 +32,7 @@ import kotlin.io.path.div
  */
 object Config {
 
-    private val logger: Logger = Logging.getLogger(this)
+    private val logger: Logger = Logging.getLogger(Config::class)
 
     /**
      * Current version of roboquant

@@ -53,7 +53,7 @@ class IBKRBroker(
 
     private var client: EClientSocket
     override val account: Account = Account(currencyConverter = currencyConverter)
-    val logger = Logging.getLogger(this)
+    val logger = Logging.getLogger(IBKRBroker::class)
     private var orderId = 0
 
     // Track IB orders ids with roboquant orders

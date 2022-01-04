@@ -30,7 +30,7 @@ import java.util.logging.Level
 import java.util.logging.LogRecord
 
 /**
- * Make exceptions a bit nicer to deal with
+ * Make exceptions a bit nicer to deal with in notebooks
  */
 internal class RoboquantThrowableRenderer : ThrowableRenderer {
 

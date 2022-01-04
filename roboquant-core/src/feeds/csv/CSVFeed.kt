@@ -50,7 +50,7 @@ class CSVFeed(
     private var events = listOf<Event>()
     override val assets = TreeSet<Asset>()
 
-    private val logger = Logging.getLogger(this)
+    private val logger = Logging.getLogger(CSVFeed::class)
 
     override val timeline: List<Instant>
         get() = events.map { it.now }

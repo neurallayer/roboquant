@@ -10,7 +10,7 @@ image:https://img.shields.io/github/issues/neurallayer/roboquant[GitHub issues]
 image:https://img.shields.io/github/last-commit/neurallayer/roboquant[GitHub last commit]
 image:https://img.shields.io/github/v/tag/neurallayer/roboquant[GitHub tag (latest by date)]
 
-Roboquant is an algorithmic trading platform that is fast and flexible while at the same time strives to be easy to use. It is fully open source, written in Kotlin, and can be used in Jupyter Notebooks as well as standalone applications. It is meant to be used by anyone serious about algo trading, from retail traders to proprietary trading firms.
+Roboquant is an algorithmic trading platform that is fast and flexible while at the same time strives to be easy to use. It is fully open source, written in Kotlin, and can be used in Jupyter Notebooks as well as standalone applications. It is designed to be used by anyone serious about algo trading, from retail traders to proprietary trading firms.
 
 image::/docs/roboquant_logo.png[roboquant Logo, 250, align=center]
 

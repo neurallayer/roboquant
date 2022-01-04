@@ -44,7 +44,7 @@ import java.util.logging.Level
  * variety of testing and live trading scenarios. Through [metrics] and a [logger] it provides insights into the
  * performance of a [run].
  *
- * Every instance has it own [name] that is also used when logging details.
+ * Every instance has it own [name] that is also used when using the [logger].
  *
  */
 class Roboquant<L : MetricsLogger>(
@@ -58,7 +58,7 @@ class Roboquant<L : MetricsLogger>(
 ) {
 
     private var runCounter = 0
-    private val kotlinLogger = Logging.getLogger(name)
+    private val kotlinLogger = Logging.getLogger(Roboquant::class)
     private val components = listOf(strategy, policy, broker, *metrics, logger)
 
     companion object {
@@ -82,7 +82,7 @@ class Roboquant<L : MetricsLogger>(
     }
 
     init {
-        kotlinLogger.fine { "Created new roboquant instance" }
+        kotlinLogger.fine { "Created new roboquant instance with name $name" }
     }
 
     /**
@@ -191,7 +191,7 @@ class Roboquant<L : MetricsLogger>(
         require(episodes > 0) { "episodes need to be greater than zero" }
         val run = runName ?: runCounter++.toString()
         val runInfo = RunInfo(name, run)
-        kotlinLogger.fine { "Starting run $runInfo for $episodes episodes" }
+        kotlinLogger.fine { "Starting run $runInfo for $episodes episodes for $name" }
 
         repeat(episodes) {
             runInfo.episode++
@@ -204,7 +204,7 @@ class Roboquant<L : MetricsLogger>(
                 runPhase(feed, runInfo)
             }
         }
-        kotlinLogger.fine { "Finished run $runInfo" }
+        kotlinLogger.fine { "Finished run $runInfo for $name" }
     }
 
 

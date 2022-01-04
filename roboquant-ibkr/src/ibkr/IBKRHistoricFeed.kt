@@ -34,7 +34,7 @@ class IBKRHistoricFeed(
 
     private var tickerId: Int = 0
     private val subscriptions = mutableMapOf<Int, Asset>()
-    private val logger = Logging.getLogger(this)
+    private val logger = Logging.getLogger(IBKRHistoricFeed::class)
     private var client: EClientSocket
 
 

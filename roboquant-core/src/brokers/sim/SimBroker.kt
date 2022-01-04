@@ -64,7 +64,7 @@ class SimBroker(
 
     companion object Factory {
 
-        private val logger: Logger = Logging.getLogger(this)
+        private val logger: Logger = Logging.getLogger(SimBroker::class)
 
         /**
          * Create a new SimBroker instance with the provided initial deposit of cash in the account

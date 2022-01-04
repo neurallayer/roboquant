@@ -168,34 +168,45 @@ fun large6() {
     var feed: CSVFeed? = null
 
     for (d in Files.list(path)) {
-        if (d.name.startsWith("nasdaq")) {
+        if (d.name.startsWith("nasdaq stocks")) {
             val tmp = CSVFeed(d.toString(), config1)
             if (feed === null) feed = tmp else feed.merge(tmp)
         }
     }
 
     for (d in Files.list(path)) {
-        if (d.name.startsWith("nyse")) {
+        if (d.name.startsWith("nyse stocks")) {
             val tmp = CSVFeed(d.toString(), config2)
             if (feed === null) feed = tmp else feed.merge(tmp)
         }
     }
 
-    val avroPath = dataHome / "avro/us_2000_2020.avro"
-    AvroUtil.record(feed!!, avroPath.toString(), TimeFrame.fromYears(2000, 2020), 6)
+    // val avroPath = dataHome / "avro/us_2000_2021.avro"
+    // AvroUtil.record(feed!!, avroPath.toString(), TimeFrame.fromYears(2000, 2021), 6)
+    val avroPath = dataHome / "avro/us_stocks.avro"
+    AvroUtil.record(feed!!, avroPath.toString(), TimeFrame.fromYears(1900, 2021), compressionLevel = 6)
 
 }
 
 
 fun largeRead() {
     val dataHome = Path("/Users/peter/data")
-    val avroPath = dataHome / "avro/us_2000_2020.avro"
+    val avroPath = dataHome / "avro/us_stocks.avro"
 
-    val feed = AvroFeed(avroPath.toString())
-    val strategy = EMACrossover()
 
-    val roboquant = Roboquant(strategy, AccountSummary())
-    roboquant.run(feed)
+    val t = measureTimeMillis {
+        val feed = AvroFeed(avroPath.toString(), useIndex = false)
+        val strategy = EMACrossover()
+
+        val roboquant = Roboquant(strategy, AccountSummary())
+        roboquant.run(feed)
+        // val broker = roboquant.broker as SimBroker
+        // broker.liquidatePortfolio()
+        roboquant.broker.account.summary().log()
+    }
+    println(t)
+
+
 
 }
 
@@ -511,7 +522,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.info()
 
-    when ("ONE_MILLION") {
+    when ("LARGEREAD") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()

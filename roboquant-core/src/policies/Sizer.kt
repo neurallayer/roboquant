@@ -31,21 +31,22 @@ interface Sizer {
 }
 
 /**
- * Fixed value amount sizer allocates fixed percentage of the total value of the account. This sizer doesn't
- * take volatility into account
+ * Allocates a fixed percentage of the total value of the account.
  *
  * @property percentage percentage of total value to use, default is 0.01 (= 1%)
+ * @property reserve percentage of total value not to allocate, default is 0.2 (= 20%)
  * @constructor Create bew Fixed amount sizer
  */
-class FixedValueSizer(val percentage: Double = 0.01) : Sizer {
+class FixedPecentageSizer(val percentage: Double = 0.01, val reserve: Double = 0.20) : Sizer {
 
     override fun size(asset: Asset, account: Account, event: Event): Double {
 
         // TODO can cache the total value
-        val available = account.convertToCurrency(account.getMarketValue(), now = event.now) * percentage
+        var available = account.convertToCurrency(account.getMarketValue(), now = event.now)
+        available *= (1.0 - reserve)
         val price = event.getPrice(asset)!!
 
-        return floor(available / price)
+        return floor(available * percentage / price)
     }
 
 }
