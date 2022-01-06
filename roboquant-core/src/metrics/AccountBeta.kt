@@ -51,7 +51,7 @@ class AccountBeta(private val referenceAsset: Asset, val period: Int) : SimpleMe
 
         if (action !== null) {
             val price = action.getPrice()
-            val value = account.equityAmount
+            val value = account.equityAmount.value
             assetData.add(price)
             accountData.add(value)
 

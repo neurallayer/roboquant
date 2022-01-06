@@ -72,7 +72,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
             amount
         } else {
             val w = Cash(Amount(account.baseCurrency, amount))
-            account.convertToCurrency(w, assetCurrency)
+            account.convert(w, assetCurrency).value
         }
 
     }
@@ -89,9 +89,9 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
      * @return
      */
     protected fun calcVolume(buyingPower: Double, asset: Asset, price: Double, account: Account): Double {
-        val cost = asset.multiplier * price
-        val availableAssetCash = account.convertToCurrency(account.baseCurrency, buyingPower, asset.currency)
-        return availableAssetCash / cost
+        val singleContractCost = asset.multiplier * price
+        val availableAssetCash = account.convert(Amount(account.baseCurrency, buyingPower), asset.currency)
+        return availableAssetCash.value / singleContractCost
     }
 
 

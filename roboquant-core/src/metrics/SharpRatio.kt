@@ -54,7 +54,7 @@ class SharpRatio(
 
 
     override fun calc(account: Account, event: Event): MetricResults {
-        val value = account.equityAmount
+        val value = account.equityAmount.value
 
         if (lastTime == Instant.MIN) {
             lastValue = value

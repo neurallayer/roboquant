@@ -108,7 +108,7 @@ open class DefaultPolicy(
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<Order>()
-        var buyingPower = account.buyingPower
+        var buyingPower = account.buyingPower.value
         val openOrderAssets = account.orders.open.map { it.asset }
         val remainingDayOrders =
             if (maxOrdersPerDay == Int.MAX_VALUE) Int.MAX_VALUE else maxOrdersPerDay - getOrdersCurrentDay(
@@ -130,11 +130,9 @@ open class DefaultPolicy(
                     val order = createBuyOrder(account, signal, price, buyingPower)
                     if (order != null) {
                         orders.add(order)
-                        val cost = order.getValue(price)
-                        if (!cost.isNaN()) {
-                            val baseCurrencyCost = account.convertToCurrency(asset.currency, cost)
-                            buyingPower -= baseCurrencyCost
-                        }
+                        val cost = order.getValueAmount(price)
+                        val baseCurrencyCost = account.convert(cost)
+                        buyingPower -= baseCurrencyCost.value
                     }
                 }
             }

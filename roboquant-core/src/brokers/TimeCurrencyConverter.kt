@@ -16,6 +16,7 @@
 
 package org.roboquant.brokers
 
+import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import java.time.Instant
 import java.util.*
@@ -41,20 +42,20 @@ abstract class TimeCurrencyConverter(protected val baseCurrency: Currency) : Cur
      * Convert between two currencies.
      * @see CurrencyConverter.convert
      *
-     * @param from
      * @param to
      * @param amount The total amount to be converted
      * @return The converted amount
      */
-    override fun convert(from: Currency, to: Currency, amount: Double, now: Instant): Double {
+    override fun convert(amount: Amount, to: Currency, now: Instant): Amount {
+        val from = amount.currency
         (from === to) && return amount
 
-        if (to === baseCurrency)
-            return find(from, now) * amount
+        val rate = when {
+            (to === baseCurrency) -> find(from, now)
+            (from === baseCurrency) -> 1.0 / find(to, now)
+            else -> find(from, now) * (1.0 / find(to, now))
+        }
 
-        if (from === baseCurrency)
-            return 1 / find(to, now) * amount
-
-        return find(from, now) * 1 / find(to, now) * amount
+        return Amount(to, amount.value * rate)
     }
 }

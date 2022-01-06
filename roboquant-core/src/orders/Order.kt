@@ -17,6 +17,7 @@
 package org.roboquant.orders
 
 import org.roboquant.brokers.sim.Execution
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import java.time.Instant
@@ -88,6 +89,9 @@ abstract class Order(val asset: Asset) : Cloneable {
     open fun getValue(price: Double = this.price) = 0.0
 
 
+    fun getValueAmount(price: Double = this.price) = Amount(asset.currency, getValue(price))
+
+
     /**
      * Execute the order given the provided [price] and [time]. Any subclass of [Order] will need to implement
      * this method and return a list of [executions][Execution]
@@ -103,6 +107,8 @@ abstract class Order(val asset: Asset) : Cloneable {
         result.placed = placed
         result.status = status
     }
+
+
 
 }
 

@@ -274,8 +274,8 @@ class IBKRBroker(
             if (currency != null && "BASE" != currency) {
                 when (key) {
                     "BuyingPower" -> {
-                        account.buyingPower = value.toDouble()
                         account.baseCurrency = Currency.getInstance(currency)
+                        account.buyingPower = Amount(account.baseCurrency, value.toDouble())
                         if (currencyConverter is IBKRCurrencyConverter) currencyConverter.baseCurrency =
                             account.baseCurrency
                     }

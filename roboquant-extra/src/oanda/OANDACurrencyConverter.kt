@@ -17,6 +17,7 @@
 package org.roboquant.oanda
 
 import org.roboquant.brokers.CurrencyConverter
+import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import org.roboquant.common.toCurrencyPair
 import org.roboquant.feeds.PriceAction
@@ -47,20 +48,20 @@ class OANDACurrencyConverter(private val priceType: String = "DEFAULT") : Curren
      * Convert between two currencies.
      * @see CurrencyConverter.convert
      *
-     * @param from
      * @param to
      * @param amount The total amount to be converted
      * @return The converted amount
      */
-    override fun convert(from: Currency, to: Currency, amount: Double, now: Instant): Double {
+    override fun convert(amount: Amount, to: Currency, now: Instant): Amount {
+        val from = amount.currency
         (from === to) && return amount
 
-        if (to === baseCurrency)
-            return exchangeRates[from]!! * amount
+        val corr = when {
+            (to === baseCurrency) -> exchangeRates[from]!!
+            (from === baseCurrency) -> 1 / exchangeRates[to]!!
+            else -> exchangeRates[from]!! * 1 / exchangeRates[to]!!
+        }
 
-        if (from === baseCurrency)
-            return 1 / exchangeRates[to]!! * amount
-
-        return exchangeRates[from]!! * 1 / exchangeRates[to]!! * amount
+        return Amount(to, amount.value * corr)
     }
 }

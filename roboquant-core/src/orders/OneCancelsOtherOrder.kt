@@ -38,9 +38,8 @@ class OneCancelsOtherOrder(
         return OneCancelsOtherOrder(first.clone(), second.clone())
     }
 
-    override fun getValue(price: Double): Double {
-        return max(first.getValue(price), second.getValue(price))
-    }
+    override fun getValue(price: Double): Double = max(first.getValue(price), second.getValue(price))
+
 
     override fun execute(price: Double, time: Instant): List<Execution> {
         var executions = listOf<Execution>()

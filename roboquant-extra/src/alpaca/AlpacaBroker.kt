@@ -75,8 +75,9 @@ class AlpacaBroker(
     private fun updateAccount() {
         try {
             val acc = alpacaAPI.account().get()
-            account.buyingPower = acc.buyingPower.toDouble()
+
             account.baseCurrency = Currency.getInstance(acc.currency)
+            account.buyingPower = Amount(account.baseCurrency, acc.buyingPower.toDouble())
 
             account.cash.clear()
             val balance = Amount(account.baseCurrency, acc.cash.toDouble())

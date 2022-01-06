@@ -16,6 +16,7 @@
 
 package org.roboquant.brokers
 
+import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import java.time.Instant
 
@@ -35,12 +36,11 @@ interface CurrencyConverter {
      * It depends on the implementation if all parameters are also actually used by the underlying algorithm. If a
      * conversion cannot be processed due to incorrect or missing configuration, it is expected to throw an exception.
      *
-     * @param from The originating currency that needs to be converted
      * @param to The currency that the money needs to be converted to
      * @param amount The amount (in from currency denoted) that needs to be converted
      * @param now The time of the conversion
      * @return The converted amount
      */
-    fun convert(from: Currency, to: Currency, amount: Double, now: Instant): Double
+    fun convert(amount: Amount, to: Currency, now: Instant): Amount
 
 }

@@ -48,12 +48,12 @@ class AccountSummary(private val includeEquity: Boolean = true) : SimpleMetric()
             "account.orders.open" to account.orders.open.size,
             "account.trades" to account.trades.size,
             "account.portfolio.assets" to account.portfolio.positions.size,
-            "account.cash" to account.cashAmount,
-            "account.buyingpower" to account.buyingPower,
+            "account.cash" to account.cashAmount.value,
+            "account.buyingpower" to account.buyingPower.value,
         )
 
         if (includeEquity) {
-            result["account.equity"] = account.equityAmount
+            result["account.equity"] = account.equityAmount.value
         }
 
         return result

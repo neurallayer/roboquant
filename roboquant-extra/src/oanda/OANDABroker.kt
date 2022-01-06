@@ -107,7 +107,7 @@ class OANDABroker(
         // Cash in roboquant is excluding the margin part
         val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
         account.cash.set(amount)
-        account.buyingPower = acc.marginAvailable.doubleValue() * maxLeverage
+        account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
         account.time = Instant.now()
         lastTransactionId = acc.lastTransactionID
         account.portfolio.clear()
@@ -125,7 +125,7 @@ class OANDABroker(
         // Cash in roboquant is excluding the margin part
         val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
         account.cash.set(amount)
-        account.buyingPower = acc.marginAvailable.doubleValue() * maxLeverage
+        account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
         account.time = Instant.now()
     }
 

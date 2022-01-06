@@ -177,7 +177,7 @@ class SimBroker(
      **/
     private fun validateOrders(event: Event) {
         if (!validateBuyingPower) return
-        var buyingPower = account.buyingPower
+        var buyingPower = account.buyingPower.value
         val initialOrders = account.orders.filter { it.status === OrderStatus.INITIAL }
         for (order in initialOrders) {
             val price = event.prices[order.asset]?.getPrice()

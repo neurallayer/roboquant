@@ -42,7 +42,7 @@ class FixedPecentageSizer(val percentage: Double = 0.01, val reserve: Double = 0
     override fun size(asset: Asset, account: Account, event: Event): Double {
 
         // TODO can cache the total value
-        var available = account.equityAmount
+        var available = account.equityAmount.value
         available *= (1.0 - reserve)
         val price = event.getPrice(asset)!!
 

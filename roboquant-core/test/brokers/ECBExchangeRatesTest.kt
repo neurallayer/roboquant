@@ -16,11 +16,16 @@
 
 package org.roboquant.brokers
 
-import org.roboquant.TestData
 import org.junit.Test
-import kotlin.test.*
-import org.roboquant.common.Currency
+import org.roboquant.TestData
+import org.roboquant.common.Currency.Companion.EUR
+import org.roboquant.common.Currency.Companion.JPY
+import org.roboquant.common.Currency.Companion.USD
+import org.roboquant.common.EUR
+import org.roboquant.common.USD
 import java.time.Instant
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class ECBExchangeRatesTest {
 
@@ -29,33 +34,31 @@ internal class ECBExchangeRatesTest {
         val fileName = TestData.dataDir() + "RATES/eurofxref-hist.csv"
         val x = ECBExchangeRates.fromFile(fileName)
 
-        val eur = Currency.getInstance("EUR")
-        var c = x.convert(eur, eur, 100.0, Instant.now())
-        assertEquals(100.0, c)
+        var c = x.convert(100.EUR, EUR, Instant.now())
+        assertEquals(100.EUR, c)
 
-        val usd = Currency.getInstance("USD")
-        c = x.convert(usd, eur, 100.0, Instant.now())
-        assertTrue(c < 100.0)
+        c = x.convert(100.USD, EUR, Instant.now())
+        assertTrue(c.value < 100.0)
 
-        val jpy = Currency.getInstance("JPY")
-        c = x.convert(eur, jpy, 100.0, Instant.now())
-        assertTrue(c > 100.0)
+        c = x.convert(100.EUR, JPY, Instant.now())
+        assertTrue(c.value > 100.0)
 
-        val r1 = x.convert(usd, jpy, 100.0, Instant.MIN)
-        val r2 = x.convert(usd, jpy, 100.0, Instant.MIN.plusMillis(1L))
+        val r1 = x.convert(100.USD, JPY, Instant.MIN)
+        val r2 = x.convert(100.USD, JPY, Instant.MIN.plusMillis(1L))
         assertEquals(r1, r2)
 
-        c = x.convert(usd, jpy, 100.0, Instant.MAX)
-        assertTrue(c > 100.0)
+        c = x.convert(100.USD, JPY, Instant.MAX)
+        assertTrue(c.value > 100.0)
 
-        val c1 = x.convert(usd, jpy, 100.0, Instant.now())
-        val c2 = x.convert(jpy, usd, c1, Instant.now())
-        assertEquals(100.0, c2)
+        val now = Instant.now()
+        val c1 = x.convert(100.USD, JPY, now)
+        val c2 = x.convert(c1, USD, now)
+        assertEquals(100.USD, c2)
 
         val currencies = x.currencies
-        assertTrue(jpy in currencies)
+        assertTrue(JPY in currencies)
 
-        assertTrue(eur !in currencies)
+        assertTrue(EUR !in currencies)
 
     }
 

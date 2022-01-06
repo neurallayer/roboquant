@@ -73,13 +73,13 @@ class Account(
     val cash : Cash = Cash()
 
 
-    val cashAmount : Double
-        get() = convertToCurrency(cash)
+    val cashAmount : Amount
+        get() = convert(cash)
 
 
 
-    var buyingPower : Double = Double.NaN
-        get() = if (field.isNaN()) cashAmount else field
+    var buyingPower : Amount = Amount(baseCurrency, Double.NaN)
+        get() = if (field.value.isNaN()) cashAmount else field
 
 
     /**
@@ -96,7 +96,7 @@ class Account(
 
 
     val equityAmount
-        get() = convertToCurrency(equity)
+        get() = convert(equity)
 
 
     /**
@@ -118,8 +118,8 @@ class Account(
      * @param now The time to use for the conversion, default is the account last update time
      * @return The total amount
      */
-    fun getTotalCash(currency: Currency = baseCurrency, now: Instant = time): Double {
-        return convertToCurrency(cash, currency, now)
+    fun getTotalCash(currency: Currency = baseCurrency, now: Instant = time): Amount {
+        return convert(cash, currency, now)
     }
 
     /**
@@ -206,54 +206,19 @@ class Account(
      * @param now The time to use for the exchange rate, default is the last update time of the account
      * @return The converted amount as a Double
      */
-    fun convertToCurrency(cash: Cash, toCurrency: Currency = baseCurrency, now: Instant = time): Double {
-        var sum = 0.0
-        cash.toMap().forEach { (fromCurrency, amount) ->
-            sum += if (fromCurrency === toCurrency) {
-                amount
-            } else {
-                currencyConverter?.convert(fromCurrency, toCurrency, amount, now)
-                    ?: throw ConfigurationException("No currency converter defined to convert from $fromCurrency to $toCurrency")
-            }
-        }
-        return sum
-    }
-
-    /**
-     * Convert a [Cash] value into a single currency amount. If no currencyConverter has been configured and this method is
-     * called and a conversion is required, it will throw a [ConfigurationException].
-     *
-     * @param cash The cash values to convert from
-     * @param toCurrency The currency to convert the cash to, default is the baseCurrency of the account
-     * @param now The time to use for the exchange rate, default is the last update time of the account
-     * @return The converted amount as a Double
-     */
     fun convert(cash: Cash, toCurrency: Currency = baseCurrency, now: Instant = time): Amount {
         var sum = 0.0
-        cash.toMap().forEach { (fromCurrency, amount) ->
-            sum += if (fromCurrency === toCurrency) {
-                amount
+        for (amount in cash.toAmounts()) {
+            sum += if (amount.currency === toCurrency) {
+                amount.value
             } else {
-                currencyConverter?.convert(fromCurrency, toCurrency, amount, now)
-                    ?: throw ConfigurationException("No currency converter defined to convert from $fromCurrency to $toCurrency")
+                currencyConverter?.convert(amount, toCurrency, now)?.value
+                    ?: throw ConfigurationException("No currency converter defined to convert  $amount to $toCurrency")
             }
         }
         return Amount(toCurrency, sum)
     }
 
-    /**
-     * Convert an Amount into a single currency amount. If no currencyConverter has been configured and this method is
-     * called and a conversion is required, it will throw a [ConfigurationException].
-     *
-     */
-    fun convertToCurrency(amount: Amount, toCurrency: Currency = baseCurrency, now: Instant = time): Double {
-        return if (amount.currency === toCurrency || amount.value == 0.0) {
-            amount.value
-        } else {
-            currencyConverter?.convert(amount.currency, toCurrency, amount.value, now)
-                ?: throw ConfigurationException("No currency converter defined to convert $amount to $toCurrency")
-        }
-    }
 
 
     /**
@@ -265,23 +230,9 @@ class Account(
         return if (amount.currency === toCurrency || amount.value == 0.0) {
             Amount(toCurrency, amount.value)
         } else {
-            val value = currencyConverter?.convert(amount.currency, toCurrency, amount.value, now)
+            currencyConverter?.convert(amount, toCurrency, now)
                 ?: throw ConfigurationException("No currency converter defined to convert $amount to $toCurrency")
-            Amount(toCurrency, value)
-        }
-    }
 
-    fun convertToCurrency(
-        fromCurrency: Currency,
-        amount: Double,
-        toCurrency: Currency = baseCurrency,
-        now: Instant = time
-    ): Double {
-        return if (fromCurrency === toCurrency || amount == 0.0) {
-            amount
-        } else {
-            currencyConverter?.convert(fromCurrency, toCurrency, amount, now)
-                ?: throw ConfigurationException("No currency converter defined to convert from $fromCurrency to $toCurrency")
         }
     }
 

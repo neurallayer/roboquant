@@ -16,6 +16,7 @@
 
 package org.roboquant.brokers
 
+import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import java.time.Instant
 
@@ -39,21 +40,22 @@ class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: 
      * Convert between two currencies.
      * @see CurrencyConverter.convert
      *
-     * @param from
      * @param to
      * @param amount The total amount to be converted
      * @return The converted amount
      */
-    override fun convert(from: Currency, to: Currency, amount: Double, now: Instant): Double {
+    override fun convert(amount: Amount, to: Currency, now: Instant): Amount {
+        val from = amount.currency
+
         (from === to) && return amount
 
         if (to === baseCurrency)
-            return exchangeRates[from]!! * amount
+            return amount * exchangeRates[from]!!
 
         if (from === baseCurrency)
-            return 1 / exchangeRates[to]!! * amount
+            return amount * (1 / exchangeRates[to]!!)
 
-        return exchangeRates[from]!! * 1 / exchangeRates[to]!! * amount
+        return amount * (exchangeRates[from]!! * 1 / exchangeRates[to]!!)
     }
 
 }

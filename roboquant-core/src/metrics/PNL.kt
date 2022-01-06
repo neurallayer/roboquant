@@ -43,12 +43,12 @@ class PNL : SimpleMetric() {
         val result = mutableMapOf<String, Double>()
 
         val pnl = account.trades.realizedPnL()
-        val realizedPNL = account.convertToCurrency(pnl, now = now)
-        result["pnl.realized"] = realizedPNL
+        val realizedPNL = account.convert(pnl, now = now)
+        result["pnl.realized"] = realizedPNL.value
 
         val totalValue = account.portfolio.unrealizedPNL()
-        val unrealizedPNL = account.convertToCurrency(totalValue, now = now)
-        result["pnl.unrealized"] = unrealizedPNL
+        val unrealizedPNL = account.convert(totalValue, now = now)
+        result["pnl.unrealized"] = unrealizedPNL.value
 
         return result
     }

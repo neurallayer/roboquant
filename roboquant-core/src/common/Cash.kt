@@ -33,7 +33,7 @@ import java.lang.Exception
  * performance benefits over BigDecimal.
  *
  * Cash itself will never convert the currencies it contains. However, an account can do this if required, provided the
- * appropriate conversion rates are available. See also [Account.convertToCurrency] on how to convert a Cash instance
+ * appropriate conversion rates are available. See also [Account.convert] on how to convert a Cash instance
  * to a single amount value.
  *
  */
