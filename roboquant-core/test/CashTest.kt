@@ -48,14 +48,14 @@ internal class CashTest {
     fun deposit() {
         val wallet = Cash()
         wallet.deposit(12.USD)
-        assertEquals(12.0, wallet.getAmount(USD))
+        assertEquals(12.0, wallet.getValue(USD))
 
         wallet.deposit(13.USD)
-        assertEquals(25.0, wallet.getAmount(USD))
+        assertEquals(25.USD, wallet.getAmount(USD))
 
         wallet.deposit(13.EUR)
-        assertEquals(25.0, wallet.getAmount(USD))
-        assertEquals(13.0, wallet.getAmount(EUR))
+        assertEquals(25.USD, wallet.getAmount(USD))
+        assertEquals(13.EUR, wallet.getAmount(EUR))
 
         wallet.withdraw(wallet)
         assertTrue(wallet.isEmpty())
@@ -65,7 +65,7 @@ internal class CashTest {
     fun withdraw() {
         val wallet = Cash()
         wallet.withdraw(USD, 12.0)
-        assertEquals(-12.0, wallet.getAmount(USD))
+        assertEquals(-12.0, wallet.getValue(USD))
 
         var metrics = wallet.toMap(true)
         assertContains(metrics, USD)

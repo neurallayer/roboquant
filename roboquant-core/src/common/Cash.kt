@@ -42,7 +42,7 @@ class Cash(vararg amounts: Amount) {
     private val data = mutableMapOf<Currency, Double>()
 
     init {
-        amounts.forEach { deposit(it) }
+        for (amount in amounts) deposit(amount)
     }
 
 
@@ -56,12 +56,21 @@ class Cash(vararg amounts: Amount) {
 
     /**
      * Get the amount for a certain [currency]. If the currency is not
+     * found, a zero amount will be returned.
+     *
+     */
+    fun getAmount(currency: Currency): Amount {
+        val value = data.getOrDefault(currency, 0.0)
+        return Amount(currency, value)
+    }
+
+    /**
+     * Get the value for a certain [currency]. If the currency is not
      * found, 0.0 will be returned.
      *
      */
-    fun getAmount(currency: Currency): Double {
-        return data.getOrDefault(currency, 0.0)
-    }
+    fun getValue(currency: Currency): Double = data.getOrDefault(currency, 0.0)
+
 
     /**
      * Is this cash instance empty, meaning it has zero entries with a non-zero balance.
@@ -97,11 +106,11 @@ class Cash(vararg amounts: Amount) {
 
 
     /**
-     * Set a monetary [amount] denominated in the specified [currency]. If the currency already exist, its amount
+     * Set a monetary [amount]. If the currency already exist, its value
      * will be overwritten, otherwise a new entry will be created.
      */
-    fun set(currency: Currency, amount: Double) {
-        data[currency] = amount
+    fun set(amount: Amount) {
+        data[amount.currency] = amount.value
     }
 
     /**
@@ -190,6 +199,15 @@ class Cash(vararg amounts: Amount) {
         data.clear()
     }
 
+
+    /**
+     * Provide a map representation of the cash hold where the key is the [Currency] and the value is the amount.
+     * By default, empty values will not be included but this can be changed by setting [includeEmpty] to true.
+     */
+    fun toAmounts(includeEmpty: Boolean = false): List<Amount> =
+        if (includeEmpty) data.map { Amount(it.key, it.value) } else data.filter { it.value != 0.0 }.map { Amount(it.key, it.value) }
+
+
     /**
      * Provide a map representation of the cash hold where the key is the [Currency] and the value is the amount.
      * By default, empty values will not be included but this can be changed by setting [includeEmpty] to true.
@@ -203,9 +221,9 @@ class Cash(vararg amounts: Amount) {
      */
     override fun toString(): String {
         val sb = StringBuffer()
-        for ((c, v) in data) {
-            if (v != 0.0)
-                sb.append("${c.displayName} => ${c.format(v)} \n")
+        for (amount in toAmounts()) {
+            if (amount.value != 0.0)
+                sb.append("$amount\n")
         }
         return sb.toString()
     }
@@ -215,8 +233,8 @@ class Cash(vararg amounts: Amount) {
      */
     fun summary(header: String = "Cash"): Summary {
         val s = Summary(header)
-        data.forEach {
-            s.add(it.key.displayName, it.key.format(it.value))
+        toAmounts().forEach {
+            s.add(it.currency.displayName, it.formatValue())
         }
         return s
     }

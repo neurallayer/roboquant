@@ -60,9 +60,9 @@ internal class PortfolioTest {
         portfolio.updatePosition(Position(Asset("B"), 100.0, 10.0))
         portfolio.updatePosition(Position(Asset("C"), -100.0, 10.0))
         portfolio.updatePosition(Position(Asset("D"), -100.0, 10.0))
-        assertEquals(2000.0, portfolio.longValue.getAmount(Currency.USD))
-        assertEquals(-2000.0, portfolio.shortValue.getAmount(Currency.USD))
-        assertEquals(0.0, portfolio.value.getAmount(Currency.USD))
+        assertEquals(2000.0, portfolio.longValue.getValue(Currency.USD))
+        assertEquals(-2000.0, portfolio.shortValue.getValue(Currency.USD))
+        assertEquals(0.0, portfolio.value.getValue(Currency.USD))
     }
 
     /*

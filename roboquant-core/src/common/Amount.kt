@@ -10,8 +10,8 @@ data class Amount(val currency: Currency, val value: Double) {
 
 
     /**
-     * Format the value based on the currency. For example USD would have two fraction digits
-     * while JPY would have none.
+     * Format the value hold in this amount based on the currency. For example USD would have two fraction digits
+     * by default while JPY would have none.
      */
     fun formatValue(fractionDigits: Int = currency.defaultFractionDigits) = toBigDecimal(fractionDigits).toString()
 

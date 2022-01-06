@@ -18,7 +18,6 @@ package org.roboquant.jupyter
 
 import org.roboquant.brokers.Account
 import java.math.BigDecimal
-import kotlin.math.absoluteValue
 
 /**
  * Plot the allocation of assets as a pie chart
@@ -42,18 +41,16 @@ class AssetAllocationChart(
     private fun toSeriesData(): List<Entry> {
         val result = mutableListOf<Entry>()
         if (includeCash) {
-            for (entry in account.cash.toMap()) {
-                val localAmount = account.convertToCurrency(entry.key, entry.value.absoluteValue)
-                val roundedValue = account.baseCurrency.toBigDecimal(localAmount)
-                result.add(Entry(entry.key.displayName, roundedValue, "CASH"))
+            for (amount in account.cash.toAmounts()) {
+                val localAmount = account.convert(amount).toBigDecimal()
+                result.add(Entry(amount.currency.displayName, localAmount, "CASH"))
             }
         }
 
         for (position in account.portfolio.positions) {
             val asset = position.asset
-            val localAmount = account.convertToCurrency(position.exposure)
-            val roundedValue = account.baseCurrency.toBigDecimal(localAmount)
-            result.add(Entry(asset.symbol, roundedValue, asset.type.name))
+            val localAmount = account.convert(position.exposure).toBigDecimal()
+            result.add(Entry(asset.symbol, localAmount, asset.type.name))
         }
         return result
     }

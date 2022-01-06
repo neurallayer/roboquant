@@ -19,10 +19,7 @@ package org.roboquant.ibkr
 import com.ib.client.*
 import ibkr.IBKRCurrencyConverter
 import org.roboquant.brokers.*
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Currency
-import org.roboquant.common.Logging
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import org.roboquant.orders.OrderStatus
@@ -267,9 +264,8 @@ class IBKRBroker(
 
         private fun setCash(currencyCode: String, value: String) {
             if ("BASE" != currencyCode) {
-                val currency = Currency.getInstance(currencyCode)
-                val amount = value.toDouble()
-                account.cash.set(currency, amount)
+                val amount = Amount(Currency.getInstance(currencyCode),  value.toDouble())
+                account.cash.set(amount)
             }
         }
 

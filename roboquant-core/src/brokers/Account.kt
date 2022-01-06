@@ -132,7 +132,7 @@ class Account(
         result.add(header)
         val currencies = cash.currencies
         for (currency in currencies.distinct().sortedBy { it.displayName }) {
-            val t =  currency.format(cash.getAmount(currency))
+            val t =  cash.getAmount(currency).formatValue()
             val line = String.format(fmt,  currency.currencyCode, t)
             result.add(line)
         }
@@ -150,16 +150,16 @@ class Account(
         val s = Summary("Account")
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
-        s.add("buying power", baseCurrency.format(buyingPower))
+        s.add("buying power", buyingPower)
         s.add(cashSummary())
 
         val tradesSummary = Summary("Trades")
         tradesSummary.add("total", trades.size)
-        val realizedPNL = convertToCurrency(trades.realizedPnL())
-        tradesSummary.add("realized p&l", baseCurrency.format(realizedPNL))
+        val realizedPNL = convert(trades.realizedPnL())
+        tradesSummary.add("realized p&l", realizedPNL.formatValue())
         tradesSummary.add("assets", trades.assets.size)
-        val fee = convertToCurrency(trades.totalFee())
-        tradesSummary.add("fee", baseCurrency.format(fee))
+        val fee = convert(trades.totalFee())
+        tradesSummary.add("fee", fee.formatValue())
         s.add(tradesSummary)
 
         val orderSummary = Summary("Orders")
@@ -172,10 +172,10 @@ class Account(
         portfolioSummary.add("open positions", portfolio.positions.size)
         portfolioSummary.add("long positions", portfolio.longPositions.size)
         portfolioSummary.add("short positions", portfolio.shortPositions.size)
-        val unrealizedValue = convertToCurrency(portfolio.value)
-        portfolioSummary.add("estimated value", baseCurrency.format(unrealizedValue))
-        val unrealizedPNL = convertToCurrency(portfolio.unrealizedPNL())
-        portfolioSummary.add("unrealized p&l", baseCurrency.format(unrealizedPNL))
+        val unrealizedValue = convert(portfolio.value)
+        portfolioSummary.add("estimated value", unrealizedValue.formatValue())
+        val unrealizedPNL = convert(portfolio.unrealizedPNL())
+        portfolioSummary.add("unrealized p&l", unrealizedPNL.formatValue())
         s.add(portfolioSummary)
 
         return s
@@ -189,7 +189,7 @@ class Account(
         val s = Summary("Account")
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
-        s.add("buying power", baseCurrency.format(buyingPower))
+        s.add("buying power", buyingPower)
         s.add(cashSummary())
         s.add(portfolio.summary())
         s.add(orders.summary())
@@ -220,6 +220,28 @@ class Account(
     }
 
     /**
+     * Convert a [Cash] value into a single currency amount. If no currencyConverter has been configured and this method is
+     * called and a conversion is required, it will throw a [ConfigurationException].
+     *
+     * @param cash The cash values to convert from
+     * @param toCurrency The currency to convert the cash to, default is the baseCurrency of the account
+     * @param now The time to use for the exchange rate, default is the last update time of the account
+     * @return The converted amount as a Double
+     */
+    fun convert(cash: Cash, toCurrency: Currency = baseCurrency, now: Instant = time): Amount {
+        var sum = 0.0
+        cash.toMap().forEach { (fromCurrency, amount) ->
+            sum += if (fromCurrency === toCurrency) {
+                amount
+            } else {
+                currencyConverter?.convert(fromCurrency, toCurrency, amount, now)
+                    ?: throw ConfigurationException("No currency converter defined to convert from $fromCurrency to $toCurrency")
+            }
+        }
+        return Amount(toCurrency, sum)
+    }
+
+    /**
      * Convert an Amount into a single currency amount. If no currencyConverter has been configured and this method is
      * called and a conversion is required, it will throw a [ConfigurationException].
      *
@@ -230,6 +252,22 @@ class Account(
         } else {
             currencyConverter?.convert(amount.currency, toCurrency, amount.value, now)
                 ?: throw ConfigurationException("No currency converter defined to convert $amount to $toCurrency")
+        }
+    }
+
+
+    /**
+     * Convert an Amount into a single currency amount. If no currencyConverter has been configured and this method is
+     * called and a conversion is required, it will throw a [ConfigurationException].
+     *
+     */
+    fun convert(amount: Amount, toCurrency: Currency = baseCurrency, now: Instant = time): Amount {
+        return if (amount.currency === toCurrency || amount.value == 0.0) {
+            Amount(toCurrency, amount.value)
+        } else {
+            val value = currencyConverter?.convert(amount.currency, toCurrency, amount.value, now)
+                ?: throw ConfigurationException("No currency converter defined to convert $amount to $toCurrency")
+            Amount(toCurrency, value)
         }
     }
 

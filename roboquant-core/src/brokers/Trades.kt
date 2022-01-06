@@ -174,7 +174,7 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
                     val cost = totalCost.formatValue()
                     val fee = fee.formatValue()
                     val pnl = pnl.formatValue()
-                    val price = asset.currency.format(price)
+                    val price = Amount(asset.currency, price).formatValue()
                     val t = time.truncatedTo(ChronoUnit.SECONDS)
                     val line = String.format(fmt, t, asset.symbol, quantity, cost, fee, pnl, price)
                     s.add(line)

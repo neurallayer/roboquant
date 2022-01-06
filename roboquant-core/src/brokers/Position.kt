@@ -52,7 +52,7 @@ enum class PositionChange {
  */
 data class Position(
     val asset: Asset,
-    var size: Double,
+    val size: Double,
     val avgPrice: Double = 0.0,
     val spotPrice: Double = avgPrice,
     val lastUpdate: Instant = Instant.MIN

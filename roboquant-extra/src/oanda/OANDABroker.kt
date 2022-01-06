@@ -25,6 +25,7 @@ import com.oanda.v20.primitives.InstrumentName
 import com.oanda.v20.transaction.OrderFillTransaction
 import com.oanda.v20.transaction.TransactionID
 import org.roboquant.brokers.*
+import org.roboquant.common.Amount
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging
@@ -104,7 +105,8 @@ class OANDABroker(
         account.cash.clear()
 
         // Cash in roboquant is excluding the margin part
-        account.cash.set(account.baseCurrency, acc.balance.doubleValue())
+        val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
+        account.cash.set(amount)
         account.buyingPower = acc.marginAvailable.doubleValue() * maxLeverage
         account.time = Instant.now()
         lastTransactionId = acc.lastTransactionID
@@ -121,7 +123,8 @@ class OANDABroker(
         account.cash.clear()
 
         // Cash in roboquant is excluding the margin part
-        account.cash.set(account.baseCurrency, acc.balance.doubleValue())
+        val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
+        account.cash.set(amount)
         account.buyingPower = acc.marginAvailable.doubleValue() * maxLeverage
         account.time = Instant.now()
     }
@@ -142,7 +145,8 @@ class OANDABroker(
             order.id
         )
         account.trades.add(trade)
-        account.cash.set(account.baseCurrency, trx.accountBalance.doubleValue())
+        val amount = Amount(account.baseCurrency, trx.accountBalance.doubleValue())
+        account.cash.set(amount)
     }
 
     private fun updateExchangeRates(event: Event) {

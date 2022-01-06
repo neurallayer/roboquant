@@ -20,6 +20,7 @@ import org.roboquant.TestData
 import org.roboquant.common.Currency
 import java.time.Instant
 import org.junit.Test
+import org.roboquant.common.USD
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -54,7 +55,7 @@ internal class TradesTest {
         assertTrue(s.toString().isNotEmpty())
 
         val trades2 = trades[0..5]
-        assertEquals(50.0, trades2.totalFee().getAmount(Currency.USD))
+        assertEquals(50.USD, trades2.totalFee().getAmount(Currency.USD))
 
         assertEquals(5, trades2.timeline.size)
 

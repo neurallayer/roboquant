@@ -16,6 +16,7 @@
 
 package org.roboquant.brokers
 
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Cash
 import org.roboquant.common.Summary
@@ -194,9 +195,9 @@ class Portfolio : Cloneable {
             for (v in ps) {
                 val c = v.asset.currency
                 val pos = pf.format(v.size)
-                val avgPrice = c.format(v.avgPrice)
-                val price = c.format(v.spotPrice)
-                val pnl = c.format(v.unrealizedPNL.value)
+                val avgPrice = Amount(c, v.avgPrice).formatValue()
+                val price =  Amount(c,v.spotPrice).formatValue()
+                val pnl =  Amount(c,v.unrealizedPNL.value).formatValue()
                 val asset = "${v.asset.type}:${v.asset.symbol}"
                 val line = String.format(fmt, asset, v.currency.currencyCode, pos, avgPrice, price, pnl)
                 s.add(line)

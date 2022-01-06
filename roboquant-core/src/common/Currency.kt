@@ -18,7 +18,6 @@
 
 package org.roboquant.common
 
-import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.concurrent.ConcurrentHashMap
 
@@ -52,26 +51,6 @@ class Currency private constructor(val currencyCode: String) {
             // If we cannot find a default fraction for this currency, use 2
             2
         }
-
-    /**
-     * Format an [amount] based on the currency. For example USD would have two fraction digits
-     * while JPY would have none. Set [includeCurrency] to true if the resulting string should also contain the
-     * currency display name.
-     */
-    fun format(amount: Double, fractionDigits: Int = defaultFractionDigits, includeCurrency: Boolean = false): String {
-        val amountStr = toBigDecimal(amount, fractionDigits).toString()
-        return if (includeCurrency)
-            "$amountStr $displayName"
-        else
-            amountStr
-    }
-
-    /**
-     * Convert a numeric [amount] to BigDecimal using the number of digits defined for the currency. Internally roboquant
-     * doesn't use BigDecimals, but this method is used enable a nicer display of currency amounts.
-     */
-    fun toBigDecimal(amount: Number, fractionDigits: Int = defaultFractionDigits): BigDecimal =
-        BigDecimal(amount.toDouble()).setScale(fractionDigits, roundingMode)
 
 
     companion object {
