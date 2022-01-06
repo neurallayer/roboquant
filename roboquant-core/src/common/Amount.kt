@@ -5,7 +5,6 @@ import java.math.BigDecimal
 data class Amount(val currency: Currency, val value: Double) {
     operator fun times(d: Number): Amount = Amount(currency, value * d.toDouble())
     operator fun plus(d: Number): Amount = Amount(currency, value + d.toDouble())
-
     operator fun plus(other: Amount): Cash = Cash(this, other)
 
 
@@ -28,3 +27,12 @@ data class Amount(val currency: Currency, val value: Double) {
 
 
 }
+
+
+
+// Some extensions to make it easier to create cash objects with one currency
+val Number.EUR
+    get() = Amount(Currency.EUR, this.toDouble())
+
+val Number.USD
+    get() = Amount(Currency.USD, this.toDouble())

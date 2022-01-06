@@ -113,13 +113,6 @@ class Cash(vararg amounts: Amount) {
         data[amount.currency] = amount.value
     }
 
-    /**
-     * Deposit a monetary [amount] denominated in teh specified [currency]. If the currency already exist, it
-     * will be added to the existing amount, otherwise a new entry will be created.
-     */
-    private fun deposit(currency: Currency, amount: Double) {
-        data[currency] = data.getOrDefault(currency, 0.0) + amount
-    }
 
     /**
      * Deposit a monetary [amount][Amount]. If the currency already exist, it
@@ -134,17 +127,9 @@ class Cash(vararg amounts: Amount) {
      * Deposit the cash hold in an [other] Cash instance into this one.
      */
     fun deposit(other: Cash) {
-        other.data.forEach { deposit(it.key, it.value) }
+        for (amount in other.toAmounts()) { deposit(amount) }
     }
 
-    /**
-     * Withdraw  a monetary [amount] denominated in the specified [currency]. If the currency already exist, it
-     * will be deducted from the existing amount, otherwise a new entry will be created.
-     *
-     */
-    fun withdraw(currency: Currency, amount: Double) {
-        deposit(currency, -amount)
-    }
 
     /**
      * Withdraw  a monetary [amount][Amount]. If the currency already exist, it
@@ -153,7 +138,7 @@ class Cash(vararg amounts: Amount) {
      * @param amount
      */
     fun withdraw(amount: Amount) {
-        deposit(amount.currency, - amount.value)
+        deposit(amount * -1)
     }
 
 
@@ -170,7 +155,7 @@ class Cash(vararg amounts: Amount) {
      * Withdraw the cash hold in an [other] Cash instance into this one.
      */
     fun withdraw(other: Cash) {
-        other.data.forEach { deposit(it.key, -it.value) }
+       for (amount in other.toAmounts()) { withdraw(amount) }
     }
 
 
@@ -253,11 +238,3 @@ class Cash(vararg amounts: Amount) {
 
 }
 
-
-
-// Some extensions to make it easier to create cash objects with one currency
-val Number.EUR
-    get() = Amount(Currency.EUR, this.toDouble())
-
-val Number.USD
-    get() = Amount(Currency.USD, this.toDouble())

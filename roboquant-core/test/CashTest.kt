@@ -64,7 +64,7 @@ internal class CashTest {
     @Test
     fun withdraw() {
         val wallet = Cash()
-        wallet.withdraw(USD, 12.0)
+        wallet.withdraw(12.USD)
         assertEquals(-12.0, wallet.getValue(USD))
 
         var metrics = wallet.toMap(true)
