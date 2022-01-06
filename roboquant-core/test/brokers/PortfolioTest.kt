@@ -19,6 +19,8 @@ package org.roboquant.brokers
 import org.junit.Test
 import kotlin.test.*
 import org.roboquant.TestData
+import org.roboquant.common.Asset
+import org.roboquant.common.Currency
 
 internal class PortfolioTest {
 
@@ -42,11 +44,25 @@ internal class PortfolioTest {
         assertEquals(100.0, portfolio.getPosition(c).size)
         assertEquals(10.0, portfolio.getPosition(c).avgPrice)
 
+
         assertEquals(portfolio.positions.size, portfolio.longPositions.size + portfolio.shortPositions.size)
 
         val s = portfolio.summary()
         assertTrue(s.toString().isNotEmpty())
 
+    }
+
+
+    @Test
+    fun derivedValues() {
+        val portfolio = Portfolio()
+        portfolio.updatePosition(Position(Asset("A"), 100.0, 10.0))
+        portfolio.updatePosition(Position(Asset("B"), 100.0, 10.0))
+        portfolio.updatePosition(Position(Asset("C"), -100.0, 10.0))
+        portfolio.updatePosition(Position(Asset("D"), -100.0, 10.0))
+        assertEquals(2000.0, portfolio.longValue.getAmount(Currency.USD))
+        assertEquals(-2000.0, portfolio.shortValue.getAmount(Currency.USD))
+        assertEquals(0.0, portfolio.value.getAmount(Currency.USD))
     }
 
     /*

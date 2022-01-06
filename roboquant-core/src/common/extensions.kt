@@ -52,7 +52,7 @@ fun Collection<String>.summary(header: String = "Values"): Summary {
 }
 
 /**
- * Extension function to allow *numpy* alike indexing for lists.
+ * Extension function to allow *numpy* like indexing for lists.
  *
  * ## Example
  *
@@ -62,7 +62,7 @@ fun Collection<String>.summary(header: String = "Values"): Summary {
  * @param range
  * @return
  */
-operator fun <T> List<T>.get(range: IntRange): List<T> = this.subList(max(0, range.first), min(this.size, range.last))
+operator fun <T> List<T>.get(range: IntRange): List<T> = subList(max(0, range.first), min(this.size, range.last))
 
 
 /**
@@ -228,6 +228,7 @@ fun String.toCurrencyPair() : Pair<Currency, Currency>? {
     }
     return null
 }
+
 
 
 

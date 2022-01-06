@@ -134,7 +134,7 @@ class SimBroker(
 
         // PNL includes the fee
         val pnl = account.portfolio.updatePosition(position) - fee
-        account.total.deposit(asset.currency, pnl)
+
 
         val newTrade = Trade(
             now,
@@ -145,16 +145,17 @@ class SimBroker(
             pnl,
             execution.order.id
         )
+
         account.trades.add(newTrade)
+        account.cash.withdraw(newTrade.asset.currency, newTrade.totalCost)
     }
 
     /**
-     * Calculate the new margin requirements based on positions int the portfolio
+     * Calculate the new margin requirements based on positions in the portfolio
      */
     fun updateMargin() {
         val margin = account.getMarginRequirements()
-        account.used.clear()
-        account.used.deposit(margin)
+        // TODO update account accordingly
     }
 
 
@@ -230,7 +231,7 @@ class SimBroker(
 
     override fun reset() {
         account.reset()
-        account.total.deposit(initialDeposit)
+        account.cash.deposit(initialDeposit)
         metrics.clear()
     }
 

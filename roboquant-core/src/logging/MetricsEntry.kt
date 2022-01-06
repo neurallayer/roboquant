@@ -29,7 +29,7 @@ import org.roboquant.common.std
  * @property info
  * @constructor Create empty Metrics entry
  */
-class MetricsEntry(val metric: String, val value: Number, val info: RunInfo) {
+data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo) {
 
     /**
      * Validate if another entry is from the same recorded episode.
@@ -43,8 +43,51 @@ class MetricsEntry(val metric: String, val value: Number, val info: RunInfo) {
     }
 }
 
-fun Collection<MetricsEntry>.max() = maxOf { it.value.toDouble() }
-fun Collection<MetricsEntry>.min() = minOf { it.value.toDouble() }
+fun Collection<MetricsEntry>.max() = maxOf { it.value }
+fun Collection<MetricsEntry>.min() = minOf { it.value }
+
+
+fun Collection<MetricsEntry>.diff() : List<MetricsEntry> {
+    val result = mutableListOf<MetricsEntry>()
+    var first = true
+    var prev = 0.0
+    for (entry in this) {
+        if (first) {
+            prev = entry.value
+            first = false
+        } else {
+            val newValue = entry.value - prev
+            val newEntry = entry.copy(value = newValue)
+            result.add(newEntry)
+            prev = entry.value
+        }
+    }
+    return result
+}
+
+
+fun Collection<MetricsEntry>.perc() : List<MetricsEntry> {
+    val result = mutableListOf<MetricsEntry>()
+    var first = true
+    var prev = 0.0
+    for (entry in this) {
+        if (first) {
+            prev = entry.value
+            first = false
+        } else {
+            val newValue = (entry.value - prev) / prev
+            val newEntry = entry.copy(value = newValue)
+            result.add(newEntry)
+            prev = entry.value
+        }
+    }
+    return result
+}
+
+/**
+fun Collection<MetricsEntry>.diff() = reduce { acc, metricsEntry ->  }
+fun Collection<MetricsEntry>.perc() = reduce { acc, metricsEntry ->  }
+**/
 
 fun Collection<MetricsEntry>.summary(): Summary {
     val result = Summary("Metrics")

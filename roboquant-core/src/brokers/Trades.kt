@@ -23,6 +23,19 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 
 
+/*
+fun Collection<Trade>.realizedPnL(vararg assets: Asset, timeFrame: TimeFrame? = null): Cash {
+    var filteredResults = asSequence()
+    if (assets.isNotEmpty()) filteredResults = filteredResults.filter { it.asset in assets }
+    if (timeFrame != null) filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
+    val result = Cash()
+    for (trade in filteredResults) {
+        result.deposit(trade.asset.currency, trade.pnl)
+    }
+    return result
+}
+*/
+
 /**
  * List of trades. This is part of the [Account] and contains all the trades that occurred.
  *

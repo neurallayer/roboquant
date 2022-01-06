@@ -17,6 +17,7 @@
 package org.roboquant.common
 
 import org.roboquant.brokers.Account
+import java.lang.Exception
 
 
 /**
@@ -128,6 +129,16 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
      */
     fun withdraw(currency: Currency, amount: Double) {
         deposit(currency, -amount)
+    }
+
+
+
+    fun toAmount() : Double {
+        return when(currencies.size) {
+            0 -> 0.0
+            1 -> data.filter { it.value != 0.0 }.values.first()
+            else -> throw Exception("Multicurrency account")
+        }
     }
 
 

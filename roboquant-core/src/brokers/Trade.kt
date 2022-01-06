@@ -52,3 +52,4 @@ data class Trade(
         get() = price * quantity * asset.multiplier + fee
 
 }
+

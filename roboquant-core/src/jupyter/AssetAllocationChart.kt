@@ -42,7 +42,7 @@ class AssetAllocationChart(
     private fun toSeriesData(): List<Entry> {
         val result = mutableListOf<Entry>()
         if (includeCash) {
-            for (entry in account.total.toMap()) {
+            for (entry in account.cash.toMap()) {
                 val localAmount = account.convertToCurrency(entry.key, entry.value.absoluteValue)
                 val roundedValue = account.baseCurrency.toBigDecimal(localAmount)
                 result.add(Entry(entry.key.displayName, roundedValue, "CASH"))

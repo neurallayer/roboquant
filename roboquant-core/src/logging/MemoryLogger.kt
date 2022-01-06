@@ -44,7 +44,7 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
 
         for ((t, u) in results) {
             if (history.size >= maxHistorySize) history.removeFirst()
-            val entry = MetricsEntry(t, u, info)
+            val entry = MetricsEntry(t, u.toDouble(), info)
             history.add(entry)
         }
     }
@@ -137,7 +137,7 @@ internal fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, C
 /**
  * Convert a collection of metric entries into a double array.
  */
-fun Collection<MetricsEntry>.toDoubleArray() = map { it.value.toDouble() }.toDoubleArray()
+fun Collection<MetricsEntry>.toDoubleArray() = map { it.value }.toDoubleArray()
 
 
 /**

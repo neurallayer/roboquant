@@ -29,7 +29,7 @@ import javax.naming.ConfigurationException
 /**
  * Account represents a unified brokerage trading account and holds the following state:
  *
- * - Cash balances in the account ([total], [free] and [used])
+ * - Cash balances in the account
  * - the [portfolio] with its assets
  * - The past [trades]
  * - The [orders], both open (still in progress) and already closed ones
@@ -70,46 +70,34 @@ class Account(
      * Total cash balance hold in this account. This is the account cash deposits plus all realized PNL so far.
      * PLase note that not all this cash is available.
      */
-    val total : Cash = Cash()
+    val cash : Cash = Cash()
 
 
-    val totalAmount : Double
-        get() = convertToCurrency(total)
+    val cashAmount : Double
+        get() = convertToCurrency(cash)
 
-
-    /**
-     * Free available cash, this is a derived value for convenience and is calculated by
-     *
-     *      free = total - used
-     */
-    val free : Cash
-        get() = total - used
 
 
     var buyingPower : Double = Double.NaN
-        get() = if (field.isNaN()) freeAmount else field
+        get() = if (field.isNaN()) cashAmount else field
 
-    /**
-     * Cash being used, typically due to:
-     * - holding assets (open positions)
-     * - margin requirements
-     */
-    val used : Cash = Cash()
 
     /**
      * Portfolio with its positions
      */
     val portfolio : Portfolio = Portfolio()
 
+
     /**
-     * How much cash (in base currency denoted) is still available to buy assets. Default implementation is just the
-     * amount of available cash. But with margin accounts there is typically more cash is available to
-     * trade than just the total remaining cash balance.
-     *
-     * @return the available free amount of cash denoted in base currency of account
+     * Equity
      */
-    val freeAmount: Double
-        get() = convertToCurrency(free)
+    val equity
+        get() = cash + portfolio.value
+
+
+    val equityAmount
+        get() = convertToCurrency(equity)
+
 
     /**
      * Reset the account to its initial state.
@@ -119,8 +107,7 @@ class Account(
         trades.clear()
         orders.clear()
         portfolio.clear()
-        total.clear()
-        used.clear()
+        cash.clear()
     }
 
 
@@ -139,23 +126,21 @@ class Account(
      * @return The total amount
      */
     fun getTotalCash(currency: Currency = baseCurrency, now: Instant = time): Double {
-        return convertToCurrency(total, currency, now)
+        return convertToCurrency(cash, currency, now)
     }
 
     /**
-     * Summary overview of the cash positions ([total], [free] and [used]).
+     * Summary overview of the cash positions
      */
     fun cashSummary(): Summary {
         val result = Summary("Cash")
-        val fmt = "│%10s│%14s│%14s│%14s│"
-        val header = String.format(fmt, "currency", "total", "free", "used")
+        val fmt = "│%10s│%14s│"
+        val header = String.format(fmt, "currency", "amount")
         result.add(header)
-        val currencies = total.currencies + free.currencies + used.currencies
+        val currencies = cash.currencies
         for (currency in currencies.distinct().sortedBy { it.displayName }) {
-            val t =  currency.format(total.getAmount(currency))
-            val f =  currency.format(free.getAmount(currency))
-            val u =  currency.format(used.getAmount(currency))
-            val line = String.format(fmt,  currency.currencyCode, t, f, u)
+            val t =  currency.format(cash.getAmount(currency))
+            val line = String.format(fmt,  currency.currencyCode, t)
             result.add(line)
         }
         return result
@@ -172,7 +157,7 @@ class Account(
         val s = Summary("Account")
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
-        s.add("buying power", baseCurrency.format(freeAmount))
+        s.add("buying power", baseCurrency.format(buyingPower))
         s.add(cashSummary())
 
         val tradesSummary = Summary("Trades")
@@ -194,7 +179,7 @@ class Account(
         portfolioSummary.add("open positions", portfolio.positions.size)
         portfolioSummary.add("long positions", portfolio.longPositions.size)
         portfolioSummary.add("short positions", portfolio.shortPositions.size)
-        val unrealizedValue = convertToCurrency(portfolio.getValue())
+        val unrealizedValue = convertToCurrency(portfolio.value)
         portfolioSummary.add("estimated value", baseCurrency.format(unrealizedValue))
         val unrealizedPNL = convertToCurrency(portfolio.unrealizedPNL())
         portfolioSummary.add("unrealized p&l", baseCurrency.format(unrealizedPNL))
@@ -211,7 +196,7 @@ class Account(
         val s = Summary("Account")
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
-        s.add("buying power", baseCurrency.format(freeAmount))
+        s.add("buying power", baseCurrency.format(buyingPower))
         s.add(cashSummary())
         s.add(portfolio.summary())
         s.add(orders.summary())
@@ -255,21 +240,6 @@ class Account(
         }
     }
 
-    /**
-     * Get the total value of this account, where the total account value is defined as:
-     *
-     *      Account Value = Portfolio PNL + Cash + Margin
-     *
-     * The portfolio positions are evaluated against the last known price for that position and thus reflect the
-     * unrealized P&L.
-     *
-     * @return the total value of the account as [Cash]
-     */
-    fun getMarketValue(): Cash {
-        val result = portfolio.getPNL()
-        result.deposit(total)
-        return result
-    }
 
     /**
      * Create a snapshot of the account that is guaranteed not to change. It is optimised in that it only
@@ -283,10 +253,8 @@ class Account(
         account.time = time
         account.trades.addAll(trades)
         account.orders.put(orders)
-        account.total.clear()
-        account.total.deposit(total)
-        account.used.clear()
-        account.used.deposit(used)
+        account.cash.clear()
+        account.cash.deposit(cash)
         account.portfolio.put(portfolio)
         return account
     }

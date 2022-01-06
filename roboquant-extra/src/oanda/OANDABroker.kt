@@ -104,13 +104,11 @@ class OANDABroker(
         val acc = ctx.account.get(accountID).account
         account.baseCurrency = Currency.getInstance(acc.currency.toString())
         if (currencyConverter is OANDACurrencyConverter) currencyConverter.baseCurrency = account.baseCurrency
-        account.total.clear()
+        account.cash.clear()
 
         // Cash in roboquant is excluding the margin part
-        account.total.set(account.baseCurrency, acc.balance.doubleValue())
+        account.cash.set(account.baseCurrency, acc.balance.doubleValue())
         account.buyingPower = acc.marginAvailable.doubleValue() * maxLeverage
-        account.used.clear()
-        account.used.set(account.baseCurrency, acc.marginUsed.doubleValue())
         account.time = Instant.now()
         lastTransactionId = acc.lastTransactionID
         account.portfolio.clear()
@@ -123,12 +121,10 @@ class OANDABroker(
      */
     private fun updateAccount() {
         val acc = ctx.account.get(accountID).account
-        account.total.clear()
+        account.cash.clear()
 
         // Cash in roboquant is excluding the margin part
-        account.total.set(account.baseCurrency, acc.balance.doubleValue())
-        account.used.clear()
-        account.used.set(account.baseCurrency, acc.marginUsed.doubleValue())
+        account.cash.set(account.baseCurrency, acc.balance.doubleValue())
         account.buyingPower = acc.marginAvailable.doubleValue() * maxLeverage
         account.time = Instant.now()
     }
@@ -149,7 +145,7 @@ class OANDABroker(
             order.id
         )
         account.trades.add(trade)
-        account.total.set(account.baseCurrency, trx.accountBalance.doubleValue())
+        account.cash.set(account.baseCurrency, trx.accountBalance.doubleValue())
     }
 
     private fun updateExchangeRates(event: Event) {

@@ -269,7 +269,7 @@ class IBKRBroker(
             if ("BASE" != currencyCode) {
                 val currency = Currency.getInstance(currencyCode)
                 val amount = value.toDouble()
-                account.total.set(currency, amount)
+                account.cash.set(currency, amount)
             }
         }
 

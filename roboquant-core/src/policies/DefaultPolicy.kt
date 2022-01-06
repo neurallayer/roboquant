@@ -108,7 +108,7 @@ open class DefaultPolicy(
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<Order>()
-        var buyingPower = account.freeAmount
+        var buyingPower = account.buyingPower
         val openOrderAssets = account.orders.open.map { it.asset }
         val remainingDayOrders =
             if (maxOrdersPerDay == Int.MAX_VALUE) Int.MAX_VALUE else maxOrdersPerDay - getOrdersCurrentDay(

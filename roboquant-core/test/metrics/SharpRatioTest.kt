@@ -44,13 +44,13 @@ internal class SharpRatioTest {
         val roboquant = Roboquant(strategy, metric, logger = logger)
         roboquant.run(feed)
 
-        val sharpRatio = logger.getMetric("portfolio.sharpratio").last().value as Double
+        val sharpRatio = logger.getMetric("portfolio.sharpratio").last().value
         assertTrue(!sharpRatio.isNaN())
 
-        val mean = logger.getMetric("portfolio.mean").last().value as Double
+        val mean = logger.getMetric("portfolio.mean").last().value
         assertTrue(!mean.isNaN())
 
-        val std = logger.getMetric("portfolio.std").last().value as Double
+        val std = logger.getMetric("portfolio.std").last().value
         assertTrue(!std.isNaN())
 
     }

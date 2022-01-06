@@ -32,16 +32,16 @@ internal class ProgressBar {
 
     private var currentPercent = -1
     private val progressChar = getProgressChar()
-    private var message1: String = ""
-    private var message2: String = ""
+    private var pre: String = ""
+    private var post: String = ""
     private var nextUpdate = Instant.MIN
 
     private var lastOutput = ""
 
     fun reset() {
         currentPercent = -1
-        message1 = ""
-        message2 = ""
+        post = ""
+        pre = ""
         nextUpdate = Instant.MIN
         lastOutput = ""
     }
@@ -61,9 +61,9 @@ internal class ProgressBar {
 
         currentPercent = percent
 
-        if (message1.isEmpty()) {
-            message1 = "${info.roboquant} | run=${info.run} | phase=${info.phase} |"
-            message2 = info.timeFrame.toPrettyString() + " | "
+        if (post.isEmpty()) {
+            post = "${info.roboquant} | run=${info.run} | phase=${info.phase} |"
+            pre = info.timeFrame.toPrettyString() + " | "
         }
 
         draw(percent)
@@ -71,14 +71,14 @@ internal class ProgressBar {
 
     private fun draw(percent: Int) {
         val sb = StringBuilder(100)
-        sb.append('\r').append(message2)
+        sb.append('\r').append(pre)
         sb.append(String.format("%3d", percent)).append("% |")
         val filled = percent * TOTAL_BAR_LENGTH / 100
         for (i in 0 until TOTAL_BAR_LENGTH) {
             if (i <= filled) sb.append(progressChar) else sb.append(' ')
         }
 
-        sb.append("| ").append(message1)
+        sb.append("| ").append(post)
         if (percent == 100) sb.append("\n")
         val str = sb.toString()
 
@@ -93,14 +93,12 @@ internal class ProgressBar {
 
     /**
      * Signal that the current task is done, so the progress bar can show it has finished.
-     *
      */
     fun done() {
         if ((currentPercent < 100) && (currentPercent >= 0)) {
             draw(100)
             System.out.flush()
         }
-
     }
 
     companion object {

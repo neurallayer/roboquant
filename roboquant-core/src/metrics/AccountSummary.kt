@@ -34,10 +34,11 @@ import org.roboquant.feeds.Event
  * - account.change Change of value of the account
  *
  *
- * @property includeValue include the account value and account value change metrics, default is true
+ * @property includeEquity include the account equity default is true
+
  * @constructor Create new Account Summary metric
  */
-class AccountSummary(val includeValue: Boolean = true) : SimpleMetric() {
+class AccountSummary(private val includeEquity: Boolean = true) : SimpleMetric() {
 
     private var lastValue: Double? = null
 
@@ -47,16 +48,12 @@ class AccountSummary(val includeValue: Boolean = true) : SimpleMetric() {
             "account.orders.open" to account.orders.open.size,
             "account.trades" to account.trades.size,
             "account.portfolio.assets" to account.portfolio.positions.size,
-            "account.cash.currencies" to account.total.currencies.size,
-            "account.cash.total" to account.totalAmount,
-            "account.cash.free" to account.freeAmount
+            "account.cash" to account.cashAmount,
+            "account.buyingpower" to account.buyingPower,
         )
 
-        if (includeValue) {
-            val value = account.convertToCurrency(account.getMarketValue(), now = event.now)
-            result["account.value"] = value
-            result["account.change"] = if (lastValue == null) 0.0 else value - lastValue!!
-            lastValue = value
+        if (includeEquity) {
+            result["account.equity"] = account.equityAmount
         }
 
         return result

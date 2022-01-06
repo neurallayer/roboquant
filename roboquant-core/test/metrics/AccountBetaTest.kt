@@ -34,7 +34,7 @@ internal class AccountBetaTest {
         val logger = MemoryLogger(false)
         val roboquant = Roboquant(strategy, accountBetaMetric, logger = logger)
         roboquant.run(feed)
-        val beta = logger.getMetric("account.beta").last().value as Double
+        val beta = logger.getMetric("account.beta").last().value
 
         assertTrue(!beta.isNaN())
     }

@@ -16,7 +16,6 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 
@@ -27,14 +26,9 @@ import org.roboquant.feeds.Event
  *
  * All amounts are converted to the base currency of the account.
  *
- * @property cumulative Should the realized PNL be aggregated or not, default is false
  * @constructor Create new PNL metric
  */
-class PNL(
-    private val cumulative: Boolean = false,
-) : SimpleMetric() {
-
-    private var lastTotalValue = Double.NaN
+class PNL : SimpleMetric() {
 
     /**
      * Calculate any metrics given the event of information. This will be called at the
@@ -48,14 +42,9 @@ class PNL(
         val now = event.now
         val result = mutableMapOf<String, Double>()
 
-        if (lastTotalValue.isNaN()) {
-            lastTotalValue = account.getTotalCash()
-        } else {
-            val newTotalValue = account.getTotalCash()
-            val pnl = newTotalValue - lastTotalValue
-            if (! cumulative) lastTotalValue = newTotalValue
-            result["pnl.realized"] = pnl
-        }
+        val pnl = account.trades.realizedPnL()
+        val realizedPNL = account.convertToCurrency(pnl, now = now)
+        result["pnl.realized"] = realizedPNL
 
         val totalValue = account.portfolio.unrealizedPNL()
         val unrealizedPNL = account.convertToCurrency(totalValue, now = now)
@@ -65,8 +54,5 @@ class PNL(
     }
 
 
-    override fun start(runPhase: RunPhase) {
-        lastTotalValue = Double.NaN
-    }
 
 }

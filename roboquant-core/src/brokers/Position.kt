@@ -17,6 +17,7 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.Asset
+import org.roboquant.common.Cash
 import java.time.Instant
 import kotlin.math.absoluteValue
 import kotlin.math.sign
@@ -174,3 +175,9 @@ data class Position(
 
 }
 
+val Collection<Position>.value : Cash
+        get() {
+            val result = Cash()
+            for (position in this) result.deposit(position.currency, position.marketValue)
+            return result
+        }

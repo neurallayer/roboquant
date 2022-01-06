@@ -497,7 +497,7 @@ fun beta2() {
     val policy = BettingAgainstBeta(feed.assets, marketAsset, 60, maxAssetsInPortfolio = 10)
     policy.recording = true
     val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, ProgressMetric(), PNL(cumulative = true), policy = policy, logger = logger)
+    val roboquant = Roboquant(strategy, ProgressMetric(), PNL(), policy = policy, logger = logger)
     roboquant.run(feed)
     logger.summary().print()
     println(roboquant.broker.account.summary())

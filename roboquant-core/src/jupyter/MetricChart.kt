@@ -92,7 +92,7 @@ class MetricChart(
         val d = mutableListOf<Pair<Any, Number>>()
         for (entry in this) {
             val value = entry.value
-            val roundedValue = BigDecimal(value.toDouble()).setScale(fractionDigits, RoundingMode.HALF_DOWN)
+            val roundedValue = BigDecimal(value).setScale(fractionDigits, RoundingMode.HALF_DOWN)
             if (useTime)
                 d.add(Pair(entry.info.time, roundedValue))
             else

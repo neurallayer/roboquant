@@ -125,26 +125,16 @@ class Portfolio : Cloneable {
      * Get total value of this portfolio. The total value is calculated based on the sum of the open positions and
      * their last known price. The result is returned as a Cash object, so no currency conversion is applied.
      */
-    fun getValue(): Cash {
-        val result = Cash()
-        for (position in positions) {
-            result.deposit(position.currency, position.marketValue)
-        }
-        return result
-    }
+    val value: Cash
+        get() = positions.value
+
+    val longValue : Cash
+        get() = longPositions.value
+
+    val shortValue : Cash
+        get() = shortPositions.value
 
 
-    /**
-     * Get total PNL of this portfolio. The total value is calculated based on the sum of the open positions and
-     * their last known price. The result is returned as a Cash object, so no currency conversion is applied.
-     */
-    fun getPNL(): Cash {
-        val result = Cash()
-        for (position in positions) {
-            result.deposit(position.currency, position.unrealizedPNL)
-        }
-        return result
-    }
 
     /**
      * Get total exposure of this portfolio. The total value is calculated based on the sum of the open positions and
