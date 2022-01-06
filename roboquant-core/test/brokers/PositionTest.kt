@@ -67,7 +67,7 @@ internal class PositionTest {
     fun pnl() {
         val contract = TestData.usStock()
         val p1 = Position(contract, 10.0, 10.0, 12.0)
-        val pnl = p1.unrealizedPNL
+        val pnl = p1.unrealizedPNL.value
         assertEquals(20.0, pnl)
     }
 
@@ -86,7 +86,7 @@ internal class PositionTest {
     fun cost() {
         val contract = TestData.usStock()
         val p1 = Position(contract, 10.0, 10.0)
-        val cost = p1.totalCost
+        val cost = p1.totalCost.value
         assertEquals(100.0, cost)
     }
 
@@ -94,7 +94,7 @@ internal class PositionTest {
     fun value() {
         val contract = TestData.usStock()
         val p1 = Position(contract, 10.0, 10.0, 12.0)
-        val value = p1.marketValue
+        val value = p1.marketValue.value
         assertEquals(120.0, value)
     }
 

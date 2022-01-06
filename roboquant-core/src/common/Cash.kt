@@ -37,12 +37,12 @@ import java.lang.Exception
  * to a single amount value.
  *
  */
-class Cash(vararg amounts: Pair<Currency, Double>) {
+class Cash(vararg amounts: Amount) {
 
     private val data = mutableMapOf<Currency, Double>()
 
     init {
-        amounts.forEach { deposit(it.first, it.second) }
+        amounts.forEach { deposit(it) }
     }
 
 
@@ -108,8 +108,16 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
      * Deposit a monetary [amount] denominated in teh specified [currency]. If the currency already exist, it
      * will be added to the existing amount, otherwise a new entry will be created.
      */
-    fun deposit(currency: Currency, amount: Double) {
+    private fun deposit(currency: Currency, amount: Double) {
         data[currency] = data.getOrDefault(currency, 0.0) + amount
+    }
+
+    /**
+     * Deposit a monetary [amount][Amount]. If the currency already exist, it
+     * will be added to the existing value, otherwise a new entry will be created.
+     */
+    fun deposit(amount: Amount) {
+        data[amount.currency] = data.getOrDefault(amount.currency, 0.0) + amount.value
     }
 
 
@@ -124,13 +132,20 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
      * Withdraw  a monetary [amount] denominated in the specified [currency]. If the currency already exist, it
      * will be deducted from the existing amount, otherwise a new entry will be created.
      *
-     * @param currency
-     * @param amount
      */
     fun withdraw(currency: Currency, amount: Double) {
         deposit(currency, -amount)
     }
 
+    /**
+     * Withdraw  a monetary [amount][Amount]. If the currency already exist, it
+     * will be deducted from the existing value, otherwise a new entry will be created.
+     *
+     * @param amount
+     */
+    fun withdraw(amount: Amount) {
+        deposit(amount.currency, - amount.value)
+    }
 
 
     fun toAmount() : Double {
@@ -148,6 +163,7 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
     fun withdraw(other: Cash) {
         other.data.forEach { deposit(it.key, -it.value) }
     }
+
 
 
     /**
@@ -223,7 +239,7 @@ class Cash(vararg amounts: Pair<Currency, Double>) {
 
 // Some extensions to make it easier to create cash objects with one currency
 val Number.EUR
-    get() = Cash(Currency.EUR to this.toDouble())
+    get() = Amount(Currency.EUR, this.toDouble())
 
 val Number.USD
-    get() = Cash(Currency.USD to this.toDouble())
+    get() = Amount(Currency.USD, this.toDouble())

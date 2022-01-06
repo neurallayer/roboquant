@@ -19,6 +19,7 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Cash
 import org.roboquant.common.Currency
@@ -70,7 +71,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
         return if (assetCurrency === account.baseCurrency) {
             amount
         } else {
-            val w = Cash(account.baseCurrency to amount)
+            val w = Cash(Amount(account.baseCurrency, amount))
             account.convertToCurrency(w, assetCurrency)
         }
 

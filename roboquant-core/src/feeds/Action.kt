@@ -16,6 +16,7 @@
 
 package org.roboquant.feeds
 
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import kotlin.math.absoluteValue
 
@@ -56,7 +57,10 @@ interface PriceAction : Action {
      */
     fun getPrice(type: String = "DEFAULT"): Double
 
-
+    /**
+     * Same as [getPrice] but returns an [Amount], so this incudes the currency
+     */
+    fun getPriceAmount(type: String = "DEFAULT") = Amount(asset.currency, getPrice(type))
 }
 
 /**

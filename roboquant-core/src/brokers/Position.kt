@@ -16,6 +16,7 @@
 
 package org.roboquant.brokers
 
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Cash
 import java.time.Instant
@@ -146,31 +147,31 @@ data class Position(
      * The unrealized profit & loss for this position based on the [avgPrice] and last known market [spotPrice],
      * in the currency denoted by the asset
      */
-    val unrealizedPNL: Double
-        get() = totalSize * (spotPrice - avgPrice)
+    val unrealizedPNL: Amount
+        get() = Amount(asset.currency, totalSize * (spotPrice - avgPrice))
 
 
     /**
      * The total value for this position based on last known spot price, in the currency denoted by the asset.
      * Short positions will typically return a negative value.
      */
-    val marketValue: Double
-        get() = totalSize * spotPrice
+    val marketValue: Amount
+        get() = Amount(asset.currency,totalSize * spotPrice)
 
     /**
      * The gross exposure for this position based on last known market price, in the currency denoted by the asset.
      * The difference with the [marketValue] property is that short positions also result in a positive exposure.
      */
-    val exposure: Double
-        get() = totalSize.absoluteValue * spotPrice
+    val exposure: Amount
+        get() = Amount(asset.currency, totalSize.absoluteValue * spotPrice)
 
 
     /**
      * The total cost of this position, in the currency denoted by the asset. Short positions will typically return
      * a negative value.
      */
-    val totalCost: Double
-        get() = totalSize * avgPrice
+    val totalCost: Amount
+        get() =  Amount(asset.currency,totalSize * avgPrice)
 
 
 }
@@ -178,6 +179,6 @@ data class Position(
 val Collection<Position>.value : Cash
         get() {
             val result = Cash()
-            for (position in this) result.deposit(position.currency, position.marketValue)
+            for (position in this) result.deposit(position.marketValue)
             return result
         }

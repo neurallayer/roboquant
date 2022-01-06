@@ -34,11 +34,11 @@ internal class CashTest {
     fun getCurrencies() {
         var wallet = Cash()
         assertTrue(wallet.currencies.isEmpty())
-        wallet = Cash(USD to 10.0, EUR to 20.0)
+        wallet = Cash(10.USD, 20.EUR)
         assertEquals(2, wallet.currencies.size)
         assertTrue(wallet.isMultiCurrency())
 
-        wallet = Cash(USD to 10.0, EUR to 0.0)
+        wallet = Cash(10.USD, 0.EUR)
         assertEquals(1, wallet.currencies.size)
 
         assertTrue { wallet.toString().contains("USD") }
@@ -47,13 +47,13 @@ internal class CashTest {
     @Test
     fun deposit() {
         val wallet = Cash()
-        wallet.deposit(USD, 12.0)
+        wallet.deposit(12.USD)
         assertEquals(12.0, wallet.getAmount(USD))
 
-        wallet.deposit(USD, 13.0)
+        wallet.deposit(13.USD)
         assertEquals(25.0, wallet.getAmount(USD))
 
-        wallet.deposit(EUR, 13.0)
+        wallet.deposit(13.EUR)
         assertEquals(25.0, wallet.getAmount(USD))
         assertEquals(13.0, wallet.getAmount(EUR))
 
@@ -70,7 +70,7 @@ internal class CashTest {
         var metrics = wallet.toMap(true)
         assertContains(metrics, USD)
 
-        wallet.deposit(USD, 12.0)
+        wallet.deposit(12.USD)
         metrics = wallet.toMap(true)
         assertContains(metrics, USD)
 
@@ -82,7 +82,7 @@ internal class CashTest {
 
     @Test
     fun copy() {
-        val wallet = Cash(USD to 10.0, EUR to 20.0)
+        val wallet = Cash(10.USD, 20.EUR)
         val wallet2 = wallet.copy()
         assertEquals(wallet.getAmount(USD), wallet2.getAmount(USD))
     }
@@ -90,7 +90,7 @@ internal class CashTest {
 
     @Test
     fun operators() {
-        val wallet = Cash(USD to 10.0, EUR to 20.0)
+        val wallet = Cash(10.USD, 20.EUR)
         val wallet2 = wallet + wallet - wallet
         assertEquals(wallet, wallet2)
     }

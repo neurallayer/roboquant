@@ -16,6 +16,7 @@
 
 package org.roboquant.brokers
 
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import java.time.Instant
 
@@ -39,8 +40,8 @@ data class Trade(
     val asset: Asset,
     val quantity: Double,
     val price: Double,
-    val fee: Double,
-    val pnl: Double,
+    val feeValue: Double,
+    val pnlValue: Double,
     val orderId: String,
 ) {
 
@@ -49,7 +50,13 @@ data class Trade(
      * will return a negative value.
      */
     val totalCost
-        get() = price * quantity * asset.multiplier + fee
+        get() = Amount(asset.currency, price * quantity * asset.multiplier + feeValue)
+
+    val fee
+        get() = Amount(asset.currency, feeValue)
+
+    val pnl
+        get() = Amount(asset.currency, pnlValue)
 
 }
 

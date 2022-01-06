@@ -143,7 +143,7 @@ class Portfolio : Cloneable {
     fun getExposure(): Cash {
         val result = Cash()
         for (position in positions) {
-            result.deposit(position.currency, position.exposure)
+            result.deposit(position.exposure)
         }
         return result
     }
@@ -157,7 +157,7 @@ class Portfolio : Cloneable {
     fun unrealizedPNL(): Cash {
         val result = Cash()
         for (position in positions) {
-            result.deposit(position.currency, position.unrealizedPNL)
+            result.deposit(position.unrealizedPNL)
         }
         return result
     }
@@ -196,7 +196,7 @@ class Portfolio : Cloneable {
                 val pos = pf.format(v.size)
                 val avgPrice = c.format(v.avgPrice)
                 val price = c.format(v.spotPrice)
-                val pnl = c.format(v.unrealizedPNL)
+                val pnl = c.format(v.unrealizedPNL.value)
                 val asset = "${v.asset.type}:${v.asset.symbol}"
                 val line = String.format(fmt, asset, v.currency.currencyCode, pos, avgPrice, price, pnl)
                 s.add(line)

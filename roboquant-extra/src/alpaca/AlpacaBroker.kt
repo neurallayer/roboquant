@@ -23,10 +23,7 @@ import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.CurrentOrderStatus
 import net.jacobpeterson.alpaca.rest.AlpacaClientException
 import org.roboquant.brokers.*
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Currency
-import org.roboquant.common.Logging
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
@@ -82,7 +79,8 @@ class AlpacaBroker(
             account.baseCurrency = Currency.getInstance(acc.currency)
 
             account.cash.clear()
-            account.cash.deposit(account.baseCurrency, acc.cash.toDouble())
+            val balance = Amount(account.baseCurrency, acc.cash.toDouble())
+            account.cash.deposit(balance)
             account.time = Instant.now()
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())

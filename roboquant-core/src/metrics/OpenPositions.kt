@@ -34,9 +34,9 @@ class OpenPositions : SimpleMetric() {
             val asset = position.asset
             val name = "position.${asset.symbol}"
             result["$name.quantity"] = position.size
-            result["$name.value"] = position.marketValue
-            result["$name.cost"] = position.totalCost
-            result["$name.pnl"] = position.unrealizedPNL
+            result["$name.value"] = position.marketValue.value
+            result["$name.cost"] = position.totalCost.value
+            result["$name.pnl"] = position.unrealizedPNL.value
         }
         return result
     }

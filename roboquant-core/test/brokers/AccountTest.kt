@@ -21,6 +21,7 @@ import org.junit.Test
 import org.roboquant.common.Asset
 import org.roboquant.common.Cash
 import org.roboquant.common.Currency
+import org.roboquant.common.USD
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -43,7 +44,7 @@ internal class AccountTest {
         val asset = Asset("Dummy")
         assertTrue(account.trades.realizedPnL(asset) == 0.0)
 
-        account.cash.deposit(Currency.USD, 100.0)
+        account.cash.deposit(100.USD)
 
         val s = account.summary()
         assertTrue(s.toString().isNotEmpty())

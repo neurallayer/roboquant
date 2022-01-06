@@ -229,7 +229,7 @@ class IBKRBroker(
             if (trade != null) {
                 val i = account.trades.indexOf(trade)
                 val newTrade = trade.copy(
-                    fee = report.commission(), pnl = report.realizedPNL()
+                    feeValue = report.commission(), pnlValue = report.realizedPNL()
                 )
                 account.trades[i] = newTrade
             } else {

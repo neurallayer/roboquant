@@ -18,6 +18,7 @@
 
 package org.roboquant.brokers
 
+import org.roboquant.common.Amount
 import org.roboquant.common.Cash
 import org.roboquant.common.Currency
 import org.roboquant.common.Summary
@@ -216,6 +217,20 @@ class Account(
             }
         }
         return sum
+    }
+
+    /**
+     * Convert an Amount into a single currency amount. If no currencyConverter has been configured and this method is
+     * called and a conversion is required, it will throw a [ConfigurationException].
+     *
+     */
+    fun convertToCurrency(amount: Amount, toCurrency: Currency = baseCurrency, now: Instant = time): Double {
+        return if (amount.currency === toCurrency || amount.value == 0.0) {
+            amount.value
+        } else {
+            currencyConverter?.convert(amount.currency, toCurrency, amount.value, now)
+                ?: throw ConfigurationException("No currency converter defined to convert $amount to $toCurrency")
+        }
     }
 
     fun convertToCurrency(

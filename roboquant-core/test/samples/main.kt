@@ -269,7 +269,7 @@ fun multiCurrency() {
     val usd = Currency.getInstance("USD")
     val currencyConverter = FixedExchangeRates(usd, euro to 1.2)
 
-    val cash = Cash(usd to 100_000.00)
+    val cash = Cash(100_000.USD)
     val broker = SimBroker(cash, currencyConverter)
 
     val strategy = EMACrossover.midTerm()

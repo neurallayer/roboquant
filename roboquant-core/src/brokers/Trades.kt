@@ -63,7 +63,7 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
         if (timeFrame != null)
             filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
 
-        return filteredResults.fold(0.0) { result, trade -> result + trade.pnl }
+        return filteredResults.fold(0.0) { result, trade -> result + trade.pnlValue }
     }
 
     /**
@@ -92,7 +92,7 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
             filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
 
         filteredResults.forEach {
-            result.deposit(it.asset.currency, it.pnl)
+            result.deposit(it.pnl)
         }
         return result
     }
@@ -112,7 +112,7 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
         val filteredResults = asSequence().filter(timeFrame)
 
         filteredResults.forEach {
-            result.deposit(it.asset.currency, it.fee)
+            result.deposit(it.fee)
         }
         return result
     }
@@ -133,7 +133,7 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
     fun totalFee(asset: Asset, timeFrame: TimeFrame? = null): Double {
         var filteredResults = asSequence().filter { it.asset == asset }
         filteredResults = filteredResults.filter(timeFrame)
-        return filteredResults.fold(0.0) { result, order -> result + order.fee }
+        return filteredResults.fold(0.0) { result, order -> result + order.feeValue }
     }
 
 
@@ -171,9 +171,9 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
             s.add(header)
             forEach {
                 with(it) {
-                    val cost = asset.currency.format(totalCost)
-                    val fee = asset.currency.format(fee)
-                    val pnl = asset.currency.format(pnl)
+                    val cost = totalCost.formatValue()
+                    val fee = fee.formatValue()
+                    val pnl = pnl.formatValue()
                     val price = asset.currency.format(price)
                     val t = time.truncatedTo(ChronoUnit.SECONDS)
                     val line = String.format(fmt, t, asset.symbol, quantity, cost, fee, pnl, price)

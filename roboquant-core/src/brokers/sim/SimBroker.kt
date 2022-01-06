@@ -18,9 +18,7 @@ package org.roboquant.brokers.sim
 
 import org.roboquant.RunPhase
 import org.roboquant.brokers.*
-import org.roboquant.common.Cash
-import org.roboquant.common.Currency
-import org.roboquant.common.Logging
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
 import org.roboquant.metrics.MetricResults
@@ -44,7 +42,7 @@ import java.util.logging.Logger
  * @constructor Create new Sim broker
  */
 class SimBroker(
-    private val initialDeposit: Cash = Cash(Currency.USD to 1_000_000.00),
+    private val initialDeposit: Cash = Cash(1_000_000.00.USD),
     currencyConverter: CurrencyConverter? = null,
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val costModel: CostModel = DefaultCostModel(),
@@ -75,7 +73,7 @@ class SimBroker(
          */
         fun withDeposit(amount: Double, currencyCode: String = "USD"): SimBroker {
             val currency = Currency.getInstance(currencyCode)
-            return SimBroker(Cash(currency to amount))
+            return SimBroker(Cash(Amount(currency, amount)))
         }
 
     }
@@ -147,7 +145,7 @@ class SimBroker(
         )
 
         account.trades.add(newTrade)
-        account.cash.withdraw(newTrade.asset.currency, newTrade.totalCost)
+        account.cash.withdraw(newTrade.totalCost)
     }
 
 

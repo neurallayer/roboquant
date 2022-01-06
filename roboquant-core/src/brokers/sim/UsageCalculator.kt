@@ -3,7 +3,6 @@ package org.roboquant.brokers.sim
 import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
 import org.roboquant.common.Cash
-import kotlin.math.absoluteValue
 
 /**
  * Interface for usage calculations. It is used to calculate how much cash is required for holding a set of
@@ -30,12 +29,12 @@ class BasicUsageCalculator : UsageCalculator {
         val usage = Cash()
         for (p in positions) {
             if (p.long)
-                usage.deposit(p.asset.currency, p.totalCost)
+                usage.deposit(p.totalCost)
             else if (p.short)
-                usage.deposit(p.asset.currency, p.exposure)
+                usage.deposit(p.exposure)
         }
 
-        for (p in changes) usage.deposit(p.asset.currency, p.totalCost.absoluteValue)
+        // for (p in changes) usage.deposit(p.asset.currency, p.totalCost.absoluteValue)
 
         return usage
     }
@@ -55,9 +54,9 @@ class RegTCalculator : UsageCalculator {
         // Maintance margin
         for (p in positions) {
             if (p.long)
-                margin.deposit(p.asset.currency,p.totalCost * 0.50)
+                margin.deposit(p.totalCost)
             else if (p.short)
-                margin.deposit(p.asset.currency,p.totalCost.absoluteValue * 1.50)
+                margin.deposit(p.totalCost)
 
             currentPos[p.asset] = p.size
         }
@@ -65,9 +64,9 @@ class RegTCalculator : UsageCalculator {
         // Initial margin
         for (p in changes) {
             if (p.long)
-                margin.deposit(p.asset.currency,p.totalCost * 0.5)
+                margin.deposit(p.totalCost * 0.5)
             else if (p.short)
-                margin.deposit(p.asset.currency,p.exposure * 1.5)
+                margin.deposit(p.exposure * 1.5)
         }
         return margin
     }
@@ -84,9 +83,9 @@ class LeveragedUsageCalculator(val leverage: Double = 1.0) : UsageCalculator {
         val margin = Cash()
         for (p in positions) {
             if (p.long)
-                margin.deposit(p.asset.currency,p.totalCost * 1.0/leverage)
+                margin.deposit(p.totalCost * (1.0/leverage))
             else if (p.short)
-                margin.deposit(p.asset.currency,p.exposure * (1.0 + 1.0/leverage))
+                margin.deposit(p.exposure * (1.0 + 1.0/leverage))
         }
         return margin
     }

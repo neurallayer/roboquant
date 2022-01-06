@@ -40,10 +40,9 @@ class TradeChart(
 
 
     private fun getTooltip(trade: Trade): String {
-        val c = trade.asset.currency
-        val pnl = c.toBigDecimal(trade.pnl)
-        val totalCost = c.toBigDecimal(trade.totalCost)
-        val fee = c.toBigDecimal(trade.fee)
+        val pnl = trade.pnl.toBigDecimal()
+        val totalCost =trade.totalCost.toBigDecimal()
+        val fee = trade.fee.toBigDecimal()
         return "asset: ${trade.asset} <br> time: ${trade.time} <br> qty: ${trade.quantity} <br> fee: $fee <br> pnl: $pnl <br> cost: $totalCost <br> order: ${trade.orderId}"
     }
 
@@ -52,11 +51,10 @@ class TradeChart(
         for (trade in trades) {
             if (skipBuy && trade.quantity > 0) continue
             with(trade) {
-                val c = asset.currency
                 val value = when (aspect) {
-                    "pnl" -> c.toBigDecimal(pnl)
-                    "fee" -> c.toBigDecimal(fee)
-                    "cost" -> c.toBigDecimal(totalCost)
+                    "pnl" -> pnl.toBigDecimal()
+                    "fee" -> fee.toBigDecimal()
+                    "cost" -> totalCost.toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
                     else -> throw Exception("Unsupported aspect $aspect")
                 }

@@ -34,8 +34,7 @@ class PriceChart(
     private val asset: Asset,
     private val trades: Collection<Trade> = listOf(),
     private val timeFrame: TimeFrame = TimeFrame.FULL,
-    private val priceType: String = "DEFAULT",
-    private val fractionDigits: Int = asset.currency.defaultFractionDigits
+    private val priceType: String = "DEFAULT"
 ) : Chart() {
 
     /**
@@ -43,11 +42,9 @@ class PriceChart(
      */
     private fun fromFeed(): List<Pair<Instant, BigDecimal>> {
         val entries = feed.filter<PriceAction>(timeFrame) { it.asset == asset }
-        val currency = asset.currency
         val data = entries.map {
-            val price = it.second.getPrice(priceType)
-            val value = currency.toBigDecimal(price, fractionDigits)
-            it.first to value
+            val price = it.second.getPriceAmount(priceType)
+            it.first to price.toBigDecimal()
         }
         return data
     }

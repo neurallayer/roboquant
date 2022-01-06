@@ -51,7 +51,7 @@ class AssetAllocationChart(
 
         for (position in account.portfolio.positions) {
             val asset = position.asset
-            val localAmount = account.convertToCurrency(asset.currency, position.exposure)
+            val localAmount = account.convertToCurrency(position.exposure)
             val roundedValue = account.baseCurrency.toBigDecimal(localAmount)
             result.add(Entry(asset.symbol, roundedValue, asset.type.name))
         }
