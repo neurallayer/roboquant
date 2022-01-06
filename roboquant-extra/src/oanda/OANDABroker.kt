@@ -24,7 +24,6 @@ import com.oanda.v20.position.PositionSide
 import com.oanda.v20.primitives.InstrumentName
 import com.oanda.v20.transaction.OrderFillTransaction
 import com.oanda.v20.transaction.TransactionID
-import oanda.OANDAUsageCalculator
 import org.roboquant.brokers.*
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
@@ -50,9 +49,7 @@ class OANDABroker(
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
     private val accountID = AccountID(OANDA.getAccountID(accountID, ctx))
-
-    private val usageCalculator = OANDAUsageCalculator(ctx, this.accountID)
-    override val account: Account = Account(currencyConverter = currencyConverter, usageCalculator = usageCalculator)
+    override val account: Account = Account(currencyConverter = currencyConverter)
     private val logger = Logging.getLogger("OANDABroker")
     private lateinit var lastTransactionId: TransactionID
 

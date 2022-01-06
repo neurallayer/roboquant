@@ -1,4 +1,4 @@
-package org.roboquant.brokers
+package org.roboquant.brokers.sim
 
 import kotlin.test.Test
 import kotlin.test.assertTrue

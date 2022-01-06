@@ -47,7 +47,6 @@ import javax.naming.ConfigurationException
 class Account(
     var baseCurrency: Currency = Currency.USD,
     private val currencyConverter: CurrencyConverter? = null,
-    private val usageCalculator: UsageCalculator = BasicUsageCalculator()
 ) : Cloneable {
 
     /**
@@ -110,13 +109,6 @@ class Account(
         cash.clear()
     }
 
-
-    /**
-     * Get the margin requirements for provided portfolio
-     */
-    fun getMarginRequirements(portfolio: Portfolio = this.portfolio) : Cash {
-        return usageCalculator.calculate(portfolio.positions)
-    }
 
     /**
      * Get the total cash balance hold in this account converted to a single currency amount.

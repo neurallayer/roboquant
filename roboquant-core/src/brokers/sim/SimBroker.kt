@@ -48,7 +48,7 @@ class SimBroker(
     currencyConverter: CurrencyConverter? = null,
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val costModel: CostModel = DefaultCostModel(),
-    usageCalculator: UsageCalculator = BasicUsageCalculator(),
+    // private val usageCalculator: UsageCalculator = BasicUsageCalculator(),
     private val validateBuyingPower: Boolean = false,
     private val recording: Boolean = false,
     private val prefix: String = "broker.",
@@ -60,7 +60,7 @@ class SimBroker(
     private val metrics = mutableMapOf<String, Number>()
 
 
-    override val account: Account = Account(baseCurrency, currencyConverter, usageCalculator)
+    override val account: Account = Account(baseCurrency, currencyConverter)
 
     companion object Factory {
 
@@ -150,13 +150,7 @@ class SimBroker(
         account.cash.withdraw(newTrade.asset.currency, newTrade.totalCost)
     }
 
-    /**
-     * Calculate the new margin requirements based on positions in the portfolio
-     */
-    fun updateMargin() {
-        val margin = account.getMarginRequirements()
-        // TODO update account accordingly
-    }
+
 
 
     /**
@@ -173,7 +167,6 @@ class SimBroker(
         execute(event)
         account.portfolio.updateMarketPrices(event)
         account.time = event.now
-        updateMargin()
         if (! keepClosedOrders) account.orders.removeIf { it.status.closed }
         return account
     }

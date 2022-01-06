@@ -1,5 +1,6 @@
-package org.roboquant.brokers
+package org.roboquant.brokers.sim
 
+import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
 import org.roboquant.common.Cash
 import kotlin.math.absoluteValue
