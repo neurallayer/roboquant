@@ -16,6 +16,8 @@
 
 package org.roboquant.oanda
 
+import com.oanda.v20.Context
+import com.oanda.v20.pricing.PricingGetRequest
 import org.roboquant.brokers.CurrencyConverter
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
@@ -26,10 +28,24 @@ import java.time.Instant
 /**
  * Currency converter used by default by OANDA Broker that uses feed data to update exchange rates.
  */
-class OANDACurrencyConverter(private val priceType: String = "DEFAULT") : CurrencyConverter {
+class OANDACurrencyConverter(token: String? = null, demoAccount: Boolean = true, private val priceType: String = "DEFAULT") : CurrencyConverter {
+
+    private val ctx: Context = OANDA.getContext(token, demoAccount)
+    private val accountID = OANDA.getAccountID(null, ctx)
+
 
     internal lateinit var baseCurrency: Currency
     private val exchangeRates = mutableMapOf<Currency, Double>()
+
+
+    init {
+        val request = PricingGetRequest(accountID, listOf("GBP_USD", "EUR_USD", "EUR_GBP"))
+        val resp = ctx.pricing[request]
+        for (price in resp.prices) {
+            val symbol = price.instrument
+            println("$symbol ${price.quoteHomeConversionFactors}")
+        }
+    }
 
 
     internal fun setRate(symbol: String, action :PriceAction) {

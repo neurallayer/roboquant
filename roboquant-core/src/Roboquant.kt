@@ -232,7 +232,8 @@ class Roboquant<L : MetricsLogger>(
             try {
                 metric.calculate(account, event)
             } catch (e: Exception) {
-                kotlinLogger.log(Level.WARNING, "Couldn't calculate metric", e)
+                println(e.printStackTrace())
+                kotlinLogger.log(Level.WARNING, "Couldn't calculate metric ${metric::class.qualifiedName}", e)
             }
         }
 

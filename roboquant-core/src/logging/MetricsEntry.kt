@@ -41,11 +41,13 @@ data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo
         val i = other.info
         return i.phase == info.phase && i.run == info.run && i.episode == info.episode && i.roboquant == info.roboquant
     }
+
 }
 
 fun Collection<MetricsEntry>.max() = maxOf { it.value }
 fun Collection<MetricsEntry>.min() = minOf { it.value }
-
+fun Collection<MetricsEntry>.high(n:Int = 10) = sortedBy { it.value }.takeLast(n)
+fun Collection<MetricsEntry>.low(n:Int = 10) = sortedBy { it.value }.take(n)
 
 fun Collection<MetricsEntry>.diff() : List<MetricsEntry> {
     val result = mutableListOf<MetricsEntry>()
@@ -75,7 +77,7 @@ fun Collection<MetricsEntry>.perc() : List<MetricsEntry> {
             prev = entry.value
             first = false
         } else {
-            val newValue = (entry.value - prev) / prev
+            val newValue = 100.0 * (entry.value - prev) / prev
             val newEntry = entry.copy(value = newValue)
             result.add(newEntry)
             prev = entry.value
@@ -84,10 +86,6 @@ fun Collection<MetricsEntry>.perc() : List<MetricsEntry> {
     return result
 }
 
-/**
-fun Collection<MetricsEntry>.diff() = reduce { acc, metricsEntry ->  }
-fun Collection<MetricsEntry>.perc() = reduce { acc, metricsEntry ->  }
-**/
 
 fun Collection<MetricsEntry>.summary(): Summary {
     val result = Summary("Metrics")

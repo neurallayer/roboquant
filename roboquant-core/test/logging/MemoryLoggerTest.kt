@@ -27,7 +27,7 @@ internal class MemoryLoggerTest {
 
     @Test
     fun memoryLogger() {
-        val logger = MemoryLogger()
+        val logger = MemoryLogger(showProgress = false)
         assertTrue(logger.metricNames.isEmpty())
         val metrics = TestData.getMetrics()
         logger.log(metrics, TestData.getRunInfo())
@@ -54,7 +54,7 @@ internal class MemoryLoggerTest {
 
     @Test
     fun testMetricsEntry() {
-        val logger = MemoryLogger()
+        val logger = MemoryLogger(showProgress = false)
         repeat(12) {
             val metrics =  mapOf("key1" to it)
             logger.log(metrics, TestData.getRunInfo())
@@ -67,7 +67,7 @@ internal class MemoryLoggerTest {
 
         val dataPerc = data.perc()
         assertEquals(11, dataPerc.size)
-        assertEquals(0.1, dataPerc.last().value)
+        assertEquals(10.0, dataPerc.last().value)
     }
 
 }

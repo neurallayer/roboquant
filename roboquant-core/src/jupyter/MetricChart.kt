@@ -69,7 +69,7 @@ class MetricChart(
                     scale: true
                 },
                  title: {
-                    text: 'Metric ${metricsData.getName()}'
+                    text: 'Metric: ${metricsData.getName()}'
                 },
                 tooltip: {
                     trigger: 'axis'

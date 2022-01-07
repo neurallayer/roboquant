@@ -99,9 +99,9 @@ class Account(
 
 
     /**
-     * Reset the account to its initial state.
+     * Clear all the state in the account.
      */
-    internal fun reset() {
+    internal fun clear() {
         time = Instant.MIN
         trades.clear()
         orders.clear()

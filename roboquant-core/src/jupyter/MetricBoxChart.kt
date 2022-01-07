@@ -68,7 +68,7 @@ class MetricBoxChart(
         return """
             {
                 title: {
-                        text: 'BoxPlot ${metricData.getName()}',
+                        text: 'Metric: ${metricData.getName()}',
                     },
                 ${renderDataZoom()},
                 ${renderToolbox(false)},

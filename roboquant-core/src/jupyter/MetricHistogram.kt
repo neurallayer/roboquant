@@ -75,7 +75,7 @@ class MetricHistogram(
                     scale: true
                 },
                  title: {
-                    text: 'Histogram ${metricData.getName()}'
+                    text: 'Metric: ${metricData.getName()}'
                 },
                tooltip: {
                     trigger: 'axis',
