@@ -22,6 +22,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
+import org.roboquant.common.Amount
 import java.lang.reflect.Type
 import java.nio.charset.StandardCharsets
 import java.time.Instant
@@ -44,6 +45,26 @@ private class PairAdapter : JsonSerializer<Pair<*, *>> {
     }
 
 }
+
+
+/**
+ * Type adaptor for Gson that allows to use Amount that get serialized as a big decimal
+ *
+ * @constructor Create new Pair adapter
+ */
+private class AmountAdapter : JsonSerializer<Amount> {
+
+    override fun serialize(
+        jsonElement: Amount,
+        type: Type,
+        jsonSerializationContext: JsonSerializationContext
+    ): JsonElement {
+        return jsonSerializationContext.serialize(jsonElement.toBigDecimal())
+    }
+
+}
+
+
 
 /**
  * Type adaptor for Gson that allows to use Instant that get serialized as a Long
@@ -104,6 +125,7 @@ abstract class Chart : Output() {
             gsonBuilder.registerTypeAdapter(Pair::class.java, PairAdapter())
             gsonBuilder.registerTypeAdapter(Triple::class.java, TripleAdapter())
             gsonBuilder.registerTypeAdapter(Instant::class.java, InstantAdapter())
+            gsonBuilder.registerTypeAdapter(Amount::class.java, AmountAdapter())
         }
 
         fun loadScript(): String {

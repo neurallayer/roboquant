@@ -138,13 +138,11 @@ fun large5() {
     val feed = AvroFeed.sp500()
     val strategy = EMACrossover.longTerm()
     val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, ProgressMetric(), AccountSummary(), logger = logger)
+    val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
     val t = measureTimeMillis {
         roboquant.run(feed)
-        logger.summary()
-        roboquant.broker.account.summary()
-        println(roboquant.broker.account.orders.size)
     }
+    roboquant.broker.account.summary().print()
     println(t)
 }
 
@@ -522,7 +520,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.info()
 
-    when ("LARGEREAD") {
+    when ("LARGE5") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()

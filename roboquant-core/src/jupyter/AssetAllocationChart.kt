@@ -25,7 +25,7 @@ import java.math.BigDecimal
  * @property account the account to use
  * @property includeCash also include cash balances next to the portfolio, default is true
  * @property includeAssetClass group per assetClass, default is false
- * @constructor Create empty Asset allocation chart
+ * @constructor Create a new asset allocation chart
  */
 class AssetAllocationChart(
     private val account: Account,

@@ -77,7 +77,6 @@ class Account(
         get() = convert(cash)
 
 
-
     var buyingPower : Amount = Amount(baseCurrency, Double.NaN)
         get() = if (field.value.isNaN()) cashAmount else field
 
@@ -102,7 +101,7 @@ class Account(
     /**
      * Reset the account to its initial state.
      */
-    fun reset() {
+    internal fun reset() {
         time = Instant.MIN
         trades.clear()
         orders.clear()
@@ -118,26 +117,11 @@ class Account(
      * @param now The time to use for the conversion, default is the account last update time
      * @return The total amount
      */
-    fun getTotalCash(currency: Currency = baseCurrency, now: Instant = time): Amount {
+    fun getCashAmount(currency: Currency = baseCurrency, now: Instant = time): Amount {
         return convert(cash, currency, now)
     }
 
-    /**
-     * Summary overview of the cash positions
-     */
-    fun cashSummary(): Summary {
-        val result = Summary("Cash")
-        val fmt = "│%10s│%14s│"
-        val header = String.format(fmt, "currency", "amount")
-        result.add(header)
-        val currencies = cash.currencies
-        for (currency in currencies.distinct().sortedBy { it.displayName }) {
-            val t =  cash.getAmount(currency).formatValue()
-            val line = String.format(fmt,  currency.currencyCode, t)
-            result.add(line)
-        }
-        return result
-    }
+
 
 
     /**
@@ -150,8 +134,9 @@ class Account(
         val s = Summary("Account")
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
+        s.add("equity", equityAmount)
         s.add("buying power", buyingPower)
-        s.add(cashSummary())
+        s.add(cash.summary())
 
         val tradesSummary = Summary("Trades")
         tradesSummary.add("total", trades.size)
@@ -190,7 +175,7 @@ class Account(
         s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
         s.add("buying power", buyingPower)
-        s.add(cashSummary())
+        s.add(cash.summary())
         s.add(portfolio.summary())
         s.add(orders.summary())
         s.add(trades.summary())
@@ -198,8 +183,8 @@ class Account(
     }
 
     /**
-     * Convert a [Cash] value into a single currency amount. If no currencyConverter has been configured and this method is
-     * called and a conversion is required, it will throw a [ConfigurationException].
+     * Convert a [Cash] value into a single currency amount. If no currencyConverter has been configured and this method
+     * is invoked when a conversion is required, it will throw a [ConfigurationException].
      *
      * @param cash The cash values to convert from
      * @param toCurrency The currency to convert the cash to, default is the baseCurrency of the account
@@ -247,8 +232,8 @@ class Account(
     public override fun clone(): Account {
         val account = Account(baseCurrency, currencyConverter)
         account.time = time
-        account.trades.addAll(trades)
-        account.orders.put(orders)
+        account.trades.addAll(trades) // Trade is immutable
+        account.orders.addAll(orders.map { it.clone() }) // order is not immutable
         account.cash.clear()
         account.cash.deposit(cash)
         account.portfolio.put(portfolio)

@@ -21,10 +21,8 @@ import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import java.time.Instant
-import java.time.Period
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 internal class CSVFeedTest {
@@ -72,28 +70,6 @@ internal class CSVFeedTest {
     }
 
     @Test
-    fun find() {
-        val feed = CSVFeed(TestData.dataDir() + "US")
-        val apple = feed.find("AAPL")
-        assertNotNull(apple)
-    }
-
-
-    @Test
-    fun split() {
-        val feed = CSVFeed(TestData.dataDir() + "US")
-        val tfs = feed.split(Period.ofYears(1))
-        var cnt = 0
-        runBlocking {
-            for (tf in tfs)
-                for (event in org.roboquant.feeds.play(feed, tf)) {
-                    cnt++
-                }
-        }
-        assertEquals(feed.timeline.size, cnt)
-    }
-
-    @Test
     fun mergeCSVFeeds() {
         val feed = CSVFeed(TestData.dataDir() + "US")
         val feed2 = CSVFeed(TestData.dataDir() + "EU")
@@ -102,8 +78,6 @@ internal class CSVFeedTest {
         val feed3 = CSVFeed(TestData.dataDir() + "FX")
         feed.merge(feed3)
         assertEquals(2, feed.assets.map { it.currency }.toHashSet().size)
-
-
     }
 
 }

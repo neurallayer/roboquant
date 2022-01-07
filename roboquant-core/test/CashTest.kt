@@ -67,14 +67,11 @@ internal class CashTest {
         wallet.withdraw(12.USD)
         assertEquals(-12.0, wallet.getValue(USD))
 
-        var metrics = wallet.toMap(true)
+        var metrics = wallet.toMap()
         assertContains(metrics, USD)
 
         wallet.deposit(12.USD)
-        metrics = wallet.toMap(true)
-        assertContains(metrics, USD)
-
-        metrics = wallet.toMap(false)
+        metrics = wallet.toMap()
         assertFalse(USD in metrics)
 
 
@@ -83,8 +80,8 @@ internal class CashTest {
     @Test
     fun copy() {
         val wallet = Cash(10.USD, 20.EUR)
-        val wallet2 = wallet.copy()
-        assertEquals(wallet.getAmount(USD), wallet2.getAmount(USD))
+        val wallet2 = wallet + wallet - wallet
+        assertEquals(wallet, wallet2)
     }
 
 

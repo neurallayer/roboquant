@@ -21,7 +21,7 @@ import java.util.*
 
 /**
  * Base class that provides a foundation for data feeds that provide historic prices. It used a TreeMap to store
- * for each time one or more PriceActions.
+ * for each time one or more PriceActions in memory.
  */
 open class HistoricPriceFeed : HistoricFeed {
 
@@ -31,9 +31,7 @@ open class HistoricPriceFeed : HistoricFeed {
         get() = events.keys.toList()
 
     override val assets
-        get() = events.values.map { action -> action.map { it.asset }.distinct() }.flatten().distinct()
-            .toSortedSet()
-
+        get() = events.values.map { actions -> actions.map { it.asset } }.flatten().distinct().toSortedSet()
 
     /**
      * (Re)play the events of the feed using the provided [EventChannel]
@@ -49,11 +47,12 @@ open class HistoricPriceFeed : HistoricFeed {
     }
 
     /**
-     * Add a new action to this feed
+     * Add a new [action] to this feed at the provided [time]
      */
+    @Synchronized
     protected fun add(time: Instant, action: PriceAction) {
-        val l = events.getOrPut(time) { mutableListOf() }
-        l.add(action)
+        val actions = events.getOrPut(time) { mutableListOf() }
+        actions.add(action)
     }
 
     /**
@@ -61,6 +60,16 @@ open class HistoricPriceFeed : HistoricFeed {
      */
     fun clear() {
         events.clear()
+    }
+
+    /**
+     * Merge the events in another [feed] into this feed.
+     */
+    fun merge(feed: HistoricPriceFeed) {
+        for (event in feed.events) {
+            val actions = events.getOrPut(event.key) { mutableListOf() }
+            actions.addAll(event.value)
+        }
     }
 
 }

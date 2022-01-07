@@ -27,7 +27,7 @@ internal class AccountBetaTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears(10, 20)
+        val feed = RandomWalk.lastYears()
         val marketAsset = feed.assets.first()
         val strategy = EMACrossover.shortTerm()
         val accountBetaMetric = AccountBeta(marketAsset, 50)

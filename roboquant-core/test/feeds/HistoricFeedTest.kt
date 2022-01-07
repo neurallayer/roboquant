@@ -14,32 +14,26 @@
  * limitations under the License.
  */
 
-package org.roboquant.brokers
-
+package org.roboquant.feeds
 
 import org.junit.Test
-import org.roboquant.common.Currency.Companion.EUR
-import org.roboquant.common.Currency.Companion.USD
-import org.roboquant.common.USD
-import java.time.Instant
+import org.roboquant.feeds.random.RandomWalk
+import java.time.Period
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
-
-internal class FixedExchangeRatesTest {
+internal class HistoricFeedTest {
 
     @Test
-    fun basic() {
-        val currencyConverter = FixedExchangeRates(USD, EUR to 1.2)
-        assertEquals(USD, currencyConverter.baseCurrency)
+    fun test() {
+        val feed: HistoricFeed = RandomWalk.lastYears()
+        val tfs = feed.split(Period.ofMonths(1))
+        assertEquals(12, tfs.size)
+        assertEquals(10, feed.assets.size)
+        assertFalse(feed.timeline.isEmpty())
 
-        val now = Instant.now()
-        val amount1 = 100.USD
-        val amount2 = currencyConverter.convert(amount1, USD, now)
-        assertEquals(amount1, amount2)
-
-        val amount3 = currencyConverter.convert(amount1, EUR, now)
-        assertEquals(amount1.value/1.2, amount3.value)
+        val s = feed.assets.first().symbol
+        assertEquals(s, feed.find(s).symbol)
     }
-
 
 }

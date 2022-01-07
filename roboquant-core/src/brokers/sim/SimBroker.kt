@@ -221,7 +221,6 @@ class SimBroker(
 
 
     override fun reset() {
-        account.reset()
         account.cash.deposit(initialDeposit)
         metrics.clear()
     }

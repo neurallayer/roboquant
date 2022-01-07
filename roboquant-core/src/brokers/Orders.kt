@@ -71,12 +71,5 @@ class Orders : ArrayList<Order>() {
         return s
     }
 
-    /**
-     *
-     * @param orders
-     */
-    internal fun put(orders: Orders) {
-        addAll(orders.map { it.clone() })
-    }
 
 }

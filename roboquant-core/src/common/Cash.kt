@@ -37,7 +37,7 @@ import java.lang.Exception
  * to a single amount value.
  *
  */
-class Cash(vararg amounts: Amount) {
+class Cash(vararg amounts: Amount) : Cloneable {
 
     private val data = mutableMapOf<Currency, Double>()
 
@@ -51,7 +51,7 @@ class Cash(vararg amounts: Amount) {
      * zero balance will not be included.
      */
     val currencies: List<Currency>
-        get() = data.filter { it.value != 0.0 }.keys.toList()
+        get() = data.keys.sortedBy { it.currencyCode }.toList()
 
 
     /**
@@ -67,7 +67,6 @@ class Cash(vararg amounts: Amount) {
     /**
      * Get the value for a certain [currency]. If the currency is not
      * found, 0.0 will be returned.
-     *
      */
     fun getValue(currency: Currency): Double = data.getOrDefault(currency, 0.0)
 
@@ -75,22 +74,19 @@ class Cash(vararg amounts: Amount) {
     /**
      * Is this cash instance empty, meaning it has zero entries with a non-zero balance.
      */
-    fun isEmpty(): Boolean {
-        return !isNotEmpty()
-    }
+    fun isEmpty() = data.isEmpty()
+
 
     /**
      * Is this cash instance not empty, meaning it has at least one entry that has a non-zero balance.
      */
-    fun isNotEmpty(): Boolean {
-        return data.any { it.value != 0.0 }
-    }
+    fun isNotEmpty() = data.isNotEmpty()
 
     /**
      * Add operator + to allow for cash + cash
      */
     operator fun plus(other: Cash): Cash {
-        val result = this.copy()
+        val result = clone()
         result.deposit(other)
         return result
     }
@@ -99,7 +95,7 @@ class Cash(vararg amounts: Amount) {
      * Add operator - to allow for cash - cash
      */
     operator fun minus(other: Cash): Cash {
-        val result = this.copy()
+        val result = clone()
         result.withdraw(other)
         return result
     }
@@ -110,16 +106,19 @@ class Cash(vararg amounts: Amount) {
      * will be overwritten, otherwise a new entry will be created.
      */
     fun set(amount: Amount) {
-        data[amount.currency] = amount.value
+        if (amount.value == 0.0)
+            data.remove(amount.currency)
+        else
+            data[amount.currency] = amount.value
     }
-
 
     /**
      * Deposit a monetary [amount][Amount]. If the currency already exist, it
      * will be added to the existing value, otherwise a new entry will be created.
      */
     fun deposit(amount: Amount) {
-        data[amount.currency] = data.getOrDefault(amount.currency, 0.0) + amount.value
+        val value = getValue(amount.currency) + amount.value
+        set(Amount(amount.currency, value))
     }
 
 
@@ -168,14 +167,12 @@ class Cash(vararg amounts: Amount) {
     }
 
 
-    /**
-     * Create a copy of this cash instance
-     */
-    fun copy(): Cash {
+    override fun clone(): Cash {
         val result = Cash()
         result.data.putAll(data)
         return result
     }
+
 
     /**
      * Clear this Cash instance, removing all entries.
@@ -187,18 +184,13 @@ class Cash(vararg amounts: Amount) {
 
     /**
      * Provide a map representation of the cash hold where the key is the [Currency] and the value is the amount.
-     * By default, empty values will not be included but this can be changed by setting [includeEmpty] to true.
      */
-    fun toAmounts(includeEmpty: Boolean = false): List<Amount> =
-        if (includeEmpty) data.map { Amount(it.key, it.value) } else data.filter { it.value != 0.0 }.map { Amount(it.key, it.value) }
-
+    fun toAmounts(): List<Amount> = data.map { Amount(it.key, it.value) }
 
     /**
      * Provide a map representation of the cash hold where the key is the [Currency] and the value is the amount.
-     * By default, empty values will not be included but this can be changed by setting [includeEmpty] to true.
      */
-    fun toMap(includeEmpty: Boolean = false): Map<Currency, Double> =
-        if (includeEmpty) data.toMap() else data.filter { it.value != 0.0 }
+    fun toMap(): Map<Currency, Double> = data.toMap()
 
 
     /**
@@ -224,16 +216,27 @@ class Cash(vararg amounts: Amount) {
         return s
     }
 
-    override fun equals(other: Any?): Boolean {
-        return if (other is Cash) {
-            data.toMap() == other.toMap()
-        } else {
-            false
-        }
-    }
+    override fun equals(other: Any?) = if (other is Cash) data == other.data else false
 
     override fun hashCode(): Int {
-        return data.toMap().hashCode()
+        return data.hashCode()
+    }
+
+    /**
+     * Summary overview of the cash positions
+     */
+    fun summary(): Summary {
+        val result = Summary("Cash")
+        val fmt = "│%10s│%14s│"
+        val header = String.format(fmt, "currency", "amount")
+        result.add(header)
+        val currencies = currencies
+        for (currency in currencies.distinct().sortedBy { it.displayName }) {
+            val t =  getAmount(currency).formatValue()
+            val line = String.format(fmt,  currency.currencyCode, t)
+            result.add(line)
+        }
+        return result
     }
 
 }

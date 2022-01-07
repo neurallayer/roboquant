@@ -25,12 +25,11 @@ import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.Background
 import org.roboquant.common.Logging
-import org.roboquant.feeds.*
+import org.roboquant.feeds.HistoricPriceFeed
+import org.roboquant.feeds.PriceAction
 import java.io.File
 import java.io.FileReader
 import java.time.Instant
-import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.absoluteValue
 
 
@@ -45,15 +44,11 @@ import kotlin.math.absoluteValue
 class CSVFeed(
     path: String,
     val config: CSVConfig = CSVConfig.fromFile(path)
-) : HistoricFeed {
+) : HistoricPriceFeed() {
 
-    private var events = listOf<Event>()
-    override val assets = TreeSet<Asset>()
 
     private val logger = Logging.getLogger(CSVFeed::class)
 
-    override val timeline: List<Instant>
-        get() = events.map { it.now }
 
     init {
         val dir = File(path)
@@ -61,11 +56,11 @@ class CSVFeed(
         val startTime = Instant.now().toEpochMilli()
 
         runBlocking {
-            events = readFiles(path)
+            readFiles(path)
         }
 
         val duration = Instant.now().toEpochMilli() - startTime
-        logger.info { "Constructed feed with ${events.size} events, ${assets.size} assets and time-frame of [${timeFrame.toPrettyString()}] in ${duration}ms" }
+        logger.info { "Constructed feed with ${timeline.size} events, ${assets.size} assets and time-frame of [${timeFrame.toPrettyString()}] in ${duration}ms" }
     }
 
 
@@ -88,21 +83,6 @@ class CSVFeed(
         }
     }
 
-    /**
-     * Merge another CSVFeed into this feed. The timelines will be combined and the actions in events merged.
-     * Duplicate events as a result of the merge won't be filtered out.
-     *
-     * @param feed
-     */
-    fun merge(feed: CSVFeed) {
-        val newSteps = events.associate { it.now to it.actions }.toMutableMap()
-        for ((actions, now) in feed.events) {
-            newSteps[now] = newSteps.getOrDefault(now, listOf()) + actions
-        }
-        events = newSteps.toSortedMap().toList().map { Event(it.second, it.first) }
-        assets.addAll(feed.assets)
-        logger.info { "Merged feed has ${events.size} events and ${assets.size} assets" }
-    }
 
 
     /**
@@ -111,15 +91,14 @@ class CSVFeed(
      * @param path
      * @return
      */
-    private suspend fun readFiles(path: String): List<Event> {
+    private suspend fun readFiles(path: String) {
         val files = readPath(path)
         if (files.isEmpty()) {
             logger.warning { "Found no CSV files at $path" }
-            return listOf()
+            return
         }
         logger.fine { "Found ${files.size} CSV files" }
 
-        val result = ConcurrentHashMap<Instant, MutableList<Action>>()
         val deferredList = mutableListOf<Deferred<Unit>>()
         for (file in files) {
             val asset = config.getAsset(file.name)
@@ -127,16 +106,19 @@ class CSVFeed(
             val deferred = Background.async {
                 val steps = readFile(asset, file)
                 for (step in steps) {
+                    add(step.now, step.price)
+                    /*
                     val actions = result.getOrPut(step.now) { mutableListOf() }
                     synchronized(actions) {
                         actions.add(step.price)
                     }
+                     */
                 }
             }
             deferredList.add(deferred)
         }
         deferredList.awaitAll()
-        return result.map { Event(it.value, it.key) }.sorted()
+        // return result.map { Event(it.value, it.key) }.sorted()
     }
 
 
@@ -189,17 +171,6 @@ class CSVFeed(
             last = price
         }
         return true
-    }
-
-
-    /**
-     * @see Feed.play
-     *
-     */
-    override suspend fun play(channel: EventChannel) {
-        for (step in events) {
-            channel.send(step)
-        }
     }
 
 
