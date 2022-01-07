@@ -43,7 +43,7 @@ import java.util.logging.Logger
  */
 class SimBroker(
     private val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
-    currencyConverter: CurrencyConverter? = null,
+    exchangeRates: ExchangeRates? = null,
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val costModel: CostModel = DefaultCostModel(),
     // private val usageCalculator: UsageCalculator = BasicUsageCalculator(),
@@ -58,7 +58,7 @@ class SimBroker(
     private val metrics = mutableMapOf<String, Number>()
 
 
-    override val account: Account = Account(baseCurrency, currencyConverter)
+    override val account: Account = Account(baseCurrency, exchangeRates)
 
     companion object Factory {
 

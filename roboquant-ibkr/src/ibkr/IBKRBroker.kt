@@ -17,7 +17,7 @@
 package org.roboquant.ibkr
 
 import com.ib.client.*
-import ibkr.IBKRCurrencyConverter
+import ibkr.IBKRExchangeRates
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
@@ -43,13 +43,13 @@ class IBKRBroker(
     host: String = "127.0.0.1",
     port: Int = 4002,
     clientId: Int = 1,
-    private val currencyConverter: CurrencyConverter? = IBKRCurrencyConverter(),
+    private val exchangeRates: ExchangeRates? = IBKRExchangeRates(),
     private val accountId: String? = null,
     private val enableOrders: Boolean = false,
 ) : Broker {
 
     private var client: EClientSocket
-    override val account: Account = Account(currencyConverter = currencyConverter)
+    override val account: Account = Account(exchangeRates = exchangeRates)
     val logger = Logging.getLogger(IBKRBroker::class)
     private var orderId = 0
 
@@ -276,14 +276,14 @@ class IBKRBroker(
                     "BuyingPower" -> {
                         account.baseCurrency = Currency.getInstance(currency)
                         account.buyingPower = Amount(account.baseCurrency, value.toDouble())
-                        if (currencyConverter is IBKRCurrencyConverter) currencyConverter.baseCurrency =
+                        if (exchangeRates is IBKRExchangeRates) exchangeRates.baseCurrency =
                             account.baseCurrency
                     }
                     "CashBalance" -> setCash(currency, value)
                     "ExchangeRate" -> {
-                        if (currencyConverter is IBKRCurrencyConverter) {
+                        if (exchangeRates is IBKRExchangeRates) {
                             val c = Currency.getInstance(currency)
-                            currencyConverter.exchangeRates[c] = value.toDouble()
+                            exchangeRates.exchangeRates[c] = value.toDouble()
                         }
                     }
                 }

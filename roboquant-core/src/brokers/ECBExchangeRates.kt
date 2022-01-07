@@ -54,7 +54,7 @@ import kotlin.io.path.notExists
  *
  * @constructor Create a new  ECB exchange rates converter
  */
-class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) : TimeCurrencyConverter(Currency.EUR) {
+class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) : TimeExchangeRates(Currency.EUR) {
 
 
     private val logger: Logger = Logging.getLogger(ECBExchangeRates::class)

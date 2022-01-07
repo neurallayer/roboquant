@@ -37,8 +37,8 @@ import java.util.logging.Level
 
 fun ibkrBroker() {
     val feed = CSVFeed("data/US", CSVConfig(priceAdjust = true))
-    val currencyConverter = FixedExchangeRates(Currency.USD, Currency.EUR to 1.2)
-    val broker = IBKRBroker(currencyConverter = currencyConverter)
+    val exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.2)
+    val broker = IBKRBroker(exchangeRates = exchangeRates)
 
     val strategy = EMACrossover.midTerm()
 
@@ -68,8 +68,8 @@ fun ibkrBroker2() {
 
 fun ibkrBrokerFeed() {
 
-    val currencyConverter = FixedExchangeRates(Currency.EUR, Currency.USD to 0.89)
-    val broker = IBKRBroker(currencyConverter = currencyConverter)
+    val exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.89)
+    val broker = IBKRBroker(exchangeRates = exchangeRates)
     broker.account.portfolio.summary().log()
 
     // Subscribe to all assets in the portfolio

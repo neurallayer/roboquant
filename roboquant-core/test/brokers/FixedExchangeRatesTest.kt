@@ -34,11 +34,11 @@ internal class FixedExchangeRatesTest {
 
         val now = Instant.now()
         val amount1 = 100.USD
-        val amount2 = currencyConverter.convert(amount1, USD, now)
-        assertEquals(amount1, amount2)
+        val r1 = currencyConverter.getRate(amount1, USD, now)
+        assertEquals(1.0, r1)
 
-        val amount3 = currencyConverter.convert(amount1, EUR, now)
-        assertEquals(amount1.value/1.2, amount3.value)
+        val r2 = currencyConverter.getRate(amount1, EUR, now)
+        assertEquals(1.0/1.2, r2)
     }
 
 

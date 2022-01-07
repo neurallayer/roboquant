@@ -26,7 +26,7 @@ import java.util.*
 /**
  * use a feed as the basis for currency conversion rates
  */
-class FeedCurrencyConverter(feed: HistoricFeed, baseCurrency: Currency = Currency.USD, private val priceType: String = "DEFAULT") : TimeCurrencyConverter(baseCurrency) {
+class FeedExchangeRates(feed: HistoricFeed, baseCurrency: Currency = Currency.USD, private val priceType: String = "DEFAULT") : TimeExchangeRates(baseCurrency) {
 
     init {
         setRates(feed)

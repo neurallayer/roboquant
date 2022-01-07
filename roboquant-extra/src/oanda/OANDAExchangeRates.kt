@@ -18,7 +18,7 @@ package org.roboquant.oanda
 
 import com.oanda.v20.Context
 import com.oanda.v20.pricing.PricingGetRequest
-import org.roboquant.brokers.CurrencyConverter
+import org.roboquant.brokers.ExchangeRates
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import org.roboquant.common.toCurrencyPair
@@ -28,7 +28,7 @@ import java.time.Instant
 /**
  * Currency converter used by default by OANDA Broker that uses feed data to update exchange rates.
  */
-class OANDACurrencyConverter(token: String? = null, demoAccount: Boolean = true, private val priceType: String = "DEFAULT") : CurrencyConverter {
+class OANDAExchangeRates(token: String? = null, demoAccount: Boolean = true, private val priceType: String = "DEFAULT") : ExchangeRates {
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
     private val accountID = OANDA.getAccountID(null, ctx)
@@ -62,22 +62,21 @@ class OANDACurrencyConverter(token: String? = null, demoAccount: Boolean = true,
 
     /**
      * Convert between two currencies.
-     * @see CurrencyConverter.convert
+     * @see ExchangeRates.getRate
      *
      * @param to
      * @param amount The total amount to be converted
      * @return The converted amount
      */
-    override fun convert(amount: Amount, to: Currency, now: Instant): Amount {
+    override fun getRate(amount: Amount, to: Currency, time: Instant): Double {
         val from = amount.currency
-        (from === to) && return amount
+        (from === to) && return 1.0
 
-        val corr = when {
+        return when {
             (to === baseCurrency) -> exchangeRates[from]!!
             (from === baseCurrency) -> 1 / exchangeRates[to]!!
             else -> exchangeRates[from]!! * 1 / exchangeRates[to]!!
         }
 
-        return Amount(to, amount.value * corr)
     }
 }

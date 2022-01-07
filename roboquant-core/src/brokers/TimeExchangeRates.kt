@@ -25,7 +25,7 @@ import java.util.*
  * Currency Convertor that supports different rates at different times. Abstract class that is used by
  * FeedCurrencyConverter and ECBCurrencyConverter.
  */
-abstract class TimeCurrencyConverter(protected val baseCurrency: Currency) : CurrencyConverter {
+abstract class TimeExchangeRates(protected val baseCurrency: Currency) : ExchangeRates {
 
     protected val exchangeRates = mutableMapOf<Currency, NavigableMap<Instant,Double>>()
 
@@ -40,22 +40,20 @@ abstract class TimeCurrencyConverter(protected val baseCurrency: Currency) : Cur
 
     /**
      * Convert between two currencies.
-     * @see CurrencyConverter.convert
+     * @see ExchangeRates.getRate
      *
      * @param to
      * @param amount The total amount to be converted
      * @return The converted amount
      */
-    override fun convert(amount: Amount, to: Currency, now: Instant): Amount {
+    override fun getRate(amount: Amount, to: Currency, time: Instant): Double {
         val from = amount.currency
-        (from === to) && return amount
+        (from === to) && return 1.0
 
-        val rate = when {
-            (to === baseCurrency) -> find(from, now)
-            (from === baseCurrency) -> 1.0 / find(to, now)
-            else -> find(from, now) * (1.0 / find(to, now))
+        return when {
+            (to === baseCurrency) -> find(from, time)
+            (from === baseCurrency) -> 1.0 / find(to, time)
+            else -> find(from, time) * (1.0 / find(to, time))
         }
-
-        return Amount(to, amount.value * rate)
     }
 }

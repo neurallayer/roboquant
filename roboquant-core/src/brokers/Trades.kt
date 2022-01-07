@@ -24,11 +24,11 @@ import java.util.*
 
 
 /*
-fun Collection<Trade>.realizedPnL(vararg assets: Asset, timeFrame: TimeFrame? = null): Cash {
+fun Collection<Trade>.realizedPnL(vararg assets: Asset, timeFrame: TimeFrame? = null): Wallet {
     var filteredResults = asSequence()
     if (assets.isNotEmpty()) filteredResults = filteredResults.filter { it.asset in assets }
     if (timeFrame != null) filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
-    val result = Cash()
+    val result = Wallet()
     for (trade in filteredResults) {
         result.deposit(trade.asset.currency, trade.pnl)
     }

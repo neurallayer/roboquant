@@ -28,19 +28,25 @@ import java.time.Instant
  * - the amount to be converted
  *
  */
-interface CurrencyConverter {
+interface ExchangeRates {
 
     /**
-     * Convert a monetary amount from one currency to another currency at a specific moment in time.
+     * Get the exchange rate required to convert a monetary [amount] from one currency [to] another currency at a
+     * specific moment in [time].
      *
      * It depends on the implementation if all parameters are also actually used by the underlying algorithm. If a
      * conversion cannot be processed due to incorrect or missing configuration, it is expected to throw an exception.
      *
-     * @param to The currency that the money needs to be converted to
-     * @param amount The amount (in from currency denoted) that needs to be converted
-     * @param now The time of the conversion
-     * @return The converted amount
      */
-    fun convert(amount: Amount, to: Currency, now: Instant): Amount
+    fun getRate(amount: Amount, to: Currency, time: Instant): Double
+
+    /**
+     * Convert an [amount] [to] an amount in a different currency. This default implementation uses the [getRate] to
+     * calculate the exchange rate to use for this conversion.
+     */
+    fun convert(amount: Amount, to: Currency, time: Instant): Amount {
+        val rate = getRate(amount, to, time)
+        return Amount(to, amount.value * rate )
+    }
 
 }

@@ -124,7 +124,7 @@ class Portfolio : Cloneable {
 
     /**
      * Get total value of this portfolio. The total value is calculated based on the sum of the open positions and
-     * their last known price. The result is returned as a Cash object, so no currency conversion is applied.
+     * their last known price. The result is returned as a [Wallet] object, so no currency conversion is applied.
      */
     val value: Wallet
         get() = positions.value
@@ -139,7 +139,7 @@ class Portfolio : Cloneable {
 
     /**
      * Get total exposure of this portfolio. The total value is calculated based on the sum of the open positions and
-     * their last known price. The result is returned as a Cash object, so no currency conversion is applied.
+     * their last known price. The result is returned as a [Wallet] object, so no currency conversion is applied.
      */
     fun getExposure(): Wallet {
         val result = Wallet()
@@ -152,7 +152,7 @@ class Portfolio : Cloneable {
 
     /**
      * Get total unrealized PNL of this portfolio. The unrealized PNL is calculated based on the open positions and
-     * their average price and last known price. The result is returned as a Cash object, so no currency conversion
+     * their average price and last known price. The result is returned as a [Wallet] object, so no currency conversion
      * is applied.
      */
     fun unrealizedPNL(): Wallet {

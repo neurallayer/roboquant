@@ -31,31 +31,31 @@ import java.time.Instant
  *
  * @constructor Create a new  fixed currency converter
  */
-class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: Map<Currency, Double>) : CurrencyConverter {
+class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: Map<Currency, Double>) : ExchangeRates {
 
     constructor(baseCurrency: Currency, vararg rates: Pair<Currency, Double>) : this(baseCurrency, rates.toMap())
 
 
     /**
      * Convert between two currencies.
-     * @see CurrencyConverter.convert
+     * @see ExchangeRates.getRate
      *
      * @param to
      * @param amount The total amount to be converted
      * @return The converted amount
      */
-    override fun convert(amount: Amount, to: Currency, now: Instant): Amount {
+    override fun getRate(amount: Amount, to: Currency, time: Instant): Double {
         val from = amount.currency
 
-        (from === to) && return amount
+        (from === to) && return 1.0
 
         if (to === baseCurrency)
-            return amount * exchangeRates[from]!!
+            return exchangeRates[from]!!
 
         if (from === baseCurrency)
-            return amount * (1 / exchangeRates[to]!!)
+            return 1.0 / exchangeRates[to]!!
 
-        return amount * (exchangeRates[from]!! * 1 / exchangeRates[to]!!)
+        return exchangeRates[from]!! * 1.0 / exchangeRates[to]!!
     }
 
 }

@@ -20,7 +20,6 @@ import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.JPY
-import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.EUR
 import org.roboquant.common.USD
 import java.time.Instant
@@ -34,26 +33,23 @@ internal class ECBExchangeRatesTest {
         val fileName = TestData.dataDir() + "RATES/eurofxref-hist.csv"
         val x = ECBExchangeRates.fromFile(fileName)
 
-        var c = x.convert(100.EUR, EUR, Instant.now())
-        assertEquals(100.EUR, c)
+        var c = x.getRate(100.EUR, EUR, Instant.now())
+        assertEquals(1.0, c)
 
-        c = x.convert(100.USD, EUR, Instant.now())
-        assertTrue(c.value < 100.0)
+        c = x.getRate(100.USD, EUR, Instant.now())
+        assertTrue(c < 100.0)
 
-        c = x.convert(100.EUR, JPY, Instant.now())
-        assertTrue(c.value > 100.0)
+        c = x.getRate(100.EUR, JPY, Instant.now())
+        assertTrue(c > 100.0)
 
-        val r1 = x.convert(100.USD, JPY, Instant.MIN)
-        val r2 = x.convert(100.USD, JPY, Instant.MIN.plusMillis(1L))
+        val r1 = x.getRate(100.USD, JPY, Instant.MIN)
+        val r2 = x.getRate(100.USD, JPY, Instant.MIN.plusMillis(1L))
         assertEquals(r1, r2)
 
-        c = x.convert(100.USD, JPY, Instant.MAX)
-        assertTrue(c.value > 100.0)
+        c = x.getRate(100.USD, JPY, Instant.MAX)
+        assertTrue(c > 100.0)
 
-        val now = Instant.now()
-        val c1 = x.convert(100.USD, JPY, now)
-        val c2 = x.convert(c1, USD, now)
-        assertEquals(100.USD, c2)
+
 
         val currencies = x.currencies
         assertTrue(JPY in currencies)

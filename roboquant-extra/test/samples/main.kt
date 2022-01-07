@@ -23,7 +23,7 @@ import org.roboquant.alpaca.AlpacaBroker
 import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.alpaca.AlpacaLiveFeed
 import org.roboquant.alpaca.AlpacaPeriod
-import org.roboquant.brokers.FeedCurrencyConverter
+import org.roboquant.brokers.FeedExchangeRates
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
@@ -188,7 +188,7 @@ fun oanda2() {
     Currency.increaseDigits(3)
     val feed = OANDAHistoricFeed()
     feed.retrieveCandles("EUR_USD", "EUR_GBP", "GBP_USD")
-    val currencyConverter = FeedCurrencyConverter(feed)
+    val currencyConverter = FeedExchangeRates(feed)
 
     val roboquant = OANDA.roboquant(EMACrossover(), currencyConverter = currencyConverter)
     roboquant.run(feed)
@@ -223,8 +223,8 @@ fun oandaLivePrices() {
 
 
 fun oandaBroker() {
-    val currencyConverter = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
-    val broker = OANDABroker(currencyConverter = currencyConverter)
+    val exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
+    val broker = OANDABroker(exchangeRates = exchangeRates)
     broker.account.summary().log()
     broker.account.portfolio.summary().log()
     broker.availableAssets.values.summary().log()

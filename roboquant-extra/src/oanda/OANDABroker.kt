@@ -43,14 +43,14 @@ class OANDABroker(
     accountID: String? = null,
     token: String? = null,
     demoAccount: Boolean = true,
-    private val currencyConverter: CurrencyConverter = OANDACurrencyConverter(),
+    private val exchangeRates: ExchangeRates = OANDAExchangeRates(),
     val enableOrders: Boolean = false,
     private val maxLeverage: Double = 30.0
 ) : Broker {
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
     private val accountID = AccountID(OANDA.getAccountID(accountID, ctx))
-    override val account: Account = Account(currencyConverter = currencyConverter)
+    override val account: Account = Account(exchangeRates = exchangeRates)
     private val logger = Logging.getLogger("OANDABroker")
     private lateinit var lastTransactionId: TransactionID
 
@@ -101,7 +101,7 @@ class OANDABroker(
     private fun initAccount() {
         val acc = ctx.account.get(accountID).account
         account.baseCurrency = Currency.getInstance(acc.currency.toString())
-        if (currencyConverter is OANDACurrencyConverter) currencyConverter.baseCurrency = account.baseCurrency
+        if (exchangeRates is OANDAExchangeRates) exchangeRates.baseCurrency = account.baseCurrency
         account.cash.clear()
 
         // Cash in roboquant is excluding the margin part
@@ -150,11 +150,11 @@ class OANDABroker(
     }
 
     private fun updateExchangeRates(event: Event) {
-        if (currencyConverter !is OANDACurrencyConverter) return
+        if (exchangeRates !is OANDAExchangeRates) return
         for (price in event.prices) {
             val asset = price.key
             if (asset.type == AssetType.FOREX) {
-                currencyConverter.setRate(asset.symbol, price.value)
+                exchangeRates.setRate(asset.symbol, price.value)
             }
         }
     }

@@ -23,7 +23,7 @@ internal class OANDACurrencyTest {
     @Test
     fun test() {
         System.getProperty("TEST_OANDA") ?: return
-        val c = OANDACurrencyConverter()
+        val c = OANDAExchangeRates()
 
     }
 }

@@ -42,12 +42,12 @@ import javax.naming.ConfigurationException
  * Only a broker should ever update the account. For other components like a policy, it should be used read-only.
  *
  * @property baseCurrency The base currency to use for things like reporting
- * @property currencyConverter Optional a currency convertor to support multi-currency trading
+ * @property exchangeRates Optional a currency convertor to support multi-currency trading
  * @constructor Create a new Account
  */
 class Account(
     var baseCurrency: Currency = Currency.USD,
-    private val currencyConverter: CurrencyConverter? = null,
+    private val exchangeRates: ExchangeRates? = null,
 ) : Cloneable {
 
     /**
@@ -197,13 +197,13 @@ class Account(
             sum += if (amount.currency === toCurrency) {
                 amount.value
             } else {
-                currencyConverter?.convert(amount, toCurrency, now)?.value
+                val rate = exchangeRates?.getRate(amount, toCurrency, now)
                     ?: throw ConfigurationException("No currency converter defined to convert  $amount to $toCurrency")
+                amount.value * rate
             }
         }
         return Amount(toCurrency, sum)
     }
-
 
 
     /**
@@ -215,9 +215,9 @@ class Account(
         return if (amount.currency === toCurrency || amount.value == 0.0) {
             Amount(toCurrency, amount.value)
         } else {
-            currencyConverter?.convert(amount, toCurrency, now)
+            val rate = exchangeRates?.getRate(amount, toCurrency, now)
                 ?: throw ConfigurationException("No currency converter defined to convert $amount to $toCurrency")
-
+            Amount(toCurrency, amount.value * rate)
         }
     }
 
@@ -230,7 +230,7 @@ class Account(
      * @return a new snapshot of the account
      */
     public override fun clone(): Account {
-        val account = Account(baseCurrency, currencyConverter)
+        val account = Account(baseCurrency, exchangeRates)
         account.time = time
         account.trades.addAll(trades) // Trade is immutable
         account.orders.addAll(orders.map { it.clone() }) // order is not immutable

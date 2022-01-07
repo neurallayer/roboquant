@@ -21,7 +21,7 @@ import com.oanda.v20.ContextBuilder
 import com.oanda.v20.account.AccountID
 import com.oanda.v20.primitives.InstrumentType
 import org.roboquant.Roboquant
-import org.roboquant.brokers.FeedCurrencyConverter
+import org.roboquant.brokers.FeedExchangeRates
 import org.roboquant.brokers.sim.DefaultCostModel
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Asset
@@ -40,7 +40,7 @@ object OANDA {
     - Being short is as common as being long
     - The spread (for common currency pairs) is lower than most stocks
      */
-    fun roboquant(strategy: Strategy, vararg metrics: Metric, currencyConverter: FeedCurrencyConverter? = null): Roboquant<MemoryLogger> {
+    fun roboquant(strategy: Strategy, vararg metrics: Metric, currencyConverter: FeedExchangeRates? = null): Roboquant<MemoryLogger> {
         // We allow shorting
         val policy = DefaultPolicy(shorting = true)
 
@@ -48,7 +48,7 @@ object OANDA {
         // We select 2.0 BIPS
         val costModel = DefaultCostModel(2.0)
         // val marginCalculator = OANDAMarginCalculator()
-        val broker = SimBroker(costModel = costModel, currencyConverter = currencyConverter)
+        val broker = SimBroker(costModel = costModel, exchangeRates = currencyConverter)
 
         return Roboquant(strategy, *metrics, policy = policy, broker = broker)
     }
