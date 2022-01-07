@@ -48,7 +48,7 @@ import kotlin.random.asJavaRandom
  *
  */
 class RandomWalk(
-    override val timeline: List<Instant>,
+    timeline: List<Instant>,
     nAssets: Int = 10,
     generateBars: Boolean = true,
     seed: Long = Config.seed,
@@ -57,32 +57,23 @@ class RandomWalk(
     maxDayRange: Double = 4.0,
     symbolLength: Int = 4,
     template: Asset = Asset("TEMPLATE")
-) : HistoricFeed {
+) : HistoricPriceFeed() {
 
     private val random = Random(seed)
-    private val data = mutableMapOf<Asset, List<PriceAction>>()
 
-    /**
-     * The assets that are in this feed
-     */
-    override val assets
-        get() = data.keys.toSortedSet()
 
 
     init {
-        val size = timeline.size
-        repeat(nAssets) {
-            var asset: Asset?
-            do {
-                val symbol = generateSymbol(symbolLength)
-                asset = AssetBuilderFactory.build(symbol, template)
-            } while (asset in data)
 
-            val prices = if (generateBars)
-                generateBars(asset!!, size, minVolume, maxVolume, maxDayRange)
+
+        repeat(nAssets) {
+            val symbol = generateSymbol(symbolLength)
+            val asset = AssetBuilderFactory.build(symbol, template)
+
+            if (generateBars)
+                generateBars(asset, timeline, minVolume, maxVolume, maxDayRange)
             else
-                generateSinglePrice(asset!!, size, minVolume, maxVolume)
-            data[asset] = prices
+                generateSinglePrice(asset, timeline, minVolume, maxVolume)
         }
 
     }
@@ -126,16 +117,15 @@ class RandomWalk(
      */
     private fun generateBars(
         asset: Asset,
-        size: Int,
+        timeline: List<Instant>,
         minVolume: Int,
         maxVolume: Int,
         maxDayRange: Double
-    ): List<PriceAction> {
-        val data = mutableListOf<PriceBar>()
+    ) {
         var prevPrice = 100.0
         val plusVolume = maxVolume - minVolume
         val javaRandom = random.asJavaRandom()
-        repeat(size) {
+        for (time in timeline) {
             val newValue = javaRandom.nextGaussian() + prevPrice
             val v = mutableListOf(newValue)
             repeat(3) {
@@ -149,29 +139,26 @@ class RandomWalk(
             } else {
                 PriceBar(asset, v[2], v[3], v[0], v[1], volume)
             }
-            data.add(action)
+            add(time, action)
 
             prevPrice = if (newValue > 10.0) newValue else 10.0
         }
-        return data
     }
 
     /**
      * Generate random single price actions
      */
-    private fun generateSinglePrice(asset: Asset, size: Int, minVolume: Int, maxVolume: Int): List<PriceAction> {
-        val data = mutableListOf<TradePrice>()
+    private fun generateSinglePrice(asset: Asset, timeline: List<Instant>, minVolume: Int, maxVolume: Int) {
         var prevPrice = 100.0
         val javaRandom = random.asJavaRandom()
         val plusVolume = maxVolume - minVolume
-        repeat(size) {
+        for (time in timeline) {
             val newValue = javaRandom.nextGaussian() + prevPrice
             val volume = round(minVolume + (plusVolume * javaRandom.nextDouble()))
             val action = TradePrice(asset, newValue, volume)
-            data.add(action)
+            add(time, action)
             prevPrice = if (newValue > 10.0) newValue else 10.0
         }
-        return data
     }
 
     /**
@@ -180,22 +167,6 @@ class RandomWalk(
     private fun generateSymbol(symbolLength: Int): String {
         val alphabet = ('A'..'Z').toList()
         return List(symbolLength) { alphabet.random(random) }.joinToString("")
-    }
-
-
-    /**
-     * See [Feed.play]
-     */
-    override suspend fun play(channel: EventChannel) {
-        for ((i, now) in timeline.withIndex()) {
-            !channel.timeFrame.contains(now) && continue
-            val result = mutableListOf<PriceAction>()
-            for (actions in data.values) {
-                result.add(actions[i])
-            }
-            val event = Event(result, now)
-            channel.send(event)
-        }
     }
 
 

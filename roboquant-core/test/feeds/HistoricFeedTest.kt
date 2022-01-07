@@ -21,6 +21,7 @@ import org.roboquant.feeds.random.RandomWalk
 import java.time.Period
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class HistoricFeedTest {
 
@@ -35,5 +36,14 @@ internal class HistoricFeedTest {
         val s = feed.assets.first().symbol
         assertEquals(s, feed.find(s).symbol)
     }
+
+    @Test
+    fun testMerge() {
+        val feed1: HistoricPriceFeed = RandomWalk.lastYears(nAssets = 2)
+        val feed2: HistoricPriceFeed = RandomWalk.lastYears(nAssets = 3)
+        feed1.merge(feed2)
+        assertTrue(feed1.assets.containsAll(feed2.assets))
+    }
+
 
 }
