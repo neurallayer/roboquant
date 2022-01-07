@@ -16,7 +16,7 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.common.Cash
+import org.roboquant.common.Wallet
 import org.roboquant.orders.Order
 import java.lang.Double.max
 import kotlin.math.absoluteValue
@@ -68,8 +68,8 @@ class DefaultCostModel(private val bips: Double = 10.0) : CostModel {
 class CommissionBasedCostModel(
     private val slippage: Int = 5,
     private val fee: Int = 10,
-    private val minimumAmount: Cash = Cash(),
-    private val maximumAmount: Cash = Cash()
+    private val minimumAmount: Wallet = Wallet(),
+    private val maximumAmount: Wallet = Wallet()
 ) : CostModel {
 
     override fun calculate(order: Order, execution: Execution): Pair<Double, Double> {

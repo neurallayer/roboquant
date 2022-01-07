@@ -2,7 +2,7 @@ package org.roboquant.brokers.sim
 
 import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
-import org.roboquant.common.Cash
+import org.roboquant.common.Wallet
 
 /**
  * Interface for usage calculations. It is used to calculate how much cash is required for holding a set of
@@ -16,7 +16,7 @@ interface UsageCalculator {
     /**
      * Calculate the used cash for the existing [positions] and (possible) new [changes]
      */
-    fun calculate(positions: List<Position>, changes: List<Position> = emptyList()) : Cash
+    fun calculate(positions: List<Position>, changes: List<Position> = emptyList()) : Wallet
 }
 
 /**
@@ -25,8 +25,8 @@ interface UsageCalculator {
  */
 class BasicUsageCalculator : UsageCalculator {
 
-    override fun calculate(positions: List<Position>, changes: List<Position>): Cash {
-        val usage = Cash()
+    override fun calculate(positions: List<Position>, changes: List<Position>): Wallet {
+        val usage = Wallet()
         for (p in positions) {
             if (p.long)
                 usage.deposit(p.totalCost)
@@ -47,8 +47,8 @@ class BasicUsageCalculator : UsageCalculator {
  */
 class RegTCalculator : UsageCalculator {
 
-    override fun calculate(positions: List<Position>, changes: List<Position>): Cash {
-        val margin = Cash()
+    override fun calculate(positions: List<Position>, changes: List<Position>): Wallet {
+        val margin = Wallet()
         val currentPos = mutableMapOf<Asset, Double>()
 
         // Maintance margin
@@ -79,8 +79,8 @@ class RegTCalculator : UsageCalculator {
  */
 class LeveragedUsageCalculator(val leverage: Double = 1.0) : UsageCalculator {
 
-    override fun calculate(positions: List<Position>, changes: List<Position>): Cash {
-        val margin = Cash()
+    override fun calculate(positions: List<Position>, changes: List<Position>): Wallet {
+        val margin = Wallet()
         for (p in positions) {
             if (p.long)
                 margin.deposit(p.totalCost * (1.0/leverage))

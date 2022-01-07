@@ -18,7 +18,7 @@ package org.roboquant.brokers
 
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
-import org.roboquant.common.Cash
+import org.roboquant.common.Wallet
 import org.roboquant.common.Summary
 import org.roboquant.feeds.Event
 import java.text.DecimalFormat
@@ -126,13 +126,13 @@ class Portfolio : Cloneable {
      * Get total value of this portfolio. The total value is calculated based on the sum of the open positions and
      * their last known price. The result is returned as a Cash object, so no currency conversion is applied.
      */
-    val value: Cash
+    val value: Wallet
         get() = positions.value
 
-    val longValue : Cash
+    val longValue : Wallet
         get() = longPositions.value
 
-    val shortValue : Cash
+    val shortValue : Wallet
         get() = shortPositions.value
 
 
@@ -141,8 +141,8 @@ class Portfolio : Cloneable {
      * Get total exposure of this portfolio. The total value is calculated based on the sum of the open positions and
      * their last known price. The result is returned as a Cash object, so no currency conversion is applied.
      */
-    fun getExposure(): Cash {
-        val result = Cash()
+    fun getExposure(): Wallet {
+        val result = Wallet()
         for (position in positions) {
             result.deposit(position.exposure)
         }
@@ -155,8 +155,8 @@ class Portfolio : Cloneable {
      * their average price and last known price. The result is returned as a Cash object, so no currency conversion
      * is applied.
      */
-    fun unrealizedPNL(): Cash {
-        val result = Cash()
+    fun unrealizedPNL(): Wallet {
+        val result = Wallet()
         for (position in positions) {
             result.deposit(position.unrealizedPNL)
         }

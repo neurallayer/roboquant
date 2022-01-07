@@ -85,8 +85,8 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
      * @param timeFrame An optional timeframe to restrict the PnL calculation to
      * @return The P&L as a cash value
      */
-    fun realizedPnL(timeFrame: TimeFrame? = null): Cash {
-        val result = Cash()
+    fun realizedPnL(timeFrame: TimeFrame? = null): Wallet {
+        val result = Wallet()
         var filteredResults = asSequence()
         if (timeFrame != null)
             filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
@@ -107,8 +107,8 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
      * @param timeFrame
      * @return
      */
-    fun totalFee(timeFrame: TimeFrame? = null): Cash {
-        val result = Cash()
+    fun totalFee(timeFrame: TimeFrame? = null): Wallet {
+        val result = Wallet()
         val filteredResults = asSequence().filter(timeFrame)
 
         filteredResults.forEach {

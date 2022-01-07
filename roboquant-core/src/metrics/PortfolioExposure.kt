@@ -17,7 +17,7 @@
 package org.roboquant.metrics
 
 import org.roboquant.brokers.Account
-import org.roboquant.common.Cash
+import org.roboquant.common.Wallet
 import org.roboquant.feeds.Event
 import kotlin.math.absoluteValue
 
@@ -43,8 +43,8 @@ class PortfolioExposure : SimpleMetric() {
      * @return
      */
     override fun calc(account: Account, event: Event): MetricResults {
-        val longExposure = Cash()
-        val shortExposure = Cash()
+        val longExposure = Wallet()
+        val shortExposure = Wallet()
         val now = event.now
 
         for (position in account.portfolio.positions) {

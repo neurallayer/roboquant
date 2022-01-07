@@ -94,7 +94,7 @@ fun ibkrFeed() {
     val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
     feed.subscribe(asset)
 
-    val cash = Cash(1_000_000.EUR)
+    val cash = Wallet(1_000_000.EUR)
     val broker = SimBroker(cash)
 
     val strategy = EMACrossover.shortTerm()
@@ -112,7 +112,7 @@ fun ibkrHistoricFeed() {
     val template = Asset("", AssetType.STOCK, "EUR", "AEB")
     feed.retrieve(template.copy(symbol = "ABN"), template.copy(symbol = "ASML"), template.copy(symbol = "KPN"))
 
-    val cash = Cash(1_000_000.EUR)
+    val cash = Wallet(1_000_000.EUR)
     val broker = SimBroker(cash)
 
     val strategy = EMACrossover.shortTerm()

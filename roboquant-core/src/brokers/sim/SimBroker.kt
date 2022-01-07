@@ -42,7 +42,7 @@ import java.util.logging.Logger
  * @constructor Create new Sim broker
  */
 class SimBroker(
-    private val initialDeposit: Cash = Cash(1_000_000.00.USD),
+    private val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     currencyConverter: CurrencyConverter? = null,
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val costModel: CostModel = DefaultCostModel(),
@@ -73,7 +73,7 @@ class SimBroker(
          */
         fun withDeposit(amount: Double, currencyCode: String = "USD"): SimBroker {
             val currency = Currency.getInstance(currencyCode)
-            return SimBroker(Cash(Amount(currency, amount)))
+            return SimBroker(Wallet(Amount(currency, amount)))
         }
 
     }

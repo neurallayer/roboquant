@@ -5,7 +5,7 @@ import java.math.BigDecimal
 data class Amount(val currency: Currency, val value: Double) {
     operator fun times(d: Number): Amount = Amount(currency, value * d.toDouble())
     operator fun plus(d: Number): Amount = Amount(currency, value + d.toDouble())
-    operator fun plus(other: Amount): Cash = Cash(this, other)
+    operator fun plus(other: Amount): Wallet = Wallet(this, other)
 
 
     /**

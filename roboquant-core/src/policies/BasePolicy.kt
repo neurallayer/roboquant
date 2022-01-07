@@ -21,7 +21,7 @@ package org.roboquant.policies
 import org.roboquant.brokers.Account
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
-import org.roboquant.common.Cash
+import org.roboquant.common.Wallet
 import org.roboquant.common.Currency
 import org.roboquant.metrics.MetricResults
 
@@ -71,7 +71,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
         return if (assetCurrency === account.baseCurrency) {
             amount
         } else {
-            val w = Cash(Amount(account.baseCurrency, amount))
+            val w = Wallet(Amount(account.baseCurrency, amount))
             account.convert(w, assetCurrency).value
         }
 

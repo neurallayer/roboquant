@@ -19,7 +19,7 @@ package org.roboquant.brokers
 
 import org.junit.Test
 import org.roboquant.common.Asset
-import org.roboquant.common.Cash
+import org.roboquant.common.Wallet
 import org.roboquant.common.Currency
 import org.roboquant.common.USD
 import kotlin.test.assertEquals
@@ -36,7 +36,7 @@ internal class AccountTest {
         assertTrue(account.portfolio.isEmpty())
 
         val e = account.equity
-        assertEquals(Cash(), e)
+        assertEquals(Wallet(), e)
 
         assertTrue(account.trades.isEmpty())
         assertTrue(account.trades.realizedPnL().isEmpty())

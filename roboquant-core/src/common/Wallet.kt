@@ -21,10 +21,10 @@ import java.lang.Exception
 
 
 /**
- * Cash can contain amounts of multiple currencies at the same time. So for example a single instance of Cash can
+ * Wallet can contain amounts of different currencies at the same time. So for example a single instance of Wallet can
  * contain both USD and EURO amounts.
  *
- * You can add other currencies to a Cash instance. If the currency is already contained in the Cash instance, it will
+ * You can add other currencies to a Wallet instance. If the currency is already contained in the Wallet instance, it will
  * be added to the existing amount, otherwise the currency and amount will be added.
  *
  * It is used throughout roboquant in order to support trading in multiple assets with different currency denominations.
@@ -32,12 +32,12 @@ import java.lang.Exception
  * For storing monetary amounts internally it uses [Double], since it is accurate enough for trading while providing large
  * performance benefits over BigDecimal.
  *
- * Cash itself will never convert the currencies it contains. However, an account can do this if required, provided the
- * appropriate conversion rates are available. See also [Account.convert] on how to convert a Cash instance
+ * Wallet itself will never convert the currencies it contains. However, an account can do this if required, provided the
+ * appropriate conversion rates are available. See also [Account.convert] on how to convert a Wallet instance
  * to a single amount value.
  *
  */
-class Cash(vararg amounts: Amount) : Cloneable {
+class Wallet(vararg amounts: Amount) : Cloneable {
 
     private val data = mutableMapOf<Currency, Double>()
 
@@ -47,7 +47,7 @@ class Cash(vararg amounts: Amount) : Cloneable {
 
 
     /**
-     * Return the currencies that are hold in this Cash object. Currencies with
+     * Return the currencies that are hold in this Wallet object. Currencies with
      * zero balance will not be included.
      */
     val currencies: List<Currency>
@@ -85,7 +85,7 @@ class Cash(vararg amounts: Amount) : Cloneable {
     /**
      * Add operator + to allow for cash + cash
      */
-    operator fun plus(other: Cash): Cash {
+    operator fun plus(other: Wallet): Wallet {
         val result = clone()
         result.deposit(other)
         return result
@@ -94,7 +94,7 @@ class Cash(vararg amounts: Amount) : Cloneable {
     /**
      * Add operator - to allow for cash - cash
      */
-    operator fun minus(other: Cash): Cash {
+    operator fun minus(other: Wallet): Wallet {
         val result = clone()
         result.withdraw(other)
         return result
@@ -123,9 +123,9 @@ class Cash(vararg amounts: Amount) : Cloneable {
 
 
     /**
-     * Deposit the cash hold in an [other] Cash instance into this one.
+     * Deposit the cash hold in an [other] Wallet instance into this one.
      */
-    fun deposit(other: Cash) {
+    fun deposit(other: Wallet) {
         for (amount in other.toAmounts()) { deposit(amount) }
     }
 
@@ -151,9 +151,9 @@ class Cash(vararg amounts: Amount) : Cloneable {
 
 
     /**
-     * Withdraw the cash hold in an [other] Cash instance into this one.
+     * Withdraw the cash hold in an [other] Wallet instance into this one.
      */
-    fun withdraw(other: Cash) {
+    fun withdraw(other: Wallet) {
        for (amount in other.toAmounts()) { withdraw(amount) }
     }
 
@@ -167,15 +167,15 @@ class Cash(vararg amounts: Amount) : Cloneable {
     }
 
 
-    override fun clone(): Cash {
-        val result = Cash()
+    override fun clone(): Wallet {
+        val result = Wallet()
         result.data.putAll(data)
         return result
     }
 
 
     /**
-     * Clear this Cash instance, removing all entries.
+     * Clear this Wallet instance, removing all entries.
      */
     fun clear() {
         data.clear()
@@ -216,7 +216,7 @@ class Cash(vararg amounts: Amount) : Cloneable {
         return s
     }
 
-    override fun equals(other: Any?) = if (other is Cash) data == other.data else false
+    override fun equals(other: Any?) = if (other is Wallet) data == other.data else false
 
     override fun hashCode(): Int {
         return data.hashCode()

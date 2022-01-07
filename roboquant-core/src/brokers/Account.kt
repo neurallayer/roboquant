@@ -19,7 +19,7 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.Amount
-import org.roboquant.common.Cash
+import org.roboquant.common.Wallet
 import org.roboquant.common.Currency
 import org.roboquant.common.Summary
 import java.time.Instant
@@ -70,7 +70,7 @@ class Account(
      * Total cash balance hold in this account. This is the account cash deposits plus all realized PNL so far.
      * PLase note that not all this cash is available.
      */
-    val cash : Cash = Cash()
+    val cash : Wallet = Wallet()
 
 
     val cashAmount : Amount
@@ -183,17 +183,17 @@ class Account(
     }
 
     /**
-     * Convert a [Cash] value into a single currency amount. If no currencyConverter has been configured and this method
+     * Convert a [Wallet] value into a single currency amount. If no currencyConverter has been configured and this method
      * is invoked when a conversion is required, it will throw a [ConfigurationException].
      *
-     * @param cash The cash values to convert from
+     * @param wallet The cash values to convert from
      * @param toCurrency The currency to convert the cash to, default is the baseCurrency of the account
      * @param now The time to use for the exchange rate, default is the last update time of the account
      * @return The converted amount as a Double
      */
-    fun convert(cash: Cash, toCurrency: Currency = baseCurrency, now: Instant = time): Amount {
+    fun convert(wallet: Wallet, toCurrency: Currency = baseCurrency, now: Instant = time): Amount {
         var sum = 0.0
-        for (amount in cash.toAmounts()) {
+        for (amount in wallet.toAmounts()) {
             sum += if (amount.currency === toCurrency) {
                 amount.value
             } else {

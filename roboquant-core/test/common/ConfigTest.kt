@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.roboquant
+package org.roboquant.common
 
 
-import org.roboquant.common.Config
 import kotlin.test.*
 
 internal class ConfigTest {

@@ -16,29 +16,24 @@
 
 @file:Suppress("PrivatePropertyName", "PrivatePropertyName")
 
-package org.roboquant
+package org.roboquant.common
 
 import kotlin.test.*
 
-import org.roboquant.common.Cash
-import org.roboquant.common.Currency
-import org.roboquant.common.EUR
-import org.roboquant.common.USD
-
-internal class CashTest {
+internal class WalletTest {
 
     private val USD = Currency.getInstance("USD")
     private val EUR = Currency.getInstance("EUR")
 
     @Test
     fun getCurrencies() {
-        var wallet = Cash()
+        var wallet = Wallet()
         assertTrue(wallet.currencies.isEmpty())
-        wallet = Cash(10.USD, 20.EUR)
+        wallet = Wallet(10.USD, 20.EUR)
         assertEquals(2, wallet.currencies.size)
         assertTrue(wallet.isMultiCurrency())
 
-        wallet = Cash(10.USD, 0.EUR)
+        wallet = Wallet(10.USD, 0.EUR)
         assertEquals(1, wallet.currencies.size)
 
         assertTrue { wallet.toString().contains("USD") }
@@ -46,7 +41,7 @@ internal class CashTest {
 
     @Test
     fun deposit() {
-        val wallet = Cash()
+        val wallet = Wallet()
         wallet.deposit(12.USD)
         assertEquals(12.0, wallet.getValue(USD))
 
@@ -63,7 +58,7 @@ internal class CashTest {
 
     @Test
     fun withdraw() {
-        val wallet = Cash()
+        val wallet = Wallet()
         wallet.withdraw(12.USD)
         assertEquals(-12.0, wallet.getValue(USD))
 
@@ -79,7 +74,7 @@ internal class CashTest {
 
     @Test
     fun copy() {
-        val wallet = Cash(10.USD, 20.EUR)
+        val wallet = Wallet(10.USD, 20.EUR)
         val wallet2 = wallet + wallet - wallet
         assertEquals(wallet, wallet2)
     }
@@ -87,7 +82,7 @@ internal class CashTest {
 
     @Test
     fun operators() {
-        val wallet = Cash(10.USD, 20.EUR)
+        val wallet = Wallet(10.USD, 20.EUR)
         val wallet2 = wallet + wallet - wallet
         assertEquals(wallet, wallet2)
     }
