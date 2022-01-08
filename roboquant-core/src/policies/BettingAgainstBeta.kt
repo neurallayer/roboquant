@@ -136,11 +136,11 @@ open class BettingAgainstBeta(
         buffers.add(event)
 
         // Check if it is time to re-balance the portfolio
-        if (event.now >= rebalanceDate && buffers.isAvailable()) {
+        if (event.time >= rebalanceDate && buffers.isAvailable()) {
             val betas = calculateBetas()
 
             // Update the re-balance date
-            rebalanceDate = event.now + holdingPeriodDays.days
+            rebalanceDate = event.time + holdingPeriodDays.days
             return rebalance(betas, account, event)
         }
         return listOf()

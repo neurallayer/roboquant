@@ -33,10 +33,10 @@ interface TimeInForce {
      * Is the order expired given the current time (now) and when it was originally placed and the fill in comparison
      * to total fill
      *
-     * @param now
+     * @param time
      * @return
      */
-    fun isExpired(order: Order, now: Instant, fill: Double, total: Double): Boolean
+    fun isExpired(order: Order, time: Instant, fill: Double, total: Double): Boolean
 
 }
 
@@ -55,10 +55,10 @@ class GTC(private val maxDays: Int = 90) : TimeInForce {
      * @see TimeInForce.isExpired
      *
      */
-    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double): Boolean {
-        if (now == order.placed) return false
+    override fun isExpired(order: Order, time: Instant, fill: Double, total: Double): Boolean {
+        if (time == order.placed) return false
         val max = order.placed.plus(maxDays.toLong(), ChronoUnit.DAYS)
-        return now > max
+        return time > max
     }
 
     override fun toString(): String {
@@ -80,7 +80,7 @@ class GTD(private val date: Instant) : TimeInForce {
      * @see TimeInForce.isExpired
      *
      */
-    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double) = now > date
+    override fun isExpired(order: Order, time: Instant, fill: Double, total: Double) = time > date
 
     override fun toString(): String {
         return "GTD($date)"
@@ -99,7 +99,7 @@ class IOC : TimeInForce {
     /**
      *
      */
-    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double) = now > order.placed
+    override fun isExpired(order: Order, time: Instant, fill: Double, total: Double) = time > order.placed
 
     override fun toString(): String {
         return "IOC"
@@ -117,9 +117,9 @@ class DAY : TimeInForce {
     /**
      *
      */
-    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double): Boolean {
+    override fun isExpired(order: Order, time: Instant, fill: Double, total: Double): Boolean {
         val exchange = order.asset.exchange
-        return !exchange.sameDay(order.placed, now)
+        return !exchange.sameDay(order.placed, time)
     }
 
     override fun toString(): String {
@@ -141,7 +141,7 @@ class FOK : TimeInForce {
      * @see TimeInForce.isExpired
      *
      */
-    override fun isExpired(order: Order, now: Instant, fill: Double, total: Double): Boolean {
+    override fun isExpired(order: Order, time: Instant, fill: Double, total: Double): Boolean {
         return fill != 0.0 && fill != total
     }
 

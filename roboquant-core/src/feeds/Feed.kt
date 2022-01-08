@@ -34,10 +34,10 @@ import java.util.*
 interface Feed {
 
     /**
-     * Timeframe of the feed. In case the timeframe is not known upfront, return the full timeframe [TimeFrame.FULL]
+     * Timeframe of the feed. In case the timeframe is not known upfront, return the full timeframe [TimeFrame.INFINITY]
      */
     val timeFrame: TimeFrame
-        get() = TimeFrame.FULL
+        get() = TimeFrame.INFINITY
 
     /**
      * (Re)play the events of the feed on put these events on the provided [channel]. Once done, return from this method.
@@ -76,7 +76,7 @@ interface AssetFeed : Feed {
  * restricted to a certain [timeFrame] and an additional [filter] can be provided.
  */
 inline fun <reified T : Action> Feed.filter(
-    timeFrame: TimeFrame = TimeFrame.FULL,
+    timeFrame: TimeFrame = TimeFrame.INFINITY,
     crossinline filter: (T) -> Boolean = { true }
 ): List<Pair<Instant, T>> = runBlocking {
 
@@ -91,7 +91,7 @@ inline fun <reified T : Action> Feed.filter(
     try {
         while (true) {
             val o = channel.receive()
-            val newResults = o.actions.filterIsInstance<T>().filter(filter).map { Pair(o.now, it) }
+            val newResults = o.actions.filterIsInstance<T>().filter(filter).map { Pair(o.time, it) }
             result.addAll(newResults)
         }
 

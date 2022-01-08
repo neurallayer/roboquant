@@ -40,7 +40,7 @@ class CombinedAssetStrategy(val strategyBuilder: (asset: Asset) -> Strategy) : S
      */
     override fun generate(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
-        val now = event.now
+        val now = event.time
         event.prices.forEach { (asset, priceAction) ->
             val strategy = strategies.getOrPut(asset) { strategyBuilder(asset) }
             val newStep = Event(listOf(priceAction), now)

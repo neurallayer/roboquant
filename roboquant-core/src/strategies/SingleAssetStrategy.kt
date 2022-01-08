@@ -37,7 +37,7 @@ abstract class SingleAssetStrategy(
         val result = mutableListOf<Signal>()
         val priceAction = event.prices[asset]
         if (priceAction != null) {
-            val signal = generate(priceAction, event.now)
+            val signal = generate(priceAction, event.time)
             result.addNotNull(signal)
         }
         return result

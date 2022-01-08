@@ -79,14 +79,16 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
     }
 
 
-    private fun position(r: DataFileReader<GenericRecord>, now: Instant) {
-        var idx = index.binarySearch { it.first.compareTo(now) }
+    private fun position(r: DataFileReader<GenericRecord>, time: Instant) {
+        var idx = index.binarySearch { it.first.compareTo(time) }
         idx = if (idx < 0) -idx - 1 else idx
         if (idx >= index.size) idx = index.size - 1
         if (idx >= 0) r.seek(index[idx].second)
     }
 
-
+    /**
+     * Both build an index of where each time starts and get all assets found
+     */
     private fun buildIndex() {
         index.clear()
         var last = Instant.MIN
@@ -119,7 +121,6 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
      * @return
      */
     override suspend fun play(channel: EventChannel) {
-        val lookup = assetLookup
         val tf = channel.timeFrame
         var last = Instant.MIN
         var actions = mutableListOf<PriceAction>()
@@ -143,7 +144,7 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
                 if (now >= tf.end) break
 
                 val assetId = rec.get(1).toString()
-                val asset = lookup.getOrPut(assetId) { Asset.deserialize(assetId) }
+                val asset = assetLookup.getOrPut(assetId) { Asset.deserialize(assetId) }
                 val actionType = rec.get(2) as Int
 
                 @Suppress("UNCHECKED_CAST")

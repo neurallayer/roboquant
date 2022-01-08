@@ -35,7 +35,7 @@ import java.util.*
 class PriceCorrelationChart(
     private val feed: Feed,
     private val assets: Collection<Asset>,
-    private val timeFrame: TimeFrame = TimeFrame.FULL,
+    private val timeFrame: TimeFrame = TimeFrame.INFINITY,
     private val priceType: String = "DEFAULT",
     private val scale: Int = 2,
     private val minObservations: Int = 3

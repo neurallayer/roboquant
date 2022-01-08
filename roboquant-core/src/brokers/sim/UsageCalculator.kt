@@ -1,8 +1,8 @@
 package org.roboquant.brokers.sim
 
-import org.roboquant.brokers.Position
-import org.roboquant.common.Asset
-import org.roboquant.common.Wallet
+import org.roboquant.brokers.Account
+import org.roboquant.common.Amount
+import org.roboquant.common.sum
 
 /**
  * Interface for usage calculations. It is used to calculate how much cash is required for holding a set of
@@ -14,80 +14,52 @@ import org.roboquant.common.Wallet
 interface UsageCalculator {
 
     /**
-     * Calculate the used cash for the existing [positions] and (possible) new [changes]
+     * Calculate the reamining buying power for an account
      */
-    fun calculate(positions: List<Position>, changes: List<Position> = emptyList()) : Wallet
+    fun calculate(account: Account) : Amount
 }
 
 /**
- * Basic Margin calculator, long positions usage are against their initial cost and short positions against their
- * last known exposure. So there is no leverage involved. Orders are ignored until they materialize into positions.
+ * Basic calculator that calculates: cash balance - open orders. So no equity or leverage is involved.
  */
-class BasicUsageCalculator : UsageCalculator {
+class BasicUsageCalculator(private val minimum: Double = 0.0) : UsageCalculator {
 
-    override fun calculate(positions: List<Position>, changes: List<Position>): Wallet {
-        val usage = Wallet()
-        for (p in positions) {
-            if (p.long)
-                usage.deposit(p.totalCost)
-            else if (p.short)
-                usage.deposit(p.exposure)
-        }
-
-        // for (p in changes) usage.deposit(p.asset.currency, p.totalCost.absoluteValue)
-
-        return usage
+    override fun calculate(account: Account): Amount {
+        val cash = account.cash
+        val openOrders = account.orders.open.map { it.getValueAmount() }.sum()
+        val total = cash - openOrders
+        total.withdraw(Amount(account.baseCurrency, minimum))
+        return account.convert(total)
     }
 
 }
 
 
 /**
- * Usage calculator for T Reg accounts, using 50% for initial margin and 25% for maintance margin.
+ * Usage calculator for Regulation T accounts. Formula used is
+ *
+ *      free = equity - initialMarginOrders - maintanceMarginLong - maintanceMarginShort
+ *      buyingPower = free / initialMargin
+ *
  */
-class RegTCalculator : UsageCalculator {
+class RegTCalculator(
+    private val initialMargin: Double= 0.5,
+    private val longMaintanceMargin: Double = 0.25,
+    private val shortMaintanceMargin: Double = 0.30,
+    private val minimumAmount : Double = 0.0
+) : UsageCalculator {
 
-    override fun calculate(positions: List<Position>, changes: List<Position>): Wallet {
-        val margin = Wallet()
-        val currentPos = mutableMapOf<Asset, Double>()
-
-        // Maintance margin
-        for (p in positions) {
-            if (p.long)
-                margin.deposit(p.totalCost)
-            else if (p.short)
-                margin.deposit(p.totalCost)
-
-            currentPos[p.asset] = p.size
-        }
-
-        // Initial margin
-        for (p in changes) {
-            if (p.long)
-                margin.deposit(p.totalCost * 0.5)
-            else if (p.short)
-                margin.deposit(p.exposure * 1.5)
-        }
-        return margin
+    override fun calculate(account: Account): Amount {
+        val initialMarginOrders = account.orders.open.map { it.getValueAmount().absoluteValue * initialMargin }.sum()
+        val maintanceMarginLong = account.portfolio.longPositions.map { it.exposure * longMaintanceMargin }.sum()
+        val maintanceMarginShort = account.portfolio.longPositions.map { it.exposure * shortMaintanceMargin }.sum()
+        val free = account.equity - initialMarginOrders - maintanceMarginLong - maintanceMarginShort
+        val result = account.convert(free) - minimumAmount
+        return if (result.value < 0.0)
+            Amount(account.baseCurrency, result.value)
+        else
+            result * ( 1.0 / initialMargin)
     }
 
 }
 
-
-/**
- * Basic usage calculator that support a fixed laverage
- */
-class LeveragedUsageCalculator(val leverage: Double = 1.0) : UsageCalculator {
-
-    override fun calculate(positions: List<Position>, changes: List<Position>): Wallet {
-        val margin = Wallet()
-        for (p in positions) {
-            if (p.long)
-                margin.deposit(p.totalCost * (1.0/leverage))
-            else if (p.short)
-                margin.deposit(p.exposure * (1.0 + 1.0/leverage))
-        }
-        return margin
-    }
-
-}

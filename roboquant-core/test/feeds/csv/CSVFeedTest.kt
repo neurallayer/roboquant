@@ -16,11 +16,9 @@
 
 package org.roboquant.feeds.csv
 
-import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
-import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -30,9 +28,7 @@ internal class CSVFeedTest {
     @Test
     fun getContracts() {
         val feed = CSVFeed(TestData.dataDir() + "US")
-        assertEquals(4, feed.assets.size)
-        // val c= StockBuilder().invoke("AAPL")
-        // assertTrue(feed.assets.contains(c))
+        assertEquals(3, feed.assets.size)
         val c2 = feed.assets.find { it.symbol == "AAPL" }
         assertTrue(c2 !== null)
     }
@@ -57,27 +53,6 @@ internal class CSVFeedTest {
         assertEquals("TEST123", feed.assets.first().exchangeCode)
     }
 
-    @Test
-    fun play() {
-        val feed = CSVFeed(TestData.dataDir() + "US")
-        var past = Instant.MIN
-        runBlocking {
-            for (event in org.roboquant.feeds.play(feed)) {
-                assertTrue(event.now > past)
-                past = event.now
-            }
-        }
-    }
 
-    @Test
-    fun mergeCSVFeeds() {
-        val feed = CSVFeed(TestData.dataDir() + "US")
-        val feed2 = CSVFeed(TestData.dataDir() + "EU")
-        feed.merge(feed2)
-        assertEquals(2, feed.assets.map { it.currency }.toHashSet().size)
-        val feed3 = CSVFeed(TestData.dataDir() + "FX")
-        feed.merge(feed3)
-        assertEquals(2, feed.assets.map { it.currency }.toHashSet().size)
-    }
 
 }

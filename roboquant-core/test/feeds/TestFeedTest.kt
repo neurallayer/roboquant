@@ -25,7 +25,7 @@ import org.roboquant.common.TimeFrame
 import org.roboquant.feeds.test.TestLiveFeed
 import org.roboquant.feeds.test.TestHistoricFeed
 
-fun play(feed: Feed, timeFrame: TimeFrame = TimeFrame.FULL): EventChannel {
+fun play(feed: Feed, timeFrame: TimeFrame = TimeFrame.INFINITY): EventChannel {
     val channel = EventChannel(timeFrame = timeFrame)
 
     Background.ioJob {

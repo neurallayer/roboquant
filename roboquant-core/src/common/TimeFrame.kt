@@ -44,10 +44,11 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     }
 
     companion object {
+
         /**
-         * Full timeframe, matches any time and is typically used when no filtering is required
+         * Infinity time-frame that matches any time and is typically used when no filtering is required
          */
-        val FULL = TimeFrame(Instant.MIN, Instant.MAX)
+        val INFINITY = TimeFrame(Instant.MIN, Instant.MAX)
 
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")

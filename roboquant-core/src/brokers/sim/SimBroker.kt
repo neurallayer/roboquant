@@ -46,7 +46,7 @@ class SimBroker(
     exchangeRates: ExchangeRates? = null,
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val costModel: CostModel = DefaultCostModel(),
-    // private val usageCalculator: UsageCalculator = BasicUsageCalculator(),
+    private val usageCalculator: UsageCalculator = BasicUsageCalculator(),
     private val validateBuyingPower: Boolean = false,
     private val recording: Boolean = false,
     private val prefix: String = "broker.",
@@ -86,27 +86,27 @@ class SimBroker(
      */
     private fun execute(event: Event) {
         val prices = event.prices
-        val now = event.now
-        logger.finer { "Executing at $now with ${prices.size} prices" }
+        val time = event.time
+        logger.finer { "Executing at $time with ${prices.size} prices" }
 
         for (order in account.orders.open) {
             val action = prices[order.asset] ?: continue
             val price = action.getPrice(priceType)
             if (order.status === OrderStatus.INITIAL) {
                 order.status = OrderStatus.ACCEPTED
-                order.placed = now
+                order.placed = time
             }
 
             order.price = price
 
-            val executions = order.execute(price, now)
+            val executions = order.execute(price, time)
             for (execution in executions) {
                 val (realPrice, fee) = costModel.calculate(order, execution)
                 val avgPrice = realPrice / execution.size()
                 record("exec.${order.asset.symbol}.qty", execution.quantity)
                 record("exec.${order.asset.symbol}.price", avgPrice)
 
-                updateAccount(execution, avgPrice, fee, now)
+                updateAccount(execution, avgPrice, fee, time)
             }
 
         }
@@ -149,6 +149,11 @@ class SimBroker(
     }
 
 
+    private fun updateBuyingPower() {
+        val value = usageCalculator.calculate(account)
+        account.buyingPower = value
+    }
+
 
 
     /**
@@ -159,13 +164,14 @@ class SimBroker(
      *
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        logger.finer { "Received ${orders.size} orders at ${event.now}" }
+        logger.finer { "Received ${orders.size} orders at ${event.time}" }
         account.orders.addAll(orders)
         validateOrders(event)
         execute(event)
         account.portfolio.updateMarketPrices(event)
-        account.time = event.now
+        account.lastUpdate = event.time
         if (! keepClosedOrders) account.orders.removeIf { it.status.closed }
+        updateBuyingPower()
         return account
     }
 
@@ -200,7 +206,7 @@ class SimBroker(
      * 1. cancel all open orders
      * 2. close all open positions by creating and process market orders for the required quantities
      */
-    fun liquidatePortfolio(now:Instant = account.time): Account {
+    fun liquidatePortfolio(now:Instant = account.lastUpdate): Account {
         for (order in account.orders.open) order.status = OrderStatus.CANCELLED
         val change = account.portfolio.diff(Portfolio())
         val orders = change.map { MarketOrder(it.key, it.value, tag = "liquidate") }

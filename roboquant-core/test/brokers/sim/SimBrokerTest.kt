@@ -16,10 +16,11 @@
 
 package org.roboquant.brokers.sim
 
-
 import org.junit.Test
 import org.roboquant.TestData
-import org.roboquant.common.Currency
+import org.roboquant.brokers.FixedExchangeRates
+import org.roboquant.common.Currency.Companion.EUR
+import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.orders.OrderStatus
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -36,7 +37,7 @@ internal class SimBrokerTest {
         broker.place(listOf(), event)
 
         val broker2 = SimBroker.withDeposit(100_000.00)
-        assertEquals(Currency.USD, broker2.account.baseCurrency)
+        assertEquals(USD, broker2.account.baseCurrency)
 
         val metrics = broker.getMetrics()
         assertTrue(metrics.isEmpty())
@@ -44,7 +45,8 @@ internal class SimBrokerTest {
 
     @Test
     fun basicPlaceOrder() {
-        val broker = SimBroker()
+        val er = FixedExchangeRates(USD, EUR to 0.8)
+        val broker = SimBroker(exchangeRates = er)
         val event = TestData.event()
         var account = broker.place(listOf(TestData.euMarketOrder(), TestData.usMarketOrder()), event)
         assertEquals(2, account.orders.size)
@@ -75,7 +77,8 @@ internal class SimBrokerTest {
 
     @Test
     fun advancedPlaceOrder() {
-        val broker = SimBroker(validateBuyingPower = true)
+        val er = FixedExchangeRates(USD, EUR to 0.8)
+        val broker = SimBroker(exchangeRates = er, validateBuyingPower = true)
         val event = TestData.event()
         val account = broker.place(listOf(TestData.euMarketOrder(), TestData.usMarketOrder()), event)
         assertEquals(2, account.orders.size)

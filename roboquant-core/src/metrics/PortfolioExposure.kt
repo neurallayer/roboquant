@@ -45,7 +45,7 @@ class PortfolioExposure : SimpleMetric() {
     override fun calc(account: Account, event: Event): MetricResults {
         val longExposure = Wallet()
         val shortExposure = Wallet()
-        val now = event.now
+        val now = event.time
 
         for (position in account.portfolio.positions) {
             if (position.long)
@@ -54,12 +54,12 @@ class PortfolioExposure : SimpleMetric() {
                 shortExposure.deposit(position.marketValue)
         }
 
-        val longExposureValue = account.convert(longExposure, now = now).value
-        val shortExposureValue = account.convert(shortExposure, now = now).value
+        val longExposureValue = account.convert(longExposure, time = now).value
+        val shortExposureValue = account.convert(shortExposure, time = now).value
         val netExposureValue = longExposureValue + shortExposureValue
         val grossExposureValue = longExposureValue.absoluteValue + shortExposureValue.absoluteValue
 
-        val total = account.getCashAmount(now = now).value + netExposureValue
+        val total = account.cashAmount.value + netExposureValue
 
         return mapOf(
             "exposure.net" to netExposureValue / total,

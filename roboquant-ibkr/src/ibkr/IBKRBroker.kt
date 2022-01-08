@@ -317,7 +317,7 @@ class IBKRBroker(
 
         override fun updateAccountTime(timeStamp: String) {
             logger.fine(timeStamp)
-            account.time = Instant.now()
+            account.lastUpdate = Instant.now()
         }
 
         /**

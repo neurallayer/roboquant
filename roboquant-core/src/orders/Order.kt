@@ -83,10 +83,10 @@ abstract class Order(val asset: Asset) : Cloneable {
     }
 
     /**
-     * Get the value of the order given the provided [price]. Used to see if there is enough buying power to place this order.
+     * Get the remaining value of the order given the provided [price]. Used to see if there is enough buying power to place this order.
      * The default returns 0.0, which means no (known) value and as a result will not be counting against buying power.
      */
-    open fun getValue(price: Double = this.price) = 0.0
+    abstract fun getValue(price: Double = this.price) : Double
 
 
     fun getValueAmount(price: Double = this.price) = Amount(asset.currency, getValue(price))

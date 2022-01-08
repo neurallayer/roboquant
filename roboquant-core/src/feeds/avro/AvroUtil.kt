@@ -58,7 +58,7 @@ object AvroUtil {
     /**
      * Record the price actions in a feed and store them in a avro file that can be used with the AvroFeed
      */
-    fun record(feed: Feed, fileName: String, timeFrame: TimeFrame = TimeFrame.FULL, compressionLevel: Int = 1) =
+    fun record(feed: Feed, fileName: String, timeFrame: TimeFrame = TimeFrame.INFINITY, compressionLevel: Int = 1) =
         runBlocking {
 
             val channel = EventChannel(timeFrame = timeFrame)
@@ -86,7 +86,7 @@ object AvroUtil {
                 val record = GenericData.Record(schema)
                 while (true) {
                     val event = channel.receive()
-                    val now = event.now.toEpochMilli()
+                    val now = event.time.toEpochMilli()
                     for (action in event.actions.filterIsInstance<PriceAction>()) {
                         val assetStr = cache.getOrPut(action.asset) { action.asset.serialize() }
                         record.put(0, now)

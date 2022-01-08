@@ -89,13 +89,13 @@ class LazyCSVFeed(val path: String, val config: CSVConfig = CSVConfig.fromFile(p
             }
 
             while (queue.isNotEmpty()) {
-                val now = queue.first().now
+                val now = queue.first().time
                 assert(now > last) { "Found unsorted time $now in ${queue.first().price.asset}" }
                 val actions = mutableListOf<Action>()
                 var done = false
                 while (!done) {
                     val entry = queue.firstOrNull()
-                    if (entry != null && entry.now == now) {
+                    if (entry != null && entry.time == now) {
                         actions.add(entry.price)
                         queue.remove()
                         val asset = entry.price.asset

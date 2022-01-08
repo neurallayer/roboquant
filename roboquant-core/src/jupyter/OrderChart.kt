@@ -16,6 +16,7 @@
 
 package org.roboquant.jupyter
 
+import org.roboquant.brokers.Account
 import org.roboquant.orders.Order
 import org.roboquant.orders.SingleOrder
 import java.math.BigDecimal
@@ -31,10 +32,10 @@ import kotlin.math.absoluteValue
  * provide more insights, since these also cover advanced order types. You can use the [TradeChart] for that.
  */
 class OrderChart(
-    private val orders: List<Order>,
-    private val skipBuy: Boolean = false,
+    private val account: Account,
     private val aspect: String = "quantity",
-    private val scale: Int = 2
+    private val scale: Int = 2,
+    private val filter: (Order) -> Boolean = { true }
 ) : Chart() {
 
     private var max = Double.MIN_VALUE
@@ -43,13 +44,11 @@ class OrderChart(
         require(aspect in listOf("remaining", "direction", "quantity", "fill"))
     }
 
-
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
-        val singleOrders = orders.filterIsInstance<SingleOrder>()
+        val singleOrders = account.orders.filterIsInstance<SingleOrder>().filter(filter)
 
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (order in singleOrders) {
-            if (skipBuy && order.quantity > 0) continue
             with(order) {
 
                 val value = when (aspect) {

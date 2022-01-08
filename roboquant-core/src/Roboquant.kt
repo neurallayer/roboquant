@@ -167,7 +167,7 @@ class Roboquant<L : MetricsLogger>(
      */
     fun run(
         feed: Feed,
-        timeFrame: TimeFrame = TimeFrame.FULL,
+        timeFrame: TimeFrame = TimeFrame.INFINITY,
         validation: TimeFrame? = null,
         runName: String? = null,
         episodes: Int = 1
@@ -183,7 +183,7 @@ class Roboquant<L : MetricsLogger>(
      */
     suspend fun runAsync(
         feed: Feed,
-        timeFrame: TimeFrame = TimeFrame.FULL,
+        timeFrame: TimeFrame = TimeFrame.INFINITY,
         validation: TimeFrame? = null,
         runName: String? = null,
         episodes: Int = 1
@@ -214,7 +214,7 @@ class Roboquant<L : MetricsLogger>(
      */
     private fun step(orders: List<Order>, event: Event, runInfo: RunInfo): List<Order> {
         runInfo.step++
-        runInfo.time = event.now
+        runInfo.time = event.time
 
         val account = broker.place(orders, event)
         runMetrics(account, event, runInfo)
@@ -268,7 +268,7 @@ class Roboquant<L : MetricsLogger>(
  * @property episode the episode number
  * @property step the step
  * @property time the time
- * @property timeFrame the total timeframe of the run, if not known it will be [TimeFrame.FULL]
+ * @property timeFrame the total timeframe of the run, if not known it will be [TimeFrame.INFINITY]
  * @property phase the phase of the run
  * @constructor Create new RunInfo object
  */
@@ -278,7 +278,7 @@ data class RunInfo internal constructor(
     var episode: Int = 0,
     var step: Int = 0,
     var time: Instant = Instant.MIN,
-    var timeFrame: TimeFrame = TimeFrame.FULL,
+    var timeFrame: TimeFrame = TimeFrame.INFINITY,
     var phase: RunPhase = RunPhase.MAIN
 ) {
 

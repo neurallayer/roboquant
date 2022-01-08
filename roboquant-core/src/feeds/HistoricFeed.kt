@@ -38,10 +38,10 @@ interface HistoricFeed : AssetFeed {
     val timeline: List<Instant>
 
     /**
-     * TimeFrame of this feed. If it cannot be determined, [TimeFrame.FULL] is returned instead.
+     * TimeFrame of this feed. If it cannot be determined, [TimeFrame.INFINITY] is returned instead.
      */
     override val timeFrame: TimeFrame
-        get() = if (timeline.isEmpty()) TimeFrame.FULL else TimeFrame(timeline.first(), timeline.last().plusMillis(1))
+        get() = if (timeline.isEmpty()) TimeFrame.INFINITY else TimeFrame(timeline.first(), timeline.last().plusMillis(1))
 
     /**
      * Draw a random sample of event size from the historic feed and return the timeframe that represents this sample

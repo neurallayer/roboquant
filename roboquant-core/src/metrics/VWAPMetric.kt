@@ -47,7 +47,7 @@ class VWAPMetric(val minSize: Int = 2) : SimpleMetric() {
         val result = mutableMapOf<String, Double>()
         event.prices.values.filterIsInstance<PriceBar>().forEach {
             val calc = calculators.getOrPut(it.asset) { VWAPDaily(minSize) }
-            calc.add(it, event.now)
+            calc.add(it, event.time)
             if (calc.isReady()) {
                 result["vwap.${it.asset.symbol}"] = calc.calc()
             }

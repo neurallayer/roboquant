@@ -16,19 +16,19 @@
 
 package org.roboquant.jupyter
 
+import org.roboquant.brokers.Account
 import org.roboquant.brokers.Trade
 import java.math.BigDecimal
 import java.time.Instant
 
 /**
- * Trade chart plots the [trades] that have been generated during a run. By default, the realized pnl of the trades will
- * be plotted but this can be changed.
- *
+ * Trade chart plots the trades of an [account] that have been generated during a run. By default, the realized pnl of the trades will
+ * be plotted but this can be changed. The possible options are pnl, fee, cost and quantity
  */
 class TradeChart(
-    private val trades: Collection<Trade>,
-    private val skipBuy: Boolean = false,
-    private val aspect: String = "pnl"
+    private val account: Account,
+    private val aspect: String = "pnl",
+    private val filter: (Trade) -> Boolean = { true }
 ) : Chart() {
 
     private var max = Double.MIN_VALUE.toBigDecimal()
@@ -38,23 +38,21 @@ class TradeChart(
         require(aspect in validAspects) { "Unsupported aspect $aspect, valid values are $validAspects" }
     }
 
-
     private fun getTooltip(trade: Trade): String {
         val pnl = trade.pnl.toBigDecimal()
         val totalCost =trade.totalCost.toBigDecimal()
         val fee = trade.fee.toBigDecimal()
-        return "asset: ${trade.asset} <br> time: ${trade.time} <br> qty: ${trade.quantity} <br> fee: $fee <br> pnl: $pnl <br> cost: $totalCost <br> order: ${trade.orderId}"
+        return "asset: ${trade.asset} <br> currency: ${trade.asset.currency} <br> time: ${trade.time} <br> qty: ${trade.quantity} <br> fee: $fee <br> pnl: $pnl <br> cost: $totalCost <br> order: ${trade.orderId}"
     }
 
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
-        for (trade in trades) {
-            if (skipBuy && trade.quantity > 0) continue
+        for (trade in account.trades.filter(filter)) {
             with(trade) {
                 val value = when (aspect) {
-                    "pnl" -> pnl.toBigDecimal()
-                    "fee" -> fee.toBigDecimal()
-                    "cost" -> totalCost.toBigDecimal()
+                    "pnl" -> account.convert(pnl).toBigDecimal()
+                    "fee" -> account.convert(fee).toBigDecimal()
+                    "cost" -> account.convert(totalCost).toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
                     else -> throw Exception("Unsupported aspect $aspect")
                 }

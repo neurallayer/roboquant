@@ -32,7 +32,7 @@ import java.util.logging.Logger
  * @constructor
  *
  */
-open class EventChannel(capacity: Int = 100, val timeFrame: TimeFrame = TimeFrame.FULL) {
+open class EventChannel(capacity: Int = 100, val timeFrame: TimeFrame = TimeFrame.INFINITY) {
 
     private val channel = Channel<Event>(capacity)
     private val logger: Logger = Logging.getLogger(EventChannel::class)
@@ -49,15 +49,15 @@ open class EventChannel(capacity: Int = 100, val timeFrame: TimeFrame = TimeFram
      * @param event
      */
     fun offer(event: Event) {
-        if (timeFrame.contains(event.now)) {
+        if (timeFrame.contains(event.time)) {
             while (!channel.trySend(event).isSuccess) {
                 val dropped = channel.tryReceive().getOrNull()
                 if (dropped !== null)
-                    logger.info { "dropped event for time ${dropped.now}" }
+                    logger.info { "dropped event for time ${dropped.time}" }
             }
         } else {
-            if (event.now >= timeFrame.end) {
-                logger.fine { "Offer ${event.now} after $timeFrame, closing channel" }
+            if (event.time >= timeFrame.end) {
+                logger.fine { "Offer ${event.time} after $timeFrame, closing channel" }
                 channel.close()
                 done = true
                 // throw ClosedSendChannelException("Out of time")
@@ -75,11 +75,11 @@ open class EventChannel(capacity: Int = 100, val timeFrame: TimeFrame = TimeFram
      * @param event
      */
     suspend fun send(event: Event) {
-        if (timeFrame.contains(event.now)) {
+        if (timeFrame.contains(event.time)) {
             channel.send(event)
         } else {
-            if (event.now >= timeFrame.end) {
-                logger.fine { "Send ${event.now} after $timeFrame, closing channel" }
+            if (event.time >= timeFrame.end) {
+                logger.fine { "Send ${event.time} after $timeFrame, closing channel" }
                 channel.close()
                 done = true
                 // throw ClosedSendChannelException("Out of time")
@@ -90,9 +90,9 @@ open class EventChannel(capacity: Int = 100, val timeFrame: TimeFrame = TimeFram
     suspend fun receive(): Event {
         while (true) {
             val event = channel.receive()
-            timeFrame.contains(event.now) && return event
-            if (event.now >= timeFrame.end) {
-                logger.fine { "Received ${event.now} after $timeFrame, closing channel" }
+            timeFrame.contains(event.time) && return event
+            if (event.time >= timeFrame.end) {
+                logger.fine { "Received ${event.time} after $timeFrame, closing channel" }
                 channel.close()
                 done = true
                 throw ClosedReceiveChannelException("Out of time")

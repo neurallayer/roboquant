@@ -20,19 +20,19 @@ import org.roboquant.common.Asset
 import java.time.Instant
 
 /**
- * Event contains a list of [actions] that all happened at the same moment in time ([now]). There are no restrictions
+ * Event contains a list of [actions] that all happened at the same moment in time ([time]). There are no restrictions
  * on the type of information contained in a [Action] and different type of actions can be mixed in a single event.
  *
  */
-data class Event(val actions: List<Action>, val now: Instant) : Comparable<Event> {
+data class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
 
 
     companion object {
 
         /**
-         * Create an empty event with as default the current time
+         * Create an empty event with as default [time] the current time
          */
-        fun empty(now: Instant = Instant.now()) = Event(listOf(), now)
+        fun empty(time: Instant = Instant.now()) = Event(listOf(), time)
     }
 
 
@@ -59,20 +59,8 @@ data class Event(val actions: List<Action>, val now: Instant) : Comparable<Event
      * Compare this to an [other] event based on their timestamp. This is used for sorting a list of events by their
      * chronological order.
      */
-    override fun compareTo(other: Event): Int = this.now.compareTo(other.now)
+    override fun compareTo(other: Event): Int = time.compareTo(other.time)
 
-}
-
-
-/**
- * Merge this with a collection of [events] and return the result
- */
-fun Collection<Event>.merge(events: Collection<Event>): List<Event> {
-    val result = associate { it.now to it.actions }.toMutableMap()
-    for ((actions, now) in events) {
-        result[now] = result.getOrDefault(now, listOf()) + actions
-    }
-    return result.toSortedMap().toList().map { Event(it.second, it.first) }
 }
 
 

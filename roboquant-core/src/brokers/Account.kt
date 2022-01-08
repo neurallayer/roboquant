@@ -53,7 +53,7 @@ class Account(
     /**
      * When was the account last updated
      */
-    var time: Instant = Instant.MIN
+    var lastUpdate: Instant = Instant.MIN
 
     /**
      * The trades that has been executed
@@ -67,34 +67,37 @@ class Account(
     val orders = Orders()
 
     /**
-     * Total cash balance hold in this account. This is the account cash deposits plus all realized PNL so far.
-     * PLase note that not all this cash is available.
+     * Total cash balance hold in this account. This can be a single currency or multiple currencies.
      */
     val cash : Wallet = Wallet()
 
-
+    /**
+     * Total cash balance hold in this account denoted in the [baseCurrency] of the account.
+     */
     val cashAmount : Amount
         get() = convert(cash)
 
-
-    var buyingPower : Amount = Amount(baseCurrency, Double.NaN)
-        get() = if (field.value.isNaN()) cashAmount else field
-
+    /**
+     * Remaining buying power of the account denoted in the [baseCurrency] of the account.
+     */
+    var buyingPower : Amount = Amount(baseCurrency, 0.0)
 
     /**
      * Portfolio with its positions
      */
     val portfolio : Portfolio = Portfolio()
 
-
     /**
-     * Equity
+     * Total equity value
      */
-    val equity
+    val equity: Wallet
         get() = cash + portfolio.value
 
 
-    val equityAmount
+    /**
+     * Total equity value denoted in the [baseCurrency] of the account.
+     */
+    val equityAmount: Amount
         get() = convert(equity)
 
 
@@ -102,26 +105,12 @@ class Account(
      * Clear all the state in the account.
      */
     internal fun clear() {
-        time = Instant.MIN
+        lastUpdate = Instant.MIN
         trades.clear()
         orders.clear()
         portfolio.clear()
         cash.clear()
     }
-
-
-    /**
-     * Get the total cash balance hold in this account converted to a single currency amount.
-     *
-     * @param currency The currency to convert to, default is the account base currency
-     * @param now The time to use for the conversion, default is the account last update time
-     * @return The total amount
-     */
-    fun getCashAmount(currency: Currency = baseCurrency, now: Instant = time): Amount {
-        return convert(cash, currency, now)
-    }
-
-
 
 
     /**
@@ -132,37 +121,16 @@ class Account(
      */
     fun summary(): Summary {
         val s = Summary("Account")
-        s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
+        s.add("last update", lastUpdate.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
-        s.add("equity", equityAmount)
+        s.add("cash", convert(cash))
         s.add("buying power", buyingPower)
-        s.add(cash.summary())
-
-        val tradesSummary = Summary("Trades")
-        tradesSummary.add("total", trades.size)
-        val realizedPNL = convert(trades.realizedPnL())
-        tradesSummary.add("realized p&l", realizedPNL.formatValue())
-        tradesSummary.add("assets", trades.assets.size)
-        val fee = convert(trades.totalFee())
-        tradesSummary.add("fee", fee.formatValue())
-        s.add(tradesSummary)
-
-        val orderSummary = Summary("Orders")
-        orderSummary.add("total", orders.size)
-        orderSummary.add("open", orders.open.size)
-        orderSummary.add("closed", orders.closed.size)
-        s.add(orderSummary)
-
-        val portfolioSummary = Summary("Portfolio")
-        portfolioSummary.add("open positions", portfolio.positions.size)
-        portfolioSummary.add("long positions", portfolio.longPositions.size)
-        portfolioSummary.add("short positions", portfolio.shortPositions.size)
-        val unrealizedValue = convert(portfolio.value)
-        portfolioSummary.add("estimated value", unrealizedValue.formatValue())
-        val unrealizedPNL = convert(portfolio.unrealizedPNL())
-        portfolioSummary.add("unrealized p&l", unrealizedPNL.formatValue())
-        s.add(portfolioSummary)
-
+        s.add("equity", equityAmount)
+        s.add("portfolio", convert(portfolio.value))
+        s.add("long value", convert(portfolio.longValue))
+        s.add("short value", convert(portfolio.shortValue))
+        s.add("realized p&l", convert(trades.realizedPnL()))
+        s.add("unrealized p&l", convert(portfolio.unrealizedPNL()))
         return s
     }
 
@@ -171,10 +139,7 @@ class Account(
      * testing this can become a long list of items, so look at [summary] for a shorter summary.
      */
     fun fullSummary(): Summary {
-        val s = Summary("Account")
-        s.add("last update", time.truncatedTo(ChronoUnit.SECONDS))
-        s.add("base currency", baseCurrency.displayName)
-        s.add("buying power", buyingPower)
+        val s = summary()
         s.add(cash.summary())
         s.add(portfolio.summary())
         s.add(orders.summary())
@@ -188,16 +153,16 @@ class Account(
      *
      * @param wallet The cash values to convert from
      * @param toCurrency The currency to convert the cash to, default is the baseCurrency of the account
-     * @param now The time to use for the exchange rate, default is the last update time of the account
+     * @param time The time to use for the exchange rate, default is the last update time of the account
      * @return The converted amount as a Double
      */
-    fun convert(wallet: Wallet, toCurrency: Currency = baseCurrency, now: Instant = time): Amount {
+    fun convert(wallet: Wallet, toCurrency: Currency = baseCurrency, time: Instant = lastUpdate): Amount {
         var sum = 0.0
         for (amount in wallet.toAmounts()) {
             sum += if (amount.currency === toCurrency) {
                 amount.value
             } else {
-                val rate = exchangeRates?.getRate(amount, toCurrency, now)
+                val rate = exchangeRates?.getRate(amount, toCurrency, time)
                     ?: throw ConfigurationException("No currency converter defined to convert  $amount to $toCurrency")
                 amount.value * rate
             }
@@ -211,11 +176,11 @@ class Account(
      * called and a conversion is required, it will throw a [ConfigurationException].
      *
      */
-    fun convert(amount: Amount, toCurrency: Currency = baseCurrency, now: Instant = time): Amount {
+    fun convert(amount: Amount, toCurrency: Currency = baseCurrency, time: Instant = lastUpdate): Amount {
         return if (amount.currency === toCurrency || amount.value == 0.0) {
             Amount(toCurrency, amount.value)
         } else {
-            val rate = exchangeRates?.getRate(amount, toCurrency, now)
+            val rate = exchangeRates?.getRate(amount, toCurrency, time)
                 ?: throw ConfigurationException("No currency converter defined to convert $amount to $toCurrency")
             Amount(toCurrency, amount.value * rate)
         }
@@ -231,7 +196,7 @@ class Account(
      */
     public override fun clone(): Account {
         val account = Account(baseCurrency, exchangeRates)
-        account.time = time
+        account.lastUpdate = lastUpdate
         account.trades.addAll(trades) // Trade is immutable
         account.orders.addAll(orders.map { it.clone() }) // order is not immutable
         account.cash.clear()

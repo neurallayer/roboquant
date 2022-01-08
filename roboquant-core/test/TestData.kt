@@ -48,11 +48,6 @@ object TestData {
         return account
     }
 
-
-
-
-
-
     fun euStock() = Asset("AF", currencyCode = "EUR", exchangeCode = "AEB")
 
     fun dataDir(): String {
@@ -89,7 +84,7 @@ object TestData {
     }
 
     fun getRunInfo(): RunInfo {
-        return RunInfo("test", "1", 1, 10, Instant.now(), TimeFrame.FULL, RunPhase.MAIN)
+        return RunInfo("test", "1", 1, 10, Instant.now(), TimeFrame.INFINITY, RunPhase.MAIN)
     }
 
 

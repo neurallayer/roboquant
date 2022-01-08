@@ -83,17 +83,17 @@ fun <T> MutableCollection<T>.addNotNull(elem: T?): Boolean {
  *
  * If no such time is found return null
  *
- * @param now
+ * @param time
  * @return
  */
-fun List<Instant>.latestNotAfter(now: Instant): Int? {
-    var idx = binarySearch(now)
+fun List<Instant>.latestNotAfter(time: Instant): Int? {
+    var idx = binarySearch(time)
     idx = if (idx < 0) -idx - 2 else idx
     return if (idx >= 0) idx else null
 }
 
-fun List<Instant>.earliestNotBefore(now: Instant): Int? {
-    var idx = binarySearch(now)
+fun List<Instant>.earliestNotBefore(time: Instant): Int? {
+    var idx = binarySearch(time)
     idx = if (idx < 0) -idx - 1 else idx
     return if (idx < size) idx else null
 }
@@ -204,16 +204,16 @@ fun Number.round(fractions: Int = 2): BigDecimal = BigDecimal(toDouble()).setSca
 
 
 /**
- * Annualize an amount based on the duration of this time frame.
+ * Annualize an amount based on the duration of the provided time frame.
  */
-fun Number.annualize(tf: TimeFrame): Double {
-    val period = tf.duration.toMillis()
+fun Number.annualize(timeFrame: TimeFrame): Double {
+    val period = timeFrame.duration.toMillis()
     val years = (365.0 * 24.0 * 3600.0 * 1000.0) / period
     return (1.0 + toDouble()).pow(years) - 1.0
 }
 
 /**
- * Convert a string to a currency pair. Return null if not possible
+ * Convert a string to a currency pair. Return null if not successed
  */
 fun String.toCurrencyPair() : Pair<Currency, Currency>? {
     val codes = split('_', '-', ' ', '/', ':')

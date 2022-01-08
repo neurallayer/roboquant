@@ -82,7 +82,7 @@ class AlpacaBroker(
             account.cash.clear()
             val balance = Amount(account.baseCurrency, acc.cash.toDouble())
             account.cash.deposit(balance)
-            account.time = Instant.now()
+            account.lastUpdate = Instant.now()
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())
         }
@@ -250,7 +250,7 @@ class AlpacaBroker(
                 throw Exception("Unsupported order type $order")
             }
         }
-        account.time = event.now
+        account.lastUpdate = event.time
         return account
     }
 }

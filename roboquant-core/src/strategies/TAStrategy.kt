@@ -201,7 +201,7 @@ class TAStrategy(private val history: Int = 15) : Strategy {
      */
     override fun generate(event: Event): List<Signal> {
         val results = mutableListOf<Signal>()
-        val now = event.now
+        val now = event.time
         for ((asset, priceAction) in event.prices) {
             if (priceAction is PriceBar) {
                 val buffer = buffers.getOrPut(asset) { PriceBarBuffer(history, usePercentage = false) }

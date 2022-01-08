@@ -95,18 +95,13 @@ class Portfolio : Cloneable {
      */
     fun updateMarketPrices(event: Event, priceType: String = "DEFAULT") {
         val prices = event.prices
-        val now = event.now
 
         for (position in positions) {
             val priceAction = prices[position.asset]
             if (priceAction != null) {
                 val price = priceAction.getPrice(priceType)
-
-                // Unmutable prep
-                val newPosition = position.copy(spotPrice = price, lastUpdate = now)
+                val newPosition = position.copy(spotPrice = price, lastUpdate = event.time)
                 _positions[position.asset] = newPosition
-                // position.spotPrice = price
-                // position.lastUpdate = now
             }
         }
     }
@@ -118,7 +113,7 @@ class Portfolio : Cloneable {
      * in a portfolio.
      */
     fun setPosition(position: Position) {
-        _positions[position.asset] = position.copy()
+        _positions[position.asset] = position
     }
 
 

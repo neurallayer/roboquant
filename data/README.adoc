@@ -1,0 +1,3 @@
+Data in this directory and its sub directiries is used during unit testing.
+
+NOTE: It is not meant for real back tests.

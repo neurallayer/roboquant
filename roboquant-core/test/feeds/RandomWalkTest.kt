@@ -33,8 +33,8 @@ internal class RandomWalkTest {
         var cnt = 0
         var now = Instant.MIN
         for (step in play(feed)) {
-            assertTrue(step.now >= now)
-            now = step.now
+            assertTrue(step.time >= now)
+            now = step.time
             cnt++
         }
         assertEquals(feed.timeline.size, cnt)

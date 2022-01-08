@@ -16,8 +16,10 @@
 
 package org.roboquant.feeds
 
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.roboquant.feeds.random.RandomWalk
+import java.time.Instant
 import java.time.Period
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -43,6 +45,18 @@ internal class HistoricFeedTest {
         val feed2: HistoricPriceFeed = RandomWalk.lastYears(nAssets = 3)
         feed1.merge(feed2)
         assertTrue(feed1.assets.containsAll(feed2.assets))
+    }
+
+    @Test
+    fun play() {
+        val feed = RandomWalk.lastYears(nAssets = 2)
+        var past = Instant.MIN
+        runBlocking {
+            for (event in play(feed)) {
+                assertTrue(event.time > past)
+                past = event.time
+            }
+        }
     }
 
 

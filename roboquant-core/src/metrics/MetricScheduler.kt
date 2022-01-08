@@ -87,7 +87,7 @@ class MetricScheduler(
 
 
     override fun calculate(account: Account, event: Event) {
-        if (fire(event.now))
+        if (fire(event.time))
             for (metric in metrics) metric.calculate(account, event)
     }
 

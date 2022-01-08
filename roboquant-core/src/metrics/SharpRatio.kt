@@ -58,15 +58,15 @@ class SharpRatio(
 
         if (lastTime == Instant.MIN) {
             lastValue = value
-            lastTime = event.now
+            lastTime = event.time
             return mapOf()
         } else {
             val returns = (value - lastValue) / lastValue
-            val tf = TimeFrame(lastTime, event.now)
+            val tf = TimeFrame(lastTime, event.time)
             val annualReturns = returns.annualize(tf)
             stats.addValue(annualReturns)
             lastValue = value
-            lastTime = event.now
+            lastTime = event.time
 
             return if (stats.n >= minSteps) {
 

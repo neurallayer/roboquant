@@ -34,16 +34,5 @@ internal class EventTest {
         assertTrue(event.actions.isEmpty())
     }
 
-    @Test
-    fun merge() {
-        val now = Instant.now()
-        val c1 = listOf(Event(listOf(), now))
-        val c2 = listOf(Event(listOf(), now.plusMillis(1)))
 
-        val s1 = c1.merge(c1)
-        assert(s1.size == 1)
-
-        val s2 = c1.merge(c2)
-        assert(s2.size == 2)
-    }
 }

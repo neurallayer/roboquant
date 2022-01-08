@@ -47,7 +47,7 @@ class PriceRecorder(val assets: Collection<Asset>) : Metric, Feed {
             val action = event.prices[asset]
             if (action != null) prices.add(action)
         }
-        if (prices.isNotEmpty()) events.add(Event(prices, event.now))
+        if (prices.isNotEmpty()) events.add(Event(prices, event.time))
     }
 
     override fun start(runPhase: RunPhase) {

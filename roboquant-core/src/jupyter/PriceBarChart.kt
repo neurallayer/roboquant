@@ -35,7 +35,7 @@ class PriceBarChart(
     private val feed: Feed,
     private val asset: Asset,
     private val trades: Collection<Trade> = listOf(),
-    private val timeFrame: TimeFrame = TimeFrame.FULL,
+    private val timeFrame: TimeFrame = TimeFrame.INFINITY,
     private val useTime: Boolean = true
 ) : Chart() {
 

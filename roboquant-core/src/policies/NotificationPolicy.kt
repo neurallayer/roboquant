@@ -83,7 +83,7 @@ class NotificationPolicy(
      * @return The list of orders that will be sent to the broker
      */
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
-        for (signal in signals) backlog.add(Pair(event.now, signal))
+        for (signal in signals) backlog.add(Pair(event.time, signal))
 
         val realTime = Instant.now()
 

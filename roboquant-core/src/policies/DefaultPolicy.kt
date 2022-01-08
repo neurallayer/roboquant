@@ -112,7 +112,7 @@ open class DefaultPolicy(
         val openOrderAssets = account.orders.open.map { it.asset }
         val remainingDayOrders =
             if (maxOrdersPerDay == Int.MAX_VALUE) Int.MAX_VALUE else maxOrdersPerDay - getOrdersCurrentDay(
-                event.now,
+                event.time,
                 account.orders
             ).size
 

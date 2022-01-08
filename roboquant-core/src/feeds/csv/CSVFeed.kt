@@ -106,7 +106,7 @@ class CSVFeed(
             val deferred = Background.async {
                 val steps = readFile(asset, file)
                 for (step in steps) {
-                    add(step.now, step.price)
+                    add(step.time, step.price)
                     /*
                     val actions = result.getOrPut(step.now) { mutableListOf() }
                     synchronized(actions) {
@@ -164,7 +164,7 @@ class CSVFeed(
             if (last != null) {
                 val diff = (price - last) / last
                 if (diff.absoluteValue > config.priceThreshold) {
-                    logger.warning { "Validation error ${priceAction.asset.symbol} ${step.now} $diff" }
+                    logger.warning { "Validation error ${priceAction.asset.symbol} ${step.time} $diff" }
                     return false
                 }
             }
@@ -177,7 +177,7 @@ class CSVFeed(
 }
 
 
-internal class PriceEntry(val now: Instant, val price: PriceAction) : Comparable<PriceEntry> {
+internal class PriceEntry(val time: Instant, val price: PriceAction) : Comparable<PriceEntry> {
 
     /**
      * Compares this object with the specified object for order. Returns zero if this object is equal
@@ -185,7 +185,7 @@ internal class PriceEntry(val now: Instant, val price: PriceAction) : Comparable
      * if it's greater than [other].
      */
     override fun compareTo(other: PriceEntry): Int {
-        return now.compareTo(other.now)
+        return time.compareTo(other.time)
     }
 
 }

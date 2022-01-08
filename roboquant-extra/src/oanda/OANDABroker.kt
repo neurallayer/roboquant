@@ -108,7 +108,7 @@ class OANDABroker(
         val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
         account.cash.set(amount)
         account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
-        account.time = Instant.now()
+        account.lastUpdate = Instant.now()
         lastTransactionId = acc.lastTransactionID
         account.portfolio.clear()
         updatePositions()
@@ -126,7 +126,7 @@ class OANDABroker(
         val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
         account.cash.set(amount)
         account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
-        account.time = Instant.now()
+        account.lastUpdate = Instant.now()
     }
 
 

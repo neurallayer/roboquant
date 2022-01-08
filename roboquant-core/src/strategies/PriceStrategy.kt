@@ -32,7 +32,7 @@ abstract class PriceStrategy(private val aspect: String = "DEFAULT", prefix: Str
         val signals = mutableListOf<Signal>()
         for ((asset, priceAction) in event.prices) {
             val price = priceAction.getPrice(aspect)
-            val signal = generate(asset, price, event.now)
+            val signal = generate(asset, price, event.time)
             if (signal != null) signals.add(signal)
         }
         return signals

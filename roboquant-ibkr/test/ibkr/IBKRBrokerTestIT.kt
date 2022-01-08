@@ -29,7 +29,7 @@ internal class IBKRBrokerTestIT {
         val broker = IBKRBroker()
         val past = Instant.now()
 
-        assertTrue(broker.account.time > past)
+        assertTrue(broker.account.lastUpdate > past)
         broker.disconnect()
 
     }

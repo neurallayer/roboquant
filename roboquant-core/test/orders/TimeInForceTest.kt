@@ -30,6 +30,11 @@ import kotlin.test.assertTrue
 internal class TimeInForceTest {
 
     class TestOrder(asset: Asset = TestData.usStock()) : Order(asset) {
+
+        override fun getValue(price: Double): Double {
+            TODO("Not yet implemented")
+        }
+
         override fun execute(price: Double, time: Instant): List<Execution> {
             return listOf()
         }
