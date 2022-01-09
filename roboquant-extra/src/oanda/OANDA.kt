@@ -47,8 +47,9 @@ object OANDA {
         // We use a lower cost model, since the default of 10 BIPS is too much for Forex
         // We select 2.0 BIPS
         val costModel = DefaultCostModel(2.0)
+        Config.exchangeRates = currencyConverter
         // val marginCalculator = OANDAMarginCalculator()
-        val broker = SimBroker(costModel = costModel, exchangeRates = currencyConverter)
+        val broker = SimBroker(costModel = costModel)
 
         return Roboquant(strategy, *metrics, policy = policy, broker = broker)
     }

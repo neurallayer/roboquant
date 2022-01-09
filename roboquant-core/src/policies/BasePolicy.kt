@@ -72,7 +72,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
             amount
         } else {
             val w = Wallet(Amount(account.baseCurrency, amount))
-            account.convert(w, assetCurrency).value
+            w.convert(assetCurrency, account.lastUpdate).value
         }
 
     }
@@ -90,7 +90,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
      */
     protected fun calcVolume(buyingPower: Double, asset: Asset, price: Double, account: Account): Double {
         val singleContractCost = asset.multiplier * price
-        val availableAssetCash = account.convert(Amount(account.baseCurrency, buyingPower), asset.currency)
+        val availableAssetCash = Amount(account.baseCurrency, buyingPower).convert(asset.currency, account.lastUpdate)
         return availableAssetCash.value / singleContractCost
     }
 

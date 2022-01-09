@@ -18,6 +18,8 @@ package org.roboquant.common
 
 import org.roboquant.brokers.Account
 import java.lang.Exception
+import java.time.Instant
+import javax.naming.ConfigurationException
 
 
 /**
@@ -100,6 +102,18 @@ class Wallet(vararg amounts: Amount) : Cloneable {
         return result
     }
 
+    operator fun plus(amount: Amount): Wallet {
+        val result = clone()
+        result.deposit(amount)
+        return result
+    }
+
+    operator fun minus(amount: Amount): Wallet {
+        val result = clone()
+        result.withdraw(amount)
+        return result
+    }
+
 
     /**
      * Set a monetary [amount]. If the currency already exist, its value
@@ -140,11 +154,13 @@ class Wallet(vararg amounts: Amount) : Cloneable {
         deposit(amount * -1)
     }
 
-
-    fun toAmount() : Double {
+    /**
+     * Convert this wallet to a single Amount without any currency conversion
+     */
+    fun toAmount() : Amount {
         return when(currencies.size) {
-            0 -> 0.0
-            1 -> data.filter { it.value != 0.0 }.values.first()
+            0 -> Amount(Config.baseCurrency,0.0)
+            1 -> toAmounts().first()
             else -> throw Exception("Multicurrency account")
         }
     }
@@ -156,7 +172,6 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     fun withdraw(other: Wallet) {
        for (amount in other.toAmounts()) { withdraw(amount) }
     }
-
 
 
     /**
@@ -238,6 +253,24 @@ class Wallet(vararg amounts: Amount) : Cloneable {
         }
         return result
     }
+
+    /**
+     * Convert a [Wallet] value into a single currency amount. If no currencyConverter has been configured and this method
+     * is invoked when a conversion is required, it will throw a [ConfigurationException].
+     *
+     * @param toCurrency The currency to convert the cash to, default is the baseCurrency of the account
+     * @param time The time to use for the exchange rate, default is the last update time of the account
+     * @return The converted amount as a Double
+     */
+    fun convert(toCurrency: Currency = Config.baseCurrency, time: Instant = Instant.now()): Amount {
+        var sum = 0.0
+        for (amount in toAmounts()) {
+            sum += amount.convert(toCurrency, time).value
+        }
+        return Amount(toCurrency, sum)
+    }
+
+
 
 }
 

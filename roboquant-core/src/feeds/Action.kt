@@ -22,7 +22,7 @@ import kotlin.math.absoluteValue
 
 /**
  * An action is the lowest level of information contained in an Event and can be anything from a price action for an asset
- * to an annual report to a Twitter tweet. An action doesn't have to be linked to a particular asset, although many are.
+ * to an annual report or a Twitter tweet. An action doesn't have to be linked to a particular asset, although many are.
  *
  * The content of the action is determined by the class implementing this interface. Strategies are expected to filter
  * on those types of actions they are interested in.
@@ -157,7 +157,7 @@ data class PriceBar(
 
 /**
  * Holds a single price for an asset and optional the volume. Often this reflects an actual trade, but it can
- * also be used for other use cases.
+ * also be used in other scenario's.
  *
  * @property asset
  * @property price
@@ -168,6 +168,9 @@ data class TradePrice(override val asset: Asset, private val price: Double, val 
 
     fun values() = listOf(price, volume)
 
+    operator fun times(n: Number) = copy(price = price * n.toDouble())
+    operator fun div(n: Number) = copy(price = price / n.toDouble())
+
     companion object {
         fun fromValues(asset: Asset, values: List<Double>) = TradePrice(
             asset,
@@ -177,8 +180,7 @@ data class TradePrice(override val asset: Asset, private val price: Double, val 
     }
 
     /**
-     * Return the underlying price. Since this event only holds a single price, the aspect
-     * parameter is not used.
+     * Return the underlying price. Since this event only holds a single price, the [type] parameter is not used.
      *
      * @param type
      * @return
@@ -220,14 +222,13 @@ data class PriceQuote(
         )
     }
     /**
-     * Return the underlying price. The available types are:
+     * Return the underlying price. The available [types][type] are:
      *
      * - WEIGHTED
      * - ASK
      * - BID
      * - MEAN (also the default)
      *
-     * @param type
      * @return
      */
     override fun getPrice(type: String): Double {
@@ -291,7 +292,7 @@ data class OrderBook(
     }
 
     /**
-     * Order book will by default return the unweighted MIDPOINT price. Other types that are supported are:
+     * Order book will by default return the unweighted MIDPOINT price. Other [types][type] that are supported are:
      * - lowest "ASK" price
      * - highest "BID" price
      * - "WEIGHTED" midpoint price

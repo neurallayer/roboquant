@@ -16,7 +16,6 @@
 
 package org.roboquant.jupyter
 
-import org.roboquant.brokers.Account
 import org.roboquant.orders.Order
 import org.roboquant.orders.SingleOrder
 import java.math.BigDecimal
@@ -30,9 +29,8 @@ import java.time.Instant
  * provide more insights, since these also cover advanced order types. You can use the [TradeChart] for that.
  */
 class OrderChart(
-    private val account: Account,
+    private val orders: List<Order>,
     private val aspect: String = "quantity",
-    private val filter: (Order) -> Boolean = { true }
 ) : Chart() {
 
     private var max = Double.MIN_VALUE.toBigDecimal()
@@ -42,7 +40,7 @@ class OrderChart(
     }
 
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
-        val singleOrders = account.orders.filterIsInstance<SingleOrder>().filter(filter)
+        val singleOrders = orders.filterIsInstance<SingleOrder>()
         max = Double.MIN_VALUE.toBigDecimal()
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (order in singleOrders) {
@@ -51,7 +49,7 @@ class OrderChart(
                     "remaining" -> remaining.toBigDecimal()
                     "direction" -> order.direction.toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
-                    "value" -> account.convert(order.getValueAmount()).toBigDecimal()
+                    "value" -> order.getValueAmount().convert(time = order.placed).toBigDecimal()
                     "fill" -> fill.toBigDecimal()
                     else -> throw Exception("Unsupported aspect")
                 }

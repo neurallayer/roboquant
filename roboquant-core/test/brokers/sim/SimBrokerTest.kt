@@ -19,6 +19,7 @@ package org.roboquant.brokers.sim
 import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.FixedExchangeRates
+import org.roboquant.common.Config
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.orders.OrderStatus
@@ -46,7 +47,8 @@ internal class SimBrokerTest {
     @Test
     fun basicPlaceOrder() {
         val er = FixedExchangeRates(USD, EUR to 0.8)
-        val broker = SimBroker(exchangeRates = er)
+        Config.exchangeRates = er
+        val broker = SimBroker()
         val event = TestData.event()
         var account = broker.place(listOf(TestData.euMarketOrder(), TestData.usMarketOrder()), event)
         assertEquals(2, account.orders.size)
@@ -78,7 +80,8 @@ internal class SimBrokerTest {
     @Test
     fun advancedPlaceOrder() {
         val er = FixedExchangeRates(USD, EUR to 0.8)
-        val broker = SimBroker(exchangeRates = er, validateBuyingPower = true)
+        Config.exchangeRates = er
+        val broker = SimBroker(validateBuyingPower = true)
         val event = TestData.event()
         val account = broker.place(listOf(TestData.euMarketOrder(), TestData.usMarketOrder()), event)
         assertEquals(2, account.orders.size)

@@ -39,15 +39,14 @@ class PNL : SimpleMetric() {
      * @return
      */
     override fun calc(account: Account, event: Event): MetricResults {
-        val now = event.time
         val result = mutableMapOf<String, Double>()
 
         val pnl = account.trades.realizedPnL()
-        val realizedPNL = account.convert(pnl, time = now)
+        val realizedPNL = pnl.convert(time = event.time)
         result["pnl.realized"] = realizedPNL.value
 
         val totalValue = account.portfolio.unrealizedPNL()
-        val unrealizedPNL = account.convert(totalValue, time = now)
+        val unrealizedPNL = totalValue.convert(time = event.time)
         result["pnl.unrealized"] = unrealizedPNL.value
 
         return result

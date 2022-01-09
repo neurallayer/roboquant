@@ -16,19 +16,17 @@
 
 package org.roboquant.jupyter
 
-import org.roboquant.brokers.Account
 import org.roboquant.brokers.Trade
 import java.math.BigDecimal
 import java.time.Instant
 
 /**
- * Trade chart plots the trades of an [account] that have been generated during a run. By default, the realized pnl of the trades will
+ * Trade chart plots the trades of an [trades] that have been generated during a run. By default, the realized pnl of the trades will
  * be plotted but this can be changed. The possible options are pnl, fee, cost and quantity
  */
 open class TradeChart(
-    private val account: Account,
+    private val trades: List<Trade>,
     private val aspect: String = "pnl",
-    private val filter: (Trade) -> Boolean = { true }
 ) : Chart() {
 
     private var max = Double.MIN_VALUE.toBigDecimal()
@@ -47,12 +45,12 @@ open class TradeChart(
 
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
-        for (trade in account.trades.filter(filter)) {
+        for (trade in trades) {
             with(trade) {
                 val value = when (aspect) {
-                    "pnl" -> account.convert(pnl, time = time).toBigDecimal()
-                    "fee" -> account.convert(fee, time = time).toBigDecimal()
-                    "cost" -> account.convert(totalCost, time = time).toBigDecimal()
+                    "pnl" -> pnl.convert(time = time).toBigDecimal()
+                    "fee" -> fee.convert(time = time).toBigDecimal()
+                    "cost" -> totalCost.convert(time = time).toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
                     else -> throw Exception("Unsupported aspect $aspect")
                 }

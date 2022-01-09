@@ -19,6 +19,8 @@
 package org.roboquant.common
 
 import java.math.BigDecimal
+import java.time.Instant
+import javax.naming.ConfigurationException
 import kotlin.math.absoluteValue
 
 data class Amount(val currency: Currency, val value: Double) : Comparable<Number> {
@@ -29,9 +31,10 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     operator fun minus(d: Number): Amount = Amount(currency, value - d.toDouble())
     operator fun plus(other: Amount): Wallet = Wallet(this, other)
 
-
     val absoluteValue
         get() = Amount(currency, value.absoluteValue)
+
+
 
     /**
      * Format the value hold in this amount based on the currency. For example USD would have two fraction digits
@@ -50,6 +53,21 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     override fun toString(): String = "${currency.currencyCode} ${formatValue()}"
 
     override fun compareTo(other: Number): Int =  value.compareTo(other.toDouble())
+
+    /**
+     * COnvert this amount [to] a different currency. If no currency is provided, the [Config.baseCurrency] is used.
+     * Optional you can provide a [time] at which the conversion should be calculated. If no time is proviedd the
+     * current time is used.
+     */
+    fun convert(to: Currency = Config.baseCurrency, time: Instant = Instant.now()): Amount {
+        if (to === currency || value == 0.0) return Amount(to, value)
+        val er = Config.exchangeRates
+        if (er != null) {
+            return er.convert(this, to, time)
+        } else {
+            throw ConfigurationException("No exchangerates defined")
+        }
+    }
 
 }
 

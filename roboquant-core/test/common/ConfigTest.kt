@@ -28,7 +28,8 @@ internal class ConfigTest {
         assertTrue(version.isNotBlank())
         Config.info()
 
-        assertFalse(Config.lowMemory)
+        val p = Config.getProperty("NON_EXISTING", "DUMMY")
+        assertEquals("DUMMY", p)
     }
 
 }

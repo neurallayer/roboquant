@@ -16,19 +16,17 @@
 
 package org.roboquant.jupyter
 
-import org.roboquant.brokers.Account
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
 
 /**
- * Trade chart plots the trades in an [account] that have been generated during a run per Asset. By default, the realized pnl of the
+ * Trade chart plots the [trades] that have been generated during a run per Asset. By default, the realized pnl of the
  * trades will be plotted but this is configurable
  *
  */
 class TradeChartByAsset(
-    private val account: Account,
+    private val trades: List<Trade>,
     private val aspect: String = "pnl",
-    private val filter: (Trade) -> Boolean = { true }
 ) : Chart() {
 
     init {
@@ -43,14 +41,14 @@ class TradeChartByAsset(
         return "asset: ${trade.asset} <br> currency: ${trade.asset.currency} <br> time: ${trade.time} <br> qty: ${trade.quantity} <br> fee: $fee <br> pnl: $pnl <br> cost: $totalCost <br> order: ${trade.orderId}"
     }
 
-    private fun toSeriesData(trades: List<Trade>, assets: List<Asset>): List<List<Any>> {
+    private fun toSeriesData(assets: List<Asset>): List<List<Any>> {
         val d = mutableListOf<List<Any>>()
         for (trade in trades) {
             with(trade) {
                 val value = when (aspect) {
-                    "pnl" -> account.convert(pnl, time = time).toBigDecimal()
-                    "fee" -> account.convert(fee, time = time).toBigDecimal()
-                    "cost" -> account.convert(totalCost, time = time).toBigDecimal()
+                    "pnl" -> pnl.convert(time = time).toBigDecimal()
+                    "fee" -> fee.convert(time = time).toBigDecimal()
+                    "cost" -> totalCost.convert(time = time).toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
                     else -> throw Exception("Unsupported aspect $aspect")
                 }
@@ -66,9 +64,8 @@ class TradeChartByAsset(
 
     override fun renderOption(): String {
         val gson = gsonBuilder.create()
-        val trades = account.trades.filter(filter)
         val assets = trades.map { it.asset }.distinct().sortedBy { it.symbol }
-        val d = toSeriesData(trades, assets)
+        val d = toSeriesData(assets)
         val data = gson.toJson(d)
         val series = """
             {

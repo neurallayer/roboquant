@@ -20,7 +20,6 @@ import org.roboquant.RunPhase
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.TradePrice
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
@@ -43,7 +42,6 @@ import java.util.logging.Logger
  */
 class SimBroker(
     private val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
-    exchangeRates: ExchangeRates? = null,
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val costModel: CostModel = DefaultCostModel(),
     private val usageCalculator: UsageCalculator = BasicUsageCalculator(),
@@ -57,7 +55,7 @@ class SimBroker(
     // Used to store metrics of the simbroker itself
     private val metrics = mutableMapOf<String, Number>()
 
-    override val account: Account = Account(baseCurrency, exchangeRates)
+    override val account: Account = Account(baseCurrency)
 
     companion object Factory {
 
@@ -205,12 +203,11 @@ class SimBroker(
      * 1. cancel all open orders
      * 2. close all open positions by creating and process market orders for the required quantities
      */
-    fun liquidatePortfolio(now:Instant = account.lastUpdate): Account {
+    fun liquidatePortfolio(time:Instant = account.lastUpdate): Account {
         for (order in account.orders.open) order.status = OrderStatus.CANCELLED
         val change = account.portfolio.diff(Portfolio())
         val orders = change.map { MarketOrder(it.key, it.value, tag = "liquidate") }
-        val actions = account.portfolio.positions.map { TradePrice(it.asset, it.spotPrice) }
-        val event = Event(actions, now)
+        val event = Event(account.portfolio.toTradePrices(), time)
         return place(orders, event)
     }
 

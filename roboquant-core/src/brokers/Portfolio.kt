@@ -18,9 +18,10 @@ package org.roboquant.brokers
 
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
-import org.roboquant.common.Wallet
 import org.roboquant.common.Summary
+import org.roboquant.common.Wallet
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.TradePrice
 import java.text.DecimalFormat
 import java.util.*
 
@@ -88,7 +89,13 @@ class Portfolio : Cloneable {
         return currentPos.realizedPNL(position)
     }
 
+    /**
+     * Create the trade prices for all positions in the portfolio.
+     */
+    fun toTradePrices(): List<TradePrice> {
+        return positions.map { TradePrice(it.asset, it.spotPrice) }
 
+    }
 
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]
@@ -205,7 +212,7 @@ class Portfolio : Cloneable {
 
 
     /**
-     * Add all the positions of an [other] portfolio to this portfolio. Even closed positions are transferred.
+     * Add all the positions of an [other] portfolio to this portfolio.
      */
     fun add(other: Portfolio) {
         for (position in other._positions.values) {
@@ -217,7 +224,7 @@ class Portfolio : Cloneable {
      * Put the positions of an [other] portfolio to this portfolio, overwriting existing position entries
      */
     fun put(other: Portfolio) {
-        _positions.putAll(other._positions.map { it.key to it.value.copy() })
+        _positions.putAll(other._positions.map { it.key to it.value })
     }
 
 

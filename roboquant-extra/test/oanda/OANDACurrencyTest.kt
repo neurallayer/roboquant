@@ -16,6 +16,7 @@
 
 package org.roboquant.oanda
 
+import org.roboquant.common.Config
 import kotlin.test.*
 
 internal class OANDACurrencyTest {
@@ -24,6 +25,6 @@ internal class OANDACurrencyTest {
     fun test() {
         System.getProperty("TEST_OANDA") ?: return
         val c = OANDAExchangeRates()
-
+        assertEquals(Config.baseCurrency, c.baseCurrency)
     }
 }

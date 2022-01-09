@@ -44,9 +44,9 @@ internal class TradesTest {
             trades.add(trade2)
         }
 
-        assertEquals(200.0, trades.totalFee(asset))
-        assertEquals(100.0, trades.realizedPnL(asset))
-        assertEquals(100.0, trades.realizedPnL(asset.symbol))
+        assertEquals(200.0, trades.totalFee(asset).value)
+        assertEquals(100.0, trades.realizedPnL(asset).value)
+        assertEquals(100.0, trades.realizedPnL(asset.symbol).value)
         assertEquals(20, trades.timeline.size)
 
         assertTrue(trades.summary().content == "Trades")

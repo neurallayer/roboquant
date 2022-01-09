@@ -58,12 +58,12 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
      * @param timeFrame An optional timeframe to restrict the calculation to
      * @return The P&L as a double value
      */
-    fun realizedPnL(asset: Asset, timeFrame: TimeFrame? = null): Double {
-        var filteredResults = asSequence().filter { it.asset == asset }
+    fun realizedPnL(asset: Asset, timeFrame: TimeFrame? = null): Amount {
+        var filteredResults = filter { it.asset == asset }
         if (timeFrame != null)
             filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
 
-        return filteredResults.fold(0.0) { result, trade -> result + trade.pnlValue }
+        return filteredResults.map { it.pnl }.sum().toAmount()
     }
 
     /**
@@ -74,7 +74,7 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
      * @param timeFrame
      * @return
      */
-    fun realizedPnL(symbol: String, timeFrame: TimeFrame? = null): Double {
+    fun realizedPnL(symbol: String, timeFrame: TimeFrame? = null): Amount {
         val asset = assets.first { it.symbol == symbol }
         return realizedPnL(asset, timeFrame)
     }
@@ -130,10 +130,12 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
      * @param timeFrame
      * @return
      */
-    fun totalFee(asset: Asset, timeFrame: TimeFrame? = null): Double {
-        var filteredResults = asSequence().filter { it.asset == asset }
-        filteredResults = filteredResults.filter(timeFrame)
-        return filteredResults.fold(0.0) { result, order -> result + order.feeValue }
+    fun totalFee(asset: Asset, timeFrame: TimeFrame? = null): Amount {
+        var filteredResults = filter { it.asset == asset }
+        if (timeFrame != null)
+            filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
+
+        return filteredResults.map { it.fee }.sum().toAmount()
     }
 
 

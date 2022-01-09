@@ -17,29 +17,43 @@
 package org.roboquant.feeds.avro
 
 import kotlinx.coroutines.runBlocking
-import kotlin.test.*
+import org.junit.FixMethodOrder
 import org.junit.rules.TemporaryFolder
-import org.roboquant.feeds.random.RandomWalk
+import org.junit.runners.MethodSorters
+import org.roboquant.common.TimeFrame
+import org.roboquant.common.days
 import org.roboquant.feeds.play
+import org.roboquant.feeds.random.RandomWalk
 import java.io.File
 import java.time.Instant
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class AvroTest {
 
-    private val folder = TemporaryFolder()
+    companion object {
+        private val folder = TemporaryFolder()
+        private lateinit var fileName: String
+        private var size: Int = 0
+        private const val nAssets = 3
+    }
+
+    @Test
+    fun avroStep1() {
+        folder.create()
+        fileName = folder.newFile("test.avro").path
+        val timeline = TimeFrame.past(30.days).toDays()
+        val feed = RandomWalk(timeline, nAssets = nAssets)
+        size = feed.timeline.size
+        AvroUtil.record(feed, fileName, compressionLevel = 0)
+        assertTrue(File(fileName).isFile)
+    }
 
 
     @Test
-    fun avroRecord() {
-        folder.create()
-        val fileName = folder.newFile("test.avro").path
-        val nAssets = 3
-        val feed = RandomWalk.lastYears(1, nAssets = nAssets)
-        val size = feed.timeline.size
-        AvroUtil.record(feed, fileName)
-        assertTrue(File(fileName).isFile)
-
+    fun avroStep2() {
         val feed2 = AvroFeed(fileName, useIndex = false)
         assertTrue(feed2.assets.isEmpty())
 
@@ -54,9 +68,12 @@ class AvroTest {
             }
             assertEquals(size, cnt)
         }
+    }
 
+    @Test
+    fun avroStep3() {
         val feed3 = AvroFeed(fileName, useIndex = true)
-        assertEquals(feed.assets, feed3.assets)
+        // assertEquals(feed.assets, feed3.assets)
         assertEquals(size, feed3.timeline.size)
         assertEquals(size, feed3.index.size)
 
@@ -65,8 +82,9 @@ class AvroTest {
             for (event in play(feed3)) cnt++
             assertEquals(size, cnt)
         }
-
     }
+
+
 
 
 }

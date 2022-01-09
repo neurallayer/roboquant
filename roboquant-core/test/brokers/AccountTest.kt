@@ -42,7 +42,7 @@ internal class AccountTest {
         assertTrue(account.trades.realizedPnL().isEmpty())
 
         val asset = Asset("Dummy")
-        assertTrue(account.trades.realizedPnL(asset) == 0.0)
+        assertTrue(account.trades.realizedPnL(asset).value == 0.0)
 
         account.cash.deposit(100.USD)
 

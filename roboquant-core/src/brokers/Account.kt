@@ -18,13 +18,10 @@
 
 package org.roboquant.brokers
 
-import org.roboquant.common.Amount
-import org.roboquant.common.Wallet
-import org.roboquant.common.Currency
-import org.roboquant.common.Summary
+import org.roboquant.common.*
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import javax.naming.ConfigurationException
+import org.roboquant.common.Config.baseCurrency
 
 
 /**
@@ -46,7 +43,7 @@ import javax.naming.ConfigurationException
  * @constructor Create a new Account
  */
 class Account(
-    var baseCurrency: Currency = Currency.USD,
+    var baseCurrency: Currency = Config.baseCurrency,
     private val exchangeRates: ExchangeRates? = null,
 ) : Cloneable {
 
@@ -113,6 +110,9 @@ class Account(
     }
 
 
+    fun convert(w: Wallet) = w.convert(toCurrency = baseCurrency, time = lastUpdate)
+    fun convert(a: Amount) = a.convert(to = baseCurrency, time = lastUpdate)
+
     /**
      * Provide a short summary that contains the high level account information, the available cash balances and
      * the open positions in the portfolio.
@@ -145,45 +145,6 @@ class Account(
         s.add(orders.summary())
         s.add(trades.summary())
         return s
-    }
-
-    /**
-     * Convert a [Wallet] value into a single currency amount. If no currencyConverter has been configured and this method
-     * is invoked when a conversion is required, it will throw a [ConfigurationException].
-     *
-     * @param wallet The cash values to convert from
-     * @param toCurrency The currency to convert the cash to, default is the baseCurrency of the account
-     * @param time The time to use for the exchange rate, default is the last update time of the account
-     * @return The converted amount as a Double
-     */
-    fun convert(wallet: Wallet, toCurrency: Currency = baseCurrency, time: Instant = lastUpdate): Amount {
-        var sum = 0.0
-        for (amount in wallet.toAmounts()) {
-            sum += if (amount.currency === toCurrency) {
-                amount.value
-            } else {
-                val rate = exchangeRates?.getRate(amount, toCurrency, time)
-                    ?: throw ConfigurationException("No currency converter defined to convert  $amount to $toCurrency")
-                amount.value * rate
-            }
-        }
-        return Amount(toCurrency, sum)
-    }
-
-
-    /**
-     * Convert an Amount into a single currency amount. If no currencyConverter has been configured and this method is
-     * called and a conversion is required, it will throw a [ConfigurationException].
-     *
-     */
-    fun convert(amount: Amount, toCurrency: Currency = baseCurrency, time: Instant = lastUpdate): Amount {
-        return if (amount.currency === toCurrency || amount.value == 0.0) {
-            Amount(toCurrency, amount.value)
-        } else {
-            val rate = exchangeRates?.getRate(amount, toCurrency, time)
-                ?: throw ConfigurationException("No currency converter defined to convert $amount to $toCurrency")
-            Amount(toCurrency, amount.value * rate)
-        }
     }
 
 

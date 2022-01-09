@@ -54,8 +54,8 @@ class PortfolioExposure : SimpleMetric() {
                 shortExposure.deposit(position.marketValue)
         }
 
-        val longExposureValue = account.convert(longExposure, time = now).value
-        val shortExposureValue = account.convert(shortExposure, time = now).value
+        val longExposureValue = longExposure.convert(time = now).value
+        val shortExposureValue = shortExposure.convert(time = now).value
         val netExposureValue = longExposureValue + shortExposureValue
         val grossExposureValue = longExposureValue.absoluteValue + shortExposureValue.absoluteValue
 

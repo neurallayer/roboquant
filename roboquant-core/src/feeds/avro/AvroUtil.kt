@@ -108,7 +108,7 @@ object AvroUtil {
                         dataFileWriter.append(record)
                     }
 
-                    // We sync after each event, so we can later create an index if required
+                    // We sync after each event, so we can later create an index that allows for faster access
                     dataFileWriter.sync()
                 }
 

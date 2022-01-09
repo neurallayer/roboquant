@@ -25,7 +25,7 @@ internal class OrderChartTest {
     @Test
     fun test() {
         val account = TestData.usAccount()
-        val chart = OrderChart(account)
+        val chart = OrderChart(account.orders)
         assertTrue(chart.asHTML().isNotBlank())
     }
 

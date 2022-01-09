@@ -18,6 +18,10 @@
 
 package org.roboquant.common
 
+import org.roboquant.brokers.ExchangeRates
+import org.roboquant.common.Config.baseCurrency
+import org.roboquant.common.Config.defaultZoneId
+import org.roboquant.common.Config.seed
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -27,7 +31,13 @@ import java.util.logging.Logger
 import kotlin.io.path.div
 
 /**
- * Configuration object for roboquant that contains shared properties.
+ * Configuration for roboquant that contains access to environment properties and several global properties
+ * that can be set:
+ *
+ * - The base cuurency [baseCurrency]
+ * - the default time zone [defaultZoneId]
+ * - exchange rates
+ * - random seed [seed]
  *
  */
 object Config {
@@ -39,18 +49,26 @@ object Config {
      */
     const val version = "0.8-SNAPSHOT"
 
-    /**
-     * Hint that memory is limited. This might cause certain components to prefer low memory usage over performance
-     */
-    var lowMemory = false
 
     /**
-     * Default zoneId to use
+     * Default zoneId to use for reporting purposes. Internally roboquant always uses the Instant type, so this is only
+     * used for displaying.
      */
     var defaultZoneId: ZoneId = ZoneId.systemDefault()
 
     /**
-     * Default seed to use, typically used by methods as a default value when none is specified
+     * exchange rates
+     */
+    var exchangeRates: ExchangeRates? = null
+
+
+    /**
+     * Default currency to use
+     */
+    var baseCurrency: Currency = Currency.USD
+
+    /**
+     * Default seed to use, typically used by methods as a default value when no other seed is specified
      */
     var seed = 42L
 
@@ -84,10 +102,8 @@ object Config {
     }
 
     /**
-     * Get the roboquant home directory, <USER_HOME>/.roboquant
-     * If it is not available yet, it will be created first time this property is called.
-     *
-     * @return home directory as Path
+     * Return the roboquant home directory, <USER_HOME>/.roboquant
+     * If it doesn not exist, it will be created first time this property is called.
      */
     val home by lazy {
         val path: Path = Paths.get(System.getProperty("user.home"), ".roboquant")
