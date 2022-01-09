@@ -19,6 +19,7 @@
 package org.roboquant.common
 
 import org.roboquant.brokers.ExchangeRates
+import org.roboquant.brokers.SingleCurrencyOnly
 import org.roboquant.common.Config.baseCurrency
 import org.roboquant.common.Config.defaultZoneId
 import org.roboquant.common.Config.seed
@@ -49,7 +50,6 @@ object Config {
      */
     const val version = "0.8-SNAPSHOT"
 
-
     /**
      * Default zoneId to use for reporting purposes. Internally roboquant always uses the Instant type, so this is only
      * used for displaying.
@@ -57,10 +57,10 @@ object Config {
     var defaultZoneId: ZoneId = ZoneId.systemDefault()
 
     /**
-     * exchange rates
+     * The exchange rates to use when dealing with multiple currencies. The default is [SingleCurrencyOnly] which as the
+     * name suggests doesn't support any conversions.
      */
-    var exchangeRates: ExchangeRates? = null
-
+    var exchangeRates: ExchangeRates = SingleCurrencyOnly()
 
     /**
      * Default currency to use

@@ -49,12 +49,9 @@ internal class ECBExchangeRatesTest {
         c = x.getRate(100.USD, JPY, Instant.MAX)
         assertTrue(c > 100.0)
 
-
-
         val currencies = x.currencies
         assertTrue(JPY in currencies)
-
-        assertTrue(EUR !in currencies)
+        assertTrue(EUR in currencies)
 
     }
 

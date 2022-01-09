@@ -27,6 +27,8 @@ import java.time.Instant
  * - the time of the conversion
  * - the amount to be converted
  *
+ * Typically you won't be using this interface directly, buth rather [Amount.convert].
+ *
  */
 interface ExchangeRates {
 
@@ -41,7 +43,7 @@ interface ExchangeRates {
     fun getRate(amount: Amount, to: Currency, time: Instant): Double
 
     /**
-     * Convert an [amount] [to] an amount in a different currency. This default implementation uses the [getRate] to
+     * Convert an [amount] [to] a different currency. This default implementation uses the [getRate] to
      * calculate the exchange rate to use for this conversion.
      */
     fun convert(amount: Amount, to: Currency, time: Instant): Amount {

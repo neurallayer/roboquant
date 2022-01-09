@@ -44,7 +44,7 @@ class SimBroker(
     private val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val costModel: CostModel = DefaultCostModel(),
-    private val usageCalculator: UsageCalculator = BasicUsageCalculator(),
+    private val buyingPower: BuyingPower = CashBuyingPower(),
     private val validateBuyingPower: Boolean = false,
     private val recording: Boolean = false,
     private val prefix: String = "broker.",
@@ -147,7 +147,7 @@ class SimBroker(
 
 
     private fun updateBuyingPower() {
-        val value = usageCalculator.calculate(account)
+        val value = buyingPower.calculate(account)
         account.buyingPower = value
     }
 

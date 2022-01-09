@@ -8,12 +8,12 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class  UsageCalculatorTest {
+internal class  BuyingPowerTest {
 
     @Test
     fun test() {
         val account = TestData.usAccount()
-        val uc = BasicUsageCalculator()
+        val uc = CashBuyingPower()
         val result = uc.calculate(account)
         assertEquals(result.value, account.cashAmount.value)
 
@@ -34,5 +34,13 @@ internal class  UsageCalculatorTest {
         assertTrue(result.value > account.cashAmount.value)
     }
 
+
+    @Test
+    fun test3() {
+        val account = TestData.usAccount()
+        val uc = MarginBuyingPower()
+        val result = uc.calculate(account)
+        assertTrue(result.value > account.cashAmount.value)
+    }
 
 }

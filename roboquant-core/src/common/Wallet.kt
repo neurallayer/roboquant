@@ -270,6 +270,11 @@ class Wallet(vararg amounts: Amount) : Cloneable {
         return Amount(toCurrency, sum)
     }
 
+    operator fun times(n: Number): Wallet {
+        val result = clone()
+        for ((k, v) in result.data) result.data[k] = v * n.toDouble()
+        return result
+    }
 
 
 }

@@ -21,7 +21,6 @@ import com.oanda.v20.ContextBuilder
 import com.oanda.v20.account.AccountID
 import com.oanda.v20.primitives.InstrumentType
 import org.roboquant.Roboquant
-import org.roboquant.brokers.FeedExchangeRates
 import org.roboquant.brokers.sim.DefaultCostModel
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Asset
@@ -38,17 +37,16 @@ object OANDA {
      * Create a roboquant instance configured for back testing Forex trading. Although trading Forex is just like any
      * another asset class, there are some configuration paramters that are different from assets classes like stocks:
     - Being short is as common as being long
-    - The spread (for common currency pairs) is lower than most stocks
+    - The spread (for common currency pairs) is smaller than most stocks
+     - The lee
      */
-    fun roboquant(strategy: Strategy, vararg metrics: Metric, currencyConverter: FeedExchangeRates? = null): Roboquant<MemoryLogger> {
+    fun roboquant(strategy: Strategy, vararg metrics: Metric): Roboquant<MemoryLogger> {
         // We allow shorting
         val policy = DefaultPolicy(shorting = true)
 
         // We use a lower cost model, since the default of 10 BIPS is too much for Forex
         // We select 2.0 BIPS
         val costModel = DefaultCostModel(2.0)
-        Config.exchangeRates = currencyConverter
-        // val marginCalculator = OANDAMarginCalculator()
         val broker = SimBroker(costModel = costModel)
 
         return Roboquant(strategy, *metrics, policy = policy, broker = broker)

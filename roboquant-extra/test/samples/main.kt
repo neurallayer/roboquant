@@ -188,9 +188,9 @@ fun oanda2() {
     Currency.increaseDigits(3)
     val feed = OANDAHistoricFeed()
     feed.retrieveCandles("EUR_USD", "EUR_GBP", "GBP_USD")
-    val currencyConverter = FeedExchangeRates(feed)
+    Config.exchangeRates = FeedExchangeRates(feed)
 
-    val roboquant = OANDA.roboquant(EMACrossover(), currencyConverter = currencyConverter)
+    val roboquant = OANDA.roboquant(EMACrossover())
     roboquant.run(feed)
     roboquant.broker.account.fullSummary().print()
 }

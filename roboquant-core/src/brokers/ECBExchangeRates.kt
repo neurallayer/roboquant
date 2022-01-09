@@ -56,11 +56,7 @@ import kotlin.io.path.notExists
  */
 class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) : TimeExchangeRates(Currency.EUR) {
 
-
     private val logger: Logger = Logging.getLogger(ECBExchangeRates::class)
-
-
-
 
     companion object {
         private const val DEFAULT_ECB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.zip"

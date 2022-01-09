@@ -18,25 +18,21 @@ package org.roboquant.brokers
 
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
+import java.lang.Exception
 import java.time.Instant
-import java.util.*
+
 
 /**
- * Currency Convertor that supports different rates at different times. Abstract class that is used by
- * FeedCurrencyConverter and ECBCurrencyConverter.
+ * Currency converter that supports fixed exchange rates between currencies, so rates that don't change over the
+ * duration of a run. It provides logic to convert between two currencies given this map of
+ * exchange rates. It is smart in the sense that is able to convert between currencies even if there is no direct
+ * exchange rate defined in the map for a given currency pair.
+ *
+ * It will throw an exception if a conversion is required for an unknown currency.
+ *
+ * @constructor Create a new  single currency only
  */
-abstract class TimeExchangeRates(protected val baseCurrency: Currency) : ExchangeRates {
-
-    protected val exchangeRates = mutableMapOf<Currency, NavigableMap<Instant,Double>>()
-
-    val currencies: Collection<Currency>
-        get() = exchangeRates.keys + setOf(baseCurrency)
-
-    private fun find(currency: Currency, time: Instant): Double {
-        val rates = exchangeRates[currency]!!
-        val result = rates.floorEntry(time) ?: rates.firstEntry()
-        return result.value
-    }
+class SingleCurrencyOnly : ExchangeRates {
 
     /**
      * Convert between two currencies.
@@ -44,16 +40,11 @@ abstract class TimeExchangeRates(protected val baseCurrency: Currency) : Exchang
      *
      * @param to
      * @param amount The total amount to be converted
-     * @return The converted amount
+     * @return The rate to use
      */
     override fun getRate(amount: Amount, to: Currency, time: Instant): Double {
-        val from = amount.currency
-        (from === to) && return 1.0
-
-        return when {
-            (to === baseCurrency) -> find(from, time)
-            (from === baseCurrency) -> 1.0 / find(to, time)
-            else -> find(from, time) * (1.0 / find(to, time))
-        }
+        (amount.currency === to || amount.value == 0.0) && return 1.0
+        throw Exception("Cannot convert $amount to $to")
     }
+
 }

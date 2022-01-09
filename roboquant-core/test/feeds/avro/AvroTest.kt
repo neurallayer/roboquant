@@ -76,6 +76,7 @@ class AvroTest {
         // assertEquals(feed.assets, feed3.assets)
         assertEquals(size, feed3.timeline.size)
         assertEquals(size, feed3.index.size)
+        assertEquals(nAssets, feed3.assets.size)
 
         runBlocking {
             var cnt = 0
