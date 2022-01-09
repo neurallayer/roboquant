@@ -40,7 +40,7 @@ class TradeChartByAsset(
         val pnl = trade.pnl.toBigDecimal()
         val totalCost = trade.totalCost.toBigDecimal()
         val fee = trade.fee.toBigDecimal()
-        return "asset: ${trade.asset} <br> time: ${trade.time} <br> qty: ${trade.quantity} <br> fee: $fee <br> pnl: $pnl <br> cost: $totalCost <br> order: ${trade.orderId}"
+        return "asset: ${trade.asset} <br> currency: ${trade.asset.currency} <br> time: ${trade.time} <br> qty: ${trade.quantity} <br> fee: $fee <br> pnl: $pnl <br> cost: $totalCost <br> order: ${trade.orderId}"
     }
 
     private fun toSeriesData(trades: List<Trade>, assets: List<Asset>): List<List<Any>> {
@@ -48,15 +48,14 @@ class TradeChartByAsset(
         for (trade in trades) {
             with(trade) {
                 val value = when (aspect) {
-                    "pnl" -> pnl.toBigDecimal()
-                    "fee" -> fee.toBigDecimal()
-                    "cost" -> totalCost.toBigDecimal()
+                    "pnl" -> account.convert(pnl, time = time).toBigDecimal()
+                    "fee" -> account.convert(fee, time = time).toBigDecimal()
+                    "cost" -> account.convert(totalCost, time = time).toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
                     else -> throw Exception("Unsupported aspect $aspect")
                 }
 
                 val y = assets.indexOf(asset)
-
                 val tooltip = getTooltip(this)
                 d.add(listOf(time, y, value, tooltip))
             }
@@ -78,7 +77,6 @@ class TradeChartByAsset(
                 data : $data
             }
         """
-
 
         val yAxisData = gson.toJson(assets.map { it.symbol })
 

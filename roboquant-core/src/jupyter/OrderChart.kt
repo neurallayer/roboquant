@@ -20,9 +20,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.orders.Order
 import org.roboquant.orders.SingleOrder
 import java.math.BigDecimal
-import java.math.RoundingMode
 import java.time.Instant
-import kotlin.math.absoluteValue
 
 /**
  * Order chart plots [orders] over time. By default, the quantity will be plotted, but you can change the [aspect]
@@ -34,35 +32,33 @@ import kotlin.math.absoluteValue
 class OrderChart(
     private val account: Account,
     private val aspect: String = "quantity",
-    private val scale: Int = 2,
     private val filter: (Order) -> Boolean = { true }
 ) : Chart() {
 
-    private var max = Double.MIN_VALUE
+    private var max = Double.MIN_VALUE.toBigDecimal()
 
     init {
-        require(aspect in listOf("remaining", "direction", "quantity", "fill"))
+        require(aspect in listOf("remaining", "direction", "quantity", "fill", "value"))
     }
 
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val singleOrders = account.orders.filterIsInstance<SingleOrder>().filter(filter)
-
+        max = Double.MIN_VALUE.toBigDecimal()
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (order in singleOrders) {
             with(order) {
-
                 val value = when (aspect) {
-                    "remaining" -> remaining
-                    "direction" -> order.direction.toDouble()
-                    "quantity" -> quantity
-                    "fill" -> fill
+                    "remaining" -> remaining.toBigDecimal()
+                    "direction" -> order.direction.toBigDecimal()
+                    "quantity" -> quantity.toBigDecimal()
+                    "value" -> account.convert(order.getValueAmount()).toBigDecimal()
+                    "fill" -> fill.toBigDecimal()
                     else -> throw Exception("Unsupported aspect")
                 }
 
-                if (value.absoluteValue > max) max = value.absoluteValue
-                val roundedValue = BigDecimal(value).setScale(scale, RoundingMode.HALF_DOWN)
+                if (value.abs() > max) max = value.abs()
                 val tooltip = "asset: $asset <br> qty: $quantity <br> id: $id"
-                d.add(Triple(placed, roundedValue, tooltip))
+                d.add(Triple(placed, value, tooltip))
             }
         }
 
@@ -72,7 +68,6 @@ class OrderChart(
     /** @suppress */
     override fun renderOption(): String {
         val gson = gsonBuilder.create()
-        max = Double.MIN_VALUE
 
         val d = toSeriesData()
         val data = gson.toJson(d)

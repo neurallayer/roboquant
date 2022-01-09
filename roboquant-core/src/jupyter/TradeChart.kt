@@ -25,7 +25,7 @@ import java.time.Instant
  * Trade chart plots the trades of an [account] that have been generated during a run. By default, the realized pnl of the trades will
  * be plotted but this can be changed. The possible options are pnl, fee, cost and quantity
  */
-class TradeChart(
+open class TradeChart(
     private val account: Account,
     private val aspect: String = "pnl",
     private val filter: (Trade) -> Boolean = { true }
@@ -50,9 +50,9 @@ class TradeChart(
         for (trade in account.trades.filter(filter)) {
             with(trade) {
                 val value = when (aspect) {
-                    "pnl" -> account.convert(pnl).toBigDecimal()
-                    "fee" -> account.convert(fee).toBigDecimal()
-                    "cost" -> account.convert(totalCost).toBigDecimal()
+                    "pnl" -> account.convert(pnl, time = time).toBigDecimal()
+                    "fee" -> account.convert(fee, time = time).toBigDecimal()
+                    "cost" -> account.convert(totalCost, time = time).toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
                     else -> throw Exception("Unsupported aspect $aspect")
                 }

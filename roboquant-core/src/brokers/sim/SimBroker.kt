@@ -57,7 +57,6 @@ class SimBroker(
     // Used to store metrics of the simbroker itself
     private val metrics = mutableMapOf<String, Number>()
 
-
     override val account: Account = Account(baseCurrency, exchangeRates)
 
     companion object Factory {

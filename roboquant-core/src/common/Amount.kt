@@ -29,6 +29,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     operator fun minus(d: Number): Amount = Amount(currency, value - d.toDouble())
     operator fun plus(other: Amount): Wallet = Wallet(this, other)
 
+
     val absoluteValue
         get() = Amount(currency, value.absoluteValue)
 
