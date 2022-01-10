@@ -19,46 +19,45 @@ package org.roboquant.oanda
 import com.oanda.v20.Context
 import com.oanda.v20.pricing.PricingGetRequest
 import org.roboquant.brokers.ExchangeRates
-import org.roboquant.common.Amount
-import org.roboquant.common.Currency
-import org.roboquant.common.toCurrencyPair
-import org.roboquant.feeds.PriceAction
+import org.roboquant.common.*
 import java.time.Instant
+import javax.naming.ConfigurationException
 
 /**
  * Currency converter used by default by OANDA Broker that uses feed data to update exchange rates.
  */
-class OANDAExchangeRates(token: String? = null, demoAccount: Boolean = true, private val priceType: String = "DEFAULT") : ExchangeRates {
+class OANDAExchangeRates(
+    assets: Iterable<Asset>,
+    token: String? = null,
+    demoAccount: Boolean = true,
+    accountID: String? = null,
+) : ExchangeRates {
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
-    private val accountID = OANDA.getAccountID(null, ctx)
-
+    private val accountID = OANDA.getAccountID(accountID, ctx)
 
     internal lateinit var baseCurrency: Currency
-    private val exchangeRates = mutableMapOf<Currency, Double>()
-
+    private val exchangeRates = mutableMapOf<Pair<Currency, Currency>, Double>()
+    private val logger = Logging.getLogger(OANDAExchangeRates::class)
 
     init {
-        val request = PricingGetRequest(accountID, listOf("GBP_USD", "EUR_USD", "EUR_GBP"))
+        val symbols = assets.map { it.symbol }
+        val request = PricingGetRequest(this.accountID, symbols)
         val resp = ctx.pricing[request]
         for (price in resp.prices) {
-            val symbol = price.instrument
-            println("$symbol ${price.quoteHomeConversionFactors}")
+            val symbol = price.instrument.toString()
+            val pair1 = symbol.toCurrencyPair()!!
+            val pair2 = Pair(pair1.second, pair1.first)
+            val quote1 = price.quoteHomeConversionFactors.positiveUnits.doubleValue()
+            val quote2 = 1.0 / price.quoteHomeConversionFactors.negativeUnits.doubleValue()
+            exchangeRates[pair1] = quote1
+            exchangeRates[pair2] = quote2
+            logger.finer {"Added $pair1 : $quote1 and $pair2 : $quote2 to the exchange rates"}
         }
+        logger.info {"Added ${exchangeRates.size} exchange rates"}
     }
 
 
-    internal fun setRate(symbol: String, action :PriceAction) {
-        val currencyPair = symbol.toCurrencyPair()
-        if (currencyPair != null) {
-            val (from, to) = currencyPair
-            val rate = action.getPrice(priceType)
-            if (to == baseCurrency)
-                exchangeRates[from] = rate
-            else if (from == baseCurrency)
-                exchangeRates[to] = 1.0/ rate
-        }
-    }
 
     /**
      * Convert between two currencies.
@@ -70,12 +69,14 @@ class OANDAExchangeRates(token: String? = null, demoAccount: Boolean = true, pri
      */
     override fun getRate(amount: Amount, to: Currency, time: Instant): Double {
         val from = amount.currency
-        (from === to) && return 1.0
+        (from === to || amount.value == 0.0) && return 1.0
 
+        val pair1 = Pair(from, to)
+        val pair2 = Pair(to, from)
         return when {
-            (to === baseCurrency) -> exchangeRates[from]!!
-            (from === baseCurrency) -> 1 / exchangeRates[to]!!
-            else -> exchangeRates[from]!! * 1 / exchangeRates[to]!!
+            (pair1 in exchangeRates) -> exchangeRates[pair1]!!
+            (pair2 in exchangeRates) -> 1.0 / exchangeRates[pair2]!!
+            else -> throw ConfigurationException("Cannot convert $amount to $to")
         }
 
     }

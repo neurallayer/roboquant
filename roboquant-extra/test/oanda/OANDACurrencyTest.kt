@@ -24,7 +24,7 @@ internal class OANDACurrencyTest {
     @Test
     fun test() {
         System.getProperty("TEST_OANDA") ?: return
-        val c = OANDAExchangeRates()
+        val c = OANDAExchangeRates(listOf())
         assertEquals(Config.baseCurrency, c.baseCurrency)
     }
 }

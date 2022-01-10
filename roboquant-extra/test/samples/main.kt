@@ -25,6 +25,7 @@ import org.roboquant.alpaca.AlpacaLiveFeed
 import org.roboquant.alpaca.AlpacaPeriod
 import org.roboquant.brokers.FeedExchangeRates
 import org.roboquant.brokers.FixedExchangeRates
+import org.roboquant.brokers.Portfolio
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.OrderBook
@@ -37,10 +38,7 @@ import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.OpenPositions
 import org.roboquant.metrics.ProgressMetric
-import org.roboquant.oanda.OANDA
-import org.roboquant.oanda.OANDABroker
-import org.roboquant.oanda.OANDAHistoricFeed
-import org.roboquant.oanda.OANDALiveFeed
+import org.roboquant.oanda.*
 import org.roboquant.orders.FOK
 import org.roboquant.orders.MarketOrder
 import org.roboquant.policies.DefaultPolicy
@@ -205,6 +203,35 @@ fun oandaLive() {
 }
 
 
+
+fun oandaPaperTrading() {
+    val broker = OANDABroker(enableOrders = true)
+    Config.exchangeRates = OANDAExchangeRates(broker.availableAssets)
+
+    val feed = OANDALiveFeed()
+    val assets = broker.availableAssets.findByCurrencies("EUR", "USD", "JPY", "GBP")
+    feed.subscribeOrderBook(assets)
+
+    val roboquant = Roboquant(EMACrossover.shortTerm(), broker = broker)
+
+    val tf = TimeFrame.next(10.minutes)
+    roboquant.run(feed, tf)
+    Currency.increaseDigits(3) // We want to use some extra digits
+    roboquant.broker.account.fullSummary().print()
+}
+
+
+fun oandaPaperTradingClosePositions() {
+    val broker = OANDABroker(enableOrders = true)
+    Logging.setLevel(Level.FINE)
+    Config.exchangeRates = OANDAExchangeRates(broker.availableAssets)
+    val orders = broker.account.portfolio.diff(Portfolio()).map { MarketOrder(it.key, it.value) }
+    broker.place(orders, Event.empty())
+    broker.account.fullSummary().print()
+}
+
+
+
 fun oandaLiveRecord() {
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
@@ -223,11 +250,11 @@ fun oandaLivePrices() {
 
 
 fun oandaBroker() {
-    val exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
-    val broker = OANDABroker(exchangeRates = exchangeRates)
+    Config.exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
+    val broker = OANDABroker()
     broker.account.summary().log()
     broker.account.portfolio.summary().log()
-    broker.availableAssets.values.summary().log()
+    broker.availableAssets.summary().log()
 
     val strategy = EMACrossover()
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
@@ -263,10 +290,10 @@ fun oandaBroker2(createOrder: Boolean = true) {
     Logging.setLevel(Level.FINE, "OANDABroker")
     val broker = OANDABroker(enableOrders = true)
     broker.account.fullSummary().log()
-    broker.availableAssets.values.summary().log()
+    broker.availableAssets.summary().log()
 
     if (createOrder) {
-        val asset = broker.availableAssets.values.findBySymbols("EUR_USD").first()
+        val asset = broker.availableAssets.findBySymbols("EUR_USD").first()
         val order = MarketOrder(asset, -100.0, tif = FOK())
         broker.place(listOf(order), Event.empty())
         broker.account.fullSummary().log()
@@ -274,9 +301,8 @@ fun oandaBroker2(createOrder: Boolean = true) {
 }
 
 
-
 fun main() {
-    when ("OANDA_BROKER2") {
+    when ("OANDA_PAPER") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
@@ -293,5 +319,7 @@ fun main() {
         "OANDA_LIVE_FEED" -> oandaLive()
         "OANDA_LIVE_RECORD" -> oandaLiveRecord()
         "OANDA_LIVE_PRICES" -> oandaLivePrices()
+        "OANDA_PAPER" -> oandaPaperTrading()
+        "OANDA_CLOSE" -> oandaPaperTradingClosePositions()
     }
 }

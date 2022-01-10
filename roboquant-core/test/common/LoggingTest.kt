@@ -22,11 +22,10 @@ import kotlin.test.*
 
 class LoggingTest {
 
-
     @Test
     fun test() {
-        val logger = Logging.getLogger("test")
-        assertEquals("test", logger.name)
+        val logger = Logging.getLogger("org.roboquant.test")
+        assertEquals("org.roboquant.test", logger.name)
         assertEquals(Level.INFO, logger.level)
 
         Logging.setLevel(Level.WARNING)
@@ -34,7 +33,7 @@ class LoggingTest {
         Logging.setLevel(Level.WARNING)
 
         Logging.setDefaultLevel(Level.FINE)
-        val logger2 = Logging.getLogger("test")
+        val logger2 = Logging.getLogger("org.roboquant.test")
         assertEquals(Level.FINE, logger2.level)
         Logging.setDefaultLevel(Level.INFO)
     }

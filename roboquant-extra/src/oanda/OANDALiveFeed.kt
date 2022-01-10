@@ -128,6 +128,12 @@ class OANDALiveFeed(
 
     }
 
+
+    fun subscribeOrderBook(assets: Collection<Asset>, delay: Long = 5_000L) {
+        val symbols = assets.map{ it.symbol}.toTypedArray()
+        subscribeOrderBook(*symbols, delay = delay)
+    }
+    
     /**
      * Subscribe to the order book data for the provided [symbols]. Since this is a pulling solution, you can also
      * specify the [delay] interval between two pulls, default being 5000 milliseconds (so 5 seocond data)

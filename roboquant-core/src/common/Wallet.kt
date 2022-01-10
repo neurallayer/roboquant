@@ -151,7 +151,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
      * @param amount
      */
     fun withdraw(amount: Amount) {
-        deposit(amount * -1)
+        deposit(- amount)
     }
 
     /**
@@ -175,13 +175,15 @@ class Wallet(vararg amounts: Amount) : Cloneable {
 
 
     /**
-     * Does the wallet contain multiple currencies with a non-zero balance.
+     * Does the wallet contain multiple currencies.
      */
     fun isMultiCurrency(): Boolean {
         return currencies.size > 1
     }
 
-
+    /**
+     * Create a clone of this wallet
+     */
     override fun clone(): Wallet {
         val result = Wallet()
         result.data.putAll(data)
@@ -209,14 +211,12 @@ class Wallet(vararg amounts: Amount) : Cloneable {
 
 
     /**
-     * Create a string representation with respecting currency preferred settings when formatting the amounts.
+     * Create a string representation of this wallet with respecting currency preferred settings when
+     * formatting the values.
      */
     override fun toString(): String {
-        val sb = StringBuffer()
-        for (amount in toAmounts()) {
-            if (amount.value != 0.0)
-                sb.append("$amount\n")
-        }
+        val sb = StringBuffer("Wallet")
+        for (amount in toAmounts()) sb.append("    $amount")
         return sb.toString()
     }
 

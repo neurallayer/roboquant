@@ -22,11 +22,14 @@ import com.oanda.v20.order.MarketOrderRequest
 import com.oanda.v20.order.OrderCreateRequest
 import com.oanda.v20.position.PositionSide
 import com.oanda.v20.primitives.InstrumentName
+import com.oanda.v20.transaction.OrderCancelReason
 import com.oanda.v20.transaction.OrderFillTransaction
 import com.oanda.v20.transaction.TransactionID
-import org.roboquant.brokers.*
+import org.roboquant.brokers.Account
+import org.roboquant.brokers.Broker
+import org.roboquant.brokers.Position
+import org.roboquant.brokers.Trade
 import org.roboquant.common.Amount
-import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
@@ -37,27 +40,29 @@ import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
- * Implementation of the [Broker] API for OANDA that can be used for paper- en live-trading.
+ * Implementation of the [Broker] API that can be used for paper- en live-trading using OANDA as your broker.
  */
 class OANDABroker(
     accountID: String? = null,
     token: String? = null,
     demoAccount: Boolean = true,
-    private val exchangeRates: ExchangeRates = OANDAExchangeRates(),
     val enableOrders: Boolean = false,
     private val maxLeverage: Double = 30.0
 ) : Broker {
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
     private val accountID = AccountID(OANDA.getAccountID(accountID, ctx))
-    override val account: Account = Account(exchangeRates = exchangeRates)
-    private val logger = Logging.getLogger("OANDABroker")
+    override val account: Account = Account()
+    private val logger = Logging.getLogger(OANDABroker::class)
     private lateinit var lastTransactionId: TransactionID
 
 
-    val availableAssets by lazy {
+    private val availableAssetsMap by lazy {
         OANDA.getAvailableAssets(ctx, this.accountID)
     }
+
+    val availableAssets
+        get() = availableAssetsMap.values
 
     init {
         if (! demoAccount) logger.warning("Using real account, use at your own risk!!!")
@@ -67,7 +72,7 @@ class OANDABroker(
 
 
     private fun getPosition(symbol: String, p: PositionSide): Position {
-        val asset = availableAssets[symbol]!!
+        val asset = availableAssetsMap[symbol]!!
         val qty = p.units.doubleValue()
         val avgPrice = p.averagePrice.doubleValue()
         val spotPrice = avgPrice + p.unrealizedPL.doubleValue() / qty
@@ -101,7 +106,6 @@ class OANDABroker(
     private fun initAccount() {
         val acc = ctx.account.get(accountID).account
         account.baseCurrency = Currency.getInstance(acc.currency.toString())
-        if (exchangeRates is OANDAExchangeRates) exchangeRates.baseCurrency = account.baseCurrency
         account.cash.clear()
 
         // Cash in roboquant is excluding the margin part
@@ -149,16 +153,6 @@ class OANDABroker(
         account.cash.set(amount)
     }
 
-    private fun updateExchangeRates(event: Event) {
-        if (exchangeRates !is OANDAExchangeRates) return
-        for (price in event.prices) {
-            val asset = price.key
-            if (asset.type == AssetType.FOREX) {
-                exchangeRates.setRate(asset.symbol, price.value)
-            }
-        }
-    }
-
 
     private fun createOrderRequest(order: MarketOrder): OrderCreateRequest {
         val req = OrderCreateRequest(accountID)
@@ -176,7 +170,6 @@ class OANDABroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer {"received ${orders.size} orders and ${event.actions.size} actions"}
-        updateExchangeRates(event)
 
         account.orders.addAll(orders)
 
@@ -185,10 +178,10 @@ class OANDABroker(
         } else {
             for (order in orders) {
                 if (order is MarketOrder) {
-                    if (order.tif !is FOK) logger.fine("Received ${order.tif}, using FOK instead")
+                    if (order.tif !is FOK) logger.fine("Received order $order, using tif=FOK instead")
                     val req = createOrderRequest(order)
                     val resp = ctx.order.create(req)
-                    logger.fine { "Received response $resp" }
+                    logger.fine { "Received response with last transaction Id ${resp.lastTransactionID}" }
                     if (resp.orderFillTransaction != null) {
                         val trx = resp.orderFillTransaction
                         order.status = OrderStatus.COMPLETED
@@ -196,11 +189,14 @@ class OANDABroker(
                         processTrade(order, trx)
                     } else if (resp.orderCancelTransaction != null){
                         val trx = resp.orderCancelTransaction
-                        // In roboquant a TIF results in expired and not cancelled.
-                        order.status = OrderStatus.EXPIRED
-                        logger.fine {"Received order cancellation for $order $trx"}
+
+                        when(trx.reason) {
+                            OrderCancelReason.TIME_IN_FORCE_EXPIRED -> order.status = OrderStatus.EXPIRED
+                            else -> order.status = OrderStatus.REJECTED
+                        }
+                        logger.fine {"Received order cancellation for $order with reason ${trx.reason}"}
                     } else {
-                        logger.warning {"No cancel or fill was returned for $order"}
+                        logger.warning {"No order cancel or fill was returned for $order"}
                     }
                 } else {
                     logger.warning { "Rejecting unsupported order type $order" }

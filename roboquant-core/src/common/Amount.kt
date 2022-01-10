@@ -24,11 +24,15 @@ import kotlin.math.absoluteValue
 
 data class Amount(val currency: Currency, val value: Double) : Comparable<Number> {
 
+    // Some common operators
     operator fun times(d: Number): Amount = Amount(currency, value * d.toDouble())
     operator fun plus(d: Number): Amount = Amount(currency, value + d.toDouble())
     operator fun div(d: Number): Amount = Amount(currency, value / d.toDouble())
     operator fun minus(d: Number): Amount = Amount(currency, value - d.toDouble())
     operator fun plus(other: Amount): Wallet = Wallet(this, other)
+    operator fun minus(other: Amount): Wallet = Wallet(this, - other)
+    operator fun unaryMinus(): Amount = Amount(currency, -value)
+
 
     val absoluteValue
         get() = Amount(currency, value.absoluteValue)

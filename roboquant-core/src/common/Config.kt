@@ -32,12 +32,12 @@ import java.util.logging.Logger
 import kotlin.io.path.div
 
 /**
- * Configuration for roboquant that contains access to environment properties and several global properties
+ * Configuration for roboquant that contains access to environment properties and has several global properties
  * that can be set:
  *
- * - The base cuurency [baseCurrency]
+ * - base cuurency [baseCurrency]
  * - the default time zone [defaultZoneId]
- * - exchange rates
+ * - exchange rates [exchangeRates]
  * - random seed [seed]
  *
  */
@@ -115,14 +115,15 @@ object Config {
     }
 
     /**
-     * Get property value. Tries to find the property in this order
+     * Get property value. Tries to find the property in the following order
      *
      *  1. System properties (`java -DpropertyName=value`)
      *  2. Environment variables set by the OS
      *  3. "dotenv" or ".env" property file in the current working directory
-     *  4. ".env" property file in roboquant home directory (normally $USER/.roboquant)
+     *  4. ".env" property file in roboquant home directory ($USER/.roboquant)
      *
-     * If nothing is found, it will return the default value or if that is not provided null
+     * If nothing is found, it will return the default value or if that is not provided null.
+     * Results are not cached, so any changes made to a file are picked immediately.
      *
      * @param name of property
      * @return
@@ -133,7 +134,7 @@ object Config {
     }
 
     /**
-     * Load properties from an environment file. We don't use lazy so any change to the file is picked-up
+     * Load properties from an environment file. We don't use caching, so any change to the file is picked-up
      * immediately.
      */
     private val env: Map<String, String>

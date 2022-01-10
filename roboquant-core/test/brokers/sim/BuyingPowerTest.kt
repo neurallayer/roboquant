@@ -43,4 +43,12 @@ internal class  BuyingPowerTest {
         assertTrue(result.value > account.cashAmount.value)
     }
 
+    @Test
+    fun test4() {
+        val account = TestData.usAccount()
+        val uc = ForexBuyingPower()
+        val result = uc.calculate(account)
+        assertTrue(result.value > account.cashAmount.value)
+    }
+
 }

@@ -5,9 +5,10 @@ import org.roboquant.common.Amount
 import org.roboquant.common.sum
 
 /**
- * Interface for different types of buying power calculations. These are used by the SimBroker to simulate different
- * types of account.
+ * Interface for different types of buying power calculations. These are used by the [SimBroker] to simulate the
+ * different types of account that exist, like a Cash Account and Margin Account.
  *
+ * At the end of each step, the buying power is re-calculaated and made available in [Account.buyingPower]
  */
 interface BuyingPower {
 
@@ -19,9 +20,11 @@ interface BuyingPower {
 }
 
 /**
- * Basic calculator that calculates: cash balance - open orders. So no equity or leverage calculations are involved.
- * This is the default BuyingPower and can be used to model a plain Cash Account, and in that case it is recommended to not allow shorting in the used
- * Policy.
+ * Basic calculator that calculates: cash balance - open orders. So no leverage or margin is avaialble for trading.
+ * This is the default BuyingPower and can be used to model a plain Cash Account.
+ *
+ * It is recommended to not to allow for shorting when using the CashBuyingPower since that is almost never
+ * allowed in the real world.
  */
 class CashBuyingPower(private val minimum: Double = 0.0) : BuyingPower {
 
@@ -34,6 +37,24 @@ class CashBuyingPower(private val minimum: Double = 0.0) : BuyingPower {
     }
 
 }
+
+
+/**
+ * BuyingPower that allows for a fixed leverage as often seen with Forex brokers.
+ */
+class ForexBuyingPower(leverage: Double = 20.0) : BuyingPower {
+
+    private val margin = 1.0 / leverage
+
+    override fun calculate(account: Account): Amount {
+        val loanValue = account.portfolio.positions.map { it.totalCost.absoluteValue * (1.0 - margin) }.sum()
+        val openOrders = account.orders.open.map { it.getValueAmount().absoluteValue }.sum() * margin
+        val total = account.cash + loanValue - openOrders
+        return account.convert(total) / margin
+    }
+
+}
+
 
 
 /**
@@ -59,27 +80,22 @@ class MarginBuyingPower(private val margin: Double = 0.50, private val minimum: 
 /**
  * Usage calculator for Regulation T accounts. Formula used is
  *
- *      free = equity - initialMarginOrders - maintanceMarginLong - maintanceMarginShort
- *      buyingPower = free / initialMargin
+ *    free = cash + loan value - initial margin
+ *    buying power = free / initial margin
  *
+ * Right now maintenance margin is not calculated.
  */
 class RegTCalculator(
     private val initialMargin: Double= 0.5,
-    private val longMaintanceMargin: Double = 0.25,
-    private val shortMaintanceMargin: Double = 0.30,
-    private val minimumAmount : Double = 0.0
+    // private val longMaintanceMargin: Double = 0.25,
+    // private val shortMaintanceMargin: Double = 0.30,
 ) : BuyingPower {
 
     override fun calculate(account: Account): Amount {
+        val loanValue = account.portfolio.positions.map { it.totalCost.absoluteValue * (1.0 - initialMargin) }.sum()
         val initialMarginOrders = account.orders.open.map { it.getValueAmount().absoluteValue * initialMargin }.sum()
-        val maintanceMarginLong = account.portfolio.longPositions.map { it.exposure * longMaintanceMargin }.sum()
-        val maintanceMarginShort = account.portfolio.longPositions.map { it.exposure * shortMaintanceMargin }.sum()
-        val free = account.equity - initialMarginOrders - maintanceMarginLong - maintanceMarginShort
-        val result = account.convert(free) - minimumAmount
-        return if (result.value < 0.0)
-            Amount(account.baseCurrency, result.value)
-        else
-            result * ( 1.0 / initialMargin)
+        val availableCash = account.cash + loanValue - initialMarginOrders
+        return account.convert(availableCash) / initialMargin
     }
 
 }

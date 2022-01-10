@@ -173,6 +173,15 @@ fun DoubleArray.kurtosis(): Double {
  */
 fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 
+/**
+ * Get the percentail change
+ */
+fun DoubleArray.perc() : DoubleArray {
+    if (size < 2) return DoubleArray(0)
+    val result = DoubleArray(size - 1)
+    for (n in 1..lastIndex) result[n-1] = (get(n) - get(n-1)) / get(n-1)
+    return result
+}
 
 fun Pair<List<Double>, List<Double>>.clean(): Pair<DoubleArray, DoubleArray> {
     val max = max(first.size, second.size)

@@ -103,3 +103,8 @@ inline fun <reified T : Action> Feed.filter(
     }
     return@runBlocking result
 }
+
+/**
+ * Convert a collection of price actions to a double array
+ */
+fun Collection<PriceAction>.toDoubleArray(type:String = "DEFAULT") : DoubleArray = this.map { it.getPrice(type) }.toDoubleArray()
