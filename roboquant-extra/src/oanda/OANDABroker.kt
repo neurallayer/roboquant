@@ -40,13 +40,13 @@ import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
- * Implementation of the [Broker] API that can be used for paper- en live-trading using OANDA as your broker.
+ * Implementation of the [Broker] interface that can be used for paper- en live-trading using OANDA as your broker.
  */
 class OANDABroker(
     accountID: String? = null,
     token: String? = null,
     demoAccount: Boolean = true,
-    val enableOrders: Boolean = false,
+    val enableOrders: Boolean = true,
     private val maxLeverage: Double = 30.0 // Used to calculate buying power
 ) : Broker {
 
@@ -61,6 +61,10 @@ class OANDABroker(
         OANDA.getAvailableAssets(ctx, this.accountID)
     }
 
+    /**
+     * Which assets are available to this account. For OANDA the region you are from determines which asset classes
+     * you can trade.
+     */
     val availableAssets
         get() = availableAssetsMap.values
 
@@ -167,8 +171,8 @@ class OANDABroker(
     }
 
     /**
-     * For now only market orders are supported, all other order types are rejected. Also TIF be submitted with the
-     * FOK (FillOrKill) and ignore the requested TiF.
+     * For now only market orders are supported, all other order types are rejected. Also orders will always TIF be
+     * submitted with FOK (FillOrKill) and ignore the requested TiF.
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer {"received ${orders.size} orders and ${event.actions.size} actions"}
@@ -207,11 +211,13 @@ class OANDABroker(
             }
         }
 
-        // OONDA doesn't update positions quick enough and so don't reflect the trade yet.
+        // OONDA doesn't update positions quick enough and so they don't reflect trades just made
         Thread.sleep(1000)
         updateAccount()
         updatePositions()
-        // No need to create a copy since an account only modified during this method
+
+        // No need to return a copy of the account since is only modified during this method and not concurrently with
+        // the strategy or policy execution
         return account
     }
 }

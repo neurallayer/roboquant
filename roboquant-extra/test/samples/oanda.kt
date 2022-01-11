@@ -86,28 +86,32 @@ fun oandaLive() {
 
 
 fun oandaPaperTrading() {
-    val broker = OANDABroker(enableOrders = true)
+    Currency.increaseDigits(3) // We want to use extra digits when displaying amounts
+    val broker = OANDABroker()
     Config.exchangeRates = OANDAExchangeRates.allAvailableAssets()
 
     val feed = OANDALiveFeed()
     val assets = broker.availableAssets.findByCurrencies("EUR", "USD", "JPY", "GBP", "CAD", "CHF")
     feed.subscribeOrderBook(assets)
-    val policy = DefaultPolicy(shorting = true)
 
+    val policy = DefaultPolicy(shorting = true)
     val roboquant = Roboquant(EMACrossover.shortTerm(), broker = broker, policy = policy)
 
     val tf = TimeFrame.next(5.minutes)
     roboquant.run(feed, tf)
-    Currency.increaseDigits(3) // We want to use some extra digits
+
     roboquant.broker.account.fullSummary().print()
 }
 
 
-fun oandaPaperTradingClosePositions() {
-    val broker = OANDABroker(enableOrders = true)
+fun oandaClosePositions() {
+    val broker = OANDABroker()
     Logging.setLevel(Level.FINE)
-    Config.exchangeRates = OANDAExchangeRates(broker.availableAssets)
-    val orders = broker.account.portfolio.diff(Portfolio()).map { MarketOrder(it.key, it.value) }
+    Config.exchangeRates = OANDAExchangeRates.allAvailableAssets()
+
+    val target = Portfolio() // target portfolio is an empty portfolio
+    val changes = broker.account.portfolio.diff(target)
+    val orders = changes.map { MarketOrder(it.key, it.value) }
     broker.place(orders, Event.empty())
     broker.account.fullSummary().print()
 }
@@ -195,7 +199,7 @@ fun main() {
         "OANDA_LIVE_RECORD" -> oandaLiveRecord()
         "OANDA_LIVE_PRICES" -> oandaLivePrices()
         "OANDA_PAPER" -> oandaPaperTrading()
-        "OANDA_CLOSE" -> oandaPaperTradingClosePositions()
+        "OANDA_CLOSE" -> oandaClosePositions()
     }
 }
 

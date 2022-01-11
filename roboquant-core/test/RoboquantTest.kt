@@ -23,8 +23,7 @@ import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.AccountSummary
-import org.roboquant.metrics.MetricScheduler
-import org.roboquant.metrics.OpenPositions
+import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.RandomStrategy
 import java.time.Period
@@ -73,12 +72,16 @@ internal class RoboquantTest {
 
 
     @Test
-    fun randomly() {
-        val feed = RandomWalk.lastYears(2)
+    fun validationPhase() {
+        val feed = RandomWalk.lastYears()
         val strategy = EMACrossover()
-        val reducedMetric = MetricScheduler(MetricScheduler.everyFriday, AccountSummary())
-        val roboquant = Roboquant(strategy, reducedMetric, OpenPositions(), logger = SilentLogger())
-        roboquant.run(feed)
+        val roboquant = Roboquant(strategy, ProgressMetric(), logger = MemoryLogger(showProgress = false))
+        val (train, test) = feed.timeFrame.splitTrainTest(0.20)
+        roboquant.run(feed, train, test)
+        val logger = roboquant.logger
+        val data = logger.getMetric("progress.events")
+        assertEquals(2, data.map { it.info.phase }.distinct().size)
+        assertEquals(1, logger.getRuns().size)
     }
 
 
