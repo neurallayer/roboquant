@@ -32,7 +32,7 @@ class Summary(val content: String) {
     private val decimalFormatter = DecimalFormat(decimalPattern)
 
     companion object {
-        private val logger = Logging.getLogger("Summary")
+        private val logger = Logging.getLogger(Summary::class)
         var decimalPattern = "#.000"
         var sep = ": "
     }

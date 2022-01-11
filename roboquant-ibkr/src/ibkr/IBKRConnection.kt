@@ -30,7 +30,7 @@ import java.util.*
  */
 internal object IBKRConnection {
 
-    private val logger = Logging.getLogger("IBKRConnection")
+    private val logger = Logging.getLogger(IBKRConnection::class)
     private val connections = mutableMapOf<Int, EClientSocket>()
 
 

@@ -42,7 +42,7 @@ class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private va
 
     private val client: BinanceApiWebSocketClient
     private val subscriptions = mutableMapOf<String, Asset>()
-    private val logger = Logging.getLogger("BinanceFeed")
+    private val logger = Logging.getLogger(BinanceLiveFeed::class)
     private val closeables = mutableListOf<Closeable>()
     private val factory = BinanceConnection.getFactory(apiKey, secret)
 

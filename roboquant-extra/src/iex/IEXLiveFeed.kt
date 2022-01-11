@@ -52,7 +52,7 @@ class IEXLiveFeed(
 ) :
     LiveFeed() {
 
-    private val logger = Logging.getLogger("IEXLive")
+    private val logger = Logging.getLogger(IEXLiveFeed::class)
     private val client: IEXCloudClient
     private val assetMap = mutableMapOf<String, Asset>()
 

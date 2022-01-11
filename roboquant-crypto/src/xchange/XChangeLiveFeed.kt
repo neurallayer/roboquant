@@ -54,7 +54,7 @@ class XChangeLiveFeed(
     private val useMachineTime: Boolean = true
 ) : LiveFeed() {
 
-    private val logger = Logging.getLogger("CryptoFeed")
+    private val logger = Logging.getLogger(XChangeLiveFeed::class)
     private val service: StreamingMarketDataService = exchange.streamingMarketDataService
     private val subscriptions = mutableListOf<Disposable>()
     private val exchangeName = exchange.toString()

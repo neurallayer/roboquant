@@ -28,12 +28,11 @@ import java.util.logging.Logger
  * @constructor Create new Info logger
  */
 class InfoLogger(
-    name: String = "MetricsLogger",
     private val splitMetrics: Boolean = false,
     private val level: Level = Level.INFO
 ) : MetricsLogger {
 
-    private val logger = Logging.getLogger(name)
+    private val logger = Logging.getLogger(InfoLogger::class)
 
     override fun log(results: Map<String, Number>, info: RunInfo) {
         if (results.isEmpty()) return

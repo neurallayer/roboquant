@@ -28,17 +28,18 @@ import org.roboquant.feeds.PriceBar
 import java.time.Instant
 
 /**
- * Retrieve historic FOREX data from OANDA.
+ * Retrieve historic data from OANDA. Right now only [PriceBar] (= candlesticks) data is supported.
  */
 class OANDAHistoricFeed(token: String? = null, demoAccount: Boolean = true) : HistoricPriceFeed() {
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
     private val accountID = OANDA.getAccountID(null, ctx)
+    private val logger = Logging.getLogger(OANDAHistoricFeed::class)
 
     val availableAssets by lazy {
         OANDA.getAvailableAssets(ctx,accountID)
     }
-    private val logger = Logging.getLogger("OANDAHistoricFeed")
+
 
     fun retrieveCandles(
         vararg symbols: String,

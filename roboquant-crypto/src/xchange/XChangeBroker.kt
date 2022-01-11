@@ -45,7 +45,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
     override val account: Account = Account(Currency.getInstance(baseCurrencyCode))
 
-    private val logger = Logging.getLogger("CryptoBroker")
+    private val logger = Logging.getLogger(XChangeBroker::class)
     private val tradeService = exchange.tradeService
     private val accountService = exchange.accountService
     private val supportCurrencies = exchange.exchangeSymbols

@@ -20,6 +20,7 @@ import com.crazzyghost.alphavantage.AlphaVantage
 import com.crazzyghost.alphavantage.Config
 import com.crazzyghost.alphavantage.parameters.OutputSize
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse
+import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.feeds.*
@@ -49,7 +50,7 @@ class AlphaVantageHistoricFeed(
 ) : HistoricPriceFeed() {
 
     private val subscriptions = mutableMapOf<String, Asset>()
-    private val logger = Logging.getLogger("AlphaVantageFeed")
+    private val logger = Logging.getLogger(AlpacaHistoricFeed::class)
 
     init {
         val key = apiKey ?: RConfig.getProperty("ALPHA_VANTAGE_API_KEY")

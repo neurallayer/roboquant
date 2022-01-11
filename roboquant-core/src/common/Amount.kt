@@ -22,9 +22,17 @@ import java.math.BigDecimal
 import java.time.Instant
 import kotlin.math.absoluteValue
 
+/**
+ * An amount can hold the [value] for a single [currency].
+ *
+ * For storing monetary amounts internally it uses [Double], since it is accurate enough for trading while providing large
+ * performance benefits over BigDecimal.
+ */
 data class Amount(val currency: Currency, val value: Double) : Comparable<Number> {
 
-    // Some common operators
+    constructor(currency: Currency, value: Number) : this(currency, value.toDouble())
+
+    // Common operators that make working with Amounts more pleasant
     operator fun times(d: Number): Amount = Amount(currency, value * d.toDouble())
     operator fun plus(d: Number): Amount = Amount(currency, value + d.toDouble())
     operator fun div(d: Number): Amount = Amount(currency, value / d.toDouble())
@@ -33,10 +41,17 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     operator fun minus(other: Amount): Wallet = Wallet(this, - other)
     operator fun unaryMinus(): Amount = Amount(currency, -value)
 
+    /**
+     * Does this amount contain a positive value
+     */
+    val isPositive: Boolean
+        get() = value > 0.0
 
+    /**
+     * Return a new amount containing the absolute value of this amount.
+     */
     val absoluteValue
         get() = Amount(currency, value.absoluteValue)
-
 
     /**
      * Format the value hold in this amount based on the currency. For example USD would have two fraction digits
@@ -53,6 +68,9 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
 
     override fun toString(): String = "${currency.currencyCode} ${formatValue()}"
 
+    /**
+     * Compare the [value] in this amount to an [other] number
+     */
     override fun compareTo(other: Number): Int =  value.compareTo(other.toDouble())
 
     /**
@@ -97,6 +115,9 @@ val Number.HKD
 val Number.NZD
     get() = Amount(Currency.NZD, toDouble())
 
+/**
+ * Add all the amounts together and return the resulting wallet.
+ */
 fun Iterable<Amount>.sum(): Wallet {
     val result = Wallet()
     for (amount in this) result.deposit(amount)

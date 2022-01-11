@@ -49,7 +49,7 @@ class IEXHistoricFeed(
 ) : HistoricPriceFeed() {
 
 
-    private val logger = Logging.getLogger("IEXFeed")
+    private val logger = Logging.getLogger(IEXHistoricFeed::class)
     private val client: IEXCloudClient
 
 

@@ -51,7 +51,7 @@ import java.util.logging.Logger
  */
 class LazyCSVFeed(val path: String, val config: CSVConfig = CSVConfig.fromFile(path)) : AssetFeed {
 
-    private val logger: Logger = Logging.getLogger("LazyCSVFeed")
+    private val logger: Logger = Logging.getLogger(LazyCSVFeed::class)
     private val files: Map<Asset, File>
 
     override val assets

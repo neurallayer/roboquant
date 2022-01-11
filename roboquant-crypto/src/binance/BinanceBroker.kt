@@ -50,7 +50,7 @@ class BinanceBroker(
 
     private val client: BinanceApiRestClient
     override val account: Account = Account(Currency.getInstance(baseCurrencyCode))
-    private val logger = Logging.getLogger("BinanceBroker")
+    private val logger = Logging.getLogger(BinanceBroker::class)
     private val placedOrders = mutableMapOf<Long, SingleOrder>()
     private var orderId = 0
 

@@ -24,7 +24,7 @@ import java.time.Instant
 import javax.naming.ConfigurationException
 
 /**
- * Currency converter used by default by OANDA Broker that uses feed data to update exchange rates.
+ * Exchange rates that are being retrieved from OANDA.
  */
 class OANDAExchangeRates(
     assets: Iterable<Asset>,
@@ -35,10 +35,26 @@ class OANDAExchangeRates(
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
     private val accountID = OANDA.getAccountID(accountID, ctx)
-
-    internal lateinit var baseCurrency: Currency
-    private val exchangeRates = mutableMapOf<Pair<Currency, Currency>, Double>()
     private val logger = Logging.getLogger(OANDAExchangeRates::class)
+    internal lateinit var baseCurrency: Currency
+
+    // Contains per currency pair the buy and sell rates
+    private val exchangeRates = mutableMapOf<Pair<Currency, Currency>, Pair<Double, Double>>()
+
+
+    companion object {
+
+        fun allAvailableAssets(
+            token: String? = null,
+            demoAccount: Boolean = true,
+            accountID: String? = null,
+        ): OANDAExchangeRates {
+            val ctx: Context = OANDA.getContext(token, demoAccount)
+            val accountID2 = OANDA.getAccountID(accountID, ctx)
+            val assets = OANDA.getAvailableAssets(ctx, accountID2).values
+            return OANDAExchangeRates(assets, token, demoAccount, accountID)
+        }
+    }
 
     init {
         val symbols = assets.map { it.symbol }
@@ -46,17 +62,14 @@ class OANDAExchangeRates(
         val resp = ctx.pricing[request]
         for (price in resp.prices) {
             val symbol = price.instrument.toString()
-            val pair1 = symbol.toCurrencyPair()!!
-            val pair2 = Pair(pair1.second, pair1.first)
+            val pair = symbol.toCurrencyPair()!!
             val quote1 = price.quoteHomeConversionFactors.positiveUnits.doubleValue()
-            val quote2 = 1.0 / price.quoteHomeConversionFactors.negativeUnits.doubleValue()
-            exchangeRates[pair1] = quote1
-            exchangeRates[pair2] = quote2
-            logger.finer {"Added $pair1 : $quote1 and $pair2 : $quote2 to the exchange rates"}
+            val quote2 = price.quoteHomeConversionFactors.negativeUnits.doubleValue()
+            exchangeRates[pair] = Pair(quote1, quote2)
+            logger.finer { "Added $pair => $quote1 $quote2 to the exchange rates" }
         }
-        logger.info {"Added ${exchangeRates.size} exchange rates"}
+        logger.info { "Added ${exchangeRates.size} exchange rates" }
     }
-
 
 
     /**
@@ -74,10 +87,9 @@ class OANDAExchangeRates(
         val pair1 = Pair(from, to)
         val pair2 = Pair(to, from)
         return when {
-            (pair1 in exchangeRates) -> exchangeRates[pair1]!!
-            (pair2 in exchangeRates) -> 1.0 / exchangeRates[pair2]!!
+            (pair1 in exchangeRates) -> if (amount.isPositive) exchangeRates[pair1]!!.first else exchangeRates[pair1]!!.second
+            (pair2 in exchangeRates) -> if (amount.isPositive) 1.0 /exchangeRates[pair2]!!.first else 1.0 / exchangeRates[pair2]!!.second
             else -> throw ConfigurationException("Cannot convert $amount to $to")
         }
-
     }
 }

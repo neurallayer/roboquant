@@ -16,11 +16,8 @@
 
 package org.roboquant.common
 
-import org.roboquant.brokers.Account
-import java.lang.Exception
 import java.time.Instant
 import javax.naming.ConfigurationException
-
 
 /**
  * Wallet can contain amounts of different currencies at the same time. So for example a single instance of Wallet can
@@ -31,16 +28,12 @@ import javax.naming.ConfigurationException
  *
  * It is used throughout roboquant in order to support trading in multiple assets with different currency denominations.
  *
- * For storing monetary amounts internally it uses [Double], since it is accurate enough for trading while providing large
- * performance benefits over BigDecimal.
- *
- * Wallet itself will never convert the currencies it contains. However, an account can do this if required, provided the
- * appropriate conversion rates are available. See also [Account.convert] on how to convert a Wallet instance
- * to a single amount value.
- *
+ * Wallet by itself will never convert currencies when depositing or withdrawing amounts. But you can invoke
+ * the [convert] method if you want to do so.
  */
 class Wallet(vararg amounts: Amount) : Cloneable {
 
+    // Contains the data of the wallet
     private val data = mutableMapOf<Currency, Double>()
 
     init {
@@ -49,8 +42,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
 
 
     /**
-     * Return the currencies that are hold in this Wallet object. Currencies with
-     * zero balance will not be included.
+     * Return the currencies that are hold in this Wallet object sorted by [Currency.currencyCode]
      */
     val currencies: List<Currency>
         get() = data.keys.sortedBy { it.currencyCode }.toList()
@@ -59,7 +51,6 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     /**
      * Get the amount for a certain [currency]. If the currency is not
      * found, a zero amount will be returned.
-     *
      */
     fun getAmount(currency: Currency): Amount {
         val value = data.getOrDefault(currency, 0.0)
@@ -74,18 +65,18 @@ class Wallet(vararg amounts: Amount) : Cloneable {
 
 
     /**
-     * Is this cash instance empty, meaning it has zero entries with a non-zero balance.
+     * Is this wallet instance empty
      */
     fun isEmpty() = data.isEmpty()
 
 
     /**
-     * Is this cash instance not empty, meaning it has at least one entry that has a non-zero balance.
+     * Is this wallet instance not empty
      */
     fun isNotEmpty() = data.isNotEmpty()
 
     /**
-     * Add operator + to allow for cash + cash
+     * Add operator + to allow for wallet + wallet
      */
     operator fun plus(other: Wallet): Wallet {
         val result = clone()
@@ -94,7 +85,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     }
 
     /**
-     * Add operator - to allow for cash - cash
+     * Add operator - to allow for wallet - wallet
      */
     operator fun minus(other: Wallet): Wallet {
         val result = clone()
@@ -117,7 +108,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
 
     /**
      * Set a monetary [amount]. If the currency already exist, its value
-     * will be overwritten, otherwise a new entry will be created.
+     * will be overwritten, otherwise a new entry will be created. If the amount is zero, the enntry will be removed.
      */
     fun set(amount: Amount) {
         if (amount.value == 0.0)
@@ -137,7 +128,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
 
 
     /**
-     * Deposit the cash hold in an [other] Wallet instance into this one.
+     * Deposit the amounts hold in an [other] Wallet instance into this one.
      */
     fun deposit(other: Wallet) {
         for (amount in other.toAmounts()) { deposit(amount) }
@@ -147,27 +138,14 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     /**
      * Withdraw  a monetary [amount][Amount]. If the currency already exist, it
      * will be deducted from the existing value, otherwise a new entry will be created.
-     *
-     * @param amount
      */
     fun withdraw(amount: Amount) {
         deposit(- amount)
     }
 
-    /**
-     * Convert this wallet to a single Amount without any currency conversion
-     */
-    fun toAmount() : Amount {
-        return when(currencies.size) {
-            0 -> Amount(Config.baseCurrency,0.0)
-            1 -> toAmounts().first()
-            else -> throw Exception("Multicurrency account")
-        }
-    }
-
 
     /**
-     * Withdraw the cash hold in an [other] Wallet instance into this one.
+     * Withdraw the amounts hold in an [other] Wallet instance into this one.
      */
     fun withdraw(other: Wallet) {
        for (amount in other.toAmounts()) { withdraw(amount) }
@@ -200,12 +178,12 @@ class Wallet(vararg amounts: Amount) : Cloneable {
 
 
     /**
-     * Provide a map representation of the cash hold where the key is the [Currency] and the value is the amount.
+     * Provide a list representation of the amounts hold in this wallet
      */
     fun toAmounts(): List<Amount> = data.map { Amount(it.key, it.value) }
 
     /**
-     * Provide a map representation of the cash hold where the key is the [Currency] and the value is the amount.
+     * Provide a map representation of the amounts hold where the key is the [Currency] and the value is the amount.
      */
     fun toMap(): Map<Currency, Double> = data.toMap()
 
@@ -238,7 +216,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     }
 
     /**
-     * Summary overview of the cash positions
+     * Summary overview of the wallet
      */
     fun summary(): Summary {
         val result = Summary("Cash")
@@ -273,6 +251,12 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     operator fun times(n: Number): Wallet {
         val result = clone()
         for ((k, v) in result.data) result.data[k] = v * n.toDouble()
+        return result
+    }
+
+    operator fun div(n: Number): Wallet {
+        val result = clone()
+        for ((k, v) in result.data) result.data[k] = v / n.toDouble()
         return result
     }
 

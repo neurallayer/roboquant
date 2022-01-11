@@ -47,7 +47,7 @@ class OANDABroker(
     token: String? = null,
     demoAccount: Boolean = true,
     val enableOrders: Boolean = false,
-    private val maxLeverage: Double = 30.0
+    private val maxLeverage: Double = 30.0 // Used to calculate buying power
 ) : Broker {
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
@@ -65,9 +65,9 @@ class OANDABroker(
         get() = availableAssetsMap.values
 
     init {
-        if (! demoAccount) logger.warning("Using real account, use at your own risk!!!")
+        logger.info("Using account with id ${this.accountID}")
+        if (! demoAccount) throw Exception("Currently only demo account usage is supported.")
         initAccount()
-        logger.info("Retrieved account with id $accountID")
     }
 
 
@@ -111,11 +111,13 @@ class OANDABroker(
         // Cash in roboquant is excluding the margin part
         val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
         account.cash.set(amount)
+
         account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
         account.lastUpdate = Instant.now()
         lastTransactionId = acc.lastTransactionID
         account.portfolio.clear()
         updatePositions()
+        logger.info {"Found ${account.portfolio.positions.size} existing positions in portfolio"}
     }
 
     /**

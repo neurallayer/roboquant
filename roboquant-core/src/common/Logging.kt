@@ -89,11 +89,6 @@ object Logging {
         return getLogger(clazz.qualifiedName!!)
     }
 
-    fun getLogger2(obj: Any): Logger {
-        return getLogger(obj::class.qualifiedName!!)
-    }
-
-
     fun getLogger(name: String): Logger {
         val mainLogger: Logger = Logger.getLogger(name)
         mainLogger.level = defaultLevel

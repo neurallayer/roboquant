@@ -36,7 +36,7 @@ import java.util.*
  */
 class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFeed() {
 
-    private val logger = Logging.getLogger("YahooFinanceFeed")
+    private val logger = Logging.getLogger(YahooHistoricFeed::class)
 
 
     /**

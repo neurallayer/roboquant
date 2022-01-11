@@ -32,7 +32,7 @@ typealias DataType = DataAPIType
  */
 internal object AlpacaConnection {
 
-    private val logger = Logging.getLogger("AlpacaConnection")
+    private val logger = Logging.getLogger(AlpacaConnection::class)
 
     /**
      * Should OTC assets be included, default is false

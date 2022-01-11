@@ -63,7 +63,8 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
         if (timeFrame != null)
             filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
 
-        return filteredResults.map { it.pnl }.sum().toAmount()
+        val sum = filteredResults.sumOf { it.pnl.value }
+        return Amount(asset.currency, sum)
     }
 
     /**
@@ -135,7 +136,8 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
         if (timeFrame != null)
             filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
 
-        return filteredResults.map { it.fee }.sum().toAmount()
+        val sum = filteredResults.sumOf { it.fee.value }
+        return Amount(asset.currency, sum)
     }
 
 

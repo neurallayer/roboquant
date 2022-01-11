@@ -13,7 +13,7 @@ import org.roboquant.common.sum
 interface BuyingPower {
 
     /**
-     * Calculate the remaining buying power for an account. The returned amount should be expressed in the base currency
+     * Calculate the total buying power for an account. The returned amount should be expressed in the base currency
      * of the account.
      */
     fun calculate(account: Account) : Amount
@@ -40,16 +40,22 @@ class CashBuyingPower(private val minimum: Double = 0.0) : BuyingPower {
 
 
 /**
- * BuyingPower that allows for a fixed leverage as often seen with Forex brokers.
+ * BuyingPower that is based on a fixed leverage as often found at Forex brokers.
  */
 class ForexBuyingPower(leverage: Double = 20.0) : BuyingPower {
 
     private val margin = 1.0 / leverage
 
     override fun calculate(account: Account): Amount {
-        val loanValue = account.portfolio.positions.map { it.totalCost.absoluteValue * (1.0 - margin) }.sum()
-        val openOrders = account.orders.open.map { it.getValueAmount().absoluteValue }.sum() * margin
-        val total = account.cash + loanValue - openOrders
+
+        // How much do we need to reserve to meet portfolio margin requirements
+        val portfolioMargin = account.portfolio.positions.map { it.marketValue.absoluteValue * margin }.sum()
+
+        // How much extra margin we might need for the open orders
+        val orderMargin = account.orders.open.map { it.getValueAmount().absoluteValue * margin }.sum()
+
+        // What is left over that we can use
+        val total = account.equity - portfolioMargin - orderMargin
         return account.convert(total) / margin
     }
 

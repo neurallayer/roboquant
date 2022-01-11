@@ -38,7 +38,7 @@ import java.time.Instant
 
 
 /**
- * Retrieve live  data from OANDA.
+ * Retrieve live data from OANDA.
  */
 class OANDALiveFeed(
     accountID: String? = null,
@@ -60,6 +60,7 @@ class OANDALiveFeed(
         get() = assetMap.values.toSortedSet()
 
     fun subscribePrices(vararg symbols: String) {
+        logger.info {"Subscribing to ${symbols.size} prices"}
         val httpClient = HttpClientBuilder.create().build()
 
         symbols.forEach {
@@ -139,7 +140,7 @@ class OANDALiveFeed(
      * specify the [delay] interval between two pulls, default being 5000 milliseconds (so 5 seocond data)
      */
     fun subscribeOrderBook(vararg symbols: String, delay: Long = 5_000L) {
-
+        logger.info {"Subscribing to ${symbols.size} order books"}
         symbols.forEach {
             val asset = availableAssets[it]
             if (asset != null)
