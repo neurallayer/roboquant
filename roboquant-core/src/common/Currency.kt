@@ -62,12 +62,19 @@ class Currency private constructor(val currencyCode: String) {
          */
         var roundingMode = RoundingMode.HALF_DOWN
 
+        private fun getInstance(currencyCode: String, defaultFractionDigits: Int): Currency {
+            val result = currencies.getOrPut(currencyCode) { Currency(currencyCode) }
+            result.defaultFractionDigits = defaultFractionDigits
+            return result
+        }
+
+
         /**
          * Returns the Currency instance for the given the provided [currencyCode].
          */
         fun getInstance(currencyCode: String): Currency = currencies.getOrPut(currencyCode) { Currency(currencyCode) }
 
-        // Top 10 commonly used currencies in trading
+        // Commonly used currencies in trading
 
         /**
          * United States Dollar
@@ -120,6 +127,32 @@ class Currency private constructor(val currencyCode: String) {
         val NZD = getInstance("NZD")
 
         /**
+         * Russian Ruble
+         */
+        val RUB = getInstance("RUB")
+
+        /**
+         * Indian Rupee
+         */
+        val INR = getInstance("INR")
+
+        /**
+         * Bitcoin
+         */
+        val BTC = getInstance("BTC", 8)
+
+        /**
+         * Ether
+         */
+        val ETH = getInstance("ETH", 8)
+
+        /**
+         * Tether (stable coin)
+         */
+        val USDT = getInstance("USDT", 2)
+
+
+        /**
          * For all already registered currencies increase the number of display digits with [extraDigits]. This doesn't
          * change calculations, only the way currency amounts are displayed.
          *
@@ -129,6 +162,7 @@ class Currency private constructor(val currencyCode: String) {
             for (currency in currencies.values) currency.defaultFractionDigits += extraDigits
         }
     }
+
 
     /** @suppress */
     override fun toString(): String {

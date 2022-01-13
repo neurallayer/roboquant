@@ -84,7 +84,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
 
 }
 
-// Some extensions to make it easier to create amounts for common currencies
+// Extensions to make it easier to create amounts for common currencies
 val Number.EUR
     get() = Amount(Currency.EUR, toDouble())
 
@@ -114,6 +114,23 @@ val Number.HKD
 
 val Number.NZD
     get() = Amount(Currency.NZD, toDouble())
+
+val Number.RUB
+    get() = Amount(Currency.RUB, toDouble())
+
+val Number.INR
+    get() = Amount(Currency.INR, toDouble())
+
+val Number.BTC
+    get() = Amount(Currency.BTC, toDouble())
+
+val Number.ETH
+    get() = Amount(Currency.ETH, toDouble())
+
+val Number.USDT
+    get() = Amount(Currency.USDT, toDouble())
+
+
 
 /**
  * Add all the amounts together and return the resulting wallet.
