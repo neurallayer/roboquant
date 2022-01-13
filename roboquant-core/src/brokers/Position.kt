@@ -16,6 +16,9 @@
 
 package org.roboquant.brokers
 
+import java.math.BigDecimal
+import java.math.RoundingMode
+
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Wallet
@@ -52,12 +55,16 @@ enum class PositionChange {
  */
 data class Position(
     val asset: Asset,
-    val size: Double,
+    val bdSize: BigDecimal,
     val avgPrice: Double = 0.0,
     val spotPrice: Double = avgPrice,
     val lastUpdate: Instant = Instant.MIN
 ) {
+    constructor(asset: Asset, size: Double, avgPrice: Double = 0.0, spotPrice: Double = avgPrice, lastUpdate: Instant = Instant.MIN)  :
+           this(asset, BigDecimal(size).setScale(8, RoundingMode.HALF_DOWN), avgPrice, spotPrice, lastUpdate)
 
+    val size: Double
+        get() = bdSize.toDouble()
     /**
      * Total size of a position is the position size times the asset multiplier. For many asset classes the
      * multiplier will be 1, but for example for option contracts it will often be 100
@@ -76,7 +83,7 @@ data class Position(
         /**
          * Create an empty position for the provided [asset] and return this.
          */
-        fun empty(asset: Asset): Position = Position(asset, 0.0, 0.0, 0.0)
+        fun empty(asset: Asset): Position = Position(asset, BigDecimal("0.0"), 0.0, 0.0)
     }
 
 
@@ -90,17 +97,17 @@ data class Position(
 
     operator fun plus(p: Position) : Position {
 
-        val newQuantity = size + p.size
+        val newQuantity = bdSize.plus(p.bdSize)
 
         return when {
-            size.sign != newQuantity.sign -> p.copy(size = newQuantity)
+            size.sign != newQuantity.toDouble().sign -> p.copy(bdSize = newQuantity)
 
-            newQuantity.absoluteValue > size.absoluteValue -> {
-                val newAvgPrice = (avgPrice * size + p.avgPrice * p.size) / newQuantity
-                p.copy(size = newQuantity, avgPrice = newAvgPrice)
+            newQuantity.abs() > bdSize.abs() -> {
+                val newAvgPrice = (avgPrice * size + p.avgPrice * p.size) / newQuantity.toDouble()
+                p.copy(bdSize = newQuantity, avgPrice = newAvgPrice)
             }
 
-            else -> p.copy(size = newQuantity, avgPrice = avgPrice)
+            else -> p.copy(bdSize = newQuantity, avgPrice = avgPrice)
         }
 
     }
