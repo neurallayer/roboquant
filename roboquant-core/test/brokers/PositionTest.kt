@@ -106,4 +106,16 @@ internal class PositionTest {
         assertEquals(10.0, p1.totalSize)
     }
 
+    @Test
+    fun positionUpdateRounding() {
+        val contract = TestData.usStock()
+        val p1 = Position(contract, 2.0, 1.25003111, 1.203001)
+        val p2 = Position(contract, 3.1, 1.24111, 1.2130044)
+        val updatedPosition12 = p1.plus(p2)
+        val minusP2 = Position(contract, -3.1, 1.3111, 1.3130044)
+        val minusP1 = Position(contract, -2.0, 1.25003111, 1.203001)
+        val shouldBeZero = updatedPosition12.plus(minusP2).plus(minusP1)
+        assertEquals(shouldBeZero.size, 0.0)
+    }
+
 }
