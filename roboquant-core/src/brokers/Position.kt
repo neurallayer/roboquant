@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Wallet
+import java.math.BigDecimal
 import java.time.Instant
 import kotlin.math.absoluteValue
 import kotlin.math.sign
@@ -89,18 +90,18 @@ data class Position(
     }
 
     operator fun plus(p: Position) : Position {
-
-        val newQuantity = size + p.size
+        // Use BigDecimal to perform the addition so we don't loose precision
+        val newSize = ((BigDecimal("$size") + BigDecimal("${p.size}")).toDouble())
 
         return when {
-            size.sign != newQuantity.sign -> p.copy(size = newQuantity)
+            size.sign != newSize.sign -> p.copy(size = newSize)
 
-            newQuantity.absoluteValue > size.absoluteValue -> {
-                val newAvgPrice = (avgPrice * size + p.avgPrice * p.size) / newQuantity
-                p.copy(size = newQuantity, avgPrice = newAvgPrice)
+            newSize.absoluteValue > size.absoluteValue -> {
+                val newAvgPrice = (avgPrice * size + p.avgPrice * p.size) / newSize
+                p.copy(size = newSize, avgPrice = newAvgPrice)
             }
 
-            else -> p.copy(size = newQuantity, avgPrice = avgPrice)
+            else -> p.copy(size = newSize, avgPrice = avgPrice)
         }
 
     }
@@ -121,9 +122,10 @@ data class Position(
     }
 
     /**
-     * Is this an empty position
+     * Is this a closed position, so size is 0.0
      */
-    fun isEmpty(): Boolean = size == 0.0
+    val closed: Boolean
+        get() = size == 0.0
 
     /**
      * Is this a short position

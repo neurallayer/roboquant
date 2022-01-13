@@ -42,7 +42,7 @@ class Portfolio : Cloneable {
      * positions will be returned.
      */
     val positions
-        get() = _positions.values.filter { it.open }
+        get() = _positions.values
 
     /**
      * Long positions contained in this portfolio
@@ -65,7 +65,7 @@ class Portfolio : Cloneable {
     /**
      * Is this portfolio empty? Or in other words does it not contain positions with a quantity unequal to zero
      */
-    fun isEmpty(): Boolean = ! _positions.values.any { it.open }
+    fun isEmpty(): Boolean = _positions.isEmpty()
 
 
     /**
@@ -85,7 +85,7 @@ class Portfolio : Cloneable {
         val asset = position.asset
         val currentPos = _positions.getOrDefault(asset, Position.empty(asset))
         val newPosition = currentPos + position
-        if (newPosition.isEmpty()) _positions.remove(asset) else  _positions[asset] = newPosition
+        if (newPosition.closed) _positions.remove(asset) else  _positions[asset] = newPosition
         return currentPos.realizedPNL(position)
     }
 
@@ -120,7 +120,11 @@ class Portfolio : Cloneable {
      * in a portfolio.
      */
     fun setPosition(position: Position) {
-        _positions[position.asset] = position
+        if (position.closed) {
+            _positions.remove(position.asset)
+        } else {
+            _positions[position.asset] = position
+        }
     }
 
 

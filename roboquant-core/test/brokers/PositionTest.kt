@@ -19,11 +19,20 @@ package org.roboquant.brokers
 import org.junit.Test
 import kotlin.test.*
 import org.roboquant.TestData
+import java.math.BigDecimal
+import kotlin.random.Random
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+
+
 internal class PositionTest {
 
+
+    private fun getRandomSize(): BigDecimal {
+        val l = Random.nextLong(9_999_999_999)
+        return BigDecimal("0.$l")
+    }
 
     @Test
     fun update1() {
@@ -35,6 +44,21 @@ internal class PositionTest {
         assertEquals(11.0, newPos.avgPrice)
         assertEquals(20.0, newPos.size)
         assertEquals(0.0, pnl)
+    }
+
+    @Test
+    fun accuracy() {
+        val contract = TestData.usStock()
+        for (i in 1..10) {
+            val size1 = getRandomSize()
+            val size2 = getRandomSize()
+            val totalSize = size1 + size2
+
+            val p1 = Position(contract, size1.toDouble(), 10.0, 12.0)
+            val p2 = Position(contract, size2.toDouble(), 12.0, 12.0)
+            val newPos = p1 + p2
+            assertEquals(totalSize.toDouble(), newPos.size)
+        }
     }
 
 
