@@ -21,6 +21,8 @@ import org.roboquant.common.TimeFrame
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * Use the assets and prices found in the [feed] to plot the assets, their returns and trading volume. This chart for
@@ -41,14 +43,17 @@ class AssetPerformanceChart(
         val entries = feed.filter<PriceBar>(timeFrame)
         entries.forEach {
             val priceBar = it.second
-            val price = priceBar.getPriceAmount(priceType).value
-            val record = result.getOrPut(priceBar.asset) { mutableListOf(price, 0.0, 0.0) } // start, last, volume
-            record[1] = price
-            record[2] = record[2] + (price * priceBar.volume)
+            val price = priceBar.getPriceAmount(priceType)
+            val record = result.getOrPut(priceBar.asset) { mutableListOf(price.value, 0.0, 0.0) } // start, last, volume
+            record[1] = price.value
+            val volume = price.convert(time = it.first).value * priceBar.volume
+            record[2] += volume
         }
         return result.map {
             val returns = 100.0 * (it.value[1] - it.value[0])/it.value[0]
-            mapOf("name" to it.key.symbol,  "value" to listOf(it.value[2], returns))
+            val bdVolume = BigDecimal(it.value[2]).setScale(0, RoundingMode.HALF_DOWN)
+            val bdReturns = BigDecimal(returns).setScale(2, RoundingMode.HALF_DOWN)
+            mapOf("name" to it.key.symbol,  "value" to listOf(bdVolume, bdReturns))
         }
     }
 
@@ -57,7 +62,7 @@ class AssetPerformanceChart(
         val list = fromFeed()
         val max = list.maxOf {
             val x = it["value"] as List<*>
-            x[1] as Double
+            x[1] as BigDecimal
         }
 
         val data = gsonBuilder.create().toJson(list)
@@ -67,6 +72,7 @@ class AssetPerformanceChart(
                 name: 'Assets',
                 type: 'treemap',
                 data : $data,
+                breadcrumb : { show: false },
             },
         """
 
@@ -88,8 +94,7 @@ class AssetPerformanceChart(
                 tooltip: {
                    position: 'top',
                    formatter: function (p) {
-                        volume = (p.value[0] / 1000000).toFixed();
-                        return 'asset: ' + p.name + '<br>' + 'volume: ' + volume + '<br>' + 'returns: ' + p.value[1]; 
+                        return 'asset: ' + p.name + '<br>volume: ' + p.value[0]+ '<br>returns: ' + p.value[1]  + '%'; 
                     }
                 },
                 toolbox: {
