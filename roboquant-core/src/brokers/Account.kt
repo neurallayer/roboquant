@@ -45,7 +45,7 @@ import org.roboquant.common.Config.baseCurrency
 class Account(
     var baseCurrency: Currency = Config.baseCurrency,
     private val exchangeRates: ExchangeRates? = null,
-) : Cloneable {
+) : Cloneable, Summarizable {
 
     /**
      * When was the account last updated
@@ -119,7 +119,7 @@ class Account(
      *
      * @return The summary
      */
-    fun summary(): Summary {
+    override fun summary(): Summary {
         val s = Summary("Account")
         s.add("last update", lastUpdate.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)

@@ -19,6 +19,7 @@ package org.roboquant.logging
 import org.roboquant.RunPhase
 import org.roboquant.RunInfo
 import org.roboquant.common.Summary
+import org.roboquant.metrics.MetricResults
 import java.text.SimpleDateFormat
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -31,7 +32,8 @@ import java.util.*
  * this should not pose a problem. By specifying [maxHistorySize] you can further limit the amount stored in memory.
  *
  * By default, a bar will be shown that shows the progress of a run, but by setting [showProgress] to false this can be
- * disabled.
+ * disabled. And although the MemoryLogger can be used in multiple runs at the same time, that is not true for the
+ * progressbar.
  */
 class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize: Int = Int.MAX_VALUE) : MetricsLogger {
 
@@ -39,7 +41,7 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
     private val progressBar = ProgressBar()
 
     @Synchronized
-    override fun log(results: Map<String, Number>, info: RunInfo) {
+    override fun log(results: MetricResults, info: RunInfo) {
         if (showProgress) progressBar.update(info)
 
         for ((t, u) in results) {
@@ -111,7 +113,7 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
     /**
      * Get results for a metric specified by its [name]. It will include all the runs and episodes for that metric.
      */
-    fun getMetric(name: String): List<MetricsEntry> {
+    override fun getMetric(name: String): List<MetricsEntry> {
         return history.filter { it.metric == name }
     }
 

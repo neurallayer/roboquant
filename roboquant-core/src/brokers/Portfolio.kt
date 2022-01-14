@@ -22,6 +22,7 @@ import org.roboquant.common.Summary
 import org.roboquant.common.Wallet
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
+import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.util.*
 
@@ -81,7 +82,7 @@ class Portfolio : Cloneable {
     /**
      * Update the portfolio with the provided [position] and return the realized PnL.
      */
-    fun updatePosition(position: Position): Double {
+    fun updatePosition(position: Position): Amount {
         val asset = position.asset
         val currentPos = _positions.getOrDefault(asset, Position.empty(asset))
         val newPosition = currentPos + position
@@ -239,7 +240,7 @@ class Portfolio : Cloneable {
      *
      *      Target Portfolio = Current Portfolio + Diff
      *
-     * An example how to generate the required orders for the re-balancing of a portfolio:
+     * An example how to generate the market orders for the re-balancing of a portfolio:
      *
      *      val diff = portfolio.diff(targetPortfolio)
      *      val orders = diff.map { MarketOrder(it.key, it.value) }
@@ -249,7 +250,10 @@ class Portfolio : Cloneable {
         val result = mutableMapOf<Asset, Double>()
 
         for (position in target.positions) {
-            val value = position.size - getPosition(position.asset).size
+            // Use BigDecimal to avoid inaccuracies
+            val targetSize = BigDecimal.valueOf(position.size)
+            val sourceSize = BigDecimal.valueOf(getPosition(position.asset).size)
+            val value = (targetSize - sourceSize).toDouble()
             if (value != 0.0) result[position.asset] = value
         }
 

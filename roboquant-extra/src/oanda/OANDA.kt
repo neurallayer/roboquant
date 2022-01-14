@@ -27,7 +27,6 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Config
-import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.Metric
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.Strategy
@@ -41,7 +40,7 @@ object OANDA {
      * - The spread (for common currency pairs) is smaller than most stocks
      * - Leverage is high
      */
-    fun roboquant(strategy: Strategy, vararg metrics: Metric): Roboquant<MemoryLogger> {
+    fun roboquant(strategy: Strategy, vararg metrics: Metric): Roboquant {
         // We allow shorting
         val policy = DefaultPolicy(shorting = true)
 

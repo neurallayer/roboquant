@@ -17,6 +17,7 @@
 package org.roboquant.logging
 
 import org.roboquant.RunInfo
+import org.roboquant.metrics.MetricResults
 
 /**
  * Silent logger ignores all metrics results and only counts the number of invocations.
@@ -27,7 +28,7 @@ class SilentLogger : MetricsLogger {
 
     var events = 0L
 
-    override fun log(results: Map<String, Number>, info: RunInfo) {
+    override fun log(results: MetricResults, info: RunInfo) {
         events += 1
     }
 

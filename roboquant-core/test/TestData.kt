@@ -84,7 +84,7 @@ object TestData {
     }
 
     fun getRunInfo(): RunInfo {
-        return RunInfo("test", "1", 1, 10, Instant.now(), TimeFrame.INFINITY, RunPhase.MAIN)
+        return RunInfo("run-1", 1, 10, Instant.now(), TimeFrame.INFINITY, RunPhase.MAIN)
     }
 
 

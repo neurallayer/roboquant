@@ -52,7 +52,6 @@ fun small() {
     val strategy = EMACrossover.longTerm()
     val roboquant = Roboquant(strategy, AccountSummary())
     roboquant.run(feed)
-    roboquant.logger.summary().log()
     roboquant.broker.account.trades.summary().log()
     roboquant.broker.account.orders.summary().log()
 }
@@ -234,7 +233,6 @@ fun oneMillionBars() {
     val broker = SimBroker(keepClosedOrders = false)
     val roboquant = Roboquant(strategy, ProgressMetric(), broker = broker)
     roboquant.run(feed)
-    roboquant.logger.summary().print()
 }
 
 /*
@@ -307,6 +305,23 @@ fun determine() {
 }
 
 
+fun multiRun() {
+    val feed = AvroFeed.sp500()
+    var max = Double.MIN_VALUE
+
+    for (fast in 5..20)
+        for (slow in fast+1..fast+10) {
+            val strategy = EMACrossover(fast, slow)
+            val roboquant = Roboquant(strategy, AccountSummary(), logger= MemoryLogger(showProgress = false))
+            roboquant.run(feed)
+            val equity = roboquant.logger.getMetric("account.equity").last().value
+            if (equity > max) {
+                println("$fast $slow => $equity")
+                max = equity
+            }
+        }
+}
+
 fun testingStrategies() {
     val strategy = EMACrossover()
     val roboquant = Roboquant(strategy)
@@ -341,9 +356,9 @@ suspend fun runParallel() {
         for (j in i + 1..i + 5) {
             val s = EMACrossover(i, j)
             val logger = MemoryLogger(false)
-            val e = Roboquant(s, AccountSummary(), logger = logger, name = "Run $i $j")
+            val e = Roboquant(s, AccountSummary(), logger = logger)
             val deferred = Background.async {
-                e.runAsync(feed)
+                e.runAsync(feed, runName = "Run $i $j")
                 logger
             }
 
@@ -355,7 +370,7 @@ suspend fun runParallel() {
     val l = Logging.getLogger("ParallelRuns")
     loggers.forEach {
         val entry = it.getMetric("account.value").last()
-        l.info { "${entry.info.roboquant}  ${entry.value}" }
+        l.info { "${entry.info.run}  ${entry.value}" }
     }
 
 }
@@ -521,7 +536,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.info()
 
-    when ("LARGE5") {
+    when ("MULTI_RUN") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()
@@ -534,6 +549,7 @@ suspend fun main() {
         "LARGE6" -> large6()
         "LARGEREAD" -> largeRead()
         "LARGE_LOW_MEM" -> largeLowMem()
+        "MULTI_RUN" -> multiRun()
         "INTRA" -> intraday()
         "ONE_MILLION" -> oneMillionBars()
         "MC" -> multiCurrency()

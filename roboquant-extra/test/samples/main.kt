@@ -68,7 +68,6 @@ fun allAlpaca() {
     feed.disconnect()
 
     roboquant.broker.account.summary().log()
-    roboquant.logger.summary(3).log()
 }
 
 
@@ -80,7 +79,6 @@ fun alpacaHistoricFeed() {
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
     roboquant.run(feed)
     roboquant.broker.account.summary().log()
-    roboquant.logger.summary().log()
 }
 
 fun alpacaFeed() {
@@ -96,8 +94,6 @@ fun alpacaFeed() {
     feed.disconnect()
 
     roboquant.broker.account.summary().log()
-    roboquant.logger.summary().log()
-
 }
 
 fun feedIEX() {
@@ -122,7 +118,6 @@ fun feedIEXLive() {
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
     roboquant.run(feed, TimeFrame.next(5.minutes))
     roboquant.broker.account.summary().log()
-    roboquant.logger.summary().log()
 }
 
 

@@ -18,27 +18,12 @@ package org.roboquant.brokers
 
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
+import org.roboquant.common.Currency
 import org.roboquant.common.Wallet
 import java.math.BigDecimal
 import java.time.Instant
 import kotlin.math.absoluteValue
 import kotlin.math.sign
-
-/**
- * The 3 possible position changes, that impact PNL and avg price calculations
- */
-enum class PositionChange {
-
-    // Go from a long to short position or visa verse
-    DIRECTION,
-
-    // Increase the position size, either long or short
-    INCREASE,
-
-    // Decrease position size, either long or short
-    DECREASE
-
-}
 
 /**
  * Position of an asset in the portfolio. This implementation makes no assumptions about the asset class, so it supports
@@ -69,7 +54,7 @@ data class Position(
     /**
      * The currency of this position, aka the currency of the underlying asset
      */
-    val currency
+    val currency: Currency
         get() = asset.currency
 
     companion object Factory {
@@ -80,18 +65,9 @@ data class Position(
         fun empty(asset: Asset): Position = Position(asset, 0.0, 0.0, 0.0)
     }
 
-
-    fun getPositionChange(change: Position) : PositionChange {
-        return when {
-            size.sign == change.size.sign -> PositionChange.INCREASE
-            size.absoluteValue - change.size.absoluteValue > 0 -> PositionChange.DECREASE
-            else -> PositionChange.DIRECTION
-        }
-    }
-
     operator fun plus(p: Position) : Position {
-        // Use BigDecimal to perform the addition so we don't loose precision
-        val newSize = ((BigDecimal("$size") + BigDecimal("${p.size}")).toDouble())
+        // Use BigDecimals to perform the addition so we don't loose precision
+        val newSize = (BigDecimal.valueOf(size) + BigDecimal.valueOf(p.size)).toDouble()
 
         return when {
             size.sign != newSize.sign -> p.copy(size = newSize)
@@ -110,19 +86,19 @@ data class Position(
      * How much PNL would be realized when [update] a position. This doesn't change the position itself, just
      * calculates the potential realized PNL.
      */
-    fun realizedPNL(update: Position) : Double {
-        val newQuantity = size + update.size
+    fun realizedPNL(update: Position) : Amount {
+        val newSize = size + update.size
 
-        return when {
-            size.sign != newQuantity.sign -> totalSize * (update.avgPrice - avgPrice)
-            newQuantity.absoluteValue > size.absoluteValue -> 0.0
+        val value = when {
+            size.sign != newSize.sign -> totalSize * (update.avgPrice - avgPrice)
+            newSize.absoluteValue > size.absoluteValue -> 0.0
             else -> update.totalSize * (avgPrice - update.avgPrice)
         }
-
+        return Amount(asset.currency, value)
     }
 
     /**
-     * Is this a closed position, so size is 0.0
+     * Is this a closed position, or in other worhds is the size equal to 0
      */
     val closed: Boolean
         get() = size == 0.0

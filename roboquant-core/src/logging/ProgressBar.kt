@@ -62,8 +62,8 @@ internal class ProgressBar {
         currentPercent = percent
 
         if (post.isEmpty()) {
-            post = "${info.roboquant} | run=${info.run} | phase=${info.phase} |"
-            pre = info.timeFrame.toPrettyString() + " | "
+            post = "${info.run} | episode=${info.episode} | phase=${info.phase} "
+            pre = "${info.timeFrame.toPrettyString()} | "
         }
 
         draw(percent)

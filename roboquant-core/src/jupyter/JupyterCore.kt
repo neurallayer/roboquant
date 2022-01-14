@@ -21,6 +21,7 @@ import org.jetbrains.kotlinx.jupyter.api.ThrowableRenderer
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
 import org.roboquant.common.Logging
+import org.roboquant.common.Summarizable
 import org.roboquant.common.escapeHtml
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -116,6 +117,11 @@ internal class JupyterCore : JupyterIntegration() {
             handler.level = Level.WARNING
             Logging.resetHandler(handler)
             Logging.setDefaultLevel(Level.WARNING)
+        }
+
+
+        render<Summarizable> {
+            print(it.summary())
         }
 
         /**

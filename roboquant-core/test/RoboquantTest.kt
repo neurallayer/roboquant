@@ -75,10 +75,10 @@ internal class RoboquantTest {
     fun validationPhase() {
         val feed = RandomWalk.lastYears()
         val strategy = EMACrossover()
-        val roboquant = Roboquant(strategy, ProgressMetric(), logger = MemoryLogger(showProgress = false))
+        val logger =  MemoryLogger(showProgress = false)
+        val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
         val (train, test) = feed.timeFrame.splitTrainTest(0.20)
         roboquant.run(feed, train, test)
-        val logger = roboquant.logger
         val data = logger.getMetric("progress.events")
         assertEquals(2, data.map { it.info.phase }.distinct().size)
         assertEquals(1, logger.getRuns().size)
@@ -110,17 +110,18 @@ internal class RoboquantTest {
     fun reset() {
         val feed = RandomWalk.lastYears()
         val strategy = EMACrossover()
-        val roboquant = Roboquant(strategy, AccountSummary())
+        val logger = MemoryLogger(showProgress = false)
+        val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
         roboquant.run(feed)
-        var runs = roboquant.logger.getRuns()
+        var runs = logger.getRuns()
         assertEquals(1, runs.size)
-        val lastHistory1 = roboquant.logger.history.last
+        val lastHistory1 = logger.history.last
 
         roboquant.reset()
         roboquant.run(feed)
-        runs = roboquant.logger.getRuns()
+        runs = logger.getRuns()
         assertEquals(1, runs.size)
-        val lastHistory2 = roboquant.logger.history.last
+        val lastHistory2 = logger.history.last
 
         assertEquals(lastHistory1, lastHistory2)
     }

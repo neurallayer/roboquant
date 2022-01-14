@@ -17,15 +17,16 @@
 package org.roboquant.logging
 
 import org.roboquant.RunInfo
+import org.roboquant.metrics.MetricResults
 
 /**
  * Use plain println to output metric results to the console. This works with Notebooks and standalone applications.
  * By default, it will log metrics in a single line, but by setting [splitMetrics] to true, every metric will be logged
- * to separate line.
+ * to a separate line.
  */
 class ConsoleLogger(private val splitMetrics: Boolean = false) : MetricsLogger {
 
-    override fun log(results: Map<String, Number>, info: RunInfo) {
+    override fun log(results: MetricResults, info: RunInfo) {
         if (results.isEmpty()) return
 
         if (splitMetrics) {

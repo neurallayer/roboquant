@@ -39,7 +39,7 @@ data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo
      */
     fun sameEpisode(other: MetricsEntry): Boolean {
         val i = other.info
-        return i.phase == info.phase && i.run == info.run && i.episode == info.episode && i.roboquant == info.roboquant
+        return i.phase == info.phase && i.run == info.run && i.episode == info.episode
     }
 
 }

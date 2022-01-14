@@ -18,6 +18,7 @@ package org.roboquant.logging
 
 import org.roboquant.RunInfo
 import org.roboquant.common.Logging
+import org.roboquant.metrics.MetricResults
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -34,13 +35,12 @@ class InfoLogger(
 
     private val logger = Logging.getLogger(InfoLogger::class)
 
-    override fun log(results: Map<String, Number>, info: RunInfo) {
+    override fun log(results: MetricResults, info: RunInfo) {
         if (results.isEmpty()) return
 
         if (!splitMetrics)
             logger.log(level) {
                 mapOf(
-                    "name" to info.roboquant,
                     "run" to info.run,
                     "epoch" to info.episode,
                     "time" to info.time,
@@ -52,7 +52,6 @@ class InfoLogger(
             results.forEach {
                 logger.log(level) {
                     mapOf(
-                        "name" to info.roboquant,
                         "run" to info.run,
                         "epoch" to info.episode,
                         "time" to info.time,

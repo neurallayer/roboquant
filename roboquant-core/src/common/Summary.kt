@@ -19,6 +19,12 @@ package org.roboquant.common
 import java.text.DecimalFormat
 import java.util.logging.Level
 
+
+interface Summarizable {
+
+    fun summary() : Summary
+}
+
 /**
  * Summary allows to represent nested data into a tree like format. This is supported by several of the components
  * in roboquant if you invoke their summary() method.

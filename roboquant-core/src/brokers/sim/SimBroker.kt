@@ -137,7 +137,7 @@ class SimBroker(
             execution.quantity,
             avgPrice,
             fee,
-            pnl,
+            pnl.value,
             execution.order.id
         )
 

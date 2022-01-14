@@ -116,6 +116,11 @@
                             </goals>
                         </execution>
                     </executions>
+                    <configuration>
+                        <args>
+                            <!-- arg>-Xexplicit-api=strict</arg -->
+                        </args>
+                    </configuration>
                 </plugin>
 
                 <!-- Make sure we have the latest versions of std maven plugins -->

@@ -44,16 +44,13 @@ import java.util.logging.Level
  * variety of testing and live trading scenarios. Through [metrics] and a [logger] it provides insights into the
  * performance of a [run].
  *
- * Every instance has it own [name] that is also used when using the [logger].
- *
  */
-class Roboquant<L : MetricsLogger>(
+class Roboquant(
     val strategy: Strategy,
     vararg val metrics: Metric,
     val policy: Policy = DefaultPolicy(),
     val broker: Broker = SimBroker(),
-    val logger: L,
-    val name: String = "roboquant-${instanceCounter++}",
+    val logger: MetricsLogger = MemoryLogger(),
     private val channelCapacity: Int = 100,
 ) {
 
@@ -61,28 +58,8 @@ class Roboquant<L : MetricsLogger>(
     private val kotlinLogger = Logging.getLogger(Roboquant::class)
     private val components = listOf(strategy, policy, broker, *metrics, logger)
 
-    companion object {
-
-        // Used to generate a unique roboquant name
-        private var instanceCounter = 0
-
-        /**
-         * Shortcut to create a new roboquant with a default logger.
-         *
-         * @param strategy
-         * @param metrics
-         */
-        operator fun invoke(
-            strategy: Strategy,
-            vararg metrics: Metric,
-            policy: Policy = DefaultPolicy(),
-            broker: Broker = SimBroker()
-        ) = Roboquant(strategy, *metrics, policy = policy, broker = broker, logger = MemoryLogger())
-
-    }
-
     init {
-        kotlinLogger.fine { "Created new roboquant instance with name $name" }
+        kotlinLogger.fine { "Created new roboquant instance with name" }
     }
 
     /**
@@ -152,11 +129,11 @@ class Roboquant<L : MetricsLogger>(
 
     /**
      * Start a new run using the provided [feed] as data. If no [timeFrame] is provided all the events in the feed
-     * will be used. Optionally you can provide a [validation] timeframe that will trigger a separate validation phase. You
-     * can also repeat the run for a number of [episodes].
+     * will be used. Optionally you can provide a [validation] timeframe that will trigger a separate validation phase.
+     * You can also repeat the run for a number of [episodes].
      *
      * If can provide a custom [runName] that will help to later identify this run. If none is provided, a name will
-     * be generated.
+     * be generated with the format "run-<counter>"
      *
      *  The following provides a schematic overview of the flow of a run:
      *
@@ -189,9 +166,9 @@ class Roboquant<L : MetricsLogger>(
         episodes: Int = 1
     ) {
         require(episodes > 0) { "episodes need to be greater than zero" }
-        val run = runName ?: runCounter++.toString()
-        val runInfo = RunInfo(name, run)
-        kotlinLogger.fine { "Starting run $runInfo for $episodes episodes for $name" }
+        val run = runName ?: "run-${runCounter++}"
+        val runInfo = RunInfo(run)
+        kotlinLogger.fine { "Starting run $runInfo for $episodes episodes" }
 
         repeat(episodes) {
             runInfo.episode++
@@ -204,7 +181,7 @@ class Roboquant<L : MetricsLogger>(
                 runPhase(feed, runInfo)
             }
         }
-        kotlinLogger.fine { "Finished run $runInfo for $name" }
+        kotlinLogger.fine { "Finished run $runInfo" }
     }
 
 
@@ -232,7 +209,6 @@ class Roboquant<L : MetricsLogger>(
             try {
                 metric.calculate(account, event)
             } catch (e: Exception) {
-                println(e.printStackTrace())
                 kotlinLogger.log(Level.WARNING, "Couldn't calculate metric ${metric::class.qualifiedName}", e)
             }
         }
@@ -249,7 +225,6 @@ class Roboquant<L : MetricsLogger>(
      */
     fun summary(): Summary {
         val s = Summary("roboquant")
-        s.add("name", name)
         s.add("strategy", strategy::class.simpleName)
         s.add("policy", policy::class.simpleName)
         s.add("logger", logger::class.simpleName)
@@ -263,7 +238,6 @@ class Roboquant<L : MetricsLogger>(
 /**
  * Run related info provided to metrics loggers together with the metric results.
  *
- * @property roboquant name of the roboquant that started this run
  * @property run the name of the run
  * @property episode the episode number
  * @property step the step
@@ -273,7 +247,6 @@ class Roboquant<L : MetricsLogger>(
  * @constructor Create new RunInfo object
  */
 data class RunInfo internal constructor(
-    val roboquant: String,
     val run: String,
     var episode: Int = 0,
     var step: Int = 0,
