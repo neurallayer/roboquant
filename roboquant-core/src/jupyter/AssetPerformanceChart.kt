@@ -19,6 +19,7 @@ package org.roboquant.jupyter
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
 import org.roboquant.feeds.Feed
+import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import java.math.BigDecimal
@@ -36,18 +37,21 @@ class AssetPerformanceChart(
 ) : Chart() {
 
     /**
-     * Play the feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
+     * Play the feed and get priceactions
+     * The output is usable for a treemap
      */
     private fun fromFeed(): List<Map<String, Any>> {
-        val result = mutableMapOf<Asset, MutableList<Double>>()
-        val entries = feed.filter<PriceBar>(timeFrame)
+        val result = mutableMapOf<Asset, MutableList<Double>>()  // start, last, volume
+        val entries = feed.filter<PriceAction>(timeFrame)
         entries.forEach {
-            val priceBar = it.second
-            val price = priceBar.getPriceAmount(priceType)
-            val record = result.getOrPut(priceBar.asset) { mutableListOf(price.value, 0.0, 0.0) } // start, last, volume
-            record[1] = price.value
-            val volume = price.convert(time = it.first).value * priceBar.volume
-            record[2] += volume
+            val priceAction = it.second
+            if (priceAction.volume.isFinite()) {
+                val price = priceAction.getPriceAmount(priceType)
+                val record = result.getOrPut(priceAction.asset) { mutableListOf(price.value, 0.0, 0.0) }
+                record[1] = price.value
+                val volume = price.convert(time = it.first).value * priceAction.volume
+                record[2] += volume
+            }
         }
         return result.map {
             val returns = 100.0 * (it.value[1] - it.value[0])/it.value[0]

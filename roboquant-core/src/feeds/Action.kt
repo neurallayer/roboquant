@@ -61,6 +61,15 @@ interface PriceAction : Action {
      * Same as [getPrice] but returns an [Amount], so this incudes the currency
      */
     fun getPriceAmount(type: String = "DEFAULT") = Amount(asset.currency, getPrice(type))
+
+
+    /**
+     * Volume for the rpice action. This is optional and if not implemented, the default is Double.NaN
+     * Volume in teh context of a PriceAction can be both trade volume as well as orderbook volume, depending on the
+     * type of PriceAction.
+     */
+    val volume: Double
+        get() = Double.NaN
 }
 
 /**
@@ -76,7 +85,7 @@ data class PriceBar(
     val high: Double,
     val low: Double,
     val close: Double,
-    val volume: Double = Double.NaN
+    override val volume: Double = Double.NaN
 ) : PriceAction {
 
     /**
@@ -164,7 +173,7 @@ data class PriceBar(
  * @property volume
  * @constructor Create empty Single price
  */
-data class TradePrice(override val asset: Asset, private val price: Double, val volume: Double = Double.NaN) : PriceAction {
+data class TradePrice(override val asset: Asset, private val price: Double, override val volume: Double = Double.NaN) : PriceAction {
 
     fun values() = listOf(price, volume)
 
@@ -240,6 +249,9 @@ data class PriceQuote(
         }
         return  result
     }
+
+    override val volume: Double
+        get() = askSize + bidSize
 
 }
 
