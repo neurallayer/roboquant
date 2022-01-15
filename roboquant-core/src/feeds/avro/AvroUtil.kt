@@ -33,9 +33,10 @@ import org.roboquant.feeds.*
 import java.io.File
 
 /**
- * Utility to create an Avro file based on feed. It only records actions of the type [PriceBar].
+ * Utilities for working with Avro files:
  *
- * Typical use case is to turn a large set of CSV files into a single Avro file and use that for future back-tests.
+ * - create an Avro file based on feed. Typical use case is to turn a large set of CSV files into a single Avro file
+ * and use that for future back-tests.
  */
 object AvroUtil {
 
@@ -56,7 +57,7 @@ object AvroUtil {
             """
 
     /**
-     * Record the price actions in a feed and store them in a avro file that can be used with the AvroFeed
+     * Record the price actions in a feed and store them in a avro file that can be used with [AvroFeed].
      */
     fun record(feed: Feed, fileName: String, timeFrame: TimeFrame = TimeFrame.INFINITY, compressionLevel: Int = 1) =
         runBlocking {
@@ -92,10 +93,10 @@ object AvroUtil {
                         record.put(0, now)
                         record.put(1, assetStr)
                         val values : List<Double> = when (action) {
-                            is PriceBar -> { record.put(2, 1); action.values() }
-                            is TradePrice -> { record.put(2, 2); action.values() }
-                            is PriceQuote -> { record.put(2, 3); action.values() }
-                            is OrderBook -> { record.put(2, 4); action.values() }
+                            is PriceBar -> { record.put(2, 1); action.values }
+                            is TradePrice -> { record.put(2, 2); action.values }
+                            is PriceQuote -> { record.put(2, 3); action.values }
+                            is OrderBook -> { record.put(2, 4); action.values }
                             else -> {
                                 logger.warning("Unsupported price action encountered $action")
                                 continue

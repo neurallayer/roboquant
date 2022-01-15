@@ -31,8 +31,10 @@ import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.LazyCSVFeed
 import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.SilentLogger
+import org.roboquant.logging.toDoubleArray
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.PNL
 import org.roboquant.metrics.ProgressMetric
@@ -235,25 +237,7 @@ fun oneMillionBars() {
     roboquant.run(feed)
 }
 
-/*
-fun crypto() {
-    val config = CSVConfig(
-        assetBuilder = {
-            val currencyCode = it.substring(it.lastIndex - 2)
-            val symbol = it.substring(0, it.lastIndex - 2)
-            Asset(symbol, AssetType.CRYPTO, currencyCode)
-        },
-    )
 
-    val feed = CSVFeed("/data/assets/crypto_small", config)
-
-    val strategy = EMACrossover()
-    val exp = Roboquant(strategy, ProgressMetric(), AccountSummary(), logger = MemoryLogger(maxHistorySize = 100))
-    exp.run(feed)
-    exp.broker.account.summary().log()
-    exp.logger.summary().log()
-}
-*/
 
 fun multiCurrency() {
     val feed = CSVFeed("data/US", CSVConfig(priceAdjust = true))
@@ -307,20 +291,59 @@ fun determine() {
 
 fun multiRun() {
     val feed = AvroFeed.sp500()
-    var max = Double.MIN_VALUE
+    val logger = LastEntryLogger()
 
-    for (fast in 5..20)
-        for (slow in fast+1..fast+10) {
+    for (fast in 10..20..2) {
+        for (slow in fast * 2..fast * 4..4) {
             val strategy = EMACrossover(fast, slow)
-            val roboquant = Roboquant(strategy, AccountSummary(), logger= MemoryLogger(showProgress = false))
-            roboquant.run(feed)
-            val equity = roboquant.logger.getMetric("account.equity").last().value
-            if (equity > max) {
-                println("$fast $slow => $equity")
-                max = equity
+            val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
+            roboquant.run(feed, runName = "run $fast-$slow")
+        }
+    }
+    val maxEntry = logger.getMetric("account.equity").maxByOrNull{ it.value }!!
+    println(maxEntry.info.run)
+}
+
+
+suspend fun walkforwardParallel() {
+    val feed = AvroFeed.sp500()
+    val logger = LastEntryLogger()
+    val jobs = ParallelJobs()
+
+    feed.timeFrame.split(2.years).forEach {
+        val strategy = EMACrossover()
+        val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
+        jobs.add {
+            roboquant.runAsync(feed, runName = "run-$it")
+        }
+    }
+
+    jobs.joinAll() // Make sure we wait for all jobs to finish
+    val avgEquity = logger.getMetric("account.equity").toDoubleArray().mean()
+    println(avgEquity)
+}
+
+
+suspend fun multiRunParallel() {
+    val feed = AvroFeed.sp500()
+    val logger = LastEntryLogger()
+    val jobs = ParallelJobs()
+
+    for (fast in 10..20..2) {
+        for (slow in fast * 2..fast * 4..4) {
+            val strategy = EMACrossover(fast, slow)
+            val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
+            jobs.add {
+                roboquant.runAsync(feed, runName = "run $fast-$slow")
             }
         }
+    }
+
+    jobs.joinAll() // Make sure we wait for all jobs to finish
+    val maxEntry = logger.getMetric("account.equity").maxByOrNull{ it.value }!!
+    println(maxEntry.info.run)
 }
+
 
 fun testingStrategies() {
     val strategy = EMACrossover()
@@ -536,7 +559,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.info()
 
-    when ("MULTI_RUN") {
+    when ("WALKFORWARD_PARALLEL") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()
@@ -550,6 +573,8 @@ suspend fun main() {
         "LARGEREAD" -> largeRead()
         "LARGE_LOW_MEM" -> largeLowMem()
         "MULTI_RUN" -> multiRun()
+        "MULTI_RUN_PARALLEL" -> println( measureTimeMillis {  multiRunParallel() })
+        "WALKFORWARD_PARALLEL" -> println( measureTimeMillis {  walkforwardParallel() })
         "INTRA" -> intraday()
         "ONE_MILLION" -> oneMillionBars()
         "MC" -> multiCurrency()

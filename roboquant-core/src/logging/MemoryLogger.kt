@@ -106,7 +106,7 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
     /**
      * Get the unique list of metric names that have been captured
      */
-    val metricNames : List<String>
+    override val metricNames : List<String>
         get() = history.map { it.metric }.distinct().sorted()
 
 

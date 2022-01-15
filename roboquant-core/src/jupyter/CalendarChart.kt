@@ -36,7 +36,7 @@ class CalendarChart(
     private var max: Double = 1.0
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)
 
-    private fun prepData(): MutableMap<Int, List<Any>> {
+    private fun prepData(): Map<Int, List<Any>> {
 
         max = metricsData.map { it.value }.maxOfOrNull { it.absoluteValue } ?: 1.0
         val perYear = metricsData.groupBy { it.info.time.atZone(zoneId).year }
@@ -49,7 +49,7 @@ class CalendarChart(
         return result.toSortedMap()
     }
 
-    private fun genCalendar(data: MutableMap<Int, List<Any>>): String {
+    private fun genCalendar(data: Map<Int, List<Any>>): String {
         var top = 100
         val result = StringBuffer()
         data.keys.forEach {
@@ -69,7 +69,7 @@ class CalendarChart(
         return result.toString()
     }
 
-    private fun genSeries(data: MutableMap<Int, List<Any>>): String {
+    private fun genSeries(data: Map<Int, List<Any>>): String {
         val result = StringBuffer()
         val gson = gsonBuilder.create()
         data.values.forEachIndexed { index, list ->

@@ -46,35 +46,41 @@ interface PriceAction : Action {
     val asset: Asset
 
     /**
-     * Get the price from this PriceEvent. If more than one price is available, optionally the
+     * Get the price for this PriceAction. If more than one price is available, optionally the
      * [type] of price can be passed as a parameter. For example "CLOSE" in case of a candlestick.
      *
      * Any implementation is expected to return a default price if the type is not recognised. This way strategies
      * can work on a wide variety of feeds. It is convention to use uppercase strings for different types.
      *
-     * @param type
      * @return
      */
     fun getPrice(type: String = "DEFAULT"): Double
 
     /**
-     * Same as [getPrice] but returns an [Amount], so this incudes the currency
+     * Same as [getPrice] but returns an [Amount], so this incudes the currency. The default implmentation should be
+     * sufficient for most cases.
      */
     fun getPriceAmount(type: String = "DEFAULT") = Amount(asset.currency, getPrice(type))
 
 
     /**
-     * Volume for the rpice action. This is optional and if not implemented, the default is Double.NaN
-     * Volume in teh context of a PriceAction can be both trade volume as well as orderbook volume, depending on the
-     * type of PriceAction.
+     * Volume for the price action. This is optional and if not implemented, the default is to return [Double.NaN]
+     *
+     * Volume in the context of a PriceAction can mean different things. For example is can be trade volume or also
+     * orderbook volume, depending on the type of PriceAction.
      */
     val volume: Double
         get() = Double.NaN
+
+    /**
+     * Return the prices and volume as a list of doubles. This is used to serialize the price action
+     */
+    val values: List<Double>
 }
 
 /**
  * Provides [open], [high], [low], and [close] prices and volume for a single asset. If the volume is not available, it
- * will return NaN instead.
+ * will return [Double.NaN] instead.
  *
  * Often this type of data is also referred to as a candlesticks.
  *
@@ -101,7 +107,7 @@ data class PriceBar(
     ) : this(asset, open.toDouble(), high.toDouble(), low.toDouble(), close.toDouble(), volume.toDouble())
 
 
-    companion object {
+    companion object{
 
         fun fromValues(asset: Asset, values: List<Double>) = PriceBar(asset, values[0], values[1], values[2], values[3], values[4])
 
@@ -153,9 +159,10 @@ data class PriceBar(
     }
 
     /**
-     * return the contained values (OHLCV) as a float array
+     * return the contained values (OHLCV) as a list of Doubles
      */
-    fun values() = listOf(open, high, low, close, volume)
+    override val values
+        get() = listOf(open, high, low, close, volume)
 
     override fun toString(): String {
         return "price-bar ${asset.symbol} $open $high $low $close $volume"
@@ -175,7 +182,8 @@ data class PriceBar(
  */
 data class TradePrice(override val asset: Asset, private val price: Double, override val volume: Double = Double.NaN) : PriceAction {
 
-    fun values() = listOf(price, volume)
+    override val values
+        get() = listOf(price, volume)
 
     operator fun times(n: Number) = copy(price = price * n.toDouble())
     operator fun div(n: Number) = copy(price = price / n.toDouble())
@@ -219,7 +227,8 @@ data class PriceQuote(
     val bidSize: Double
 ) : PriceAction {
 
-    fun values() = listOf(askPrice, askSize, bidPrice, bidSize)
+    override val values
+        get() = listOf(askPrice, askSize, bidPrice, bidSize)
 
     companion object {
         fun fromValues(asset: Asset, values: List<Double>) = PriceQuote(
@@ -250,6 +259,9 @@ data class PriceQuote(
         return  result
     }
 
+    /**
+     * Volume is defined as totol of [askSize] and [bidSize]
+     */
     override val volume: Double
         get() = askSize + bidSize
 
@@ -297,17 +309,17 @@ data class OrderBook(
     val entries
         get() = asks.size + bids.size
 
-    fun values() :List<Double> {
-        return listOf(asks.size.toDouble()) +
+    override val values
+        get() = listOf(asks.size.toDouble()) +
                 asks.map { listOf(it.quantity, it.limit) }.flatten() +
                 bids.map { listOf(it.quantity, it.limit) }.flatten()
-    }
+
 
     /**
-     * Order book will by default return the unweighted MIDPOINT price. Other [types][type] that are supported are:
-     * - lowest "ASK" price
-     * - highest "BID" price
-     * - "WEIGHTED" midpoint price
+     * Order book will by default return the unweighted **MIDPOINT** price. Other [types][type] that are supported are:
+     * - lowest **ASK** price
+     * - highest **BID** price
+     * - **WEIGHTED** midpoint price
      *
      * @param type
      * @return
@@ -325,6 +337,12 @@ data class OrderBook(
         }
     }
 
+    /**
+     * Volume is totol of order book
+     */
+    override val volume: Double
+        get() = asks.volume() + bids.volume()
+
     private fun List<OrderBookEntry>.volume() = this.sumOf { it.quantity.absoluteValue }
     private fun List<OrderBookEntry>.max() = this.maxOf { it.limit }
     private fun List<OrderBookEntry>.min() = this.minOf { it.limit }
@@ -332,7 +350,7 @@ data class OrderBook(
     // override fun toString(): String = "$asset bids:${bids.size} asks:${asks.size}"
 
     /**
-     * Order book entry contains the limit price and quantity
+     * Order book entry contains the [quantity] and [limit] price
      *
      * @property quantity
      * @property limit
@@ -366,11 +384,11 @@ class NewsAction(val items: List<NewsItem>) : Action {
 
     /**
      * News item contains a single news item (text) with optionally extra metadata like
-     * the originating source.
+     * the author
      *
      * @property content
      * @property meta
-     * @constructor Create empty News item
+     * @constructor Create new News item
      */
     class NewsItem(val content: String, val meta: Map<String, Any>)
 }

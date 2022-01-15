@@ -107,18 +107,11 @@ class CSVFeed(
                 val steps = readFile(asset, file)
                 for (step in steps) {
                     add(step.time, step.price)
-                    /*
-                    val actions = result.getOrPut(step.now) { mutableListOf() }
-                    synchronized(actions) {
-                        actions.add(step.price)
-                    }
-                     */
                 }
             }
             deferredList.add(deferred)
         }
         deferredList.awaitAll()
-        // return result.map { Event(it.value, it.key) }.sorted()
     }
 
 

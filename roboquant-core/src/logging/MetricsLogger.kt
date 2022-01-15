@@ -36,6 +36,12 @@ interface MetricsLogger : Component {
      * This is optional to implement
      */
     fun getMetric(name: String) : List<MetricsEntry> = listOf()
+
+    /**
+     * The metrics that are available and can be retreived with the [getMetric].
+     */
+    val metricNames : List<String>
+        get() = listOf()
 }
 
 

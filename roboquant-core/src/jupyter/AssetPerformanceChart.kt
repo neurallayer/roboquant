@@ -20,15 +20,17 @@ import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
- * Use the assets and prices found in the [feed] to plot the assets, their returns and trading volume. This chart for
- * now only works on feeds that contain [PriceBar] actions with known volumes.
+ * Use the assets and prices found in the [feed] to plot the assets, their returns and trading volume. in a tree map.
+ * This chart works on feeds that contain [price actions][PriceAction] that also have [volume][PriceAction.volume]
+ * information
  *
+ * If you mix different type of price actions in this feed the result might become less reliable due to the
+ * different ways that volume is calculated.
  */
 class AssetPerformanceChart(
     private val feed: Feed,
@@ -43,14 +45,12 @@ class AssetPerformanceChart(
     private fun fromFeed(): List<Map<String, Any>> {
         val result = mutableMapOf<Asset, MutableList<Double>>()  // start, last, volume
         val entries = feed.filter<PriceAction>(timeFrame)
-        entries.forEach {
-            val priceAction = it.second
+        entries.forEach { (time, priceAction) ->
             if (priceAction.volume.isFinite()) {
                 val price = priceAction.getPriceAmount(priceType)
                 val record = result.getOrPut(priceAction.asset) { mutableListOf(price.value, 0.0, 0.0) }
                 record[1] = price.value
-                val volume = price.convert(time = it.first).value * priceAction.volume
-                record[2] += volume
+                record[2] += price.convert(time = time).value * priceAction.volume
             }
         }
         return result.map {

@@ -16,8 +16,7 @@
 
 package org.roboquant.feeds
 
-import kotlinx.coroutines.Job
-import org.roboquant.common.Background
+import org.roboquant.common.ParallelJobs
 
 /**
  * Combines several live feeds into a single new feed. It assumes the feeds are delivering
@@ -30,14 +29,13 @@ import org.roboquant.common.Background
 class CombinedFeed(vararg val feeds: LiveFeed) : Feed {
 
     override suspend fun play(channel: EventChannel) {
-        val jobs = mutableListOf<Job>()
+        val jobs = ParallelJobs()
         for (feed in feeds) {
-            val job = Background.ioJob {
+            jobs.add {
                 feed.play(channel)
             }
-            jobs.add(job)
         }
-        jobs.forEach { it.join() }
+        jobs.joinAll()
     }
 
 }

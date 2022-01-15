@@ -36,7 +36,7 @@ internal class ActionTest {
         assertEquals(1.0, pb.open)
         assertEquals(200.0, pb.volume)
 
-        val values = pb.values()
+        val values = pb.values
         val pb2 = PriceBar.fromValues(pb.asset, values)
         assertEquals(pb, pb2)
     }
@@ -50,7 +50,7 @@ internal class ActionTest {
             listOf(OrderBook.OrderBookEntry(100.0, 9.0), OrderBook.OrderBookEntry(100.0, 9.0))
         )
 
-        val values = action.values()
+        val values = action.values
         val action2 = OrderBook.fromValues(action.asset, values)
         assertEquals(action, action2)
     }

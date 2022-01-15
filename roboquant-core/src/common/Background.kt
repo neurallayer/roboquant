@@ -32,7 +32,6 @@ object Background {
     private val CPUBoundScope = CoroutineScope(Dispatchers.Default + Job())
     private val IOBoundScope = CoroutineScope(Dispatchers.IO + Job())
 
-
     /**
      * Launch an IO bound routine
      *
