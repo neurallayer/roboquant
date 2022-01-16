@@ -174,10 +174,10 @@
             </plugin>
 
             <!-- Kotlin documentation plugin -->
-            <plugin>
+            <!-- plugin>
                 <groupId>org.jetbrains.dokka</groupId>
                 <artifactId>dokka-maven-plugin</artifactId>
-                <version>1.5.30</version>
+                <version>${kotlin.version}</version>
                 <executions>
                     <execution>
                         <phase>pre-site</phase>
@@ -197,7 +197,7 @@
                         <dir>${basedir}/test/samples</dir>
                     </samples>
                 </configuration>
-            </plugin>
+            </plugin -->
 
         </plugins>
     </build>
@@ -224,11 +224,11 @@
                 <version>1.6.0</version>
             </dependency>
 
-            <dependency>
+            <!-- dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-reflect</artifactId>
                 <version>${kotlin.version}</version>
-            </dependency>
+            </dependency -->
 
             <dependency>
                 <artifactId>roboquant-core</artifactId>

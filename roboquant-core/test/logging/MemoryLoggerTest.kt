@@ -17,9 +17,13 @@
 package org.roboquant.logging
 
 
+import org.roboquant.RunInfo
 import kotlin.test.*
 import org.roboquant.RunPhase
 import org.roboquant.TestData
+import org.roboquant.common.days
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
@@ -68,6 +72,26 @@ internal class MemoryLoggerTest {
         val dataPerc = data.perc()
         assertEquals(11, dataPerc.size)
         assertEquals(10.0, dataPerc.last().value)
+    }
+
+    @Test
+    fun groupBy() {
+        val logger = MemoryLogger(showProgress = false)
+        var runInfo = RunInfo("run-1", time = Instant.parse("2021-01-01T00:00:00Z"))
+
+        repeat(100) {
+            val metrics =  mapOf("key1" to it)
+            logger.log(metrics, runInfo)
+            runInfo = runInfo.copy(time = runInfo.time + 2.days)
+        }
+
+        val data = logger.getMetric("key1")
+        assertEquals(100, data.groupBy(ChronoUnit.MINUTES).size)
+        assertEquals(100, data.groupBy(ChronoUnit.DAYS).size)
+        assertEquals(29, data.groupBy(ChronoUnit.WEEKS).size)
+        assertEquals(7, data.groupBy(ChronoUnit.MONTHS).size)
+        assertEquals(1, data.groupBy(ChronoUnit.YEARS).size)
+        assertEquals(100, data.groupBy(ChronoUnit.YEARS).values.first().size)
     }
 
 }

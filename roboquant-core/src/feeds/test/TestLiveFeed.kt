@@ -31,7 +31,7 @@ import java.time.Instant
  * @constructor Create new Test feed
  */
 class TestLiveFeed(
-    private vararg val prices: IntProgression = arrayOf(90..100, 100 downTo 90),
+    private vararg val prices: Iterable<Number> = arrayOf(90..100, 100 downTo 90),
     private val asset: Asset = Asset("TEST"),
     private val delayInMillis: Int = 10,
     private val priceBar: Boolean = false,

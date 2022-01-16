@@ -22,6 +22,7 @@ import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
 import org.roboquant.common.getBySymbol
+import java.io.Closeable
 import java.time.Instant
 import java.util.*
 
@@ -31,7 +32,7 @@ import java.util.*
  *
  * Feeds can represent historic data, for example during back testing, and live feeds during live trading.
  */
-interface Feed {
+interface Feed : Closeable {
 
     /**
      * Timeframe of the feed. In case the timeframe is not known upfront, return the full timeframe [TimeFrame.INFINITY]
@@ -45,6 +46,12 @@ interface Feed {
      * and make sure these resources are released before returning from the method.
      */
     suspend fun play(channel: EventChannel)
+
+    /**
+     * Close the feed and free resources held by the feed. This is part of the [Closeable] interface that any feed
+     * can implement. If not implemented, the default behavior is to do nothing.
+     */
+    override fun close() {}
 
 }
 
@@ -73,7 +80,7 @@ interface AssetFeed : Feed {
 
 /**
  * Convenience method to play a feed and return the actions of a certain type [T]. Additionally, the feed can be
- * restricted to a certain [timeFrame] and an additional [filter] can be provided.
+ * restricted to a certain [timeFrame] and if required an additional [filter] can be provided.
  */
 inline fun <reified T : Action> Feed.filter(
     timeFrame: TimeFrame = TimeFrame.INFINITY,

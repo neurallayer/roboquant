@@ -9,9 +9,8 @@ import kotlinx.coroutines.*
  *      jobs.add { roboquant.runAsync(feed) }
  *      jobs.joinAll()
  *
- * @property simulateSequential run of jobs sequnetial, mostly usefull for testing purposes
  */
-class ParallelJobs(private val simulateSequential: Boolean = false) {
+class ParallelJobs {
 
     private val scope = CoroutineScope(Dispatchers.Default + Job())
     private val jobs = mutableListOf<Job>()
@@ -33,18 +32,19 @@ class ParallelJobs(private val simulateSequential: Boolean = false) {
     /**
      * Cancel all the jobs
      */
-    suspend fun cancelAll() {
-        jobs.forEach { it.cancelAndJoin() }
+    fun cancelAll() {
+        // jobs.forEach { it.cancelAndJoin() }
+        jobs.forEach { it.cancel() }
         jobs.clear()
     }
 
     /**
      * Add a new job to the list and run it.
      */
-    suspend fun add(block: suspend CoroutineScope.() -> Unit) {
+    fun add(block: suspend CoroutineScope.() -> Unit) : Job {
         val job = scope.launch(block = block)
-        if (simulateSequential) job.join()
         jobs.add(job)
+        return job
     }
 
 

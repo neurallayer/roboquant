@@ -26,6 +26,7 @@ internal class OANDAFeedTest {
         val feed = OANDALiveFeed()
         feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
         assertEquals(3, feed.availableAssets.size)
+        feed.close()
     }
 
 

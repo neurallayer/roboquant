@@ -27,7 +27,7 @@ import kotlin.coroutines.CoroutineContext
  * can add features without impacting rest of code.
  *
  */
-object Background {
+internal object Background {
 
     private val CPUBoundScope = CoroutineScope(Dispatchers.Default + Job())
     private val IOBoundScope = CoroutineScope(Dispatchers.IO + Job())

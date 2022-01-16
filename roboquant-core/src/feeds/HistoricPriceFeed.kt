@@ -33,6 +33,14 @@ open class HistoricPriceFeed : HistoricFeed {
     override val assets
         get() = events.values.map { actions -> actions.map { it.asset } }.flatten().distinct().toSortedSet()
 
+
+    /**
+     * Remove all events from this fead
+     */
+    override fun close() {
+        events.clear()
+    }
+
     /**
      * (Re)play the events of the feed using the provided [EventChannel]
      *
@@ -55,12 +63,6 @@ open class HistoricPriceFeed : HistoricFeed {
         actions.add(action)
     }
 
-    /**
-     * Clear all events that are currently available
-     */
-    fun clear() {
-        events.clear()
-    }
 
     /**
      * Merge the events in another [feed] into this feed.

@@ -27,8 +27,8 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.apache.http.message.BasicHeader
 import org.apache.http.util.EntityUtils
 import org.roboquant.common.Asset
-import org.roboquant.common.Background
 import org.roboquant.common.Logging
+import org.roboquant.common.ParallelJobs
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.OrderBook
@@ -51,6 +51,7 @@ class OANDALiveFeed(
     private val accessToken = OANDA.getToken(token)
     private val accountID = OANDA.getAccountID(accountID, ctx)
     private val logger = Logging.getLogger(OANDALiveFeed::class)
+    private val jobs = ParallelJobs()
 
     val availableAssets by lazy {
         OANDA.getAvailableAssets(ctx, this.accountID)
@@ -74,7 +75,7 @@ class OANDALiveFeed(
         logger.finer { "Executing request: ${httpGet.requestLine}" }
         val resp = httpClient.execute(httpGet)
         if (resp.statusLine.statusCode == 200 && resp.entity != null) {
-            val job = Background.ioJob {
+            val job = jobs.add {
                 try {
                     handleResponse(resp)
                 } catch (e: Exception) {
@@ -88,6 +89,13 @@ class OANDALiveFeed(
         }
         logger.fine { "subscribed to ${symbols.toList()}" }
 
+    }
+
+    /**
+     * Stop all background jobs
+     */
+    override fun close() {
+        jobs.cancelAll()
     }
 
     /**
@@ -148,10 +156,9 @@ class OANDALiveFeed(
             else
                 logger.warning("No asset found for symbol $it. See broker.availableAssets for all available assets")
         }
-        val job = Background.ioJob {
+        jobs.add {
             var since: DateTime? = null
             while (true) {
-
                 if (channel != null) {
                     val request = PricingGetRequest(accountID, symbols.toList())
                     if (since != null) request.setSince(since)
@@ -183,7 +190,6 @@ class OANDALiveFeed(
             }
 
         }
-        logger.finer { "Started job $job" }
     }
 
 

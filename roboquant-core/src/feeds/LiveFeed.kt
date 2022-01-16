@@ -18,7 +18,6 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.channels.ClosedSendChannelException
 import kotlinx.coroutines.delay
-import java.time.Instant
 
 /**
  * Live feed represents a feed of live data. So data that comes in as it is observed with timestamps
@@ -26,7 +25,7 @@ import java.time.Instant
  * a timeframe.
  *
  * This default implementation generates heartbeat signals to ensure components still have an opportunity
- * to act even if no other data is incoming. A heartbeat is an [Event] without actions.
+ * to act even if no other data is incoming. A heartbeat is an [empty event ][Event.empty].
  *
  */
 abstract class LiveFeed : Feed {
@@ -48,7 +47,7 @@ abstract class LiveFeed : Feed {
         try {
             while (true) {
                 delay(heartbeatInterval)
-                val event = Event(listOf(), Instant.now())
+                val event = Event.empty()
                 channel.send(event)
                 if (channel.done) break
             }

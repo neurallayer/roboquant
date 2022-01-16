@@ -46,19 +46,49 @@ data class TimeFrame(val start: Instant, val end: Instant) {
     companion object {
 
         /**
-         * Infinity time-frame that matches any time and is typically used when no filtering is required
+         * Infinity time-frame matches any time and is typically used when no filtering is required
          */
         val INFINITY = TimeFrame(Instant.MIN, Instant.MAX)
 
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-        // Time-frames for some significant events in history of trading
-        fun blackMonday1987() = parse("1987-10-19T14:30:00Z", "1987-10-19T21:00:00Z")
-        fun financialCrisis2008() = parse("2008-09-08T00:00:00Z", "2009-03-10T00:00:00Z")
-        fun tenYearBullMarket2009() = parse("2009-03-10T00:00:00Z", "2019-03-10T00:00:00Z")
-        fun flashCrash2010() = parse("2010-05-06T19:30:00Z", "2010-05-06T20:15:00Z")
-        fun coronaCrash2020() = parse("2020-02-17T00:00:00Z", "2020-03-17T00:00:00Z")
+        // predefined Time-frames for significant events in history of trading
+
+        /**
+         * Black Monday is the name given to the global, sudden, severe, and largely unexpected stock market
+         * crash on October 19, 1987. All of the twenty-three major world markets experienced a sharp decline.
+         */
+        val blackMonday1987
+            get() = parse("1987-10-19T14:30:00Z", "1987-10-19T21:00:00Z")
+
+        /**
+         * The Financial Crisis of 2008 was a historic systemic risk event. Prominent financial institutions collapsed,
+         * credit markets seized up, stock markets plunged, and the world entered a severe recession.
+         */
+        val financialCrisis2008
+            get() = parse("2008-09-08T00:00:00Z", "2009-03-10T00:00:00Z")
+
+        /**
+         * After the finincial crisis of 2008-2009, a ten year period of mostly a bullish market started
+         */
+        val tenYearBullMarket2009
+            get() = parse("2009-03-10T00:00:00Z", "2019-03-10T00:00:00Z")
+
+        /**
+         * The 2010 flash crash is the market crash that occurred on May 6, 2010. During the crash, leading
+         * US stock indices tumbled but also partially rebounded in less than an hour. This was a day with high
+         * volatilty accross asset classes.
+         */
+        val flashCrash2010
+            get() = parse("2010-05-06T19:30:00Z", "2010-05-06T20:15:00Z")
+
+        /**
+         * After is became clear that COVID-19 virus would also impact countries outside China, many exchanges worldwide
+         * crashed due to the uncertainty the virus would have on economies and companies.
+         */
+        val coronaCrash2020
+            get() = parse("2020-02-17T00:00:00Z", "2020-03-17T00:00:00Z")
 
         /**
          * Create a timeframe starting from 1 january of the [first] year until 31 december from the [last] year.

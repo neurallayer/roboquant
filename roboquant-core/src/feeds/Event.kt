@@ -30,7 +30,7 @@ data class Event(val actions: List<Action>, val time: Instant) : Comparable<Even
     companion object {
 
         /**
-         * Create an empty event with as default [time] the current time
+         * Create an event without any [actions] with as default [time] the current system time.
          */
         fun empty(time: Instant = Instant.now()) = Event(listOf(), time)
     }
@@ -56,8 +56,8 @@ data class Event(val actions: List<Action>, val time: Instant) : Comparable<Even
     }
 
     /**
-     * Compare this to an [other] event based on their timestamp. This is used for sorting a list of events by their
-     * chronological order.
+     * Compare this event to an [other] event based on their timestamp. This is used for sorting a list of events by
+     * their chronological order.
      */
     override fun compareTo(other: Event): Int = time.compareTo(other.time)
 

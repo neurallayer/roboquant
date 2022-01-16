@@ -41,9 +41,8 @@ import java.util.logging.Logger
  *
  *      cat /proc/sys/fs/file-max
  *
- *
- * If you use the same large sets of CSV regular, you might consider converting them onetime to an Avro file instead. This
- * has the same low memory usage but no negative performance impact.
+ * If you use the same large sets of CSV regular, you might consider converting them onetime to an AvroFeed instead.
+ * This has the same low memory usage but no negative performance impact.
  *
  * @constructor
  *

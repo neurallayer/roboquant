@@ -44,7 +44,7 @@ import java.time.Instant
  * Compared to CSV files, Avro files contain typed values, making the parsing more efficient. Additionally, an Avro file
  * can be compressed efficiently, reducing the overall disk space required.
  *
- * Roboquant also comes with a utility to create an Avro file based on another feed, see [AvroUtil]
+ * Roboquant comes with a utility to create an Avro file based on another feed, see [AvroUtil]
  *
  * @constructor Create new Avro Feed
  */
