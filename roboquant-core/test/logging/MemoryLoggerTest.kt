@@ -21,8 +21,10 @@ import org.roboquant.RunInfo
 import kotlin.test.*
 import org.roboquant.RunPhase
 import org.roboquant.TestData
+import org.roboquant.common.Config
 import org.roboquant.common.days
 import java.time.Instant
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -76,6 +78,7 @@ internal class MemoryLoggerTest {
 
     @Test
     fun groupBy() {
+        Config.defaultZoneId = ZoneId.of("UTC")
         val logger = MemoryLogger(showProgress = false)
         var runInfo = RunInfo("run-1", time = Instant.parse("2021-01-01T00:00:00Z"))
 

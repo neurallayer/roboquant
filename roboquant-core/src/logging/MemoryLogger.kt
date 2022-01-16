@@ -16,8 +16,9 @@
 
 package org.roboquant.logging
 
-import org.roboquant.RunPhase
 import org.roboquant.RunInfo
+import org.roboquant.RunPhase
+import org.roboquant.common.Config
 import org.roboquant.common.Summary
 import org.roboquant.metrics.MetricResults
 import java.text.SimpleDateFormat
@@ -120,6 +121,7 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
 }
 
 internal fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, Collection<MetricsEntry>> {
+
     val formatter = when (period) {
         ChronoUnit.YEARS -> SimpleDateFormat("yyyy")
         ChronoUnit.MONTHS -> SimpleDateFormat("yyyy-MM")
@@ -131,8 +133,10 @@ internal fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, C
             throw IllegalArgumentException("Unsupported value $period")
         }
     }
+    formatter.timeZone = TimeZone.getTimeZone(Config.defaultZoneId)
     return groupBy {
-        formatter.format(Date.from(it.info.time))
+        val date = Date.from(it.info.time)
+        formatter.format(date)
     }
 }
 
