@@ -78,23 +78,23 @@ internal class MemoryLoggerTest {
 
     @Test
     fun groupBy() {
-        Config.defaultZoneId = ZoneId.of("UTC")
+        Config.defaultZoneId = ZoneId.of("America/New_York")
         val logger = MemoryLogger(showProgress = false)
-        var runInfo = RunInfo("run-1", time = Instant.parse("2021-01-01T00:00:00Z"))
+        var runInfo = RunInfo("run-1", time = Instant.parse("2021-01-02T00:00:00Z"))
 
-        repeat(100) {
+        repeat(50) {
             val metrics =  mapOf("key1" to it)
             logger.log(metrics, runInfo)
             runInfo = runInfo.copy(time = runInfo.time + 2.days)
         }
 
         val data = logger.getMetric("key1")
-        assertEquals(100, data.groupBy(ChronoUnit.MINUTES).size)
-        assertEquals(100, data.groupBy(ChronoUnit.DAYS).size)
-        assertEquals(29, data.groupBy(ChronoUnit.WEEKS).size)
-        assertEquals(7, data.groupBy(ChronoUnit.MONTHS).size)
+        assertEquals(50, data.groupBy(ChronoUnit.MINUTES).size)
+        assertEquals(50, data.groupBy(ChronoUnit.DAYS).size)
+        assertEquals(15, data.groupBy(ChronoUnit.WEEKS).size)
+        assertEquals(4, data.groupBy(ChronoUnit.MONTHS).size)
         assertEquals(1, data.groupBy(ChronoUnit.YEARS).size)
-        assertEquals(100, data.groupBy(ChronoUnit.YEARS).values.first().size)
+        assertEquals(50, data.groupBy(ChronoUnit.YEARS).values.first().size)
     }
 
 }
