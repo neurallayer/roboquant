@@ -16,6 +16,7 @@
 
 package org.roboquant.jupyter
 
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
 import org.roboquant.feeds.Feed
@@ -31,11 +32,15 @@ import java.math.RoundingMode
  *
  * If you mix different type of price actions in this feed the result might become less reliable due to the
  * different ways that volume is calculated.
+ *
+ * @property compensateVolume should be compensate the volume by multiplying it with the price or is the volume already
+ * expressed in a monetary amount.
  */
 class AssetPerformanceChart(
     private val feed: Feed,
     private val timeFrame: TimeFrame = TimeFrame.INFINITY,
-    private val priceType: String = "DEFAULT"
+    private val priceType: String = "DEFAULT",
+    private val compensateVolume: Boolean = true
 ) : Chart() {
 
     /**
@@ -50,14 +55,19 @@ class AssetPerformanceChart(
                 val price = priceAction.getPriceAmount(priceType)
                 val record = result.getOrPut(priceAction.asset) { mutableListOf(price.value, 0.0, 0.0) }
                 record[1] = price.value
-                record[2] += price.convert(time = time).value * priceAction.volume
+                val volume = if (compensateVolume) {
+                    price.convert(time = time) * priceAction.volume
+                } else {
+                    Amount(priceAction.asset.currency, priceAction.volume).convert(time = time)
+                }
+                record[2] += volume.value
             }
         }
         return result.map {
-            val returns = 100.0 * (it.value[1] - it.value[0])/it.value[0]
+            val returns = 100.0 * (it.value[1] - it.value[0]) / it.value[0]
             val bdVolume = BigDecimal(it.value[2]).setScale(0, RoundingMode.HALF_DOWN)
             val bdReturns = BigDecimal(returns).setScale(2, RoundingMode.HALF_DOWN)
-            mapOf("name" to it.key.symbol,  "value" to listOf(bdVolume, bdReturns))
+            mapOf("name" to it.key.symbol, "value" to listOf(bdVolume, bdReturns))
         }
     }
 

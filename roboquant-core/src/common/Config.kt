@@ -71,12 +71,12 @@ object Config {
     var exchangeRates: ExchangeRates = SingleCurrencyOnly()
 
     /**
-     * Default currency to use
+     * Default currency to use when reporting.
      */
     var baseCurrency: Currency = Currency.USD
 
     /**
-     * Default seed to use, typically used by methods as a default value when no other seed is specified
+     * Default seed to use, typically used by methods as a default value when no other seed is provided
      */
     var seed = 42L
 
