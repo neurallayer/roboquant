@@ -65,7 +65,7 @@ fun allAlpaca() {
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
     val tf = TimeFrame.next(15.minutes)
     roboquant.run(feed, tf)
-    feed.disconnect()
+    feed.close()
 
     roboquant.broker.account.summary().log()
 }
@@ -91,7 +91,7 @@ fun alpacaFeed() {
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
     val tf = TimeFrame.next(5.minutes)
     roboquant.run(feed, tf)
-    feed.disconnect()
+    feed.close()
 
     roboquant.broker.account.summary().log()
 }

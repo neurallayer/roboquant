@@ -16,13 +16,13 @@
 
 package org.roboquant.jupyter
 
+import org.apache.commons.text.StringEscapeUtils
 import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.ThrowableRenderer
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
 import org.roboquant.common.Logging
 import org.roboquant.common.Summarizable
-import org.roboquant.common.escapeHtml
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.concurrent.CopyOnWriteArrayList
@@ -38,6 +38,8 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
     override fun accepts(throwable: Throwable): Boolean {
         return true
     }
+
+    private fun String?.escapeHtml(): String = StringEscapeUtils.escapeHtml4(this ?: "")
 
     override fun render(throwable: Throwable): Any {
         val output = StringWriter()

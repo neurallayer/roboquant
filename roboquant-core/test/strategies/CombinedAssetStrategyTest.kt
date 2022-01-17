@@ -28,7 +28,7 @@ internal class CombinedAssetStrategyTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears(10)
+        val feed = RandomWalk.lastYears(1)
         val asset1 = feed.assets.first()
         val asset2 = feed.assets.last()
         val strategy = CombinedAssetStrategy {

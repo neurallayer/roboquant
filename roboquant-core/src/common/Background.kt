@@ -24,8 +24,7 @@ import kotlin.coroutines.CoroutineContext
 
 /**
  * Background helps to deal with starting and running co-routines. Right now very light implementation, but in future
- * can add features without impacting rest of code.
- *
+ * can add features without impacting rest of code. This is uszed only internally.
  */
 internal object Background {
 

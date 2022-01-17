@@ -20,6 +20,7 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAmount
+import kotlin.math.pow
 
 
 /**
@@ -138,6 +139,12 @@ data class TimeFrame(val start: Instant, val end: Instant) {
 
 
     }
+
+    /**
+     * A time frame inclusive of the [end] value
+     */
+    val inclusive
+        get() = TimeFrame(start, end + 1)
 
     /**
      * Does the timeframe contain a certain [time].
@@ -316,6 +323,18 @@ data class TimeFrame(val start: Instant, val end: Instant) {
      */
     operator fun plus(period: TemporalAmount) = TimeFrame(start + period, end + period)
 
+
+    /**
+     * Annualize a [percentage] based on the duration of this time frame. So if I make x percent profit
+     * during a time frame, what would be my profit per year.
+     *
+     * [percentage] is expected to be provided as a fraction, so 1% is 0.01
+     */
+    fun annualize(percentage: Double): Double {
+        val period = duration.toMillis()
+        val years = (365.0 * 24.0 * 3600.0 * 1000.0) / period
+        return (1.0 + percentage).pow(years) - 1.0
+    }
 
 }
 

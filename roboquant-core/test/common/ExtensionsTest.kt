@@ -31,6 +31,16 @@ class ExtensionsTest {
         assertEquals(0.6666666666666666, a.variance())
 
         assertEquals(1.0, (a / 2.0).mean())
+
+
+    }
+
+    @Test
+    fun returns() {
+        val a = doubleArrayOf(10.0, 20.0, 10.0)
+        assertEquals(2, a.returns().size)
+        assertEquals(1.0, a.returns()[0])
+        assertEquals(-0.5, a.returns()[1])
     }
 
 
@@ -38,6 +48,8 @@ class ExtensionsTest {
     fun testInstant() {
 
     }
+
+
 
 
 }

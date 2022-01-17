@@ -86,4 +86,26 @@ internal class TimeFrameTest {
         assertTrue { tf2.contains(tf.start) }
         assertTrue { tf2.contains(tf.end) }
     }
+
+
+    @Test
+    fun inclusive() {
+        val tf = TimeFrame.fromYears(2018, 2019)
+        assertFalse(tf.contains(tf.end))
+
+        val tf2 = tf.inclusive
+        assertTrue(tf2.contains(tf.end))
+        assertFalse(tf2.contains(tf.end + 1))
+    }
+
+    @Test
+    fun annualize() {
+        val tf = TimeFrame.fromYears(2019, 2019)
+        val x = tf.annualize(0.1)
+        assertTrue(x - 0.1 < 0.01)
+
+        val tf2 = TimeFrame.fromYears(2019, 2020)
+        val y = tf2.annualize(0.1)
+        assertTrue(0.05 - y < 0.1)
+    }
 }

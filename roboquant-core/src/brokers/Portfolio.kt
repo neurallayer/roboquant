@@ -91,11 +91,11 @@ class Portfolio : Cloneable {
     }
 
     /**
-     * Create the trade prices for all positions in the portfolio.
+     * Create the trade prices based on the positions in the portfolio. Every position has both an asset and last known
+     * market price that serve as input for the trade price.
      */
     fun toTradePrices(): List<TradePrice> {
         return positions.map { TradePrice(it.asset, it.spotPrice) }
-
     }
 
     /**

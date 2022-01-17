@@ -20,7 +20,6 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
 import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.common.TimeFrame
-import org.roboquant.common.annualize
 import org.roboquant.feeds.Event
 import java.time.Instant
 
@@ -63,7 +62,7 @@ class SharpRatio(
         } else {
             val returns = (value - lastValue) / lastValue
             val tf = TimeFrame(lastTime, event.time)
-            val annualReturns = returns.annualize(tf)
+            val annualReturns = tf.annualize(returns)
             stats.addValue(annualReturns)
             lastValue = value
             lastTime = event.time

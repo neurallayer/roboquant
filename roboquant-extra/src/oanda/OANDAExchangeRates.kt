@@ -23,8 +23,10 @@ import org.roboquant.common.*
 import java.time.Instant
 import javax.naming.ConfigurationException
 
+
 /**
- * Exchange rates that are being retrieved from OANDA.
+ * Exchange rates implementation that retrieves the latest rates from OANDA. This implementation uses different
+ * rates for BUY and SELL.
  */
 class OANDAExchangeRates(
     assets: Iterable<Asset>,
@@ -36,7 +38,7 @@ class OANDAExchangeRates(
     private val ctx: Context = OANDA.getContext(token, demoAccount)
     private val accountID = OANDA.getAccountID(accountID, ctx)
     private val logger = Logging.getLogger(OANDAExchangeRates::class)
-    internal lateinit var baseCurrency: Currency
+    private val symbols = assets.map { it.symbol }
 
     // Contains per currency pair the buy and sell rates
     private val exchangeRates = mutableMapOf<Pair<Currency, Currency>, Pair<Double, Double>>()
@@ -44,6 +46,9 @@ class OANDAExchangeRates(
 
     companion object {
 
+        /**
+         * Get the exchange rates for all available assets
+         */
         fun allAvailableAssets(
             token: String? = null,
             demoAccount: Boolean = true,
@@ -57,7 +62,13 @@ class OANDAExchangeRates(
     }
 
     init {
-        val symbols = assets.map { it.symbol }
+        refresh()
+    }
+
+    /**
+     * Refresh the exchange rates
+     */
+    fun refresh() {
         val request = PricingGetRequest(this.accountID, symbols)
         val resp = ctx.pricing[request]
         for (price in resp.prices) {
@@ -66,11 +77,10 @@ class OANDAExchangeRates(
             val quote1 = price.quoteHomeConversionFactors.positiveUnits.doubleValue()
             val quote2 = price.quoteHomeConversionFactors.negativeUnits.doubleValue()
             exchangeRates[pair] = Pair(quote1, quote2)
-            logger.finer { "Added $pair => $quote1 $quote2 to the exchange rates" }
+            logger.finer { "Added $pair BUY=$quote1 SELL=$quote2" }
         }
         logger.info { "Added ${exchangeRates.size} exchange rates" }
     }
-
 
     /**
      * Convert between two currencies.

@@ -22,10 +22,10 @@ import java.time.Instant
 import java.util.*
 
 /**
- * Currency Convertor that supports different rates at different times. Abstract class that is used by
- * FeedCurrencyConverter and ECBCurrencyConverter.
+ * Exchange Rates implementation that supports different rates at different times. This abstract class is used
+ * by other exchange rates implementations like FeedCurrencyConverter and ECBCurrencyConverter.
  */
-abstract class TimeExchangeRates(protected val baseCurrency: Currency) : ExchangeRates {
+abstract class TimedExchangeRates(protected val baseCurrency: Currency) : ExchangeRates {
 
     protected val exchangeRates = mutableMapOf<Currency, NavigableMap<Instant,Double>>()
 

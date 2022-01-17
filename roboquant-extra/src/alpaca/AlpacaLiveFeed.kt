@@ -94,7 +94,7 @@ class AlpacaLiveFeed(
     /**
      * Stop listening for market data
      */
-    fun disconnect() {
+    override fun close() {
         try {
             if (alpacaAPI.stockMarketDataStreaming().isConnected) alpacaAPI.stockMarketDataStreaming().disconnect()
         } catch (_: Exception) {
@@ -102,10 +102,10 @@ class AlpacaLiveFeed(
     }
 
     /**
-     * Just cleanup a any used connection
+     * Just cleanup any used connection
      */
     fun finalize() {
-        disconnect()
+        close()
     }
 
     fun subscribe(assets: Collection<Asset>) {

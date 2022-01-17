@@ -34,7 +34,7 @@ internal class RoboquantTest {
 
     @Test
     fun evaluate() {
-        val tf = TimeFrame.fromYears(2005, 2010)
+        val tf = TimeFrame.fromYears(2008, 2010)
         val timeline = tf.toDays(excludeWeekends = true)
         val feed = RandomWalk(timeline)
 

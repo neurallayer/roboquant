@@ -25,6 +25,7 @@ import org.roboquant.brokers.Portfolio
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.OrderBook
+import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.filter
 import org.roboquant.metrics.AccountSummary
@@ -45,20 +46,33 @@ fun oanda() {
 
 }
 
+
+fun forexAvro() {
+    val feed = AvroFeed("/Users/peter/data/avro/forex_march_2020.avro")
+    Config.exchangeRates = OANDAExchangeRates.allAvailableAssets()
+    val strategy = EMACrossover()
+    val roboquant = OANDA.roboquant(strategy, AccountSummary())
+    roboquant.run(feed)
+    roboquant.broker.account.summary().log()
+}
+
 fun oandaLong() {
     val feed = OANDAHistoricFeed()
-    val timeFrame = TimeFrame.parse("2020-01-01", "2020-02-01")
+    val timeFrame = TimeFrame.parse("2020-03-01", "2020-04-01")
+    val symbols = listOf("EUR_USD", "USD_JPY", "GBP_USD", "AUD_USD", "USD_CAD", "USD_CHF", "EUR_GBP", "AUD_JPY", "NZD_USD", "GBP_JPY").toTypedArray()
 
     // There is a limit on what we can download per API call, so we split it in individual days
     for (tf in timeFrame.split(1.days)) {
-        feed.retrieveCandles("EUR_USD", "USD_JPY", "GBP_USD", timeFrame = tf)
+        feed.retrieveCandles(*symbols, timeFrame = tf)
+        println(feed.timeline.size)
+        Thread.sleep(1000) // lets play nice and not overload things
     }
     feed.assets.summary().log()
     println(feed.timeline.size)
     println(feed.timeFrame)
 
-    // Now we store it in a local Avro file
-    AvroUtil.record(feed, "/Users/peter/data/avro/forex.avro")
+    // Now we store it in a local Avro file for later reuse
+    AvroUtil.record(feed, "/Users/peter/data/avro/forex_march_2020.avro")
 
 }
 
@@ -188,13 +202,14 @@ fun oandaBroker2(createOrder: Boolean = true) {
 
 
 fun main() {
-    when ("OANDA_PAPER") {
+    when ("OANDA_AVRO") {
         "OANDA_BROKER" -> oandaBroker()
         "OANDA_BROKER2" -> oandaBroker2()
         "OANDA_BROKER3" -> oandaBroker3()
         "OANDA_FEED" -> oanda()
         "OANDA_FEED2" -> oanda2()
         "OANDA_FEED3" -> oandaLong()
+        "OANDA_AVRO" -> forexAvro()
         "OANDA_LIVE_FEED" -> oandaLive()
         "OANDA_LIVE_RECORD" -> oandaLiveRecord()
         "OANDA_LIVE_PRICES" -> oandaLivePrices()

@@ -50,7 +50,8 @@ internal class SimBrokerTest {
         Config.exchangeRates = er
         val broker = SimBroker()
         val event = TestData.event()
-        var account = broker.place(listOf(TestData.euMarketOrder(), TestData.usMarketOrder()), event)
+        val orders = listOf(TestData.euMarketOrder(), TestData.usMarketOrder())
+        var account = broker.place(orders, event)
         assertEquals(2, account.orders.size)
         assertEquals(account.orders.closed.size, account.trades.size)
         assertEquals(1, account.orders.open.size)

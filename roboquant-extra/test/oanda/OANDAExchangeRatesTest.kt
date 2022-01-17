@@ -16,15 +16,26 @@
 
 package org.roboquant.oanda
 
-import org.roboquant.common.Config
-import kotlin.test.*
+import org.roboquant.common.Currency.Companion.EUR
+import org.roboquant.common.Logging
+import org.roboquant.common.USD
+import java.time.Instant
+import java.util.logging.Level
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
-internal class OANDACurrencyTest {
+internal class OANDAExchangeRatesTest {
 
     @Test
     fun test() {
         System.getProperty("TEST_OANDA") ?: return
-        val c = OANDAExchangeRates(listOf())
-        assertEquals(Config.baseCurrency, c.baseCurrency)
+        Logging.setLevel(Level.FINER)
+        val c = OANDAExchangeRates.allAvailableAssets()
+        var r = c.getRate(100.USD, EUR, Instant.now())
+        assertTrue(r.isFinite())
+
+        c.refresh()
+        r = c.getRate(100.USD, EUR, Instant.now())
+        assertTrue(r.isFinite())
     }
 }

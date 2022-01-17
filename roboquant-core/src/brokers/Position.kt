@@ -98,7 +98,7 @@ data class Position(
     }
 
     /**
-     * Is this a closed position, or in other worhds is the size equal to 0
+     * Is this a closed position, or in other words is the size equal to 0
      */
     val closed: Boolean
         get() = size == 0.0

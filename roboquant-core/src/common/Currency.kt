@@ -18,7 +18,6 @@
 
 package org.roboquant.common
 
-import java.math.RoundingMode
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -56,18 +55,11 @@ class Currency private constructor(val currencyCode: String) {
     companion object {
         private val currencies = ConcurrentHashMap<String, Currency>()
 
-        /**
-         * Rounding mode to use when displaying limited number of digits, default is [RoundingMode.HALF_DOWN]
-         * @see RoundingMode
-         */
-        var roundingMode = RoundingMode.HALF_DOWN
-
         private fun getInstance(currencyCode: String, defaultFractionDigits: Int): Currency {
             val result = currencies.getOrPut(currencyCode) { Currency(currencyCode) }
             result.defaultFractionDigits = defaultFractionDigits
             return result
         }
-
 
         /**
          * Returns the Currency instance for the given the provided [currencyCode].

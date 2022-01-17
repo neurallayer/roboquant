@@ -47,8 +47,8 @@ object OANDA {
         // We use a lower cost model, since the default of 10 BIPS is too much for Forex
         // We select 2.0 BIPS
         val costModel = DefaultCostModel(2.0)
-        val buyingPower = ForexBuyingPower(20.0)
-        val broker = SimBroker(costModel = costModel, buyingPower = buyingPower)
+        val buyingPowerModel = ForexBuyingPower(20.0)
+        val broker = SimBroker(costModel = costModel, buyingPowerModel = buyingPowerModel)
 
         return Roboquant(strategy, *metrics, policy = policy, broker = broker)
     }

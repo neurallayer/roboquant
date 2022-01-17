@@ -24,7 +24,6 @@ import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderStatus
-import java.lang.Double.min
 import java.time.Instant
 import java.util.logging.Logger
 
@@ -44,7 +43,7 @@ class SimBroker(
     private val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val costModel: CostModel = DefaultCostModel(),
-    private val buyingPower: BuyingPower = CashBuyingPower(),
+    private val buyingPowerModel: BuyingPowerModel = CashBuyingPower(),
     private val validateBuyingPower: Boolean = false,
     private val recording: Boolean = false,
     private val prefix: String = "broker.",
@@ -89,12 +88,17 @@ class SimBroker(
         for (order in account.orders.open) {
             val action = prices[order.asset] ?: continue
             val price = action.getPrice(priceType)
-            if (order.status === OrderStatus.INITIAL) {
-                order.status = OrderStatus.ACCEPTED
-                order.placed = time
-            }
-
             order.price = price
+
+            if (order.status === OrderStatus.INITIAL) {
+                if (! validOrder(order)) {
+                    order.status = OrderStatus.REJECTED
+                    continue
+                } else {
+                    order.status = OrderStatus.ACCEPTED
+                    order.placed = time
+                }
+            }
 
             val executions = order.execute(price, time)
             for (execution in executions) {
@@ -147,23 +151,21 @@ class SimBroker(
 
 
     private fun updateBuyingPower() {
-        val value = buyingPower.calculate(account)
+        val value = buyingPowerModel.calculate(account)
+        logger.finer { "Calculated buying power $value"}
         account.buyingPower = value
     }
 
-
-
     /**
-     * Place orders (created by the policy) at this broker.
+     * Place [orders] at this broker and provide the event that just occured. The event is just by the SimBroker to
+     * get the prices required to simulate the trading on an exchange.
      *
      * @param orders The new orders
      * @param event
-     *
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer { "Received ${orders.size} orders at ${event.time}" }
         account.orders.addAll(orders)
-        validateOrders(event)
         execute(event)
         account.portfolio.updateMarketPrices(event)
         account.lastUpdate = event.time
@@ -177,7 +179,8 @@ class SimBroker(
      * Validate if there is enough buying power to process the orders that are just received. If there is not enough
      * cash, the order will be rejected. If there is no price info to determine the required amount of cash, the order
      * will not yet be accepted.
-     **/
+     */
+    /*
     private fun validateOrders(event: Event) {
         if (!validateBuyingPower) return
         var buyingPower = account.buyingPower.value
@@ -196,12 +199,33 @@ class SimBroker(
         }
 
     }
+     */
 
     /**
-     * Liquidate the portfolio. It consist of the following two steps:
+     * Validate if there is enough buying power to process the order that are just received. If there is not enough
+     * cash, the order will be rejected.
+     *
+     * TODO more flexible implementation (perhaps using the BuyingPowerModel).
+     */
+    private fun validOrder(order: Order) : Boolean {
+        if (validateBuyingPower) {
+            // TODO implement real logic here
+            val requiredValue = order.getValueAmount().convert(account.buyingPower.currency).value // buyingPower.calculate(order)
+            if (account.buyingPower - requiredValue <= 0) {
+                return false
+            } else {
+                account.buyingPower -= requiredValue
+            }
+        }
+        order.status = OrderStatus.ACCEPTED
+        return true
+    }
+
+    /**
+     * Liquidate the portfolio. It performs the following two steps:
      *
      * 1. cancel all open orders
-     * 2. close all open positions by creating and process market orders for the required quantities
+     * 2. close all open positions by creating and processing market orders for the required quantities
      */
     fun liquidatePortfolio(time:Instant = account.lastUpdate): Account {
         for (order in account.orders.open) order.status = OrderStatus.CANCELLED

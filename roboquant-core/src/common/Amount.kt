@@ -19,6 +19,7 @@
 package org.roboquant.common
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.Instant
 import kotlin.math.absoluteValue
 
@@ -64,7 +65,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
      * doesn't use BigDecimals, but this method is used to enable a nicer display of currency amounts.
      */
     fun toBigDecimal(fractionDigits: Int = currency.defaultFractionDigits): BigDecimal =
-        BigDecimal(value).setScale(fractionDigits, Currency.roundingMode)
+        BigDecimal.valueOf(value).setScale(fractionDigits, RoundingMode.HALF_DOWN)
 
     override fun toString(): String = "${currency.currencyCode} ${formatValue()}"
 

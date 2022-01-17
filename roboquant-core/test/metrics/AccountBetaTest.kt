@@ -16,11 +16,11 @@
 
 package org.roboquant.metrics
 
+import org.junit.Test
 import org.roboquant.Roboquant
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.logging.MemoryLogger
+import org.roboquant.logging.LastEntryLogger
 import org.roboquant.strategies.EMACrossover
-import org.junit.Test
 import kotlin.test.assertTrue
 
 internal class AccountBetaTest {
@@ -31,7 +31,7 @@ internal class AccountBetaTest {
         val marketAsset = feed.assets.first()
         val strategy = EMACrossover.shortTerm()
         val accountBetaMetric = AccountBeta(marketAsset, 50)
-        val logger = MemoryLogger(false)
+        val logger = LastEntryLogger()
         val roboquant = Roboquant(strategy, accountBetaMetric, logger = logger)
         roboquant.run(feed)
         val beta = logger.getMetric("account.beta").last().value

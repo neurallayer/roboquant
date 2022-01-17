@@ -8,7 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class  BuyingPowerTest {
+internal class  BuyingPowerModelTest {
 
     @Test
     fun test() {

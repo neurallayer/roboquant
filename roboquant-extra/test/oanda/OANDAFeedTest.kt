@@ -16,6 +16,10 @@
 
 package org.roboquant.oanda
 
+import org.roboquant.common.TimeFrame
+import org.roboquant.common.minutes
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
 import kotlin.test.*
 
 internal class OANDAFeedTest {
@@ -25,16 +29,23 @@ internal class OANDAFeedTest {
         System.getProperty("TEST_OANDA") ?: return
         val feed = OANDALiveFeed()
         feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
-        assertEquals(3, feed.availableAssets.size)
+        assertEquals(3, feed.assets.size)
+        val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
         feed.close()
+        assertTrue(actions.isNotEmpty())
     }
-
 
     @Test
     fun historicTest() {
         System.getProperty("TEST_OANDA") ?: return
         val feed = OANDAHistoricFeed()
-        feed.retrieveCandles("EUR_USD", "EUR_GBP", "GBP_USD")
-        assertEquals(3, feed.availableAssets.size)
+        val tf = TimeFrame.parse("2020-03-05", "2020-03-06")
+        feed.retrieveCandles("EUR_USD", "EUR_GBP", "GBP_USD", timeFrame = tf)
+        assertEquals(3, feed.assets.size)
+
+        val tf2 = TimeFrame.parse("2020-03-04", "2020-03-07")
+        assertTrue(tf2.contains(feed.timeline.first()))
+        assertTrue(tf2.contains(feed.timeline.last()))
+        feed.close()
     }
 }

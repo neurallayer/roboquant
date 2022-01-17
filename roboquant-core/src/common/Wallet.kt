@@ -16,8 +16,8 @@
 
 package org.roboquant.common
 
+import java.math.BigDecimal
 import java.time.Instant
-import javax.naming.ConfigurationException
 
 /**
  * Wallet can contain amounts of different currencies at the same time. So for example a single instance of Wallet can
@@ -85,7 +85,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     }
 
     /**
-     * Add operator - to allow for wallet - wallet
+     * Minus operator to allow for wallet - wallet
      */
     operator fun minus(other: Wallet): Wallet {
         val result = clone()
@@ -93,18 +93,43 @@ class Wallet(vararg amounts: Amount) : Cloneable {
         return result
     }
 
+    /**
+     * Plus operator to allow for wallet + amount. This method is different from [deposit] in that this method doesn't
+     * update the current wallet and returns a new wallet instead.
+     */
     operator fun plus(amount: Amount): Wallet {
         val result = clone()
         result.deposit(amount)
         return result
     }
 
+    /**
+     * Minus operator to allow for wallet - amount. This method is different from [withdraw] in that this method doesn't
+     * update the current wallet and returns a new wallet instead.
+     */
     operator fun minus(amount: Amount): Wallet {
         val result = clone()
         result.withdraw(amount)
         return result
     }
 
+    /**
+     * Times operator to allow for wallet * number. It will multiply all the amounts in the wallet by [n].
+     */
+    operator fun times(n: Number): Wallet {
+        val result = clone()
+        for ((k, v) in result.data) result.data[k] = v * n.toDouble()
+        return result
+    }
+
+    /**
+     * Div operator to allow for wallet / number. It will divide all the amounts in the wallet by [n].
+     */
+    operator fun div(n: Number): Wallet {
+        val result = clone()
+        for ((k, v) in result.data) result.data[k] = v / n.toDouble()
+        return result
+    }
 
     /**
      * Set a monetary [amount]. If the currency already exist, its value
@@ -122,7 +147,8 @@ class Wallet(vararg amounts: Amount) : Cloneable {
      * will be added to the existing value, otherwise a new entry will be created.
      */
     fun deposit(amount: Amount) {
-        val value = getValue(amount.currency) + amount.value
+        val value = BigDecimal.valueOf(getValue(amount.currency)) + BigDecimal.valueOf(amount.value)
+        // val value = getValue(amount.currency) + amount.value
         set(Amount(amount.currency, value))
     }
 
@@ -170,7 +196,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
 
 
     /**
-     * Clear this Wallet instance, removing all entries.
+     * Clear this Wallet instance, removing all amounts it is holding.
      */
     fun clear() {
         data.clear()
@@ -209,8 +235,14 @@ class Wallet(vararg amounts: Amount) : Cloneable {
         return s
     }
 
+    /**
+     * A wallet only equals another wallet if they hold the same currencies and corresponding amounts.
+     */
     override fun equals(other: Any?) = if (other is Wallet) data == other.data else false
 
+    /**
+     * The hashcode of the wallet
+     */
     override fun hashCode(): Int {
         return data.hashCode()
     }
@@ -233,8 +265,8 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     }
 
     /**
-     * Convert a [Wallet] value into a single currency amount. If no currencyConverter has been configured and this method
-     * is invoked when a conversion is required, it will throw a [ConfigurationException].
+     * Convert a [Wallet] value into a single currency amount. Under the hood is uses [Amount.convert] to perfrom the
+     * actual conversions.
      *
      * @param toCurrency The currency to convert the cash to, default is the baseCurrency of the account
      * @param time The time to use for the exchange rate, default is the last update time of the account
@@ -248,17 +280,6 @@ class Wallet(vararg amounts: Amount) : Cloneable {
         return Amount(toCurrency, sum)
     }
 
-    operator fun times(n: Number): Wallet {
-        val result = clone()
-        for ((k, v) in result.data) result.data[k] = v * n.toDouble()
-        return result
-    }
-
-    operator fun div(n: Number): Wallet {
-        val result = clone()
-        for ((k, v) in result.data) result.data[k] = v / n.toDouble()
-        return result
-    }
 
 
 }

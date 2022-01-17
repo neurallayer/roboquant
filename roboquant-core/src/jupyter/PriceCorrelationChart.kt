@@ -22,7 +22,6 @@ import kotlinx.coroutines.runBlocking
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeFrame
-import org.roboquant.common.clean
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import java.math.BigDecimal
@@ -44,6 +43,21 @@ class PriceCorrelationChart(
     init {
         require(assets.size > 1) { "Minimum of 2 assets are required, found ${assets.size}" }
     }
+
+
+    private fun Pair<List<Double>, List<Double>>.clean(): Pair<DoubleArray, DoubleArray> {
+        val max = Integer.max(first.size, second.size)
+        val r1 = mutableListOf<Double>()
+        val r2 = mutableListOf<Double>()
+        for (i in 0 until max) {
+            if (first[i].isFinite() && second[i].isFinite()) {
+                r1.add(first[i])
+                r2.add(second[i])
+            }
+        }
+        return Pair(r1.toDoubleArray(), r2.toDoubleArray())
+    }
+
 
     private fun collectPrices(): Map<Asset, List<Double>> = runBlocking {
         val channel = EventChannel(timeFrame = timeFrame)
@@ -73,7 +87,7 @@ class PriceCorrelationChart(
         return@runBlocking result
     }
 
-    private fun getMatrix(prices: Map<Asset, List<Double>>): MutableList<Triple<Int, Int, BigDecimal>> {
+    private fun getMatrix(prices: Map<Asset, List<Double>>): List<Triple<Int, Int, BigDecimal>> {
         val calc = PearsonsCorrelation()
         val result = mutableListOf<Triple<Int, Int, BigDecimal>>()
         for ((x, data1) in prices.values.withIndex()) {

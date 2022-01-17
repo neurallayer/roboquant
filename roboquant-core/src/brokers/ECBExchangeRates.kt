@@ -40,10 +40,10 @@ import kotlin.io.path.notExists
  * Currency converter that uses the exchange reference rates as published by the ECB and that are freely available at the
  * [ECB website](https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html)
  *
- * It contains many daily conversion rates, and with this file loaded it is possible to trade in almost any currency
+ * It contains many daily exchange rates, and with this file loaded it is possible to trade in most currencies
  * in the world. However, please note that:
  *
- * 1. The published rates are all in relationship to the Euro, so they only go back to the introduction date of
+ * 1. The published rates are all in relationship to the Euro. So they only go back to the introduction date of
  * the Euro and don't cover earlier periods
  * 2. Cryptocurrencies are not included in this file
  *
@@ -54,7 +54,7 @@ import kotlin.io.path.notExists
  *
  * @constructor Create a new  ECB exchange rates converter
  */
-class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) : TimeExchangeRates(Currency.EUR) {
+class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) : TimedExchangeRates(Currency.EUR) {
 
     private val logger: Logger = Logging.getLogger(ECBExchangeRates::class)
 
@@ -62,13 +62,13 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
         private const val DEFAULT_ECB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.zip"
 
         /**
-         * Load the latest exchange rate file directly from the ECB website. Use the cache by default to
+         * Load the latest exchange rate file directly from the ECB website. This method [uses cache][useCache] by default to
          * avoid unnecessary requests.
          */
         fun fromWeb(useCache: Boolean = true) = ECBExchangeRates(DEFAULT_ECB_URL, compressed = true, useCache)
 
         /**
-         * Load the rates from a local file
+         * Load the ECB exchange rates from a local CSV file
          *
          * @param path
          * @param compressed
@@ -146,7 +146,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
         val inputReader = InputStreamReader(input)
         val reader = CsvReader.builder().build(inputReader)
 
-        val lines = reader.map { it.fields.toTypedArray() }
+        val lines = reader.map { it.fields } //.toTypedArray() }
         reader.close()
         val currencies = lines.first().drop(1).filter { it.isNotBlank() }.map { Currency.getInstance(it) }
 

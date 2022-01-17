@@ -26,7 +26,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 
-internal class AlpacaLiveFeedTestIT {
+internal class AlpacaFeedTestIT {
 
     @Test
     fun test() {
@@ -37,7 +37,7 @@ internal class AlpacaLiveFeedTestIT {
         feed.subscribe(apple)
         val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
         assertTrue(actions.isNotEmpty())
-        feed.disconnect()
+        feed.close()
     }
 
 
@@ -48,7 +48,7 @@ internal class AlpacaLiveFeedTestIT {
         feed.subscribe("AAPL")
         val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
         assertTrue(actions.isNotEmpty())
-        feed.disconnect()
+        feed.close()
     }
 
     @Test
@@ -57,9 +57,14 @@ internal class AlpacaLiveFeedTestIT {
         val feed = AlpacaHistoricFeed()
         val assets = feed.availableAssets
         assertTrue(assets.isNotEmpty())
-        feed.retrieve("AAPL", timeFrame = TimeFrame.past(100.days))
+        val tf = TimeFrame.past(10.days)
+        feed.retrieve("AAPL", timeFrame = tf)
         val actions = feed.filter<PriceAction>()
         assertTrue(actions.isNotEmpty())
+
+        val tf2 = tf.extend(1.days)
+        assertTrue(tf2.contains(feed.timeline.first()))
+        assertTrue(tf2.contains(feed.timeline.last()))
     }
 
     @Test
@@ -70,7 +75,7 @@ internal class AlpacaLiveFeedTestIT {
         feed.subscribeAll()
         val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
         assertTrue(actions.isNotEmpty())
-        feed.disconnect()
+        feed.close()
     }
 
 }

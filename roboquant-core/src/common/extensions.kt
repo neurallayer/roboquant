@@ -19,13 +19,11 @@ package org.roboquant.common
 import org.apache.commons.math3.stat.descriptive.moment.*
 import org.apache.commons.math3.stat.descriptive.rank.Max
 import org.apache.commons.math3.stat.descriptive.rank.Min
-import org.apache.commons.text.StringEscapeUtils
 import java.lang.Integer.max
 import java.lang.Integer.min
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.*
-import kotlin.math.pow
 
 /********************************************************************************************************************
  * This file contains the extensions for classes that are part of standard Java and Kotlin libraries. Extensions for
@@ -41,7 +39,14 @@ operator fun StringBuffer.plusAssign(s: String) {
     append(s)
 }
 
-operator fun Instant.plus(i: Int): Instant = plusMillis(i.toLong())
+/**
+ * Add a numer of [millis] seconds to the instant
+ */
+operator fun Instant.plus(millis: Int): Instant = plusMillis(millis.toLong())
+
+/**
+ * Get the instant as ZonedDateTime UTC
+ */
 fun Instant.toUTC(): ZonedDateTime = atZone(ZoneId.of("UTC"))
 
 
@@ -176,30 +181,18 @@ fun DoubleArray.kurtosis(): Double {
 fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 
 /**
- * Get the percentail change
+ * Get the returns (as a percentage). Forumla used is
+ *
+ *      returns = (new -old) / old
  */
-fun DoubleArray.perc() : DoubleArray {
+fun DoubleArray.returns() : DoubleArray {
     if (size < 2) return DoubleArray(0)
     val result = DoubleArray(size - 1)
     for (n in 1..lastIndex) result[n-1] = (get(n) - get(n-1)) / get(n-1)
     return result
 }
 
-fun Pair<List<Double>, List<Double>>.clean(): Pair<DoubleArray, DoubleArray> {
-    val max = max(first.size, second.size)
-    val r1 = mutableListOf<Double>()
-    val r2 = mutableListOf<Double>()
-    for (i in 0 until max) {
-        if (first[i].isFinite() && second[i].isFinite()) {
-            r1.add(first[i])
-            r2.add(second[i])
-        }
-    }
-    return Pair(r1.toDoubleArray(), r2.toDoubleArray())
-}
 
-
-fun String?.escapeHtml(): String = StringEscapeUtils.escapeHtml4(this ?: "")
 
 
 /**
@@ -211,17 +204,8 @@ fun Collection<Any?>.summary(): Summary {
     return result
 }
 
-fun Number.round(fractions: Int = 2): BigDecimal = BigDecimal(toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)
+fun Number.round(fractions: Int = 2): BigDecimal = BigDecimal.valueOf(toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)
 
-
-/**
- * Annualize an amount based on the duration of the provided time frame.
- */
-fun Number.annualize(timeFrame: TimeFrame): Double {
-    val period = timeFrame.duration.toMillis()
-    val years = (365.0 * 24.0 * 3600.0 * 1000.0) / period
-    return (1.0 + toDouble()).pow(years) - 1.0
-}
 
 /**
  * Convert a string to a currency pair. Return null if not successed

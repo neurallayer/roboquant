@@ -44,6 +44,14 @@ import kotlin.io.path.div
 object Config {
 
     private val logger: Logger = Logging.getLogger(Config::class)
+    private val properties = mutableMapOf<String, String>()
+
+    /**
+     * Set a property. This takes precendence over properties found in files.
+     */
+    fun setProperty(name: String, value: String) {
+        properties[name] = value
+    }
 
     /**
      * Current version of roboquant
@@ -117,6 +125,7 @@ object Config {
     /**
      * Get property value. Tries to find the property in the following order
      *
+     *  0. Properties set using [Config.setProperty]
      *  1. System properties (`java -DpropertyName=value`)
      *  2. Environment variables set by the OS
      *  3. "dotenv" or ".env" property file in the current working directory
@@ -130,7 +139,7 @@ object Config {
      */
     fun getProperty(name: String, default: String? = null): String? {
         logger.finer { "Finding property $name" }
-        return System.getProperty(name) ?: System.getenv(name) ?: env[name] ?: default
+        return  properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name] ?: default
     }
 
     /**
@@ -143,14 +152,13 @@ object Config {
             fun load(path: Path) {
                 if (Files.exists(path)) {
                     prop.load(path.toFile().inputStream())
-                    logger.finer { "Loaded environment properties from $path" }
+                    logger.finer { "Found property file at $path" }
                 }
             }
 
             load(home / ".env")
             load(Path.of(".env"))
             load(Path.of("dotenv"))
-            logger.finer { "Loaded environment properties $prop" }
             return prop.map { it.key.toString() to it.value.toString() }.toMap()
         }
 
