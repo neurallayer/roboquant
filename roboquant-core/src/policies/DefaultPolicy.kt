@@ -88,10 +88,6 @@ open class DefaultPolicy(
     }
 
 
-    open fun getAvailableCash(account: Account) {
-
-    }
-
 
     /**
      * Create a new order based on the [signal], [qty] and current [price]. Overwrite this method if you want to

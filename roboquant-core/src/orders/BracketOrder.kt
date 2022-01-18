@@ -57,14 +57,6 @@ class BracketOrder(
 
     }
 
-    override var placed: Instant = Instant.MIN
-        set(value) {
-            field = value
-            main.placed = value
-            profit.placed = value
-            loss.placed = value
-        }
-
     init {
         // Some basic sanity checks
         require(main.quantity == -profit.quantity && profit.quantity == loss.quantity) { "Profit and loss order quantities need to be the same and opposite to the main order quantity" }

@@ -17,10 +17,14 @@
 package org.roboquant.common
 
 import org.junit.Test
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 internal class ExchangeTest {
 
@@ -33,7 +37,6 @@ internal class ExchangeTest {
         val exchange2 = Exchange.getInstance("DUMMY")
         assertEquals("DUMMY", exchange2.exchangeCode)
         assertIs<ZoneId>(exchange2.zoneId)
-
         assertTrue(exchange2 in Exchange.exchanges)
 
         val now = Instant.now()
@@ -43,14 +46,19 @@ internal class ExchangeTest {
         val exchange3 = Exchange.getInstance("DUMMY2")
         assertNotEquals(exchange2, exchange3)
 
-
         val d = LocalDate.now()
         val ct = exchange2.getClosingTime(d)
         val ot = exchange2.getOpeningTime(d)
         assertTrue(ct > ot)
-
         assertTrue(exchange2.opening < exchange2.closing)
+    }
 
+    @Test
+    fun hours() {
+        val exchange = Exchange.getInstance("US")
+        val date = LocalDate.of(2020,1,5)
+        val tradingHours = exchange.getTradingHours(date)
+        assertEquals(Duration.ofSeconds(13*30*60), tradingHours.duration)
     }
 
 }

@@ -16,6 +16,7 @@
 
 package org.roboquant.strategies
 
+import org.roboquant.TestData
 import org.roboquant.common.Asset
 import kotlin.test.*
 
@@ -26,14 +27,14 @@ internal class HistoricPriceStrategyTest {
         override fun generate(asset: Asset, data: DoubleArray): Signal? {
             return null
         }
-
     }
 
     @Test
     fun test() {
         val c = SubClass()
-        assertEquals(10, c.period)
-        assertFalse(c.useReturns)
+        val event = TestData.event()
+        val signals = c.generate(event)
+        assertTrue(signals.isEmpty())
     }
 
 }

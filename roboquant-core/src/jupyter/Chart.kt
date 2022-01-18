@@ -24,7 +24,6 @@ import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import org.roboquant.common.Amount
 import java.lang.reflect.Type
-import java.nio.charset.StandardCharsets
 import java.time.Instant
 
 
@@ -128,11 +127,6 @@ abstract class Chart : Output() {
             gsonBuilder.registerTypeAdapter(Amount::class.java, AmountAdapter())
         }
 
-        fun loadScript(): String {
-            val classloader = Thread.currentThread().contextClassLoader
-            val stream = classloader.getResourceAsStream("echarts.min.js")!!
-            return String(stream.readAllBytes(), StandardCharsets.UTF_8)
-        }
     }
 
     /**
@@ -168,12 +162,9 @@ abstract class Chart : Output() {
     }
 
 
-    override fun asHTMLPage(useCDN: Boolean): String {
+    override fun asHTMLPage(): String {
         val fragment = asHTML()
-        val script = if (useCDN)
-            """<script src='https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js'></script>"""
-        else
-            """<script type='text/javascript'>${loadScript()}</script>"""
+        val script = """<script src='https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js'></script>"""
 
         return """
         <html>

@@ -27,7 +27,7 @@ interface AssetBuilder {
 
 object AssetBuilderFactory {
 
-    val builders = mutableMapOf<AssetType, AssetBuilder>()
+    private val builders = mutableMapOf<AssetType, AssetBuilder>()
 
     fun build(name: String, template: Asset = Asset("TEMPLATE")): Asset {
         val builder = builders[template.type]

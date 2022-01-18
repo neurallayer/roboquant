@@ -37,7 +37,7 @@ interface Sizer {
  * @property reserve percentage of total value not to allocate, default is 0.2 (= 20%)
  * @constructor Create bew Fixed amount sizer
  */
-class FixedPecentageSizer(val percentage: Double = 0.01, val reserve: Double = 0.20) : Sizer {
+class FixedPecentageSizer(private val percentage: Double = 0.01, private val reserve: Double = 0.20) : Sizer {
 
     override fun size(asset: Asset, account: Account, event: Event): Double {
 

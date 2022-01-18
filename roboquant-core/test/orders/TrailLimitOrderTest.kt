@@ -44,7 +44,6 @@ internal class TrailLimitOrderTest {
         e1 = order.execute(99.0, Instant.now())
         assertEquals(1, e1.size)
         assertEquals(order.quantity, e1.first().size())
-
     }
 
 
@@ -66,6 +65,7 @@ internal class TrailLimitOrderTest {
         e1 = order.execute(99.0, Instant.now())
         assertEquals(1, e1.size)
 
+        assertEquals(0.01, order.limitOffset)
     }
 
 }

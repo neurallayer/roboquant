@@ -30,8 +30,8 @@ import java.time.format.DateTimeFormatter
  */
 internal class LocalTimeParser(
     pattern: String,
-    val dateFormat: Boolean = pattern.length < 11,
-    val exchange: Exchange = Exchange.getInstance("")
+    private val dateFormat: Boolean = pattern.length < 11,
+    private val exchange: Exchange = Exchange.getInstance("")
 ) : TimeParser {
 
     private val dtf: DateTimeFormatter

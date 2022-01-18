@@ -26,6 +26,8 @@ internal class LastEntryLoggerTest {
     fun test() {
         val metrics = TestData.getMetrics()
         val logger = LastEntryLogger()
+        assertFalse(logger.showProgress)
+
         logger.log(metrics, TestData.getRunInfo())
         logger.end(RunPhase.VALIDATE)
         assertTrue(logger.metricNames.isNotEmpty())

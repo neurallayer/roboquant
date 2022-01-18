@@ -30,8 +30,17 @@ internal class PairBufferTest {
             pb.add(d * 2.0, d)
         }
         assertTrue(pb.isAvailable())
-        // assertEquals(1.0, pb.covariance().absoluteValue)
         assertEquals(1.0, pb.beta())
+    }
+
+    @Test
+    fun test2() {
+        val pb = PairBuffer(50)
+        for (i in 1..51) {
+            val d = i.toDouble()
+            pb.add(d, d)
+        }
+        assertTrue(pb.covariance() > 0.0)
     }
 
 }

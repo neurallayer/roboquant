@@ -27,7 +27,7 @@ internal class JupyterCoreTest {
     @Test
     fun test() {
         JupyterCore()
-        Output.classic(true)
+        Output.classic()
         Output.lab()
     }
 
@@ -40,7 +40,6 @@ internal class JupyterCoreTest {
         val logger = Logging.getLogger("test")
         logger.info("Should not show up")
         logger.warning("Should show up")
-
     }
 
     @Test
@@ -57,7 +56,7 @@ internal class JupyterCoreTest {
                 TODO("Not yet implemented")
             }
 
-            override fun asHTMLPage(useCDN: Boolean): String {
+            override fun asHTMLPage(): String {
                 TODO("Not yet implemented")
             }
 

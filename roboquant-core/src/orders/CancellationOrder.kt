@@ -32,6 +32,10 @@ import java.time.Instant
  */
 class CancellationOrder(val order: Order, var tag: String = "") : Order(order.asset) {
 
+    init {
+        require(order.status.open) { "Only open orders can be cancelled" }
+    }
+
     override fun clone(): CancellationOrder {
         val result = CancellationOrder(order.clone(), tag)
         copyTo(result)

@@ -17,7 +17,6 @@
 package org.roboquant.orders
 
 import org.roboquant.brokers.sim.Execution
-import java.lang.Double.max
 import java.time.Instant
 
 /**
@@ -34,10 +33,6 @@ class OneTriggersOtherOrder(
 
     override fun clone(): OneCancelsOtherOrder {
         return OneCancelsOtherOrder(first.clone(), second.clone())
-    }
-
-    override fun getValue(price: Double): Double {
-        return max(first.getValue(price), 0.0) + max(second.getValue(price), 0.0)
     }
 
     override fun execute(price: Double, time: Instant): List<Execution> {

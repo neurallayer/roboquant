@@ -32,9 +32,9 @@ import org.roboquant.strategies.utils.PercentageMovingWindow
  * @constructor Create empty Historic price strategy
  */
 abstract class HistoricPriceStrategy(
-    val period: Int,
-    val priceType: String = "DEFAULT",
-    val useReturns: Boolean = false
+    private val period: Int,
+    private val priceType: String = "DEFAULT",
+    private val useReturns: Boolean = false
 ) : RecordingStrategy() {
 
     private val history = mutableMapOf<Asset, MovingWindow>()

@@ -35,16 +35,12 @@ abstract class Output : Renderable {
 
     companion object {
         var mode = autoDetectMode()
-        var useCDN = true
 
         /**
          * Set the output to classic Jupyter Notebooks.
-         *
-         * @param useCDN
          */
-        fun classic(useCDN: Boolean = true) {
+        fun classic() {
             mode = Mode.CLASSIC
-            Output.useCDN = useCDN
         }
 
         /**
@@ -90,8 +86,8 @@ abstract class Output : Renderable {
      *
      * @param filename
      */
-    fun toHTMLFile(filename: String, useCDN: Boolean = false) {
-        val content = asHTMLPage(useCDN)
+    fun toHTMLFile(filename: String) {
+        val content = asHTMLPage()
         val f = File(filename)
         f.writeText(content)
     }
@@ -109,8 +105,7 @@ abstract class Output : Renderable {
      * Generate a whole HTML page. Subclasses will need to implement this method. This is used in Jupyter-Notebook
      * environments that put the output of a cell in an iFrame.
      *
-     * @param useCDN Should a CDN/link be used for static content or should the content be embedded
      * @return
      */
-    abstract fun asHTMLPage(useCDN: Boolean = Output.useCDN): String
+    abstract fun asHTMLPage(): String
 }

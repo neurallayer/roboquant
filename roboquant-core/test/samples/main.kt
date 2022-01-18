@@ -557,7 +557,7 @@ suspend fun runMany() {
 
 suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
-    Config.info()
+    Config.printInfo()
 
     when ("WALKFORWARD_PARALLEL") {
         // "CRYPTO" -> crypto()

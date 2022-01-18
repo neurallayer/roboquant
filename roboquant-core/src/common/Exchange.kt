@@ -62,6 +62,14 @@ class Exchange private constructor(
     }
 
     /**
+     * Get the trading hours for a certain date
+     */
+    fun getTradingHours(date: LocalDate): TimeFrame {
+       return TimeFrame(getOpeningTime(date), getClosingTime(date))
+    }
+
+
+    /**
      * Convert a local [dateTime] to an Instant type
      */
     fun getInstant(dateTime: LocalDateTime): Instant {

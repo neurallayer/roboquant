@@ -65,7 +65,6 @@ internal class TimeFrameTest {
         assertTrue(TimeFrame.flashCrash2010.isSingleDay(ZoneId.of("America/New_York")))
         assertFalse(TimeFrame.financialCrisis2008.isSingleDay())
         assertFalse(TimeFrame.tenYearBullMarket2009.isSingleDay())
-
     }
 
     @Test
@@ -96,6 +95,8 @@ internal class TimeFrameTest {
         val tf2 = tf.inclusive
         assertTrue(tf2.contains(tf.end))
         assertFalse(tf2.contains(tf.end + 1))
+
+        assertEquals(tf2, tf.union(tf2))
     }
 
     @Test

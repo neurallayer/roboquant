@@ -35,9 +35,12 @@ internal class CancellationOrderTest {
         val oc = CancellationOrder(openOrder)
         oc.placed = Instant.now()
         assertEquals(OrderStatus.INITIAL, oc.status)
+        assertEquals(openOrder, oc.order)
 
         oc.execute(100.0, Instant.now())
         assertTrue { oc.status.closed }
         assertEquals(OrderStatus.CANCELLED, oc.order.status)
+
+        assertEquals("", oc.tag)
     }
 }

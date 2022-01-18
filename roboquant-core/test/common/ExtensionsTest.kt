@@ -17,7 +17,9 @@
 package org.roboquant.common
 
 import org.junit.Test
+import java.time.ZonedDateTime
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ExtensionsTest {
 
@@ -47,6 +49,13 @@ class ExtensionsTest {
     @Test
     fun testInstant() {
 
+    }
+
+    @Test
+    fun numbers() {
+        val x = ZonedDateTime.now()
+        val y = x + 1.days + 2.months + 1.years + 2.weeks + 100.millis + 10.seconds + 30.minutes + 1.hours
+        assertTrue(y > x)
     }
 
 

@@ -1,6 +1,7 @@
 package org.roboquant.orders
 
 import java.time.Instant
+import kotlin.math.absoluteValue
 
 /**
  * Base class for combined orders that takes care of setting some of the properties
@@ -22,5 +23,7 @@ abstract class CombinedOrder(vararg val children: Order) : Order(children.first(
             field = value
             for (order in children) order.price = value
         }
+
+    override fun getValue(price: Double): Double = children.maxOf { it.getValue(price).absoluteValue }
 
 }

@@ -69,6 +69,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <!-- repository>
+            <id>kotlin.dev</id>
+            <url>https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/</url>
+        </repository -->
     </repositories>
 
     <distributionManagement>
@@ -90,7 +94,7 @@
         <resources>
             <resource>
                 <directory>${basedir}/resources</directory>
-                <filtering>false</filtering>
+                <filtering>true</filtering>
             </resource>
         </resources>
         <pluginManagement>
@@ -142,6 +146,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.2.0</version>
+                    <configuration>
+                        <propertiesEncoding>ISO-8859-1</propertiesEncoding>
+                    </configuration>
                 </plugin>
 
                 <plugin>

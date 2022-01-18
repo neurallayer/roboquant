@@ -17,6 +17,7 @@
 package org.roboquant.jupyter
 
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import org.roboquant.feeds.random.RandomWalk
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -28,7 +29,6 @@ internal class ChartTest {
 
     @Test
     fun test() {
-
         val f = RandomWalk.lastYears(1, 1, generateBars = true)
         val asset = f.assets.first()
         val chart = PriceBarChart(f, asset)
@@ -36,11 +36,14 @@ internal class ChartTest {
         assertEquals(700, chart.height)
         assertContains(chart.asHTML(), asset.symbol)
 
-        // val file = folder.newFile("test.html")
-        // val file = tempDir.resolve("test.html")
-        // chart.toHTMLFile(file.toString())
-        // assertTrue(file.exists())
+        val folder = TemporaryFolder()
+        folder.create()
+        val file = folder.newFile("test.html")
+        chart.toHTMLFile(file.toString())
+        assertTrue(file.exists())
     }
+
+
 
 
 }

@@ -22,6 +22,7 @@ import org.roboquant.brokers.ExchangeRates
 import org.roboquant.brokers.SingleCurrencyOnly
 import org.roboquant.common.Config.baseCurrency
 import org.roboquant.common.Config.defaultZoneId
+import org.roboquant.common.Config.exchangeRates
 import org.roboquant.common.Config.seed
 import java.nio.file.Files
 import java.nio.file.Path
@@ -47,16 +48,30 @@ object Config {
     private val properties = mutableMapOf<String, String>()
 
     /**
+     * Meta data about build en the environments
+     */
+    val info : Map<String, String> by lazy {
+        val result = mutableMapOf<String, String>()
+        result["jvm"] = System.getProperty("java.vm.name") + " " + System.getProperty("java.version")
+        result["os"] =  System.getProperty("os.name") + " " + System.getProperty("os.version")
+        result["memory"] = (Runtime.getRuntime().maxMemory() / (1024 * 1024)).toString()
+
+        val prop = Properties()
+        val stream = Config::class.java.getResourceAsStream("/roboquant.properties")!!
+        prop.load(stream)
+        stream.close()
+        prop.forEach {
+            result[it.key.toString()] = it.value.toString()
+        }
+        result
+    }
+
+    /**
      * Set a property. This takes precendence over properties found in files.
      */
     fun setProperty(name: String, value: String) {
         properties[name] = value
     }
-
-    /**
-     * Current version of roboquant
-     */
-    const val version = "0.8-SNAPSHOT"
 
     /**
      * Default zoneId to use for reporting purposes. Internally roboquant always uses the Instant type, so this is only
@@ -81,21 +96,17 @@ object Config {
     var seed = 42L
 
     /**
-     * ASCII art welcome greeting including overview of some properties
+     * ASCII art welcome greeting including runtime info
      */
-    fun info() {
-        val jvmInfo = System.getProperty("java.vm.name") + " " + System.getProperty("java.version")
-        val osInfo = System.getProperty("os.name") + " " + System.getProperty("os.version")
-        val runtimeInfo = Runtime.getRuntime().maxMemory() / (1024 * 1024)
-
-        val msg = """             _______ 
-            | $   $ |   roboquant v$version  home=$home
-            |   o   |   $osInfo
-            |_[___]_|   $jvmInfo (max mem=$runtimeInfo MB)
-        ___ ___|_|___ ___    
-       ()___)       ()___)
-      // / |         | \ \\
-     (___) |_________| (___)
+    fun printInfo() {
+        val msg = """             _______
+            | $   $ |             roboquant  
+            |   o   |             version: ${info["version"]}  
+            |_[___]_|             build: ${info["build"]}
+        ___ ___|_|___ ___         os: ${info["os"]}       
+       ()___)       ()___)        home: $home
+      // / |         | \ \\       jvm: ${info["jvm"]}  
+     (___) |_________| (___)      memory: ${info["memory"]}MB 
       | |   __/___\__   | |
       /_\  |_________|  /_\
      // \\  |||   |||  // \\

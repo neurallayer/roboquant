@@ -29,18 +29,21 @@ class Welcome : Output() {
      * @return
      */
     override fun asHTML(): String {
-        val jvmInfo = System.getProperty("java.vm.name") + " " + System.getProperty("java.version")
-        val osInfo = System.getProperty("os.name") + " " + System.getProperty("os.version")
-        val runtimeInfo = Runtime.getRuntime().maxMemory() / (1024 * 1024)
+        val jvmInfo = Config.info["jvm"]
+        val osInfo = Config.info["os"]
+        val memoryInfo = Config.info["memory"]
+        val date = Config.info["build"]
+        val version =  Config.info["version"]
 
         return """
-            <img src="https://roboquant.org/img/avatar.png" alt="roboquant logo" align="left" style="margin-right: 20px; max-height:150px;"/>
+            <img src="https://roboquant.org/img/avatar.png" alt="roboquant logo" align="left" style="margin-right: 20px; max-height:160px;"/>
             <span>
-                <b style="color: rgb(50,150,200);"> roboquant </b> (version ${Config.version})<br>
+                <b style="color: rgb(50,150,200);font-size: 150%;"> roboquant </b> $version<br>
+                <b> build:</b> $date<br>
                 <b> home:</b> ${Config.home}<br>
                 <b> os:</b> $osInfo<br>
                 <b> jvm:</b> $jvmInfo<br>
-                <b> memory:</b> $runtimeInfo MB<br>
+                <b> memory:</b> $memoryInfo MB<br>
                 <b> env: </b> $mode
             </span>
             """.trimIndent()
@@ -50,10 +53,9 @@ class Welcome : Output() {
      * Generate a whole HTML page. Subclasses will need to implement this method. This is used in Jupyter-Notebook
      * environments that put the output of a cell in an iFrame.
      *
-     * @param useCDN Should a CDN/link be used for static content or should the content be embedded
      * @return
      */
-    override fun asHTMLPage(useCDN: Boolean): String {
+    override fun asHTMLPage(): String {
         return asHTML()
     }
 

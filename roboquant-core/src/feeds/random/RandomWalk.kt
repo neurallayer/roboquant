@@ -16,14 +16,13 @@
 
 package org.roboquant.feeds.random
 
-import org.roboquant.common.Config
-import org.roboquant.common.Asset
-import org.roboquant.common.Logging
-import org.roboquant.common.TimeFrame
-import org.roboquant.feeds.*
+import org.roboquant.common.*
+import org.roboquant.feeds.AssetBuilderFactory
+import org.roboquant.feeds.HistoricPriceFeed
+import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.TradePrice
 import java.time.Instant
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 import kotlin.math.round
 import kotlin.random.Random
 import kotlin.random.asJavaRandom
@@ -61,10 +60,7 @@ class RandomWalk(
 
     private val random = Random(seed)
 
-
-
     init {
-
 
         repeat(nAssets) {
             val symbol = generateSymbol(symbolLength)
@@ -96,7 +92,7 @@ class RandomWalk(
          */
         fun lastDays(days: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalk {
             val last = Instant.now()
-            val first = last.minus(days.toLong(), ChronoUnit.DAYS)
+            val first = last - days.days
             val timeline = TimeFrame(first, last).toMinutes(excludeWeekends = true)
             return RandomWalk(timeline, nAssets, generateBars)
         }

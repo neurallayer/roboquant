@@ -75,7 +75,7 @@ class EmailNotifier(
     /**
      * To address
      */
-    var toAddress = InternetAddress(to)
+    private var toAddress = InternetAddress(to)
 
     /**
      * From address

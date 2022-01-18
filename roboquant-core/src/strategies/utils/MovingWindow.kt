@@ -26,7 +26,7 @@ import java.util.*
  * @property windowSize The size of the moving window
  * @constructor Create empty Circular buffer
  */
-open class MovingWindow(val windowSize: Int) {
+open class MovingWindow(private val windowSize: Int) {
 
     private val buffer = DoubleArray(windowSize) { Double.NaN }
     private var counter = 0L
