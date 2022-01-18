@@ -17,17 +17,16 @@
 package org.roboquant.alpaca
 
 
-import org.roboquant.common.Config
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AlpacaBrokerTestIT {
 
     @Test
     fun test() {
-        System.getProperty("TEST_ALPACA") ?: return
-        val key = Config.getProperty("ALPACA_KEY")!!
-        val secret = Config.getProperty("ALPACA_SECRET")!!
-        val broker = AlpacaBroker(key, secret)
+        System.getenv("TEST_ALPACA") ?: return
+        val broker = AlpacaBroker()
         broker.enableTrading = false
 
         assertTrue(broker.account.cash.isNotEmpty())

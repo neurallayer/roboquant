@@ -36,7 +36,7 @@ class Exchange private constructor(
 ) {
 
     /**
-     * Do the two provided times ([first] and [second]) both belong to the same trading day. They can be outside
+     * Belong the two provided times ([first] and [second]) to the same trading day? They can be outside
      * trading hours.
      */
     fun sameDay(first: Instant, second: Instant): Boolean {
@@ -46,7 +46,7 @@ class Exchange private constructor(
     }
 
     /**
-     * Get the opening time for a [date]
+     * Get the opening time for a local [date]
      */
     fun getOpeningTime(date: LocalDate): Instant {
         val zdt = ZonedDateTime.of(date, opening, zoneId)
@@ -54,7 +54,7 @@ class Exchange private constructor(
     }
 
     /**
-     * Get the closing time for a [date]
+     * Get the closing time for a local [date]
      */
     fun getClosingTime(date: LocalDate): Instant {
         val zdt = ZonedDateTime.of(date, closing, zoneId)
@@ -87,7 +87,7 @@ class Exchange private constructor(
         fun getInstance(exchangeCode: String): Exchange = instances[exchangeCode] ?: DEFAULT
 
         /**
-         * add  the Exchange instance to the list.
+         * add the Exchange instance to the list. For a given [exchangeCode] there can only be one instance.
          *
          * @param exchangeCode the exchange code
          */
@@ -107,7 +107,7 @@ class Exchange private constructor(
         init {
             addInstance("", "America/New_York", "USD")
 
-            // Main North American exchanges
+            // North American exchanges
             addInstance("US", "America/New_York", "USD")
             addInstance("NYSE", "America/New_York", "USD")
             addInstance("NASDAQ", "America/New_York", "USD")
@@ -116,18 +116,18 @@ class Exchange private constructor(
             addInstance("AMEX", "America/New_York", "USD")
             addInstance("TSX", "America/Toronto", "CAD")
 
-            // Main European exchanges
+            // European exchanges
             addInstance("AEB", "Europe/Amsterdam", "EUR", "09:00", "17:30")
             addInstance("LSE", "Europe/London", "GBP", "08:00", "16:30")
             addInstance("FSX", "Europe/Berlin", "EUR", "09:00", "17:30")
             addInstance("SIX", "Europe/Zurich", "CHF", "09:00", "17:20")
 
-            // Main Asian exchanges
+            // Asian exchanges
             addInstance("JPX", "Asia/Tokyo", "JPY", "09:00", "15:00")
             addInstance("SSE", "Asia/Shanghai", "CNY", "09:30", "15:00")
             addInstance("SEHK", "Asia/Hong_Kong", "CNY", "09:30", "16:00")
 
-            // Main Australian exchanges
+            // Australian exchanges
             addInstance("SSX", "Australia/Sydney", "AUD", "10:00", "16:00")
         }
 
@@ -141,7 +141,7 @@ class Exchange private constructor(
 
 
         /**
-         * List of currently registered exchanges
+         * List of all the currently registered exchanges
          */
         val exchanges
             get() = instances.values.toList()

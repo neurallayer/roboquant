@@ -23,9 +23,10 @@ internal class OANDABrokerTest {
 
     @Test
     fun test() {
-        System.getProperty("TEST_OANDA") ?: return
+        System.getenv("TEST_OANDA") ?: return
         val broker = AlpacaBroker()
         val account = broker.account
         account.fullSummary()
+        assertTrue(account.buyingPower > 0)
     }
 }

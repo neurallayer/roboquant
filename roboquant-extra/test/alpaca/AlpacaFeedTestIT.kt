@@ -16,66 +16,116 @@
 
 package org.roboquant.alpaca
 
-import org.roboquant.common.TimeFrame
-import org.roboquant.common.days
-import org.roboquant.common.getBySymbol
-import org.roboquant.common.minutes
-import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.filter
+import org.roboquant.common.*
+import org.roboquant.feeds.*
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 
 internal class AlpacaFeedTestIT {
 
+    val liveTestTime = 30.seconds
+
     @Test
     fun test() {
-        System.getProperty("TEST_ALPACA") ?: return
+        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
         val assets = feed.availableAssets
         val apple = assets.getBySymbol("AAPL")
         feed.subscribe(apple)
-        val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
-        assertTrue(actions.isNotEmpty())
+        val actions = feed.filter<PriceAction>(TimeFrame.next(liveTestTime))
         feed.close()
+        if (actions.isNotEmpty()) {
+            val action = actions.first()
+            assertEquals("AAPL", action.second.asset.symbol)
+            assertTrue(action.second is PriceBar)
+        } else {
+            println("No actions found, perhaps exchange is closed")
+        }
     }
 
 
     @Test
     fun test2() {
-        System.getProperty("TEST_ALPACA") ?: return
+        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
         feed.subscribe("AAPL")
-        val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
-        assertTrue(actions.isNotEmpty())
+        val actions = feed.filter<PriceAction>(TimeFrame.next(liveTestTime))
+        feed.close()
+        if (actions.isNotEmpty()) {
+            val action = actions.first().second
+            assertTrue(action is PriceBar)
+        } else {
+            println("No actions found, perhaps exchange is closed")
+        }
+    }
+
+    @Test
+    fun testHistoricFeed() {
+        System.getenv("TEST_ALPACA") ?: return
+        val feed = AlpacaHistoricFeed()
+        val assets = feed.availableAssets
+        assertTrue(assets.isNotEmpty())
+        assertTrue(assets.findByCurrencies("USD").isNotEmpty())
+        feed.close()
+    }
+
+    private inline fun <reified T : PriceAction> testResult(feed: AlpacaHistoricFeed, tf: TimeFrame) {
+        val tf2 = tf.extend(1.days)
+        assertTrue(tf2.contains(feed.timeline.first()))
+        assertTrue(tf2.contains(feed.timeline.last()))
+
+        val actions = feed.filter<PriceAction>()
+        val action = actions.first().second
+        assertTrue(action is T)
+        assertEquals("AAPL", action.asset.symbol)
         feed.close()
     }
 
     @Test
-    fun testHistoric() {
-        System.getProperty("TEST_ALPACA") ?: return
+    fun testHistoricQuotes() {
+        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
-        val assets = feed.availableAssets
-        assertTrue(assets.isNotEmpty())
-        val tf = TimeFrame.past(10.days)
-        feed.retrieve("AAPL", timeFrame = tf)
-        val actions = feed.filter<PriceAction>()
-        assertTrue(actions.isNotEmpty())
+        val tf = TimeFrame.past(10.days) - 30.minutes
+        feed.retrieveQuotes("AAPL", timeFrame = tf)
+        testResult<PriceQuote>(feed, tf)
+    }
 
-        val tf2 = tf.extend(1.days)
-        assertTrue(tf2.contains(feed.timeline.first()))
-        assertTrue(tf2.contains(feed.timeline.last()))
+    @Test
+    fun testHistoricTrades() {
+        System.getenv("TEST_ALPACA") ?: return
+        val feed = AlpacaHistoricFeed()
+        val tf = TimeFrame.past(10.days) - 30.minutes
+        feed.retrieveTrades("AAPL", timeFrame = tf)
+        testResult<TradePrice>(feed, tf)
+    }
+
+    @Test
+    fun testHistoricBars() {
+        System.getenv("TEST_ALPACA") ?: return
+        val feed = AlpacaHistoricFeed()
+        val tf = TimeFrame.past(10.days) - 30.minutes
+        feed.retrieveBars("AAPL", timeFrame = tf)
+        testResult<PriceBar>(feed, tf)
     }
 
     @Test
     fun test3() {
-        System.getProperty("TEST_ALPACA") ?: return
+        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed(autoConnect = false)
         feed.connect()
         feed.subscribeAll()
-        val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
-        assertTrue(actions.isNotEmpty())
+        val actions = feed.filter<PriceAction>(TimeFrame.next(liveTestTime))
         feed.close()
+        if (actions.isNotEmpty()) {
+            val action = actions.first().second
+            assertTrue(action is PriceBar)
+            val symbols = actions.map { it.second.asset.symbol }.distinct()
+            assertTrue(symbols.size > 1)
+        } else {
+            println("No actions found, perhaps exchange is closed")
+        }
     }
 
 }

@@ -25,6 +25,8 @@ import org.roboquant.common.Logging
 import org.roboquant.common.TimeFrame
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.PriceQuote
+import org.roboquant.feeds.TradePrice
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -50,7 +52,48 @@ class AlpacaHistoricFeed(
     }
 
 
-    fun retrieve(vararg symbols: String, timeFrame: TimeFrame, period: AlpacaPeriod = AlpacaPeriod.DAY) {
+    fun retrieveQuotes(vararg symbols: String, timeFrame: TimeFrame) {
+        for (symbol in symbols) {
+            val resp = alpacaAPI.stockMarketData().getQuotes(
+                symbol,
+                ZonedDateTime.ofInstant(timeFrame.start, zoneId),
+                ZonedDateTime.ofInstant(timeFrame.end, zoneId),
+                null,
+                null,
+            )
+
+            val asset = Asset(symbol)
+            for (quote in resp.quotes) {
+                val action = PriceQuote(asset, quote.askPrice, quote.askSize.toDouble(), quote.bidPrice, quote.bidSize.toDouble())
+                val now = quote.timestamp.toInstant()
+                add(now, action)
+            }
+            logger.fine { "Retrieved quote prices for asset $asset and $timeFrame" }
+        }
+    }
+
+    fun retrieveTrades(vararg symbols: String, timeFrame: TimeFrame) {
+        for (symbol in symbols) {
+            val resp = alpacaAPI.stockMarketData().getTrades(
+                symbol,
+                ZonedDateTime.ofInstant(timeFrame.start, zoneId),
+                ZonedDateTime.ofInstant(timeFrame.end, zoneId),
+                null,
+                null,
+            )
+
+            val asset = Asset(symbol)
+            for (trade in resp.trades) {
+                val action = TradePrice(asset, trade.price, trade.size.toDouble())
+                val now = trade.timestamp.toInstant()
+                add(now, action)
+            }
+            logger.fine { "Retrieved trade prices for asset $asset and $timeFrame" }
+        }
+    }
+
+
+    fun retrieveBars(vararg symbols: String, timeFrame: TimeFrame, period: AlpacaPeriod = AlpacaPeriod.DAY) {
         for (symbol in symbols) {
             val resp = alpacaAPI.stockMarketData().getBars(
                 symbol,
@@ -70,7 +113,7 @@ class AlpacaHistoricFeed(
                 val now = bar.timestamp.toInstant()
                 add(now, action)
             }
-            logger.fine { "Retrieved asset $asset for $timeFrame" }
+            logger.fine { "Retrieved price bars for asset $asset and time frame $timeFrame" }
         }
     }
 

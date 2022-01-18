@@ -17,30 +17,43 @@
 package org.roboquant.oanda
 
 import org.roboquant.common.TimeFrame
-import org.roboquant.common.minutes
+import org.roboquant.common.seconds
+import org.roboquant.feeds.OrderBook
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class OANDAFeedTest {
 
+    private val liveTestTime = 30.seconds
+    private val symbols = arrayListOf("EUR_USD", "USD_JPY", "GBP_USD").toTypedArray()
+
     @Test
     fun liveTest() {
-        System.getProperty("TEST_OANDA") ?: return
+        System.getenv("TEST_OANDA") ?: return
         val feed = OANDALiveFeed()
-        feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
+        feed.subscribeOrderBook(*symbols)
         assertEquals(3, feed.assets.size)
-        val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
+        val actions = feed.filter<PriceAction>(TimeFrame.next(liveTestTime))
         feed.close()
-        assertTrue(actions.isNotEmpty())
+        if (actions.isNotEmpty()) {
+            val action = actions.first()
+            assertContains(symbols, action.second.asset.symbol)
+            assertTrue(action.second is OrderBook)
+        } else {
+            println("No actions found, perhaps exchange is closed")
+        }
     }
 
     @Test
     fun historicTest() {
-        System.getProperty("TEST_OANDA") ?: return
+        System.getenv("TEST_OANDA") ?: return
         val feed = OANDAHistoricFeed()
         val tf = TimeFrame.parse("2020-03-05", "2020-03-06")
-        feed.retrieveCandles("EUR_USD", "EUR_GBP", "GBP_USD", timeFrame = tf)
+        feed.retrieveCandles(*symbols, timeFrame = tf)
         assertEquals(3, feed.assets.size)
 
         val tf2 = TimeFrame.parse("2020-03-04", "2020-03-07")

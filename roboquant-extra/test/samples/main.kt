@@ -74,7 +74,7 @@ fun allAlpaca() {
 fun alpacaHistoricFeed() {
     val feed = AlpacaHistoricFeed()
     val tf = TimeFrame.past(100.days) - 15.minutes
-    feed.retrieve("AAPL", "IBM", timeFrame = tf, period = AlpacaPeriod.DAY)
+    feed.retrieveBars("AAPL", "IBM", timeFrame = tf, period = AlpacaPeriod.DAY)
     val strategy = EMACrossover.midTerm()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
     roboquant.run(feed)
