@@ -25,7 +25,7 @@ import kotlin.test.assertTrue
 
 internal class AlpacaFeedTestIT {
 
-    val liveTestTime = 30.seconds
+    private val liveTestTime = 30.seconds
 
     @Test
     fun test() {
