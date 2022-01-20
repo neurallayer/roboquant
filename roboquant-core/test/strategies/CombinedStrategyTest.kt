@@ -18,7 +18,9 @@ package org.roboquant.strategies
 
 
 import org.junit.Test
+import org.roboquant.TestData
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 
 class CombinedStrategyTest {
@@ -30,6 +32,11 @@ class CombinedStrategyTest {
 
         val s = CombinedStrategy(s1, s2)
         assertEquals(2, s.strategies.size)
+
+        val event = TestData.event()
+        val signals = s.generate(event)
+        assertTrue(signals.isEmpty())
+
     }
 
 }

@@ -18,7 +18,7 @@ package org.roboquant.iex
 
 import org.junit.Test
 import org.roboquant.common.Asset
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
@@ -35,7 +35,7 @@ internal class IEXLiveTestIT {
         feed.subscribeQuotes(asset)
         assertTrue(asset in feed.assets)
 
-        val actions = feed.filter<PriceAction>(TimeFrame.next(5.minutes))
+        val actions = feed.filter<PriceAction>(Timeframe.next(5.minutes))
         assertTrue(actions.isNotEmpty())
     }
 

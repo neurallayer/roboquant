@@ -21,7 +21,7 @@ import com.oanda.v20.instrument.CandlestickGranularity
 import com.oanda.v20.instrument.InstrumentCandlesRequest
 import com.oanda.v20.primitives.InstrumentName
 import org.roboquant.common.Logging
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.common.days
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
@@ -43,7 +43,7 @@ class OANDAHistoricFeed(token: String? = null, demoAccount: Boolean = true) : Hi
 
     fun retrieveCandles(
         vararg symbols: String,
-        timeFrame: TimeFrame = TimeFrame.past(1.days),
+        timeframe: Timeframe = Timeframe.past(1.days),
         granularity: String = "M1",
         priceType: String = "M",
     ) {
@@ -54,12 +54,12 @@ class OANDAHistoricFeed(token: String? = null, demoAccount: Boolean = true) : Hi
             }
             val request = InstrumentCandlesRequest(InstrumentName(symbol))
                 .setPrice(priceType)
-                .setFrom(timeFrame.start.toString())
-                .setTo(timeFrame.end.toString())
+                .setFrom(timeframe.start.toString())
+                .setTo(timeframe.end.toString())
                 .setGranularity(CandlestickGranularity.valueOf(granularity))
             val resp = ctx.instrument.candles(request)
             val asset = availableAssets[resp.instrument.toString()]!!
-            if (resp.candles.isEmpty()) logger.warning("No candles retrieved for $symbol for period $timeFrame")
+            if (resp.candles.isEmpty()) logger.warning("No candles retrieved for $symbol for period $timeframe")
             resp.candles.forEach {
                 with(it.mid) {
                     val action =

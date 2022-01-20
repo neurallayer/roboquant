@@ -24,7 +24,7 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Background
 import org.roboquant.common.Logging
 import org.roboquant.common.Summary
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
@@ -70,10 +70,10 @@ class Roboquant(
      */
     private suspend fun runPhase(feed: Feed, runInfo: RunInfo) {
 
-        if (!feed.timeFrame.overlap(runInfo.timeFrame)) return
-        runInfo.timeFrame = runInfo.timeFrame.intersect(feed.timeFrame)
+        if (!feed.timeframe.overlap(runInfo.timeframe)) return
+        runInfo.timeframe = runInfo.timeframe.intersect(feed.timeframe)
 
-        val channel = EventChannel(channelCapacity, runInfo.timeFrame)
+        val channel = EventChannel(channelCapacity, runInfo.timeframe)
         val job = Background.ioJob {
             try {
                 feed.play(channel)
@@ -128,7 +128,7 @@ class Roboquant(
     }
 
     /**
-     * Start a new run using the provided [feed] as data. If no [timeFrame] is provided all the events in the feed
+     * Start a new run using the provided [feed] as data. If no [timeframe] is provided all the events in the feed
      * will be used. Optionally you can provide a [validation] timeframe that will trigger a separate validation phase.
      * You can also repeat the run for a number of [episodes].
      *
@@ -144,13 +144,13 @@ class Roboquant(
      */
     fun run(
         feed: Feed,
-        timeFrame: TimeFrame = TimeFrame.INFINITY,
-        validation: TimeFrame? = null,
+        timeframe: Timeframe = Timeframe.INFINITY,
+        validation: Timeframe? = null,
         runName: String? = null,
         episodes: Int = 1
     ) =
         runBlocking {
-            runAsync(feed, timeFrame, validation, runName, episodes)
+            runAsync(feed, timeframe, validation, runName, episodes)
         }
 
     /**
@@ -160,8 +160,8 @@ class Roboquant(
      */
     suspend fun runAsync(
         feed: Feed,
-        timeFrame: TimeFrame = TimeFrame.INFINITY,
-        validation: TimeFrame? = null,
+        timeframe: Timeframe = Timeframe.INFINITY,
+        validation: Timeframe? = null,
         runName: String? = null,
         episodes: Int = 1
     ) {
@@ -173,10 +173,10 @@ class Roboquant(
         repeat(episodes) {
             runInfo.episode++
             runInfo.phase = RunPhase.MAIN
-            runInfo.timeFrame = timeFrame
+            runInfo.timeframe = timeframe
             runPhase(feed, runInfo)
             if (validation !== null) {
-                runInfo.timeFrame = validation
+                runInfo.timeframe = validation
                 runInfo.phase = RunPhase.VALIDATE
                 runPhase(feed, runInfo)
             }
@@ -242,7 +242,7 @@ class Roboquant(
  * @property episode the episode number
  * @property step the step
  * @property time the time
- * @property timeFrame the total timeframe of the run, if not known it will be [TimeFrame.INFINITY]
+ * @property timeframe the total timeframe of the run, if not known it will be [Timeframe.INFINITY]
  * @property phase the phase of the run
  * @constructor Create new RunInfo object
  */
@@ -251,7 +251,7 @@ data class RunInfo internal constructor(
     var episode: Int = 0,
     var step: Int = 0,
     var time: Instant = Instant.MIN,
-    var timeFrame: TimeFrame = TimeFrame.INFINITY,
+    var timeframe: Timeframe = Timeframe.INFINITY,
     var phase: RunPhase = RunPhase.MAIN
 ) {
 
@@ -259,7 +259,7 @@ data class RunInfo internal constructor(
      * What is the duration of the run so far
      */
     val duration: Duration
-        get() = Duration.between(timeFrame.start, time)
+        get() = Duration.between(timeframe.start, time)
 
 
 }

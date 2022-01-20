@@ -42,7 +42,7 @@ fun oanda() {
     feed.retrieveCandles("EUR_USD", "USD_JPY", "GBP_USD")
     feed.assets.summary().log()
     println(feed.timeline.size)
-    println(feed.timeFrame)
+    println(feed.timeframe)
 
 }
 
@@ -58,18 +58,18 @@ fun forexAvro() {
 
 fun oandaLong() {
     val feed = OANDAHistoricFeed()
-    val timeFrame = TimeFrame.parse("2020-03-01", "2020-04-01")
+    val timeframe = Timeframe.parse("2020-03-01", "2020-04-01")
     val symbols = listOf("EUR_USD", "USD_JPY", "GBP_USD", "AUD_USD", "USD_CAD", "USD_CHF", "EUR_GBP", "AUD_JPY", "NZD_USD", "GBP_JPY").toTypedArray()
 
     // There is a limit on what we can download per API call, so we split it in individual days
-    for (tf in timeFrame.split(1.days)) {
-        feed.retrieveCandles(*symbols, timeFrame = tf)
+    for (tf in timeframe.split(1.days)) {
+        feed.retrieveCandles(*symbols, timeframe = tf)
         println(feed.timeline.size)
         Thread.sleep(1000) // lets play nice and not overload things
     }
     feed.assets.summary().log()
     println(feed.timeline.size)
-    println(feed.timeFrame)
+    println(feed.timeframe)
 
     // Now we store it in a local Avro file for later reuse
     AvroUtil.record(feed, "/Users/peter/data/avro/forex_march_2020.avro")
@@ -92,7 +92,7 @@ fun oanda2() {
 fun oandaLive() {
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
-    val tf = TimeFrame.next(5.minutes)
+    val tf = Timeframe.next(5.minutes)
     val actions = feed.filter<OrderBook>(tf)
     println(actions.size)
 }
@@ -111,7 +111,7 @@ fun oandaPaperTrading() {
     val policy = DefaultPolicy(shorting = true)
     val roboquant = Roboquant(EMACrossover.shortTerm(), broker = broker, policy = policy)
 
-    val tf = TimeFrame.next(5.minutes)
+    val tf = Timeframe.next(5.minutes)
     roboquant.run(feed, tf)
 
     roboquant.broker.account.fullSummary().print()
@@ -135,7 +135,7 @@ fun oandaClosePositions() {
 fun oandaLiveRecord() {
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
-    val tf = TimeFrame.next(5.minutes)
+    val tf = Timeframe.next(5.minutes)
     AvroUtil.record(feed, "/Users/peter/tmp/oanda.avro", tf)
 }
 
@@ -144,7 +144,7 @@ fun oandaLivePrices() {
     Logging.setLevel(Level.FINE, "org.roboquant")
     val feed = OANDALiveFeed()
     feed.subscribePrices("EUR_USD", "USD_JPY", "GBP_USD")
-    val data = feed.filter<OrderBook>(TimeFrame.next(1.minutes))
+    val data = feed.filter<OrderBook>(Timeframe.next(1.minutes))
     data.summary().log()
 }
 
@@ -161,7 +161,7 @@ fun oandaBroker() {
 
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "GBP_USD", "GBP_EUR")
-    val twoMinutes = TimeFrame.next(5.minutes)
+    val twoMinutes = Timeframe.next(5.minutes)
     roboquant.run(feed, twoMinutes)
     broker.account.portfolio.summary().log()
 }
@@ -181,8 +181,8 @@ fun oandaBroker3() {
     val strategy = EMACrossover() // Use EMA Crossover strategy
     val policy = DefaultPolicy(shorting = true) // We want to short if we do Forex trading
     val roboquant = Roboquant(strategy, AccountSummary(), policy = policy, broker = broker)
-    val timeFrame = TimeFrame.next(1.minutes) // restrict the time from now for the next minutes
-    roboquant.run(feed, timeFrame)
+    val timeframe = Timeframe.next(1.minutes) // restrict the time from now for the next minutes
+    roboquant.run(feed, timeframe)
     account.fullSummary().print()
 }
 

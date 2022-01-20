@@ -43,7 +43,7 @@ fun ibkrBroker() {
     val strategy = EMACrossover.midTerm()
 
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
-    val tf = TimeFrame.next(3.minutes)
+    val tf = Timeframe.next(3.minutes)
     roboquant.run(feed, tf)
     broker.account.summary()
     broker.disconnect()
@@ -80,7 +80,7 @@ fun ibkrBrokerFeed() {
     val strategy = EMACrossover.shortTerm()
 
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), broker = broker)
-    val tf = TimeFrame.next(1.minutes)
+    val tf = Timeframe.next(1.minutes)
     roboquant.run(feed, tf)
     broker.account.summary().log()
     broker.disconnect()
@@ -98,7 +98,7 @@ fun ibkrFeed() {
 
     val strategy = EMACrossover.shortTerm()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), PriceRecorder(asset), broker = broker)
-    val tf = TimeFrame.next(10.minutes)
+    val tf = Timeframe.next(10.minutes)
 
     roboquant.run(feed, tf)
     feed.disconnect()

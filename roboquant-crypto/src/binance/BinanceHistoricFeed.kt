@@ -18,7 +18,7 @@ package org.roboquant.binance
 
 import com.binance.api.client.BinanceApiRestClient
 import org.roboquant.common.Logging
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.CryptoBuilder
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
@@ -49,13 +49,13 @@ class BinanceHistoricFeed(apiKey: String? = null, secret: String? = null, privat
 
     fun retrieve(
         vararg currencyPairs: String,
-        timeFrame: TimeFrame,
+        timeframe: Timeframe,
         interval: Interval = Interval.DAILY,
         limit: Int = 1000
     ) {
         require(currencyPairs.isNotEmpty()) { "You need to provide at least 1 currency pair" }
-        val startTime = timeFrame.start.toEpochMilli()
-        val endTime = timeFrame.end.toEpochMilli() - 1 // Binance uses inclusive end-times, so we subtract 1 millis
+        val startTime = timeframe.start.toEpochMilli()
+        val endTime = timeframe.end.toEpochMilli() - 1 // Binance uses inclusive end-times, so we subtract 1 millis
         for (name in currencyPairs) {
             val asset = CryptoBuilder().invoke(name.uppercase(), binanceTemplate)
             val bars = client.getCandlestickBars(asset.symbol, interval, limit, startTime, endTime)
@@ -71,7 +71,7 @@ class BinanceHistoricFeed(apiKey: String? = null, secret: String? = null, privat
                 val now = Instant.ofEpochMilli(bar.closeTime)
                 add(now, action)
             }
-            logger.fine { "Retrieved $asset for $timeFrame" }
+            logger.fine { "Retrieved $asset for $timeframe" }
         }
     }
 

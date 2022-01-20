@@ -7,27 +7,54 @@ import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.jetbrains.kotlinx.jupyter.testkit.JupyterReplTestCase
 import org.jetbrains.kotlinx.jupyter.testkit.ReplProvider
 import org.junit.Test
+import org.roboquant.TestData
+import org.roboquant.common.Config
+import org.roboquant.orders.Order
 import java.io.File
+import java.time.ZoneId
+import kotlin.random.Random
 import kotlin.test.assertEquals
 
 
-abstract class RoboquantJupyterTest : JupyterReplTestCase(
-    ReplProvider.forLibrariesTesting(listOf("dataframe"))
-)
+internal class SampleNotebookTest {
 
 
+    private fun test(file: String) {
+        System.getenv("TEST_NOTEBOOKS") ?: return
+        val c = NotebookTester("roboquant")
+        Config.random = Random(42L)
+        Config.defaultZoneId = ZoneId.of("Europe/Amsterdam") // The one used for creating notebooks
+        Order.ID = 0L
+        val path = TestData.dataDir() + "notebooks/$file.ipynb"
+        c.validateNotebook(path)
+    }
 
-class SampleNotebookTest : RoboquantJupyterTest() {
 
     @Test
-    fun testNotebooks() {
-        System.getenv("TEST_NOTEBOOKS") ?: return
-        // place holder to test a number of Jupyter notebooks
-        // right now module kotlin-jupyter-test-kit difficult to load due dev dependencies
-        // val files = listOf("/Users/peter/tmp/test.ipynb")// , "/Users/peter/tmp/visualization.ipynb")
-        val files = listOf("/Users/peter/tmp/visualization.ipynb")
-        for (file in files) validateNotebook(file)
+    fun testFeedCharts() {
+        test("feed_charts")
     }
+
+    @Test
+    fun testAccountCharts() {
+        test("account_charts")
+    }
+
+    @Test
+    fun testMetricCharts() {
+        test("metric_charts")
+    }
+
+    @Test
+    fun testMultirunCharts() {
+        test("multirun_charts")
+    }
+
+}
+
+
+private class NotebookTester(lib: String) : JupyterReplTestCase(ReplProvider.forLibrariesTesting(listOf(lib))) {
+
 
     /**
      * Execute the code cells in a notebook and validate the new output against the existing output in the notebook.
@@ -35,11 +62,12 @@ class SampleNotebookTest : RoboquantJupyterTest() {
      *
      * All comparison is done between Strings, so make sure there is no random behavior in the output.
      */
-    private fun validateNotebook(notebookPath: String) {
+    fun validateNotebook(notebookPath: String) {
         val notebookFile = File(notebookPath)
         val notebook = JupyterParser.parse(notebookFile)
 
         for (cell in notebook.cells.filterIsInstance<CodeCell>()) {
+
             val cellResult = exec(cell.source)
             val result = if (cellResult is MimeTypedResult) cellResult.entries.first().value else cellResult.toString()
 

@@ -20,7 +20,7 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.common.getBySymbol
 import java.io.Closeable
 import java.time.Instant
@@ -35,10 +35,10 @@ import java.util.*
 interface Feed : Closeable {
 
     /**
-     * Timeframe of the feed. In case the timeframe is not known upfront, return the full timeframe [TimeFrame.INFINITY]
+     * Timeframe of the feed. In case the timeframe is not known upfront, return the full timeframe [Timeframe.INFINITY]
      */
-    val timeFrame: TimeFrame
-        get() = TimeFrame.INFINITY
+    val timeframe: Timeframe
+        get() = Timeframe.INFINITY
 
     /**
      * (Re)play the events of the feed on put these events on the provided [channel]. Once done, return from this method.
@@ -80,14 +80,14 @@ interface AssetFeed : Feed {
 
 /**
  * Convenience method to play a feed and return the actions of a certain type [T]. Additionally, the feed can be
- * restricted to a certain [timeFrame] and if required an additional [filter] can be provided.
+ * restricted to a certain [timeframe] and if required an additional [filter] can be provided.
  */
 inline fun <reified T : Action> Feed.filter(
-    timeFrame: TimeFrame = TimeFrame.INFINITY,
+    timeframe: Timeframe = Timeframe.INFINITY,
     crossinline filter: (T) -> Boolean = { true }
 ): List<Pair<Instant, T>> = runBlocking {
 
-    val channel = EventChannel(timeFrame = timeFrame)
+    val channel = EventChannel(timeframe = timeframe)
     val result = mutableListOf<Pair<Instant, T>>()
 
     val job = launch {

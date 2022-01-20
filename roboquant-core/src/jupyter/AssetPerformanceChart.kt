@@ -18,7 +18,7 @@ package org.roboquant.jupyter
 
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
@@ -38,7 +38,7 @@ import java.math.RoundingMode
  */
 class AssetPerformanceChart(
     private val feed: Feed,
-    private val timeFrame: TimeFrame = TimeFrame.INFINITY,
+    private val timeframe: Timeframe = Timeframe.INFINITY,
     private val priceType: String = "DEFAULT",
     private val compensateVolume: Boolean = true
 ) : Chart() {
@@ -49,7 +49,7 @@ class AssetPerformanceChart(
      */
     private fun fromFeed(): List<Map<String, Any>> {
         val result = mutableMapOf<Asset, MutableList<Double>>()  // start, last, volume
-        val entries = feed.filter<PriceAction>(timeFrame)
+        val entries = feed.filter<PriceAction>(timeframe)
         entries.forEach { (time, priceAction) ->
             if (priceAction.volume.isFinite()) {
                 val price = priceAction.getPriceAmount(priceType)

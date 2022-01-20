@@ -83,7 +83,7 @@ class RandomWalk(
          */
         fun lastYears(years: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalk {
             val lastYear = LocalDate.now().year - 1
-            val timeline = TimeFrame.fromYears(lastYear - years + 1, lastYear).toDays(excludeWeekends = true)
+            val timeline = Timeframe.fromYears(lastYear - years + 1, lastYear).toDays(excludeWeekends = true)
             return RandomWalk(timeline, nAssets, generateBars)
         }
 
@@ -93,7 +93,7 @@ class RandomWalk(
         fun lastDays(days: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalk {
             val last = Instant.now()
             val first = last - days.days
-            val timeline = TimeFrame(first, last).toMinutes(excludeWeekends = true)
+            val timeline = Timeframe(first, last).toMinutes(excludeWeekends = true)
             return RandomWalk(timeline, nAssets, generateBars)
         }
 

@@ -24,10 +24,10 @@ import java.util.*
 
 
 /*
-fun Collection<Trade>.realizedPnL(vararg assets: Asset, timeFrame: TimeFrame? = null): Wallet {
+fun Collection<Trade>.realizedPnL(vararg assets: Asset, timeframe: TimeFrame? = null): Wallet {
     var filteredResults = asSequence()
     if (assets.isNotEmpty()) filteredResults = filteredResults.filter { it.asset in assets }
-    if (timeFrame != null) filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
+    if (timeframe != null) filteredResults = filteredResults.filter { timeframe.contains(it.time) }
     val result = Wallet()
     for (trade in filteredResults) {
         result.deposit(trade.asset.currency, trade.pnl)
@@ -55,13 +55,13 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
      * Calculate the realized PnL for a certain asset and optionally a timeframe
      *
      * @param asset The asset
-     * @param timeFrame An optional timeframe to restrict the calculation to
+     * @param timeframe An optional timeframe to restrict the calculation to
      * @return The P&L as a double value
      */
-    fun realizedPnL(asset: Asset, timeFrame: TimeFrame? = null): Amount {
+    fun realizedPnL(asset: Asset, timeframe: Timeframe? = null): Amount {
         var filteredResults = filter { it.asset == asset }
-        if (timeFrame != null)
-            filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
+        if (timeframe != null)
+            filteredResults = filteredResults.filter { timeframe.contains(it.time) }
 
         val sum = filteredResults.sumOf { it.pnl.value }
         return Amount(asset.currency, sum)
@@ -72,25 +72,25 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
      * name, the first one will be used.
      *
      * @param symbol
-     * @param timeFrame
+     * @param timeframe
      * @return
      */
-    fun realizedPnL(symbol: String, timeFrame: TimeFrame? = null): Amount {
+    fun realizedPnL(symbol: String, timeframe: Timeframe? = null): Amount {
         val asset = assets.first { it.symbol == symbol }
-        return realizedPnL(asset, timeFrame)
+        return realizedPnL(asset, timeframe)
     }
 
     /**
      * Calculate the total realized PnL for all assets and optionally a timeframe
      *
-     * @param timeFrame An optional timeframe to restrict the PnL calculation to
+     * @param timeframe An optional timeframe to restrict the PnL calculation to
      * @return The P&L as a cash value
      */
-    fun realizedPnL(timeFrame: TimeFrame? = null): Wallet {
+    fun realizedPnL(timeframe: Timeframe? = null): Wallet {
         val result = Wallet()
         var filteredResults = asSequence()
-        if (timeFrame != null)
-            filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
+        if (timeframe != null)
+            filteredResults = filteredResults.filter { timeframe.contains(it.time) }
 
         filteredResults.forEach {
             result.deposit(it.pnl)
@@ -105,12 +105,12 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
      * Total fee, optionally limited to a specific timeframe. Fees are denoted in the
      * currency of the asset, so the returned Cash can hold different currencies.
      *
-     * @param timeFrame
+     * @param timeframe
      * @return
      */
-    fun totalFee(timeFrame: TimeFrame? = null): Wallet {
+    fun totalFee(timeframe: Timeframe? = null): Wallet {
         val result = Wallet()
-        val filteredResults = asSequence().filter(timeFrame)
+        val filteredResults = asSequence().filter(timeframe)
 
         filteredResults.forEach {
             result.deposit(it.fee)
@@ -118,23 +118,23 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
         return result
     }
 
-    private fun Sequence<Trade>.filter(timeFrame: TimeFrame?): Sequence<Trade> {
-        return if (timeFrame == null)
+    private fun Sequence<Trade>.filter(timeframe: Timeframe?): Sequence<Trade> {
+        return if (timeframe == null)
             this
         else
-            filter { timeFrame.contains(it.time) }
+            filter { timeframe.contains(it.time) }
     }
 
     /**
      * Total fee for a single asset denoted in the currency of the asset
      *
-     * @param timeFrame
+     * @param timeframe
      * @return
      */
-    fun totalFee(asset: Asset, timeFrame: TimeFrame? = null): Amount {
+    fun totalFee(asset: Asset, timeframe: Timeframe? = null): Amount {
         var filteredResults = filter { it.asset == asset }
-        if (timeFrame != null)
-            filteredResults = filteredResults.filter { timeFrame.contains(it.time) }
+        if (timeframe != null)
+            filteredResults = filteredResults.filter { timeframe.contains(it.time) }
 
         val sum = filteredResults.sumOf { it.fee.value }
         return Amount(asset.currency, sum)

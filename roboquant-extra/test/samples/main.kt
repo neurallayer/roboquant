@@ -63,7 +63,7 @@ fun allAlpaca() {
 
     val strategy = EMACrossover(3, 5)
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
-    val tf = TimeFrame.next(15.minutes)
+    val tf = Timeframe.next(15.minutes)
     roboquant.run(feed, tf)
     feed.close()
 
@@ -73,8 +73,8 @@ fun allAlpaca() {
 
 fun alpacaHistoricFeed() {
     val feed = AlpacaHistoricFeed()
-    val tf = TimeFrame.past(100.days) - 15.minutes
-    feed.retrieveBars("AAPL", "IBM", timeFrame = tf, period = AlpacaPeriod.DAY)
+    val tf = Timeframe.past(100.days) - 15.minutes
+    feed.retrieveBars("AAPL", "IBM", timeframe = tf, period = AlpacaPeriod.DAY)
     val strategy = EMACrossover.midTerm()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
     roboquant.run(feed)
@@ -89,7 +89,7 @@ fun alpacaFeed() {
     feed.heartbeatInterval = 1000
     val strategy = EMACrossover.midTerm()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
-    val tf = TimeFrame.next(5.minutes)
+    val tf = Timeframe.next(5.minutes)
     roboquant.run(feed, tf)
     feed.close()
 
@@ -116,7 +116,7 @@ fun feedIEXLive() {
 
     val strategy = EMACrossover()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
-    roboquant.run(feed, TimeFrame.next(5.minutes))
+    roboquant.run(feed, Timeframe.next(5.minutes))
     roboquant.broker.account.summary().log()
 }
 
@@ -125,8 +125,8 @@ fun feedYahoo() {
     val feed = YahooHistoricFeed()
     val apple = Asset("AAPL")
     val google = Asset("GOOG")
-    val last300Days = TimeFrame.past(300.days)
-    feed.retrieve(apple, google, timeFrame = last300Days)
+    val last300Days = Timeframe.past(300.days)
+    feed.retrieve(apple, google, timeframe = last300Days)
 
     val strategy = EMACrossover()
     val logger = MemoryLogger()

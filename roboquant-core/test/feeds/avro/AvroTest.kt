@@ -20,7 +20,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.FixMethodOrder
 import org.junit.rules.TemporaryFolder
 import org.junit.runners.MethodSorters
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.common.days
 import org.roboquant.feeds.play
 import org.roboquant.feeds.random.RandomWalk
@@ -44,7 +44,7 @@ class AvroTest {
     fun avroStep1() {
         folder.create()
         fileName = folder.newFile("test.avro").path
-        val timeline = TimeFrame.past(30.days).toDays()
+        val timeline = Timeframe.past(30.days).toDays()
         val feed = RandomWalk(timeline, nAssets = nAssets)
         size = feed.timeline.size
         AvroUtil.record(feed, fileName, compressionLevel = 0)

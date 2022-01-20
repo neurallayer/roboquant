@@ -64,8 +64,8 @@ class Exchange private constructor(
     /**
      * Get the trading hours for a certain date
      */
-    fun getTradingHours(date: LocalDate): TimeFrame {
-       return TimeFrame(getOpeningTime(date), getClosingTime(date))
+    fun getTradingHours(date: LocalDate): Timeframe {
+       return Timeframe(getOpeningTime(date), getClosingTime(date))
     }
 
 

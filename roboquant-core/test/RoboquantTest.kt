@@ -18,7 +18,7 @@ package org.roboquant
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.SilentLogger
@@ -34,7 +34,7 @@ internal class RoboquantTest {
 
     @Test
     fun evaluate() {
-        val tf = TimeFrame.fromYears(2008, 2010)
+        val tf = Timeframe.fromYears(2008, 2010)
         val timeline = tf.toDays(excludeWeekends = true)
         val feed = RandomWalk(timeline)
 
@@ -60,7 +60,7 @@ internal class RoboquantTest {
 
     @Test
     fun tenYearRandomWalk() {
-        val timeline = TimeFrame.fromYears(2010, 2020).toDays(excludeWeekends = true)
+        val timeline = Timeframe.fromYears(2010, 2020).toDays(excludeWeekends = true)
         val feed = RandomWalk(timeline, generateBars = false)
 
         val strategy = EMACrossover()
@@ -77,7 +77,7 @@ internal class RoboquantTest {
         val strategy = EMACrossover()
         val logger =  MemoryLogger(showProgress = false)
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
-        val (train, test) = feed.timeFrame.splitTrainTest(0.20)
+        val (train, test) = feed.timeframe.splitTrainTest(0.20)
         roboquant.run(feed, train, test)
         val data = logger.getMetric("progress.events")
         assertEquals(2, data.map { it.info.phase }.distinct().size)

@@ -18,7 +18,7 @@ package org.roboquant.yahoo
 
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.common.toUTC
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
@@ -43,12 +43,12 @@ class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFee
      * Retrieve historic [PriceBar] data from Yahoo Finance
      *
      * @param assets
-     * @param timeFrame
+     * @param timeframe
      * @param interval
      */
-    fun retrieve(vararg assets: Asset, timeFrame: TimeFrame, interval: Interval = Interval.DAILY) {
-        val c1 = GregorianCalendar.from(timeFrame.start.toUTC())
-        val c2 = GregorianCalendar.from(timeFrame.end.toUTC())
+    fun retrieve(vararg assets: Asset, timeframe: Timeframe, interval: Interval = Interval.DAILY) {
+        val c1 = GregorianCalendar.from(timeframe.start.toUTC())
+        val c2 = GregorianCalendar.from(timeframe.end.toUTC())
         assets.forEach {
             val quotes = YahooFinance.get(it.symbol)
             val history = quotes.getHistory(c1, c2, interval)
@@ -62,12 +62,12 @@ class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFee
      * Retrieve historic [PriceBar] data from Yahoo Finance
      *
      * @param symbols
-     * @param timeFrame
+     * @param timeframe
      * @param interval
      */
-    fun retrieve(vararg symbols: String, timeFrame: TimeFrame, interval: Interval = Interval.DAILY) {
+    fun retrieve(vararg symbols: String, timeframe: Timeframe, interval: Interval = Interval.DAILY) {
         val assets = symbols.map { Asset(it) }.toTypedArray()
-        retrieve(*assets, timeFrame = timeFrame, interval = interval)
+        retrieve(*assets, timeframe = timeframe, interval = interval)
     }
 
     // TODO validate time offset

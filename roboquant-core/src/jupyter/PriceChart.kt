@@ -18,7 +18,7 @@ package org.roboquant.jupyter
 
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
@@ -33,7 +33,7 @@ class PriceChart(
     private val feed: Feed,
     private val asset: Asset,
     private val trades: Collection<Trade> = listOf(),
-    private val timeFrame: TimeFrame = TimeFrame.INFINITY,
+    private val timeframe: Timeframe = Timeframe.INFINITY,
     private val priceType: String = "DEFAULT"
 ) : Chart() {
 
@@ -41,7 +41,7 @@ class PriceChart(
      * Play the feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
      */
     private fun fromFeed(): List<Pair<Instant, BigDecimal>> {
-        val entries = feed.filter<PriceAction>(timeFrame) { it.asset == asset }
+        val entries = feed.filter<PriceAction>(timeframe) { it.asset == asset }
         val data = entries.map {
             val price = it.second.getPriceAmount(priceType)
             it.first to price.toBigDecimal()
@@ -51,7 +51,7 @@ class PriceChart(
 
 
     private fun markPoints(): List<Map<String, Any>> {
-        val t = trades.filter { it.asset == asset && timeFrame.contains(it.time) }
+        val t = trades.filter { it.asset == asset && timeframe.contains(it.time) }
         val result = mutableListOf<Map<String, Any>>()
         for (trade in t) {
             val entry = mapOf(
@@ -66,7 +66,7 @@ class PriceChart(
     override fun renderOption(): String {
         val line = fromFeed()
         val lineData = gsonBuilder.create().toJson(line)
-        val timeFrame = if (line.size > 1) TimeFrame(line.first().first, line.last().first).toPrettyString() else ""
+        val timeframe = if (line.size > 1) Timeframe(line.first().first, line.last().first).toPrettyString() else ""
 
         val marks = markPoints()
         val markData = gsonBuilder.create().toJson(marks)
@@ -97,7 +97,7 @@ class PriceChart(
                     scale: true
                 },
                  title: {
-                    text: '${asset.symbol} $timeFrame'
+                    text: '${asset.symbol} $timeframe'
                 },
                 tooltip: {
                     trigger: 'axis'

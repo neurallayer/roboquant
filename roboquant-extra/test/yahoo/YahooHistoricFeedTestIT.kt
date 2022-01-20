@@ -17,7 +17,7 @@
 package org.roboquant.yahoo
 
 import org.roboquant.common.Asset
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.junit.Test
 import kotlin.test.assertContains
 import kotlin.test.assertTrue
@@ -30,10 +30,10 @@ internal class YahooHistoricFeedTestIT {
         System.getenv("TEST_YAHOO") ?: return
         val feed = YahooHistoricFeed()
         val asset = Asset("AAPL")
-        feed.retrieve(asset, timeFrame = TimeFrame.fromYears(2018, 2020))
+        feed.retrieve(asset, timeframe = Timeframe.fromYears(2018, 2020))
         assertTrue(feed.assets.first().symbol == "AAPL")
 
-        feed.retrieve("GOOGL", timeFrame = TimeFrame.fromYears(2019, 2020))
+        feed.retrieve("GOOGL", timeframe = Timeframe.fromYears(2019, 2020))
         assertContains(feed.assets.map { it.symbol }, "GOOGL")
     }
 

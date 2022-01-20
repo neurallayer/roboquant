@@ -183,7 +183,7 @@ fun large6() {
     // val avroPath = dataHome / "avro/us_2000_2021.avro"
     // AvroUtil.record(feed!!, avroPath.toString(), TimeFrame.fromYears(2000, 2021), 6)
     val avroPath = dataHome / "avro/us_stocks.avro"
-    AvroUtil.record(feed!!, avroPath.toString(), TimeFrame.fromYears(1900, 2021), compressionLevel = 6)
+    AvroUtil.record(feed!!, avroPath.toString(), Timeframe.fromYears(1900, 2021), compressionLevel = 6)
 
 }
 
@@ -266,7 +266,7 @@ fun manyMinutes() {
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
 
-    val tf = TimeFrame.fromYears(2019, 2019)
+    val tf = Timeframe.fromYears(2019, 2019)
     val timeline = tf.toMinutes(excludeWeekends = true)
     val feed = RandomWalk(timeline, 10, generateBars = true)
 
@@ -310,7 +310,7 @@ suspend fun walkforwardParallel() {
     val logger = LastEntryLogger()
     val jobs = ParallelJobs()
 
-    feed.timeFrame.split(2.years).forEach {
+    feed.timeframe.split(2.years).forEach {
         val strategy = EMACrossover()
         val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
         jobs.add {
@@ -455,7 +455,7 @@ fun avro() {
     val strategy = EMACrossover()
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
-    roboquant.run(feed, TimeFrame.fromYears(1960, 2021))
+    roboquant.run(feed, Timeframe.fromYears(1960, 2021))
     logger.summary().print()
 }
 

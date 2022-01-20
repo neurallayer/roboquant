@@ -24,7 +24,7 @@ import org.apache.avro.generic.GenericRecord
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.Logging
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.*
 import java.io.File
 import java.io.InputStream
@@ -50,7 +50,7 @@ import java.time.Instant
  */
 class AvroFeed(private val path: String, private val useIndex: Boolean = true) : HistoricFeed {
 
-    private val _timeFrame: TimeFrame
+    private val _timeframe: Timeframe
     private val assetLookup = mutableMapOf<String, Asset>()
     internal val index = mutableListOf<Pair<Instant, Long>>()
 
@@ -58,8 +58,8 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
         get() = assetLookup.values.toSortedSet()
 
 
-    override val timeFrame: TimeFrame
-        get() = if (index.isEmpty()) _timeFrame else super.timeFrame
+    override val timeframe: Timeframe
+        get() = if (index.isEmpty()) _timeframe else super.timeframe
 
 
     override val timeline: List<Instant>
@@ -67,14 +67,14 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
 
 
     init {
-        _timeFrame = getReader().use { reader ->
+        _timeframe = getReader().use { reader ->
             val start = reader.getMetaLong("roboquant.start")
             val end = reader.getMetaLong("roboquant.end")
-            TimeFrame(Instant.ofEpochMilli(start), (Instant.ofEpochMilli(end)))
+            Timeframe(Instant.ofEpochMilli(start), (Instant.ofEpochMilli(end)))
         }
 
         if (useIndex) buildIndex()
-        logger.info { "Loaded assets with timeframe $timeFrame from $path" }
+        logger.info { "Loaded assets with timeframe $timeframe from $path" }
     }
 
 
@@ -120,7 +120,7 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
      * @return
      */
     override suspend fun play(channel: EventChannel) {
-        val tf = channel.timeFrame
+        val tf = channel.timeframe
         var last = Instant.MIN
         var actions = mutableListOf<PriceAction>()
 

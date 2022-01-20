@@ -108,29 +108,29 @@ fun List<Instant>.earliestNotBefore(time: Instant): Int? {
 /**
  * Get the timeframe for this timeline, it assumes a sorted list
  */
-val List<Instant>.timeFrame
-    get() = TimeFrame(first(), last() + 1)
+val List<Instant>.timeframe
+    get() = Timeframe(first(), last() + 1)
 
-fun List<Instant>.split(period: Period): List<TimeFrame> {
-    val result = mutableListOf<TimeFrame>()
+fun List<Instant>.split(period: Period): List<Timeframe> {
+    val result = mutableListOf<Timeframe>()
     val zone = ZoneOffset.UTC
     var start = first()
     var stop = (LocalDateTime.ofInstant(start, zone) + period).toInstant(zone)
     for (now in this) {
         if (now > stop) {
-            val tf = TimeFrame(start, now)
+            val tf = Timeframe(start, now)
             result.add(tf)
             start = now
             stop = (LocalDateTime.ofInstant(start, zone) + period).toInstant(zone)
         }
     }
-    val tf = TimeFrame(start, stop)
+    val tf = Timeframe(start, stop)
     result.add(tf)
     return result
 }
 
-fun List<Instant>.split(size: Int): List<TimeFrame> {
-    return chunked(size).map { TimeFrame(it.first(), it.last()) }
+fun List<Instant>.split(size: Int): List<Timeframe> {
+    return chunked(size).map { Timeframe(it.first(), it.last()) }
 }
 
 

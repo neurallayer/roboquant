@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation
 import org.roboquant.common.Asset
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import java.math.BigDecimal
@@ -34,7 +34,7 @@ import java.util.*
 class PriceCorrelationChart(
     private val feed: Feed,
     private val assets: Collection<Asset>,
-    private val timeFrame: TimeFrame = TimeFrame.INFINITY,
+    private val timeframe: Timeframe = Timeframe.INFINITY,
     private val priceType: String = "DEFAULT",
     private val scale: Int = 2,
     private val minObservations: Int = 3
@@ -60,7 +60,7 @@ class PriceCorrelationChart(
 
 
     private fun collectPrices(): Map<Asset, List<Double>> = runBlocking {
-        val channel = EventChannel(timeFrame = timeFrame)
+        val channel = EventChannel(timeframe = timeframe)
         val result = TreeMap<Asset, MutableList<Double>>()
 
         val job = launch {
@@ -124,7 +124,7 @@ class PriceCorrelationChart(
                 }
               },
               title: {
-                    text: '${assets.size} assets ${timeFrame.toPrettyString()}'
+                    text: '${assets.size} assets ${timeframe.toPrettyString()}'
               },
               ${renderGrid()},
               toolbox: {

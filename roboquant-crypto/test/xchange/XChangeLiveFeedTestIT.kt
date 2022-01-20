@@ -19,7 +19,7 @@ package org.roboquant.xchange
 import info.bitrich.xchangestream.bitstamp.v2.BitstampStreamingExchange
 import info.bitrich.xchangestream.core.StreamingExchangeFactory
 import org.roboquant.Roboquant
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMACrossover
 import org.junit.Test
@@ -48,8 +48,8 @@ internal class XChangeLiveFeedTestIT {
         val roboquant = Roboquant(strategy, ProgressMetric())
 
         /// Run it for 5 minutes
-        val timeFrame = TimeFrame.next(5.minutes)
-        roboquant.run(feed, timeFrame)
+        val timeframe = Timeframe.next(5.minutes)
+        roboquant.run(feed, timeframe)
         exchange.disconnect().blockingAwait()
     }
 

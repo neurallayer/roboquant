@@ -18,7 +18,7 @@ package org.roboquant.jupyter
 
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
@@ -35,7 +35,7 @@ class PriceBarChart(
     private val feed: Feed,
     private val asset: Asset,
     private val trades: Collection<Trade> = listOf(),
-    private val timeFrame: TimeFrame = TimeFrame.INFINITY,
+    private val timeframe: Timeframe = Timeframe.INFINITY,
     private val useTime: Boolean = true
 ) : Chart() {
 
@@ -49,7 +49,7 @@ class PriceBarChart(
      * @return
      */
     private fun fromFeed(): List<List<Any>> {
-        val entries = feed.filter<PriceBar>(timeFrame) { it.asset == asset }
+        val entries = feed.filter<PriceBar>(timeframe) { it.asset == asset }
         val data = entries.map {
             val (now, price) = it
             val direction = if (price.close >= price.open) 1 else -1
@@ -64,7 +64,7 @@ class PriceBarChart(
      * TODO: add tooltip support so more info is available about the trade.
      */
     private fun markPoints(): List<Map<String, Any>> {
-        val t = trades.filter { it.asset == asset && timeFrame.contains(it.time) }
+        val t = trades.filter { it.asset == asset && timeframe.contains(it.time) }
         val d = mutableListOf<Map<String, Any>>()
         for (trade in t) {
             val time = if (useTime) trade.time else trade.time.toString()
@@ -81,7 +81,7 @@ class PriceBarChart(
 
         val line = fromFeed()
         val lineData = gsonBuilder.create().toJson(line)
-        val timeFrame = if (line.size > 1) TimeFrame.parse(line.first()[0].toString(), line.last()[0].toString())
+        val timeframe = if (line.size > 1) Timeframe.parse(line.first()[0].toString(), line.last()[0].toString())
             .toPrettyString() else ""
 
         val marks = markPoints()
@@ -94,7 +94,7 @@ class PriceBarChart(
                     source: $lineData
                 },
                 title: {
-                    text: '${asset.symbol} $timeFrame'
+                    text: '${asset.symbol} $timeframe'
                 },
                 tooltip: {
                     trigger: 'axis',

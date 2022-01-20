@@ -34,7 +34,7 @@ internal class AlpacaFeedTestIT {
         val assets = feed.availableAssets
         val apple = assets.getBySymbol("AAPL")
         feed.subscribe(apple)
-        val actions = feed.filter<PriceAction>(TimeFrame.next(liveTestTime))
+        val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
             val action = actions.first()
@@ -51,7 +51,7 @@ internal class AlpacaFeedTestIT {
         System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
         feed.subscribe("AAPL")
-        val actions = feed.filter<PriceAction>(TimeFrame.next(liveTestTime))
+        val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
             val action = actions.first().second
@@ -71,7 +71,7 @@ internal class AlpacaFeedTestIT {
         feed.close()
     }
 
-    private inline fun <reified T : PriceAction> testResult(feed: AlpacaHistoricFeed, tf: TimeFrame) {
+    private inline fun <reified T : PriceAction> testResult(feed: AlpacaHistoricFeed, tf: Timeframe) {
         val tf2 = tf.extend(1.days)
         assertTrue(tf2.contains(feed.timeline.first()))
         assertTrue(tf2.contains(feed.timeline.last()))
@@ -87,8 +87,8 @@ internal class AlpacaFeedTestIT {
     fun testHistoricQuotes() {
         System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
-        val tf = TimeFrame.past(10.days) - 30.minutes
-        feed.retrieveQuotes("AAPL", timeFrame = tf)
+        val tf = Timeframe.past(10.days) - 30.minutes
+        feed.retrieveQuotes("AAPL", timeframe = tf)
         testResult<PriceQuote>(feed, tf)
     }
 
@@ -96,8 +96,8 @@ internal class AlpacaFeedTestIT {
     fun testHistoricTrades() {
         System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
-        val tf = TimeFrame.past(10.days) - 30.minutes
-        feed.retrieveTrades("AAPL", timeFrame = tf)
+        val tf = Timeframe.past(10.days) - 30.minutes
+        feed.retrieveTrades("AAPL", timeframe = tf)
         testResult<TradePrice>(feed, tf)
     }
 
@@ -105,8 +105,8 @@ internal class AlpacaFeedTestIT {
     fun testHistoricBars() {
         System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
-        val tf = TimeFrame.past(10.days) - 30.minutes
-        feed.retrieveBars("AAPL", timeFrame = tf)
+        val tf = Timeframe.past(10.days) - 30.minutes
+        feed.retrieveBars("AAPL", timeframe = tf)
         testResult<PriceBar>(feed, tf)
     }
 
@@ -116,7 +116,7 @@ internal class AlpacaFeedTestIT {
         val feed = AlpacaLiveFeed(autoConnect = false)
         feed.connect()
         feed.subscribeAll()
-        val actions = feed.filter<PriceAction>(TimeFrame.next(liveTestTime))
+        val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
             val action = actions.first().second

@@ -19,7 +19,7 @@ package org.roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
@@ -84,7 +84,7 @@ object TestData {
     }
 
     fun getRunInfo(): RunInfo {
-        return RunInfo("run-1", 1, 10, Instant.now(), TimeFrame.INFINITY, RunPhase.MAIN)
+        return RunInfo("run-1", 1, 10, Instant.now(), Timeframe.INFINITY, RunPhase.MAIN)
     }
 
 

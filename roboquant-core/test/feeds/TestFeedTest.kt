@@ -21,12 +21,12 @@ import org.junit.Test
 import kotlin.test.*
 import org.roboquant.TestData
 import org.roboquant.common.Background
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.test.TestLiveFeed
 import org.roboquant.feeds.test.TestHistoricFeed
 
-fun play(feed: Feed, timeFrame: TimeFrame = TimeFrame.INFINITY): EventChannel {
-    val channel = EventChannel(timeFrame = timeFrame)
+fun play(feed: Feed, timeframe: Timeframe = Timeframe.INFINITY): EventChannel {
+    val channel = EventChannel(timeframe = timeframe)
 
     Background.ioJob {
         feed.play(channel)

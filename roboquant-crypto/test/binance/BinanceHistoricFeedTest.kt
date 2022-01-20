@@ -17,7 +17,7 @@
 package org.roboquant.binance
 
 import org.junit.Test
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.common.days
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -28,8 +28,8 @@ internal class BinanceHistoricFeedTest {
     fun test() {
         System.getProperty("TEST_BINANCE") ?: return
         val feed = BinanceHistoricFeed()
-        val tf = TimeFrame.past(100.days)
-        feed.retrieve("BTC-BUSD", timeFrame = tf)
+        val tf = Timeframe.past(100.days)
+        feed.retrieve("BTC-BUSD", timeframe = tf)
         assertEquals(1, feed.assets.size)
         assertTrue(feed.availableAssets.isNotEmpty())
     }

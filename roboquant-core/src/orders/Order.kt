@@ -66,7 +66,7 @@ abstract class Order(val asset: Asset) : Cloneable {
     companion object {
 
         // Counter for unique order id
-        private var ID = 0L
+        internal var ID = 0L
 
         private fun getId(): Long {
             synchronized(ID) {

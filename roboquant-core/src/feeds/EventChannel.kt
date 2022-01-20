@@ -19,20 +19,20 @@ package org.roboquant.feeds
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import org.roboquant.common.Logging
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import java.util.logging.Logger
 
 /**
  * Wrapper around a [Channel] for communicating an [Event] of a [Feed]. It uses asynchronous communication
  * so the producing and receiving parts are decoupled. It has built in support to restrict the events
- * that are being send to a predefined [TimeFrame].
+ * that are being send to a predefined [Timeframe].
  *
  * @param capacity The capacity of the channel in the number of events it can store before blocking the sender
- * @property timeFrame Limit the events to this timeframe only
+ * @property timeframe Limit the events to this timeframe only
  * @constructor
  *
  */
-open class EventChannel(capacity: Int = 100, val timeFrame: TimeFrame = TimeFrame.INFINITY) {
+open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timeframe.INFINITY) {
 
     private val channel = Channel<Event>(capacity)
     private val logger: Logger = Logging.getLogger(EventChannel::class)
@@ -49,15 +49,15 @@ open class EventChannel(capacity: Int = 100, val timeFrame: TimeFrame = TimeFram
      * @param event
      */
     fun offer(event: Event) {
-        if (timeFrame.contains(event.time)) {
+        if (timeframe.contains(event.time)) {
             while (!channel.trySend(event).isSuccess) {
                 val dropped = channel.tryReceive().getOrNull()
                 if (dropped !== null)
                     logger.info { "dropped event for time ${dropped.time}" }
             }
         } else {
-            if (event.time >= timeFrame.end) {
-                logger.fine { "Offer ${event.time} after $timeFrame, closing channel" }
+            if (event.time >= timeframe.end) {
+                logger.fine { "Offer ${event.time} after $timeframe, closing channel" }
                 channel.close()
                 done = true
                 // throw ClosedSendChannelException("Out of time")
@@ -69,17 +69,17 @@ open class EventChannel(capacity: Int = 100, val timeFrame: TimeFrame = TimeFram
 
 
     /**
-     * Send an event. If the event is before the time frame linked to this channel it will be
-     * ignored. And if the event is after the time frame, the channel will be closed.
+     * Send an event. If the event is before the timeframe linked to this channel it will be
+     * ignored. And if the event is after the timeframe, the channel will be closed.
      *
      * @param event
      */
     suspend fun send(event: Event) {
-        if (timeFrame.contains(event.time)) {
+        if (timeframe.contains(event.time)) {
             channel.send(event)
         } else {
-            if (event.time >= timeFrame.end) {
-                logger.fine { "Send ${event.time} after $timeFrame, closing channel" }
+            if (event.time >= timeframe.end) {
+                logger.fine { "Send ${event.time} after $timeframe, closing channel" }
                 channel.close()
                 done = true
                 // throw ClosedSendChannelException("Out of time")
@@ -90,9 +90,9 @@ open class EventChannel(capacity: Int = 100, val timeFrame: TimeFrame = TimeFram
     suspend fun receive(): Event {
         while (true) {
             val event = channel.receive()
-            timeFrame.contains(event.time) && return event
-            if (event.time >= timeFrame.end) {
-                logger.fine { "Received ${event.time} after $timeFrame, closing channel" }
+            timeframe.contains(event.time) && return event
+            if (event.time >= timeframe.end) {
+                logger.fine { "Received ${event.time} after $timeframe, closing channel" }
                 channel.close()
                 done = true
                 throw ClosedReceiveChannelException("Out of time")

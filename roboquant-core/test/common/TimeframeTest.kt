@@ -25,11 +25,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class TimeFrameTest {
+internal class TimeframeTest {
 
     @Test
     fun toDays() {
-        val tf = TimeFrame.fromYears(1900, 2000)
+        val tf = Timeframe.fromYears(1900, 2000)
         val timeline1 = tf.toDays()
         val timeline2 = tf.toDays(excludeWeekends = true)
         assertTrue(timeline1.size > timeline2.size)
@@ -37,7 +37,7 @@ internal class TimeFrameTest {
 
     @Test
     fun beforeAfter() {
-        val tf = TimeFrame.fromYears(1900, 2000)
+        val tf = Timeframe.fromYears(1900, 2000)
         val timeline = tf.toDays()
         val first = timeline.first()
         val last = timeline.last()
@@ -49,7 +49,7 @@ internal class TimeFrameTest {
     fun split() {
         val i1 = Instant.parse("1980-01-01T09:00:00Z")
         val i2 = Instant.parse("2000-01-01T09:00:00Z")
-        val tf = TimeFrame(i1, i2)
+        val tf = Timeframe(i1, i2)
         val subFrames = tf.split(Period.ofYears(2))
         assertEquals(10, subFrames.size)
     }
@@ -57,19 +57,19 @@ internal class TimeFrameTest {
 
     @Test
     fun constants() {
-        val tf2 = TimeFrame.INFINITY
-        assertEquals(TimeFrame.INFINITY, tf2)
+        val tf2 = Timeframe.INFINITY
+        assertEquals(Timeframe.INFINITY, tf2)
 
-        assertTrue(TimeFrame.blackMonday1987.isSingleDay(ZoneId.of("America/New_York")))
-        assertFalse(TimeFrame.coronaCrash2020.isSingleDay())
-        assertTrue(TimeFrame.flashCrash2010.isSingleDay(ZoneId.of("America/New_York")))
-        assertFalse(TimeFrame.financialCrisis2008.isSingleDay())
-        assertFalse(TimeFrame.tenYearBullMarket2009.isSingleDay())
+        assertTrue(Timeframe.blackMonday1987.isSingleDay(ZoneId.of("America/New_York")))
+        assertFalse(Timeframe.coronaCrash2020.isSingleDay())
+        assertTrue(Timeframe.flashCrash2010.isSingleDay(ZoneId.of("America/New_York")))
+        assertFalse(Timeframe.financialCrisis2008.isSingleDay())
+        assertFalse(Timeframe.tenYearBullMarket2009.isSingleDay())
     }
 
     @Test
     fun print() {
-        val tf2 = TimeFrame.INFINITY
+        val tf2 = Timeframe.INFINITY
 
         val s2 = tf2.toPrettyString()
         assertTrue(s2.isNotBlank())
@@ -78,7 +78,7 @@ internal class TimeFrameTest {
 
     @Test
     fun creation() {
-        val tf = TimeFrame.next(1.minutes)
+        val tf = Timeframe.next(1.minutes)
         assertEquals(60, tf.end.epochSecond - tf.start.epochSecond)
 
         val tf2 = tf.extend(1.days)
@@ -89,7 +89,7 @@ internal class TimeFrameTest {
 
     @Test
     fun inclusive() {
-        val tf = TimeFrame.fromYears(2018, 2019)
+        val tf = Timeframe.fromYears(2018, 2019)
         assertFalse(tf.contains(tf.end))
 
         val tf2 = tf.inclusive
@@ -101,11 +101,11 @@ internal class TimeFrameTest {
 
     @Test
     fun annualize() {
-        val tf = TimeFrame.fromYears(2019, 2019)
+        val tf = Timeframe.fromYears(2019, 2019)
         val x = tf.annualize(0.1)
         assertTrue(x - 0.1 < 0.01)
 
-        val tf2 = TimeFrame.fromYears(2019, 2020)
+        val tf2 = Timeframe.fromYears(2019, 2020)
         val y = tf2.annualize(0.1)
         assertTrue(0.05 - y < 0.1)
     }

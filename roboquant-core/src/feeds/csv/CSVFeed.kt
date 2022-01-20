@@ -60,7 +60,7 @@ class CSVFeed(
         }
 
         val duration = Instant.now().toEpochMilli() - startTime
-        logger.info { "Constructed feed with ${timeline.size} events, ${assets.size} assets and time-frame of [${timeFrame.toPrettyString()}] in ${duration}ms" }
+        logger.info { "Constructed feed with ${timeline.size} events, ${assets.size} assets and timeframe of [${timeframe.toPrettyString()}] in ${duration}ms" }
     }
 
 

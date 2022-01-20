@@ -16,7 +16,7 @@
 
 package org.roboquant.oanda
 
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.common.seconds
 import org.roboquant.feeds.OrderBook
 import org.roboquant.feeds.PriceAction
@@ -37,7 +37,7 @@ internal class OANDAFeedTest {
         val feed = OANDALiveFeed()
         feed.subscribeOrderBook(*symbols)
         assertEquals(3, feed.assets.size)
-        val actions = feed.filter<PriceAction>(TimeFrame.next(liveTestTime))
+        val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
             val action = actions.first()
@@ -52,11 +52,11 @@ internal class OANDAFeedTest {
     fun historicTest() {
         System.getenv("TEST_OANDA") ?: return
         val feed = OANDAHistoricFeed()
-        val tf = TimeFrame.parse("2020-03-05", "2020-03-06")
-        feed.retrieveCandles(*symbols, timeFrame = tf)
+        val tf = Timeframe.parse("2020-03-05", "2020-03-06")
+        feed.retrieveCandles(*symbols, timeframe = tf)
         assertEquals(3, feed.assets.size)
 
-        val tf2 = TimeFrame.parse("2020-03-04", "2020-03-07")
+        val tf2 = Timeframe.parse("2020-03-04", "2020-03-07")
         assertTrue(tf2.contains(feed.timeline.first()))
         assertTrue(tf2.contains(feed.timeline.last()))
         feed.close()

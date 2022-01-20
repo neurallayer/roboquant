@@ -28,7 +28,7 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.avro.io.DatumWriter
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
-import org.roboquant.common.TimeFrame
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.*
 import java.io.File
 
@@ -59,17 +59,17 @@ object AvroUtil {
     /**
      * Record the price actions in a feed and store them in a avro file that can be used with [AvroFeed].
      */
-    fun record(feed: Feed, fileName: String, timeFrame: TimeFrame = TimeFrame.INFINITY, compressionLevel: Int = 1) =
+    fun record(feed: Feed, fileName: String, timeframe: Timeframe = Timeframe.INFINITY, compressionLevel: Int = 1) =
         runBlocking {
 
-            val channel = EventChannel(timeFrame = timeFrame)
+            val channel = EventChannel(timeframe = timeframe)
             val file = File(fileName)
             val schema = Schema.Parser().parse(schemaDef)
             val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
             val dataFileWriter = DataFileWriter(datumWriter)
             dataFileWriter.setCodec(CodecFactory.deflateCodec(compressionLevel))
 
-            val tf = feed.timeFrame.intersect(timeFrame)
+            val tf = feed.timeframe.intersect(timeframe)
             dataFileWriter.setMeta("roboquant.start", tf.start.toEpochMilli())
             dataFileWriter.setMeta("roboquant.end", tf.end.toEpochMilli())
 

@@ -53,7 +53,7 @@ internal class ProgressBar {
         if (now < nextUpdate) return
         nextUpdate = now.plusMillis(500)
 
-        val totalDuration = info.timeFrame.duration
+        val totalDuration = info.timeframe.duration
         var percent = ((info.duration.seconds * 100.0 / totalDuration.seconds)).roundToInt()
         percent = min(percent, 100)
 
@@ -63,7 +63,7 @@ internal class ProgressBar {
 
         if (post.isEmpty()) {
             post = "${info.run} | episode=${info.episode} | phase=${info.phase} "
-            pre = "${info.timeFrame.toPrettyString()} | "
+            pre = "${info.timeframe.toPrettyString()} | "
         }
 
         draw(percent)
