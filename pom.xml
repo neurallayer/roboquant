@@ -69,10 +69,10 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-        <!-- repository>
+        <repository>
             <id>kotlin.dev</id>
             <url>https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/</url>
-        </repository -->
+        </repository>
     </repositories>
 
     <distributionManagement>

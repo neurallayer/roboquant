@@ -22,11 +22,11 @@ import org.roboquant.metrics.MetricResults
 /**
  * Silent logger ignores all metrics results and only counts the number of invocations.
  * Used mainly during unit tests to suppress the output or memory usage of logging.
- *
  */
 class SilentLogger : MetricsLogger {
 
     var events = 0L
+        private set
 
     override fun log(results: MetricResults, info: RunInfo) {
         events += 1

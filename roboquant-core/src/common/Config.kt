@@ -23,7 +23,6 @@ import org.roboquant.brokers.SingleCurrencyOnly
 import org.roboquant.common.Config.baseCurrency
 import org.roboquant.common.Config.defaultZoneId
 import org.roboquant.common.Config.exchangeRates
-import org.roboquant.common.Config.seed
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -31,6 +30,7 @@ import java.time.ZoneId
 import java.util.*
 import java.util.logging.Logger
 import kotlin.io.path.div
+import kotlin.random.Random
 
 /**
  * Configuration for roboquant that contains access to environment properties and has several global properties
@@ -39,7 +39,6 @@ import kotlin.io.path.div
  * - base cuurency [baseCurrency]
  * - the default time zone [defaultZoneId]
  * - exchange rates [exchangeRates]
- * - random seed [seed]
  *
  */
 object Config {
@@ -91,9 +90,9 @@ object Config {
     var baseCurrency: Currency = Currency.USD
 
     /**
-     * Default seed to use, typically used by methods as a default value when no other seed is provided
+     * Default random to use, typically used by methods as a default value when other random generator is provided
      */
-    var seed = 42L
+    var random: Random = Random(42L)
 
     /**
      * ASCII art welcome greeting including runtime info

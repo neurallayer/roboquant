@@ -81,12 +81,12 @@ internal class RoboquantTest {
         roboquant.run(feed, train, test)
         val data = logger.getMetric("progress.events")
         assertEquals(2, data.map { it.info.phase }.distinct().size)
-        assertEquals(1, logger.getRuns().size)
+        assertEquals(1, logger.runs.size)
     }
 
 
     @Test
-    fun simple_nonblocking() = runBlocking {
+    fun runAsync() = runBlocking {
         val feed = RandomWalk.lastYears()
 
         val strategy = EMACrossover()
@@ -113,14 +113,12 @@ internal class RoboquantTest {
         val logger = MemoryLogger(showProgress = false)
         val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
         roboquant.run(feed)
-        var runs = logger.getRuns()
-        assertEquals(1, runs.size)
+        assertEquals(1, logger.runs.size)
         val lastHistory1 = logger.history.last
 
         roboquant.reset()
         roboquant.run(feed)
-        runs = logger.getRuns()
-        assertEquals(1, runs.size)
+        assertEquals(1, logger.runs.size)
         val lastHistory2 = logger.history.last
 
         assertEquals(lastHistory1, lastHistory2)

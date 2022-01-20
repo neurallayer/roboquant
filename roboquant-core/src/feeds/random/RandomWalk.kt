@@ -50,15 +50,15 @@ class RandomWalk(
     timeline: List<Instant>,
     nAssets: Int = 10,
     generateBars: Boolean = true,
-    seed: Long = Config.seed,
     minVolume: Int = 100_000,
     maxVolume: Int = 1000_000,
     maxDayRange: Double = 4.0,
     symbolLength: Int = 4,
-    template: Asset = Asset("TEMPLATE")
+    template: Asset = Asset("TEMPLATE"),
+    private val random: Random = Config.random
 ) : HistoricPriceFeed() {
 
-    private val random = Random(seed)
+
 
     init {
 

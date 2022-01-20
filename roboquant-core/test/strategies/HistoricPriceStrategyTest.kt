@@ -23,7 +23,7 @@ import kotlin.test.*
 
 internal class HistoricPriceStrategyTest {
 
-    private class SubClass : HistoricPriceStrategy(10) {
+    private class MySubClass : HistoricPriceStrategy(10) {
         override fun generate(asset: Asset, data: DoubleArray): Signal? {
             return null
         }
@@ -31,7 +31,7 @@ internal class HistoricPriceStrategyTest {
 
     @Test
     fun test() {
-        val c = SubClass()
+        val c = MySubClass()
         val event = TestData.event()
         val signals = c.generate(event)
         assertTrue(signals.isEmpty())

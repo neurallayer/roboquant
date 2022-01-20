@@ -22,7 +22,10 @@ import org.roboquant.metrics.MetricResults
 
 /**
  * Interface that a metrics logger will need to implement. It is called by roboquant after metrics have been calculated
- * to store or log them.
+ * to store and/or log them.
+ *
+ * A metrics logger also extends the [Component] interface. This interface exposes [Component.getMetrics], hwowever this
+ * method should return metrics about the Component and not the logged metrics.
  */
 interface MetricsLogger : Component {
 
@@ -33,7 +36,8 @@ interface MetricsLogger : Component {
     fun log(results: MetricResults, info: RunInfo)
 
     /**
-     * This is optional to implement
+     * Get all the logged entries for a specific metric. This is optional to implement since not all loggers store
+     * the metrics. Use [metricNames] to see which metrics are available.
      */
     fun getMetric(name: String) : List<MetricsEntry> = listOf()
 

@@ -16,6 +16,7 @@
 
 package org.roboquant.feeds
 
+import org.roboquant.common.Config
 import org.roboquant.common.TimeFrame
 import org.roboquant.common.split
 import java.time.Instant
@@ -44,17 +45,18 @@ interface HistoricFeed : AssetFeed {
         get() = if (timeline.isEmpty()) TimeFrame.INFINITY else TimeFrame(timeline.first(), timeline.last().plusMillis(1))
 
     /**
-     * Draw a random sample of event size from the historic feed and return the timeframe that represents this sample
+     * Draw a random sampled time-frame of a [size] from the historic feed and return the timeframe that represents this sample
      *
-     * @param size Number of events to include
-     * @param random Random generator to use
+     * @param size Number of events that the timeframe should contain
+     * @param random Random generator to use, if none provided will use [Config.random]
      * @return
      */
-    fun sample(size: Int, random: Random = Random): TimeFrame {
+    fun sample(size: Int, random: Random = Config.random) : TimeFrame {
         val tl = timeline
         val start = random.nextInt(tl.size - size)
         return TimeFrame(tl[start], tl[start + size])
     }
+
 
     /**
      * Split the timeline of the feed in number of equal periods

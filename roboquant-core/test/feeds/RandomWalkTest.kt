@@ -65,7 +65,6 @@ internal class RandomWalkTest {
 
         val tf3 = feed.sample(10)
         assertFalse(tf3.isSingleDay())
-
     }
 
     @Test

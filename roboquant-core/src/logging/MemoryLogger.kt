@@ -96,7 +96,8 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
     /**
      * Get all the recorded runs in this logger
      */
-    fun getRuns() = history.map { it.info.run }.distinct().sorted()
+    val runs
+        get() = history.map { it.info.run }.distinct().sorted()
 
     /**
      * Get available episodes for a specific [run]

@@ -22,7 +22,6 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import kotlin.test.assertEquals
-import kotlin.test.assertIs
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
@@ -36,7 +35,7 @@ internal class ExchangeTest {
         Exchange.addInstance("DUMMY", "Europe/Paris")
         val exchange2 = Exchange.getInstance("DUMMY")
         assertEquals("DUMMY", exchange2.exchangeCode)
-        assertIs<ZoneId>(exchange2.zoneId)
+        assertEquals(ZoneId.of("Europe/Paris") ,exchange2.zoneId)
         assertTrue(exchange2 in Exchange.exchanges)
 
         val now = Instant.now()
@@ -46,7 +45,7 @@ internal class ExchangeTest {
         val exchange3 = Exchange.getInstance("DUMMY2")
         assertNotEquals(exchange2, exchange3)
 
-        val d = LocalDate.now()
+        val d = LocalDate.parse("2021-02-02")
         val ct = exchange2.getClosingTime(d)
         val ot = exchange2.getOpeningTime(d)
         assertTrue(ct > ot)

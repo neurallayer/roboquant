@@ -152,7 +152,7 @@ class Exchange private constructor(
          * List of all the currently registered exchanges
          */
         val exchanges
-            get() = instances.values.toList()
+            get() = instances.values
 
 
     }

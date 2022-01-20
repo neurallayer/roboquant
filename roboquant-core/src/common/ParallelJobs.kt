@@ -24,6 +24,14 @@ class ParallelJobs {
     }
 
     /**
+     * Wait for all the jobs to finish, using blocking mode.
+     */
+    fun joinAllBlocking() = runBlocking {
+        jobs.joinAll()
+        jobs.clear()
+    }
+
+    /**
      * How many jobs are there
      */
     val size
