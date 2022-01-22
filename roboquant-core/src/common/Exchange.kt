@@ -81,6 +81,14 @@ class Exchange private constructor(
         return exchangeCode
     }
 
+    /**
+     * IS the provided time a trading time
+     */
+    fun isTrading(time: Instant): Boolean {
+        val date = LocalDate.from(time.atZone(zoneId))
+        return getTradingHours(date).contains(time)
+    }
+
     companion object {
 
         private val instances = ConcurrentHashMap<String, Exchange>()
@@ -105,11 +113,12 @@ class Exchange private constructor(
             currencyCode: String = "USD",
             opening: String = "09:30",
             closing: String = "16:00"
-        ) {
+        ): Exchange {
             val zoneId = ZoneId.of(zone)
             val currency = Currency.getInstance(currencyCode)
             val instance = Exchange(exchangeCode, zoneId, currency, LocalTime.parse(opening), LocalTime.parse(closing))
             instances[exchangeCode] = instance
+            return instance
         }
 
         init {

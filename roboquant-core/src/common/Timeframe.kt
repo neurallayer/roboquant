@@ -24,9 +24,11 @@ import kotlin.math.pow
 
 
 /**
- * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time (exclusive). The
- * timeframe instance is immutable.  * Like all time related data in roboquant, it uses the [Instant] type to define
+ * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time (exclusive). A
+ * timeframe instance is immutable.  Like all time related logic in roboquant, it uses the [Instant] type to define
  * a moment in time, in order to avoid potential timezone inconsistencies.
+ *
+ * The internal logic uses milliseconds as the the smallest difference between two times.
  *
  * It can be used to limit the duration of a run to that specific timeframe, for example in a walk-forward. It can also
  * serve to limit a live-feed to a certain duration.
@@ -34,7 +36,7 @@ import kotlin.math.pow
 data class Timeframe(val start: Instant, val end: Instant) {
 
     /**
-     * Duration of TimeFrame
+     * Duration of timeframe
      */
     val duration: Duration
         get() = Duration.between(start, end)
@@ -57,29 +59,28 @@ data class Timeframe(val start: Instant, val end: Instant) {
         // predefined Time-frames for significant events in history of trading
 
         /**
-         * Black Monday is the name given to the global, sudden, severe, and largely unexpected stock market
-         * crash on October 19, 1987. All of the twenty-three major world markets experienced a sharp decline.
+         * Black Monday is the name given to the global, and largely unexpected stock market crash on October 19, 1987.
+         * In some timezones it is also known as Black Tuesday.
          */
         val blackMonday1987
             get() = parse("1987-10-19T14:30:00Z", "1987-10-19T21:00:00Z")
 
         /**
-         * The Financial Crisis of 2008 was a historic systemic risk event. Prominent financial institutions collapsed,
-         * credit markets seized up, stock markets plunged, and the world entered a severe recession.
+         * The Financial Crisis of 2008 was a historic systemic risk event. Several financial institutions collapsed,
+         * stock markets plunged, and the world entered a severe recession.
          */
         val financialCrisis2008
             get() = parse("2008-09-08T00:00:00Z", "2009-03-10T00:00:00Z")
 
         /**
-         * After the finincial crisis of 2008-2009, a ten year period of mostly a bullish market started
+         * After the finincial crisis of 2008-2009, a ten year period of mostly a bullish market started.
          */
         val tenYearBullMarket2009
             get() = parse("2009-03-10T00:00:00Z", "2019-03-10T00:00:00Z")
 
         /**
          * The 2010 flash crash is the market crash that occurred on May 6, 2010. During the crash, leading
-         * US stock indices tumbled but also partially rebounded in less than an hour. This was a day with high
-         * volatilty accross asset classes.
+         * US stock indices tumbled but also partially rebounded in less than an hour.
          */
         val flashCrash2010
             get() = parse("2010-05-06T19:30:00Z", "2010-05-06T20:15:00Z")
@@ -141,7 +142,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
     }
 
     /**
-     * A timeframe inclusive of the [end] value
+     * Return a timeframe inclusive of the [end] value.
      */
     val inclusive
         get() = Timeframe(start, end + 1)
@@ -206,7 +207,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
     /**
      * Convert a timeframe to a timeline of individual days, optionally [excludeWeekends]
      */
-    fun toDays(excludeWeekends: Boolean = false, zoneId: ZoneId = ZoneOffset.UTC): List<Instant> {
+    fun toDays(excludeWeekends: Boolean = false, zoneId: ZoneId = ZoneOffset.UTC): Timeline {
         val timeline = mutableListOf<Instant>()
         var offset = start
         val oneDay = Period.ofDays(1)
@@ -223,6 +224,24 @@ data class Timeframe(val start: Instant, val end: Instant) {
         return timeline
     }
 
+    /**
+     * Convert a timeframe to a timeline of Period sized [steps][step] and only include times according to the
+     * provided [exchange] trading hours.
+     *
+     * Usage:
+     *
+     *      timeframe.toTimeline(1.days, Exchange.AEB)
+     */
+    fun toTimeline(step: Period, exchange: Exchange = Exchange.DEFAULT): Timeline {
+        val timeline = mutableListOf<Instant>()
+        var time = start
+        while (time < end) {
+            if (exchange.isTrading(time)) timeline.add(time)
+            time += step
+        }
+        return timeline
+    }
+
 
     /**
      * Convert a timeframe to a timeline (is a list of Instant values) with one minute intervals. Optionally specify a
@@ -234,7 +253,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
         zoneId: ZoneId = ZoneOffset.UTC,
         startTime: LocalTime = LocalTime.parse("09:30:00"),
         endTime: LocalTime = LocalTime.parse("16:00:00")
-    ): List<Instant> {
+    ): Timeline {
         val timeline = mutableListOf<Instant>()
         var offset = start
         val weekend = listOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
@@ -259,6 +278,9 @@ data class Timeframe(val start: Instant, val end: Instant) {
      * Split a timeframe into two parts, one for training and one for test using the provided [testSize]
      * for determining the size of test. [testSize] should be a number between 0.0 and 1.0, for example
      * 0.25 means use last 25% as test timeframe.
+     *
+     * It return a [Pair] of timeframes, the first one being the training timeframe and the second being the
+     * test timefame.
      */
     fun splitTrainTest(testSize: Double): Pair<Timeframe, Timeframe> {
         assert(testSize < 1.0)
@@ -291,7 +313,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Provide a nicer string representation of the timeframe
+     * Provide a string representation of the timeframe
      */
     override fun toString(): String {
         return "[$start - $end]"
@@ -325,10 +347,10 @@ data class Timeframe(val start: Instant, val end: Instant) {
 
 
     /**
-     * Annualize a [percentage] based on the duration of this timeframe. So if I make x percent profit
-     * during a timeframe, what would be my profit per year.
+     * Annualize a [percentage] based on the duration of this timeframe. So given x percent profit
+     * during a timeframe, what would be the profit per year.
      *
-     * [percentage] is expected to be provided as a fraction, so 1% is 0.01
+     * [percentage] is expected to be provided as a fraction, for example 1% is 0.01
      */
     fun annualize(percentage: Double): Double {
         val period = duration.toMillis()

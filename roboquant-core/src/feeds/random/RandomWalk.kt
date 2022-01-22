@@ -47,7 +47,7 @@ import kotlin.random.asJavaRandom
  *
  */
 class RandomWalk(
-    timeline: List<Instant>,
+    timeline: Timeline,
     nAssets: Int = 10,
     generateBars: Boolean = true,
     minVolume: Int = 100_000,
@@ -113,7 +113,7 @@ class RandomWalk(
      */
     private fun generateBars(
         asset: Asset,
-        timeline: List<Instant>,
+        timeline: Timeline,
         minVolume: Int,
         maxVolume: Int,
         maxDayRange: Double
@@ -144,7 +144,7 @@ class RandomWalk(
     /**
      * Generate random single price actions
      */
-    private fun generateSinglePrice(asset: Asset, timeline: List<Instant>, minVolume: Int, maxVolume: Int) {
+    private fun generateSinglePrice(asset: Asset, timeline: Timeline, minVolume: Int, maxVolume: Int) {
         var prevPrice = 100.0
         val javaRandom = random.asJavaRandom()
         val plusVolume = maxVolume - minVolume

@@ -24,6 +24,7 @@ import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.alpaca.AlpacaLiveFeed
 import org.roboquant.alpaca.AlpacaPeriod
 import org.roboquant.common.*
+import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.iex.Range
@@ -74,11 +75,14 @@ fun allAlpaca() {
 fun alpacaHistoricFeed() {
     val feed = AlpacaHistoricFeed()
     val tf = Timeframe.past(100.days) - 15.minutes
-    feed.retrieveBars("AAPL", "IBM", timeframe = tf, period = AlpacaPeriod.DAY)
-    val strategy = EMACrossover.midTerm()
-    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
-    roboquant.run(feed)
-    roboquant.broker.account.summary().log()
+    tf.split(1.days).forEach {
+        feed.retrieveBars("AAPL", "IBM", timeframe = it, period = AlpacaPeriod.MINUTE)
+        println(feed.timeline.size)
+        println(feed.timeframe)
+        Thread.sleep(1000)
+    }
+
+    AvroUtil.record(feed, "/Users/peter/tmp/alpaca.avro")
 }
 
 fun alpacaFeed() {
@@ -138,7 +142,7 @@ fun feedYahoo() {
 
 
 fun main() {
-    when ("OANDA_PAPER") {
+    when ("ALPACA_HISTORIC_FEED") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()

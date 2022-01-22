@@ -56,23 +56,19 @@ interface Feed : Closeable {
 }
 
 /**
- * Implementations of AssetFeed need to provide the assets they contain.
+ * Implementations of AssetFeed need to provide the [assets] it contains.
  *
- * @constructor Create empty Asset feed
  */
 interface AssetFeed : Feed {
 
     /**
-     * Unique collection of assets contained in the feed
+     * Unique sorted collection of assets contained in the feed
      */
     val assets: SortedSet<Asset>
 
     /**
-     * Find an asset by its symbol name. If there are multiple assets with the same symbol name,
+     * Find an asset by its [symbol] name. If there are multiple assets with the same symbol name,
      * the first one will be returned. If no asset is found, exception will be thrown
-     *
-     * @param symbol
-     * @return The found asset or an exception
      */
     fun find(symbol: String): Asset = assets.getBySymbol(symbol)
 }

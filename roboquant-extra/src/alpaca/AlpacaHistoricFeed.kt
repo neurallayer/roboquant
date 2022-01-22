@@ -46,12 +46,16 @@ class AlpacaHistoricFeed(
     private val logger = Logging.getLogger(AlpacaHistoricFeed::class)
     private val zoneId: ZoneId = ZoneId.of("America/New_York")
 
-
+    /**
+     * All available assets that can be retrieved. See [assets] for the assets that have already been retreived.
+     */
     val availableAssets by lazy {
         AlpacaConnection.getAvailableAssets(alpacaAPI)
     }
 
-
+    /**
+     * Retrieve for a number of [symbols] and specified [timeframe] the [PriceQuote].
+     */
     fun retrieveQuotes(vararg symbols: String, timeframe: Timeframe) {
         for (symbol in symbols) {
             val resp = alpacaAPI.stockMarketData().getQuotes(
@@ -61,7 +65,7 @@ class AlpacaHistoricFeed(
                 null,
                 null,
             )
-
+            resp.quotes == null && continue
             val asset = Asset(symbol)
             for (quote in resp.quotes) {
                 val action = PriceQuote(asset, quote.askPrice, quote.askSize.toDouble(), quote.bidPrice, quote.bidSize.toDouble())
@@ -72,6 +76,9 @@ class AlpacaHistoricFeed(
         }
     }
 
+    /**
+     * Retrieve for a number of [symbols] and specified [timeframe] the [TradePrice].
+     */
     fun retrieveTrades(vararg symbols: String, timeframe: Timeframe) {
         for (symbol in symbols) {
             val resp = alpacaAPI.stockMarketData().getTrades(
@@ -82,6 +89,7 @@ class AlpacaHistoricFeed(
                 null,
             )
 
+            resp.trades == null && continue
             val asset = Asset(symbol)
             for (trade in resp.trades) {
                 val action = TradePrice(asset, trade.price, trade.size.toDouble())
@@ -92,7 +100,9 @@ class AlpacaHistoricFeed(
         }
     }
 
-
+    /**
+     * Retrieve for a number of [symbols] and specified [timeframe] the [PriceBar].
+     */
     fun retrieveBars(vararg symbols: String, timeframe: Timeframe, period: AlpacaPeriod = AlpacaPeriod.DAY) {
         for (symbol in symbols) {
             val resp = alpacaAPI.stockMarketData().getBars(
@@ -106,6 +116,7 @@ class AlpacaHistoricFeed(
                 BarAdjustment.ALL,
                 BarFeed.IEX
             )
+            resp.bars == null && continue
 
             val asset = Asset(symbol)
             for (bar in resp.bars) {

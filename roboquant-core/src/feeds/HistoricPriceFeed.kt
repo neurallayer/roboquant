@@ -16,6 +16,7 @@
 
 package org.roboquant.feeds
 
+import org.roboquant.common.Timeline
 import java.time.Instant
 import java.util.*
 
@@ -27,7 +28,7 @@ open class HistoricPriceFeed : HistoricFeed {
 
     private val events = TreeMap<Instant, MutableList<PriceAction>>()
 
-    override val timeline: List<Instant>
+    override val timeline: Timeline
         get() = events.keys.toList()
 
     override val assets

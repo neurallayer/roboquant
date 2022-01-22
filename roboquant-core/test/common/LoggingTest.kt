@@ -23,18 +23,29 @@ import kotlin.test.*
 class LoggingTest {
 
     @Test
-    fun test() {
+    fun testBasic() {
+        Logging.setDefaultLevel(Level.INFO)
         val logger = Logging.getLogger("org.roboquant.test")
         assertEquals("org.roboquant.test", logger.name)
         assertEquals(Level.INFO, logger.level)
+    }
+
+
+    @Test
+    fun testSetLevel() {
+        Logging.setDefaultLevel(Level.INFO)
+        val logger = Logging.getLogger("org.roboquant.test")
 
         Logging.setLevel(Level.WARNING)
         assertEquals(Level.WARNING, logger.level)
-        Logging.setLevel(Level.WARNING)
+        Logging.setLevel(Level.INFO)
+    }
 
+    @Test
+    fun testDefaultLevel() {
         Logging.setDefaultLevel(Level.FINE)
-        val logger2 = Logging.getLogger("org.roboquant.test")
-        assertEquals(Level.FINE, logger2.level)
+        val logger = Logging.getLogger("org.roboquant.test2")
+        assertEquals(Level.FINE, logger.level)
         Logging.setDefaultLevel(Level.INFO)
     }
 

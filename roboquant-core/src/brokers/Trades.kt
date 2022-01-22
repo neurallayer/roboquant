@@ -17,7 +17,6 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.*
-import java.time.Instant
 import java.time.Period
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -48,7 +47,7 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
         get() = map { it.asset }.distinct()
 
     // What is the combined timeline for the trades
-    val timeline: List<Instant>
+    val timeline: Timeline
         get() = map { it.time }.distinct().sorted()
 
     /**

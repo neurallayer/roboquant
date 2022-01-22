@@ -21,14 +21,17 @@ internal class SampleNotebookTest {
 
     private fun test(file: String) {
         System.getenv("TEST_NOTEBOOKS") ?: return
-        val c = NotebookTester("roboquant")
+
+        // Make sure to remove potential random behavior
         Config.random = Random(42L)
-        Config.defaultZoneId = ZoneId.of("Europe/Amsterdam") // The one used for creating notebooks
+        Config.defaultZoneId = ZoneId.of("Europe/Amsterdam")
         Order.ID = 0L
+
+        // Get the file and validate it
         val path = TestData.dataDir() + "notebooks/$file.ipynb"
+        val c = NotebookTester("roboquant")
         c.validateNotebook(path)
     }
-
 
     @Test
     fun testFeedCharts() {
@@ -55,7 +58,6 @@ internal class SampleNotebookTest {
 
 private class NotebookTester(lib: String) : JupyterReplTestCase(ReplProvider.forLibrariesTesting(listOf(lib))) {
 
-
     /**
      * Execute the code cells in a notebook and validate the new output against the existing output in the notebook.
      * So it serves as a regression test if notebooks still produce the same output.
@@ -67,7 +69,6 @@ private class NotebookTester(lib: String) : JupyterReplTestCase(ReplProvider.for
         val notebook = JupyterParser.parse(notebookFile)
 
         for (cell in notebook.cells.filterIsInstance<CodeCell>()) {
-
             val cellResult = exec(cell.source)
             val result = if (cellResult is MimeTypedResult) cellResult.entries.first().value else cellResult.toString()
 
@@ -81,6 +82,5 @@ private class NotebookTester(lib: String) : JupyterReplTestCase(ReplProvider.for
         }
 
     }
-
 
 }

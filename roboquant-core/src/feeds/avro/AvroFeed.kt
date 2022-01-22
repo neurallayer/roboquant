@@ -21,10 +21,7 @@ package org.roboquant.feeds.avro
 import org.apache.avro.file.DataFileReader
 import org.apache.avro.generic.GenericDatumReader
 import org.apache.avro.generic.GenericRecord
-import org.roboquant.common.Asset
-import org.roboquant.common.Config
-import org.roboquant.common.Logging
-import org.roboquant.common.Timeframe
+import org.roboquant.common.*
 import org.roboquant.feeds.*
 import java.io.File
 import java.io.InputStream
@@ -62,7 +59,7 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
         get() = if (index.isEmpty()) _timeframe else super.timeframe
 
 
-    override val timeline: List<Instant>
+    override val timeline: Timeline
         get() = index.map { it.first }
 
 
