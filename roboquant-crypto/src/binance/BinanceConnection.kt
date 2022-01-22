@@ -39,13 +39,11 @@ internal object BinanceConnection {
 
     /**
      * get available assets
-     *
-     * TODO currently broken, seems to be a Binance problem
      */
-    fun retrieveAssets(api: BinanceApiClientFactory): List<Asset> {
+    fun retrieveAssets(api: BinanceApiClientFactory): Map<String, Asset> {
         val client = api.newRestClient()
-        return client.exchangeInfo.symbols.map {
-            binanceTemplate.copy(symbol = it.symbol, currencyCode = it.quoteAsset)
+        return client.exchangeInfo.symbols.associate {
+            it.symbol to binanceTemplate.copy(symbol = it.symbol, currencyCode = it.quoteAsset)
         }
     }
 

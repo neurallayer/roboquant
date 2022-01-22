@@ -62,4 +62,3 @@ fun Timeline.split(period: Period): List<Timeframe> {
 fun Timeline.split(size: Int): List<Timeframe> {
     return chunked(size).map { Timeframe(it.first(), it.last()) }
 }
-

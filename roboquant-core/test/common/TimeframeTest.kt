@@ -109,4 +109,11 @@ internal class TimeframeTest {
         val y = tf2.annualize(0.1)
         assertTrue(0.05 - y < 0.1)
     }
+
+    @Test
+    fun toTimeline() {
+        val tf = Timeframe.parse("2020-01-01T18:00:00Z","2021-12-31T18:00:00Z")
+        val timeline = tf.toTimeline(Period.ofDays(1))
+        assertTrue(timeline.size > 200)
+    }
 }

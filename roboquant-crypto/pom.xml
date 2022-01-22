@@ -69,10 +69,9 @@
         </dependency>
 
         <dependency>
-            <!-- strangely Binance doesn't publish the client library to Maven central, but someone else did -->
-            <groupId>tr.com.lucidcode</groupId>
+            <groupId>org.roboquant</groupId>
             <artifactId>binance-api-client</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

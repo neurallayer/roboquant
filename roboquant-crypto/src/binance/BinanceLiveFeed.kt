@@ -21,7 +21,6 @@ import com.binance.api.client.domain.event.CandlestickEvent
 import com.binance.api.client.domain.market.CandlestickInterval
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
-import org.roboquant.feeds.CryptoBuilder
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.PriceBar
@@ -46,7 +45,6 @@ class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private va
     private val closeables = mutableListOf<Closeable>()
     private val factory = BinanceConnection.getFactory(apiKey, secret)
 
-
     /**
      * Get the assets that has been subscribed to
      */
@@ -65,32 +63,31 @@ class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private va
 
 
     /**
-     * Subscribe to the [PriceBar] actions one or more currency pairs.
+     * Subscribe to the [PriceBar] actions for one or more symbols
      *
-     * @param currencyPairs the currency pairs you want to subscribe to
+     * @param symbols the currency pairs you want to subscribe to
      * @param interval the interval of the PriceBar. Default is  1 minute
      */
     fun subscribePriceBar(
-        vararg currencyPairs: String,
+        vararg symbols: String,
         interval: Interval = Interval.ONE_MINUTE
     ) {
-        require(currencyPairs.isNotEmpty()) { "You need to provide at least 1 currency pair" }
-        for (name in currencyPairs) {
-            val asset = CryptoBuilder().invoke(name.uppercase(), binanceTemplate)
-            logger.info { "Subscribing to $asset" }
+        require(symbols.isNotEmpty()) { "You need to provide at least 1 currency pair" }
+        for (symbol in symbols) {
+            val asset = availableAssets[symbol]
+            if (asset != null) {
+                logger.info { "Subscribing to $symbol" }
 
-            // API required lowercase symbol
-            val closable = client.onCandlestickEvent(asset.symbol.lowercase(), interval) {
-                handle(it)
+                // API requires lowercase symbol
+                val closable = client.onCandlestickEvent(symbol.lowercase(), interval) {
+                    handle(it)
+                }
+                closeables.add(closable)
+                subscriptions[asset.symbol] = asset
+            } else {
+                logger.warning { "Not found $symbol" }
             }
-            closeables.add(closable)
-            subscriptions[asset.symbol] = asset
         }
-    }
-
-    fun disconnect() {
-        for (c in closeables) c.close()
-        closeables.clear()
     }
 
     private fun handle(resp: CandlestickEvent) {
@@ -114,6 +111,12 @@ class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private va
             logger.warning { "Received CandlestickEvent for unexpected symbol ${resp.symbol}" }
         }
     }
+
+    override fun close() {
+        for (c in closeables) c.close()
+        closeables.clear()
+    }
+
 
 }
 

@@ -19,7 +19,6 @@ package org.roboquant.binance
 import com.binance.api.client.BinanceApiRestClient
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
-import org.roboquant.feeds.CryptoBuilder
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
@@ -46,32 +45,40 @@ class BinanceHistoricFeed(apiKey: String? = null, secret: String? = null, privat
         client = factory.newRestClient()
     }
 
-
+    /**
+     * Retrieve [PriceBar] data for the provides [symbols]. It will retrieve the data for the provided [timeframe],
+     * given that it doesn't exceed the limits enforced by Binance.
+     */
     fun retrieve(
-        vararg currencyPairs: String,
+        vararg symbols: String,
         timeframe: Timeframe,
         interval: Interval = Interval.DAILY,
         limit: Int = 1000
     ) {
-        require(currencyPairs.isNotEmpty()) { "You need to provide at least 1 currency pair" }
+        require(symbols.isNotEmpty()) { "You need to provide at least 1 currency pair" }
         val startTime = timeframe.start.toEpochMilli()
         val endTime = timeframe.end.toEpochMilli() - 1 // Binance uses inclusive end-times, so we subtract 1 millis
-        for (name in currencyPairs) {
-            val asset = CryptoBuilder().invoke(name.uppercase(), binanceTemplate)
-            val bars = client.getCandlestickBars(asset.symbol, interval, limit, startTime, endTime)
-            for (bar in bars) {
-                val action = PriceBar(
-                    asset,
-                    bar.open.toDouble(),
-                    bar.high.toDouble(),
-                    bar.low.toDouble(),
-                    bar.close.toDouble(),
-                    bar.volume.toDouble()
-                )
-                val now = Instant.ofEpochMilli(bar.closeTime)
-                add(now, action)
+        for (symbol in symbols) {
+            val asset = availableAssets[symbol]
+            if (asset != null ) {
+                val bars = client.getCandlestickBars(asset.symbol, interval, limit, startTime, endTime)
+                for (bar in bars) {
+                    val action = PriceBar(
+                        asset,
+                        bar.open.toDouble(),
+                        bar.high.toDouble(),
+                        bar.low.toDouble(),
+                        bar.close.toDouble(),
+                        bar.volume.toDouble()
+                    )
+                    val now = Instant.ofEpochMilli(bar.closeTime)
+                    add(now, action)
+                }
+                logger.fine { "Retrieved $asset for $timeframe" }
+            } else {
+                logger.warning{ "$symbol not found" }
             }
-            logger.fine { "Retrieved $asset for $timeframe" }
+
         }
     }
 
