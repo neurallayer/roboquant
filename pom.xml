@@ -73,6 +73,16 @@
             <id>kotlin.dev</id>
             <url>https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/</url>
         </repository>
+        <repository>
+            <id>snapshots</id>
+            <url>https://roboquant.jfrog.io/artifactory/roboquant/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <distributionManagement>
