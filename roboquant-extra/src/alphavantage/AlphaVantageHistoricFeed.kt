@@ -23,7 +23,10 @@ import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse
 import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
-import org.roboquant.feeds.*
+import org.roboquant.feeds.HistoricPriceFeed
+import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.TradePrice
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -82,7 +85,7 @@ class AlphaVantageHistoricFeed(
             if (result.errorMessage != null)
                 logger.warning(result.errorMessage)
             else
-                handleSuccess(result)
+                handleIntraday(result)
         }
     }
 
@@ -92,6 +95,7 @@ class AlphaVantageHistoricFeed(
      *
      */
     fun retrieveDaily(vararg assets: Asset) {
+
         for (asset in assets) {
             val symbol = asset.symbol
             subscriptions[symbol] = asset
@@ -105,7 +109,7 @@ class AlphaVantageHistoricFeed(
             if (result.errorMessage != null)
                 logger.warning(result.errorMessage)
             else
-                handleSuccess(result)
+                handleDaily(result)
         }
     }
 
@@ -116,18 +120,38 @@ class AlphaVantageHistoricFeed(
         return DateTimeFormatter.ofPattern(pattern).withZone(zoneId)
     }
 
-    private fun handleSuccess(response: TimeSeriesResponse) {
+    private fun handleIntraday(response: TimeSeriesResponse) {
         try {
             val symbol = response.metaData.symbol
             logger.info { "Received time series response for $symbol" }
             val asset = subscriptions[symbol]!!
-            val tz = response.metaData.timeZone
+            val tz = response.metaData.timeZone ?: "America/New_York"
             val dtf = getParser(tz)
             response.stockUnits.forEach {
                 val action = if (generateSinglePrice) TradePrice(asset, it.close) else
                     PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
 
                 val now = ZonedDateTime.parse(it.date, dtf).toInstant()
+                add(now, action)
+            }
+            logger.info { "Received prices for $symbol" }
+        } catch (e: Exception) {
+            logger.severe { e.toString() }
+        }
+    }
+
+
+    private fun handleDaily(response: TimeSeriesResponse) {
+        try {
+            val symbol = response.metaData.symbol
+            logger.info { "Received time series response for $symbol" }
+            val asset = subscriptions[symbol]!!
+            response.stockUnits.forEach {
+                val action = if (generateSinglePrice) TradePrice(asset, it.close) else
+                    PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
+
+                val localDate = LocalDate.parse(it.date)
+                val now = asset.exchange.getClosingTime(localDate)
                 add(now, action)
             }
             logger.info { "Received prices for $symbol" }
