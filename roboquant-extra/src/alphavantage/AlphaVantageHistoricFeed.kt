@@ -33,9 +33,7 @@ import org.roboquant.common.Config as RConfig
 typealias Interval = AlphaInterval
 
 /**
- * Alpha vantage feed, current just a PoC to validate we can retrieve data.
- *
- * TODO add support for different types of data a
+ * AlphaVantage feed, currently just a PoC to validate we can retrieve data.
  *
  * @property compensateTimeZone compensate for timezone differences
  * @property generateSinglePrice generate a single price event (using the close price) or a price bar (OHLCV) event
@@ -46,7 +44,7 @@ typealias Interval = AlphaInterval
 class AlphaVantageHistoricFeed(
     apiKey: String? = null,
     val compensateTimeZone: Boolean = true,
-    private val generateSinglePrice: Boolean = true
+    private val generateSinglePrice: Boolean = false
 ) : HistoricPriceFeed() {
 
     private val subscriptions = mutableMapOf<String, Asset>()
@@ -69,7 +67,7 @@ class AlphaVantageHistoricFeed(
      * Retrieve historic intra-day price data for the provided [assets]
      *
      */
-    fun retrieve(vararg assets: Asset, interval: Interval = Interval.FIVE_MIN) {
+    fun retrieveIntraday(vararg assets: Asset, interval: Interval = Interval.FIVE_MIN) {
         for (asset in assets) {
             val symbol = asset.symbol
             subscriptions[symbol] = asset
@@ -78,6 +76,29 @@ class AlphaVantageHistoricFeed(
                 .intraday()
                 .forSymbol(symbol)
                 .interval(interval)
+                .outputSize(OutputSize.FULL)
+                .fetchSync()
+
+            if (result.errorMessage != null)
+                logger.warning(result.errorMessage)
+            else
+                handleSuccess(result)
+        }
+    }
+
+
+    /**
+     * Retrieve historic daily price data for the provided [assets]
+     *
+     */
+    fun retrieveDaily(vararg assets: Asset) {
+        for (asset in assets) {
+            val symbol = asset.symbol
+            subscriptions[symbol] = asset
+            val result = AlphaVantage.api()
+                .timeSeries()
+                .daily()
+                .forSymbol(symbol)
                 .outputSize(OutputSize.FULL)
                 .fetchSync()
 
