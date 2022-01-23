@@ -21,35 +21,35 @@ Version 0.8 is all about making sure that (back-)testing works great, and the mo
 * [x] Support for advanced order types
 * [x] Add info on key design concepts behind the software, so it becomes easier to contribute
 * [x] Bring back Interactive Brokers integration. The code is already developed but due to license restrictions the TwsApi.jar file cannot be included with roboquant. So have to come up with alternative solution.
+* [x] See how to best fit crypto trading with current account structure
 
 == Version 0.9 (summer 2022)
 
-Ensure the API is stable and start including AI/ Machine Learning based strategies
+Ensure the API is stable and start including AI and Machine Learning support
 
-* [ ] Stabalize the exposed API
-* [ ] Enable -Xexplicit-api=strict compiler flag
-* [ ] Improve documentation based on the stable API
-* [ ] Create specific Machine Learning module (research required)
-* [ ] Add better hyper-parameter search capabilities
-* [ ] Include more demo feeds for quick expirementation
+* [ ] Stabalize the exposed API (enable -Xexplicit-api=strict compiler flag)
+* [ ] Improve documentation, notebooks and examples based on the stable API
+* [ ] Include additional demo feeds for quick expirementation
+* [ ] Add Machine Learning support (research required)
+* [ ] Add better hyper-parameter search and optmimalization capabilities (research required)
 
 == Version 1.0 (end of 2022)
 
 This version is all about adding better live trading capabilities. Although there is already integration available in earlier versions, that is just to validate the architectural concepts supports live trading. These broker integrations are neither reliable nor complete. So what still needs to be done:
 
-* [ ] More complete integrations with brokers and crypto-exchanges
-* [ ] Advanced policies, like auto re-balancing portfolios
-* [ ] Add support for distributed learning (research required)
 * [ ] Better margin account simulation support
 * [ ] More metrics, especially around alpha and beta calculations
-* [ ] See how to best fit crypto trading with current account structure
 * [ ] Add more advanced slippage-, fee- and fill-models
+* [ ] Add visualtizations for the tuning of strategies (research required)
+* [ ] Add support for distributed back-testing (research required)
 
 == Version 2 and later (2023 and beyond)
 
 The topics mentioned here are just some ideas for the future releases:
 
 * [ ] Add support for reading different types of data feeds besides price actions
+* [ ] More complete integrations with brokers and crypto-exchanges
+* [ ] Advanced policies, like auto re-balancing portfolios
 * [ ] More ready-to-use strategies out of the box
 * [ ] More complex deep learning strategies
 * [ ] Right now messages and formats support English format only, add L10N/I18N support
