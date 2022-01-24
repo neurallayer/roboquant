@@ -38,9 +38,9 @@ roboquant.run(feed) // <5>
 Some key features of roboquant are:
 
 * [x] Very fast back-testing, even on large volumes of data.
-* [x] Easy to develop your own strategies and integrate with brokers and data feeds
+* [x] Easy to develop your own strategies and integrate with third party brokers and data feeds
 * [x] Trade in multiple asset classes at the same time
-* [x] Run anything from a technical indicator to complex deep learning based strategies
+* [x] Run anything from a technical indicator to complex machine learning based strategies
 * [x] Easy to transition from back-testing to live trading
 * [x] Trade on multi-markets with multi-currencies
 * [x] Developed under open source with a permissive Apache license

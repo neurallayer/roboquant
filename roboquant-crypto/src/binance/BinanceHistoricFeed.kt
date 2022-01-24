@@ -55,9 +55,9 @@ class BinanceHistoricFeed(apiKey: String? = null, secret: String? = null, privat
         interval: Interval = Interval.DAILY,
         limit: Int = 1000
     ) {
-        require(symbols.isNotEmpty()) { "You need to provide at least 1 currency pair" }
+        require(symbols.isNotEmpty()) { "You need to provide at least 1 symbol" }
         val startTime = timeframe.start.toEpochMilli()
-        val endTime = timeframe.end.toEpochMilli() - 1 // Binance uses inclusive end-times, so we subtract 1 millis
+        val endTime = timeframe.end.toEpochMilli()
         for (symbol in symbols) {
             val asset = availableAssets[symbol]
             if (asset != null ) {

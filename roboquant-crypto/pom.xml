@@ -69,6 +69,9 @@
         </dependency>
 
         <dependency>
+            <!-- Binance doesn't publish their lib on Maven and other publications using an older version of the library
+                with known defects. So we publish our own version, for the time being as a snapshot release.
+            -->
             <groupId>org.roboquant</groupId>
             <artifactId>binance-api-client</artifactId>
             <version>1.0.1-SNAPSHOT</version>

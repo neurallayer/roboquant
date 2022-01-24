@@ -24,9 +24,11 @@ import org.roboquant.common.compareTo
 import java.util.logging.Logger
 
 /**
- * Wrapper around a [Channel] for communicating an [Event] of a [Feed]. It uses asynchronous communication
- * so the producing and receiving parts are decoupled. It has built in support to restrict the events
- * that are being send to a predefined [Timeframe].
+ * Wrapper around a [Channel] for communicating the [events][Event] of a [Feed]. It uses asynchronous communication
+ * so the producing and receiving parts are decoupled.
+ *
+ * It has built in support to restrict the events that are being send to a certain [timeframe]. It is gauranteed that
+ * no events outside this timeframe are delivered.
  *
  * @param capacity The capacity of the channel in the number of events it can store before blocking the sender
  * @property timeframe Limit the events to this timeframe only
@@ -88,6 +90,9 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
         }
     }
 
+    /**
+     * Receive a event from the channel. Will throw a [ClosedReceiveChannelException] if the channel is already closed.
+     */
     suspend fun receive(): Event {
         while (true) {
             val event = channel.receive()

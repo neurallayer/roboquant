@@ -177,7 +177,7 @@
         </pluginManagement>
 
         <plugins>
-            <!-- We don't need Java compilation, so lets disable it -->
+            <!-- We don't use Java, so lets disable the default Java compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

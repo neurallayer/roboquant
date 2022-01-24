@@ -85,6 +85,10 @@ internal class TAStrategyTest {
         strategy = TAStrategy.recordHighLow(20, 50, 100)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
+
+        strategy = TAStrategy.rsi(20)
+        s = run(strategy)
+        assertTrue(s.isNotEmpty())
     }
 
 

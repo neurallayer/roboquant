@@ -93,7 +93,7 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
     }
 
     /**
-     * Implementaiton of execute for all single order types. Subclasses will need only to implement the [fill] method.
+     * Implementation of execute for all single order types. Subclasses will need only to implement the [fill] method.
      */
     override fun execute(price: Double, time: Instant): List<Execution> {
         val qty = fill(price)

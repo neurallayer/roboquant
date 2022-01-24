@@ -21,7 +21,7 @@ import java.time.Instant
 
 
 /**
- * Instruction to update an SimpleOrder. It is up to the broker implementation to translate the updated order to the correct
+ * Update an existing SimpleOrder. It is up to the broker implementation to translate the updated order to the correct
  * message, so it can be processed.
  *
  * Typically, only a part of an open order can be updated, like the limit price of a limit order. For many other
@@ -34,7 +34,8 @@ import java.time.Instant
 class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : Order(originalOrder.asset) {
 
     init {
-        require(originalOrder.asset == updateOrder.asset)
+        require(originalOrder.asset == updateOrder.asset) {"Cannot updated the asset of an order"}
+        require(! originalOrder.status.closed) {"Only open orders can be updated"}
     }
 
     override fun execute(price: Double, time: Instant): List<Execution> {
@@ -43,6 +44,7 @@ class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : O
             updateOrder.quantity < originalOrder.fill -> status = OrderStatus.REJECTED
             else -> {
                 originalOrder.quantity = updateOrder.quantity
+                status = OrderStatus.COMPLETED
             }
         }
         return listOf()

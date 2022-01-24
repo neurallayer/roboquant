@@ -38,7 +38,10 @@ internal class RatingTest {
     @Test
     fun inverse() {
         val rating = Rating.SELL
-        assertEquals(rating.inverse(), Rating.BUY)
+        assertEquals(Rating.BUY, rating.inverse())
+
+        val rating2 = Rating.HOLD
+        assertEquals(Rating.HOLD, rating2.inverse())
     }
 
     @Test
