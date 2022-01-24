@@ -50,6 +50,13 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
     val timeline: Timeline
         get() = map { it.time }.distinct().sorted()
 
+    // What is the total timeframe of the trades
+    val timeframe: Timeframe
+        get() {
+            val tl = timeline
+            return Timeframe(tl.first(), tl.last())
+        }
+
     /**
      * Calculate the realized PnL for a certain asset and optionally a timeframe
      *
@@ -98,7 +105,7 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
     }
 
 
-    fun split(period: Period) = timeline.split(period)
+    fun split(period: Period) = timeframe.split(period)
 
     /**
      * Total fee, optionally limited to a specific timeframe. Fees are denoted in the

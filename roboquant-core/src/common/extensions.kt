@@ -44,6 +44,17 @@ operator fun StringBuffer.plusAssign(s: String) {
  */
 operator fun Instant.plus(millis: Int): Instant = plusMillis(millis.toLong())
 
+
+operator fun Instant.compareTo(timeframe: Timeframe): Int {
+    return if (this > timeframe.end) 1 else if (this < timeframe.start) -1 else 0
+}
+
+
+/**
+ * Subtract a numer of [millis] seconds to the instant
+ */
+operator fun Instant.minus(millis: Int): Instant = minusMillis(millis.toLong())
+
 /**
  * Get the instant as ZonedDateTime UTC
  */

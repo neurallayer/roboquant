@@ -1,9 +1,6 @@
 package org.roboquant.common
 
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.Period
-import java.time.ZoneOffset
 
 
 /**
@@ -39,26 +36,11 @@ fun Timeline.earliestNotBefore(time: Instant): Int? {
  * Get the timeframe for this timeline. If the timeline is empty, an exception will be thrown.
  */
 val Timeline.timeframe
-    get() = Timeframe(first(), last() + 1)
+    get() = Timeframe(first(), last())
 
-fun Timeline.split(period: Period): List<Timeframe> {
-    val result = mutableListOf<Timeframe>()
-    val zone = ZoneOffset.UTC
-    var start = first()
-    var stop = (LocalDateTime.ofInstant(start, zone) + period).toInstant(zone)
-    for (now in this) {
-        if (now > stop) {
-            val tf = Timeframe(start, now)
-            result.add(tf)
-            start = now
-            stop = (LocalDateTime.ofInstant(start, zone) + period).toInstant(zone)
-        }
-    }
-    val tf = Timeframe(start, stop)
-    result.add(tf)
-    return result
-}
-
+/**
+ * Split the timeline in chunks of [size]
+ */
 fun Timeline.split(size: Int): List<Timeframe> {
     return chunked(size).map { Timeframe(it.first(), it.last()) }
 }

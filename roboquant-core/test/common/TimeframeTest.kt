@@ -18,7 +18,6 @@ package org.roboquant.common
 
 
 import org.junit.Test
-import java.time.Instant
 import java.time.Period
 import java.time.ZoneId
 import kotlin.test.assertEquals
@@ -29,29 +28,23 @@ internal class TimeframeTest {
 
     @Test
     fun toDays() {
-        val tf = Timeframe.fromYears(1900, 2000)
+        val tf = Timeframe.fromYears(1995, 2000)
         val timeline1 = tf.toDays()
+        assertEquals(tf.start, timeline1.first())
+        assertTrue(tf.end >= timeline1.last())
+
         val timeline2 = tf.toDays(excludeWeekends = true)
         assertTrue(timeline1.size > timeline2.size)
     }
 
-    @Test
-    fun beforeAfter() {
-        val tf = Timeframe.fromYears(1900, 2000)
-        val timeline = tf.toDays()
-        val first = timeline.first()
-        val last = timeline.last()
-        assertEquals(timeline.lastIndex, timeline.latestNotAfter(last))
-        assertEquals(0, timeline.earliestNotBefore(first))
-    }
 
     @Test
     fun split() {
-        val i1 = Instant.parse("1980-01-01T09:00:00Z")
-        val i2 = Instant.parse("2000-01-01T09:00:00Z")
-        val tf = Timeframe(i1, i2)
+        val tf = Timeframe.fromYears(1980, 1999)
         val subFrames = tf.split(Period.ofYears(2))
         assertEquals(10, subFrames.size)
+        assertEquals(tf.start, subFrames.first().start)
+        assertEquals(tf.end, subFrames.last().end)
     }
 
 
@@ -88,15 +81,15 @@ internal class TimeframeTest {
 
 
     @Test
-    fun inclusive() {
+    fun exclusive() {
         val tf = Timeframe.fromYears(2018, 2019)
-        assertFalse(tf.contains(tf.end))
+        assertTrue(tf.contains(tf.end))
 
-        val tf2 = tf.inclusive
-        assertTrue(tf2.contains(tf.end))
-        assertFalse(tf2.contains(tf.end + 1))
+        val tf2 = tf.exclusive
+        assertTrue(tf2.contains(tf.end - 1))
+        assertFalse(tf2.contains(tf.end))
 
-        assertEquals(tf2, tf.union(tf2))
+        assertEquals(tf, tf.union(tf2))
     }
 
     @Test

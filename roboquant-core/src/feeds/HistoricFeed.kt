@@ -42,7 +42,7 @@ interface HistoricFeed : AssetFeed {
      * TimeFrame of this feed. If it cannot be determined, [Timeframe.INFINITY] is returned instead.
      */
     override val timeframe: Timeframe
-        get() = if (timeline.isEmpty()) Timeframe.INFINITY else Timeframe(timeline.first(), timeline.last().plusMillis(1))
+        get() = if (timeline.isEmpty()) Timeframe.INFINITY else Timeframe(timeline.first(), timeline.last())
 
     /**
      * Draw a [random] sampled timeframe of a cetain [size] from the historic feed and return the timeframe that
@@ -60,11 +60,11 @@ interface HistoricFeed : AssetFeed {
 
 
     /**
-     * Split the timeline of this feed in number of equal periods.
+     * Split the timeframe of this feed in number of equal periods.
      *
      * @param period
      */
-    fun split(period: Period) = timeline.split(period)
+    fun split(period: Period) = timeframe.split(period)
 
     /**
      * Split the timeline of the feed in number of equal size chunks

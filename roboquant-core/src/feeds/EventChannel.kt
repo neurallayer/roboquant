@@ -20,6 +20,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
+import org.roboquant.common.compareTo
 import java.util.logging.Logger
 
 /**
@@ -56,7 +57,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
                     logger.info { "dropped event for time ${dropped.time}" }
             }
         } else {
-            if (event.time >= timeframe.end) {
+            if (event.time > timeframe) {
                 logger.fine { "Offer ${event.time} after $timeframe, closing channel" }
                 channel.close()
                 done = true
@@ -78,7 +79,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
         if (event.time in timeframe) {
             channel.send(event)
         } else {
-            if (event.time >= timeframe.end) {
+            if (event.time > timeframe) {
                 logger.fine { "Send ${event.time} after $timeframe, closing channel" }
                 channel.close()
                 done = true
@@ -91,7 +92,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
         while (true) {
             val event = channel.receive()
             timeframe.contains(event.time) && return event
-            if (event.time >= timeframe.end) {
+            if (event.time > timeframe) {
                 logger.fine { "Received ${event.time} after $timeframe, closing channel" }
                 channel.close()
                 done = true

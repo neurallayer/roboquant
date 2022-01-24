@@ -50,6 +50,7 @@ internal class RandomWalkTest {
         val tl = Timeframe.fromYears(2010, 2012).toDays()
         val feed2 = RandomWalk(tl, generateBars = true)
         val item2 = play(feed2).receive()
+        assertEquals(tl, feed2.timeline)
         assertTrue(item2.actions[0] is PriceBar)
     }
 
