@@ -10,7 +10,7 @@ See also the link:CONTRIBUTING.adoc[contributing] page on how to submit a PR.
 
 == Version 0.8 (end of 2021)
 
-Version 0.8 is all about making sure that (back-)testing works great, and the most common use-cases are covered. Much of the foundation for algo trading is already in place with this release:
+Version 0.8 is all about making sure that (back-)testing works, and the most common use-cases are covered. Much of the foundation for algo trading is in place with this release:
 
 * [x] Improve the documentation in source code
 * [x] Improve unit test coverage

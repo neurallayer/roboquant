@@ -49,7 +49,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
      * @param event
      */
     fun offer(event: Event) {
-        if (timeframe.contains(event.time)) {
+        if (event.time in timeframe) {
             while (!channel.trySend(event).isSuccess) {
                 val dropped = channel.tryReceive().getOrNull()
                 if (dropped !== null)
@@ -75,7 +75,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
      * @param event
      */
     suspend fun send(event: Event) {
-        if (timeframe.contains(event.time)) {
+        if (event.time in timeframe) {
             channel.send(event)
         } else {
             if (event.time >= timeframe.end) {

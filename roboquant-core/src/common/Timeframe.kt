@@ -150,7 +150,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
     /**
      * Does the timeframe contain a certain [time].
      */
-    fun contains(time: Instant): Boolean {
+    operator fun contains(time: Instant): Boolean {
         return (time >= start) && (time < end)
     }
 
@@ -359,5 +359,4 @@ data class Timeframe(val start: Instant, val end: Instant) {
     }
 
 }
-
 
