@@ -26,13 +26,14 @@ internal class SingleOrderTest {
     @Test
     fun testMarketOrder() {
         val asset = TestData.usStock()
-        val mo = MarketOrder(asset, 100.0)
-        mo.placed = Instant.now()
+        val order = MarketOrder(asset, 100.0)
+        order.placed = Instant.now()
+        assertEquals(order.quantity, order.clone().quantity)
 
-        assertEquals(100.0, mo.quantity)
-        assertTrue(mo.tif is GTC)
+        assertEquals(100.0, order.quantity)
+        assertTrue(order.tif is GTC)
 
-        val e = mo.execute(100.0, Instant.now())
+        val e = order.execute(100.0, Instant.now())
         assertTrue { e.isNotEmpty() }
     }
 
@@ -52,6 +53,8 @@ internal class SingleOrderTest {
         val e2 = order.execute(98.0, Instant.now())
         assertEquals(-10.0, e2.first().quantity)
         assertTrue { order.executed }
+
+        assertEquals(order.quantity, order.clone().quantity)
     }
 
     @Test
@@ -59,6 +62,7 @@ internal class SingleOrderTest {
         val asset = TestData.usStock()
         val order = LimitOrder(asset, -10.0, 101.0)
         order.placed = Instant.now()
+        assertEquals(order.quantity, order.clone().quantity)
 
         assertEquals(-10.0, order.quantity)
         assertEquals(101.0, order.limit)
@@ -77,6 +81,7 @@ internal class SingleOrderTest {
         val asset = TestData.usStock()
         val order = StopLimitOrder(asset, -10.0, 99.0, 98.0)
         order.placed = Instant.now()
+        assertEquals(order.quantity, order.clone().quantity)
 
         assertEquals(-10.0, order.quantity)
         assertEquals(98.0, order.limit)

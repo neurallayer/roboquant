@@ -45,6 +45,7 @@ class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : O
             else -> {
                 originalOrder.quantity = updateOrder.quantity
                 status = OrderStatus.COMPLETED
+                updateOrder.status = OrderStatus.COMPLETED
             }
         }
         return listOf()

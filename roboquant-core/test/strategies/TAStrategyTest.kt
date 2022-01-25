@@ -20,6 +20,8 @@ import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
+import org.roboquant.strategies.ta.TALib
+import org.roboquant.strategies.utils.PriceBarBuffer
 import java.time.Instant
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -41,7 +43,7 @@ internal class TAStrategyTest {
         }
 
         val x = run(strategy, 60)
-        assertEquals(60,x.size)
+        assertEquals(60, x.size)
     }
 
     @Test
@@ -54,17 +56,24 @@ internal class TAStrategyTest {
         }
     }
 
+    private fun getPriceBarBuffer(size: Int) : PriceBarBuffer {
+        val result = PriceBarBuffer(size)
+        repeat(size) {
+            result.update(TestData.priceBar(), Instant.now())
+        }
+        return result
+    }
 
     private fun run(s: TAStrategy, n: Int = 100): Map<Instant, List<Signal>> {
         val actions = listOf(TestData.priceBar())
         val result = mutableMapOf<Instant, List<Signal>>()
-        var now =  Instant.now()
-       repeat(n) {
-           val event = Event(actions, now)
-           val signals = s.generate(event)
-           result[now] = signals
-           now += 1.seconds
-       }
+        var now = Instant.now()
+        repeat(n) {
+            val event = Event(actions, now)
+            val signals = s.generate(event)
+            result[now] = signals
+            now += 1.seconds
+        }
         return result
     }
 
@@ -89,6 +98,21 @@ internal class TAStrategyTest {
         strategy = TAStrategy.rsi(20)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
+    }
+
+    @Test
+    fun testExtraIndicators() {
+        val data = getPriceBarBuffer(20)
+        var a = TALib.recordHigh(data.close, 10)
+        var b = TALib.recordHigh(data, 10)
+        assertEquals(a, b)
+
+        a = TALib.recordLow(data.close, 10)
+        b = TALib.recordLow(data, 10)
+        assertEquals(a, b)
+
+        val c = TALib.vwap(data, 10)
+        assertTrue(c.isFinite())
     }
 
 
@@ -119,7 +143,7 @@ internal class TAStrategyTest {
 
         run(strategy)
         var metrics = strategy.getMetrics()
-        assertContains(metrics,"sma.fast")
+        assertContains(metrics, "sma.fast")
         assertContains(metrics, "sma.slow")
 
         metrics = strategy.getMetrics()

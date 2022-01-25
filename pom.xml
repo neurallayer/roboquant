@@ -256,13 +256,13 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.30</version>
+                <version>2.0.0-alpha6</version>
             </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-jdk14</artifactId>
-                <version>1.7.30</version>
+                <version>2.0.0-alpha6</version>
             </dependency>
 
         </dependencies>

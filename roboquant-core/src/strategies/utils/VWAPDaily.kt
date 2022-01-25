@@ -19,12 +19,9 @@ package org.roboquant.strategies.utils
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
 
-import java.time.temporal.ChronoUnit
-
 /**
- * Calculates the Daily VWAP. VWAP is a single-day indicator, and is restarted at the opening of each new trading day.
- * If there is more than 8 hours between two events, it is considered to be a new day and the previous calculations
- * are reset.
+ * Calculates the Daily VWAP. VWAP is a single-day indicator, and is restarted at the start of each new trading day.
+ * It uses the exchange of the underlying asset to determine what is still within one day.
  *
  * @property minSteps The minimum number of steps required
  * @constructor Create empty Daily VWAP calculator
@@ -37,7 +34,7 @@ class VWAPDaily(private val minSteps: Int = 1) {
 
 
     fun add(action: PriceBar, now: Instant) {
-        if (now > last.plus(8, ChronoUnit.HOURS)) clear()
+        if (last != Instant.MIN && ! action.asset.exchange.sameDay(now, last)) clear()
         last = now
         val v = action.volume
         total.add(action.getPrice("TYPICAL") * v)

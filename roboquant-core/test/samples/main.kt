@@ -25,11 +25,13 @@ import org.roboquant.brokers.ECBExchangeRates
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
+import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.LazyCSVFeed
+import org.roboquant.feeds.filter
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.MemoryLogger
@@ -237,7 +239,15 @@ fun oneMillionBars() {
     roboquant.run(feed)
 }
 
-
+fun volatility() {
+    val feed = AvroFeed.sp500()
+    val data = feed.filter<PriceBar> { it.asset.symbol == "IBM" }
+    val arr = data.map { it.second.close }.toDoubleArray()
+    val returns =  arr.returns()
+    println(returns.variance())
+    println(returns.filter { it > 0.0 }.toDoubleArray().variance())
+    println(returns.filter { it < 0.0 }.toDoubleArray().variance())
+}
 
 fun multiCurrency() {
     val feed = CSVFeed("data/US", CSVConfig(priceAdjust = true))
@@ -559,7 +569,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("WALKFORWARD_PARALLEL") {
+    when ("VOLATILITY") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()
@@ -592,6 +602,7 @@ suspend fun main() {
         "AVRO" -> avro()
         "AVRO_GEN" -> avroGen()
         "AVRO_CAP" -> avroCapture()
+        "VOLATILITY" -> volatility()
         "AVRO_ALL" -> {
             avroGen(); avro()
         }

@@ -17,6 +17,7 @@
 package org.roboquant.strategies.utils
 
 import org.roboquant.TestData.priceBar
+import java.time.Instant
 import kotlin.test.*
 
 internal class VWAPCalculatorTest {
@@ -32,4 +33,16 @@ internal class VWAPCalculatorTest {
         assertEquals(priceBar().getPrice("TYPICAL"), c.calc())
     }
 
+    @Test
+    fun testDaily() {
+        val c = VWAPDaily(5)
+        assertFalse(c.isReady())
+        val now = Instant.now()
+        repeat(5) {
+            c.add(priceBar(), now)
+        }
+        assertTrue(c.isReady())
+
+        assertEquals(priceBar().getPrice("TYPICAL"), c.calc())
+    }
 }

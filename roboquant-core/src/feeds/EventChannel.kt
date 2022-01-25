@@ -54,6 +54,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
     fun offer(event: Event) {
         if (event.time in timeframe) {
             while (!channel.trySend(event).isSuccess) {
+                if (done) return
                 val dropped = channel.tryReceive().getOrNull()
                 if (dropped !== null)
                     logger.info { "dropped event for time ${dropped.time}" }
@@ -107,6 +108,9 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
 
     }
 
-    fun close() = channel.close()
+    fun close() {
+        done = true
+        channel.close()
+    }
 
 }
