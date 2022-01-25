@@ -18,6 +18,7 @@ package org.roboquant.logging
 
 import org.roboquant.RunPhase
 import org.roboquant.TestData
+import org.roboquant.common.Logging
 import java.util.logging.Level
 import kotlin.test.*
 
@@ -26,7 +27,7 @@ internal class InfoLoggerTest {
     @Test
     fun test() {
         val metrics = TestData.getMetrics()
-
+        Logging.setLevel(Level.INFO)
         val logger = InfoLogger()
         logger.log(metrics, TestData.getRunInfo())
         logger.end(RunPhase.VALIDATE)

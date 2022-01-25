@@ -39,6 +39,9 @@ internal class PriceActionTest {
 
         price = p.getPrice("WEIGHTED")
         assertEquals(9.25, price)
+
+        val q = PriceQuote.fromValues(asset, p.values)
+        assertEquals(p, q)
     }
 
     @Test
@@ -47,6 +50,17 @@ internal class PriceActionTest {
         val event = OrderBook(asset, listOf(), listOf())
         assertTrue(event.asks.isEmpty())
         assertTrue(event.bids.isEmpty())
+
+
+    }
+
+    @Test
+    fun testTradePrice() {
+        val asset = Asset("DUMMY")
+        val p = TradePrice(asset, 10.0, 100.0)
+        assertEquals(10.0, p.getPrice("DEFAULT"))
+        val q = TradePrice.fromValues(asset, p.values)
+        assertEquals(p, q)
     }
 
 
@@ -65,5 +79,7 @@ internal class PriceActionTest {
         price = p.getPrice("WEIGHTED")
         assertEquals(10.4, price)
 
+        val q = OrderBook.fromValues(asset, p.values)
+        assertEquals(p, q)
     }
 }

@@ -35,8 +35,20 @@ internal class CurrencyTest {
             Currency.AUD
             Currency.CNY
             Currency.NZD
+            Currency.RUB
+            Currency.INR
+            Currency.BTC
+            Currency.ETH
+            Currency.USDT
             true
         }
+    }
+
+    @Test
+    fun test2() {
+        val x = Currency.USD
+        val y = Currency.getInstance("USD")
+        assertEquals(x, y)
     }
 
 
