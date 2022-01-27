@@ -61,6 +61,10 @@ internal class PriceActionTest {
         assertEquals(10.0, p.getPrice("DEFAULT"))
         val q = TradePrice.fromValues(asset, p.values)
         assertEquals(p, q)
+
+        assertEquals(100.0, p.volume)
+        val r = p * 2.0
+        assertEquals(20.0, r.getPrice())
     }
 
 

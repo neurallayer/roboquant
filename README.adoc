@@ -14,7 +14,7 @@ Roboquant is an algorithmic trading platform that is fast and flexible while at 
 
 image::/docs/roboquant_logo.png[roboquant Logo, 250, align=center]
 
-You can find out more at *https://roboquant.org[roboquant.org]*. Give this repository a star ⭐ if you like the project.
+You can find out more at *https://roboquant.org[roboquant.org]*. Please consider giving this repository a star ⭐ if you like the project.
 
 == Code sample
 To demonstrate how easy it is to get started, the following code snippet shows all the key ingredients required to back-test a trading strategy:
@@ -69,6 +69,6 @@ Roboquant is distributed under the link:/LICENSE[Apache 2.0 License].
 Roboquant also comes with live trading and paper trading capabilities. Using this is at your own risk and there are NO guarantees about the correct functioning of the software.
 
 == Beta version
-Roboquant is still a pre-1.0 release and bugs are for sure still present. Also expect API's to change without notice. So keep this in mind when using it.
+Roboquant is still a pre-1.0 release and bugs are for sure to be expected. Also expect API's to change without any notice. So keep this in mind when using it.
 
 PR are more than welcome, see also the link:/docs/CONTRIBUTING.adoc[Contribution Guide] document. If you're missing some features, just open an issue on GitHub. See also the link:/docs/TODO.adoc[todo documentation] for already identified backlog items if you look for something to work on.

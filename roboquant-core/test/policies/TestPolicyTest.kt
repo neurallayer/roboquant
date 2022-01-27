@@ -17,22 +17,23 @@
 package org.roboquant.policies
 
 
-import kotlin.test.*
-import org.roboquant.strategies.Signal
+import org.roboquant.TestData
 import org.roboquant.brokers.Account
-import org.roboquant.feeds.Event
-import java.time.Instant
+import org.roboquant.orders.MarketOrder
+import org.roboquant.strategies.Rating
+import org.roboquant.strategies.Signal
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 internal class TestPolicyTest {
-
 
     @Test
     fun order() {
         val policy = TestPolicy()
-        val signals = listOf<Signal>()
-        val event = Event(listOf(), Instant.now())
+        val signals = listOf(Signal(TestData.usStock(), Rating.BUY))
+        val event = TestData.event2()
         val account = Account()
         val orders = policy.act(signals, account, event)
-        assertTrue(orders.isEmpty())
+        assertTrue(orders.first() is MarketOrder)
     }
 }

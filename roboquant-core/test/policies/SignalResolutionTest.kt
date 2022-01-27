@@ -14,34 +14,27 @@
  * limitations under the License.
  */
 
-package org.roboquant.orders
+package org.roboquant.policies
+
 
 import org.roboquant.TestData
-import org.junit.Test
-import java.time.Instant
+import org.roboquant.strategies.Rating
+import org.roboquant.strategies.Signal
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+internal class SignalResolutionTest {
 
-internal class CancellationOrderTest {
 
     @Test
-    fun test() {
+    fun rules() {
         val asset = TestData.usStock()
-
-        val openOrder = MarketOrder(asset, 100.0)
-        openOrder.placed = Instant.now()
-
-        val oc = CancellationOrder(openOrder)
-        oc.placed = Instant.now()
-        assertEquals(OrderStatus.INITIAL, oc.status)
-        assertEquals(openOrder, oc.order)
-        assertEquals(0.0, oc.getValue(10.0))
-
-        oc.execute(100.0, Instant.now())
-        assertTrue { oc.status.closed }
-        assertEquals(OrderStatus.CANCELLED, oc.order.status)
-
-        assertEquals("", oc.tag)
+        val signals = listOf(Signal(asset, Rating.BUY), Signal(asset, Rating.SELL), Signal(asset, Rating.SELL))
+        assertEquals(signals.first(),signals.resolve(SignalResolution.FIRST).first())
+        assertEquals(signals.last(),signals.resolve(SignalResolution.LAST).last())
+        assertTrue(signals.resolve(SignalResolution.NO_DUPLICATES).isEmpty())
+        assertTrue(signals.resolve(SignalResolution.NO_CONFLICTS).isEmpty())
+        assertEquals(signals, signals.resolve(SignalResolution.NONE))
     }
 }

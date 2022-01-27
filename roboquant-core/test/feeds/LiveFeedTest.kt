@@ -14,29 +14,30 @@
  * limitations under the License.
  */
 
-package org.roboquant.metrics
+package org.roboquant.feeds
 
+import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import org.roboquant.TestData
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import org.roboquant.common.Background
 
-internal class VWAPMetricTest {
+internal class LiveFeedTest {
+
+    class MyLiveFeed : LiveFeed() {
+
+        val isActive
+            get() = channel != null
+
+    }
+
 
     @Test
-    fun test() {
-        val metric = VWAPMetric()
-        assertEquals(2, metric.minSize)
-
-        val account = TestData.usAccount()
-        var result = mapOf<String, Number>()
-        val event = TestData.event2()
-        repeat (10) {
-
-            result = metric.calc(account, event)
-
-        }
-        assertTrue(result.isEmpty())
+    fun basic() = runBlocking {
+        val feed = MyLiveFeed()
+        feed.heartbeatInterval = 10
+        Background.ioJob { feed.play(EventChannel()) }
+        feed.close()
     }
+
+
 
 }

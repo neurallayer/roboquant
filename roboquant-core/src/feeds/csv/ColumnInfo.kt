@@ -62,7 +62,7 @@ internal class ColumnInfo {
                 'C' -> close = index
                 'A' -> adjustedClose = index
                 'V' -> volume = index
-                '?', 'X', ' ' -> {}
+                '?', 'X', ' ', '_' -> {}
                 else -> {
                     throw ConfigurationException("Found unsupported character '$char' in parse pattern $def")
                 }

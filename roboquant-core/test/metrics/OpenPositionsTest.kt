@@ -19,14 +19,18 @@ package org.roboquant.metrics
 
 import kotlin.test.*
 import org.roboquant.TestData
+import org.roboquant.feeds.Event
 
 internal class OpenPositionsTest {
 
     @Test
     fun calc() {
         val metric = OpenPositions()
-        val (account, event) = TestData.metricInput()
-        val result = metric.calc(account, event)
-        assertTrue(result.isEmpty())
+        val account = TestData.usAccount()
+        val result = metric.calc(account, Event.empty())
+        assertFalse(result.isEmpty())
+        val symbol = account.portfolio.assets.first().symbol
+        assertContains(result, "position.$symbol.quantity" )
+        assertTrue(result.all { it.key.startsWith("position.") })
     }
 }

@@ -68,4 +68,11 @@ internal class TrailLimitOrderTest {
         assertEquals(0.01, order.limitOffset)
     }
 
+    @Test
+    fun from() {
+        val usOrder = TestData.usMarketOrder()
+        val order = TrailLimitOrder.from(usOrder, 0.02, 0.01)
+        assertEquals(usOrder.quantity, - order.quantity)
+    }
+
 }

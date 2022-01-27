@@ -190,6 +190,46 @@ fun large6() {
 }
 
 
+
+fun small6() {
+
+    val dataHome = Path("/Users/peter/data")
+
+    fun getConfig(exchange: String): CSVConfig {
+        Exchange.getInstance(exchange)
+        return CSVConfig(
+            fileExtension = ".us.txt",
+            parsePattern = "??T?OHLCV?",
+            template = Asset("TEMPLATE", exchangeCode = exchange)
+        )
+    }
+
+    val config1 = getConfig("NASDAQ")
+    val config2 = getConfig("NYSE")
+    val path = dataHome / "stooq/daily/us2/"
+    var feed: CSVFeed? = null
+
+    for (d in Files.list(path)) {
+        if (d.name.startsWith("nasdaq stocks")) {
+            val tmp = CSVFeed(d.toString(), config1)
+            if (feed === null) feed = tmp else feed.merge(tmp)
+        }
+    }
+
+    for (d in Files.list(path)) {
+        if (d.name.startsWith("nyse stocks")) {
+            val tmp = CSVFeed(d.toString(), config2)
+            if (feed === null) feed = tmp else feed.merge(tmp)
+        }
+    }
+
+    // val avroPath = dataHome / "avro/us_2000_2021.avro"
+    // AvroUtil.record(feed!!, avroPath.toString(), TimeFrame.fromYears(2000, 2021), 6)
+    val avroPath = dataHome / "avro/us_stocks_small.avro"
+    AvroUtil.record(feed!!, avroPath.toString(), Timeframe.fromYears(1900, 2021), compressionLevel = 6)
+
+}
+
 fun largeRead() {
     val dataHome = Path("/Users/peter/data")
     val avroPath = dataHome / "avro/us_stocks.avro"
@@ -569,7 +609,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("VOLATILITY") {
+    when ("SMALL6") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()
@@ -580,6 +620,7 @@ suspend fun main() {
         "LARGE4" -> large4()
         "LARGE5" -> large5()
         "LARGE6" -> large6()
+        "SMALL6" -> small6()
         "LARGEREAD" -> largeRead()
         "LARGE_LOW_MEM" -> largeLowMem()
         "MULTI_RUN" -> multiRun()

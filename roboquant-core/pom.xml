@@ -36,6 +36,15 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
             </plugin>
+            <!-- plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>org/roboquant/strategies/ta/**/*.class</exclude>
+                    </excludes>
+                </configuration>
+            </plugin -->
         </plugins>
     </build>
 

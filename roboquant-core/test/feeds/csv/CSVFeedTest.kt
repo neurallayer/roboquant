@@ -20,6 +20,7 @@ import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
@@ -53,6 +54,25 @@ internal class CSVFeedTest {
         assertEquals("TEST123", feed.assets.first().exchangeCode)
     }
 
+
+    @Test
+    fun config() {
+        val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
+        val config = CSVConfig(template = asset)
+        assertEquals(asset.currency, config.currency)
+    }
+
+    @Test
+    fun columnInfoTest() {
+        val a = ColumnInfo()
+        a.define("XOHXLC")
+        assertEquals(1, a.open)
+        assertEquals(5, a.close)
+
+        assertFails {
+            a.define("QQQ")
+        }
+    }
 
 
 }

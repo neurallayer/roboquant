@@ -206,7 +206,6 @@ data class TradePrice(override val asset: Asset, private val price: Double, over
         return price
     }
 
-    fun toList() = listOf(price, volume)
 }
 
 /**

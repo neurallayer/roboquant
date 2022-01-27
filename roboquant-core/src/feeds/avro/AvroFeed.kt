@@ -164,16 +164,20 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
 
     companion object {
         private val logger = Logging.getLogger(AvroFeed::class)
-        private const val fileName = "5yr_sp500_v1.1.avro"
+        private const val sp500File = "5yr_sp500_v1.1.avro"
+        private const val testFile = "us_stocks_test_v1.1.avro"
 
         private const val sp500URL =
-            "https://github.com/neurallayer/roboquant-data/blob/main/avro/$fileName?raw=true"
+            "https://github.com/neurallayer/roboquant-data/blob/main/avro/$sp500File?raw=true"
+
+        private const val testURL =
+            "https://github.com/neurallayer/roboquant-data/blob/main/avro/$testFile?raw=true"
 
         /**
-         * 5 years worth of end of day data for companies listed in the S&P 500
+         * 5 years worth of end of day [PriceBar] data for the companies listed in the S&P 500
          */
         fun sp500(): AvroFeed {
-            val path: Path = Paths.get(Config.home.toString(), fileName)
+            val path: Path = Paths.get(Config.home.toString(), sp500File)
             if (Files.notExists(path)) {
                 logger.info("Downloading S&P 500 price data from $sp500URL...")
                 download(sp500URL, path)
@@ -182,6 +186,18 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
             return AvroFeed(path.toString())
         }
 
+        /**
+         * Small avro file with end of day [PriceBar] data 6 us stocks: AAPL, AMZN, TSLA, IBM, JNJ and JPM
+         */
+        fun test(): AvroFeed {
+            val path: Path = Paths.get(Config.home.toString(), testFile)
+            if (Files.notExists(path)) {
+                logger.info("Downloading S&P 500 price data from $testURL...")
+                download(testURL, path)
+                require(Files.exists(path))
+            }
+            return AvroFeed(path.toString())
+        }
 
         private fun download(downloadURL: String, fileName: Path) {
             val website = URL(downloadURL)
