@@ -22,9 +22,9 @@ import org.junit.Test
 import org.roboquant.brokers.sim.Execution
 import kotlin.test.assertEquals
 
-class CombinedOrderTest {
+internal class CombinedOrderTest {
 
-    class MyOrder(order: MarketOrder) : CombinedOrder(order) {
+    private class MyOrder(order: MarketOrder) : CombinedOrder(order) {
         override fun execute(price: Double, time: Instant): List<Execution> {
             return listOf()
         }

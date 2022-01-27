@@ -164,9 +164,6 @@ data class PriceBar(
     override val values
         get() = listOf(open, high, low, close, volume)
 
-    override fun toString(): String {
-        return "price-bar ${asset.symbol} $open $high $low $close $volume"
-    }
 
 }
 
