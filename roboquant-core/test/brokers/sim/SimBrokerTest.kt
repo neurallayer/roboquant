@@ -57,9 +57,8 @@ internal class SimBrokerTest {
         assertEquals(1, account.orders.open.size)
 
         account = broker.place(listOf(), TestData.event2())
-        assertEquals(0, account.orders.open.size)
-        assertEquals(2, account.portfolio.assets.size)
-
+        assertEquals(1, account.orders.open.size)
+        assertEquals(1, account.portfolio.assets.size)
     }
 
     @Test

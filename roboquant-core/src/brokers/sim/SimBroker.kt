@@ -56,6 +56,10 @@ class SimBroker(
 
     override val account: Account = Account(baseCurrency)
 
+    init {
+        reset()
+    }
+
     companion object Factory {
 
         private val logger: Logger = Logging.getLogger(SimBroker::class)

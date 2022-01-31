@@ -20,6 +20,7 @@ import org.roboquant.TestData
 import org.junit.Test
 import java.time.Instant
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
 
@@ -43,5 +44,20 @@ internal class CancellationOrderTest {
         assertEquals(OrderStatus.CANCELLED, oc.order.status)
 
         assertEquals("", oc.tag)
+    }
+
+
+    @Test
+    fun testFailure() {
+        val asset = TestData.usStock()
+
+        val openOrder = MarketOrder(asset, 100.0)
+        openOrder.placed = Instant.now()
+        openOrder.status = OrderStatus.COMPLETED
+
+        assertFails {
+            CancellationOrder(openOrder)
+        }
+
     }
 }

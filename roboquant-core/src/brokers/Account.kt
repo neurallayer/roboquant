@@ -119,18 +119,21 @@ class Account(
      *
      * @return The summary
      */
-    override fun summary(): Summary {
+    override fun summary(singleCurrency: Boolean): Summary {
+
+        fun c(w:Wallet) :Any = if (singleCurrency) convert(w) else w
+
         val s = Summary("Account")
         s.add("last update", lastUpdate.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
-        s.add("cash", convert(cash))
+        s.add("cash", c(cash))
         s.add("buying power", buyingPower)
-        s.add("equity", equityAmount)
-        s.add("portfolio", convert(portfolio.value))
-        s.add("long value", convert(portfolio.longValue))
-        s.add("short value", convert(portfolio.shortValue))
-        s.add("realized p&l", convert(trades.realizedPnL()))
-        s.add("unrealized p&l", convert(portfolio.unrealizedPNL()))
+        s.add("equity", c(equity))
+        s.add("portfolio", c(portfolio.value))
+        s.add("long value", c(portfolio.longValue))
+        s.add("short value", c(portfolio.shortValue))
+        s.add("realized p&l", c(trades.realizedPnL()))
+        s.add("unrealized p&l", c(portfolio.unrealizedPNL()))
         return s
     }
 

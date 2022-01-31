@@ -219,9 +219,9 @@ class Wallet(vararg amounts: Amount) : Cloneable {
      * formatting the values.
      */
     override fun toString(): String {
-        val sb = StringBuffer("Wallet")
-        for (amount in toAmounts()) sb.append("    $amount")
-        return sb.toString()
+        val sb = StringBuffer()
+        for (amount in toAmounts()) sb.append("$amount, ")
+        return sb.toString().removeSuffix(", ")
     }
 
     /**

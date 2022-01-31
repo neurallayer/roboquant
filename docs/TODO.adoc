@@ -27,10 +27,10 @@ Version 0.8 is all about making sure that (back-)testing works, and the most com
 
 Ensure the API is stable and start including AI and Machine Learning support
 
-* [ ] Stabalize the exposed API (enable -Xexplicit-api=strict compiler flag)
+* [ ] Stabalize the exposed API (perhaps also enable -Xexplicit-api=strict compiler flag)
 * [ ] Improve documentation, notebooks and examples based on the stable API
-* [ ] Include additional demo feeds for quick expirementation
-* [ ] Add Machine Learning support (research required)
+* [ ] Include additional demo feeds for quick expirementation (some forex and crypto assets)
+* [ ] Add basic Machine Learning support (research required)
 * [ ] Add better hyper-parameter search and optmimalization capabilities (research required)
 
 == Version 1.0 (end of 2022)
@@ -48,7 +48,7 @@ This version is all about adding better live trading capabilities. Although ther
 The topics mentioned here are just some ideas for the future releases:
 
 * [ ] Add support for reading different types of data feeds besides price actions
-* [ ] More complete integrations with brokers and crypto-exchanges
+* [ ] Better and more complete integrations with brokers and crypto-exchanges
 * [ ] Advanced policies, like auto re-balancing portfolios
 * [ ] More ready-to-use strategies out of the box
 * [ ] More complex deep learning strategies

@@ -55,6 +55,14 @@ class DefaultCostModel(private val bips: Double = 10.0) : CostModel {
 }
 
 
+class NoCostModel : CostModel {
+
+    override fun calculate(order: Order, execution: Execution): Pair<Double, Double> {
+        return Pair(execution.price * execution.size(), 0.0)
+    }
+
+}
+
 /**
  * Cost model, using a fixed percentage slippage expressed in basis points and additional commission fee. The commission
  * fee is also in expressed in bips but has a minimum and maximum amount (for each currency used).

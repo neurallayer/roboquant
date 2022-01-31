@@ -18,12 +18,15 @@ package org.roboquant.xchange
 
 import info.bitrich.xchangestream.bitstamp.v2.BitstampStreamingExchange
 import info.bitrich.xchangestream.core.StreamingExchangeFactory
-import org.roboquant.Roboquant
-import org.roboquant.common.Timeframe
-import org.roboquant.metrics.ProgressMetric
-import org.roboquant.strategies.EMACrossover
 import org.junit.Test
+import org.knowm.xchange.ExchangeFactory
+import org.knowm.xchange.bitstamp.BitstampExchange
+import org.roboquant.common.AssetType
+import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
+import org.roboquant.common.summary
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
 import kotlin.test.assertEquals
 
 
@@ -36,21 +39,44 @@ internal class XChangeLiveFeedTestIT {
         val exchange = StreamingExchangeFactory.INSTANCE.createExchange(BitstampStreamingExchange::class.java)
         exchange.connect().blockingAwait()
         val feed = XChangeLiveFeed(exchange)
+        feed.availableAssets.summary().print()
 
         // Mix three kind of price actions in a single feed
         feed.subscribeTrade(Pair("BTC", "USD"))
         feed.subscribeOrderBook(Pair("BAT", "USD"))
-        feed.subscribeTicker(Pair("ETH", "BTC"))
+        feed.subscribeTicker("ETH_BTC")
 
         assertEquals(3, feed.assets.size)
 
-        val strategy = EMACrossover.shortTerm()
-        val roboquant = Roboquant(strategy, ProgressMetric())
-
-        /// Run it for 5 minutes
-        val timeframe = Timeframe.next(5.minutes)
-        roboquant.run(feed, timeframe)
+        /// Run it for 2 minutes
+        val timeframe = Timeframe.next(2.minutes)
+        val result = feed.filter<PriceAction>(timeframe = timeframe)
         exchange.disconnect().blockingAwait()
+
+        assertEquals(AssetType.CRYPTO, result.first().second.asset.type)
     }
+
+
+    @Test
+    fun xchangeFeedPollingIT() {
+        System.getProperty("TEST_XCHANGE") ?: return
+
+        val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
+        val feed = XChangePollingLiveFeed(exchange)
+        feed.availableAssets.summary().print()
+
+        feed.subscribeTrade("BTC_USD", pollingDelayMillis = 30_000)
+        println("Subscribed")
+        assertEquals("BTC_USD", feed.assets.first().symbol)
+
+        /// Run it for 2 minutes
+        val timeframe = Timeframe.next(2.minutes)
+        val result = feed.filter<PriceAction>(timeframe = timeframe)
+        feed.close()
+
+        assertEquals(AssetType.CRYPTO, result.first().second.asset.type)
+
+    }
+
 
 }

@@ -22,9 +22,7 @@ import io.reactivex.disposables.Disposable
 import org.knowm.xchange.currency.CurrencyPair
 import org.knowm.xchange.dto.marketdata.Ticker
 import org.knowm.xchange.dto.marketdata.Trade
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Logging
+import org.roboquant.common.*
 import org.roboquant.feeds.*
 import java.time.Instant
 import org.knowm.xchange.dto.marketdata.OrderBook as CryptoOrderBook
@@ -59,20 +57,29 @@ class XChangeLiveFeed(
     private val subscriptions = mutableListOf<Disposable>()
     private val exchangeName = exchange.toString()
 
+    val availableAssets by lazy {
+        val meta = exchange.exchangeMetaData
+        if (meta == null) {
+            logger.warning("No metadata available")
+            listOf<Asset>()
+        } else {
+            val pairs = meta.currencyPairs
+            pairs.map {
+                val symbol = "${it.key.base.currencyCode}_${it.key.counter.currencyCode}"
+                Asset(symbol, AssetType.CRYPTO, it.key.counter.currencyCode, exchangeName)
+            }
+        }
+    }
+
     /**
      * Assets that are subscribed to
      */
     val assets = mutableSetOf<Asset>()
 
+
     init {
-        if (!exchange.isAlive) logger.warning { "Exchange connection is not yet live" }
         logger.info { "Establishing feed for exchange $exchangeName" }
-
-        logger.fine {
-            val pairs = exchange.exchangeMetaData.currencyPairs.keys
-            "Available currency pairs $pairs"
-        }
-
+        if (!exchange.isAlive) logger.warning { "Exchange connection is not yet live" }
     }
 
     /**
@@ -82,6 +89,7 @@ class XChangeLiveFeed(
      * @param currencyPairs
      */
     fun subscribeTrade(vararg currencyPairs: Pair<String, String>) {
+
         for (currencyPair in currencyPairs) {
             val cryptoPair = CurrencyPair(currencyPair.first, currencyPair.second)
             val asset = getAsset(cryptoPair)
@@ -92,6 +100,7 @@ class XChangeLiveFeed(
             subscriptions.add(subscription)
             assets.add(asset)
         }
+
     }
 
 
@@ -121,17 +130,33 @@ class XChangeLiveFeed(
      * patterns.
      *
      */
-    fun subscribeTicker(vararg currencyPairs: Pair<String, String>) {
-        for (currencyPair in currencyPairs) {
-            val cryptoPair = CurrencyPair(currencyPair.first, currencyPair.second)
-            val asset = getAsset(cryptoPair)
-            val subscription = service.getTicker(cryptoPair)
-                .subscribe(
-                    { ticker -> handleTicker(asset, ticker) },
-                    { throwable -> logger.warning { "Error in ticker subscription ${throwable.stackTrace}" } })
-            subscriptions.add(subscription)
-            assets.add(asset)
+    fun subscribeTicker(vararg symbols: String) {
+        for (symbol in symbols) {
+
+            val currencyPair = symbol.toCurrencyPair()
+            if (currencyPair != null) {
+                val asset = getAsset2(symbol, currencyPair.second)
+                val cryptoPair = CurrencyPair(currencyPair.first.currencyCode, currencyPair.second.currencyCode)
+                val subscription = service.getTicker(cryptoPair)
+                    .subscribe(
+                        { ticker -> handleTicker(asset, ticker) },
+                        { throwable -> logger.warning { "Error in ticker subscription ${throwable.stackTrace}" } })
+                subscriptions.add(subscription)
+                assets.add(asset)
+            } else {
+                logger.warning { "Error in converting $symbol to currency pair" }
+            }
         }
+    }
+
+
+    /**
+     * Get an asset based on a crypto-currency pair.
+     *
+     * @return
+     */
+    private fun getAsset2(symbol: String, currency: Currency): Asset {
+        return Asset(symbol, AssetType.CRYPTO, currency.currencyCode, exchangeName)
     }
 
     /**

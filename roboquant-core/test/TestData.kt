@@ -71,7 +71,7 @@ object TestData {
 
     fun event(time: Instant = time()) = Event(listOf(priceAction()), time)
 
-    fun event2(time: Instant = time()) = Event(listOf(priceAction(usStock()), priceAction(euStock())), time)
+    fun event2(time: Instant = time()) = Event(listOf(priceBar()), time)
 
     fun metricInput(time: Instant = time()): Pair<Account, Event> {
         val account = Account()

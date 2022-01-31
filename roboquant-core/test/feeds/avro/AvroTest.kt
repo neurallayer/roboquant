@@ -27,6 +27,7 @@ import org.roboquant.feeds.random.RandomWalk
 import java.io.File
 import java.time.Instant
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -85,6 +86,19 @@ class AvroTest {
         }
     }
 
+    @Test
+    fun predefined() {
+        // System.getenv("TEST_DATA") ?: return
+        val feed = AvroFeed.sp500()
+        assertTrue(feed.assets.size >= 500)
+        assertTrue(feed.timeframe.start > Instant.parse("2013-01-01T00:00:00Z"))
+        assertContains(feed.assets.map { it.symbol }, "AAPL")
+
+        val feed2 = AvroFeed.test()
+        assertTrue(feed2.assets.size == 6)
+        assertContains(feed2.assets.map { it.symbol }, "AAPL")
+        assertTrue(feed2.timeframe.start < Instant.parse("1963-01-01T00:00:00Z"))
+    }
 
 
 

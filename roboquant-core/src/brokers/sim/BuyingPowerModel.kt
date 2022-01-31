@@ -39,6 +39,27 @@ class CashBuyingPower(private val minimum: Double = 0.0) : BuyingPowerModel {
 
 }
 
+/**
+ * Basic calculator that calculates: cash balance - open orders. So no leverage or margin is avaialble for trading.
+ * This is the default BuyingPower and can be used to model a plain Cash Account.
+ *
+ * It is recommended to not to allow for shorting when using the CashBuyingPower since that is almost never
+ * allowed in the real world.
+ */
+class NoLeverageMargin(private val shortMultiplier: Double = 1.5, private val minimum: Number = 0.0) : BuyingPowerModel {
+
+    override fun calculate(account: Account): Amount {
+        val cash = account.cash
+        val short = account.portfolio.shortPositions.map { it.marketValue }.sum() * shortMultiplier
+        val openOrders = account.orders.accepted.map { it.getValueAmount() }.sum()
+        val total = cash - openOrders + short
+        total.withdraw(Amount(account.baseCurrency, minimum))
+        return account.convert(total)
+    }
+
+}
+
+
 
 /**
  * BuyingPower that is based on a fixed leverage as often found at Forex brokers.

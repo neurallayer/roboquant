@@ -49,7 +49,7 @@ internal class CSVFeedTest {
     @Test
     fun customBuilder() {
         val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
-        val config = CSVConfig(template = asset)
+        val config = CSVConfig(template = asset, priceValidate = true)
         val feed = CSVFeed(TestData.dataDir() + "US", config)
         assertEquals("TEST123", feed.assets.first().exchangeCode)
     }

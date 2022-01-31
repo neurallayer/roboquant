@@ -16,8 +16,8 @@
 
 package org.roboquant.orders
 
-import org.roboquant.TestData
 import org.junit.Test
+import org.roboquant.TestData
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -44,6 +44,9 @@ internal class TrailLimitOrderTest {
         e1 = order.execute(99.0, Instant.now())
         assertEquals(1, e1.size)
         assertEquals(order.quantity, e1.first().size())
+
+        val order2 = order.clone()
+        assertEquals(order.quantity, order2.quantity)
     }
 
 
@@ -66,6 +69,8 @@ internal class TrailLimitOrderTest {
         assertEquals(1, e1.size)
 
         assertEquals(0.01, order.limitOffset)
+        val order2 = order.clone()
+        assertEquals(order.quantity, order2.quantity)
     }
 
     @Test

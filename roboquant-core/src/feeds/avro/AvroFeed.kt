@@ -167,22 +167,11 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
         private const val sp500File = "5yr_sp500_v1.1.avro"
         private const val testFile = "us_stocks_test_v1.1.avro"
 
-        private const val sp500URL =
-            "https://github.com/neurallayer/roboquant-data/blob/main/avro/$sp500File?raw=true"
-
-        private const val testURL =
-            "https://github.com/neurallayer/roboquant-data/blob/main/avro/$testFile?raw=true"
-
         /**
          * 5 years worth of end of day [PriceBar] data for the companies listed in the S&P 500
          */
         fun sp500(): AvroFeed {
-            val path: Path = Paths.get(Config.home.toString(), sp500File)
-            if (Files.notExists(path)) {
-                logger.info("Downloading S&P 500 price data from $sp500URL...")
-                download(sp500URL, path)
-                require(Files.exists(path))
-            }
+            val path = download(sp500File)
             return AvroFeed(path.toString())
         }
 
@@ -190,24 +179,26 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
          * Small avro file with end of day [PriceBar] data 6 us stocks: AAPL, AMZN, TSLA, IBM, JNJ and JPM
          */
         fun test(): AvroFeed {
-            val path: Path = Paths.get(Config.home.toString(), testFile)
-            if (Files.notExists(path)) {
-                logger.info("Downloading S&P 500 price data from $testURL...")
-                download(testURL, path)
-                require(Files.exists(path))
-            }
+            val path = download(testFile)
             return AvroFeed(path.toString())
         }
 
-        private fun download(downloadURL: String, fileName: Path) {
-            val website = URL(downloadURL)
-            website.openStream().use { inputStream: InputStream ->
-                Files.copy(
-                    inputStream,
-                    fileName,
-                    StandardCopyOption.REPLACE_EXISTING
-                )
+        private fun download(fileName: String): Path {
+            val path: Path = Paths.get(Config.home.toString(), fileName)
+            if (Files.notExists(path)) {
+                val url = "https://github.com/neurallayer/roboquant-data/blob/main/avro/$fileName?raw=true"
+                logger.info("Downloading data from $url...")
+                val website = URL(url)
+                website.openStream().use { inputStream: InputStream ->
+                    Files.copy(
+                        inputStream,
+                        path,
+                        StandardCopyOption.REPLACE_EXISTING
+                    )
+                }
+                require(Files.exists(path))
             }
+            return path
         }
 
 

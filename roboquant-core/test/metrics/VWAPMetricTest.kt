@@ -36,7 +36,7 @@ internal class VWAPMetricTest {
             result = metric.calc(account, event)
 
         }
-        assertTrue(result.isEmpty())
+        assertTrue(result.isNotEmpty())
     }
 
 }

@@ -42,7 +42,7 @@ object Logging {
      * Use a simple output format (default) or a more detailed format better suited for debugging purposes
      */
     var useSimpleFormat = true
-
+    
     // ANSI escape code
     private const val ANSI_RESET = "\u001B[0m"
     private const val ANSI_BLACK = "\u001B[30m"
@@ -56,7 +56,6 @@ object Logging {
 
     fun blue(msg: Any) = "$ANSI_BLUE$msg$ANSI_RESET"
     fun green(msg: Any) = "$ANSI_GREEN$msg$ANSI_RESET"
-
 
     private class LoggingFormatter : SimpleFormatter() {
 
