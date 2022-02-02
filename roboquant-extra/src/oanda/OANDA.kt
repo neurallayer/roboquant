@@ -22,7 +22,7 @@ import com.oanda.v20.account.AccountID
 import com.oanda.v20.primitives.InstrumentType
 import org.roboquant.Roboquant
 import org.roboquant.brokers.sim.DefaultCostModel
-import org.roboquant.brokers.sim.ForexBuyingPower
+import org.roboquant.brokers.sim.MarginBuyingPower
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
@@ -47,7 +47,7 @@ object OANDA {
         // We use a lower cost model, since the default of 10 BIPS is too much for Forex
         // We select 2.0 BIPS
         val costModel = DefaultCostModel(2.0)
-        val buyingPowerModel = ForexBuyingPower(20.0)
+        val buyingPowerModel = MarginBuyingPower(20.0)
         val broker = SimBroker(costModel = costModel, buyingPowerModel = buyingPowerModel)
 
         return Roboquant(strategy, *metrics, policy = policy, broker = broker)

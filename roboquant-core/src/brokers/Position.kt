@@ -160,3 +160,12 @@ val Collection<Position>.value : Wallet
             for (position in this) result.deposit(position.marketValue)
             return result
         }
+
+
+
+val Collection<Position>.exposure : Wallet
+    get() {
+        val result = Wallet()
+        for (position in this) result.deposit(position.exposure)
+        return result
+    }

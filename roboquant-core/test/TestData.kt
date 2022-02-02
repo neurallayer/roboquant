@@ -31,7 +31,7 @@ import java.time.Instant
 
 object TestData {
 
-    fun usStock() = Asset("AAPL")
+    fun usStock() = Asset("XYZ")
 
     fun usAccount() : Account {
         val asset1 = Asset("AAA")
@@ -48,7 +48,7 @@ object TestData {
         return account
     }
 
-    fun euStock() = Asset("AF", currencyCode = "EUR", exchangeCode = "AEB")
+    fun euStock() = Asset("ABC", currencyCode = "EUR", exchangeCode = "AEB")
 
     fun dataDir(): String {
         if (File("./data").isDirectory)
@@ -57,7 +57,6 @@ object TestData {
             return "../data/"
         throw Exception("cannot find data directory for testing")
     }
-
 
     fun euMarketOrder() = MarketOrder(euStock(), 10.0)
 

@@ -33,13 +33,6 @@ internal class  BuyingPowerModelTest {
         assertTrue(result2.value < result.value)
     }
 
-    @Test
-    fun test2() {
-        val account = TestData.usAccount()
-        val uc = RegTCalculator()
-        val result = uc.calculate(account)
-        assertTrue(result.value > account.cashAmount.value)
-    }
 
 
     @Test
@@ -53,7 +46,7 @@ internal class  BuyingPowerModelTest {
     @Test
     fun test4() {
         val account = TestData.usAccount()
-        val uc = ForexBuyingPower()
+        val uc = MarginBuyingPower(20.0)
         val result = uc.calculate(account)
         assertTrue(result.value > account.cashAmount.value)
     }
@@ -63,7 +56,7 @@ internal class  BuyingPowerModelTest {
         val action = TradePrice(asset, price.toDouble())
         val event = Event(listOf(action), Instant.now())
         broker.place(orders, event)
-        // println(broker.account.summary())
+        println(broker.account.summary())
     }
 
     @Test
@@ -79,6 +72,7 @@ internal class  BuyingPowerModelTest {
         update(broker, abc, 100)
         assertEquals(Amount(EUR,10_000), account.buyingPower )
         update(broker,abc, 100, 40)
+        assertEquals(initial, account.equity)
         update(broker,abc, 75)
         update(broker,abc, 75, -40)
         update(broker,xyz, 200, 25)
@@ -90,19 +84,26 @@ internal class  BuyingPowerModelTest {
 
     @Test
     fun testMarginAccount() {
-        val initial = Wallet(20_000.USD)
-        val buyingPower = NoLeverageMargin(2.0, 5_000)
-        val broker = SimBroker(initial, costModel = NoCostModel(), buyingPowerModel = buyingPower)
-        val xyz = Asset("XYZ", currencyCode = "USD")
+        val initial = Wallet(10_000.USD)
+        val broker = SimBroker(initial, costModel = NoCostModel(), buyingPowerModel = MarginBuyingPower())
+        val abc = Asset("ABC", currencyCode = "USD")
+
         val account = broker.account
 
-        update(broker, xyz, 200)
-        assertEquals(Amount(USD,15_000), account.buyingPower )
-        update(broker,xyz, 200, -50)
-        update(broker,xyz, 240)
-        update(broker,xyz, 240, 50)
-        assertEquals(Amount(USD,13_000), account.buyingPower )
+        update(broker, abc, 100)
+        assertEquals(Amount(USD,10_000) * 2, account.buyingPower )
 
+        update(broker,abc, 100, 50)
+        assertEquals(Amount(USD,17_000), account.buyingPower )
+        assertEquals(initial, account.equity)
+
+        update(broker,abc, 60)
+        assertEquals(Amount(USD,14_200), account.buyingPower )
+
+        update(broker,abc, 60, -50)
+        assertEquals(Amount(USD,16_000), account.buyingPower )
+        assertEquals(account.cash.getAmount(USD) * 2.0, account.buyingPower )
     }
+
 
 }

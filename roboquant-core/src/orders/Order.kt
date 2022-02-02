@@ -89,7 +89,7 @@ abstract class Order(val asset: Asset) : Cloneable {
     abstract fun getValue(price: Double = this.price) : Double
 
 
-    fun getValueAmount(price: Double = this.price) = Amount(asset.currency, getValue(price))
+    open fun getValueAmount(price: Double = this.price) = Amount(asset.currency, getValue(price))
 
 
     /**
