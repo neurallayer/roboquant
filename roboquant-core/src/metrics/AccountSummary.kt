@@ -16,7 +16,6 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 
@@ -27,10 +26,9 @@ import org.roboquant.feeds.Event
  * - account.orders.open Total number of open orders
  * - account.trades Total number of trades
  * - account.portfolio.assets Total number of assets in the portfolio
- * - account.cash.currencies Number of currencies hold
- * - account.cash.total Total cash value
+ * - account.cash Total cash value
  * - account.buyingPower Buying power available in the account
- * - account.value Total value of the account
+ * - account.equity Total equity value of the account
  * - account.change Change of value of the account
  *
  *
@@ -40,7 +38,6 @@ import org.roboquant.feeds.Event
  */
 class AccountSummary(private val includeEquity: Boolean = true) : SimpleMetric() {
 
-    private var lastValue: Double? = null
 
     override fun calc(account: Account, event: Event): MetricResults {
         val result = mutableMapOf(
@@ -59,7 +56,4 @@ class AccountSummary(private val includeEquity: Boolean = true) : SimpleMetric()
         return result
     }
 
-    override fun start(runPhase: RunPhase) {
-        lastValue = null
-    }
 }

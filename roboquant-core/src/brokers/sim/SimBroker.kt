@@ -48,7 +48,6 @@ class SimBroker(
     private val recording: Boolean = false,
     private val prefix: String = "broker.",
     private val priceType: String = "OPEN",
-    private val keepClosedOrders: Boolean = true
 ) : Broker {
 
     // Used to store metrics of the simbroker itself
@@ -172,7 +171,6 @@ class SimBroker(
         execute(event)
         account.portfolio.updateMarketPrices(event)
         account.lastUpdate = event.time
-        if (! keepClosedOrders) account.orders.removeIf { it.status.closed }
         updateBuyingPower()
         return account
     }
@@ -225,10 +223,12 @@ class SimBroker(
     }
 
     /**
-     * Liquidate the portfolio. It performs the following two steps:
+     * Liquidate the portfolio. This comes in handy at the end of a back-test if you prefer no more open positions.
+     * It performs the following two steps:
      *
      * 1. cancel all open orders
-     * 2. close all open positions by creating and processing market orders for the required quantities
+     * 2. close all open positions by creating and processing [MarketOrder] for the required quantities, using the
+     * last known market prices as price actions.
      */
     fun liquidatePortfolio(time:Instant = account.lastUpdate): Account {
         for (order in account.orders.open) order.status = OrderStatus.CANCELLED

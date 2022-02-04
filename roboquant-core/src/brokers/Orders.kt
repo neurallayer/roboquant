@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.roboquant.common.Summary
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderStatus
+import kotlin.collections.ArrayList
 
 /**
  * Optimized container for storing orders used by the Account.
@@ -29,25 +30,45 @@ import org.roboquant.orders.OrderStatus
  */
 class Orders : ArrayList<Order>() {
 
+    private var lastSize = 0
+    private val _openCache = mutableListOf<Order>()
+
+    override fun clear() {
+        lastSize = 0
+        _openCache.clear()
+        super.clear()
+    }
 
     /**
      * Closed orders, any order that is in a state that cannot be further processed
+     * @See OrderStatus.closed
      */
     val closed
         get() = filter { it.status.closed }
 
     /**
-     * Open orders, these are orders that can still be processed
-     * TODO: Optimize the acces to open orders since that is called often and small subset of all orders in a large backtest
+     * Open orders, these are orders that can still be processed. This means they are either in [OrderStatus.INITIAL]
+     * state or [OrderStatus.ACCEPTED] state.
+     *
+     * This propoerty uses caching to optimize large back-tests generate large amount of orders, of which most are closed
      */
-    val open
-        get() = filter { it.status.open }
+    val open : List<Order>
+        get() {
+            assert(size >= lastSize)
+            // Check if the total number of orders has changed and if so refresh the _openCache
+            if (size > lastSize) {
+                _openCache.clear()
+                _openCache.addAll(filter { it.status.open })
+                lastSize = size
+            }
+            return _openCache.filter { it.status.open }
+        }
 
     /**
      * Orders that are in [OrderStatus.ACCEPTED] state, and so they are ready for execution
      */
     val accepted
-        get() = filter { it.status === OrderStatus.ACCEPTED }
+        get() = open.filter { it.status === OrderStatus.ACCEPTED }
 
 
     /**

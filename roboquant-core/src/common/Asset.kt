@@ -44,7 +44,7 @@ data class Asset(
 ) : Comparable<Asset> {
 
     init {
-        assert(symbol.isNotBlank()) { "Symbol in an asset cannot be empty or blank" }
+        require(symbol.isNotBlank()) { "Symbol in an asset cannot be empty or blank" }
     }
 
     /**

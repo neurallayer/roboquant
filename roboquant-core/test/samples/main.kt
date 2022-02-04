@@ -274,9 +274,8 @@ fun oneMillionBars() {
     val feed = RandomWalk(timeline, 1)
     val strategy = EMACrossover()
 
-    val broker = SimBroker(keepClosedOrders = false)
-    val roboquant = Roboquant(strategy, ProgressMetric(), broker = broker)
-    roboquant.run(feed)
+    val roboquant = Roboquant(strategy, ProgressMetric())
+    println(measureTimeMillis {  roboquant.run(feed) })
 }
 
 fun volatility() {
@@ -609,7 +608,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("SMALL6") {
+    when ("ONE_MILLION") {
         // "CRYPTO" -> crypto()
         "SMALL" -> small()
         "BETA" -> beta()

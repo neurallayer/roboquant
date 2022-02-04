@@ -67,7 +67,7 @@ internal class RoboquantTest {
         val logger = SilentLogger()
         val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
         roboquant.run(feed)
-        assert(logger.events > 0)
+        assertTrue(logger.events > 0)
     }
 
 

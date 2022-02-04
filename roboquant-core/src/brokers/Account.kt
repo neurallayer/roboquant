@@ -57,7 +57,6 @@ class Account(
      */
     val trades = Trades()
 
-
     /**
      * All orders
      */

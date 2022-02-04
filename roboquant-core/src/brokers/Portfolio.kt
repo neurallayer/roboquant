@@ -114,7 +114,6 @@ class Portfolio : Cloneable {
         }
     }
 
-
     /**
      * Replace a position in the portfolio with a new [position]. So this overwrites the previous position
      * This will be used for example with live trading when the broker holds the true state of the positions
