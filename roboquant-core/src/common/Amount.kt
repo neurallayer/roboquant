@@ -90,6 +90,13 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
         return Config.exchangeRates.convert(this, to, time)
     }
 
+    /**
+     * Convert this amount to a [Wallet]
+     */
+    fun toWallet(): Wallet {
+        return Wallet(this)
+    }
+
 }
 
 // Extensions to make it easier to create amounts for common currencies

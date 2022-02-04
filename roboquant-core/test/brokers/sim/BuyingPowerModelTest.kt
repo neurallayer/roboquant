@@ -15,7 +15,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class  BuyingPowerModelTest {
+internal class BuyingPowerModelTest {
 
     @Test
     fun test() {
@@ -32,7 +32,6 @@ internal class  BuyingPowerModelTest {
         val result2 = uc.calculate(account)
         assertTrue(result2.value < result.value)
     }
-
 
 
     @Test
@@ -56,11 +55,12 @@ internal class  BuyingPowerModelTest {
         val action = TradePrice(asset, price.toDouble())
         val event = Event(listOf(action), Instant.now())
         broker.place(orders, event)
-        println(broker.account.summary())
+        // println(broker.account.summary())
     }
 
     @Test
     fun testCashAccount() {
+        // Slide 1 example in code
         val initial = Wallet(10_000.EUR)
         val broker = SimBroker(initial, costModel = NoCostModel())
         val abc = Asset("ABC", currencyCode = "EUR")
@@ -70,39 +70,83 @@ internal class  BuyingPowerModelTest {
         val account = broker.account
 
         update(broker, abc, 100)
-        assertEquals(Amount(EUR,10_000), account.buyingPower )
-        update(broker,abc, 100, 40)
+        assertEquals(10_000.EUR, account.buyingPower)
+
+        update(broker, abc, 100, 40)
         assertEquals(initial, account.equity)
-        update(broker,abc, 75)
-        update(broker,abc, 75, -40)
-        update(broker,xyz, 200, 25)
-        update(broker,xyz, 240)
-        update(broker,xyz, 240, -25)
-        assertEquals(Amount(EUR,9900), account.buyingPower )
+        assertEquals(4_000.EUR.toWallet(), account.portfolio.value)
+        assertEquals(6_000.EUR, account.buyingPower)
+
+        update(broker, abc, 75)
+        assertEquals(9_000.EUR, account.equityAmount)
+
+        update(broker, abc, 75, -40)
+        assertEquals(9_000.EUR, account.buyingPower)
+
+        update(broker, xyz, 200, 25)
+        assertEquals(4_500.EUR, account.buyingPower)
+
+        update(broker, xyz, 240)
+        assertEquals(4_500.EUR, account.buyingPower)
+
+        update(broker, xyz, 240, -25)
+        assertEquals(9900.EUR, account.buyingPower)
+
+    }
+
+
+    @Test
+    fun testMarginAccountLong() {
+        // Slide 2 example in code
+        val initial = Wallet(1_000_000.JPY)
+        val broker = SimBroker(initial, costModel = NoCostModel(), buyingPowerModel = MarginBuyingPower())
+        val abc = Asset("ABC", currencyCode = "JPY")
+
+        val account = broker.account
+
+        update(broker, abc, 1000)
+        assertEquals(2_000_000.JPY, account.buyingPower)
+
+        update(broker, abc, 1000, 500)
+        assertEquals(1_700_000.JPY, account.buyingPower)
+        assertEquals(initial, account.equity)
+
+        update(broker, abc, 500)
+        assertEquals(1_350_000.JPY, account.buyingPower)
+
+        update(broker, abc, 500, 2000)
+        assertEquals(750_000.JPY, account.buyingPower)
+
+        update(broker, abc, 400)
+        assertEquals(400_000.JPY, account.buyingPower)
+
+        update(broker, abc, 400, -2500)
+        assertEquals(1_000_000.JPY, account.buyingPower)
 
     }
 
     @Test
-    fun testMarginAccount() {
-        val initial = Wallet(10_000.USD)
+    fun testMarginAccountShort() {
+        // Slide 3 example example in code
+        val initial = Wallet(20_000.USD)
         val broker = SimBroker(initial, costModel = NoCostModel(), buyingPowerModel = MarginBuyingPower())
         val abc = Asset("ABC", currencyCode = "USD")
 
         val account = broker.account
 
-        update(broker, abc, 100)
-        assertEquals(Amount(USD,10_000) * 2, account.buyingPower )
-
-        update(broker,abc, 100, 50)
-        assertEquals(Amount(USD,17_000), account.buyingPower )
+        update(broker, abc, 200, -50)
+        assertEquals(34_000.USD, account.buyingPower)
         assertEquals(initial, account.equity)
 
-        update(broker,abc, 60)
-        assertEquals(Amount(USD,14_200), account.buyingPower )
+        update(broker, abc, 300)
+        assertEquals(Amount(USD, 21_000), account.buyingPower)
 
-        update(broker,abc, 60, -50)
-        assertEquals(Amount(USD,16_000), account.buyingPower )
-        assertEquals(account.cash.getAmount(USD) * 2.0, account.buyingPower )
+        update(broker, abc, 300, -50)
+        assertEquals(12_000.USD, account.buyingPower)
+
+        update(broker, abc, 300, 100)
+        assertEquals(30_000.USD, account.buyingPower)
+        assertEquals(15_000.USD.toWallet(), account.cash)
     }
 
 
