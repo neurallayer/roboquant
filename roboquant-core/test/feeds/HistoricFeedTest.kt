@@ -18,9 +18,9 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import org.roboquant.common.months
 import org.roboquant.feeds.random.RandomWalk
 import java.time.Instant
-import java.time.Period
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -30,7 +30,7 @@ internal class HistoricFeedTest {
     @Test
     fun test() {
         val feed: HistoricFeed = RandomWalk.lastYears()
-        val tfs = feed.split(Period.ofMonths(1))
+        val tfs = feed.split(1.months)
         assertEquals(12, tfs.size)
         assertEquals(10, feed.assets.size)
         assertFalse(feed.timeline.isEmpty())

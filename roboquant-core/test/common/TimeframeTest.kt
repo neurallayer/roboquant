@@ -18,7 +18,6 @@ package org.roboquant.common
 
 
 import org.junit.Test
-import java.time.Period
 import java.time.ZoneId
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -41,7 +40,7 @@ internal class TimeframeTest {
     @Test
     fun split() {
         val tf = Timeframe.fromYears(1980, 1999)
-        val subFrames = tf.split(Period.ofYears(2))
+        val subFrames = tf.split(2.years)
         assertEquals(10, subFrames.size)
         assertEquals(tf.start, subFrames.first().start)
         assertEquals(tf.end, subFrames.last().end)
@@ -106,7 +105,7 @@ internal class TimeframeTest {
     @Test
     fun toTimeline() {
         val tf = Timeframe.parse("2020-01-01T18:00:00Z","2021-12-31T18:00:00Z")
-        val timeline = tf.toTimeline(Period.ofDays(1))
+        val timeline = tf.toTimeline(1.days)
         assertTrue(timeline.size > 200)
     }
 }

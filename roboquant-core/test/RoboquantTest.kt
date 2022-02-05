@@ -19,6 +19,7 @@ package org.roboquant
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.roboquant.common.Timeframe
+import org.roboquant.common.years
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.SilentLogger
@@ -26,7 +27,6 @@ import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.RandomStrategy
-import java.time.Period
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -53,7 +53,7 @@ internal class RoboquantTest {
         val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
 
         val feed = RandomWalk.lastYears()
-        feed.split(Period.ofYears(2)).forEach {
+        feed.split(2.years).forEach {
             roboquant.run(feed, it)
         }
     }

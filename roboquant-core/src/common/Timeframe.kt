@@ -209,7 +209,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
     fun toDays(excludeWeekends: Boolean = false, zoneId: ZoneId = Config.defaultZoneId): Timeline {
         val timeline = mutableListOf<Instant>()
         var offset = start
-        val oneDay = Period.ofDays(1)
+        val oneDay = 1.days
         val weekend = listOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
         while (offset <= end) {
             if (excludeWeekends) {

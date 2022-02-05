@@ -45,7 +45,6 @@ import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.*
 import java.nio.file.Files
 import java.time.Instant
-import java.time.Period
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.io.path.name
@@ -100,7 +99,7 @@ fun large1() {
     val feed = CSVFeed("/data/assets/stock-market/stocks/")
     val strategy = EMACrossover.longTerm()
     val roboquant = Roboquant(strategy, AccountSummary(), PNL())
-    feed.split(Period.ofYears(10)).forEach {
+    feed.split(10.years).forEach {
         roboquant.run(feed, it)
     }
 }
@@ -120,7 +119,7 @@ fun large3() {
     val strategy = EMACrossover.longTerm()
     val roboquant = Roboquant(strategy, AccountSummary())
     val feed = CSVFeed("/data/assets/stock-market/stocks/")
-    feed.split(Period.ofYears(5)).map { it.splitTrainTest(0.2) }.forEach {
+    feed.split(5.years).map { it.splitTrainTest(0.2) }.forEach {
         roboquant.run(feed, it.first, it.second)
     }
 }
@@ -403,12 +402,12 @@ fun testingStrategies() {
     roboquant.run(feed)
 
     // Walk forward
-    feed.split(Period.ofYears(2)).forEach {
+    feed.split(2.years).forEach {
         roboquant.run(feed, it)
     }
 
     // Walk forward learning
-    feed.split(Period.ofYears(2)).map { it.splitTrainTest(0.2) }.forEach { (train, test) ->
+    feed.split(2.years).map { it.splitTrainTest(0.2) }.forEach { (train, test) ->
         roboquant.run(feed, train, test, episodes = 100)
     }
 
