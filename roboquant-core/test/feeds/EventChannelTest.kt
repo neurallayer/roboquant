@@ -46,7 +46,7 @@ internal class EventChannelTest {
     fun basicOffer() {
         val channel = EventChannel(10)
         val event = Event.empty()
-        repeat(15) {
+        repeat(11) {
             channel.offer(event)
         }
         assertFalse(channel.done)

@@ -17,6 +17,8 @@
 package org.roboquant.policies
 
 import org.roboquant.Roboquant
+import org.roboquant.brokers.sim.MarginBuyingPower
+import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.strategies.NoSignalStrategy
@@ -31,8 +33,9 @@ class BettingAgainstAccountBetaTest {
         val marketAsset = assets.first()
 
         val policy = BettingAgainstBeta(assets, marketAsset)
+        val broker = SimBroker(buyingPowerModel = MarginBuyingPower())
         val logger = MemoryLogger(false)
-        val exp = Roboquant(NoSignalStrategy(), policy = policy, logger = logger)
+        val exp = Roboquant(NoSignalStrategy(), broker = broker, policy = policy, logger = logger)
         exp.run(feed)
         assertTrue(exp.broker.account.orders.closed.isNotEmpty())
     }
