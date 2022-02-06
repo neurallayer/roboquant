@@ -46,16 +46,18 @@ fun recordBinanceFeed() {
 }
 
 fun readBianceFeed() {
+    println("starting")
     val t = measureTimeMillis {
         val userHomeDir = System.getProperty("user.home")
         val fileName = "$userHomeDir/tmp/crypto.avro"
         val feed = AvroFeed(fileName, useIndex = true)
         val initialDeposit = Amount("USDC", 100_000).toWallet()
-        val buyingPower = MarginBuyingPower(20.0)
+        val buyingPower = MarginBuyingPower()
         val policy = DefaultPolicy(shorting = true)
         val broker = SimBroker(initialDeposit, buyingPowerModel = buyingPower)
         val roboquant = Roboquant(EMACrossover(), AccountSummary(), broker = broker, policy = policy)
         roboquant.run(feed)
+        roboquant.broker.account.summary().log()
     }
     println(t)
 }

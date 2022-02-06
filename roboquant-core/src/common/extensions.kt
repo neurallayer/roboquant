@@ -153,6 +153,8 @@ fun DoubleArray.returns() : DoubleArray {
 }
 
 
+val Double.zeroOrMore
+    get() = if (this > 0.0) this else 0.0
 
 
 /**

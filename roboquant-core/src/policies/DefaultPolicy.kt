@@ -18,12 +18,14 @@ package org.roboquant.policies
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Orders
-import org.roboquant.common.addNotNull
+import org.roboquant.common.Amount
+import org.roboquant.common.Asset
+import org.roboquant.common.Logging
+import org.roboquant.common.zeroOrMore
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 import java.time.Instant
-import kotlin.math.absoluteValue
 import kotlin.math.floor
 import kotlin.math.min
 
@@ -56,37 +58,50 @@ open class DefaultPolicy(
     private val shorting: Boolean = false,
     private val increasePosition: Boolean = false,
     private val oneOrderPerAsset: Boolean = true,
-    private val maxOrdersPerDay: Int = Int.MAX_VALUE,
+    private val maxOrdersPerDay: Int = Int.MAX_VALUE
 ) : BasePolicy() {
 
-    private fun createSellOrder(account: Account, signal: Signal, price: Double, buyingPower: Double): Order? {
-        val position = account.portfolio.getPosition(signal.asset)
+    private val logger = Logging.getLogger(DefaultPolicy::class)
 
-        // Check if we are going to short
-        if (!shorting && !position.long) return null
-
-        return if (position.long) {
-            createOrder(signal, -position.size, price)
-        } else {
-            if (position.short && !increasePosition) return null
-            val amount = min(buyingPower, maxAmount).absoluteValue
-            val volume = floor(calcVolume(amount, signal.asset, price, account))
-            if (volume > 0) createOrder(signal, -volume, price) else null
-        }
-
+    init {
+        require(maxOrdersPerDay > 0)
+        require(minAmount <= maxAmount)
     }
 
-    private fun createBuyOrder(account: Account, signal: Signal, price: Double, buyingPower: Double): Order? {
+    private fun reducedBuyingPower(account: Account, asset: Asset, qty: Double, price: Double): Double {
+        val cost = Amount(asset.currency, asset.multiplier * qty * price).absoluteValue
+        val baseCurrencyCost = account.convert(cost)
+        return baseCurrencyCost.value
+    }
+
+    private fun createSellOrder(account: Account, signal: Signal, price: Double, amount: Double): Pair<Order?, Double> {
         val position = account.portfolio.getPosition(signal.asset)
 
-        // If we have already a position don't increase it
-        if (position.long) return null
+        if (position.long) return Pair(createOrder(signal, -position.size, price), 0.0)
+        if (!shorting) return Pair(null, 0.0)
+        if (position.short && !increasePosition) return Pair(null, 0.0)
 
-        val amount = min(buyingPower, maxAmount)
         val volume = floor(calcVolume(amount, signal.asset, price, account))
-        return if (volume > 0) createOrder(signal, volume, price) else null
+        if (volume <= 0.0) return Pair(null, 0.0)
+
+        val bp = reducedBuyingPower(account, signal.asset, volume, price)
+        val order = createOrder(signal, -volume, price)
+        return Pair(order, bp)
     }
 
+    private fun createBuyOrder(account: Account, signal: Signal, price: Double, amount: Double): Pair<Order?, Double> {
+        val position = account.portfolio.getPosition(signal.asset)
+
+        if (position.short) return Pair(createOrder(signal, -position.size, price), 0.0)
+        if (position.long && !increasePosition) return Pair(null, 0.0)
+
+        val volume = floor(calcVolume(amount, signal.asset, price, account))
+        if (volume <= 0.0) return Pair(null, 0.0)
+
+        val bp = reducedBuyingPower(account, signal.asset, volume, price)
+        val order = createOrder(signal, volume, price)
+        return Pair(order, bp)
+    }
 
 
     /**
@@ -100,39 +115,44 @@ open class DefaultPolicy(
      * trading on different exchanges with different timezones.
      */
     private fun getOrdersCurrentDay(now: Instant, orders: Orders) =
-        orders.filter { it.asset.exchange.sameDay(now, it.placed) }
+        orders.filter { it.asset.exchange.sameDay(now, it.placed) }.size
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<Order>()
         var buyingPower = account.buyingPower.value
         val openOrderAssets = account.orders.open.map { it.asset }
-        val remainingDayOrders =
-            if (maxOrdersPerDay == Int.MAX_VALUE) Int.MAX_VALUE else maxOrdersPerDay - getOrdersCurrentDay(
-                event.time,
-                account.orders
-            ).size
+        var remainingDayOrders = maxOrdersPerDay
+
+        // Performance optimilization. Checking day orders is expensive so we only do it when required
+        if (maxOrdersPerDay != Int.MAX_VALUE) remainingDayOrders -= getOrdersCurrentDay(event.time, account.orders)
 
         for (signal in signals.resolve(signalResolve)) {
             val asset = signal.asset
 
-            // If there are open orders, we don't place a new order
+            // If there are open orders for the asset, we don't place an additional order
             if (oneOrderPerAsset && openOrderAssets.contains(asset)) continue
+
+            // We don't place an order if we don't know the current price
             val price = event.getPrice(asset)
             if (price !== null) {
+                val amount = min(maxAmount, buyingPower).zeroOrMore
                 if (signal.rating.isNegative) {
-                    val order = createSellOrder(account, signal, price, buyingPower)
-                    orders.addNotNull(order)
-                } else if (signal.rating.isPositive && buyingPower >= minAmount) {
-                    val order = createBuyOrder(account, signal, price, buyingPower)
+                    val (order, cost) = createSellOrder(account, signal, price, amount)
                     if (order != null) {
+                        logger.fine {"sell $amount $cost $order" }
                         orders.add(order)
-                        val cost = order.getValueAmount(price)
-                        val baseCurrencyCost = account.convert(cost)
-                        buyingPower -= baseCurrencyCost.value
+                        buyingPower -= cost
+                    }
+                } else if (signal.rating.isPositive) {
+                    val (order, cost) = createBuyOrder(account, signal, price, amount)
+                    if (order != null) {
+                        logger.fine {"buy $amount $cost $order" }
+                        orders.add(order)
+                        buyingPower -= cost
                     }
                 }
             }
-            if (orders.size > remainingDayOrders) break
+            if (orders.size >= remainingDayOrders) break
         }
         record("policy.signals", signals.size)
         record("policy.orders", orders.size)

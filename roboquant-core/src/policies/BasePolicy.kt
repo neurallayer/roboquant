@@ -82,15 +82,15 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
      * buying power. The buying power is in the same baseCurrency fo the account and the price
      * is in the currency of that asset.
      *
-     * @param buyingPower
+     * @param freeAmount
      * @param asset
      * @param price
      * @param account
      * @return
      */
-    protected fun calcVolume(buyingPower: Double, asset: Asset, price: Double, account: Account): Double {
+    protected fun calcVolume(freeAmount: Double, asset: Asset, price: Double, account: Account): Double {
         val singleContractCost = asset.multiplier * price
-        val availableAssetCash = Amount(account.baseCurrency, buyingPower).convert(asset.currency, account.lastUpdate)
+        val availableAssetCash = Amount(account.baseCurrency, freeAmount).convert(asset.currency, account.lastUpdate)
         return availableAssetCash.value / singleContractCost
     }
 
