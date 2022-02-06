@@ -36,7 +36,7 @@ fun Timeline.earliestNotBefore(time: Instant): Int? {
  * Get the timeframe for this timeline. If the timeline is empty, an exception will be thrown.
  */
 val Timeline.timeframe
-    get() = Timeframe(first(), last())
+    get() = Timeframe.inclusive(first(), last())
 
 /**
  * Split the timeline in chunks of [size]

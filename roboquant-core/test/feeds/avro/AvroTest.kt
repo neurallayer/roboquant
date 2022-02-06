@@ -94,7 +94,7 @@ class AvroTest {
         assertTrue(feed.timeframe.start > Instant.parse("2013-01-01T00:00:00Z"))
         assertContains(feed.assets.map { it.symbol }, "AAPL")
 
-        val feed2 = AvroFeed.test()
+        val feed2 = AvroFeed.usTest()
         assertTrue(feed2.assets.size == 6)
         assertContains(feed2.assets.map { it.symbol }, "AAPL")
         assertTrue(feed2.timeframe.start < Instant.parse("1963-01-01T00:00:00Z"))

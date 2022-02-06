@@ -114,8 +114,22 @@ abstract class Chart : Output() {
      */
     var height = 500
 
+
+
     companion object {
+
+        /**
+         * Theme to use for plotting
+         */
         var theme = "auto"
+
+        /**
+         * Maximum number of samples to plot in a chart. Certain types of charts can be become very large and as
+         * a result make your browser unresposive. By lowering this value (default is Int.MAX_VALUE)
+         * before serializing the result to the browser, the sample size will first be reduced. A good value might
+         * be 100_000, but this depends on your computer.
+         */
+        var maxSamples = Int.MAX_VALUE
 
         val gsonBuilder = GsonBuilder()
 
@@ -128,6 +142,19 @@ abstract class Chart : Output() {
         }
 
     }
+
+    /**
+     * Reduce the sample size in order to ensure the browser can still plot it.
+     */
+    protected fun <T>reduce(data: Collection<T>): Collection<T> {
+        return if (data.size > maxSamples) {
+            val skip = data.size / maxSamples
+            data.filterIndexed {  index, _ -> index % skip == 1 }
+        } else {
+            data
+        }
+    }
+
 
     /**
      * Generates the HTML required to draw a chart.

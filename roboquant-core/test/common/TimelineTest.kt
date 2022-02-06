@@ -41,9 +41,9 @@ internal class TimelineTest {
 
     @Test
     fun timeframe() {
-        val tl = Timeframe.fromYears(1987, 1999).toDays()
-        val tf = tl.timeframe
-        assertEquals(Timeframe(tl.first(), tl.last()), tf)
+        val timeline = Timeframe.fromYears(1987, 1999).toDays()
+        val tf = timeline.timeframe
+        assertEquals(Timeframe.inclusive(timeline.first(), timeline.last()), tf)
     }
 
 

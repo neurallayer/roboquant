@@ -24,7 +24,7 @@ import kotlin.math.pow
 
 
 /**
- * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time (inclusive). A
+ * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time (exclusive). A
  * timeframe instance is immutable.  Like all time related logic in roboquant, it uses the [Instant] type to define
  * a moment in time, in order to avoid potential timezone inconsistencies.
  *
@@ -41,9 +41,14 @@ data class Timeframe(val start: Instant, val end: Instant) {
     val duration: Duration
         get() = Duration.between(start, end)
 
+    /**
+     * The end value that is inclusive
+     */
+    val endInclusive = end - 1
+
 
     init {
-        require(end >= start) { "end time has to be larger or equal than start time, found $start - $end" }
+        require(end > start) { "end time has to be larger than start time, found $start - $end" }
     }
 
     companion object {
@@ -138,19 +143,32 @@ data class Timeframe(val start: Instant, val end: Instant) {
             return Timeframe(start, start + period)
         }
 
+        /**
+         * Create a [Timeframe] with both the [start] and the [end] time being inclusive.
+         */
+        fun inclusive(start: Instant, end: Instant): Timeframe {
+            return Timeframe(start, end + 1)
+        }
+
     }
 
     /**
      * Return a timeframe exclusive of the [end] value.
      */
     val exclusive
-        get() = Timeframe(start, end - 1)
+        get() = this
+
+    /**
+     * Return a timeframe inclusive of the [end] value.
+     */
+    val inclusive
+        get() = Timeframe(start, end + 1)
 
     /**
      * Does the timeframe contain a certain [time].
      */
     operator fun contains(time: Instant): Boolean {
-        return (time >= start) && (time <= end)
+        return (time >= start) && (time < end)
     }
 
     /**
@@ -300,12 +318,12 @@ data class Timeframe(val start: Instant, val end: Instant) {
 
         val result = mutableListOf<Timeframe>()
         var offset = start
-        while (offset <= stop) {
+        while (offset < stop) {
             var end = offset + period
             if (end > stop) end = stop
             val timeframe = Timeframe(offset.toInstant(), end.toInstant())
             result.add(timeframe)
-            offset = end.plus(Duration.ofMillis(1))
+            offset = end
         }
         return result
     }

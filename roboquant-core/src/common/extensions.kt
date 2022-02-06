@@ -46,7 +46,7 @@ operator fun Instant.plus(millis: Int): Instant = plusMillis(millis.toLong())
 
 
 operator fun Instant.compareTo(timeframe: Timeframe): Int {
-    return if (this > timeframe.end) 1 else if (this < timeframe.start) -1 else 0
+    return if (this >= timeframe.end) 1 else if (this < timeframe.start) -1 else 0
 }
 
 

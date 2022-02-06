@@ -45,35 +45,21 @@ import java.time.Instant
  *
  * @constructor Create new Avro Feed
  */
-class AvroFeed(private val path: String, private val useIndex: Boolean = true) : HistoricFeed {
+class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFeed {
 
-    private val _timeframe: Timeframe
     private val assetLookup = mutableMapOf<String, Asset>()
     internal val index = mutableListOf<Pair<Instant, Long>>()
 
     override val assets
         get() = assetLookup.values.toSortedSet()
 
-
-    override val timeframe: Timeframe
-        get() = if (index.isEmpty()) _timeframe else super.timeframe
-
-
     override val timeline: Timeline
         get() = index.map { it.first }
 
-
     init {
-        _timeframe = getReader().use { reader ->
-            val start = reader.getMetaLong("roboquant.start")
-            val end = reader.getMetaLong("roboquant.end")
-            Timeframe(Instant.ofEpochMilli(start), (Instant.ofEpochMilli(end)))
-        }
-
         if (useIndex) buildIndex()
-        logger.info { "Loaded assets with timeframe $timeframe from $path" }
+        logger.info { "Loaded data from $path with timefame $timeframe" }
     }
-
 
     private fun position(r: DataFileReader<GenericRecord>, time: Instant) {
         var idx = index.binarySearch { it.first.compareTo(time) }
@@ -83,21 +69,22 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
     }
 
     /**
-     * Both build an index of where each time starts and get all assets found
+     * Build an index of where each time starts and get all assets found
      */
     private fun buildIndex() {
         index.clear()
-        var last = Instant.MIN
+        var last = Long.MIN_VALUE
 
         getReader().use {
             while (it.hasNext()) {
                 val rec = it.next()
-                val t = Instant.ofEpochMilli(rec[0] as Long)
+                val t = rec[0] as Long
                 val asset = rec[1].toString()
                 if (!assetLookup.containsKey(asset)) assetLookup[asset] = Asset.deserialize(asset)
                 if (t > last) {
                     val pos = it.previousSync()
-                    index.add(Pair(t, pos))
+                    val time = Instant.ofEpochMilli(t)
+                    index.add(Pair(time, pos))
                     last = t
                 }
             }
@@ -117,19 +104,19 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
      * @return
      */
     override suspend fun play(channel: EventChannel) {
-        val tf = channel.timeframe
+        val timeframe = channel.timeframe
         var last = Instant.MIN
         var actions = mutableListOf<PriceAction>()
 
         getReader().use {
-            if (useIndex) position(it, tf.start)
+            if (index.isNotEmpty()) position(it, timeframe.start)
 
             while (it.hasNext()) {
                 val rec = it.next()
 
                 // Optimize unnecessary parsing of whole record
                 val now = Instant.ofEpochMilli(rec[0] as Long)
-                if (now < tf.start) continue
+                if (now < timeframe) continue
 
                 if (now != last) {
                     if (actions.isNotEmpty()) channel.send(Event(actions, last))
@@ -137,7 +124,7 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
                     actions = mutableListOf()
                 }
 
-                if (now >= tf.end) break
+                if (now > timeframe) break
 
                 val assetId = rec.get(1).toString()
                 val asset = assetLookup.getOrPut(assetId) { Asset.deserialize(assetId) }
@@ -178,7 +165,7 @@ class AvroFeed(private val path: String, private val useIndex: Boolean = true) :
         /**
          * Small avro file with end of day [PriceBar] data 6 us stocks: AAPL, AMZN, TSLA, IBM, JNJ and JPM
          */
-        fun test(): AvroFeed {
+        fun usTest(): AvroFeed {
             val path = download(testFile)
             return AvroFeed(path.toString())
         }

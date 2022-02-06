@@ -82,7 +82,7 @@ internal class TimeframeTest {
     @Test
     fun exclusive() {
         val tf = Timeframe.fromYears(2018, 2019)
-        assertTrue(tf.contains(tf.end))
+        assertTrue(tf.inclusive.contains(tf.end))
 
         val tf2 = tf.exclusive
         assertTrue(tf2.contains(tf.end - 1))

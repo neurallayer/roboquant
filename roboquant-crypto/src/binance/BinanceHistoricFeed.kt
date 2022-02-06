@@ -25,13 +25,10 @@ import java.time.Instant
 /**
  * Create a new feed based on price actions coming from the Binance exchange.
  *
- * @property useMachineTime
  * @constructor
  *
  */
-class BinanceHistoricFeed(apiKey: String? = null, secret: String? = null, private val useMachineTime: Boolean = true) :
-    HistoricPriceFeed() {
-
+class BinanceHistoricFeed(apiKey: String? = null, secret: String? = null) : HistoricPriceFeed() {
 
     private val logger = Logging.getLogger(BinanceHistoricFeed::class)
     private val factory = BinanceConnection.getFactory(apiKey, secret)
@@ -53,7 +50,7 @@ class BinanceHistoricFeed(apiKey: String? = null, secret: String? = null, privat
     ) {
         require(symbols.isNotEmpty()) { "You need to provide at least 1 symbol" }
         val startTime = timeframe.start.toEpochMilli()
-        val endTime = timeframe.end.toEpochMilli()
+        val endTime = timeframe.end.toEpochMilli() - 1
         for (symbol in symbols) {
             val asset = availableAssets[symbol]
             if (asset != null ) {

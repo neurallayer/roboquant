@@ -42,7 +42,7 @@ class MetricChart(
         val result = StringBuffer()
         val gson = gsonBuilder.create()
         series.forEach { (name, entries) ->
-            val d = entries.toSeriesData()
+            val d = reduce(entries.toSeriesData())
             val data = gson.toJson(d)
             result += """
                 {

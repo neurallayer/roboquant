@@ -69,10 +69,6 @@ object AvroUtil {
             val dataFileWriter = DataFileWriter(datumWriter)
             dataFileWriter.setCodec(CodecFactory.deflateCodec(compressionLevel))
 
-            val tf = feed.timeframe.intersect(timeframe)
-            dataFileWriter.setMeta("roboquant.start", tf.start.toEpochMilli())
-            dataFileWriter.setMeta("roboquant.end", tf.end.toEpochMilli())
-
             dataFileWriter.create(schema, file)
 
             val cache = mutableMapOf<Asset, String>()
