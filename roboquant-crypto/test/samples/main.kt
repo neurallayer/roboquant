@@ -1,18 +1,32 @@
+@file:Suppress("KotlinConstantConditions")
 package samples
 
 import org.knowm.xchange.ExchangeFactory
 import org.knowm.xchange.bitstamp.BitstampExchange
-import org.roboquant.common.AssetType
-import org.roboquant.common.Timeframe
-import org.roboquant.common.minutes
-import org.roboquant.common.summary
+import org.roboquant.binance.BinanceHistoricFeed
+import org.roboquant.binance.Interval
+import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import org.roboquant.xchange.XChangePollingLiveFeed
 import kotlin.test.assertEquals
 
 
-fun main() {
+
+fun recordBinanceFeed() {
+    val feed = BinanceHistoricFeed()
+    val timeframe = Timeframe.parse("2019-02-01", "2019-02-02")
+    for (period in timeframe.split(12.hours)) {
+        println(period)
+        feed.retrieve("BTCUSDC", "ETHUSDC", timeframe = period, interval = Interval.ONE_MINUTE)
+        println(feed.timeline.size)
+        Thread.sleep(2000)
+    }
+    feed.close()
+}
+
+
+fun xchangeFeed() {
 
     val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
     val feed = XChangePollingLiveFeed(exchange)
@@ -31,3 +45,10 @@ fun main() {
 
 }
 
+fun main() {
+
+    when("RECORD") {
+        "RECORD" -> recordBinanceFeed()
+        "XCHANGE" -> xchangeFeed ()
+    }
+}

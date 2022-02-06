@@ -16,7 +16,6 @@
 
 package org.roboquant.binance
 
-import com.binance.api.client.BinanceApiWebSocketClient
 import com.binance.api.client.domain.event.CandlestickEvent
 import com.binance.api.client.domain.market.CandlestickInterval
 import org.roboquant.common.Asset
@@ -39,11 +38,12 @@ typealias Interval = CandlestickInterval
 class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private val useMachineTime: Boolean = true) :
     LiveFeed() {
 
-    private val client: BinanceApiWebSocketClient
+
     private val subscriptions = mutableMapOf<String, Asset>()
     private val logger = Logging.getLogger(BinanceLiveFeed::class)
     private val closeables = mutableListOf<Closeable>()
     private val factory = BinanceConnection.getFactory(apiKey, secret)
+    private val client = factory.newWebSocketClient()
 
     /**
      * Get the assets that has been subscribed to
@@ -57,7 +57,6 @@ class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private va
     }
 
     init {
-        client = factory.newWebSocketClient()
         logger.fine { "Started BinanceFeed using web-socket client" }
     }
 

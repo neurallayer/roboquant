@@ -305,7 +305,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
             if (end > stop) end = stop
             val timeframe = Timeframe(offset.toInstant(), end.toInstant())
             result.add(timeframe)
-            offset += period
+            offset = end.plus(Duration.ofMillis(1))
         }
         return result
     }

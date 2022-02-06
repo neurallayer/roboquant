@@ -17,6 +17,7 @@
 package org.roboquant.binance
 
 import com.binance.api.client.BinanceApiClientFactory
+import com.binance.api.client.BinanceApiRestClient
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Config
@@ -42,6 +43,15 @@ internal object BinanceConnection {
      */
     fun retrieveAssets(api: BinanceApiClientFactory): Map<String, Asset> {
         val client = api.newRestClient()
+        return client.exchangeInfo.symbols.associate {
+            it.symbol to binanceTemplate.copy(symbol = it.symbol, currencyCode = it.quoteAsset)
+        }
+    }
+
+    /**
+     * get available assets
+     */
+    fun retrieveAssets(client: BinanceApiRestClient): Map<String, Asset> {
         return client.exchangeInfo.symbols.associate {
             it.symbol to binanceTemplate.copy(symbol = it.symbol, currencyCode = it.quoteAsset)
         }
