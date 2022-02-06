@@ -31,8 +31,30 @@ internal class AmountTest {
 
         val a3 = a2 * 2
         assertEquals(a2.value * 2, a3.value)
+
+        val a5 = Amount("EUR", 100)
+        assertEquals(a1, a5)
     }
 
+    @Test
+    fun calc() {
+        var a = 100.EUR + 2
+        assertEquals(102.0, a.value)
+
+        a *= 2
+        assertEquals(204.0, a.value)
+
+        a /= 2
+        assertEquals(102.0, a.value)
+
+        a -= 2
+        assertEquals(100.0, a.value)
+
+        assertTrue(a.isPositive)
+
+        assertEquals(a, a.zeroOrMore)
+
+    }
 
     @Test
     fun test() {

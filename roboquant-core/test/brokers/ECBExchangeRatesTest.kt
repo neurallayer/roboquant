@@ -55,4 +55,10 @@ internal class ECBExchangeRatesTest {
 
     }
 
+    @Test
+    fun load() {
+        val rates = ECBExchangeRates.fromWeb(useCache = true)
+        assertTrue(rates.currencies.size > 40)
+    }
+
 }
