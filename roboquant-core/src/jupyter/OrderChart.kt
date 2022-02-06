@@ -39,6 +39,12 @@ class OrderChart(
         require(aspect in listOf("remaining", "direction", "quantity", "fill", "value"))
     }
 
+    private fun getTooltip(order: SingleOrder): String {
+        return with(order) {
+            "asset: $asset <br> currency: ${asset.currency} <br> placed: $placed <br> qty: $quantity <br> id: $id <br> type: ${order::class.simpleName} <br> tif: $tif"
+        }
+    }
+
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val singleOrders = orders.filterIsInstance<SingleOrder>()
         max = Double.MIN_VALUE.toBigDecimal()
@@ -55,7 +61,7 @@ class OrderChart(
                 }
 
                 if (value.abs() > max) max = value.abs()
-                val tooltip = "asset: $asset <br> qty: $quantity <br> id: $id"
+                val tooltip = getTooltip(order)
                 d.add(Triple(placed, value, tooltip))
             }
         }

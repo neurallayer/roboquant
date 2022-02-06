@@ -30,7 +30,6 @@ import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
-import org.roboquant.feeds.csv.LazyCSVFeed
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.LastEntryLogger
@@ -49,6 +48,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.io.path.name
 import kotlin.system.measureTimeMillis
+
 
 fun small() {
     val feed = CSVFeed("data/US")
@@ -81,60 +81,6 @@ fun trendFollowing() {
 }
 
 
-/**
- * Runs over 5000 stocks since 1962. Should runs in less than 1 GB JVM heap size
- *
- */
-fun largeLowMem() {
-    val feed = LazyCSVFeed("/data/assets/stock-market/stocks/")
-    val strategy = EMACrossover.longTerm()
-    val logger = MemoryLogger(showProgress = false)
-    val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
-    roboquant.run(feed)
-    logger.summary(3).print()
-}
-
-
-fun large1() {
-    val feed = CSVFeed("/data/assets/stock-market/stocks/")
-    val strategy = EMACrossover.longTerm()
-    val roboquant = Roboquant(strategy, AccountSummary(), PNL())
-    feed.split(10.years).forEach {
-        roboquant.run(feed, it)
-    }
-}
-
-
-fun large2() {
-    val feed = CSVFeed("/data/assets/stock-market/stocks/")
-    val strategy = EMACrossover.longTerm()
-    val logger = MemoryLogger(showProgress = false)
-    val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
-    roboquant.run(feed)
-    logger.summary().log()
-    roboquant.broker.account.summary().log()
-}
-
-fun large3() {
-    val strategy = EMACrossover.longTerm()
-    val roboquant = Roboquant(strategy, AccountSummary())
-    val feed = CSVFeed("/data/assets/stock-market/stocks/")
-    feed.split(5.years).map { it.splitTrainTest(0.2) }.forEach {
-        roboquant.run(feed, it.first, it.second)
-    }
-}
-
-
-fun large4() {
-    val config = CSVConfig(fileExtension = ".us.txt")
-    val feed = CSVFeed("/data/assets/us-stocks/Stocks", config)
-    val strategy = EMACrossover.longTerm()
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
-    roboquant.run(feed)
-    logger.summary().log()
-    roboquant.broker.account.trades.summary().log()
-}
 
 fun large5() {
     val feed = AvroFeed.sp500()
@@ -248,18 +194,6 @@ fun largeRead() {
 
 
 
-}
-
-fun intraday() {
-    val path = "data/INTRA"
-    // "/data/assets/INTRADAY/"
-    val feed = CSVFeed(path)
-    if (feed.assets.isNotEmpty()) {
-        val strategy = EMACrossover.longTerm()
-        val roboquant = Roboquant(strategy, AccountSummary())
-        roboquant.run(feed)
-        println(roboquant.broker.account.summary())
-    }
 }
 
 fun oneMillionBars() {
@@ -590,18 +524,7 @@ fun beta2() {
 
 }
 
-suspend fun runMany() {
-    large1()
-    large2()
-    large3()
-    intraday()
-    oneMillionBars()
-    multiCurrency()
-    ecbRates()
-    manyMinutes()
-    taLarge()
-    runParallel()
-}
+
 
 suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
@@ -612,26 +535,19 @@ suspend fun main() {
         "SMALL" -> small()
         "BETA" -> beta()
         "BETA2" -> beta2()
-        "LARGE" -> large1()
-        "LARGE2" -> repeat(1) { large2() }
-        "LARGE3" -> large3()
-        "LARGE4" -> large4()
         "LARGE5" -> large5()
         "LARGE6" -> large6()
         "SMALL6" -> small6()
         "LARGEREAD" -> largeRead()
-        "LARGE_LOW_MEM" -> largeLowMem()
         "MULTI_RUN" -> multiRun()
         "MULTI_RUN_PARALLEL" -> println( measureTimeMillis {  multiRunParallel() })
         "WALKFORWARD_PARALLEL" -> println( measureTimeMillis {  walkforwardParallel() })
-        "INTRA" -> intraday()
         "ONE_MILLION" -> oneMillionBars()
         "MC" -> multiCurrency()
         "ECB" -> ecbRates()
         "MIN" -> minimal()
         "MINUTES" -> manyMinutes()
         "TESTING" -> testingStrategies()
-        "MANY" -> runMany()
         "DETERMINE" -> determine()
         "TA" -> ta()
         "TREND" -> trendFollowing()
