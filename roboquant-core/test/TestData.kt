@@ -20,6 +20,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
+import org.roboquant.common.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
@@ -37,6 +38,7 @@ object TestData {
         val asset1 = Asset("AAA")
         val asset2 = Asset("AAB")
         val account = Account()
+        account.cash.deposit(100_000.USD)
         account.portfolio.setPosition(Position(asset1, 100.0, 10.0))
         account.portfolio.setPosition(Position(asset2, 100.0, 10.0))
 
@@ -44,7 +46,6 @@ object TestData {
         order.placed = Instant.now()
         order.status = OrderStatus.COMPLETED
         account.orders.add(order)
-
         return account
     }
 
@@ -73,8 +74,10 @@ object TestData {
     fun event2(time: Instant = time()) = Event(listOf(priceBar()), time)
 
     fun metricInput(time: Instant = time()): Pair<Account, Event> {
-        val account = Account()
-        val moment = Event(listOf(priceAction()), time)
+        val account = usAccount()
+        val asset1 = account.portfolio.assets.first()
+        // val asset2 = account.portfolio.assets.last()
+        val moment = Event(listOf(TradePrice(asset1, 11.0)), time)
         return Pair(account, moment)
     }
 

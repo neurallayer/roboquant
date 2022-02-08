@@ -47,14 +47,18 @@ import kotlin.math.min
  * - Never create BUY orders of which the total value is below a minimum amount (configurable)
  *
  *
- * @property minAmount
- * @property maxAmount
- * @constructor Create new Never short policy
+ * @property minAmount If an order has impact on buying power, what should be the minimum amount
+ * @property maxAmount The maximum amount (in terms of buying power impact) for a single order
+ * @property signalResolution The [SignalResolution] to use for resovling conflicting signals
+ * @property shorting Should the policy create orders that lead to short positions
+ * @property increasePosition Should the policy create orders increase already open positions
+ * @property oneOrderPerAsset Should there be only maximum one open order per asset at any time
+ * @constructor Create new Default Policy
  */
 open class DefaultPolicy(
     private val minAmount: Double = 5000.0,
     private val maxAmount: Double = 20_000.0,
-    private val signalResolve: SignalResolution = SignalResolution.NO_CONFLICTS,
+    private val signalResolution: SignalResolution = SignalResolution.NO_CONFLICTS,
     private val shorting: Boolean = false,
     private val increasePosition: Boolean = false,
     private val oneOrderPerAsset: Boolean = true,
@@ -126,7 +130,7 @@ open class DefaultPolicy(
         // Performance optimilization. Checking day orders is expensive so we only do it when required
         if (maxOrdersPerDay != Int.MAX_VALUE) remainingDayOrders -= getOrdersCurrentDay(event.time, account.orders)
 
-        for (signal in signals.resolve(signalResolve)) {
+        for (signal in signals.resolve(signalResolution)) {
             val asset = signal.asset
 
             // If there are open orders for the asset, we don't place an additional order

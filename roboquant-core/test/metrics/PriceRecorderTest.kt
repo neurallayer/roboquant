@@ -16,10 +16,11 @@
 
 package org.roboquant.metrics
 
-
 import org.junit.Test
+import org.roboquant.RunPhase
 import org.roboquant.TestData
-import org.roboquant.common.Asset
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
 import kotlin.test.assertTrue
 
 internal class PriceRecorderTest {
@@ -28,10 +29,17 @@ internal class PriceRecorderTest {
     fun basic() {
 
         val (account, event) = TestData.metricInput()
-        val metric = PriceRecorder(Asset("Dummy"))
+        val metric = PriceRecorder(event.prices.keys.first())
 
         metric.calculate(account, event)
         assertTrue(metric.getMetrics().isEmpty())
+
+        var results = metric.filter<PriceAction>()
+        assertTrue(results.isNotEmpty())
+
+        metric.start(RunPhase.MAIN)
+        results = metric.filter()
+        assertTrue(results.isEmpty())
     }
 
 }

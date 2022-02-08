@@ -24,7 +24,7 @@ import org.roboquant.logging.MemoryLogger
 import org.roboquant.strategies.NoSignalStrategy
 import kotlin.test.*
 
-class BettingAgainstAccountBetaTest {
+class BettingAgainstBetaTest {
 
     @Test
     fun test() {

@@ -19,6 +19,7 @@ package org.roboquant.common
 import org.junit.Test
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class ExtensionsTest {
@@ -58,7 +59,30 @@ class ExtensionsTest {
         assertTrue(y > x)
     }
 
+    @Test
+    fun testCollections() {
+        val l = listOf("1", 1, true)
+        assertTrue(l.summary().content.isNotBlank())
 
+        val l2 = listOf("1", "2")
+        assertTrue(l2.summary().content.isNotBlank())
+    }
+
+    @Test
+    fun testAccess() {
+        val l = listOf("1", 1, true, "more", 2 , 3)
+        val sub = l[1..2]
+        assertEquals(1, sub[0])
+        assertEquals(2, sub.size)
+    }
+
+    @Test
+    fun testCurrencyPairs() {
+        val s = "ABCDEF"
+        val t = "ABC_DEF"
+        assertEquals(s.toCurrencyPair(), t.toCurrencyPair())
+        assertNull("dummy".toCurrencyPair())
+    }
 
 
 }

@@ -24,7 +24,10 @@ import kotlin.test.*
 internal class HistoricPriceStrategyTest {
 
     private class MySubClass : HistoricPriceStrategy(10) {
+        var called = false
+
         override fun generate(asset: Asset, data: DoubleArray): Signal? {
+            called = true
             return null
         }
     }
@@ -35,6 +38,10 @@ internal class HistoricPriceStrategyTest {
         val event = TestData.event()
         val signals = c.generate(event)
         assertTrue(signals.isEmpty())
+        assertFalse(c.called)
+
+        repeat(10) { c.generate(event) }
+        assertTrue(c.called)
     }
 
 }

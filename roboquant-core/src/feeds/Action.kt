@@ -64,9 +64,9 @@ interface PriceAction : Action {
 
 
     /**
-     * Volume for the price action. This is optional and if not implemented, the default is to return [Double.NaN]
+     * Volume for the price action. This is optional and if not implemented, it will return [Double.NaN]
      *
-     * Volume in the context of a PriceAction can mean different things. For example is can be trade volume or also
+     * Volume in the context of a PriceAction can mean different things. For example is can be trade volume but also
      * orderbook volume, depending on the type of PriceAction.
      */
     val volume: Double

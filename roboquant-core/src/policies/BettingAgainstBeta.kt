@@ -29,6 +29,7 @@ import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.utils.AssetReturns
 import java.time.Instant
+import kotlin.math.floor
 import kotlin.math.min
 
 /**
@@ -39,7 +40,8 @@ import kotlin.math.min
  * strategy will then generate the market orders required to achieve the desired new portfolio composition (re-balancing).
  *
  * Since this strategy controls the complete [Portfolio] and not just generates signals, it is implemented as a [Policy]
- * and not a strategy.
+ * and not a strategy. It doesn't use leverage or buying power, when re-balancing it just re-balances the total equity
+ * of the account accross the long and short positions.
  *
  * > Betting against Beta was first described by Andrea Frazzinia and Lasse Heje Pedersen in Journal of Financial Economics
  *
@@ -51,7 +53,6 @@ open class BettingAgainstBeta(
     private val holdingPeriodDays: Int = 20,
     private val maxAssetsInPortfolio: Int = 20,
     windowSize: Int = 120,
-    private val sizer: Sizer = FixedPecentageSizer(1.0/maxAssetsInPortfolio)
 ) : BasePolicy() {
 
     private var rebalanceDate = Instant.MIN
@@ -90,33 +91,45 @@ open class BettingAgainstBeta(
      * @return
      */
     private fun rebalance(betas: List<Pair<Asset, Double>>, account: Account, event: Event): List<Order> {
-        // maximum number of short and long assets we want to have in portfolio
-        val max = min(betas.size / 2, maxAssetsInPortfolio / 2)
+        // maximum number of short and long assets we want to have in portfolio. Since htere cannot be overlap,
+        // the maximum number is always equal or smaller than half.
+        val max = min(betas.size/2, maxAssetsInPortfolio/2)
+
+        // exposure per position.
+        val exposure = account.equityAmount / (max * 2)
 
         val targetPortfolio = Portfolio()
 
-        // Generate the positions for a long position in assets with a low beta
-        betas.subList(0, max).forEach {
-            val holding = sizer.size(it.first, account, event)
-            targetPortfolio.setPosition(Position(it.first, holding))
+        // Generate the long positions assets with a low beta
+        betas.subList(0, max).forEach { (asset, _) ->
+            val price = event.getPrice(asset)
+            val assetAmount = exposure.convert(asset.currency, event.time).value
+            if (price != null) {
+                val holding = floor(assetAmount/(asset.multiplier * price))
+                targetPortfolio.setPosition(Position(asset, holding))
+            }
         }
 
-        // Generate the positions for a short position in assets with a high beta
-        betas.reversed().subList(0, max).forEach {
-            val holding = sizer.size(it.first, account, event)
-            targetPortfolio.setPosition(Position(it.first, -holding))
+        // Generate the short positions for assets with a high beta
+        betas.reversed().subList(0, max).forEach {  (asset, _) ->
+            val price = event.getPrice(asset)
+            val assetAmount = exposure.convert(asset.currency, event.time).value
+            if (price != null) {
+                val holding = floor(assetAmount/(asset.multiplier * price))
+                targetPortfolio.setPosition(Position(asset, -holding))
+            }
         }
 
         // Get the difference of target portfolio state and the current one
         val diff = account.portfolio.diff(targetPortfolio)
 
-        // Transform difference into Market Orders
+        // Transform difference into Orders
         return diff.map { createOrder(it.key, it.value, account, event) }.filterNotNull()
     }
 
     /**
-     * Override this method if you want to override the default generation of MarketOrders with a different
-     * order type like LimitOrders. Return null if you don't want ot generate an order for a certain asset.
+     * Override this method if you want to override the default creation of MarketOrders with a different
+     * order type like LimitOrders. Return null if you don't want to create an order for a certain asset.
      */
     open fun createOrder(asset: Asset, quantity: Double, account: Account, event: Event): Order? {
         return MarketOrder(asset, quantity)

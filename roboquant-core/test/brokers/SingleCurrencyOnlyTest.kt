@@ -14,32 +14,37 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds
+package org.roboquant.brokers
+
 
 import org.junit.Test
-import org.roboquant.common.Asset
+import org.roboquant.common.Currency.Companion.EUR
+import org.roboquant.common.Currency.Companion.USD
+import org.roboquant.common.EUR
+import org.roboquant.common.USD
 import java.time.Instant
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
-internal class EventTest {
 
+internal class SingleCurrencyOnlyTest {
 
     @Test
     fun basic() {
+        val currencyConverter = SingleCurrencyOnly()
+
         val now = Instant.now()
-        val event = Event(listOf(), now)
-        assertTrue(event.prices.isEmpty())
-        val asset = Asset("Dummy")
-        assertTrue(event.getPrice(asset) == null)
-        assertTrue(event.actions.isEmpty())
+        val amount1 = 100.USD
+        val rate = currencyConverter.getRate(amount1, USD, now)
+        assertEquals(1.0, rate)
+
+        val amount = currencyConverter.convert(0.USD, EUR, now)
+        assertEquals(0.EUR, amount)
+
+        assertFails {
+            currencyConverter.getRate(amount1, EUR, now)
+        }
     }
 
-    @Test
-    fun order() {
-        val now = Instant.now()
-        val event = Event(listOf(), now)
-        val event2 = Event(listOf(), now.plusMillis(1))
-        assertTrue(event2 > event)
-    }
 
 }

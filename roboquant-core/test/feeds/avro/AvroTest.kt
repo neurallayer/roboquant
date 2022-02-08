@@ -20,12 +20,14 @@ import kotlinx.coroutines.runBlocking
 import org.junit.FixMethodOrder
 import org.junit.rules.TemporaryFolder
 import org.junit.runners.MethodSorters
+import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
 import org.roboquant.feeds.play
 import org.roboquant.feeds.random.RandomWalk
 import java.io.File
 import java.time.Instant
+import kotlin.io.path.div
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -88,7 +90,6 @@ class AvroTest {
 
     @Test
     fun predefined() {
-        // System.getenv("TEST_DATA") ?: return
         val feed = AvroFeed.sp500()
         assertTrue(feed.assets.size >= 500)
         assertTrue(feed.timeframe.start > Instant.parse("2013-01-01T00:00:00Z"))
@@ -98,6 +99,15 @@ class AvroTest {
         assertTrue(feed2.assets.size == 6)
         assertContains(feed2.assets.map { it.symbol }, "AAPL")
         assertTrue(feed2.timeframe.start < Instant.parse("1963-01-01T00:00:00Z"))
+    }
+
+    @Test
+    fun loadFromGithub() {
+        Config.getProperty("TEST_DATA") ?: return
+        val file = (Config.home / "us_stocks_test_v1.1.avro").toFile()
+        file.delete()
+        val feed = AvroFeed.usTest()
+        assertTrue(feed.assets.size == 6)
     }
 
 

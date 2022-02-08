@@ -65,6 +65,12 @@ data class Asset(
     }
 
     /**
+     * What is the value of the asset given the quantity and provided price
+     */
+    fun value(qty: Double, price: Double) = multiplier * price * qty
+
+
+    /**
      * Create a serialized string representation of this asset that can be later deserialized using the
      * [deserialize] method
      *

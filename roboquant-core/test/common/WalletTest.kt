@@ -79,12 +79,24 @@ internal class WalletTest {
         assertEquals(wallet, wallet2)
     }
 
+    @Test
+    fun summary() {
+        val wallet = Wallet(10.USD, 20.EUR)
+        assertTrue(wallet.summary().content.isNotEmpty())
+    }
+
 
     @Test
     fun operators() {
         val wallet = Wallet(10.USD, 20.EUR)
         val wallet2 = wallet + wallet - wallet
         assertEquals(wallet, wallet2)
+
+        val wallet3 = wallet * 2
+        assertEquals(20.USD, wallet3.getAmount(USD))
+
+        val wallet4 = wallet / 2
+        assertEquals(5.USD, wallet4.getAmount(USD))
     }
 
     @Test

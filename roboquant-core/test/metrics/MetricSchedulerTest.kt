@@ -51,5 +51,6 @@ internal class MetricSchedulerTest {
         result = calc(metric, account, event)
         assertTrue(result.isEmpty())
 
+
     }
 }

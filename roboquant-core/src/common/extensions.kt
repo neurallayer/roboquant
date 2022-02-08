@@ -78,7 +78,7 @@ fun Collection<String>.summary(header: String = "Values"): Summary {
  * @param range
  * @return
  */
-operator fun <T> List<T>.get(range: IntRange): List<T> = subList(max(0, range.first), min(this.size, range.last))
+operator fun <T> List<T>.get(range: IntRange): List<T> = subList(max(0, range.first), min(this.size, range.last+1))
 
 
 operator fun IntRange.rangeTo(i: Int): IntProgression = IntProgression.fromClosedRange(first, last, i)
