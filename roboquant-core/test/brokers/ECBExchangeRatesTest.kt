@@ -18,6 +18,7 @@ package org.roboquant.brokers
 
 import org.junit.Test
 import org.roboquant.TestData
+import org.roboquant.common.Config
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.JPY
 import org.roboquant.common.EUR
@@ -57,6 +58,7 @@ internal class ECBExchangeRatesTest {
 
     @Test
     fun load() {
+        Config.getProperty("TEST_DATA") ?: return
         val rates = ECBExchangeRates.fromWeb(useCache = true)
         assertTrue(rates.currencies.size > 40)
     }

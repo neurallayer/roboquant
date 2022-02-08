@@ -26,17 +26,17 @@ import org.roboquant.orders.MarketOrder
 enum class SignalType {
 
     /**
-     * Used only for entry of a position
+     * Used only to enter of a position, meaning to open or increase a position size
      */
     ENTRY,
 
     /**
-     * Used only to exit a position, so should not be processed if there is no open position in the portfolio already.
+     * Used only to exit a position, meaning to close or decrease a position size
      */
     EXIT,
 
     /**
-     * Used for both entry and exit a position
+     * Can be used for entry or exit of a position
      */
     BOTH
 }
@@ -59,11 +59,11 @@ enum class SignalType {
  *
  * @property asset The asset for which this rating applies
  * @property rating The rating for the asset
- * @property type The type of signal
+ * @property type The type of signal, entry, exit or both. [SignalType.BOTH] is the default
  * @property takeProfit An optional take profit price in the same currency as the asset
  * @property stopLoss An optional stop loss price in the same currency as the asset
  * @property probability Optional the probability (value between 0.0 and 1.0) that the rating is correct.
- * @property source Optional source of the signal, like the strategy name
+ * @property source Optional the source of the signal, like the strategy name
  * @constructor Create a new Signal
  */
 class Signal(
@@ -75,6 +75,18 @@ class Signal(
     val probability: Double = Double.NaN,
     val source: String = ""
 ) {
+
+    /**
+     * Does this signal allow to function as a exit signal, so to close or decrease a position
+     */
+    val exit
+        get() = type === SignalType.EXIT || type === SignalType.BOTH
+
+    /**
+     * Does this signal allow to function as a entry signal, so to open or increase a position
+     */
+    val entry
+        get() = type === SignalType.ENTRY || type === SignalType.BOTH
 
     /**
      * Create a new signal and based on the strategy that created it

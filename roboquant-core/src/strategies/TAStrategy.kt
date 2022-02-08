@@ -26,6 +26,7 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.metrics.MetricResults
 import org.roboquant.strategies.ta.TALib
 import org.roboquant.strategies.utils.PriceBarBuffer
+import java.lang.Integer.max
 import java.util.logging.Logger
 
 /**
@@ -98,6 +99,23 @@ class TAStrategy(private val history: Int = 15) : Strategy {
                 val data = it.low
                 timePeriods.any { period -> ta.recordLow(data, period) }
             }
+            return strategy
+        }
+
+        /**
+         * Breakout strategy generates a BUY signal if it is a records high over last [highPeriod] and
+         * generates a SELL signal is it is a record low over last [lowPeriod].
+         */
+        fun breakout(highPeriod: Int = 100, lowPeriod: Int = 50) : TAStrategy {
+            require(highPeriod > 0 && lowPeriod > 0) { "Periods have to be larger than 0" }
+            val strategy = TAStrategy(max(highPeriod, lowPeriod))
+            strategy.buy {
+                ta.recordHigh(it.high, highPeriod)
+            }
+            strategy.sell {
+                ta.recordLow(it.low, lowPeriod)
+            }
+
             return strategy
         }
 

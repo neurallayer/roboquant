@@ -66,6 +66,7 @@ open class DefaultPolicy(
 ) : BasePolicy() {
 
     private val logger = Logging.getLogger(DefaultPolicy::class)
+    private val noOrder: Pair<Order?, Double> = Pair(null, 0.0)
 
     init {
         require(maxOrdersPerDay > 0)
@@ -78,15 +79,19 @@ open class DefaultPolicy(
         return baseCurrencyCost.value
     }
 
+
     private fun createSellOrder(account: Account, signal: Signal, price: Double, amount: Double): Pair<Order?, Double> {
         val position = account.portfolio.getPosition(signal.asset)
 
-        if (position.long) return Pair(createOrder(signal, -position.size, price), 0.0)
-        if (!shorting) return Pair(null, 0.0)
-        if (position.short && !increasePosition) return Pair(null, 0.0)
+        if (position.long && signal.exit) return Pair(createOrder(signal, -position.size, price), 0.0)
+        if (position.long) return noOrder
+        if (! signal.entry) return noOrder
+
+        if (!shorting) return noOrder
+        if (position.short && !increasePosition) return noOrder
 
         val volume = floor(calcVolume(amount, signal.asset, price, account))
-        if (volume <= 0.0) return Pair(null, 0.0)
+        if (volume <= 0.0) return noOrder
 
         val bp = reducedBuyingPower(account, signal.asset, volume, price)
         val order = createOrder(signal, -volume, price)
@@ -95,12 +100,14 @@ open class DefaultPolicy(
 
     private fun createBuyOrder(account: Account, signal: Signal, price: Double, amount: Double): Pair<Order?, Double> {
         val position = account.portfolio.getPosition(signal.asset)
+        if (position.long && !increasePosition) return noOrder
+        if (position.short && ! signal.exit) return noOrder
 
         if (position.short) return Pair(createOrder(signal, -position.size, price), 0.0)
-        if (position.long && !increasePosition) return Pair(null, 0.0)
+        if (! signal.entry) return noOrder
 
         val volume = floor(calcVolume(amount, signal.asset, price, account))
-        if (volume <= 0.0) return Pair(null, 0.0)
+        if (volume <= 0.0) return noOrder
 
         val bp = reducedBuyingPower(account, signal.asset, volume, price)
         val order = createOrder(signal, volume, price)

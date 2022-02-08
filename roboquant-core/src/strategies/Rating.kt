@@ -37,7 +37,7 @@ import kotlin.math.sign
  */
 enum class Rating(val value: Int) {
     BUY(2),
-    OUTPEFORM(1),
+    OUTPERFORM(1),
     HOLD(0),
     UNDERPERFORM(-1),
     SELL(-2);
@@ -45,7 +45,7 @@ enum class Rating(val value: Int) {
     /**
      * Is this a positive rating, so a BUY or an OUTPERFORM
      */
-    val isPositive: Boolean get() = this === BUY || this === OUTPEFORM
+    val isPositive: Boolean get() = this === BUY || this === OUTPERFORM
 
 
     /**
@@ -56,20 +56,21 @@ enum class Rating(val value: Int) {
     /**
      * The inverse of this rating
      *
-     * @return
+     * @return the inverse rating
      */
     fun inverse(): Rating {
         return when (this) {
             BUY -> SELL
-            OUTPEFORM -> UNDERPERFORM
+            OUTPERFORM -> UNDERPERFORM
             HOLD -> HOLD
-            UNDERPERFORM -> OUTPEFORM
+            UNDERPERFORM -> OUTPERFORM
             SELL -> BUY
         }
     }
 
     /**
-     * Does this rating conflict with an [other] rating
+     * Does this rating conflict with an [other] rating. Ratings only conflict if the direction is different. So a
+     * [BUY] and [OUTPERFORM] don't conflict.
      *
      * @param other
      */

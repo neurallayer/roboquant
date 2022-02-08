@@ -39,7 +39,7 @@ internal class RatingTest {
     fun inverse() {
         assertEquals(Rating.BUY, Rating.BUY.inverse().inverse())
         assertEquals(Rating.HOLD, Rating.HOLD.inverse())
-        assertEquals(Rating.OUTPEFORM, Rating.OUTPEFORM.inverse().inverse())
+        assertEquals(Rating.OUTPERFORM, Rating.OUTPERFORM.inverse().inverse())
     }
 
     @Test

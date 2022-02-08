@@ -90,6 +90,7 @@ class AvroTest {
 
     @Test
     fun predefined() {
+        Config.getProperty("TEST_DATA") ?: return
         val feed = AvroFeed.sp500()
         assertTrue(feed.assets.size >= 500)
         assertTrue(feed.timeframe.start > Instant.parse("2013-01-01T00:00:00Z"))
