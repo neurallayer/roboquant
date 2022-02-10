@@ -27,11 +27,10 @@ import java.text.DecimalFormat
 import java.util.*
 
 /**
- * Portfolio holds the [positions][Position] within an account. For a given asset there can only be one position at
- * a time.
+ * Portfolio holds the open [positions][Position] within an account. For a given asset there can only be one position
+ * at a time. So there cannot be a short and long position for the same asset at the same time.
  *
- *
- * @constructor Create a new empty Portfolio
+ * @constructor Create a new Portfolio
  */
 class Portfolio : Cloneable {
 
@@ -183,19 +182,24 @@ class Portfolio : Cloneable {
     fun clear() = _positions.clear()
 
 
+
+
     /**
-     * Create a [Summary] of this portfolio that contains an overview the open positions.
+     * Create a [Summary] of this portfolio that contains an overview of the open positions.
      */
     fun summary(): Summary {
         val s = Summary("Portfolio")
 
-        val pf = DecimalFormat("#######")
+        val pf = DecimalFormat("############")
+        pf.minimumFractionDigits = 0
+        pf.maximumFractionDigits = 4
+
         val ps = positions
         if (ps.isEmpty()) {
             s.add("EMPTY")
         } else {
-            val fmt = "│%14s│%6s│%11s│%11s│%11s│%11s│"
-            val header = String.format(fmt, "asset", "curr", "qty", "avgPrice", "spot", "p&l")
+            val fmt = "%14s│%10s│%14s│%14s│%14s│%14s│%14s│"
+            val header = String.format(fmt, "asset", "currency", "quantity", "entry price", "market price", "market value", "unrlzd p&l")
             s.add(header)
 
             for (v in ps) {
@@ -203,11 +207,11 @@ class Portfolio : Cloneable {
                 val pos = pf.format(v.size)
                 val avgPrice = Amount(c, v.avgPrice).formatValue()
                 val price =  Amount(c,v.spotPrice).formatValue()
+                val value = v.marketValue.formatValue()
                 val pnl =  Amount(c,v.unrealizedPNL.value).formatValue()
                 val asset = "${v.asset.type}:${v.asset.symbol}"
-                val line = String.format(fmt, asset, v.currency.currencyCode, pos, avgPrice, price, pnl)
+                val line = String.format(fmt, asset, v.currency.currencyCode, pos, avgPrice, price, value, pnl)
                 s.add(line)
-                //s.add("${p.type}:${p.symbol}", "$pos @ $cost ($price)")
             }
         }
 

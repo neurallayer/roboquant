@@ -21,7 +21,6 @@ package org.roboquant.samples
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
 import org.roboquant.Roboquant
-import org.roboquant.brokers.ECBExchangeRates
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
@@ -34,7 +33,6 @@ import org.roboquant.feeds.filter
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.MemoryLogger
-import org.roboquant.logging.SilentLogger
 import org.roboquant.logging.toDoubleArray
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.PNL
@@ -48,38 +46,6 @@ import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.io.path.name
 import kotlin.system.measureTimeMillis
-
-
-fun small() {
-    val feed = CSVFeed("data/US")
-    val strategy = EMACrossover.longTerm()
-    val roboquant = Roboquant(strategy, AccountSummary())
-    roboquant.run(feed)
-    roboquant.broker.account.trades.summary().log()
-    roboquant.broker.account.orders.summary().log()
-}
-
-fun trendFollowing() {
-    val period = 200
-    val strategy = TAStrategy(period)
-
-    strategy.buy {
-        ta.maxIndex(it.high, period) + 1 == period
-    }
-
-    strategy.sell {
-        ta.minIndex(it.low, period) + 1 == period
-    }
-
-    val feed = AvroFeed.sp500()
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
-    roboquant.run(feed)
-    logger.summary().log()
-    roboquant.broker.account.summary().log()
-
-}
-
 
 
 fun large5() {
@@ -196,19 +162,26 @@ fun largeRead() {
 
 }
 
-fun oneMillionBars() {
+fun twoMillionBars() {
     val timeline = mutableListOf<Instant>()
     var start = Instant.parse("2000-01-01T09:00:00Z")
 
-    repeat(1_000_000) {
+    // Create a timeline of 1 million entries
+    repeat(20_000) {
         timeline.add(start)
-        start += 1.seconds
+        start += 1.minutes
     }
-    val feed = RandomWalk(timeline, 1)
-    val strategy = EMACrossover()
 
+    // Create a random walk for the timeline provided
+    val feed = RandomWalk(timeline, 100)
+
+    // Create a roboquant using Exponential Weighted Moving Average
+    val strategy = EMACrossover()
     val roboquant = Roboquant(strategy, ProgressMetric())
-    println(measureTimeMillis {  roboquant.run(feed) })
+
+    // Measure how long it takes to run a back-test over 2 million candlesticks
+    val time = measureTimeMillis {  roboquant.run(feed) }
+    println("Time taken to run back-test over 2M Candlesticks is $time milliseconds")
 }
 
 fun volatility() {
@@ -254,20 +227,6 @@ fun manyMinutes() {
 
     roboquant.run(feed)
     logger.summary().print()
-}
-
-fun minimal() {
-    val roboquant = Roboquant(EMACrossover())
-    val feed = CSVFeed("data/US")
-    roboquant.run(feed)
-}
-
-
-fun determine() {
-    val strategy = TestStrategy(100)
-    val roboquant = Roboquant(strategy, AccountSummary(), logger = SilentLogger())
-    val feed = CSVFeed("data/US")
-    roboquant.run(feed)
 }
 
 
@@ -345,12 +304,6 @@ fun testingStrategies() {
         roboquant.run(feed, train, test, episodes = 100)
     }
 
-}
-
-
-fun ecbRates() {
-    val rates = ECBExchangeRates.fromWeb()
-    println(rates.currencies)
 }
 
 
@@ -532,7 +485,6 @@ suspend fun main() {
 
     when ("ONE_MILLION") {
         // "CRYPTO" -> crypto()
-        "SMALL" -> small()
         "BETA" -> beta()
         "BETA2" -> beta2()
         "LARGE5" -> large5()
@@ -542,15 +494,11 @@ suspend fun main() {
         "MULTI_RUN" -> multiRun()
         "MULTI_RUN_PARALLEL" -> println( measureTimeMillis {  multiRunParallel() })
         "WALKFORWARD_PARALLEL" -> println( measureTimeMillis {  walkforwardParallel() })
-        "ONE_MILLION" -> oneMillionBars()
+        "ONE_MILLION" -> twoMillionBars()
         "MC" -> multiCurrency()
-        "ECB" -> ecbRates()
-        "MIN" -> minimal()
         "MINUTES" -> manyMinutes()
         "TESTING" -> testingStrategies()
-        "DETERMINE" -> determine()
         "TA" -> ta()
-        "TREND" -> trendFollowing()
         "TREND2" -> trendFollowing2()
         "TA_LARGE" -> taLarge()
         "PARALLEL" -> runParallel()

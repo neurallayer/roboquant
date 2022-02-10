@@ -17,7 +17,6 @@
 package org.roboquant.feeds.random
 
 import org.roboquant.common.*
-import org.roboquant.feeds.AssetBuilderFactory
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
@@ -59,19 +58,16 @@ class RandomWalk(
 ) : HistoricPriceFeed() {
 
 
-
     init {
-
         repeat(nAssets) {
             val symbol = generateSymbol(symbolLength)
-            val asset = AssetBuilderFactory.build(symbol, template)
+            val asset = template.copy(symbol = symbol)
 
             if (generateBars)
                 generateBars(asset, timeline, minVolume, maxVolume, maxDayRange)
             else
                 generateSinglePrice(asset, timeline, minVolume, maxVolume)
         }
-
     }
 
     companion object {
