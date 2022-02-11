@@ -22,19 +22,6 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 
 
-/*
-fun Collection<Trade>.realizedPnL(vararg assets: Asset, timeframe: TimeFrame? = null): Wallet {
-    var filteredResults = asSequence()
-    if (assets.isNotEmpty()) filteredResults = filteredResults.filter { it.asset in assets }
-    if (timeframe != null) filteredResults = filteredResults.filter { timeframe.contains(it.time) }
-    val result = Wallet()
-    for (trade in filteredResults) {
-        result.deposit(trade.asset.currency, trade.pnl)
-    }
-    return result
-}
-*/
-
 /**
  * List of trades. This is part of the [Account] and contains all the trades that occurred.
  *
@@ -176,7 +163,7 @@ class Trades : MutableList<Trade>, LinkedList<Trade>() {
         if (isEmpty()) {
             s.add("EMPTY")
         } else {
-            val fmt = "│%24s│%10s│%11s│%14s│%14s│%14s│%12s│"
+            val fmt = "%24s│%10s│%11s│%14s│%14s│%14s│%12s│"
             val header = String.format(fmt, "time", "asset", "qty", "cost", "fee", "p&l", "price")
             s.add(header)
             forEach {

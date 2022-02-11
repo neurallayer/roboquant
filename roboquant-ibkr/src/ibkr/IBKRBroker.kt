@@ -49,7 +49,7 @@ class IBKRBroker(
 ) : Broker {
 
     private var client: EClientSocket
-    override val account: Account = Account(exchangeRates = exchangeRates)
+    override val account: Account = Account()
     val logger = Logging.getLogger(IBKRBroker::class)
     private var orderId = 0
 
@@ -206,7 +206,7 @@ class IBKRBroker(
             if (openOrder == null)
                 logger.warning { "Received unknown open order with orderId $orderId" }
             else if (openOrder is SingleOrder) {
-                openOrder.fill = filled
+                openOrder.remaining = remaining
                 openOrder.price = lastFillPrice
                 when (status) {
                     "PreSubmitted" -> openOrder.status = OrderStatus.INITIAL

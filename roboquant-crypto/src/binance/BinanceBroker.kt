@@ -80,7 +80,7 @@ class BinanceBroker(
         for (order in client.getOpenOrders(OrderRequest(""))) {
             val o = placedOrders[order.orderId]
             if (o !== null) {
-                o.fill = order.executedQty.toDouble()
+                o.remaining = o.quantity - order.executedQty.toDouble()
             } else {
                 logger.info("Received unknown order $order")
             }

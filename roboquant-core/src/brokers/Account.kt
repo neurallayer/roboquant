@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused", "unused")
-
 package org.roboquant.brokers
 
 import org.roboquant.common.*
@@ -39,12 +37,10 @@ import org.roboquant.common.Config.baseCurrency
  * Only a broker should ever update the account. For other components like a policy, it should be used read-only.
  *
  * @property baseCurrency The base currency to use for things like reporting
- * @property exchangeRates Optional a currency convertor to support multi-currency trading
  * @constructor Create a new Account
  */
 class Account(
-    var baseCurrency: Currency = Config.baseCurrency,
-    private val exchangeRates: ExchangeRates? = null,
+    var baseCurrency: Currency = Config.baseCurrency
 ) : Cloneable, Summarizable {
 
     /**
@@ -158,7 +154,7 @@ class Account(
      * @return a new snapshot of the account
      */
     public override fun clone(): Account {
-        val account = Account(baseCurrency, exchangeRates)
+        val account = Account(baseCurrency)
         account.lastUpdate = lastUpdate
         account.trades.addAll(trades) // Trade is immutable
         account.orders.addAll(orders.map { it.clone() }) // order is not immutable

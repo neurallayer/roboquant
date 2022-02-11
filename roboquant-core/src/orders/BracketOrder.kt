@@ -34,7 +34,7 @@ import java.time.Instant
  * @constructor Create a new bracket order
  *
  */
-class BracketOrder(
+open class BracketOrder(
     val main: SingleOrder,
     val profit: SingleOrder,
     val loss: SingleOrder,

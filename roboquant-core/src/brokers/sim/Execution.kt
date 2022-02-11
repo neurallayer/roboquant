@@ -22,7 +22,7 @@ import org.roboquant.orders.Order
  * Return how much of the order was filled and against what price. The price is in
  * the currency denoted by the underlying asset.
  *
- * Typically a [CostModel] might still increase the price due to spread and slippage cost.
+ * Typically a [CostModel] might still increase the price afterwards due to spread and slippage cost.
  *
  * @property order
  * @property quantity

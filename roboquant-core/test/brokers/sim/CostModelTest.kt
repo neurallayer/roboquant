@@ -18,6 +18,7 @@ package org.roboquant.brokers.sim
 
 import org.junit.Test
 import org.roboquant.TestData
+import org.roboquant.feeds.TradePrice
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -25,22 +26,22 @@ internal class CostModelTest {
 
     @Test
     fun testDefaultCostModel() {
-        val model = DefaultCostModel()
+        val model = DefaultCostModel(feePercentage = 0.01)
         val order = TestData.usMarketOrder()
-        val exec = Execution(order, order.quantity, 100.0)
-        val (price, fee) = model.calculate(order, exec)
-        assertTrue { price > exec.price }
-        assertEquals(0.0, fee)
+        val price = model.calculatePrice(order, TradePrice(order.asset, 100.0))
+        assertTrue { price > 100.0 }
+        val fee = model.calculateFee(Execution(order, 5.0, price))
+        assertTrue { fee > 4.9 && fee < 5.1 }
     }
 
     @Test
-    fun testCommissionBasedCostModel() {
-        val model = CommissionBasedCostModel()
+    fun noCostModel() {
+        val model = NoCostModel()
         val order = TestData.usMarketOrder()
-        val exec = Execution(order, order.quantity, 100.0)
-        val (price, fee) = model.calculate(order, exec)
-        assertTrue { price > exec.price }
-        assertTrue { fee > 0.0 }
+        val price = model.calculatePrice(order, TradePrice(order.asset, 100.0))
+        assertTrue { price == 100.0 }
+        val fee = model.calculateFee(Execution(order, 100.0, price))
+        assertEquals(0.0, fee)
     }
 
 }

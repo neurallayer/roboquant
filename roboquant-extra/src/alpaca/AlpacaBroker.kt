@@ -133,7 +133,7 @@ class AlpacaBroker(
         val qty = if (order.side == OrderSide.BUY) order.quantity.toDouble() else - order.quantity.toDouble()
         val result = MarketOrder(asset, qty)
         val fill = if (order.side == OrderSide.BUY) order.filledQuantity.toDouble() else - order.filledQuantity.toDouble()
-        result.fill = fill
+        result.remaining = result.quantity - fill
         result.placed = order.createdAt.toInstant()
         result.price = order.averageFillPrice.toDouble()
 
@@ -168,7 +168,7 @@ class AlpacaBroker(
         account.orders.open.filterIsInstance<SingleOrder>().forEach {
             val aOrder = orderMapping[it]!!
             val order = alpacaAPI.orders().get(aOrder.id, false)
-            it.fill = order.filledQuantity.toDouble()
+            it.remaining = it.quantity - order.filledQuantity.toDouble()
 
             when (order.status) {
                 AlpacaOrderStatus.CANCELED -> it.status = OrderStatus.CANCELLED

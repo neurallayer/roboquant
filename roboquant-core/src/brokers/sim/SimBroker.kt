@@ -35,19 +35,17 @@ import java.util.logging.Logger
  * It is also possible to use this SimBroker in combination with live feeds to see how your strategy is performing with
  * realtime data without the need for a real broker.
  *
- * @property initialDeposit Initial deposit to use before any trading starts. Default is the often used paper trading
- * setting of 1 million USD.
- * @constructor Create new Sim broker
+ * @property initialDeposit Initial deposit to use before any trading starts. Default is 1 million USD.
+ * @constructor Create new SimBroker instance
  */
 class SimBroker(
     private val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
-    private val costModel: CostModel = DefaultCostModel(),
+    private val costModel: CostModel = DefaultCostModel(priceType = "OPEN"),
     private val buyingPowerModel: BuyingPowerModel = CashBuyingPower(),
     private val validateBuyingPower: Boolean = false,
     private val recording: Boolean = false,
     private val prefix: String = "broker.",
-    private val priceType: String = "OPEN",
 ) : Broker {
 
     // Used to store metrics of the simbroker itself
@@ -89,7 +87,7 @@ class SimBroker(
 
         for (order in account.orders.open) {
             val action = prices[order.asset] ?: continue
-            val price = action.getPrice(priceType)
+            val price = costModel.calculatePrice(order, action)
             order.price = price
 
             if (order.status === OrderStatus.INITIAL) {
@@ -104,12 +102,10 @@ class SimBroker(
 
             val executions = order.execute(price, time)
             for (execution in executions) {
-                val (realPrice, fee) = costModel.calculate(order, execution)
-                val avgPrice = realPrice / execution.size()
+                val fee = costModel.calculateFee(execution)
                 record("exec.${order.asset.symbol}.qty", execution.quantity)
-                record("exec.${order.asset.symbol}.price", avgPrice)
-
-                updateAccount(execution, avgPrice, fee, time)
+                record("exec.${order.asset.symbol}.price", execution.price)
+                updateAccount(execution, fee, time)
             }
 
         }
@@ -126,12 +122,11 @@ class SimBroker(
      */
     private fun updateAccount(
         execution: Execution,
-        avgPrice: Double,
         fee: Double,
         now: Instant
     ) {
         val asset = execution.order.asset
-        val position = Position(asset, execution.quantity, avgPrice)
+        val position = Position(asset, execution.quantity, execution.price)
 
         // PNL includes the fee
         val pnl = account.portfolio.updatePosition(position) - fee
@@ -141,7 +136,7 @@ class SimBroker(
             now,
             asset,
             execution.quantity,
-            avgPrice,
+            execution.price,
             fee,
             pnl.value,
             execution.order.id

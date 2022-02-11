@@ -24,7 +24,7 @@ import kotlin.math.round
 
 
 /**
- * Abstract base class for all different types of single orders.
+ * Abstract base class for different types of single orders.
  *
  * An important implementation detail of orders in roboquant is that the sign quantity decides if it is a BUY or SELL
  * order, it doesn't have to be specified separately. So positive quantities are BUY orders and negative quantities are
@@ -39,18 +39,8 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
 
     init {
         require(quantity != 0.0) { "Cannot create an order with zero quantity" }
+        remaining = quantity
     }
-
-    /**
-     * How much of the order is filled
-     */
-    var fill = 0.0
-
-    /**
-     * How much of the order quantity is remaining
-     */
-    val remaining
-        get() = quantity - fill
 
     /**
      * Is this a BUY order
@@ -63,6 +53,11 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
      */
     val sell: Boolean
         get() = quantity < 0
+
+
+    val fill
+        get() = quantity - remaining
+
 
     /**
      * The quantity as a rounded absolute integer. By default roboquant support fractional orders and makes no assumption
@@ -89,7 +84,7 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
      */
     protected fun copyTo(result: SingleOrder) {
         super.copyTo(result)
-        result.fill = fill
+        result.remaining = remaining
     }
 
     /**
@@ -104,7 +99,7 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
         }
 
         return if (qty != 0.0) {
-            fill += qty
+            remaining -= qty
             if (remaining == 0.0) status = OrderStatus.COMPLETED
             logger.fine { "executed order=$this qty=$qty price=$price" }
             listOf(Execution(this, qty, price))
@@ -121,7 +116,7 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
      * Did (part of) the order get already filled
      */
     val executed
-        get() = fill != 0.0
+        get() = remaining != quantity
 
 
     /**

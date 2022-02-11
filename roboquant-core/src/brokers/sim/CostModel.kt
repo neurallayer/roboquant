@@ -16,14 +16,12 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.common.Wallet
+import org.roboquant.feeds.PriceAction
 import org.roboquant.orders.Order
-import java.lang.Double.max
 import kotlin.math.absoluteValue
-import kotlin.math.min
 
 /**
- * Calculate the final cost of an execution. Typically implemntations should cather for:
+ * Calculate the price to be used for executing orders and fees that might apply.
  *
  * 1. Increase the price paid due to spread and slippage cost
  * 2. Include a commision/fee in case you simulate a commision based broker
@@ -31,65 +29,56 @@ import kotlin.math.min
 interface CostModel {
 
     /**
-     * Calcuate the final price and fee based on the [order] and the actual [execution]. The first returned
-     * parameter is the price and the second one the fee.
+     * Calculate the price to be used for executing an [order] based on the provided [PriceAction]. The returned
+     * price should be denoted in the currency of the asset.
+     *
      */
-    fun calculate(order: Order, execution: Execution): Pair<Double, Double>
+    fun calculatePrice(order: Order, priceAction: PriceAction): Double
+
+    /**
+     * Any fees and commisions applicable for the [execution]. The returned value should be
+     * denoted in the currency of the underlying asset of the order. Typically a fee should be a positive value unless
+     * you want to model rebates and other reward structures.
+     */
+    fun calculateFee(execution: Execution): Double
+
 }
 
 /**
- * Default cost model, using a fixed percentage  expressed in basis points and no additional commission fee. This
- * percentage would cover both spread and slippage. There is no fixed fee.
+ * Default cost model, using a fixed percentage expressed in basis points and optional a commission fee. This
+ * percentage would cover both spread and slippage.
  *
  * @property bips, default is 10 bips
+ * @property feePercentage fee as a percentage of total execution cost, 0.01 = 1%. Default is 0.0
  * @constructor Create new Default cost model
  */
-class DefaultCostModel(private val bips: Double = 10.0) : CostModel {
+class DefaultCostModel(
+    private val bips: Double = 10.0,
+    private val feePercentage: Double = 0.0,
+    private val priceType: String = "DEFAULT"
+) : CostModel {
 
-    override fun calculate(order: Order, execution: Execution): Pair<Double, Double> {
-        val correction = if (execution.quantity > 0) 1.0 + bips / 10_000.0 else 1.0 - bips / 10_000.0
-        val cost = execution.price * correction * execution.size()
-        return Pair(cost, 0.0)
+    override fun calculatePrice(order: Order, priceAction: PriceAction): Double {
+        val price = priceAction.getPrice(priceType)
+        val correction = if (order.remaining > 0) 1.0 + bips / 10_000.0 else 1.0 - bips / 10_000.0
+        return price * correction
     }
 
-}
-
-
-class NoCostModel : CostModel {
-
-    override fun calculate(order: Order, execution: Execution): Pair<Double, Double> {
-        return Pair(execution.price * execution.size(), 0.0)
+    override fun calculateFee(execution: Execution): Double {
+        return execution.size().absoluteValue * execution.price * feePercentage
     }
 
 }
 
 /**
- * Cost model, using a fixed percentage slippage expressed in basis points and additional commission fee. The commission
- * fee is also in expressed in bips but has a minimum and maximum amount (for each currency used).
- *
- *
- * @property slippage, slippage in bips
- * @property fee, fee in bips
- *
- * @constructor Create empty Default cost model
+ * Cost model that adds no additional spread, slippage or other fees to the transaction cost. Mostly useful to see how
+ * a stragy would perform without any additional cost, but not very realistic and should be avoided in realistic
+ * back tests.
  */
-class CommissionBasedCostModel(
-    private val slippage: Int = 5,
-    private val fee: Int = 10,
-    private val minimumAmount: Wallet = Wallet(),
-    private val maximumAmount: Wallet = Wallet()
-) : CostModel {
+class NoCostModel(private val priceType: String = "DEFAULT") : CostModel {
 
-    override fun calculate(order: Order, execution: Execution): Pair<Double, Double> {
-        val correction = if (execution.quantity > 0) 1.0 + slippage / 10_000.0 else 1.0 - slippage / 10_000.0
-        val cost = execution.price * correction * execution.size()
+    override fun calculatePrice(order: Order, priceAction: PriceAction) = priceAction.getPrice(priceType)
 
-        val currency = order.asset.currency
-        var fee = cost.absoluteValue * (fee / 10_000.0)
-        fee = max(fee, minimumAmount.getValue(currency))
-        val maxAmount = maximumAmount.getValue(currency)
-        if (maxAmount != 0.0) fee = min(fee, maxAmount)
-        return Pair(cost, fee)
-    }
+    override fun calculateFee(execution: Execution): Double = 0.0
 
 }

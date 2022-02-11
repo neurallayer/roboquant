@@ -36,7 +36,7 @@ class OrderChart(
     private var max = Double.MIN_VALUE.toBigDecimal()
 
     init {
-        require(aspect in listOf("remaining", "direction", "quantity", "fill", "value"))
+        require(aspect in listOf("remaining", "direction", "quantity", "value"))
     }
 
     private fun getTooltip(order: SingleOrder): String {
@@ -56,7 +56,6 @@ class OrderChart(
                     "direction" -> order.direction.toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
                     "value" -> order.getValueAmount().convert(time = order.placed).toBigDecimal()
-                    "fill" -> fill.toBigDecimal()
                     else -> throw Exception("Unsupported aspect")
                 }
 

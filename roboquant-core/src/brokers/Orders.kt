@@ -30,6 +30,7 @@ import kotlin.collections.ArrayList
  */
 class Orders : ArrayList<Order>() {
 
+    // We cache open orders because in large back-test the total orders list can become large
     private var lastSize = 0
     private val _openCache = mutableListOf<Order>()
 

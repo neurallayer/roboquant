@@ -98,6 +98,11 @@ abstract class Order(val asset: Asset) : Cloneable {
      */
     abstract fun execute(price: Double, time: Instant): List<Execution>
 
+    /**
+     * Indication how much of quantity is remaining. For complex order types this is not always known upfront, but an
+     * estimate should be provided if possible. Used for margin calculation on open orders.
+     */
+    var remaining: Double = 0.0
 
     /**
      * Copy current state into the passed object. This is used in the clone function of the subclasses
