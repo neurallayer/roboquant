@@ -23,8 +23,8 @@ import kotlin.math.absoluteValue
 /**
  * Calculate the price to be used for executing orders and fees that might apply.
  *
- * 1. Increase the price paid due to spread and slippage cost
- * 2. Include a commision/fee in case you simulate a commision based broker
+ * 1. calculatePrice: raise/lower the price paid due to spread and slippage
+ * 2. calculateFee: include a commision/fee in case you simulate a commision based broker
  */
 interface CostModel {
 
@@ -72,8 +72,8 @@ class DefaultCostModel(
 
 /**
  * Cost model that adds no additional spread, slippage or other fees to the transaction cost. Mostly useful to see how
- * a stragy would perform without any additional cost, but not very realistic and should be avoided in realistic
- * back tests.
+ * a strategy would perform without additional cost. But not very realistic and should be avoided in realistic
+ * back tests scenarios since it doesn't reflect live trading.
  */
 class NoCostModel(private val priceType: String = "DEFAULT") : CostModel {
 

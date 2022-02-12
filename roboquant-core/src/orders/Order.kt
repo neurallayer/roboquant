@@ -23,7 +23,8 @@ import org.roboquant.common.Logging
 import java.time.Instant
 
 /**
- * Order is an instruction for a broker to initiate a certain action. An order is always associated with an [asset]
+ * Order is an instruction for a broker to initiate a certain action. An order is always associated with a
+ * single [asset].
  *
  * Within roboquant it is the [policy][org.roboquant.policies.Policy] that creates the orders. An order can cover a
  * wide variety of use cases:
