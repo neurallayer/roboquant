@@ -16,6 +16,7 @@
 
 package org.roboquant.brokers.sim
 
+import org.roboquant.common.Amount
 import org.roboquant.orders.Order
 
 /**
@@ -39,4 +40,6 @@ class Execution(val order: Order, val quantity: Double, val price: Double) {
      * Totol size of execution, including contract size
      */
     fun size(): Double = order.asset.multiplier * quantity
+
+    fun value() : Amount = order.asset.value(quantity, price)
 }

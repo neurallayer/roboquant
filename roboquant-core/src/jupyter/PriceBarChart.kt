@@ -17,8 +17,10 @@
 package org.roboquant.jupyter
 
 import org.roboquant.brokers.Trade
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
+import org.roboquant.common.asQuantity
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
@@ -68,8 +70,9 @@ class PriceBarChart(
         val d = mutableListOf<Map<String, Any>>()
         for (trade in t) {
             val time = if (useTime) trade.time else trade.time.toString()
+            val price = Amount(asset.currency, trade.price).toBigDecimal()
             val entry = mapOf(
-                "value" to trade.quantity.toInt(), "xAxis" to time, "yAxis" to trade.price
+                "value" to trade.quantity.asQuantity, "xAxis" to time, "yAxis" to price
             )
             d.add(entry)
         }

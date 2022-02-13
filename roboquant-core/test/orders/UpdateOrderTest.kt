@@ -37,8 +37,8 @@ internal class UpdateOrderTest {
         assertEquals(qty, orderUpdate.originalOrder.quantity)
         assertEquals(100.0, orderUpdate.updateOrder.quantity)
 
-        val executions = orderUpdate.execute(100.0, Instant.now())
-        assertTrue(executions.isEmpty())
+        val q = orderUpdate.execute(100.0, Instant.now())
+        assertEquals(0.0, q)
         assertTrue(orderUpdate.status.closed)
         assertEquals(100.0, order.quantity)
     }

@@ -16,7 +16,6 @@
 
 package org.roboquant.orders
 
-import org.roboquant.brokers.sim.Execution
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
@@ -39,7 +38,7 @@ import java.time.Instant
 abstract class Order(val asset: Asset) : Cloneable {
 
     /**
-     * OrderId, initially set when creating an order. This id will remain untill the JVM stops.
+     * OrderId, initially set when creating an order. This id will remain unique until the JVM stops.
      */
     var id = getId().toString()
         private set
@@ -50,19 +49,15 @@ abstract class Order(val asset: Asset) : Cloneable {
      */
     var status = OrderStatus.INITIAL
 
-
     /**
      * When was the order first placed. This timestamp is used during simulation to deal with time-in-force policies.
      * Before the order is actually placed, this attribute will contain the value `Instant.MIN`
      */
     open var placed: Instant = Instant.MIN
 
+    var price: Double = Double.NaN
 
-    /**
-     * Last known market price for the asset contained in this order
-     */
-    open var price: Double = Double.NaN
-
+    open fun value() : Amount = asset.value(remaining, price)
 
     companion object {
 
@@ -83,27 +78,19 @@ abstract class Order(val asset: Asset) : Cloneable {
         throw NotImplementedError("Concrete subclasses of Order need to override clone() method")
     }
 
-    /**
-     * Get the remaining value of the order given the provided [price]. Used to see if there is enough buying power to place this order.
-     * The default returns 0.0, which means no (known) value and as a result will not be counting against buying power.
-     */
-    abstract fun getValue(price: Double = this.price) : Double
-
-
-    open fun getValueAmount(price: Double = this.price) = Amount(asset.currency, getValue(price))
 
 
     /**
      * Execute the order given the provided [price] and [time]. Any subclass of [Order] will need to implement
-     * this method and return a list of [executions][Execution]
+     * this method and return the quantity traded, using 0.0 if not trades happened at all.
      */
-    abstract fun execute(price: Double, time: Instant): List<Execution>
+    abstract fun execute(price: Double, time: Instant): Double
 
     /**
      * Indication how much of quantity is remaining. For complex order types this is not always known upfront, but an
      * estimate should be provided if possible. Used for margin calculation on open orders.
      */
-    var remaining: Double = 0.0
+    open val remaining: Double = 0.0
 
     /**
      * Copy current state into the passed object. This is used in the clone function of the subclasses

@@ -17,7 +17,6 @@
 package org.roboquant.orders
 
 import org.roboquant.TestData
-import org.roboquant.brokers.sim.Execution
 import org.roboquant.common.Asset
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -31,12 +30,8 @@ internal class TimeInForceTest {
 
     class TestOrder(asset: Asset = TestData.usStock()) : Order(asset) {
 
-        override fun getValue(price: Double): Double {
-            TODO("Not yet implemented")
-        }
-
-        override fun execute(price: Double, time: Instant): List<Execution> {
-            return listOf()
+        override fun execute(price: Double, time: Instant): Double {
+            return 0.0
         }
 
         fun updatePlaced(now: Instant) {

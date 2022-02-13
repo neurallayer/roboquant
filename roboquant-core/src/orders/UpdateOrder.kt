@@ -16,7 +16,6 @@
 
 package org.roboquant.orders
 
-import org.roboquant.brokers.sim.Execution
 import java.time.Instant
 
 
@@ -38,7 +37,7 @@ class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : O
         require(! originalOrder.status.closed) {"Only open orders can be updated"}
     }
 
-    override fun execute(price: Double, time: Instant): List<Execution> {
+    override fun execute(price: Double, time: Instant): Double {
         when {
             originalOrder.status.closed -> status = OrderStatus.REJECTED
             updateOrder.quantity < originalOrder.fill -> status = OrderStatus.REJECTED
@@ -48,11 +47,9 @@ class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : O
                 updateOrder.status = OrderStatus.COMPLETED
             }
         }
-        return listOf()
+        return 0.0
     }
 
-    override fun getValue(price: Double): Double {
-        return updateOrder.getValue(price)
-    }
+
 
 }

@@ -24,7 +24,7 @@ import java.time.temporal.ChronoUnit
  * active before it is executed or expires. There are two aspects that can determine if an order expires:
  *
  * - How much time has passed since it was first placed.
- * - Is the order completely filled or net yet
+ * - Is the order completely filled or not yet
  *
  */
 interface TimeInForce {
@@ -44,7 +44,7 @@ interface TimeInForce {
 /**
  * Good Till Cancelled policy. The order will remain active until fully filled or is cancelled.
  *
- * In practice, most brokers allow such order to remain active for 90 days max. That is also what is
+ * In practice, most brokers allow such order to remain active for 60-90 days max. 90 days is also what is
  * used a default value for this implementation
  *
  * @constructor Create new GTC tif

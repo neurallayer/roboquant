@@ -88,7 +88,6 @@ class SimBroker(
         for (order in account.orders.open) {
             val action = prices[order.asset] ?: continue
             val price = costModel.calculatePrice(order, action)
-            order.price = price
 
             if (order.status === OrderStatus.INITIAL) {
                 if (! validOrder(order)) {
@@ -100,11 +99,12 @@ class SimBroker(
                 }
             }
 
-            val executions = order.execute(price, time)
-            for (execution in executions) {
+            val qty = order.execute(price, time)
+            if (qty != 0.0 ) {
+                val execution = Execution(order, qty, price)
                 val fee = costModel.calculateFee(execution)
-                record("exec.${order.asset.symbol}.qty", execution.quantity)
-                record("exec.${order.asset.symbol}.price", execution.price)
+                record("exec.${order.asset.symbol}.qty", qty)
+                record("exec.${order.asset.symbol}.price", price)
                 updateAccount(execution, fee, time)
             }
 
@@ -171,31 +171,7 @@ class SimBroker(
     }
 
 
-    /**
-     * Validate if there is enough buying power to process the orders that are just received. If there is not enough
-     * cash, the order will be rejected. If there is no price info to determine the required amount of cash, the order
-     * will not yet be accepted.
-     */
-    /*
-    private fun validateOrders(event: Event) {
-        if (!validateBuyingPower) return
-        var buyingPower = account.buyingPower.value
-        val initialOrders = account.orders.filter { it.status === OrderStatus.INITIAL }
-        for (order in initialOrders) {
-            val price = event.prices[order.asset]?.getPrice()
-            if (price != null) {
-                val expectedCost = min(0.0, order.getValue(price))
-                if (buyingPower > expectedCost) {
-                    buyingPower -= expectedCost
-                } else {
-                    logger.fine { "Not enough buying power $buyingPower, required $expectedCost, rejecting order $order" }
-                    order.status = OrderStatus.REJECTED
-                }
-            }
-        }
 
-    }
-     */
 
     /**
      * Validate if there is enough buying power to process the order that are just received. If there is not enough
@@ -206,7 +182,7 @@ class SimBroker(
     private fun validOrder(order: Order) : Boolean {
         if (validateBuyingPower) {
             // TODO implement real logic here
-            val requiredValue = order.getValueAmount().convert(account.buyingPower.currency).value // buyingPower.calculate(order)
+            val requiredValue = 0.0 // order.getValueAmount().convert(account.buyingPower.currency).value // buyingPower.calculate(order)
             if (account.buyingPower - requiredValue <= 0) {
                 return false
             } else {
@@ -216,6 +192,7 @@ class SimBroker(
         order.status = OrderStatus.ACCEPTED
         return true
     }
+
 
     /**
      * Liquidate the portfolio. This comes in handy at the end of a back-test if you prefer no more open positions.

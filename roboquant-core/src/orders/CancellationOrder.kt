@@ -16,7 +16,6 @@
 
 package org.roboquant.orders
 
-import org.roboquant.brokers.sim.Execution
 import java.time.Instant
 
 
@@ -42,9 +41,7 @@ class CancellationOrder(val order: Order, var tag: String = "") : Order(order.as
         return result
     }
 
-    override fun getValue(price: Double): Double = 0.0
-
-    override fun execute(price: Double, time: Instant): List<Execution> {
+    override fun execute(price: Double, time: Instant): Double {
 
         if (!order.status.closed) {
             order.status = OrderStatus.CANCELLED
@@ -52,7 +49,7 @@ class CancellationOrder(val order: Order, var tag: String = "") : Order(order.as
         } else {
             status = OrderStatus.REJECTED
         }
-        return listOf()
+        return 0.0
     }
 
 }

@@ -133,7 +133,7 @@ class AlpacaBroker(
         val qty = if (order.side == OrderSide.BUY) order.quantity.toDouble() else - order.quantity.toDouble()
         val result = MarketOrder(asset, qty)
         val fill = if (order.side == OrderSide.BUY) order.filledQuantity.toDouble() else - order.filledQuantity.toDouble()
-        result.remaining = result.quantity - fill
+        result.fill = fill
         result.placed = order.createdAt.toInstant()
         result.price = order.averageFillPrice.toDouble()
 
@@ -168,7 +168,7 @@ class AlpacaBroker(
         account.orders.open.filterIsInstance<SingleOrder>().forEach {
             val aOrder = orderMapping[it]!!
             val order = alpacaAPI.orders().get(aOrder.id, false)
-            it.remaining = it.quantity - order.filledQuantity.toDouble()
+            it.fill = order.filledQuantity.toDouble()
 
             when (order.status) {
                 AlpacaOrderStatus.CANCELED -> it.status = OrderStatus.CANCELLED
@@ -192,7 +192,6 @@ class AlpacaBroker(
         require(asset.type == AssetType.STOCK) { "Only stocks supported, received ${asset.type}" }
         require(asset.currencyCode == "USD") { "Only USD supported, received ${asset.currencyCode}" }
 
-        val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
         val tif = when (order.tif) {
             is GTC -> OrderTimeInForce.GOOD_UNTIL_CANCELLED
             is DAY -> OrderTimeInForce.DAY
@@ -206,10 +205,13 @@ class AlpacaBroker(
             return
         }
 
+        val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
+        val qty = order.quantity.absInt
+
         val alpacaOrder = when (order) {
-            is MarketOrder -> alpacaAPI.orders().requestMarketOrder(asset.symbol, order.absInt, side, tif)
+            is MarketOrder -> alpacaAPI.orders().requestMarketOrder(asset.symbol, qty, side, tif)
             is LimitOrder -> alpacaAPI.orders()
-                .requestLimitOrder(asset.symbol, order.absInt, side, tif, order.limit, false)
+                .requestLimitOrder(asset.symbol, qty, side, tif, order.limit, false)
             else -> {
                 throw Exception("Unsupported order type $order. Right now only Market and Limit orders are mapped")
             }

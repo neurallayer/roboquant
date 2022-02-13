@@ -57,7 +57,7 @@ class PercentageOrderSizer(
     private val fractions = BigDecimal.valueOf(fractions.toLong())
 
     private fun rounding(asset: Asset, amount: Double, price: Double): Double {
-        val singleContractValue = asset.value(1.0, price)
+        val singleContractValue = asset.value(1.0, price).value
         val volume = floor(amount * fractions.toInt() / singleContractValue)
         val result = BigDecimal.valueOf(volume).setScale(20) / fractions
         return result.toDouble()

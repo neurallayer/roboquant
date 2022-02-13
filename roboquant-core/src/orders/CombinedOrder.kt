@@ -18,12 +18,8 @@ abstract class CombinedOrder(vararg val children: Order) : Order(children.first(
             for (order in children) order.placed = value
         }
 
-    override var price: Double = Double.NaN
-        set(value) {
-            field = value
-            for (order in children) order.price = value
-        }
 
-    override fun getValue(price: Double): Double = children.maxOf { it.getValue(price).absoluteValue }
+    override val remaining
+        get() = children.maxOf { it.remaining.absoluteValue }
 
 }

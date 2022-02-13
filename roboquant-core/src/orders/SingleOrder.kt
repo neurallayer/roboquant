@@ -16,11 +16,8 @@
 
 package org.roboquant.orders
 
-import org.roboquant.brokers.sim.Execution
 import org.roboquant.common.Asset
 import java.time.Instant
-import kotlin.math.absoluteValue
-import kotlin.math.round
 
 
 /**
@@ -36,10 +33,10 @@ import kotlin.math.round
  */
 abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInForce, val tag: String) : Order(asset) {
 
+    var fill = 0.0
 
     init {
         require(quantity != 0.0) { "Cannot create an order with zero quantity" }
-        remaining = quantity
     }
 
     /**
@@ -55,16 +52,11 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
         get() = quantity < 0
 
 
-    val fill
-        get() = quantity - remaining
+    override val remaining
+        get() = quantity - fill
 
 
-    /**
-     * The quantity as a rounded absolute integer. By default roboquant support fractional orders and makes no assumption
-     * about the order size. But some brokers support only whole orders.
-     */
-    val absInt: Int
-        get() = round(quantity.absoluteValue).toInt()
+
 
     /**
      * Direction => 1 is for *BUY* and -1 is for *SELL*
@@ -84,26 +76,24 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
      */
     protected fun copyTo(result: SingleOrder) {
         super.copyTo(result)
-        result.remaining = remaining
+        result.fill = fill
     }
 
     /**
      * Implementation of execute for all single order types. Subclasses will need only to implement the [fill] method.
      */
-    override fun execute(price: Double, time: Instant): List<Execution> {
+    override fun execute(price: Double, time: Instant): Double {
         val qty = fill(price)
 
         if (tif.isExpired(this, time, qty, quantity)) {
             status = OrderStatus.EXPIRED
-            return listOf()
+            return 0.0
         }
 
-        return if (qty != 0.0) {
-            remaining -= qty
-            if (remaining == 0.0) status = OrderStatus.COMPLETED
-            logger.fine { "executed order=$this qty=$qty price=$price" }
-            listOf(Execution(this, qty, price))
-        } else listOf()
+        fill += qty
+        if (remaining == 0.0) status = OrderStatus.COMPLETED
+        logger.fine { "executed order=$this qty=$qty price=$price" }
+        return qty
     }
 
     /**
@@ -119,13 +109,6 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
         get() = remaining != quantity
 
 
-    /**
-     * Calculates the remaining value of the order given the market price provided. The order value is expressed
-     * in the currency of the underlying asset. Note that sell orders will result in a negative value.
-     *
-     * @param price Price to use for calculating the remaining order value
-     */
-    override fun getValue(price: Double) = asset.multiplier * remaining * price
 
     override fun toString(): String {
         return "${this::class.simpleName} asset=${asset.symbol} qty=$quantity tif=$tif id=$id status=$status"
@@ -186,7 +169,6 @@ class LimitOrder(
         copyTo(result)
         return result
     }
-
 
     override fun fill(price: Double): Double {
         var qty = 0.0

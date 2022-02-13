@@ -16,7 +16,6 @@
 
 package org.roboquant.orders
 
-import org.roboquant.brokers.sim.Execution
 import java.time.Instant
 
 /**
@@ -35,19 +34,19 @@ class OneTriggersOtherOrder(
         return OneCancelsOtherOrder(first.clone(), second.clone())
     }
 
-    override fun execute(price: Double, time: Instant): List<Execution> {
-        val executions = mutableListOf<Execution>()
+    override fun execute(price: Double, time: Instant): Double {
+        var qty = 0.0
 
         if (first.status.open) {
-            executions.addAll(first.execute(price, time))
+            qty += first.execute(price, time)
             if (first.status.aborted) status = first.status
         }
 
         if (first.status == OrderStatus.COMPLETED) {
-            executions.addAll(second.execute(price, time))
+            qty += second.execute(price, time)
             status = second.status
         }
 
-        return executions
+        return qty
     }
 }

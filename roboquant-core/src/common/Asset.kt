@@ -19,7 +19,7 @@ package org.roboquant.common
 /**
  * Asset is used to uniquely identify a financial instrument. So it can represent a stock, a future
  * or even a cryptocurrency. All of its properties are read-only, and assets are typically only created
- * once and reused thereafter.
+ * once and reused thereafter. An asset is immutable.
  *
  * @property symbol symbol name
  * @property type type of asset class, default is [AssetType.STOCK]
@@ -65,9 +65,11 @@ data class Asset(
     }
 
     /**
-     * What is the value of the asset given the quantity and provided price
+     * What is the value of the asset given the provided [quantity] and [price]
      */
-    fun value(qty: Double, price: Double) = multiplier * price * qty
+    fun value(quantity: Double, price: Double) : Amount {
+        return if (quantity == 0.0) Amount(currency,0.0)else Amount(currency, multiplier * price * quantity)
+    }
 
 
     /**

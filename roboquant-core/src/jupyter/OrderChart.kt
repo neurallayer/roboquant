@@ -55,7 +55,7 @@ class OrderChart(
                     "remaining" -> remaining.toBigDecimal()
                     "direction" -> order.direction.toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
-                    "value" -> order.getValueAmount().convert(time = order.placed).toBigDecimal()
+                    "value" -> order.value().convert(time = order.placed).toBigDecimal()
                     else -> throw Exception("Unsupported aspect")
                 }
 

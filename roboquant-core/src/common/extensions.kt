@@ -23,7 +23,10 @@ import java.lang.Integer.max
 import java.lang.Integer.min
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.time.*
+import kotlin.math.absoluteValue
+import kotlin.math.round
 
 /********************************************************************************************************************
  * This file contains the extensions for classes that are part of standard Java and Kotlin libraries. Extensions for
@@ -44,7 +47,9 @@ operator fun StringBuffer.plusAssign(s: String) {
  */
 operator fun Instant.plus(millis: Int): Instant = plusMillis(millis.toLong())
 
-
+/**
+ * Compare an instant to a [timeframe].
+ */
 operator fun Instant.compareTo(timeframe: Timeframe): Int {
     return if (this >= timeframe.end) 1 else if (this < timeframe.start) -1 else 0
 }
@@ -170,7 +175,26 @@ fun Number.round(fractions: Int = 2): BigDecimal = BigDecimal.valueOf(toDouble()
 
 
 /**
- * Convert a string to a currency pair. Return null if not successed
+ * Convert a Double as a rounded positive integer.
+ */
+val Double.absInt: Int
+    get() = round(this).toInt().absoluteValue
+
+
+/**
+ * Deals with nicely formatting fractional quantities. Don't use decimals if not required.
+ */
+val Double.asQuantity : BigDecimal
+    get() {
+        val pf = DecimalFormat("############")
+        pf.minimumFractionDigits = 0
+        pf.maximumFractionDigits = 4
+        return pf.format(this).toBigDecimal()
+    }
+
+
+/**
+ * Try to convert a string to a currency pair. Return null if not successed
  */
 fun String.toCurrencyPair() : Pair<Currency, Currency>? {
     val codes = split('_', '-', ' ', '/', ':')

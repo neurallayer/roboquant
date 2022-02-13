@@ -42,13 +42,11 @@ internal class BracketOrderTest {
         assertContains(order.children.toList(), order.main)
 
         val e = order.execute(100.0, Instant.now())
-        assertEquals(1, e.size)
-        assertEquals(10.0, e.first().quantity)
+        assertEquals(10.0, e)
 
         val e2 = order.execute(95.0, Instant.now())
-        assertEquals(1, e2.size)
-        assertEquals(-10.0, e2.first().quantity)
-        assertTrue { order.status.closed }
+        assertEquals(-10.0, e2)
+        assertTrue(order.status.closed)
 
 
         val order2 = BracketOrder.fromPercentage(asset, 10.0, 100.0, 0.01, 0.01)

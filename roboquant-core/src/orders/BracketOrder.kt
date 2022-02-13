@@ -16,7 +16,6 @@
 
 package org.roboquant.orders
 
-import org.roboquant.brokers.sim.Execution
 import org.roboquant.common.Asset
 import java.time.Instant
 
@@ -66,33 +65,31 @@ open class BracketOrder(
         return BracketOrder(main.clone(), profit.clone(), loss.clone())
     }
 
-    override fun getValue(price: Double): Double {
-        return main.getValue(price)
-    }
+    override val remaining: Double
+        get() = if (main.status.open) main.remaining else profit.remaining
 
-    override fun execute(price: Double, time: Instant): List<Execution> {
-        val result = mutableListOf<Execution>()
+
+    override fun execute(price: Double, time: Instant): Double {
+
+        var qty = 0.0
 
         if (main.status.open) {
-            val e = main.execute(price, time)
-            result.addAll(e)
+            qty += main.execute(price, time)
             if (main.status.aborted) {
                 status = main.status
-                return result
             }
         }
 
+        // We only trigger profit and loss orders if main order is completed.
         if (main.status == OrderStatus.COMPLETED) {
 
             if (profit.remaining != 0.0) {
-                val e = profit.execute(price, time)
-                result.addAll(e)
+                qty += profit.execute(price, time)
                 loss.quantity = -main.quantity - profit.fill
             }
 
             if (loss.remaining != 0.0) {
-                val e = loss.execute(price, time)
-                result.addAll(e)
+                qty += loss.execute(price, time)
                 profit.quantity = -main.quantity - loss.fill
             }
 
@@ -106,6 +103,6 @@ open class BracketOrder(
             }
         }
 
-        return result
+        return qty
     }
 }

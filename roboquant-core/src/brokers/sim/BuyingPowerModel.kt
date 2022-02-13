@@ -45,7 +45,7 @@ class CashBuyingPower(private val minimum: Double = 0.0) : BuyingPowerModel {
 
     override fun calculate(account: Account): Amount {
         val cash = account.cash
-        val openOrders = account.orders.accepted.map { it.getValueAmount() }.sum()
+        val openOrders = account.orders.accepted.map { it.value().absoluteValue }.sum()
         val total = cash - openOrders
         total.withdraw(Amount(account.baseCurrency, minimum))
 

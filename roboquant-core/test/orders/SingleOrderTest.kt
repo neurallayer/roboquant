@@ -34,7 +34,7 @@ internal class SingleOrderTest {
         assertTrue(order.tif is GTC)
 
         val e = order.execute(100.0, Instant.now())
-        assertTrue { e.isNotEmpty() }
+        assertEquals(100.0, e)
     }
 
 
@@ -47,11 +47,11 @@ internal class SingleOrderTest {
         assertEquals(-10.0, order.quantity)
         assertEquals(99.0, order.stop)
         val e1 = order.execute(100.0, Instant.now())
-        assertTrue { e1.isEmpty() }
+        assertEquals(0.0, e1)
         assertFalse { order.executed }
 
         val e2 = order.execute(98.0, Instant.now())
-        assertEquals(-10.0, e2.first().quantity)
+        assertEquals(-10.0, e2)
         assertTrue { order.executed }
 
         assertEquals(order.quantity, order.clone().quantity)
@@ -67,11 +67,11 @@ internal class SingleOrderTest {
         assertEquals(-10.0, order.quantity)
         assertEquals(101.0, order.limit)
         val e1 = order.execute(100.0, Instant.now())
-        assertTrue { e1.isEmpty() }
+        assertEquals(0.0, e1)
         assertFalse { order.executed }
 
         val e2 = order.execute(102.0, Instant.now())
-        assertEquals(-10.0, e2.first().quantity)
+        assertEquals(-10.0, e2)
         assertTrue { order.executed }
     }
 
@@ -86,15 +86,15 @@ internal class SingleOrderTest {
         assertEquals(-10.0, order.quantity)
         assertEquals(98.0, order.limit)
         val e1 = order.execute(100.0, Instant.now())
-        assertTrue { e1.isEmpty() }
+        assertEquals(0.0, e1)
         assertFalse { order.executed }
 
         val e2 = order.execute(98.5, Instant.now())
-        assertTrue { e2.isEmpty() }
+        assertEquals(0.0, e2)
         assertFalse { order.executed }
 
         val e3 = order.execute(97.0, Instant.now())
-        assertEquals(-10.0, e3.first().quantity)
+        assertEquals(-10.0, e3)
         assertTrue { order.executed }
     }
 
