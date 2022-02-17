@@ -71,8 +71,6 @@ abstract class Order(val asset: Asset) : Cloneable {
     }
 
 
-
-
     /**
      * Copy current state into the passed object. This is used in the clone function of the subclasses
      */

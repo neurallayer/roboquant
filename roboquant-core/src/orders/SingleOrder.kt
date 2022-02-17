@@ -33,7 +33,7 @@ import org.roboquant.common.Asset
 abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInForce, val tag: String) : Order(asset) {
 
     init {
-        require(quantity != 0.0) { "Cannot create an order with zero quantity" }
+        require(quantity != 0.0) { "Cannot create an order with no quantity" }
     }
 
     /**
@@ -47,7 +47,6 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
      */
     val sell: Boolean
         get() = quantity < 0
-
 
 
     /**

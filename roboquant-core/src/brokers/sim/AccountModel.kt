@@ -33,11 +33,11 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
     val logger = Logging.getLogger(CashAccount::class)
 
     override fun calculate(account: Account): Amount {
-        val cash = account.cash
+        val total = account.cash
 
         // Only accepted orders are taken into consideration
         // val openOrders = account.orders.accepted.map { it.value().absoluteValue }.sum()
-        val total = cash // - openOrders
+        // val total = cash // - openOrders
         total.withdraw(Amount(account.baseCurrency, minimum))
 
         if (account.portfolio.positions.any { it.short }) {

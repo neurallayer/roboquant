@@ -24,17 +24,15 @@ package org.roboquant.orders
  *
  * @property order The order that needs to be cancelled
  * @constructor
- *
- * @param tag
  */
-class CancellationOrder(val order: Order, private var tag: String = "") : Order(order.asset) {
+class CancellationOrder(val order: Order) : Order(order.asset) {
 
     init {
         require(order.status.open) { "Only open orders can be cancelled" }
     }
 
     override fun clone(): CancellationOrder {
-        val result = CancellationOrder(order.clone(), tag)
+        val result = CancellationOrder(order.clone())
         copyTo(result)
         return result
     }
