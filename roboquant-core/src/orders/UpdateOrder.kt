@@ -37,7 +37,7 @@ class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : O
         require(! originalOrder.status.closed) {"Only open orders can be updated"}
     }
 
-    override fun execute(price: Double, time: Instant): Double {
+     fun execute(price: Double, time: Instant): Double {
         when {
             originalOrder.status.closed -> status = OrderStatus.REJECTED
             updateOrder.quantity < originalOrder.fill -> status = OrderStatus.REJECTED

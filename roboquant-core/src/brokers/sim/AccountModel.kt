@@ -13,7 +13,7 @@ import org.roboquant.metrics.MetricResults
  *
  * At the end of each step, the buying power is re-calculaated and made available in [Account.buyingPower]
  */
-interface BuyingPowerModel {
+interface AccountModel {
 
     /**
      * Calculate the total buying power for an account. The returned amount should be expressed in the base currency
@@ -39,9 +39,9 @@ interface BuyingPowerModel {
  * You should not using shorting when using the CashBuyingPower since that is almost never allowed in the real world
  * and also not supported. It will generate warning messages.
  */
-class CashBuyingPower(private val minimum: Double = 0.0) : BuyingPowerModel {
+class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 
-    val logger = Logging.getLogger(CashBuyingPower::class)
+    val logger = Logging.getLogger(CashAccount::class)
 
     override fun calculate(account: Account): Amount {
         val cash = account.cash
@@ -70,13 +70,13 @@ class CashBuyingPower(private val minimum: Double = 0.0) : BuyingPowerModel {
  *      buying power = excess margin * ( 1 / initial margin)
  *
  */
-class MarginBuyingPower(
+class MarginAccount(
     private val initialMargin: Double = 0.50,
     private val maintanceMarginLong: Double = 0.3,
     private val maintanceMarginShort: Double = maintanceMarginLong,
     private val minimumEquity: Double = 0.0
     // private val includeOpenOrders: Boolean = false
-) : BuyingPowerModel {
+) : AccountModel {
 
     /**
      * Create a margin based on a leverage. Effectively all margins will be set to 1/leverage

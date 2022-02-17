@@ -20,7 +20,6 @@ import org.roboquant.RunPhase
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderStatus
@@ -41,16 +40,14 @@ import java.util.logging.Logger
 class SimBroker(
     private val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
-    private val costModel: CostModel = DefaultCostModel(priceType = "OPEN"),
-    private val buyingPowerModel: BuyingPowerModel = CashBuyingPower(),
-    private val validateBuyingPower: Boolean = false,
-    private val recording: Boolean = false,
-    private val prefix: String = "broker.",
+    private val feeModel: FeeModel = NoFeeModel(),
+    private val accountModel: AccountModel = CashAccount(),
+    pricingEngine: PricingEngine = SlippagePricing(10),
 ) : Broker {
 
-    // Used to store metrics of the simbroker itself
-    private val metrics = mutableMapOf<String, Number>()
+
     override val account: Account = Account(baseCurrency)
+    private val executionEngine = ExecutionEngine(pricingEngine)
 
     init {
         reset()
@@ -74,42 +71,7 @@ class SimBroker(
 
     }
 
-    /**
-     * Execute the accepted orders. If there is no price info available, the order will be skipped and tried again next
-     * step.
-     *
-     * @param event
-     */
-    private fun execute(event: Event) {
-        val prices = event.prices
-        val time = event.time
-        logger.finer { "Executing at $time with ${prices.size} prices" }
 
-        for (order in account.orders.open) {
-            val action = prices[order.asset] ?: continue
-            val price = costModel.calculatePrice(order, action)
-
-            if (order.status === OrderStatus.INITIAL) {
-                if (! validOrder(order)) {
-                    order.status = OrderStatus.REJECTED
-                    continue
-                } else {
-                    order.status = OrderStatus.ACCEPTED
-                    order.placed = time
-                }
-            }
-
-            val qty = order.execute(price, time)
-            if (qty != 0.0 ) {
-                val execution = Execution(order, qty, price)
-                val fee = costModel.calculateFee(execution)
-                record("exec.${order.asset.symbol}.qty", qty)
-                record("exec.${order.asset.symbol}.price", price)
-                updateAccount(execution, fee, time)
-            }
-
-        }
-    }
 
 
     /**
@@ -122,16 +84,15 @@ class SimBroker(
      */
     private fun updateAccount(
         execution: Execution,
-        fee: Double,
         now: Instant
     ) {
+
         val asset = execution.order.asset
         val position = Position(asset, execution.quantity, execution.price)
+        val fee = feeModel.calculate(execution)
 
         // PNL includes the fee
         val pnl = account.portfolio.updatePosition(position) - fee
-
-
         val newTrade = Trade(
             now,
             asset,
@@ -144,11 +105,12 @@ class SimBroker(
 
         account.trades.add(newTrade)
         account.cash.withdraw(newTrade.totalCost)
+
     }
 
 
     private fun updateBuyingPower() {
-        val value = buyingPowerModel.calculate(account)
+        val value = accountModel.calculate(account)
         logger.finer { "Calculated buying power $value"}
         account.buyingPower = value
     }
@@ -163,7 +125,10 @@ class SimBroker(
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer { "Received ${orders.size} orders at ${event.time}" }
         account.orders.addAll(orders)
-        execute(event)
+        executionEngine.addAll(orders)
+
+        val executions = executionEngine.execute(event)
+        for (execution in executions) updateAccount(execution, event.time)
         account.portfolio.updateMarketPrices(event)
         account.lastUpdate = event.time
         updateBuyingPower()
@@ -178,7 +143,6 @@ class SimBroker(
      * cash, the order will be rejected.
      *
      * TODO more flexible implementation (perhaps using the BuyingPowerModel).
-     */
     private fun validOrder(order: Order) : Boolean {
         if (validateBuyingPower) {
             // TODO implement real logic here
@@ -192,12 +156,14 @@ class SimBroker(
         order.status = OrderStatus.ACCEPTED
         return true
     }
+     */
 
 
     /**
-     * Liquidate the portfolio. This comes in handy at the end of a back-test if you prefer no more open positions.
-     * It performs the following two steps:
+     * Liquidate the portfolio. This comes in handy at the end of a back-test if you prefer to have no open positions
+     * left in the portfolio.
      *
+     * This method performs the following two steps:
      * 1. cancel all open orders
      * 2. close all open positions by creating and processing [MarketOrder] for the required quantities, using the
      * last known market prices as price actions.
@@ -222,32 +188,12 @@ class SimBroker(
 
 
     override fun reset() {
-        metrics.clear()
         account.clear()
+        executionEngine.clear()
         account.cash.deposit(initialDeposit)
     }
 
-    /**
-     * Record a metric
-     *
-     * @param key
-     * @param value
-     */
-    private fun record(key: String, value: Number) {
-        !recording && return
-        metrics["$prefix$key"] = value
-    }
 
-    /**
-     * Get metrics generated by the simulated broker and the costModel and buyingPower model
-     *
-     * @return
-     */
-    override fun getMetrics(): MetricResults {
-        val result = metrics + buyingPowerModel.getMetrics()
-        metrics.clear()
-        return result
-    }
 
 }
 

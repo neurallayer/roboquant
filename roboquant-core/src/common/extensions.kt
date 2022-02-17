@@ -158,8 +158,25 @@ fun DoubleArray.returns() : DoubleArray {
 }
 
 
+private const val eps = 0.0000001
+
+/**
+ * Is this value zero, allows for small rounding errors.
+ */
+val Double.iszero
+    get() = this.absoluteValue < eps
+
+/**
+ * is this a non zero number, allows for small rounding errors.
+ */
+val Double.nonzero
+    get() = this.absoluteValue > eps
+
+/**
+ * is this a non zero number, allows for small rounding errors.
+ */
 val Double.zeroOrMore
-    get() = if (this > 0.0) this else 0.0
+    get() = if (this > eps) this else 0.0
 
 
 /**

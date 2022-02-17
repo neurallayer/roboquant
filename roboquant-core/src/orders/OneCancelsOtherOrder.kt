@@ -36,7 +36,7 @@ class OneCancelsOtherOrder(
         return OneCancelsOtherOrder(first.clone(), second.clone())
     }
 
-    override fun execute(price: Double, time: Instant): Double {
+     fun execute(price: Double, time: Instant): Double {
         var qty = 0.0
 
         if (first.status.open) {

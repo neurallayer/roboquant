@@ -30,10 +30,6 @@ internal class TimeInForceTest {
 
     class TestOrder(asset: Asset = TestData.usStock()) : Order(asset) {
 
-        override fun execute(price: Double, time: Instant): Double {
-            return 0.0
-        }
-
         fun updatePlaced(now: Instant) {
             placed = now
         }
@@ -47,10 +43,10 @@ internal class TimeInForceTest {
         assertEquals("GTC", tif.toString())
         val order = TestData.usMarketOrder()
         val t2 = order.placed.plusSeconds(1000)
-        assertFalse(tif.isExpired(order, t2, 10.0, 20.0))
+        assertFalse(tif.isExpired(order, t2, 10.0))
 
         val t3 = order.placed.plusSeconds(3600L * 24 * 365)
-        assertTrue(tif.isExpired(order, t3, 10.0, 20.0))
+        assertTrue(tif.isExpired(order, t3, 10.0))
     }
 
     @Test
@@ -65,10 +61,10 @@ internal class TimeInForceTest {
 
         val order = TestData.usMarketOrder()
 
-        assertFalse(tif.isExpired(order, t2, 1.0, 10.0))
+        assertFalse(tif.isExpired(order, t2, 1.0))
 
         val t3 = t1.plusSeconds((3600L * 24 * 6))
-        assertTrue(tif.isExpired(order, t3, 10.0, 10.0))
+        assertTrue(tif.isExpired(order, t3, 10.0))
     }
 
     @Test
@@ -79,8 +75,8 @@ internal class TimeInForceTest {
         val date = Instant.now()
         order.updatePlaced(date)
 
-        assertFalse(tif.isExpired(order, date, 10.0, 20.0))
-        assertTrue(tif.isExpired(order, date.plus(1, ChronoUnit.DAYS), 10.0, 20.0))
+        assertFalse(tif.isExpired(order, date, 10.0))
+        assertTrue(tif.isExpired(order, date.plus(1, ChronoUnit.DAYS), 10.0))
     }
 
     @Test
@@ -90,7 +86,7 @@ internal class TimeInForceTest {
         assertEquals("IOC", tif.toString())
         val date = Instant.now()
         order.updatePlaced(date)
-        assertFalse(tif.isExpired(order, date, 10.0, 10.0))
+        assertFalse(tif.isExpired(order, date, 10.0))
     }
 
     @Test
@@ -100,8 +96,8 @@ internal class TimeInForceTest {
         assertEquals("FOK", tif.toString())
         val date = Instant.now()
         order.updatePlaced(date)
-        assertFalse(tif.isExpired(order, date, 10.0, 10.0))
-        assertTrue(tif.isExpired(order, date, 10.0, 20.0))
+        assertFalse(tif.isExpired(order, date, 0.0))
+        assertTrue(tif.isExpired(order, date, 10.0))
     }
 
 }

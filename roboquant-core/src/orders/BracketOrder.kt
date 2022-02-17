@@ -69,15 +69,13 @@ open class BracketOrder(
         get() = if (main.status.open) main.remaining else profit.remaining
 
 
-    override fun execute(price: Double, time: Instant): Double {
+     fun execute(price: Double, time: Instant): Double {
 
         var qty = 0.0
 
         if (main.status.open) {
             qty += main.execute(price, time)
-            if (main.status.aborted) {
-                status = main.status
-            }
+            if (main.status.aborted) status = main.status
         }
 
         // We only trigger profit and loss orders if main order is completed.

@@ -20,11 +20,13 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 /**
- * Time in force (TiF) allows to put an expiration and fill policy on an order. It determined how long an order remains
- * active before it is executed or expires. There are two aspects that can determine if an order expires:
+ * Time in force (TiF) allows to put an expiration or fill policy on an order. It determines how long an order remains
+ * active before it expires. There are two aspects that can determine if an order expires:
  *
  * - How much time has passed since it was first placed.
  * - Is the order completely filled or not yet
+ *
+ * When an order expires, the status is typically set [OrderStatus.EXPIRED] to indicate such event occurred.
  *
  */
 interface TimeInForce {
@@ -36,7 +38,7 @@ interface TimeInForce {
      * @param time
      * @return
      */
-    fun isExpired(order: Order, time: Instant, fill: Double, total: Double): Boolean
+    fun isExpired(order: Order, time: Instant, remaining: Double): Boolean
 
 }
 
@@ -55,7 +57,7 @@ class GTC(private val maxDays: Int = 90) : TimeInForce {
      * @see TimeInForce.isExpired
      *
      */
-    override fun isExpired(order: Order, time: Instant, fill: Double, total: Double): Boolean {
+    override fun isExpired(order: Order, time: Instant, remaining: Double): Boolean {
         if (time == order.placed) return false
         val max = order.placed.plus(maxDays.toLong(), ChronoUnit.DAYS)
         return time > max
@@ -78,9 +80,8 @@ class GTD(private val date: Instant) : TimeInForce {
 
     /**
      * @see TimeInForce.isExpired
-     *
      */
-    override fun isExpired(order: Order, time: Instant, fill: Double, total: Double) = time > date
+    override fun isExpired(order: Order, time: Instant, remaining: Double) = time > date
 
     override fun toString(): String {
         return "GTD($date)"
@@ -97,9 +98,9 @@ class GTD(private val date: Instant) : TimeInForce {
 class IOC : TimeInForce {
 
     /**
-     *
+     * @see TimeInForce.isExpired
      */
-    override fun isExpired(order: Order, time: Instant, fill: Double, total: Double) = time > order.placed
+    override fun isExpired(order: Order, time: Instant, remaining: Double) = time > order.placed
 
     override fun toString(): String {
         return "IOC"
@@ -108,16 +109,17 @@ class IOC : TimeInForce {
 
 /**
  * A DAY order is a stipulation placed on an order to a broker to execute a trade at a specific price
- * that expires at the end of the trading day if it is not completed.
+ * that expires at the end of the trading day if it is not completed. The definition of a day is determined by the
+ * exchange the asset is traded on.
  *
  * @constructor Create new DAY tif
  */
 class DAY : TimeInForce {
 
     /**
-     *
+     * @see TimeInForce.isExpired
      */
-    override fun isExpired(order: Order, time: Instant, fill: Double, total: Double): Boolean {
+    override fun isExpired(order: Order, time: Instant, remaining: Double): Boolean {
         val exchange = order.asset.exchange
         return !exchange.sameDay(order.placed, time)
     }
@@ -141,8 +143,8 @@ class FOK : TimeInForce {
      * @see TimeInForce.isExpired
      *
      */
-    override fun isExpired(order: Order, time: Instant, fill: Double, total: Double): Boolean {
-        return fill != 0.0 && fill != total
+    override fun isExpired(order: Order, time: Instant, remaining: Double): Boolean {
+        return remaining != 0.0
     }
 
     override fun toString(): String {

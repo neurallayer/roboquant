@@ -22,7 +22,7 @@
 
     <artifactId>roboquant</artifactId>
     <groupId>org.roboquant</groupId>
-    <version>0.8-SNAPSHOT</version>
+    <version>0.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>roboquant</name>
@@ -264,7 +264,7 @@
             <dependency>
                 <artifactId>roboquant-core</artifactId>
                 <groupId>org.roboquant</groupId>
-                <version>0.8-SNAPSHOT</version>
+                <version>0.9-SNAPSHOT</version>
             </dependency>
 
             <dependency>

@@ -19,6 +19,7 @@ package org.roboquant.common
 import org.junit.Test
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -48,8 +49,11 @@ class ExtensionsTest {
 
 
     @Test
-    fun testInstant() {
-
+    fun testRounding() {
+        val small = 0.00000000000001
+        assertEquals(0.0, small.zeroOrMore)
+        assertTrue(small.iszero)
+        assertFalse(small.nonzero)
     }
 
     @Test

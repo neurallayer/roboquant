@@ -22,7 +22,7 @@
     <parent>
         <artifactId>roboquant</artifactId>
         <groupId>org.roboquant</groupId>
-        <version>0.8-SNAPSHOT</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
     <artifactId>roboquant-ibkr</artifactId>
     <packaging>jar</packaging>

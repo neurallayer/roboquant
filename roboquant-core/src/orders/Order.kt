@@ -79,13 +79,6 @@ abstract class Order(val asset: Asset) : Cloneable {
     }
 
 
-
-    /**
-     * Execute the order given the provided [price] and [time]. Any subclass of [Order] will need to implement
-     * this method and return the quantity traded, using 0.0 if not trades happened at all.
-     */
-    abstract fun execute(price: Double, time: Instant): Double
-
     /**
      * Indication how much of quantity is remaining. For complex order types this is not always known upfront, but an
      * estimate should be provided if possible. Used for margin calculation on open orders.

@@ -41,7 +41,7 @@ class CancellationOrder(val order: Order, var tag: String = "") : Order(order.as
         return result
     }
 
-    override fun execute(price: Double, time: Instant): Double {
+     fun execute(price: Double, time: Instant): Double {
 
         if (!order.status.closed) {
             order.status = OrderStatus.CANCELLED

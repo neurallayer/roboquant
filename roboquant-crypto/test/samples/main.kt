@@ -6,7 +6,7 @@ import org.knowm.xchange.bitstamp.BitstampExchange
 import org.roboquant.Roboquant
 import org.roboquant.binance.BinanceHistoricFeed
 import org.roboquant.binance.Interval
-import org.roboquant.brokers.sim.MarginBuyingPower
+import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
@@ -52,9 +52,9 @@ fun readBianceFeed() {
         val fileName = "$userHomeDir/tmp/crypto.avro"
         val feed = AvroFeed(fileName, useIndex = true)
         val initialDeposit = Amount("USDC", 100_000).toWallet()
-        val buyingPower = MarginBuyingPower()
+        val buyingPower = MarginAccount()
         val policy = DefaultPolicy(shorting = true)
-        val broker = SimBroker(initialDeposit, buyingPowerModel = buyingPower)
+        val broker = SimBroker(initialDeposit, accountModel = buyingPower)
         val roboquant = Roboquant(EMACrossover(), AccountSummary(), broker = broker, policy = policy)
         roboquant.run(feed)
         roboquant.broker.account.summary().log()

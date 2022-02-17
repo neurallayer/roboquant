@@ -81,7 +81,7 @@ internal class SimBrokerTest {
     fun advancedPlaceOrder() {
         val er = FixedExchangeRates(USD, EUR to 0.8)
         Config.exchangeRates = er
-        val broker = SimBroker(validateBuyingPower = true)
+        val broker = SimBroker()
         val event = TestData.event()
         val account = broker.place(listOf(TestData.euMarketOrder(), TestData.usMarketOrder()), event)
         assertEquals(2, account.orders.size)

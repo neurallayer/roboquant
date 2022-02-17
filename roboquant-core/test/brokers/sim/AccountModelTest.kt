@@ -15,12 +15,12 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class BuyingPowerModelTest {
+internal class AccountModelTest {
 
     @Test
     fun test() {
         val account = TestData.usAccount()
-        val uc = CashBuyingPower()
+        val uc = CashAccount()
         val result = uc.calculate(account)
         assertEquals(result.value, account.cashAmount.value)
 
@@ -37,7 +37,7 @@ internal class BuyingPowerModelTest {
     @Test
     fun test3() {
         val account = TestData.usAccount()
-        val uc = MarginBuyingPower()
+        val uc = MarginAccount()
         val result = uc.calculate(account)
         assertTrue(result.value > account.cashAmount.value)
     }
@@ -45,7 +45,7 @@ internal class BuyingPowerModelTest {
     @Test
     fun test4() {
         val account = TestData.usAccount()
-        val uc = MarginBuyingPower(20.0)
+        val uc = MarginAccount(20.0)
         val result = uc.calculate(account)
         assertTrue(result.value > account.cashAmount.value)
     }
@@ -58,11 +58,17 @@ internal class BuyingPowerModelTest {
         // println(broker.account.summary())
     }
 
+
+    private fun getSimBroker(deposit: Amount, accountModel: AccountModel): SimBroker {
+        val wallet = deposit.toWallet()
+        return SimBroker(wallet, accountModel = accountModel, pricingEngine = NoSlippagePricing(), feeModel = NoFeeModel())
+    }
+
     @Test
     fun testCashAccount() {
         // Slide 1 example in code
-        val initial = Wallet(10_000.EUR)
-        val broker = SimBroker(initial, costModel = NoCostModel())
+        val initial = 10_000.EUR
+        val broker = getSimBroker(initial, accountModel = CashAccount())
         val abc = Asset("ABC", currencyCode = "EUR")
         val xyz = Asset("XYZ", currencyCode = "USD")
 
@@ -73,7 +79,7 @@ internal class BuyingPowerModelTest {
         assertEquals(10_000.EUR, account.buyingPower)
 
         update(broker, abc, 100, 40)
-        assertEquals(initial, account.equity)
+        assertEquals(initial, account.equityAmount)
         assertEquals(4_000.EUR.toWallet(), account.portfolio.value)
         assertEquals(6_000.EUR, account.buyingPower)
 
@@ -98,8 +104,8 @@ internal class BuyingPowerModelTest {
     @Test
     fun testMarginAccountLong() {
         // Slide 2 example in code
-        val initial = Wallet(1_000_000.JPY)
-        val broker = SimBroker(initial, costModel = NoCostModel(), buyingPowerModel = MarginBuyingPower())
+        val initial = 1_000_000.JPY
+        val broker = getSimBroker(initial,MarginAccount())
         val abc = Asset("ABC", currencyCode = "JPY")
 
         val account = broker.account
@@ -109,7 +115,7 @@ internal class BuyingPowerModelTest {
 
         update(broker, abc, 1000, 500)
         assertEquals(1_700_000.JPY, account.buyingPower)
-        assertEquals(initial, account.equity)
+        assertEquals(initial, account.equityAmount)
 
         update(broker, abc, 500)
         assertEquals(1_350_000.JPY, account.buyingPower)
@@ -125,18 +131,21 @@ internal class BuyingPowerModelTest {
 
     }
 
+
+
+
     @Test
     fun testMarginAccountShort() {
         // Slide 3 example example in code
-        val initial = Wallet(20_000.USD)
-        val broker = SimBroker(initial, costModel = NoCostModel(), buyingPowerModel = MarginBuyingPower())
+        val initial = 20_000.USD
+        val broker = getSimBroker(initial, MarginAccount())
         val abc = Asset("ABC", currencyCode = "USD")
 
         val account = broker.account
 
         update(broker, abc, 200, -50)
         assertEquals(34_000.USD, account.buyingPower)
-        assertEquals(initial, account.equity)
+        assertEquals(initial, account.equityAmount)
 
         update(broker, abc, 300)
         assertEquals(Amount(USD, 21_000), account.buyingPower)

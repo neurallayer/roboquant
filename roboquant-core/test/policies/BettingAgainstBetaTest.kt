@@ -17,7 +17,7 @@
 package org.roboquant.policies
 
 import org.roboquant.Roboquant
-import org.roboquant.brokers.sim.MarginBuyingPower
+import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.MemoryLogger
@@ -33,7 +33,7 @@ class BettingAgainstBetaTest {
         val marketAsset = assets.first()
 
         val policy = BettingAgainstBeta(assets, marketAsset)
-        val broker = SimBroker(buyingPowerModel = MarginBuyingPower())
+        val broker = SimBroker(accountModel = MarginAccount())
         val logger = MemoryLogger(false)
         val exp = Roboquant(NoSignalStrategy(), broker = broker, policy = policy, logger = logger)
         exp.run(feed)

@@ -18,25 +18,17 @@ package org.roboquant.orders
 
 import org.junit.Test
 import org.roboquant.TestData
-import java.time.Instant
-import kotlin.test.assertEquals
+import kotlin.test.assertContains
 
 internal class CombinedOrderTest {
 
-    private class MyOrder(order: MarketOrder) : CombinedOrder(order) {
-        override fun execute(price: Double, time: Instant):Double {
-            return 0.0
-        }
-
-    }
+    private class MyOrder(order: MarketOrder) : CombinedOrder(order)
 
     @Test
     fun test() {
         val child = TestData.euMarketOrder()
         val order = MyOrder(child)
-        order.price = 100.0
-        assertEquals(Double.NaN, child.price)
-        // assertEquals(child.getValue(), order.getValue())
+        assertContains(order.children.toList(), child)
 
     }
 

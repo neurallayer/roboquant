@@ -82,10 +82,10 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
     /**
      * Implementation of execute for all single order types. Subclasses will need only to implement the [fill] method.
      */
-    override fun execute(price: Double, time: Instant): Double {
+     fun execute(price: Double, time: Instant): Double {
         val qty = fill(price)
 
-        if (tif.isExpired(this, time, qty, quantity)) {
+        if (tif.isExpired(this, time, remaining)) {
             status = OrderStatus.EXPIRED
             return 0.0
         }
