@@ -126,7 +126,7 @@ open class DefaultPolicy(
      * trading on different exchanges with different timezones.
      */
     private fun getOrdersCurrentDay(now: Instant, orders: Orders) =
-        orders.filter { it.asset.exchange.sameDay(now, it.placed) }.size
+        orders.filter { it.asset.exchange.sameDay(now, it.state.placed) }.size
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<Order>()

@@ -42,7 +42,7 @@ class SimBroker(
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val feeModel: FeeModel = NoFeeModel(),
     private val accountModel: AccountModel = CashAccount(),
-    pricingEngine: PricingEngine = SlippagePricing(10),
+    pricingEngine: PricingEngine = SlippagePricing(10, "OPEN"),
 ) : Broker {
 
 
@@ -171,7 +171,7 @@ class SimBroker(
     fun liquidatePortfolio(time:Instant = account.lastUpdate): Account {
         for (order in account.orders.open) order.status = OrderStatus.CANCELLED
         val change = account.portfolio.diff(Portfolio())
-        val orders = change.map { MarketOrder(it.key, it.value, tag = "liquidate") }
+        val orders = change.map { MarketOrder(it.key, it.value) }
         val event = Event(account.portfolio.toTradePrices(), time)
         return place(orders, event)
     }

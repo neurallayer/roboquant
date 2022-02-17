@@ -92,9 +92,9 @@ class OCOOrderCommand(override val order: OneCancelsOtherOrder) : OrderCommand {
 
 class BracketOrderCommand(override val order: BracketOrder) : OrderCommand {
 
-    private val main = ExecutionEngine.getOrderCommand(order.main) as SingleOrderCommand<*>
-    val profit = ExecutionEngine.getOrderCommand(order.profit) as SingleOrderCommand<*>
-    val loss = ExecutionEngine.getOrderCommand(order.loss) as SingleOrderCommand<*>
+    private val main = ExecutionEngine.getOrderCommand(order.entry) as SingleOrderCommand<*>
+    val profit = ExecutionEngine.getOrderCommand(order.takeProfit) as SingleOrderCommand<*>
+    val loss = ExecutionEngine.getOrderCommand(order.stopLoss) as SingleOrderCommand<*>
 
     var fill = 0.0
 
@@ -115,66 +115,57 @@ class BracketOrderCommand(override val order: BracketOrder) : OrderCommand {
 
     }
 
-
 }
-
 
 
 class StopOrderCommand(order: StopOrder) : SingleOrderCommand<StopOrder>(order) {
 
     override fun fill(pricing: Pricing) : Execution? {
-        return if ((order.sell && pricing.lowPrice(remaining) <= order.stop) || (order.buy && pricing.highPrice(remaining) >= order.stop)) {
-            Execution(order, remaining, pricing.marketPrice(remaining))
-        } else {
-            null
-        }
-
+        val trigger = if (order.sell) ::sellTrigger else ::buyTrigger
+        if (trigger(order.stop, remaining, pricing)) return Execution(order, remaining, pricing.marketPrice(remaining))
+        return null
     }
 
 }
 
 
-private fun isStopTriggered(order: StopOrder, volume: Double, pricing: Pricing) : Boolean {
-    return (order.sell && pricing.lowPrice(volume) <= order.stop) || (order.buy && pricing.highPrice(volume) >= order.stop)
+
+private fun sellTrigger(limit: Double, volume: Double, pricing: Pricing) = pricing.lowPrice(volume) <= limit
+
+private fun buyTrigger(limit: Double, volume: Double, pricing: Pricing) = pricing.highPrice(volume) >= limit
+
+
+private fun getStop(stop: Double, trail: Double, volume: Double, pricing: Pricing) : Double {
+
+    return if (volume > 0.0) {
+        // BUY stop
+        val price = pricing.highPrice(volume)
+        val newStop = price * (1.0 - trail)
+        if (newStop > stop) newStop else stop
+    } else {
+        // SELL stop
+        val price = pricing.lowPrice(volume)
+        val newStop = price * (1.0 + trail)
+        if (newStop < stop) newStop else stop
+    }
+
 }
-
-
-private fun isLimitTriggered(order: LimitOrder, volume: Double, pricing: Pricing) : Boolean {
-    return (order.sell && pricing.lowPrice(volume) <= order.limit) || (order.buy && pricing.highPrice(volume) >= order.limit)
-}
-
 
 
 open class TrailOrderCommand(order: TrailOrder) : SingleOrderCommand<TrailOrder>(order) {
 
     protected var triggered = false
     private var stop: Double = if (order.buy) Double.MAX_VALUE else Double.MIN_VALUE
-    private val correction = if (order.buy) 1.0 + order.trail else 1.0 - order.trail
+    private val correction = if (order.buy) 1.0 + order.trailPercentage else 1.0 - order.trailPercentage
 
-    protected fun updateStop(pricing: Pricing) {
-        if (! triggered) {
-                if (order.buy) {
-                    val price = pricing.lowPrice(remaining)
-                    if (stop < price * correction ) stop = price
-                    if (price < stop) triggered = true
-                } else {
-                    val price = pricing.highPrice(remaining)
-                    if (price * correction > stop) stop = price
-                    if (price > stop) triggered = true
-                }
-
-        }
-    }
 
     override fun fill(pricing: Pricing) : Execution? {
-        if (!triggered) updateStop(pricing)
-        return if (triggered) Execution(order, remaining, pricing.marketPrice(remaining)) else null
+        stop = getStop(stop, order.trailPercentage, remaining, pricing)
+        val trigger = if (order.sell) ::sellTrigger else ::buyTrigger
+        return if (trigger(stop, remaining, pricing)) Execution(order, remaining, pricing.marketPrice(remaining)) else null
     }
 
 }
-
-
-
 
 
 class StopLimitOrderCommand(order: StopLimitOrder) : SingleOrderCommand<StopLimitOrder>(order) {
@@ -182,14 +173,10 @@ class StopLimitOrderCommand(order: StopLimitOrder) : SingleOrderCommand<StopLimi
     private var triggered = false
 
     override fun fill(pricing: Pricing) : Execution? {
+        val trigger = if (order.sell) ::sellTrigger else ::buyTrigger
 
-        if (!triggered) triggered = isStopTriggered(order, remaining, pricing)
-
-        if (triggered) {
-            if ((order.sell && pricing.lowPrice(remaining) <= order.limit) || (order.buy && pricing.highPrice(remaining) >= order.limit)) {
-                return Execution(order, remaining, order.limit)
-            }
-        }
+        if (! triggered) triggered = trigger(order.stop, remaining, pricing)
+        if (triggered && trigger(order.limit, remaining, pricing)) return Execution(order, remaining, order.limit)
 
         return null
     }

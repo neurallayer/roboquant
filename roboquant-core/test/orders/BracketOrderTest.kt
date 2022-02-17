@@ -19,7 +19,6 @@ package org.roboquant.orders
 import org.junit.Test
 import org.roboquant.TestData
 import java.time.Instant
-import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
 
@@ -34,15 +33,11 @@ internal class BracketOrderTest {
             StopOrder(asset, -10.0, 99.0),
         )
         order.status = OrderStatus.ACCEPTED
-        order.placed = Instant.now()
+        order.state.placed = Instant.now()
 
-        assertTrue(order.main is MarketOrder)
-        assertTrue(order.loss is StopOrder)
-        assertContains(order.children.toList(), order.main)
+        assertTrue(order.entry is MarketOrder)
+        assertTrue(order.stopLoss is StopOrder)
 
-        val order2 = BracketOrder.fromPercentage(asset, 10.0, 100.0, 0.01, 0.01)
-        assertTrue(order2.loss is StopOrder)
-        assertTrue(order2.profit is LimitOrder)
     }
 
 }

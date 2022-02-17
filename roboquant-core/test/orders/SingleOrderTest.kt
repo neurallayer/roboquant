@@ -18,8 +18,9 @@ package org.roboquant.orders
 
 
 import org.roboquant.TestData
-import java.time.Instant
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class SingleOrderTest {
 
@@ -27,8 +28,6 @@ internal class SingleOrderTest {
     fun testMarketOrder() {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100.0)
-        order.placed = Instant.now()
-        assertEquals(order.quantity, order.clone().quantity)
 
         assertEquals(100.0, order.quantity)
         assertTrue(order.tif is GTC)
@@ -39,7 +38,7 @@ internal class SingleOrderTest {
     fun testStopOrder() {
         val asset = TestData.usStock()
         val order = StopOrder(asset, -10.0, 99.0)
-        order.placed = Instant.now()
+
 
         assertEquals(-10.0, order.quantity)
         assertEquals(99.0, order.stop)
@@ -50,8 +49,7 @@ internal class SingleOrderTest {
     fun testLimitOrder() {
         val asset = TestData.usStock()
         val order = LimitOrder(asset, -10.0, 101.0)
-        order.placed = Instant.now()
-        assertEquals(order.quantity, order.clone().quantity)
+
 
         assertEquals(-10.0, order.quantity)
         assertEquals(101.0, order.limit)
@@ -63,8 +61,7 @@ internal class SingleOrderTest {
     fun testStopLimitOrder() {
         val asset = TestData.usStock()
         val order = StopLimitOrder(asset, -10.0, 99.0, 98.0)
-        order.placed = Instant.now()
-        assertEquals(order.quantity, order.clone().quantity)
+
 
         assertEquals(-10.0, order.quantity)
         assertEquals(98.0, order.limit)

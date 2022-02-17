@@ -16,6 +16,8 @@
 
 package org.roboquant.orders
 
+import org.roboquant.common.Asset
+
 
 /**
  * Update an existing SimpleOrder. It is up to the broker implementation to translate the updated order to the correct
@@ -24,31 +26,41 @@ package org.roboquant.orders
  * Typically, only a part of an open order can be updated, like the limit price of a limit order. For many other
  * types of changes, an order needs to be cancelled and a new one needs to be created.
  **
- * @property originalOrder
- * @property updateOrder
+ * @property original
+ * @property update
  * @constructor Create empty Order update
  */
-class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : Order(originalOrder.asset) {
+
+data class UpdateOrder<T : SingleOrder>(
+    val original: T,
+    val update: T,
+    override val id: String = Order.nextId(),
+    override val state: OrderState = OrderState()
+) : ModifyOrder {
 
     init {
-        require(originalOrder.asset == updateOrder.asset) {"Cannot updated the asset of an order"}
-        require(! originalOrder.status.closed) {"Only open orders can be updated"}
+        require(original.status.open)
+        require(original.status == OrderStatus.INITIAL)
+        require(original.asset == update.asset)
     }
 
-    /*
-     fun execute(price: Double, time: Instant): Double {
-        when {
-            originalOrder.status.closed -> status = OrderStatus.REJECTED
-            updateOrder.quantity < originalOrder.fill -> status = OrderStatus.REJECTED
-            else -> {
-                originalOrder.quantity = updateOrder.quantity
-                status = OrderStatus.COMPLETED
-                updateOrder.status = OrderStatus.COMPLETED
-            }
-        }
-        return 0.0
-    }
-    */
+    override val asset: Asset
+        get() = original.asset
 
+}
+
+
+data class CancellationOrder(
+    val order: Order,
+    override val id: String = Order.nextId(),
+    override val state: OrderState = OrderState()
+) : ModifyOrder {
+
+    init {
+        require(order.status.open)
+    }
+
+    override val asset: Asset
+        get() = order.asset
 
 }

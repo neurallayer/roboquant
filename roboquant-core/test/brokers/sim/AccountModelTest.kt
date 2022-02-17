@@ -26,7 +26,7 @@ internal class AccountModelTest {
 
         val order = MarketOrder(TestData.usStock(), 100.0)
         order.status = OrderStatus.ACCEPTED
-        order.placed = Instant.now()
+        order.state.placed = Instant.now()
         account.orders.add(order)
         val result2 = uc.calculate(account)
 

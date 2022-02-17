@@ -16,6 +16,18 @@
 
 package org.roboquant.orders
 
+import java.time.Instant
+
+/**
+ * Part of order that can change
+ */
+data class OrderState(
+    var status: OrderStatus = OrderStatus.INITIAL,
+    var placed: Instant = Instant.MIN,
+    var closed: Instant = Instant.MAX
+)
+
+
 /**
  * Various state that an order can be in. The  flow is straight forward:
  *

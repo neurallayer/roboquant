@@ -99,11 +99,11 @@ class Signal(
      */
     fun conflicts(other: Signal) = asset == other.asset && rating.conflicts(other.rating)
 
-    fun toMarketOrder(qty: Double) = MarketOrder(asset, qty, tag = source)
+    fun toMarketOrder(qty: Double) = MarketOrder(asset, qty)
 
     fun toLimitOrder(qty: Double): LimitOrder {
         require(!takeProfit.isNaN()) { "Cannot create limit order since no take profit has been provided" }
-        return LimitOrder(asset, qty, takeProfit, tag = source)
+        return LimitOrder(asset, qty, takeProfit)
     }
 
 }

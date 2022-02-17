@@ -17,7 +17,7 @@
 package org.roboquant.orders
 
 import org.roboquant.common.Asset
-import java.time.Instant
+
 
 /**
  * Order is an instruction for a broker to initiate a certain action. An order is always associated with a
@@ -31,56 +31,54 @@ import java.time.Instant
  * - update of an existing order
  *
  * Please note it depends on the broker implementation which order types are supported.
- *
+ * The two direct interfaces of this interface are [TradeOrder] and [ModifyOrder].
  */
-abstract class Order(val asset: Asset) : Cloneable {
+interface Order {
 
     /**
-     * OrderId, initially set when creating an order. This id will remain unique until the JVM stops.
+     * Underlying asset of the order
      */
-    var id = getId().toString()
-        private set
-
+    val asset: Asset
 
     /**
-     * What is the latest status of this order, see also [OrderStatus] for the possible values
+     * Unique identifier for the order that will stay constant. This id will rset when the JVM is restarted.
      */
-    var status = OrderStatus.INITIAL
+    val id: String
 
     /**
-     * When was the order first placed. This timestamp is used during simulation to deal with time-in-force policies.
-     * Before the order is actually placed, this attribute will contain the value `Instant.MIN`
+     * keeps track of changing state of an order while it is being executed.
      */
-    open var placed: Instant = Instant.MIN
+    val state: OrderState
+
+    var status
+        get() = state.status
+        set(value) { state.status = value }
 
     companion object {
 
-        // Counter for unique order id
+        // Counter used for creating unique order ids
         internal var ID = 0L
 
-        private fun getId(): Long {
+        /**
+         * Generate the next order id
+         */
+        fun nextId(): String {
             synchronized(ID) {
-                return ID++
+                return ID++.toString()
             }
         }
-
     }
-
-    public override fun clone(): Order {
-        throw NotImplementedError("Concrete subclasses of Order need to override clone() method")
-    }
-
-
-    /**
-     * Copy current state into the passed object. This is used in the clone function of the subclasses
-     */
-    protected fun copyTo(result: Order) {
-        result.id = id
-        result.placed = placed
-        result.status = status
-    }
-
-
 
 }
+
+/**
+ * Order type that only modifies (update or cancel) other orders, it doesn't generate trades.
+ */
+interface ModifyOrder : Order
+
+/**
+ * Orders types that generate trades based on the underlying asset.
+ */
+interface TradeOrder : Order
+
 

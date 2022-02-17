@@ -28,11 +28,16 @@ import kotlin.test.assertTrue
 
 internal class TimeInForceTest {
 
-    class TestOrder(asset: Asset = TestData.usStock()) : Order(asset) {
+    class TestOrder(
+        override val asset: Asset = TestData.usStock(),
+        override val state: OrderState = OrderState(),
+        override val id: String = "12"
+    ) : Order {
 
         fun updatePlaced(now: Instant) {
-            placed = now
+            state.placed = now
         }
+
 
     }
 
@@ -42,10 +47,10 @@ internal class TimeInForceTest {
         val tif = GTC()
         assertEquals("GTC", tif.toString())
         val order = TestData.usMarketOrder()
-        val t2 = order.placed.plusSeconds(1000)
+        val t2 = order.state.placed.plusSeconds(1000)
         assertFalse(tif.isExpired(order, t2, 10.0))
 
-        val t3 = order.placed.plusSeconds(3600L * 24 * 365)
+        val t3 = order.state.placed.plusSeconds(3600L * 24 * 365)
         assertTrue(tif.isExpired(order, t3, 10.0))
     }
 

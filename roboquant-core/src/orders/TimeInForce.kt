@@ -58,8 +58,8 @@ class GTC(private val maxDays: Int = 90) : TimeInForce {
      *
      */
     override fun isExpired(order: Order, time: Instant, remaining: Double): Boolean {
-        if (time == order.placed) return false
-        val max = order.placed.plus(maxDays.toLong(), ChronoUnit.DAYS)
+        if (time == order.state.placed) return false
+        val max = order.state.placed.plus(maxDays.toLong(), ChronoUnit.DAYS)
         return time > max
     }
 
@@ -100,7 +100,7 @@ class IOC : TimeInForce {
     /**
      * @see TimeInForce.isExpired
      */
-    override fun isExpired(order: Order, time: Instant, remaining: Double) = time > order.placed
+    override fun isExpired(order: Order, time: Instant, remaining: Double) = time > order.state.placed
 
     override fun toString(): String {
         return "IOC"
@@ -121,7 +121,7 @@ class DAY : TimeInForce {
      */
     override fun isExpired(order: Order, time: Instant, remaining: Double): Boolean {
         val exchange = order.asset.exchange
-        return !exchange.sameDay(order.placed, time)
+        return !exchange.sameDay(order.state.placed, time)
     }
 
     override fun toString(): String {

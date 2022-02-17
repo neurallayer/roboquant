@@ -134,7 +134,7 @@ class AlpacaBroker(
         val result = MarketOrder(asset, qty)
         // val fill = if (order.side == OrderSide.BUY) order.filledQuantity.toDouble() else - order.filledQuantity.toDouble()
         // result.fill = fill
-        result.placed = order.createdAt.toInstant()
+        result.state.placed = order.createdAt.toInstant()
         // result.price = order.averageFillPrice.toDouble()
 
         when (order.status) {

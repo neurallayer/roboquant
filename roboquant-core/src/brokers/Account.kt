@@ -157,7 +157,7 @@ class Account(
         val account = Account(baseCurrency)
         account.lastUpdate = lastUpdate
         account.trades.addAll(trades) // Trade is immutable
-        account.orders.addAll(orders.map { it.clone() }) // order is not immutable
+        account.orders.addAll(orders) // order is not immutable TODO fix
         account.cash.clear()
         account.cash.deposit(cash)
         account.portfolio.put(portfolio)

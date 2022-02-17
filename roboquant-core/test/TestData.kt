@@ -43,7 +43,7 @@ object TestData {
         account.portfolio.setPosition(Position(asset2, 100.0, 10.0))
 
         val order = MarketOrder(asset1, 100.0)
-        order.placed = Instant.now()
+        order.state.placed = Instant.now()
         order.status = OrderStatus.COMPLETED
         account.orders.add(order)
         return account

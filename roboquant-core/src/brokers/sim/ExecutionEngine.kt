@@ -58,8 +58,8 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine)  {
             val pricing = pricingEngine.getPricing(action, event.time)
 
             if (order.status == OrderStatus.INITIAL) {
-                order.status = OrderStatus.ACCEPTED
-                order.placed = event.time
+                order.state.status = OrderStatus.ACCEPTED
+                order.state.placed = event.time
             }
 
             val newExecutions = cmd.execute(pricing, event.time)

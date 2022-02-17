@@ -41,7 +41,7 @@ class OrderChart(
 
     private fun getTooltip(order: SingleOrder): String {
         return with(order) {
-            "asset: $asset <br> currency: ${asset.currency} <br> placed: $placed <br> qty: $quantity <br> id: $id <br> type: ${order::class.simpleName} <br> tif: $tif"
+            "asset: $asset <br> currency: ${asset.currency} <br> placed: ${state.placed} <br> qty: $quantity <br> id: $id <br> type: ${order::class.simpleName} <br> tif: $tif"
         }
     }
 
@@ -61,7 +61,7 @@ class OrderChart(
 
                 if (value.abs() > max) max = value.abs()
                 val tooltip = getTooltip(order)
-                d.add(Triple(placed, value, tooltip))
+                d.add(Triple(state.placed, value, tooltip))
             }
         }
 

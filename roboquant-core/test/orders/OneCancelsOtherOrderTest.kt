@@ -18,7 +18,6 @@ package org.roboquant.orders
 
 import org.junit.Test
 import org.roboquant.TestData
-import java.time.Instant
 import kotlin.test.assertEquals
 
 class OneCancelsOtherOrderTest {
@@ -30,7 +29,6 @@ class OneCancelsOtherOrderTest {
             LimitOrder(asset, 100.0, 10.9),
             LimitOrder(asset, 200.0, 11.1)
         )
-        order.placed = Instant.now()
 
         assertEquals(OrderStatus.INITIAL, order.status)
 
