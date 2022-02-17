@@ -16,8 +16,6 @@
 
 package org.roboquant.orders
 
-import java.time.Instant
-
 
 /**
  * Create a cancellation order for another open [Order]. It is not guaranteed that a cancellation is
@@ -29,7 +27,7 @@ import java.time.Instant
  *
  * @param tag
  */
-class CancellationOrder(val order: Order, var tag: String = "") : Order(order.asset) {
+class CancellationOrder(val order: Order, private var tag: String = "") : Order(order.asset) {
 
     init {
         require(order.status.open) { "Only open orders can be cancelled" }
@@ -41,15 +39,6 @@ class CancellationOrder(val order: Order, var tag: String = "") : Order(order.as
         return result
     }
 
-     fun execute(price: Double, time: Instant): Double {
 
-        if (!order.status.closed) {
-            order.status = OrderStatus.CANCELLED
-            status = OrderStatus.COMPLETED
-        } else {
-            status = OrderStatus.REJECTED
-        }
-        return 0.0
-    }
 
 }

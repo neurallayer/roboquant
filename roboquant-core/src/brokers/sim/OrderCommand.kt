@@ -145,6 +145,38 @@ private fun isLimitTriggered(order: LimitOrder, volume: Double, pricing: Pricing
 
 
 
+open class TrailOrderCommand(order: TrailOrder) : SingleOrderCommand<TrailOrder>(order) {
+
+    protected var triggered = false
+    private var stop: Double = if (order.buy) Double.MAX_VALUE else Double.MIN_VALUE
+    private val correction = if (order.buy) 1.0 + order.trail else 1.0 - order.trail
+
+    protected fun updateStop(pricing: Pricing) {
+        if (! triggered) {
+                if (order.buy) {
+                    val price = pricing.lowPrice(remaining)
+                    if (stop < price * correction ) stop = price
+                    if (price < stop) triggered = true
+                } else {
+                    val price = pricing.highPrice(remaining)
+                    if (price * correction > stop) stop = price
+                    if (price > stop) triggered = true
+                }
+
+        }
+    }
+
+    override fun fill(pricing: Pricing) : Execution? {
+        if (!triggered) updateStop(pricing)
+        return if (triggered) Execution(order, remaining, pricing.marketPrice(remaining)) else null
+    }
+
+}
+
+
+
+
+
 class StopLimitOrderCommand(order: StopLimitOrder) : SingleOrderCommand<StopLimitOrder>(order) {
 
     private var triggered = false

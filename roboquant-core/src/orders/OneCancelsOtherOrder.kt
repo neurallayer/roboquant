@@ -16,8 +16,6 @@
 
 package org.roboquant.orders
 
-import java.time.Instant
-
 
 /**
  * Creates an OCO (One Cancels Other) order. If one order is (partially) filled, the other order will be cancelled. So
@@ -36,23 +34,7 @@ class OneCancelsOtherOrder(
         return OneCancelsOtherOrder(first.clone(), second.clone())
     }
 
-     fun execute(price: Double, time: Instant): Double {
-        var qty = 0.0
 
-        if (first.status.open) {
-            qty += first.execute(price, time)
-            status = first.status
-            if (first.executed) second.status = OrderStatus.CANCELLED
-        }
-
-        if (second.status.open) {
-            qty += second.execute(price, time)
-            status = second.status
-            if (second.executed) first.status = OrderStatus.CANCELLED
-        }
-
-        return qty
-    }
 }
 
 

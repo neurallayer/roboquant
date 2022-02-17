@@ -16,12 +16,11 @@
 
 package org.roboquant.orders
 
-import org.roboquant.TestData
 import org.junit.Test
+import org.roboquant.TestData
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
-import kotlin.test.assertTrue
 
 
 internal class CancellationOrderTest {
@@ -37,13 +36,8 @@ internal class CancellationOrderTest {
         oc.placed = Instant.now()
         assertEquals(OrderStatus.INITIAL, oc.status)
         assertEquals(openOrder, oc.order)
-        // assertEquals(0.0, oc.getValue(10.0))
 
-        oc.execute(100.0, Instant.now())
-        assertTrue { oc.status.closed }
-        assertEquals(OrderStatus.CANCELLED, oc.order.status)
 
-        assertEquals("", oc.tag)
     }
 
 

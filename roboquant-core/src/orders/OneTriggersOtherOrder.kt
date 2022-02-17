@@ -16,8 +16,6 @@
 
 package org.roboquant.orders
 
-import java.time.Instant
-
 /**
  * Creates an OTO (One Triggers Other) order. If one order is completed, the other order will be triggered.
  *
@@ -34,19 +32,5 @@ class OneTriggersOtherOrder(
         return OneCancelsOtherOrder(first.clone(), second.clone())
     }
 
-     fun execute(price: Double, time: Instant): Double {
-        var qty = 0.0
 
-        if (first.status.open) {
-            qty += first.execute(price, time)
-            if (first.status.aborted) status = first.status
-        }
-
-        if (first.status == OrderStatus.COMPLETED) {
-            qty += second.execute(price, time)
-            status = second.status
-        }
-
-        return qty
-    }
 }

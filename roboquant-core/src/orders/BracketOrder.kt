@@ -17,7 +17,6 @@
 package org.roboquant.orders
 
 import org.roboquant.common.Asset
-import java.time.Instant
 
 /**
  * Bracket orders are designed to help limit the loss and lock in a profit by "bracketing" an
@@ -65,42 +64,4 @@ open class BracketOrder(
         return BracketOrder(main.clone(), profit.clone(), loss.clone())
     }
 
-    override val remaining: Double
-        get() = if (main.status.open) main.remaining else profit.remaining
-
-
-     fun execute(price: Double, time: Instant): Double {
-
-        var qty = 0.0
-
-        if (main.status.open) {
-            qty += main.execute(price, time)
-            if (main.status.aborted) status = main.status
-        }
-
-        // We only trigger profit and loss orders if main order is completed.
-        if (main.status == OrderStatus.COMPLETED) {
-
-            if (profit.remaining != 0.0) {
-                qty += profit.execute(price, time)
-                loss.quantity = -main.quantity - profit.fill
-            }
-
-            if (loss.remaining != 0.0) {
-                qty += loss.execute(price, time)
-                profit.quantity = -main.quantity - loss.fill
-            }
-
-            if (profit.status.closed)
-                status = profit.status
-            else if (loss.status.closed)
-                status = loss.status
-
-            if (loss.fill + profit.fill == -main.quantity) {
-                status = OrderStatus.COMPLETED
-            }
-        }
-
-        return qty
-    }
 }

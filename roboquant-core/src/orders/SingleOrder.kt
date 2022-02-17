@@ -17,7 +17,6 @@
 package org.roboquant.orders
 
 import org.roboquant.common.Asset
-import java.time.Instant
 
 
 /**
@@ -79,36 +78,6 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
         result.fill = fill
     }
 
-    /**
-     * Implementation of execute for all single order types. Subclasses will need only to implement the [fill] method.
-     */
-     fun execute(price: Double, time: Instant): Double {
-        val qty = fill(price)
-
-        if (tif.isExpired(this, time, remaining)) {
-            status = OrderStatus.EXPIRED
-            return 0.0
-        }
-
-        fill += qty
-        if (remaining == 0.0) status = OrderStatus.COMPLETED
-        logger.fine { "executed order=$this qty=$qty price=$price" }
-        return qty
-    }
-
-    /**
-     * Subclasses only need to implement this method, given a certain [price] return how much of the order is
-     * filled.
-     */
-    protected abstract fun fill(price: Double): Double
-
-    /**
-     * Did (part of) the order get already filled
-     */
-    val executed
-        get() = remaining != quantity
-
-
 
     override fun toString(): String {
         return "${this::class.simpleName} asset=${asset.symbol} qty=$quantity tif=$tif id=$id status=$status"
@@ -138,9 +107,6 @@ class MarketOrder(
         return result
     }
 
-    override fun fill(price: Double): Double {
-        return remaining
-    }
 
 }
 
@@ -170,11 +136,6 @@ class LimitOrder(
         return result
     }
 
-    override fun fill(price: Double): Double {
-        var qty = 0.0
-        if (buy && price < limit || sell && price > limit) qty = quantity
-        return qty
-    }
 
     override fun toString(): String {
         return "${super.toString()} limit=$limit"
@@ -200,22 +161,11 @@ open class StopOrder(
     tag: String = ""
 ) : SingleOrder(asset, quantity, tif, tag) {
 
-    protected var triggered = false
 
     override fun clone(): StopOrder {
         val result = StopOrder(asset, quantity, stop, tif, tag)
         copyTo(result)
         return result
-    }
-
-    override fun fill(price: Double): Double {
-        if (!triggered) {
-            if ((sell && price <= stop) || (buy && price >= stop)) {
-                triggered = true
-            }
-        }
-
-        return if (triggered) remaining else 0.0
     }
 
 
@@ -253,24 +203,6 @@ class StopLimitOrder(
     }
 
 
-    override fun fill(price: Double): Double {
-        if (!triggered) {
-            if ((sell && price <= stop) || (buy && price >= stop)) {
-                logger.fine { "StopLimitOrder triggered order=$this price=$price" }
-                triggered = true
-            }
-        }
-
-        if (triggered) {
-            if ((sell && price <= limit) || buy && price >= limit) {
-                return remaining
-            }
-        }
-
-        return 0.0
-    }
-
-
     override fun toString(): String {
         return "${super.toString()} stop=$stop limit=$limit"
     }
@@ -302,8 +234,6 @@ open class TrailOrder(
     tag: String = ""
 ) : SingleOrder(asset, quantity, tif, tag) {
 
-    protected var triggered = false
-    private var stop: Double = if (buy) Double.MAX_VALUE else Double.MIN_VALUE
 
     companion object {
         fun from(order: SingleOrder, trail: Double = 0.01) = TrailOrder(order.asset, -order.quantity, trail)
@@ -313,23 +243,6 @@ open class TrailOrder(
         return "${super.toString()} trail=$trail"
     }
 
-    protected fun updateStop(price: Double) {
-        if (! triggered) {
-            val correction = if (buy) (1.0 + trail) else (1.0 - trail)
-            val newStop = price * correction
-            if (buy && newStop < stop) stop = newStop
-            if (sell && newStop > stop) stop = newStop
-            if ((sell && price <= stop) || (buy && price >= stop)) {
-                logger.fine { "triggered order=$this price=$price   " }
-                triggered = true
-            }
-        }
-    }
-
-    override fun fill(price: Double): Double {
-        updateStop(price)
-        return if (triggered) remaining else 0.0
-    }
 
     override fun clone(): TrailOrder {
         val result = TrailOrder(asset, quantity, trail, tif, tag)
@@ -362,7 +275,6 @@ class TrailLimitOrder(
     tag: String = ""
 ) : TrailOrder(asset, quantity, trail, tif, tag) {
 
-    var limit = Double.NaN
 
     companion object {
         fun from(order: SingleOrder, trail: Double, limit: Double) =
@@ -370,22 +282,11 @@ class TrailLimitOrder(
     }
 
     override fun toString(): String {
-        return "${super.toString()} trail=$trail limit=$limit"
-    }
-
-    override fun fill(price: Double): Double {
-        updateStop(price)
-        if (triggered) {
-            if (limit.isNaN()) limit = price + limitOffset
-            if ((sell && price <= limit) || buy && price >= limit) {
-                return remaining
-            }
-        }
-        return 0.0
+        return "${super.toString()} trail=$trail limit=$limitOffset"
     }
 
     override fun clone(): TrailLimitOrder {
-        val result = TrailLimitOrder(asset, quantity, trail, limit, tif, tag)
+        val result = TrailLimitOrder(asset, quantity, trail, limitOffset, tif, tag)
         copyTo(result)
         return result
     }
