@@ -4,31 +4,20 @@ import org.roboquant.brokers.Account
 import org.roboquant.brokers.exposure
 import org.roboquant.common.Amount
 import org.roboquant.common.Logging
-import org.roboquant.common.sum
-import org.roboquant.metrics.MetricResults
 
 /**
- * Interface for different types of buying power calculations. These are used by the [SimBroker] to simulate the
- * different types of account that exist, like a Cash Account and Margin Account.
+ * Interface for modelling types Accounts in the [SimBroker], like a [CashAccount] or [MarginAccount]
  *
- * At the end of each step, the buying power is re-calculaated and made available in [Account.buyingPower]
+ * The main functionality is that at the end of each step the buying power is re-calculaated and made
+ * available in [Account.buyingPower].
  */
 interface AccountModel {
 
     /**
-     * Calculate the total buying power for an account. The returned amount should be expressed in the base currency
-     * of the account.
+     * Calculate the total buying power for a given [account]. The returned amount should be expressed in the
+     * base currency of the account.
      */
     fun calculate(account: Account): Amount
-
-    /**
-     * Get any recorded metrics from the most recent step in the run. This will be invoked after each step and
-     * provides the component with the opportunity to log additional information. The default implementation is to
-     * return an empty map.
-     *
-     * @return the map containing the metrics. This map should NOT be mutated by the component afterwards
-     */
-    fun getMetrics(): MetricResults = mapOf()
 
 }
 
@@ -45,8 +34,10 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 
     override fun calculate(account: Account): Amount {
         val cash = account.cash
-        val openOrders = account.orders.accepted.map { it.value().absoluteValue }.sum()
-        val total = cash - openOrders
+
+        // Only accepted orders are taken into consideration
+        // val openOrders = account.orders.accepted.map { it.value().absoluteValue }.sum()
+        val total = cash // - openOrders
         total.withdraw(Amount(account.baseCurrency, minimum))
 
         if (account.portfolio.positions.any { it.short }) {

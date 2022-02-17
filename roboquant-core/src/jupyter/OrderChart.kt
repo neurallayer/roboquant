@@ -52,10 +52,10 @@ class OrderChart(
         for (order in singleOrders) {
             with(order) {
                 val value = when (aspect) {
-                    "remaining" -> remaining.toBigDecimal()
+                    // "remaining" -> remaining.toBigDecimal()
                     "direction" -> order.direction.toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
-                    "value" -> order.value().convert(time = order.placed).toBigDecimal()
+                    // "value" -> order.value().convert(time = order.placed).toBigDecimal()
                     else -> throw Exception("Unsupported aspect")
                 }
 

@@ -32,8 +32,6 @@ import org.roboquant.common.Asset
  */
 abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInForce, val tag: String) : Order(asset) {
 
-    var fill = 0.0
-
     init {
         require(quantity != 0.0) { "Cannot create an order with zero quantity" }
     }
@@ -49,11 +47,6 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
      */
     val sell: Boolean
         get() = quantity < 0
-
-
-    override val remaining
-        get() = quantity - fill
-
 
 
 
@@ -75,7 +68,6 @@ abstract class SingleOrder(asset: Asset, var quantity: Double, val tif: TimeInFo
      */
     protected fun copyTo(result: SingleOrder) {
         super.copyTo(result)
-        result.fill = fill
     }
 
 

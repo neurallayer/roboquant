@@ -27,10 +27,11 @@ internal class AccountModelTest {
         val order = MarketOrder(TestData.usStock(), 100.0)
         order.status = OrderStatus.ACCEPTED
         order.placed = Instant.now()
-        order.price = 10.0
         account.orders.add(order)
         val result2 = uc.calculate(account)
-        assertTrue(result2.value < result.value)
+
+        // Right now open orders are not taken into account
+        assertEquals(result2.value, result.value)
     }
 
 

@@ -16,8 +16,6 @@
 
 package org.roboquant.orders
 
-import java.time.Instant
-
 
 /**
  * Update an existing SimpleOrder. It is up to the broker implementation to translate the updated order to the correct
@@ -37,6 +35,7 @@ class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : O
         require(! originalOrder.status.closed) {"Only open orders can be updated"}
     }
 
+    /*
      fun execute(price: Double, time: Instant): Double {
         when {
             originalOrder.status.closed -> status = OrderStatus.REJECTED
@@ -49,7 +48,7 @@ class UpdateOrder<T : SingleOrder>(val originalOrder: T, val updateOrder: T) : O
         }
         return 0.0
     }
-
+    */
 
 
 }

@@ -17,11 +17,9 @@
 package org.roboquant.orders
 
 
-import org.roboquant.TestData
 import org.junit.Test
-import java.time.Instant
+import org.roboquant.TestData
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class UpdateOrderTest {
 
@@ -37,10 +35,7 @@ internal class UpdateOrderTest {
         assertEquals(qty, orderUpdate.originalOrder.quantity)
         assertEquals(100.0, orderUpdate.updateOrder.quantity)
 
-        val q = orderUpdate.execute(100.0, Instant.now())
-        assertEquals(0.0, q)
-        assertTrue(orderUpdate.status.closed)
-        assertEquals(100.0, order.quantity)
+
     }
 
 

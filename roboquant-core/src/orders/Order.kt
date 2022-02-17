@@ -16,9 +16,7 @@
 
 package org.roboquant.orders
 
-import org.roboquant.common.Amount
 import org.roboquant.common.Asset
-import org.roboquant.common.Logging
 import java.time.Instant
 
 /**
@@ -55,10 +53,6 @@ abstract class Order(val asset: Asset) : Cloneable {
      */
     open var placed: Instant = Instant.MIN
 
-    var price: Double = Double.NaN
-
-    open fun value() : Amount = asset.value(remaining, price)
-
     companion object {
 
         // Counter for unique order id
@@ -70,8 +64,6 @@ abstract class Order(val asset: Asset) : Cloneable {
             }
         }
 
-        val logger = Logging.getLogger(Order::class)
-
     }
 
     public override fun clone(): Order {
@@ -79,11 +71,7 @@ abstract class Order(val asset: Asset) : Cloneable {
     }
 
 
-    /**
-     * Indication how much of quantity is remaining. For complex order types this is not always known upfront, but an
-     * estimate should be provided if possible. Used for margin calculation on open orders.
-     */
-    open val remaining: Double = 0.0
+
 
     /**
      * Copy current state into the passed object. This is used in the clone function of the subclasses

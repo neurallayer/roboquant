@@ -206,8 +206,8 @@ class IBKRBroker(
             if (openOrder == null)
                 logger.warning { "Received unknown open order with orderId $orderId" }
             else if (openOrder is SingleOrder) {
-                openOrder.fill = filled
-                openOrder.price = lastFillPrice
+                // openOrder.fill = filled
+                // openOrder.price = lastFillPrice
                 when (status) {
                     "PreSubmitted" -> openOrder.status = OrderStatus.INITIAL
                     "Submitted" -> openOrder.status = OrderStatus.ACCEPTED
