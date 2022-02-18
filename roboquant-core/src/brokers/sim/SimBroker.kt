@@ -20,6 +20,7 @@ import org.roboquant.RunPhase
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderStatus
@@ -77,6 +78,19 @@ class SimBroker(
 
 
     /**
+     * Update the portfolio with the provided [position] and return the realized PnL.
+     */
+    private fun updatePosition(position: Position): Amount {
+        val asset = position.asset
+        val p = _account.portfolio
+        val currentPos = p.getOrDefault(asset, Position.empty(asset))
+        val newPosition = currentPos + position
+        if (newPosition.closed) p.remove(asset) else  p[asset] = newPosition
+        return currentPos.realizedPNL(position)
+    }
+
+
+    /**
      * Update the account based on an execution. This will perform the following steps:
      *
      * 1. Update the cash position
@@ -94,7 +108,7 @@ class SimBroker(
         val fee = feeModel.calculate(execution)
 
         // PNL includes the fee
-        val pnl = _account.portfolio.updatePosition(position) - fee
+        val pnl = updatePosition(position) - fee
         val newTrade = Trade(
             now,
             asset,
@@ -131,7 +145,7 @@ class SimBroker(
 
         val executions = executionEngine.execute(event)
         for (execution in executions) updateAccount(execution, event.time)
-        _account.portfolio.updateMarketPrices(event)
+        _account.updateMarketPrices(event)
         _account.lastUpdate = event.time
         updateBuyingPower()
         return account
@@ -170,9 +184,10 @@ class SimBroker(
      */
     fun liquidatePortfolio(time: Instant = _account.lastUpdate): Account {
         for (order in _account.orders.open) order.status = OrderStatus.CANCELLED
-        val change = _account.portfolio.diff(Portfolio())
+        val change = _account.portfolio.values.diff(listOf())
         val orders = change.map { MarketOrder(it.key, it.value) }
-        val event = Event(_account.portfolio.toTradePrices(), time)
+        val actions = _account.portfolio.values.map { TradePrice(it.asset, it.spotPrice) }
+        val event = Event(actions, time)
         return place(orders, event)
     }
 

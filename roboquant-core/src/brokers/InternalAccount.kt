@@ -16,11 +16,10 @@
 
 package org.roboquant.brokers
 
-import org.roboquant.common.Amount
-import org.roboquant.common.Config
+import org.roboquant.common.*
 import org.roboquant.common.Config.baseCurrency
 import org.roboquant.common.Currency
-import org.roboquant.common.Wallet
+import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import java.time.Instant
 import java.util.*
@@ -83,13 +82,13 @@ class InternalAccount(
     /**
      * Portfolio with its positions
      */
-    val portfolio: Portfolio = Portfolio()
+    val portfolio = TreeMap<Asset, Position>()
 
     /**
      * Total equity value
      */
     val equity: Wallet
-        get() = cash + portfolio.value
+        get() = cash + portfolio.values.value
 
     /**
      * Clear all the state in this account.
@@ -100,6 +99,34 @@ class InternalAccount(
         orders.clear()
         portfolio.clear()
         cash.clear()
+    }
+
+    /**
+     * Set the position in a portfolio. If the position is closed, it is removed from thr portfolio
+     */
+    fun setPosition(position: Position) {
+        if (position.closed) {
+            portfolio.remove(position.asset)
+        } else {
+            portfolio[position.asset] = position
+        }
+    }
+
+
+    /**
+     * Update the open positions in the portfolio with the current market prices as found in the [event]
+     */
+    fun updateMarketPrices(event: Event, priceType: String = "DEFAULT") {
+        val prices = event.prices
+
+        for (position in portfolio.values) {
+            val priceAction = prices[position.asset]
+            if (priceAction != null) {
+                val price = priceAction.getPrice(priceType)
+                val newPosition = position.copy(spotPrice = price, lastUpdate = event.time)
+                portfolio[position.asset] = newPosition
+            }
+        }
     }
 
 
@@ -116,11 +143,10 @@ class InternalAccount(
             cash.clone(),
             trades.toList(),
             orders.toList(),
-            portfolio.positions.toList(),
+            portfolio.values.toList(),
             buyingPower
         )
     }
 
 }
-
 

@@ -40,8 +40,8 @@ object TestData {
         val asset2 = Asset("AAB")
         val account = InternalAccount()
         account.cash.deposit(100_000.USD)
-        account.portfolio.setPosition(Position(asset1, 100.0, 10.0))
-        account.portfolio.setPosition(Position(asset2, 100.0, 10.0))
+        account.setPosition(Position(asset1, 100.0, 10.0))
+        account.setPosition(Position(asset2, 100.0, 10.0))
 
         val order = MarketOrder(asset1, 100.0)
         order.state.placed = Instant.now()
@@ -55,8 +55,8 @@ object TestData {
         val asset2 = Asset("AAB")
         val account = InternalAccount()
         account.cash.deposit(100_000.USD)
-        account.portfolio.setPosition(Position(asset1, 100.0, 10.0))
-        account.portfolio.setPosition(Position(asset2, 100.0, 10.0))
+        account.setPosition(Position(asset1, 100.0, 10.0))
+        account.setPosition(Position(asset2, 100.0, 10.0))
 
         val order = MarketOrder(asset1, 100.0)
         order.state.placed = Instant.now()

@@ -14,22 +14,34 @@
  * limitations under the License.
  */
 
-package org.roboquant.orders
+package org.roboquant.brokers.sim
 
-
+import org.junit.Test
 import org.roboquant.TestData
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import org.roboquant.common.Asset
+import org.roboquant.feeds.TradePrice
+import org.roboquant.orders.LimitOrder
+import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.StopLimitOrder
+import org.roboquant.orders.StopOrder
+import java.time.Instant
 
-internal class SingleOrderTest {
+internal class OrderCommandTest {
+
+
+    private fun getAssetAndPricing(): Pair<Asset, Pricing> {
+        val asset = TestData.usStock()
+        val engine = NoSlippagePricing()
+        val pricing = engine.getPricing(TradePrice(asset, 100.0), Instant.now())
+        return Pair(asset, pricing)
+    }
 
     @Test
     fun testMarketOrder() {
-        val asset = TestData.usStock()
+        val (asset, pricing) = getAssetAndPricing()
         val order = MarketOrder(asset, 100.0)
-        assertEquals(100.0, order.quantity)
-        assertTrue(order.tif is GTC)
+        val cmd = MarketOrderCommand(order)
+        cmd.execute(pricing, Instant.now())
     }
 
 
@@ -37,8 +49,7 @@ internal class SingleOrderTest {
     fun testStopOrder() {
         val asset = TestData.usStock()
         val order = StopOrder(asset, -10.0, 99.0)
-        assertEquals(-10.0, order.quantity)
-        assertEquals(99.0, order.stop)
+        val cmd = StopOrderCommand(order)
 
     }
 
@@ -46,9 +57,7 @@ internal class SingleOrderTest {
     fun testLimitOrder() {
         val asset = TestData.usStock()
         val order = LimitOrder(asset, -10.0, 101.0)
-        assertEquals(-10.0, order.quantity)
-        assertEquals(101.0, order.limit)
-
+        val cmd = LimitOrderCommand(order)
     }
 
 
@@ -56,9 +65,9 @@ internal class SingleOrderTest {
     fun testStopLimitOrder() {
         val asset = TestData.usStock()
         val order = StopLimitOrder(asset, -10.0, 99.0, 98.0)
-        assertEquals(-10.0, order.quantity)
-        assertEquals(98.0, order.limit)
-
+        val cmd = StopLimitOrderCommand(order)
     }
+
+
 
 }

@@ -309,7 +309,7 @@ class IBKRBroker(
             logger.finer { "$contract $position $marketPrice $averageCost" }
             val asset = contract.getAsset()
             val p = Position(asset, position, averageCost, marketPrice, Instant.now())
-            _account.portfolio.setPosition(p)
+            _account.setPosition(p)
         }
 
         override fun currentTime(time: Long) {

@@ -173,7 +173,7 @@ fun twoMillionBars() {
         start += 1.minutes
     }
 
-    // Create a random walk for the timeline provided
+    // Create a random walk for the timeline provided, totol 2_000_000 candle sticks
     val feed = RandomWalk(timeline, 100)
 
     // Create a roboquant using Exponential Weighted Moving Average
@@ -182,7 +182,7 @@ fun twoMillionBars() {
 
     // Measure how long it takes to run a back-test over 2 million candlesticks
     val time = measureTimeMillis {  roboquant.run(feed) }
-    println("Time taken to run back-test over 2M Candlesticks is $time milliseconds")
+    println("Time taken to run a full back-test over 2M Candlesticks is $time milliseconds")
 }
 
 fun volatility() {

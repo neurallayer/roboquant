@@ -23,14 +23,11 @@ import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-
 internal class TradesTest {
-
 
     @Test
     fun test() {
         val trades = mutableListOf<Trade>()
-
         val asset = TestData.usStock()
         var now = Instant.now()
         for (i in 1..10) {

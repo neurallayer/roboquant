@@ -19,10 +19,11 @@ package org.roboquant.policies
 import org.apache.commons.math3.stat.correlation.Covariance
 import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.Portfolio
 import org.roboquant.brokers.Position
+import org.roboquant.brokers.diff
 import org.roboquant.common.Asset
 import org.roboquant.common.days
+import org.roboquant.common.nonzero
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
@@ -39,7 +40,7 @@ import kotlin.math.min
  * It will then hold these positions for a number of days before re-evaluating the strategy. After re-evaluation, the
  * strategy will then generate the market orders required to achieve the desired new portfolio composition (re-balancing).
  *
- * Since this strategy controls the complete [Portfolio] and not just generates signals, it is implemented as a [Policy]
+ * Since this strategy controls the complete portfolio and not just generates signals, it is implemented as a [Policy]
  * and not a strategy. It doesn't use leverage or buying power, when re-balancing it just re-balances the total equity
  * of the account accross the long and short positions.
  *
@@ -98,7 +99,7 @@ open class BettingAgainstBeta(
         // exposure per position.
         val exposure = account.equity.convert(time = event.time) / (max * 2)
 
-        val targetPortfolio = Portfolio()
+        val targetPortfolio = mutableListOf<Position>()
 
         // Generate the long positions assets with a low beta
         betas.subList(0, max).forEach { (asset, _) ->
@@ -106,7 +107,7 @@ open class BettingAgainstBeta(
             val assetAmount = exposure.convert(asset.currency, event.time).value
             if (price != null) {
                 val holding = floor(assetAmount/(asset.multiplier * price))
-                targetPortfolio.setPosition(Position(asset, holding))
+                if (holding.nonzero) targetPortfolio.add(Position(asset, holding))
             }
         }
 
@@ -116,13 +117,12 @@ open class BettingAgainstBeta(
             val assetAmount = exposure.convert(asset.currency, event.time).value
             if (price != null) {
                 val holding = floor(assetAmount/(asset.multiplier * price))
-                targetPortfolio.setPosition(Position(asset, -holding))
+                if (holding.nonzero) targetPortfolio.add(Position(asset, -holding))
             }
         }
 
         // Get the difference of target portfolio state and the current one
-        // TODO QQQ
-        val diff = mapOf<Asset, Double>() // account.portfolio.diff(targetPortfolio)
+        val diff = account.portfolio.diff(targetPortfolio)
 
         // Transform difference into Orders
         return diff.map { createOrder(it.key, it.value, account, event) }.filterNotNull()

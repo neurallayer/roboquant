@@ -98,15 +98,12 @@ class AlpacaBroker(
      */
     private fun updatePositions() {
         try {
-            val portfolio = Portfolio()
+            _account.portfolio.clear()
             for (openPosition in alpacaAPI.positions().get()) {
                 logger.fine { "received $openPosition" }
                 val p = convertPos(openPosition)
-                portfolio.setPosition(p)
+                _account.setPosition(p)
             }
-            // If there was an exception we don't reach this part and keep the old state of the portfolio.
-            _account.portfolio.clear()
-            _account.portfolio.put(portfolio)
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())
         }

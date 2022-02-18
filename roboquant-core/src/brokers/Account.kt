@@ -49,7 +49,7 @@ class Account(
     val orders: List<Order>,
     val portfolio: List<Position>,
     val buyingPower: Amount
-) {
+) : Summarizable {
 
     val cashAmount
         get() = convert(cash)
@@ -70,12 +70,42 @@ class Account(
 
     fun convert(wallet: Wallet) = wallet.convert(baseCurrency, lastUpdate)
 
-    fun summary(): Summary {
-        return Summary("Test")
+
+    /**
+     * Provide a short summary that contains the high level account information, the available cash balances and
+     * the open positions in the portfolio.
+     *
+     * @return The summary
+     */
+    override fun summary(singleCurrency: Boolean): Summary {
+
+        fun c(w:Wallet) :Any = if (singleCurrency) convert(w) else w
+
+        val s = Summary("Account")
+        s.add("last update", lastUpdate.truncatedTo(ChronoUnit.SECONDS))
+        s.add("base currency", baseCurrency.displayName)
+        s.add("cash", c(cash))
+        s.add("buying power", buyingPower)
+        s.add("equity", c(equity))
+        s.add("portfolio", c(portfolio.value))
+        s.add("long value", c(portfolio.long.value))
+        s.add("short value", c(portfolio.short.value))
+        s.add("realized p&l", c(trades.realizedPNL))
+        s.add("unrealized p&l", c(portfolio.unrealizedPNL))
+        return s
     }
 
+    /**
+     * Provide a full summary of the account that contains all cahs, orders, trades and open positions. During back
+     * testing this can become a long list of items, so look at [summary] for a shorter summary.
+     */
     fun fullSummary(): Summary {
-        return Summary("Test")
+        val s = summary()
+        s.add(cash.summary())
+        s.add(portfolio.summary())
+        s.add(orders.summary())
+        s.add(trades.summary())
+        return s
     }
 
 }
@@ -103,6 +133,9 @@ val Collection<Position>.unrealizedPNL
 
 val Collection<Trade>.realizedPNL
     get() = sumOf { it.pnl }
+
+val Collection<Trade>.timeframe
+    get() = timeline.timeframe
 
 val Collection<Position>.short
     get() = filter { it.short }
@@ -220,4 +253,3 @@ fun Collection<Position>.summary(): Summary {
 
     return s
 }
-

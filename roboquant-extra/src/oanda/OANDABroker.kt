@@ -93,12 +93,12 @@ class OANDABroker(
             val symbol = p.instrument.toString()
             if (p.long.units.doubleValue() != 0.0) {
                 val position = getPosition(symbol, p.long)
-                _account.portfolio.setPosition(position)
+                _account.setPosition(position)
             }
             if (p.short.units.doubleValue() != 0.0) {
                 // TODO does the short side use negative value for units
                 val position = getPosition(symbol, p.short)
-                _account.portfolio.setPosition(position)
+                _account.setPosition(position)
             }
         }
     }
@@ -122,7 +122,7 @@ class OANDABroker(
         lastTransactionId = acc.lastTransactionID
         _account.portfolio.clear()
         updatePositions()
-        logger.info {"Found ${_account.portfolio.positions.size} existing positions in portfolio"}
+        logger.info {"Found ${_account.portfolio.values.size} existing positions in portfolio"}
     }
 
     /**

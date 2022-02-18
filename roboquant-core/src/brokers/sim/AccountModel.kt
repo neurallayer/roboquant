@@ -1,8 +1,6 @@
 package org.roboquant.brokers.sim
 
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.InternalAccount
-import org.roboquant.brokers.exposure
+import org.roboquant.brokers.*
 import org.roboquant.common.Amount
 import org.roboquant.common.Logging
 
@@ -41,7 +39,7 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
         // val total = cash // - openOrders
         total.withdraw(Amount(account.baseCurrency, minimum))
 
-        if (account.portfolio.positions.any { it.short }) {
+        if (account.portfolio.values.any { it.short }) {
             logger.warning("Having short positions while using cash account is not supported")
         }
 
@@ -87,8 +85,8 @@ class MarginAccount(
     }
 
     override fun calculate(account: InternalAccount): Amount {
-        val longValue = account.portfolio.longPositions.exposure * maintanceMarginLong
-        val shortValue = account.portfolio.shortPositions.exposure * maintanceMarginShort
+        val longValue = account.portfolio.values.long.exposure * maintanceMarginLong
+        val shortValue = account.portfolio.values.short.exposure * maintanceMarginShort
         val excessMargin = account.equity - longValue - shortValue - Amount(account.baseCurrency, minimumEquity)
         val buyingPower = excessMargin * (1.0 / initialMargin)
         return account.convert(buyingPower)
