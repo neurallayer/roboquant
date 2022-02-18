@@ -1,8 +1,10 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.TestData
+import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.FixedExchangeRates
+import org.roboquant.brokers.value
 import org.roboquant.common.*
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
@@ -19,7 +21,7 @@ internal class AccountModelTest {
 
     @Test
     fun test() {
-        val account = TestData.usAccount()
+        val account = TestData.internalAccount()
         val uc = CashAccount()
         val result = uc.calculate(account)
         assertEquals(result.value, account.cashAmount.value)
@@ -37,7 +39,7 @@ internal class AccountModelTest {
 
     @Test
     fun test3() {
-        val account = TestData.usAccount()
+        val account = TestData.internalAccount()
         val uc = MarginAccount()
         val result = uc.calculate(account)
         assertTrue(result.value > account.cashAmount.value)
@@ -45,17 +47,18 @@ internal class AccountModelTest {
 
     @Test
     fun test4() {
-        val account = TestData.usAccount()
+        val account = TestData.internalAccount()
         val uc = MarginAccount(20.0)
         val result = uc.calculate(account)
         assertTrue(result.value > account.cashAmount.value)
     }
 
-    private fun update(broker: Broker, asset: Asset, price: Number, orderSize: Number = 0) {
+    private fun update(broker: Broker, asset: Asset, price: Number, orderSize: Number = 0): Account {
         val orders = if (orderSize == 0) listOf() else listOf(MarketOrder(asset, orderSize.toDouble()))
         val action = TradePrice(asset, price.toDouble())
         val event = Event(listOf(action), Instant.now())
-        broker.place(orders, event)
+        return broker.place(orders, event)
+
         // println(broker.account.summary())
     }
 
@@ -74,29 +77,28 @@ internal class AccountModelTest {
         val xyz = Asset("XYZ", currencyCode = "USD")
 
         Config.exchangeRates = FixedExchangeRates(EUR, USD to 0.9)
-        val account = broker.account
 
-        update(broker, abc, 100)
+        var account = update(broker, abc, 100)
         assertEquals(10_000.EUR, account.buyingPower)
 
-        update(broker, abc, 100, 40)
+        account = update(broker, abc, 100, 40)
         assertEquals(initial, account.equityAmount)
         assertEquals(4_000.EUR.toWallet(), account.portfolio.value)
         assertEquals(6_000.EUR, account.buyingPower)
 
-        update(broker, abc, 75)
+        account = update(broker, abc, 75)
         assertEquals(9_000.EUR, account.equityAmount)
 
-        update(broker, abc, 75, -40)
+        account = update(broker, abc, 75, -40)
         assertEquals(9_000.EUR, account.buyingPower)
 
-        update(broker, xyz, 200, 25)
+        account = update(broker, xyz, 200, 25)
         assertEquals(4_500.EUR, account.buyingPower)
 
-        update(broker, xyz, 240)
+        account = update(broker, xyz, 240)
         assertEquals(4_500.EUR, account.buyingPower)
 
-        update(broker, xyz, 240, -25)
+        account = update(broker, xyz, 240, -25)
         assertEquals(9900.EUR, account.buyingPower)
 
     }
@@ -109,25 +111,24 @@ internal class AccountModelTest {
         val broker = getSimBroker(initial,MarginAccount())
         val abc = Asset("ABC", currencyCode = "JPY")
 
-        val account = broker.account
 
-        update(broker, abc, 1000)
+        var account = update(broker, abc, 1000)
         assertEquals(2_000_000.JPY, account.buyingPower)
 
-        update(broker, abc, 1000, 500)
+        account = update(broker, abc, 1000, 500)
         assertEquals(1_700_000.JPY, account.buyingPower)
         assertEquals(initial, account.equityAmount)
 
-        update(broker, abc, 500)
+        account = update(broker, abc, 500)
         assertEquals(1_350_000.JPY, account.buyingPower)
 
-        update(broker, abc, 500, 2000)
+        account = update(broker, abc, 500, 2000)
         assertEquals(750_000.JPY, account.buyingPower)
 
-        update(broker, abc, 400)
+        account = update(broker, abc, 400)
         assertEquals(400_000.JPY, account.buyingPower)
 
-        update(broker, abc, 400, -2500)
+        account = update(broker, abc, 400, -2500)
         assertEquals(1_000_000.JPY, account.buyingPower)
 
     }
@@ -142,19 +143,17 @@ internal class AccountModelTest {
         val broker = getSimBroker(initial, MarginAccount())
         val abc = Asset("ABC", currencyCode = "USD")
 
-        val account = broker.account
-
-        update(broker, abc, 200, -50)
+        var account = update(broker, abc, 200, -50)
         assertEquals(34_000.USD, account.buyingPower)
         assertEquals(initial, account.equityAmount)
 
-        update(broker, abc, 300)
+        account = update(broker, abc, 300)
         assertEquals(Amount(USD, 21_000), account.buyingPower)
 
-        update(broker, abc, 300, -50)
+        account = update(broker, abc, 300, -50)
         assertEquals(12_000.USD, account.buyingPower)
 
-        update(broker, abc, 300, 100)
+        account = update(broker, abc, 300, 100)
         assertEquals(30_000.USD, account.buyingPower)
         assertEquals(15_000.USD.toWallet(), account.cash)
     }

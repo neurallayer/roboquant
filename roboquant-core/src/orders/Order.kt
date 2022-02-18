@@ -71,14 +71,5 @@ interface Order {
 
 }
 
-/**
- * Order type that only modifies (update or cancel) other orders, it doesn't generate trades.
- */
-interface ModifyOrder : Order
-
-/**
- * Orders types that generate trades based on the underlying asset.
- */
-interface TradeOrder : Order
 
 

@@ -1,6 +1,7 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.brokers.Account
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.brokers.exposure
 import org.roboquant.common.Amount
 import org.roboquant.common.Logging
@@ -17,7 +18,7 @@ interface AccountModel {
      * Calculate the total buying power for a given [account]. The returned amount should be expressed in the
      * base currency of the account.
      */
-    fun calculate(account: Account): Amount
+    fun calculate(account: InternalAccount): Amount
 
 }
 
@@ -32,7 +33,7 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 
     val logger = Logging.getLogger(CashAccount::class)
 
-    override fun calculate(account: Account): Amount {
+    override fun calculate(account: InternalAccount): Amount {
         val total = account.cash
 
         // Only accepted orders are taken into consideration
@@ -85,7 +86,7 @@ class MarginAccount(
         require(maintanceMarginShort in 0.0..1.0) { "maintanceMarginShort between 0.0 and 1.0" }
     }
 
-    override fun calculate(account: Account): Amount {
+    override fun calculate(account: InternalAccount): Amount {
         val longValue = account.portfolio.longPositions.exposure * maintanceMarginLong
         val shortValue = account.portfolio.shortPositions.exposure * maintanceMarginShort
         val excessMargin = account.equity - longValue - shortValue - Amount(account.baseCurrency, minimumEquity)

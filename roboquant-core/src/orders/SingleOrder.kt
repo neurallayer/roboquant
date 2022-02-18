@@ -20,8 +20,8 @@ import org.roboquant.common.Asset
 
 
 /**
- * These are plain non-combined order types with a quantity and Time in Force policy. Most common well-known order types
- * fall under this category, like Market-, Limit- and StopLimit-orders.
+ * SingleOrder types are plain non-combined orders with a pre-defined quantity and Time in Force policy. Many well-known
+ * order types fall under this category, like Market-, Limit- and Trail-orders.
  */
 interface SingleOrder : TradeOrder {
 

@@ -18,14 +18,16 @@ package org.roboquant.policies
 
 
 import org.roboquant.TestData
-import kotlin.test.*
-import org.roboquant.strategies.Signal
-import org.roboquant.brokers.Account
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.Notifier
 import org.roboquant.feeds.Event
-import org.roboquant.orders.*
+import org.roboquant.orders.Order
 import org.roboquant.strategies.Rating
+import org.roboquant.strategies.Signal
 import java.time.Instant
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class NotificationPolicyTest {
 
@@ -43,7 +45,7 @@ internal class NotificationPolicyTest {
         val asset = TestData.usStock()
         val signals = mutableListOf(Signal(asset, Rating.BUY))
         val event = Event(listOf(), Instant.now())
-        val account = Account()
+        val account = InternalAccount().toAccount()
         return policy.act(signals, account, event)
     }
 

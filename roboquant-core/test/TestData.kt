@@ -17,6 +17,7 @@
 package org.roboquant
 
 import org.roboquant.brokers.Account
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
@@ -34,10 +35,10 @@ object TestData {
 
     fun usStock() = Asset("XYZ")
 
-    fun usAccount() : Account {
+    fun internalAccount() : InternalAccount {
         val asset1 = Asset("AAA")
         val asset2 = Asset("AAB")
-        val account = Account()
+        val account = InternalAccount()
         account.cash.deposit(100_000.USD)
         account.portfolio.setPosition(Position(asset1, 100.0, 10.0))
         account.portfolio.setPosition(Position(asset2, 100.0, 10.0))
@@ -47,6 +48,21 @@ object TestData {
         order.status = OrderStatus.COMPLETED
         account.orders.add(order)
         return account
+    }
+
+    fun usAccount() : Account {
+        val asset1 = Asset("AAA")
+        val asset2 = Asset("AAB")
+        val account = InternalAccount()
+        account.cash.deposit(100_000.USD)
+        account.portfolio.setPosition(Position(asset1, 100.0, 10.0))
+        account.portfolio.setPosition(Position(asset2, 100.0, 10.0))
+
+        val order = MarketOrder(asset1, 100.0)
+        order.state.placed = Instant.now()
+        order.status = OrderStatus.COMPLETED
+        account.orders.add(order)
+        return account.toAccount()
     }
 
     fun euStock() = Asset("ABC", currencyCode = "EUR", exchangeCode = "AEB")
@@ -75,7 +91,7 @@ object TestData {
 
     fun metricInput(time: Instant = time()): Pair<Account, Event> {
         val account = usAccount()
-        val asset1 = account.portfolio.assets.first()
+        val asset1 = account.assets.first()
         // val asset2 = account.portfolio.assets.last()
         val moment = Event(listOf(TradePrice(asset1, 11.0)), time)
         return Pair(account, moment)

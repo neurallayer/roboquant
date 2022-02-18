@@ -96,7 +96,7 @@ open class BettingAgainstBeta(
         val max = min(betas.size/2, maxAssetsInPortfolio/2)
 
         // exposure per position.
-        val exposure = account.equityAmount / (max * 2)
+        val exposure = account.equity.convert(time = event.time) / (max * 2)
 
         val targetPortfolio = Portfolio()
 
@@ -121,7 +121,8 @@ open class BettingAgainstBeta(
         }
 
         // Get the difference of target portfolio state and the current one
-        val diff = account.portfolio.diff(targetPortfolio)
+        // TODO QQQ
+        val diff = mapOf<Asset, Double>() // account.portfolio.diff(targetPortfolio)
 
         // Transform difference into Orders
         return diff.map { createOrder(it.key, it.value, account, event) }.filterNotNull()

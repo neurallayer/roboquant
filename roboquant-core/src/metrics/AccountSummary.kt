@@ -31,29 +31,21 @@ import org.roboquant.feeds.Event
  * - account.equity Total equity value of the account
  * - account.change Change of value of the account
  *
- *
- * @property includeEquity include the account equity default is true
-
  * @constructor Create new Account Summary metric
  */
-class AccountSummary(private val includeEquity: Boolean = true) : SimpleMetric() {
+class AccountSummary: SimpleMetric() {
 
 
     override fun calc(account: Account, event: Event): MetricResults {
-        val result = mutableMapOf(
+        return mapOf(
             "account.orders" to account.orders.size,
-            "account.orders.open" to account.orders.open.size,
             "account.trades" to account.trades.size,
-            "account.portfolio.assets" to account.portfolio.positions.size,
-            "account.cash" to account.cashAmount.value,
+            "account.positions" to account.portfolio.size,
+            "account.cash" to account.cash.convert(time = event.time).value,
             "account.buyingpower" to account.buyingPower.value,
+            "account.equity"  to account.equity.convert(time = event.time).value,
         )
 
-        if (includeEquity) {
-            result["account.equity"] = account.equityAmount.value
-        }
-
-        return result
     }
 
 }

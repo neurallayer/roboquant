@@ -47,7 +47,7 @@ class AssetAllocationChart(
             }
         }
 
-        for (position in account.portfolio.positions) {
+        for (position in account.portfolio) {
             val asset = position.asset
             val localAmount = account.convert(position.exposure).toBigDecimal()
             result.add(Entry(asset.symbol, localAmount, asset.type.name))

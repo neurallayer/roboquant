@@ -188,7 +188,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     /**
      * Create a clone of this wallet
      */
-    override fun clone(): Wallet {
+    public override fun clone(): Wallet {
         val result = Wallet()
         result.data.putAll(data)
         return result

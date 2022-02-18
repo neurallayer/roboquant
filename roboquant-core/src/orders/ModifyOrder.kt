@@ -19,6 +19,13 @@ package org.roboquant.orders
 import org.roboquant.common.Asset
 
 
+
+/**
+ * Order type that only modifies (update or cancel) other orders, it doesn't generate trades.
+ */
+interface ModifyOrder : Order
+
+
 /**
  * Update an existing SimpleOrder. It is up to the broker implementation to translate the updated order to the correct
  * message, so it can be processed.

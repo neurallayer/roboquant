@@ -26,6 +26,7 @@ import com.binance.api.client.domain.account.request.CancelOrderRequest
 import com.binance.api.client.domain.account.request.OrderRequest
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
@@ -49,7 +50,12 @@ class BinanceBroker(
 ) : Broker {
 
     private val client: BinanceApiRestClient
-    override val account: Account = Account(Currency.getInstance(baseCurrencyCode))
+    private val _account = InternalAccount(Currency.getInstance(baseCurrencyCode))
+
+    override val account: Account
+        get() = _account.toAccount()
+
+
     private val logger = Logging.getLogger(BinanceBroker::class)
     private val placedOrders = mutableMapOf<Long, SingleOrder>()
     private var orderId = 0
@@ -122,7 +128,7 @@ class BinanceBroker(
             }
         }
 
-        return account.clone()
+        return account
     }
 
     private fun binanceSymbol(asset: Asset): String {

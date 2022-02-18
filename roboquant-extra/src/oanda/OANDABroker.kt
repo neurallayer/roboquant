@@ -25,10 +25,7 @@ import com.oanda.v20.primitives.InstrumentName
 import com.oanda.v20.transaction.OrderCancelReason
 import com.oanda.v20.transaction.OrderFillTransaction
 import com.oanda.v20.transaction.TransactionID
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.Broker
-import org.roboquant.brokers.Position
-import org.roboquant.brokers.Trade
+import org.roboquant.brokers.*
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging
@@ -52,7 +49,11 @@ class OANDABroker(
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
     private val accountID = AccountID(OANDA.getAccountID(accountID, ctx))
-    override val account: Account = Account()
+
+    private val _account = InternalAccount()
+
+    override val account: Account
+        get() = _account.toAccount()
     private val logger = Logging.getLogger(OANDABroker::class)
     private lateinit var lastTransactionId: TransactionID
 
@@ -85,19 +86,19 @@ class OANDABroker(
 
 
     private fun updatePositions() {
-        account.portfolio.clear()
+        _account.portfolio.clear()
         val positions = ctx.position.listOpen(accountID).positions
         for (p in positions) {
             logger.fine { "Received position $p"}
             val symbol = p.instrument.toString()
             if (p.long.units.doubleValue() != 0.0) {
                 val position = getPosition(symbol, p.long)
-                account.portfolio.setPosition(position)
+                _account.portfolio.setPosition(position)
             }
             if (p.short.units.doubleValue() != 0.0) {
                 // TODO does the short side use negative value for units
                 val position = getPosition(symbol, p.short)
-                account.portfolio.setPosition(position)
+                _account.portfolio.setPosition(position)
             }
         }
     }
@@ -109,19 +110,19 @@ class OANDABroker(
      */
     private fun initAccount() {
         val acc = ctx.account.get(accountID).account
-        account.baseCurrency = Currency.getInstance(acc.currency.toString())
+        _account.baseCurrency = Currency.getInstance(acc.currency.toString())
         account.cash.clear()
 
         // Cash in roboquant is excluding the margin part
         val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
         account.cash.set(amount)
 
-        account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
-        account.lastUpdate = Instant.now()
+        _account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
+        _account.lastUpdate = Instant.now()
         lastTransactionId = acc.lastTransactionID
-        account.portfolio.clear()
+        _account.portfolio.clear()
         updatePositions()
-        logger.info {"Found ${account.portfolio.positions.size} existing positions in portfolio"}
+        logger.info {"Found ${_account.portfolio.positions.size} existing positions in portfolio"}
     }
 
     /**
@@ -135,8 +136,8 @@ class OANDABroker(
         // Cash in roboquant is excluding the margin part
         val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
         account.cash.set(amount)
-        account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
-        account.lastUpdate = Instant.now()
+        _account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
+        _account.lastUpdate = Instant.now()
     }
 
 
@@ -154,9 +155,9 @@ class OANDABroker(
             trx.pl.doubleValue(),
             order.id
         )
-        account.trades.add(trade)
+        _account.trades.add(trade)
         val amount = Amount(account.baseCurrency, trx.accountBalance.doubleValue())
-        account.cash.set(amount)
+        _account.cash.set(amount)
     }
 
 
@@ -177,7 +178,7 @@ class OANDABroker(
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer {"received ${orders.size} orders and ${event.actions.size} actions"}
 
-        account.orders.addAll(orders)
+        _account.orders.addAll(orders)
 
         if (! enableOrders) {
             for (order in orders) order.status = OrderStatus.REJECTED

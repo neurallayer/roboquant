@@ -19,6 +19,7 @@ package org.roboquant.metrics
 
 import kotlin.test.*
 import org.roboquant.TestData
+import org.roboquant.brokers.assets
 import org.roboquant.feeds.Event
 
 internal class OpenPositionsTest {

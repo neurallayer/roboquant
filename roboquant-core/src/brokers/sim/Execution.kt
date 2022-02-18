@@ -41,5 +41,7 @@ class Execution(val order: Order, val quantity: Double, val price: Double) {
      */
     fun size(): Double = order.asset.multiplier * quantity
 
-    fun value() : Amount = order.asset.value(quantity, price)
+    fun value() : Double = order.asset.value(quantity, price).value
+
+    fun amount() : Amount = order.asset.value(quantity, price)
 }

@@ -5,21 +5,24 @@ import org.roboquant.orders.*
 import java.util.*
 
 
-internal class ExecutionEngine(private val pricingEngine: PricingEngine)  {
+internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
     companion object {
 
         /**
          * Get a new command for a cerain order
          */
-        fun getOrderCommand(order: Order) : OrderCommand {
+        fun getTradeOrderCommand(order: Order): TradeOrderCommand {
             return when (order) {
                 is MarketOrder -> MarketOrderCommand(order)
                 is LimitOrder -> LimitOrderCommand(order)
-                is StopLimitOrder -> StopLimitOrderCommand(order)
                 is StopOrder -> StopOrderCommand(order)
+                is StopLimitOrder -> StopLimitOrderCommand(order)
+                is TrailOrder -> TrailOrderCommand(order)
+                is TrailLimitOrder -> TrailLimitOrderCommand(order)
                 is BracketOrder -> BracketOrderCommand(order)
                 is OneCancelsOtherOrder -> OCOOrderCommand(order)
+                is OneTriggersOtherOrder -> OTOOrderCommand(order)
                 else -> throw Exception("Unsupported Order type $order")
             }
 
@@ -28,19 +31,19 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine)  {
     }
 
     // Currently active order commands
-    private val orderCommands = LinkedList<OrderCommand>()
+    private val orderCommands = LinkedList<TradeOrderCommand>()
 
     // Add a new order to the execution engine
-    fun add(order: Order) = orderCommands.add(getOrderCommand(order))
+    fun add(order: Order) = orderCommands.add(getTradeOrderCommand(order))
 
 
     // Add a new order to the execution engine
     fun addAll(orders: List<Order>) {
-        for (order in orders) orderCommands.add(getOrderCommand(order))
+        for (order in orders) orderCommands.add(getTradeOrderCommand(order))
     }
 
 
-    fun execute(event: Event) : List<Execution> {
+    fun execute(event: Event): List<Execution> {
         val executions = mutableListOf<Execution>()
         // First run the modify order commands
 

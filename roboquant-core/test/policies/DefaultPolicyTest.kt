@@ -17,12 +17,13 @@
 package org.roboquant.policies
 
 
-import kotlin.test.*
-import org.roboquant.strategies.Signal
-import org.roboquant.brokers.Account
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
+import org.roboquant.strategies.Signal
 import java.time.Instant
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 internal class DefaultPolicyTest {
 
@@ -31,7 +32,7 @@ internal class DefaultPolicyTest {
         val policy = DefaultPolicy()
         val signals = mutableListOf<Signal>()
         val event = Event(listOf(), Instant.now())
-        val account = Account()
+        val account = InternalAccount().toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
 
@@ -58,7 +59,7 @@ internal class DefaultPolicyTest {
         val policy = MyPolicy()
         val signals = mutableListOf<Signal>()
         val event = Event(listOf(), Instant.now())
-        val account = Account()
+        val account = InternalAccount().toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
 

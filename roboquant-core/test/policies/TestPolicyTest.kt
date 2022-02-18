@@ -18,7 +18,7 @@ package org.roboquant.policies
 
 
 import org.roboquant.TestData
-import org.roboquant.brokers.Account
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
@@ -32,7 +32,7 @@ internal class TestPolicyTest {
         val policy = TestPolicy()
         val signals = listOf(Signal(TestData.usStock(), Rating.BUY))
         val event = TestData.event2()
-        val account = Account()
+        val account = InternalAccount().toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.first() is MarketOrder)
     }

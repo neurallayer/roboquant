@@ -22,6 +22,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
 import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
+import org.roboquant.brokers.fee
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceBar
@@ -473,7 +474,7 @@ fun beta2() {
     roboquant.run(feed)
     logger.summary().print()
     println(roboquant.broker.account.summary())
-    println(roboquant.broker.account.trades.totalFee())
+    println(roboquant.broker.account.trades.fee)
 
 }
 

@@ -4,8 +4,8 @@ import org.roboquant.feeds.PriceAction
 import java.time.Instant
 
 /**
- * Interface for any pricing engine to implement. Ideally implementations should be able to support any type of price actions,
- * although they can specialize for certain types of price actions, like a PriceBar.
+ * Interface for any pricing engine to implement. Ideally implementations should be able to support any type of price
+ * actions, although they can specialize for certain types of price actions, like a PriceBar.
  */
 fun interface PricingEngine {
 
@@ -14,7 +14,7 @@ fun interface PricingEngine {
      * calculators can be dependent on the [time]. For example certain FOREX exchanges might be more volatile during
      * certain timeframes and this can be reflected in the Pricing.
      */
-    fun getPricing(action: PriceAction, time: Instant) : Pricing
+    fun getPricing(action: PriceAction, time: Instant): Pricing
 
     /**
      * Clear any state of the pricing engine. General speaking a PricingEngine is stateless, but advanced engines might
@@ -32,17 +32,17 @@ interface Pricing {
     /**
      * Get the low price for the provided [volume]. Default is the [marketPrice]
      */
-    fun lowPrice(volume: Double) : Double = marketPrice(volume)
+    fun lowPrice(volume: Double): Double = marketPrice(volume)
 
     /**
      * Get the high price for the provided [volume]. Default is the [marketPrice]
      */
-    fun highPrice(volume: Double) : Double = marketPrice(volume)
+    fun highPrice(volume: Double): Double = marketPrice(volume)
 
     /**
      * Get the market price for the provided [volume]. There is no default.
      */
-    fun marketPrice(volume: Double) : Double
+    fun marketPrice(volume: Double): Double
 
 }
 
@@ -51,7 +51,7 @@ interface Pricing {
  * Pricing model that uses a constant [slippage] in BIPS to determine final trading price. It calculates the same price for
  * high, low and market prices. It works with any type of PriceAction.
  */
-class SlippagePricing(private val slippage: Int = 10, private val priceType : String = "DEFAULT") : PricingEngine {
+class SlippagePricing(private val slippage: Int = 10, private val priceType: String = "DEFAULT") : PricingEngine {
 
     private class SlippagePricing(val price: Double, val slippage: Int) : Pricing {
 
@@ -67,12 +67,11 @@ class SlippagePricing(private val slippage: Int = 10, private val priceType : St
 }
 
 
-
 /**
  * Pricing model that uses a no slippage. It calculates the same price for high, low and market prices. It works
  * with any type of PriceAction.
  */
-class NoSlippagePricing(private val priceType : String = "DEFAULT") : PricingEngine {
+class NoSlippagePricing(private val priceType: String = "DEFAULT") : PricingEngine {
 
     private class SlippagePricing(val price: Double) : Pricing {
 

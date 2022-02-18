@@ -20,6 +20,7 @@ import org.knowm.xchange.Exchange
 import org.knowm.xchange.currency.CurrencyPair
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging
@@ -43,7 +44,12 @@ import org.knowm.xchange.dto.trade.MarketOrder as CryptoMarketOrder
  */
 class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Broker {
 
-    override val account: Account = Account(Currency.getInstance(baseCurrencyCode))
+
+    private val _account = InternalAccount(Currency.getInstance(baseCurrencyCode))
+
+    override val account: Account
+        get() = _account.toAccount()
+
 
     private val logger = Logging.getLogger(XChangeBroker::class)
     private val tradeService = exchange.tradeService
@@ -86,7 +92,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
                 if (supportCurrencies != null && currencyPair !in supportCurrencies) {
                     logger.warning { "Unsupported currency pair $currencyPair for exchange" }
-                    return account.clone()
+                    return account
                 }
                 val orderId = orderId++.toString()
                 when (order) {
@@ -108,7 +114,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
             }
         }
 
-        return account.clone()
+        return account
     }
 
 

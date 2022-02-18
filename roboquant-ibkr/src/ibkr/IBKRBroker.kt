@@ -50,7 +50,11 @@ class IBKRBroker(
 ) : Broker {
 
     private var client: EClientSocket
-    override val account: Account = Account()
+    private val _account = InternalAccount()
+
+    override val account: Account
+        get() = _account.toAccount()
+
     val logger = Logging.getLogger(IBKRBroker::class)
     private var orderId = 0
 
@@ -101,9 +105,9 @@ class IBKRBroker(
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        account.orders.addAll(orders)
+        _account.orders.addAll(orders)
 
-        if (!enableOrders) return account.clone()
+        if (!enableOrders) return _account.toAccount()
 
         // First we place the cancellation orders
         for (cancellation in orders.filterIsInstance<CancellationOrder>()) {
@@ -122,7 +126,7 @@ class IBKRBroker(
         }
 
         // Return a clone so changes to account while running policies don't cause inconsistencies.
-        return account.clone()
+        return _account.toAccount()
     }
 
     /**
@@ -193,7 +197,7 @@ class IBKRBroker(
             } else {
                 val newOrder = toOrder(order, contract)
                 orderMap[orderId] = newOrder
-                account.orders.add(newOrder)
+                _account.orders.add(newOrder)
             }
         }
 
@@ -229,7 +233,7 @@ class IBKRBroker(
                 val newTrade = trade.copy(
                     feeValue = report.commission(), pnlValue = report.realizedPNL()
                 )
-                account.trades[i] = newTrade
+                _account.trades[i] = newTrade
             } else {
                 logger.warning("Commision for none existing trade ${report.execId()}")
             }
@@ -256,7 +260,7 @@ class IBKRBroker(
                 orderId
             )
             tradeMap[id] = trade
-            account.trades.add(trade)
+            _account.trades.add(trade)
         }
 
         override fun openOrderEnd() {
@@ -275,8 +279,8 @@ class IBKRBroker(
             if (currency != null && "BASE" != currency) {
                 when (key) {
                     "BuyingPower" -> {
-                        account.baseCurrency = Currency.getInstance(currency)
-                        account.buyingPower = Amount(account.baseCurrency, value.toDouble())
+                        _account.baseCurrency = Currency.getInstance(currency)
+                        _account.buyingPower = Amount(account.baseCurrency, value.toDouble())
                         if (exchangeRates is IBKRExchangeRates) exchangeRates.baseCurrency =
                             account.baseCurrency
                     }
@@ -305,7 +309,7 @@ class IBKRBroker(
             logger.finer { "$contract $position $marketPrice $averageCost" }
             val asset = contract.getAsset()
             val p = Position(asset, position, averageCost, marketPrice, Instant.now())
-            account.portfolio.setPosition(p)
+            _account.portfolio.setPosition(p)
         }
 
         override fun currentTime(time: Long) {
@@ -318,7 +322,7 @@ class IBKRBroker(
 
         override fun updateAccountTime(timeStamp: String) {
             logger.fine(timeStamp)
-            account.lastUpdate = Instant.now()
+            _account.lastUpdate = Instant.now()
         }
 
         /**

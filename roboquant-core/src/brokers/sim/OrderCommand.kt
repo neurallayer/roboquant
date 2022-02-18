@@ -14,7 +14,7 @@ interface ModifyOrderCommand {
 
 
 
-interface OrderCommand {
+interface TradeOrderCommand {
 
     fun execute(pricing: Pricing, time: Instant) : List<Execution>
 
@@ -22,7 +22,7 @@ interface OrderCommand {
 
 }
 
-abstract class SingleOrderCommand<T: SingleOrder>(final override val order: T)  : OrderCommand {
+abstract class SingleOrderCommand<T: SingleOrder>(final override val order: T)  : TradeOrderCommand {
 
     internal var fill = 0.0
     internal var qty = order.quantity
@@ -50,12 +50,12 @@ abstract class SingleOrderCommand<T: SingleOrder>(final override val order: T)  
     abstract fun fill(pricing: Pricing) : Execution?
 }
 
-class MarketOrderCommand(order: MarketOrder) : SingleOrderCommand<MarketOrder>(order) {
+internal class MarketOrderCommand(order: MarketOrder) : SingleOrderCommand<MarketOrder>(order) {
     override fun fill(pricing: Pricing) : Execution = Execution(order, remaining, pricing.marketPrice(remaining))
 }
 
 
-class LimitOrderCommand(order: LimitOrder) : SingleOrderCommand<LimitOrder>(order) {
+internal class LimitOrderCommand(order: LimitOrder) : SingleOrderCommand<LimitOrder>(order) {
 
     override fun fill(pricing: Pricing) : Execution? {
         if (order.buy && pricing.lowPrice(remaining) <= order.limit) return Execution(order, remaining, order.limit)
@@ -67,10 +67,10 @@ class LimitOrderCommand(order: LimitOrder) : SingleOrderCommand<LimitOrder>(orde
 
 
 
-class OCOOrderCommand(override val order: OneCancelsOtherOrder) : OrderCommand {
+internal class OCOOrderCommand(override val order: OneCancelsOtherOrder) : TradeOrderCommand {
 
-    private val first = ExecutionEngine.getOrderCommand(order.first)
-    private val second = ExecutionEngine.getOrderCommand(order.second)
+    private val first = ExecutionEngine.getTradeOrderCommand(order.first)
+    private val second = ExecutionEngine.getTradeOrderCommand(order.second)
 
     override fun execute(pricing: Pricing, time: Instant) : List<Execution> {
         val result = mutableListOf<Execution>()
@@ -90,11 +90,33 @@ class OCOOrderCommand(override val order: OneCancelsOtherOrder) : OrderCommand {
 }
 
 
-class BracketOrderCommand(override val order: BracketOrder) : OrderCommand {
+internal class OTOOrderCommand(override val order: OneTriggersOtherOrder) : TradeOrderCommand {
 
-    private val main = ExecutionEngine.getOrderCommand(order.entry) as SingleOrderCommand<*>
-    val profit = ExecutionEngine.getOrderCommand(order.takeProfit) as SingleOrderCommand<*>
-    val loss = ExecutionEngine.getOrderCommand(order.stopLoss) as SingleOrderCommand<*>
+    private val first = ExecutionEngine.getTradeOrderCommand(order.first)
+    private val second = ExecutionEngine.getTradeOrderCommand(order.second)
+
+    override fun execute(pricing: Pricing, time: Instant) : List<Execution> {
+        val result = mutableListOf<Execution>()
+
+        if (first.order.status.open) {
+            result.addAll(first.execute(pricing, time))
+            if (first.order.status.aborted) order.status = first.order.status
+        }
+
+        if (first.order.status == OrderStatus.COMPLETED) {
+            result.addAll(second.execute(pricing, time))
+            order.status = second.order.status
+        }
+
+        return result
+    }
+}
+
+internal class BracketOrderCommand(override val order: BracketOrder) : TradeOrderCommand {
+
+    private val main = ExecutionEngine.getTradeOrderCommand(order.entry) as SingleOrderCommand<*>
+    private val profit = ExecutionEngine.getTradeOrderCommand(order.takeProfit) as SingleOrderCommand<*>
+    private val loss = ExecutionEngine.getTradeOrderCommand(order.stopLoss) as SingleOrderCommand<*>
 
     var fill = 0.0
 
@@ -118,7 +140,7 @@ class BracketOrderCommand(override val order: BracketOrder) : OrderCommand {
 }
 
 
-class StopOrderCommand(order: StopOrder) : SingleOrderCommand<StopOrder>(order) {
+internal class StopOrderCommand(order: StopOrder) : SingleOrderCommand<StopOrder>(order) {
 
     override fun fill(pricing: Pricing) : Execution? {
         val trigger = if (order.sell) ::sellTrigger else ::buyTrigger
@@ -129,11 +151,25 @@ class StopOrderCommand(order: StopOrder) : SingleOrderCommand<StopOrder>(order) 
 }
 
 
+internal class StopLimitOrderCommand(order: StopLimitOrder) : SingleOrderCommand<StopLimitOrder>(order) {
+
+    private var triggered = false
+
+    override fun fill(pricing: Pricing) : Execution? {
+        val trigger = if (order.sell) ::sellTrigger else ::buyTrigger
+
+        if (! triggered) triggered = trigger(order.stop, remaining, pricing)
+        if (triggered && trigger(order.limit, remaining, pricing)) return Execution(order, remaining, order.limit)
+
+        return null
+    }
+
+}
+
 
 private fun sellTrigger(limit: Double, volume: Double, pricing: Pricing) = pricing.lowPrice(volume) <= limit
 
 private fun buyTrigger(limit: Double, volume: Double, pricing: Pricing) = pricing.highPrice(volume) >= limit
-
 
 private fun getStop(stop: Double, trail: Double, volume: Double, pricing: Pricing) : Double {
 
@@ -152,12 +188,9 @@ private fun getStop(stop: Double, trail: Double, volume: Double, pricing: Pricin
 }
 
 
-open class TrailOrderCommand(order: TrailOrder) : SingleOrderCommand<TrailOrder>(order) {
+internal  class TrailOrderCommand(order: TrailOrder) : SingleOrderCommand<TrailOrder>(order) {
 
-    protected var triggered = false
     private var stop: Double = if (order.buy) Double.MAX_VALUE else Double.MIN_VALUE
-    private val correction = if (order.buy) 1.0 + order.trailPercentage else 1.0 - order.trailPercentage
-
 
     override fun fill(pricing: Pricing) : Execution? {
         stop = getStop(stop, order.trailPercentage, remaining, pricing)
@@ -168,17 +201,16 @@ open class TrailOrderCommand(order: TrailOrder) : SingleOrderCommand<TrailOrder>
 }
 
 
-class StopLimitOrderCommand(order: StopLimitOrder) : SingleOrderCommand<StopLimitOrder>(order) {
+internal  class TrailLimitOrderCommand(order: TrailLimitOrder) : SingleOrderCommand<TrailLimitOrder>(order) {
 
-    private var triggered = false
+    private var stop: Double = if (order.buy) Double.MAX_VALUE else Double.MIN_VALUE
+
 
     override fun fill(pricing: Pricing) : Execution? {
+        stop = getStop(stop, order.trailPercentage, remaining, pricing)
         val trigger = if (order.sell) ::sellTrigger else ::buyTrigger
-
-        if (! triggered) triggered = trigger(order.stop, remaining, pricing)
-        if (triggered && trigger(order.limit, remaining, pricing)) return Execution(order, remaining, order.limit)
-
-        return null
+        return if (trigger(stop, remaining, pricing)) Execution(order, remaining, pricing.marketPrice(remaining)) else null
     }
 
 }
+

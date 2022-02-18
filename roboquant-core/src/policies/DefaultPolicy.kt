@@ -17,7 +17,7 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.Orders
+import org.roboquant.brokers.getPosition
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
@@ -75,7 +75,7 @@ open class DefaultPolicy(
 
     private fun reducedBuyingPower(account: Account, asset: Asset, qty: Double, price: Double): Double {
         val cost = Amount(asset.currency, asset.multiplier * qty * price).absoluteValue
-        val baseCurrencyCost = account.convert(cost)
+        val baseCurrencyCost =  account.convert(cost)
         return baseCurrencyCost.value
     }
 
@@ -125,13 +125,13 @@ open class DefaultPolicy(
      * How many orders do we have for the current trading day. This takes into account that different orders may be
      * trading on different exchanges with different timezones.
      */
-    private fun getOrdersCurrentDay(now: Instant, orders: Orders) =
+    private fun getOrdersCurrentDay(now: Instant, orders: List<Order>) =
         orders.filter { it.asset.exchange.sameDay(now, it.state.placed) }.size
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<Order>()
         var buyingPower = account.buyingPower.value
-        val openOrderAssets = account.orders.open.map { it.asset }
+        val openOrderAssets = account.orders.filter { it.status.open }.map { it.asset }
         var remainingDayOrders = maxOrdersPerDay
 
         // Performance optimilization. Checking day orders is expensive so we only do it when required

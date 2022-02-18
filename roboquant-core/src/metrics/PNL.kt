@@ -17,6 +17,8 @@
 package org.roboquant.metrics
 
 import org.roboquant.brokers.Account
+import org.roboquant.brokers.realizedPNL
+import org.roboquant.brokers.unrealizedPNL
 import org.roboquant.feeds.Event
 
 /**
@@ -41,11 +43,11 @@ class PNL : SimpleMetric() {
     override fun calc(account: Account, event: Event): MetricResults {
         val result = mutableMapOf<String, Double>()
 
-        val pnl = account.trades.realizedPnL()
+        val pnl = account.trades.realizedPNL
         val realizedPNL = pnl.convert(time = event.time)
         result["pnl.realized"] = realizedPNL.value
 
-        val totalValue = account.portfolio.unrealizedPNL()
+        val totalValue = account.portfolio.unrealizedPNL
         val unrealizedPNL = totalValue.convert(time = event.time)
         result["pnl.unrealized"] = unrealizedPNL.value
 

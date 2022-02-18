@@ -156,3 +156,4 @@ fun Iterable<Amount>.sum(): Wallet {
     for (amount in this) result.deposit(amount)
     return result
 }
+

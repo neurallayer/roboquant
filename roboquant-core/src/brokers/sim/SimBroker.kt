@@ -46,7 +46,11 @@ class SimBroker(
 ) : Broker {
 
 
-    override val account: Account = Account(baseCurrency)
+    private val _account = InternalAccount(baseCurrency)
+
+    override val account: Account
+        get() = _account.toAccount()
+
     private val executionEngine = ExecutionEngine(pricingEngine)
 
     init {
@@ -72,8 +76,6 @@ class SimBroker(
     }
 
 
-
-
     /**
      * Update the account based on an execution. This will perform the following steps:
      *
@@ -92,7 +94,7 @@ class SimBroker(
         val fee = feeModel.calculate(execution)
 
         // PNL includes the fee
-        val pnl = account.portfolio.updatePosition(position) - fee
+        val pnl = _account.portfolio.updatePosition(position) - fee
         val newTrade = Trade(
             now,
             asset,
@@ -103,16 +105,16 @@ class SimBroker(
             execution.order.id
         )
 
-        account.trades.add(newTrade)
-        account.cash.withdraw(newTrade.totalCost)
+        _account.trades.add(newTrade)
+        _account.cash.withdraw(newTrade.totalCost)
 
     }
 
 
     private fun updateBuyingPower() {
-        val value = accountModel.calculate(account)
-        logger.finer { "Calculated buying power $value"}
-        account.buyingPower = value
+        val value = accountModel.calculate(_account)
+        logger.finer { "Calculated buying power $value" }
+        _account.buyingPower = value
     }
 
     /**
@@ -124,18 +126,16 @@ class SimBroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer { "Received ${orders.size} orders at ${event.time}" }
-        account.orders.addAll(orders)
+        _account.orders.addAll(orders)
         executionEngine.addAll(orders)
 
         val executions = executionEngine.execute(event)
         for (execution in executions) updateAccount(execution, event.time)
-        account.portfolio.updateMarketPrices(event)
-        account.lastUpdate = event.time
+        _account.portfolio.updateMarketPrices(event)
+        _account.lastUpdate = event.time
         updateBuyingPower()
         return account
     }
-
-
 
 
     /**
@@ -144,17 +144,17 @@ class SimBroker(
      *
      * TODO more flexible implementation (perhaps using the BuyingPowerModel).
     private fun validOrder(order: Order) : Boolean {
-        if (validateBuyingPower) {
-            // TODO implement real logic here
-            val requiredValue = 0.0 // order.getValueAmount().convert(account.buyingPower.currency).value // buyingPower.calculate(order)
-            if (account.buyingPower - requiredValue <= 0) {
-                return false
-            } else {
-                account.buyingPower -= requiredValue
-            }
-        }
-        order.status = OrderStatus.ACCEPTED
-        return true
+    if (validateBuyingPower) {
+    // TODO implement real logic here
+    val requiredValue = 0.0 // order.getValueAmount().convert(account.buyingPower.currency).value // buyingPower.calculate(order)
+    if (account.buyingPower - requiredValue <= 0) {
+    return false
+    } else {
+    account.buyingPower -= requiredValue
+    }
+    }
+    order.status = OrderStatus.ACCEPTED
+    return true
     }
      */
 
@@ -168,11 +168,11 @@ class SimBroker(
      * 2. close all open positions by creating and processing [MarketOrder] for the required quantities, using the
      * last known market prices as price actions.
      */
-    fun liquidatePortfolio(time:Instant = account.lastUpdate): Account {
-        for (order in account.orders.open) order.status = OrderStatus.CANCELLED
-        val change = account.portfolio.diff(Portfolio())
+    fun liquidatePortfolio(time: Instant = _account.lastUpdate): Account {
+        for (order in _account.orders.open) order.status = OrderStatus.CANCELLED
+        val change = _account.portfolio.diff(Portfolio())
         val orders = change.map { MarketOrder(it.key, it.value) }
-        val event = Event(account.portfolio.toTradePrices(), time)
+        val event = Event(_account.portfolio.toTradePrices(), time)
         return place(orders, event)
     }
 
@@ -188,11 +188,10 @@ class SimBroker(
 
 
     override fun reset() {
-        account.clear()
+        _account.clear()
         executionEngine.clear()
-        account.cash.deposit(initialDeposit)
+        _account.cash.deposit(initialDeposit)
     }
-
 
 
 }

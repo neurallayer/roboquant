@@ -2,6 +2,13 @@ package org.roboquant.orders
 
 import org.roboquant.common.Asset
 
+
+/**
+ * Orders types that generate trades based on the underlying asset. See also [SingleOrder] for e specialized sub-set.
+ */
+interface TradeOrder : Order
+
+
 data class OneCancelsOtherOrder(
     val first: Order,
     val second: Order,

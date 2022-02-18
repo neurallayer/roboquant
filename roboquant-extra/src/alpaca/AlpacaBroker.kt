@@ -47,7 +47,11 @@ class AlpacaBroker(
     dataType: DataType = DataType.IEX
 ) : Broker {
 
-    override val account: Account = Account()
+    private val _account = InternalAccount()
+
+    override val account: Account
+        get() = _account.toAccount()
+
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
     private val logger = Logging.getLogger(AlpacaOrder::class)
     var enableTrading = false
@@ -76,13 +80,13 @@ class AlpacaBroker(
         try {
             val acc = alpacaAPI.account().get()
 
-            account.baseCurrency = Currency.getInstance(acc.currency)
-            account.buyingPower = Amount(account.baseCurrency, acc.buyingPower.toDouble())
+            _account.baseCurrency = Currency.getInstance(acc.currency)
+            _account.buyingPower = Amount(account.baseCurrency, acc.buyingPower.toDouble())
 
-            account.cash.clear()
+            _account.cash.clear()
             val balance = Amount(account.baseCurrency, acc.cash.toDouble())
-            account.cash.deposit(balance)
-            account.lastUpdate = Instant.now()
+            _account.cash.deposit(balance)
+            _account.lastUpdate = Instant.now()
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())
         }
@@ -101,8 +105,8 @@ class AlpacaBroker(
                 portfolio.setPosition(p)
             }
             // If there was an exception we don't reach this part and keep the old state of the portfolio.
-            account.portfolio.clear()
-            account.portfolio.put(portfolio)
+            _account.portfolio.clear()
+            _account.portfolio.put(portfolio)
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())
         }
@@ -115,7 +119,7 @@ class AlpacaBroker(
         try {
             for (order in alpacaAPI.orders().get(CurrentOrderStatus.ALL, null, null, null, null, false, null)) {
                 logger.fine { "received $order" }
-                account.orders.add(toOrder(order))
+                _account.orders.add(toOrder(order))
             }
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())
@@ -165,7 +169,7 @@ class AlpacaBroker(
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
     private fun updateOpenOrders() {
-        account.orders.open.filterIsInstance<SingleOrder>().forEach {
+        _account.orders.open.filterIsInstance<SingleOrder>().forEach {
             val aOrder = orderMapping[it]!!
             val order = alpacaAPI.orders().get(aOrder.id, false)
             // it.fill = order.filledQuantity.toDouble()
@@ -247,12 +251,12 @@ class AlpacaBroker(
         for (order in orders) {
             if (order is SingleOrder) {
                 placeOrder(order)
-                account.orders.add(order)
+                _account.orders.add(order)
             } else {
                 throw Exception("Unsupported order type $order")
             }
         }
-        account.lastUpdate = event.time
-        return account
+        _account.lastUpdate = event.time
+        return _account.toAccount()
     }
 }

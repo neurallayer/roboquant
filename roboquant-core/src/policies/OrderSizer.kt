@@ -66,7 +66,8 @@ class PercentageOrderSizer(
     override fun size(asset: Asset, account: Account, remaining: Double, price: Double): Double {
 
         // The available amount to spent
-        val amountValue = min(account.equityAmount.value * maxPercentage, remaining)
+        val equity = account.convert(account.equity).value
+        val amountValue = min(equity * maxPercentage, remaining)
         if (amountValue < minAmount) return 0.0
 
         // Price denoted in currency of account

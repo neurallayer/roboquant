@@ -32,7 +32,7 @@ import java.util.*
  *
  * @constructor Create a new Portfolio
  */
-class Portfolio : Cloneable {
+class Portfolio  {
 
     // Use a treemap to store positions in order to make results more reproducable
     private val _positions = TreeMap<Asset, Position>()
@@ -67,16 +67,6 @@ class Portfolio : Cloneable {
      */
     fun isEmpty(): Boolean = _positions.isEmpty()
 
-
-    /**
-     * Create a clone of the portfolio and return it. A clone is guaranteed not to be mutated
-     * by an ongoing run and so reflects the portfolio at the moment in time this method is called.
-     */
-    public override fun clone(): Portfolio {
-        val portfolio = Portfolio()
-        portfolio._positions.putAll(_positions)
-        return portfolio
-    }
 
     /**
      * Update the portfolio with the provided [position] and return the realized PnL.
@@ -140,33 +130,6 @@ class Portfolio : Cloneable {
     val shortValue : Wallet
         get() = shortPositions.value
 
-
-
-    /**
-     * Get total exposure of this portfolio. The total value is calculated based on the sum of the open positions and
-     * their last known price. The result is returned as a [Wallet] object, so no currency conversion is applied.
-     */
-    fun getExposure(): Wallet {
-        val result = Wallet()
-        for (position in positions) {
-            result.deposit(position.exposure)
-        }
-        return result
-    }
-
-
-    /**
-     * Get total unrealized PNL of this portfolio. The unrealized PNL is calculated based on the open positions and
-     * their average price and last known price. The result is returned as a [Wallet] object, so no currency conversion
-     * is applied.
-     */
-    fun unrealizedPNL(): Wallet {
-        val result = Wallet()
-        for (position in positions) {
-            result.deposit(position.unrealizedPNL)
-        }
-        return result
-    }
 
 
     /**

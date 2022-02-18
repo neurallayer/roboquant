@@ -228,6 +228,19 @@ fun String.toCurrencyPair() : Pair<Currency, Currency>? {
 }
 
 
+/**
+ * Extesnion to use sumOf for Amounts
+ */
+inline fun <T> Iterable<T>.sumOf(
+    selector: (T) -> Amount
+): Wallet {
+    val result = Wallet()
+    forEach {
+        val amount = selector(it)
+        result.deposit(amount)
+    }
+    return result
+}
 
 
 /*********************************************************************************************

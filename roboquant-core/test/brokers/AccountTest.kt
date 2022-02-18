@@ -16,44 +16,52 @@
 
 package org.roboquant.brokers
 
-
 import org.junit.Test
-import org.roboquant.common.Asset
-import org.roboquant.common.Wallet
+import org.roboquant.TestData
 import org.roboquant.common.Currency
-import org.roboquant.common.USD
+import org.roboquant.common.Wallet
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+
 
 internal class AccountTest {
 
     @Test
     fun basis() {
-        val account = Account()
+        val iAccount = InternalAccount()
+        val account = iAccount.toAccount()
         val amount = account.equityAmount.value
         assertEquals(0.00, amount)
-        assertEquals(Currency.getInstance("USD"), account.baseCurrency)
+        assertEquals(Currency.USD, account.baseCurrency)
         assertTrue(account.portfolio.isEmpty())
 
         val e = account.equity
         assertEquals(Wallet(), e)
 
         assertTrue(account.trades.isEmpty())
-        assertTrue(account.trades.realizedPnL().isEmpty())
+        assertTrue(account.trades.realizedPNL.isEmpty())
 
-        val asset = Asset("Dummy")
-        assertTrue(account.trades.realizedPnL(asset).value == 0.0)
+    }
 
-        account.cash.deposit(100.USD)
+    @Test
+    fun summaries() {
+        val account = TestData.usAccount()
+        assertTrue(account.portfolio.summary().content.isNotEmpty())
+        assertTrue(account.orders.summary().content.isNotEmpty())
+        assertTrue(account.trades.summary().content.isNotEmpty())
+        assertTrue(account.cash.summary().content.isNotEmpty())
 
-        val s = account.summary()
-        assertTrue(s.toString().isNotEmpty())
+        assertTrue(account.summary().content.isNotEmpty())
+        assertTrue(account.fullSummary().content.isNotEmpty())
+    }
 
-        val s2 = account.fullSummary()
-        assertTrue(s2.toString().isNotEmpty())
+    @Test
+    fun extensions() {
+        val account = TestData.usAccount()
+        assertEquals(account.portfolio.size, account.portfolio.long.size + account.portfolio.short.size)
+        assertContains(account.portfolio.assets, account.portfolio.first().asset)
 
-        val o = account.orders
-        assertTrue(o.summary().toString().isNotEmpty())
     }
 
 

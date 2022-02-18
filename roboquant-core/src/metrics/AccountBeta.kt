@@ -53,7 +53,7 @@ class AccountBeta(private val referenceAsset: Asset, private val period: Int, pr
             val price = action.getPrice(priceType)
             assetData.add(price)
 
-            val value = account.equityAmount.value
+            val value = account.equity.convert(time = event.time).value
             accountData.add(value)
 
             if (assetData.isAvailable() && accountData.isAvailable()) {

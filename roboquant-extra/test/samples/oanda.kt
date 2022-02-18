@@ -124,10 +124,10 @@ fun oandaClosePositions() {
     Config.exchangeRates = OANDAExchangeRates.allAvailableAssets()
 
     val target = Portfolio() // target portfolio is an empty portfolio
-    val changes = broker.account.portfolio.diff(target)
+   /* val changes = broker.account.portfolio.diff(target)
     val orders = changes.map { MarketOrder(it.key, it.value) }
     broker.place(orders, Event.empty())
-    broker.account.fullSummary().print()
+    broker.account.fullSummary().print()*/
 }
 
 
