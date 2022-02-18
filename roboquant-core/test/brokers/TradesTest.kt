@@ -16,14 +16,20 @@
 
 package org.roboquant.brokers
 
+import org.junit.Test
+import org.roboquant.TestData
+import org.roboquant.common.USD
+import java.time.Instant
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
 
 internal class TradesTest {
 
-/*
+
     @Test
     fun test() {
-        val trades = Trades()
-        assertTrue(trades.isEmpty())
+        val trades = mutableListOf<Trade>()
 
         val asset = TestData.usStock()
         var now = Instant.now()
@@ -37,9 +43,10 @@ internal class TradesTest {
             trades.add(trade2)
         }
 
-        assertEquals(200.0, trades.totalFee(asset).value)
-        assertEquals(100.0, trades.realizedPnL(asset).value)
-        assertEquals(100.0, trades.realizedPnL(asset.symbol).value)
+
+
+        assertEquals(200.USD.toWallet(), trades.fee)
+        assertEquals(100.USD.toWallet(), trades.realizedPNL)
         assertEquals(20, trades.timeline.size)
 
         assertTrue(trades.summary().content == "Trades")
@@ -47,12 +54,12 @@ internal class TradesTest {
         val s = trades.summary()
         assertTrue(s.toString().isNotEmpty())
 
-        val trades2 = trades[0..5]
+        /*val trades2 = trades[0..5]
         assertEquals(50.USD, trades2.totalFee().getAmount(Currency.USD))
 
-        assertEquals(5, trades2.timeline.size)
+        assertEquals(5, trades2.timeline.size)*/
 
     }
-*/
+
 
 }

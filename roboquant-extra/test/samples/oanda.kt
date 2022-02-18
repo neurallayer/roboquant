@@ -19,10 +19,9 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.brokers.FeedExchangeRates
-import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.brokers.Portfolio
+import org.roboquant.brokers.*
 import org.roboquant.common.*
+import org.roboquant.common.summary
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.OrderBook
 import org.roboquant.feeds.avro.AvroFeed
@@ -123,11 +122,11 @@ fun oandaClosePositions() {
     Logging.setLevel(Level.FINE)
     Config.exchangeRates = OANDAExchangeRates.allAvailableAssets()
 
-    val target = Portfolio() // target portfolio is an empty portfolio
-   /* val changes = broker.account.portfolio.diff(target)
+    val target = mutableListOf<Position>() // target portfolio is an empty portfolio
+    val changes = broker.account.portfolio.diff(target)
     val orders = changes.map { MarketOrder(it.key, it.value) }
     broker.place(orders, Event.empty())
-    broker.account.fullSummary().print()*/
+    broker.account.fullSummary().print()
 }
 
 

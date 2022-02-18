@@ -89,6 +89,9 @@ val Collection<Order>.open
 val Collection<Trade>.fee
     get() = sumOf { it.fee }
 
+val Collection<Trade>.timeline
+    get() = map { it.time }.distinct().sorted()
+
 val Collection<Position>.assets
     get() = map { it.asset }.distinct()
 
