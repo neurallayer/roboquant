@@ -18,56 +18,74 @@ package org.roboquant.brokers.sim
 
 import org.junit.Test
 import org.roboquant.TestData
-import org.roboquant.common.Asset
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.StopLimitOrder
 import org.roboquant.orders.StopOrder
 import java.time.Instant
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 internal class OrderCommandTest {
 
+    private val asset = TestData.usStock()
 
-    private fun getAssetAndPricing(): Pair<Asset, Pricing> {
-        val asset = TestData.usStock()
+    private fun pricing(price: Number): Pricing {
         val engine = NoSlippagePricing()
-        val pricing = engine.getPricing(TradePrice(asset, 100.0), Instant.now())
-        return Pair(asset, pricing)
+        return engine.getPricing(TradePrice(asset, price.toDouble()), Instant.now())
     }
 
     @Test
     fun testMarketOrder() {
-        val (asset, pricing) = getAssetAndPricing()
         val order = MarketOrder(asset, 100.0)
         val cmd = MarketOrderCommand(order)
-        cmd.execute(pricing, Instant.now())
+        var executions = cmd.execute(pricing(100), Instant.now())
+        assertEquals(1, executions.size)
+
+        assertFails {
+            executions = cmd.execute(pricing(100), Instant.now())
+        }
     }
 
 
     @Test
     fun testStopOrder() {
-        val asset = TestData.usStock()
         val order = StopOrder(asset, -10.0, 99.0)
         val cmd = StopOrderCommand(order)
+        var executions = cmd.execute(pricing(100), Instant.now())
+        assertEquals(0, executions.size)
 
+        executions = cmd.execute(pricing(98), Instant.now())
+        assertEquals(1, executions.size)
     }
 
     @Test
     fun testLimitOrder() {
-        val asset = TestData.usStock()
-        val order = LimitOrder(asset, -10.0, 101.0)
+        val order = LimitOrder(asset, 10.0, 99.0)
         val cmd = LimitOrderCommand(order)
+        var executions = cmd.execute(pricing(100), Instant.now())
+        assertEquals(0, executions.size)
+
+        executions = cmd.execute(pricing(98), Instant.now())
+        assertEquals(1, executions.size)
     }
 
 
     @Test
     fun testStopLimitOrder() {
-        val asset = TestData.usStock()
-        val order = StopLimitOrder(asset, -10.0, 99.0, 98.0)
+        val order = StopLimitOrder(asset, -10.0, 100.0, 98.0)
         val cmd = StopLimitOrderCommand(order)
-    }
 
+        var executions = cmd.execute(pricing(101), Instant.now())
+        assertEquals(0, executions.size)
+
+        executions = cmd.execute(pricing(97), Instant.now())
+        assertEquals(0, executions.size)
+
+        executions = cmd.execute(pricing(99), Instant.now())
+        assertEquals(1, executions.size)
+    }
 
 
 }
