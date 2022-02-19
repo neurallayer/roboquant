@@ -186,15 +186,15 @@ private fun limitTrigger(limit: Double, volume: Double, pricing: Pricing): Boole
 }
 
 
-private fun getStop(oldStop: Double, trail: Double, volume: Double, pricing: Pricing): Double {
+private fun getTrailStop(oldStop: Double, trail: Double, volume: Double, pricing: Pricing): Double {
 
-    return if (volume > 0.0) {
-        // BUY stop
+    return if (volume < 0.0) {
+        // Sell stop
         val price = pricing.highPrice(volume)
         val newStop = price * (1.0 - trail)
-        if (oldStop.isNaN()  && newStop > oldStop) newStop else oldStop
+        if (oldStop.isNaN()  || newStop > oldStop) newStop else oldStop
     } else {
-        // SELL stop
+        // Buy stop
         val price = pricing.lowPrice(volume)
         val newStop = price * (1.0 + trail)
         if (oldStop.isNaN() || newStop < oldStop) newStop else oldStop
@@ -208,7 +208,7 @@ internal class TrailOrderCommand(order: TrailOrder) : SingleOrderCommand<TrailOr
     private var stop = Double.NaN
 
     override fun fill(pricing: Pricing): Execution? {
-        stop = getStop(stop, order.trailPercentage, remaining, pricing)
+        stop = getTrailStop(stop, order.trailPercentage, remaining, pricing)
         return if (stopTrigger(stop, remaining, pricing)) Execution(
             order, remaining, pricing.marketPrice(remaining)
         ) else null
@@ -223,7 +223,7 @@ internal class TrailLimitOrderCommand(order: TrailLimitOrder) : SingleOrderComma
     private var stopTriggered = false
 
     override fun fill(pricing: Pricing): Execution? {
-        stop = getStop(stop, order.trailPercentage, remaining, pricing)
+        stop = getTrailStop(stop, order.trailPercentage, remaining, pricing)
         if (! stopTriggered) stopTriggered = stopTrigger(stop, remaining, pricing)
         val limit = stop + order.limitOffset
         return if (stopTriggered && limitTrigger(limit, remaining, pricing)) Execution(order, remaining, limit)

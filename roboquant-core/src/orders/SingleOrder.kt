@@ -40,6 +40,17 @@ interface SingleOrder : TradeOrder {
 }
 
 
+/**
+ * Buy or sell an asset at the market’s current best available price. A market order typically ensures
+ * an execution, but it does not guarantee a specified price.
+ *
+ * @property asset
+ * @property quantity
+ * @property tif
+ * @property id
+ * @property state
+ * @constructor Create new Market order
+ */
 data class MarketOrder(
     override val asset: Asset,
     override val quantity: Double,
@@ -48,7 +59,19 @@ data class MarketOrder(
     override val state: OrderState = OrderState()
 ) : SingleOrder
 
-
+/**
+ *  Buy or sell an asset with a restriction on the maximum price to be paid or the minimum price
+ *  to be received. If the order is filled, it will only be at the specified limit price or better.
+ *  However, there is no assurance of execution.
+ *
+ * @property asset
+ * @property quantity
+ * @property limit
+ * @property tif
+ * @property id
+ * @property state
+ * @constructor Create empty Limit order
+ */
 data class LimitOrder(
     override val asset: Asset,
     override val quantity: Double,
@@ -88,9 +111,29 @@ data class TrailOrder(
     override val tif: TimeInForce = GTC(),
     override val id: String = Order.nextId(),
     override val state: OrderState = OrderState()
-) : SingleOrder
+) : SingleOrder {
 
+    init {
+        require(trailPercentage > 0.0) {"trailPrecentage should be a positive value"}
+    }
+}
 
+/**
+ * Trail limit order
+ *
+ * example: We want to sell 25 stocks of XYZ when it reaches 5% below its high with a limit price of -1 below that high.
+ *
+ * val order = TrailLimitOrder(Asset("XYZ"), -25, 0.05, -1.0)
+ *
+ * @property asset
+ * @property quantity
+ * @property trailPercentage trailing percentage to be used to calculate the stop value
+ * @property limitOffset offset for the limit compared to the stop value, negative value being a lower limit
+ * @property tif
+ * @property id
+ * @property state
+ * @constructor Create new Trail limit Order
+ */
 data class TrailLimitOrder(
     override val asset: Asset,
     override val quantity: Double,
@@ -99,5 +142,11 @@ data class TrailLimitOrder(
     override val tif: TimeInForce = GTC(),
     override val id: String = Order.nextId(),
     override val state: OrderState = OrderState()
-) : SingleOrder
+) : SingleOrder {
+
+    init {
+        require(trailPercentage > 0.0) {"trailPrecentage should be a positive value"}
+    }
+
+}
 

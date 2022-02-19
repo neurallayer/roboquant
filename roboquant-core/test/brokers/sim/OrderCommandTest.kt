@@ -19,10 +19,7 @@ package org.roboquant.brokers.sim
 import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.feeds.TradePrice
-import org.roboquant.orders.LimitOrder
-import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.StopLimitOrder
-import org.roboquant.orders.StopOrder
+import org.roboquant.orders.*
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -81,6 +78,37 @@ internal class OrderCommandTest {
         assertEquals(0, executions.size)
 
         executions = cmd.execute(pricing(97), Instant.now())
+        assertEquals(0, executions.size)
+
+        executions = cmd.execute(pricing(99), Instant.now())
+        assertEquals(1, executions.size)
+    }
+
+    @Test
+    fun testTrailOrder() {
+        val order = TrailOrder(asset, -10.0, 0.01)
+        val cmd = TrailOrderCommand(order)
+        var executions = cmd.execute(pricing(90), Instant.now())
+        assertEquals(0, executions.size)
+
+        executions = cmd.execute(pricing(100), Instant.now())
+        assertEquals(0, executions.size)
+
+        executions = cmd.execute(pricing(98), Instant.now())
+        assertEquals(1, executions.size)
+    }
+
+    @Test
+    fun testTrailLimitOrder() {
+        val order = TrailLimitOrder(asset, -10.0, 0.01, -1.0)
+        val cmd = TrailLimitOrderCommand(order)
+        var executions = cmd.execute(pricing(90), Instant.now())
+        assertEquals(0, executions.size)
+
+        executions = cmd.execute(pricing(100), Instant.now())
+        assertEquals(0, executions.size)
+
+        executions = cmd.execute(pricing(95), Instant.now())
         assertEquals(0, executions.size)
 
         executions = cmd.execute(pricing(99), Instant.now())

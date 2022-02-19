@@ -45,7 +45,7 @@ class DefaultFeeModel(
 
 
     override fun calculate(execution: Execution): Double {
-        return execution.value().absoluteValue * feePercentage
+        return execution.value.absoluteValue * feePercentage
     }
 
 }

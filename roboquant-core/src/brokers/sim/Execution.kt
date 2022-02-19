@@ -16,32 +16,39 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.common.Amount
+import org.roboquant.common.nonzero
 import org.roboquant.orders.Order
 
 /**
  * Return how much of the order was filled and against what price. The price is in
  * the currency denoted by the underlying asset.
  *
- * Typically a [FeeModel] might still increase the price afterwards due to spread and slippage cost.
- *
- * @property order
- * @property quantity
- * @property price
- * @constructor Create empty Execution
+ * @property order The order the execution is linked to
+ * @property quantity The quantity traded
+ * @property price The (average) price of the execution
+ * @constructor Create new Execution
  */
 class Execution(val order: Order, val quantity: Double, val price: Double) {
 
     init {
-        require(quantity != 0.0) { "Execution should have a non-zero quantity" }
+        require(quantity.nonzero) { "Execution should have a non-zero quantity" }
     }
 
     /**
      * Totol size of execution, including contract size
      */
-    fun size(): Double = order.asset.multiplier * quantity
+    val size
+        get() = order.asset.multiplier * quantity
 
-    fun value() : Double = order.asset.value(quantity, price).value
+    /**
+     * Totol value of execution in the currency denoted by the underlying asset
+     */
+    val value
+        get() = order.asset.value(quantity, price).value
 
-    fun amount() : Amount = order.asset.value(quantity, price)
+    /**
+     * Totol amount of execution in the currency denoted by the underlying asset
+     */
+    val amount
+        get() = order.asset.value(quantity, price)
 }
