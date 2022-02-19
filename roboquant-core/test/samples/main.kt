@@ -484,7 +484,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("ONE_MILLION") {
+    when ("TWO_MILLION") {
         // "CRYPTO" -> crypto()
         "BETA" -> beta()
         "BETA2" -> beta2()
@@ -495,7 +495,7 @@ suspend fun main() {
         "MULTI_RUN" -> multiRun()
         "MULTI_RUN_PARALLEL" -> println( measureTimeMillis {  multiRunParallel() })
         "WALKFORWARD_PARALLEL" -> println( measureTimeMillis {  walkforwardParallel() })
-        "ONE_MILLION" -> twoMillionBars()
+        "TWO_MILLION" -> twoMillionBars()
         "MC" -> multiCurrency()
         "MINUTES" -> manyMinutes()
         "TESTING" -> testingStrategies()

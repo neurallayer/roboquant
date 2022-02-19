@@ -116,7 +116,7 @@ class AlpacaBroker(
         try {
             for (order in alpacaAPI.orders().get(CurrentOrderStatus.ALL, null, null, null, null, false, null)) {
                 logger.fine { "received $order" }
-                _account.orders.add(toOrder(order))
+                _account.putOrders(listOf(toOrder(order)))
             }
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())
@@ -248,7 +248,7 @@ class AlpacaBroker(
         for (order in orders) {
             if (order is SingleOrder) {
                 placeOrder(order)
-                _account.orders.add(order)
+                _account.putOrders(listOf(order))
             } else {
                 throw Exception("Unsupported order type $order")
             }

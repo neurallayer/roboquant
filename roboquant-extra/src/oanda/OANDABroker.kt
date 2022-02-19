@@ -178,7 +178,7 @@ class OANDABroker(
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer {"received ${orders.size} orders and ${event.actions.size} actions"}
 
-        _account.orders.addAll(orders)
+        _account.putOrders(orders)
 
         if (! enableOrders) {
             for (order in orders) order.status = OrderStatus.REJECTED

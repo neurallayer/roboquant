@@ -105,7 +105,7 @@ class IBKRBroker(
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        _account.orders.addAll(orders)
+        _account.putOrders(orders)
 
         if (!enableOrders) return _account.toAccount()
 
@@ -197,7 +197,7 @@ class IBKRBroker(
             } else {
                 val newOrder = toOrder(order, contract)
                 orderMap[orderId] = newOrder
-                _account.orders.add(newOrder)
+                _account.putOrders(listOf(newOrder))
             }
         }
 

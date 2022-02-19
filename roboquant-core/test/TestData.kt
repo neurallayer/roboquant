@@ -46,7 +46,7 @@ object TestData {
         val order = MarketOrder(asset1, 100.0)
         order.state.placed = Instant.now()
         order.status = OrderStatus.COMPLETED
-        account.orders.add(order)
+        account.putOrders(listOf(order))
         return account
     }
 
@@ -61,7 +61,7 @@ object TestData {
         val order = MarketOrder(asset1, 100.0)
         order.state.placed = Instant.now()
         order.status = OrderStatus.COMPLETED
-        account.orders.add(order)
+        account.putOrders(listOf(order))
         return account.toAccount()
     }
 

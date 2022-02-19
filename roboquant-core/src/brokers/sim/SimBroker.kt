@@ -125,6 +125,17 @@ class SimBroker(
     }
 
 
+    private fun simulateMarket(newOrders:List<Order>, event: Event) {
+        executionEngine.addAll(newOrders)
+        val executions = executionEngine.execute(event)
+        for (execution in executions) updateAccount(execution, event.time)
+
+        // TODO replace with real copy of orders
+        val orders = executionEngine.orderCommands.map { it.order }
+        _account.putOrders(orders)
+    }
+
+
     private fun updateBuyingPower() {
         val value = accountModel.calculate(_account)
         logger.finer { "Calculated buying power $value" }
@@ -140,11 +151,10 @@ class SimBroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer { "Received ${orders.size} orders at ${event.time}" }
-        _account.orders.addAll(orders)
-        executionEngine.addAll(orders)
+        // val slips = orders.orderSlips
 
-        val executions = executionEngine.execute(event)
-        for (execution in executions) updateAccount(execution, event.time)
+        _account.putOrders(orders)
+        simulateMarket(orders, event)
         _account.updateMarketPrices(event)
         _account.lastUpdate = event.time
         updateBuyingPower()

@@ -59,9 +59,9 @@ class InternalAccount(
     val trades = LinkedList<Trade>()
 
     /**
-     * All orders
+     * All orders in a map with key being the order ID
      */
-    val orders = LinkedList<Order>()
+    val orders = TreeMap<String, Order>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -112,6 +112,12 @@ class InternalAccount(
         }
     }
 
+    /**
+     * Put orders, replacing existing ones with the same order id or otherwise add them.
+     */
+    fun putOrders(orders: Collection<Order>) {
+        for (order in orders) this.orders[order.id] = order
+    }
 
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]
@@ -142,7 +148,7 @@ class InternalAccount(
             lastUpdate,
             cash.clone(),
             trades.toList(),
-            orders.toList(),
+            orders.values.toList(),
             portfolio.values.toList(),
             buyingPower
         )
@@ -150,3 +156,5 @@ class InternalAccount(
 
 }
 
+val Map<String, Order>.open
+    get() = values.open

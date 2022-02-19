@@ -31,7 +31,7 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
     }
 
     // Currently active order commands
-    private val orderCommands = LinkedList<TradeOrderCommand>()
+    internal val orderCommands = LinkedList<TradeOrderCommand>()
 
     // Add a new order to the execution engine
     fun add(order: Order) = orderCommands.add(getTradeOrderCommand(order))
