@@ -47,7 +47,7 @@ interface TimeInForce {
  * Good Till Cancelled policy. The order will remain active until fully filled or is cancelled.
  *
  * In practice, most brokers allow such order to remain active for 60-90 days max. 90 days is also what is
- * used a default value for this implementation
+ * used a default value for this implementation.
  *
  * @constructor Create new GTC tif
  */
@@ -71,7 +71,7 @@ class GTC(private val maxDays: Int = 90) : TimeInForce {
 
 
 /**
- * Good Till Date policy. The order will remain active until fully filled or a specified date
+ * Good Till Date policy. The order will remain active until fully filled or a specified date.
  *
  * @property date
  * @constructor Create new GTD tif

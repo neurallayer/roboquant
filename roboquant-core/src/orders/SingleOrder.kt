@@ -25,17 +25,33 @@ import org.roboquant.common.Asset
  */
 interface SingleOrder : TradeOrder {
 
+    /**
+     * Quantity of this order, positive value being a BUY and negative value being a SELL order.
+     */
     val quantity: Double
+
+    /**
+     * Time in Force policy that applies to this order
+     */
     val tif: TimeInForce
 
+    /**
+     * Is this a sell order
+     */
     val sell
         get() = quantity < 0.0
 
+    /**
+     * Is this a buy order
+     */
     val buy
         get() = quantity > 0.0
 
+    /**
+     * Direction of the order, 1 being BUY and -1 being SELL
+     */
     val direction
-        get() = if (quantity > 0.0) 1 else if (quantity < 0.0) -1 else 0
+        get() = if (quantity > 0.0) 1 else -1
 
 }
 
@@ -82,7 +98,18 @@ data class LimitOrder(
 ) : SingleOrder
 
 
-
+/**
+ * Stop limit order
+ *
+ * @property asset
+ * @property quantity
+ * @property stop
+ * @property limit
+ * @property tif
+ * @property id
+ * @property state
+ * @constructor Create empty Stop limit order
+ */
 data class StopLimitOrder(
     override val asset: Asset,
     override val quantity: Double,
@@ -93,7 +120,17 @@ data class StopLimitOrder(
     override val state: OrderState = OrderState()
 ) : SingleOrder
 
-
+/**
+ * Stop order
+ *
+ * @property asset
+ * @property quantity
+ * @property stop
+ * @property tif
+ * @property id
+ * @property state
+ * @constructor Create empty Stop order
+ */
 data class StopOrder(
     override val asset: Asset,
     override val quantity: Double,
@@ -103,7 +140,17 @@ data class StopOrder(
     override val state: OrderState = OrderState()
 ) : SingleOrder
 
-
+/**
+ * Trail order
+ *
+ * @property asset
+ * @property quantity
+ * @property trailPercentage
+ * @property tif
+ * @property id
+ * @property state
+ * @constructor Create empty Trail order
+ */
 data class TrailOrder(
     override val asset: Asset,
     override val quantity: Double,

@@ -21,9 +21,7 @@ import com.oanda.v20.ContextBuilder
 import com.oanda.v20.account.AccountID
 import com.oanda.v20.primitives.InstrumentType
 import org.roboquant.Roboquant
-import org.roboquant.brokers.sim.DefaultFeeModel
-import org.roboquant.brokers.sim.MarginAccount
-import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.brokers.sim.*
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Config
@@ -34,21 +32,25 @@ import org.roboquant.strategies.Strategy
 object OANDA {
 
     /**
-     * Create a [Roboquant] instance configured for back testing Forex trading. Although trading Forex is just like any
+     * Create a [Roboquant] instance configured for back testing OANDA trading. Although trading Forex is just like any
      * another asset class, there are some configuration paramters that are different from assets classes like stocks:
      * - Being short is as common as being long
-     * - The spread (for common currency pairs) is smaller than most stocks
+     * - The spread cost (for common currency pairs) is smaller than with most stocks
      * - Leverage is high
+     * - There are no fees or commisions
      */
     fun roboquant(strategy: Strategy, vararg metrics: Metric): Roboquant {
         // We allow shorting
         val policy = DefaultPolicy(shorting = true)
 
+
+        val feeModel = NoFeeModel()
+
         // We use a lower cost model, since the default of 10 BIPS is too much for Forex
         // We select 2.0 BIPS
-        val feeModel = DefaultFeeModel(2.0)
+        val pricingEngine = SlippagePricing(2)
         val buyingPowerModel = MarginAccount(20.0)
-        val broker = SimBroker(feeModel = feeModel, accountModel = buyingPowerModel)
+        val broker = SimBroker(feeModel = feeModel, accountModel = buyingPowerModel, pricingEngine = pricingEngine)
 
         return Roboquant(strategy, *metrics, policy = policy, broker = broker)
     }
@@ -57,10 +59,7 @@ object OANDA {
         val url = if (demo) "https://api-fxpractice.oanda.com/" else "https://api-fxtrade.oanda.com/"
         val apiToken = token ?: Config.getProperty("OANDA_API_KEY")
         require(apiToken != null) { "Couldn't locate API token OANDA_API_KEY" }
-        return ContextBuilder(url)
-            .setToken(apiToken)
-            .setApplication("roboquant")
-            .build()
+        return ContextBuilder(url).setToken(apiToken).setApplication("roboquant").build()
     }
 
 

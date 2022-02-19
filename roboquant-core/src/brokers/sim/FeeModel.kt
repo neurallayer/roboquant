@@ -39,7 +39,7 @@ interface FeeModel {
  * @property feePercentage fee as a percentage of total execution cost, 0.01 = 1%. Default is 0.0
  * @constructor Create new Default fee model
  */
-class DefaultFeeModel(
+class PercentageFeeModel(
     private val feePercentage: Double = 0.0,
 ) : FeeModel {
 

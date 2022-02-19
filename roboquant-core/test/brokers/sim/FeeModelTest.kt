@@ -24,7 +24,7 @@ internal class FeeModelTest {
 
     @Test
     fun testDefaultCostModel() {
-        val model = DefaultFeeModel(feePercentage = 0.01)
+        val model = PercentageFeeModel(feePercentage = 0.01)
         val order = TestData.usMarketOrder()
         val fee = model.calculate(Execution(order, 5.0, 100.0))
         assertEquals(5.0, fee)
