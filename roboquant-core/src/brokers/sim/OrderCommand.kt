@@ -5,15 +5,10 @@ import org.roboquant.orders.*
 import java.time.Instant
 
 
-interface ModifyOrderCommand {
-
-    fun execute(price: Double, time: Instant): Double
-
-    val order: Order
-}
 
 
-interface TradeOrderCommand {
+
+interface OrderCommand {
 
     fun execute(pricing: Pricing, time: Instant): List<Execution>
 
@@ -21,7 +16,8 @@ interface TradeOrderCommand {
 
 }
 
-abstract class SingleOrderCommand<T : SingleOrder>(final override val order: T) : TradeOrderCommand {
+
+abstract class SingleOrderCommand<T : SingleOrder>(final override var order: T) : OrderCommand {
 
     internal var fill = 0.0
     internal var qty = order.quantity
@@ -30,10 +26,7 @@ abstract class SingleOrderCommand<T : SingleOrder>(final override val order: T) 
         get() = qty - fill
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-        if (order.state.status == OrderStatus.INITIAL) {
-            order.state.status = OrderStatus.ACCEPTED
-            order.state.placed = time
-        }
+
         val execution = fill(pricing)
         fill += execution?.quantity ?: 0.0
 
@@ -53,6 +46,9 @@ abstract class SingleOrderCommand<T : SingleOrder>(final override val order: T) 
     abstract fun fill(pricing: Pricing): Execution?
 }
 
+
+
+
 internal class MarketOrderCommand(order: MarketOrder) : SingleOrderCommand<MarketOrder>(order) {
     override fun fill(pricing: Pricing): Execution = Execution(order, remaining, pricing.marketPrice(remaining))
 }
@@ -71,7 +67,7 @@ internal class LimitOrderCommand(order: LimitOrder) : SingleOrderCommand<LimitOr
 }
 
 
-internal class OCOOrderCommand(override val order: OneCancelsOtherOrder) : TradeOrderCommand {
+internal class OCOOrderCommand(override val order: OneCancelsOtherOrder) : OrderCommand {
 
     private val first = ExecutionEngine.getTradeOrderCommand(order.first)
     private val second = ExecutionEngine.getTradeOrderCommand(order.second)
@@ -94,7 +90,7 @@ internal class OCOOrderCommand(override val order: OneCancelsOtherOrder) : Trade
 }
 
 
-internal class OTOOrderCommand(override val order: OneTriggersOtherOrder) : TradeOrderCommand {
+internal class OTOOrderCommand(override val order: OneTriggersOtherOrder) : OrderCommand {
 
     private val first = ExecutionEngine.getTradeOrderCommand(order.first)
     private val second = ExecutionEngine.getTradeOrderCommand(order.second)
@@ -116,7 +112,7 @@ internal class OTOOrderCommand(override val order: OneTriggersOtherOrder) : Trad
     }
 }
 
-internal class BracketOrderCommand(override val order: BracketOrder) : TradeOrderCommand {
+internal class BracketOrderCommand(override val order: BracketOrder) : OrderCommand {
 
     private val main = ExecutionEngine.getTradeOrderCommand(order.entry) as SingleOrderCommand<*>
     private val profit = ExecutionEngine.getTradeOrderCommand(order.takeProfit) as SingleOrderCommand<*>

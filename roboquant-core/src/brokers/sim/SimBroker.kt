@@ -124,15 +124,15 @@ class SimBroker(
 
     }
 
-
     private fun simulateMarket(newOrders:List<Order>, event: Event) {
         executionEngine.addAll(newOrders)
         val executions = executionEngine.execute(event)
         for (execution in executions) updateAccount(execution, event.time)
 
         // TODO replace with real copy of orders
-        val orders = executionEngine.orderCommands.map { it.order }
-        _account.putOrders(orders)
+        // val orders = executionEngine.orderCommands.map { it.order }
+        // _account.putOrders(orders)
+        _account.putOrders(newOrders)
     }
 
 
@@ -151,9 +151,6 @@ class SimBroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer { "Received ${orders.size} orders at ${event.time}" }
-        // val slips = orders.orderSlips
-
-        _account.putOrders(orders)
         simulateMarket(orders, event)
         _account.updateMarketPrices(event)
         _account.lastUpdate = event.time
@@ -193,7 +190,8 @@ class SimBroker(
      * last known market prices as price actions.
      */
     fun liquidatePortfolio(time: Instant = _account.lastUpdate): Account {
-        for (order in _account.orders.open) order.status = OrderStatus.CANCELLED
+        // TODO
+        // for (order in _account.orders.open) order.status = OrderStatus.CANCELLED
         val change = _account.portfolio.values.diff(listOf())
         val orders = change.map { MarketOrder(it.key, it.value) }
         val actions = _account.portfolio.values.map { TradePrice(it.asset, it.spotPrice) }

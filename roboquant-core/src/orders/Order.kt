@@ -45,14 +45,17 @@ interface Order {
      */
     val id: String
 
+
     /**
      * keeps track of changing state of an order while it is being executed.
      */
     val state: OrderState
 
+
     var status
         get() = state.status
-        set(value) { state.status = value }
+        set(value) { state.status = value}
+
 
     companion object {
 

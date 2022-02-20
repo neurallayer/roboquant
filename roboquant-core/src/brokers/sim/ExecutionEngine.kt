@@ -12,7 +12,7 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
         /**
          * Get a new command for a cerain order
          */
-        fun getTradeOrderCommand(order: Order): TradeOrderCommand {
+        fun getTradeOrderCommand(order: Order): OrderCommand {
             return when (order) {
                 is MarketOrder -> MarketOrderCommand(order)
                 is LimitOrder -> LimitOrderCommand(order)
@@ -31,7 +31,7 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
     }
 
     // Currently active order commands
-    internal val orderCommands = LinkedList<TradeOrderCommand>()
+    internal val orderCommands = LinkedList<OrderCommand>()
 
     // Add a new order to the execution engine
     fun add(order: Order) = orderCommands.add(getTradeOrderCommand(order))
@@ -60,12 +60,13 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
             val action = prices[order.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, event.time)
 
-            if (order.status == OrderStatus.INITIAL) {
-                order.state.status = OrderStatus.ACCEPTED
-                order.state.placed = event.time
-            }
 
             val newExecutions = cmd.execute(pricing, event.time)
+
+            if (order.status.closed) {
+
+            }
+
             executions.addAll(newExecutions)
 
             if (order.status.closed) orderCommands.remove(cmd)
