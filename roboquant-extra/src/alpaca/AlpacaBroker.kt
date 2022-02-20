@@ -17,17 +17,16 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
-import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderSide
-import  net.jacobpeterson.alpaca.model.endpoint.orders.Order as AlpacaOrder
-import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.CurrentOrderStatus
+import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderSide
+import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce
 import net.jacobpeterson.alpaca.rest.AlpacaClientException
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
-import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderStatus as AlpacaOrderStatus
+import net.jacobpeterson.alpaca.model.endpoint.orders.Order as AlpacaOrder
 import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosition
 
 /**
@@ -116,7 +115,7 @@ class AlpacaBroker(
         try {
             for (order in alpacaAPI.orders().get(CurrentOrderStatus.ALL, null, null, null, null, false, null)) {
                 logger.fine { "received $order" }
-                _account.putOrders(listOf(toOrder(order)))
+                _account.putOrders(listOf(toOrder(order)).initialOrderSlips)
             }
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())
@@ -135,9 +134,11 @@ class AlpacaBroker(
         val result = MarketOrder(asset, qty)
         // val fill = if (order.side == OrderSide.BUY) order.filledQuantity.toDouble() else - order.filledQuantity.toDouble()
         // result.fill = fill
-        result.state.placed = order.createdAt.toInstant()
-        // result.price = order.averageFillPrice.toDouble()
 
+
+      /*  result.state.placed = order.createdAt.toInstant()
+
+        TODO
         when (order.status) {
             AlpacaOrderStatus.CANCELED -> result.status = OrderStatus.CANCELLED
             AlpacaOrderStatus.EXPIRED -> result.status = OrderStatus.EXPIRED
@@ -147,6 +148,7 @@ class AlpacaBroker(
                 logger.info { "Received order status ${order.status}" }
             }
         }
+        */
         return result
     }
 
@@ -166,6 +168,9 @@ class AlpacaBroker(
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
     private fun updateOpenOrders() {
+
+        /*
+        TODO
         _account.orders.open.filterIsInstance<SingleOrder>().forEach {
             val aOrder = orderMapping[it]!!
             val order = alpacaAPI.orders().get(aOrder.id, false)
@@ -181,6 +186,8 @@ class AlpacaBroker(
                 }
             }
         }
+
+         */
     }
 
     /**
@@ -219,7 +226,7 @@ class AlpacaBroker(
         }
         orderMapping[order] = alpacaOrder
 
-        // val action = OrderTicket(order, alpacaOrder.id)
+       /*
         when (alpacaOrder.status) {
             AlpacaOrderStatus.CANCELED -> order.status = OrderStatus.CANCELLED
             AlpacaOrderStatus.EXPIRED -> order.status = OrderStatus.EXPIRED
@@ -228,7 +235,7 @@ class AlpacaBroker(
             else -> {
                 logger.info { "Received order status ${order.status}" }
             }
-        }
+        }*/
 
     }
 
@@ -248,7 +255,7 @@ class AlpacaBroker(
         for (order in orders) {
             if (order is SingleOrder) {
                 placeOrder(order)
-                _account.putOrders(listOf(order))
+                _account.putOrders(listOf(order).initialOrderSlips)
             } else {
                 throw Exception("Unsupported order type $order")
             }

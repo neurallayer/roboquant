@@ -23,17 +23,12 @@ import org.roboquant.common.Asset
  * SingleOrder types are plain non-combined orders with a pre-defined quantity and Time in Force policy. Many well-known
  * order types fall under this category, like Market-, Limit- and Trail-orders.
  */
-interface SingleOrder : TradeOrder {
+abstract class SingleOrder(asset: Asset, val quantity: Double,  val tif: TimeInForce, id: String ) : Order(asset, id)  {
 
-    /**
-     * Quantity of this order, positive value being a BUY and negative value being a SELL order.
-     */
-    val quantity: Double
 
-    /**
-     * Time in Force policy that applies to this order
-     */
-    val tif: TimeInForce
+    init {
+        require(quantity != 0.0) { "Orders require a non zero quantity"}
+    }
 
     /**
      * Is this a sell order
@@ -64,16 +59,14 @@ interface SingleOrder : TradeOrder {
  * @property quantity
  * @property tif
  * @property id
- * @property state
  * @constructor Create new Market order
  */
-data class MarketOrder(
-    override val asset: Asset,
-    override val quantity: Double,
-    override val tif: TimeInForce = GTC(),
-    override val id: String = Order.nextId(),
-    override val state: OrderState = OrderState()
-) : SingleOrder
+class MarketOrder(
+    asset: Asset,
+    quantity: Double,
+    tif: TimeInForce = GTC(),
+    id: String = nextId(),
+) : SingleOrder(asset, quantity, tif, id)
 
 /**
  *  Buy or sell an asset with a restriction on the maximum price to be paid or the minimum price
@@ -85,17 +78,36 @@ data class MarketOrder(
  * @property limit
  * @property tif
  * @property id
- * @property state
  * @constructor Create empty Limit order
  */
-data class LimitOrder(
-    override val asset: Asset,
-    override val quantity: Double,
+class LimitOrder(
+    asset: Asset,
+    quantity: Double,
     val limit: Double,
-    override val tif: TimeInForce = GTC(),
-    override val id: String = Order.nextId(),
-    override val state: OrderState = OrderState()
-) : SingleOrder
+    tif: TimeInForce = GTC(),
+    id: String = nextId(),
+) : SingleOrder(asset, quantity, tif, id)
+
+
+
+
+/**
+ * Stop order
+ *
+ * @property asset
+ * @property quantity
+ * @property stop
+ * @property tif
+ * @property id
+ * @constructor Create empty Stop order
+ */
+class StopOrder(
+    asset: Asset,
+    quantity: Double,
+    val stop: Double,
+    tif: TimeInForce = GTC(),
+    id: String = nextId(),
+) : SingleOrder(asset, quantity, tif, id)
 
 
 /**
@@ -107,38 +119,16 @@ data class LimitOrder(
  * @property limit
  * @property tif
  * @property id
- * @property state
  * @constructor Create empty Stop limit order
  */
-data class StopLimitOrder(
-    override val asset: Asset,
-    override val quantity: Double,
+class StopLimitOrder(
+    asset: Asset,
+    quantity: Double,
     val stop: Double,
     val limit: Double,
-    override val tif: TimeInForce = GTC(),
-    override val id: String = Order.nextId(),
-    override val state: OrderState = OrderState()
-) : SingleOrder
-
-/**
- * Stop order
- *
- * @property asset
- * @property quantity
- * @property stop
- * @property tif
- * @property id
- * @property state
- * @constructor Create empty Stop order
- */
-data class StopOrder(
-    override val asset: Asset,
-    override val quantity: Double,
-    val stop: Double,
-    override val tif: TimeInForce = GTC(),
-    override val id: String = Order.nextId(),
-    override val state: OrderState = OrderState()
-) : SingleOrder
+    tif: TimeInForce = GTC(),
+    id: String = nextId(),
+) : SingleOrder(asset, quantity, tif, id)
 
 /**
  * Trail order
@@ -148,17 +138,15 @@ data class StopOrder(
  * @property trailPercentage
  * @property tif
  * @property id
- * @property state
  * @constructor Create empty Trail order
  */
-data class TrailOrder(
-    override val asset: Asset,
-    override val quantity: Double,
+open class TrailOrder(
+    asset: Asset,
+    quantity: Double,
     val trailPercentage: Double,
-    override val tif: TimeInForce = GTC(),
-    override val id: String = Order.nextId(),
-    override val state: OrderState = OrderState()
-) : SingleOrder {
+    tif: TimeInForce = GTC(),
+    id: String = nextId(),
+) : SingleOrder(asset, quantity, tif, id) {
 
     init {
         require(trailPercentage > 0.0) {"trailPrecentage should be a positive value"}
@@ -178,22 +166,14 @@ data class TrailOrder(
  * @property limitOffset offset for the limit compared to the stop value, negative value being a lower limit
  * @property tif
  * @property id
- * @property state
  * @constructor Create new Trail limit Order
  */
-data class TrailLimitOrder(
-    override val asset: Asset,
-    override val quantity: Double,
-    val trailPercentage: Double,
+class TrailLimitOrder(
+    asset: Asset,
+    quantity: Double,
+    trailPercentage: Double,
     val limitOffset: Double,
-    override val tif: TimeInForce = GTC(),
-    override val id: String = Order.nextId(),
-    override val state: OrderState = OrderState()
-) : SingleOrder {
-
-    init {
-        require(trailPercentage > 0.0) {"trailPrecentage should be a positive value"}
-    }
-
-}
+    tif: TimeInForce = GTC(),
+    id: String = nextId(),
+) : TrailOrder(asset, quantity, trailPercentage, tif, id)
 

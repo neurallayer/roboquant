@@ -22,7 +22,6 @@ import com.oanda.v20.order.MarketOrderRequest
 import com.oanda.v20.order.OrderCreateRequest
 import com.oanda.v20.position.PositionSide
 import com.oanda.v20.primitives.InstrumentName
-import com.oanda.v20.transaction.OrderCancelReason
 import com.oanda.v20.transaction.OrderFillTransaction
 import com.oanda.v20.transaction.TransactionID
 import org.roboquant.brokers.*
@@ -30,10 +29,9 @@ import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
-import org.roboquant.orders.FOK
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
-import org.roboquant.orders.OrderStatus
+import org.roboquant.orders.initialOrderSlips
 import java.time.Instant
 
 /**
@@ -178,12 +176,15 @@ class OANDABroker(
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer {"received ${orders.size} orders and ${event.actions.size} actions"}
 
-        _account.putOrders(orders)
+        val slips = orders.initialOrderSlips
+        _account.putOrders(slips)
 
         if (! enableOrders) {
-            for (order in orders) order.status = OrderStatus.REJECTED
+            // TODO
+            // for (order in orders) order.status = OrderStatus.REJECTED
         } else {
-            for (order in orders) {
+            /*
+            for (order in slips) {
                 if (order is MarketOrder) {
                     if (order.tif !is FOK) logger.fine("Received order $order, using tif=FOK instead")
                     val req = createOrderRequest(order)
@@ -208,8 +209,8 @@ class OANDABroker(
                 } else {
                     logger.warning { "Rejecting unsupported order type $order" }
                     order.status = OrderStatus.REJECTED
-                }
-            }
+
+            }  }*/
         }
 
         // OONDA doesn't update positions quick enough and so they don't reflect trades just made

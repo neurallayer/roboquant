@@ -25,12 +25,12 @@ internal class UpdateOrderTest {
 
     @Test
     fun basic() {
-        val original = TestData.euMarketOrder()
-        val qty = original.quantity
+        val original = OrderSlip(TestData.euMarketOrder())
+        val qty = original.order.quantity
         val update = MarketOrder(original.asset, 100.0)
         val order = UpdateOrder(original, update)
         assertEquals(100.0, order.update.quantity)
-        assertEquals(qty, order.original.quantity)
+        assertEquals(qty, original.order.quantity)
 
     }
 

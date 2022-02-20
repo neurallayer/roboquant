@@ -24,6 +24,8 @@ import org.roboquant.common.Logging
 import org.roboquant.common.zeroOrMore
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
+import org.roboquant.orders.OrderSlip
+import org.roboquant.orders.open
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.math.floor
@@ -125,17 +127,18 @@ open class DefaultPolicy(
      * How many orders do we have for the current trading day. This takes into account that different orders may be
      * trading on different exchanges with different timezones.
      */
-    private fun getOrdersCurrentDay(now: Instant, orders: List<Order>) =
+    private fun getOrdersCurrentDay(now: Instant, orders: List<OrderSlip<*>>) =
         orders.filter { it.asset.exchange.sameDay(now, it.state.placed) }.size
+
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<Order>()
         var buyingPower = account.buyingPower.value
-        val openOrderAssets = account.orders.filter { it.status.open }.map { it.asset }
+        val openOrderAssets = account.orders.open.map { it.asset }.distinct()
         var remainingDayOrders = maxOrdersPerDay
 
         // Performance optimilization. Checking day orders is expensive so we only do it when required
-        if (maxOrdersPerDay != Int.MAX_VALUE) remainingDayOrders -= getOrdersCurrentDay(event.time, account.orders)
+       if (maxOrdersPerDay != Int.MAX_VALUE) remainingDayOrders -= getOrdersCurrentDay(event.time, account.orders)
 
         for (signal in signals.resolve(signalResolution)) {
             val asset = signal.asset

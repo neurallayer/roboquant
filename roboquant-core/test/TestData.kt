@@ -27,7 +27,7 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderStatus
+import org.roboquant.orders.OrderSlip
 import java.io.File
 import java.time.Instant
 
@@ -44,9 +44,9 @@ object TestData {
         account.setPosition(Position(asset2, 100.0, 10.0))
 
         val order = MarketOrder(asset1, 100.0)
-        order.state.placed = Instant.now()
+        /*order.state.placed = Instant.now()
         order.status = OrderStatus.COMPLETED
-        account.putOrders(listOf(order))
+        account.putOrders(listOf(order))*/
         return account
     }
 
@@ -58,9 +58,7 @@ object TestData {
         account.setPosition(Position(asset1, 100.0, 10.0))
         account.setPosition(Position(asset2, 100.0, 10.0))
 
-        val order = MarketOrder(asset1, 100.0)
-        order.state.placed = Instant.now()
-        order.status = OrderStatus.COMPLETED
+        val order = OrderSlip(MarketOrder(asset1, 100.0))
         account.putOrders(listOf(order))
         return account.toAccount()
     }

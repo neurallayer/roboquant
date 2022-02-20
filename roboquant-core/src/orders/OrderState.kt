@@ -19,13 +19,44 @@ package org.roboquant.orders
 import java.time.Instant
 
 /**
- * Part of order that can change
+ * Part of order processing that can change
  */
 data class OrderState(
     var status: OrderStatus = OrderStatus.INITIAL,
     var placed: Instant = Instant.MIN,
     var closed: Instant = Instant.MAX
 )
+
+class OrderSlip<T: Order>(val order: T, val state: OrderState = OrderState()) {
+
+    val open
+        get() = state.status.open
+
+    val closed
+        get() = state.status.closed
+
+    val status
+        get() = state.status
+
+    val asset
+        get() = order.asset
+
+    val id
+        get() = order.id
+
+}
+
+
+val Collection<OrderSlip<*>>.orders
+    get() = map { it.order }
+
+
+val Collection<OrderSlip<*>>.open
+    get() = filter { it.open }.orders
+
+
+val Collection<OrderSlip<*>>.closed
+    get() = filter { it.closed }.orders
 
 
 /**

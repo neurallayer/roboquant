@@ -17,6 +17,8 @@
 package org.roboquant.jupyter
 
 import org.roboquant.orders.Order
+import org.roboquant.orders.OrderSlip
+import org.roboquant.orders.OrderStatus
 import org.roboquant.orders.SingleOrder
 import java.math.BigDecimal
 import java.time.Instant
@@ -29,7 +31,7 @@ import java.time.Instant
  * provide more insights, since these also cover advanced order types. You can use the [TradeChart] for that.
  */
 class OrderChart(
-    private val orders: List<Order>,
+    private val orders: List<OrderSlip<*>>,
     private val aspect: String = "quantity",
 ) : Chart() {
 
@@ -39,28 +41,28 @@ class OrderChart(
         require(aspect in listOf("remaining", "direction", "quantity", "value"))
     }
 
-    private fun getTooltip(order: SingleOrder): String {
-        return with(order) {
-            "asset: $asset <br> currency: ${asset.currency} <br> placed: ${state.placed} <br> qty: $quantity <br> id: $id <br> type: ${order::class.simpleName} <br> tif: $tif"
+    private fun getTooltip(slip: OrderSlip<SingleOrder>): String {
+        return with(slip) {
+            "asset: $asset <br> currency: ${asset.currency} <br> placed: ${state.placed} <br> qty: ${order.quantity} <br> id: $id <br> type: ${order::class.simpleName} <br> tif: $order.tif"
         }
     }
 
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
-        val singleOrders = orders.filterIsInstance<SingleOrder>()
+        val slips = orders.filterIsInstance<OrderSlip<SingleOrder>>().filter { it.status != OrderStatus.INITIAL }
         max = Double.MIN_VALUE.toBigDecimal()
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
-        for (order in singleOrders) {
-            with(order) {
+        for (slip in slips) {
+            with(slip) {
                 val value = when (aspect) {
                     // "remaining" -> remaining.toBigDecimal()
                     "direction" -> order.direction.toBigDecimal()
-                    "quantity" -> quantity.toBigDecimal()
+                    "quantity" -> order.quantity.toBigDecimal()
                     // "value" -> order.value().convert(time = order.placed).toBigDecimal()
                     else -> throw Exception("Unsupported aspect")
                 }
 
                 if (value.abs() > max) max = value.abs()
-                val tooltip = getTooltip(order)
+                val tooltip = getTooltip(slip)
                 d.add(Triple(state.placed, value, tooltip))
             }
         }

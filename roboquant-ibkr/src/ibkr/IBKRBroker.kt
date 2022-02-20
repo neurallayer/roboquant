@@ -23,7 +23,6 @@ import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
-import org.roboquant.orders.OrderStatus
 import java.lang.Thread.sleep
 import java.time.Instant
 import kotlin.math.absoluteValue
@@ -105,7 +104,7 @@ class IBKRBroker(
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        _account.putOrders(orders)
+        _account.putOrders(orders.initialOrderSlips)
 
         if (!enableOrders) return _account.toAccount()
 
@@ -174,7 +173,8 @@ class IBKRBroker(
             val asset = contract.getAsset()
             val qty = if (order.action == "BUY") order.totalQuantity() else -order.totalQuantity()
             val result = MarketOrder(asset, qty)
-            result.status = OrderStatus.ACCEPTED
+            // QQQ
+            // result.status = OrderStatus.ACCEPTED
             return result
         }
 
@@ -192,12 +192,13 @@ class IBKRBroker(
             val openOrder = orderMap[orderId]
             if (openOrder != null) {
                 if (orderState.completedStatus() == "true") {
-                    openOrder.status = OrderStatus.COMPLETED
+                    // TODO
+                    // openOrder.status = OrderStatus.COMPLETED
                 }
             } else {
                 val newOrder = toOrder(order, contract)
                 orderMap[orderId] = newOrder
-                _account.putOrders(listOf(newOrder))
+                _account.putOrders(listOf(newOrder).initialOrderSlips)
             }
         }
 
@@ -213,11 +214,14 @@ class IBKRBroker(
             else if (openOrder is SingleOrder) {
                 // openOrder.fill = filled
                 // openOrder.price = lastFillPrice
-                when (status) {
+
+                // TODO
+
+              /*  when (status) {
                     "PreSubmitted" -> openOrder.status = OrderStatus.INITIAL
                     "Submitted" -> openOrder.status = OrderStatus.ACCEPTED
                     "Filled" -> openOrder.status = OrderStatus.COMPLETED
-                }
+                }*/
             }
         }
 

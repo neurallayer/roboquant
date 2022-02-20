@@ -23,7 +23,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
-import org.roboquant.orders.OrderStatus
+import org.roboquant.orders.OrderSlip
 import java.time.Instant
 import java.util.logging.Logger
 
@@ -125,14 +125,16 @@ class SimBroker(
     }
 
     private fun simulateMarket(newOrders:List<Order>, event: Event) {
+        // Add new orders to the execution egine and run it with the latest events
         executionEngine.addAll(newOrders)
         val executions = executionEngine.execute(event)
+
+        // Process the new executions
         for (execution in executions) updateAccount(execution, event.time)
 
-        // TODO replace with real copy of orders
-        // val orders = executionEngine.orderCommands.map { it.order }
-        // _account.putOrders(orders)
-        _account.putOrders(newOrders)
+        // Get latest state of orders
+        val orders = executionEngine.orderCommands.map { OrderSlip(it.order, it.state) }
+        _account.putOrders(orders)
     }
 
 

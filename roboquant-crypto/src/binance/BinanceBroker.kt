@@ -141,7 +141,7 @@ class BinanceBroker(
      * @param cancellation
      */
     private fun cancelOrder(cancellation: CancellationOrder) {
-        val c = cancellation.order
+        val c = cancellation.order.order
         require(c.id.isNotEmpty()) { "Require non empty id when cancelling and order $c" }
         require(c.asset.type == AssetType.CRYPTO) { "BinanceBroker only support CRYPTO orders ${c.asset}" }
         val symbol = binanceSymbol(c.asset)

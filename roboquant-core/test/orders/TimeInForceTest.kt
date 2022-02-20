@@ -16,19 +16,10 @@
 
 package org.roboquant.orders
 
-import org.roboquant.TestData
-import org.roboquant.common.Asset
-import java.time.Instant
-import java.time.temporal.ChronoUnit
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-
 
 internal class TimeInForceTest {
 
-    class TestOrder(
+  /*  class TestOrder(
         override val asset: Asset = TestData.usStock(),
         override val state: OrderState = OrderState(),
         override val id: String = "12"
@@ -104,5 +95,5 @@ internal class TimeInForceTest {
         assertFalse(tif.isExpired(order, date, 0.0))
         assertTrue(tif.isExpired(order, date, 10.0))
     }
-
+*/
 }

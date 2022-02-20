@@ -18,6 +18,7 @@ package org.roboquant.orders
 
 import org.junit.Test
 import org.roboquant.TestData
+import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
@@ -32,6 +33,7 @@ internal class OneTriggersOtherOrderTest {
         )
 
         assertTrue(order.first is MarketOrder)
+        assertEquals(order.first.asset, order.asset)
     }
 
 

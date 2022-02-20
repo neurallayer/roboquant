@@ -21,6 +21,7 @@ import org.roboquant.common.Config.baseCurrency
 import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
+import org.roboquant.orders.OrderSlip
 import java.time.Instant
 import java.util.*
 
@@ -61,7 +62,7 @@ class InternalAccount(
     /**
      * All orders in a map with key being the order ID
      */
-    val orders = TreeMap<String, Order>()
+    val orders = TreeMap<String, OrderSlip<*>>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -115,8 +116,15 @@ class InternalAccount(
     /**
      * Put orders, replacing existing ones with the same order id or otherwise add them.
      */
-    fun putOrders(orders: Collection<Order>) {
-        for (order in orders) this.orders[order.id] = order
+    fun putOrders2(orders: Collection<Order>) {
+        for (order in orders) this.orders[order.id] = OrderSlip(order)
+    }
+
+    /**
+     * Put orders, replacing existing ones with the same order id or otherwise add them.
+     */
+    fun putOrders(slips: Collection<OrderSlip<*>>) {
+        for (slip in slips) this.orders[slip.order.id] = slip
     }
 
     /**
@@ -156,5 +164,4 @@ class InternalAccount(
 
 }
 
-val Map<String, Order>.open
-    get() = values.open
+

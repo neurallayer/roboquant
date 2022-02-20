@@ -29,8 +29,8 @@ class OneCancelsOtherOrderTest {
             LimitOrder(asset, 100.0, 10.9),
             LimitOrder(asset, 200.0, 11.1)
         )
+        assertEquals(order.first.asset, order.asset)
 
-        assertEquals(OrderStatus.INITIAL, order.status)
 
     }
 

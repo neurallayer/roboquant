@@ -16,15 +16,15 @@
 
 package org.roboquant.orders
 
-import org.roboquant.common.Asset
 
 
+abstract class ModifyOrder(orderSlip: OrderSlip<*>, id: String) : Order(orderSlip.order.asset, id) {
 
-/**
- * Order type that only modifies (update or cancel) other orders, it doesn't generate trades.
- */
-interface ModifyOrder : Order
+    init {
+        require(orderSlip.state.status.open)
+    }
 
+}
 
 /**
  * Update an existing SimpleOrder. It is up to the broker implementation to translate the updated order to the correct
@@ -38,36 +38,14 @@ interface ModifyOrder : Order
  * @constructor Create empty Order update
  */
 
-data class UpdateOrder<T : SingleOrder>(
-    val original: T,
+class UpdateOrder<T : SingleOrder>(
+    val original: OrderSlip<T>,
     val update: T,
-    override val id: String = Order.nextId(),
-    override val state: OrderState = OrderState()
-) : ModifyOrder {
-
-    init {
-        require(original.status.open)
-        require(original.status == OrderStatus.INITIAL)
-        require(original.asset == update.asset)
-    }
-
-    override val asset: Asset
-        get() = original.asset
-
-}
+    id: String = nextId(),
+) : ModifyOrder(original, id)
 
 
-data class CancellationOrder(
-    val order: Order,
-    override val id: String = Order.nextId(),
-    override val state: OrderState = OrderState()
-) : ModifyOrder {
-
-    init {
-        require(order.status.open)
-    }
-
-    override val asset: Asset
-        get() = order.asset
-
-}
+class CancellationOrder(
+    val order: OrderSlip<*>,
+    id: String = nextId(),
+) : ModifyOrder(order, id)

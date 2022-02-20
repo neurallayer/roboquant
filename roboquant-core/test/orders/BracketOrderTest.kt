@@ -18,7 +18,6 @@ package org.roboquant.orders
 
 import org.junit.Test
 import org.roboquant.TestData
-import java.time.Instant
 import kotlin.test.assertTrue
 
 
@@ -32,8 +31,6 @@ internal class BracketOrderTest {
             LimitOrder(asset, -10.0, 101.0),
             StopOrder(asset, -10.0, 99.0),
         )
-        order.status = OrderStatus.ACCEPTED
-        order.state.placed = Instant.now()
 
         assertTrue(order.entry is MarketOrder)
         assertTrue(order.stopLoss is StopOrder)

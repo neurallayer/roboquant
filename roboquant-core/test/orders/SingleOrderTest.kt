@@ -30,6 +30,7 @@ internal class SingleOrderTest {
         val order = MarketOrder(asset, 100.0)
         assertEquals(100.0, order.quantity)
         assertTrue(order.tif is GTC)
+        assertTrue(order.buy)
     }
 
 
@@ -39,7 +40,7 @@ internal class SingleOrderTest {
         val order = StopOrder(asset, -10.0, 99.0)
         assertEquals(-10.0, order.quantity)
         assertEquals(99.0, order.stop)
-
+        assertTrue(order.sell)
     }
 
     @Test
@@ -48,7 +49,7 @@ internal class SingleOrderTest {
         val order = LimitOrder(asset, -10.0, 101.0)
         assertEquals(-10.0, order.quantity)
         assertEquals(101.0, order.limit)
-
+        assertTrue(order.sell)
     }
 
 
@@ -58,6 +59,7 @@ internal class SingleOrderTest {
         val order = StopLimitOrder(asset, -10.0, 99.0, 98.0)
         assertEquals(-10.0, order.quantity)
         assertEquals(98.0, order.limit)
+        assertTrue(order.sell)
 
     }
 

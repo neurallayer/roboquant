@@ -11,7 +11,6 @@ import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,9 +26,9 @@ internal class AccountModelTest {
         assertEquals(result.value, account.cashAmount.value)
 
         val order = MarketOrder(TestData.usStock(), 100.0)
-        order.status = OrderStatus.ACCEPTED
+    /*    order.status = OrderStatus.ACCEPTED
         order.state.placed = Instant.now()
-        account.putOrders(listOf(order))
+        account.putOrders(listOf(order))*/
         val result2 = uc.calculate(account)
 
         // Right now open orders are not taken into account

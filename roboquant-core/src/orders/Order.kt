@@ -29,32 +29,12 @@ import org.roboquant.common.Asset
  * - a new order (perhaps the most common use case), ranging from a simple market order to advanced order types
  * - cancellation of an existing order
  * - update of an existing order
- *
- * Please note it depends on the broker implementation which order types are supported.
- * The two direct interfaces of this interface are [TradeOrder] and [ModifyOrder].
- */
-interface Order {
+ **/
+abstract class Order(val asset: Asset, val id: String) {
 
-    /**
-     * Underlying asset of the order
-     */
-    val asset: Asset
-
-    /**
-     * Unique identifier for the order that will stay constant. This id will rset when the JVM is restarted.
-     */
-    val id: String
-
-
-    /**
-     * keeps track of changing state of an order while it is being executed.
-     */
-    val state: OrderState
-
-
-    var status
-        get() = state.status
-        set(value) { state.status = value}
+    init {
+        require(id.isNotBlank()) { "Cannot use blank order id's"}
+    }
 
 
     companion object {
@@ -73,6 +53,10 @@ interface Order {
     }
 
 }
+
+
+val Collection<Order>.initialOrderSlips
+    get() = map { OrderSlip(it)}
 
 
 

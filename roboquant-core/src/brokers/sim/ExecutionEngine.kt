@@ -5,21 +5,21 @@ import org.roboquant.orders.*
 import java.util.*
 
 
-internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
+class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
     companion object {
 
         /**
          * Get a new command for a cerain order
          */
-        fun getTradeOrderCommand(order: Order): OrderCommand {
+        fun getOrderCommand(order: Order): OrderCommand<*> {
             return when (order) {
                 is MarketOrder -> MarketOrderCommand(order)
                 is LimitOrder -> LimitOrderCommand(order)
-                is StopOrder -> StopOrderCommand(order)
                 is StopLimitOrder -> StopLimitOrderCommand(order)
-                is TrailOrder -> TrailOrderCommand(order)
+                is StopOrder -> StopOrderCommand(order)
                 is TrailLimitOrder -> TrailLimitOrderCommand(order)
+                is TrailOrder -> TrailOrderCommand(order)
                 is BracketOrder -> BracketOrderCommand(order)
                 is OneCancelsOtherOrder -> OCOOrderCommand(order)
                 is OneTriggersOtherOrder -> OTOOrderCommand(order)
@@ -31,15 +31,15 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
     }
 
     // Currently active order commands
-    internal val orderCommands = LinkedList<OrderCommand>()
+    internal val orderCommands = LinkedList<OrderCommand<*>>()
 
     // Add a new order to the execution engine
-    fun add(order: Order) = orderCommands.add(getTradeOrderCommand(order))
+    fun add(order: Order) = orderCommands.add(getOrderCommand(order))
 
 
     // Add a new order to the execution engine
     fun addAll(orders: List<Order>) {
-        for (order in orders) orderCommands.add(getTradeOrderCommand(order))
+        for (order in orders) orderCommands.add(getOrderCommand(order))
     }
 
 
@@ -49,27 +49,19 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
         // Now run the trade order commands
         val prices = event.prices
-        for (cmd in orderCommands.toList()) {
-            val order = cmd.order
+        for (exec in orderCommands.toList()) {
 
-            if (order.status.closed) {
-                orderCommands.remove(cmd)
+
+            if (exec.status.closed) {
+                orderCommands.remove(exec)
                 continue
             }
 
-            val action = prices[order.asset] ?: continue
+            val action = prices[exec.order.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, event.time)
-
-
-            val newExecutions = cmd.execute(pricing, event.time)
-
-            if (order.status.closed) {
-
-            }
-
+            val newExecutions = exec.execute(pricing, event.time)
             executions.addAll(newExecutions)
 
-            if (order.status.closed) orderCommands.remove(cmd)
         }
         return executions
     }

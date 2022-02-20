@@ -26,7 +26,7 @@ internal class TrailLimitOrderTest {
     fun testTrailOrder() {
         val asset = TestData.usStock()
         val order = TrailOrder(asset, -100.0, 0.01)
-        order.status = OrderStatus.ACCEPTED
+
 
     }
 
@@ -35,7 +35,7 @@ internal class TrailLimitOrderTest {
     fun testTrailLimitOrder() {
         val asset = TestData.usStock()
         val order = TrailLimitOrder(asset, -100.0, 0.01, 0.01)
-        order.status = OrderStatus.ACCEPTED
+
 
     }
 
