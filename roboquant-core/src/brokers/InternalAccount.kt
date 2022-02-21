@@ -22,6 +22,8 @@ import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderSlip
+import org.roboquant.orders.OrderState
+import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import java.util.*
 
@@ -124,7 +126,16 @@ class InternalAccount(
      * Put orders, replacing existing ones with the same order id or otherwise add them.
      */
     fun putOrders(slips: Collection<OrderSlip<*>>) {
-        for (slip in slips) this.orders[slip.order.id] = slip
+        for (slip in slips) orders[slip.order.id] = slip
+    }
+
+    fun rejectOrder(order: Order, time: Instant) {
+        orders[order.id] = OrderSlip(order, OrderState(OrderStatus.REJECTED, time, time))
+    }
+
+
+    fun acceptOrder(order: Order, time: Instant) {
+        orders[order.id] = OrderSlip(order, OrderState(OrderStatus.ACCEPTED, time))
     }
 
     /**
@@ -161,6 +172,7 @@ class InternalAccount(
             buyingPower
         )
     }
+
 
 }
 

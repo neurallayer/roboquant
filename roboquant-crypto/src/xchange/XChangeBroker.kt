@@ -84,7 +84,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        for (order in orders.filterIsInstance<SingleOrder>()) {
+        for (order in orders) {
             val asset = order.asset
             if (asset.type == AssetType.CRYPTO) {
 
@@ -99,18 +99,22 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
                     is LimitOrder -> {
                         trade(currencyPair, order, orderId)
                         placedOrders[orderId] = order
+                        _account.acceptOrder(order, event.time)
                     }
                     is MarketOrder -> {
                         trade(currencyPair, order)
                         placedOrders[orderId] = order
+                        _account.acceptOrder(order, event.time)
                     }
                     else -> {
-                        logger.warning { "CryptoBroker supports only market and limit orders, received ${order::class} instead" }
+                        logger.warning { "only market and limit orders are supported, received ${order::class} instead" }
+                        _account.rejectOrder(order, event.time)
                     }
                 }
 
             } else {
-                logger.warning { "CryptoBroker supports only CRYPTO assets, received ${asset.type} instead" }
+                logger.warning { "only CRYPTO assets are supported, received ${asset.type} instead" }
+                _account.rejectOrder(order, event.time)
             }
         }
 

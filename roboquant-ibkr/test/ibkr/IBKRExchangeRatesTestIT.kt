@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package org.roboquant.orders
+package org.roboquant.ibkr
 
-
+import ibkr.IBKRExchangeRates
 import org.junit.Test
-import org.roboquant.TestData
-import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-internal class UpdateOrderTest {
+internal class IBKRExchangeRatesTestIT {
 
     @Test
-    fun basic() {
-        val original = OrderSlip(TestData.euMarketOrder())
-        val qty = original.order.quantity
-        val update = MarketOrder(original.asset, 100.0)
-        val order = UpdateOrder(original, update)
-        assertEquals(100.0, order.update.quantity)
-        assertEquals(qty, original.order.quantity)
-        assertEquals(original, order.original)
+    fun test() {
+        System.getProperty("TEST_IBKR") ?: return
+        val rates = IBKRExchangeRates()
+        assertTrue(rates.exchangeRates.isNotEmpty())
     }
-
 
 }

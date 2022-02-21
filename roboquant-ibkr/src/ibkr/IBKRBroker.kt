@@ -17,11 +17,13 @@
 package org.roboquant.ibkr
 
 import com.ib.client.*
-import com.ib.client.OrderState
+import com.ib.client.OrderState as IBOrderSate
+import com.ib.client.OrderStatus as IBOrderStatus
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
+import org.roboquant.orders.OrderStatus
 import java.lang.Thread.sleep
 import java.time.Instant
 import kotlin.math.absoluteValue
@@ -173,10 +175,16 @@ class IBKRBroker(
         private fun toOrder(order: IBOrder, contract: Contract): Order {
             val asset = contract.getAsset()
             val qty = if (order.action == "BUY") order.totalQuantity() else -order.totalQuantity()
-            val result = MarketOrder(asset, qty)
-            // QQQ
-            // result.status = OrderStatus.ACCEPTED
-            return result
+            return MarketOrder(asset, qty)
+        }
+
+        private fun toStatus(status: String): OrderStatus {
+            return when (IBOrderStatus.valueOf(status)) {
+                IBOrderStatus.Submitted -> OrderStatus.ACCEPTED
+                IBOrderStatus.Cancelled -> OrderStatus.CANCELLED
+                IBOrderStatus.Filled -> OrderStatus.COMPLETED
+                else -> OrderStatus.INITIAL
+            }
         }
 
         /**
@@ -187,14 +195,15 @@ class IBKRBroker(
             logger.fine("$id")
         }
 
-        override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: OrderState) {
+        override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: IBOrderSate) {
             logger.fine { "orderId: $orderId asset: ${contract.symbol()} qty: ${order.totalQuantity()} status: ${orderState.status}" }
             logger.finer { "$orderId $contract $order $orderState" }
             val openOrder = orderMap[orderId]
             if (openOrder != null) {
                 if (orderState.completedStatus() == "true") {
-                    // TODO
-                    // openOrder.status = OrderStatus.COMPLETED
+                    val state = OrderState(OrderStatus.COMPLETED, closed = Instant.parse(orderState.completedTime()))
+                    val slip = _account.orders[openOrder]!!
+                    _account.orders[openOrder] = OrderSlip(slip.order, state)
                 }
             } else {
                 val newOrder = toOrder(order, contract)
@@ -210,21 +219,13 @@ class IBKRBroker(
         ) {
             logger.fine { "oderId: $orderId status: $status filled: $filled" }
             val id = orderMap[orderId]
-            val order = _account.orders[id]
-
-            if (order == null)
+            if (id == null)
                 logger.warning { "Received unknown open order with orderId $orderId" }
-            else if (order is SingleOrder) {
-                // openOrder.fill = filled
-                // openOrder.price = lastFillPrice
-
-                // TODO
-
-              /*  when (status) {
-                    "PreSubmitted" -> openOrder.status = OrderStatus.INITIAL
-                    "Submitted" -> openOrder.status = OrderStatus.ACCEPTED
-                    "Filled" -> openOrder.status = OrderStatus.COMPLETED
-                }*/
+            else  {
+                val slip = _account.orders[id]!!
+                val newStatus = toStatus(status!!)
+                val orderState = slip.state.copy(newStatus)
+                _account.orders[id] = OrderSlip(slip.order, orderState)
             }
         }
 

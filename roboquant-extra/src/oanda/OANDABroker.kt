@@ -127,11 +127,13 @@ class OANDABroker(
      */
     private fun updateAccount() {
         val acc = ctx.account.get(accountID).account
-        account.cash.clear()
+
 
         // Cash in roboquant is excluding the margin part
+        account.cash.clear()
         val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
         account.cash.set(amount)
+
         _account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
         _account.lastUpdate = Instant.now()
     }

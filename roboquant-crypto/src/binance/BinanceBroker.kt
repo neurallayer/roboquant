@@ -100,7 +100,11 @@ class BinanceBroker(
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        true && TODO()
+        val slips = orders.map {
+            val state = OrderState(OrderStatus.REJECTED, event.time, event.time)
+            OrderSlip(it, state) }
+        _account.putOrders(slips)
+        true && return _account.toAccount()
 
         for (order in orders) {
             val asset = order.asset
