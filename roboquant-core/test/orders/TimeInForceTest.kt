@@ -16,84 +16,21 @@
 
 package org.roboquant.orders
 
+import org.junit.Test
+import java.time.Instant
+import kotlin.test.assertEquals
+
 
 internal class TimeInForceTest {
 
-  /*  class TestOrder(
-        override val asset: Asset = TestData.usStock(),
-        override val state: OrderState = OrderState(),
-        override val id: String = "12"
-    ) : Order {
-
-        fun updatePlaced(now: Instant) {
-            state.placed = now
-        }
-
-
-    }
-
-
     @Test
-    fun gtc() {
-        val tif = GTC()
-        assertEquals("GTC", tif.toString())
-        val order = TestData.usMarketOrder()
-        val t2 = order.state.placed.plusSeconds(1000)
-        assertFalse(tif.isExpired(order, t2, 10.0))
-
-        val t3 = order.state.placed.plusSeconds(3600L * 24 * 365)
-        assertTrue(tif.isExpired(order, t3, 10.0))
+    fun test() {
+        assertEquals("GTC", GTC().toString())
+        assertEquals("FOK", FOK().toString())
+        assertEquals("IOC", IOC().toString())
+        assertEquals("DAY", DAY().toString())
+        val now = Instant.now()
+        assertEquals("GTD($now)", GTD(now).toString())
     }
 
-    @Test
-    fun gtd() {
-        // 5 days in future
-        val date = Instant.now().plusSeconds(3600L * 24 * 5)
-        val tif = GTD(date)
-        assertEquals("GTD", tif.toString().slice(0..2))
-
-        val t1 = Instant.now()
-        val t2 = t1.plusSeconds(3600)
-
-        val order = TestData.usMarketOrder()
-
-        assertFalse(tif.isExpired(order, t2, 1.0))
-
-        val t3 = t1.plusSeconds((3600L * 24 * 6))
-        assertTrue(tif.isExpired(order, t3, 10.0))
-    }
-
-    @Test
-    fun day() {
-        val tif = DAY()
-        val order = TestOrder()
-        assertEquals("DAY", tif.toString())
-        val date = Instant.now()
-        order.updatePlaced(date)
-
-        assertFalse(tif.isExpired(order, date, 10.0))
-        assertTrue(tif.isExpired(order, date.plus(1, ChronoUnit.DAYS), 10.0))
-    }
-
-    @Test
-    fun ioc() {
-        val tif = IOC()
-        val order = TestOrder()
-        assertEquals("IOC", tif.toString())
-        val date = Instant.now()
-        order.updatePlaced(date)
-        assertFalse(tif.isExpired(order, date, 10.0))
-    }
-
-    @Test
-    fun fok() {
-        val tif = FOK()
-        val order = TestOrder()
-        assertEquals("FOK", tif.toString())
-        val date = Instant.now()
-        order.updatePlaced(date)
-        assertFalse(tif.isExpired(order, date, 0.0))
-        assertTrue(tif.isExpired(order, date, 10.0))
-    }
-*/
 }
