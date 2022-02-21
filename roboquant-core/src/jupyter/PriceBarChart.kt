@@ -63,7 +63,6 @@ class PriceBarChart(
 
     /**
      * Generate mark points that will highlight when a trade happened.
-     * TODO: add tooltip support so more info is available about the trade.
      */
     private fun markPoints(): List<Map<String, Any>> {
         val t = trades.filter { it.asset == asset && timeframe.contains(it.time) }

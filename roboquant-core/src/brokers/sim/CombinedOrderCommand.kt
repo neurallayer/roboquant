@@ -13,11 +13,12 @@ internal class OCOOrderCommand(order: OneCancelsOtherOrder) : OrderCommand<OneCa
     private val second = ExecutionEngine.getOrderCommand(order.second)
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
+        update(time)
         val result = mutableListOf<Execution>()
 
         if (first.status.open) {
             result.addAll(first.execute(pricing, time))
-            if (first.status.aborted) status = first.status
+            if (first.status.aborted) close(first.status, time)
         }
 
         if (first.status == OrderStatus.COMPLETED) {
@@ -36,6 +37,7 @@ internal class OTOOrderCommand(order: OneTriggersOtherOrder) : OrderCommand<OneT
     private val second = ExecutionEngine.getOrderCommand(order.second)
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
+        update(time)
         val result = mutableListOf<Execution>()
 
         if (first.status.open) {
@@ -59,12 +61,8 @@ internal class BracketOrderCommand(order: BracketOrder) : OrderCommand<BracketOr
     private val profit = ExecutionEngine.getOrderCommand(order.takeProfit) as SingleOrderCommand<*>
     private val loss = ExecutionEngine.getOrderCommand(order.stopLoss) as SingleOrderCommand<*>
 
-    var fill = 0.0
-
-    val remaining
-        get() = main.qty + fill
-
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
+        update(time)
         if (main.status.open) return main.execute(pricing, time)
 
         val executions = mutableListOf<Execution>()
@@ -72,10 +70,9 @@ internal class BracketOrderCommand(order: BracketOrder) : OrderCommand<BracketOr
         if (loss.fill.iszero) executions.addAll(profit.execute(pricing, time))
         if (profit.fill.iszero) executions.addAll(loss.execute(pricing, time))
 
-        fill = loss.fill + profit.fill
-        if (remaining.iszero) status = OrderStatus.COMPLETED
+        val remaining = main.qty + loss.fill + profit.fill
+        if (remaining.iszero) close(OrderStatus.COMPLETED, time)
         return executions
-
     }
 
 }

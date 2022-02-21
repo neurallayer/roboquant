@@ -41,8 +41,6 @@ interface TimeInForce
  */
 class GTC(val maxDays: Int = 90) : TimeInForce {
 
-
-
     override fun toString(): String {
         return "GTC"
     }
@@ -56,9 +54,7 @@ class GTC(val maxDays: Int = 90) : TimeInForce {
  * @property date
  * @constructor Create new GTD tif
  */
-class GTD(private val date: Instant) : TimeInForce {
-
-
+class GTD(val date: Instant) : TimeInForce {
 
     override fun toString(): String {
         return "GTD($date)"
@@ -73,7 +69,6 @@ class GTD(private val date: Instant) : TimeInForce {
  * @constructor Create new IOC tif
  */
 class IOC : TimeInForce {
-
 
     override fun toString(): String {
         return "IOC"

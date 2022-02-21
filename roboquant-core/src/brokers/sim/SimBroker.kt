@@ -21,9 +21,7 @@ import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
-import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.Order
-import org.roboquant.orders.OrderSlip
+import org.roboquant.orders.*
 import java.time.Instant
 import java.util.logging.Logger
 
@@ -162,27 +160,6 @@ class SimBroker(
 
 
     /**
-     * Validate if there is enough buying power to process the order that are just received. If there is not enough
-     * cash, the order will be rejected.
-     *
-     * TODO more flexible implementation (perhaps using the BuyingPowerModel).
-    private fun validOrder(order: Order) : Boolean {
-    if (validateBuyingPower) {
-    // TODO implement real logic here
-    val requiredValue = 0.0 // order.getValueAmount().convert(account.buyingPower.currency).value // buyingPower.calculate(order)
-    if (account.buyingPower - requiredValue <= 0) {
-    return false
-    } else {
-    account.buyingPower -= requiredValue
-    }
-    }
-    order.status = OrderStatus.ACCEPTED
-    return true
-    }
-     */
-
-
-    /**
      * Liquidate the portfolio. This comes in handy at the end of a back-test if you prefer to have no open positions
      * left in the portfolio.
      *
@@ -192,10 +169,10 @@ class SimBroker(
      * last known market prices as price actions.
      */
     fun liquidatePortfolio(time: Instant = _account.lastUpdate): Account {
-        // TODO
-        // for (order in _account.orders.open) order.status = OrderStatus.CANCELLED
+        val cancellationOrders = _account.orders.filter {it.value.open }.map { CancellationOrder(it.value) }
         val change = _account.portfolio.values.diff(listOf())
-        val orders = change.map { MarketOrder(it.key, it.value) }
+        val changeOrders = change.map { MarketOrder(it.key, it.value) }
+        val orders = cancellationOrders + changeOrders
         val actions = _account.portfolio.values.map { TradePrice(it.asset, it.spotPrice) }
         val event = Event(actions, time)
         return place(orders, event)

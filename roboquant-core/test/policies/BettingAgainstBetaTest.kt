@@ -21,8 +21,10 @@ import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.MemoryLogger
+import org.roboquant.orders.closed
 import org.roboquant.strategies.NoSignalStrategy
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class BettingAgainstBetaTest {
 
@@ -37,8 +39,7 @@ class BettingAgainstBetaTest {
         val logger = MemoryLogger(false)
         val exp = Roboquant(NoSignalStrategy(), broker = broker, policy = policy, logger = logger)
         exp.run(feed)
-        // TODO
-        // assertTrue(exp.broker.account.orders.closed.isNotEmpty())
+        assertTrue(exp.broker.account.orders.closed.isNotEmpty())
     }
 
 }

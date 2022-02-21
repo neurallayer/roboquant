@@ -53,11 +53,11 @@ internal class JupyterCoreTest {
     fun core() {
         class TestOutput : Output() {
             override fun asHTML(): String {
-                TODO("Not yet implemented")
+               return  "<div>Hello</div>"
             }
 
             override fun asHTMLPage(): String {
-                TODO("Not yet implemented")
+                return  "<html><div>Hello</div></html>"
             }
 
         }

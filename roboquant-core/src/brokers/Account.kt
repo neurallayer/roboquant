@@ -92,7 +92,10 @@ class Account(
         s.add("portfolio", c(portfolio.value))
         s.add("long value", c(portfolio.long.value))
         s.add("short value", c(portfolio.short.value))
+        s.add("assets", portfolio.size)
         s.add("realized p&l", c(trades.realizedPNL))
+        s.add("trades", trades.size)
+        s.add("orders", orders.size)
         s.add("unrealized p&l", c(portfolio.unrealizedPNL))
         return s
     }

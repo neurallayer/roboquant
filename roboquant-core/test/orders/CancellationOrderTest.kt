@@ -16,36 +16,30 @@
 
 package org.roboquant.orders
 
+import org.junit.Test
+import org.roboquant.TestData
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
+
 
 internal class CancellationOrderTest {
 
-  /*  @Test
+    @Test
     fun test() {
         val asset = TestData.usStock()
-
-        val openOrder = MarketOrder(asset, 100.0)
-        openOrder.state.placed = Instant.now()
-
-        val oc = CancellationOrder(openOrder)
-
-        assertEquals(OrderStatus.INITIAL, oc.status)
-        assertEquals(openOrder, oc.order)
-
-
+        val order = MarketOrder(asset, 100.0)
+        val slip = OrderSlip(order)
+        val oc = CancellationOrder(slip)
+        assertEquals(order, oc.order.order)
     }
-
 
     @Test
     fun testFailure() {
         val asset = TestData.usStock()
-
-        val openOrder = MarketOrder(asset, 100.0)
-        openOrder.state.placed = Instant.now()
-        openOrder.status = OrderStatus.COMPLETED
-
+        val order = MarketOrder(asset, 100.0)
+        val slip = OrderSlip(order, OrderState(OrderStatus.COMPLETED))
         assertFails {
-            CancellationOrder(openOrder)
+            CancellationOrder(slip)
         }
-
-    }*/
+    }
 }

@@ -183,6 +183,7 @@ fun twoMillionBars() {
     // Measure how long it takes to run a back-test over 2 million candlesticks
     val time = measureTimeMillis {  roboquant.run(feed) }
     println("Time taken to run a full back-test over 2M Candlesticks is $time milliseconds")
+    roboquant.broker.account.summary().print()
 }
 
 fun volatility() {

@@ -24,10 +24,8 @@ import org.roboquant.common.Logging
 import org.roboquant.common.zeroOrMore
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
-import org.roboquant.orders.OrderSlip
 import org.roboquant.orders.open
 import org.roboquant.strategies.Signal
-import java.time.Instant
 import kotlin.math.floor
 import kotlin.math.min
 
@@ -64,14 +62,12 @@ open class DefaultPolicy(
     private val shorting: Boolean = false,
     private val increasePosition: Boolean = false,
     private val oneOrderPerAsset: Boolean = true,
-    private val maxOrdersPerDay: Int = Int.MAX_VALUE
 ) : BasePolicy() {
 
     private val logger = Logging.getLogger(DefaultPolicy::class)
     private val noOrder: Pair<Order?, Double> = Pair(null, 0.0)
 
     init {
-        require(maxOrdersPerDay > 0)
         require(minAmount <= maxAmount)
     }
 
@@ -123,22 +119,11 @@ open class DefaultPolicy(
      */
     open fun createOrder(signal: Signal, qty: Double, price: Double): Order? = signal.toMarketOrder(qty)
 
-    /**
-     * How many orders do we have for the current trading day. This takes into account that different orders may be
-     * trading on different exchanges with different timezones.
-     */
-    private fun getOrdersCurrentDay(now: Instant, orders: List<OrderSlip<*>>) =
-        orders.filter { it.asset.exchange.sameDay(now, it.state.placed) }.size
-
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<Order>()
         var buyingPower = account.buyingPower.value
         val openOrderAssets = account.orders.open.map { it.asset }.distinct()
-        var remainingDayOrders = maxOrdersPerDay
-
-        // Performance optimilization. Checking day orders is expensive so we only do it when required
-       if (maxOrdersPerDay != Int.MAX_VALUE) remainingDayOrders -= getOrdersCurrentDay(event.time, account.orders)
 
         for (signal in signals.resolve(signalResolution)) {
             val asset = signal.asset
@@ -166,7 +151,6 @@ open class DefaultPolicy(
                     }
                 }
             }
-            if (orders.size >= remainingDayOrders) break
         }
         record("policy.signals", signals.size)
         record("policy.orders", orders.size)

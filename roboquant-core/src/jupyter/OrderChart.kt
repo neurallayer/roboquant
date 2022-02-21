@@ -16,7 +16,6 @@
 
 package org.roboquant.jupyter
 
-import org.roboquant.orders.Order
 import org.roboquant.orders.OrderSlip
 import org.roboquant.orders.OrderStatus
 import org.roboquant.orders.SingleOrder
@@ -43,7 +42,7 @@ class OrderChart(
 
     private fun getTooltip(slip: OrderSlip<SingleOrder>): String {
         return with(slip) {
-            "asset: $asset <br> currency: ${asset.currency} <br> placed: ${state.placed} <br> qty: ${order.quantity} <br> id: $id <br> type: ${order::class.simpleName} <br> tif: $order.tif"
+            "asset: $asset <br> currency: ${asset.currency} <br> placed: ${state.placed} <br> qty: ${order.quantity} <br> id: $id <br> type: ${order::class.simpleName} <br> tif: ${order.tif}"
         }
     }
 

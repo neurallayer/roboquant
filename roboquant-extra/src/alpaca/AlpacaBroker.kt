@@ -28,6 +28,7 @@ import org.roboquant.orders.*
 import java.time.Instant
 import net.jacobpeterson.alpaca.model.endpoint.orders.Order as AlpacaOrder
 import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosition
+import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderStatus as AlpacaOrderStatus
 
 /**
  * Broker implementation for Alpaca. This implementation allows using the Alpaca live- and paper-trading capabilities
@@ -115,7 +116,7 @@ class AlpacaBroker(
         try {
             for (order in alpacaAPI.orders().get(CurrentOrderStatus.ALL, null, null, null, null, false, null)) {
                 logger.fine { "received $order" }
-                _account.putOrders(listOf(toOrder(order)).initialOrderSlips)
+                _account.putOrders(listOf(toOrder(order)))
             }
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())
@@ -125,31 +126,32 @@ class AlpacaBroker(
     private fun toAsset(assetId: String) = assetsMap[assetId]!!
 
 
+    private fun toState(order: AlpacaOrder) : OrderState {
+        val status = when (order.status) {
+            AlpacaOrderStatus.CANCELED -> OrderStatus.CANCELLED
+            AlpacaOrderStatus.EXPIRED -> OrderStatus.EXPIRED
+            AlpacaOrderStatus.FILLED -> OrderStatus.COMPLETED
+            AlpacaOrderStatus.REJECTED -> OrderStatus.REJECTED
+            else -> {
+                logger.info { "Received UNSUPPORTED order status ${order.status}" }
+                OrderStatus.ACCEPTED
+            }
+        }
+        val close = order.filledAt ?: order.canceledAt ?: order.expiredAt
+        val closeTime = close?.toInstant() ?: Instant.MAX
+        return OrderState(status, order.createdAt.toInstant(), closeTime)
+    }
+
+
     /**
      * Convert an alpaca order to a roboquant order
      */
-    private fun toOrder(order: AlpacaOrder): Order {
+    private fun toOrder(order: AlpacaOrder): OrderSlip<*> {
         val asset = toAsset(order.assetId)
         val qty = if (order.side == OrderSide.BUY) order.quantity.toDouble() else - order.quantity.toDouble()
-        val result = MarketOrder(asset, qty)
-        // val fill = if (order.side == OrderSide.BUY) order.filledQuantity.toDouble() else - order.filledQuantity.toDouble()
-        // result.fill = fill
-
-
-      /*  result.state.placed = order.createdAt.toInstant()
-
-        TODO
-        when (order.status) {
-            AlpacaOrderStatus.CANCELED -> result.status = OrderStatus.CANCELLED
-            AlpacaOrderStatus.EXPIRED -> result.status = OrderStatus.EXPIRED
-            AlpacaOrderStatus.FILLED -> result.status = OrderStatus.COMPLETED
-            AlpacaOrderStatus.REJECTED -> result.status = OrderStatus.REJECTED
-            else -> {
-                logger.info { "Received order status ${order.status}" }
-            }
-        }
-        */
-        return result
+        val state = toState(order)
+        val marketOrder = MarketOrder(asset, qty)
+        return OrderSlip(marketOrder, state)
     }
 
     /**
@@ -169,25 +171,13 @@ class AlpacaBroker(
      */
     private fun updateOpenOrders() {
 
-        /*
-        TODO
-        _account.orders.open.filterIsInstance<SingleOrder>().forEach {
+        val slips = _account.orders.values.open.filterIsInstance<SingleOrder>().map {
             val aOrder = orderMapping[it]!!
             val order = alpacaAPI.orders().get(aOrder.id, false)
-            // it.fill = order.filledQuantity.toDouble()
-
-            when (order.status) {
-                AlpacaOrderStatus.CANCELED -> it.status = OrderStatus.CANCELLED
-                AlpacaOrderStatus.EXPIRED -> it.status = OrderStatus.EXPIRED
-                AlpacaOrderStatus.FILLED -> it.status = OrderStatus.COMPLETED
-                AlpacaOrderStatus.REJECTED -> it.status = OrderStatus.REJECTED
-                else -> {
-                    logger.info { "Received order status ${order.status}" }
-                }
-            }
+            val state = toState(order)
+            OrderSlip(it, state)
         }
-
-         */
+        _account.putOrders(slips)
     }
 
     /**
@@ -225,17 +215,8 @@ class AlpacaBroker(
             }
         }
         orderMapping[order] = alpacaOrder
+        _account.putOrders(listOf(OrderSlip(order)))
 
-       /*
-        when (alpacaOrder.status) {
-            AlpacaOrderStatus.CANCELED -> order.status = OrderStatus.CANCELLED
-            AlpacaOrderStatus.EXPIRED -> order.status = OrderStatus.EXPIRED
-            AlpacaOrderStatus.FILLED -> order.status = OrderStatus.COMPLETED
-            AlpacaOrderStatus.REJECTED -> order.status = OrderStatus.REJECTED
-            else -> {
-                logger.info { "Received order status ${order.status}" }
-            }
-        }*/
 
     }
 

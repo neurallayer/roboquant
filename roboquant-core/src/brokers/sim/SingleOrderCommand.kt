@@ -10,42 +10,36 @@ abstract class SingleOrderCommand<T : SingleOrder>(order: T) : OrderCommand<T>(o
     internal var fill = 0.0
     internal var qty = order.quantity
 
-    val remaining
+    internal val remaining
         get() = qty - fill
-
-    var time: Instant = Instant.MIN
 
 
     /**
-     * Validate TiF
-     *
-     * @return
+     * Validate TiF policy and return true if order has expired according to the policy.
      */
-    private val expired: Boolean
-        get() {
-            return when (val tif = order.tif) {
-                is GTC -> time > state.placed + tif.maxDays.days
-                is DAY -> ! order.asset.exchange.sameDay(state.placed, time)
-                is FOK -> remaining != 0.0
-                else -> throw Exception("Unsupported TIF $tif")
-            }
+    private fun expired(time: Instant): Boolean {
+        return when (val tif = order.tif) {
+            is GTC -> time > state.placed + tif.maxDays.days
+            is DAY -> ! order.asset.exchange.sameDay(state.placed, time)
+            is FOK -> remaining != 0.0
+            is GTD -> time > tif.date
+            is IOC -> time > state.placed
+            else -> throw Exception("Unsupported TIF $tif")
         }
-
-
+    }
 
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-
-
+        update(time)
         val execution = fill(pricing)
         fill += execution?.quantity ?: 0.0
 
-        if (expired) {
-            status = OrderStatus.EXPIRED
+        if (expired(time)) {
+            close(OrderStatus.EXPIRED, time)
             return listOf()
         }
 
-        if (remaining.iszero) status = OrderStatus.COMPLETED
+        if (remaining.iszero) close(OrderStatus.COMPLETED, time)
         return if (execution == null) listOf() else listOf(execution)
 
     }
@@ -59,6 +53,37 @@ abstract class SingleOrderCommand<T : SingleOrder>(order: T) : OrderCommand<T>(o
 internal class MarketOrderCommand(order: MarketOrder) : SingleOrderCommand<MarketOrder>(order) {
     override fun fill(pricing: Pricing): Execution = Execution(order, remaining, pricing.marketPrice(remaining))
 }
+
+
+private fun stopTrigger(stop: Double, volume: Double, pricing: Pricing): Boolean {
+    return if (volume < 0.0) pricing.lowPrice(volume) <= stop
+    else pricing.highPrice(volume) >= stop
+}
+
+
+private fun limitTrigger(limit: Double, volume: Double, pricing: Pricing): Boolean {
+    return if (volume < 0.0) pricing.highPrice(volume) >= limit
+    else pricing.lowPrice(volume) <= limit
+}
+
+
+private fun getTrailStop(oldStop: Double, trail: Double, volume: Double, pricing: Pricing): Double {
+
+    return if (volume < 0.0) {
+        // Sell stop
+        val price = pricing.highPrice(volume)
+        val newStop = price * (1.0 - trail)
+        if (oldStop.isNaN()  || newStop > oldStop) newStop else oldStop
+    } else {
+        // Buy stop
+        val price = pricing.lowPrice(volume)
+        val newStop = price * (1.0 + trail)
+        if (oldStop.isNaN() || newStop < oldStop) newStop else oldStop
+    }
+
+}
+
+
 
 internal class LimitOrderCommand(order: LimitOrder) : SingleOrderCommand<LimitOrder>(order) {
 
@@ -101,34 +126,6 @@ internal class StopLimitOrderCommand(order: StopLimitOrder) : SingleOrderCommand
 
 }
 
-
-private fun stopTrigger(stop: Double, volume: Double, pricing: Pricing): Boolean {
-    return if (volume < 0.0) pricing.lowPrice(volume) <= stop
-    else pricing.highPrice(volume) >= stop
-}
-
-
-private fun limitTrigger(limit: Double, volume: Double, pricing: Pricing): Boolean {
-    return if (volume < 0.0) pricing.highPrice(volume) >= limit
-    else pricing.lowPrice(volume) <= limit
-}
-
-
-private fun getTrailStop(oldStop: Double, trail: Double, volume: Double, pricing: Pricing): Double {
-
-    return if (volume < 0.0) {
-        // Sell stop
-        val price = pricing.highPrice(volume)
-        val newStop = price * (1.0 - trail)
-        if (oldStop.isNaN()  || newStop > oldStop) newStop else oldStop
-    } else {
-        // Buy stop
-        val price = pricing.lowPrice(volume)
-        val newStop = price * (1.0 + trail)
-        if (oldStop.isNaN() || newStop < oldStop) newStop else oldStop
-    }
-
-}
 
 
 internal class TrailOrderCommand(order: TrailOrder) : SingleOrderCommand<TrailOrder>(order) {

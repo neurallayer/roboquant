@@ -22,6 +22,7 @@ import com.oanda.v20.order.MarketOrderRequest
 import com.oanda.v20.order.OrderCreateRequest
 import com.oanda.v20.position.PositionSide
 import com.oanda.v20.primitives.InstrumentName
+import com.oanda.v20.transaction.OrderCancelReason
 import com.oanda.v20.transaction.OrderFillTransaction
 import com.oanda.v20.transaction.TransactionID
 import org.roboquant.brokers.*
@@ -29,9 +30,7 @@ import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
-import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.Order
-import org.roboquant.orders.initialOrderSlips
+import org.roboquant.orders.*
 import java.time.Instant
 
 /**
@@ -94,7 +93,6 @@ class OANDABroker(
                 _account.setPosition(position)
             }
             if (p.short.units.doubleValue() != 0.0) {
-                // TODO does the short side use negative value for units
                 val position = getPosition(symbol, p.short)
                 _account.setPosition(position)
             }
@@ -175,16 +173,15 @@ class OANDABroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer {"received ${orders.size} orders and ${event.actions.size} actions"}
-
-        val slips = orders.initialOrderSlips
-        _account.putOrders(slips)
+        _account.putOrders(orders.initialOrderSlips)
 
         if (! enableOrders) {
-            // TODO
-            // for (order in orders) order.status = OrderStatus.REJECTED
+            val slips = orders.map { OrderSlip(it, OrderState(OrderStatus.REJECTED)) }
+            _account.putOrders(slips)
         } else {
-            /*
-            for (order in slips) {
+
+            for (order in orders) {
+                var state =  OrderState(OrderStatus.INITIAL)
                 if (order is MarketOrder) {
                     if (order.tif !is FOK) logger.fine("Received order $order, using tif=FOK instead")
                     val req = createOrderRequest(order)
@@ -192,15 +189,15 @@ class OANDABroker(
                     logger.fine { "Received response with last transaction Id ${resp.lastTransactionID}" }
                     if (resp.orderFillTransaction != null) {
                         val trx = resp.orderFillTransaction
-                        order.status = OrderStatus.COMPLETED
+                        state = OrderState(OrderStatus.COMPLETED, event.time, event.time)
                         logger.fine { "Received transaction $trx" }
                         processTrade(order, trx)
                     } else if (resp.orderCancelTransaction != null){
                         val trx = resp.orderCancelTransaction
 
-                        when(trx.reason) {
-                            OrderCancelReason.TIME_IN_FORCE_EXPIRED -> order.status = OrderStatus.EXPIRED
-                            else -> order.status = OrderStatus.REJECTED
+                        state = when(trx.reason) {
+                            OrderCancelReason.TIME_IN_FORCE_EXPIRED -> OrderState(OrderStatus.EXPIRED, event.time, event.time)
+                            else -> OrderState(OrderStatus.REJECTED, event.time, event.time)
                         }
                         logger.fine {"Received order cancellation for $order with reason ${trx.reason}"}
                     } else {
@@ -208,9 +205,10 @@ class OANDABroker(
                     }
                 } else {
                     logger.warning { "Rejecting unsupported order type $order" }
-                    order.status = OrderStatus.REJECTED
-
-            }  }*/
+                    state =  OrderState(OrderStatus.REJECTED, event.time, event.time)
+                }
+                _account.orders[order.id] = OrderSlip(order, state)
+            }
         }
 
         // OONDA doesn't update positions quick enough and so they don't reflect trades just made

@@ -18,7 +18,6 @@ package org.roboquant.ibkr
 
 import com.ib.client.*
 import com.ib.client.OrderState
-import ibkr.IBKRExchangeRates
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
@@ -43,7 +42,6 @@ class IBKRBroker(
     host: String = "127.0.0.1",
     port: Int = 4002,
     clientId: Int = 1,
-    private val exchangeRates: ExchangeRates? = IBKRExchangeRates(),
     private val accountId: String? = null,
     private val enableOrders: Boolean = false,
 ) : Broker {
@@ -58,7 +56,7 @@ class IBKRBroker(
     private var orderId = 0
 
     // Track IB orders ids with roboquant orders
-    private val orderMap = mutableMapOf<Int, Order>()
+    private val orderMap = mutableMapOf<Int, String>()
 
     // Track IB Trades and Feed ids with roboquant trades
     private val tradeMap = mutableMapOf<String, Trade>()
@@ -105,14 +103,17 @@ class IBKRBroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         _account.putOrders(orders.initialOrderSlips)
+        if (!enableOrders) {
+            return _account.toAccount()
+        }
 
-        if (!enableOrders) return _account.toAccount()
 
         // First we place the cancellation orders
         for (cancellation in orders.filterIsInstance<CancellationOrder>()) {
             logger.fine("received order $cancellation")
-            val id = orderMap.filterValues { it == cancellation.order }.keys.first()
-            client.cancelOrder(id)
+            val id = cancellation.id
+            val ibID = orderMap.filter { it.value == id }.keys.first()
+            client.cancelOrder(ibID)
         }
 
         // And now the regular new orders
@@ -154,7 +155,7 @@ class IBKRBroker(
         result.totalQuantity(order.quantity.absoluteValue)
         if (accountId != null) result.account(accountId)
 
-        orderMap[orderId] = order
+        orderMap[orderId] = order.id
         result.orderId(orderId++)
         return result
     }
@@ -197,7 +198,7 @@ class IBKRBroker(
                 }
             } else {
                 val newOrder = toOrder(order, contract)
-                orderMap[orderId] = newOrder
+                orderMap[orderId] = newOrder.id
                 _account.putOrders(listOf(newOrder).initialOrderSlips)
             }
         }
@@ -208,10 +209,12 @@ class IBKRBroker(
             lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
         ) {
             logger.fine { "oderId: $orderId status: $status filled: $filled" }
-            val openOrder = orderMap[orderId]
-            if (openOrder == null)
+            val id = orderMap[orderId]
+            val order = _account.orders[id]
+
+            if (order == null)
                 logger.warning { "Received unknown open order with orderId $orderId" }
-            else if (openOrder is SingleOrder) {
+            else if (order is SingleOrder) {
                 // openOrder.fill = filled
                 // openOrder.price = lastFillPrice
 
@@ -253,7 +256,7 @@ class IBKRBroker(
 
             // Possible values BOT and SLD
             val direction = if (execution.side() == "SLD") -1.0 else 1.0
-            val orderId = orderMap[execution.orderId()]?.id ?: "UNKOWN" // Should not happen
+            val orderId = orderMap[execution.orderId()] ?: "UNKOWN" // Should not happen
             val trade = Trade(
                 Instant.now(),
                 contract.getAsset(),
@@ -285,16 +288,8 @@ class IBKRBroker(
                     "BuyingPower" -> {
                         _account.baseCurrency = Currency.getInstance(currency)
                         _account.buyingPower = Amount(account.baseCurrency, value.toDouble())
-                        if (exchangeRates is IBKRExchangeRates) exchangeRates.baseCurrency =
-                            account.baseCurrency
                     }
                     "CashBalance" -> setCash(currency, value)
-                    "ExchangeRate" -> {
-                        if (exchangeRates is IBKRExchangeRates) {
-                            val c = Currency.getInstance(currency)
-                            exchangeRates.exchangeRates[c] = value.toDouble()
-                        }
-                    }
                 }
             }
         }

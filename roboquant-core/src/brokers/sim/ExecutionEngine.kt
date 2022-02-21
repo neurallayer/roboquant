@@ -45,12 +45,10 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
     fun execute(event: Event): List<Execution> {
         val executions = mutableListOf<Execution>()
-        // First run the modify order commands
 
         // Now run the trade order commands
         val prices = event.prices
         for (exec in orderCommands.toList()) {
-
 
             if (exec.status.closed) {
                 orderCommands.remove(exec)
@@ -58,6 +56,8 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
             }
 
             val action = prices[exec.order.asset] ?: continue
+
+
             val pricing = pricingEngine.getPricing(action, event.time)
             val newExecutions = exec.execute(pricing, event.time)
             executions.addAll(newExecutions)
