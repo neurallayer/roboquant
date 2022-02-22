@@ -59,8 +59,8 @@ internal class RoboquantTest {
     }
 
     @Test
-    fun tenYearRandomWalk() {
-        val timeline = Timeframe.fromYears(2010, 2020).toDays(excludeWeekends = true)
+    fun fiveYearRandomWalk() {
+        val timeline = Timeframe.fromYears(2015, 2020).toDays(excludeWeekends = true)
         val feed = RandomWalk(timeline, generateBars = false)
 
         val strategy = EMACrossover()

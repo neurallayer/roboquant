@@ -16,20 +16,25 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.Roboquant
-import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.logging.SilentLogger
 import org.junit.Test
+import org.roboquant.TestData
+import kotlin.test.assertEquals
 
 internal class ParallelStrategyTest {
 
-
     @Test
     fun test() {
-        val strategy = ParallelStrategy(EMACrossover(1, 3), EMACrossover(3, 5))
-        val feed = RandomWalk.lastYears()
-        val roboquant = Roboquant(strategy, logger = SilentLogger())
-        roboquant.run(feed)
+        val s1 = EMACrossover(1, 3)
+        val s2 = EMACrossover(3, 5)
+        val s3 = ParallelStrategy(EMACrossover(1, 3), EMACrossover(3, 5))
+
+        for (event in TestData.events(20)) {
+            val r1 = s1.generate(event)
+            val r2 = s2.generate(event)
+            val r3 = s3.generate(event)
+            assertEquals(r1.size + r2.size, r3.size)
+        }
+
     }
 
 }

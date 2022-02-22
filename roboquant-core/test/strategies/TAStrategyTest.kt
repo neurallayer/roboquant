@@ -47,6 +47,27 @@ internal class TAStrategyTest {
     }
 
     @Test
+    fun taSignalStrategy() {
+
+        val strategy = TASignalStrategy(50) { price, asset ->
+            if (ta.cdlMorningStar(price))  Signal(asset, Rating.BUY)
+            else if (ta.cdl3BlackCrows(price)) Signal(asset, Rating.SELL)
+            else null
+        }
+
+        val x = run(strategy, 60)
+        assertEquals(60, x.size)
+    }
+
+    @Test
+    fun taSignalBreakout() {
+        val strategy = TASignalStrategy.breakout(10, 30)
+        val x = run(strategy, 60)
+        assertEquals(60, x.size)
+    }
+
+
+    @Test
     fun testFail() {
         val strategy = TAStrategy(3)
         strategy.buy { price -> ta.cdlMorningStar(price) }
@@ -64,7 +85,7 @@ internal class TAStrategyTest {
         return result
     }
 
-    private fun run(s: TAStrategy, n: Int = 100): Map<Instant, List<Signal>> {
+    private fun run(s: Strategy, n: Int = 100): Map<Instant, List<Signal>> {
         val actions = listOf(TestData.priceBar())
         val result = mutableMapOf<Instant, List<Signal>>()
         var now = Instant.now()

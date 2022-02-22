@@ -33,6 +33,7 @@ internal class CSVFeedTest {
         assertTrue(c2 !== null)
     }
 
+
     @Test
     fun noAssets() {
         assertFailsWith<Exception> {
@@ -52,7 +53,6 @@ internal class CSVFeedTest {
         val feed = CSVFeed(TestData.dataDir() + "US", config)
         assertEquals("TEST123", feed.assets.first().exchangeCode)
     }
-
 
 
     @Test

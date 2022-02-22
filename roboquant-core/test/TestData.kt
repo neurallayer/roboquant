@@ -22,12 +22,15 @@ import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import org.roboquant.common.USD
+import org.roboquant.common.days
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderSlip
+import org.roboquant.orders.OrderState
+import org.roboquant.orders.OrderStatus
 import java.io.File
 import java.time.Instant
 
@@ -44,9 +47,8 @@ object TestData {
         account.setPosition(Position(asset2, 100.0, 10.0))
 
         val order = MarketOrder(asset1, 100.0)
-        /*order.state.placed = Instant.now()
-        order.status = OrderStatus.COMPLETED
-        account.putOrders(listOf(order))*/
+        val slip = OrderSlip(order, OrderState(OrderStatus.COMPLETED, Instant.now(), Instant.now()))
+        account.putOrders(listOf(slip))
         return account
     }
 
@@ -103,5 +105,15 @@ object TestData {
         return RunInfo("run-1", 1, 10, Instant.now(), Timeframe.INFINITY, RunPhase.MAIN)
     }
 
+    fun events(n:Int = 100, asset: Asset = usStock()) : List<Event> {
+        val start = time()
+        val result = mutableListOf<Event>()
+        repeat(n) {
+            val action = TradePrice(asset, it + 100.0)
+            val event = Event(listOf(action), start + it.days)
+            result.add(event)
+        }
+        return result
+    }
 
 }
