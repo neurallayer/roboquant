@@ -119,3 +119,5 @@ object Logging {
     fun getLoggerNames() = LogManager.getLogManager().loggerNames.toList()
 
 }
+
+fun Logger.severe(msg: String, exception: Exception) = log(Level.SEVERE, msg + exception.message)

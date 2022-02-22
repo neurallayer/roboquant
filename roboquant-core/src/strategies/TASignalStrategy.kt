@@ -22,6 +22,7 @@ import org.roboquant.RunPhase
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.addNotNull
+import org.roboquant.common.severe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.metrics.MetricResults
@@ -38,7 +39,10 @@ import java.util.logging.Logger
  * technical indicators you want to use. If the [history] is too small, it will lead to a runtime exception.
  *
  */
-class TASignalStrategy(private val history: Int = 15, private var block: TASignalStrategy.(price: PriceBarBuffer, asset: Asset) -> Signal?) : Strategy {
+class TASignalStrategy(
+    private val history: Int = 15,
+    private var block: TASignalStrategy.(price: PriceBarBuffer, asset: Asset) -> Signal?
+) : Strategy {
 
     private val buffers = mutableMapOf<Asset, PriceBarBuffer>()
     private val logger: Logger = Logging.getLogger(TAStrategy::class)
@@ -71,7 +75,7 @@ class TASignalStrategy(private val history: Int = 15, private var block: TASigna
 
     companion object {
 
-        fun breakout(entryPeriod: Int = 100, exitPeriod: Int= 50) : TASignalStrategy {
+        fun breakout(entryPeriod: Int = 100, exitPeriod: Int = 50): TASignalStrategy {
             val maxPeriod = max(entryPeriod, exitPeriod)
             return TASignalStrategy(maxPeriod) { data, asset ->
                 when {
@@ -87,9 +91,6 @@ class TASignalStrategy(private val history: Int = 15, private var block: TASigna
 
 
     }
-
-
-
 
 
     /**
@@ -111,8 +112,7 @@ class TASignalStrategy(private val history: Int = 15, private var block: TASigna
                         val signal = block.invoke(this, buffer, asset)
                         signals.addNotNull(signal)
                     } catch (e: InsufficientData) {
-                        logger.severe("Not enough data available to calculate the indicators, increase the history size")
-                        logger.severe(e.message)
+                        logger.severe("Not enough data available to calculate the indicators, increase the history size", e)
                         throw e
                     }
                 }
@@ -128,7 +128,7 @@ class TASignalStrategy(private val history: Int = 15, private var block: TASigna
     }
 
 
-    override fun toString() = "TAStrategy $history"
+    override fun toString() = "TASignalStrategy $history"
 
 }
 

@@ -17,16 +17,14 @@
 package org.roboquant.strategies
 
 import org.junit.Test
+import org.roboquant.RunPhase
 import org.roboquant.TestData
 import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
 import org.roboquant.strategies.ta.TALib
 import org.roboquant.strategies.utils.PriceBarBuffer
 import java.time.Instant
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class TAStrategyTest {
 
@@ -49,12 +47,36 @@ internal class TAStrategyTest {
     @Test
     fun taSignalStrategy() {
 
-        val strategy = TASignalStrategy(50) { price, asset ->
+        val strategy = TASignalStrategy(20) { price, asset ->
+            record("test", 1)
             if (ta.cdlMorningStar(price))  Signal(asset, Rating.BUY)
             else if (ta.cdl3BlackCrows(price)) Signal(asset, Rating.SELL)
             else null
         }
 
+        val x = run(strategy, 30)
+        assertEquals(30, x.size)
+        assertContains(strategy.getMetrics(), "test")
+    }
+
+    @Test
+    fun taSignalStrategyInsufficientData() {
+
+        val strategy = TASignalStrategy(5) { price, asset ->
+            record("test", 1)
+            if (ta.cdlMorningStar(price))  Signal(asset, Rating.BUY)
+            else if (ta.cdl3BlackCrows(price)) Signal(asset, Rating.SELL)
+            else null
+        }
+
+        assertFailsWith<InsufficientData> {
+            run(strategy, 30)
+        }
+    }
+
+    @Test
+    fun taBreakout() {
+        val strategy = TAStrategy.breakout(10, 30)
         val x = run(strategy, 60)
         assertEquals(60, x.size)
     }
@@ -86,6 +108,8 @@ internal class TAStrategyTest {
     }
 
     private fun run(s: Strategy, n: Int = 100): Map<Instant, List<Signal>> {
+        s.reset()
+        s.start(RunPhase.MAIN)
         val actions = listOf(TestData.priceBar())
         val result = mutableMapOf<Instant, List<Signal>>()
         var now = Instant.now()
