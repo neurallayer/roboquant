@@ -1,32 +1,38 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.common.iszero
-import org.roboquant.orders.BracketOrder
-import org.roboquant.orders.OneCancelsOtherOrder
-import org.roboquant.orders.OneTriggersOtherOrder
-import org.roboquant.orders.OrderStatus
+import org.roboquant.orders.*
 import java.time.Instant
 
 internal class OCOOrderCommand(order: OneCancelsOtherOrder) : OrderCommand<OneCancelsOtherOrder>(order) {
 
     private val first = ExecutionEngine.getOrderCommand(order.first)
     private val second = ExecutionEngine.getOrderCommand(order.second)
+    private var active = 0
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         update(time)
-        val result = mutableListOf<Execution>()
 
-        if (first.status.open) {
-            result.addAll(first.execute(pricing, time))
-            if (first.status.aborted) close(first.status, time)
+        if (active == 0 || active == 1) {
+            val result = first.execute(pricing, time)
+            if (result.isNotEmpty()) {
+                active = 1
+                state = first.state
+                return result
+            }
+
         }
 
-        if (first.status == OrderStatus.COMPLETED) {
-            result.addAll(second.execute(pricing, time))
-            status = second.status
+        if (active == 0 || active == 2) {
+            val result = second.execute(pricing, time)
+            if (result.isNotEmpty()) {
+                active = 2
+                state = second.state
+                return result
+            }
         }
 
-        return result
+        return emptyList()
     }
 }
 
