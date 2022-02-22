@@ -19,10 +19,9 @@ package org.roboquant.feeds.csv
 import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
-import kotlin.test.assertEquals
-import kotlin.test.assertFails
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
+import org.roboquant.common.Exchange
+import java.time.Instant
+import kotlin.test.*
 
 internal class CSVFeedTest {
 
@@ -54,6 +53,33 @@ internal class CSVFeedTest {
         assertEquals("TEST123", feed.assets.first().exchangeCode)
     }
 
+
+
+    @Test
+    fun testColumnInfo() {
+       val ci = ColumnInfo()
+        ci.detectColumns(listOf("OPEN", "dummy", "high", "close"))
+        assertEquals(0, ci.open)
+        assertEquals(2, ci.high)
+        assertEquals(3, ci.close)
+
+        val ci2 = ColumnInfo()
+        ci2.define("OXHC")
+        assertEquals(0, ci2.open)
+        assertEquals(2, ci2.high)
+        assertEquals(3, ci2.close)
+        assertEquals(-1, ci2.adjustedClose)
+        assertFalse(ci2.hasVolume)
+    }
+
+
+    @Test
+    fun localTimeParser() {
+        val parser = LocalTimeParser("dd-MM-yyyy", dateFormat = true, exchange = Exchange.getInstance("US"))
+        val instant = parser.parse("01-01-2020")
+        val closingTime = Instant.parse("2020-01-01T21:00:00Z")
+        assertEquals(closingTime, instant)
+    }
 
     @Test
     fun config() {

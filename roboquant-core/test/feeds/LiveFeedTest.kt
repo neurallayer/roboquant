@@ -39,5 +39,16 @@ internal class LiveFeedTest {
     }
 
 
+    @Test
+    fun combined() = runBlocking {
+        val feed1 = MyLiveFeed()
+        feed1.heartbeatInterval = 2
+        val feed2 = MyLiveFeed()
+        feed2.heartbeatInterval = 2
+        val feed = CombinedFeed(feed1, feed2)
+        Background.ioJob { feed.play(EventChannel()) }
+        feed.close()
+    }
+
 
 }
