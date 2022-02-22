@@ -12,7 +12,8 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
         /**
          * Get a new command for a cerain order
          */
-        fun getOrderCommand(order: Order): OrderCommand<*> {
+        fun getOrderCommand(order: Order, orderCommands: List<OrderCommand<*>> = emptyList()): OrderCommand<*> {
+            @Suppress("UNCHECKED_CAST")
             return when (order) {
                 is MarketOrder -> MarketOrderCommand(order)
                 is LimitOrder -> LimitOrderCommand(order)
@@ -23,6 +24,8 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
                 is BracketOrder -> BracketOrderCommand(order)
                 is OneCancelsOtherOrder -> OCOOrderCommand(order)
                 is OneTriggersOtherOrder -> OTOOrderCommand(order)
+                is UpdateOrder<*> -> UpdateOrderCommand(order as UpdateOrder<SingleOrder>, orderCommands)
+                is CancellationOrder -> CancelOrderCommand(order, orderCommands )
                 else -> throw Exception("Unsupported Order type $order")
             }
 
@@ -34,12 +37,12 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
     internal val orderCommands = LinkedList<OrderCommand<*>>()
 
     // Add a new order to the execution engine
-    fun add(order: Order) = orderCommands.add(getOrderCommand(order))
+    fun add(order: Order) = orderCommands.add(getOrderCommand(order, orderCommands))
 
 
     // Add a new order to the execution engine
     fun addAll(orders: List<Order>) {
-        for (order in orders) orderCommands.add(getOrderCommand(order))
+        for (order in orders) orderCommands.add(getOrderCommand(order, orderCommands))
     }
 
 
@@ -55,9 +58,8 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
                 continue
             }
 
+
             val action = prices[exec.order.asset] ?: continue
-
-
             val pricing = pricingEngine.getPricing(action, event.time)
             val newExecutions = exec.execute(pricing, event.time)
             executions.addAll(newExecutions)
