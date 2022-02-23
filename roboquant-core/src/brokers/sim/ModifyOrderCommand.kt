@@ -1,14 +1,11 @@
 package org.roboquant.brokers.sim
 
-import org.roboquant.orders.CancellationOrder
-import org.roboquant.orders.OrderStatus
-import org.roboquant.orders.SingleOrder
-import org.roboquant.orders.UpdateOrder
+import org.roboquant.orders.*
 import java.time.Instant
 
-internal class UpdateOrderCommand(order: UpdateOrder<SingleOrder>, cmds: List<OrderCommand<*>>) : OrderCommand<UpdateOrder<SingleOrder>>(order) {
+internal class UpdateOrderCommand(order: UpdateOrder, cmds: List<OrderCommand<*>>) : OrderCommand<UpdateOrder>(order) {
 
-    private val ro = cmds.filterIsInstance<OrderCommand<SingleOrder>>()
+    private val ro = cmds.filterIsInstance<OrderCommand<Order>>()
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         update(time)

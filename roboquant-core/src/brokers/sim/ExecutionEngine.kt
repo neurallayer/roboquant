@@ -24,7 +24,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
                 is BracketOrder -> BracketOrderCommand(order)
                 is OneCancelsOtherOrder -> OCOOrderCommand(order)
                 is OneTriggersOtherOrder -> OTOOrderCommand(order)
-                is UpdateOrder<*> -> UpdateOrderCommand(order as UpdateOrder<SingleOrder>, orderCommands)
+                is UpdateOrder -> UpdateOrderCommand(order, orderCommands)
                 is CancellationOrder -> CancelOrderCommand(order, orderCommands )
                 else -> throw Exception("Unsupported Order type $order")
             }

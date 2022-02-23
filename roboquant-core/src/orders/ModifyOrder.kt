@@ -38,11 +38,18 @@ abstract class ModifyOrder(orderSlip: OrderSlip<*>, id: String) : Order(orderSli
  * @constructor Create empty Order update
  */
 
-class UpdateOrder<T : SingleOrder>(
-    val original: OrderSlip<T>,
-    val update: T,
+class UpdateOrder(
+    val original: OrderSlip<*>,
+    val update: SingleOrder,
     id: String = nextId(),
-) : ModifyOrder(original, id)
+) : ModifyOrder(original, id) {
+
+    init {
+        require(original.order::class == update::class) { "update orders cannot change order type"}
+    }
+
+
+}
 
 
 class CancellationOrder(
