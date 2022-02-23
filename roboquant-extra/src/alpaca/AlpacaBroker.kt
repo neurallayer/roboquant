@@ -126,7 +126,7 @@ class AlpacaBroker(
     private fun toAsset(assetId: String) = assetsMap[assetId]!!
 
 
-    private fun toState(order: AlpacaOrder) : OrderState {
+    private fun toState(order: AlpacaOrder, marketOrder: MarketOrder) : OrderState {
         val status = when (order.status) {
             AlpacaOrderStatus.CANCELED -> OrderStatus.CANCELLED
             AlpacaOrderStatus.EXPIRED -> OrderStatus.EXPIRED
@@ -139,19 +139,18 @@ class AlpacaBroker(
         }
         val close = order.filledAt ?: order.canceledAt ?: order.expiredAt
         val closeTime = close?.toInstant() ?: Instant.MAX
-        return OrderState(status, order.createdAt.toInstant(), closeTime)
+        return OrderState(marketOrder, status, order.createdAt.toInstant(), closeTime)
     }
 
 
     /**
      * Convert an alpaca order to a roboquant order
      */
-    private fun toOrder(order: AlpacaOrder): OrderSlip<*> {
+    private fun toOrder(order: AlpacaOrder): OrderState {
         val asset = toAsset(order.assetId)
         val qty = if (order.side == OrderSide.BUY) order.quantity.toDouble() else - order.quantity.toDouble()
-        val state = toState(order)
         val marketOrder = MarketOrder(asset, qty)
-        return OrderSlip(marketOrder, state)
+        return toState(order, marketOrder)
     }
 
     /**
@@ -171,13 +170,13 @@ class AlpacaBroker(
      */
     private fun updateOpenOrders() {
 
-        val slips = _account.orders.values.open.filterIsInstance<SingleOrder>().map {
+  /*      val slips = _account.orders.values.open.filterIsInstance<SingleOrder>().map {
             val aOrder = orderMapping[it]!!
             val order = alpacaAPI.orders().get(aOrder.id, false)
             val state = toState(order)
             OrderSlip(it, state)
         }
-        _account.putOrders(slips)
+        _account.putOrders(slips)*/
     }
 
     /**
@@ -215,7 +214,7 @@ class AlpacaBroker(
             }
         }
         orderMapping[order] = alpacaOrder
-        _account.putOrders(listOf(OrderSlip(order)))
+        _account.putOrders(listOf(OrderState(order)))
 
 
     }

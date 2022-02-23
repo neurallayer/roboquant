@@ -177,7 +177,7 @@ class OANDABroker(
         logger.finer {"received ${orders.size} orders and ${event.actions.size} actions"}
         _account.putOrders(orders.initialOrderSlips)
 
-        if (! enableOrders) {
+    /*    if (! enableOrders) {
             val slips = orders.map { OrderSlip(it, OrderState(OrderStatus.REJECTED)) }
             _account.putOrders(slips)
         } else {
@@ -212,7 +212,7 @@ class OANDABroker(
                 _account.orders[order.id] = OrderSlip(order, state)
             }
         }
-
+*/
         // OONDA doesn't update positions quick enough and so they don't reflect trades just made
         Thread.sleep(1000)
         updateAccount()

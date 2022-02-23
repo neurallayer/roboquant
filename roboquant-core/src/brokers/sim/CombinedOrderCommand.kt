@@ -17,7 +17,7 @@ internal class OCOOrderCommand(order: OneCancelsOtherOrder) : OrderCommand<OneCa
             val result = first.execute(pricing, time)
             if (result.isNotEmpty()) {
                 active = 1
-                state = first.state
+                status = first.status
                 return result
             }
 
@@ -27,7 +27,7 @@ internal class OCOOrderCommand(order: OneCancelsOtherOrder) : OrderCommand<OneCa
             val result = second.execute(pricing, time)
             if (result.isNotEmpty()) {
                 active = 2
-                state = second.state
+                status = first.status
                 return result
             }
         }

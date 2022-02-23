@@ -131,7 +131,7 @@ class SimBroker(
         for (execution in executions) updateAccount(execution, event.time)
 
         // Get latest state of orders
-        val orders = executionEngine.orderCommands.map { OrderSlip(it.order, it.state) }
+        val orders = executionEngine.orderCommands.map { it.state }
         _account.putOrders(orders)
     }
 

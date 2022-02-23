@@ -101,8 +101,8 @@ class BinanceBroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         val slips = orders.map {
-            val state = OrderState(OrderStatus.REJECTED, event.time, event.time)
-            OrderSlip(it, state) }
+            OrderState(it, OrderStatus.REJECTED, event.time, event.time)
+        }
         _account.putOrders(slips)
         true && return _account.toAccount()
 

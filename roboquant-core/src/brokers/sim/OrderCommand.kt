@@ -10,26 +10,26 @@ abstract class OrderCommand<T: Order>(var order: T) {
 
     abstract fun execute(pricing: Pricing, time: Instant): List<Execution>
 
-    var state = OrderState()
+    val state: OrderState
+        get() = OrderState(order, status, open, closed)
 
-    /**
-     * Make sure we use copy
-     */
-    var status
-        get() = state.status
-        set(value) {
-            state = state.copy(status = value)
-        }
+    var status: OrderStatus = OrderStatus.INITIAL
+    var open: Instant = Instant.MIN
+    var closed: Instant = Instant.MAX
+
+
 
     fun update(time: Instant) {
         if (state.status === OrderStatus.INITIAL) {
-            state = OrderState(OrderStatus.ACCEPTED, time)
+            status = OrderStatus.ACCEPTED
+            open = time
         }
     }
 
     fun close(status: OrderStatus, time: Instant) {
         if (state.status === OrderStatus.ACCEPTED) {
-            state = OrderState(status, state.placed, time)
+            this.status = status
+            closed = time
         }
     }
 

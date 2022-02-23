@@ -22,21 +22,17 @@ import java.time.Instant
  * Part of order processing that can change
  */
 data class OrderState(
-    var status: OrderStatus = OrderStatus.INITIAL,
-    var placed: Instant = Instant.MIN,
-    var closed: Instant = Instant.MAX
-)
-
-class OrderSlip<T: Order>(val order: T, val state: OrderState = OrderState()) {
+    val order: Order,
+    val status: OrderStatus = OrderStatus.INITIAL,
+    val openedAt: Instant = Instant.MIN,
+    val closedAt: Instant = Instant.MAX
+) {
 
     val open
-        get() = state.status.open
+        get() = status.open
 
     val closed
-        get() = state.status.closed
-
-    val status
-        get() = state.status
+        get() = status.closed
 
     val asset
         get() = order.asset
@@ -44,18 +40,20 @@ class OrderSlip<T: Order>(val order: T, val state: OrderState = OrderState()) {
     val id
         get() = order.id
 
+
 }
 
 
-val Collection<OrderSlip<*>>.orders
+
+val Collection<OrderState>.orders
     get() = map { it.order }
 
 
-val Collection<OrderSlip<*>>.open
+val Collection<OrderState>.open
     get() = filter { it.open }.orders
 
 
-val Collection<OrderSlip<*>>.closed
+val Collection<OrderState>.closed
     get() = filter { it.closed }.orders
 
 

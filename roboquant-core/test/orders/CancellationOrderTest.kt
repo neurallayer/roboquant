@@ -28,7 +28,7 @@ internal class CancellationOrderTest {
     fun test() {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100.0)
-        val slip = OrderSlip(order)
+        val slip = OrderState(order)
         val oc = CancellationOrder(slip)
         assertEquals(order, oc.order.order)
     }
@@ -37,7 +37,7 @@ internal class CancellationOrderTest {
     fun testFailure() {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100.0)
-        val slip = OrderSlip(order, OrderState(OrderStatus.COMPLETED))
+        val slip = OrderState(order, OrderStatus.COMPLETED)
         assertFails {
             CancellationOrder(slip)
         }

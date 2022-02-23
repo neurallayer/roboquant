@@ -56,7 +56,7 @@ abstract class Order(val asset: Asset, val id: String) {
 
 
 val Collection<Order>.initialOrderSlips
-    get() = map { OrderSlip(it)}
+    get() = map { OrderState(it, OrderStatus.INITIAL)}
 
 
 

@@ -17,7 +17,7 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.*
-import org.roboquant.orders.OrderSlip
+import org.roboquant.orders.OrderState
 import org.roboquant.orders.closed
 import org.roboquant.orders.open
 import java.math.BigDecimal
@@ -48,7 +48,7 @@ class Account(
     val lastUpdate: Instant,
     val cash: Wallet,
     val trades: List<Trade>,
-    val orders: List<OrderSlip<*>>,
+    val orders: List<OrderState>,
     val portfolio: List<Position>,
     val buyingPower: Amount
 ) : Summarizable {
@@ -166,7 +166,7 @@ fun Collection<Position>.diff(target: Collection<Position>): Map<Asset, Double> 
  * Provide a summary for the orders, split by open and closed orders
  */
 @JvmName("summaryOrders")
-fun Collection<OrderSlip<*>>.summary(): Summary {
+fun Collection<OrderState>.summary(): Summary {
     val s = Summary("Orders")
 
     val c = Summary("closed")

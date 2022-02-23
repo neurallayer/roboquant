@@ -19,11 +19,11 @@ abstract class SingleOrderCommand<T : SingleOrder>(order: T) : OrderCommand<T>(o
      */
     private fun expired(time: Instant): Boolean {
         return when (val tif = order.tif) {
-            is GTC -> time > state.placed + tif.maxDays.days
-            is DAY -> ! order.asset.exchange.sameDay(state.placed, time)
+            is GTC -> time > state.openedAt + tif.maxDays.days
+            is DAY -> ! order.asset.exchange.sameDay(state.openedAt, time)
             is FOK -> remaining != 0.0
             is GTD -> time > tif.date
-            is IOC -> time > state.placed
+            is IOC -> time > state.openedAt
             else -> throw Exception("Unsupported TIF $tif")
         }
     }

@@ -18,10 +18,10 @@ package org.roboquant.orders
 
 
 
-abstract class ModifyOrder(orderSlip: OrderSlip<*>, id: String) : Order(orderSlip.order.asset, id) {
+abstract class ModifyOrder(orderState: OrderState, id: String) : Order(orderState.order.asset, id) {
 
     init {
-        require(orderSlip.state.status.open)
+        require(orderState.status.open)
     }
 
 }
@@ -39,7 +39,7 @@ abstract class ModifyOrder(orderSlip: OrderSlip<*>, id: String) : Order(orderSli
  */
 
 class UpdateOrder(
-    val original: OrderSlip<*>,
+    val original: OrderState,
     val update: SingleOrder,
     id: String = nextId(),
 ) : ModifyOrder(original, id) {
@@ -53,6 +53,6 @@ class UpdateOrder(
 
 
 class CancellationOrder(
-    val order: OrderSlip<*>,
+    val order: OrderState,
     id: String = nextId(),
 ) : ModifyOrder(order, id)

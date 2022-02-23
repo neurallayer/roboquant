@@ -21,7 +21,6 @@ import org.roboquant.common.Config.baseCurrency
 import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
-import org.roboquant.orders.OrderSlip
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
@@ -64,7 +63,7 @@ class InternalAccount(
     /**
      * All orders in a map with key being the order ID
      */
-    val orders = TreeMap<String, OrderSlip<*>>()
+    val orders = TreeMap<String, OrderState>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -115,27 +114,22 @@ class InternalAccount(
         }
     }
 
-    /**
-     * Put orders, replacing existing ones with the same order id or otherwise add them.
-     */
-    fun putOrders2(orders: Collection<Order>) {
-        for (order in orders) this.orders[order.id] = OrderSlip(order)
-    }
+
 
     /**
      * Put orders, replacing existing ones with the same order id or otherwise add them.
      */
-    fun putOrders(slips: Collection<OrderSlip<*>>) {
-        for (slip in slips) orders[slip.order.id] = slip
+    fun putOrders(orderStates: Collection<OrderState>) {
+        for (orderState in orderStates) orders[orderState.order.id] = orderState
     }
 
     fun rejectOrder(order: Order, time: Instant) {
-        orders[order.id] = OrderSlip(order, OrderState(OrderStatus.REJECTED, time, time))
+        orders[order.id] = OrderState(order, OrderStatus.REJECTED, time, time)
     }
 
 
     fun acceptOrder(order: Order, time: Instant) {
-        orders[order.id] = OrderSlip(order, OrderState(OrderStatus.ACCEPTED, time))
+        orders[order.id] = OrderState(order, OrderStatus.ACCEPTED, time, time)
     }
 
     /**

@@ -11,7 +11,6 @@ import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderSlip
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
@@ -29,7 +28,7 @@ internal class AccountModelTest {
         assertEquals(result.value, account.cashAmount.value)
 
         val order = MarketOrder(TestData.usStock(), 100.0)
-        val slip = OrderSlip(order, OrderState(OrderStatus.ACCEPTED, Instant.now()))
+        val slip = OrderState(order, OrderStatus.ACCEPTED, Instant.now())
         account.putOrders(listOf(slip))
         val result2 = uc.calculate(account)
 

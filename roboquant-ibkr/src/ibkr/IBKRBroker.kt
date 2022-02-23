@@ -201,9 +201,8 @@ class IBKRBroker(
             val openOrder = orderMap[orderId]
             if (openOrder != null) {
                 if (orderState.completedStatus() == "true") {
-                    val state = OrderState(OrderStatus.COMPLETED, closed = Instant.parse(orderState.completedTime()))
                     val slip = _account.orders[openOrder]!!
-                    _account.orders[openOrder] = OrderSlip(slip.order, state)
+                    _account.orders[openOrder] = OrderState(slip.order, OrderStatus.COMPLETED, closedAt = Instant.parse(orderState.completedTime()))
                 }
             } else {
                 val newOrder = toOrder(order, contract)
@@ -224,8 +223,8 @@ class IBKRBroker(
             else  {
                 val slip = _account.orders[id]!!
                 val newStatus = toStatus(status!!)
-                val orderState = slip.state.copy(newStatus)
-                _account.orders[id] = OrderSlip(slip.order, orderState)
+                val orderState = slip.copy(status = newStatus)
+                _account.orders[id] = orderState
             }
         }
 

@@ -16,7 +16,7 @@
 
 package org.roboquant.jupyter
 
-import org.roboquant.orders.OrderSlip
+import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import org.roboquant.orders.SingleOrder
 import java.math.BigDecimal
@@ -30,7 +30,7 @@ import java.time.Instant
  * provide more insights, since these also cover advanced order types. You can use the [TradeChart] for that.
  */
 class OrderChart(
-    private val orders: List<OrderSlip<*>>,
+    private val orderStates: List<OrderState>,
     private val aspect: String = "quantity",
 ) : Chart() {
 
@@ -40,18 +40,20 @@ class OrderChart(
         require(aspect in listOf("remaining", "direction", "quantity", "value"))
     }
 
-    private fun getTooltip(slip: OrderSlip<SingleOrder>): String {
-        return with(slip) {
-            "asset: $asset <br> currency: ${asset.currency} <br> placed: ${state.placed} <br> qty: ${order.quantity} <br> id: $id <br> type: ${order::class.simpleName} <br> tif: ${order.tif}"
+    private fun getTooltip(order: SingleOrder, openedAt: Instant): String {
+        return with(order) {
+            // "asset: $asset <br> currency: ${asset.currency} <br> placed: $openedAt <br> id: $id <br> type: ${order::class.simpleName}"
+            "asset: $asset <br> currency: ${asset.currency} <br> placed: $openedAt <br> qty: ${order.quantity} <br> id: $id <br> type: ${order::class.simpleName} <br> tif: ${order.tif}"
         }
     }
 
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
-        val slips = orders.filterIsInstance<OrderSlip<SingleOrder>>().filter { it.status != OrderStatus.INITIAL }
+        val states = orderStates.filter { it.status != OrderStatus.INITIAL }
         max = Double.MIN_VALUE.toBigDecimal()
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
-        for (slip in slips) {
-            with(slip) {
+        for (state in states) {
+            val order = state.order
+            if (order is SingleOrder) {
                 val value = when (aspect) {
                     // "remaining" -> remaining.toBigDecimal()
                     "direction" -> order.direction.toBigDecimal()
@@ -61,8 +63,8 @@ class OrderChart(
                 }
 
                 if (value.abs() > max) max = value.abs()
-                val tooltip = getTooltip(slip)
-                d.add(Triple(state.placed, value, tooltip))
+                val tooltip = getTooltip(order, state.openedAt)
+                d.add(Triple(state.openedAt, value, tooltip))
             }
         }
 

@@ -28,7 +28,6 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderSlip
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.io.File
@@ -47,7 +46,7 @@ object TestData {
         account.setPosition(Position(asset2, 100.0, 10.0))
 
         val order = MarketOrder(asset1, 100.0)
-        val slip = OrderSlip(order, OrderState(OrderStatus.COMPLETED, Instant.now(), Instant.now()))
+        val slip = OrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
         account.putOrders(listOf(slip))
         return account
     }
@@ -60,7 +59,7 @@ object TestData {
         account.setPosition(Position(asset1, 100.0, 10.0))
         account.setPosition(Position(asset2, 100.0, 10.0))
 
-        val order = OrderSlip(MarketOrder(asset1, 100.0))
+        val order = OrderState(MarketOrder(asset1, 100.0), OrderStatus.INITIAL)
         account.putOrders(listOf(order))
         return account.toAccount()
     }
