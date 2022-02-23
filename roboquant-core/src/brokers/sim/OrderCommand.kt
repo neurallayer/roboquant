@@ -17,8 +17,6 @@ abstract class OrderCommand<T: Order>(var order: T) {
     var open: Instant = Instant.MIN
     var closed: Instant = Instant.MAX
 
-
-
     fun update(time: Instant) {
         if (state.status === OrderStatus.INITIAL) {
             status = OrderStatus.ACCEPTED
@@ -27,7 +25,7 @@ abstract class OrderCommand<T: Order>(var order: T) {
     }
 
     fun close(status: OrderStatus, time: Instant) {
-        if (state.status === OrderStatus.ACCEPTED) {
+        if (state.status.open) {
             this.status = status
             closed = time
         }

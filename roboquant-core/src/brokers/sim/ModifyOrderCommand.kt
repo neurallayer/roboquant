@@ -22,18 +22,22 @@ internal class UpdateOrderCommand(order: UpdateOrder, cmds: List<OrderCommand<*>
 }
 
 
-internal class CancelOrderCommand(order: CancellationOrder, private val cmds: List<OrderCommand<*>>) : OrderCommand<CancellationOrder>(order) {
+internal class CancellationOrderCommand(order: CancellationOrder, private val cmds: List<OrderCommand<*>>) : OrderCommand<CancellationOrder>(order) {
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         update(time)
-        val idx = cmds.indexOfFirst { it.order.id == order.id }
-        if (idx >=0 ) {
-            cmds[idx].close(OrderStatus.CANCELLED, time)
-            close(OrderStatus.COMPLETED, time)
-        } else {
+        val cmd = cmds.firstOrNull { it.order.id == order.order.id }
+        if (cmd == null) {
             close(OrderStatus.REJECTED, time)
-        }
+        } else {
+            if (cmd.status.closed) {
+                close(OrderStatus.REJECTED, time)
+            } else {
+                cmd.close(OrderStatus.EXPIRED, time)
+                close(OrderStatus.COMPLETED, time)
+            }
 
+        }
         return emptyList()
     }
 }

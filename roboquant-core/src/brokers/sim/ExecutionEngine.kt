@@ -25,7 +25,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
                 is OneCancelsOtherOrder -> OCOOrderCommand(order)
                 is OneTriggersOtherOrder -> OTOOrderCommand(order)
                 is UpdateOrder -> UpdateOrderCommand(order, orderCommands)
-                is CancellationOrder -> CancelOrderCommand(order, orderCommands )
+                is CancellationOrder -> CancellationOrderCommand(order, orderCommands )
                 else -> throw Exception("Unsupported Order type $order")
             }
 
@@ -57,7 +57,6 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
                 orderCommands.remove(exec)
                 continue
             }
-
 
             val action = prices[exec.order.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, event.time)
