@@ -193,7 +193,7 @@ data class CSVConfig(
             )
         }
         // Skip the price action if the open price is zero. This is an often occurring data issue
-        if (skipZeroPrice && action.getPrice("OPEN") == 0.0) throw Exception("Found zero price")
+        if (skipZeroPrice && action.getPrice("OPEN") == 0.0) throw ValidationException("Found zero price")
 
         return PriceEntry(now, action)
     }
