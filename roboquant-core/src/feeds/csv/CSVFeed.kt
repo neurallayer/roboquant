@@ -136,7 +136,7 @@ class CSVFeed(
                 }
             }
             if (errors > 0) logger.info { "Skipped $errors lines due to errors in $file" }
-            config.priceValidate && !validateResult(result) && return listOf()
+            config.priceValidate && !validateResult(result) && return emptyList()
             return result
         }
     }

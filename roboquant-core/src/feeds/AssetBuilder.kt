@@ -18,6 +18,7 @@ package org.roboquant.feeds
 
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
+import org.roboquant.common.ConfigurationException
 
 interface AssetBuilder {
     operator fun invoke(name: String, template: Asset = Asset("TEMPLATE")): Asset =
@@ -32,7 +33,7 @@ object AssetBuilderFactory {
     fun build(name: String, template: Asset = Asset("TEMPLATE")): Asset {
         val builder = builders[template.type]
         return if (builder == null) {
-            throw Exception("No registered AssetBuilder for type ${template.type}")
+            throw ConfigurationException("No registered AssetBuilder for type ${template.type}")
         } else {
             builder(name, template)
         }

@@ -98,7 +98,7 @@ class NotificationPolicy(
             nextAlert = realTime.plusSeconds(maxFrequencySeconds.toLong())
             backlog.clear()
         }
-        return listOf()
+        return emptyList()
     }
 
 

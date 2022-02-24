@@ -54,7 +54,7 @@ internal class AccountModelTest {
     }
 
     private fun update(broker: Broker, asset: Asset, price: Number, orderSize: Number = 0): Account {
-        val orders = if (orderSize == 0) listOf() else listOf(MarketOrder(asset, orderSize.toDouble()))
+        val orders = if (orderSize == 0) emptyList() else listOf(MarketOrder(asset, orderSize.toDouble()))
         val action = TradePrice(asset, price.toDouble())
         val event = Event(listOf(action), Instant.now())
         return broker.place(orders, event)

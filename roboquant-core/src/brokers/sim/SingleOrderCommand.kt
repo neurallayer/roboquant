@@ -1,5 +1,6 @@
 package org.roboquant.brokers.sim
 
+import org.roboquant.common.UnsupportedException
 import org.roboquant.common.days
 import org.roboquant.common.iszero
 import org.roboquant.orders.*
@@ -24,7 +25,7 @@ abstract class SingleOrderCommand<T : SingleOrder>(order: T) : OrderCommand<T>(o
             is FOK -> remaining != 0.0
             is GTD -> time > tif.date
             is IOC -> time > state.openedAt
-            else -> throw Exception("Unsupported TIF $tif")
+            else -> throw UnsupportedException("Unsupported TIF $tif")
         }
     }
 
@@ -36,11 +37,11 @@ abstract class SingleOrderCommand<T : SingleOrder>(order: T) : OrderCommand<T>(o
 
         if (expired(time)) {
             close(OrderStatus.EXPIRED, time)
-            return listOf()
+            return emptyList()
         }
 
         if (remaining.iszero) close(OrderStatus.COMPLETED, time)
-        return if (execution == null) listOf() else listOf(execution)
+        return if (execution == null) emptyList() else listOf(execution)
 
     }
 

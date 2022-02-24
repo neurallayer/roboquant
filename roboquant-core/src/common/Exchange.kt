@@ -97,7 +97,8 @@ class Exchange private constructor(
          * Returns the Exchange instance for the given [exchangeCode]. If no exchange is found, the default exchange
          * is returned instead.
          *
-         * @param exchangeCode the currency code for the currency, not limited to ISO-4217 codes like regular Java Currencies
+         * @param exchangeCode the currency code for the currency, not limited to ISO-4217 codes like regular Java
+         * Currencies
          * @return Returns the Currency instance for the given currency code
          */
         fun getInstance(exchangeCode: String): Exchange = instances[exchangeCode] ?: DEFAULT

@@ -94,7 +94,7 @@ class AvroTest {
 
     @Test
     fun predefined() {
-        Config.getProperty("TEST_DATA") ?: return
+        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AvroFeed.sp500()
         assertTrue(feed.assets.size >= 500)
         assertTrue(feed.timeframe.start > Instant.parse("2013-01-01T00:00:00Z"))
@@ -108,7 +108,7 @@ class AvroTest {
 
     @Test
     fun loadFromGithub() {
-        Config.getProperty("TEST_DATA") ?: return
+        Config.getProperty("FULL_COVERAGE") ?: return
         val file = (Config.home / "us_stocks_test_v1.1.avro").toFile()
         file.delete()
         val feed = AvroFeed.usTest()

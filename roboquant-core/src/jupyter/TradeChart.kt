@@ -17,6 +17,7 @@
 package org.roboquant.jupyter
 
 import org.roboquant.brokers.Trade
+import org.roboquant.common.UnsupportedException
 import java.math.BigDecimal
 import java.time.Instant
 
@@ -38,9 +39,17 @@ open class TradeChart(
 
     private fun getTooltip(trade: Trade): String {
         val pnl = trade.pnl.toBigDecimal()
-        val totalCost =trade.totalCost.toBigDecimal()
+        val totalCost = trade.totalCost.toBigDecimal()
         val fee = trade.fee.toBigDecimal()
-        return "asset: ${trade.asset} <br> currency: ${trade.asset.currency} <br> time: ${trade.time} <br> qty: ${trade.quantity} <br> fee: $fee <br> pnl: $pnl <br> cost: $totalCost <br> order: ${trade.orderId}"
+        return """
+            |asset: ${trade.asset}<br>
+            |currency: ${trade.asset.currency}<br>
+            |time: ${trade.time}<br>
+            |qty: ${trade.quantity}<br>
+            |fee: $fee<br>
+            |pnl: $pnl<br>
+            |cost: $totalCost<br>
+            |order: ${trade.orderId}""".trimMargin()
     }
 
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
@@ -52,7 +61,7 @@ open class TradeChart(
                     "fee" -> fee.convert(time = time).toBigDecimal()
                     "cost" -> totalCost.convert(time = time).toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
-                    else -> throw Exception("Unsupported aspect $aspect")
+                    else -> throw UnsupportedException("Unsupported aspect $aspect")
                 }
 
                 if (value.abs() > max) max = value.abs()

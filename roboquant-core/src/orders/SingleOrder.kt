@@ -177,10 +177,4 @@ class TrailLimitOrder(
     val limitOffset: Double,
     tif: TimeInForce = GTC(),
     id: String = nextId(),
-) : TrailOrder(asset, quantity, trailPercentage, tif, id) {
-
-
-
-
-}
-
+) : TrailOrder(asset, quantity, trailPercentage, tif, id)

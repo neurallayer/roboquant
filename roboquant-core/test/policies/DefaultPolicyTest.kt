@@ -31,7 +31,7 @@ internal class DefaultPolicyTest {
     fun order() {
         val policy = DefaultPolicy()
         val signals = mutableListOf<Signal>()
-        val event = Event(listOf(), Instant.now())
+        val event = Event(emptyList(), Instant.now())
         val account = InternalAccount().toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
@@ -58,7 +58,7 @@ internal class DefaultPolicyTest {
 
         val policy = MyPolicy()
         val signals = mutableListOf<Signal>()
-        val event = Event(listOf(), Instant.now())
+        val event = Event(emptyList(), Instant.now())
         val account = InternalAccount().toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())

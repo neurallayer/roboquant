@@ -20,7 +20,7 @@ internal class SampleNotebookTest {
 
 
     private fun test(file: String) {
-        Config.getProperty("TEST_NOTEBOOKS") ?: return
+        Config.getProperty("FULL_COVERAGE") ?: return
 
         // Make sure to remove potential random behavior
         Config.random = Random(42L)

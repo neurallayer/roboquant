@@ -39,13 +39,13 @@ interface MetricsLogger : Component {
      * Get all the logged entries for a specific metric. This is optional to implement since not all loggers store
      * the metrics. Use [metricNames] to see which metrics are available.
      */
-    fun getMetric(name: String) : List<MetricsEntry> = listOf()
+    fun getMetric(name: String) : List<MetricsEntry> = emptyList()
 
     /**
      * The metrics that are available and can be retreived with the [getMetric].
      */
     val metricNames : List<String>
-        get() = listOf()
+        get() = emptyList()
 }
 
 

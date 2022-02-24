@@ -58,7 +58,7 @@ internal class ECBExchangeRatesTest {
 
     @Test
     fun load() {
-        Config.getProperty("TEST_DATA") ?: return
+        Config.getProperty("FULL_COVERAGE") ?: return
         val rates = ECBExchangeRates.fromWeb(useCache = true)
         assertTrue(rates.currencies.size > 40)
     }

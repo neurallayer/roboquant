@@ -36,7 +36,7 @@ import org.roboquant.feeds.filter
 class PriceBarChart(
     private val feed: Feed,
     private val asset: Asset,
-    private val trades: Collection<Trade> = listOf(),
+    private val trades: Collection<Trade> = emptyList(),
     private val timeframe: Timeframe = Timeframe.INFINITY,
     private val useTime: Boolean = true
 ) : Chart() {

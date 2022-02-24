@@ -32,7 +32,7 @@ data class Event(val actions: List<Action>, val time: Instant) : Comparable<Even
         /**
          * Create an event without any [actions] with as default [time] the current system time.
          */
-        fun empty(time: Instant = Instant.now()) = Event(listOf(), time)
+        fun empty(time: Instant = Instant.now()) = Event(emptyList(), time)
     }
 
 

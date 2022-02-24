@@ -44,7 +44,7 @@ internal class NotificationPolicyTest {
     private fun act(policy: Policy): List<Order> {
         val asset = TestData.usStock()
         val signals = mutableListOf(Signal(asset, Rating.BUY))
-        val event = Event(listOf(), Instant.now())
+        val event = Event(emptyList(), Instant.now())
         val account = InternalAccount().toAccount()
         return policy.act(signals, account, event)
     }

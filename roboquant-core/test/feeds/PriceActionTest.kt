@@ -47,7 +47,7 @@ internal class PriceActionTest {
     @Test
     fun testOrderBookEmpty() {
         val asset = TestData.euStock()
-        val event = OrderBook(asset, listOf(), listOf())
+        val event = OrderBook(asset, emptyList(), emptyList())
         assertTrue(event.asks.isEmpty())
         assertTrue(event.bids.isEmpty())
 

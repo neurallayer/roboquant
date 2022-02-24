@@ -41,7 +41,7 @@ import java.util.regex.Pattern
 data class CSVConfig(
     var fileExtension: String = ".csv",
     var filePattern: String = ".*",
-    var fileSkip: List<String> = listOf(),
+    var fileSkip: List<String> = emptyList(),
     var parsePattern: String = "",
     var parseTime: String = "",
     var parseIsDate: Boolean = true,

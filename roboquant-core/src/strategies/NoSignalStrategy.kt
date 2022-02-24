@@ -30,6 +30,6 @@ import org.roboquant.feeds.Event
  */
 class NoSignalStrategy : Strategy {
     override fun generate(event: Event): List<Signal> {
-        return listOf()
+        return emptyList()
     }
 }

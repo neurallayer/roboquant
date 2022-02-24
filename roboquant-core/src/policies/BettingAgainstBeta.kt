@@ -157,7 +157,7 @@ open class BettingAgainstBeta(
             rebalanceDate = event.time + holdingPeriodDays.days
             return rebalance(betas, account, event)
         }
-        return listOf()
+        return emptyList()
     }
 
     /**

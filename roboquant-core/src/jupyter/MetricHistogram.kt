@@ -42,7 +42,7 @@ class MetricHistogram(
         val result = mutableListOf<Pair<String, Long>>()
         val f = EmpiricalDistribution(binCount)
         val data = metricData.toDoubleArray().clean()
-        if (data.isEmpty()) return listOf()
+        if (data.isEmpty()) return emptyList()
 
         f.load(data)
         for (i in 0 until binCount) {

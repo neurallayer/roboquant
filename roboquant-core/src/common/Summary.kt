@@ -90,13 +90,13 @@ class Summary(val content: String) {
     }
 
     override fun toString(): String {
-        val buffer = StringBuilder(50)
+        val buffer = StringBuilder()
         generate(buffer, "", "")
         return buffer.toString()
     }
 
     fun toString(maxChildren: Int): String {
-        val buffer = StringBuilder(50)
+        val buffer = StringBuilder()
         generate(buffer, "", "", maxChildren)
         return buffer.toString()
     }
