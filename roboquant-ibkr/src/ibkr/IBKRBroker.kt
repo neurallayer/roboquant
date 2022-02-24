@@ -111,7 +111,7 @@ class IBKRBroker(
 
 
         // First we place the cancellation orders
-        for (cancellation in orders.filterIsInstance<CancellationOrder>()) {
+        for (cancellation in orders.filterIsInstance<CancelOrder>()) {
             logger.fine("received order $cancellation")
             val id = cancellation.id
             val ibID = orderMap.filter { it.value == id }.keys.first()

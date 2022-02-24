@@ -169,10 +169,10 @@ class SimBroker(
      * last known market prices as price actions.
      */
     fun liquidatePortfolio(time: Instant = _account.lastUpdate): Account {
-        val cancellationOrders = _account.orders.filter {it.value.open }.map { CancellationOrder(it.value) }
+        val cancelOrders = _account.orders.filter {it.value.open }.map { CancelOrder(it.value) }
         val change = _account.portfolio.values.diff(listOf())
         val changeOrders = change.map { MarketOrder(it.key, it.value) }
-        val orders = cancellationOrders + changeOrders
+        val orders = cancelOrders + changeOrders
         val actions = _account.portfolio.values.map { TradePrice(it.asset, it.spotPrice) }
         val event = Event(actions, time)
         return place(orders, event)

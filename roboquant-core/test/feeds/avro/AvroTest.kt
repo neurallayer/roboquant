@@ -20,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.FixMethodOrder
 import org.junit.rules.TemporaryFolder
 import org.junit.runners.MethodSorters
+import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
@@ -41,7 +42,9 @@ class AvroTest {
         private lateinit var fileName: String
         private var size: Int = 0
         private const val nAssets = 3
+        var assets = mutableListOf<Asset>()
     }
+
 
     @Test
     fun avroStep1() {
@@ -49,6 +52,7 @@ class AvroTest {
         fileName = folder.newFile("test.avro").path
         val timeline = Timeframe.past(30.days).toDays()
         val feed = RandomWalk(timeline, nAssets = nAssets)
+        assets.addAll(feed.assets)
         size = feed.timeline.size
         AvroUtil.record(feed, fileName, compressionLevel = 0)
         assertTrue(File(fileName).isFile)
@@ -76,10 +80,10 @@ class AvroTest {
     @Test
     fun avroStep3() {
         val feed3 = AvroFeed(fileName, useIndex = true)
-        // assertEquals(feed.assets, feed3.assets)
         assertEquals(size, feed3.timeline.size)
         assertEquals(size, feed3.index.size)
         assertEquals(nAssets, feed3.assets.size)
+        assertEquals(assets.toSet(), feed3.assets.toSet())
 
         runBlocking {
             var cnt = 0

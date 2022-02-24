@@ -31,7 +31,7 @@ import java.time.temporal.TemporalAmount
  *
  * @constructor Create new Test feed
  */
-class TestHistoricFeed(
+class HistoricTestFeed(
     vararg prices: Iterable<Number> = arrayOf(90..100, 100 downTo 90),
     start: Instant = Instant.parse("1970-01-01T12:00:00Z"),
     duration: TemporalAmount = 1.days,

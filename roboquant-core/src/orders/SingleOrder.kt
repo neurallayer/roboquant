@@ -151,6 +151,8 @@ open class TrailOrder(
     init {
         require(trailPercentage > 0.0) {"trailPrecentage should be a positive value"}
     }
+
+
 }
 
 /**
@@ -175,5 +177,10 @@ class TrailLimitOrder(
     val limitOffset: Double,
     tif: TimeInForce = GTC(),
     id: String = nextId(),
-) : TrailOrder(asset, quantity, trailPercentage, tif, id)
+) : TrailOrder(asset, quantity, trailPercentage, tif, id) {
+
+
+
+
+}
 

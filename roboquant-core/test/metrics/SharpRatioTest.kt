@@ -20,7 +20,7 @@ package org.roboquant.metrics
 import org.junit.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
-import org.roboquant.feeds.test.TestHistoricFeed
+import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.strategies.TestStrategy
 import kotlin.test.assertTrue
@@ -37,7 +37,7 @@ internal class SharpRatioTest {
 
     @Test
     fun test2() {
-        val feed = TestHistoricFeed(100..200)
+        val feed = HistoricTestFeed(100..200)
         val strategy = TestStrategy()
         val metric = SharpRatio()
         val logger = MemoryLogger(false)

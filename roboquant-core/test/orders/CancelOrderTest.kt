@@ -22,14 +22,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 
 
-internal class CancellationOrderTest {
+internal class CancelOrderTest {
 
     @Test
     fun test() {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100.0)
         val slip = OrderState(order)
-        val oc = CancellationOrder(slip)
+        val oc = CancelOrder(slip)
         assertEquals(order, oc.order.order)
     }
 
@@ -39,7 +39,7 @@ internal class CancellationOrderTest {
         val order = MarketOrder(asset, 100.0)
         val slip = OrderState(order, OrderStatus.COMPLETED)
         assertFails {
-            CancellationOrder(slip)
+            CancelOrder(slip)
         }
     }
 }

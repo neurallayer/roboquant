@@ -23,7 +23,7 @@ import org.roboquant.common.AssetType
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.USD
-import org.roboquant.feeds.test.TestHistoricFeed
+import org.roboquant.feeds.test.HistoricTestFeed
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -33,7 +33,7 @@ internal class FeedExchangeRatesTest {
     @Test
     fun basic() {
         val rates = listOf(1.15, 1.16, 1.20, 1.18)
-        val feed = TestHistoricFeed(rates, asset = Asset("USD_EUR", AssetType.FOREX))
+        val feed = HistoricTestFeed(rates, asset = Asset("USD_EUR", AssetType.FOREX))
         val er = FeedExchangeRates(feed)
         assertEquals(setOf(EUR, USD),  er.currencies.toSet())
         val r = er.convert(100.USD, EUR, Instant.now())

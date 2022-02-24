@@ -30,7 +30,7 @@ internal class CSVFeedTest {
         val feed = CSVFeed(TestData.dataDir() + "US")
         assertEquals(3, feed.assets.size)
         val c2 = feed.assets.find { it.symbol == "AAPL" }
-        assertTrue(c2 !== null)
+        assertEquals("AAPL", c2?.symbol)
     }
 
 

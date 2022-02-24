@@ -32,7 +32,7 @@ import java.time.temporal.ChronoUnit
  * - [cash] balances in the account
  * - the [portfolio] with its assets
  * - The past [trades]
- * - The [orders], both open (still in progress) and already closed ones
+ * - The [orders] and theor state, both open (still in progress) and already closed ones
  *
  * It also supports multi-currency trading through the use of a pluggable currency converter. Without configuring such
  * plug-in it still supports single currency trading, so when all assets and cash balances are denoted in a single
@@ -65,8 +65,19 @@ class Account(
     val equity
         get() = cash + portfolio.value
 
+    /**
+     * Assets in the portfolio
+     */
     val assets
         get() = portfolio.map { it.asset }
+
+    /**
+     * Gte the associated trades for the provided [orders]. If no orders are provided all orders linked to this account
+     * instance are used.
+     */
+    fun getOrderTrades(orders: Collection<OrderState> = this.orders) =
+        orders.associateWith { order -> trades.filter { it.orderId == order.id } }.toMap()
+
 
     fun convert(amount: Amount) = amount.convert(baseCurrency, lastUpdate)
 
@@ -81,7 +92,7 @@ class Account(
      */
     override fun summary(singleCurrency: Boolean): Summary {
 
-        fun c(w:Wallet) :Any = if (singleCurrency) convert(w) else w
+        fun c(w: Wallet): Any = if (singleCurrency) convert(w) else w
 
         val s = Summary("Account")
         s.add("last update", lastUpdate.truncatedTo(ChronoUnit.SECONDS))
@@ -114,7 +125,6 @@ class Account(
     }
 
 }
-
 
 
 val Collection<Trade>.fee
@@ -181,8 +191,6 @@ fun Collection<OrderState>.summary(): Summary {
 
     return s
 }
-
-
 
 
 /**

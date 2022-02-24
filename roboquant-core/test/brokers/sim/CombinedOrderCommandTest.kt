@@ -43,6 +43,17 @@ internal class CombinedOrderCommandTest {
         assertEquals(100.0, executions.first().size)
     }
 
+    @Test
+    fun testOCO2() {
+        val order1 = LimitOrder(asset, 100.0, 90.0)
+        val order2 = MarketOrder(asset, 50.0)
+        val order = OneCancelsOtherOrder(order1, order2)
+        val cmd = OCOOrderCommand(order)
+        val executions = cmd.execute(pricing(100), Instant.now())
+        assertEquals(1, executions.size)
+        assertEquals(50.0, executions.first().size)
+    }
+
 
     @Test
     fun testOTO() {

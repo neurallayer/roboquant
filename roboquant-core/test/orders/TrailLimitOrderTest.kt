@@ -18,6 +18,8 @@ package org.roboquant.orders
 
 import org.junit.Test
 import org.roboquant.TestData
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 
 internal class TrailLimitOrderTest {
@@ -26,7 +28,12 @@ internal class TrailLimitOrderTest {
     fun testTrailOrder() {
         val asset = TestData.usStock()
         val order = TrailOrder(asset, -100.0, 0.01)
+        assertEquals(0.01, order.trailPercentage)
 
+
+        assertFails {
+            TrailOrder(asset, -100.0, -0.01)
+        }
 
     }
 
@@ -34,16 +41,10 @@ internal class TrailLimitOrderTest {
     @Test
     fun testTrailLimitOrder() {
         val asset = TestData.usStock()
-        val order = TrailLimitOrder(asset, -100.0, 0.01, 0.01)
-
-
+        val order = TrailLimitOrder(asset, -100.0, 0.01, -1.0)
+        assertEquals(0.01, order.trailPercentage)
+        assertEquals(-1.0, order.limitOffset)
     }
 
-    @Test
-    fun from() {
-        val usOrder = TestData.usMarketOrder()
-        // val order = TrailLimitOrder.from(usOrder, 0.02, 0.01)
-        // assertEquals(usOrder.quantity, - order.quantity)
-    }
 
 }

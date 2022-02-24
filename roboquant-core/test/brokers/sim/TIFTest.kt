@@ -19,6 +19,7 @@ package org.roboquant.brokers.sim
 import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.common.days
+import org.roboquant.common.seconds
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
 import java.time.Instant
@@ -26,42 +27,104 @@ import kotlin.test.assertEquals
 
 internal class TIFTest {
 
-    private val asset = TestData.usStock()
 
-    private fun pricing(price: Number): Pricing {
-        val engine = NoSlippagePricing()
-        return engine.getPricing(TradePrice(asset, price.toDouble()), Instant.now())
+
+    class MySingleOrderCommand(order: MarketOrder) : SingleOrderCommand<MarketOrder>(order) {
+        var fillPercentage: Double = 1.0
+
+        override fun fill(pricing: Pricing): Execution? {
+            if (fillPercentage != 0.0) return Execution(order, fillPercentage* order.quantity, pricing.marketPrice(100.0))
+            return null
+        }
+
     }
 
-    private fun getOrderCommand(tif: TimeInForce): LimitOrderCommand {
-        val order = LimitOrder(asset, 50.0, 100.0, tif)
-        return LimitOrderCommand(order)
+    private fun pricing(price: Number = 100): Pricing {
+        val engine = NoSlippagePricing()
+        return engine.getPricing(TradePrice(TestData.usStock(), price.toDouble()), Instant.now())
+    }
+
+    private fun getOrderCommand(tif: TimeInForce, fillPercentage: Double = 1.0): MySingleOrderCommand {
+        val asset = TestData.usStock()
+        val order = MarketOrder(asset, 50.0, tif)
+        val result = MySingleOrderCommand(order)
+        result.fillPercentage = fillPercentage
+        return result
     }
 
     @Test
     fun testDAY() {
-        val cmd = getOrderCommand(DAY())
-        var executions = cmd.execute(pricing(120), Instant.now())
-        assertEquals(0, executions.size)
-        executions = cmd.execute(pricing(110), Instant.now() + 2.days)
-        assertEquals(0, executions.size)
-        assertEquals(OrderStatus.EXPIRED, cmd.status)
+        var cmd = getOrderCommand(DAY())
+        cmd.execute(pricing(), Instant.now())
+        assertEquals(OrderStatus.COMPLETED, cmd.status)
 
+        cmd = getOrderCommand(DAY(), 0.1)
+        cmd.execute(pricing(), Instant.now())
+        assertEquals(OrderStatus.ACCEPTED, cmd.status)
+
+        cmd.execute(pricing(), Instant.now() + 2.days)
+        assertEquals(OrderStatus.EXPIRED, cmd.status)
     }
 
     @Test
     fun testGTC() {
-        val cmd = getOrderCommand(GTC())
-        var executions = cmd.execute(pricing(120), Instant.now())
-        assertEquals(0, executions.size)
+        var cmd = getOrderCommand(GTC(), 1.0)
+        cmd.execute(pricing(120), Instant.now())
+        assertEquals(OrderStatus.COMPLETED, cmd.status)
+
+        cmd = getOrderCommand(GTC(), 0.1)
+        cmd.execute(pricing(), Instant.now())
         assertEquals(OrderStatus.ACCEPTED, cmd.status)
 
-        executions = cmd.execute(pricing(110), Instant.now() + 2.days)
-        assertEquals(0, executions.size)
+        cmd.execute(pricing(), Instant.now() + 100.days)
+        assertEquals(OrderStatus.EXPIRED, cmd.status)
+    }
+
+
+    @Test
+    fun testFOK() {
+        var cmd = getOrderCommand(FOK(), 1.0)
+        cmd.execute(pricing(120), Instant.now())
+        assertEquals(OrderStatus.COMPLETED, cmd.status)
+
+        cmd = getOrderCommand(FOK(), 0.1)
+        cmd.execute(pricing(), Instant.now())
+        assertEquals(OrderStatus.EXPIRED, cmd.status)
+
+    }
+
+
+    @Test
+    fun testGTD() {
+        val date = Instant.now() + 2.days
+        var cmd = getOrderCommand(GTD(date), 1.0)
+        cmd.execute(pricing(), Instant.now())
+        assertEquals(OrderStatus.COMPLETED, cmd.status)
+
+        cmd = getOrderCommand(GTD(date), 0.1)
+        cmd.execute(pricing(), Instant.now())
         assertEquals(OrderStatus.ACCEPTED, cmd.status)
 
-        executions = cmd.execute(pricing(110), Instant.now() + 100.days)
-        assertEquals(0, executions.size)
+        cmd.execute(pricing(), Instant.now() + 1.days)
+        assertEquals(OrderStatus.ACCEPTED, cmd.status)
+
+        cmd.execute(pricing(), Instant.now() + 4.days)
+        assertEquals(OrderStatus.EXPIRED, cmd.status)
+
+    }
+
+
+    @Test
+    fun testIOC() {
+        var cmd = getOrderCommand(IOC(), 1.0)
+        cmd.execute(pricing(), Instant.now())
+        assertEquals(OrderStatus.COMPLETED, cmd.status)
+
+        cmd = getOrderCommand(IOC(), 0.1)
+        cmd.execute(pricing(), Instant.now())
+        assertEquals(OrderStatus.ACCEPTED, cmd.status)
+
+        cmd.execute(pricing(), Instant.now() + 1.seconds)
         assertEquals(OrderStatus.EXPIRED, cmd.status)
 
     }

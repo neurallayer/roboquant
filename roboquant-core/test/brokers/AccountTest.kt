@@ -41,7 +41,13 @@ internal class AccountTest {
 
         assertTrue(account.trades.isEmpty())
         assertTrue(account.trades.realizedPNL.isEmpty())
+    }
 
+    @Test
+    fun testValues() {
+        val account = TestData.internalAccount().toAccount()
+        assertTrue(account.orders.isNotEmpty())
+        assertContains(account.getOrderTrades(), account.orders.first())
     }
 
     @Test
@@ -63,6 +69,8 @@ internal class AccountTest {
         assertContains(account.portfolio.assets, account.portfolio.first().asset)
 
     }
+
+
 
 
 }

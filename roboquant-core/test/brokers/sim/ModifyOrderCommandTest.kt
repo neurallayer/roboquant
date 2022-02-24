@@ -51,9 +51,9 @@ internal class ModifyOrderCommandTest {
         val order1 = MarketOrder(asset, 100.0)
         val moc = MarketOrderCommand(order1)
 
-        val order = CancellationOrder(moc.state)
+        val order = CancelOrder(moc.state)
 
-        val cmd = CancellationOrderCommand(order, listOf(moc))
+        val cmd = CancelOrderCommand(order, listOf(moc))
         cmd.execute(pricing(100), Instant.now())
         assertEquals(OrderStatus.COMPLETED, cmd.status)
         assertEquals(OrderStatus.EXPIRED, moc.state.status)

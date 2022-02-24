@@ -17,7 +17,7 @@
 package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
-import org.roboquant.feeds.test.TestLiveFeed
+import org.roboquant.feeds.test.LiveTestFeed
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -25,8 +25,8 @@ internal class CombinedFeedTest {
 
     @Test
     fun testCombinedFeed() = runBlocking {
-        val f1 = TestLiveFeed(10..19, delayInMillis = 1)
-        val f2 = TestLiveFeed(60..69, delayInMillis = 1)
+        val f1 = LiveTestFeed(10..19, delayInMillis = 1)
+        val f2 = LiveTestFeed(60..69, delayInMillis = 1)
         val cf = CombinedFeed(f1, f2)
         var cnt = 0
         for (step in play(cf)) {

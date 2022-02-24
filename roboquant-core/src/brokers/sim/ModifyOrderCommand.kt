@@ -22,7 +22,7 @@ internal class UpdateOrderCommand(order: UpdateOrder, cmds: List<OrderCommand<*>
 }
 
 
-internal class CancellationOrderCommand(order: CancellationOrder, private val cmds: List<OrderCommand<*>>) : OrderCommand<CancellationOrder>(order) {
+internal class CancelOrderCommand(order: CancelOrder, private val cmds: List<OrderCommand<*>>) : OrderCommand<CancelOrder>(order) {
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         update(time)

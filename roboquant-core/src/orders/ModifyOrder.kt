@@ -17,11 +17,19 @@
 package org.roboquant.orders
 
 
-
+/**
+ * Base class for orders that modify other orders and don't generate trades them selves. The two included sub classes
+ * are [UpdateOrder] and [CancelOrder]
+ *
+ * @constructor
+ *
+ * @param orderState
+ * @param id
+ */
 abstract class ModifyOrder(orderState: OrderState, id: String) : Order(orderState.order.asset, id) {
 
     init {
-        require(orderState.status.open)
+        require(orderState.status.open) { "Only open orders can be modified"}
     }
 
 }
@@ -51,8 +59,15 @@ class UpdateOrder(
 
 }
 
-
-class CancellationOrder(
+/**
+ * Cancel an open order, will throw an exception if the order is not open anymore.
+ *
+ * @property order The order to cancel
+ * @constructor
+ *
+ * @param id
+ */
+class CancelOrder(
     val order: OrderState,
     id: String = nextId(),
 ) : ModifyOrder(order, id)
