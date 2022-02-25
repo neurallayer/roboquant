@@ -6,7 +6,7 @@ import org.roboquant.common.iszero
 import org.roboquant.orders.*
 import java.time.Instant
 
-abstract class SingleOrderCommand<T : SingleOrder>(order: T) : OrderCommand<T>(order) {
+abstract class SingleOrderHandler<T : SingleOrder>(order: T) : OrderHandler<T>(order) {
 
     internal var fill = 0.0
     internal var qty = order.quantity
@@ -51,7 +51,7 @@ abstract class SingleOrderCommand<T : SingleOrder>(order: T) : OrderCommand<T>(o
     abstract fun fill(pricing: Pricing): Execution?
 }
 
-internal class MarketOrderCommand(order: MarketOrder) : SingleOrderCommand<MarketOrder>(order) {
+internal class MarketOrderHandler(order: MarketOrder) : SingleOrderHandler<MarketOrder>(order) {
     override fun fill(pricing: Pricing): Execution = Execution(order, remaining, pricing.marketPrice(remaining))
 }
 
@@ -86,7 +86,7 @@ private fun getTrailStop(oldStop: Double, trail: Double, volume: Double, pricing
 
 
 
-internal class LimitOrderCommand(order: LimitOrder) : SingleOrderCommand<LimitOrder>(order) {
+internal class LimitOrderHandler(order: LimitOrder) : SingleOrderHandler<LimitOrder>(order) {
 
     override fun fill(pricing: Pricing): Execution? {
         return if (limitTrigger(order.limit, remaining, pricing)) {
@@ -98,7 +98,7 @@ internal class LimitOrderCommand(order: LimitOrder) : SingleOrderCommand<LimitOr
 
 }
 
-internal class StopOrderCommand(order: StopOrder) : SingleOrderCommand<StopOrder>(order) {
+internal class StopOrderHandler(order: StopOrder) : SingleOrderHandler<StopOrder>(order) {
 
     override fun fill(pricing: Pricing): Execution? {
         if (stopTrigger(order.stop, remaining, pricing)) return Execution(
@@ -110,7 +110,7 @@ internal class StopOrderCommand(order: StopOrder) : SingleOrderCommand<StopOrder
 }
 
 
-internal class StopLimitOrderCommand(order: StopLimitOrder) : SingleOrderCommand<StopLimitOrder>(order) {
+internal class StopLimitOrderHandler(order: StopLimitOrder) : SingleOrderHandler<StopLimitOrder>(order) {
 
     private var stopTriggered = false
 
@@ -129,7 +129,7 @@ internal class StopLimitOrderCommand(order: StopLimitOrder) : SingleOrderCommand
 
 
 
-internal class TrailOrderCommand(order: TrailOrder) : SingleOrderCommand<TrailOrder>(order) {
+internal class TrailOrderHandler(order: TrailOrder) : SingleOrderHandler<TrailOrder>(order) {
 
     private var stop = Double.NaN
 
@@ -142,7 +142,7 @@ internal class TrailOrderCommand(order: TrailOrder) : SingleOrderCommand<TrailOr
 
 }
 
-internal class TrailLimitOrderCommand(order: TrailLimitOrder) : SingleOrderCommand<TrailLimitOrder>(order) {
+internal class TrailLimitOrderHandler(order: TrailLimitOrder) : SingleOrderHandler<TrailLimitOrder>(order) {
 
     private var stop: Double = Double.NaN
     private var stopTriggered = false

@@ -52,10 +52,10 @@ abstract class Order(val asset: Asset, val id: String) {
     }
 
     override fun toString(): String {
-        return "$name id=$id asset=$asset ${info()}"
+        return "$type id=$id asset=$asset ${info()}"
     }
 
-    open val name
+    open val type
         get() = this::class.simpleName
 
     /**

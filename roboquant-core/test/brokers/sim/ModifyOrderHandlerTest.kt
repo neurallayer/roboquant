@@ -23,7 +23,7 @@ import org.roboquant.orders.*
 import java.time.Instant
 import kotlin.test.assertEquals
 
-internal class ModifyOrderCommandTest {
+internal class ModifyOrderHandlerTest {
 
     private val asset = TestData.usStock()
 
@@ -35,12 +35,12 @@ internal class ModifyOrderCommandTest {
     @Test
     fun testUpdate() {
         val order1 = MarketOrder(asset, 100.0)
-        val moc = MarketOrderCommand(order1)
+        val moc = MarketOrderHandler(order1)
 
         val order2 = MarketOrder(asset, 50.0)
         val order = UpdateOrder(moc.state, order2)
 
-        val cmd = UpdateOrderCommand(order, listOf(moc))
+        val cmd = UpdateOrderHandler(order, listOf(moc))
         cmd.execute(pricing(100), Instant.now())
         assertEquals(50.0, moc.order.quantity)
     }
@@ -49,11 +49,11 @@ internal class ModifyOrderCommandTest {
     @Test
     fun testCancellation() {
         val order1 = MarketOrder(asset, 100.0)
-        val moc = MarketOrderCommand(order1)
+        val moc = MarketOrderHandler(order1)
 
         val order = CancelOrder(moc.state)
 
-        val cmd = CancelOrderCommand(order, listOf(moc))
+        val cmd = CancelOrderHandler(order, listOf(moc))
         cmd.execute(pricing(100), Instant.now())
         assertEquals(OrderStatus.COMPLETED, cmd.status)
         assertEquals(OrderStatus.EXPIRED, moc.state.status)

@@ -29,7 +29,7 @@ internal class TIFTest {
 
 
 
-    class MySingleOrderCommand(order: MarketOrder) : SingleOrderCommand<MarketOrder>(order) {
+    class MySingleOrderHandler(order: MarketOrder) : SingleOrderHandler<MarketOrder>(order) {
         var fillPercentage: Double = 1.0
 
         override fun fill(pricing: Pricing): Execution? {
@@ -44,10 +44,10 @@ internal class TIFTest {
         return engine.getPricing(TradePrice(TestData.usStock(), price.toDouble()), Instant.now())
     }
 
-    private fun getOrderCommand(tif: TimeInForce, fillPercentage: Double = 1.0): MySingleOrderCommand {
+    private fun getOrderCommand(tif: TimeInForce, fillPercentage: Double = 1.0): MySingleOrderHandler {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 50.0, tif)
-        val result = MySingleOrderCommand(order)
+        val result = MySingleOrderHandler(order)
         result.fillPercentage = fillPercentage
         return result
     }

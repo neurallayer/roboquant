@@ -23,7 +23,7 @@ import org.roboquant.orders.*
 import java.time.Instant
 import kotlin.test.assertEquals
 
-internal class CombinedOrderCommandTest {
+internal class CombinedOrderHandlerTest {
 
     private val asset = TestData.usStock()
 
@@ -37,7 +37,7 @@ internal class CombinedOrderCommandTest {
         val order1 = MarketOrder(asset, 100.0)
         val order2 = MarketOrder(asset, 50.0)
         val order = OneCancelsOtherOrder(order1, order2)
-        val cmd = OCOOrderCommand(order)
+        val cmd = OCOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
         assertEquals(100.0, executions.first().size)
@@ -48,7 +48,7 @@ internal class CombinedOrderCommandTest {
         val order1 = LimitOrder(asset, 100.0, 90.0)
         val order2 = MarketOrder(asset, 50.0)
         val order = OneCancelsOtherOrder(order1, order2)
-        val cmd = OCOOrderCommand(order)
+        val cmd = OCOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
         assertEquals(50.0, executions.first().size)
@@ -60,7 +60,7 @@ internal class CombinedOrderCommandTest {
         val order1 = MarketOrder(asset, 100.0)
         val order2 = MarketOrder(asset, 50.0)
         val order = OneTriggersOtherOrder(order1, order2)
-        val cmd = OTOOrderCommand(order)
+        val cmd = OTOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(2, executions.size)
         assertEquals(100.0, executions.first().size)
@@ -73,7 +73,7 @@ internal class CombinedOrderCommandTest {
         val profit = LimitOrder(asset, -50.0, 110.0)
         val loss = StopOrder(asset, -50.0, 95.0)
         val order = BracketOrder(entry, profit, loss)
-        val cmd = BracketOrderCommand(order)
+        val cmd = BracketOrderHandler(order)
 
         var executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)

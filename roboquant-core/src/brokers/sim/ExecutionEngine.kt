@@ -5,6 +5,8 @@ import org.roboquant.orders.*
 import java.util.*
 
 
+typealias OrderHandlerFactory = (order: Order, engine: ExecutionEngine) -> OrderHandler<*>
+
 class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
     companion object {
@@ -12,37 +14,54 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
         /**
          * Get a new command for a cerain order
          */
-        fun getOrderCommand(order: Order, orderCommands: List<OrderCommand<*>> = emptyList()): OrderCommand<*> {
+        fun getHandler(order: Order, orderHandlers: List<OrderHandler<*>> = emptyList()): OrderHandler<*> {
             @Suppress("UNCHECKED_CAST")
             return when (order) {
-                is MarketOrder -> MarketOrderCommand(order)
-                is LimitOrder -> LimitOrderCommand(order)
-                is StopLimitOrder -> StopLimitOrderCommand(order)
-                is StopOrder -> StopOrderCommand(order)
-                is TrailLimitOrder -> TrailLimitOrderCommand(order)
-                is TrailOrder -> TrailOrderCommand(order)
-                is BracketOrder -> BracketOrderCommand(order)
-                is OneCancelsOtherOrder -> OCOOrderCommand(order)
-                is OneTriggersOtherOrder -> OTOOrderCommand(order)
-                is UpdateOrder -> UpdateOrderCommand(order, orderCommands)
-                is CancelOrder -> CancelOrderCommand(order, orderCommands )
+                is MarketOrder -> MarketOrderHandler(order)
+                is LimitOrder -> LimitOrderHandler(order)
+                is StopLimitOrder -> StopLimitOrderHandler(order)
+                is StopOrder -> StopOrderHandler(order)
+                is TrailLimitOrder -> TrailLimitOrderHandler(order)
+                is TrailOrder -> TrailOrderHandler(order)
+                is BracketOrder -> BracketOrderHandler(order)
+                is OneCancelsOtherOrder -> OCOOrderHandler(order)
+                is OneTriggersOtherOrder -> OTOOrderHandler(order)
+                is UpdateOrder -> UpdateOrderHandler(order, orderHandlers)
+                is CancelOrder -> CancelOrderHandler(order, orderHandlers )
                 else -> throw Exception("Unsupported Order type $order")
             }
+
+        }
+
+
+        private val handlers = mutableMapOf<String, OrderHandlerFactory>()
+
+        fun register(orderType: String, factory: OrderHandlerFactory) {
+            handlers[orderType] = factory
+        }
+
+        fun getHandler2(order: Order, engine: ExecutionEngine): OrderHandler<*> {
+            val handler = handlers[order.type]!!
+            return handler(order, engine)
+        }
+
+        init {
+            register("MarketOrder") { order, _ -> MarketOrderHandler(order as MarketOrder)}
 
         }
 
     }
 
     // Currently active order commands
-    internal val orderCommands = LinkedList<OrderCommand<*>>()
+    internal val orderHandlers = LinkedList<OrderHandler<*>>()
 
     // Add a new order to the execution engine
-    fun add(order: Order) = orderCommands.add(getOrderCommand(order, orderCommands))
+    fun add(order: Order) = orderHandlers.add(getHandler(order, orderHandlers))
 
 
     // Add a new order to the execution engine
     fun addAll(orders: List<Order>) {
-        for (order in orders) orderCommands.add(getOrderCommand(order, orderCommands))
+        for (order in orders) orderHandlers.add(getHandler(order, orderHandlers))
     }
 
 
@@ -51,10 +70,10 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
         // Now run the trade order commands
         val prices = event.prices
-        for (exec in orderCommands.toList()) {
+        for (exec in orderHandlers.toList()) {
 
             if (exec.status.closed) {
-                orderCommands.remove(exec)
+                orderHandlers.remove(exec)
                 continue
             }
 
@@ -69,7 +88,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
 
     fun clear() {
-        orderCommands.clear()
+        orderHandlers.clear()
         pricingEngine.clear()
     }
 

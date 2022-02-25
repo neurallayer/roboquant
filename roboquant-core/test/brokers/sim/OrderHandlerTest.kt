@@ -24,7 +24,7 @@ import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 
-internal class OrderCommandTest {
+internal class OrderHandlerTest {
 
     private val asset = TestData.usStock()
 
@@ -36,7 +36,7 @@ internal class OrderCommandTest {
     @Test
     fun testMarketOrder() {
         val order = MarketOrder(asset, 100.0)
-        val cmd = MarketOrderCommand(order)
+        val cmd = MarketOrderHandler(order)
         var executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
 
@@ -49,7 +49,7 @@ internal class OrderCommandTest {
     @Test
     fun testStopOrder() {
         val order = StopOrder(asset, -10.0, 99.0)
-        val cmd = StopOrderCommand(order)
+        val cmd = StopOrderHandler(order)
         var executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
 
@@ -60,7 +60,7 @@ internal class OrderCommandTest {
     @Test
     fun testLimitOrder() {
         val order = LimitOrder(asset, 10.0, 99.0)
-        val cmd = LimitOrderCommand(order)
+        val cmd = LimitOrderHandler(order)
         var executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
 
@@ -72,7 +72,7 @@ internal class OrderCommandTest {
     @Test
     fun testStopLimitOrder() {
         val order = StopLimitOrder(asset, -10.0, 100.0, 98.0)
-        val cmd = StopLimitOrderCommand(order)
+        val cmd = StopLimitOrderHandler(order)
 
         var executions = cmd.execute(pricing(101), Instant.now())
         assertEquals(0, executions.size)
@@ -87,7 +87,7 @@ internal class OrderCommandTest {
     @Test
     fun testTrailOrder() {
         val order = TrailOrder(asset, -10.0, 0.01)
-        val cmd = TrailOrderCommand(order)
+        val cmd = TrailOrderHandler(order)
         var executions = cmd.execute(pricing(90), Instant.now())
         assertEquals(0, executions.size)
 
@@ -101,7 +101,7 @@ internal class OrderCommandTest {
     @Test
     fun testTrailLimitOrder() {
         val order = TrailLimitOrder(asset, -10.0, 0.01, -1.0)
-        val cmd = TrailLimitOrderCommand(order)
+        val cmd = TrailLimitOrderHandler(order)
         var executions = cmd.execute(pricing(90), Instant.now())
         assertEquals(0, executions.size)
 

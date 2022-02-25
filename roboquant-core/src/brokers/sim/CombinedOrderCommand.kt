@@ -4,10 +4,10 @@ import org.roboquant.common.iszero
 import org.roboquant.orders.*
 import java.time.Instant
 
-internal class OCOOrderCommand(order: OneCancelsOtherOrder) : OrderCommand<OneCancelsOtherOrder>(order) {
+internal class OCOOrderHandler(order: OneCancelsOtherOrder) : OrderHandler<OneCancelsOtherOrder>(order) {
 
-    private val first = ExecutionEngine.getOrderCommand(order.first)
-    private val second = ExecutionEngine.getOrderCommand(order.second)
+    private val first = ExecutionEngine.getHandler(order.first)
+    private val second = ExecutionEngine.getHandler(order.second)
     private var active = 0
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
@@ -37,10 +37,10 @@ internal class OCOOrderCommand(order: OneCancelsOtherOrder) : OrderCommand<OneCa
 }
 
 
-internal class OTOOrderCommand(order: OneTriggersOtherOrder) : OrderCommand<OneTriggersOtherOrder>(order) {
+internal class OTOOrderHandler(order: OneTriggersOtherOrder) : OrderHandler<OneTriggersOtherOrder>(order) {
 
-    private val first = ExecutionEngine.getOrderCommand(order.first)
-    private val second = ExecutionEngine.getOrderCommand(order.second)
+    private val first = ExecutionEngine.getHandler(order.first)
+    private val second = ExecutionEngine.getHandler(order.second)
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         update(time)
@@ -61,11 +61,11 @@ internal class OTOOrderCommand(order: OneTriggersOtherOrder) : OrderCommand<OneT
 }
 
 
-internal class BracketOrderCommand(order: BracketOrder) : OrderCommand<BracketOrder>(order) {
+internal class BracketOrderHandler(order: BracketOrder) : OrderHandler<BracketOrder>(order) {
 
-    private val main = ExecutionEngine.getOrderCommand(order.entry) as SingleOrderCommand<*>
-    private val profit = ExecutionEngine.getOrderCommand(order.takeProfit) as SingleOrderCommand<*>
-    private val loss = ExecutionEngine.getOrderCommand(order.stopLoss) as SingleOrderCommand<*>
+    private val main = ExecutionEngine.getHandler(order.entry) as SingleOrderHandler<*>
+    private val profit = ExecutionEngine.getHandler(order.takeProfit) as SingleOrderHandler<*>
+    private val loss = ExecutionEngine.getHandler(order.stopLoss) as SingleOrderHandler<*>
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         update(time)

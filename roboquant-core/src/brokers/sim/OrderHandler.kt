@@ -5,8 +5,14 @@ import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
-
-abstract class OrderCommand<T: Order>(var order: T) {
+/**
+ * Order handler
+ *
+ * @param T
+ * @property order
+ * @constructor Create empty Order handler
+ */
+abstract class OrderHandler<T: Order>(var order: T) {
 
     abstract fun execute(pricing: Pricing, time: Instant): List<Execution>
 
@@ -25,10 +31,9 @@ abstract class OrderCommand<T: Order>(var order: T) {
     }
 
     fun close(status: OrderStatus, time: Instant) {
-        if (state.status.open) {
-            this.status = status
-            closed = time
-        }
+        this.status = status
+        closed = time
+        if (open == Instant.MIN) open = time
     }
 
 

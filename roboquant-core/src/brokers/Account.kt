@@ -208,7 +208,7 @@ fun Collection<OrderState>.summary(): Summary {
                 val t1 = openedAt.truncatedTo(ChronoUnit.SECONDS)
                 val t2 = closedAt.truncatedTo(ChronoUnit.SECONDS)
                 val infoString = order.info().toString().removeSuffix("}").removePrefix("{")
-                val line = String.format(fmt, order.name, asset.symbol, status, order.id, t1, t2, asset.currencyCode, infoString)
+                val line = String.format(fmt, order.type, asset.symbol, status, order.id, t1, t2, asset.currencyCode, infoString)
                 s.add(line)
             }
         }
