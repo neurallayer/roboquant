@@ -78,24 +78,22 @@ interface PriceAction : Action {
     val values: List<Double>
 }
 
+
+
 /**
- * Provides [open], [high], [low], and [close] prices and volume for a single asset. If the volume is not available, it
- * will return [Double.NaN] instead.
+ * Provides open, high, low, and close prices and volume for a single asset. If the volume is not available, it
+ * will return Double.NaN instead. Often this type of price action is also referred to as a candlestick.
  *
- * Often this type of data is also referred to as a candlesticks.
+ * In order to optimize memory and reduce GC overhead, internally the values are stored in a DoubleArray.
  *
  */
-data class PriceBar(
+class PriceBar(
     override val asset: Asset,
-    val open: Double,
-    val high: Double,
-    val low: Double,
-    val close: Double,
-    override val volume: Double = Double.NaN
+    private val ohlcv: DoubleArray
 ) : PriceAction {
 
     /**
-     * Convenience constructor to allow the instantiation with other types like BigDecimala.
+     * Convenience constructor to allow the instantiation with any type of number.
      */
     constructor(
         asset: Asset,
@@ -104,12 +102,27 @@ data class PriceBar(
         low: Number,
         close: Number,
         volume: Number = Double.NaN
-    ) : this(asset, open.toDouble(), high.toDouble(), low.toDouble(), close.toDouble(), volume.toDouble())
+    ) : this(asset, doubleArrayOf(open.toDouble(), high.toDouble(), low.toDouble(), close.toDouble(), volume.toDouble()))
 
+
+    val open
+        get() = ohlcv[0]
+
+    val high
+        get() = ohlcv[1]
+
+    val low
+        get() = ohlcv[2]
+
+    val close
+        get() = ohlcv[3]
+
+    override val volume
+        get() = ohlcv[4]
 
     companion object{
 
-        fun fromValues(asset: Asset, values: List<Double>) = PriceBar(asset, values[0], values[1], values[2], values[3], values[4])
+        fun fromValues(asset: Asset, values: List<Double>) = PriceBar(asset, values.toDoubleArray())
 
         /**
          * Create a new PriceBar and compensate all prices and volume for the [adjustedClose]. This result in all prices
@@ -127,11 +140,13 @@ data class PriceBar(
             val adj = adjustedClose.toDouble() / close.toDouble()
             return PriceBar(
                 asset,
-                open.toDouble() * adj,
-                high.toDouble() * adj,
-                low.toDouble() * adj,
-                close.toDouble() * adj,
-                volume.toDouble() / adj
+                doubleArrayOf(
+                    open.toDouble() * adj,
+                    high.toDouble() * adj,
+                    low.toDouble() * adj,
+                    close.toDouble() * adj,
+                    volume.toDouble() / adj
+                )
             )
         }
 
@@ -149,12 +164,12 @@ data class PriceBar(
      */
     override fun getPrice(type: String): Double {
         return when (type) {
-            "CLOSE" -> close
-            "OPEN" -> open
-            "LOW" -> low
-            "HIGH" -> high
-            "TYPICAL" -> (high + low + close) / 3.0
-            else -> close
+            "CLOSE" -> ohlcv[3]
+            "OPEN" -> ohlcv[0]
+            "LOW" -> ohlcv[2]
+            "HIGH" -> ohlcv[1]
+            "TYPICAL" -> ( ohlcv[1] + ohlcv[2] + ohlcv[3]) / 3.0
+            else -> ohlcv[3]
         }
     }
 
@@ -162,7 +177,7 @@ data class PriceBar(
      * return the contained values (OHLCV) as a list of Doubles
      */
     override val values
-        get() = listOf(open, high, low, close, volume)
+        get() = ohlcv.toList()
 
 
 }

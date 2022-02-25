@@ -123,7 +123,7 @@ open class DefaultPolicy(
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<Order>()
         var buyingPower = account.buyingPower.value
-        val openOrderAssets = account.orders.open.map { it.asset }.distinct()
+        val openOrderAssets = if (oneOrderPerAsset) account.orders.open.map { it.asset }.distinct() else emptyList()
 
         for (signal in signals.resolve(signalResolution)) {
             val asset = signal.asset

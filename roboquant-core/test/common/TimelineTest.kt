@@ -36,7 +36,7 @@ internal class TimelineTest {
         val tl = Timeframe.fromYears(1987, 1999).toDays()
         val list = tl.split(200)
         assertEquals(tl.first(), list.first().start)
-        assertEquals(tl.last(), list.last().end)
+        assertEquals(tl.last() + 1, list.last().end)
     }
 
     @Test

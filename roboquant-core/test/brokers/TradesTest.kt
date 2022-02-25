@@ -40,8 +40,6 @@ internal class TradesTest {
             trades.add(trade2)
         }
 
-
-
         assertEquals(200.USD.toWallet(), trades.fee)
         assertEquals(100.USD.toWallet(), trades.realizedPNL)
         assertEquals(20, trades.timeline.size)
@@ -55,6 +53,29 @@ internal class TradesTest {
         assertEquals(50.USD, trades2.totalFee().getAmount(Currency.USD))
 
         assertEquals(5, trades2.timeline.size)*/
+
+    }
+
+    @Test
+    fun testOutliers() {
+        val trades = mutableListOf<Trade>()
+        val asset = TestData.usStock()
+        var now = Instant.now()
+        for (i in 1..100) {
+            now = now.plusSeconds(60)
+            val trade1 = Trade(now, asset, 10.0, 100.0, 10.0, i.toDouble(), "id_$i")
+            trades.add(trade1)
+
+            now = now.plusSeconds(60)
+            val trade2 = Trade(now, asset, -10.0, 100.0, 10.0, -i.toDouble(), "id_$i")
+            trades.add(trade2)
+        }
+
+        val outliers = trades.outliers(0.95)
+        assertEquals(10, outliers.size)
+
+        val inliers = trades.inliers(0.95)
+        assertEquals(190, inliers.size)
 
     }
 

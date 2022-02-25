@@ -164,12 +164,12 @@ fun largeRead() {
 
 }
 
-fun twoMillionBars() {
+fun millionBars(n:Int = 2) {
     val timeline = mutableListOf<Instant>()
     var start = Instant.parse("2000-01-01T09:00:00Z")
 
-    // Create a timeline of 1 million entries
-    repeat(20_000) {
+    // Create a timeline of n million entries
+    repeat(n * 10_000) {
         timeline.add(start)
         start += 1.minutes
     }
@@ -183,7 +183,7 @@ fun twoMillionBars() {
 
     // Measure how long it takes to run a back-test over 2 million candlesticks
     val time = measureTimeMillis {  roboquant.run(feed) }
-    println("Time taken to run a full back-test over 2M Candlesticks is $time milliseconds")
+    println("Time taken to run a full back-test over ${n}M Candlesticks is $time milliseconds")
 
     val account = roboquant.broker.account
 
@@ -501,7 +501,8 @@ suspend fun main() {
         "MULTI_RUN" -> multiRun()
         "MULTI_RUN_PARALLEL" -> println( measureTimeMillis {  multiRunParallel() })
         "WALKFORWARD_PARALLEL" -> println( measureTimeMillis {  walkforwardParallel() })
-        "TWO_MILLION" -> twoMillionBars()
+        "TWO_MILLION" -> millionBars(2)
+        "TEN_MILLION" -> millionBars(10)
         "MC" -> multiCurrency()
         "MINUTES" -> manyMinutes()
         "TESTING" -> testingStrategies()

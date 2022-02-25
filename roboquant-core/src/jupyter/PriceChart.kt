@@ -66,7 +66,7 @@ class PriceChart(
     override fun renderOption(): String {
         val line = reduce(fromFeed())
         val lineData = gsonBuilder.create().toJson(line)
-        val timeframe = if (line.size > 1) Timeframe(line.first().first, line.last().first).toPrettyString() else ""
+        val timeframe = if (line.size > 1) Timeframe(line.first().first, line.last().first).toString() else ""
 
         val marks = markPoints()
         val markData = gsonBuilder.create().toJson(marks)

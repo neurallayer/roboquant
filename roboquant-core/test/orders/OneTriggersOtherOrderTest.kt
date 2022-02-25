@@ -34,6 +34,7 @@ internal class OneTriggersOtherOrderTest {
 
         assertTrue(order.first is MarketOrder)
         assertEquals(order.first.asset, order.asset)
+        assertTrue(order.toString().isNotBlank())
     }
 
 

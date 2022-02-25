@@ -63,8 +63,11 @@ internal class TimeframeTest {
     fun print() {
         val tf2 = Timeframe.INFINITY
 
-        val s2 = tf2.toPrettyString()
+        val s2 = tf2.toString()
         assertTrue(s2.isNotBlank())
+
+        val s3 = tf2.toRawString()
+        assertTrue(s3.isNotBlank())
     }
 
 

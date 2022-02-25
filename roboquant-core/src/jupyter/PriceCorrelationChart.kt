@@ -124,7 +124,7 @@ class PriceCorrelationChart(
                 }
               },
               title: {
-                    text: '${assets.size} assets ${timeframe.toPrettyString()}'
+                    text: '${assets.size} assets $timeframe'
               },
               ${renderGrid()},
               toolbox: {

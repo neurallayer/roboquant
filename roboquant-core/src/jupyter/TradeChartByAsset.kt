@@ -89,9 +89,7 @@ class TradeChartByAsset(
                 yAxis: {
                     type: 'category',
                     data: $yAxisData,
-                    axisLine: {
-                      show: false
-                    }
+                    splitArea: {show: true}
                 },
                 tooltip: {
                      formatter: function (params) {

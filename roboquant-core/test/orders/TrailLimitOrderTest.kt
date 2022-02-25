@@ -20,6 +20,7 @@ import org.junit.Test
 import org.roboquant.TestData
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertTrue
 
 
 internal class TrailLimitOrderTest {
@@ -29,7 +30,7 @@ internal class TrailLimitOrderTest {
         val asset = TestData.usStock()
         val order = TrailOrder(asset, -100.0, 0.01)
         assertEquals(0.01, order.trailPercentage)
-
+        assertTrue(order.toString().isNotBlank())
 
         assertFails {
             TrailOrder(asset, -100.0, -0.01)
@@ -44,6 +45,7 @@ internal class TrailLimitOrderTest {
         val order = TrailLimitOrder(asset, -100.0, 0.01, -1.0)
         assertEquals(0.01, order.trailPercentage)
         assertEquals(-1.0, order.limitOffset)
+        assertTrue(order.toString().isNotBlank())
     }
 
 

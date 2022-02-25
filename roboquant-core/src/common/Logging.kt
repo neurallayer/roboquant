@@ -102,7 +102,9 @@ object Logging {
         val manager = LogManager.getLogManager()
         if (updateDefault) defaultLevel = level
         LogManager.getLogManager().loggerNames.toList().forEach {
-            if (it.startsWith(prefix)) manager.getLogger(it).level = level
+            if (it.startsWith(prefix)) {
+                manager.getLogger(it)?.level = level
+            }
         }
     }
 

@@ -34,6 +34,7 @@ internal class BracketOrderTest {
 
         assertTrue(order.entry is MarketOrder)
         assertTrue(order.stopLoss is StopOrder)
+        assertTrue(order.toString().isNotBlank())
 
     }
 

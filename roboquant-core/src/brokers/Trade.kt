@@ -61,5 +61,8 @@ data class Trade(
     val priceAmount
         get() = Amount(asset.currency, price)
 
+    val returns
+        get() = Amount(asset.currency, pnlValue/-totalCost.value)
+
 }
 

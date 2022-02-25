@@ -20,6 +20,7 @@ package org.roboquant.orders
 import org.junit.Test
 import org.roboquant.TestData
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class UpdateOrderTest {
 
@@ -31,6 +32,7 @@ internal class UpdateOrderTest {
         val order = UpdateOrder(original, update)
         assertEquals(100.0, order.update.quantity)
         assertEquals(original, order.original)
+        assertTrue(order.toString().isNotBlank())
     }
 
 

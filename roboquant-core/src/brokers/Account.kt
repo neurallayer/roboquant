@@ -16,12 +16,14 @@
 
 package org.roboquant.brokers
 
+import org.apache.commons.math3.stat.descriptive.rank.Percentile
 import org.roboquant.common.*
 import org.roboquant.orders.OrderState
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import kotlin.math.absoluteValue
 
 
 /**
@@ -76,9 +78,14 @@ class Account(
     fun getOrderTrades(orders: Collection<OrderState> = this.orders) =
         orders.associateWith { order -> trades.filter { it.orderId == order.id } }.toMap()
 
-
+    /**
+     * Convert an [amount] to the account base currency using last update of the account as a timestamp
+     */
     fun convert(amount: Amount) = amount.convert(baseCurrency, lastUpdate)
 
+    /**
+     * Convert a [wallet] to the account base currency using last update of the account as a timestamp
+     */
     fun convert(wallet: Wallet) = wallet.convert(baseCurrency, lastUpdate)
 
 
@@ -124,6 +131,20 @@ class Account(
 
 }
 
+
+fun Collection<Trade>.outliers(percentage: Double = 0.95): List<Trade> {
+    val data = map { it.pnl.value.absoluteValue }.toDoubleArray()
+    val p = Percentile()
+    val boundary = p.evaluate(data, percentage * 100.0)
+    return filter { it.pnl.value.absoluteValue >= boundary }
+}
+
+fun Collection<Trade>.inliers(percentage: Double = 0.95): List<Trade> {
+    val data = map { it.pnl.value.absoluteValue }.toDoubleArray()
+    val p = Percentile()
+    val boundary = p.evaluate(data, percentage * 100.0)
+    return filter { it.pnl.value.absoluteValue < boundary }
+}
 
 val Collection<Trade>.fee
     get() = sumOf { it.fee }
@@ -180,7 +201,7 @@ fun Collection<OrderState>.summary(): Summary {
         s.add("EMPTY")
     } else {
         val fmt = "%15s │%10s │%15s │%10s │%24s │%24s │%10s │ %-50s"
-        val header = String.format(fmt, "name", "asset", "status", "id", "opened at", "closed at", "currency", "details")
+        val header = String.format(fmt, "type", "asset", "status", "id", "opened at", "closed at", "currency", "details")
         s.add(header)
         forEach {
             with(it) {

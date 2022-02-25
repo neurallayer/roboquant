@@ -19,6 +19,7 @@ package org.roboquant.orders
 import org.junit.Test
 import org.roboquant.TestData
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class OneCancelsOtherOrderTest {
 
@@ -30,6 +31,7 @@ class OneCancelsOtherOrderTest {
             LimitOrder(asset, 200.0, 11.1)
         )
         assertEquals(order.first.asset, order.asset)
+        assertTrue(order.toString().isNotBlank())
 
 
     }

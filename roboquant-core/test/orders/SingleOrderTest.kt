@@ -31,6 +31,7 @@ internal class SingleOrderTest {
         assertEquals(100.0, order.quantity)
         assertTrue(order.tif is GTC)
         assertTrue(order.buy)
+        assertTrue(order.toString().isNotBlank())
     }
 
 
@@ -41,6 +42,7 @@ internal class SingleOrderTest {
         assertEquals(-10.0, order.quantity)
         assertEquals(99.0, order.stop)
         assertTrue(order.sell)
+        assertTrue(order.toString().isNotBlank())
     }
 
     @Test
@@ -50,6 +52,7 @@ internal class SingleOrderTest {
         assertEquals(-10.0, order.quantity)
         assertEquals(101.0, order.limit)
         assertTrue(order.sell)
+        assertTrue(order.toString().isNotBlank())
     }
 
 
@@ -60,6 +63,7 @@ internal class SingleOrderTest {
         assertEquals(-10.0, order.quantity)
         assertEquals(98.0, order.limit)
         assertTrue(order.sell)
+        assertTrue(order.toString().isNotBlank())
 
     }
 

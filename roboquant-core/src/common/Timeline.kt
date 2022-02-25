@@ -42,5 +42,12 @@ val Timeline.timeframe
  * Split the timeline in chunks of [size]
  */
 fun Timeline.split(size: Int): List<Timeframe> {
-    return chunked(size).map { Timeframe(it.first(), it.last()) }
+    require(size > 1) {"Minimum requires 2 elements in timeline"}
+    val chunks = chunked(size)
+    val result = mutableListOf<Timeframe>()
+    for (chunk in chunks) {
+        if (size > 1) result.add(Timeframe(chunk.first(), chunk.last()) )
+    }
+    result[result.lastIndex] = result.last().inclusive
+    return result
 }

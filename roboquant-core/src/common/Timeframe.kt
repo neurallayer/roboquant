@@ -59,7 +59,9 @@ data class Timeframe(val start: Instant, val end: Instant) {
         val INFINITY = Timeframe(Instant.MIN, Instant.MAX)
 
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        private val minutesFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        private val millisFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
         // predefined Time-frames for significant events in history of trading
 
@@ -331,7 +333,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
     /**
      * Provide a string representation of the timeframe
      */
-    override fun toString(): String {
+    fun toRawString(): String {
         return "[$start - $end]"
     }
 
@@ -339,8 +341,14 @@ data class Timeframe(val start: Instant, val end: Instant) {
      * Depending on the duration of the timeframe, format the timeframe either with seconds or days
      * resolution.
      */
-    fun toPrettyString(): String {
-        val formatter = if (duration < Duration.ofHours(24)) secondFormatter else dayFormatter
+    override fun toString(): String {
+        val formatter = when {
+            duration < 1.hours -> millisFormatter
+            duration < 4.hours -> secondFormatter
+            duration < 100.hours -> minutesFormatter
+            else -> dayFormatter
+        }
+
         val fmt = formatter.withZone(Config.defaultZoneId)
         val s1 = if (start == Instant.MIN) "MIN" else if (start == Instant.MAX) "MAX" else fmt.format(start)
         val s2 = if (end == Instant.MIN) "MIN" else if (end == Instant.MAX) "MAX" else fmt.format(end)

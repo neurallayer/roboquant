@@ -38,7 +38,8 @@ internal class ActionTest {
 
         val values = pb.values
         val pb2 = PriceBar.fromValues(pb.asset, values)
-        assertEquals(pb, pb2)
+        assertEquals(pb.asset, pb2.asset)
+        assertEquals(pb.values, pb2.values)
     }
 
     @Test
