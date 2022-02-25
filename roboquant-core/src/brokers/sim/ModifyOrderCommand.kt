@@ -3,15 +3,13 @@ package org.roboquant.brokers.sim
 import org.roboquant.orders.*
 import java.time.Instant
 
-internal class UpdateOrderHandler(order: UpdateOrder, cmds: List<OrderHandler<*>>) : OrderHandler<UpdateOrder>(order) {
-
-    private val ro = cmds.filterIsInstance<OrderHandler<Order>>()
+internal class UpdateOrderHandler(order: UpdateOrder, private val handlers: List<OrderHandler<*>>) : OrderHandler<UpdateOrder>(order) {
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         update(time)
-        val idx = ro.indexOfFirst { it.order.id == order.original.id }
-        if (idx >=0 ) {
-            ro[idx].order = order.update
+        val handler = handlers.filterIsInstance<OrderHandler<SingleOrder>>().firstOrNull { it.order.id == order.original.id }
+        if (handler != null && handler.status.open) {
+           handler.order = order.update
             close(OrderStatus.COMPLETED, time)
         } else {
             close(OrderStatus.REJECTED, time)
@@ -22,21 +20,16 @@ internal class UpdateOrderHandler(order: UpdateOrder, cmds: List<OrderHandler<*>
 }
 
 
-internal class CancelOrderHandler(order: CancelOrder, private val cmds: List<OrderHandler<*>>) : OrderHandler<CancelOrder>(order) {
+internal class CancelOrderHandler(order: CancelOrder, private val handlers: List<OrderHandler<*>>) : OrderHandler<CancelOrder>(order) {
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         update(time)
-        val cmd = cmds.firstOrNull { it.order.id == order.order.id }
-        if (cmd == null) {
-            close(OrderStatus.REJECTED, time)
+        val handler = handlers.firstOrNull { it.order.id == order.order.id }
+        if (handler != null && handler.status.open) {
+            handler.close(OrderStatus.EXPIRED, time)
+            close(OrderStatus.COMPLETED, time)
         } else {
-            if (cmd.status.closed) {
-                close(OrderStatus.REJECTED, time)
-            } else {
-                cmd.close(OrderStatus.EXPIRED, time)
-                close(OrderStatus.COMPLETED, time)
-            }
-
+            close(OrderStatus.REJECTED, time)
         }
         return emptyList()
     }
