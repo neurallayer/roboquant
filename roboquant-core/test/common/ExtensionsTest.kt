@@ -63,14 +63,7 @@ class ExtensionsTest {
         assertTrue(y > x)
     }
 
-    @Test
-    fun testCollections() {
-        val l = listOf("1", 1, true)
-        assertTrue(l.summary().content.isNotBlank())
 
-        val l2 = listOf("1", "2")
-        assertTrue(l2.summary().content.isNotBlank())
-    }
 
     @Test
     fun testAccess() {

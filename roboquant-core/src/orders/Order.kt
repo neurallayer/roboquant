@@ -36,7 +36,6 @@ abstract class Order(val asset: Asset, val id: String) {
         require(id.isNotBlank()) { "Cannot use blank order id's"}
     }
 
-
     companion object {
 
         // Counter used for creating unique order ids
@@ -51,6 +50,20 @@ abstract class Order(val asset: Asset, val id: String) {
             }
         }
     }
+
+    override fun toString(): String {
+        return "$name id=$id asset=$asset ${info()}"
+    }
+
+    open val name
+        get() = this::class.simpleName
+
+    /**
+     * Provide extra info as map
+     *
+     * @return
+     */
+    abstract fun info() : Map<String, Any>
 
 }
 

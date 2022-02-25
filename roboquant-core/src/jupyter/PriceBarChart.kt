@@ -26,9 +26,9 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 
 /**
- * Plot the price-bars (candlesticks) of an asset found in a [feed] and optionally the [trades] made for that same asset.
- * This will only plot candlesticks if the feed also contains price actions of the type PriceBar. If this is not the case
- * you can use the [PriceChart] instead to plot prices.
+ * Plot the price-bars (candlesticks) of an asset found in a [feed] and optionally the [trades] made for that same
+ * asset. This will only plot candlesticks if the feed also contains price actions of the type PriceBar.
+ * If this is not the case you can use the [PriceChart] instead to plot prices.
  *
  * By default, the chart will use a linear timeline, meaning gaps like a weekend will show-up. this can be disabled
  * by setting [useTime] to false.

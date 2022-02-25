@@ -144,7 +144,7 @@ fun oandaLivePrices() {
     val feed = OANDALiveFeed()
     feed.subscribePrices("EUR_USD", "USD_JPY", "GBP_USD")
     val data = feed.filter<OrderBook>(Timeframe.next(1.minutes))
-    data.summary().log()
+    println(data.size)
 }
 
 

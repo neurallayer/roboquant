@@ -179,15 +179,6 @@ val Double.zeroOrMore
     get() = if (this > eps) this else 0.0
 
 
-/**
- * Provide a [Summary] for a collection of any objects
- */
-fun Collection<Any?>.summary(): Summary {
-    val result = Summary("${this.javaClass.simpleName}s")
-    for (obj in this) result.add(obj?.toString() ?: "NULL")
-    return result
-}
-
 fun Number.round(fractions: Int = 2): BigDecimal = BigDecimal.valueOf(toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)
 
 

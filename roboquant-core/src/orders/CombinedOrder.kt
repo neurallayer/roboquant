@@ -14,14 +14,21 @@ class OneCancelsOtherOrder(
     val first: SingleOrder,
     val second: SingleOrder,
     id: String = nextId(),
-) : CombinedOrder(first, second, id = id)
+) : CombinedOrder(first, second, id = id) {
+
+    override fun info() = sortedMapOf("first" to first, "second" to second)
+}
 
 
 class OneTriggersOtherOrder(
     val first: SingleOrder,
     val second: SingleOrder,
     id: String = nextId(),
-) : CombinedOrder(first, second, id = id)
+) : CombinedOrder(first, second, id = id) {
+
+    override fun info() = sortedMapOf("first" to first, "second" to second)
+
+}
 
 
 
@@ -36,5 +43,6 @@ class BracketOrder(
         require(entry.quantity == -takeProfit.quantity && entry.quantity == -stopLoss.quantity)
     }
 
+    override fun info() = sortedMapOf("entry" to entry, "takeProfit" to takeProfit, "stopLoss" to "stopLoss")
 }
 

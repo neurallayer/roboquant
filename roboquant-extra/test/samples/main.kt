@@ -24,6 +24,7 @@ import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.alpaca.AlpacaLiveFeed
 import org.roboquant.alpaca.AlpacaPeriod
 import org.roboquant.brokers.assets
+import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.csv.CSVConfig

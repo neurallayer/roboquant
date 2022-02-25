@@ -22,6 +22,7 @@ import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.assets
 import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.csv.CSVConfig

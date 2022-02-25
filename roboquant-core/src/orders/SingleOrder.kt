@@ -66,7 +66,11 @@ class MarketOrder(
     quantity: Double,
     tif: TimeInForce = GTC(),
     id: String = nextId(),
-) : SingleOrder(asset, quantity, tif, id)
+) : SingleOrder(asset, quantity, tif, id) {
+
+    override fun info() = sortedMapOf("quantity" to quantity, "tif" to tif)
+
+}
 
 /**
  *  Buy or sell an asset with a restriction on the maximum price to be paid or the minimum price
@@ -86,7 +90,11 @@ class LimitOrder(
     val limit: Double,
     tif: TimeInForce = GTC(),
     id: String = nextId(),
-) : SingleOrder(asset, quantity, tif, id)
+) : SingleOrder(asset, quantity, tif, id) {
+
+    override fun info() = sortedMapOf("quantity" to quantity, "limit" to limit, "tif" to tif)
+
+}
 
 
 
@@ -107,7 +115,10 @@ class StopOrder(
     val stop: Double,
     tif: TimeInForce = GTC(),
     id: String = nextId(),
-) : SingleOrder(asset, quantity, tif, id)
+) : SingleOrder(asset, quantity, tif, id) {
+
+    override fun info() = sortedMapOf("quantity" to quantity, "stop" to stop, "tif" to tif)
+}
 
 
 /**
@@ -128,7 +139,10 @@ class StopLimitOrder(
     val limit: Double,
     tif: TimeInForce = GTC(),
     id: String = nextId(),
-) : SingleOrder(asset, quantity, tif, id)
+) : SingleOrder(asset, quantity, tif, id) {
+
+    override fun info() = sortedMapOf("quantity" to quantity, "stop" to stop,  "limit" to limit, "tif" to tif)
+}
 
 /**
  * Trail order
@@ -152,6 +166,7 @@ open class TrailOrder(
         require(trailPercentage > 0.0) {"trailPrecentage should be a positive value"}
     }
 
+    override fun info() = sortedMapOf("quantity" to quantity, "trailPercentage" to trailPercentage,  "tif" to tif)
 
 }
 
@@ -177,4 +192,7 @@ class TrailLimitOrder(
     val limitOffset: Double,
     tif: TimeInForce = GTC(),
     id: String = nextId(),
-) : TrailOrder(asset, quantity, trailPercentage, tif, id)
+) : TrailOrder(asset, quantity, trailPercentage, tif, id) {
+
+    override fun info() = sortedMapOf("quantity" to quantity, "trailPercentage" to trailPercentage, "limitOffset" to limitOffset,  "tif" to tif)
+}

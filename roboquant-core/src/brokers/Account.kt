@@ -18,8 +18,6 @@ package org.roboquant.brokers
 
 import org.roboquant.common.*
 import org.roboquant.orders.OrderState
-import org.roboquant.orders.closed
-import org.roboquant.orders.open
 import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.time.Instant
@@ -173,22 +171,27 @@ fun Collection<Position>.diff(target: Collection<Position>): Map<Asset, Double> 
 
 
 /**
- * Provide a summary for the orders, split by open and closed orders
+ * Provide a summary for the orders
  */
 @JvmName("summaryOrders")
 fun Collection<OrderState>.summary(): Summary {
     val s = Summary("Orders")
-
-    val c = Summary("closed")
-    for (order in closed) c.add("$order")
-    if (closed.isEmpty()) c.add("EMPTY")
-    s.add(c)
-
-    val o = Summary("open")
-    for (order in open) o.add("$order")
-    if (open.isEmpty()) o.add("EMPTY")
-    s.add(o)
-
+    if (isEmpty()) {
+        s.add("EMPTY")
+    } else {
+        val fmt = "%15s │%10s │%15s │%10s │%24s │%24s │%10s │ %-50s"
+        val header = String.format(fmt, "name", "asset", "status", "id", "opened at", "closed at", "currency", "details")
+        s.add(header)
+        forEach {
+            with(it) {
+                val t1 = openedAt.truncatedTo(ChronoUnit.SECONDS)
+                val t2 = closedAt.truncatedTo(ChronoUnit.SECONDS)
+                val infoString = order.info().toString().removeSuffix("}").removePrefix("{")
+                val line = String.format(fmt, order.name, asset.symbol, status, order.id, t1, t2, asset.currencyCode, infoString)
+                s.add(line)
+            }
+        }
+    }
     return s
 }
 

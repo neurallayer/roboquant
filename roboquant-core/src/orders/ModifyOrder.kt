@@ -56,7 +56,7 @@ class UpdateOrder(
         require(original.order::class == update::class) { "update orders cannot change order type"}
     }
 
-
+    override fun info() = update.info()
 }
 
 /**
@@ -70,4 +70,7 @@ class UpdateOrder(
 class CancelOrder(
     val order: OrderState,
     id: String = nextId(),
-) : ModifyOrder(order, id)
+) : ModifyOrder(order, id) {
+
+    override fun info() = order.order.info()
+}

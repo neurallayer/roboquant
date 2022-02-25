@@ -24,6 +24,7 @@ import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.fee
 import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.avro.AvroFeed
@@ -183,7 +184,11 @@ fun twoMillionBars() {
     // Measure how long it takes to run a back-test over 2 million candlesticks
     val time = measureTimeMillis {  roboquant.run(feed) }
     println("Time taken to run a full back-test over 2M Candlesticks is $time milliseconds")
-    roboquant.broker.account.summary().print()
+
+    val account = roboquant.broker.account
+
+    account.summary().print()
+    account.orders[1..100].summary().print()
 }
 
 fun volatility() {
@@ -215,7 +220,7 @@ fun multiCurrency() {
 
     val roboquant = Roboquant(strategy, AccountSummary(), policy = policy, broker = broker, logger = MemoryLogger())
     roboquant.run(feed)
-    broker.account.summary().print()
+    broker.account.orders.summary().print()
 }
 
 fun manyMinutes() {

@@ -55,7 +55,7 @@ class PriceChart(
         val result = mutableListOf<Map<String, Any>>()
         for (trade in t) {
             val entry = mapOf(
-                "value" to trade.quantity.toInt(), "xAxis" to trade.time, "yAxis" to trade.price
+                "value" to trade.quantity.toInt(), "xAxis" to trade.time, "yAxis" to trade.priceAmount.toBigDecimal()
             )
             result.add(entry)
         }

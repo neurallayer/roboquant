@@ -58,12 +58,12 @@ class InternalAccount(
     /**
      * The trades that has been executed
      */
-    val trades = LinkedList<Trade>()
+    val trades = mutableListOf<Trade>()
 
     /**
      * All orders in a map with key being the order ID
      */
-    val orders = TreeMap<String, OrderState>()
+    val orders = sortedMapOf<String, OrderState>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
