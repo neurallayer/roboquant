@@ -4,10 +4,13 @@ import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.util.*
 
-
-typealias OrderHandlerFactory = (order: Order, engine: ExecutionEngine) -> OrderHandler<*>
-
-class ExecutionEngine(private val pricingEngine: PricingEngine) {
+/**
+ * Executes the orders.
+ *
+ * @property pricingEngine
+ * @constructor Create empty Execution engine
+ */
+class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePricing()) {
 
     companion object {
 
@@ -30,30 +33,18 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
                 is CancelOrder -> CancelOrderHandler(order, orderHandlers )
                 else -> throw Exception("Unsupported Order type $order")
             }
-
-        }
-
-
-        private val handlers = mutableMapOf<String, OrderHandlerFactory>()
-
-        fun register(orderType: String, factory: OrderHandlerFactory) {
-            handlers[orderType] = factory
-        }
-
-        fun getHandler2(order: Order, engine: ExecutionEngine): OrderHandler<*> {
-            val handler = handlers[order.type]!!
-            return handler(order, engine)
-        }
-
-        init {
-            register("MarketOrder") { order, _ -> MarketOrderHandler(order as MarketOrder)}
-
         }
 
     }
 
     // Currently active order commands
-    internal val orderHandlers = LinkedList<OrderHandler<*>>()
+    private val orderHandlers = LinkedList<OrderHandler<*>>()
+
+    /**
+     * Latetst Order states
+     */
+    val orderStates
+        get() = orderHandlers.map { it.state }
 
     // Add a new order to the execution engine
     fun add(order: Order) = orderHandlers.add(getHandler(order, orderHandlers))
@@ -61,7 +52,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
     // Add a new order to the execution engine
     fun addAll(orders: List<Order>) {
-        for (order in orders) orderHandlers.add(getHandler(order, orderHandlers))
+        for (order in orders) add(order)
     }
 
 

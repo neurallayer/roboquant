@@ -71,7 +71,7 @@ internal class ExecutionEngineTest {
 
         val origOrder = MarketOrder(asset, 100.0)
         engine.add(origOrder)
-        val state = engine.orderHandlers.first.state
+        val state = engine.orderStates.first()
 
         var order: Order = UpdateOrder(state, MarketOrder(asset, 50.0, id = origOrder.id))
         var success = engine.add(order)
