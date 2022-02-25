@@ -135,6 +135,7 @@ class SimBroker(
         // Get latest state of orders
         val orderStates = executionEngine.orderStates
         _account.putOrders(orderStates)
+        executionEngine.removeClosedOrders()
     }
 
 

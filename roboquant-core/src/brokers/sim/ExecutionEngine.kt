@@ -40,6 +40,10 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
     // Currently active order commands
     private val orderHandlers = LinkedList<OrderHandler<*>>()
 
+
+    internal fun removeClosedOrders() = orderHandlers.removeIf { it.status.closed }
+
+
     /**
      * Latetst Order states
      */
@@ -62,12 +66,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
         // Now run the trade order commands
         val prices = event.prices
         for (exec in orderHandlers.toList()) {
-
-            if (exec.status.closed) {
-                orderHandlers.remove(exec)
-                continue
-            }
-
+            if (exec.status.closed) continue
             val action = prices[exec.order.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, event.time)
             val newExecutions = exec.execute(pricing, event.time)
