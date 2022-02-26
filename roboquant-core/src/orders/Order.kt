@@ -30,23 +30,21 @@ import org.roboquant.common.Asset
  * - cancellation of an existing order
  * - update of an existing order
  **/
-abstract class Order(val asset: Asset, val id: String) {
+abstract class Order(val asset: Asset, val id: Int) {
 
-    init {
-        require(id.isNotBlank()) { "Cannot use blank order id's"}
-    }
+
 
     companion object {
 
         // Counter used for creating unique order ids
-        internal var ID = 0L
+        internal var ID = 0
 
         /**
          * Generate the next order id
          */
-        fun nextId(): String {
+        fun nextId(): Int {
             synchronized(ID) {
-                return ID++.toString()
+                return ID++
             }
         }
     }

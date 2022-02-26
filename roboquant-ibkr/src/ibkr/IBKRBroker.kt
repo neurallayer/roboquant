@@ -58,7 +58,7 @@ class IBKRBroker(
     private var orderId = 0
 
     // Track IB orders ids with roboquant orders
-    private val orderMap = mutableMapOf<Int, String>()
+    private val orderMap = mutableMapOf<Int, Int>()
 
     // Track IB Trades and Feed ids with roboquant trades
     private val tradeMap = mutableMapOf<String, Trade>()
@@ -202,12 +202,12 @@ class IBKRBroker(
             if (openOrder != null) {
                 if (orderState.completedStatus() == "true") {
                     val slip = _account.orders[openOrder]!!
-                    _account.orders[openOrder] = OrderState(slip.order, OrderStatus.COMPLETED, closedAt = Instant.parse(orderState.completedTime()))
+                    _account.putOrder(OrderState(slip.order, OrderStatus.COMPLETED, closedAt = Instant.parse(orderState.completedTime())))
                 }
             } else {
                 val newOrder = toOrder(order, contract)
                 orderMap[orderId] = newOrder.id
-                _account.putOrders(listOf(newOrder).initialOrderState)
+                _account.putOrder(OrderState(newOrder))
             }
         }
 
@@ -224,7 +224,7 @@ class IBKRBroker(
                 val slip = _account.orders[id]!!
                 val newStatus = toStatus(status!!)
                 val orderState = slip.copy(status = newStatus)
-                _account.orders[id] = orderState
+                _account.putOrder(orderState)
             }
         }
 
@@ -256,7 +256,7 @@ class IBKRBroker(
 
             // Possible values BOT and SLD
             val direction = if (execution.side() == "SLD") -1.0 else 1.0
-            val orderId = orderMap[execution.orderId()] ?: "UNKOWN" // Should not happen
+            val orderId = orderMap[execution.orderId()] ?: -1 // Should not happen
             val trade = Trade(
                 Instant.now(),
                 contract.getAsset(),
@@ -267,7 +267,7 @@ class IBKRBroker(
                 orderId
             )
             tradeMap[id] = trade
-            _account.trades.add(trade)
+            _account.trades += trade
         }
 
         override fun openOrderEnd() {

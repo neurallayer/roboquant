@@ -25,7 +25,7 @@ internal class SampleNotebookTest {
         // Make sure to remove potential random behavior
         Config.random = Random(42L)
         Config.defaultZoneId = ZoneId.of("Europe/Amsterdam")
-        Order.ID = 0L
+        Order.ID = 0
 
         // Get the file and validate it
         val path = TestData.dataDir() + "notebooks/$file.ipynb"

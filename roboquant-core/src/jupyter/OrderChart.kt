@@ -51,7 +51,7 @@ class OrderChart(
         val states = orderStates.filter { it.status != OrderStatus.INITIAL }
         max = Double.MIN_VALUE.toBigDecimal()
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
-        for (state in states) {
+        for (state in states.sortedBy { it.openedAt }) {
             val order = state.order
             if (order is SingleOrder) {
                 val value = when (aspect) {

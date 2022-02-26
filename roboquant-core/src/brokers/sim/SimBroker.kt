@@ -119,7 +119,7 @@ class SimBroker(
             execution.order.id
         )
 
-        _account.trades.add(newTrade)
+        _account.trades += newTrade
         _account.cash.withdraw(newTrade.totalCost)
 
     }

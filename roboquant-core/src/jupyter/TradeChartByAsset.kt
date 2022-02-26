@@ -43,7 +43,7 @@ class TradeChartByAsset(
 
     private fun toSeriesData(assets: List<Asset>): List<List<Any>> {
         val d = mutableListOf<List<Any>>()
-        for (trade in trades) {
+        for (trade in trades.sortedBy { it.time }) {
             with(trade) {
                 val value = when (aspect) {
                     "pnl" -> pnl.convert(time = time).toBigDecimal()

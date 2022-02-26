@@ -200,10 +200,11 @@ fun Collection<OrderState>.summary(): Summary {
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
+        val orders = sortedBy { it.id }
         val fmt = "%15s │%10s │%15s │%10s │%24s │%24s │%10s │ %-50s"
         val header = String.format(fmt, "type", "asset", "status", "id", "opened at", "closed at", "currency", "details")
         s.add(header)
-        forEach {
+        orders.forEach {
             with(it) {
                 val t1 = openedAt.truncatedTo(ChronoUnit.SECONDS)
                 val t2 = closedAt.truncatedTo(ChronoUnit.SECONDS)
@@ -222,15 +223,15 @@ fun Collection<OrderState>.summary(): Summary {
  */
 @JvmName("summaryTrades")
 fun Collection<Trade>.summary(): Summary {
-
     val s = Summary("Trades")
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
+        val trades = sortedBy { it.time }
         val fmt = "%24s│%10s│%11s│%14s│%14s│%14s│%12s│"
         val header = String.format(fmt, "time", "asset", "qty", "cost", "fee", "p&l", "price")
         s.add(header)
-        forEach {
+        trades.forEach {
             with(it) {
                 val cost = totalCost.formatValue()
                 val fee = fee.formatValue()
@@ -260,6 +261,7 @@ fun Collection<Position>.summary(): Summary {
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
+        val positions = sortedBy { it.asset.symbol }
         val fmt = "%14s│%10s│%14s│%14s│%14s│%14s│%14s│"
         val header = String.format(
             fmt,
@@ -273,7 +275,7 @@ fun Collection<Position>.summary(): Summary {
         )
         s.add(header)
 
-        for (v in this) {
+        for (v in positions) {
             val c = v.asset.currency
             val pos = pf.format(v.size)
             val avgPrice = Amount(c, v.avgPrice).formatValue()

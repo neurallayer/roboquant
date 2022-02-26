@@ -18,13 +18,11 @@ package org.roboquant.brokers
 
 import org.roboquant.common.*
 import org.roboquant.common.Config.baseCurrency
-import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
-import java.util.*
 
 
 /**
@@ -46,9 +44,9 @@ import java.util.*
  * @property baseCurrency The base currency to use for things like reporting
  * @constructor Create a new Account
  */
-class InternalAccount(
+class InternalAccount (
     var baseCurrency: Currency = Config.baseCurrency
-) {
+)   {
 
     /**
      * When was the account last updated
@@ -63,7 +61,7 @@ class InternalAccount(
     /**
      * All orders in a map with key being the order ID
      */
-    val orders = sortedMapOf<String, OrderState>()
+    val orders = mutableMapOf<Int, OrderState>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -84,7 +82,7 @@ class InternalAccount(
     /**
      * Portfolio with its positions
      */
-    val portfolio = TreeMap<Asset, Position>()
+    val portfolio = mutableMapOf<Asset, Position>()
 
     /**
      * Total equity value
@@ -117,16 +115,22 @@ class InternalAccount(
 
 
     /**
+     * Put a single order, replacing existing one with the same order id or otherwise add it.
+     */
+    fun putOrder(orderState: OrderState) {
+        orders[orderState.id] = orderState
+    }
+
+    /**
      * Put orders, replacing existing ones with the same order id or otherwise add them.
      */
     fun putOrders(orderStates: Collection<OrderState>) {
-        for (orderState in orderStates) orders[orderState.order.id] = orderState
+        for (orderState in orderStates) orders[orderState.id] = orderState
     }
 
     fun rejectOrder(order: Order, time: Instant) {
         orders[order.id] = OrderState(order, OrderStatus.REJECTED, time, time)
     }
-
 
     fun acceptOrder(order: Order, time: Instant) {
         orders[order.id] = OrderState(order, OrderStatus.ACCEPTED, time, time)
@@ -162,11 +166,10 @@ class InternalAccount(
             cash.clone(),
             trades.toList(),
             orders.values.toList(),
-            portfolio.values.toList(),
+            portfolio.values.sortedBy { it.asset },
             buyingPower
         )
     }
-
 
 }
 

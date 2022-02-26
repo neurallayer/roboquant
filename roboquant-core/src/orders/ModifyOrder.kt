@@ -31,7 +31,7 @@ package org.roboquant.orders
 class UpdateOrder(
     val original: OrderState,
     val update: SingleOrder,
-    id: String = nextId(),
+    id: Int = nextId(),
 ) : Order(original.order.asset, id) {
 
     init {
@@ -50,7 +50,7 @@ class UpdateOrder(
  */
 class CancelOrder(
     val order: OrderState,
-    id: String = nextId(),
+    id: Int = nextId(),
 ) : Order(order.order.asset, id) {
 
     init {

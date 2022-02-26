@@ -54,7 +54,7 @@ open class TradeChart(
 
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
-        for (trade in trades) {
+        for (trade in trades.sortedBy { it.time }) {
             with(trade) {
                 val value = when (aspect) {
                     "pnl" -> pnl.convert(time = time).toBigDecimal()

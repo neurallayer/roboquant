@@ -4,7 +4,7 @@ import org.roboquant.orders.*
 import java.time.Instant
 
 
-private fun List<OrderHandler>.getSingleOrderHandler(id: String) = filterIsInstance<SingleOrderHandler<SingleOrder>>().firstOrNull {
+private fun List<OrderHandler>.getSingleOrderHandler(id: Int) = filterIsInstance<SingleOrderHandler<SingleOrder>>().firstOrNull {
     it.order.id == id
 }
 

@@ -5,7 +5,7 @@ package org.roboquant.orders
 class OCOOrder(
     val first: SingleOrder,
     val second: SingleOrder,
-    id: String = nextId(),
+    id: Int = nextId(),
 ) : Order(first.asset, id) {
 
     init {
@@ -19,7 +19,7 @@ class OCOOrder(
 class OTOOrder(
     val first: SingleOrder,
     val second: SingleOrder,
-    id: String = nextId(),
+    id: Int = nextId(),
 ) : Order(first.asset, id)  {
 
     init {
@@ -35,7 +35,7 @@ class BracketOrder(
     val entry: SingleOrder,
     val takeProfit: SingleOrder,
     val stopLoss: SingleOrder,
-    id: String = nextId(),
+    id: Int = nextId(),
 ) : Order(entry.asset, id) {
 
     init {

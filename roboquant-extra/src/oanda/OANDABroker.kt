@@ -153,7 +153,7 @@ class OANDABroker(
             trx.pl.doubleValue(),
             order.id
         )
-        _account.trades.add(trade)
+        _account.trades += trade
         val amount = Amount(account.baseCurrency, trx.accountBalance.doubleValue())
         _account.cash.set(amount)
     }
@@ -209,7 +209,7 @@ class OANDABroker(
                     logger.warning { "Rejecting unsupported order type $order" }
                     state =  OrderState(order, OrderStatus.REJECTED, event.time, event.time)
                 }
-                _account.orders[order.id] = state
+                _account.putOrder(state)
             }
         }
 
