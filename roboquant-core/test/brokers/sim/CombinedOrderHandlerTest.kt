@@ -83,7 +83,7 @@ internal class CombinedOrderHandlerTest {
 
         executions = cmd.execute(pricing(111), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(OrderStatus.COMPLETED, cmd.status)
+        assertEquals(OrderStatus.COMPLETED, cmd.state.status)
 
     }
 

@@ -40,6 +40,23 @@ data class OrderState(
     val id
         get() = order.id
 
+    /**
+     * Update the order state and return the new order state (if applicable)
+     *
+     * @param time
+     * @param newStatus
+     * @return
+     */
+    fun update(time: Instant, newStatus: OrderStatus = OrderStatus.ACCEPTED) : OrderState {
+        return if (newStatus === OrderStatus.ACCEPTED && status === OrderStatus.INITIAL) {
+            OrderState(order, newStatus, time)
+        } else if (newStatus.closed && status.open) {
+            val openTime = if (openedAt === Instant.MIN) time else openedAt
+            OrderState(order, newStatus, openTime, time)
+        } else {
+            this
+        }
+    }
 
 }
 

@@ -18,7 +18,13 @@ sealed interface OrderHandler {
     /**
      * What is the order state
      */
-    val state: OrderState
+    var state: OrderState
+
+    /**
+     * Convenience attribite
+     */
+    val status
+        get() = state.status
 
 }
 
@@ -45,26 +51,6 @@ interface ModifyOrderHandler : OrderHandler {
 abstract class TradeOrderHandler<T: Order>(var order: T) : OrderHandler {
 
     abstract fun execute(pricing: Pricing, time: Instant): List<Execution>
-
-    override val state: OrderState
-        get() = OrderState(order, status, open, closed)
-
-    var status: OrderStatus = OrderStatus.INITIAL
-    var open: Instant = Instant.MIN
-    var closed: Instant = Instant.MAX
-
-    fun update(time: Instant) {
-        if (state.status === OrderStatus.INITIAL) {
-            status = OrderStatus.ACCEPTED
-            open = time
-        }
-    }
-
-    fun close(status: OrderStatus, time: Instant) {
-        this.status = status
-        closed = time
-        if (open == Instant.MIN) open = time
-    }
 
 
 }

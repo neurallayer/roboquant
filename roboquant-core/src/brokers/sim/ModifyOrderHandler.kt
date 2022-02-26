@@ -11,7 +11,7 @@ internal class UpdateOrderHandler(val order: UpdateOrder) : ModifyOrderHandler {
         val handler = handlers.filterIsInstance<TradeOrderHandler<SingleOrder>>().firstOrNull {
             it.order.id == order.original.id
         }
-        state = if (handler != null && handler.status.open) {
+        state = if (handler != null && handler.state.status.open) {
             handler.order = order.update
             OrderState(order, OrderStatus.COMPLETED, time, time)
         } else {
@@ -29,7 +29,7 @@ internal class CancelOrderHandler(val order: CancelOrder) : ModifyOrderHandler {
     override fun execute(handlers: List<OrderHandler>, time: Instant) {
         val handler = handlers.filterIsInstance<TradeOrderHandler<*>>().firstOrNull { it.order.id == order.order.id }
         state = if (handler != null && handler.state.status.open) {
-            handler.close(OrderStatus.EXPIRED, time)
+            handler.state = handler.state.update(time, OrderStatus.EXPIRED)
             OrderState(order, OrderStatus.COMPLETED, time, time)
         } else {
             OrderState(order, OrderStatus.REJECTED, time, time)

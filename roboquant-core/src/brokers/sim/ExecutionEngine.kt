@@ -87,7 +87,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
         val executions = mutableListOf<Execution>()
         val prices = event.prices
         for (exec in tradeHandlers.toList()) {
-            if (exec.status.closed) continue
+            if (exec.state.status.closed) continue
             val action = prices[exec.order.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, event.time)
             val newExecutions = exec.execute(pricing, event.time)

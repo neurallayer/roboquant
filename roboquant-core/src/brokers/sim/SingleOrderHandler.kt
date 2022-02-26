@@ -14,6 +14,7 @@ abstract class SingleOrderHandler<T : SingleOrder>(order: T) : TradeOrderHandler
     internal val remaining
         get() = qty - fill
 
+    override var state: OrderState = OrderState(order)
 
     /**
      * Validate TiF policy and return true if order has expired according to the policy.
@@ -31,16 +32,16 @@ abstract class SingleOrderHandler<T : SingleOrder>(order: T) : TradeOrderHandler
 
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-        update(time)
+        state = state.update(time)
         val execution = fill(pricing)
         fill += execution?.quantity ?: 0.0
 
         if (expired(time)) {
-            close(OrderStatus.EXPIRED, time)
+            state = state.update(time, OrderStatus.EXPIRED)
             return emptyList()
         }
 
-        if (remaining.iszero) close(OrderStatus.COMPLETED, time)
+        if (remaining.iszero) state = state.update(time, OrderStatus.COMPLETED)
         return if (execution == null) emptyList() else listOf(execution)
 
     }
