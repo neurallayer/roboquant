@@ -26,8 +26,8 @@ package org.roboquant.common
  * @property currencyCode currency code, default is "USD"
  * @property exchangeCode Exchange this asset is traded on, default is an empty string
  * @property multiplier contract multiplier, default is 1.0
- * @property details contract details, for example this could hold the option series or futures contract details. Default
- * is an empty string.
+ * @property details contract details, for example this could hold the option series or futures contract details.
+ * Default is an empty string.
  * @property name Company name, default is an empty string
  * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
@@ -67,21 +67,10 @@ data class Asset(
     /**
      * What is the value of the asset given the provided [quantity] and [price]
      */
-    fun value(quantity: Double, price: Double) : Amount {
-        return if (quantity == 0.0) Amount(currency,0.0)else Amount(currency, multiplier * price * quantity)
+    fun value(quantity: Double, price: Double): Amount {
+        return if (quantity == 0.0) Amount(currency, 0.0) else Amount(currency, multiplier * price * quantity)
     }
 
-
-    /**
-     * Create a serialized string representation of this asset that can be later deserialized using the
-     * [deserialize] method
-     *
-     * @return
-
-    fun serialize(): String {
-    return "$symbol$SEP$type$SEP$currencyCode$SEP$exchangeCode$SEP$multiplier$SEP$lastDate$SEP$right$SEP$strike$SEP$name$SEP$id"
-    }
-     */
 
     /**
      * Create a serialized string representation of this asset that can be later deserialized using the [deserialize]
@@ -164,14 +153,14 @@ fun Collection<Asset>.findBySymbols(symbols: Collection<String>): List<Asset> = 
 /**
  * Find all assets based on their [currencyCodes]. Returns an empty list if no matching assets can be found.
  */
-fun Collection<Asset>.findByCurrencies(vararg currencyCodes: String): List<Asset> = findByCurrencies(currencyCodes.asList())
+fun Collection<Asset>.findByCurrencies(vararg currencyCodes: String): List<Asset> =
+    findByCurrencies(currencyCodes.asList())
 
 /**
  * Find all assets based on their [currencyCodes]. Returns an empty list if no matching assets can be found.
  */
 fun Collection<Asset>.findByCurrencies(currencyCodes: Collection<String>): List<Asset> =
     filter { it.currencyCode in currencyCodes }
-
 
 
 /**
@@ -183,7 +172,8 @@ fun Collection<Asset>.findByExchanges(exchangeCodes: Collection<String>): List<A
 /**
  * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.
  */
-fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset> = findByExchanges(exchangeCodes.asList())
+fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset> =
+    findByExchanges(exchangeCodes.asList())
 
 /**
  * Select [n] random assets from a collection, without duplicates. [n] has to equal or smaller than the size of the

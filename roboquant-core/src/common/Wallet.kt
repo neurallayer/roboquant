@@ -23,8 +23,8 @@ import java.time.Instant
  * Wallet can contain amounts of different currencies at the same time. So for example a single instance of Wallet can
  * contain both USD and EURO amounts.
  *
- * You can add other currencies to a Wallet instance. If the currency is already contained in the Wallet instance, it will
- * be added to the existing amount, otherwise the currency and amount will be added.
+ * You can add other currencies to a Wallet instance. If the currency is already contained in the Wallet instance, it
+ * will be added to the existing amount, otherwise the currency and amount will be added.
  *
  * It is used throughout roboquant in order to support trading in multiple assets with different currency denominations.
  *

@@ -158,25 +158,25 @@ fun DoubleArray.returns() : DoubleArray {
 }
 
 
-private const val eps = 0.0000001
+private const val EPS = 0.0000001
 
 /**
  * Is this value zero, allows for small rounding errors.
  */
 val Double.iszero
-    get() = this.absoluteValue < eps
+    get() = this.absoluteValue < EPS
 
 /**
  * is this a non zero number, allows for small rounding errors.
  */
 val Double.nonzero
-    get() = this.absoluteValue > eps
+    get() = this.absoluteValue > EPS
 
 /**
  * is this a non zero number, allows for small rounding errors.
  */
 val Double.zeroOrMore
-    get() = if (this > eps) this else 0.0
+    get() = if (this > EPS) this else 0.0
 
 
 fun Number.round(fractions: Int = 2): BigDecimal = BigDecimal.valueOf(toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)

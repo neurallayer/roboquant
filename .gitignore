@@ -7,3 +7,4 @@ out
 *.iml
 *.avro
 target/
+*.jfr
