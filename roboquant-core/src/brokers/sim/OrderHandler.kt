@@ -1,8 +1,6 @@
 package org.roboquant.brokers.sim
 
-import org.roboquant.orders.Order
 import org.roboquant.orders.OrderState
-import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
@@ -21,7 +19,7 @@ sealed interface OrderHandler {
     var state: OrderState
 
     /**
-     * Convenience attribite
+     * Convenience attribute
      */
     val status
         get() = state.status
@@ -44,14 +42,10 @@ interface ModifyOrderHandler : OrderHandler {
 /**
  * Order handler
  *
- * @param T
- * @property order
- * @constructor Create empty Order handler
  */
-abstract class TradeOrderHandler<T: Order>(var order: T) : OrderHandler {
+interface TradeOrderHandler : OrderHandler {
 
-    abstract fun execute(pricing: Pricing, time: Instant): List<Execution>
-
+    fun execute(pricing: Pricing, time: Instant): List<Execution>
 
 }
 

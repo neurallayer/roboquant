@@ -38,7 +38,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
     }
 
     // Currently active order commands
-    private val tradeHandlers = LinkedList<TradeOrderHandler<*>>()
+    private val tradeHandlers = LinkedList<TradeOrderHandler>()
 
     // Currently active order commands
     private val modifyHandlers = LinkedList<ModifyOrderHandler>()
@@ -63,7 +63,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
 
         return when(val handler = getHandler(order)) {
             is ModifyOrderHandler ->  modifyHandlers.add(handler)
-            is TradeOrderHandler<*> -> tradeHandlers.add(handler)
+            is TradeOrderHandler -> tradeHandlers.add(handler)
         }
 
     }
@@ -88,7 +88,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
         val prices = event.prices
         for (exec in tradeHandlers.toList()) {
             if (exec.state.status.closed) continue
-            val action = prices[exec.order.asset] ?: continue
+            val action = prices[exec.state.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, event.time)
             val newExecutions = exec.execute(pricing, event.time)
             executions.addAll(newExecutions)

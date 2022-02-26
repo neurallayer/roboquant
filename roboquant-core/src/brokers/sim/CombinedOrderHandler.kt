@@ -4,15 +4,13 @@ import org.roboquant.common.iszero
 import org.roboquant.orders.*
 import java.time.Instant
 
-internal class OCOOrderHandler(order: OCOOrder) : TradeOrderHandler<OCOOrder>(order) {
+internal class OCOOrderHandler(val order: OCOOrder) : TradeOrderHandler{
 
-    private val first = ExecutionEngine.getHandler(order.first) as TradeOrderHandler<*>
-    private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler<*>
+    private val first = ExecutionEngine.getHandler(order.first) as TradeOrderHandler
+    private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler
     private var active = 0
 
     override var state: OrderState = OrderState(order)
-
-
 
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
@@ -42,14 +40,12 @@ internal class OCOOrderHandler(order: OCOOrder) : TradeOrderHandler<OCOOrder>(or
 }
 
 
-internal class OTOOrderHandler(order: OTOOrder) : TradeOrderHandler<OTOOrder>(order) {
+internal class OTOOrderHandler(val order: OTOOrder) : TradeOrderHandler {
 
     override var state: OrderState = OrderState(order)
 
-
-
-    private val first = ExecutionEngine.getHandler(order.first) as TradeOrderHandler<*>
-    private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler<*>
+    private val first = ExecutionEngine.getHandler(order.first) as TradeOrderHandler
+    private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         state = state.update(time)
@@ -70,11 +66,9 @@ internal class OTOOrderHandler(order: OTOOrder) : TradeOrderHandler<OTOOrder>(or
 }
 
 
-internal class BracketOrderHandler(order: BracketOrder) : TradeOrderHandler<BracketOrder>(order) {
+internal class BracketOrderHandler(order: BracketOrder) : TradeOrderHandler{
 
     override var state: OrderState = OrderState(order)
-
-
 
     private val main = ExecutionEngine.getHandler(order.entry) as SingleOrderHandler<*>
     private val profit = ExecutionEngine.getHandler(order.takeProfit) as SingleOrderHandler<*>
