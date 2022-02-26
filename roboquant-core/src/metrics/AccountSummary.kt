@@ -31,6 +31,8 @@ import org.roboquant.feeds.Event
  * - account.equity Total equity value of the account
  * - account.change Change of value of the account
  *
+ * All monetary values will be denoted in base currency of the account
+ *
  * @constructor Create new Account Summary metric
  */
 class AccountSummary: SimpleMetric() {
@@ -41,9 +43,9 @@ class AccountSummary: SimpleMetric() {
             "account.orders" to account.openOrders.size + account.closedOrders.size,
             "account.trades" to account.trades.size,
             "account.positions" to account.portfolio.size,
-            "account.cash" to account.cash.convert(time = event.time).value,
+            "account.cash" to account.convert(account.cash, event.time).value,
             "account.buyingpower" to account.buyingPower.value,
-            "account.equity"  to account.equity.convert(time = event.time).value,
+            "account.equity"  to account.convert(account.equity, event.time).value,
         )
 
     }

@@ -166,15 +166,15 @@ fun largeRead() {
 
 fun millionBars(n:Int = 2) {
     val timeline = mutableListOf<Instant>()
-    var start = Instant.parse("2000-01-01T09:00:00Z")
+    var start = Instant.parse("1975-01-01T09:00:00Z")
 
-    // Create a timeline of n million entries
+    // Create a timeline
     repeat(n * 10_000) {
         timeline.add(start)
-        start += 1.minutes
+        start += 4.hours
     }
 
-    // Create a random walk for the timeline provided, totol 2_000_000 candle sticks
+    // Create a random walk for the timeline provided, totol n * 1_000_000 candle sticks
     val feed = RandomWalk(timeline, 100)
 
     // Create a roboquant using Exponential Weighted Moving Average

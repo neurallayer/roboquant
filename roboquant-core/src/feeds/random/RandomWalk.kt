@@ -57,7 +57,6 @@ class RandomWalk(
     private val random: Random = Config.random
 ) : HistoricPriceFeed() {
 
-
     init {
         repeat(nAssets) {
             val symbol = generateSymbol(symbolLength)
@@ -116,17 +115,17 @@ class RandomWalk(
     ) {
         var prevPrice = 100.0
         val plusVolume = maxVolume - minVolume
-        val javaRandom = random.asJavaRandom()
+        val jRandom = random.asJavaRandom()
         for (time in timeline) {
-            val newValue = javaRandom.nextGaussian() + prevPrice
+            val newValue = jRandom.nextGaussian() + prevPrice
             val v = mutableListOf(newValue)
             repeat(3) {
-                v.add(newValue + (javaRandom.nextDouble() * maxDayRange) - (maxDayRange / 2.0f))
+                v.add(newValue + (jRandom.nextDouble() * maxDayRange) - (maxDayRange / 2.0f))
             }
             v.sort()
 
-            val volume = round(minVolume + (plusVolume * javaRandom.nextDouble()))
-            val action = if (javaRandom.nextBoolean()) {
+            val volume = round(minVolume + (plusVolume * jRandom.nextDouble()))
+            val action = if (jRandom.nextBoolean()) {
                 PriceBar(asset, v[1], v[3], v[0], v[2], volume)
             } else {
                 PriceBar(asset, v[2], v[3], v[0], v[1], volume)
@@ -142,11 +141,11 @@ class RandomWalk(
      */
     private fun generateSinglePrice(asset: Asset, timeline: Timeline, minVolume: Int, maxVolume: Int) {
         var prevPrice = 100.0
-        val javaRandom = random.asJavaRandom()
         val plusVolume = maxVolume - minVolume
+        val jRandom = random.asJavaRandom()
         for (time in timeline) {
-            val newValue = javaRandom.nextGaussian() + prevPrice
-            val volume = round(minVolume + (plusVolume * javaRandom.nextDouble()))
+            val newValue = jRandom.nextGaussian() + prevPrice
+            val volume = round(minVolume + (plusVolume * jRandom.nextDouble()))
             val action = TradePrice(asset, newValue, volume)
             add(time, action)
             prevPrice = if (newValue > 10.0) newValue else 10.0

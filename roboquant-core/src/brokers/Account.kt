@@ -83,12 +83,12 @@ class Account(
     /**
      * Convert an [amount] to the account base currency using last update of the account as a timestamp
      */
-    fun convert(amount: Amount) = amount.convert(baseCurrency, lastUpdate)
+    fun convert(amount: Amount, time:Instant = lastUpdate) = amount.convert(baseCurrency, time)
 
     /**
      * Convert a [wallet] to the account base currency using last update of the account as a timestamp
      */
-    fun convert(wallet: Wallet) = wallet.convert(baseCurrency, lastUpdate)
+    fun convert(wallet: Wallet, time:Instant = lastUpdate) = wallet.convert(baseCurrency, time)
 
 
     /**

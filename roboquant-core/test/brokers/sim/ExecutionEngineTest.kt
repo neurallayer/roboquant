@@ -20,6 +20,7 @@ import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.orders.*
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 
 internal class ExecutionEngineTest {
 
@@ -80,6 +81,22 @@ internal class ExecutionEngineTest {
         order = CancelOrder(state)
         success = engine.add(order)
         assertEquals(true, success)
+    }
+
+
+    @Test
+    fun testRegister() {
+
+        ExecutionEngine.unregister<MarketOrder>()
+
+        val order = TestData.usMarketOrder()
+        assertFails {
+            ExecutionEngine.getHandler(order)
+        }
+
+        ExecutionEngine.register<MarketOrder> { MarketOrderHandler(it) }
+        val handler = ExecutionEngine.getHandler(order)
+        assertEquals("MarketOrderHandler" , handler::class.simpleName)
     }
 
 }

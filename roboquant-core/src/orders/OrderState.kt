@@ -62,17 +62,6 @@ data class OrderState(
 
 
 
-val Collection<OrderState>.orders
-    get() = map { it.order }
-
-
-val Collection<OrderState>.open
-    get() = filter { it.open }.orders
-
-
-val Collection<OrderState>.closed
-    get() = filter { it.closed }.orders
-
 
 /**
  * Various state that an order can be in. The  flow is straight forward:

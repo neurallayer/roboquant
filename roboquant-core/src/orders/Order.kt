@@ -32,8 +32,6 @@ import org.roboquant.common.Asset
  **/
 abstract class Order(val asset: Asset, val id: Int) {
 
-
-
     companion object {
 
         // Counter used for creating unique order ids
@@ -61,7 +59,7 @@ abstract class Order(val asset: Asset, val id: Int) {
      *
      * @return
      */
-    open fun info() : Map<String, Any> = emptyMap()
+    abstract fun info() : Map<String, Any>
 
 }
 

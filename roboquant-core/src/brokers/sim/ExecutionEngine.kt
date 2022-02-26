@@ -3,6 +3,13 @@ package org.roboquant.brokers.sim
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.util.*
+import kotlin.reflect.KClass
+
+
+fun interface OrderHandlerFactory<T : Order> {
+
+    fun getHandler(order: T): OrderHandler
+}
 
 /**
  * Executes the orders.
@@ -14,28 +21,54 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
 
     companion object {
 
+        val factories = mutableMapOf<KClass<*>, OrderHandlerFactory<Order>>()
+
         /**
-         * Get a new command for a cerain order
+         * Get the order handler for the [order]
+         *
+         * @param order
+         * @return
          */
         fun getHandler(order: Order): OrderHandler {
+            val factory = factories[order::class]!!
+            return factory.getHandler(order)
+        }
+
+        /**
+         * Unregister th eorder handler for order type [T]
+         */
+        inline fun <reified T : Order> unregister() {
+            factories.remove(T::class)
+        }
+
+        /**
+         * Register a order handler factory for order type [T]
+         *
+         * @param T
+         * @param factory
+         */
+        inline fun <reified T : Order> register(factory: OrderHandlerFactory<T>) {
             @Suppress("UNCHECKED_CAST")
-            return when (order) {
-                is MarketOrder -> MarketOrderHandler(order)
-                is LimitOrder -> LimitOrderHandler(order)
-                is StopLimitOrder -> StopLimitOrderHandler(order)
-                is StopOrder -> StopOrderHandler(order)
-                is TrailLimitOrder -> TrailLimitOrderHandler(order)
-                is TrailOrder -> TrailOrderHandler(order)
-                is BracketOrder -> BracketOrderHandler(order)
-                is OCOOrder -> OCOOrderHandler(order)
-                is OTOOrder -> OTOOrderHandler(order)
-                is UpdateOrder -> UpdateOrderHandler(order)
-                is CancelOrder -> CancelOrderHandler(order)
-                else -> throw Exception("Unsupported Order type $order")
-            }
+            factories[T::class] = factory as OrderHandlerFactory<Order>
+        }
+
+        init {
+            // All the default included order handlers
+            register<MarketOrder> { MarketOrderHandler(it) }
+            register<LimitOrder> { LimitOrderHandler(it) }
+            register<StopLimitOrder> { StopLimitOrderHandler(it) }
+            register<StopOrder> { StopOrderHandler(it) }
+            register<TrailLimitOrder> { TrailLimitOrderHandler(it) }
+            register<TrailOrder> { TrailOrderHandler(it) }
+            register<BracketOrder> { BracketOrderHandler(it) }
+            register<OCOOrder> { OCOOrderHandler(it) }
+            register<OTOOrder> { OTOOrderHandler(it) }
+            register<UpdateOrder> { UpdateOrderHandler(it) }
+            register<CancelOrder> { CancelOrderHandler(it) }
         }
 
     }
+
 
     // Currently active order commands
     private val tradeHandlers = LinkedList<TradeOrderHandler>()
@@ -57,12 +90,11 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
         get() = tradeHandlers.map { it.state } + modifyHandlers.map { it.state }
 
 
-
     // Add a new order to the execution engine
     fun add(order: Order): Boolean {
 
-        return when(val handler = getHandler(order)) {
-            is ModifyOrderHandler ->  modifyHandlers.add(handler)
+        return when (val handler = getHandler(order)) {
+            is ModifyOrderHandler -> modifyHandlers.add(handler)
             is TradeOrderHandler -> tradeHandlers.add(handler)
         }
 
@@ -73,8 +105,6 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
     fun addAll(orders: List<Order>) {
         for (order in orders) add(order)
     }
-
-
 
 
     fun execute(event: Event): List<Execution> {
