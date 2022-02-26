@@ -59,16 +59,16 @@ abstract class Order(val asset: Asset, val id: String) {
         get() = this::class.simpleName
 
     /**
-     * Provide extra info as map
+     * Provide extra info as map, used in displaying order information
      *
      * @return
      */
-    abstract fun info() : Map<String, Any>
+    open fun info() : Map<String, Any> = emptyMap()
 
 }
 
 
-val Collection<Order>.initialOrderSlips
+val Collection<Order>.initialOrderState
     get() = map { OrderState(it, OrderStatus.INITIAL)}
 
 

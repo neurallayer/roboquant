@@ -175,7 +175,7 @@ class OANDABroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer {"received ${orders.size} orders and ${event.actions.size} actions"}
-        _account.putOrders(orders.initialOrderSlips)
+        _account.putOrders(orders.initialOrderState)
 
        if (! enableOrders) {
             val states = orders.map { OrderState(it, OrderStatus.REJECTED, event.time, event.time) }

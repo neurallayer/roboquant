@@ -36,7 +36,7 @@ internal class CombinedOrderHandlerTest {
     fun testOCO() {
         val order1 = MarketOrder(asset, 100.0)
         val order2 = MarketOrder(asset, 50.0)
-        val order = OneCancelsOtherOrder(order1, order2)
+        val order = OCOOrder(order1, order2)
         val cmd = OCOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
@@ -47,7 +47,7 @@ internal class CombinedOrderHandlerTest {
     fun testOCO2() {
         val order1 = LimitOrder(asset, 100.0, 90.0)
         val order2 = MarketOrder(asset, 50.0)
-        val order = OneCancelsOtherOrder(order1, order2)
+        val order = OCOOrder(order1, order2)
         val cmd = OCOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
@@ -59,7 +59,7 @@ internal class CombinedOrderHandlerTest {
     fun testOTO() {
         val order1 = MarketOrder(asset, 100.0)
         val order2 = MarketOrder(asset, 50.0)
-        val order = OneTriggersOtherOrder(order1, order2)
+        val order = OTOOrder(order1, order2)
         val cmd = OTOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(2, executions.size)

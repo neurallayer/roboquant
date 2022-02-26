@@ -46,8 +46,8 @@ object TestData {
         account.setPosition(Position(asset2, 100.0, 10.0))
 
         val order = MarketOrder(asset1, 100.0)
-        val slip = OrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
-        account.putOrders(listOf(slip))
+        val state = OrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
+        account.putOrders(listOf(state))
         return account
     }
 

@@ -235,7 +235,7 @@ class AlpacaBroker(
         for (order in orders) {
             if (order is SingleOrder) {
                 placeOrder(order)
-                _account.putOrders(listOf(order).initialOrderSlips)
+                _account.putOrders(listOf(order).initialOrderState)
             } else {
                 throw Exception("Unsupported order type $order")
             }

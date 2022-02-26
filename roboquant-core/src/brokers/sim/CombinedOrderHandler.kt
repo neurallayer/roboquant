@@ -4,7 +4,7 @@ import org.roboquant.common.iszero
 import org.roboquant.orders.*
 import java.time.Instant
 
-internal class OCOOrderHandler(order: OneCancelsOtherOrder) : TradeOrderHandler<OneCancelsOtherOrder>(order) {
+internal class OCOOrderHandler(order: OCOOrder) : TradeOrderHandler<OCOOrder>(order) {
 
     private val first = ExecutionEngine.getHandler(order.first) as TradeOrderHandler<*>
     private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler<*>
@@ -37,7 +37,7 @@ internal class OCOOrderHandler(order: OneCancelsOtherOrder) : TradeOrderHandler<
 }
 
 
-internal class OTOOrderHandler(order: OneTriggersOtherOrder) : TradeOrderHandler<OneTriggersOtherOrder>(order) {
+internal class OTOOrderHandler(order: OTOOrder) : TradeOrderHandler<OTOOrder>(order) {
 
     private val first = ExecutionEngine.getHandler(order.first) as TradeOrderHandler<*>
     private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler<*>

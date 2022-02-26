@@ -18,23 +18,6 @@ package org.roboquant.orders
 
 
 /**
- * Base class for orders that modify other orders and don't generate trades them selves. The two included sub classes
- * are [UpdateOrder] and [CancelOrder]
- *
- * @constructor
- *
- * @param orderState
- * @param id
- */
-abstract class ModifyOrder(orderState: OrderState, id: String) : Order(orderState.order.asset, id) {
-
-    init {
-        require(orderState.status.open) { "Only open orders can be modified"}
-    }
-
-}
-
-/**
  * Update an existing SimpleOrder. It is up to the broker implementation to translate the updated order to the correct
  * message, so it can be processed.
  *
@@ -43,17 +26,17 @@ abstract class ModifyOrder(orderState: OrderState, id: String) : Order(orderStat
  **
  * @property original
  * @property update
- * @constructor Create empty Order update
+ * @constructor Create new UpateOrder
  */
-
 class UpdateOrder(
     val original: OrderState,
     val update: SingleOrder,
     id: String = nextId(),
-) : ModifyOrder(original, id) {
+) : Order(original.order.asset, id) {
 
     init {
         require(original.order::class == update::class) { "update orders cannot change order type"}
+        require(original.status.open) { "Only open orders can be updated"}
     }
 
     override fun info() = update.info()
@@ -63,14 +46,16 @@ class UpdateOrder(
  * Cancel an open order, will throw an exception if the order is not open anymore.
  *
  * @property order The order to cancel
- * @constructor
- *
  * @param id
  */
 class CancelOrder(
     val order: OrderState,
     id: String = nextId(),
-) : ModifyOrder(order, id) {
+) : Order(order.order.asset, id) {
+
+    init {
+        require(order.status.open) { "Only open orders can be cancelled"}
+    }
 
     override fun info() = order.order.info()
 }

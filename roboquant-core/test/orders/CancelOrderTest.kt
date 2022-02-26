@@ -19,7 +19,7 @@ package org.roboquant.orders
 import org.junit.Test
 import org.roboquant.TestData
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
 
 
 internal class CancelOrderTest {
@@ -28,8 +28,8 @@ internal class CancelOrderTest {
     fun test() {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100.0)
-        val slip = OrderState(order)
-        val oc = CancelOrder(slip)
+        val state = OrderState(order)
+        val oc = CancelOrder(state)
         assertEquals(order, oc.order.order)
     }
 
@@ -37,9 +37,9 @@ internal class CancelOrderTest {
     fun testFailure() {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100.0)
-        val slip = OrderState(order, OrderStatus.COMPLETED)
-        assertFails {
-            CancelOrder(slip)
+        val state = OrderState(order, OrderStatus.COMPLETED)
+        assertFailsWith<java.lang.IllegalArgumentException> {
+            CancelOrder(state)
         }
     }
 }

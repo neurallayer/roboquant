@@ -19,36 +19,20 @@ package org.roboquant.orders
 import org.junit.Test
 import org.roboquant.TestData
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
-internal class OneTriggersOtherOrderTest {
+class OCOOrderTest {
 
     @Test
     fun test() {
         val asset = TestData.usStock()
-        val order = OneTriggersOtherOrder(
-            MarketOrder(asset, 100.0),
-            MarketOrder(asset, 200.0)
+        val order = OCOOrder(
+            LimitOrder(asset, 100.0, 10.9),
+            LimitOrder(asset, 200.0, 11.1)
         )
-
-        assertTrue(order.first is MarketOrder)
         assertEquals(order.first.asset, order.asset)
         assertTrue(order.toString().isNotBlank())
-    }
 
-
-    @Test
-    fun test2() {
-        val asset1 = TestData.usStock()
-        val asset2 = TestData.euStock()
-
-        assertFails {
-            OneTriggersOtherOrder(
-                MarketOrder(asset1, 100.0),
-                MarketOrder(asset2, 200.0)
-            )
-        }
 
     }
 

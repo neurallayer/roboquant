@@ -28,8 +28,8 @@ internal class AccountModelTest {
         assertEquals(result.value, account.cashAmount.value)
 
         val order = MarketOrder(TestData.usStock(), 100.0)
-        val slip = OrderState(order, OrderStatus.ACCEPTED, Instant.now())
-        account.putOrders(listOf(slip))
+        val state = OrderState(order, OrderStatus.ACCEPTED, Instant.now())
+        account.putOrders(listOf(state))
         val result2 = uc.calculate(account)
 
         // Right now open orders are not taken into account

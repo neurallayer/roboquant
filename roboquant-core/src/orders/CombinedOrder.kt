@@ -2,34 +2,33 @@ package org.roboquant.orders
 
 
 
-abstract class CombinedOrder(vararg orders: SingleOrder, id: String) : Order(orders.first().asset, id) {
+class OCOOrder(
+    val first: SingleOrder,
+    val second: SingleOrder,
+    id: String = nextId(),
+) : Order(first.asset, id) {
 
     init {
-        require(orders.map { it.asset }.distinct().size == 1) { "Combined Orders can only contain orders for the same asset"}
+        require(first.asset == second.asset) { "OCO orders can only contain orders for the same asset"}
     }
 
-}
-
-class OneCancelsOtherOrder(
-    val first: SingleOrder,
-    val second: SingleOrder,
-    id: String = nextId(),
-) : CombinedOrder(first, second, id = id) {
-
     override fun info() = sortedMapOf("first" to first, "second" to second)
 }
 
 
-class OneTriggersOtherOrder(
+class OTOOrder(
     val first: SingleOrder,
     val second: SingleOrder,
     id: String = nextId(),
-) : CombinedOrder(first, second, id = id) {
+) : Order(first.asset, id)  {
+
+    init {
+        require(first.asset == second.asset) { "OTO orders can only contain orders for the same asset"}
+    }
 
     override fun info() = sortedMapOf("first" to first, "second" to second)
 
 }
-
 
 
 class BracketOrder(
@@ -37,10 +36,11 @@ class BracketOrder(
     val takeProfit: SingleOrder,
     val stopLoss: SingleOrder,
     id: String = nextId(),
-) : CombinedOrder(entry, takeProfit, stopLoss, id = id) {
+) : Order(entry.asset, id) {
 
     init {
-        require(entry.quantity == -takeProfit.quantity && entry.quantity == -stopLoss.quantity)
+        require(entry.asset == takeProfit.asset && entry.asset == stopLoss.asset) { "Bracket orders can only contain orders for the same asset"}
+        require(entry.quantity == -takeProfit.quantity && entry.quantity == -stopLoss.quantity) { "Bracket orders takeProfit and stopLoss orders need to close position"}
     }
 
     override fun info() = sortedMapOf("entry" to entry, "takeProfit" to takeProfit, "stopLoss" to "stopLoss")

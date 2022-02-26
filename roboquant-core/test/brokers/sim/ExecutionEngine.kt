@@ -50,11 +50,11 @@ internal class ExecutionEngineTest {
         val engine = ExecutionEngine(NoSlippagePricing())
         val asset = TestData.usStock()
 
-        var order: Order = OneCancelsOtherOrder(LimitOrder(asset, 100.0, 200.0), LimitOrder(asset, -100.0, 200.0))
+        var order: Order = OCOOrder(LimitOrder(asset, 100.0, 200.0), LimitOrder(asset, -100.0, 200.0))
         var success = engine.add(order)
         assertEquals(true, success)
 
-        order = OneTriggersOtherOrder(LimitOrder(asset, 100.0, 200.0), LimitOrder(asset, -100.0, 200.0))
+        order = OTOOrder(LimitOrder(asset, 100.0, 200.0), LimitOrder(asset, -100.0, 200.0))
         success = engine.add(order)
         assertEquals(true, success)
 
