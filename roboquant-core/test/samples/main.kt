@@ -179,7 +179,7 @@ fun millionBars(n:Int = 2) {
 
     // Create a roboquant using Exponential Weighted Moving Average
     val strategy = EMACrossover()
-    val roboquant = Roboquant(strategy, ProgressMetric())
+    val roboquant = Roboquant(strategy, ProgressMetric(), policy = DefaultPolicy())
 
     // Measure how long it takes to run a back-test over 2 million candlesticks
     val time = measureTimeMillis {  roboquant.run(feed) }
@@ -188,7 +188,7 @@ fun millionBars(n:Int = 2) {
     val account = roboquant.broker.account
 
     account.summary().print()
-    account.orders[1..100].summary().print()
+    // account.orders[1..100].summary().print()
 }
 
 fun volatility() {
@@ -220,7 +220,7 @@ fun multiCurrency() {
 
     val roboquant = Roboquant(strategy, AccountSummary(), policy = policy, broker = broker, logger = MemoryLogger())
     roboquant.run(feed)
-    broker.account.orders.summary().print()
+    broker.account.openOrders.summary().print()
 }
 
 fun manyMinutes() {
@@ -490,7 +490,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("TWO_MILLION") {
+    when ("TEN_MILLION") {
         // "CRYPTO" -> crypto()
         "BETA" -> beta()
         "BETA2" -> beta2()
@@ -502,6 +502,7 @@ suspend fun main() {
         "MULTI_RUN_PARALLEL" -> println( measureTimeMillis {  multiRunParallel() })
         "WALKFORWARD_PARALLEL" -> println( measureTimeMillis {  walkforwardParallel() })
         "TWO_MILLION" -> millionBars(2)
+        "FOUR_MILLION" -> millionBars(4)
         "TEN_MILLION" -> millionBars(10)
         "MC" -> multiCurrency()
         "MINUTES" -> manyMinutes()

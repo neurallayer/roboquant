@@ -201,8 +201,8 @@ class IBKRBroker(
             val openOrder = orderMap[orderId]
             if (openOrder != null) {
                 if (orderState.completedStatus() == "true") {
-                    val slip = _account.orders[openOrder]!!
-                    _account.putOrder(OrderState(slip.order, OrderStatus.COMPLETED, closedAt = Instant.parse(orderState.completedTime())))
+                    val slip = _account.openOrders[openOrder]
+                    if (slip != null) _account.putOrder(OrderState(slip.order, OrderStatus.COMPLETED, closedAt = Instant.parse(orderState.completedTime())))
                 }
             } else {
                 val newOrder = toOrder(order, contract)
@@ -221,10 +221,12 @@ class IBKRBroker(
             if (id == null)
                 logger.warning { "Received unknown open order with orderId $orderId" }
             else  {
-                val slip = _account.orders[id]!!
-                val newStatus = toStatus(status!!)
-                val orderState = slip.copy(status = newStatus)
-                _account.putOrder(orderState)
+                val slip = _account.openOrders[id]
+                if (slip != null) {
+                    val newStatus = toStatus(status!!)
+                    val orderState = slip.copy(status = newStatus)
+                    _account.putOrder(orderState)
+                }
             }
         }
 

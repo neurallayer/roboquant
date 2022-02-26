@@ -48,7 +48,8 @@ class Account(
     val lastUpdate: Instant,
     val cash: Wallet,
     val trades: List<Trade>,
-    val orders: List<OrderState>,
+    val openOrders: List<OrderState>,
+    val closedOrders: List<OrderState>,
     val portfolio: List<Position>,
     val buyingPower: Amount
 ) : Summarizable {
@@ -71,11 +72,12 @@ class Account(
     val assets
         get() = portfolio.map { it.asset }
 
+
     /**
      * Gte the associated trades for the provided [orders]. If no orders are provided all orders linked to this account
      * instance are used.
      */
-    fun getOrderTrades(orders: Collection<OrderState> = this.orders) =
+    fun getOrderTrades(orders: Collection<OrderState> = this.closedOrders) =
         orders.associateWith { order -> trades.filter { it.orderId == order.id } }.toMap()
 
     /**
@@ -111,7 +113,8 @@ class Account(
         s.add("assets", portfolio.size)
         s.add("realized p&l", c(trades.realizedPNL))
         s.add("trades", trades.size)
-        s.add("orders", orders.size)
+        s.add("open orders", openOrders.size)
+        s.add("closed orders", closedOrders.size)
         s.add("unrealized p&l", c(portfolio.unrealizedPNL))
         return s
     }
@@ -124,7 +127,8 @@ class Account(
         val s = summary()
         s.add(cash.summary())
         s.add(portfolio.summary())
-        s.add(orders.summary())
+        s.add(openOrders.summary())
+        s.add(closedOrders.summary())
         s.add(trades.summary())
         return s
     }

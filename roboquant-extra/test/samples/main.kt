@@ -52,7 +52,7 @@ fun allAlpaca() {
     val broker = AlpacaBroker()
     val account = broker.account
     account.summary().log()
-    account.orders.summary().log()
+    account.summary().log()
     account.portfolio.summary().log()
 
     val feed = AlpacaLiveFeed()

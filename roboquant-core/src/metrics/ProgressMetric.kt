@@ -43,7 +43,7 @@ class ProgressMetric : SimpleMetric() {
             "progress.actions" to actions,
             "progress.events" to ++steps,
             "progress.trades" to account.trades.size,
-            "progress.orders" to account.orders.size,
+            "progress.orders" to account.openOrders.size + account.closedOrders.size,
             "progress.walltime" to (Instant.now().toEpochMilli() - startTime.toEpochMilli()),
         )
     }

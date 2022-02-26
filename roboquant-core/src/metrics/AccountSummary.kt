@@ -38,7 +38,7 @@ class AccountSummary: SimpleMetric() {
 
     override fun calc(account: Account, event: Event): MetricResults {
         return mapOf(
-            "account.orders" to account.orders.size,
+            "account.orders" to account.openOrders.size + account.closedOrders.size,
             "account.trades" to account.trades.size,
             "account.positions" to account.portfolio.size,
             "account.cash" to account.cash.convert(time = event.time).value,

@@ -23,8 +23,6 @@ import org.roboquant.brokers.assets
 import org.roboquant.common.Config
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
-import org.roboquant.orders.closed
-import org.roboquant.orders.open
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -35,7 +33,8 @@ internal class SimBrokerTest {
         val broker = SimBroker()
         val event = TestData.event()
         val account = broker.place(emptyList(), event)
-        assertTrue(account.orders.isEmpty())
+        assertTrue(account.openOrders.isEmpty())
+        assertTrue(account.closedOrders.isEmpty())
 
         broker.place(emptyList(), event)
 
@@ -54,12 +53,11 @@ internal class SimBrokerTest {
         val event = TestData.event()
         val orders = listOf(TestData.euMarketOrder(), TestData.usMarketOrder())
         var account = broker.place(orders, event)
-        assertEquals(2, account.orders.size)
-        assertEquals(account.orders.closed.size, account.trades.size)
-        assertEquals(1, account.orders.open.size)
+        assertEquals(account.closedOrders.size, account.trades.size)
+        assertEquals(1, account.openOrders.size)
 
         account = broker.place(emptyList(), TestData.event2())
-        assertEquals(1, account.orders.open.size)
+        assertEquals(1, account.openOrders.size)
         assertEquals(1, account.assets.size)
     }
 
@@ -72,9 +70,9 @@ internal class SimBrokerTest {
         assertEquals(1, account.portfolio.assets.size)
 
         account = broker.liquidatePortfolio()
-        assertEquals(0, account.orders.open.size)
+        assertEquals(0, account.openOrders.size)
         assertEquals(0, account.portfolio.assets.size)
-        assertEquals(2, account.orders.size)
+        assertEquals(2, account.closedOrders.size)
 
     }
 
@@ -87,8 +85,8 @@ internal class SimBrokerTest {
         val event = TestData.event()
         val orders = listOf(TestData.euMarketOrder(), TestData.usMarketOrder())
         val account = broker.place(orders, event)
-        assertEquals(2, account.orders.size)
-        assertEquals(1, account.orders.closed.size)
+        assertEquals(1, account.openOrders.size)
+        assertEquals(1, account.closedOrders.size)
         // assertEquals(1, account.orders.filter { it.status === OrderStatus.INITIAL }.size)
 
     }

@@ -47,6 +47,7 @@ data class Event(val actions: List<Action>, val time: Instant) : Comparable<Even
         actions.filterIsInstance<PriceAction>().associateBy { it.asset }
     }
 
+
     /**
      * Convenience method to get a single price for an [asset] or null if there is no price action present for
      * the asset in this event. Optionally you can specify the [type] of price.

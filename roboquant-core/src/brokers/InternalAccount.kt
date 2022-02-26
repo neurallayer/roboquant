@@ -58,10 +58,10 @@ class InternalAccount (
      */
     val trades = mutableListOf<Trade>()
 
-    /**
-     * All orders in a map with key being the order ID
-     */
-    val orders = mutableMapOf<Int, OrderState>()
+
+    val openOrders = mutableMapOf<Int, OrderState>()
+
+    val closedOrders = mutableListOf<OrderState>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -96,7 +96,8 @@ class InternalAccount (
     internal fun clear() {
         lastUpdate = Instant.MIN
         trades.clear()
-        orders.clear()
+        openOrders.clear()
+        closedOrders.clear()
         portfolio.clear()
         cash.clear()
     }
@@ -118,22 +119,31 @@ class InternalAccount (
      * Put a single order, replacing existing one with the same order id or otherwise add it.
      */
     fun putOrder(orderState: OrderState) {
-        orders[orderState.id] = orderState
+       putOrders(listOf(orderState))
     }
 
     /**
      * Put orders, replacing existing ones with the same order id or otherwise add them.
      */
     fun putOrders(orderStates: Collection<OrderState>) {
-        for (orderState in orderStates) orders[orderState.id] = orderState
+        for (orderState in orderStates) {
+            val id = orderState.id
+            if (orderState.open) {
+                openOrders[id] = orderState
+            } else {
+                openOrders.remove(id)
+                closedOrders.add(orderState)
+            }
+            // orders[orderState.id] = orderState
+        }
     }
 
     fun rejectOrder(order: Order, time: Instant) {
-        orders[order.id] = OrderState(order, OrderStatus.REJECTED, time, time)
+        putOrder(OrderState(order, OrderStatus.REJECTED, time, time))
     }
 
     fun acceptOrder(order: Order, time: Instant) {
-        orders[order.id] = OrderState(order, OrderStatus.ACCEPTED, time, time)
+        putOrder(OrderState(order, OrderStatus.ACCEPTED, time, time))
     }
 
     /**
@@ -156,6 +166,18 @@ class InternalAccount (
     fun convert(w: Wallet) = w.convert(toCurrency = baseCurrency, time = lastUpdate)
     fun convert(a: Amount) = a.convert(to = baseCurrency, time = lastUpdate)
 
+    /*fun toAccount2(): Account {
+        return Account(
+            baseCurrency,
+            lastUpdate,
+            cash.clone(),
+            trades.toList(),
+            orders.values.toList(),
+            portfolio.values.toList(), // sortedBy { it.asset },
+            buyingPower
+        )
+    }*/
+
     /**
      * Create an immutable [Account] instance that can be shared with other components (Policy and Metric).
      */
@@ -163,10 +185,11 @@ class InternalAccount (
         return Account(
             baseCurrency,
             lastUpdate,
-            cash.clone(),
+            cash,
             trades.toList(),
-            orders.values.toList(),
-            portfolio.values.sortedBy { it.asset },
+            openOrders.values.toList(),
+            closedOrders.toList(),
+            portfolio.values.sortedBy { it.asset }, // sortedBy { it.asset },
             buyingPower
         )
     }

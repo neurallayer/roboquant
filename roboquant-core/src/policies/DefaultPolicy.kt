@@ -24,7 +24,6 @@ import org.roboquant.common.Logging
 import org.roboquant.common.zeroOrMore
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
-import org.roboquant.orders.open
 import org.roboquant.strategies.Signal
 import kotlin.math.floor
 import kotlin.math.min
@@ -121,9 +120,11 @@ open class DefaultPolicy(
 
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+        if (signals.isEmpty()) return emptyList()
+
         val orders = mutableListOf<Order>()
         var buyingPower = account.buyingPower.value
-        val openOrderAssets = if (oneOrderPerAsset) account.orders.open.map { it.asset }.distinct() else emptyList()
+        val openOrderAssets = if (oneOrderPerAsset) account.openOrders.map { it.asset }.distinct() else emptyList()
 
         for (signal in signals.resolve(signalResolution)) {
             val asset = signal.asset

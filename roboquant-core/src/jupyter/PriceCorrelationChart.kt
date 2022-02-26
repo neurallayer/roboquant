@@ -71,8 +71,9 @@ class PriceCorrelationChart(
         try {
             while (true) {
                 val o = channel.receive()
+                val prices = o.prices
                 for (asset in assets) {
-                    val price = o.getPrice(asset, priceType) ?: Double.NaN
+                    val price = prices[asset]?.getPrice(priceType) ?: Double.NaN
                     val list = result.getOrPut(asset) { mutableListOf() }
                     list.add(price)
                 }

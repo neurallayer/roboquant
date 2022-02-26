@@ -46,15 +46,22 @@ internal class AccountTest {
     @Test
     fun testValues() {
         val account = TestData.internalAccount().toAccount()
-        assertTrue(account.orders.isNotEmpty())
-        assertContains(account.getOrderTrades(), account.orders.first())
+        assertTrue(account.closedOrders.isNotEmpty())
+        assertContains(account.getOrderTrades(), account.closedOrders.first())
+    }
+
+    @Test
+    fun testIntervalValues() {
+        val account = TestData.internalAccount()
+        assertTrue(account.closedOrders.isNotEmpty())
+        assertTrue(account.trades.isEmpty())
     }
 
     @Test
     fun summaries() {
         val account = TestData.usAccount()
         assertTrue(account.portfolio.summary().content.isNotEmpty())
-        assertTrue(account.orders.summary().content.isNotEmpty())
+        assertTrue(account.closedOrders.summary().content.isNotEmpty())
         assertTrue(account.trades.summary().content.isNotEmpty())
         assertTrue(account.cash.summary().content.isNotEmpty())
 
