@@ -6,7 +6,7 @@ import org.roboquant.common.iszero
 import org.roboquant.orders.*
 import java.time.Instant
 
-abstract class SingleOrderHandler<T : SingleOrder>(order: T) : OrderHandler<T>(order) {
+abstract class SingleOrderHandler<T : SingleOrder>(order: T) : TradeOrderHandler<T>(order) {
 
     internal var fill = 0.0
     internal var qty = order.quantity

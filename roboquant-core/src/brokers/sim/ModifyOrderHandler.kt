@@ -3,38 +3,36 @@ package org.roboquant.brokers.sim
 import org.roboquant.orders.*
 import java.time.Instant
 
-internal class UpdateOrderHandler(order: UpdateOrder, private val handlers: List<OrderHandler<*>>) :
-    OrderHandler<UpdateOrder>(order) {
+internal class UpdateOrderHandler(val order: UpdateOrder) : ModifyOrderHandler {
 
-    override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-        update(time)
-        val handler = handlers.filterIsInstance<OrderHandler<SingleOrder>>().firstOrNull {
+    override var state: OrderState = OrderState(order)
+
+    override fun execute(handlers: List<OrderHandler>, time: Instant) {
+        val handler = handlers.filterIsInstance<TradeOrderHandler<SingleOrder>>().firstOrNull {
             it.order.id == order.original.id
         }
-        if (handler != null && handler.status.open) {
+        state = if (handler != null && handler.status.open) {
             handler.order = order.update
-            close(OrderStatus.COMPLETED, time)
+            OrderState(order, OrderStatus.COMPLETED, time, time)
         } else {
-            close(OrderStatus.REJECTED, time)
+            OrderState(order, OrderStatus.REJECTED, time, time)
         }
 
-        return emptyList()
     }
 }
 
 
-internal class CancelOrderHandler(order: CancelOrder, private val handlers: List<OrderHandler<*>>) :
-    OrderHandler<CancelOrder>(order) {
+internal class CancelOrderHandler(val order: CancelOrder) : ModifyOrderHandler {
 
-    override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-        update(time)
-        val handler = handlers.firstOrNull { it.order.id == order.order.id }
-        if (handler != null && handler.status.open) {
+    override var state: OrderState = OrderState(order)
+
+    override fun execute(handlers: List<OrderHandler>, time: Instant) {
+        val handler = handlers.filterIsInstance<TradeOrderHandler<*>>().firstOrNull { it.order.id == order.order.id }
+        state = if (handler != null && handler.state.status.open) {
             handler.close(OrderStatus.EXPIRED, time)
-            close(OrderStatus.COMPLETED, time)
+            OrderState(order, OrderStatus.COMPLETED, time, time)
         } else {
-            close(OrderStatus.REJECTED, time)
+            OrderState(order, OrderStatus.REJECTED, time, time)
         }
-        return emptyList()
     }
 }

@@ -4,10 +4,10 @@ import org.roboquant.common.iszero
 import org.roboquant.orders.*
 import java.time.Instant
 
-internal class OCOOrderHandler(order: OneCancelsOtherOrder) : OrderHandler<OneCancelsOtherOrder>(order) {
+internal class OCOOrderHandler(order: OneCancelsOtherOrder) : TradeOrderHandler<OneCancelsOtherOrder>(order) {
 
-    private val first = ExecutionEngine.getHandler(order.first)
-    private val second = ExecutionEngine.getHandler(order.second)
+    private val first = ExecutionEngine.getHandler(order.first) as TradeOrderHandler<*>
+    private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler<*>
     private var active = 0
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
@@ -37,10 +37,10 @@ internal class OCOOrderHandler(order: OneCancelsOtherOrder) : OrderHandler<OneCa
 }
 
 
-internal class OTOOrderHandler(order: OneTriggersOtherOrder) : OrderHandler<OneTriggersOtherOrder>(order) {
+internal class OTOOrderHandler(order: OneTriggersOtherOrder) : TradeOrderHandler<OneTriggersOtherOrder>(order) {
 
-    private val first = ExecutionEngine.getHandler(order.first)
-    private val second = ExecutionEngine.getHandler(order.second)
+    private val first = ExecutionEngine.getHandler(order.first) as TradeOrderHandler<*>
+    private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler<*>
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         update(time)
@@ -61,7 +61,7 @@ internal class OTOOrderHandler(order: OneTriggersOtherOrder) : OrderHandler<OneT
 }
 
 
-internal class BracketOrderHandler(order: BracketOrder) : OrderHandler<BracketOrder>(order) {
+internal class BracketOrderHandler(order: BracketOrder) : TradeOrderHandler<BracketOrder>(order) {
 
     private val main = ExecutionEngine.getHandler(order.entry) as SingleOrderHandler<*>
     private val profit = ExecutionEngine.getHandler(order.takeProfit) as SingleOrderHandler<*>

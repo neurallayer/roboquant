@@ -17,7 +17,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
         /**
          * Get a new command for a cerain order
          */
-        fun getHandler(order: Order, orderHandlers: List<OrderHandler<*>> = emptyList()): OrderHandler<*> {
+        fun getHandler(order: Order): OrderHandler {
             @Suppress("UNCHECKED_CAST")
             return when (order) {
                 is MarketOrder -> MarketOrderHandler(order)
@@ -29,8 +29,8 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
                 is BracketOrder -> BracketOrderHandler(order)
                 is OneCancelsOtherOrder -> OCOOrderHandler(order)
                 is OneTriggersOtherOrder -> OTOOrderHandler(order)
-                is UpdateOrder -> UpdateOrderHandler(order, orderHandlers)
-                is CancelOrder -> CancelOrderHandler(order, orderHandlers )
+                is UpdateOrder -> UpdateOrderHandler(order)
+                is CancelOrder -> CancelOrderHandler(order)
                 else -> throw Exception("Unsupported Order type $order")
             }
         }
@@ -38,20 +38,35 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
     }
 
     // Currently active order commands
-    private val orderHandlers = LinkedList<OrderHandler<*>>()
+    private val tradeHandlers = LinkedList<TradeOrderHandler<*>>()
+
+    // Currently active order commands
+    private val modifyHandlers = LinkedList<ModifyOrderHandler>()
 
 
-    internal fun removeClosedOrders() = orderHandlers.removeIf { it.status.closed }
+    internal fun removeClosedOrders() {
+        tradeHandlers.removeIf { it.state.status.closed }
+        modifyHandlers.removeIf { it.state.status.closed }
+    }
 
 
     /**
      * Latetst Order states
      */
     val orderStates
-        get() = orderHandlers.map { it.state }
+        get() = tradeHandlers.map { it.state } + modifyHandlers.map { it.state }
+
+
 
     // Add a new order to the execution engine
-    fun add(order: Order) = orderHandlers.add(getHandler(order, orderHandlers))
+    fun add(order: Order): Boolean {
+
+        return when(val handler = getHandler(order)) {
+            is ModifyOrderHandler ->  modifyHandlers.add(handler)
+            is TradeOrderHandler<*> -> tradeHandlers.add(handler)
+        }
+
+    }
 
 
     // Add a new order to the execution engine
@@ -60,12 +75,18 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
     }
 
 
+
+
     fun execute(event: Event): List<Execution> {
-        val executions = mutableListOf<Execution>()
+
+        // We always first execute the modify orders. These are run even if there is
+        // no price for the asset known
+        for (handler in modifyHandlers) handler.execute(tradeHandlers, event.time)
 
         // Now run the trade order commands
+        val executions = mutableListOf<Execution>()
         val prices = event.prices
-        for (exec in orderHandlers.toList()) {
+        for (exec in tradeHandlers.toList()) {
             if (exec.status.closed) continue
             val action = prices[exec.order.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, event.time)
@@ -78,7 +99,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
 
 
     fun clear() {
-        orderHandlers.clear()
+        tradeHandlers.clear()
         pricingEngine.clear()
     }
 
