@@ -68,7 +68,7 @@ class MetricChart(
                     type: 'value',
                     scale: true
                 },
-                 title: {
+                title: {
                     text: 'Metric: ${metricsData.getName()}'
                 },
                 tooltip: {
@@ -76,10 +76,9 @@ class MetricChart(
                 },
                 ${renderDataZoom()},
                 ${renderToolbox()},
-                ${renderGrid()},  
+                ${renderGrid()},
                 series : [$result]
-            }
-       """.trimStart()
+            }"""
     }
 
 

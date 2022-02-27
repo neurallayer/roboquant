@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("MemberVisibilityCanBePrivate")
+// @file:Suppress("MemberVisibilityCanBePrivate")
 
 package org.roboquant.jupyter
 
@@ -25,7 +25,6 @@ import com.google.gson.JsonSerializer
 import org.roboquant.common.Amount
 import java.lang.reflect.Type
 import java.time.Instant
-
 
 /**
  * Type adaptor for Gson that allows to use Pair that get serialized as a list
@@ -114,8 +113,6 @@ abstract class Chart : Output() {
      */
     var height = 500
 
-
-
     companion object {
 
         /**
@@ -160,7 +157,7 @@ abstract class Chart : Output() {
      * Generates the HTML required to draw a chart.
      */
     override fun asHTML(): String {
-        val fragment = renderOption()
+        val fragment = renderOption().trimStart()
         val themeDetector = if (theme == "auto") {
             "document.body.dataset.jpThemeLight == 'false' ? 'dark' : 'light'"
         } else {
@@ -201,47 +198,35 @@ abstract class Chart : Output() {
                     window["call_echarts"] = function(f) {f();};
                 </script>
                 <style type='text/css' media='screen'>
-                        html {  margin: 0px; padding: 0px; min-height: ${height}px;}
-                        body { margin: 0px; padding: 10px; min-height: ${height}px;}
+                    html { margin: 0px; padding: 0px; min-height: ${height}px;}
+                    body { margin: 0px; padding: 10px; min-height: ${height}px;}
                 </style>
             </head>
             <body>
                 $fragment
             </body>
         </html>
-        """
+        """.trimIndent()
     }
 
 
     protected fun renderGrid(): String {
-        return """
-            grid: {
-                left: '3%',
-                right: '3%',
-                containLabel: true
-            }
-        """
+        return """grid: { left: '3%', right: '3%', containLabel: true }"""
     }
 
     protected fun renderDataZoom(): String {
-        return """
-             dataZoom: [{ type: 'inside'}, {}]
-        """.trimIndent()
+        return """dataZoom: [{ type: 'inside'}, {}]"""
     }
 
     protected fun renderToolbox(includeMagicType: Boolean = true): String {
         val mt = if (includeMagicType) "magicType: {type: ['line', 'bar']}," else ""
         return """
-            toolbox: {
-                feature: {
-                    dataZoom: { yAxisIndex: 'none' },
-                    dataView: {readOnly: true},
-                    $mt
+                toolbox: { feature: {
+                    dataZoom: { yAxisIndex: 'none'},
+                    dataView: {readOnly: true}, $mt
                     restore: {},
                     saveAsImage: {}
-                }
-            }
-        """.trimIndent()
+                }}""".trimStart()
     }
 
     /**

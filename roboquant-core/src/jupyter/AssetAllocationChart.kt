@@ -107,8 +107,7 @@ class AssetAllocationChart(
                 }
               }
             }
-        }
-    """.trimIndent()
+        }""".trimIndent()
 
     private fun renderSunburst(): String {
         val gson = gsonBuilder.create()
@@ -122,7 +121,7 @@ class AssetAllocationChart(
                 radius: '80%',
                 data : $data
             }
-        """.trimIndent()
+            """.trimIndent()
 
         return """
             {
@@ -131,7 +130,7 @@ class AssetAllocationChart(
                 $toolbox,
                 series : [$series]
             }
-       """.trimStart()
+            """.trimIndent()
     }
 
     /** @suppress */

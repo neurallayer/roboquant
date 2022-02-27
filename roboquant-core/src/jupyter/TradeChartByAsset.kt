@@ -105,7 +105,7 @@ class TradeChartByAsset(
                     }
                 },
                 ${renderDataZoom()},
-                ${renderGrid()},  
+                ${renderGrid()},
                 series : [$series]
             }
        """.trimStart()

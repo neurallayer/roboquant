@@ -119,9 +119,9 @@ class OrderChart(
                 },
                 ${renderDataZoom()},
                 ${renderToolbox(false)},
-                ${renderGrid()},  
+                ${renderGrid()},
                 series : [$series]
             }
-       """.trimStart()
+       """.trimIndent()
     }
 }

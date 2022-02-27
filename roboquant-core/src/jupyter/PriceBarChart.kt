@@ -225,8 +225,8 @@ class PriceBarChart(
                         }
                     }
                 ]
-            };
-    """.trimStart()
+                };
+                """.trimIndent()
     }
 
 }

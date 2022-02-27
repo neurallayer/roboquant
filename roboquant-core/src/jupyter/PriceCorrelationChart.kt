@@ -29,7 +29,7 @@ import java.math.RoundingMode
 import java.util.*
 
 /**
- * Shows the correlation matrix between the prices of two or more assets
+ * Shows the correlation matrix between the prices of two or more [assets] that are present in the provided [feed]
  */
 class PriceCorrelationChart(
     private val feed: Feed,
