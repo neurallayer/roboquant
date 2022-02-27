@@ -51,15 +51,18 @@ abstract class Order(val asset: Asset, val id: Int) {
         return "$type id=$id asset=$asset ${info()}"
     }
 
+    /**
+     * What is the type of order, default is the simple class name
+     */
     open val type
         get() = this::class.simpleName
 
     /**
-     * Provide extra info as map, used in displaying order information
+     * Provide extra info as map, used in displaying order information. Default is an emoty map.
      *
      * @return
      */
-    abstract fun info() : Map<String, Any>
+    open fun info() : Map<String, Any> = emptyMap()
 
 }
 

@@ -74,6 +74,17 @@ internal class MemoryLoggerTest {
         val dataPerc = data.perc()
         assertEquals(11, dataPerc.size)
         assertEquals(10.0, dataPerc.last().value)
+
+        val h = data.high(5)
+        assertEquals(5, h.size)
+        val max = data.max()
+        assertEquals(max, h.last().value)
+
+        val l = data.low(5)
+        assertEquals(5, l.size)
+        val min = data.min()
+        assertEquals(min, l.first().value)
+
     }
 
     @Test

@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 
-package org.roboquant.logging
+package org.roboquant.orders
 
-import org.roboquant.RunPhase
+
+import org.junit.Test
 import org.roboquant.TestData
-import kotlin.test.*
+import org.roboquant.common.Asset
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-internal class LastEntryLoggerTest {
+internal class CustomOrderTest {
+
+    private class MyOrder(asset: Asset, id:Int) : Order(asset,id)
 
     @Test
-    fun test() {
-        val metrics = TestData.getMetrics()
-        val logger = LastEntryLogger()
-        assertFalse(logger.showProgress)
-
-        logger.log(metrics, TestData.getRunInfo())
-        logger.end(RunPhase.VALIDATE)
-        assertTrue(logger.metricNames.isNotEmpty())
-
-        val m1 = logger.metricNames.first()
-        val m = logger.getMetric(m1)
-        assertEquals(m1, m.first().metric)
-
-        logger.reset()
-        assertTrue(logger.metricNames.isEmpty())
+    fun basic() {
+        val asset = TestData.usStock()
+        val order = MyOrder(asset,123)
+        assertTrue(order.info().isEmpty())
+        assertTrue(order.toString().isNotBlank())
+        assertEquals("MyOrder", order.type)
+        assertEquals(123, order.id)
+        assertEquals(asset, order.asset)
     }
+
 
 }

@@ -25,7 +25,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
- * Metric histogram
+ * Chart that takes some metric data and creates a histogram of it. The number of bins to display is configurable.
  *
  * @property metricData
  * @property binCount
@@ -94,6 +94,6 @@ class MetricHistogram(
                     data : $data
                 }
             }
-       """
+       """.trimStart()
     }
 }
