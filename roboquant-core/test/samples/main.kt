@@ -47,6 +47,7 @@ import java.time.Instant
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.io.path.name
+import kotlin.random.Random
 import kotlin.system.measureTimeMillis
 
 
@@ -167,6 +168,7 @@ fun largeRead() {
 fun millionBars(n:Int = 2) {
     val timeline = mutableListOf<Instant>()
     var start = Instant.parse("1975-01-01T09:00:00Z")
+    Config.random = Random(101L)
 
     // Create a timeline
     repeat(n * 10_000) {
@@ -174,11 +176,11 @@ fun millionBars(n:Int = 2) {
         start += 4.hours
     }
 
-    // Create a random walk for the timeline provided, totol n * 1_000_000 candle sticks
     val feed = RandomWalk(timeline, 100)
 
     // Create a roboquant using Exponential Weighted Moving Average
     val strategy = EMACrossover()
+
     val roboquant = Roboquant(strategy, ProgressMetric(), policy = DefaultPolicy())
 
     // Measure how long it takes to run a back-test over 2 million candlesticks

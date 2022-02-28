@@ -120,12 +120,12 @@ class RandomWalk(
             val newValue = jRandom.nextGaussian() + prevPrice
             val v = mutableListOf(newValue)
             repeat(3) {
-                v.add(newValue + (jRandom.nextDouble() * maxDayRange) - (maxDayRange / 2.0f))
+                v.add(newValue + (random.nextDouble() * maxDayRange) - (maxDayRange / 2.0f))
             }
             v.sort()
 
-            val volume = round(minVolume + (plusVolume * jRandom.nextDouble()))
-            val action = if (jRandom.nextBoolean()) {
+            val volume = round(minVolume + (plusVolume * random.nextDouble()))
+            val action = if (random.nextBoolean()) {
                 PriceBar(asset, v[1], v[3], v[0], v[2], volume)
             } else {
                 PriceBar(asset, v[2], v[3], v[0], v[1], volume)
@@ -145,7 +145,7 @@ class RandomWalk(
         val jRandom = random.asJavaRandom()
         for (time in timeline) {
             val newValue = jRandom.nextGaussian() + prevPrice
-            val volume = round(minVolume + (plusVolume * jRandom.nextDouble()))
+            val volume = round(minVolume + (plusVolume * random.nextDouble()))
             val action = TradePrice(asset, newValue, volume)
             add(time, action)
             prevPrice = if (newValue > 10.0) newValue else 10.0

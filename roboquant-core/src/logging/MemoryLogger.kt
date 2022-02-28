@@ -38,7 +38,7 @@ import java.util.*
  */
 class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize: Int = Int.MAX_VALUE) : MetricsLogger {
 
-    val history = LinkedList<MetricsEntry>()
+    val history = mutableListOf<MetricsEntry>()
     private val progressBar = ProgressBar()
 
     @Synchronized

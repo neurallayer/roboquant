@@ -48,16 +48,16 @@ internal class ProgressBar {
 
     fun update(info: RunInfo) {
 
+        // Only if percentage changes we are going to refresh
+        val totalDuration = info.timeframe.duration
+        var percent = ((info.duration.seconds * 100.0 / totalDuration.seconds)).roundToInt()
+        percent = min(percent, 100)
+        if (percent == currentPercent) return
+
         // Avoid updating the progress meter too often
         val now = Instant.now()
         if (now < nextUpdate) return
         nextUpdate = now.plusMillis(500)
-
-        val totalDuration = info.timeframe.duration
-        var percent = ((info.duration.seconds * 100.0 / totalDuration.seconds)).roundToInt()
-        percent = min(percent, 100)
-
-        if (percent == currentPercent) return
 
         currentPercent = percent
 

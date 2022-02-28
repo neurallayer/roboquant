@@ -114,12 +114,12 @@ internal class RoboquantTest {
         val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
         roboquant.run(feed)
         assertEquals(1, logger.runs.size)
-        val lastHistory1 = logger.history.last
+        val lastHistory1 = logger.history.last()
 
         roboquant.reset()
         roboquant.run(feed)
         assertEquals(1, logger.runs.size)
-        val lastHistory2 = logger.history.last
+        val lastHistory2 = logger.history.last()
 
         assertEquals(lastHistory1, lastHistory2)
     }

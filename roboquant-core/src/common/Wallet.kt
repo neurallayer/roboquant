@@ -148,7 +148,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
      */
     fun deposit(amount: Amount) {
         val value = BigDecimal.valueOf(getValue(amount.currency)) + BigDecimal.valueOf(amount.value)
-        // val value = getValue(amount.currency) + amount.value
+        // val value = (data[amount.currency] ?: 0.0) + amount.value
         set(Amount(amount.currency, value))
     }
 

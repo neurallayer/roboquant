@@ -16,9 +16,9 @@
 
 package org.roboquant.feeds
 
+import org.roboquant.common.Timeframe
 import org.roboquant.common.Timeline
 import java.time.Instant
-import java.util.*
 
 /**
  * Base class that provides a foundation for data feeds that provide historic prices. It used a TreeMap to store
@@ -26,10 +26,13 @@ import java.util.*
  */
 open class HistoricPriceFeed : HistoricFeed {
 
-    private val events = TreeMap<Instant, MutableList<PriceAction>>()
+    private val events = sortedMapOf<Instant, MutableList<PriceAction>>()
 
     override val timeline: Timeline
         get() = events.keys.toList()
+
+    override val timeframe
+        get() =  if (events.isEmpty()) Timeframe.INFINITY else Timeframe.inclusive(events.firstKey(), events.lastKey())
 
     override val assets
         get() = events.values.map { actions -> actions.map { it.asset } }.flatten().distinct().toSortedSet()
@@ -64,15 +67,21 @@ open class HistoricPriceFeed : HistoricFeed {
         actions.add(action)
     }
 
+    /**
+     * Add all new [actions] to this feed at the provided [time]
+     */
+    @Synchronized
+    protected fun addAll(time: Instant, actions: Collection<PriceAction>) {
+        val existing = events.getOrPut(time) { mutableListOf() }
+        existing.addAll(actions)
+    }
+
 
     /**
-     * Merge the events in another [feed] into this feed.
+     * Merge the events in another historic [feed] into this feed.
      */
     fun merge(feed: HistoricPriceFeed) {
-        for (event in feed.events) {
-            val actions = events.getOrPut(event.key) { mutableListOf() }
-            actions.addAll(event.value)
-        }
+        for (event in feed.events) addAll(event.key, event.value)
     }
 
 }

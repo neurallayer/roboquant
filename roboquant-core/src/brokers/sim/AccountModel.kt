@@ -37,7 +37,7 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
         // Only accepted orders are taken into consideration
         // val openOrders = account.orders.accepted.map { it.value().absoluteValue }.sum()
         // val total = cash // - openOrders
-        total.withdraw(Amount(account.baseCurrency, minimum))
+        if (minimum != 0.0) total.withdraw(Amount(account.baseCurrency, minimum))
 
         if (account.portfolio.values.any { it.short }) {
             logger.warning("Having short positions while using cash account is not supported")
