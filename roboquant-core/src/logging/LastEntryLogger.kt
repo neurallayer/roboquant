@@ -21,14 +21,14 @@ import org.roboquant.RunPhase
 import org.roboquant.metrics.MetricResults
 
 /**
- * Stores the last value of a metric for a particular run and phase and is memory efficient if you only care about the
- * final result and not in-between values of metrics.
+ * Stores the last value of a metric for a particular run and phase in memeory. This is memory efficient if you only
+ * care about the last result and not the values of metrics at each step of a run.
  *
  * If you need access to the metric values of every step, use the [MemoryLogger] instead.
  */
 class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
 
-    // Key is run + phase + metricName
+    // Key is runName + phase + metricName
     private val history = mutableMapOf<Triple<String, RunPhase, String>, MetricsEntry>()
     private val progressBar = ProgressBar()
 

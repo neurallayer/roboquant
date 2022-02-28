@@ -18,8 +18,6 @@
 
 package org.roboquant.samples
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.awaitAll
 import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.fee
@@ -32,7 +30,6 @@ import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
-import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.toDoubleArray
@@ -43,25 +40,10 @@ import org.roboquant.policies.BettingAgainstBeta
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.*
 import java.nio.file.Files
-import java.time.Instant
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.io.path.name
-import kotlin.random.Random
 import kotlin.system.measureTimeMillis
-
-
-fun large5() {
-    val feed = AvroFeed.sp500()
-    val strategy = EMACrossover.longTerm()
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
-    val t = measureTimeMillis {
-        roboquant.run(feed)
-    }
-    roboquant.broker.account.summary().print()
-    println(t)
-}
 
 
 fun large6() {
@@ -96,11 +78,8 @@ fun large6() {
         }
     }
 
-    // val avroPath = dataHome / "avro/us_2000_2021.avro"
-    // AvroUtil.record(feed!!, avroPath.toString(), TimeFrame.fromYears(2000, 2021), 6)
     val avroPath = dataHome / "avro/us_stocks.avro"
     AvroUtil.record(feed!!, avroPath.toString(), Timeframe.fromYears(1900, 2021), compressionLevel = 6)
-
 }
 
 
@@ -165,33 +144,6 @@ fun largeRead() {
 
 }
 
-fun millionBars(n:Int = 2) {
-    val timeline = mutableListOf<Instant>()
-    var start = Instant.parse("1975-01-01T09:00:00Z")
-    Config.random = Random(101L)
-
-    // Create a timeline
-    repeat(n * 10_000) {
-        timeline.add(start)
-        start += 4.hours
-    }
-
-    val feed = RandomWalk(timeline, 100)
-
-    // Create a roboquant using Exponential Weighted Moving Average
-    val strategy = EMACrossover()
-
-    val roboquant = Roboquant(strategy, ProgressMetric(), policy = DefaultPolicy())
-
-    // Measure how long it takes to run a back-test over 2 million candlesticks
-    val time = measureTimeMillis {  roboquant.run(feed) }
-    println("Time taken to run a full back-test over ${n}M Candlesticks is $time milliseconds")
-
-    val account = roboquant.broker.account
-
-    account.summary().print()
-    // account.orders[1..100].summary().print()
-}
 
 fun volatility() {
     val feed = AvroFeed.sp500()
@@ -224,20 +176,6 @@ fun multiCurrency() {
     roboquant.run(feed)
     broker.account.openOrders.summary().print()
 }
-
-fun manyMinutes() {
-    val strategy = EMACrossover.longTerm()
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
-
-    val tf = Timeframe.fromYears(2019, 2019)
-    val timeline = tf.toMinutes(excludeWeekends = true)
-    val feed = RandomWalk(timeline, 10, generateBars = true)
-
-    roboquant.run(feed)
-    logger.summary().print()
-}
-
 
 fun multiRun() {
     val feed = AvroFeed.sp500()
@@ -274,26 +212,6 @@ suspend fun walkforwardParallel() {
 }
 
 
-suspend fun multiRunParallel() {
-    val feed = AvroFeed.sp500()
-    val logger = LastEntryLogger()
-    val jobs = ParallelJobs()
-
-    for (fast in 10..20..2) {
-        for (slow in fast * 2..fast * 4..4) {
-            val strategy = EMACrossover(fast, slow)
-            val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
-            jobs.add {
-                roboquant.runAsync(feed, runName = "run $fast-$slow")
-            }
-        }
-    }
-
-    jobs.joinAll() // Make sure we wait for all jobs to finish
-    val maxEntry = logger.getMetric("account.equity").maxByOrNull{ it.value }!!
-    println(maxEntry.info.run)
-}
-
 
 fun testingStrategies() {
     val strategy = EMACrossover()
@@ -316,83 +234,7 @@ fun testingStrategies() {
 }
 
 
-suspend fun runParallel() {
-    val feed = RandomWalk.lastDays(100, 10, false)
-    val deferredList = mutableListOf<Deferred<MemoryLogger>>()
-    for (i in 10..15) {
-        for (j in i + 1..i + 5) {
-            val s = EMACrossover(i, j)
-            val logger = MemoryLogger(false)
-            val e = Roboquant(s, AccountSummary(), logger = logger)
-            val deferred = Background.async {
-                e.runAsync(feed, runName = "Run $i $j")
-                logger
-            }
 
-            deferredList.add(deferred)
-        }
-    }
-
-    val loggers = deferredList.awaitAll()
-    val l = Logging.getLogger("ParallelRuns")
-    loggers.forEach {
-        val entry = it.getMetric("account.value").last()
-        l.info { "${entry.info.run}  ${entry.value}" }
-    }
-
-}
-
-fun ta() {
-    val shortTerm = 30
-    val longTerm = 50
-    val strategy = TAStrategy(longTerm)
-
-    strategy.buy { price ->
-        val emaShort = ta.ema(price.close, shortTerm)
-        emaShort > ta.ema(price.close, longTerm) && ta.cdlMorningStar(price)
-    }
-
-    strategy.sell { price ->
-        ta.cdl3BlackCrows(price) || (ta.cdl2Crows(price) && ta.ema(price.close, shortTerm) < ta.ema(
-            price.close,
-            longTerm
-        ))
-    }
-
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
-    val feed = CSVFeed("data/US")
-    roboquant.run(feed)
-    logger.summary(10).print()
-}
-
-
-fun taLarge() {
-    val shortTerm = 30
-    val longTerm = 50
-    val strategy = TAStrategy(longTerm)
-
-    strategy.buy { price ->
-        with(ta) {
-            cdlMorningStar(price) || cdl3Inside(price) || cdl3Outside(price) || cdl3LineStrike(price) ||
-                    cdlHammer(price) || cdlPiercing(price) || cdlSpinningTop(price) || cdlRiseFall3Methods(price) ||
-                    cdl3StarsInSouth(price) || cdlOnNeck(price)
-        }
-    }
-
-    strategy.sell { price ->
-        ta.cdl3BlackCrows(price) || (ta.cdl2Crows(price) && ta.ema(price.close, shortTerm) < ta.ema(
-            price.close,
-            longTerm
-        ))
-    }
-
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
-    val feed = AvroFeed("/Users/peter/data/avro/us_2000_2020.avro")
-    roboquant.run(feed)
-    roboquant.broker.account.fullSummary().print()
-}
 
 fun avro() {
     val feed = AvroFeed("/data/assets/avro/universe.avro")
@@ -492,27 +334,18 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("TEN_MILLION") {
+    when ("BETA") {
         // "CRYPTO" -> crypto()
         "BETA" -> beta()
         "BETA2" -> beta2()
-        "LARGE5" -> large5()
         "LARGE6" -> large6()
         "SMALL6" -> small6()
         "LARGEREAD" -> largeRead()
         "MULTI_RUN" -> multiRun()
-        "MULTI_RUN_PARALLEL" -> println( measureTimeMillis {  multiRunParallel() })
         "WALKFORWARD_PARALLEL" -> println( measureTimeMillis {  walkforwardParallel() })
-        "TWO_MILLION" -> millionBars(2)
-        "FOUR_MILLION" -> millionBars(4)
-        "TEN_MILLION" -> millionBars(10)
         "MC" -> multiCurrency()
-        "MINUTES" -> manyMinutes()
         "TESTING" -> testingStrategies()
-        "TA" -> ta()
         "TREND2" -> trendFollowing2()
-        "TA_LARGE" -> taLarge()
-        "PARALLEL" -> runParallel()
         "AVRO" -> avro()
         "AVRO_GEN" -> avroGen()
         "AVRO_CAP" -> avroCapture()
