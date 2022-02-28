@@ -21,6 +21,8 @@ import org.roboquant.common.clean
 import org.roboquant.common.max
 import org.roboquant.common.min
 import org.roboquant.logging.*
+import java.math.MathContext
+import java.math.RoundingMode
 import java.time.temporal.ChronoUnit
 
 /**
@@ -34,22 +36,23 @@ class MetricBoxChart(
     private val lowPercentile: Double = 25.0,
     private val midPercentile: Double = 50.0,
     private val highPercentile: Double = 75.0,
+    private val precision : Int = 8
 ) : Chart() {
 
-
-    private fun toSeriesData(): List<Pair<String, DoubleArray>> {
-        val result = mutableListOf<Pair<String, DoubleArray>>()
+    private fun toSeriesData(): List<Pair<String, Any>> {
+        val result = mutableListOf<Pair<String, Any>>()
+        val ctx = MathContext(precision, RoundingMode.HALF_DOWN)
         for (d in metricData.groupBy(period)) {
             val arr = d.value.toDoubleArray().clean()
             if (arr.isNotEmpty()) {
                 val p = Percentile()
                 p.data = arr
-                val tmp = doubleArrayOf(
-                    arr.min(),
-                    p.evaluate(lowPercentile),
-                    p.evaluate(midPercentile),
-                    p.evaluate(highPercentile),
-                    arr.max()
+                val tmp = listOf(
+                    arr.min().toBigDecimal(ctx),
+                    p.evaluate(lowPercentile).toBigDecimal(ctx),
+                    p.evaluate(midPercentile).toBigDecimal(ctx),
+                    p.evaluate(highPercentile).toBigDecimal(ctx),
+                    arr.max().toBigDecimal(ctx)
                 )
                 result.add(Pair(d.key, tmp))
             }
