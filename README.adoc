@@ -1,7 +1,7 @@
 = Roboquant
 :icons: font
 
-image:https://img.shields.io/badge/roboquant-0.8-blue.svg[roboquant]
+image:https://img.shields.io/badge/roboquant-0.9-blue.svg[roboquant]
 image:https://img.shields.io/badge/kotlin-1.6-blue.svg?logo=kotlin[Kotlin,link=http://kotlinlang.org]
 image:https://github.com/neurallayer/roboquant/actions/workflows/maven.yml/badge.svg[Automated Build,link=https://github.com/neurallayer/roboquant/actions/workflows/maven.yml]
 image:https://img.shields.io/badge/license-Apache%202-blue.svg[APL v2,link=http://www.apache.org/licenses/LICENSE-2.0.html]
