@@ -54,18 +54,28 @@ class Account(
     val buyingPower: Amount
 ) : Summarizable {
 
+    /**
+     * Cash balances converted to a single amount denoted in the [baseCurrency] of the account
+     */
     val cashAmount
         get() = convert(cash)
 
+    /**
+     * [equity] converted to a single amount denoted in the [baseCurrency] of the account
+     */
     val equityAmount
         get() = convert(equity)
 
-    val fee
-        get() = trades.sumOf { it.fee }
 
+    /**
+     * Total equity hold in the account. Equity is defined as sum of cash and portfolio value
+     */
     val equity: Wallet
         get() = cash + portfolio.value
 
+    /**
+     * Positions in the account
+     */
     val positions
         get() = portfolio.values
 
@@ -177,20 +187,20 @@ val Collection<Trade>.timeframe
 val Collection<Position>.short
     get() = filter { it.short }
 
-fun Collection<Position>.getPosition(asset: Asset) = find { it.asset == asset } ?: Position.empty(asset)
+// fun Collection<Position>.getPosition(asset: Asset) = find { it.asset == asset } ?: Position.empty(asset)
 
-fun Collection<Position>.diff(target: Collection<Position>): Map<Asset, Double> {
+fun Map<Asset, Position>.diff(target: Collection<Position>): Map<Asset, Double> {
     val result = mutableMapOf<Asset, Double>()
 
     for (position in target) {
         // Use BigDecimal to avoid inaccuracies
         val targetSize = BigDecimal.valueOf(position.size)
-        val sourceSize = BigDecimal.valueOf(getPosition(position.asset).size)
+        val sourceSize = BigDecimal.valueOf(getValue(position.asset).size)
         val value = (targetSize - sourceSize).toDouble()
         if (value != 0.0) result[position.asset] = value
     }
 
-    for (position in this) {
+    for (position in this.values) {
         if (position.asset !in result) result[position.asset] = -position.size
     }
 
