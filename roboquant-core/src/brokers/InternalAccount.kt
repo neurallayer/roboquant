@@ -166,17 +166,6 @@ class InternalAccount (
     fun convert(w: Wallet) = w.convert(toCurrency = baseCurrency, time = lastUpdate)
     fun convert(a: Amount) = a.convert(to = baseCurrency, time = lastUpdate)
 
-    /*fun toAccount2(): Account {
-        return Account(
-            baseCurrency,
-            lastUpdate,
-            cash.clone(),
-            trades.toList(),
-            orders.values.toList(),
-            portfolio.values.toList(), // sortedBy { it.asset },
-            buyingPower
-        )
-    }*/
 
     /**
      * Create an immutable [Account] instance that can be shared with other components (Policy and Metric).

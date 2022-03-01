@@ -26,8 +26,8 @@ import kotlin.math.absoluteValue
 import kotlin.math.sign
 
 /**
- * Position of an asset in the portfolio. This implementation makes no assumptions about the asset class, so it supports
- * any type of asset class from stocks and options to crypto currencies.
+ * Class that holds the position of an asset in the portfolio. This implementation makes no assumptions about the
+ * asset class, so it supports any type of asset class from stocks and options to crypto currencies.
  *
  * @property asset the asset
  * @property size size of the position, not including any contract multiplier defined at asset level

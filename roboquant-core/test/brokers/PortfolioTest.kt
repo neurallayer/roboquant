@@ -33,11 +33,12 @@ internal class PortfolioTest {
         assertEquals(10.0, portfolio.getValue(c).avgPrice)
     }
 
-    /*
+    /**
+
     @Test
     fun derivedValues() {
-        val portfolio = mutableMapOf<Asset, Position>()
-        portfolio.updatePosition(Position(Asset("A"), 100.0, 10.0))
+        val account = InternalAccount()
+        account.updatePosition(Position(Asset("A"), 100.0, 10.0))
         portfolio.updatePosition(Position(Asset("B"), 100.0, 10.0))
         portfolio.updatePosition(Position(Asset("C"), -100.0, 10.0))
         portfolio.updatePosition(Position(Asset("D"), -100.0, 10.0))
