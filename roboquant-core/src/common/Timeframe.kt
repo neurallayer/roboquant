@@ -41,11 +41,6 @@ data class Timeframe(val start: Instant, val end: Instant) {
     val duration: Duration
         get() = Duration.between(start, end)
 
-    /**
-     * The end value that is inclusive
-     */
-    val endInclusive = end - 1
-
 
     init {
         require(end > start) { "end time has to be larger than start time, found $start - $end" }
