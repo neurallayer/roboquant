@@ -17,10 +17,12 @@
 package org.roboquant.metrics
 
 
-import kotlin.test.*
 import org.roboquant.TestData
-import org.roboquant.brokers.assets
 import org.roboquant.feeds.Event
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class OpenPositionsTest {
 
@@ -30,7 +32,7 @@ internal class OpenPositionsTest {
         val account = TestData.usAccount()
         val result = metric.calc(account, Event.empty())
         assertFalse(result.isEmpty())
-        val symbol = account.portfolio.assets.first().symbol
+        val symbol = account.portfolio.keys.first().symbol
         assertContains(result, "position.$symbol.quantity" )
         assertTrue(result.all { it.key.startsWith("position.") })
     }

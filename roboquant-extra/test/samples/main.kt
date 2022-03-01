@@ -23,7 +23,6 @@ import org.roboquant.alpaca.AlpacaBroker
 import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.alpaca.AlpacaLiveFeed
 import org.roboquant.alpaca.AlpacaPeriod
-import org.roboquant.brokers.assets
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.avro.AvroUtil
@@ -53,7 +52,7 @@ fun allAlpaca() {
     val account = broker.account
     account.summary().log()
     account.summary().log()
-    account.portfolio.summary().log()
+    account.positions.summary().log()
 
     val feed = AlpacaLiveFeed()
     feed.heartbeatInterval = 1000
@@ -61,7 +60,7 @@ fun allAlpaca() {
 
     // Let trade all the assets that start with an A or are in our portfolio already
     // val assets = feed.availableAssets.filter { it.symbol.startsWith("AA") } + account.portfolio.assets
-    val assets = account.portfolio.assets
+    val assets = account.assets
     feed.subscribe(assets.distinct())
 
     val strategy = EMACrossover(3, 5)

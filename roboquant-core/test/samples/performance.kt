@@ -96,7 +96,7 @@ suspend fun multiRunParallel(feed: Feed) {
 
 suspend fun main() {
     Config.printInfo()
-    val feed = getFeed(2)
+    val feed = getFeed(4)
 
     val t = measureTimeMillis {
         when ("MIXED") {

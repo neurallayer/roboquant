@@ -47,7 +47,7 @@ class PortfolioExposure : SimpleMetric() {
         val shortExposure = Wallet()
         val now = event.time
 
-        for (position in account.portfolio) {
+        for (position in account.positions) {
             if (position.long)
                 longExposure.deposit(position.marketValue)
             else

@@ -20,7 +20,6 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.brokers.assets
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
@@ -60,7 +59,7 @@ fun ibkrBroker2() {
     account.fullSummary().print()
 
     // Now lets place a new market sell order
-    val asset = account.portfolio.assets.findBySymbols("AAPL").first()
+    val asset = account.assets.findBySymbols("AAPL").first()
     val order = MarketOrder(asset, -1.0)
     broker.place(listOf(order), Event.empty())
     Thread.sleep(10000)
@@ -73,11 +72,11 @@ fun ibkrBrokerFeed() {
     val exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.89)
     Config.exchangeRates = exchangeRates
     val broker = IBKRBroker()
-    broker.account.portfolio.summary().log()
+    broker.account.positions.summary().log()
 
     // Subscribe to all assets in the portfolio
     val feed = IBKRLiveFeed()
-    val assets = broker.account.portfolio.assets
+    val assets = broker.account.assets
     feed.subscribe(*assets.toTypedArray())
 
     val strategy = EMACrossover.shortTerm()

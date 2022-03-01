@@ -47,7 +47,7 @@ class PNL : SimpleMetric() {
         val realizedPNL = pnl.convert(time = event.time)
         result["pnl.realized"] = realizedPNL.value
 
-        val totalValue = account.portfolio.unrealizedPNL
+        val totalValue = account.positions.unrealizedPNL
         val unrealizedPNL = totalValue.convert(time = event.time)
         result["pnl.unrealized"] = unrealizedPNL.value
 

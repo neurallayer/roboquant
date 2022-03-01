@@ -50,7 +50,7 @@ class Account(
     val trades: List<Trade>,
     val openOrders: List<OrderState>,
     val closedOrders: List<OrderState>,
-    val portfolio: List<Position>,
+    val portfolio: Map<Asset, Position>,
     val buyingPower: Amount
 ) : Summarizable {
 
@@ -63,14 +63,17 @@ class Account(
     val fee
         get() = trades.sumOf { it.fee }
 
-    val equity
+    val equity: Wallet
         get() = cash + portfolio.value
+
+    val positions
+        get() = portfolio.values
 
     /**
      * Assets in the portfolio
      */
     val assets
-        get() = portfolio.map { it.asset }
+        get() = portfolio.keys
 
 
     /**
@@ -107,15 +110,15 @@ class Account(
         s.add("cash", c(cash))
         s.add("buying power", buyingPower)
         s.add("equity", c(equity))
-        s.add("portfolio", c(portfolio.value))
-        s.add("long value", c(portfolio.long.value))
-        s.add("short value", c(portfolio.short.value))
+        s.add("portfolio", c(positions.value))
+        s.add("long value", c(positions.long.value))
+        s.add("short value", c(positions.short.value))
         s.add("assets", portfolio.size)
         s.add("realized p&l", c(trades.realizedPNL))
         s.add("trades", trades.size)
         s.add("open orders", openOrders.size)
         s.add("closed orders", closedOrders.size)
-        s.add("unrealized p&l", c(portfolio.unrealizedPNL))
+        s.add("unrealized p&l", c(positions.unrealizedPNL))
         return s
     }
 
@@ -126,7 +129,7 @@ class Account(
     fun fullSummary(): Summary {
         val s = summary()
         s.add(cash.summary())
-        s.add(portfolio.summary())
+        s.add(positions.summary())
         s.add(openOrders.summary())
         s.add(closedOrders.summary())
         s.add(trades.summary())
@@ -249,6 +252,14 @@ fun Collection<Trade>.summary(): Summary {
     }
     return s
 }
+
+
+
+/**
+ * Create a [Summary] of this portfolio that contains an overview of the open positions.
+ */
+@JvmName("summaryPortfolio")
+fun Map<Asset, Position>.summary(): Summary = values.summary()
 
 
 /**

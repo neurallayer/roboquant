@@ -157,7 +157,7 @@ class InternalAccount (
             if (priceAction != null) {
                 val price = priceAction.getPrice(priceType)
                 val newPosition = position.copy(spotPrice = price, lastUpdate = event.time)
-                portfolio[position.asset] = newPosition
+                portfolio.replace(position.asset, newPosition)
             }
         }
     }
@@ -189,7 +189,7 @@ class InternalAccount (
             trades.toList(),
             openOrders.values.toList(),
             closedOrders.toList(),
-            portfolio.values.sortedBy { it.asset }, // sortedBy { it.asset },
+            portfolio.toMap().withDefault { Position.empty(it) },
             buyingPower
         )
     }

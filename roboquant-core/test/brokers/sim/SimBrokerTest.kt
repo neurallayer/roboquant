@@ -19,7 +19,6 @@ package org.roboquant.brokers.sim
 import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.brokers.assets
 import org.roboquant.common.Config
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
@@ -66,12 +65,12 @@ internal class SimBrokerTest {
         val broker = SimBroker()
         val event = TestData.event()
         var account = broker.place(listOf(TestData.usMarketOrder()), event)
-        assertEquals(1, account.portfolio.assets.size)
-        assertEquals(1, account.portfolio.assets.size)
+        assertEquals(1, account.portfolio.size)
+        assertEquals(1, account.portfolio.size)
 
         account = broker.liquidatePortfolio()
         assertEquals(0, account.openOrders.size)
-        assertEquals(0, account.portfolio.assets.size)
+        assertEquals(0, account.portfolio.size)
         assertEquals(2, account.closedOrders.size)
 
     }

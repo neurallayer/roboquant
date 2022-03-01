@@ -17,7 +17,6 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.getPosition
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
@@ -78,7 +77,7 @@ open class DefaultPolicy(
 
 
     private fun createSellOrder(account: Account, signal: Signal, price: Double, amount: Double): Pair<Order?, Double> {
-        val position = account.portfolio.getPosition(signal.asset)
+        val position = account.portfolio.getValue(signal.asset)
 
         if (position.long && signal.exit) return Pair(createOrder(signal, -position.size, price), 0.0)
         if (position.long) return noOrder
@@ -96,7 +95,7 @@ open class DefaultPolicy(
     }
 
     private fun createBuyOrder(account: Account, signal: Signal, price: Double, amount: Double): Pair<Order?, Double> {
-        val position = account.portfolio.getPosition(signal.asset)
+        val position = account.portfolio.getValue(signal.asset)
         if (position.long && !increasePosition) return noOrder
         if (position.short && ! signal.exit) return noOrder
 

@@ -60,7 +60,7 @@ internal class AccountTest {
     @Test
     fun summaries() {
         val account = TestData.usAccount()
-        assertTrue(account.portfolio.summary().content.isNotEmpty())
+        assertTrue(account.positions.summary().content.isNotEmpty())
         assertTrue(account.closedOrders.summary().content.isNotEmpty())
         assertTrue(account.trades.summary().content.isNotEmpty())
         assertTrue(account.cash.summary().content.isNotEmpty())
@@ -72,8 +72,8 @@ internal class AccountTest {
     @Test
     fun extensions() {
         val account = TestData.usAccount()
-        assertEquals(account.portfolio.size, account.portfolio.long.size + account.portfolio.short.size)
-        assertContains(account.portfolio.assets, account.portfolio.first().asset)
+        assertEquals(account.portfolio.size, account.positions.long.size + account.positions.short.size)
+        assertContains(account.portfolio.keys, account.assets.first())
 
     }
 

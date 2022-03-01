@@ -154,12 +154,31 @@ data class Position(
 
 }
 
+
+val Map<Asset, Position>.value : Wallet
+    get() {
+        val result = Wallet()
+        for (position in this.values) result.deposit(position.marketValue)
+        return result
+    }
+
+
+
 val Collection<Position>.value : Wallet
         get() {
             val result = Wallet()
             for (position in this) result.deposit(position.marketValue)
             return result
         }
+
+
+
+val Map<Asset, Position>.exposure : Wallet
+    get() {
+        val result = Wallet()
+        for (position in this.values) result.deposit(position.exposure)
+        return result
+    }
 
 
 
