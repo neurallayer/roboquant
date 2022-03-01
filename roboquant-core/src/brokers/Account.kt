@@ -114,7 +114,7 @@ class Account(
 
         fun c(w: Wallet): Any = if (singleCurrency) convert(w) else w
 
-        val s = Summary("Account")
+        val s = Summary("account")
         s.add("last update", lastUpdate.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
         s.add("cash", c(cash))
@@ -139,9 +139,9 @@ class Account(
     fun fullSummary(): Summary {
         val s = summary()
         s.add(cash.summary())
-        s.add(positions.summary())
-        s.add(openOrders.summary())
-        s.add(closedOrders.summary())
+        s.add(portfolio.summary())
+        s.add(openOrders.summary("open orders"))
+        s.add(closedOrders.summary("closed orders"))
         s.add(trades.summary())
         return s
     }
@@ -212,8 +212,8 @@ fun Map<Asset, Position>.diff(target: Collection<Position>): Map<Asset, Double> 
  * Provide a summary for the orders
  */
 @JvmName("summaryOrders")
-fun Collection<OrderState>.summary(): Summary {
-    val s = Summary("Orders")
+fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
+    val s = Summary(name)
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
@@ -239,8 +239,8 @@ fun Collection<OrderState>.summary(): Summary {
  * Create a summary of the trades
  */
 @JvmName("summaryTrades")
-fun Collection<Trade>.summary(): Summary {
-    val s = Summary("Trades")
+fun Collection<Trade>.summary(name: String = "trades"): Summary {
+    val s = Summary(name)
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
@@ -269,15 +269,15 @@ fun Collection<Trade>.summary(): Summary {
  * Create a [Summary] of this portfolio that contains an overview of the open positions.
  */
 @JvmName("summaryPortfolio")
-fun Map<Asset, Position>.summary(): Summary = values.summary()
+fun Map<Asset, Position>.summary(name: String = "portfolio"): Summary = values.summary(name)
 
 
 /**
  * Create a [Summary] of this portfolio that contains an overview of the open positions.
  */
 @JvmName("summaryPositions")
-fun Collection<Position>.summary(): Summary {
-    val s = Summary("Portfolio")
+fun Collection<Position>.summary(name: String = "positions"): Summary {
+    val s = Summary(name)
 
     val pf = DecimalFormat("############")
     pf.minimumFractionDigits = 0

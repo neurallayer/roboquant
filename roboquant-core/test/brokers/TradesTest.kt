@@ -44,7 +44,7 @@ internal class TradesTest {
         assertEquals(100.USD.toWallet(), trades.realizedPNL)
         assertEquals(20, trades.timeline.size)
 
-        assertTrue(trades.summary().content == "Trades")
+        assertTrue(trades.summary().content == "trades")
 
         val s = trades.summary()
         assertTrue(s.toString().isNotEmpty())
