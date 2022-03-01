@@ -19,24 +19,37 @@ package org.roboquant.strategies
 
 import org.junit.Test
 import org.roboquant.TestData
+import org.roboquant.feeds.Event
+import org.roboquant.metrics.MetricResults
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 
 class CombinedStrategyTest {
 
+    class MyStrategy : Strategy {
+
+        override fun generate(event: Event): List<Signal> {
+           return emptyList()
+        }
+
+        override fun getMetrics(): MetricResults {
+           return emptyMap()
+        }
+
+    }
+
     @Test
     fun test() {
-        val s1 = EMACrossover.shortTerm()
-        val s2 = EMACrossover.midTerm()
-
+        val s1 = MyStrategy()
+        val s2 = MyStrategy()
         val s = CombinedStrategy(s1, s2)
         assertEquals(2, s.strategies.size)
-
-        val event = TestData.event()
-        val signals = s.generate(event)
+        s.reset()
+        val signals = mutableListOf<Signal>()
+        for (event in TestData.events(10)) signals += s.generate(event)
         assertTrue(signals.isEmpty())
-
+        assertTrue(s.getMetrics().isEmpty())
     }
 
 }
