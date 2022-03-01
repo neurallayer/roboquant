@@ -48,7 +48,7 @@ import kotlin.math.min
  *
  * @property minAmount If an order has impact on buying power, what should be the minimum amount
  * @property maxAmount The maximum amount (in terms of buying power impact) for a single order
- * @property signalResolution The [SignalResolution] to use for resovling conflicting signals
+ * @property signalResolution The [SignalResolution] strategy to use for resolving conflicting signals
  * @property shorting Should the policy create orders that lead to short positions
  * @property increasePosition Should the policy create orders increase already open positions
  * @property oneOrderPerAsset Should there be only maximum one open order per asset at any time
@@ -57,7 +57,7 @@ import kotlin.math.min
 open class DefaultPolicy(
     private val minAmount: Double = 5000.0,
     private val maxAmount: Double = 20_000.0,
-    private val signalResolution: SignalResolution = SignalResolution.NO_CONFLICTS,
+    private val signalResolution: SignalResolution = SignalResolution.NONE,
     private val shorting: Boolean = false,
     private val increasePosition: Boolean = false,
     private val oneOrderPerAsset: Boolean = true,

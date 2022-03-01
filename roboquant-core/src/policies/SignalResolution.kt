@@ -52,13 +52,13 @@ enum class SignalResolution {
 
 
 /**
- * Resolve conflicting signals. For many strategies this might not be necessary since there is only 1 signal per
- * asset, but as strategies are combined, this issue might pop up. You can specify the resolution [rule] to apply
- * when solving conflicts, the default being [SignalResolution.NO_CONFLICTS].
+ * Resolve potential conflicting signals. For many strategies this might not be necessary since there is always only 1
+ * signal per asset, but as strategies are combined, this issue might pop up. You can specify the resolution [rule]
+ * to apply when solving conflicts, the default being [SignalResolution.NONE].
  *
- * It returns the list of signals without any conflicts.
+ * It returns the list of signals without any conflicts according to the confiured rule.
  */
-fun List<Signal>.resolve(rule: SignalResolution = SignalResolution.NO_CONFLICTS): List<Signal> {
+fun List<Signal>.resolve(rule: SignalResolution = SignalResolution.NONE): List<Signal> {
     if (size < 2) return this
 
     return when (rule) {
