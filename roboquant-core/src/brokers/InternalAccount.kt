@@ -49,18 +49,23 @@ class InternalAccount (
 )   {
 
     /**
-     * When was the account last updated
+     * When was the account last updated, default if not set is Instant.MIN
      */
     var lastUpdate: Instant = Instant.MIN
 
     /**
-     * The trades that has been executed
+     * The trades that have been executed
      */
     val trades = mutableListOf<Trade>()
 
-
+    /**
+     * Open orders
+     */
     val openOrders = mutableMapOf<Int, OrderState>()
 
+    /**
+     * Closed orders
+     */
     val closedOrders = mutableListOf<OrderState>()
 
     /**
