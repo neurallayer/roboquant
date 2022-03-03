@@ -58,8 +58,6 @@ internal class AccountModelTest {
         val action = TradePrice(asset, price.toDouble())
         val event = Event(listOf(action), Instant.now())
         return broker.place(orders, event)
-
-        // println(broker.account.summary())
     }
 
 

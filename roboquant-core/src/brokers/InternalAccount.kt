@@ -27,7 +27,7 @@ import java.time.Instant
 
 /**
  * Internal Account is only used by broker implementations, like the SimBroker. The broker is the only one with a
- * referene to this account and will commnuicate to the outside world (Policy and Metrics) only the immutable [Account]
+ * referene to this account and will communicate to the outside world (Policy and Metrics) only the immutable [Account]
  * version.
  *
  * - Cash balances in the account
@@ -109,34 +109,43 @@ class InternalAccount (
     }
 
 
-
     /**
      * Put a single order, replacing existing one with the same order id or otherwise add it.
      */
     fun putOrder(orderState: OrderState) {
-       putOrders(listOf(orderState))
+        val id = orderState.id
+        if (orderState.open) {
+            openOrders[id] = orderState
+        } else {
+            // order is closed, so remove it from the open orders
+            openOrders.remove(id)
+            closedOrders.add(orderState)
+        }
     }
 
     /**
      * Put orders, replacing existing ones with the same order id or otherwise add them.
      */
     fun putOrders(orderStates: Collection<OrderState>) {
-        for (orderState in orderStates) {
-            val id = orderState.id
-            if (orderState.open) {
-                openOrders[id] = orderState
-            } else {
-                openOrders.remove(id)
-                closedOrders.add(orderState)
-            }
-            // orders[orderState.id] = orderState
-        }
+        for (orderState in orderStates) putOrder(orderState)
     }
 
+    /**
+     * Reject an order
+     *
+     * @param order
+     * @param time
+     */
     fun rejectOrder(order: Order, time: Instant) {
         putOrder(OrderState(order, OrderStatus.REJECTED, time, time))
     }
 
+    /**
+     * Accept an order
+     *
+     * @param order
+     * @param time
+     */
     fun acceptOrder(order: Order, time: Instant) {
         putOrder(OrderState(order, OrderStatus.ACCEPTED, time, time))
     }
@@ -156,10 +165,6 @@ class InternalAccount (
             }
         }
     }
-
-
-    fun convert(w: Wallet) = w.convert(toCurrency = baseCurrency, time = lastUpdate)
-    fun convert(a: Amount) = a.convert(to = baseCurrency, time = lastUpdate)
 
 
     /**

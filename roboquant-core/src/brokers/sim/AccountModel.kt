@@ -43,7 +43,7 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
             logger.warning("Having short positions while using cash account is not supported")
         }
 
-        return account.convert(total)
+        return total.convert(account.baseCurrency, account.lastUpdate)
     }
 
 }
@@ -90,7 +90,7 @@ class MarginAccount(
         val equity = account.cash + account.portfolio.marketValue
         val excessMargin = equity - longValue - shortValue - Amount(account.baseCurrency, minimumEquity)
         val buyingPower = excessMargin * (1.0 / initialMargin)
-        return account.convert(buyingPower)
+        return buyingPower.convert(account.baseCurrency, account.lastUpdate)
     }
 
 }
