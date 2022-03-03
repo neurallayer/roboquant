@@ -46,13 +46,17 @@ class SimBroker(
     pricingEngine: PricingEngine = SlippagePricing(10, "OPEN"),
 ) : Broker {
 
-
+    // Internally used account to store the state
     private val _account = InternalAccount(baseCurrency)
 
+    // Execution engine for simulating trades
+    private val executionEngine = ExecutionEngine(pricingEngine)
+
+    /**
+     * Get the lastest state of the account
+     */
     override val account: Account
         get() = _account.toAccount()
-
-    private val executionEngine = ExecutionEngine(pricingEngine)
 
     init {
         reset()
@@ -168,8 +172,8 @@ class SimBroker(
      *
      * This method performs the following two steps:
      * 1. cancel all open orders
-     * 2. close all open positions by creating and processing [MarketOrder] for the required quantities, using the
-     * last known market prices as price actions.
+     * 2. close all positions by creating and processing [MarketOrder] for the required quantities, using the
+     * last known market price for an asset as the price action.
      */
     fun liquidatePortfolio(time: Instant = _account.lastUpdate): Account {
         val cancelOrders = _account.openOrders.map { CancelOrder(it.value) }
@@ -196,6 +200,7 @@ class SimBroker(
         _account.clear()
         executionEngine.clear()
         _account.cash.deposit(initialDeposit)
+        updateBuyingPower()
     }
 
 
