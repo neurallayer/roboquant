@@ -43,11 +43,14 @@ class SimBroker(
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val feeModel: FeeModel = NoFeeModel(),
     private val accountModel: AccountModel = CashAccount(),
-    pricingEngine: PricingEngine = SlippagePricing(10, "OPEN"),
+    pricingEngine: PricingEngine = SlippagePricing(),
 ) : Broker {
 
     // Internally used account to store the state
     private val _account = InternalAccount(baseCurrency)
+
+    // Logger to use
+    private val logger: Logger = Logging.getLogger(SimBroker::class)
 
     // Execution engine for simulating trades
     private val executionEngine = ExecutionEngine(pricingEngine)
@@ -62,23 +65,6 @@ class SimBroker(
         reset()
     }
 
-    companion object Factory {
-
-        private val logger: Logger = Logging.getLogger(SimBroker::class)
-
-        /**
-         * Create a new SimBroker instance with the provided initial deposit of cash in the account
-         *
-         * @param amount
-         * @param currencyCode
-         * @return
-         */
-        fun withDeposit(amount: Double, currencyCode: String = "USD"): SimBroker {
-            val currency = Currency.getInstance(currencyCode)
-            return SimBroker(Wallet(Amount(currency, amount)))
-        }
-
-    }
 
 
     /**
@@ -89,7 +75,7 @@ class SimBroker(
         val p = _account.portfolio
         val currentPos = p.getOrDefault(asset, Position.empty(asset))
         val newPosition = currentPos + position
-        if (newPosition.closed) p.remove(asset) else  p[asset] = newPosition
+        if (newPosition.closed) p.remove(asset) else p[asset] = newPosition
         return currentPos.realizedPNL(position)
     }
 
@@ -125,10 +111,9 @@ class SimBroker(
 
         _account.trades += newTrade
         _account.cash.withdraw(newTrade.totalCost)
-
     }
 
-    private fun simulateMarket(newOrders:List<Order>, event: Event) {
+    private fun simulateMarket(newOrders: List<Order>, event: Event) {
         // Add new orders to the execution egine and run it with the latest events
         executionEngine.addAll(newOrders)
         val executions = executionEngine.execute(event)

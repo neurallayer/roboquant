@@ -22,6 +22,7 @@ import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.common.Config
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
+import org.roboquant.common.USD
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -37,7 +38,7 @@ internal class SimBrokerTest {
 
         broker.place(emptyList(), event)
 
-        val broker2 = SimBroker.withDeposit(100_000.00)
+        val broker2 = SimBroker(100_000.00.USD.toWallet())
         assertEquals(USD, broker2.account.baseCurrency)
 
         val metrics = broker.getMetrics()
@@ -75,7 +76,6 @@ internal class SimBrokerTest {
 
     }
 
-
     @Test
     fun advancedPlaceOrder() {
         val er = FixedExchangeRates(USD, EUR to 0.8)
@@ -89,6 +89,5 @@ internal class SimBrokerTest {
         // assertEquals(1, account.orders.filter { it.status === OrderStatus.INITIAL }.size)
 
     }
-
 
 }
