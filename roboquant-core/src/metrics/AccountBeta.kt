@@ -33,7 +33,11 @@ import org.roboquant.strategies.utils.MovingWindow
  * @constructor
  *
  */
-class AccountBeta(private val referenceAsset: Asset, private val period: Int, private val priceType: String = "DEFAULT") : SimpleMetric() {
+class AccountBeta(
+    private val referenceAsset: Asset,
+    private val period: Int,
+    private val priceType: String = "DEFAULT"
+) : SimpleMetric() {
 
     private val assetData = MovingWindow(period + 1)
     private val accountData = MovingWindow(period + 1)

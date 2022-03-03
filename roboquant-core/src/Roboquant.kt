@@ -56,7 +56,7 @@ class Roboquant(
 
     private var runCounter = 0
     private val kotlinLogger = Logging.getLogger(Roboquant::class)
-    private val components = listOf(strategy, policy, broker, *metrics, logger)
+    private val components = listOf(strategy, policy, broker, logger) + metrics
 
     init {
         kotlinLogger.fine { "Created new roboquant instance with name" }
@@ -89,7 +89,7 @@ class Roboquant(
                 val event = channel.receive()
                 orders = step(orders, event, runInfo)
             }
-        } catch (exception: ClosedReceiveChannelException) {
+        } catch (_: ClosedReceiveChannelException) {
             return
         } finally {
             end(runInfo.phase)

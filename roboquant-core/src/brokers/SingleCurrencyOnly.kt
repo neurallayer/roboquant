@@ -17,8 +17,8 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.Amount
+import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Currency
-import java.lang.Exception
 import java.time.Instant
 
 
@@ -44,7 +44,7 @@ class SingleCurrencyOnly : ExchangeRates {
      */
     override fun getRate(amount: Amount, to: Currency, time: Instant): Double {
         (amount.currency === to || amount.value == 0.0) && return 1.0
-        throw Exception("Cannot convert $amount to $to")
+        throw ConfigurationException("Cannot convert $amount to $to")
     }
 
 }

@@ -38,13 +38,14 @@ import kotlin.math.min
  * low beta stocks undervalued. So this strategy goes long on low beta stocks and short on high beta stocks.
  *
  * It will then hold these positions for a number of days before re-evaluating the strategy. After re-evaluation, the
- * strategy will then generate the market orders required to achieve the desired new portfolio composition (re-balancing).
+ * strategy will then generate the market orders required to achieve the desired new portfolio composition.
  *
  * Since this strategy controls the complete portfolio and not just generates signals, it is implemented as a [Policy]
  * and not a strategy. It doesn't use leverage or buying power, when re-balancing it just re-balances the total equity
  * of the account accross the long and short positions.
  *
- * > Betting against Beta was first described by Andrea Frazzinia and Lasse Heje Pedersen in Journal of Financial Economics
+ * > Betting against Beta was first described by Andrea Frazzinia and Lasse Heje Pedersen in Journal of Financial
+ * Economics
  *
  * @constructor Create new Betting Against Beta instance
  */

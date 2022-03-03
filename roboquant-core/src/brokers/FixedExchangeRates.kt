@@ -35,7 +35,6 @@ class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: 
 
     constructor(baseCurrency: Currency, vararg rates: Pair<Currency, Double>) : this(baseCurrency, rates.toMap())
 
-
     /**
      * Convert between two currencies.
      * @see ExchangeRates.getRate

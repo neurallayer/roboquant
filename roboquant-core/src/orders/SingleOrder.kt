@@ -23,11 +23,11 @@ import org.roboquant.common.Asset
  * SingleOrder types are plain non-combined orders with a pre-defined quantity and Time in Force policy. Many well-known
  * order types fall under this category, like Market-, Limit- and Trail-orders.
  */
-abstract class SingleOrder(asset: Asset, val quantity: Double,  val tif: TimeInForce, id: Int ) : Order(asset, id)  {
+abstract class SingleOrder(asset: Asset, val quantity: Double, val tif: TimeInForce, id: Int) : Order(asset, id) {
 
 
     init {
-        require(quantity != 0.0) { "Orders require a non zero quantity"}
+        require(quantity != 0.0) { "Orders require a non zero quantity" }
     }
 
     /**
@@ -97,8 +97,6 @@ class LimitOrder(
 }
 
 
-
-
 /**
  * Stop order
  *
@@ -141,7 +139,7 @@ class StopLimitOrder(
     id: Int = nextId(),
 ) : SingleOrder(asset, quantity, tif, id) {
 
-    override fun info() = sortedMapOf("quantity" to quantity, "stop" to stop,  "limit" to limit, "tif" to tif)
+    override fun info() = sortedMapOf("quantity" to quantity, "stop" to stop, "limit" to limit, "tif" to tif)
 }
 
 /**
@@ -163,10 +161,10 @@ open class TrailOrder(
 ) : SingleOrder(asset, quantity, tif, id) {
 
     init {
-        require(trailPercentage > 0.0) {"trailPrecentage should be a positive value"}
+        require(trailPercentage > 0.0) { "trailPrecentage should be a positive value" }
     }
 
-    override fun info() = sortedMapOf("quantity" to quantity, "trailPercentage" to trailPercentage,  "tif" to tif)
+    override fun info() = sortedMapOf("quantity" to quantity, "trailPercentage" to trailPercentage, "tif" to tif)
 
 }
 
@@ -194,5 +192,10 @@ class TrailLimitOrder(
     id: Int = nextId(),
 ) : TrailOrder(asset, quantity, trailPercentage, tif, id) {
 
-    override fun info() = sortedMapOf("quantity" to quantity, "trailPercentage" to trailPercentage, "limitOffset" to limitOffset,  "tif" to tif)
+    override fun info() = sortedMapOf(
+        "quantity" to quantity,
+        "trailPercentage" to trailPercentage,
+        "limitOffset" to limitOffset,
+        "tif" to tif
+    )
 }
