@@ -37,7 +37,7 @@ import kotlin.io.path.div
 import kotlin.io.path.notExists
 
 /**
- * Currency converter that uses the exchange reference rates as published by the ECB and that are freely available at the
+ * Currency converter that uses the exchange reference rates as published by the ECB and that are freely available at
  * [ECB website](https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html)
  *
  * It contains many daily exchange rates, and with this file loaded it is possible to trade in most currencies
@@ -54,7 +54,8 @@ import kotlin.io.path.notExists
  *
  * @constructor Create a new  ECB exchange rates converter
  */
-class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) : TimedExchangeRates(Currency.EUR) {
+class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) :
+    TimedExchangeRates(Currency.EUR) {
 
     private val logger: Logger = Logging.getLogger(ECBExchangeRates::class)
 
@@ -62,8 +63,8 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
         private const val DEFAULT_ECB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.zip"
 
         /**
-         * Load the latest exchange rate file directly from the ECB website. This method [uses cache][useCache] by default to
-         * avoid unnecessary requests.
+         * Load the latest exchange rate file directly from the ECB website. This method [uses cache][useCache] by
+         * default to avoid unnecessary requests.
          */
         fun fromWeb(useCache: Boolean = true) = ECBExchangeRates(DEFAULT_ECB_URL, compressed = true, useCache)
 

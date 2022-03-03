@@ -24,8 +24,8 @@ import org.roboquant.metrics.MetricResults
  * With the recording flag you can enable or disable the actual recording of the metrics.
  *
  * @property prefix Prefix to use when logging a metric, default is "strategy."
- * @property recording Should metrics be recorded or not. Some strategies can record a lot of metrics, so this disables that recording
- * and as a consequence might be faster and/or use less memory.
+ * @property recording Should metrics be recorded or not. Some strategies can record a lot of metrics, so this disables
+ * that recording and as a consequence might be faster and/or use less memory.
  *
  */
 abstract class RecordingStrategy(private val prefix: String = "strategy.", var recording: Boolean = false) : Strategy {
@@ -34,8 +34,8 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
     private val metrics = mutableMapOf<String, Number>()
 
     /**
-     * Get the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this method
-     * twice in a row won't return the same result.
+     * Get the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this
+     * method twice in a row won't return the same result.
      *
      * @return
      */

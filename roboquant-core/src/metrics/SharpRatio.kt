@@ -26,8 +26,8 @@ import java.time.Instant
 private const val eps = 0.0000000001
 
 /**
- * Calculate the sharp ratio for the returns made. The ratio is the average return earned in excess of the risk-free rate
- * per unit of volatility or total risk. Volatility is a measure of the price fluctuations of the portfolio.
+ * Calculate the sharp ratio for the returns made. The ratio is the average return earned in excess of the risk-free
+ * rate per unit of volatility or total risk. Volatility is a measure of the price fluctuations of the portfolio.
  *
  * The following metrics will be calculated:
  *

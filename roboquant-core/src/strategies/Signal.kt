@@ -94,8 +94,8 @@ class Signal(
     constructor(asset: Asset, rating: Rating, strategy: Strategy) : this(asset, rating, source = "$strategy")
 
     /**
-     * Does this signal conflict with an [other] signal. Two signals conflict if they contain the same asset but opposite
-     * ratings. So one signal has a positive outlook and the other one is negative.
+     * Does this signal conflict with an [other] signal. Two signals conflict if they contain the same asset but
+     * opposite ratings. So one signal has a positive outlook and the other one is negative.
      */
     fun conflicts(other: Signal) = asset == other.asset && rating.conflicts(other.rating)
 

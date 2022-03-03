@@ -61,8 +61,8 @@ class TASignalStrategy(
     }
 
     /**
-     * Get the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this method
-     * twice in a row won't return the same result.
+     * Get the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this
+     * method twice in a row won't return the same result.
      *
      * @return
      */
@@ -103,18 +103,20 @@ class TASignalStrategy(
     override fun generate(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
         val now = event.time
-        for ((asset, priceAction) in event.prices) {
-            if (priceAction is PriceBar) {
-                val buffer = buffers.getOrPut(asset) { PriceBarBuffer(history, usePercentage = false) }
-                buffer.update(priceAction, now)
-                if (buffer.isAvailable()) {
-                    try {
-                        val signal = block.invoke(this, buffer, asset)
-                        signals.addNotNull(signal)
-                    } catch (e: InsufficientData) {
-                        logger.severe("Not enough data available to calculate the indicators, increase the history size", e)
-                        throw e
-                    }
+        for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
+            val asset = priceAction.asset
+            val buffer = buffers.getOrPut(asset) { PriceBarBuffer(history, usePercentage = false) }
+            buffer.update(priceAction, now)
+            if (buffer.isAvailable()) {
+                try {
+                    val signal = block.invoke(this, buffer, asset)
+                    signals.addNotNull(signal)
+                } catch (e: InsufficientData) {
+                    logger.severe(
+                        "Not enough data available to calculate the indicators, increase the history size",
+                        e
+                    )
+                    throw e
                 }
             }
         }

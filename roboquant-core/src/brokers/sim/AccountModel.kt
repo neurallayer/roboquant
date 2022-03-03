@@ -8,7 +8,7 @@ import org.roboquant.common.Logging
  * Interface for modelling types Accounts in the [SimBroker], like a [CashAccount] or [MarginAccount]
  *
  * The main functionality is that at the end of each step the buying power is re-calculaated and made
- * available in [Account.buyingPower].
+ * available in [InternalAccount.buyingPower].
  */
 interface AccountModel {
 
