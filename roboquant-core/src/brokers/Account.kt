@@ -71,7 +71,7 @@ class Account(
      * Total equity hold in the account. Equity is defined as sum of cash and portfolio value
      */
     val equity: Wallet
-        get() = cash + portfolio.value
+        get() = cash + portfolio.marketValue
 
     /**
      * Positions in the account
@@ -120,9 +120,9 @@ class Account(
         s.add("cash", c(cash))
         s.add("buying power", buyingPower)
         s.add("equity", c(equity))
-        s.add("portfolio", c(positions.value))
-        s.add("long value", c(positions.long.value))
-        s.add("short value", c(positions.short.value))
+        s.add("portfolio", c(positions.marketValue))
+        s.add("long value", c(positions.long.marketValue))
+        s.add("short value", c(positions.short.marketValue))
         s.add("assets", portfolio.size)
         s.add("realized p&l", c(trades.realizedPNL))
         s.add("trades", trades.size)

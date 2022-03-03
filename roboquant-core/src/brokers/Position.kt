@@ -155,7 +155,7 @@ data class Position(
 }
 
 
-val Map<Asset, Position>.value : Wallet
+val Map<Asset, Position>.marketValue : Wallet
     get() {
         val result = Wallet()
         for (position in this.values) result.deposit(position.marketValue)
@@ -164,7 +164,7 @@ val Map<Asset, Position>.value : Wallet
 
 
 
-val Collection<Position>.value : Wallet
+val Collection<Position>.marketValue : Wallet
         get() {
             val result = Wallet()
             for (position in this) result.deposit(position.marketValue)

@@ -87,7 +87,8 @@ class MarginAccount(
     override fun calculate(account: InternalAccount): Amount {
         val longValue = account.portfolio.values.long.exposure * maintanceMarginLong
         val shortValue = account.portfolio.values.short.exposure * maintanceMarginShort
-        val excessMargin = account.equity - longValue - shortValue - Amount(account.baseCurrency, minimumEquity)
+        val equity = account.cash + account.portfolio.marketValue
+        val excessMargin = equity - longValue - shortValue - Amount(account.baseCurrency, minimumEquity)
         val buyingPower = excessMargin * (1.0 / initialMargin)
         return account.convert(buyingPower)
     }

@@ -73,11 +73,6 @@ class InternalAccount (
      */
     val cash: Wallet = Wallet()
 
-    /**
-     * Total cash balance hold in this account denoted in the [baseCurrency] of the account.
-     */
-    val cashAmount: Amount
-        get() = convert(cash)
 
     /**
      * Remaining buying power of the account denoted in the [baseCurrency] of the account.
@@ -89,11 +84,6 @@ class InternalAccount (
      */
     val portfolio = mutableMapOf<Asset, Position>()
 
-    /**
-     * Total equity value
-     */
-    val equity: Wallet
-        get() = cash + portfolio.values.value
 
     /**
      * Clear all the state in this account.

@@ -4,7 +4,7 @@ import org.roboquant.TestData
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.brokers.value
+import org.roboquant.brokers.marketValue
 import org.roboquant.common.*
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
@@ -25,7 +25,7 @@ internal class AccountModelTest {
         val account = TestData.internalAccount()
         val uc = CashAccount()
         val result = uc.calculate(account)
-        assertEquals(result.value, account.cashAmount.value)
+        assertEquals(result, account.cash.getAmount(result.currency))
 
         val order = MarketOrder(TestData.usStock(), 100.0)
         val state = OrderState(order, OrderStatus.ACCEPTED, Instant.now())
@@ -42,7 +42,7 @@ internal class AccountModelTest {
         val account = TestData.internalAccount()
         val uc = MarginAccount()
         val result = uc.calculate(account)
-        assertTrue(result.value > account.cashAmount.value)
+        assertTrue(result.value > account.cash.getAmount(result.currency).value)
     }
 
     @Test
@@ -50,7 +50,7 @@ internal class AccountModelTest {
         val account = TestData.internalAccount()
         val uc = MarginAccount(20.0)
         val result = uc.calculate(account)
-        assertTrue(result.value > account.cashAmount.value)
+        assertTrue(result.value > account.cash.getAmount(result.currency).value)
     }
 
     private fun update(broker: Broker, asset: Asset, price: Number, orderSize: Number = 0): Account {
@@ -83,7 +83,7 @@ internal class AccountModelTest {
 
         account = update(broker, abc, 100, 40)
         assertEquals(initial, account.equityAmount)
-        assertEquals(4_000.EUR.toWallet(), account.portfolio.value)
+        assertEquals(4_000.EUR.toWallet(), account.portfolio.marketValue)
         assertEquals(6_000.EUR, account.buyingPower)
 
         account = update(broker, abc, 75)
