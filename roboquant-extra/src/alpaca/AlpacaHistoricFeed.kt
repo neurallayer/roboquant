@@ -103,7 +103,12 @@ class AlpacaHistoricFeed(
     /**
      * Retrieve for a number of [symbols] and specified [timeframe] the [PriceBar].
      */
-    fun retrieveBars(vararg symbols: String, timeframe: Timeframe, period: AlpacaPeriod = AlpacaPeriod.DAY) {
+    fun retrieveBars(
+        vararg symbols: String,
+        timeframe: Timeframe,
+        period: AlpacaPeriod = AlpacaPeriod.DAY,
+        barTimePeriodDuration: Int = 1,
+    ) {
         for (symbol in symbols) {
             val resp = alpacaAPI.stockMarketData().getBars(
                 symbol,
@@ -111,7 +116,7 @@ class AlpacaHistoricFeed(
                 ZonedDateTime.ofInstant(timeframe.end, zoneId),
                 null,
                 null,
-                1,
+                barTimePeriodDuration,
                 period,
                 BarAdjustment.ALL,
                 BarFeed.IEX

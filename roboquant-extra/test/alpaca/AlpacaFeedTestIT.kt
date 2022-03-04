@@ -18,6 +18,7 @@ package org.roboquant.alpaca
 
 import org.roboquant.common.*
 import org.roboquant.feeds.*
+import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -108,6 +109,20 @@ internal class AlpacaFeedTestIT {
         val tf = Timeframe.past(10.days) - 30.minutes
         feed.retrieveBars("AAPL", timeframe = tf)
         testResult<PriceBar>(feed, tf)
+    }
+
+    @Test
+    fun testHistoricBarsWithTimePeriodDuration() {
+        System.getenv("TEST_ALPACA") ?: return
+        val feed = AlpacaHistoricFeed()
+        val tf = Timeframe.past(10.days) - 30.minutes
+        feed.retrieveBars("AAPL",
+            timeframe = tf,
+            period = AlpacaPeriod.MINUTE,
+            barTimePeriodDuration = 5)
+
+        val actions = feed.filter<PriceAction>()
+        assertEquals(5, Duration.between(actions[0].first, actions[1].first).toMinutes())
     }
 
     @Test
