@@ -18,6 +18,7 @@ package org.roboquant.jupyter
 
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
+import org.roboquant.common.UnsupportedException
 
 /**
  * Trade chart plots the [trades] that have been generated during a run per Asset. By default, the realized pnl of the
@@ -50,7 +51,7 @@ class TradeChartByAsset(
                     "fee" -> fee.convert(time = time).toBigDecimal()
                     "cost" -> totalCost.convert(time = time).toBigDecimal()
                     "quantity" -> quantity.toBigDecimal()
-                    else -> throw Exception("Unsupported aspect $aspect")
+                    else -> throw UnsupportedException("Unsupported aspect $aspect")
                 }
 
                 val y = assets.indexOf(asset)

@@ -22,8 +22,8 @@ import java.math.BigDecimal
 import java.time.Instant
 
 /**
- * Trade chart plots the trades of an [trades] that have been generated during a run. By default, the realized pnl of the trades will
- * be plotted but this can be changed. The possible options are pnl, fee, cost and quantity
+ * Trade chart plots the trades of an [trades] that have been generated during a run. By default, the realized pnl of
+ * the trades will be plotted but this can be changed. The possible options are pnl, fee, cost and quantity
  */
 open class TradeChart(
     private val trades: List<Trade>,

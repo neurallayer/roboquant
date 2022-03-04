@@ -51,7 +51,7 @@ abstract class LiveFeed : Feed {
                 channel.send(event)
                 if (channel.done) break
             }
-        } catch (e: ClosedSendChannelException) {
+        } catch (_: ClosedSendChannelException) {
             // Expected exception
         } finally {
             this.channel = null

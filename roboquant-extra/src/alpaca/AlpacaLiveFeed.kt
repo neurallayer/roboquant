@@ -26,6 +26,7 @@ import net.jacobpeterson.alpaca.websocket.marketdata.MarketDataListener
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
+import org.roboquant.common.severe
 import org.roboquant.feeds.*
 import java.time.Instant
 import java.util.concurrent.TimeUnit
@@ -174,7 +175,7 @@ class AlpacaLiveFeed(
                 channel?.offer(event)
             }
         } catch (e: Exception) {
-            logger.warning(e.message)
+            logger.severe("error during handling market data message", e)
         }
     }
 

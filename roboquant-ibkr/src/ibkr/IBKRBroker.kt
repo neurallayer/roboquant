@@ -79,12 +79,10 @@ class IBKRBroker(
         waitTillSynced()
     }
 
-
     /**
      * Disconnect roboquant from TWS or IB Gateway
      */
     fun disconnect() = IBKRConnection.disconnect(client)
-
 
     /**
      * Wait till IBKR account is synchronized so roboquant has the correct assets and cash balance available.
@@ -94,7 +92,6 @@ class IBKRBroker(
     private fun waitTillSynced() {
         sleep(5_000)
     }
-
 
     /**
      * Place on or more orders
@@ -108,7 +105,6 @@ class IBKRBroker(
         if (!enableOrders) {
             return _account.toAccount()
         }
-
 
         // First we place the cancellation orders
         for (cancellation in orders.filterIsInstance<CancelOrder>()) {
@@ -162,7 +158,6 @@ class IBKRBroker(
         return result
     }
 
-
     /**
      * Overwrite the default wrapper
      */
@@ -202,7 +197,13 @@ class IBKRBroker(
             if (openOrder != null) {
                 if (orderState.completedStatus() == "true") {
                     val slip = _account.openOrders[openOrder]
-                    if (slip != null) _account.putOrder(OrderState(slip.order, OrderStatus.COMPLETED, closedAt = Instant.parse(orderState.completedTime())))
+                    if (slip != null) _account.putOrder(
+                        OrderState(
+                            slip.order,
+                            OrderStatus.COMPLETED,
+                            closedAt = Instant.parse(orderState.completedTime())
+                        )
+                    )
                 }
             } else {
                 val newOrder = toOrder(order, contract)
@@ -220,7 +221,7 @@ class IBKRBroker(
             val id = orderMap[orderId]
             if (id == null)
                 logger.warning { "Received unknown open order with orderId $orderId" }
-            else  {
+            else {
                 val slip = _account.openOrders[id]
                 if (slip != null) {
                     val newStatus = toStatus(status!!)
@@ -278,7 +279,7 @@ class IBKRBroker(
 
         private fun setCash(currencyCode: String, value: String) {
             if ("BASE" != currencyCode) {
-                val amount = Amount(Currency.getInstance(currencyCode),  value.toDouble())
+                val amount = Amount(Currency.getInstance(currencyCode), value.toDouble())
                 account.cash.set(amount)
             }
         }
@@ -335,7 +336,7 @@ class IBKRBroker(
                     Types.SecType.STK -> AssetType.STOCK
                     Types.SecType.BOND -> AssetType.BOND
                     Types.SecType.OPT -> AssetType.OPTION
-                    else -> throw Exception("Unsupported asset type ${secType()}")
+                    else -> throw UnsupportedException("Unsupported asset type ${secType()}")
                 }
                 val asset = Asset(
                     symbol = symbol(),
@@ -364,7 +365,6 @@ class IBKRBroker(
             else
                 logger.warning { "$var1 $var2 $var3" }
         }
-
 
     }
 }

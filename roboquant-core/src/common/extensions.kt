@@ -242,14 +242,14 @@ inline fun <T> Iterable<T>.sumOf(
 val Int.years
     get() = Period.ofYears(this)
 
-val Int.days
-    get() = Period.ofDays(this)
-
 val Int.months
     get() = Period.ofMonths(this)
 
 val Int.weeks
     get() = Period.ofWeeks(this)
+
+val Int.days
+    get() = Period.ofDays(this)
 
 val Int.hours
     get() = Duration.ofHours(this.toLong())

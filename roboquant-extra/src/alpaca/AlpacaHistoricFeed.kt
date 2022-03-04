@@ -20,15 +20,16 @@ import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.historical.bar.enums.BarTimePeriod
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarAdjustment
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarFeed
-import org.roboquant.common.Asset
-import org.roboquant.common.Logging
-import org.roboquant.common.Timeframe
+import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceQuote
 import org.roboquant.feeds.TradePrice
+import java.time.Duration
+import java.time.Period
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.temporal.TemporalAmount
 
 typealias AlpacaPeriod = BarTimePeriod
 
@@ -68,7 +69,13 @@ class AlpacaHistoricFeed(
             resp.quotes == null && continue
             val asset = Asset(symbol)
             for (quote in resp.quotes) {
-                val action = PriceQuote(asset, quote.askPrice, quote.askSize.toDouble(), quote.bidPrice, quote.bidSize.toDouble())
+                val action = PriceQuote(
+                    asset,
+                    quote.askPrice,
+                    quote.askSize.toDouble(),
+                    quote.bidPrice,
+                    quote.bidSize.toDouble()
+                )
                 val now = quote.timestamp.toInstant()
                 add(now, action)
             }
@@ -100,10 +107,29 @@ class AlpacaHistoricFeed(
         }
     }
 
+
+
+    private fun fromTemporalAmount(amt: TemporalAmount): Pair<BarTimePeriod, Int> {
+
+        return when {
+            amt is Duration && amt.toDays() > 0 -> Pair(AlpacaPeriod.DAY, amt.toDays().toInt())
+            amt is Period && amt.days > 0 -> Pair(AlpacaPeriod.DAY, amt.days)
+            amt is Duration && amt.toHours() > 0 -> Pair(AlpacaPeriod.HOUR, amt.toHours().toInt())
+            amt is Duration && amt.toMinutes() > 0 -> Pair(AlpacaPeriod.MINUTE, amt.toMinutes().toInt())
+            else -> throw UnsupportedException("$amt")
+        }
+
+    }
+
     /**
-     * Retrieve for a number of [symbols] and specified [timeframe] the [PriceBar].
+     * Retrieve for a number of [symbols] and specified [timeframe] the [PriceBar] and [barSize].
      */
-    fun retrieveBars(vararg symbols: String, timeframe: Timeframe, period: AlpacaPeriod = AlpacaPeriod.DAY) {
+    fun retrieveBars(
+        vararg symbols: String,
+        timeframe: Timeframe,
+        barSize: TemporalAmount = 1.days,
+    ) {
+        val (alpacaPeriod, duration) = fromTemporalAmount(barSize)
         for (symbol in symbols) {
             val resp = alpacaAPI.stockMarketData().getBars(
                 symbol,
@@ -111,8 +137,8 @@ class AlpacaHistoricFeed(
                 ZonedDateTime.ofInstant(timeframe.end, zoneId),
                 null,
                 null,
-                1,
-                period,
+                duration,
+                alpacaPeriod,
                 BarAdjustment.ALL,
                 BarFeed.IEX
             )
@@ -127,7 +153,6 @@ class AlpacaHistoricFeed(
             logger.fine { "Retrieved price bars for asset $asset and timeframe $timeframe" }
         }
     }
-
 
 }
 

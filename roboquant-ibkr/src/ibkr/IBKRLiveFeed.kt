@@ -20,6 +20,7 @@ import com.ib.client.DefaultEWrapper
 import com.ib.client.EClientSocket
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
+import org.roboquant.common.severe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.PriceBar
@@ -70,8 +71,7 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
                 subscriptions[tickerId] = asset
                 logger.info("Added subscription to receive realtime bars for ${contract.symbol()}")
             } catch (e: Exception) {
-                e.printStackTrace()
-                logger.warning(e.message)
+                logger.severe("Error during subscribing to $asset", e)
             }
         }
     }
@@ -102,7 +102,7 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
         }
 
         override fun error(var1: Exception) {
-            logger.warning { "$var1" }
+            logger.severe("Received exception", var1)
         }
 
         override fun error(var1: String?) {

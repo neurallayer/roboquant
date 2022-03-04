@@ -23,7 +23,7 @@ import java.time.Instant
  * Auto-detect the appropriate time parser based on the first
  * sample it receives. This is the default time parser if no config was found
  *
- * @constructor Create empty Auto c s v data time parser
+ * @constructor Create new AutoDetect time parser
  */
 class AutoDetectTimeParser(val exchangeCode: String = "NASDAQ") : TimeParser {
 

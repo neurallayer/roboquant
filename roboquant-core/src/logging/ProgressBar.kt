@@ -18,6 +18,7 @@ package org.roboquant.logging
 
 import org.roboquant.RunInfo
 import java.time.Instant
+import java.util.*
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -72,7 +73,7 @@ internal class ProgressBar {
     private fun draw(percent: Int) {
         val sb = StringBuilder(100)
         sb.append('\r').append(pre)
-        sb.append(String.format("%3d", percent)).append("% |")
+        sb.append(String.format(Locale.ENGLISH, "%3d", percent)).append("% |")
         val filled = percent * TOTAL_BAR_LENGTH / 100
         for (i in 0 until TOTAL_BAR_LENGTH) {
             if (i <= filled) sb.append(progressChar) else sb.append(' ')

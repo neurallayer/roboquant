@@ -78,14 +78,12 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
             ECBExchangeRates("file:$path", compressed = compressed)
     }
 
-
     init {
         load(url, compressed, useCache)
         logger.info {
             "loaded conversion rates for ${exchangeRates.size} currencies"
         }
     }
-
 
     /**
      * Get the cache url of an asset. If not exist cache it now.

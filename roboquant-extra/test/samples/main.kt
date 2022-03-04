@@ -77,7 +77,7 @@ fun alpacaHistoricFeed() {
     val feed = AlpacaHistoricFeed()
     val tf = Timeframe.past(100.days) - 15.minutes
     tf.split(1.days).forEach {
-        feed.retrieveBars("AAPL", "IBM", timeframe = it, period = AlpacaPeriod.MINUTE)
+        feed.retrieveBars("AAPL", "IBM", timeframe = it, barSize = 1.days)
         println(feed.timeline.size)
         println(feed.timeframe)
         Thread.sleep(1000)

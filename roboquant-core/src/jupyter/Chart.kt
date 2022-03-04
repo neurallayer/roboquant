@@ -108,8 +108,9 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
  */
 abstract class Chart : Output() {
 
+
     /**
-     * Default height for charts. Subclasses can override this value
+     * Height for charts, default being 500 pixels. Subclasses can override this value
      */
     var height = 500
 
