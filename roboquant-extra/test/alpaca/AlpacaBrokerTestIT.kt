@@ -17,23 +17,16 @@
 package org.roboquant.alpaca
 
 
-import org.junit.Before
-import org.roboquant.common.Config
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class AlpacaBrokerTestIT {
 
-    @Before
-    fun validateEnv() {
-        require(Config.getProperty("TEST_ALPACA", "")!!.isNotEmpty()) {
-            "Missing TEST_ALPACA environment variable"
-        }
-    }
 
     @Test
     fun test() {
+        System.getProperty("TEST_ALPACA") ?: return
         val broker = AlpacaBroker()
         broker.enableTrading = false
 

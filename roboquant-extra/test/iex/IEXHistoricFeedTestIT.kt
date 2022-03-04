@@ -27,6 +27,7 @@ import kotlin.test.assertTrue
 
 internal class IEXHistoricFeedTestIT {
 
+
     @Test
     fun test() {
         System.getProperty("TEST_IEX") ?: return
@@ -42,7 +43,7 @@ internal class IEXHistoricFeedTestIT {
 
     @Test
     fun testPriceBar() {
-        System.getProperty("IEX_TEST") ?: return
+        System.getProperty("TEST_IEX") ?: return
         val token = Config.getProperty("IEX_TOKEN")!!
         val feed = IEXHistoricFeed(token)
         val asset = Asset("AAPL")
@@ -54,7 +55,7 @@ internal class IEXHistoricFeedTestIT {
 
     @Test
     fun testIntraday() {
-        System.getProperty("IEX_TEST") ?: return
+        System.getProperty("TEST_IEX") ?: return
         val token = Config.getProperty("IEX_TOKEN")!!
         val feed = IEXHistoricFeed(token)
         feed.retrieveIntraday("AAPL")
