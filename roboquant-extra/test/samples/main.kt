@@ -22,7 +22,6 @@ import org.roboquant.Roboquant
 import org.roboquant.alpaca.AlpacaBroker
 import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.alpaca.AlpacaLiveFeed
-import org.roboquant.alpaca.AlpacaPeriod
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.avro.AvroUtil
@@ -35,7 +34,6 @@ import org.roboquant.metrics.OpenPositions
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.yahoo.YahooHistoricFeed
-
 
 fun alpacaBroker() {
     val feed = CSVFeed("data/US", CSVConfig(priceAdjust = true))
