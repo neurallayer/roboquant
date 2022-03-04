@@ -16,6 +16,7 @@
 
 package org.roboquant.alpaca
 
+import org.junit.Before
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import java.time.Duration
@@ -28,9 +29,15 @@ internal class AlpacaFeedTestIT {
 
     private val liveTestTime = 30.seconds
 
+    @Before
+    fun validateEnv() {
+        require(System.getenv("TEST_ALPACA").isNotEmpty()) {
+            "Missing TEST_ALPACA environment variable"
+        }
+    }
+
     @Test
     fun test() {
-        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
         val assets = feed.availableAssets
         val apple = assets.getBySymbol("AAPL")
@@ -49,7 +56,6 @@ internal class AlpacaFeedTestIT {
 
     @Test
     fun test2() {
-        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
         feed.subscribe("AAPL")
         val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
@@ -64,7 +70,6 @@ internal class AlpacaFeedTestIT {
 
     @Test
     fun testHistoricFeed() {
-        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val assets = feed.availableAssets
         assertTrue(assets.isNotEmpty())
@@ -86,7 +91,6 @@ internal class AlpacaFeedTestIT {
 
     @Test
     fun testHistoricQuotes() {
-        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
         feed.retrieveQuotes("AAPL", timeframe = tf)
@@ -95,7 +99,6 @@ internal class AlpacaFeedTestIT {
 
     @Test
     fun testHistoricTrades() {
-        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
         feed.retrieveTrades("AAPL", timeframe = tf)
@@ -104,7 +107,6 @@ internal class AlpacaFeedTestIT {
 
     @Test
     fun testHistoricBars() {
-        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
         feed.retrieveBars("AAPL", timeframe = tf)
@@ -113,7 +115,6 @@ internal class AlpacaFeedTestIT {
 
     @Test
     fun testHistoricBarsWithTimePeriodDuration() {
-        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
         feed.retrieveBars("AAPL",
@@ -127,7 +128,6 @@ internal class AlpacaFeedTestIT {
 
     @Test
     fun test3() {
-        System.getenv("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed(autoConnect = false)
         feed.connect()
         feed.subscribeAll()
