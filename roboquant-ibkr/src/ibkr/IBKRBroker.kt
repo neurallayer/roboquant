@@ -17,6 +17,7 @@
 package org.roboquant.ibkr
 
 import com.ib.client.*
+import ibkr.BaseWrapper
 import com.ib.client.OrderState as IBOrderSate
 import com.ib.client.OrderStatus as IBOrderStatus
 import org.roboquant.brokers.*
@@ -26,6 +27,7 @@ import org.roboquant.orders.*
 import org.roboquant.orders.OrderStatus
 import java.lang.Thread.sleep
 import java.time.Instant
+import java.util.logging.Logger
 import kotlin.math.absoluteValue
 import com.ib.client.Order as IBOrder
 
@@ -68,7 +70,7 @@ class IBKRBroker(
 
     init {
         if (enableOrders) logger.warning { "Enabling sending orders, use it at your own risk!!!" }
-        val wrapper = Wrapper()
+        val wrapper = Wrapper(logger)
         client = IBKRConnection.connect(wrapper, host, port, clientId)
         client.reqCurrentTime()
         client.reqAccountUpdates(true, accountId)
@@ -161,7 +163,7 @@ class IBKRBroker(
     /**
      * Overwrite the default wrapper
      */
-    inner class Wrapper : DefaultEWrapper() {
+    inner class Wrapper(logger: Logger) : BaseWrapper(logger) {
 
         /**
          * Convert an IBOrder to a roboquant Order. This is only used during initial connect when retrieving any open
@@ -314,13 +316,7 @@ class IBKRBroker(
             _account.setPosition(p)
         }
 
-        override fun currentTime(time: Long) {
-            logger.fine { EWrapperMsgGenerator.currentTime(time).toString() }
 
-            // If more than 60 seconds difference, give a warning
-            val diff = Instant.now().epochSecond - time
-            if (diff.absoluteValue > 60) logger.warning("Time clocks out of sync by $diff seconds")
-        }
 
         override fun updateAccountTime(timeStamp: String) {
             logger.fine(timeStamp)
@@ -351,20 +347,7 @@ class IBKRBroker(
             return assetMap[conid()]!!
         }
 
-        override fun error(var1: Exception) {
-            logger.warning { "$var1" }
-        }
 
-        override fun error(var1: String?) {
-            logger.warning { "$var1" }
-        }
-
-        override fun error(var1: Int, var2: Int, var3: String?) {
-            if (var1 == -1)
-                logger.finer { "$var1 $var2 $var3" }
-            else
-                logger.warning { "$var1 $var2 $var3" }
-        }
 
     }
 }

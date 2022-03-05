@@ -16,8 +16,8 @@
 
 package org.roboquant.ibkr
 
-import com.ib.client.DefaultEWrapper
 import com.ib.client.EClientSocket
+import ibkr.BaseWrapper
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.severe
@@ -25,7 +25,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
-
+import java.util.logging.Logger
 
 /**
  * Get realtime bars from IBKR. Please note that often you need paid subscriptions to get this
@@ -49,7 +49,7 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
     val logger = Logging.getLogger(IBKRLiveFeed::class)
 
     init {
-        val wrapper = Wrapper()
+        val wrapper = Wrapper(logger)
         client = IBKRConnection.connect(wrapper, host, port, clientId)
         client.reqCurrentTime()
     }
@@ -77,7 +77,7 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
     }
 
 
-    inner class Wrapper : DefaultEWrapper() {
+    inner class Wrapper(logger: Logger) : BaseWrapper(logger) {
 
         override fun realtimeBar(
             reqId: Int,

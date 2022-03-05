@@ -109,8 +109,9 @@ fun ibkrFeed() {
 
 fun ibkrHistoricFeed() {
     val feed = IBKRHistoricFeed()
-    val template = Asset("", AssetType.STOCK, "EUR", "AEB")
+    val template = Asset("TEMPLATE", AssetType.STOCK, "EUR", "AEB")
     feed.retrieve(template.copy(symbol = "ABN"), template.copy(symbol = "ASML"), template.copy(symbol = "KPN"))
+    feed.waitTillRetrieved()
 
     val cash = Wallet(1_000_000.EUR)
     val broker = SimBroker(cash)
@@ -125,7 +126,7 @@ fun ibkrHistoricFeed() {
 
 fun main() {
 
-    when ("BROKER2") {
+    when ("HISTORIC") {
         "BROKER" -> ibkrBroker()
         "BROKER2" -> ibkrBroker2()
         "FEED" -> ibkrFeed()

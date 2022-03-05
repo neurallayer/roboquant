@@ -17,14 +17,16 @@
 package org.roboquant.ibkr
 
 import com.ib.client.Bar
-import com.ib.client.DefaultEWrapper
 import com.ib.client.EClientSocket
+import ibkr.BaseWrapper
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
+import org.roboquant.common.millis
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.csv.AutoDetectTimeParser
 import java.time.Instant
+import java.util.logging.Logger
 
 class IBKRHistoricFeed(
     host: String = "127.0.0.1",
@@ -37,9 +39,8 @@ class IBKRHistoricFeed(
     private val logger = Logging.getLogger(IBKRHistoricFeed::class)
     private var client: EClientSocket
 
-
     init {
-        val wrapper = Wrapper()
+        val wrapper = Wrapper(logger)
         client = IBKRConnection.connect(wrapper, host, port, clientId)
         client.reqCurrentTime()
     }
@@ -64,12 +65,14 @@ class IBKRHistoricFeed(
             client.reqHistoricalData(++tickerId, contract, formatted, duration, barSize, dataType, 1, 1, false, null)
             subscriptions[tickerId] = asset
         }
-        // TODO better implementation
-        while (subscriptions.isNotEmpty()) Thread.sleep(1_000)
     }
 
+    fun waitTillRetrieved(maxMillis: Int = 10_000) {
+        val endTime = Instant.now() + maxMillis.millis
+        while (subscriptions.isNotEmpty() && Instant.now() <= endTime) Thread.sleep(1_000)
+    }
 
-    inner class Wrapper : DefaultEWrapper() {
+    inner class Wrapper(logger: Logger) : BaseWrapper(logger) {
 
         override fun historicalData(reqId: Int, bar: Bar) {
             val asset = subscriptions[reqId]!!
@@ -85,6 +88,9 @@ class IBKRHistoricFeed(
             val v = subscriptions.remove(reqId)
             logger.info("Finished retrieving $v")
         }
+
+
+
     }
 
 }
