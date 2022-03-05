@@ -48,8 +48,8 @@ data class Position(
      * Total size of a position is the position size times the asset multiplier. For many asset classes the
      * multiplier will be 1, but for example for option contracts it will often be 100
      */
-    val totalSize: Double
-        get() = size * asset.multiplier
+    // val totalSize: Double
+    //    get() = size * asset.multiplier
 
     /**
      * The currency of this position, aka the currency of the underlying asset
@@ -88,13 +88,11 @@ data class Position(
      */
     fun realizedPNL(update: Position) : Amount {
         val newSize = size + update.size
-
-        val value = when {
-            size.sign != newSize.sign -> totalSize * (update.avgPrice - avgPrice)
-            newSize.absoluteValue > size.absoluteValue -> 0.0
-            else -> update.totalSize * (avgPrice - update.avgPrice)
+        return when {
+            size.sign != newSize.sign -> asset.value(size, update.avgPrice - avgPrice)
+            newSize.absoluteValue > size.absoluteValue -> Amount(asset.currency, 0.0)
+            else -> asset.value(update.size, avgPrice - update.avgPrice)
         }
-        return Amount(asset.currency, value)
     }
 
     /**
@@ -126,7 +124,7 @@ data class Position(
      * in the currency denoted by the asset
      */
     val unrealizedPNL: Amount
-        get() = Amount(asset.currency, totalSize * (spotPrice - avgPrice))
+        get() = asset.value(size, spotPrice - avgPrice)
 
 
     /**
@@ -134,14 +132,14 @@ data class Position(
      * Short positions will typically return a negative value.
      */
     val marketValue: Amount
-        get() = Amount(asset.currency,totalSize * spotPrice)
+        get() = asset.value(size, spotPrice)
 
     /**
      * The gross exposure for this position based on last known market price, in the currency denoted by the asset.
      * The difference with the [marketValue] property is that short positions also result in a positive exposure.
      */
     val exposure: Amount
-        get() = Amount(asset.currency, totalSize.absoluteValue * spotPrice)
+        get() = marketValue.absoluteValue
 
 
     /**
@@ -149,7 +147,7 @@ data class Position(
      * a negative value.
      */
     val totalCost: Amount
-        get() =  Amount(asset.currency,totalSize * avgPrice)
+        get() = asset.value(size, avgPrice)
 
 
 }

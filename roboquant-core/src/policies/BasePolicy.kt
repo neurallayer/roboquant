@@ -89,7 +89,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
      * @return
      */
     protected fun calcVolume(freeAmount: Double, asset: Asset, price: Double, account: Account): Double {
-        val singleContractCost = asset.multiplier * price
+        val singleContractCost = asset.value(1.0, price).value
         val availableAssetCash = Amount(account.baseCurrency, freeAmount).convert(asset.currency, account.lastUpdate)
         return availableAssetCash.value / singleContractCost
     }

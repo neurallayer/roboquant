@@ -50,7 +50,7 @@ data class Trade(
      * will return a negative value.
      */
     val totalCost
-        get() = Amount(asset.currency, price * quantity * asset.multiplier + feeValue)
+        get() =  asset.value(quantity, price) + feeValue
 
     val fee
         get() = Amount(asset.currency, feeValue)

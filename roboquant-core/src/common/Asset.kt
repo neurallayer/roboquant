@@ -68,6 +68,7 @@ data class Asset(
      * What is the value of the asset given the provided [quantity] and [price]
      */
     fun value(quantity: Double, price: Double): Amount {
+        // If quantity is zero even an unknown price (Double.NanN) is fine
         return if (quantity == 0.0) Amount(currency, 0.0) else Amount(currency, multiplier * price * quantity)
     }
 

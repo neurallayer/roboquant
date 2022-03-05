@@ -101,13 +101,13 @@ open class BettingAgainstBeta(
         val exposure = account.equity.convert(time = event.time) / (max * 2)
 
         val targetPortfolio = mutableListOf<Position>()
-
         // Generate the long positions assets with a low beta
         betas.subList(0, max).forEach { (asset, _) ->
             val price = event.getPrice(asset)
-            val assetAmount = exposure.convert(asset.currency, event.time).value
             if (price != null) {
-                val holding = floor(assetAmount/(asset.multiplier * price))
+                val assetAmount = exposure.convert(asset.currency, event.time).value
+                val singleContractValue = asset.value(1.0, price).value
+                val holding = floor(assetAmount/singleContractValue)
                 if (holding.nonzero) targetPortfolio.add(Position(asset, holding))
             }
         }
@@ -115,9 +115,10 @@ open class BettingAgainstBeta(
         // Generate the short positions for assets with a high beta
         betas.reversed().subList(0, max).forEach {  (asset, _) ->
             val price = event.getPrice(asset)
-            val assetAmount = exposure.convert(asset.currency, event.time).value
             if (price != null) {
-                val holding = floor(assetAmount/(asset.multiplier * price))
+                val assetAmount = exposure.convert(asset.currency, event.time).value
+                val singleContractValue = asset.value(1.0, price).value
+                val holding = floor(assetAmount/singleContractValue)
                 if (holding.nonzero) targetPortfolio.add(Position(asset, -holding))
             }
         }

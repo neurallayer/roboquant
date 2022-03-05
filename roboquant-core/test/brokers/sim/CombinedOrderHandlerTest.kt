@@ -40,7 +40,7 @@ internal class CombinedOrderHandlerTest {
         val cmd = OCOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(100.0, executions.first().size)
+        assertEquals(100.0, executions.first().quantity)
     }
 
     @Test
@@ -51,7 +51,7 @@ internal class CombinedOrderHandlerTest {
         val cmd = OCOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(50.0, executions.first().size)
+        assertEquals(50.0, executions.first().quantity)
     }
 
 
@@ -63,8 +63,8 @@ internal class CombinedOrderHandlerTest {
         val cmd = OTOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(2, executions.size)
-        assertEquals(100.0, executions.first().size)
-        assertEquals(50.0, executions.last().size)
+        assertEquals(100.0, executions.first().quantity)
+        assertEquals(50.0, executions.last().quantity)
     }
 
     @Test

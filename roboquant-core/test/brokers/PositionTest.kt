@@ -138,7 +138,7 @@ internal class PositionTest {
     fun size() {
         val contract = TestData.usStock()
         val p1 = Position(contract, 10.0, 10.0, 12.0)
-        assertEquals(10.0, p1.totalSize)
+        assertEquals(10.0, p1.size)
     }
 
 }

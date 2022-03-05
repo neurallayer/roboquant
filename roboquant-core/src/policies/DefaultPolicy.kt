@@ -17,7 +17,6 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
-import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.zeroOrMore
@@ -26,7 +25,6 @@ import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 import kotlin.math.floor
 import kotlin.math.min
-
 
 /**
  * This is the default policy that will be used if no other policy is specified. There are a number of parameters that
@@ -70,7 +68,7 @@ open class DefaultPolicy(
     }
 
     private fun reducedBuyingPower(account: Account, asset: Asset, qty: Double, price: Double): Double {
-        val cost = Amount(asset.currency, asset.multiplier * qty * price).absoluteValue
+        val cost =  asset.value(qty, price).absoluteValue
         val baseCurrencyCost =  account.convert(cost)
         return baseCurrencyCost.value
     }

@@ -34,11 +34,6 @@ class Execution(val order: Order, val quantity: Double, val price: Double) {
         require(quantity.nonzero) { "Execution should have a non-zero quantity" }
     }
 
-    /**
-     * Totol size of execution, including contract size
-     */
-    val size
-        get() = order.asset.multiplier * quantity
 
     /**
      * Totol value of execution in the currency denoted by the underlying asset
