@@ -20,7 +20,6 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile
 import org.roboquant.common.*
 import org.roboquant.orders.OrderState
 import java.math.BigDecimal
-import java.text.DecimalFormat
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
@@ -255,7 +254,7 @@ fun Collection<Trade>.summary(name: String = "trades"): Summary {
                 val pnl = pnl.formatValue()
                 val price = Amount(asset.currency, price).formatValue()
                 val t = time.truncatedTo(ChronoUnit.SECONDS)
-                val line = String.format(fmt, t, asset.symbol, quantity, cost, fee, pnl, price)
+                val line = String.format(fmt, t, asset.symbol, quantity.asQuantity, cost, fee, pnl, price)
                 s.add(line)
             }
         }
@@ -279,9 +278,6 @@ fun Map<Asset, Position>.summary(name: String = "portfolio"): Summary = values.s
 fun Collection<Position>.summary(name: String = "positions"): Summary {
     val s = Summary(name)
 
-    val pf = DecimalFormat("############")
-    pf.minimumFractionDigits = 0
-    pf.maximumFractionDigits = 4
 
     if (isEmpty()) {
         s.add("EMPTY")
@@ -302,7 +298,7 @@ fun Collection<Position>.summary(name: String = "positions"): Summary {
 
         for (v in positions) {
             val c = v.asset.currency
-            val pos = pf.format(v.size)
+            val pos = v.size.asQuantity
             val avgPrice = Amount(c, v.avgPrice).formatValue()
             val price = Amount(c, v.spotPrice).formatValue()
             val value = v.marketValue.formatValue()

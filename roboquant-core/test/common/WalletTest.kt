@@ -54,6 +54,7 @@ internal class WalletTest {
 
         wallet.withdraw(wallet)
         assertTrue(wallet.isEmpty())
+        assertFalse(wallet.isNotEmpty())
     }
 
     @Test

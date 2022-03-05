@@ -223,16 +223,6 @@ class Wallet(vararg amounts: Amount) : Cloneable {
         return sb.toString().removeSuffix(", ")
     }
 
-    /**
-     * Provide a short summary including all currencies, also the one that have a zero balance.
-     */
-    fun summary(header: String = "Cash"): Summary {
-        val s = Summary(header)
-        toAmounts().forEach {
-            s.add(it.currency.displayName, it.formatValue())
-        }
-        return s
-    }
 
     /**
      * A wallet only equals another wallet if they hold the same currencies and corresponding amounts.
@@ -249,8 +239,8 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     /**
      * Summary overview of the wallet
      */
-    fun summary(): Summary {
-        val result = Summary("Cash")
+    fun summary(title: String = "Cash"): Summary {
+        val result = Summary(title)
         val fmt = "│%10s│%14s│"
         val header = String.format(fmt, "currency", "amount")
         result.add(header)
