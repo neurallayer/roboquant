@@ -52,8 +52,7 @@ so do familiarize yourself with the following guidelines.
 == PR workflow
 
 . Contributor build roboquant locally and run all unit test via maven `mvn clean test`
- and integration tests (if it's possible on contributor machine)
- via `mvn clean integration`.
+ and integration tests (if it's possible on contributor machine) via `mvn clean integration`.
 . Contributor submits the PR if the local build is successful and tests are green.
 . Reviewer marks the PR with the "Review" label at the start of the review process.
 . Reviewer leaves the comments or marks the PR with the label "LGTM."

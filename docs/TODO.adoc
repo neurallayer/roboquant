@@ -31,11 +31,11 @@ Ensure the API is stable and start including AI and Machine Learning support
 * [ ] Improve documentation, notebooks and examples based on the stable API
 * [ ] Include additional demo feeds for quick expirementation (some forex and crypto assets)
 * [ ] Add basic Machine Learning support (research required)
-* [ ] Add better hyper-parameter search and optmimalization capabilities (research required)
+* [ ] Add better hyper-parameter search and optimalization capabilities (research required)
 
 == Version 1.0 (end of 2022)
 
-This version is all about adding better live trading capabilities. Although there is already integration available in earlier versions, that is just to validate the architectural concepts supports live trading. These broker integrations are neither reliable nor complete. So what still needs to be done:
+This version is all about adding better trading capabilities. Although there is already integration available in earlier versions, that is just to validate the architectural concepts supports live trading. These broker integrations are neither reliable nor complete. So what still needs to be done:
 
 * [ ] Better margin account simulation support
 * [ ] More metrics, especially around alpha and beta calculations
