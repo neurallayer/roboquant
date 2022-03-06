@@ -156,12 +156,12 @@ class InternalAccount (
     fun updateMarketPrices(event: Event, priceType: String = "DEFAULT") {
         val prices = event.prices
 
-        for (position in portfolio.values) {
-            val priceAction = prices[position.asset]
+        for ((asset,position) in portfolio) {
+            val priceAction = prices[asset]
             if (priceAction != null) {
                 val price = priceAction.getPrice(priceType)
                 val newPosition = position.copy(spotPrice = price, lastUpdate = event.time)
-                portfolio.replace(position.asset, newPosition)
+                portfolio.replace(asset, newPosition)
             }
         }
     }

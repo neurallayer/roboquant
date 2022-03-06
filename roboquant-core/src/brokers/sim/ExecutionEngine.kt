@@ -5,14 +5,27 @@ import org.roboquant.orders.*
 import java.util.*
 import kotlin.reflect.KClass
 
-
+/**
+ * Order handler factory creates [OrderHandler] for an order. The provided handler is repsonsible for executing the
+ * order.
+ *
+ * @param T
+ * @constructor Create empty Order handler factory
+ */
 fun interface OrderHandlerFactory<T : Order> {
 
+    /**
+     * Get a handler for the provided order
+     *
+     * @param order
+     * @return
+     */
     fun getHandler(order: T): OrderHandler
 }
 
 /**
- * Executes the orders.
+ * Engine that simulates how orders are executed on financial markets. For any order to be executed, it needs a
+ * corresponding [OrderHandler]
  *
  * @property pricingEngine
  * @constructor Create empty Execution engine
@@ -21,10 +34,13 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
 
     companion object {
 
+        /**
+         * All the registered [OrderHandlerFactory]
+         */
         val factories = mutableMapOf<KClass<*>, OrderHandlerFactory<Order>>()
 
         /**
-         * Get the order handler for the [order]
+         * Get the order handler for the provided [order]
          *
          * @param order
          * @return
@@ -35,14 +51,15 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
         }
 
         /**
-         * Unregister th eorder handler for order type [T]
+         * Unregister the order handler for order type [T]
          */
         inline fun <reified T : Order> unregister() {
             factories.remove(T::class)
         }
 
         /**
-         * Register a order handler factory for order type [T]
+         * Register a new order handler factory for order type [T]. If there was already an order handler registered
+         * for the same class it will be overwritten.
          *
          * @param T
          * @param factory
@@ -53,16 +70,22 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
         }
 
         init {
-            // All the default included order handlers
+            // register all the default included order handlers
+
+            // Single Order types
             register<MarketOrder> { MarketOrderHandler(it) }
             register<LimitOrder> { LimitOrderHandler(it) }
             register<StopLimitOrder> { StopLimitOrderHandler(it) }
             register<StopOrder> { StopOrderHandler(it) }
             register<TrailLimitOrder> { TrailLimitOrderHandler(it) }
             register<TrailOrder> { TrailOrderHandler(it) }
+
+            // Advanced order types
             register<BracketOrder> { BracketOrderHandler(it) }
             register<OCOOrder> { OCOOrderHandler(it) }
             register<OTOOrder> { OTOOrderHandler(it) }
+
+            // Modify order types
             register<UpdateOrder> { UpdateOrderHandler(it) }
             register<CancelOrder> { CancelOrderHandler(it) }
         }
@@ -76,7 +99,9 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
     // Currently active order commands
     private val modifyHandlers = LinkedList<ModifyOrderHandler>()
 
-
+    /**
+     * Remove all handlers of closed orders
+     */
     internal fun removeClosedOrders() {
         tradeHandlers.removeIf { it.state.status.closed }
         modifyHandlers.removeIf { it.state.status.closed }
@@ -84,13 +109,18 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
 
 
     /**
-     * Latetst Order states
+     * Latetst Order states of all handlers
      */
     val orderStates
         get() = tradeHandlers.map { it.state } + modifyHandlers.map { it.state }
 
-
-    // Add a new order to the execution engine
+    /**
+     * Add a new order to the execution engine. Orders can only be processed if their is a corresponding handler
+     * registered for the order class.
+     *
+     * @param order
+     * @return
+     */
     fun add(order: Order): Boolean {
 
         return when (val handler = getHandler(order)) {
@@ -106,28 +136,41 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
         for (order in orders) add(order)
     }
 
-
+    /**
+     * Execute all the handlers of orders that are not yet closed. Logic:
+     *
+     * 1. First any open modify orders will be processed
+     * 2. The any regular order will be processed assuming there is a price action for the underlying asses.
+     *
+     * @param event
+     * @return
+     */
     fun execute(event: Event): List<Execution> {
 
         // We always first execute the modify orders. These are run even if there is
         // no price for the asset known
-        for (handler in modifyHandlers) handler.execute(tradeHandlers, event.time)
+        for (handler in modifyHandlers) {
+            if (handler.state.status.closed) continue
+            handler.execute(tradeHandlers, event.time)
+        }
 
         // Now run the trade order commands
         val executions = mutableListOf<Execution>()
         val prices = event.prices
-        for (exec in tradeHandlers.toList()) {
-            if (exec.state.status.closed) continue
-            val action = prices[exec.state.asset] ?: continue
+        for (handler in tradeHandlers) {
+            if (handler.state.status.closed) continue
+            val action = prices[handler.state.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, event.time)
-            val newExecutions = exec.execute(pricing, event.time)
+            val newExecutions = handler.execute(pricing, event.time)
             executions.addAll(newExecutions)
 
         }
         return executions
     }
 
-
+    /**
+     * Clear any state
+     */
     fun clear() {
         tradeHandlers.clear()
         pricingEngine.clear()
