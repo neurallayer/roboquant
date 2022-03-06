@@ -98,7 +98,7 @@ class InternalAccount (
     }
 
     /**
-     * Set the position in a portfolio. If the position is closed, it is removed from thr portfolio
+     * Set the position in a portfolio. If the position is closed, it is removed from the portfolio.
      */
     fun setPosition(position: Position) {
         if (position.closed) {

@@ -27,10 +27,11 @@ sealed interface OrderHandler {
 }
 
 /**
- * Interface for orders that update another order. These orders don't generate trades by themselves and:
+ * Interface for orders that update another order. These orders don't generate trades by themselves. Also important
+ * to note that:
  *
- *  - are executed first, before the [TradeOrderHandler] orders are executed
- *  - are always executed, even if there is no known price for the underlying asset
+ *  - they are executed first, before the [TradeOrderHandler] orders are executed
+ *  - they are always executed, even if there is no known price for the underlying asset at that moment in time
  *
  */
 interface ModifyOrderHandler : OrderHandler {
@@ -40,8 +41,7 @@ interface ModifyOrderHandler : OrderHandler {
 }
 
 /**
- * Order handler
- *
+ * Interface for orders that might generate trades.
  */
 interface TradeOrderHandler : OrderHandler {
 

@@ -24,20 +24,20 @@ import kotlin.math.absoluteValue
 interface FeeModel {
 
     /**
-     * Any fees or commisions applicable for the [execution]. The returned value should be denoted in the currency
-     * of the underlying asset of the order.
+     * Any fees or commisions applicable for the provided [execution]. The returned value should be denoted in the
+     * currency of the underlying asset of the order.
      *
-     * Typically a fee should be a positive value unless you want to model rebates and other rewards.
+     * Typically a fee should be a positive value, unless you want to model rebates and other rewards.
      */
     fun calculate(execution: Execution): Double
 
 }
 
 /**
- * Default fee model, using a fixed fee percentage of total absolute value of the execution.
+ * Default fee model, using a fixed percentage fee of total absolute value of the execution.
  *
  * @property feePercentage fee as a percentage of total execution cost, 0.01 = 1%. Default is 0.0
- * @constructor Create new Default fee model
+ * @constructor Create a new percentage fee model
  */
 class PercentageFeeModel(
     private val feePercentage: Double = 0.0,

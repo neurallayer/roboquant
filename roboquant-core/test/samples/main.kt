@@ -45,7 +45,6 @@ import kotlin.io.path.div
 import kotlin.io.path.name
 import kotlin.system.measureTimeMillis
 
-
 fun large6() {
 
     val dataHome = Path("/Users/peter/data")

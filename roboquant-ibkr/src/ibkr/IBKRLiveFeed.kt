@@ -56,14 +56,13 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
 
     fun disconnect() = IBKRConnection.disconnect(client)
 
-
     /**
      * Subscribe to the realtime bars for a particular contract. Often IBKR platform requires a subscription in order
      * to be able to receive realtime bars. Please check the documentation at hte IBKR website for more details.
      *
      * @param assets
      */
-    fun subscribe(vararg assets: Asset, interval: Int = 5, type: String = "MIDPOINT") {
+    fun subscribe(assets: Collection<Asset>, interval: Int = 5, type: String = "MIDPOINT") {
         for (asset in assets) {
             try {
                 val contract = IBKRConnection.getContract(asset)
@@ -76,6 +75,8 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
         }
     }
 
+    fun subscribe(vararg assets: Asset, interval: Int = 5, type: String = "MIDPOINT") =
+        subscribe(assets.toList(), interval, type)
 
     inner class Wrapper(logger: Logger) : BaseWrapper(logger) {
 
@@ -117,7 +118,6 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
         }
 
     }
-
 
 }
 

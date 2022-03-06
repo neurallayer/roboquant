@@ -53,7 +53,7 @@ class IBKRHistoricFeed(
      * So you cannot retrieve short barSize for a very long duration.
      */
     fun retrieve(
-        vararg assets: Asset,
+        assets: Collection<Asset>,
         endDate: Instant = Instant.now(),
         duration: String = "1 Y",
         barSize: String = "1 day",
@@ -66,6 +66,18 @@ class IBKRHistoricFeed(
             subscriptions[tickerId] = asset
         }
     }
+
+    /**
+     * Historical Data requests need to be assembled in such a way that only a few thousand bars are returned at a time.
+     * So you cannot retrieve short barSize for a very long duration.
+     */
+    fun retrieve(
+        vararg assets: Asset,
+        endDate: Instant = Instant.now(),
+        duration: String = "1 Y",
+        barSize: String = "1 day",
+        dataType: String = "TRADES"
+    ) = retrieve(assets.toList(), endDate, duration, barSize, dataType)
 
     fun waitTillRetrieved(maxMillis: Int = 10_000) {
         val endTime = Instant.now() + maxMillis.millis

@@ -241,7 +241,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
      */
     fun summary(title: String = "Cash"): Summary {
         val result = Summary(title)
-        val fmt = "│%10s│%14s│"
+        val fmt = "%8s│%14s│"
         val header = String.format(fmt, "currency", "amount")
         result.add(header)
         val currencies = currencies

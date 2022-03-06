@@ -24,18 +24,20 @@ fun interface PricingEngine {
 }
 
 /**
- * Pricing calclulator provided to OrderCommand to execute an order and disciver the price to be used.
+ * Pricing calclulator is provided as an argument [TradeOrderHandler.execute] when so it can determine the price to use
+ * when executing an order.
  */
 interface Pricing {
 
-
     /**
      * Get the lowest price for the provided [volume]. Default is the [marketPrice]
+     * Typivally this is used to evaluate if a limit or stop has been triggered.
      */
     fun lowPrice(volume: Double): Double = marketPrice(volume)
 
     /**
      * Get the highest price for the provided [volume]. Default is the [marketPrice]
+     * Typivally this is used to evaluate if a limit or stop has been triggered.
      */
     fun highPrice(volume: Double): Double = marketPrice(volume)
 

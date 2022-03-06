@@ -24,8 +24,6 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.csv.CSVConfig
-import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
@@ -37,21 +35,27 @@ import org.roboquant.strategies.EMACrossover
 import java.util.logging.Level
 
 fun ibkrBroker() {
-    val feed = CSVFeed("data/US", CSVConfig(priceAdjust = true))
-    Config.exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.2)
+    Config.exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.1)
+
+    val feed = IBKRLiveFeed()
+    val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
+    feed.subscribe(asset)
     val broker = IBKRBroker()
+    broker.account.fullSummary().print()
 
     val strategy = EMACrossover.midTerm()
-
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
     val tf = Timeframe.next(3.minutes)
     roboquant.run(feed, tf)
     broker.account.summary()
+
+    // Disconnect
     broker.disconnect()
+    feed.disconnect()
 }
 
 
-fun ibkrBroker2() {
+fun closePosition() {
     Logging.setLevel(Level.FINE)
     Logging.useSimpleFormat = false
     val broker = IBKRBroker(enableOrders = true)
@@ -59,10 +63,10 @@ fun ibkrBroker2() {
     account.fullSummary().print()
 
     // Now lets place a new market sell order
-    val asset = account.assets.findBySymbols("AAPL").first()
-    val order = MarketOrder(asset, -1.0)
+    val position = account.positions.first()
+    val order = MarketOrder(position.asset, -position.size)
     broker.place(listOf(order), Event.empty())
-    Thread.sleep(10000)
+    Thread.sleep(10_000)
     account.fullSummary().print()
     broker.disconnect()
 }
@@ -76,8 +80,7 @@ fun ibkrBrokerFeed() {
 
     // Subscribe to all assets in the portfolio
     val feed = IBKRLiveFeed()
-    val assets = broker.account.assets
-    feed.subscribe(*assets.toTypedArray())
+    feed.subscribe(broker.account.assets)
 
     val strategy = EMACrossover.shortTerm()
 
@@ -107,14 +110,18 @@ fun ibkrFeed() {
 }
 
 
-fun ibkrHistoricFeed() {
+fun ibkrHistoricFeedEU() {
     val feed = IBKRHistoricFeed()
+
+    // This assumes you have a valid market subscriptoin for European stocks
     val template = Asset("TEMPLATE", AssetType.STOCK, "EUR", "AEB")
-    feed.retrieve(template.copy(symbol = "ABN"), template.copy(symbol = "ASML"), template.copy(symbol = "KPN"))
+    val symbols = listOf("ABN", "ASML", "KPN")
+    val assets = symbols.map { template.copy(symbol = it) }
+    feed.retrieve(assets)
     feed.waitTillRetrieved()
 
-    val cash = Wallet(1_000_000.EUR)
-    val broker = SimBroker(cash)
+    val inititalDeposit = Wallet(100_000.EUR)
+    val broker = SimBroker(inititalDeposit)
 
     val strategy = EMACrossover.shortTerm()
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
@@ -126,12 +133,12 @@ fun ibkrHistoricFeed() {
 
 fun main() {
 
-    when ("HISTORIC") {
+    when ("BROKER") {
         "BROKER" -> ibkrBroker()
-        "BROKER2" -> ibkrBroker2()
+        "CLOSE_POSITION" -> closePosition()
         "FEED" -> ibkrFeed()
         "BROKER_FEED" -> ibkrBrokerFeed()
-        "HISTORIC" -> ibkrHistoricFeed()
+        "HISTORIC" -> ibkrHistoricFeedEU()
     }
 
 }

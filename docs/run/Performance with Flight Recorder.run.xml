@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Performance with Flight Recorder" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="org.roboquant.samples.PerformanceKt" />
+    <module name="roboquant-core" />
+    <shortenClasspath name="NONE" />
+    <option name="VM_PARAMETERS" value="-XX:+FlightRecorder -XX:StartFlightRecording=duration=30s,filename=roboquant_recording.jfr -XX:FlightRecorderOptions=stackdepth=256" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
