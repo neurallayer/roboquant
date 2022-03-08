@@ -16,6 +16,8 @@
 
 package org.roboquant.common
 
+import kotlinx.serialization.*
+
 /**
  * Asset is used to uniquely identify a financial instrument. So it can represent a stock, a future
  * or even a cryptocurrency. All of its properties are read-only, and assets are typically only created
@@ -32,6 +34,7 @@ package org.roboquant.common
  * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
  */
+@Serializable
 data class Asset(
     val symbol: String,
     val type: AssetType = AssetType.STOCK,
@@ -72,55 +75,6 @@ data class Asset(
         return if (quantity == 0.0) Amount(currency, 0.0) else Amount(currency, multiplier * price * quantity)
     }
 
-
-    /**
-     * Create a serialized string representation of this asset that can be later deserialized using the [deserialize]
-     * method. It optimizes the string length.
-     *
-     * @return
-     */
-    fun serialize(): String {
-        val sb = StringBuilder(symbol).append(SEP)
-        if (type != AssetType.STOCK) sb.append(type.name); sb.append(SEP)
-        if (currencyCode != "USD") sb.append(currencyCode); sb.append(SEP)
-        if (exchangeCode != "") sb.append(exchangeCode); sb.append(SEP)
-        if (multiplier != 1.0) sb.append(multiplier); sb.append(SEP)
-        if (details.isNotEmpty()) sb.append(details); sb.append(SEP)
-        if (name.isNotEmpty()) sb.append(name); sb.append(SEP)
-        if (id.isNotEmpty()) sb.append(id); sb.append(SEP)
-
-        var cnt = 0
-        for (ch in sb.reversed()) if (ch == SEP) cnt++ else break
-        return sb.substring(0, sb.length - cnt)
-    }
-
-    companion object {
-
-        /**
-         * Use the ASCII Unit Separator character. Should not interfere with most strings
-         */
-        private const val SEP = '\u001F'
-
-
-        /**
-         * Deserialize a string into an asset. The string needs to have been created using [serialize] method
-         */
-        fun deserialize(s: String): Asset {
-            val e = s.split(SEP)
-            val l = e.size
-            return Asset(
-                e[0],
-                if (l > 1 && e[1].isNotEmpty()) AssetType.valueOf(e[1]) else AssetType.STOCK,
-                if (l > 2 && e[2].isNotEmpty()) e[2] else "USD",
-                if (l > 3) e[3] else "",
-                if (l > 4 && e[4].isNotEmpty()) e[4].toDouble() else 1.0,
-                if (l > 5) e[5] else "",
-                if (l > 6) e[6] else "",
-                if (l > 7) e[7] else "",
-            )
-        }
-
-    }
 
     /**
      * Compares this object with the specified object for order. Returns zero if this object is equal

@@ -48,7 +48,7 @@ class AlpacaLiveFeed(
     accountType: AccountType = AccountType.PAPER,
     dataType: DataType = DataType.IEX,
     autoConnect: Boolean = true
-) : LiveFeed() {
+) : LiveFeed(), AssetFeed {
 
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
 
@@ -64,7 +64,7 @@ class AlpacaLiveFeed(
         availableAssets.associateBy { it.symbol }
     }
 
-    val assets
+    override val assets
         get() = assetsMap.values.toSortedSet()
 
 

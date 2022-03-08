@@ -21,10 +21,17 @@ import org.roboquant.RunPhase
 import org.roboquant.TestData
 import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.filter
 import org.roboquant.strategies.ta.TALib
+import org.roboquant.strategies.ta.TALibBatch
 import org.roboquant.strategies.utils.PriceBarBuffer
 import java.time.Instant
-import kotlin.test.*
+import kotlin.math.absoluteValue
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 internal class TAStrategyTest {
 
@@ -160,6 +167,22 @@ internal class TAStrategyTest {
         assertTrue(c.isFinite())
     }
 
+
+
+    @Test
+    fun testSma() {
+        val feed =  TestData.feed()
+        val asset = feed.assets.first()
+        val closingPrice = feed.filter<PriceBar> { it.asset == asset }.map { it.second.close }.toDoubleArray()
+        assertTrue(closingPrice.size > 30)
+
+        val emaBatch1 = TALibBatch.sma(closingPrice)
+        val emaBatch2 = TALibBatch.sma(closingPrice)
+        assertEquals(emaBatch1.last(), emaBatch2.last())
+
+        val ema = TALib.sma(closingPrice, 30)
+        assertTrue((emaBatch1.last() - ema).absoluteValue < 0.00001 )
+    }
 
     @Test
     fun test2() {

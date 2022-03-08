@@ -26,7 +26,6 @@ import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.avro.AvroFeed
-import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
@@ -39,110 +38,7 @@ import org.roboquant.metrics.ProgressMetric
 import org.roboquant.policies.BettingAgainstBeta
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.*
-import java.nio.file.Files
-import kotlin.io.path.Path
-import kotlin.io.path.div
-import kotlin.io.path.name
 import kotlin.system.measureTimeMillis
-
-fun large6() {
-
-    val dataHome = Path("/Users/peter/data")
-
-    fun getConfig(exchange: String): CSVConfig {
-        Exchange.getInstance(exchange)
-        return CSVConfig(
-            fileExtension = ".us.txt",
-            parsePattern = "??T?OHLCV?",
-            template = Asset("TEMPLATE", exchangeCode = exchange)
-        )
-    }
-
-    val config1 = getConfig("NASDAQ")
-    val config2 = getConfig("NYSE")
-    val path = dataHome / "stooq/daily/us/"
-    var feed: CSVFeed? = null
-
-    for (d in Files.list(path)) {
-        if (d.name.startsWith("nasdaq stocks")) {
-            val tmp = CSVFeed(d.toString(), config1)
-            if (feed === null) feed = tmp else feed.merge(tmp)
-        }
-    }
-
-    for (d in Files.list(path)) {
-        if (d.name.startsWith("nyse stocks")) {
-            val tmp = CSVFeed(d.toString(), config2)
-            if (feed === null) feed = tmp else feed.merge(tmp)
-        }
-    }
-
-    val avroPath = dataHome / "avro/us_stocks.avro"
-    AvroUtil.record(feed!!, avroPath.toString(), Timeframe.fromYears(1900, 2021), compressionLevel = 6)
-}
-
-
-
-fun small6() {
-
-    val dataHome = Path("/Users/peter/data")
-
-    fun getConfig(exchange: String): CSVConfig {
-        Exchange.getInstance(exchange)
-        return CSVConfig(
-            fileExtension = ".us.txt",
-            parsePattern = "??T?OHLCV?",
-            template = Asset("TEMPLATE", exchangeCode = exchange)
-        )
-    }
-
-    val config1 = getConfig("NASDAQ")
-    val config2 = getConfig("NYSE")
-    val path = dataHome / "stooq/daily/us2/"
-    var feed: CSVFeed? = null
-
-    for (d in Files.list(path)) {
-        if (d.name.startsWith("nasdaq stocks")) {
-            val tmp = CSVFeed(d.toString(), config1)
-            if (feed === null) feed = tmp else feed.merge(tmp)
-        }
-    }
-
-    for (d in Files.list(path)) {
-        if (d.name.startsWith("nyse stocks")) {
-            val tmp = CSVFeed(d.toString(), config2)
-            if (feed === null) feed = tmp else feed.merge(tmp)
-        }
-    }
-
-    // val avroPath = dataHome / "avro/us_2000_2021.avro"
-    // AvroUtil.record(feed!!, avroPath.toString(), TimeFrame.fromYears(2000, 2021), 6)
-    val avroPath = dataHome / "avro/us_stocks_small.avro"
-    AvroUtil.record(feed!!, avroPath.toString(), Timeframe.fromYears(1900, 2021), compressionLevel = 6)
-
-}
-
-fun largeRead() {
-    val dataHome = Path("/Users/peter/data")
-    val avroPath = dataHome / "avro/us_stocks.avro"
-
-
-    val t = measureTimeMillis {
-        val feed = AvroFeed(avroPath.toString(), useIndex = false)
-        val strategy = EMACrossover()
-
-        val roboquant = Roboquant(strategy, AccountSummary())
-        roboquant.run(feed)
-        // val broker = roboquant.broker as SimBroker
-        // broker.liquidatePortfolio()
-        roboquant.broker.account.summary().log()
-    }
-    println(t)
-
-
-
-}
-
 
 fun volatility() {
     val feed = AvroFeed.sp500()
@@ -235,25 +131,6 @@ fun testingStrategies() {
 
 
 
-fun avro() {
-    val feed = AvroFeed("/data/assets/avro/universe.avro")
-    val strategy = EMACrossover()
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
-    roboquant.run(feed, Timeframe.fromYears(1960, 2021))
-    logger.summary().print()
-}
-
-
-fun avroGen() {
-    // val feed = CSVFeed("/data/assets/stock-market/stocks/")
-    val feed = CSVFeed("/Users/peter/data/individual_stocks_5yr", CSVConfig("_data.csv"))
-    val t = measureTimeMillis {
-        val file = "/Users/peter/tmp/5yr_sp500.avro"
-        AvroUtil.record(feed, file)
-    }
-    println(t)
-}
 
 fun trendFollowing2() {
     val feed = AvroFeed.sp500()
@@ -274,22 +151,6 @@ fun trendFollowing2() {
 }
 
 
-fun avroCapture() {
-    val feed = CSVFeed("data/US")
-
-    val avroFile = "/Users/peter/data/avro/tmp.avro"
-    //val feed = CSVFeed("/data/assets/individual_stocks_5yr", CSVConfig("_data.csv"))
-    AvroUtil.record(feed, avroFile)
-
-    val feed2 = AvroFeed(avroFile, useIndex = true)
-    val strategy = EMACrossover()
-
-    val roboquant = Roboquant(strategy, ProgressMetric())
-    roboquant.run(feed2)
-    roboquant.broker.account.summary().log()
-    roboquant.broker.account.trades.summary().log()
-
-}
 
 
 fun beta() {
@@ -333,25 +194,15 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("BETA") {
-        // "CRYPTO" -> crypto()
+    when ("TEST_AVRO") {
         "BETA" -> beta()
         "BETA2" -> beta2()
-        "LARGE6" -> large6()
-        "SMALL6" -> small6()
-        "LARGEREAD" -> largeRead()
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println( measureTimeMillis {  walkforwardParallel() })
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()
         "TREND2" -> trendFollowing2()
-        "AVRO" -> avro()
-        "AVRO_GEN" -> avroGen()
-        "AVRO_CAP" -> avroCapture()
         "VOLATILITY" -> volatility()
-        "AVRO_ALL" -> {
-            avroGen(); avro()
-        }
 
     }
 

@@ -135,6 +135,7 @@
                             <!-- arg>-Xexplicit-api=strict</arg -->
                         </args>
                     </configuration>
+
                 </plugin>
 
                 <!-- Make sure we have the latest versions of std maven plugins -->
@@ -242,6 +243,7 @@
                 <version>${kotlin.version}</version>
             </dependency>
 
+
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-test-junit</artifactId>
@@ -255,11 +257,6 @@
                 <version>1.6.0</version>
             </dependency>
 
-            <!-- dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-reflect</artifactId>
-                <version>${kotlin.version}</version>
-            </dependency -->
 
             <dependency>
                 <artifactId>roboquant-core</artifactId>

@@ -25,6 +25,7 @@ import org.knowm.xchange.dto.marketdata.Trade
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import java.time.Instant
+import java.util.TreeSet
 import org.knowm.xchange.dto.marketdata.OrderBook as CryptoOrderBook
 
 /**
@@ -50,7 +51,7 @@ import org.knowm.xchange.dto.marketdata.OrderBook as CryptoOrderBook
 class XChangeLiveFeed(
     exchange: StreamingExchange,
     private val useMachineTime: Boolean = true
-) : LiveFeed() {
+) : LiveFeed(), AssetFeed {
 
     private val logger = Logging.getLogger(XChangeLiveFeed::class)
     private val service: StreamingMarketDataService = exchange.streamingMarketDataService
@@ -74,7 +75,7 @@ class XChangeLiveFeed(
     /**
      * Assets that are subscribed to
      */
-    val assets = mutableSetOf<Asset>()
+    override val assets = TreeSet<Asset>()
 
 
     init {
