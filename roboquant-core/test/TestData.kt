@@ -23,9 +23,8 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import org.roboquant.common.USD
 import org.roboquant.common.days
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.TradePrice
+import org.roboquant.feeds.*
+import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderState
@@ -33,6 +32,9 @@ import org.roboquant.orders.OrderStatus
 import java.io.File
 import java.time.Instant
 
+/**
+ * Test data used in unit tests
+ */
 object TestData {
 
     fun usStock() = Asset("XYZ")
@@ -65,6 +67,10 @@ object TestData {
     }
 
     fun euStock() = Asset("ABC", currencyCode = "EUR", exchangeCode = "AEB")
+
+    fun feed() : HistoricFeed {
+        return HistoricTestFeed(90..110, 110 downTo 80, 80..125, priceBar = true, asset = usStock())
+    }
 
     fun dataDir(): String {
         if (File("./data").isDirectory)

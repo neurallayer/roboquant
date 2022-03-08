@@ -18,6 +18,8 @@
 
 package org.roboquant.feeds.avro
 
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.apache.avro.file.DataFileReader
 import org.apache.avro.generic.GenericDatumReader
 import org.apache.avro.generic.GenericRecord
@@ -25,14 +27,12 @@ import org.roboquant.common.*
 import org.roboquant.feeds.*
 import java.io.File
 import java.io.InputStream
-import java.lang.Exception
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.time.Instant
-
 
 /**
  * Read price data from a single file in Avro format. This feed loads data lazy and disposes of it afterwards, so
@@ -46,6 +46,8 @@ import java.time.Instant
  * @constructor Create new Avro Feed
  */
 class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFeed {
+
+    constructor(path:Path, useIndex: Boolean = true) : this(path.toString(), useIndex)
 
     private val assetLookup = mutableMapOf<String, Asset>()
     internal val index = mutableListOf<Pair<Instant, Long>>()
@@ -75,12 +77,15 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
         index.clear()
         var last = Long.MIN_VALUE
 
+
+
         getReader().use {
             while (it.hasNext()) {
                 val rec = it.next()
                 val t = rec[0] as Long
                 val asset = rec[1].toString()
-                if (!assetLookup.containsKey(asset)) assetLookup[asset] = Asset.deserialize(asset)
+                // if (!assetLookup.containsKey(asset)) assetLookup[asset] = Asset.deserialize(asset)
+                if (!assetLookup.containsKey(asset)) assetLookup[asset] = Json.decodeFromString(asset)
                 if (t > last) {
                     val pos = it.previousSync()
                     val time = Instant.ofEpochMilli(t)
@@ -127,7 +132,7 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
                 if (now > timeframe) break
 
                 val assetId = rec.get(1).toString()
-                val asset = assetLookup.getOrPut(assetId) { Asset.deserialize(assetId) }
+                val asset = assetLookup.getOrPut(assetId) { Json.decodeFromString(assetId) }
                 val actionType = rec.get(2) as Int
 
                 @Suppress("UNCHECKED_CAST")
@@ -151,8 +156,8 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
 
     companion object {
         private val logger = Logging.getLogger(AvroFeed::class)
-        private const val sp500File = "5yr_sp500_v1.1.avro"
-        private const val testFile = "us_stocks_test_v1.1.avro"
+        private const val sp500File = "5yr_sp500_v2.0.avro"
+        private const val smallFile = "us_small_daily_v2.0.avro"
 
         /**
          * 5 years worth of end of day [PriceBar] data for the companies listed in the S&P 500
@@ -166,7 +171,7 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
          * Small avro file with end of day [PriceBar] data 6 us stocks: AAPL, AMZN, TSLA, IBM, JNJ and JPM
          */
         fun usTest(): AvroFeed {
-            val path = download(testFile)
+            val path = download(smallFile)
             return AvroFeed(path.toString())
         }
 

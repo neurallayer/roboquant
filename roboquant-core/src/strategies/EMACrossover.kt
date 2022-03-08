@@ -47,7 +47,7 @@ class EMACrossover(
 
     val fast = 1.0 - (smoothing / (fastPeriod + 1))
     val slow = 1.0 - (smoothing / (slowPeriod + 1))
-    private val calculators = HashMap<Asset, EMACalculator>()
+    private val calculators = mutableMapOf<Asset, EMACalculator>()
 
     companion object Factory {
         /**

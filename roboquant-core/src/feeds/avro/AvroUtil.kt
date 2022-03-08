@@ -19,6 +19,8 @@ package org.roboquant.feeds.avro
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.apache.avro.Schema
 import org.apache.avro.file.CodecFactory
 import org.apache.avro.file.DataFileWriter
@@ -59,7 +61,13 @@ object AvroUtil {
     /**
      * Record the price actions in a feed and store them in a avro file that can be used with [AvroFeed].
      */
-    fun record(feed: Feed, fileName: String, timeframe: Timeframe = Timeframe.INFINITY, compressionLevel: Int = 1) =
+    fun record(
+        feed: Feed,
+        fileName: String,
+        timeframe: Timeframe = Timeframe.INFINITY,
+        includeAssetsOnly: Set<Asset> = emptySet(),
+        compressionLevel: Int = 1
+    ) =
         runBlocking {
 
             val channel = EventChannel(timeframe = timeframe)
@@ -85,14 +93,25 @@ object AvroUtil {
                     val event = channel.receive()
                     val now = event.time.toEpochMilli()
                     for (action in event.actions.filterIsInstance<PriceAction>()) {
-                        val assetStr = cache.getOrPut(action.asset) { action.asset.serialize() }
+                        val asset = action.asset
+                        if (includeAssetsOnly.isNotEmpty() && ! includeAssetsOnly.contains(asset)) continue
+                        // val assetStr = cache.getOrPut(action.asset) { action.asset.serialize() }
+                        val assetStr = cache.getOrPut(asset) { Json.encodeToString(asset) }
                         record.put(0, now)
                         record.put(1, assetStr)
-                        val values : List<Double> = when (action) {
-                            is PriceBar -> { record.put(2, 1); action.values }
-                            is TradePrice -> { record.put(2, 2); action.values }
-                            is PriceQuote -> { record.put(2, 3); action.values }
-                            is OrderBook -> { record.put(2, 4); action.values }
+                        val values: List<Double> = when (action) {
+                            is PriceBar -> {
+                                record.put(2, 1); action.values
+                            }
+                            is TradePrice -> {
+                                record.put(2, 2); action.values
+                            }
+                            is PriceQuote -> {
+                                record.put(2, 3); action.values
+                            }
+                            is OrderBook -> {
+                                record.put(2, 4); action.values
+                            }
                             else -> {
                                 logger.warning("Unsupported price action encountered $action")
                                 continue

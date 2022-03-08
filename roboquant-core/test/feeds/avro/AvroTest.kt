@@ -29,10 +29,7 @@ import org.roboquant.feeds.random.RandomWalk
 import java.io.File
 import java.time.Instant
 import kotlin.io.path.div
-import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class AvroTest {
@@ -103,16 +100,19 @@ class AvroTest {
         val feed2 = AvroFeed.usTest()
         assertTrue(feed2.assets.size == 6)
         assertContains(feed2.assets.map { it.symbol }, "AAPL")
-        assertTrue(feed2.timeframe.start < Instant.parse("1963-01-01T00:00:00Z"))
     }
 
     @Test
     fun loadFromGithub() {
         Config.getProperty("FULL_COVERAGE") ?: return
-        val file = (Config.home / "us_stocks_test_v1.1.avro").toFile()
+        val file = (Config.home / "us_small_daily_v2.0.avro").toFile()
         file.delete()
+        assertFalse(file.exists())
         val feed = AvroFeed.usTest()
         assertTrue(feed.assets.size == 6)
+
+        val file2 = (Config.home / "us_small_daily_v2.0.avro").toFile()
+        assertTrue(file2.exists())
     }
 
 

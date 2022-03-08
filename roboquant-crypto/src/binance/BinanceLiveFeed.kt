@@ -20,6 +20,7 @@ import com.binance.api.client.domain.event.CandlestickEvent
 import com.binance.api.client.domain.market.CandlestickInterval
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
+import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.PriceBar
@@ -36,7 +37,7 @@ typealias Interval = CandlestickInterval
  *
  */
 class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private val useMachineTime: Boolean = true) :
-    LiveFeed() {
+    LiveFeed(), AssetFeed {
 
 
     private val subscriptions = mutableMapOf<String, Asset>()
@@ -48,8 +49,8 @@ class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private va
     /**
      * Get the assets that has been subscribed to
      */
-    val assets
-        get() = subscriptions.values.distinct().toSortedSet()
+    override val assets
+        get() = subscriptions.values.toSortedSet()
 
 
     val availableAssets by lazy {

@@ -19,10 +19,7 @@ package org.roboquant.iex
 import iex.IEXConnection
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
-import org.roboquant.feeds.Action
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.LiveFeed
-import org.roboquant.feeds.TradePrice
+import org.roboquant.feeds.*
 import pl.zankowski.iextrading4j.api.marketdata.Trade
 import pl.zankowski.iextrading4j.api.stocks.Quote
 import pl.zankowski.iextrading4j.client.IEXCloudClient
@@ -49,15 +46,14 @@ class IEXLiveFeed(
     secretKey: String? = null,
     sandbox: Boolean = true,
     private val useMachineTime: Boolean = true
-) :
-    LiveFeed() {
+) : LiveFeed(), AssetFeed {
 
     private val logger = Logging.getLogger(IEXLiveFeed::class)
     private val client: IEXCloudClient
     private val assetMap = mutableMapOf<String, Asset>()
 
-    val assets
-        get() = assetMap.values.distinct()
+    override val assets
+        get() = assetMap.values.toSortedSet()
 
     init {
         client = IEXConnection.getClient(publicKey, secretKey, sandbox)

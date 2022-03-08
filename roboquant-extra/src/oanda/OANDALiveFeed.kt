@@ -29,6 +29,7 @@ import org.apache.http.util.EntityUtils
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.ParallelJobs
+import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.OrderBook
@@ -44,7 +45,7 @@ class OANDALiveFeed(
     accountID: String? = null,
     token: String? = null,
     private val demoAccount: Boolean = true
-) : LiveFeed() {
+) : LiveFeed(), AssetFeed {
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
     private val assetMap = mutableMapOf<String, Asset>()
@@ -57,7 +58,7 @@ class OANDALiveFeed(
         OANDA.getAvailableAssets(ctx, this.accountID)
     }
 
-    val assets
+    override val assets
         get() = assetMap.values.toSortedSet()
 
     fun subscribePrices(vararg symbols: String) {
