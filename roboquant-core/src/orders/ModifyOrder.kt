@@ -32,7 +32,8 @@ class UpdateOrder(
     val original: OrderState,
     val update: SingleOrder,
     id: Int = nextId(),
-) : Order(original.order.asset, id) {
+    tag: String = ""
+) : Order(original.order.asset, id, tag) {
 
     init {
         require(original.order::class == update::class) { "update orders cannot change order type"}
@@ -51,7 +52,8 @@ class UpdateOrder(
 class CancelOrder(
     val order: OrderState,
     id: Int = nextId(),
-) : Order(order.order.asset, id) {
+    tag: String = ""
+) : Order(order.order.asset, id, tag) {
 
     init {
         require(order.status.open) { "Only open orders can be cancelled"}

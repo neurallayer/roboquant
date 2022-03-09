@@ -30,7 +30,7 @@ import org.roboquant.common.Asset
  * - cancellation of an existing order
  * - update of an existing order
  **/
-abstract class Order(val asset: Asset, val id: Int) {
+abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
 
     companion object {
 
@@ -48,7 +48,7 @@ abstract class Order(val asset: Asset, val id: Int) {
     }
 
     override fun toString(): String {
-        return "$type id=$id asset=$asset ${info()}"
+        return "$type id=$id asset=$asset tag=$tag ${info()}"
     }
 
     /**

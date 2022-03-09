@@ -23,7 +23,7 @@ import org.roboquant.common.Asset
  * SingleOrder types are plain non-combined orders with a pre-defined quantity and Time in Force policy. Many well-known
  * order types fall under this category, like Market-, Limit- and Trail-orders.
  */
-abstract class SingleOrder(asset: Asset, val quantity: Double, val tif: TimeInForce, id: Int) : Order(asset, id) {
+abstract class SingleOrder(asset: Asset, val quantity: Double, val tif: TimeInForce, id: Int, tag: String = "") : Order(asset, id, tag) {
 
 
     init {
@@ -66,7 +66,8 @@ class MarketOrder(
     quantity: Double,
     tif: TimeInForce = GTC(),
     id: Int = nextId(),
-) : SingleOrder(asset, quantity, tif, id) {
+    tag: String = ""
+) : SingleOrder(asset, quantity, tif, id, tag) {
 
     override fun info() = sortedMapOf("quantity" to quantity, "tif" to tif)
 
@@ -90,7 +91,8 @@ class LimitOrder(
     val limit: Double,
     tif: TimeInForce = GTC(),
     id: Int = nextId(),
-) : SingleOrder(asset, quantity, tif, id) {
+    tag: String = ""
+) : SingleOrder(asset, quantity, tif, id, tag) {
 
     override fun info() = sortedMapOf("quantity" to quantity, "limit" to limit, "tif" to tif)
 
@@ -113,7 +115,8 @@ class StopOrder(
     val stop: Double,
     tif: TimeInForce = GTC(),
     id: Int = nextId(),
-) : SingleOrder(asset, quantity, tif, id) {
+    tag: String = ""
+) : SingleOrder(asset, quantity, tif, id, tag) {
 
     override fun info() = sortedMapOf("quantity" to quantity, "stop" to stop, "tif" to tif)
 }
@@ -137,7 +140,8 @@ class StopLimitOrder(
     val limit: Double,
     tif: TimeInForce = GTC(),
     id: Int = nextId(),
-) : SingleOrder(asset, quantity, tif, id) {
+    tag: String = ""
+) : SingleOrder(asset, quantity, tif, id, tag) {
 
     override fun info() = sortedMapOf("quantity" to quantity, "stop" to stop, "limit" to limit, "tif" to tif)
 }
@@ -158,7 +162,8 @@ open class TrailOrder(
     val trailPercentage: Double,
     tif: TimeInForce = GTC(),
     id: Int = nextId(),
-) : SingleOrder(asset, quantity, tif, id) {
+    tag: String = ""
+) : SingleOrder(asset, quantity, tif, id, tag) {
 
     init {
         require(trailPercentage > 0.0) { "trailPrecentage should be a positive value" }
@@ -190,7 +195,8 @@ class TrailLimitOrder(
     val limitOffset: Double,
     tif: TimeInForce = GTC(),
     id: Int = nextId(),
-) : TrailOrder(asset, quantity, trailPercentage, tif, id) {
+    tag: String = ""
+) : TrailOrder(asset, quantity, trailPercentage, tif, id, tag) {
 
     override fun info() = sortedMapOf(
         "quantity" to quantity,
