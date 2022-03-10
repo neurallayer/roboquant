@@ -18,7 +18,6 @@ package org.roboquant.orders
 
 import org.roboquant.common.Asset
 
-
 /**
  * Order is an instruction for a broker to initiate a certain action. An order is always associated with a
  * single [asset].
@@ -65,10 +64,6 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
     open fun info() : Map<String, Any> = emptyMap()
 
 }
-
-
-val Collection<Order>.initialOrderState
-    get() = map { OrderState(it, OrderStatus.INITIAL)}
 
 
 

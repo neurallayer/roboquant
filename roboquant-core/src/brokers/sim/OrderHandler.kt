@@ -1,6 +1,5 @@
 package org.roboquant.brokers.sim
 
-import org.roboquant.orders.OrderState
 import java.time.Instant
 
 /**
@@ -16,7 +15,7 @@ sealed interface OrderHandler {
     /**
      * What is the order state
      */
-    var state: OrderState
+    var state: SimOrderState
 
     /**
      * Convenience attribute

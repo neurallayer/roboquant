@@ -21,6 +21,8 @@ import ibkr.BaseWrapper
 import com.ib.client.OrderState as IBOrderSate
 import com.ib.client.OrderStatus as IBOrderStatus
 import org.roboquant.brokers.*
+import org.roboquant.brokers.sim.SimOrderState
+import org.roboquant.brokers.sim.initialOrderState
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
@@ -201,7 +203,7 @@ class IBKRBroker(
                 if (orderState.completedStatus() == "true") {
                     val slip = _account.openOrders[openOrder]
                     if (slip != null) _account.putOrder(
-                        OrderState(
+                        SimOrderState(
                             slip.order,
                             OrderStatus.COMPLETED,
                             closedAt = Instant.parse(orderState.completedTime())
@@ -211,7 +213,7 @@ class IBKRBroker(
             } else {
                 val newOrder = toOrder(order, contract)
                 orderMap[orderId] = newOrder.id
-                _account.putOrder(OrderState(newOrder))
+                _account.putOrder(SimOrderState(newOrder))
             }
         }
 
@@ -226,7 +228,7 @@ class IBKRBroker(
                 logger.warning { "Received unknown open order with orderId $orderId" }
             else {
                 val slip = _account.openOrders[id]
-                if (slip != null) {
+                if (slip != null && slip is SimOrderState) {
                     val newStatus = toStatus(status!!)
                     val orderState = slip.copy(status = newStatus)
                     _account.putOrder(orderState)

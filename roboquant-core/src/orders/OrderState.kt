@@ -1,66 +1,19 @@
-/*
- * Copyright 2021 Neural Layer
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.roboquant.orders
 
+import org.roboquant.common.Asset
+import org.roboquant.orders.OrderStatus.*
 import java.time.Instant
 
-/**
- * Part of order processing that can change
- */
-data class OrderState(
-    val order: Order,
-    val status: OrderStatus = OrderStatus.INITIAL,
-    val openedAt: Instant = Instant.MIN,
-    val closedAt: Instant = Instant.MAX
-) {
-
-    val open
-        get() = status.open
-
-    val closed
-        get() = status.closed
-
-    val asset
-        get() = order.asset
-
-    val id
-        get() = order.id
-
-    /**
-     * Update the order state and return the new order state (if applicable)
-     *
-     * @param time
-     * @param newStatus
-     * @return
-     */
-    fun update(time: Instant, newStatus: OrderStatus = OrderStatus.ACCEPTED) : OrderState {
-        return if (newStatus === OrderStatus.ACCEPTED && status === OrderStatus.INITIAL) {
-            OrderState(order, newStatus, time)
-        } else if (newStatus.closed && status.open) {
-            val openTime = if (openedAt === Instant.MIN) time else openedAt
-            OrderState(order, newStatus, openTime, time)
-        } else {
-            this
-        }
-    }
-
+interface OrderState {
+    val order: Order
+    val status: OrderStatus
+    val openedAt: Instant
+    val closedAt: Instant
+    val open: Boolean
+    val closed: Boolean
+    val asset: Asset
+    val id: Int
 }
-
-
 
 
 /**

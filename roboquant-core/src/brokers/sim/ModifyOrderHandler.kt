@@ -11,15 +11,15 @@ private fun List<OrderHandler>.getSingleOrderHandler(id: Int) = filterIsInstance
 
 internal class UpdateOrderHandler(val order: UpdateOrder) : ModifyOrderHandler {
 
-    override var state: OrderState = OrderState(order)
+    override var state: SimOrderState = SimOrderState(order)
 
     override fun execute(handlers: List<OrderHandler>, time: Instant) {
         val handler = handlers.getSingleOrderHandler(order.original.id)
         state = if (handler != null && handler.state.status.open) {
             handler.order = order.update
-            OrderState(order, OrderStatus.COMPLETED, time, time)
+            SimOrderState(order, OrderStatus.COMPLETED, time, time)
         } else {
-            OrderState(order, OrderStatus.REJECTED, time, time)
+            SimOrderState(order, OrderStatus.REJECTED, time, time)
         }
 
     }
@@ -28,15 +28,15 @@ internal class UpdateOrderHandler(val order: UpdateOrder) : ModifyOrderHandler {
 
 internal class CancelOrderHandler(val order: CancelOrder) : ModifyOrderHandler {
 
-    override var state: OrderState = OrderState(order)
+    override var state: SimOrderState = SimOrderState(order)
 
     override fun execute(handlers: List<OrderHandler>, time: Instant) {
         val handler = handlers.getSingleOrderHandler(order.order.id)
         state = if (handler != null && handler.state.status.open) {
             handler.state = handler.state.update(time, OrderStatus.EXPIRED)
-            OrderState(order, OrderStatus.COMPLETED, time, time)
+            SimOrderState(order, OrderStatus.COMPLETED, time, time)
         } else {
-            OrderState(order, OrderStatus.REJECTED, time, time)
+            SimOrderState(order, OrderStatus.REJECTED, time, time)
         }
     }
 }

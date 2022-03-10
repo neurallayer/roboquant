@@ -14,7 +14,7 @@ abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHan
     internal val remaining
         get() = qty - fill
 
-    override var state: OrderState = OrderState(order)
+    override var state: SimOrderState = SimOrderState(order)
 
     /**
      * Validate TiF policy and return true if order has expired according to the policy.

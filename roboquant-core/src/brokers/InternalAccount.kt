@@ -16,6 +16,7 @@
 
 package org.roboquant.brokers
 
+import org.roboquant.brokers.sim.SimOrderState
 import org.roboquant.common.*
 import org.roboquant.common.Config.baseCurrency
 import org.roboquant.feeds.Event
@@ -23,7 +24,6 @@ import org.roboquant.orders.Order
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
-
 
 /**
  * Internal Account is only used by broker implementations, like the SimBroker. The broker is the only one with a
@@ -137,7 +137,7 @@ class InternalAccount (
      * @param time
      */
     fun rejectOrder(order: Order, time: Instant) {
-        putOrder(OrderState(order, OrderStatus.REJECTED, time, time))
+        putOrder(SimOrderState(order, OrderStatus.REJECTED, time, time))
     }
 
     /**
@@ -147,7 +147,7 @@ class InternalAccount (
      * @param time
      */
     fun acceptOrder(order: Order, time: Instant) {
-        putOrder(OrderState(order, OrderStatus.ACCEPTED, time, time))
+        putOrder(SimOrderState(order, OrderStatus.ACCEPTED, time, time))
     }
 
     /**
