@@ -16,6 +16,7 @@
 
 package org.roboquant.brokers.sim
 
+import org.roboquant.brokers.InternalAccount
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
@@ -30,6 +31,8 @@ data class SimOrderState(
     override val openedAt: Instant = Instant.MIN,
     override val closedAt: Instant = Instant.MAX
 ) : OrderState {
+
+
 
     override val open
         get() = status.open
@@ -63,7 +66,25 @@ data class SimOrderState(
 
 }
 
+/**
+ * Reject an order
+ *
+ * @param order
+ * @param time
+ */
+fun InternalAccount.rejectOrder(order: Order, time: Instant) {
+    putOrder(SimOrderState(order, OrderStatus.REJECTED, time, time))
+}
 
+/**
+ * Accept an order
+ *
+ * @param order
+ * @param time
+ */
+fun InternalAccount.acceptOrder(order: Order, time: Instant) {
+    putOrder(SimOrderState(order, OrderStatus.ACCEPTED, time, time))
+}
 
 
 val Collection<Order>.initialOrderState

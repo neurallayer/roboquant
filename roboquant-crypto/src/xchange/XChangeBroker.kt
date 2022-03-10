@@ -21,6 +21,8 @@ import org.knowm.xchange.currency.CurrencyPair
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.InternalAccount
+import org.roboquant.brokers.sim.acceptOrder
+import org.roboquant.brokers.sim.rejectOrder
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging

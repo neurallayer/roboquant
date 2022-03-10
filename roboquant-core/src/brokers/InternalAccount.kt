@@ -16,13 +16,10 @@
 
 package org.roboquant.brokers
 
-import org.roboquant.brokers.sim.SimOrderState
 import org.roboquant.common.*
 import org.roboquant.common.Config.baseCurrency
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
 import org.roboquant.orders.OrderState
-import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
@@ -130,25 +127,7 @@ class InternalAccount (
         for (orderState in orderStates) putOrder(orderState)
     }
 
-    /**
-     * Reject an order
-     *
-     * @param order
-     * @param time
-     */
-    fun rejectOrder(order: Order, time: Instant) {
-        putOrder(SimOrderState(order, OrderStatus.REJECTED, time, time))
-    }
 
-    /**
-     * Accept an order
-     *
-     * @param order
-     * @param time
-     */
-    fun acceptOrder(order: Order, time: Instant) {
-        putOrder(SimOrderState(order, OrderStatus.ACCEPTED, time, time))
-    }
 
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]
