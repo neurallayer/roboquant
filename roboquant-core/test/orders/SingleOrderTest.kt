@@ -34,6 +34,14 @@ internal class SingleOrderTest {
         assertTrue(order.toString().isNotBlank())
     }
 
+    @Test
+    fun testOrderTag() {
+        val asset = TestData.usStock()
+        val order = MarketOrder(asset, 100.0, tag = "test")
+        assertEquals("test", order.tag)
+    }
+
+
 
     @Test
     fun testStopOrder() {
