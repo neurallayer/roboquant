@@ -76,9 +76,7 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
     private fun buildIndex() {
         index.clear()
         var last = Long.MIN_VALUE
-
-
-
+        
         getReader().use {
             while (it.hasNext()) {
                 val rec = it.next()

@@ -12,7 +12,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.io.path.name
 
-val dataHome = Path("/Users/peter/data")
+val dataHome = Path(System.getProperty("user.home")) / "data"
 
 fun getAvroFile(type: String = "daily"): Path {
     return dataHome / "avro/us_stocks_$type.avro"
@@ -65,25 +65,15 @@ fun large(type: String) {
  * - 1_000 events
  * - included symbols are "AAPL", "AMZN", "TSLA", "IBM", "JNJ", "JPM"
  */
-fun small() {
+fun small(type: String) {
     val events = 1_000
 
-    var feed = AvroFeed(getAvroFile("daily"))
+    val feed = AvroFeed(getAvroFile(type))
     val symbols = setOf("AAPL", "AMZN", "TSLA", "IBM", "JNJ", "JPM")
     val assets = feed.assets.filter { it.symbol in symbols }.toSet()
 
-    var file = dataHome / "avro/us_small_daily_v2.0.avro"
-    var timeframe = feed.timeline.takeLast(events).timeframe
-    AvroUtil.record(feed, file.toString(), timeframe, includeAssetsOnly = assets)
-
-    feed = AvroFeed(getAvroFile("hourly"))
-    file = dataHome / "avro/us_small_hourly_v2.0.avro"
-    timeframe = feed.timeline.takeLast(events).timeframe
-    AvroUtil.record(feed, file.toString(), timeframe, includeAssetsOnly = assets)
-
-    feed = AvroFeed(getAvroFile("5 min"))
-    file = dataHome / "avro/us_small_5min_v2.0.avro"
-    timeframe = feed.timeline.takeLast(events).timeframe
+    val file = dataHome / "avro/us_small_${type}_v2.0.avro"
+    val timeframe = feed.timeline.takeLast(events).timeframe
     AvroUtil.record(feed, file.toString(), timeframe, includeAssetsOnly = assets)
 }
 
@@ -98,25 +88,24 @@ fun fiveYear_sp500() {
     AvroUtil.record(feed, avroFile.toString(), Timeframe.fromYears(2016, 2020), includeAssetsOnly = assets)
 }
 
-
-
-
 fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("ALL") {
+    when ("SMALL") {
         "LARGE" -> {
             large("daily"); large("hourly"); large("5 min")
         }
         "5YEAR_SP500" -> fiveYear_sp500()
-        "SMALL" -> small()
+        "SMALL" -> {
+            small("daily"); small("hourly"); small("5 min")
+        }
         "ALL" -> {
             // First generate the large feeds since they are used by the others
             large("daily"); large("hourly"); large("5 min")
 
-            // No the small feeds
-            small()
+            // Now the small feeds
+            small("daily"); small("hourly"); small("5 min")
 
             // And the 5 year S&P 500
             fiveYear_sp500()
