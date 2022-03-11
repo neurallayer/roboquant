@@ -128,7 +128,7 @@ object AvroUtil {
                     dataFileWriter.sync()
                 }
 
-            } catch (e: ClosedReceiveChannelException) {
+            } catch (_: ClosedReceiveChannelException) {
                 // On purpose left empty, expected exception
             } finally {
                 channel.close()

@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.roboquant.brokers.sim
+package org.roboquant.brokers
 
-import org.roboquant.brokers.InternalAccount
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
@@ -25,7 +24,7 @@ import java.time.Instant
 /**
  * Part of order processing that can change
  */
-data class SimOrderState(
+data class DefaultOrderState(
     override val order: Order,
     override val status: OrderStatus = OrderStatus.INITIAL,
     override val openedAt: Instant = Instant.MIN,
@@ -53,12 +52,12 @@ data class SimOrderState(
      * @param newStatus
      * @return
      */
-    fun update(time: Instant, newStatus: OrderStatus = OrderStatus.ACCEPTED) : SimOrderState {
+    fun update(time: Instant, newStatus: OrderStatus = OrderStatus.ACCEPTED) : DefaultOrderState {
         return if (newStatus === OrderStatus.ACCEPTED && status === OrderStatus.INITIAL) {
-            SimOrderState(order, newStatus, time)
+            DefaultOrderState(order, newStatus, time)
         } else if (newStatus.closed && status.open) {
             val openTime = if (openedAt === Instant.MIN) time else openedAt
-            SimOrderState(order, newStatus, openTime, time)
+            DefaultOrderState(order, newStatus, openTime, time)
         } else {
             this
         }
@@ -73,7 +72,7 @@ data class SimOrderState(
  * @param time
  */
 fun InternalAccount.rejectOrder(order: Order, time: Instant) {
-    putOrder(SimOrderState(order, OrderStatus.REJECTED, time, time))
+    putOrder(DefaultOrderState(order, OrderStatus.REJECTED, time, time))
 }
 
 /**
@@ -83,10 +82,10 @@ fun InternalAccount.rejectOrder(order: Order, time: Instant) {
  * @param time
  */
 fun InternalAccount.acceptOrder(order: Order, time: Instant) {
-    putOrder(SimOrderState(order, OrderStatus.ACCEPTED, time, time))
+    putOrder(DefaultOrderState(order, OrderStatus.ACCEPTED, time, time))
 }
 
 
 val Collection<Order>.initialOrderState
-    get() = map { SimOrderState(it, OrderStatus.INITIAL) }
+    get() = map { DefaultOrderState(it, OrderStatus.INITIAL) }
 

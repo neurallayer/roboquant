@@ -1,10 +1,7 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.TestData
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.Broker
-import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.brokers.marketValue
+import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
@@ -27,7 +24,7 @@ internal class AccountModelTest {
         assertEquals(result, account.cash.getAmount(result.currency))
 
         val order = MarketOrder(TestData.usStock(), 100.0)
-        val state = SimOrderState(order, OrderStatus.ACCEPTED, Instant.now())
+        val state = DefaultOrderState(order, OrderStatus.ACCEPTED, Instant.now())
         account.putOrders(listOf(state))
         val result2 = uc.calculate(account)
 

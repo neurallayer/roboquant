@@ -27,7 +27,7 @@ import com.binance.api.client.domain.account.request.OrderRequest
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.InternalAccount
-import org.roboquant.brokers.sim.SimOrderState
+import org.roboquant.brokers.DefaultOrderState
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
@@ -102,7 +102,7 @@ class BinanceBroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         val slips = orders.map {
-            SimOrderState(it, OrderStatus.REJECTED, event.time, event.time)
+            DefaultOrderState(it, OrderStatus.REJECTED, event.time, event.time)
         }
         _account.putOrders(slips)
         true && return _account.toAccount()

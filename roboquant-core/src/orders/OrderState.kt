@@ -17,13 +17,13 @@ interface OrderState {
 
 
 /**
- * Various state that an order can be in. The  flow is straight forward:
+ * The status an order can be in. The  flow is straight forward:
  *
  *  - [INITIAL] -> [ACCEPTED] -> [COMPLETED] | [CANCELLED] | [EXPIRED]
  *  - [INITIAL] -> [REJECTED]
  *
- *  At any given time an order is either [open] or [closed]. Once an order reaches a [closed] state, it cannot be opened
- *  again.
+ *  At any given time an [OrderState] is either [open] or [closed] state. Once an order reaches a [closed] state,
+ *  it cannot be opened again and will not be further processed.
  */
 enum class OrderStatus {
 
@@ -49,12 +49,15 @@ enum class OrderStatus {
     CANCELLED,
 
     /**
-     *  The order has expired, normally by a time-in-force policy. This is an end state
+     *  The order has expired, normally triggered by a time-in-force policy. This is an end state
      */
     EXPIRED,
 
     /**
-     *  The order has been rejected. This is an end state
+     *  The order has been rejected. This is an end state and typically occurs when:
+     *  - The order is not valid, for example you try to short an asset while that is not allowed
+     *  - You don't have enough buyingPower
+     *  - The provided asset is recognised or cannot be traded on your account
      */
     REJECTED;
 

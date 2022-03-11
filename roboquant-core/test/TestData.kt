@@ -19,7 +19,7 @@ package org.roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.InternalAccount
 import org.roboquant.brokers.Position
-import org.roboquant.brokers.sim.SimOrderState
+import org.roboquant.brokers.DefaultOrderState
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import org.roboquant.common.USD
@@ -48,7 +48,7 @@ object TestData {
         account.setPosition(Position(asset2, 100.0, 10.0))
 
         val order = MarketOrder(asset1, 100.0)
-        val state = SimOrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
+        val state = DefaultOrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
         account.putOrders(listOf(state))
         return account
     }
@@ -61,7 +61,7 @@ object TestData {
         account.setPosition(Position(asset1, 100.0, 10.0))
         account.setPosition(Position(asset2, 100.0, 10.0))
 
-        val order = SimOrderState(MarketOrder(asset1, 100.0), OrderStatus.INITIAL)
+        val order = DefaultOrderState(MarketOrder(asset1, 100.0), OrderStatus.INITIAL)
         account.putOrders(listOf(order))
         return account.toAccount()
     }
