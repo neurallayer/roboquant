@@ -4,15 +4,56 @@ import org.roboquant.common.Asset
 import org.roboquant.orders.OrderStatus.*
 import java.time.Instant
 
+/**
+ * Order state
+ *
+ * @constructor Create empty Order state
+ */
 interface OrderState {
+
+    /**
+     * The oder (instruction)
+     */
     val order: Order
+
+    /**
+     * The status of the order
+     */
     val status: OrderStatus
+
+    /**
+     * When was the order first opened
+     */
     val openedAt: Instant
+
+    /**
+     * When was the order closed
+     */
     val closedAt: Instant
+
+    /**
+     * Is the order still open
+     */
     val open: Boolean
+        get() = status.open
+
+    /**
+     * Is the order closed. If this returns true, the order will be no further processed.
+     */
     val closed: Boolean
+        get() = status.closed
+
+    /**
+     * The underlying asset
+     */
     val asset: Asset
+        get() = order.asset
+
+    /**
+     * The underlying order id
+     */
     val id: Int
+        get() = order.id
 }
 
 
