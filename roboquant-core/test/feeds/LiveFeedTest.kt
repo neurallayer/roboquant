@@ -19,6 +19,8 @@ package org.roboquant.feeds
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.roboquant.common.Background
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class LiveFeedTest {
 
@@ -33,9 +35,14 @@ internal class LiveFeedTest {
     @Test
     fun basic() = runBlocking {
         val feed = MyLiveFeed()
+        assertFalse(feed.isActive)
         feed.heartbeatInterval = 10
-        Background.ioJob { feed.play(EventChannel()) }
+        Background.ioJob {
+            feed.play(EventChannel())
+            assertTrue(feed.isActive)
+        }
         feed.close()
+        assertFalse(feed.isActive)
     }
 
 

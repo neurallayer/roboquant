@@ -49,6 +49,8 @@ abstract class LiveFeed : Feed {
                 delay(heartbeatInterval)
                 val event = Event.empty()
                 channel.send(event)
+
+                // We check to not have to wait another heart beat
                 if (channel.done) break
             }
         } catch (_: ClosedSendChannelException) {

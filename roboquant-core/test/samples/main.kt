@@ -29,6 +29,9 @@ import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
+import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.jupyter.Chart
+import org.roboquant.jupyter.PriceBarChart
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.toDoubleArray
@@ -39,12 +42,13 @@ import org.roboquant.policies.BettingAgainstBeta
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.*
 import kotlin.system.measureTimeMillis
+import kotlin.test.assertTrue
 
 fun volatility() {
     val feed = AvroFeed.sp500()
     val data = feed.filter<PriceBar> { it.asset.symbol == "IBM" }
     val arr = data.map { it.second.close }.toDoubleArray()
-    val returns =  arr.returns()
+    val returns = arr.returns()
     println(returns.variance())
     println(returns.filter { it > 0.0 }.toDoubleArray().variance())
     println(returns.filter { it < 0.0 }.toDoubleArray().variance())
@@ -83,10 +87,9 @@ fun multiRun() {
             roboquant.run(feed, runName = "run $fast-$slow")
         }
     }
-    val maxEntry = logger.getMetric("account.equity").maxByOrNull{ it.value }!!
+    val maxEntry = logger.getMetric("account.equity").maxByOrNull { it.value }!!
     println(maxEntry.info.run)
 }
-
 
 suspend fun walkforwardParallel() {
     val feed = AvroFeed.sp500()
@@ -105,8 +108,6 @@ suspend fun walkforwardParallel() {
     val avgEquity = logger.getMetric("account.equity").toDoubleArray().mean()
     println(avgEquity)
 }
-
-
 
 fun testingStrategies() {
     val strategy = EMACrossover()
@@ -128,10 +129,6 @@ fun testingStrategies() {
 
 }
 
-
-
-
-
 fun trendFollowing2() {
     val feed = AvroFeed.sp500()
     val strategy = TAStrategy(200)
@@ -150,9 +147,6 @@ fun trendFollowing2() {
     roboquant.broker.account.trades.summary().log()
 }
 
-
-
-
 fun beta() {
     val feed = CSVFeed("/data/assets/stock-market/stocks/")
     val market = CSVFeed("/data/assets/stock-market/market/")
@@ -169,7 +163,6 @@ fun beta() {
     roboquant.broker.account.summary().print()
 
 }
-
 
 fun beta2() {
     val feed = CSVFeed("/data/assets/us-stocks/Stocks", CSVConfig(".us.txt"))
@@ -188,21 +181,41 @@ fun beta2() {
 
 }
 
+fun svg() {
+    val f = RandomWalk.lastYears(1, 1, generateBars = true)
+    val asset = f.assets.first()
+    val chart = PriceBarChart(f, asset)
+    Chart.theme = "dark"
 
+    val ssr = chart.asSSR(800)
+    assertTrue(ssr.isNotEmpty())
+    val svg = chart.asSVG()
+    println(svg)
+
+    val msg = MimeMessage()
+    val session = msg.getSession()
+    msg.send(
+        "peter@neurallayer.com",
+        session,
+        "<html><body>The following chart the prices of ${asset.symbol} <img src='cid:ChartImage' /></body></html>",
+        svg
+    )
+}
 
 suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("TEST_AVRO") {
+    when ("SVG") {
         "BETA" -> beta()
         "BETA2" -> beta2()
         "MULTI_RUN" -> multiRun()
-        "WALKFORWARD_PARALLEL" -> println( measureTimeMillis {  walkforwardParallel() })
+        "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkforwardParallel() })
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()
         "TREND2" -> trendFollowing2()
         "VOLATILITY" -> volatility()
+        "SVG" -> svg()
 
     }
 

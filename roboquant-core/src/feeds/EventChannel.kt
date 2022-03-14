@@ -41,6 +41,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
     private val logger: Logger = Logging.getLogger(EventChannel::class)
 
     var done: Boolean = false
+        private set
 
     /**
      * Add a new event to the channel. If the channel is full, it will remove older event first to make room, before
@@ -62,9 +63,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
         } else {
             if (event.time > timeframe) {
                 logger.fine { "Offer ${event.time} after $timeframe, closing channel" }
-                channel.close()
-                done = true
-                // throw ClosedSendChannelException("Out of time")
+                close()
             }
         }
     }
@@ -84,9 +83,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
         } else {
             if (event.time > timeframe) {
                 logger.fine { "Send ${event.time} after $timeframe, closing channel" }
-                channel.close()
-                done = true
-                // throw ClosedSendChannelException("Out of time")
+                close()
             }
         }
     }
