@@ -5,9 +5,8 @@ import org.roboquant.orders.OrderStatus.*
 import java.time.Instant
 
 /**
- * Order state
+ * Order state captures the state of an order and is available through the account object.
  *
- * @constructor Create empty Order state
  */
 interface OrderState {
 

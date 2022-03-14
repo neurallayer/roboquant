@@ -22,7 +22,8 @@ import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
- * Part of order processing that can change
+ * Default order state that implements the [OrderState] interface and is used by roboquant in most brokers
+ * implementations.
  */
 data class DefaultOrderState(
     override val order: Order,
@@ -30,20 +31,6 @@ data class DefaultOrderState(
     override val openedAt: Instant = Instant.MIN,
     override val closedAt: Instant = Instant.MAX
 ) : OrderState {
-
-
-
-    override val open
-        get() = status.open
-
-    override val closed
-        get() = status.closed
-
-    override val asset
-        get() = order.asset
-
-    override val id
-        get() = order.id
 
     /**
      * Update the order state and return the new order state (if applicable)
