@@ -33,7 +33,7 @@ internal class LiveFeedTest {
 
 
     @Test
-    fun basic() = runBlocking {
+    fun basic(): Unit = runBlocking {
         val feed = MyLiveFeed()
         assertFalse(feed.isActive)
         feed.heartbeatInterval = 10
@@ -41,8 +41,6 @@ internal class LiveFeedTest {
             feed.play(EventChannel())
             assertTrue(feed.isActive)
         }
-        feed.close()
-        assertFalse(feed.isActive)
     }
 
 
