@@ -10,10 +10,10 @@ import java.time.Instant
 
 abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHandler {
 
-    internal var fill = 0.0
-    internal var qty = order.quantity
+    var fill = 0.0
+    var qty = order.quantity
 
-    internal val remaining
+    val remaining
         get() = qty - fill
 
     override var state: OrderState = DefaultOrderState(order)
