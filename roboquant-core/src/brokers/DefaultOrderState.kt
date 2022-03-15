@@ -52,6 +52,19 @@ data class DefaultOrderState(
 
 }
 
+
+fun OrderState.update(time: Instant, newStatus: OrderStatus = OrderStatus.ACCEPTED) : OrderState {
+    return if (newStatus === OrderStatus.ACCEPTED && status === OrderStatus.INITIAL) {
+        DefaultOrderState(order, newStatus, time)
+    } else if (newStatus.closed && status.open) {
+        val openTime = if (openedAt === Instant.MIN) time else openedAt
+        DefaultOrderState(order, newStatus, openTime, time)
+    } else {
+        this
+    }
+}
+
+
 /**
  * Reject an order
  *

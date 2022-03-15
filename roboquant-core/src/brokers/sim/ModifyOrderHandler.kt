@@ -1,18 +1,18 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.brokers.DefaultOrderState
+import org.roboquant.brokers.update
 import org.roboquant.orders.*
 import java.time.Instant
 
-
-private fun List<OrderHandler>.getSingleOrderHandler(id: Int) = filterIsInstance<SingleOrderHandler<SingleOrder>>().firstOrNull {
-    it.order.id == id
-}
-
+private fun List<OrderHandler>.getSingleOrderHandler(id: Int) =
+    filterIsInstance<SingleOrderHandler<SingleOrder>>().firstOrNull {
+        it.order.id == id
+    }
 
 internal class UpdateOrderHandler(val order: UpdateOrder) : ModifyOrderHandler {
 
-    override var state: DefaultOrderState = DefaultOrderState(order)
+    override var state: OrderState = DefaultOrderState(order)
 
     override fun execute(handlers: List<OrderHandler>, time: Instant) {
         val handler = handlers.getSingleOrderHandler(order.original.id)
@@ -26,10 +26,9 @@ internal class UpdateOrderHandler(val order: UpdateOrder) : ModifyOrderHandler {
     }
 }
 
-
 internal class CancelOrderHandler(val order: CancelOrder) : ModifyOrderHandler {
 
-    override var state: DefaultOrderState = DefaultOrderState(order)
+    override var state: OrderState = DefaultOrderState(order)
 
     override fun execute(handlers: List<OrderHandler>, time: Instant) {
         val handler = handlers.getSingleOrderHandler(order.order.id)

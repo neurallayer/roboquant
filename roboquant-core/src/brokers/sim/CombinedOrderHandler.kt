@@ -1,6 +1,7 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.brokers.DefaultOrderState
+import org.roboquant.brokers.update
 import org.roboquant.common.iszero
 import org.roboquant.orders.*
 import java.time.Instant
@@ -11,7 +12,7 @@ internal class OCOOrderHandler(val order: OCOOrder) : TradeOrderHandler{
     private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler
     private var active = 0
 
-    override var state: DefaultOrderState = DefaultOrderState(order)
+    override var state : OrderState = DefaultOrderState(order)
 
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
@@ -43,7 +44,7 @@ internal class OCOOrderHandler(val order: OCOOrder) : TradeOrderHandler{
 
 internal class OTOOrderHandler(val order: OTOOrder) : TradeOrderHandler {
 
-    override var state: DefaultOrderState = DefaultOrderState(order)
+    override var state : OrderState = DefaultOrderState(order)
 
     private val first = ExecutionEngine.getHandler(order.first) as TradeOrderHandler
     private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler
@@ -69,7 +70,7 @@ internal class OTOOrderHandler(val order: OTOOrder) : TradeOrderHandler {
 
 internal class BracketOrderHandler(order: BracketOrder) : TradeOrderHandler{
 
-    override var state: DefaultOrderState = DefaultOrderState(order)
+    override var state: OrderState = DefaultOrderState(order)
 
     private val main = ExecutionEngine.getHandler(order.entry) as SingleOrderHandler<*>
     private val profit = ExecutionEngine.getHandler(order.takeProfit) as SingleOrderHandler<*>
