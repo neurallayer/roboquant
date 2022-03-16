@@ -1,7 +1,6 @@
 package org.roboquant.brokers.sim
 
-import org.roboquant.brokers.DefaultOrderState
-import org.roboquant.brokers.update
+import org.roboquant.orders.OrderState
 import org.roboquant.common.UnsupportedException
 import org.roboquant.common.days
 import org.roboquant.common.iszero
@@ -16,7 +15,7 @@ abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHan
     val remaining
         get() = qty - fill
 
-    override var state: OrderState = DefaultOrderState(order)
+    override var state: OrderState = OrderState(order)
 
     /**
      * Validate TiF policy and return true if order has expired according to the policy.
@@ -34,16 +33,16 @@ abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHan
 
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-        state = state.update(time)
+        state = state.copy(time)
         val execution = fill(pricing)
         fill += execution?.quantity ?: 0.0
 
         if (expired(time)) {
-            state = state.update(time, OrderStatus.EXPIRED)
+            state = state.copy(time, OrderStatus.EXPIRED)
             return emptyList()
         }
 
-        if (remaining.iszero) state = state.update(time, OrderStatus.COMPLETED)
+        if (remaining.iszero) state = state.copy(time, OrderStatus.COMPLETED)
         return if (execution == null) emptyList() else listOf(execution)
 
     }

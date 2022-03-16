@@ -4,31 +4,13 @@ import org.roboquant.common.Asset
 import org.roboquant.orders.OrderStatus.*
 import java.time.Instant
 
-/**
- * Order state captures the state of an order and is available through the account object.
- *
- */
-interface OrderState {
 
-    /**
-     * The oder (instruction)
-     */
-    val order: Order
-
-    /**
-     * The status of the order
-     */
-    val status: OrderStatus
-
-    /**
-     * When was the order first opened
-     */
-    val openedAt: Instant
-
-    /**
-     * When was the order closed
-     */
-    val closedAt: Instant
+open class OrderState(
+    val order: Order,
+    val status: OrderStatus = INITIAL,
+    val openedAt: Instant = Instant.MIN,
+    val closedAt: Instant = Instant.MAX
+)  {
 
     /**
      * Is the order still open
@@ -53,7 +35,29 @@ interface OrderState {
      */
     val id: Int
         get() = order.id
+
+    /**
+     * Update the order state and return the new order state (if applicable)
+     *
+     * @param time
+     * @param newStatus
+     * @return
+     */
+    fun copy(time: Instant, newStatus: OrderStatus = ACCEPTED) : OrderState {
+        return if (newStatus === ACCEPTED && status === INITIAL) {
+            OrderState(order, newStatus, time)
+        } else if (newStatus.closed && status.open) {
+            val openTime = if (openedAt === Instant.MIN) time else openedAt
+            OrderState(order, newStatus, openTime, time)
+        } else {
+            this
+        }
+    }
+
+
+
 }
+
 
 
 /**

@@ -8,6 +8,7 @@ import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import kotlin.test.Test
@@ -24,7 +25,7 @@ internal class AccountModelTest {
         assertEquals(result, account.cash.getAmount(result.currency))
 
         val order = MarketOrder(TestData.usStock(), 100.0)
-        val state = DefaultOrderState(order, OrderStatus.ACCEPTED, Instant.now())
+        val state = OrderState(order, OrderStatus.ACCEPTED, Instant.now())
         account.putOrders(listOf(state))
         val result2 = uc.calculate(account)
 

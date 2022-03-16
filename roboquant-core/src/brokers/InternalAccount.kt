@@ -19,7 +19,9 @@ package org.roboquant.brokers
 import org.roboquant.common.*
 import org.roboquant.common.Config.baseCurrency
 import org.roboquant.feeds.Event
+import org.roboquant.orders.Order
 import org.roboquant.orders.OrderState
+import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
@@ -128,7 +130,6 @@ class InternalAccount (
     }
 
 
-
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]
      */
@@ -165,3 +166,26 @@ class InternalAccount (
 }
 
 
+/**
+ * Reject an order
+ *
+ * @param order
+ * @param time
+ */
+fun InternalAccount.rejectOrder(order: Order, time: Instant) {
+    putOrder(OrderState(order, OrderStatus.REJECTED, time, time))
+}
+
+/**
+ * Accept an order
+ *
+ * @param order
+ * @param time
+ */
+fun InternalAccount.acceptOrder(order: Order, time: Instant) {
+    putOrder(OrderState(order, OrderStatus.ACCEPTED, time, time))
+}
+
+
+val Collection<Order>.initialOrderState
+    get() = map { OrderState(it, OrderStatus.INITIAL) }

@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.common.days
+import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import kotlin.test.assertContains
@@ -29,15 +30,15 @@ internal class OrderStateTest {
     @Test
     fun basis() {
         val order = TestData.usMarketOrder()
-        var state = DefaultOrderState(order)
+        var state = OrderState(order)
         assertEquals(OrderStatus.INITIAL, state.status)
 
         val t = Instant.now()
-        state = state.update(t)
+        state = state.copy(t)
         assertEquals(OrderStatus.ACCEPTED, state.status)
 
         val t2 = t + 1.days
-        state = state.update(t2, OrderStatus.COMPLETED)
+        state = state.copy(t2, OrderStatus.COMPLETED)
         assertEquals(OrderStatus.COMPLETED, state.status)
         assertEquals(t, state.openedAt)
         assertEquals(t2, state.closedAt)

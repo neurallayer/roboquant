@@ -22,8 +22,6 @@ import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderSide
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce
 import net.jacobpeterson.alpaca.rest.AlpacaClientException
 import org.roboquant.brokers.*
-import org.roboquant.brokers.DefaultOrderState
-import org.roboquant.brokers.initialOrderState
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
@@ -128,7 +126,7 @@ class AlpacaBroker(
     private fun toAsset(assetId: String) = assetsMap[assetId]!!
 
 
-    private fun toState(order: AlpacaOrder, marketOrder: MarketOrder) : DefaultOrderState {
+    private fun toState(order: AlpacaOrder, marketOrder: MarketOrder) : OrderState {
         val status = when (order.status) {
             AlpacaOrderStatus.CANCELED -> OrderStatus.CANCELLED
             AlpacaOrderStatus.EXPIRED -> OrderStatus.EXPIRED
@@ -141,14 +139,14 @@ class AlpacaBroker(
         }
         val close = order.filledAt ?: order.canceledAt ?: order.expiredAt
         val closeTime = close?.toInstant() ?: Instant.MAX
-        return DefaultOrderState(marketOrder, status, order.createdAt.toInstant(), closeTime)
+        return OrderState(marketOrder, status, order.createdAt.toInstant(), closeTime)
     }
 
 
     /**
      * Convert an alpaca order to a roboquant order
      */
-    private fun toOrder(order: AlpacaOrder): DefaultOrderState {
+    private fun toOrder(order: AlpacaOrder): OrderState {
         val asset = toAsset(order.assetId)
         val qty = if (order.side == OrderSide.BUY) order.quantity.toDouble() else - order.quantity.toDouble()
         val marketOrder = MarketOrder(asset, qty)
@@ -216,7 +214,7 @@ class AlpacaBroker(
             }
         }
         orderMapping[order] = alpacaOrder
-        _account.putOrders(listOf(DefaultOrderState(order)))
+        _account.putOrders(listOf(OrderState(order)))
 
 
     }

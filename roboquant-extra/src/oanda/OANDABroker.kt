@@ -26,8 +26,6 @@ import com.oanda.v20.transaction.OrderCancelReason
 import com.oanda.v20.transaction.OrderFillTransaction
 import com.oanda.v20.transaction.TransactionID
 import org.roboquant.brokers.*
-import org.roboquant.brokers.DefaultOrderState
-import org.roboquant.brokers.initialOrderState
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging
@@ -180,12 +178,12 @@ class OANDABroker(
         _account.putOrders(orders.initialOrderState)
 
        if (! enableOrders) {
-            val states = orders.map { DefaultOrderState(it, OrderStatus.REJECTED, event.time, event.time) }
+            val states = orders.map { OrderState(it, OrderStatus.REJECTED, event.time, event.time) }
             _account.putOrders(states)
         } else {
 
             for (order in orders) {
-                var state =  DefaultOrderState(order, OrderStatus.INITIAL, event.time)
+                var state =  OrderState(order, OrderStatus.INITIAL, event.time)
                 if (order is MarketOrder) {
                     if (order.tif !is FOK) logger.fine("Received order $order, using tif=FOK instead")
                     val req = createOrderRequest(order)
@@ -193,15 +191,15 @@ class OANDABroker(
                     logger.fine { "Received response with last transaction Id ${resp.lastTransactionID}" }
                     if (resp.orderFillTransaction != null) {
                         val trx = resp.orderFillTransaction
-                        state = DefaultOrderState(order, OrderStatus.COMPLETED, event.time)
+                        state = OrderState(order, OrderStatus.COMPLETED, event.time)
                         logger.fine { "Received transaction $trx" }
                         processTrade(order, trx)
                     } else if (resp.orderCancelTransaction != null){
                         val trx = resp.orderCancelTransaction
 
                         state = when(trx.reason) {
-                            OrderCancelReason.TIME_IN_FORCE_EXPIRED -> DefaultOrderState(order, OrderStatus.EXPIRED, event.time, event.time)
-                            else -> DefaultOrderState(order, OrderStatus.REJECTED, event.time, event.time)
+                            OrderCancelReason.TIME_IN_FORCE_EXPIRED -> OrderState(order, OrderStatus.EXPIRED, event.time, event.time)
+                            else -> OrderState(order, OrderStatus.REJECTED, event.time, event.time)
                         }
                         logger.fine {"Received order cancellation for $order with reason ${trx.reason}"}
                     } else {
@@ -209,7 +207,7 @@ class OANDABroker(
                     }
                 } else {
                     logger.warning { "Rejecting unsupported order type $order" }
-                    state =  DefaultOrderState(order, OrderStatus.REJECTED, event.time, event.time)
+                    state =  OrderState(order, OrderStatus.REJECTED, event.time, event.time)
                 }
                 _account.putOrder(state)
             }

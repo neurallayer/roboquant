@@ -19,7 +19,6 @@ package org.roboquant.orders
 
 import org.junit.Test
 import org.roboquant.TestData
-import org.roboquant.brokers.DefaultOrderState
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -28,7 +27,7 @@ internal class UpdateOrderTest {
     @Test
     fun basic() {
         val originalOrder = TestData.euMarketOrder()
-        val original = DefaultOrderState(originalOrder)
+        val original = OrderState(originalOrder)
         val update = MarketOrder(original.asset, 100.0)
         val order = UpdateOrder(original, update)
         assertEquals(100.0, order.update.quantity)
