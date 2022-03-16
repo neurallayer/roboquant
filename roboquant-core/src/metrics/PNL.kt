@@ -24,9 +24,12 @@ import org.roboquant.feeds.Event
 /**
  * Metric that calculates both the realized and unrealized Profit and Loss. The unrealized PNL is calculated based
  * on the assets in the portfolio and the last known market price. The realized PNL is based on actual trades made
- * and the profit they generated.
+ * and the profit they generated. All amounts are converted to the base currency of the account.
  *
- * All amounts are converted to the base currency of the account.
+ * Metric names used:
+ * - pnl.realized
+ * - pnl.unrealized
+ * - pnl.total (= realized + unrealized)
  *
  * @constructor Create new PNL metric
  */
@@ -35,7 +38,7 @@ class PNL : SimpleMetric() {
     /**
      * Calculate any metrics given the event of information. This will be called at the
      * end of each step in a run. The result is returned using the base currency of
-     * the account.
+     * the account. It contains the following three metrics
      *
      * @param account
      * @return
@@ -51,6 +54,7 @@ class PNL : SimpleMetric() {
         val unrealizedPNL = totalValue.convert(time = event.time)
         result["pnl.unrealized"] = unrealizedPNL.value
 
+        result["pnl.total"] = realizedPNL.value + unrealizedPNL.value
         return result
     }
 

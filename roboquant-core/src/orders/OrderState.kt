@@ -3,8 +3,21 @@ package org.roboquant.orders
 import org.roboquant.common.Asset
 import org.roboquant.orders.OrderStatus.*
 import java.time.Instant
+import org.roboquant.brokers.Account
 
-
+/**
+ * Order State keeps track of the execution state of an order. After an order is placed at a broker, the OrderState
+ * informs you what is happening with that order. The most common way to access this information is through
+ * [Account.openOrders] and [Account.closedOrders]
+ *
+ * This is a open class and can be extended by more advanced implementations.
+ *
+ * @property order The underying order
+ * @property status The latest status
+ * @property openedAt When was the order execution opened
+ * @property closedAt When was the order execution closed
+ * @constructor Create new Order state
+ */
 open class OrderState(
     val order: Order,
     val status: OrderStatus = INITIAL,

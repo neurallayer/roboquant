@@ -39,8 +39,15 @@ import kotlin.math.absoluteValue
  *
  * This is a immutable class.
  *
- * @property baseCurrency The base currency to use for things like reporting
- * @constructor Create a new Account
+ * @property baseCurrency what is the base currency of the account
+ * @property lastUpdate when was the account last updated
+ * @property cash cash balances
+ * @property trades List of all trades
+ * @property openOrders List of [OrderState] of all open orders
+ * @property closedOrders List of [OrderState] of all closed orders
+ * @property portfolio Map of all open [Position]
+ * @property buyingPower amount of buying power remaining
+ * @constructor Create new Account
  */
 class Account(
     val baseCurrency: Currency,
