@@ -49,7 +49,8 @@ data class Timeframe(val start: Instant, val end: Instant) {
     companion object {
 
         /**
-         * Infinity timeframe matches any time and is typically used when no filtering is required
+         * Infinite timeframe that matches any time and is typically used when no filtering is required or the
+         * timeframe for a number of events is unknown.
          */
         val INFINITY = Timeframe(Instant.MIN, Instant.MAX)
 
@@ -81,7 +82,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
             get() = parse("2009-03-10T00:00:00Z", "2019-03-10T00:00:00Z")
 
         /**
-         * The 2010 flash crash is the market crash that occurred on May 6, 2010. During the crash, leading
+         * The 2010 flash crash is the market crash that occurred on May 6, 2010. During this crash, leading
          * US stock indices tumbled but also partially rebounded in less than an hour.
          */
         val flashCrash2010
@@ -89,7 +90,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
 
         /**
          * After is became clear that COVID-19 virus would also impact countries outside China, many exchanges worldwide
-         * crashed due to the uncertainty the virus would have on economies and companies.
+         * crashed due to the uncertainty of the impact that the virus would have on economies and companies.
          */
         val coronaCrash2020
             get() = parse("2020-02-17T00:00:00Z", "2020-03-17T00:00:00Z")
@@ -108,7 +109,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
          * Create a timeframe based on the [first] and [last] time provided. The times are to be provided as a string
          * and should be parsable by [Instant.parse]
          *
-         * If the time component is omitted, the provided strings will be appended first with "T00:00:00" before
+         * If the time component is omitted, the provided strings will be appended first with "T00:00:00Z" before
          * being parsed.
          */
         fun parse(first: String, last: String): Timeframe {
@@ -131,7 +132,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
          * Create a timeframe from now for the provided duration. This is useful to restrict a live feed so it
          * won't run forever.
          *
-         *      val tf = TimeFrame.nexy(60.minutes)
+         *      val tf = TimeFrame.next(60.minutes)
          *      roboquant.run(feed, tf)
          *
          */

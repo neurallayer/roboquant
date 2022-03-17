@@ -37,8 +37,8 @@ internal class EMACrossoverTest {
 
     @Test
     fun simple2() {
-        val strategy1 = EMACrossover.shortTerm()
-        val strategy2 = EMACrossover.longTerm()
+        val strategy1 = EMACrossover.EMA_5_15
+        val strategy2 = EMACrossover.EMA_50_200
         assertTrue(strategy1.fast < strategy2.fast)
         assertTrue(strategy1.slow < strategy2.slow)
     }

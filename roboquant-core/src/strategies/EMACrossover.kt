@@ -55,21 +55,25 @@ class EMACrossover(
          *
          * @return new EMACrossover
          */
-        fun longTerm(): EMACrossover = EMACrossover(50, 200)
+        val EMA_50_200: EMACrossover
+            get() = EMACrossover(50, 200)
+
 
         /**
          * Predefined EMA Crossover with 12 steps for fast EMA and 26 steps for slow EMA
          *
          * @return new EMACrossover
          */
-        fun midTerm(): EMACrossover = EMACrossover(12, 26)
+        val EMA_12_26: EMACrossover
+            get() = EMACrossover(12, 26)
 
         /**
          * Predefined EMA Crossover with 5 steps for fast EMA and 15 steps for slow EMA
          *
          * @return new EMACrossover
          */
-        fun shortTerm(): EMACrossover = EMACrossover(5, 15)
+        val EMA_5_15: EMACrossover
+            get() = EMACrossover(5, 15)
     }
 
     private inner class EMACalculator(initialPrice: Double) {

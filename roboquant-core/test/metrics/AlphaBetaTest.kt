@@ -27,9 +27,9 @@ internal class AlphaBetaTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears()
+        val feed = RandomWalk.lastYears(nAssets = 2)
         val marketAsset = feed.assets.first()
-        val strategy = EMACrossover.shortTerm()
+        val strategy = EMACrossover.EMA_5_15
         val alphaBetaMetric = AlphaBeta(marketAsset, 50)
         val logger = LastEntryLogger()
         val roboquant = Roboquant(strategy, alphaBetaMetric, logger = logger)

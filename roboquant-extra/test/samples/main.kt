@@ -38,7 +38,7 @@ import org.roboquant.yahoo.YahooHistoricFeed
 fun alpacaBroker() {
     val feed = CSVFeed("data/US", CSVConfig(priceAdjust = true))
     val broker = AlpacaBroker()
-    val strategy = EMACrossover.midTerm()
+    val strategy = EMACrossover.EMA_12_26
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
     roboquant.run(feed)
     broker.account.summary().print()
@@ -90,7 +90,7 @@ fun alpacaFeed() {
     val assets = feed.assets.take(50)
     feed.subscribe(assets)
     feed.heartbeatInterval = 1000
-    val strategy = EMACrossover.midTerm()
+    val strategy = EMACrossover.EMA_12_26
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
     val tf = Timeframe.next(5.minutes)
     roboquant.run(feed, tf)

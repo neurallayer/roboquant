@@ -21,7 +21,7 @@ import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.MarketOrder
 
 /**
- * Is the signal generated meant for entry, exit or both.
+ * Is the signal generated only for entry, exit or both.
  */
 enum class SignalType {
 
@@ -61,9 +61,9 @@ enum class SignalType {
  * @property rating The rating for the asset
  * @property type The type of signal, entry, exit or both. [SignalType.BOTH] is the default
  * @property takeProfit An optional take profit price in the same currency as the asset
- * @property stopLoss An optional stop loss price in the same currency as the asset
+ * @property stopLoss An (optional) stop loss price in the same currency as the asset
  * @property probability Optional the probability (value between 0.0 and 1.0) that the rating is correct.
- * @property source Optional the source of the signal, like the strategy name
+ * @property source Optional the source of the signal, for example the strategy name
  * @constructor Create a new Signal
  */
 class Signal(

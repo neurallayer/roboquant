@@ -30,7 +30,7 @@ internal class LazyCSVFeedTest {
         val feed = LazyCSVFeed(TestData.dataDir() + "US")
         val priceBars = feed.filter<PriceBar>()
         assertTrue(priceBars.isNotEmpty())
-        assertTrue(priceBars[0].first < priceBars[1].first)
+        assertTrue(priceBars[0].first <= priceBars[1].first)
     }
 
 }

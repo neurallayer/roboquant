@@ -26,10 +26,11 @@ import kotlin.test.*
 internal class CSVFeedTest {
 
     @Test
-    fun getContracts() {
+    fun getAssets() {
         val feed = CSVFeed(TestData.dataDir() + "US")
-        assertEquals(3, feed.assets.size)
-        val c2 = feed.assets.find { it.symbol == "AAPL" }
+        val assets = feed.assets
+        assertEquals(3, assets.size)
+        val c2 = assets.find { it.symbol == "AAPL" }
         assertEquals("AAPL", c2?.symbol)
     }
 

@@ -108,7 +108,7 @@ fun oandaPaperTrading() {
     feed.subscribeOrderBook(assets)
 
     val policy = DefaultPolicy(shorting = true)
-    val roboquant = Roboquant(EMACrossover.shortTerm(), broker = broker, policy = policy)
+    val roboquant = Roboquant(EMACrossover.EMA_5_15, broker = broker, policy = policy)
 
     val tf = Timeframe.next(5.minutes)
     roboquant.run(feed, tf)
