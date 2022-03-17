@@ -18,6 +18,7 @@ package org.roboquant.oanda
 
 import com.oanda.v20.Context
 import com.oanda.v20.account.AccountID
+import com.oanda.v20.order.LimitOrderRequest
 import com.oanda.v20.order.MarketOrderRequest
 import com.oanda.v20.order.OrderCreateRequest
 import com.oanda.v20.position.PositionSide
@@ -29,6 +30,7 @@ import org.roboquant.brokers.*
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging
+import org.roboquant.common.UnsupportedException
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
@@ -40,7 +42,6 @@ class OANDABroker(
     accountID: String? = null,
     token: String? = null,
     demoAccount: Boolean = true,
-    val enableOrders: Boolean = true,
     private val maxLeverage: Double = 30.0 // Used to calculate buying power
 ) : Broker {
 
@@ -53,7 +54,6 @@ class OANDABroker(
         get() = _account.toAccount()
     private val logger = Logging.getLogger(OANDABroker::class)
     private lateinit var lastTransactionId: TransactionID
-
 
     private val availableAssetsMap by lazy {
         OANDA.getAvailableAssets(ctx, this.accountID)
@@ -68,10 +68,9 @@ class OANDABroker(
 
     init {
         logger.info("Using account with id ${this.accountID}")
-        if (! demoAccount) throw Exception("Currently only demo account usage is supported.")
+        if (!demoAccount) throw UnsupportedException("Currently only demo account usage is supported.")
         initAccount()
     }
-
 
     private fun getPosition(symbol: String, p: PositionSide): Position {
         val asset = availableAssetsMap[symbol]!!
@@ -81,12 +80,11 @@ class OANDABroker(
         return Position(asset, qty, avgPrice, spotPrice)
     }
 
-
     private fun updatePositions() {
         _account.portfolio.clear()
         val positions = ctx.position.listOpen(accountID).positions
         for (p in positions) {
-            logger.fine { "Received position $p"}
+            logger.fine { "Received position $p" }
             val symbol = p.instrument.toString()
             if (p.long.units.doubleValue() != 0.0) {
                 val position = getPosition(symbol, p.long)
@@ -98,7 +96,6 @@ class OANDABroker(
             }
         }
     }
-
 
     /**
      * First time when connecting, update the state of roboquant account with broker account. Only cash and positions
@@ -113,12 +110,12 @@ class OANDABroker(
         val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
         account.cash.set(amount)
 
-        _account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
+        _account.buyingPower = Amount(account.baseCurrency, acc.marginAvailable.doubleValue() * maxLeverage)
         _account.lastUpdate = Instant.now()
         lastTransactionId = acc.lastTransactionID
         _account.portfolio.clear()
         updatePositions()
-        logger.info {"Found ${_account.portfolio.values.size} existing positions in portfolio"}
+        logger.info { "Found ${_account.portfolio.values.size} existing positions in portfolio" }
     }
 
     /**
@@ -128,16 +125,14 @@ class OANDABroker(
     private fun updateAccount() {
         val acc = ctx.account.get(accountID).account
 
-
         // Cash in roboquant is excluding the margin part
         account.cash.clear()
         val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
         account.cash.set(amount)
 
-        _account.buyingPower = Amount(account.baseCurrency,acc.marginAvailable.doubleValue() * maxLeverage)
+        _account.buyingPower = Amount(account.baseCurrency, acc.marginAvailable.doubleValue() * maxLeverage)
         _account.lastUpdate = Instant.now()
     }
-
 
     /**
      * Process a transaction/trade and update account accordingly
@@ -158,7 +153,6 @@ class OANDABroker(
         _account.cash.set(amount)
     }
 
-
     private fun createOrderRequest(order: MarketOrder): OrderCreateRequest {
         val req = OrderCreateRequest(accountID)
         val o = MarketOrderRequest()
@@ -169,57 +163,64 @@ class OANDABroker(
         return req
     }
 
+    private fun createOrderRequest(order: LimitOrder): OrderCreateRequest {
+        val req = OrderCreateRequest(accountID)
+        val o = LimitOrderRequest()
+        o.instrument = InstrumentName(order.asset.symbol)
+        o.setUnits(order.quantity)
+        o.setPrice(order.limit)
+        req.setOrder(o)
+        logger.fine { "Created OANDA order $o" }
+        return req
+    }
+
     /**
-     * For now only market orders are supported, all other order types are rejected. Also orders will always TIF be
-     * submitted with FOK (FillOrKill) and ignore the requested TiF.
+     * For now only market- and limit-orders are supported, all other order types are rejected. Also orders will
+     * always TIF be submitted with FOK (FillOrKill) and ignore the requested TiF.
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        logger.finer {"received ${orders.size} orders and ${event.actions.size} actions"}
+        logger.finer { "received ${orders.size} orders and ${event.actions.size} actions" }
         _account.putOrders(orders.initialOrderState)
 
-       if (! enableOrders) {
-            val states = orders.map { OrderState(it, OrderStatus.REJECTED, event.time, event.time) }
-            _account.putOrders(states)
-        } else {
-
-            for (order in orders) {
-                var state =  OrderState(order, OrderStatus.INITIAL, event.time)
-                if (order is MarketOrder) {
-                    if (order.tif !is FOK) logger.fine("Received order $order, using tif=FOK instead")
-                    val req = createOrderRequest(order)
-                    val resp = ctx.order.create(req)
-                    logger.fine { "Received response with last transaction Id ${resp.lastTransactionID}" }
-                    if (resp.orderFillTransaction != null) {
-                        val trx = resp.orderFillTransaction
-                        state = OrderState(order, OrderStatus.COMPLETED, event.time)
-                        logger.fine { "Received transaction $trx" }
-                        processTrade(order, trx)
-                    } else if (resp.orderCancelTransaction != null){
-                        val trx = resp.orderCancelTransaction
-
-                        state = when(trx.reason) {
-                            OrderCancelReason.TIME_IN_FORCE_EXPIRED -> OrderState(order, OrderStatus.EXPIRED, event.time, event.time)
-                            else -> OrderState(order, OrderStatus.REJECTED, event.time, event.time)
-                        }
-                        logger.fine {"Received order cancellation for $order with reason ${trx.reason}"}
-                    } else {
-                        logger.warning {"No order cancel or fill was returned for $order"}
-                    }
-                } else {
-                    logger.warning { "Rejecting unsupported order type $order" }
-                    state =  OrderState(order, OrderStatus.REJECTED, event.time, event.time)
-                }
-                _account.putOrder(state)
+        for (order in orders) {
+            var state = OrderState(order, OrderStatus.INITIAL, event.time)
+            val orderRequest = when (order) {
+                is MarketOrder -> createOrderRequest(order)
+                is LimitOrder -> createOrderRequest(order)
+                else -> throw UnsupportedException("Unsupported order type $order")
             }
+
+            val resp = ctx.order.create(orderRequest)
+            logger.fine { "Received response with last transaction Id ${resp.lastTransactionID}" }
+            if (resp.orderFillTransaction != null) {
+                val trx = resp.orderFillTransaction
+                state = OrderState(order, OrderStatus.COMPLETED, event.time, event.time)
+                logger.fine { "Received transaction $trx" }
+                processTrade(order, trx)
+            } else if (resp.orderCancelTransaction != null) {
+                val trx = resp.orderCancelTransaction
+
+                state = when (trx.reason) {
+                    OrderCancelReason.TIME_IN_FORCE_EXPIRED -> OrderState(
+                        order,
+                        OrderStatus.EXPIRED,
+                        event.time,
+                        event.time
+                    )
+                    else -> OrderState(order, OrderStatus.REJECTED, event.time, event.time)
+                }
+                logger.fine { "Received order cancellation for $order with reason ${trx.reason}" }
+            } else {
+                logger.warning { "No order cancel or fill was returned for $order" }
+            }
+
+            _account.putOrder(state)
         }
 
-        // OONDA doesn't update positions quick enough and so they don't reflect trades just made
+        // OONDA doesn't update positions quick enough and so they don't reflect trades just made.
         Thread.sleep(1000)
         updateAccount()
         updatePositions()
-
-        // No need to return a copy of the account since is only modified during this method and not concurrently with
-        // the strategy or policy execution
         return account
     }
 }

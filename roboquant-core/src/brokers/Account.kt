@@ -224,7 +224,7 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
         s.add("EMPTY")
     } else {
         val orders = sortedBy { it.id }
-        val fmt = "%15s │%10s │%15s │%10s │%24s │%24s │%10s │ %-50s"
+        val fmt = "%15s│%10s│%15s│%10s│%24s│%24s│%10s│ %-50s"
         val header = String.format(fmt, "type", "asset", "status", "id", "opened at", "closed at", "currency", "details")
         s.add(header)
         orders.forEach {

@@ -150,12 +150,6 @@ data class Timeframe(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Return a timeframe exclusive of the [end] value.
-     */
-    val exclusive
-        get() = this
-
-    /**
      * Return a timeframe inclusive of the [end] value.
      */
     val inclusive

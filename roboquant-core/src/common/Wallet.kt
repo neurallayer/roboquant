@@ -41,7 +41,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
 
 
     /**
-     * Return the currencies that are hold in this Wallet object sorted by [Currency.currencyCode]
+     * Return the currencies that are hold in this wallet sorted by [Currency.currencyCode]
      */
     val currencies: List<Currency>
         get() = data.keys.sortedBy { it.currencyCode }.toList()
@@ -239,7 +239,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     /**
      * Summary overview of the wallet
      */
-    fun summary(title: String = "Cash"): Summary {
+    fun summary(title: String = "cash"): Summary {
         val result = Summary(title)
         val fmt = "%8s│%14s│"
         val header = String.format(fmt, "currency", "amount")

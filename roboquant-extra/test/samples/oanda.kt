@@ -170,7 +170,7 @@ fun oandaBroker3() {
     Logging.setLevel(Level.FINE, "OANDABroker")
     Currency.increaseDigits(3)
 
-    val broker = OANDABroker(enableOrders = true)
+    val broker = OANDABroker()
     val account = broker.account
     account.fullSummary().print()
     val feed = OANDALiveFeed()
@@ -187,7 +187,7 @@ fun oandaBroker3() {
 
 fun oandaBroker2(createOrder: Boolean = true) {
     Logging.setLevel(Level.FINE, "OANDABroker")
-    val broker = OANDABroker(enableOrders = true)
+    val broker = OANDABroker()
     broker.account.fullSummary().log()
     broker.availableAssets.summary().log()
 

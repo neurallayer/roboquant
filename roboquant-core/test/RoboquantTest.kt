@@ -18,7 +18,6 @@ package org.roboquant
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import org.roboquant.common.Timeframe
 import org.roboquant.common.years
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.MemoryLogger
@@ -33,17 +32,13 @@ import kotlin.test.assertTrue
 internal class RoboquantTest {
 
     @Test
-    fun evaluate() {
-        val tf = Timeframe.fromYears(2008, 2010)
-        val timeline = tf.toDays(excludeWeekends = true)
-        val feed = RandomWalk(timeline)
-
-        val strategy = RandomStrategy()
-        val logger = SilentLogger()
-        val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
-
+    fun simpleRun() {
+        val feed = RandomWalk.lastYears(nAssets = 2)
+        val strategy = EMACrossover()
+        val roboquant = Roboquant(strategy, AccountSummary(), logger = SilentLogger())
         roboquant.run(feed)
-        assertTrue { logger.events > 1 }
+        val summary = roboquant.summary()
+        assertTrue(summary.toString().isNotEmpty())
     }
 
     @Test
@@ -53,21 +48,7 @@ internal class RoboquantTest {
         val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
 
         val feed = RandomWalk.lastYears()
-        feed.split(2.years).forEach {
-            roboquant.run(feed, it)
-        }
-    }
-
-    @Test
-    fun fiveYearRandomWalk() {
-        val timeline = Timeframe.fromYears(2015, 2020).toDays(excludeWeekends = true)
-        val feed = RandomWalk(timeline, generateBars = false)
-
-        val strategy = EMACrossover()
-        val logger = SilentLogger()
-        val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
-        roboquant.run(feed)
-        assertTrue(logger.events > 0)
+        for (timeframe in feed.split(2.years)) roboquant.run(feed, timeframe)
     }
 
 
@@ -96,15 +77,6 @@ internal class RoboquantTest {
         assertTrue(roboquant.broker.account.trades.isNotEmpty())
     }
 
-    @Test
-    fun simple() {
-        val feed = RandomWalk.lastYears(nAssets = 2)
-        val strategy = EMACrossover()
-        val roboquant = Roboquant(strategy, AccountSummary(), logger = SilentLogger())
-        roboquant.run(feed)
-        val summary = roboquant.summary()
-        assertTrue(summary.toString().isNotEmpty())
-    }
 
     @Test
     fun reset() {

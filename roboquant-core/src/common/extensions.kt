@@ -73,7 +73,8 @@ fun Collection<String>.summary(header: String = "Values"): Summary {
 }
 
 /**
- * Extension function to allow *numpy* like indexing for lists.
+ * Extension function to allow *numpy* like indexing for lists. In order to stay close to Kotlin, the end value is
+ * inclusive. Returns a view on the original list, so no copy is made.
  *
  * ## Example
  *
@@ -155,6 +156,18 @@ fun DoubleArray.returns() : DoubleArray {
     val result = DoubleArray(size - 1)
     for (n in 1..lastIndex) result[n-1] = (get(n) - get(n-1)) / get(n-1)
     return result
+}
+
+/**
+ * Get the totoal return (as a percentage). Forumla used is
+ *
+ *      returns = (new -old) / old
+ */
+fun DoubleArray.totalReturns() : Double {
+    return if (size < 2)
+        0.0
+    else
+        (last() - first())/first()
 }
 
 

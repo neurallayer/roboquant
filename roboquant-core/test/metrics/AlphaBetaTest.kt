@@ -23,19 +23,22 @@ import org.roboquant.logging.LastEntryLogger
 import org.roboquant.strategies.EMACrossover
 import kotlin.test.assertTrue
 
-internal class AccountBetaTest {
+internal class AlphaBetaTest {
 
     @Test
     fun test() {
         val feed = RandomWalk.lastYears()
         val marketAsset = feed.assets.first()
         val strategy = EMACrossover.shortTerm()
-        val accountBetaMetric = AccountBeta(marketAsset, 50)
+        val alphaBetaMetric = AlphaBeta(marketAsset, 50)
         val logger = LastEntryLogger()
-        val roboquant = Roboquant(strategy, accountBetaMetric, logger = logger)
+        val roboquant = Roboquant(strategy, alphaBetaMetric, logger = logger)
         roboquant.run(feed)
-        val beta = logger.getMetric("account.beta").last().value
 
+        val alpha = logger.getMetric("account.alpha").last().value
+        assertTrue(!alpha.isNaN())
+
+        val beta = logger.getMetric("account.beta").last().value
         assertTrue(!beta.isNaN())
     }
 

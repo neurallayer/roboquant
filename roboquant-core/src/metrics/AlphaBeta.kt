@@ -19,28 +19,34 @@ package org.roboquant.metrics
 import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
+import org.roboquant.common.totalReturns
 import org.roboquant.feeds.Event
 import org.roboquant.strategies.ta.TALib
 import org.roboquant.strategies.utils.MovingWindow
 
 /**
- * Beta is a measure of the volatility (or systematic risk) of the account compared to the market as a whole. This
- * implementation doesn't look only at the assets in the portfolio, but looks at the volatility of the whole account
- * so including the cash positions.
+ * Calculates the Alpha and Beta of a portfio. This implementation not only looka at the assets in the portfolio, but
+ * looks at the returns of the whole account, so including the cash balances.
+ *
+ * - Alpha is a measure of the performance of an investment as compared to the market as a whole.
+ * - Beta is a measure of the volatility (or systematic risk) of the account compared to the market as a whole.
  *
  * @property referenceAsset Which asset to use for the market volatility, for example S&P 500
  * @property period Over how many events to calculate the beta
  * @constructor
  *
  */
-class AccountBeta(
+class AlphaBeta(
     private val referenceAsset: Asset,
     private val period: Int,
-    private val priceType: String = "DEFAULT"
+    private val priceType: String = "DEFAULT",
+    private val riskFreeReturn : Double = 0.0,
+    private val onlyAfterInitialTrade: Boolean = false
 ) : SimpleMetric() {
 
-    private val assetData = MovingWindow(period + 1)
-    private val accountData = MovingWindow(period + 1)
+    private val marketData = MovingWindow(period + 1)
+    private val portfolioData = MovingWindow(period + 1)
+
 
 
     /**
@@ -53,23 +59,33 @@ class AccountBeta(
     override fun calc(account: Account, event: Event): MetricResults {
         val action = event.prices[referenceAsset]
 
-        if (action !== null) {
+        // Can we already start recording measures or do we have to wait for
+        // an initial trade
+        val start = ! onlyAfterInitialTrade || account.trades.isNotEmpty()
+
+        if (action !== null && start) {
             val price = action.getPrice(priceType)
-            assetData.add(price)
+            marketData.add(price)
 
             val value = account.equity.convert(time = event.time).value
-            accountData.add(value)
+            portfolioData.add(value)
 
-            if (assetData.isAvailable() && accountData.isAvailable()) {
-                val beta = TALib.beta(assetData.toDoubleArray(), accountData.toDoubleArray(), period)
-                return mapOf("account.beta" to beta)
+            if (marketData.isAvailable() && portfolioData.isAvailable()) {
+                val x1 = marketData.toDoubleArray()
+                val x2 = portfolioData.toDoubleArray()
+                val beta = TALib.beta(x1, x2, period)
+                val alpha = (x1.totalReturns() - riskFreeReturn) - beta * (x2.totalReturns() - riskFreeReturn)
+                return mapOf(
+                    "account.alpha" to alpha,
+                    "account.beta" to beta
+                )
             }
         }
         return mapOf()
     }
 
     override fun start(runPhase: RunPhase) {
-        accountData.clear()
-        assetData.clear()
+        portfolioData.clear()
+        marketData.clear()
     }
 }

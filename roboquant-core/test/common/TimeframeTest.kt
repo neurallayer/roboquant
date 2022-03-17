@@ -81,18 +81,14 @@ internal class TimeframeTest {
         assertTrue { tf2.contains(tf.end) }
     }
 
-
     @Test
-    fun exclusive() {
-        val tf = Timeframe.fromYears(2018, 2019)
-        assertTrue(tf.inclusive.contains(tf.end))
+    fun union() {
+        val tf1 = Timeframe.parse("2020-01-01", "2021-02-01")
+        val tf2 = Timeframe.parse("2021-01-01", "2022-01-01")
 
-        val tf2 = tf.exclusive
-        assertTrue(tf2.contains(tf.end - 1))
-        assertFalse(tf2.contains(tf.end))
-
-        assertEquals(tf, tf.union(tf2))
+        assertEquals(Timeframe(tf1.start, tf2.end), tf1.union(tf2))
     }
+
 
     @Test
     fun annualize() {

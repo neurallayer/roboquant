@@ -22,8 +22,8 @@ import java.time.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Exchange contains the metadata about an exchange. The most important meta-data are the [zoneId], [opening] and
- * [closing] times and the default currency.
+ * Exchange contains the metadata of an market place or exchange. The most important meta-data are the
+ * [zoneId], [opening] and [closing] times and the default currency.
  *
  * It is used at several areas in roboquant, for example when loading CSV files.
  */
@@ -37,7 +37,7 @@ class Exchange private constructor(
 
     /**
      * Belong the two provided times ([first] and [second]) to the same trading day? They can be outside
-     * trading hours.
+     * trading hours as long as they are in the same calendar day.
      */
     fun sameDay(first: Instant, second: Instant): Boolean {
         val dt1 = LocalDate.ofInstant(first, zoneId)

@@ -43,9 +43,7 @@ import java.time.Instant
  * @property baseCurrency The base currency to use for things like reporting
  * @constructor Create a new Account
  */
-class InternalAccount (
-    var baseCurrency: Currency = Config.baseCurrency
-)   {
+class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
 
     /**
      * When was the account last updated, default if not set is Instant.MIN
@@ -72,7 +70,6 @@ class InternalAccount (
      */
     val cash: Wallet = Wallet()
 
-
     /**
      * Remaining buying power of the account denoted in the [baseCurrency] of the account.
      */
@@ -82,7 +79,6 @@ class InternalAccount (
      * Portfolio with its positions
      */
     val portfolio = mutableMapOf<Asset, Position>()
-
 
     /**
      * Clear all the state in this account.
@@ -107,7 +103,6 @@ class InternalAccount (
         }
     }
 
-
     /**
      * Put a single order, replacing existing one with the same order id or otherwise add it.
      */
@@ -129,23 +124,21 @@ class InternalAccount (
         for (orderState in orderStates) putOrder(orderState)
     }
 
-
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]
      */
     fun updateMarketPrices(event: Event, priceType: String = "DEFAULT") {
         val prices = event.prices
 
-        for ((asset,position) in portfolio) {
+        for ((asset, position) in portfolio) {
             val priceAction = prices[asset]
             if (priceAction != null) {
                 val price = priceAction.getPrice(priceType)
                 val newPosition = position.copy(spotPrice = price, lastUpdate = event.time)
-                portfolio.replace(asset, newPosition)
+                portfolio[asset] = newPosition
             }
         }
     }
-
 
     /**
      * Create an immutable [Account] instance that can be shared with other components (Policy and Metric).
@@ -154,7 +147,7 @@ class InternalAccount (
         return Account(
             baseCurrency,
             lastUpdate,
-            cash,
+            cash.clone(),
             trades.toList(),
             openOrders.values.toList(),
             closedOrders.toList(),
@@ -164,7 +157,6 @@ class InternalAccount (
     }
 
 }
-
 
 /**
  * Reject an order
@@ -185,7 +177,6 @@ fun InternalAccount.rejectOrder(order: Order, time: Instant) {
 fun InternalAccount.acceptOrder(order: Order, time: Instant) {
     putOrder(OrderState(order, OrderStatus.ACCEPTED, time, time))
 }
-
 
 val Collection<Order>.initialOrderState
     get() = map { OrderState(it, OrderStatus.INITIAL) }
