@@ -194,7 +194,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Is there any overlap between this timeframe and the [other] timeframe
+     * Is there an overlap between this timeframe and an [other] timeframe
      */
     fun overlap(other: Timeframe): Boolean {
         val startTime = if (start > other.start) start else other.start
@@ -203,7 +203,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Calculate the union of this timeframe with the [other] timeframe and return
+     * Calculate the union of this timeframe with an [other] timeframe and return
      * the resulting timeframe
      */
     fun union(other: Timeframe): Timeframe {
