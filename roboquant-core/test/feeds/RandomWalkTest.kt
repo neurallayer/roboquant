@@ -18,16 +18,13 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
-import org.roboquant.Roboquant
-import kotlin.test.*
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.logging.SilentLogger
-import org.roboquant.metrics.AccountSummary
-import org.roboquant.strategies.EMACrossover
 import java.time.Instant
 import java.time.Period
-
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class RandomWalkTest {
 
@@ -78,20 +75,6 @@ internal class RandomWalkTest {
         val tf = feed.split(100)
         assertTrue(tf.isNotEmpty())
     }
-
-
-    @Test
-    fun fiveYearRandomWalk() {
-        val timeline = Timeframe.fromYears(2015, 2020).toDays(excludeWeekends = true)
-        val feed = RandomWalk(timeline, generateBars = false)
-
-        val strategy = EMACrossover()
-        val logger = SilentLogger()
-        val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
-        roboquant.run(feed)
-        assertTrue(logger.events > 0)
-    }
-
 
 
     @Test

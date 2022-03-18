@@ -43,11 +43,6 @@ operator fun StringBuffer.plusAssign(s: String) {
 }
 
 /**
- * Add a numer of [millis] seconds to the instant
- */
-operator fun Instant.plus(millis: Int): Instant = plusMillis(millis.toLong())
-
-/**
  * Compare an instant to a [timeframe].
  */
 operator fun Instant.compareTo(timeframe: Timeframe): Int {

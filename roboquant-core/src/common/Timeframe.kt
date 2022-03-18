@@ -28,7 +28,8 @@ import kotlin.math.pow
  * timeframe instance is immutable.  Like all time related logic in roboquant, it uses the [Instant] type to define
  * a moment in time, in order to avoid potential timezone inconsistencies.
  *
- * The internal logic uses milliseconds as the the smallest difference between two times.
+ * All internal trading logic uses nanoseconds as the the smallest difference between two times. However some
+ * visualizations and charts use milli-seconds and the smallest time differences.
  *
  * It can be used to limit the duration of a run to that specific timeframe, for example in a walk-forward. It can also
  * serve to limit a live-feed to a certain duration.
@@ -44,15 +45,33 @@ data class Timeframe(val start: Instant, val end: Instant) {
 
     init {
         require(end > start) { "end time has to be larger than start time, found $start - $end" }
+        require (start >= MIN) { "start time has to be larger or equal than $MIN" }
+        require (end <= MAX) { "end time has to be smaller or equal than $MAX" }
     }
 
+    /**
+     * Is this an infinite timeframe
+     */
+    fun isInfinite() = this == INFINITE
+
     companion object {
+        /**
+         * Minimum start date of a timeframe
+         */
+        val MIN = Instant.parse("1900-01-01T00:00:00Z")
+
+        /**
+         * Maximum end date of a timeframe
+         */
+        val MAX = Instant.parse("2200-01-01T00:00:00Z")
+
+        private const val ONE_YEAR_MILLIS = 365.0 * 24.0 * 3600.0 * 1000.0
 
         /**
          * Infinite timeframe that matches any time and is typically used when no filtering is required or the
          * timeframe for a number of events is unknown.
          */
-        val INFINITY = Timeframe(Instant.MIN, Instant.MAX)
+        val INFINITE = Timeframe(MIN, MAX)
 
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         private val minutesFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
@@ -145,7 +164,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
          * Create a [Timeframe] with both the [start] and the [end] time being inclusive.
          */
         fun inclusive(start: Instant, end: Instant): Timeframe {
-            return Timeframe(start, end + 1)
+            return Timeframe(start, end).inclusive
         }
 
     }
@@ -154,7 +173,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
      * Return a timeframe inclusive of the [end] value.
      */
     val inclusive
-        get() = Timeframe(start, end + 1)
+        get() = Timeframe(start, end.plusNanos(1))
 
     /**
      * Does the timeframe contain a certain [time].
@@ -340,8 +359,8 @@ data class Timeframe(val start: Instant, val end: Instant) {
         }
 
         val fmt = formatter.withZone(Config.defaultZoneId)
-        val s1 = if (start == Instant.MIN) "MIN" else if (start == Instant.MAX) "MAX" else fmt.format(start)
-        val s2 = if (end == Instant.MIN) "MIN" else if (end == Instant.MAX) "MAX" else fmt.format(end)
+        val s1 = if (start == MIN) "MIN" else if (start == MAX) "MAX" else fmt.format(start)
+        val s2 = if (end == MIN) "MIN" else if (end == MAX) "MAX" else fmt.format(end)
         return "$s1 - $s2"
     }
 
@@ -361,14 +380,15 @@ data class Timeframe(val start: Instant, val end: Instant) {
 
 
     /**
-     * Annualize a [percentage] based on the duration of this timeframe. So given x percent profit
-     * during a timeframe, what would be the profit per year.
+     * Annualize a [percentage] based on the duration of this timeframe. So given x percent returns
+     * during a timeframe, what would be the returns per year. If this timeframe has higher than milliseconds precision,
+     * the remaining will not be used.
      *
      * [percentage] is expected to be provided as a fraction, for example 1% is 0.01
      */
     fun annualize(percentage: Double): Double {
-        val period = end.toEpochMilli() - start.toEpochMilli()
-        val years = (365.0 * 24.0 * 3600.0 * 1000.0) / period
+        val period = duration.toMillis()
+        val years = ONE_YEAR_MILLIS / period
         return (1.0 + percentage).pow(years) - 1.0
     }
 

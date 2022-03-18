@@ -35,10 +35,10 @@ import java.util.*
 interface Feed : Closeable {
 
     /**
-     * Timeframe of the feed. In case the timeframe is not known upfront, return the full timeframe [Timeframe.INFINITY]
+     * Timeframe of the feed. In case the timeframe is not known upfront, return the full timeframe [Timeframe.INFINITE]
      */
     val timeframe: Timeframe
-        get() = Timeframe.INFINITY
+        get() = Timeframe.INFINITE
 
     /**
      * (Re)play the events of the feed on put these events on the provided [channel]. Once done, return from this method.
@@ -79,7 +79,7 @@ interface AssetFeed : Feed {
  * restricted to a certain [timeframe] and if required an additional [filter] can be provided.
  */
 inline fun <reified T : Action> Feed.filter(
-    timeframe: Timeframe = Timeframe.INFINITY,
+    timeframe: Timeframe = Timeframe.INFINITE,
     crossinline filter: (T) -> Boolean = { true }
 ): List<Pair<Instant, T>> = runBlocking {
 

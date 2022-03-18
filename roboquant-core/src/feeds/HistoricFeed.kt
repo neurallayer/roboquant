@@ -39,10 +39,10 @@ interface HistoricFeed : AssetFeed {
     val timeline: Timeline
 
     /**
-     * TimeFrame of this feed. If it cannot be determined, [Timeframe.INFINITY] is returned instead.
+     * TimeFrame of this feed. If it cannot be determined, [Timeframe.INFINITE] is returned instead.
      */
     override val timeframe: Timeframe
-        get() = if (timeline.isEmpty()) Timeframe.INFINITY else Timeframe.inclusive(timeline.first(), timeline.last())
+        get() = if (timeline.isEmpty()) Timeframe.INFINITE else Timeframe.inclusive(timeline.first(), timeline.last())
 
     /**
      * Draw a [random] sampled timeframe of a cetain [size] from the historic feed and return the timeframe that

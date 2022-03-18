@@ -35,7 +35,7 @@ import java.util.logging.Logger
  * @constructor
  *
  */
-open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timeframe.INFINITY) {
+open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timeframe.INFINITE) {
 
     private val channel = Channel<Event>(capacity)
     private val logger: Logger = Logging.getLogger(EventChannel::class)

@@ -33,7 +33,7 @@ class PriceChart(
     private val feed: Feed,
     private val asset: Asset,
     private val trades: Collection<Trade> = emptyList(),
-    private val timeframe: Timeframe = Timeframe.INFINITY,
+    private val timeframe: Timeframe = Timeframe.INFINITE,
     private val priceType: String = "DEFAULT"
 ) : Chart() {
 

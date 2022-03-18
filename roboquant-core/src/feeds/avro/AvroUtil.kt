@@ -64,7 +64,7 @@ object AvroUtil {
     fun record(
         feed: Feed,
         fileName: String,
-        timeframe: Timeframe = Timeframe.INFINITY,
+        timeframe: Timeframe = Timeframe.INFINITE,
         includeAssetsOnly: Set<Asset> = emptySet(),
         compressionLevel: Int = 1
     ) =

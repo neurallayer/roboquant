@@ -144,7 +144,7 @@ class Roboquant(
      */
     fun run(
         feed: Feed,
-        timeframe: Timeframe = Timeframe.INFINITY,
+        timeframe: Timeframe = Timeframe.INFINITE,
         validation: Timeframe? = null,
         runName: String? = null,
         episodes: Int = 1
@@ -160,7 +160,7 @@ class Roboquant(
      */
     suspend fun runAsync(
         feed: Feed,
-        timeframe: Timeframe = Timeframe.INFINITY,
+        timeframe: Timeframe = Timeframe.INFINITE,
         validation: Timeframe? = null,
         runName: String? = null,
         episodes: Int = 1
@@ -242,7 +242,7 @@ class Roboquant(
  * @property episode the episode number
  * @property step the step
  * @property time the time
- * @property timeframe the total timeframe of the run, if not known it will be [Timeframe.INFINITY]
+ * @property timeframe the total timeframe of the run, if not known it will be [Timeframe.INFINITE]
  * @property phase the phase of the run
  * @constructor Create new RunInfo object
  */
@@ -251,7 +251,7 @@ data class RunInfo internal constructor(
     var episode: Int = 0,
     var step: Int = 0,
     var time: Instant = Instant.MIN,
-    var timeframe: Timeframe = Timeframe.INFINITY,
+    var timeframe: Timeframe = Timeframe.INFINITE,
     var phase: RunPhase = RunPhase.MAIN
 ) {
 

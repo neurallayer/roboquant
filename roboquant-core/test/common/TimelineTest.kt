@@ -18,6 +18,7 @@ package org.roboquant.common
 
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class TimelineTest {
 
@@ -36,7 +37,7 @@ internal class TimelineTest {
         val tl = Timeframe.fromYears(1987, 1999).toDays()
         val list = tl.split(200)
         assertEquals(tl.first(), list.first().start)
-        assertEquals(tl.last() + 1, list.last().end)
+        assertTrue(tl.last() < list.last().end)
     }
 
     @Test

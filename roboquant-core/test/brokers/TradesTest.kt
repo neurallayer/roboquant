@@ -63,7 +63,7 @@ internal class TradesTest {
         val trades = mutableListOf<Trade>()
         val asset = TestData.usStock()
         var now = Instant.now()
-        for (i in 1..100) {
+        for (i in 1..10) {
             now = now.plusSeconds(60)
             val trade1 = Trade(now, asset, 10.0, 100.0, 10.0, i.toDouble(), i)
             trades.add(trade1)
@@ -74,10 +74,10 @@ internal class TradesTest {
         }
 
         val outliers = trades.outliers(0.95)
-        assertEquals(10, outliers.size)
+        assertEquals(2, outliers.size)
 
         val inliers = trades.inliers(0.95)
-        assertEquals(190, inliers.size)
+        assertEquals(18, inliers.size)
 
     }
 

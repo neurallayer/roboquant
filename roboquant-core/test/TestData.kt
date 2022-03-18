@@ -107,7 +107,7 @@ object TestData {
     }
 
     fun getRunInfo(): RunInfo {
-        return RunInfo("run-1", 1, 10, Instant.now(), Timeframe.INFINITY, RunPhase.MAIN)
+        return RunInfo("run-1", 1, 10, Instant.now(), Timeframe.INFINITE, RunPhase.MAIN)
     }
 
     fun events(n:Int = 100, asset: Asset = usStock()) : List<Event> {

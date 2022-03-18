@@ -38,7 +38,7 @@ import java.math.RoundingMode
  */
 class AssetPerformanceChart(
     private val feed: Feed,
-    private val timeframe: Timeframe = Timeframe.INFINITY,
+    private val timeframe: Timeframe = Timeframe.INFINITE,
     private val priceType: String = "DEFAULT",
     private val compensateVolume: Boolean = true
 ) : Chart() {

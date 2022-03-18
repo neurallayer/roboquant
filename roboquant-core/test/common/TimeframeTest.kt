@@ -49,8 +49,9 @@ internal class TimeframeTest {
 
     @Test
     fun constants() {
-        val tf2 = Timeframe.INFINITY
-        assertEquals(Timeframe.INFINITY, tf2)
+        val tf2 = Timeframe.INFINITE
+        assertEquals(Timeframe.INFINITE, tf2)
+        assertTrue(tf2.isInfinite())
 
         assertTrue(Timeframe.blackMonday1987.isSingleDay(ZoneId.of("America/New_York")))
         assertFalse(Timeframe.coronaCrash2020.isSingleDay())
@@ -61,7 +62,7 @@ internal class TimeframeTest {
 
     @Test
     fun print() {
-        val tf2 = Timeframe.INFINITY
+        val tf2 = Timeframe.INFINITE
 
         val s2 = tf2.toString()
         assertTrue(s2.isNotBlank())
