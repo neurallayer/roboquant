@@ -20,6 +20,7 @@ import org.junit.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.Exchange
+import org.roboquant.feeds.PriceAction
 import java.time.Instant
 import kotlin.test.*
 
@@ -52,7 +53,8 @@ internal class CSVFeedTest {
         val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
         val config = CSVConfig(template = asset, priceValidate = true)
         val feed = CSVFeed(TestData.dataDir() + "US", config)
-        assertEquals("TEST123", feed.assets.first().exchangeCode)
+        val first = feed.first().actions.first() as PriceAction
+        assertEquals("TEST123", first.asset.exchangeCode)
     }
 
 

@@ -39,7 +39,7 @@ internal class TestFeedTest {
 
     @Test
     fun testTestFeed() = runBlocking {
-        val feed = LiveTestFeed(5..9)
+        val feed = LiveTestFeed(5..9, delayInMillis = 1)
         var cnt = 0
         for (step in play(feed)) {
             cnt++

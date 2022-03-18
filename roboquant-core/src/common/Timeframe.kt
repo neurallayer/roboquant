@@ -352,9 +352,9 @@ data class Timeframe(val start: Instant, val end: Instant) {
      */
     override fun toString(): String {
         val formatter = when {
-            duration < 1.hours -> millisFormatter
-            duration < 4.hours -> secondFormatter
-            duration < 100.hours -> minutesFormatter
+            duration < Duration.ofHours(1) -> millisFormatter
+            duration < Duration.ofHours(4) -> secondFormatter
+            duration < Duration.ofHours(100) -> minutesFormatter
             else -> dayFormatter
         }
 

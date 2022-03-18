@@ -16,12 +16,14 @@
 
 package org.roboquant.feeds
 
+import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import org.roboquant.common.Timeline
 import java.time.Instant
+import java.util.SortedSet
 
 /**
- * Base class that provides a foundation for data feeds that provide historic prices. It used a TreeMap to store
+ * Base class that provides a foundation for data feeds that provide historic prices. It used a sorted map to store
  * for each time one or more PriceActions in memory.
  */
 open class HistoricPriceFeed : HistoricFeed {
@@ -34,12 +36,22 @@ open class HistoricPriceFeed : HistoricFeed {
     override val timeframe
         get() =  if (events.isEmpty()) Timeframe.INFINITE else Timeframe.inclusive(events.firstKey(), events.lastKey())
 
-    override val assets
-        get() = events.values.map { actions -> actions.map { it.asset } }.flatten().toSortedSet()
+    override val assets : SortedSet<Asset>
+        get() = events.asSequence().map { entry -> entry.value.map { it.asset } }.flatten().toSortedSet()
+
+    /**
+     * Return the first event in this feed
+     */
+    fun first() : Event = Event(events[events.firstKey()]!!,  events.firstKey())
+
+    /**
+     * Return the last event in this feed
+     */
+    fun last() : Event = Event(events[events.lastKey()]!!,  events.lastKey())
 
 
     /**
-     * Remove all events from this fead
+     * Remove all events from this feed, realsing possible claimed memory.
      */
     override fun close() {
         events.clear()
