@@ -29,9 +29,6 @@ import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
-import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.jupyter.Chart
-import org.roboquant.jupyter.PriceBarChart
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.toDoubleArray
@@ -42,7 +39,6 @@ import org.roboquant.policies.BettingAgainstBeta
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.*
 import kotlin.system.measureTimeMillis
-import kotlin.test.assertTrue
 
 fun volatility() {
     val feed = AvroFeed.sp500()
@@ -108,6 +104,9 @@ suspend fun walkforwardParallel() {
     val avgEquity = logger.getMetric("account.equity").toDoubleArray().mean()
     println(avgEquity)
 }
+
+
+
 
 fun testingStrategies() {
     val strategy = EMACrossover()
@@ -181,32 +180,12 @@ fun beta2() {
 
 }
 
-fun svg() {
-    val f = RandomWalk.lastYears(1, 1, generateBars = true)
-    val asset = f.assets.first()
-    val chart = PriceBarChart(f, asset)
-    Chart.theme = "dark"
-
-    val ssr = chart.asSSR(800)
-    assertTrue(ssr.isNotEmpty())
-    val svg = chart.asSVG()
-    println(svg)
-
-    val msg = MimeMessage()
-    val session = msg.getSession()
-    msg.send(
-        "peter@neurallayer.com",
-        session,
-        "<html><body>The following chart the prices of ${asset.symbol} <img src='cid:ChartImage' /></body></html>",
-        svg
-    )
-}
 
 suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("SVG") {
+    when ("BETA") {
         "BETA" -> beta()
         "BETA2" -> beta2()
         "MULTI_RUN" -> multiRun()
@@ -215,8 +194,6 @@ suspend fun main() {
         "TESTING" -> testingStrategies()
         "TREND2" -> trendFollowing2()
         "VOLATILITY" -> volatility()
-        "SVG" -> svg()
-
     }
 
 }

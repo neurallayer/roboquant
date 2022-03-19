@@ -186,64 +186,7 @@ abstract class Chart : Output() {
         """.trimIndent()
     }
 
-    /**
-     * Generates the code required for serverside renderring in nodejs. It is self contained and the only requirement
-     * is that the echarts package is available.
-     */
-    fun asSSR(width: Int): String {
-        val fragment = renderOption().trimStart()
-        val themeDetector = if (theme == "dark") "dark" else "light"
 
-        return """
-        const echarts = require('echarts');
-        var theme = '$themeDetector';
-        const chart = echarts.init(null, theme, {
-          renderer: 'svg', 
-          ssr: true, 
-          width: $width, 
-          height: $height
-        });
-        
-       var option = $fragment 
-       option && (option.backgroundColor = 'rgba(0,0,0,0)');
-       option && chart.setOption(option);
-        
-       const svgStr = chart.renderToSVGString();
-       process.stdout.write(svgStr, () => { process.exit(); });
-       """.trimIndent()
-    }
-
-    /**
-     * Run a node process to render the chart as a SVG image.
-     *
-     * @return
-     */
-    fun asSVG(width: Int = 1000, nodeProcess: String = "node") : String {
-        val code = asSSR(width)
-        val rt = Runtime.getRuntime()
-        val commands = arrayOf(nodeProcess)
-        val proc = rt.exec(commands)
-        println(proc)
-
-        val writer = proc.outputWriter()
-        writer.write(code)
-        writer.flush()
-        writer.close()
-
-        val reader = proc.inputReader()
-        val result = StringBuffer()
-        reader.forEachLine {
-            result.append(it).append('\n')
-        }
-
-        // val error = proc.errorReader()
-        // val errors = error.lines().collect(Collectors.joining())
-        // println("errors $errors")
-
-        reader.close()
-        proc.destroy()
-        return result.toString()
-    }
 
 
     override fun asHTMLPage(): String {
@@ -293,7 +236,7 @@ abstract class Chart : Output() {
      * Subclasses will need to return the value of the option attribute. Although is can be a plain JSON string, this is
      * not required, and it can be any valid JavaScript object including any JavaScript code.
      */
-    protected abstract fun renderOption(): String
+    abstract fun renderOption(): String
 
 }
 

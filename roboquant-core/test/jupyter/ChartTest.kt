@@ -42,11 +42,6 @@ internal class ChartTest {
         chart.toHTMLFile(file.toString())
         assertTrue(file.exists())
 
-        val ssr = chart.asSSR(500)
-        assertTrue(ssr.isNotEmpty())
-
-        // val svg = chart.asSVG()
-
     }
 
 

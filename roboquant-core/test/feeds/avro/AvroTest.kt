@@ -47,7 +47,7 @@ class AvroTest {
     fun avroStep1() {
         folder.create()
         fileName = folder.newFile("test.avro").path
-        val timeline = Timeframe.past(30.days).toDays()
+        val timeline = Timeframe.past(30.days).toTimeline(1.days)
         val feed = RandomWalk(timeline, nAssets = nAssets)
         assets.addAll(feed.assets)
         size = feed.timeline.size

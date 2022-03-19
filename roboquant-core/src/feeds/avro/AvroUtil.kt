@@ -95,7 +95,6 @@ object AvroUtil {
                     for (action in event.actions.filterIsInstance<PriceAction>()) {
                         val asset = action.asset
                         if (includeAssetsOnly.isNotEmpty() && ! includeAssetsOnly.contains(asset)) continue
-                        // val assetStr = cache.getOrPut(action.asset) { action.asset.serialize() }
                         val assetStr = cache.getOrPut(asset) { Json.encodeToString(asset) }
                         record.put(0, now)
                         record.put(1, assetStr)

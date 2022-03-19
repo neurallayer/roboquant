@@ -124,6 +124,16 @@ data class Timeframe(val start: Instant, val end: Instant) {
             return Timeframe(start.toInstant(), stop.toInstant() - 1)
         }
 
+
+        private fun flexParse(str: String) : Instant {
+            val fStr = when (str.length) {
+                4 -> "$str-01-01T00:00:00Z"
+                10 -> "${str}T00:00:00Z"
+                else -> str
+            }
+            return Instant.parse(fStr)
+        }
+
         /**
          * Create a timeframe based on the [first] and [last] time provided. The times are to be provided as a string
          * and should be parsable by [Instant.parse]
@@ -132,15 +142,13 @@ data class Timeframe(val start: Instant, val end: Instant) {
          * being parsed.
          */
         fun parse(first: String, last: String): Timeframe {
-            val f1 = if (first.length == 10) first + "T00:00:00Z" else first
-            val f2 = if (last.length == 10) last + "T00:00:00Z" else last
-            val start = Instant.parse(f1)
-            val stop = Instant.parse(f2)
+            val start = flexParse(first)
+            val stop = flexParse(last)
             return Timeframe(start, stop)
         }
 
         /**
-         * Create a timeframe from now for the previous period.
+         * Create a timeframe from now - [period] to now
          */
         fun past(period: TemporalAmount): Timeframe {
             val end = Instant.now()
@@ -233,70 +241,17 @@ data class Timeframe(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Convert a timeframe to a timeline of individual days, optionally [excludeWeekends]
-     */
-    fun toDays(excludeWeekends: Boolean = false, zoneId: ZoneId = Config.defaultZoneId): Timeline {
-        val timeline = mutableListOf<Instant>()
-        var offset = start
-        val oneDay = 1.days
-        val weekend = listOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
-        while (offset <= end) {
-            if (excludeWeekends) {
-                val zdt = ZonedDateTime.ofInstant(offset, zoneId)
-                if (zdt.dayOfWeek !in weekend) timeline.add(offset)
-            } else {
-                timeline.add(offset)
-            }
-            offset += oneDay
-        }
-        return timeline
-    }
-
-    /**
-     * Convert a timeframe to a timeline of Period sized [steps][step] and only include times according to the
-     * provided [exchange] trading hours.
+     * Convert a timeframe to a timeline where each time is [steps][step] size separated
      *
      * Usage:
-     *
-     *      timeframe.toTimeline(1.days, Exchange.AEB)
+     *      timeframe.toTimeline(1.days)
      */
-    fun toTimeline(step: Period, exchange: Exchange = Exchange.DEFAULT): Timeline {
+    fun toTimeline(step: TemporalAmount): Timeline {
         val timeline = mutableListOf<Instant>()
         var time = start
         while (time < end) {
-            if (exchange.isTrading(time)) timeline.add(time)
+            timeline.add(time)
             time += step
-        }
-        return timeline
-    }
-
-
-    /**
-     * Convert a timeframe to a timeline (is a list of Instant values) with one minute intervals. Optionally specify a
-     * different [startTime] and [endTime] in a day given the provided [zoneId]. You can also optionally exclude
-     * weekends by setting [excludeWeekends] to true.
-     */
-    fun toMinutes(
-        excludeWeekends: Boolean = false,
-        zoneId: ZoneId = ZoneOffset.UTC,
-        startTime: LocalTime = LocalTime.parse("09:30:00"),
-        endTime: LocalTime = LocalTime.parse("16:00:00")
-    ): Timeline {
-        val timeline = mutableListOf<Instant>()
-        var offset = start
-        val weekend = listOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
-        while (offset <= end) {
-            val zdt = ZonedDateTime.ofInstant(offset, zoneId)
-            val time = LocalTime.of(zdt.hour, zdt.minute, zdt.second)
-            if ((time >= startTime) and (time < endTime)) {
-                if (excludeWeekends) {
-                    if (zdt.dayOfWeek !in weekend)
-                        timeline.add(offset)
-                } else {
-                    timeline.add(offset)
-                }
-            }
-            offset = offset.plus(1, ChronoUnit.MINUTES)
         }
         return timeline
     }
@@ -312,7 +267,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
      */
     fun splitTrainTest(testSize: Double): Pair<Timeframe, Timeframe> {
         require(testSize in 0.0..1.0) {"Test size has to between 0 and 1" }
-        val diff = end.toEpochMilli() - start.toEpochMilli()
+        val diff = duration.toMillis()
         val train = (diff * (1.0 - testSize)).toLong()
         val border = start.plus(train, ChronoUnit.MILLIS)
         return Pair(Timeframe(start, border), Timeframe(border, end))
@@ -323,18 +278,15 @@ data class Timeframe(val start: Instant, val end: Instant) {
      * Split a timeframe in multiple individual timeframes each of the fixed [period] length. One common use case is
      * to create timeframes that can be used in a walk forward back-test.
      */
-    fun split(period: TemporalAmount, zoneId: ZoneId = Config.defaultZoneId): List<Timeframe> {
-        val start =  ZonedDateTime.ofInstant(start, zoneId)
-        val stop = ZonedDateTime.ofInstant(end, zoneId)
-
+    fun split(period: TemporalAmount): List<Timeframe> {
         val result = mutableListOf<Timeframe>()
-        var offset = start
-        while (offset < stop) {
-            var end = offset + period
-            if (end > stop) end = stop
-            val timeframe = Timeframe(offset.toInstant(), end.toInstant())
+        var time = start
+        while (time < end) {
+            var stop = time + period
+            if (stop > end) stop = end
+            val timeframe = Timeframe(time, stop)
             result.add(timeframe)
-            offset = end
+            time = stop
         }
         return result
     }
@@ -370,6 +322,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
      *      val newTimeFrame = timeframe - 2.days
      */
     operator fun minus(period: TemporalAmount) = Timeframe(start - period, end - period)
+
 
     /**
      * Add a [period] to this timeframe and return the result.

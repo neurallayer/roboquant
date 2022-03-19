@@ -5,8 +5,8 @@ import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
-import java.time.Duration
 import java.time.Instant
+import java.time.temporal.TemporalAmount
 import java.util.LinkedList
 
 /**
@@ -19,7 +19,7 @@ import java.util.LinkedList
  * @property policy
  * @constructor Create new Chain Breaker
  */
-class CircuitBreakerPolicy(val policy: Policy, private val maxOrders: Int, private val duration: Duration) : Policy {
+class CircuitBreakerPolicy(val policy: Policy, private val maxOrders: Int, private val duration: TemporalAmount) : Policy {
 
     private val history = LinkedList<Pair<Instant, Int>>()
 

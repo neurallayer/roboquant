@@ -257,7 +257,6 @@
                 <version>1.6.0</version>
             </dependency>
 
-
             <dependency>
                 <artifactId>roboquant-core</artifactId>
                 <groupId>org.roboquant</groupId>

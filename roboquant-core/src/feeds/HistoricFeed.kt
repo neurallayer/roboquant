@@ -20,7 +20,7 @@ import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
 import org.roboquant.common.Timeline
 import org.roboquant.common.split
-import java.time.Period
+import java.time.temporal.TemporalAmount
 import kotlin.random.Random
 
 /**
@@ -64,7 +64,7 @@ interface HistoricFeed : AssetFeed {
      *
      * @param period
      */
-    fun split(period: Period) = timeframe.split(period)
+    fun split(period: TemporalAmount) = timeframe.split(period)
 
     /**
      * Split the timeline of the feed in number of equal size chunks

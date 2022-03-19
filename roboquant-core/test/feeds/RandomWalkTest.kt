@@ -19,6 +19,7 @@ package org.roboquant.feeds
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.roboquant.common.Timeframe
+import org.roboquant.common.days
 import org.roboquant.feeds.random.RandomWalk
 import java.time.Instant
 import java.time.Period
@@ -48,7 +49,7 @@ internal class RandomWalkTest {
         val event = play(feed).receive()
         assertTrue(event.actions[0] is TradePrice)
 
-        val tl = Timeframe.fromYears(2010, 2012).toDays()
+        val tl = Timeframe.fromYears(2010, 2012).toTimeline(1.days)
         val feed2 = RandomWalk(tl, generateBars = true)
         val item2 = play(feed2).receive()
         assertEquals(tl, feed2.timeline)

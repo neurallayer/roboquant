@@ -26,7 +26,6 @@ import kotlin.math.round
 import kotlin.random.Random
 import kotlin.random.asJavaRandom
 
-
 /**
  * Random walk creates a number of randomly named assets with a price history that follows a random walk using a
  * Normal distribution. It can be useful for testing, since if your strategy does well using this feed, there
@@ -78,9 +77,10 @@ class RandomWalk(
          */
         fun lastYears(years: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalk {
             val lastYear = LocalDate.now().year - 1
-            val timeline = Timeframe.fromYears(lastYear - years + 1, lastYear).toDays(excludeWeekends = true)
+            val timeline = Timeframe.fromYears(lastYear - years + 1, lastYear).toTimeline(1.days)
             return RandomWalk(timeline, nAssets, generateBars)
         }
+
 
         /**
          * Create a random walk for the last [days], generating minute prices.
@@ -88,7 +88,7 @@ class RandomWalk(
         fun lastDays(days: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalk {
             val last = Instant.now()
             val first = last - days.days
-            val timeline = Timeframe(first, last).toMinutes(excludeWeekends = true)
+            val timeline = Timeframe(first, last).toTimeline(1.minutes)
             return RandomWalk(timeline, nAssets, generateBars)
         }
 

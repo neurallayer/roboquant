@@ -25,16 +25,6 @@ import kotlin.test.assertTrue
 
 internal class TimeframeTest {
 
-    @Test
-    fun toDays() {
-        val tf = Timeframe.fromYears(1995, 2000)
-        val timeline1 = tf.toDays()
-        assertEquals(tf.start, timeline1.first())
-        assertTrue(tf.end >= timeline1.last())
-
-        val timeline2 = tf.toDays(excludeWeekends = true)
-        assertTrue(timeline1.size > timeline2.size)
-    }
 
 
     @Test

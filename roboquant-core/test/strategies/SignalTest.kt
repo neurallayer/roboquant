@@ -34,6 +34,7 @@ internal class SignalTest {
         assertEquals(s.asset, c)
         assertTrue(s.takeProfit.isNaN())
         assertTrue(s.takeProfit.isNaN())
+        assertTrue(s.stopLoss.isNaN())
         assertTrue(s.probability.isNaN())
         assertEquals(s.rating, Rating.BUY)
 
