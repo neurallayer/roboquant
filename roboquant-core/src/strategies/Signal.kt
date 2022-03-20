@@ -16,9 +16,8 @@
 
 package org.roboquant.strategies
 
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
-import org.roboquant.orders.LimitOrder
-import org.roboquant.orders.MarketOrder
 
 /**
  * Is the signal generated only for entry, exit or both.
@@ -83,6 +82,18 @@ class Signal(
         get() = type === SignalType.EXIT || type === SignalType.BOTH
 
     /**
+     * Returns [takeProfit] as an [Amount]
+     */
+    val takeProfitAmount
+        get() = Amount(asset.currency, takeProfit)
+
+    /**
+     * Returns [stopLoss] as an [Amount]
+     */
+    val stopLossAmount
+        get() = Amount(asset.currency, stopLoss)
+
+    /**
      * Does this signal allow to function as a entry signal, so to open or increase a position
      */
     val entry
@@ -99,11 +110,5 @@ class Signal(
      */
     fun conflicts(other: Signal) = asset == other.asset && rating.conflicts(other.rating)
 
-    fun toMarketOrder(qty: Double) = MarketOrder(asset, qty)
-
-    fun toLimitOrder(qty: Double): LimitOrder {
-        require(!takeProfit.isNaN()) { "Cannot create limit order since no take profit has been provided" }
-        return LimitOrder(asset, qty, takeProfit)
-    }
 
 }

@@ -21,6 +21,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.zeroOrMore
 import org.roboquant.feeds.Event
+import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 import kotlin.math.floor
@@ -113,7 +114,7 @@ open class DefaultPolicy(
      * Create a new order based on the [signal], [qty] and current [price]. Overwrite this method if you want to
      * create other orders types than the default MarketOrder.
      */
-    open fun createOrder(signal: Signal, qty: Double, price: Double): Order? = signal.toMarketOrder(qty)
+    open fun createOrder(signal: Signal, qty: Double, price: Double): Order? = MarketOrder(signal.asset, qty)
 
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
