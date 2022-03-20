@@ -67,6 +67,9 @@ data class Timeframe(val start: Instant, val end: Instant) {
 
         private const val ONE_YEAR_MILLIS = 365.0 * 24.0 * 3600.0 * 1000.0
 
+        private val Instant.inclusive : Instant
+            get() = plusNanos(1L)
+
         /**
          * Infinite timeframe that matches any time and is typically used when no filtering is required or the
          * timeframe for a number of events is unknown.
@@ -172,7 +175,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
          * Create a [Timeframe] with both the [start] and the [end] time being inclusive.
          */
         fun inclusive(start: Instant, end: Instant): Timeframe {
-            return Timeframe(start, end).inclusive
+            return Timeframe(start, end.inclusive)
         }
 
     }
@@ -181,7 +184,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
      * Return a timeframe inclusive of the [end] value.
      */
     val inclusive
-        get() = Timeframe(start, end.plusNanos(1))
+        get() = Timeframe(start, end.inclusive)
 
     /**
      * Does the timeframe contain a certain [time].

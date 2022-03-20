@@ -18,36 +18,31 @@ package org.roboquant.metrics
 
 import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
-import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceAction
+import java.time.temporal.TemporalAmount
+import java.util.LinkedList
 
 /**
- * Capture price actions for [assets]. This can then be used to display them in a graph or perform
- * other post-run analysis. This metric also implements the [Feed] API.
+ * Capture events that can then be used to display them in a graph or perform other post-run analysis. This metric
+ * also implements the [Feed] API.
  *
  * This metric is different from how most metrics work. It stores the result internally and does not
  * hand them over to a logger. However, just like other metrics it will reset its state at the beginning of a
  * phase.
  */
-class PriceRecorder(val assets: Collection<Asset>) : Metric, Feed {
+class EventRecorder(private val maxDuration: TemporalAmount? = null) : Metric, Feed {
 
-    /**
-     * Convenient constructor that allows to pass individual assets
-     */
-    constructor(vararg assets: Asset) : this(assets.asList())
-
-    private val events = mutableListOf<Event>()
+    private val events = LinkedList<Event>()
 
     override fun calculate(account: Account, event: Event) {
-        val prices = mutableListOf<PriceAction>()
-        for (asset in assets) {
-            val action = event.prices[asset]
-            if (action != null) prices.add(action)
+        events.add(event)
+        if (maxDuration != null) {
+            val firstTime = events.last().time - maxDuration
+            while (events.first().time < firstTime) events.removeFirst()
+            // events.removeAll { it.time < firstTime }
         }
-        if (prices.isNotEmpty()) events.add(Event(prices, event.time))
     }
 
     override fun start(runPhase: RunPhase) {

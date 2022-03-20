@@ -23,13 +23,13 @@ import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import kotlin.test.assertTrue
 
-internal class PriceRecorderTest {
+internal class EventRecorderTest {
 
     @Test
     fun basic() {
 
         val (account, event) = TestData.metricInput()
-        val metric = PriceRecorder(event.prices.keys.first())
+        val metric = EventRecorder()
 
         metric.calculate(account, event)
         assertTrue(metric.getMetrics().isEmpty())

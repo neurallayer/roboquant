@@ -28,7 +28,7 @@ import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
 import org.roboquant.metrics.AccountSummary
-import org.roboquant.metrics.PriceRecorder
+import org.roboquant.metrics.EventRecorder
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMACrossover
@@ -102,7 +102,7 @@ fun ibkrFeed() {
     val broker = SimBroker(cash)
 
     val strategy = EMACrossover.EMA_5_15
-    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), PriceRecorder(asset), broker = broker)
+    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), EventRecorder(), broker = broker)
     val tf = Timeframe.next(10.minutes)
 
     roboquant.run(feed, tf)
