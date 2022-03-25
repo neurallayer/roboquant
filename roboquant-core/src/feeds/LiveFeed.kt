@@ -21,19 +21,16 @@ import kotlinx.coroutines.delay
 
 /**
  * Live feed represents a feed of live data. So data that comes in as it is observed with timestamps
- * close to the present. Since a live feed has no defined end, it will continue to run unless you specify
+ * close to the present. Since a live feed has no pre-defined end, it will continue to run unless you specify
  * a timeframe.
  *
  * This default implementation generates heartbeat signals to ensure components still have an opportunity
  * to act even if no other data is incoming. A heartbeat is an [empty event ][Event.empty].
  *
+ * @param heartbeatInterval The interval between heartbeats in milli-seconds, default is 10_000 (10 seconds)
  */
-abstract class LiveFeed : Feed {
+abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
 
-    /**
-     * How many milliseconds between the heartbeat signals, default is 10_000ms (10 seconds)
-     */
-    var heartbeatInterval: Long = 10_000
     protected var channel: EventChannel? = null
 
     /**

@@ -29,19 +29,21 @@ import java.util.LinkedList
  * also implements the [Feed] API.
  *
  * This metric is different from how most metrics work. It stores the result internally and does not
- * hand them over to a logger. However, just like other metrics it will reset its state at the beginning of a
- * phase.
+ * hand them over to a MetricsLogger. However, just like other metrics, it will reset its state at the beginning of a
+ * new phase.
  */
 class EventRecorder(private val maxDuration: TemporalAmount? = null) : Metric, Feed {
 
     private val events = LinkedList<Event>()
 
-    override fun calculate(account: Account, event: Event) {
+
+    override fun calculate(account: Account, event: Event) = record(event)
+
+    fun record(event: Event) {
         events.add(event)
         if (maxDuration != null) {
             val firstTime = events.last().time - maxDuration
             while (events.first().time < firstTime) events.removeFirst()
-            // events.removeAll { it.time < firstTime }
         }
     }
 

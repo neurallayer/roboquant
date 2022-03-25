@@ -19,10 +19,12 @@ package org.roboquant.alpaca
 import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.MarketDataMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.bar.BarMessage
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.control.SuccessMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.enums.MarketDataMessageType
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.quote.QuoteMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.trade.TradeMessage
 import net.jacobpeterson.alpaca.websocket.marketdata.MarketDataListener
+import net.jacobpeterson.alpaca.websocket.marketdata.MarketDataWebsocketInterface
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
@@ -33,7 +35,7 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Alpaca feed allows you to subscribe to live market data from Alpaca. Alpaca needs a key and secret in order to access
- * their API.
+ * their API. This live feed support both stocks and crypto asset classes.
  *
  * You can provide these to the constructor or set them as environment variables ("APCA_API_KEY_ID", "APCA_API_SECRET_KEY").
  *
@@ -51,9 +53,7 @@ class AlpacaLiveFeed(
 ) : LiveFeed(), AssetFeed {
 
     private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
-
-
-    val logger = Logging.getLogger(AlpacaLiveFeed::class)
+    private val logger = Logging.getLogger(AlpacaLiveFeed::class)
     private val listener = createListener()
 
     val availableAssets by lazy {
@@ -64,31 +64,41 @@ class AlpacaLiveFeed(
         availableAssets.associateBy { it.symbol }
     }
 
+    private fun String.isCrypto() = assetsMap[this]!!.type == AssetType.CRYPTO
+
+    /**
+     * TODO return only subscribed assets
+     */
     override val assets
         get() = assetsMap.values.toSortedSet()
 
 
     init {
-        if (autoConnect) connect()
-        alpacaAPI.stockMarketDataStreaming().setListener(listener)
+        if (autoConnect) {
+            connect(alpacaAPI.stockMarketDataStreaming())
+            connect(alpacaAPI.cryptoMarketDataStreaming())
+        }
     }
 
 
     /**
-     * Start listening for market data
+     * Connect to ta market data provider and start listening. This can be the stocks or crypto market data feeds.
+     * 13 april 15:00 hendriks
      */
-    fun connect() {
-        require(!alpacaAPI.stockMarketDataStreaming().isConnected) { "Already connected, disconnect first" }
+    fun connect(connection: MarketDataWebsocketInterface = alpacaAPI.stockMarketDataStreaming()) {
+        require(! connection.isConnected) { "Already connected, disconnect first" }
 
-        alpacaAPI.stockMarketDataStreaming().subscribeToControl(
+        connection.subscribeToControl(
             MarketDataMessageType.SUCCESS,
             MarketDataMessageType.SUBSCRIPTION,
             MarketDataMessageType.ERROR
         )
-        alpacaAPI.stockMarketDataStreaming().connect()
-        alpacaAPI.stockMarketDataStreaming().waitForAuthorization(5, TimeUnit.SECONDS)
-        if (!alpacaAPI.stockMarketDataStreaming().isValid) {
+        connection.connect()
+        connection.waitForAuthorization(5, TimeUnit.SECONDS)
+        if (!connection.isValid) {
             logger.severe("Couldn't establish websocket connection")
+        } else {
+            connection.setListener(listener)
         }
     }
 
@@ -98,6 +108,9 @@ class AlpacaLiveFeed(
     override fun close() {
         try {
             if (alpacaAPI.stockMarketDataStreaming().isConnected) alpacaAPI.stockMarketDataStreaming().disconnect()
+            if (alpacaAPI.cryptoMarketDataStreaming().isConnected) alpacaAPI.cryptoMarketDataStreaming().disconnect()
+            alpacaAPI.okHttpClient.dispatcher.executorService.shutdown()
+            alpacaAPI.okHttpClient.connectionPool.evictAll()
         } catch (_: Exception) {
         }
     }
@@ -109,39 +122,40 @@ class AlpacaLiveFeed(
         close()
     }
 
-    fun subscribe(assets: Collection<Asset>) {
-        subscribe(*assets.toTypedArray())
+
+    private val Collection<Asset>.symbols
+        get() = if (isEmpty()) null else map { it.symbol }.distinct()
+
+    fun subscribeStocks(priceBars: Collection<String>, trades: Collection<String> = emptyList(), quotes: Collection<String> = emptyList()) {
+        alpacaAPI.stockMarketDataStreaming().subscribe(trades.ifEmpty { null }, quotes.ifEmpty { null }, priceBars.ifEmpty { null })
+    }
+
+    @JvmName("subscribeStocksAssets")
+    fun subscribeStocks(priceBars: Collection<Asset>, trades: Collection<Asset> = emptyList(), quotes: Collection<Asset> = emptyList()) {
+        alpacaAPI.stockMarketDataStreaming().subscribe(trades.symbols, quotes.symbols, priceBars.symbols)
+    }
+
+    fun subscribeCrypto(priceBars: Collection<String>, trades: Collection<String> = emptyList(), quotes: Collection<String> = emptyList()) {
+        alpacaAPI.cryptoMarketDataStreaming().subscribe(trades.ifEmpty { null }, quotes.ifEmpty { null }, priceBars.ifEmpty { null })
+    }
+
+    @JvmName("subscribeCryptoAssets")
+    fun subscribeCrypto(priceBars: Collection<Asset>, trades: Collection<Asset> = emptyList(), quotes: Collection<Asset> = emptyList()) {
+        alpacaAPI.cryptoMarketDataStreaming().subscribe(trades.symbols, quotes.symbols, priceBars.symbols)
     }
 
     /**
-     * Subscribe to price data of all the assets
-     */
-    fun subscribeAll() {
-        alpacaAPI.stockMarketDataStreaming().subscribe(null, null, listOf("*"))
-        logger.info("Subscribing to all assets")
-    }
-
-    /**
-     * Subscribe to price data identified by their [assets]
-     */
-    fun subscribe(vararg assets: Asset) {
-        for (asset in assets) {
-            require(asset.type == AssetType.STOCK) { "Only stocks are supported, received ${asset.type}" }
-            require(asset.currencyCode == "USD") { "Only USD currency supported, received ${asset.currencyCode}" }
-        }
-
-        val symbols = assets.map { it.symbol }
-        alpacaAPI.stockMarketDataStreaming().subscribe(null, null, symbols)
-        logger.info("Subscribing to ${assets.size} assets")
-    }
-
-    /**
-     * Subscribe to price data identified by their [symbols]
+     * Subscribe to price data identified by their [symbols].
      */
     fun subscribe(vararg symbols: String) {
-        val assets = symbols.map { Asset(it) }.toTypedArray()
-        subscribe(*assets)
+        val crypto = symbols.filter { it.isCrypto() }
+        if (crypto.isNotEmpty()) subscribeCrypto(crypto)
+
+        val stocks = symbols.filter { ! it.isCrypto() }
+        if (stocks.isNotEmpty()) subscribeStocks(stocks)
     }
+
+
 
     private fun handleMsg(msg: MarketDataMessage) {
         try {
@@ -163,10 +177,8 @@ class AlpacaLiveFeed(
                     msg.close,
                     msg.tradeCount.toDouble()
                 )
-                else -> {
-                    logger.warning("Unexpected msg $msg")
-                    null
-                }
+                is SuccessMessage -> { logger.fine(msg.message); null }
+                else -> { logger.warning("Unexpected msg $msg"); null}
             }
 
             if (action != null) {
@@ -175,6 +187,7 @@ class AlpacaLiveFeed(
                 channel?.offer(event)
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             logger.severe("error during handling market data message", e)
         }
     }
@@ -185,8 +198,9 @@ class AlpacaLiveFeed(
             logger.finer {"Received message of type $streamMessageType and msg $msg"}
 
             when (streamMessageType) {
-                MarketDataMessageType.ERROR -> logger.warning(msg.toString())
-                MarketDataMessageType.SUBSCRIPTION -> logger.info(msg.toString())
+                MarketDataMessageType.ERROR -> logger.warning("$msg")
+                MarketDataMessageType.SUBSCRIPTION -> logger.info("subscription $msg")
+                MarketDataMessageType.SUCCESS -> logger.fine("succes $msg")
                 else -> handleMsg(msg)
             }
         }

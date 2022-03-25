@@ -147,6 +147,9 @@ class Exchange private constructor(
 
             // Australian exchanges
             addInstance("SSX", "Australia/Sydney", "AUD", "10:00", "16:00")
+
+            // Generic 24x7 Crypto Exchange
+            addInstance("CRYPTO", "America/New_York", "USD", "00:00", "23:59:59.999")
         }
 
 

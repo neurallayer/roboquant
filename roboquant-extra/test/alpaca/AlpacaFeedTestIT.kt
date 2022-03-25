@@ -20,6 +20,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.*
 import java.time.Duration
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -32,8 +33,8 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
         val assets = feed.availableAssets
-        val apple = assets.getBySymbol("AAPL")
-        feed.subscribe(apple)
+        assertContains(assets.map { it.symbol }, "AAPL")
+        feed.subscribe("AAPL")
         val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
@@ -129,7 +130,7 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed(autoConnect = false)
         feed.connect()
-        feed.subscribeAll()
+        feed.subscribeStocks(listOf("*"))
         val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {

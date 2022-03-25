@@ -34,6 +34,12 @@ internal object AlpacaConnection {
 
     private val logger = Logging.getLogger(AlpacaConnection::class)
 
+    init {
+        if (Exchange.exchanges.none { it.exchangeCode == "FTXU" }) {
+            Exchange.addInstance("FTXU", "UTC", "USD", opening = "00:00", closing = "23:59:59.999")
+        }
+    }
+
     /**
      * Should OTC assets be included, default is false
      */
@@ -52,17 +58,19 @@ internal object AlpacaConnection {
         return AlpacaAPI(finalKey, finalSecret, accountType, dataType)
     }
 
+
     /**
      * Get the available assets
      */
     fun getAvailableAssets(api: AlpacaAPI): SortedSet<Asset> {
-        val availableAssets = api.assets().get(AssetStatus.ACTIVE, AssetClass.US_EQUITY)
+        val availableAssets = api.assets().get(AssetStatus.ACTIVE, AssetClass.CRYPTO) + api.assets().get(AssetStatus.ACTIVE, AssetClass.US_EQUITY)
         val exchangeCodes = Exchange.exchanges.map { e -> e.exchangeCode }
         val result = mutableListOf<Asset>()
         availableAssets.forEach {
             if (it.exchange != "OTC" || includeOTC) {
                 if (it.exchange !in exchangeCodes) logger.warning("Exchange ${it.exchange} not configured")
-                result.add(Asset(it.symbol, AssetType.STOCK, "USD", it.exchange, id = it.id))
+                val assetClass = if (it.assetClass == AssetClass.CRYPTO) AssetType.CRYPTO else AssetType.STOCK
+                result.add(Asset(it.symbol, assetClass, "USD", it.exchange, id = it.id))
             }
         }
         return result.toSortedSet()

@@ -20,6 +20,7 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.alpaca.AlpacaBroker
+import org.roboquant.alpaca.AlpacaConnection
 import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.alpaca.AlpacaLiveFeed
 import org.roboquant.brokers.summary
@@ -34,6 +35,7 @@ import org.roboquant.metrics.OpenPositions
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.yahoo.YahooHistoricFeed
+import java.util.logging.Level
 
 fun alpacaBroker() {
     val feed = CSVFeed("data/US", CSVConfig(priceAdjust = true))
@@ -53,13 +55,12 @@ fun allAlpaca() {
     account.positions.summary().log()
 
     val feed = AlpacaLiveFeed()
-    feed.heartbeatInterval = 1000
-
+    feed.heartbeatInterval = 30_000
 
     // Let trade all the assets that start with an A or are in our portfolio already
     // val assets = feed.availableAssets.filter { it.symbol.startsWith("AA") } + account.portfolio.assets
     val assets = account.assets
-    feed.subscribe(assets.distinct())
+    feed.subscribeStocks(assets.distinct())
 
     val strategy = EMACrossover(3, 5)
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
@@ -84,18 +85,24 @@ fun alpacaHistoricFeed() {
     AvroUtil.record(feed, "/Users/peter/tmp/alpaca.avro")
 }
 
-fun alpacaFeed() {
-    // Logging.setLevel(Level.FINER)
+fun alpacaConnection() {
+    val api = AlpacaConnection.getAPI()
+    println(AlpacaConnection.getAvailableAssets(api).size)
+    println(AlpacaConnection.getAvailableAssets(api).filter { it.type == AssetType.CRYPTO })
+
+}
+
+fun alpacaLiveFeed() {
+    Logging.setLevel(Level.FINER)
     val feed = AlpacaLiveFeed()
-    val assets = feed.assets.take(50)
-    feed.subscribe(assets)
-    feed.heartbeatInterval = 1000
-    val strategy = EMACrossover.EMA_12_26
-    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
-    val tf = Timeframe.next(5.minutes)
+    feed.subscribeStocks(listOf("TSLA", "IBM", "AMZN", "MSFT"))
+    feed.subscribeCrypto(listOf("BTCUSD"))
+    feed.heartbeatInterval = 30_000
+    val strategy = EMACrossover.EMA_5_15
+    val roboquant = Roboquant(strategy, ProgressMetric())
+    val tf = Timeframe.next(10.minutes)
     roboquant.run(feed, tf)
     feed.close()
-
     roboquant.broker.account.summary().log()
 }
 
@@ -116,7 +123,6 @@ fun feedIEXLive() {
     val apple = Asset("AAPL")
     val google = Asset("GOOG")
     feed.subscribeTrades(apple, google)
-
     val strategy = EMACrossover()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
     roboquant.run(feed, Timeframe.next(5.minutes))
@@ -130,7 +136,6 @@ fun feedYahoo() {
     val google = Asset("GOOG")
     val last300Days = Timeframe.past(300.days)
     feed.retrieve(apple, google, timeframe = last300Days)
-
     val strategy = EMACrossover()
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, AccountSummary(), OpenPositions(), logger = logger)
@@ -141,12 +146,13 @@ fun feedYahoo() {
 
 
 fun main() {
-    when ("ALPACA_HISTORIC_FEED") {
+    when ("ALPACA_LIVE_FEED") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
         "ALPACA_BROKER" -> alpacaBroker()
-        "ALPACA_FEED" -> alpacaFeed()
+        "ALPACA_LIVE_FEED" -> alpacaLiveFeed()
+        "ALPACA_CONNECTION" -> alpacaConnection()
         "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
         "ALPACA_ALL" -> allAlpaca()
     }

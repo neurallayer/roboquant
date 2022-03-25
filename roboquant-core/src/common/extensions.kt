@@ -25,6 +25,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.time.*
+import java.time.temporal.ChronoUnit
 import java.time.temporal.Temporal
 import java.time.temporal.TemporalAmount
 import java.time.temporal.TemporalUnit
@@ -289,6 +290,13 @@ class ZonedPeriod(private val a: TemporalAmount, private val zoneId: ZoneId = Co
         return a.units
     }
 
+    fun toDays() = a.get(ChronoUnit.DAYS)
+
+    fun toHours() = a.get(ChronoUnit.HOURS)
+
+    fun toMinutes() = a.get(ChronoUnit.MINUTES)
+
+
     override fun addTo(temporal: Temporal): Temporal {
         // if (a is Duration) return temporal.plus(a)
         val result = Instant.from(temporal).atZone(zoneId).plus(a)
@@ -304,6 +312,8 @@ class ZonedPeriod(private val a: TemporalAmount, private val zoneId: ZoneId = Co
     fun atZone(zoneId: ZoneId) : ZonedPeriod {
         return ZonedPeriod(a, zoneId)
     }
+
+
 
 }
 

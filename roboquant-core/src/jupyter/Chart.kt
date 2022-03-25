@@ -153,7 +153,6 @@ abstract class Chart : Output() {
         }
     }
 
-
     /**
      * Generates the HTML required to draw a chart.
      */
@@ -185,8 +184,6 @@ abstract class Chart : Output() {
         </script>
         """.trimIndent()
     }
-
-
 
 
     override fun asHTMLPage(): String {
