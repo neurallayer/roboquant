@@ -63,6 +63,22 @@ internal class AlpacaFeedTestIT {
     }
 
     @Test
+    fun test4() {
+        System.getProperty("TEST_ALPACA") ?: return
+        val feed = AlpacaLiveFeed()
+        val asset  = feed.availableAssets.first { it.type == AssetType.CRYPTO }
+        feed.subscribeCrypto(listOf(asset))
+        val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
+        feed.close()
+        if (actions.isNotEmpty()) {
+            val action = actions.first().second
+            assertTrue(action is PriceBar)
+        } else {
+            println("No actions found, perhaps exchange is closed")
+        }
+    }
+
+    @Test
     fun testHistoricFeed() {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
