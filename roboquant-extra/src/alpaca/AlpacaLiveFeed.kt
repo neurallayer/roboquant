@@ -37,7 +37,8 @@ import java.util.concurrent.TimeUnit
  * Alpaca feed allows you to subscribe to live market data from Alpaca. Alpaca needs a key and secret in order to access
  * their API. This live feed support both stocks and crypto asset classes.
  *
- * You can provide these to the constructor or set them as environment variables ("APCA_API_KEY_ID", "APCA_API_SECRET_KEY").
+ * You can provide these to the constructor or set them as environment variables
+ * ("APCA_API_KEY_ID", "APCA_API_SECRET_KEY") or environment files (recommened)
  *
  * @constructor
  *
@@ -145,7 +146,7 @@ class AlpacaLiveFeed(
     }
 
     /**
-     * Subscribe to price data identified by their [symbols].
+     * Subscribe to price bar data identified by their [symbols].
      */
     fun subscribe(vararg symbols: String) {
         val crypto = symbols.filter { it.isCrypto() }
@@ -154,7 +155,6 @@ class AlpacaLiveFeed(
         val stocks = symbols.filter { ! it.isCrypto() }
         if (stocks.isNotEmpty()) subscribeStocks(stocks)
     }
-
 
 
     private fun handleMsg(msg: MarketDataMessage) {
