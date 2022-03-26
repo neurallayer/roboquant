@@ -20,6 +20,7 @@ import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.historical.bar.enums.BarTimePeriod
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarAdjustment
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarFeed
+import net.jacobpeterson.alpaca.model.properties.DataAPIType
 import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
@@ -129,6 +130,10 @@ class AlpacaHistoricFeed(
         timeframe: Timeframe,
         barSize: TemporalAmount = 1.days,
     ) {
+        val barFeed = when(config.dataType) {
+            DataAPIType.IEX -> BarFeed.IEX
+            DataAPIType.SIP -> BarFeed.SIP
+        }
         val (alpacaPeriod, duration) = fromTemporalAmount(barSize)
         for (symbol in symbols) {
             val resp = alpacaAPI.stockMarketData().getBars(
@@ -140,7 +145,7 @@ class AlpacaHistoricFeed(
                 duration,
                 alpacaPeriod,
                 BarAdjustment.ALL,
-                BarFeed.IEX
+                barFeed
             )
             resp.bars == null && continue
 
