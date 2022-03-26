@@ -28,6 +28,7 @@ import org.roboquant.feeds.PriceQuote
 import org.roboquant.feeds.TradePrice
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAmount
 
 typealias AlpacaPeriod = BarTimePeriod
@@ -114,7 +115,7 @@ class AlpacaHistoricFeed(
     private fun fromTemporalAmount(amt: TemporalAmount): Pair<BarTimePeriod, Int> {
 
         return when {
-            amt is  ZonedPeriod && amt.toDays() > 0 -> Pair(AlpacaPeriod.DAY, amt.toDays().toInt())
+            amt is ZonedPeriod && amt.units.contains(ChronoUnit.DAYS) && amt.toDays().toInt() > 0 -> Pair(AlpacaPeriod.DAY, amt.toDays().toInt())
             amt is ZonedPeriod && amt.toHours() > 0 -> Pair(AlpacaPeriod.HOUR, amt.toHours().toInt())
             amt is ZonedPeriod && amt.toMinutes() > 0 -> Pair(AlpacaPeriod.MINUTE, amt.toMinutes().toInt())
             else -> throw UnsupportedException("$amt")
