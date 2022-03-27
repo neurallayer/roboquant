@@ -23,15 +23,15 @@ internal class MovingWindowTest {
 
     @Test
     fun test() {
-        val buffer = MovingWindow(100)
-        repeat(90) { buffer.add(1.0) }
+        val buffer = MovingWindow(10)
+        repeat(5) { buffer.add(1.0) }
         assertFalse(buffer.isAvailable())
 
         repeat(10) { buffer.add(1.0) }
-        assertFalse(buffer.isAvailable())
+        assertTrue(buffer.isAvailable())
 
         val d = buffer.toDoubleArray()
-        assertEquals(100, d.size)
+        assertEquals(10, d.size)
     }
 
 }
