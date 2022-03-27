@@ -16,7 +16,7 @@
 
 @file:Suppress("unused")
 
-package org.roboquant.strategies
+package org.roboquant.ta
 
 import org.roboquant.RunPhase
 import org.roboquant.common.Asset
@@ -26,7 +26,10 @@ import org.roboquant.common.severe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.metrics.MetricResults
-import org.roboquant.strategies.ta.TALib
+import org.roboquant.strategies.Rating
+import org.roboquant.strategies.Signal
+import org.roboquant.strategies.SignalType
+import org.roboquant.strategies.Strategy
 import org.roboquant.strategies.utils.PriceBarBuffer
 import java.lang.Integer.max
 import java.util.logging.Logger
@@ -45,7 +48,7 @@ class TASignalStrategy(
 ) : Strategy {
 
     private val buffers = mutableMapOf<Asset, PriceBarBuffer>()
-    private val logger: Logger = Logging.getLogger(TAStrategy::class)
+    private val logger: Logger = Logging.getLogger(TALibStrategy::class)
     val ta = TALib
 
     private var metrics = mutableMapOf<String, Number>()

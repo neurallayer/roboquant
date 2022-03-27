@@ -96,7 +96,6 @@ internal class JupyterCore : JupyterIntegration() {
             "org.roboquant.common.*",
             "org.roboquant.metrics.*",
             "org.roboquant.strategies.*",
-            "org.roboquant.strategies.ta.*",
             "org.roboquant.orders.*",
             "org.roboquant.feeds.*",
             "org.roboquant.feeds.csv.*",

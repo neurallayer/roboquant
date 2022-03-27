@@ -2,12 +2,12 @@
   <configuration default="false" name="With Coverage" type="JUnit" factoryName="JUnit">
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="org.roboquant.strategies.ta.TALib" />
+        <option name="PATTERN" value="ta.TALib" />
         <option name="ENABLED" value="true" />
         <option name="INCLUDE" value="false" />
       </pattern>
       <pattern>
-        <option name="PATTERN" value="org.roboquant.strategies.ta.TALibBatch" />
+        <option name="PATTERN" value="ta.TALibBatch" />
         <option name="ENABLED" value="true" />
         <option name="INCLUDE" value="false" />
       </pattern>

@@ -128,7 +128,7 @@ fun testingStrategies() {
 
 }
 
-fun trendFollowing2() {
+/*fun trendFollowing2() {
     val feed = AvroFeed.sp500()
     val strategy = TAStrategy(200)
 
@@ -144,7 +144,7 @@ fun trendFollowing2() {
     roboquant.run(feed)
     roboquant.broker.account.summary().log()
     roboquant.broker.account.trades.summary().log()
-}
+}*/
 
 fun beta() {
     val feed = CSVFeed("/data/assets/stock-market/stocks/")
@@ -192,7 +192,6 @@ suspend fun main() {
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkforwardParallel() })
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()
-        "TREND2" -> trendFollowing2()
         "VOLATILITY" -> volatility()
     }
 

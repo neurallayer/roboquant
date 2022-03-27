@@ -158,9 +158,9 @@ fun DoubleArray.returns() : DoubleArray {
 }
 
 /**
- * Get the totoal return (as a percentage). Forumla used is
+ * Get the total return (as a percentage). Forumla used is
  *
- *      returns = (new -old) / old
+ *      returns = (last - first) / first
  */
 fun DoubleArray.totalReturns() : Double {
     return if (size < 2)

@@ -16,12 +16,14 @@
 
 package org.roboquant.metrics
 
+import org.apache.commons.math3.stat.correlation.Covariance
+import org.apache.commons.math3.stat.descriptive.moment.Variance
 import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
+import org.roboquant.common.returns
 import org.roboquant.common.totalReturns
 import org.roboquant.feeds.Event
-import org.roboquant.strategies.ta.TALib
 import org.roboquant.strategies.utils.MovingWindow
 
 /**
@@ -30,6 +32,8 @@ import org.roboquant.strategies.utils.MovingWindow
  *
  * - Alpha is a measure of the performance of an investment as compared to the market as a whole.
  * - Beta is a measure of the volatility (or systematic risk) of the account compared to the market as a whole.
+ *
+ * The provided risk free return should be for the same duration as period.
  *
  * @property referenceAsset Which asset to use for the market volatility, for example S&P 500
  * @property period Over how many events to calculate the beta
@@ -73,7 +77,14 @@ class AlphaBeta(
             if (marketData.isAvailable() && portfolioData.isAvailable()) {
                 val x1 = marketData.toDoubleArray()
                 val x2 = portfolioData.toDoubleArray()
-                val beta = TALib.beta(x1, x2, period)
+
+                val marketReturns = x1.returns()
+                val portfolioReturns = x1.returns()
+
+                val covariance = Covariance().covariance(portfolioReturns, marketReturns)
+                val variance = Variance().evaluate(marketReturns)
+                val beta = covariance/variance
+
                 val alpha = (x1.totalReturns() - riskFreeReturn) - beta * (x2.totalReturns() - riskFreeReturn)
                 return mapOf(
                     "account.alpha" to alpha,

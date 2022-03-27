@@ -16,10 +16,12 @@
 
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
-package org.roboquant.strategies.ta
+package org.roboquant.ta
 
-import com.tictactec.ta.lib.*
-import org.roboquant.strategies.InsufficientData
+import com.tictactec.ta.lib.Core
+import com.tictactec.ta.lib.MAType
+import com.tictactec.ta.lib.MInteger
+import com.tictactec.ta.lib.RetCode
 import org.roboquant.strategies.utils.PriceBarBuffer
 
 /**
@@ -4094,4 +4096,3 @@ object TALib {
 
 
 }
-

@@ -12,7 +12,6 @@ import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.EMACrossover
-import org.roboquant.strategies.TAStrategy
 import java.time.Instant
 import kotlin.system.measureTimeMillis
 
@@ -45,7 +44,7 @@ fun base(feed: Feed) {
  * Technical analysis with many indicators
  */
 fun technicalAnaslysis(feed: Feed) {
-    val shortTerm = 30
+/*    val shortTerm = 30
     val longTerm = 50
     val strategy = TAStrategy(longTerm)
 
@@ -66,7 +65,7 @@ fun technicalAnaslysis(feed: Feed) {
 
     val roboquant = Roboquant(strategy, AccountSummary())
     roboquant.run(feed)
-    roboquant.broker.account.summary().print()
+    roboquant.broker.account.summary().print()*/
 }
 
 

@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.roboquant.strategies
+package org.roboquant.ta
 
 import org.junit.Test
 import org.roboquant.RunPhase
-import org.roboquant.TestData
+import org.roboquant.common.Asset
 import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
-import org.roboquant.strategies.ta.TALib
-import org.roboquant.strategies.ta.TALibBatch
+import org.roboquant.feeds.test.HistoricTestFeed
+import org.roboquant.strategies.*
 import org.roboquant.strategies.utils.PriceBarBuffer
 import java.time.Instant
 import kotlin.math.absoluteValue
@@ -33,12 +33,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
+
 internal class TAStrategyTest {
 
     @Test
     fun test() {
 
-        val strategy = TAStrategy(50)
+        val strategy = TALibStrategy(50)
         strategy.buy { price ->
             ta.ema(price.close, 30) > ta.ema(price.close, 50) && ta.cdlMorningStar(price)
         }
@@ -83,7 +84,7 @@ internal class TAStrategyTest {
 
     @Test
     fun taBreakout() {
-        val strategy = TAStrategy.breakout(10, 30)
+        val strategy = TALibStrategy.breakout(10, 30)
         val x = run(strategy, 60)
         assertEquals(60, x.size)
     }
@@ -98,7 +99,7 @@ internal class TAStrategyTest {
 
     @Test
     fun testFail() {
-        val strategy = TAStrategy(3)
+        val strategy = TALibStrategy(3)
         strategy.buy { price -> ta.cdlMorningStar(price) }
 
         assertFailsWith<InsufficientData> {
@@ -108,8 +109,10 @@ internal class TAStrategyTest {
 
     private fun getPriceBarBuffer(size: Int) : PriceBarBuffer {
         val result = PriceBarBuffer(size)
+        val asset = Asset("XYZ")
         repeat(size) {
-            result.update(TestData.priceBar(), Instant.now())
+            val pb = PriceBar(asset, 10.0, 12.0, 8.0, 11.0, 100 + it)
+            result.update(pb, Instant.now())
         }
         return result
     }
@@ -117,12 +120,12 @@ internal class TAStrategyTest {
     private fun run(s: Strategy, n: Int = 100): Map<Instant, List<Signal>> {
         s.reset()
         s.start(RunPhase.MAIN)
-        val actions = listOf(TestData.priceBar())
+        val feed = HistoricTestFeed(100 until 100+n, priceBar = true)
+        val events = feed.filter<PriceBar>()
         val result = mutableMapOf<Instant, List<Signal>>()
         var now = Instant.now()
-        repeat(n) {
-            val event = Event(actions, now)
-            val signals = s.generate(event)
+        for (event in events) {
+            val signals = s.generate(Event(listOf(event.second), event.first))
             result[now] = signals
             now += 1.seconds
         }
@@ -131,23 +134,23 @@ internal class TAStrategyTest {
 
     @Test
     fun testPredefined() {
-        var strategy = TAStrategy.emaCrossover(50, 10)
+        var strategy = TALibStrategy.emaCrossover(50, 10)
         var s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TAStrategy.smaCrossover(50, 10)
+        strategy = TALibStrategy.smaCrossover(50, 10)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TAStrategy.recordHighLow(100)
+        strategy = TALibStrategy.recordHighLow(100)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TAStrategy.recordHighLow(20, 50, 100)
+        strategy = TALibStrategy.recordHighLow(20, 50, 100)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TAStrategy.rsi(20)
+        strategy = TALibStrategy.rsi(20)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
     }
@@ -171,7 +174,7 @@ internal class TAStrategyTest {
 
     @Test
     fun testSma() {
-        val feed =  TestData.feed()
+        val feed =  HistoricTestFeed(100..150, priceBar = true)
         val asset = feed.assets.first()
         val closingPrice = feed.filter<PriceBar> { it.asset == asset }.map { it.second.close }.toDoubleArray()
         assertTrue(closingPrice.size > 30)
@@ -186,7 +189,7 @@ internal class TAStrategyTest {
 
     @Test
     fun test2() {
-        val strategy = TAStrategy(2)
+        val strategy = TALibStrategy(2)
         strategy.buy {
             true
         }
@@ -200,7 +203,7 @@ internal class TAStrategyTest {
 
     @Test
     fun testMetrics() {
-        val strategy = TAStrategy(10)
+        val strategy = TALibStrategy(10)
         strategy.buy {
             val a = ta.sma(it.close, 5)
             val b = ta.sma(it.close, 10)
@@ -218,3 +221,4 @@ internal class TAStrategyTest {
         assertTrue(metrics.isEmpty())
     }
 }
+

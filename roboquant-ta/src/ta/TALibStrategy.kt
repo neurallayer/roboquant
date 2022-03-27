@@ -16,7 +16,7 @@
 
 @file:Suppress("unused")
 
-package org.roboquant.strategies
+package org.roboquant.ta
 
 import org.roboquant.RunPhase
 import org.roboquant.common.Asset
@@ -24,7 +24,9 @@ import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.metrics.MetricResults
-import org.roboquant.strategies.ta.TALib
+import org.roboquant.strategies.Rating
+import org.roboquant.strategies.Signal
+import org.roboquant.strategies.Strategy
 import org.roboquant.strategies.utils.PriceBarBuffer
 import java.lang.Integer.max
 import java.util.logging.Logger
@@ -37,12 +39,12 @@ import java.util.logging.Logger
  * technical indicators you want to use. If the [history] is too small, it will lead to a runtime exception.
  *
  */
-class TAStrategy(private val history: Int = 15) : Strategy {
+class TALibStrategy(private val history: Int = 15) : Strategy {
 
-    private var sellFn: TAStrategy.(price: PriceBarBuffer) -> Boolean = { false }
-    private var buyFn: TAStrategy.(price: PriceBarBuffer) -> Boolean = { false }
+    private var sellFn: TALibStrategy.(price: PriceBarBuffer) -> Boolean = { false }
+    private var buyFn: TALibStrategy.(price: PriceBarBuffer) -> Boolean = { false }
     private val buffers = mutableMapOf<Asset, PriceBarBuffer>()
-    private val logger: Logger = Logging.getLogger(TAStrategy::class)
+    private val logger: Logger = Logging.getLogger(TALibStrategy::class)
     val ta = TALib
 
     private var metrics = mutableMapOf<String, Number>()
@@ -85,12 +87,12 @@ class TAStrategy(private val history: Int = 15) : Strategy {
          * @param timePeriods
          * @return
          */
-        fun recordHighLow(vararg timePeriods: Int = intArrayOf(200)): TAStrategy {
+        fun recordHighLow(vararg timePeriods: Int = intArrayOf(200)): TALibStrategy {
 
             require(timePeriods.isNotEmpty()) { "At least one period needs to be provided" }
             require(timePeriods.all { it > 1 }) { "Any provided period needs to be at least of size 2" }
 
-            val strategy = TAStrategy(timePeriods.maxOrNull()!!)
+            val strategy = TALibStrategy(timePeriods.maxOrNull()!!)
             strategy.buy {
                 val data = it.high
                 timePeriods.any { period -> ta.recordHigh(data, period) }
@@ -106,9 +108,9 @@ class TAStrategy(private val history: Int = 15) : Strategy {
          * Breakout strategy generates a BUY signal if it is a records high over last [highPeriod] and
          * generates a SELL signal is it is a record low over last [lowPeriod].
          */
-        fun breakout(highPeriod: Int = 100, lowPeriod: Int = 50) : TAStrategy {
+        fun breakout(highPeriod: Int = 100, lowPeriod: Int = 50) : TALibStrategy {
             require(highPeriod > 0 && lowPeriod > 0) { "Periods have to be larger than 0" }
-            val strategy = TAStrategy(max(highPeriod, lowPeriod))
+            val strategy = TALibStrategy(max(highPeriod, lowPeriod))
             strategy.buy {
                 ta.recordHigh(it.high, highPeriod)
             }
@@ -126,11 +128,11 @@ class TAStrategy(private val history: Int = 15) : Strategy {
          * @param fast
          * @return
          */
-        fun smaCrossover(slow: Int, fast: Int): TAStrategy {
+        fun smaCrossover(slow: Int, fast: Int): TALibStrategy {
             require(slow > 0 && fast > 0) { "Periods have to be larger than 0" }
             require(slow > fast) { "Slow period have to be larger than fast period" }
 
-            val strategy = TAStrategy(slow)
+            val strategy = TALibStrategy(slow)
             strategy.buy { ta.sma(it.close, fast) > ta.sma(it.close, slow) }
             strategy.sell { ta.sma(it.close, fast) < ta.sma(it.close, slow) }
             return strategy
@@ -143,11 +145,11 @@ class TAStrategy(private val history: Int = 15) : Strategy {
          * @param fast
          * @return
          */
-        fun emaCrossover(slow: Int, fast: Int): TAStrategy {
+        fun emaCrossover(slow: Int, fast: Int): TALibStrategy {
             require(slow > 0 && fast > 0) { "Periods have to be larger than 0" }
             require(slow > fast) { "Slow period have to be larger than fast period" }
 
-            val strategy = TAStrategy(slow)
+            val strategy = TALibStrategy(slow)
             strategy.buy { ta.ema(it.close, fast) > ta.ema(it.close, slow) }
             strategy.sell { ta.ema(it.close, fast) < ta.ema(it.close, slow) }
             return strategy
@@ -169,11 +171,11 @@ class TAStrategy(private val history: Int = 15) : Strategy {
             timePeriod: Int,
             lowThreshold: Double = 30.0,
             highThreshold: Double = 70.0
-        ): TAStrategy {
+        ): TALibStrategy {
             require(lowThreshold in 0.0..100.0 && highThreshold in 0.0..100.0) { "Thresholds have to be in the range 0..100" }
             require(highThreshold > lowThreshold) { "High threshold has to be larger than low threshold" }
 
-            val strategy = TAStrategy(timePeriod + 1)
+            val strategy = TALibStrategy(timePeriod + 1)
             strategy.buy { ta.rsi(it.close, timePeriod) < lowThreshold }
             strategy.sell { ta.rsi(it.close, timePeriod) > highThreshold }
             return strategy
@@ -192,7 +194,7 @@ class TAStrategy(private val history: Int = 15) : Strategy {
      *       }
      *
      */
-    fun buy(block: TAStrategy.(price: PriceBarBuffer) -> Boolean) {
+    fun buy(block: TALibStrategy.(price: PriceBarBuffer) -> Boolean) {
         buyFn = block
     }
 
@@ -206,7 +208,7 @@ class TAStrategy(private val history: Int = 15) : Strategy {
      *      }
      *
      */
-    fun sell(block: TAStrategy.(price: PriceBarBuffer) -> Boolean) {
+    fun sell(block: TALibStrategy.(price: PriceBarBuffer) -> Boolean) {
         sellFn = block
     }
 

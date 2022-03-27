@@ -32,7 +32,7 @@ Just add _roboquant-core_ as a dependency to your build tool, like Maven or Grad
 <dependency>
     <groupId>org.roboquant</groupId>
     <artifactId>roboquant-core</artifactId>
-    <version>the version</version>
+    <version>VERSION</version>
 </dependency>
 ----
 
@@ -40,13 +40,15 @@ Just add _roboquant-core_ as a dependency to your build tool, like Maven or Grad
 
 [source,shell]
 ----
-implementation group: 'org.roboquant', name: 'roboquant-core', version: 'the version'    
+implementation group: 'org.roboquant', name: 'roboquant-core', version: 'VERSION'
 ----
 
 Next to roboquant-core, the following additional modules are available for inclusion in your application:
 
 * *roboquant-crypto* Adds support for many of today's most popular crypto exchanges
 * *roboquant-extra* Adds out-of-the-box integrations with 3rd party brokers and data providers.
+* *roboquant-ta* Adds support for technical analysis indicators and strategies
+* *roboquant-ibkr* Adds support for Interactive Brokers
 
 == Interactive Brokers
 
