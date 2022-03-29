@@ -24,6 +24,7 @@ import org.roboquant.common.*
 import org.roboquant.common.summary
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.OrderBook
+import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.filter
@@ -97,6 +98,14 @@ fun oandaLive() {
 }
 
 
+fun oandaLive2() {
+    val feed = OANDALiveFeed()
+    feed.subscribePriceBar("EUR_USD", "USD_JPY", "GBP_USD", granularity = "S5", delay = 5_000L)
+    val tf = Timeframe.next(15.minutes)
+    val actions = feed.filter<PriceBar>(tf)
+    println(actions.size)
+}
+
 
 fun oandaPaperTrading() {
     Currency.increaseDigits(3) // We want to use extra digits when displaying amounts
@@ -138,14 +147,6 @@ fun oandaLiveRecord() {
     AvroUtil.record(feed, "/Users/peter/tmp/oanda.avro", tf)
 }
 
-
-fun oandaLivePrices() {
-    Logging.setLevel(Level.FINE, "org.roboquant")
-    val feed = OANDALiveFeed()
-    feed.subscribePrices("EUR_USD", "USD_JPY", "GBP_USD")
-    val data = feed.filter<OrderBook>(Timeframe.next(1.minutes))
-    println(data.size)
-}
 
 
 fun oandaBroker() {
@@ -201,7 +202,7 @@ fun oandaBroker2(createOrder: Boolean = true) {
 
 
 fun main() {
-    when ("OANDA_AVRO") {
+    when ("OANDA_LIVE_FEED2") {
         "OANDA_BROKER" -> oandaBroker()
         "OANDA_BROKER2" -> oandaBroker2()
         "OANDA_BROKER3" -> oandaBroker3()
@@ -210,8 +211,8 @@ fun main() {
         "OANDA_FEED3" -> oandaLong()
         "OANDA_AVRO" -> forexAvro()
         "OANDA_LIVE_FEED" -> oandaLive()
+        "OANDA_LIVE_FEED2" -> oandaLive2()
         "OANDA_LIVE_RECORD" -> oandaLiveRecord()
-        "OANDA_LIVE_PRICES" -> oandaLivePrices()
         "OANDA_PAPER" -> oandaPaperTrading()
         "OANDA_CLOSE" -> oandaClosePositions()
     }

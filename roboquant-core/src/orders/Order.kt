@@ -34,15 +34,13 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
     companion object {
 
         // Counter used for creating unique order ids
-        internal var ID = 0
+        var ID = 0
 
         /**
          * Generate the next order id
          */
-        fun nextId(): Int {
-            synchronized(ID) {
+        @Synchronized fun nextId(): Int {
                 return ID++
-            }
         }
     }
 

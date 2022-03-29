@@ -13,8 +13,6 @@ import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.filter
-import org.roboquant.jupyter.Chart
-import org.roboquant.jupyter.PriceBarChart
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.EMACrossover
@@ -63,18 +61,6 @@ fun readBianceFeed() {
 }
 
 
-fun readBianceFeed2() {
-    val userHomeDir = System.getProperty("user.home")
-    val fileName = "$userHomeDir/tmp/crypto.avro"
-    val feed = AvroFeed(fileName)
-    Chart.maxSamples = 100_000
-    val chart = PriceBarChart(feed, feed.assets.first())
-    println( measureTimeMillis {
-        chart.asHTML()
-    })
-}
-
-
 
 fun xchangeFeed() {
 
@@ -100,7 +86,6 @@ fun main() {
     when("READ") {
         "RECORD" -> recordBinanceFeed()
         "READ" -> readBianceFeed()
-        "READ2" -> readBianceFeed2()
         "XCHANGE" -> xchangeFeed ()
     }
 }

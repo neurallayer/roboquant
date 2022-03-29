@@ -48,6 +48,7 @@
     <modules>
         <module>roboquant-core</module>
         <module>roboquant-ta</module>
+        <module>roboquant-jupyter</module>
         <module>roboquant-extra</module>
         <module>roboquant-crypto</module>
         <module>roboquant-ibkr</module>

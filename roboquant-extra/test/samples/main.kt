@@ -92,11 +92,12 @@ fun alpacaConnection() {
 
 }
 
-fun alpacaLiveFeed() {
+
+fun alpacaLiveFeed2() {
     Logging.setLevel(Level.FINER)
     val feed = AlpacaLiveFeed()
-    feed.subscribeStocks(listOf("TSLA", "IBM", "AMZN", "MSFT"))
-    feed.subscribeCrypto(listOf("BTCUSD"))
+    // feed.subscribeStocks(listOf("TSLA", "IBM", "AMZN", "MSFT"))
+    feed.subscribeCrypto(listOf("*"))
     feed.heartbeatInterval = 30_000
     val strategy = EMACrossover.EMA_5_15
     val roboquant = Roboquant(strategy, ProgressMetric())
@@ -151,7 +152,7 @@ fun main() {
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
         "ALPACA_BROKER" -> alpacaBroker()
-        "ALPACA_LIVE_FEED" -> alpacaLiveFeed()
+        "ALPACA_LIVE_FEED" -> alpacaLiveFeed2()
         "ALPACA_CONNECTION" -> alpacaConnection()
         "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
         "ALPACA_ALL" -> allAlpaca()

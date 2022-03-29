@@ -16,38 +16,20 @@
 
 package org.roboquant.oanda
 
-import com.google.gson.JsonParser
 import com.oanda.v20.Context
+import com.oanda.v20.instrument.CandlestickGranularity
+import com.oanda.v20.instrument.InstrumentCandlesRequest
 import com.oanda.v20.pricing.PricingGetRequest
 import com.oanda.v20.primitives.DateTime
+import com.oanda.v20.primitives.InstrumentName
 import kotlinx.coroutines.delay
-import org.apache.http.client.methods.CloseableHttpResponse
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.HttpClientBuilder
-import org.apache.http.message.BasicHeader
-import org.apache.http.util.EntityUtils
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.ParallelJobs
-import org.roboquant.feeds.AssetFeed
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.LiveFeed
-import org.roboquant.feeds.OrderBook
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import org.roboquant.feeds.*
 import java.time.Instant
-import kotlin.collections.Collection
-import kotlin.collections.forEach
-import kotlin.collections.get
-import kotlin.collections.isNotEmpty
-import kotlin.collections.joinToString
-import kotlin.collections.listOf
-import kotlin.collections.map
-import kotlin.collections.mutableMapOf
+import java.time.temporal.ChronoUnit
 import kotlin.collections.set
-import kotlin.collections.toList
-import kotlin.collections.toSortedSet
-import kotlin.collections.toTypedArray
 
 /**
  * Retrieve live data from OANDA.
@@ -55,12 +37,11 @@ import kotlin.collections.toTypedArray
 class OANDALiveFeed(
     accountID: String? = null,
     token: String? = null,
-    private val demoAccount: Boolean = true
+    demoAccount: Boolean = true
 ) : LiveFeed(), AssetFeed {
 
     private val ctx: Context = OANDA.getContext(token, demoAccount)
     private val assetMap = mutableMapOf<String, Asset>()
-    private val accessToken = OANDA.getToken(token)
     private val accountID = OANDA.getAccountID(accountID, ctx)
     private val logger = Logging.getLogger(OANDALiveFeed::class)
     private val jobs = ParallelJobs()
@@ -72,36 +53,6 @@ class OANDALiveFeed(
     override val assets
         get() = assetMap.values.toSortedSet()
 
-    fun subscribePrices(vararg symbols: String) {
-        logger.info {"Subscribing to ${symbols.size} prices"}
-        val httpClient = HttpClientBuilder.create().build()
-
-        symbols.forEach {
-            assetMap[it] = availableAssets[it]!!
-        }
-
-        val domain = if (demoAccount) "https://stream-fxpractice.oanda.com/" else "https://stream-fxtrade.oanda.com/"
-        val instruments = symbols.joinToString(",")
-        val httpGet = HttpGet("${domain}v3/accounts/$accountID/pricing/stream?instruments=$instruments")
-        httpGet.setHeader(BasicHeader("Authorization", "Bearer $accessToken"))
-        logger.finer { "Executing request: ${httpGet.requestLine}" }
-        val resp = httpClient.execute(httpGet)
-        if (resp.statusLine.statusCode == 200 && resp.entity != null) {
-            val job = jobs.add {
-                try {
-                    handleResponse(resp)
-                } catch (e: Exception) {
-                    logger.severe("$e")
-                }
-            }
-            job.invokeOnCompletion { httpClient.close() }
-        } else {
-            val responseString = EntityUtils.toString(resp.entity, "UTF-8")
-            logger.warning(responseString)
-        }
-        logger.fine { "subscribed to ${symbols.toList()}" }
-
-    }
 
     /**
      * Stop all background jobs
@@ -110,57 +61,63 @@ class OANDALiveFeed(
         jobs.cancelAll()
     }
 
-    /**
-     * Subscribe to price events for the provides symbols. These events will be delivered at a maximum rate of once
-     * per 250 milliseconds.
-     *
-     * TODO use an async HTTP client solution
-     */
-    private fun handleResponse(resp: CloseableHttpResponse) {
 
-        val entity = resp.entity
-        val stream = entity.content
 
-        var line: String?
-        val br = BufferedReader(InputStreamReader(stream))
-        while (br.readLine().also { line = it } != null) {
-            val tick = JsonParser.parseString(line).asJsonObject
-            logger.finer { "received tick: $tick" }
-
-            val type = tick.get("type").asString
-            if (type == "PRICE") {
-                val symbol = tick.get("instrument")?.asString
-                val asset = availableAssets[symbol]!!
-                val bids = tick.get("bids").asJsonArray.map {
-                    val map = it.asJsonObject
-                    OrderBook.OrderBookEntry(map.get("liquidity").asDouble, map.get("price").asDouble)
-                }
-                val asks = tick.get("asks").asJsonArray.map {
-                    val map = it.asJsonObject
-                    OrderBook.OrderBookEntry(map.get("liquidity").asDouble, map.get("price").asDouble)
-                }
-                val action = OrderBook(asset, asks, bids)
-                val time = Instant.now() // parse(tick.get("time").asString)
-                val event = Event(listOf(action), time)
-                channel?.offer(event)
-            }
-
+    fun subscribePriceBar(
+        vararg symbols: String,
+        granularity: String = "M1",
+        priceType: String = "M",
+        delay: Long = 60_000L,
+    ) {
+        val gr = CandlestickGranularity.valueOf(granularity)
+        symbols.forEach { assetMap[it] = availableAssets[it]!! }
+        val requests = symbols.map { InstrumentCandlesRequest(InstrumentName(it))
+            .setPrice(priceType)
+            .setGranularity(gr)
+            .setCount(1)
         }
 
+        jobs.add {
+            while (true) {
+                val now = Instant.now()
+                val actions = mutableListOf<Action>()
+                for (request in requests) {
+                    val resp = ctx.instrument.candles(request)
+                    val asset = availableAssets[resp.instrument.toString()]!!
+                    resp.candles.forEach {
+                        with(it.mid) {
+                            val action =
+                                PriceBar(
+                                    asset,
+                                    o.doubleValue(),
+                                    h.doubleValue(),
+                                    l.doubleValue(),
+                                    c.doubleValue(),
+                                    it.volume.toDouble()
+                                )
+                            actions.add(action)
+                            logger.fine {"Got price bar at ${now.truncatedTo(ChronoUnit.SECONDS)} for $action" }
+                        }
+                    }
+                }
+                val event = Event(actions, now)
+                channel?.offer(event)
+                delay(delay)
+            }
+        }
     }
-
 
     fun subscribeOrderBook(assets: Collection<Asset>, delay: Long = 5_000L) {
-        val symbols = assets.map{ it.symbol}.toTypedArray()
+        val symbols = assets.map { it.symbol }.toTypedArray()
         subscribeOrderBook(*symbols, delay = delay)
     }
-    
+
     /**
      * Subscribe to the order book data for the provided [symbols]. Since this is a pulling solution, you can also
      * specify the [delay] interval between two pulls, default being 5000 milliseconds (so 5 seocond data)
      */
     fun subscribeOrderBook(vararg symbols: String, delay: Long = 5_000L) {
-        logger.info {"Subscribing to ${symbols.size} order books"}
+        logger.info { "Subscribing to ${symbols.size} order books" }
         symbols.forEach {
             val asset = availableAssets[it]
             if (asset != null)
@@ -203,6 +160,5 @@ class OANDALiveFeed(
 
         }
     }
-
 
 }

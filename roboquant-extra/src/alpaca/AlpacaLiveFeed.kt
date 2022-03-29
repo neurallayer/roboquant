@@ -31,6 +31,7 @@ import org.roboquant.common.Logging
 import org.roboquant.common.severe
 import org.roboquant.feeds.*
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 
 /**
@@ -183,6 +184,7 @@ class AlpacaLiveFeed(
 
             if (action != null) {
                 val now = Instant.now()
+                logger.finer { "Received action $action at ${now.truncatedTo(ChronoUnit.SECONDS)}"}
                 val event = Event(listOf(action), now)
                 channel?.offer(event)
             }

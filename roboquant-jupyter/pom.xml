@@ -24,11 +24,12 @@
         <groupId>org.roboquant</groupId>
         <version>0.9-SNAPSHOT</version>
     </parent>
-    <artifactId>roboquant-extra</artifactId>
+
+    <artifactId>roboquant-jupyter</artifactId>
+
     <packaging>jar</packaging>
 
-    <name>roboquant-extra</name>
-
+    <name>roboquant-jupyter</name>
     <build>
         <plugins>
             <plugin>
@@ -42,7 +43,9 @@
         </plugins>
     </build>
 
+
     <dependencies>
+
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
@@ -51,43 +54,35 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.roboquant</groupId>
             <artifactId>roboquant-core</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>com.yahoofinance-api</groupId>
-            <artifactId>YahooFinanceAPI</artifactId>
-            <version>3.15.0</version>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlin-jupyter-api</artifactId>
+            <version>0.11.0-53</version>
         </dependency>
-        <!-- overwrite the version used by iextrading4j-all since it got a bug -->
+
         <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-common</artifactId>
-            <version>2.30.1</version>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlin-jupyter-test-kit</artifactId>
+            <version>0.11.0-53</version>
+            <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>com.oanda.v20</groupId>
-            <artifactId>v20</artifactId>
-            <version>3.0.25</version>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.9.0</version>
         </dependency>
+
         <dependency>
-            <groupId>pl.zankowski</groupId>
-            <artifactId>iextrading4j-all</artifactId>
-            <version>3.4.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.crazzyghost</groupId>
-            <artifactId>alphavantage-java</artifactId>
-            <version>1.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.jacobpeterson</groupId>
-            <artifactId>alpaca-java</artifactId>
-            <version>9.1.0</version>
-            <scope>compile</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
         </dependency>
 
     </dependencies>
-
 </project>

@@ -119,6 +119,10 @@ class PriceBar(
     override val volume
         get() = ohlcv[4]
 
+    override fun toString(): String {
+        return "asset=$asset OHLCV=${ohlcv.toList()}"
+    }
+
     companion object{
 
         fun fromValues(asset: Asset, values: List<Double>) = PriceBar(asset, values.toDoubleArray())

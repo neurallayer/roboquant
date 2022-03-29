@@ -121,7 +121,7 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
 
 }
 
-internal fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, Collection<MetricsEntry>> {
+fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, Collection<MetricsEntry>> {
 
     val formatter = when (period) {
         ChronoUnit.YEARS -> SimpleDateFormat("yyyy")
@@ -150,6 +150,6 @@ fun Collection<MetricsEntry>.toDoubleArray() = map { it.value }.toDoubleArray()
 /**
  * Generate a name for a collection of metric entries
  */
-internal fun Collection<MetricsEntry>.getName(): String {
+fun Collection<MetricsEntry>.getName(): String {
     return map { it.metric }.distinct().joinToString("/") { it.replace('.', ' ') }
 }
