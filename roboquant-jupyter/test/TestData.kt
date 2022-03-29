@@ -27,7 +27,6 @@ import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
 import org.roboquant.feeds.test.HistoricTestFeed
-import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
@@ -76,18 +75,12 @@ object TestData {
 
     fun event(time: Instant = time()) = Event(listOf(priceAction()), time)
 
-
-
     fun metricInput(time: Instant = time()): Pair<Account, Event> {
         val account = usAccount()
         val asset1 = account.assets.first()
         // val asset2 = account.portfolio.assets.last()
         val moment = Event(listOf(TradePrice(asset1, 11.0)), time)
         return Pair(account, moment)
-    }
-
-    fun getMetrics(): MetricResults {
-        return mapOf("key1" to 12.0, "key2" to 13.0)
     }
 
     fun events(n:Int = 100, asset: Asset = usStock()) : List<Event> {

@@ -1,4 +1,4 @@
-package org.roboquant.strategies.ta
+package generator
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -129,7 +129,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
     companion object {
         val startCode =  """
         @file:Suppress("MemberVisibilityCanBePrivate", "unused")
-        package org.roboquant.strategies.ta
+        package org.roboquant.ta
         
         import com.tictactec.ta.lib.*
        
@@ -206,13 +206,12 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
         return """
             
         /**
-         * Apply the $desc on the provided input and return the result as an array.
-         *
+         * Apply $desc on the provided input data and return the most recent output only. If there is insufficient
+         * data to calculate the indicators, an [InsufficientData] will be thrown.
          * This indicator belongs to the group $groupId.
-         *
          */
         fun $fnName(${getInput(true)}, $constructor):  ${returnType()} {
-            val endIdx = $firstInput.size-1
+            val endIdx = $firstInput.lastIndex
             val outputSize = $firstInput.size
             ${getOutputDecl()}
             val startOutput = MInteger()
@@ -220,8 +219,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
             val ret = core.$fnName(0, endIdx, $inputParams, $optional startOutput, endOutput, ${getOutputNames()})
             if (ret != RetCode.Success) throw Exception(ret.toString())
             val last = endOutput.value
-            if (last < 0) throw InsufficientData("Not enough data available to calculate $fnName")
-            return ${returnStatement()}
+            return if (last < 0) throw InsufficientData("Not enough data to calculate $fnName") else ${returnStatement()}
         }
     """.trimIndent()
     }
@@ -242,7 +240,7 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
     companion object {
         val startCode = """
         @file:Suppress("MemberVisibilityCanBePrivate", "unused")
-        package org.roboquant.strategies.ta
+        package org.roboquant.ta
         
         import com.tictactec.ta.lib.*
         import org.roboquant.strategies.utils.PriceBarBuffer
@@ -279,6 +277,21 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
         return result.toString().trimIndent()
     }
 
+    /**
+    private fun returnStatementInssuficientData(): String {
+        if (patternRecognition) return "false"
+
+        val l = getList("OutputArgument")
+        return when(l.size) {
+            1 -> "Double.NaN"
+            2 -> "Pair(Double.NaN, Double.NaN)"
+            3 -> "Triple(Double.NaN, Double.NaN, Double.NaN)"
+            else -> {
+                throw Exception("unexpected return size")
+            }
+        }
+    }
+    */
 
     private fun returnStatement(): String {
         if (patternRecognition) return "output1[last] != 0"
@@ -316,16 +329,16 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
      * @return
      */
     fun genMethod(): String {
+
         return """
             
         /**
-         * Apply $desc on the provided input and return the most recent output only.
-         *
+         * Apply $desc on the provided input data and return the most recent output only. If there is insufficient
+         * data to calculate the indicators, an [InsufficientData] will be thrown.
          * This indicator belongs to the group $groupId.
-         *
          */
         fun $fnName(${getInput(true)}, $constructor previous:Int=0): ${returnType()} {
-            val endIdx = $firstInput.size - 1 - previous
+            val endIdx = $firstInput.lastIndex - previous
             val outputSize = 1
             ${getOutputDecl()}
             val startOutput = MInteger()
@@ -333,8 +346,7 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
             val ret = core.$fnName(endIdx, endIdx, $inputParams, $optional startOutput, endOutput, ${getOutputNames()})
             if (ret != RetCode.Success) throw Exception(ret.toString())
             val last = endOutput.value - 1
-            if (last < 0) throw InsufficientData("Not enough data available to calculate $fnName")
-            return ${returnStatement()}
+            return if (last < 0) throw InsufficientData("Not enough data to calculate $fnName") else ${returnStatement()}
         }
 
         ${genPriceBufferMethod()}
@@ -375,13 +387,16 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
  *
  */
 fun main() {
-    val f = File("utils/ta_func_api.json")
-    require(f.isFile)
+    println("starting")
+    val f = File("roboquant-ta/test/generator/ta_func_api.json")
+    require(f.isFile) { "File not found"}
+    println(f)
 
     val jsonTree = JsonParser.parseString(f.readText())
     val obj = jsonTree.asJsonObject
 
     val l = obj.getAsJsonObject("FinancialFunctions").getAsJsonArray("FinancialFunction")
+    println("found ${l.size()} functions")
 
     // First create the TALib object
     val sb1 = StringBuffer()

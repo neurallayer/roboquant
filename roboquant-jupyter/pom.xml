@@ -80,6 +80,12 @@
         </dependency>
 
         <dependency>
+           <groupId>org.apache.commons</groupId>
+           <artifactId>commons-text</artifactId>
+           <version>1.9</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
         </dependency>
