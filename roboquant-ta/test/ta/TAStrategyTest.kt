@@ -33,7 +33,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-
 internal class TAStrategyTest {
 
     @Test
@@ -53,13 +52,15 @@ internal class TAStrategyTest {
     }
 
     @Test
-    fun taSignalStrategy() {
+    fun testTASignalStrategy() {
 
         val strategy = TASignalStrategy(20) { price, asset ->
             record("test", 1)
-            if (ta.cdlMorningStar(price))  Signal(asset, Rating.BUY)
-            else if (ta.cdl3BlackCrows(price)) Signal(asset, Rating.SELL)
-            else null
+            when {
+                ta.cdlMorningStar(price) -> Signal(asset, Rating.BUY, source = "Morning Star")
+                ta.cdl3BlackCrows(price) -> Signal(asset, Rating.SELL, source = "Black Crows")
+                else -> null
+            }
         }
 
         val x = run(strategy, 30)
@@ -68,11 +69,11 @@ internal class TAStrategyTest {
     }
 
     @Test
-    fun taSignalStrategyInsufficientData() {
+    fun testTASignalStrategyInsufficientData() {
 
         val strategy = TASignalStrategy(5) { price, asset ->
             record("test", 1)
-            if (ta.cdlMorningStar(price))  Signal(asset, Rating.BUY)
+            if (ta.cdlMorningStar(price)) Signal(asset, Rating.BUY)
             else if (ta.cdl3BlackCrows(price)) Signal(asset, Rating.SELL)
             else null
         }
@@ -96,7 +97,6 @@ internal class TAStrategyTest {
         assertEquals(60, x.size)
     }
 
-
     @Test
     fun testFail() {
         val strategy = TALibStrategy(3)
@@ -107,7 +107,7 @@ internal class TAStrategyTest {
         }
     }
 
-    private fun getPriceBarBuffer(size: Int) : PriceBarBuffer {
+    private fun getPriceBarBuffer(size: Int): PriceBarBuffer {
         val result = PriceBarBuffer(size)
         val asset = Asset("XYZ")
         repeat(size) {
@@ -120,7 +120,7 @@ internal class TAStrategyTest {
     private fun run(s: Strategy, n: Int = 100): Map<Instant, List<Signal>> {
         s.reset()
         s.start(RunPhase.MAIN)
-        val feed = HistoricTestFeed(100 until 100+n, priceBar = true)
+        val feed = HistoricTestFeed(100 until 100 + n, priceBar = true)
         val events = feed.filter<PriceBar>()
         val result = mutableMapOf<Instant, List<Signal>>()
         var now = Instant.now()
@@ -170,11 +170,9 @@ internal class TAStrategyTest {
         assertTrue(c.isFinite())
     }
 
-
-
     @Test
     fun testSma() {
-        val feed =  HistoricTestFeed(100..150, priceBar = true)
+        val feed = HistoricTestFeed(100..150, priceBar = true)
         val asset = feed.assets.first()
         val closingPrice = feed.filter<PriceBar> { it.asset == asset }.map { it.second.close }.toDoubleArray()
         assertTrue(closingPrice.size > 30)
@@ -184,7 +182,7 @@ internal class TAStrategyTest {
         assertEquals(emaBatch1.last(), emaBatch2.last())
 
         val ema = TALib.sma(closingPrice, 30)
-        assertTrue((emaBatch1.last() - ema).absoluteValue < 0.00001 )
+        assertTrue((emaBatch1.last() - ema).absoluteValue < 0.00001)
     }
 
     @Test
@@ -199,7 +197,6 @@ internal class TAStrategyTest {
         assertTrue(s.values.first().isEmpty())
         assertTrue(s.values.last().isNotEmpty())
     }
-
 
     @Test
     fun testMetrics() {

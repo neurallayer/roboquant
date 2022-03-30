@@ -62,6 +62,18 @@ internal open class BaseWrapper(val root: JsonObject) {
         return result.toString()
     }
 
+    protected fun callLookback(): String {
+        val result = StringBuffer("${fnName}Lookback(")
+
+        val l = getList("OptionalInputArgument")
+        l.forEach {
+            result += it.getVariableName("Name") + ","
+        }
+        result.removeSuffix(",")
+        result += ")"
+        return result.toString()
+    }
+
 
     protected fun getInput(withType: Boolean = false): String {
         val result = StringBuffer()
@@ -219,7 +231,11 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
             val ret = core.$fnName(0, endIdx, $inputParams, $optional startOutput, endOutput, ${getOutputNames()})
             if (ret != RetCode.Success) throw Exception(ret.toString())
             val last = endOutput.value
-            return if (last < 0) throw InsufficientData("Not enough data to calculate $fnName") else ${returnStatement()}
+             if (last < 0) {
+                val lookback = core.${callLookback()}
+                throw InsufficientData("Not enough data to calculate $fnName, required lookback period is ${'$'}lookback")
+            }
+            return ${returnStatement()}
         }
     """.trimIndent()
     }
@@ -266,8 +282,8 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
         l.forEach {
             val type = it.getAttr("Type")
             result += when (type) {
-                "Integer Array" -> "val output$cnt = IntArray(outputSize)\n"
-                "Double Array" -> "val output$cnt = DoubleArray(outputSize)\n"
+                "Integer Array" -> "val output$cnt = IntArray(1)\n"
+                "Double Array" -> "val output$cnt = DoubleArray(1)\n"
                 else -> {
                     throw Exception("unexpected output type $type")
                 }
@@ -294,13 +310,13 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
     */
 
     private fun returnStatement(): String {
-        if (patternRecognition) return "output1[last] != 0"
+        if (patternRecognition) return "output1[0] != 0"
 
         val l = getList("OutputArgument")
         return when(l.size) {
-            1 -> "output1[last]"
-            2 -> "Pair(output1[last], output2[last])"
-            3 -> "Triple(output1[last], output2[last], output3[last])"
+            1 -> "output1[0]"
+            2 -> "Pair(output1[0], output2[0])"
+            3 -> "Triple(output1[0], output2[0], output3[0])"
             else -> {
                 throw Exception("unexpected return size")
             }
@@ -339,14 +355,17 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
          */
         fun $fnName(${getInput(true)}, $constructor previous:Int=0): ${returnType()} {
             val endIdx = $firstInput.lastIndex - previous
-            val outputSize = 1
             ${getOutputDecl()}
             val startOutput = MInteger()
             val endOutput = MInteger()
             val ret = core.$fnName(endIdx, endIdx, $inputParams, $optional startOutput, endOutput, ${getOutputNames()})
             if (ret != RetCode.Success) throw Exception(ret.toString())
             val last = endOutput.value - 1
-            return if (last < 0) throw InsufficientData("Not enough data to calculate $fnName") else ${returnStatement()}
+            if (last < 0) {
+                val lookback = core.${callLookback()}
+                throw InsufficientData("Not enough data to calculate $fnName, required lookback period is ${'$'}lookback")
+            }
+            return ${returnStatement()}
         }
 
         ${genPriceBufferMethod()}
