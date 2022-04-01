@@ -13,7 +13,9 @@ import org.ta4j.core.BaseBarSeriesBuilder
 import org.ta4j.core.Rule
 import org.ta4j.core.rules.BooleanRule
 
-private fun noOp(series: BarSeries) = BooleanRule.FALSE
+
+@Suppress("UNUSED_PARAMETER")
+private fun alwaysFalseRule(series : BarSeries) : Rule = BooleanRule.FALSE
 
 /**
  * Strategy that allows to use indicators and rules from the TA4J library to define a custom strategy.
@@ -24,8 +26,8 @@ private fun noOp(series: BarSeries) = BooleanRule.FALSE
  * @constructor Create new TA4J strategy
  */
 class TA4JStrategy(
-    var getBuyingRule: (BarSeries) -> Rule = ::noOp,
-    var getSellingRule: (BarSeries) -> Rule = ::noOp,
+    var getBuyingRule: (BarSeries) -> Rule = ::alwaysFalseRule,
+    var getSellingRule: (BarSeries) -> Rule = ::alwaysFalseRule,
     private val maxBarCount:Int = -1,
 ) : Strategy {
 

@@ -42,7 +42,6 @@ class OrderChart(
 
     private fun getTooltip(order: SingleOrder, openedAt: Instant): String {
         return with(order) {
-            // "asset: $asset <br> currency: ${asset.currency} <br> placed: $openedAt <br> id: $id <br> type: ${order::class.simpleName}"
             "asset: $asset <br> currency: ${asset.currency} <br> placed: $openedAt <br> qty: ${order.quantity} <br> id: $id <br> type: ${order::class.simpleName} <br> tif: ${order.tif}"
         }
     }

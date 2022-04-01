@@ -48,7 +48,7 @@ class TASignalStrategy(
 ) : Strategy {
 
     private val buffers = mutableMapOf<Asset, PriceBarBuffer>()
-    private val logger: Logger = Logging.getLogger(TALibStrategy::class)
+    private val logger: Logger = Logging.getLogger(TASignalStrategy::class)
     val ta = TALib
 
     private var metrics = mutableMapOf<String, Number>()

@@ -16,24 +16,30 @@
 
 package org.roboquant.common
 
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class AssetTest {
 
-/*    @Test
-    fun test() {
+    @Test
+    fun testAssetSerialization() {
         val a = Asset("TEST")
         val b = Asset("TEST2")
         assertNotEquals(a, b)
+        assertEquals(a, a)
 
-        val s = a.serialize()
+        val s = Json.encodeToString(a)
         assertTrue(s.isNotEmpty())
 
-        val c = Asset.deserialize(s)
+        val c = Json.decodeFromString<Asset>(s)
         assertEquals(a, c)
-    }*/
+    }
 
     @Test
     fun testCollection() {
@@ -51,6 +57,20 @@ internal class AssetTest {
 
         val s = assets.summary()
         assertTrue { s.content.isNotEmpty() }
+    }
+
+    @Test
+    fun testFilter() {
+        val asset1 = Asset("abc")
+        val assets = listOf(asset1, Asset("BCD"), Asset("CDE"))
+        var a = assets.filter { AssetFilter.noFilter().filter(it) }
+        assertEquals(3, a.size)
+
+        a = assets.filter { AssetFilter.excludeSymbols("ABC").filter(it) }
+        assertFalse(asset1 in a)
+
+        a = assets.filter { AssetFilter.includeSymbols("ABC").filter(it) }
+        assertTrue(asset1 in a)
     }
 
 }

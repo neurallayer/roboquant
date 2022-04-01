@@ -16,7 +16,7 @@
 
 package org.roboquant.common
 
-import kotlinx.serialization.*
+import kotlinx.serialization.Serializable
 
 /**
  * Asset is used to uniquely identify a financial instrument. So it can represent a stock, a future
@@ -148,3 +148,46 @@ fun Collection<Asset>.summary(): Summary {
     return result
 }
 
+/**
+ * Asset filter allows to determine which assets will be considered in a certain operation.
+ *
+ */
+fun interface AssetFilter {
+
+    /**
+     * Filter based on the provided asset.
+     *
+     * @param asset
+     * @return
+     */
+    fun filter(asset: Asset) : Boolean
+
+    companion object {
+
+
+        /**
+         * Don't apply any filtering and process all assets
+         */
+        fun noFilter() : AssetFilter {
+            return AssetFilter { _ : Asset -> true}
+        }
+
+        /**
+         * Allow only assets that don't match the provided symbol names.
+         */
+        fun excludeSymbols(vararg symbols: String): AssetFilter {
+            val set = symbols.map { it.uppercase() }.toSet()
+            return AssetFilter { asset: Asset -> asset.symbol.uppercase() !in set }
+        }
+
+        /**
+         * Allow only assets that match the provided symbol names.
+         */
+        fun includeSymbols(vararg symbols: String): AssetFilter {
+            val set = symbols.map { it.uppercase() }.toSet()
+            return AssetFilter{  asset: Asset -> asset.symbol.uppercase() in set }
+        }
+
+    }
+
+}

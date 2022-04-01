@@ -158,15 +158,17 @@ internal class TAStrategyTest {
     @Test
     fun testExtraIndicators() {
         val data = getPriceBarBuffer(20)
-        var a = TALib.recordHigh(data.close, 10)
-        var b = TALib.recordHigh(data, 10)
+        val ta = TALib
+
+        var a = ta.recordHigh(data.close, 10)
+        var b = ta.recordHigh(data, 10)
         assertEquals(a, b)
 
-        a = TALib.recordLow(data.close, 10)
-        b = TALib.recordLow(data, 10)
+        a = ta.recordLow(data.close, 10)
+        b = ta.recordLow(data, 10)
         assertEquals(a, b)
 
-        val c = TALib.vwap(data, 10)
+        val c = ta.vwap(data, 10)
         assertTrue(c.isFinite())
     }
 
@@ -174,6 +176,7 @@ internal class TAStrategyTest {
     fun testSma() {
         val feed = HistoricTestFeed(100..150, priceBar = true)
         val asset = feed.assets.first()
+
         val closingPrice = feed.filter<PriceBar> { it.asset == asset }.map { it.second.close }.toDoubleArray()
         assertTrue(closingPrice.size > 30)
 
@@ -181,7 +184,8 @@ internal class TAStrategyTest {
         val emaBatch2 = TALibBatch.sma(closingPrice)
         assertEquals(emaBatch1.last(), emaBatch2.last())
 
-        val ema = TALib.sma(closingPrice, 30)
+        val ta = TALib
+        val ema = ta.sma(closingPrice, 30)
         assertTrue((emaBatch1.last() - ema).absoluteValue < 0.00001)
     }
 

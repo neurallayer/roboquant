@@ -32,6 +32,12 @@ import org.roboquant.common.std
 data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo) {
 
     /**
+     * Get a key that unique defines the metric, run and episode.
+     */
+    val group
+        get() = """${metric}/${info.run}/${info.episode}"""
+
+    /**
      * Validate if another entry is from the same recorded episode.
      *
      * @param other

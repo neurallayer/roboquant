@@ -2,7 +2,10 @@
 
 package org.roboquant.ta
 
-import com.tictactec.ta.lib.*
+import com.tictactec.ta.lib.Core
+import com.tictactec.ta.lib.MAType
+import com.tictactec.ta.lib.MInteger
+import com.tictactec.ta.lib.RetCode
 import org.roboquant.strategies.utils.PriceBarBuffer
 
 /**
@@ -12,6 +15,7 @@ import org.roboquant.strategies.utils.PriceBarBuffer
  * For accessing the regular access, see TALibBatch
  */
 object TALib {
+
 
     var core: Core = Core()
 

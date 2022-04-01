@@ -28,8 +28,6 @@ internal class AssetAllocationChartTest {
         val account = TestData.usAccount()
         val chart = AssetAllocationChart(account)
         assertTrue(chart.asHTML().isNotBlank())
-
-
     }
 
 }
