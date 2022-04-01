@@ -6,7 +6,7 @@ import org.jetbrains.jupyter.parser.notebook.ExecuteResult
 import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.jetbrains.kotlinx.jupyter.testkit.JupyterReplTestCase
 import org.jetbrains.kotlinx.jupyter.testkit.ReplProvider
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Config
 import org.roboquant.orders.Order

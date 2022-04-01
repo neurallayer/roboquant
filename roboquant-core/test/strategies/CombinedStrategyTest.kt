@@ -17,7 +17,7 @@
 package org.roboquant.strategies
 
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.feeds.Event
 import org.roboquant.metrics.MetricResults

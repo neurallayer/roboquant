@@ -16,7 +16,7 @@
 
 package org.roboquant.feeds
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.common.Asset
 import java.time.Instant
 import kotlin.test.assertTrue

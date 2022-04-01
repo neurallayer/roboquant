@@ -16,7 +16,7 @@
 
 package org.roboquant.strategies.utils
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.random.RandomWalk

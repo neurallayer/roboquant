@@ -16,7 +16,7 @@
 
 package org.roboquant.jupyter
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import kotlin.test.assertTrue
 

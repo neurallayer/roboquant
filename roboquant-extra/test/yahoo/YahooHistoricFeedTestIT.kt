@@ -18,7 +18,7 @@ package org.roboquant.yahoo
 
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertContains
 import kotlin.test.assertTrue
 

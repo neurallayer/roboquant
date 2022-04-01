@@ -16,7 +16,7 @@
 
 package org.roboquant.binance
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
 import org.roboquant.feeds.PriceBar

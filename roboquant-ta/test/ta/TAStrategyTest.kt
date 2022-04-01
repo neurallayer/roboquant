@@ -16,7 +16,7 @@
 
 package org.roboquant.ta
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.RunPhase
 import org.roboquant.common.Asset
 import org.roboquant.common.seconds

@@ -16,7 +16,7 @@
 
 package org.roboquant.feeds.csv
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.Exchange

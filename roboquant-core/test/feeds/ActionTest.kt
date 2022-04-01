@@ -16,7 +16,7 @@
 
 package org.roboquant.feeds
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.*
 import org.roboquant.TestData
 

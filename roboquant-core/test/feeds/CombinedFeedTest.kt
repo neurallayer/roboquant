@@ -18,7 +18,7 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.roboquant.feeds.test.LiveTestFeed
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 internal class CombinedFeedTest {

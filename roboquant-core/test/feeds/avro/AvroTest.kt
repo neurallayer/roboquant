@@ -17,9 +17,9 @@
 package org.roboquant.feeds.avro
 
 import kotlinx.coroutines.runBlocking
-import org.junit.FixMethodOrder
-import org.junit.rules.TemporaryFolder
-import org.junit.runners.MethodSorters
+import org.junit.jupiter.api.MethodOrderer.Alphanumeric
+import org.junit.jupiter.api.TestMethodOrder
+import org.junit.jupiter.api.io.TempDir
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
@@ -31,11 +31,15 @@ import java.time.Instant
 import kotlin.io.path.div
 import kotlin.test.*
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(Alphanumeric::class)
 class AvroTest {
 
     companion object {
-        private val folder = TemporaryFolder()
+
+        @TempDir
+        lateinit var folder: File
+
+        // private val folder = TemporaryFolder()
         private lateinit var fileName: String
         private var size: Int = 0
         private const val nAssets = 3
@@ -45,8 +49,9 @@ class AvroTest {
 
     @Test
     fun avroStep1() {
-        folder.create()
-        fileName = folder.newFile("test.avro").path
+        // folder.create()
+        // fileName = folder.newFile("test.avro").path
+        fileName = File(folder, "test.avro").path
         val timeline = Timeframe.past(30.days).toTimeline(1.days)
         val feed = RandomWalk(timeline, nAssets = nAssets)
         assets.addAll(feed.assets)

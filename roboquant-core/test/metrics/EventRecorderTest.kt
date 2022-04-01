@@ -16,7 +16,7 @@
 
 package org.roboquant.metrics
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.RunPhase
 import org.roboquant.TestData
 import org.roboquant.feeds.PriceAction

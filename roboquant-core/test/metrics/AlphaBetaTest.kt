@@ -16,7 +16,7 @@
 
 package org.roboquant.metrics
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.LastEntryLogger

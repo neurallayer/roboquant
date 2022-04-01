@@ -16,15 +16,19 @@
 
 package org.roboquant.jupyter
 
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import org.roboquant.feeds.random.RandomWalk
+import java.io.File
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 
 internal class ChartTest {
+
+    @TempDir
+    lateinit var folder: File
 
 
     @Test
@@ -36,9 +40,7 @@ internal class ChartTest {
         assertEquals(700, chart.height)
         assertContains(chart.asHTML(), asset.symbol)
 
-        val folder = TemporaryFolder()
-        folder.create()
-        val file = folder.newFile("test.html")
+        val file = File(folder, "test.html")
         chart.toHTMLFile(file.toString())
         assertTrue(file.exists())
 

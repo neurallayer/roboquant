@@ -16,7 +16,7 @@
 
 package org.roboquant.brokers
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.*
 import org.roboquant.TestData
 import java.math.BigDecimal

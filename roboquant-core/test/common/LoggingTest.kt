@@ -16,7 +16,7 @@
 
 package org.roboquant.common
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.logging.Level
 import kotlin.test.*
 

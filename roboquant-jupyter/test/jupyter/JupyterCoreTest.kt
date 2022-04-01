@@ -17,7 +17,7 @@
 package org.roboquant.jupyter
 
 import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.common.Logging
 import java.util.logging.Level
 import kotlin.test.assertTrue

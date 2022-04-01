@@ -16,7 +16,7 @@
 
 package org.roboquant.alphavantage
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.feeds.PriceBar

@@ -18,7 +18,7 @@ package org.roboquant.jupyter
 
 import org.roboquant.logging.MemoryLogger
 import kotlin.test.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 internal class MetricChartTest {
 

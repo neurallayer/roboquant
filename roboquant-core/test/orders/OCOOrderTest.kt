@@ -16,7 +16,7 @@
 
 package org.roboquant.orders
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

@@ -17,7 +17,7 @@
 package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.common.Background
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

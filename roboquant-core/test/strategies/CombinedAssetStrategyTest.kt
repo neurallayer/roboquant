@@ -21,7 +21,7 @@ import org.roboquant.Roboquant
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.ProgressMetric
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 internal class CombinedAssetStrategyTest {

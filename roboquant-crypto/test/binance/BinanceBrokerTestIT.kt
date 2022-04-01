@@ -16,7 +16,7 @@
 
 package org.roboquant.binance
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.RunPhase
 import kotlin.test.assertFails
 import kotlin.test.assertTrue

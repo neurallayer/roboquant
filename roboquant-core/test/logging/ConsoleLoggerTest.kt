@@ -16,7 +16,7 @@
 
 package org.roboquant.logging
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 
 internal class ConsoleLoggerTest {

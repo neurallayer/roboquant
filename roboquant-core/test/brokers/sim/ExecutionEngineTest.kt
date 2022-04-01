@@ -16,7 +16,7 @@
 
 package org.roboquant.brokers.sim
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.orders.*
 import kotlin.test.assertEquals
