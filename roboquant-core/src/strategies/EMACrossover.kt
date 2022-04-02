@@ -30,6 +30,9 @@ import java.time.Instant
  * - If the fast EMA crosses under the slow EMA, create a SELL signal
  * - Don't generate a signal in all other cases.
  *
+ * This is a simple and computational efficient strategy that is great to validate if other components like the
+ * feed, policy and broker are working correctly.
+ *
  * @constructor Create a new EMACrossover strategy
  *
  * @param fastPeriod The shorter period or fast EMA in number of steps

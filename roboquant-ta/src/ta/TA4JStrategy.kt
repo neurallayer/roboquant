@@ -20,6 +20,9 @@ private fun alwaysFalseRule(series : BarSeries) : Rule = BooleanRule.FALSE
 /**
  * Strategy that allows to use indicators and rules from the TA4J library to define a custom strategy.
  *
+ * TA4J is a flexible framework written in Java that allows both simple and complex rules. Compared to TALib it is
+ * however a fair bit slower.
+ *
  * @property getBuyingRule function that returns a buying rule based on the provided BarSaries
  * @property getSellingRule function that returns a selling rule based on the provided BarSaries
  * @property maxBarCount maximum number of pricebars to track

@@ -228,8 +228,8 @@ class TALibStrategy(private val history: Int = 15) : Strategy {
                 buffer.update(priceAction, now)
                 if (buffer.isAvailable()) {
                     try {
-                        if (buyFn.invoke(this, buffer)) results.add(Signal(asset, Rating.BUY, this))
-                        if (sellFn.invoke(this, buffer)) results.add(Signal(asset, Rating.SELL, this))
+                        if (buyFn.invoke(this, buffer)) results.add(Signal(asset, Rating.BUY))
+                        if (sellFn.invoke(this, buffer)) results.add(Signal(asset, Rating.SELL))
                     } catch (e: InsufficientData) {
                         logger.severe("Not enough data available to calculate the indicators, increase the history size")
                         logger.severe(e.message)

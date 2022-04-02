@@ -21,9 +21,8 @@ import org.roboquant.feeds.Event
 import java.time.Instant
 
 /**
- * Base class that can be extended by strategies that are only interested in
- * a single price for an asset and not other type of actions.
- *
+ * Base class that can be extended by strategies that are only interested in a single price for an asset and not
+ * other types of actions.
  */
 abstract class PriceStrategy(private val aspect: String = "DEFAULT", prefix: String = "strategy.") :
     RecordingStrategy(prefix) {

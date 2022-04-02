@@ -169,7 +169,7 @@ fun interface AssetFilter {
          * Don't apply any filtering and process all assets
          */
         fun noFilter() : AssetFilter {
-            return AssetFilter { _ : Asset -> true}
+            return AssetFilter { true }
         }
 
         /**

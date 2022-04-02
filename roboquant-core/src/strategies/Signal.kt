@@ -99,10 +99,6 @@ class Signal(
     val entry
         get() = type === SignalType.ENTRY || type === SignalType.BOTH
 
-    /**
-     * Create a new signal and based on the strategy that created it
-     */
-    constructor(asset: Asset, rating: Rating, strategy: Strategy) : this(asset, rating, source = "$strategy")
 
     /**
      * Does this signal conflict with an [other] signal. Two signals conflict if they contain the same asset but
