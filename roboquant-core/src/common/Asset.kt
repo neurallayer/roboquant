@@ -141,7 +141,7 @@ fun Collection<Asset>.random(n: Int): List<Asset> = shuffled().take(n)
  * Provide a [Summary] for a collection of assets
  */
 fun Collection<Asset>.summary(): Summary {
-    val result = Summary("Assets")
+    val result = Summary("assets")
     for (asset in this) {
         result.add("$asset")
     }

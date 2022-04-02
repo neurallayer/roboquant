@@ -40,34 +40,6 @@ fun base(feed: Feed) {
     roboquant.broker.account.summary().print()
 }
 
-/**
- * Technical analysis with many indicators
- */
-fun technicalAnaslysis(feed: Feed) {
-/*    val shortTerm = 30
-    val longTerm = 50
-    val strategy = TAStrategy(longTerm)
-
-    strategy.buy { price ->
-        with(ta) {
-            cdlMorningStar(price) || cdl3Inside(price) || cdl3Outside(price) || cdl3LineStrike(price) ||
-                    cdlHammer(price) || cdlPiercing(price) || cdlSpinningTop(price) || cdlRiseFall3Methods(price) ||
-                    cdl3StarsInSouth(price) || cdlOnNeck(price)
-        }
-    }
-
-    strategy.sell { price ->
-        ta.cdl3BlackCrows(price) || (ta.cdl2Crows(price) && ta.ema(price.close, shortTerm) < ta.ema(
-            price.close,
-            longTerm
-        ))
-    }
-
-    val roboquant = Roboquant(strategy, AccountSummary())
-    roboquant.run(feed)
-    roboquant.broker.account.summary().print()*/
-}
-
 
 /**
  * Example of hyper parameter search using parallel runs.
@@ -100,11 +72,10 @@ suspend fun main() {
     val t = measureTimeMillis {
         when ("MIXED") {
             "BASE" -> base(feed)
-            "TECHNICAL_ANALYSIS" -> technicalAnaslysis(feed)
             "PARALLEL" -> multiRunParallel(feed)
             "MIXED" -> {
                 base(feed)
-                technicalAnaslysis(feed)
+                base(feed)
                 multiRunParallel(feed)
             }
         }
