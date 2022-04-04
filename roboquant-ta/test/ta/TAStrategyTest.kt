@@ -25,7 +25,7 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.strategies.*
-import org.roboquant.strategies.utils.PriceBarBuffer
+import org.roboquant.strategies.utils.PriceBarSeries
 import java.time.Instant
 import kotlin.math.absoluteValue
 import kotlin.test.assertContains
@@ -36,15 +36,22 @@ import kotlin.test.assertTrue
 internal class TAStrategyTest {
 
     @Test
+    fun taCore() {
+        val ta = TA()
+        assertEquals("Default", ta.core.compatibility.name)
+    }
+
+
+    @Test
     fun test() {
 
-        val strategy = TALibStrategy(50)
+        val strategy = TAStrategy(50)
         strategy.buy { price ->
-            ta.ema(price.close, 30) > ta.ema(price.close, 50) && ta.cdlMorningStar(price)
+            ema(price.close, 30) > ema(price.close, 50) && cdlMorningStar(price)
         }
 
         strategy.sell { price ->
-            ta.cdl3BlackCrows(price) || (ta.cdl2Crows(price, 1) && ta.ema(price.close, 30) < ta.ema(price.close, 50))
+            cdl3BlackCrows(price) || (cdl2Crows(price, 1) && ema(price.close, 30) < ema(price.close, 50))
         }
 
         val x = run(strategy, 60)
@@ -85,7 +92,7 @@ internal class TAStrategyTest {
 
     @Test
     fun taBreakout() {
-        val strategy = TALibStrategy.breakout(10, 30)
+        val strategy = TAStrategy.breakout(10, 30)
         val x = run(strategy, 60)
         assertEquals(60, x.size)
     }
@@ -99,20 +106,20 @@ internal class TAStrategyTest {
 
     @Test
     fun testFail() {
-        val strategy = TALibStrategy(3)
-        strategy.buy { price -> ta.cdlMorningStar(price) }
+        val strategy = TAStrategy(3)
+        strategy.buy { price -> cdlMorningStar(price) }
 
         assertFailsWith<InsufficientData> {
             run(strategy)
         }
     }
 
-    private fun getPriceBarBuffer(size: Int): PriceBarBuffer {
-        val result = PriceBarBuffer(size)
+    private fun getPriceBarBuffer(size: Int): PriceBarSeries {
+        val result = PriceBarSeries(size)
         val asset = Asset("XYZ")
         repeat(size) {
             val pb = PriceBar(asset, 10.0, 12.0, 8.0, 11.0, 100 + it)
-            result.update(pb, Instant.now())
+            result.update(pb)
         }
         return result
     }
@@ -134,23 +141,23 @@ internal class TAStrategyTest {
 
     @Test
     fun testPredefined() {
-        var strategy = TALibStrategy.emaCrossover(50, 10)
+        var strategy = TAStrategy.emaCrossover(50, 10)
         var s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TALibStrategy.smaCrossover(50, 10)
+        strategy = TAStrategy.smaCrossover(50, 10)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TALibStrategy.recordHighLow(100)
+        strategy = TAStrategy.recordHighLow(100)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TALibStrategy.recordHighLow(20, 50, 100)
+        strategy = TAStrategy.recordHighLow(20, 50, 100)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TALibStrategy.rsi(20)
+        strategy = TAStrategy.rsi(20)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
     }
@@ -158,7 +165,7 @@ internal class TAStrategyTest {
     @Test
     fun testExtraIndicators() {
         val data = getPriceBarBuffer(20)
-        val ta = TALib
+        val ta = TA()
 
         var a = ta.recordHigh(data.close, 10)
         var b = ta.recordHigh(data, 10)
@@ -184,14 +191,14 @@ internal class TAStrategyTest {
         val emaBatch2 = TALibBatch.sma(closingPrice)
         assertEquals(emaBatch1.last(), emaBatch2.last())
 
-        val ta = TALib
+        val ta = TA()
         val ema = ta.sma(closingPrice, 30)
         assertTrue((emaBatch1.last() - ema).absoluteValue < 0.00001)
     }
 
     @Test
     fun test2() {
-        val strategy = TALibStrategy(2)
+        val strategy = TAStrategy(2)
         strategy.buy {
             true
         }
@@ -202,24 +209,6 @@ internal class TAStrategyTest {
         assertTrue(s.values.last().isNotEmpty())
     }
 
-    @Test
-    fun testMetrics() {
-        val strategy = TALibStrategy(10)
-        strategy.buy {
-            val a = ta.sma(it.close, 5)
-            val b = ta.sma(it.close, 10)
-            record("sma.fast", a)
-            record("sma.slow", b)
-            a > b
-        }
 
-        run(strategy)
-        var metrics = strategy.getMetrics()
-        assertContains(metrics, "sma.fast")
-        assertContains(metrics, "sma.slow")
-
-        metrics = strategy.getMetrics()
-        assertTrue(metrics.isEmpty())
-    }
 }
 

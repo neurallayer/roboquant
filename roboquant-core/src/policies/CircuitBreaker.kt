@@ -10,7 +10,7 @@ import java.time.temporal.TemporalAmount
 import java.util.LinkedList
 
 /**
- * Wraps another policy and based on configurable throttle settings stops propagating orders to a broker.
+ * Wraps another [policy] and based on tje configured throttle settings stops propagating orders to a broker.
  *
  * Usage:
  *      // For example maximum of 5 orders per 8 hours
@@ -19,7 +19,8 @@ import java.util.LinkedList
  * @property policy
  * @constructor Create new Chain Breaker
  */
-class CircuitBreakerPolicy(val policy: Policy, private val maxOrders: Int, private val duration: TemporalAmount) : Policy {
+class CircuitBreakerPolicy(val policy: Policy, private val maxOrders: Int, private val duration: TemporalAmount) :
+    Policy by policy {
 
     private val history = LinkedList<Pair<Instant, Int>>()
 
@@ -47,11 +48,10 @@ class CircuitBreakerPolicy(val policy: Policy, private val maxOrders: Int, priva
     }
 
     override fun start(runPhase: RunPhase) {
-        reset()
-    }
-
-    override fun reset() {
         history.clear()
+        policy.start(runPhase)
     }
 
 }
+
+fun Policy.circuitBreaker(maxOrders: Int, duration: TemporalAmount) = CircuitBreakerPolicy(this, maxOrders, duration)

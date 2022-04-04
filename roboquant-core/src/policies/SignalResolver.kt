@@ -16,6 +16,10 @@
 
 package org.roboquant.policies
 
+import org.roboquant.brokers.Account
+import org.roboquant.common.Logging
+import org.roboquant.feeds.Event
+import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 
 /**
@@ -72,3 +76,27 @@ fun List<Signal>.resolve(rule: SignalResolution = SignalResolution.NONE): List<S
         }
     }
 }
+
+/**
+ * Signal resolver policy wraps other policies and makes sure there are no conflicting signals
+ *
+ * @property policy
+ * @property resolution
+ * @constructor Create empty Signal resolver
+ */
+class SignalResolver(val policy: Policy, private val resolution: SignalResolution) : Policy by policy {
+
+    private val logger = Logging.getLogger(this::class)
+
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+        val resolvedSignals = signals.resolve(resolution)
+        logger.fine { "signals in=${signals.size} out=${resolvedSignals.size}"}
+        return policy.act(resolvedSignals, account, event)
+    }
+
+}
+
+/**
+ * Resolve signals
+ */
+fun Policy.resolve(resolution: SignalResolution) = SignalResolver(this, resolution)

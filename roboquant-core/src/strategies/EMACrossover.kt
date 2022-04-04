@@ -22,7 +22,8 @@ import java.time.Instant
 
 /**
  * Strategy that use the crossover of two Exponential Moving Averages (EMA) to generate a BUY or SELL signal. It is
- * frequently used in FOREX trading, but can also be applied to other asset classes.
+ * frequently used in FOREX trading, but can also be applied to other asset classes. This is a computational and memory
+ * efficient implementation.
  *
  * The rules are straight forward:
  *
@@ -30,8 +31,6 @@ import java.time.Instant
  * - If the fast EMA crosses under the slow EMA, create a SELL signal
  * - Don't generate a signal in all other cases.
  *
- * This is a simple and computational efficient strategy that is great to validate if other components like the
- * feed, policy and broker are working correctly.
  *
  * @constructor Create a new EMACrossover strategy
  *
@@ -104,8 +103,10 @@ class EMACrossover(
             if (calculator.isReady()) {
                 val newDirection = calculator.getDirection()
 
-                record("${asset.symbol}.short", calculator.emaFast)
-                record("${asset.symbol}.long", calculator.emaSlow)
+                if (recording) {
+                    record("${asset.symbol}.fast", calculator.emaFast)
+                    record("${asset.symbol}.slow", calculator.emaSlow)
+                }
 
                 if (oldDirection != newDirection) {
                     val rating = if (newDirection) Rating.BUY else Rating.SELL

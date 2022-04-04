@@ -23,17 +23,17 @@ import org.roboquant.feeds.random.RandomWalk
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class PriceBarBufferTest {
+internal class PriceBarSeriesTest {
 
     @Test
     fun test() {
-        val pb = PriceBarBuffer(20)
+        val pb = PriceBarSeries(20)
         assertFalse(pb.isAvailable())
         val feed = RandomWalk.lastYears()
         val asset = feed.assets.first()
         val data = feed.filter<PriceBar> { it.asset === asset }
         for (entry in data) {
-            pb.update(entry.second, entry.first)
+            pb.update(entry.second)
         }
         assertTrue(pb.isAvailable())
         assertTrue(pb.typical.isNotEmpty())

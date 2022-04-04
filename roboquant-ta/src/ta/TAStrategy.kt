@@ -19,7 +19,6 @@
 package org.roboquant.ta
 
 import org.roboquant.RunPhase
-import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
@@ -27,7 +26,8 @@ import org.roboquant.metrics.MetricResults
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
-import org.roboquant.strategies.utils.PriceBarBuffer
+import org.roboquant.strategies.utils.MultiAssetPriceBarSeries
+import org.roboquant.strategies.utils.PriceBarSeries
 import java.lang.Integer.max
 import java.util.logging.Logger
 
@@ -35,17 +35,17 @@ import java.util.logging.Logger
  * This strategy that makes it easy to implement different types strategies based on technical analysis indicators.
  * This strategy requires [PriceBar] data and common use cases are candlestick patterns and moving average strategies.
  *
- * It is important that the strategy is initialized with a large enough [history] window to support the underlying
- * technical indicators you want to use. If the [history] is too small, it will lead to a runtime exception.
+ * It is important that the strategy is initialized with a large enough history window to support the underlying
+ * technical indicators you want to use. If the history is too small, it will lead to a runtime exception.
  *
  */
-class TALibStrategy(private val history: Int = 15) : Strategy {
+class TAStrategy(history: Int = 15) : Strategy {
 
-    private var sellFn: TALibStrategy.(price: PriceBarBuffer) -> Boolean = { false }
-    private var buyFn: TALibStrategy.(price: PriceBarBuffer) -> Boolean = { false }
-    private val buffers = mutableMapOf<Asset, PriceBarBuffer>()
-    private val logger: Logger = Logging.getLogger(TALibStrategy::class)
-    val ta = TALib
+    private var sellFn: TA.(series: PriceBarSeries) -> Boolean = { false }
+    private var buyFn: TA.(series: PriceBarSeries) -> Boolean = { false }
+    private val data = MultiAssetPriceBarSeries(history)
+    private val logger: Logger = Logging.getLogger(TAStrategy::class)
+    val ta = TA()
 
     private var metrics = mutableMapOf<String, Number>()
 
@@ -87,19 +87,19 @@ class TALibStrategy(private val history: Int = 15) : Strategy {
          * @param timePeriods
          * @return
          */
-        fun recordHighLow(vararg timePeriods: Int = intArrayOf(200)): TALibStrategy {
+        fun recordHighLow(vararg timePeriods: Int = intArrayOf(200)): TAStrategy {
 
             require(timePeriods.isNotEmpty()) { "At least one period needs to be provided" }
             require(timePeriods.all { it > 1 }) { "Any provided period needs to be at least of size 2" }
 
-            val strategy = TALibStrategy(timePeriods.maxOrNull()!!)
+            val strategy = TAStrategy(timePeriods.maxOrNull()!!)
             strategy.buy {
                 val data = it.high
-                timePeriods.any { period -> ta.recordHigh(data, period) }
+                timePeriods.any { period -> recordHigh(data, period) }
             }
             strategy.sell {
                 val data = it.low
-                timePeriods.any { period -> ta.recordLow(data, period) }
+                timePeriods.any { period -> recordLow(data, period) }
             }
             return strategy
         }
@@ -108,14 +108,14 @@ class TALibStrategy(private val history: Int = 15) : Strategy {
          * Breakout strategy generates a BUY signal if it is a records high over last [highPeriod] and
          * generates a SELL signal is it is a record low over last [lowPeriod].
          */
-        fun breakout(highPeriod: Int = 100, lowPeriod: Int = 50) : TALibStrategy {
+        fun breakout(highPeriod: Int = 100, lowPeriod: Int = 50) : TAStrategy {
             require(highPeriod > 0 && lowPeriod > 0) { "Periods have to be larger than 0" }
-            val strategy = TALibStrategy(max(highPeriod, lowPeriod))
+            val strategy = TAStrategy(max(highPeriod, lowPeriod))
             strategy.buy {
-                ta.recordHigh(it.high, highPeriod)
+                recordHigh(it.high, highPeriod)
             }
             strategy.sell {
-                ta.recordLow(it.low, lowPeriod)
+                recordLow(it.low, lowPeriod)
             }
 
             return strategy
@@ -128,13 +128,13 @@ class TALibStrategy(private val history: Int = 15) : Strategy {
          * @param fast
          * @return
          */
-        fun smaCrossover(slow: Int, fast: Int): TALibStrategy {
+        fun smaCrossover(slow: Int, fast: Int): TAStrategy {
             require(slow > 0 && fast > 0) { "Periods have to be larger than 0" }
             require(slow > fast) { "Slow period have to be larger than fast period" }
 
-            val strategy = TALibStrategy(slow)
-            strategy.buy { ta.sma(it.close, fast) > ta.sma(it.close, slow) }
-            strategy.sell { ta.sma(it.close, fast) < ta.sma(it.close, slow) }
+            val strategy = TAStrategy(slow)
+            strategy.buy { sma(it.close, fast) > sma(it.close, slow) }
+            strategy.sell { sma(it.close, fast) < sma(it.close, slow) }
             return strategy
         }
 
@@ -145,13 +145,13 @@ class TALibStrategy(private val history: Int = 15) : Strategy {
          * @param fast
          * @return
          */
-        fun emaCrossover(slow: Int, fast: Int): TALibStrategy {
+        fun emaCrossover(slow: Int, fast: Int): TAStrategy {
             require(slow > 0 && fast > 0) { "Periods have to be larger than 0" }
             require(slow > fast) { "Slow period have to be larger than fast period" }
 
-            val strategy = TALibStrategy(slow)
-            strategy.buy { ta.ema(it.close, fast) > ta.ema(it.close, slow) }
-            strategy.sell { ta.ema(it.close, fast) < ta.ema(it.close, slow) }
+            val strategy = TAStrategy(slow)
+            strategy.buy { ema(it.close, fast) > ema(it.close, slow) }
+            strategy.sell { ema(it.close, fast) < ema(it.close, slow) }
             return strategy
         }
 
@@ -171,13 +171,13 @@ class TALibStrategy(private val history: Int = 15) : Strategy {
             timePeriod: Int,
             lowThreshold: Double = 30.0,
             highThreshold: Double = 70.0
-        ): TALibStrategy {
+        ): TAStrategy {
             require(lowThreshold in 0.0..100.0 && highThreshold in 0.0..100.0) { "Thresholds have to be in the range 0..100" }
             require(highThreshold > lowThreshold) { "High threshold has to be larger than low threshold" }
 
-            val strategy = TALibStrategy(timePeriod + 1)
-            strategy.buy { ta.rsi(it.close, timePeriod) < lowThreshold }
-            strategy.sell { ta.rsi(it.close, timePeriod) > highThreshold }
+            val strategy = TAStrategy(timePeriod + 1)
+            strategy.buy { rsi(it.close, timePeriod) < lowThreshold }
+            strategy.sell { rsi(it.close, timePeriod) > highThreshold }
             return strategy
         }
 
@@ -194,7 +194,7 @@ class TALibStrategy(private val history: Int = 15) : Strategy {
      *       }
      *
      */
-    fun buy(block: TALibStrategy.(price: PriceBarBuffer) -> Boolean) {
+    fun buy(block: TA.(price: PriceBarSeries) -> Boolean) {
         buyFn = block
     }
 
@@ -208,7 +208,7 @@ class TALibStrategy(private val history: Int = 15) : Strategy {
      *      }
      *
      */
-    fun sell(block: TALibStrategy.(price: PriceBarBuffer) -> Boolean) {
+    fun sell(block: TA.(price: PriceBarSeries) -> Boolean) {
         sellFn = block
     }
 
@@ -221,15 +221,14 @@ class TALibStrategy(private val history: Int = 15) : Strategy {
      */
     override fun generate(event: Event): List<Signal> {
         val results = mutableListOf<Signal>()
-        val now = event.time
         for ((asset, priceAction) in event.prices) {
             if (priceAction is PriceBar) {
-                val buffer = buffers.getOrPut(asset) { PriceBarBuffer(history, usePercentage = false) }
-                buffer.update(priceAction, now)
-                if (buffer.isAvailable()) {
+                data.add(priceAction)
+                if (data.isAvailable(asset)) {
                     try {
-                        if (buyFn.invoke(this, buffer)) results.add(Signal(asset, Rating.BUY))
-                        if (sellFn.invoke(this, buffer)) results.add(Signal(asset, Rating.SELL))
+                        val buffer = data.getSeries(asset)
+                        if (buyFn.invoke(ta, buffer)) results.add(Signal(asset, Rating.BUY))
+                        if (sellFn.invoke(ta, buffer)) results.add(Signal(asset, Rating.SELL))
                     } catch (e: InsufficientData) {
                         logger.severe("Not enough data available to calculate the indicators, increase the history size")
                         logger.severe(e.message)
@@ -243,40 +242,34 @@ class TALibStrategy(private val history: Int = 15) : Strategy {
 
     override fun start(runPhase: RunPhase) {
         super.start(runPhase)
-        buffers.clear()
+        data.clear()
         metrics = mutableMapOf()
     }
 
-
-    override fun toString() = "TAStrategy $history"
-
 }
 
 
-fun TALib.recordLow(data: DoubleArray, period: Int) = minIndex(data, period) == data.lastIndex
-fun TALib.recordLow(data: PriceBarBuffer, period: Int) = recordLow(data.low, period)
+fun TA.recordLow(low: DoubleArray, period: Int, previous: Int = 0) = minIndex(low, period, previous) == low.lastIndex - previous
+fun TA.recordLow(data: PriceBarSeries, period: Int, previous: Int = 0) = recordLow(data.low, period, previous)
 
-fun TALib.recordHigh(data: DoubleArray, period: Int) = maxIndex(data, period) == data.lastIndex
-fun TALib.recordHigh(data: PriceBarBuffer, period: Int) = recordHigh(data.high, period)
+fun TA.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) = maxIndex(high, period, previous) == high.lastIndex - previous
+fun TA.recordHigh(data: PriceBarSeries, period: Int, previous: Int = 0) = recordHigh(data.high, period, previous)
 
-fun TALib.vwap(data: PriceBarBuffer, period: Int): Double {
-    val size = data.windowSize
-    val c = data.close
-    val h = data.high
-    val l = data.low
-    val v = data.volume
+fun TA.vwap(high: DoubleArray, low: DoubleArray, close: DoubleArray, volume: DoubleArray, period: Int, previous: Int = 0) : Double {
+    val size = high.size - previous
     var sumPrice = 0.0
     var sumVolume = 0.0
-    val start = size - period
+    val start = size - period - previous
     if (start < 0) throw InsufficientData("Not sufficient data to calculate vwap")
 
     for (i in start until size) {
-        //Calculate the typical price
-        val price = (c[i] + h[i] + l[i]) / 3
-        sumPrice += price * v[i]
-        sumVolume += v[i]
+        val typicalPrice = (close[i] + high[i] + low[i]) / 3
+        sumPrice += typicalPrice * volume[i]
+        sumVolume += volume[i]
     }
     return sumPrice / sumVolume
 }
+
+fun TA.vwap(series: PriceBarSeries, period: Int, previous: Int = 0): Double = vwap(series.high, series.low, series.close, series.volume, period, previous)
 
 class InsufficientData(msg: String) : Exception(msg)

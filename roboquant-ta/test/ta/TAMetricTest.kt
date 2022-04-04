@@ -3,7 +3,7 @@ package org.roboquant.ta
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
-class TALibMetricTest {
+class TAMetricTest {
 
     @Test
     fun test() {

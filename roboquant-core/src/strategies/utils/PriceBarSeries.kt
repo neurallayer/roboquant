@@ -16,17 +16,18 @@
 
 package org.roboquant.strategies.utils
 
+import org.roboquant.common.Asset
 import org.roboquant.common.div
+import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import java.time.Instant
 
 /**
- * PriceBar buffer is a buffer of the OHLCV. It supports both storing the regular prices and percentage difference
+ * PriceBar Series is a circular buffer of OHLCV values. It supports both storing the regular prices or thre returns
  *
  * @property windowSize
  * @constructor Create new PriceBar buffer
  */
-class PriceBarBuffer(val windowSize: Int, usePercentage: Boolean = false) {
+class PriceBarSeries(val windowSize: Int, usePercentage: Boolean = false) {
 
     private val openBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
     private val highBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
@@ -34,7 +35,6 @@ class PriceBarBuffer(val windowSize: Int, usePercentage: Boolean = false) {
     private val closeBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
     private val volumeBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
 
-    var now: Instant = Instant.MIN
 
     val open
         get() = openBuffer.toDoubleArray()
@@ -59,15 +59,13 @@ class PriceBarBuffer(val windowSize: Int, usePercentage: Boolean = false) {
      * Update the buffer with a new price bar
      *
      * @param priceBar
-     * @param now
      */
-    fun update(priceBar: PriceBar, now: Instant) {
+    fun update(priceBar: PriceBar) {
         openBuffer.add(priceBar.open)
         highBuffer.add(priceBar.high)
         lowBuffer.add(priceBar.low)
         closeBuffer.add(priceBar.close)
         volumeBuffer.add(priceBar.volume)
-        this.now = now
     }
 
     fun isAvailable(): Boolean {
@@ -80,8 +78,40 @@ class PriceBarBuffer(val windowSize: Int, usePercentage: Boolean = false) {
         lowBuffer.clear()
         closeBuffer.clear()
         volumeBuffer.clear()
-        now = Instant.MIN
     }
+
+}
+
+/**
+ * Multi asset price bar series that keeps a number of history pricebars in memory per asset.
+ *
+ * @property history The number of historic pricebars per asset to keep
+ * @constructor Create new Multi asset price bar series
+ */
+class MultiAssetPriceBarSeries(private val history: Int) {
+
+    private val data = mutableMapOf<Asset, PriceBarSeries>()
+
+    /**
+     * Add a new priceBar and return true if enough data, false otherwise
+     */
+    fun add(priceBar: PriceBar): Boolean {
+        val series = data.getOrPut(priceBar.asset) { PriceBarSeries(history) }
+        series.update(priceBar)
+        return series.isAvailable()
+    }
+
+    fun add(event: Event) {
+        for ((_, action) in event.prices) {
+            if (action is PriceBar) add(action)
+        }
+    }
+
+    fun isAvailable(asset: Asset) = data[asset]?.isAvailable() ?: false
+
+    fun getSeries(asset: Asset) = data.getValue(asset)
+
+    fun clear() = data.clear()
 
 }
 

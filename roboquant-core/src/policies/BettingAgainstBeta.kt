@@ -58,7 +58,7 @@ open class BettingAgainstBeta(
 ) : BasePolicy() {
 
     private var rebalanceDate = Instant.MIN
-    private val buffers = AssetReturns(assets, windowSize, Double.NaN)
+    private val data = AssetReturns(assets, windowSize, Double.NaN)
 
     init {
         require(market in assets) { "The selected market asset $market also has to be part of all assets" }
@@ -72,10 +72,10 @@ open class BettingAgainstBeta(
      */
     private fun calculateBetas(): List<Pair<Asset, Double>> {
         val betas = mutableListOf<Pair<Asset, Double>>()
-        val x = buffers.toDoubleArray(market)
-        buffers.assets.forEach { asset ->
+        val x = data.toDoubleArray(market)
+        data.assets.forEach { asset ->
             if (asset != market) {
-                val y = buffers.toDoubleArray(asset)
+                val y = data.toDoubleArray(asset)
                 val beta = Covariance().covariance(x, y)
                 if (!beta.isNaN()) betas.add(Pair(asset, beta))
             }
@@ -149,10 +149,10 @@ open class BettingAgainstBeta(
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
 
         // First we update the buffers
-        buffers.add(event)
+        data.add(event)
 
         // Check if it is time to re-balance the portfolio
-        if (event.time >= rebalanceDate && buffers.isAvailable()) {
+        if (event.time >= rebalanceDate && data.isAvailable()) {
             val betas = calculateBetas()
 
             // Update the re-balance date
@@ -168,7 +168,7 @@ open class BettingAgainstBeta(
      * @param runPhase
      */
     override fun start(runPhase: RunPhase) {
-        buffers.clear()
+        data.clear()
         rebalanceDate = Instant.MIN
     }
 

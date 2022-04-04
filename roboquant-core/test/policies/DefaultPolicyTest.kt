@@ -18,6 +18,7 @@ package org.roboquant.policies
 
 
 import org.roboquant.brokers.InternalAccount
+import org.roboquant.common.days
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import org.roboquant.strategies.Signal
@@ -57,6 +58,17 @@ internal class DefaultPolicyTest {
         }
 
         val policy = MyPolicy()
+        val signals = mutableListOf<Signal>()
+        val event = Event(emptyList(), Instant.now())
+        val account = InternalAccount().toAccount()
+        val orders = policy.act(signals, account, event)
+        assertTrue(orders.isEmpty())
+
+    }
+
+    @Test
+    fun nesting() {
+        val policy = DefaultPolicy().resolve(SignalResolution.FIRST).circuitBreaker(10, 1.days)
         val signals = mutableListOf<Signal>()
         val event = Event(emptyList(), Instant.now())
         val account = InternalAccount().toAccount()

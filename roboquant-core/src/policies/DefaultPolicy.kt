@@ -29,14 +29,11 @@ import kotlin.math.min
 
 /**
  * This is the default policy that will be used if no other policy is specified. There are a number of parameters that
- * can be configured to change it behavior.
- *
- * By default, this policy will create Market Orders, but this can be changed by providing a different [createOrder]
- * method.
+ * can be configured to change it behavior. By default, this policy will create Market Orders, but this can be
+ * changed by providing a different [createOrder] method.
  *
  * It will adhere to the following rules when it converts signals into orders:
  *
- * - Remove conflicting signals (configurable)
  * - If there still is an open order outstanding for the same asset, don't do anything
  * - If there is already an open position for the same asset, don't place an additional BUY order
  * - A SELL order will liquidate the full position for that asset in the portfolio if available
@@ -46,7 +43,6 @@ import kotlin.math.min
  *
  * @property minAmount If an order has impact on buying power, what should be the minimum amount
  * @property maxAmount The maximum amount (in terms of buying power impact) for a single order
- * @property signalResolution The [SignalResolution] strategy to use for resolving conflicting signals
  * @property shorting Should the policy create orders that lead to short positions
  * @property increasePosition Should the policy create orders increase already open positions
  * @property oneOrderPerAsset Should there be only maximum one open order per asset at any time
@@ -55,7 +51,6 @@ import kotlin.math.min
 open class DefaultPolicy(
     private val minAmount: Double = 5000.0,
     private val maxAmount: Double = 20_000.0,
-    private val signalResolution: SignalResolution = SignalResolution.NONE,
     private val shorting: Boolean = false,
     private val increasePosition: Boolean = false,
     private val oneOrderPerAsset: Boolean = true,
@@ -124,14 +119,15 @@ open class DefaultPolicy(
         var buyingPower = account.buyingPower.value
         val openOrderAssets = if (oneOrderPerAsset) account.openOrders.map { it.asset }.distinct() else emptyList()
 
-        for (signal in signals.resolve(signalResolution)) {
+        for (signal in signals) {
             val asset = signal.asset
 
-            // If there are open orders for the asset, we don't place an additional order
+            // validate the one order per asset policy
             if (oneOrderPerAsset && openOrderAssets.contains(asset)) continue
 
             // We don't place an order if we don't know the current price
             val price = event.getPrice(asset)
+
             if (price !== null) {
                 val amount = min(maxAmount, buyingPower).zeroOrMore
                 if (signal.rating.isNegative) {

@@ -8,7 +8,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.metrics.MetricResults
 import org.roboquant.metrics.SimpleMetric
-import org.roboquant.strategies.utils.PriceBarBuffer
+import org.roboquant.strategies.utils.PriceBarSeries
 
 /**
  * Add a technical indicator as a metric, for example a moving avarage.
@@ -23,21 +23,20 @@ class TALibMetric(
     private val name: String,
     private val history: Int = 15,
     private val assetFilter: AssetFilter = AssetFilter.noFilter(),
-    private var block: TALib.(series: PriceBarBuffer) -> Double
+    private var block: TA.(series: PriceBarSeries) -> Double
 ) : SimpleMetric() {
 
-    private val buffers = mutableMapOf<Asset, PriceBarBuffer>()
-    private val talib = TALib
+    private val buffers = mutableMapOf<Asset, PriceBarSeries>()
+    private val talib = TA()
     // private val logger: Logger = Logging.getLogger(TALibMetric::class)
 
     override fun calc(account: Account, event: Event): MetricResults {
         val metrics = mutableMapOf<String, Number>()
-        val now = event.time
         val actions = event.prices.values.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset) }
         for (priceAction in actions) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarBuffer(history, usePercentage = false) }
-            buffer.update(priceAction, now)
+            val buffer = buffers.getOrPut(asset) { PriceBarSeries(history, usePercentage = false) }
+            buffer.update(priceAction)
             if (buffer.isAvailable()) {
                 val metric = block.invoke(talib, buffer)
                 val name = "$name.${asset.symbol.lowercase()}"

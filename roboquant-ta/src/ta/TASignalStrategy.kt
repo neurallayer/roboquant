@@ -30,7 +30,7 @@ import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.SignalType
 import org.roboquant.strategies.Strategy
-import org.roboquant.strategies.utils.PriceBarBuffer
+import org.roboquant.strategies.utils.PriceBarSeries
 import java.lang.Integer.max
 import java.util.logging.Logger
 
@@ -44,12 +44,12 @@ import java.util.logging.Logger
  */
 class TASignalStrategy(
     private val history: Int = 15,
-    private var block: TASignalStrategy.(price: PriceBarBuffer, asset: Asset) -> Signal?
+    private var block: TASignalStrategy.(price: PriceBarSeries, asset: Asset) -> Signal?
 ) : Strategy {
 
-    private val buffers = mutableMapOf<Asset, PriceBarBuffer>()
+    private val buffers = mutableMapOf<Asset, PriceBarSeries>()
     private val logger: Logger = Logging.getLogger(TASignalStrategy::class)
-    val ta = TALib
+    val ta = TA()
 
     private var metrics = mutableMapOf<String, Number>()
 
@@ -105,11 +105,10 @@ class TASignalStrategy(
      */
     override fun generate(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
-        val now = event.time
         for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarBuffer(history, usePercentage = false) }
-            buffer.update(priceAction, now)
+            val buffer = buffers.getOrPut(asset) { PriceBarSeries(history, usePercentage = false) }
+            buffer.update(priceAction)
             if (buffer.isAvailable()) {
                 try {
                     val signal = block.invoke(this, buffer, asset)

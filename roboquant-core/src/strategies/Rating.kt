@@ -23,30 +23,51 @@ import kotlin.math.sign
  * enumeration and is closely modelled after how traditional analyst rate, using a 5 point score:
  *
  * - Buy: Also known as strong buy and "on the recommended list". Buy is a recommendation to purchase a specific
- *   security.
- * - Sell: Also known as strong sell, it's a recommendation to sell a security or to liquidate an asset.
- * - Hold: In general terms, a company with a hold recommendation is expected to perform at the same pace as comparable
- *   companies or in-line with the market.
- * - Underperform: A recommendation that means a stock is expected to do slightly worse than the overall stock market
+ *   asset.
+ * - Sell: Also known as strong sell, it's a recommendation to sell an asset or to liquidate an asset.
+ * - Hold: In general terms, an asset with a hold recommendation is expected to perform at the same pace as comparable
+ *   assets or in-line with the market.
+ * - Underperform: A recommendation that means a asset is expected to do slightly worse than the overall market
  *   return. Underperform can also be expressed as "moderate sell," "weak hold" and "underweight."
- * - Outperform: Also known as "moderate buy," "accumulate" and "overweight." Outperform is an analyst recommendation
- *   meaning a stock is expected to do slightly better than the market return.
+ * - Outperform: Also known as "moderate buy," "accumulate" and "overweight." Outperform is a recommendation
+ *   meaning a asset is expected to do slightly better than the market return.
  *
  *   The [value] of a rating goes from 2 (BUY) to -2 (SELL)
  *
  */
 enum class Rating(val value: Int) {
+
+    /**
+     * Buy rating, is a recommendation to purchase a specific asset.
+     */
     BUY(2),
+
+    /**
+     * Outperform rating, is a recommendatio meaning a asset is expected to do slightly better than the market return.
+     */
     OUTPERFORM(1),
+
+    /**
+     * Hold rating, a recommendation that means an asset is expected to perform at the same pace as comparable assets
+     * or in-line with the market.
+     */
     HOLD(0),
+
+    /**
+     * Underperform rating, a recommendation that means an asset is expected to do slightly worse than the overall market
+     *  return.
+     */
     UNDERPERFORM(-1),
+
+    /**
+     * Sell rating. a recommendation to sell an asset or to liquidate an asset.
+     */
     SELL(-2);
 
     /**
      * Is this a positive rating, so a BUY or an OUTPERFORM
      */
     val isPositive: Boolean get() = this === BUY || this === OUTPERFORM
-
 
     /**
      * Is this a negative rating, so a SELL or UNDERPERFORM
@@ -69,10 +90,8 @@ enum class Rating(val value: Int) {
     }
 
     /**
-     * Does this rating conflict with an [other] rating. Ratings only conflict if the direction is different. So a
-     * [BUY] and [OUTPERFORM] don't conflict.
-     *
-     * @param other
+     * Does this rating conflict with an [other] rating. Ratings only conflict if the direction is different. So for
+     * example, a [BUY] and [OUTPERFORM] don't conflict.
      */
     fun conflicts(other: Rating) = value.sign != other.value.sign
 }

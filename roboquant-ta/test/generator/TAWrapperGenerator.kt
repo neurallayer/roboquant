@@ -45,6 +45,7 @@ internal open class BaseWrapper(val root: JsonObject) {
     protected val desc = root.getAttr("ShortDescription")
     private val className: String = root.get("CamelCaseName").asString
     protected val fnName = className.unCapitalize()
+    protected val fixedFnName = if (fnName == "cdlStickSandwhich") "cdlStickSandwich" else fnName
     protected val inputParams = getInput()
     protected val optional = getOptionalInput()
     protected val firstInput = getList("RequiredInputArgument").first().getVariableName("Name")
@@ -222,7 +223,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
          * data to calculate the indicators, an [InsufficientData] will be thrown.
          * This indicator belongs to the group $groupId.
          */
-        fun $fnName(${getInput(true)}, $constructor):  ${returnType()} {
+        fun $fixedFnName(${getInput(true)}, $constructor):  ${returnType()} {
             val endIdx = $firstInput.lastIndex
             val outputSize = $firstInput.size
             ${getOutputDecl()}
@@ -233,7 +234,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
             val last = endOutput.value
              if (last < 0) {
                 val lookback = core.${callLookback()}
-                throw InsufficientData("Not enough data to calculate $fnName, required lookback period is ${'$'}lookback")
+                throw InsufficientData("Not enough data to calculate $fixedFnName, required lookback period is ${'$'}lookback")
             }
             return ${returnStatement()}
         }
@@ -259,15 +260,13 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
         package org.roboquant.ta
         
         import com.tictactec.ta.lib.*
-        import org.roboquant.strategies.utils.PriceBarBuffer
+        import org.roboquant.strategies.utils.PriceBarSeries
         
         /**
-         * TALib wrapper that supports the API in a streaming/online context. Calling a method will only return a single
-         * value, by default the most recent one, but this can be changed by setting the "previous" argument.
-         *
-         * For accessing the regular access, see TALibBatch
+         * TA wraps the excellent TALib library and makes it easy to use any of indicators provided by that library. 
+         * This wrapper is optimized for streaming/event based updates.     
          */
-        object TALib {
+        object TA {
         
             var core:Core = Core()
        
@@ -349,11 +348,13 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
         return """
             
         /**
-         * Apply $desc on the provided input data and return the most recent output only. If there is insufficient
-         * data to calculate the indicators, an [InsufficientData] will be thrown.
-         * This indicator belongs to the group $groupId.
+         * Calculate **$desc** using the provided input data and by default return the most recent result. 
+         * You can set previous if you don't want the most recent result.
+         * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
+         *
+         * This indicator belongs to the group **$groupId**.
          */
-        fun $fnName(${getInput(true)}, $constructor previous:Int=0): ${returnType()} {
+        fun $fixedFnName(${getInput(true)}, $constructor previous:Int=0): ${returnType()} {
             val endIdx = $firstInput.lastIndex - previous
             ${getOutputDecl()}
             val startOutput = MInteger()
@@ -362,13 +363,13 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
             if (ret != RetCode.Success) throw Exception(ret.toString())
             val last = endOutput.value - 1
             if (last < 0) {
-                val lookback = core.${callLookback()}
-                throw InsufficientData("Not enough data to calculate $fnName, required lookback period is ${'$'}lookback")
+                val lookback = core.${callLookback()} + previous
+                throw InsufficientData("Not enough data to calculate $fixedFnName, minimal lookback period is ${'$'}lookback")
             }
             return ${returnStatement()}
         }
 
-        ${genPriceBufferMethod()}
+        ${genPriceBarSeriesMethod()}
 
     """.trimIndent()
     }
@@ -380,15 +381,20 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
      *
      * @return
      */
-    private fun genPriceBufferMethod(): String {
+    private fun genPriceBarSeriesMethod(): String {
         val result = StringBuffer()
         val l = getList("RequiredInputArgument")
         val name = l.first().getVariableName("Name")
+        if (name in setOf("data")) {
+            result += "fun $fixedFnName(series: PriceBarSeries, $constructor previous:Int = 0) = $fixedFnName(series.close"
+            result += "$optional previous)"
+        }
+
         if (name in setOf("open", "close", "high", "low", "volume")) {
-            result += "fun $fnName(buffer: PriceBarBuffer, $constructor previous:Int = 0) = $fnName("
+            result += "fun $fixedFnName(series: PriceBarSeries, $constructor previous:Int = 0) = $fixedFnName("
             l.forEach {
                 val attr = it.getVariableName("Name")
-                result += "buffer.$attr,"
+                result += "series.$attr,"
             }
             result += "$optional previous)"
         }
@@ -426,7 +432,7 @@ fun main() {
         sb1 += b.genMethod()
     }
     sb1 += "}\n\n"
-    val file1 = File("/tmp/TALib.kt")
+    val file1 = File("/tmp/TA.kt")
     file1.writeText(sb1.toString())
 
     // And now the TALibBatch object
