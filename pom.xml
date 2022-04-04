@@ -64,7 +64,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
-        <kotlin.version>1.6.20-RC2</kotlin.version>
+        <kotlin.version>1.6.20</kotlin.version>
     </properties>
 
     <repositories>
@@ -281,13 +281,13 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>2.0.0-alpha6</version>
+                <version>2.0.0-alpha7</version>
             </dependency>
 
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-jdk14</artifactId>
-                <version>2.0.0-alpha6</version>
+                <version>2.0.0-alpha7</version>
             </dependency>
 
         </dependencies>

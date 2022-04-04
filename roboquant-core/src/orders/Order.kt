@@ -19,15 +19,19 @@ package org.roboquant.orders
 import org.roboquant.common.Asset
 
 /**
- * Order is an instruction for a broker to initiate a certain action. An order is always associated with a
- * single [asset].
+ * An order is an instruction for a broker to buy or sell an asset or modify an existing order. An order in *roboquant*
+ * is always associated with a single [asset] and it is a [policy][org.roboquant.policies.Policy] that creates orders.
  *
- * Within roboquant it is the [policy][org.roboquant.policies.Policy] that creates the orders. An order can cover a
- * wide variety of use cases:
+ * An order can cover different of use cases:
  *
- * - a new order (perhaps the most common use case), ranging from a simple market order to advanced order types
+ * - a buy or sell order (perhaps the most common use case), ranging from simple market order to advanced order types
  * - cancellation of an existing order
  * - update of an existing order
+ *
+ * @property asset the underlying asset of the order
+ * @property id an unqiue id of the order
+ * @property tag an abritrary tag that can be associated with this order, default is an empty string
+ *
  **/
 abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
 

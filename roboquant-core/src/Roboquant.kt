@@ -187,7 +187,10 @@ class Roboquant(
 
     /**
      * Take a single step in the timeline. The broker is always invoked before the strategy and policy to ensure it is
-     * impossible to look ahead in the future.
+     * impossible to look ahead in the future. So the loop really is:
+     *
+     *  feed --|event|--> broker --|account|--> metrics -> strategy --|signals|--> policy --|orders|-->
+     *
      */
     private fun step(orders: List<Order>, event: Event, runInfo: RunInfo): List<Order> {
         runInfo.step++
@@ -200,8 +203,8 @@ class Roboquant(
     }
 
     /**
-     * Run the configured metrics and log the results. This includes any metrics that are recorded by the strategy,
-     * policy and broker.
+     * Calculate the configured [metrics] and log the results. This includes also metrics that are recorded by the
+     * strategy, policy and broker.
      */
     private fun runMetrics(account: Account, event: Event, runInfo: RunInfo) {
         val info = runInfo.copy()
