@@ -108,7 +108,7 @@ class TASignalStrategy(
         for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
             val asset = priceAction.asset
             val buffer = buffers.getOrPut(asset) { PriceBarSeries(history, usePercentage = false) }
-            buffer.update(priceAction)
+            buffer.add(priceAction)
             if (buffer.isAvailable()) {
                 try {
                     val signal = block.invoke(this, buffer, asset)

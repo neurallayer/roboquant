@@ -19,7 +19,7 @@ import org.roboquant.strategies.utils.PriceBarSeries
  * @property block
  * @constructor Create new metric
  */
-class TALibMetric(
+class TAMetric(
     private val name: String,
     private val history: Int = 15,
     private val assetFilter: AssetFilter = AssetFilter.noFilter(),
@@ -27,7 +27,7 @@ class TALibMetric(
 ) : SimpleMetric() {
 
     private val buffers = mutableMapOf<Asset, PriceBarSeries>()
-    private val talib = TA()
+    private val ta = TA()
     // private val logger: Logger = Logging.getLogger(TALibMetric::class)
 
     override fun calc(account: Account, event: Event): MetricResults {
@@ -36,9 +36,9 @@ class TALibMetric(
         for (priceAction in actions) {
             val asset = priceAction.asset
             val buffer = buffers.getOrPut(asset) { PriceBarSeries(history, usePercentage = false) }
-            buffer.update(priceAction)
+            buffer.add(priceAction)
             if (buffer.isAvailable()) {
-                val metric = block.invoke(talib, buffer)
+                val metric = block.invoke(ta, buffer)
                 val name = "$name.${asset.symbol.lowercase()}"
                 metrics[name] = metric
             }

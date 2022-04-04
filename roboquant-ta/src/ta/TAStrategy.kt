@@ -256,13 +256,13 @@ fun TA.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) = maxIndex(
 fun TA.recordHigh(data: PriceBarSeries, period: Int, previous: Int = 0) = recordHigh(data.high, period, previous)
 
 fun TA.vwap(high: DoubleArray, low: DoubleArray, close: DoubleArray, volume: DoubleArray, period: Int, previous: Int = 0) : Double {
-    val size = high.size - previous
+    val end = high.lastIndex - previous
     var sumPrice = 0.0
     var sumVolume = 0.0
-    val start = size - period - previous
-    if (start < 0) throw InsufficientData("Not sufficient data to calculate vwap")
+    val start = end - period - previous
+    if (start < 0) throw InsufficientData("Not sufficient data to calculate vwap, minimum lookback period is ${period + previous}")
 
-    for (i in start until size) {
+    for (i in start..end) {
         val typicalPrice = (close[i] + high[i] + low[i]) / 3
         sumPrice += typicalPrice * volume[i]
         sumVolume += volume[i]

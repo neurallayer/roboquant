@@ -119,7 +119,7 @@ internal class TAStrategyTest {
         val asset = Asset("XYZ")
         repeat(size) {
             val pb = PriceBar(asset, 10.0, 12.0, 8.0, 11.0, 100 + it)
-            result.update(pb)
+            result.add(pb)
         }
         return result
     }

@@ -266,10 +266,8 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
          * TA wraps the excellent TALib library and makes it easy to use any of indicators provided by that library. 
          * This wrapper is optimized for streaming/event based updates.     
          */
-        object TA {
+        class TA(var core:Core = Core()) {
         
-            var core:Core = Core()
-       
     """.trimIndent()
     }
 
@@ -385,8 +383,8 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
         val result = StringBuffer()
         val l = getList("RequiredInputArgument")
         val name = l.first().getVariableName("Name")
-        if (name in setOf("data")) {
-            result += "fun $fixedFnName(series: PriceBarSeries, $constructor previous:Int = 0) = $fixedFnName(series.close"
+        if (name in setOf("data") && l.size == 1) {
+            result += "fun $fixedFnName(series: PriceBarSeries, $constructor previous:Int = 0) = $fixedFnName(series.close,"
             result += "$optional previous)"
         }
 
@@ -398,7 +396,15 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
             }
             result += "$optional previous)"
         }
-        return result.toString()
+        return if (result.isNotEmpty()) {
+            """
+                
+            /**
+             * Simple wrapper that allows to use PricebarSeries as input.
+             * @see [$fixedFnName]
+             */ 
+             """.trimIndent() + "\n$result"
+        } else ""
     }
 
 }

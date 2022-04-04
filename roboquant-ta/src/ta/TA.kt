@@ -34,6 +34,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [acos]
+     */
+    fun acos(series: PriceBarSeries, previous: Int = 0) = acos(series.close, previous)
+
+    /**
      * Calculate **Chaikin A/D Line** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -55,6 +61,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [ad]
+     */
     fun ad(series: PriceBarSeries, previous: Int = 0) =
         ad(series.high, series.low, series.close, series.volume, previous)
 
@@ -122,6 +132,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [adOsc]
+     */
     fun adOsc(series: PriceBarSeries, fastPeriod: Int = 3, slowPeriod: Int = 10, previous: Int = 0) =
         adOsc(series.high, series.low, series.close, series.volume, fastPeriod, slowPeriod, previous)
 
@@ -147,6 +161,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [adx]
+     */
     fun adx(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         adx(series.high, series.low, series.close, timePeriod, previous)
 
@@ -172,6 +190,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [adxr]
+     */
     fun adxr(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         adxr(series.high, series.low, series.close, timePeriod, previous)
 
@@ -204,6 +226,18 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [apo]
+     */
+    fun apo(
+        series: PriceBarSeries,
+        fastPeriod: Int = 12,
+        slowPeriod: Int = 26,
+        mAType: MAType = MAType.Ema,
+        previous: Int = 0
+    ) = apo(series.close, fastPeriod, slowPeriod, mAType, previous)
+
+    /**
      * Calculate **Aroon** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -226,6 +260,10 @@ class TA(var core: Core = Core()) {
         return Pair(output1[0], output2[0])
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [aroon]
+     */
     fun aroon(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         aroon(series.high, series.low, timePeriod, previous)
 
@@ -251,6 +289,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [aroonOsc]
+     */
     fun aroonOsc(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         aroonOsc(series.high, series.low, timePeriod, previous)
 
@@ -277,6 +319,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [asin]
+     */
+    fun asin(series: PriceBarSeries, previous: Int = 0) = asin(series.close, previous)
+
+    /**
      * Calculate **Vector Trigonometric ATan** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -297,6 +345,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [atan]
+     */
+    fun atan(series: PriceBarSeries, previous: Int = 0) = atan(series.close, previous)
 
     /**
      * Calculate **Average True Range** using the provided input data and by default return the most recent result.
@@ -320,6 +374,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [atr]
+     */
     fun atr(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         atr(series.high, series.low, series.close, timePeriod, previous)
 
@@ -351,6 +409,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [avgPrice]
+     */
     fun avgPrice(series: PriceBarSeries, previous: Int = 0) =
         avgPrice(series.open, series.high, series.low, series.close, previous)
 
@@ -399,6 +461,19 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [bbands]
+     */
+    fun bbands(
+        series: PriceBarSeries,
+        timePeriod: Int = 5,
+        deviationsup: Double = 2.000000e+0,
+        deviationsdown: Double = 2.000000e+0,
+        mAType: MAType = MAType.Ema,
+        previous: Int = 0
+    ) = bbands(series.close, timePeriod, deviationsup, deviationsdown, mAType, previous)
+
+    /**
      * Calculate **Beta** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -442,6 +517,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [bop]
+     */
     fun bop(series: PriceBarSeries, previous: Int = 0) =
         bop(series.open, series.high, series.low, series.close, previous)
 
@@ -467,6 +546,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cci]
+     */
     fun cci(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         cci(series.high, series.low, series.close, timePeriod, previous)
 
@@ -498,6 +581,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdl2Crows]
+     */
     fun cdl2Crows(series: PriceBarSeries, previous: Int = 0) =
         cdl2Crows(series.open, series.high, series.low, series.close, previous)
 
@@ -529,6 +616,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdl3BlackCrows]
+     */
     fun cdl3BlackCrows(series: PriceBarSeries, previous: Int = 0) =
         cdl3BlackCrows(series.open, series.high, series.low, series.close, previous)
 
@@ -560,6 +651,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdl3Inside]
+     */
     fun cdl3Inside(series: PriceBarSeries, previous: Int = 0) =
         cdl3Inside(series.open, series.high, series.low, series.close, previous)
 
@@ -591,6 +686,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdl3LineStrike]
+     */
     fun cdl3LineStrike(series: PriceBarSeries, previous: Int = 0) =
         cdl3LineStrike(series.open, series.high, series.low, series.close, previous)
 
@@ -622,6 +721,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdl3Outside]
+     */
     fun cdl3Outside(series: PriceBarSeries, previous: Int = 0) =
         cdl3Outside(series.open, series.high, series.low, series.close, previous)
 
@@ -653,6 +756,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdl3StarsInSouth]
+     */
     fun cdl3StarsInSouth(series: PriceBarSeries, previous: Int = 0) =
         cdl3StarsInSouth(series.open, series.high, series.low, series.close, previous)
 
@@ -684,6 +791,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdl3WhiteSoldiers]
+     */
     fun cdl3WhiteSoldiers(series: PriceBarSeries, previous: Int = 0) =
         cdl3WhiteSoldiers(series.open, series.high, series.low, series.close, previous)
 
@@ -717,6 +828,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlAbandonedBaby]
+     */
     fun cdlAbandonedBaby(series: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
         cdlAbandonedBaby(series.open, series.high, series.low, series.close, penetration, previous)
 
@@ -748,6 +863,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlAdvanceBlock]
+     */
     fun cdlAdvanceBlock(series: PriceBarSeries, previous: Int = 0) =
         cdlAdvanceBlock(series.open, series.high, series.low, series.close, previous)
 
@@ -779,6 +898,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlBeltHold]
+     */
     fun cdlBeltHold(series: PriceBarSeries, previous: Int = 0) =
         cdlBeltHold(series.open, series.high, series.low, series.close, previous)
 
@@ -810,6 +933,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlBreakaway]
+     */
     fun cdlBreakaway(series: PriceBarSeries, previous: Int = 0) =
         cdlBreakaway(series.open, series.high, series.low, series.close, previous)
 
@@ -841,6 +968,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlClosingMarubozu]
+     */
     fun cdlClosingMarubozu(series: PriceBarSeries, previous: Int = 0) =
         cdlClosingMarubozu(series.open, series.high, series.low, series.close, previous)
 
@@ -872,6 +1003,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlConcealBabysWall]
+     */
     fun cdlConcealBabysWall(series: PriceBarSeries, previous: Int = 0) =
         cdlConcealBabysWall(series.open, series.high, series.low, series.close, previous)
 
@@ -903,6 +1038,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlCounterAttack]
+     */
     fun cdlCounterAttack(series: PriceBarSeries, previous: Int = 0) =
         cdlCounterAttack(series.open, series.high, series.low, series.close, previous)
 
@@ -936,6 +1075,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlDarkCloudCover]
+     */
     fun cdlDarkCloudCover(series: PriceBarSeries, penetration: Double = 5.000000e-1, previous: Int = 0) =
         cdlDarkCloudCover(series.open, series.high, series.low, series.close, penetration, previous)
 
@@ -967,6 +1110,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlDoji]
+     */
     fun cdlDoji(series: PriceBarSeries, previous: Int = 0) =
         cdlDoji(series.open, series.high, series.low, series.close, previous)
 
@@ -998,6 +1145,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlDojiStar]
+     */
     fun cdlDojiStar(series: PriceBarSeries, previous: Int = 0) =
         cdlDojiStar(series.open, series.high, series.low, series.close, previous)
 
@@ -1029,6 +1180,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlDragonflyDoji]
+     */
     fun cdlDragonflyDoji(series: PriceBarSeries, previous: Int = 0) =
         cdlDragonflyDoji(series.open, series.high, series.low, series.close, previous)
 
@@ -1060,6 +1215,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlEngulfing]
+     */
     fun cdlEngulfing(series: PriceBarSeries, previous: Int = 0) =
         cdlEngulfing(series.open, series.high, series.low, series.close, previous)
 
@@ -1103,6 +1262,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlEveningDojiStar]
+     */
     fun cdlEveningDojiStar(series: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
         cdlEveningDojiStar(series.open, series.high, series.low, series.close, penetration, previous)
 
@@ -1136,6 +1299,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlEveningStar]
+     */
     fun cdlEveningStar(series: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
         cdlEveningStar(series.open, series.high, series.low, series.close, penetration, previous)
 
@@ -1167,6 +1334,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlGapSideSideWhite]
+     */
     fun cdlGapSideSideWhite(series: PriceBarSeries, previous: Int = 0) =
         cdlGapSideSideWhite(series.open, series.high, series.low, series.close, previous)
 
@@ -1198,6 +1369,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlGravestoneDoji]
+     */
     fun cdlGravestoneDoji(series: PriceBarSeries, previous: Int = 0) =
         cdlGravestoneDoji(series.open, series.high, series.low, series.close, previous)
 
@@ -1229,6 +1404,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlHammer]
+     */
     fun cdlHammer(series: PriceBarSeries, previous: Int = 0) =
         cdlHammer(series.open, series.high, series.low, series.close, previous)
 
@@ -1260,6 +1439,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlHangingMan]
+     */
     fun cdlHangingMan(series: PriceBarSeries, previous: Int = 0) =
         cdlHangingMan(series.open, series.high, series.low, series.close, previous)
 
@@ -1291,6 +1474,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlHarami]
+     */
     fun cdlHarami(series: PriceBarSeries, previous: Int = 0) =
         cdlHarami(series.open, series.high, series.low, series.close, previous)
 
@@ -1322,6 +1509,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlHaramiCross]
+     */
     fun cdlHaramiCross(series: PriceBarSeries, previous: Int = 0) =
         cdlHaramiCross(series.open, series.high, series.low, series.close, previous)
 
@@ -1353,6 +1544,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlHignWave]
+     */
     fun cdlHignWave(series: PriceBarSeries, previous: Int = 0) =
         cdlHignWave(series.open, series.high, series.low, series.close, previous)
 
@@ -1384,6 +1579,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlHikkake]
+     */
     fun cdlHikkake(series: PriceBarSeries, previous: Int = 0) =
         cdlHikkake(series.open, series.high, series.low, series.close, previous)
 
@@ -1415,6 +1614,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlHikkakeMod]
+     */
     fun cdlHikkakeMod(series: PriceBarSeries, previous: Int = 0) =
         cdlHikkakeMod(series.open, series.high, series.low, series.close, previous)
 
@@ -1446,6 +1649,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlHomingPigeon]
+     */
     fun cdlHomingPigeon(series: PriceBarSeries, previous: Int = 0) =
         cdlHomingPigeon(series.open, series.high, series.low, series.close, previous)
 
@@ -1477,6 +1684,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlIdentical3Crows]
+     */
     fun cdlIdentical3Crows(series: PriceBarSeries, previous: Int = 0) =
         cdlIdentical3Crows(series.open, series.high, series.low, series.close, previous)
 
@@ -1508,6 +1719,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlInNeck]
+     */
     fun cdlInNeck(series: PriceBarSeries, previous: Int = 0) =
         cdlInNeck(series.open, series.high, series.low, series.close, previous)
 
@@ -1539,6 +1754,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlInvertedHammer]
+     */
     fun cdlInvertedHammer(series: PriceBarSeries, previous: Int = 0) =
         cdlInvertedHammer(series.open, series.high, series.low, series.close, previous)
 
@@ -1570,6 +1789,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlKicking]
+     */
     fun cdlKicking(series: PriceBarSeries, previous: Int = 0) =
         cdlKicking(series.open, series.high, series.low, series.close, previous)
 
@@ -1601,6 +1824,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlKickingByLength]
+     */
     fun cdlKickingByLength(series: PriceBarSeries, previous: Int = 0) =
         cdlKickingByLength(series.open, series.high, series.low, series.close, previous)
 
@@ -1632,6 +1859,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlLadderBottom]
+     */
     fun cdlLadderBottom(series: PriceBarSeries, previous: Int = 0) =
         cdlLadderBottom(series.open, series.high, series.low, series.close, previous)
 
@@ -1663,6 +1894,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlLongLeggedDoji]
+     */
     fun cdlLongLeggedDoji(series: PriceBarSeries, previous: Int = 0) =
         cdlLongLeggedDoji(series.open, series.high, series.low, series.close, previous)
 
@@ -1694,6 +1929,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlLongLine]
+     */
     fun cdlLongLine(series: PriceBarSeries, previous: Int = 0) =
         cdlLongLine(series.open, series.high, series.low, series.close, previous)
 
@@ -1725,6 +1964,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlMarubozu]
+     */
     fun cdlMarubozu(series: PriceBarSeries, previous: Int = 0) =
         cdlMarubozu(series.open, series.high, series.low, series.close, previous)
 
@@ -1756,6 +1999,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlMatchingLow]
+     */
     fun cdlMatchingLow(series: PriceBarSeries, previous: Int = 0) =
         cdlMatchingLow(series.open, series.high, series.low, series.close, previous)
 
@@ -1788,6 +2035,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlMatHold]
+     */
     fun cdlMatHold(series: PriceBarSeries, penetration: Double = 5.000000e-1, previous: Int = 0) =
         cdlMatHold(series.open, series.high, series.low, series.close, penetration, previous)
 
@@ -1831,6 +2082,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlMorningDojiStar]
+     */
     fun cdlMorningDojiStar(series: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
         cdlMorningDojiStar(series.open, series.high, series.low, series.close, penetration, previous)
 
@@ -1864,6 +2119,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlMorningStar]
+     */
     fun cdlMorningStar(series: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
         cdlMorningStar(series.open, series.high, series.low, series.close, penetration, previous)
 
@@ -1895,6 +2154,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlOnNeck]
+     */
     fun cdlOnNeck(series: PriceBarSeries, previous: Int = 0) =
         cdlOnNeck(series.open, series.high, series.low, series.close, previous)
 
@@ -1926,6 +2189,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlPiercing]
+     */
     fun cdlPiercing(series: PriceBarSeries, previous: Int = 0) =
         cdlPiercing(series.open, series.high, series.low, series.close, previous)
 
@@ -1957,6 +2224,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlRickshawMan]
+     */
     fun cdlRickshawMan(series: PriceBarSeries, previous: Int = 0) =
         cdlRickshawMan(series.open, series.high, series.low, series.close, previous)
 
@@ -1988,6 +2259,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlRiseFall3Methods]
+     */
     fun cdlRiseFall3Methods(series: PriceBarSeries, previous: Int = 0) =
         cdlRiseFall3Methods(series.open, series.high, series.low, series.close, previous)
 
@@ -2019,6 +2294,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlSeperatingLines]
+     */
     fun cdlSeperatingLines(series: PriceBarSeries, previous: Int = 0) =
         cdlSeperatingLines(series.open, series.high, series.low, series.close, previous)
 
@@ -2050,6 +2329,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlShootingStar]
+     */
     fun cdlShootingStar(series: PriceBarSeries, previous: Int = 0) =
         cdlShootingStar(series.open, series.high, series.low, series.close, previous)
 
@@ -2081,6 +2364,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlShortLine]
+     */
     fun cdlShortLine(series: PriceBarSeries, previous: Int = 0) =
         cdlShortLine(series.open, series.high, series.low, series.close, previous)
 
@@ -2112,6 +2399,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlSpinningTop]
+     */
     fun cdlSpinningTop(series: PriceBarSeries, previous: Int = 0) =
         cdlSpinningTop(series.open, series.high, series.low, series.close, previous)
 
@@ -2143,6 +2434,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlStalledPattern]
+     */
     fun cdlStalledPattern(series: PriceBarSeries, previous: Int = 0) =
         cdlStalledPattern(series.open, series.high, series.low, series.close, previous)
 
@@ -2174,6 +2469,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlStickSandwich]
+     */
     fun cdlStickSandwich(series: PriceBarSeries, previous: Int = 0) =
         cdlStickSandwich(series.open, series.high, series.low, series.close, previous)
 
@@ -2205,6 +2504,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlTakuri]
+     */
     fun cdlTakuri(series: PriceBarSeries, previous: Int = 0) =
         cdlTakuri(series.open, series.high, series.low, series.close, previous)
 
@@ -2236,6 +2539,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlTasukiGap]
+     */
     fun cdlTasukiGap(series: PriceBarSeries, previous: Int = 0) =
         cdlTasukiGap(series.open, series.high, series.low, series.close, previous)
 
@@ -2267,6 +2574,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlThrusting]
+     */
     fun cdlThrusting(series: PriceBarSeries, previous: Int = 0) =
         cdlThrusting(series.open, series.high, series.low, series.close, previous)
 
@@ -2298,6 +2609,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlTristar]
+     */
     fun cdlTristar(series: PriceBarSeries, previous: Int = 0) =
         cdlTristar(series.open, series.high, series.low, series.close, previous)
 
@@ -2329,6 +2644,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlUnique3River]
+     */
     fun cdlUnique3River(series: PriceBarSeries, previous: Int = 0) =
         cdlUnique3River(series.open, series.high, series.low, series.close, previous)
 
@@ -2360,6 +2679,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlUpsideGap2Crows]
+     */
     fun cdlUpsideGap2Crows(series: PriceBarSeries, previous: Int = 0) =
         cdlUpsideGap2Crows(series.open, series.high, series.low, series.close, previous)
 
@@ -2391,6 +2714,10 @@ class TA(var core: Core = Core()) {
         return output1[0] != 0
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cdlXSideGap3Methods]
+     */
     fun cdlXSideGap3Methods(series: PriceBarSeries, previous: Int = 0) =
         cdlXSideGap3Methods(series.open, series.high, series.low, series.close, previous)
 
@@ -2417,6 +2744,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [ceil]
+     */
+    fun ceil(series: PriceBarSeries, previous: Int = 0) = ceil(series.close, previous)
+
+    /**
      * Calculate **Chande Momentum Oscillator** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2437,6 +2770,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cmo]
+     */
+    fun cmo(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) = cmo(series.close, timePeriod, previous)
 
     /**
      * Calculate **Pearson's Correlation Coefficient (r)** using the provided input data and by default return the most recent result.
@@ -2483,6 +2822,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cos]
+     */
+    fun cos(series: PriceBarSeries, previous: Int = 0) = cos(series.close, previous)
+
+    /**
      * Calculate **Vector Trigonometric Cosh** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2505,6 +2850,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [cosh]
+     */
+    fun cosh(series: PriceBarSeries, previous: Int = 0) = cosh(series.close, previous)
+
+    /**
      * Calculate **Double Exponential Moving Average** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2525,6 +2876,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [dema]
+     */
+    fun dema(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = dema(series.close, timePeriod, previous)
 
     /**
      * Calculate **Vector Arithmetic Div** using the provided input data and by default return the most recent result.
@@ -2570,6 +2927,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [dx]
+     */
     fun dx(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         dx(series.high, series.low, series.close, timePeriod, previous)
 
@@ -2596,6 +2957,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [ema]
+     */
+    fun ema(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = ema(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Vector Arithmetic Exp** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2616,6 +2983,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [exp]
+     */
+    fun exp(series: PriceBarSeries, previous: Int = 0) = exp(series.close, previous)
 
     /**
      * Calculate **Vector Floor** using the provided input data and by default return the most recent result.
@@ -2640,6 +3013,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [floor]
+     */
+    fun floor(series: PriceBarSeries, previous: Int = 0) = floor(series.close, previous)
+
+    /**
      * Calculate **Hilbert Transform - Dominant Cycle Period** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2662,6 +3041,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [htDcPeriod]
+     */
+    fun htDcPeriod(series: PriceBarSeries, previous: Int = 0) = htDcPeriod(series.close, previous)
+
+    /**
      * Calculate **Hilbert Transform - Dominant Cycle Phase** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2682,6 +3067,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [htDcPhase]
+     */
+    fun htDcPhase(series: PriceBarSeries, previous: Int = 0) = htDcPhase(series.close, previous)
 
     /**
      * Calculate **Hilbert Transform - Phasor Components** using the provided input data and by default return the most recent result.
@@ -2707,6 +3098,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [htPhasor]
+     */
+    fun htPhasor(series: PriceBarSeries, previous: Int = 0) = htPhasor(series.close, previous)
+
+    /**
      * Calculate **Hilbert Transform - SineWave** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2728,6 +3125,12 @@ class TA(var core: Core = Core()) {
         }
         return Pair(output1[0], output2[0])
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [htSine]
+     */
+    fun htSine(series: PriceBarSeries, previous: Int = 0) = htSine(series.close, previous)
 
     /**
      * Calculate **Hilbert Transform - Instantaneous Trendline** using the provided input data and by default return the most recent result.
@@ -2752,6 +3155,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [htTrendline]
+     */
+    fun htTrendline(series: PriceBarSeries, previous: Int = 0) = htTrendline(series.close, previous)
+
+    /**
      * Calculate **Hilbert Transform - Trend vs Cycle Mode** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2772,6 +3181,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [htTrendMode]
+     */
+    fun htTrendMode(series: PriceBarSeries, previous: Int = 0) = htTrendMode(series.close, previous)
 
     /**
      * Calculate **Kaufman Adaptive Moving Average** using the provided input data and by default return the most recent result.
@@ -2796,6 +3211,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [kama]
+     */
+    fun kama(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = kama(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Linear Regression** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2816,6 +3237,13 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [linearReg]
+     */
+    fun linearReg(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
+        linearReg(series.close, timePeriod, previous)
 
     /**
      * Calculate **Linear Regression Angle** using the provided input data and by default return the most recent result.
@@ -2840,6 +3268,13 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [linearRegAngle]
+     */
+    fun linearRegAngle(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
+        linearRegAngle(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Linear Regression Intercept** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2860,6 +3295,13 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [linearRegIntercept]
+     */
+    fun linearRegIntercept(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
+        linearRegIntercept(series.close, timePeriod, previous)
 
     /**
      * Calculate **Linear Regression Slope** using the provided input data and by default return the most recent result.
@@ -2884,6 +3326,13 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [linearRegSlope]
+     */
+    fun linearRegSlope(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
+        linearRegSlope(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Vector Log Natural** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2904,6 +3353,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [ln]
+     */
+    fun ln(series: PriceBarSeries, previous: Int = 0) = ln(series.close, previous)
 
     /**
      * Calculate **Vector Log10** using the provided input data and by default return the most recent result.
@@ -2928,6 +3383,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [log10]
+     */
+    fun log10(series: PriceBarSeries, previous: Int = 0) = log10(series.close, previous)
+
+    /**
      * Calculate **Moving average** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -2948,6 +3409,13 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [movingAverage]
+     */
+    fun movingAverage(series: PriceBarSeries, timePeriod: Int = 30, mAType: MAType = MAType.Ema, previous: Int = 0) =
+        movingAverage(series.close, timePeriod, mAType, previous)
 
     /**
      * Calculate **Moving Average Convergence/Divergence** using the provided input data and by default return the most recent result.
@@ -2990,6 +3458,18 @@ class TA(var core: Core = Core()) {
         }
         return Triple(output1[0], output2[0], output3[0])
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [macd]
+     */
+    fun macd(
+        series: PriceBarSeries,
+        fastPeriod: Int = 12,
+        slowPeriod: Int = 26,
+        signalPeriod: Int = 9,
+        previous: Int = 0
+    ) = macd(series.close, fastPeriod, slowPeriod, signalPeriod, previous)
 
     /**
      * Calculate **MACD with controllable MA type** using the provided input data and by default return the most recent result.
@@ -3041,6 +3521,21 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [macdExt]
+     */
+    fun macdExt(
+        series: PriceBarSeries,
+        fastPeriod: Int = 12,
+        fastMA: MAType = MAType.Ema,
+        slowPeriod: Int = 26,
+        slowMA: MAType = MAType.Ema,
+        signalPeriod: Int = 9,
+        signalMA: MAType = MAType.Ema,
+        previous: Int = 0
+    ) = macdExt(series.close, fastPeriod, fastMA, slowPeriod, slowMA, signalPeriod, signalMA, previous)
+
+    /**
      * Calculate **Moving Average Convergence/Divergence Fix 12/26** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -3063,6 +3558,13 @@ class TA(var core: Core = Core()) {
         }
         return Triple(output1[0], output2[0], output3[0])
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [macdFix]
+     */
+    fun macdFix(series: PriceBarSeries, signalPeriod: Int = 9, previous: Int = 0) =
+        macdFix(series.close, signalPeriod, previous)
 
     /**
      * Calculate **MESA Adaptive Moving Average** using the provided input data and by default return the most recent result.
@@ -3091,6 +3593,17 @@ class TA(var core: Core = Core()) {
         }
         return Pair(output1[0], output2[0])
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [mama]
+     */
+    fun mama(
+        series: PriceBarSeries,
+        fastLimit: Double = 5.000000e-1,
+        slowLimit: Double = 5.000000e-2,
+        previous: Int = 0
+    ) = mama(series.close, fastLimit, slowLimit, previous)
 
     /**
      * Calculate **Moving average with variable period** using the provided input data and by default return the most recent result.
@@ -3155,6 +3668,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [max]
+     */
+    fun max(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = max(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Index of highest value over a specified period** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -3175,6 +3694,13 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [maxIndex]
+     */
+    fun maxIndex(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
+        maxIndex(series.close, timePeriod, previous)
 
     /**
      * Calculate **Median Price** using the provided input data and by default return the most recent result.
@@ -3198,6 +3724,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [medPrice]
+     */
     fun medPrice(series: PriceBarSeries, previous: Int = 0) = medPrice(series.high, series.low, previous)
 
     /**
@@ -3229,6 +3759,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [mfi]
+     */
     fun mfi(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         mfi(series.high, series.low, series.close, series.volume, timePeriod, previous)
 
@@ -3255,6 +3789,13 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [midPoint]
+     */
+    fun midPoint(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
+        midPoint(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Midpoint Price over period** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -3276,6 +3817,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [midPrice]
+     */
     fun midPrice(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         midPrice(series.high, series.low, timePeriod, previous)
 
@@ -3302,6 +3847,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [min]
+     */
+    fun min(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = min(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Index of lowest value over a specified period** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -3322,6 +3873,13 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [minIndex]
+     */
+    fun minIndex(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
+        minIndex(series.close, timePeriod, previous)
 
     /**
      * Calculate **Lowest and highest values over a specified period** using the provided input data and by default return the most recent result.
@@ -3347,6 +3905,13 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [minMax]
+     */
+    fun minMax(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
+        minMax(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Indexes of lowest and highest values over a specified period** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -3368,6 +3933,13 @@ class TA(var core: Core = Core()) {
         }
         return Pair(output1[0], output2[0])
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [minMaxIndex]
+     */
+    fun minMaxIndex(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
+        minMaxIndex(series.close, timePeriod, previous)
 
     /**
      * Calculate **Minus Directional Indicator** using the provided input data and by default return the most recent result.
@@ -3397,6 +3969,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [minusDI]
+     */
     fun minusDI(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         minusDI(series.high, series.low, series.close, timePeriod, previous)
 
@@ -3422,6 +3998,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [minusDM]
+     */
     fun minusDM(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         minusDM(series.high, series.low, timePeriod, previous)
 
@@ -3446,6 +4026,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [mom]
+     */
+    fun mom(series: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = mom(series.close, timePeriod, previous)
 
     /**
      * Calculate **Vector Arithmetic Mult** using the provided input data and by default return the most recent result.
@@ -3491,6 +4077,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [natr]
+     */
     fun natr(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         natr(series.high, series.low, series.close, timePeriod, previous)
 
@@ -3544,6 +4134,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [plusDI]
+     */
     fun plusDI(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         plusDI(series.high, series.low, series.close, timePeriod, previous)
 
@@ -3569,6 +4163,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [plusDM]
+     */
     fun plusDM(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         plusDM(series.high, series.low, timePeriod, previous)
 
@@ -3601,7 +4199,19 @@ class TA(var core: Core = Core()) {
     }
 
     /**
-     * Calculate **Rate of change : ((price/prevPrice)-1)*100** using the provided input data and by default return the most recent result.
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [ppo]
+     */
+    fun ppo(
+        series: PriceBarSeries,
+        fastPeriod: Int = 12,
+        slowPeriod: Int = 26,
+        mAType: MAType = MAType.Ema,
+        previous: Int = 0
+    ) = ppo(series.close, fastPeriod, slowPeriod, mAType, previous)
+
+    /**
+     * Calculate **Rate of change : ((price/prevPrice)-1) * 100** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
@@ -3621,6 +4231,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [roc]
+     */
+    fun roc(series: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = roc(series.close, timePeriod, previous)
 
     /**
      * Calculate **Rate of change Percentage: (price-prevPrice)/prevPrice** using the provided input data and by default return the most recent result.
@@ -3645,6 +4261,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [rocP]
+     */
+    fun rocP(series: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = rocP(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Rate of change ratio: (price/prevPrice)** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -3667,7 +4289,13 @@ class TA(var core: Core = Core()) {
     }
 
     /**
-     * Calculate **Rate of change ratio 100 scale: (price/prevPrice)*100** using the provided input data and by default return the most recent result.
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [rocR]
+     */
+    fun rocR(series: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = rocR(series.close, timePeriod, previous)
+
+    /**
+     * Calculate **Rate of change ratio 100 scale: (price/prevPrice) * 100** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
@@ -3687,6 +4315,13 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [rocR100]
+     */
+    fun rocR100(series: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) =
+        rocR100(series.close, timePeriod, previous)
 
     /**
      * Calculate **Relative Strength Index** using the provided input data and by default return the most recent result.
@@ -3709,6 +4344,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [rsi]
+     */
+    fun rsi(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) = rsi(series.close, timePeriod, previous)
 
     /**
      * Calculate **Parabolic SAR** using the provided input data and by default return the most recent result.
@@ -3738,6 +4379,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [sar]
+     */
     fun sar(
         series: PriceBarSeries,
         accelerationFactor: Double = 2.000000e-2,
@@ -3804,6 +4449,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [sarExt]
+     */
     fun sarExt(
         series: PriceBarSeries,
         startValue: Double = 0.000000e+0,
@@ -3852,6 +4501,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [sin]
+     */
+    fun sin(series: PriceBarSeries, previous: Int = 0) = sin(series.close, previous)
+
+    /**
      * Calculate **Vector Trigonometric Sinh** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -3872,6 +4527,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [sinh]
+     */
+    fun sinh(series: PriceBarSeries, previous: Int = 0) = sinh(series.close, previous)
 
     /**
      * Calculate **Simple Moving Average** using the provided input data and by default return the most recent result.
@@ -3896,6 +4557,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [sma]
+     */
+    fun sma(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = sma(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Vector Square Root** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -3918,6 +4585,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [sqrt]
+     */
+    fun sqrt(series: PriceBarSeries, previous: Int = 0) = sqrt(series.close, previous)
+
+    /**
      * Calculate **Standard Deviation** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -3938,6 +4611,13 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [stdDev]
+     */
+    fun stdDev(series: PriceBarSeries, timePeriod: Int = 5, deviations: Double = 1.000000e+0, previous: Int = 0) =
+        stdDev(series.close, timePeriod, deviations, previous)
 
     /**
      * Calculate **Stochastic** using the provided input data and by default return the most recent result.
@@ -3987,6 +4667,10 @@ class TA(var core: Core = Core()) {
         return Pair(output1[0], output2[0])
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [stoch]
+     */
     fun stoch(
         series: PriceBarSeries,
         fastKPeriod: Int = 5,
@@ -4041,6 +4725,10 @@ class TA(var core: Core = Core()) {
         return Pair(output1[0], output2[0])
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [stochF]
+     */
     fun stochF(
         series: PriceBarSeries,
         fastKPeriod: Int = 5,
@@ -4092,6 +4780,19 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [stochRsi]
+     */
+    fun stochRsi(
+        series: PriceBarSeries,
+        timePeriod: Int = 14,
+        fastKPeriod: Int = 5,
+        fastDPeriod: Int = 3,
+        fastDMA: MAType = MAType.Ema,
+        previous: Int = 0
+    ) = stochRsi(series.close, timePeriod, fastKPeriod, fastDPeriod, fastDMA, previous)
+
+    /**
      * Calculate **Vector Arithmetic Subtraction** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -4136,6 +4837,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [sum]
+     */
+    fun sum(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = sum(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Triple Exponential Moving Average (T3)** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -4156,6 +4863,13 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [t3]
+     */
+    fun t3(series: PriceBarSeries, timePeriod: Int = 5, volumeFactor: Double = 7.000000e-1, previous: Int = 0) =
+        t3(series.close, timePeriod, volumeFactor, previous)
 
     /**
      * Calculate **Vector Trigonometric Tan** using the provided input data and by default return the most recent result.
@@ -4180,6 +4894,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [tan]
+     */
+    fun tan(series: PriceBarSeries, previous: Int = 0) = tan(series.close, previous)
+
+    /**
      * Calculate **Vector Trigonometric Tanh** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -4200,6 +4920,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [tanh]
+     */
+    fun tanh(series: PriceBarSeries, previous: Int = 0) = tanh(series.close, previous)
 
     /**
      * Calculate **Triple Exponential Moving Average** using the provided input data and by default return the most recent result.
@@ -4224,6 +4950,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [tema]
+     */
+    fun tema(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = tema(series.close, timePeriod, previous)
+
+    /**
      * Calculate **True Range** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -4245,6 +4977,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [trueRange]
+     */
     fun trueRange(series: PriceBarSeries, previous: Int = 0) =
         trueRange(series.high, series.low, series.close, previous)
 
@@ -4271,6 +5007,13 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [trima]
+     */
+    fun trima(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
+        trima(series.close, timePeriod, previous)
+
+    /**
      * Calculate **1-day Rate-Of-Change (ROC) of a Triple Smooth EMA** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -4291,6 +5034,12 @@ class TA(var core: Core = Core()) {
         }
         return output1[0]
     }
+
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [trix]
+     */
+    fun trix(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = trix(series.close, timePeriod, previous)
 
     /**
      * Calculate **Time Series Forecast** using the provided input data and by default return the most recent result.
@@ -4315,6 +5064,12 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [tsf]
+     */
+    fun tsf(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) = tsf(series.close, timePeriod, previous)
+
+    /**
      * Calculate **Typical Price** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -4336,6 +5091,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [typPrice]
+     */
     fun typPrice(series: PriceBarSeries, previous: Int = 0) = typPrice(series.high, series.low, series.close, previous)
 
     /**
@@ -4380,6 +5139,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [ultOsc]
+     */
     fun ultOsc(
         series: PriceBarSeries,
         firstPeriod: Int = 7,
@@ -4411,6 +5174,13 @@ class TA(var core: Core = Core()) {
     }
 
     /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [variance]
+     */
+    fun variance(series: PriceBarSeries, timePeriod: Int = 5, deviations: Double = 1.000000e+0, previous: Int = 0) =
+        variance(series.close, timePeriod, deviations, previous)
+
+    /**
      * Calculate **Weighted Close Price** using the provided input data and by default return the most recent result.
      * You can set previous if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
@@ -4432,6 +5202,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [wclPrice]
+     */
     fun wclPrice(series: PriceBarSeries, previous: Int = 0) = wclPrice(series.high, series.low, series.close, previous)
 
     /**
@@ -4462,6 +5236,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [willR]
+     */
     fun willR(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         willR(series.high, series.low, series.close, timePeriod, previous)
 
@@ -4487,5 +5265,10 @@ class TA(var core: Core = Core()) {
         return output1[0]
     }
 
+    /**
+     * Simple wrapper that allows to use PricebarSeries as input.
+     * @see [wma]
+     */
+    fun wma(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = wma(series.close, timePeriod, previous)
 }
 

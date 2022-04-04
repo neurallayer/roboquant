@@ -88,7 +88,7 @@ interface PriceAction : Action {
  */
 class PriceBar(
     override val asset: Asset,
-    private val ohlcv: DoubleArray
+    val ohlcv: DoubleArray
 ) : PriceAction {
 
     /**

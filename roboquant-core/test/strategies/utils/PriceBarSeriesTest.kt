@@ -33,7 +33,7 @@ internal class PriceBarSeriesTest {
         val asset = feed.assets.first()
         val data = feed.filter<PriceBar> { it.asset === asset }
         for (entry in data) {
-            pb.update(entry.second)
+            pb.add(entry.second)
         }
         assertTrue(pb.isAvailable())
         assertTrue(pb.typical.isNotEmpty())

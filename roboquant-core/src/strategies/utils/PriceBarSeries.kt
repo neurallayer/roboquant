@@ -24,17 +24,15 @@ import org.roboquant.feeds.PriceBar
 /**
  * PriceBar Series is a circular buffer of OHLCV values. It supports both storing the regular prices or thre returns
  *
- * @property windowSize
  * @constructor Create new PriceBar buffer
  */
-class PriceBarSeries(val windowSize: Int, usePercentage: Boolean = false) {
+class PriceBarSeries(windowSize: Int, usePercentage: Boolean = false) {
 
     private val openBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
     private val highBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
     private val lowBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
     private val closeBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
     private val volumeBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
-
 
     val open
         get() = openBuffer.toDoubleArray()
@@ -56,16 +54,22 @@ class PriceBarSeries(val windowSize: Int, usePercentage: Boolean = false) {
 
 
     /**
-     * Update the buffer with a new price bar
-     *
-     * @param priceBar
+     * Update the buffer with a new [priceBar]
      */
-    fun update(priceBar: PriceBar) {
-        openBuffer.add(priceBar.open)
-        highBuffer.add(priceBar.high)
-        lowBuffer.add(priceBar.low)
-        closeBuffer.add(priceBar.close)
-        volumeBuffer.add(priceBar.volume)
+    fun add(priceBar: PriceBar) {
+       add(priceBar.ohlcv)
+    }
+
+    /**
+     * Update the buffer with a new [ohlcv] values
+     */
+    fun add(ohlcv: DoubleArray) {
+        assert(ohlcv.size == 5)
+        openBuffer.add(ohlcv[0])
+        highBuffer.add(ohlcv[1])
+        lowBuffer.add(ohlcv[2])
+        closeBuffer.add(ohlcv[3])
+        volumeBuffer.add(ohlcv[4])
     }
 
     fun isAvailable(): Boolean {
@@ -97,7 +101,7 @@ class MultiAssetPriceBarSeries(private val history: Int) {
      */
     fun add(priceBar: PriceBar): Boolean {
         val series = data.getOrPut(priceBar.asset) { PriceBarSeries(history) }
-        series.update(priceBar)
+        series.add(priceBar)
         return series.isAvailable()
     }
 

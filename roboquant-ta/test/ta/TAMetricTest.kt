@@ -7,7 +7,7 @@ class TAMetricTest {
 
     @Test
     fun test() {
-        val metric = TALibMetric("ema50",50) { series ->
+        val metric = TAMetric("ema50",50) { series ->
             ema(series.close, 50)
         }
         assertTrue(metric.getMetrics().isEmpty())

@@ -5120,7 +5120,7 @@
       {
         "Abbreviation": "ROC",
         "CamelCaseName": "Roc",
-        "ShortDescription": "Rate of change : ((price/prevPrice)-1)*100",
+        "ShortDescription": "Rate of change : ((price/prevPrice)-1) * 100",
         "GroupId": "Momentum Indicators",
         "RequiredInputArguments": {
           "RequiredInputArgument": {
@@ -5228,7 +5228,7 @@
       {
         "Abbreviation": "ROCR100",
         "CamelCaseName": "RocR100",
-        "ShortDescription": "Rate of change ratio 100 scale: (price/prevPrice)*100",
+        "ShortDescription": "Rate of change ratio 100 scale: (price/prevPrice) * 100",
         "GroupId": "Momentum Indicators",
         "RequiredInputArguments": {
           "RequiredInputArgument": {
