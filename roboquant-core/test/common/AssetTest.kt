@@ -71,6 +71,9 @@ internal class AssetTest {
 
         a = assets.filter { AssetFilter.includeSymbols("ABC").filter(it) }
         assertTrue(asset1 in a)
+
+        a = assets.filter { AssetFilter.includeCurrencies(Currency.USD).filter(it) }
+        assertTrue(asset1 in a)
     }
 
 }

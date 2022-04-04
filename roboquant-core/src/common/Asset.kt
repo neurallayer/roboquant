@@ -173,7 +173,15 @@ fun interface AssetFilter {
         }
 
         /**
-         * Allow only assets that don't match the provided symbol names.
+         * Allow only assets that are denoted in the provided [currencies].
+         */
+        fun includeCurrencies(vararg currencies: Currency): AssetFilter {
+            return AssetFilter { asset: Asset -> asset.currency in currencies }
+        }
+
+
+        /**
+         * Allow only assets that don't match the provided [symbols].
          */
         fun excludeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.uppercase() }.toSet()
@@ -181,7 +189,7 @@ fun interface AssetFilter {
         }
 
         /**
-         * Allow only assets that match the provided symbol names.
+         * Allow only assets that match the provided [symbols].
          */
         fun includeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.uppercase() }.toSet()
