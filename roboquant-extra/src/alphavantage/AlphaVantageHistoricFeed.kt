@@ -37,6 +37,7 @@ typealias Interval = AlphaInterval
 
 data class AlphaVantageConfig(
     var key: String = org.roboquant.common.Config.getProperty("alphavantage.key", ""),
+    var timeout: Int = 10
 )
 
 /**
@@ -63,7 +64,7 @@ class AlphaVantageHistoricFeed(
 
         val cfg = Config.builder()
             .key(config.key)
-            .timeOut(10)
+            .timeOut(config.timeout)
             .build()
         AlphaVantage.api().init(cfg)
         logger.info("Connected Alpha Vantage")

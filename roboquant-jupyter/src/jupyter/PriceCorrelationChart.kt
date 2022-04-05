@@ -44,7 +44,6 @@ class PriceCorrelationChart(
         require(assets.size > 1) { "Minimum of 2 assets are required, found ${assets.size}" }
     }
 
-
     private fun Pair<List<Double>, List<Double>>.clean(): Pair<DoubleArray, DoubleArray> {
         val max = Integer.max(first.size, second.size)
         val r1 = mutableListOf<Double>()

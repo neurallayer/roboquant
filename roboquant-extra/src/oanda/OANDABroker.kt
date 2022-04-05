@@ -51,6 +51,7 @@ class OANDABroker(
 
     override val account: Account
         get() = _account.toAccount()
+
     private val logger = Logging.getLogger(OANDABroker::class)
     private lateinit var lastTransactionId: TransactionID
 
