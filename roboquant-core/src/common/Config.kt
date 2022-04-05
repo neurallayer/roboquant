@@ -147,9 +147,14 @@ object Config {
      * @param name of property
      * @return
      */
-    fun getProperty(name: String, default: String? = null): String? {
+    fun getProperty(name: String, default: String): String {
         logger.finer { "Finding property $name" }
         return  properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name] ?: default
+    }
+
+    fun getProperty(name: String): String? {
+        logger.finer { "Finding property $name" }
+        return  properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name]
     }
 
     /**

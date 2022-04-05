@@ -16,6 +16,7 @@
 
 package org.roboquant.iex
 
+import iex.IEXConfig
 import iex.IEXConnection
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
@@ -36,19 +37,14 @@ typealias Interval = QuoteInterval
  * Live feed of trades on IEX for the subscribed assets. For each trade the sale price and volume is provided
  * together when the trade happened.
  *
- * @constructor
- *
- * @param publicKey
- * @param secretKey
  */
 class IEXLiveFeed(
-    publicKey: String? = null,
-    secretKey: String? = null,
-    sandbox: Boolean = true,
-    private val useMachineTime: Boolean = true
+    private val useMachineTime: Boolean = true,
+    configure: IEXConfig.() -> Unit = {}
 ) : LiveFeed(), AssetFeed {
 
     private val logger = Logging.getLogger(IEXLiveFeed::class)
+    val config = IEXConfig()
     private val client: IEXCloudClient
     private val assetMap = mutableMapOf<String, Asset>()
 
@@ -56,7 +52,8 @@ class IEXLiveFeed(
         get() = assetMap.values.toSortedSet()
 
     init {
-        client = IEXConnection.getClient(publicKey, secretKey, sandbox)
+        config.configure()
+        client = IEXConnection.getClient(config)
     }
 
     /**

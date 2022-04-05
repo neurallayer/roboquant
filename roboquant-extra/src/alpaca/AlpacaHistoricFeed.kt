@@ -35,15 +35,18 @@ typealias AlpacaPeriod = BarTimePeriod
  * Get historic data feed from Alpaca
  */
 class AlpacaHistoricFeed(
-    apiKey: String? = null,
-    apiSecret: String? = null,
-    accountType: AccountType = AccountType.PAPER,
-    dataType: DataType = DataType.IEX
+    configure: AlpacaConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-    private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
+    val config = AlpacaConfig()
+    private val alpacaAPI: AlpacaAPI
     private val logger = Logging.getLogger(AlpacaHistoricFeed::class)
     private val zoneId: ZoneId = ZoneId.of("America/New_York")
+
+    init {
+        config.configure()
+        alpacaAPI = AlpacaConnection.getAPI(config)
+    }
 
     /**
      * All available assets that can be retrieved. See [assets] for the assets that have already been retreived.

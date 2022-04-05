@@ -17,51 +17,41 @@
 package org.roboquant.oanda
 
 import com.oanda.v20.Context
+import com.oanda.v20.account.AccountID
 import com.oanda.v20.pricing.PricingGetRequest
 import org.roboquant.brokers.ExchangeRates
 import org.roboquant.common.*
 import java.time.Instant
 import javax.naming.ConfigurationException
 
-
 /**
  * Exchange rates implementation that retrieves the latest rates from OANDA. This implementation uses different
- * rates for BUY and SELL.
+ * rates for BUY and SELL. If no assets are provided, all available assets will be used.
  */
 class OANDAExchangeRates(
-    assets: Iterable<Asset>,
-    token: String? = null,
-    demoAccount: Boolean = true,
-    accountID: String? = null,
+    assets: Collection<Asset> = emptyList(),
+    configure: OANDAConfig.() -> Unit = {}
 ) : ExchangeRates {
 
-    private val ctx: Context = OANDA.getContext(token, demoAccount)
-    private val accountID = OANDA.getAccountID(accountID, ctx)
+    val config = OANDAConfig()
+    private val ctx: Context
+    private val accountID: AccountID
     private val logger = Logging.getLogger(OANDAExchangeRates::class)
-    private val symbols = assets.map { it.symbol }
+    private val symbols: List<String>
 
     // Contains per currency pair the buy and sell rates
     private val exchangeRates = mutableMapOf<Pair<Currency, Currency>, Pair<Double, Double>>()
 
-
-    companion object {
-
-        /**
-         * Get the exchange rates for all available assets
-         */
-        fun allAvailableAssets(
-            token: String? = null,
-            demoAccount: Boolean = true,
-            accountID: String? = null,
-        ): OANDAExchangeRates {
-            val ctx: Context = OANDA.getContext(token, demoAccount)
-            val accountID2 = OANDA.getAccountID(accountID, ctx)
-            val assets = OANDA.getAvailableAssets(ctx, accountID2).values
-            return OANDAExchangeRates(assets, token, demoAccount, accountID)
-        }
-    }
-
     init {
+        config.configure()
+        ctx = OANDA.getContext(config)
+        accountID = OANDA.getAccountID(config.account, ctx)
+        symbols = if (assets.isNotEmpty()) {
+            assets.map { it.symbol }
+        } else {
+            OANDA.getAvailableAssets(ctx, accountID)
+                .filter { it.value.type in setOf(AssetType.FOREX, AssetType.CRYPTO) }.map { it.value.symbol }
+        }
         refresh()
     }
 

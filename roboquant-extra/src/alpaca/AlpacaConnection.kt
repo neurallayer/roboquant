@@ -27,6 +27,14 @@ import java.util.*
 typealias AccountType = EndpointAPIType
 typealias DataType = DataAPIType
 
+
+data class AlpacaConfig(
+    var publicKey: String = Config.getProperty("alpaca.public.key", ""),
+    var secretKey: String = Config.getProperty("alpaca.secret.key", ""),
+    var accountType: AccountType = AccountType.PAPER,
+    var dataType: DataType = DataType.IEX
+)
+
 /**
  * Connect to Alpaca API, logic shared between the Alpaca Feeds and Alpaca Broker
  */
@@ -46,16 +54,11 @@ internal object AlpacaConnection {
     private var includeOTC = false
 
     fun getAPI(
-        apiKey: String? = null,
-        apiSecret: String? = null,
-        accountType: AccountType = AccountType.PAPER,
-        dataType: DataType = DataType.IEX
+        config: AlpacaConfig
     ): AlpacaAPI {
-        val finalKey = apiKey ?: Config.getProperty("APCA_API_KEY_ID")
-        val finalSecret = apiSecret ?: Config.getProperty("APCA_API_SECRET_KEY")
-        require(finalKey != null) { "No public key provided or set as environment variable APCA_API_KEY_ID" }
-        require(finalSecret != null) { "No secret key provided or set as environment variable APCA_API_SECRET_KEY" }
-        return AlpacaAPI(finalKey, finalSecret, accountType, dataType)
+        require(config.publicKey.isBlank()) { "No public key provided" }
+        require(config.secretKey.isBlank()) { "No secret key provided" }
+        return AlpacaAPI(config.publicKey, config.secretKey, config.accountType, config.dataType)
     }
 
 

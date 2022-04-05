@@ -17,6 +17,7 @@
 package org.roboquant.oanda
 
 import com.oanda.v20.Context
+import com.oanda.v20.account.AccountID
 import com.oanda.v20.instrument.CandlestickGranularity
 import com.oanda.v20.instrument.InstrumentCandlesRequest
 import com.oanda.v20.pricing.PricingGetRequest
@@ -35,16 +36,21 @@ import kotlin.collections.set
  * Retrieve live data from OANDA.
  */
 class OANDALiveFeed(
-    accountID: String? = null,
-    token: String? = null,
-    demoAccount: Boolean = true
+    configure: OANDAConfig.() -> Unit = {}
 ) : LiveFeed(), AssetFeed {
 
-    private val ctx: Context = OANDA.getContext(token, demoAccount)
+    val config = OANDAConfig()
+    private val ctx: Context
+    private val accountID: AccountID
     private val assetMap = mutableMapOf<String, Asset>()
-    private val accountID = OANDA.getAccountID(accountID, ctx)
     private val logger = Logging.getLogger(OANDALiveFeed::class)
     private val jobs = ParallelJobs()
+
+    init {
+        config.configure()
+        ctx = OANDA.getContext(config)
+        accountID = OANDA.getAccountID(config.account, ctx)
+    }
 
     val availableAssets by lazy {
         OANDA.getAvailableAssets(ctx, this.accountID)
@@ -53,15 +59,12 @@ class OANDALiveFeed(
     override val assets
         get() = assetMap.values.toSortedSet()
 
-
     /**
      * Stop all background jobs
      */
     override fun close() {
         jobs.cancelAll()
     }
-
-
 
     fun subscribePriceBar(
         vararg symbols: String,

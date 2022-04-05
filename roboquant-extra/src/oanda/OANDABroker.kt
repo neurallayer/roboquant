@@ -39,14 +39,13 @@ import java.time.Instant
  * Implementation of the [Broker] interface that can be used for paper- en live-trading using OANDA as your broker.
  */
 class OANDABroker(
-    accountID: String? = null,
-    token: String? = null,
-    demoAccount: Boolean = true,
-    private val maxLeverage: Double = 30.0 // Used to calculate buying power
+    private val maxLeverage: Double = 30.0, // Used to calculate buying power
+    configure: OANDAConfig.() -> Unit = {}
 ) : Broker {
 
-    private val ctx: Context = OANDA.getContext(token, demoAccount)
-    private val accountID = AccountID(OANDA.getAccountID(accountID, ctx))
+    val config = OANDAConfig()
+    private val ctx: Context
+    private val accountID: AccountID
 
     private val _account = InternalAccount()
 
@@ -55,9 +54,6 @@ class OANDABroker(
     private val logger = Logging.getLogger(OANDABroker::class)
     private lateinit var lastTransactionId: TransactionID
 
-    private val availableAssetsMap by lazy {
-        OANDA.getAvailableAssets(ctx, this.accountID)
-    }
 
     /**
      * Which assets are available to this account. For OANDA the region you are from determines which asset classes
@@ -67,9 +63,15 @@ class OANDABroker(
         get() = availableAssetsMap.values
 
     init {
-        logger.info("Using account with id ${this.accountID}")
-        if (!demoAccount) throw UnsupportedException("Currently only demo account usage is supported.")
+        config.configure()
+        if (!config.demo) throw UnsupportedException("Currently only demo account usage is supported.")
+        ctx = OANDA.getContext(config)
+        accountID = OANDA.getAccountID(config.account, ctx)
         initAccount()
+    }
+
+    private val availableAssetsMap by lazy {
+        OANDA.getAvailableAssets(ctx, this.accountID)
     }
 
     private fun getPosition(symbol: String, p: PositionSide): Position {

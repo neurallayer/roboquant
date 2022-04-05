@@ -29,6 +29,13 @@ import org.roboquant.metrics.Metric
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.Strategy
 
+
+data class OANDAConfig(
+    var key: String = Config.getProperty("oanda.key", ""),
+    var account: String = Config.getProperty("oanda.account", ""),
+    var demo: Boolean = true
+)
+
 object OANDA {
 
     /**
@@ -55,11 +62,10 @@ object OANDA {
         return Roboquant(strategy, *metrics, policy = policy, broker = broker)
     }
 
-    internal fun getContext(token: String?, demo: Boolean): Context {
-        val url = if (demo) "https://api-fxpractice.oanda.com/" else "https://api-fxtrade.oanda.com/"
-        val apiToken = token ?: Config.getProperty("OANDA_API_KEY")
-        require(apiToken != null) { "Couldn't locate API token OANDA_API_KEY" }
-        return ContextBuilder(url).setToken(apiToken).setApplication("roboquant").build()
+    internal fun getContext(config: OANDAConfig): Context {
+        val url = if (config.demo) "https://api-fxpractice.oanda.com/" else "https://api-fxtrade.oanda.com/"
+        require(config.key.isBlank()) { "Couldn't locate key" }
+        return ContextBuilder(url).setToken(config.key).setApplication("roboquant").build()
     }
 
 

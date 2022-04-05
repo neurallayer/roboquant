@@ -27,8 +27,8 @@ import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
 import net.jacobpeterson.alpaca.model.endpoint.orders.Order as AlpacaOrder
-import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosition
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderStatus as AlpacaOrderStatus
+import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosition
 
 /**
  * Broker implementation for Alpaca. This implementation allows using the Alpaca live- and paper-trading capabilities
@@ -41,36 +41,36 @@ import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderStatus as Alpac
  * @sample org.roboquant.samples.alpacaBroker
  */
 class AlpacaBroker(
-    apiKey: String? = null,
-    apiSecret: String? = null,
-    accountType: AccountType = AccountType.PAPER,
-    dataType: DataType = DataType.IEX
+    configure: AlpacaConfig.() -> Unit = {}
 ) : Broker {
 
     private val _account = InternalAccount()
+    val config = AlpacaConfig()
 
     override val account: Account
         get() = _account.toAccount()
 
-    private val alpacaAPI: AlpacaAPI = AlpacaConnection.getAPI(apiKey, apiSecret, accountType, dataType)
+    private val alpacaAPI: AlpacaAPI
     private val logger = Logging.getLogger(AlpacaOrder::class)
     var enableTrading = false
 
     private val orderMapping = mutableMapOf<Order, AlpacaOrder>()
-
-    val availableAssets by lazy {
-        AlpacaConnection.getAvailableAssets(alpacaAPI)
-    }
 
     private val assetsMap : Map<String, Asset> by lazy {
         availableAssets.associateBy { it.id }
     }
 
     init {
+        config.configure()
+        alpacaAPI = AlpacaConnection.getAPI(config)
         updateAccount()
         updatePositions()
         loadInitialOrders()
         // updateOpenOrders()
+    }
+
+    val availableAssets by lazy {
+        AlpacaConnection.getAvailableAssets(alpacaAPI)
     }
 
     /**

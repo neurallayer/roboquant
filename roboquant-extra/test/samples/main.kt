@@ -19,10 +19,7 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.alpaca.AlpacaBroker
-import org.roboquant.alpaca.AlpacaConnection
-import org.roboquant.alpaca.AlpacaHistoricFeed
-import org.roboquant.alpaca.AlpacaLiveFeed
+import org.roboquant.alpaca.*
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.avro.AvroUtil
@@ -86,7 +83,8 @@ fun alpacaHistoricFeed() {
 }
 
 fun alpacaConnection() {
-    val api = AlpacaConnection.getAPI()
+    val config = AlpacaConfig()
+    val api = AlpacaConnection.getAPI(config)
     println(AlpacaConnection.getAvailableAssets(api).size)
     println(AlpacaConnection.getAvailableAssets(api).filter { it.type == AssetType.CRYPTO })
 
@@ -109,7 +107,9 @@ fun alpacaLiveFeed2() {
 
 fun feedIEX() {
     val token = Config.getProperty("IEX_PUBLIC_KEY") ?: throw Exception("No token found")
-    val feed = org.roboquant.iex.IEXHistoricFeed(token)
+    val feed = org.roboquant.iex.IEXHistoricFeed {
+        publicKey = token
+    }
     feed.retrievePriceBar("AAPL", "GOOGL", "FB", range = Range.TWO_YEARS)
 
     val strategy = EMACrossover(10, 30)

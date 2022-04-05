@@ -16,6 +16,7 @@
 
 package org.roboquant.iex
 
+import iex.IEXConfig
 import iex.IEXConnection
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
@@ -37,24 +38,20 @@ typealias Range = ChartRange
  * Feed of historic price data using IEX Cloud as the data source.
  *
  * @constructor
- *
- * @param publicKey
- * @param secretKey
  */
 class IEXHistoricFeed(
-    publicKey: String? = null,
-    secretKey: String? = null,
-    sandbox: Boolean = true,
-    private val template: Asset = Asset("TEMPLATE")
+    private val template: Asset = Asset("TEMPLATE"),
+    configure: IEXConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-
+    val config = IEXConfig()
     private val logger = Logging.getLogger(IEXHistoricFeed::class)
     private val client: IEXCloudClient
 
 
     init {
-        client = IEXConnection.getClient(publicKey, secretKey, sandbox)
+        config.configure()
+        client = IEXConnection.getClient(config)
     }
 
 

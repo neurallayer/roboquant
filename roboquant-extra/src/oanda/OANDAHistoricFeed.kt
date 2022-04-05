@@ -17,6 +17,7 @@
 package org.roboquant.oanda
 
 import com.oanda.v20.Context
+import com.oanda.v20.account.AccountID
 import com.oanda.v20.instrument.CandlestickGranularity
 import com.oanda.v20.instrument.InstrumentCandlesRequest
 import com.oanda.v20.primitives.InstrumentName
@@ -30,16 +31,22 @@ import java.time.Instant
 /**
  * Retrieve historic data from OANDA. Right now only [PriceBar] (= candlesticks) data is supported.
  */
-class OANDAHistoricFeed(token: String? = null, demoAccount: Boolean = true) : HistoricPriceFeed() {
+class OANDAHistoricFeed(configure: OANDAConfig.() -> Unit = {}) : HistoricPriceFeed() {
 
-    private val ctx: Context = OANDA.getContext(token, demoAccount)
-    private val accountID = OANDA.getAccountID(null, ctx)
+    private val config = OANDAConfig()
+    private val ctx: Context
+    private val accountID: AccountID
     private val logger = Logging.getLogger(OANDAHistoricFeed::class)
 
-    val availableAssets by lazy {
-        OANDA.getAvailableAssets(ctx,accountID)
+    init {
+        config.configure()
+        ctx = OANDA.getContext(config)
+        accountID = OANDA.getAccountID(null, ctx)
     }
 
+    val availableAssets by lazy {
+        OANDA.getAvailableAssets(ctx, accountID)
+    }
 
     fun retrieveCandles(
         vararg symbols: String,
@@ -63,13 +70,19 @@ class OANDAHistoricFeed(token: String? = null, demoAccount: Boolean = true) : Hi
             resp.candles.forEach {
                 with(it.mid) {
                     val action =
-                        PriceBar(asset, o.doubleValue(), h.doubleValue(), l.doubleValue(), c.doubleValue(), it.volume.toDouble())
+                        PriceBar(
+                            asset,
+                            o.doubleValue(),
+                            h.doubleValue(),
+                            l.doubleValue(),
+                            c.doubleValue(),
+                            it.volume.toDouble()
+                        )
                     val now = Instant.parse(it.time)
                     add(now, action)
                 }
             }
         }
     }
-
 
 }

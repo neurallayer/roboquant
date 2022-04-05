@@ -49,7 +49,7 @@ fun oanda() {
 
 fun forexAvro() {
     val feed = AvroFeed("/Users/peter/data/avro/forex_march_2020.avro")
-    Config.exchangeRates = OANDAExchangeRates.allAvailableAssets()
+    Config.exchangeRates = OANDAExchangeRates()
     val strategy = EMACrossover()
     val roboquant = OANDA.roboquant(strategy, AccountSummary())
     roboquant.run(feed)
@@ -110,7 +110,7 @@ fun oandaLive2() {
 fun oandaPaperTrading() {
     Currency.increaseDigits(3) // We want to use extra digits when displaying amounts
     val broker = OANDABroker()
-    Config.exchangeRates = OANDAExchangeRates.allAvailableAssets()
+    Config.exchangeRates = OANDAExchangeRates()
 
     val feed = OANDALiveFeed()
     val assets = broker.availableAssets.findByCurrencies("EUR", "USD", "JPY", "GBP", "CAD", "CHF")
@@ -129,7 +129,7 @@ fun oandaPaperTrading() {
 fun oandaClosePositions() {
     val broker = OANDABroker()
     Logging.setLevel(Level.FINE)
-    Config.exchangeRates = OANDAExchangeRates.allAvailableAssets()
+    Config.exchangeRates = OANDAExchangeRates()
 
     val target = mutableListOf<Position>() // target portfolio is an empty portfolio
     val changes = broker.account.portfolio.diff(target)

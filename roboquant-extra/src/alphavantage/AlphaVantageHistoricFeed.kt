@@ -31,9 +31,13 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import com.crazzyghost.alphavantage.parameters.Interval as AlphaInterval
-import org.roboquant.common.Config as RConfig
 
 typealias Interval = AlphaInterval
+
+
+data class AlphaVantageConfig(
+    var key: String = org.roboquant.common.Config.getProperty("alphavantage.key", ""),
+)
 
 /**
  * AlphaVantage feed, currently just a PoC to validate we can retrieve data.
@@ -42,23 +46,23 @@ typealias Interval = AlphaInterval
  * @property generateSinglePrice generate a single price event (using the close price) or a price bar (OHLCV) event
  * @constructor
  *
- * @param apiKey
  */
 class AlphaVantageHistoricFeed(
-    apiKey: String? = null,
     val compensateTimeZone: Boolean = true,
-    private val generateSinglePrice: Boolean = false
+    private val generateSinglePrice: Boolean = false,
+    configure: AlphaVantageConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
     private val subscriptions = mutableMapOf<String, Asset>()
     private val logger = Logging.getLogger(AlpacaHistoricFeed::class)
+    val config = AlphaVantageConfig()
 
     init {
-        val key = apiKey ?: RConfig.getProperty("ALPHA_VANTAGE_API_KEY")
-        require(key != null) { "No api key provided or set as environment variable ALPHA_VANTAGE_API_KEY" }
+        config.configure()
+        require(config.key.isNotBlank()) { "No api key provided" }
 
         val cfg = Config.builder()
-            .key(key)
+            .key(config.key)
             .timeOut(10)
             .build()
         AlphaVantage.api().init(cfg)

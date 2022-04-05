@@ -31,7 +31,7 @@ internal class OANDAExchangeRatesTest {
     @Test
     fun test() {
         System.getenv("TEST_OANDA") ?: return
-        val c = OANDAExchangeRates.allAvailableAssets()
+        val c = OANDAExchangeRates()
         var r = c.getRate(100.USD, EUR, Instant.now())
         assertTrue(r.isFinite())
 
@@ -44,7 +44,7 @@ internal class OANDAExchangeRatesTest {
     @Test
     fun test2() {
         System.getenv("TEST_OANDA") ?: return
-        val c = OANDAExchangeRates.allAvailableAssets()
+        val c = OANDAExchangeRates()
         val a = c.convert(100.USD, JPY, Instant.now())
         assertTrue(a > 1000)
 

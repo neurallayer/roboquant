@@ -22,21 +22,30 @@ import pl.zankowski.iextrading4j.client.IEXCloudTokenBuilder
 import pl.zankowski.iextrading4j.client.IEXTradingApiVersion
 import pl.zankowski.iextrading4j.client.IEXTradingClient
 
+/**
+ * Configuration settings for connecting to IEX Cloud
+ *
+ * @property publicKey
+ * @property secretKey
+ * @property sandbox
+ * @constructor Create new IEX configuration
+ */
+data class IEXConfig(
+    var publicKey: String = Config.getProperty("iex.public.key", ""),
+    var secretKey: String = Config.getProperty("iex.secret.key", ""),
+    var sandbox:  Boolean = true,
+)
+
 internal object IEXConnection {
 
-    fun getClient(
-        publicKey: String? = null,
-        secretKey: String? = null,
-        sandbox: Boolean = true
-    ): IEXCloudClient {
-        val pToken = publicKey ?: Config.getProperty("IEX_PUBLIC_KEY")
-        require(pToken != null)
-        val sToken = secretKey ?: Config.getProperty("IEX_SECRET_KEY")
-
-        var tokenBuilder = IEXCloudTokenBuilder().withPublishableToken(pToken)
-        if (sToken != null) tokenBuilder = tokenBuilder.withSecretToken(sToken)
-
-        val apiVersion = if (sandbox) IEXTradingApiVersion.IEX_CLOUD_V1_SANDBOX else IEXTradingApiVersion.IEX_CLOUD_V1
+    fun getClient(config: IEXConfig): IEXCloudClient {
+        require(config.publicKey.isNotBlank())
+        var tokenBuilder = IEXCloudTokenBuilder().withPublishableToken(config.publicKey)
+        if (config.secretKey.isNotBlank()) tokenBuilder = tokenBuilder.withSecretToken(config.secretKey)
+        val apiVersion =
+            if (config.sandbox) IEXTradingApiVersion.IEX_CLOUD_V1_SANDBOX else IEXTradingApiVersion.IEX_CLOUD_V1
         return IEXTradingClient.create(apiVersion, tokenBuilder.build())
     }
+
 }
+
