@@ -56,8 +56,8 @@ internal object AlpacaConnection {
     fun getAPI(
         config: AlpacaConfig
     ): AlpacaAPI {
-        require(config.publicKey.isBlank()) { "No public key provided" }
-        require(config.secretKey.isBlank()) { "No secret key provided" }
+        require(config.publicKey.isNotBlank()) { "No public key provided" }
+        require(config.secretKey.isNotBlank()) { "No secret key provided" }
         return AlpacaAPI(config.publicKey, config.secretKey, config.accountType, config.dataType)
     }
 

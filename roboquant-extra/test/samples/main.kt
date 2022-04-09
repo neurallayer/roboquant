@@ -94,6 +94,7 @@ fun alpacaConnection() {
 fun alpacaLiveFeed2() {
     Logging.setLevel(Level.FINER)
     val feed = AlpacaLiveFeed()
+
     // feed.subscribeStocks(listOf("TSLA", "IBM", "AMZN", "MSFT"))
     feed.subscribeCrypto(listOf("*"))
     feed.heartbeatInterval = 30_000
@@ -103,6 +104,23 @@ fun alpacaLiveFeed2() {
     roboquant.run(feed, tf)
     feed.close()
     roboquant.broker.account.summary().log()
+}
+
+fun alpacaHistoricFeed2() {
+    val assets = listOf("AAPL", "FB", "IBM", "JPM", "MSFT", "TSLA", "GOOGL", "AMZN", "BRK.A", "V", "BABA", "NVDA", "JNJ", "TSM", "WMT").toTypedArray()
+    val feed = AlpacaHistoricFeed()
+
+    // We get the data for last 200 days. The minus 15.minutes is to make sure we only request data that
+    // the free subscriptions is entitled to and not the last 15 minutes.
+    val tf = Timeframe.past(200.days) - 15.minutes
+
+    feed.retrieveBars(*assets, timeframe = tf)
+
+    // Example on how to retreive 5 minutes bars
+    // val tf = Timeframe.past(5.days) - 15.minutes
+    // feed.retrieveBars("AAPL", "FB", "IBM", "JPM", "MSFT", "TSLA", "GOOGL", "AMZN", "BRK.A", "V", "BABA", "NVDA", "JNJ", "TSM", "WMT", timeframe = tf, barSize = 5.minutes)
+
+    feed.assets.summary().print()
 }
 
 fun feedIEX() {
@@ -147,7 +165,7 @@ fun feedYahoo() {
 
 
 fun main() {
-    when ("ALPACA_LIVE_FEED") {
+    when ("ALPACA_HISTORIC_FEED2") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
@@ -155,6 +173,7 @@ fun main() {
         "ALPACA_LIVE_FEED" -> alpacaLiveFeed2()
         "ALPACA_CONNECTION" -> alpacaConnection()
         "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
+        "ALPACA_HISTORIC_FEED2" -> alpacaHistoricFeed2()
         "ALPACA_ALL" -> allAlpaca()
     }
 }

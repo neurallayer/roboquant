@@ -27,7 +27,6 @@ import org.roboquant.orders.Order
 import java.time.Instant
 import java.util.logging.Logger
 
-
 /**
  * Simulated Broker that is used during back testing. It simulates both broker behavior and the exchange
  * where the orders are executed. It can be configured with avrious plug-ins that determine its behavior.
@@ -45,6 +44,16 @@ class SimBroker(
     private val accountModel: AccountModel = CashAccount(),
     pricingEngine: PricingEngine = SlippagePricing(),
 ) : Broker {
+
+    /**
+     * Create a new SimBroker with a [deposit] in currency
+     */
+    constructor(deposit: Number, currencyCode: String = "USD") : this(
+        Amount(
+            Currency.getInstance(currencyCode),
+            deposit
+        ).toWallet()
+    )
 
     // Internally used account to store the state
     private val _account = InternalAccount(baseCurrency)
@@ -65,8 +74,6 @@ class SimBroker(
         reset()
     }
 
-
-
     /**
      * Update the portfolio with the provided [position] and return the realized PnL.
      */
@@ -78,7 +85,6 @@ class SimBroker(
         if (newPosition.closed) p.remove(asset) else p[asset] = newPosition
         return currentPos.realizedPNL(position)
     }
-
 
     /**
      * Update the account based on an execution. This will perform the following steps:
@@ -127,7 +133,6 @@ class SimBroker(
         executionEngine.removeClosedOrders()
     }
 
-
     private fun updateBuyingPower() {
         val value = accountModel.calculate(_account)
         logger.finer { "Calculated buying power $value" }
@@ -150,7 +155,6 @@ class SimBroker(
         return account
     }
 
-
     /**
      * Liquidate the portfolio. This comes in handy at the end of a back-test if you prefer to have no open positions
      * left in the portfolio.
@@ -170,7 +174,6 @@ class SimBroker(
         return place(orders, event)
     }
 
-
     /**
      * At the start of a new phase the account and metrics will be reset
      *
@@ -180,14 +183,12 @@ class SimBroker(
         reset()
     }
 
-
     override fun reset() {
         _account.clear()
         executionEngine.clear()
         _account.cash.deposit(initialDeposit)
         updateBuyingPower()
     }
-
 
 }
 

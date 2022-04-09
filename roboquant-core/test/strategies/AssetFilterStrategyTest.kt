@@ -25,7 +25,7 @@ import java.time.Instant
 
 internal class AssetFilterStrategyTest {
 
-    class AlwaysStrategy(private val rating: Rating = Rating.BUY) : Strategy {
+    private class AlwaysStrategy(private val rating: Rating = Rating.BUY) : Strategy {
         override fun generate(event: Event): List<Signal> {
             return event.prices.keys.map { Signal(it, rating) }
         }
