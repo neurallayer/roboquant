@@ -34,22 +34,22 @@ import org.roboquant.metrics.MetricResults
 interface Component {
 
     /**
-     * Signal the start of a [runPhase]. Default implementation is to take no action.
+     * Invoked at the start of a [runPhase]. Default implementation is to take no action.
      */
     fun start(runPhase: RunPhase) {}
 
     /**
-     * Signal the end of a [runPhase]. Default implementation is to take no action.
+     * Invoked at the end of a [runPhase]. Default implementation is to take no action.
      */
     fun end(runPhase: RunPhase) {}
 
     /**
-     * Reset any state of a component. Default implementation is to take no action.
+     * Reset the state of a component. Default implementation is to take no action.
      */
     fun reset() {}
 
     /**
-     * Get any recorded metrics from the most recent step in the run. This will be invoked after each step and
+     * Get recorded metrics from the most recent step in the run. This will be invoked after each step and
      * provides the component with the opportunity to log additional information. The default implementation is to
      * return an empty map.
      *

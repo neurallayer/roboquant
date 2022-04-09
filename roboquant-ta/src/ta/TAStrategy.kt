@@ -194,7 +194,7 @@ class TAStrategy(history: Int = 15) : Strategy {
      *       }
      *
      */
-    fun buy(block: TA.(price: PriceBarSeries) -> Boolean) {
+    fun buy(block: TA.(series: PriceBarSeries) -> Boolean) {
         buyFn = block
     }
 
@@ -208,7 +208,7 @@ class TAStrategy(history: Int = 15) : Strategy {
      *      }
      *
      */
-    fun sell(block: TA.(price: PriceBarSeries) -> Boolean) {
+    fun sell(block: TA.(series: PriceBarSeries) -> Boolean) {
         sellFn = block
     }
 

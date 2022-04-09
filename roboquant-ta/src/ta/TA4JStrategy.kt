@@ -23,14 +23,14 @@ private fun alwaysFalseRule(series : BarSeries) : Rule = BooleanRule.FALSE
  * TA4J is a flexible framework written in Java that allows both simple and complex rules. Compared to TALib it is
  * however a fair bit slower.
  *
- * @property getBuyingRule function that returns a buying rule based on the provided BarSaries
- * @property getSellingRule function that returns a selling rule based on the provided BarSaries
+ * @property buyingRule function that returns a buying rule based on the provided BarSaries
+ * @property sellingRule function that returns a selling rule based on the provided BarSaries
  * @property maxBarCount maximum number of pricebars to track
  * @constructor Create new TA4J strategy
  */
 class TA4JStrategy(
-    var getBuyingRule: (BarSeries) -> Rule = ::alwaysFalseRule,
-    var getSellingRule: (BarSeries) -> Rule = ::alwaysFalseRule,
+    var buyingRule: (BarSeries) -> Rule = ::alwaysFalseRule,
+    var sellingRule: (BarSeries) -> Rule = ::alwaysFalseRule,
     private val maxBarCount:Int = -1,
 ) : Strategy {
 
@@ -44,8 +44,8 @@ class TA4JStrategy(
                 val (buyingRule, sellingRule, series) = data.getOrPut(asset) {
                     val series = BaseBarSeriesBuilder().withName(asset.symbol).build()
                     if (maxBarCount >= 0) series.maximumBarCount = maxBarCount
-                    val rule1 = getBuyingRule(series)
-                    val rule2 = getSellingRule(series)
+                    val rule1 = buyingRule(series)
+                    val rule2 = sellingRule(series)
                     Triple(rule1, rule2, series)
                 }
 

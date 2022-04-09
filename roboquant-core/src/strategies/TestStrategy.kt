@@ -21,11 +21,10 @@ import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 
 /**
- * Test strategy that has simple deterministic logic that can help during testing to detect where things go wrong.
+ * Test strategy that has deterministic behavior that can help during testing to detect where things go wrong.
  *
- * It will generate an alternating BUY/SELL signal every n-th step.
- * So for example it can generate a BUY signal for Apple at 10th trading day and a SELL signal at 20th
- * trading day.
+ * It will generate an alternating BUY/SELL signal every n-th step. So for example it can generate a BUY signal for
+ * Apple at 10th trading day and a SELL signal at 20th trading day.
  *
  *
  * @constructor Create new Test strategy

@@ -84,7 +84,7 @@ object TestData {
 
     fun usMarketOrder() = MarketOrder(usStock(), 10.0)
 
-    private fun priceAction(asset: Asset = usStock()) = TradePrice(asset, 10.0)
+    fun priceAction(asset: Asset = usStock()) = TradePrice(asset, 10.0)
 
     fun priceBar(asset: Asset = usStock()) = PriceBar(asset, 10.0, 11.0, 9.0, 10.0, 1000.0)
 
