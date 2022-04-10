@@ -16,6 +16,8 @@
 
 package org.roboquant.binance
 
+import com.binance.api.client.BinanceApiClientFactory
+import com.binance.api.client.BinanceApiWebSocketClient
 import com.binance.api.client.domain.event.CandlestickEvent
 import com.binance.api.client.domain.market.CandlestickInterval
 import org.roboquant.common.Asset
@@ -36,15 +38,17 @@ typealias Interval = CandlestickInterval
  * @constructor
  *
  */
-class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private val useMachineTime: Boolean = true) :
+class BinanceLiveFeed(private val useMachineTime: Boolean = true,
+                      configure: BinanceConfig.() -> Unit = {}) :
     LiveFeed(), AssetFeed {
 
 
     private val subscriptions = mutableMapOf<String, Asset>()
     private val logger = Logging.getLogger(BinanceLiveFeed::class)
     private val closeables = mutableListOf<Closeable>()
-    private val factory = BinanceConnection.getFactory(apiKey, secret)
-    private val client = factory.newWebSocketClient()
+    private val config = BinanceConfig()
+    private val factory: BinanceApiClientFactory
+    private val client: BinanceApiWebSocketClient
 
     /**
      * Get the assets that has been subscribed to
@@ -52,13 +56,15 @@ class BinanceLiveFeed(apiKey: String? = null, secret: String? = null, private va
     override val assets
         get() = subscriptions.values.toSortedSet()
 
+    init {
+        config.configure()
+        factory = BinanceConnection.getFactory(config)
+        client = factory.newWebSocketClient()
+        logger.fine { "Started BinanceFeed using web-socket client" }
+    }
 
     val availableAssets by lazy {
         BinanceConnection.retrieveAssets(factory)
-    }
-
-    init {
-        logger.fine { "Started BinanceFeed using web-socket client" }
     }
 
 

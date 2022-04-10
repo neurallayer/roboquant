@@ -44,13 +44,14 @@ import kotlin.math.absoluteValue
  *
  */
 class BinanceBroker(
-    apiKey: String? = null, secret: String? = null,
     baseCurrencyCode: String = "USD",
-    private val useMachineTime: Boolean = true
+    private val useMachineTime: Boolean = true,
+    configure: BinanceConfig.() -> Unit = {}
 ) : Broker {
 
     private val client: BinanceApiRestClient
     private val _account = InternalAccount(Currency.getInstance(baseCurrencyCode))
+    private val config = BinanceConfig()
 
     override val account: Account
         get() = _account.toAccount()
@@ -65,7 +66,8 @@ class BinanceBroker(
     }
 
     init {
-        val factory = BinanceConnection.getFactory(apiKey, secret)
+        config.configure()
+        val factory = BinanceConnection.getFactory(config)
         client = factory.newRestClient()
         logger.info("Created BinanceBroker with client $client")
         updateAccount()

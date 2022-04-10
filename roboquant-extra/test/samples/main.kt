@@ -23,7 +23,6 @@ import org.roboquant.alpaca.*
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.avro.AvroUtil
-import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.iex.Range
 import org.roboquant.logging.MemoryLogger
@@ -35,7 +34,9 @@ import org.roboquant.yahoo.YahooHistoricFeed
 import java.util.logging.Level
 
 fun alpacaBroker() {
-    val feed = CSVFeed("data/US", CSVConfig(priceAdjust = true))
+    val feed = CSVFeed("data/US") {
+        priceAdjust = true
+    }
     val broker = AlpacaBroker()
     val strategy = EMACrossover.EMA_12_26
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)

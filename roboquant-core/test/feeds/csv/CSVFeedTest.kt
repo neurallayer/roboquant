@@ -42,8 +42,9 @@ internal class CSVFeedTest {
             CSVFeed(TestData.dataDir() + "NON_Existing_DIR")
         }
 
-        val config = CSVConfig(fileExtension = "non_existing_ext")
-        val feed1 = CSVFeed(TestData.dataDir() + "US", config)
+        val feed1 = CSVFeed(TestData.dataDir() + "US") {
+            fileExtension = "non_existing_ext"
+        }
         assertTrue(feed1.assets.isEmpty())
     }
 
@@ -51,8 +52,10 @@ internal class CSVFeedTest {
     @Test
     fun customBuilder() {
         val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
-        val config = CSVConfig(template = asset, priceValidate = true)
-        val feed = CSVFeed(TestData.dataDir() + "US", config)
+        val feed = CSVFeed(TestData.dataDir() + "US") {
+            template = asset
+            priceValidate = true
+        }
         val first = feed.first().actions.first() as PriceAction
         assertEquals("TEST123", first.asset.exchangeCode)
     }

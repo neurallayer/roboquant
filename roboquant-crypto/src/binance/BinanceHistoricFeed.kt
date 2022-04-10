@@ -16,6 +16,8 @@
 
 package org.roboquant.binance
 
+import com.binance.api.client.BinanceApiClientFactory
+import com.binance.api.client.BinanceApiRestClient
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.HistoricPriceFeed
@@ -28,11 +30,19 @@ import java.time.Instant
  * @constructor
  *
  */
-class BinanceHistoricFeed(apiKey: String? = null, secret: String? = null) : HistoricPriceFeed() {
+class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPriceFeed() {
 
     private val logger = Logging.getLogger(BinanceHistoricFeed::class)
-    private val factory = BinanceConnection.getFactory(apiKey, secret)
-    private val client = factory.newRestClient()
+    private val config = BinanceConfig()
+    private val factory: BinanceApiClientFactory
+    private val client: BinanceApiRestClient
+
+    init {
+        config.configure()
+        factory = BinanceConnection.getFactory(config)
+        client = factory.newRestClient()
+    }
+
 
     val availableAssets by lazy {
         BinanceConnection.retrieveAssets(client)

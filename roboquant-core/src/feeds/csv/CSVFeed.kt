@@ -43,16 +43,19 @@ import kotlin.math.absoluteValue
  */
 class CSVFeed(
     path: String,
-    val config: CSVConfig = CSVConfig.fromFile(path)
+    configure: CSVConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
 
     private val logger = Logging.getLogger(CSVFeed::class)
+    val config: CSVConfig = CSVConfig.fromFile(path)
 
 
     init {
         val dir = File(path)
         require(dir.isDirectory) { "Directory $path does not exist" }
+        config.configure()
+
         val startTime = Instant.now().toEpochMilli()
 
         runBlocking {

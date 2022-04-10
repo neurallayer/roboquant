@@ -26,7 +26,6 @@ import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.avro.AvroFeed
-import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
 import org.roboquant.logging.LastEntryLogger
@@ -37,7 +36,8 @@ import org.roboquant.metrics.PNL
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.policies.BettingAgainstBeta
 import org.roboquant.policies.DefaultPolicy
-import org.roboquant.strategies.*
+import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.NoSignalStrategy
 import kotlin.system.measureTimeMillis
 
 fun volatility() {
@@ -51,9 +51,13 @@ fun volatility() {
 }
 
 fun multiCurrency() {
-    val feed = CSVFeed("data/US", CSVConfig(priceAdjust = true))
-    val template = Asset("TEMPLATE", currencyCode = "EUR")
-    val feed2 = CSVFeed("data/EU", CSVConfig(priceAdjust = true, template = template))
+    val feed = CSVFeed("data/US") {
+        priceAdjust = true
+    }
+    val feed2 = CSVFeed("data/EU") {
+        priceAdjust = true
+        template =  Asset("TEMPLATE", currencyCode = "EUR")
+    }
     feed.merge(feed2)
 
     val euro = Currency.getInstance("EUR")
@@ -164,8 +168,14 @@ fun beta() {
 }
 
 fun beta2() {
-    val feed = CSVFeed("/data/assets/us-stocks/Stocks", CSVConfig(".us.txt"))
-    val market = CSVFeed("/data/assets/us-stocks/ETFs", CSVConfig(".us.txt", "spy.us.txt"))
+    val feed = CSVFeed("/data/assets/us-stocks/Stocks") {
+        fileExtension = ".us.txt"
+    }
+    val market = CSVFeed("/data/assets/us-stocks/ETFs") {
+        fileExtension = ".us.txt"
+        filePattern = "spy.us.txt"
+
+    }
     feed.merge(market)
     val strategy = NoSignalStrategy()
     val marketAsset = feed.find("SPY")

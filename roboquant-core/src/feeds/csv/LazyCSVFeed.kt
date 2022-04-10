@@ -48,16 +48,18 @@ import java.util.logging.Logger
  *
  * @param path The directory that contains the CSV files
  */
-class LazyCSVFeed(val path: String, val config: CSVConfig = CSVConfig.fromFile(path)) : AssetFeed {
+class LazyCSVFeed(val path: String,  configure: CSVConfig.() -> Unit = {}) : AssetFeed {
 
     private val logger: Logger = Logging.getLogger(LazyCSVFeed::class)
     private val files: Map<Asset, File>
+    val config: CSVConfig = CSVConfig.fromFile(path)
 
     override val assets
         get() = files.keys.toSortedSet()
 
     init {
         logger.fine { "Scanning $path" }
+        config.configure()
         files = File(path)
             .walk()
             .filter { config.shouldParse(it) }

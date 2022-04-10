@@ -1,10 +1,12 @@
 @file:Suppress("KotlinConstantConditions")
 package org.roboquant.samples
 
-import org.roboquant.common.*
+import org.roboquant.common.Asset
+import org.roboquant.common.Config
+import org.roboquant.common.Timeframe
+import org.roboquant.common.timeframe
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.avro.AvroUtil
-import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import java.nio.file.Files
 import java.nio.file.Path
@@ -26,30 +28,27 @@ fun getAvroFile(type: String = "daily"): Path {
  */
 fun large(type: String) {
 
-    fun getConfig(exchange: String): CSVConfig {
-        Exchange.getInstance(exchange)
-        return CSVConfig(
-            fileExtension = ".us.txt",
-            parsePattern = "??T?OHLCV?",
-            template = Asset("TEMPLATE", exchangeCode = exchange)
-        )
-    }
-
-    val config1 = getConfig("NASDAQ")
-    val config2 = getConfig("NYSE")
     val path = dataHome / "stooq/$type/us/"
     var feed: CSVFeed? = null
 
     for (d in Files.list(path)) {
         if (d.name.startsWith("nasdaq stocks")) {
-            val tmp = CSVFeed(d.toString(), config1)
+            val tmp = CSVFeed(d.toString()) {
+                fileExtension = ".us.txt"
+                parsePattern = "??T?OHLCV?"
+                template = Asset("TEMPLATE", exchangeCode = "NASDAQ")
+            }
             if (feed === null) feed = tmp else feed.merge(tmp)
         }
     }
 
     for (d in Files.list(path)) {
         if (d.name.startsWith("nyse stocks")) {
-            val tmp = CSVFeed(d.toString(), config2)
+            val tmp = CSVFeed(d.toString()) {
+                fileExtension = ".us.txt"
+                parsePattern = "??T?OHLCV?"
+                template = Asset("TEMPLATE", exchangeCode = "NYSE")
+            }
             if (feed === null) feed = tmp else feed.merge(tmp)
         }
     }
