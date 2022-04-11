@@ -29,7 +29,7 @@ import org.roboquant.common.std
  * @property info
  * @constructor Create empty Metrics entry
  */
-data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo) {
+data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo) : Comparable<MetricsEntry> {
 
     /**
      * Get a key that unique defines the metric, run and episode.
@@ -48,10 +48,14 @@ data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo
         return i.phase == info.phase && i.run == info.run && i.episode == info.episode
     }
 
+    override fun compareTo(other: MetricsEntry): Int {
+         return value.compareTo(other.value)
+    }
+
 }
 
-fun Collection<MetricsEntry>.max() = maxOf { it.value }
-fun Collection<MetricsEntry>.min() = minOf { it.value }
+fun Collection<MetricsEntry>.max() = maxByOrNull { it }!!
+fun Collection<MetricsEntry>.min() = minByOrNull { it }!!
 fun Collection<MetricsEntry>.high(n:Int = 10) = sortedBy { it.value }.takeLast(n)
 fun Collection<MetricsEntry>.low(n:Int = 10) = sortedBy { it.value }.take(n)
 

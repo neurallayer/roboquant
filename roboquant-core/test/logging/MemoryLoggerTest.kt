@@ -16,7 +16,6 @@
 
 package org.roboquant.logging
 
-
 import org.roboquant.RunInfo
 import kotlin.test.*
 import org.roboquant.RunPhase
@@ -78,12 +77,12 @@ internal class MemoryLoggerTest {
         val h = data.high(5)
         assertEquals(5, h.size)
         val max = data.max()
-        assertEquals(max, h.last().value)
+        assertEquals(max.value, h.last().value)
 
         val l = data.low(5)
         assertEquals(5, l.size)
         val min = data.min()
-        assertEquals(min, l.first().value)
+        assertEquals(min.value, l.first().value)
 
     }
 

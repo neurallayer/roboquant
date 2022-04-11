@@ -64,15 +64,15 @@ object OANDA {
 
     internal fun getContext(config: OANDAConfig): Context {
         val url = if (config.demo) "https://api-fxpractice.oanda.com/" else "https://api-fxtrade.oanda.com/"
-        require(config.key.isBlank()) { "Couldn't locate key" }
+        require(config.key.isNotBlank()) { "Couldn't locate key" }
         return ContextBuilder(url).setToken(config.key).setApplication("roboquant").build()
     }
 
 
-    internal fun getAccountID(id: String?, ctx: Context): AccountID {
+    internal fun getAccountID(id: String, ctx: Context): AccountID {
         val accounts = ctx.account.list().accounts.map { it.id.toString() }
-        var accountId = id ?: Config.getProperty("OANDA_ACCOUNT_ID")
-        if (accountId == null) {
+        var accountId = id
+        if (id.isBlank()) {
             accountId = accounts.first()
         } else {
             require(accountId in accounts) { "Provided accountID $accountId not in found list $accounts" }

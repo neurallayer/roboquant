@@ -13,10 +13,6 @@ import org.ta4j.core.BaseBarSeriesBuilder
 import org.ta4j.core.Rule
 import org.ta4j.core.rules.BooleanRule
 
-
-@Suppress("UNUSED_PARAMETER")
-private fun alwaysFalseRule(series : BarSeries) : Rule = BooleanRule.FALSE
-
 /**
  * Strategy that allows to use indicators and rules from the TA4J library to define a custom strategy.
  *
@@ -29,11 +25,15 @@ private fun alwaysFalseRule(series : BarSeries) : Rule = BooleanRule.FALSE
  * @constructor Create new TA4J strategy
  */
 class TA4JStrategy(
-    var buyingRule: (BarSeries) -> Rule = ::alwaysFalseRule,
-    var sellingRule: (BarSeries) -> Rule = ::alwaysFalseRule,
+
     private val maxBarCount:Int = -1,
 ) : Strategy {
 
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun alwaysFalseRule(series : BarSeries) : Rule = BooleanRule.FALSE
+    private var buyingRule: (BarSeries) -> Rule = ::alwaysFalseRule
+    private var sellingRule: (BarSeries) -> Rule = ::alwaysFalseRule
     private val data = mutableMapOf<Asset, Triple<Rule, Rule, BarSeries>>()
 
     override fun generate(event: Event): List<Signal> {
@@ -55,6 +55,34 @@ class TA4JStrategy(
             }
         }
         return result
+    }
+
+    /**
+     * Define the buy condition, return true if you want to generate a BUY signal, false otherwise
+     *
+     * # Example
+     *
+     *       strategy.buy { price ->
+     *          ema(price.close, shortTerm) > ema(price.close, longTerm) && cdlMorningStar(price)
+     *       }
+     *
+     */
+    fun buy(block: (series: BarSeries) -> Rule) {
+        buyingRule = block
+    }
+
+    /**
+     * Define the sell conditions, return true if you want to generate a SELL signal, false otherwise
+     *
+     * # Example
+     *
+     *      strategy.sell { price ->
+     *          cdl3BlackCrows(price) || cdl2Crows(price)
+     *      }
+     *
+     */
+    fun sell(block: (series: BarSeries) -> Rule) {
+        sellingRule = block
     }
 
     override fun start(runPhase: RunPhase) {

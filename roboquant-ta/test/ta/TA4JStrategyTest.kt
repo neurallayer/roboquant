@@ -17,14 +17,14 @@ internal class TA4JStrategyTest {
     fun test() {
         val strategy = TA4JStrategy(maxBarCount = 50)
 
-        strategy.buyingRule = { series ->
+        strategy.buy  { series ->
             val closePrice = ClosePriceIndicator(series)
             val shortSma = SMAIndicator(closePrice, 5)
             val longSma = SMAIndicator(closePrice, 30)
             CrossedUpIndicatorRule(shortSma, longSma)
         }
 
-        strategy.sellingRule = { series ->
+        strategy.sell { series ->
             val closePrice = ClosePriceIndicator(series)
             val shortSma = SMAIndicator(closePrice, 5)
             val longSma = SMAIndicator(closePrice, 30)

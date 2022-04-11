@@ -41,7 +41,7 @@ class OANDAHistoricFeed(configure: OANDAConfig.() -> Unit = {}) : HistoricPriceF
     init {
         config.configure()
         ctx = OANDA.getContext(config)
-        accountID = OANDA.getAccountID(null, ctx)
+        accountID = OANDA.getAccountID(config.account, ctx)
     }
 
     val availableAssets by lazy {
