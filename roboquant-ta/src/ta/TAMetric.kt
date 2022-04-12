@@ -47,7 +47,12 @@ class TAMetric(
     }
 
     override fun start(runPhase: RunPhase) {
-        super.start(runPhase)
+       reset()
+    }
+
+    override fun reset() {
+        super.reset()
         buffers.clear()
     }
+
 }

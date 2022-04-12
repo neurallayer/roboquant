@@ -29,11 +29,8 @@ class TA4JStrategy(
     private val maxBarCount:Int = -1,
 ) : Strategy {
 
-
-    @Suppress("UNUSED_PARAMETER")
-    private fun alwaysFalseRule(series : BarSeries) : Rule = BooleanRule.FALSE
-    private var buyingRule: (BarSeries) -> Rule = ::alwaysFalseRule
-    private var sellingRule: (BarSeries) -> Rule = ::alwaysFalseRule
+    private var buyingRule: (BarSeries) -> Rule = { BooleanRule.FALSE }
+    private var sellingRule: (BarSeries) -> Rule = { BooleanRule.FALSE }
     private val data = mutableMapOf<Asset, Triple<Rule, Rule, BarSeries>>()
 
     override fun generate(event: Event): List<Signal> {

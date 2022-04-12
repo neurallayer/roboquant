@@ -21,9 +21,9 @@ import kotlinx.serialization.Serializable
 /**
  * Asset is used to uniquely identify a financial instrument. So it can represent a stock, a future
  * or even a cryptocurrency. All of its properties are read-only, and assets are typically only created
- * once and reused thereafter. An asset is immutable.
+ * once and reused thereafter. An asset is immutable bu nature.
  *
- * @property symbol symbol name
+ * @property symbol none empty symbol name
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currencyCode currency code, default is "USD"
  * @property exchangeCode Exchange this asset is traded on, default is an empty string
@@ -71,7 +71,7 @@ data class Asset(
      * What is the value of the asset given the provided [quantity] and [price]
      */
     fun value(quantity: Double, price: Double): Amount {
-        // If quantity is zero even an unknown price (Double.NanN) is fine
+        // If quantity is zero, an unknown price (Double.NanN) is fine
         return if (quantity == 0.0) Amount(currency, 0.0) else Amount(currency, multiplier * price * quantity)
     }
 
@@ -166,14 +166,14 @@ fun interface AssetFilter {
 
 
         /**
-         * Don't apply any filtering and process all assets
+         * Don't apply any filtering and include all assets
          */
         fun noFilter() : AssetFilter {
             return AssetFilter { true }
         }
 
         /**
-         * Allow only assets that are denoted in the provided [currencies].
+         * Include only assets that are denoted in the provided [currencies].
          */
         fun includeCurrencies(vararg currencies: Currency): AssetFilter {
             return AssetFilter { asset: Asset -> asset.currency in currencies }
@@ -181,7 +181,7 @@ fun interface AssetFilter {
 
 
         /**
-         * Allow only assets that don't match the provided [symbols].
+         * Include only assets that don't match the provided [symbols].
          */
         fun excludeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.uppercase() }.toSet()
@@ -189,7 +189,7 @@ fun interface AssetFilter {
         }
 
         /**
-         * Allow only assets that match the provided [symbols].
+         * Include only assets that match the provided [symbols].
          */
         fun includeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.uppercase() }.toSet()
