@@ -22,7 +22,7 @@ import org.roboquant.common.clean
 import org.roboquant.common.std
 
 /**
- * Single metric entry with the metadata. This is a read-only class.
+ * Single metric entry with the runinfo. This is a read-only class.
  *
  * @property metric
  * @property value
@@ -32,7 +32,7 @@ import org.roboquant.common.std
 data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo) : Comparable<MetricsEntry> {
 
     /**
-     * Get a key that unique defines the metric, run and episode.
+     * Get a key that uniquely defines the metric, run and episode.
      */
     val group
         get() = """${metric}/${info.run}/${info.episode}"""
@@ -48,16 +48,34 @@ data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo
         return i.phase == info.phase && i.run == info.run && i.episode == info.episode
     }
 
+    /**
+     * Compare two metric entries based on their [value]
+     */
     override fun compareTo(other: MetricsEntry): Int {
          return value.compareTo(other.value)
     }
 
 }
 
+/**
+ * Get the entry with the maximum value
+ */
 fun Collection<MetricsEntry>.max() = maxByOrNull { it }!!
+
+/**
+ * Get the entry with the minimum value
+ */
 fun Collection<MetricsEntry>.min() = minByOrNull { it }!!
-fun Collection<MetricsEntry>.high(n:Int = 10) = sortedBy { it.value }.takeLast(n)
-fun Collection<MetricsEntry>.low(n:Int = 10) = sortedBy { it.value }.take(n)
+
+/**
+ * Get the [n] highest entries, default being 10
+ */
+fun Collection<MetricsEntry>.high(n:Int = 10) = sortedBy { it }.takeLast(n)
+
+/**
+ * Get the [n] lowest entries, default being 10
+ */
+fun Collection<MetricsEntry>.low(n:Int = 10) = sortedBy { it }.take(n)
 
 fun Collection<MetricsEntry>.diff() : List<MetricsEntry> {
     val result = mutableListOf<MetricsEntry>()

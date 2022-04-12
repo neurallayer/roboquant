@@ -33,7 +33,7 @@ import kotlin.math.absoluteValue
  * - The past [trades]
  * - The [orders] and theor state, both open (still in progress) and already closed ones
  *
- * It also supports multi-currency trading through the use of a pluggable currency converter. Without configuring such
+ * It supports multi-currency trading through the use of a pluggable currency converter. Without configuring such
  * plug-in it still supports single currency trading, so when all assets and cash balances are denoted in a single
  * currency.
  *
@@ -63,51 +63,51 @@ class Account(
     /**
      * Cash balances converted to a single amount denoted in the [baseCurrency] of the account
      */
-    val cashAmount
+    val cashAmount: Amount
         get() = convert(cash)
 
     /**
      * [equity] converted to a single amount denoted in the [baseCurrency] of the account
      */
-    val equityAmount
+    val equityAmount: Amount
         get() = convert(equity)
 
 
     /**
-     * Total equity hold in the account. Equity is defined as sum of cash and portfolio value
+     * Total equity hold in the account. Equity is defined as sum of cash balances and the portfolio market value
      */
     val equity: Wallet
         get() = cash + portfolio.marketValue
 
     /**
-     * Positions in the account
+     * Open positions in the portfolio
      */
-    val positions
+    val positions: Collection<Position>
         get() = portfolio.values
 
     /**
-     * Assets in the portfolio
+     * Unique set of assets hold in the portfolio for which there is an open position
      */
-    val assets
+    val assets: Set<Asset>
         get() = portfolio.keys
 
 
     /**
-     * Gte the associated trades for the provided [orders]. If no orders are provided all orders linked to this account
-     * instance are used.
+     * Get the associated trades for the provided [orders]. If no orders are provided all [closedOrders] linked to this
+     * account instance are used.
      */
-    fun getOrderTrades(orders: Collection<OrderState> = this.closedOrders) =
+    fun getOrderTrades(orders: Collection<OrderState> = this.closedOrders) : Map<OrderState, List<Trade>> =
         orders.associateWith { order -> trades.filter { it.orderId == order.id } }.toMap()
 
     /**
-     * Convert an [amount] to the account base currency using last update of the account as a timestamp
+     * Convert an [amount] to the account [baseCurrency] using last update of the account as a timestamp
      */
-    fun convert(amount: Amount, time:Instant = lastUpdate) = amount.convert(baseCurrency, time)
+    fun convert(amount: Amount, time:Instant = lastUpdate) : Amount = amount.convert(baseCurrency, time)
 
     /**
-     * Convert a [wallet] to the account base currency using last update of the account as a timestamp
+     * Convert a [wallet] to the account [baseCurrency] using last update of the account as a timestamp
      */
-    fun convert(wallet: Wallet, time:Instant = lastUpdate) = wallet.convert(baseCurrency, time)
+    fun convert(wallet: Wallet, time:Instant = lastUpdate): Amount = wallet.convert(baseCurrency, time)
 
 
     /**
