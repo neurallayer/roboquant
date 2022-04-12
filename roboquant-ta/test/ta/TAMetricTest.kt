@@ -9,6 +9,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.test.HistoricTestFeed
+import org.roboquant.metrics.MetricResults
 import java.time.Instant
 import kotlin.test.assertTrue
 
@@ -16,8 +17,8 @@ class TAMetricTest {
 
     @Test
     fun test() {
-        val metric = TAMetric("ema50",50) { series ->
-            ema(series.close, 50)
+        val metric = TAMetric("ema10",10) { series ->
+            ema(series.close, 10)
         }
         assertTrue(metric.getMetrics().isEmpty())
 
@@ -28,12 +29,13 @@ class TAMetricTest {
         val results = metric.calc(account, Event(emptyList(), Instant.now()))
         assertTrue(results.isEmpty())
 
-        val feed = HistoricTestFeed(100 until 110, priceBar = true)
+        val feed = HistoricTestFeed(100 until 111, priceBar = true)
         val events = feed.filter<PriceBar>()
+        var mResult: MetricResults = emptyMap()
         for (event in events) {
-            val mResults = metric.calc(account, Event(listOf(event.second), event.first))
-            assertTrue(mResults.isEmpty())
+            mResult = metric.calc(account, Event(listOf(event.second), event.first))
         }
+        assertTrue(mResult.isNotEmpty())
 
     }
 }
