@@ -28,8 +28,8 @@ import org.roboquant.metrics.MetricResults
  * that recording and as a consequence might be faster and/or use less memory.
  *
  */
-abstract class RecordingStrategy(private val prefix: String = "strategy.", var recording: Boolean = false) : Strategy {
-
+abstract class RecordingStrategy(private val prefix: String = "strategy.", var recording: Boolean = false) : Strategy,
+    MetricRecorder {
 
     private val metrics = mutableMapOf<String, Number>()
 
@@ -51,11 +51,10 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
      * @param key
      * @param value
      */
-    protected fun record(key: String, value: Number) {
+    override fun record(key: String, value: Number) {
         if (!recording) return
         metrics["$prefix$key"] = value
     }
-
 
     /**
      * At the start of a phase, any recorded metrics will be cleared.
@@ -63,4 +62,8 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
     override fun start(runPhase: RunPhase) {
         metrics.clear()
     }
+}
+
+fun interface MetricRecorder {
+    fun record(key: String, value: Number)
 }

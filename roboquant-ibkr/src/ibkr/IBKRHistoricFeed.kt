@@ -18,7 +18,6 @@ package org.roboquant.ibkr
 
 import com.ib.client.Bar
 import com.ib.client.EClientSocket
-import ibkr.BaseWrapper
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.millis

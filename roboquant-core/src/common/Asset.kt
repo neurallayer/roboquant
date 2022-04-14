@@ -181,7 +181,7 @@ fun interface AssetFilter {
 
 
         /**
-         * Include only assets that don't match the provided [symbols].
+         * Exclude assets that match the provided [symbols].
          */
         fun excludeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.uppercase() }.toSet()

@@ -16,7 +16,6 @@
 
 package org.roboquant.ibkr
 
-import ibkr.IBKRExchangeRates
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 

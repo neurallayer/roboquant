@@ -78,7 +78,7 @@
         </repository>
         <repository>
             <id>kotlin.dev</id>
-            <url>https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap/</url>
+            <url>https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/</url>
         </repository>
         <repository>
             <id>snapshots</id>
@@ -139,6 +139,7 @@
                     </executions>
                     <configuration>
                         <args>
+                            <!-- arg>-Xcontext-receivers</arg -->
                             <!-- arg>-Xexplicit-api=strict</arg -->
                         </args>
                     </configuration>

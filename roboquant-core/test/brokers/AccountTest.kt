@@ -18,6 +18,7 @@ package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import org.roboquant.common.Wallet
 import kotlin.test.assertContains
@@ -33,6 +34,8 @@ internal class AccountTest {
         val account = iAccount.toAccount()
         val amount = account.equityAmount.value
         assertEquals(0.00, amount)
+        assertEquals(Amount(Currency.USD, 0.0), account.cashAmount)
+
         assertEquals(Currency.USD, account.baseCurrency)
         assertTrue(account.portfolio.isEmpty())
 

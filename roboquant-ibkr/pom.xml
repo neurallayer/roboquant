@@ -64,6 +64,12 @@
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.roboquant</groupId>
+            <artifactId>roboquant-ta</artifactId>
+            <version>0.9-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

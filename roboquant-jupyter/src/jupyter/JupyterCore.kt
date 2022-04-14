@@ -113,6 +113,7 @@ internal class JupyterCore : JupyterIntegration() {
 
         onLoaded {
             addThrowableRenderer(RoboquantThrowableRenderer())
+            // execute("""@file:CompilerArgs("-Xskip-prerelease-check")""")
             execute("%logLevel warn")
             val handler = JupyterLogger()
             handler.level = Level.WARNING

@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
+import org.roboquant.common.Currency
 import kotlin.test.assertEquals
 
 internal class PortfolioTest {
@@ -31,10 +32,12 @@ internal class PortfolioTest {
         portfolio[c] = position
         assertEquals(100.0, portfolio.getValue(c).size)
         assertEquals(10.0, portfolio.getValue(c).avgPrice)
+
+       assertEquals(1000.0, portfolio.exposure.getValue(Currency.USD))
     }
 
-    /**
 
+    /**
     @Test
     fun derivedValues() {
         val account = InternalAccount()

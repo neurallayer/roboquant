@@ -72,6 +72,7 @@ internal class ActionTest {
         val item = NewsAction.NewsItem("Some text", mapOf("source" to "TWITTER"))
         val action = NewsAction(listOf(item))
         assertEquals(1, action.items.size)
+        assertEquals("Some text", action.items.first().content)
         assertEquals(1, action.items[0].meta.size)
         assertFalse(action.items.isEmpty())
     }

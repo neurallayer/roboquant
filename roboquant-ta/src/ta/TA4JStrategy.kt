@@ -25,7 +25,6 @@ import org.ta4j.core.rules.BooleanRule
  * @constructor Create new TA4J strategy
  */
 class TA4JStrategy(
-
     private val maxBarCount:Int = -1,
 ) : Strategy {
 

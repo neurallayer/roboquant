@@ -1,4 +1,4 @@
-package ibkr
+package org.roboquant.ibkr
 
 import com.ib.client.DefaultEWrapper
 import com.ib.client.EWrapperMsgGenerator

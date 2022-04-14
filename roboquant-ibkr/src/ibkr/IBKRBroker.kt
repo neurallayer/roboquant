@@ -17,7 +17,6 @@
 package org.roboquant.ibkr
 
 import com.ib.client.*
-import ibkr.BaseWrapper
 import com.ib.client.OrderState as IBOrderSate
 import com.ib.client.OrderStatus as IBOrderStatus
 import org.roboquant.brokers.*

@@ -112,6 +112,58 @@ operator fun DoubleArray.div(a: Number): DoubleArray {
 }
 
 
+operator fun DoubleArray.times(a: Number): DoubleArray {
+    val result = clone()
+    val n = a.toDouble()
+    for (i in indices) result[i] *= n
+    return result
+}
+
+operator fun DoubleArray.minus(a: Number): DoubleArray {
+    val result = clone()
+    val n = a.toDouble()
+    for (i in indices) result[i] -= n
+    return result
+}
+
+operator fun DoubleArray.plus(a: Number): DoubleArray {
+    val result = clone()
+    val n = a.toDouble()
+    for (i in indices) result[i] += n
+    return result
+}
+
+operator fun DoubleArray.minus(a: DoubleArray): DoubleArray {
+    require(a.size == size) { "Arrays have to be of equal size"}
+    val result = clone()
+    for (i in indices) result[i] -= a[i]
+    return result
+}
+
+operator fun DoubleArray.times(a: DoubleArray): DoubleArray {
+    require(a.size == size) { "Arrays have to be of equal size"}
+    val result = clone()
+    for (i in indices) result[i] *= a[i]
+    return result
+}
+
+operator fun DoubleArray.div(a: DoubleArray): DoubleArray {
+    require(a.size == size) { "Arrays have to be of equal size"}
+    val result = clone()
+    for (i in indices) result[i] /= a[i]
+    return result
+}
+
+
+operator fun DoubleArray.plus(a: DoubleArray): DoubleArray {
+    require(a.size == size) { "Arrays have to be of equal size"}
+    val result = clone()
+    for (i in indices) result[i] += a[i]
+    return result
+}
+
+
+
 fun DoubleArray.max(): Double {
     return Max().evaluate(this)
 }
@@ -139,6 +191,7 @@ fun DoubleArray.skewness(): Double {
 fun DoubleArray.kurtosis(): Double {
     return Kurtosis().evaluate(this)
 }
+
 
 /**
  * Remove non-finite values from a DoubleArray and return this new array. The removed values include Inf and NaN values.

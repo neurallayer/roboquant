@@ -21,7 +21,6 @@ import org.roboquant.brokers.InternalAccount
 import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
 import org.roboquant.common.USD
-import org.roboquant.common.days
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.PriceBar
@@ -75,7 +74,7 @@ object TestData {
 
     fun event(time: Instant = time()) = Event(listOf(priceAction()), time)
 
-    fun metricInput(time: Instant = time()): Pair<Account, Event> {
+   /* fun metricInput(time: Instant = time()): Pair<Account, Event> {
         val account = usAccount()
         val asset1 = account.assets.first()
         // val asset2 = account.portfolio.assets.last()
@@ -92,6 +91,6 @@ object TestData {
             result.add(event)
         }
         return result
-    }
+    }*/
 
 }

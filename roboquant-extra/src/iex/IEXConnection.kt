@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package iex
+package org.roboquant.iex
 
 import org.roboquant.common.Config
 import pl.zankowski.iextrading4j.client.IEXCloudClient

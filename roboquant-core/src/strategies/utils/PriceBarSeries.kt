@@ -22,11 +22,12 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 
 /**
- * PriceBar Series is a circular buffer of OHLCV values. It supports both storing the regular prices or thre returns
+ * PriceBar Series is a circular buffer of OHLCV values for a single [asset]. It supports both storing the regular
+ * prices or the returns.
  *
  * @constructor Create new PriceBar buffer
  */
-class PriceBarSeries(windowSize: Int, usePercentage: Boolean = false) {
+class PriceBarSeries(val asset: Asset, windowSize: Int, usePercentage: Boolean = false) {
 
     private val openBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
     private val highBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
@@ -57,7 +58,8 @@ class PriceBarSeries(windowSize: Int, usePercentage: Boolean = false) {
      * Update the buffer with a new [priceBar]
      */
     fun add(priceBar: PriceBar) {
-       add(priceBar.ohlcv)
+        assert(priceBar.asset == asset)
+        add(priceBar.ohlcv)
     }
 
     /**
@@ -100,7 +102,7 @@ class MultiAssetPriceBarSeries(private val history: Int) {
      * Add a new priceBar and return true if enough data, false otherwise
      */
     fun add(priceBar: PriceBar): Boolean {
-        val series = data.getOrPut(priceBar.asset) { PriceBarSeries(history) }
+        val series = data.getOrPut(priceBar.asset) { PriceBarSeries(priceBar.asset, history) }
         series.add(priceBar)
         return series.isAvailable()
     }

@@ -16,8 +16,7 @@
 
 package org.roboquant.iex
 
-import iex.IEXConfig
-import iex.IEXConnection
+
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.feeds.*

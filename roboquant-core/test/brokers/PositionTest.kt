@@ -44,6 +44,7 @@ internal class PositionTest {
         assertEquals(11.0, newPos.avgPrice)
         assertEquals(20.0, newPos.size)
         assertEquals(0.0, pnl.value)
+        assertEquals(240.0, newPos.exposure.value)
     }
 
     @Test

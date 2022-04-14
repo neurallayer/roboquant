@@ -94,12 +94,5 @@ object OANDA {
         }.associateBy { it.symbol }
     }
 
-    internal fun getToken(token: String?): String {
-        val apiToken = token ?: Config.getProperty("OANDA_API_KEY")
-        require(apiToken != null) { "Couldn't locate API token OANDA_API_KEY" }
-        return apiToken
-    }
-
-
 }
 

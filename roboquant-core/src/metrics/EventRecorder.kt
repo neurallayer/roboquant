@@ -25,7 +25,7 @@ import java.time.temporal.TemporalAmount
 import java.util.LinkedList
 
 /**
- * Capture events that can then be used to display them in a graph or perform other post-run analysis. This metric
+ * Capture events that can then be used later to display them in a graph or perform other post-run analysis. This metric
  * also implements the [Feed] API.
  *
  * This metric is different from how most metrics work. It stores the result internally and does not

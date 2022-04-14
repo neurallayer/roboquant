@@ -23,6 +23,7 @@ import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.metrics.MetricResults
+import org.roboquant.strategies.MetricRecorder
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
@@ -39,7 +40,7 @@ import java.util.logging.Logger
  * technical indicators you want to use. If the history is too small, it will lead to a runtime exception.
  *
  */
-class TAStrategy(history: Int = 15) : Strategy {
+class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
 
     private var sellFn: TA.(series: PriceBarSeries) -> Boolean = { false }
     private var buyFn: TA.(series: PriceBarSeries) -> Boolean = { false }
@@ -55,7 +56,7 @@ class TAStrategy(history: Int = 15) : Strategy {
      * @param key
      * @param value
      */
-    fun record(key: String, value: Number) {
+    override fun record(key: String, value: Number) {
         metrics[key] = value
     }
 
@@ -226,9 +227,9 @@ class TAStrategy(history: Int = 15) : Strategy {
                 data.add(priceAction)
                 if (data.isAvailable(asset)) {
                     try {
-                        val buffer = data.getSeries(asset)
-                        if (buyFn.invoke(ta, buffer)) results.add(Signal(asset, Rating.BUY))
-                        if (sellFn.invoke(ta, buffer)) results.add(Signal(asset, Rating.SELL))
+                        val series = data.getSeries(asset)
+                        if (buyFn.invoke(ta, series)) results.add(Signal(asset, Rating.BUY))
+                        if (sellFn.invoke(ta, series)) results.add(Signal(asset, Rating.SELL))
                     } catch (e: InsufficientData) {
                         logger.severe("Not enough data available to calculate the indicators, increase the history size")
                         logger.severe(e.message)

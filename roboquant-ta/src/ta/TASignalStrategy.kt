@@ -26,10 +26,7 @@ import org.roboquant.common.severe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.metrics.MetricResults
-import org.roboquant.strategies.Rating
-import org.roboquant.strategies.Signal
-import org.roboquant.strategies.SignalType
-import org.roboquant.strategies.Strategy
+import org.roboquant.strategies.*
 import org.roboquant.strategies.utils.PriceBarSeries
 import java.lang.Integer.max
 import java.util.logging.Logger
@@ -44,8 +41,8 @@ import java.util.logging.Logger
  */
 class TASignalStrategy(
     private val history: Int = 15,
-    private var block: TASignalStrategy.(price: PriceBarSeries, asset: Asset) -> Signal?
-) : Strategy {
+    private var block: TA.(series: PriceBarSeries) -> Signal?
+) : Strategy, MetricRecorder {
 
     private val buffers = mutableMapOf<Asset, PriceBarSeries>()
     private val logger: Logger = Logging.getLogger(TASignalStrategy::class)
@@ -59,7 +56,7 @@ class TASignalStrategy(
      * @param key
      * @param value
      */
-    fun record(key: String, value: Number) {
+    override fun record(key: String, value: Number) {
         metrics[key] = value
     }
 
@@ -80,12 +77,12 @@ class TASignalStrategy(
 
         fun breakout(entryPeriod: Int = 100, exitPeriod: Int = 50): TASignalStrategy {
             val maxPeriod = max(entryPeriod, exitPeriod)
-            return TASignalStrategy(maxPeriod) { data, asset ->
+            return TASignalStrategy(maxPeriod) { series ->
                 when {
-                    ta.recordHigh(data.high, entryPeriod) -> Signal(asset, Rating.BUY, SignalType.BOTH)
-                    ta.recordLow(data.low, entryPeriod) -> Signal(asset, Rating.SELL, SignalType.BOTH)
-                    ta.recordLow(data.low, exitPeriod) -> Signal(asset, Rating.SELL, SignalType.EXIT)
-                    ta.recordHigh(data.high, exitPeriod) -> Signal(asset, Rating.BUY, SignalType.EXIT)
+                    recordHigh(series.high, entryPeriod) -> Signal(series.asset, Rating.BUY, SignalType.BOTH)
+                    recordLow(series.low, entryPeriod) -> Signal(series.asset, Rating.SELL, SignalType.BOTH)
+                    recordLow(series.low, exitPeriod) -> Signal(series.asset, Rating.SELL, SignalType.EXIT)
+                    recordHigh(series.high, exitPeriod) -> Signal(series.asset, Rating.BUY, SignalType.EXIT)
                     else -> null
                 }
             }
@@ -107,11 +104,11 @@ class TASignalStrategy(
         val signals = mutableListOf<Signal>()
         for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSeries(history, usePercentage = false) }
+            val buffer = buffers.getOrPut(asset) { PriceBarSeries(asset, history, usePercentage = false) }
             buffer.add(priceAction)
             if (buffer.isAvailable()) {
                 try {
-                    val signal = block.invoke(this, buffer, asset)
+                    val signal = block.invoke(ta, buffer)
                     signals.addNotNull(signal)
                 } catch (e: InsufficientData) {
                     logger.severe(
