@@ -23,7 +23,7 @@ import java.time.Instant
 import java.util.SortedSet
 
 /**
- * Base class that provides a foundation for data feeds that provide historic prices. It used a sorted map to store
+ * Base class that provides a foundation for data feeds that provide historic prices. It uses a sorted map to store
  * for each time one or more PriceActions in memory.
  */
 open class HistoricPriceFeed : HistoricFeed {
