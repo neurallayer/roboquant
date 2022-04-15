@@ -65,7 +65,7 @@ operator fun Instant.minus(millis: Int): Instant = minusMillis(millis.toLong())
 fun Instant.toUTC(): ZonedDateTime = atZone(ZoneId.of("UTC"))
 
 
-fun Collection<String>.summary(header: String = "Values"): Summary {
+fun Collection<String>.summary(header: String = "values"): Summary {
     val result = Summary(header)
     forEach { result.add(it) }
     return result

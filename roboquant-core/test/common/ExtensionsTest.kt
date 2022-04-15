@@ -64,6 +64,21 @@ class ExtensionsTest {
     }
 
 
+    @Test
+    fun doubleArrayTests() {
+        val a = doubleArrayOf(1.0, 2.0, 3.0, 4.0)
+        val b = doubleArrayOf(1.0, 1.0, 2.0, 2.0)
+        assertEquals(6.0, (a + b).last())
+        assertEquals(2.0, (a - b).last())
+        assertEquals(2.0, (a / b).last())
+        assertEquals(8.0, (a * b).last())
+
+        assertEquals(20.0, (a * 5.0).last())
+        assertEquals(9.0, (a + 5.0).last())
+        assertEquals(2.0, (a / 2.0).last())
+        assertEquals(0.0, (a - 4.0).last())
+    }
+
 
     @Test
     fun testAccess() {
