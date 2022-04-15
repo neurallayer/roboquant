@@ -1,6 +1,5 @@
 package org.roboquant.ta
 
-import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetFilter
@@ -46,9 +45,6 @@ class TAMetric(
         return metrics
     }
 
-    override fun start(runPhase: RunPhase) {
-       reset()
-    }
 
     override fun reset() {
         super.reset()

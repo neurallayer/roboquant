@@ -17,7 +17,6 @@
 package org.roboquant.policies
 
 import org.apache.commons.math3.stat.correlation.Covariance
-import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.diff
@@ -163,11 +162,9 @@ open class BettingAgainstBeta(
     }
 
     /**
-     * Clear any state before a new phase is started
-     *
-     * @param runPhase
+     * Clear any state
      */
-    override fun start(runPhase: RunPhase) {
+    override fun reset() {
         data.clear()
         rebalanceDate = Instant.MIN
     }

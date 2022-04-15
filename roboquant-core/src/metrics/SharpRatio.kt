@@ -17,7 +17,6 @@
 package org.roboquant.metrics
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
-import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
@@ -85,7 +84,7 @@ class SharpRatio(
         }
     }
 
-    override fun start(runPhase: RunPhase) {
+    override fun reset() {
         stats.clear()
         lastTime = Instant.MIN
         lastValue = Double.NaN

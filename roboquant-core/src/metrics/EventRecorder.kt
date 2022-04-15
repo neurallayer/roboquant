@@ -16,13 +16,12 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import java.time.temporal.TemporalAmount
-import java.util.LinkedList
+import java.util.*
 
 /**
  * Capture events that can then be used later to display them in a graph or perform other post-run analysis. This metric
@@ -47,9 +46,6 @@ class EventRecorder(private val maxDuration: TemporalAmount? = null) : Metric, F
         }
     }
 
-    override fun start(runPhase: RunPhase) {
-        reset()
-    }
 
     override fun reset() {
         events.clear()

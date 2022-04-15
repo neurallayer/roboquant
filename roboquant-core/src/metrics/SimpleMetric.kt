@@ -16,7 +16,6 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 
@@ -49,10 +48,6 @@ abstract class SimpleMetric : Metric {
         val result = values
         values = emptyMap()
         return result
-    }
-
-    override fun start(runPhase: RunPhase) {
-        values = emptyMap()
     }
 
     override fun reset() {

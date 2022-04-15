@@ -16,7 +16,6 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 import java.time.Instant
@@ -48,7 +47,7 @@ class ProgressMetric : SimpleMetric() {
         )
     }
 
-    override fun start(runPhase: RunPhase) {
+    override fun reset() {
         startTime = Instant.now()
         actions = 0
         steps = 0

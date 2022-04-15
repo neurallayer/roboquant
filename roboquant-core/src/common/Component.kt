@@ -34,9 +34,9 @@ import org.roboquant.metrics.MetricResults
 interface Component {
 
     /**
-     * Invoked at the start of a [runPhase]. Default implementation is to take no action.
+     * Invoked at the start of a [runPhase]. Default implementation is to invoke [reset]
      */
-    fun start(runPhase: RunPhase) {}
+    fun start(runPhase: RunPhase) { reset() }
 
     /**
      * Invoked at the end of a [runPhase]. Default implementation is to take no action.

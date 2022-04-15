@@ -18,7 +18,6 @@ package org.roboquant.metrics
 
 import org.apache.commons.math3.stat.correlation.Covariance
 import org.apache.commons.math3.stat.descriptive.moment.Variance
-import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.returns
@@ -95,7 +94,7 @@ class AlphaBeta(
         return mapOf()
     }
 
-    override fun start(runPhase: RunPhase) {
+    override fun reset() {
         portfolioData.clear()
         marketData.clear()
     }

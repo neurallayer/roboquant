@@ -43,7 +43,7 @@ open class MovingWindow(private val windowSize: Int) {
     }
 
     /**
-     * Is the window fully filled, so it is ready to be used.
+     * Is the history fully filled, so it is ready to be used.
      *
      * @return True if the window is filled, false otherwise
      */
@@ -54,7 +54,7 @@ open class MovingWindow(private val windowSize: Int) {
 
     /**
      * Return the stored values a DoubleArray. If this is called before the buffer is completely filled, it will
-     * contain Double.NaN values for the missing part.
+     * contain Double.NaN values for the missing values.
      *
      * ## Usage
      *

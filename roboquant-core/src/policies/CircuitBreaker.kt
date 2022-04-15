@@ -1,13 +1,12 @@
 package org.roboquant.policies
 
-import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import java.time.temporal.TemporalAmount
-import java.util.LinkedList
+import java.util.*
 
 /**
  * Wraps another [policy] and based on tje configured throttle settings stops propagating orders to a broker.
@@ -47,9 +46,10 @@ class CircuitBreakerPolicy(val policy: Policy, private val maxOrders: Int, priva
         }
     }
 
-    override fun start(runPhase: RunPhase) {
+
+    override fun reset() {
         history.clear()
-        policy.start(runPhase)
+        policy.reset()
     }
 
 }

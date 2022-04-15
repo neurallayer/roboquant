@@ -16,7 +16,6 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.RunPhase
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
@@ -174,14 +173,6 @@ class SimBroker(
         return place(orders, event)
     }
 
-    /**
-     * At the start of a new phase the account and metrics will be reset
-     *
-     * @param runPhase
-     */
-    override fun start(runPhase: RunPhase) {
-        reset()
-    }
 
     override fun reset() {
         _account.clear()

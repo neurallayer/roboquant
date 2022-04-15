@@ -16,7 +16,6 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.RunPhase
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
@@ -55,7 +54,7 @@ class VWAPMetric(val minSize: Int = 2) : SimpleMetric() {
         return result
     }
 
-    override fun start(runPhase: RunPhase) {
+    override fun reset() {
         calculators.clear()
     }
 }

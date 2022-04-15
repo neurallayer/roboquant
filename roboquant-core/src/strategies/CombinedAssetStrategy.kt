@@ -16,7 +16,6 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.RunPhase
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 import org.roboquant.metrics.MetricResults
@@ -50,7 +49,7 @@ class CombinedAssetStrategy(val strategyBuilder: (asset: Asset) -> Strategy) : S
         return signals
     }
 
-    override fun start(runPhase: RunPhase) {
+    override fun reset() {
         strategies.clear()
     }
 
