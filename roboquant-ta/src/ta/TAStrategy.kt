@@ -18,7 +18,6 @@
 
 package org.roboquant.ta
 
-import org.roboquant.RunPhase
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
@@ -241,8 +240,7 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
         return results
     }
 
-    override fun start(runPhase: RunPhase) {
-        super.start(runPhase)
+    override fun reset() {
         data.clear()
         metrics = mutableMapOf()
     }

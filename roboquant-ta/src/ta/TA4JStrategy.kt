@@ -1,6 +1,5 @@
 package org.roboquant.ta
 
-import org.roboquant.RunPhase
 import org.roboquant.common.Asset
 import org.roboquant.common.toUTC
 import org.roboquant.feeds.Event
@@ -79,10 +78,6 @@ class TA4JStrategy(
      */
     fun sell(block: (series: BarSeries) -> Rule) {
         sellingRule = block
-    }
-
-    override fun start(runPhase: RunPhase) {
-        reset()
     }
 
     override fun reset() {

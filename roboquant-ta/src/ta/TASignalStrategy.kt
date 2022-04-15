@@ -18,7 +18,6 @@
 
 package org.roboquant.ta
 
-import org.roboquant.RunPhase
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.addNotNull
@@ -122,8 +121,7 @@ class TASignalStrategy(
         return signals
     }
 
-    override fun start(runPhase: RunPhase) {
-        super.start(runPhase)
+    override fun reset() {
         buffers.clear()
         metrics = mutableMapOf()
     }
