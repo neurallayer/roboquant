@@ -6,8 +6,8 @@ import com.tictactec.ta.lib.*
 import org.roboquant.strategies.utils.PriceBarSeries
 
 /**
- * TA wraps the excellent TALib library and makes it easy to use any of indicators provided by that library.
- * This wrapper is optimized for streaming/event based updates.
+ * TA (**T**echnical **A**nalysis) wraps the excellent TALib library and makes it easy to use any of indicators
+ * provided by that library. This wrapper is optimized for event based updates.
  */
 class TA(var core: Core = Core()) {
 

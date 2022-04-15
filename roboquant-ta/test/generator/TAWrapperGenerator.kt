@@ -219,7 +219,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
         return """
             
         /**
-         * Apply $desc on the provided input data and return the most recent output only. If there is insufficient
+         * Apply $desc on the provided input data and return the output result. If there is insufficient
          * data to calculate the indicators, an [InsufficientData] will be thrown.
          * This indicator belongs to the group $groupId.
          */

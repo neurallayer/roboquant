@@ -29,7 +29,6 @@ import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import org.roboquant.strategies.utils.PriceBarSeries
 import java.time.Instant
-import kotlin.math.absoluteValue
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -179,7 +178,7 @@ internal class TAStrategyTest {
         assertTrue(c.isFinite())
     }
 
-    @Test
+/*    @Test
     fun testSma() {
         val feed = HistoricTestFeed(100..150, priceBar = true)
         val asset = feed.assets.first()
@@ -194,7 +193,7 @@ internal class TAStrategyTest {
         val ta = TA()
         val ema = ta.sma(closingPrice, 30)
         assertTrue((emaBatch1.last() - ema).absoluteValue < 0.00001)
-    }
+    }*/
 
     @Test
     fun test2() {

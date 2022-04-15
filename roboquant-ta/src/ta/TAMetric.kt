@@ -35,7 +35,7 @@ class TAMetric(
         val actions = event.prices.values.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset) }
         for (priceAction in actions) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSeries(asset, history, usePercentage = false) }
+            val buffer = buffers.getOrPut(asset) { PriceBarSeries(asset, history) }
             buffer.add(priceAction)
             if (buffer.isAvailable()) {
                 val metric = block.invoke(ta, buffer)

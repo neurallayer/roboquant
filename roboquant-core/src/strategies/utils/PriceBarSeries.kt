@@ -18,40 +18,40 @@ package org.roboquant.strategies.utils
 
 import org.roboquant.common.Asset
 import org.roboquant.common.div
+import org.roboquant.common.plus
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 
 /**
- * PriceBar Series is a circular buffer of OHLCV values for a single [asset]. It supports both storing the regular
- * prices or the returns.
+ * PriceBar Series is a moving window of OHLCV values for a single [asset].
  *
- * @constructor Create new PriceBar buffer
+ * @constructor Create new PriceBar Series
  */
-class PriceBarSeries(val asset: Asset, windowSize: Int, usePercentage: Boolean = false) {
+class PriceBarSeries(val asset: Asset, windowSize: Int) {
 
-    private val openBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
-    private val highBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
-    private val lowBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
-    private val closeBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
-    private val volumeBuffer = if (usePercentage) PercentageMovingWindow(windowSize) else MovingWindow(windowSize)
+    private val openSeries = MovingWindow(windowSize)
+    private val highSeries = MovingWindow(windowSize)
+    private val lowSeries = MovingWindow(windowSize)
+    private val closeSeries = MovingWindow(windowSize)
+    private val volumeSeries = MovingWindow(windowSize)
 
     val open
-        get() = openBuffer.toDoubleArray()
+        get() = openSeries.toDoubleArray()
 
     val high
-        get() = highBuffer.toDoubleArray()
+        get() = highSeries.toDoubleArray()
 
     val low
-        get() = lowBuffer.toDoubleArray()
+        get() = lowSeries.toDoubleArray()
 
     val close
-        get() = closeBuffer.toDoubleArray()
+        get() = closeSeries.toDoubleArray()
 
     val volume
-        get() = volumeBuffer.toDoubleArray()
+        get() = volumeSeries.toDoubleArray()
 
     val typical
-        get() = (highBuffer.toDoubleArray() + lowBuffer.toDoubleArray() + closeBuffer.toDoubleArray()) / 3.0
+        get() = (highSeries.toDoubleArray() + lowSeries.toDoubleArray() + closeSeries.toDoubleArray()) / 3.0
 
 
     /**
@@ -67,23 +67,23 @@ class PriceBarSeries(val asset: Asset, windowSize: Int, usePercentage: Boolean =
      */
     fun add(ohlcv: DoubleArray) {
         assert(ohlcv.size == 5)
-        openBuffer.add(ohlcv[0])
-        highBuffer.add(ohlcv[1])
-        lowBuffer.add(ohlcv[2])
-        closeBuffer.add(ohlcv[3])
-        volumeBuffer.add(ohlcv[4])
+        openSeries.add(ohlcv[0])
+        highSeries.add(ohlcv[1])
+        lowSeries.add(ohlcv[2])
+        closeSeries.add(ohlcv[3])
+        volumeSeries.add(ohlcv[4])
     }
 
     fun isAvailable(): Boolean {
-        return openBuffer.isAvailable()
+        return openSeries.isAvailable()
     }
 
     fun clear() {
-        openBuffer.clear()
-        highBuffer.clear()
-        lowBuffer.clear()
-        closeBuffer.clear()
-        volumeBuffer.clear()
+        openSeries.clear()
+        highSeries.clear()
+        lowSeries.clear()
+        closeSeries.clear()
+        volumeSeries.clear()
     }
 
 }
@@ -107,16 +107,33 @@ class MultiAssetPriceBarSeries(private val history: Int) {
         return series.isAvailable()
     }
 
+    /**
+     * Add pricae bars found in the provided [event] to the history
+     *
+     * @param event
+     */
     fun add(event: Event) {
         for ((_, action) in event.prices) {
             if (action is PriceBar) add(action)
         }
     }
 
+    /**
+     * Is there enough data captured for the provided [asset]
+     */
     fun isAvailable(asset: Asset) = data[asset]?.isAvailable() ?: false
 
-    fun getSeries(asset: Asset) = data.getValue(asset)
+    /**
+     * Get the price bar series for the provided [asset]
+     *
+     * @param asset
+     */
+    fun getSeries(asset: Asset) : PriceBarSeries = data.getValue(asset)
 
+    /**
+     * Clear all captured data
+     *
+     */
     fun clear() = data.clear()
 
 }
