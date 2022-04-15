@@ -18,11 +18,16 @@ package org.roboquant
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.roboquant.brokers.Account
 import org.roboquant.common.years
+import org.roboquant.feeds.Event
 import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.AccountSummary
+import org.roboquant.metrics.Metric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.RandomStrategy
@@ -39,6 +44,24 @@ internal class RoboquantTest {
         roboquant.run(feed)
         val summary = roboquant.summary()
         assertTrue(summary.toString().isNotEmpty())
+    }
+
+    @Test
+    fun brokenMetric() {
+        class MyBrokenMetric : Metric {
+            override fun calculate(account: Account, event: Event) {
+                throw Exception("Broken")
+            }
+
+        }
+
+        val feed = HistoricTestFeed(100..101)
+        val strategy = EMACrossover()
+        val roboquant = Roboquant(strategy, MyBrokenMetric(), logger = SilentLogger())
+        assertDoesNotThrow {
+            roboquant.run(feed)
+        }
+
     }
 
     @Test

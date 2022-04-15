@@ -90,7 +90,7 @@ class Roboquant(
                 orders = step(orders, event, runInfo)
             }
         } catch (_: ClosedReceiveChannelException) {
-            return
+            // intentionally empty
         } finally {
             end(runInfo.phase)
             if (job.isActive) job.cancel()
@@ -212,7 +212,7 @@ class Roboquant(
             try {
                 metric.calculate(account, event)
             } catch (e: Exception) {
-                kotlinLogger.log(Level.WARNING, "failed when calculate metric ${metric::class.qualifiedName}", e)
+                kotlinLogger.log(Level.WARNING, "failed when calculate metric ${metric::class.simpleName}", e)
             }
         }
 
