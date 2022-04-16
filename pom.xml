@@ -26,7 +26,7 @@
     <packaging>pom</packaging>
 
     <name>roboquant</name>
-    <description>Algorithmic trading platform for Kotlin</description>
+    <description>Algorithmic trading platform written in Kotlin</description>
 
     <licenses>
         <license>
@@ -47,6 +47,9 @@
             <name>roboquant team</name>
             <organization>roboquant</organization>
             <url>https://www.roboquant.org</url>
+            <roles>
+                <role>Developer</role>
+            </roles>
         </developer>
     </developers>
 

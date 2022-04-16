@@ -90,26 +90,6 @@ internal class JupyterCore : JupyterIntegration() {
     }
 
     override fun Builder.onLoaded() {
-        import(
-            "org.roboquant.*",
-            "org.roboquant.logging.*",
-            "org.roboquant.common.*",
-            "org.roboquant.metrics.*",
-            "org.roboquant.strategies.*",
-            "org.roboquant.orders.*",
-            "org.roboquant.feeds.*",
-            "org.roboquant.feeds.csv.*",
-            "org.roboquant.feeds.avro.*",
-            "org.roboquant.feeds.random.*",
-            "org.roboquant.brokers.sim.*",
-            "org.roboquant.brokers.*",
-            "org.roboquant.policies.*",
-            "org.roboquant.jupyter.*",
-            "java.time.Period",
-            "java.time.Instant",
-            "java.time.temporal.ChronoUnit"
-        )
-
 
         onLoaded {
             addThrowableRenderer(RoboquantThrowableRenderer())
@@ -120,7 +100,6 @@ internal class JupyterCore : JupyterIntegration() {
             Logging.resetHandler(handler)
             Logging.setDefaultLevel(Level.WARNING)
         }
-
 
         render<Summarizable> {
             print(it.summary())

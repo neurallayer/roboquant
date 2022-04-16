@@ -29,6 +29,7 @@ internal class SampleNotebookTest {
 
         // Get the file and validate it
         val path = TestData.dataDir() + "notebooks/$file.ipynb"
+
         val c = NotebookTester("roboquant")
         c.validateNotebook(path)
     }
@@ -57,6 +58,8 @@ internal class SampleNotebookTest {
 
 
 private class NotebookTester(lib: String) : JupyterReplTestCase(ReplProvider.forLibrariesTesting(listOf(lib))) {
+
+// private class NotebookTester(lib: String) : JupyterReplTestCase(ReplProvider.withoutLibraryResolution) {
 
     /**
      * Execute the code cells in a notebook and validate the new output against the existing output in the notebook.
