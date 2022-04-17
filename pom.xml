@@ -26,8 +26,10 @@
     <packaging>pom</packaging>
 
     <name>roboquant</name>
+    <url>https://roboquant.org</url>
     <description>Algorithmic trading platform written in Kotlin</description>
 
+    <!-- start extra info -->
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -36,22 +38,28 @@
         </license>
     </licenses>
 
-    <issueManagement>
-        <system>GitHub</system>
-        <url>https://github.com/neurallayer/roboquant/issues</url>
-    </issueManagement>
-
     <developers>
         <developer>
             <id>roboquant</id>
             <name>roboquant team</name>
-            <organization>roboquant</organization>
             <url>https://www.roboquant.org</url>
-            <roles>
-                <role>Developer</role>
-            </roles>
         </developer>
     </developers>
+
+    <scm>
+        <url>https://github.com/neurallayer/roboquant.git</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/neurallayer/roboquant/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>GitHub Actions</system>
+        <url>https://github.com/neurallayer/roboquant/actions</url>
+    </ciManagement>
+    <!-- end extra info -->
 
     <modules>
         <module>roboquant-core</module>
@@ -233,6 +241,58 @@
                 </executions>
             </plugin>
 
+            <!-- We need to include sources when publishing to Maven Central -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <excludePackageNames>org.roboquant.*</excludePackageNames>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin -->
+
+            <plugin>
+                <groupId>org.jetbrains.dokka</groupId>
+                <artifactId>dokka-maven-plugin</artifactId>
+                <version>1.6.10</version>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>javadocJar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jdkVersion>11</jdkVersion>
+                    <suppressObviousFunctions>true</suppressObviousFunctions>
+                    <reportUndocumented>false</reportUndocumented>
+                    <suppressInheritedMembers>true</suppressInheritedMembers>
+                </configuration>
+            </plugin>
+
             <!-- Kotlin documentation plugin -->
             <!-- plugin>
                 <groupId>org.jetbrains.dokka</groupId>
@@ -276,12 +336,6 @@
                 <artifactId>kotlin-test-junit5</artifactId>
                 <version>${kotlin.version}</version>
                 <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jetbrains.kotlinx</groupId>
-                <artifactId>kotlinx-coroutines-core</artifactId>
-                <version>1.6.0</version>
             </dependency>
 
             <dependency>

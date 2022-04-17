@@ -26,10 +26,11 @@
     </parent>
 
     <artifactId>roboquant-jupyter</artifactId>
-
     <packaging>jar</packaging>
+    <name>roboquant jupyter</name>
+    <url>https://roboquant.org</url>
+    <description>Jupyter notebook support for the roboquant algorithmic trading platform</description>
 
-    <name>roboquant-jupyter</name>
     <build>
         <plugins>
             <plugin>

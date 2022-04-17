@@ -24,10 +24,16 @@
         <groupId>org.roboquant</groupId>
         <version>0.9-SNAPSHOT</version>
     </parent>
+
     <artifactId>roboquant-ta</artifactId>
     <packaging>jar</packaging>
+    <name>roboquant ta</name>
+    <url>https://roboquant.org</url>
+    <description>Technical analysis support for the roboquant algorithmic trading platform</description>
 
-    <name>roboquant-ta</name>
+    <!-- start extra info -->
+
+    <!-- end extra info -->
 
     <build>
         <plugins>

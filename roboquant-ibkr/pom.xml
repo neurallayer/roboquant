@@ -24,10 +24,12 @@
         <groupId>org.roboquant</groupId>
         <version>0.9-SNAPSHOT</version>
     </parent>
+
     <artifactId>roboquant-ibkr</artifactId>
     <packaging>jar</packaging>
-
-    <name>roboquant-ibkr</name>
+    <name>roboquant ibkr</name>
+    <url>https://roboquant.org</url>
+    <description>Interactive Brokers support for the roboquant algorithmic trading platform</description>
 
     <build>
         <plugins>
@@ -63,12 +65,6 @@
             <version>9.76</version>
             <scope>provided</scope>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.roboquant</groupId>
-            <artifactId>roboquant-ta</artifactId>
-            <version>0.9-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 

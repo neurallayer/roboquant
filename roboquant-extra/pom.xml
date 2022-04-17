@@ -27,7 +27,9 @@
     <artifactId>roboquant-extra</artifactId>
     <packaging>jar</packaging>
 
-    <name>roboquant-extra</name>
+    <name>roboquant extra</name>
+    <url>https://roboquant.org</url>
+    <description>3rd party integration with brokers and market data providers for the roboquant algorithmic trading platform</description>
 
     <build>
         <plugins>

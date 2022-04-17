@@ -61,7 +61,7 @@ class XChangeLiveFeed(
     val availableAssets by lazy {
         val meta = exchange.exchangeMetaData
         if (meta == null) {
-            logger.warning("No metadata available")
+            logger.info("No metadata available")
             listOf<Asset>()
         } else {
             val pairs = meta.currencyPairs

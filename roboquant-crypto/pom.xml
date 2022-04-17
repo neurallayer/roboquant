@@ -25,10 +25,13 @@
         <groupId>org.roboquant</groupId>
         <version>0.9-SNAPSHOT</version>
     </parent>
+
     <artifactId>roboquant-crypto</artifactId>
     <packaging>jar</packaging>
+    <name>roboquant crypto</name>
+    <url>https://roboquant.org</url>
+    <description>Crypto support for the roboquant algorithmic trading platform</description>
 
-    <name>roboquant-crypto</name>
 
     <properties>
         <xchange.version>5.0.13</xchange.version>
@@ -69,9 +72,7 @@
         </dependency>
 
         <dependency>
-            <!-- Binance doesn't publish their lib on Maven and other publications are using an older version of the
-            library with known defects. So we published our own version, for the time being as a snapshot release.
-            -->
+            <!-- Doesn't publish their patched lib on Maven so we published our own version. -->
             <groupId>org.roboquant</groupId>
             <artifactId>binance-api-client</artifactId>
             <version>1.0.1-SNAPSHOT</version>
