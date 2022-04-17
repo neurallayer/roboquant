@@ -5,7 +5,6 @@ import org.jetbrains.jupyter.parser.notebook.CodeCell
 import org.jetbrains.jupyter.parser.notebook.ExecuteResult
 import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.jetbrains.kotlinx.jupyter.testkit.JupyterReplTestCase
-import org.jetbrains.kotlinx.jupyter.testkit.ReplProvider
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Config
@@ -14,7 +13,6 @@ import java.io.File
 import java.time.ZoneId
 import kotlin.random.Random
 import kotlin.test.assertEquals
-
 
 internal class SampleNotebookTest {
 
@@ -29,8 +27,7 @@ internal class SampleNotebookTest {
 
         // Get the file and validate it
         val path = TestData.dataDir() + "notebooks/$file.ipynb"
-
-        val c = NotebookTester("roboquant")
+        val c = NotebookTester()
         c.validateNotebook(path)
     }
 
@@ -57,9 +54,9 @@ internal class SampleNotebookTest {
 }
 
 
-private class NotebookTester(lib: String) : JupyterReplTestCase(ReplProvider.forLibrariesTesting(listOf(lib))) {
+private class NotebookTester : JupyterReplTestCase(RoboquantReplProvider) {
 
-// private class NotebookTester(lib: String) : JupyterReplTestCase(ReplProvider.withoutLibraryResolution) {
+    // private class NotebookTester(lib: String) : JupyterReplTestCase(ReplProvider.withoutLibraryResolution) {
 
     /**
      * Execute the code cells in a notebook and validate the new output against the existing output in the notebook.
