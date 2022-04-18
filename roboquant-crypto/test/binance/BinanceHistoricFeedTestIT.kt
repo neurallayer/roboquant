@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-package org.roboquant.oanda
+package org.roboquant.binance
 
-import org.roboquant.alpaca.AlpacaBroker
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
+import org.roboquant.common.Timeframe
+import org.roboquant.common.days
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class OANDABrokerTest {
-
+internal class BinanceHistoricFeedTestIT {
 
     @Test
     fun test() {
-        System.getenv("TEST_OANDA") ?: return
-        val broker = AlpacaBroker()
-        val account = broker.account
-        account.fullSummary()
-        assertTrue(account.buyingPower > 0)
+        System.getProperty("TEST_BINANCE") ?: return
+        val feed = BinanceHistoricFeed()
+        assertTrue(feed.availableAssets.isNotEmpty())
+
+        assertContains(feed.availableAssets, "BTCBUSD")
+        val tf = Timeframe.past(100.days)
+        feed.retrieve("BTCBUSD", timeframe = tf)
+        assertEquals(1, feed.assets.size)
     }
+
 }

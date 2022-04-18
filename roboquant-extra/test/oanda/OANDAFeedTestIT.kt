@@ -26,7 +26,7 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class OANDAFeedTest {
+internal class OANDAFeedTestIT {
 
     private val liveTestTime = 30.seconds
     private val symbols = arrayListOf("EUR_USD", "USD_JPY", "GBP_USD").toTypedArray()

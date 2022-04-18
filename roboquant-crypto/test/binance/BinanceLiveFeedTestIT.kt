@@ -41,10 +41,11 @@ internal class BinanceLiveFeedTestIT {
         feed.subscribePriceBar("BTCBUSD")
         assertFalse(feed.assets.isEmpty())
 
-        val timeframe = Timeframe.next(5.minutes)
+        val timeframe = Timeframe.next(10.minutes)
         val prices = feed.filter<PriceBar>(timeframe = timeframe)
         feed.close()
 
+        println(prices.size)
         assertTrue(prices.isNotEmpty())
         assertEquals("BTCBUSD", prices.first().second.asset.symbol)
     }

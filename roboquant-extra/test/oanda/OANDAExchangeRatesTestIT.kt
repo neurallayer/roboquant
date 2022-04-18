@@ -26,7 +26,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class OANDAExchangeRatesTest {
+internal class OANDAExchangeRatesTestIT {
 
     @Test
     fun test() {

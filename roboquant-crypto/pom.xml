@@ -72,10 +72,9 @@
         </dependency>
 
         <dependency>
-            <!-- Doesn't publish their patched lib on Maven so we published our own version. -->
             <groupId>org.roboquant</groupId>
             <artifactId>binance-api-client</artifactId>
-            <version>1.0.1-SNAPSHOT</version>
+            <version>1.0.1</version>
         </dependency>
 
         <dependency>
