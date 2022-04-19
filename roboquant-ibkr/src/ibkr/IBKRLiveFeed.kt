@@ -16,6 +16,7 @@
 
 package org.roboquant.ibkr
 
+import com.ib.client.Decimal
 import com.ib.client.EClientSocket
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
@@ -86,34 +87,19 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
             high: Double,
             low: Double,
             close: Double,
-            volume: Long,
-            wap: Double,
+            volume: Decimal,
+            wap: Decimal,
             count: Int
         ) {
             val asset = subscriptions[reqId]
             if (asset == null) {
                 logger.warning("unexpected realtimeBar received with request id $reqId")
             } else {
-                val action = PriceBar(asset, open, high, low, close, volume.toDouble())
+                val action = PriceBar(asset, open, high, low, close, volume.value().toDouble())
                 val now = Instant.ofEpochSecond(time) // IBKR uses seconds resolution
                 val event = Event(listOf(action), now)
                 channel?.offer(event)
             }
-        }
-
-        override fun error(var1: Exception) {
-            logger.severe("Received exception", var1)
-        }
-
-        override fun error(var1: String?) {
-            logger.warning { "$var1" }
-        }
-
-        override fun error(var1: Int, var2: Int, var3: String?) {
-            if (var1 == -1)
-                logger.fine { "$var1 $var2 $var3" }
-            else
-                logger.warning { "$var1 $var2 $var3" }
         }
 
     }

@@ -62,7 +62,7 @@
             <!-- needs to be locally installed since not allowed to re-distribute-->
             <groupId>com.interactivebrokers</groupId>
             <artifactId>tws-api</artifactId>
-            <version>9.76</version>
+            <version>10.15</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>

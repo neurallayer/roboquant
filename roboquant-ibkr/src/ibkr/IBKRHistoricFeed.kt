@@ -88,7 +88,7 @@ class IBKRHistoricFeed(
         override fun historicalData(reqId: Int, bar: Bar) {
             val asset = subscriptions[reqId]!!
             val action = PriceBar(
-                asset, bar.open(), bar.high(), bar.low(), bar.close(), bar.volume().toDouble()
+                asset, bar.open(), bar.high(), bar.low(), bar.close(), bar.volume().value().toDouble()
             )
             val parser = AutoDetectTimeParser(asset.exchangeCode)
             val time = parser.parse(bar.time())

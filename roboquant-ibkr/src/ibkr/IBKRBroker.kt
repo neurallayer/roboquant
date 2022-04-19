@@ -114,7 +114,7 @@ class IBKRBroker(
             logger.fine("received order $cancellation")
             val id = cancellation.id
             val ibID = orderMap.filter { it.value == id }.keys.first()
-            client.cancelOrder(ibID)
+            client.cancelOrder(ibID, cancellation.tag)
         }
 
         // And now the regular new orders
@@ -153,7 +153,7 @@ class IBKRBroker(
 
         val action = if (order.quantity > 0) "BUY" else "SELL"
         result.action(action)
-        result.totalQuantity(order.quantity.absoluteValue)
+        result.totalQuantity(Decimal.get(order.quantity.absoluteValue))
         if (accountId != null) result.account(accountId)
 
         orderMap[orderId] = order.id
@@ -172,8 +172,8 @@ class IBKRBroker(
          */
         private fun toOrder(order: IBOrder, contract: Contract): Order {
             val asset = contract.getAsset()
-            val qty = if (order.action == "BUY") order.totalQuantity() else -order.totalQuantity()
-            return MarketOrder(asset, qty)
+            val qty = if (order.action == "BUY") order.totalQuantity() else order.totalQuantity().negate()
+            return MarketOrder(asset, qty.value().toDouble())
         }
 
         private fun toStatus(status: String): OrderStatus {
@@ -215,9 +215,10 @@ class IBKRBroker(
             }
         }
 
+
         override fun orderStatus(
-            orderId: Int, status: String?, filled: Double,
-            remaining: Double, avgFillPrice: Double, permId: Int, parentId: Int,
+            orderId: Int, status: String?, filled: Decimal,
+            remaining: Decimal, avgFillPrice: Double, permId: Int, parentId: Int,
             lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
         ) {
             logger.fine { "oderId: $orderId status: $status filled: $filled" }
@@ -266,7 +267,7 @@ class IBKRBroker(
             val trade = Trade(
                 Instant.now(),
                 contract.getAsset(),
-                execution.cumQty() * direction,
+                execution.cumQty().value().toDouble() * direction,
                 execution.avgPrice(),
                 Double.NaN,
                 Double.NaN,
@@ -302,7 +303,7 @@ class IBKRBroker(
 
         override fun updatePortfolio(
             contract: Contract,
-            position: Double,
+            position: Decimal,
             marketPrice: Double,
             marketValue: Double,
             averageCost: Double,
@@ -313,7 +314,7 @@ class IBKRBroker(
             logger.fine { "asset: ${contract.symbol()} position: $position price: $marketPrice cost: $averageCost" }
             logger.finer { "$contract $position $marketPrice $averageCost" }
             val asset = contract.getAsset()
-            val p = Position(asset, position, averageCost, marketPrice, Instant.now())
+            val p = Position(asset, position.value().toDouble(), averageCost, marketPrice, Instant.now())
             _account.setPosition(p)
         }
 

@@ -49,13 +49,13 @@ Next to `roboquant`, the following additional modules are available for inclusio
 * *roboquant-extra* Adds out-of-the-box integrations with 3rd party brokers and data providers.
 * *roboquant-ta* Adds support for technical analysis indicators and strategies
 * *roboquant-ibkr* Adds support for Interactive Brokers
+* *roboquant-jupyter* Adds support for running roboquant inside Jupyter Notebooks
 
 == Interactive Brokers
-
+Unfortuatly we are not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file and install it in your local Maven repository
 [source, shell]
-Download the TwsApi.jar file and install it in the local Maven repository
 ----
-mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=9.76 -Dpackaging=jar
+mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.15 -Dpackaging=jar
 ----
 
 == Building from source

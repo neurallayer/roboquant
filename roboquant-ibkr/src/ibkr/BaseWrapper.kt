@@ -24,11 +24,11 @@ open class BaseWrapper(private val logger: Logger) : DefaultEWrapper() {
         logger.warning { "$var1" }
     }
 
-    override fun error(var1: Int, var2: Int, var3: String?) {
+    override fun error(var1: Int, var2: Int, var3: String?, var4:String?) {
         if (var1 == -1)
-            logger.fine { "$var1 $var2 $var3" }
+            logger.fine { "$var1 $var2 $var3 $var4" }
         else
-            logger.warning { "$var1 $var2 $var3" }
+            logger.warning { "$var1 $var2 $var3 $var4" }
     }
 
     override fun currentTime(time: Long) {
