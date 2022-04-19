@@ -23,7 +23,7 @@ Or try some same notebooks right now image:https://mybinder.org/badge_logo.svg[B
 
 == Standalone Application
 
-Just add _roboquant-core_ as a dependency to your build tool, like Maven or Gradle.
+Just add `roboquant` as a dependency to your build tool, like Maven or Gradle.
 
 *Maven*
 
@@ -31,7 +31,7 @@ Just add _roboquant-core_ as a dependency to your build tool, like Maven or Grad
 ----
 <dependency>
     <groupId>org.roboquant</groupId>
-    <artifactId>roboquant-core</artifactId>
+    <artifactId>roboquant</artifactId>
     <version>VERSION</version>
 </dependency>
 ----
@@ -40,10 +40,10 @@ Just add _roboquant-core_ as a dependency to your build tool, like Maven or Grad
 
 [source,shell]
 ----
-implementation group: 'org.roboquant', name: 'roboquant-core', version: 'VERSION'
+implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'
 ----
 
-Next to roboquant-core, the following additional modules are available for inclusion in your application:
+Next to `roboquant`, the following additional modules are available for inclusion in your application:
 
 * *roboquant-crypto* Adds support for many of today's most popular crypto exchanges
 * *roboquant-extra* Adds out-of-the-box integrations with 3rd party brokers and data providers.

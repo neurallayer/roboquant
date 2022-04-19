@@ -3,6 +3,7 @@
 package org.roboquant.ta
 
 import com.tictactec.ta.lib.*
+import org.roboquant.common.DoesNotComputeException
 import org.roboquant.strategies.utils.PriceBarSeries
 
 /**
@@ -24,7 +25,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.acos(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.acosLookback() + previous
@@ -52,7 +53,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.ad(endIdx, endIdx, high, low, close, volume, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.adLookback() + previous
@@ -81,7 +82,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.add(endIdx, endIdx, data0, data1, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.addLookback() + previous
@@ -123,7 +124,7 @@ class TA(var core: Core = Core()) {
             endOutput,
             output1
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.adOscLookback(fastPeriod, slowPeriod) + previous
@@ -152,7 +153,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.adx(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.adxLookback(timePeriod) + previous
@@ -181,7 +182,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.adxr(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.adxrLookback(timePeriod) + previous
@@ -216,7 +217,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.apo(endIdx, endIdx, data, fastPeriod, slowPeriod, mAType, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.apoLookback(fastPeriod, slowPeriod, mAType) + previous
@@ -251,7 +252,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.aroon(endIdx, endIdx, high, low, timePeriod, startOutput, endOutput, output1, output2)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.aroonLookback(timePeriod) + previous
@@ -280,7 +281,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.aroonOsc(endIdx, endIdx, high, low, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.aroonOscLookback(timePeriod) + previous
@@ -309,7 +310,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.asin(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.asinLookback() + previous
@@ -337,7 +338,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.atan(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.atanLookback() + previous
@@ -365,7 +366,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.atr(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.atrLookback(timePeriod) + previous
@@ -400,7 +401,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.avgPrice(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.avgPriceLookback() + previous
@@ -451,7 +452,7 @@ class TA(var core: Core = Core()) {
             output2,
             output3
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.bbandsLookback(timePeriod, deviationsup, deviationsdown, mAType) + previous
@@ -486,7 +487,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.beta(endIdx, endIdx, data0, data1, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.betaLookback(timePeriod) + previous
@@ -508,7 +509,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.bop(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.bopLookback() + previous
@@ -537,7 +538,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cci(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cciLookback(timePeriod) + previous
@@ -572,7 +573,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdl2Crows(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl2CrowsLookback() + previous
@@ -607,7 +608,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdl3BlackCrows(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3BlackCrowsLookback() + previous
@@ -642,7 +643,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdl3Inside(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3InsideLookback() + previous
@@ -677,7 +678,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdl3LineStrike(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3LineStrikeLookback() + previous
@@ -712,7 +713,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdl3Outside(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3OutsideLookback() + previous
@@ -747,7 +748,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdl3StarsInSouth(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3StarsInSouthLookback() + previous
@@ -782,7 +783,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdl3WhiteSoldiers(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3WhiteSoldiersLookback() + previous
@@ -819,7 +820,7 @@ class TA(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret =
             core.cdlAbandonedBaby(endIdx, endIdx, open, high, low, close, penetration, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlAbandonedBabyLookback(penetration) + previous
@@ -854,7 +855,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlAdvanceBlock(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlAdvanceBlockLookback() + previous
@@ -889,7 +890,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlBeltHold(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlBeltHoldLookback() + previous
@@ -924,7 +925,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlBreakaway(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlBreakawayLookback() + previous
@@ -959,7 +960,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlClosingMarubozu(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlClosingMarubozuLookback() + previous
@@ -994,7 +995,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlConcealBabysWall(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlConcealBabysWallLookback() + previous
@@ -1029,7 +1030,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlCounterAttack(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlCounterAttackLookback() + previous
@@ -1066,7 +1067,7 @@ class TA(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret =
             core.cdlDarkCloudCover(endIdx, endIdx, open, high, low, close, penetration, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlDarkCloudCoverLookback(penetration) + previous
@@ -1101,7 +1102,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlDoji(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlDojiLookback() + previous
@@ -1136,7 +1137,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlDojiStar(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlDojiStarLookback() + previous
@@ -1171,7 +1172,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlDragonflyDoji(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlDragonflyDojiLookback() + previous
@@ -1206,7 +1207,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlEngulfing(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlEngulfingLookback() + previous
@@ -1253,7 +1254,7 @@ class TA(var core: Core = Core()) {
             endOutput,
             output1
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlEveningDojiStarLookback(penetration) + previous
@@ -1290,7 +1291,7 @@ class TA(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret =
             core.cdlEveningStar(endIdx, endIdx, open, high, low, close, penetration, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlEveningStarLookback(penetration) + previous
@@ -1325,7 +1326,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlGapSideSideWhite(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlGapSideSideWhiteLookback() + previous
@@ -1360,7 +1361,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlGravestoneDoji(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlGravestoneDojiLookback() + previous
@@ -1395,7 +1396,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlHammer(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHammerLookback() + previous
@@ -1430,7 +1431,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlHangingMan(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHangingManLookback() + previous
@@ -1465,7 +1466,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlHarami(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHaramiLookback() + previous
@@ -1500,7 +1501,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlHaramiCross(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHaramiCrossLookback() + previous
@@ -1535,7 +1536,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlHignWave(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHignWaveLookback() + previous
@@ -1570,7 +1571,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlHikkake(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHikkakeLookback() + previous
@@ -1605,7 +1606,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlHikkakeMod(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHikkakeModLookback() + previous
@@ -1640,7 +1641,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlHomingPigeon(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHomingPigeonLookback() + previous
@@ -1675,7 +1676,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlIdentical3Crows(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlIdentical3CrowsLookback() + previous
@@ -1710,7 +1711,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlInNeck(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlInNeckLookback() + previous
@@ -1745,7 +1746,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlInvertedHammer(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlInvertedHammerLookback() + previous
@@ -1780,7 +1781,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlKicking(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlKickingLookback() + previous
@@ -1815,7 +1816,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlKickingByLength(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlKickingByLengthLookback() + previous
@@ -1850,7 +1851,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlLadderBottom(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlLadderBottomLookback() + previous
@@ -1885,7 +1886,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlLongLeggedDoji(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlLongLeggedDojiLookback() + previous
@@ -1920,7 +1921,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlLongLine(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlLongLineLookback() + previous
@@ -1955,7 +1956,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlMarubozu(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlMarubozuLookback() + previous
@@ -1990,7 +1991,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlMatchingLow(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlMatchingLowLookback() + previous
@@ -2026,7 +2027,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlMatHold(endIdx, endIdx, open, high, low, close, penetration, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlMatHoldLookback(penetration) + previous
@@ -2073,7 +2074,7 @@ class TA(var core: Core = Core()) {
             endOutput,
             output1
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlMorningDojiStarLookback(penetration) + previous
@@ -2110,7 +2111,7 @@ class TA(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret =
             core.cdlMorningStar(endIdx, endIdx, open, high, low, close, penetration, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlMorningStarLookback(penetration) + previous
@@ -2145,7 +2146,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlOnNeck(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlOnNeckLookback() + previous
@@ -2180,7 +2181,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlPiercing(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlPiercingLookback() + previous
@@ -2215,7 +2216,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlRickshawMan(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlRickshawManLookback() + previous
@@ -2250,7 +2251,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlRiseFall3Methods(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlRiseFall3MethodsLookback() + previous
@@ -2285,7 +2286,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlSeperatingLines(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlSeperatingLinesLookback() + previous
@@ -2320,7 +2321,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlShootingStar(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlShootingStarLookback() + previous
@@ -2355,7 +2356,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlShortLine(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlShortLineLookback() + previous
@@ -2390,7 +2391,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlSpinningTop(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlSpinningTopLookback() + previous
@@ -2425,7 +2426,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlStalledPattern(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlStalledPatternLookback() + previous
@@ -2460,7 +2461,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlStickSandwhich(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlStickSandwhichLookback() + previous
@@ -2495,7 +2496,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlTakuri(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlTakuriLookback() + previous
@@ -2530,7 +2531,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlTasukiGap(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlTasukiGapLookback() + previous
@@ -2565,7 +2566,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlThrusting(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlThrustingLookback() + previous
@@ -2600,7 +2601,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlTristar(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlTristarLookback() + previous
@@ -2635,7 +2636,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlUnique3River(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlUnique3RiverLookback() + previous
@@ -2670,7 +2671,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlUpsideGap2Crows(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlUpsideGap2CrowsLookback() + previous
@@ -2705,7 +2706,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cdlXSideGap3Methods(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlXSideGap3MethodsLookback() + previous
@@ -2734,7 +2735,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.ceil(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.ceilLookback() + previous
@@ -2762,7 +2763,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cmo(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cmoLookback(timePeriod) + previous
@@ -2790,7 +2791,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.correl(endIdx, endIdx, data0, data1, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.correlLookback(timePeriod) + previous
@@ -2812,7 +2813,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cos(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cosLookback() + previous
@@ -2840,7 +2841,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.cosh(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.coshLookback() + previous
@@ -2868,7 +2869,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.dema(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.demaLookback(timePeriod) + previous
@@ -2896,7 +2897,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.div(endIdx, endIdx, data0, data1, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.divLookback() + previous
@@ -2918,7 +2919,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.dx(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.dxLookback(timePeriod) + previous
@@ -2947,7 +2948,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.ema(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.emaLookback(timePeriod) + previous
@@ -2975,7 +2976,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.exp(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.expLookback() + previous
@@ -3003,7 +3004,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.floor(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.floorLookback() + previous
@@ -3031,7 +3032,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.htDcPeriod(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htDcPeriodLookback() + previous
@@ -3059,7 +3060,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.htDcPhase(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htDcPhaseLookback() + previous
@@ -3088,7 +3089,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.htPhasor(endIdx, endIdx, data, startOutput, endOutput, output1, output2)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htPhasorLookback() + previous
@@ -3117,7 +3118,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.htSine(endIdx, endIdx, data, startOutput, endOutput, output1, output2)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htSineLookback() + previous
@@ -3145,7 +3146,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.htTrendline(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htTrendlineLookback() + previous
@@ -3173,7 +3174,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.htTrendMode(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htTrendModeLookback() + previous
@@ -3201,7 +3202,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.kama(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.kamaLookback(timePeriod) + previous
@@ -3229,7 +3230,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.linearReg(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.linearRegLookback(timePeriod) + previous
@@ -3258,7 +3259,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.linearRegAngle(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.linearRegAngleLookback(timePeriod) + previous
@@ -3287,7 +3288,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.linearRegIntercept(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.linearRegInterceptLookback(timePeriod) + previous
@@ -3316,7 +3317,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.linearRegSlope(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.linearRegSlopeLookback(timePeriod) + previous
@@ -3345,7 +3346,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.ln(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.lnLookback() + previous
@@ -3373,7 +3374,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.log10(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.log10Lookback() + previous
@@ -3401,7 +3402,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.movingAverage(endIdx, endIdx, data, timePeriod, mAType, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.movingAverageLookback(timePeriod, mAType) + previous
@@ -3450,7 +3451,7 @@ class TA(var core: Core = Core()) {
             output2,
             output3
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.macdLookback(fastPeriod, slowPeriod, signalPeriod) + previous
@@ -3510,7 +3511,7 @@ class TA(var core: Core = Core()) {
             output2,
             output3
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback =
@@ -3550,7 +3551,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.macdFix(endIdx, endIdx, data, signalPeriod, startOutput, endOutput, output1, output2, output3)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.macdFixLookback(signalPeriod) + previous
@@ -3585,7 +3586,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.mama(endIdx, endIdx, data, fastLimit, slowLimit, startOutput, endOutput, output1, output2)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.mamaLookback(fastLimit, slowLimit) + previous
@@ -3636,7 +3637,7 @@ class TA(var core: Core = Core()) {
             endOutput,
             output1
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.movingAverageVariablePeriodLookback(minimumPeriod, maximumPeriod, mAType) + previous
@@ -3658,7 +3659,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.max(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.maxLookback(timePeriod) + previous
@@ -3686,7 +3687,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.maxIndex(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.maxIndexLookback(timePeriod) + previous
@@ -3715,7 +3716,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.medPrice(endIdx, endIdx, high, low, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.medPriceLookback() + previous
@@ -3750,7 +3751,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.mfi(endIdx, endIdx, high, low, close, volume, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.mfiLookback(timePeriod) + previous
@@ -3779,7 +3780,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.midPoint(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.midPointLookback(timePeriod) + previous
@@ -3808,7 +3809,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.midPrice(endIdx, endIdx, high, low, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.midPriceLookback(timePeriod) + previous
@@ -3837,7 +3838,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.min(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minLookback(timePeriod) + previous
@@ -3865,7 +3866,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.minIndex(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minIndexLookback(timePeriod) + previous
@@ -3895,7 +3896,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.minMax(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1, output2)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minMaxLookback(timePeriod) + previous
@@ -3925,7 +3926,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.minMaxIndex(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1, output2)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minMaxIndexLookback(timePeriod) + previous
@@ -3960,7 +3961,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.minusDI(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minusDILookback(timePeriod) + previous
@@ -3989,7 +3990,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.minusDM(endIdx, endIdx, high, low, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minusDMLookback(timePeriod) + previous
@@ -4018,7 +4019,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.mom(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.momLookback(timePeriod) + previous
@@ -4046,7 +4047,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.mult(endIdx, endIdx, data0, data1, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.multLookback() + previous
@@ -4068,7 +4069,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.natr(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.natrLookback(timePeriod) + previous
@@ -4097,7 +4098,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.obv(endIdx, endIdx, data, volume, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.obvLookback() + previous
@@ -4125,7 +4126,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.plusDI(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.plusDILookback(timePeriod) + previous
@@ -4154,7 +4155,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.plusDM(endIdx, endIdx, high, low, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.plusDMLookback(timePeriod) + previous
@@ -4189,7 +4190,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.ppo(endIdx, endIdx, data, fastPeriod, slowPeriod, mAType, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.ppoLookback(fastPeriod, slowPeriod, mAType) + previous
@@ -4223,7 +4224,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.roc(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.rocLookback(timePeriod) + previous
@@ -4251,7 +4252,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.rocP(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.rocPLookback(timePeriod) + previous
@@ -4279,7 +4280,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.rocR(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.rocRLookback(timePeriod) + previous
@@ -4307,7 +4308,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.rocR100(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.rocR100Lookback(timePeriod) + previous
@@ -4336,7 +4337,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.rsi(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.rsiLookback(timePeriod) + previous
@@ -4370,7 +4371,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.sar(endIdx, endIdx, high, low, accelerationFactor, aFMaximum, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.sarLookback(accelerationFactor, aFMaximum) + previous
@@ -4431,7 +4432,7 @@ class TA(var core: Core = Core()) {
             endOutput,
             output1
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.sarExtLookback(
@@ -4491,7 +4492,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.sin(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.sinLookback() + previous
@@ -4519,7 +4520,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.sinh(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.sinhLookback() + previous
@@ -4547,7 +4548,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.sma(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.smaLookback(timePeriod) + previous
@@ -4575,7 +4576,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.sqrt(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.sqrtLookback() + previous
@@ -4603,7 +4604,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.stdDev(endIdx, endIdx, data, timePeriod, deviations, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.stdDevLookback(timePeriod, deviations) + previous
@@ -4658,7 +4659,7 @@ class TA(var core: Core = Core()) {
             output1,
             output2
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.stochLookback(fastKPeriod, slowKPeriod, slowKMA, slowDPeriod, slowDMA) + previous
@@ -4716,7 +4717,7 @@ class TA(var core: Core = Core()) {
             output1,
             output2
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.stochFLookback(fastKPeriod, fastDPeriod, fastDMA) + previous
@@ -4770,7 +4771,7 @@ class TA(var core: Core = Core()) {
             output1,
             output2
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.stochRsiLookback(timePeriod, fastKPeriod, fastDPeriod, fastDMA) + previous
@@ -4805,7 +4806,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.sub(endIdx, endIdx, data0, data1, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.subLookback() + previous
@@ -4827,7 +4828,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.sum(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.sumLookback(timePeriod) + previous
@@ -4855,7 +4856,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.t3(endIdx, endIdx, data, timePeriod, volumeFactor, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.t3Lookback(timePeriod, volumeFactor) + previous
@@ -4884,7 +4885,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.tan(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.tanLookback() + previous
@@ -4912,7 +4913,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.tanh(endIdx, endIdx, data, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.tanhLookback() + previous
@@ -4940,7 +4941,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.tema(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.temaLookback(timePeriod) + previous
@@ -4968,7 +4969,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.trueRange(endIdx, endIdx, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.trueRangeLookback() + previous
@@ -4997,7 +4998,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.trima(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.trimaLookback(timePeriod) + previous
@@ -5026,7 +5027,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.trix(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.trixLookback(timePeriod) + previous
@@ -5054,7 +5055,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.tsf(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.tsfLookback(timePeriod) + previous
@@ -5082,7 +5083,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.typPrice(endIdx, endIdx, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.typPriceLookback() + previous
@@ -5130,7 +5131,7 @@ class TA(var core: Core = Core()) {
             endOutput,
             output1
         )
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.ultOscLookback(firstPeriod, secondPeriod, thirdPeriod) + previous
@@ -5164,7 +5165,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.variance(endIdx, endIdx, data, timePeriod, deviations, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.varianceLookback(timePeriod, deviations) + previous
@@ -5193,7 +5194,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.wclPrice(endIdx, endIdx, high, low, close, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.wclPriceLookback() + previous
@@ -5227,7 +5228,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.willR(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.willRLookback(timePeriod) + previous
@@ -5256,7 +5257,7 @@ class TA(var core: Core = Core()) {
         val startOutput = MInteger()
         val endOutput = MInteger()
         val ret = core.wma(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
-        if (ret != RetCode.Success) throw Exception(ret.toString())
+        if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.wmaLookback(timePeriod) + previous

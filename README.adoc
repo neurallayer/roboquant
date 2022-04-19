@@ -36,14 +36,14 @@ roboquant.run(feed) // <5>
 
 == Installation
 === Library
-Just add `roboquant-core` or any of the other modules as a dependency to your build tool, like Maven or Gradle. See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant.
+Just add `roboquant` or any of the other modules as a dependency to your build tool, like Maven or Gradle. See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant.
 
 *Maven*
 [source,xml]
 ----
 <dependency>
     <groupId>org.roboquant</groupId>
-    <artifactId>roboquant-core</artifactId>
+    <artifactId>roboquant</artifactId>
     <version>VERSION</version>
 </dependency>
 ----
@@ -51,7 +51,7 @@ Just add `roboquant-core` or any of the other modules as a dependency to your bu
 *Gradle*
 [source,groovy]
 ----
-implementation group: 'org.roboquant', name: 'roboquant-core', version: 'VERSION'
+implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'
 ----
 
 === Jupyter Notebooks

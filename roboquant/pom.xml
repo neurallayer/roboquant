@@ -20,16 +20,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>roboquant</artifactId>
+        <artifactId>roboquant-parent</artifactId>
         <groupId>org.roboquant</groupId>
         <version>0.9.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>roboquant-core</artifactId>
+    <artifactId>roboquant</artifactId>
     <packaging>jar</packaging>
-    <name>roboquant core</name>
+    <name>roboquant</name>
     <url>https://roboquant.org</url>
-    <description>Core components for roboquant algorithmic trading platform</description>
+    <description>Algorithmic trading platform written in Kotlin</description>
 
     <build>
         <plugins>

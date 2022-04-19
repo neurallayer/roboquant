@@ -3,6 +3,7 @@ package generator
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import org.roboquant.common.ConfigurationException
 import java.io.File
 
 operator fun StringBuffer.plusAssign(str: Any) {
@@ -261,6 +262,7 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
         
         import com.tictactec.ta.lib.*
         import org.roboquant.strategies.utils.PriceBarSeries
+        import org.roboquant.common.DoesNotComputeException
         
         /**
          * TA wraps the excellent TALib library and makes it easy to use any of indicators provided by that library. 
@@ -282,7 +284,7 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
                 "Integer Array" -> "val output$cnt = IntArray(1)\n"
                 "Double Array" -> "val output$cnt = DoubleArray(1)\n"
                 else -> {
-                    throw Exception("unexpected output type $type")
+                    throw ConfigurationException("unexpected output type $type")
                 }
             }
             cnt++
@@ -315,7 +317,7 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
             2 -> "Pair(output1[0], output2[0])"
             3 -> "Triple(output1[0], output2[0], output3[0])"
             else -> {
-                throw Exception("unexpected return size")
+                throw ConfigurationException("unexpected return size")
             }
         }
     }
@@ -331,7 +333,7 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
             2 -> "Pair<$type, $type>"
             3 -> "Triple<$type, $type, $type>"
             else -> {
-                throw Exception("unexpected return size")
+                throw ConfigurationException("unexpected return size")
             }
         }
     }
@@ -358,7 +360,7 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
             val startOutput = MInteger()
             val endOutput = MInteger()
             val ret = core.$fnName(endIdx, endIdx, $inputParams, $optional startOutput, endOutput, ${getOutputNames()})
-            if (ret != RetCode.Success) throw Exception(ret.toString())
+            if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
             val last = endOutput.value - 1
             if (last < 0) {
                 val lookback = core.${callLookback()} + previous
