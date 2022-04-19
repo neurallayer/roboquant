@@ -160,7 +160,7 @@ class BinanceBroker(
      * @param order
      */
     private fun trade(symbol: String, order: LimitOrder): NewOrderResponse {
-        val amount = order.size.absoluteValue.toBigInteger().toString()
+        val amount = order.size.absoluteValue.toString()
         val price = order.limit.toString()
         val newOrder = if (order.buy)
             client.newOrder(limitBuy(symbol, TimeInForce.GTC, amount, price))
@@ -177,7 +177,7 @@ class BinanceBroker(
      * @param order
      */
     private fun trade(symbol: String, order: MarketOrder): NewOrderResponse {
-        val amount = order.size.absoluteValue.toBigInteger().toString()
+        val amount = order.size.absoluteValue.toString()
         val newOrder = if (order.buy)
             client.newOrder(marketBuy(symbol, amount))
         else

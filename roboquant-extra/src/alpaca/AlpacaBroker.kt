@@ -26,7 +26,6 @@ import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
-import kotlin.math.absoluteValue
 import net.jacobpeterson.alpaca.model.endpoint.orders.Order as AlpacaOrder
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderStatus as AlpacaOrderStatus
 import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosition
@@ -205,7 +204,7 @@ class AlpacaBroker(
         }
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
-        val qty = order.size.toInt().absoluteValue
+        val qty = order.size.toBigDecimal().abs().toInt()
 
         val alpacaOrder = when (order) {
             is MarketOrder -> alpacaAPI.orders().requestMarketOrder(asset.symbol, qty, side, tif)

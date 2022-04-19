@@ -24,7 +24,7 @@ import org.roboquant.feeds.Event
  * Captures metrics for all open positions within the portfolio, so you can see how these progresses over the
  * duration of the run. For each open position it will recond
  *
- * - quantity
+ * - size
  * - value
  * - cost
  * - unrealized P&L
@@ -38,7 +38,7 @@ class OpenPositions : SimpleMetric() {
         for (position in account.positions) {
             val asset = position.asset
             val name = "position.${asset.symbol}"
-            result["$name.quantity"] = position.size
+            result["$name.size"] = position.size.toDouble()
             result["$name.value"] = position.marketValue.value
             result["$name.cost"] = position.totalCost.value
             result["$name.pnl"] = position.unrealizedPNL.value

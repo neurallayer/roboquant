@@ -127,7 +127,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
      * @param orderId
      */
     private fun trade(currencyPair: CurrencyPair, order: LimitOrder, orderId: String) {
-        val amount = order.size.absoluteValue
+        val amount = order.size.absoluteValue.toBigDecimal()
         val orderType = if (order.buy) CryptoOrder.OrderType.BID else CryptoOrder.OrderType.ASK
         val limitPrice = BigDecimal(order.limit)
         val limitOrder = CryptoLimitOrder(orderType, amount, currencyPair, orderId, null, limitPrice)
@@ -142,7 +142,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
      * @param order
      */
     private fun trade(currencyPair: CurrencyPair, order: MarketOrder) {
-        val amount = order.size.absoluteValue
+        val amount = order.size.absoluteValue.toBigDecimal()
         val orderType = if (order.buy) CryptoOrder.OrderType.BID else CryptoOrder.OrderType.ASK
         val marketOrder = CryptoMarketOrder(orderType, amount, currencyPair)
         val returnValue = tradeService.placeMarketOrder(marketOrder)

@@ -151,7 +151,7 @@ class IBKRBroker(
 
         val action = if (order.size > 0) "BUY" else "SELL"
         result.action(action)
-        result.totalQuantity(Decimal.get(order.size.absoluteValue))
+        result.totalQuantity(Decimal.get(order.size.toBigDecimal().abs()))
         if (accountId != null) result.account(accountId)
 
         orderMap[orderId] = order.id

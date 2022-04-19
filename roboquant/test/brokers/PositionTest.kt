@@ -25,14 +25,11 @@ import kotlin.random.Random
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-
-
 internal class PositionTest {
 
-
     private fun getRandomSize(): BigDecimal {
-        val l = Random.nextLong(9_999_999_999)
-        return BigDecimal("0.$l")
+        val l = Random.nextLong(9_999_999)
+        return BigDecimal("10.$l")
     }
 
     @Test
@@ -54,12 +51,14 @@ internal class PositionTest {
         for (i in 1..10) {
             val size1 = getRandomSize()
             val size2 = getRandomSize()
-            val totalSize = size1 + size2
+            val totalSize = Size(size1 + size2)
 
+            // println("$size2 ${Size(size2)}")
             val p1 = Position(contract, Size(size1), 10.0, 12.0)
             val p2 = Position(contract, Size(size2), 12.0, 12.0)
             val newPos = p1 + p2
-            assertEquals(Size(totalSize), newPos.size)
+            // assertTrue(totalSize == newPos.size)
+            assertEquals(totalSize, newPos.size)
         }
     }
 
