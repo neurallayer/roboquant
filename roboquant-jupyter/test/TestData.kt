@@ -20,6 +20,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.brokers.InternalAccount
 import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
+import org.roboquant.common.ConfigurationException
 import org.roboquant.common.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.HistoricFeed
@@ -62,7 +63,7 @@ object TestData {
             return "./data/"
         else if (File("../data").isDirectory)
             return "../data/"
-        throw Exception("cannot find data directory for testing")
+        throw ConfigurationException("cannot find data directory for testing")
     }
 
 

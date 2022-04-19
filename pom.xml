@@ -24,10 +24,11 @@
     <groupId>org.roboquant</groupId>
     <version>0.9.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-
     <name>roboquant</name>
-    <url>https://roboquant.org</url>
     <description>Algorithmic trading platform written in Kotlin</description>
+
+    <!-- start extra info -->
+    <url>https://roboquant.org</url>
 
     <licenses>
         <license>
@@ -36,6 +37,19 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <developers>
+        <developer>
+            <name>roboquant team</name>
+            <organization>roboquant</organization>
+            <url>https://www.roboquant.org</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/neurallayer/roboquant</url>
+    </scm>
+    <!-- end extra info -->
 
     <modules>
         <module>roboquant-core</module>
@@ -70,24 +84,10 @@
     </repositories>
 
     <distributionManagement>
-        <!-- snapshotRepository>
-            <id>roboquant.repo</id>
-            <name>roboquant repository</name>
-            <url>https://roboquant.jfrog.io/artifactory/roboquant/</url>
-        </snapshotRepository -->
         <snapshotRepository>
             <id>ossrh</id>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
-        <!-- repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository -->
-        <!-- snapshotRepository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/neurallayer/roboquant</url>
-        </snapshotRepository -->
     </distributionManagement>
 
     <profiles>
@@ -279,62 +279,19 @@
                 </executions>
             </plugin>
 
-
-            <!-- plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.3.2</version>
-                <configuration>
-                    <excludePackageNames>org.roboquant.*</excludePackageNames>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin -->
-
-
-            <!-- Kotlin documentation plugin -->
-            <!-- plugin>
-                <groupId>org.jetbrains.dokka</groupId>
-                <artifactId>dokka-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>dokka</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <includes>
-                        <include>docs/roboquant-core.md</include>
-                    </includes>
-                    <suppressObviousFunctions>true</suppressObviousFunctions>
-                    <reportUndocumented>true</reportUndocumented>
-                    <suppressInheritedMembers>true</suppressInheritedMembers>
-                    <samples>
-                        <dir>${basedir}/test/samples</dir>
-                    </samples>
-                </configuration>
-            </plugin -->
-
         </plugins>
     </build>
 
     <dependencyManagement>
         <dependencies>
 
-            <!-- Force higer version due to vulnerabilities -->
+            <!-- Force versions due to known vulnerabilities -->
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.13.2.2</version>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.12.5</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
 
             <dependency>

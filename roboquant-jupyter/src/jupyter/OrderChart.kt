@@ -16,6 +16,7 @@
 
 package org.roboquant.jupyter
 
+import org.roboquant.common.UnsupportedException
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import org.roboquant.orders.SingleOrder
@@ -37,7 +38,7 @@ class OrderChart(
     private var max = Double.MIN_VALUE.toBigDecimal()
 
     init {
-        require(aspect in listOf("remaining", "direction", "quantity", "value"))
+        require(aspect in listOf("direction", "quantity"))
     }
 
     private fun getTooltip(order: SingleOrder, openedAt: Instant): String {
@@ -54,11 +55,9 @@ class OrderChart(
             val order = state.order
             if (order is SingleOrder) {
                 val value = when (aspect) {
-                    // "remaining" -> remaining.toBigDecimal()
                     "direction" -> order.direction.toBigDecimal()
                     "quantity" -> order.quantity.toBigDecimal()
-                    // "value" -> order.value().convert(time = order.placed).toBigDecimal()
-                    else -> throw Exception("Unsupported aspect")
+                    else -> throw UnsupportedException("Unsupported aspect $aspect")
                 }
 
                 if (value.abs() > max) max = value.abs()

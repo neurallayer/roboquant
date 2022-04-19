@@ -29,7 +29,7 @@
 
     <name>roboquant extra</name>
     <url>https://roboquant.org</url>
-    <description>3rd party integration with brokers and market data providers for the roboquant algorithmic trading platform</description>
+    <description>3rd party integration with brokers and market data providers for roboquant</description>
 
     <build>
         <plugins>

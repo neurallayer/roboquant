@@ -20,6 +20,7 @@ import com.ib.client.*
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
+import org.roboquant.common.UnsupportedException
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -91,7 +92,7 @@ internal object IBKRConnection {
             AssetType.STOCK -> contract.secType(Types.SecType.STK)
             AssetType.FOREX -> contract.secType(Types.SecType.CASH)
             AssetType.BOND -> contract.secType(Types.SecType.BOND)
-            else -> throw Exception("${asset.type} is not yet supported")
+            else -> throw UnsupportedException("${asset.type} is not yet supported")
         }
 
         val exchange = when (asset.exchangeCode) {

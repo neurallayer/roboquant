@@ -193,7 +193,7 @@ class AlpacaBroker(
             is GTC -> OrderTimeInForce.GOOD_UNTIL_CANCELLED
             is DAY -> OrderTimeInForce.DAY
             else -> {
-                throw Exception("Unsupported TIF ${order.tif} for order $order")
+                throw UnsupportedException("Unsupported TIF ${order.tif} for order $order")
             }
         }
 
@@ -210,7 +210,7 @@ class AlpacaBroker(
             is LimitOrder -> alpacaAPI.orders()
                 .requestLimitOrder(asset.symbol, qty, side, tif, order.limit, false)
             else -> {
-                throw Exception("Unsupported order type $order. Right now only Market and Limit orders are mapped")
+                throw UnsupportedException("Unsupported order type $order. Right now only Market and Limit orders are mapped")
             }
         }
         orderMapping[order] = alpacaOrder
@@ -237,7 +237,7 @@ class AlpacaBroker(
                 placeOrder(order)
                 _account.putOrders(listOf(order).initialOrderState)
             } else {
-                throw Exception("Unsupported order type $order")
+                throw UnsupportedException("Unsupported order type $order")
             }
         }
         _account.lastUpdate = event.time

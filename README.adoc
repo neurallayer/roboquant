@@ -34,21 +34,27 @@ roboquant.run(feed) // <5>
 <4> What data should be used, in this case CSV files
 <5> Run the back test
 
-== Features
-Some key features of roboquant are:
-
-* [x] Very fast back-testing, even on large volumes of data.
-* [x] Easy to develop your own strategies and integrate with third party brokers and data feeds
-* [x] Trade in multiple asset classes at the same time
-* [x] Run anything from a technical indicator to complex machine learning based strategies
-* [x] Easy to transition from back-testing to live trading
-* [x] Trade on multi-markets with multi-currencies
-* [x] Developed under open source with a permissive Apache license
-* [x] Use Jupyter Notebooks with insightful charts if you prefer interactive development
-* [x] Batteries included: over 200 technical indicators
-* [x] Out of the box integration with Alpaca, Interactive Brokers, OANDA, IEX Cloud, Yahoo Finance, Alpha Vantage, Binance and most other crypto exchanges
-
 == Installation
+=== Library
+Just add `roboquant-core` or any of the other modules as a dependency to your build tool, like Maven or Gradle. See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant.
+
+*Maven*
+[source,xml]
+----
+<dependency>
+    <groupId>org.roboquant</groupId>
+    <artifactId>roboquant-core</artifactId>
+    <version>VERSION</version>
+</dependency>
+----
+
+*Gradle*
+[source,groovy]
+----
+implementation group: 'org.roboquant', name: 'roboquant-core', version: 'VERSION'
+----
+
+=== Jupyter Notebooks
 If you have already Docker installed, all it takes is a single command to have a fully functional Jupyter Lab environment available:
 
 [source,shell]
@@ -60,7 +66,19 @@ This also comes with several tutorials. And if you just want to try it without a
 
 image:/docs/jupyter-lab.png[Jupyter Lab]
 
-See the link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant, for example if you want to use it in a standalone application and want to include the libraries.
+== Features
+Some key features of roboquant are:
+
+* [x] Very fast back-testing, even on large volumes of data.
+* [x] Easy to develop your own strategies and integrate with third party brokers and data feeds
+* [x] Trade in multiple asset classes at the same time
+* [x] Run anything from a technical indicator to complex machine learning based strategies
+* [x] Easy to transition from back-testing to live trading
+* [x] Trade on multi-markets with multi-currencies
+* [x] Developed under open source with a permissive Apache license
+* [x] Use Jupyter Notebooks with insightful charts if you prefer interactive development
+* [x] Batteries included, for example 150+ technical indicators and ready to use datasets
+* [x] Out of the box integration with Alpaca, Interactive Brokers, OANDA, IEX Cloud, Yahoo Finance, Alpha Vantage, Binance and most other crypto exchanges
 
 == License
 Roboquant is distributed under the link:/LICENSE[Apache 2.0 License]. 

@@ -29,7 +29,7 @@
     <packaging>jar</packaging>
     <name>roboquant core</name>
     <url>https://roboquant.org</url>
-    <description>Core components for the roboquant algorithmic trading platform</description>
+    <description>Core components for roboquant algorithmic trading platform</description>
 
     <build>
         <plugins>

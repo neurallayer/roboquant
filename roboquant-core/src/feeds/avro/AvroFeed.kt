@@ -142,7 +142,7 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
                     3 -> PriceQuote.fromValues(asset, values)
                     4 -> OrderBook.fromValues(asset, values)
                     else -> {
-                        throw Exception("unsupported price action found")
+                        throw UnsupportedException("unsupported price action found")
                     }
                 }
 

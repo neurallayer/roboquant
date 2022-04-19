@@ -125,10 +125,7 @@ fun alpacaHistoricFeed2() {
 }
 
 fun feedIEX() {
-    val token = Config.getProperty("IEX_PUBLIC_KEY") ?: throw Exception("No token found")
-    val feed = org.roboquant.iex.IEXHistoricFeed {
-        publicKey = token
-    }
+    val feed = org.roboquant.iex.IEXHistoricFeed()
     feed.retrievePriceBar("AAPL", "GOOGL", "FB", range = Range.TWO_YEARS)
 
     val strategy = EMACrossover(10, 30)

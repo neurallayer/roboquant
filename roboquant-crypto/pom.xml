@@ -30,7 +30,7 @@
     <packaging>jar</packaging>
     <name>roboquant crypto</name>
     <url>https://roboquant.org</url>
-    <description>Crypto support for the roboquant algorithmic trading platform</description>
+    <description>Cryptocurrency trading support for roboquant algorithmic trading platform</description>
 
 
     <properties>

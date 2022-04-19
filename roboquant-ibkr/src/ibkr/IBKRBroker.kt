@@ -147,7 +147,7 @@ class IBKRBroker(
                 result.orderType("STP"); result.lmtPrice(order.stop)
             }
             else -> {
-                throw Exception("unsupported order type $order")
+                throw UnsupportedException("unsupported order type $order")
             }
         }
 
