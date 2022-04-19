@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Currency
+import org.roboquant.common.Size
 import org.roboquant.common.USD
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -34,11 +35,11 @@ internal class TradesTest {
         var now = Instant.now()
         for (i in 1..10) {
             now = now.plusSeconds(60)
-            val trade1 = Trade(now, asset, 10.0, 100.0, 10.0, 0.0, i)
+            val trade1 = Trade(now, asset, Size(10), 100.0, 10.0, 0.0, i)
             trades.add(trade1)
 
             now = now.plusSeconds(60)
-            val trade2 = Trade(now, asset, -10.0, 100.0, 10.0, 10.0, i)
+            val trade2 = Trade(now, asset, Size(-10), 100.0, 10.0, 10.0, i)
             trades.add(trade2)
         }
 
@@ -65,11 +66,11 @@ internal class TradesTest {
         var now = Instant.now()
         for (i in 1..10) {
             now = now.plusSeconds(60)
-            val trade1 = Trade(now, asset, 10.0, 100.0, 10.0, i.toDouble(), i)
+            val trade1 = Trade(now, asset, Size(10), 100.0, 10.0, i.toDouble(), i)
             trades.add(trade1)
 
             now = now.plusSeconds(60)
-            val trade2 = Trade(now, asset, -10.0, 100.0, 10.0, -i.toDouble(), i)
+            val trade2 = Trade(now, asset, Size(-10), 100.0, 10.0, -i.toDouble(), i)
             trades.add(trade2)
         }
 

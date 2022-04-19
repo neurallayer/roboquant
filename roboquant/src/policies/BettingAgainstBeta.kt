@@ -21,8 +21,8 @@ import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.diff
 import org.roboquant.common.Asset
+import org.roboquant.common.Size
 import org.roboquant.common.days
-import org.roboquant.common.nonzero
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
@@ -105,9 +105,9 @@ open class BettingAgainstBeta(
             val price = event.getPrice(asset)
             if (price != null) {
                 val assetAmount = exposure.convert(asset.currency, event.time).value
-                val singleContractValue = asset.value(1.0, price).value
-                val holding = floor(assetAmount/singleContractValue)
-                if (holding.nonzero) targetPortfolio.add(Position(asset, holding))
+                val singleContractValue = asset.value(Size.ONE, price).value
+                val holding = floor(assetAmount/singleContractValue).toInt()
+                if (holding != 0) targetPortfolio.add(Position(asset, Size(holding)))
             }
         }
 
@@ -116,9 +116,9 @@ open class BettingAgainstBeta(
             val price = event.getPrice(asset)
             if (price != null) {
                 val assetAmount = exposure.convert(asset.currency, event.time).value
-                val singleContractValue = asset.value(1.0, price).value
-                val holding = floor(assetAmount/singleContractValue)
-                if (holding.nonzero) targetPortfolio.add(Position(asset, -holding))
+                val singleContractValue = asset.value(Size.ONE, price).value
+                val holding = floor(assetAmount/singleContractValue).toInt()
+                if (holding != 0) targetPortfolio.add(Position(asset, Size(-holding)))
             }
         }
 
@@ -133,7 +133,7 @@ open class BettingAgainstBeta(
      * Override this method if you want to override the default creation of MarketOrders with a different
      * order type like LimitOrders. Return null if you don't want to create an order for a certain asset.
      */
-    open fun createOrder(asset: Asset, quantity: Double, account: Account, event: Event): Order? {
+    open fun createOrder(asset: Asset, quantity: Size, account: Account, event: Event): Order? {
         return MarketOrder(asset, quantity)
     }
 

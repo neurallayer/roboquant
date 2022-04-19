@@ -19,10 +19,7 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
-import org.roboquant.common.Amount
-import org.roboquant.common.Asset
-import org.roboquant.common.Wallet
-import org.roboquant.common.Currency
+import org.roboquant.common.*
 import org.roboquant.metrics.MetricResults
 
 
@@ -89,7 +86,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
      * @return
      */
     protected fun calcVolume(freeAmount: Double, asset: Asset, price: Double, account: Account): Double {
-        val singleContractCost = asset.value(1.0, price).value
+        val singleContractCost = asset.value(Size.ONE, price).value
         val availableAssetCash = Amount(account.baseCurrency, freeAmount).convert(asset.currency, account.lastUpdate)
         return availableAssetCash.value / singleContractCost
     }

@@ -146,7 +146,6 @@ class Wallet(vararg amounts: Amount) : Cloneable {
      * will be added to the existing value, otherwise a new entry will be created.
      */
     fun deposit(amount: Amount) {
-        // val value = BigDecimal.valueOf(getValue(amount.currency)) + BigDecimal.valueOf(amount.value)
         val value = (data[amount.currency] ?: 0.0) + amount.value
         set(Amount(amount.currency, value))
     }

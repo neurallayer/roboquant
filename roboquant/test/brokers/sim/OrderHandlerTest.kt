@@ -18,6 +18,7 @@ package org.roboquant.brokers.sim
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
 import java.time.Instant
@@ -48,7 +49,7 @@ internal class OrderHandlerTest {
 
     @Test
     fun testStopOrder() {
-        val order = StopOrder(asset, -10.0, 99.0)
+        val order = StopOrder(asset, Size(-10), 99.0)
         val cmd = StopOrderHandler(order)
         var executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
@@ -59,7 +60,7 @@ internal class OrderHandlerTest {
 
     @Test
     fun testLimitOrder() {
-        val order = LimitOrder(asset, 10.0, 99.0)
+        val order = LimitOrder(asset, Size(10), 99.0)
         val cmd = LimitOrderHandler(order)
         var executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
@@ -71,7 +72,7 @@ internal class OrderHandlerTest {
 
     @Test
     fun testStopLimitOrder() {
-        val order = StopLimitOrder(asset, -10.0, 100.0, 98.0)
+        val order = StopLimitOrder(asset, Size(-10), 100.0, 98.0)
         val cmd = StopLimitOrderHandler(order)
 
         var executions = cmd.execute(pricing(101), Instant.now())
@@ -86,7 +87,7 @@ internal class OrderHandlerTest {
 
     @Test
     fun testTrailOrder() {
-        val order = TrailOrder(asset, -10.0, 0.01)
+        val order = TrailOrder(asset, Size(-10), 0.01)
         val cmd = TrailOrderHandler(order)
         var executions = cmd.execute(pricing(90), Instant.now())
         assertEquals(0, executions.size)
@@ -100,7 +101,7 @@ internal class OrderHandlerTest {
 
     @Test
     fun testTrailLimitOrder() {
-        val order = TrailLimitOrder(asset, -10.0, 0.01, -1.0)
+        val order = TrailLimitOrder(asset, Size(-10), 0.01, -1.0)
         val cmd = TrailLimitOrderHandler(order)
         var executions = cmd.execute(pricing(90), Instant.now())
         assertEquals(0, executions.size)

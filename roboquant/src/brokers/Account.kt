@@ -19,11 +19,9 @@ package org.roboquant.brokers
 import org.apache.commons.math3.stat.descriptive.rank.Percentile
 import org.roboquant.common.*
 import org.roboquant.orders.OrderState
-import java.math.BigDecimal
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
-
 
 /**
  * Account represents a unified brokerage trading account and holds the following state:
@@ -195,15 +193,14 @@ val Collection<Position>.short
 
 // fun Collection<Position>.getPosition(asset: Asset) = find { it.asset == asset } ?: Position.empty(asset)
 
-fun Map<Asset, Position>.diff(target: Collection<Position>): Map<Asset, Double> {
-    val result = mutableMapOf<Asset, Double>()
+fun Map<Asset, Position>.diff(target: Collection<Position>): Map<Asset, Size> {
+    val result = mutableMapOf<Asset, Size>()
 
     for (position in target) {
-        // Use BigDecimal to avoid inaccuracies
-        val targetSize = BigDecimal.valueOf(position.size)
-        val sourceSize = BigDecimal.valueOf(getValue(position.asset).size)
-        val value = (targetSize - sourceSize).toDouble()
-        if (value != 0.0) result[position.asset] = value
+        val targetSize = position.size
+        val sourceSize = getValue(position.asset).size
+        val value = targetSize - sourceSize
+        if (! value.iszero) result[position.asset] = value
     }
 
     for (position in this.values) {
@@ -261,7 +258,7 @@ fun Collection<Trade>.summary(name: String = "trades"): Summary {
                 val pnl = pnl.formatValue()
                 val price = Amount(asset.currency, price).formatValue()
                 val t = time.truncatedTo(ChronoUnit.SECONDS)
-                val line = String.format(fmt, t, asset.symbol, quantity.asQuantity, cost, fee, pnl, price)
+                val line = String.format(fmt, t, asset.symbol, size, cost, fee, pnl, price)
                 s.add(line)
             }
         }
@@ -305,7 +302,7 @@ fun Collection<Position>.summary(name: String = "positions"): Summary {
 
         for (v in positions) {
             val c = v.asset.currency
-            val pos = v.size.asQuantity
+            val pos = v.size
             val avgPrice = Amount(c, v.avgPrice).formatValue()
             val price = Amount(c, v.spotPrice).formatValue()
             val value = v.marketValue.formatValue()

@@ -16,7 +16,7 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.common.nonzero
+import org.roboquant.common.Size
 import org.roboquant.orders.Order
 
 /**
@@ -24,14 +24,14 @@ import org.roboquant.orders.Order
  * the currency denoted by the underlying asset.
  *
  * @property order The order the execution is linked to
- * @property quantity The quantity traded
+ * @property size The quantity traded
  * @property price The (average) price of the execution
  * @constructor Create new Execution
  */
-class Execution(val order: Order, val quantity: Double, val price: Double) {
+class Execution(val order: Order, val size: Size, val price: Double) {
 
     init {
-        require(quantity.nonzero) { "Execution should have a non-zero quantity" }
+        require(size.nonzero) { "Execution should have a non-zero quantity" }
     }
 
 
@@ -39,11 +39,11 @@ class Execution(val order: Order, val quantity: Double, val price: Double) {
      * Totol value of execution in the currency denoted by the underlying asset
      */
     val value
-        get() = order.asset.value(quantity, price).value
+        get() = order.asset.value(size, price).value
 
     /**
      * Totol amount of execution in the currency denoted by the underlying asset
      */
     val amount
-        get() = order.asset.value(quantity, price)
+        get() = order.asset.value(size, price)
 }

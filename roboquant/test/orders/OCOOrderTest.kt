@@ -18,6 +18,7 @@ package org.roboquant.orders
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -27,8 +28,8 @@ class OCOOrderTest {
     fun test() {
         val asset = TestData.usStock()
         val order = OCOOrder(
-            LimitOrder(asset, 100.0, 10.9),
-            LimitOrder(asset, 200.0, 11.1)
+            LimitOrder(asset, Size(100), 10.9),
+            LimitOrder(asset, Size(200), 11.1)
         )
         assertEquals(order.first.asset, order.asset)
         assertTrue(order.toString().isNotBlank())

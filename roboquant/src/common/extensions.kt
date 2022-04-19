@@ -23,14 +23,12 @@ import java.lang.Integer.max
 import java.lang.Integer.min
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.text.DecimalFormat
 import java.time.*
 import java.time.temporal.ChronoUnit
 import java.time.temporal.Temporal
 import java.time.temporal.TemporalAmount
 import java.time.temporal.TemporalUnit
 import kotlin.math.absoluteValue
-import kotlin.math.round
 
 /********************************************************************************************************************
  * This file contains the extensions for classes that are part of standard Java and Kotlin libraries. Extensions for
@@ -245,26 +243,6 @@ val Double.zeroOrMore
 
 
 fun Number.round(fractions: Int = 2): BigDecimal = BigDecimal.valueOf(toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)
-
-
-/**
- * Convert a Double as a rounded positive integer.
- */
-val Double.absInt: Int
-    get() = round(this).toInt().absoluteValue
-
-
-/**
- * Deals with nicely formatting fractional quantities. Don't use decimals if not required.
- */
-val Double.asQuantity : BigDecimal
-    get() {
-        val pf = DecimalFormat("############")
-        pf.minimumFractionDigits = 0
-        pf.maximumFractionDigits = 4
-        return pf.format(this).toBigDecimal()
-    }
-
 
 /**
  * Try to convert a string to a currency pair. Return null if not successed

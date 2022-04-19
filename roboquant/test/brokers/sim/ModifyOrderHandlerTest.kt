@@ -18,6 +18,7 @@ package org.roboquant.brokers.sim
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import org.roboquant.orders.CancelOrder
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus
@@ -40,7 +41,7 @@ internal class ModifyOrderHandlerTest {
 
         val cmd = UpdateOrderHandler(order)
         cmd.execute(listOf(moc), Instant.now())
-        assertEquals(50.0, moc.order.quantity)
+        assertEquals(Size(50), moc.order.size)
     }
 
 

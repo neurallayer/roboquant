@@ -1,5 +1,6 @@
 package org.roboquant.brokers.sim
 
+import org.roboquant.common.Size
 import org.roboquant.feeds.PriceAction
 import java.time.Instant
 
@@ -33,18 +34,18 @@ interface Pricing {
      * Get the lowest price for the provided [volume]. Default is the [marketPrice]
      * Typivally this is used to evaluate if a limit or stop has been triggered.
      */
-    fun lowPrice(volume: Double): Double = marketPrice(volume)
+    fun lowPrice(volume: Size): Double = marketPrice(volume)
 
     /**
      * Get the highest price for the provided [volume]. Default is the [marketPrice]
      * Typivally this is used to evaluate if a limit or stop has been triggered.
      */
-    fun highPrice(volume: Double): Double = marketPrice(volume)
+    fun highPrice(volume: Size): Double = marketPrice(volume)
 
     /**
      * Get the market price for the provided [volume]. There is no default.
      */
-    fun marketPrice(volume: Double): Double
+    fun marketPrice(volume: Size): Double
 
 }
 
@@ -57,7 +58,7 @@ class SlippagePricing(private val slippageInBips: Int = 10, private val priceTyp
 
     private class SlippagePricing(val price: Double, val slippagePercentage: Double) : Pricing {
 
-        override fun marketPrice(volume: Double): Double {
+        override fun marketPrice(volume: Size): Double {
             val correction = if (volume > 0) 1.0 + slippagePercentage else 1.0 - slippagePercentage
             return price * correction
         }
@@ -78,7 +79,7 @@ class NoSlippagePricing(private val priceType: String = "DEFAULT") : PricingEngi
 
     private class SlippagePricing(val price: Double) : Pricing {
 
-        override fun marketPrice(volume: Double) = price
+        override fun marketPrice(volume: Size) = price
     }
 
     override fun getPricing(action: PriceAction, time: Instant): Pricing {

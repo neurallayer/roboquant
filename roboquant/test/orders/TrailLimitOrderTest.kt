@@ -18,6 +18,7 @@ package org.roboquant.orders
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
@@ -28,12 +29,12 @@ internal class TrailLimitOrderTest {
     @Test
     fun testTrailOrder() {
         val asset = TestData.usStock()
-        val order = TrailOrder(asset, -100.0, 0.01)
+        val order = TrailOrder(asset, Size(-100), 0.01)
         assertEquals(0.01, order.trailPercentage)
         assertTrue(order.toString().isNotBlank())
 
         assertFails {
-            TrailOrder(asset, -100.0, -0.01)
+            TrailOrder(asset, Size(-100), -0.01)
         }
 
     }
@@ -42,7 +43,7 @@ internal class TrailLimitOrderTest {
     @Test
     fun testTrailLimitOrder() {
         val asset = TestData.usStock()
-        val order = TrailLimitOrder(asset, -100.0, 0.01, -1.0)
+        val order = TrailLimitOrder(asset, Size(-100), 0.01, -1.0)
         assertEquals(0.01, order.trailPercentage)
         assertEquals(-1.0, order.limitOffset)
         assertTrue(order.toString().isNotBlank())

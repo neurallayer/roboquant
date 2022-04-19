@@ -18,6 +18,7 @@ package org.roboquant.brokers
 
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
+import org.roboquant.common.Size
 import java.time.Instant
 
 /**
@@ -29,7 +30,7 @@ import java.time.Instant
  *
  * @property time The time of this trade
  * @property asset The underlying asset of this trade
- * @property quantity The quantity or volume of this trade, negative for selling assets
+ * @property size The quantity or volume of this trade, negative for selling assets
  * @property price The average price paid denoted in the currency of the asset excluding fee
  * @property fee Any brokerage fees or commission charged as part of this trade denoted in the currency of the asset
  * @property pnl The realized profit & loss made by this trade denoted in the currency of the asset
@@ -38,7 +39,7 @@ import java.time.Instant
 data class Trade(
     val time: Instant,
     val asset: Asset,
-    val quantity: Double,
+    val size: Size,
     val price: Double,
     val feeValue: Double,
     val pnlValue: Double,
@@ -50,7 +51,7 @@ data class Trade(
      * will return a negative value.
      */
     val totalCost
-        get() =  asset.value(quantity, price) + feeValue
+        get() =  asset.value(size, price) + feeValue
 
     val fee
         get() = Amount(asset.currency, feeValue)

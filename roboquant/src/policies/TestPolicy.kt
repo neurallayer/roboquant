@@ -17,6 +17,7 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
+import org.roboquant.common.Size
 import org.roboquant.common.addNotNull
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
@@ -31,7 +32,7 @@ import org.roboquant.strategies.Signal
  * Because of the deterministic behavior, this policy useful during testing/debugging a strategy. But it should not be
  * used in live trading of realistic back-tests.
  */
-class TestPolicy(private val quantity: Double = 1.0) : BasePolicy() {
+class TestPolicy(private val quantity: Size = Size.ONE) : BasePolicy() {
 
     /**
      * Create a buys or sells [MarketOrder] for an asset based on the received [signals]. It ignores the [account]

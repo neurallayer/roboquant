@@ -27,10 +27,7 @@ import com.oanda.v20.transaction.OrderCancelReason
 import com.oanda.v20.transaction.OrderFillTransaction
 import com.oanda.v20.transaction.TransactionID
 import org.roboquant.brokers.*
-import org.roboquant.common.Amount
-import org.roboquant.common.Currency
-import org.roboquant.common.Logging
-import org.roboquant.common.UnsupportedException
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
@@ -77,10 +74,10 @@ class OANDABroker(
 
     private fun getPosition(symbol: String, p: PositionSide): Position {
         val asset = availableAssetsMap[symbol]!!
-        val qty = p.units.doubleValue()
+        val qty = p.units.bigDecimalValue()
         val avgPrice = p.averagePrice.doubleValue()
-        val spotPrice = avgPrice + p.unrealizedPL.doubleValue() / qty
-        return Position(asset, qty, avgPrice, spotPrice)
+        val spotPrice = avgPrice + p.unrealizedPL.doubleValue() / qty.toDouble()
+        return Position(asset, Size(qty), avgPrice, spotPrice)
     }
 
     private fun updatePositions() {
@@ -145,7 +142,7 @@ class OANDABroker(
         val trade = Trade(
             time,
             order.asset,
-            trx.units.doubleValue(),
+            Size(trx.units.bigDecimalValue()),
             trx.price.doubleValue(),
             trx.commission.doubleValue(),
             trx.pl.doubleValue(),
@@ -160,7 +157,7 @@ class OANDABroker(
         val req = OrderCreateRequest(accountID)
         val o = MarketOrderRequest()
         o.instrument = InstrumentName(order.asset.symbol)
-        o.setUnits(order.quantity)
+        o.setUnits(order.size.toBigDecimal())
         req.setOrder(o)
         logger.fine { "Created OANDA order $o" }
         return req
@@ -170,7 +167,7 @@ class OANDABroker(
         val req = OrderCreateRequest(accountID)
         val o = LimitOrderRequest()
         o.instrument = InstrumentName(order.asset.symbol)
-        o.setUnits(order.quantity)
+        o.setUnits(order.size.toBigDecimal())
         o.setPrice(order.limit)
         req.setOrder(o)
         logger.fine { "Created OANDA order $o" }

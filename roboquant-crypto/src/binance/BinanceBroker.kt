@@ -33,8 +33,6 @@ import org.roboquant.common.Currency
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
-import java.math.BigDecimal
-import kotlin.math.absoluteValue
 
 /**
  * Implementation of the broker interface for Binance exchange. This enables live trading of cryptocurrencies
@@ -162,7 +160,7 @@ class BinanceBroker(
      * @param order
      */
     private fun trade(symbol: String, order: LimitOrder): NewOrderResponse {
-        val amount = BigDecimal(order.quantity.absoluteValue).toBigInteger().toString()
+        val amount = order.size.absoluteValue.toBigInteger().toString()
         val price = order.limit.toString()
         val newOrder = if (order.buy)
             client.newOrder(limitBuy(symbol, TimeInForce.GTC, amount, price))
@@ -179,7 +177,7 @@ class BinanceBroker(
      * @param order
      */
     private fun trade(symbol: String, order: MarketOrder): NewOrderResponse {
-        val amount = BigDecimal(order.quantity.absoluteValue).toBigInteger().toString()
+        val amount = order.size.absoluteValue.toBigInteger().toString()
         val newOrder = if (order.buy)
             client.newOrder(marketBuy(symbol, amount))
         else

@@ -19,6 +19,7 @@ package org.roboquant.policies
 import org.roboquant.brokers.Account
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
+import org.roboquant.common.Size
 import java.lang.Double.min
 import java.math.BigDecimal
 import kotlin.math.floor
@@ -33,7 +34,7 @@ interface OrderSizer {
     /**
      * Determine the maximum order size for the provided asset.
      */
-    fun size(asset: Asset, account: Account, remaining: Double, price: Double): Double
+    fun size(asset: Asset, account: Account, remaining: Double, price: Double): Size
 }
 
 /**
@@ -56,27 +57,26 @@ class PercentageOrderSizer(
 
     private val fractions = BigDecimal.valueOf(fractions.toLong())
 
-    private fun rounding(asset: Asset, amount: Double, price: Double): Double {
-        val singleContractValue = asset.value(1.0, price).value
+    private fun rounding(asset: Asset, amount: Double, price: Double): BigDecimal {
+        val singleContractValue = asset.value(Size.ONE, price).value
         val volume = floor(amount * fractions.toInt() / singleContractValue)
-        val result = BigDecimal.valueOf(volume).setScale(20) / fractions
-        return result.toDouble()
+        return BigDecimal.valueOf(volume).setScale(20) / fractions
     }
 
-    override fun size(asset: Asset, account: Account, remaining: Double, price: Double): Double {
+    override fun size(asset: Asset, account: Account, remaining: Double, price: Double): Size {
 
         // The available amount to spent
         val equity = account.convert(account.equity).value
         val amountValue = min(equity * maxPercentage, remaining)
-        if (amountValue < minAmount) return 0.0
+        if (amountValue < minAmount) return Size.ZERO
 
         // Price denoted in currency of account
         val corrPrice = Amount(asset.currency, price).convert(account.baseCurrency, account.lastUpdate).value
-        val volume = rounding(asset, amountValue, corrPrice)
+        val volume = Size(rounding(asset, amountValue, corrPrice))
 
         // Check if based on the calculated volume the total order value would still above the minimum amount.
         val totalAmount = asset.value(volume, corrPrice)
-        if (totalAmount < minAmount) return 0.0
+        if (totalAmount < minAmount) return Size.ZERO
 
         return volume
     }

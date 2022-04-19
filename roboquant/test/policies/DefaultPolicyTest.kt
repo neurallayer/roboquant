@@ -18,6 +18,7 @@ package org.roboquant.policies
 
 
 import org.roboquant.brokers.InternalAccount
+import org.roboquant.common.Size
 import org.roboquant.common.days
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
@@ -44,7 +45,7 @@ internal class DefaultPolicyTest {
 
         class MyPolicy(val percentage: Double = 0.05) : DefaultPolicy() {
 
-            override fun createOrder(signal: Signal, qty: Double, price: Double): Order {
+            override fun createOrder(signal: Signal, qty: Size, price: Double): Order {
                 val asset = signal.asset
                 val direction = if (qty > 0) 1.0 else -1.0
                 val percentage = percentage * direction

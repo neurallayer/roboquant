@@ -45,7 +45,7 @@ open class TradeChart(
             |asset: ${trade.asset}<br>
             |currency: ${trade.asset.currency}<br>
             |time: ${trade.time}<br>
-            |qty: ${trade.quantity}<br>
+            |qty: ${trade.size}<br>
             |fee: $fee<br>
             |pnl: $pnl<br>
             |cost: $totalCost<br>
@@ -60,7 +60,7 @@ open class TradeChart(
                     "pnl" -> pnl.convert(time = time).toBigDecimal()
                     "fee" -> fee.convert(time = time).toBigDecimal()
                     "cost" -> totalCost.convert(time = time).toBigDecimal()
-                    "quantity" -> quantity.toBigDecimal()
+                    "quantity" -> size.toBigDecimal()
                     else -> throw UnsupportedException("Unsupported aspect $aspect")
                 }
 

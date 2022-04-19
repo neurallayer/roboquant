@@ -18,18 +18,13 @@ package org.roboquant.xchange
 
 import org.knowm.xchange.Exchange
 import org.knowm.xchange.currency.CurrencyPair
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.Broker
-import org.roboquant.brokers.InternalAccount
-import org.roboquant.brokers.acceptOrder
-import org.roboquant.brokers.rejectOrder
+import org.roboquant.brokers.*
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.math.BigDecimal
-import kotlin.math.absoluteValue
 import org.knowm.xchange.dto.Order as CryptoOrder
 import org.knowm.xchange.dto.trade.LimitOrder as CryptoLimitOrder
 import org.knowm.xchange.dto.trade.MarketOrder as CryptoMarketOrder
@@ -132,7 +127,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
      * @param orderId
      */
     private fun trade(currencyPair: CurrencyPair, order: LimitOrder, orderId: String) {
-        val amount = BigDecimal(order.quantity.absoluteValue)
+        val amount = order.size.absoluteValue
         val orderType = if (order.buy) CryptoOrder.OrderType.BID else CryptoOrder.OrderType.ASK
         val limitPrice = BigDecimal(order.limit)
         val limitOrder = CryptoLimitOrder(orderType, amount, currencyPair, orderId, null, limitPrice)
@@ -147,7 +142,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
      * @param order
      */
     private fun trade(currencyPair: CurrencyPair, order: MarketOrder) {
-        val amount = BigDecimal(order.quantity.absoluteValue)
+        val amount = order.size.absoluteValue
         val orderType = if (order.buy) CryptoOrder.OrderType.BID else CryptoOrder.OrderType.ASK
         val marketOrder = CryptoMarketOrder(orderType, amount, currencyPair)
         val returnValue = tradeService.placeMarketOrder(marketOrder)

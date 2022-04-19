@@ -83,7 +83,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
     /**
      * Clear all the state in this account.
      */
-    internal fun clear() {
+    fun clear() {
         lastUpdate = Instant.MIN
         trades.clear()
         openOrders.clear()

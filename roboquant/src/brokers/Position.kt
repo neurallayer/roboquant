@@ -16,14 +16,9 @@
 
 package org.roboquant.brokers
 
-import org.roboquant.common.Amount
-import org.roboquant.common.Asset
-import org.roboquant.common.Currency
-import org.roboquant.common.Wallet
+import org.roboquant.common.*
 import java.math.BigDecimal
 import java.time.Instant
-import kotlin.math.absoluteValue
-import kotlin.math.sign
 
 /**
  * Class that holds the position of an asset in the portfolio. This implementation makes no assumptions about the
@@ -38,11 +33,19 @@ import kotlin.math.sign
  */
 data class Position(
     val asset: Asset,
-    val size: Double,
+    val size: Size,
     val avgPrice: Double = 0.0,
     val spotPrice: Double = avgPrice,
     val lastUpdate: Instant = Instant.MIN
 ) {
+
+    constructor(
+        asset: Asset,
+        size: Int,
+        avgPrice: Double = 0.0,
+        spotPrice: Double = avgPrice,
+        lastUpdate: Instant = Instant.MIN
+    ) : this(asset, Size(BigDecimal.valueOf(size.toLong())), avgPrice, spotPrice, lastUpdate)
 
     /**
      * Total size of a position is the position size times the asset multiplier. For many asset classes the
@@ -62,18 +65,18 @@ data class Position(
         /**
          * Create an empty position for the provided [asset] and return this.
          */
-        fun empty(asset: Asset): Position = Position(asset, 0.0, 0.0, 0.0)
+        fun empty(asset: Asset): Position = Position(asset, Size.ZERO, 0.0, 0.0)
     }
 
     operator fun plus(p: Position) : Position {
         // Use BigDecimals to perform the addition so we don't loose precision
-        val newSize = (BigDecimal.valueOf(size) + BigDecimal.valueOf(p.size)).toDouble()
+        val newSize = size + p.size
 
         return when {
             size.sign != newSize.sign -> p.copy(size = newSize)
 
             newSize.absoluteValue > size.absoluteValue -> {
-                val newAvgPrice = (avgPrice * size + p.avgPrice * p.size) / newSize
+                val newAvgPrice = (size * avgPrice + p.size * p.avgPrice) / newSize.toDouble()
                 p.copy(size = newSize, avgPrice = newAvgPrice)
             }
 
@@ -99,7 +102,7 @@ data class Position(
      * Is this a closed position, or in other words is the size equal to 0
      */
     val closed: Boolean
-        get() = size == 0.0
+        get() = size.iszero
 
     /**
      * Is this a short position
@@ -117,7 +120,7 @@ data class Position(
      * Is this an open position
      */
     val open: Boolean
-        get() = size != 0.0
+        get() = ! size.iszero
 
     /**
      * The unrealized profit & loss for this position based on the [avgPrice] and last known market [spotPrice],

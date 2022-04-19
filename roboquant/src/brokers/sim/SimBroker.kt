@@ -99,7 +99,7 @@ class SimBroker(
     ) {
 
         val asset = execution.order.asset
-        val position = Position(asset, execution.quantity, execution.price)
+        val position = Position(asset, execution.size, execution.price)
         val fee = feeModel.calculate(execution)
 
         // PNL includes the fee
@@ -107,7 +107,7 @@ class SimBroker(
         val newTrade = Trade(
             now,
             asset,
-            execution.quantity,
+            execution.size,
             execution.price,
             fee,
             pnl.value,

@@ -18,6 +18,7 @@ package org.roboquant.brokers.sim
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import org.roboquant.orders.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -29,17 +30,18 @@ internal class ExecutionEngineTest {
     fun testAddingOrders() {
         val engine = ExecutionEngine(NoSlippagePricing())
         val asset = TestData.usStock()
-        var success = engine.add(MarketOrder(asset, 100.0))
+        val size = Size(100)
+        var success = engine.add(MarketOrder(asset, 100))
         assertEquals(true, success)
-        success = engine.add(LimitOrder(asset, 100.0, 200.0))
+        success = engine.add(LimitOrder(asset,size, 200.0))
         assertEquals(true, success)
-        success = engine.add(StopOrder(asset, 100.0, 180.0))
+        success = engine.add(StopOrder(asset, size, 180.0))
         assertEquals(true, success)
-        success = engine.add(StopLimitOrder(asset, 100.0, 180.0, 170.0))
+        success = engine.add(StopLimitOrder(asset, size, 180.0, 170.0))
         assertEquals(true, success)
-        success = engine.add(TrailOrder(asset, 100.0, 0.01))
+        success = engine.add(TrailOrder(asset, size, 0.01))
         assertEquals(true, success)
-        success = engine.add(TrailLimitOrder(asset, 100.0, 0.01, -1.0))
+        success = engine.add(TrailLimitOrder(asset, size, 0.01, -1.0))
         assertEquals(true, success)
 
     }
@@ -50,16 +52,17 @@ internal class ExecutionEngineTest {
     fun testAddingOtherOrders() {
         val engine = ExecutionEngine(NoSlippagePricing())
         val asset = TestData.usStock()
+        val size = Size(100)
 
-        var order: Order = OCOOrder(LimitOrder(asset, 100.0, 200.0), LimitOrder(asset, -100.0, 200.0))
+        var order: Order = OCOOrder(LimitOrder(asset, size, 200.0), LimitOrder(asset, -size, 200.0))
         var success = engine.add(order)
         assertEquals(true, success)
 
-        order = OTOOrder(LimitOrder(asset, 100.0, 200.0), LimitOrder(asset, -100.0, 200.0))
+        order = OTOOrder(LimitOrder(asset, size, 200.0), LimitOrder(asset, -size, 200.0))
         success = engine.add(order)
         assertEquals(true, success)
 
-        order = BracketOrder(LimitOrder(asset, 100.0, 200.0), LimitOrder(asset, -100.0, 200.0), LimitOrder(asset, -100.0, 200.0))
+        order = BracketOrder(LimitOrder(asset, size, 200.0), LimitOrder(asset, -size, 200.0), LimitOrder(asset, -size, 200.0))
         success = engine.add(order)
         assertEquals(true, success)
     }
@@ -74,7 +77,7 @@ internal class ExecutionEngineTest {
         engine.add(origOrder)
         val state = engine.orderStates.first()
 
-        var order: Order = UpdateOrder(state, MarketOrder(asset, 50.0, id = origOrder.id))
+        var order: Order = UpdateOrder(state, MarketOrder(asset, Size(50), id = origOrder.id))
         var success = engine.add(order)
         assertEquals(true, success)
 

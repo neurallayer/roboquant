@@ -17,10 +17,7 @@
 package org.roboquant.ibkr
 
 import com.ib.client.*
-import com.ib.client.OrderState as IBOrderSate
-import com.ib.client.OrderStatus as IBOrderStatus
 import org.roboquant.brokers.*
-import org.roboquant.brokers.initialOrderState
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
@@ -28,8 +25,9 @@ import org.roboquant.orders.OrderStatus
 import java.lang.Thread.sleep
 import java.time.Instant
 import java.util.logging.Logger
-import kotlin.math.absoluteValue
 import com.ib.client.Order as IBOrder
+import com.ib.client.OrderState as IBOrderSate
+import com.ib.client.OrderStatus as IBOrderStatus
 
 /**
  * Use your Interactive Brokers account for trading. Can be used with live trading or paper trading accounts of
@@ -151,9 +149,9 @@ class IBKRBroker(
             }
         }
 
-        val action = if (order.quantity > 0) "BUY" else "SELL"
+        val action = if (order.size > 0) "BUY" else "SELL"
         result.action(action)
-        result.totalQuantity(Decimal.get(order.quantity.absoluteValue))
+        result.totalQuantity(Decimal.get(order.size.absoluteValue))
         if (accountId != null) result.account(accountId)
 
         orderMap[orderId] = order.id
@@ -262,12 +260,12 @@ class IBKRBroker(
             if (id in tradeMap) logger.info("Overwrite of existing trade")
 
             // Possible values BOT and SLD
-            val direction = if (execution.side() == "SLD") -1.0 else 1.0
+            val size = if (execution.side() == "SLD") - execution.cumQty().value() else execution.cumQty().value()
             val orderId = orderMap[execution.orderId()] ?: -1 // Should not happen
             val trade = Trade(
                 Instant.now(),
                 contract.getAsset(),
-                execution.cumQty().value().toDouble() * direction,
+                Size(size),
                 execution.avgPrice(),
                 Double.NaN,
                 Double.NaN,
@@ -314,7 +312,8 @@ class IBKRBroker(
             logger.fine { "asset: ${contract.symbol()} position: $position price: $marketPrice cost: $averageCost" }
             logger.finer { "$contract $position $marketPrice $averageCost" }
             val asset = contract.getAsset()
-            val p = Position(asset, position.value().toDouble(), averageCost, marketPrice, Instant.now())
+            val size = Size(position.value())
+            val p = Position(asset, size, averageCost, marketPrice, Instant.now())
             _account.setPosition(p)
         }
 

@@ -194,7 +194,7 @@ fun oandaBroker2(createOrder: Boolean = true) {
 
     if (createOrder) {
         val asset = broker.availableAssets.findBySymbols("EUR_USD").first()
-        val order = MarketOrder(asset, -100.0, tif = FOK())
+        val order = MarketOrder(asset, Size(-100), tif = FOK())
         broker.place(listOf(order), Event.empty())
         broker.account.fullSummary().log()
     }

@@ -28,9 +28,9 @@ internal class PortfolioTest {
     fun testUpdatePortfolio() {
         val portfolio = mutableMapOf<Asset, Position>().withDefault { Position.empty(asset = it) }
         val c = TestData.usStock()
-        val position = Position(c, 100.0, 10.0)
+        val position = Position(c, 100, 10.0)
         portfolio[c] = position
-        assertEquals(100.0, portfolio.getValue(c).size)
+        assertEquals(100.0, portfolio.getValue(c).size.toDouble())
         assertEquals(10.0, portfolio.getValue(c).avgPrice)
 
        assertEquals(1000.0, portfolio.exposure.getValue(Currency.USD))

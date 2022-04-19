@@ -18,6 +18,7 @@ package org.roboquant.orders
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import kotlin.test.assertTrue
 
 
@@ -26,10 +27,11 @@ internal class BracketOrderTest {
     @Test
     fun test() {
         val asset = TestData.usStock()
+        val size = Size(10)
         val order = BracketOrder(
-            MarketOrder(asset, 10.0),
-            LimitOrder(asset, -10.0, 101.0),
-            StopOrder(asset, -10.0, 99.0),
+            MarketOrder(asset, size),
+            LimitOrder(asset, - size, 101.0),
+            StopOrder(asset, - size, 99.0),
         )
 
         assertTrue(order.entry is MarketOrder)

@@ -26,6 +26,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
+import kotlin.math.absoluteValue
 import net.jacobpeterson.alpaca.model.endpoint.orders.Order as AlpacaOrder
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderStatus as AlpacaOrderStatus
 import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosition
@@ -162,7 +163,8 @@ class AlpacaBroker(
     private fun convertPos(pos: AlpacaPosition): Position {
         assert(pos.assetClass == "us_equity") { "Unsupported asset class found ${pos.assetClass} for position $pos" }
         val asset = toAsset(pos.assetId)
-        return Position(asset, pos.quantity.toDouble(), pos.averageEntryPrice.toDouble(), pos.currentPrice.toDouble())
+        val size = Size(pos.quantity)
+        return Position(asset, size, pos.averageEntryPrice.toDouble(), pos.currentPrice.toDouble())
     }
 
     /**
@@ -203,7 +205,7 @@ class AlpacaBroker(
         }
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
-        val qty = order.quantity.absInt
+        val qty = order.size.toInt().absoluteValue
 
         val alpacaOrder = when (order) {
             is MarketOrder -> alpacaAPI.orders().requestMarketOrder(asset.symbol, qty, side, tif)

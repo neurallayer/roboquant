@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.junit.jupiter.api.Test
 import kotlin.test.*
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import java.math.BigDecimal
 import kotlin.random.Random
 import kotlin.test.assertFalse
@@ -37,12 +38,12 @@ internal class PositionTest {
     @Test
     fun update1() {
         val contract = TestData.usStock()
-        val p1 = Position(contract, 10.0, 10.0, 12.0)
-        val p2 = Position(contract, 10.0, 12.0, 12.0)
+        val p1 = Position(contract, 10, 10.0, 12.0)
+        val p2 = Position(contract, 10, 12.0, 12.0)
         val newPos = p1 + p2
         val pnl = p1.realizedPNL(p2)
         assertEquals(11.0, newPos.avgPrice)
-        assertEquals(20.0, newPos.size)
+        assertEquals(20.0, newPos.size.toDouble())
         assertEquals(0.0, pnl.value)
         assertEquals(240.0, newPos.exposure.value)
     }
@@ -55,46 +56,46 @@ internal class PositionTest {
             val size2 = getRandomSize()
             val totalSize = size1 + size2
 
-            val p1 = Position(contract, size1.toDouble(), 10.0, 12.0)
-            val p2 = Position(contract, size2.toDouble(), 12.0, 12.0)
+            val p1 = Position(contract, Size(size1), 10.0, 12.0)
+            val p2 = Position(contract, Size(size2), 12.0, 12.0)
             val newPos = p1 + p2
-            assertEquals(totalSize.toDouble(), newPos.size)
+            assertEquals(Size(totalSize), newPos.size)
         }
     }
 
     @Test
     fun positionUpdateRounding() {
         val contract = TestData.usStock()
-        val p1 = Position(contract, 2.0, 1.25003111, 1.203001)
-        val p2 = Position(contract, 3.1, 1.24111, 1.2130044)
+        val p1 = Position(contract, Size(2), 1.25003111, 1.203001)
+        val p2 = Position(contract, Size("3.1"), 1.24111, 1.2130044)
         val updatedPosition12 = p1.plus(p2)
-        val minusP2 = Position(contract, -3.1, 1.3111, 1.3130044)
-        val minusP1 = Position(contract, -2.0, 1.25003111, 1.203001)
+        val minusP2 = Position(contract, Size("-3.1"), 1.3111, 1.3130044)
+        val minusP1 = Position(contract, Size(-2), 1.25003111, 1.203001)
         val shouldBeZero = updatedPosition12.plus(minusP2).plus(minusP1)
-        assertEquals(shouldBeZero.size, 0.0)
+        assertTrue(shouldBeZero.size.iszero)
     }
 
     @Test
     fun update2() {
         val contract = TestData.usStock()
-        val p1 = Position(contract, 10.0, 10.0, 12.0)
-        val p2 = Position(contract, -5.0, 11.0, 12.0)
+        val p1 = Position(contract, 10, 10.0, 12.0)
+        val p2 = Position(contract, -5, 11.0, 12.0)
         val newPos = p1 + p2
         val pnl = p1.realizedPNL(p2)
         assertEquals(10.0, newPos.avgPrice)
-        assertEquals(5.0, newPos.size)
+        assertEquals(Size(5), newPos.size)
         assertEquals(5.0, pnl.value)
     }
 
     @Test
     fun update3() {
         val contract = TestData.usStock()
-        val p1 = Position(contract, 10.0, 10.0, 12.0)
-        val p2 = Position(contract, -15.0, 11.0, 12.0)
+        val p1 = Position(contract, 10, 10.0, 12.0)
+        val p2 = Position(contract, -15, 11.0, 12.0)
         val newPos = p1 + p2
         val pnl = p1.realizedPNL(p2)
         assertEquals(11.0, newPos.avgPrice)
-        assertEquals(-5.0, newPos.size)
+        assertEquals(Size(-5), newPos.size)
         assertEquals(10.0, pnl.value)
     }
 
@@ -102,7 +103,7 @@ internal class PositionTest {
     @Test
     fun pnl() {
         val contract = TestData.usStock()
-        val p1 = Position(contract, 10.0, 10.0, 12.0)
+        val p1 = Position(contract, 10, 10.0, 12.0)
         val pnl = p1.unrealizedPNL.value
         assertEquals(20.0, pnl)
     }
@@ -111,7 +112,7 @@ internal class PositionTest {
     @Test
     fun direction() {
         val contract = TestData.usStock()
-        val p1 = Position(contract, 10.0, 10.0, 12.0)
+        val p1 = Position(contract, 10, 10.0, 12.0)
         assertTrue(p1.long)
         assertFalse(p1.short)
         assertTrue(p1.open)
@@ -121,7 +122,7 @@ internal class PositionTest {
     @Test
     fun cost() {
         val contract = TestData.usStock()
-        val p1 = Position(contract, 10.0, 10.0)
+        val p1 = Position(contract, 10, 10.0)
         val cost = p1.totalCost.value
         assertEquals(100.0, cost)
     }
@@ -129,7 +130,7 @@ internal class PositionTest {
     @Test
     fun value() {
         val contract = TestData.usStock()
-        val p1 = Position(contract, 10.0, 10.0, 12.0)
+        val p1 = Position(contract, 10, 10.0, 12.0)
         val value = p1.marketValue.value
         assertEquals(120.0, value)
     }
@@ -138,8 +139,8 @@ internal class PositionTest {
     @Test
     fun size() {
         val contract = TestData.usStock()
-        val p1 = Position(contract, 10.0, 10.0, 12.0)
-        assertEquals(10.0, p1.size)
+        val p1 = Position(contract, 10, 10.0, 12.0)
+        assertEquals(Size(10), p1.size)
     }
 
 }

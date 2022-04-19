@@ -18,6 +18,7 @@ package org.roboquant.brokers.sim
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
 import java.time.Instant
@@ -34,44 +35,44 @@ internal class CombinedOrderHandlerTest {
 
     @Test
     fun testOCO() {
-        val order1 = MarketOrder(asset, 100.0)
-        val order2 = MarketOrder(asset, 50.0)
+        val order1 = MarketOrder(asset, 100)
+        val order2 = MarketOrder(asset, 50)
         val order = OCOOrder(order1, order2)
         val cmd = OCOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(100.0, executions.first().quantity)
+        assertEquals(Size(100), executions.first().size)
     }
 
     @Test
     fun testOCO2() {
-        val order1 = LimitOrder(asset, 100.0, 90.0)
-        val order2 = MarketOrder(asset, 50.0)
+        val order1 = LimitOrder(asset, Size(100), 90.0)
+        val order2 = MarketOrder(asset, 50)
         val order = OCOOrder(order1, order2)
         val cmd = OCOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(50.0, executions.first().quantity)
+        assertEquals(Size(50), executions.first().size)
     }
 
 
     @Test
     fun testOTO() {
-        val order1 = MarketOrder(asset, 100.0)
-        val order2 = MarketOrder(asset, 50.0)
+        val order1 = MarketOrder(asset, 100)
+        val order2 = MarketOrder(asset, 50)
         val order = OTOOrder(order1, order2)
         val cmd = OTOOrderHandler(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(2, executions.size)
-        assertEquals(100.0, executions.first().quantity)
-        assertEquals(50.0, executions.last().quantity)
+        assertEquals(Size(100), executions.first().size)
+        assertEquals(Size(50), executions.last().size)
     }
 
     @Test
     fun testBracker() {
         val entry = MarketOrder(asset, 50.0)
-        val profit = LimitOrder(asset, -50.0, 110.0)
-        val loss = StopOrder(asset, -50.0, 95.0)
+        val profit = LimitOrder(asset, Size(-50), 110.0)
+        val loss = StopOrder(asset, Size(-50), 95.0)
         val order = BracketOrder(entry, profit, loss)
         val cmd = BracketOrderHandler(order)
 

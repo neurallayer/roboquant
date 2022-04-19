@@ -45,10 +45,10 @@ object TestData {
         val asset2 = Asset("AAB")
         val account = InternalAccount()
         account.cash.deposit(100_000.USD)
-        account.setPosition(Position(asset1, 100.0, 10.0))
-        account.setPosition(Position(asset2, 100.0, 10.0))
+        account.setPosition(Position(asset1, 100, 10.0))
+        account.setPosition(Position(asset2, 100, 10.0))
 
-        val order = OrderState(MarketOrder(asset1, 100.0), OrderStatus.INITIAL)
+        val order = OrderState(MarketOrder(asset1, 100), OrderStatus.INITIAL)
         account.putOrders(listOf(order))
         return account.toAccount()
     }

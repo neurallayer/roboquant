@@ -19,6 +19,7 @@ package org.roboquant.policies
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
+import org.roboquant.common.Size
 import org.roboquant.common.zeroOrMore
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
@@ -63,7 +64,7 @@ open class DefaultPolicy(
         require(minAmount <= maxAmount)
     }
 
-    private fun reducedBuyingPower(account: Account, asset: Asset, qty: Double, price: Double): Double {
+    private fun reducedBuyingPower(account: Account, asset: Asset, qty: Size, price: Double): Double {
         val cost =  asset.value(qty, price).absoluteValue
         val baseCurrencyCost =  account.convert(cost)
         return baseCurrencyCost.value
@@ -80,7 +81,7 @@ open class DefaultPolicy(
         if (!shorting) return noOrder
         if (position.short && !increasePosition) return noOrder
 
-        val volume = floor(calcVolume(amount, signal.asset, price, account))
+        val volume = Size(floor(calcVolume(amount, signal.asset, price, account)).toInt())
         if (volume <= 0.0) return noOrder
 
         val bp = reducedBuyingPower(account, signal.asset, volume, price)
@@ -96,7 +97,7 @@ open class DefaultPolicy(
         if (position.short) return Pair(createOrder(signal, -position.size, price), 0.0)
         if (! signal.entry) return noOrder
 
-        val volume = floor(calcVolume(amount, signal.asset, price, account))
+        val volume = Size(floor(calcVolume(amount, signal.asset, price, account)).toInt())
         if (volume <= 0.0) return noOrder
 
         val bp = reducedBuyingPower(account, signal.asset, volume, price)
@@ -109,7 +110,7 @@ open class DefaultPolicy(
      * Create a new order based on the [signal], [qty] and current [price]. Overwrite this method if you want to
      * create other orders types than the default MarketOrder.
      */
-    open fun createOrder(signal: Signal, qty: Double, price: Double): Order? = MarketOrder(signal.asset, qty)
+    open fun createOrder(signal: Signal, qty: Size, price: Double): Order? = MarketOrder(signal.asset, qty)
 
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {

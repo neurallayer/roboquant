@@ -18,6 +18,7 @@ package org.roboquant.orders
 
 
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -28,7 +29,7 @@ internal class SingleOrderTest {
     fun testMarketOrder() {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100.0)
-        assertEquals(100.0, order.quantity)
+        assertEquals(100.0, order.size.toDouble())
         assertTrue(order.tif is GTC)
         assertTrue(order.buy)
         assertTrue(order.toString().isNotBlank())
@@ -37,7 +38,7 @@ internal class SingleOrderTest {
     @Test
     fun testOrderTag() {
         val asset = TestData.usStock()
-        val order = MarketOrder(asset, 100.0, tag = "test")
+        val order = MarketOrder(asset, Size(100), tag = "test")
         assertEquals("test", order.tag)
     }
 
@@ -46,8 +47,8 @@ internal class SingleOrderTest {
     @Test
     fun testStopOrder() {
         val asset = TestData.usStock()
-        val order = StopOrder(asset, -10.0, 99.0)
-        assertEquals(-10.0, order.quantity)
+        val order = StopOrder(asset, Size(-10), 99.0)
+        assertEquals(-10.0, order.size.toDouble())
         assertEquals(99.0, order.stop)
         assertTrue(order.sell)
         assertTrue(order.toString().isNotBlank())
@@ -56,8 +57,8 @@ internal class SingleOrderTest {
     @Test
     fun testLimitOrder() {
         val asset = TestData.usStock()
-        val order = LimitOrder(asset, -10.0, 101.0)
-        assertEquals(-10.0, order.quantity)
+        val order = LimitOrder(asset, Size(-10), 101.0)
+        assertEquals(-10.0, order.size.toDouble())
         assertEquals(101.0, order.limit)
         assertTrue(order.sell)
         assertTrue(order.toString().isNotBlank())
@@ -67,8 +68,8 @@ internal class SingleOrderTest {
     @Test
     fun testStopLimitOrder() {
         val asset = TestData.usStock()
-        val order = StopLimitOrder(asset, -10.0, 99.0, 98.0)
-        assertEquals(-10.0, order.quantity)
+        val order = StopLimitOrder(asset, Size(-10), 99.0, 98.0)
+        assertEquals(-10.0, order.size.toDouble())
         assertEquals(98.0, order.limit)
         assertTrue(order.sell)
         assertTrue(order.toString().isNotBlank())

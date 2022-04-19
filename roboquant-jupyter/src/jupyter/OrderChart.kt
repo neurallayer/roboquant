@@ -43,7 +43,7 @@ class OrderChart(
 
     private fun getTooltip(order: SingleOrder, openedAt: Instant): String {
         return with(order) {
-            "asset: $asset <br> currency: ${asset.currency} <br> placed: $openedAt <br> qty: ${order.quantity} <br> id: $id <br> type: ${order::class.simpleName} <br> tif: ${order.tif}"
+            "asset: $asset <br> currency: ${asset.currency} <br> placed: $openedAt <br> qty: ${order.size} <br> id: $id <br> type: ${order::class.simpleName} <br> tif: ${order.tif}"
         }
     }
 
@@ -56,7 +56,7 @@ class OrderChart(
             if (order is SingleOrder) {
                 val value = when (aspect) {
                     "direction" -> order.direction.toBigDecimal()
-                    "quantity" -> order.quantity.toBigDecimal()
+                    "quantity" -> order.size.toBigDecimal()
                     else -> throw UnsupportedException("Unsupported aspect $aspect")
                 }
 

@@ -18,6 +18,7 @@ package org.roboquant.policies
 
 
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -29,10 +30,10 @@ internal class OrderSizerTest {
         val asset = TestData.usStock()
         val account = TestData.usAccount()
         val size = sizer.size(asset, account, 5_000.0, 100.0)
-        assertEquals(10.0, size)
+        assertEquals(Size(10), size)
 
         val size2 = sizer.size(asset, account, 500.0, 100.0)
-        assertEquals(5.0, size2)
+        assertEquals(Size(5), size2)
     }
 
     @Test
@@ -41,10 +42,10 @@ internal class OrderSizerTest {
         val asset = TestData.usStock()
         val account = TestData.usAccount()
         val size = sizer.size(asset, account, 255.0, 100.0)
-        assertEquals(2.54, size)
+        assertEquals(2.54, size.toDouble())
 
         val size2 = sizer.size(asset, account, 256.0, 100.0)
-        assertEquals(2.56, size2)
+        assertEquals(2.56, size2.toDouble())
     }
 
     @Test
@@ -53,7 +54,7 @@ internal class OrderSizerTest {
         val asset = TestData.usStock()
         val account = TestData.usAccount()
         val size = sizer.size(asset, account, 255.0, 100.0)
-        assertEquals(0.0, size)
+        assertEquals(0.0, size.toDouble())
 
     }
 }

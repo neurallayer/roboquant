@@ -1,16 +1,15 @@
 package org.roboquant.brokers.sim
 
-import org.roboquant.orders.OrderState
+import org.roboquant.common.Size
 import org.roboquant.common.UnsupportedException
 import org.roboquant.common.days
-import org.roboquant.common.iszero
 import org.roboquant.orders.*
 import java.time.Instant
 
 abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHandler {
 
-    var fill = 0.0
-    var qty = order.quantity
+    var fill = Size.ZERO
+    var qty = order.size
 
     val remaining
         get() = qty - fill
@@ -24,7 +23,7 @@ abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHan
         return when (val tif = order.tif) {
             is GTC -> time > state.openedAt + tif.maxDays.days
             is DAY -> ! order.asset.exchange.sameDay(state.openedAt, time)
-            is FOK -> remaining != 0.0
+            is FOK -> remaining.nonzero
             is GTD -> time > tif.date
             is IOC -> time > state.openedAt
             else -> throw UnsupportedException("Unsupported TIF $tif")
@@ -35,7 +34,7 @@ abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHan
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         state = state.copy(time)
         val execution = fill(pricing)
-        fill += execution?.quantity ?: 0.0
+        fill += execution?.size ?: Size.ZERO
 
         if (expired(time)) {
             state = state.copy(time, OrderStatus.EXPIRED)
@@ -58,19 +57,19 @@ internal class MarketOrderHandler(order: MarketOrder) : SingleOrderHandler<Marke
 }
 
 
-private fun stopTrigger(stop: Double, volume: Double, pricing: Pricing): Boolean {
+private fun stopTrigger(stop: Double, volume: Size, pricing: Pricing): Boolean {
     return if (volume < 0.0) pricing.lowPrice(volume) <= stop
     else pricing.highPrice(volume) >= stop
 }
 
 
-private fun limitTrigger(limit: Double, volume: Double, pricing: Pricing): Boolean {
+private fun limitTrigger(limit: Double, volume: Size, pricing: Pricing): Boolean {
     return if (volume < 0.0) pricing.highPrice(volume) >= limit
     else pricing.lowPrice(volume) <= limit
 }
 
 
-private fun getTrailStop(oldStop: Double, trail: Double, volume: Double, pricing: Pricing): Double {
+private fun getTrailStop(oldStop: Double, trail: Double, volume: Size, pricing: Pricing): Double {
 
     return if (volume < 0.0) {
         // Sell stop

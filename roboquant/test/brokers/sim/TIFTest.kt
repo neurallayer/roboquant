@@ -18,10 +18,12 @@ package org.roboquant.brokers.sim
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import org.roboquant.common.days
 import org.roboquant.common.seconds
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
+import java.math.BigDecimal
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -33,7 +35,10 @@ internal class TIFTest {
         var fillPercentage: Double = 1.0
 
         override fun fill(pricing: Pricing): Execution? {
-            if (fillPercentage != 0.0) return Execution(order, fillPercentage* order.quantity, pricing.marketPrice(100.0))
+            if (fillPercentage != 0.0) {
+                val size = Size(BigDecimal.valueOf(order.size * fillPercentage))
+                return Execution(order, size, pricing.marketPrice(Size(100)))
+            }
             return null
         }
 
@@ -46,7 +51,7 @@ internal class TIFTest {
 
     private fun getOrderCommand(tif: TimeInForce, fillPercentage: Double = 1.0): MySingleOrderHandler {
         val asset = TestData.usStock()
-        val order = MarketOrder(asset, 50.0, tif)
+        val order = MarketOrder(asset, Size(50), tif)
         val result = MySingleOrderHandler(order)
         result.fillPercentage = fillPercentage
         return result
