@@ -4,89 +4,26 @@ import java.math.BigDecimal
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
-/**
- * Size of orders and positions, using high precision calculations
- *
-class Size2(private val value: BigDecimal)  : Comparable<Size> {
-
-    constructor(value: Int) : this(BigDecimal.valueOf(value.toLong()))
-    constructor(value: String) : this(BigDecimal(value))
-
-    companion object {
-        val ZERO = Size(BigDecimal.ZERO)
-        val ONE = Size(BigDecimal.ONE)
-    }
-
-    /*
-    override fun toByte(): Byte = value.toByte()
-
-    override fun toChar(): Char  = value.toChar()
-
-    override fun toInt(): Int = value.toInt()
-
-    override fun toLong(): Long = value.toLong()
-
-    override fun toFloat(): Float = value.toFloat()
-
-    override fun toShort(): Short = value.toShort()
-     */
-
-    fun toDouble(): Double  = value.toDouble()
-
-    fun toBigDecimal(): BigDecimal = value
-
-
-    operator fun times(value: Double) : Double = toDouble() * value
-
-    val iszero: Boolean
-        get() = BigDecimal.ZERO.compareTo(this.value) == 0
-
-    val nonzero: Boolean
-        get() = ! iszero
-
-    val absoluteValue
-        get() = Size(value.abs())
-
-    val sign
-        get() = value.signum()
-
-    operator fun plus(value: Size) = Size(this.value + value.value)
-
-    operator fun minus(value: Size) = Size(this.value - value.value)
-
-    operator fun compareTo(i: Number) = value.toDouble().compareTo(i.toDouble())
-
-    operator fun unaryMinus(): Size = Size(value.unaryMinus())
-
-    override fun toString(): String = value.toString()
-
-    override fun hashCode(): Int = value.hashCode()
-
-    override fun compareTo(other: Size): Int = value.compareTo(other.value)
-
-    override fun equals(other: Any?): Boolean = if (other is Size) value.compareTo(other.value) == 0 else false
-
-}
-*/
 
 /**
- * Size of orders and positions, using high precision storage with minimum overhead.
+ * Represents the size of orders, positions and trades. This implementation is precise up to 8 decimals, ensuring that order
+ * sizes are always precise even with fractional orders.
  */
 @JvmInline
 value class Size private constructor (private val value: Long) : Comparable<Size> {
 
     /**
-     * Create a new instance based on an integer [value]
+     * Translates an [Int] [value] to a [Size]
      */
     constructor(value: Int) : this(value * FRACTION)
 
     /**
-     * Create a new instance based on an BigDecimal [value]
+     * Translates a [BigDecimal] [value] to a [Size]
      */
     constructor(value: BigDecimal) : this(value.multiply(BD_FRACTION).toLong())
 
     /**
-     * Create a new instance based on an string [value] that represents the number
+     * Translaes the [String] representation of a numeric [value] to a Size
      */
     constructor(value: String) : this(BigDecimal(value).multiply(BD_FRACTION).toLong())
 
@@ -96,29 +33,44 @@ value class Size private constructor (private val value: Long) : Comparable<Size
         private const val FRACTION = 100_000_000L
         private val BD_FRACTION = BigDecimal(FRACTION)
 
+        /**
+         * Size of zero
+         */
         val ZERO = Size(0)
+
+        /**
+         * Size of one
+         */
         val ONE = Size(1)
     }
 
     /**
-     * Get the size as a double
+     * Converts this [Size] value to [Double]
      */
     fun toDouble() = value / FRACTION.toDouble()
 
     /**
-     * Get the size as a BigDecimal
+     * Converts this [Size] value to [BigDecimal]
      */
     fun toBigDecimal() = BigDecimal(value).setScale(SCALE).divide(BD_FRACTION)
+
 
     val iszero: Boolean
         get() = value == 0L
 
+
     val nonzero: Boolean
         get() = value != 0L
 
+    /**
+     * Returns the absolute value of this value
+     */
     val absoluteValue: Size
         get() = Size(value.absoluteValue)
 
+    /**
+     * Returns the sign of this value
+     */
     val sign: Int
         get() = value.sign
 

@@ -92,6 +92,18 @@
 
     <profiles>
         <profile>
+            <!-- we can only build the roboquant-ibkr module if the client is localy installed -->
+            <id>ibkr</id>
+            <activation>
+                <file>
+                    <exists>${user.home}/.m2/repository/com/interactivebrokers/tws-api/10.15/tws-api-10.15.pom</exists>
+                </file>
+            </activation>
+            <modules>
+                <module>roboquant-ibkr</module>
+            </modules>
+        </profile>
+        <profile>
             <id>release</id>
             <build>
                 <plugins>

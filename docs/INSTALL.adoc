@@ -48,15 +48,8 @@ Next to `roboquant`, the following additional modules are available for inclusio
 * *roboquant-crypto* Adds support for many of today's most popular crypto exchanges
 * *roboquant-extra* Adds out-of-the-box integrations with 3rd party brokers and data providers.
 * *roboquant-ta* Adds support for technical analysis indicators and strategies
-* *roboquant-ibkr* Adds support for Interactive Brokers
 * *roboquant-jupyter* Adds support for running roboquant inside Jupyter Notebooks
-
-== Interactive Brokers
-Unfortuatly we are not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file and install it in your local Maven repository
-[source, shell]
-----
-mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.15 -Dpackaging=jar
-----
+* *roboquant-ibkr* Adds support for Interactive Brokers
 
 == Building from source
 First start with cloning the roboquant GitHub repository to your local disk. The quickest way to be up and running is then to install IntelliJ IDEA (either the free community edition or the paid Ultimate version) and open the directory you just cloned. IntelliJ IDEA will recognize it as Kotlin/Maven project, and you can build it and run test directly from the IDE.
@@ -69,3 +62,15 @@ Roboquant uses Maven for the build process and assumes you already have this ins
 ----
 mvn install
 ----
+
+== Interactive Brokers
+Unfortuatly we are not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file yourself. You can download version `10.15` from here: https://interactivebrokers.github.io/# and within the downloaded archive file you'll find the required `TwsApi.jar`.
+
+The install it in the local Maven repository on your machine using the following command:
+
+[source, shell]
+----
+mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.15 -Dpackaging=jar
+----
+
+If this artefact is not found in your local Maven repository during build, the module `roboquant-ibkr` will be automatically skipped during the build phase. So if you don't need integration with Interactive Brokers for your use-case, you can skip this step.
