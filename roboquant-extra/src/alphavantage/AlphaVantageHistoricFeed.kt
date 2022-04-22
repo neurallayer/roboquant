@@ -125,6 +125,7 @@ class AlphaVantageHistoricFeed(
         return DateTimeFormatter.ofPattern(pattern).withZone(zoneId)
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun handleIntraday(response: TimeSeriesResponse) {
         try {
             val symbol = response.metaData.symbol
@@ -145,7 +146,7 @@ class AlphaVantageHistoricFeed(
         }
     }
 
-
+    @Suppress("TooGenericExceptionCaught")
     private fun handleDaily(response: TimeSeriesResponse) {
         try {
             val symbol = response.metaData.symbol

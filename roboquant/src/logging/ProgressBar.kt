@@ -75,8 +75,8 @@ internal class ProgressBar {
         sb.append('\r').append(pre)
         sb.append(String.format(Locale.ENGLISH, "%3d", percent)).append("% |")
         val filled = percent * TOTAL_BAR_LENGTH / 100
-        for (i in 0 until TOTAL_BAR_LENGTH) {
-            if (i <= filled) sb.append(progressChar) else sb.append(' ')
+        repeat(TOTAL_BAR_LENGTH) {
+            if (it <= filled) sb.append(progressChar) else sb.append(' ')
         }
 
         sb.append("| ").append(post)
@@ -107,15 +107,7 @@ internal class ProgressBar {
         private const val TOTAL_BAR_LENGTH = 40
 
         private fun getProgressChar(): Char {
-            if (System.getProperty("os.name").startsWith("Win")) {
-                return '='
-            } else if (System.getProperty("os.name").startsWith("Linux")) {
-                val lang = System.getenv("LANG")
-                if (lang == null || !lang.contains("UTF-8")) {
-                    return '='
-                }
-            }
-            return '█'
+            return if (System.getProperty("os.name").startsWith("Win")) '=' else '█'
         }
     }
 }

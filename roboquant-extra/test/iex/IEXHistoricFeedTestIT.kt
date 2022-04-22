@@ -31,7 +31,7 @@ internal class IEXHistoricFeedTestIT {
         System.getProperty("TEST_IEX") ?: return
         val feed = IEXHistoricFeed()
         val asset = Asset("AAPL")
-        feed.retrieveIntraday(asset)
+        feed.retrieveIntraday(listOf(asset))
         assertTrue(asset in feed.assets)
 
         val actions = feed.filter<PriceAction>(Timeframe.next(5.minutes))

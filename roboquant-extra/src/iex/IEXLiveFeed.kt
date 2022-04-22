@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("SpreadOperator")
 
 package org.roboquant.iex
 
@@ -74,6 +75,7 @@ class IEXLiveFeed(
 
         client.subscribe(request, ::handleQuotes)
     }
+
 
     fun subscribeTrades(vararg assets: Asset) {
         val symbols = assets.map { it.symbol }.toTypedArray()

@@ -27,7 +27,6 @@ import java.util.*
 typealias AccountType = EndpointAPIType
 typealias DataType = DataAPIType
 
-
 data class AlpacaConfig(
     var publicKey: String = Config.getProperty("alpaca.public.key", ""),
     var secretKey: String = Config.getProperty("alpaca.secret.key", ""),
@@ -61,12 +60,12 @@ internal object AlpacaConnection {
         return AlpacaAPI(config.publicKey, config.secretKey, config.accountType, config.dataType)
     }
 
-
     /**
      * Get the available assets
      */
     fun getAvailableAssets(api: AlpacaAPI): SortedSet<Asset> {
-        val availableAssets = api.assets().get(AssetStatus.ACTIVE, AssetClass.CRYPTO) + api.assets().get(AssetStatus.ACTIVE, AssetClass.US_EQUITY)
+        val availableAssets = api.assets().get(AssetStatus.ACTIVE, AssetClass.CRYPTO) + api.assets()
+            .get(AssetStatus.ACTIVE, AssetClass.US_EQUITY)
         val exchangeCodes = Exchange.exchanges.map { e -> e.exchangeCode }
         val result = mutableListOf<Asset>()
         availableAssets.forEach {

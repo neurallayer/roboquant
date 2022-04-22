@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.roboquant.iex
 
 
@@ -59,7 +58,7 @@ class IEXHistoricFeed(
      *
      * @param assets
      */
-    fun retrieveIntraday(vararg assets: Asset) {
+    fun retrieveIntraday(assets: Collection<Asset>) {
         assets.forEach {
             val quote = client.executeRequest(
                 IntradayRequestBuilder()
@@ -77,7 +76,7 @@ class IEXHistoricFeed(
      */
     fun retrieveIntraday(vararg symbols: String) {
         val assets = symbols.map { template.copy(symbol = it.uppercase()) }
-        retrieveIntraday(*assets.toTypedArray())
+        retrieveIntraday(assets.toList())
     }
 
     /**

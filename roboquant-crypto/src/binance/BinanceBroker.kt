@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "WildcardImport")
 
 package org.roboquant.binance
 
@@ -122,9 +122,10 @@ class BinanceBroker(
                         val newMarketOrder = trade(symbol, order)
                         placedOrders[newMarketOrder.orderId] = order
                     }
-                    else -> {
-                        logger.warning { "BinanceBroker supports only cancellation, market and limit orders, received ${order::class} instead" }
+                    else -> logger.warning {
+                        "supports only cancellation, market and limit orders, received ${order::class} instead"
                     }
+
                 }
 
             } else {
