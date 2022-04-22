@@ -1,9 +1,12 @@
+@file:Suppress("ReturnCount", "MaxLineLength")
+
 package generator
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.roboquant.common.ConfigurationException
+import org.roboquant.common.RoboquantException
 import java.io.File
 
 operator fun StringBuffer.plusAssign(str: Any) {
@@ -172,7 +175,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
                 "Integer Array" -> "val output$cnt = IntArray(outputSize)\n"
                 "Double Array" -> "val output$cnt = DoubleArray(outputSize)\n"
                 else -> {
-                    throw Exception("unexpected output type $type")
+                    throw RoboquantException("unexpected output type $type")
                 }
             }
             cnt++
@@ -189,7 +192,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
             2 -> "Pair(output1.copyOfRange(0, last), output2.copyOfRange(0, last))"
             3 -> "Triple(output1.copyOfRange(0, last), output2.copyOfRange(0, last), output3.copyOfRange(0, last))"
             else -> {
-                throw Exception("unexpected return size")
+                throw RoboquantException("unexpected return size")
             }
         }
     }
@@ -204,7 +207,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
             2 -> "Pair<$type, $type>"
             3 -> "Triple<$type, $type, $type>"
             else -> {
-                throw Exception("unexpected return size")
+                throw RoboquantException("unexpected return size")
             }
         }
     }

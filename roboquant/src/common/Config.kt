@@ -45,6 +45,8 @@ object Config {
 
     private val logger: Logger = Logging.getLogger(Config::class)
     private val properties = mutableMapOf<String, String>()
+    private const val ONE_MB = 1024 * 1024
+    private const val DEFAULT_SEED = 42L
 
     /**
      * Meta data about build en the environments
@@ -53,7 +55,7 @@ object Config {
         val result = mutableMapOf<String, String>()
         result["jvm"] = System.getProperty("java.vm.name") + " " + System.getProperty("java.version")
         result["os"] =  System.getProperty("os.name") + " " + System.getProperty("os.version")
-        result["memory"] = (Runtime.getRuntime().maxMemory() / (1024 * 1024)).toString()
+        result["memory"] = (Runtime.getRuntime().maxMemory() / ONE_MB).toString()
 
         val prop = Properties()
         val stream = Config::class.java.getResourceAsStream("/roboquant.properties")!!
@@ -92,7 +94,7 @@ object Config {
     /**
      * Default random to use, typically used by methods as a default value when other random generator is provided
      */
-    var random: Random = Random(42L)
+    var random: Random = Random(DEFAULT_SEED)
 
     /**
      * ASCII art welcome greeting including runtime info

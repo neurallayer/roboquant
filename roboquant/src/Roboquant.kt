@@ -211,7 +211,7 @@ class Roboquant(
         for (metric in metrics) {
             try {
                 metric.calculate(account, event)
-            } catch (e: Exception) {
+            } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
                 kotlinLogger.log(Level.WARNING, "failed when calculate metric ${metric::class.simpleName}", e)
             }
         }

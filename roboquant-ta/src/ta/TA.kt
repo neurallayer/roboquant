@@ -1,4 +1,12 @@
-@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+@file:Suppress(
+    "MemberVisibilityCanBePrivate",
+    "unused",
+    "LargeClass",
+    "TooManyFunctions",
+    "WildcardImport",
+    "MaxLineLength",
+    "LongParameterList"
+)
 
 package org.roboquant.ta
 

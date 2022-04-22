@@ -65,7 +65,6 @@ class AlpacaLiveFeed(
     override val assets
         get() = assetsMap.values.toSortedSet()
 
-
     init {
         config.configure()
         alpacaAPI = AlpacaConnection.getAPI(config)
@@ -79,13 +78,15 @@ class AlpacaLiveFeed(
         AlpacaConnection.getAvailableAssets(alpacaAPI)
     }
 
-
     /**
      * Connect to ta market data provider and start listening. This can be the stocks or crypto market data feeds.
      * 13 april 15:00 hendriks
      */
-    fun connect(connection: MarketDataWebsocketInterface = alpacaAPI.stockMarketDataStreaming()) {
-        require(! connection.isConnected) { "Already connected, disconnect first" }
+    fun connect(
+        connection: MarketDataWebsocketInterface = alpacaAPI.stockMarketDataStreaming(),
+        timeoutMillis: Long = 5_000
+    ) {
+        require(!connection.isConnected) { "Already connected, disconnect first" }
 
         connection.subscribeToControl(
             MarketDataMessageType.SUCCESS,
@@ -93,7 +94,7 @@ class AlpacaLiveFeed(
             MarketDataMessageType.ERROR
         )
         connection.connect()
-        connection.waitForAuthorization(5, TimeUnit.SECONDS)
+        connection.waitForAuthorization(timeoutMillis, TimeUnit.MILLISECONDS)
         if (!connection.isValid) {
             logger.severe("Couldn't establish websocket connection")
         } else {
@@ -121,25 +122,42 @@ class AlpacaLiveFeed(
         close()
     }
 
-
     private val Collection<Asset>.symbols
         get() = if (isEmpty()) null else map { it.symbol }.distinct()
 
-    fun subscribeStocks(priceBars: Collection<String>, trades: Collection<String> = emptyList(), quotes: Collection<String> = emptyList()) {
-        alpacaAPI.stockMarketDataStreaming().subscribe(trades.ifEmpty { null }, quotes.ifEmpty { null }, priceBars.ifEmpty { null })
+    fun subscribeStocks(
+        priceBars: Collection<String>,
+        trades: Collection<String> = emptyList(),
+        quotes: Collection<String> = emptyList()
+    ) {
+        alpacaAPI.stockMarketDataStreaming()
+            .subscribe(trades.ifEmpty { null }, quotes.ifEmpty { null }, priceBars.ifEmpty { null })
     }
 
     @JvmName("subscribeStocksAssets")
-    fun subscribeStocks(priceBars: Collection<Asset>, trades: Collection<Asset> = emptyList(), quotes: Collection<Asset> = emptyList()) {
+    fun subscribeStocks(
+        priceBars: Collection<Asset>,
+        trades: Collection<Asset> = emptyList(),
+        quotes: Collection<Asset> = emptyList()
+    ) {
         alpacaAPI.stockMarketDataStreaming().subscribe(trades.symbols, quotes.symbols, priceBars.symbols)
     }
 
-    fun subscribeCrypto(priceBars: Collection<String>, trades: Collection<String> = emptyList(), quotes: Collection<String> = emptyList()) {
-        alpacaAPI.cryptoMarketDataStreaming().subscribe(trades.ifEmpty { null }, quotes.ifEmpty { null }, priceBars.ifEmpty { null })
+    fun subscribeCrypto(
+        priceBars: Collection<String>,
+        trades: Collection<String> = emptyList(),
+        quotes: Collection<String> = emptyList()
+    ) {
+        alpacaAPI.cryptoMarketDataStreaming()
+            .subscribe(trades.ifEmpty { null }, quotes.ifEmpty { null }, priceBars.ifEmpty { null })
     }
 
     @JvmName("subscribeCryptoAssets")
-    fun subscribeCrypto(priceBars: Collection<Asset>, trades: Collection<Asset> = emptyList(), quotes: Collection<Asset> = emptyList()) {
+    fun subscribeCrypto(
+        priceBars: Collection<Asset>,
+        trades: Collection<Asset> = emptyList(),
+        quotes: Collection<Asset> = emptyList()
+    ) {
         alpacaAPI.cryptoMarketDataStreaming().subscribe(trades.symbols, quotes.symbols, priceBars.symbols)
     }
 
@@ -150,14 +168,13 @@ class AlpacaLiveFeed(
         val crypto = symbols.filter { it.isCrypto() }
         if (crypto.isNotEmpty()) subscribeCrypto(crypto)
 
-        val stocks = symbols.filter { ! it.isCrypto() }
+        val stocks = symbols.filter { !it.isCrypto() }
         if (stocks.isNotEmpty()) subscribeStocks(stocks)
     }
 
-
     private fun handleMsg(msg: MarketDataMessage) {
         try {
-            logger.finer {"Received msg $msg"}
+            logger.finer { "Received msg $msg" }
             val action: PriceAction? = when (msg) {
                 is TradeMessage -> TradePrice(assetsMap[msg.symbol]!!, msg.price)
                 is QuoteMessage -> PriceQuote(
@@ -175,26 +192,28 @@ class AlpacaLiveFeed(
                     msg.close,
                     msg.tradeCount.toDouble()
                 )
-                is SuccessMessage -> { logger.fine(msg.message); null }
-                else -> { logger.warning("Unexpected msg $msg"); null}
+                is SuccessMessage -> {
+                    logger.fine(msg.message); null
+                }
+                else -> {
+                    logger.warning("Unexpected msg $msg"); null
+                }
             }
 
             if (action != null) {
                 val now = Instant.now()
-                logger.finer { "Received action $action at ${now.truncatedTo(ChronoUnit.SECONDS)}"}
+                logger.finer { "Received action $action at ${now.truncatedTo(ChronoUnit.SECONDS)}" }
                 val event = Event(listOf(action), now)
                 channel?.offer(event)
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
             logger.severe("error during handling market data message", e)
         }
     }
 
-
     private fun createListener(): MarketDataListener {
         return MarketDataListener { streamMessageType, msg ->
-            logger.finer {"Received message of type $streamMessageType and msg $msg"}
+            logger.finer { "Received message of type $streamMessageType and msg $msg" }
 
             when (streamMessageType) {
                 MarketDataMessageType.ERROR -> logger.warning("$msg")

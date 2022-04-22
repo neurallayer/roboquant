@@ -56,7 +56,7 @@ class AlpacaBroker(
 
     private val orderMapping = mutableMapOf<Order, AlpacaOrder>()
 
-    private val assetsMap : Map<String, Asset> by lazy {
+    private val assetsMap: Map<String, Asset> by lazy {
         availableAssets.associateBy { it.id }
     }
 
@@ -125,8 +125,7 @@ class AlpacaBroker(
 
     private fun toAsset(assetId: String) = assetsMap[assetId]!!
 
-
-    private fun toState(order: AlpacaOrder, marketOrder: MarketOrder) : OrderState {
+    private fun toState(order: AlpacaOrder, roboquantOrder: Order): OrderState {
         val status = when (order.status) {
             AlpacaOrderStatus.CANCELED -> OrderStatus.CANCELLED
             AlpacaOrderStatus.EXPIRED -> OrderStatus.EXPIRED
@@ -139,16 +138,15 @@ class AlpacaBroker(
         }
         val close = order.filledAt ?: order.canceledAt ?: order.expiredAt
         val closeTime = close?.toInstant() ?: Instant.MAX
-        return OrderState(marketOrder, status, order.createdAt.toInstant(), closeTime)
+        return OrderState(roboquantOrder, status, order.createdAt.toInstant(), closeTime)
     }
-
 
     /**
      * Convert an alpaca order to a roboquant order
      */
     private fun toOrder(order: AlpacaOrder): OrderState {
         val asset = toAsset(order.assetId)
-        val qty = if (order.side == OrderSide.BUY) order.quantity.toDouble() else - order.quantity.toDouble()
+        val qty = if (order.side == OrderSide.BUY) order.quantity.toDouble() else -order.quantity.toDouble()
         val marketOrder = MarketOrder(asset, qty)
         return toState(order, marketOrder)
     }
@@ -171,13 +169,12 @@ class AlpacaBroker(
      */
     private fun updateOpenOrders() {
 
-  /*      val slips = _account.orders.values.open.filterIsInstance<SingleOrder>().map {
-            val aOrder = orderMapping[it]!!
-            val order = alpacaAPI.orders().get(aOrder.id, false)
-            val state = toState(order)
-            OrderSlip(it, state)
+        val states = _account.openOrders.values.map {
+            val aOrder = orderMapping[it.order]!!
+            val order = alpacaAPI.orders().get(aOrder.id, false)!!
+            toState(order, it.order)
         }
-        _account.putOrders(slips)*/
+        _account.putOrders(states)
     }
 
     /**
@@ -211,12 +208,13 @@ class AlpacaBroker(
             is LimitOrder -> alpacaAPI.orders()
                 .requestLimitOrder(asset.symbol, qty, side, tif, order.limit, false)
             else -> {
-                throw UnsupportedException("Unsupported order type $order. Right now only Market and Limit orders are mapped")
+                throw UnsupportedException(
+                    "Unsupported order type $order. Right now only Market and Limit orders are mapped"
+                )
             }
         }
         orderMapping[order] = alpacaOrder
         _account.putOrders(listOf(OrderState(order)))
-
 
     }
 

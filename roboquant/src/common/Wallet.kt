@@ -30,6 +30,7 @@ import java.time.Instant
  * Wallet by itself will never convert currencies when depositing or withdrawing amounts. But you can invoke
  * the [convert] method if you want to do so.
  */
+@Suppress("TooManyFunctions")
 class Wallet(vararg amounts: Amount) : Cloneable {
 
     // Contains the data of the wallet

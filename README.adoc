@@ -29,14 +29,14 @@ val feed = CSVFeed("data/US") // <4>
 roboquant.run(feed) // <5>
 ----
 <1> Create the strategy that you want to validate
-<2> Define the metrics you want to use during the test
-<3> Create a Roboquant instance, the engine of the framework
+<2> Define the metrics you want to monitor during the test
+<3> Create a Roboquant instance, the engine of the platform
 <4> What data should be used, in this case CSV files
 <5> Run the back test
 
 == Installation
 === Library
-Just add `roboquant` or any of the other modules as a dependency to your build tool, like Maven or Gradle. See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant.
+Just add `roboquant` and any of the additional modules as a dependency to your build tool, like Maven or Gradle. See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant.
 
 *Maven*
 [source,xml]
@@ -62,7 +62,7 @@ If you have already Docker installed, all it takes is a single command to have a
 docker run --rm -p 8888:8888 roboquant/jupyter 
 ----
 
-This also comes with several tutorials. And if you just want to try it without any installation, go toimage:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials], although it might be a bit slow to start the environment. 
+This image also comes with several tutorials. And if you just want to try it without any installation, go toimage:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials], although it might be a bit slow to start the environment.
 
 image:/docs/jupyter-lab.png[Jupyter Lab]
 

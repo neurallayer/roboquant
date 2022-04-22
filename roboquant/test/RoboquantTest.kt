@@ -20,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.brokers.Account
+import org.roboquant.common.RoboquantException
 import org.roboquant.common.years
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.random.RandomWalk
@@ -50,7 +51,7 @@ internal class RoboquantTest {
     fun brokenMetric() {
         class MyBrokenMetric : Metric {
             override fun calculate(account: Account, event: Event) {
-                throw Exception("Broken")
+                throw RoboquantException("Broken")
             }
 
         }

@@ -42,7 +42,7 @@ object Logging {
      * Use a simple output format (default) or a more detailed format better suited for debugging purposes
      */
     var useSimpleFormat = true
-    
+
     // ANSI escape code
     private const val ANSI_RESET = "\u001B[0m"
     private const val ANSI_BLACK = "\u001B[30m"
@@ -59,6 +59,7 @@ object Logging {
 
     private class LoggingFormatter : SimpleFormatter() {
 
+        @Suppress("MaxLineLength")
         override fun format(lr: LogRecord): String {
             return if (useSimpleFormat) {
                 val shortLoggerName = lr.loggerName.split('.').last()
@@ -68,7 +69,6 @@ object Logging {
             }
         }
     }
-
 
     init {
         // Install a modified formatter
@@ -122,4 +122,4 @@ object Logging {
 
 }
 
-fun Logger.severe(msg: String, exception: Exception) = log(Level.SEVERE, msg + exception.message)
+fun Logger.severe(msg: String, throwable: Throwable) = log(Level.SEVERE, msg + throwable.message)

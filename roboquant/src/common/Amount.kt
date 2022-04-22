@@ -26,8 +26,8 @@ import kotlin.math.absoluteValue
 /**
  * An amount can hold the [value] for a single [currency].
  *
- * For storing monetary amounts internally it uses [Double], since it is accurate enough for trading while providing large
- * performance benefits over BigDecimal.
+ * For storing monetary amounts internally it uses [Double], since it is accurate enough for trading while providing
+ * large performance benefits over BigDecimal.
  */
 data class Amount(val currency: Currency, val value: Double) : Comparable<Number> {
 
@@ -40,7 +40,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     operator fun div(d: Number): Amount = Amount(currency, value / d.toDouble())
     operator fun minus(d: Number): Amount = Amount(currency, value - d.toDouble())
     operator fun plus(other: Amount): Wallet = Wallet(this, other)
-    operator fun minus(other: Amount): Wallet = Wallet(this, - other)
+    operator fun minus(other: Amount): Wallet = Wallet(this, -other)
     operator fun unaryMinus(): Amount = Amount(currency, -value)
 
     /**
@@ -54,7 +54,6 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
      */
     val absoluteValue
         get() = Amount(currency, value.absoluteValue)
-
 
     /**
      * Return a new amount containing the value if it is positive else 0.0
@@ -80,7 +79,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     /**
      * Compare the [value] in this amount to an [other] number
      */
-    override fun compareTo(other: Number): Int =  value.compareTo(other.toDouble())
+    override fun compareTo(other: Number): Int = value.compareTo(other.toDouble())
 
     /**
      * Convert this amount [to] a different currency. If no currency is provided, the [Config.baseCurrency] is used.
@@ -145,8 +144,6 @@ val Number.ETH
 
 val Number.USDT
     get() = Amount(Currency.USDT, toDouble())
-
-
 
 /**
  * Add all the amounts together and return the resulting wallet.

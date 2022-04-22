@@ -46,8 +46,8 @@ class Currency private constructor(val currencyCode: String) {
     var defaultFractionDigits: Int =
         try {
             java.util.Currency.getInstance(currencyCode).defaultFractionDigits
-        } catch (e: Exception) {
-            // If we cannot find a default fraction for this currency, use 2
+        } catch (_: IllegalArgumentException) {
+            // If we cannot find the currency, use 2
             2
         }
 

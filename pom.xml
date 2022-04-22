@@ -297,7 +297,7 @@
     <dependencyManagement>
         <dependencies>
 
-            <!-- Force versions due to known vulnerabilities -->
+            <!-- force higher versions of dependencies due to known vulnerabilities -->
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
@@ -311,6 +311,34 @@
                 <artifactId>okhttp</artifactId>
                 <version>4.9.3</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.13</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>31.1-jre</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.jersey</groupId>
+                <artifactId>jersey-bom</artifactId>
+                <version>2.34</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+
+            <!-- overwrite the version used by iextrading4j-all since it got a bug -->
+            <!-- dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>2.34</version>
+            </dependency -->
             <!-- end upgrades -->
 
             <dependency>
