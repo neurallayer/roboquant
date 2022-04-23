@@ -141,7 +141,7 @@ class AlphaVantageHistoricFeed(
                 add(now, action)
             }
             logger.info { "Received prices for $symbol" }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             logger.severe { e.toString() }
         }
     }
@@ -161,7 +161,7 @@ class AlphaVantageHistoricFeed(
                 add(now, action)
             }
             logger.info { "Received prices for $symbol" }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             logger.severe { e.toString() }
         }
     }

@@ -172,6 +172,7 @@ class AlpacaLiveFeed(
         if (stocks.isNotEmpty()) subscribeStocks(stocks)
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private fun handleMsg(msg: MarketDataMessage) {
         try {
             logger.finer { "Received msg $msg" }
@@ -206,7 +207,7 @@ class AlpacaLiveFeed(
                 val event = Event(listOf(action), now)
                 channel?.offer(event)
             }
-        } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
+        } catch (e: Throwable) {
             logger.severe("error during handling market data message", e)
         }
     }

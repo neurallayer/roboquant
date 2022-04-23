@@ -62,6 +62,7 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
      *
      * @param assets
      */
+    @Suppress("TooGenericExceptionCaught")
     fun subscribe(assets: Collection<Asset>, interval: Int = 5, type: String = "MIDPOINT") {
         for (asset in assets) {
             try {
@@ -69,7 +70,7 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
                 client.reqRealTimeBars(++tickerId, contract, interval, type, false, arrayListOf())
                 subscriptions[tickerId] = asset
                 logger.info("Added subscription to receive realtime bars for ${contract.symbol()}")
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 logger.severe("Error during subscribing to $asset", e)
             }
         }

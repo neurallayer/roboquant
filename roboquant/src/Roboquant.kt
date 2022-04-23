@@ -206,12 +206,13 @@ class Roboquant(
      * Calculate the configured [metrics] and log the results. This includes also metrics that are recorded by the
      * strategy, policy and broker.
      */
+    @Suppress("TooGenericExceptionCaught")
     private fun runMetrics(account: Account, event: Event, runInfo: RunInfo) {
         val info = runInfo.copy()
         for (metric in metrics) {
             try {
                 metric.calculate(account, event)
-            } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
+            } catch (e: Throwable) {
                 kotlinLogger.log(Level.WARNING, "failed when calculate metric ${metric::class.simpleName}", e)
             }
         }

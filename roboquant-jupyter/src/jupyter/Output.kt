@@ -54,7 +54,7 @@ abstract class Output : Renderable {
                     val line = process.info().commandLine().toString()
                     if (line.contains("jupyter") && line.contains("lab")) return Mode.LAB
                 }
-            } catch (e: Exception) {
+            } catch (_: Throwable) {
                 // ignore
             }
             return Mode.CLASSIC

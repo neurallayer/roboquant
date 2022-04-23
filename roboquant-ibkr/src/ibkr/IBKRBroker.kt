@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@file:Suppress("WildcardImport", "MaxLineLength")
 package org.roboquant.ibkr
 
 import com.ib.client.*
@@ -88,9 +88,10 @@ class IBKRBroker(
     /**
      * Wait till IBKR account is synchronized so roboquant has the correct assets and cash balance available.
      *
-     * TODO: replace sleep with real check
+     * @TODO: replace sleep with real check
      */
     private fun waitTillSynced() {
+        @Suppress("MagicNumber")
         sleep(5_000)
     }
 
@@ -192,7 +193,7 @@ class IBKRBroker(
         }
 
         override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: IBOrderSate) {
-            logger.fine { "orderId: $orderId asset: ${contract.symbol()} qty: ${order.totalQuantity()} status: ${orderState.status}" }
+            logger.fine { "orderId=$orderId asset=${contract.symbol()} qty=${order.totalQuantity()} status=${orderState.status}" }
             logger.finer { "$orderId $contract $order $orderState" }
             val openOrder = orderMap[orderId]
             if (openOrder != null) {

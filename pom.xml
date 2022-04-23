@@ -332,6 +332,12 @@
                 <type>pom</type>
             </dependency>
 
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.15</version>
+            </dependency>
+
 
             <!-- overwrite the version used by iextrading4j-all since it got a bug -->
             <!-- dependency>
