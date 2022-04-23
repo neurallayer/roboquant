@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 @file:Suppress("WildcardImport", "MaxLineLength")
+
 package org.roboquant.ibkr
 
 import com.ib.client.*
@@ -83,7 +84,6 @@ class IBKRBroker(
      * Disconnect roboquant from TWS or IB Gateway
      */
     fun disconnect() = IBKRConnection.disconnect(client)
-
 
     /**
      * Wait till IBKR account is synchronized so roboquant has the correct assets and cash balance available.
@@ -214,7 +214,6 @@ class IBKRBroker(
             }
         }
 
-
         override fun orderStatus(
             orderId: Int, status: String?, filled: Decimal,
             remaining: Decimal, avgFillPrice: Double, permId: Int, parentId: Int,
@@ -261,7 +260,7 @@ class IBKRBroker(
             if (id in tradeMap) logger.info("Overwrite of existing trade")
 
             // Possible values BOT and SLD
-            val size = if (execution.side() == "SLD") - execution.cumQty().value() else execution.cumQty().value()
+            val size = if (execution.side() == "SLD") -execution.cumQty().value() else execution.cumQty().value()
             val orderId = orderMap[execution.orderId()] ?: -1 // Should not happen
             val trade = Trade(
                 Instant.now(),
@@ -318,8 +317,6 @@ class IBKRBroker(
             _account.setPosition(p)
         }
 
-
-
         override fun updateAccountTime(timeStamp: String) {
             logger.fine(timeStamp)
             _account.lastUpdate = Instant.now()
@@ -348,8 +345,6 @@ class IBKRBroker(
 
             return assetMap[conid()]!!
         }
-
-
 
     }
 }
