@@ -29,9 +29,31 @@
     <artifactId>roboquant-crypto</artifactId>
     <packaging>jar</packaging>
     <name>roboquant crypto</name>
-    <url>https://roboquant.org</url>
     <description>Cryptocurrency trading support for roboquant algorithmic trading platform</description>
 
+    <!-- start extra info -->
+    <url>https://roboquant.org</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>roboquant team</name>
+            <organization>roboquant</organization>
+            <url>https://www.roboquant.org</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/neurallayer/roboquant</url>
+    </scm>
+    <!-- end extra info -->
 
     <properties>
         <xchange.version>5.0.13</xchange.version>

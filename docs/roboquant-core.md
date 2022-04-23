@@ -1,6 +1,6 @@
 # Module roboquant
 
-The roboquant-core module contains the functionality required to create trading strategies and back-test them.
+The roboquant module contains the functionality required to create trading strategies and back-test them.
 
 The flow of data between the components is as follows:
 

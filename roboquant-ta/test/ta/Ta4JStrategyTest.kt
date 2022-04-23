@@ -11,11 +11,11 @@ import org.ta4j.core.rules.StopLossRule
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-internal class TA4JStrategyTest {
+internal class Ta4JStrategyTest {
 
     @Test
     fun test() {
-        val strategy = TA4JStrategy(maxBarCount = 50)
+        val strategy = Ta4jStrategy(maxBarCount = 50)
 
         strategy.buy  { series ->
             val closePrice = ClosePriceIndicator(series)

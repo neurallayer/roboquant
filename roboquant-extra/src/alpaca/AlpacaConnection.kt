@@ -27,6 +27,15 @@ import java.util.*
 typealias AccountType = EndpointAPIType
 typealias DataType = DataAPIType
 
+/**
+ * Alpaca configuration properties
+ *
+ * @property publicKey
+ * @property secretKey
+ * @property accountType
+ * @property dataType
+ * @constructor Create empty Alpaca config
+ */
 data class AlpacaConfig(
     var publicKey: String = Config.getProperty("alpaca.public.key", ""),
     var secretKey: String = Config.getProperty("alpaca.secret.key", ""),
@@ -48,7 +57,7 @@ internal object AlpacaConnection {
     }
 
     /**
-     * Should OTC assets be included, default is false
+     * Should OTC (over The Counter) assets be included, default is false
      */
     private var includeOTC = false
 

@@ -28,8 +28,31 @@
     <artifactId>roboquant-jupyter</artifactId>
     <packaging>jar</packaging>
     <name>roboquant jupyter</name>
-    <url>https://roboquant.org</url>
     <description>Jupyter notebook support for the roboquant algorithmic trading platform</description>
+
+    <!-- start extra info -->
+    <url>https://roboquant.org</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>roboquant team</name>
+            <organization>roboquant</organization>
+            <url>https://www.roboquant.org</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/neurallayer/roboquant</url>
+    </scm>
+    <!-- end extra info -->
 
     <build>
         <plugins>
@@ -65,6 +88,7 @@
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlin-jupyter-api</artifactId>
             <version>0.11.0-74</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

@@ -24,12 +24,35 @@
         <groupId>org.roboquant</groupId>
         <version>0.9.0-SNAPSHOT</version>
     </parent>
+
     <artifactId>roboquant-extra</artifactId>
     <packaging>jar</packaging>
-
     <name>roboquant extra</name>
-    <url>https://roboquant.org</url>
     <description>3rd party integration with brokers and market data providers for roboquant</description>
+
+    <!-- start extra info -->
+    <url>https://roboquant.org</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>roboquant team</name>
+            <organization>roboquant</organization>
+            <url>https://www.roboquant.org</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/neurallayer/roboquant</url>
+    </scm>
+    <!-- end extra info -->
 
     <build>
         <plugins>

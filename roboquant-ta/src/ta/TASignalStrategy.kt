@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "WildcardImport")
 
 package org.roboquant.ta
 
@@ -104,8 +104,7 @@ class TASignalStrategy(
         for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
             val asset = priceAction.asset
             val buffer = buffers.getOrPut(asset) { PriceBarSeries(asset, history) }
-            buffer.add(priceAction)
-            if (buffer.isAvailable()) {
+            if (buffer.add(priceAction)) {
                 try {
                     val signal = block.invoke(ta, buffer)
                     signals.addNotNull(signal)

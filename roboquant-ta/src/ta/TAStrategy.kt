@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "LongParameterList")
 
 package org.roboquant.ta
 
@@ -60,8 +60,8 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
     }
 
     /**
-     * Get the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this method
-     * twice in a row won't return the same result.
+     * Get the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this
+     * method twice in a row won't return the same result.
      *
      * @return
      */
@@ -70,7 +70,6 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
         metrics = mutableMapOf()
         return result
     }
-
 
     companion object {
 
@@ -87,7 +86,7 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
          * @param timePeriods
          * @return
          */
-        fun recordHighLow(vararg timePeriods: Int = intArrayOf(200)): TAStrategy {
+        fun recordHighLow(vararg timePeriods: Int = intArrayOf(100)): TAStrategy {
 
             require(timePeriods.isNotEmpty()) { "At least one period needs to be provided" }
             require(timePeriods.all { it > 1 }) { "Any provided period needs to be at least of size 2" }
@@ -108,7 +107,7 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
          * Breakout strategy generates a BUY signal if it is a records high over last [highPeriod] and
          * generates a SELL signal is it is a record low over last [lowPeriod].
          */
-        fun breakout(highPeriod: Int = 100, lowPeriod: Int = 50) : TAStrategy {
+        fun breakout(highPeriod: Int = 100, lowPeriod: Int = 50): TAStrategy {
             require(highPeriod > 0 && lowPeriod > 0) { "Periods have to be larger than 0" }
             val strategy = TAStrategy(max(highPeriod, lowPeriod))
             strategy.buy {
@@ -155,7 +154,6 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
             return strategy
         }
 
-
         /**
          * Strategy using the Relative Strength Index of an asset to generate signals. RSI measures the magnitude of
          * recent price changes to evaluate overbought or oversold conditions in the price of a stock or other asset.
@@ -172,7 +170,9 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
             lowThreshold: Double = 30.0,
             highThreshold: Double = 70.0
         ): TAStrategy {
-            require(lowThreshold in 0.0..100.0 && highThreshold in 0.0..100.0) { "Thresholds have to be in the range 0..100" }
+            require(lowThreshold in 0.0..100.0 && highThreshold in 0.0..100.0) {
+                "Thresholds have to be in the range 0..100"
+            }
             require(highThreshold > lowThreshold) { "High threshold has to be larger than low threshold" }
 
             val strategy = TAStrategy(timePeriod + 1)
@@ -182,7 +182,6 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
         }
 
     }
-
 
     /**
      * Define the buy condition, return true if you want to generate a BUY signal, false otherwise
@@ -222,18 +221,15 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
     override fun generate(event: Event): List<Signal> {
         val results = mutableListOf<Signal>()
         for ((asset, priceAction) in event.prices) {
-            if (priceAction is PriceBar) {
-                data.add(priceAction)
-                if (data.isAvailable(asset)) {
-                    try {
-                        val series = data.getSeries(asset)
-                        if (buyFn.invoke(ta, series)) results.add(Signal(asset, Rating.BUY))
-                        if (sellFn.invoke(ta, series)) results.add(Signal(asset, Rating.SELL))
-                    } catch (e: InsufficientData) {
-                        logger.severe("Not enough data available to calculate the indicators, increase the history size")
-                        logger.severe(e.message)
-                        throw e
-                    }
+            if (priceAction is PriceBar && data.add(priceAction)) {
+                try {
+                    val series = data.getSeries(asset)
+                    if (buyFn.invoke(ta, series)) results.add(Signal(asset, Rating.BUY))
+                    if (sellFn.invoke(ta, series)) results.add(Signal(asset, Rating.SELL))
+                } catch (e: InsufficientData) {
+                    logger.severe("Not enough data available to calculate the indicators, increase history")
+                    logger.severe(e.message)
+                    throw e
                 }
             }
         }
@@ -247,19 +243,31 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
 
 }
 
+fun TA.recordLow(low: DoubleArray, period: Int, previous: Int = 0) =
+    minIndex(low, period, previous) == low.lastIndex - previous
 
-fun TA.recordLow(low: DoubleArray, period: Int, previous: Int = 0) = minIndex(low, period, previous) == low.lastIndex - previous
 fun TA.recordLow(data: PriceBarSeries, period: Int, previous: Int = 0) = recordLow(data.low, period, previous)
 
-fun TA.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) = maxIndex(high, period, previous) == high.lastIndex - previous
+fun TA.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) =
+    maxIndex(high, period, previous) == high.lastIndex - previous
+
 fun TA.recordHigh(data: PriceBarSeries, period: Int, previous: Int = 0) = recordHigh(data.high, period, previous)
 
-fun TA.vwap(high: DoubleArray, low: DoubleArray, close: DoubleArray, volume: DoubleArray, period: Int, previous: Int = 0) : Double {
+fun TA.vwap(
+    high: DoubleArray,
+    low: DoubleArray,
+    close: DoubleArray,
+    volume: DoubleArray,
+    period: Int,
+    previous: Int = 0
+): Double {
     val end = high.lastIndex - previous
     var sumPrice = 0.0
     var sumVolume = 0.0
     val start = end - period - previous
-    if (start < 0) throw InsufficientData("Not sufficient data to calculate vwap, minimum lookback period is ${period + previous}")
+    if (start < 0) throw InsufficientData(
+        "Not sufficient data to calculate vwap, minimum lookback period is ${period + previous}"
+    )
 
     for (i in start..end) {
         val typicalPrice = (close[i] + high[i] + low[i]) / 3
@@ -269,6 +277,7 @@ fun TA.vwap(high: DoubleArray, low: DoubleArray, close: DoubleArray, volume: Dou
     return sumPrice / sumVolume
 }
 
-fun TA.vwap(series: PriceBarSeries, period: Int, previous: Int = 0): Double = vwap(series.high, series.low, series.close, series.volume, period, previous)
+fun TA.vwap(series: PriceBarSeries, period: Int, previous: Int = 0): Double =
+    vwap(series.high, series.low, series.close, series.volume, period, previous)
 
 class InsufficientData(msg: String) : Exception(msg)

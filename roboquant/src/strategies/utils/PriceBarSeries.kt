@@ -57,21 +57,22 @@ class PriceBarSeries(val asset: Asset, windowSize: Int) {
     /**
      * Update the buffer with a new [priceBar]
      */
-    fun add(priceBar: PriceBar) {
+    fun add(priceBar: PriceBar): Boolean {
         assert(priceBar.asset == asset)
-        add(priceBar.ohlcv)
+        return add(priceBar.ohlcv)
     }
 
     /**
      * Update the buffer with a new [ohlcv] values
      */
-    fun add(ohlcv: DoubleArray) {
+    fun add(ohlcv: DoubleArray): Boolean {
         assert(ohlcv.size == 5)
         openSeries.add(ohlcv[0])
         highSeries.add(ohlcv[1])
         lowSeries.add(ohlcv[2])
         closeSeries.add(ohlcv[3])
         volumeSeries.add(ohlcv[4])
+        return isAvailable()
     }
 
     fun isAvailable(): Boolean {
@@ -99,12 +100,11 @@ class MultiAssetPriceBarSeries(private val history: Int) {
     private val data = mutableMapOf<Asset, PriceBarSeries>()
 
     /**
-     * Add a new priceBar and return true if enough data, false otherwise
+     * Add a new priceBar and return true if already enough data, false otherwise
      */
     fun add(priceBar: PriceBar): Boolean {
         val series = data.getOrPut(priceBar.asset) { PriceBarSeries(priceBar.asset, history) }
-        series.add(priceBar)
-        return series.isAvailable()
+        return series.add(priceBar)
     }
 
     /**

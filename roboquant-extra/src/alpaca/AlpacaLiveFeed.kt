@@ -213,7 +213,7 @@ class AlpacaLiveFeed(
 
     private fun createListener(): MarketDataListener {
         return MarketDataListener { streamMessageType, msg ->
-            logger.finer { "Received message of type $streamMessageType and msg $msg" }
+            logger.finer { "Received message of type=$streamMessageType and msg=$msg" }
 
             when (streamMessageType) {
                 MarketDataMessageType.ERROR -> logger.warning("$msg")

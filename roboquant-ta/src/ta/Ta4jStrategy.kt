@@ -13,17 +13,16 @@ import org.ta4j.core.Rule
 import org.ta4j.core.rules.BooleanRule
 
 /**
- * Strategy that allows to use indicators and rules from the TA4J library to define a custom strategy.
- *
- * TA4J is a flexible framework written in Java that allows both simple and complex rules. Compared to TALib it is
- * however a fair bit slower.
+ * Technical analysis based [Strategy] that allows to use indicators and rules from the ta4j library to define a
+ * custom strategy. Ta4j is a flexible framework written in Java that allows to combine indicators and rules and comes
+ * with over 130 indicators.
  *
  * @property buyingRule function that returns a buying rule based on the provided BarSaries
  * @property sellingRule function that returns a selling rule based on the provided BarSaries
- * @property maxBarCount maximum number of pricebars to track
- * @constructor Create new TA4J strategy
+ * @property maxBarCount maximum number of pricebars to track, default is -1 meaining all
+ * @constructor Create new ta4j strategy
  */
-class TA4JStrategy(
+class Ta4jStrategy(
     private val maxBarCount:Int = -1,
 ) : Strategy {
 
@@ -53,28 +52,14 @@ class TA4JStrategy(
     }
 
     /**
-     * Define the buy condition, return true if you want to generate a BUY signal, false otherwise
-     *
-     * # Example
-     *
-     *       strategy.buy { price ->
-     *          ema(price.close, shortTerm) > ema(price.close, longTerm) && cdlMorningStar(price)
-     *       }
-     *
+     * Define the buy rule
      */
     fun buy(block: (series: BarSeries) -> Rule) {
         buyingRule = block
     }
 
     /**
-     * Define the sell conditions, return true if you want to generate a SELL signal, false otherwise
-     *
-     * # Example
-     *
-     *      strategy.sell { price ->
-     *          cdl3BlackCrows(price) || cdl2Crows(price)
-     *      }
-     *
+     * Define the sell rule
      */
     fun sell(block: (series: BarSeries) -> Rule) {
         sellingRule = block

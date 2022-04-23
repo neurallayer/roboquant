@@ -35,8 +35,7 @@ class TAMetric(
         for (priceAction in actions) {
             val asset = priceAction.asset
             val buffer = buffers.getOrPut(asset) { PriceBarSeries(asset, history) }
-            buffer.add(priceAction)
-            if (buffer.isAvailable()) {
+            if (buffer.add(priceAction)) {
                 val metric = block.invoke(ta, buffer)
                 val name = "$name.${asset.symbol.lowercase()}"
                 metrics[name] = metric

@@ -32,7 +32,7 @@ import java.time.temporal.TemporalAmount
 typealias AlpacaPeriod = BarTimePeriod
 
 /**
- * Get historic data feed from Alpaca
+ * Historic data feed using market data from Alpaca
  */
 class AlpacaHistoricFeed(
     configure: AlpacaConfig.() -> Unit = {}
