@@ -21,8 +21,6 @@ package org.roboquant.ta
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.metrics.MetricResults
-import org.roboquant.strategies.MetricRecorder
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
@@ -39,7 +37,7 @@ import java.util.logging.Logger
  * technical indicators you want to use. If the history is too small, it will lead to a runtime exception.
  *
  */
-class TaLibStrategy(history: Int = 15) : Strategy, MetricRecorder {
+class TaLibStrategy(history: Int = 15) : Strategy {
 
     private var sellFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
     private var buyFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
@@ -47,29 +45,6 @@ class TaLibStrategy(history: Int = 15) : Strategy, MetricRecorder {
     private val logger: Logger = Logging.getLogger(TaLibStrategy::class)
     val taLib = TaLib()
 
-    private var metrics = mutableMapOf<String, Number>()
-
-    /**
-     * Record a new metric. If there is already a metric recorded with the same key, it will be overwritten.
-     *
-     * @param key
-     * @param value
-     */
-    override fun record(key: String, value: Number) {
-        metrics[key] = value
-    }
-
-    /**
-     * Get the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this
-     * method twice in a row won't return the same result.
-     *
-     * @return
-     */
-    override fun getMetrics(): MetricResults {
-        val result = metrics
-        metrics = mutableMapOf()
-        return result
-    }
 
     companion object {
 
@@ -238,7 +213,6 @@ class TaLibStrategy(history: Int = 15) : Strategy, MetricRecorder {
 
     override fun reset() {
         data.clear()
-        metrics = mutableMapOf()
     }
 
 }

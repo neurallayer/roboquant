@@ -24,8 +24,10 @@ import org.roboquant.common.addNotNull
 import org.roboquant.common.severe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.metrics.MetricResults
-import org.roboquant.strategies.*
+import org.roboquant.strategies.Rating
+import org.roboquant.strategies.Signal
+import org.roboquant.strategies.SignalType
+import org.roboquant.strategies.Strategy
 import org.roboquant.strategies.utils.PriceBarSeries
 import java.lang.Integer.max
 import java.util.logging.Logger
@@ -43,35 +45,11 @@ import java.util.logging.Logger
 class TaLibSignalStrategy(
     private val history: Int = 15,
     private var block: TaLib.(series: PriceBarSeries) -> Signal?
-) : Strategy, MetricRecorder {
+) : Strategy {
 
     private val buffers = mutableMapOf<Asset, PriceBarSeries>()
     private val logger: Logger = Logging.getLogger(TaLibSignalStrategy::class)
     val taLib = TaLib()
-
-    private var metrics = mutableMapOf<String, Number>()
-
-    /**
-     * Record a new metric. If there is already a metric recorded with the same key, it will be overwritten.
-     *
-     * @param key
-     * @param value
-     */
-    override fun record(key: String, value: Number) {
-        metrics[key] = value
-    }
-
-    /**
-     * Get the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this
-     * method twice in a row won't return the same result.
-     *
-     * @return
-     */
-    override fun getMetrics(): MetricResults {
-        val result = metrics
-        metrics = mutableMapOf()
-        return result
-    }
 
 
     companion object {
@@ -124,11 +102,10 @@ class TaLibSignalStrategy(
 
     override fun reset() {
         buffers.clear()
-        metrics = mutableMapOf()
     }
 
 
-    override fun toString() = "TASignalStrategy $history"
+    override fun toString() = "TaLibSignalStrategy history=$history"
 
 }
 
