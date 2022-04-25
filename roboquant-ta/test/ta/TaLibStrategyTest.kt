@@ -16,6 +16,7 @@
 
 package org.roboquant.ta
 
+import com.tictactec.ta.lib.Compatibility
 import org.junit.jupiter.api.Test
 import org.roboquant.RunPhase
 import org.roboquant.common.Asset
@@ -56,6 +57,8 @@ internal class TaLibStrategyTest {
 
         val x = run(strategy, 60)
         assertEquals(60, x.size)
+
+        assertEquals(strategy.taLib.core.compatibility, Compatibility.Default)
     }
 
     @Test
@@ -72,7 +75,7 @@ internal class TaLibStrategyTest {
 
         val x = run(strategy, 30)
         assertEquals(30, x.size)
-        // assertContains(strategy.getMetrics(), "test")
+        assertEquals(strategy.taLib.core.compatibility, Compatibility.Default)
     }
 
     @Test
@@ -126,7 +129,8 @@ internal class TaLibStrategyTest {
     private fun run(s: Strategy, n: Int = 100): Map<Instant, List<Signal>> {
         s.reset()
         s.start(RunPhase.MAIN)
-        val feed = HistoricTestFeed(100 until 100 + n, priceBar = true)
+        val nHalf = n / 2
+        val feed = HistoricTestFeed(100 until 100 + nHalf, 100 + nHalf - 1 downTo 100, priceBar = true)
         val events = feed.filter<PriceBar>()
         val result = mutableMapOf<Instant, List<Signal>>()
         var now = Instant.now()
@@ -177,23 +181,6 @@ internal class TaLibStrategyTest {
         val c = taLib.vwap(data, 10)
         assertTrue(c.isFinite())
     }
-
-/*    @Test
-    fun testSma() {
-        val feed = HistoricTestFeed(100..150, priceBar = true)
-        val asset = feed.assets.first()
-
-        val closingPrice = feed.filter<PriceBar> { it.asset == asset }.map { it.second.close }.toDoubleArray()
-        assertTrue(closingPrice.size > 30)
-
-        val emaBatch1 = TALibBatch.sma(closingPrice)
-        val emaBatch2 = TALibBatch.sma(closingPrice)
-        assertEquals(emaBatch1.last(), emaBatch2.last())
-
-        val ta = TA()
-        val ema = ta.sma(closingPrice, 30)
-        assertTrue((emaBatch1.last() - ema).absoluteValue < 0.00001)
-    }*/
 
     @Test
     fun test2() {
