@@ -33,19 +33,19 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-internal class TAStrategyTest {
+internal class TaLibStrategyTest {
 
     @Test
     fun taCore() {
-        val ta = TA()
-        assertEquals("Default", ta.core.compatibility.name)
+        val taLib = TaLib()
+        assertEquals("Default", taLib.core.compatibility.name)
     }
 
 
     @Test
     fun test() {
 
-        val strategy = TAStrategy(50)
+        val strategy = TaLibStrategy(50)
         strategy.buy { price ->
             ema(price.close, 30) > ema(price.close, 50) && cdlMorningStar(price)
         }
@@ -61,7 +61,7 @@ internal class TAStrategyTest {
     @Test
     fun testTASignalStrategy() {
 
-        val strategy = TASignalStrategy(20) { series ->
+        val strategy = TaLibSignalStrategy(20) { series ->
             // record("test", 1)
             when {
                 cdlMorningStar(series) -> Signal(series.asset, Rating.BUY, source = "Morning Star")
@@ -78,7 +78,7 @@ internal class TAStrategyTest {
     @Test
     fun testTASignalStrategyInsufficientData() {
 
-        val strategy = TASignalStrategy(5) { series ->
+        val strategy = TaLibSignalStrategy(5) { series ->
             if (cdlMorningStar(series)) Signal(series.asset, Rating.BUY)
             else if (cdl3BlackCrows(series)) Signal(series.asset, Rating.SELL)
             else null
@@ -91,21 +91,21 @@ internal class TAStrategyTest {
 
     @Test
     fun taBreakout() {
-        val strategy = TAStrategy.breakout(10, 30)
+        val strategy = TaLibStrategy.breakout(10, 30)
         val x = run(strategy, 60)
         assertEquals(60, x.size)
     }
 
     @Test
     fun taSignalBreakout() {
-        val strategy = TASignalStrategy.breakout(10, 30)
+        val strategy = TaLibSignalStrategy.breakout(10, 30)
         val x = run(strategy, 60)
         assertEquals(60, x.size)
     }
 
     @Test
     fun testFail() {
-        val strategy = TAStrategy(3)
+        val strategy = TaLibStrategy(3)
         strategy.buy { price -> cdlMorningStar(price) }
 
         assertFailsWith<InsufficientData> {
@@ -140,23 +140,23 @@ internal class TAStrategyTest {
 
     @Test
     fun testPredefined() {
-        var strategy = TAStrategy.emaCrossover(50, 10)
+        var strategy = TaLibStrategy.emaCrossover(50, 10)
         var s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TAStrategy.smaCrossover(50, 10)
+        strategy = TaLibStrategy.smaCrossover(50, 10)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TAStrategy.recordHighLow(100)
+        strategy = TaLibStrategy.recordHighLow(100)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TAStrategy.recordHighLow(20, 50, 100)
+        strategy = TaLibStrategy.recordHighLow(20, 50, 100)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
 
-        strategy = TAStrategy.rsi(20)
+        strategy = TaLibStrategy.rsi(20)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
     }
@@ -164,17 +164,17 @@ internal class TAStrategyTest {
     @Test
     fun testExtraIndicators() {
         val data = getPriceBarBuffer(20)
-        val ta = TA()
+        val taLib = TaLib()
 
-        var a = ta.recordHigh(data.close, 10)
-        var b = ta.recordHigh(data, 10)
+        var a = taLib.recordHigh(data.close, 10)
+        var b = taLib.recordHigh(data, 10)
         assertEquals(a, b)
 
-        a = ta.recordLow(data.close, 10)
-        b = ta.recordLow(data, 10)
+        a = taLib.recordLow(data.close, 10)
+        b = taLib.recordLow(data, 10)
         assertEquals(a, b)
 
-        val c = ta.vwap(data, 10)
+        val c = taLib.vwap(data, 10)
         assertTrue(c.isFinite())
     }
 
@@ -197,7 +197,7 @@ internal class TAStrategyTest {
 
     @Test
     fun test2() {
-        val strategy = TAStrategy(2)
+        val strategy = TaLibStrategy(2)
         strategy.buy {
             true
         }

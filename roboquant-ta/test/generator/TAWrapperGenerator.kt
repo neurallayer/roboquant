@@ -1,6 +1,6 @@
 @file:Suppress("ReturnCount", "MaxLineLength")
 
-package generator
+package org.roboquant.generator
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -155,7 +155,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
          * back an array with multiple results. 
          *
          */
-        object TALibBatch {
+        object TaLibBatch {
 
             var core:Core = Core()
             
@@ -256,7 +256,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
  * @property root
  * @constructor Create new TA builder
  */
-internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
+internal class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
 
     companion object {
         val startCode = """
@@ -271,7 +271,7 @@ internal class TALibGenerator(root: JsonObject) : BaseWrapper(root) {
          * TA wraps the excellent TALib library and makes it easy to use any of indicators provided by that library. 
          * This wrapper is optimized for streaming/event based updates.     
          */
-        class TA(var core:Core = Core()) {
+        class TaLib(var core:Core = Core()) {
         
     """.trimIndent()
     }
@@ -436,10 +436,10 @@ fun main() {
 
     // First create the TALib object
     val sb1 = StringBuffer()
-    sb1 += TALibGenerator.startCode
+    sb1 += TaLibGenerator.startCode
     l.forEach {
         val el = it as JsonObject
-        val b = TALibGenerator(el)
+        val b = TaLibGenerator(el)
         sb1 += b.genMethod()
     }
     sb1 += "}\n\n"

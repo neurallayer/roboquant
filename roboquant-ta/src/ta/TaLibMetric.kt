@@ -18,15 +18,15 @@ import org.roboquant.strategies.utils.PriceBarSeries
  * @property block
  * @constructor Create new metric
  */
-class TAMetric(
+class TaLibMetric(
     private val name: String,
     private val history: Int = 15,
     private val assetFilter: AssetFilter = AssetFilter.noFilter(),
-    private var block: TA.(series: PriceBarSeries) -> Double
+    private var block: TaLib.(series: PriceBarSeries) -> Double
 ) : SimpleMetric() {
 
     private val buffers = mutableMapOf<Asset, PriceBarSeries>()
-    private val ta = TA()
+    private val taLib = TaLib()
     // private val logger: Logger = Logging.getLogger(TALibMetric::class)
 
     override fun calc(account: Account, event: Event): MetricResults {
@@ -36,7 +36,7 @@ class TAMetric(
             val asset = priceAction.asset
             val buffer = buffers.getOrPut(asset) { PriceBarSeries(asset, history) }
             if (buffer.add(priceAction)) {
-                val metric = block.invoke(ta, buffer)
+                val metric = block.invoke(taLib, buffer)
                 val name = "$name.${asset.symbol.lowercase()}"
                 metrics[name] = metric
             }

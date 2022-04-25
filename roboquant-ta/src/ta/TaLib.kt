@@ -15,10 +15,10 @@ import org.roboquant.common.DoesNotComputeException
 import org.roboquant.strategies.utils.PriceBarSeries
 
 /**
- * TA (**T**echnical **A**nalysis) wraps the excellent TALib library and makes it easy to use any of indicators
- * provided by that library. This wrapper is optimized for event based updates.
+ * This class wraps the excellent TALib library and makes it easy to use any of indicators provided by that library.
+ * This wrapper is optimized for event based updates.
  */
-class TA(var core: Core = Core()) {
+class TaLib(var core: Core = Core()) {
 
     /**
      * Calculate **Vector Trigonometric ACos** using the provided input data and by default return the most recent result.

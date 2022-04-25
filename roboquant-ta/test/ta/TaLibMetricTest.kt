@@ -13,17 +13,24 @@ import org.roboquant.metrics.MetricResults
 import java.time.Instant
 import kotlin.test.assertTrue
 
-class TAMetricTest {
+class TaLibMetricTest {
 
     @Test
     fun test() {
-        val metric = TAMetric("ema10",10) { series ->
+        val metric = TaLibMetric("ema10", 10) { series ->
             ema(series.close, 10)
         }
         assertTrue(metric.getMetrics().isEmpty())
 
         val account = Account(
-            Currency.USD, Instant.now(), Wallet(), emptyList(), emptyList(), emptyList(), emptyMap(), Amount(Currency.USD, 0.0)
+            Currency.USD,
+            Instant.now(),
+            Wallet(),
+            emptyList(),
+            emptyList(),
+            emptyList(),
+            emptyMap(),
+            Amount(Currency.USD, 0.0)
         )
 
         val results = metric.calc(account, Event(emptyList(), Instant.now()))

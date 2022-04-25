@@ -31,21 +31,23 @@ import java.lang.Integer.max
 import java.util.logging.Logger
 
 /**
- * This strategy that makes it easy to implement different types strategies based on technical analysis indicators.
+ * This strategy that makes it easy to implement different types strategies based on technical analysis indicators from
+ * the TaLib library.
+ *
  * This strategy requires [PriceBar] data and common use cases are candlestick patterns and moving average strategies.
  *
  * It is important that the strategy is initialized with a large enough [history] window to support the underlying
  * technical indicators you want to use. If the [history] is too small, it will lead to a runtime exception.
  *
  */
-class TASignalStrategy(
+class TaLibSignalStrategy(
     private val history: Int = 15,
-    private var block: TA.(series: PriceBarSeries) -> Signal?
+    private var block: TaLib.(series: PriceBarSeries) -> Signal?
 ) : Strategy, MetricRecorder {
 
     private val buffers = mutableMapOf<Asset, PriceBarSeries>()
-    private val logger: Logger = Logging.getLogger(TASignalStrategy::class)
-    val ta = TA()
+    private val logger: Logger = Logging.getLogger(TaLibSignalStrategy::class)
+    val taLib = TaLib()
 
     private var metrics = mutableMapOf<String, Number>()
 
@@ -74,9 +76,9 @@ class TASignalStrategy(
 
     companion object {
 
-        fun breakout(entryPeriod: Int = 100, exitPeriod: Int = 50): TASignalStrategy {
+        fun breakout(entryPeriod: Int = 100, exitPeriod: Int = 50): TaLibSignalStrategy {
             val maxPeriod = max(entryPeriod, exitPeriod)
-            return TASignalStrategy(maxPeriod) { series ->
+            return TaLibSignalStrategy(maxPeriod) { series ->
                 when {
                     recordHigh(series.high, entryPeriod) -> Signal(series.asset, Rating.BUY, SignalType.BOTH)
                     recordLow(series.low, entryPeriod) -> Signal(series.asset, Rating.SELL, SignalType.BOTH)
@@ -106,7 +108,7 @@ class TASignalStrategy(
             val buffer = buffers.getOrPut(asset) { PriceBarSeries(asset, history) }
             if (buffer.add(priceAction)) {
                 try {
-                    val signal = block.invoke(ta, buffer)
+                    val signal = block.invoke(taLib, buffer)
                     signals.addNotNull(signal)
                 } catch (e: InsufficientData) {
                     logger.severe(

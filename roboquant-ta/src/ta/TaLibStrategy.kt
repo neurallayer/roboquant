@@ -39,13 +39,13 @@ import java.util.logging.Logger
  * technical indicators you want to use. If the history is too small, it will lead to a runtime exception.
  *
  */
-class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
+class TaLibStrategy(history: Int = 15) : Strategy, MetricRecorder {
 
-    private var sellFn: TA.(series: PriceBarSeries) -> Boolean = { false }
-    private var buyFn: TA.(series: PriceBarSeries) -> Boolean = { false }
+    private var sellFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
+    private var buyFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
     private val data = MultiAssetPriceBarSeries(history)
-    private val logger: Logger = Logging.getLogger(TAStrategy::class)
-    val ta = TA()
+    private val logger: Logger = Logging.getLogger(TaLibStrategy::class)
+    val taLib = TaLib()
 
     private var metrics = mutableMapOf<String, Number>()
 
@@ -86,12 +86,12 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
          * @param timePeriods
          * @return
          */
-        fun recordHighLow(vararg timePeriods: Int = intArrayOf(100)): TAStrategy {
+        fun recordHighLow(vararg timePeriods: Int = intArrayOf(100)): TaLibStrategy {
 
             require(timePeriods.isNotEmpty()) { "At least one period needs to be provided" }
             require(timePeriods.all { it > 1 }) { "Any provided period needs to be at least of size 2" }
 
-            val strategy = TAStrategy(timePeriods.maxOrNull()!!)
+            val strategy = TaLibStrategy(timePeriods.maxOrNull()!!)
             strategy.buy {
                 val data = it.high
                 timePeriods.any { period -> recordHigh(data, period) }
@@ -107,9 +107,9 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
          * Breakout strategy generates a BUY signal if it is a records high over last [highPeriod] and
          * generates a SELL signal is it is a record low over last [lowPeriod].
          */
-        fun breakout(highPeriod: Int = 100, lowPeriod: Int = 50): TAStrategy {
+        fun breakout(highPeriod: Int = 100, lowPeriod: Int = 50): TaLibStrategy {
             require(highPeriod > 0 && lowPeriod > 0) { "Periods have to be larger than 0" }
-            val strategy = TAStrategy(max(highPeriod, lowPeriod))
+            val strategy = TaLibStrategy(max(highPeriod, lowPeriod))
             strategy.buy {
                 recordHigh(it.high, highPeriod)
             }
@@ -127,11 +127,11 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
          * @param fast
          * @return
          */
-        fun smaCrossover(slow: Int, fast: Int): TAStrategy {
+        fun smaCrossover(slow: Int, fast: Int): TaLibStrategy {
             require(slow > 0 && fast > 0) { "Periods have to be larger than 0" }
             require(slow > fast) { "Slow period have to be larger than fast period" }
 
-            val strategy = TAStrategy(slow)
+            val strategy = TaLibStrategy(slow)
             strategy.buy { sma(it.close, fast) > sma(it.close, slow) }
             strategy.sell { sma(it.close, fast) < sma(it.close, slow) }
             return strategy
@@ -144,11 +144,11 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
          * @param fast
          * @return
          */
-        fun emaCrossover(slow: Int, fast: Int): TAStrategy {
+        fun emaCrossover(slow: Int, fast: Int): TaLibStrategy {
             require(slow > 0 && fast > 0) { "Periods have to be larger than 0" }
             require(slow > fast) { "Slow period have to be larger than fast period" }
 
-            val strategy = TAStrategy(slow)
+            val strategy = TaLibStrategy(slow)
             strategy.buy { ema(it.close, fast) > ema(it.close, slow) }
             strategy.sell { ema(it.close, fast) < ema(it.close, slow) }
             return strategy
@@ -169,13 +169,13 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
             timePeriod: Int,
             lowThreshold: Double = 30.0,
             highThreshold: Double = 70.0
-        ): TAStrategy {
+        ): TaLibStrategy {
             require(lowThreshold in 0.0..100.0 && highThreshold in 0.0..100.0) {
                 "Thresholds have to be in the range 0..100"
             }
             require(highThreshold > lowThreshold) { "High threshold has to be larger than low threshold" }
 
-            val strategy = TAStrategy(timePeriod + 1)
+            val strategy = TaLibStrategy(timePeriod + 1)
             strategy.buy { rsi(it.close, timePeriod) < lowThreshold }
             strategy.sell { rsi(it.close, timePeriod) > highThreshold }
             return strategy
@@ -193,7 +193,7 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
      *       }
      *
      */
-    fun buy(block: TA.(series: PriceBarSeries) -> Boolean) {
+    fun buy(block: TaLib.(series: PriceBarSeries) -> Boolean) {
         buyFn = block
     }
 
@@ -207,7 +207,7 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
      *      }
      *
      */
-    fun sell(block: TA.(series: PriceBarSeries) -> Boolean) {
+    fun sell(block: TaLib.(series: PriceBarSeries) -> Boolean) {
         sellFn = block
     }
 
@@ -224,8 +224,8 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
             if (priceAction is PriceBar && data.add(priceAction)) {
                 try {
                     val series = data.getSeries(asset)
-                    if (buyFn.invoke(ta, series)) results.add(Signal(asset, Rating.BUY))
-                    if (sellFn.invoke(ta, series)) results.add(Signal(asset, Rating.SELL))
+                    if (buyFn.invoke(taLib, series)) results.add(Signal(asset, Rating.BUY))
+                    if (sellFn.invoke(taLib, series)) results.add(Signal(asset, Rating.SELL))
                 } catch (e: InsufficientData) {
                     logger.severe("Not enough data available to calculate the indicators, increase history")
                     logger.severe(e.message)
@@ -243,17 +243,17 @@ class TAStrategy(history: Int = 15) : Strategy, MetricRecorder {
 
 }
 
-fun TA.recordLow(low: DoubleArray, period: Int, previous: Int = 0) =
+fun TaLib.recordLow(low: DoubleArray, period: Int, previous: Int = 0) =
     minIndex(low, period, previous) == low.lastIndex - previous
 
-fun TA.recordLow(data: PriceBarSeries, period: Int, previous: Int = 0) = recordLow(data.low, period, previous)
+fun TaLib.recordLow(data: PriceBarSeries, period: Int, previous: Int = 0) = recordLow(data.low, period, previous)
 
-fun TA.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) =
+fun TaLib.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) =
     maxIndex(high, period, previous) == high.lastIndex - previous
 
-fun TA.recordHigh(data: PriceBarSeries, period: Int, previous: Int = 0) = recordHigh(data.high, period, previous)
+fun TaLib.recordHigh(data: PriceBarSeries, period: Int, previous: Int = 0) = recordHigh(data.high, period, previous)
 
-fun TA.vwap(
+fun TaLib.vwap(
     high: DoubleArray,
     low: DoubleArray,
     close: DoubleArray,
@@ -277,7 +277,7 @@ fun TA.vwap(
     return sumPrice / sumVolume
 }
 
-fun TA.vwap(series: PriceBarSeries, period: Int, previous: Int = 0): Double =
+fun TaLib.vwap(series: PriceBarSeries, period: Int, previous: Int = 0): Double =
     vwap(series.high, series.low, series.close, series.volume, period, previous)
 
 class InsufficientData(msg: String) : Exception(msg)
