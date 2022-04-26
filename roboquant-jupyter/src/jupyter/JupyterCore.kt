@@ -57,7 +57,7 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
 }
 
 /**
- * Very simple logger handler that is installed when using notebooks and prints a line to standard out, so log statements
+ * Simple logger handler that is installed when using notebooks and prints a line to standard out, so log statements
  * turn up in the cell output by default.
  */
 internal class JupyterLogger : Handler() {
@@ -68,8 +68,10 @@ internal class JupyterLogger : Handler() {
         }
     }
 
+    @Suppress("EmptyFunctionBlock")
     override fun flush() {}
 
+    @Suppress("EmptyFunctionBlock")
     override fun close() {}
 
 }

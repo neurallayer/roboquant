@@ -21,8 +21,9 @@ import org.roboquant.common.Asset
 import kotlin.math.absoluteValue
 
 /**
- * An action is the lowest level of information contained in an Event and can be anything from a price action for an asset
- * to an annual report or a Twitter tweet. An action doesn't have to be linked to a particular asset, although many are.
+ * An action is the lowest level of information contained in an Event and can be anything from a price action for an
+ * asset to an annual report or a Twitter tweet. An action doesn't have to be linked to a particular asset, although
+ * many are.
  *
  * The content of the action is determined by the class implementing this interface. Strategies are expected to filter
  * on those types of actions they are interested in.
@@ -34,7 +35,6 @@ import kotlin.math.absoluteValue
  *
  */
 interface Action
-
 
 /**
  * PriceAction represents an [Action] that contains pricing information for a single asset.
@@ -62,7 +62,6 @@ interface PriceAction : Action {
      */
     fun getPriceAmount(type: String = "DEFAULT") = Amount(asset.currency, getPrice(type))
 
-
     /**
      * Volume for the price action. If not implemented, it should return [Double.NaN]
      *
@@ -76,8 +75,6 @@ interface PriceAction : Action {
      */
     val values: List<Double>
 }
-
-
 
 /**
  * Provides open, high, low, and close prices and volume for a single asset. If the volume is not available, it
@@ -101,8 +98,10 @@ class PriceBar(
         low: Number,
         close: Number,
         volume: Number = Double.NaN
-    ) : this(asset, doubleArrayOf(open.toDouble(), high.toDouble(), low.toDouble(), close.toDouble(), volume.toDouble()))
-
+    ) : this(
+        asset,
+        doubleArrayOf(open.toDouble(), high.toDouble(), low.toDouble(), close.toDouble(), volume.toDouble())
+    )
 
     val open
         get() = ohlcv[0]
@@ -123,7 +122,7 @@ class PriceBar(
         return "asset=$asset OHLCV=${ohlcv.toList()}"
     }
 
-    companion object{
+    companion object {
 
         fun fromValues(asset: Asset, values: List<Double>) = PriceBar(asset, values.toDoubleArray())
 
@@ -131,6 +130,7 @@ class PriceBar(
          * Create a new PriceBar and compensate all prices and volume for the [adjustedClose]. This result in all prices
          * being corrected with by a factor [adjustedClose]/[close] and the volume by a factor [close]/[adjustedClose]
          */
+        @Suppress("LongParameterList")
         fun fromAdjustedClose(
             asset: Asset,
             open: Number,
@@ -155,7 +155,6 @@ class PriceBar(
 
     }
 
-
     /**
      * Get the price for this price bar, default is the closing price. Supported types:
      *
@@ -171,7 +170,7 @@ class PriceBar(
             "OPEN" -> ohlcv[0]
             "LOW" -> ohlcv[2]
             "HIGH" -> ohlcv[1]
-            "TYPICAL" -> ( ohlcv[1] + ohlcv[2] + ohlcv[3]) / 3.0
+            "TYPICAL" -> (ohlcv[1] + ohlcv[2] + ohlcv[3]) / 3.0
             else -> ohlcv[3]
         }
     }
@@ -182,9 +181,7 @@ class PriceBar(
     override val values
         get() = ohlcv.toList()
 
-
 }
-
 
 /**
  * Holds a single price for an asset and optional the volume. Often this reflects an actual trade, but it can
@@ -195,7 +192,8 @@ class PriceBar(
  * @property volume
  * @constructor Create empty Single price
  */
-data class TradePrice(override val asset: Asset, private val price: Double, override val volume: Double = Double.NaN) : PriceAction {
+data class TradePrice(override val asset: Asset, private val price: Double, override val volume: Double = Double.NaN) :
+    PriceAction {
 
     override val values
         get() = listOf(price, volume)
@@ -253,6 +251,7 @@ data class PriceQuote(
             values[3]
         )
     }
+
     /**
      * Return the underlying price. The available [types][type] are:
      *
@@ -270,7 +269,7 @@ data class PriceQuote(
             "BID" -> bidPrice
             else -> (askPrice + bidPrice) / 2
         }
-        return  result
+        return result
     }
 
     /**
@@ -280,7 +279,6 @@ data class PriceQuote(
         get() = askSize + bidSize
 
 }
-
 
 /**
  * Contains an order book for an asset at a certain moment in time. The entries in the order book, both
@@ -297,19 +295,18 @@ data class OrderBook(
     val bids: List<OrderBookEntry>
 ) : PriceAction {
 
-
     companion object {
 
-        fun fromValues(asset: Asset, values: List<Double>) : OrderBook {
+        fun fromValues(asset: Asset, values: List<Double>): OrderBook {
             val asks = mutableListOf<OrderBookEntry>()
-            val bids  = mutableListOf<OrderBookEntry>()
-            val endAsks =  1 + 2 * values[0].toInt()
+            val bids = mutableListOf<OrderBookEntry>()
+            val endAsks = 1 + 2 * values[0].toInt()
             for (i in 1 until endAsks step 2) {
                 val entry = OrderBookEntry(values[i], values[i + 1])
                 asks.add(entry)
             }
 
-            for (i in endAsks until values.lastIndex step 2 ) {
+            for (i in endAsks until values.lastIndex step 2) {
                 val entry = OrderBookEntry(values[i], values[i + 1])
                 bids.add(entry)
             }
@@ -327,7 +324,6 @@ data class OrderBook(
         get() = listOf(asks.size.toDouble()) +
                 asks.map { listOf(it.quantity, it.limit) }.flatten() +
                 bids.map { listOf(it.quantity, it.limit) }.flatten()
-
 
     /**
      * Order book will by default return the unweighted **MIDPOINT** price. Other [types][type] that are supported are:
@@ -385,7 +381,6 @@ data class OrderBook(
  * @constructor Create empty Corporate action
  */
 class CorporateAction(val asset: Asset, val type: String, val value: Double) : Action
-
 
 /**
  * Can contain news items from market news sources or social media like Twitter and Reddit

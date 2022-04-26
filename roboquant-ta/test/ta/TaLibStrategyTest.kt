@@ -100,6 +100,13 @@ internal class TaLibStrategyTest {
     }
 
     @Test
+    fun vwap() {
+        val strategy = TaLibStrategy.vwap(10, 200)
+        val x = run(strategy, 60)
+        assertEquals(60, x.size)
+    }
+
+    @Test
     fun taSignalBreakout() {
         val strategy = TaLibSignalStrategy.breakout(10, 30)
         val x = run(strategy, 60)

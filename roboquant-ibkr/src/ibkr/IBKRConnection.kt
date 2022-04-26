@@ -49,6 +49,7 @@ internal object IBKRConnection {
      * @param port
      * @param clientId
      */
+    @Suppress("TooGenericExceptionCaught")
     fun connect(wrapper: EWrapper, host: String, port: Int, clientId: Int): EClientSocket {
         val oldClient = connections[clientId]
         if (oldClient !== null) disconnect(oldClient)
@@ -66,7 +67,7 @@ internal object IBKRConnection {
                 signal.waitForSignal()
                 try {
                     reader.processMsgs()
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     logger.warning("Exception: " + e.message)
                 }
             }

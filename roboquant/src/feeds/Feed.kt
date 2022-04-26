@@ -41,9 +41,9 @@ interface Feed : Closeable {
         get() = Timeframe.INFINITE
 
     /**
-     * (Re)play the events of the feed on put these events on the provided [channel]. Once done, return from this method.
-     * Implementations that hold resources like open file descriptors, should carefully handle Channel related exceptions
-     * and make sure these resources are released before returning from the method.
+     * (Re)play the events of the feed on put these events on the provided [channel]. Once done, return from this
+     * method. Implementations that hold resources like open file descriptors, should carefully handle Channel
+     * related exceptions and make sure these resources are released before returning from the method.
      */
     suspend fun play(channel: EventChannel)
 
@@ -72,7 +72,6 @@ interface AssetFeed : Feed {
      */
     fun find(symbol: String): Asset = assets.getBySymbol(symbol)
 }
-
 
 /**
  * Convenience method to play a feed and return the actions of a certain type [T]. Additionally, the feed can be
@@ -110,4 +109,5 @@ inline fun <reified T : Action> Feed.filter(
 /**
  * Convert a collection of price actions to a double array
  */
-fun Collection<PriceAction>.toDoubleArray(type:String = "DEFAULT") : DoubleArray = this.map { it.getPrice(type) }.toDoubleArray()
+fun Collection<PriceAction>.toDoubleArray(type: String = "DEFAULT"): DoubleArray =
+    this.map { it.getPrice(type) }.toDoubleArray()

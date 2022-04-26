@@ -3,7 +3,8 @@
 This directory contains IntelliJ IDEA configuration files for running roboquant for special use-cases.
 
 == With Coverage
-Runs extended unit test cases to improve code coverage. By default these extra unit tests not enabled since they take too much extra time. Overall goal is to maintain a roboquant test coverage over 90%.
+Run extended unit tests to improve code coverage. By default these extra unit tests are not enabled since they take too much extra time.
+The overall goal is to maintain a roboquant test coverage > 90%.
 
 == Performance with Flight recorder
 Runs a mixed performance test with flight recorder enabled. The resulting `roboquant_recording.jfr` file can be opened with a tool like VisualVM and further inspection.

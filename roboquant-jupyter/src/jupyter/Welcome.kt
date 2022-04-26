@@ -28,6 +28,7 @@ class Welcome : Output() {
      *
      * @return
      */
+    @Suppress("MaxLineLength")
     override fun asHTML(): String {
         val jvmInfo = Config.info["jvm"]
         val osInfo = Config.info["os"]

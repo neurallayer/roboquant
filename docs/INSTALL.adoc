@@ -1,28 +1,32 @@
 = Installation
 :icons: font
 
+// file:noinspection GrUnresolvedAccess
 There are two ways to use roboquant:
 
-* Interactively in a Jupyter notebook. If you want to get up and running quickly, and want to experiment with many strategies, this is the best approach. Additionally, you get many charts out-of-the-box.
+. Interactively in a Jupyter notebook. If you want to get up and running quickly, and want to experiment with many strategies, this is the best approach. Additionally, you get many charts out-of-the-box.
 
-* As a library in your own Kotlin or Java application. If you plan to develop large and complex trading strategies, this is the good approach since you have the full power of an IDE like IntelliJ IDEA at your disposal.
+. As a library in your own Kotlin or Java application. If you plan to develop large and complex trading strategies, this is the good approach since you have the full power of an IDE like IntelliJ IDEA at your disposal.
 
 == Jupyter Notebook
 
-If you have already Docker installed, all it takes is a single command to have a fully functional Jupyter Lab environment available:
+If you have already Docker installed, it only takes a single command to have a fully functional Jupyter Lab environment available:
 
 [source,shell]
 ----
 docker run --rm -p 8888:8888 roboquant/jupyter
 ----
 
-This will pull the image from DockerHub and run it on your local machine. The image comes with several tutorial-notebooks that demonstrate how to develop and run your own strategies.
+This will pull the image from DockerHub and run it on your local machine. The image comes with several notebooks that demonstrate how to develop and run your own strategies.
 
-If you don't have Docker yet installed on your computer, check out https://www.docker.com/get-started[Docker get started] and download Docker for Desktop from there. If you are running Linux, then your distribution likely already has Docker or Podman included.
+If you don't have Docker yet installed on your computer, check out https://www.docker.com/get-started[Docker get started] and download Docker for Desktop from there. If you are running Linux, then your distribution likely already has Docker included.
 
-If you don't want to install anything locally, you can use https://datalore.jetbrains.com/[JetBrains Datalore]. It supports Kotlin Notebooks and has a free tier available if you just want to try it out.
+If you don't want to install anything locally, you can:
 
-Or try some same notebooks right now image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials]
+. Try some same notebooks right now in your browser by clicking: image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials]
+
+. Go to https://datalore.jetbrains.com/[JetBrains Datalore] and create an account there. It supports Kotlin Notebooks and has a free tier available if you just want to try it out.
+
 
 == Standalone Application
 Just add `roboquant` as a dependency to your build tool, like Maven or Gradle.
@@ -40,7 +44,7 @@ Just add `roboquant` as a dependency to your build tool, like Maven or Gradle.
 
 *Gradle*
 
-[source,shell]
+[source, groovy]
 ----
 implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'
 ----
@@ -65,7 +69,9 @@ Roboquant uses Maven for the build process and assuming you already have this in
 mvn build
 ----
 
-The build and install ais always tested using JDK 17 runtime, however the generated libraries are targeted against JDK 11 in order to provide greater compatibilty for projects that still use older versions of the JDK.
+The build and install is tested using JDK 17 runtime, however the generated libraries are targeted against JDK 11 in order to provide greater compatibilty for projects that still use older versions of the JDK.
+
+TIP: If you plan to make many changes and updates to the source code, checkout the https://github.com/apache/maven-mvnd[Maven Deamon] project that provides much faster builds.
 
 == Interactive Brokers
 Unfortuatly we are not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file yourself. You can download version `10.15` from here: https://interactivebrokers.github.io/# and within the downloaded archive file you'll find the required `TwsApi.jar`.

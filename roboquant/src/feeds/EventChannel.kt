@@ -97,14 +97,17 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
             timeframe.contains(event.time) && return event
             if (event.time > timeframe) {
                 logger.fine { "Received ${event.time} after $timeframe, closing channel" }
-                channel.close()
-                done = true
+                close()
                 throw ClosedReceiveChannelException("Out of time")
             }
         }
 
     }
 
+    /**
+     * Close this [EventChannel] and mark it as [done]
+     *
+     */
     fun close() {
         done = true
         channel.close()

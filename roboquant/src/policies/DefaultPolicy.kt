@@ -70,7 +70,7 @@ open class DefaultPolicy(
         return baseCurrencyCost.value
     }
 
-
+    @Suppress("ReturnCount")
     private fun createSellOrder(account: Account, signal: Signal, price: Double, amount: Double): Pair<Order?, Double> {
         val position = account.portfolio.getValue(signal.asset)
 
@@ -89,6 +89,7 @@ open class DefaultPolicy(
         return Pair(order, bp)
     }
 
+    @Suppress("ReturnCount")
     private fun createBuyOrder(account: Account, signal: Signal, price: Double, amount: Double): Pair<Order?, Double> {
         val position = account.portfolio.getValue(signal.asset)
         if (position.long && !increasePosition) return noOrder

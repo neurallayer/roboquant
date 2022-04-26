@@ -36,6 +36,7 @@ import java.util.zip.ZipInputStream
 import kotlin.io.path.div
 import kotlin.io.path.notExists
 
+@Suppress("MaxLineLength")
 /**
  * Currency converter that uses the exchange reference rates as published by the ECB and that are freely available at
  * [ECB website](https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html)

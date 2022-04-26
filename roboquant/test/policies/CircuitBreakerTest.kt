@@ -30,7 +30,7 @@ import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class CircuitBreakerPolicyTest {
+internal class CircuitBreakerTest {
 
     class MyPolicy : Policy {
         override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
@@ -48,7 +48,7 @@ internal class CircuitBreakerPolicyTest {
     fun test() {
         val account = TestData.usAccount()
         val time = Instant.now()
-        val policy = CircuitBreakerPolicy(MyPolicy(), 8, 1.hours)
+        val policy = CircuitBreaker(MyPolicy(), 8, 1.hours)
         var orders = policy.act(emptyList(), account, Event.empty(time))
         assertEquals(3, orders.size)
 

@@ -41,6 +41,7 @@ class OrderChart(
         require(aspect in listOf("direction", "quantity"))
     }
 
+    @Suppress("MaxLineLength")
     private fun getTooltip(order: SingleOrder, openedAt: Instant): String {
         return with(order) {
             "asset: $asset <br> currency: ${asset.currency} <br> placed: $openedAt <br> qty: ${order.size} <br> id: $id <br> type: ${order::class.simpleName} <br> tif: ${order.tif}"

@@ -36,10 +36,10 @@ import kotlin.random.asJavaRandom
  * upfront and stored in memory to ensure it is fully reproducible independent of the test scenario.
  *
  * # Background
- * Random walk theory suggests that changes in stock prices have the same distribution and are independent of each other.
- * Therefore, it assumes the past movement or trend of a stock price or market cannot be used to predict its future movement.
- * In short, random walk theory proclaims that stocks take a random and unpredictable path that makes all methods of
- * predicting stock prices futile in the long run.
+ * Random walk theory suggests that changes in stock prices have the same distribution and are independent of each
+ * other. Therefore, it assumes the past movement or trend of a stock price or market cannot be used to predict its
+ * future movement. In short, random walk theory proclaims that stocks take a random and unpredictable path that makes
+ * all methods of predicting stock prices futile in the long run.
  *
  * @property timeline The timeline of this random walk.
  *

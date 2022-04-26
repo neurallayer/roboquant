@@ -87,8 +87,10 @@ class OANDAExchangeRates(
         val pair1 = Pair(from, to)
         val pair2 = Pair(to, from)
         return when {
-            (pair1 in exchangeRates) -> if (amount.isPositive) 1.0 / exchangeRates[pair1]!!.first else 1.0 / exchangeRates[pair1]!!.second
-            (pair2 in exchangeRates) -> if (amount.isPositive) exchangeRates[pair2]!!.first else exchangeRates[pair2]!!.second
+            (pair1 in exchangeRates) -> if (amount.isPositive) 1.0 / exchangeRates[pair1]!!.first else
+                1.0 / exchangeRates[pair1]!!.second
+            (pair2 in exchangeRates) -> if (amount.isPositive) exchangeRates[pair2]!!.first else
+                exchangeRates[pair2]!!.second
             else -> throw ConfigurationException("Cannot convert $amount to $to")
         }
     }

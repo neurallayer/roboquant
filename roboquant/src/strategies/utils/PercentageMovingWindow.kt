@@ -28,9 +28,9 @@ import org.roboquant.feeds.Event
  * Please note that it will take one additional value for the window to get filled, so a window size of 20 will take
  * 21 values to get filled and be ready.
  *
- * @property missingValue the value to store if no price is available for an asset at a certain step, default is NaN. The
- *  consequence is that fill you have many missing values, strategies might become unpredictable. An alternative is to
- *  set the default to 0.0 (so the return is 0 is unknown).
+ * @property missingValue the value to store if no price is available for an asset at a certain step, default is NaN.
+ * The consequence is that fill you have many missing values, strategies might become unpredictable. An alternative is
+ * to set the default to 0.0 (so the return is 0 is unknown).
  * @param size The window size to use
  *
  * @constructor

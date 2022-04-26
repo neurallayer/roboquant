@@ -18,7 +18,7 @@ import java.util.*
  * @property policy
  * @constructor Create new Chain Breaker
  */
-class CircuitBreakerPolicy(val policy: Policy, private val maxOrders: Int, private val duration: TemporalAmount) :
+class CircuitBreaker(val policy: Policy, private val maxOrders: Int, private val duration: TemporalAmount) :
     Policy by policy {
 
     private val history = LinkedList<Pair<Instant, Int>>()
@@ -54,4 +54,4 @@ class CircuitBreakerPolicy(val policy: Policy, private val maxOrders: Int, priva
 
 }
 
-fun Policy.circuitBreaker(maxOrders: Int, duration: TemporalAmount) = CircuitBreakerPolicy(this, maxOrders, duration)
+fun Policy.circuitBreaker(maxOrders: Int, duration: TemporalAmount) = CircuitBreaker(this, maxOrders, duration)

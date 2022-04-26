@@ -22,14 +22,13 @@ import java.time.Instant
 /**
  * Strategy that use the crossover of two Exponential Moving Averages (EMA) to generate a BUY or SELL signal. It is
  * frequently used in FOREX trading, but can also be applied to other asset classes. This is a computational and memory
- * efficient implementation.
+ * efficient implementation since it doesn't store historic prices in memory.
  *
  * The rules are straight forward:
  *
- * - If the fast EMA crosses over the slow EMA, create a BUY signal
- * - If the fast EMA crosses under the slow EMA, create a SELL signal
- * - Don't generate a signal in all other cases.
- *
+ * - If the fast EMA crosses over the slow EMA, generate a BUY signal
+ * - If the fast EMA crosses under the slow EMA, generate a SELL signal
+ * - Don't generate a signal in all other scenario's
  *
  * @constructor Create a new EMACrossover strategy
  *

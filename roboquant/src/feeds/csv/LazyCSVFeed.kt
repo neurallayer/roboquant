@@ -136,7 +136,7 @@ private class IncrementalReader(val asset: Asset, file: File, val config: CSVCon
             val line = reader.next().fields
             try {
                 return config.processLine(asset, line)
-            } catch (e: Exception) {
+            } catch (_: Throwable) {
                 errors++
             }
         }

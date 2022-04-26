@@ -70,7 +70,6 @@ class Account(
     val equityAmount: Amount
         get() = convert(equity)
 
-
     /**
      * Total equity hold in the account. Equity is defined as sum of cash balances and the portfolio market value
      */
@@ -89,24 +88,22 @@ class Account(
     val assets: Set<Asset>
         get() = portfolio.keys
 
-
     /**
      * Get the associated trades for the provided [orders]. If no orders are provided all [closedOrders] linked to this
      * account instance are used.
      */
-    fun getOrderTrades(orders: Collection<OrderState> = this.closedOrders) : Map<OrderState, List<Trade>> =
+    fun getOrderTrades(orders: Collection<OrderState> = this.closedOrders): Map<OrderState, List<Trade>> =
         orders.associateWith { order -> trades.filter { it.orderId == order.id } }.toMap()
 
     /**
      * Convert an [amount] to the account [baseCurrency] using last update of the account as a timestamp
      */
-    fun convert(amount: Amount, time:Instant = lastUpdate) : Amount = amount.convert(baseCurrency, time)
+    fun convert(amount: Amount, time: Instant = lastUpdate): Amount = amount.convert(baseCurrency, time)
 
     /**
      * Convert a [wallet] to the account [baseCurrency] using last update of the account as a timestamp
      */
-    fun convert(wallet: Wallet, time:Instant = lastUpdate): Amount = wallet.convert(baseCurrency, time)
-
+    fun convert(wallet: Wallet, time: Instant = lastUpdate): Amount = wallet.convert(baseCurrency, time)
 
     /**
      * Provide a short summary that contains the high level account information, the available cash balances and
@@ -127,12 +124,12 @@ class Account(
         s.add("portfolio", c(positions.marketValue))
         s.add("long value", c(positions.long.marketValue))
         s.add("short value", c(positions.short.marketValue))
-        s.add("assets", portfolio.size)
+        s.add("open positions", portfolio.size)
+        s.add("unrealized p&l", c(positions.unrealizedPNL))
         s.add("realized p&l", c(trades.realizedPNL))
         s.add("trades", trades.size)
         s.add("open orders", openOrders.size)
         s.add("closed orders", closedOrders.size)
-        s.add("unrealized p&l", c(positions.unrealizedPNL))
         return s
     }
 
@@ -151,7 +148,6 @@ class Account(
     }
 
 }
-
 
 fun Collection<Trade>.outliers(percentage: Double = 0.95): List<Trade> {
     val data = map { it.pnl.value.absoluteValue }.toDoubleArray()
@@ -200,7 +196,7 @@ fun Map<Asset, Position>.diff(target: Collection<Position>): Map<Asset, Size> {
         val targetSize = position.size
         val sourceSize = getValue(position.asset).size
         val value = targetSize - sourceSize
-        if (! value.iszero) result[position.asset] = value
+        if (!value.iszero) result[position.asset] = value
     }
 
     for (position in this.values) {
@@ -209,7 +205,6 @@ fun Map<Asset, Position>.diff(target: Collection<Position>): Map<Asset, Size> {
 
     return result
 }
-
 
 /**
  * Provide a summary for the orders
@@ -222,21 +217,31 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
     } else {
         val orders = sortedBy { it.id }
         val fmt = "%15s│%10s│%15s│%10s│%24s│%24s│%10s│ %-50s"
-        val header = String.format(fmt, "type", "asset", "status", "id", "opened at", "closed at", "currency", "details")
+        val header =
+            String.format(fmt, "type", "asset", "status", "id", "opened at", "closed at", "currency", "details")
         s.add(header)
         orders.forEach {
             with(it) {
                 val t1 = openedAt.truncatedTo(ChronoUnit.SECONDS)
                 val t2 = closedAt.truncatedTo(ChronoUnit.SECONDS)
                 val infoString = order.info().toString().removeSuffix("}").removePrefix("{")
-                val line = String.format(fmt, order.type, asset.symbol, status, order.id, t1, t2, asset.currencyCode, infoString)
+                val line = String.format(
+                    fmt,
+                    order.type,
+                    asset.symbol,
+                    status,
+                    order.id,
+                    t1,
+                    t2,
+                    asset.currencyCode,
+                    infoString
+                )
                 s.add(line)
             }
         }
     }
     return s
 }
-
 
 /**
  * Create a summary of the trades
@@ -266,14 +271,11 @@ fun Collection<Trade>.summary(name: String = "trades"): Summary {
     return s
 }
 
-
-
 /**
  * Create a [Summary] of this portfolio that contains an overview of the open positions.
  */
 @JvmName("summaryPortfolio")
 fun Map<Asset, Position>.summary(name: String = "portfolio"): Summary = values.summary(name)
-
 
 /**
  * Create a [Summary] of this portfolio that contains an overview of the open positions.

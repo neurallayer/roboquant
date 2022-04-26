@@ -45,16 +45,12 @@ class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: 
      */
     override fun getRate(amount: Amount, to: Currency, time: Instant): Double {
         val from = amount.currency
-
-        (from === to) && return 1.0
-
-        if (to === baseCurrency)
-            return exchangeRates[from]!!
-
-        if (from === baseCurrency)
-            return 1.0 / exchangeRates[to]!!
-
-        return exchangeRates[from]!! * 1.0 / exchangeRates[to]!!
+        return when {
+            from === to -> 1.0
+            to === baseCurrency -> exchangeRates[from]!!
+            from === baseCurrency -> 1.0 / exchangeRates[to]!!
+            else -> exchangeRates[from]!! * 1.0 / exchangeRates[to]!!
+        }
     }
 
 }

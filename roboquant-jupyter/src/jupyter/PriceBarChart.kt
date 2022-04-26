@@ -78,6 +78,7 @@ class PriceBarChart(
     }
 
     /** @suppress */
+    @Suppress("LongMethod")
     override fun renderOption(): String {
 
         val line = reduce(fromFeed())

@@ -113,7 +113,26 @@ class TaLibStrategy(history: Int = 15) : Strategy {
         }
 
         /**
-         * EMA crossover
+         * Vwap strategy buys if the VWAP is higher than the actual price by a certain margin and sells if the
+         * vwap is lower than the actual price by a certian margin. Although this strategy can be used for any interval
+         * between prices, it is most often used for day trading and very small time interval between price events.
+         *
+         * @param period period to use to calculate the VWAP, default is 0.1%
+         * @param bips the margin in Bips
+         * @return
+         */
+        fun vwap(period: Int, bips: Int = 100) : TaLibStrategy {
+            val perc = bips / 10_000.0
+            val strategy = TaLibStrategy(period)
+            strategy.buy { vwap(it, period) > it.close.last() * (1.0 + perc) }
+            strategy.sell { vwap(it, period) < it.close.last() * (1.0 - perc) }
+            return strategy
+        }
+
+        /**
+         * EMA crossover using the TaLib under the hood.
+         *
+         * See also [org.roboquant.strategies.EMACrossover] for more efficient implementation.
          *
          * @param slow
          * @param fast
@@ -238,7 +257,7 @@ fun TaLib.vwap(
     val end = high.lastIndex - previous
     var sumPrice = 0.0
     var sumVolume = 0.0
-    val start = end - period - previous
+    val start = end - period + 1
     if (start < 0) throw InsufficientData(
         "Not sufficient data to calculate vwap, minimum lookback period is ${period + previous}"
     )

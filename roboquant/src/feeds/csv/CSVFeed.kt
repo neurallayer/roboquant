@@ -56,14 +56,11 @@ class CSVFeed(
         require(dir.isDirectory) { "Directory $path does not exist" }
         config.configure()
 
-        val startTime = Instant.now().toEpochMilli()
-
         runBlocking {
             readFiles(path)
         }
 
-        val duration = Instant.now().toEpochMilli() - startTime
-        logger.info { "Constructed feed with ${timeline.size} events, ${assets.size} assets and timeframe of [$timeframe] in ${duration}ms" }
+        logger.info { "events=${timeline.size} assets=${assets.size} timeframe=$timeframe" }
     }
 
 
@@ -132,7 +129,7 @@ class CSVFeed(
                     try {
                         val step = config.processLine(asset, row.fields)
                         result += step
-                    } catch (e: Exception) {
+                    } catch (_: Exception) {
                         logger.fine { "${asset.symbol} $row" }
                         errors += 1
                     }

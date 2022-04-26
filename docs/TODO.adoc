@@ -8,7 +8,7 @@ But at least it gives insight into the current planning when to add certain feat
 
 See also the link:CONTRIBUTING.adoc[contributing] page on how to submit a PR.
 
-== Version 0.8 (end of 2021)
+== Version 0.8.x (end of 2021)
 
 Version 0.8 is all about making sure that (back-)testing works, and the most common use-cases are covered. Much of the foundation for algo trading is in place with this release:
 
@@ -20,32 +20,32 @@ Version 0.8 is all about making sure that (back-)testing works, and the most com
 * [x] Add documentation on how to install and get started
 * [x] Support for advanced order types
 * [x] Add info on key design concepts behind the software, so it becomes easier to contribute
-* [x] Bring back Interactive Brokers integration. The code is already developed but due to license restrictions the TwsApi.jar file cannot be included with roboquant. So have to come up with alternative solution.
+* [x] Bring back Interactive Brokers integration. The code was already developed but due to license restrictions the TwsApi.jar file could not be included with roboquant.
 * [x] See how to best fit crypto trading with current account structure
 
-== Version 0.9 (summer 2022)
+== Version 0.9.x (2022)
 
 Ensure the API is stable and start including AI and Machine Learning support
 
-* [ ] Stabalize the exposed API (perhaps also enable -Xexplicit-api=strict compiler flag)
+* [X] Stabalize the exposed API (perhaps also enable -Xexplicit-api=strict compiler flag)
 * [ ] Improve documentation, notebooks and examples based on the stable API
 * [ ] Include additional demo feeds for quick expirementation (some forex and crypto assets)
 * [ ] Add basic Machine Learning support (research required)
 * [ ] Add better hyper-parameter search and optimalization capabilities (research required)
 
-== Version 1.0 (end of 2022)
+== Version 1.0.x (end of 2022)
 
 This version is all about adding better trading capabilities. Although there is already integration available in earlier versions, that is just to validate the architectural concepts supports live trading. These broker integrations are neither reliable nor complete. So what still needs to be done:
 
 * [ ] Better margin account simulation support
 * [ ] More metrics, especially around alpha and beta calculations
-* [ ] Add more advanced slippage-, fee- and fill-models
+* [ ] Add more advanced slippage- and fee-models
 * [ ] Add visualtizations for the tuning of strategies (research required)
 * [ ] Add support for distributed back-testing (research required)
 
 == Version 2 and later (2023 and beyond)
 
-The topics mentioned here are just some ideas for the future releases:
+The topics mentioned here are some of the ideas for the future releases:
 
 * [ ] Add support for reading different types of data feeds besides price actions
 * [ ] Better and more complete integrations with brokers and crypto-exchanges

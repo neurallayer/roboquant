@@ -54,8 +54,8 @@ enum class Rating(val value: Int) {
     HOLD(0),
 
     /**
-     * Underperform rating, a recommendation that means an asset is expected to do slightly worse than the overall market
-     *  return.
+     * Underperform rating, a recommendation that means an asset is expected to do slightly worse than the overall
+     * market return.
      */
     UNDERPERFORM(-1),
 

@@ -33,7 +33,9 @@ class RandomStrategy(private val probability: Double = 0.05, private val random 
 
 
     init {
-        require(probability in 0.0..1.0) { "probability should be a value between 0.0 and 1.0, found $probability instead" }
+        require(probability in 0.0..1.0) {
+            "probability should be a value between 0.0 and 1.0, found $probability instead"
+        }
     }
 
     override fun generate(event: Event): List<Signal> {

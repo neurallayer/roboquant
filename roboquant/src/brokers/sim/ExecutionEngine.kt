@@ -100,6 +100,11 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
     private val modifyHandlers = LinkedList<ModifyOrderHandler>()
 
     /**
+     * Get the open order handlers
+     */
+    private fun <T: OrderHandler>List<T>.open() = filter { it.status.open }
+
+    /**
      * Remove all handlers of closed orders
      */
     internal fun removeClosedOrders() {
@@ -149,21 +154,18 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePrici
 
         // We always first execute the modify orders. These are run even if there is
         // no price for the asset known
-        for (handler in modifyHandlers) {
-            if (handler.state.status.closed) continue
+        for (handler in modifyHandlers.open()) {
             handler.execute(tradeHandlers, event.time)
         }
 
         // Now run the trade order commands
         val executions = mutableListOf<Execution>()
         val prices = event.prices
-        for (handler in tradeHandlers) {
-            if (handler.state.status.closed) continue
+        for (handler in tradeHandlers.open()) {
             val action = prices[handler.state.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, event.time)
             val newExecutions = handler.execute(pricing, event.time)
             executions.addAll(newExecutions)
-
         }
         return executions
     }

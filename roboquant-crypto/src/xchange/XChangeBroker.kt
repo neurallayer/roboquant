@@ -41,12 +41,10 @@ import org.knowm.xchange.dto.trade.MarketOrder as CryptoMarketOrder
  */
 class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Broker {
 
-
     private val _account = InternalAccount(Currency.getInstance(baseCurrencyCode))
 
     override val account: Account
         get() = _account.toAccount()
-
 
     private val logger = Logging.getLogger(XChangeBroker::class)
     private val tradeService = exchange.tradeService
@@ -62,7 +60,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
     /**
      * Update the account
-     * TODO: implement real update
+     * @TODO: implement real update
      *
      */
     private fun updateAccount() {
@@ -104,7 +102,9 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
                         _account.acceptOrder(order, event.time)
                     }
                     else -> {
-                        logger.warning { "only market and limit orders are supported, received ${order::class} instead" }
+                        logger.warning {
+                            "only market and limit orders are supported, received ${order::class} instead"
+                        }
                         _account.rejectOrder(order, event.time)
                     }
                 }
@@ -132,7 +132,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
         val limitPrice = BigDecimal(order.limit)
         val limitOrder = CryptoLimitOrder(orderType, amount, currencyPair, orderId, null, limitPrice)
         val returnValue = tradeService.placeLimitOrder(limitOrder)
-        println("Limit Order return value: $returnValue")
+        logger.fine {"Limit Order return value: $returnValue"}
     }
 
     /**
@@ -146,7 +146,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
         val orderType = if (order.buy) CryptoOrder.OrderType.BID else CryptoOrder.OrderType.ASK
         val marketOrder = CryptoMarketOrder(orderType, amount, currencyPair)
         val returnValue = tradeService.placeMarketOrder(marketOrder)
-        println("Market Order return value: $returnValue")
+        logger.fine { "Market Order return value: $returnValue" }
     }
 
 }

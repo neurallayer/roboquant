@@ -22,7 +22,7 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import java.time.Instant
 
-private const val eps = 0.0000000001
+private const val EPS = 0.0000000001
 
 /**
  * Calculate the sharp ratio for the returns made. The ratio is the average return earned in excess of the risk-free
@@ -71,7 +71,7 @@ class SharpRatio(
                 // Calculate the three metrics
                 val mean = stats.mean
                 val std = stats.standardDeviation
-                val sharpRatio = (mean - riskFreeRate) / (std + eps)
+                val sharpRatio = (mean - riskFreeRate) / (std + EPS)
 
                 mapOf(
                     "portfolio.mean" to mean,

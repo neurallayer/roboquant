@@ -17,6 +17,7 @@
 package org.roboquant.feeds.csv
 
 import org.roboquant.common.Exchange
+import org.roboquant.common.RoboquantException
 import java.time.Instant
 
 /**
@@ -69,7 +70,7 @@ class AutoDetectTimeParser(val exchangeCode: String = "NASDAQ") : TimeParser {
                         return
                     }
                 }
-                throw java.lang.Exception("Unknown datetime format $sample. Please provide config.properties with time parsing instructions")
+                throw RoboquantException("Unknown datetime format $sample")
             }
         }
     }

@@ -89,6 +89,7 @@ class AssetAllocationChart(
     /**
      * This custom toolbox enables to switch between a sunburst and treemap view of the asset allocation
      */
+    @Suppress("MaxLineLength")
     private val toolbox = """
         toolbox: {
             feature: {

@@ -24,7 +24,8 @@ import java.math.BigDecimal
  * SingleOrder types are plain non-combined orders with a pre-defined quantity and Time in Force policy. Many well-known
  * order types fall under this category, like Market-, Limit- and Trail-orders.
  */
-abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, id: Int, tag: String = "") : Order(asset, id, tag) {
+abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, id: Int, tag: String = "") :
+    Order(asset, id, tag) {
 
 
     init {
@@ -51,7 +52,6 @@ abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, i
 
 }
 
-
 /**
  * Buy or sell an asset at the market’s current best available price. A market order typically ensures
  * an execution, but it does not guarantee a specified price.
@@ -71,7 +71,6 @@ class MarketOrder(
 ) : SingleOrder(asset, size, tif, id, tag) {
 
     constructor(asset: Asset, quantity: Number) : this(asset, Size(BigDecimal.valueOf(quantity.toDouble())))
-
 
     override fun info() = sortedMapOf("quantity" to size, "tif" to tif)
 
@@ -102,7 +101,6 @@ class LimitOrder(
 
 }
 
-
 /**
  * Stop order
  *
@@ -124,7 +122,6 @@ class StopOrder(
 
     override fun info() = sortedMapOf("quantity" to size, "stop" to stop, "tif" to tif)
 }
-
 
 /**
  * Stop limit order
