@@ -41,7 +41,7 @@ class SimBroker(
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val feeModel: FeeModel = NoFeeModel(),
     private val accountModel: AccountModel = CashAccount(),
-    pricingEngine: PricingEngine = SlippagePricing(),
+    pricingEngine: PricingEngine = SpreadPricingEngine(),
 ) : Broker {
 
     /**

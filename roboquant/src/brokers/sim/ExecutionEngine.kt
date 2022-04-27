@@ -30,7 +30,7 @@ fun interface OrderHandlerFactory<T : Order> {
  * @property pricingEngine
  * @constructor Create empty Execution engine
  */
-class ExecutionEngine(private val pricingEngine: PricingEngine = NoSlippagePricing()) {
+class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEngine()) {
 
     companion object {
 

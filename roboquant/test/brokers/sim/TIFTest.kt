@@ -45,7 +45,7 @@ internal class TIFTest {
     }
 
     private fun pricing(price: Number = 100): Pricing {
-        val engine = NoSlippagePricing()
+        val engine = NoCostPricingEngine()
         return engine.getPricing(TradePrice(TestData.usStock(), price.toDouble()), Instant.now())
     }
 

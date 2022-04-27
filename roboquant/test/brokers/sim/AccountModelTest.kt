@@ -33,7 +33,6 @@ internal class AccountModelTest {
         assertEquals(result2.value, result.value)
     }
 
-
     @Test
     fun test3() {
         val account = TestData.internalAccount()
@@ -57,10 +56,14 @@ internal class AccountModelTest {
         return broker.place(orders, event)
     }
 
-
     private fun getSimBroker(deposit: Amount, accountModel: AccountModel): SimBroker {
         val wallet = deposit.toWallet()
-        return SimBroker(wallet, accountModel = accountModel, pricingEngine = NoSlippagePricing(), feeModel = NoFeeModel())
+        return SimBroker(
+            wallet,
+            accountModel = accountModel,
+            pricingEngine = NoCostPricingEngine(),
+            feeModel = NoFeeModel()
+        )
     }
 
     @Test
@@ -98,14 +101,12 @@ internal class AccountModelTest {
 
     }
 
-
     @Test
     fun testMarginAccountLong() {
         // Slide 2 example in code
         val initial = 1_000_000.JPY
-        val broker = getSimBroker(initial,MarginAccount())
+        val broker = getSimBroker(initial, MarginAccount())
         val abc = Asset("ABC", currencyCode = "JPY")
-
 
         var account = update(broker, abc, 1000)
         assertEquals(2_000_000.JPY, account.buyingPower)
@@ -128,9 +129,6 @@ internal class AccountModelTest {
 
     }
 
-
-
-
     @Test
     fun testMarginAccountShort() {
         // Slide 3 example example in code
@@ -152,6 +150,5 @@ internal class AccountModelTest {
         assertEquals(30_000.USD, account.buyingPower)
         assertEquals(15_000.USD.toWallet(), account.cash)
     }
-
 
 }

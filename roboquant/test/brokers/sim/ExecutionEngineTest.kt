@@ -25,15 +25,14 @@ import kotlin.test.assertFails
 
 internal class ExecutionEngineTest {
 
-
     @Test
     fun testAddingOrders() {
-        val engine = ExecutionEngine(NoSlippagePricing())
+        val engine = ExecutionEngine(NoCostPricingEngine())
         val asset = TestData.usStock()
         val size = Size(100)
         var success = engine.add(MarketOrder(asset, 100))
         assertEquals(true, success)
-        success = engine.add(LimitOrder(asset,size, 200.0))
+        success = engine.add(LimitOrder(asset, size, 200.0))
         assertEquals(true, success)
         success = engine.add(StopOrder(asset, size, 180.0))
         assertEquals(true, success)
@@ -46,11 +45,9 @@ internal class ExecutionEngineTest {
 
     }
 
-
-
     @Test
     fun testAddingOtherOrders() {
-        val engine = ExecutionEngine(NoSlippagePricing())
+        val engine = ExecutionEngine(NoCostPricingEngine())
         val asset = TestData.usStock()
         val size = Size(100)
 
@@ -62,15 +59,18 @@ internal class ExecutionEngineTest {
         success = engine.add(order)
         assertEquals(true, success)
 
-        order = BracketOrder(LimitOrder(asset, size, 200.0), LimitOrder(asset, -size, 200.0), LimitOrder(asset, -size, 200.0))
+        order = BracketOrder(
+            LimitOrder(asset, size, 200.0),
+            LimitOrder(asset, -size, 200.0),
+            LimitOrder(asset, -size, 200.0)
+        )
         success = engine.add(order)
         assertEquals(true, success)
     }
 
-
     @Test
     fun testAddingModifyOrders() {
-        val engine = ExecutionEngine(NoSlippagePricing())
+        val engine = ExecutionEngine(NoCostPricingEngine())
         val asset = TestData.usStock()
 
         val origOrder = MarketOrder(asset, 100.0)
@@ -86,7 +86,6 @@ internal class ExecutionEngineTest {
         assertEquals(true, success)
     }
 
-
     @Test
     fun testRegister() {
 
@@ -99,7 +98,7 @@ internal class ExecutionEngineTest {
 
         ExecutionEngine.register<MarketOrder> { MarketOrderHandler(it) }
         val handler = ExecutionEngine.getHandler(order)
-        assertEquals("MarketOrderHandler" , handler::class.simpleName)
+        assertEquals("MarketOrderHandler", handler::class.simpleName)
     }
 
 }

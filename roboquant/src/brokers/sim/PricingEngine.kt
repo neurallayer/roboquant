@@ -25,7 +25,7 @@ fun interface PricingEngine {
 }
 
 /**
- * Pricing calclulator is provided as an argument [TradeOrderHandler.execute] when so it can determine the price to use
+ * Pricing calclulator is provided as an argument [TradeOrderHandler.execute] so it can determine the price to use
  * when executing an order.
  */
 interface Pricing {
@@ -49,14 +49,14 @@ interface Pricing {
 
 }
 
-
 /**
- * Pricing model that uses a constant [slippageInBips] in BIPS to determine final trading price. It uses the same
+ * Pricing model that uses a constant [spreadInBips] in BIPS to determine final trading price. It uses the same
  * price for high, low and market prices. It works with any type of PriceAction.
  */
-class SlippagePricing(private val slippageInBips: Int = 10, private val priceType: String = "DEFAULT") : PricingEngine {
+class SpreadPricingEngine(private val spreadInBips: Int = 10, private val priceType: String = "DEFAULT") :
+    PricingEngine {
 
-    private class SlippagePricing(val price: Double, val slippagePercentage: Double) : Pricing {
+    private class SpreadPricing(val price: Double, val slippagePercentage: Double) : Pricing {
 
         override fun marketPrice(volume: Size): Double {
             val correction = if (volume > 0) 1.0 + slippagePercentage else 1.0 - slippagePercentage
@@ -65,25 +65,24 @@ class SlippagePricing(private val slippageInBips: Int = 10, private val priceTyp
     }
 
     override fun getPricing(action: PriceAction, time: Instant): Pricing {
-        val slippagePercentage = slippageInBips / 10_000.0
-        return SlippagePricing(action.getPrice(priceType), slippagePercentage)
+        val slippagePercentage = spreadInBips / 10_000.0
+        return SpreadPricing(action.getPrice(priceType), slippagePercentage)
     }
 }
 
-
 /**
- * Pricing model that uses a no slippage. It calculates the same price for high, low and market prices. It works
- * with any type of PriceAction.
+ * Pricing model that uses no additional cost. It calculates the same price for high, low and market prices.
+ * It works with any type of PriceAction.
  */
-class NoSlippagePricing(private val priceType: String = "DEFAULT") : PricingEngine {
+class NoCostPricingEngine(private val priceType: String = "DEFAULT") : PricingEngine {
 
-    private class SlippagePricing(val price: Double) : Pricing {
+    private class NoCostPricing(val price: Double) : Pricing {
 
         override fun marketPrice(volume: Size) = price
     }
 
     override fun getPricing(action: PriceAction, time: Instant): Pricing {
-        return SlippagePricing(action.getPrice(priceType))
+        return NoCostPricing(action.getPrice(priceType))
     }
 }
 

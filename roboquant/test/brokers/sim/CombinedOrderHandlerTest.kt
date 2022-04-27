@@ -29,7 +29,7 @@ internal class CombinedOrderHandlerTest {
     private val asset = TestData.usStock()
 
     private fun pricing(price: Number): Pricing {
-        val engine = NoSlippagePricing()
+        val engine = NoCostPricingEngine()
         return engine.getPricing(TradePrice(asset, price.toDouble()), Instant.now())
     }
 

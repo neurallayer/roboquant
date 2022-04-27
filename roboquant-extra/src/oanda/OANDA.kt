@@ -50,15 +50,16 @@ object OANDA {
         // We allow shorting
         val policy = DefaultPolicy(shorting = true)
 
-
+        // No commisions or fees
         val feeModel = NoFeeModel()
 
-        // We use a lower cost model, since the default of 10 BIPS is too much for Forex
+        // We use a lower spread model, since the default of 10 BIPS is too much for most Forex trading
         // We select 2.0 BIPS
-        val pricingEngine = SlippagePricing(2)
+        val pricingEngine = SpreadPricingEngine(2)
         val buyingPowerModel = MarginAccount(20.0)
         val broker = SimBroker(feeModel = feeModel, accountModel = buyingPowerModel, pricingEngine = pricingEngine)
 
+        @Suppress("SpreadOperator")
         return Roboquant(strategy, *metrics, policy = policy, broker = broker)
     }
 
