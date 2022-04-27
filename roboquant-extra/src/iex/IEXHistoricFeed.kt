@@ -86,7 +86,7 @@ class IEXHistoricFeed(
      */
     fun retrievePriceBar(vararg symbols: String, range: Range = Range.FIVE_YEARS) {
         val assets = symbols.map { template.copy(symbol = it.uppercase()) }
-        retrievePriceBar(*assets.toTypedArray(), range = range)
+        retrievePriceBar(assets.toList(), range = range)
     }
 
     /**
@@ -94,7 +94,7 @@ class IEXHistoricFeed(
      *
      * @param assets
      */
-    fun retrievePriceBar(vararg assets: Asset, range: Range = Range.FIVE_YEARS) {
+    fun retrievePriceBar(assets: Collection<Asset>, range: Range = Range.FIVE_YEARS) {
 
         assets.forEach {
             val chart = client.executeRequest(

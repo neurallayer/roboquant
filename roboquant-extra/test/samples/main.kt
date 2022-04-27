@@ -44,7 +44,6 @@ fun alpacaBroker() {
     broker.account.summary().print()
 }
 
-
 fun allAlpaca() {
     val broker = AlpacaBroker()
     val account = broker.account
@@ -69,7 +68,6 @@ fun allAlpaca() {
     roboquant.broker.account.summary().log()
 }
 
-
 fun alpacaHistoricFeed() {
     val feed = AlpacaHistoricFeed()
     val tf = Timeframe.past(100.days) - 15.minutes
@@ -91,7 +89,6 @@ fun alpacaConnection() {
 
 }
 
-
 fun alpacaLiveFeed2() {
     Logging.setLevel(Level.FINER)
     val feed = AlpacaLiveFeed()
@@ -108,7 +105,23 @@ fun alpacaLiveFeed2() {
 }
 
 fun alpacaHistoricFeed2() {
-    val assets = listOf("AAPL", "FB", "IBM", "JPM", "MSFT", "TSLA", "GOOGL", "AMZN", "BRK.A", "V", "BABA", "NVDA", "JNJ", "TSM", "WMT").toTypedArray()
+    val assets = listOf(
+        "AAPL",
+        "FB",
+        "IBM",
+        "JPM",
+        "MSFT",
+        "TSLA",
+        "GOOGL",
+        "AMZN",
+        "BRK.A",
+        "V",
+        "BABA",
+        "NVDA",
+        "JNJ",
+        "TSM",
+        "WMT"
+    ).toTypedArray()
     val feed = AlpacaHistoricFeed()
 
     // We get the data for last 200 days. The minus 15.minutes is to make sure we only request data that
@@ -119,7 +132,7 @@ fun alpacaHistoricFeed2() {
 
     // Example on how to retreive 5 minutes bars
     // val tf = Timeframe.past(5.days) - 15.minutes
-    // feed.retrieveBars("AAPL", "FB", "IBM", "JPM", "MSFT", "TSLA", "GOOGL", "AMZN", "BRK.A", "V", "BABA", "NVDA", "JNJ", "TSM", "WMT", timeframe = tf, barSize = 5.minutes)
+    // feed.retrieveBars("AAPL", "FB", "IBM", timeframe = tf, barSize = 5.minutes)
 
     feed.assets.summary().print()
 }
@@ -134,7 +147,6 @@ fun feedIEX() {
     roboquant.broker.account.summary().log()
 }
 
-
 fun feedIEXLive() {
     val feed = org.roboquant.iex.IEXLiveFeed()
     val apple = Asset("AAPL")
@@ -146,21 +158,18 @@ fun feedIEXLive() {
     roboquant.broker.account.summary().log()
 }
 
-
 fun feedYahoo() {
     val feed = YahooHistoricFeed()
     val apple = Asset("AAPL")
     val google = Asset("GOOG")
     val last300Days = Timeframe.past(300.days)
-    feed.retrieve(apple, google, timeframe = last300Days)
+    feed.retrieve(listOf(apple, google), timeframe = last300Days)
     val strategy = EMACrossover()
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, AccountSummary(), OpenPositions(), logger = logger)
     roboquant.run(feed)
     logger.summary(10)
 }
-
-
 
 fun main() {
     when ("ALPACA_HISTORIC_FEED2") {

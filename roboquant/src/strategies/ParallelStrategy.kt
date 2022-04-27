@@ -36,7 +36,9 @@ import org.roboquant.feeds.Event
  * @property strategies The strategies to process in parallel
  * @constructor Create a new parallel strategy
  */
-class ParallelStrategy(vararg strategies: Strategy) : CombinedStrategy(*strategies) {
+class ParallelStrategy(strategies: Collection<Strategy>) : CombinedStrategy(strategies) {
+
+    constructor(vararg strategies: Strategy) : this(strategies.toList())
 
     /**
      * @see Strategy.generate

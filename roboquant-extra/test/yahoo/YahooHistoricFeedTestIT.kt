@@ -30,7 +30,7 @@ internal class YahooHistoricFeedTestIT {
         System.getenv("TEST_YAHOO") ?: return
         val feed = YahooHistoricFeed()
         val asset = Asset("AAPL")
-        feed.retrieve(asset, timeframe = Timeframe.fromYears(2018, 2020))
+        feed.retrieve(listOf(asset), timeframe = Timeframe.fromYears(2018, 2020))
         assertTrue(feed.assets.first().symbol == "AAPL")
 
         feed.retrieve("GOOGL", timeframe = Timeframe.fromYears(2019, 2020))

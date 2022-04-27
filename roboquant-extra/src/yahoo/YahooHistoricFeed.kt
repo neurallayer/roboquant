@@ -46,7 +46,7 @@ class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFee
      * @param timeframe
      * @param interval
      */
-    fun retrieve(vararg assets: Asset, timeframe: Timeframe, interval: Interval = Interval.DAILY) {
+    fun retrieve(assets: Collection<Asset>, timeframe: Timeframe, interval: Interval = Interval.DAILY) {
         val c1 = GregorianCalendar.from(timeframe.start.toUTC())
         val c2 = GregorianCalendar.from(timeframe.end.toUTC())
         assets.forEach {
@@ -67,7 +67,7 @@ class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFee
      */
     fun retrieve(vararg symbols: String, timeframe: Timeframe, interval: Interval = Interval.DAILY) {
         val assets = symbols.map { Asset(it) }.toTypedArray()
-        retrieve(*assets, timeframe = timeframe, interval = interval)
+        retrieve(assets.toList(), timeframe = timeframe, interval = interval)
     }
 
     // TODO validate time offset

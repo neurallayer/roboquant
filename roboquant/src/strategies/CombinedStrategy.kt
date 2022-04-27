@@ -28,7 +28,9 @@ import org.roboquant.metrics.MetricResults
  * @property strategies
  * @constructor Create empty Combined strategy
  */
-open class CombinedStrategy(vararg val strategies: Strategy) : Strategy {
+open class CombinedStrategy(val strategies: Collection<Strategy>) : Strategy {
+
+    constructor(vararg strategies: Strategy) : this(strategies.toList())
 
     override fun generate(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
