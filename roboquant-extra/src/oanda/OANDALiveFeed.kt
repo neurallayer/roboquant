@@ -110,17 +110,18 @@ class OANDALiveFeed(
         }
     }
 
-    fun subscribeOrderBook(assets: Collection<Asset>, delay: Long = 5_000L) {
-        val symbols = assets.map { it.symbol }.toTypedArray()
-        subscribeOrderBook(*symbols, delay = delay)
+    fun subscribeOrderBook(vararg symbols: String, delay: Long = 5_000L) {
+        val assets = symbols.map { Asset(it) }
+        subscribeOrderBook(assets, delay = delay)
     }
 
     /**
-     * Subscribe to the order book data for the provided [symbols]. Since this is a pulling solution, you can also
+     * Subscribe to the order book data for the provided [assets]. Since this is a pulling solution, you can also
      * specify the [delay] interval between two pulls, default being 5000 milliseconds (so 5 seocond data)
      */
-    fun subscribeOrderBook(vararg symbols: String, delay: Long = 5_000L) {
-        logger.info { "Subscribing to ${symbols.size} order books" }
+    fun subscribeOrderBook(assets: Collection<Asset>, delay: Long = 5_000L) {
+        logger.info { "Subscribing to ${assets.size} order books" }
+        val symbols = assets.map { it.symbol }
         symbols.forEach {
             val asset = availableAssets[it]
             if (asset != null)
