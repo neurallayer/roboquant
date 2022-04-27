@@ -46,7 +46,7 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
     private var tickerId: Int = 0
     private var client: EClientSocket
     private val subscriptions = mutableMapOf<Int, Asset>()
-    val logger = Logging.getLogger(IBKRLiveFeed::class)
+    private val logger = Logging.getLogger(IBKRLiveFeed::class)
 
     init {
         val wrapper = Wrapper(logger)

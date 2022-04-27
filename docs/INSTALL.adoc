@@ -1,7 +1,7 @@
 = Installation
 :icons: font
 
-// file:noinspection GrUnresolvedAccess
+
 There are two ways to use roboquant:
 
 . Interactively in a Jupyter notebook. If you want to get up and running quickly, and want to experiment with many strategies, this is the best approach. Additionally, you get many charts out-of-the-box.
@@ -43,7 +43,7 @@ Just add `roboquant` as a dependency to your build tool, like Maven or Gradle.
 ----
 
 *Gradle*
-
+// file:noinspection GrUnresolvedAccess
 [source, groovy]
 ----
 implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'

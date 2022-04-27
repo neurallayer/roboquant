@@ -129,7 +129,7 @@ class CSVFeed(
                     try {
                         val step = config.processLine(asset, row.fields)
                         result += step
-                    } catch (_: Exception) {
+                    } catch (_: Throwable) {
                         logger.fine { "${asset.symbol} $row" }
                         errors += 1
                     }

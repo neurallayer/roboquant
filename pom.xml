@@ -280,7 +280,7 @@
                     <artifactId>detekt-maven-plugin</artifactId>
                     <version>1.20.0</version>
                     <configuration>
-                        <config>docs/default-detekt-config.yaml</config>
+                        <config>docs/run/detekt.yaml</config>
                     </configuration>
                     <executions>
                         <execution>
