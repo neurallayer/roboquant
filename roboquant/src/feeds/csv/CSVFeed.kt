@@ -46,10 +46,8 @@ class CSVFeed(
     configure: CSVConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-
     private val logger = Logging.getLogger(CSVFeed::class)
     val config: CSVConfig = CSVConfig.fromFile(path)
-
 
     init {
         val dir = File(path)
@@ -84,7 +82,6 @@ class CSVFeed(
     }
 
 
-
     /**
      * Read and parse CSV files in parallel to ensure fast processing of large datasets.
      *
@@ -102,7 +99,6 @@ class CSVFeed(
         val deferredList = mutableListOf<Deferred<Unit>>()
         for (file in files) {
             val asset = config.getAsset(file.name)
-            // assets.add(asset)
             val deferred = Background.async {
                 val steps = readFile(asset, file)
                 for (step in steps) {
