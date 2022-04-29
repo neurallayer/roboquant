@@ -163,32 +163,70 @@ fun Collection<Trade>.inliers(percentage: Double = 0.95): List<Trade> {
     return filter { it.pnl.value.absoluteValue < boundary }
 }
 
+/**
+ * Return the total fee for a collection of trades
+ */
 val Collection<Trade>.fee
     get() = sumOf { it.fee }
 
+/**
+ * Return the timeline for a collection of trades
+ */
 val Collection<Trade>.timeline
     get() = map { it.time }.distinct().sorted()
 
+/**
+ * Return the unique assets for a collection of positions
+ */
 val Collection<Position>.assets
     get() = map { it.asset }.distinct()
 
+/**
+ * Return the long positions for a collection of positions
+ */
 val Collection<Position>.long
     get() = filter { it.long }
 
-val Collection<Position>.unrealizedPNL
-    get() = sumOf { it.unrealizedPNL }
 
-val Collection<Trade>.realizedPNL
-    get() = sumOf { it.pnl }
-
-val Collection<Trade>.timeframe
-    get() = timeline.timeframe
-
+/**
+ * Return the short positions for a collection of positions
+ */
 val Collection<Position>.short
     get() = filter { it.short }
 
-// fun Collection<Position>.getPosition(asset: Asset) = find { it.asset == asset } ?: Position.empty(asset)
+/**
+ * Return the total unrealized PNL for a collection of positions
+ */
+val Collection<Position>.unrealizedPNL
+    get() = sumOf { it.unrealizedPNL }
 
+/**
+ * Return the total relaized PNL for a collection of trades
+ */
+val Collection<Trade>.realizedPNL
+    get() = sumOf { it.pnl }
+
+/**
+ * Return the timeframe for a collection of trades
+ */
+val Collection<Trade>.timeframe
+    get() = timeline.timeframe
+
+
+
+/**
+ * Return true of the portfolio is long for the provided [asset], false otherwise
+ */
+fun Map<Asset, Position>.isLong(asset: Asset) = get(asset)?.long ?: false
+
+/**
+ * Return true of the portfolio is short for the provided [asset], false otherwise
+ */
+fun Map<Asset, Position>.isShort(asset: Asset) = get(asset)?.short ?: false
+
+/**
+ * Return the difference between this portfolio and a target set of positions
+ */
 fun Map<Asset, Position>.diff(target: Collection<Position>): Map<Asset, Size> {
     val result = mutableMapOf<Asset, Size>()
 

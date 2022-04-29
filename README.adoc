@@ -1,7 +1,7 @@
 = Roboquant
 :icons: font
 
-image:https://img.shields.io/badge/roboquant-0.9-blue.svg[roboquant]
+image:https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&[Maven Central]
 image:https://img.shields.io/badge/kotlin-1.6-blue.svg?logo=kotlin[Kotlin,link=http://kotlinlang.org]
 image:https://github.com/neurallayer/roboquant/actions/workflows/maven.yml/badge.svg[Automated Build,link=https://github.com/neurallayer/roboquant/actions/workflows/maven.yml]
 image:https://img.shields.io/badge/license-Apache%202-blue.svg[APL v2,link=http://www.apache.org/licenses/LICENSE-2.0.html]
@@ -9,6 +9,7 @@ image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh
 image:https://img.shields.io/github/issues/neurallayer/roboquant[GitHub issues]
 image:https://img.shields.io/github/last-commit/neurallayer/roboquant[GitHub last commit]
 image:https://img.shields.io/github/v/tag/neurallayer/roboquant[GitHub tag (latest by date)]
+image:https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org[Sonatype Nexus (Snapshots)]
 
 Roboquant is an algorithmic trading platform that is fast and flexible while at the same time strives to be easy to use. It is fully open source, written in Kotlin, and can be used in Jupyter Notebooks as well as standalone applications. It is designed to be used by anyone serious about algo trading, from retail traders to proprietary trading firms.
 
@@ -37,6 +38,11 @@ roboquant.run(feed) // <5>
 == Installation
 === Library
 Just add `roboquant` and any of the additional modules as a dependency to your build tool, like Maven or Gradle. See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant.
+
+Latest available versions:
+
+- Stable version: image:https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&[Maven Central]
+- Snapshot version: image:https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org[Sonatype Nexus (Snapshots)]
 
 *Maven*
 [source,xml]
@@ -69,8 +75,8 @@ image:/docs/jupyter-lab.png[Jupyter Lab]
 == Features
 Some key features of roboquant are:
 
-* [x] Very fast back-testing, even on large volumes of data.
-* [x] Easy to develop your own strategies and integrate with third party brokers and data feeds
+* [x] Very fast back-testing, even on large volumes of historical data.
+* [x] Easy to develop your own strategies and integrate with third party brokers and data providers
 * [x] Trade in multiple asset classes at the same time
 * [x] Run anything from a technical indicator to complex machine learning based strategies
 * [x] Easy to transition from back-testing to live trading

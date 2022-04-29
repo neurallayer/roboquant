@@ -49,12 +49,12 @@ interface Component {
     fun reset() {}
 
     /**
-     * Get recorded metrics from the most recent step in the run. This will be invoked after each step and
+     * Return the map of metrics from the most recent step in the run. This will be invoked after each step and
      * provides the component with the opportunity to log additional information. The default implementation is to
      * return an empty map.
      *
-     * @return the map containing the metrics. This map should NOT be mutated by the component afterwards
+     * This map should NOT be mutated after it has been returned by this method.
      */
-    fun getMetrics(): MetricResults = mapOf()
+    fun getMetrics(): MetricResults = emptyMap()
 
 }

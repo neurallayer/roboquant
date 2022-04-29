@@ -21,6 +21,8 @@ import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.Currency
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class PortfolioTest {
 
@@ -34,50 +36,9 @@ internal class PortfolioTest {
         assertEquals(10.0, portfolio.getValue(c).avgPrice)
 
        assertEquals(1000.0, portfolio.exposure.getValue(Currency.USD))
+
+       assertTrue(portfolio.isLong(c))
+       assertFalse(portfolio.isShort(c))
     }
-
-
-    /**
-    @Test
-    fun derivedValues() {
-        val account = InternalAccount()
-        account.updatePosition(Position(Asset("A"), 100.0, 10.0))
-        portfolio.updatePosition(Position(Asset("B"), 100.0, 10.0))
-        portfolio.updatePosition(Position(Asset("C"), -100.0, 10.0))
-        portfolio.updatePosition(Position(Asset("D"), -100.0, 10.0))
-        assertEquals(2000.0, portfolio.longValue.getValue(Currency.USD))
-        assertEquals(-2000.0, portfolio.shortValue.getValue(Currency.USD))
-        assertEquals(0.0, portfolio.value.getValue(Currency.USD))
-    }
-
-
-    @Test
-    fun testUpdatePortfolio2() {
-        val portfolio = Portfolio()
-        val c = TestData.usStock()
-        val position = Position(c, 100.0, 10.0)
-        portfolio.updatePosition2(position)
-        assertEquals(100.0, portfolio.getPosition(c).size)
-        assertEquals(10.0, portfolio.getPosition(c).avgPrice)
-
-
-        val position2 = Position(c, 100.0, 10.0)
-        portfolio.updatePosition2(position2)
-        assertEquals(200.0, portfolio.getPosition(c).size)
-        assertEquals(10.0, portfolio.getPosition(c).avgPrice)
-
-        val position3 = Position(c, -100.0, 10.0)
-        portfolio.updatePosition2(position3)
-        assertEquals(100.0, portfolio.getPosition(c).size)
-        assertEquals(10.0, portfolio.getPosition(c).avgPrice)
-
-        assertEquals(portfolio.positions.size, portfolio.longPositions.size + portfolio.shortPositions.size)
-
-        val s = portfolio.summary()
-        assertTrue(s.toString().isNotEmpty())
-
-    }
-     */
-
 
 }
