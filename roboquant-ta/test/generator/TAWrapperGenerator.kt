@@ -9,7 +9,7 @@ import org.roboquant.common.ConfigurationException
 import org.roboquant.common.RoboquantException
 import java.io.File
 
-operator fun StringBuffer.plusAssign(str: Any) {
+private operator fun StringBuffer.plusAssign(str: Any) {
     append(str.toString())
 }
 
