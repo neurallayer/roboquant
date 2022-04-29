@@ -92,7 +92,7 @@
 
     <profiles>
         <profile>
-            <!-- we can only build the roboquant-ibkr module if the client is localy installed -->
+            <!-- we can only build the roboquant-ibkr module if the ibkr client is localy installed -->
             <id>ibkr</id>
             <activation>
                 <file>
@@ -356,13 +356,6 @@
                 <version>1.15</version>
             </dependency>
 
-
-            <!-- overwrite the version used by iextrading4j-all since it got a bug -->
-            <!-- dependency>
-                <groupId>org.glassfish.jersey.core</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>2.34</version>
-            </dependency -->
             <!-- end upgrades -->
 
             <dependency>

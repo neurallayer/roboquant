@@ -23,7 +23,7 @@ value class Size private constructor (private val value: Long) : Comparable<Size
     constructor(value: BigDecimal) : this(value.multiply(BD_FRACTION).toLong())
 
     /**
-     * Translaes the [String] representation of a numeric [value] to a Size
+     * Translates the [String] representation of a numeric [value] to a Size
      */
     constructor(value: String) : this(BigDecimal(value).multiply(BD_FRACTION).toLong())
 
@@ -54,11 +54,15 @@ value class Size private constructor (private val value: Long) : Comparable<Size
      */
     fun toBigDecimal() = BigDecimal(value).setScale(SCALE).divide(BD_FRACTION)
 
-
+    /**
+     * Returns true if the size is zero, false otherwise
+     */
     val iszero: Boolean
         get() = value == 0L
 
-
+    /**
+     * Returns true if the size non-zero, false otherwise
+     */
     val nonzero: Boolean
         get() = value != 0L
 
@@ -74,12 +78,24 @@ value class Size private constructor (private val value: Long) : Comparable<Size
     val sign: Int
         get() = value.sign
 
-    operator fun times(value: Number) : Double = toDouble() * value.toDouble()
+    /**
+     * Multiplies this value by the [other] value.
+     */
+    operator fun times(other: Number) : Double = toDouble() * other.toDouble()
 
-    operator fun div(value: Number) : Double = toDouble() / value.toDouble()
+    /**
+     * Divides this value by the [other] value.
+     */
+    operator fun div(other: Number) : Double = toDouble() / other.toDouble()
 
+    /**
+     * Adds the [other] value to this value.
+     */
     operator fun plus(other: Size) = Size(value + other.value)
 
+    /**
+     * Subtracts the [other] value from this value.
+     */
     operator fun minus(other: Size) = Size(value - other.value)
 
     operator fun compareTo(other: Number) = value.toDouble().compareTo(other.toDouble())
