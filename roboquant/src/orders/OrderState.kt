@@ -14,7 +14,7 @@ import org.roboquant.brokers.Account
  *
  * @property order The underying order
  * @property status The latest status
- * @property openedAt When was the order execution opened
+ * @property openedAt When was the order execution first opened
  * @property closedAt When was the order execution closed
  * @constructor Create new Order state
  */

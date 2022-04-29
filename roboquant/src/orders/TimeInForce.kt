@@ -34,16 +34,14 @@ interface TimeInForce
 /**
  * Good Till Cancelled policy. The order will remain active until fully filled or is cancelled.
  *
- * In practice, most brokers allow such order to remain active for 60-90 days max. 90 days is also what is
- * used a default value for this implementation.
+ * In practice, most brokers allow such order to remain active for 60-90 days max. 90 [maxDays] is what is
+ * used as a default value for this implementation.
  *
  * @constructor Create new GTC tif
  */
 class GTC(val maxDays: Int = 90) : TimeInForce {
 
-    override fun toString(): String {
-        return "GTC"
-    }
+    override fun toString(): String = "GTC"
 
 }
 
@@ -56,9 +54,8 @@ class GTC(val maxDays: Int = 90) : TimeInForce {
  */
 class GTD(val date: Instant) : TimeInForce {
 
-    override fun toString(): String {
-        return "GTD($date)"
-    }
+    override fun toString(): String = "GTD($date)"
+
 }
 
 
@@ -70,9 +67,8 @@ class GTD(val date: Instant) : TimeInForce {
  */
 class IOC : TimeInForce {
 
-    override fun toString(): String {
-        return "IOC"
-    }
+    override fun toString(): String = "IOC"
+
 }
 
 /**
@@ -84,10 +80,7 @@ class IOC : TimeInForce {
  */
 class DAY : TimeInForce {
 
-
-    override fun toString(): String {
-        return "DAY"
-    }
+    override fun toString(): String = "DAY"
 
 }
 
@@ -100,8 +93,6 @@ class DAY : TimeInForce {
  */
 class FOK : TimeInForce {
 
+    override fun toString(): String = "FOK"
 
-    override fun toString(): String {
-        return "FOK"
-    }
 }

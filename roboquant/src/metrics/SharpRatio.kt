@@ -57,7 +57,7 @@ class SharpRatio(
         if (lastTime == Instant.MIN) {
             lastValue = value
             lastTime = event.time
-            return mapOf()
+            return emptyMap()
         } else {
             val returns = (value - lastValue) / lastValue
             val tf = Timeframe(lastTime, event.time)
@@ -79,7 +79,7 @@ class SharpRatio(
                     "portfolio.sharpratio" to sharpRatio
                 )
             } else {
-                mapOf()
+                emptyMap()
             }
         }
     }

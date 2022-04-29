@@ -5,45 +5,46 @@ import org.roboquant.feeds.PriceAction
 import java.time.Instant
 
 /**
- * Interface for any pricing engine to implement. Ideally implementations should be able to support any type of price
- * actions, although they can specialize for certain types of price actions, like a PriceBar.
+ * Interface that any pricing engine needs to implement. Ideally implementations should be able to support any type
+ * of price actions, although they can specialize for certain types of price actions, like a PriceBar.
  */
 fun interface PricingEngine {
 
     /**
-     * Return a pricing (calculator) for the provided price [action]. Although most often not used, advanced pricing
-     * calculators can be dependent on the [time]. For example certain FOREX exchanges might be more volatile during
-     * certain timeframes and this can be reflected in the Pricing.
+     * Return a pricing (calculator) for the provided price [action] and [time]. Although most often not used, advanced
+     * pricing calculators can be dependent on the [time]. For example certain FOREX exchanges might be more
+     * volatile during certain timeframes and this can be reflected in the [PricingEngine].
      */
     fun getPricing(action: PriceAction, time: Instant): Pricing
 
     /**
-     * Clear any state of the pricing engine. General speaking a PricingEngine is stateless, but advanced engines might
-     * implement some type of ripple-effect pricing strategy. Default is to do nothing.
+     * Clear any state of the pricing engine. Often a [PricingEngine] is stateless, but advanced engines might
+     * implement some type of ripple-effect pricing behavior. The default implementation is to do nothing.
      */
     fun clear() {}
 }
 
 /**
- * Pricing calclulator is provided as an argument [TradeOrderHandler.execute] so it can determine the price to use
- * when executing an order.
+ * Pricing is provided as an argument [TradeOrderHandler.execute] so it can determine the price to use
+ * when executing an order. The [PricingEngine] is the factory that creates these pricings.
  */
 interface Pricing {
 
     /**
      * Get the lowest price for the provided [size]. Default is the [marketPrice]
-     * Typivally this is used to evaluate if a limit or stop has been triggered.
+     * Typically this is used to evaluate if a limit or stop has been triggered.
      */
     fun lowPrice(size: Size): Double = marketPrice(size)
 
     /**
      * Get the highest price for the provided [size]. Default is the [marketPrice]
-     * Typivally this is used to evaluate if a limit or stop has been triggered.
+     * Typically this is used to evaluate if a limit or stop has been triggered.
      */
     fun highPrice(size: Size): Double = marketPrice(size)
 
     /**
-     * Get the market price for the provided [size]. There is no default.
+     * Get the market price for the provided [size]. There is no default implementation and a needs to be provided
+     * by the implementation.
      */
     fun marketPrice(size: Size): Double
 

@@ -179,7 +179,7 @@ fun interface AssetFilter {
 
 
         /**
-         * Exclude assets that match the provided [symbols].
+         * Exclude assets that match the provided [symbols]. Matching of sybmol names is done case insensitive.
          */
         fun excludeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.uppercase() }.toSet()
@@ -187,7 +187,7 @@ fun interface AssetFilter {
         }
 
         /**
-         * Include only assets that match the provided [symbols].
+         * Include only assets that match the provided [symbols]. Matching of sybmol names is done case insensitive.
          */
         fun includeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.uppercase() }.toSet()

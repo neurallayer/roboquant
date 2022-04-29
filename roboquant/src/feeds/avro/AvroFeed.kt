@@ -51,7 +51,7 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
     constructor(path:Path, useIndex: Boolean = true) : this(path.toString(), useIndex)
 
     private val assetLookup = mutableMapOf<String, Asset>()
-    internal val index = mutableListOf<Pair<Instant, Long>>()
+    private val index = mutableListOf<Pair<Instant, Long>>()
 
     override val assets
         get() = assetLookup.values.toSortedSet()

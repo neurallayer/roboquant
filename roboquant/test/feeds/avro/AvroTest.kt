@@ -83,7 +83,6 @@ class AvroTest {
     fun avroStep3() {
         val feed3 = AvroFeed(fileName, useIndex = true)
         assertEquals(size, feed3.timeline.size)
-        assertEquals(size, feed3.index.size)
         assertEquals(nAssets, feed3.assets.size)
         assertEquals(assets.toSet(), feed3.assets.toSet())
 

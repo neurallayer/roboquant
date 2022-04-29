@@ -26,8 +26,8 @@ import org.roboquant.feeds.Event
 import org.roboquant.strategies.utils.MovingWindow
 
 /**
- * Calculates the Alpha and Beta of a portfio. This implementation not only looka at the assets in the portfolio, but
- * looks at the returns of the whole account, so including the cash balances.
+ * Calculates the Alpha and Beta of an account. This implementation not only looks at the assets in the portfolio, but
+ * looks at the returns of the whole account, so including cash balances.
  *
  * - Alpha is a measure of the performance of an investment as compared to the market as a whole.
  * - Beta is a measure of the volatility (or systematic risk) of the account compared to the market as a whole.
@@ -49,8 +49,6 @@ class AlphaBeta(
 
     private val marketData = MovingWindow(period + 1)
     private val portfolioData = MovingWindow(period + 1)
-
-
 
     /**
      * Based on the provided account and event, calculate any metrics and return them.
@@ -91,7 +89,7 @@ class AlphaBeta(
                 )
             }
         }
-        return mapOf()
+        return emptyMap()
     }
 
     override fun reset() {

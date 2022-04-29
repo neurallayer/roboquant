@@ -34,7 +34,7 @@ internal open class BaseWrapper(val root: JsonObject) {
     }
 
     protected fun getList(key: String): List<JsonObject> {
-        if (!root.has(key + "s")) return listOf()
+        if (!root.has(key + "s")) return emptyList()
 
         val child = root.getAsJsonObject(key + "s").get(key)
         if (child is JsonArray)
@@ -42,7 +42,7 @@ internal open class BaseWrapper(val root: JsonObject) {
         else if (child is JsonObject) {
             return listOf(child)
         }
-        return listOf()
+        return emptyList()
     }
 
 

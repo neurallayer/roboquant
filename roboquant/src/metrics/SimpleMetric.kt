@@ -27,7 +27,7 @@ import org.roboquant.feeds.Event
  */
 abstract class SimpleMetric : Metric {
 
-    private var values: MetricResults = mapOf()
+    private var values: MetricResults = emptyMap()
 
     /**
      * You only need to implement [calc]

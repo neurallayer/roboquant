@@ -22,21 +22,18 @@ import org.roboquant.feeds.Event
 /**
  * Capture the following statistics about the [Account]:
  *
- * - account.orders  Total number of orders
- * - account.orders.open Total number of open orders
+ * - account.orders  Total number of orders, open and closed together
  * - account.trades Total number of trades
- * - account.portfolio.assets Total number of assets in the portfolio
+ * - account.positions Total number of open positions in the portfolio
  * - account.cash Total cash value
  * - account.buyingPower Buying power available in the account
  * - account.equity Total equity value of the account
- * - account.change Change of value of the account
  *
- * All monetary values will be denoted in base currency of the account
+ * All monetary values are denoted in base currency of the account
  *
  * @constructor Create new Account Summary metric
  */
 class AccountSummary: SimpleMetric() {
-
 
     override fun calc(account: Account, event: Event): MetricResults {
         return mapOf(
