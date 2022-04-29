@@ -19,6 +19,7 @@
 package org.roboquant.ta
 
 import org.roboquant.common.Logging
+import org.roboquant.common.RoboquantException
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.strategies.Rating
@@ -259,7 +260,7 @@ fun TaLib.vwap(
     var sumVolume = 0.0
     val start = end - period + 1
     if (start < 0) throw InsufficientData(
-        "Not sufficient data to calculate vwap, minimum lookback period is ${period + previous}"
+        "insufficient data to calculate vwap, minimum lookback period is ${period + previous}"
     )
 
     for (i in start..end) {
@@ -273,4 +274,4 @@ fun TaLib.vwap(
 fun TaLib.vwap(series: PriceBarSeries, period: Int, previous: Int = 0): Double =
     vwap(series.high, series.low, series.close, series.volume, period, previous)
 
-class InsufficientData(msg: String) : Exception(msg)
+class InsufficientData(msg: String) : RoboquantException(msg)

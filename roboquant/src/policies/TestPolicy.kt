@@ -27,12 +27,12 @@ import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 
 /**
- * Policy that buys or sells a fixed [quantity] of an asset, generating [MarketOrder]s
+ * Policy that buys or sells a fixed [size] of an asset, generating [MarketOrder]s
  *
  * Because of the deterministic behavior, this policy useful during testing/debugging a strategy. But it should not be
  * used in live trading of realistic back-tests.
  */
-class TestPolicy(private val quantity: Size = Size.ONE) : BasePolicy() {
+class TestPolicy(private val size: Size = Size.ONE) : BasePolicy() {
 
     /**
      * Create a buys or sells [MarketOrder] for an asset based on the received [signals]. It ignores the [account]
@@ -44,8 +44,8 @@ class TestPolicy(private val quantity: Size = Size.ONE) : BasePolicy() {
         val orders = mutableListOf<SingleOrder>()
         for (signal in signals.resolve()) {
             val order: MarketOrder? = when (signal.rating) {
-                Rating.BUY, Rating.OUTPERFORM -> MarketOrder(signal.asset, quantity)
-                Rating.SELL, Rating.UNDERPERFORM -> MarketOrder(signal.asset, -quantity)
+                Rating.BUY, Rating.OUTPERFORM -> MarketOrder(signal.asset, size)
+                Rating.SELL, Rating.UNDERPERFORM -> MarketOrder(signal.asset, -size)
                 Rating.HOLD -> null
             }
             orders.addNotNull(order)

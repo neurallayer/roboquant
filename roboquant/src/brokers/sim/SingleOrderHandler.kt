@@ -57,28 +57,28 @@ internal class MarketOrderHandler(order: MarketOrder) : SingleOrderHandler<Marke
 }
 
 
-private fun stopTrigger(stop: Double, volume: Size, pricing: Pricing): Boolean {
-    return if (volume < 0.0) pricing.lowPrice(volume) <= stop
-    else pricing.highPrice(volume) >= stop
+private fun stopTrigger(stop: Double, size: Size, pricing: Pricing): Boolean {
+    return if (size < 0.0) pricing.lowPrice(size) <= stop
+    else pricing.highPrice(size) >= stop
 }
 
 
-private fun limitTrigger(limit: Double, volume: Size, pricing: Pricing): Boolean {
-    return if (volume < 0.0) pricing.highPrice(volume) >= limit
-    else pricing.lowPrice(volume) <= limit
+private fun limitTrigger(limit: Double, size: Size, pricing: Pricing): Boolean {
+    return if (size < 0.0) pricing.highPrice(size) >= limit
+    else pricing.lowPrice(size) <= limit
 }
 
 
-private fun getTrailStop(oldStop: Double, trail: Double, volume: Size, pricing: Pricing): Double {
+private fun getTrailStop(oldStop: Double, trail: Double, size: Size, pricing: Pricing): Double {
 
-    return if (volume < 0.0) {
+    return if (size < 0.0) {
         // Sell stop
-        val price = pricing.highPrice(volume)
+        val price = pricing.highPrice(size)
         val newStop = price * (1.0 - trail)
         if (oldStop.isNaN()  || newStop > oldStop) newStop else oldStop
     } else {
         // Buy stop
-        val price = pricing.lowPrice(volume)
+        val price = pricing.lowPrice(size)
         val newStop = price * (1.0 + trail)
         if (oldStop.isNaN() || newStop < oldStop) newStop else oldStop
     }

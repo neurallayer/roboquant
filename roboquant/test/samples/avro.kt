@@ -1,10 +1,8 @@
 @file:Suppress("KotlinConstantConditions")
+
 package org.roboquant.samples
 
-import org.roboquant.common.Asset
-import org.roboquant.common.Config
-import org.roboquant.common.Timeframe
-import org.roboquant.common.timeframe
+import org.roboquant.common.*
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.csv.CSVFeed
@@ -66,14 +64,15 @@ fun large(type: String) {
  */
 fun small(type: String) {
     val events = 1_000
-
     val feed = AvroFeed(getAvroFile(type))
-    val symbols = setOf("AAPL", "AMZN", "TSLA", "IBM", "JNJ", "JPM")
-    val assets = feed.assets.filter { it.symbol in symbols }.toSet()
-
     val file = dataHome / "avro/us_small_${type}_v2.0.avro"
     val timeframe = feed.timeline.takeLast(events).timeframe
-    AvroUtil.record(feed, file.toString(), timeframe, includeAssetsOnly = assets)
+    AvroUtil.record(
+        feed,
+        file.toString(),
+        timeframe,
+        assetFilter = AssetFilter.includeSymbols("AAPL", "AMZN", "TSLA", "IBM", "JNJ", "JPM")
+    )
 }
 
 /**
@@ -84,7 +83,7 @@ fun fiveYear_sp500() {
     val assets = feed.assets.filter { it.symbol in sp500Symbols }.toSet()
     println("Found ${assets.size} assets")
     val avroFile = dataHome / "avro/5yr_sp500_v2.0.avro"
-    AvroUtil.record(feed, avroFile.toString(), Timeframe.fromYears(2016, 2020), includeAssetsOnly = assets)
+    AvroUtil.record(feed, avroFile.toString(), Timeframe.fromYears(2016, 2020))
 }
 
 fun main() {

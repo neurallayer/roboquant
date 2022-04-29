@@ -19,7 +19,6 @@ package org.roboquant.strategies.utils
 import org.roboquant.common.Asset
 import org.roboquant.common.div
 import org.roboquant.common.plus
-import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 
 /**
@@ -105,17 +104,6 @@ class MultiAssetPriceBarSeries(private val history: Int) {
     fun add(priceBar: PriceBar): Boolean {
         val series = data.getOrPut(priceBar.asset) { PriceBarSeries(priceBar.asset, history) }
         return series.add(priceBar)
-    }
-
-    /**
-     * Add pricae bars found in the provided [event] to the history
-     *
-     * @param event
-     */
-    fun add(event: Event) {
-        for ((_, action) in event.prices) {
-            if (action is PriceBar) add(action)
-        }
     }
 
     /**

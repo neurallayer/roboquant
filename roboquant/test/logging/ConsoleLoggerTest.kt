@@ -24,9 +24,13 @@ internal class ConsoleLoggerTest {
     @Test
     fun consoleLogger() {
         val logger = ConsoleLogger()
-
         logger.log(TestData.getMetrics(), TestData.getRunInfo())
+    }
 
+    @Test
+    fun splitMetrics() {
+        val logger = ConsoleLogger(splitMetrics = true)
+        logger.log(TestData.getMetrics(), TestData.getRunInfo())
     }
 
 }

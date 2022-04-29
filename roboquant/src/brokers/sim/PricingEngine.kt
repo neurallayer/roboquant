@@ -31,21 +31,21 @@ fun interface PricingEngine {
 interface Pricing {
 
     /**
-     * Get the lowest price for the provided [volume]. Default is the [marketPrice]
+     * Get the lowest price for the provided [size]. Default is the [marketPrice]
      * Typivally this is used to evaluate if a limit or stop has been triggered.
      */
-    fun lowPrice(volume: Size): Double = marketPrice(volume)
+    fun lowPrice(size: Size): Double = marketPrice(size)
 
     /**
-     * Get the highest price for the provided [volume]. Default is the [marketPrice]
+     * Get the highest price for the provided [size]. Default is the [marketPrice]
      * Typivally this is used to evaluate if a limit or stop has been triggered.
      */
-    fun highPrice(volume: Size): Double = marketPrice(volume)
+    fun highPrice(size: Size): Double = marketPrice(size)
 
     /**
-     * Get the market price for the provided [volume]. There is no default.
+     * Get the market price for the provided [size]. There is no default.
      */
-    fun marketPrice(volume: Size): Double
+    fun marketPrice(size: Size): Double
 
 }
 
@@ -58,8 +58,8 @@ class SpreadPricingEngine(private val spreadInBips: Int = 10, private val priceT
 
     private class SpreadPricing(val price: Double, val slippagePercentage: Double) : Pricing {
 
-        override fun marketPrice(volume: Size): Double {
-            val correction = if (volume > 0) 1.0 + slippagePercentage else 1.0 - slippagePercentage
+        override fun marketPrice(size: Size): Double {
+            val correction = if (size > 0) 1.0 + slippagePercentage else 1.0 - slippagePercentage
             return price * correction
         }
     }
@@ -78,7 +78,7 @@ class NoCostPricingEngine(private val priceType: String = "DEFAULT") : PricingEn
 
     private class NoCostPricing(val price: Double) : Pricing {
 
-        override fun marketPrice(volume: Size) = price
+        override fun marketPrice(size: Size) = price
     }
 
     override fun getPricing(action: PriceAction, time: Instant): Pricing {

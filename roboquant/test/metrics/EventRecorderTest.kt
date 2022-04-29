@@ -21,6 +21,7 @@ import org.roboquant.RunPhase
 import org.roboquant.TestData
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class EventRecorderTest {
@@ -35,11 +36,12 @@ internal class EventRecorderTest {
         assertTrue(metric.getMetrics().isEmpty())
 
         var results = metric.filter<PriceAction>()
-        assertTrue(results.isNotEmpty())
+        assertEquals(1, results.size)
 
         metric.start(RunPhase.MAIN)
         results = metric.filter()
         assertTrue(results.isEmpty())
     }
+
 
 }

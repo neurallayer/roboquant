@@ -25,7 +25,7 @@ package org.roboquant.common
 enum class AssetType {
 
     /**
-     * Stock (or also often referred to as equity) are pieces (shares) of publicly traded companies.
+     * Stock (or also often referred to as equity) are shares of traded companies.
      */
     STOCK,
 
@@ -35,7 +35,7 @@ enum class AssetType {
     OPTION,
 
     /**
-     * A futures contract is a standardized agreement to buy or sell the underlying commodity or other asset at a
+     * A futures contract is an agreement to buy or sell the underlying commodity or other asset at a
      * specific price at a future date.
      */
     FUTURES,

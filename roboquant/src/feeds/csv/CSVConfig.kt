@@ -132,7 +132,6 @@ data class CSVConfig(
             exchangeCode = config.getOrDefault("exchange", ""),
             multiplier = config.getOrDefault("multiplier", "1.0").toDouble(),
             details = config.getOrDefault("details", ""),
-            name = config.getOrDefault("name", ""),
             id = config.getOrDefault("id", ""),
         )
     }

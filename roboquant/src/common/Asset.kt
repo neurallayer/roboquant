@@ -30,7 +30,6 @@ import kotlinx.serialization.Serializable
  * @property multiplier contract multiplier, default is 1.0
  * @property details contract details, for example this could hold the option series or futures contract details.
  * Default is an empty string.
- * @property name Company name, default is an empty string
  * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
  */
@@ -42,7 +41,6 @@ data class Asset(
     val exchangeCode: String = "",
     val multiplier: Double = 1.0,
     val details: String = "",
-    val name: String = "",
     val id: String = ""
 ) : Comparable<Asset> {
 

@@ -19,10 +19,11 @@ package org.roboquant.common
 
 import kotlin.test.*
 
-internal class ExceptionTest {
+internal class RoboquantExceptionTest {
 
 
     @Test
+    @Suppress("ThrowsCount")
     fun test() {
         assertFailsWith<RoboquantException> {
             throw ConfigurationException("Error")
@@ -39,6 +40,12 @@ internal class ExceptionTest {
         assertFailsWith<RoboquantException> {
             throw ConfigurationException("Error")
         }
+
+        assertFailsWith<RoboquantException> {
+            throw DoesNotComputeException("Error")
+        }
+
+
     }
 
 }

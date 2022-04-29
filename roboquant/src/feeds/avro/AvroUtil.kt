@@ -29,6 +29,7 @@ import org.apache.avro.generic.GenericDatumWriter
 import org.apache.avro.generic.GenericRecord
 import org.apache.avro.io.DatumWriter
 import org.roboquant.common.Asset
+import org.roboquant.common.AssetFilter
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.*
@@ -59,14 +60,14 @@ object AvroUtil {
             """
 
     /**
-     * Record the price actions in a feed and store them in a avro file that can be used with [AvroFeed].
+     * Record the [PriceAction]s in a feed and store them in a Avro file that can be later used with an [AvroFeed].
      */
     fun record(
         feed: Feed,
         fileName: String,
         timeframe: Timeframe = Timeframe.INFINITE,
-        includeAssetsOnly: Set<Asset> = emptySet(),
-        compressionLevel: Int = 1
+        compressionLevel: Int = 1,
+        assetFilter: AssetFilter = AssetFilter.noFilter()
     ) =
         runBlocking {
 
@@ -92,9 +93,9 @@ object AvroUtil {
                 while (true) {
                     val event = channel.receive()
                     val now = event.time.toEpochMilli()
-                    for (action in event.actions.filterIsInstance<PriceAction>()) {
+                    for (action in event.actions.filterIsInstance<PriceAction>()
+                        .filter { assetFilter.filter(it.asset) }) {
                         val asset = action.asset
-                        if (includeAssetsOnly.isNotEmpty() && ! includeAssetsOnly.contains(asset)) continue
                         val assetStr = cache.getOrPut(asset) { Json.encodeToString(asset) }
                         record.put(0, now)
                         record.put(1, assetStr)

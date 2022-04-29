@@ -27,8 +27,8 @@ import java.util.concurrent.ConcurrentHashMap
  * This is a lightweight implementation since most of roboquant functionality only relies on the currency code.
  *
  * When creating a new currency instance, use the [Currency.getInstance] method. This ensures only a single
- * instance of a currency exist for a given currency code and that allows for faster equality comparison and hashmap
- * lookup.
+ * instance of a currency exists for a given currency code and that allows for faster equality comparison and hashmap
+ * lookups.
  *
  *  @property currencyCode The currency code for the currency.
  **/
@@ -148,7 +148,8 @@ class Currency private constructor(val currencyCode: String) {
          * For all already registered currencies increase the number of display digits with [extraDigits]. This doesn't
          * change calculations, only the way currency amounts are displayed.
          *
-         * TIP: For Forex trading this is often required since otherwise small differences can not be seen.
+         * TIP: For Forex trading this is often required since otherwise small differences can not be seen in charts
+         * and reports.
          */
         fun increaseDigits(extraDigits: Int = 3) {
             for (currency in currencies.values) currency.defaultFractionDigits += extraDigits

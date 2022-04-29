@@ -87,7 +87,7 @@ object Config {
     var exchangeRates: ExchangeRates = SingleCurrencyOnly()
 
     /**
-     * Default currency to use when reporting.
+     * Default currency to use when reporting in a single currency
      */
     var baseCurrency: Currency = Currency.USD
 

@@ -64,8 +64,8 @@ open class DefaultPolicy(
         require(minAmount <= maxAmount)
     }
 
-    private fun reducedBuyingPower(account: Account, asset: Asset, qty: Size, price: Double): Double {
-        val cost =  asset.value(qty, price).absoluteValue
+    private fun reducedBuyingPower(account: Account, asset: Asset, size: Size, price: Double): Double {
+        val cost =  asset.value(size, price).absoluteValue
         val baseCurrencyCost =  account.convert(cost)
         return baseCurrencyCost.value
     }
@@ -108,10 +108,10 @@ open class DefaultPolicy(
 
 
     /**
-     * Create a new order based on the [signal], [qty] and current [price]. Overwrite this method if you want to
+     * Create a new order based on the [signal], [size] and current [price]. Overwrite this method if you want to
      * create other orders types than the default MarketOrder.
      */
-    open fun createOrder(signal: Signal, qty: Size, price: Double): Order? = MarketOrder(signal.asset, qty)
+    open fun createOrder(signal: Signal, size: Size, price: Double): Order? = MarketOrder(signal.asset, size)
 
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {

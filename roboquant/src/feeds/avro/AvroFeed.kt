@@ -34,6 +34,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.time.Instant
 
+
 /**
  * Read price data from a single file in Avro format. This feed loads data lazy and disposes of it afterwards, so
  * memory footprint is low.

@@ -37,7 +37,8 @@ class ConfigurationException(msg: String) : RoboquantException(msg)
 class ValidationException(msg: String) : RoboquantException(msg)
 
 /**
- * Does not compute exception
+ * Does not compute exception is thrown when a certain computation cannot deliver a result, for example because
+ * the optimization doesn't converge.
  *
  * @constructor
  *

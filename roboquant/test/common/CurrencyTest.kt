@@ -52,4 +52,15 @@ internal class CurrencyTest {
     }
 
 
+    @Test
+    fun test3() {
+        val c = Currency.getInstance("DUMMY")
+        assertEquals(2, c.defaultFractionDigits)
+        Currency.increaseDigits(2)
+        assertEquals(4, c.defaultFractionDigits)
+        Currency.increaseDigits(-2)
+        assertEquals(2, c.defaultFractionDigits)
+    }
+
+
 }
