@@ -22,18 +22,22 @@ import java.time.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Exchange contains the metadata of an market place or exchange. The most important meta-data fields are the
- * [zoneId], [opening] and [closing] times and the default [currency].
+ * Exchange contains the metadata of an market place or exchange.
  *
  * It is used at several areas in roboquant, for example when loading CSV files.
+ *
+ * @property exchangeCode The exchange code
+ * @property zoneId The ZoneId of the exchange
+ * @property currency The primary currency of the exchange
+ * @property tradingCalendar The trading calendar
+ * @constructor Create empty Exchange
  */
 class Exchange private constructor(
     val exchangeCode: String,
     val zoneId: ZoneId,
     val currency: Currency,
-    val opening: LocalTime = LocalTime.parse("09:30"),
-    val closing: LocalTime = LocalTime.parse("16:00")
-) {
+    private val tradingCalendar: TradingCalendar
+)  {
 
     /**
      * Returns true if the the two provided times ([first] and [second]) belong to the same trading day. They can be
@@ -46,26 +50,37 @@ class Exchange private constructor(
     }
 
     /**
-     * Returns the opening time for a local [date] based on the [zoneId] of the exchange
+     * Returns the local date based on the provided [time]
      */
+    fun getLocalDate(time: Instant): LocalDate {
+        return LocalDate.ofInstant(time, zoneId)
+    }
+
     fun getOpeningTime(date: LocalDate): Instant {
+        val opening = tradingCalendar.getOpeningTime(date)
+        if (opening === null) throw NoTrading(date)
         val zdt = ZonedDateTime.of(date, opening, zoneId)
         return zdt.toInstant()
     }
 
-    /**
-     * Returns the closing time for a local [date] based on the [zoneId] of the exchange
-     */
     fun getClosingTime(date: LocalDate): Instant {
+        val closing = tradingCalendar.getClosingTime(date)
+        if (closing === null) throw NoTrading(date)
         val zdt = ZonedDateTime.of(date, closing, zoneId)
         return zdt.toInstant()
     }
 
+    private fun getTradingHours(date: LocalDate): Timeframe {
+        return Timeframe(getOpeningTime(date), getClosingTime(date))
+    }
+
     /**
-     * Get the trading hours for a certain date
+     * Is the provided time a trading time
      */
-    fun getTradingHours(date: LocalDate): Timeframe {
-       return Timeframe(getOpeningTime(date), getClosingTime(date))
+    fun isTrading(time: Instant): Boolean {
+        val date = LocalDate.from(time.atZone(zoneId))
+        return tradingCalendar.isTradingDay(date) && getTradingHours(date).contains(time)
+
     }
 
 
@@ -77,17 +92,11 @@ class Exchange private constructor(
         return zdt.toInstant()
     }
 
+
     override fun toString(): String {
         return exchangeCode
     }
 
-    /**
-     * IS the provided time a trading time
-     */
-    fun isTrading(time: Instant): Boolean {
-        val date = LocalDate.from(time.atZone(zoneId))
-        return getTradingHours(date).contains(time)
-    }
 
     companion object {
 
@@ -117,7 +126,8 @@ class Exchange private constructor(
         ): Exchange {
             val zoneId = ZoneId.of(zone)
             val currency = Currency.getInstance(currencyCode)
-            val instance = Exchange(exchangeCode, zoneId, currency, LocalTime.parse(opening), LocalTime.parse(closing))
+            val tradingCalendar = SimpleTradingCalendar(opening, closing)
+            val instance = Exchange(exchangeCode, zoneId, currency, tradingCalendar)
             instances[exchangeCode] = instance
             return instance
         }

@@ -17,13 +17,12 @@
 package org.roboquant.common
 
 import org.junit.jupiter.api.Test
-import java.time.Duration
+import org.junit.jupiter.api.assertDoesNotThrow
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class ExchangeTest {
 
@@ -49,15 +48,26 @@ internal class ExchangeTest {
         val ct = exchange2.getClosingTime(d)
         val ot = exchange2.getOpeningTime(d)
         assertTrue(ct > ot)
-        assertTrue(exchange2.opening < exchange2.closing)
     }
 
     @Test
-    fun hours() {
+    fun testNoTrading() {
         val exchange = Exchange.getInstance("US")
-        val date = LocalDate.of(2020,1,5)
-        val tradingHours = exchange.getTradingHours(date)
-        assertEquals(Duration.ofSeconds(13*30*60), tradingHours.duration)
+
+        assertDoesNotThrow {
+            val localDate = LocalDate.parse("2020-01-03")
+            assertEquals(DayOfWeek.FRIDAY, localDate.dayOfWeek)
+            exchange.getClosingTime(localDate)
+        }
+
+        assertFailsWith<NoTrading> {
+            val localDate = LocalDate.parse("2020-01-04")
+            assertEquals(DayOfWeek.SATURDAY, localDate.dayOfWeek)
+            exchange.getClosingTime(localDate)
+        }
+
+
     }
+
 
 }

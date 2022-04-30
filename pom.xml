@@ -140,7 +140,7 @@
                     <plugin>
                         <groupId>org.jetbrains.dokka</groupId>
                         <artifactId>dokka-maven-plugin</artifactId>
-                        <version>1.6.10</version>
+                        <version>${kotlin.version}</version>
                         <executions>
                             <execution>
                                 <phase>prepare-package</phase>

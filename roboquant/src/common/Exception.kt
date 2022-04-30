@@ -1,5 +1,7 @@
 package org.roboquant.common
 
+import java.time.LocalDate
+
 /**
  * Base class for all roboquant exceptions
  *
@@ -45,3 +47,10 @@ class ValidationException(msg: String) : RoboquantException(msg)
  * @param msg
  */
 class DoesNotComputeException(msg: String) : RoboquantException(msg)
+
+/**
+ * No Trading exception
+ *
+ * @param date
+ */
+class NoTrading(date: LocalDate) : RoboquantException("$date is not a trading day")
