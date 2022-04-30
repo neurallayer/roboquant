@@ -19,13 +19,16 @@ package org.roboquant.feeds.csv
 import de.siegmar.fastcsv.reader.CsvReader
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
-import org.roboquant.feeds.*
+import org.roboquant.feeds.Action
+import org.roboquant.feeds.AssetFeed
+import org.roboquant.feeds.Event
+import org.roboquant.feeds.EventChannel
 import java.io.File
 import java.io.FileReader
+import java.nio.file.Path
 import java.time.Instant
 import java.util.*
 import java.util.logging.Logger
-
 
 /**
  * Feed that can handle large CSV files. The difference compared to the regular [CSVFeed] is that this feeds only loads
@@ -48,7 +51,9 @@ import java.util.logging.Logger
  *
  * @param path The directory that contains the CSV files
  */
-class LazyCSVFeed(val path: String,  configure: CSVConfig.() -> Unit = {}) : AssetFeed {
+class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetFeed {
+
+    constructor(path: String, configure: CSVConfig.() -> Unit = {}) : this(Path.of(path), configure)
 
     private val logger: Logger = Logging.getLogger(LazyCSVFeed::class)
     private val files: Map<Asset, File>
@@ -60,7 +65,7 @@ class LazyCSVFeed(val path: String,  configure: CSVConfig.() -> Unit = {}) : Ass
     init {
         logger.fine { "Scanning $path" }
         config.configure()
-        files = File(path)
+        files = path.toFile()
             .walk()
             .filter { config.shouldParse(it) }
             .map { it.absoluteFile }

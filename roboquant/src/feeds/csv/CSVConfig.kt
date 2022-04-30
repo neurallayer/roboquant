@@ -24,9 +24,10 @@ import org.roboquant.feeds.AssetBuilderFactory
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.PriceBar
 import java.io.File
-import java.nio.file.Paths
+import java.nio.file.Path
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.io.path.div
 
 /**
  * Takes care of the configuration of the CSV parsing. There three steps:
@@ -53,10 +54,14 @@ data class CSVConfig(
     var template: Asset = Asset("TEMPLATE")
 ) {
 
-    private val dateTimeParser: TimeParser by lazy {
-        if (parseTime.isEmpty()) AutoDetectTimeParser() else LocalTimeParser(parseTime)
-    }
+    private val timeParser: TimeParser by lazy {
+        when {
+            parseTime.isEmpty() -> AutoDetectTimeParser()
+            parseTime.length < 11 -> LocalDateParser(parseTime)
+            else -> LocalTimeParser(parseTime)
+        }
 
+    }
 
     private val info = ColumnInfo()
     private val pattern by lazy { Pattern.compile(filePattern) }
@@ -81,7 +86,7 @@ data class CSVConfig(
         private const val configFileName = "config.properties"
         private val logger = Logging.getLogger(CSVConfig::class)
 
-        fun fromFile(path: String): CSVConfig {
+        fun fromFile(path: Path): CSVConfig {
             val result = CSVConfig()
             val cfg = readConfigFile(path)
             result.merge(cfg)
@@ -95,8 +100,8 @@ data class CSVConfig(
          * @param path
          * @return
          */
-        private fun readConfigFile(path: String): Map<String, String> {
-            val filePath = Paths.get(path, configFileName)
+        private fun readConfigFile(path: Path): Map<String, String> {
+            val filePath = path / configFileName
             val file = filePath.toFile()
             val prop = Properties()
             if (file.exists()) {
@@ -171,7 +176,7 @@ data class CSVConfig(
      */
     internal fun processLine(asset: Asset, line: List<String>): PriceEntry {
 
-        val now = dateTimeParser.parse(line[info.time])
+        val now = timeParser.parse(line[info.time], asset.exchange)
         val volume = if (info.hasVolume) line[info.volume].toDouble() else Double.NaN
         val action: PriceAction = when {
             priceAdjust -> PriceBar.fromAdjustedClose(

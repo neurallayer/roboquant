@@ -1,14 +1,16 @@
 = Roboquant
 :icons: font
 
-image:https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&[Maven Central]
 image:https://img.shields.io/badge/kotlin-1.6-blue.svg?logo=kotlin[Kotlin,link=http://kotlinlang.org]
 image:https://github.com/neurallayer/roboquant/actions/workflows/maven.yml/badge.svg[Automated Build,link=https://github.com/neurallayer/roboquant/actions/workflows/maven.yml]
+image:https://img.shields.io/github/languages/code-size/neurallayer/roboquant[GitHub code size in bytes]
 image:https://img.shields.io/badge/license-Apache%202-blue.svg[APL v2,link=http://www.apache.org/licenses/LICENSE-2.0.html]
-image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials]
-image:https://img.shields.io/github/issues/neurallayer/roboquant[GitHub issues]
+image:https://img.shields.io/github/issues/neurallayer/roboquant/bug?color=red&label=bugs[GitHub issues by-label]
+image:https://img.shields.io/github/issues/neurallayer/roboquant/enhancement?color=yellow&label=enhancements[GitHub issues by-label]
 image:https://img.shields.io/github/last-commit/neurallayer/roboquant[GitHub last commit]
+image:https://img.shields.io/github/commit-activity/m/neurallayer/roboquant[GitHub commit activity]
 image:https://img.shields.io/github/v/tag/neurallayer/roboquant[GitHub tag (latest by date)]
+image:https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&[Maven Central]
 image:https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org[Sonatype Nexus (Snapshots)]
 
 Roboquant is an algorithmic trading platform that is fast and flexible while at the same time strives to be easy to use. It is fully open source, written in Kotlin, and can be used in Jupyter Notebooks as well as standalone applications. It is designed to be used by anyone serious about algo trading, from retail traders to proprietary trading firms.
@@ -68,7 +70,7 @@ If you have already Docker installed, all it takes is a single command to have a
 docker run --rm -p 8888:8888 roboquant/jupyter 
 ----
 
-This image also comes with several tutorials. And if you just want to try it without any installation, go toimage:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials], although it might be a bit slow to start the environment.
+This image also comes with several tutorials. And if you just want to try it without any installation, go to image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials]
 
 image:/docs/jupyter-lab.png[Jupyter Lab]
 

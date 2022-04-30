@@ -16,8 +16,12 @@
 
 package org.roboquant.feeds.csv
 
+import org.roboquant.common.Exchange
 import java.time.Instant
 
+/**
+ * Interface for time parsers
+ */
 fun interface TimeParser {
-    fun parse(s: String): Instant
+    fun parse(s: String, exchange: Exchange): Instant
 }

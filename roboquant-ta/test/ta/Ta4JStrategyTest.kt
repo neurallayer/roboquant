@@ -15,18 +15,18 @@ internal class Ta4JStrategyTest {
 
     @Test
     fun test() {
-        val strategy = Ta4jStrategy(maxBarCount = 50)
+        val strategy = Ta4jStrategy(maxBarCount = 30)
 
         strategy.buy  { series ->
             val closePrice = ClosePriceIndicator(series)
-            val shortSma = SMAIndicator(closePrice, 5)
+            val shortSma = SMAIndicator(closePrice, 20)
             val longSma = SMAIndicator(closePrice, 30)
             CrossedUpIndicatorRule(shortSma, longSma)
         }
 
         strategy.sell { series ->
             val closePrice = ClosePriceIndicator(series)
-            val shortSma = SMAIndicator(closePrice, 5)
+            val shortSma = SMAIndicator(closePrice, 20)
             val longSma = SMAIndicator(closePrice, 30)
             CrossedDownIndicatorRule(shortSma, longSma)
                 .or(StopLossRule(closePrice, 3.0))
@@ -35,7 +35,7 @@ internal class Ta4JStrategyTest {
 
         val roboquant = Roboquant(strategy)
 
-        val feed = RandomWalk.lastYears()
+        val feed = RandomWalk.lastYears(1, nAssets = 2)
         roboquant.run(feed)
         val account = roboquant.broker.account
         assertTrue(account.closedOrders.isNotEmpty())

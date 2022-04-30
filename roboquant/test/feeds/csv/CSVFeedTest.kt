@@ -81,8 +81,9 @@ internal class CSVFeedTest {
 
     @Test
     fun localTimeParser() {
-        val parser = LocalTimeParser("dd-MM-yyyy", dateFormat = true, exchange = Exchange.getInstance("US"))
-        val instant = parser.parse("01-01-2020")
+        val  exchange = Exchange.getInstance("US")
+        val parser = LocalDateParser("dd-MM-yyyy")
+        val instant = parser.parse("01-01-2020", exchange)
         val closingTime = Instant.parse("2020-01-01T21:00:00Z")
         assertEquals(closingTime, instant)
     }

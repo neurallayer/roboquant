@@ -90,7 +90,7 @@ fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("SMALL") {
+    when ("LARGE") {
         "LARGE" -> {
             large("daily"); large("hourly"); large("5 min")
         }

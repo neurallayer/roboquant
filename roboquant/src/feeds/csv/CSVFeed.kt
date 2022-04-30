@@ -29,7 +29,9 @@ import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceAction
 import java.io.File
 import java.io.FileReader
+import java.nio.file.Path
 import java.time.Instant
+import kotlin.io.path.isDirectory
 import kotlin.math.absoluteValue
 
 
@@ -42,16 +44,17 @@ import kotlin.math.absoluteValue
  * @constructor
  */
 class CSVFeed(
-    path: String,
+    path: Path,
     configure: CSVConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
+
+    constructor(path: String, configure: CSVConfig.() -> Unit = {}) : this(Path.of(path), configure)
 
     private val logger = Logging.getLogger(CSVFeed::class)
     val config: CSVConfig = CSVConfig.fromFile(path)
 
     init {
-        val dir = File(path)
-        require(dir.isDirectory) { "Directory $path does not exist" }
+        require(path.isDirectory()) { "Directory $path does not exist" }
         config.configure()
 
         runBlocking {
@@ -68,8 +71,8 @@ class CSVFeed(
      * @param path
      * @return
      */
-    private fun readPath(path: String): List<File> {
-        val entry = File(path)
+    private fun readPath(path: Path): List<File> {
+        val entry = path.toFile()
         return if (entry.isFile) {
             listOf(entry)
         } else {
@@ -88,7 +91,7 @@ class CSVFeed(
      * @param path
      * @return
      */
-    private suspend fun readFiles(path: String) {
+    private suspend fun readFiles(path: Path) {
         val files = readPath(path)
         if (files.isEmpty()) {
             logger.warning { "Found no CSV files at $path" }

@@ -19,36 +19,40 @@ package org.roboquant.feeds.csv
 import org.roboquant.common.Exchange
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZonedDateTime
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /**
- * Datetime parser that parses local time or dates
+ * Datetime parser that parses local date-time
  *
  * @constructor
  *
  */
-internal class LocalTimeParser(
-    pattern: String,
-    private val dateFormat: Boolean = pattern.length < 11,
-    private val exchange: Exchange = Exchange.getInstance("")
-) : TimeParser {
+internal class LocalTimeParser(pattern: String) : TimeParser {
 
-    private val dtf: DateTimeFormatter
+    private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
 
-    init {
-        val zoneId = exchange.zoneId
-        dtf = DateTimeFormatter.ofPattern(pattern).withZone(zoneId)
+    override fun parse(s: String, exchange: Exchange): Instant {
+        val dt = LocalDateTime.parse(s, dtf)
+        return exchange.getInstant(dt)
     }
 
-    override fun parse(s: String): Instant {
-        return if (dateFormat) {
-            val date = LocalDate.parse(s, dtf)
-            exchange.getClosingTime(date)
-        } else {
-            ZonedDateTime.parse(s, dtf).toInstant()
-        }
+}
 
+/**
+ * Parser that parses local dates
+ *
+ * @constructor
+ *
+ * @param pattern
+ */
+internal class LocalDateParser(pattern: String) : TimeParser {
+
+    private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
+
+    override fun parse(s: String, exchange: Exchange): Instant {
+        val date = LocalDate.parse(s, dtf)
+        return exchange.getClosingTime(date)
     }
 
 

@@ -1,4 +1,4 @@
-name: CI with Maven
+name: CI
 
 on: [push, pull_request]
 

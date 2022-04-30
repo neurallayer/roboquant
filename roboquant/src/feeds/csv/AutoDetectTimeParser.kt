@@ -17,22 +17,36 @@
 package org.roboquant.feeds.csv
 
 import org.roboquant.common.Exchange
-import org.roboquant.common.RoboquantException
 import java.time.Instant
 
 /**
- * Auto-detect the appropriate time parser based on the first
- * sample it receives. This is the default time parser if no config was found
+ * Auto-detect the appropriate time parser based on the first sample it receives. This is the default time parser
+ * if no configuration was found for the pattern to use
  *
  * @constructor Create new AutoDetect time parser
  */
-class AutoDetectTimeParser(val exchangeCode: String = "NASDAQ") : TimeParser {
+class AutoDetectTimeParser : TimeParser {
 
     private lateinit var parser: TimeParser
 
-    override fun parse(s: String): Instant {
+    override fun parse(s: String, exchange: Exchange): Instant {
         if (!this::parser.isInitialized) detect(s)
-        return parser.parse(s)
+        return parser.parse(s, exchange)
+    }
+
+
+    private companion object Patterns {
+
+        @Suppress("RegExpRepeatedSpace")
+        private val patterns = mapOf(
+            """\d{8}""".toRegex() to LocalDateParser("yyyyMMdd"),
+            """\d{4}-\d{2}-\d{2}""".toRegex() to LocalDateParser("yyyy-MM-dd"),
+            """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".toRegex() to TimeParser { str, _ -> Instant.parse(str) },
+            """\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm:ss"),
+            """\d{8} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd  HH:mm:ss"),
+            """\d{8}  \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd  HH:mm:ss"),
+            """\d{13}""".toRegex() to TimeParser { str, _ -> Instant.ofEpochMilli(str.toLong()) }
+        )
     }
 
 
@@ -44,36 +58,9 @@ class AutoDetectTimeParser(val exchangeCode: String = "NASDAQ") : TimeParser {
     private fun detect(sample: String) {
         synchronized(this) {
             if (!this::parser.isInitialized) {
-
-                val exchange = Exchange.getInstance(exchangeCode)
-
-                // Map of regex and the corresponding parser for date/time string parsing
-                @Suppress("RegExpRepeatedSpace")
-                val matches = mutableMapOf(
-                    """\d{8}""".toRegex() to LocalTimeParser("yyyyMMdd", true, exchange),
-                    """\d{4}-\d{2}-\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd", true, exchange),
-                    """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".toRegex() to TimeParser { Instant.parse(it) },
-                    """\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser(
-                        "yyyy-MM-dd HH:mm:ss",
-                        false,
-                        exchange
-                    ),
-                    """\d{8} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd  HH:mm:ss", false, exchange),
-                    """\d{8}  \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd  HH:mm:ss", false, exchange),
-                    """\d{13}""".toRegex() to TimeParser { Instant.ofEpochMilli(it.toLong()) }
-                )
-
-
-                for (entry in matches.entries) {
-                    if (entry.key.matches(sample)) {
-                        parser = entry.value
-                        return
-                    }
-                }
-                throw RoboquantException("Unknown datetime format $sample")
+                parser = patterns.entries.first { it.key.matches(sample) }.value
             }
         }
     }
-
-
 }
+
