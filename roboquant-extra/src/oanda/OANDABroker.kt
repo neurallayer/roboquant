@@ -80,7 +80,11 @@ class OANDABroker(
         return Position(asset, Size(qty), avgPrice, spotPrice)
     }
 
-    private fun updatePositions() {
+    /**
+     * Update portfolio
+     *
+     */
+    private fun syncPortfolio() {
         _account.portfolio.clear()
         val positions = ctx.position.listOpen(accountID).positions
         for (p in positions) {
@@ -104,33 +108,24 @@ class OANDABroker(
     private fun initAccount() {
         val acc = ctx.account.get(accountID).account
         _account.baseCurrency = Currency.getInstance(acc.currency.toString())
-        account.cash.clear()
-
-        // Cash in roboquant is excluding the margin part
-        val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
-        account.cash.set(amount)
-
-        _account.buyingPower = Amount(account.baseCurrency, acc.marginAvailable.doubleValue() * maxLeverage)
-        _account.lastUpdate = Instant.now()
         lastTransactionId = acc.lastTransactionID
-        _account.portfolio.clear()
-        updatePositions()
+        syncAccount()
+        syncPortfolio()
         logger.info { "Found ${_account.portfolio.values.size} existing positions in portfolio" }
     }
 
     /**
-     * First time when connecting, update the state of roboquant account with broker account. Only cash and positions
-     * are synced and it is assumed there are no open orders pending.
+     * Sync the internal roboquant account state with the account of OANDA
      */
-    private fun updateAccount() {
+    private fun syncAccount() {
         val acc = ctx.account.get(accountID).account
 
         // Cash in roboquant is excluding the margin part
-        account.cash.clear()
-        val amount = Amount(account.baseCurrency, acc.balance.doubleValue())
-        account.cash.set(amount)
+        _account.cash.clear()
+        val amount = Amount(_account.baseCurrency, acc.balance.doubleValue())
+        _account.cash.set(amount)
 
-        _account.buyingPower = Amount(account.baseCurrency, acc.marginAvailable.doubleValue() * maxLeverage)
+        _account.buyingPower = Amount(_account.baseCurrency, acc.marginAvailable.doubleValue() * maxLeverage)
         _account.lastUpdate = Instant.now()
     }
 
@@ -149,7 +144,7 @@ class OANDABroker(
             order.id
         )
         _account.trades += trade
-        val amount = Amount(account.baseCurrency, trx.accountBalance.doubleValue())
+        val amount = Amount(_account.baseCurrency, trx.accountBalance.doubleValue())
         _account.cash.set(amount)
     }
 
@@ -218,9 +213,10 @@ class OANDABroker(
         }
 
         // OONDA doesn't update positions quick enough and so they don't reflect trades just made.
+        // so for now we put a sleep in here :(
         Thread.sleep(1000)
-        updateAccount()
-        updatePositions()
+        syncAccount()
+        syncPortfolio()
         return account
     }
 }
