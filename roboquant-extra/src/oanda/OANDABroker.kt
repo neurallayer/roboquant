@@ -52,6 +52,7 @@ class OANDABroker(
     private val logger = Logging.getLogger(OANDABroker::class)
     private lateinit var lastTransactionId: TransactionID
 
+    private val availableAssetsMap: Map<String, Asset>
 
     /**
      * Which assets are available to this account. For OANDA the region you are from determines which asset classes
@@ -65,12 +66,11 @@ class OANDABroker(
         if (!config.demo) throw UnsupportedException("Currently only demo account usage is supported.")
         ctx = OANDA.getContext(config)
         accountID = OANDA.getAccountID(config.account, ctx)
+        availableAssetsMap = OANDA.getAvailableAssets(ctx, this.accountID)
         initAccount()
     }
 
-    private val availableAssetsMap by lazy {
-        OANDA.getAvailableAssets(ctx, this.accountID)
-    }
+
 
     private fun getPosition(symbol: String, p: PositionSide): Position {
         val asset = availableAssetsMap[symbol]!!
