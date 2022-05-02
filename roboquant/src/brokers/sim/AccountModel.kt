@@ -85,10 +85,12 @@ class MarginAccount(
     }
 
     override fun calculate(account: InternalAccount): Amount {
-        val longValue = account.portfolio.values.long.exposure * maintanceMarginLong
-        val shortValue = account.portfolio.values.short.exposure * maintanceMarginShort
-        val equity = account.cash + account.portfolio.marketValue
-        val excessMargin = equity - longValue - shortValue - Amount(account.baseCurrency, minimumEquity)
+        val excessMargin = account.cash + account.portfolio.marketValue
+        
+        val positions = account.portfolio.values
+        excessMargin.withdraw(positions.long.exposure * maintanceMarginLong)
+        excessMargin.withdraw(positions.short.exposure * maintanceMarginShort)
+        excessMargin.withdraw(Amount(account.baseCurrency, minimumEquity))
         val buyingPower = excessMargin * (1.0 / initialMargin)
         return buyingPower.convert(account.baseCurrency, account.lastUpdate)
     }

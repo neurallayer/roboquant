@@ -132,8 +132,9 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     }
 
     /**
-     * Set a monetary value. If the [currency] already exist, its [value] will be overwritten, otherwise a new entry
-     * will be created. If the value is zero, the enntry will be removed.
+     * Set a monetary [value]. If the [currency] already exist, its value will be overwritten, otherwise a new entry
+     * will be created. If the new value is zero, the enntry will be removed since a wallet doesn't contain zero
+     * values
      */
     fun set(currency: Currency, value: Double) {
         if (value == 0.0)
