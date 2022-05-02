@@ -132,14 +132,14 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     }
 
     /**
-     * Set a monetary [amount]. If the currency already exist, its value
-     * will be overwritten, otherwise a new entry will be created. If the amount is zero, the enntry will be removed.
+     * Set a monetary value. If the [currency] already exist, its [value] will be overwritten, otherwise a new entry
+     * will be created. If the value is zero, the enntry will be removed.
      */
-    fun set(amount: Amount) {
-        if (amount.value == 0.0)
-            data.remove(amount.currency)
+    fun set(currency: Currency, value: Double) {
+        if (value == 0.0)
+            data.remove(currency)
         else
-            data[amount.currency] = amount.value
+            data[currency] = value
     }
 
     /**
@@ -148,7 +148,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
      */
     fun deposit(amount: Amount) {
         val value = (data[amount.currency] ?: 0.0) + amount.value
-        set(Amount(amount.currency, value))
+        set(amount.currency, value)
     }
 
 

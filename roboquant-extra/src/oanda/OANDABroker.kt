@@ -122,8 +122,7 @@ class OANDABroker(
 
         // Cash in roboquant is excluding the margin part
         _account.cash.clear()
-        val amount = Amount(_account.baseCurrency, acc.balance.doubleValue())
-        _account.cash.set(amount)
+        _account.cash.set(_account.baseCurrency, acc.balance.doubleValue())
 
         _account.buyingPower = Amount(_account.baseCurrency, acc.marginAvailable.doubleValue() * maxLeverage)
         _account.lastUpdate = Instant.now()
@@ -144,8 +143,7 @@ class OANDABroker(
             order.id
         )
         _account.trades += trade
-        val amount = Amount(_account.baseCurrency, trx.accountBalance.doubleValue())
-        _account.cash.set(amount)
+        _account.cash.set(_account.baseCurrency, trx.accountBalance.doubleValue())
     }
 
     private fun createOrderRequest(order: MarketOrder): OrderCreateRequest {

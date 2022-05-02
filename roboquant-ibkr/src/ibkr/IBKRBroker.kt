@@ -281,8 +281,7 @@ class IBKRBroker(
 
         private fun setCash(currencyCode: String, value: String) {
             if ("BASE" != currencyCode) {
-                val amount = Amount(Currency.getInstance(currencyCode), value.toDouble())
-                account.cash.set(amount)
+                account.cash.set(Currency.getInstance(currencyCode), value.toDouble())
             }
         }
 
