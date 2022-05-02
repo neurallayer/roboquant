@@ -27,7 +27,7 @@ import java.time.Instant
  * @property asset the asset
  * @property size size of the position, not including any contract multiplier defined at asset level
  * @property avgPrice average price paid, in the currency denoted by the asset
- * @property spotPrice Last known market price for this asset
+ * @property mktPrice Last known market price for this asset
  * @property lastUpdate When was the market price last updated
  * @constructor Create a new Position
  */
@@ -35,7 +35,7 @@ data class Position(
     val asset: Asset,
     val size: Size,
     val avgPrice: Double = 0.0,
-    val spotPrice: Double = avgPrice,
+    val mktPrice: Double = avgPrice,
     val lastUpdate: Instant = Instant.MIN
 ) {
 
@@ -43,9 +43,9 @@ data class Position(
         asset: Asset,
         size: Int,
         avgPrice: Double = 0.0,
-        spotPrice: Double = avgPrice,
+        mktPrice: Double = avgPrice,
         lastUpdate: Instant = Instant.MIN
-    ) : this(asset, Size(BigDecimal.valueOf(size.toLong())), avgPrice, spotPrice, lastUpdate)
+    ) : this(asset, Size(BigDecimal.valueOf(size.toLong())), avgPrice, mktPrice, lastUpdate)
 
     /**
      * Total size of a position is the position size times the asset multiplier. For many asset classes the
@@ -123,11 +123,11 @@ data class Position(
         get() = ! size.iszero
 
     /**
-     * The unrealized profit & loss for this position based on the [avgPrice] and last known market [spotPrice],
+     * The unrealized profit & loss for this position based on the [avgPrice] and last known market [mktPrice],
      * in the currency denoted by the asset
      */
     val unrealizedPNL: Amount
-        get() = asset.value(size, spotPrice - avgPrice)
+        get() = asset.value(size, mktPrice - avgPrice)
 
 
     /**
@@ -135,7 +135,7 @@ data class Position(
      * Short positions will typically return a negative value.
      */
     val marketValue: Amount
-        get() = asset.value(size, spotPrice)
+        get() = asset.value(size, mktPrice)
 
     /**
      * The gross exposure for this position based on last known market price, in the currency denoted by the asset.
@@ -156,21 +156,23 @@ data class Position(
 }
 
 
-val Map<Asset, Position>.marketValue : Wallet
+
+val Collection<Position>.marketValue : Wallet
     get() {
         val result = Wallet()
-        for (position in this.values) result.deposit(position.marketValue)
+        for (position in this) result.deposit(position.marketValue)
         return result
     }
 
 
 
-val Collection<Position>.marketValue : Wallet
-        get() {
-            val result = Wallet()
-            for (position in this) result.deposit(position.marketValue)
-            return result
-        }
+/**
+ * What is the Market Value for this portfolio
+ */
+val Map<Asset, Position>.marketValue : Wallet
+    get() {
+        return values.marketValue
+    }
 
 
 

@@ -269,7 +269,5 @@ class Wallet(vararg amounts: Amount) : Cloneable {
         return Amount(toCurrency, sum)
     }
 
-
-
 }
 

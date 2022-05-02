@@ -168,7 +168,7 @@ class SimBroker(
         val change = _account.portfolio.diff(emptyList())
         val changeOrders = change.map { MarketOrder(it.key, it.value) }
         val orders = cancelOrders + changeOrders
-        val actions = _account.portfolio.values.map { TradePrice(it.asset, it.spotPrice) }
+        val actions = _account.portfolio.values.map { TradePrice(it.asset, it.mktPrice) }
         val event = Event(actions, time)
         return place(orders, event)
     }

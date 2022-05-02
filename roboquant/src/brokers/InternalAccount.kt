@@ -134,7 +134,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
             val priceAction = prices[asset]
             if (priceAction != null) {
                 val price = priceAction.getPrice(priceType)
-                val newPosition = position.copy(spotPrice = price, lastUpdate = event.time)
+                val newPosition = position.copy(mktPrice = price, lastUpdate = event.time)
                 portfolio[asset] = newPosition
             }
         }

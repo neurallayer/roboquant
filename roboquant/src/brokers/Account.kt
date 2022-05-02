@@ -23,6 +23,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 
+
 /**
  * Account represents a unified brokerage trading account and holds the following state:
  *
@@ -344,7 +345,7 @@ fun Collection<Position>.summary(name: String = "positions"): Summary {
             val c = v.asset.currency
             val pos = v.size
             val avgPrice = Amount(c, v.avgPrice).formatValue()
-            val price = Amount(c, v.spotPrice).formatValue()
+            val price = Amount(c, v.mktPrice).formatValue()
             val value = v.marketValue.formatValue()
             val pnl = Amount(c, v.unrealizedPNL.value).formatValue()
             val asset = "${v.asset.type}:${v.asset.symbol}"
