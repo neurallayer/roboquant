@@ -23,7 +23,6 @@ import org.roboquant.brokers.Account
 import org.roboquant.common.RoboquantException
 import org.roboquant.common.years
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.SilentLogger
@@ -39,10 +38,9 @@ internal class RoboquantTest {
 
     @Test
     fun simpleRun() {
-        val feed = RandomWalk.lastYears(nAssets = 2)
         val strategy = EMACrossover()
         val roboquant = Roboquant(strategy, AccountSummary(), logger = SilentLogger())
-        roboquant.run(feed)
+        roboquant.run(TestData.feed)
         val summary = roboquant.summary()
         assertTrue(summary.toString().isNotEmpty())
     }
@@ -71,14 +69,14 @@ internal class RoboquantTest {
         val logger = MemoryLogger(false)
         val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
 
-        val feed = RandomWalk.lastYears()
+        val feed = TestData.feed
         for (timeframe in feed.split(2.years)) roboquant.run(feed, timeframe)
     }
 
 
     @Test
     fun validationPhase() {
-        val feed = RandomWalk.lastYears()
+        val feed = TestData.feed
         val strategy = EMACrossover()
         val logger =  MemoryLogger(showProgress = false)
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
@@ -92,28 +90,25 @@ internal class RoboquantTest {
 
     @Test
     fun runAsync() = runBlocking {
-        val feed = RandomWalk.lastYears()
-
         val strategy = EMACrossover()
 
         val roboquant = Roboquant(strategy, AccountSummary(), logger = SilentLogger())
-        roboquant.runAsync(feed)
+        roboquant.runAsync(TestData.feed)
         assertTrue(roboquant.broker.account.trades.isNotEmpty())
     }
 
 
     @Test
     fun reset() {
-        val feed = RandomWalk.lastYears()
         val strategy = EMACrossover()
         val logger = MemoryLogger(showProgress = false)
         val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
-        roboquant.run(feed)
+        roboquant.run(TestData.feed)
         assertEquals(1, logger.runs.size)
         val lastHistory1 = logger.history.last()
 
         roboquant.reset()
-        roboquant.run(feed)
+        roboquant.run(TestData.feed)
         assertEquals(1, logger.runs.size)
         val lastHistory2 = logger.history.last()
 

@@ -20,12 +20,10 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.MethodOrderer.Alphanumeric
 import org.junit.jupiter.api.TestMethodOrder
 import org.junit.jupiter.api.io.TempDir
+import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
-import org.roboquant.common.Timeframe
-import org.roboquant.common.days
 import org.roboquant.feeds.play
-import org.roboquant.feeds.random.RandomWalk
 import java.io.File
 import java.time.Instant
 import kotlin.io.path.div
@@ -42,7 +40,7 @@ class AvroTest {
         // private val folder = TemporaryFolder()
         private lateinit var fileName: String
         private var size: Int = 0
-        private const val nAssets = 3
+        private const val nAssets = 2
         var assets = mutableListOf<Asset>()
     }
 
@@ -52,8 +50,7 @@ class AvroTest {
         // folder.create()
         // fileName = folder.newFile("test.avro").path
         fileName = File(folder, "test.avro").path
-        val timeline = Timeframe.past(30.days).toTimeline(1.days)
-        val feed = RandomWalk(timeline, nAssets = nAssets)
+        val feed = TestData.feed
         assets.addAll(feed.assets)
         size = feed.timeline.size
         AvroUtil.record(feed, fileName, compressionLevel = 0)

@@ -1,7 +1,15 @@
 package org.roboquant.orders
 
-
-
+/**
+ * One Cancels Other order
+ *
+ * @property first
+ * @property second
+ *
+ * @constructor
+ * @param id
+ * @param tag
+ */
 class OCOOrder(
     val first: SingleOrder,
     val second: SingleOrder,
@@ -16,7 +24,16 @@ class OCOOrder(
     override fun info() = sortedMapOf("first" to first, "second" to second)
 }
 
-
+/**
+ * One Triggers Other order
+ *
+ * @property first
+ * @property second
+ * @constructor
+ *
+ * @param id
+ * @param tag
+ */
 class OTOOrder(
     val first: SingleOrder,
     val second: SingleOrder,
@@ -32,7 +49,17 @@ class OTOOrder(
 
 }
 
-
+/**
+ * Bracket order
+ *
+ * @property entry
+ * @property takeProfit
+ * @property stopLoss
+ * @constructor
+ *
+ * @param id
+ * @param tag
+ */
 class BracketOrder(
     val entry: SingleOrder,
     val takeProfit: SingleOrder,

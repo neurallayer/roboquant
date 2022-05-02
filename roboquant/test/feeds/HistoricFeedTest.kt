@@ -18,6 +18,7 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.roboquant.TestData
 import org.roboquant.common.months
 import org.roboquant.feeds.random.RandomWalk
 import java.time.Instant
@@ -49,10 +50,9 @@ internal class HistoricFeedTest {
 
     @Test
     fun play() {
-        val feed = RandomWalk.lastYears(nAssets = 2)
         var past = Instant.MIN
         runBlocking {
-            for (event in play(feed)) {
+            for (event in play(TestData.feed)) {
                 assertTrue(event.time > past)
                 past = event.time
             }

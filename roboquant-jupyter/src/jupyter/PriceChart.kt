@@ -17,6 +17,7 @@
 package org.roboquant.jupyter
 
 import org.roboquant.brokers.Trade
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
@@ -49,13 +50,14 @@ class PriceChart(
         return data
     }
 
-
     private fun markPoints(): List<Map<String, Any>> {
         val t = trades.filter { it.asset == asset && timeframe.contains(it.time) }
         val result = mutableListOf<Map<String, Any>>()
         for (trade in t) {
             val entry = mapOf(
-                "value" to trade.size.toBigDecimal(), "xAxis" to trade.time, "yAxis" to trade.priceAmount.toBigDecimal()
+                "value" to trade.size.toBigDecimal(),
+                "xAxis" to trade.time,
+                "yAxis" to Amount(trade.asset.currency, trade.price).toBigDecimal()
             )
             result.add(entry)
         }
@@ -109,6 +111,5 @@ class PriceChart(
             }
        """.trimStart()
     }
-
 
 }

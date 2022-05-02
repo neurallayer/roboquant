@@ -19,7 +19,7 @@ package org.roboquant.strategies
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.TestData
 import org.roboquant.logging.SilentLogger
 import kotlin.test.assertTrue
 
@@ -27,12 +27,9 @@ internal class EMACrossoverTest {
 
     @Test
     fun simple() = runBlocking {
-        val feed = RandomWalk.lastYears()
-
         val strategy = EMACrossover()
-
         val roboquant = Roboquant(strategy, logger = SilentLogger())
-        roboquant.run(feed)
+        roboquant.run(TestData.feed)
     }
 
     @Test

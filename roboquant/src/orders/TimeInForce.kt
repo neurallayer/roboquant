@@ -22,21 +22,19 @@ import java.time.Instant
  * Time in force (TiF) allows to put an expiration or fill policy on an order. It determines how long an order remains
  * active before it expires. There are two aspects that can determine if an order expires:
  *
- * - How much time has passed since it was first placed.
+ * - How much time has passed since the order was first placed.
  * - Is the order completely filled or not yet
  *
  * When an order expires, the status is typically set [OrderStatus.EXPIRED] to indicate such event occurred.
- *
  */
 interface TimeInForce
 
 
 /**
  * Good Till Cancelled policy. The order will remain active until fully filled or is cancelled.
+ * In practice, most brokers allow such orders to remain active for a 60-90 day period, so not indefinitly.
  *
- * In practice, most brokers allow such order to remain active for 60-90 days max. 90 [maxDays] is what is
- * used as a default value for this implementation.
- *
+ * @property maxDays the maximum number of days an order stays valid, default is 90 calendar days.
  * @constructor Create new GTC tif
  */
 class GTC(val maxDays: Int = 90) : TimeInForce {

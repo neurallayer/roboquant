@@ -17,9 +17,9 @@
 package org.roboquant.strategies.utils
 
 import org.junit.jupiter.api.Test
+import org.roboquant.TestData
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
-import org.roboquant.feeds.random.RandomWalk
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -27,8 +27,7 @@ internal class PriceBarSeriesTest {
 
     @Test
     fun test() {
-
-        val feed = RandomWalk.lastYears()
+        val feed = TestData.feed
         val asset = feed.assets.first()
         val pb = PriceBarSeries(asset,20)
         assertFalse(pb.isAvailable())

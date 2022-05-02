@@ -17,18 +17,18 @@
 package org.roboquant.strategies
 
 
+import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.TestData
 import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.ProgressMetric
-import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 internal class CombinedAssetStrategyTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears(1)
+        val feed = TestData.feed
         val asset1 = feed.assets.first()
         val asset2 = feed.assets.last()
         val strategy = CombinedAssetStrategy {

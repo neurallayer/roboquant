@@ -24,6 +24,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
@@ -120,5 +121,7 @@ object TestData {
         }
         return result
     }
+
+    val feed = RandomWalk.lastYears(1, 2, generateBars = true)
 
 }

@@ -30,10 +30,11 @@ import java.time.Instant
  *
  * @property time The time of this trade
  * @property asset The underlying asset of this trade
- * @property size The quantity or volume of this trade, negative for selling assets
+ * @property size The size or volume of this trade, negative for selling assets
  * @property price The average price paid denoted in the currency of the asset excluding fee
- * @property fee Any brokerage fees or commission charged as part of this trade denoted in the currency of the asset
- * @property pnl The realized profit & loss made by this trade denoted in the currency of the asset
+ * @property feeValue total fee or commission charged as part of this trade denoted in the currency of the asset
+ * @property pnlValue The realized profit & loss made by this trade denoted in the currency of the asset
+ * @property orderId The corresponding order id
  * @constructor Create a new trade
  */
 data class Trade(
@@ -47,23 +48,22 @@ data class Trade(
 ) {
 
     /**
-     * total cost of this trade, including the fee. If the trade generated revenue (for example by selling assets) this
-     * will return a negative value.
+     * Returns total cost amount of this trade, including the fee.
      */
     val totalCost
-        get() =  asset.value(size, price) + feeValue
+        get() = asset.value(size, price) + feeValue
 
+    /**
+     * Returns the fee amount
+     */
     val fee
         get() = Amount(asset.currency, feeValue)
 
+    /**
+     * Returns the profit & loss amount
+     */
     val pnl
         get() = Amount(asset.currency, pnlValue)
-
-    val priceAmount
-        get() = Amount(asset.currency, price)
-
-    val returns
-        get() = Amount(asset.currency, pnlValue/-totalCost.value)
 
 }
 

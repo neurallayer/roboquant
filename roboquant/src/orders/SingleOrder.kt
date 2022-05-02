@@ -23,6 +23,9 @@ import java.math.BigDecimal
 /**
  * SingleOrder types are plain non-combined orders with a pre-defined quantity and Time in Force policy. Many well-known
  * order types fall under this category, like Market-, Limit- and Trail-orders.
+ *
+ * @property size the size of the order
+ * @property tif the Time In Force policy to use
  */
 abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, id: Int, tag: String = "") :
     Order(asset, id, tag) {
@@ -33,19 +36,19 @@ abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, i
     }
 
     /**
-     * Is this a sell order
-     */
-    val sell
-        get() = size < 0.0
-
-    /**
-     * Is this a buy order
+     * Returns true if this is a buy order, false otherwise.
      */
     val buy
         get() = size > 0.0
 
     /**
-     * Direction of the order, 1 being BUY and -1 being SELL
+     * Returns true if this is a sell order, false otherwise.
+     */
+    val sell
+        get() = size < 0.0
+
+    /**
+     * Returns the direction of the order, 1 being BUY and -1 being SELL
      */
     val direction
         get() = if (buy) 1 else -1

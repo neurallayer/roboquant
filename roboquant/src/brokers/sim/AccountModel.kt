@@ -26,10 +26,12 @@ interface AccountModel {
  *
  * You should not using shorting when using the CashBuyingPower since that is almost never allowed in the real world
  * and also not supported. It will generate warning messages.
+ *
+ * @property minimum the minimum amount of cash balance required
  */
 class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 
-    val logger = Logging.getLogger(CashAccount::class)
+    private val logger = Logging.getLogger(CashAccount::class)
 
     override fun calculate(account: InternalAccount): Amount {
         val total = account.cash

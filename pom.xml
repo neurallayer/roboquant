@@ -152,7 +152,7 @@
                         <configuration>
                             <jdkVersion>11</jdkVersion>
                             <suppressObviousFunctions>true</suppressObviousFunctions>
-                            <reportUndocumented>false</reportUndocumented>
+                            <reportUndocumented>true</reportUndocumented>
                             <suppressInheritedMembers>true</suppressInheritedMembers>
                         </configuration>
                     </plugin>

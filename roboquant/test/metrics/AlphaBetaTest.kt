@@ -18,7 +18,7 @@ package org.roboquant.metrics
 
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.TestData
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.strategies.EMACrossover
 import kotlin.test.assertTrue
@@ -27,7 +27,7 @@ internal class AlphaBetaTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears(nAssets = 2)
+        val feed = TestData.feed
         val marketAsset = feed.assets.first()
         val strategy = EMACrossover.EMA_5_15
         val alphaBetaMetric = AlphaBeta(marketAsset, 50)

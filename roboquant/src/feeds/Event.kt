@@ -23,6 +23,9 @@ import java.time.Instant
  * Event contains a list of [actions] that all happened at the same moment in time ([time]). There are no restrictions
  * on the type of information contained in a [Action] and different type of actions can be mixed in a single event.
  *
+ * @property actions the list of [Action]s that are part of this event
+ * @property time the time that the actions in this event became available
+ *
  */
 data class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
 
@@ -35,7 +38,6 @@ data class Event(val actions: List<Action>, val time: Instant) : Comparable<Even
         fun empty(time: Instant = Instant.now()) = Event(emptyList(), time)
     }
 
-
     /**
      * Convenience property for accessing all the price actions in this event. The result is cached so that accessing
      * this attribute multiple times is quick.
@@ -47,7 +49,6 @@ data class Event(val actions: List<Action>, val time: Instant) : Comparable<Even
         actions.filterIsInstance<PriceAction>().associateBy { it.asset }
     }
 
-
     /**
      * Convenience method to get a single price for an [asset] or null if there is no price action present for
      * the asset in this event. Optionally you can specify the [type] of price.
@@ -57,7 +58,7 @@ data class Event(val actions: List<Action>, val time: Instant) : Comparable<Even
     }
 
     /**
-     * Compare this event to an [other] event based on their timestamp. This is used for sorting a list of events by
+     * Compare this event to an [other] event based on their [time]. This is used for sorting a list of events by
      * their chronological order.
      */
     override fun compareTo(other: Event): Int = time.compareTo(other.time)

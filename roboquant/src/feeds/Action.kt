@@ -43,6 +43,9 @@ interface Action
  */
 interface PriceAction : Action {
 
+    /**
+     * Returns the asset of the action
+     */
     val asset: Asset
 
     /**
@@ -103,24 +106,38 @@ class PriceBar(
         doubleArrayOf(open.toDouble(), high.toDouble(), low.toDouble(), close.toDouble(), volume.toDouble())
     )
 
+    /**
+     * Returns the opening price
+     */
     val open
         get() = ohlcv[0]
 
+    /**
+     * Returns the highest price
+     */
     val high
         get() = ohlcv[1]
 
+    /**
+     * Returns the lowest price
+     */
     val low
         get() = ohlcv[2]
 
+    /**
+     * Returns the closing price
+     */
     val close
         get() = ohlcv[3]
 
+    /**
+     * Returns the volume
+     */
     override val volume
         get() = ohlcv[4]
 
-    override fun toString(): String {
-        return "asset=$asset OHLCV=${ohlcv.toList()}"
-    }
+
+    override fun toString(): String = "asset=$asset OHLCV=${ohlcv.toList()}"
 
     companion object {
 
@@ -273,7 +290,7 @@ data class PriceQuote(
     }
 
     /**
-     * Volume is defined as totol of [askSize] and [bidSize]
+     * Returns the volume. The volume is defined as totol of [askSize] and [bidSize]
      */
     override val volume: Double
         get() = askSize + bidSize
@@ -315,7 +332,7 @@ data class OrderBook(
     }
 
     /**
-     * Totoal amount of entries (asks + bids)
+     * Returns the total amount of entries (asks + bids)
      */
     val entries
         get() = asks.size + bids.size
@@ -348,7 +365,7 @@ data class OrderBook(
     }
 
     /**
-     * Volume is totol of order book
+     * Returns the total outstanding volume of order book (bid + ask volumes combined)
      */
     override val volume: Double
         get() = asks.volume() + bids.volume()
