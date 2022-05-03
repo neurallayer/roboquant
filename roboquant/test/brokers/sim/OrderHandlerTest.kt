@@ -36,7 +36,7 @@ internal class OrderHandlerTest {
 
     @Test
     fun testMarketOrder() {
-        val order = MarketOrder(asset, 100.0)
+        val order = MarketOrder(asset, 100)
         val cmd = MarketOrderHandler(order)
         var executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)

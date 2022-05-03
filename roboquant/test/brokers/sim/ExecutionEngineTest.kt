@@ -73,7 +73,7 @@ internal class ExecutionEngineTest {
         val engine = ExecutionEngine(NoCostPricingEngine())
         val asset = TestData.usStock()
 
-        val origOrder = MarketOrder(asset, 100.0)
+        val origOrder = MarketOrder(asset, 100)
         engine.add(origOrder)
         val state = engine.orderStates.first()
 

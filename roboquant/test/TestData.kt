@@ -48,7 +48,7 @@ object TestData {
         account.setPosition(Position(asset1, 100, 10.0))
         account.setPosition(Position(asset2, 100, 10.0))
 
-        val order = MarketOrder(asset1, 100.0)
+        val order = MarketOrder(asset1, 100)
         val state = OrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
         account.putOrders(listOf(state))
         return account
@@ -62,7 +62,7 @@ object TestData {
         account.setPosition(Position(asset1, 100, 10.0))
         account.setPosition(Position(asset2, 100, 10.0))
 
-        val order = OrderState(MarketOrder(asset1, 100.0), OrderStatus.INITIAL)
+        val order = OrderState(MarketOrder(asset1, 100), OrderStatus.INITIAL)
         account.putOrders(listOf(order))
         return account.toAccount()
     }
@@ -81,9 +81,9 @@ object TestData {
         throw ConfigurationException("cannot find data directory for testing")
     }
 
-    fun euMarketOrder() = MarketOrder(euStock(), 10.0)
+    fun euMarketOrder() = MarketOrder(euStock(), 10)
 
-    fun usMarketOrder() = MarketOrder(usStock(), 10.0)
+    fun usMarketOrder() = MarketOrder(usStock(), 10)
 
     fun priceAction(asset: Asset = usStock()) = TradePrice(asset, 10.0)
 

@@ -25,8 +25,8 @@ internal class CashAccountTest {
     companion object {
 
 
-        internal fun update(broker: Broker, asset: Asset, price: Number, orderSize: Number = 0): Account {
-            val orders = if (orderSize == 0) emptyList() else listOf(MarketOrder(asset, orderSize.toDouble()))
+        internal fun update(broker: Broker, asset: Asset, price: Number, orderSize: Int = 0): Account {
+            val orders = if (orderSize == 0) emptyList() else listOf(MarketOrder(asset, orderSize))
             val action = TradePrice(asset, price.toDouble())
             val event = Event(listOf(action), Instant.now())
             return broker.place(orders, event)
@@ -50,7 +50,7 @@ internal class CashAccountTest {
         val result = uc.calculate(account)
         assertEquals(result, account.cash.getAmount(result.currency))
 
-        val order = MarketOrder(TestData.usStock(), 100.0)
+        val order = MarketOrder(TestData.usStock(), 100)
         val state = OrderState(order, OrderStatus.ACCEPTED, Instant.now())
         account.putOrders(listOf(state))
         val result2 = uc.calculate(account)

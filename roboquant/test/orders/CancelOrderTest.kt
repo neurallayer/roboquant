@@ -26,7 +26,7 @@ internal class CancelOrderTest {
     @Test
     fun test() {
         val asset = TestData.usStock()
-        val order = MarketOrder(asset, 100.0)
+        val order = MarketOrder(asset, 100)
         val state = OrderState(order)
         val oc = CancelOrder(state)
         assertEquals(order, oc.order.order)
@@ -35,7 +35,7 @@ internal class CancelOrderTest {
     @Test
     fun testFailure() {
         val asset = TestData.usStock()
-        val order = MarketOrder(asset, 100.0)
+        val order = MarketOrder(asset, 100)
         val state = OrderState(order, OrderStatus.COMPLETED)
         assertFailsWith<java.lang.IllegalArgumentException> {
             CancelOrder(state)

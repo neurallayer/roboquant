@@ -172,7 +172,7 @@ class IBKRBroker(
         private fun toOrder(order: IBOrder, contract: Contract): Order {
             val asset = contract.getAsset()
             val qty = if (order.action == "BUY") order.totalQuantity() else order.totalQuantity().negate()
-            return MarketOrder(asset, qty.value().toDouble())
+            return MarketOrder(asset, Size(qty.value()))
         }
 
         private fun toStatus(status: String): OrderStatus {

@@ -146,8 +146,8 @@ class AlpacaBroker(
      */
     private fun toOrder(order: AlpacaOrder): OrderState {
         val asset = toAsset(order.assetId)
-        val qty = if (order.side == OrderSide.BUY) order.quantity.toDouble() else -order.quantity.toDouble()
-        val marketOrder = MarketOrder(asset, qty)
+        val qty = if (order.side == OrderSide.BUY) order.quantity.toBigDecimal() else -order.quantity.toBigDecimal()
+        val marketOrder = MarketOrder(asset, Size(qty))
         return toState(order, marketOrder)
     }
 

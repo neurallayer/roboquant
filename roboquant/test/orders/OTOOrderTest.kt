@@ -28,8 +28,8 @@ internal class OTOOrderTest {
     fun test() {
         val asset = TestData.usStock()
         val order = OTOOrder(
-            MarketOrder(asset, 100.0),
-            MarketOrder(asset, 200.0)
+            MarketOrder(asset, 100),
+            MarketOrder(asset, 200)
         )
 
         assertTrue(order.first is MarketOrder)
@@ -45,8 +45,8 @@ internal class OTOOrderTest {
 
         assertFails {
             OTOOrder(
-                MarketOrder(asset1, 100.0),
-                MarketOrder(asset2, 200.0)
+                MarketOrder(asset1, 100),
+                MarketOrder(asset2, 200)
             )
         }
 

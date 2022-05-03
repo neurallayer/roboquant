@@ -28,7 +28,7 @@ internal class SingleOrderTest {
     @Test
     fun testMarketOrder() {
         val asset = TestData.usStock()
-        val order = MarketOrder(asset, 100.0)
+        val order = MarketOrder(asset, 100)
         assertEquals(100.0, order.size.toDouble())
         assertTrue(order.tif is GTC)
         assertTrue(order.buy)

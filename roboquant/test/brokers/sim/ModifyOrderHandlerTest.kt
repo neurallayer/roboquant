@@ -33,10 +33,10 @@ internal class ModifyOrderHandlerTest {
 
     @Test
     fun testUpdate() {
-        val order1 = MarketOrder(asset, 100.0)
+        val order1 = MarketOrder(asset, 100)
         val moc = MarketOrderHandler(order1)
 
-        val order2 = MarketOrder(asset, 50.0)
+        val order2 = MarketOrder(asset, 50)
         val order = UpdateOrder(moc.state, order2)
 
         val cmd = UpdateOrderHandler(order)
@@ -47,7 +47,7 @@ internal class ModifyOrderHandlerTest {
 
     @Test
     fun testCancellation() {
-        val order1 = MarketOrder(asset, 100.0)
+        val order1 = MarketOrder(asset, 100)
         val moc = MarketOrderHandler(order1)
 
         val order = CancelOrder(moc.state)

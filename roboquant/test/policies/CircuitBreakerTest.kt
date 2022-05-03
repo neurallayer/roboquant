@@ -35,9 +35,9 @@ internal class CircuitBreakerTest {
     class MyPolicy : Policy {
         override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
             return listOf(
-                MarketOrder(Asset("A"),10.0),
-                MarketOrder(Asset("B"), 10.0),
-                MarketOrder(Asset("C"), 10.0)
+                MarketOrder(Asset("A"),10),
+                MarketOrder(Asset("B"), 10),
+                MarketOrder(Asset("C"), 10)
             )
         }
 

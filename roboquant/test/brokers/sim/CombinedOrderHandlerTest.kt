@@ -70,7 +70,7 @@ internal class CombinedOrderHandlerTest {
 
     @Test
     fun testBracker() {
-        val entry = MarketOrder(asset, 50.0)
+        val entry = MarketOrder(asset, 50)
         val profit = LimitOrder(asset, Size(-50), 110.0)
         val loss = StopOrder(asset, Size(-50), 95.0)
         val order = BracketOrder(entry, profit, loss)

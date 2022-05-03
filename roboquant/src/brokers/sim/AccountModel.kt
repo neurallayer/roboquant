@@ -13,8 +13,8 @@ import org.roboquant.common.Logging
 interface AccountModel {
 
     /**
-     * Calculate the total buying power for a given [account]. The returned amount should be expressed in the
-     * base currency of the account.
+     * Returns the total amount of remaining buying power for a given [account]. The returned amount should be
+     * in the base currency of the account.
      */
     fun calculate(account: InternalAccount): Amount
 
@@ -24,28 +24,23 @@ interface AccountModel {
  * Basic calculator that calculates: cash balance - open orders. So no leverage or margin is avaialble for trading.
  * This is the default BuyingPower and can be used to model a plain Cash Account.
  *
- * You should not using shorting when using the CashBuyingPower since that is almost never allowed in the real world
+ * You should not short positions when using the CashModel since that is almost never allowed in the real world
  * and also not supported. It will generate warning messages.
  *
- * @property minimum the minimum amount of cash balance required
+ * Note: currently open orders are not taken into consideration when calculating the total buying power
+ *
+ * @property minimum the minimum amount of cash balance required to maintain
  */
 class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 
     private val logger = Logging.getLogger(CashAccount::class)
 
     override fun calculate(account: InternalAccount): Amount {
-        val total = account.cash
-
-        // Only accepted orders are taken into consideration
-        // val openOrders = account.orders.accepted.map { it.value().absoluteValue }.sum()
-        // val total = cash // - openOrders
-        if (minimum != 0.0) total.withdraw(Amount(account.baseCurrency, minimum))
-
         if (account.portfolio.values.any { it.short }) {
             logger.warning("Having short positions while using cash account is not supported")
         }
 
-        return total.convert(account.baseCurrency, account.lastUpdate)
+        return account.cash.convert(account.baseCurrency, account.lastUpdate) - minimum
     }
 
 }
@@ -59,6 +54,7 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
  *      3. excess margin = equity - long value - short value - minimum equity
  *      4. buying power = excess margin * ( 1 / initial margin)
  *
+ * Note: currently open orders are not taken into consideration when calculating the total buying power
  */
 class MarginAccount(
     private val initialMargin: Double = 0.50,

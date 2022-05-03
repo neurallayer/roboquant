@@ -18,7 +18,6 @@ package org.roboquant.orders
 
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
-import java.math.BigDecimal
 
 /**
  * SingleOrder types are plain non-combined orders with a pre-defined quantity and Time in Force policy. Many well-known
@@ -73,7 +72,7 @@ class MarketOrder(
     tag: String = ""
 ) : SingleOrder(asset, size, tif, id, tag) {
 
-    constructor(asset: Asset, quantity: Number) : this(asset, Size(BigDecimal.valueOf(quantity.toDouble())))
+    constructor(asset: Asset, quantity: Int) : this(asset, Size(quantity))
 
     override fun info() = sortedMapOf("quantity" to size, "tif" to tif)
 
