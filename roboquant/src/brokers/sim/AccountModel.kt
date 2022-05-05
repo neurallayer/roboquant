@@ -16,7 +16,7 @@ interface AccountModel {
      * Returns the total amount of remaining buying power for a given [account]. The returned amount should be
      * in the base currency of the account.
      */
-    fun calculate(account: InternalAccount): Amount
+    fun getBuyingPower(account: InternalAccount): Amount
 
 }
 
@@ -35,7 +35,7 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 
     private val logger = Logging.getLogger(CashAccount::class)
 
-    override fun calculate(account: InternalAccount): Amount {
+    override fun getBuyingPower(account: InternalAccount): Amount {
         if (account.portfolio.values.any { it.short }) {
             logger.warning("Having short positions while using cash account is not supported")
         }
@@ -80,7 +80,7 @@ class MarginAccount(
         require(maintanceMarginShort in 0.0..1.0) { "maintanceMarginShort between 0.0 and 1.0" }
     }
 
-    override fun calculate(account: InternalAccount): Amount {
+    override fun getBuyingPower(account: InternalAccount): Amount {
         val excessMargin = account.cash + account.portfolio.marketValue
         
         val positions = account.portfolio.values

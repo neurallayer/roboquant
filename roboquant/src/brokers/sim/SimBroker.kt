@@ -133,7 +133,7 @@ class SimBroker(
     }
 
     private fun updateBuyingPower() {
-        val value = accountModel.calculate(_account)
+        val value = accountModel.getBuyingPower(_account)
         logger.finer { "Calculated buying power $value" }
         _account.buyingPower = value
     }
