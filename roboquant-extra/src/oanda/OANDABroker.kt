@@ -30,6 +30,7 @@ import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
+import java.math.BigDecimal
 import java.time.Instant
 
 /**
@@ -71,7 +72,6 @@ class OANDABroker(
     }
 
 
-
     private fun getPosition(symbol: String, p: PositionSide): Position {
         val asset = availableAssetsMap[symbol]!!
         val qty = p.units.bigDecimalValue()
@@ -90,11 +90,11 @@ class OANDABroker(
         for (p in positions) {
             logger.fine { "Received position $p" }
             val symbol = p.instrument.toString()
-            if (p.long.units.doubleValue() != 0.0) {
+            if (p.long.units.bigDecimalValue() != BigDecimal.ZERO) {
                 val position = getPosition(symbol, p.long)
                 _account.setPosition(position)
             }
-            if (p.short.units.doubleValue() != 0.0) {
+            if (p.short.units.bigDecimalValue() != BigDecimal.ZERO) {
                 val position = getPosition(symbol, p.short)
                 _account.setPosition(position)
             }
@@ -109,8 +109,8 @@ class OANDABroker(
         val acc = ctx.account.get(accountID).account
         _account.baseCurrency = Currency.getInstance(acc.currency.toString())
         lastTransactionId = acc.lastTransactionID
-        syncAccount()
         syncPortfolio()
+        syncAccount()
         logger.info { "Found ${_account.portfolio.values.size} existing positions in portfolio" }
     }
 
@@ -118,15 +118,19 @@ class OANDABroker(
      * Sync the internal roboquant account state with the account of OANDA
      */
     private fun syncAccount() {
+        // OANDA makes doesn't report the all the required values, so this trick is required to calculate the required
+        // cash value otherwise "equity = cash + portfolioValue" is not true
+        val portfolioValue = _account.portfolio.marketValue.convert(_account.baseCurrency).value
         val acc = ctx.account.get(accountID).account
+        val cashValue = acc.balance.doubleValue() - portfolioValue - acc.unrealizedPL.doubleValue()
 
-        // Cash in roboquant is excluding the margin part
         _account.cash.clear()
-        _account.cash.set(_account.baseCurrency, acc.balance.doubleValue())
+        _account.cash.set(_account.baseCurrency, cashValue)
 
         _account.buyingPower = Amount(_account.baseCurrency, acc.marginAvailable.doubleValue() * maxLeverage)
         _account.lastUpdate = Instant.now()
     }
+
 
     /**
      * Process a transaction/trade and update account accordingly
@@ -213,8 +217,8 @@ class OANDABroker(
         // OONDA doesn't update positions quick enough and so they don't reflect trades just made.
         // so for now we put a sleep in here :(
         Thread.sleep(1000)
-        syncAccount()
         syncPortfolio()
+        syncAccount()
         return account
     }
 }
