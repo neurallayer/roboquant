@@ -28,6 +28,7 @@ internal class BinanceBrokerTestIT {
         System.getProperty("TEST_BINANCE") ?: return
         val broker = BinanceBroker()
         assertTrue(broker.toString().isNotEmpty())
+        assertTrue(broker.availableAssets.isNotEmpty())
         assertFails { broker.start(RunPhase.MAIN) }
     }
 
