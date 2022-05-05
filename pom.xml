@@ -65,7 +65,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-        <kotlin.version>1.6.21</kotlin.version>
+        <kotlin.version>1.7.0-Beta</kotlin.version>
     </properties>
 
     <repositories>
@@ -140,7 +140,7 @@
                     <plugin>
                         <groupId>org.jetbrains.dokka</groupId>
                         <artifactId>dokka-maven-plugin</artifactId>
-                        <version>${kotlin.version}</version>
+                        <version>1.6.21</version>
                         <executions>
                             <execution>
                                 <phase>prepare-package</phase>

@@ -17,6 +17,7 @@
 package org.roboquant.binance
 
 import org.junit.jupiter.api.Test
+import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
 import kotlin.test.assertContains
@@ -27,7 +28,7 @@ internal class BinanceHistoricFeedTestIT {
 
     @Test
     fun test() {
-        System.getProperty("TEST_BINANCE") ?: return
+        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = BinanceHistoricFeed()
         assertTrue(feed.availableAssets.isNotEmpty())
 

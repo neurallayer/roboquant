@@ -16,7 +16,10 @@
 
 package org.roboquant.oanda
 
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.alpaca.AlpacaBroker
+import org.roboquant.common.Config
+import org.roboquant.feeds.Event
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -25,10 +28,14 @@ internal class OANDABrokerTestIT {
 
     @Test
     fun test() {
-        System.getenv("TEST_OANDA") ?: return
+        Config.getProperty("FULL_COVERAGE") ?: return
         val broker = AlpacaBroker()
         val account = broker.account
         account.fullSummary()
         assertTrue(account.buyingPower > 0)
+
+        assertDoesNotThrow {
+            broker.place(emptyList(), Event.empty())
+        }
     }
 }

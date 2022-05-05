@@ -17,15 +17,21 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
+import net.jacobpeterson.alpaca.model.endpoint.accountactivities.TradeActivity
+import net.jacobpeterson.alpaca.model.endpoint.accountactivities.enums.ActivityType
+import net.jacobpeterson.alpaca.model.endpoint.common.enums.SortDirection
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.CurrentOrderStatus
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderSide
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce
 import net.jacobpeterson.alpaca.rest.AlpacaClientException
 import org.roboquant.brokers.*
 import org.roboquant.common.*
+import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
+import java.time.ZonedDateTime
+import java.util.*
 import net.jacobpeterson.alpaca.model.endpoint.orders.Order as AlpacaOrder
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderStatus as AlpacaOrderStatus
 import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosition
@@ -51,41 +57,41 @@ class AlpacaBroker(
         get() = _account.toAccount()
 
     private val alpacaAPI: AlpacaAPI
+    private val handledTrades = mutableSetOf<String>()
+
     private val logger = Logging.getLogger(AlpacaOrder::class)
-    var enableTrading = false
 
     private val orderMapping = mutableMapOf<Order, AlpacaOrder>()
 
-    private val assetsMap: Map<String, Asset> by lazy {
-        availableAssets.associateBy { it.id }
-    }
+    // All available assets
+    val availableAssets: SortedSet<Asset>
+
+    // Stored the asset by the Alpaca assetId
+    private val assetsMap: Map<String, Asset>
 
     init {
         config.configure()
         alpacaAPI = AlpacaConnection.getAPI(config)
-        updateAccount()
-        updatePositions()
+        availableAssets = AlpacaConnection.getAvailableAssets(alpacaAPI)
+        assetsMap = availableAssets.associateBy { it.id }
+        syncAccount()
+        syncPortfolio()
         loadInitialOrders()
         // updateOpenOrders()
     }
 
-    val availableAssets by lazy {
-        AlpacaConnection.getAvailableAssets(alpacaAPI)
-    }
-
     /**
-     * Update the roboquant account with the details from Alpaca account
+     * Sync the roboquant account with the details from Alpaca account
      */
-    private fun updateAccount() {
+    private fun syncAccount() {
         try {
             val acc = alpacaAPI.account().get()
 
             _account.baseCurrency = Currency.getInstance(acc.currency)
-            _account.buyingPower = Amount(account.baseCurrency, acc.buyingPower.toDouble())
+            _account.buyingPower = Amount(_account.baseCurrency, acc.buyingPower.toDouble())
 
             _account.cash.clear()
-            val balance = Amount(account.baseCurrency, acc.cash.toDouble())
-            _account.cash.deposit(balance)
+            _account.cash.set(_account.baseCurrency, acc.cash.toDouble())
             _account.lastUpdate = Instant.now()
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())
@@ -93,10 +99,10 @@ class AlpacaBroker(
     }
 
     /**
-     * Update positions in the portfolio based on positions received from Alpaca.
+     * Sync positions in the portfolio based on positions received from Alpaca.
      *
      */
-    private fun updatePositions() {
+    private fun syncPortfolio() {
         try {
             _account.portfolio.clear()
             for (openPosition in alpacaAPI.positions().get()) {
@@ -110,20 +116,32 @@ class AlpacaBroker(
     }
 
     /**
-     * Load all the orders already linked to the account. This is only called once during initiatlization.
+     * Update the status of the open orders in the account with the latest order status from Alpaca
+     */
+    private fun syncOrders() {
+
+        val states = _account.openOrders.values.map {
+            val aOrder = orderMapping[it.order]!!
+            val order = alpacaAPI.orders().get(aOrder.id, false)!!
+            toState(order, it.order)
+        }
+        _account.putOrders(states)
+    }
+
+    /**
+     * Load the open orders already linked to the account. This is only called once during initiatlization.
+     * Closed orders will be ignored.
      */
     private fun loadInitialOrders() {
         try {
-            for (order in alpacaAPI.orders().get(CurrentOrderStatus.ALL, null, null, null, null, false, null)) {
-                logger.fine { "received $order" }
+            for (order in alpacaAPI.orders().get(CurrentOrderStatus.OPEN, null, null, null, null, false, null)) {
+                logger.fine { "received open $order" }
                 _account.putOrders(listOf(toOrder(order)))
             }
         } catch (e: AlpacaClientException) {
             logger.severe(e.stackTraceToString())
         }
     }
-
-    private fun toAsset(assetId: String) = assetsMap[assetId]!!
 
     private fun toState(order: AlpacaOrder, roboquantOrder: Order): OrderState {
         val status = when (order.status) {
@@ -145,7 +163,7 @@ class AlpacaBroker(
      * Convert an alpaca order to a roboquant order
      */
     private fun toOrder(order: AlpacaOrder): OrderState {
-        val asset = toAsset(order.assetId)
+        val asset = assetsMap[order.assetId]!!
         val qty = if (order.side == OrderSide.BUY) order.quantity.toBigDecimal() else -order.quantity.toBigDecimal()
         val marketOrder = MarketOrder(asset, Size(qty))
         return toState(order, marketOrder)
@@ -158,23 +176,41 @@ class AlpacaBroker(
      * @return
      */
     private fun convertPos(pos: AlpacaPosition): Position {
-        assert(pos.assetClass == "us_equity") { "Unsupported asset class found ${pos.assetClass} for position $pos" }
-        val asset = toAsset(pos.assetId)
+        val asset = assetsMap[pos.assetId]!!
         val size = Size(pos.quantity)
         return Position(asset, size, pos.averageEntryPrice.toDouble(), pos.currentPrice.toDouble())
     }
 
+
+
     /**
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
-    private fun updateOpenOrders() {
-
-        val states = _account.openOrders.values.map {
-            val aOrder = orderMapping[it.order]!!
-            val order = alpacaAPI.orders().get(aOrder.id, false)!!
-            toState(order, it.order)
+    private fun syncTrades() {
+        val now = ZonedDateTime.now()
+        val trades = alpacaAPI.accountActivities().get(
+            now, null, null, SortDirection.ASCENDING, 100, "", ActivityType.FILL)
+        logger.fine { "Found ${trades.size} fill activities"}
+        for (activity in trades.filterIsInstance<TradeActivity>()) {
+            // Only add trades we know the order id of
+            logger.fine { "Found trade $activity"}
+            val order = orderMapping.filterValues { it.id == activity.orderId }.keys.firstOrNull()
+            if (order != null) {
+                if (activity.id !in handledTrades) {
+                    val trade = Trade(
+                        activity.transactionTime.toInstant(),
+                        order.asset,
+                        Size(activity.quantity.toBigDecimal()),
+                        activity.price.toDouble(),
+                        0.0,
+                        Double.NaN,
+                        order.id
+                    )
+                    _account.trades.add(trade)
+                    handledTrades.add(activity.id)
+                }
+            }
         }
-        _account.putOrders(states)
     }
 
     /**
@@ -184,8 +220,9 @@ class AlpacaBroker(
      */
     private fun placeOrder(order: SingleOrder) {
         val asset = order.asset
-        require(asset.type == AssetType.STOCK) { "Only stocks supported, received ${asset.type}" }
-        require(asset.currencyCode == "USD") { "Only USD supported, received ${asset.currencyCode}" }
+        require(asset.type in setOf(AssetType.STOCK, AssetType.CRYPTO)) {
+            "Only stocks and crypto supported, received ${asset.type}"
+        }
 
         val tif = when (order.tif) {
             is GTC -> OrderTimeInForce.GOOD_UNTIL_CANCELLED
@@ -193,11 +230,6 @@ class AlpacaBroker(
             else -> {
                 throw UnsupportedException("Unsupported TIF ${order.tif} for order $order")
             }
-        }
-
-        if (!enableTrading) {
-            logger.info { "Trading not enabled, skipping $order" }
-            return
         }
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
@@ -230,11 +262,17 @@ class AlpacaBroker(
      * @return the updated account that reflects the latest state
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        updateOpenOrders()
+        syncOrders()
+        syncTrades()
         for (order in orders) {
             if (order is SingleOrder) {
-                placeOrder(order)
-                _account.putOrders(listOf(order).initialOrderState)
+                try {
+                    placeOrder(order)
+                    _account.putOrders(listOf(order).initialOrderState)
+                } catch (e: AlpacaClientException) {
+                    logger.severe("couldn't place order=$order", e)
+                    _account.putOrder(OrderState(order, status = OrderStatus.REJECTED))
+                }
             } else {
                 throw UnsupportedException("Unsupported order type $order")
             }

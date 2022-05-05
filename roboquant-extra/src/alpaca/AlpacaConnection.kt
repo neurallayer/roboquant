@@ -41,7 +41,13 @@ data class AlpacaConfig(
     var secretKey: String = Config.getProperty("alpaca.secret.key", ""),
     var accountType: AccountType = AccountType.PAPER,
     var dataType: DataType = DataType.IEX
-)
+) {
+
+    init {
+        require(accountType == AccountType.PAPER) { "Only Paper tradins supported, received $accountType"}
+    }
+
+}
 
 /**
  * Connect to Alpaca API, logic shared between the Alpaca Feeds and Alpaca Broker

@@ -59,23 +59,19 @@ class BinanceBroker(
     private val placedOrders = mutableMapOf<Long, SingleOrder>()
     private var orderId = 0
 
-    val assets by lazy {
-        retrieveAssets()
-    }
+    val availableAssets: List<Asset>
 
     init {
         config.configure()
         val factory = BinanceConnection.getFactory(config)
         client = factory.newRestClient()
+        availableAssets = client.exchangeInfo.symbols.map {
+            Asset(it.symbol, AssetType.CRYPTO, it.quoteAsset, "BINANCE")
+        }
         logger.info("Created BinanceBroker with client $client")
         updateAccount()
     }
 
-    private fun retrieveAssets(): List<Asset> {
-        return client.exchangeInfo.symbols.map {
-            Asset(it.symbol, AssetType.CRYPTO, it.quoteAsset, "BINANCE")
-        }
-    }
 
     private fun updateAccount() {
         val balances = client.account.balances

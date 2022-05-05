@@ -126,7 +126,7 @@ class OANDABroker(
 
         _account.cash.clear()
         _account.cash.set(_account.baseCurrency, cashValue)
-
+        
         _account.buyingPower = Amount(_account.baseCurrency, acc.marginAvailable.doubleValue() * maxLeverage)
         _account.lastUpdate = Instant.now()
     }
