@@ -51,9 +51,10 @@ fun large(type: String) {
         }
     }
 
-    val avroFile = getAvroFile(type)
-
-    AvroUtil.record(feed!!, avroFile.toString(), compressionLevel = 1)
+    if (feed != null) {
+        val avroFile = getAvroFile(type)
+        AvroUtil.record(feed, avroFile.toString(), compressionLevel = 1)
+    }
 }
 
 /**

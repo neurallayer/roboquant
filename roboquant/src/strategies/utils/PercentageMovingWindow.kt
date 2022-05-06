@@ -80,7 +80,7 @@ class AssetReturns(val assets: Collection<Asset>, windowSize: Int, missingValue:
 
     fun isAvailable() = buffers.values.first().isAvailable()
 
-    fun toDoubleArray(asset: Asset) = buffers[asset]!!.toDoubleArray()
+    fun toDoubleArray(asset: Asset) = buffers.getValue(asset).toDoubleArray()
 
     /**
      * Update the buffers with the latest prices

@@ -33,7 +33,7 @@ abstract class TimedExchangeRates(protected val baseCurrency: Currency) : Exchan
         get() = exchangeRates.keys + setOf(baseCurrency)
 
     private fun find(currency: Currency, time: Instant): Double {
-        val rates = exchangeRates[currency]!!
+        val rates = exchangeRates.getValue(currency)
         val result = rates.floorEntry(time) ?: rates.firstEntry()
         return result.value
     }

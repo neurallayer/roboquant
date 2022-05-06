@@ -46,7 +46,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
          * @return
          */
         fun getHandler(order: Order): OrderHandler {
-            val factory = factories[order::class]!!
+            val factory = factories.getValue(order::class)
             return factory.getHandler(order)
         }
 

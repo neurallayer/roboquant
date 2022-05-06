@@ -26,6 +26,9 @@ import org.roboquant.feeds.Event
  * on the assets in the portfolio and the last known market price. The realized PNL is based on actual trades made
  * and the profit they generated. All amounts are converted to the base currency of the account.
  *
+ * This can be a metric can slow down back tests with very many trades, since at each step it iterates over all
+ * available trades to calculate the realized PNL
+ *
  * Metric names used:
  * - pnl.realized
  * - pnl.unrealized
@@ -50,8 +53,8 @@ class PNL : SimpleMetric() {
         val realizedPNL = pnl.convert(time = event.time)
         result["pnl.realized"] = realizedPNL.value
 
-        val totalValue = account.positions.unrealizedPNL
-        val unrealizedPNL = totalValue.convert(time = event.time)
+        val pnl2 = account.positions.unrealizedPNL
+        val unrealizedPNL = pnl2.convert(time = event.time)
         result["pnl.unrealized"] = unrealizedPNL.value
 
         result["pnl.total"] = realizedPNL.value + unrealizedPNL.value

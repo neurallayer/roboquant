@@ -74,7 +74,7 @@ class SimBroker(
     }
 
     /**
-     * Update the portfolio with the provided [position] and return the realized PnL.
+     * Update the portfolio with the provided [position] and return the realized PNL.
      */
     private fun updatePosition(position: Position): Amount {
         val asset = position.asset
