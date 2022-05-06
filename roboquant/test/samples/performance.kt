@@ -10,13 +10,14 @@ import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.AccountSummary
+import org.roboquant.metrics.PNL
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.EMACrossover
 import java.time.Instant
 import kotlin.system.measureTimeMillis
 
-private fun getFeed(n: Int = 2): Feed {
+private fun getFeed(n: Int): Feed {
     val timeline = mutableListOf<Instant>()
     var start = Instant.parse("1975-01-01T09:00:00Z")
 
@@ -35,14 +36,17 @@ private fun getFeed(n: Int = 2): Feed {
  */
 fun base(feed: Feed) {
     // Create a roboquant using Exponential Weighted Moving Average
-    repeat(10) {
+    repeat(1) {
         val logger = MemoryLogger(false)
-        val roboquant = Roboquant(EMACrossover(), ProgressMetric(), policy = DefaultPolicy(), logger = logger)
+        val roboquant = Roboquant(EMACrossover(), ProgressMetric(), PNL(), policy = DefaultPolicy(), logger = logger)
         roboquant.run(feed)
         roboquant.broker.account.summary()
         print(".")
     }
 }
+
+
+
 
 
 /**
@@ -74,7 +78,7 @@ suspend fun main() {
     val feed = getFeed(4)
 
     val t = measureTimeMillis {
-        when ("MIXED") {
+        when ("BASE") {
             "BASE" -> base(feed)
             "PARALLEL" -> multiRunParallel(feed)
             "MIXED" -> {

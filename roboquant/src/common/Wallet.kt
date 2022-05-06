@@ -17,12 +17,13 @@
 package org.roboquant.common
 
 import java.time.Instant
+import java.util.*
 
 /**
- * Wallet can contain amounts of different currencies at the same time. So for example a single instance of Wallet can
+ * Wallet contains amounts of different currencies at the same time. So for example a single instance of Wallet can
  * contain both USD and EURO amounts.
  *
- * You can add other currencies to a Wallet instance. If the currency is already contained in the Wallet instance, it
+ * You can add other currencies to a Wallet instance. If the currency is already present in the Wallet, it
  * will be added to the existing amount, otherwise the currency and amount will be added.
  *
  * It is used throughout roboquant in order to support trading in multiple assets with different currency denominations.
@@ -31,13 +32,20 @@ import java.time.Instant
  * the [convert] method if you want to do so.
  */
 @Suppress("TooManyFunctions")
-class Wallet(vararg amounts: Amount) : Cloneable {
+class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMap(3)) : Cloneable {
 
-    // Contains the data of the wallet
-    private val data = mutableMapOf<Currency, Double>()
 
-    init {
-        for (amount in amounts) deposit(amount)
+    companion object {
+
+        operator fun invoke(amount: Amount) : Wallet =
+            Wallet(IdentityHashMap(mapOf(amount.currency to amount.value)))
+
+        operator fun invoke(vararg amounts: Amount) : Wallet {
+            val wallet = Wallet()
+            for (amount in amounts) wallet.deposit(amount)
+            return wallet
+        }
+
     }
 
 
@@ -53,7 +61,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
      * found, a zero amount will be returned.
      */
     fun getAmount(currency: Currency): Amount {
-        val value = data.getOrDefault(currency, 0.0)
+        val value = data[currency] ?: 0.0
         return Amount(currency, value)
     }
 
@@ -61,7 +69,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
      * Get the value for a certain [currency]. If the currency is not
      * found, 0.0 will be returned.
      */
-    fun getValue(currency: Currency): Double = data.getOrDefault(currency, 0.0)
+    fun getValue(currency: Currency): Double = data[currency] ?: 0.0
 
 
     /**
@@ -149,8 +157,10 @@ class Wallet(vararg amounts: Amount) : Cloneable {
      * will be added to the existing value, otherwise a new entry will be created.
      */
     fun deposit(amount: Amount) {
-        val value = (data[amount.currency] ?: 0.0) + amount.value
-        set(amount.currency, value)
+        val (currency, value) = amount
+        val oldValue = data[currency] ?: 0.0
+        // data[amount.currency] = amount.value + oldValue
+        set(currency, value + oldValue)
     }
 
 
@@ -189,11 +199,9 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     /**
      * Create a clone of this wallet
      */
-    public override fun clone(): Wallet {
-        val result = Wallet()
-        result.data.putAll(data)
-        return result
-    }
+    @Suppress("UNCHECKED_CAST")
+    public override fun clone(): Wallet = Wallet(data.clone() as IdentityHashMap<Currency, Double>)
+
 
 
     /**
@@ -229,13 +237,13 @@ class Wallet(vararg amounts: Amount) : Cloneable {
     /**
      * A wallet only equals another wallet if they hold the same currencies and corresponding amounts.
      */
-    override fun equals(other: Any?) = if (other is Wallet) data == other.data else false
+    override fun equals(other: Any?) = if (other is Wallet) data.toMap() == other.data.toMap() else false
 
     /**
      * The hashcode of the wallet
      */
     override fun hashCode(): Int {
-        return data.hashCode()
+        return data.toMap().hashCode()
     }
 
     /**

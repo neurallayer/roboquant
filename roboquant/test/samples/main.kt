@@ -191,11 +191,12 @@ fun beta2() {
 }
 
 
+
 suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("BETA") {
+    when ("beta") {
         "BETA" -> beta()
         "BETA2" -> beta2()
         "MULTI_RUN" -> multiRun()

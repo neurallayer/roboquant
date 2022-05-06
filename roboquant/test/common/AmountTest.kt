@@ -52,8 +52,6 @@ internal class AmountTest {
 
         assertTrue(a.isPositive)
 
-        assertEquals(a, a.zeroOrMore)
-
     }
 
     @Test
@@ -71,13 +69,12 @@ internal class AmountTest {
 
         assertEquals(10.EUR, 10.0.EUR)
 
-
     }
 
     @Test
     fun testPredifined() {
-        val wallet =
-            1.EUR + 1.USD + 1.JPY + 1.GBP + 1.CHF + 1.AUD + 1.CAD + 1.CNY + 1.HKD + 1.NZD + 1.RUB + 1.INR + 1.BTC + 1.ETH + 1.USDT
+        val wallet = 1.EUR + 1.USD + 1.JPY + 1.GBP + 1.CHF + 1.AUD + 1.CAD +
+                1.CNY + 1.HKD + 1.NZD + 1.RUB + 1.INR + 1.BTC + 1.ETH + 1.USDT
         assertEquals(15, wallet.currencies.size)
     }
 

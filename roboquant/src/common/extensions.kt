@@ -253,7 +253,7 @@ fun String.toCurrencyPair(): Pair<Currency, Currency>? {
 }
 
 /**
- * Extesnion to use sumOf for Amounts
+ * Extension to use sumOf for Amounts
  */
 inline fun <T> Iterable<T>.sumOf(
     selector: (T) -> Amount
@@ -265,6 +265,9 @@ inline fun <T> Iterable<T>.sumOf(
     }
     return result
 }
+
+
+
 
 /*********************************************************************************************
  * Extensions on Integer type to make instantiation of periods or duration more convenient

@@ -55,11 +55,6 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     val absoluteValue
         get() = Amount(currency, value.absoluteValue)
 
-    /**
-     * Return a new amount containing the value if it is positive else 0.0
-     */
-    val zeroOrMore
-        get() = Amount(currency, if (isPositive) value else 0.0)
 
     /**
      * Format the value hold in this amount based on the currency. For example USD would have two fraction digits

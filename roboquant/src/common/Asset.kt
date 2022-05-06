@@ -17,6 +17,7 @@
 package org.roboquant.common
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * Asset is used to uniquely identify a financial instrument. So it can represent a stock, a future
@@ -49,10 +50,11 @@ data class Asset(
     }
 
     /**
-     * Get the [Currency] of this asset based on the underlying currency code
+     * Get the [Currency] of this asset based on the underlying currency code.
      */
-    val currency
-        get() = Currency.getInstance(currencyCode)
+    @Transient
+    val currency = Currency.getInstance(currencyCode)
+
 
     /**
      * Get the [Exchange] of this asset based on the underlying exchange code
