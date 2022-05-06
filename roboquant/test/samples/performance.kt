@@ -64,7 +64,7 @@ suspend fun multiRunParallel(feed: Feed) {
     }
 
     jobs.joinAll() // Make sure we wait for all jobs to finish
-    val maxEntry = logger.getMetric("account.equity").maxByOrNull{ it.value }!!
+    val maxEntry = logger.getMetric("account.equity").max()
     println("${maxEntry.info.run}  => ${maxEntry.value} equity")
 }
 

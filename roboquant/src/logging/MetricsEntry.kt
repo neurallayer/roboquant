@@ -58,16 +58,6 @@ data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo
 }
 
 /**
- * Get the entry with the maximum value
- */
-fun Collection<MetricsEntry>.max() = maxByOrNull { it }!!
-
-/**
- * Get the entry with the minimum value
- */
-fun Collection<MetricsEntry>.min() = minByOrNull { it }!!
-
-/**
  * Get the [n] highest entries, default being 10
  */
 fun Collection<MetricsEntry>.high(n:Int = 10) = sortedBy { it }.takeLast(n)

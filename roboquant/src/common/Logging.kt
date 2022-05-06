@@ -85,7 +85,7 @@ object Logging {
     }
 
     fun getLogger(clazz: KClass<*>): Logger {
-        return getLogger(clazz.qualifiedName!!)
+        return getLogger(clazz.qualifiedName ?: "$clazz")
     }
 
     fun getLogger(name: String): Logger {

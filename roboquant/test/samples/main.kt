@@ -87,7 +87,7 @@ fun multiRun() {
             roboquant.run(feed, runName = "run $fast-$slow")
         }
     }
-    val maxEntry = logger.getMetric("account.equity").maxByOrNull { it.value }!!
+    val maxEntry = logger.getMetric("account.equity").max()
     println(maxEntry.info.run)
 }
 

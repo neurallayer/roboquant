@@ -93,6 +93,7 @@ class Wallet(vararg amounts: Amount) : Cloneable {
         return result
     }
 
+
     /**
      * Plus operator to allow for wallet + amount. This method is different from [deposit] in that this method doesn't
      * update the current wallet and returns a new wallet instead.

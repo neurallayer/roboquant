@@ -59,7 +59,7 @@ class IBKRBroker(
     private var orderId = 0
 
     // Track IB orders ids with roboquant orders
-    private val orderMap = mutableMapOf<Int, Int>()
+    private val orderMap = mutableMapOf<Int, Order>()
 
     // Track IB Trades and Feed ids with roboquant trades
     private val tradeMap = mutableMapOf<String, Trade>()
@@ -74,8 +74,8 @@ class IBKRBroker(
         client.reqCurrentTime()
         client.reqAccountUpdates(true, accountId)
 
-        // Only request orders created with this client, aka roboquant
-        // don't use client.reqAllOpenOrders()
+        // Only request orders created with this client, so roboquant
+        // doesn't use client.reqAllOpenOrders()
         client.reqOpenOrders()
         waitTillSynced()
     }
@@ -96,7 +96,7 @@ class IBKRBroker(
     }
 
     /**
-     * Place on or more orders
+     * Place zero or more orders
      *
      * @param orders
      * @param event
@@ -112,7 +112,7 @@ class IBKRBroker(
         for (cancellation in orders.filterIsInstance<CancelOrder>()) {
             logger.fine("received order $cancellation")
             val id = cancellation.id
-            val ibID = orderMap.filter { it.value == id }.keys.first()
+            val ibID = orderMap.filter { it.value.id == id }.keys.first()
             client.cancelOrder(ibID, cancellation.tag)
         }
 
@@ -130,7 +130,7 @@ class IBKRBroker(
     }
 
     /**
-     * convert roboquant order into IBKR order
+     * convert roboquant order into IBKR order. Right now only support for few single type of orders
      *
      * @param order
      * @return
@@ -155,7 +155,7 @@ class IBKRBroker(
         result.totalQuantity(Decimal.get(order.size.toBigDecimal().abs()))
         if (accountId != null) result.account(accountId)
 
-        orderMap[orderId] = order.id
+        orderMap[orderId] = order
         result.orderId(orderId++)
         return result
     }
@@ -198,7 +198,7 @@ class IBKRBroker(
             val openOrder = orderMap[orderId]
             if (openOrder != null) {
                 if (orderState.completedStatus() == "true") {
-                    val slip = _account.openOrders[openOrder]
+                    val slip = _account.openOrders[openOrder.id]
                     if (slip != null) _account.putOrder(
                         OrderState(
                             slip.order,
@@ -209,7 +209,7 @@ class IBKRBroker(
                 }
             } else {
                 val newOrder = toOrder(order, contract)
-                orderMap[orderId] = newOrder.id
+                orderMap[orderId] = newOrder
                 _account.putOrder(OrderState(newOrder))
             }
         }
@@ -220,11 +220,11 @@ class IBKRBroker(
             lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
         ) {
             logger.fine { "oderId: $orderId status: $status filled: $filled" }
-            val id = orderMap[orderId]
-            if (id == null)
+            val order = orderMap[orderId]
+            if (order == null)
                 logger.warning { "Received unknown open order with orderId $orderId" }
             else {
-                val slip = _account.openOrders[id]
+                val slip = _account.openOrders[order.id]
                 if (slip != null) {
                     val newStatus = toStatus(status!!)
                     val orderState = slip.copy(Instant.now(), newStatus)
@@ -257,33 +257,34 @@ class IBKRBroker(
 
             // The last number is to correct an existing execution, so not a new execution
             val id = execution.execId().substringBeforeLast('.')
-            if (id in tradeMap) logger.info("Overwrite of existing trade")
+
+            if (id in tradeMap) {
+                logger.info("trade already handled, no support for corrections currently")
+                return
+            }
 
             // Possible values BOT and SLD
             val size = if (execution.side() == "SLD") -execution.cumQty().value() else execution.cumQty().value()
-            val orderId = orderMap[execution.orderId()] ?: -1 // Should not happen
-            val trade = Trade(
-                Instant.now(),
-                contract.getAsset(),
-                Size(size),
-                execution.avgPrice(),
-                Double.NaN,
-                Double.NaN,
-                orderId
-            )
-            tradeMap[id] = trade
-            _account.trades += trade
+            val order = orderMap[execution.orderId()]
+            if (order != null) {
+                val trade = Trade(
+                    Instant.now(),
+                    contract.getAsset(),
+                    Size(size),
+                    execution.avgPrice(),
+                    Double.NaN,
+                    Double.NaN,
+                    order.id
+                )
+                tradeMap[id] = trade
+                _account.trades += trade
+            }
         }
 
         override fun openOrderEnd() {
             logger.fine("Open order ended")
         }
 
-        private fun setCash(currencyCode: String, value: String) {
-            if ("BASE" != currencyCode) {
-                _account.cash.set(Currency.getInstance(currencyCode), value.toDouble())
-            }
-        }
 
         override fun updateAccountValue(key: String, value: String, currency: String?, accountName: String?) {
             logger.fine { "$key $value $currency $accountName" }
@@ -293,7 +294,7 @@ class IBKRBroker(
                         _account.baseCurrency = Currency.getInstance(currency)
                         _account.buyingPower = Amount(account.baseCurrency, value.toDouble())
                     }
-                    "CashBalance" -> setCash(currency, value)
+                    "CashBalance" -> _account.cash.set(Currency.getInstance(currency), value.toDouble())
                 }
             }
         }
@@ -325,24 +326,24 @@ class IBKRBroker(
          * Convert an IBKR contract to an asset
          */
         private fun Contract.getAsset(): Asset {
-            if (!assetMap.containsKey(conid())) {
-                val type = when (secType()) {
-                    Types.SecType.STK -> AssetType.STOCK
-                    Types.SecType.BOND -> AssetType.BOND
-                    Types.SecType.OPT -> AssetType.OPTION
-                    else -> throw UnsupportedException("Unsupported asset type ${secType()}")
-                }
-                val asset = Asset(
-                    symbol = symbol(),
-                    currencyCode = currency(),
-                    exchangeCode = exchange() ?: primaryExch() ?: "",
-                    type = type,
-                    id = conid().toString()
-                )
-                assetMap[conid()] = asset
-            }
+            val result = assetMap[conid()]
+            result != null && return result
 
-            return assetMap[conid()]!!
+            val type = when (secType()) {
+                Types.SecType.STK -> AssetType.STOCK
+                Types.SecType.BOND -> AssetType.BOND
+                Types.SecType.OPT -> AssetType.OPTION
+                else -> throw UnsupportedException("Unsupported asset type ${secType()}")
+            }
+            val asset = Asset(
+                symbol = symbol(),
+                currencyCode = currency(),
+                exchangeCode = exchange() ?: primaryExch() ?: "",
+                type = type,
+                id = conid().toString()
+            )
+            assetMap[conid()] = asset
+            return asset
         }
 
     }

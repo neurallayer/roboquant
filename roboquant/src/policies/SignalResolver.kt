@@ -72,7 +72,7 @@ fun List<Signal>.resolve(rule: SignalResolution = SignalResolution.NONE): List<S
         SignalResolution.NO_CONFLICTS -> filter { none { f -> f.conflicts(it) } }.distinctBy { it.asset }
         SignalResolution.NO_DUPLICATES -> {
             val assets = this.groupBy { it.asset }
-            filter { assets[it.asset]!!.size == 1 }
+            filter { assets.getValue(it.asset).size == 1 }
         }
     }
 }

@@ -47,9 +47,9 @@ class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: 
         val from = amount.currency
         return when {
             from === to -> 1.0
-            to === baseCurrency -> exchangeRates[from]!!
-            from === baseCurrency -> 1.0 / exchangeRates[to]!!
-            else -> exchangeRates[from]!! * 1.0 / exchangeRates[to]!!
+            to === baseCurrency -> exchangeRates.getValue(from)
+            from === baseCurrency -> 1.0 / exchangeRates.getValue(to)
+            else -> exchangeRates.getValue(from) * 1.0 / exchangeRates.getValue(to)
         }
     }
 

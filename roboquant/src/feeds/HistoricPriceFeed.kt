@@ -42,12 +42,12 @@ open class HistoricPriceFeed : HistoricFeed {
     /**
      * Return the first event in this feed
      */
-    fun first() : Event = Event(events[events.firstKey()]!!,  events.firstKey())
+    fun first() : Event = Event(events.getValue(events.firstKey()),  events.firstKey())
 
     /**
      * Return the last event in this feed
      */
-    fun last() : Event = Event(events[events.lastKey()]!!,  events.lastKey())
+    fun last() : Event = Event(events.getValue(events.lastKey()),  events.lastKey())
 
 
     /**
