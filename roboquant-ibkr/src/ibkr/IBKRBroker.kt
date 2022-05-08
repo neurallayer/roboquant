@@ -42,13 +42,13 @@ import com.ib.client.OrderStatus as IBOrderStatus
  *
  */
 class IBKRBroker(
-    host: String = "127.0.0.1",
-    port: Int = 4002,
-    clientId: Int = 1,
-    private val accountId: String? = null,
     private val enableOrders: Boolean = false,
+    configure: IBKRConfig.() -> Unit = {}
 ) : Broker {
 
+    private val config = IBKRConfig()
+
+    private val accountId: String?
     private var client: EClientSocket
     private val _account = InternalAccount()
 
@@ -69,8 +69,10 @@ class IBKRBroker(
 
     init {
         if (enableOrders) logger.warning { "Enabling sending orders, use it at your own risk!!!" }
+        config.configure()
+        accountId = config.account.ifBlank { null }
         val wrapper = Wrapper(logger)
-        client = IBKRConnection.connect(wrapper, host, port, clientId)
+        client = IBKRConnection.connect(wrapper, config)
         client.reqCurrentTime()
         client.reqAccountUpdates(true, accountId)
 

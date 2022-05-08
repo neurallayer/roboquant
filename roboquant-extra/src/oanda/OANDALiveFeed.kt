@@ -138,7 +138,7 @@ class OANDALiveFeed(
                     val resp = ctx.pricing[request]
                     val now = Instant.now()
                     val actions = resp.prices.map {
-                        val asset = assetMap[it.instrument.toString()]!!
+                        val asset = assetMap.getValue(it.instrument.toString())
                         OrderBook(
                             asset,
                             it.asks.map { entry ->

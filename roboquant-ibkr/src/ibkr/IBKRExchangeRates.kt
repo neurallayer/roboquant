@@ -1,7 +1,6 @@
 package org.roboquant.ibkr
 
 import com.ib.client.DefaultEWrapper
-import com.ib.client.EClientSocket
 import org.roboquant.brokers.ExchangeRates
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
@@ -11,24 +10,36 @@ import java.time.Instant
  * Currency convertor that can be filled by exchange rates provided by IBKR during the retrieval of the account values
  */
 internal class IBKRExchangeRates(
-    host: String = "127.0.0.1",
-    port: Int = 4002,
-    clientId: Int = 3,
-    accountId: String? = null,
+    configure: IBKRConfig.() -> Unit = {}
 ) : ExchangeRates {
 
-    private var client: EClientSocket
+    private val config = IBKRConfig()
     lateinit var baseCurrency: Currency
     val exchangeRates = mutableMapOf<Currency, Double>()
 
-
     init {
-        val wrapper = Wrapper()
-        client = IBKRConnection.connect(wrapper, host, port, clientId)
-        client.reqCurrentTime()
-        client.reqAccountUpdates(true, accountId)
+        config.configure()
+        refresh()
     }
 
+    fun refresh() {
+        val wrapper = Wrapper()
+        val client = IBKRConnection.connect(wrapper, config)
+        client.reqCurrentTime()
+        client.reqAccountUpdates(true, config.account.ifBlank { null })
+        waitTillSynced()
+        IBKRConnection.disconnect(client)
+    }
+
+    /**
+     * Wait till IBKR account is synchronized so roboquant has the correct assets and cash balance available.
+     *
+     * @TODO: replace sleep with real check
+     */
+    private fun waitTillSynced() {
+        @Suppress("MagicNumber")
+        (Thread.sleep(5_000))
+    }
 
     /**
      * Convert between two currencies.
@@ -66,6 +77,8 @@ internal class IBKRExchangeRates(
                 }
             }
         }
+
+
     }
 }
 

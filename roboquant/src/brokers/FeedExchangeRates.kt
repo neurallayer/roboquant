@@ -18,7 +18,6 @@ package org.roboquant.brokers
 
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
-import org.roboquant.common.toCurrencyPair
 import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
@@ -44,8 +43,7 @@ class FeedExchangeRates(
         for ((now, action) in actions) {
             val asset = action.asset
             val rate = action.getPrice(priceType)
-            val codes = asset.symbol.toCurrencyPair()
-            if (codes != null) {
+            val codes = asset.currencyPair
                 val (from, to) = codes
                 if (to == baseCurrency) {
                     val map = exchangeRates.getOrPut(from) { TreeMap() }
@@ -54,8 +52,6 @@ class FeedExchangeRates(
                     val map = exchangeRates.getOrPut(to) { TreeMap() }
                     map[now] = 1.0 / rate
                 }
-
-            }
         }
 
     }

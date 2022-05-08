@@ -28,19 +28,19 @@ import java.time.Instant
 import java.util.logging.Logger
 
 class IBKRHistoricFeed(
-    host: String = "127.0.0.1",
-    port: Int = 4002,
-    clientId: Int = 3,
+    configure: IBKRConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
+    private val config = IBKRConfig()
     private var tickerId: Int = 0
     private val subscriptions = mutableMapOf<Int, Asset>()
     private val logger = Logging.getLogger(IBKRHistoricFeed::class)
     private var client: EClientSocket
 
     init {
+        config.configure()
         val wrapper = Wrapper(logger)
-        client = IBKRConnection.connect(wrapper, host, port, clientId)
+        client = IBKRConnection.connect(wrapper, config)
         client.reqCurrentTime()
     }
 

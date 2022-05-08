@@ -37,11 +37,10 @@ import java.util.logging.Logger
  *
  * @constructor
  *
- * @param host The host to connect to
- * @param port The port to connect to
- * @param clientId The client id to use. By default, roboquant uses clientId=2 for the IBKR feed
  */
-class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int = 2) : LiveFeed() {
+class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
+
+    private val config = IBKRConfig()
 
     private var tickerId: Int = 0
     private var client: EClientSocket
@@ -49,8 +48,9 @@ class IBKRLiveFeed(host: String = "127.0.0.1", port: Int = 4002, clientId: Int =
     private val logger = Logging.getLogger(IBKRLiveFeed::class)
 
     init {
+        config.configure()
         val wrapper = Wrapper(logger)
-        client = IBKRConnection.connect(wrapper, host, port, clientId)
+        client = IBKRConnection.connect(wrapper, config)
         client.reqCurrentTime()
     }
 

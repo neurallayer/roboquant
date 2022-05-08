@@ -13,24 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("LongParameterList")
 
 package org.roboquant.common
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import java.math.BigDecimal
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 /**
- * Asset is used to uniquely identify a financial instrument. So it can represent a stock, a future
- * or even a cryptocurrency. All of its properties are read-only, and assets are typically only created
- * once and reused thereafter. An asset is immutable bu nature.
+ * Asset is used to uniquely identify a financial instrument. So it can represent a stock, a future or a
+ * cryptocurrency. All of its properties are read-only, and assets are ideally only created once and reused
+ * thereafter. An asset instance is immutable.
  *
- * @property symbol none empty symbol name
+ * @property symbol none empty symbol name, for derivatives like options and futures this includes the contract details
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currencyCode currency code, default is "USD"
  * @property exchangeCode Exchange this asset is traded on, default is an empty string
  * @property multiplier contract multiplier, default is 1.0
- * @property details contract details, for example this could hold the option series or futures contract details.
- * Default is an empty string.
  * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
  */
@@ -41,12 +43,85 @@ data class Asset(
     val currencyCode: String = "USD",
     val exchangeCode: String = "",
     val multiplier: Double = 1.0,
-    val details: String = "",
     val id: String = ""
 ) : Comparable<Asset> {
 
     init {
         require(symbol.isNotBlank()) { "Symbol in an asset cannot be empty or blank" }
+    }
+
+    val currencyPair: Pair<Currency, Currency>
+            get() {
+                val l = symbol.split('/')
+                return Pair(Currency.getInstance(l.first()), Currency.getInstance(l.last()))
+            }
+
+    companion object {
+
+        /**
+         * Returns a option contract using the OCC (Options Clearing Corporation) option symbol standard.
+         * The OCC option symbol string consists of four parts:
+         *
+         * 1. uppercase [symbol] of the underlying stock or ETF, padded with trailing spaces to 6 characters
+         * 2. [expiration] date, in the format yymmdd
+         * 3. Option [type], single character either P(ut) or C(all)
+         * 4. strike price, as the [price] x 1000, front padded with 0 to make it 8 digits
+         */
+        fun optionContract(
+            symbol: String,
+            expiration: LocalDate,
+            type: Char,
+            price: String,
+            multiplier: Double = 100.0,
+            currencyCode: String = "USD",
+            exchangeCode: String = "",
+            id: String = ""
+        ): Asset {
+            val formatter = DateTimeFormatter.ofPattern("yyMMdd")
+            val optionSymbol = "%-6s".format(symbol.uppercase()) +
+                    expiration.format(formatter) +
+                    type.uppercase() +
+                    "%08d".format(BigDecimal(price).multiply(BigDecimal(1000)).toInt())
+
+            return Asset(optionSymbol, AssetType.OPTION, currencyCode, exchangeCode, multiplier, id)
+        }
+
+        /**
+         * Returns a future contract
+         */
+        fun futureContract(
+            symbol: String,
+            month: Char,
+            year: Int,
+            currencyCode: String = "USD",
+            exchangeCode: String = "",
+            multiplier: Double = 1.0,
+            id: String = ""
+        ): Asset {
+            val futureSymbol = "$symbol$month$year"
+            return Asset(futureSymbol, AssetType.FUTURES, currencyCode, exchangeCode, multiplier, id)
+        }
+
+        /**
+         * Returns a forex currency pair asset.
+         */
+        fun forexPair(symbol: String): Asset {
+            val codes = symbol.split('_', '-', ' ', '/', ':')
+            val (base, quote) = if (codes.size == 2) {
+                val c1 = codes.first().uppercase()
+                val c2 = codes.last().uppercase()
+                Pair(c1, c2)
+            } else if (codes.size == 1 && symbol.length == 6) {
+                // We assume a 3-3 split
+                val c1 = symbol.substring(0, 3).uppercase()
+                val c2 = symbol.substring(3, 6).uppercase()
+                Pair(c1, c2)
+            } else {
+                throw UnsupportedException("Cannot parse $symbol to currency pair")
+            }
+            return Asset("$base/$quote", AssetType.FOREX, quote)
+        }
+
     }
 
     /**
@@ -55,26 +130,23 @@ data class Asset(
     @Transient
     val currency = Currency.getInstance(currencyCode)
 
-
     /**
      * Get the [Exchange] of this asset based on the underlying exchange code
      */
     val exchange
         get() = Exchange.getInstance(exchangeCode)
 
-
     override fun toString(): String {
-        return "$type $symbol $details"
+        return symbol
     }
 
     /**
      * What is the value of the asset given the provided [size] and [price]
      */
     fun value(size: Size, price: Double): Amount {
-        // If quantity is zero, an unknown price (Double.NanN) is fine
+        // If size is zero, an unknown price (Double.NanN) is fine
         return if (size.iszero) Amount(currency, 0.0) else Amount(currency, size * multiplier * price)
     }
-
 
     /**
      * Compares this object with the specified object for order. Returns zero if this object is equal
@@ -86,7 +158,6 @@ data class Asset(
     }
 
 }
-
 
 /**
  * Get an asset based on its [symbol] name. Will throw a NoSuchElementException if no asset is found. If there are
@@ -104,7 +175,6 @@ fun Collection<Asset>.findBySymbols(vararg symbols: String): List<Asset> = findB
  */
 fun Collection<Asset>.findBySymbols(symbols: Collection<String>): List<Asset> = filter { it.symbol in symbols }
 
-
 /**
  * Find all assets based on their [currencyCodes]. Returns an empty list if no matching assets can be found.
  */
@@ -116,7 +186,6 @@ fun Collection<Asset>.findByCurrencies(vararg currencyCodes: String): List<Asset
  */
 fun Collection<Asset>.findByCurrencies(currencyCodes: Collection<String>): List<Asset> =
     filter { it.currencyCode in currencyCodes }
-
 
 /**
  * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.
@@ -135,7 +204,6 @@ fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset>
  * collection
  */
 fun Collection<Asset>.random(n: Int): List<Asset> = shuffled().take(n)
-
 
 /**
  * Provide a [Summary] for a collection of assets
@@ -160,15 +228,14 @@ fun interface AssetFilter {
      * @param asset
      * @return
      */
-    fun filter(asset: Asset) : Boolean
+    fun filter(asset: Asset): Boolean
 
     companion object {
-
 
         /**
          * Don't apply any filtering and include all assets
          */
-        fun noFilter() : AssetFilter {
+        fun noFilter(): AssetFilter {
             return AssetFilter { true }
         }
 
@@ -178,7 +245,6 @@ fun interface AssetFilter {
         fun includeCurrencies(vararg currencies: Currency): AssetFilter {
             return AssetFilter { asset: Asset -> asset.currency in currencies }
         }
-
 
         /**
          * Exclude assets that match the provided [symbols]. Matching of sybmol names is done case insensitive.
@@ -193,7 +259,7 @@ fun interface AssetFilter {
          */
         fun includeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.uppercase() }.toSet()
-            return AssetFilter{  asset: Asset -> asset.symbol.uppercase() in set }
+            return AssetFilter { asset: Asset -> asset.symbol.uppercase() in set }
         }
 
     }

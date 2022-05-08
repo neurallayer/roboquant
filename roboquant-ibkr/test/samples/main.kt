@@ -25,6 +25,7 @@ import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.ibkr.IBKRBroker
+import org.roboquant.ibkr.IBKRExchangeRates
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
 import org.roboquant.metrics.AccountSummary
@@ -34,24 +35,21 @@ import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMACrossover
 import java.util.logging.Level
 
-fun ibkrBroker() {
-    Config.exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.1)
 
-    val feed = IBKRLiveFeed()
-    val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
-    feed.subscribe(asset)
+fun exchangeRates() {
+    val exchangeRates = IBKRExchangeRates()
+    println(exchangeRates.exchangeRates)
+    exchangeRates.refresh()
+    println(exchangeRates.exchangeRates)
+}
+
+fun broker() {
+    Config.exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.1)
     val broker = IBKRBroker()
     broker.account.fullSummary().print()
-
-    val strategy = EMACrossover.EMA_12_26
-    val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
-    val tf = Timeframe.next(3.minutes)
-    roboquant.run(feed, tf)
-    broker.account.summary()
-
-    // Disconnect
+    historicFeed()
+    broker.account.fullSummary().print()
     broker.disconnect()
-    feed.disconnect()
 }
 
 
@@ -71,7 +69,7 @@ fun closePosition() {
     broker.disconnect()
 }
 
-fun ibkrBrokerFeed() {
+fun paperTrade() {
 
     val exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.89)
     Config.exchangeRates = exchangeRates
@@ -93,7 +91,7 @@ fun ibkrBrokerFeed() {
 }
 
 
-fun ibkrFeed() {
+fun liveFeed() {
     val feed = IBKRLiveFeed()
     val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
     feed.subscribe(asset)
@@ -110,7 +108,7 @@ fun ibkrFeed() {
 }
 
 
-fun ibkrHistoricFeedEU() {
+fun historicFeed() {
     val feed = IBKRHistoricFeed()
 
     // This assumes you have a valid market subscriptoin for European stocks
@@ -119,25 +117,20 @@ fun ibkrHistoricFeedEU() {
     val assets = symbols.map { template.copy(symbol = it) }
     feed.retrieve(assets)
     feed.waitTillRetrieved()
-
-    val inititalDeposit = Wallet(100_000.EUR)
-    val broker = SimBroker(inititalDeposit)
-    val strategy = EMACrossover.EMA_5_15
-    val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
-    roboquant.run(feed)
-    roboquant.broker.account.summary().log()
+    feed.assets.summary().print()
     feed.disconnect()
 }
 
 
 fun main() {
 
-    when ("BROKER") {
-        "BROKER" -> ibkrBroker()
+    when ("EXCH") {
+        "EXCH" -> exchangeRates()
+        "BROKER" -> broker()
         "CLOSE_POSITION" -> closePosition()
-        "FEED" -> ibkrFeed()
-        "BROKER_FEED" -> ibkrBrokerFeed()
-        "HISTORIC" -> ibkrHistoricFeedEU()
+        "FEED" -> liveFeed()
+        "BROKER_FEED" -> paperTrade()
+        "HISTORIC" -> historicFeed()
     }
 
 }

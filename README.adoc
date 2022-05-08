@@ -1,6 +1,14 @@
 = Roboquant
 :icons: font
 
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
 image:https://img.shields.io/badge/kotlin-1.7-blue.svg?logo=kotlin[Kotlin,link=http://kotlinlang.org]
 image:https://github.com/neurallayer/roboquant/actions/workflows/maven.yml/badge.svg[Automated Build,link=https://github.com/neurallayer/roboquant/actions/workflows/maven.yml]
 image:https://img.shields.io/github/languages/code-size/neurallayer/roboquant[GitHub code size in bytes]

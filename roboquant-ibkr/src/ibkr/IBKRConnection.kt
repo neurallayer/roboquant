@@ -17,14 +17,24 @@
 package org.roboquant.ibkr
 
 import com.ib.client.*
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Logging
-import org.roboquant.common.UnsupportedException
+import org.roboquant.common.*
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.*
+
+
+/**
+ * IBKR configuration properties
+ * @constructor Create empty Alpaca config
+ */
+data class IBKRConfig(
+    var host: String = Config.getProperty("ibkr.host", "127.0.0.1"),
+    var port: Int = Config.getProperty("ibkr.port", "4002").toInt(),
+    var account: String = Config.getProperty("ibkr.account", ""),
+    val client: Int = Config.getProperty("ibkr.client", "2").toInt()
+)
+
 
 /**
  * Shared utilities for both IBKR Broker Feed classes
@@ -44,21 +54,17 @@ internal object IBKRConnection {
 
     /**
      * Connect to a IBKR TWS or Gateway
-     *
-     * @param host
-     * @param port
-     * @param clientId
      */
     @Suppress("TooGenericExceptionCaught")
-    fun connect(wrapper: EWrapper, host: String, port: Int, clientId: Int): EClientSocket {
-        val oldClient = connections[clientId]
+    fun connect(wrapper: EWrapper, config: IBKRConfig): EClientSocket {
+        val oldClient = connections[config.client]
         if (oldClient !== null) disconnect(oldClient)
 
         val signal = EJavaSignal()
         val client = EClientSocket(wrapper, signal)
         client.isAsyncEConnect = false
-        client.eConnect(host, port, clientId)
-        logger.info { "Connected to IBKR on $host and port $port with clientId $clientId" }
+        client.eConnect(config.host, config.port, config.client)
+        logger.info { "Connected to IBKR on $config" }
 
         val reader = EReader(client, signal)
         reader.start()
@@ -72,7 +78,7 @@ internal object IBKRConnection {
                 }
             }
         }.start()
-        connections[clientId] = client
+        connections[config.client] = client
         return client
     }
 

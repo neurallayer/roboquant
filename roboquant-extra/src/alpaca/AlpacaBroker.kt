@@ -51,16 +51,14 @@ class AlpacaBroker(
 ) : Broker {
 
     private val _account = InternalAccount()
-    val config = AlpacaConfig()
+    private val config = AlpacaConfig()
 
     override val account: Account
         get() = _account.toAccount()
 
     private val alpacaAPI: AlpacaAPI
     private val handledTrades = mutableSetOf<String>()
-
     private val logger = Logging.getLogger(AlpacaOrder::class)
-
     private val orderMapping = mutableMapOf<Order, AlpacaOrder>()
 
     // All available assets
@@ -121,8 +119,8 @@ class AlpacaBroker(
     private fun syncOrders() {
 
         val states = _account.openOrders.values.map {
-            val aOrder = orderMapping[it.order]!!
-            val order = alpacaAPI.orders().get(aOrder.id, false)!!
+            val aOrder = orderMapping.getValue(it.order)
+            val order = alpacaAPI.orders().get(aOrder.id, false)
             toState(order, it.order)
         }
         _account.putOrders(states)
@@ -176,7 +174,7 @@ class AlpacaBroker(
      * @return
      */
     private fun convertPos(pos: AlpacaPosition): Position {
-        val asset = assetsMap[pos.assetId]!!
+        val asset = assetsMap.getValue(pos.assetId)
         val size = Size(pos.quantity)
         return Position(asset, size, pos.averageEntryPrice.toDouble(), pos.currentPrice.toDouble())
     }
@@ -251,14 +249,8 @@ class AlpacaBroker(
     }
 
     /**
-     * Place new instructions at this broker, the most common instruction being an order. After any processing,
-     * it returns an instance of Account.
+     * Place new [orders] at this broker. After any processing, this method returns an instance of Account.
      *
-     * Right now only Order type instructions are supported
-     *
-     * See also [Order]
-     *
-     * @param orders list of action to be placed at the broker
      * @return the updated account that reflects the latest state
      */
     override fun place(orders: List<Order>, event: Event): Account {
@@ -268,7 +260,7 @@ class AlpacaBroker(
             if (order is SingleOrder) {
                 try {
                     placeOrder(order)
-                    _account.putOrders(listOf(order).initialOrderState)
+                    _account.putOrder(OrderState(order))
                 } catch (e: AlpacaClientException) {
                     logger.severe("couldn't place order=$order", e)
                     _account.putOrder(OrderState(order, status = OrderStatus.REJECTED))

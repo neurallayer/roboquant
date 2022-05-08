@@ -20,6 +20,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
@@ -39,6 +40,19 @@ internal class AssetTest {
 
         val c = Json.decodeFromString<Asset>(s)
         assertEquals(a, c)
+    }
+
+    @Test
+    fun testContracts() {
+        val a = Asset.optionContract("SPX", LocalDate.parse("2014-11-22"), 'P', "19.50")
+        assertEquals("SPX   141122P00019500", a.symbol)
+
+        val b = Asset.futureContract("GC", 'Z', 18)
+        assertEquals("GCZ18", b.symbol)
+
+        val c = Asset.forexPair("EUR_USD")
+        assertEquals("EUR/USD", c.symbol)
+
     }
 
     @Test
