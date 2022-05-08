@@ -37,7 +37,7 @@ class Exchange private constructor(
     val zoneId: ZoneId,
     val currency: Currency,
     private val tradingCalendar: TradingCalendar
-)  {
+) {
 
     /**
      * Returns true if the the two provided times ([first] and [second]) belong to the same trading day. They can be
@@ -83,7 +83,6 @@ class Exchange private constructor(
 
     }
 
-
     /**
      * Convert a local [dateTime] to an Instant type
      */
@@ -92,11 +91,9 @@ class Exchange private constructor(
         return zdt.toInstant()
     }
 
-
     override fun toString(): String {
         return exchangeCode
     }
-
 
     companion object {
 
@@ -162,7 +159,6 @@ class Exchange private constructor(
             addInstance("CRYPTO", "America/New_York", "USD", "00:00", "23:59:59.999")
         }
 
-
         /**
          * The default exchange is the exchange with as exchangeCode an empty string and used as a fallback if an
          * exchange cannot be found.
@@ -170,13 +166,11 @@ class Exchange private constructor(
         val DEFAULT
             get() = getInstance("")
 
-
         /**
          * List of all the currently registered exchanges
          */
         val exchanges
             get() = instances.values
-
 
     }
 }
