@@ -50,11 +50,6 @@ data class Asset(
         require(symbol.isNotBlank()) { "Symbol in an asset cannot be empty or blank" }
     }
 
-    val currencyPair: Pair<Currency, Currency>
-            get() {
-                val l = symbol.split('/')
-                return Pair(Currency.getInstance(l.first()), Currency.getInstance(l.last()))
-            }
 
     companion object {
 
@@ -123,6 +118,15 @@ data class Asset(
         }
 
     }
+
+    /**
+     * Returns the currency pair (base and quote values) for a crypto or forex asset
+     */
+    val currencyPair: Pair<Currency, Currency>
+        get() {
+            val l = symbol.split('/').first()
+            return Pair(Currency.getInstance(l), currency)
+        }
 
     /**
      * Get the [Currency] of this asset based on the underlying currency code.

@@ -5,17 +5,17 @@ import java.time.*
 
 /**
  * Trading calendar is used to define when an [Exchange] is open for trading. Timezone conversions
- * are handled by the Exchange class, the trading calendar only deals with [LocalDate] and [LocalTime] instances.
+ * are handled by the [Exchange] class, the trading calendar only deals with [LocalDate] and [LocalTime] instances.
  */
 interface TradingCalendar {
 
     /**
-     * Returns the opening time for the provided [date] or null if it is not a trading day
+     * Returns the opening time for the provided local [date] or null if it is not a trading day
      */
     fun getOpeningTime(date: LocalDate): LocalTime?
 
     /**
-     * Returns the closing time for the provided [date] or null if it is not a trading day
+     * Returns the closing time for the provided local [date] or null if it is not a trading day
      */
     fun getClosingTime(date: LocalDate): LocalTime?
 

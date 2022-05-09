@@ -22,13 +22,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Currency implementation that supports regular currencies as well as cryptocurrencies. So the [currencyCode] for the
- * currency is not limited to ISO-4217 codes like regular Java Currency class.
+ * currency is not limited to ISO-4217 codes like the regular Java Currency class.
  *
  * This is a lightweight implementation since most of roboquant functionality only relies on the currency code.
  *
  * When creating a new currency instance, use the [Currency.getInstance] method. This ensures only a single
- * instance of a currency exists for a given currency code and that allows for faster equality comparison and hashmap
- * lookups.
+ * instance of a currency exists for a given currency code and that allows for fast equality comparison.
  *
  *  @property currencyCode The currency code for the currency.
  **/

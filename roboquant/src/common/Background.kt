@@ -22,8 +22,8 @@ import kotlinx.coroutines.*
 
 
 /**
- * Background helps to deal with starting and running co-routines. Right now very light implementation, but in future
- * can add features without impacting rest of code. This is uszed only internally.
+ * Background object helps to deal with starting and running co-routines. Right now very light implementation, but
+ * in future features can be added without impacting rest of code. This is uszed only internally.
  */
 internal object Background {
 
