@@ -110,12 +110,11 @@ class AlpacaHistoricFeed(
         }
     }
 
-
-
     private fun fromTemporalAmount(amt: TemporalAmount): Pair<BarTimePeriod, Int> {
 
         return when {
-            amt is ZonedPeriod && amt.units.contains(ChronoUnit.DAYS) && amt.toDays().toInt() > 0 -> Pair(AlpacaPeriod.DAY, amt.toDays().toInt())
+            amt is ZonedPeriod && amt.units.contains(ChronoUnit.DAYS) && amt.toDays()
+                .toInt() > 0 -> Pair(AlpacaPeriod.DAY, amt.toDays().toInt())
             amt is ZonedPeriod && amt.toHours() > 0 -> Pair(AlpacaPeriod.HOUR, amt.toHours().toInt())
             amt is ZonedPeriod && amt.toMinutes() > 0 -> Pair(AlpacaPeriod.MINUTE, amt.toMinutes().toInt())
             else -> throw UnsupportedException("$amt")
@@ -131,7 +130,7 @@ class AlpacaHistoricFeed(
         timeframe: Timeframe,
         barSize: TemporalAmount = 1.days,
     ) {
-        val barFeed = when(config.dataType) {
+        val barFeed = when (config.dataType) {
             DataAPIType.IEX -> BarFeed.IEX
             DataAPIType.SIP -> BarFeed.SIP
         }
