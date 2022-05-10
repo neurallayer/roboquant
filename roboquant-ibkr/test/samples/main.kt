@@ -20,21 +20,20 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
 import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRExchangeRates
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
 import org.roboquant.metrics.AccountSummary
-import org.roboquant.metrics.EventRecorder
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMACrossover
 import java.util.logging.Level
-
 
 fun exchangeRates() {
     val exchangeRates = IBKRExchangeRates()
@@ -44,11 +43,12 @@ fun exchangeRates() {
 }
 
 fun broker() {
+    Logging.setLevel(Level.FINE)
     Config.exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.1)
     val broker = IBKRBroker()
     broker.account.fullSummary().print()
-    historicFeed()
-    broker.account.fullSummary().print()
+    Thread.sleep(5000)
+    println(broker.account.assets)
     broker.disconnect()
 }
 
@@ -56,7 +56,7 @@ fun broker() {
 fun closePosition() {
     Logging.setLevel(Level.FINE)
     Logging.useSimpleFormat = false
-    val broker = IBKRBroker(enableOrders = true)
+    val broker = IBKRBroker()
     val account = broker.account
     account.fullSummary().print()
 
@@ -71,8 +71,7 @@ fun closePosition() {
 
 fun paperTrade() {
 
-    val exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.89)
-    Config.exchangeRates = exchangeRates
+    Config.exchangeRates = IBKRExchangeRates()
     val broker = IBKRBroker()
     broker.account.positions.summary().log()
 
@@ -91,19 +90,25 @@ fun paperTrade() {
 }
 
 
-fun liveFeed() {
+fun liveFeedEU() {
     val feed = IBKRLiveFeed()
     val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
     feed.subscribe(asset)
+    val tf = Timeframe.next(1.minutes)
+    val data = feed.filter<PriceAction>(tf)
+    println(data.size)
+    feed.disconnect()
+}
 
-    val cash = Wallet(1_000_000.EUR)
-    val broker = SimBroker(cash)
 
-    val strategy = EMACrossover.EMA_5_15
-    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), EventRecorder(), broker = broker)
-    val tf = Timeframe.next(10.minutes)
 
-    roboquant.run(feed, tf)
+fun liveFeedUS() {
+    val feed = IBKRLiveFeed()
+    val asset = Asset("TSLA", AssetType.STOCK, "USD")
+    feed.subscribe(asset)
+    val tf = Timeframe.next(1.minutes)
+    val data = feed.filter<PriceAction>(tf)
+    println(data.size)
     feed.disconnect()
 }
 
@@ -124,12 +129,13 @@ fun historicFeed() {
 
 fun main() {
 
-    when ("EXCH") {
+    when ("BROKER") {
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()
         "CLOSE_POSITION" -> closePosition()
-        "FEED" -> liveFeed()
-        "BROKER_FEED" -> paperTrade()
+        "LIVE_FEED_EU" -> liveFeedEU()
+        "LIVE_FEED_US" -> liveFeedUS()
+        "PAPER_TRADE" -> paperTrade()
         "HISTORIC" -> historicFeed()
     }
 

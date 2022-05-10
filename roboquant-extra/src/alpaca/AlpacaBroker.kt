@@ -70,8 +70,8 @@ class AlpacaBroker(
     init {
         config.configure()
         alpacaAPI = AlpacaConnection.getAPI(config)
-        availableAssets = AlpacaConnection.getAvailableAssets(alpacaAPI)
-        assetsMap = availableAssets.associateBy { it.id }
+        assetsMap = AlpacaConnection.getAvailableAssets(alpacaAPI)
+        availableAssets = assetsMap.values.toSortedSet()
         syncAccount()
         syncPortfolio()
         loadInitialOrders()

@@ -40,7 +40,15 @@ class TradeChartByAsset(
         val pnl = trade.pnl.toBigDecimal()
         val totalCost = trade.totalCost.toBigDecimal()
         val fee = trade.fee.toBigDecimal()
-        return "asset: ${trade.asset} <br> currency: ${trade.asset.currency} <br> time: ${trade.time} <br> qty: ${trade.size} <br> fee: $fee <br> pnl: $pnl <br> cost: $totalCost <br> order: ${trade.orderId}"
+        return """
+            |asset: ${trade.asset.symbol}<br>
+            |currency: ${trade.asset.currency}<br> 
+            |time: ${trade.time}<br>
+            |qty: ${trade.size}<br>
+            |fee: $fee<br>
+            |pnl: $pnl<br>
+            |cost: $totalCost<br> 
+            |order: ${trade.orderId}""".trimMargin()
     }
 
     private fun toSeriesData(assets: List<Asset>): List<List<Any>> {

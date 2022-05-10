@@ -75,7 +75,7 @@ class AlpacaLiveFeed(
     }
 
     val availableAssets by lazy {
-        AlpacaConnection.getAvailableAssets(alpacaAPI)
+        AlpacaConnection.getAvailableAssets(alpacaAPI).values.toSortedSet()
     }
 
     /**

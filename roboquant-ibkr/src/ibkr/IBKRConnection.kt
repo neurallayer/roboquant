@@ -22,7 +22,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.*
-
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * IBKR configuration properties
@@ -32,7 +32,7 @@ data class IBKRConfig(
     var host: String = Config.getProperty("ibkr.host", "127.0.0.1"),
     var port: Int = Config.getProperty("ibkr.port", "4002").toInt(),
     var account: String = Config.getProperty("ibkr.account", ""),
-    val client: Int = Config.getProperty("ibkr.client", "2").toInt()
+    var client: Int = Config.getProperty("ibkr.client", "2").toInt()
 )
 
 
@@ -43,6 +43,9 @@ internal object IBKRConnection {
 
     private val logger = Logging.getLogger(IBKRConnection::class)
     private val connections = mutableMapOf<Int, EClientSocket>()
+
+    // Holds mapping between IBKR contract Id and an asset.
+    val assetMap = ConcurrentHashMap<Int, Asset>()
 
 
     fun disconnect(client: EClientSocket) {
@@ -109,7 +112,8 @@ internal object IBKRConnection {
         }
         contract.exchange(exchange)
 
-        if (asset.id.isNotEmpty()) contract.conid(asset.id.toInt())
+        val id = assetMap.filterValues { it == asset }.keys.firstOrNull()
+        if (id != null) contract.conid(id)
         return contract
     }
 

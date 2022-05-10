@@ -42,7 +42,7 @@ open class TradeChart(
         val totalCost = trade.totalCost.toBigDecimal()
         val fee = trade.fee.toBigDecimal()
         return """
-            |asset: ${trade.asset}<br>
+            |asset: ${trade.asset.symbol}<br>
             |currency: ${trade.asset.currency}<br>
             |time: ${trade.time}<br>
             |qty: ${trade.size}<br>

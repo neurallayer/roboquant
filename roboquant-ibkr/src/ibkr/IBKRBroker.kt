@@ -42,7 +42,6 @@ import com.ib.client.OrderStatus as IBOrderStatus
  *
  */
 class IBKRBroker(
-    private val enableOrders: Boolean = false,
     configure: IBKRConfig.() -> Unit = {}
 ) : Broker {
 
@@ -50,7 +49,7 @@ class IBKRBroker(
 
     private val accountId: String?
     private var client: EClientSocket
-    private val _account = InternalAccount()
+    private var _account = InternalAccount()
 
     override val account: Account
         get() = _account.toAccount()
@@ -64,17 +63,15 @@ class IBKRBroker(
     // Track IB Trades and Feed ids with roboquant trades
     private val tradeMap = mutableMapOf<String, Trade>()
 
-    // Holds mapping between contract Id and an asset.
-    private val assetMap = mutableMapOf<Int, Asset>()
-
     init {
-        if (enableOrders) logger.warning { "Enabling sending orders, use it at your own risk!!!" }
         config.configure()
+        require(config.account.isBlank() || config.account.startsWith('D')) {"only paper trading is supported"}
         accountId = config.account.ifBlank { null }
         val wrapper = Wrapper(logger)
         client = IBKRConnection.connect(wrapper, config)
         client.reqCurrentTime()
         client.reqAccountUpdates(true, accountId)
+        // client.reqAccountSummary(9004, "All", "\$LEDGER:ALL")
 
         // Only request orders created with this client, so roboquant
         // doesn't use client.reqAllOpenOrders()
@@ -106,9 +103,6 @@ class IBKRBroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         _account.putOrders(orders.initialOrderState)
-        if (!enableOrders) {
-            return _account.toAccount()
-        }
 
         // First we place the cancellation orders
         for (cancellation in orders.filterIsInstance<CancelOrder>()) {
@@ -235,11 +229,19 @@ class IBKRBroker(
             }
         }
 
+        override fun accountSummary(p0: Int, p1: String?, p2: String?, p3: String?, p4: String?) {
+            println("$p0, $p1, $p2, $p3, $p4")
+        }
+
+        override fun accountSummaryEnd(p0: Int) {
+            println(p0)
+        }
+
         /**
          * This is called with fee and pnl of a trade.
          */
         override fun commissionReport(report: CommissionReport) {
-            logger.fine { "execId=${report.execId()} currency=${report.currency()} fee=${report.commission()} pnl=${report.realizedPNL()}" }
+            logger.fine { "commissionReport execId=${report.execId()} currency=${report.currency()} fee=${report.commission()} pnl=${report.realizedPNL()}" }
             val id = report.execId().substringBeforeLast('.')
             val trade = tradeMap[id]
             if (trade != null) {
@@ -255,7 +257,7 @@ class IBKRBroker(
         }
 
         override fun execDetails(reqId: Int, contract: Contract, execution: Execution) {
-            logger.fine { "execId: ${execution.execId()} asset: ${contract.symbol()} side: ${execution.side()} qty: ${execution.cumQty()} price: ${execution.avgPrice()}" }
+            logger.fine { "execDetails execId: ${execution.execId()} asset: ${contract.symbol()} side: ${execution.side()} qty: ${execution.cumQty()} price: ${execution.avgPrice()}" }
 
             // The last number is to correct an existing execution, so not a new execution
             val id = execution.execId().substringBeforeLast('.')
@@ -284,12 +286,21 @@ class IBKRBroker(
         }
 
         override fun openOrderEnd() {
-            logger.fine("Open order ended")
+            logger.fine("openOrderEnd")
+        }
+
+        override fun accountDownloadEnd(p0: String?) {
+            logger.fine("accountDownloadEnd $p0")
         }
 
 
         override fun updateAccountValue(key: String, value: String, currency: String?, accountName: String?) {
-            logger.fine { "$key $value $currency $accountName" }
+            logger.fine { "updateAccountValue $key $value $currency $accountName" }
+
+            if (key == "AccountCode") require(value.startsWith('D')) {
+                "currently only paper traing account is supported, found $value"
+            }
+
             if (currency != null && "BASE" != currency) {
                 when (key) {
                     "BuyingPower" -> {
@@ -311,13 +322,14 @@ class IBKRBroker(
             realizedPNL: Double,
             accountName: String
         ) {
-            logger.fine { "asset: ${contract.symbol()} position: $position price: $marketPrice cost: $averageCost" }
-            logger.finer { "$contract $position $marketPrice $averageCost" }
+            logger.fine { "updatePortfolio asset: ${contract.symbol()} position: $position price: $marketPrice cost: $averageCost" }
+            logger.finer { "updatePortfolio $contract $position $marketPrice $averageCost" }
             val asset = contract.getAsset()
             val size = Size(position.value())
             val p = Position(asset, size, averageCost, marketPrice, Instant.now())
             _account.setPosition(p)
         }
+
 
         override fun updateAccountTime(timeStamp: String) {
             logger.fine(timeStamp)
@@ -325,26 +337,26 @@ class IBKRBroker(
         }
 
         /**
-         * Convert an IBKR contract to an asset
+         * Convert an IBKR contract to a roboquant asset
+         *
+         * @TODO: support more asset clases
          */
         private fun Contract.getAsset(): Asset {
-            val result = assetMap[conid()]
+            val result = IBKRConnection.assetMap[conid()]
             result != null && return result
 
             val type = when (secType()) {
                 Types.SecType.STK -> AssetType.STOCK
                 Types.SecType.BOND -> AssetType.BOND
-                Types.SecType.OPT -> AssetType.OPTION
                 else -> throw UnsupportedException("Unsupported asset type ${secType()}")
             }
             val asset = Asset(
                 symbol = symbol(),
+                type = type,
                 currencyCode = currency(),
                 exchangeCode = exchange() ?: primaryExch() ?: "",
-                type = type,
-                id = conid().toString()
             )
-            assetMap[conid()] = asset
+            IBKRConnection.assetMap[conid()] = asset
             return asset
         }
 

@@ -49,7 +49,7 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
     }
 
     override fun toString(): String {
-        return "$type id=$id asset=$asset tag=$tag ${info()}"
+        return "$type id=$id asset=${asset.symbol} tag=$tag ${info()}"
     }
 
     /**

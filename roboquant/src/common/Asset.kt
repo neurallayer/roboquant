@@ -140,10 +140,6 @@ data class Asset(
     val exchange
         get() = Exchange.getInstance(exchangeCode)
 
-    override fun toString(): String {
-        return symbol
-    }
-
     /**
      * What is the value of the asset given the provided [size] and [price]
      */

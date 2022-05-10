@@ -22,7 +22,6 @@ import net.jacobpeterson.alpaca.model.endpoint.assets.enums.AssetStatus
 import net.jacobpeterson.alpaca.model.properties.DataAPIType
 import net.jacobpeterson.alpaca.model.properties.EndpointAPIType
 import org.roboquant.common.*
-import java.util.*
 
 typealias AccountType = EndpointAPIType
 typealias DataType = DataAPIType
@@ -78,19 +77,19 @@ internal object AlpacaConnection {
     /**
      * Get the available assets
      */
-    fun getAvailableAssets(api: AlpacaAPI): SortedSet<Asset> {
+    fun getAvailableAssets(api: AlpacaAPI): Map<String, Asset> {
         val availableAssets = api.assets().get(AssetStatus.ACTIVE, AssetClass.CRYPTO) + api.assets()
             .get(AssetStatus.ACTIVE, AssetClass.US_EQUITY)
         val exchangeCodes = Exchange.exchanges.map { e -> e.exchangeCode }
-        val result = mutableListOf<Asset>()
+        val result = mutableMapOf<String, Asset>()
         availableAssets.forEach {
             if (it.exchange != "OTC" || includeOTC) {
                 if (it.exchange !in exchangeCodes) logger.warning("Exchange ${it.exchange} not configured")
                 val assetClass = if (it.assetClass == AssetClass.CRYPTO) AssetType.CRYPTO else AssetType.STOCK
-                result.add(Asset(it.symbol, assetClass, "USD", it.exchange, id = it.id))
+                result[it.id] = Asset(it.symbol, assetClass, "USD", it.exchange)
             }
         }
-        return result.toSortedSet()
+        return result
     }
 
 }

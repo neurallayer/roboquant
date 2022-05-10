@@ -137,7 +137,7 @@ class PriceBar(
         get() = ohlcv[4]
 
 
-    override fun toString(): String = "asset=$asset OHLCV=${ohlcv.toList()}"
+    override fun toString(): String = "asset=${asset.symbol} OHLCV=${ohlcv.toList()}"
 
     companion object {
 
