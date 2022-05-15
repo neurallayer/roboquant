@@ -21,7 +21,6 @@ import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -35,7 +34,6 @@ internal class BinanceLiveFeedTestIT {
         val feed = BinanceLiveFeed()
         val availableAssets = feed.availableAssets
         assertTrue(availableAssets.isNotEmpty())
-        assertContains(feed.availableAssets, "BTCBUSD")
 
         assertTrue(feed.assets.isEmpty())
         feed.subscribePriceBar("BTCBUSD")

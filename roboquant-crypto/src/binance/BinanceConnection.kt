@@ -24,38 +24,26 @@ import org.roboquant.common.Config
 
 internal val binanceTemplate = Asset("TEMPLATE", AssetType.CRYPTO, exchangeCode = "BINANCE")
 
-
 data class BinanceConfig(
     var publicKey: String = Config.getProperty("binance.public.key", ""),
     var secretKey: String = Config.getProperty("binance.secret.key", "")
 )
 
-
 internal object BinanceConnection {
 
     fun getFactory(config: BinanceConfig): BinanceApiClientFactory {
         return if (config.publicKey.isBlank()) BinanceApiClientFactory.newInstance()
-            else BinanceApiClientFactory.newInstance(config.publicKey, config.secretKey)
+        else BinanceApiClientFactory.newInstance(config.publicKey, config.secretKey)
     }
 
-    /**
-     * get available assets
-     */
-    fun retrieveAssets(api: BinanceApiClientFactory): Map<String, Asset> {
-        val client = api.newRestClient()
-        return client.exchangeInfo.symbols.associate {
-            it.symbol to binanceTemplate.copy(symbol = it.symbol, currencyCode = it.quoteAsset)
-        }
-    }
 
     /**
      * get available assets
      */
     fun retrieveAssets(client: BinanceApiRestClient): Map<String, Asset> {
         return client.exchangeInfo.symbols.associate {
-            it.symbol to binanceTemplate.copy(symbol = it.symbol, currencyCode = it.quoteAsset)
+            it.symbol to binanceTemplate.copy(symbol = "${it.baseAsset}/${it.quoteAsset}", currencyCode = it.quoteAsset)
         }
     }
-
 
 }

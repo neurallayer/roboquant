@@ -17,10 +17,7 @@
 package org.roboquant.binance
 
 import org.junit.jupiter.api.Test
-import org.roboquant.common.Config
-import org.roboquant.common.Timeframe
-import org.roboquant.common.days
-import kotlin.test.assertContains
+import org.roboquant.common.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -32,7 +29,10 @@ internal class BinanceHistoricFeedTestIT {
         val feed = BinanceHistoricFeed()
         assertTrue(feed.availableAssets.isNotEmpty())
 
-        assertContains(feed.availableAssets, "BTCBUSD")
+        val asset = feed.availableAssets.getBySymbol("BTC/BUSD")
+        assertEquals(asset.type, AssetType.CRYPTO)
+        assertEquals(asset.currencyPair, Pair(Currency.BTC, Currency.getInstance("BUSD")))
+
         val tf = Timeframe.past(100.days)
         feed.retrieve("BTCBUSD", timeframe = tf)
         assertEquals(1, feed.assets.size)

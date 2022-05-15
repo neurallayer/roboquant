@@ -49,6 +49,9 @@ class BinanceLiveFeed(private val useMachineTime: Boolean = true,
     private val config = BinanceConfig()
     private val factory: BinanceApiClientFactory
     private val client: BinanceApiWebSocketClient
+    private val assetMap: Map<String, Asset>
+    val availableAssets
+        get() = assetMap.values
 
     /**
      * Get the assets that has been subscribed to
@@ -60,11 +63,8 @@ class BinanceLiveFeed(private val useMachineTime: Boolean = true,
         config.configure()
         factory = BinanceConnection.getFactory(config)
         client = factory.newWebSocketClient()
+        assetMap = BinanceConnection.retrieveAssets(factory.newRestClient())
         logger.fine { "Started BinanceFeed using web-socket client" }
-    }
-
-    val availableAssets by lazy {
-        BinanceConnection.retrieveAssets(factory)
     }
 
 
@@ -80,12 +80,13 @@ class BinanceLiveFeed(private val useMachineTime: Boolean = true,
     ) {
         require(symbols.isNotEmpty()) { "You need to provide at least 1 currency pair" }
         for (symbol in symbols) {
-            val asset = availableAssets[symbol]
+            val finalSymbol = symbol.replace("/", "")
+            val asset = assetMap[symbol]
             if (asset != null) {
                 logger.info { "Subscribing to $symbol" }
 
                 // API requires lowercase symbol
-                val closable = client.onCandlestickEvent(symbol.lowercase(), interval) {
+                val closable = client.onCandlestickEvent(finalSymbol.lowercase(), interval) {
                     handle(it)
                 }
                 closeables.add(closable)

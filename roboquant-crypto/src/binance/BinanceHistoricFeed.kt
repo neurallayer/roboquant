@@ -18,6 +18,7 @@ package org.roboquant.binance
 
 import com.binance.api.client.BinanceApiClientFactory
 import com.binance.api.client.BinanceApiRestClient
+import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.HistoricPriceFeed
@@ -36,17 +37,19 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
     private val config = BinanceConfig()
     private val factory: BinanceApiClientFactory
     private val client: BinanceApiRestClient
+    private val assetMap: Map<String, Asset>
 
     init {
         config.configure()
         factory = BinanceConnection.getFactory(config)
         client = factory.newRestClient()
+        assetMap = BinanceConnection.retrieveAssets(client)
     }
 
 
-    val availableAssets by lazy {
-        BinanceConnection.retrieveAssets(client)
-    }
+    val availableAssets
+        get() = assetMap.values
+
 
     /**
      * Retrieve [PriceBar] data for the provides [symbols]. It will retrieve the data for the provided [timeframe],
@@ -62,9 +65,10 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
         val startTime = timeframe.start.toEpochMilli()
         val endTime = timeframe.end.toEpochMilli() - 1
         for (symbol in symbols) {
-            val asset = availableAssets[symbol]
+            val finalSymbol = symbol.replace("/", "")
+            val asset = assetMap[finalSymbol]
             if (asset != null ) {
-                val bars = client.getCandlestickBars(asset.symbol, interval, limit, startTime, endTime)
+                val bars = client.getCandlestickBars(finalSymbol, interval, limit, startTime, endTime)
                 for (bar in bars) {
                     val action = PriceBar(
                         asset,
