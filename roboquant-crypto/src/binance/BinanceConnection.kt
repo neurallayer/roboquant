@@ -19,10 +19,7 @@ package org.roboquant.binance
 import com.binance.api.client.BinanceApiClientFactory
 import com.binance.api.client.BinanceApiRestClient
 import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
 import org.roboquant.common.Config
-
-internal val binanceTemplate = Asset("TEMPLATE", AssetType.CRYPTO, exchangeCode = "BINANCE")
 
 data class BinanceConfig(
     var publicKey: String = Config.getProperty("binance.public.key", ""),
@@ -42,7 +39,7 @@ internal object BinanceConnection {
      */
     fun retrieveAssets(client: BinanceApiRestClient): Map<String, Asset> {
         return client.exchangeInfo.symbols.associate {
-            it.symbol to binanceTemplate.copy(symbol = "${it.baseAsset}/${it.quoteAsset}", currencyCode = it.quoteAsset)
+            it.symbol to Asset.crypto(it.baseAsset, it.quoteAsset, "BINANCE")
         }
     }
 

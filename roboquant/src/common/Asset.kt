@@ -97,6 +97,11 @@ data class Asset(
             return Asset(futureSymbol, AssetType.FUTURES, currencyCode, exchangeCode, multiplier, id)
         }
 
+
+        fun crypto(base: String, quote: String, exchangeCode: String) =
+            Asset("$base/$quote", AssetType.CRYPTO, quote, exchangeCode)
+
+
         /**
          * Returns a forex currency pair asset.
          */
