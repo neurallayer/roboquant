@@ -169,7 +169,7 @@ open class TrailOrder(
 ) : SingleOrder(asset, size, tif, id, tag) {
 
     init {
-        require(trailPercentage > 0.0) { "trailPrecentage should be a positive value" }
+        require(trailPercentage > 0.0) { "trail percentage should be a positive value" }
     }
 
     override fun info() = sortedMapOf("quantity" to size, "trailPercentage" to trailPercentage, "tif" to tif)

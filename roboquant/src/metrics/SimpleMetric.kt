@@ -40,7 +40,7 @@ abstract class SimpleMetric : Metric {
 
     /**
      * Based on the provided [account] and [event], calculate any metrics and return them directly. This method needs to
-     * be implemented in sub-classes.
+     * be implemented in subclasses.
      */
     abstract fun calc(account: Account, event: Event): MetricResults
 

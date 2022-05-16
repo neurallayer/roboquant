@@ -39,13 +39,13 @@ interface OrderSizer {
 
 /**
  * Define a maximum percentage of total equity value you want to limit your orders to, assuming there is sufficient
- * bying power. Additional you can define a absolute minimum amount (denoted in the baseCurrency of the account).
+ * buying power. Additionally, you can define an absolute minimum amount (denoted in the baseCurrency of the account).
  *
- * This implemntation also allows for fractional order sizes. A fraction of 50 for example allows orders to be a
+ * This implementation also allows for fractional order sizes. A fraction of 50 for example allows orders to be a
  * multiple of 1/50
  *
  * @property maxPercentage Maximum percentage of equity to allocate to a single order, default is 1% (0.01)
- * @property minAmount mininum absolute amount of any order, default is 0.0
+ * @property minAmount minimum absolute amount of any order, default is 0.0
  * @property fractions fractions to allow for order size, default is 1 (no fractions)
  *
  */

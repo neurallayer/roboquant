@@ -7,7 +7,7 @@ import org.roboquant.common.Logging
 /**
  * Interface for modelling different types Accounts in the [SimBroker], like a [CashAccount] or [MarginAccount]
  *
- * The main functionality is that at the end of each step the buying power is re-calculaated and made
+ * The main functionality is that at the end of each step the buying power is re-calculated and made
  * available in [Account.buyingPower].
  */
 interface AccountModel {
@@ -21,7 +21,7 @@ interface AccountModel {
 }
 
 /**
- * Basic calculator that calculates: cash balance - open orders. So no leverage or margin is avaialble for trading.
+ * Basic calculator that calculates: cash balance - open orders. So no leverage or margin is available for trading.
  * This is the default BuyingPower and can be used to model a plain Cash Account.
  *
  * You should not short positions when using the CashModel since that is almost never allowed in the real world
@@ -49,8 +49,8 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 /**
  * Account model that supports trading with margin. The buying power calculation uses the following formula:
  *
- *      1. long value = long positions * maintance margin long
- *      2. short value = short positions * maintance margin short
+ *      1. long value = long positions * maintenance margin long
+ *      2. short value = short positions * maintenance margin short
  *      3. excess margin = equity - long value - short value - minimum equity
  *      4. buying power = excess margin * ( 1 / initial margin)
  *
@@ -58,8 +58,8 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
  */
 class MarginAccount(
     private val initialMargin: Double = 0.50,
-    private val maintanceMarginLong: Double = 0.3,
-    private val maintanceMarginShort: Double = maintanceMarginLong,
+    private val maintenanceMarginLong: Double = 0.3,
+    private val maintenanceMarginShort: Double = maintenanceMarginLong,
     private val minimumEquity: Double = 0.0
     // private val includeOpenOrders: Boolean = false
 ) : AccountModel {
@@ -76,16 +76,16 @@ class MarginAccount(
 
     init {
         require(initialMargin in 0.0..1.0) { "initialMargin between 0.0 and 1.0" }
-        require(maintanceMarginLong in 0.0..1.0) { "maintanceMarginLong between 0.0 and 1.0" }
-        require(maintanceMarginShort in 0.0..1.0) { "maintanceMarginShort between 0.0 and 1.0" }
+        require(maintenanceMarginLong in 0.0..1.0) { "maintenanceMarginLong between 0.0 and 1.0" }
+        require(maintenanceMarginShort in 0.0..1.0) { "maintenanceMarginShort between 0.0 and 1.0" }
     }
 
     override fun getBuyingPower(account: InternalAccount): Amount {
         val excessMargin = account.cash + account.portfolio.marketValue
         
         val positions = account.portfolio.values
-        excessMargin.withdraw(positions.long.exposure * maintanceMarginLong)
-        excessMargin.withdraw(positions.short.exposure * maintanceMarginShort)
+        excessMargin.withdraw(positions.long.exposure * maintenanceMarginLong)
+        excessMargin.withdraw(positions.short.exposure * maintenanceMarginShort)
         excessMargin.withdraw(Amount(account.baseCurrency, minimumEquity))
         val buyingPower = excessMargin * (1.0 / initialMargin)
         return buyingPower.convert(account.baseCurrency, account.lastUpdate)

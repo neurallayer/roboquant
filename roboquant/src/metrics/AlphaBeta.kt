@@ -27,12 +27,12 @@ import org.roboquant.strategies.utils.MovingWindow
 
 /**
  * Calculates the Alpha and Beta of an account. This implementation not only looks at the assets in the portfolio, but
- * looks at the returns of the whole account, so including cash balances.
+ * looks at the returns of the complete account, so including cash balances.
  *
- * - Alpha is a measure of the performance of an investment as compared to the market as a whole.
- * - Beta is a measure of the volatility (or systematic risk) of the account compared to the market as a whole.
+ * - Alpha is a measure of the performance of an investment as compared to the market
+ * - Beta is a measure of the volatility (or systematic risk) of the account compared to the market
  *
- * The provided risk free return should be for the same duration as period.
+ * The provided risk-free return should be for the same duration as period.
  *
  * @property referenceAsset Which asset to use for the market volatility, for example S&P 500
  * @property period Over how many events to calculate the beta

@@ -36,7 +36,7 @@ import kotlin.random.Random
  * Configuration for roboquant that contains access to environment properties and has several global properties
  * that can be set:
  *
- * - base cuurency [baseCurrency]
+ * - base currency [baseCurrency]
  * - the default time zone [defaultZoneId]
  * - exchange rates [exchangeRates]
  *
@@ -68,7 +68,7 @@ object Config {
     }
 
     /**
-     * Set a property. This takes precendence over properties found in files.
+     * Set a property. This takes precedence over properties found in files.
      */
     fun setProperty(name: String, value: String) {
         properties[name] = value
@@ -123,7 +123,7 @@ object Config {
 
     /**
      * Returns the roboquant home directory, <USER_HOME>/.roboquant
-     * If it doesn not exist, it will be created the first time this property is called.
+     * If it does not exist, it will be created the first time this property is called.
      */
     val home: Path by lazy {
         val path: Path = Paths.get(System.getProperty("user.home"), ".roboquant")

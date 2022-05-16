@@ -32,7 +32,7 @@ interface Broker : Component {
     val account: Account
 
     /**
-     * Place new [orders] at this broker. The [event] is usefull for simulated brokers, but can also function
+     * Place new [orders] at this broker. The [event] is useful for simulated brokers, but can also function
      * as a safeguard for other brokers (like not allowing to place orders is the current price is unknown).
      *
      * After processing the [orders], this method returns an instance of the updated account. The returned instance of

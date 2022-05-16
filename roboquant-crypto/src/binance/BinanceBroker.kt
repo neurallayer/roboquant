@@ -33,6 +33,7 @@ import org.roboquant.common.Currency
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
+import java.time.Instant
 
 /**
  * Implementation of the broker interface for Binance exchange. This enables live trading of cryptocurrencies
@@ -56,7 +57,7 @@ class BinanceBroker(
 
 
     private val logger = Logging.getLogger(BinanceBroker::class)
-    private val placedOrders = mutableMapOf<Long, SingleOrder>()
+    private val placedOrders = mutableMapOf<Long, OrderState>()
     private var orderId = 0
     private val assetMap: Map<String, Asset>
 
@@ -81,7 +82,11 @@ class BinanceBroker(
         for (order in client.getOpenOrders(OrderRequest(""))) {
             val o = placedOrders[order.orderId]
             if (o !== null) {
-                // o.fill = order.executedQty.toDouble()
+                val orderState = when (order.status) {
+                    com.binance.api.client.domain.OrderStatus.FILLED -> o.copy(Instant.now(), OrderStatus.COMPLETED)
+                    else -> o
+                }
+                _account.openOrders[order.orderId.toInt()] = orderState
             } else {
                 logger.info("Received unknown order $order")
             }
@@ -111,11 +116,11 @@ class BinanceBroker(
 
                     is LimitOrder -> {
                         val newLimitOrder = trade(symbol, order)
-                        placedOrders[newLimitOrder.orderId] = order
+                        placedOrders[newLimitOrder.orderId] = OrderState(order)
                     }
                     is MarketOrder -> {
                         val newMarketOrder = trade(symbol, order)
-                        placedOrders[newMarketOrder.orderId] = order
+                        placedOrders[newMarketOrder.orderId] = OrderState(order)
                     }
                     else -> logger.warning {
                         "supports only cancellation, market and limit orders, received ${order::class} instead"

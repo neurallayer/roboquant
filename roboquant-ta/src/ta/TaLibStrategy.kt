@@ -115,18 +115,18 @@ class TaLibStrategy(history: Int = 15) : Strategy {
 
         /**
          * Vwap strategy buys if the VWAP is higher than the actual price by a certain margin and sells if the
-         * vwap is lower than the actual price by a certian margin. Although this strategy can be used for any interval
-         * between prices, it is most often used for day trading and very small time interval between price events.
+         * vwap is lower than the actual price by a certain margin. Although this strategy can be used for any interval
+         * between prices, it is most often used for day trading and small time-intervals between price events.
          *
          * @param period period to use to calculate the VWAP, default is 0.1%
          * @param bips the margin in Bips
          * @return
          */
         fun vwap(period: Int, bips: Int = 100) : TaLibStrategy {
-            val perc = bips / 10_000.0
+            val percentage = bips / 10_000.0
             val strategy = TaLibStrategy(period)
-            strategy.buy { vwap(it, period) > it.close.last() * (1.0 + perc) }
-            strategy.sell { vwap(it, period) < it.close.last() * (1.0 - perc) }
+            strategy.buy { vwap(it, period) > it.close.last() * (1.0 + percentage) }
+            strategy.sell { vwap(it, period) < it.close.last() * (1.0 - percentage) }
             return strategy
         }
 

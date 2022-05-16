@@ -34,7 +34,7 @@ import java.math.BigDecimal
 import java.time.Instant
 
 /**
- * Implementation of the [Broker] interface that can be used for paper- en live-trading using OANDA as your broker.
+ * Implementation of the [Broker] interface that can be used for paper- and live-trading using OANDA as your broker.
  */
 class OANDABroker(
     private val maxLeverage: Double = 30.0, // Used to calculate buying power
@@ -103,7 +103,7 @@ class OANDABroker(
 
     /**
      * First time when connecting, update the state of roboquant account with broker account. Only cash and positions
-     * are synced and it is assumed there are no open orders pending.
+     * are synced, and it is assumed there are no open orders pending.
      */
     private fun initAccount() {
         val acc = ctx.account.get(accountID).account
@@ -172,7 +172,7 @@ class OANDABroker(
     }
 
     /**
-     * For now only market- and limit-orders are supported, all other order types are rejected. Also orders will
+     * For now only market- and limit-orders are supported, all others are rejected. Also orders will
      * always TIF be submitted with FOK (FillOrKill) and ignore the requested TiF.
      */
     override fun place(orders: List<Order>, event: Event): Account {
@@ -214,7 +214,7 @@ class OANDABroker(
             _account.putOrder(state)
         }
 
-        // OONDA doesn't update positions quick enough and so they don't reflect trades just made.
+        // OANDA doesn't update positions quick enough, and so they don't reflect trades just made.
         // so for now we put a sleep in here :(
         Thread.sleep(1000)
         syncPortfolio()

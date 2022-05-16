@@ -14,5 +14,5 @@ Roboquant couldn't have been developed without the use of free and open source t
 * https://github.com/osiegmar/FastCSV[FastCSV]: an ultra-fast and easy to use CSV parser.
 
 == Other artefacts
-* Comfortaa font created by Johan Aakerlund. I really like how _roboquant_ looks like using Comfortaa font.
+* `Comfortaa` font created by Johan Aakerlund. I really like how _roboquant_ looks like using `Comfortaa` font.
 * Modified robot image from Free Vector Characters, as also seen on the README page and https://roboquant.org[roboquant.org] website.

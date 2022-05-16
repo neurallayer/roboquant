@@ -29,8 +29,8 @@ import org.roboquant.common.Asset
  * - update of an existing order
  *
  * @property asset the underlying asset of the order
- * @property id an unqiue id of the order
- * @property tag an abritrary tag that can be associated with this order, default is an empty string
+ * @property id an unique id of the order
+ * @property tag an arbitrary tag that can be associated with this order, default is an empty string
  *
  **/
 abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
@@ -59,7 +59,7 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
         get() = this::class.simpleName
 
     /**
-     * Provide extra info as map, used in displaying order information. Default is an emoty map.
+     * Provide extra info as map, used in displaying order information. Default is an empty map.
      *
      * @return
      */

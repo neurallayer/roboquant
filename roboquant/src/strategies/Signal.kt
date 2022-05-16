@@ -76,7 +76,7 @@ class Signal(
 ) {
 
     /**
-     * Does this signal allow to function as a exit signal, so to close or decrease a position
+     * Does this signal allow to function as an exit signal, so to close or decrease a position
      */
     val exit
         get() = type === SignalType.EXIT || type === SignalType.BOTH
@@ -94,7 +94,7 @@ class Signal(
         get() = Amount(asset.currency, stopLoss)
 
     /**
-     * Does this signal allow to function as a entry signal, so to open or increase a position
+     * Does this signal allow to function as an entry signal, so to open or increase a position
      */
     val entry
         get() = type === SignalType.ENTRY || type === SignalType.BOTH

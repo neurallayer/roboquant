@@ -22,7 +22,7 @@ import java.time.Instant
 
 /**
  * Class that holds the position of an asset in the portfolio. This implementation makes no assumptions about the
- * asset class, so it supports any type of asset class from stocks and options to crypto currencies.
+ * asset class, so it supports any type of asset class from stocks and options to cryptocurrencies.
  *
  * @property asset the asset
  * @property size size of the position, not including any contract multiplier defined at asset level
@@ -69,7 +69,7 @@ data class Position(
     }
 
     operator fun plus(p: Position) : Position {
-        // Use BigDecimals to perform the addition so we don't loose precision
+        // Use BigDecimals to perform the addition, so we don't lose precision
         val newSize = size + p.size
 
         return when {

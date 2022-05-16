@@ -27,10 +27,10 @@ import kotlin.math.sign
  * - Sell: Also known as strong sell, it's a recommendation to sell an asset or to liquidate an asset.
  * - Hold: In general terms, an asset with a hold recommendation is expected to perform at the same pace as comparable
  *   assets or in-line with the market.
- * - Underperform: A recommendation that means a asset is expected to do slightly worse than the overall market
+ * - Underperform: A recommendation that means an asset is expected to do slightly worse than the overall market
  *   return. Underperform can also be expressed as "moderate sell," "weak hold" and "underweight."
  * - Outperform: Also known as "moderate buy," "accumulate" and "overweight." Outperform is a recommendation
- *   meaning a asset is expected to do slightly better than the market return.
+ *   meaning an asset is expected to do slightly better than the market return.
  *
  *   The [value] of a rating goes from 2 (BUY) to -2 (SELL)
  *
@@ -43,7 +43,7 @@ enum class Rating(val value: Int) {
     BUY(2),
 
     /**
-     * Outperform rating, is a recommendatio meaning a asset is expected to do slightly better than the market return.
+     * Outperform rating, is a recommendation meaning an asset is expected to do slightly better than the market return.
      */
     OUTPERFORM(1),
 

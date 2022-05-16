@@ -50,7 +50,7 @@ fun base(feed: Feed) {
 
 
 /**
- * Example of hyper parameter search using parallel runs.
+ * Example of hyperparameter search using parallel runs.
  * Total 36 (6x6) combinations are explored.
  */
 suspend fun multiRunParallel(feed: Feed) {

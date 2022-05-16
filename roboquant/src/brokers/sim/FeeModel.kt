@@ -19,15 +19,15 @@ package org.roboquant.brokers.sim
 import kotlin.math.absoluteValue
 
 /**
- * Calculate the broker fee/comisions to be used for executed trades.
+ * Calculate the broker fee/commissions to be used for executed trades.
  */
 interface FeeModel {
 
     /**
-     * Any fees or commisions applicable for the provided [execution]. The returned value should be denoted in the
+     * Any fees or commissions applicable for the provided [execution]. The returned value should be denoted in the
      * currency of the underlying asset of the order.
      *
-     * Typically a fee should be a positive value, unless you want to model rebates and other rewards.
+     * Typically, a fee should be a positive value, unless you want to model rebates and other rewards.
      */
     fun calculate(execution: Execution): Double
 
@@ -51,7 +51,7 @@ class PercentageFeeModel(
 }
 
 /**
- * Fee model that adds no additional fee or commisions.
+ * Fee model that adds no additional fee or commissions.
  */
 class NoFeeModel : FeeModel {
 

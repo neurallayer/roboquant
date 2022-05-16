@@ -251,7 +251,7 @@ class IBKRBroker(
                 )
                 _account.trades[i] = newTrade
             } else {
-                logger.warning("Commision for none existing trade ${report.execId()}")
+                logger.warning("Commission for none existing trade ${report.execId()}")
             }
 
         }
@@ -298,7 +298,7 @@ class IBKRBroker(
             logger.fine { "updateAccountValue $key $value $currency $accountName" }
 
             if (key == "AccountCode") require(value.startsWith('D')) {
-                "currently only paper traing account is supported, found $value"
+                "currently only paper trading account is supported, found $value"
             }
 
             if (currency != null && "BASE" != currency) {
@@ -339,7 +339,7 @@ class IBKRBroker(
         /**
          * Convert an IBKR contract to a roboquant asset
          *
-         * @TODO: support more asset clases
+         * @TODO: support more asset classes
          */
         private fun Contract.getAsset(): Asset {
             val result = IBKRConnection.assetMap[conid()]

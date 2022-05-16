@@ -84,7 +84,7 @@ internal class MarginAccountTest {
 
     @Test
     fun testMarginAccountShort() {
-        // Slide 3 example example in code
+        // Slide 3 example in code
         val initial = 20_000.USD
         val broker = getSimBroker(initial, MarginAccount())
         val abc = Asset("ABC", currencyCode = "USD")

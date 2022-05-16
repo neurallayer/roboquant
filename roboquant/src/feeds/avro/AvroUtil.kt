@@ -60,7 +60,7 @@ object AvroUtil {
             """
 
     /**
-     * Record the [PriceAction]s in a feed and store them in a Avro file that can be later used with an [AvroFeed].
+     * Record the [PriceAction]s in a feed and store them in an Avro file that can be later used with an [AvroFeed].
      */
     fun record(
         feed: Feed,

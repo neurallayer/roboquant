@@ -4,7 +4,7 @@ import java.time.Instant
 
 
 /**
- * Timeline is a ordered list of [Instant] instances, sorted from old to new. Currently it is just a typealias for
+ * Timeline is an ordered list of [Instant] instances, sorted from old to new. Currently, it is just a typealias for
  * List<Instant>, but this might change in the future.
  */
 typealias Timeline = List<Instant>

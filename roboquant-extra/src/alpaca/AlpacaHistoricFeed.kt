@@ -51,7 +51,7 @@ class AlpacaHistoricFeed(
     }
 
     /**
-     * All available assets that can be retrieved. See [assets] for the assets that have already been retreived.
+     * All available assets that can be retrieved. See [assets] for the assets that have already been retrieved.
      */
     val availableAssets by lazy {
         AlpacaConnection.getAvailableAssets(alpacaAPI).values.toSortedSet()

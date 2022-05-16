@@ -22,7 +22,7 @@ import org.roboquant.common.clean
 import org.roboquant.common.std
 
 /**
- * Single metric entry with the runinfo. This is a read-only class.
+ * Single metric entry with the [RunInfo]. This is a read-only class.
  *
  * @property metric
  * @property value

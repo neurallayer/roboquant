@@ -22,12 +22,12 @@ import org.roboquant.feeds.Event
 /**
  * Capture the following statistics about the [Account]:
  *
- * - account.orders  Total number of orders, open and closed together
- * - account.trades Total number of trades
- * - account.positions Total number of open positions in the portfolio
- * - account.cash Total cash value
- * - account.buyingPower Buying power available in the account
- * - account.equity Total equity value of the account
+ * - `account.orders`  Total number of orders, open and closed together
+ * - `account.trades` Total number of trades
+ * - `account.positions` Total number of open positions in the portfolio
+ * - `account.cash` Total cash value
+ * - `account.buyingPower` Buying power available in the account
+ * - `account.equity` Total equity value of the account
  *
  * All monetary values are denoted in base currency of the account
  *

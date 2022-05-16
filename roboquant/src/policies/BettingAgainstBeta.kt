@@ -41,7 +41,7 @@ import kotlin.math.min
  *
  * Since this strategy controls the complete portfolio and not just generates signals, it is implemented as a [Policy]
  * and not a strategy. It doesn't use leverage or buying power, when re-balancing it just re-balances the total equity
- * of the account accross the long and short positions.
+ * of the account across the long and short positions.
  *
  * > Betting against Beta was first described by Andrea Frazzinia and Lasse Heje Pedersen in Journal of Financial
  * Economics
@@ -92,7 +92,7 @@ open class BettingAgainstBeta(
      * @return
      */
     private fun rebalance(betas: List<Pair<Asset, Double>>, account: Account, event: Event): List<Order> {
-        // maximum number of short and long assets we want to have in portfolio. Since htere cannot be overlap,
+        // maximum number of short and long assets we want to have in portfolio. Since there cannot be overlap,
         // the maximum number is always equal or smaller than half.
         val max = min(betas.size/2, maxAssetsInPortfolio/2)
 

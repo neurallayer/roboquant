@@ -95,7 +95,7 @@ object Logging {
     }
 
     /**
-     * Set the logging level for all loggers to specified [level] and restric the update to loggers whose name start
+     * Set the logging level for all loggers to specified [level] and restrict the update to loggers whose name start
      * with provided [prefix], the default being "org.roboquant"
      */
     fun setLevel(level: Level, prefix: String = "org.roboquant", updateDefault: Boolean = true) {

@@ -26,7 +26,7 @@ import java.time.Instant
 
 /**
  * Internal Account is only used by broker implementations, like the SimBroker. The broker is the only one with a
- * referene to this account and will communicate to the outside world (Policy and Metrics) only the immutable [Account]
+ * reference to this account and will communicate to the outside world (Policy and Metrics) only the immutable [Account]
  * version.
  *
  * - Cash balances in the account
@@ -46,7 +46,7 @@ import java.time.Instant
 class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
 
     /**
-     * When was the account last updated, default if not set is Instant.MIN
+     * When was the account last updated, default if not set is [Instant.MIN]
      */
     var lastUpdate: Instant = Instant.MIN
 

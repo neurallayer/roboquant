@@ -127,7 +127,7 @@ class AlpacaBroker(
     }
 
     /**
-     * Load the open orders already linked to the account. This is only called once during initiatlization.
+     * Load the open orders already linked to the account. This is only called once during initialization.
      * Closed orders will be ignored.
      */
     private fun loadInitialOrders() {

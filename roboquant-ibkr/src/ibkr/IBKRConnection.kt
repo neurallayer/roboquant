@@ -44,7 +44,7 @@ internal object IBKRConnection {
     private val logger = Logging.getLogger(IBKRConnection::class)
     private val connections = mutableMapOf<Int, EClientSocket>()
 
-    // Holds mapping between IBKR contract Id and an asset.
+    // Holds mapping between IBKR contract ids and assets.
     val assetMap = ConcurrentHashMap<Int, Asset>()
 
 

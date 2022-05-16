@@ -142,7 +142,7 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
 
     /**
      * Set a monetary [value]. If the [currency] already exist, its value will be overwritten, otherwise a new entry
-     * will be created. If the new value is zero, the enntry will be removed since a wallet doesn't contain zero
+     * will be created. If the new value is zero, the entry will be removed since a wallet doesn't contain zero
      * values
      */
     fun set(currency: Currency, value: Double) {
@@ -264,7 +264,7 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
     }
 
     /**
-     * Convert a [Wallet] value into a single currency amount. Under the hood is uses [Amount.convert] to perfrom the
+     * Convert a [Wallet] value into a single currency amount. Under the hood is uses [Amount.convert] to perform the
      * actual conversions.
      *
      * @param toCurrency The currency to convert the cash to, default is the baseCurrency of the account

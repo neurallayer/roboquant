@@ -30,7 +30,7 @@ import org.knowm.xchange.dto.trade.LimitOrder as CryptoLimitOrder
 import org.knowm.xchange.dto.trade.MarketOrder as CryptoMarketOrder
 
 /**
- * Generic Crypto currency broker implementation for exchanges that are supported by the XChange package.
+ * Generic cryptocurrency broker implementation for exchanges that are supported by the XChange package.
  *
  * XChange is a Java library providing a streamlined API for interacting with 60+ Bitcoin and Altcoin exchanges
  * See also https://knowm.org/open-source/xchange/ for a complete overview of the supported exchanges.

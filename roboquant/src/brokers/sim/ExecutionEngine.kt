@@ -6,7 +6,7 @@ import java.util.*
 import kotlin.reflect.KClass
 
 /**
- * Order handler factory creates [OrderHandler] for an order. The provided handler is repsonsible for executing the
+ * Order handler factory creates [OrderHandler] for an order. The provided handler is responsible for executing the
  * order.
  *
  * @param T
@@ -93,10 +93,10 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
     }
 
 
-    // Currently active order commands
+    // Return the trade-handlers
     private val tradeHandlers = LinkedList<TradeOrderHandler>()
 
-    // Currently active order commands
+    // Return the modify-handlers
     private val modifyHandlers = LinkedList<ModifyOrderHandler>()
 
     /**
@@ -114,13 +114,13 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
 
 
     /**
-     * Latetst Order states of all handlers
+     * Return the order states of all handlers
      */
     val orderStates
         get() = tradeHandlers.map { it.state } + modifyHandlers.map { it.state }
 
     /**
-     * Add a new order to the execution engine. Orders can only be processed if their is a corresponding handler
+     * Add a new order to the execution engine. Orders can only be processed if there is a corresponding handler
      * registered for the order class.
      *
      * @param order
@@ -145,14 +145,14 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
      * Execute all the handlers of orders that are not yet closed. Logic:
      *
      * 1. First any open modify orders will be processed
-     * 2. The any regular order will be processed assuming there is a price action for the underlying asses.
+     * 2. Then any regular order will be processed assuming there is a price action for the underlying asses.
      *
      * @param event
      * @return
      */
     fun execute(event: Event): List<Execution> {
 
-        // We always first execute the modify orders. These are run even if there is
+        // We always first execute modify orders. These are run even if there is
         // no price for the asset known
         for (handler in modifyHandlers.open()) {
             handler.execute(tradeHandlers, event.time)

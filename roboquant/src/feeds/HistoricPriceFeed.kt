@@ -51,7 +51,7 @@ open class HistoricPriceFeed : HistoricFeed {
 
 
     /**
-     * Remove all events from this feed, realsing possible claimed memory.
+     * Remove all events from this feed, releasing claimed memory.
      */
     override fun close() {
         events.clear()

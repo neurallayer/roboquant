@@ -80,7 +80,6 @@ class AlpacaLiveFeed(
 
     /**
      * Connect to ta market data provider and start listening. This can be the stocks or crypto market data feeds.
-     * 13 april 15:00 hendriks
      */
     fun connect(
         connection: MarketDataWebsocketInterface = alpacaAPI.stockMarketDataStreaming(),

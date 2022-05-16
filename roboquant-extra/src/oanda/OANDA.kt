@@ -40,17 +40,17 @@ object OANDA {
 
     /**
      * Create a [Roboquant] instance configured for back testing OANDA trading. Although trading Forex is just like any
-     * another asset class, there are some configuration paramters that are different from assets classes like stocks:
+     * another asset class, there are some configuration parameters that are different from assets classes like stocks:
      * - Being short is as common as being long
      * - The spread cost (for common currency pairs) is smaller than with most stocks
      * - Leverage is high
-     * - There are no fees or commisions
+     * - There are no fees or commissions
      */
     fun roboquant(strategy: Strategy, vararg metrics: Metric): Roboquant {
         // We allow shorting
         val policy = DefaultPolicy(shorting = true)
 
-        // No commisions or fees
+        // No commissions or fees
         val feeModel = NoFeeModel()
 
         // We use a lower spread model, since the default of 10 BIPS is too much for most Forex trading

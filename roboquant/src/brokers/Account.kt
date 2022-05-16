@@ -30,13 +30,13 @@ import kotlin.math.absoluteValue
  * - [cash] balances in the account
  * - the [portfolio] with its assets
  * - The past [trades]
- * - The [orders] and theor state, both open (still in progress) and already closed ones
+ * - The [orders] and their state, both open (still in progress) and already closed ones
  *
  * It supports multi-currency trading through the use of a pluggable currency converter. Without configuring such
  * plug-in it still supports single currency trading, so when all assets and cash balances are denoted in a single
  * currency.
  *
- * This is a immutable class.
+ * This is an immutable class.
  *
  * @property baseCurrency what is the base currency of the account
  * @property lastUpdate when was the account last updated
@@ -135,7 +135,7 @@ class Account(
     }
 
     /**
-     * Provide a full summary of the account that contains all cahs, orders, trades and open positions. During back
+     * Provide a full summary of the account that contains all cash, orders, trades and open positions. During back
      * testing this can become a long list of items, so look at [summary] for a shorter summary.
      */
     fun fullSummary(): Summary {
@@ -202,7 +202,7 @@ val Collection<Position>.unrealizedPNL
     get() = sumOf { it.unrealizedPNL }
 
 /**
- * Return the total relaized PNL for a collection of trades
+ * Return the total realized PNL for a collection of trades
  */
 val Collection<Trade>.realizedPNL
     get() = sumOf { it.pnl }

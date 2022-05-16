@@ -10,7 +10,7 @@ import org.roboquant.metrics.SimpleMetric
 import org.roboquant.strategies.utils.PriceBarSeries
 
 /**
- * Add a technical indicator as a metric, for example a moving avarage.
+ * Add a technical indicator as a metric, for example a moving average.
  *
  * @property name the name of the metric
  * @property history

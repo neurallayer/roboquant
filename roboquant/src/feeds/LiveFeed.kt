@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
  * This default implementation generates heartbeat signals to ensure components still have an opportunity
  * to act even if no other data is incoming. A heartbeat is an [empty event ][Event.empty].
  *
- * @param heartbeatInterval The interval between heartbeats in milli-seconds, default is 10_000 (10 seconds)
+ * @param heartbeatInterval The interval between heartbeats in milliseconds, default is 10_000 (10 seconds)
  */
 abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
 

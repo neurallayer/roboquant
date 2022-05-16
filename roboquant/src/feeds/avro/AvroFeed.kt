@@ -61,7 +61,7 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
 
     init {
         if (useIndex) buildIndex()
-        logger.info { "Loaded data from $path with timefame $timeframe" }
+        logger.info { "Loaded data from $path with timeframe $timeframe" }
     }
 
     private fun position(r: DataFileReader<GenericRecord>, time: Instant) {

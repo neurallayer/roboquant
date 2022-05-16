@@ -60,7 +60,7 @@ interface PriceAction : Action {
     fun getPrice(type: String = "DEFAULT"): Double
 
     /**
-     * Same as [getPrice] but returns an [Amount], so this incudes the currency. The default implmentation should be
+     * Same as [getPrice] but returns an [Amount], so this incudes the currency. The default implementation should be
      * sufficient for most cases.
      */
     fun getPriceAmount(type: String = "DEFAULT") = Amount(asset.currency, getPrice(type))
@@ -69,7 +69,7 @@ interface PriceAction : Action {
      * Volume for the price action. If not implemented, it should return [Double.NaN]
      *
      * Volume in the context of a PriceAction can mean different things. For example is can be trade volume but also
-     * orderbook volume, depending on the type of PriceAction.
+     * order-book volume, depending on the type of PriceAction.
      */
     val volume: Double
 
@@ -290,7 +290,7 @@ data class PriceQuote(
     }
 
     /**
-     * Returns the volume. The volume is defined as totol of [askSize] and [bidSize]
+     * Returns the volume. The volume is defined as total of [askSize] and [bidSize]
      */
     override val volume: Double
         get() = askSize + bidSize

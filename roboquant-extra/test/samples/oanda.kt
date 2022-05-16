@@ -36,7 +36,6 @@ import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.EMACrossover
 import java.util.logging.Level
 
-
 fun oanda() {
     val feed = OANDAHistoricFeed()
     feed.retrieveCandles("EUR_USD", "USD_JPY", "GBP_USD")
@@ -45,7 +44,6 @@ fun oanda() {
     println(feed.timeframe)
 
 }
-
 
 fun forexAvro() {
     val feed = AvroFeed("/Users/peter/data/avro/forex_march_2020.avro")
@@ -59,13 +57,24 @@ fun forexAvro() {
 fun oandaLong() {
     val feed = OANDAHistoricFeed()
     val timeframe = Timeframe.parse("2020-03-01", "2020-04-01")
-    val symbols = listOf("EUR_USD", "USD_JPY", "GBP_USD", "AUD_USD", "USD_CAD", "USD_CHF", "EUR_GBP", "AUD_JPY", "NZD_USD", "GBP_JPY").toTypedArray()
+    val symbols = listOf(
+        "EUR_USD",
+        "USD_JPY",
+        "GBP_USD",
+        "AUD_USD",
+        "USD_CAD",
+        "USD_CHF",
+        "EUR_GBP",
+        "AUD_JPY",
+        "NZD_USD",
+        "GBP_JPY"
+    ).toTypedArray()
 
     // There is a limit on what we can download per API call, so we split it in individual days
     for (tf in timeframe.split(1.days)) {
         feed.retrieveCandles(*symbols, timeframe = tf)
         println(feed.timeline.size)
-        Thread.sleep(1000) // lets play nice and not overload things
+        Thread.sleep(1000) // let's play nice and not overload things
     }
     feed.assets.summary().log()
     println(feed.timeline.size)
@@ -75,7 +84,6 @@ fun oandaLong() {
     AvroUtil.record(feed, "/Users/peter/data/avro/forex_march_2020.avro")
 
 }
-
 
 fun oanda2() {
     Currency.increaseDigits(3)
@@ -88,7 +96,6 @@ fun oanda2() {
     roboquant.broker.account.fullSummary().print()
 }
 
-
 fun oandaLive() {
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
@@ -97,7 +104,6 @@ fun oandaLive() {
     println(actions.size)
 }
 
-
 fun oandaLive2() {
     val feed = OANDALiveFeed()
     feed.subscribePriceBar("EUR_USD", "USD_JPY", "GBP_USD", granularity = "S5", delay = 5_000L)
@@ -105,7 +111,6 @@ fun oandaLive2() {
     val actions = feed.filter<PriceBar>(tf)
     println(actions.size)
 }
-
 
 fun oandaPaperTrading() {
     Currency.increaseDigits(3) // We want to use extra digits when displaying amounts
@@ -125,7 +130,6 @@ fun oandaPaperTrading() {
     roboquant.broker.account.fullSummary().print()
 }
 
-
 fun oandaClosePositions() {
     val broker = OANDABroker()
     Logging.setLevel(Level.FINE)
@@ -138,16 +142,12 @@ fun oandaClosePositions() {
     broker.account.fullSummary().print()
 }
 
-
-
 fun oandaLiveRecord() {
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
     val tf = Timeframe.next(5.minutes)
     AvroUtil.record(feed, "/Users/peter/tmp/oanda.avro", tf)
 }
-
-
 
 fun oandaBroker() {
     Config.exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
@@ -165,7 +165,6 @@ fun oandaBroker() {
     roboquant.run(feed, twoMinutes)
     broker.account.portfolio.summary().log()
 }
-
 
 fun oandaBroker3() {
     Logging.setLevel(Level.FINE, "OANDABroker")
@@ -199,7 +198,6 @@ fun oandaBroker2(createOrder: Boolean = true) {
         broker.account.fullSummary().log()
     }
 }
-
 
 fun main() {
     when ("OANDA_LIVE_FEED2") {

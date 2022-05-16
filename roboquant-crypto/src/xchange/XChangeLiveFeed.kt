@@ -152,7 +152,7 @@ class XChangeLiveFeed(
 
 
     /**
-     * Get an asset based on a crypto-currency pair.
+     * Get an asset based on a cryptocurrency pair.
      *
      * @return
      */
@@ -161,7 +161,7 @@ class XChangeLiveFeed(
     }
 
     /**
-     * Get an asset based on a crypto-currency pair.
+     * Get an asset based on a cryptocurrency pair.
      *
      * @param currencyPair
      * @return

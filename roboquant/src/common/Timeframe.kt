@@ -28,8 +28,8 @@ import kotlin.math.pow
  * timeframe instance is immutable.  Like all time related logic in roboquant, it uses the [Instant] type to define
  * a moment in time, in order to avoid potential timezone inconsistencies.
  *
- * All internal trading logic uses nanoseconds as the the smallest difference between two times. However some
- * visualizations and charts use milli-seconds and the smallest time differences.
+ * All internal trading logic uses nanoseconds as the smallest difference between two times. However, some
+ * visualizations and charts use milliseconds and the smallest time differences.
  *
  * It can be used to limit the duration of a run to that specific timeframe, for example in a walk-forward. It can also
  * serve to limit a live-feed to a certain duration.
@@ -98,7 +98,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
             get() = parse("2008-09-08T00:00:00Z", "2009-03-10T00:00:00Z")
 
         /**
-         * After the finincial crisis of 2008-2009, a ten year period of mostly a bullish market started.
+         * After the financial crisis of 2008-2009, a ten-year period of mostly a bullish market started.
          */
         val tenYearBullMarket2009
             get() = parse("2009-03-10T00:00:00Z", "2019-03-10T00:00:00Z")
@@ -111,7 +111,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
             get() = parse("2010-05-06T19:30:00Z", "2010-05-06T20:15:00Z")
 
         /**
-         * After is became clear that COVID-19 virus would also impact countries outside China, many exchanges worldwide
+         * After it became clear that COVID-19 virus would also impact countries outside China, many exchanges worldwide
          * crashed due to the uncertainty of the impact that the virus would have on economies and companies.
          */
         val coronaCrash2020
@@ -139,7 +139,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
 
         /**
          * Create a timeframe based on the [first] and [last] time provided. The times are to be provided as a string
-         * and should be parsable by [Instant.parse]
+         * and will be parsed by [Instant.parse]
          *
          * If the time component is omitted, the provided strings will be appended first with "T00:00:00Z" before
          * being parsed.
@@ -159,7 +159,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
         }
 
         /**
-         * Create a timeframe from now for the provided duration. This is useful to restrict a live feed so it
+         * Create a timeframe from now for the provided duration. This is useful to restrict a live feed, so it
          * won't run forever.
          *
          *      val tf = TimeFrame.next(60.minutes)
@@ -265,8 +265,8 @@ data class Timeframe(val start: Instant, val end: Instant) {
      * for determining the size of test. [testSize] should be a number between 0.0 and 1.0, for example
      * 0.25 means use last 25% as test timeframe.
      *
-     * It return a [Pair] of timeframes, the first one being the training timeframe and the second being the
-     * test timefame.
+     * It returns a [Pair] of timeframes, the first one being the training timeframe and the second being the
+     * test timeframe.
      */
     fun splitTrainTest(testSize: Double): Pair<Timeframe, Timeframe> {
         require(testSize in 0.0..1.0) {"Test size has to between 0 and 1" }

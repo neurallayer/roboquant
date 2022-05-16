@@ -45,7 +45,7 @@ interface HistoricFeed : AssetFeed {
         get() = if (timeline.isEmpty()) Timeframe.INFINITE else Timeframe.inclusive(timeline.first(), timeline.last())
 
     /**
-     * Draw a [random] sampled timeframe of a cetain [size] from the historic feed and return the timeframe that
+     * Draw a [random] sampled timeframe of a certain [size] from the historic feed and return the timeframe that
      * represents this sample.
      *
      * @param size Number of events that the timeframe should contain

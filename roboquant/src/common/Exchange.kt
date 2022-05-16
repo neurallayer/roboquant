@@ -22,7 +22,7 @@ import java.time.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Exchange contains the metadata of an market place or exchange.
+ * Exchange contains the metadata of a marketplace or exchange.
  *
  * It is used at several areas in roboquant, for example when loading CSV files.
  *
@@ -40,7 +40,7 @@ class Exchange private constructor(
 ) {
 
     /**
-     * Returns true if the the two provided times ([first] and [second]) belong to the same trading day. They can be
+     * Returns true if the two provided times ([first] and [second]) belong to the same trading day. They can be
      * outside trading hours as long as they are in the same calendar day.
      */
     fun sameDay(first: Instant, second: Instant): Boolean {

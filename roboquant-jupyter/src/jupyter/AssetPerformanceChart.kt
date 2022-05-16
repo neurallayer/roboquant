@@ -33,8 +33,8 @@ import java.math.RoundingMode
  * If you mix different type of price actions in this feed the result might become less reliable due to the
  * different ways that volume is calculated.
  *
- * @property compensateVolume should be compensate the volume by multiplying it with the price or is the volume already
- * expressed in a monetary amount.
+ * @property compensateVolume should the chart compensate the volume by multiplying it with the price or is the
+ * volume already expressed in a monetary amount.
  */
 class AssetPerformanceChart(
     private val feed: Feed,
@@ -44,7 +44,7 @@ class AssetPerformanceChart(
 ) : Chart() {
 
     /**
-     * Play the feed and get priceactions
+     * Play the feed and get price-actions
      * The output is usable for a treemap
      */
     private fun fromFeed(): List<Map<String, Any>> {

@@ -72,7 +72,7 @@ class AlphaVantageHistoricFeed(
 
 
     /**
-     * Retrieve historic intra-day price data for the provided [assets]
+     * Retrieve historic intraday price data for the provided [assets]
      *
      */
     fun retrieveIntraday(vararg assets: Asset, interval: Interval = Interval.FIVE_MIN) {

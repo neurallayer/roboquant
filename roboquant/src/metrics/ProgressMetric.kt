@@ -24,11 +24,11 @@ import java.time.Instant
  * Set of metrics that capture the progress of the run. The captured metrics are aggregated since
  * the start of a phase. The following metrics are captured:
  *
- * - progress.actions: The number of actions
- * - progress.events: The number of events (or steps)
- * - progress.trades: The number of trades
- * - progress.orders: The number of orders
- * - progress.walltime : The wall time
+ * - `progress.actions`: The number of actions
+ * - `progress.events`: The number of events (or steps)
+ * - `progress.trades`: The number of trades
+ * - `progress.orders`: The number of orders
+ * - `progress.walltime`: The wall time
  */
 class ProgressMetric : SimpleMetric() {
 

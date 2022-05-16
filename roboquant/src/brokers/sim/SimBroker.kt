@@ -28,7 +28,7 @@ import java.util.logging.Logger
 
 /**
  * Simulated Broker that is used during back testing. It simulates both broker behavior and the exchange
- * where the orders are executed. It can be configured with avrious plug-ins that determine its behavior.
+ * where the orders are executed. It can be configured with various plug-ins that determine its behavior.
  *
  * It is also possible to use this SimBroker in combination with live feeds to see how your strategy is performing with
  * realtime data without the need for a real broker.
@@ -64,7 +64,7 @@ class SimBroker(
     private val executionEngine = ExecutionEngine(pricingEngine)
 
     /**
-     * Get the lastest state of the account
+     * Get the latest state of the account
      */
     override val account: Account
         get() = _account.toAccount()
@@ -119,14 +119,14 @@ class SimBroker(
     }
 
     private fun simulateMarket(newOrders: List<Order>, event: Event) {
-        // Add new orders to the execution egine and run it with the latest events
+        // Add new orders to the execution engine and run it with the latest events
         executionEngine.addAll(newOrders)
         val executions = executionEngine.execute(event)
 
         // Process the new executions
         for (execution in executions) updateAccount(execution, event.time)
 
-        // Get latest state of orders
+        // Get the latest state of orders
         val orderStates = executionEngine.orderStates
         _account.putOrders(orderStates)
         executionEngine.removeClosedOrders()
@@ -139,7 +139,7 @@ class SimBroker(
     }
 
     /**
-     * Place [orders] at this broker and provide the event that just occured. The event is just by the SimBroker to
+     * Place [orders] at this broker and provide the event that just occurred. The event is just by the SimBroker to
      * get the prices required to simulate the trading on an exchange.
      *
      * @param orders The new orders

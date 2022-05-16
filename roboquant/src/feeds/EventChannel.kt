@@ -89,7 +89,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
     }
 
     /**
-     * Receive a event from the channel. Will throw a [ClosedReceiveChannelException] if the channel is already closed.
+     * Receive an event from the channel. Will throw a [ClosedReceiveChannelException] if the channel is already closed.
      */
     suspend fun receive(): Event {
         while (true) {

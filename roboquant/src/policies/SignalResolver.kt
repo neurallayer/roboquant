@@ -60,7 +60,7 @@ enum class SignalResolution {
  * signal per asset, but as strategies are combined, this issue might pop up. You can specify the resolution [rule]
  * to apply when solving conflicts, the default being [SignalResolution.NONE].
  *
- * It returns the list of signals without any conflicts according to the confiured rule.
+ * It returns the list of signals without any conflicts according to the configured rule.
  */
 fun List<Signal>.resolve(rule: SignalResolution = SignalResolution.NONE): List<Signal> {
     if (size < 2) return this

@@ -106,7 +106,7 @@ fun main() {
             // Now the small feeds
             small("daily"); small("hourly"); small("5 min")
 
-            // And the 5 year S&P 500
+            // And the five-year S&P 500
             fiveYear_sp500()
         }
 

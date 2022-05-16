@@ -89,9 +89,9 @@ class PriceBarSeries(val asset: Asset, windowSize: Int) {
 }
 
 /**
- * Multi asset price bar series that keeps a number of history pricebars in memory per asset.
+ * Multi asset price bar series that keeps a number of history price-bars in memory per asset.
  *
- * @property history The number of historic pricebars per asset to keep
+ * @property history The number of historic price-bars per asset to keep
  * @constructor Create new Multi asset price bar series
  */
 class MultiAssetPriceBarSeries(private val history: Int) {

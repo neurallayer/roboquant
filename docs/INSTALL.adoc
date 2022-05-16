@@ -69,12 +69,12 @@ Roboquant uses Maven for the build process and assuming you already have this in
 mvn build
 ----
 
-The build and install is tested using JDK 17 runtime, however the generated libraries are targeted against JDK 11 in order to provide greater compatibilty for projects that still use older versions of the JDK.
+The build and install is tested using JDK 17 runtime, however the generated libraries are targeted against JDK 11 in order to provide greater compatibility for projects that still use older versions of the JDK.
 
-TIP: If you plan to make many changes and updates to the source code, checkout the https://github.com/apache/maven-mvnd[Maven Deamon] project that provides much faster builds.
+TIP: If you plan to make many changes and updates to the source code, checkout the https://github.com/apache/maven-mvnd[Maven Daemon] project that provides much faster builds.
 
 == Interactive Brokers
-Unfortuatly we are not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file yourself. You can download version `10.15` from here: https://interactivebrokers.github.io/# and within the downloaded archive file you'll find the required `TwsApi.jar`.
+Unfortunately we are not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file yourself. You can download version `10.15` from here: https://interactivebrokers.github.io/# and within the downloaded archive file you'll find the required `TwsApi.jar`.
 
 Then install the jar file in the local Maven repository on your machine using the following command:
 

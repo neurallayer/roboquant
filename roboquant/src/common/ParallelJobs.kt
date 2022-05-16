@@ -6,7 +6,7 @@ import kotlinx.coroutines.*
 /**
  * Utility to make running experiments in parallel more convenient. Basic usage:
  *
- *      val jobs = ParralelJobs()
+ *      val jobs = ParallelJobs()
  *      jobs.add { roboquant.runAsync(feed) }
  *      jobs.joinAll()
  *

@@ -52,7 +52,7 @@ operator fun Instant.compareTo(timeframe: Timeframe): Int {
 }
 
 /**
- * Subtract a numer of [millis] seconds to the instant
+ * Subtract a number of [millis] seconds to the instant
  */
 operator fun Instant.minus(millis: Int): Instant = minusMillis(millis.toLong())
 
@@ -188,7 +188,7 @@ fun DoubleArray.kurtosis(): Double {
 fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 
 /**
- * Get the returns (as a percentage). Forumla used is
+ * Get the returns (as a percentage). Formula used is
  *
  *      returns = (new -old) / old
  */
@@ -200,7 +200,7 @@ fun DoubleArray.returns(): DoubleArray {
 }
 
 /**
- * Get the total return (as a percentage). Forumla used is
+ * Get the total return (as a percentage). Formula used is
  *
  *      returns = (last - first) / first
  */
@@ -220,13 +220,13 @@ val Double.iszero
     get() = this.absoluteValue < EPS
 
 /**
- * is this a non zero number, allows for small rounding errors.
+ * is this a non-zero number, allows for small rounding errors.
  */
 val Double.nonzero
     get() = this.absoluteValue > EPS
 
 /**
- * is this a non zero number, allows for small rounding errors.
+ * is this a non-zero number, allows for small rounding errors.
  */
 val Double.zeroOrMore
     get() = if (this > EPS) this else 0.0
@@ -235,7 +235,7 @@ fun Number.round(fractions: Int = 2): BigDecimal =
     BigDecimal.valueOf(toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)
 
 /**
- * Try to convert a string to a currency pair. Return null if not successed
+ * Convert a string to a currency pair. Return null if not succeeded.
  */
 fun String.toCurrencyPair(): Pair<Currency, Currency>? {
     val codes = split('_', '-', ' ', '/', ':')
@@ -320,13 +320,11 @@ class ZonedPeriod(private val a: TemporalAmount, private val zoneId: ZoneId = Co
     fun toMinutes() = (a as Duration).toMinutes()
 
     override fun addTo(temporal: Temporal): Temporal {
-        // if (a is Duration) return temporal.plus(a)
         val result = Instant.from(temporal).atZone(zoneId).plus(a)
         return if (temporal is Instant) result.toInstant() else result
     }
 
     override fun subtractFrom(temporal: Temporal): Temporal {
-        // if (a is Duration) return temporal.minus(a)
         val result = Instant.from(temporal).atZone(zoneId).minus(a)
         return if (temporal is Instant) result.toInstant() else result
     }

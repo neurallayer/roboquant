@@ -117,7 +117,7 @@ class OANDALiveFeed(
 
     /**
      * Subscribe to the order book data for the provided [assets]. Since this is a pulling solution, you can also
-     * specify the [delay] interval between two pulls, default being 5000 milliseconds (so 5 seocond data)
+     * specify the [delay] interval between two pulls, default being 5000 milliseconds (so 5 second data)
      */
     fun subscribeOrderBook(assets: Collection<Asset>, delay: Long = 5_000L) {
         logger.info { "Subscribing to ${assets.size} order books" }
@@ -155,7 +155,7 @@ class OANDALiveFeed(
                             }
                         )
                     }
-                    logger.fine("Got ${actions.size} orderbook actions")
+                    logger.fine("Got ${actions.size} order-book actions")
                     if (actions.isNotEmpty()) channel?.offer(Event(actions, now))
                     since = resp.time
                 }

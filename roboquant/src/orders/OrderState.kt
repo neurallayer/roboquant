@@ -10,9 +10,9 @@ import org.roboquant.brokers.Account
  * informs you what is happening with that order. The most common way to access this information is through
  * [Account.openOrders] and [Account.closedOrders]
  *
- * This is a open class and can be extended by more advanced implementations.
+ * This is an open class and can be extended by more advanced implementations.
  *
- * @property order The underying order
+ * @property order The underlying order
  * @property status The latest status
  * @property openedAt When was the order execution first opened
  * @property closedAt When was the order execution closed
@@ -108,7 +108,7 @@ enum class OrderStatus {
     EXPIRED,
 
     /**
-     *  The order has been rejected. This is an end-state and could occurs when:
+     *  The order has been rejected. This is an end-state and could occur when:
      *  - The order is not valid, for example you try to short an asset while that is not allowed
      *  - You don't have enough buyingPower to place a new order
      *  - The order type is not supported by the broker
@@ -124,7 +124,7 @@ enum class OrderStatus {
         get() = this === CANCELLED || this === EXPIRED || this === REJECTED
 
     /**
-     * Returns true if the order closed. This means it has reached an endstate that doesn't allow for any more trading.
+     * Returns true if the order closed. This means it has reached an end-state that doesn't allow for any more trading.
      * This implies it is in one of these four possible end-states: [COMPLETED], [CANCELLED], [EXPIRED] or [REJECTED].
      */
     val closed: Boolean

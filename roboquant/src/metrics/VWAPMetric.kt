@@ -37,7 +37,7 @@ class VWAPMetric(val minSize: Int = 2) : SimpleMetric() {
      * end of each step in a run. The result is [Map] with keys being a unique metric name and the value
      * the calculated metric value. If no metrics are calculated, an empty map should be returned instead.
      *
-     * Please note VWAP is a single-day indicator, so it only makes sense in the context of intra-day events.
+     * Please note VWAP is a single-day indicator, so it only makes sense in the context of intraday events.
      *
      * @param account
      * @return

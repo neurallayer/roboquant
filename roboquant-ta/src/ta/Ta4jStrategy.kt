@@ -19,7 +19,7 @@ import org.ta4j.core.rules.BooleanRule
  *
  * @property buyingRule function that returns a buying rule based on the provided BarSaries, default is always FALSE
  * @property sellingRule function that returns a selling rule based on the provided BarSaries, default is always FALSE
- * @property maxBarCount maximum number of pricebars to track, default is -1 meaning track all bars
+ * @property maxBarCount maximum number of price-bars to track, default is -1 meaning track all bars
  * @constructor Create a new ta4j strategy
  */
 class Ta4jStrategy(

@@ -132,7 +132,7 @@ class Roboquant(
      * will be used. Optionally you can provide a [validation] timeframe that will trigger a separate validation phase.
      * You can also repeat the run for a number of [episodes].
      *
-     * If can provide a custom [runName] that will help to later identify this run. If none is provided, a name will
+     * You can provide a custom [runName] that will help to later identify this run. If none is provided, a name will
      * be generated with the format "run-<counter>"
      *
      *  The following provides a schematic overview of the flow of a run:

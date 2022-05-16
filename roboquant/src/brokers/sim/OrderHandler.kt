@@ -27,7 +27,7 @@ sealed interface OrderHandler {
 }
 
 /**
- * Interface for orders that update another order. These orders don't generate trades by themselves. Also important
+ * Interface for orders that update another order. These orders don't generate trades by themselves. Also, important
  * to note that:
  *
  *  - they are executed first, before the [TradeOrderHandler] orders are executed

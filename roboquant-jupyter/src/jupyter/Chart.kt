@@ -123,7 +123,7 @@ abstract class Chart : Output() {
 
         /**
          * Maximum number of samples to plot in a chart. Certain types of charts can be become very large and as
-         * a result make your browser unresposive. By lowering this value (default is Int.MAX_VALUE)
+         * a result make your browser unresponsive. By lowering this value (default is Int.MAX_VALUE)
          * before serializing the result to the browser, the sample size will first be reduced. A good value might
          * be 100_000, but this depends on your computer.
          */

@@ -21,7 +21,7 @@ import java.util.*
 
 
 /**
- * Moving Window that holds double values an the time and is typically used by strategies for moving averages or
+ * Moving Window that holds double values and the time and is typically used by strategies for moving averages or
  * replay buffers.
  *
  * Instances of this class are not thread safe when updating
