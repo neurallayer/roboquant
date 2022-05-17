@@ -21,14 +21,14 @@ image:https://img.shields.io/github/v/tag/neurallayer/roboquant[GitHub tag (late
 image:https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&[Maven Central]
 image:https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org[Sonatype Nexus (Snapshots)]
 
-Roboquant is an algorithmic trading platform that is fast and flexible while at the same time strives to be easy to use. It is fully open source, written in Kotlin, and can be used in Jupyter Notebooks as well as standalone applications. It is designed to be used by anyone serious about algo trading, from retail traders to proprietary trading firms.
+image::/docs/roboquant_header.png[roboquant Logo, align="center"]
 
-image::/docs/roboquant_logo.png[roboquant Logo, 250, align="center"]
+Roboquant is an algorithmic trading platform that is very fast and flexible while at the same time strives to be easy to use. It is fully open source, written in Kotlin, and can be used in Jupyter Notebooks as well as standalone applications.
 
-You can find out more at *https://roboquant.org[roboquant.org]*. Please consider giving this repository a star ⭐ if you like the project.
+It is designed to be used by anyone serious about algo trading, from beginning retail traders to established trading firms. You can find out more at *https://roboquant.org[roboquant.org]*. Please consider giving this repository a star ⭐ if you like the project.
 
 == Code sample
-To demonstrate how easy it is to get started, the following code snippet shows all the key ingredients required to back-test a trading strategy:
+To demonstrate how easy it is to get started, the following code snippet shows the key ingredients required to back-test a trading strategy:
 
 [source,kotlin]
 ----
@@ -40,7 +40,7 @@ val feed = CSVFeed("data/US") // <4>
 roboquant.run(feed) // <5>
 ----
 <1> Create the strategy that you want to validate
-<2> Define the metrics you want to monitor during the test
+<2> Define the metrics you want to monitor during the run
 <3> Create a Roboquant instance, the engine of the platform
 <4> What data should be used, in this case CSV files
 <5> Run the back test
@@ -54,7 +54,8 @@ Latest available versions:
 - Stable version: image:https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&[Maven Central]
 - Snapshot version: image:https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org[Sonatype Nexus (Snapshots)]
 
-*Maven*
+==== Maven
+Add the following dependency to your `pom.xml` file:
 [source,xml]
 ----
 <dependency>
@@ -64,21 +65,22 @@ Latest available versions:
 </dependency>
 ----
 
-*Gradle*
+==== Gradle
+Add the following line to your gradle script:
 [source,groovy]
 ----
 implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'
 ----
 
 === Jupyter Notebooks
-If you have already Docker installed, all it takes is a single command to have a fully functional Jupyter Lab environment available:
+If you already have Docker installed, all it takes is a single command to have a fully functional Jupyter Lab environment available:
 
 [source,shell]
 ----
 docker run --rm -p 8888:8888 roboquant/jupyter 
 ----
 
-This image also comes with several tutorials. And if you just want to try it without any installation, go to image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials]
+This image also comes with several tutorials included. And if you just want to try it without any installation, go to image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials]
 
 image:/docs/jupyter-lab.png[Jupyter Lab]
 
@@ -95,6 +97,8 @@ Some key features of roboquant are:
 * [x] Use Jupyter Notebooks with insightful charts if you prefer interactive development
 * [x] Batteries included, for example 150+ technical indicators and ready to use datasets
 * [x] Out of the box integration with Alpaca, Interactive Brokers, OANDA, IEX Cloud, Yahoo Finance, Alpha Vantage, Binance and most other crypto exchanges
+
+See also https://roboquant.org/background/features.html[Features] for a more extensive feature list and how roboquant compares to some other platforms.
 
 == License
 Roboquant is distributed under the link:/LICENSE[Apache 2.0 License]. 

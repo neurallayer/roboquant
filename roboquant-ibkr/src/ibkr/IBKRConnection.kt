@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * IBKR configuration properties
- * @constructor Create empty Alpaca config
+ * @constructor Create new IBKR config
  */
 data class IBKRConfig(
     var host: String = Config.getProperty("ibkr.host", "127.0.0.1"),

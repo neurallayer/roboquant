@@ -37,7 +37,7 @@ import java.time.Instant
 
 /**
  * Implementation of the broker interface for Binance exchange. This enables live trading of cryptocurrencies
- * on the Binance exchange. This broker only supports assets of the type Crypto.
+ * on the Binance exchange. This broker only supports assets of the type [AssetType.CRYPTO].
  *
  * @constructor
  *
