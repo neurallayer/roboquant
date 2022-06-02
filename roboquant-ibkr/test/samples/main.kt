@@ -122,14 +122,14 @@ fun historicFeed() {
     val assets = symbols.map { template.copy(symbol = it) }
     feed.retrieve(assets)
     feed.waitTillRetrieved()
-    feed.assets.summary().print()
+    println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets" )
     feed.disconnect()
 }
 
 
 fun main() {
 
-    when ("BROKER") {
+    when ("HISTORIC") {
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()
         "CLOSE_POSITION" -> closePosition()

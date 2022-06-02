@@ -43,7 +43,7 @@ internal class IEXHistoricFeedTestIT {
         System.getProperty("TEST_IEX") ?: return
         val feed = IEXHistoricFeed()
         val asset = Asset("AAPL")
-        feed.retrievePriceBar(listOf(asset))
+        feed.retrieve(listOf(asset))
         Thread.sleep(2000)
         val actions = feed.filter<PriceAction>(Timeframe.next(5.minutes))
         assertTrue(actions.isNotEmpty())

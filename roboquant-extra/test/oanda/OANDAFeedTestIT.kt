@@ -53,7 +53,7 @@ internal class OANDAFeedTestIT {
         System.getenv("TEST_OANDA") ?: return
         val feed = OANDAHistoricFeed()
         val tf = Timeframe.parse("2020-03-05", "2020-03-06")
-        feed.retrieveCandles(*symbols, timeframe = tf)
+        feed.retrieve(*symbols, timeframe = tf)
         assertEquals(3, feed.assets.size)
 
         val tf2 = Timeframe.parse("2020-03-04", "2020-03-07")

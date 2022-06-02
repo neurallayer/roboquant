@@ -95,7 +95,7 @@ fun alpacaHistoricFeed() {
     val feed = AlpacaHistoricFeed()
     val tf = Timeframe.past(100.days) - 15.minutes
     tf.split(1.days).forEach {
-        feed.retrieveBars("AAPL", "IBM", timeframe = it, barSize = 1.minutes)
+        feed.retrieve("AAPL", "IBM", timeframe = it, barSize = 1.minutes)
         println("timeline size is ${feed.timeline.size}")
 
         // Sleep a little bit to not exceed API call limits
@@ -104,7 +104,7 @@ fun alpacaHistoricFeed() {
     println("total timeframe is ${feed.timeframe}")
 
     // store thre result in a Avro feed for future usage
-    AvroUtil.record(feed, "/Users/peter/tmp/alpaca.avro")
+    AvroUtil.record(feed, "/tmp/alpaca.avro")
 }
 
 fun alpacaHistoricFeed2() {
@@ -131,11 +131,11 @@ fun alpacaHistoricFeed2() {
     // the free subscriptions is entitled to and not the latest 15 minutes.
     val tf = Timeframe.past(200.days) - 15.minutes
 
-    feed.retrieveBars(*symbols, timeframe = tf)
+    feed.retrieve(*symbols, timeframe = tf)
 
     // Example on how to retreive 5 minutes bars
     // val tf = Timeframe.past(5.days) - 15.minutes
-    // feed.retrieveBars("AAPL", "FB", "IBM", timeframe = tf, barSize = 5.minutes)
+    // feed.retrieve("AAPL", "FB", "IBM", timeframe = tf, barSize = 5.minutes)
 
     feed.assets.summary().print()
 }

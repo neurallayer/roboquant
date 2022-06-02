@@ -123,7 +123,7 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
-        feed.retrieveBars("AAPL", timeframe = tf)
+        feed.retrieve("AAPL", timeframe = tf)
         testResult<PriceBar>(feed, tf)
     }
 
@@ -132,7 +132,7 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
-        feed.retrieveBars("AAPL",
+        feed.retrieve("AAPL",
             timeframe = tf,
             barSize = 5.minutes
         )

@@ -38,7 +38,7 @@ import java.util.logging.Level
 
 fun oanda() {
     val feed = OANDAHistoricFeed()
-    feed.retrieveCandles("EUR_USD", "USD_JPY", "GBP_USD")
+    feed.retrieve("EUR_USD", "USD_JPY", "GBP_USD")
     feed.assets.summary().log()
     println(feed.timeline.size)
     println(feed.timeframe)
@@ -46,7 +46,7 @@ fun oanda() {
 }
 
 fun forexAvro() {
-    val feed = AvroFeed("/Users/peter/data/avro/forex_march_2020.avro")
+    val feed = AvroFeed("/tmp/forex_march_2020.avro")
     Config.exchangeRates = OANDAExchangeRates()
     val strategy = EMACrossover()
     val roboquant = OANDA.roboquant(strategy, AccountSummary())
@@ -72,7 +72,7 @@ fun oandaLong() {
 
     // There is a limit on what we can download per API call, so we split it in individual days
     for (tf in timeframe.split(1.days)) {
-        feed.retrieveCandles(*symbols, timeframe = tf)
+        feed.retrieve(*symbols, timeframe = tf)
         println(feed.timeline.size)
         Thread.sleep(1000) // let's play nice and not overload things
     }
@@ -81,14 +81,14 @@ fun oandaLong() {
     println(feed.timeframe)
 
     // Now we store it in a local Avro file for later reuse
-    AvroUtil.record(feed, "/Users/peter/data/avro/forex_march_2020.avro")
+    AvroUtil.record(feed, "/tmp/forex_march_2020.avro")
 
 }
 
 fun oanda2() {
     Currency.increaseDigits(3)
     val feed = OANDAHistoricFeed()
-    feed.retrieveCandles("EUR_USD", "EUR_GBP", "GBP_USD")
+    feed.retrieve("EUR_USD", "EUR_GBP", "GBP_USD")
     Config.exchangeRates = FeedExchangeRates(feed)
 
     val roboquant = OANDA.roboquant(EMACrossover())
@@ -146,7 +146,7 @@ fun oandaLiveRecord() {
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
     val tf = Timeframe.next(5.minutes)
-    AvroUtil.record(feed, "/Users/peter/tmp/oanda.avro", tf)
+    AvroUtil.record(feed, "/tmp/oanda.avro", tf)
 }
 
 fun oandaBroker() {

@@ -48,7 +48,7 @@ class OANDAHistoricFeed(configure: OANDAConfig.() -> Unit = {}) : HistoricPriceF
         OANDA.getAvailableAssets(ctx, accountID)
     }
 
-    fun retrieveCandles(
+    fun retrieve(
         vararg symbols: String,
         timeframe: Timeframe = Timeframe.past(1.days),
         granularity: String = "M1",

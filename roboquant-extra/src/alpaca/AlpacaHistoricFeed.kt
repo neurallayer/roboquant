@@ -125,7 +125,7 @@ class AlpacaHistoricFeed(
     /**
      * Retrieve for a number of [symbols] and specified [timeframe] the [PriceBar] and [barSize].
      */
-    fun retrieveBars(
+    fun retrieve(
         vararg symbols: String,
         timeframe: Timeframe,
         barSize: TemporalAmount = 1.days,

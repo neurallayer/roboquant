@@ -33,7 +33,7 @@ import org.roboquant.yahoo.YahooHistoricFeed
 
 fun feedIEX() {
     val feed = org.roboquant.iex.IEXHistoricFeed()
-    feed.retrievePriceBar("AAPL", "GOOGL", "FB", range = Range.TWO_YEARS)
+    feed.retrieve("AAPL", "GOOGL", "FB", range = Range.TWO_YEARS)
 
     val strategy = EMACrossover(10, 30)
     val roboquant = Roboquant(strategy, AccountSummary())
