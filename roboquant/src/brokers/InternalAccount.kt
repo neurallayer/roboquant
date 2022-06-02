@@ -159,24 +159,21 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
 }
 
 /**
- * Reject an order
- *
- * @param order
- * @param time
+ * Reject an [order] at the provided [time]
  */
 fun InternalAccount.rejectOrder(order: Order, time: Instant) {
     putOrder(OrderState(order, OrderStatus.REJECTED, time, time))
 }
 
 /**
- * Accept an order
- *
- * @param order
- * @param time
+ * Accept an [order] at the provided [time]
  */
 fun InternalAccount.acceptOrder(order: Order, time: Instant) {
     putOrder(OrderState(order, OrderStatus.ACCEPTED, time, time))
 }
 
+/**
+ * Return a set of initial orders
+ */
 val Collection<Order>.initialOrderState
-    get() = map { OrderState(it, OrderStatus.INITIAL) }
+    get() = map { OrderState(it) }

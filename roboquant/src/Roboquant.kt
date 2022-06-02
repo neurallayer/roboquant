@@ -269,7 +269,7 @@ data class RunInfo internal constructor(
 }
 
 /**
- * Enumeration of fhe different phases that a run can be in, MAIN and VALIDATE. Especially with self learning
+ * Enumeration of fhe different phases that a run can be in, [MAIN] and [VALIDATE]. Especially with self learning
  * strategies, it is important that you evaluate your strategy on yet unseen data, so you don't over-fit.
  *
  * See also [Roboquant.run] how to run your strategy with different phases enabled.
@@ -277,6 +277,14 @@ data class RunInfo internal constructor(
  * @property value String value of the phase
  */
 enum class RunPhase(val value: String) {
+
+    /**
+     * Main run phase
+     */
     MAIN("MAIN"),
+
+    /**
+     * Validation run phase
+     */
     VALIDATE("VALIDATE"),
 }

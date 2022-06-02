@@ -167,15 +167,16 @@ val Collection<Position>.marketValue : Wallet
 
 
 /**
- * What is the Market Value for this portfolio
+ * Return the market value for this portfolio
  */
 val Map<Asset, Position>.marketValue : Wallet
     get() {
         return values.marketValue
     }
 
-
-
+/**
+ * Return the exposure for this portfolio
+ */
 val Map<Asset, Position>.exposure : Wallet
     get() {
         val result = Wallet()
@@ -184,7 +185,9 @@ val Map<Asset, Position>.exposure : Wallet
     }
 
 
-
+/**
+ * Return the exposure for this collection of positions
+ */
 val Collection<Position>.exposure : Wallet
     get() {
         val result = Wallet()

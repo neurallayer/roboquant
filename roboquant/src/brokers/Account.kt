@@ -150,6 +150,9 @@ class Account(
 
 }
 
+/**
+ * Return the PNL outliers for a collection of trades for a given [percentage]
+ */
 fun Collection<Trade>.outliers(percentage: Double = 0.95): List<Trade> {
     val data = map { it.pnl.value.absoluteValue }.toDoubleArray()
     val p = Percentile()
@@ -157,6 +160,9 @@ fun Collection<Trade>.outliers(percentage: Double = 0.95): List<Trade> {
     return filter { it.pnl.value.absoluteValue >= boundary }
 }
 
+/**
+ * Return the PNL inliers for a collection of trades for a given [percentage]
+ */
 fun Collection<Trade>.inliers(percentage: Double = 0.95): List<Trade> {
     val data = map { it.pnl.value.absoluteValue }.toDoubleArray()
     val p = Percentile()
