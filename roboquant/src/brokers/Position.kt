@@ -69,7 +69,7 @@ data class Position(
     }
 
     operator fun plus(p: Position) : Position {
-        // Use BigDecimals to perform the addition, so we don't lose precision
+
         val newSize = size + p.size
 
         return when {

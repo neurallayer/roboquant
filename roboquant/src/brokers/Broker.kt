@@ -21,8 +21,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 
 /**
- * Interface for any broker, both used for simulated and real live brokers.
- *
+ * Interface for any broker implementation, used for both simulated and real brokers.
  */
 interface Broker : Component {
 
@@ -33,7 +32,7 @@ interface Broker : Component {
 
     /**
      * Place new [orders] at this broker. The [event] is useful for simulated brokers, but can also function
-     * as a safeguard for other brokers (like not allowing to place orders is the current price is unknown).
+     * as a safeguard for other brokers (like not allowing to place orders when the current price is unknown).
      *
      * After processing the [orders], this method returns an instance of the updated account. The returned instance of
      * [Account] should reflect the latest status and be considered thread safe. It is important that the placed orders

@@ -60,7 +60,7 @@ data class Trade(
         get() = Amount(asset.currency, feeValue)
 
     /**
-     * Returns the profit & loss amount
+     * Returns the realized profit & loss amount
      */
     val pnl
         get() = Amount(asset.currency, pnlValue)

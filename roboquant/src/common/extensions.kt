@@ -126,6 +126,9 @@ operator fun DoubleArray.plus(a: Number): DoubleArray {
     return result
 }
 
+/**
+ * Subtract two arrays
+ */
 operator fun DoubleArray.minus(a: DoubleArray): DoubleArray {
     require(a.size == size) { "Arrays have to be of equal size" }
     val result = clone()
@@ -133,6 +136,9 @@ operator fun DoubleArray.minus(a: DoubleArray): DoubleArray {
     return result
 }
 
+/**
+ * Multiply two arrays
+ */
 operator fun DoubleArray.times(a: DoubleArray): DoubleArray {
     require(a.size == size) { "Arrays have to be of equal size" }
     val result = clone()
@@ -140,6 +146,9 @@ operator fun DoubleArray.times(a: DoubleArray): DoubleArray {
     return result
 }
 
+/**
+ * Divide two arrays
+ */
 operator fun DoubleArray.div(a: DoubleArray): DoubleArray {
     require(a.size == size) { "Arrays have to be of equal size" }
     val result = clone()
@@ -147,6 +156,9 @@ operator fun DoubleArray.div(a: DoubleArray): DoubleArray {
     return result
 }
 
+/**
+ * Add two arrays
+ */
 operator fun DoubleArray.plus(a: DoubleArray): DoubleArray {
     require(a.size == size) { "Arrays have to be of equal size" }
     val result = clone()
@@ -154,30 +166,50 @@ operator fun DoubleArray.plus(a: DoubleArray): DoubleArray {
     return result
 }
 
+/**
+ * Return the max value from the array
+ */
 fun DoubleArray.max(): Double {
     return Max().evaluate(this)
 }
-
+/**
+ * Return the min value from the array
+ */
 fun DoubleArray.min(): Double {
     return Min().evaluate(this)
 }
 
+/**
+ * Return the mean value from the array
+ */
 fun DoubleArray.mean(): Double {
     return Mean().evaluate(this)
 }
 
+/**
+ * Return the standard deviation value from the array
+ */
 fun DoubleArray.std(): Double {
     return StandardDeviation().evaluate(this)
 }
 
+/**
+ * Return the variance value from the array
+ */
 fun DoubleArray.variance(): Double {
     return Variance().evaluate(this)
 }
 
+/**
+ * Return the skewness value from the array
+ */
 fun DoubleArray.skewness(): Double {
     return Skewness().evaluate(this)
 }
 
+/**
+ * Return the kurtosis value from the array
+ */
 fun DoubleArray.kurtosis(): Double {
     return Kurtosis().evaluate(this)
 }
