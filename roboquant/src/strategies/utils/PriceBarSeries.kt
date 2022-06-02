@@ -34,21 +34,39 @@ class PriceBarSeries(val asset: Asset, windowSize: Int) {
     private val closeSeries = MovingWindow(windowSize)
     private val volumeSeries = MovingWindow(windowSize)
 
+    /**
+     * Open prices
+     */
     val open
         get() = openSeries.toDoubleArray()
 
+    /**
+     * High prices
+     */
     val high
         get() = highSeries.toDoubleArray()
 
+    /**
+     * Low prices
+     */
     val low
         get() = lowSeries.toDoubleArray()
 
+    /**
+     * Close prices
+     */
     val close
         get() = closeSeries.toDoubleArray()
 
+    /**
+     * Volume
+     */
     val volume
         get() = volumeSeries.toDoubleArray()
 
+    /**
+     * Typical prices ( high + low + close / 3)
+     */
     val typical
         get() = (highSeries.toDoubleArray() + lowSeries.toDoubleArray() + closeSeries.toDoubleArray()) / 3.0
 
@@ -74,10 +92,16 @@ class PriceBarSeries(val asset: Asset, windowSize: Int) {
         return isAvailable()
     }
 
+    /**
+     * Is there enough data available
+     */
     fun isAvailable(): Boolean {
         return openSeries.isAvailable()
     }
 
+    /**
+     * Clear all captured prices
+     */
     fun clear() {
         openSeries.clear()
         highSeries.clear()
@@ -119,8 +143,7 @@ class MultiAssetPriceBarSeries(private val history: Int) {
     fun getSeries(asset: Asset) : PriceBarSeries = data.getValue(asset)
 
     /**
-     * Clear all captured data
-     *
+     * Clear all captured prices
      */
     fun clear() = data.clear()
 

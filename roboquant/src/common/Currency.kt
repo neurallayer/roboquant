@@ -61,7 +61,7 @@ class Currency private constructor(val currencyCode: String) {
         }
 
         /**
-         * Returns the Currency instance for the given the provided [currencyCode].
+         * Returns the Currency instance for the provided [currencyCode].
          */
         fun getInstance(currencyCode: String): Currency = currencies.getOrPut(currencyCode) { Currency(currencyCode) }
 

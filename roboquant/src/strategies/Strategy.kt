@@ -33,7 +33,7 @@ import org.roboquant.feeds.Event
 interface Strategy : Component {
 
     /**
-     * Based on received [event], generate zero or more [signals][Signal]. Typically, the signals are a result of the
+     * Generate zero or more [signals][Signal] based on received [event]. Typically, the signals are a result of the
      * actions in the event, but this is not a strict requirement.
      *
      * If there are no signals detected, this method should return an empty list.

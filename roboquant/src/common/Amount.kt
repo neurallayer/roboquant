@@ -95,48 +95,94 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
 }
 
 // Extensions to make it easier to create amounts for common currencies
+
+/**
+ * Amount in Euro
+ */
 val Number.EUR
     get() = Amount(Currency.EUR, toDouble())
 
+/**
+ * Amount in USD
+ */
 val Number.USD
     get() = Amount(Currency.USD, toDouble())
 
+/**
+ * Amount in Japanese Yen
+ */
 val Number.JPY
     get() = Amount(Currency.JPY, toDouble())
 
+/**
+ * Amount in GBP
+ */
 val Number.GBP
     get() = Amount(Currency.GBP, toDouble())
 
+/**
+ * Amount in CHF
+ */
 val Number.CHF
     get() = Amount(Currency.CHF, toDouble())
 
+/**
+ * Amount in AUD
+ */
 val Number.AUD
     get() = Amount(Currency.AUD, toDouble())
 
+/**
+ * Amount in CAD
+ */
 val Number.CAD
     get() = Amount(Currency.CAD, toDouble())
 
+/**
+ * Amount in CNY
+ */
 val Number.CNY
     get() = Amount(Currency.CNY, toDouble())
 
+/**
+ * Amount in [Currency.HKD]
+ */
 val Number.HKD
     get() = Amount(Currency.HKD, toDouble())
 
+/**
+ * Amount in [Currency.NZD]
+ */
 val Number.NZD
     get() = Amount(Currency.NZD, toDouble())
 
+/**
+ * Amount in [Currency.RUB]
+ */
 val Number.RUB
     get() = Amount(Currency.RUB, toDouble())
 
+/**
+ * Amount in [Currency.INR]
+ */
 val Number.INR
     get() = Amount(Currency.INR, toDouble())
 
+/**
+ * Amount in [Currency.BTC]
+ */
 val Number.BTC
     get() = Amount(Currency.BTC, toDouble())
 
+/**
+ * Amount in [Currency.ETH]
+ */
 val Number.ETH
     get() = Amount(Currency.ETH, toDouble())
 
+/**
+ * Amount in [Currency.USDT]
+ */
 val Number.USDT
     get() = Amount(Currency.USDT, toDouble())
 
