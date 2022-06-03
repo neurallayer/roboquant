@@ -97,49 +97,49 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
 // Extensions to make it easier to create amounts for common currencies
 
 /**
- * Amount in Euro
+ * Amount in [Currency.EUR]
  */
 val Number.EUR
     get() = Amount(Currency.EUR, toDouble())
 
 /**
- * Amount in USD
+ * Amount in [Currency.USD]
  */
 val Number.USD
     get() = Amount(Currency.USD, toDouble())
 
 /**
- * Amount in Japanese Yen
+ * Amount in [Currency.JPY]
  */
 val Number.JPY
     get() = Amount(Currency.JPY, toDouble())
 
 /**
- * Amount in GBP
+ * Amount in [Currency.GBP]
  */
 val Number.GBP
     get() = Amount(Currency.GBP, toDouble())
 
 /**
- * Amount in CHF
+ * Amount in [Currency.CHF]
  */
 val Number.CHF
     get() = Amount(Currency.CHF, toDouble())
 
 /**
- * Amount in AUD
+ * Amount in [Currency.AUD]
  */
 val Number.AUD
     get() = Amount(Currency.AUD, toDouble())
 
 /**
- * Amount in CAD
+ * Amount in [Currency.CAD]
  */
 val Number.CAD
     get() = Amount(Currency.CAD, toDouble())
 
 /**
- * Amount in CNY
+ * Amount in [Currency.CNY]
  */
 val Number.CNY
     get() = Amount(Currency.CNY, toDouble())

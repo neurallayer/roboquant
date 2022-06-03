@@ -17,32 +17,25 @@
 package org.roboquant.strategies.utils
 
 import org.roboquant.TestData.priceBar
-import java.time.Instant
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-internal class VWAPCalculatorTest {
+internal class ATRTest {
 
     @Test
     fun test() {
-        val c = VWAPCalculator(20)
+        val c = ATR(10)
         assertFalse(c.isReady())
 
-        repeat(30) { c.add(priceBar()) }
+        repeat(15) { c.add(priceBar()) }
         assertTrue(c.isReady())
 
-        assertEquals(priceBar().getPrice("TYPICAL"), c.calc())
-    }
-
-    @Test
-    fun testDaily() {
-        val c = VWAPDaily(5)
+        assertEquals(priceBar().high - priceBar().low, c.calc())
+        c.reset()
         assertFalse(c.isReady())
-        val now = Instant.now()
-        repeat(5) {
-            c.add(priceBar(), now)
-        }
-        assertTrue(c.isReady())
-
-        assertEquals(priceBar().getPrice("TYPICAL"), c.calc())
     }
+
+
 }
