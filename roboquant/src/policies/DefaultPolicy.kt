@@ -113,7 +113,9 @@ open class DefaultPolicy(
      */
     open fun createOrder(signal: Signal, size: Size, price: Double): Order? = MarketOrder(signal.asset, size)
 
-
+    /**
+     * @see Policy.act
+     */
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         if (signals.isEmpty()) return emptyList()
 

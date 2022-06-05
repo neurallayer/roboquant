@@ -19,11 +19,13 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
+import org.roboquant.brokers.Account
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.fee
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
+import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.csv.CSVFeed
@@ -34,10 +36,14 @@ import org.roboquant.logging.toDoubleArray
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.PNL
 import org.roboquant.metrics.ProgressMetric
+import org.roboquant.orders.LimitOrder
+import org.roboquant.orders.Order
 import org.roboquant.policies.BettingAgainstBeta
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.NoSignalStrategy
+import org.roboquant.strategies.Signal
+import org.roboquant.strategies.utils.ATR
 import kotlin.system.measureTimeMillis
 
 fun volatility() {
@@ -76,6 +82,61 @@ fun multiCurrency() {
     broker.account.openOrders.summary().print()
 }
 
+
+fun customPolicy() {
+
+    /**
+     * Custom Policy that captures the ATR (Average True Range) and uses it to set limit orders
+     */
+    class MyPolicy(private val atrPercentage: Double = 0.02, private val atrPeriod : Int = 5) : DefaultPolicy() {
+
+        // map tat contains the ATR per asset
+        private val atrs = mutableMapOf<Asset, ATR>()
+
+        /**
+         * Update the ATR for all the assets in the event
+         */
+        private fun updateAtrs(event: Event) {
+            event.actions.filterIsInstance<PriceBar>().forEach {
+                val atr = atrs.getOrPut(it.asset) { ATR(atrPeriod) }
+                atr.add(it)
+            }
+        }
+
+        override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+            updateAtrs(event)
+            return super.act(signals, account, event)
+        }
+
+        /**
+         * Create limit BUY and SELL orders with the limit based on the ATR of the asset
+         */
+        override fun createOrder(signal: Signal, size: Size, price: Double): Order? {
+            val atr = atrs[signal.asset]
+            if (atr != null && atr.isReady()) {
+                val direction = if (size > 0) 1 else -1
+                val limit = price - direction * atr.calc() * atrPercentage
+                // println("$direction $price $limit")
+                return LimitOrder(signal.asset, size, limit)
+            }
+            return null
+        }
+
+        override fun reset() {
+            atrs.clear()
+            super.reset()
+        }
+
+    }
+
+
+    val roboquant = Roboquant(EMACrossover.EMA_12_26, AccountSummary(), policy = MyPolicy(atrPeriod = 12))
+    val feed = AvroFeed.sp500()
+    roboquant.run(feed)
+    roboquant.broker.account.summary().print()
+
+}
+
 fun multiRun() {
     val feed = AvroFeed.sp500()
     val logger = LastEntryLogger()
@@ -90,6 +151,7 @@ fun multiRun() {
     val maxEntry = logger.getMetric("account.equity").max()
     println(maxEntry.info.run)
 }
+
 
 suspend fun walkforwardParallel() {
     val feed = AvroFeed.sp500()
@@ -196,8 +258,9 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("beta") {
+    when ("POLICY") {
         "BETA" -> beta()
+        "POLICY" -> customPolicy()
         "BETA2" -> beta2()
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkforwardParallel() })
