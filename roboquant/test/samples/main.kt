@@ -90,7 +90,7 @@ fun customPolicy() {
      */
     class MyPolicy(private val atrPercentage: Double = 0.02, private val atrPeriod : Int = 5) : DefaultPolicy() {
 
-        // map tat contains the ATR per asset
+        // map that contains the ATR per asset
         private val atrs = mutableMapOf<Asset, ATR>()
 
         /**
