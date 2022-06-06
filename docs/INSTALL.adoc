@@ -62,16 +62,23 @@ First start with cloning the roboquant GitHub repository to your local disk. The
 
 You can also use a plain text editor of course. Roboquant uses a setup and directory structure that removes much of the ceremony often found in many Java/Kotlin projects. So no need to go 10 directories deep to locate the source file you were looking for.
 
-Roboquant uses Maven for the build process and assuming you already have this installed, building the libraries locally, is as easy as:
+Roboquant uses Maven for the build process and assuming you already have this installed, building and installing the libraries locally, is as easy as:
 
 [source,shell]
 ----
-mvn compile
+mvn clean install
 ----
 
-The build and install is tested using JDK 17 runtime, however the generated libraries are targeted against JDK 11 in order to provide greater compatibility for projects that still use older versions of the JDK.
+The build and install is tested using JDK 17 runtime, however the generated libraries are targeted against JDK 11 in order to provide better compatibility for projects that still use older versions of the JDK.
 
 TIP: If you plan to make many changes and updates to the source code, checkout the https://github.com/apache/maven-mvnd[Maven Daemon] project that provides much faster builds.
+
+If you want to deploy a release (and not a SNAPSHOT) to Maven Central, use the `-P release` option.
+
+[source,shell]
+----
+mvn clean deploy -P release
+----
 
 == Interactive Brokers
 Unfortunately we are not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file yourself. You can download version `10.15` from here: https://interactivebrokers.github.io/# and within the downloaded archive file you'll find the required `TwsApi.jar`.
