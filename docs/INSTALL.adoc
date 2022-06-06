@@ -66,7 +66,7 @@ Roboquant uses Maven for the build process and assuming you already have this in
 
 [source,shell]
 ----
-mvn build
+mvn compile
 ----
 
 The build and install is tested using JDK 17 runtime, however the generated libraries are targeted against JDK 11 in order to provide greater compatibility for projects that still use older versions of the JDK.
