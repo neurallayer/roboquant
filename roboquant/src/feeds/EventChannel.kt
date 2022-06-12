@@ -58,7 +58,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
                 if (done) return
                 val dropped = channel.tryReceive().getOrNull()
                 if (dropped !== null)
-                    logger.info { "dropped event for time ${dropped.time}" }
+                    logger.fine { "dropped event for time ${dropped.time}" }
             }
         } else {
             if (event.time > timeframe) {

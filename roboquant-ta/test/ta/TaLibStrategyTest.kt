@@ -133,7 +133,7 @@ internal class TaLibStrategyTest {
         return result
     }
 
-    private fun run(s: Strategy, n: Int = 100): Map<Instant, List<Signal>> {
+    private fun run(s: Strategy, n: Int = 150): Map<Instant, List<Signal>> {
         s.reset()
         s.start(RunPhase.MAIN)
         val nHalf = n / 2

@@ -99,7 +99,9 @@ object AvroUtil {
                         val assetStr = cache.getOrPut(asset) { Json.encodeToString(asset) }
                         record.put(0, now)
                         record.put(1, assetStr)
+
                         val values: List<Double> = when (action) {
+
                             is PriceBar -> {
                                 record.put(2, 1); action.values
                             }
