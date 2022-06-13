@@ -19,8 +19,6 @@
 package org.roboquant.feeds.csv
 
 import org.roboquant.common.*
-import org.roboquant.common.Currency
-import org.roboquant.feeds.AssetBuilderFactory
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.PriceBar
 import java.io.File
@@ -50,9 +48,14 @@ data class CSVConfig(
     var priceThreshold: Double = 0.5,
     var priceAdjust: Boolean = false,
     var skipZeroPrice: Boolean = true,
-    var assetCurrency: String = "",
     var template: Asset = Asset("TEMPLATE")
 ) {
+
+    /**
+     * Asset builder allows to create assets based on more than just the symbol name. The input it the filename
+     * without extension in all capital letters an dthe return value should be a valid Asset
+     */
+    var assetBuilder : (String) -> Asset = { name -> template.copy(symbol = name) }
 
     private val timeParser: TimeParser by lazy {
         when {
@@ -66,15 +69,6 @@ data class CSVConfig(
     private val info = ColumnInfo()
     private val pattern by lazy { Pattern.compile(filePattern) }
     private var hasColumnsDefined = false
-
-    val exchange
-        get() = template.exchange
-
-    val currency: Currency
-        get() = if (assetCurrency.isNotEmpty())
-            Currency.getInstance(assetCurrency)
-        else
-            exchange.currency
 
 
     init {
@@ -116,7 +110,7 @@ data class CSVConfig(
 
     fun getAsset(fileName: String): Asset {
         val name = fileName.substringBefore(fileExtension).uppercase()
-        return AssetBuilderFactory.build(name, template)
+        return assetBuilder(name)
     }
 
 
@@ -129,7 +123,7 @@ data class CSVConfig(
     }
 
 
-    private fun getTemplateAsset(config: Map<String, String>): Asset {
+    private fun getAssetTemplate(config: Map<String, String>): Asset {
         return Asset(
             symbol = config.getOrDefault("symbol", "TEMPLATE"),
             type = AssetType.valueOf(config.getOrDefault("type", "STOCK")),
@@ -146,7 +140,7 @@ data class CSVConfig(
      */
     fun merge(config: Map<String, String>) {
         val newAssetConfig = config.filter { it.key.startsWith("asset.") }.mapKeys { it.key.substring(6) }
-        template = getTemplateAsset(newAssetConfig)
+        template = getAssetTemplate(newAssetConfig)
         for ((key, value) in config) {
             when (key) {
                 "file.extension" -> fileExtension = value

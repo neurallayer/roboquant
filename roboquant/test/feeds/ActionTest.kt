@@ -29,43 +29,7 @@ internal class ActionTest {
         assertEquals("SPLIT", action.type)
     }
 
-    @Test
-    fun priceBar() {
-        val asset = TestData.euStock()
-        val action = PriceBar(asset, 10, 12, 8, 11, 1000)
-        assertEquals(10.0, action.getPrice("OPEN"))
-        assertEquals(12.0, action.getPrice("HIGH"))
-        assertEquals(8.0, action.getPrice("LOW"))
-        assertEquals(11.0, action.getPrice("CLOSE"))
-        assertEquals(1000.0, action.volume)
-    }
 
-    @Test
-    fun priceAction() {
-        val asset = TestData.euStock()
-        val pb = PriceBar.fromAdjustedClose(asset, 2, 1, 1, 1, 0.5, 100)
-        assertEquals(1.0, pb.open)
-        assertEquals(200.0, pb.volume)
-
-        val values = pb.values
-        val pb2 = PriceBar.fromValues(pb.asset, values)
-        assertEquals(pb.asset, pb2.asset)
-        assertEquals(pb.values, pb2.values)
-    }
-
-    @Test
-    fun orderbook() {
-        val asset = TestData.euStock()
-        val action = OrderBook(
-            asset,
-            listOf(OrderBook.OrderBookEntry(100.0, 10.0), OrderBook.OrderBookEntry(100.0, 10.0)),
-            listOf(OrderBook.OrderBookEntry(100.0, 9.0), OrderBook.OrderBookEntry(100.0, 9.0))
-        )
-
-        val values = action.values
-        val action2 = OrderBook.fromValues(action.asset, values)
-        assertEquals(action, action2)
-    }
 
     @Test
     fun newsAction() {

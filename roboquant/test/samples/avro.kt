@@ -11,6 +11,7 @@ import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.io.path.name
+import kotlin.system.measureTimeMillis
 
 val dataHome = Path(System.getProperty("user.home")) / "data"
 
@@ -91,7 +92,12 @@ fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("LARGE") {
+    when ("LARGE2") {
+        "LARGE2" -> {
+            val t = measureTimeMillis { large("daily") }
+            println(t)
+        }
+
         "LARGE" -> {
             large("daily"); large("hourly"); large("5 min")
         }

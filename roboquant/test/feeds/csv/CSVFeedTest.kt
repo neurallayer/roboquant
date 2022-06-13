@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.Exchange
+import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.PriceAction
 import java.time.Instant
 import kotlin.test.*
@@ -31,8 +32,9 @@ internal class CSVFeedTest {
         val feed = CSVFeed(TestData.dataDir() + "US")
         val assets = feed.assets
         assertEquals(3, assets.size)
-        val c2 = assets.find { it.symbol == "AAPL" }
-        assertEquals("AAPL", c2?.symbol)
+        val c2 = assets.getBySymbol("AAPL")
+        assertEquals("AAPL", c2.symbol)
+        assertEquals(6669, feed.timeline.size)
     }
 
 
@@ -88,12 +90,7 @@ internal class CSVFeedTest {
         assertEquals(closingTime, instant)
     }
 
-    @Test
-    fun config() {
-        val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
-        val config = CSVConfig(template = asset)
-        assertEquals(asset.currency, config.currency)
-    }
+
 
     @Test
     fun columnInfoTest() {

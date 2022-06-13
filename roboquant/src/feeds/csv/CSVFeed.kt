@@ -114,6 +114,34 @@ class CSVFeed(
     }
 
 
+
+    /**
+    private fun readFile(asset: Asset, file: File): List<PriceEntry> {
+        var errors = 0
+        var first = true
+        val result = mutableListOf<PriceEntry>()
+        file.forEachLine {
+            val fields = it.split(",")
+            if (first) {
+                config.detectColumns(fields)
+                first = false
+            } else {
+                try {
+                    val step = config.processLine(asset, fields)
+                    result += step
+                } catch (_: Throwable) {
+                    logger.fine { "${asset.symbol} $fields" }
+                    errors += 1
+                }
+            }
+        }
+        if (errors > 0) logger.info { "Skipped $errors lines due to errors in $file" }
+        config.priceValidate && !validateResult(result) && return emptyList()
+            return result
+    }
+    */
+
+
     private fun readFile(asset: Asset, file: File): List<PriceEntry> {
         val reader = CsvReader.builder().skipEmptyRows(true).build(FileReader(file))
         reader.use {
