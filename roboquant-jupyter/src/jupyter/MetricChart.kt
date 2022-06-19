@@ -19,6 +19,7 @@ package org.roboquant.jupyter
 import org.roboquant.common.plusAssign
 import org.roboquant.logging.MetricsEntry
 import org.roboquant.logging.getName
+import org.roboquant.logging.group
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -38,7 +39,7 @@ class MetricChart(
     override fun renderOption(): String {
 
         // Every combination of a run and episode will be its own series
-        val series = metricsData.groupBy { it.group }
+        val series = metricsData.group()
         val result = StringBuffer()
         val gson = gsonBuilder.create()
         series.forEach { (name, entries) ->

@@ -34,21 +34,20 @@ open class HistoricPriceFeed : HistoricFeed {
         get() = events.keys.toList()
 
     override val timeframe
-        get() =  if (events.isEmpty()) Timeframe.INFINITE else Timeframe.inclusive(events.firstKey(), events.lastKey())
+        get() = if (events.isEmpty()) Timeframe.INFINITE else Timeframe.inclusive(events.firstKey(), events.lastKey())
 
-    override val assets : SortedSet<Asset>
+    override val assets: SortedSet<Asset>
         get() = events.asSequence().map { entry -> entry.value.map { it.asset } }.flatten().toSortedSet()
 
     /**
      * Return the first event in this feed
      */
-    fun first() : Event = Event(events.getValue(events.firstKey()),  events.firstKey())
+    fun first(): Event = Event(events.getValue(events.firstKey()), events.firstKey())
 
     /**
      * Return the last event in this feed
      */
-    fun last() : Event = Event(events.getValue(events.lastKey()),  events.lastKey())
-
+    fun last(): Event = Event(events.getValue(events.lastKey()), events.lastKey())
 
     /**
      * Remove all events from this feed, releasing claimed memory.
@@ -87,7 +86,6 @@ open class HistoricPriceFeed : HistoricFeed {
         val existing = events.getOrPut(time) { mutableListOf() }
         existing.addAll(actions)
     }
-
 
     /**
      * Merge the events in another historic [feed] into this feed.

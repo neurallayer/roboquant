@@ -25,15 +25,13 @@ import java.time.format.DateTimeFormatter
 /**
  * Datetime parser that parses local date-time
  *
- * @constructor
- *
  */
 internal class LocalTimeParser(pattern: String) : TimeParser {
 
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
 
-    override fun parse(s: String, exchange: Exchange): Instant {
-        val dt = LocalDateTime.parse(s, dtf)
+    override fun parse(text: String, exchange: Exchange): Instant {
+        val dt = LocalDateTime.parse(text, dtf)
         return exchange.getInstant(dt)
     }
 
@@ -50,8 +48,11 @@ internal class LocalDateParser(pattern: String) : TimeParser {
 
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
 
-    override fun parse(s: String, exchange: Exchange): Instant {
-        val date = LocalDate.parse(s, dtf)
+    /**
+     * @see TimeParser.parse
+     */
+    override fun parse(text: String, exchange: Exchange): Instant {
+        val date = LocalDate.parse(text, dtf)
         return exchange.getClosingTime(date)
     }
 

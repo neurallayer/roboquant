@@ -43,7 +43,6 @@ class LiveTestFeed(
         require(prices.isNotEmpty())
     }
 
-
     private fun getAction(price: Double): Action {
         return if (priceBar) {
             PriceBar(asset, price, price * 1.001, price * 0.999, price, volume)

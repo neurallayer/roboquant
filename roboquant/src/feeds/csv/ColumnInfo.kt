@@ -18,6 +18,10 @@ package org.roboquant.feeds.csv
 
 import javax.naming.ConfigurationException
 
+/**
+ * Contains the info of what the columns are in a CSV file
+ *
+ */
 internal class ColumnInfo {
     var time: Int = -1
     var open: Int = -1

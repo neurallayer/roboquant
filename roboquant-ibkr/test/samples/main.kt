@@ -127,9 +127,24 @@ fun historicFeed() {
 }
 
 
+fun historicFeed2() {
+    val feed = IBKRHistoricFeed()
+
+    // This assumes you have a valid market subscriptoin for European stocks
+    val template = Asset("TEMPLATE", AssetType.STOCK, "EUR", "AEB")
+    val symbols = listOf("ABN", "ASML", "KPN")
+    val assets = symbols.map { template.copy(symbol = it) }
+    feed.retrieve(assets, duration = "2 D", barSize = "30 mins")
+    feed.waitTillRetrieved()
+    println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets" )
+    feed.disconnect()
+}
+
+
+
 fun main() {
 
-    when ("HISTORIC") {
+    when ("HISTORIC2") {
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()
         "CLOSE_POSITION" -> closePosition()
@@ -137,6 +152,7 @@ fun main() {
         "LIVE_FEED_US" -> liveFeedUS()
         "PAPER_TRADE" -> paperTrade()
         "HISTORIC" -> historicFeed()
+        "HISTORIC2" -> historicFeed2()
     }
 
 }

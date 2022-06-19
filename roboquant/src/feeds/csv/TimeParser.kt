@@ -20,8 +20,13 @@ import org.roboquant.common.Exchange
 import java.time.Instant
 
 /**
- * Interface for time parsers
+ * Interface for time parsers that can use the exchange to support logic like the time zone or opening and
+ * closing times
  */
 fun interface TimeParser {
-    fun parse(s: String, exchange: Exchange): Instant
+
+    /**
+     * Return an [Instant] given the provided [text] string and [exchange]
+     */
+    fun parse(text: String, exchange: Exchange): Instant
 }

@@ -34,7 +34,6 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.time.Instant
 
-
 /**
  * Read price data from a single file in Avro format. This feed loads data lazy and disposes of it afterwards, so
  * memory footprint is low.
@@ -48,7 +47,7 @@ import java.time.Instant
  */
 class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFeed {
 
-    constructor(path:Path, useIndex: Boolean = true) : this(path.toString(), useIndex)
+    constructor(path: Path, useIndex: Boolean = true) : this(path.toString(), useIndex)
 
     private val assetLookup = mutableMapOf<String, Asset>()
     private val index = mutableListOf<Pair<Instant, Long>>()
@@ -77,7 +76,7 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
     private fun buildIndex() {
         index.clear()
         var last = Long.MIN_VALUE
-        
+
         getReader().use {
             while (it.hasNext()) {
                 val rec = it.next()
@@ -99,7 +98,6 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
         val file = File(path)
         return DataFileReader(file, GenericDatumReader())
     }
-
 
     /**
      * (Re)play the events of the feed using the provided [EventChannel]
@@ -154,6 +152,7 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
     }
 
     companion object {
+
         private val logger = Logging.getLogger(AvroFeed::class)
         private const val sp500File = "5yr_sp500_v2.0.avro"
         private const val smallFile = "us_small_daily_v2.0.avro"
@@ -167,7 +166,8 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
         }
 
         /**
-         * Small avro file with end of day [PriceBar] data 6 us stocks: AAPL, AMZN, TSLA, IBM, JNJ and JPM
+         * Small set of historic data with end of day [PriceBar] prices for 6 US stocks: AAPL, AMZN, TSLA, IBM,
+         * JNJ and JPM
          */
         fun usTest(): AvroFeed {
             val path = download(smallFile)
@@ -191,7 +191,6 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
             }
             return path
         }
-
 
     }
 

@@ -32,13 +32,13 @@ import org.roboquant.common.std
 data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo) : Comparable<MetricsEntry> {
 
     /**
-     * Get a key that uniquely defines the metric, run and episode.
+     * Get a key that uniquely defines the metric across a run and episode.
      */
-    val group
+    internal val groupId
         get() = """${metric}/${info.run}/${info.episode}"""
 
     /**
-     * Validate if another entry is from the same recorded episode.
+     * Validate if another entry is from the same recorded phase, run and episode.
      *
      * @param other
      * @return
@@ -56,6 +56,16 @@ data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo
     }
 
 }
+
+/**
+ * Group a collection of metrics by thier unique name, run and episode
+ */
+fun Collection<MetricsEntry>.group() : Map<String, List<MetricsEntry>> = groupBy { it.groupId }
+
+fun  Map<String, List<MetricsEntry>>.max() : Map<String, MetricsEntry> = mapValues { it.value.max() }
+
+fun  Map<String, List<MetricsEntry>>.min() : Map<String, MetricsEntry> = mapValues { it.value.min() }
+
 
 /**
  * Get the [n] highest entries, default being 10

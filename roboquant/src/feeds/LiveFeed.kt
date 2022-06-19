@@ -58,5 +58,4 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
 
     }
 
-
 }

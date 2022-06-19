@@ -29,9 +29,12 @@ class AutoDetectTimeParser : TimeParser {
 
     private lateinit var parser: TimeParser
 
-    override fun parse(s: String, exchange: Exchange): Instant {
-        if (!this::parser.isInitialized) detect(s)
-        return parser.parse(s, exchange)
+    /**
+     * @see TimeParser.parse
+     */
+    override fun parse(text: String, exchange: Exchange): Instant {
+        if (!this::parser.isInitialized) detect(text)
+        return parser.parse(text, exchange)
     }
 
 
