@@ -77,7 +77,7 @@ internal class AssetTest {
     fun testFilter() {
         val asset1 = Asset("abc")
         val assets = listOf(asset1, Asset("BCD"), Asset("CDE"))
-        var a = assets.filter { AssetFilter.noFilter().filter(it) }
+        var a = assets.filter { AssetFilter.all().filter(it) }
         assertEquals(3, a.size)
 
         a = assets.filter { AssetFilter.excludeSymbols("ABC").filter(it) }

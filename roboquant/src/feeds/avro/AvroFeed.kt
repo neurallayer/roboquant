@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("BlockingMethodInNonBlockingContext")
-
 package org.roboquant.feeds.avro
 
 import kotlinx.serialization.decodeFromString

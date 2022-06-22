@@ -67,7 +67,7 @@ object AvroUtil {
         fileName: String,
         timeframe: Timeframe = Timeframe.INFINITE,
         compressionLevel: Int = 1,
-        assetFilter: AssetFilter = AssetFilter.noFilter()
+        assetFilter: AssetFilter = AssetFilter.all()
     ) =
         runBlocking {
 

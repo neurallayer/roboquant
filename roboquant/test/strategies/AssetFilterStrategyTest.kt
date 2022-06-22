@@ -35,7 +35,7 @@ internal class AssetFilterStrategyTest {
     @Test
     fun test() {
         val action = TestData.priceAction()
-        val strategy = AlwaysStrategy().filter(AssetFilter.noFilter())
+        val strategy = AlwaysStrategy().filter(AssetFilter.all())
         val event = Event(listOf(action), Instant.now())
         val signals = strategy.generate(event)
         assertEquals(1, signals.size)

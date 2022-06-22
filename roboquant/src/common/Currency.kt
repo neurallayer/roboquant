@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("MemberVisibilityCanBePrivate")
-
 package org.roboquant.common
 
 import java.util.concurrent.ConcurrentHashMap

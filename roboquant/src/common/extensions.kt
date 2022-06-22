@@ -119,9 +119,12 @@ operator fun DoubleArray.minus(a: Number): DoubleArray {
     return result
 }
 
-operator fun DoubleArray.plus(a: Number): DoubleArray {
+/**
+ * Add a [number] to all elements in a double array and return the result
+ */
+operator fun DoubleArray.plus(number: Number): DoubleArray {
     val result = clone()
-    val n = a.toDouble()
+    val n = number.toDouble()
     for (i in indices) result[i] += n
     return result
 }
@@ -243,6 +246,7 @@ fun DoubleArray.totalReturns(): Double {
         (last() - first()) / first()
 }
 
+// Values smaller than this value are considered to be zero
 private const val EPS = 0.0000001
 
 /**
@@ -255,14 +259,17 @@ val Double.iszero
  * is this a non-zero number, allows for small rounding errors.
  */
 val Double.nonzero
-    get() = this.absoluteValue > EPS
+    get() = this.absoluteValue >= EPS
 
 /**
  * is this a non-zero number, allows for small rounding errors.
  */
 val Double.zeroOrMore
-    get() = if (this > EPS) this else 0.0
+    get() = if (this >= EPS) this else 0.0
 
+/**
+ * Return a rounded number with the specified number of fractions as a BigDecimal
+ */
 fun Number.round(fractions: Int = 2): BigDecimal =
     BigDecimal.valueOf(toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)
 

@@ -14,14 +14,14 @@ import org.roboquant.strategies.utils.PriceBarSeries
  *
  * @property name the name of the metric
  * @property history
- * @property assetFilter determines which assets to process, default is [AssetFilter.noFilter]
+ * @property assetFilter determines which assets to process, default is [AssetFilter.all]
  * @property block
  * @constructor Create new metric
  */
 class TaLibMetric(
     private val name: String,
     private val history: Int = 15,
-    private val assetFilter: AssetFilter = AssetFilter.noFilter(),
+    private val assetFilter: AssetFilter = AssetFilter.all(),
     private var block: TaLib.(series: PriceBarSeries) -> Double
 ) : SimpleMetric() {
 

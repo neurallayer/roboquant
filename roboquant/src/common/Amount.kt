@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
-
 package org.roboquant.common
 
 import java.math.BigDecimal

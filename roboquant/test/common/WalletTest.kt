@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("PrivatePropertyName", "PrivatePropertyName")
+@file:Suppress("PrivatePropertyName")
 
 package org.roboquant.common
 
@@ -22,8 +22,8 @@ import kotlin.test.*
 
 internal class WalletTest {
 
-    private val USD = Currency.getInstance("USD")
-    private val EUR = Currency.getInstance("EUR")
+    private val usd = Currency.getInstance("USD")
+    private val eur = Currency.getInstance("EUR")
 
     @Test
     fun getCurrencies() {
@@ -43,14 +43,14 @@ internal class WalletTest {
     fun deposit() {
         val wallet = Wallet()
         wallet.deposit(12.USD)
-        assertEquals(12.0, wallet.getValue(USD))
+        assertEquals(12.0, wallet.getValue(usd))
 
         wallet.deposit(13.USD)
-        assertEquals(25.USD, wallet.getAmount(USD))
+        assertEquals(25.USD, wallet.getAmount(usd))
 
         wallet.deposit(13.EUR)
-        assertEquals(25.USD, wallet.getAmount(USD))
-        assertEquals(13.EUR, wallet.getAmount(EUR))
+        assertEquals(25.USD, wallet.getAmount(usd))
+        assertEquals(13.EUR, wallet.getAmount(eur))
 
         wallet.withdraw(wallet)
         assertTrue(wallet.isEmpty())
@@ -61,14 +61,14 @@ internal class WalletTest {
     fun withdraw() {
         val wallet = Wallet()
         wallet.withdraw(12.USD)
-        assertEquals(-12.0, wallet.getValue(USD))
+        assertEquals(-12.0, wallet.getValue(usd))
 
         var metrics = wallet.toMap()
-        assertContains(metrics, USD)
+        assertContains(metrics, usd)
 
         wallet.deposit(12.USD)
         metrics = wallet.toMap()
-        assertFalse(USD in metrics)
+        assertFalse(usd in metrics)
 
 
     }
@@ -94,10 +94,10 @@ internal class WalletTest {
         assertEquals(wallet, wallet2)
 
         val wallet3 = wallet * 2
-        assertEquals(20.USD, wallet3.getAmount(USD))
+        assertEquals(20.USD, wallet3.getAmount(usd))
 
         val wallet4 = wallet / 2
-        assertEquals(5.USD, wallet4.getAmount(USD))
+        assertEquals(5.USD, wallet4.getAmount(usd))
     }
 
     @Test

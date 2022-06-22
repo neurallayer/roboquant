@@ -146,7 +146,7 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
      * values
      */
     fun set(currency: Currency, value: Double) {
-        if (value == 0.0)
+        if (value.iszero)
             data.remove(currency)
         else
             data[currency] = value
@@ -159,7 +159,6 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
     fun deposit(amount: Amount) {
         val (currency, value) = amount
         val oldValue = data[currency] ?: 0.0
-        // data[amount.currency] = amount.value + oldValue
         set(currency, value + oldValue)
     }
 
@@ -237,13 +236,13 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
     /**
      * A wallet only equals another wallet if they hold the same currencies and corresponding amounts.
      */
-    override fun equals(other: Any?) = if (other is Wallet) data.toMap() == other.data.toMap() else false
+    override fun equals(other: Any?) = if (other is Wallet) toMap() == other.toMap() else false
 
     /**
      * The hashcode of the wallet
      */
     override fun hashCode(): Int {
-        return data.toMap().hashCode()
+        return data.hashCode()
     }
 
     /**

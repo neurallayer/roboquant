@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused", "WildcardImport")
+@file:Suppress("WildcardImport")
 
 package org.roboquant.common
 

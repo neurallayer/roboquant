@@ -167,7 +167,7 @@ class IBKRBroker(
          */
         private fun toOrder(order: IBOrder, contract: Contract): Order {
             val asset = contract.getAsset()
-            val qty = if (order.action == "BUY") order.totalQuantity() else order.totalQuantity().negate()
+            val qty = if (order.action() == Types.Action.BUY) order.totalQuantity() else order.totalQuantity().negate()
             return MarketOrder(asset, Size(qty.value()))
         }
 
@@ -230,11 +230,11 @@ class IBKRBroker(
         }
 
         override fun accountSummary(p0: Int, p1: String?, p2: String?, p3: String?, p4: String?) {
-            println("$p0, $p1, $p2, $p3, $p4")
+            logger.fine { "$p0, $p1, $p2, $p3, $p4" }
         }
 
         override fun accountSummaryEnd(p0: Int) {
-            println(p0)
+            logger.fine { "$p0" }
         }
 
         /**
@@ -345,17 +345,14 @@ class IBKRBroker(
             val result = IBKRConnection.assetMap[conid()]
             result != null && return result
 
-            val type = when (secType()) {
-                Types.SecType.STK -> AssetType.STOCK
-                Types.SecType.BOND -> AssetType.BOND
+            val exchangeCode = exchange() ?: primaryExch() ?: ""
+
+            val asset = when (secType()) {
+                Types.SecType.STK -> Asset(symbol(), AssetType.STOCK, currency(), exchangeCode)
+                Types.SecType.BOND -> Asset(symbol(), AssetType.BOND, currency(), exchangeCode)
                 else -> throw UnsupportedException("Unsupported asset type ${secType()}")
             }
-            val asset = Asset(
-                symbol = symbol(),
-                type = type,
-                currencyCode = currency(),
-                exchangeCode = exchange() ?: primaryExch() ?: "",
-            )
+
             IBKRConnection.assetMap[conid()] = asset
             return asset
         }

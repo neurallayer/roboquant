@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter
  * cryptocurrency. All of its properties are read-only, and assets are ideally only created once and reused
  * thereafter. An asset instance is immutable.
  *
- * @property symbol none empty symbol name, for derivatives like options and futures this includes the contract details
+ * @property symbol none empty symbol name, for derivatives like options or futures contrat this includes the details
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currencyCode currency code, default is "USD"
  * @property exchangeCode Exchange this asset is traded on, default is an empty string
@@ -228,31 +228,28 @@ fun Collection<Asset>.summary(): Summary {
 fun interface AssetFilter {
 
     /**
-     * Filter based on the provided asset.
-     *
-     * @param asset
-     * @return
+     * Returns true if the provided [asset] should be processed, false otherwise.
      */
     fun filter(asset: Asset): Boolean
 
     companion object {
 
         /**
-         * Don't apply any filtering and include all assets
+         * Include all assets
          */
-        fun noFilter(): AssetFilter {
+        fun all(): AssetFilter {
             return AssetFilter { true }
         }
 
         /**
-         * Include only assets that are denoted in the provided [currencies].
+         * Include the assets that are denoted in the provided [currencies].
          */
         fun includeCurrencies(vararg currencies: Currency): AssetFilter {
             return AssetFilter { asset: Asset -> asset.currency in currencies }
         }
 
         /**
-         * Exclude assets that match the provided [symbols]. Matching of symbol names is done case-insensitive.
+         * Exclude the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive.
          */
         fun excludeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.uppercase() }.toSet()
@@ -260,7 +257,7 @@ fun interface AssetFilter {
         }
 
         /**
-         * Include only assets that match the provided [symbols]. Matching of symbol names is done case-insensitive.
+         * Include the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive.
          */
         fun includeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.uppercase() }.toSet()

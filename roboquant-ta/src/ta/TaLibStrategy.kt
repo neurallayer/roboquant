@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused", "LongParameterList")
+@file:Suppress("LongParameterList")
 
 package org.roboquant.ta
 
@@ -247,6 +247,7 @@ fun TaLib.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) =
 
 fun TaLib.recordHigh(data: PriceBarSeries, period: Int, previous: Int = 0) = recordHigh(data.high, period, previous)
 
+@Suppress("UnusedReceiverParameter")
 fun TaLib.vwap(
     high: DoubleArray,
     low: DoubleArray,

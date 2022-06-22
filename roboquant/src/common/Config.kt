@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("SimplifiableCallChain")
-
 package org.roboquant.common
 
 import org.roboquant.brokers.ExchangeRates

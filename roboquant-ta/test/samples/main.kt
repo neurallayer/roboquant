@@ -1,6 +1,3 @@
-
-@file:Suppress("KotlinConstantConditions")
-
 import org.roboquant.Roboquant
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.ta.TaLibStrategy
