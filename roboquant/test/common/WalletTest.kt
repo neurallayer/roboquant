@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("PrivatePropertyName")
-
 package org.roboquant.common
 
 import kotlin.test.*
