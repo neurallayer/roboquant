@@ -35,9 +35,6 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
 
     /**
      * (Re)play the events of the feed using the provided [EventChannel]
-     *
-     * @param channel
-     * @return
      */
     override suspend fun play(channel: EventChannel) {
         this.channel = channel

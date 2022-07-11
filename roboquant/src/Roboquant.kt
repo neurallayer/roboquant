@@ -99,20 +99,16 @@ class Roboquant(
     }
 
     /**
-     * Inform components of the start of a phase, this provides them with the opportunity to reset state and
+     * Inform components of the start of a [runPhase], this provides them with the opportunity to reset state and
      * re-initialize values if required.
-     *
-     * @param runPhase
      */
     private fun start(runPhase: RunPhase) {
         for (component in components) component.start(runPhase)
     }
 
     /**
-     * Inform components of the end of a phase, this provides them with the opportunity to release resources
+     * Inform components of the end of a [runPhase], this provides them with the opportunity to release resources
      * if required or process aggregated results.
-     *
-     * @param runPhase
      */
     private fun end(runPhase: RunPhase) {
         for (component in components) component.end(runPhase)
@@ -154,7 +150,7 @@ class Roboquant(
         }
 
     /**
-     * This is exactly the same method as the [run] method but as the name already suggest, asynchronously.
+     * This is the same method as the [run] method but as the name already suggest, asynchronously.
      *
      * @see [run]
      */
@@ -274,7 +270,7 @@ data class RunInfo internal constructor(
  *
  * See also [Roboquant.run] how to run your strategy with different phases enabled.
  *
- * @property value String value of the phase
+ * @property value String value of the run phase
  */
 enum class RunPhase(val value: String) {
 

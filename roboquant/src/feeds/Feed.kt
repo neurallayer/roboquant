@@ -57,7 +57,6 @@ interface Feed : Closeable {
 
 /**
  * Implementations of AssetFeed need to provide the [assets] it contains.
- *
  */
 interface AssetFeed : Feed {
 
