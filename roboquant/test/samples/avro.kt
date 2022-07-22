@@ -88,15 +88,27 @@ fun fiveYear_sp500() {
     AvroUtil.record(feed, avroFile.toString(), Timeframe.fromYears(2016, 2020))
 }
 
+/**
+ * All years  of SP500 stocks
+ */
+fun all_sp500() {
+    large("daily")
+    val feed = AvroFeed(getAvroFile("daily"))
+    val avroFile = dataHome / "avro/all_sp500_v2.0.avro"
+    AvroUtil.record(feed, avroFile.toString(), assetFilter = AssetFilter.includeSymbols(*sp500Symbols.toTypedArray()))
+}
+
 fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("LARGE2") {
+    when ("ALL_SP500") {
         "LARGE2" -> {
             val t = measureTimeMillis { large("daily") }
             println(t)
         }
+
+        "LARGE_US_DAILY" -> large("daily")
 
         "LARGE" -> {
             large("daily"); large("hourly"); large("5 min")
@@ -105,6 +117,9 @@ fun main() {
         "SMALL" -> {
             small("daily"); small("hourly"); small("5 min")
         }
+
+        "ALL_SP500" -> all_sp500()
+
         "ALL" -> {
             // First generate the large feeds since they are used by the others
             large("daily"); large("hourly"); large("5 min")
