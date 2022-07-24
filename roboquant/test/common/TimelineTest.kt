@@ -17,6 +17,10 @@
 package org.roboquant.common
 
 import org.junit.jupiter.api.Test
+import org.roboquant.TestData
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
+import org.roboquant.feeds.timeseries
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -45,6 +49,17 @@ internal class TimelineTest {
         val timeline = Timeframe.fromYears(1987, 1999).toTimeline(1.days)
         val tf = timeline.timeframe
         assertEquals(Timeframe.inclusive(timeline.first(), timeline.last()), tf)
+    }
+
+    @Test
+    fun correlation() {
+        val feed = TestData.feed()
+        val data = feed.filter<PriceAction>()
+        val timeseries = data.timeseries()
+        val corr = timeseries.correlation()
+        assertTrue(corr.isNotEmpty())
+        val pair = Pair(feed.assets.first(), feed.assets.first())
+        assertTrue(corr[pair]!! in 0.999..1.001)
     }
 
 

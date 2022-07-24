@@ -30,6 +30,7 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
+import org.roboquant.feeds.timeseries
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.toDoubleArray
@@ -44,6 +45,7 @@ import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.NoSignalStrategy
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.utils.ATR
+import kotlin.math.absoluteValue
 import kotlin.system.measureTimeMillis
 
 fun volatility() {
@@ -81,6 +83,8 @@ fun multiCurrency() {
     roboquant.run(feed)
     broker.account.openOrders.summary().print()
 }
+
+
 
 
 fun customPolicy() {
@@ -194,23 +198,19 @@ fun testingStrategies() {
 
 }
 
-/*fun trendFollowing2() {
+
+fun calcCorrelation() {
     val feed = AvroFeed.sp500()
-    val strategy = TAStrategy(200)
+    val data = feed.filter<PriceBar>(Timeframe.coronaCrash2020)
+    val timeseries = data.timeseries()
+    val result = timeseries.correlation()
 
-    strategy.buy {
-        ta.recordHigh(it.high, 200) || ta.recordHigh(it.high, 50)
+    val mostUncorrelated = result.toList().sortedBy { it.second.absoluteValue }.take(50)
+    for ((assets, corr) in mostUncorrelated) {
+        println("${assets.first.symbol} ${assets.second.symbol} = $corr")
     }
 
-    strategy.sell {
-        ta.recordLow(it.low, 25)
-    }
-
-    val roboquant = Roboquant(strategy, ProgressMetric())
-    roboquant.run(feed)
-    roboquant.broker.account.summary().log()
-    roboquant.broker.account.trades.summary().log()
-}*/
+}
 
 fun beta() {
     val feed = CSVFeed("/data/assets/stock-market/stocks/")
@@ -258,9 +258,10 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("POLICY") {
+    when ("CORR") {
         "BETA" -> beta()
         "POLICY" -> customPolicy()
+        "CORR" -> calcCorrelation()
         "BETA2" -> beta2()
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkforwardParallel() })

@@ -19,9 +19,7 @@ package org.roboquant.feeds
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
-import org.roboquant.common.getBySymbol
+import org.roboquant.common.*
 import java.io.Closeable
 import java.time.Instant
 import java.util.*
@@ -103,6 +101,17 @@ inline fun <reified T : Action> Feed.filter(
         if (job.isActive) job.cancel()
     }
     return@runBlocking result
+}
+
+/**
+ * Return a map with assets and their [Timeserie]
+ */
+inline fun <reified T : PriceAction> List<Pair<Instant, T>>.timeseries(
+    type: String = "DEFAULT"
+): Map<Asset, Timeserie> {
+    return groupBy { it.second.asset }.mapValues { it2 ->
+        it2.value.map { Observation(it.first, it.second.getPrice(type)) }
+    }
 }
 
 /**
