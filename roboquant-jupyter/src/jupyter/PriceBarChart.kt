@@ -26,11 +26,16 @@ import org.roboquant.feeds.filter
 
 /**
  * Plot the price-bars (candlesticks) of an asset found in a [feed] and optionally the [trades] made for that same
- * asset. This will only plot candlesticks if the feed also contains price actions of the type PriceBar.
+ * asset. This will only plot candlesticks if the feed also contains price actions of the type PriceBar in the provided
+ * [timeframe].
+ *
  * If this is not the case you can use the [PriceChart] instead to plot prices.
  *
- * By default, the chart will use a linear timeline, meaning gaps like a weekend will show-up. this can be disabled
+ * By default, the chart will use a linear timeline, meaning gaps like a weekend will show-up. This can be disabled
  * by setting [useTime] to false.
+ *
+ * Besides the prices, you can also provide [trades] to be plotted in the same chart. This will help to visualize when
+ * a certain price move triggered a trade.
  */
 class PriceBarChart(
     private val feed: Feed,
@@ -42,12 +47,12 @@ class PriceBarChart(
 
 
     init {
+        // Default height is not that suitable, so we increase it to 700
         height = 700
     }
 
     /**
      * Play a feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
-     * @return
      */
     private fun fromFeed(): List<List<Any>> {
         val entries = feed.filter<PriceBar>(timeframe) { it.asset == asset }

@@ -25,7 +25,7 @@ internal class AssetPerformanceChartTest {
     @Test
     fun test() {
         val feed = RandomWalk.lastYears(1)
-        val chart = AssetPerformanceChart(feed)
+        val chart = AssetPerformanceChart2(feed)
         assertTrue(chart.asHTML().isNotBlank())
     }
 

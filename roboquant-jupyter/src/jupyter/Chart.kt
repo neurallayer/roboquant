@@ -22,6 +22,10 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
+import org.icepear.echarts.Option
+import org.icepear.echarts.components.grid.Grid
+import org.icepear.echarts.components.toolbox.*
+import org.icepear.echarts.components.visualMap.ContinousVisualMap
 import org.roboquant.common.Amount
 import java.lang.reflect.Type
 import java.time.Instant
@@ -108,6 +112,7 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
  */
 abstract class Chart : Output() {
 
+    private var hasJavascript: Boolean = false
 
     /**
      * Height for charts, default being 500 pixels. Subclasses can override this value
@@ -117,7 +122,8 @@ abstract class Chart : Output() {
     companion object {
 
         /**
-         * Theme to use for plotting
+         * Theme to use for plotting. When left to "auto", it will adapt to the theme set for
+         * Jupyter Lab (light or dark)
          */
         var theme = "auto"
 
@@ -129,10 +135,10 @@ abstract class Chart : Output() {
          */
         var maxSamples = Int.MAX_VALUE
 
-        val gsonBuilder = GsonBuilder()
+        internal val gsonBuilder = GsonBuilder()
 
         init {
-            // register the three builders
+            // register the custom type adapters
             gsonBuilder.registerTypeAdapter(Pair::class.java, PairAdapter())
             gsonBuilder.registerTypeAdapter(Triple::class.java, TripleAdapter())
             gsonBuilder.registerTypeAdapter(Instant::class.java, InstantAdapter())
@@ -164,6 +170,12 @@ abstract class Chart : Output() {
             "'$theme'"
         }
 
+        // Transfer a string into a javascript Function for tooltip formatting
+        val handleJS = if (hasJavascript)
+                """option && (option.tooltip.formatter = new Function("p", option.tooltip.formatter));"""
+            else
+                ""
+
         return """
         <div style="width:100%;height:${height}px;" class="rqcharts"></div>
         
@@ -171,10 +183,9 @@ abstract class Chart : Output() {
             (function () {
                 let elem = document.currentScript.previousElementSibling;
                 let fn = function(a) {
-                    var theme = $themeDetector;
-                    var myChart = echarts.init(elem, theme);
-                    var option = $fragment;
-                    option && (option.backgroundColor = 'rgba(0,0,0,0)');
+                    let theme = $themeDetector;
+                    let myChart = echarts.init(elem, theme);
+                    let option = $fragment;$handleJS
                     option && myChart.setOption(option);
                     elem.ondblclick = function () { myChart.resize() };
                     console.log('rendered new chart');     
@@ -219,6 +230,55 @@ abstract class Chart : Output() {
         return """dataZoom: [{ type: 'inside'}, {}]"""
     }
 
+    /**
+     * Return the toolbox
+     */
+    protected fun getToolbox(includeMagicType: Boolean = true): Toolbox {
+        val features = mutableMapOf(
+            "saveAsImage" to ToolboxSaveAsImageFeature(),
+            "dataView" to ToolboxDataViewFeature().setReadOnly(true),
+            "dataZoom" to ToolboxDataZoomFeature().setYAxisIndex("none"),
+            "magicType" to ToolboxMagicTypeFeature().setType(arrayOf("line", "bar")),
+            "restore" to ToolboxRestoreFeature()
+        )
+        if (! includeMagicType) features.remove("magicType")
+        return Toolbox().setFeature(features)
+    }
+
+    /**
+     * Return the most basic toolbox
+     */
+    protected fun getBasicToolbox(): Toolbox {
+        val features = mutableMapOf(
+            "saveAsImage" to ToolboxSaveAsImageFeature(),
+            "restore" to ToolboxRestoreFeature()
+        )
+        return Toolbox().setFeature(features)
+    }
+
+    /**
+     * Returns the grid used to render the chart
+     */
+    protected fun getGrid(): Grid {
+        return Grid().setContainLabel(true).setRight("3%").setLeft("3%")
+    }
+
+    protected fun getVisualMap(min: Number, max: Number): ContinousVisualMap {
+        return ContinousVisualMap()
+            .setMin(min)
+            .setMax(max)
+            .setCalculable(true)
+            .setOrient("horizontal")
+            .setTop("top")
+            .setLeft("center")
+            .setColor(arrayOf("#00FF00", "#FF0000"))
+    }
+
+    protected fun javasciptFunction(code: String): String {
+        hasJavascript = true
+        return code
+    }
+
     protected fun renderToolbox(includeMagicType: Boolean = true): String {
         val mt = if (includeMagicType) "magicType: {type: ['line', 'bar']}," else ""
         return """
@@ -228,6 +288,13 @@ abstract class Chart : Output() {
                     restore: {},
                     saveAsImage: {}
                 }}""".trimStart()
+    }
+
+
+    protected fun renderJson(option: Option) : String {
+        option.backgroundColor = "rgba(0,0,0,0)"
+        if (option.grid == null) option.setGrid(getGrid())
+        return gsonBuilder.create().toJson(option)
     }
 
     /**

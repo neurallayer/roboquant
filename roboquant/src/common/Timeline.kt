@@ -12,7 +12,8 @@ import java.time.Instant
 typealias Timeline = List<Instant>
 
 /**
- * Observation captures a [value] at a certain point in [time]. Observation can be compared based on their [time].
+ * Observation contains a double [value] at a certain point in [time]. Observation can be compared based on
+ * their [time].
  */
 class Observation(val time: Instant, val value: Double) : Comparable<Observation> {
     override fun compareTo(other: Observation): Int = time.compareTo(other.time)
@@ -30,9 +31,10 @@ typealias Timeserie = List<Observation>
 fun Timeserie.toDoubleArray() : DoubleArray = map { it.value }.toDoubleArray()
 
 /**
- * Return the Correlation between two timeseries. Only observations at the same time will be taken into account.
+ * Return the Correlation between two timeseries. Only observations at the same time will be taken into account and
+ * correlations are only calculated if there are at least [minObservations] observations.
  */
-fun correlation(a: Timeserie, b: Timeserie) : Double {
+fun correlation(a: Timeserie, b: Timeserie, minObservations: Int = 3) : Double {
     require(a.isNotEmpty() && b.isNotEmpty())
     var offset1 = 0
     var offset2 = 0
@@ -54,7 +56,7 @@ fun correlation(a: Timeserie, b: Timeserie) : Double {
         if (offset1 > a.lastIndex || offset2 > b.lastIndex) break
     }
 
-    return if (data1.size > 3) {
+    return if (data1.size >= minObservations) {
         val calc = PearsonsCorrelation()
         calc.correlation(data1.toDoubleArray(), data2.toDoubleArray())
     } else {
@@ -63,15 +65,17 @@ fun correlation(a: Timeserie, b: Timeserie) : Double {
 }
 
 /**
- * Return the correlations for the timeseries
+ * Return the correlations for the timeseries, ensuring that at least [minObservations] are available for calculating
+ * the correlation. By default the correlation for the same asset are excluded
  */
-fun Map<Asset, Timeserie>.correlation(): Map<Pair<Asset, Asset>, Double> {
+fun Map<Asset, Timeserie>.correlation(minObservations: Int = 3, excludeSame : Boolean = true): Map<Pair<Asset, Asset>, Double> {
     val result = mutableMapOf<Pair<Asset, Asset>, Double>()
     for ((asset1, timeserie1) in this) {
         for ((asset2, timeserie2) in this) {
+            if (excludeSame && asset1 == asset2) continue
             val pair = Pair(asset2, asset1)
             if (pair !in result) {
-                val corr = correlation(timeserie1, timeserie2)
+                val corr = correlation(timeserie1, timeserie2, minObservations)
                 result[Pair(asset1, asset2)] = corr
             }
 

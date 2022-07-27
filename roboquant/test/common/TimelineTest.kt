@@ -56,7 +56,7 @@ internal class TimelineTest {
         val feed = TestData.feed()
         val data = feed.filter<PriceAction>()
         val timeseries = data.timeseries()
-        val corr = timeseries.correlation()
+        val corr = timeseries.correlation(excludeSame = false)
         assertTrue(corr.isNotEmpty())
         val pair = Pair(feed.assets.first(), feed.assets.first())
         assertTrue(corr[pair]!! in 0.999..1.001)

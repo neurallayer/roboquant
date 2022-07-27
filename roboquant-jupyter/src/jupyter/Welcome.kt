@@ -19,9 +19,10 @@ package org.roboquant.jupyter
 import org.roboquant.common.Config
 
 /**
- * Provides current environment settings in HTML format usable for displaying in a Jupyter Notebook.
+ * Provides current environment settings in HTML format suitable for displaying in a Jupyter Notebook.
  */
 class Welcome : Output() {
+
     /**
      * Generate an HTML snippet. Subclasses will need to implement this method. This is used in Jupyter-Lab environments
      * that can directly insert HTML and JavaScript content in the output of a cell.
