@@ -220,15 +220,6 @@ abstract class Chart : Output() {
         """.trimIndent()
     }
 
-    @Suppress("FunctionOnlyReturningConstant")
-    protected fun renderGrid(): String {
-        return """grid: { left: '3%', right: '3%', containLabel: true }"""
-    }
-
-    @Suppress("FunctionOnlyReturningConstant")
-    protected fun renderDataZoom(): String {
-        return """dataZoom: [{ type: 'inside'}, {}]"""
-    }
 
     /**
      * Return the toolbox
