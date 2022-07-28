@@ -39,6 +39,7 @@ import java.math.RoundingMode
  * @property compensateVolume should the chart compensate the volume by multiplying it with the price or is the
  * volume already expressed in a monetary amount.
  */
+@Suppress("unused")
 class AssetPerformanceChart2(
     private val feed: Feed,
     private val timeframe: Timeframe = Timeframe.INFINITE,
@@ -99,6 +100,8 @@ class AssetPerformanceChart2(
             .setVisualMap(getVisualMap(-max, max))
 
         val option = chart.option
+        option.setToolbox(getBasicToolbox())
+
         return renderJson(option)
     }
 

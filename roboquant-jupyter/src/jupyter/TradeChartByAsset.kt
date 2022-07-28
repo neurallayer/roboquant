@@ -102,7 +102,6 @@ class TradeChartByAsset(
 
         val option = chart.option
 
-
         // Allow for both horizontal and vertical zooming
         val toolbox = getToolbox(false)
         val feature = toolbox.feature

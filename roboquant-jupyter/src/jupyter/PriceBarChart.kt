@@ -16,6 +16,25 @@
 
 package org.roboquant.jupyter
 
+import org.icepear.echarts.Option
+import org.icepear.echarts.charts.bar.BarItemStyle
+import org.icepear.echarts.charts.bar.BarSeries
+import org.icepear.echarts.charts.candlestick.CandlestickItemStyle
+import org.icepear.echarts.charts.candlestick.CandlestickSeries
+import org.icepear.echarts.components.coord.AxisLine
+import org.icepear.echarts.components.coord.CategoryAxisTick
+import org.icepear.echarts.components.coord.cartesian.CategoryAxis
+import org.icepear.echarts.components.coord.cartesian.TimeAxis
+import org.icepear.echarts.components.coord.cartesian.ValueAxis
+import org.icepear.echarts.components.dataZoom.DataZoom
+import org.icepear.echarts.components.dataset.Dataset
+import org.icepear.echarts.components.grid.Grid
+import org.icepear.echarts.components.marker.MarkPoint
+import org.icepear.echarts.components.series.Encode
+import org.icepear.echarts.components.title.Title
+import org.icepear.echarts.components.tooltip.Tooltip
+import org.icepear.echarts.origin.coord.cartesian.AxisOption
+import org.icepear.echarts.origin.util.SeriesOption
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
@@ -49,6 +68,9 @@ class PriceBarChart(
     init {
         // Default height is not that suitable, so we increase it to 700
         height = 700
+
+        // workaround for missing encode functionality
+        fix = "option.series[0].encode = { x: 0, y: [1, 4, 3, 2] }; option.series[1].encode = {x: 0, y: 5 };"
     }
 
     /**
@@ -82,156 +104,101 @@ class PriceBarChart(
         return d
     }
 
+    /**
+     * Get the series for prices (ohlc) and volume
+     */
+    private fun getSeries(): Array<SeriesOption> {
+        val markPoint = MarkPoint()
+            .setData(markPoints().toTypedArray())
+
+        val encode1 = Encode().setItemName(arrayOf("x", "y")).setValue(arrayOf(0, 1))
+
+        val itemStyle1 = CandlestickItemStyle()
+            .setColor(positiveColor)
+            .setColor0(negativeColor)
+            .setBorderColor(positiveColor)
+            .setBorderColor0(negativeColor)
+
+        val series1 = CandlestickSeries()
+            .setName(asset.symbol)
+            .setMarkPoint(markPoint)
+            .setEncode(encode1)
+            .setItemStyle(itemStyle1)
+
+        val itemStyle2 = BarItemStyle()
+            .setColor("#fbe9e")
+
+        val series2 = BarSeries()
+            .setXAxisIndex(1)
+            .setYAxisIndex(1)
+            .setEncode(Encode())
+            .setItemStyle(itemStyle2)
+            .setLarge(true)
+
+        return arrayOf(series1, series2)
+    }
+
+    /**
+     * Get the grids for prices and volume
+     */
+    private fun getGrids(): Array<Grid> {
+        return arrayOf(
+            Grid().setRight("3%").setLeft(80).setBottom(200),
+            Grid().setRight("3%").setLeft(80).setBottom(80).setHeight(80),
+        )
+    }
+
+    private fun getDataZoom(): Array<DataZoom> {
+        return arrayOf(
+            DataZoom().setXAxisIndex(arrayOf(0,1)).setType("inside"),
+            DataZoom().setXAxisIndex(arrayOf(0,1)).setType("slider")
+        )
+    }
+
+    private fun getXAxis(): Array<AxisOption> {
+        val hide = mapOf("show" to false)
+        val noTick = CategoryAxisTick().setShow(false)
+
+        return if (useTime)
+            arrayOf(TimeAxis(), TimeAxis().setGridIndex(1).setAxisLabel(hide).setAxisTick(noTick))
+        else
+            arrayOf(CategoryAxis(), CategoryAxis().setGridIndex(1).setAxisLabel(hide).setAxisTick(noTick))
+    }
+
+    private fun getYAxis(): Array<AxisOption> {
+        return arrayOf(
+            ValueAxis().setScale(true),
+            ValueAxis()
+                .setScale(true)
+                .setGridIndex(1)
+                .setAxisLine(AxisLine().setShow(false))
+                .setAxisLabel(mapOf("show" to false))
+        )
+    }
+
     /** @suppress */
-    @Suppress("LongMethod")
     override fun renderOption(): String {
 
         val line = reduce(fromFeed())
-        val lineData = gsonBuilder.create().toJson(line)
         val timeframe = if (line.size > 1) Timeframe.parse(line.first()[0].toString(), line.last()[0].toString())
             .toString() else ""
 
-        val marks = markPoints()
-        val markData = gsonBuilder.create().toJson(marks)
-        val xAxisType = if (useTime) "time" else "category"
+        val dataset = Dataset().setSource(line)
+        val tooltip = Tooltip().setTrigger("axis")
 
-        return """
-                {
-                dataset: {
-                    source: $lineData
-                },
-                title: {
-                    text: '${asset.symbol} $timeframe'
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'line'
-                    }
-                },
-                ${renderToolbox()},
-                grid: [
-                    {
-                        left: 80,
-                        right: '3%',
-                        bottom: 200
-                    },
-                    {
-                        left: 80,
-                        right: '3%',
-                        height: 80,
-                        bottom: 80
-                    }
-                ],
-                xAxis: [
-                    {
-                        type: '$xAxisType',
-                        scale: true,
-                        boundaryGap: true,
-                        axisLine: {onZero: false},
-                        splitLine: {show: false},
-                        splitNumber: 20,
-                        min: 'dataMin',
-                        max: 'dataMax'
-                    },
-                    {
-                        type: '$xAxisType',
-                        gridIndex: 1,
-                        scale: true,
-                        boundaryGap: true,
-                        axisLine: {onZero: false},
-                        axisTick: {show: false},
-                        splitLine: {show: false},
-                        axisLabel: {show: false},
-                        splitNumber: 20,
-                        min: 'dataMin',
-                        max: 'dataMax'
-                    }
-                ],
-                yAxis: [
-                    {
-                        scale: true,
-                        splitArea: {
-                            show: true
-                        }
-                    },
-                    {
-                        scale: true,
-                        gridIndex: 1,
-                        splitNumber: 2,
-                        axisLabel: {show: false},
-                        axisLine: {show: false},
-                        axisTick: {show: false},
-                        splitLine: {show: false}
-                    }
-                ],
-                dataZoom: [
-                    {
-                        type: 'inside',
-                        xAxisIndex: [0, 1],
-                        start: 0,
-                        end: 100
-                    },
-                    {
-                        show: true,
-                        xAxisIndex: [0, 1],
-                        type: 'slider',
-                        bottom: 10,
-                        start: 0,
-                        end: 100
-                    }
-                ],
-                visualMap: {
-                    show: false,
-                    seriesIndex: 1,
-                    dimension: 6,
-                    pieces: [{
-                        value: 1,
-                        color: 'green'
-                    }, {
-                        value: -1,
-                        color: 'red'
-                    }]
-                },
-                series: [
-                    {
-                        type: 'candlestick',
-                        name: '${asset.symbol}',
-                        itemStyle: {
-                            color: 'green',
-                            color0: 'red',
-                            borderColor: 'green',
-                            borderColor0: 'red'
-                        },
-                         markPoint: {
-                                data: $markData,
-                                itemStyle : {
-                                    color: "yellow"
-                                }
-                        },
-                        encode: {
-                            x: 0,
-                            y: [1, 4, 3, 2]
-                        },
-                          
-                    },
-                    {
-                        name: 'Volume',
-                        type: 'bar',
-                        xAxisIndex: 1,
-                        yAxisIndex: 1,
-                        itemStyle: {
-                            color: '#7fbe9e'
-                        },
-                        large: true,
-                        encode: {
-                            x: 0,
-                            y: 5
-                        }
-                    }
-                ]
-                };
-                """.trimIndent()
+        val option = Option()
+            .setTitle(Title().setText("${asset.symbol} $timeframe"))
+            .setGrid(getGrids())
+            .setToolbox(getToolbox())
+            .setDataset(dataset)
+            .setSeries(getSeries())
+            .setXAxis(getXAxis())
+            .setYAxis(getYAxis())
+            .setToolbox(getToolbox())
+            .setTooltip(tooltip)
+            .setDataZoom(getDataZoom())
+
+        return renderJson(option)
     }
 
 }

@@ -102,6 +102,8 @@ class CalendarChart(
             .setCalendar(getCalendars(data))
             .setVisualMap(getVisualMap(-max, max))
             .setTooltip(getTooltip())
+            .setToolbox(getBasicToolbox())
+
         return renderJson(option)
     }
 }

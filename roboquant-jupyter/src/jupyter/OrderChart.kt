@@ -102,7 +102,6 @@ class OrderChart(
         val option = chart.option
         option.setToolbox(getToolbox(includeMagicType = false))
         option.setDataZoom(DataZoom())
-        option.setGrid(getGrid())
 
         return renderJson(option)
     }

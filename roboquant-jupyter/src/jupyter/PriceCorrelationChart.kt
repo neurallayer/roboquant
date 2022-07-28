@@ -110,7 +110,6 @@ class PriceCorrelationChart(
     }
 
     /** @suppress */
-    @Suppress("LongMethod")
     override fun renderOption(): String {
         val prices = collectPrices()
         val labels = prices.keys.map { it.symbol }.toTypedArray()
@@ -136,6 +135,8 @@ class PriceCorrelationChart(
             .addYAxis(CategoryAxis().setData(labels))
 
         val option = chart.option
+        option.setToolbox(getBasicToolbox())
+
         return renderJson(option)
     }
 }

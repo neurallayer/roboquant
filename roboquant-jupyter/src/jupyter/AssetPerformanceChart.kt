@@ -117,7 +117,8 @@ class AssetPerformanceChart(
                         saveAsImage: {}
                     }
                 },
-                series : [$series]
+                series : [$series],
+                backgroundColor: 'rgba(0,0,0,0)'
             }
        """.trimStart()
     }

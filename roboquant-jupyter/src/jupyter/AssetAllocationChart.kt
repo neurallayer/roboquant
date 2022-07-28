@@ -68,12 +68,12 @@ class AssetAllocationChart(
             .setData(data)
 
         val chart = Pie()
-            .setTitle("sset allocation")
+            .setTitle("Asset allocation")
             .addSeries(series)
             .setTooltip(Tooltip())
 
         val option = chart.option
-        option.setToolbox(getToolbox(false))
+        option.setToolbox(getBasicToolbox())
         return renderJson(option)
     }
 
@@ -93,6 +93,8 @@ class AssetAllocationChart(
             .setTooltip(Tooltip())
 
         val option = chart.option
+        option.setToolbox(getBasicToolbox())
+
         return renderJson(option)
     }
 

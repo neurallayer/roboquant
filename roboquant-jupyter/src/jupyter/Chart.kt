@@ -113,11 +113,14 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 abstract class Chart : Output() {
 
     private var hasJavascript: Boolean = false
+    protected var fix : String = ""
 
     /**
      * Height for charts, default being 500 pixels. Subclasses can override this value
      */
     var height = 500
+
+
 
     companion object {
 
@@ -134,6 +137,10 @@ abstract class Chart : Output() {
          * be 100_000, but this depends on your computer.
          */
         var maxSamples = Int.MAX_VALUE
+
+        // Make this variable so can serve both Chinese and western users.
+        var positiveColor : String = "#00FF00"
+        var negativeColor : String = "#FF0000"
 
         internal val gsonBuilder = GsonBuilder()
 
@@ -185,7 +192,7 @@ abstract class Chart : Output() {
                 let fn = function(a) {
                     let theme = $themeDetector;
                     let myChart = echarts.init(elem, theme);
-                    let option = $fragment;$handleJS
+                    let option = $fragment;$handleJS;$fix;
                     option && myChart.setOption(option);
                     elem.ondblclick = function () { myChart.resize() };
                     console.log('rendered new chart');     
@@ -242,7 +249,8 @@ abstract class Chart : Output() {
     protected fun getBasicToolbox(): Toolbox {
         val features = mutableMapOf(
             "saveAsImage" to ToolboxSaveAsImageFeature(),
-            "restore" to ToolboxRestoreFeature()
+            "restore" to ToolboxRestoreFeature(),
+            "dataView" to ToolboxDataViewFeature().setReadOnly(true),
         )
         return Toolbox().setFeature(features)
     }
@@ -262,23 +270,12 @@ abstract class Chart : Output() {
             .setOrient("horizontal")
             .setTop("top")
             .setLeft("center")
-            .setColor(arrayOf("#00FF00", "#FF0000"))
+            .setColor(arrayOf(positiveColor, negativeColor))
     }
 
     protected fun javasciptFunction(code: String): String {
         hasJavascript = true
         return code
-    }
-
-    protected fun renderToolbox(includeMagicType: Boolean = true): String {
-        val mt = if (includeMagicType) "magicType: {type: ['line', 'bar']}," else ""
-        return """
-                toolbox: { feature: {
-                    dataZoom: { yAxisIndex: 'none'},
-                    dataView: {readOnly: true}, $mt
-                    restore: {},
-                    saveAsImage: {}
-                }}""".trimStart()
     }
 
 
