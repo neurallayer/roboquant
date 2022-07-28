@@ -3,7 +3,6 @@ package org.roboquant.common
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation
 import java.time.Instant
 
-
 /**
  * Timeline is an ordered list of [Instant] instances, sorted from old to new. Every [Instant] is unique.
  *
@@ -28,13 +27,13 @@ typealias Timeserie = List<Observation>
 /**
  * Return the values of the timeserie as an double array
  */
-fun Timeserie.toDoubleArray() : DoubleArray = map { it.value }.toDoubleArray()
+fun Timeserie.toDoubleArray(): DoubleArray = map { it.value }.toDoubleArray()
 
 /**
  * Return the Correlation between two timeseries. Only observations at the same time will be taken into account and
  * correlations are only calculated if there are at least [minObservations] observations.
  */
-fun correlation(a: Timeserie, b: Timeserie, minObservations: Int = 3) : Double {
+fun correlation(a: Timeserie, b: Timeserie, minObservations: Int = 3): Double {
     require(a.isNotEmpty() && b.isNotEmpty())
     var offset1 = 0
     var offset2 = 0
@@ -68,7 +67,10 @@ fun correlation(a: Timeserie, b: Timeserie, minObservations: Int = 3) : Double {
  * Return the correlations for the timeseries, ensuring that at least [minObservations] are available for calculating
  * the correlation. By default the correlation for the same asset are excluded
  */
-fun Map<Asset, Timeserie>.correlation(minObservations: Int = 3, excludeSame : Boolean = true): Map<Pair<Asset, Asset>, Double> {
+fun Map<Asset, Timeserie>.correlation(
+    minObservations: Int = 3,
+    excludeSame: Boolean = true
+): Map<Pair<Asset, Asset>, Double> {
     val result = mutableMapOf<Pair<Asset, Asset>, Double>()
     for ((asset1, timeserie1) in this) {
         for ((asset2, timeserie2) in this) {
@@ -84,12 +86,10 @@ fun Map<Asset, Timeserie>.correlation(minObservations: Int = 3, excludeSame : Bo
     return result
 }
 
-
 /**
  * Return the [Timeline] of the [Timeserie]
  */
-fun Timeserie.timeline() : Timeline = map { it.time }
-
+fun Timeserie.timeline(): Timeline = map { it.time }
 
 /**
  * Return the index of the time that is closets to the provided time but doesn't exceed it. So it is the most recent
@@ -124,11 +124,11 @@ val Timeline.timeframe
  * Split the timeline in chunks of [size]
  */
 fun Timeline.split(size: Int): List<Timeframe> {
-    require(size > 1) {"Minimum requires 2 elements in timeline"}
+    require(size > 1) { "Minimum requires 2 elements in timeline" }
     val chunks = chunked(size)
     val result = mutableListOf<Timeframe>()
     for (chunk in chunks) {
-        if (size > 1) result.add(Timeframe(chunk.first(), chunk.last()) )
+        if (size > 1) result.add(Timeframe(chunk.first(), chunk.last()))
     }
     result[result.lastIndex] = result.last().inclusive
     return result
