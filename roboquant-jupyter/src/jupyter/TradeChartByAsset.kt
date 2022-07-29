@@ -43,7 +43,6 @@ class TradeChartByAsset(
         require(aspect in validAspects) { "Unsupported aspect $aspect, valid values are $validAspects" }
     }
 
-    @Suppress("MaxLineLength")
     private fun getTooltip(trade: Trade): String {
         val pnl = trade.pnl.toBigDecimal()
         val totalCost = trade.totalCost.toBigDecimal()

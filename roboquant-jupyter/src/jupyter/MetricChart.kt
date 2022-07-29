@@ -66,7 +66,6 @@ class MetricChart(
         val option = chart.option
         option.setToolbox(getToolbox())
         option.setDataZoom(DataZoom())
-        option.setGrid(getGrid())
 
         return renderJson(option)
     }

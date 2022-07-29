@@ -52,13 +52,16 @@ class Welcome : Output() {
     }
 
     /**
-     * Generate a whole HTML page. Subclasses will need to implement this method. This is used in Jupyter-Notebook
-     * environments that put the output of a cell in an iFrame.
-     *
-     * @return
+     * Generate a full HTML page.
      */
     override fun asHTMLPage(): String {
-        return asHTML()
+        return """
+        <html>
+            <body>
+                ${asHTML()}
+            </body>
+        </html>
+        """.trimIndent()
     }
 
 

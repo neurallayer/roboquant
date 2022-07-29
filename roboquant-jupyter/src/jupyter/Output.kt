@@ -23,7 +23,8 @@ import org.jetbrains.kotlinx.jupyter.api.Renderable
 import java.io.File
 
 /**
- * Takes care of difference between Notebook and Lab behavior
+ * Base class for anything that wants to generate output for notebooks. This takes care of difference between
+ * classic notebooks and Jupyer-Lab.
  *
  */
 abstract class Output : Renderable {

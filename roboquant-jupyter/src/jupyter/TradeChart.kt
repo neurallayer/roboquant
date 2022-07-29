@@ -36,8 +36,6 @@ open class TradeChart(
     private val aspect: String = "pnl",
 ) : Chart() {
 
-    private var max = Double.MIN_VALUE.toBigDecimal()
-
     init {
         val validAspects = listOf("pnl", "fee", "cost", "quantity")
         require(aspect in validAspects) { "Unsupported aspect $aspect, valid values are $validAspects" }
@@ -70,21 +68,20 @@ open class TradeChart(
                     else -> throw UnsupportedException("Unsupported aspect $aspect")
                 }
 
-                if (value.abs() > max) max = value.abs()
                 val tooltip = getTooltip(this)
                 d.add(Triple(time, value, tooltip))
             }
         }
-
         return d
     }
 
     override fun renderOption(): String {
-        max = Double.MIN_VALUE.toBigDecimal()
 
-        val d = toSeriesData()
+        val data = toSeriesData()
+        val max = data.maxOfOrNull { it.second.abs() } ?: BigDecimal.ONE
+
         val series = ScatterSeries()
-            .setData(d.toTypedArray())
+            .setData(data)
             .setSymbolSize(10)
 
         val vm = getVisualMap(-max, max).setDimension(1)
@@ -103,7 +100,6 @@ open class TradeChart(
         val option = chart.option
         option.setToolbox(getToolbox(includeMagicType = false))
         option.setDataZoom(DataZoom())
-        option.setGrid(getGrid())
 
         return renderJson(option)
     }

@@ -36,12 +36,9 @@ class CalendarChart(
     private val zoneId: ZoneId = Config.defaultZoneId
 ) : Chart() {
 
-    private var max: Double = 1.0
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)
 
     private fun prepData(): Map<Int, List<Any>> {
-
-        max = metricsData.map { it.value }.maxOfOrNull { it.absoluteValue } ?: 1.0
         val perYear = metricsData.groupBy { it.info.time.atZone(zoneId).year }
         val result = mutableMapOf<Int, List<Pair<String, BigDecimal>>>()
         perYear.forEach { (t, u) ->
@@ -96,6 +93,8 @@ class CalendarChart(
     /** @suppress */
     override fun renderOption(): String {
         val data = prepData()
+        val max = metricsData.map { it.value }.maxOfOrNull { it.absoluteValue } ?: 1.0
+
         val option = Option()
             .setTitle(Title().setText("Daily results ${metricsData.getName()}"))
             .setSeries(getSeriesOptions(data))

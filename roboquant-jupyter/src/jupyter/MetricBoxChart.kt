@@ -52,14 +52,14 @@ class MetricBoxChart(
             if (arr.isNotEmpty()) {
                 val p = Percentile()
                 p.data = arr
-                val tmp = listOf(
+                val entry = listOf(
                     arr.min().toBigDecimal(ctx),
                     p.evaluate(lowPercentile).toBigDecimal(ctx),
                     p.evaluate(midPercentile).toBigDecimal(ctx),
                     p.evaluate(highPercentile).toBigDecimal(ctx),
                     arr.max().toBigDecimal(ctx)
                 )
-                result.add(Pair(d.key, tmp))
+                result.add(Pair(d.key, entry))
             }
         }
         result.sortBy { it.first }
@@ -68,13 +68,13 @@ class MetricBoxChart(
 
     /** @suppress */
     override fun renderOption(): String {
-        val d = toSeriesData()
-        val data = d.map { it.second }
-        val xData = d.map { it.first }.toTypedArray()
+        val data = toSeriesData()
+        val xData = data.map { it.first }.toTypedArray()
+        val yData = data.map { it.second }
 
         val chart = Boxplot()
             .setTitle("")
-            .addSeries(BoxplotSeries().setName("boxplot").setData(data))
+            .addSeries(BoxplotSeries().setName("boxplot").setData(yData))
             .addYAxis(ValueAxis())
             .addXAxis(CategoryAxis().setData(xData))
             .setTooltip("axis")

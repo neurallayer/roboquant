@@ -45,10 +45,10 @@ import org.roboquant.feeds.filter
 
 /**
  * Plot the price-bars (candlesticks) of an asset found in a [feed] and optionally the [trades] made for that same
- * asset. This will only plot candlesticks if the feed also contains price actions of the type PriceBar in the provided
- * [timeframe].
+ * asset.
  *
- * If this is not the case you can use the [PriceChart] instead to plot prices.
+ * This will only plot candlesticks if the feed also contains price actions of the type [PriceBar] for the
+ * provided [timeframe]. If this is not the case you can use the [PriceChart] instead to plot prices.
  *
  * By default, the chart will use a linear timeline, meaning gaps like a weekend will show-up. This can be disabled
  * by setting [useTime] to false.
@@ -69,7 +69,7 @@ class PriceBarChart(
         // Default height is not that suitable, so we increase it to 700
         height = 700
 
-        // workaround for missing encode functionality
+        // @TODO once there is support for in the ECharts-Java library, this workaround can be removed
         fix = "option.series[0].encode = { x: 0, y: [1, 4, 3, 2] }; option.series[1].encode = {x: 0, y: 5 };"
     }
 

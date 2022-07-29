@@ -29,6 +29,7 @@ import org.icepear.echarts.components.visualMap.ContinousVisualMap
 import org.roboquant.common.Amount
 import java.lang.reflect.Type
 import java.time.Instant
+import java.util.*
 
 /**
  * Type adaptor for Gson that allows to use Pair that get serialized as a list
@@ -50,7 +51,7 @@ private class PairAdapter : JsonSerializer<Pair<*, *>> {
 
 
 /**
- * Type adaptor for Gson that allows to use Amount that get serialized as a big decimal
+ * Type adaptor for Gson that allows to use [Amount] that get serialized as a BigDecimal.
  *
  * @constructor Create new Pair adapter
  */
@@ -69,7 +70,7 @@ private class AmountAdapter : JsonSerializer<Amount> {
 
 
 /**
- * Type adaptor for Gson that allows to use Instant that get serialized as a Long
+ * Type adaptor for Gson that allows to use [Instant] that get serialized as a Long
  *
  * @constructor Create new Pair adapter
  */
@@ -88,7 +89,7 @@ private class InstantAdapter : JsonSerializer<Instant> {
 
 
 /**
- * Type adaptor for Gson that allows to use Triple that get serialized as a list
+ * Type adaptor for Gson that allows to use [Triple] that get serialized as a List
  *
  * @constructor Create new Pair adapter
  */
@@ -106,20 +107,19 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 }
 
 /**
- * Base class for ECharts based charts
- *
- * @constructor Create empty E chart
+ * Base class all roboquant charts in Notebooks. Subclasses should implemented at least the [renderOption] method.
  */
 abstract class Chart : Output() {
 
     private var hasJavascript: Boolean = false
+
+    // Temporary workaround
     protected var fix : String = ""
 
     /**
      * Height for charts, default being 500 pixels. Subclasses can override this value
      */
     var height = 500
-
 
 
     companion object {
@@ -138,9 +138,9 @@ abstract class Chart : Output() {
          */
         var maxSamples = Int.MAX_VALUE
 
-        // Make this variable so can serve both Chinese and western users.
-        var positiveColor : String = "#00FF00"
-        var negativeColor : String = "#FF0000"
+        // Make this variable so can charts work for both Chinese and western users.
+        var positiveColor : String = "#00FF00" // Green
+        var negativeColor : String = "#FF0000" // Red
 
         internal val gsonBuilder = GsonBuilder()
 
@@ -150,6 +150,12 @@ abstract class Chart : Output() {
             gsonBuilder.registerTypeAdapter(Triple::class.java, TripleAdapter())
             gsonBuilder.registerTypeAdapter(Instant::class.java, InstantAdapter())
             gsonBuilder.registerTypeAdapter(Amount::class.java, AmountAdapter())
+
+            // Swap colors for Chinese users
+            if (Locale.getDefault() == Locale.CHINA) {
+                positiveColor = "#FF0000" // Red
+                negativeColor = "#00FF00" // Green
+            }
         }
 
     }
@@ -167,7 +173,8 @@ abstract class Chart : Output() {
     }
 
     /**
-     * Generates the HTML required to draw a chart.
+     * Generates the HTML required to draw a chart. This is a HTML snippet and not a full HTML page and it is suitable
+     * to be rendered in the cell output of a Jupyter notebook.
      */
     override fun asHTML(): String {
         val fragment = renderOption().trimStart()
@@ -203,7 +210,9 @@ abstract class Chart : Output() {
         """.trimIndent()
     }
 
-
+    /**
+     * Generates a standalone HTML page for the chart. This page can be saved and for example viewed in a browser.
+     */
     override fun asHTMLPage(): String {
         val fragment = asHTML()
         val script = """<script src='https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js'></script>"""
@@ -256,12 +265,8 @@ abstract class Chart : Output() {
     }
 
     /**
-     * Returns the grid used to render the chart
+     * Get the default visual map ranging from [min] to [max]
      */
-    protected fun getGrid(): Grid {
-        return Grid().setContainLabel(true).setRight("3%").setLeft("3%")
-    }
-
     protected fun getVisualMap(min: Number, max: Number): ContinousVisualMap {
         return ContinousVisualMap()
             .setMin(min)
@@ -273,15 +278,27 @@ abstract class Chart : Output() {
             .setColor(arrayOf(positiveColor, negativeColor))
     }
 
-    protected fun javasciptFunction(code: String): String {
+    /**
+     * Calling this function will ensure that a JavaScript function used in the tooltip formatter wil work.
+     * A function should only contain the body and the input paramter is `p`, for example:
+     *
+     * ```
+     *      return p.param[0] + p.param[1]
+     * ```
+     *
+     */
+    protected fun javasciptFunction(function: String): String {
         hasJavascript = true
-        return code
+        return function
     }
 
 
     protected fun renderJson(option: Option) : String {
         option.backgroundColor = "rgba(0,0,0,0)"
-        if (option.grid == null) option.setGrid(getGrid())
+        if (option.grid == null) {
+            val grid = Grid().setContainLabel(true).setRight("3%").setLeft("3%")
+            option.setGrid(grid)
+        }
         return gsonBuilder.create().toJson(option)
     }
 

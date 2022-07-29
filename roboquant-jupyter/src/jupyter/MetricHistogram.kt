@@ -32,7 +32,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
- * Chart that takes some metric data and creates a histogram of it. The number of bins to display is configurable.
+ * Chart that takes [metricData] and creates a histogram of it. The number of [binCount] to display is configurable.
  *
  * @property metricData
  * @property binCount

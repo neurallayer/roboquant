@@ -58,6 +58,9 @@ class PriceChart(
         return data
     }
 
+    /**
+     * Generate mark points that will highlight when a trade happened.
+     */
     private fun markPointsData(): Array<Map<String, Any>> {
         val t = trades.filter { it.asset == asset && timeframe.contains(it.time) }
         val result = mutableListOf<Map<String, Any>>()
@@ -99,9 +102,8 @@ class PriceChart(
         option.backgroundColor = "rgba(0,0,0,0)"
         option.setToolbox(getToolbox())
         option.setDataZoom(DataZoom())
-        option.setGrid(getGrid())
 
-        return gsonBuilder.create().toJson(option)
+        return renderJson(option)
     }
 
 }

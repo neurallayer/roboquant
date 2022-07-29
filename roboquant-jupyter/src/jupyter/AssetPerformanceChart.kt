@@ -44,8 +44,7 @@ class AssetPerformanceChart(
 ) : Chart() {
 
     /**
-     * Play the feed and get price-actions
-     * The output is usable for a treemap
+     * Play the feed and get price-actions. The output is usable for a treemap chart
      */
     private fun fromFeed(): List<Map<String, Any>> {
         val result = mutableMapOf<Asset, MutableList<Double>>()  // start, last, volume

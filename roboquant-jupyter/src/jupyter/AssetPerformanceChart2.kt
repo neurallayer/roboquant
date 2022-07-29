@@ -38,6 +38,8 @@ import java.math.RoundingMode
  *
  * @property compensateVolume should the chart compensate the volume by multiplying it with the price or is the
  * volume already expressed in a monetary amount.
+ *
+ * @TODO once there is support for TreeMap charts in the ECharts-Java library, this implementation can be finsihed.
  */
 @Suppress("unused")
 class AssetPerformanceChart2(

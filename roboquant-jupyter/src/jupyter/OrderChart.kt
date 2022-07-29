@@ -41,8 +41,6 @@ class OrderChart(
     private val aspect: String = "quantity",
 ) : Chart() {
 
-    private var max = Double.MIN_VALUE.toBigDecimal()
-
     init {
         require(aspect in listOf("direction", "quantity"))
     }
@@ -56,7 +54,6 @@ class OrderChart(
 
     private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val states = orderStates.filter { it.status != OrderStatus.INITIAL }
-        max = Double.MIN_VALUE.toBigDecimal()
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (state in states.sortedBy { it.openedAt }) {
             val order = state.order
@@ -67,7 +64,6 @@ class OrderChart(
                     else -> throw UnsupportedException("Unsupported aspect $aspect")
                 }
 
-                if (value.abs() > max) max = value.abs()
                 val tooltip = getTooltip(order, state.openedAt)
                 d.add(Triple(state.openedAt, value, tooltip))
             }
@@ -79,11 +75,11 @@ class OrderChart(
     /** @suppress */
     override fun renderOption(): String {
 
-        max = Double.MIN_VALUE.toBigDecimal()
+        val data = toSeriesData()
+        val max = data.maxOfOrNull { it.second.abs() } ?: BigDecimal.ONE
 
-        val d = toSeriesData()
         val series = ScatterSeries()
-            .setData(d.toTypedArray())
+            .setData(data)
             .setSymbolSize(10)
 
         val vm = getVisualMap(-max, max).setDimension(1)

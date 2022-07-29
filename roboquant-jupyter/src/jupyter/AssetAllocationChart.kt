@@ -16,6 +16,7 @@
 
 package org.roboquant.jupyter
 
+import org.icepear.echarts.Option
 import org.icepear.echarts.Pie
 import org.icepear.echarts.Sunburst
 import org.icepear.echarts.charts.pie.PieSeries
@@ -26,9 +27,9 @@ import java.math.BigDecimal
 
 /**
  * Plot the allocation of assets as a pie chart
-
+ *
  * @property account the account to use
- * @property includeCash also include cash balances next aessets in the portfolio, default is true
+ * @property includeCash also include cash balances next to the assets in the portfolio, default is true
  * @property includeAssetClass group per assetClass, default is false
  * @constructor Create a new asset allocation chart
  */
@@ -60,7 +61,7 @@ class AssetAllocationChart(
         return result
     }
 
-    private fun renderPie(): String {
+    private fun renderPie(): Option {
 
         val data = toSeriesData().map { it.toMap() }
         val series = PieSeries()
@@ -74,11 +75,11 @@ class AssetAllocationChart(
 
         val option = chart.option
         option.setToolbox(getBasicToolbox())
-        return renderJson(option)
+        return option
     }
 
 
-    private fun renderSunburst(): String {
+    private fun renderSunburst(): Option  {
 
         val data = toSeriesData().groupBy { it.type }
             .map { entry -> mapOf("name" to entry.key, "children" to entry.value.map { it.toMap() }) }
@@ -95,11 +96,12 @@ class AssetAllocationChart(
         val option = chart.option
         option.setToolbox(getBasicToolbox())
 
-        return renderJson(option)
+        return option
     }
 
     /** @suppress */
     override fun renderOption(): String {
-        return if (includeAssetClass) renderSunburst() else renderPie()
+        val result = if (includeAssetClass) renderSunburst() else renderPie()
+        return renderJson(result)
     }
 }
