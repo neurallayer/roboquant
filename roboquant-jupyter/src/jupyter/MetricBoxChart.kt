@@ -73,7 +73,7 @@ class MetricBoxChart(
         val yData = data.map { it.second }
 
         val chart = Boxplot()
-            .setTitle("")
+            .setTitle("Metric: ${metricData.getName()}")
             .addSeries(BoxplotSeries().setName("boxplot").setData(yData))
             .addYAxis(ValueAxis())
             .addXAxis(CategoryAxis().setData(xData))

@@ -119,14 +119,6 @@ class PriceCorrelationChart(
             .setData(data)
             .setLabel(SeriesLabel().setShow(true))
 
-        /*
-        val tooltip = Tooltip()
-            .setPosition("top")
-            .setFormatter(javasciptFunction(
-                "return p.name + ':' + option.yAxis.data[p.data[1]] + ' = ' + p.data[2];"
-            ))
-        */
-
         val chart = Heatmap()
             .setTitle("${assets.size} assets $timeframe")
             .addSeries(series)
