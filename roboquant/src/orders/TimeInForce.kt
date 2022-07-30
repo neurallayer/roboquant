@@ -39,6 +39,9 @@ interface TimeInForce
  */
 class GTC(val maxDays: Int = 90) : TimeInForce {
 
+    /**
+     * Returns string representation of GTC
+     */
     override fun toString(): String = "GTC"
 
 }
@@ -52,6 +55,9 @@ class GTC(val maxDays: Int = 90) : TimeInForce {
  */
 class GTD(val date: Instant) : TimeInForce {
 
+    /**
+     * Returns string representation of GTD
+     */
     override fun toString(): String = "GTD($date)"
 
 }
@@ -65,6 +71,9 @@ class GTD(val date: Instant) : TimeInForce {
  */
 class IOC : TimeInForce {
 
+    /**
+     * Returns string representation of IOC
+     */
     override fun toString(): String = "IOC"
 
 }
@@ -78,6 +87,9 @@ class IOC : TimeInForce {
  */
 class DAY : TimeInForce {
 
+    /**
+     * Returns string representation of DAY
+     */
     override fun toString(): String = "DAY"
 
 }
@@ -91,6 +103,9 @@ class DAY : TimeInForce {
  */
 class FOK : TimeInForce {
 
+    /**
+     * Returns string representation of FOK
+     */
     override fun toString(): String = "FOK"
 
 }

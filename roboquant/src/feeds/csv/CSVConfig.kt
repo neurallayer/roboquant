@@ -32,8 +32,19 @@ import kotlin.io.path.div
  * 2) The config.properties that can add and override the default config
  * 3) The config provided as a parameter that can override the previous step
  *
- * @constructor
  *
+ * @property fileExtension
+ * @property filePattern
+ * @property fileSkip
+ * @property parsePattern
+ * @property parseTime
+ * @property parseIsDate
+ * @property priceValidate
+ * @property priceThreshold
+ * @property priceAdjust
+ * @property skipZeroPrice
+ * @property template
+ * @constructor Create new CSV config
  */
 data class CSVConfig(
     var fileExtension: String = ".csv",

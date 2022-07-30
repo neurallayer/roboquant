@@ -33,6 +33,9 @@ import kotlin.math.pow
  *
  * It can be used to limit the duration of a run to that specific timeframe, for example in a walk-forward. It can also
  * serve to limit a live-feed to a certain duration.
+ *
+ * @property start start of timeframe, inclusive
+ * @property end end of timeframe, exclusive
  */
 data class Timeframe(val start: Instant, val end: Instant) {
 
