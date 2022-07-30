@@ -20,7 +20,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.strategies.utils.VWAPDaily
+import java.time.Instant
 
 /**
  * Calculate the daily VWAP (Volume Weighted Average Price) for all the assets in a feed
@@ -58,3 +58,39 @@ class VWAPMetric(val minSize: Int = 2) : SimpleMetric() {
         calculators.clear()
     }
 }
+
+/**
+ * Calculates the Daily VWAP. VWAP is a single-day indicator, and is restarted at the start of each new trading day.
+ * It uses the exchange of the underlying asset to determine what is still within one day.
+ *
+ * @property minSteps The minimum number of steps required
+ * @constructor Create empty Daily VWAP calculator
+ */
+private class VWAPDaily(private val minSteps: Int = 1) {
+
+    private val total = mutableListOf<Double>()
+    private val volume = mutableListOf<Double>()
+    private var last: Instant = Instant.MIN
+
+
+    fun add(action: PriceBar, now: Instant) {
+        if (last != Instant.MIN && ! action.asset.exchange.sameDay(now, last)) clear()
+        last = now
+        val v = action.volume
+        total.add(action.getPrice("TYPICAL") * v)
+        volume.add(v)
+    }
+
+    fun isReady() = total.size >= minSteps
+
+    fun calc(): Double {
+        return total.sum() / volume.sum()
+    }
+
+    fun clear() {
+        total.clear()
+        volume.clear()
+        last = Instant.MIN
+    }
+}
+
