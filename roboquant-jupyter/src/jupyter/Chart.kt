@@ -141,6 +141,7 @@ abstract class Chart : Output() {
         // Make this variable so can charts work for both Chinese and western users.
         var positiveColor : String = "#00FF00" // Green
         var negativeColor : String = "#FF0000" // Red
+        var neutralColor : String = "#FFFF00" // Yellow
 
         internal val gsonBuilder = GsonBuilder()
 
@@ -267,15 +268,15 @@ abstract class Chart : Output() {
     /**
      * Get the default visual map ranging from [min] to [max]
      */
-    protected fun getVisualMap(min: Number, max: Number): ContinousVisualMap {
+    protected fun getVisualMap(min: Number?, max: Number?): ContinousVisualMap {
         return ContinousVisualMap()
-            .setMin(min)
-            .setMax(max)
+            .setMin(min ?: -1)
+            .setMax(max ?: 1)
             .setCalculable(true)
             .setOrient("horizontal")
             .setTop("top")
             .setLeft("center")
-            .setColor(arrayOf(positiveColor, negativeColor))
+            .setColor(arrayOf(positiveColor, neutralColor, negativeColor))
     }
 
     /**

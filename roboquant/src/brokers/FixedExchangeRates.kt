@@ -36,12 +36,9 @@ class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: 
     constructor(baseCurrency: Currency, vararg rates: Pair<Currency, Double>) : this(baseCurrency, rates.toMap())
 
     /**
-     * Convert between two currencies.
+     * Returns the exchange rate
      * @see ExchangeRates.getRate
      *
-     * @param to
-     * @param amount The total amount to be converted
-     * @return The converted amount
      */
     override fun getRate(amount: Amount, to: Currency, time: Instant): Double {
         val from = amount.currency

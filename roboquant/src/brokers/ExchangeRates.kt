@@ -33,17 +33,17 @@ import java.time.Instant
 interface ExchangeRates {
 
     /**
-     * Get the exchange rate required to convert a monetary [amount] from one currency [to] another currency at a
-     * specific moment in [time].
+     * Get the exchange rate required to convert a monetary [amount] in [to] another currency at  specific moment
+     * in [time].
      *
      * It depends on the implementation if all parameters are also actually used by the underlying algorithm. If a
-     * conversion cannot be processed due to incorrect or missing configuration, it is expected to throw an exception.
+     * conversion cannot be performed due to incorrect or missing configuration, it is expected to throw an exception.
      *
      */
     fun getRate(amount: Amount, to: Currency, time: Instant): Double
 
     /**
-     * Convert an [amount] [to] a different currency. This default implementation uses the [getRate] to
+     * Convert an [amount] into [to] a different currency. This default implementation uses the [getRate] to
      * calculate the exchange rate to use for this conversion.
      */
     fun convert(amount: Amount, to: Currency, time: Instant): Amount {

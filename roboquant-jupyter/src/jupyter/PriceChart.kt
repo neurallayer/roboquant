@@ -22,6 +22,8 @@ import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.marker.MarkPoint
+import org.icepear.echarts.components.series.ItemStyle
+import org.icepear.echarts.components.series.LineStyle
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
@@ -84,9 +86,12 @@ class PriceChart(
         val lineSeries = LineSeries()
             .setData(line)
             .setShowSymbol(false)
+            .setLineStyle(LineStyle().setWidth(1))
 
         val mpData = markPointsData()
-        if (mpData.isNotEmpty()) lineSeries.markPoint = MarkPoint().setData(mpData)
+        if (mpData.isNotEmpty()) lineSeries.markPoint = MarkPoint()
+            .setData(mpData)
+            .setItemStyle(ItemStyle().setColor(neutralColor))
 
         val xAxis = TimeAxis()
         val yAxis = ValueAxis().setScale(true)

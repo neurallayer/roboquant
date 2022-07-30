@@ -76,19 +76,20 @@ class OrderChart(
     override fun renderOption(): String {
 
         val data = toSeriesData()
-        val max = data.maxOfOrNull { it.second.abs() } ?: BigDecimal.ONE
+        val max = data.maxOfOrNull { it.second}
+        val min = data.minOfOrNull { it.second}
 
         val series = ScatterSeries()
             .setData(data)
             .setSymbolSize(10)
 
-        val vm = getVisualMap(-max, max).setDimension(1)
+        val vm = getVisualMap(min, max).setDimension(1)
 
         val tooltip = Tooltip()
             .setFormatter(javasciptFunction("return p.value[2];"))
 
         val chart = Scatter()
-            .setTitle("Order Chart $aspect")
+            .setTitle("Order $aspect")
             .addXAxis(TimeAxis())
             .addYAxis(ValueAxis().setScale(true))
             .addSeries(series)

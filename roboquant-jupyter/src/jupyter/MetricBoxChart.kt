@@ -25,7 +25,10 @@ import org.icepear.echarts.components.dataZoom.DataZoom
 import org.roboquant.common.clean
 import org.roboquant.common.max
 import org.roboquant.common.min
-import org.roboquant.logging.*
+import org.roboquant.logging.MetricsEntry
+import org.roboquant.logging.getName
+import org.roboquant.logging.groupBy
+import org.roboquant.logging.toDoubleArray
 import java.math.MathContext
 import java.math.RoundingMode
 import java.time.temporal.ChronoUnit
@@ -72,9 +75,13 @@ class MetricBoxChart(
         val xData = data.map { it.first }.toTypedArray()
         val yData = data.map { it.second }
 
+        val series = BoxplotSeries()
+            .setName(metricData.getName())
+            .setData(yData)
+
         val chart = Boxplot()
             .setTitle("Metric: ${metricData.getName()}")
-            .addSeries(BoxplotSeries().setName("boxplot").setData(yData))
+            .addSeries(series)
             .addYAxis(ValueAxis())
             .addXAxis(CategoryAxis().setData(xData))
             .setTooltip("axis")

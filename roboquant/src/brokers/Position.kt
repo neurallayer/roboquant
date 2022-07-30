@@ -22,7 +22,7 @@ import java.time.Instant
 
 /**
  * Class that holds the position of an asset in the portfolio. This implementation makes no assumptions about the
- * asset class, so it supports any type of asset class from stocks and options to cryptocurrencies.
+ * asset class, so it supports any type of asset class, ranging from stocks and options to cryptocurrencies.
  *
  * @property asset the asset
  * @property size size of the position, not including any contract multiplier defined at asset level
@@ -68,6 +68,9 @@ data class Position(
         fun empty(asset: Asset): Position = Position(asset, Size.ZERO, 0.0, 0.0)
     }
 
+    /**
+     * Add another position [p] to this position
+     */
     operator fun plus(p: Position) : Position {
 
         val newSize = size + p.size
@@ -155,8 +158,9 @@ data class Position(
 
 }
 
-
-
+/**
+ * Return the total market value for the collection of positions
+ */
 val Collection<Position>.marketValue : Wallet
     get() {
         val result = Wallet()
@@ -167,7 +171,7 @@ val Collection<Position>.marketValue : Wallet
 
 
 /**
- * Return the market value for this portfolio
+ * Return the total market value for this portfolio
  */
 val Map<Asset, Position>.marketValue : Wallet
     get() {
@@ -175,7 +179,7 @@ val Map<Asset, Position>.marketValue : Wallet
     }
 
 /**
- * Return the exposure for this portfolio
+ * Return the total exposure for this portfolio
  */
 val Map<Asset, Position>.exposure : Wallet
     get() {
@@ -186,7 +190,7 @@ val Map<Asset, Position>.exposure : Wallet
 
 
 /**
- * Return the exposure for this collection of positions
+ * Return the total exposure for this collection of positions
  */
 val Collection<Position>.exposure : Wallet
     get() {

@@ -131,6 +131,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
         private fun flexParse(str: String) : Instant {
             val fStr = when (str.length) {
                 4 -> "$str-01-01T00:00:00Z"
+                7 -> "$str-01T00:00:00Z"
                 10 -> "${str}T00:00:00Z"
                 else -> str
             }
@@ -139,10 +140,12 @@ data class Timeframe(val start: Instant, val end: Instant) {
 
         /**
          * Create a timeframe based on the [first] and [last] time provided. The times are to be provided as a string
-         * and will be parsed by [Instant.parse]
+         * and the following formats are supported:
+         * 1. Year only
+         * 2. Year and month
+         * 3. Year, month and day
+         * 4. Full date and time
          *
-         * If the time component is omitted, the provided strings will be appended first with "T00:00:00Z" before
-         * being parsed.
          */
         fun parse(first: String, last: String): Timeframe {
             val start = flexParse(first)

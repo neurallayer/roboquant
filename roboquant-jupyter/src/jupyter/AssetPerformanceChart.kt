@@ -75,7 +75,8 @@ class AssetPerformanceChart(
         val list = fromFeed()
         val max = list.maxOf {
             val x = it["value"] as List<*>
-            x[1] as BigDecimal
+            val result = x[1] as BigDecimal
+            result.abs()
         }
 
         val data = gsonBuilder.create().toJson(list)
@@ -86,6 +87,7 @@ class AssetPerformanceChart(
                 type: 'treemap',
                 data : $data,
                 breadcrumb : { show: false },
+                itemStyle: { borderColor: 'rgba(0,0,0,0)' },
             },
         """
 
@@ -95,14 +97,14 @@ class AssetPerformanceChart(
                     text: 'Asset Performance'
                 },
                 visualMap: {
-                   min: -$max,
+                   min: ${max.negate()},
                    max: $max,
                    dimension: 1,
                    calculable: true,
                    orient: 'horizontal',
                    left: 'center',
                    top: 'top',
-                   inRange : { color: ['#FF0000', '#00FF00'] }
+                   inRange : { color: ['$negativeColor', '$positiveColor'] }
                 },
                 tooltip: {
                    position: 'top',

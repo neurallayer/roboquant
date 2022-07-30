@@ -21,6 +21,7 @@ import org.icepear.echarts.charts.line.LineSeries
 import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
+import org.icepear.echarts.components.series.LineStyle
 import org.roboquant.logging.MetricsEntry
 import org.roboquant.logging.getName
 import org.roboquant.logging.group
@@ -59,6 +60,7 @@ class MetricChart(
                 .setData(d)
                 .setShowSymbol(false)
                 .setName(name)
+                .setLineStyle(LineStyle().setWidth(1))
 
             chart.addSeries(lineSeries)
         }

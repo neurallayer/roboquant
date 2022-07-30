@@ -23,6 +23,8 @@ import org.icepear.echarts.charts.candlestick.CandlestickItemStyle
 import org.icepear.echarts.charts.candlestick.CandlestickSeries
 import org.icepear.echarts.components.coord.AxisLine
 import org.icepear.echarts.components.coord.CategoryAxisTick
+import org.icepear.echarts.components.coord.SplitArea
+import org.icepear.echarts.components.coord.SplitLine
 import org.icepear.echarts.components.coord.cartesian.CategoryAxis
 import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
@@ -31,6 +33,7 @@ import org.icepear.echarts.components.dataset.Dataset
 import org.icepear.echarts.components.grid.Grid
 import org.icepear.echarts.components.marker.MarkPoint
 import org.icepear.echarts.components.series.Encode
+import org.icepear.echarts.components.series.ItemStyle
 import org.icepear.echarts.components.title.Title
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.icepear.echarts.origin.coord.cartesian.AxisOption
@@ -110,6 +113,7 @@ class PriceBarChart(
     private fun getSeries(): Array<SeriesOption> {
         val markPoint = MarkPoint()
             .setData(markPoints().toTypedArray())
+            .setItemStyle(ItemStyle().setColor(neutralColor))
 
         val encode1 = Encode().setItemName(arrayOf("x", "y")).setValue(arrayOf(0, 1))
 
@@ -166,13 +170,17 @@ class PriceBarChart(
     }
 
     private fun getYAxis(): Array<AxisOption> {
+        val showSplitArea = SplitArea().setShow(true)
+        val hideSplitLine = SplitLine().setShow(false)
+
         return arrayOf(
-            ValueAxis().setScale(true),
+            ValueAxis().setScale(true).setSplitArea(showSplitArea),
             ValueAxis()
                 .setScale(true)
                 .setGridIndex(1)
                 .setAxisLine(AxisLine().setShow(false))
                 .setAxisLabel(mapOf("show" to false))
+                .setSplitLine(hideSplitLine)
         )
     }
 

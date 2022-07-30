@@ -28,7 +28,6 @@ import java.math.BigDecimal
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.collections.*
-import kotlin.math.absoluteValue
 
 class CalendarChart(
     private val metricsData: List<MetricsEntry>,
@@ -38,7 +37,7 @@ class CalendarChart(
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)
 
-    private fun prepData(): Map<Int, List<Any>> {
+    private fun prepData(): Map<Int, List<Pair<String, BigDecimal>>> {
         val perYear = metricsData.groupBy { it.info.time.atZone(zoneId).year }
         val result = mutableMapOf<Int, List<Pair<String, BigDecimal>>>()
         perYear.forEach { (t, u) ->
@@ -93,13 +92,14 @@ class CalendarChart(
     /** @suppress */
     override fun renderOption(): String {
         val data = prepData()
-        val max = metricsData.map { it.value }.maxOfOrNull { it.absoluteValue } ?: 1.0
+        val max = metricsData.map { it.value }.maxOfOrNull { it }
+        val min = metricsData.map { it.value }.minOfOrNull { it }
 
         val option = Option()
             .setTitle(Title().setText("Daily results ${metricsData.getName()}"))
             .setSeries(getSeriesOptions(data))
             .setCalendar(getCalendars(data))
-            .setVisualMap(getVisualMap(-max, max))
+            .setVisualMap(getVisualMap(min, max))
             .setTooltip(getTooltip())
             .setToolbox(getBasicToolbox())
 

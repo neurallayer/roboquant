@@ -22,7 +22,9 @@ import java.time.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Exchange contains the metadata of a marketplace or exchange.
+ * Exchange contains the metadata of a marketplace or exchange.  When creating a new currency instance, use
+ * the [Exchange.getInstance] method. This ensures only a single instance of an exchange exists for a given currency
+ * code and that allows for fast equality comparison.
  *
  * It is used at several areas in roboquant, for example when loading CSV files.
  *
@@ -56,6 +58,9 @@ class Exchange private constructor(
         return LocalDate.ofInstant(time, zoneId)
     }
 
+    /**
+     * Returns the opening time for a certain [date]
+     */
     fun getOpeningTime(date: LocalDate): Instant {
         val opening = tradingCalendar.getOpeningTime(date)
         if (opening === null) throw NoTrading(date)
@@ -63,6 +68,9 @@ class Exchange private constructor(
         return zdt.toInstant()
     }
 
+    /**
+     * Returns the closing time for a certain [date]
+     */
     fun getClosingTime(date: LocalDate): Instant {
         val closing = tradingCalendar.getClosingTime(date)
         if (closing === null) throw NoTrading(date)

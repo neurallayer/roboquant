@@ -56,8 +56,6 @@ internal class SampleNotebookTest {
 
 private class NotebookTester : JupyterReplTestCase(RoboquantReplProvider) {
 
-    // private class NotebookTester(lib: String) : JupyterReplTestCase(ReplProvider.withoutLibraryResolution) {
-
     /**
      * Execute the code cells in a notebook and validate the new output against the existing output in the notebook.
      * So it serves as a regression test if notebooks still produce the same output.
