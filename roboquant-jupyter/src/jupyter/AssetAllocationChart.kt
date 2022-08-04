@@ -69,7 +69,7 @@ class AssetAllocationChart(
             .setData(data)
 
         val chart = Pie()
-            .setTitle("Asset allocation")
+            .setTitle(title ?: "Asset allocation")
             .addSeries(series)
             .setTooltip(Tooltip())
 

@@ -91,10 +91,12 @@ class AssetPerformanceChart(
             },
         """
 
+        val t = title ?: "Asset performance"
+
         return """
             {
                 title: {
-                    text: 'Asset Performance'
+                    text: '$t'
                 },
                 visualMap: {
                    min: ${max.negate()},

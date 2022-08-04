@@ -120,7 +120,7 @@ class PriceCorrelationChart(
             .setLabel(SeriesLabel().setShow(true))
 
         val chart = Heatmap()
-            .setTitle("Price correlations")
+            .setTitle(title ?: "Price correlations")
             .addSeries(series)
             .setVisualMap(getVisualMap(-1.0, 1.0).setPrecision(2))
             .addXAxis(CategoryAxis().setData(labels))

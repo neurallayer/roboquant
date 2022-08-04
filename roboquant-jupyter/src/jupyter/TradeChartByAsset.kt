@@ -93,7 +93,7 @@ class TradeChartByAsset(
             .setFormatter(javasciptFunction("return p.value[3];"))
 
         val chart = Scatter()
-            .setTitle("Trade Chart $aspect")
+            .setTitle(title ?: "Trade Chart $aspect")
             .addSeries(series)
             .addYAxis(CategoryAxis().setData(yAxisData).setSplitArea(SplitArea().setShow(true)))
             .addXAxis(TimeAxis())

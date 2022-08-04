@@ -73,7 +73,7 @@ class MetricHistogram(
             .setLabel(BarLabel().setShow(true))
 
         val chart = Bar()
-            .setTitle("Metric: ${metricData.getName()}")
+            .setTitle(title ?: "Metric: ${metricData.getName()}")
             .addYAxis(ValueAxis().setScale(true))
             .addXAxis(CategoryAxis().setData(xData).setAxisTick(mapOf("alignWithLabel" to true)))
             .addSeries(series)

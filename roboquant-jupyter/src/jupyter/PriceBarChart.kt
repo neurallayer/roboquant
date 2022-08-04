@@ -71,9 +71,6 @@ class PriceBarChart(
     init {
         // Default height is not that suitable, so we increase it to 700
         height = 700
-
-        // @TODO once there is support for in the ECharts-Java library, this workaround can be removed
-        fix = "option.series[0].encode = { x: 0, y: [1, 4, 3, 2] }; option.series[1].encode = {x: 0, y: 5 };"
     }
 
     /**
@@ -115,13 +112,14 @@ class PriceBarChart(
             .setData(markPoints().toTypedArray())
             .setItemStyle(ItemStyle().setColor(neutralColor))
 
-        val encode1 = Encode().setItemName(arrayOf("x", "y")).setValue(arrayOf(0, 1))
+        val encode1 = Encode().setX(0).setY(arrayOf(1,4,3,2))
 
         val itemStyle1 = CandlestickItemStyle()
             .setColor(positiveColor)
             .setColor0(negativeColor)
             .setBorderColor(positiveColor)
             .setBorderColor0(negativeColor)
+
 
         val series1 = CandlestickSeries()
             .setName(asset.symbol)
@@ -132,10 +130,12 @@ class PriceBarChart(
         val itemStyle2 = BarItemStyle()
             .setColor("#fbe9e")
 
+        val encode2 = Encode().setX(0).setY(5)
+
         val series2 = BarSeries()
             .setXAxisIndex(1)
             .setYAxisIndex(1)
-            .setEncode(Encode())
+            .setEncode(encode2)
             .setItemStyle(itemStyle2)
             .setLarge(true)
 
@@ -195,7 +195,7 @@ class PriceBarChart(
         val tooltip = Tooltip().setTrigger("axis")
 
         val option = Option()
-            .setTitle(Title().setText("${asset.symbol} $timeframe"))
+            .setTitle(Title().setText(title ?: "${asset.symbol} $timeframe"))
             .setGrid(getGrids())
             .setToolbox(getToolbox())
             .setDataset(dataset)

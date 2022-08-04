@@ -113,13 +113,16 @@ abstract class Chart : Output() {
 
     private var hasJavascript: Boolean = false
 
-    // Temporary workaround
-    protected var fix : String = ""
-
     /**
      * Height for charts, default being 500 pixels. Subclasses can override this value
      */
     var height = 500
+
+    /**
+     * Set a custom title for the chart. If not set, a default title will be generated. If you don't want a title, set
+     * this property to an empty string.
+     */
+    var title : String? = null
 
 
     companion object {
@@ -131,6 +134,12 @@ abstract class Chart : Output() {
         var theme = "auto"
 
         /**
+         * If set to true, a console.log(option) statement will be included so the option parameter of echarts can be
+         * easily debugged
+         */
+        var debug = false
+
+        /**
          * Maximum number of samples to plot in a chart. Certain types of charts can be become very large and as
          * a result make your browser unresponsive. By lowering this value (default is Int.MAX_VALUE)
          * before serializing the result to the browser, the sample size will first be reduced. A good value might
@@ -139,9 +148,9 @@ abstract class Chart : Output() {
         var maxSamples = Int.MAX_VALUE
 
         // Make this variable so can charts work for both Chinese and western users.
-        var positiveColor : String = "#00FF00" // Green
-        var negativeColor : String = "#FF0000" // Red
-        var neutralColor : String = "#FFFF00" // Yellow
+        var positiveColor : String = "#0C0" // Green
+        var negativeColor : String = "#C00" // Red
+        var neutralColor : String = "#CC0" // Yellow
 
         internal val gsonBuilder = GsonBuilder()
 
@@ -154,15 +163,15 @@ abstract class Chart : Output() {
 
             // Swap colors for Chinese users
             if (Locale.getDefault() == Locale.CHINA) {
-                positiveColor = "#FF0000" // Red
-                negativeColor = "#00FF00" // Green
+                positiveColor = "#C00" // Red
+                negativeColor = "#0C0" // Green
             }
         }
 
     }
 
     /**
-     * Reduce the sample size in order to ensure the browser can still plot it.
+     * Reduce the sample size in order to ensure the browser can plot it and remain responsive.
      */
     protected fun <T>reduce(data: Collection<T>): Collection<T> {
         return if (data.size > maxSamples) {
@@ -185,6 +194,8 @@ abstract class Chart : Output() {
             "'$theme'"
         }
 
+        val debugStmt = if (debug) "console.log(option);" else ""
+
         // Transfer a string into a javascript Function for tooltip formatting
         val handleJS = if (hasJavascript)
                 """option && (option.tooltip.formatter = new Function("p", option.tooltip.formatter));"""
@@ -200,10 +211,9 @@ abstract class Chart : Output() {
                 let fn = function(a) {
                     let theme = $themeDetector;
                     let myChart = echarts.init(elem, theme);
-                    let option = $fragment;$handleJS;$fix;
+                    let option = $fragment;$handleJS;
                     option && myChart.setOption(option);
-                    elem.ondblclick = function () { myChart.resize() };
-                    console.log('rendered new chart');     
+                    elem.ondblclick = function () { myChart.resize() }; $debugStmt
                 }
                 call_echarts(fn)        
             })()
@@ -212,7 +222,8 @@ abstract class Chart : Output() {
     }
 
     /**
-     * Generates a standalone HTML page for the chart. This page can be saved and for example viewed in a browser.
+     * Generates a standalone HTML page for the chart. This page can be saved and for example viewed in a
+     * standalone browser.
      */
     override fun asHTMLPage(): String {
         val fragment = asHTML()
@@ -286,14 +297,15 @@ abstract class Chart : Output() {
      * ```
      *      return p.param[0] + p.param[1]
      * ```
-     *
      */
     protected fun javasciptFunction(function: String): String {
         hasJavascript = true
         return function
     }
 
-
+    /**
+     * Return JSON string representation of the [option]
+     */
     protected fun renderJson(option: Option) : String {
         option.backgroundColor = "rgba(0,0,0,0)"
         if (option.grid == null) {

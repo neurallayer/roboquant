@@ -97,7 +97,7 @@ class PriceChart(
         val yAxis = ValueAxis().setScale(true)
 
         val chart = Line()
-            .setTitle("${asset.symbol} $timeframe")
+            .setTitle(title ?: "${asset.symbol} $timeframe")
             .addSeries(lineSeries)
             .addXAxis(xAxis)
             .addYAxis(yAxis)

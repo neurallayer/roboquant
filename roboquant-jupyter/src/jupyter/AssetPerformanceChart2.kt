@@ -97,7 +97,7 @@ class AssetPerformanceChart2(
 
         val chart = Tree()
             .addSeries(series)
-            .setTitle("Asset Performance")
+            .setTitle(title ?: "Asset Performance")
             .setTooltip(tooltip)
             .setVisualMap(getVisualMap(-max, max))
 

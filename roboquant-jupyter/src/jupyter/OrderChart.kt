@@ -89,7 +89,7 @@ class OrderChart(
             .setFormatter(javasciptFunction("return p.value[2];"))
 
         val chart = Scatter()
-            .setTitle("Order $aspect")
+            .setTitle(title ?: "Order $aspect")
             .addXAxis(TimeAxis())
             .addYAxis(ValueAxis().setScale(true))
             .addSeries(series)

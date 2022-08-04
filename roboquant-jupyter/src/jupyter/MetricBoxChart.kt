@@ -80,7 +80,7 @@ class MetricBoxChart(
             .setData(yData)
 
         val chart = Boxplot()
-            .setTitle("Metric: ${metricData.getName()}")
+            .setTitle(title ?: "Metric: ${metricData.getName()}")
             .addSeries(series)
             .addYAxis(ValueAxis())
             .addXAxis(CategoryAxis().setData(xData))
