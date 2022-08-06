@@ -123,7 +123,7 @@
         <dependency>
             <groupId>com.cronutils</groupId>
             <artifactId>cron-utils</artifactId>
-            <version>9.1.7</version>
+            <version>9.2.0</version>
         </dependency>
 
         <dependency>

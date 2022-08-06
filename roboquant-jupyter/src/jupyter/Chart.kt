@@ -307,7 +307,10 @@ abstract class Chart : Output() {
      * Return JSON string representation of the [option]
      */
     protected fun renderJson(option: Option) : String {
+        // Set transparent background so charts look good in different Jupyter themes
         option.backgroundColor = "rgba(0,0,0,0)"
+
+        // Set the default grid if none is set already
         if (option.grid == null) {
             val grid = Grid().setContainLabel(true).setRight("3%").setLeft("3%")
             option.setGrid(grid)

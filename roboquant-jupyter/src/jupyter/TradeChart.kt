@@ -37,7 +37,7 @@ open class TradeChart(
 ) : Chart() {
 
     init {
-        val validAspects = listOf("pnl", "fee", "cost", "quantity")
+        val validAspects = listOf("pnl", "fee", "cost", "size")
         require(aspect in validAspects) { "Unsupported aspect $aspect, valid values are $validAspects" }
     }
 
@@ -49,7 +49,7 @@ open class TradeChart(
             |asset: ${trade.asset.symbol}<br>
             |currency: ${trade.asset.currency}<br>
             |time: ${trade.time}<br>
-            |qty: ${trade.size}<br>
+            |size: ${trade.size}<br>
             |fee: $fee<br>
             |pnl: $pnl<br>
             |cost: $totalCost<br>
@@ -64,7 +64,7 @@ open class TradeChart(
                     "pnl" -> pnl.convert(time = time).toBigDecimal()
                     "fee" -> fee.convert(time = time).toBigDecimal()
                     "cost" -> totalCost.convert(time = time).toBigDecimal()
-                    "quantity" -> size.toBigDecimal()
+                    "size" -> size.toBigDecimal()
                     else -> throw UnsupportedException("Unsupported aspect $aspect")
                 }
 
@@ -91,7 +91,7 @@ open class TradeChart(
             .setFormatter(javasciptFunction("return p.value[2];"))
 
         val chart = Scatter()
-            .setTitle(title ?: "Trade Chart $aspect")
+            .setTitle(title ?: "Trade $aspect")
             .addXAxis(TimeAxis())
             .addYAxis(ValueAxis().setScale(true))
             .addSeries(series)

@@ -22,7 +22,6 @@ import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.tooltip.Tooltip
-import org.roboquant.common.UnsupportedException
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import org.roboquant.orders.SingleOrder
@@ -30,25 +29,28 @@ import java.math.BigDecimal
 import java.time.Instant
 
 /**
- * Order chart plots [orders] over time. By default, the quantity will be plotted, but you can change the [aspect]
- * to plot other properties of an order ("remaining", "direction", "quantity", "fill").
+ * Order chart plots [orders] sizes over time. Most comon use case is to plot the order sizes of a single asset, but
+ * this is not a strict requirement.
  *
  * Please not this chart only display orders of the type [SingleOrder] and will ignore other order types. Often trades
- * provide more insights, since these also cover advanced order types. You can use the [TradeChart] for that.
+ * provide more insights, since these also cover more advanced order types. You can use the [TradeChart] for that.
  */
 class OrderChart(
     private val orderStates: List<OrderState>,
-    private val aspect: String = "quantity",
 ) : Chart() {
 
-    init {
-        require(aspect in listOf("direction", "quantity"))
-    }
 
-    @Suppress("MaxLineLength")
     private fun getTooltip(order: SingleOrder, openedAt: Instant): String {
+
         return with(order) {
-            "asset: ${asset.symbol}<br> currency: ${asset.currency}<br> placed: $openedAt<br> qty: ${order.size}<br> id: $id<br> type: ${order::class.simpleName}<br> tif: ${order.tif}"
+            """
+                |asset: ${asset.symbol}<br>
+                |currency: ${asset.currency}<br>
+                |placed: $openedAt<br>
+                |size: ${order.size}<br> 
+                |id: $id<br> 
+                |type: ${order::class.simpleName}<br> 
+                |tif: ${order.tif}""".trimMargin()
         }
     }
 
@@ -58,12 +60,7 @@ class OrderChart(
         for (state in states.sortedBy { it.openedAt }) {
             val order = state.order
             if (order is SingleOrder) {
-                val value = when (aspect) {
-                    "direction" -> order.direction.toBigDecimal()
-                    "quantity" -> order.size.toBigDecimal()
-                    else -> throw UnsupportedException("Unsupported aspect $aspect")
-                }
-
+                val value = order.size.toBigDecimal()
                 val tooltip = getTooltip(order, state.openedAt)
                 d.add(Triple(state.openedAt, value, tooltip))
             }
@@ -89,7 +86,7 @@ class OrderChart(
             .setFormatter(javasciptFunction("return p.value[2];"))
 
         val chart = Scatter()
-            .setTitle(title ?: "Order $aspect")
+            .setTitle(title ?: "Order size")
             .addXAxis(TimeAxis())
             .addYAxis(ValueAxis().setScale(true))
             .addSeries(series)
