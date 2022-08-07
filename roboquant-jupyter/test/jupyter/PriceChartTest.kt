@@ -25,7 +25,7 @@ internal class PriceChartTest {
     @Test
     fun test() {
         val feed = RandomWalk.lastYears(1)
-        val chart = PriceChart(feed, feed.assets.first(), emptyList())
+        val chart = PriceChart(feed, feed.assets.first())
         assertTrue(chart.asHTML().isNotBlank())
     }
 

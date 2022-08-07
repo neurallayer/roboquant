@@ -88,9 +88,10 @@ class PriceBarChart(
     }
 
     /**
-     * Generate mark points that will highlight when a trade happened.
+     * Generate the mark points that will plot when a trade happened.
      */
     private fun markPoints(): List<Map<String, Any>> {
+        // Filter only the relevant trades
         val t = trades.filter { it.asset == asset && timeframe.contains(it.time) }
         val d = mutableListOf<Map<String, Any>>()
         for (trade in t) {
@@ -143,7 +144,7 @@ class PriceBarChart(
     }
 
     /**
-     * Get the grids for prices and volume
+     * Get the grids for candlestick and volume areas
      */
     private fun getGrids(): Array<Grid> {
         return arrayOf(
@@ -152,6 +153,9 @@ class PriceBarChart(
         )
     }
 
+    /**
+     * Get data zoom ensuring both candlestick and volume zoom at the same time
+     */
     private fun getDataZoom(): Array<DataZoom> {
         return arrayOf(
             DataZoom().setXAxisIndex(arrayOf(0,1)).setType("inside"),

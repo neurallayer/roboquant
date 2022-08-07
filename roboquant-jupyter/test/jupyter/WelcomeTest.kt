@@ -24,7 +24,9 @@ internal class WelcomeTest {
     @Test
     fun test() {
         val w = Welcome()
-        assertTrue(w.asHTML().isNotBlank())
+        val snippet = w.asHTML()
+        assertTrue(snippet.isNotBlank())
+        assertTrue { w.asHTMLPage().contains(snippet) }
     }
 
 }

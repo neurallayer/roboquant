@@ -24,12 +24,22 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-
 internal class ChartTest {
 
     @TempDir
     lateinit var folder: File
 
+    private class MyChart : Chart() {
+
+        init {
+            javasciptFunction("return p;")
+        }
+
+        override fun renderOption(): String {
+            return "{}"
+        }
+
+    }
 
     @Test
     fun test() {
@@ -46,8 +56,19 @@ internal class ChartTest {
 
     }
 
+    @Test
+    fun testCodeGeneration() {
+        val chart = MyChart()
+        chart.height = 123
+        Chart.debug = true
 
+        val code = chart.asHTML()
+        assertContains(code, "123px")
+        assertContains(code, "console.log")
+        assertContains(code, "new Function")
 
+        Chart.debug = false
 
+    }
 
 }

@@ -4,13 +4,15 @@ import java.math.BigDecimal
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
-
 /**
  * Represents the size of orders, positions and trades. This implementation is precise up to 8 decimals, ensuring that
  * order and position sizes are precise enough even when dealing with fractional orders.
+ *
+ * Since this implementation uses a value class, so there almost no overhead compared to the underlying
+ * primitive, a [Long]
  */
 @JvmInline
-value class Size private constructor (private val value: Long) : Comparable<Size> {
+value class Size private constructor(private val value: Long) : Comparable<Size> {
 
     /**
      * Translates an [Int] [value] to a [Size]
@@ -81,12 +83,12 @@ value class Size private constructor (private val value: Long) : Comparable<Size
     /**
      * Multiplies this value by the [other] value.
      */
-    operator fun times(other: Number) : Double = toDouble() * other.toDouble()
+    operator fun times(other: Number): Double = toDouble() * other.toDouble()
 
     /**
      * Divides this value by the [other] value.
      */
-    operator fun div(other: Number) : Double = toDouble() / other.toDouble()
+    operator fun div(other: Number): Double = toDouble() / other.toDouble()
 
     /**
      * Adds the [other] value to this value.
