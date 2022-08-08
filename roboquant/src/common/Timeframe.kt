@@ -22,7 +22,6 @@ import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAmount
 import kotlin.math.pow
 
-
 /**
  * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time (exclusive). A
  * timeframe instance is immutable.  Like all time related logic in roboquant, it uses the [Instant] type to define
@@ -45,11 +44,10 @@ data class Timeframe(val start: Instant, val end: Instant) {
     val duration: Duration
         get() = Duration.between(start, end)
 
-
     init {
         require(end > start) { "end time has to be larger than start time, found $start - $end" }
-        require (start >= MIN) { "start time has to be larger or equal than $MIN" }
-        require (end <= MAX) { "end time has to be smaller or equal than $MAX" }
+        require(start >= MIN) { "start time has to be larger or equal than $MIN" }
+        require(end <= MAX) { "end time has to be smaller or equal than $MAX" }
     }
 
     /**
@@ -70,7 +68,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
 
         private const val ONE_YEAR_MILLIS = 365.0 * 24.0 * 3600.0 * 1000.0
 
-        private val Instant.inclusive : Instant
+        private val Instant.inclusive: Instant
             get() = plusNanos(1L)
 
         /**
@@ -130,8 +128,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
             return Timeframe(start.toInstant(), stop.toInstant() - 1)
         }
 
-
-        private fun flexParse(str: String) : Instant {
+        private fun flexParse(str: String): Instant {
             val fStr = when (str.length) {
                 4 -> "$str-01-01T00:00:00Z"
                 7 -> "$str-01T00:00:00Z"
@@ -170,7 +167,6 @@ data class Timeframe(val start: Instant, val end: Instant) {
          *
          *      val tf = TimeFrame.next(60.minutes)
          *      roboquant.run(feed, tf)
-         *
          */
         fun next(period: TemporalAmount): Timeframe {
             val start = Instant.now()
@@ -207,7 +203,6 @@ data class Timeframe(val start: Instant, val end: Instant) {
         return start.atZone(zoneId).toLocalDate() == end.minusMillis(1).atZone(zoneId).toLocalDate()
     }
 
-
     /**
      * Extend a timeframe, both [before] and [after] the current timeframe. The current timeframe
      * remains unchanged and a new one is returned.
@@ -218,7 +213,6 @@ data class Timeframe(val start: Instant, val end: Instant) {
      *
      */
     fun extend(before: TemporalAmount, after: TemporalAmount = before) = Timeframe(start - before, end + after)
-
 
     /**
      * Calculate the intersection of this timeframe with an [other] timeframe and return
@@ -265,7 +259,6 @@ data class Timeframe(val start: Instant, val end: Instant) {
         return timeline
     }
 
-
     /**
      * Split a timeframe into two parts, one for training and one for test using the provided [testSize]
      * for determining the size of test. [testSize] should be a number between 0.0 and 1.0, for example
@@ -275,13 +268,12 @@ data class Timeframe(val start: Instant, val end: Instant) {
      * test timeframe.
      */
     fun splitTrainTest(testSize: Double): Pair<Timeframe, Timeframe> {
-        require(testSize in 0.0..1.0) {"Test size has to between 0 and 1" }
+        require(testSize in 0.0..1.0) { "Test size has to between 0 and 1" }
         val diff = duration.toMillis()
         val train = (diff * (1.0 - testSize)).toLong()
         val border = start.plus(train, ChronoUnit.MILLIS)
         return Pair(Timeframe(start, border), Timeframe(border, end))
     }
-
 
     /**
      * Split a timeframe in multiple individual timeframes each of the fixed [period] length. One common use case is
@@ -332,14 +324,12 @@ data class Timeframe(val start: Instant, val end: Instant) {
      */
     operator fun minus(period: TemporalAmount) = Timeframe(start - period, end - period)
 
-
     /**
      * Add a [period] to this timeframe and return the result.
      *
      *      val newTimeFrame = timeframe + 2.days
      */
     operator fun plus(period: TemporalAmount) = Timeframe(start + period, end + period)
-
 
     /**
      * Annualize a [percentage] based on the duration of this timeframe. So given x percent returns

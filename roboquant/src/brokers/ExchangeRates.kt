@@ -38,7 +38,6 @@ interface ExchangeRates {
      *
      * It depends on the implementation if all parameters are also actually used by the underlying algorithm. If a
      * conversion cannot be performed due to incorrect or missing configuration, it is expected to throw an exception.
-     *
      */
     fun getRate(amount: Amount, to: Currency, time: Instant): Double
 

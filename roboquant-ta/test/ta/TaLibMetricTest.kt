@@ -1,6 +1,7 @@
 package org.roboquant.ta
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.brokers.Account
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
@@ -43,6 +44,10 @@ class TaLibMetricTest {
             mResult = metric.calc(account, Event(listOf(event.second), event.first))
         }
         assertTrue(mResult.isNotEmpty())
+
+        assertDoesNotThrow {
+            metric.reset()
+        }
 
     }
 }

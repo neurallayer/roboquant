@@ -17,8 +17,6 @@ import org.ta4j.core.rules.BooleanRule
  * custom strategy. Ta4j is a flexible framework written in Java that allows to combine indicators and rules and comes
  * with over 130 indicators.
  *
- * @property buyingRule function that returns a buying rule based on the provided BarSaries, default is always FALSE
- * @property sellingRule function that returns a selling rule based on the provided BarSaries, default is always FALSE
  * @property maxBarCount maximum number of price-bars to track, default is -1 meaning track all bars
  * @constructor Create a new ta4j strategy
  */
@@ -28,6 +26,8 @@ class Ta4jStrategy(
 
     private var buyingRule: (BarSeries) -> Rule = { BooleanRule.FALSE }
     private var sellingRule: (BarSeries) -> Rule = { BooleanRule.FALSE }
+
+    // Hold the rules and data for all the assets
     private val rules = mutableMapOf<Asset, Triple<Rule, Rule, BarSeries>>()
 
     private fun getRules(asset: Asset): Triple<Rule, Rule, BarSeries> {
@@ -40,6 +40,9 @@ class Ta4jStrategy(
         }
     }
 
+    /**
+     * @see Strategy.generate
+     */
     override fun generate(event: Event): List<Signal> {
         val result = mutableListOf<Signal>()
         val time = event.time.toUTC()

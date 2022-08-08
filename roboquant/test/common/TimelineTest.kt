@@ -21,6 +21,7 @@ import org.roboquant.TestData
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.timeseries
+import org.roboquant.feeds.toDoubleArray
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -60,6 +61,18 @@ internal class TimelineTest {
         assertTrue(corr.isNotEmpty())
         val pair = Pair(feed.assets.first(), feed.assets.first())
         assertTrue(corr[pair]!! in 0.999..1.001)
+
+        val arr = data.map { it.second }.toDoubleArray()
+        assertTrue { arr.isNotEmpty() }
+    }
+
+    @Test
+    fun doubleArray() {
+        val feed = TestData.feed()
+        val data = feed.filter<PriceAction>()
+
+        val arr = data.map { it.second }.toDoubleArray()
+        assertTrue { arr.isNotEmpty() }
     }
 
 

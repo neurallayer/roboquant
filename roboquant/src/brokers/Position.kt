@@ -114,7 +114,7 @@ data class Position(
         get() = size < 0
 
     /**
-     * is this a long position
+     * Is this a long position
      */
     val long: Boolean
         get() = size > 0

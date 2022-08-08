@@ -24,7 +24,7 @@ import kotlin.test.assertTrue
 
 internal class LiveFeedTest {
 
-    class MyLiveFeed : LiveFeed() 
+    private class MyLiveFeed : LiveFeed()
 
     @Test
     fun basic(): Unit = runBlocking {

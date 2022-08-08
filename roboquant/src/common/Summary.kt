@@ -51,10 +51,8 @@ class Summary(val content: String) {
     fun add(child: Summary) = children.add(child)
 
     /**
-     * Add a number. When adding this number is a Float or Double, the decimal formatter will be used
-     *
-     * @param label
-     * @param value
+     * Add a [label] with a numerical [value]. When adding a Float or Double, the decimal formatter will be used to
+     * format it. Other numbers will be presented using the toString() method.
      */
     fun add(label: String, value: Number) {
         when (value) {
@@ -98,12 +96,18 @@ class Summary(val content: String) {
         toString(maxChildren)
     }
 
+    /**
+     * To string
+     */
     override fun toString(): String {
         val buffer = StringBuilder()
         generate(buffer, "", "")
         return buffer.toString()
     }
 
+    /**
+     * To string
+     */
     fun toString(maxChildren: Int): String {
         val buffer = StringBuilder()
         generate(buffer, "", "", maxChildren)

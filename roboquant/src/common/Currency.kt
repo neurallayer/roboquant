@@ -50,6 +50,10 @@ class Currency private constructor(val currencyCode: String) {
 
 
     companion object {
+
+        /**
+         * Holds all the instantiated currencies
+         */
         private val currencies = ConcurrentHashMap<String, Currency>()
 
         private fun getInstance(currencyCode: String, defaultFractionDigits: Int): Currency {
@@ -59,7 +63,7 @@ class Currency private constructor(val currencyCode: String) {
         }
 
         /**
-         * Returns the Currency instance for the provided [currencyCode].
+         * Returns a Currency instance for the provided [currencyCode].
          */
         fun getInstance(currencyCode: String): Currency = currencies.getOrPut(currencyCode) { Currency(currencyCode) }
 

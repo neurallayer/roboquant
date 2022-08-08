@@ -93,6 +93,13 @@ internal class TimeframeTest {
     }
 
     @Test
+    fun plusMinus() {
+        val tf = Timeframe.fromYears(2019, 2019)
+        val tf2 = tf + 2.years - 2.years
+        assertEquals(tf, tf2)
+    }
+
+    @Test
     fun toTimeline() {
         val tf = Timeframe.parse("2020-01-01T18:00:00Z","2021-12-31T18:00:00Z")
         val timeline = tf.toTimeline(1.days)

@@ -48,6 +48,10 @@ internal class ExchangeTest {
         val ct = exchange2.getClosingTime(d)
         val ot = exchange2.getOpeningTime(d)
         assertTrue(ct > ot)
+
+        assertDoesNotThrow {
+            exchange3.getLocalDate(now)
+        }
     }
 
     @Test

@@ -53,6 +53,9 @@ internal class AssetTest {
         val c = Asset.forexPair("EUR_USD")
         assertEquals("EUR/USD", c.symbol)
 
+        val d = Asset.forexPair("EURUSD")
+        assertEquals("EUR/USD", d.symbol)
+
     }
 
     @Test

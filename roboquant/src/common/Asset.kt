@@ -82,7 +82,7 @@ data class Asset(
         }
 
         /**
-         * Returns a future contract
+         * Returns a future contract based on the provided paramaters
          */
         fun futureContract(
             symbol: String,
@@ -97,13 +97,15 @@ data class Asset(
             return Asset(futureSymbol, AssetType.FUTURES, currencyCode, exchangeCode, multiplier, id)
         }
 
-
+        /**
+         * Return a Crypto asset based on the [base] currency, [quote] currency and [exchangeCode]
+         */
         fun crypto(base: String, quote: String, exchangeCode: String) =
             Asset("$base/$quote", AssetType.CRYPTO, quote, exchangeCode)
 
 
         /**
-         * Returns a forex currency pair asset.
+         * Returns a forex currency pair asset based on the provided [symbol].
          */
         fun forexPair(symbol: String): Asset {
             val codes = symbol.split('_', '-', ' ', '/', ':')

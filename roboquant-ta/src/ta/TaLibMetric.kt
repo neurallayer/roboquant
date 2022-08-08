@@ -10,12 +10,13 @@ import org.roboquant.metrics.SimpleMetric
 import org.roboquant.strategies.utils.PriceBarSeries
 
 /**
- * Add a technical indicator as a metric, for example a moving average.
+ * Use a technical indicator from the talib library as a metric. Metrics will be available under the name: [name].symbol
+ * with the symbol in lowercase.
  *
  * @property name the name of the metric
- * @property history
- * @property assetFilter determines which assets to process, default is [AssetFilter.all]
- * @property block
+ * @property history how much history should be kept before invoking the metric
+ * @property assetFilter which assets to process, default is [AssetFilter.all]
+ * @property block the logic to use as an indicator
  * @constructor Create new metric
  */
 class TaLibMetric(

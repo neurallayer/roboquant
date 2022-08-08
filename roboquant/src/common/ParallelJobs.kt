@@ -25,7 +25,8 @@ class ParallelJobs {
     }
 
     /**
-     * Wait for all the jobs to finish, using blocking mode.
+     * Wait for all the jobs to finish, using blocking mode. This is especially useful in Jupyter Notebooks and other
+     * interactive environments.
      */
     fun joinAllBlocking() = runBlocking {
         jobs.joinAll()

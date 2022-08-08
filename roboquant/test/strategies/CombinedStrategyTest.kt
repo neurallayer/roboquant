@@ -18,6 +18,7 @@ package org.roboquant.strategies
 
 
 import org.junit.jupiter.api.Test
+import org.roboquant.RunPhase
 import org.roboquant.TestData
 import org.roboquant.feeds.Event
 import org.roboquant.metrics.MetricResults
@@ -46,10 +47,12 @@ class CombinedStrategyTest {
         val s = CombinedStrategy(s1, s2)
         assertEquals(2, s.strategies.size)
         s.reset()
+        s.start(RunPhase.MAIN)
         val signals = mutableListOf<Signal>()
         for (event in TestData.events(10)) signals += s.generate(event)
         assertTrue(signals.isEmpty())
         assertTrue(s.getMetrics().isEmpty())
+        s.end(RunPhase.MAIN)
     }
 
 }

@@ -32,15 +32,14 @@ import java.util.*
  * the [convert] method if you want to do so.
  */
 @Suppress("TooManyFunctions")
-class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMap(3)) : Cloneable {
-
+class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashMap(3)) : Cloneable {
 
     companion object {
 
-        operator fun invoke(amount: Amount) : Wallet =
+        operator fun invoke(amount: Amount): Wallet =
             Wallet(IdentityHashMap(mapOf(amount.currency to amount.value)))
 
-        operator fun invoke(vararg amounts: Amount) : Wallet {
+        operator fun invoke(vararg amounts: Amount): Wallet {
             val wallet = Wallet()
             for (amount in amounts) wallet.deposit(amount)
             return wallet
@@ -48,17 +47,14 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
 
     }
 
-
     /**
      * Return the currencies that are hold in this wallet sorted by [Currency.currencyCode]
      */
     val currencies: List<Currency>
         get() = data.keys.sortedBy { it.currencyCode }.toList()
 
-
     /**
-     * Get the amount for a certain [currency]. If the currency is not
-     * found, a zero amount will be returned.
+     * Get the amount for a certain [currency]. If the currency is not found, a zero [Amount] will be returned.
      */
     fun getAmount(currency: Currency): Amount {
         val value = data[currency] ?: 0.0
@@ -66,17 +62,14 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
     }
 
     /**
-     * Get the value for a certain [currency]. If the currency is not
-     * found, 0.0 will be returned.
+     * Return the value for a certain [currency]. If the currency is not found, 0.0 will be returned.
      */
     fun getValue(currency: Currency): Double = data[currency] ?: 0.0
-
 
     /**
      * Is this wallet instance empty
      */
     fun isEmpty() = data.isEmpty()
-
 
     /**
      * Is this wallet instance not empty
@@ -100,7 +93,6 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
         result.withdraw(other)
         return result
     }
-
 
     /**
      * Plus operator to allow for wallet + amount. This method is different from [deposit] in that this method doesn't
@@ -162,31 +154,31 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
         set(currency, value + oldValue)
     }
 
-
     /**
      * Deposit the amounts hold in an [other] Wallet instance into this one.
      */
     fun deposit(other: Wallet) {
-        for (amount in other.toAmounts()) { deposit(amount) }
+        for (amount in other.toAmounts()) {
+            deposit(amount)
+        }
     }
-
 
     /**
      * Withdraw  a monetary [amount][Amount]. If the currency already exist, it
      * will be deducted from the existing value, otherwise a new entry will be created.
      */
     fun withdraw(amount: Amount) {
-        deposit(- amount)
+        deposit(-amount)
     }
-
 
     /**
      * Withdraw the amounts hold in an [other] Wallet instance into this one.
      */
     fun withdraw(other: Wallet) {
-       for (amount in other.toAmounts()) { withdraw(amount) }
+        for (amount in other.toAmounts()) {
+            withdraw(amount)
+        }
     }
-
 
     /**
      * Does the wallet contain multiple currencies.
@@ -201,15 +193,12 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
     @Suppress("UNCHECKED_CAST")
     public override fun clone(): Wallet = Wallet(data.clone() as IdentityHashMap<Currency, Double>)
 
-
-
     /**
-     * Clear this Wallet instance, removing all amounts it is holding.
+     * Clear this Wallet instance, removing all the amounts it is holding.
      */
     fun clear() {
         data.clear()
     }
-
 
     /**
      * Provide a list representation of the amounts hold in this wallet
@@ -221,7 +210,6 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
      */
     fun toMap(): Map<Currency, Double> = data.toMap()
 
-
     /**
      * Create a string representation of this wallet with respecting currency preferred settings when
      * formatting the values.
@@ -231,7 +219,6 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
         for (amount in toAmounts()) sb.append("$amount, ")
         return sb.toString().removeSuffix(", ")
     }
-
 
     /**
      * A wallet only equals another wallet if they hold the same currencies and corresponding amounts.
@@ -255,27 +242,23 @@ class Wallet(private val data:IdentityHashMap<Currency, Double> = IdentityHashMa
         result.add(header)
         val currencies = currencies
         for (currency in currencies.distinct().sortedBy { it.displayName }) {
-            val t =  getAmount(currency).formatValue()
-            val line = String.format(fmt,  currency.currencyCode, t)
+            val t = getAmount(currency).formatValue()
+            val line = String.format(fmt, currency.currencyCode, t)
             result.add(line)
         }
         return result
     }
 
     /**
-     * Convert a [Wallet] value into a single currency amount. Under the hood is uses [Amount.convert] to perform the
-     * actual conversions.
-     *
-     * @param toCurrency The currency to convert the cash to, default is the baseCurrency of the account
-     * @param time The time to use for the exchange rate, default is the last update time of the account
-     * @return The converted amount as a Double
+     * Convert this Wallet into a single [currency] amount. Under the hood is uses [Amount.convert] to perform the
+     * actual conversions. Optional a [time] can be provided, the default is [Instant.now].
      */
-    fun convert(toCurrency: Currency = Config.baseCurrency, time: Instant = Instant.now()): Amount {
+    fun convert(currency: Currency = Config.baseCurrency, time: Instant = Instant.now()): Amount {
         var sum = 0.0
         for (amount in toAmounts()) {
-            sum += amount.convert(toCurrency, time).value
+            sum += amount.convert(currency, time).value
         }
-        return Amount(toCurrency, sum)
+        return Amount(currency, sum)
     }
 
 }

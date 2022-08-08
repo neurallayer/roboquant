@@ -30,7 +30,6 @@ class LoggingTest {
         assertEquals(Level.INFO, logger.level)
     }
 
-
     @Test
     fun testSetLevel() {
         Logging.setDefaultLevel(Level.INFO)
@@ -47,6 +46,13 @@ class LoggingTest {
         val logger = Logging.getLogger("org.roboquant.test2")
         assertEquals(Level.FINE, logger.level)
         Logging.setDefaultLevel(Level.INFO)
+    }
+
+    @Test
+    fun testNames() {
+        Logging.getLogger("org.roboquant.test3")
+        val names = Logging.getLoggerNames()
+        assertContains(names, "org.roboquant.test3")
     }
 
 }
