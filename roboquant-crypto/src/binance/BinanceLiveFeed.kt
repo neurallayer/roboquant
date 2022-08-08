@@ -113,7 +113,7 @@ class BinanceLiveFeed(private val useMachineTime: Boolean = true,
             )
             val now = if (useMachineTime) Instant.now() else Instant.ofEpochMilli(resp.closeTime)
             val event = Event(listOf(action), now)
-            channel?.offer(event)
+            send(event)
         } else {
             logger.warning { "Received CandlestickEvent for unexpected symbol ${resp.symbol}" }
         }

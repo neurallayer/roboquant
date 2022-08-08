@@ -52,7 +52,7 @@ class Welcome : Output() {
     }
 
     /**
-     * Generate a full HTML page.
+     * Generate a full HTML Welcome page.
      */
     override fun asHTMLPage(): String {
         return """

@@ -104,7 +104,7 @@ class OANDALiveFeed(
                     }
                 }
                 val event = Event(actions, now)
-                channel?.offer(event)
+                send(event)
                 delay(delay)
             }
         }
@@ -132,7 +132,7 @@ class OANDALiveFeed(
         jobs.add {
             var since: DateTime? = null
             while (true) {
-                if (channel != null) {
+                if (isActive) {
                     val request = PricingGetRequest(accountID, symbols.toList())
                     if (since != null) request.setSince(since)
                     val resp = ctx.pricing[request]
@@ -156,7 +156,7 @@ class OANDALiveFeed(
                         )
                     }
                     logger.fine("Got ${actions.size} order-book actions")
-                    if (actions.isNotEmpty()) channel?.offer(Event(actions, now))
+                    if (actions.isNotEmpty()) send(Event(actions, now))
                     since = resp.time
                 }
                 delay(delay)

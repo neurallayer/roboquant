@@ -89,12 +89,12 @@ class XChangePollingLiveFeed(
                         val item = TradePrice(asset, trade.price.toDouble(), trade.originalAmount.toDouble())
                         val now = trade.timestamp.toInstant()
                         val event = Event(listOf(item), now)
-                        channel?.offer(event)
+                        send(event)
                     }
 
                 }
                 delay(pollingDelayMillis.toLong())
-                done = channel?.done ?: false
+                done = ! isActive
             }
         }
     }

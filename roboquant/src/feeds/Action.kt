@@ -74,7 +74,7 @@ interface PriceAction : Action {
     val volume: Double
 
     /**
-     * Return the prices and volume as a list of doubles. This is used to serialize the price action
+     * Return the values (prices and volume) as a list of doubles. This is used to serialize the price action
      */
     val values: List<Double>
 }

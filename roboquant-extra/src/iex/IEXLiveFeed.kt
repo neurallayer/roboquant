@@ -103,7 +103,7 @@ class IEXLiveFeed(
             if (now > lastTime && actions.isNotEmpty()) {
                 val event = Event(actions, now)
                 actions = mutableListOf()
-                channel?.offer(event)
+                send(event)
             }
             lastTime = now
             actions.add(action)
@@ -111,7 +111,7 @@ class IEXLiveFeed(
 
         if (actions.isNotEmpty()) {
             val event = Event(actions, now)
-            channel?.offer(event)
+            send(event)
         }
     }
 
@@ -125,7 +125,7 @@ class IEXLiveFeed(
             val action = TradePrice(asset, it.iexRealtimePrice.toDouble(), it.iexRealtimeSize.toDouble())
             if (!useMachineTime) now = Instant.ofEpochMilli(it.iexLastUpdated)
             val event = Event(listOf(action), now)
-            channel?.offer(event)
+            send(event)
         }
 
     }

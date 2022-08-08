@@ -24,13 +24,7 @@ import kotlin.test.assertTrue
 
 internal class LiveFeedTest {
 
-    class MyLiveFeed : LiveFeed() {
-
-        val isActive
-            get() = channel != null
-
-    }
-
+    class MyLiveFeed : LiveFeed() 
 
     @Test
     fun basic(): Unit = runBlocking {

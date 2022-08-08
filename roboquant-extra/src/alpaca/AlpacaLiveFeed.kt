@@ -204,7 +204,7 @@ class AlpacaLiveFeed(
                 val now = Instant.now()
                 logger.finer { "Received action $action at ${now.truncatedTo(ChronoUnit.SECONDS)}" }
                 val event = Event(listOf(action), now)
-                channel?.offer(event)
+                send(event)
             }
         } catch (e: Throwable) {
             logger.severe("error during handling market data message", e)

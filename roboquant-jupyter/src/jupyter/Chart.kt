@@ -111,6 +111,10 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
  */
 abstract class Chart : Output() {
 
+    /**
+     * Does the generated option JSON string contain Javascript. If true additional code will be generated to parse
+     * this into a Javascript function.
+     */
     private var hasJavascript: Boolean = false
 
     /**
@@ -128,20 +132,20 @@ abstract class Chart : Output() {
     companion object {
 
         /**
-         * Theme to use for plotting. When left to "auto", it will adapt to the theme set for
+         * Theme to use for plotting. When left to "auto", it will try to adapt to the theme set for
          * Jupyter Lab (light or dark)
          */
         var theme = "auto"
 
         /**
          * If set to true, a console.log(option) statement will be included so the option parameter of echarts can be
-         * easily debugged
+         * easily inspected in the console of the browser.
          */
         var debug = false
 
         /**
          * Maximum number of samples to plot in a chart. Certain types of charts can be become very large and as
-         * a result make your browser unresponsive. By lowering this value (default is Int.MAX_VALUE)
+         * a result make your browser unresponsive. By lowering this value (default is [Int.MAX_VALUE])
          * before serializing the result to the browser, the sample size will first be reduced. A good value might
          * be 100_000, but this depends on your computer.
          */
@@ -291,11 +295,11 @@ abstract class Chart : Output() {
     }
 
     /**
-     * Calling this function will ensure that a JavaScript function used in the tooltip formatter wil work.
-     * A function should only contain the body and the input paramter is `p`, for example:
+     * Calling this function will ensure that a JavaScript function used in the tooltip formatter will work.
+     * The provided function should only contain the body and the input paramter is `p`, for example:
      *
      * ```
-     *      return p.param[0] + p.param[1]
+     *      javascriptFunction("return p.param[0] + p.param[1]")
      * ```
      */
     protected fun javasciptFunction(function: String): String {
@@ -307,7 +311,7 @@ abstract class Chart : Output() {
      * Return JSON string representation of the [option]
      */
     protected fun renderJson(option: Option) : String {
-        // Set transparent background so charts look good in different Jupyter themes
+        // Set transparent background so charts look better with Jupyter Notebooks
         option.backgroundColor = "rgba(0,0,0,0)"
 
         // Set the default grid if none is set already

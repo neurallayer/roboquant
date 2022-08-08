@@ -28,6 +28,9 @@ import org.roboquant.common.ParallelJobs
  */
 class CombinedFeed(vararg val feeds: LiveFeed) : Feed {
 
+    /**
+     * @see Feed.play
+     */
     override suspend fun play(channel: EventChannel) {
         val jobs = ParallelJobs()
         for (feed in feeds) {

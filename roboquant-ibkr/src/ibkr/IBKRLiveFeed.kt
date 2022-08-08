@@ -99,7 +99,7 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
                 val action = PriceBar(asset, open, high, low, close, volume.value().toDouble())
                 val now = Instant.ofEpochSecond(time) // IBKR uses seconds resolution
                 val event = Event(listOf(action), now)
-                channel?.offer(event)
+                send(event)
             }
         }
 

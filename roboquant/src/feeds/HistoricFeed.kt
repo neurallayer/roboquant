@@ -47,32 +47,22 @@ interface HistoricFeed : AssetFeed {
     /**
      * Draw a [random] sampled timeframe of a certain [size] from the historic feed and return a timeframe that
      * represents this sample.
-     *
-     * @param size Number of events that the timeframe should contain
-     * @param random Random generator to use, if none provided will use [Config.random]
-     * @return
      */
-    fun sample(size: Int, random: Random = Config.random) : Timeframe {
+    fun sample(size: Int, random: Random = Config.random): Timeframe {
         val tl = timeline
         val start = random.nextInt(tl.size - size)
         return Timeframe(tl[start], tl[start + size])
     }
 
-
     /**
-     * Split the timeframe of this feed in number of equal periods.
-     *
-     * @param period
+     * Split the timeframe of this feed in number of timeframes of equal [period].
      */
     fun split(period: TemporalAmount) = timeframe.split(period)
 
     /**
-     * Split the timeline of the feed in number of equal size chunks
-     *
-     * @param size
+     * Split the timeline of the feed in number of timeframes equal [size].
      */
     fun split(size: Int) = timeline.split(size)
-
 
 }
 
