@@ -16,6 +16,7 @@
 
 package org.roboquant.jupyter
 
+import org.icepear.echarts.Option
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.feeds.random.RandomWalk
@@ -35,8 +36,8 @@ internal class ChartTest {
             javasciptFunction("return p;")
         }
 
-        override fun renderOption(): String {
-            return "{}"
+        override fun getOption(): Option {
+            return Option()
         }
 
     }

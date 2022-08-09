@@ -18,6 +18,7 @@ package org.roboquant.jupyter
 
 import org.apache.commons.math3.stat.descriptive.rank.Percentile
 import org.icepear.echarts.Boxplot
+import org.icepear.echarts.Option
 import org.icepear.echarts.charts.boxplot.BoxplotSeries
 import org.icepear.echarts.components.coord.cartesian.CategoryAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
@@ -70,7 +71,7 @@ class MetricBoxChart(
     }
 
     /** @suppress */
-    override fun renderOption(): String {
+    override fun getOption(): Option {
         val data = toSeriesData()
         val xData = data.map { it.first }.toTypedArray()
         val yData = data.map { it.second }
@@ -90,6 +91,6 @@ class MetricBoxChart(
         option.setToolbox(getToolbox(false))
         option.setDataZoom(DataZoom())
 
-        return renderJson(option)
+        return option
     }
 }

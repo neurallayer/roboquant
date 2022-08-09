@@ -17,6 +17,7 @@
 package org.roboquant.jupyter
 
 import org.icepear.echarts.Line
+import org.icepear.echarts.Option
 import org.icepear.echarts.charts.line.LineSeries
 import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
@@ -79,7 +80,7 @@ class PriceChart(
 
 
     /** @suppress */
-    override fun renderOption(): String {
+    override fun getOption(): Option {
         val line = reduce(fromFeed())
         val timeframe = if (line.size > 1) Timeframe(line.first().first, line.last().first).toString() else ""
 
@@ -108,7 +109,7 @@ class PriceChart(
         option.setToolbox(getToolbox())
         option.setDataZoom(DataZoom())
 
-        return renderJson(option)
+        return option
     }
 
 }

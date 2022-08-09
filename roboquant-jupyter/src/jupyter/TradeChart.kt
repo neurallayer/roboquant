@@ -16,6 +16,7 @@
 
 package org.roboquant.jupyter
 
+import org.icepear.echarts.Option
 import org.icepear.echarts.Scatter
 import org.icepear.echarts.charts.scatter.ScatterSeries
 import org.icepear.echarts.components.coord.cartesian.TimeAxis
@@ -75,7 +76,7 @@ open class TradeChart(
         return d
     }
 
-    override fun renderOption(): String {
+    override fun getOption(): Option {
 
         val data = toSeriesData()
         val max = data.maxOfOrNull { it.second }
@@ -102,6 +103,6 @@ open class TradeChart(
         option.setToolbox(getToolbox(includeMagicType = false))
         option.setDataZoom(DataZoom())
 
-        return renderJson(option)
+        return option
     }
 }

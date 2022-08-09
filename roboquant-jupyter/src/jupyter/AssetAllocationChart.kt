@@ -100,8 +100,7 @@ class AssetAllocationChart(
     }
 
     /** @suppress */
-    override fun renderOption(): String {
-        val result = if (includeAssetClass) renderSunburst() else renderPie()
-        return renderJson(result)
+    override fun getOption(): Option {
+        return if (includeAssetClass) renderSunburst() else renderPie()
     }
 }

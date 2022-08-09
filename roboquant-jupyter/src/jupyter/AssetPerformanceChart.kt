@@ -16,6 +16,12 @@
 
 package org.roboquant.jupyter
 
+import org.icepear.echarts.Option
+import org.icepear.echarts.Treemap
+import org.icepear.echarts.charts.treemap.Breadcrumb
+import org.icepear.echarts.charts.treemap.TreemapSeries
+import org.icepear.echarts.charts.treemap.TreemapSeriesItemStyle
+import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
@@ -44,7 +50,8 @@ class AssetPerformanceChart(
 ) : Chart() {
 
     /**
-     * Play the feed and get price-actions. The output is usable for a treemap chart
+     * Play the feed and get price-actions
+     * The output is usable for a treemap
      */
     private fun fromFeed(): List<Map<String, Any>> {
         val result = mutableMapOf<Asset, MutableList<Double>>()  // start, last, volume
@@ -71,59 +78,38 @@ class AssetPerformanceChart(
     }
 
     /** @suppress */
-    override fun renderOption(): String {
-        val list = fromFeed()
-        val max = list.maxOf {
+    override fun getOption(): Option {
+        val data = fromFeed()
+        val max = data.maxOf {
             val x = it["value"] as List<*>
-            val result = x[1] as BigDecimal
-            result.abs()
+            x[1] as BigDecimal
         }
 
-        val data = gsonBuilder.create().toJson(list)
+        val series = TreemapSeries()
+            .setName("assets")
+            .setData(data)
+            .setBreadcrumb(Breadcrumb().setShow(false))
+            .setItemStyle(TreemapSeriesItemStyle().setBorderColor("rgba(0,0,0,0)"))
 
-        val series = """
-            {
-                name: 'Assets',
-                type: 'treemap',
-                data : $data,
-                breadcrumb : { show: false },
-                itemStyle: { borderColor: 'rgba(0,0,0,0)' },
-            },
-        """
+        val tooltip = Tooltip()
+            .setPosition("top")
+            .setFormatter(javasciptFunction(
+                "return 'asset: ' + p.name + '<br>volume: ' + p.value[0]+ '<br>returns: ' + p.value[1]  + '%';"
+            ))
 
-        val t = title ?: "Asset performance"
+        val vm = getVisualMap(-max, max)
+        vm.color = arrayOf(positiveColor, negativeColor)
 
-        return """
-            {
-                title: {
-                    text: '$t'
-                },
-                visualMap: {
-                   min: ${max.negate()},
-                   max: $max,
-                   dimension: 1,
-                   calculable: true,
-                   orient: 'horizontal',
-                   left: 'center',
-                   top: 'top',
-                   inRange : { color: ['$negativeColor', '$positiveColor'] }
-                },
-                tooltip: {
-                   position: 'top',
-                   formatter: function (p) {
-                        return 'asset: ' + p.name + '<br>volume: ' + p.value[0]+ '<br>returns: ' + p.value[1]  + '%'; 
-                    }
-                },
-                toolbox: {
-                    feature: {
-                        restore: {},
-                        saveAsImage: {}
-                    }
-                },
-                series : [$series],
-                backgroundColor: 'rgba(0,0,0,0)'
-            }
-       """.trimStart()
+        val chart = Treemap()
+            .addSeries(series)
+            .setTitle(title ?: "Asset Performance")
+            .setTooltip(tooltip)
+            .setVisualMap(vm)
+
+        val option = chart.option
+        option.setToolbox(getBasicToolbox())
+
+        return option
     }
 
 

@@ -189,7 +189,7 @@ class PriceBarChart(
     }
 
     /** @suppress */
-    override fun renderOption(): String {
+    override fun getOption(): Option {
 
         val line = reduce(fromFeed())
         val timeframe = if (line.size > 1) Timeframe.parse(line.first()[0].toString(), line.last()[0].toString())
@@ -198,7 +198,7 @@ class PriceBarChart(
         val dataset = Dataset().setSource(line)
         val tooltip = Tooltip().setTrigger("axis")
 
-        val option = Option()
+        return Option()
             .setTitle(Title().setText(title ?: "${asset.symbol} $timeframe"))
             .setGrid(getGrids())
             .setToolbox(getToolbox())
@@ -209,8 +209,6 @@ class PriceBarChart(
             .setToolbox(getToolbox())
             .setTooltip(tooltip)
             .setDataZoom(getDataZoom())
-
-        return renderJson(option)
     }
 
 }

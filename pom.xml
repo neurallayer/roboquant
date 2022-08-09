@@ -66,6 +66,8 @@
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <kotlin.version>1.7.10</kotlin.version>
+        <sonar.organization>neurallayer</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <repositories>

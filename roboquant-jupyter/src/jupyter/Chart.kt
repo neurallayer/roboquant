@@ -107,7 +107,7 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 }
 
 /**
- * Base class all roboquant charts in Notebooks. Subclasses should implemented at least the [renderOption] method.
+ * Base class all roboquant charts in Notebooks. Subclasses should implemented at least the [getOption] method.
  */
 abstract class Chart : Output() {
 
@@ -191,7 +191,7 @@ abstract class Chart : Output() {
      * to be rendered in the cell output of a Jupyter notebook.
      */
     override fun asHTML(): String {
-        val fragment = renderOption().trimStart()
+        val fragment = renderJson().trimStart()
         val themeDetector = if (theme == "auto") {
             "document.body.dataset.jpThemeLight == 'false' ? 'dark' : 'light'"
         } else {
@@ -308,9 +308,11 @@ abstract class Chart : Output() {
     }
 
     /**
-     * Return JSON string representation of the [option]
+     * Return JSON string representation of the option
      */
-    protected fun renderJson(option: Option) : String {
+    protected fun renderJson() : String {
+        val option = getOption()
+
         // Set transparent background so charts look better with Jupyter Notebooks
         option.backgroundColor = "rgba(0,0,0,0)"
 
@@ -323,10 +325,9 @@ abstract class Chart : Output() {
     }
 
     /**
-     * Subclasses will need to return the value of the option attribute. Although is can be a plain JSON string, this is
-     * not required, and it can be any valid JavaScript object including any JavaScript code.
+     * Subclasses will need to return the value of the option attribute.
      */
-    abstract fun renderOption(): String
+    abstract fun getOption(): Option
 
 }
 

@@ -18,6 +18,7 @@ package org.roboquant.jupyter
 
 import org.apache.commons.math3.random.EmpiricalDistribution
 import org.icepear.echarts.Bar
+import org.icepear.echarts.Option
 import org.icepear.echarts.charts.bar.BarLabel
 import org.icepear.echarts.charts.bar.BarSeries
 import org.icepear.echarts.components.coord.cartesian.CategoryAxis
@@ -61,7 +62,7 @@ class MetricHistogram(
     }
 
     /** @suppress */
-    override fun renderOption(): String {
+    override fun getOption(): Option {
         val d = toSeriesData()
         val data = d.map { it.second }.toTypedArray()
         val xData = d.map { it.first }.toTypedArray()
@@ -83,6 +84,6 @@ class MetricHistogram(
         option.setToolbox(getToolbox())
         option.setDataZoom(DataZoom())
 
-        return renderJson(option)
+        return option
     }
 }

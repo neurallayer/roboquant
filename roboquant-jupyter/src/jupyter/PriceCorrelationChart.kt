@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation
 import org.icepear.echarts.Heatmap
+import org.icepear.echarts.Option
 import org.icepear.echarts.charts.heatmap.HeatmapSeries
 import org.icepear.echarts.components.coord.cartesian.CategoryAxis
 import org.icepear.echarts.components.series.SeriesLabel
@@ -110,7 +111,7 @@ class PriceCorrelationChart(
     }
 
     /** @suppress */
-    override fun renderOption(): String {
+    override fun getOption(): Option {
         val prices = collectPrices()
         val labels = prices.keys.map { it.symbol }.toTypedArray()
         val data = getMatrix(prices)
@@ -129,6 +130,6 @@ class PriceCorrelationChart(
         val option = chart.option
         option.setToolbox(getBasicToolbox())
 
-        return renderJson(option)
+        return option
     }
 }

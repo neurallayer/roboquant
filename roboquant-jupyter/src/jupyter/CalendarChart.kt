@@ -90,20 +90,18 @@ class CalendarChart(
     }
 
     /** @suppress */
-    override fun renderOption(): String {
+    override fun getOption(): Option {
         val data = prepData()
         val max = metricsData.map { it.value }.maxOfOrNull { it }
         val min = metricsData.map { it.value }.minOfOrNull { it }
 
-        val option = Option()
+        return Option()
             .setTitle(Title().setText(title ?: "Daily results ${metricsData.getName()}"))
             .setSeries(getSeriesOptions(data))
             .setCalendar(getCalendars(data))
             .setVisualMap(getVisualMap(min, max))
             .setTooltip(getTooltip())
             .setToolbox(getBasicToolbox())
-
-        return renderJson(option)
     }
 }
 

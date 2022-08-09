@@ -16,6 +16,7 @@
 
 package org.roboquant.jupyter
 
+import org.icepear.echarts.Option
 import org.icepear.echarts.Scatter
 import org.icepear.echarts.charts.scatter.ScatterSeries
 import org.icepear.echarts.components.coord.SplitArea
@@ -79,7 +80,7 @@ class TradeChartByAsset(
         return d
     }
 
-    override fun renderOption(): String {
+    override fun getOption(): Option {
         val assets = trades.map { it.asset }.distinct().sortedBy { it.symbol }
         val d = toSeriesData(assets)
 
@@ -110,6 +111,6 @@ class TradeChartByAsset(
         option.setToolbox(toolbox)
         option.setDataZoom(DataZoom())
 
-        return renderJson(option)
+        return option
     }
 }

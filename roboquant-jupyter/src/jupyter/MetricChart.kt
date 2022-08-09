@@ -17,6 +17,7 @@
 package org.roboquant.jupyter
 
 import org.icepear.echarts.Line
+import org.icepear.echarts.Option
 import org.icepear.echarts.charts.line.LineSeries
 import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
@@ -41,7 +42,7 @@ class MetricChart(
 ) : Chart() {
 
     /** @suppress */
-    override fun renderOption(): String {
+    override fun getOption(): Option {
 
         val xAxis = if (useTime) TimeAxis() else ValueAxis()
         val yAxis = ValueAxis().setScale(true)
@@ -69,7 +70,7 @@ class MetricChart(
         option.setToolbox(getToolbox())
         option.setDataZoom(DataZoom())
 
-        return renderJson(option)
+        return option
     }
 
 
