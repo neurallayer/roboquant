@@ -67,14 +67,13 @@ internal class WalletTest {
         wallet.deposit(12.USD)
         metrics = wallet.toMap()
         assertFalse(usd in metrics)
-
-
     }
 
     @Test
-    fun copy() {
+    fun plusMinus() {
         val wallet = Wallet(10.USD, 20.EUR)
         val wallet2 = wallet + wallet - wallet
+        assertNotEquals(wallet.hashCode(), wallet2.hashCode())
         assertEquals(wallet, wallet2)
     }
 
@@ -83,7 +82,6 @@ internal class WalletTest {
         val wallet = Wallet(10.USD, 20.EUR)
         assertTrue(wallet.summary().content.isNotEmpty())
     }
-
 
     @Test
     fun operators() {

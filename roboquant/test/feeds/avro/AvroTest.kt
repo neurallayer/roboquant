@@ -19,11 +19,12 @@ package org.roboquant.feeds.avro
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.MethodOrderer.Alphanumeric
 import org.junit.jupiter.api.TestMethodOrder
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
-import org.roboquant.feeds.play
+import org.roboquant.feeds.*
 import java.io.File
 import java.time.Instant
 import kotlin.io.path.div
@@ -31,6 +32,16 @@ import kotlin.test.*
 
 @TestMethodOrder(Alphanumeric::class)
 class AvroTest {
+
+    private class MyFeed : Feed {
+
+        lateinit var event: Event
+
+        override suspend fun play(channel: EventChannel) {
+            channel.send(event)
+        }
+
+    }
 
     companion object {
 
@@ -56,6 +67,8 @@ class AvroTest {
         AvroUtil.record(feed, fileName, compressionLevel = 0)
         assertTrue(File(fileName).isFile)
     }
+
+
 
 
     @Test
@@ -88,6 +101,24 @@ class AvroTest {
             for (event in play(feed3)) cnt++
             assertEquals(size, cnt)
         }
+    }
+
+    @Test
+    fun avroStep4() {
+        val asset = Asset("DUMMY")
+        val p1 = PriceBar.fromValues(asset, listOf(10.0, 10.0, 10.0, 10.0, 1000.0))
+        val p2 = TradePrice(asset, 10.0, 1000.0)
+        val p3 = PriceQuote(asset, 10.0, 1000.0, 10.0, 1000.0)
+        val feed = MyFeed()
+        feed.event = Event(listOf(p1, p2, p3), Instant.now())
+
+        assertDoesNotThrow {
+            AvroUtil.record(feed, fileName, compressionLevel = 0)
+        }
+
+        val feed2 = AvroFeed(fileName)
+        assertEquals(1, feed2.timeline.size)
+
     }
 
     @Test

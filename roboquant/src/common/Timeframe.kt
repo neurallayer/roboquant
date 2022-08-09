@@ -268,7 +268,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
      * test timeframe.
      */
     fun splitTrainTest(testSize: Double): Pair<Timeframe, Timeframe> {
-        require(testSize in 0.0..1.0) { "Test size has to between 0 and 1" }
+        require(testSize in 0.0..1.0) { "Test size has to between 0.0 and 1.0" }
         val diff = duration.toMillis()
         val train = (diff * (1.0 - testSize)).toLong()
         val border = start.plus(train, ChronoUnit.MILLIS)

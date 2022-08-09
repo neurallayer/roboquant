@@ -31,17 +31,15 @@ internal object Background {
     private val IOBoundScope = CoroutineScope(Dispatchers.IO + Job())
 
     /**
-     * Launch an IO bound routine
-     *
-     * @param block
-     * @receiver
-     * @return
+     * Launch an IO bound [block] and return the job
      */
     fun ioJob(block: suspend CoroutineScope.() -> Unit): Job {
         return IOBoundScope.launch(block = block)
     }
 
-
+    /**
+     * Run an async [block] and return deferred result
+     */
     fun <T> async(block: suspend CoroutineScope.() -> T): Deferred<T> {
         return IOBoundScope.async(block = block)
     }

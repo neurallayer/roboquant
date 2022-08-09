@@ -340,7 +340,6 @@ val Int.millis : Duration
 
 /**
  * Unified approach to the different types of temporalAmounts found in Java: Period and Duration.
- *
  */
 class ZonedPeriod(private val a: TemporalAmount, private val zoneId: ZoneId = Config.defaultZoneId) : TemporalAmount {
 
