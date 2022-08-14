@@ -16,16 +16,14 @@
 
 package org.roboquant.common
 
-
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.ZoneId
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class TimeframeTest {
-
-
 
     @Test
     fun split() {
@@ -35,7 +33,6 @@ internal class TimeframeTest {
         assertEquals(tf.start, subFrames.first().start)
         assertEquals(tf.end, subFrames.last().end)
     }
-
 
     @Test
     fun constants() {
@@ -61,7 +58,6 @@ internal class TimeframeTest {
         assertTrue(s3.isNotBlank())
     }
 
-
     @Test
     fun creation() {
         val tf = Timeframe.next(1.minutes)
@@ -70,6 +66,10 @@ internal class TimeframeTest {
         val tf2 = tf.extend(1.days)
         assertTrue { tf2.contains(tf.start) }
         assertTrue { tf2.contains(tf.end) }
+
+        assertThrows<IllegalArgumentException> {
+            Timeframe.fromYears(1800, 2000)
+        }
     }
 
     @Test
@@ -79,7 +79,6 @@ internal class TimeframeTest {
 
         assertEquals(Timeframe(tf1.start, tf2.end), tf1.union(tf2))
     }
-
 
     @Test
     fun annualize() {
@@ -101,7 +100,7 @@ internal class TimeframeTest {
 
     @Test
     fun toTimeline() {
-        val tf = Timeframe.parse("2020-01-01T18:00:00Z","2021-12-31T18:00:00Z")
+        val tf = Timeframe.parse("2020-01-01T18:00:00Z", "2021-12-31T18:00:00Z")
         val timeline = tf.toTimeline(1.days)
         assertTrue(timeline.size > 200)
     }

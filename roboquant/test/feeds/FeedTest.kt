@@ -17,6 +17,8 @@
 package org.roboquant.feeds
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import java.util.*
@@ -51,6 +53,17 @@ internal class FeedTest {
         val feed = MyFeed2()
         assertEquals(Timeframe.INFINITE, feed.timeframe)
         assertContains(feed.assets, Asset("AAB"))
+    }
+
+
+    @Test
+    fun filter() {
+        val feed = TestData.feed()
+        assertDoesNotThrow {
+            feed.filter<PriceAction>(timeframe = Timeframe.fromYears(1901, 2000)).filter {
+                it.second.getPrice() > 0.0
+            }
+        }
     }
 
 
