@@ -26,6 +26,9 @@ import kotlin.math.absoluteValue
  *
  * For storing monetary amounts internally it uses [Double], since it is accurate enough for trading while providing
  * large performance benefits over BigDecimal.
+ *
+ * @property currency the currency of the amount
+ * @property value the value amount
  */
 data class Amount(val currency: Currency, val value: Double) : Comparable<Number> {
 
@@ -33,12 +36,26 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     constructor(currencyCode: String, value: Number) : this(Currency.getInstance(currencyCode), value.toDouble())
 
     // Common operators that make working with Amounts more pleasant
+
+    /** @supress */
     operator fun times(d: Number): Amount = Amount(currency, value * d.toDouble())
+
+    /** @supress */
     operator fun plus(d: Number): Amount = Amount(currency, value + d.toDouble())
+
+    /** @supress */
     operator fun div(d: Number): Amount = Amount(currency, value / d.toDouble())
+
+    /** @supress */
     operator fun minus(d: Number): Amount = Amount(currency, value - d.toDouble())
+
+    /** @supress */
     operator fun plus(other: Amount): Wallet = Wallet(this, other)
+
+    /** @supress */
     operator fun minus(other: Amount): Wallet = Wallet(this, -other)
+
+    /** @supress */
     operator fun unaryMinus(): Amount = Amount(currency, -value)
 
     /**
@@ -67,6 +84,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     fun toBigDecimal(fractionDigits: Int = currency.defaultFractionDigits): BigDecimal =
         BigDecimal.valueOf(value).setScale(fractionDigits, RoundingMode.HALF_DOWN)
 
+    /** @suppress **/
     override fun toString(): String = "${currency.currencyCode} ${formatValue()}"
 
     /**

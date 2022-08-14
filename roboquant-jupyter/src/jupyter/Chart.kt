@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-// @file:Suppress("MemberVisibilityCanBePrivate")
-
 package org.roboquant.jupyter
 
 import com.google.gson.GsonBuilder
@@ -49,7 +47,6 @@ private class PairAdapter : JsonSerializer<Pair<*, *>> {
 
 }
 
-
 /**
  * Type adaptor for Gson that allows to use [Amount] that get serialized as a BigDecimal.
  *
@@ -66,8 +63,6 @@ private class AmountAdapter : JsonSerializer<Amount> {
     }
 
 }
-
-
 
 /**
  * Type adaptor for Gson that allows to use [Instant] that get serialized as a Long
@@ -86,7 +81,6 @@ private class InstantAdapter : JsonSerializer<Instant> {
     }
 
 }
-
 
 /**
  * Type adaptor for Gson that allows to use [Triple] that get serialized as a List
@@ -126,8 +120,7 @@ abstract class Chart : Output() {
      * Set a custom title for the chart. If not set, a default title will be generated. If you don't want a title, set
      * this property to an empty string.
      */
-    var title : String? = null
-
+    var title: String? = null
 
     companion object {
 
@@ -152,9 +145,9 @@ abstract class Chart : Output() {
         var maxSamples = Int.MAX_VALUE
 
         // Make this variable so can charts work for both Chinese and western users.
-        var positiveColor : String = "#0C0" // Green
-        var negativeColor : String = "#C00" // Red
-        var neutralColor : String = "#CC0" // Yellow
+        var positiveColor: String = "#0C0" // Green
+        var negativeColor: String = "#C00" // Red
+        var neutralColor: String = "#CC0" // Yellow
 
         internal val gsonBuilder = GsonBuilder()
 
@@ -177,10 +170,10 @@ abstract class Chart : Output() {
     /**
      * Reduce the sample size in order to ensure the browser can plot it and remain responsive.
      */
-    protected fun <T>reduce(data: Collection<T>): Collection<T> {
+    protected fun <T> reduce(data: Collection<T>): Collection<T> {
         return if (data.size > maxSamples) {
             val skip = data.size / maxSamples
-            data.filterIndexed {  index, _ -> index % skip == 1 }
+            data.filterIndexed { index, _ -> index % skip == 1 }
         } else {
             data
         }
@@ -191,7 +184,7 @@ abstract class Chart : Output() {
      * to be rendered in the cell output of a Jupyter notebook.
      */
     override fun asHTML(): String {
-        val fragment = renderJson().trimStart()
+        val fragment = getOption().renderJson().trimStart()
         val themeDetector = if (theme == "auto") {
             "document.body.dataset.jpThemeLight == 'false' ? 'dark' : 'light'"
         } else {
@@ -202,9 +195,9 @@ abstract class Chart : Output() {
 
         // Transfer a string into a javascript Function for tooltip formatting
         val handleJS = if (hasJavascript)
-                """option && (option.tooltip.formatter = new Function("p", option.tooltip.formatter));"""
-            else
-                ""
+            """option && (option.tooltip.formatter = new Function("p", option.tooltip.formatter));"""
+        else
+            ""
 
         return """
         <div style="width:100%;height:${height}px;" class="rqcharts"></div>
@@ -252,9 +245,8 @@ abstract class Chart : Output() {
         """.trimIndent()
     }
 
-
     /**
-     * Return the toolbox
+     * Return the standard toolbox
      */
     protected fun getToolbox(includeMagicType: Boolean = true): Toolbox {
         val features = mutableMapOf(
@@ -264,12 +256,12 @@ abstract class Chart : Output() {
             "magicType" to ToolboxMagicTypeFeature().setType(arrayOf("line", "bar")),
             "restore" to ToolboxRestoreFeature()
         )
-        if (! includeMagicType) features.remove("magicType")
+        if (!includeMagicType) features.remove("magicType")
         return Toolbox().setFeature(features)
     }
 
     /**
-     * Return the most basic toolbox
+     * Return the basic toolbox
      */
     protected fun getBasicToolbox(): Toolbox {
         val features = mutableMapOf(
@@ -307,27 +299,23 @@ abstract class Chart : Output() {
         return function
     }
 
-    /**
-     * Return JSON string representation of the option
-     */
-    protected fun renderJson() : String {
-        val option = getOption()
-
-        // Set transparent background so charts look better with Jupyter Notebooks
-        option.backgroundColor = "rgba(0,0,0,0)"
-
-        // Set the default grid if none is set already
-        if (option.grid == null) {
-            val grid = Grid().setContainLabel(true).setRight("3%").setLeft("3%")
-            option.setGrid(grid)
-        }
-        return gsonBuilder.create().toJson(option)
-    }
 
     /**
      * Subclasses will need to return the value of the option attribute.
      */
     abstract fun getOption(): Option
 
+}
+
+fun Option.renderJson(): String {
+    // Set default transparent background so charts look better with Jupyter Notebooks
+    if (backgroundColor == null) backgroundColor = "rgba(0,0,0,0)"
+
+    // Set the default grid if none is set already
+    if (grid == null) {
+        val grid = Grid().setContainLabel(true).setRight("3%").setLeft("3%")
+        setGrid(grid)
+    }
+    return Chart.gsonBuilder.create().toJson(this)
 }
 

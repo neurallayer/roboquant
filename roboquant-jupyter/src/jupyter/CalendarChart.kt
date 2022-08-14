@@ -67,7 +67,6 @@ class CalendarChart(
         return result.toTypedArray()
     }
 
-
     private fun getSeriesOptions(data: Map<Int, List<Any>>): Array<HeatmapSeries> {
         val seriesOptions = mutableListOf<HeatmapSeries>()
         data.values.forEachIndexed { index, list ->
@@ -80,13 +79,14 @@ class CalendarChart(
         return seriesOptions.toTypedArray()
     }
 
-
     private fun getTooltip(): Tooltip {
         return Tooltip()
             .setPosition("top")
-            .setFormatter(javasciptFunction(
-                "var f = echarts.format.formatTime('yyyy-MM-dd', p.data[0]);return f + ': ' + p.data[1];"
-            ))
+            .setFormatter(
+                javasciptFunction(
+                    "var f = echarts.format.formatTime('yyyy-MM-dd', p.data[0]);return f + ': ' + p.data[1];"
+                )
+            )
     }
 
     /** @suppress */

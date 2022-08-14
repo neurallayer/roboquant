@@ -18,6 +18,7 @@ package org.roboquant.jupyter
 
 import org.icepear.echarts.Option
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.feeds.random.RandomWalk
 import java.io.File
@@ -62,6 +63,10 @@ internal class ChartTest {
         val chart = MyChart()
         chart.height = 123
         Chart.debug = true
+
+        assertDoesNotThrow {
+            chart.getOption().renderJson()
+        }
 
         val code = chart.asHTML()
         assertContains(code, "123px")

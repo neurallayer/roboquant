@@ -93,9 +93,11 @@ class AssetPerformanceChart(
 
         val tooltip = Tooltip()
             .setPosition("top")
-            .setFormatter(javasciptFunction(
-                "return 'asset: ' + p.name + '<br>volume: ' + p.value[0]+ '<br>returns: ' + p.value[1]  + '%';"
-            ))
+            .setFormatter(
+                javasciptFunction(
+                    "return 'asset: ' + p.name + '<br>volume: ' + p.value[0]+ '<br>returns: ' + p.value[1]  + '%';"
+                )
+            )
 
         val vm = getVisualMap(-max, max)
         vm.color = arrayOf(positiveColor, negativeColor)
@@ -111,6 +113,5 @@ class AssetPerformanceChart(
 
         return option
     }
-
 
 }

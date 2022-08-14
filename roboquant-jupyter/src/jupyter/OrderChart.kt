@@ -40,7 +40,6 @@ class OrderChart(
     private val orderStates: List<OrderState>,
 ) : Chart() {
 
-
     private fun getTooltip(order: SingleOrder, openedAt: Instant): String {
 
         return with(order) {
@@ -74,8 +73,8 @@ class OrderChart(
     override fun getOption(): Option {
 
         val data = toSeriesData()
-        val max = data.maxOfOrNull { it.second}
-        val min = data.minOfOrNull { it.second}
+        val max = data.maxOfOrNull { it.second }
+        val min = data.minOfOrNull { it.second }
 
         val series = ScatterSeries()
             .setData(data)

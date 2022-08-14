@@ -30,10 +30,11 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
- * Metric chart will plot a metric
+ * A MetricChart will plot a metric that is captured during one or more runs.
  *
- * @property metricsData
- * @property useTime
+ * @property metricsData the data to use
+ * @property useTime should be X axis be a time scale (or a step scale)
+ * @property fractionDigits how many digits to use for presenting the metric values
  */
 class MetricChart(
     private val metricsData: Collection<MetricsEntry>,

@@ -36,9 +36,15 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
 
     companion object {
 
+        /**
+         * Create a Wallet based on the [amount]
+         */
         operator fun invoke(amount: Amount): Wallet =
             Wallet(IdentityHashMap(mapOf(amount.currency to amount.value)))
 
+        /**
+         * Create a Wallet based on the [amounts]
+         */
         operator fun invoke(vararg amounts: Amount): Wallet {
             val wallet = Wallet()
             for (amount in amounts) wallet.deposit(amount)

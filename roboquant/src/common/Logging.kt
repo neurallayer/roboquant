@@ -54,9 +54,6 @@ object Logging {
     private const val ANSI_CYAN = "\u001B[36m"
     private const val ANSI_WHITE = "\u001B[37m"
 
-    fun blue(msg: Any) = "$ANSI_BLUE$msg$ANSI_RESET"
-    fun green(msg: Any) = "$ANSI_GREEN$msg$ANSI_RESET"
-
     private class LoggingFormatter : SimpleFormatter() {
 
         @Suppress("MaxLineLength")
@@ -109,17 +106,21 @@ object Logging {
     }
 
     /**
-     * Set the default logging level for new Loggers. This won't change logging level of already created loggers,
+     * Set the default logging [level] for new Loggers. This won't change logging level of already created loggers,
      * for that please use [setLevel].
-     *
-     * @param level
      */
     fun setDefaultLevel(level: Level) {
         defaultLevel = level
     }
 
+    /**
+     * Return the registered logger names
+     */
     fun getLoggerNames() = LogManager.getLogManager().loggerNames.toList()
 
 }
 
+/**
+ * Log a severe error [msg] with the [throwable]
+ */
 fun Logger.severe(msg: String, throwable: Throwable) = log(Level.SEVERE, msg + throwable.message)

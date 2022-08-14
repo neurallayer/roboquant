@@ -17,7 +17,6 @@
 package org.roboquant.jupyter
 
 import org.icepear.echarts.Option
-import org.icepear.echarts.charts.bar.BarItemStyle
 import org.icepear.echarts.charts.bar.BarSeries
 import org.icepear.echarts.charts.candlestick.CandlestickItemStyle
 import org.icepear.echarts.charts.candlestick.CandlestickSeries
@@ -36,6 +35,8 @@ import org.icepear.echarts.components.series.Encode
 import org.icepear.echarts.components.series.ItemStyle
 import org.icepear.echarts.components.title.Title
 import org.icepear.echarts.components.tooltip.Tooltip
+import org.icepear.echarts.components.visualMap.PiecewiseVisualMap
+import org.icepear.echarts.components.visualMap.VisualPiece
 import org.icepear.echarts.origin.coord.cartesian.AxisOption
 import org.icepear.echarts.origin.util.SeriesOption
 import org.roboquant.brokers.Trade
@@ -113,7 +114,7 @@ class PriceBarChart(
             .setData(markPoints().toTypedArray())
             .setItemStyle(ItemStyle().setColor(neutralColor))
 
-        val encode1 = Encode().setX(0).setY(arrayOf(1,4,3,2))
+        val encode1 = Encode().setX(0).setY(arrayOf(1, 4, 3, 2))
 
         val itemStyle1 = CandlestickItemStyle()
             .setColor(positiveColor)
@@ -121,15 +122,11 @@ class PriceBarChart(
             .setBorderColor(positiveColor)
             .setBorderColor0(negativeColor)
 
-
         val series1 = CandlestickSeries()
             .setName(asset.symbol)
             .setMarkPoint(markPoint)
             .setEncode(encode1)
             .setItemStyle(itemStyle1)
-
-        val itemStyle2 = BarItemStyle()
-            .setColor("#fbe9e")
 
         val encode2 = Encode().setX(0).setY(5)
 
@@ -137,10 +134,23 @@ class PriceBarChart(
             .setXAxisIndex(1)
             .setYAxisIndex(1)
             .setEncode(encode2)
-            .setItemStyle(itemStyle2)
             .setLarge(true)
+            .setColor("#fbe9e")
 
         return arrayOf(series1, series2)
+    }
+
+    private fun getVM(): PiecewiseVisualMap {
+        return PiecewiseVisualMap()
+            .setShow(false)
+            .setSeriesIndex(1)
+            .setDimension(6)
+            .setPieces(
+                arrayOf(
+                    VisualPiece().setValue(1).setColor(positiveColor),
+                    VisualPiece().setValue(-1).setColor(negativeColor)
+                )
+            )
     }
 
     /**
@@ -158,8 +168,8 @@ class PriceBarChart(
      */
     private fun getDataZoom(): Array<DataZoom> {
         return arrayOf(
-            DataZoom().setXAxisIndex(arrayOf(0,1)).setType("inside"),
-            DataZoom().setXAxisIndex(arrayOf(0,1)).setType("slider")
+            DataZoom().setXAxisIndex(arrayOf(0, 1)).setType("inside"),
+            DataZoom().setXAxisIndex(arrayOf(0, 1)).setType("slider")
         )
     }
 
@@ -168,9 +178,15 @@ class PriceBarChart(
         val noTick = CategoryAxisTick().setShow(false)
 
         return if (useTime)
-            arrayOf(TimeAxis(), TimeAxis().setGridIndex(1).setAxisLabel(hide).setAxisTick(noTick))
+            arrayOf(
+                TimeAxis(),
+                TimeAxis().setGridIndex(1).setAxisLabel(hide).setAxisTick(noTick)
+            )
         else
-            arrayOf(CategoryAxis(), CategoryAxis().setGridIndex(1).setAxisLabel(hide).setAxisTick(noTick))
+            arrayOf(
+                CategoryAxis(),
+                CategoryAxis().setGridIndex(1).setAxisLabel(hide).setAxisTick(noTick)
+            )
     }
 
     private fun getYAxis(): Array<AxisOption> {
@@ -209,6 +225,7 @@ class PriceBarChart(
             .setToolbox(getToolbox())
             .setTooltip(tooltip)
             .setDataZoom(getDataZoom())
+            .setVisualMap(getVM())
     }
 
 }

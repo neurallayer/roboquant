@@ -84,12 +84,18 @@ data class CSVConfig(
         require(parsePattern.isEmpty() || parsePattern.length > 5)
     }
 
-    companion object {
+    /**
+     * @suppress
+     */
+    internal companion object {
 
         private const val configFileName = "config.properties"
         private val logger = Logging.getLogger(CSVConfig::class)
 
-        fun fromFile(path: Path): CSVConfig {
+        /**
+         * Read a CSV configuration from a [path]
+         */
+        internal fun fromFile(path: Path): CSVConfig {
             val result = CSVConfig()
             val cfg = readConfigFile(path)
             result.merge(cfg)
@@ -98,10 +104,7 @@ data class CSVConfig(
 
 
         /**
-         * Read properties from config file is it exist.
-         *
-         * @param path
-         * @return
+         * Read properties from config file [path] is it exist.
          */
         private fun readConfigFile(path: Path): Map<String, String> {
             val filePath = path / configFileName
@@ -117,7 +120,7 @@ data class CSVConfig(
 
     }
 
-    fun getAsset(fileName: String): Asset {
+    internal fun getAsset(fileName: String): Asset {
         val name = fileName.substringBefore(fileExtension).uppercase()
         return assetBuilder(name)
     }
@@ -126,7 +129,7 @@ data class CSVConfig(
     /**
      * Should the provided [file] be parsed or skipped all together, true is parsed
      */
-    fun shouldParse(file: File): Boolean {
+    internal fun shouldParse(file: File): Boolean {
         val name = file.name
         return file.isFile && name.endsWith(fileExtension) && pattern.matcher(name).matches() && name !in fileSkip
     }

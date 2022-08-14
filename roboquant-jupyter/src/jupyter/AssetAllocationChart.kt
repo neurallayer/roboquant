@@ -39,7 +39,6 @@ class AssetAllocationChart(
     private val includeAssetClass: Boolean = false,
 ) : Chart() {
 
-
     private class Entry(val name: String, val value: BigDecimal, val type: String) {
         fun toMap() = mapOf("name" to name, "value" to value, "type" to type)
     }
@@ -78,8 +77,7 @@ class AssetAllocationChart(
         return option
     }
 
-
-    private fun renderSunburst(): Option  {
+    private fun renderSunburst(): Option {
 
         val data = toSeriesData().groupBy { it.type }
             .map { entry -> mapOf("name" to entry.key, "children" to entry.value.map { it.toMap() }) }
