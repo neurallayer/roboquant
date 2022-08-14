@@ -34,11 +34,21 @@ internal class Ta4JStrategyTest {
         }
 
         val roboquant = Roboquant(strategy)
-
         val feed = RandomWalk.lastYears(1, nAssets = 2)
         roboquant.run(feed)
         val account = roboquant.broker.account
         assertTrue(account.closedOrders.isNotEmpty())
+    }
+
+    @Test
+    fun noRules() {
+        // Default rule is false, meaning no signals
+        val strategy = Ta4jStrategy(maxBarCount = 30)
+        val roboquant = Roboquant(strategy)
+        val feed = RandomWalk.lastYears(1, nAssets = 2)
+        roboquant.run(feed)
+        val account = roboquant.broker.account
+        assertTrue(account.closedOrders.isEmpty())
     }
 
 }

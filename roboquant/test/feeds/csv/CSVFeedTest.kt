@@ -37,7 +37,6 @@ internal class CSVFeedTest {
         assertEquals(6669, feed.timeline.size)
     }
 
-
     @Test
     fun noAssets() {
         assertFailsWith<Exception> {
@@ -50,7 +49,6 @@ internal class CSVFeedTest {
         assertTrue(feed1.assets.isEmpty())
     }
 
-
     @Test
     fun customBuilder() {
         val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
@@ -62,10 +60,9 @@ internal class CSVFeedTest {
         assertEquals("TEST123", first.asset.exchangeCode)
     }
 
-
     @Test
     fun testColumnInfo() {
-       val ci = ColumnInfo()
+        val ci = ColumnInfo()
         ci.detectColumns(listOf("OPEN", "dummy", "high", "close"))
         assertEquals(0, ci.open)
         assertEquals(2, ci.high)
@@ -80,17 +77,23 @@ internal class CSVFeedTest {
         assertFalse(ci2.hasVolume)
     }
 
-
     @Test
     fun localTimeParser() {
-        val  exchange = Exchange.getInstance("US")
+        val exchange = Exchange.getInstance("US")
+        val parser = LocalTimeParser("dd-MM-yyyy HH:mm")
+        val instant = parser.parse("01-01-2020 16:00", exchange)
+        val closingTime = Instant.parse("2020-01-01T21:00:00Z")
+        assertEquals(closingTime, instant)
+    }
+
+    @Test
+    fun localDateParser() {
+        val exchange = Exchange.getInstance("US")
         val parser = LocalDateParser("dd-MM-yyyy")
         val instant = parser.parse("01-01-2020", exchange)
         val closingTime = Instant.parse("2020-01-01T21:00:00Z")
         assertEquals(closingTime, instant)
     }
-
-
 
     @Test
     fun columnInfoTest() {
@@ -103,6 +106,5 @@ internal class CSVFeedTest {
             a.define("QQQ")
         }
     }
-
 
 }

@@ -18,7 +18,10 @@ package org.roboquant.jupyter
 
 import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.Logging
+import org.roboquant.common.RoboquantException
+import java.lang.RuntimeException
 import java.util.logging.Level
 import kotlin.test.assertTrue
 
@@ -40,11 +43,19 @@ internal class JupyterCoreTest {
         val logger = Logging.getLogger("test")
         logger.info("Should not show up")
         logger.warning("Should show up")
+
+        assertDoesNotThrow {
+            jupyterLogger.close()
+            jupyterLogger.flush()
+        }
     }
 
     @Test
     fun exceptions() {
         val t = RoboquantThrowableRenderer()
+        assertTrue { t.accepts(RoboquantException("test")) }
+        assertTrue { t.accepts(RuntimeException()) }
+        assertTrue { t.accepts(Throwable()) }
         val output = t.render(Exception("Dummy"))
         assertTrue { output is MimeTypedResult }
     }

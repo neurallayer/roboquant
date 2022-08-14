@@ -18,17 +18,21 @@ package org.roboquant.ta
 
 import com.tictactec.ta.lib.Compatibility
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.roboquant.Roboquant
 import org.roboquant.RunPhase
 import org.roboquant.common.Asset
 import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import org.roboquant.strategies.utils.PriceBarSeries
+import java.lang.IllegalArgumentException
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -41,7 +45,6 @@ internal class TaLibStrategyTest {
         val taLib = TaLib()
         assertEquals("Default", taLib.core.compatibility.name)
     }
-
 
     @Test
     fun test() {
@@ -170,6 +173,10 @@ internal class TaLibStrategyTest {
         strategy = TaLibStrategy.rsi(20)
         s = run(strategy)
         assertTrue(s.isNotEmpty())
+
+        assertThrows<IllegalArgumentException> {
+            TaLibStrategy.rsi(20, -10.0, 110.0)
+        }
     }
 
     @Test
@@ -202,6 +209,16 @@ internal class TaLibStrategyTest {
         assertTrue(s.values.last().isNotEmpty())
     }
 
+    @Test
+    fun noRules() {
+        // Default rule is false, meaning no signals
+        val strategy = TaLibStrategy(30)
+        val roboquant = Roboquant(strategy)
+        val feed = RandomWalk.lastYears(1, nAssets = 2)
+        roboquant.run(feed)
+        val account = roboquant.broker.account
+        assertTrue(account.closedOrders.isEmpty())
+    }
 
 }
 
