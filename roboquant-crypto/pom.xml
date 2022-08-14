@@ -96,7 +96,7 @@
         <dependency>
             <groupId>org.roboquant</groupId>
             <artifactId>binance-api-client</artifactId>
-            <version>1.0.3-SNAPSHOT</version>
+            <version>1.0.3</version>
         </dependency>
 
         <dependency>
