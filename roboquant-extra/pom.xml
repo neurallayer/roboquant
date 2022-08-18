@@ -98,12 +98,12 @@
         <dependency>
             <groupId>com.github.crazzyghost</groupId>
             <artifactId>alphavantage-java</artifactId>
-            <version>1.5.0</version>
+            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>net.jacobpeterson</groupId>
             <artifactId>alpaca-java</artifactId>
-            <version>9.1.0</version>
+            <version>9.1.2</version>
         </dependency>
 
         <!-- required by alpaca client -->

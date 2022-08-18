@@ -236,7 +236,7 @@ class AlpacaBroker(
         val alpacaOrder = when (order) {
             is MarketOrder -> alpacaAPI.orders().requestMarketOrder(asset.symbol, qty, side, tif)
             is LimitOrder -> alpacaAPI.orders()
-                .requestLimitOrder(asset.symbol, qty, side, tif, order.limit, false)
+                .requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, false)
             else -> {
                 throw UnsupportedException(
                     "Unsupported order type $order. Right now only Market and Limit orders are mapped"

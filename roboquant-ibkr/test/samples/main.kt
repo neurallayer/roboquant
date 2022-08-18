@@ -69,7 +69,7 @@ fun closePosition() {
     broker.disconnect()
 }
 
-fun paperTrade() {
+fun paperTrade(minutes: Int = 10) {
 
     Config.exchangeRates = IBKRExchangeRates()
     val broker = IBKRBroker()
@@ -82,7 +82,7 @@ fun paperTrade() {
     val strategy = EMACrossover.EMA_5_15
 
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), broker = broker)
-    val tf = Timeframe.next(1.minutes)
+    val tf = Timeframe.next(minutes.minutes)
     roboquant.run(feed, tf)
     broker.account.summary().log()
     broker.disconnect()
@@ -140,17 +140,15 @@ fun historicFeed2() {
     feed.disconnect()
 }
 
-
-
 fun main() {
 
-    when ("HISTORIC2") {
+    when ("PAPER_TRADE") {
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()
         "CLOSE_POSITION" -> closePosition()
         "LIVE_FEED_EU" -> liveFeedEU()
         "LIVE_FEED_US" -> liveFeedUS()
-        "PAPER_TRADE" -> paperTrade()
+        "PAPER_TRADE" -> paperTrade(30)
         "HISTORIC" -> historicFeed()
         "HISTORIC2" -> historicFeed2()
     }
