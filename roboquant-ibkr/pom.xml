@@ -82,10 +82,11 @@
             <artifactId>roboquant</artifactId>
         </dependency>
         <dependency>
-            <!-- needs to be locally installed since not allowed to re-distribute-->
+            <!-- ibkr client library needs to be locally installed after downloading since not allowed to re-distribute-->
+            <!-- mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=<VERSION> -Dpackaging=jar -->
             <groupId>com.interactivebrokers</groupId>
             <artifactId>tws-api</artifactId>
-            <version>10.15</version>
+            <version>${ibkr.version}</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>

@@ -69,6 +69,27 @@ fun closePosition() {
     broker.disconnect()
 }
 
+
+
+fun showAccount() {
+
+    // If you don't have multiple currencies in your account
+    // you don't need to setup exchange rates
+    Config.exchangeRates = IBKRExchangeRates()
+
+    // Get the account object from the broker instance
+    val broker = IBKRBroker()
+    val account = broker.account
+
+    // Log the summaray of the account and portfolio
+    account.summary().log()
+    account.portfolio.summary().log()
+
+    // Disconnect
+    broker.disconnect()
+}
+
+
 fun paperTrade(minutes: Int = 10) {
 
     Config.exchangeRates = IBKRExchangeRates()
@@ -142,7 +163,8 @@ fun historicFeed2() {
 
 fun main() {
 
-    when ("PAPER_TRADE") {
+    when ("ACCOUNT") {
+        "ACCOUNT" -> showAccount()
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()
         "CLOSE_POSITION" -> closePosition()

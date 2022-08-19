@@ -24,6 +24,7 @@ import org.icepear.echarts.charts.treemap.TreemapSeriesItemStyle
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
+import org.roboquant.common.AssetFilter
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceAction
@@ -46,7 +47,8 @@ class AssetPerformanceChart(
     private val feed: Feed,
     private val timeframe: Timeframe = Timeframe.INFINITE,
     private val priceType: String = "DEFAULT",
-    private val compensateVolume: Boolean = true
+    private val compensateVolume: Boolean = true,
+    private val assetFilter: AssetFilter = AssetFilter.all()
 ) : Chart() {
 
     /**
@@ -56,7 +58,8 @@ class AssetPerformanceChart(
     private fun fromFeed(): List<Map<String, Any>> {
         val result = mutableMapOf<Asset, MutableList<Double>>()  // start, last, volume
         val entries = feed.filter<PriceAction>(timeframe)
-        entries.forEach { (time, priceAction) ->
+        val finalEntries = entries.filter { assetFilter.filter(it.second.asset) }
+        finalEntries.forEach { (time, priceAction) ->
             if (priceAction.volume.isFinite()) {
                 val price = priceAction.getPriceAmount(priceType)
                 val record = result.getOrPut(priceAction.asset) { mutableListOf(price.value, 0.0, 0.0) }

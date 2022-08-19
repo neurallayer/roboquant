@@ -17,7 +17,6 @@
 package org.roboquant.oanda
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.alpaca.AlpacaBroker
 import org.roboquant.common.Config
 import org.roboquant.feeds.Event
 import kotlin.test.Test
@@ -28,7 +27,7 @@ internal class OANDABrokerTestIT {
     @Test
     fun test() {
         Config.getProperty("FULL_COVERAGE") ?: return
-        val broker = AlpacaBroker()
+        val broker = OANDABroker()
         val account = broker.account
         account.fullSummary().print()
 

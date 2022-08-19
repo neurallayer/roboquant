@@ -68,6 +68,7 @@
         <kotlin.version>1.7.10</kotlin.version>
         <sonar.organization>neurallayer</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <ibkr.version>10.17</ibkr.version>
     </properties>
 
     <repositories>
@@ -98,7 +99,7 @@
             <id>ibkr</id>
             <activation>
                 <file>
-                    <exists>${user.home}/.m2/repository/com/interactivebrokers/tws-api/10.15/tws-api-10.15.pom</exists>
+                    <exists>${user.home}/.m2/repository/com/interactivebrokers/tws-api/${ibkr.version}/tws-api-${ibkr.version}.pom</exists>
                 </file>
             </activation>
             <modules>
