@@ -3,22 +3,28 @@ package org.roboquant.polygon
 import io.polygon.kotlin.sdk.rest.AggregatesParameters
 import io.polygon.kotlin.sdk.rest.PolygonRestClient
 import org.roboquant.common.Asset
+import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
 
+/**
+ * Configuration for [PolygonHistoricFeed]
+ */
 data class PolygonConfig(
-    var key: String = org.roboquant.common.Config.getProperty("polygon.key", ""),
-    var timeout: Int = 10
+    var key: String = Config.getProperty("polygon.key", "")
 )
 
+/**
+* Historic data feed using market data from Polygon.io
+*/
 class PolygonHistoricFeed(
     configure: PolygonConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
     val config = PolygonConfig()
-    var client: PolygonRestClient
+    private var client: PolygonRestClient
 
     init {
         config.configure()
@@ -26,22 +32,23 @@ class PolygonHistoricFeed(
         client = PolygonRestClient(config.key)
     }
 
-    fun retrieve(symbol: String, tf: Timeframe) {
+    fun retrieve(symbol: String, tf: Timeframe, multiplier:Int = 1, timespan: String = "day", limit: Int = 5000) {
         val aggr = client.getAggregatesBlocking(
             AggregatesParameters(
                 symbol,
-                1,
-                "day",
+                multiplier.toLong(),
+                timespan,
                 tf.start.toEpochMilli().toString(),
-                tf.end.toEpochMilli().toString()
+                tf.end.toEpochMilli().toString(),
+                limit = limit.toLong()
             )
         )
-        // val bars = client.stocksClient.getDailyOpenCloseBlocking(symbol, date = "2022-08-04", unadjusted = false)
+
         for (bar in aggr.results) {
             val action =
                 PriceBar(Asset(symbol), doubleArrayOf(bar.open!!, bar.high!!, bar.low!!, bar.close!!, bar.volume!!))
             val time = Instant.ofEpochMilli(bar.timestampMillis!!)
-            super.add(time, action)
+            add(time, action)
         }
     }
 

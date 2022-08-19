@@ -19,6 +19,7 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
+import org.roboquant.brokers.summary
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
@@ -74,6 +75,14 @@ fun feedPolygon() {
     feed.retrieve("AAPL", tf)
     println(feed.assets)
     println(feed.timeline.size)
+
+    // Lets us the feed
+    val strategy = EMACrossover()
+    val roboquant = Roboquant(strategy)
+    roboquant.run(feed)
+    val account = roboquant.broker.account
+    account.summary().log()
+    account.portfolio.summary().log()
 }
 
 
