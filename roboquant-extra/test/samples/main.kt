@@ -28,6 +28,7 @@ import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.OpenPositions
 import org.roboquant.metrics.ProgressMetric
+import org.roboquant.polygon.PolygonHistoricFeed
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.yahoo.YahooHistoricFeed
 
@@ -65,10 +66,22 @@ fun feedYahoo() {
     logger.summary(10)
 }
 
+
+fun feedPolygon() {
+    val feed = PolygonHistoricFeed()
+    val tf = Timeframe.fromYears(2021, 2022)
+    feed.retrieve("IBM", tf)
+    feed.retrieve("AAPL", tf)
+    println(feed.assets)
+    println(feed.timeline.size)
+}
+
+
 fun main() {
-    when ("ALPACA_HISTORIC_FEED2") {
+    when ("POLYGON") {
         "IEX" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
+        "POLYGON" -> feedPolygon()
     }
 }
