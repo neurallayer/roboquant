@@ -25,7 +25,6 @@ internal class SampleNotebookTest {
         Order.ID = 0
 
         // Get the file and validate it
-        // val path = TestData.dataDir() + "notebooks/$file.ipynb"
         val path = "./roboquant-jupyter/notebooks/$file.ipynb"
         val c = NotebookTester()
         c.validateNotebook(path)

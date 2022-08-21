@@ -70,7 +70,7 @@ class IEXHistoricFeed(
     }
 
     /**
-     * Retrieve historic end of day price bars for one or more symbols
+     * Retrieve historic end of day [PriceBar] for one or more symbols
      *
      * @param symbols
      */
@@ -80,7 +80,7 @@ class IEXHistoricFeed(
     }
 
     /**
-     * Retrieve historic end of day price bars for one or more symbols
+     * Retrieve historic end of day [PriceBar] for one or more symbols
      *
      * @param symbols
      */
@@ -90,7 +90,7 @@ class IEXHistoricFeed(
     }
 
     /**
-     * Retrieve historic end of day price bars for one or more assets
+     * Retrieve historic end of day [PriceBar] for one or more assets
      *
      * @param assets
      */

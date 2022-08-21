@@ -13,6 +13,10 @@ import java.time.Instant
  * Configuration for [PolygonHistoricFeed]
  */
 data class PolygonConfig(
+
+    /**
+     * API key to access polygon.io api's
+     */
     var key: String = Config.getProperty("polygon.key", "")
 )
 

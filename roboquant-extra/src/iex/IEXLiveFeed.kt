@@ -17,7 +17,6 @@
 
 package org.roboquant.iex
 
-
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.feeds.*
@@ -30,13 +29,10 @@ import pl.zankowski.iextrading4j.client.sse.request.stocks.QuoteInterval
 import pl.zankowski.iextrading4j.client.sse.request.stocks.QuoteSseRequestBuilder
 import java.time.Instant
 
-
 typealias Interval = QuoteInterval
 
 /**
- * Live feed of trades on IEX for the subscribed assets. For each trade the sale price and volume is provided
- * together when the trade happened.
- *
+ * Live feed of trades and/or quotes from IEX Cloud for the subscribed assets.
  */
 class IEXLiveFeed(
     private val useMachineTime: Boolean = true,
@@ -57,10 +53,8 @@ class IEXLiveFeed(
     }
 
     /**
-     * Subscribe to one or more assets. If the symbol of the asset is found by IEX, [TradePrice] will be provided
+     * Subscribe to one or more [assets]. If the symbol of the asset is found by IEX, [PriceQuote] will be provided
      * as part of the feed.
-     *
-     * @param assets
      */
     fun subscribeQuotes(vararg assets: Asset, interval: Interval = Interval.ONE_MINUTE) {
 
@@ -76,7 +70,10 @@ class IEXLiveFeed(
         client.subscribe(request, ::handleQuotes)
     }
 
-
+    /**
+     * Subscribe to one or more [assets]. If the symbol of the asset is found by IEX, [TradePrice] will be provided
+     * as part of the feed.
+     */
     fun subscribeTrades(vararg assets: Asset) {
         val symbols = assets.map { it.symbol }.toTypedArray()
         assets.forEach { assetMap[it.symbol] = it }
@@ -89,7 +86,6 @@ class IEXLiveFeed(
 
         client.subscribe(request, ::handleTrades)
     }
-
 
     private fun handleTrades(trades: List<DeepAsyncResponse<Trade>>) {
         var now = Instant.now()
@@ -115,14 +111,19 @@ class IEXLiveFeed(
         }
     }
 
-
     // TODO correct for timezone
     private fun handleQuotes(quotes: List<Quote>) {
         logger.info { "Received callback with ${quotes.size} quotes" }
         var now = Instant.now()
         quotes.forEach {
             val asset = assetMap[it.symbol]!!
-            val action = TradePrice(asset, it.iexRealtimePrice.toDouble(), it.iexRealtimeSize.toDouble())
+            val action = PriceQuote(
+                asset,
+                it.askPrice.toDouble(),
+                it.askSize.toDouble(),
+                it.bidPrice.toDouble(),
+                it.askSize.toDouble()
+            )
             if (!useMachineTime) now = Instant.ofEpochMilli(it.iexLastUpdated)
             val event = Event(listOf(action), now)
             send(event)
