@@ -32,6 +32,9 @@ class PolygonHistoricFeed(
         client = PolygonRestClient(config.key)
     }
 
+    /**
+     * Retrieve [PriceBar] data for the provided [symbol]
+     */
     fun retrieve(symbol: String, tf: Timeframe, multiplier:Int = 1, timespan: String = "day", limit: Int = 5000) {
         val aggr = client.getAggregatesBlocking(
             AggregatesParameters(

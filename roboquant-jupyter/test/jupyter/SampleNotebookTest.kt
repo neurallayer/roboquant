@@ -6,7 +6,6 @@ import org.jetbrains.jupyter.parser.notebook.ExecuteResult
 import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.jetbrains.kotlinx.jupyter.testkit.JupyterReplTestCase
 import org.junit.jupiter.api.Test
-import org.roboquant.TestData
 import org.roboquant.common.Config
 import org.roboquant.orders.Order
 import java.io.File
@@ -26,7 +25,8 @@ internal class SampleNotebookTest {
         Order.ID = 0
 
         // Get the file and validate it
-        val path = TestData.dataDir() + "notebooks/$file.ipynb"
+        // val path = TestData.dataDir() + "notebooks/$file.ipynb"
+        val path = "./roboquant-jupyter/notebooks/$file.ipynb"
         val c = NotebookTester()
         c.validateNotebook(path)
     }
