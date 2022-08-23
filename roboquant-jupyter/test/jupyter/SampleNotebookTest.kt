@@ -13,6 +13,9 @@ import java.time.ZoneId
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
+/**
+ * Runs a number of notebooks and validates if the output is equal to the output as already available in the notebook.
+ */
 internal class SampleNotebookTest {
 
 

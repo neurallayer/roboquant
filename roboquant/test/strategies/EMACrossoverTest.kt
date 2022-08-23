@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.logging.SilentLogger
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class EMACrossoverTest {
@@ -36,8 +37,8 @@ internal class EMACrossoverTest {
     fun simple2() {
         val strategy1 = EMACrossover.EMA_5_15
         val strategy2 = EMACrossover.EMA_50_200
-        assertTrue(strategy1.fast < strategy2.fast)
-        assertTrue(strategy1.slow < strategy2.slow)
+        assertTrue(!strategy1.recording)
+        assertNotEquals(strategy1, strategy2)
     }
 
 }

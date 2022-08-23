@@ -45,8 +45,8 @@ class EMACrossover(
     val minEvents: Int = slowPeriod
 ) : PriceStrategy(prefix = "strategy.ema.") {
 
-    val fast = 1.0 - (smoothing / (fastPeriod + 1))
-    val slow = 1.0 - (smoothing / (slowPeriod + 1))
+    private val fast = 1.0 - (smoothing / (fastPeriod + 1))
+    private val slow = 1.0 - (smoothing / (slowPeriod + 1))
     private val calculators = mutableMapOf<Asset, EMACalculator>()
 
     companion object Factory {
@@ -93,7 +93,7 @@ class EMACrossover(
     }
 
 
-    override fun generate(asset: Asset, price: Double, now: Instant): Signal? {
+    override fun generate(asset: Asset, price: Double, time: Instant): Signal? {
         val calculator = calculators[asset]
         if (calculator != null) {
             val oldDirection = calculator.getDirection()

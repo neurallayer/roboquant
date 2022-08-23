@@ -41,10 +41,13 @@ class OANDABroker(
     configure: OANDAConfig.() -> Unit = {}
 ) : Broker {
 
+    /**
+     * Configuration for OANDA
+     */
     val config = OANDAConfig()
+
     private val ctx: Context
     private val accountID: AccountID
-
     private val _account = InternalAccount()
 
     override val account: Account

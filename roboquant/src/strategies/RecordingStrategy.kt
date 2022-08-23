@@ -63,6 +63,13 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
     }
 }
 
+/**
+ * Interface for components that support the recording of metrics
+ */
 fun interface MetricRecorder {
+
+    /**
+     * Record a metric with given [key] and [value]
+     */
     fun record(key: String, value: Number)
 }

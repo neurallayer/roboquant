@@ -38,13 +38,8 @@ abstract class PriceStrategy(private val aspect: String = "DEFAULT", prefix: Str
     }
 
     /**
-     * Subclasses need to implement this method and return optional a signal.
-     *
-     * @param asset
-     * @param price
-     * @param now
-     * @return
+     * Generate a signal based on the provided [asset], [price] and [time]
      */
-    abstract fun generate(asset: Asset, price: Double, now: Instant): Signal?
+    abstract fun generate(asset: Asset, price: Double, time: Instant): Signal?
 }
 

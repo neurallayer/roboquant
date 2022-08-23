@@ -6,8 +6,15 @@ import java.time.Instant
 /**
  * Observation represents a double [value] at a certain point in [time]. Observations can be compared based on
  * their [time].
+ *
+ * @property time the time when the value was observed
+ * @property value the value that was observed
  */
 class Observation(val time: Instant, val value: Double) : Comparable<Observation> {
+
+    /**
+     * Compare to [other] observation based on their [time]
+     */
     override fun compareTo(other: Observation): Int = time.compareTo(other.time)
 }
 

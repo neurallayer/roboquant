@@ -29,6 +29,8 @@ import java.time.Instant
  *
  * It will throw an exception if a conversion is required for an unknown currency.
  *
+ * @property baseCurrency the base currency for which the [exchangeRates] are provided
+ *
  * @constructor Create a new  fixed currency converter
  */
 class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: Map<Currency, Double>) : ExchangeRates {

@@ -40,17 +40,18 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
     private val channel = Channel<Event>(capacity)
     private val logger: Logger = Logging.getLogger(EventChannel::class)
 
+    /**
+     * True if the channel is done, false otherwise
+     */
     var done: Boolean = false
         private set
 
     /**
-     * Add a new event to the channel. If the channel is full, it will remove older event first to make room, before
+     * Add a new [event] to the channel. If the channel is full, it will remove older event first to make room, before
      * adding the new event. So this is a non-blocking send.
      *
      * This method is often preferable over the regular [send] in live trading scenario's since it prioritize more
      * actual data over a large backlog.
-     *
-     * @param event
      */
     fun offer(event: Event) {
         if (event.time in timeframe) {
@@ -68,14 +69,15 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
         }
     }
 
+    /**
+     * Iterate over the events in this channel
+     */
     operator fun iterator() = channel.iterator()
 
 
     /**
-     * Send an event. If the event is before the timeframe linked to this channel it will be
+     * Send an [event]. If the event is before the timeframe linked to this channel it will be
      * ignored. And if the event is after the timeframe, the channel will be closed.
-     *
-     * @param event
      */
     suspend fun send(event: Event) {
         if (event.time in timeframe) {
@@ -106,7 +108,6 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
 
     /**
      * Close this [EventChannel] and mark it as [done]
-     *
      */
     fun close() {
         done = true

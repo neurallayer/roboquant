@@ -25,6 +25,9 @@ import org.roboquant.metrics.MetricResults
  */
 class SilentLogger : MetricsLogger {
 
+    /**
+     * how many events have been received during this run
+     */
     var events = 0L
         private set
 

@@ -46,10 +46,10 @@ class RSIStrategy(
      *
      * @param asset
      * @param price
-     * @param now
+     * @param time
      * @return
      */
-    override fun generate(asset: Asset, price: Double, now: Instant): Signal? {
+    override fun generate(asset: Asset, price: Double, time: Instant): Signal? {
         var result: Signal? = null
 
         val rsi = calculators[asset]

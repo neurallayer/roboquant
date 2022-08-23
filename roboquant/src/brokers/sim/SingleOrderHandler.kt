@@ -6,14 +6,32 @@ import org.roboquant.common.days
 import org.roboquant.orders.*
 import java.time.Instant
 
+/**
+ * Base class for executing single orders
+ *
+ * @property order the single order to execute
+ */
 abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHandler {
 
+    /**
+     * Fill size
+     */
     var fill = Size.ZERO
+
+    /**
+     * Quantity
+     */
     var qty = order.size
 
+    /**
+     * Remaining order size
+     */
     val remaining
         get() = qty - fill
 
+    /**
+     * Order state
+     */
     override var state: OrderState = OrderState(order)
 
     /**
@@ -30,7 +48,9 @@ abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHan
         }
     }
 
-
+    /**
+     * Execute the order, using the provided [pricing] and [time]
+     */
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         state = state.copy(time)
         val execution = fill(pricing)

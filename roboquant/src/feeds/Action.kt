@@ -85,6 +85,7 @@ interface PriceAction : Action {
  *
  * In order to optimize memory and reduce GC overhead, internally the values are stored in a DoubleArray.
  *
+ * @property ohlcv contains the values of this price-bar as doubles
  */
 class PriceBar(
     override val asset: Asset,
@@ -136,7 +137,9 @@ class PriceBar(
     override val volume
         get() = ohlcv[4]
 
-
+    /**
+     * String representation of this price-bar
+     */
     override fun toString(): String = "asset=${asset.symbol} OHLCV=${ohlcv.toList()}"
 
     companion object {

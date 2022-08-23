@@ -35,10 +35,12 @@ import java.util.*
  * By default, a bar will be shown that shows the progress of a run, but by setting [showProgress] to false this can be
  * disabled. And although the MemoryLogger can be used in multiple runs at the same time, that is not true for the
  * progressbar.
+ *
+ * @property showProgress should a progress bar be displayed, default is true
  */
 class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize: Int = Int.MAX_VALUE) : MetricsLogger {
 
-    val history = mutableListOf<MetricsEntry>()
+    internal val history = mutableListOf<MetricsEntry>()
     private val progressBar = ProgressBar()
 
     @Synchronized

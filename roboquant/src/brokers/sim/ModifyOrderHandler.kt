@@ -13,6 +13,9 @@ internal class UpdateOrderHandler(val order: UpdateOrder) : ModifyOrderHandler {
 
     override var state: OrderState = OrderState(order)
 
+    /**
+     * Update the orders for the provided [handlers] and [time]
+     */
     override fun execute(handlers: List<OrderHandler>, time: Instant) {
         val handler = handlers.getSingleOrderHandler(order.original.id)
         state = if (handler != null && handler.state.status.open) {
@@ -29,6 +32,9 @@ internal class CancelOrderHandler(val order: CancelOrder) : ModifyOrderHandler {
 
     override var state: OrderState = OrderState(order)
 
+    /**
+     * Cancel the orders for the provided [handlers] and [time]
+     */
     override fun execute(handlers: List<OrderHandler>, time: Instant) {
         val handler = handlers.getSingleOrderHandler(order.order.id)
         state = if (handler != null && handler.state.status.open) {

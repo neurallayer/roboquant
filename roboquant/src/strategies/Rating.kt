@@ -32,8 +32,7 @@ import kotlin.math.sign
  * - Outperform: Also known as "moderate buy," "accumulate" and "overweight." Outperform is a recommendation
  *   meaning an asset is expected to do slightly better than the market return.
  *
- *   The [value] of a rating goes from 2 (BUY) to -2 (SELL)
- *
+ *   @property value represnetation of a rating goes from 2 (BUY) to -2 (SELL)
  */
 enum class Rating(val value: Int) {
 
