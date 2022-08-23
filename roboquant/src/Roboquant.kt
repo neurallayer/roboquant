@@ -44,6 +44,11 @@ import java.util.logging.Level
  * variety of testing and live trading scenarios. Through [metrics] and a [logger] it provides insights into the
  * performance of a [run].
  *
+ * @property strategy The strategy to use
+ * @property metrics the various metrics to calculate during the runs, default is none
+ * @property policy The policy to use, default is [DefaultPolicy]
+ * @property broker the broker to use, default is [SimBroker]
+ * @property logger the metrics logger to use, default is [MemoryLogger]
  */
 class Roboquant(
     val strategy: Strategy,
@@ -115,7 +120,7 @@ class Roboquant(
     }
 
     /**
-     * Reset all state including that of the used components. This allows to start a fresh run with the same
+     * Reset all state including that of the used underlying components. This allows to start a fresh run with the same
      * configuration as the original instance.
      */
     fun reset() {

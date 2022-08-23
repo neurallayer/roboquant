@@ -20,7 +20,6 @@ import org.roboquant.brokers.Account
 import org.roboquant.brokers.InternalAccount
 import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
-import org.roboquant.common.ConfigurationException
 import org.roboquant.common.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.HistoricFeed
@@ -30,7 +29,6 @@ import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
-import java.io.File
 import java.time.Instant
 
 /**
@@ -57,15 +55,6 @@ object TestData {
     fun feed() : HistoricFeed {
         return HistoricTestFeed(90..110, 110 downTo 80, 80..125, priceBar = true, asset = usStock())
     }
-
-    fun dataDir(): String {
-        if (File("./data").isDirectory)
-            return "./data/"
-        else if (File("../data").isDirectory)
-            return "../data/"
-        throw ConfigurationException("cannot find data directory for testing")
-    }
-
 
     private fun priceAction(asset: Asset = usStock()) = TradePrice(asset, 10.0)
 

@@ -35,7 +35,7 @@ interface Component {
 
     /**
      * Invoked at the start of a [runPhase]. Default implementation is to invoke [reset], which is suitable for
-     * most components.
+     * many type of components.
      */
     fun start(runPhase: RunPhase) { reset() }
 

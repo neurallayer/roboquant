@@ -24,7 +24,7 @@ import org.roboquant.metrics.MetricResults
  * Stores the last value of a metric for a particular run and phase in memory. This is more memory efficient if you
  * only care about the last result and not the values of metrics at each step of a run.
  *
- * If you need access to the metric values of every step, use the [MemoryLogger] instead.
+ * If you need access to the metric values at each step, use the [MemoryLogger] instead.
  */
 class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
 
