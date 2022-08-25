@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("DuplicatedCode")
+
 package org.roboquant.iex
 
 
@@ -118,8 +120,8 @@ class IEXHistoricFeed(
         }
     }
 
-    private fun handlePriceBar(asset: Asset, chart: List<Chart>) {
-        chart.filter { it.open !== null }.forEach {
+    private fun handlePriceBar(asset: Asset, charts: List<Chart>) {
+        charts.filter { it.open !== null }.forEach {
             val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
             val now = getInstant(asset, it.date, it.minute)
             add(now, action)

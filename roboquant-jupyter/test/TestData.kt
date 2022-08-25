@@ -21,22 +21,14 @@ import org.roboquant.brokers.InternalAccount
 import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
 import org.roboquant.common.USD
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.HistoricFeed
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.TradePrice
-import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
-import java.time.Instant
 
 /**
  * Test data used in unit tests
  */
 object TestData {
-
-    private fun usStock() = Asset("XYZ")
 
     fun usAccount() : Account {
         val asset1 = Asset("AAA")
@@ -50,37 +42,5 @@ object TestData {
         account.putOrders(listOf(order))
         return account.toAccount()
     }
-
-
-    fun feed() : HistoricFeed {
-        return HistoricTestFeed(90..110, 110 downTo 80, 80..125, priceBar = true, asset = usStock())
-    }
-
-    private fun priceAction(asset: Asset = usStock()) = TradePrice(asset, 10.0)
-
-    fun priceBar(asset: Asset = usStock()) = PriceBar(asset, 10.0, 11.0, 9.0, 10.0, 1000.0)
-
-    private fun time() = Instant.parse("2020-01-03T12:00:00Z")!!
-
-    fun event(time: Instant = time()) = Event(listOf(priceAction()), time)
-
-   /* fun metricInput(time: Instant = time()): Pair<Account, Event> {
-        val account = usAccount()
-        val asset1 = account.assets.first()
-        // val asset2 = account.portfolio.assets.last()
-        val moment = Event(listOf(TradePrice(asset1, 11.0)), time)
-        return Pair(account, moment)
-    }
-
-    fun events(n:Int = 100, asset: Asset = usStock()) : List<Event> {
-        val start = time()
-        val result = mutableListOf<Event>()
-        repeat(n) {
-            val action = TradePrice(asset, it + 100.0)
-            val event = Event(listOf(action), start + it.days)
-            result.add(event)
-        }
-        return result
-    }*/
 
 }
