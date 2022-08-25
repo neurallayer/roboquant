@@ -26,7 +26,7 @@ image:https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboq
 
 image::/docs/roboquant_header.png[roboquant Logo, align="center"]
 
-Roboquant is an algorithmic trading platform that is very fast and flexible while at the same time strives to be easy to use. It is fully open source, written in Kotlin, and can be used in Jupyter Notebooks as well as standalone applications.
+_Roboquant_ is an algorithmic trading platform that is very fast and flexible while at the same time strives to be easy to use. It is fully open source, written in Kotlin, and can be used in Jupyter Notebooks as well as standalone applications.
 
 It is designed to be used by anyone serious about algo trading, from beginning retail traders to established trading firms. You can find out more at *https://roboquant.org[roboquant.org]*. Please consider giving this repository a star ⭐ if you like the project.
 
@@ -50,7 +50,7 @@ roboquant.run(feed) // <5>
 
 == Installation
 === Library
-Just add `roboquant` and any of the additional modules as a dependency to your build tool, like Maven or Gradle. See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant.
+Just add roboquant and any of the additional modules as a dependency to your build tool, like Maven or Gradle. See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant.
 
 Latest available versions:
 
@@ -106,10 +106,15 @@ See also https://roboquant.org/background/features.html[Features] for a more ext
 == License
 Roboquant is distributed under the link:/LICENSE[Apache 2.0 License]. 
 
+== Thanks
+Besides all the link:docs/THIRDPARTY.adoc[great open source software] that is powering _roboquant_, also special thanks to JetBrains for making a https://www.jetbrains.com/community/opensource/[license] available of *IntelliJ IDEA*.
+
+image:https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png[JetBrains,100,100]
+
 == Disclaimer
-Roboquant also comes with live trading and paper trading capabilities. Using this is at your own risk and there are NO guarantees about the correct functioning of the software.
+_Roboquant_ also comes with live trading and paper trading capabilities. Using this is at your own risk and there are NO guarantees about the correct functioning of the software.
 
 == Beta version
-Roboquant is still a pre-1.0 release and bugs are for sure to be expected. Also expect APIs to change without any notice. So keep this in mind when using it.
+_Roboquant_ is still a pre-1.0 release and bugs are for sure to be expected. Also expect APIs to change without any notice. So keep this in mind when using it.
 
 PR are more than welcome, see also the link:/docs/CONTRIBUTING.adoc[Contribution Guide] document. If you're missing some features, just open an issue on GitHub. See also the link:/docs/TODO.adoc[todo documentation] for already identified backlog items if you look for something to work on.
