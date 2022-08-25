@@ -86,17 +86,14 @@ class MetricScheduler(
     }
 
 
-    override fun calculate(account: Account, event: Event) {
-        if (fire(event.time))
-            for (metric in metrics) metric.calculate(account, event)
-    }
-
-
-    override fun getMetrics(): MetricResults {
+    override fun calculate(account: Account, event: Event) : MetricResults {
         val result = mutableMapOf<String, Number>()
-        for (metric in metrics) result += metric.getMetrics()
+        if (fire(event.time)) {
+            for (metric in metrics) result += metric.calculate(account, event)
+        }
         return result
     }
+
 
     /**
      * Should the metrics be calculated given the provided time

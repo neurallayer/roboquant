@@ -17,8 +17,9 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
-import org.roboquant.common.Component
+import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
+import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 
@@ -34,12 +35,20 @@ import org.roboquant.strategies.Signal
  * Please note that a brokers which receives the orders that a Policy created, might not support all the different
  * order types.
  */
-interface Policy : Component {
+interface Policy : Lifecycle {
 
     /**
      * Act on the received [signals], the latest state of the [account] and the last known [event] and create zero or
      * more orders.
      */
     fun act(signals: List<Signal>, account: Account, event: Event): List<Order>
+
+    /**
+     * This will be invoked at each step in a run and provides the implemention with the opportunity to log additional
+     * information. The default implementation is to return an empty map.
+     *
+     * This map should NOT be mutated after it has been returned by this method.
+     */
+    fun getMetrics(): MetricResults = emptyMap()
 
 }

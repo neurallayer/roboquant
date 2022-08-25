@@ -26,7 +26,7 @@ internal class ProgressMetricTest {
     fun calc() {
         val metric = ProgressMetric()
         val (account, event) = TestData.metricInput()
-        val result = metric.calc(account, event)
+        val result = metric.calculate(account, event)
         assertTrue(result.isNotEmpty())
     }
 }

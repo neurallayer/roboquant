@@ -30,13 +30,13 @@ import java.time.Instant
  * - `progress.orders`: The number of orders
  * - `progress.walltime`: The wall time
  */
-class ProgressMetric : SimpleMetric() {
+class ProgressMetric : Metric {
 
     private var startTime = Instant.now()
     private var actions = 0
     private var steps = 0
 
-    override fun calc(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): MetricResults {
         actions += event.actions.size
         return mapOf(
             "progress.actions" to actions,

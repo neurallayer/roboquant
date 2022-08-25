@@ -33,9 +33,9 @@ import org.roboquant.feeds.Event
  *
  * @constructor Create new Account Summary metric
  */
-class AccountSummary: SimpleMetric() {
+class AccountSummary: Metric {
 
-    override fun calc(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): MetricResults {
         return mapOf(
             "account.orders" to account.openOrders.size + account.closedOrders.size,
             "account.trades" to account.trades.size,

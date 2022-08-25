@@ -21,7 +21,6 @@ class TaLibMetricTest {
         val metric = TaLibMetric("ema10", 10) { series ->
             ema(series.close, 10)
         }
-        assertTrue(metric.getMetrics().isEmpty())
 
         val account = Account(
             Currency.USD,
@@ -34,14 +33,14 @@ class TaLibMetricTest {
             Amount(Currency.USD, 0.0)
         )
 
-        val results = metric.calc(account, Event(emptyList(), Instant.now()))
+        val results = metric.calculate(account, Event(emptyList(), Instant.now()))
         assertTrue(results.isEmpty())
 
         val feed = HistoricTestFeed(100 until 111, priceBar = true)
         val events = feed.filter<PriceBar>()
         var mResult: MetricResults = emptyMap()
         for (event in events) {
-            mResult = metric.calc(account, Event(listOf(event.second), event.first))
+            mResult = metric.calculate(account, Event(listOf(event.second), event.first))
         }
         assertTrue(mResult.isNotEmpty())
 

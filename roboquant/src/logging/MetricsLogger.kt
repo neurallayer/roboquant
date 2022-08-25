@@ -17,17 +17,16 @@
 package org.roboquant.logging
 
 import org.roboquant.RunInfo
-import org.roboquant.common.Component
+import org.roboquant.common.Lifecycle
 import org.roboquant.metrics.MetricResults
 
 /**
  * Interface that a metrics logger will need to implement. It is called by roboquant after metrics have been calculated
  * to store and/or log them.
  *
- * A metrics logger also extends the [Component] interface. This interface exposes [Component.getMetrics], however this
- * method should return metrics about the Component and not the logged metrics.
+ * A metrics logger also extends the [Lifecycle] interface.
  */
-interface MetricsLogger : Component {
+interface MetricsLogger : Lifecycle {
 
     /**
      * Log the [results of metrics]. It should be noted that the provided results can be empty. Also [info] is provided

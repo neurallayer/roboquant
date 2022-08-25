@@ -36,7 +36,7 @@ import org.roboquant.feeds.Event
  *
  * @constructor Create new PNL metric
  */
-class PNL : SimpleMetric() {
+class PNL : Metric {
 
     /**
      * Calculate any metrics given the event of information. This will be called at the
@@ -46,7 +46,7 @@ class PNL : SimpleMetric() {
      * @param account
      * @return
      */
-    override fun calc(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): MetricResults {
         val result = mutableMapOf<String, Double>()
 
         val pnl = account.trades.realizedPNL

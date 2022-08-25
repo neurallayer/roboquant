@@ -19,16 +19,15 @@ package org.roboquant.strategies
 import org.roboquant.metrics.MetricResults
 
 /**
- * Recording strategy allows subclasses to record metrics during their processing.
- * With the recording flag you can enable or disable the actual recording of the metrics.
+ * Recording strategy allows subclasses to record metrics during their processing. With the [recording] flag you can
+ * enable or disable the actual recording of the metrics.
  *
  * @property prefix Prefix to use when logging a metric, default is "strategy."
  * @property recording Should metrics be recorded or not. Some strategies can record a lot of metrics, so this disables
  * that recording and as a consequence might be faster and/or use less memory.
  *
  */
-abstract class RecordingStrategy(private val prefix: String = "strategy.", var recording: Boolean = false) : Strategy,
-    MetricRecorder {
+abstract class RecordingStrategy(private val prefix: String = "strategy.", var recording: Boolean = false) : Strategy {
 
     private val metrics = mutableMapOf<String, Number>()
 
@@ -50,7 +49,7 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
      * @param key
      * @param value
      */
-    override fun record(key: String, value: Number) {
+    fun record(key: String, value: Number) {
         if (!recording) return
         metrics["$prefix$key"] = value
     }
@@ -63,13 +62,3 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
     }
 }
 
-/**
- * Interface for components that support the recording of metrics
- */
-fun interface MetricRecorder {
-
-    /**
-     * Record a metric with given [key] and [value]
-     */
-    fun record(key: String, value: Number)
-}

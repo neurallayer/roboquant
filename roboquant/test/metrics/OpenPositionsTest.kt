@@ -30,7 +30,7 @@ internal class OpenPositionsTest {
     fun calc() {
         val metric = OpenPositions()
         val account = TestData.usAccount()
-        val result = metric.calc(account, Event.empty())
+        val result = metric.calculate(account, Event.empty())
         assertFalse(result.isEmpty())
         val symbol = account.portfolio.keys.first().symbol
         assertContains(result, "position.$symbol.size" )

@@ -16,14 +16,15 @@
 
 package org.roboquant.brokers
 
-import org.roboquant.common.Component
+import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
+import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.Order
 
 /**
  * Interface for any broker implementation, used for both simulated and real brokers.
  */
-interface Broker : Component {
+interface Broker : Lifecycle {
 
     /**
      * Return a snapshot of the trading account that is guaranteed not to change after it has been returned.
@@ -40,5 +41,12 @@ interface Broker : Component {
      */
     fun place(orders: List<Order>, event: Event): Account
 
+    /**
+     * This will be invoked at each step in a run and provides the implemention with the opportunity to log additional
+     * information. The default implementation is to return an empty map.
+     *
+     * This map should NOT be mutated after it has been returned by this method.
+     */
+    fun getMetrics(): MetricResults = emptyMap()
 
 }

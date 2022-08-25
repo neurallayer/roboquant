@@ -36,7 +36,10 @@ class EventRecorder(private val maxDuration: TemporalAmount? = null) : Metric, F
     private val events = LinkedList<Event>()
 
 
-    override fun calculate(account: Account, event: Event) = record(event)
+    override fun calculate(account: Account, event: Event) : MetricResults {
+        record(event)
+        return emptyMap()
+    }
 
     fun record(event: Event) {
         events.add(event)

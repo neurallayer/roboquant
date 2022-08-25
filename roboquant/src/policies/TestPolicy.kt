@@ -27,10 +27,10 @@ import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 
 /**
- * Policy that buys or sells a fixed [size] of an asset, generating [MarketOrder]s
+ * Policy that buys or sells a fixed [size] of an asset based on the signal. It will always generate [MarketOrder]s
  *
- * Because of the deterministic behavior, this policy useful during testing/debugging a strategy. But it should not be
- * used in live trading of realistic back-tests.
+ * Because of this simple deterministic behavior, this policy is useful during testing/debugging a strategy. But it
+ * should not be used in live trading or realistic back-tests.
  */
 class TestPolicy(private val size: Size = Size.ONE) : BasePolicy() {
 

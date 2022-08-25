@@ -32,7 +32,7 @@ import kotlin.math.absoluteValue
  *
  * @constructor Create new Portfolio Exposure metric
  */
-class PortfolioExposure : SimpleMetric() {
+class PortfolioExposure : Metric {
     /**
      * Calculate any metrics given the event of information. This will be called at the
      * end of each step in a run.
@@ -42,7 +42,7 @@ class PortfolioExposure : SimpleMetric() {
      * @param account
      * @return
      */
-    override fun calc(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): MetricResults {
         val longExposure = Wallet()
         val shortExposure = Wallet()
         val now = event.time

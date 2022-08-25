@@ -33,7 +33,7 @@ internal class VWAPMetricTest {
         val event = TestData.event2()
         repeat (10) {
 
-            result = metric.calc(account, event)
+            result = metric.calculate(account, event)
 
         }
         assertTrue(result.isNotEmpty())

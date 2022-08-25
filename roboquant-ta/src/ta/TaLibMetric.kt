@@ -5,8 +5,8 @@ import org.roboquant.common.Asset
 import org.roboquant.common.AssetFilter
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
+import org.roboquant.metrics.Metric
 import org.roboquant.metrics.MetricResults
-import org.roboquant.metrics.SimpleMetric
 import org.roboquant.strategies.utils.PriceBarSeries
 
 /**
@@ -24,13 +24,13 @@ class TaLibMetric(
     private val history: Int = 15,
     private val assetFilter: AssetFilter = AssetFilter.all(),
     private var block: TaLib.(series: PriceBarSeries) -> Double
-) : SimpleMetric() {
+) : Metric {
 
     private val buffers = mutableMapOf<Asset, PriceBarSeries>()
     private val taLib = TaLib()
     // private val logger: Logger = Logging.getLogger(TALibMetric::class)
 
-    override fun calc(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): MetricResults {
         val metrics = mutableMapOf<String, Number>()
         val actions = event.prices.values.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset) }
         for (priceAction in actions) {

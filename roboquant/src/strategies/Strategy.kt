@@ -16,8 +16,9 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.common.Component
+import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
+import org.roboquant.metrics.MetricResults
 
 /**
  * The Strategy is the interface that a trading strategy will need to implement. A strategy receives an
@@ -30,7 +31,7 @@ import org.roboquant.feeds.Event
  * A strategy only has access to an event. In case a strategy requires also to have access to the Account or Portfolio,
  * it should be implemented as a policy instead.
  */
-interface Strategy : Component {
+interface Strategy : Lifecycle {
 
     /**
      * Generate zero or more [signals][Signal] based on received [event]. Typically, the signals are a result of the
@@ -39,6 +40,14 @@ interface Strategy : Component {
      * If there are no signals detected, this method should return an empty list.
      */
     fun generate(event: Event): List<Signal>
+
+    /**
+     * This will be invoked at each step in a run and provides the implemention with the opportunity to log additional
+     * information. The default implementation is to return an empty map.
+     *
+     * This map should NOT be mutated after it has been returned by this method.
+     */
+    fun getMetrics(): MetricResults = emptyMap()
 
 }
 

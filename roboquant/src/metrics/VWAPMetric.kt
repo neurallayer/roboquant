@@ -28,7 +28,7 @@ import java.time.Instant
  * @property minSize minimum number of events before calculating the first VWAP
  * @constructor Create new VWAP metric
  */
-class VWAPMetric(val minSize: Int = 2) : SimpleMetric() {
+class VWAPMetric(val minSize: Int = 2) : Metric {
 
     private val calculators = mutableMapOf<Asset, VWAPDaily>()
 
@@ -42,7 +42,7 @@ class VWAPMetric(val minSize: Int = 2) : SimpleMetric() {
      * @param account
      * @return
      */
-    override fun calc(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): MetricResults {
         val result = mutableMapOf<String, Double>()
         for (priceBar in event.prices.values.filterIsInstance<PriceBar>()){
             val calc = calculators.getOrPut(priceBar.asset) { VWAPDaily(minSize) }

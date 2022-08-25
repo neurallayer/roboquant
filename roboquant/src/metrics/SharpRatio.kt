@@ -44,14 +44,14 @@ private const val EPS = 0.0000000001
 class SharpRatio(
     private val riskFreeRate: Double = 0.0,
     private val minSteps: Int = 60,
-) : SimpleMetric() {
+) : Metric {
 
     private var stats = DescriptiveStatistics()
     private var lastValue: Double = Double.NaN
     private var lastTime: Instant = Instant.MIN
 
 
-    override fun calc(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): MetricResults {
         val value = account.equity.convert(time = event.time).value
 
         if (lastTime == Instant.MIN) {

@@ -30,9 +30,9 @@ import org.roboquant.feeds.Event
  * - unrealized P&L
  *
  */
-class OpenPositions : SimpleMetric() {
+class OpenPositions : Metric {
 
-    override fun calc(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): MetricResults {
         val result = mutableMapOf<String, Number>()
 
         for (position in account.positions) {

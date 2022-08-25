@@ -44,7 +44,7 @@ import java.util.logging.Level
  * variety of testing and live trading scenarios. Through [metrics] and a [logger] it provides insights into the
  * performance of a [run].
  *
- * @property strategy The strategy to use
+ * @property strategy The strategy to use, there is no default
  * @property metrics the various metrics to calculate during the runs, default is none
  * @property policy The policy to use, default is [DefaultPolicy]
  * @property broker the broker to use, default is [SimBroker]
@@ -64,7 +64,7 @@ class Roboquant(
     private val components = listOf(strategy, policy, broker, logger) + metrics
 
     init {
-        kotlinLogger.fine { "Created new roboquant instance with name" }
+        kotlinLogger.fine { "Created new roboquant instance" }
     }
 
     /**
@@ -104,7 +104,7 @@ class Roboquant(
     }
 
     /**
-     * Inform components of the start of a [runPhase], this provides them with the opportunity to reset state and
+     * Inform components of the start of a [runPhase], this provides them with the opportunity to clear state and
      * re-initialize values if required.
      */
     private fun start(runPhase: RunPhase) {
@@ -121,7 +121,7 @@ class Roboquant(
 
     /**
      * Reset all state including that of the used underlying components. This allows to start a fresh run with the same
-     * configuration as the original instance.
+     * configuration as the original instance. This will also reset the run counter in this roboquant instance.
      */
     fun reset() {
         for (component in components) component.reset()
@@ -204,25 +204,26 @@ class Roboquant(
     }
 
     /**
-     * Calculate the configured [metrics] and log the results. This includes also metrics that are recorded by the
-     * strategy, policy and broker.
+     * Calculate the configured [metrics] and log the results. If one of the metrics throws an excpetion, the
+     * processing continues.
+     *
+     * This includes also metrics that are recorded by the [strategy], [policy] and [broker].
      */
     @Suppress("TooGenericExceptionCaught")
     private fun runMetrics(account: Account, event: Event, runInfo: RunInfo) {
         val info = runInfo.copy()
         for (metric in metrics) {
             try {
-                metric.calculate(account, event)
+                val metricResult = metric.calculate(account, event)
+                logger.log(metricResult, info)
             } catch (e: Throwable) {
                 kotlinLogger.log(Level.WARNING, "failed when calculate metric ${metric::class.simpleName}", e)
             }
         }
 
-        for (component in components) {
-            val metrics = component.getMetrics()
-            logger.log(metrics, info)
-        }
-
+        logger.log(strategy.getMetrics(), info)
+        logger.log(policy.getMetrics(), info)
+        logger.log(broker.getMetrics(), info)
     }
 
     /**
@@ -270,7 +271,7 @@ data class RunInfo internal constructor(
 }
 
 /**
- * Enumeration of fhe different phases that a run can be in, [MAIN] and [VALIDATE]. Especially with self learning
+ * Enumeration of the different phases that a run can be in, [MAIN] and [VALIDATE]. Especially with self learning
  * strategies, it is important that you evaluate your strategy on yet unseen data, so you don't over-fit.
  *
  * See also [Roboquant.run] how to run your strategy with different phases enabled.

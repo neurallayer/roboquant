@@ -24,7 +24,7 @@ import kotlin.random.Random
 /**
  * Strategy that randomly generates a BUY or SELL signal for the assets in the feed.
  * The configured probability is the likelihood to generate a signal. And after that,
- * there is a 50/50 change it will generate either a BUY or SELL signal.
+ * there is a 50/50 chance it will generate either a BUY or SELL signal.
  *
  * @property probability the likelihood to generate a signal, a value between 0.0 and 1.0
  * @constructor Create new Random strategy

@@ -28,15 +28,14 @@ internal class EventRecorderTest {
 
     @Test
     fun basic() {
-
         val (account, event) = TestData.metricInput()
         val metric = EventRecorder()
 
+        assertTrue(metric.calculate(account, event).isEmpty())
         metric.calculate(account, event)
-        assertTrue(metric.getMetrics().isEmpty())
 
         var results = metric.filter<PriceAction>()
-        assertEquals(1, results.size)
+        assertEquals(2, results.size)
 
         metric.start(RunPhase.MAIN)
         results = metric.filter()

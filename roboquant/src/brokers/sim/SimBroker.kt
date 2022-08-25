@@ -27,13 +27,10 @@ import java.time.Instant
 import java.util.logging.Logger
 
 /**
- * Simulated Broker that is used during back testing. It simulates both broker behavior and the exchange
- * where the orders are executed. It can be configured with various plug-ins that determine its behavior.
+ * Simulated Broker that is used during back testing and live testing. It simulates both broker and exchange behavior.
+ * It can be configured with various plug-ins that determine it exact behavior:
  *
- * It is also possible to use this SimBroker in combination with live feeds to see how your strategy is performing with
- * realtime data without the need for a real broker.
- *
- * @property initialDeposit Initial deposit to use before any trading starts. Default is 1 million USD.
+ * You can provide an [initialDeposit] and base currency
  * @constructor Create new SimBroker instance
  */
 class SimBroker(

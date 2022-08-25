@@ -45,7 +45,7 @@ class AlphaBeta(
     private val priceType: String = "DEFAULT",
     private val riskFreeReturn : Double = 0.0,
     private val onlyAfterInitialTrade: Boolean = false
-) : SimpleMetric() {
+) : Metric {
 
     private val marketData = MovingWindow(period + 1)
     private val portfolioData = MovingWindow(period + 1)
@@ -57,7 +57,7 @@ class AlphaBeta(
      * @param event
      * @return
      */
-    override fun calc(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): MetricResults {
         val action = event.prices[referenceAsset]
 
         // Can we already start recording measures or do we have to wait for

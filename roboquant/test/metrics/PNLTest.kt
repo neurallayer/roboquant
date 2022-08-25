@@ -26,7 +26,7 @@ internal class PNLTest {
     fun basic() {
         val metric = PNL()
         val (account, event) = TestData.metricInput()
-        val result = metric.calc(account, event)
+        val result = metric.calculate(account, event)
         assertEquals(0.0, result.values.first())
     }
 
