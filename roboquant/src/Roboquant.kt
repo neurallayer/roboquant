@@ -18,6 +18,8 @@ package org.roboquant
 
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
+import org.roboquant.RunPhase.MAIN
+import org.roboquant.RunPhase.VALIDATE
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.sim.SimBroker
@@ -37,7 +39,6 @@ import org.roboquant.policies.Policy
 import org.roboquant.strategies.Strategy
 import java.time.Duration
 import java.time.Instant
-import java.util.logging.Level
 
 /**
  * Roboquant is the engine of the platform that ties [strategy], [policy] and [broker] together and caters to a wide
@@ -173,12 +174,12 @@ class Roboquant(
 
         repeat(episodes) {
             runInfo.episode++
-            runInfo.phase = RunPhase.MAIN
+            runInfo.phase = MAIN
             runInfo.timeframe = timeframe
             runPhase(feed, runInfo)
             if (validation !== null) {
                 runInfo.timeframe = validation
-                runInfo.phase = RunPhase.VALIDATE
+                runInfo.phase = VALIDATE
                 runPhase(feed, runInfo)
             }
         }
@@ -204,21 +205,14 @@ class Roboquant(
     }
 
     /**
-     * Calculate the configured [metrics] and log the results. If one of the metrics throws an excpetion, the
-     * processing continues.
-     *
-     * This includes also metrics that are recorded by the [strategy], [policy] and [broker].
+     * Calculate the configured [metrics] and log the results. This includes also metrics that are recorded
+     * by the [strategy], [policy] and [broker].
      */
-    @Suppress("TooGenericExceptionCaught")
     private fun runMetrics(account: Account, event: Event, runInfo: RunInfo) {
         val info = runInfo.copy()
         for (metric in metrics) {
-            try {
-                val metricResult = metric.calculate(account, event)
-                logger.log(metricResult, info)
-            } catch (e: Throwable) {
-                kotlinLogger.log(Level.WARNING, "failed when calculate metric ${metric::class.simpleName}", e)
-            }
+            val metricResult = metric.calculate(account, event)
+            logger.log(metricResult, info)
         }
 
         logger.log(strategy.getMetrics(), info)
@@ -258,7 +252,7 @@ data class RunInfo internal constructor(
     var step: Int = 0,
     var time: Instant = Instant.MIN,
     var timeframe: Timeframe = Timeframe.INFINITE,
-    var phase: RunPhase = RunPhase.MAIN
+    var phase: RunPhase = MAIN
 ) {
 
     /**

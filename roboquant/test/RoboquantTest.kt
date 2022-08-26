@@ -18,7 +18,7 @@ package org.roboquant
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.Account
 import org.roboquant.common.RoboquantException
 import org.roboquant.common.years
@@ -58,7 +58,7 @@ internal class RoboquantTest {
         val feed = HistoricTestFeed(100..101)
         val strategy = EMACrossover()
         val roboquant = Roboquant(strategy, MyBrokenMetric(), logger = SilentLogger())
-        assertDoesNotThrow {
+        assertThrows<RoboquantException> {
             roboquant.run(feed)
         }
 

@@ -21,14 +21,10 @@ import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.ThrowableRenderer
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
-import org.roboquant.common.Logging
 import org.roboquant.common.Summarizable
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.logging.Handler
-import java.util.logging.Level
-import java.util.logging.LogRecord
 
 /**
  * Make exceptions a bit nicer to deal with in notebooks
@@ -57,26 +53,6 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
 }
 
 /**
- * Simple logger handler that is installed when using notebooks and prints a line to standard out, so log statements
- * turn up in the cell output by default.
- */
-internal class JupyterLogger : Handler() {
-
-    override fun publish(record: LogRecord) {
-        if (record.level.intValue() >= this.level.intValue()) {
-            println("${record.loggerName}:${record.level} => ${record.message}")
-        }
-    }
-
-    @Suppress("EmptyFunctionBlock")
-    override fun flush() {}
-
-    @Suppress("EmptyFunctionBlock")
-    override fun close() {}
-
-}
-
-/**
  * Integration with Kotlin based Jupyter notebook kernels. Some main features:
  *
  * 1) Support for charts using the Apache ECharts library
@@ -95,12 +71,7 @@ internal class JupyterCore : JupyterIntegration() {
 
         onLoaded {
             addThrowableRenderer(RoboquantThrowableRenderer())
-            // execute("""@file:CompilerArgs("-Xskip-prerelease-check")""")
             execute("%logLevel warn")
-            val handler = JupyterLogger()
-            handler.level = Level.WARNING
-            Logging.resetHandler(handler)
-            Logging.setDefaultLevel(Level.WARNING)
         }
 
         render<Summarizable> {

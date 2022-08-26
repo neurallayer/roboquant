@@ -18,11 +18,7 @@ package org.roboquant.jupyter
 
 import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.common.Logging
 import org.roboquant.common.RoboquantException
-import java.lang.RuntimeException
-import java.util.logging.Level
 import kotlin.test.assertTrue
 
 internal class JupyterCoreTest {
@@ -34,21 +30,6 @@ internal class JupyterCoreTest {
         Output.lab()
     }
 
-    @Test
-    fun logger() {
-        val jupyterLogger = JupyterLogger()
-        jupyterLogger.level = Level.WARNING
-        Logging.resetHandler(jupyterLogger)
-
-        val logger = Logging.getLogger("test")
-        logger.info("Should not show up")
-        logger.warning("Should show up")
-
-        assertDoesNotThrow {
-            jupyterLogger.close()
-            jupyterLogger.flush()
-        }
-    }
 
     @Test
     fun exceptions() {

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
 
 package org.roboquant.common
 
@@ -23,7 +22,8 @@ import kotlin.reflect.KClass
 
 /**
  * Simple Logging object that provides utility methods to create and update loggers. Where many loggers APIs are
- * focused on serverside applications, this API is also suitable for interactive environments like notebooks.
+ * focused on serverside applications, this API is also suitable for interactive environments like notebooks since
+ * you can change logging levels at runtime.
  *
  * Features:
  *
@@ -45,14 +45,8 @@ object Logging {
 
     // ANSI escape code
     private const val ANSI_RESET = "\u001B[0m"
-    private const val ANSI_BLACK = "\u001B[30m"
-    private const val ANSI_RED = "\u001B[31m"
     private const val ANSI_GREEN = "\u001B[32m"
-    private const val ANSI_YELLOW = "\u001B[33m"
     private const val ANSI_BLUE = "\u001B[34m"
-    private const val ANSI_PURPLE = "\u001B[35m"
-    private const val ANSI_CYAN = "\u001B[36m"
-    private const val ANSI_WHITE = "\u001B[37m"
 
     private class LoggingFormatter : SimpleFormatter() {
 
@@ -75,17 +69,26 @@ object Logging {
         resetHandler(handler)
     }
 
-    fun resetHandler(handler: Handler) {
+    /**
+     * Reset a [handler]
+     */
+    private fun resetHandler(handler: Handler) {
         LogManager.getLogManager().reset()
         val rootLogger = Logger.getLogger("")
         rootLogger.addHandler(handler)
     }
 
+    /**
+     * Get a logger based on the provided [clazz]
+     */
     fun getLogger(clazz: KClass<*>): Logger {
         return getLogger(clazz.qualifiedName ?: "$clazz")
     }
 
-    fun getLogger(name: String): Logger {
+    /**
+     * Get a logger based on the provided [name]
+     */
+    internal fun getLogger(name: String): Logger {
         val mainLogger: Logger = Logger.getLogger(name)
         mainLogger.level = defaultLevel
         return mainLogger
