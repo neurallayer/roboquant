@@ -27,21 +27,20 @@ Version 0.8 is all about making sure that (back-)testing works, and the most com
 
 Ensure the API is stable and start including AI and Machine Learning support
 
-* [X] Stabilize the exposed API (perhaps also enable -Xexplicit-api=strict compiler flag)
-* [ ] Improve documentation, notebooks and examples based on the stable API
-* [ ] Include additional demo feeds for quick experimentation (some forex and crypto assets)
-* [ ] Add basic Machine Learning support (research required)
-* [ ] Add better hyperparameter search and optimization capabilities (research required)
+* [X] Stabilize the exposed API
+* [X] Improve documentation, notebooks and examples based on the stable API
+* [X] Include additional demo feeds for quick experimentation
+* [X] Use better approach for generating charts
 
 == Version 1.0.x (end of 2022)
 
 This version is all about adding better trading capabilities. Although there is already integration available in earlier versions, that is just to validate the architectural concepts supports live trading. These broker integrations are neither reliable nor complete. So what still needs to be done:
 
-* [ ] Better margin account simulation support
 * [ ] More metrics, especially around alpha and beta calculations
-* [ ] Add more advanced slippage- and fee-models
 * [ ] Add visualizations for the tuning of strategies (research required)
 * [ ] Add support for distributed back-testing (research required)
+* [ ] Add basic Machine Learning support (research required)
+* [ ] Add better hyperparameter search and optimization capabilities (research required)
 
 == Version 2 and later (2023 and beyond)
 
@@ -51,6 +50,7 @@ The topics mentioned here are some of the ideas for the future releases:
 * [ ] Better and more complete integrations with brokers and crypto-exchanges
 * [ ] Advanced policies, like auto re-balancing portfolios
 * [ ] More ready-to-use strategies out of the box
+* [ ] Add more advanced slippage- and fee-models
 * [ ] More complex deep learning strategies
 * [ ] Right now messages and formats support English format only, add L10N/I18N support
 * [ ] Make video(s) that show the steps to develop and test your own strategies
