@@ -32,11 +32,13 @@ internal class VWAPMetricTest {
         var result = mapOf<String, Number>()
         val event = TestData.event2()
         repeat (10) {
-
             result = metric.calculate(account, event)
-
         }
         assertTrue(result.isNotEmpty())
+
+        metric.reset()
+        result = metric.calculate(account, event)
+        assertTrue(result.isEmpty())
     }
 
 }

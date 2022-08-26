@@ -18,14 +18,34 @@ package org.roboquant.policies
 
 
 import org.roboquant.TestData
+import org.roboquant.brokers.Account
 import org.roboquant.brokers.InternalAccount
+import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.Order
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class TestPolicyTest {
+
+    private class MyPolicy : Policy {
+        override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+            return emptyList()
+        }
+
+    }
+
+    @Test
+    fun basic() {
+        val policy = MyPolicy()
+        val account = InternalAccount().toAccount()
+        val orders = policy.act(emptyList(), account, Event.empty())
+        assertTrue(orders.isEmpty())
+        assertTrue(policy.getMetrics().isEmpty())
+    }
+
 
     @Test
     fun order() {
@@ -35,5 +55,6 @@ internal class TestPolicyTest {
         val account = InternalAccount().toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.first() is MarketOrder)
+        assertTrue(policy.getMetrics().isEmpty())
     }
 }

@@ -18,6 +18,8 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.months
 import org.roboquant.feeds.random.RandomWalk
@@ -38,6 +40,20 @@ internal class HistoricFeedTest {
 
         val s = feed.assets.first().symbol
         assertEquals(s, feed.find(s).symbol)
+    }
+
+    @Test
+    fun firstLast() {
+        val feed: HistoricPriceFeed = RandomWalk.lastYears(nAssets = 2)
+        assertDoesNotThrow {
+            feed.first()
+            feed.last()
+        }
+
+        feed.close()
+        assertThrows<NoSuchElementException> {
+            feed.first()
+        }
     }
 
     @Test
