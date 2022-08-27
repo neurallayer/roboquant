@@ -180,8 +180,8 @@ abstract class Chart : Output() {
     }
 
     /**
-     * Generates the HTML required to draw a chart. This is a HTML snippet and not a full HTML page and it is suitable
-     * to be rendered in the cell output of a Jupyter notebook.
+     * Generates the HTML snippet required to draw a chart. This is a HTML snippet and not a full HTML page
+     * and it is suitable to be rendered in the cell output of a Jupyter notebook.
      */
     override fun asHTML(): String {
         val fragment = getOption().renderJson().trimStart()
@@ -195,21 +195,20 @@ abstract class Chart : Output() {
 
         // Transfer a string into a javascript Function for tooltip formatting
         val handleJS = if (hasJavascript)
-            """option && (option.tooltip.formatter = new Function("p", option.tooltip.formatter));"""
+            """option.tooltip.formatter = new Function("p", option.tooltip.formatter);"""
         else
             ""
 
         return """
         <div style="width:100%;height:${height}px;" class="rqcharts"></div>
-        
         <script type="text/javascript">
             (function () {
                 let elem = document.currentScript.previousElementSibling;
                 let fn = function(a) {
                     let theme = $themeDetector;
                     let myChart = echarts.init(elem, theme);
-                    let option = $fragment;$handleJS;
-                    option && myChart.setOption(option);
+                    let option = $fragment;$handleJS
+                    myChart.setOption(option);
                     elem.ondblclick = function () { myChart.resize() }; $debugStmt
                 }
                 call_echarts(fn)        
