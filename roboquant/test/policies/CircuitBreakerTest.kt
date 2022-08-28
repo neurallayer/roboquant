@@ -16,7 +16,6 @@
 
 package org.roboquant.policies
 
-
 import org.roboquant.TestData
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
@@ -32,17 +31,16 @@ import kotlin.test.assertEquals
 
 internal class CircuitBreakerTest {
 
-    class MyPolicy : Policy {
+    private class MyPolicy : Policy {
         override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
             return listOf(
-                MarketOrder(Asset("A"),10),
+                MarketOrder(Asset("A"), 10),
                 MarketOrder(Asset("B"), 10),
                 MarketOrder(Asset("C"), 10)
             )
         }
 
     }
-
 
     @Test
     fun test() {
