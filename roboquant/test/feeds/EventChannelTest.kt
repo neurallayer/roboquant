@@ -25,9 +25,8 @@ import kotlin.test.assertTrue
 
 internal class EventChannelTest {
 
-
     @Test
-    fun basicSend(): Unit = runBlocking{
+    fun basicSend(): Unit = runBlocking {
         val channel = EventChannel(10)
         val event = Event.empty()
         repeat(5) {
@@ -67,6 +66,5 @@ internal class EventChannelTest {
         channel.close()
         assertTrue(channel.done)
     }
-
 
 }

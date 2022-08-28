@@ -28,7 +28,7 @@ import java.util.logging.Logger
  * so the producing and receiving parts are decoupled.
  *
  * It has built in support to restrict the events that are being send to a certain [timeframe]. It is gauranteed that
- * no events outside this timeframe are delivered.
+ * no events outside this timeframe can be delivered to the channel.
  *
  * @param capacity The capacity of the channel in the number of events it can store before blocking the sender
  * @property timeframe Limit the events to this timeframe only
@@ -95,15 +95,8 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
      */
     suspend fun receive(): Event {
         while (true) {
-            val event = channel.receive()
-            timeframe.contains(event.time) && return event
-            if (event.time > timeframe) {
-                logger.fine { "Received ${event.time} after $timeframe, closing channel" }
-                close()
-                throw ClosedReceiveChannelException("Out of time")
-            }
+            return channel.receive()
         }
-
     }
 
     /**
