@@ -372,27 +372,51 @@ class ZonedPeriod(private val a: TemporalAmount, private val zoneId: ZoneId = Co
 
 }
 
+/**
+ * Convert number to years
+ */
 val Number.years: ZonedPeriod
     get() = ZonedPeriod(Period.ofYears(this.toInt()))
 
+/**
+ * Convert number to months
+ */
 val Number.months: ZonedPeriod
     get() = ZonedPeriod(Period.ofMonths(this.toInt()))
 
+/**
+ * Convert number to weeks
+ */
 val Number.weeks: ZonedPeriod
     get() = ZonedPeriod(Period.ofWeeks(this.toInt()))
 
+/**
+ * Convert number to days
+ */
 val Number.days: ZonedPeriod
     get() = ZonedPeriod(Period.ofDays(this.toInt()))
 
+/**
+ * Convert number to hours
+ */
 val Number.hours: ZonedPeriod
     get() = ZonedPeriod(Duration.ofHours(this.toLong()))
 
+/**
+ * Convert number to minutes
+ */
 val Number.minutes: ZonedPeriod
     get() = ZonedPeriod(Duration.ofMinutes(this.toLong()))
 
+/**
+ * Convert number to seconds
+ */
 val Number.seconds: ZonedPeriod
     get() = ZonedPeriod(Duration.ofSeconds(this.toLong()))
 
+/**
+ * Convert number to millis
+ */
 val Number.millis: ZonedPeriod
     get() = ZonedPeriod(Duration.ofMillis(this.toLong()))
 
