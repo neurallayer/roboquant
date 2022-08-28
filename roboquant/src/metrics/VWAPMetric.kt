@@ -44,7 +44,7 @@ class VWAPMetric(val minSize: Int = 2) : Metric {
      */
     override fun calculate(account: Account, event: Event): MetricResults {
         val result = mutableMapOf<String, Double>()
-        for (priceBar in event.prices.values.filterIsInstance<PriceBar>()){
+        for (priceBar in event.prices.values.filterIsInstance<PriceBar>()) {
             val calc = calculators.getOrPut(priceBar.asset) { VWAPDaily(minSize) }
             calc.add(priceBar, event.time)
             if (calc.isReady()) {
@@ -72,9 +72,8 @@ private class VWAPDaily(private val minSteps: Int = 1) {
     private val volume = mutableListOf<Double>()
     private var last: Instant = Instant.MIN
 
-
     fun add(action: PriceBar, now: Instant) {
-        if (last != Instant.MIN && ! action.asset.exchange.sameDay(now, last)) clear()
+        if (last != Instant.MIN && !action.asset.exchange.sameDay(now, last)) clear()
         last = now
         val v = action.volume
         total.add(action.getPrice("TYPICAL") * v)

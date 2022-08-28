@@ -298,7 +298,6 @@ abstract class Chart : Output() {
         return function
     }
 
-
     /**
      * Subclasses will need to return the value of the option attribute.
      */

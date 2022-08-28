@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test
 import java.time.Instant
 import kotlin.test.assertEquals
 
-
 internal class TimeInForceTest {
 
     @Test

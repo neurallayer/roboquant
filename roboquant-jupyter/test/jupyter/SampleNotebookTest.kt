@@ -34,7 +34,6 @@ import kotlin.test.assertEquals
  */
 internal class SampleNotebookTest {
 
-
     private fun test(file: String) {
         Config.getProperty("FULL_COVERAGE") ?: return
 
@@ -70,7 +69,6 @@ internal class SampleNotebookTest {
     }
 
 }
-
 
 private class NotebookTester : JupyterReplTestCase(RoboquantReplProvider) {
 

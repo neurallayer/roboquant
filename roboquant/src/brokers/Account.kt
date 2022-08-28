@@ -23,7 +23,6 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 
-
 /**
  * Account represents a unified brokerage trading account and holds the following state:
  *
@@ -194,7 +193,6 @@ val Collection<Position>.assets
 val Collection<Position>.long
     get() = filter { it.long }
 
-
 /**
  * Return the short positions for a collection of positions
  */
@@ -218,8 +216,6 @@ val Collection<Trade>.realizedPNL
  */
 val Collection<Trade>.timeframe
     get() = timeline.timeframe
-
-
 
 /**
  * Return true of the portfolio is long for the provided [asset], false otherwise

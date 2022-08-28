@@ -29,7 +29,7 @@ internal class PriceBarSeriesTest {
     fun test() {
         val feed = TestData.feed
         val asset = feed.assets.first()
-        val pb = PriceBarSeries(asset,20)
+        val pb = PriceBarSeries(asset, 20)
         assertFalse(pb.isAvailable())
         val data = feed.filter<PriceBar> { it.asset === asset }
         for (entry in data) {

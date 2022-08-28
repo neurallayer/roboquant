@@ -23,7 +23,6 @@ import org.roboquant.common.Config
 import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
-
 internal class YahooHistoricFeedTestIT {
 
     @Test

@@ -17,7 +17,6 @@
 
 package org.roboquant.iex
 
-
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.feeds.HistoricPriceFeed
@@ -48,12 +47,10 @@ class IEXHistoricFeed(
     private val logger = Logging.getLogger(IEXHistoricFeed::class)
     private val client: IEXCloudClient
 
-
     init {
         config.configure()
         client = IEXConnection.getClient(config)
     }
-
 
     /**
      * Retrieve historic intraday price bars for one or more assets
@@ -109,7 +106,6 @@ class IEXHistoricFeed(
         }
     }
 
-
     private fun getInstant(asset: Asset, date: String, minute: String?): Instant {
         return if (minute !== null) {
             val dt = LocalDateTime.parse("${date}T$minute")
@@ -129,7 +125,6 @@ class IEXHistoricFeed(
         logger.info { "Received data for $asset" }
         logger.info { "Total ${timeline.size} steps from ${timeline.first()} to ${timeline.last()}" }
     }
-
 
     private fun handleIntraday(asset: Asset, quotes: List<Intraday>) {
         quotes.filter { it.open !== null }.forEach {

@@ -75,5 +75,4 @@ internal class HistoricFeedTest {
         }
     }
 
-
 }

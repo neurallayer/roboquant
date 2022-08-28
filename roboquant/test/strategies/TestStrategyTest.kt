@@ -16,12 +16,10 @@
 
 package org.roboquant.strategies
 
-
 import kotlin.test.*
 import org.roboquant.TestData
 
 internal class TestStrategyTest {
-
 
     @Test
     fun test() {

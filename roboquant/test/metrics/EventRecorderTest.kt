@@ -42,5 +42,4 @@ internal class EventRecorderTest {
         assertTrue(results.isEmpty())
     }
 
-
 }

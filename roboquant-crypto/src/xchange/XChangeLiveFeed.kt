@@ -77,7 +77,6 @@ class XChangeLiveFeed(
      */
     override val assets = TreeSet<Asset>()
 
-
     init {
         logger.info { "Establishing feed for exchange $exchangeName" }
         if (!exchange.isAlive) logger.warning { "Exchange connection is not yet live" }
@@ -104,7 +103,6 @@ class XChangeLiveFeed(
 
     }
 
-
     /**
      * Subscribe to live order book updates from the exchange. The resulting actions will be of the
      * type of [OrderBook].
@@ -123,7 +121,6 @@ class XChangeLiveFeed(
             assets.add(asset)
         }
     }
-
 
     /**
      * Subscribe to live ticker updates from the exchange. The resulting events will contain
@@ -149,7 +146,6 @@ class XChangeLiveFeed(
             }
         }
     }
-
 
     /**
      * Get an asset based on a cryptocurrency pair.
@@ -225,6 +221,5 @@ class XChangeLiveFeed(
         val event = Event(listOf(item), now)
         send(event)
     }
-
 
 }

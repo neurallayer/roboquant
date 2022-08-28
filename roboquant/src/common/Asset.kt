@@ -50,7 +50,6 @@ data class Asset(
         require(symbol.isNotBlank()) { "Symbol in an asset cannot be empty or blank" }
     }
 
-
     companion object {
 
         /**
@@ -102,7 +101,6 @@ data class Asset(
          */
         fun crypto(base: String, quote: String, exchangeCode: String) =
             Asset("$base/$quote", AssetType.CRYPTO, quote, exchangeCode)
-
 
         /**
          * Returns a forex currency pair asset based on the provided [symbol].

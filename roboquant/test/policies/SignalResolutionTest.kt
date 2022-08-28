@@ -16,7 +16,6 @@
 
 package org.roboquant.policies
 
-
 import org.roboquant.TestData
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
@@ -26,13 +25,12 @@ import kotlin.test.assertTrue
 
 internal class SignalResolutionTest {
 
-
     @Test
     fun rules() {
         val asset = TestData.usStock()
         val signals = listOf(Signal(asset, Rating.BUY), Signal(asset, Rating.SELL), Signal(asset, Rating.SELL))
-        assertEquals(signals.first(),signals.resolve(SignalResolution.FIRST).first())
-        assertEquals(signals.last(),signals.resolve(SignalResolution.LAST).last())
+        assertEquals(signals.first(), signals.resolve(SignalResolution.FIRST).first())
+        assertEquals(signals.last(), signals.resolve(SignalResolution.LAST).last())
         assertTrue(signals.resolve(SignalResolution.NO_DUPLICATES).isEmpty())
         assertTrue(signals.resolve(SignalResolution.NO_CONFLICTS).isEmpty())
         assertEquals(signals, signals.resolve(SignalResolution.NONE))

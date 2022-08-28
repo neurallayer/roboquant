@@ -74,10 +74,11 @@ class OANDALiveFeed(
     ) {
         val gr = CandlestickGranularity.valueOf(granularity)
         symbols.forEach { assetMap[it] = availableAssets[it]!! }
-        val requests = symbols.map { InstrumentCandlesRequest(InstrumentName(it))
-            .setPrice(priceType)
-            .setGranularity(gr)
-            .setCount(1)
+        val requests = symbols.map {
+            InstrumentCandlesRequest(InstrumentName(it))
+                .setPrice(priceType)
+                .setGranularity(gr)
+                .setCount(1)
         }
 
         jobs.add {
@@ -99,7 +100,7 @@ class OANDALiveFeed(
                                     it.volume.toDouble()
                                 )
                             actions.add(action)
-                            logger.fine {"Got price bar at ${now.truncatedTo(ChronoUnit.SECONDS)} for $action" }
+                            logger.fine { "Got price bar at ${now.truncatedTo(ChronoUnit.SECONDS)} for $action" }
                         }
                     }
                 }

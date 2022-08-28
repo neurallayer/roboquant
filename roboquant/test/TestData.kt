@@ -40,7 +40,7 @@ object TestData {
 
     fun usStock() = Asset("XYZ")
 
-    fun internalAccount() : InternalAccount {
+    fun internalAccount(): InternalAccount {
         val asset1 = Asset("AAA")
         val asset2 = Asset("AAB")
         val account = InternalAccount()
@@ -54,7 +54,7 @@ object TestData {
         return account
     }
 
-    fun usAccount() : Account {
+    fun usAccount(): Account {
         val asset1 = Asset("AAA")
         val asset2 = Asset("AAB")
         val account = InternalAccount()
@@ -69,7 +69,7 @@ object TestData {
 
     fun euStock() = Asset("ABC", currencyCode = "EUR", exchangeCode = "AEB")
 
-    fun feed() : HistoricFeed {
+    fun feed(): HistoricFeed {
         return HistoricTestFeed(90..110, 110 downTo 80, 80..125, priceBar = true, asset = usStock())
     }
 
@@ -111,7 +111,7 @@ object TestData {
         return RunInfo("run-1", 1, 10, Instant.now(), Timeframe.INFINITE, RunPhase.MAIN)
     }
 
-    fun events(n:Int = 100, asset: Asset = usStock()) : List<Event> {
+    fun events(n: Int = 100, asset: Asset = usStock()): List<Event> {
         val start = time()
         val result = mutableListOf<Event>()
         repeat(n) {

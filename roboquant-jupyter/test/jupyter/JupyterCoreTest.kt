@@ -30,7 +30,6 @@ internal class JupyterCoreTest {
         Output.lab()
     }
 
-
     @Test
     fun exceptions() {
         val t = RoboquantThrowableRenderer()
@@ -45,11 +44,11 @@ internal class JupyterCoreTest {
     fun core() {
         class TestOutput : Output() {
             override fun asHTML(): String {
-               return  "<div>Hello</div>"
+                return "<div>Hello</div>"
             }
 
             override fun asHTMLPage(): String {
-                return  "<html><div>Hello</div></html>"
+                return "<html><div>Hello</div></html>"
             }
 
         }

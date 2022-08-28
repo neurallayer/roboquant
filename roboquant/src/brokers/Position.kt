@@ -71,7 +71,7 @@ data class Position(
     /**
      * Add another position [p] to this position
      */
-    operator fun plus(p: Position) : Position {
+    operator fun plus(p: Position): Position {
 
         val newSize = size + p.size
 
@@ -92,7 +92,7 @@ data class Position(
      * How much PNL would be realized when [update] a position. This doesn't change the position itself, just
      * calculates the potential realized PNL.
      */
-    fun realizedPNL(update: Position) : Amount {
+    fun realizedPNL(update: Position): Amount {
         val newSize = size + update.size
         return when {
             size.sign != newSize.sign -> asset.value(size, update.avgPrice - avgPrice)
@@ -123,7 +123,7 @@ data class Position(
      * Is this an open position
      */
     val open: Boolean
-        get() = ! size.iszero
+        get() = !size.iszero
 
     /**
      * The unrealized profit & loss for this position based on the [avgPrice] and last known market [mktPrice],
@@ -131,7 +131,6 @@ data class Position(
      */
     val unrealizedPNL: Amount
         get() = asset.value(size, mktPrice - avgPrice)
-
 
     /**
      * The total value for this position based on last known spot price, in the currency denoted by the asset.
@@ -147,7 +146,6 @@ data class Position(
     val exposure: Amount
         get() = marketValue.absoluteValue
 
-
     /**
      * The total cost of this position, in the currency denoted by the asset. Short positions will typically return
      * a negative value.
@@ -155,25 +153,22 @@ data class Position(
     val totalCost: Amount
         get() = asset.value(size, avgPrice)
 
-
 }
 
 /**
  * Return the total market value for the collection of positions
  */
-val Collection<Position>.marketValue : Wallet
+val Collection<Position>.marketValue: Wallet
     get() {
         val result = Wallet()
         for (position in this) result.deposit(position.marketValue)
         return result
     }
 
-
-
 /**
  * Return the total market value for this portfolio
  */
-val Map<Asset, Position>.marketValue : Wallet
+val Map<Asset, Position>.marketValue: Wallet
     get() {
         return values.marketValue
     }
@@ -181,18 +176,17 @@ val Map<Asset, Position>.marketValue : Wallet
 /**
  * Return the total exposure for this portfolio
  */
-val Map<Asset, Position>.exposure : Wallet
+val Map<Asset, Position>.exposure: Wallet
     get() {
         val result = Wallet()
         for (position in this.values) result.deposit(position.exposure)
         return result
     }
 
-
 /**
  * Return the total exposure for this collection of positions
  */
-val Collection<Position>.exposure : Wallet
+val Collection<Position>.exposure: Wallet
     get() {
         val result = Wallet()
         for (position in this) result.deposit(position.exposure)

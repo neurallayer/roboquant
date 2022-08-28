@@ -45,7 +45,7 @@ class MetricBoxChart(
     private val lowPercentile: Double = 25.0,
     private val midPercentile: Double = 50.0,
     private val highPercentile: Double = 75.0,
-    private val precision : Int = 8
+    private val precision: Int = 8
 ) : Chart() {
 
     private fun toSeriesData(): List<Pair<String, Any>> {

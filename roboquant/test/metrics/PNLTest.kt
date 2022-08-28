@@ -16,7 +16,6 @@
 
 package org.roboquant.metrics
 
-
 import kotlin.test.*
 import org.roboquant.TestData
 

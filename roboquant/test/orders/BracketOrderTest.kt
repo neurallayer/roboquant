@@ -21,7 +21,6 @@ import org.roboquant.TestData
 import org.roboquant.common.Size
 import kotlin.test.assertTrue
 
-
 internal class BracketOrderTest {
 
     @Test
@@ -30,8 +29,8 @@ internal class BracketOrderTest {
         val size = Size(10)
         val order = BracketOrder(
             MarketOrder(asset, size),
-            LimitOrder(asset, - size, 101.0),
-            StopOrder(asset, - size, 99.0),
+            LimitOrder(asset, -size, 101.0),
+            StopOrder(asset, -size, 99.0),
         )
 
         assertTrue(order.entry is MarketOrder)

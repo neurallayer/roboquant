@@ -16,7 +16,6 @@
 
 package org.roboquant.policies
 
-
 import org.roboquant.TestData
 import org.roboquant.common.Size
 import kotlin.test.Test

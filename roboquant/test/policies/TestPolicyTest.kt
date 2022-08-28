@@ -16,7 +16,6 @@
 
 package org.roboquant.policies
 
-
 import org.roboquant.TestData
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.InternalAccount
@@ -45,7 +44,6 @@ internal class TestPolicyTest {
         assertTrue(orders.isEmpty())
         assertTrue(policy.getMetrics().isEmpty())
     }
-
 
     @Test
     fun order() {

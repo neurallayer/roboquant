@@ -38,7 +38,6 @@ class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFee
 
     private val logger = Logging.getLogger(YahooHistoricFeed::class)
 
-
     /**
      * Retrieve historic [PriceBar] data from Yahoo Finance
      *
@@ -56,7 +55,6 @@ class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFee
         }
         this.assets.addAll(assets)
     }
-
 
     /**
      * Retrieve historic [PriceBar] data from Yahoo Finance

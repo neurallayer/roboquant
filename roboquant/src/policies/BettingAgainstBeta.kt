@@ -94,7 +94,7 @@ open class BettingAgainstBeta(
     private fun rebalance(betas: List<Pair<Asset, Double>>, account: Account, event: Event): List<Order> {
         // maximum number of short and long assets we want to have in portfolio. Since there cannot be overlap,
         // the maximum number is always equal or smaller than half.
-        val max = min(betas.size/2, maxAssetsInPortfolio/2)
+        val max = min(betas.size / 2, maxAssetsInPortfolio / 2)
 
         // exposure per position.
         val exposure = account.equity.convert(time = event.time) / (max * 2)
@@ -106,18 +106,18 @@ open class BettingAgainstBeta(
             if (price != null) {
                 val assetAmount = exposure.convert(asset.currency, event.time).value
                 val singleContractValue = asset.value(Size.ONE, price).value
-                val holding = floor(assetAmount/singleContractValue).toInt()
+                val holding = floor(assetAmount / singleContractValue).toInt()
                 if (holding != 0) targetPortfolio.add(Position(asset, Size(holding)))
             }
         }
 
         // Generate the short positions for assets with a high beta
-        betas.reversed().subList(0, max).forEach {  (asset, _) ->
+        betas.reversed().subList(0, max).forEach { (asset, _) ->
             val price = event.getPrice(asset)
             if (price != null) {
                 val assetAmount = exposure.convert(asset.currency, event.time).value
                 val singleContractValue = asset.value(Size.ONE, price).value
-                val holding = floor(assetAmount/singleContractValue).toInt()
+                val holding = floor(assetAmount / singleContractValue).toInt()
                 if (holding != 0) targetPortfolio.add(Position(asset, Size(-holding)))
             }
         }
@@ -136,7 +136,6 @@ open class BettingAgainstBeta(
     open fun createOrder(asset: Asset, size: Size, account: Account, event: Event): Order? {
         return MarketOrder(asset, size)
     }
-
 
     /**
      * Create zero or more orders based on the received signals.

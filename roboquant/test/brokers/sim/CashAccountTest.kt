@@ -40,7 +40,6 @@ internal class CashAccountTest {
 
     companion object {
 
-
         internal fun update(broker: Broker, asset: Asset, price: Number, orderSize: Int = 0): Account {
             val orders = if (orderSize == 0) emptyList() else listOf(MarketOrder(asset, orderSize))
             val action = TradePrice(asset, price.toDouble())
@@ -109,7 +108,5 @@ internal class CashAccountTest {
         assertEquals(9900.EUR, account.buyingPower)
 
     }
-
-
 
 }

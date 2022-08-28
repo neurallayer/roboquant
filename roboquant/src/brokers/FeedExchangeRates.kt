@@ -44,14 +44,14 @@ class FeedExchangeRates(
             val asset = action.asset
             val rate = action.getPrice(priceType)
             val codes = asset.currencyPair
-                val (from, to) = codes
-                if (to == baseCurrency) {
-                    val map = exchangeRates.getOrPut(from) { TreeMap() }
-                    map[now] = rate
-                } else if (from == baseCurrency) {
-                    val map = exchangeRates.getOrPut(to) { TreeMap() }
-                    map[now] = 1.0 / rate
-                }
+            val (from, to) = codes
+            if (to == baseCurrency) {
+                val map = exchangeRates.getOrPut(from) { TreeMap() }
+                map[now] = rate
+            } else if (from == baseCurrency) {
+                val map = exchangeRates.getOrPut(to) { TreeMap() }
+                map[now] = 1.0 / rate
+            }
         }
 
     }

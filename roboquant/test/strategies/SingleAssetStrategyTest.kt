@@ -33,7 +33,6 @@ internal class SingleAssetStrategyTest {
 
     }
 
-
     @Test
     fun test() {
         val asset = TestData.usStock()

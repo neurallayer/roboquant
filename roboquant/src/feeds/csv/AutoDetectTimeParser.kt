@@ -37,7 +37,6 @@ class AutoDetectTimeParser : TimeParser {
         return parser.parse(text, exchange)
     }
 
-
     private companion object Patterns {
 
         @Suppress("RegExpRepeatedSpace")
@@ -51,7 +50,6 @@ class AutoDetectTimeParser : TimeParser {
             """\d{13}""".toRegex() to TimeParser { str, _ -> Instant.ofEpochMilli(str.toLong()) }
         )
     }
-
 
     /**
      * Detect on the first sample received what the time format is.

@@ -16,7 +16,6 @@
 
 package org.roboquant.strategies
 
-
 import kotlin.test.*
 import org.roboquant.TestData
 import org.roboquant.common.AssetFilter
@@ -46,6 +45,5 @@ internal class AssetFilterStrategyTest {
         val signals2 = strategy2.generate(event)
         assertTrue(signals2.isEmpty())
     }
-
 
 }

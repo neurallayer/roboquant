@@ -36,12 +36,14 @@ import org.jetbrains.kotlinx.jupyter.testkit.ReplProvider
 import java.io.File
 import java.net.URL
 
-
 internal object RoboquantReplProvider : ReplProvider {
 
     private class DisplayHandlerImpl : DisplayHandler {
-        override fun handleDisplay(value: Any, host: ExecutionHost) { /* NOP */ }
-        override fun handleUpdate(value: Any, host: ExecutionHost, id: String?) { /* NOP */ }
+        override fun handleDisplay(value: Any, host: ExecutionHost) { /* NOP */
+        }
+
+        override fun handleUpdate(value: Any, host: ExecutionHost, id: String?) { /* NOP */
+        }
     }
 
     override fun invoke(classpath: List<File>): ReplForJupyter {
@@ -58,7 +60,6 @@ internal object RoboquantReplProvider : ReplProvider {
             isEmbedded = true,
         )
     }
-
 
     private val urlEditingResolver = SpecificLibraryResolver(AbstractLibraryResolutionInfo.ByURL::class) { info, _ ->
         val response = getHttp(info.url.toString())

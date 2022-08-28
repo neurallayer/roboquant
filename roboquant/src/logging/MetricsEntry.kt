@@ -52,7 +52,7 @@ data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo
      * Compare two metric entries based on their [value]
      */
     override fun compareTo(other: MetricsEntry): Int {
-         return value.compareTo(other.value)
+        return value.compareTo(other.value)
     }
 
 }
@@ -60,24 +60,23 @@ data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo
 /**
  * Group a collection of metrics by thier unique name, run and episode
  */
-fun Collection<MetricsEntry>.group() : Map<String, List<MetricsEntry>> = groupBy { it.groupId }
+fun Collection<MetricsEntry>.group(): Map<String, List<MetricsEntry>> = groupBy { it.groupId }
 
-fun  Map<String, List<MetricsEntry>>.max() : Map<String, MetricsEntry> = mapValues { it.value.max() }
+fun Map<String, List<MetricsEntry>>.max(): Map<String, MetricsEntry> = mapValues { it.value.max() }
 
-fun  Map<String, List<MetricsEntry>>.min() : Map<String, MetricsEntry> = mapValues { it.value.min() }
-
+fun Map<String, List<MetricsEntry>>.min(): Map<String, MetricsEntry> = mapValues { it.value.min() }
 
 /**
  * Get the [n] highest entries, default being 10
  */
-fun Collection<MetricsEntry>.high(n:Int = 10) = sortedBy { it }.takeLast(n)
+fun Collection<MetricsEntry>.high(n: Int = 10) = sortedBy { it }.takeLast(n)
 
 /**
  * Get the [n] lowest entries, default being 10
  */
-fun Collection<MetricsEntry>.low(n:Int = 10) = sortedBy { it }.take(n)
+fun Collection<MetricsEntry>.low(n: Int = 10) = sortedBy { it }.take(n)
 
-fun Collection<MetricsEntry>.diff() : List<MetricsEntry> {
+fun Collection<MetricsEntry>.diff(): List<MetricsEntry> {
     val result = mutableListOf<MetricsEntry>()
     var first = true
     var prev = 0.0
@@ -95,8 +94,7 @@ fun Collection<MetricsEntry>.diff() : List<MetricsEntry> {
     return result
 }
 
-
-fun Collection<MetricsEntry>.perc() : List<MetricsEntry> {
+fun Collection<MetricsEntry>.perc(): List<MetricsEntry> {
     val result = mutableListOf<MetricsEntry>()
     var first = true
     var prev = 0.0
@@ -113,7 +111,6 @@ fun Collection<MetricsEntry>.perc() : List<MetricsEntry> {
     }
     return result
 }
-
 
 fun Collection<MetricsEntry>.summary(): Summary {
     val result = Summary("Metrics")

@@ -20,7 +20,6 @@ import org.roboquant.TestData
 import org.roboquant.common.Asset
 import kotlin.test.*
 
-
 internal class HistoricPriceStrategyTest {
 
     private class MySubClass : HistoricPriceStrategy(10) {

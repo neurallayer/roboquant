@@ -29,7 +29,6 @@ import org.roboquant.metrics.Metric
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.Strategy
 
-
 data class OANDAConfig(
     var key: String = Config.getProperty("oanda.key", ""),
     var account: String = Config.getProperty("oanda.account", ""),
@@ -69,7 +68,6 @@ object OANDA {
         return ContextBuilder(url).setToken(config.key).setApplication("roboquant").build()
     }
 
-
     internal fun getAccountID(id: String, ctx: Context): AccountID {
         val accounts = ctx.account.list().accounts.map { it.id.toString() }
         var accountId = id
@@ -80,7 +78,6 @@ object OANDA {
         }
         return AccountID(accountId)
     }
-
 
     internal fun getAvailableAssets(ctx: Context, accountID: AccountID): Map<String, Asset> {
         val instruments = ctx.account.instruments(accountID).instruments

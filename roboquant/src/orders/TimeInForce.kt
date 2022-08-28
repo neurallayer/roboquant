@@ -29,7 +29,6 @@ import java.time.Instant
  */
 interface TimeInForce
 
-
 /**
  * Good Till Cancelled policy. The order will remain active until fully filled or is cancelled.
  * In practice, most brokers allow such orders to remain active for a 60-90 day period, so not indefinitly.
@@ -46,7 +45,6 @@ class GTC(val maxDays: Int = 90) : TimeInForce {
 
 }
 
-
 /**
  * Good Till Date policy. The order will remain active until fully filled or a specified date.
  *
@@ -61,7 +59,6 @@ class GTD(val date: Instant) : TimeInForce {
     override fun toString(): String = "GTD($date)"
 
 }
-
 
 /**
  * Immediate or Cancel (IOC) policy. An immediate or cancel order is an order to buy or sell an asset that attempts
@@ -93,7 +90,6 @@ class DAY : TimeInForce {
     override fun toString(): String = "DAY"
 
 }
-
 
 /**
  * Fill or Kill (FOK) policy. A Fill or Kill policy is to be executed immediately at the market or a specified price

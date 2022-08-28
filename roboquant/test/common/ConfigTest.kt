@@ -16,11 +16,9 @@
 
 package org.roboquant.common
 
-
 import kotlin.test.*
 
 internal class ConfigTest {
-
 
     @Test
     fun test() {

@@ -34,7 +34,6 @@ import com.crazzyghost.alphavantage.parameters.Interval as AlphaInterval
 
 typealias Interval = AlphaInterval
 
-
 data class AlphaVantageConfig(
     var key: String = org.roboquant.common.Config.getProperty("alphavantage.key", ""),
     var timeout: Int = 10
@@ -70,7 +69,6 @@ class AlphaVantageHistoricFeed(
         logger.info("Connected Alpha Vantage")
     }
 
-
     /**
      * Retrieve historic intraday price data for the provided [assets]
      *
@@ -94,7 +92,6 @@ class AlphaVantageHistoricFeed(
         }
     }
 
-
     /**
      * Retrieve historic daily price data for the provided [assets]
      *
@@ -117,7 +114,6 @@ class AlphaVantageHistoricFeed(
                 handleDaily(result)
         }
     }
-
 
     private fun getParser(timezone: String): DateTimeFormatter {
         val pattern = "yyyy-MM-dd HH:mm:ss"
@@ -165,6 +161,5 @@ class AlphaVantageHistoricFeed(
             logger.severe { e.toString() }
         }
     }
-
 
 }

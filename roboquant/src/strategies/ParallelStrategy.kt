@@ -58,5 +58,4 @@ class ParallelStrategy(strategies: Collection<Strategy>) : CombinedStrategy(stra
         return signals
     }
 
-
 }

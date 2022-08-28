@@ -55,7 +55,6 @@ class AvroTest {
         var assets = mutableListOf<Asset>()
     }
 
-
     @Test
     fun avroStep1() {
         // folder.create()
@@ -67,9 +66,6 @@ class AvroTest {
         AvroUtil.record(feed, fileName, compressionLevel = 0)
         assertTrue(File(fileName).isFile)
     }
-
-
-
 
     @Test
     fun avroStep2() {
@@ -146,7 +142,5 @@ class AvroTest {
         val file2 = (Config.home / "us_small_daily_v2.0.avro").toFile()
         assertTrue(file2.exists())
     }
-
-
 
 }

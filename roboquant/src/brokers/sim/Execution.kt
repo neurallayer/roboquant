@@ -34,7 +34,6 @@ class Execution(val order: Order, val size: Size, val price: Double) {
         require(size.nonzero) { "Execution should have a non-zero quantity" }
     }
 
-
     /**
      * Totol value of execution in the currency denoted by the underlying asset
      */

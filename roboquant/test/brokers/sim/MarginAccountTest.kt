@@ -34,7 +34,6 @@ import kotlin.test.assertTrue
 
 internal class MarginAccountTest {
 
-    
     @Test
     fun test3() {
         val account = TestData.internalAccount()
@@ -67,8 +66,6 @@ internal class MarginAccountTest {
             feeModel = NoFeeModel()
         )
     }
-
-
 
     @Test
     fun testMarginAccountLong() {

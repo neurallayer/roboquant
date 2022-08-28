@@ -16,7 +16,6 @@
 
 package org.roboquant.strategies
 
-
 import org.junit.jupiter.api.Test
 import org.roboquant.RunPhase
 import org.roboquant.TestData
@@ -25,17 +24,16 @@ import org.roboquant.metrics.MetricResults
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-
 class CombinedStrategyTest {
 
     class MyStrategy : Strategy {
 
         override fun generate(event: Event): List<Signal> {
-           return emptyList()
+            return emptyList()
         }
 
         override fun getMetrics(): MetricResults {
-           return emptyMap()
+            return emptyMap()
         }
 
     }

@@ -16,7 +16,6 @@
 
 package org.roboquant.metrics
 
-
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData

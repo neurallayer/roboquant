@@ -16,7 +16,6 @@
 
 package org.roboquant.orders
 
-
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
@@ -25,18 +24,17 @@ import kotlin.test.assertTrue
 
 internal class CustomOrderTest {
 
-    private class MyOrder(asset: Asset, id:Int) : Order(asset,id)
+    private class MyOrder(asset: Asset, id: Int) : Order(asset, id)
 
     @Test
     fun basic() {
         val asset = TestData.usStock()
-        val order = MyOrder(asset,123)
+        val order = MyOrder(asset, 123)
         assertTrue(order.info().isEmpty())
         assertTrue(order.toString().isNotBlank())
         assertEquals("MyOrder", order.type)
         assertEquals(123, order.id)
         assertEquals(asset, order.asset)
     }
-
 
 }

@@ -26,7 +26,6 @@ import kotlin.test.assertTrue
 
 internal class AlphaVantageHistoricFeedTestIT {
 
-
     @Test
     fun alphaVantageIntraday() {
         System.getProperty("TEST_ALPHAVANTAGE") ?: return
@@ -48,6 +47,5 @@ internal class AlphaVantageHistoricFeedTestIT {
         assertTrue(events.isNotEmpty())
         assertEquals(asset, events.first().second.asset)
     }
-
 
 }

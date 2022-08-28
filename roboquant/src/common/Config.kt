@@ -49,10 +49,10 @@ object Config {
     /**
      * Meta data about build en the environments
      */
-    val info : Map<String, String> by lazy {
+    val info: Map<String, String> by lazy {
         val result = mutableMapOf<String, String>()
         result["jvm"] = System.getProperty("java.vm.name") + " " + System.getProperty("java.version")
-        result["os"] =  System.getProperty("os.name") + " " + System.getProperty("os.version")
+        result["os"] = System.getProperty("os.name") + " " + System.getProperty("os.version")
         result["memory"] = (Runtime.getRuntime().maxMemory() / ONE_MB).toString()
 
         val prop = Properties()
@@ -149,12 +149,12 @@ object Config {
      */
     fun getProperty(name: String, default: String): String {
         logger.finer { "Finding property $name" }
-        return  properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name] ?: default
+        return properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name] ?: default
     }
 
     fun getProperty(name: String): String? {
         logger.finer { "Finding property $name" }
-        return  properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name]
+        return properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name]
     }
 
     /**

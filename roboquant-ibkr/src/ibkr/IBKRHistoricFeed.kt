@@ -46,7 +46,6 @@ class IBKRHistoricFeed(
 
     fun disconnect() = IBKRConnection.disconnect(client)
 
-
     /**
      * Historical Data requests need to be assembled in such a way that only a few thousand bars are returned at a time.
      * So you cannot retrieve short barSize for a very long duration.
@@ -99,8 +98,6 @@ class IBKRHistoricFeed(
             val v = subscriptions.remove(reqId)
             logger.info("Finished retrieving $v")
         }
-
-
 
     }
 

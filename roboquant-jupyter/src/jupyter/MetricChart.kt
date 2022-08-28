@@ -74,7 +74,6 @@ class MetricChart(
         return option
     }
 
-
     /**
      * Convert a list of entries to data-format suitable for chart series.
      * @return
@@ -93,6 +92,5 @@ class MetricChart(
         }
         return d
     }
-
 
 }

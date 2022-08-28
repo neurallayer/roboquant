@@ -51,7 +51,6 @@ internal class CurrencyTest {
         assertEquals(x, y)
     }
 
-
     @Test
     fun test3() {
         val c = Currency.getInstance("DUMMY")
@@ -61,6 +60,5 @@ internal class CurrencyTest {
         Currency.increaseDigits(-2)
         assertEquals(2, c.defaultFractionDigits)
     }
-
 
 }

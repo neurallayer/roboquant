@@ -35,7 +35,7 @@ class Welcome : Output() {
         val osInfo = Config.info["os"]
         val memoryInfo = Config.info["memory"]
         val date = Config.info["build"]
-        val version =  Config.info["version"]
+        val version = Config.info["version"]
 
         return """
             <img src="https://roboquant.org/img/avatar.png" alt="roboquant logo" align="left" style="margin-right: 20px; max-height:160px;"/>
@@ -63,6 +63,5 @@ class Welcome : Output() {
         </html>
         """.trimIndent()
     }
-
 
 }

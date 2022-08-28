@@ -37,7 +37,7 @@ import org.ta4j.core.rules.BooleanRule
  * @constructor Create a new ta4j strategy
  */
 class Ta4jStrategy(
-    private val maxBarCount:Int = -1,
+    private val maxBarCount: Int = -1,
 ) : Strategy {
 
     private var buyingRule: (BarSeries) -> Rule = { BooleanRule.FALSE }

@@ -123,7 +123,6 @@ class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetF
 
 }
 
-
 private class IncrementalReader(val asset: Asset, file: File, val config: CSVConfig) {
 
     private val reader = CsvReader.builder().skipEmptyRows(true).build(FileReader(file)).iterator()
@@ -150,6 +149,5 @@ private class IncrementalReader(val asset: Asset, file: File, val config: CSVCon
     }
 
     fun close() = reader.close()
-
 
 }

@@ -22,7 +22,6 @@ import org.knowm.xchange.bitstamp.BitstampExchange
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFails
 
-
 internal class XChangeBrokerTestIT {
 
     private fun getExchange(): Exchange {
@@ -33,7 +32,6 @@ internal class XChangeBrokerTestIT {
 
         return ExchangeFactory.INSTANCE.createExchange(exSpec)
     }
-
 
     @Test
     fun test() {

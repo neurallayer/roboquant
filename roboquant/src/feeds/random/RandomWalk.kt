@@ -81,7 +81,6 @@ class RandomWalk(
             return RandomWalk(timeline, nAssets, generateBars)
         }
 
-
         /**
          * Create a random walk for the last [days], generating minute prices.
          */
@@ -94,14 +93,12 @@ class RandomWalk(
 
     }
 
-
     init {
         logger.fine {
             "Created $nAssets assets with ${timeline.size} events and a timeline " +
                     "from ${timeline.first()} to ${timeline.last()}"
         }
     }
-
 
     /**
      * Generate random bars
@@ -159,7 +156,6 @@ class RandomWalk(
         val alphabet = ('A'..'Z').toList()
         return List(symbolLength) { alphabet.random(random) }.joinToString("")
     }
-
 
 }
 

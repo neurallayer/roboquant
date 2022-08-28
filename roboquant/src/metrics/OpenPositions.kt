@@ -19,7 +19,6 @@ package org.roboquant.metrics
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 
-
 /**
  * Captures metrics for all open positions within the portfolio, so you can see how these progresses over the
  * duration of the run. For each open position it will record:

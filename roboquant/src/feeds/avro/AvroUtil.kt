@@ -105,15 +105,19 @@ object AvroUtil {
                             is PriceBar -> {
                                 record.put(2, 1); action.values
                             }
+
                             is TradePrice -> {
                                 record.put(2, 2); action.values
                             }
+
                             is PriceQuote -> {
                                 record.put(2, 3); action.values
                             }
+
                             is OrderBook -> {
                                 record.put(2, 4); action.values
                             }
+
                             else -> {
                                 logger.warning("Unsupported price action encountered $action")
                                 continue

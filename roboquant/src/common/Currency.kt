@@ -48,7 +48,6 @@ class Currency private constructor(val currencyCode: String) {
             2
         }
 
-
     companion object {
 
         /**
@@ -144,7 +143,6 @@ class Currency private constructor(val currencyCode: String) {
          */
         val USDT = getInstance("USDT", 2)
 
-
         /**
          * For all already registered currencies increase the number of display digits with [extraDigits]. This doesn't
          * change calculations, only the way currency amounts are displayed.
@@ -156,7 +154,6 @@ class Currency private constructor(val currencyCode: String) {
             for (currency in currencies.values) currency.defaultFractionDigits += extraDigits
         }
     }
-
 
     /** @suppress */
     override fun toString(): String {

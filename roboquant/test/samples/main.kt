@@ -64,7 +64,7 @@ fun multiCurrency() {
     }
     val feed2 = CSVFeed("data/EU") {
         priceAdjust = true
-        template =  Asset("TEMPLATE", currencyCode = "EUR")
+        template = Asset("TEMPLATE", currencyCode = "EUR")
     }
     feed.merge(feed2)
 
@@ -84,15 +84,12 @@ fun multiCurrency() {
     broker.account.openOrders.summary().print()
 }
 
-
-
-
 fun customPolicy() {
 
     /**
      * Custom Policy that captures the ATR (Average True Range) and uses it to set limit orders
      */
-    class MyPolicy(private val atrPercentage: Double = 0.02, private val atrPeriod : Int = 5) : DefaultPolicy() {
+    class MyPolicy(private val atrPercentage: Double = 0.02, private val atrPeriod: Int = 5) : DefaultPolicy() {
 
         // map that contains the ATR per asset
         private val atrs = mutableMapOf<Asset, ATR>()
@@ -133,7 +130,6 @@ fun customPolicy() {
 
     }
 
-
     val roboquant = Roboquant(EMACrossover.EMA_12_26, AccountSummary(), policy = MyPolicy(atrPeriod = 12))
     val feed = AvroFeed.sp500()
     roboquant.run(feed)
@@ -156,7 +152,6 @@ fun multiRun() {
     println(maxEntry.info.run)
 }
 
-
 suspend fun walkforwardParallel() {
     val feed = AvroFeed.sp500()
     val logger = LastEntryLogger()
@@ -174,9 +169,6 @@ suspend fun walkforwardParallel() {
     val avgEquity = logger.getMetric("account.equity").toDoubleArray().mean()
     println(avgEquity)
 }
-
-
-
 
 fun testingStrategies() {
     val strategy = EMACrossover()
@@ -197,7 +189,6 @@ fun testingStrategies() {
     }
 
 }
-
 
 fun calcCorrelation() {
     val feed = AvroFeed.sp500()
@@ -251,8 +242,6 @@ fun beta2() {
     println(roboquant.broker.account.trades.fee)
 
 }
-
-
 
 suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)

@@ -78,7 +78,6 @@ class PriceChart(
         return result.toTypedArray()
     }
 
-
     /** @suppress */
     override fun getOption(): Option {
         val line = reduce(fromFeed())

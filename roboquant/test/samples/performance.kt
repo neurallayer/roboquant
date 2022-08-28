@@ -15,6 +15,7 @@
  */
 
 @file:Suppress("KotlinConstantConditions")
+
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
@@ -46,7 +47,6 @@ private fun getFeed(n: Int): Feed {
     return RandomWalk(timeline, 100)
 }
 
-
 /**
  * Basic test with minimal overhead
  */
@@ -60,10 +60,6 @@ fun base(feed: Feed) {
         print(".")
     }
 }
-
-
-
-
 
 /**
  * Example of hyperparameter search using parallel runs.
@@ -87,7 +83,6 @@ suspend fun multiRunParallel(feed: Feed) {
     val maxEntry = logger.getMetric("account.equity").max()
     println("${maxEntry.info.run}  => ${maxEntry.value} equity")
 }
-
 
 suspend fun main() {
     Config.printInfo()

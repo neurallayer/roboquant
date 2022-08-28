@@ -26,7 +26,7 @@ import kotlin.test.assertTrue
 
 internal class PortfolioTest {
 
-   @Test
+    @Test
     fun testUpdatePortfolio() {
         val portfolio = mutableMapOf<Asset, Position>().withDefault { Position.empty(asset = it) }
         val c = TestData.usStock()
@@ -35,10 +35,10 @@ internal class PortfolioTest {
         assertEquals(100.0, portfolio.getValue(c).size.toDouble())
         assertEquals(10.0, portfolio.getValue(c).avgPrice)
 
-       assertEquals(1000.0, portfolio.exposure.getValue(Currency.USD))
+        assertEquals(1000.0, portfolio.exposure.getValue(Currency.USD))
 
-       assertTrue(portfolio.isLong(c))
-       assertFalse(portfolio.isShort(c))
+        assertTrue(portfolio.isLong(c))
+        assertFalse(portfolio.isShort(c))
     }
 
 }

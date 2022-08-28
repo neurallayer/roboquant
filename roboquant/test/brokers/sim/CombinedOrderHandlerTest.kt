@@ -55,7 +55,6 @@ internal class CombinedOrderHandlerTest {
         assertEquals(Size(50), executions.first().size)
     }
 
-
     @Test
     fun testOTO() {
         val order1 = MarketOrder(asset, 100)
@@ -87,7 +86,5 @@ internal class CombinedOrderHandlerTest {
         assertEquals(OrderStatus.COMPLETED, cmd.state.status)
 
     }
-
-
 
 }

@@ -63,7 +63,6 @@ abstract class HistoricPriceStrategy(
      */
     abstract fun generate(asset: Asset, data: DoubleArray): Signal?
 
-
     override fun reset() {
         super.reset()
         history.clear()

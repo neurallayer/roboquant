@@ -19,10 +19,9 @@ package org.roboquant.common
 import java.text.DecimalFormat
 import java.util.logging.Level
 
-
 interface Summarizable {
 
-    fun summary(singleCurrency: Boolean = true) : Summary
+    fun summary(singleCurrency: Boolean = true): Summary
 }
 
 /**
@@ -66,7 +65,6 @@ class Summary(val content: String) {
      * Add a [label] and [value] to this summary
      */
     fun add(label: String, value: Any?) = children.add(Summary("$label$sep$value"))
-
 
     /**
      * Add a [label] and [summary] to this summary

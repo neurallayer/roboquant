@@ -29,7 +29,6 @@ import java.time.Instant
  */
 data class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
 
-
     companion object {
 
         /**

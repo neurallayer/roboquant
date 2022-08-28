@@ -16,14 +16,12 @@
 
 package org.roboquant.brokers
 
-
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.USD
 import java.time.Instant
 import kotlin.test.assertEquals
-
 
 internal class FixedExchangeRatesTest {
 
@@ -38,8 +36,7 @@ internal class FixedExchangeRatesTest {
         assertEquals(1.0, r1)
 
         val r2 = currencyConverter.getRate(amount1, EUR, now)
-        assertEquals(1.0/1.2, r2)
+        assertEquals(1.0 / 1.2, r2)
     }
-
 
 }

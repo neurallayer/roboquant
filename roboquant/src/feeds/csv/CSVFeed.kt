@@ -32,7 +32,6 @@ import java.time.Instant
 import kotlin.io.path.isDirectory
 import kotlin.math.absoluteValue
 
-
 /**
  * Read historic data from CSV files in a directory. It will traverse down if it finds subdirectories.
  *
@@ -62,7 +61,6 @@ class CSVFeed(
         logger.info { "events=${timeline.size} assets=${assets.size} timeframe=$timeframe" }
     }
 
-
     /**
      * Read a directory or file and all its descendants and return the found CSV files
      *
@@ -81,7 +79,6 @@ class CSVFeed(
                 .toList()
         }
     }
-
 
     /**
      * Read and parse CSV files in parallel to ensure fast processing of large datasets.
@@ -111,34 +108,31 @@ class CSVFeed(
         deferredList.awaitAll()
     }
 
-
-
     /**
     private fun readFile(asset: Asset, file: File): List<PriceEntry> {
-        var errors = 0
-        var first = true
-        val result = mutableListOf<PriceEntry>()
-        file.forEachLine {
-            val fields = it.split(",")
-            if (first) {
-                config.detectColumns(fields)
-                first = false
-            } else {
-                try {
-                    val step = config.processLine(asset, fields)
-                    result += step
-                } catch (_: Throwable) {
-                    logger.fine { "${asset.symbol} $fields" }
-                    errors += 1
-                }
-            }
-        }
-        if (errors > 0) logger.info { "Skipped $errors lines due to errors in $file" }
-        config.priceValidate && !validateResult(result) && return emptyList()
-            return result
+    var errors = 0
+    var first = true
+    val result = mutableListOf<PriceEntry>()
+    file.forEachLine {
+    val fields = it.split(",")
+    if (first) {
+    config.detectColumns(fields)
+    first = false
+    } else {
+    try {
+    val step = config.processLine(asset, fields)
+    result += step
+    } catch (_: Throwable) {
+    logger.fine { "${asset.symbol} $fields" }
+    errors += 1
     }
-    */
-
+    }
+    }
+    if (errors > 0) logger.info { "Skipped $errors lines due to errors in $file" }
+    config.priceValidate && !validateResult(result) && return emptyList()
+    return result
+    }
+     */
 
     private fun readFile(asset: Asset, file: File): List<PriceEntry> {
         val reader = CsvReader.builder().skipEmptyRows(true).build(FileReader(file))
@@ -166,7 +160,6 @@ class CSVFeed(
         }
     }
 
-
     /**
      * Validate if the result for an asset has unusual movements in price.
      * This could be an indication of incorrect or corrupt historic data.
@@ -191,9 +184,7 @@ class CSVFeed(
         return true
     }
 
-
 }
-
 
 internal class PriceEntry(val time: Instant, val price: PriceAction) : Comparable<PriceEntry> {
 

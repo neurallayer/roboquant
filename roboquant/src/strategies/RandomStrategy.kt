@@ -20,7 +20,6 @@ import org.roboquant.common.Config
 import org.roboquant.feeds.Event
 import kotlin.random.Random
 
-
 /**
  * Strategy that randomly generates a BUY or SELL signal for the assets in the feed.
  * The configured probability is the likelihood to generate a signal. And after that,
@@ -29,7 +28,7 @@ import kotlin.random.Random
  * @property probability the likelihood to generate a signal, a value between 0.0 and 1.0
  * @constructor Create new Random strategy
  */
-class RandomStrategy(private val probability: Double = 0.05, private val random : Random = Config.random) : Strategy {
+class RandomStrategy(private val probability: Double = 0.05, private val random: Random = Config.random) : Strategy {
 
 
     init {

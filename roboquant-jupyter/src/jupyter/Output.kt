@@ -61,7 +61,6 @@ abstract class Output : Renderable {
             return Mode.CLASSIC
         }
 
-
         /**
          * Set the output to Jupyter Lab format.
          *
@@ -92,7 +91,6 @@ abstract class Output : Renderable {
         val f = File(filename)
         f.writeText(content)
     }
-
 
     /**
      * Generate an HTML snippet. Subclasses will need to implement this method. This is used in Jupyter-Lab environments

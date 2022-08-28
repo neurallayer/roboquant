@@ -29,7 +29,6 @@ import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import kotlin.test.assertEquals
 
-
 internal class XChangeLiveFeedTestIT {
 
     @Test
@@ -56,7 +55,6 @@ internal class XChangeLiveFeedTestIT {
         assertEquals(AssetType.CRYPTO, result.first().second.asset.type)
     }
 
-
     @Test
     fun xchangeFeedPollingIT() {
         System.getProperty("TEST_XCHANGE") ?: return
@@ -77,6 +75,5 @@ internal class XChangeLiveFeedTestIT {
         assertEquals(AssetType.CRYPTO, result.first().second.asset.type)
 
     }
-
 
 }

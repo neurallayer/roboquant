@@ -179,19 +179,18 @@ class AlpacaBroker(
         return Position(asset, size, pos.averageEntryPrice.toDouble(), pos.currentPrice.toDouble())
     }
 
-
-
     /**
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
     private fun syncTrades() {
         val now = ZonedDateTime.now()
         val trades = alpacaAPI.accountActivities().get(
-            now, null, null, SortDirection.ASCENDING, 100, "", ActivityType.FILL)
-        logger.fine { "Found ${trades.size} fill activities"}
+            now, null, null, SortDirection.ASCENDING, 100, "", ActivityType.FILL
+        )
+        logger.fine { "Found ${trades.size} fill activities" }
         for (activity in trades.filterIsInstance<TradeActivity>()) {
             // Only add trades we know the order id of
-            logger.fine { "Found trade $activity"}
+            logger.fine { "Found trade $activity" }
             val order = orderMapping.filterValues { it.id == activity.orderId }.keys.firstOrNull()
             if (order != null) {
                 if (activity.id !in handledTrades) {
@@ -237,6 +236,7 @@ class AlpacaBroker(
             is MarketOrder -> alpacaAPI.orders().requestMarketOrder(asset.symbol, qty, side, tif)
             is LimitOrder -> alpacaAPI.orders()
                 .requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, false)
+
             else -> {
                 throw UnsupportedException(
                     "Unsupported order type $order. Right now only Market and Limit orders are mapped"

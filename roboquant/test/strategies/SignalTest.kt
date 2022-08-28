@@ -16,7 +16,6 @@
 
 package org.roboquant.strategies
 
-
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Asset
 import kotlin.test.assertEquals
@@ -41,16 +40,13 @@ internal class SignalTest {
         assertTrue(s.probability.isNaN())
         assertEquals(s.rating, Rating.BUY)
 
-
         val s2 = Signal(c, Rating.SELL, takeProfit = 110.0)
         assertTrue(s2.conflicts(s))
         assertTrue(!s2.conflicts(s2))
-
 
         val s3 = Signal(c, Rating.SELL, SignalType.ENTRY)
         assertNotEquals(s3.type, SignalType.EXIT)
 
     }
-
 
 }

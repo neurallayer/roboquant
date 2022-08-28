@@ -16,7 +16,6 @@
 
 package org.roboquant.strategies
 
-
 import kotlin.test.*
 import org.roboquant.TestData
 
@@ -29,6 +28,5 @@ internal class NoSignalStrategyTest {
         val signals = strategy.generate(event)
         assertTrue(signals.isEmpty())
     }
-
 
 }

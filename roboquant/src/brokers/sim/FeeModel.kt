@@ -43,7 +43,6 @@ class PercentageFeeModel(
     private val feePercentage: Double = 0.0,
 ) : FeeModel {
 
-
     override fun calculate(execution: Execution): Double {
         return execution.value.absoluteValue * feePercentage
     }

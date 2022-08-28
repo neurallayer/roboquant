@@ -15,6 +15,7 @@
  */
 
 @file:Suppress("KotlinConstantConditions")
+
 package samples
 
 import org.knowm.xchange.ExchangeFactory
@@ -35,7 +36,6 @@ import org.roboquant.strategies.EMACrossover
 import org.roboquant.xchange.XChangePollingLiveFeed
 import kotlin.system.measureTimeMillis
 import kotlin.test.assertEquals
-
 
 fun recordBinanceFeed() {
     val feed = BinanceHistoricFeed()
@@ -76,8 +76,6 @@ fun readBianceFeed() {
     println(t)
 }
 
-
-
 fun xchangeFeed() {
 
     val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
@@ -99,9 +97,9 @@ fun xchangeFeed() {
 
 fun main() {
 
-    when("READ") {
+    when ("READ") {
         "RECORD" -> recordBinanceFeed()
         "READ" -> readBianceFeed()
-        "XCHANGE" -> xchangeFeed ()
+        "XCHANGE" -> xchangeFeed()
     }
 }

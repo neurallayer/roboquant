@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 @file:Suppress("TooManyFunctions")
+
 package org.roboquant.common
 
 import org.apache.commons.math3.stat.descriptive.moment.*
@@ -175,6 +176,7 @@ operator fun DoubleArray.plus(a: DoubleArray): DoubleArray {
 fun DoubleArray.max(): Double {
     return Max().evaluate(this)
 }
+
 /**
  * Return the min value from the array
  */
@@ -304,9 +306,6 @@ inline fun <T> Iterable<T>.sumOf(
     }
     return result
 }
-
-
-
 
 /*********************************************************************************************
  * Extensions on Integer type to make instantiation of periods or duration more convenient

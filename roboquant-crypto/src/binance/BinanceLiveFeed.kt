@@ -38,10 +38,11 @@ typealias Interval = CandlestickInterval
  * @constructor
  *
  */
-class BinanceLiveFeed(private val useMachineTime: Boolean = true,
-                      configure: BinanceConfig.() -> Unit = {}) :
+class BinanceLiveFeed(
+    private val useMachineTime: Boolean = true,
+    configure: BinanceConfig.() -> Unit = {}
+) :
     LiveFeed(), AssetFeed {
-
 
     private val subscriptions = mutableMapOf<String, Asset>()
     private val logger = Logging.getLogger(BinanceLiveFeed::class)
@@ -66,7 +67,6 @@ class BinanceLiveFeed(private val useMachineTime: Boolean = true,
         assetMap = BinanceConnection.retrieveAssets(factory.newRestClient())
         logger.fine { "Started BinanceFeed using web-socket client" }
     }
-
 
     /**
      * Subscribe to the [PriceBar] actions for one or more symbols
@@ -123,7 +123,6 @@ class BinanceLiveFeed(private val useMachineTime: Boolean = true,
         for (c in closeables) c.close()
         closeables.clear()
     }
-
 
 }
 

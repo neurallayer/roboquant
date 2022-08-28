@@ -31,13 +31,12 @@ import kotlinx.coroutines.delay
  */
 abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
 
-
     private var channel: EventChannel? = null
 
     /**
      * Subclasses should use this to send an event. If the channel is not active, it will be dropped.
      */
-    protected fun send(event : Event) = channel?.offer(event)
+    protected fun send(event: Event) = channel?.offer(event)
 
     val isActive
         get() = channel != null

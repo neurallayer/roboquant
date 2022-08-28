@@ -29,7 +29,6 @@ internal class TradeChartTest {
         assertTrue(chart.asHTML().isNotBlank())
     }
 
-
     @Test
     fun test2() {
         val account = TestData.usAccount()

@@ -37,8 +37,8 @@ data class PolygonConfig(
 )
 
 /**
-* Historic data feed using market data from Polygon.io
-*/
+ * Historic data feed using market data from Polygon.io
+ */
 class PolygonHistoricFeed(
     configure: PolygonConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
@@ -55,7 +55,7 @@ class PolygonHistoricFeed(
     /**
      * Retrieve [PriceBar] data for the provided [symbol]
      */
-    fun retrieve(symbol: String, tf: Timeframe, multiplier:Int = 1, timespan: String = "day", limit: Int = 5000) {
+    fun retrieve(symbol: String, tf: Timeframe, multiplier: Int = 1, timespan: String = "day", limit: Int = 5000) {
         val aggr = client.getAggregatesBlocking(
             AggregatesParameters(
                 symbol,

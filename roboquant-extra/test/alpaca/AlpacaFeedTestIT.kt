@@ -46,7 +46,6 @@ internal class AlpacaFeedTestIT {
         }
     }
 
-
     @Test
     fun test2() {
         System.getProperty("TEST_ALPACA") ?: return
@@ -66,7 +65,7 @@ internal class AlpacaFeedTestIT {
     fun test4() {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
-        val asset  = feed.availableAssets.first { it.type == AssetType.CRYPTO }
+        val asset = feed.availableAssets.first { it.type == AssetType.CRYPTO }
         feed.subscribeCrypto(listOf(asset))
         val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
         feed.close()
@@ -132,7 +131,8 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
-        feed.retrieve("AAPL",
+        feed.retrieve(
+            "AAPL",
             timeframe = tf,
             barSize = 5.minutes
         )

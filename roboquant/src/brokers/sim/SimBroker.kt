@@ -170,7 +170,6 @@ class SimBroker(
         return place(orders, event)
     }
 
-
     override fun reset() {
         _account.clear()
         executionEngine.clear()

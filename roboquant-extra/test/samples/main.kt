@@ -67,7 +67,6 @@ fun feedYahoo() {
     logger.summary(10)
 }
 
-
 fun feedPolygon() {
     val feed = PolygonHistoricFeed()
     val tf = Timeframe.fromYears(2021, 2022)
@@ -84,7 +83,6 @@ fun feedPolygon() {
     account.summary().log()
     account.portfolio.summary().log()
 }
-
 
 fun main() {
     when ("POLYGON") {

@@ -61,7 +61,6 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 
 }
 
-
 /**
  * Account model that supports trading with margin. The buying power calculation uses the following formula:
  *
@@ -98,7 +97,7 @@ class MarginAccount(
 
     override fun getBuyingPower(account: InternalAccount): Amount {
         val excessMargin = account.cash + account.portfolio.marketValue
-        
+
         val positions = account.portfolio.values
         excessMargin.withdraw(positions.long.exposure * maintenanceMarginLong)
         excessMargin.withdraw(positions.short.exposure * maintenanceMarginShort)

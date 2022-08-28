@@ -52,7 +52,6 @@ class HistoricTestFeed(
         }
     }
 
-
     private fun getAction(asset: Asset, price: Double): PriceAction {
         return if (priceBar) {
             PriceBar(asset, price, price * 1.001, price * 0.999, price, volume)

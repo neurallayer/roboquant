@@ -16,7 +16,6 @@
 
 package org.roboquant.strategies
 
-
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
@@ -49,6 +48,5 @@ internal class CombinedAssetStrategyTest {
         roboquant.run(feed)
         assertTrue(logger.events > 1)
     }
-
 
 }

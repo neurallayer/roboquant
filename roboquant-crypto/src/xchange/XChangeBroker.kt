@@ -70,7 +70,6 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
         }
     }
 
-
     /**
      * Place orders on a XChange supported exchange using the trade service.
      * @TODO test with a real account on several XChange supported exchanges
@@ -96,11 +95,13 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
                         placedOrders[orderId] = order
                         _account.acceptOrder(order, event.time)
                     }
+
                     is MarketOrder -> {
                         trade(currencyPair, order)
                         placedOrders[orderId] = order
                         _account.acceptOrder(order, event.time)
                     }
+
                     else -> {
                         logger.warning {
                             "only market and limit orders are supported, received ${order::class} instead"
@@ -118,7 +119,6 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
         return account
     }
 
-
     /**
      * Place a limit order for a currency pair
      *
@@ -132,7 +132,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
         val limitPrice = BigDecimal(order.limit)
         val limitOrder = CryptoLimitOrder(orderType, amount, currencyPair, orderId, null, limitPrice)
         val returnValue = tradeService.placeLimitOrder(limitOrder)
-        logger.fine {"Limit Order return value: $returnValue"}
+        logger.fine { "Limit Order return value: $returnValue" }
     }
 
     /**

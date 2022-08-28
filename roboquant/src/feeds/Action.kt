@@ -363,6 +363,7 @@ data class OrderBook(
                 val bidVolume = bids.volume()
                 (asks.min() * askVolume + bids.max() * bidVolume) / (askVolume + bidVolume)
             }
+
             else -> (asks.min() + bids.max()) / 2.0
         }
     }

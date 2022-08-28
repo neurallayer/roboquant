@@ -23,7 +23,6 @@ import kotlin.test.Test
 
 internal class OANDABrokerTestIT {
 
-
     @Test
     fun test() {
         Config.getProperty("FULL_COVERAGE") ?: return

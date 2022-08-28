@@ -62,7 +62,6 @@ class CircuitBreaker(val policy: Policy, private val maxOrders: Int, private val
         }
     }
 
-
     override fun reset() {
         history.clear()
         policy.reset()

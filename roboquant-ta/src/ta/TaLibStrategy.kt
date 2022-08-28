@@ -46,7 +46,6 @@ class TaLibStrategy(history: Int = 15) : Strategy {
     private val logger: Logger = Logging.getLogger(TaLibStrategy::class)
     val taLib = TaLib()
 
-
     companion object {
 
         /**
@@ -122,7 +121,7 @@ class TaLibStrategy(history: Int = 15) : Strategy {
          * @param bips the margin in Bips
          * @return
          */
-        fun vwap(period: Int, bips: Int = 100) : TaLibStrategy {
+        fun vwap(period: Int, bips: Int = 100): TaLibStrategy {
             val percentage = bips / 10_000.0
             val strategy = TaLibStrategy(period)
             strategy.buy { vwap(it, period) > it.close.last() * (1.0 + percentage) }

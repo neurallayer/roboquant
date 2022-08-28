@@ -23,7 +23,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
-
 internal class TrailLimitOrderTest {
 
     @Test
@@ -39,7 +38,6 @@ internal class TrailLimitOrderTest {
 
     }
 
-
     @Test
     fun testTrailLimitOrder() {
         val asset = TestData.usStock()
@@ -48,6 +46,5 @@ internal class TrailLimitOrderTest {
         assertEquals(-1.0, order.limitOffset)
         assertTrue(order.toString().isNotBlank())
     }
-
 
 }

@@ -29,8 +29,6 @@ internal class ActionTest {
         assertEquals("SPLIT", action.type)
     }
 
-
-
     @Test
     fun newsAction() {
         val item = NewsAction.NewsItem("Some text", mapOf("source" to "TWITTER"))

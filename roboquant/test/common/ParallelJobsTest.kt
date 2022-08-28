@@ -37,7 +37,7 @@ internal class ParallelJobsTest {
     }
 
     @Test
-    fun joinBlocking()  {
+    fun joinBlocking() {
         val jobs = ParallelJobs()
         for (i in 1..3) jobs.add { test() }
         jobs.joinAllBlocking()

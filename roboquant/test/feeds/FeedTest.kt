@@ -55,7 +55,6 @@ internal class FeedTest {
         assertContains(feed.assets, Asset("AAB"))
     }
 
-
     @Test
     fun filter() {
         val feed = TestData.feed()
@@ -65,6 +64,5 @@ internal class FeedTest {
             }
         }
     }
-
 
 }

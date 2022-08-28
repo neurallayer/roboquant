@@ -39,7 +39,7 @@ open class OrderState(
     val status: OrderStatus = INITIAL,
     val openedAt: Instant = Instant.MIN,
     val closedAt: Instant = Instant.MAX
-)  {
+) {
 
     /**
      * Returns true the order status is open, false otherwise
@@ -68,7 +68,7 @@ open class OrderState(
     /**
      * Update the [time] and [newStatus] of and return the new order state.
      */
-    fun copy(time: Instant, newStatus: OrderStatus = ACCEPTED) : OrderState {
+    fun copy(time: Instant, newStatus: OrderStatus = ACCEPTED): OrderState {
         return if (newStatus === ACCEPTED && status === INITIAL) {
             OrderState(order, newStatus, time)
         } else if (newStatus.closed && status.open) {
@@ -79,11 +79,7 @@ open class OrderState(
         }
     }
 
-
-
 }
-
-
 
 /**
  * The status an order can be in. The  flow is straight forward:
@@ -146,12 +142,10 @@ enum class OrderStatus {
     val closed: Boolean
         get() = this === COMPLETED || this === CANCELLED || this === EXPIRED || this === REJECTED
 
-
     /**
      * Returns true if the order in an open state, so [INITIAL] or [ACCEPTED]
      */
     val open: Boolean
         get() = this === INITIAL || this === ACCEPTED
-
 
 }

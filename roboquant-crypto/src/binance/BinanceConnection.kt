@@ -33,7 +33,6 @@ internal object BinanceConnection {
         else BinanceApiClientFactory.newInstance(config.publicKey, config.secretKey)
     }
 
-
     /**
      * get available assets
      */

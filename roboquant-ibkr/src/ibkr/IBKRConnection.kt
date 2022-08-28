@@ -35,7 +35,6 @@ data class IBKRConfig(
     var client: Int = Config.getProperty("ibkr.client", "2").toInt()
 )
 
-
 /**
  * Shared utilities for both IBKR Broker Feed classes
  */
@@ -46,7 +45,6 @@ internal object IBKRConnection {
 
     // Holds mapping between IBKR contract ids and assets.
     val assetMap = ConcurrentHashMap<Int, Asset>()
-
 
     fun disconnect(client: EClientSocket) {
         try {

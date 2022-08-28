@@ -16,7 +16,6 @@
 
 package org.roboquant.strategies.utils
 
-
 import kotlin.test.*
 
 internal class MovingWindowTest {

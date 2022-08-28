@@ -51,7 +51,6 @@ open class MovingWindow(private val windowSize: Int) {
         return counter > windowSize
     }
 
-
     /**
      * Return the stored values a DoubleArray. If this is called before the buffer is completely filled, it will
      * contain Double.NaN values for the missing values.
@@ -77,6 +76,5 @@ open class MovingWindow(private val windowSize: Int) {
         counter = 0L
         Arrays.fill(buffer, Double.NaN)
     }
-
 
 }

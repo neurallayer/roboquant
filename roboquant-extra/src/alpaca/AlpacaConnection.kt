@@ -43,7 +43,7 @@ data class AlpacaConfig(
 ) {
 
     init {
-        require(accountType == AccountType.PAPER) { "Only Paper trading supported, received $accountType"}
+        require(accountType == AccountType.PAPER) { "Only Paper trading supported, received $accountType" }
     }
 
 }

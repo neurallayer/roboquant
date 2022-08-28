@@ -16,7 +16,6 @@
 
 package org.roboquant.metrics
 
-
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.RunPhase
 import org.roboquant.TestData
@@ -24,8 +23,6 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class MetricSchedulerTest {
-
-
 
     @Test
     fun test() {
@@ -50,7 +47,6 @@ internal class MetricSchedulerTest {
         metric = MetricScheduler(MetricScheduler.dailyAt(16), pm)
         result = metric.calculate(account, event)
         assertTrue(result.isEmpty())
-
 
     }
 }

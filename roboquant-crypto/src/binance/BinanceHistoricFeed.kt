@@ -46,10 +46,8 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
         assetMap = BinanceConnection.retrieveAssets(client)
     }
 
-
     val availableAssets
         get() = assetMap.values
-
 
     /**
      * Retrieve [PriceBar] data for the provides [symbols]. It will retrieve the data for the provided [timeframe],
@@ -67,7 +65,7 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
         for (symbol in symbols) {
             val finalSymbol = symbol.replace("/", "")
             val asset = assetMap[finalSymbol]
-            if (asset != null ) {
+            if (asset != null) {
                 val bars = client.getCandlestickBars(finalSymbol, interval, limit, startTime, endTime)
                 for (bar in bars) {
                     val action = PriceBar(
@@ -83,12 +81,11 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
                 }
                 logger.fine { "Retrieved $asset for $timeframe" }
             } else {
-                logger.warning{ "$symbol not found" }
+                logger.warning { "$symbol not found" }
             }
 
         }
     }
 
-    
 }
 

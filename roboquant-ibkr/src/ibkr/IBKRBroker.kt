@@ -65,7 +65,7 @@ class IBKRBroker(
 
     init {
         config.configure()
-        require(config.account.isBlank() || config.account.startsWith('D')) {"only paper trading is supported"}
+        require(config.account.isBlank() || config.account.startsWith('D')) { "only paper trading is supported" }
         accountId = config.account.ifBlank { null }
         val wrapper = Wrapper(logger)
         client = IBKRConnection.connect(wrapper, config)
@@ -138,9 +138,11 @@ class IBKRBroker(
             is LimitOrder -> {
                 result.orderType("LMT"); result.lmtPrice(order.limit)
             }
+
             is StopOrder -> {
                 result.orderType("STP"); result.lmtPrice(order.stop)
             }
+
             else -> {
                 throw UnsupportedException("unsupported order type $order")
             }
@@ -293,7 +295,6 @@ class IBKRBroker(
             logger.fine("accountDownloadEnd $p0")
         }
 
-
         override fun updateAccountValue(key: String, value: String, currency: String?, accountName: String?) {
             logger.fine { "updateAccountValue $key $value $currency $accountName" }
 
@@ -307,6 +308,7 @@ class IBKRBroker(
                         _account.baseCurrency = Currency.getInstance(currency)
                         _account.buyingPower = Amount(account.baseCurrency, value.toDouble())
                     }
+
                     "CashBalance" -> _account.cash.set(Currency.getInstance(currency), value.toDouble())
                 }
             }
@@ -329,7 +331,6 @@ class IBKRBroker(
             val p = Position(asset, size, averageCost, marketPrice, Instant.now())
             _account.setPosition(p)
         }
-
 
         override fun updateAccountTime(timeStamp: String) {
             logger.fine(timeStamp)

@@ -186,7 +186,6 @@ class Roboquant(
         kotlinLogger.fine { "Finished run $runInfo" }
     }
 
-
     /**
      * Take a single step in the timeline. The broker is always invoked before the strategy and policy to ensure it is
      * impossible to look ahead in the future. So the loop really is:
@@ -234,7 +233,6 @@ class Roboquant(
 
 }
 
-
 /**
  * Run related info provided to metrics loggers together with the metric results.
  *
@@ -260,7 +258,6 @@ data class RunInfo internal constructor(
      */
     val duration: Duration
         get() = Duration.between(timeframe.start, time)
-
 
 }
 

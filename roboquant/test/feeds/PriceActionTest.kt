@@ -16,13 +16,11 @@
 
 package org.roboquant.feeds
 
-
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-
 
 internal class PriceActionTest {
 
@@ -51,9 +49,7 @@ internal class PriceActionTest {
         assertTrue(event.asks.isEmpty())
         assertTrue(event.bids.isEmpty())
 
-
     }
-
 
     @Test
     fun priceBar() {
@@ -105,7 +101,6 @@ internal class PriceActionTest {
         val r = p * 2.0
         assertEquals(20.0, r.getPrice())
     }
-
 
     @Test
     fun testOrderBook() {

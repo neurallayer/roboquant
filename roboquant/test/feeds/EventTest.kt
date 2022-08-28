@@ -23,7 +23,6 @@ import kotlin.test.assertTrue
 
 internal class EventTest {
 
-
     @Test
     fun basic() {
         val now = Instant.now()

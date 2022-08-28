@@ -129,6 +129,7 @@ fun main() {
         "LARGE" -> {
             large("daily"); large("hourly"); large("5 min")
         }
+
         "5YEAR_SP500" -> fiveYear_sp500()
         "SMALL" -> {
             small("daily"); small("hourly"); small("5 min")

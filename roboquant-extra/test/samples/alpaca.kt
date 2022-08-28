@@ -64,7 +64,6 @@ fun allAlpaca() {
     roboquant.broker.account.summary().log()
 }
 
-
 fun alpacaConnection() {
     val config = AlpacaConfig()
     val api = AlpacaConnection.getAPI(config)

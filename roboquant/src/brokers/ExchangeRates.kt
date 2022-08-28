@@ -47,7 +47,7 @@ interface ExchangeRates {
      */
     fun convert(amount: Amount, to: Currency, time: Instant): Amount {
         val rate = getRate(amount, to, time)
-        return Amount(to, amount.value * rate )
+        return Amount(to, amount.value * rate)
     }
 
 }

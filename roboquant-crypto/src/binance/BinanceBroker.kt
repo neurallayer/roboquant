@@ -55,7 +55,6 @@ class BinanceBroker(
     override val account: Account
         get() = _account.toAccount()
 
-
     private val logger = Logging.getLogger(BinanceBroker::class)
     private val placedOrders = mutableMapOf<Long, OrderState>()
     private var orderId = 0
@@ -118,10 +117,12 @@ class BinanceBroker(
                         val newLimitOrder = trade(symbol, order)
                         placedOrders[newLimitOrder.orderId] = OrderState(order)
                     }
+
                     is MarketOrder -> {
                         val newMarketOrder = trade(symbol, order)
                         placedOrders[newMarketOrder.orderId] = OrderState(order)
                     }
+
                     else -> logger.warning {
                         "supports only cancellation, market and limit orders, received ${order::class} instead"
                     }

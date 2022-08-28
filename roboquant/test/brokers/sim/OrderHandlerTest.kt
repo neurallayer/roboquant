@@ -46,7 +46,6 @@ internal class OrderHandlerTest {
         }
     }
 
-
     @Test
     fun testStopOrder() {
         val order = StopOrder(asset, Size(-10), 99.0)
@@ -68,7 +67,6 @@ internal class OrderHandlerTest {
         executions = cmd.execute(pricing(98), Instant.now())
         assertEquals(1, executions.size)
     }
-
 
     @Test
     fun testStopLimitOrder() {
@@ -115,6 +113,5 @@ internal class OrderHandlerTest {
         executions = cmd.execute(pricing(99), Instant.now())
         assertEquals(1, executions.size)
     }
-
 
 }

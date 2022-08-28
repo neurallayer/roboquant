@@ -33,7 +33,7 @@ import pl.zankowski.iextrading4j.client.IEXTradingClient
 data class IEXConfig(
     var publicKey: String = Config.getProperty("iex.public.key", ""),
     var secretKey: String = Config.getProperty("iex.secret.key", ""),
-    var sandbox:  Boolean = true,
+    var sandbox: Boolean = true,
 )
 
 internal object IEXConnection {

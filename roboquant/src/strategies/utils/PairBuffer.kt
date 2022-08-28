@@ -19,7 +19,6 @@ package org.roboquant.strategies.utils
 import org.apache.commons.math3.stat.correlation.Covariance
 import org.apache.commons.math3.stat.descriptive.moment.Variance
 
-
 class PairBuffer(size: Int, usePercentage: Boolean = true) {
 
     private val buffer1 = if (usePercentage) PercentageMovingWindow(size) else MovingWindow(size)
@@ -51,7 +50,6 @@ class PairBuffer(size: Int, usePercentage: Boolean = true) {
         val c = Covariance().covariance(data1, data2)
         return c / Variance().evaluate(data1)
     }
-
 
     /**
      * Clear the buffer

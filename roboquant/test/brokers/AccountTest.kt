@@ -25,7 +25,6 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-
 internal class AccountTest {
 
     @Test
@@ -79,8 +78,5 @@ internal class AccountTest {
         assertContains(account.portfolio.keys, account.assets.first())
 
     }
-
-
-
 
 }

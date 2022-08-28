@@ -65,8 +65,8 @@ open class DefaultPolicy(
     }
 
     private fun reducedBuyingPower(account: Account, asset: Asset, size: Size, price: Double): Double {
-        val cost =  asset.value(size, price).absoluteValue
-        val baseCurrencyCost =  account.convert(cost)
+        val cost = asset.value(size, price).absoluteValue
+        val baseCurrencyCost = account.convert(cost)
         return baseCurrencyCost.value
     }
 
@@ -76,7 +76,7 @@ open class DefaultPolicy(
 
         if (position.long && signal.exit) return Pair(createOrder(signal, -position.size, price), 0.0)
         if (position.long) return noOrder
-        if (! signal.entry) return noOrder
+        if (!signal.entry) return noOrder
 
         if (!shorting) return noOrder
         if (position.short && !increasePosition) return noOrder
@@ -93,10 +93,10 @@ open class DefaultPolicy(
     private fun createBuyOrder(account: Account, signal: Signal, price: Double, amount: Double): Pair<Order?, Double> {
         val position = account.portfolio.getValue(signal.asset)
         if (position.long && !increasePosition) return noOrder
-        if (position.short && ! signal.exit) return noOrder
+        if (position.short && !signal.exit) return noOrder
 
         if (position.short) return Pair(createOrder(signal, -position.size, price), 0.0)
-        if (! signal.entry) return noOrder
+        if (!signal.entry) return noOrder
 
         val volume = Size(floor(calcVolume(amount, signal.asset, price, account)).toInt())
         if (volume <= 0.0) return noOrder
@@ -105,7 +105,6 @@ open class DefaultPolicy(
         val order = createOrder(signal, volume, price)
         return Pair(order, bp)
     }
-
 
     /**
      * Create a new order based on the [signal], [size] and current [price]. Overwrite this method if you want to
@@ -137,14 +136,14 @@ open class DefaultPolicy(
                 if (signal.rating.isNegative) {
                     val (order, cost) = createSellOrder(account, signal, price, amount)
                     if (order != null) {
-                        logger.fine {"sell $amount $cost $order" }
+                        logger.fine { "sell $amount $cost $order" }
                         orders.add(order)
                         buyingPower -= cost
                     }
                 } else if (signal.rating.isPositive) {
                     val (order, cost) = createBuyOrder(account, signal, price, amount)
                     if (order != null) {
-                        logger.fine {"buy $amount $cost $order" }
+                        logger.fine { "buy $amount $cost $order" }
                         orders.add(order)
                         buyingPower -= cost
                     }

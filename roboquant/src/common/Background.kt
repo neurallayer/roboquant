@@ -20,7 +20,6 @@ package org.roboquant.common
 
 import kotlinx.coroutines.*
 
-
 /**
  * Background object helps to deal with starting and running co-routines. Right now very light implementation, but
  * in future features can be added without impacting rest of code. This is used only internally.
@@ -43,6 +42,5 @@ internal object Background {
     fun <T> async(block: suspend CoroutineScope.() -> T): Deferred<T> {
         return IOBoundScope.async(block = block)
     }
-
 
 }

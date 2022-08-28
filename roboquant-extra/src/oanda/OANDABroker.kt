@@ -74,7 +74,6 @@ class OANDABroker(
         initAccount()
     }
 
-
     private fun getPosition(symbol: String, p: PositionSide): Position {
         val asset = availableAssetsMap[symbol]!!
         val qty = p.units.bigDecimalValue()
@@ -129,11 +128,10 @@ class OANDABroker(
 
         _account.cash.clear()
         _account.cash.set(_account.baseCurrency, cashValue)
-        
+
         _account.buyingPower = Amount(_account.baseCurrency, acc.marginAvailable.doubleValue() * maxLeverage)
         _account.lastUpdate = Instant.now()
     }
-
 
     /**
      * Process a transaction/trade and update account accordingly
@@ -207,6 +205,7 @@ class OANDABroker(
                         event.time,
                         event.time
                     )
+
                     else -> OrderState(order, OrderStatus.REJECTED, event.time, event.time)
                 }
                 logger.fine { "Received order cancellation for $order with reason ${trx.reason}" }

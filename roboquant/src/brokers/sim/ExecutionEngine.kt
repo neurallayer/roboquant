@@ -108,7 +108,6 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
 
     }
 
-
     // Return the trade-handlers
     private val tradeHandlers = LinkedList<TradeOrderHandler>()
 
@@ -118,7 +117,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
     /**
      * Get the open order handlers
      */
-    private fun <T: OrderHandler>List<T>.open() = filter { it.status.open }
+    private fun <T : OrderHandler> List<T>.open() = filter { it.status.open }
 
     /**
      * Remove all handlers of closed orders
@@ -127,7 +126,6 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
         tradeHandlers.removeIf { it.state.status.closed }
         modifyHandlers.removeIf { it.state.status.closed }
     }
-
 
     /**
      * Return the order states of all handlers
@@ -150,7 +148,6 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
         }
 
     }
-
 
     // Add a new order to the execution engine
     fun addAll(orders: List<Order>) {

@@ -25,7 +25,6 @@ import java.time.Instant
  */
 typealias Timeline = List<Instant>
 
-
 /**
  * Return the index of the time that is closets to the provided time but doesn't exceed it. So it is the most recent
  * time but without looking into the future.

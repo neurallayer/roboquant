@@ -70,7 +70,6 @@ class PriceBarSeries(val asset: Asset, windowSize: Int) {
     val typical
         get() = (highSeries.toDoubleArray() + lowSeries.toDoubleArray() + closeSeries.toDoubleArray()) / 3.0
 
-
     /**
      * Update the buffer with a new [priceBar]
      */
@@ -140,7 +139,7 @@ class MultiAssetPriceBarSeries(private val history: Int) {
      *
      * @param asset
      */
-    fun getSeries(asset: Asset) : PriceBarSeries = data.getValue(asset)
+    fun getSeries(asset: Asset): PriceBarSeries = data.getValue(asset)
 
     /**
      * Clear all captured prices

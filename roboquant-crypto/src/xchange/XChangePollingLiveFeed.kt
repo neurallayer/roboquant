@@ -59,7 +59,6 @@ class XChangePollingLiveFeed(
         }
     }
 
-
     private val assetsMap = mutableMapOf<String, Asset>()
 
     /**
@@ -67,7 +66,6 @@ class XChangePollingLiveFeed(
      */
     val assets
         get() = assetsMap.values
-
 
     /**
      * Subscribe to live trade updates from the exchange. The resulting actions will be of the
@@ -78,7 +76,7 @@ class XChangePollingLiveFeed(
 
         jobs.add {
             var done = false
-            while(! done) {
+            while (!done) {
                 for (symbol in symbols) {
                     val currencyPair = symbol.toCurrencyPair()!!
                     val cryptoPair = CurrencyPair(currencyPair.first.currencyCode, currencyPair.second.currencyCode)
@@ -94,7 +92,7 @@ class XChangePollingLiveFeed(
 
                 }
                 delay(pollingDelayMillis.toLong())
-                done = ! isActive
+                done = !isActive
             }
         }
     }
@@ -110,7 +108,5 @@ class XChangePollingLiveFeed(
         val currencyPair = symbol.toCurrencyPair()!!
         return Asset(symbol, AssetType.CRYPTO, currencyPair.second.currencyCode, exchangeName)
     }
-
-
 
 }

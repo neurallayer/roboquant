@@ -20,7 +20,6 @@ import org.roboquant.brokers.Account
 import org.roboquant.common.*
 import org.roboquant.metrics.MetricResults
 
-
 /**
  * Contains a number of utility methods that are useful when implementing a new policy. For example
  * how to deal with conflicting signals or how to handle amounts in a multi-currency environment. It also contains
@@ -49,7 +48,6 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
         metrics.clear()
         return result
     }
-
 
     override fun reset() {
         metrics.clear()
@@ -89,7 +87,6 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
         val availableAssetCash = Amount(account.baseCurrency, freeAmount).convert(asset.currency, account.lastUpdate)
         return availableAssetCash.value / singleContractCost
     }
-
 
     /**
      * Get the potential open positions if the open orders would be processed. Open orders that reduce position size

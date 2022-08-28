@@ -16,7 +16,6 @@
 
 package org.roboquant.orders
 
-
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Size
@@ -35,6 +34,5 @@ internal class UpdateOrderTest {
         assertEquals(original, order.original)
         assertTrue(order.toString().isNotBlank())
     }
-
 
 }

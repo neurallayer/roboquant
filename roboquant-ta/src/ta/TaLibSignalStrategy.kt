@@ -51,7 +51,6 @@ class TaLibSignalStrategy(
     private val logger: Logger = Logging.getLogger(TaLibSignalStrategy::class)
     val taLib = TaLib()
 
-
     companion object {
 
         fun breakout(entryPeriod: Int = 100, exitPeriod: Int = 50): TaLibSignalStrategy {
@@ -68,9 +67,7 @@ class TaLibSignalStrategy(
 
         }
 
-
     }
-
 
     /**
      * Based on a [event], return zero or more signals. Typically, they are for the assets in the event,
@@ -103,7 +100,6 @@ class TaLibSignalStrategy(
     override fun reset() {
         buffers.clear()
     }
-
 
     override fun toString() = "TaLibSignalStrategy history=$history"
 

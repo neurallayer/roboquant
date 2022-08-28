@@ -94,7 +94,6 @@ internal class IBKRExchangeRates(
             }
         }
 
-
     }
 }
 

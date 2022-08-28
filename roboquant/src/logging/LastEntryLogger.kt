@@ -59,13 +59,11 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
         progressBar.reset()
     }
 
-
     /**
      * Get the unique list of metric names that have been captured
      */
-    override val metricNames : List<String>
+    override val metricNames: List<String>
         get() = history.map { it.key.third }.distinct().sorted()
-
 
     /**
      * Get results for the metric specified by its [name].

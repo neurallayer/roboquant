@@ -16,7 +16,6 @@
 
 package org.roboquant.orders
 
-
 import org.roboquant.TestData
 import org.roboquant.common.Size
 import kotlin.test.Test
@@ -42,8 +41,6 @@ internal class SingleOrderTest {
         assertEquals("test", order.tag)
     }
 
-
-
     @Test
     fun testStopOrder() {
         val asset = TestData.usStock()
@@ -63,7 +60,6 @@ internal class SingleOrderTest {
         assertTrue(order.sell)
         assertTrue(order.toString().isNotBlank())
     }
-
 
     @Test
     fun testStopLimitOrder() {

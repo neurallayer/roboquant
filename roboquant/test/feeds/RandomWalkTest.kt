@@ -56,7 +56,6 @@ internal class RandomWalkTest {
         assertTrue(item2.actions[0] is PriceBar)
     }
 
-
     @Test
     fun historic() {
         val feed = RandomWalk.lastYears()
@@ -76,7 +75,6 @@ internal class RandomWalkTest {
         val tf = feed.split(100)
         assertTrue(tf.isNotEmpty())
     }
-
 
     @Test
     fun filter() {

@@ -61,7 +61,6 @@ class TaLibMetric(
         return metrics
     }
 
-
     override fun reset() {
         super.reset()
         buffers.clear()

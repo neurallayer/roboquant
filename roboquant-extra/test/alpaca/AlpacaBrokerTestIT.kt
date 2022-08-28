@@ -16,7 +16,6 @@
 
 package org.roboquant.alpaca
 
-
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.brokers.summary
 import org.roboquant.common.Config
@@ -28,7 +27,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class AlpacaBrokerTestIT {
-
 
     @Test
     fun test() {

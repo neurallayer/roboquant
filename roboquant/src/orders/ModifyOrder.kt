@@ -16,7 +16,6 @@
 
 package org.roboquant.orders
 
-
 /**
  * Update an existing SimpleOrder. It is up to the broker implementation to translate the updated order to the correct
  * message, so it can be processed.
@@ -36,8 +35,8 @@ class UpdateOrder(
 ) : Order(original.order.asset, id, tag) {
 
     init {
-        require(original.order::class == update::class) { "update orders cannot change order type"}
-        require(original.status.open) { "Only open orders can be updated"}
+        require(original.order::class == update::class) { "update orders cannot change order type" }
+        require(original.status.open) { "Only open orders can be updated" }
     }
 
     override fun info() = update.info()
@@ -56,7 +55,7 @@ class CancelOrder(
 ) : Order(order.order.asset, id, tag) {
 
     init {
-        require(order.status.open) { "Only open orders can be cancelled"}
+        require(order.status.open) { "Only open orders can be cancelled" }
     }
 
     override fun info() = order.order.info()

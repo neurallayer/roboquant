@@ -43,8 +43,9 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
         /**
          * Generate the next order id
          */
-        @Synchronized fun nextId(): Int {
-                return ID++
+        @Synchronized
+        fun nextId(): Int {
+            return ID++
         }
     }
 
@@ -63,7 +64,7 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
      *
      * @return
      */
-    open fun info() : Map<String, Any> = emptyMap()
+    open fun info(): Map<String, Any> = emptyMap()
 
 }
 

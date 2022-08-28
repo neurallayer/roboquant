@@ -184,6 +184,7 @@ class AlpacaLiveFeed(
                     msg.bidPrice,
                     Double.NaN
                 )
+
                 is BarMessage -> PriceBar(
                     assetsMap[msg.symbol]!!,
                     msg.open,
@@ -192,9 +193,11 @@ class AlpacaLiveFeed(
                     msg.close,
                     msg.tradeCount.toDouble()
                 )
+
                 is SuccessMessage -> {
                     logger.fine(msg.message); null
                 }
+
                 else -> {
                     logger.warning("Unexpected msg $msg"); null
                 }

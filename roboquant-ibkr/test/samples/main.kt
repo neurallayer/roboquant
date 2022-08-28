@@ -52,7 +52,6 @@ fun broker() {
     broker.disconnect()
 }
 
-
 fun closePosition() {
     Logging.setLevel(Level.FINE)
     Logging.useSimpleFormat = false
@@ -68,8 +67,6 @@ fun closePosition() {
     account.fullSummary().print()
     broker.disconnect()
 }
-
-
 
 fun showAccount() {
 
@@ -88,7 +85,6 @@ fun showAccount() {
     // Disconnect
     broker.disconnect()
 }
-
 
 fun paperTrade(minutes: Int = 10) {
 
@@ -110,7 +106,6 @@ fun paperTrade(minutes: Int = 10) {
     feed.disconnect()
 }
 
-
 fun liveFeedEU() {
     val feed = IBKRLiveFeed()
     val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
@@ -120,8 +115,6 @@ fun liveFeedEU() {
     println(data.size)
     feed.disconnect()
 }
-
-
 
 fun liveFeedUS() {
     val feed = IBKRLiveFeed()
@@ -133,7 +126,6 @@ fun liveFeedUS() {
     feed.disconnect()
 }
 
-
 fun historicFeed() {
     val feed = IBKRHistoricFeed()
 
@@ -143,10 +135,9 @@ fun historicFeed() {
     val assets = symbols.map { template.copy(symbol = it) }
     feed.retrieve(assets)
     feed.waitTillRetrieved()
-    println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets" )
+    println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
     feed.disconnect()
 }
-
 
 fun historicFeed2() {
     val feed = IBKRHistoricFeed()
@@ -157,7 +148,7 @@ fun historicFeed2() {
     val assets = symbols.map { template.copy(symbol = it) }
     feed.retrieve(assets, duration = "2 D", barSize = "30 mins")
     feed.waitTillRetrieved()
-    println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets" )
+    println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
     feed.disconnect()
 }
 

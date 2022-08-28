@@ -16,7 +16,6 @@
 
 package org.roboquant.brokers
 
-
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
@@ -25,7 +24,6 @@ import org.roboquant.common.USD
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
-
 
 internal class SingleCurrencyOnlyTest {
 
@@ -45,6 +43,5 @@ internal class SingleCurrencyOnlyTest {
             currencyConverter.getRate(amount1, EUR, now)
         }
     }
-
 
 }

@@ -29,8 +29,6 @@ import kotlin.test.assertEquals
 
 internal class TIFTest {
 
-
-
     class MySingleOrderHandler(order: MarketOrder) : SingleOrderHandler<MarketOrder>(order) {
         var fillPercentage: Double = 1.0
 
@@ -85,7 +83,6 @@ internal class TIFTest {
         assertEquals(OrderStatus.EXPIRED, cmd.status)
     }
 
-
     @Test
     fun testFOK() {
         var cmd = getOrderCommand(FOK(), 1.0)
@@ -97,7 +94,6 @@ internal class TIFTest {
         assertEquals(OrderStatus.EXPIRED, cmd.status)
 
     }
-
 
     @Test
     fun testGTD() {
@@ -118,7 +114,6 @@ internal class TIFTest {
 
     }
 
-
     @Test
     fun testIOC() {
         var cmd = getOrderCommand(IOC(), 1.0)
@@ -133,6 +128,5 @@ internal class TIFTest {
         assertEquals(OrderStatus.EXPIRED, cmd.status)
 
     }
-
 
 }

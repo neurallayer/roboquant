@@ -27,7 +27,6 @@ import kotlin.test.assertTrue
 
 internal class TimelineTest {
 
-
     @Test
     fun beforeAfter() {
         val timeline = Timeframe.fromYears(1995, 2000).toTimeline(1.days)
@@ -74,6 +73,5 @@ internal class TimelineTest {
         val arr = data.map { it.second }.toDoubleArray()
         assertTrue { arr.isNotEmpty() }
     }
-
 
 }

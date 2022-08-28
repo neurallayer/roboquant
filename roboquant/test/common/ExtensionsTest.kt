@@ -36,7 +36,6 @@ class ExtensionsTest {
 
         assertEquals(1.0, (a / 2.0).mean())
 
-
     }
 
     @Test
@@ -46,7 +45,6 @@ class ExtensionsTest {
         assertEquals(1.0, a.returns()[0])
         assertEquals(-0.5, a.returns()[1])
     }
-
 
     @Test
     fun testRounding() {
@@ -63,7 +61,6 @@ class ExtensionsTest {
         assertTrue(y > x)
     }
 
-
     @Test
     fun doubleArrayTests() {
         val a = doubleArrayOf(1.0, 2.0, 3.0, 4.0)
@@ -79,10 +76,9 @@ class ExtensionsTest {
         assertEquals(0.0, (a - 4.0).last())
     }
 
-
     @Test
     fun testAccess() {
-        val l = listOf("1", 1, true, "more", 2 , 3)
+        val l = listOf("1", 1, true, "more", 2, 3)
         val sub = l[1..2]
         assertEquals(1, sub[0])
         assertEquals(2, sub.size)
@@ -95,6 +91,5 @@ class ExtensionsTest {
         assertEquals(s.toCurrencyPair(), t.toCurrencyPair())
         assertNull("dummy".toCurrencyPair())
     }
-
 
 }

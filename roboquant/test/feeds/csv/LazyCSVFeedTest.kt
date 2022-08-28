@@ -22,7 +22,6 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import kotlin.test.assertTrue
 
-
 internal class LazyCSVFeedTest {
 
     @Test

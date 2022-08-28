@@ -35,5 +35,4 @@ internal class CombinedFeedTest {
         assertEquals(20, cnt)
     }
 
-
 }

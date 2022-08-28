@@ -34,7 +34,6 @@ internal class ColumnInfo {
     val hasVolume
         get() = volume != -1
 
-
     fun detectColumns(header: List<String>) {
         header.forEachIndexed { index, column ->
             when (column.uppercase()) {

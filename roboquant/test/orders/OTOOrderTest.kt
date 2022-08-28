@@ -37,7 +37,6 @@ internal class OTOOrderTest {
         assertTrue(order.toString().isNotBlank())
     }
 
-
     @Test
     fun test2() {
         val asset1 = TestData.usStock()

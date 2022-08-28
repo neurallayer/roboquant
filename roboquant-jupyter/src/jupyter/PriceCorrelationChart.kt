@@ -62,7 +62,6 @@ class PriceCorrelationChart(
         return Pair(r1.toDoubleArray(), r2.toDoubleArray())
     }
 
-
     private fun collectPrices(): Map<Asset, List<Double>> = runBlocking {
         val channel = EventChannel(timeframe = timeframe)
         val result = TreeMap<Asset, MutableList<Double>>()

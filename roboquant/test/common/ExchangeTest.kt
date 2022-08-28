@@ -26,7 +26,6 @@ import kotlin.test.*
 
 internal class ExchangeTest {
 
-
     @Test
     fun test() {
         assertEquals(Exchange.DEFAULT, Exchange.getInstance("DUMMY"))
@@ -34,7 +33,7 @@ internal class ExchangeTest {
         Exchange.addInstance("DUMMY", "Europe/Paris")
         val exchange2 = Exchange.getInstance("DUMMY")
         assertEquals("DUMMY", exchange2.exchangeCode)
-        assertEquals(ZoneId.of("Europe/Paris") ,exchange2.zoneId)
+        assertEquals(ZoneId.of("Europe/Paris"), exchange2.zoneId)
         assertTrue(exchange2 in Exchange.exchanges)
 
         val now = Instant.now()
@@ -70,8 +69,6 @@ internal class ExchangeTest {
             exchange.getClosingTime(localDate)
         }
 
-
     }
-
 
 }

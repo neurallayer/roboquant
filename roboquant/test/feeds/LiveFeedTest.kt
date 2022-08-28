@@ -37,7 +37,6 @@ internal class LiveFeedTest {
         }
     }
 
-
     @Test
     fun combined() = runBlocking {
         val feed1 = MyLiveFeed()
@@ -48,6 +47,5 @@ internal class LiveFeedTest {
         Background.ioJob { feed.play(EventChannel()) }
         feed.close()
     }
-
 
 }

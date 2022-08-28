@@ -30,7 +30,7 @@ import org.roboquant.orders.OrderStatus
  */
 object TestData {
 
-    fun usAccount() : Account {
+    fun usAccount(): Account {
         val asset1 = Asset("AAA")
         val asset2 = Asset("AAB")
         val account = InternalAccount()

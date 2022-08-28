@@ -58,7 +58,6 @@ class EMACrossover(
         val EMA_50_200: EMACrossover
             get() = EMACrossover(50, 200)
 
-
         /**
          * Predefined EMA Crossover with 12 steps for fast EMA and 26 steps for slow EMA
          *
@@ -91,7 +90,6 @@ class EMACrossover(
 
         fun getDirection(): Boolean = emaFast > emaSlow
     }
-
 
     override fun generate(asset: Asset, price: Double, time: Instant): Signal? {
         val calculator = calculators[asset]

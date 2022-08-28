@@ -115,6 +115,7 @@ class AlpacaHistoricFeed(
         return when {
             amt is ZonedPeriod && amt.units.contains(ChronoUnit.DAYS) && amt.toDays()
                 .toInt() > 0 -> Pair(AlpacaPeriod.DAY, amt.toDays().toInt())
+
             amt is ZonedPeriod && amt.toHours() > 0 -> Pair(AlpacaPeriod.HOUR, amt.toHours().toInt())
             amt is ZonedPeriod && amt.toMinutes() > 0 -> Pair(AlpacaPeriod.MINUTE, amt.toMinutes().toInt())
             else -> throw UnsupportedException("$amt")

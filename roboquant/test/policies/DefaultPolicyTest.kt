@@ -16,7 +16,6 @@
 
 package org.roboquant.policies
 
-
 import org.roboquant.brokers.InternalAccount
 import org.roboquant.common.Size
 import org.roboquant.common.days

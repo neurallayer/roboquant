@@ -37,10 +37,10 @@ private operator fun StringBuffer.plusAssign(str: Any) {
  */
 internal open class BaseWrapper(val root: JsonObject) {
 
-    protected fun JsonObject.getAttr(key:String): String = get(key).asString
+    protected fun JsonObject.getAttr(key: String): String = get(key).asString
     private fun String.unCapitalize() = get(0).lowercase() + substring(1)
 
-    protected fun JsonObject.getVariableName(key: String) : String {
+    protected fun JsonObject.getVariableName(key: String): String {
         var result = get(key).asString
         result = result.replace(" ", "")
         result = result.replace("-", "")
@@ -61,7 +61,6 @@ internal open class BaseWrapper(val root: JsonObject) {
         return emptyList()
     }
 
-
     protected val desc = root.getAttr("ShortDescription")
     private val className: String = root.get("CamelCaseName").asString
     protected val fnName = className.unCapitalize()
@@ -71,7 +70,6 @@ internal open class BaseWrapper(val root: JsonObject) {
     protected val firstInput = getList("RequiredInputArgument").first().getVariableName("Name")
     protected val patternRecognition = root.getAttr("GroupId") == "Pattern Recognition"
     protected val groupId = root.getAttr("GroupId")
-
 
     private fun getOptionalInput(): String {
         val result = StringBuffer()
@@ -95,7 +93,6 @@ internal open class BaseWrapper(val root: JsonObject) {
         return result.toString()
     }
 
-
     protected fun getInput(withType: Boolean = false): String {
         val result = StringBuffer()
 
@@ -112,7 +109,6 @@ internal open class BaseWrapper(val root: JsonObject) {
 
         return result.removeSuffix(",").toString()
     }
-
 
     protected fun getOutputNames(): String {
         var result = ""
@@ -150,7 +146,6 @@ internal open class BaseWrapper(val root: JsonObject) {
         }
 }
 
-
 /**
  * Generate a Wrapper for the TA-Lib library
  *
@@ -160,7 +155,7 @@ internal open class BaseWrapper(val root: JsonObject) {
 internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
 
     companion object {
-        val startCode =  """
+        val startCode = """
         @file:Suppress("MemberVisibilityCanBePrivate", "unused")
         package org.roboquant.ta
         
@@ -177,8 +172,6 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
             
     """.trimIndent()
     }
-
-
 
     private fun getOutputDecl(): String {
         val result = StringBuffer()
@@ -199,11 +192,10 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
         return result.toString().trimIndent()
     }
 
-
     private fun returnStatement(): String {
 
         val l = getList("OutputArgument")
-        return when(l.size) {
+        return when (l.size) {
             1 -> "output1.copyOfRange(0, last)"
             2 -> "Pair(output1.copyOfRange(0, last), output2.copyOfRange(0, last))"
             3 -> "Triple(output1.copyOfRange(0, last), output2.copyOfRange(0, last), output3.copyOfRange(0, last))"
@@ -213,12 +205,11 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
         }
     }
 
-
     private fun returnType(): String {
 
         val l = getList("OutputArgument")
         val type = if (l.first().getAttr("Type") == "Integer Array") "IntArray" else "DoubleArray"
-        return when(l.size) {
+        return when (l.size) {
             1 -> type
             2 -> "Pair<$type, $type>"
             3 -> "Triple<$type, $type, $type>"
@@ -227,8 +218,6 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
             }
         }
     }
-
-
 
     /**
      * Build method that returns all available output values.
@@ -260,9 +249,6 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
         }
     """.trimIndent()
     }
-
-
-
 
 }
 
@@ -313,25 +299,25 @@ internal class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
 
     /**
     private fun returnStatementInssuficientData(): String {
-        if (patternRecognition) return "false"
+    if (patternRecognition) return "false"
 
-        val l = getList("OutputArgument")
-        return when(l.size) {
-            1 -> "Double.NaN"
-            2 -> "Pair(Double.NaN, Double.NaN)"
-            3 -> "Triple(Double.NaN, Double.NaN, Double.NaN)"
-            else -> {
-                throw Exception("unexpected return size")
-            }
-        }
+    val l = getList("OutputArgument")
+    return when(l.size) {
+    1 -> "Double.NaN"
+    2 -> "Pair(Double.NaN, Double.NaN)"
+    3 -> "Triple(Double.NaN, Double.NaN, Double.NaN)"
+    else -> {
+    throw Exception("unexpected return size")
     }
-    */
+    }
+    }
+     */
 
     private fun returnStatement(): String {
         if (patternRecognition) return "output1[0] != 0"
 
         val l = getList("OutputArgument")
-        return when(l.size) {
+        return when (l.size) {
             1 -> "output1[0]"
             2 -> "Pair(output1[0], output2[0])"
             3 -> "Triple(output1[0], output2[0], output3[0])"
@@ -341,13 +327,12 @@ internal class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
         }
     }
 
-
     private fun returnType(): String {
         if (patternRecognition) return "Boolean"
 
         val l = getList("OutputArgument")
         val type = if (l.first().getAttr("Type") == "Integer Array") "Int" else "Double"
-        return when(l.size) {
+        return when (l.size) {
             1 -> type
             2 -> "Pair<$type, $type>"
             3 -> "Triple<$type, $type, $type>"
@@ -392,8 +377,6 @@ internal class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
 
     """.trimIndent()
     }
-
-
 
     /**
      * Generate small util method for easy using price bar buffers as input variables.
@@ -441,7 +424,7 @@ internal class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
 fun main() {
     println("starting")
     val f = File("roboquant-ta/test/generator/ta_func_api.json")
-    require(f.isFile) { "File not found"}
+    require(f.isFile) { "File not found" }
     println(f)
 
     val jsonTree = JsonParser.parseString(f.readText())

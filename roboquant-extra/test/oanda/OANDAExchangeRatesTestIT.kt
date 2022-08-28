@@ -40,7 +40,6 @@ internal class OANDAExchangeRatesTestIT {
         assertTrue(r.isFinite())
     }
 
-
     @Test
     fun test2() {
         System.getenv("TEST_OANDA") ?: return

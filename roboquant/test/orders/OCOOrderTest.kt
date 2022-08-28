@@ -34,7 +34,6 @@ class OCOOrderTest {
         assertEquals(order.first.asset, order.asset)
         assertTrue(order.toString().isNotBlank())
 
-
     }
 
 }

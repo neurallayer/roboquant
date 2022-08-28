@@ -70,7 +70,6 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
         progressBar.reset()
     }
 
-
     /**
      * Provided a summary of the recorded metrics for [last] events (default is 1)
      */
@@ -106,13 +105,11 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
      */
     fun getEpisodes(run: String) = history.filter { it.info.run == run }.map { it.info.episode }.distinct().sorted()
 
-
     /**
      * Get the unique list of metric names that have been captured
      */
-    override val metricNames : List<String>
+    override val metricNames: List<String>
         get() = history.map { it.metric }.distinct().sorted()
-
 
     /**
      * Get results for a metric specified by its [name]. It will include all the runs and episodes for that metric.
@@ -147,7 +144,6 @@ fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, Collection
  * Convert a collection of metric entries into a double array.
  */
 fun Collection<MetricsEntry>.toDoubleArray() = map { it.value }.toDoubleArray()
-
 
 /**
  * Generate a name for a collection of metric entries

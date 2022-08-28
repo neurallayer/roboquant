@@ -42,7 +42,6 @@ open class CombinedStrategy(val strategies: Collection<Strategy>) : Strategy {
         return signals
     }
 
-
     override fun start(runPhase: RunPhase) {
         for (strategy in strategies) strategy.start(runPhase)
     }

@@ -98,7 +98,6 @@ internal class PositionTest {
         assertEquals(10.0, pnl.value)
     }
 
-
     @Test
     fun pnl() {
         val contract = TestData.usStock()
@@ -106,7 +105,6 @@ internal class PositionTest {
         val pnl = p1.unrealizedPNL.value
         assertEquals(20.0, pnl)
     }
-
 
     @Test
     fun direction() {
@@ -116,7 +114,6 @@ internal class PositionTest {
         assertFalse(p1.short)
         assertTrue(p1.open)
     }
-
 
     @Test
     fun cost() {
@@ -133,7 +130,6 @@ internal class PositionTest {
         val value = p1.marketValue.value
         assertEquals(120.0, value)
     }
-
 
     @Test
     fun size() {

@@ -70,7 +70,6 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     val absoluteValue
         get() = Amount(currency, value.absoluteValue)
 
-
     /**
      * Format the value hold in this amount based on the currency. For example USD would have two fraction digits
      * by default while JPY would have none.

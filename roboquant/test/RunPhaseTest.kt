@@ -16,7 +16,6 @@
 
 package org.roboquant
 
-
 import kotlin.test.*
 
 internal class RunPhaseTest {
@@ -26,6 +25,5 @@ internal class RunPhaseTest {
         assertEquals("VALIDATE", RunPhase.VALIDATE.value)
         assertEquals("MAIN", RunPhase.MAIN.value)
     }
-
 
 }

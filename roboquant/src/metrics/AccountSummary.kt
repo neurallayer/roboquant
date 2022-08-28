@@ -33,7 +33,7 @@ import org.roboquant.feeds.Event
  *
  * @constructor Create new Account Summary metric
  */
-class AccountSummary: Metric {
+class AccountSummary : Metric {
 
     override fun calculate(account: Account, event: Event): MetricResults {
         return mapOf(
@@ -42,7 +42,7 @@ class AccountSummary: Metric {
             "account.positions" to account.portfolio.size,
             "account.cash" to account.convert(account.cash, event.time).value,
             "account.buyingpower" to account.buyingPower.value,
-            "account.equity"  to account.convert(account.equity, event.time).value,
+            "account.equity" to account.convert(account.equity, event.time).value,
         )
 
     }

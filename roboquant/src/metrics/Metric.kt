@@ -38,7 +38,7 @@ interface Metric : Lifecycle {
      * Calculate the metric given the [account] and [event] and return the results. This method will be invoked at the
      * end of each step in a run.
      */
-    fun calculate(account: Account, event: Event) : MetricResults
+    fun calculate(account: Account, event: Event): MetricResults
 
 }
 

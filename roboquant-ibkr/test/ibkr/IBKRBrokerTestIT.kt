@@ -16,7 +16,6 @@
 
 package org.roboquant.ibkr
 
-
 import java.time.Instant
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue

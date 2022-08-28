@@ -30,7 +30,6 @@ internal class ModifyOrderHandlerTest {
 
     private val asset = TestData.usStock()
 
-
     @Test
     fun testUpdate() {
         val order1 = MarketOrder(asset, 100)
@@ -44,7 +43,6 @@ internal class ModifyOrderHandlerTest {
         assertEquals(Size(50), moc.order.size)
     }
 
-
     @Test
     fun testCancellation() {
         val order1 = MarketOrder(asset, 100)
@@ -57,8 +55,5 @@ internal class ModifyOrderHandlerTest {
         assertEquals(OrderStatus.COMPLETED, cmd.state.status)
         assertEquals(OrderStatus.EXPIRED, moc.state.status)
     }
-
-
-
 
 }

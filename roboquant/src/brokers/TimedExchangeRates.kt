@@ -27,7 +27,7 @@ import java.util.*
  */
 abstract class TimedExchangeRates(protected val baseCurrency: Currency) : ExchangeRates {
 
-    protected val exchangeRates = mutableMapOf<Currency, NavigableMap<Instant,Double>>()
+    protected val exchangeRates = mutableMapOf<Currency, NavigableMap<Instant, Double>>()
 
     val currencies: Collection<Currency>
         get() = exchangeRates.keys + setOf(baseCurrency)

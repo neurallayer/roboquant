@@ -70,5 +70,4 @@ class RSI(initialPrice: Double, private val periods: Int = 14, private val minSt
             0.0
     }
 
-
 }

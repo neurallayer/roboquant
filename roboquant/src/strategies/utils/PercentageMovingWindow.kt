@@ -58,7 +58,6 @@ class PercentageMovingWindow(size: Int, private val missingValue: Double = Doubl
     }
 }
 
-
 /**
  *
  * @property assets the assets that need to be tracked

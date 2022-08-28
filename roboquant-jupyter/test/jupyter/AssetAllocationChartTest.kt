@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import kotlin.test.assertTrue
 
-
 internal class AssetAllocationChartTest {
 
     @Test

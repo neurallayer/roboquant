@@ -33,7 +33,7 @@ internal class Ta4JStrategyTest {
     fun test() {
         val strategy = Ta4jStrategy(maxBarCount = 30)
 
-        strategy.buy  { series ->
+        strategy.buy { series ->
             val closePrice = ClosePriceIndicator(series)
             val shortSma = SMAIndicator(closePrice, 20)
             val longSma = SMAIndicator(closePrice, 30)

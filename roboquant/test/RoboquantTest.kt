@@ -49,7 +49,7 @@ internal class RoboquantTest {
     @Test
     fun brokenMetric() {
         class MyBrokenMetric : Metric {
-            override fun calculate(account: Account, event: Event) : MetricResults {
+            override fun calculate(account: Account, event: Event): MetricResults {
                 throw RoboquantException("Broken")
             }
 
@@ -74,12 +74,11 @@ internal class RoboquantTest {
         for (timeframe in feed.split(2.years)) roboquant.run(feed, timeframe)
     }
 
-
     @Test
     fun validationPhase() {
         val feed = TestData.feed
         val strategy = EMACrossover()
-        val logger =  MemoryLogger(showProgress = false)
+        val logger = MemoryLogger(showProgress = false)
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
         val (train, test) = feed.timeframe.splitTrainTest(0.20)
         roboquant.run(feed, train, test)
@@ -87,7 +86,6 @@ internal class RoboquantTest {
         assertEquals(2, data.map { it.info.phase }.distinct().size)
         assertEquals(1, logger.runs.size)
     }
-
 
     @Test
     fun runAsync() = runBlocking {
@@ -97,7 +95,6 @@ internal class RoboquantTest {
         roboquant.runAsync(TestData.feed)
         assertTrue(roboquant.broker.account.trades.isNotEmpty())
     }
-
 
     @Test
     fun reset() {
@@ -115,6 +112,5 @@ internal class RoboquantTest {
 
         assertEquals(lastHistory1, lastHistory2)
     }
-
 
 }

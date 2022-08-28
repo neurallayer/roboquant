@@ -54,7 +54,6 @@ enum class SignalResolution {
     NO_DUPLICATES,
 }
 
-
 /**
  * Resolve potential conflicting signals. For many strategies this might not be necessary since there is always only 1
  * signal per asset, but as strategies are combined, this issue might pop up. You can specify the resolution [rule]
@@ -90,7 +89,7 @@ class SignalResolver(val policy: Policy, private val resolution: SignalResolutio
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val resolvedSignals = signals.resolve(resolution)
-        logger.fine { "signals in=${signals.size} out=${resolvedSignals.size}"}
+        logger.fine { "signals in=${signals.size} out=${resolvedSignals.size}" }
         return policy.act(resolvedSignals, account, event)
     }
 

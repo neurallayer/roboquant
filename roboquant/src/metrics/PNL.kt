@@ -61,6 +61,4 @@ class PNL : Metric {
         return result
     }
 
-
-
 }

@@ -18,7 +18,6 @@ package org.roboquant.common
 
 import kotlinx.coroutines.*
 
-
 /**
  * Utility to make running experiments in parallel more convenient. Basic usage:
  *
@@ -67,11 +66,10 @@ class ParallelJobs {
     /**
      * Add a new job to the list and run it.
      */
-    fun add(block: suspend CoroutineScope.() -> Unit) : Job {
+    fun add(block: suspend CoroutineScope.() -> Unit): Job {
         val job = scope.launch(block = block)
         jobs.add(job)
         return job
     }
-
 
 }

@@ -74,7 +74,6 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
      */
     operator fun iterator() = channel.iterator()
 
-
     /**
      * Send an [event]. If the event is before the timeframe linked to this channel it will be
      * ignored. And if the event is after the timeframe, the channel will be closed.

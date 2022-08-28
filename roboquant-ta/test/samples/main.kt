@@ -28,9 +28,8 @@ fun vwap() {
     println(rq.broker.account.summary())
 }
 
-
 fun main() {
-    when("VWAP") {
+    when ("VWAP") {
         "VWAP" -> vwap()
     }
 }

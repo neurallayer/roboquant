@@ -56,7 +56,7 @@ abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHan
     private fun expired(time: Instant): Boolean {
         return when (val tif = order.tif) {
             is GTC -> time > state.openedAt + tif.maxDays.days
-            is DAY -> ! order.asset.exchange.sameDay(state.openedAt, time)
+            is DAY -> !order.asset.exchange.sameDay(state.openedAt, time)
             is FOK -> remaining.nonzero
             is GTD -> time > tif.date
             is IOC -> time > state.openedAt
@@ -92,18 +92,15 @@ internal class MarketOrderHandler(order: MarketOrder) : SingleOrderHandler<Marke
     override fun fill(pricing: Pricing): Execution = Execution(order, remaining, pricing.marketPrice(remaining))
 }
 
-
 private fun stopTrigger(stop: Double, size: Size, pricing: Pricing): Boolean {
     return if (size < 0.0) pricing.lowPrice(size) <= stop
     else pricing.highPrice(size) >= stop
 }
 
-
 private fun limitTrigger(limit: Double, size: Size, pricing: Pricing): Boolean {
     return if (size < 0.0) pricing.highPrice(size) >= limit
     else pricing.lowPrice(size) <= limit
 }
-
 
 private fun getTrailStop(oldStop: Double, trail: Double, size: Size, pricing: Pricing): Double {
 
@@ -111,7 +108,7 @@ private fun getTrailStop(oldStop: Double, trail: Double, size: Size, pricing: Pr
         // Sell stop
         val price = pricing.highPrice(size)
         val newStop = price * (1.0 - trail)
-        if (oldStop.isNaN()  || newStop > oldStop) newStop else oldStop
+        if (oldStop.isNaN() || newStop > oldStop) newStop else oldStop
     } else {
         // Buy stop
         val price = pricing.lowPrice(size)
@@ -120,8 +117,6 @@ private fun getTrailStop(oldStop: Double, trail: Double, size: Size, pricing: Pr
     }
 
 }
-
-
 
 internal class LimitOrderHandler(order: LimitOrder) : SingleOrderHandler<LimitOrder>(order) {
 
@@ -146,7 +141,6 @@ internal class StopOrderHandler(order: StopOrder) : SingleOrderHandler<StopOrder
 
 }
 
-
 internal class StopLimitOrderHandler(order: StopLimitOrder) : SingleOrderHandler<StopLimitOrder>(order) {
 
     private var stopTriggered = false
@@ -163,8 +157,6 @@ internal class StopLimitOrderHandler(order: StopLimitOrder) : SingleOrderHandler
     }
 
 }
-
-
 
 internal class TrailOrderHandler(order: TrailOrder) : SingleOrderHandler<TrailOrder>(order) {
 
@@ -186,7 +178,7 @@ internal class TrailLimitOrderHandler(order: TrailLimitOrder) : SingleOrderHandl
 
     override fun fill(pricing: Pricing): Execution? {
         stop = getTrailStop(stop, order.trailPercentage, remaining, pricing)
-        if (! stopTriggered) stopTriggered = stopTrigger(stop, remaining, pricing)
+        if (!stopTriggered) stopTriggered = stopTrigger(stop, remaining, pricing)
         val limit = stop + order.limitOffset
         return if (stopTriggered && limitTrigger(limit, remaining, pricing)) Execution(order, remaining, limit)
         else null

@@ -19,7 +19,6 @@ package org.roboquant.strategies.utils
 import java.time.Instant
 import java.util.*
 
-
 /**
  * Moving Window that holds double values and the time and is typically used by strategies for moving averages or
  * replay buffers.
@@ -56,7 +55,6 @@ open class MovingTimedWindow(val windowSize: Int) {
         return counter > windowSize
     }
 
-
     /**
      * Return the stored values a DoubleArray
      *
@@ -91,6 +89,5 @@ open class MovingTimedWindow(val windowSize: Int) {
         Arrays.fill(data, Double.NaN)
         Arrays.fill(times, Instant.MIN.toEpochMilli())
     }
-
 
 }

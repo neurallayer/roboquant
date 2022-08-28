@@ -20,7 +20,6 @@ import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import java.time.Instant
 
-
 /**
  * Currency converter that supports fixed exchange rates between currencies, so rates that don't change over the
  * duration of a run. It provides logic to convert between two currencies given this map of

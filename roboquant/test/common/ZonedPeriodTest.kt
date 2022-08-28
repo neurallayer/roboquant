@@ -35,7 +35,7 @@ class ZonedPeriodTest {
     fun atZone() {
         val a = ZonedPeriod(10.hours, ZoneId.of("UTC"))
         val b = a.atZone(ZoneId.of("UTC"))
-        assertDoesNotThrow {  b.toString()}
+        assertDoesNotThrow { b.toString() }
     }
 
 }

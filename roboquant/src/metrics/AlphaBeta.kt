@@ -43,7 +43,7 @@ class AlphaBeta(
     private val referenceAsset: Asset,
     private val period: Int,
     private val priceType: String = "DEFAULT",
-    private val riskFreeReturn : Double = 0.0,
+    private val riskFreeReturn: Double = 0.0,
     private val onlyAfterInitialTrade: Boolean = false
 ) : Metric {
 
@@ -62,7 +62,7 @@ class AlphaBeta(
 
         // Can we already start recording measures or do we have to wait for
         // an initial trade
-        val start = ! onlyAfterInitialTrade || account.trades.isNotEmpty()
+        val start = !onlyAfterInitialTrade || account.trades.isNotEmpty()
 
         if (action !== null && start) {
             val price = action.getPrice(priceType)
@@ -80,7 +80,7 @@ class AlphaBeta(
 
                 val covariance = Covariance().covariance(portfolioReturns, marketReturns)
                 val variance = Variance().evaluate(marketReturns)
-                val beta = covariance/variance
+                val beta = covariance / variance
 
                 val alpha = (x1.totalReturns() - riskFreeReturn) - beta * (x2.totalReturns() - riskFreeReturn)
                 return mapOf(

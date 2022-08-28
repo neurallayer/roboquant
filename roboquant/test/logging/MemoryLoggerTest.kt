@@ -61,7 +61,7 @@ internal class MemoryLoggerTest {
     fun testMetricsEntry() {
         val logger = MemoryLogger(showProgress = false)
         repeat(12) {
-            val metrics =  mapOf("key1" to it)
+            val metrics = mapOf("key1" to it)
             logger.log(metrics, TestData.getRunInfo())
         }
         val data = logger.getMetric("key1")
@@ -93,7 +93,7 @@ internal class MemoryLoggerTest {
         var runInfo = RunInfo("run-1", time = Instant.parse("2021-01-02T00:00:00Z"))
 
         repeat(50) {
-            val metrics =  mapOf("key1" to it)
+            val metrics = mapOf("key1" to it)
             logger.log(metrics, runInfo)
             runInfo = runInfo.copy(time = runInfo.time + 2.days)
         }

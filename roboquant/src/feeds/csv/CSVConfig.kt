@@ -64,7 +64,7 @@ data class CSVConfig(
      * Asset builder allows to create assets based on more than just the symbol name. The input it the filename
      * without extension in all capital letters an dthe return value should be a valid Asset
      */
-    var assetBuilder : (String) -> Asset = { name -> template.copy(symbol = name) }
+    var assetBuilder: (String) -> Asset = { name -> template.copy(symbol = name) }
 
     private val timeParser: TimeParser by lazy {
         when {
@@ -78,7 +78,6 @@ data class CSVConfig(
     private val info = ColumnInfo()
     private val pattern by lazy { Pattern.compile(filePattern) }
     private var hasColumnsDefined = false
-
 
     init {
         require(parsePattern.isEmpty() || parsePattern.length > 5)
@@ -102,7 +101,6 @@ data class CSVConfig(
             return result
         }
 
-
         /**
          * Read properties from config file [path] is it exist.
          */
@@ -125,7 +123,6 @@ data class CSVConfig(
         return assetBuilder(name)
     }
 
-
     /**
      * Should the provided [file] be parsed or skipped all together, true is parsed
      */
@@ -133,7 +130,6 @@ data class CSVConfig(
         val name = file.name
         return file.isFile && name.endsWith(fileExtension) && pattern.matcher(name).matches() && name !in fileSkip
     }
-
 
     private fun getAssetTemplate(config: Map<String, String>): Asset {
         return Asset(
@@ -169,7 +165,6 @@ data class CSVConfig(
 
     }
 
-
     /**
      * Process a single line and return a PriceEntry (if the line could be parsed). Otherwise, an exception will
      * be thrown.
@@ -191,6 +186,7 @@ data class CSVConfig(
                 line[info.adjustedClose].toDouble(),
                 line[info.volume].toDouble()
             )
+
             else -> PriceBar(
                 asset,
                 line[info.open].toDouble(),

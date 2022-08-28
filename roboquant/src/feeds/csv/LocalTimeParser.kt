@@ -56,5 +56,4 @@ internal class LocalDateParser(pattern: String) : TimeParser {
         return exchange.getClosingTime(date)
     }
 
-
 }

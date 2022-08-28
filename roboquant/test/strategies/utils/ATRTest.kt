@@ -37,5 +37,4 @@ internal class ATRTest {
         assertFalse(c.isReady())
     }
 
-
 }

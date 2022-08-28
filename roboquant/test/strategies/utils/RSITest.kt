@@ -16,12 +16,10 @@
 
 package org.roboquant.strategies.utils
 
-
 import kotlin.test.*
 import kotlin.random.Random
 
 internal class RSITest {
-
 
     @Test
     fun test() {

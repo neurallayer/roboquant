@@ -32,7 +32,9 @@ interface Lifecycle {
      * Invoked at the start of a [runPhase]. Default implementation is to invoke [reset], which is suitable for
      * many type of components.
      */
-    fun start(runPhase: RunPhase) { reset() }
+    fun start(runPhase: RunPhase) {
+        reset()
+    }
 
     /**
      * Invoked at the end of a [runPhase]. Default implementation is to take no action.
