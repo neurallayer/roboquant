@@ -54,10 +54,10 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
     }
 
     /**
-     * What is the type of order, default is the simple class name
+     * What is the type of order, default is the class name without the order suffix
      */
     open val type
-        get() = this::class.simpleName
+        get() = this::class.simpleName?.removeSuffix("Order")?.uppercase() ?: "UNKNOWN"
 
     /**
      * Provide extra info as map, used in displaying order information. Default is an empty map.

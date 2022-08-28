@@ -24,10 +24,7 @@ import org.roboquant.common.Config
 class Welcome : Output() {
 
     /**
-     * Generate an HTML snippet. Subclasses will need to implement this method. This is used in Jupyter-Lab environments
-     * that can directly insert HTML and JavaScript content in the output of a cell.
-     *
-     * @return
+     * Return the welcome message with the main environment settings as an HTML snippet.
      */
     @Suppress("MaxLineLength")
     override fun asHTML(): String {

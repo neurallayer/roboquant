@@ -74,7 +74,7 @@ class MarketOrder(
 
     constructor(asset: Asset, quantity: Int) : this(asset, Size(quantity))
 
-    override fun info() = sortedMapOf("quantity" to size, "tif" to tif)
+    override fun info() = sortedMapOf("size" to size, "tif" to tif)
 
 }
 
@@ -99,7 +99,7 @@ class LimitOrder(
     tag: String = ""
 ) : SingleOrder(asset, size, tif, id, tag) {
 
-    override fun info() = sortedMapOf("quantity" to size, "limit" to limit, "tif" to tif)
+    override fun info() = sortedMapOf("size" to size, "limit" to limit, "tif" to tif)
 
 }
 
@@ -122,7 +122,7 @@ class StopOrder(
     tag: String = ""
 ) : SingleOrder(asset, size, tif, id, tag) {
 
-    override fun info() = sortedMapOf("quantity" to size, "stop" to stop, "tif" to tif)
+    override fun info() = sortedMapOf("size" to size, "stop" to stop, "tif" to tif)
 }
 
 /**
@@ -146,7 +146,7 @@ class StopLimitOrder(
     tag: String = ""
 ) : SingleOrder(asset, size, tif, id, tag) {
 
-    override fun info() = sortedMapOf("quantity" to size, "stop" to stop, "limit" to limit, "tif" to tif)
+    override fun info() = sortedMapOf("size" to size, "stop" to stop, "limit" to limit, "tif" to tif)
 }
 
 /**
@@ -172,7 +172,7 @@ open class TrailOrder(
         require(trailPercentage > 0.0) { "trail percentage should be a positive value" }
     }
 
-    override fun info() = sortedMapOf("quantity" to size, "trailPercentage" to trailPercentage, "tif" to tif)
+    override fun info() = sortedMapOf("size" to size, "trailPercentage" to trailPercentage, "tif" to tif)
 
 }
 
@@ -202,7 +202,7 @@ class TrailLimitOrder(
 ) : TrailOrder(asset, size, trailPercentage, tif, id, tag) {
 
     override fun info() = sortedMapOf(
-        "quantity" to size,
+        "size" to size,
         "trailPercentage" to trailPercentage,
         "limitOffset" to limitOffset,
         "tif" to tif
