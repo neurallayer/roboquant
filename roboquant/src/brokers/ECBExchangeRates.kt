@@ -60,7 +60,11 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
 
     private val logger: Logger = Logging.getLogger(ECBExchangeRates::class)
 
+    /**
+     * @suppress
+     */
     companion object {
+
         private const val DEFAULT_ECB_URL = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.zip"
 
         /**

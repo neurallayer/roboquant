@@ -29,6 +29,9 @@ abstract class TimedExchangeRates(protected val baseCurrency: Currency) : Exchan
 
     protected val exchangeRates = mutableMapOf<Currency, NavigableMap<Instant, Double>>()
 
+    /**
+     * Currencies available
+     */
     val currencies: Collection<Currency>
         get() = exchangeRates.keys + setOf(baseCurrency)
 

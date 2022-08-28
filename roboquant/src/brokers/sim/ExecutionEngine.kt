@@ -48,6 +48,9 @@ fun interface OrderHandlerFactory<T : Order> {
  */
 class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEngine()) {
 
+    /**
+     * @suppress
+     */
     companion object {
 
         /**
@@ -56,10 +59,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
         val factories = mutableMapOf<KClass<*>, OrderHandlerFactory<Order>>()
 
         /**
-         * Get the order handler for the provided [order]
-         *
-         * @param order
-         * @return
+         * Return the order handler for the provided [order]
          */
         fun getHandler(order: Order): OrderHandler {
             val factory = factories.getValue(order::class)
@@ -74,11 +74,8 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
         }
 
         /**
-         * Register a new order handler factory for order type [T]. If there was already an order handler registered
-         * for the same class it will be overwritten.
-         *
-         * @param T
-         * @param factory
+         * Register a new order handler [factory] for order type [T]. If there was already an order handler registered
+         * for the same class it will be replaced.
          */
         inline fun <reified T : Order> register(factory: OrderHandlerFactory<T>) {
             @Suppress("UNCHECKED_CAST")
@@ -134,11 +131,8 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
         get() = tradeHandlers.map { it.state } + modifyHandlers.map { it.state }
 
     /**
-     * Add a new order to the execution engine. Orders can only be processed if there is a corresponding handler
+     * Add a new [order] to the execution engine. Orders can only be processed if there is a corresponding handler
      * registered for the order class.
-     *
-     * @param order
-     * @return
      */
     fun add(order: Order): Boolean {
 
@@ -149,19 +143,21 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
 
     }
 
-    // Add a new order to the execution engine
+    /**
+     * Add all [orders] to the execution engine.
+     * @see [add]
+     */
     fun addAll(orders: List<Order>) {
         for (order in orders) add(order)
     }
 
     /**
-     * Execute all the handlers of orders that are not yet closed. Logic:
+     * Execute all the handlers of orders that are not yet closed based on the [event].
      *
-     * 1. First any open modify orders will be processed
-     * 2. Then any regular order will be processed assuming there is a price action for the underlying asses.
+     * Underlying Logic:
      *
-     * @param event
-     * @return
+     * 1. First process any open modify orders (like cancel or update)
+     * 2. Then pricess any regular order but only if there is a price action in the event for the underlying asses
      */
     fun execute(event: Event): List<Execution> {
 
@@ -184,7 +180,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
     }
 
     /**
-     * Clear any state
+     * Clear any state in the exeution engine. All the pending open orders will be removed.
      */
     fun clear() {
         tradeHandlers.clear()

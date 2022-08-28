@@ -68,6 +68,9 @@ class RandomWalk(
         }
     }
 
+    /**
+     * @suppress
+     */
     companion object {
 
         private val logger = Logging.getLogger(RandomWalk::class)

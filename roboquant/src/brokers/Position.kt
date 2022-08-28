@@ -60,7 +60,10 @@ data class Position(
     val currency: Currency
         get() = asset.currency
 
-    companion object Factory {
+    /**
+     * @suppress
+     */
+    companion object {
 
         /**
          * Create an empty position for the provided [asset] and return this.

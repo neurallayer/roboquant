@@ -149,6 +149,9 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
         }
     }
 
+    /**
+     * @suppress
+     */
     companion object {
 
         private val logger = Logging.getLogger(AvroFeed::class)
