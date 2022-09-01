@@ -24,6 +24,9 @@ import java.time.Instant
  * Class that holds the position of an asset in the portfolio. This implementation makes no assumptions about the
  * asset class, so it supports any type of asset class, ranging from stocks and options to cryptocurrencies.
  *
+ * The actual size of the position is precize (doesn't lose precision like is the case with double) using the [Size]
+ * class.
+ *
  * @property asset the asset
  * @property size size of the position, not including any contract multiplier defined at asset level
  * @property avgPrice average price paid, in the currency denoted by the asset
@@ -47,12 +50,6 @@ data class Position(
         lastUpdate: Instant = Instant.MIN
     ) : this(asset, Size(BigDecimal.valueOf(size.toLong())), avgPrice, mktPrice, lastUpdate)
 
-    /**
-     * Total size of a position is the position size times the asset multiplier. For many asset classes the
-     * multiplier will be 1, but for example for option contracts it will often be 100
-     */
-    // val totalSize: Double
-    //    get() = size * asset.multiplier
 
     /**
      * The currency of this position, aka the currency of the underlying asset
@@ -72,7 +69,7 @@ data class Position(
     }
 
     /**
-     * Add another position [p] to this position
+     * Add another position [p] to this position and return the result.
      */
     operator fun plus(p: Position): Position {
 
@@ -136,7 +133,7 @@ data class Position(
         get() = asset.value(size, mktPrice - avgPrice)
 
     /**
-     * The total value for this position based on last known spot price, in the currency denoted by the asset.
+     * The total market value for this position based on last known market price, in the currency denoted by the asset.
      * Short positions will typically return a negative value.
      */
     val marketValue: Amount
@@ -159,13 +156,11 @@ data class Position(
 }
 
 /**
- * Return the total market value for the collection of positions
+ * Return the total market value for a collection of positions
  */
 val Collection<Position>.marketValue: Wallet
     get() {
-        val result = Wallet()
-        for (position in this) result.deposit(position.marketValue)
-        return result
+        return sumOf { it.marketValue }
     }
 
 /**
@@ -181,17 +176,13 @@ val Map<Asset, Position>.marketValue: Wallet
  */
 val Map<Asset, Position>.exposure: Wallet
     get() {
-        val result = Wallet()
-        for (position in this.values) result.deposit(position.exposure)
-        return result
+        return values.sumOf { it.exposure }
     }
 
 /**
- * Return the total exposure for this collection of positions
+ * Return the total exposure for a collection of positions
  */
 val Collection<Position>.exposure: Wallet
     get() {
-        val result = Wallet()
-        for (position in this) result.deposit(position.exposure)
-        return result
+        return sumOf { it.exposure }
     }

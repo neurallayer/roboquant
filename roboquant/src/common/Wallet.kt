@@ -157,6 +157,7 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
     fun deposit(amount: Amount) {
         val (currency, value) = amount
         val oldValue = data[currency] ?: 0.0
+        // data[currency] = oldValue + value
         set(currency, value + oldValue)
     }
 

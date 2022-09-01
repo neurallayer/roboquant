@@ -70,6 +70,12 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
  *      4. buying power = excess margin * ( 1 / initial margin)
  *
  * Note: currently open orders are not taken into consideration when calculating the total buying power
+ *
+ * @property initialMargin the intial margin requirements, default to 50% (0.50)
+ * @property maintenanceMarginLong the maintenance margin requirement for long psotiins, defaults to 30% (0.3)
+ * @property maintenanceMarginShort the maintenance margin requirement for short psotiins, defaults to same value as
+ * maintenanceMarginLong
+ * @property minimumEquity the minimum equity requirement, defaults to 0.0 (denoted in [Account.baseCurrency])
  */
 class MarginAccount(
     private val initialMargin: Double = 0.50,
@@ -95,6 +101,7 @@ class MarginAccount(
         require(maintenanceMarginShort in 0.0..1.0) { "maintenanceMarginShort between 0.0 and 1.0" }
     }
 
+    /*
     override fun getBuyingPower(account: InternalAccount): Amount {
         val excessMargin = account.cash + account.portfolio.marketValue
 
@@ -104,6 +111,25 @@ class MarginAccount(
         excessMargin.withdraw(Amount(account.baseCurrency, minimumEquity))
         val buyingPower = excessMargin * (1.0 / initialMargin)
         return buyingPower.convert(account.baseCurrency, account.lastUpdate)
+    }
+     */
+
+
+    override fun getBuyingPower(account: InternalAccount): Amount {
+        val time = account.lastUpdate
+        val currency = account.baseCurrency
+        val positions = account.portfolio.values
+
+        val excessMargin = account.cash + positions.marketValue
+        excessMargin.withdraw(Amount(currency, minimumEquity))
+
+        val longExposure = positions.long.exposure.convert(currency, time) * maintenanceMarginLong
+        excessMargin.withdraw(longExposure)
+
+        val shortExposure = positions.short.exposure.convert(currency, time) * maintenanceMarginShort
+        excessMargin.withdraw(shortExposure)
+
+        return excessMargin.convert(currency, time) * (1.0 / initialMargin)
     }
 
 }

@@ -276,7 +276,7 @@ fun Number.round(fractions: Int = 2): BigDecimal =
     BigDecimal.valueOf(toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)
 
 /**
- * Convert a string to a currency pair. Return null if not succeeded.
+ * Convert a string to a currency pair. Return null if could not determine the currencies.
  */
 fun String.toCurrencyPair(): Pair<Currency, Currency>? {
     val codes = split('_', '-', ' ', '/', ':')
@@ -294,8 +294,12 @@ fun String.toCurrencyPair(): Pair<Currency, Currency>? {
 }
 
 /**
- * Extension to use sumOf for [Amount]. This implementation has an optimized implementation in case the sum is over
+ * Extension to use sumOf for [Amount] values. This implementation has an optimized path in case the sum is over
  * amounts of a single currency.
+ *
+ * example:
+ *
+ *      val realizedPNL = account.trades.sumOf { it.pnl }
  */
 inline fun <T> Collection<T>.sumOf(
     selector: (T) -> Amount
