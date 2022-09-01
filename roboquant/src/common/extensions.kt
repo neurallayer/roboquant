@@ -294,16 +294,32 @@ fun String.toCurrencyPair(): Pair<Currency, Currency>? {
 }
 
 /**
- * Extension to use sumOf for Amounts
+ * Extension to use sumOf for [Amount]. This implementation has an optimized implementation in case the sum is over
+ * amounts of a single currency.
  */
-inline fun <T> Iterable<T>.sumOf(
+inline fun <T> Collection<T>.sumOf(
     selector: (T) -> Amount
 ): Wallet {
     val result = Wallet()
+    if (isEmpty()) return result
+    val currency = selector(first()).currency
+    var value = 0.0
+    var singleCurrency = true
     forEach {
         val amount = selector(it)
-        result.deposit(amount)
+        if (singleCurrency) {
+            if (amount.currency == currency) {
+                value += amount.value
+            } else {
+                singleCurrency = false
+                result.deposit(Amount(currency, value))
+                result.deposit(amount)
+            }
+        } else {
+            result.deposit(amount)
+        }
     }
+    if (singleCurrency) result.deposit(Amount(currency, value))
     return result
 }
 

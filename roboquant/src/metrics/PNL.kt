@@ -26,8 +26,8 @@ import org.roboquant.feeds.Event
  * on the assets in the portfolio and the last known market price. The realized PNL is based on actual trades made
  * and the profit they generated. All amounts are converted to the base currency of the account.
  *
- * This can be a metric can slow down back tests with very many trades, since at each step it iterates over all
- * available trades to calculate the realized PNL
+ * This metric can slow down back tests with many trades with several currencies, since at each step this metric
+ * iterates over all available trades to calculate the realized PNL.
  *
  * Metric names used:
  * - pnl.realized
