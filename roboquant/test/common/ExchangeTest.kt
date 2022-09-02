@@ -71,4 +71,11 @@ internal class ExchangeTest {
 
     }
 
+    @Test
+    fun testIsTrading() {
+        val exchange = Exchange.getInstance("US")
+        assertTrue(exchange.isTrading(Instant.parse("2022-01-03T20:00:00Z")))
+        assertFalse(exchange.isTrading(Instant.parse("2022-01-03T08:00:00Z")))
+    }
+
 }

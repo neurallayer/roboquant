@@ -30,7 +30,7 @@ interface AccountModel {
 
     /**
      * Returns the total amount of remaining buying power for a given [account]. The returned amount should be
-     * in the base currency of the account.
+     * denoted the base currency of the account.
      */
     fun getBuyingPower(account: InternalAccount): Amount
 
@@ -45,7 +45,7 @@ interface AccountModel {
  *
  * Note: currently open orders are not taken into consideration when calculating the total buying power
  *
- * @property minimum the minimum amount of cash balance required to maintain
+ * @property minimum the minimum amount of cash balance required to maintain int he account, defaults to 0.0
  */
 class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 
@@ -86,13 +86,14 @@ class MarginAccount(
 ) : AccountModel {
 
     /**
-     * Create a margin based on a leverage. Effectively all margins will be set to 1/leverage
+     * Create a margin based on a [leverage]. Effectively all margins values will be set to 1/leverage. Optional can
+     * provide a minimum cash amount that needs to remain in the account.
      */
-    constructor(leverage: Double, minimumEquity: Double = 0.0) : this(
+    constructor(leverage: Double, minimum: Double = 0.0) : this(
         1.0 / leverage,
         1.0 / leverage,
         1.0 / leverage,
-        minimumEquity
+        minimum
     )
 
     init {
