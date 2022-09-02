@@ -22,7 +22,7 @@
 
     <artifactId>roboquant-parent</artifactId>
     <groupId>org.roboquant</groupId>
-    <version>0.9.5-SNAPSHOT</version>
+    <version>0.9.5</version>
     <packaging>pom</packaging>
     <name>roboquant parent</name>
     <description>Algorithmic trading platform written in Kotlin</description>
@@ -391,7 +391,7 @@
             <dependency>
                 <artifactId>roboquant</artifactId>
                 <groupId>org.roboquant</groupId>
-                <version>0.9.5-SNAPSHOT</version>
+                <version>0.9.5</version>
             </dependency>
 
             <dependency>
