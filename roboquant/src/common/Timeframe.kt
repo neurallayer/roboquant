@@ -79,6 +79,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
 
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         private val minutesFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        private val hoursFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH")
         private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         private val millisFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
@@ -304,11 +305,12 @@ data class Timeframe(val start: Instant, val end: Instant) {
      * resolution.
      */
     override fun toString(): String {
-        val d = duration
+        val d = duration.toSeconds()
         val formatter = when {
-            d < Duration.ofHours(1) -> millisFormatter
-            d < Duration.ofHours(4) -> secondFormatter
-            d < Duration.ofHours(100) -> minutesFormatter
+            d < 1 -> millisFormatter // less then 1 second
+            d < 60 -> secondFormatter // less then 1 minute
+            d < 3600 -> minutesFormatter // less than 1 hour
+            d < 3600*24 -> hoursFormatter // less than 1 day
             else -> dayFormatter
         }
 
