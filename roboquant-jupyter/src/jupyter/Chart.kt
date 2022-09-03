@@ -26,6 +26,7 @@ import org.icepear.echarts.components.toolbox.*
 import org.icepear.echarts.components.visualMap.ContinousVisualMap
 import org.roboquant.common.Amount
 import java.lang.reflect.Type
+import java.nio.charset.StandardCharsets
 import java.time.Instant
 import java.util.*
 
@@ -226,7 +227,11 @@ abstract class Chart : Output() {
      */
     override fun asHTMLPage(): String {
         val fragment = asHTML()
-        val script = """<script src='https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js'></script>"""
+
+        val classloader = Thread.currentThread().contextClassLoader
+        val stream = classloader.getResourceAsStream("js/echarts.min.js")!!
+        val js = String(stream.readAllBytes(), StandardCharsets.UTF_8)
+        val script = """<script type='text/javascript'>$js</script>"""
 
         return """
         <html>
