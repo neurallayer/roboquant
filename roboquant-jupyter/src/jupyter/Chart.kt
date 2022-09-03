@@ -197,7 +197,7 @@ abstract class Chart : Output() {
         }
 
         val debugStmt = if (debug) "console.log(option);" else ""
-        val id = "chart-${counter++}"
+        val id = UUID.randomUUID().toString()
 
         // Transfer a string into a javascript Function for tooltip formatting
         val handleJS = if (hasJavascript)

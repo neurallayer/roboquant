@@ -26,6 +26,7 @@ import org.roboquant.common.Config
 import org.roboquant.orders.Order
 import java.io.File
 import java.time.ZoneId
+import java.util.regex.Pattern
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
@@ -73,6 +74,16 @@ internal class SampleNotebookTest {
 
 private class NotebookTester : JupyterReplTestCase(RoboquantReplProvider) {
 
+    private val uuidPattern =
+        Pattern.compile("[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?").toRegex()
+
+    /**
+     * Remove UUID from output so they still can be compared. UUID as used to generate unique ID for charts.
+     */
+    private fun String.removeUUID(): String {
+        return replace(uuidPattern, "")
+    }
+
     /**
      * Execute the code cells in a notebook and validate the new output against the existing output in the notebook.
      * So it serves as a regression test if notebooks still produce the same output.
@@ -91,7 +102,7 @@ private class NotebookTester : JupyterReplTestCase(RoboquantReplProvider) {
                 val firstOutput = cell.outputs.first()
                 if (firstOutput is ExecuteResult && firstOutput.data.isNotEmpty()) {
                     val value = firstOutput.data.entries.first()
-                    assertEquals(value.value, result)
+                    assertEquals(value.value.removeUUID(), result.removeUUID())
                 }
             }
         }
