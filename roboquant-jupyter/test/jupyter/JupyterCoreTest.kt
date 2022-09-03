@@ -53,7 +53,7 @@ internal class JupyterCoreTest {
         }
 
         val output = TestOutput()
-        val result = JupyterCore.render(output)
+        val result = JupyterCore.addOutput(output)
         assertTrue(result)
     }
 

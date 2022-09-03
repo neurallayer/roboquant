@@ -58,6 +58,7 @@ internal class ChartTest {
 
     }
 
+
     @Test
     fun testCodeGeneration() {
         val chart = MyChart()
@@ -66,6 +67,10 @@ internal class ChartTest {
 
         assertDoesNotThrow {
             chart.getOption().renderJson()
+        }
+
+        assertDoesNotThrow {
+            chart.render()
         }
 
         val code = chart.asHTML()

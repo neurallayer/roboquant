@@ -30,6 +30,11 @@ import java.io.File
 abstract class Output : Renderable {
 
     companion object {
+
+        /**
+         * Should the returned HTML be isolated (aka put in an iframe), default is false. Change this setting will
+         * impact all generated HTML snippet.
+         */
         var isolation = false
     }
 
@@ -40,14 +45,15 @@ abstract class Output : Renderable {
         return if (isolation)  HTML(asHTMLPage(), true) else HTML(asHTML(), false)
     }
 
+    /**
+     * Invoking render will make sure output is displayed in a notebook, even if it is not last statement of a cell.
+     */
     fun render() {
-        JupyterCore.render(this)
+        JupyterCore.addOutput(this)
     }
 
     /**
-     * Save output to an HTML file.
-     *
-     * @param filename
+     * Save HTML output to a file with name [filename] on the server.
      */
     fun toHTMLFile(filename: String) {
         val content = asHTMLPage()
@@ -58,16 +64,12 @@ abstract class Output : Renderable {
     /**
      * Generate an HTML snippet. Subclasses will need to implement this method. This is used in Jupyter-Lab environments
      * that can directly insert HTML and JavaScript content in the output of a cell.
-     *
-     * @return
      */
     abstract fun asHTML(): String
 
     /**
      * Generate a whole HTML page. Subclasses will need to implement this method. This is used in Jupyter-Notebook
      * environments that put the output of a cell in an iFrame.
-     *
-     * @return
      */
     abstract fun asHTMLPage(): String
 }

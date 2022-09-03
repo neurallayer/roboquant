@@ -63,7 +63,7 @@ internal class JupyterCore : JupyterIntegration() {
 
     companion object {
         private val outputs = CopyOnWriteArrayList<Output>()
-        fun render(output: Output) = outputs.add(output)
+        internal fun addOutput(output: Output) = outputs.add(output)
     }
 
     override fun Builder.onLoaded() {

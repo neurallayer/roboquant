@@ -73,7 +73,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
 
         /**
          * Infinite timeframe that matches any time and is typically used when no filtering is required or the
-         * timeframe for a number of events is unknown.
+         * exact timeframe is yet unknown.
          */
         val INFINITE = Timeframe(MIN, MAX)
 
@@ -129,12 +129,13 @@ data class Timeframe(val start: Instant, val end: Instant) {
             return Timeframe(start.toInstant(), stop.toInstant() - 1)
         }
 
-        private fun flexParse(str: String): Instant {
-            val fStr = when (str.length) {
-                4 -> "$str-01-01T00:00:00Z"
-                7 -> "$str-01T00:00:00Z"
-                10 -> "${str}T00:00:00Z"
-                else -> str
+        private fun String.toInstant(): Instant {
+            val fStr = when (length) {
+                4 -> "$this-01-01T00:00:00Z"
+                7 -> "$this-01T00:00:00Z"
+                10 -> "${this}T00:00:00Z"
+                19 -> "${this}Z"
+                else -> this
             }
             return Instant.parse(fStr)
         }
@@ -149,8 +150,8 @@ data class Timeframe(val start: Instant, val end: Instant) {
          *
          */
         fun parse(first: String, last: String): Timeframe {
-            val start = flexParse(first)
-            val stop = flexParse(last)
+            val start = first.toInstant()
+            val stop = last.toInstant()
             return Timeframe(start, stop)
         }
 
