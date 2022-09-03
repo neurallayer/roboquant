@@ -46,8 +46,7 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
                 <pre style="background: transparent;">${output.toString().escapeHtml()}</pre>         
            </details>      
         """.trimIndent()
-        val isolated = Output.mode === Output.Mode.CLASSIC
-        return HTML(result, isolated)
+        return HTML(result, Output.isolation)
     }
 
 }
@@ -84,7 +83,7 @@ internal class JupyterCore : JupyterIntegration() {
         resources {
 
             js("echarts") {
-                url("https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js")
+                classPath("js/echarts.min.js")
             }
 
         }
@@ -102,9 +101,9 @@ internal class JupyterCore : JupyterIntegration() {
 
         repositories(
             "*mavenLocal",
-            "https://roboquant.jfrog.io/artifactory/roboquant",
             "https://repo1.maven.org/maven2/",
-            "https://jitpack.io"
+            "https://jitpack.io",
+            "https://s01.oss.sonatype.org/content/repositories/snapshots"
         )
 
     }

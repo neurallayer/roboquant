@@ -29,52 +29,15 @@ import java.io.File
  */
 abstract class Output : Renderable {
 
-    enum class Mode {
-        LAB,
-        CLASSIC
-    }
-
     companion object {
-        var mode = autoDetectMode()
-
-        /**
-         * Set the output to classic Jupyter Notebooks.
-         */
-        fun classic() {
-            mode = Mode.CLASSIC
-        }
-
-        /**
-         * Quick hack to Auto detect mode. Only works with JDK 9 and higher.
-         *
-         * @return
-         */
-        private fun autoDetectMode(): Mode {
-            try {
-                for (process in ProcessHandle.allProcesses()) {
-                    val line = process.info().commandLine().toString()
-                    if (line.contains("jupyter") && line.contains("lab")) return Mode.LAB
-                }
-            } catch (_: Throwable) {
-                // ignore
-            }
-            return Mode.CLASSIC
-        }
-
-        /**
-         * Set the output to Jupyter Lab format.
-         *
-         */
-        fun lab() {
-            mode = Mode.LAB
-        }
+        var isolation = false
     }
 
+    /**
+     * Render notebook
+     */
     override fun render(notebook: Notebook): DisplayResult {
-        return when (mode) {
-            Mode.LAB -> HTML(asHTML())
-            Mode.CLASSIC -> HTML(asHTMLPage(), true)
-        }
+        return if (isolation)  HTML(asHTMLPage(), true) else HTML(asHTML(), false)
     }
 
     fun render() {

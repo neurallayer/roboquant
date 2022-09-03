@@ -26,8 +26,7 @@ internal class JupyterCoreTest {
     @Test
     fun test() {
         JupyterCore()
-        Output.classic()
-        Output.lab()
+        Output.isolation = false
     }
 
     @Test

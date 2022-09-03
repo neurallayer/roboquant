@@ -43,7 +43,6 @@ class Welcome : Output() {
                 <b> os:</b> $osInfo<br>
                 <b> jvm:</b> $jvmInfo<br>
                 <b> memory:</b> $memoryInfo MB<br>
-                <b> env: </b> $mode
             </span>
             """.trimIndent()
     }

@@ -41,6 +41,7 @@ internal class SampleNotebookTest {
         Config.random = Random(42L)
         Config.defaultZoneId = ZoneId.of("Europe/Amsterdam")
         Order.ID = 0
+        Chart.counter = 0
 
         // Get the file and validate it
         val path = "./roboquant-jupyter/notebooks/$file.ipynb"

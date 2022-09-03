@@ -125,6 +125,11 @@ abstract class Chart : Output() {
     companion object {
 
         /**
+         * Used to ensure the output divs have a unique id that is still deterministic
+         */
+        internal var counter = 0
+
+        /**
          * Theme to use for plotting. When left to "auto", it will try to adapt to the theme set for
          * Jupyter Lab (light or dark)
          */
@@ -192,6 +197,7 @@ abstract class Chart : Output() {
         }
 
         val debugStmt = if (debug) "console.log(option);" else ""
+        val id = "chart-${counter++}"
 
         // Transfer a string into a javascript Function for tooltip formatting
         val handleJS = if (hasJavascript)
@@ -200,18 +206,15 @@ abstract class Chart : Output() {
             ""
 
         return """
-        <div style="width:100%;height:${height}px;" class="rqcharts"></div>
-        <script type="text/javascript">
-            (function () {
-                let elem = document.currentScript.previousElementSibling;
-                let fn = function(a) {
-                    let theme = $themeDetector;
-                    let myChart = echarts.init(elem, theme);
-                    let option = $fragment;$handleJS
-                    myChart.setOption(option);
-                    elem.ondblclick = function () { myChart.resize() }; $debugStmt
-                }
-                call_echarts(fn)        
+        <div style="width:100%;height:${height}px;" class="rqcharts" id="$id"></div>
+        <script type="text/javascript">    
+            (function () {    
+                let elem = document.getElementById("$id"); 
+                let theme = $themeDetector;
+                let myChart = echarts.init(elem, theme);
+                let option = $fragment;$handleJS
+                myChart.setOption(option);
+                elem.ondblclick = function () { myChart.resize() }; $debugStmt
             })()
         </script>
         """.trimIndent()
@@ -229,9 +232,6 @@ abstract class Chart : Output() {
         <html>
             <head>
                 $script
-                <script type='text/javascript'>
-                    window["call_echarts"] = function(f) {f();};
-                </script>
                 <style type='text/css' media='screen'>
                     html { margin: 0px; padding: 0px; min-height: ${height}px;}
                     body { margin: 0px; padding: 10px; min-height: ${height}px;}
