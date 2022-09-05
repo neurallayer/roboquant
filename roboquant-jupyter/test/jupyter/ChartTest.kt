@@ -24,6 +24,7 @@ import org.roboquant.feeds.random.RandomWalk
 import java.io.File
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class ChartTest {
@@ -79,6 +80,8 @@ internal class ChartTest {
         assertContains(code, "new Function")
 
         Chart.debug = false
+        val code2 = chart.asHTML()
+        assertFalse(code2.contains("console.log"))
 
     }
 
