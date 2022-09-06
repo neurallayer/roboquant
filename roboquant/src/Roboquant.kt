@@ -208,15 +208,15 @@ class Roboquant(
      * by the [strategy], [policy] and [broker].
      */
     private fun runMetrics(account: Account, event: Event, runInfo: RunInfo) {
-        val info = runInfo.copy()
+        val metricResult = mutableMapOf<String, Number>()
         for (metric in metrics) {
-            val metricResult = metric.calculate(account, event)
-            logger.log(metricResult, info)
+            metricResult.putAll(metric.calculate(account, event))
         }
 
-        logger.log(strategy.getMetrics(), info)
-        logger.log(policy.getMetrics(), info)
-        logger.log(broker.getMetrics(), info)
+        metricResult.putAll(strategy.getMetrics())
+        metricResult.putAll(policy.getMetrics())
+        metricResult.putAll(broker.getMetrics())
+        logger.log(metricResult, runInfo.copy())
     }
 
     /**

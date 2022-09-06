@@ -29,8 +29,9 @@ import org.roboquant.metrics.MetricResults
 interface MetricsLogger : Lifecycle {
 
     /**
-     * Log the [results of metrics]. It should be noted that the provided results can be empty. Also [info] is provided
-     * about when these results where captured.
+     * Log the [results] of the metric calculations. Also [info] is provided about when these results where captured.
+     * This method is invoked once at the end of each step within a run with all the metrics that where captured during
+     * that step. It should be noted that the provided results can be empty.
      */
     fun log(results: MetricResults, info: RunInfo)
 
@@ -41,7 +42,7 @@ interface MetricsLogger : Lifecycle {
     fun getMetric(name: String): List<MetricsEntry> = emptyList()
 
     /**
-     * The metrics that are available and can be retrieved with the [getMetric].
+     * The list of metric names that are available and can be retrieved with the [getMetric].
      */
     val metricNames: List<String>
         get() = emptyList()
