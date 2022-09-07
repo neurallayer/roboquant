@@ -18,18 +18,28 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.Background
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class LiveFeedTest {
 
-    private class MyLiveFeed : LiveFeed()
+    private class MyLiveFeed : LiveFeed() {
+
+        fun test(event: Event) {
+            send(event)
+        }
+
+    }
 
     @Test
     fun basic(): Unit = runBlocking {
         val feed = MyLiveFeed()
         assertFalse(feed.isActive)
+
+        assertDoesNotThrow { feed.test(Event.empty()) }
+
         feed.heartbeatInterval = 10
         Background.ioJob {
             feed.play(EventChannel())

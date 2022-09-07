@@ -34,7 +34,7 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
     private var channel: EventChannel? = null
 
     /**
-     * Subclasses should use this to send an event. If the channel is not active, it will be dropped.
+     * Subclasses should use this method to send an event. If the channel is not active , it will be dropped.
      */
     protected fun send(event: Event) = channel?.offer(event)
 
@@ -52,7 +52,7 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
                 val event = Event.empty()
                 channel.send(event)
 
-                // We check to not have to wait another heart beat
+                // We check so we don't wait for another heart beat
                 if (channel.done) break
             }
         } catch (_: ClosedSendChannelException) {
