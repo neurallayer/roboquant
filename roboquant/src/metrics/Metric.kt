@@ -20,6 +20,9 @@ import org.roboquant.brokers.Account
 import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
 
+/**
+ * Alias for metric results, that is a Map with the key being the metric name and the value a number
+ */
 typealias MetricResults = Map<String, Number>
 
 /**

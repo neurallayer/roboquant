@@ -20,11 +20,14 @@ import org.roboquant.RunInfo
 import org.roboquant.metrics.MetricResults
 
 /**
- * This logger wraps another MetricsLogger and allows to configure a number of steps at the start of a run at which
+ * This logger wraps another [MetricsLogger] and allows to configure a number of steps at the start of a run at which
  * metrics will not be logged. The most common use case is that there is a warm-up period for a strategy that you
  * don't want to capture metrics at that period.
  *
- * @constructor Create empty Skip warmup logger
+ * @property logger the other metrics logger to wrap
+ * @property minSteps the number of steps before start invoking the wrapped logger
+ *
+ * @constructor Create new Skip warmup logger
  */
 class SkipWarmupLogger(private val logger: MetricsLogger, private val minSteps: Int = -1) : MetricsLogger by logger {
 
@@ -35,4 +38,7 @@ class SkipWarmupLogger(private val logger: MetricsLogger, private val minSteps: 
 
 }
 
+/**
+ * Extension function for all metrics loggers that make it convenient to don't log the first [steps]
+ */
 fun MetricsLogger.skipFirst(steps: Int) = SkipWarmupLogger(this, steps)

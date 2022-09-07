@@ -20,9 +20,9 @@ import org.roboquant.RunInfo
 import org.roboquant.metrics.MetricResults
 
 /**
- * Use println to output metric results to the console. This works with Notebooks and standalone applications.
- * By default, it will log metrics in a single line, but by setting [splitMetrics] to true, every metric will be logged
- * to a separate line.
+ * Output metric results to the console using plain println. This works with Notebooks and standalone applications.
+ * By default, it will log all metrics of step in a single line, but by setting [splitMetrics] to true, every metric
+ * will be logged to a separate line.
  */
 class ConsoleLogger(private val splitMetrics: Boolean = false) : MetricsLogger {
 
