@@ -208,7 +208,7 @@ class Roboquant(
      * by the [strategy], [policy] and [broker].
      */
     private fun runMetrics(account: Account, event: Event, runInfo: RunInfo) {
-        val metricResult = mutableMapOf<String, Number>()
+        val metricResult = mutableMapOf<String, Double>()
         for (metric in metrics) {
             metricResult.putAll(metric.calculate(account, event))
         }

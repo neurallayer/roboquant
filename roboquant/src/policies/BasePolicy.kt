@@ -30,7 +30,7 @@ import org.roboquant.metrics.MetricResults
  */
 abstract class BasePolicy(private val prefix: String = "policy.", var recording: Boolean = false) : Policy {
 
-    private val metrics = mutableMapOf<String, Number>()
+    private val metrics = mutableMapOf<String, Double>()
 
     /**
      * Record a metric
@@ -40,7 +40,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
      */
     protected fun record(key: String, value: Number) {
         if (!recording) return
-        metrics["$prefix$key"] = value
+        metrics["$prefix$key"] = value.toDouble()
     }
 
     override fun getMetrics(): MetricResults {

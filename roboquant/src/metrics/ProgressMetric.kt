@@ -38,7 +38,7 @@ class ProgressMetric : Metric {
 
     override fun calculate(account: Account, event: Event): MetricResults {
         actions += event.actions.size
-        return mapOf(
+        return metricResultsOf(
             "progress.actions" to actions,
             "progress.events" to ++steps,
             "progress.trades" to account.trades.size,

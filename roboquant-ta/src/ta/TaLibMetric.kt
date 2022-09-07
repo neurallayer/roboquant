@@ -47,7 +47,7 @@ class TaLibMetric(
     // private val logger: Logger = Logging.getLogger(TALibMetric::class)
 
     override fun calculate(account: Account, event: Event): MetricResults {
-        val metrics = mutableMapOf<String, Number>()
+        val metrics = mutableMapOf<String, Double>()
         val actions = event.prices.values.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset) }
         for (priceAction in actions) {
             val asset = priceAction.asset

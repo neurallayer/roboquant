@@ -23,7 +23,14 @@ import org.roboquant.feeds.Event
 /**
  * Alias for metric results, that is a Map with the key being the metric name and the value a number
  */
-typealias MetricResults = Map<String, Number>
+typealias MetricResults = Map<String, Double>
+
+/**
+ * Convert pairs of <String, number> to metric results. Any number will be converted to Double.
+ */
+fun metricResultsOf(vararg metricResults: Pair<String, Number>) : MetricResults {
+    return metricResults.associate { Pair(it.first, it.second.toDouble()) }
+}
 
 /**
  * Metric represents a piece of information you want to capture during a run. Examples of metrics are

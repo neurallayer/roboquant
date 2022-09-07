@@ -40,18 +40,14 @@ import java.util.*
  */
 class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize: Int = Int.MAX_VALUE) : MetricsLogger {
 
-    internal val history = mutableListOf<MetricsEntry>()
+    internal val history = mutableListOf<Pair<MetricResults, RunInfo>>()
     private val progressBar = ProgressBar()
 
     @Synchronized
     override fun log(results: MetricResults, info: RunInfo) {
         if (showProgress) progressBar.update(info)
-
-        for ((t, u) in results) {
-            if (history.size >= maxHistorySize) history.removeFirst()
-            val entry = MetricsEntry(t, u.toDouble(), info)
-            history.add(entry)
-        }
+        if (history.size >= maxHistorySize) history.removeFirst()
+        history.add(Pair(results, info))
     }
 
     override fun start(runPhase: RunPhase) {
@@ -70,6 +66,7 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
         progressBar.reset()
     }
 
+
     /**
      * Provided a summary of the recorded metrics for [last] events (default is 1)
      */
@@ -79,16 +76,15 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
         if (lastEntry == null) {
             s.add("No Data")
         } else {
-            val lastStep = lastEntry.info.step - last
-            val map = history.filter {
-                it.info.step > lastStep && lastEntry.sameEpisode(it)
-            }.groupBy { it.info.time }.toSortedMap()
-            for ((time, entries) in map) {
-                val t = Summary("$time")
-                for (entry in entries) {
-                    t.add(entry.metric, entry.value)
+            for (i in history.lastIndex downTo history.lastIndex - last) {
+                if (i >= 0) {
+                    val step = history[i]
+                    val t = Summary("${step.second.time}")
+                    for (entry in step.first) {
+                        t.add(entry.key, entry.value)
+                    }
+                    s.add(t)
                 }
-                s.add(t)
             }
         }
         return s
@@ -98,24 +94,29 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
      * Get all the recorded runs in this logger
      */
     val runs
-        get() = history.map { it.info.run }.distinct().sorted()
+        get() = history.map { it.second.run }.distinct().sorted()
 
     /**
      * Get available episodes for a specific [run]
      */
-    fun getEpisodes(run: String) = history.filter { it.info.run == run }.map { it.info.episode }.distinct().sorted()
+    fun getEpisodes(run: String) = history.filter { it.second.run == run }.map { it.second.episode }.distinct().sorted()
 
     /**
      * Get the unique list of metric names that have been captured
      */
     override val metricNames: List<String>
-        get() = history.map { it.metric }.distinct().sorted()
+        get() = history.map { it.first.keys }.flatten().distinct().sorted()
 
     /**
      * Get results for a metric specified by its [name]. It will include all the runs and episodes for that metric.
      */
     override fun getMetric(name: String): List<MetricsEntry> {
-        return history.filter { it.metric == name }
+        val result = mutableListOf<MetricsEntry>()
+        for (entry in history) {
+            val value = entry.first[name]
+            if (value != null) result.add(MetricsEntry(name, value, entry.second))
+        }
+        return result
     }
 
 }
@@ -149,5 +150,5 @@ fun Collection<MetricsEntry>.toDoubleArray() = map { it.value }.toDoubleArray()
  * Generate a name for a collection of metric entries
  */
 fun Collection<MetricsEntry>.getName(): String {
-    return map { it.metric }.distinct().joinToString("/") { it.replace('.', ' ') }
+    return map { it.name }.distinct().joinToString("/") { it.replace('.', ' ') }
 }

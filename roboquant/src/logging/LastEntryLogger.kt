@@ -22,7 +22,7 @@ import org.roboquant.metrics.MetricResults
 
 /**
  * Stores the last value of a metric for a particular run and phase in memory. This is more memory efficient if you
- * only care about the last result and not the values of metrics at each step of a run.
+ * only care about the last recorded result and not the values of metrics at each step of a run.
  *
  * If you need access to the metric values at each step, use the [MemoryLogger] instead.
  */
@@ -38,7 +38,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
 
         for ((t, u) in results) {
             val key = Triple(info.run, info.phase, t)
-            val value = MetricsEntry(t, u.toDouble(), info)
+            val value = MetricsEntry(t, u, info)
             history[key] = value
         }
     }
@@ -69,7 +69,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
      * Get results for the metric specified by its [name].
      */
     override fun getMetric(name: String): List<MetricsEntry> {
-        return history.values.filter { it.metric == name }
+        return history.values.filter { it.name == name }
     }
 
 }

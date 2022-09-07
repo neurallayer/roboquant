@@ -29,7 +29,7 @@ import org.roboquant.metrics.MetricResults
  */
 abstract class RecordingStrategy(private val prefix: String = "strategy.", var recording: Boolean = false) : Strategy {
 
-    private val metrics = mutableMapOf<String, Number>()
+    private val metrics = mutableMapOf<String, Double>()
 
     /**
      * Get the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this
@@ -49,7 +49,7 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
      * @param key
      * @param value
      */
-    fun record(key: String, value: Number) {
+    fun record(key: String, value: Double) {
         if (!recording) return
         metrics["$prefix$key"] = value
     }

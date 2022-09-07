@@ -60,7 +60,7 @@ class CombinedAssetStrategy(val strategyBuilder: (asset: Asset) -> Strategy) : S
     }
 
     override fun getMetrics(): MetricResults {
-        val result = mutableMapOf<String, Number>()
+        val result = mutableMapOf<String, Double>()
         strategies.values.forEach {
             result += it.getMetrics()
         }

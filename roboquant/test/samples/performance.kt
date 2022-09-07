@@ -87,18 +87,22 @@ suspend fun multiRunParallel(feed: Feed) {
 suspend fun main() {
     Config.printInfo()
     val feed = getFeed(4)
+    var time = Long.MAX_VALUE
 
-    val t = measureTimeMillis {
-        when ("BASE") {
-            "BASE" -> base(feed)
-            "PARALLEL" -> multiRunParallel(feed)
-            "MIXED" -> {
-                base(feed)
-                multiRunParallel(feed)
+    repeat(5) {
+        val t = measureTimeMillis {
+            when ("PARALLEL") {
+                "BASE" -> base(feed)
+                "PARALLEL" -> multiRunParallel(feed)
+                "MIXED" -> {
+                    base(feed)
+                    multiRunParallel(feed)
+                }
             }
         }
+        if (t < time) time = t
     }
 
-    println("\nTime elapsed $t ms")
+    println("\nFastest time $time ms")
 
 }

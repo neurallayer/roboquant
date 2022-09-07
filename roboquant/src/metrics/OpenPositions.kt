@@ -32,7 +32,7 @@ import org.roboquant.feeds.Event
 class OpenPositions : Metric {
 
     override fun calculate(account: Account, event: Event): MetricResults {
-        val result = mutableMapOf<String, Number>()
+        val result = mutableMapOf<String, Double>()
 
         for (position in account.positions) {
             val asset = position.asset

@@ -22,31 +22,20 @@ import org.roboquant.common.clean
 import org.roboquant.common.std
 
 /**
- * Single metric entry (name, value) with the associated [RunInfo]. This is a read-only class.
+ * Single metric entry ([name] and [value]) with the associated [RunInfo]. This is a read-only class.
  *
- * @property metric
+ * @property name
  * @property value
  * @property info
  * @constructor Create empty Metrics entry
  */
-data class MetricsEntry(val metric: String, val value: Double, val info: RunInfo) : Comparable<MetricsEntry> {
+data class MetricsEntry(val name: String, val value: Double, val info: RunInfo) : Comparable<MetricsEntry> {
 
     /**
      * Get a key that uniquely defines the metric across a run and episode.
      */
     internal val groupId
-        get() = """${metric}/${info.run}/${info.episode}"""
-
-    /**
-     * Validate if another entry is from the same recorded phase, run and episode.
-     *
-     * @param other
-     * @return
-     */
-    fun sameEpisode(other: MetricsEntry): Boolean {
-        val i = other.info
-        return i.phase == info.phase && i.run == info.run && i.episode == info.episode
-    }
+        get() = """${name}/${info.run}/${info.episode}"""
 
     /**
      * Compare two metric entries based on their [value]
@@ -114,7 +103,7 @@ fun Collection<MetricsEntry>.perc(): List<MetricsEntry> {
 
 fun Collection<MetricsEntry>.summary(): Summary {
     val result = Summary("Metrics")
-    val m = groupBy { it.metric }
+    val m = groupBy { it.name }
     for ((name, values) in m) {
         val child = Summary(name)
         child.add("size", values.size)

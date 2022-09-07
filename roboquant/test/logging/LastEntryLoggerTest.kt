@@ -34,7 +34,7 @@ internal class LastEntryLoggerTest {
 
         val m1 = logger.metricNames.first()
         val m = logger.getMetric(m1)
-        assertEquals(m1, m.first().metric)
+        assertEquals(m1, m.first().name)
 
         logger.reset()
         assertTrue(logger.metricNames.isEmpty())
