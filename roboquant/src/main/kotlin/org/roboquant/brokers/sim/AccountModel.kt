@@ -71,9 +71,9 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
  *
  * Note: currently open orders are not taken into consideration when calculating the total buying power
  *
- * @property initialMargin the intial margin requirements, default to 50% (0.50)
- * @property maintenanceMarginLong the maintenance margin requirement for long psotiins, defaults to 30% (0.3)
- * @property maintenanceMarginShort the maintenance margin requirement for short psotiins, defaults to same value as
+ * @property initialMargin the initial margin requirements, default to 50% (0.50)
+ * @property maintenanceMarginLong the maintenance margin requirement for long positions, defaults to 30% (0.3)
+ * @property maintenanceMarginShort the maintenance margin requirement for short positions, defaults to same value as
  * maintenanceMarginLong
  * @property minimumEquity the minimum equity requirement, defaults to 0.0 (denoted in [Account.baseCurrency])
  */

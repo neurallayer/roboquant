@@ -35,7 +35,7 @@ internal class ChartTest {
     private class MyChart : Chart() {
 
         init {
-            javasciptFunction("return p;")
+            javascriptFunction("return p;")
         }
 
         override fun getOption(): Option {

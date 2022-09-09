@@ -25,7 +25,7 @@ package org.roboquant.orders
  **
  * @property original
  * @property update
- * @constructor Create new UpateOrder
+ * @constructor Create new UpdateOrder
  */
 class UpdateOrder(
     val original: OrderState,

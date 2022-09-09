@@ -60,7 +60,7 @@ interface PriceAction : Action {
     fun getPrice(type: String = "DEFAULT"): Double
 
     /**
-     * Same as [getPrice] but returns an [Amount], so this incudes the currency. The default implementation should be
+     * Same as [getPrice] but returns an [Amount], so this includes the currency. The default implementation should be
      * sufficient for most cases.
      */
     fun getPriceAmount(type: String = "DEFAULT") = Amount(asset.currency, getPrice(type))

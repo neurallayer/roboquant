@@ -47,7 +47,7 @@ data class MetricsEntry(val name: String, val value: Double, val info: RunInfo) 
 }
 
 /**
- * Group a collection of metrics by thier unique name, run and episode
+ * Group a collection of metrics by their unique name, run and episode
  */
 fun Collection<MetricsEntry>.group(): Map<String, List<MetricsEntry>> = groupBy { it.groupId }
 

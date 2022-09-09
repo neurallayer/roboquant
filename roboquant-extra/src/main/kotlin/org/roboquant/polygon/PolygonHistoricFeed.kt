@@ -31,7 +31,7 @@ import java.time.Instant
 data class PolygonConfig(
 
     /**
-     * API key to access polygon.io api's
+     * API key to access polygon.io
      */
     var key: String = Config.getProperty("polygon.key", "")
 )

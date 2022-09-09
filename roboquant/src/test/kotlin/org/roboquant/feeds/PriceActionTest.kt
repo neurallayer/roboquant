@@ -76,7 +76,7 @@ internal class PriceActionTest {
     }
 
     @Test
-    fun orderbook() {
+    fun orderBook() {
         val asset = TestData.euStock()
         val action = OrderBook(
             asset,

@@ -91,7 +91,7 @@ class TradeChartByAsset(
         val yAxisData = assets.map { it.symbol }.toTypedArray()
 
         val tooltip = Tooltip()
-            .setFormatter(javasciptFunction("return p.value[3];"))
+            .setFormatter(javascriptFunction("return p.value[3];"))
 
         val chart = Scatter()
             .setTitle(title ?: "Trade Chart $aspect")

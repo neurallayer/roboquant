@@ -152,7 +152,7 @@ fun multiRun() {
     println(maxEntry.info.run)
 }
 
-suspend fun walkforwardParallel() {
+suspend fun walkForwardParallel() {
     val feed = AvroFeed.sp500()
     val logger = LastEntryLogger()
     val jobs = ParallelJobs()
@@ -253,7 +253,7 @@ suspend fun main() {
         "CORR" -> calcCorrelation()
         "BETA2" -> beta2()
         "MULTI_RUN" -> multiRun()
-        "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkforwardParallel() })
+        "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()
         "VOLATILITY" -> volatility()

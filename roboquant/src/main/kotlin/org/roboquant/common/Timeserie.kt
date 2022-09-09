@@ -81,7 +81,7 @@ fun correlation(a: Timeserie, b: Timeserie, minObservations: Int = 3): Double {
 
 /**
  * Return the correlations for the timeseries, ensuring that at least [minObservations] are available for calculating
- * the correlation. By default the correlation for the same asset are excluded
+ * the correlation. By default, the correlation for the same asset are excluded
  */
 fun Map<Asset, Timeserie>.correlation(
     minObservations: Int = 3,

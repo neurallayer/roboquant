@@ -97,7 +97,7 @@ class AssetPerformanceChart(
         val tooltip = Tooltip()
             .setPosition("top")
             .setFormatter(
-                javasciptFunction(
+                javascriptFunction(
                     "return 'asset: ' + p.name + '<br>volume: ' + p.value[0]+ '<br>returns: ' + p.value[1]  + '%';"
                 )
             )

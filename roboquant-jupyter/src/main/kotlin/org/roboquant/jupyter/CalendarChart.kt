@@ -83,7 +83,7 @@ class CalendarChart(
         return Tooltip()
             .setPosition("top")
             .setFormatter(
-                javasciptFunction(
+                javascriptFunction(
                     "var f = echarts.format.formatTime('yyyy-MM-dd', p.data[0]);return f + ': ' + p.data[1];"
                 )
             )

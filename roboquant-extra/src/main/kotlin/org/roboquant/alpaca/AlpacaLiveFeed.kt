@@ -221,7 +221,7 @@ class AlpacaLiveFeed(
             when (streamMessageType) {
                 MarketDataMessageType.ERROR -> logger.warning("$msg")
                 MarketDataMessageType.SUBSCRIPTION -> logger.info("subscription $msg")
-                MarketDataMessageType.SUCCESS -> logger.fine("succes $msg")
+                MarketDataMessageType.SUCCESS -> logger.fine("success $msg")
                 else -> handleMsg(msg)
             }
         }

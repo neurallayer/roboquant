@@ -72,7 +72,7 @@ internal class AmountTest {
     }
 
     @Test
-    fun testPredifined() {
+    fun testPredefined() {
         val wallet = 1.EUR + 1.USD + 1.JPY + 1.GBP + 1.CHF + 1.AUD + 1.CAD +
                 1.CNY + 1.HKD + 1.NZD + 1.RUB + 1.INR + 1.BTC + 1.ETH + 1.USDT
         assertEquals(15, wallet.currencies.size)

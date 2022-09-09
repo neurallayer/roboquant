@@ -89,7 +89,7 @@ open class TradeChart(
         val vm = getVisualMap(min, max).setDimension(1)
 
         val tooltip = Tooltip()
-            .setFormatter(javasciptFunction("return p.value[2];"))
+            .setFormatter(javascriptFunction("return p.value[2];"))
 
         val chart = Scatter()
             .setTitle(title ?: "Trade $aspect")

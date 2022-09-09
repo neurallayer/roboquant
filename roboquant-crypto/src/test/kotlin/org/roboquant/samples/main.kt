@@ -59,7 +59,7 @@ fun recordBinanceFeed() {
     println("done")
 }
 
-fun readBianceFeed() {
+fun readBinanceFeed() {
     println("starting")
     val t = measureTimeMillis {
         val userHomeDir = System.getProperty("user.home")
@@ -99,7 +99,7 @@ fun main() {
 
     when ("READ") {
         "RECORD" -> recordBinanceFeed()
-        "READ" -> readBianceFeed()
+        "READ" -> readBinanceFeed()
         "XCHANGE" -> xchangeFeed()
     }
 }

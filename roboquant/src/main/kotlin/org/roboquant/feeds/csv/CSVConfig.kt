@@ -62,7 +62,7 @@ data class CSVConfig(
 
     /**
      * Asset builder allows to create assets based on more than just the symbol name. The input it the filename
-     * without extension in all capital letters an dthe return value should be a valid Asset
+     * without extension in all capital letters and the return value should be a valid Asset
      */
     var assetBuilder: (String) -> Asset = { name -> template.copy(symbol = name) }
 

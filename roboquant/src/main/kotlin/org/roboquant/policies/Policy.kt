@@ -44,7 +44,7 @@ interface Policy : Lifecycle {
     fun act(signals: List<Signal>, account: Account, event: Event): List<Order>
 
     /**
-     * This will be invoked at each step in a run and provides the implemention with the opportunity to log additional
+     * This will be invoked at each step in a run and provides the implementation with the opportunity to log additional
      * information. The default implementation is to return an empty map.
      *
      * This map should NOT be mutated after it has been returned by this method.

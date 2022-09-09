@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter
  * cryptocurrency. All of its properties are read-only, and assets are ideally only created once and reused
  * thereafter. An asset instance is immutable.
  *
- * @property symbol none empty symbol name, for derivatives like options or futures contrat this includes the details
+ * @property symbol none empty symbol name, for derivatives like options or futures contract this includes the details
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currencyCode currency code, default is "USD"
  * @property exchangeCode Exchange this asset is traded on, default is an empty string
@@ -81,7 +81,7 @@ data class Asset(
         }
 
         /**
-         * Returns a future contract based on the provided paramaters
+         * Returns a future contract based on the provided parameters
          */
         fun futureContract(
             symbol: String,

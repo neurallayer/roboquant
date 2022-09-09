@@ -37,25 +37,25 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
 
     // Common operators that make working with Amounts more pleasant
 
-    /** @supress */
+    /** @suppress */
     operator fun times(d: Number): Amount = Amount(currency, value * d.toDouble())
 
-    /** @supress */
+    /** @suppress */
     operator fun plus(d: Number): Amount = Amount(currency, value + d.toDouble())
 
-    /** @supress */
+    /** @suppress */
     operator fun div(d: Number): Amount = Amount(currency, value / d.toDouble())
 
-    /** @supress */
+    /** @suppress */
     operator fun minus(d: Number): Amount = Amount(currency, value - d.toDouble())
 
-    /** @supress */
+    /** @suppress */
     operator fun plus(other: Amount): Wallet = Wallet(this, other)
 
-    /** @supress */
+    /** @suppress */
     operator fun minus(other: Amount): Wallet = Wallet(this, -other)
 
-    /** @supress */
+    /** @suppress */
     operator fun unaryMinus(): Amount = Amount(currency, -value)
 
     /**

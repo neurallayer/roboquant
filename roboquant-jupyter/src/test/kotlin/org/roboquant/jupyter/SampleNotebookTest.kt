@@ -66,7 +66,7 @@ internal class SampleNotebookTest {
     }
 
     @Test
-    fun testMultirunCharts() {
+    fun testMultiRunCharts() {
         test("multirun_charts")
     }
 

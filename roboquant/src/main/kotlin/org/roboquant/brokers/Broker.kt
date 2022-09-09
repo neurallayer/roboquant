@@ -42,7 +42,7 @@ interface Broker : Lifecycle {
     fun place(orders: List<Order>, event: Event): Account
 
     /**
-     * This will be invoked at each step in a run and provides the implemention with the opportunity to log additional
+     * This will be invoked at each step in a run and provides the implementation with the opportunity to log additional
      * information. The default implementation is to return an empty map.
      *
      * This map should NOT be mutated after it has been returned by this method.

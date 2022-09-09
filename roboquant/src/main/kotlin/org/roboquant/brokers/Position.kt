@@ -24,7 +24,7 @@ import java.time.Instant
  * Class that holds the position of an asset in the portfolio. This implementation makes no assumptions about the
  * asset class, so it supports any type of asset class, ranging from stocks and options to cryptocurrencies.
  *
- * The actual size of the position is precize (doesn't lose precision like is the case with double) using the [Size]
+ * The actual size of the position is precise (doesn't lose precision like is the case with double) using the [Size]
  * class.
  *
  * @property asset the asset

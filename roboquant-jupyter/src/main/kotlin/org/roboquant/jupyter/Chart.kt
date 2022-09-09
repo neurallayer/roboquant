@@ -292,13 +292,13 @@ abstract class Chart : Output() {
 
     /**
      * Calling this function will ensure that a JavaScript function used in the tooltip formatter will work.
-     * The provided function should only contain the body and the input paramter is `p`, for example:
+     * The provided function should only contain the body and the input parameter is `p`, for example:
      *
      * ```
      *      javascriptFunction("return p.param[0] + p.param[1]")
      * ```
      */
-    protected fun javasciptFunction(function: String): String {
+    protected fun javascriptFunction(function: String): String {
         hasJavascript = true
         return function
     }

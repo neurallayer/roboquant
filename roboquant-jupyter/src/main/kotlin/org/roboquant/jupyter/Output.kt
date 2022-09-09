@@ -24,7 +24,7 @@ import java.io.File
 
 /**
  * Base class for anything that wants to generate output for notebooks. This takes care of difference between
- * classic notebooks and Jupyer-Lab.
+ * classic notebooks and Jupyter-Lab.
  *
  */
 abstract class Output : Renderable {

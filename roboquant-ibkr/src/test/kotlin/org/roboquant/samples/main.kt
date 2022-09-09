@@ -78,7 +78,7 @@ fun showAccount() {
     val broker = IBKRBroker()
     val account = broker.account
 
-    // Log the summaray of the account and portfolio
+    // Log the summary of the account and portfolio
     account.summary().log()
     account.portfolio.summary().log()
 
@@ -129,7 +129,7 @@ fun liveFeedUS() {
 fun historicFeed() {
     val feed = IBKRHistoricFeed()
 
-    // This assumes you have a valid market subscriptoin for European stocks
+    // This assumes you have a valid market subscription for European stocks
     val template = Asset("TEMPLATE", AssetType.STOCK, "EUR", "AEB")
     val symbols = listOf("ABN", "ASML", "KPN")
     val assets = symbols.map { template.copy(symbol = it) }
@@ -142,7 +142,7 @@ fun historicFeed() {
 fun historicFeed2() {
     val feed = IBKRHistoricFeed()
 
-    // This assumes you have a valid market subscriptoin for European stocks
+    // This assumes you have a valid market subscription for European stocks
     val template = Asset("TEMPLATE", AssetType.STOCK, "EUR", "AEB")
     val symbols = listOf("ABN", "ASML", "KPN")
     val assets = symbols.map { template.copy(symbol = it) }
