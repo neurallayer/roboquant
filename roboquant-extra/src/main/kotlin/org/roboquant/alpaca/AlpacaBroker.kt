@@ -192,20 +192,18 @@ class AlpacaBroker(
             // Only add trades we know the order id of
             logger.fine { "Found trade $activity" }
             val order = orderMapping.filterValues { it.id == activity.orderId }.keys.firstOrNull()
-            if (order != null) {
-                if (activity.id !in handledTrades) {
-                    val trade = Trade(
-                        activity.transactionTime.toInstant(),
-                        order.asset,
-                        Size(activity.quantity.toBigDecimal()),
-                        activity.price.toDouble(),
-                        0.0,
-                        Double.NaN,
-                        order.id
-                    )
-                    _account.trades.add(trade)
-                    handledTrades.add(activity.id)
-                }
+            if (order != null && activity.id !in handledTrades) {
+                val trade = Trade(
+                    activity.transactionTime.toInstant(),
+                    order.asset,
+                    Size(activity.quantity.toBigDecimal()),
+                    activity.price.toDouble(),
+                    0.0,
+                    Double.NaN,
+                    order.id
+                )
+                _account.trades.add(trade)
+                handledTrades.add(activity.id)
             }
         }
     }

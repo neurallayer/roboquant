@@ -39,11 +39,15 @@ interface Lifecycle {
     /**
      * Invoked at the end of a [runPhase]. Default implementation is to take no action.
      */
-    fun end(runPhase: RunPhase) {}
+    fun end(runPhase: RunPhase) {
+        // default is to do nothing
+    }
 
     /**
      * Reset the state to its initial state, default implementation is to take no action.
      */
-    fun reset() {}
+    fun reset() {
+        // default is to do nothing
+    }
 
 }

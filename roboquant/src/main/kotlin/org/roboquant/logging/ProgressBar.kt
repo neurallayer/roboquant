@@ -51,7 +51,7 @@ internal class ProgressBar {
 
         // Only if percentage changes we are going to refresh
         val totalDuration = info.timeframe.duration
-        var percent = ((info.duration.seconds * 100.0 / totalDuration.seconds)).roundToInt()
+        var percent = (info.duration.seconds * 100.0 / totalDuration.seconds).roundToInt()
         percent = min(percent, 100)
         if (percent == currentPercent) return
 

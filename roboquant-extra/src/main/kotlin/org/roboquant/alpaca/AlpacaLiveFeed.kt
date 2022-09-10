@@ -110,7 +110,8 @@ class AlpacaLiveFeed(
             if (alpacaAPI.cryptoMarketDataStreaming().isConnected) alpacaAPI.cryptoMarketDataStreaming().disconnect()
             alpacaAPI.okHttpClient.dispatcher.executorService.shutdown()
             alpacaAPI.okHttpClient.connectionPool.evictAll()
-        } catch (_: Exception) {
+        } catch (exception: Exception) {
+            logger.info(exception.message)
         }
     }
 

@@ -49,7 +49,9 @@ interface Feed : Closeable {
      * Close the feed and free resources held by the feed. This is part of the [Closeable] interface that any feed
      * can implement. If not implemented, the default behavior is to do nothing.
      */
-    override fun close() {}
+    override fun close() {
+        // default is to do nothing
+    }
 
 }
 

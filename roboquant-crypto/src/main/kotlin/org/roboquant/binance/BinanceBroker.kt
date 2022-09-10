@@ -103,7 +103,6 @@ class BinanceBroker(
             OrderState(it, OrderStatus.REJECTED, event.time, event.time)
         }
         _account.putOrders(slips)
-        true && return _account.toAccount()
 
         for (order in orders) {
             val asset = order.asset

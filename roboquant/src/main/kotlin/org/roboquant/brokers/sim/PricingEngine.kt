@@ -37,7 +37,9 @@ fun interface PricingEngine {
      * Clear any state of the pricing engine. Often a [PricingEngine] is stateless, but advanced engines might
      * implement some type of ripple-effect pricing behavior. The default implementation is to do nothing.
      */
-    fun clear() {}
+    fun clear() {
+        // default is to do nothing
+    }
 }
 
 /**

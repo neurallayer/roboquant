@@ -1,6 +1,6 @@
 = Purpose
 
-This directory contains various IntelliJ IDEA configuration files for testing roboquant.
+This directory contains various IntelliJ IDEA configuration files for testing _roboquant_.
 
 == With Coverage
 Run extended unit tests to improve code coverage. By default, these extra unit tests are not enabled since they take too much extra time.
