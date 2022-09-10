@@ -60,7 +60,20 @@ Next to `roboquant`, the following additional artefacts are available for inclus
 == Building from source
 First start with cloning the roboquant GitHub repository to your local disk. The quickest way to be up and running is then to install IntelliJ IDEA (either the free community edition or the paid Ultimate version) and open the directory you just cloned. IntelliJ IDEA will recognize it as Kotlin/Maven project, and you can build it and run test directly from the IDE.
 
-You can also use a plain text editor of course. Roboquant uses a setup and directory structure that removes much of the ceremony often found in many Java/Kotlin projects. So no need to go 10 directories deep to locate the source file you were looking for.
+_Roboquant_ uses a directory setup that is similar to most other Kotlin projects:
+
+[]
+----
+root
+    submodule1
+        src/main/kotlin
+        src/test/kotlin
+    submodule2
+        src/main/kotlin
+        src/test/kotlin
+----
+
+All source code is written in Kotlin, so there is no Java or other language source files.
 
 Roboquant uses Maven for the build process and assuming you already have this installed, building and installing the libraries locally, is as easy as:
 
