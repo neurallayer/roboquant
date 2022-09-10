@@ -59,12 +59,12 @@ data class Timeframe(val start: Instant, val end: Instant) {
         /**
          * Minimum start date of a timeframe
          */
-        val MIN : Instant = Instant.parse("1900-01-01T00:00:00Z")
+        val MIN: Instant = Instant.parse("1900-01-01T00:00:00Z")
 
         /**
          * Maximum end date of a timeframe
          */
-        val MAX : Instant = Instant.parse("2200-01-01T00:00:00Z")
+        val MAX: Instant = Instant.parse("2200-01-01T00:00:00Z")
 
         private const val ONE_YEAR_MILLIS = 365.0 * 24.0 * 3600.0 * 1000.0
 
@@ -311,7 +311,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
             d < 1 -> millisFormatter // less than 1 second
             d < 60 -> secondFormatter // less than 1 minute
             d < 3600 -> minutesFormatter // less than 1 hour
-            d < 3600*24 -> hoursFormatter // less than 1 day
+            d < 3600 * 24 -> hoursFormatter // less than 1 day
             else -> dayFormatter
         }
 

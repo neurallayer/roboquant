@@ -89,7 +89,7 @@ object TestData {
 
     fun priceBar(asset: Asset = usStock()) = PriceBar(asset, 10.0, 11.0, 9.0, 10.0, 1000.0)
 
-    fun time() : Instant = Instant.parse("2020-01-03T12:00:00Z")
+    fun time(): Instant = Instant.parse("2020-01-03T12:00:00Z")
 
     fun event(time: Instant = time()) = Event(listOf(priceAction()), time)
 

@@ -28,7 +28,7 @@ typealias MetricResults = Map<String, Double>
 /**
  * Convert pairs of <String, number> to metric results. Any number will be converted to Double.
  */
-fun metricResultsOf(vararg metricResults: Pair<String, Number>) : MetricResults {
+fun metricResultsOf(vararg metricResults: Pair<String, Number>): MetricResults {
     return metricResults.associate { Pair(it.first, it.second.toDouble()) }
 }
 

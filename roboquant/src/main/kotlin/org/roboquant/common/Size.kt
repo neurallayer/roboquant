@@ -70,7 +70,7 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
     /**
      * Converts this [Size] value to [BigDecimal]
      */
-    fun toBigDecimal() : BigDecimal = BigDecimal(value).setScale(SCALE).divide(BD_FRACTION)
+    fun toBigDecimal(): BigDecimal = BigDecimal(value).setScale(SCALE).divide(BD_FRACTION)
 
     /**
      * Returns true if the size is zero, false otherwise

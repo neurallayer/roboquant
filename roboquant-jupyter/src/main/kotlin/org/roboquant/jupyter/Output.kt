@@ -42,7 +42,7 @@ abstract class Output : Renderable {
      * Render notebook
      */
     override fun render(notebook: Notebook): DisplayResult {
-        return if (isolation)  HTML(asHTMLPage(), true) else HTML(asHTML(), false)
+        return if (isolation) HTML(asHTMLPage(), true) else HTML(asHTML(), false)
     }
 
     /**
