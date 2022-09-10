@@ -75,7 +75,7 @@ fun feedPolygon() {
     println(feed.assets)
     println(feed.timeline.size)
 
-    // Lets us the feed
+    // Use the feed
     val strategy = EMACrossover()
     val roboquant = Roboquant(strategy)
     roboquant.run(feed)

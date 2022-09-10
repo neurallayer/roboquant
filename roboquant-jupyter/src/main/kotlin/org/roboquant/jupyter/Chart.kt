@@ -102,7 +102,7 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 }
 
 /**
- * Base class all roboquant charts in Notebooks. Subclasses should implemented at least the [getOption] method.
+ * Base class all roboquant charts in Notebooks. Subclasses should implement at least the [getOption] method.
  */
 abstract class Chart : Output() {
 
@@ -150,7 +150,7 @@ abstract class Chart : Output() {
          */
         var maxSamples = Int.MAX_VALUE
 
-        // Make this variable so can charts work for both Chinese and western users.
+        // Make this variable so charts work for both Chinese and western users.
         var positiveColor: String = "#0C0" // Green
         var negativeColor: String = "#C00" // Red
         var neutralColor: String = "#CC0" // Yellow
@@ -186,7 +186,7 @@ abstract class Chart : Output() {
     }
 
     /**
-     * Generates the HTML snippet required to draw a chart. This is a HTML snippet and not a full HTML page
+     * Generates the HTML snippet required to draw a chart. This is an HTML snippet and not a full HTML page
      * and it is suitable to be rendered in the cell output of a Jupyter notebook.
      */
     override fun asHTML(): String {

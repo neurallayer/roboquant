@@ -276,7 +276,7 @@ fun Number.round(fractions: Int = 2): BigDecimal =
     BigDecimal.valueOf(toDouble()).setScale(fractions, RoundingMode.HALF_DOWN)
 
 /**
- * Convert a string to a currency pair. Return null if could not determine the currencies.
+ * Convert a string to a currency pair. Returns null if it could not determine the currencies.
  */
 fun String.toCurrencyPair(): Pair<Currency, Currency>? {
     val codes = split('_', '-', ' ', '/', ':')

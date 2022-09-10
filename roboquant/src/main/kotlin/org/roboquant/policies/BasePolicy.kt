@@ -25,7 +25,7 @@ import org.roboquant.metrics.MetricResults
  * how to deal with conflicting signals or how to handle amounts in a multi-currency environment. It also contains
  * a simple method to record metrics.
  *
- * @property recording should logged metrics be recorded, default is false
+ * @property recording should metrics be recorded, default is false
  * @constructor Create empty Base policy
  */
 abstract class BasePolicy(private val prefix: String = "policy.", var recording: Boolean = false) : Policy {

@@ -29,7 +29,7 @@ import org.roboquant.common.Asset
  * - update of an existing order
  *
  * @property asset the underlying asset of the order
- * @property id an unique id of the order
+ * @property id a unique id of the order
  * @property tag an arbitrary tag that can be associated with this order, default is an empty string
  *
  **/

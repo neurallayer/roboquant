@@ -97,12 +97,12 @@ fun alpacaHistoricFeed() {
         feed.retrieve("AAPL", "IBM", timeframe = it, barSize = 1.minutes)
         println("timeline size is ${feed.timeline.size}")
 
-        // Sleep a little bit to not exceed API call limits
+        // Sleep a little to not exceed API call limits
         Thread.sleep(1000)
     }
     println("total timeframe is ${feed.timeframe}")
 
-    // store thre result in a Avro feed for future usage
+    // store the result in an Avro feed for future usage
     AvroUtil.record(feed, "/tmp/alpaca.avro")
 }
 

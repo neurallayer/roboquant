@@ -33,7 +33,7 @@ import java.math.RoundingMode
  * A MetricChart will plot a metric that is captured during one or more runs.
  *
  * @property metricsData the data to use
- * @property useTime should be X axis be a time scale (or a step scale)
+ * @property useTime should be X axis be a timescale (or a step scale)
  * @property fractionDigits how many digits to use for presenting the metric values
  */
 class MetricChart(

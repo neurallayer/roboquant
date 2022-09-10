@@ -45,7 +45,7 @@ interface AccountModel {
  *
  * Note: currently open orders are not taken into consideration when calculating the total buying power
  *
- * @property minimum the minimum amount of cash balance required to maintain int he account, defaults to 0.0
+ * @property minimum the minimum amount of cash balance required to maintain in the account, defaults to 0.0
  */
 class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 

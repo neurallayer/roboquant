@@ -71,7 +71,7 @@ fun closePosition() {
 fun showAccount() {
 
     // If you don't have multiple currencies in your account
-    // you don't need to setup exchange rates
+    // you don't need to set up exchange rates
     Config.exchangeRates = IBKRExchangeRates()
 
     // Get the account object from the broker instance
