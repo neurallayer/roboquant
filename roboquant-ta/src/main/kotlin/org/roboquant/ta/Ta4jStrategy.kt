@@ -30,7 +30,7 @@ import org.ta4j.core.rules.BooleanRule
 
 /**
  * Technical analysis based [Strategy] that allows to use indicators and rules from the `ta4j` library to define a
- * custom strategy. Ta4j is a flexible framework written in Java that allows to combine indicators and rules and comes
+ * custom strategy. `Ta4j` is a flexible framework written in Java that allows to combine indicators and rules and comes
  * with over 130 indicators.
  *
  * @property maxBarCount maximum number of price-bars to track, default is -1 meaning track all bars

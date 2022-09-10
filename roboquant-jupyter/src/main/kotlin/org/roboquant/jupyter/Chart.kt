@@ -186,7 +186,7 @@ abstract class Chart : Output() {
     }
 
     /**
-     * Generates the HTML snippet required to draw a chart. This is an HTML snippet and not a full HTML page
+     * Generates the HTML snippet required to draw a chart. This is an HTML snippet and not a full HTML page,
      * and it is suitable to be rendered in the cell output of a Jupyter notebook.
      */
     override fun asHTML(): String {
