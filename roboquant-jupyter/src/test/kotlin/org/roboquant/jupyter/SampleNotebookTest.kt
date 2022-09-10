@@ -45,7 +45,7 @@ internal class SampleNotebookTest {
         Chart.counter = 0
 
         // Get the file and validate it
-        val path = "./roboquant-jupyter/src/test/resources/notebooks/$file.ipynb"
+        val path = "./roboquant-jupyter/src/test/resources/$file.ipynb"
         val c = NotebookTester()
         c.validateNotebook(path)
     }
