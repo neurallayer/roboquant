@@ -73,7 +73,7 @@ root
         src/test/kotlin
 ----
 
-All source code is written in Kotlin, so there is no Java or other language source files.
+All source code is written in Kotlin, so there are no Java or other language source files.
 
 Roboquant uses Maven for the build process and assuming you already have this installed, building and installing the libraries locally, is as easy as:
 
