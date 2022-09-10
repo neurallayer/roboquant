@@ -25,7 +25,7 @@ import kotlin.test.assertTrue
 internal class SignalTest {
 
     @Test
-    fun signalTest() {
+    fun basic() {
         val c = Asset("AAPL")
         val s = Signal(c, Rating.BUY)
 

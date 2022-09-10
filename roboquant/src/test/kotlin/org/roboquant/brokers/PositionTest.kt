@@ -48,7 +48,7 @@ internal class PositionTest {
     @Test
     fun accuracy() {
         val contract = TestData.usStock()
-        for (i in 1..10) {
+        repeat(10) {
             val size1 = getRandomSize()
             val size2 = getRandomSize()
             val totalSize = Size(size1 + size2)

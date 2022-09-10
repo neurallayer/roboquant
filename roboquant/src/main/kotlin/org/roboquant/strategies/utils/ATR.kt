@@ -20,8 +20,8 @@ import org.roboquant.feeds.PriceBar
 import kotlin.math.abs
 
 /**
- * Efficient Average True Range implementation that minimizes the memory footprint and uses an exponential moving average
- * to calculate the average over a [period].
+ * Efficient Average True Range implementation that minimizes the memory footprint and uses an exponential
+ * moving average to calculate the average over a [period].
  *
  * @constructor Create new ATR
  */

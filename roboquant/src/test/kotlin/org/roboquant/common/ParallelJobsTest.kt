@@ -30,7 +30,9 @@ internal class ParallelJobsTest {
     @Test
     fun joinJobs() = runBlocking {
         val jobs = ParallelJobs()
-        for (i in 1..3) jobs.add { test() }
+        repeat(3) {
+            jobs.add { test() }
+        }
         assertEquals(3, jobs.size)
         jobs.joinAll()
         assertEquals(0, jobs.size)
@@ -39,7 +41,9 @@ internal class ParallelJobsTest {
     @Test
     fun joinBlocking() {
         val jobs = ParallelJobs()
-        for (i in 1..3) jobs.add { test() }
+        repeat(3) {
+            jobs.add { test() }
+        }
         jobs.joinAllBlocking()
         assertEquals(0, jobs.size)
     }
@@ -47,10 +51,13 @@ internal class ParallelJobsTest {
     @Test
     fun cancelJobs() = runBlocking {
         val jobs = ParallelJobs()
-        for (i in 1..3) jobs.add { test() }
+        repeat(3) {
+            jobs.add { test() }
+        }
         assertEquals(3, jobs.size)
         jobs.cancelAll()
         assertEquals(0, jobs.size)
     }
 
 }
+

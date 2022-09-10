@@ -20,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 import org.roboquant.feeds.test.LiveTestFeed
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class CombinedFeedTest {
 
@@ -30,6 +31,7 @@ internal class CombinedFeedTest {
         val cf = CombinedFeed(f1, f2)
         var cnt = 0
         for (step in play(cf)) {
+            assertTrue(step.actions.isNotEmpty())
             cnt++
         }
         assertEquals(20, cnt)
