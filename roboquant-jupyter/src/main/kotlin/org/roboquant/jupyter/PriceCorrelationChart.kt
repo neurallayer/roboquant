@@ -26,6 +26,7 @@ import org.icepear.echarts.charts.heatmap.HeatmapSeries
 import org.icepear.echarts.components.coord.cartesian.CategoryAxis
 import org.icepear.echarts.components.series.SeriesLabel
 import org.roboquant.common.Asset
+import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
@@ -44,6 +45,8 @@ class PriceCorrelationChart(
     private val scale: Int = 2,
     private val minObservations: Int = 3
 ) : Chart() {
+
+    private val logger = Logging.getLogger(this::class)
 
     init {
         require(assets.size > 1) { "Minimum of 2 assets are required, found ${assets.size}" }
@@ -83,7 +86,7 @@ class PriceCorrelationChart(
             }
 
         } catch (exception: ClosedReceiveChannelException) {
-            // intentionally left empty
+            logger.info(exception.message)
         } finally {
             channel.close()
             if (job.isActive) job.cancel()
