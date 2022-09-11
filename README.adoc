@@ -43,7 +43,7 @@ val feed = CSVFeed("data/US") // <4>
 roboquant.run(feed) // <5>
 ----
 <1> Create the strategy that you want to validate
-<2> Define the metrics you want to monitor during the run
+<2> Define the metrics you want to monitor during the back-test
 <3> Create a Roboquant instance, the engine of the platform
 <4> What data should be used, in this case CSV files
 <5> Run the back test
@@ -90,7 +90,7 @@ image:/docs/jupyter-lab.png[Jupyter Lab]
 == Features
 Some key features of roboquant are:
 
-* [x] Very fast back-testing, even on large volumes of historical data.
+* [x] Very fast back-testing, even on large volumes of historical data
 * [x] Easy to develop your own strategies and integrate with third party brokers and data providers
 * [x] Trade in multiple asset classes at the same time
 * [x] Run anything from a technical indicator to complex machine learning based strategies
@@ -107,11 +107,9 @@ See also https://roboquant.org/background/features.html[Features] for a more ext
 Roboquant is distributed under the link:/LICENSE[Apache 2.0 License]. The Apache 2.0 license is a permissive license, meaning there are few restrictions on the use of the code.
 
 == Thanks
-
 Besides all the link:docs/THIRDPARTY.adoc[great open source software] that is powering _roboquant_, also special thanks to JetBrains for making a https://www.jetbrains.com/community/opensource/[license] available of *IntelliJ IDEA*.
 
 image:https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png[JetBrains,100,100]
-
 
 == Disclaimer
 _Roboquant_ also comes with live trading and paper trading capabilities. Using this is at your own risk and there are *NO GUARANTEES* about the correct functioning of the software.
