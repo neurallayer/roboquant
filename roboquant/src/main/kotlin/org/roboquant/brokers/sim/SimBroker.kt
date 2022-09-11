@@ -92,7 +92,7 @@ class SimBroker(
      */
     private fun updateAccount(
         execution: Execution,
-        now: Instant
+        time: Instant
     ) {
 
         val asset = execution.order.asset
@@ -102,7 +102,7 @@ class SimBroker(
         // PNL includes the fee
         val pnl = updatePosition(position) - fee
         val newTrade = Trade(
-            now,
+            time,
             asset,
             execution.size,
             execution.price,

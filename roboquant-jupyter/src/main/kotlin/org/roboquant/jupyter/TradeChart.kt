@@ -57,7 +57,7 @@ open class TradeChart(
             |order: ${trade.orderId}""".trimMargin()
     }
 
-    private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
+    private fun tradesToSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (trade in trades.sortedBy { it.time }) {
             with(trade) {
@@ -78,7 +78,7 @@ open class TradeChart(
 
     override fun getOption(): Option {
 
-        val data = toSeriesData()
+        val data = tradesToSeriesData()
         val max = data.maxOfOrNull { it.second }
         val min = data.minOfOrNull { it.second }
 

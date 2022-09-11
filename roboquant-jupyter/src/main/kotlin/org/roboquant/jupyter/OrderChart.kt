@@ -54,7 +54,7 @@ class OrderChart(
         }
     }
 
-    private fun toSeriesData(): List<Triple<Instant, BigDecimal, String>> {
+    private fun ordersToSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val states = orderStates.filter { it.status != OrderStatus.INITIAL }
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (state in states.sortedBy { it.openedAt }) {
@@ -72,15 +72,11 @@ class OrderChart(
     /** @suppress */
     override fun getOption(): Option {
 
-        val data = toSeriesData()
-        val max = data.maxOfOrNull { it.second }
-        val min = data.minOfOrNull { it.second }
+        val data = ordersToSeriesData()
 
         val series = ScatterSeries()
             .setData(data)
             .setSymbolSize(10)
-
-        val vm = getVisualMap(min, max).setDimension(1)
 
         val tooltip = Tooltip()
             .setFormatter(javascriptFunction("return p.value[2];"))
@@ -90,8 +86,12 @@ class OrderChart(
             .addXAxis(TimeAxis())
             .addYAxis(ValueAxis().setScale(true))
             .addSeries(series)
-            .setVisualMap(vm)
             .setTooltip(tooltip)
+
+        val max = data.maxOfOrNull { it.second }
+        val min = data.minOfOrNull { it.second }
+        val vm = getVisualMap(min, max).setDimension(1)
+        chart.setVisualMap(vm)
 
         val option = chart.option
         option.setToolbox(getToolbox(includeMagicType = false))

@@ -230,7 +230,9 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
     /**
      * A wallet only equals another wallet if they hold the same currencies and corresponding amounts.
      */
-    override fun equals(other: Any?) = if (other is Wallet) toMap() == other.toMap() else false
+    override fun equals(other: Any?) : Boolean {
+        return if (other is Wallet) toMap() == other.toMap() else false
+    }
 
     /**
      * The hashcode of the wallet

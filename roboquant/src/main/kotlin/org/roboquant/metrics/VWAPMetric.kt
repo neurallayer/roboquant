@@ -72,9 +72,9 @@ private class VWAPDaily(private val minSteps: Int = 1) {
     private val volume = mutableListOf<Double>()
     private var last: Instant = Instant.MIN
 
-    fun add(action: PriceBar, now: Instant) {
-        if (last != Instant.MIN && !action.asset.exchange.sameDay(now, last)) clear()
-        last = now
+    fun add(action: PriceBar, time: Instant) {
+        if (last != Instant.MIN && !action.asset.exchange.sameDay(time, last)) clear()
+        last = time
         val v = action.volume
         total.add(action.getPrice("TYPICAL") * v)
         volume.add(v)

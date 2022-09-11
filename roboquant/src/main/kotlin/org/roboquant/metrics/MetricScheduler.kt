@@ -98,8 +98,8 @@ class MetricScheduler(
      *
      * @return
      */
-    private fun fire(now: Instant): Boolean {
-        val zdt = now.atZone(zoneId)
+    private fun fire(time: Instant): Boolean {
+        val zdt = time.atZone(zoneId)
         val fire = executionTime.isMatch(zdt)
         val result = if (fireOnceInRow) !lastFire && fire else fire
         lastFire = fire

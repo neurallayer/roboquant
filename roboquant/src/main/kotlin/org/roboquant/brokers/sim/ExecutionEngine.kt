@@ -157,7 +157,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
      * Underlying Logic:
      *
      * 1. First process any open modify orders (like cancel or update)
-     * 2. Then pricess any regular order but only if there is a price action in the event for the underlying asses
+     * 2. Then process any regular order but only if there is a price action in the event for the underlying asses
      */
     fun execute(event: Event): List<Execution> {
 
@@ -180,7 +180,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
     }
 
     /**
-     * Clear any state in the exeution engine. All the pending open orders will be removed.
+     * Clear any state in the execution engine. All the pending open orders will be removed.
      */
     fun clear() {
         tradeHandlers.clear()

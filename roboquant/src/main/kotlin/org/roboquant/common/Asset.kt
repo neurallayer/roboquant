@@ -235,14 +235,14 @@ fun interface AssetFilter {
     companion object {
 
         /**
-         * Include all assets
+         * Include all assets, so this filer always return true
          */
         fun all(): AssetFilter {
             return AssetFilter { true }
         }
 
         /**
-         * Include the assets that are denoted in the provided [currencies].
+         * Include only the assets that are denoted in the provided [currencies].
          */
         fun includeCurrencies(vararg currencies: Currency): AssetFilter {
             return AssetFilter { asset: Asset -> asset.currency in currencies }
@@ -257,7 +257,7 @@ fun interface AssetFilter {
         }
 
         /**
-         * Include the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive.
+         * Include only the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive.
          */
         fun includeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.uppercase() }.toSet()

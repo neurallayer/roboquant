@@ -31,7 +31,7 @@ interface TimeInForce
 
 /**
  * Good Till Cancelled policy. The order will remain active until fully filled or is cancelled.
- * In practice, most brokers allow such orders to remain active for a 60-90 day period, so not indefinitly.
+ * In practice, most brokers allow such orders to remain active for a 60-90 day period, so not indefinitely.
  *
  * @property maxDays the maximum number of days an order stays valid, default is 90 calendar days.
  * @constructor Create new GTC tif

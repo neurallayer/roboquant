@@ -35,30 +35,26 @@ open class MovingTimedWindow(val windowSize: Int) {
     private var counter = 0L
 
     /**
-     * Add a new value to the end of the window
+     * Add a new [value] to the end of the window with the specified [time].
      *
      * @param value
      */
-    open fun add(value: Double, now: Instant) {
+    open fun add(value: Double, time: Instant) {
         val index = (counter % windowSize).toInt()
         data[index] = value
-        times[index] = now.toEpochMilli()
+        times[index] = time.toEpochMilli()
         counter++
     }
 
     /**
-     * Is the window fully filled, so it is ready to be used.
-     *
-     * @return True if the window is filled, false otherwise
+     * Return true if the window fully filled, false otherwise.
      */
     fun isAvailable(): Boolean {
         return counter > windowSize
     }
 
     /**
-     * Return the stored values a DoubleArray
-     *
-     * @return the window as a Double array
+     * Return the stored values as a DoubleArray
      */
     fun toDoubleArray(): DoubleArray {
         val result = DoubleArray(windowSize)
@@ -69,9 +65,7 @@ open class MovingTimedWindow(val windowSize: Int) {
     }
 
     /**
-     * Return the stored times in a LongArray (instant.toEpochMilli())
-     *
-     * @return the time as a Double array
+     * Return the stored times in a LongArray using [Instant.toEpochMilli]
      */
     fun toLongArray(): LongArray {
         val result = LongArray(windowSize)

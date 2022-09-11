@@ -88,8 +88,6 @@ internal object IBKRConnection {
 
     /**
      * Convert a roboquant [asset] to an IBKR contract.
-     *
-     * TODO support more asset types
      */
     fun getContract(asset: Asset): Contract {
         val contract = Contract()

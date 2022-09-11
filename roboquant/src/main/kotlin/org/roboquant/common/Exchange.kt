@@ -106,6 +106,8 @@ class Exchange private constructor(
 
         private val instances = ConcurrentHashMap<String, Exchange>()
 
+        private const val NY_TIMEZONE = "America/New_York"
+
         /**
          * Returns the Exchange instance for the given [exchangeCode]. If no exchange is found, the default exchange
          * is returned instead.
@@ -137,15 +139,15 @@ class Exchange private constructor(
         }
 
         init {
-            addInstance("", "America/New_York", "USD")
+            addInstance("", NY_TIMEZONE, "USD")
 
             // North American exchanges
-            addInstance("US", "America/New_York", "USD")
-            addInstance("NYSE", "America/New_York", "USD")
-            addInstance("NASDAQ", "America/New_York", "USD")
-            addInstance("BATS", "America/New_York", "USD")
-            addInstance("ARCA", "America/New_York", "USD")
-            addInstance("AMEX", "America/New_York", "USD")
+            addInstance("US", NY_TIMEZONE, "USD")
+            addInstance("NYSE", NY_TIMEZONE, "USD")
+            addInstance("NASDAQ", NY_TIMEZONE, "USD")
+            addInstance("BATS", NY_TIMEZONE, "USD")
+            addInstance("ARCA", NY_TIMEZONE, "USD")
+            addInstance("AMEX", NY_TIMEZONE, "USD")
             addInstance("TSX", "America/Toronto", "CAD")
 
             // European exchanges
@@ -163,7 +165,7 @@ class Exchange private constructor(
             addInstance("SSX", "Australia/Sydney", "AUD", "10:00", "16:00")
 
             // Generic 24x7 Crypto Exchange
-            addInstance("CRYPTO", "America/New_York", "USD", "00:00", "23:59:59.999")
+            addInstance("CRYPTO", NY_TIMEZONE, "USD", "00:00", "23:59:59.999")
         }
 
         /**

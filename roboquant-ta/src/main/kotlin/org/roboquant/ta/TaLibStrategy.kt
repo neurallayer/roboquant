@@ -276,6 +276,6 @@ fun TaLib.vwap(series: PriceBarSeries, period: Int, previous: Int = 0): Double =
 
 /**
  * This exception is thrown when there is not enough (historic) data to run an algorithm, for example a technical
- * indiactor.
+ * indicator.
  */
 class InsufficientData(msg: String) : RoboquantException(msg)

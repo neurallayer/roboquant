@@ -35,13 +35,13 @@ class Execution(val order: Order, val size: Size, val price: Double) {
     }
 
     /**
-     * Totol value of execution in the currency denoted by the underlying asset
+     * Total value of execution in the currency denoted by the underlying asset
      */
     val value
         get() = order.asset.value(size, price).value
 
     /**
-     * Totol amount of execution in the currency denoted by the underlying asset
+     * Total amount of execution in the currency denoted by the underlying asset
      */
     val amount
         get() = order.asset.value(size, price)

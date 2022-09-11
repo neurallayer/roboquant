@@ -48,9 +48,9 @@ abstract class SingleAssetStrategy(
      * a price action for the asset.
      *
      * @param priceAction
-     * @param now
+     * @param time
      * @return
      */
-    abstract fun generate(priceAction: PriceAction, now: Instant): Signal?
+    abstract fun generate(priceAction: PriceAction, time: Instant): Signal?
 
 }
