@@ -95,7 +95,7 @@ class IBKRBroker(
     }
 
     /**
-     * Place zero or more orders
+     * Place zero or more [orders]
      *
      * @param orders
      * @param event
@@ -126,10 +126,7 @@ class IBKRBroker(
     }
 
     /**
-     * convert roboquant order into IBKR order. Right now only support for few single type of orders
-     *
-     * @param order
-     * @return
+     * convert roboquant [order] into IBKR order. Right now only support for few single type of orders
      */
     private fun createIBOrder(order: SingleOrder): IBOrder {
         val result = IBOrder()
@@ -339,8 +336,6 @@ class IBKRBroker(
 
         /**
          * Convert an IBKR contract to a roboquant asset
-         *
-         * @TODO: support more asset classes
          */
         private fun Contract.getAsset(): Asset {
             val result = IBKRConnection.assetMap[conid()]
