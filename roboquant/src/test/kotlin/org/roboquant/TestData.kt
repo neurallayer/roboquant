@@ -74,10 +74,10 @@ object TestData {
     }
 
     fun dataDir(): String {
-        if (File("./data").isDirectory)
-            return "./data/"
-        else if (File("../data").isDirectory)
-            return "../data/"
+        if (File("./roboquant/src/test/resources/data/").isDirectory)
+            return "./roboquant/src/test/resources/data/"
+        else if (File("../roboquant/src/test/resources/data/").isDirectory)
+            return "../roboquant/src/test/resources/data/"
         throw ConfigurationException("cannot find data directory for testing")
     }
 
@@ -87,7 +87,7 @@ object TestData {
 
     fun priceAction(asset: Asset = usStock()) = TradePrice(asset, 10.0)
 
-    fun priceBar(asset: Asset = usStock()) = PriceBar(asset, 10.0, 11.0, 9.0, 10.0, 1000.0)
+    private fun priceBar(asset: Asset = usStock()) = PriceBar(asset, 10.0, 11.0, 9.0, 10.0, 1000.0)
 
     fun time(): Instant = Instant.parse("2020-01-03T12:00:00Z")
 
