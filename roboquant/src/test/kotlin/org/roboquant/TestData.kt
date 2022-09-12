@@ -36,7 +36,7 @@ import java.time.Instant
 /**
  * Test data used in unit tests
  */
-object TestData {
+internal object TestData {
 
     fun usStock() = Asset("XYZ")
 
