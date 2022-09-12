@@ -20,9 +20,9 @@ image:https://img.shields.io/github/commit-activity/m/neurallayer/roboquant[GitH
 image:https://img.shields.io/github/v/tag/neurallayer/roboquant[GitHub tag (latest by date)]
 image:https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&[Maven Central]
 image:https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org[Sonatype Nexus (Snapshots)]
-image:https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=alert_status[Quality Gate Status]
-image:https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=security_rating[Security Rating]
-image:https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=sqale_rating[Maintainability Rating]
+image:https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=alert_status[Quality Gate Status, link=https://sonarcloud.io/summary/new_code?id=neurallayer_roboquant]
+image:https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=security_rating[Security Rating, link=https://sonarcloud.io/component_measures?metric=new_security_rating&view=list&id=neurallayer_roboquant]
+image:https://sonarcloud.io/api/project_badges/measure?project=neurallayer_roboquant&metric=sqale_rating[Maintainability Rating, link=https://sonarcloud.io/component_measures?id=neurallayer_roboquant&metric=new_maintainability_rating&view=list]
 
 image::/docs/roboquant_header.png[roboquant Logo, align="center"]
 

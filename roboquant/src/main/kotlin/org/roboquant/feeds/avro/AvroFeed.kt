@@ -98,6 +98,28 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
     }
 
     /**
+     * Convert a generic Avro record to a [PriceAction]
+     */
+    private fun recToPriceAction(rec: GenericRecord) : PriceAction {
+        val assetId = rec.get(1).toString()
+        val asset = assetLookup.getOrPut(assetId) { Json.decodeFromString(assetId) }
+        val actionType = rec.get(2) as Int
+
+        @Suppress("UNCHECKED_CAST")
+        val values = rec.get(3) as List<Double>
+
+        return when (actionType) {
+            1 -> PriceBar.fromValues(asset, values)
+            2 -> TradePrice.fromValues(asset, values)
+            3 -> PriceQuote.fromValues(asset, values)
+            4 -> OrderBook.fromValues(asset, values)
+            else -> {
+                throw UnsupportedException("unsupported price action found")
+            }
+        }
+    }
+
+    /**
      * (Re)play the events of the feed using the provided [EventChannel]
      *
      * @param channel
@@ -126,23 +148,7 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
 
                 if (now > timeframe) break
 
-                val assetId = rec.get(1).toString()
-                val asset = assetLookup.getOrPut(assetId) { Json.decodeFromString(assetId) }
-                val actionType = rec.get(2) as Int
-
-                @Suppress("UNCHECKED_CAST")
-                val values = rec.get(3) as List<Double>
-
-                val action = when (actionType) {
-                    1 -> PriceBar.fromValues(asset, values)
-                    2 -> TradePrice.fromValues(asset, values)
-                    3 -> PriceQuote.fromValues(asset, values)
-                    4 -> OrderBook.fromValues(asset, values)
-                    else -> {
-                        throw UnsupportedException("unsupported price action found")
-                    }
-                }
-
+                val action = recToPriceAction(rec)
                 actions.add(action)
             }
             if (actions.isNotEmpty()) channel.send(Event(actions, last))
