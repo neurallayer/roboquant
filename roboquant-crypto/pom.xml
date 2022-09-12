@@ -122,11 +122,11 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- force upgrade due to vunerabilities -->
+        <!-- force upgrade due to vulnerabilities -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.80.Final</version>
+            <version>4.1.81.Final</version>
         </dependency>
     </dependencies>
 

@@ -39,4 +39,20 @@ internal class PriceBarSeriesTest {
         assertTrue(pb.typical.isNotEmpty())
     }
 
+    @Test
+    fun test2() {
+        val feed = TestData.feed
+        val asset1 = feed.assets.first()
+        val pb = MultiAssetPriceBarSeries(10)
+        assertFalse(pb.isAvailable(asset1))
+        val data = feed.filter<PriceBar> { it.asset === asset1 }
+        for (entry in data) {
+            pb.add(entry.second)
+        }
+        assertTrue(pb.isAvailable(asset1))
+    }
+
+
+
+
 }
