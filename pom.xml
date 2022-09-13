@@ -157,6 +157,13 @@
                             <suppressObviousFunctions>true</suppressObviousFunctions>
                             <reportUndocumented>true</reportUndocumented>
                             <suppressInheritedMembers>true</suppressInheritedMembers>
+                            <sourceLinks>
+                                <link>
+                                    <path>${basedir}/src/main/kotlin</path>
+                                    <url>https://github.com/neurallayer/roboquant/blob/main/${artifactId}/src/main/kotlin</url>
+                                    <lineSuffix>#L</lineSuffix>
+                                </link>
+                            </sourceLinks>
                         </configuration>
                     </plugin>
 

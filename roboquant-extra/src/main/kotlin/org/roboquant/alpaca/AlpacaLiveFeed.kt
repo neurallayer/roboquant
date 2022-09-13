@@ -25,12 +25,12 @@ import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.quote.
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.trade.TradeMessage
 import net.jacobpeterson.alpaca.websocket.marketdata.MarketDataListener
 import net.jacobpeterson.alpaca.websocket.marketdata.MarketDataWebsocketInterface
-import okio.IOException
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
 import org.roboquant.common.severe
 import org.roboquant.feeds.*
+import java.io.IOException
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
@@ -109,8 +109,8 @@ class AlpacaLiveFeed(
         try {
             if (alpacaAPI.stockMarketDataStreaming().isConnected) alpacaAPI.stockMarketDataStreaming().disconnect()
             if (alpacaAPI.cryptoMarketDataStreaming().isConnected) alpacaAPI.cryptoMarketDataStreaming().disconnect()
-            alpacaAPI.okHttpClient.dispatcher.executorService.shutdown()
-            alpacaAPI.okHttpClient.connectionPool.evictAll()
+            // alpacaAPI.okHttpClient.dispatcher.executorService.shutdown()
+            // alpacaAPI.okHttpClient.connectionPool.evictAll()
         } catch (exception: IOException) {
             logger.info(exception.message)
         }

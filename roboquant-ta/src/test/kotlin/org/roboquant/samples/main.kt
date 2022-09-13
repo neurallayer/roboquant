@@ -46,52 +46,55 @@ fun vwap() {
 fun customPolicy() {
 
     /**
-     * Custom Policy that captures the ATR (Average True Range) and uses it to set limit orders
+     * Custom Policy that extends the DefaultPolicy and captures the ATR (Average True Range) using the TaLibMetric. It
+     * then uses the ATR to set the limit amount of a LimitOrder.
      */
-    class MyPolicy(private val atrPercentage: Double = 0.02, private val atrPeriod: Int = 5) : DefaultPolicy() {
+    class SmartLimitPolicy(private val atrPercentage: Double = 0.02, private val atrPeriod: Int) : DefaultPolicy() {
 
-        // use atr metric
-        private val atr = TaLibMetric("atr", atrPeriod) {
-            atr(it, atrPeriod)
-        }
+        // use TaLibMetric to calculate the ATR values
+        private val atr = TaLibMetric("atr", atrPeriod + 1) { atr(it, atrPeriod) }
         private var atrMetrics: MetricResults = emptyMap()
 
         override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+            // Update the metrics and store the results, so we have them available when the
+            // createOrder is invoked.
             atrMetrics = atr.calculate(account, event)
+
+            // Call the regular DefaultPolicy processing
             return super.act(signals, account, event)
         }
 
         /**
-         * Create limit BUY and SELL orders with the limit based on the ATR of the asset
+         * Override the default behavior of creating a simple MarkerOrder. Create limit BUY and SELL orders with the
+         * actual limit based on the ATR of the underlying asset.
          */
         override fun createOrder(signal: Signal, size: Size, price: Double): Order? {
-            val value = atrMetrics["atr.${signal.asset.symbol.lowercase()}"]
-            if (value != null) {
+            val metricName = "atr.${signal.asset.symbol.lowercase()}"
+            val value = atrMetrics[metricName]
+            return if (value != null) {
                 val direction = if (size > 0) 1 else -1
                 val limit = price - direction * value * atrPercentage
-                // println("$direction $price $limit")
-                return LimitOrder(signal.asset, size, limit)
+                LimitOrder(signal.asset, size, limit)
+            } else {
+                null
             }
-            return null
         }
 
         override fun reset() {
             atr.reset()
             super.reset()
         }
-
     }
 
-    val roboquant = Roboquant(EMACrossover.EMA_12_26, AccountSummary(), policy = MyPolicy(atrPeriod = 12))
+    val roboquant = Roboquant(EMACrossover.EMA_12_26, AccountSummary(), policy = SmartLimitPolicy(atrPeriod = 5))
     val feed = AvroFeed.sp500()
     roboquant.run(feed)
     roboquant.broker.account.summary().print()
-
 }
 
 
 fun main() {
-    when ("VWAP") {
+    when ("POLICY") {
         "VWAP" -> vwap()
         "POLICY" -> customPolicy()
     }
