@@ -35,7 +35,7 @@ import kotlin.test.assertEquals
  */
 internal class SampleNotebookTest {
 
-    private fun test(file: String) {
+    private fun test(fileName: String) {
         Config.getProperty("FULL_COVERAGE") ?: return
 
         // Make sure to remove potential random behavior
@@ -45,9 +45,10 @@ internal class SampleNotebookTest {
         Chart.counter = 0
 
         // Get the file and validate it
-        val path = "./roboquant-jupyter/src/test/resources/$file.ipynb"
+        val cl = this.javaClass.classLoader
+        val file = File(cl.getResource("$fileName.ipynb")!!.file)
         val c = NotebookTester()
-        c.validateNotebook(path)
+        c.validateNotebook(file)
     }
 
     @Test
@@ -90,8 +91,7 @@ private class NotebookTester : JupyterReplTestCase(RoboquantReplProvider) {
      *
      * All comparison is done between Strings, so make sure there is no random behavior in the output.
      */
-    fun validateNotebook(notebookPath: String) {
-        val notebookFile = File(notebookPath)
+    fun validateNotebook(notebookFile: File) {
         val notebook = JupyterParser.parse(notebookFile)
 
         for (cell in notebook.cells.filterIsInstance<CodeCell>()) {

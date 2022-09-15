@@ -95,11 +95,11 @@
 
     <profiles>
         <profile>
-            <!-- we can only build the roboquant-ibkr module if the ibkr client is localy installed -->
+            <!-- we can only build the roboquant-ibkr module if the ibkr client is locally installed -->
             <id>ibkr</id>
             <activation>
                 <file>
-                    <exists>${user.home}/.m2/repository/com/interactivebrokers/tws-api/${ibkr.version}/tws-api-${ibkr.version}.pom</exists>
+                    <exists>${maven.repo.local}/com/interactivebrokers/tws-api/${ibkr.version}/tws-api-${ibkr.version}.pom</exists>
                 </file>
             </activation>
             <modules>
@@ -160,7 +160,7 @@
                             <sourceLinks>
                                 <link>
                                     <path>${basedir}/src/main/kotlin</path>
-                                    <url>https://github.com/neurallayer/roboquant/blob/main/${artifactId}/src/main/kotlin</url>
+                                    <url>https://github.com/neurallayer/roboquant/blob/main/${project.artifactId}/src/main/kotlin</url>
                                     <lineSuffix>#L</lineSuffix>
                                 </link>
                             </sourceLinks>
