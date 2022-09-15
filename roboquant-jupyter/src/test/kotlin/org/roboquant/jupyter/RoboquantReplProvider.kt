@@ -54,7 +54,7 @@ internal object RoboquantReplProvider : ReplProvider {
             scriptClasspath = classpath,
             homeDir = null,
             mavenRepositories = defaultRepositories,
-            libraryResolver = urlEditingResolver,
+            libraryResolver =  urlEditingResolver,
             runtimeProperties = defaultRuntimeProperties,
             scriptReceivers = emptyList(),
             isEmbedded = true,
@@ -66,7 +66,7 @@ internal object RoboquantReplProvider : ReplProvider {
         val json = response.jsonObject
         val newJson = buildJsonObject {
             for ((key, value) in json.entries) {
-                if (key == "repositories" || key == "dependencies") continue
+                // if (key == "repositories" || key == "dependencies") continue
                 put(key, value)
             }
         }

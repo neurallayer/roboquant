@@ -17,7 +17,9 @@
 package org.roboquant.oanda
 
 import org.junit.jupiter.api.assertDoesNotThrow
+import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.common.Config
+import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import kotlin.test.Test
 
@@ -26,15 +28,17 @@ internal class OANDABrokerTestIT {
     @Test
     fun test() {
         Config.getProperty("FULL_COVERAGE") ?: return
+        Config.exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 1.0, Currency.GBP to 1.0)
         val broker = OANDABroker()
-        val account = broker.account
-        account.fullSummary().print()
+
+        assertDoesNotThrow {
+            broker.account
+        }
 
         assertDoesNotThrow {
             broker.place(emptyList(), Event.empty())
         }
 
-        // assertNotEquals(0.0, account.buyingPower.value)
 
     }
 }
