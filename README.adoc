@@ -114,7 +114,7 @@ image:https://resources.jetbrains.com/storage/products/company/brand/logos/jb_be
 == Disclaimer
 _Roboquant_ also comes with live trading and paper trading capabilities. Using this is at your own risk and there are *NO GUARANTEES* about the correct functioning of the software.
 
-== Beta version
-_Roboquant_ is still a pre-1.0 release and bugs are for sure to be expected. Also expect APIs to change without any notice. So keep this in mind when using it.
+== image:https://img.shields.io/badge/roboquant-BETA-red[roboquant beta]
+_Roboquant_ is still a pre-1.0 release and bugs are for sure to be expected. Also APIs can change without any notice. So keep this in mind when using it.
 
 PR are more than welcome, see also the link:/docs/CONTRIBUTING.adoc[Contribution Guide] document. If you're missing some features, just open an issue on GitHub. See also the link:/docs/TODO.adoc[todo documentation] for already identified backlog items if you look for something to work on.

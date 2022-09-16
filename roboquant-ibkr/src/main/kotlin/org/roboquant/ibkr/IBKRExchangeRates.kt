@@ -32,6 +32,7 @@ internal class IBKRExchangeRates(
     private val config = IBKRConfig()
     lateinit var baseCurrency: Currency
     val exchangeRates = mutableMapOf<Currency, Double>()
+    private var lock = Object()
 
     init {
         config.configure()
@@ -49,12 +50,11 @@ internal class IBKRExchangeRates(
 
     /**
      * Wait till IBKR account is synchronized so roboquant has the correct assets and cash balance available.
-     *
-     * @TODO: replace sleep with real check
      */
     private fun waitTillSynced() {
-        @Suppress("MagicNumber")
-        (Thread.sleep(5_000))
+        synchronized (lock) {
+            lock.wait(IBKRConnection.maxResponseTime)
+        }
     }
 
     /**
@@ -91,6 +91,12 @@ internal class IBKRExchangeRates(
                         exchangeRates[c] = value.toDouble()
                     }
                 }
+            }
+        }
+
+        override fun accountDownloadEnd(p0: String?) {
+            synchronized (lock) {
+                lock.notify()
             }
         }
 

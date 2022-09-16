@@ -40,6 +40,9 @@ data class IBKRConfig(
  */
 internal object IBKRConnection {
 
+    // Timeout in millis when waiting for one or more response messages to arrive
+    internal const val maxResponseTime = 5_000L
+
     private val logger = Logging.getLogger(IBKRConnection::class)
     private val connections = mutableMapOf<Int, EClientSocket>()
 
