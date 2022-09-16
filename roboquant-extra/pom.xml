@@ -92,7 +92,7 @@
         </dependency>
         <dependency>
             <groupId>pl.zankowski</groupId>
-            <artifactId>iextrading4j-all</artifactId>
+            <artifactId>iextrading4j-client</artifactId>
             <version>3.4.5</version>
         </dependency>
         <dependency>
@@ -111,13 +111,5 @@
             <version>3.0.0</version>
         </dependency>
 
-        <!-- required by alpaca client -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.9.0</version>
-        </dependency>
-
     </dependencies>
-
 </project>

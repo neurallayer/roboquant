@@ -77,28 +77,23 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>
         </dependency>
-
         <dependency>
             <artifactId>roboquant</artifactId>
             <groupId>org.roboquant</groupId>
         </dependency>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.roboquant</groupId>
             <artifactId>binance-api-client</artifactId>
             <version>1.0.3</version>
         </dependency>
-
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-core</artifactId>
@@ -120,13 +115,6 @@
             <artifactId>xchange-stream-bitstamp</artifactId>
             <version>${xchange.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <!-- force upgrade due to vulnerabilities -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.81.Final</version>
         </dependency>
     </dependencies>
 
