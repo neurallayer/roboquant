@@ -28,7 +28,7 @@
     <artifactId>roboquant-jupyter</artifactId>
     <packaging>jar</packaging>
     <name>roboquant jupyter</name>
-    <description>Jupyter notebook support for the roboquant algorithmic trading platform</description>
+    <description>Adds additional Jupyter notebook features like charts to the roboquant algorithmic trading platform</description>
 
     <!-- start extra info -->
     <url>https://roboquant.org</url>

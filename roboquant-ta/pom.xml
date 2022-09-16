@@ -30,6 +30,29 @@
     <name>roboquant ta</name>
     <description>Technical analysis support for the roboquant algorithmic trading platform</description>
 
+    <!-- start extra info -->
+    <url>https://roboquant.org</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>roboquant team</name>
+            <organization>roboquant</organization>
+            <url>https://www.roboquant.org</url>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/neurallayer/roboquant</url>
+    </scm>
+    <!-- end extra info -->
 
     <build>
         <plugins>
@@ -71,13 +94,6 @@
             <groupId>com.tictactec</groupId>
             <artifactId>ta-lib</artifactId>
             <version>0.4.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.9.0</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
