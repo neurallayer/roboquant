@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2021 Neural Layer
+  ~ Copyright 2020-2022 Neural Layer
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
-        <kotlin.version>1.7.10</kotlin.version>
+        <kotlin.version>1.7.20-RC</kotlin.version>
         <sonar.organization>neurallayer</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <ibkr.version>10.17</ibkr.version>
