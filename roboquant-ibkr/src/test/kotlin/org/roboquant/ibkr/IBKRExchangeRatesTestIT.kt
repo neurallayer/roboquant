@@ -26,6 +26,8 @@ internal class IBKRExchangeRatesTestIT {
         System.getProperty("TEST_IBKR") ?: return
         val rates = IBKRExchangeRates()
         assertTrue(rates.exchangeRates.isNotEmpty())
+        rates.refresh()
+        assertTrue(rates.exchangeRates.isNotEmpty())
     }
 
 }

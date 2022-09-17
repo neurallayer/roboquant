@@ -1,10 +1,10 @@
-= 3rd Party
+= Third Party Open Source
 
 _Roboquant_ couldn't have been developed without the use of free and open source third party software. This document list some great open software libraries and other artefacts used in roboquant.
 
 == Software
 * https://kotlinlang.org[Kotlin]: modern, concise and safe programming language that makes writing code a joy.
-* https://ta-lib.org[TA-Lib]: an extensive library of technical indicators.
+* https://ta-lib.org[TA-Lib]: an extensive and fast library of technical indicators.
 * https://github.com/ta4j/ta4j[ta4j]: another great library for technical analysis.
 * https://github.com/ECharts-Java/ECharts-Java[ECharts-Java]: a Java library that makes it very easy to create https://echarts.apache.org[ECharts] visualizations.
 * https://avro.apache.org[Avro]: data serialization system for fast and efficient storage of large amounts of data.
