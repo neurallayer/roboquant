@@ -26,8 +26,8 @@ import org.roboquant.metrics.MetricResults
 import org.roboquant.strategies.utils.PriceBarSeries
 
 /**
- * Use a technical indicator from the talib library as a metric. Metrics will be available under the name: [name].symbol
- * with the symbol in lowercase.
+ * Use a technical indicator from the Ta-Lib library as a metric. Metrics will be available under the
+ * name: [name].symbol with the symbol in lowercase.
  *
  * @property name the base name of the metric
  * @property history how much history should be kept before invoking the metric

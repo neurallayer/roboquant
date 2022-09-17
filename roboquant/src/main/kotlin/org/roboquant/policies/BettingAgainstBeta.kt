@@ -43,8 +43,7 @@ import kotlin.math.min
  * and not a strategy. It doesn't use leverage or buying power, when re-balancing it just re-balances the total equity
  * of the account across the long and short positions.
  *
- * > Betting against Beta was first described by Andrea Frazzinia and Lasse Heje Pedersen in Journal of Financial
- * Economics
+ * > Betting against Beta was first described in the Journal of Financial Economics
  *
  * @constructor Create new Betting Against Beta instance
  */

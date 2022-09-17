@@ -51,7 +51,7 @@ internal class ColumnInfo {
     }
 
     /**
-     * Parse a column definition, like 'T?OHLCA?V'
+     * Parse a column definition using the provided [def]
      *
      * @param def
      */

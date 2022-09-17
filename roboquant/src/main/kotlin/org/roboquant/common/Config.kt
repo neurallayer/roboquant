@@ -136,7 +136,7 @@ object Config {
      * Get property value. Tries to find the property in the following order
      *
      *  0. Properties set using [Config.setProperty]
-     *  1. System properties (`java -DpropertyName=value`)
+     *  1. System properties (java -D syntax)
      *  2. Environment variables set by the OS
      *  3. "dotenv" or ".env" property file in the current working directory
      *  4. ".env" property file in roboquant home directory ($USER/.roboquant)

@@ -21,7 +21,7 @@
     "TooManyFunctions",
     "WildcardImport",
     "MaxLineLength",
-    "LongParameterList", "GrazieInspection"
+    "LongParameterList", "GrazieInspection", "SpellCheckingInspection"
 )
 
 package org.roboquant.ta
@@ -59,7 +59,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [acos]
      */
     fun acos(series: PriceBarSeries, previous: Int = 0) = acos(series.close, previous)
@@ -87,7 +87,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [ad]
      */
     fun ad(series: PriceBarSeries, previous: Int = 0) =
@@ -158,7 +158,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [adOsc]
      */
     fun adOsc(series: PriceBarSeries, fastPeriod: Int = 3, slowPeriod: Int = 10, previous: Int = 0) =
@@ -187,7 +187,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [adx]
      */
     fun adx(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -216,7 +216,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [adxr]
      */
     fun adxr(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -251,7 +251,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [apo]
      */
     fun apo(
@@ -286,7 +286,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [aroon]
      */
     fun aroon(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -315,7 +315,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [aroonOsc]
      */
     fun aroonOsc(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -344,7 +344,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [asin]
      */
     fun asin(series: PriceBarSeries, previous: Int = 0) = asin(series.close, previous)
@@ -372,7 +372,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [atan]
      */
     fun atan(series: PriceBarSeries, previous: Int = 0) = atan(series.close, previous)
@@ -400,7 +400,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [atr]
      */
     fun atr(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -435,7 +435,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [avgPrice]
      */
     fun avgPrice(series: PriceBarSeries, previous: Int = 0) =
@@ -486,7 +486,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [bbands]
      */
     fun bbands(
@@ -543,7 +543,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [bop]
      */
     fun bop(series: PriceBarSeries, previous: Int = 0) =
@@ -572,7 +572,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cci]
      */
     fun cci(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -607,7 +607,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdl2Crows]
      */
     fun cdl2Crows(series: PriceBarSeries, previous: Int = 0) =
@@ -642,7 +642,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdl3BlackCrows]
      */
     fun cdl3BlackCrows(series: PriceBarSeries, previous: Int = 0) =
@@ -677,7 +677,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdl3Inside]
      */
     fun cdl3Inside(series: PriceBarSeries, previous: Int = 0) =
@@ -712,7 +712,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdl3LineStrike]
      */
     fun cdl3LineStrike(series: PriceBarSeries, previous: Int = 0) =
@@ -747,7 +747,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdl3Outside]
      */
     fun cdl3Outside(series: PriceBarSeries, previous: Int = 0) =
@@ -782,7 +782,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdl3StarsInSouth]
      */
     fun cdl3StarsInSouth(series: PriceBarSeries, previous: Int = 0) =
@@ -817,7 +817,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdl3WhiteSoldiers]
      */
     fun cdl3WhiteSoldiers(series: PriceBarSeries, previous: Int = 0) =
@@ -854,7 +854,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlAbandonedBaby]
      */
     fun cdlAbandonedBaby(series: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
@@ -889,7 +889,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlAdvanceBlock]
      */
     fun cdlAdvanceBlock(series: PriceBarSeries, previous: Int = 0) =
@@ -924,7 +924,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlBeltHold]
      */
     fun cdlBeltHold(series: PriceBarSeries, previous: Int = 0) =
@@ -959,7 +959,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlBreakaway]
      */
     fun cdlBreakaway(series: PriceBarSeries, previous: Int = 0) =
@@ -994,7 +994,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlClosingMarubozu]
      */
     fun cdlClosingMarubozu(series: PriceBarSeries, previous: Int = 0) =
@@ -1029,7 +1029,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlConcealBabysWall]
      */
     fun cdlConcealBabysWall(series: PriceBarSeries, previous: Int = 0) =
@@ -1064,7 +1064,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlCounterAttack]
      */
     fun cdlCounterAttack(series: PriceBarSeries, previous: Int = 0) =
@@ -1101,7 +1101,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlDarkCloudCover]
      */
     fun cdlDarkCloudCover(series: PriceBarSeries, penetration: Double = 5.000000e-1, previous: Int = 0) =
@@ -1136,7 +1136,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlDoji]
      */
     fun cdlDoji(series: PriceBarSeries, previous: Int = 0) =
@@ -1171,7 +1171,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlDojiStar]
      */
     fun cdlDojiStar(series: PriceBarSeries, previous: Int = 0) =
@@ -1206,7 +1206,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlDragonflyDoji]
      */
     fun cdlDragonflyDoji(series: PriceBarSeries, previous: Int = 0) =
@@ -1241,7 +1241,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlEngulfing]
      */
     fun cdlEngulfing(series: PriceBarSeries, previous: Int = 0) =
@@ -1288,7 +1288,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlEveningDojiStar]
      */
     fun cdlEveningDojiStar(series: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
@@ -1325,7 +1325,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlEveningStar]
      */
     fun cdlEveningStar(series: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
@@ -1360,7 +1360,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlGapSideSideWhite]
      */
     fun cdlGapSideSideWhite(series: PriceBarSeries, previous: Int = 0) =
@@ -1395,7 +1395,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlGravestoneDoji]
      */
     fun cdlGravestoneDoji(series: PriceBarSeries, previous: Int = 0) =
@@ -1430,7 +1430,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlHammer]
      */
     fun cdlHammer(series: PriceBarSeries, previous: Int = 0) =
@@ -1465,7 +1465,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlHangingMan]
      */
     fun cdlHangingMan(series: PriceBarSeries, previous: Int = 0) =
@@ -1500,7 +1500,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlHarami]
      */
     fun cdlHarami(series: PriceBarSeries, previous: Int = 0) =
@@ -1535,7 +1535,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlHaramiCross]
      */
     fun cdlHaramiCross(series: PriceBarSeries, previous: Int = 0) =
@@ -1570,7 +1570,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlHignWave]
      */
     fun cdlHignWave(series: PriceBarSeries, previous: Int = 0) =
@@ -1605,7 +1605,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlHikkake]
      */
     fun cdlHikkake(series: PriceBarSeries, previous: Int = 0) =
@@ -1640,7 +1640,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlHikkakeMod]
      */
     fun cdlHikkakeMod(series: PriceBarSeries, previous: Int = 0) =
@@ -1675,7 +1675,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlHomingPigeon]
      */
     fun cdlHomingPigeon(series: PriceBarSeries, previous: Int = 0) =
@@ -1710,7 +1710,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlIdentical3Crows]
      */
     fun cdlIdentical3Crows(series: PriceBarSeries, previous: Int = 0) =
@@ -1745,7 +1745,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlInNeck]
      */
     fun cdlInNeck(series: PriceBarSeries, previous: Int = 0) =
@@ -1780,7 +1780,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlInvertedHammer]
      */
     fun cdlInvertedHammer(series: PriceBarSeries, previous: Int = 0) =
@@ -1815,7 +1815,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlKicking]
      */
     fun cdlKicking(series: PriceBarSeries, previous: Int = 0) =
@@ -1850,7 +1850,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlKickingByLength]
      */
     fun cdlKickingByLength(series: PriceBarSeries, previous: Int = 0) =
@@ -1885,7 +1885,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlLadderBottom]
      */
     fun cdlLadderBottom(series: PriceBarSeries, previous: Int = 0) =
@@ -1920,7 +1920,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlLongLeggedDoji]
      */
     fun cdlLongLeggedDoji(series: PriceBarSeries, previous: Int = 0) =
@@ -1955,7 +1955,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlLongLine]
      */
     fun cdlLongLine(series: PriceBarSeries, previous: Int = 0) =
@@ -1990,7 +1990,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlMarubozu]
      */
     fun cdlMarubozu(series: PriceBarSeries, previous: Int = 0) =
@@ -2025,7 +2025,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlMatchingLow]
      */
     fun cdlMatchingLow(series: PriceBarSeries, previous: Int = 0) =
@@ -2061,7 +2061,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlMatHold]
      */
     fun cdlMatHold(series: PriceBarSeries, penetration: Double = 5.000000e-1, previous: Int = 0) =
@@ -2108,7 +2108,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlMorningDojiStar]
      */
     fun cdlMorningDojiStar(series: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
@@ -2145,7 +2145,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlMorningStar]
      */
     fun cdlMorningStar(series: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
@@ -2180,7 +2180,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlOnNeck]
      */
     fun cdlOnNeck(series: PriceBarSeries, previous: Int = 0) =
@@ -2215,7 +2215,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlPiercing]
      */
     fun cdlPiercing(series: PriceBarSeries, previous: Int = 0) =
@@ -2250,7 +2250,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlRickshawMan]
      */
     fun cdlRickshawMan(series: PriceBarSeries, previous: Int = 0) =
@@ -2285,7 +2285,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlRiseFall3Methods]
      */
     fun cdlRiseFall3Methods(series: PriceBarSeries, previous: Int = 0) =
@@ -2320,7 +2320,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlSeperatingLines]
      */
     fun cdlSeperatingLines(series: PriceBarSeries, previous: Int = 0) =
@@ -2355,7 +2355,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlShootingStar]
      */
     fun cdlShootingStar(series: PriceBarSeries, previous: Int = 0) =
@@ -2390,7 +2390,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlShortLine]
      */
     fun cdlShortLine(series: PriceBarSeries, previous: Int = 0) =
@@ -2425,7 +2425,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlSpinningTop]
      */
     fun cdlSpinningTop(series: PriceBarSeries, previous: Int = 0) =
@@ -2460,7 +2460,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlStalledPattern]
      */
     fun cdlStalledPattern(series: PriceBarSeries, previous: Int = 0) =
@@ -2495,7 +2495,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlStickSandwich]
      */
     fun cdlStickSandwich(series: PriceBarSeries, previous: Int = 0) =
@@ -2530,7 +2530,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlTakuri]
      */
     fun cdlTakuri(series: PriceBarSeries, previous: Int = 0) =
@@ -2565,7 +2565,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlTasukiGap]
      */
     fun cdlTasukiGap(series: PriceBarSeries, previous: Int = 0) =
@@ -2600,7 +2600,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlThrusting]
      */
     fun cdlThrusting(series: PriceBarSeries, previous: Int = 0) =
@@ -2635,7 +2635,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlTristar]
      */
     fun cdlTristar(series: PriceBarSeries, previous: Int = 0) =
@@ -2670,7 +2670,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlUnique3River]
      */
     fun cdlUnique3River(series: PriceBarSeries, previous: Int = 0) =
@@ -2705,7 +2705,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlUpsideGap2Crows]
      */
     fun cdlUpsideGap2Crows(series: PriceBarSeries, previous: Int = 0) =
@@ -2740,7 +2740,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cdlXSideGap3Methods]
      */
     fun cdlXSideGap3Methods(series: PriceBarSeries, previous: Int = 0) =
@@ -2769,7 +2769,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [ceil]
      */
     fun ceil(series: PriceBarSeries, previous: Int = 0) = ceil(series.close, previous)
@@ -2797,7 +2797,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cmo]
      */
     fun cmo(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) = cmo(series.close, timePeriod, previous)
@@ -2847,7 +2847,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cos]
      */
     fun cos(series: PriceBarSeries, previous: Int = 0) = cos(series.close, previous)
@@ -2875,7 +2875,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [cosh]
      */
     fun cosh(series: PriceBarSeries, previous: Int = 0) = cosh(series.close, previous)
@@ -2903,7 +2903,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [dema]
      */
     fun dema(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = dema(series.close, timePeriod, previous)
@@ -2953,7 +2953,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [dx]
      */
     fun dx(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -2982,7 +2982,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [ema]
      */
     fun ema(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = ema(series.close, timePeriod, previous)
@@ -3010,7 +3010,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [exp]
      */
     fun exp(series: PriceBarSeries, previous: Int = 0) = exp(series.close, previous)
@@ -3038,7 +3038,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [floor]
      */
     fun floor(series: PriceBarSeries, previous: Int = 0) = floor(series.close, previous)
@@ -3066,7 +3066,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [htDcPeriod]
      */
     fun htDcPeriod(series: PriceBarSeries, previous: Int = 0) = htDcPeriod(series.close, previous)
@@ -3094,7 +3094,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [htDcPhase]
      */
     fun htDcPhase(series: PriceBarSeries, previous: Int = 0) = htDcPhase(series.close, previous)
@@ -3123,7 +3123,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [htPhasor]
      */
     fun htPhasor(series: PriceBarSeries, previous: Int = 0) = htPhasor(series.close, previous)
@@ -3152,7 +3152,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [htSine]
      */
     fun htSine(series: PriceBarSeries, previous: Int = 0) = htSine(series.close, previous)
@@ -3180,7 +3180,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [htTrendline]
      */
     fun htTrendline(series: PriceBarSeries, previous: Int = 0) = htTrendline(series.close, previous)
@@ -3208,7 +3208,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [htTrendMode]
      */
     fun htTrendMode(series: PriceBarSeries, previous: Int = 0) = htTrendMode(series.close, previous)
@@ -3236,7 +3236,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [kama]
      */
     fun kama(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = kama(series.close, timePeriod, previous)
@@ -3264,7 +3264,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [linearReg]
      */
     fun linearReg(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -3293,7 +3293,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [linearRegAngle]
      */
     fun linearRegAngle(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -3322,7 +3322,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [linearRegIntercept]
      */
     fun linearRegIntercept(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -3351,7 +3351,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [linearRegSlope]
      */
     fun linearRegSlope(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -3380,7 +3380,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [ln]
      */
     fun ln(series: PriceBarSeries, previous: Int = 0) = ln(series.close, previous)
@@ -3408,7 +3408,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [log10]
      */
     fun log10(series: PriceBarSeries, previous: Int = 0) = log10(series.close, previous)
@@ -3436,7 +3436,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [movingAverage]
      */
     fun movingAverage(series: PriceBarSeries, timePeriod: Int = 30, mAType: MAType = MAType.Ema, previous: Int = 0) =
@@ -3485,7 +3485,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [macd]
      */
     fun macd(
@@ -3546,7 +3546,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [macdExt]
      */
     fun macdExt(
@@ -3585,7 +3585,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [macdFix]
      */
     fun macdFix(series: PriceBarSeries, signalPeriod: Int = 9, previous: Int = 0) =
@@ -3620,7 +3620,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [mama]
      */
     fun mama(
@@ -3693,7 +3693,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [max]
      */
     fun max(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = max(series.close, timePeriod, previous)
@@ -3721,7 +3721,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [maxIndex]
      */
     fun maxIndex(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
@@ -3750,7 +3750,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [medPrice]
      */
     fun medPrice(series: PriceBarSeries, previous: Int = 0) = medPrice(series.high, series.low, previous)
@@ -3785,7 +3785,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [mfi]
      */
     fun mfi(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -3814,7 +3814,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [midPoint]
      */
     fun midPoint(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -3843,7 +3843,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [midPrice]
      */
     fun midPrice(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -3872,7 +3872,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [min]
      */
     fun min(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = min(series.close, timePeriod, previous)
@@ -3900,7 +3900,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [minIndex]
      */
     fun minIndex(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
@@ -3930,7 +3930,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [minMax]
      */
     fun minMax(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
@@ -3960,7 +3960,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [minMaxIndex]
      */
     fun minMaxIndex(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
@@ -3995,7 +3995,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [minusDI]
      */
     fun minusDI(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -4024,7 +4024,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [minusDM]
      */
     fun minusDM(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -4053,7 +4053,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [mom]
      */
     fun mom(series: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = mom(series.close, timePeriod, previous)
@@ -4103,7 +4103,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [natr]
      */
     fun natr(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -4160,7 +4160,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [plusDI]
      */
     fun plusDI(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -4189,7 +4189,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [plusDM]
      */
     fun plusDM(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -4224,7 +4224,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [ppo]
      */
     fun ppo(
@@ -4258,7 +4258,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [roc]
      */
     fun roc(series: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = roc(series.close, timePeriod, previous)
@@ -4286,7 +4286,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [rocP]
      */
     fun rocP(series: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = rocP(series.close, timePeriod, previous)
@@ -4314,7 +4314,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [rocR]
      */
     fun rocR(series: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = rocR(series.close, timePeriod, previous)
@@ -4342,7 +4342,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [rocR100]
      */
     fun rocR100(series: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) =
@@ -4371,7 +4371,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [rsi]
      */
     fun rsi(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) = rsi(series.close, timePeriod, previous)
@@ -4405,7 +4405,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [sar]
      */
     fun sar(
@@ -4475,7 +4475,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [sarExt]
      */
     fun sarExt(
@@ -4526,7 +4526,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [sin]
      */
     fun sin(series: PriceBarSeries, previous: Int = 0) = sin(series.close, previous)
@@ -4554,7 +4554,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [sinh]
      */
     fun sinh(series: PriceBarSeries, previous: Int = 0) = sinh(series.close, previous)
@@ -4582,7 +4582,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [sma]
      */
     fun sma(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = sma(series.close, timePeriod, previous)
@@ -4610,7 +4610,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [sqrt]
      */
     fun sqrt(series: PriceBarSeries, previous: Int = 0) = sqrt(series.close, previous)
@@ -4638,7 +4638,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [stdDev]
      */
     fun stdDev(series: PriceBarSeries, timePeriod: Int = 5, deviations: Double = 1.000000e+0, previous: Int = 0) =
@@ -4693,7 +4693,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [stoch]
      */
     fun stoch(
@@ -4751,7 +4751,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [stochF]
      */
     fun stochF(
@@ -4805,7 +4805,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [stochRsi]
      */
     fun stochRsi(
@@ -4862,7 +4862,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [sum]
      */
     fun sum(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = sum(series.close, timePeriod, previous)
@@ -4890,7 +4890,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [t3]
      */
     fun t3(series: PriceBarSeries, timePeriod: Int = 5, volumeFactor: Double = 7.000000e-1, previous: Int = 0) =
@@ -4919,7 +4919,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [tan]
      */
     fun tan(series: PriceBarSeries, previous: Int = 0) = tan(series.close, previous)
@@ -4947,7 +4947,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [tanh]
      */
     fun tanh(series: PriceBarSeries, previous: Int = 0) = tanh(series.close, previous)
@@ -4975,7 +4975,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [tema]
      */
     fun tema(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = tema(series.close, timePeriod, previous)
@@ -5003,7 +5003,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [trueRange]
      */
     fun trueRange(series: PriceBarSeries, previous: Int = 0) =
@@ -5032,7 +5032,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [trima]
      */
     fun trima(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
@@ -5061,7 +5061,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [trix]
      */
     fun trix(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = trix(series.close, timePeriod, previous)
@@ -5089,7 +5089,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [tsf]
      */
     fun tsf(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) = tsf(series.close, timePeriod, previous)
@@ -5117,7 +5117,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [typPrice]
      */
     fun typPrice(series: PriceBarSeries, previous: Int = 0) = typPrice(series.high, series.low, series.close, previous)
@@ -5165,7 +5165,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [ultOsc]
      */
     fun ultOsc(
@@ -5199,7 +5199,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [variance]
      */
     fun variance(series: PriceBarSeries, timePeriod: Int = 5, deviations: Double = 1.000000e+0, previous: Int = 0) =
@@ -5228,7 +5228,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [wclPrice]
      */
     fun wclPrice(series: PriceBarSeries, previous: Int = 0) = wclPrice(series.high, series.low, series.close, previous)
@@ -5262,7 +5262,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [willR]
      */
     fun willR(series: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
@@ -5291,7 +5291,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Simple wrapper that allows to use PricebarSeries as input.
+     * Simple wrapper that allows to use PriceBar [series] as input.
      * @see [wma]
      */
     fun wma(series: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = wma(series.close, timePeriod, previous)

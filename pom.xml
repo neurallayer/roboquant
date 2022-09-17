@@ -374,6 +374,11 @@
                 <artifactId>netty-all</artifactId>
                 <version>4.1.81.Final</version>
             </dependency>
+            <dependency>
+                <groupId>io.socket</groupId>
+                <artifactId>socket.io-client</artifactId>
+                <version>1.0.2</version>
+            </dependency>
             <!-- end vulnerabilities upgrades -->
 
             <!-- enforce standard versions of following libraries across modules -->
