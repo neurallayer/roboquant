@@ -16,7 +16,7 @@
 # limitations under the License.
 #
 
-[[ ! -f "metric_charts.ipynb" ]] && echo "run the script from the notebooks directory" && exit 1
+[[ ! -f "metric_charts.ipynb" ]] && echo "run the script from the resources directory" && exit 1
 
 # First clean all the outputs in the notebooks
 jupyter nbconvert --clear-output --inplace ./*.ipynb

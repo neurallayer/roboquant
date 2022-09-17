@@ -44,21 +44,6 @@ class TradeChartByAsset(
         require(aspect in validAspects) { "Unsupported aspect $aspect, valid values are $validAspects" }
     }
 
-    private fun getTooltip(trade: Trade): String {
-        val pnl = trade.pnl.toBigDecimal()
-        val totalCost = trade.totalCost.toBigDecimal()
-        val fee = trade.fee.toBigDecimal()
-        return """
-            |asset: ${trade.asset.symbol}<br>
-            |currency: ${trade.asset.currency}<br> 
-            |time: ${trade.time}<br>
-            |qty: ${trade.size}<br>
-            |fee: $fee<br>
-            |pnl: $pnl<br>
-            |cost: $totalCost<br> 
-            |order: ${trade.orderId}""".trimMargin()
-    }
-
     private fun toSeriesData(assets: List<Asset>): List<List<Any>> {
         val d = mutableListOf<List<Any>>()
         for (trade in trades.sortedBy { it.time }) {
@@ -72,7 +57,7 @@ class TradeChartByAsset(
                 }
 
                 val y = assets.indexOf(asset)
-                val tooltip = getTooltip(this)
+                val tooltip = trade.getTooltip()
                 d.add(listOf(time, y, value, tooltip))
             }
         }

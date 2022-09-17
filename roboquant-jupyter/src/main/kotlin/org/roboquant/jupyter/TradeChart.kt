@@ -28,6 +28,22 @@ import org.roboquant.common.UnsupportedException
 import java.math.BigDecimal
 import java.time.Instant
 
+
+internal fun Trade.getTooltip() : String {
+    val pnl = pnl.toBigDecimal()
+    val totalCost = totalCost.toBigDecimal()
+    val fee = fee.toBigDecimal()
+    return """
+            |asset: ${asset.symbol}<br>
+            |currency: ${asset.currency}<br>
+            |time: $time<br>
+            |size: $size<br>
+            |fee: $fee<br>
+            |pnl: $pnl<br>
+            |cost: $totalCost<br>
+            |order: $orderId""".trimMargin()
+}
+
 /**
  * Trade chart plots the trades of an [trades] that have been generated during a run. By default, the realized pnl of
  * the trades will be plotted but this can be changed. The possible options are pnl, fee, cost and quantity
@@ -42,20 +58,6 @@ open class TradeChart(
         require(aspect in validAspects) { "Unsupported aspect $aspect, valid values are $validAspects" }
     }
 
-    private fun getTooltip(trade: Trade): String {
-        val pnl = trade.pnl.toBigDecimal()
-        val totalCost = trade.totalCost.toBigDecimal()
-        val fee = trade.fee.toBigDecimal()
-        return """
-            |asset: ${trade.asset.symbol}<br>
-            |currency: ${trade.asset.currency}<br>
-            |time: ${trade.time}<br>
-            |size: ${trade.size}<br>
-            |fee: $fee<br>
-            |pnl: $pnl<br>
-            |cost: $totalCost<br>
-            |order: ${trade.orderId}""".trimMargin()
-    }
 
     private fun tradesToSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
@@ -69,7 +71,7 @@ open class TradeChart(
                     else -> throw UnsupportedException("Unsupported aspect $aspect")
                 }
 
-                val tooltip = getTooltip(this)
+                val tooltip = trade.getTooltip()
                 d.add(Triple(time, value, tooltip))
             }
         }
