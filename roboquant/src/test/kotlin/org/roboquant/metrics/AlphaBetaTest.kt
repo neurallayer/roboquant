@@ -19,8 +19,14 @@ package org.roboquant.metrics
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
+import org.roboquant.brokers.InternalAccount
+import org.roboquant.brokers.Position
+import org.roboquant.feeds.Event
+import org.roboquant.feeds.TradePrice
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.strategies.EMACrossover
+import java.time.Instant
 import kotlin.test.assertTrue
 
 internal class AlphaBetaTest {
@@ -40,6 +46,33 @@ internal class AlphaBetaTest {
 
         val beta = logger.getMetric("account.beta").last().value
         assertTrue(!beta.isNaN())
+    }
+
+    @Test
+    fun test2() {
+        val feed = RandomWalk.lastYears(1, nAssets = 1)
+        val asset = feed.assets.first()
+        val internalAccount = InternalAccount()
+        val metric = AlphaBeta(asset, 50)
+
+        repeat(60) {
+            val price = it + 10.0
+            val event = Event(listOf(TradePrice(asset, price)), Instant.now())
+
+            // Our portfolio is exactly same as market reference asset, so ALPHA should be 0 and BETA 1
+            internalAccount.setPosition(Position(asset, 10, 10.0, price))
+            val account = internalAccount.toAccount()
+
+            val r = metric.calculate(account, event)
+            if (r.isNotEmpty()) {
+                val alpha = r["account.alpha"]!!
+                val beta = r["account.beta"]!!
+                assertTrue(alpha in -0.02..0.02)
+                assertTrue(beta in 0.98..1.02)
+            }
+
+        }
+
     }
 
 }

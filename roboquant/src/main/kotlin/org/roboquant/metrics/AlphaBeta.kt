@@ -34,7 +34,7 @@ import org.roboquant.strategies.utils.MovingWindow
  *
  * The provided risk-free return should be for the same duration as period.
  *
- * @property referenceAsset Which asset to use for the market volatility, for example S&P 500
+ * @property referenceAsset Which asset to use as reference for the market volatility and returns, for example S&P 500
  * @property period Over how many events to calculate the beta
  * @constructor
  *
@@ -51,11 +51,7 @@ class AlphaBeta(
     private val portfolioData = MovingWindow(period + 1)
 
     /**
-     * Based on the provided account and event, calculate any metrics and return them.
-     *
-     * @param account
-     * @param event
-     * @return
+     * Based on the provided [account] and [event], calculate any metrics and return them.
      */
     override fun calculate(account: Account, event: Event): MetricResults {
         val action = event.prices[referenceAsset]
