@@ -152,7 +152,7 @@ class SimBroker(
     }
 
     /**
-     * Liquidate the portfolio. This comes in handy at the end of a back-test if you prefer to have no open positions
+     * Liquidate the portfolio. This comes in handy at the end of a back-test if you want to have no open positions
      * left in the portfolio.
      *
      * This method performs the following two steps:

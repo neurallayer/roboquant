@@ -86,7 +86,7 @@ fun multiRun() {
         for (slow in fast * 2..fast * 4..4) {
             val strategy = EMACrossover(fast, slow)
             val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
-            roboquant.run(feed, runName = "run $fast-$slow")
+            roboquant.run(feed, name = "run $fast-$slow")
         }
     }
     val maxEntry = logger.getMetric("account.equity").max()

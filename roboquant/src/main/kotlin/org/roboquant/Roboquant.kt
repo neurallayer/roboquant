@@ -134,7 +134,7 @@ class Roboquant(
      * will be used. Optionally you can provide a [validation] timeframe that will trigger a separate validation phase.
      * You can also repeat the run for a number of [episodes].
      *
-     * You can provide a custom [runName] that will help to later identify this run. If none is provided, a name will
+     * You can provide a custom [name] that will help to later identify this run. If none is provided, a name will
      * be generated with the format "run-<counter>"
      *
      *  The following provides a schematic overview of the flow of a run:
@@ -148,11 +148,11 @@ class Roboquant(
         feed: Feed,
         timeframe: Timeframe = Timeframe.INFINITE,
         validation: Timeframe? = null,
-        runName: String? = null,
+        name: String? = null,
         episodes: Int = 1
     ) =
         runBlocking {
-            runAsync(feed, timeframe, validation, runName, episodes)
+            runAsync(feed, timeframe, validation, name, episodes)
         }
 
     /**

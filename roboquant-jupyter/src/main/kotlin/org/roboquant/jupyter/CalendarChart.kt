@@ -29,6 +29,9 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import kotlin.collections.*
 
+/**
+ * Plots the metrics values on a calendar, so it is easy to visualize if there are days when there are outliers.
+ */
 class CalendarChart(
     private val metricsData: List<MetricsEntry>,
     private val fractionDigits: Int = 2,

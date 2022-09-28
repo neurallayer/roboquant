@@ -36,7 +36,7 @@ class Observation(val time: Instant, val value: Double) : Comparable<Observation
 
 /**
  * Timeserie is an ordered list of [Observation] sorted from oldest to newest. There can be no observations with the
- * same [Observation.time] in the same timeserie.
+ * same [Observation.time] in a timeserie.
  */
 typealias Timeserie = List<Observation>
 

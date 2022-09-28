@@ -36,8 +36,7 @@ import java.time.temporal.ChronoUnit
 
 /**
  * A box chart is a standardized way of displaying data based on: the minimum, the maximum, and the
- * low-, mid- and high percentiles. It provides a good indication how a certain metric is distributed over a certain
- * period of time.
+ * low-, mid- and high percentiles. It provides a good indication how the values of a certain metric are distributed.
  */
 class MetricBoxChart(
     private val metricData: Collection<MetricsEntry>,
