@@ -46,6 +46,15 @@ class ExtensionsTest {
         assertEquals(-0.5, a.returns()[1])
     }
 
+
+    @Test
+    fun testPercentiles() {
+        val a = doubleArrayOf(5.0, 10.0, 20.0, 30.0, 35.0)
+        val p = a.percentiles()
+        assertEquals(5, p.size)
+        assertEquals(listOf(5.0, 5.0, 20.0, 35.0, 35.0), p)
+    }
+
     @Test
     fun testRounding() {
         val small = 0.00000000000001

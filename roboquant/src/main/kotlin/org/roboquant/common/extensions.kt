@@ -20,6 +20,7 @@ package org.roboquant.common
 import org.apache.commons.math3.stat.descriptive.moment.*
 import org.apache.commons.math3.stat.descriptive.rank.Max
 import org.apache.commons.math3.stat.descriptive.rank.Min
+import org.apache.commons.math3.stat.descriptive.rank.Percentile
 import java.lang.Integer.max
 import java.lang.Integer.min
 import java.math.BigDecimal
@@ -235,6 +236,32 @@ fun DoubleArray.returns(): DoubleArray {
     for (n in 1..lastIndex) result[n - 1] = (get(n) - get(n - 1)) / get(n - 1)
     return result
 }
+
+
+
+
+/**
+ * return the min and max values and [low], [mid] and [high] percentile. Passed percentiles should be between
+ * 0.0 and 100.0. The default values are respectively: 5.0, 50.0 and 95.0
+ */
+fun DoubleArray.percentiles(
+    low: Double = 5.0,
+    mid: Double = 50.0,
+    high: Double = 95.0
+): List<Double> {
+    val p = Percentile()
+    p.data = this
+
+    return listOf(
+        min(),
+        p.evaluate(low),
+        p.evaluate(mid),
+        p.evaluate(high),
+        max()
+    )
+
+}
+
 
 /**
  * Get the total return (as a percentage). Formula used is
