@@ -59,9 +59,9 @@ enum class SignalType {
  * @property rating The rating for the asset
  * @property type The type of signal, entry, exit or both. [SignalType.BOTH] is the default
  * @property takeProfit An optional take profit price in the same currency as the asset
- * @property stopLoss An (optional) stop loss price in the same currency as the asset
- * @property probability Optional the probability (value between 0.0 and 1.0) that the rating is correct.
- * @property source Optional the source of the signal, for example the strategy name
+ * @property stopLoss An optional stop loss price in the same currency as the asset
+ * @property probability Optional the probability (value between 0.0 and 1.0) for the provided rating.
+ * @property source Optional the source of the signal, for example the strategy name that generated the signal
  * @constructor Create a new Signal
  */
 class Signal(

@@ -18,11 +18,11 @@ private class OneOrderPerAsset(private val policy: Policy) : Policy by policy {
     private val logger = Logging.getLogger(this::class)
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+        val orders = policy.act(signals, account, event)
         val openOrderAssets = account.openOrders.assets
-        val newSignals = signals.filter { ! openOrderAssets.contains(it.asset)}
-
-        logger.fine { "signals in=${signals.size} out=${newSignals.size}" }
-        return policy.act(newSignals, account, event)
+        val newOrders = orders.filter { ! openOrderAssets.contains(it.asset) }
+        logger.fine { "orders in=${orders.size} out=${orders.size}" }
+        return newOrders
     }
 }
 

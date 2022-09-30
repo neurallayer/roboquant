@@ -27,14 +27,10 @@ import java.util.*
 /**
  * Wraps another [policy] and based on tje configured throttle settings stops propagating orders to a broker.
  *
- * Usage:
- *      // For example maximum of 5 orders per 8 hours
- *      val policy = ChainBreaker(DefaultPolicy(), 5, 8.hours)
- *
  * @property policy
  * @constructor Create new Chain Breaker
  */
-class CircuitBreaker(val policy: Policy, private val maxOrders: Int, private val duration: TemporalAmount) :
+internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, private val duration: TemporalAmount) :
     Policy by policy {
 
     private val history = LinkedList<Pair<Instant, Int>>()
@@ -69,4 +65,14 @@ class CircuitBreaker(val policy: Policy, private val maxOrders: Int, private val
 
 }
 
-fun Policy.circuitBreaker(maxOrders: Int, duration: TemporalAmount) = CircuitBreaker(this, maxOrders, duration)
+/**
+ * Limit the number of orders a policy can generate to [maxOrders] per [duration]. All the orders per step will be
+ * either added or ignored.
+ *
+ * Note: this circuit breaker will also block closing-position orders if a [maxOrders] limit is exceeded.
+ *
+ * Usage:
+ *      // For example allow maximum of 5 orders per 8 hours
+ *      val policy = myPolicy.circuitBreaker(5, 8.hours)
+ */
+fun Policy.circuitBreaker(maxOrders: Int, duration: TemporalAmount) : Policy = CircuitBreaker(this, maxOrders, duration)

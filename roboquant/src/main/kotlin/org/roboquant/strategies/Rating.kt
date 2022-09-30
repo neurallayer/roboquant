@@ -74,9 +74,7 @@ enum class Rating(val value: Int) {
     val isNegative: Boolean get() = this === SELL || this === UNDERPERFORM
 
     /**
-     * The inverse of this rating
-     *
-     * @return the inverse rating
+     * Return the inverse of this rating
      */
     fun inverse(): Rating {
         return when (this) {
