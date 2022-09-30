@@ -42,7 +42,7 @@ class TestPolicy(private val size: Size = Size.ONE) : BasePolicy() {
      */
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<SingleOrder>()
-        for (signal in signals.resolve()) {
+        for (signal in signals) {
             val order: MarketOrder? = when (signal.rating) {
                 Rating.BUY, Rating.OUTPERFORM -> MarketOrder(signal.asset, size)
                 Rating.SELL, Rating.UNDERPERFORM -> MarketOrder(signal.asset, -size)

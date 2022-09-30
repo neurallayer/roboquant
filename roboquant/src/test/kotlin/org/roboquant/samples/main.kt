@@ -71,7 +71,7 @@ fun multiCurrency() {
     val broker = SimBroker(cash)
 
     val strategy = EMACrossover.EMA_12_26
-    val policy = DefaultPolicy(minAmount = 1_000.0, maxAmount = 15_000.0)
+    val policy = DefaultPolicy(orderPercentage = 0.02)
 
     val roboquant = Roboquant(strategy, AccountSummary(), policy = policy, broker = broker, logger = MemoryLogger())
     roboquant.run(feed)

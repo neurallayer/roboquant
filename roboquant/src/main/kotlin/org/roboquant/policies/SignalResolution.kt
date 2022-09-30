@@ -43,12 +43,13 @@ enum class SignalResolution {
     LAST,
 
     /**
-     * Select the first signal for an asset assuming there are no conflicting signals, see also [Signal.conflicts]
+     * Select first signal for an asset when there are no conflicting signals for that asset, see
+     * also [Signal.conflicts]
      */
     NO_CONFLICTS,
 
     /**
-     * Select a signal for an asset is there are no duplicate signals, even if the duplicate signals are not
+     * Select a signal for an asset when there are no duplicate signals, even if the duplicate signals are not
      * conflicting
      */
     NO_DUPLICATES,
@@ -57,11 +58,11 @@ enum class SignalResolution {
 /**
  * Resolve potential conflicting signals. For many strategies this might not be necessary since there is always only 1
  * signal per asset, but as strategies are combined, this issue might pop up. You can specify the resolution [rule]
- * to apply when solving conflicts, the default being [SignalResolution.NONE].
+ * to apply when solving conflicts.
  *
  * It returns the list of signals without any conflicts according to the configured rule.
  */
-fun List<Signal>.resolve(rule: SignalResolution = SignalResolution.NONE): List<Signal> {
+fun List<Signal>.resolve(rule: SignalResolution): List<Signal> {
     if (size < 2) return this
 
     return when (rule) {
@@ -83,7 +84,7 @@ fun List<Signal>.resolve(rule: SignalResolution = SignalResolution.NONE): List<S
  * @property resolution
  * @constructor Create empty Signal resolver
  */
-class SignalResolver(val policy: Policy, private val resolution: SignalResolution) : Policy by policy {
+private class SignalResolver(private val policy: Policy, private val resolution: SignalResolution) : Policy by policy {
 
     private val logger = Logging.getLogger(this::class)
 
@@ -96,6 +97,6 @@ class SignalResolver(val policy: Policy, private val resolution: SignalResolutio
 }
 
 /**
- * Resolve signals
+ * Resolve conflicting signals using the provided [resolution] before invoking the policy
  */
-fun Policy.resolve(resolution: SignalResolution) = SignalResolver(this, resolution)
+fun Policy.resolve(resolution: SignalResolution) : Policy = SignalResolver(this, resolution)

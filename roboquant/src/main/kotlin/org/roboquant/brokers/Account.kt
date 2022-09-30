@@ -217,6 +217,14 @@ val Collection<Trade>.realizedPNL
 val Collection<Trade>.timeframe
     get() = timeline.timeframe
 
+
+/**
+ * Get the unique assets for a collection of order states
+ */
+val List<OrderState>.assets
+    get() = map { it.asset }.distinct().toSet()
+
+
 /**
  * Return true of the portfolio is long for the provided [asset], false otherwise
  */

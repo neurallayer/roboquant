@@ -35,7 +35,6 @@ class ExtensionsTest {
         assertEquals(0.6666666666666666, a.variance())
 
         assertEquals(1.0, (a / 2.0).mean())
-
     }
 
     @Test
@@ -45,7 +44,6 @@ class ExtensionsTest {
         assertEquals(1.0, a.returns()[0])
         assertEquals(-0.5, a.returns()[1])
     }
-
 
     @Test
     fun testPercentiles() {
@@ -58,7 +56,6 @@ class ExtensionsTest {
     @Test
     fun testRounding() {
         val small = 0.00000000000001
-        assertEquals(0.0, small.zeroOrMore)
         assertTrue(small.iszero)
         assertFalse(small.nonzero)
     }

@@ -17,6 +17,10 @@
 package org.roboquant.policies
 
 import org.roboquant.TestData
+import org.roboquant.brokers.Account
+import org.roboquant.brokers.assets
+import org.roboquant.feeds.Event
+import org.roboquant.orders.Order
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import kotlin.test.Test
@@ -24,6 +28,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class SignalResolutionTest {
+
+    private class MyPolicy : Policy {
+        override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+            assertTrue(signals.isEmpty())
+            return emptyList()
+        }
+
+    }
+
 
     @Test
     fun rules() {
@@ -35,4 +48,15 @@ internal class SignalResolutionTest {
         assertTrue(signals.resolve(SignalResolution.NO_CONFLICTS).isEmpty())
         assertEquals(signals, signals.resolve(SignalResolution.NONE))
     }
+
+    @Test
+    fun oneOrderPerAsset() {
+        val policy = MyPolicy().oneOrderPerAsset()
+        val account = TestData.usAccount()
+        val asset = account.openOrders.assets.first()
+        val signals = listOf(Signal(asset, Rating.BUY))
+        policy.act(signals, account, Event.empty())
+    }
+
+
 }

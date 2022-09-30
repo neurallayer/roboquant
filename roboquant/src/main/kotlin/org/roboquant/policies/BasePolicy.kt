@@ -49,64 +49,21 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
         return result
     }
 
+
     override fun reset() {
         metrics.clear()
     }
 
-    /**
-     * Convert an amount in account currency to asset currency
-     *
-     * @param amount
-     * @param assetCurrency
-     * @param account
-     * @return
-     */
-    open fun convertToAssetCurrency(amount: Double, assetCurrency: Currency, account: Account): Double {
-        return if (assetCurrency === account.baseCurrency) {
-            amount
-        } else {
-            val w = Wallet(Amount(account.baseCurrency, amount))
-            w.convert(assetCurrency, account.lastUpdate).value
-        }
-
-    }
 
     /**
      * Calculate the volume (= number of assets) that can be bought with the provided
-     * buying power. The buying power is in the same baseCurrency fo the account and the price
-     * is in the currency of that asset.
-     *
-     * @param freeAmount
-     * @param asset
-     * @param price
-     * @param account
-     * @return
+     * [amount]. The buying power is in the same baseCurrency fo the [account] and the [price]
+     * is in the currency of that [asset].
      */
-    protected fun calcVolume(freeAmount: Double, asset: Asset, price: Double, account: Account): Double {
+    protected fun calcVolume(amount: Double, asset: Asset, price: Double, account: Account): Double {
         val singleContractCost = asset.value(Size.ONE, price).value
-        val availableAssetCash = Amount(account.baseCurrency, freeAmount).convert(asset.currency, account.lastUpdate)
+        val availableAssetCash = Amount(account.baseCurrency, amount).convert(asset.currency, account.lastUpdate)
         return availableAssetCash.value / singleContractCost
     }
-
-    /**
-     * Get the potential open positions if the open orders would be processed. Open orders that reduce position size
-     * are excluded from this calculation. So this is a "worst" kind of scenario from an exposure point of view.
-     *
-
-    fun getPotentialPositions(account: Account): Map<Asset, Double> {
-    val result = mutableMapOf<Asset, Double>()
-    val op = account.portfolio.openPositions.map { it.key to it.value.quantity }
-    result.putAll(op)
-    account.openOrders.forEach {
-    val pos = result.getOrDefault(it.asset, 0.0)
-    val newPos = pos + it.remaining
-
-    // Only in case of an increase of the exposed position we include an open order
-    if (newPos.absoluteValue > pos.absoluteValue)
-    result.get(it.asset) = newPos
-    }
-    return result
-    }
-     */
 
 }

@@ -291,12 +291,6 @@ val Double.nonzero
     get() = this.absoluteValue >= EPS
 
 /**
- * is this a non-zero number, allows for small rounding errors.
- */
-val Double.zeroOrMore
-    get() = if (this >= EPS) this else 0.0
-
-/**
  * Return a rounded number with the specified number of fractions as a BigDecimal
  */
 fun Number.round(fractions: Int = 2): BigDecimal =
