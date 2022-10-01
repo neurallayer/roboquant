@@ -17,7 +17,7 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
-import org.roboquant.common.Amount
+import org.roboquant.brokers.Position
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.Size
@@ -26,6 +26,7 @@ import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
+import kotlin.math.max
 
 /**
  * This is the default policy that will be used if no other policy is specified. There are a number of parameters that
@@ -51,51 +52,41 @@ open class DefaultPolicy(
 ) : BasePolicy() {
 
     private val logger = Logging.getLogger(DefaultPolicy::class)
-    private val noOrder: Pair<Order?, Double> = Pair(null, 0.0)
 
     /**
      * Calculate the exposure impact on the buying power
      */
     private fun getExposure(account: Account, asset: Asset, size: Size, price: Double): Double {
-        val cost = asset.value(size, price).absoluteValue
-        val baseCurrencyCost = account.convert(cost)
-        return baseCurrencyCost.value
+        val position = account.portfolio.getValue(asset)
+
+        // No exposure if we reduce the overall position size
+        return if (position.isReduction(size))  {
+            0.0
+        } else {
+            val cost = asset.value(size, price).absoluteValue
+            val baseCurrencyCost = account.convert(cost)
+            return baseCurrencyCost.value
+        }
     }
 
+    private fun createSellOrder(size: Size, signal: Signal, price: Double, position: Position): Order? {
 
-    @Suppress("ReturnCount")
-    private fun createSellOrder(account: Account, signal: Signal, price: Double, amount: Amount): Pair<Order?, Double> {
-        val position = account.portfolio.getValue(signal.asset)
+        return when {
+            position.long && signal.exit -> createOrder(signal, -position.size, price)
+            position.closed && signal.entry && shorting && size > 0 -> createOrder(signal, -size, price)
+            else -> null
+        }
 
-        position.short && return noOrder
-        position.long && signal.exit && return Pair(createOrder(signal, -position.size, price), 0.0)
-        position.long && !signal.exit && return noOrder
-        position.closed && ! signal.entry && return noOrder
-        position.closed && ! shorting && return noOrder
-
-        val size = calcSize(amount, signal.asset, price, account)
-        if (size <= 0.0) return noOrder
-
-        val bp = getExposure(account, signal.asset, size, price)
-        val order = createOrder(signal, -size, price)
-        return Pair(order, bp)
     }
 
-    @Suppress("ReturnCount")
-    private fun createBuyOrder(account: Account, signal: Signal, price: Double, amount: Amount): Pair<Order?, Double> {
-        val position = account.portfolio.getValue(signal.asset)
+    private fun createBuyOrder(size: Size, signal: Signal, price: Double, position: Position): Order? {
 
-        position.long && return noOrder
-        position.short && ! signal.exit && return noOrder
-        position.short && return Pair(createOrder(signal, -position.size, price), 0.0)
-        position.closed && !signal.entry &&  return noOrder
+        return when {
+            position.short && signal.exit -> createOrder(signal, -position.size, price)
+            position.closed && signal.entry && size > 0 -> createOrder(signal, size, price)
+            else -> null
+        }
 
-        val size = calcSize(amount, signal.asset, price, account)
-        if (size <= 0.0) return noOrder
-
-        val bp = getExposure(account, signal.asset, size, price)
-        val order = createOrder(signal, size, price)
-        return Pair(order, bp)
     }
 
     /**
@@ -111,7 +102,7 @@ open class DefaultPolicy(
         if (signals.isEmpty()) return emptyList()
 
         val orders = mutableListOf<Order>()
-        var buyingPower = account.buyingPower.value
+        var buyingPower = max(account.buyingPower.value, 0.0)
 
         for (signal in signals.filter { it.rating !== Rating.HOLD }) {
             val asset = signal.asset
@@ -121,13 +112,16 @@ open class DefaultPolicy(
 
             if (price !== null) {
                 val amount = account.equityAmount * orderPercentage
+                val size = calcSize(amount, signal.asset, price, account)
+                val position = account.portfolio.getValue(asset)
 
-                val (order, exposure) = if (signal.rating.isNegative)
-                        createSellOrder(account, signal, price, amount)
+                val order = if (signal.rating.isNegative)
+                        createSellOrder(size, signal, price, position)
                     else
-                        createBuyOrder(account, signal, price, amount)
+                        createBuyOrder(size, signal, price, position)
 
-                if (order != null && exposure < buyingPower) {
+                val exposure = getExposure(account, signal.asset, size, price)
+                if (order != null && exposure <= buyingPower) {
                     logger.fine { "signal=${signal} amount=$amount exposure=$exposure order=$order" }
                     orders.add(order)
                     buyingPower -= exposure

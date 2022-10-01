@@ -56,9 +56,8 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
 
 
     /**
-     * Calculate the volume (= number of assets) that can be bought with the provided
-     * [amount]. The buying power is in the same baseCurrency fo the [account] and the [price]
-     * is in the currency of that [asset].
+     * Calculate the size that can be bought with the provided [amount] given the [price] in the currency of
+     * the [asset].
      */
     protected fun calcSize(amount: Amount, asset: Asset, price: Double, account: Account): Size {
         val singleContractPrice = asset.value(Size.ONE, price).value

@@ -153,6 +153,11 @@ data class Position(
     val totalCost: Amount
         get() = asset.value(size, avgPrice)
 
+    /**
+     * Is changing the position size with the provided [size] a reduction
+     */
+    fun isReduction(size: Size) = (this.size + size).absoluteValue < size.absoluteValue
+
 }
 
 /**
