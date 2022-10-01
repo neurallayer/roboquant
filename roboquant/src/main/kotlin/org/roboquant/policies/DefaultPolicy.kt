@@ -17,16 +17,15 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.Size
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
+import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
-import kotlin.math.floor
-import kotlin.math.max
-import kotlin.math.min
 
 /**
  * This is the default policy that will be used if no other policy is specified. There are a number of parameters that
@@ -54,7 +53,10 @@ open class DefaultPolicy(
     private val logger = Logging.getLogger(DefaultPolicy::class)
     private val noOrder: Pair<Order?, Double> = Pair(null, 0.0)
 
-    private fun reducedBuyingPower(account: Account, asset: Asset, size: Size, price: Double): Double {
+    /**
+     * Calculate the exposure impact on the buying power
+     */
+    private fun getExposure(account: Account, asset: Asset, size: Size, price: Double): Double {
         val cost = asset.value(size, price).absoluteValue
         val baseCurrencyCost = account.convert(cost)
         return baseCurrencyCost.value
@@ -62,7 +64,7 @@ open class DefaultPolicy(
 
 
     @Suppress("ReturnCount")
-    private fun createSellOrder(account: Account, signal: Signal, price: Double, amount: Double): Pair<Order?, Double> {
+    private fun createSellOrder(account: Account, signal: Signal, price: Double, amount: Amount): Pair<Order?, Double> {
         val position = account.portfolio.getValue(signal.asset)
 
         position.short && return noOrder
@@ -71,16 +73,16 @@ open class DefaultPolicy(
         position.closed && ! signal.entry && return noOrder
         position.closed && ! shorting && return noOrder
 
-        val volume = Size(floor(calcVolume(amount, signal.asset, price, account)).toInt())
-        if (volume <= 0.0) return noOrder
+        val size = calcSize(amount, signal.asset, price, account)
+        if (size <= 0.0) return noOrder
 
-        val bp = reducedBuyingPower(account, signal.asset, volume, price)
-        val order = createOrder(signal, -volume, price)
+        val bp = getExposure(account, signal.asset, size, price)
+        val order = createOrder(signal, -size, price)
         return Pair(order, bp)
     }
 
     @Suppress("ReturnCount")
-    private fun createBuyOrder(account: Account, signal: Signal, price: Double, amount: Double): Pair<Order?, Double> {
+    private fun createBuyOrder(account: Account, signal: Signal, price: Double, amount: Amount): Pair<Order?, Double> {
         val position = account.portfolio.getValue(signal.asset)
 
         position.long && return noOrder
@@ -88,11 +90,11 @@ open class DefaultPolicy(
         position.short && return Pair(createOrder(signal, -position.size, price), 0.0)
         position.closed && !signal.entry &&  return noOrder
 
-        val volume = Size(floor(calcVolume(amount, signal.asset, price, account)).toInt())
-        if (volume <= 0.0) return noOrder
+        val size = calcSize(amount, signal.asset, price, account)
+        if (size <= 0.0) return noOrder
 
-        val bp = reducedBuyingPower(account, signal.asset, volume, price)
-        val order = createOrder(signal, volume, price)
+        val bp = getExposure(account, signal.asset, size, price)
+        val order = createOrder(signal, size, price)
         return Pair(order, bp)
     }
 
@@ -111,30 +113,26 @@ open class DefaultPolicy(
         val orders = mutableListOf<Order>()
         var buyingPower = account.buyingPower.value
 
-        for (signal in signals) {
+        for (signal in signals.filter { it.rating !== Rating.HOLD }) {
             val asset = signal.asset
 
             // We don't place an order if we don't know the current price
             val price = event.getPrice(asset)
 
             if (price !== null) {
-                val maxAmount = account.equityAmount.value * orderPercentage
-                val amount = max(0.0, min(maxAmount, buyingPower))
-                if (signal.rating.isNegative) {
-                    val (order, cost) = createSellOrder(account, signal, price, amount)
-                    if (order != null) {
-                        logger.fine { "sell $amount $cost $order" }
-                        orders.add(order)
-                        buyingPower -= cost
-                    }
-                } else if (signal.rating.isPositive) {
-                    val (order, cost) = createBuyOrder(account, signal, price, amount)
-                    if (order != null) {
-                        logger.fine { "buy $amount $cost $order" }
-                        orders.add(order)
-                        buyingPower -= cost
-                    }
+                val amount = account.equityAmount * orderPercentage
+
+                val (order, exposure) = if (signal.rating.isNegative)
+                        createSellOrder(account, signal, price, amount)
+                    else
+                        createBuyOrder(account, signal, price, amount)
+
+                if (order != null && exposure < buyingPower) {
+                    logger.fine { "signal=${signal} amount=$amount exposure=$exposure order=$order" }
+                    orders.add(order)
+                    buyingPower -= exposure
                 }
+
             }
         }
         record("policy.signals", signals.size)
