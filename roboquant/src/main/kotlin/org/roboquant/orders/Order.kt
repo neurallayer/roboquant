@@ -50,7 +50,8 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
     }
 
     override fun toString(): String {
-        return "$type id=$id asset=${asset.symbol} tag=$tag ${info()}"
+        val infoStr = info().toString().removePrefix("{").removeSuffix("}")
+        return "$type id=$id asset=${asset.symbol} tag=$tag $infoStr"
     }
 
     /**

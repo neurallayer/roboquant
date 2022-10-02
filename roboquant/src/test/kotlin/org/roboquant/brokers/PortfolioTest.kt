@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.Currency
+import org.roboquant.common.Size
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -30,7 +31,7 @@ internal class PortfolioTest {
     fun testUpdatePortfolio() {
         val portfolio = mutableMapOf<Asset, Position>().withDefault { Position.empty(asset = it) }
         val c = TestData.usStock()
-        val position = Position(c, 100, 10.0)
+        val position = Position(c, Size(100), 10.0)
         portfolio[c] = position
         assertEquals(100.0, portfolio.getValue(c).size.toDouble())
         assertEquals(10.0, portfolio.getValue(c).avgPrice)

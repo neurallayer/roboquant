@@ -41,7 +41,7 @@ class AlpacaBrokerTestIT {
         assertDoesNotThrow {
             broker.place(emptyList(), Event.empty())
         }
-        broker.account.trades.summary().print()
+        println(broker.account.trades.summary())
     }
 
 }

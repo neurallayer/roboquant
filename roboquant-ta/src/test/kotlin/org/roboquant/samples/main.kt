@@ -89,7 +89,7 @@ fun customPolicy() {
     val roboquant = Roboquant(EMACrossover.EMA_12_26, AccountSummary(), policy = SmartLimitPolicy(atrPeriod = 5))
     val feed = AvroFeed.sp500()
     roboquant.run(feed)
-    roboquant.broker.account.summary().print()
+    println(roboquant.broker.account.summary())
 }
 
 

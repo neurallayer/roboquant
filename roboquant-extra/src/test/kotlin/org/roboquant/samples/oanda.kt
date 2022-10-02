@@ -39,7 +39,7 @@ import java.util.logging.Level
 fun oanda() {
     val feed = OANDAHistoricFeed()
     feed.retrieve("EUR_USD", "USD_JPY", "GBP_USD")
-    feed.assets.summary().log()
+    println(feed.assets.summary())
     println(feed.timeline.size)
     println(feed.timeframe)
 
@@ -51,7 +51,7 @@ fun forexAvro() {
     val strategy = EMACrossover()
     val roboquant = OANDA.roboquant(strategy, AccountSummary())
     roboquant.run(feed)
-    roboquant.broker.account.summary().log()
+    println(roboquant.broker.account.summary())
 }
 
 fun oandaLong() {
@@ -76,7 +76,7 @@ fun oandaLong() {
         println(feed.timeline.size)
         Thread.sleep(1000) // let's play nice and not overload things
     }
-    feed.assets.summary().log()
+    println(feed.assets.summary())
     println(feed.timeline.size)
     println(feed.timeframe)
 
@@ -93,7 +93,7 @@ fun oanda2() {
 
     val roboquant = OANDA.roboquant(EMACrossover())
     roboquant.run(feed)
-    roboquant.broker.account.fullSummary().print()
+    println(roboquant.broker.account.fullSummary())
 }
 
 fun oandaLive() {
@@ -127,7 +127,7 @@ fun oandaPaperTrading() {
     val tf = Timeframe.next(5.minutes)
     roboquant.run(feed, tf)
 
-    roboquant.broker.account.fullSummary().print()
+    println(roboquant.broker.account.fullSummary())
 }
 
 fun oandaClosePositions() {
@@ -139,7 +139,7 @@ fun oandaClosePositions() {
     val changes = broker.account.portfolio.diff(target)
     val orders = changes.map { MarketOrder(it.key, it.value) }
     broker.place(orders, Event.empty())
-    broker.account.fullSummary().print()
+    println(broker.account.fullSummary())
 }
 
 fun oandaLiveRecord() {
@@ -152,9 +152,9 @@ fun oandaLiveRecord() {
 fun oandaBroker() {
     Config.exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
     val broker = OANDABroker()
-    broker.account.summary().log()
-    broker.account.portfolio.summary().log()
-    broker.availableAssets.summary().log()
+    println(broker.account.summary())
+    println(broker.account.portfolio.summary())
+    println(broker.availableAssets.summary())
 
     val strategy = EMACrossover()
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
@@ -163,7 +163,7 @@ fun oandaBroker() {
     feed.subscribeOrderBook("EUR_USD", "GBP_USD", "GBP_EUR")
     val twoMinutes = Timeframe.next(5.minutes)
     roboquant.run(feed, twoMinutes)
-    broker.account.portfolio.summary().log()
+    println(broker.account.portfolio.summary())
 }
 
 fun oandaBroker3() {
@@ -172,7 +172,7 @@ fun oandaBroker3() {
 
     val broker = OANDABroker()
     val account = broker.account
-    account.fullSummary().print()
+    println(account.fullSummary())
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("GBP_USD", "EUR_USD", "EUR_GBP")
     feed.heartbeatInterval = 30_000L
@@ -182,20 +182,20 @@ fun oandaBroker3() {
     val roboquant = Roboquant(strategy, AccountSummary(), policy = policy, broker = broker)
     val timeframe = Timeframe.next(1.minutes) // restrict the time from now for the next minutes
     roboquant.run(feed, timeframe)
-    account.fullSummary().print()
+    println(account.fullSummary())
 }
 
 fun oandaBroker2(createOrder: Boolean = true) {
     Logging.setLevel(Level.FINE, "OANDABroker")
     val broker = OANDABroker()
-    broker.account.fullSummary().log()
-    broker.availableAssets.summary().log()
+    println(broker.account.fullSummary())
+    println(broker.availableAssets.summary())
 
     if (createOrder) {
         val asset = broker.availableAssets.findBySymbols("EUR_USD").first()
         val order = MarketOrder(asset, Size(-100), tif = FOK())
         broker.place(listOf(order), Event.empty())
-        broker.account.fullSummary().log()
+        println(broker.account.fullSummary())
     }
 }
 

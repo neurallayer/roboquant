@@ -38,7 +38,7 @@ internal class XChangeLiveFeedTestIT {
         val exchange = StreamingExchangeFactory.INSTANCE.createExchange(BitstampStreamingExchange::class.java)
         exchange.connect().blockingAwait()
         val feed = XChangeLiveFeed(exchange)
-        feed.availableAssets.summary().print()
+        println(feed.availableAssets.summary())
 
         // Mix three kind of price actions in a single feed
         feed.subscribeTrade(Pair("BTC", "USD"))
@@ -61,7 +61,7 @@ internal class XChangeLiveFeedTestIT {
 
         val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
         val feed = XChangePollingLiveFeed(exchange)
-        feed.availableAssets.summary().print()
+        println(feed.availableAssets.summary())
 
         feed.subscribeTrade("BTC_USD", pollingDelayMillis = 30_000)
         println("Subscribed")

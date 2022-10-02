@@ -75,7 +75,7 @@ fun multiCurrency() {
 
     val roboquant = Roboquant(strategy, AccountSummary(), policy = policy, broker = broker, logger = MemoryLogger())
     roboquant.run(feed)
-    broker.account.openOrders.summary().print()
+    println(broker.account.openOrders.summary())
 }
 
 fun multiRun() {
@@ -156,8 +156,8 @@ fun beta() {
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, ProgressMetric(), policy = policy, logger = logger)
     roboquant.run(feed)
-    logger.summary().print()
-    roboquant.broker.account.summary().print()
+    println(logger.summary())
+    println(roboquant.broker.account.summary())
 
 }
 
@@ -178,7 +178,7 @@ fun beta2() {
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, ProgressMetric(), PNL(), policy = policy, logger = logger)
     roboquant.run(feed)
-    logger.summary().print()
+    println(logger.summary())
     println(roboquant.broker.account.summary())
     println(roboquant.broker.account.trades.fee)
 

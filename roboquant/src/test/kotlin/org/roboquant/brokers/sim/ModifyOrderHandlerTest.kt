@@ -48,12 +48,13 @@ internal class ModifyOrderHandlerTest {
         val order1 = MarketOrder(asset, 100)
         val moc = MarketOrderHandler(order1)
 
-        val order = CancelOrder(moc.state)
+        val order = CancelOrder(moc.state, id=12345)
 
         val cmd = CancelOrderHandler(order)
         cmd.execute(listOf(moc), Instant.now())
         assertEquals(OrderStatus.COMPLETED, cmd.state.status)
         assertEquals(OrderStatus.EXPIRED, moc.state.status)
+        assertEquals("CANCEL id=12345 asset=XYZ tag= size=100, tif=GTC", order.toString())
     }
 
 }

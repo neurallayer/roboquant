@@ -21,6 +21,7 @@ import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.brokers.InternalAccount
 import org.roboquant.brokers.Position
+import org.roboquant.common.Size
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
 import org.roboquant.feeds.random.RandomWalk
@@ -60,7 +61,7 @@ internal class AlphaBetaTest {
             val event = Event(listOf(TradePrice(asset, price)), Instant.now())
 
             // Our portfolio is exactly same as market reference asset, so ALPHA should be 0 and BETA 1
-            internalAccount.setPosition(Position(asset, 10, 10.0, price))
+            internalAccount.setPosition(Position(asset, Size(10), 10.0, price))
             val account = internalAccount.toAccount()
 
             val r = metric.calculate(account, event)

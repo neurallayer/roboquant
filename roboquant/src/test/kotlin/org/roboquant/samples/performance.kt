@@ -18,47 +18,60 @@
 
 package org.roboquant.samples
 
+import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
 import org.roboquant.common.Config
 import org.roboquant.common.ParallelJobs
-import org.roboquant.common.hours
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.LastEntryLogger
-import org.roboquant.logging.MemoryLogger
+import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.AccountSummary
-import org.roboquant.metrics.PNL
 import org.roboquant.metrics.ProgressMetric
-import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.EMACrossover
-import java.time.Instant
 import kotlin.system.measureTimeMillis
-
-private fun getFeed(n: Int): Feed {
-    val timeline = mutableListOf<Instant>()
-    var start = Instant.parse("1975-01-01T09:00:00Z")
-
-    // Create a timeline
-    repeat(n * 10_000) {
-        timeline.add(start)
-        start += 4.hours
-    }
-
-    return RandomWalk(timeline, 100)
-}
 
 /**
  * Basic test with minimal overhead
  */
-fun base(feed: Feed) {
-    // Create a roboquant using Exponential Weighted Moving Average
-    repeat(1) {
-        val logger = MemoryLogger(false)
-        val roboquant = Roboquant(EMACrossover(), ProgressMetric(), PNL(), policy = DefaultPolicy(), logger = logger)
-        roboquant.run(feed)
-        roboquant.broker.account.summary()
-        print(".")
+fun base() {
+    val feed = RandomWalk.lastDays(7, 100)
+
+    repeat(3) {
+        val t = measureTimeMillis {
+            val roboquant = Roboquant(EMACrossover(), ProgressMetric(), logger = SilentLogger())
+            roboquant.run(feed)
+        }
+
+        println("time = $t ms")
     }
+}
+
+
+
+/**
+ * Basic test with minimal overhead
+ */
+fun baseParallel(feed: Feed) = runBlocking {
+    val jobs = ParallelJobs()
+    var actions = 0
+
+    val t = measureTimeMillis {
+        repeat(8) {
+            val logger = LastEntryLogger()
+            val roboquant = Roboquant(
+                EMACrossover(),
+                ProgressMetric(),
+                logger = logger
+            )
+            jobs.add {
+                roboquant.run(feed)
+                actions += logger.getMetric("progress.actions").first().value.toInt()
+            }
+        }
+        jobs.joinAll()
+    }
+    println("actions = $actions  time = $t")
 }
 
 /**
@@ -86,16 +99,21 @@ suspend fun multiRunParallel(feed: Feed) {
 
 suspend fun main() {
     Config.printInfo()
-    val feed = getFeed(4)
+
+    // Generate 1.008.000 price bars
+    val feed = RandomWalk.lastDays(7, 100)
+
     var time = Long.MAX_VALUE
 
-    repeat(5) {
+    // Repeat three times to exclude Java compile time overhead of first run
+    repeat(3) {
         val t = measureTimeMillis {
-            when ("PARALLEL") {
-                "BASE" -> base(feed)
+            when ("BASE") {
+                "BASE" -> base()
+                "BASE_PARALLEL" -> baseParallel(feed)
                 "PARALLEL" -> multiRunParallel(feed)
                 "MIXED" -> {
-                    base(feed)
+                    base()
                     multiRunParallel(feed)
                 }
             }

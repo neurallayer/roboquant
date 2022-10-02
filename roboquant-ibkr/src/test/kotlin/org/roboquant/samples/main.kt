@@ -46,7 +46,7 @@ fun broker() {
     Logging.setLevel(Level.FINE)
     Config.exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.1)
     val broker = IBKRBroker()
-    broker.account.fullSummary().print()
+    println(broker.account.fullSummary())
     Thread.sleep(5000)
     println(broker.account.assets)
     broker.disconnect()
@@ -57,14 +57,14 @@ fun closePosition() {
     Logging.useSimpleFormat = false
     val broker = IBKRBroker()
     val account = broker.account
-    account.fullSummary().print()
+    println(account.fullSummary())
 
     // Now lets place a new market sell order
     val position = account.positions.first()
     val order = MarketOrder(position.asset, -position.size)
     broker.place(listOf(order), Event.empty())
     Thread.sleep(10_000)
-    account.fullSummary().print()
+    println(account.fullSummary())
     broker.disconnect()
 }
 
@@ -79,8 +79,8 @@ fun showAccount() {
     val account = broker.account
 
     // Log the summary of the account and portfolio
-    account.summary().log()
-    account.portfolio.summary().log()
+    println(account.summary())
+    println(account.portfolio.summary())
 
     // Disconnect
     broker.disconnect()
@@ -90,7 +90,7 @@ fun paperTrade(minutes: Int = 10) {
 
     Config.exchangeRates = IBKRExchangeRates()
     val broker = IBKRBroker()
-    broker.account.positions.summary().log()
+    println(broker.account.positions.summary())
 
     // Subscribe to all assets in the portfolio
     val feed = IBKRLiveFeed()
@@ -101,7 +101,7 @@ fun paperTrade(minutes: Int = 10) {
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), broker = broker)
     val tf = Timeframe.next(minutes.minutes)
     roboquant.run(feed, tf)
-    broker.account.summary().log()
+    println(broker.account.summary())
     broker.disconnect()
     feed.disconnect()
 }

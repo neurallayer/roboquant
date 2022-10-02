@@ -60,7 +60,7 @@ open class DefaultPolicy(
         val position = account.portfolio.getValue(asset)
 
         // No exposure if we reduce the overall position size
-        return if (position.isReduction(size))  {
+        return if (position.isReduced(size))  {
             0.0
         } else {
             val cost = asset.value(size, price).absoluteValue

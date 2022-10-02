@@ -71,7 +71,7 @@ fun readBinanceFeed() {
         val broker = SimBroker(initialDeposit, accountModel = buyingPower)
         val roboquant = Roboquant(EMACrossover(), AccountSummary(), broker = broker, policy = policy)
         roboquant.run(feed)
-        roboquant.broker.account.summary().log()
+        println(roboquant.broker.account.summary())
     }
     println(t)
 }
@@ -80,7 +80,7 @@ fun xchangeFeed() {
 
     val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
     val feed = XChangePollingLiveFeed(exchange)
-    feed.availableAssets.summary().print()
+    println(feed.availableAssets.summary())
 
     feed.subscribeTrade("BTC_USD", pollingDelayMillis = 30_000)
     println("Subscribed")

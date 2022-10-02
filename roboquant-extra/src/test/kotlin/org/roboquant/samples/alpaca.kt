@@ -37,15 +37,14 @@ fun alpacaBroker() {
     val strategy = EMACrossover.EMA_12_26
     val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
     roboquant.run(feed)
-    broker.account.summary().print()
+    println(broker.account.summary())
 }
 
 fun allAlpaca() {
     val broker = AlpacaBroker()
     val account = broker.account
-    account.summary().log()
-    account.summary().log()
-    account.positions.summary().log()
+    println(account.summary())
+    println(account.positions.summary())
 
     val feed = AlpacaLiveFeed()
     feed.heartbeatInterval = 30_000
@@ -61,7 +60,7 @@ fun allAlpaca() {
     roboquant.run(feed, tf)
     feed.close()
 
-    roboquant.broker.account.summary().log()
+    println(roboquant.broker.account.summary())
 }
 
 fun alpacaConnection() {
@@ -83,7 +82,7 @@ fun alpacaLiveFeed() {
     val tf = Timeframe.next(10.minutes)
     roboquant.run(feed, tf)
     feed.close()
-    roboquant.broker.account.summary().log()
+    println(roboquant.broker.account.summary())
 }
 
 /**
@@ -129,7 +128,7 @@ fun alpacaHistoricFeed2() {
     // the free subscriptions is entitled to and not the latest 15 minutes.
     val tf = Timeframe.past(200.days) - 15.minutes
     feed.retrieve(*symbols, timeframe = tf)
-    feed.assets.summary().print()
+    println(feed.assets.summary())
 }
 
 fun main() {

@@ -69,7 +69,7 @@ interface Pricing {
 }
 
 /**
- * Pricing model that uses a constant [spreadInBips] in BIPS to determine final trading price. It uses the same
+ * Pricing model that uses a constant [spreadInBips] to determine the trading price. It uses the same
  * price for high, low and market prices. It works with any type of PriceAction.
  */
 class SpreadPricingEngine(private val spreadInBips: Int = 10, private val priceType: String = "DEFAULT") :

@@ -41,10 +41,10 @@ fun interface OrderHandlerFactory<T : Order> {
 
 /**
  * Engine that simulates how orders are executed on financial markets. For any order to be executed, it needs a
- * corresponding [OrderHandler]
+ * corresponding [OrderHandler] to be registered.
  *
- * @property pricingEngine
- * @constructor Create empty Execution engine
+ * @property pricingEngine pricing engine to use to determine the price
+ * @constructor Create new Execution engine
  */
 class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEngine()) {
 

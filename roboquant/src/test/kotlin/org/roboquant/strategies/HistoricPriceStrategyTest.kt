@@ -29,6 +29,7 @@ internal class HistoricPriceStrategyTest {
             called = true
             return null
         }
+
     }
 
     @Test
@@ -41,6 +42,11 @@ internal class HistoricPriceStrategyTest {
 
         repeat(10) { c.generate(event) }
         assertTrue(c.called)
+
+        c.reset()
+        c.called = false
+        c.generate(event)
+        assertFalse(c.called)
     }
 
 }

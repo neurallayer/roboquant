@@ -47,13 +47,9 @@ data class MetricsEntry(val name: String, val value: Double, val info: RunInfo) 
 }
 
 /**
- * Group a collection of metrics by their unique name, run and episode
+ * Group a collection of metrics by their unique [MetricsEntry.groupId] (run and episode)
  */
 fun Collection<MetricsEntry>.group(): Map<String, List<MetricsEntry>> = groupBy { it.groupId }
-
-fun Map<String, List<MetricsEntry>>.max(): Map<String, MetricsEntry> = mapValues { it.value.max() }
-
-fun Map<String, List<MetricsEntry>>.min(): Map<String, MetricsEntry> = mapValues { it.value.min() }
 
 /**
  * Get the [n] highest entries, default being 10

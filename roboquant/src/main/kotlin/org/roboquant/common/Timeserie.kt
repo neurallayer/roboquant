@@ -23,8 +23,8 @@ import java.time.Instant
  * Observation represents a double [value] at a certain point in [time]. Observations can be compared based on
  * their [time].
  *
- * @property time the time when the value was observed
- * @property value the value that was observed
+ * @property time the time when the value was observed expressed as an [Instant]
+ * @property value the value that was observed expressed as a [Double]
  */
 class Observation(val time: Instant, val value: Double) : Comparable<Observation> {
 
@@ -35,8 +35,8 @@ class Observation(val time: Instant, val value: Double) : Comparable<Observation
 }
 
 /**
- * Timeserie is an ordered list of [Observation] sorted from oldest to newest. There can be no observations with the
- * same [Observation.time] in a timeserie.
+ * Timeserie is an ordered list of [Observations][Observation] sorted from oldest to newest. There can be no
+ * observations with the same [Observation.time] in a timeserie.
  */
 typealias Timeserie = List<Observation>
 
@@ -81,7 +81,7 @@ fun correlation(a: Timeserie, b: Timeserie, minObservations: Int = 3): Double {
 
 /**
  * Return the correlations for the timeseries, ensuring that at least [minObservations] are available for calculating
- * the correlation. By default, the correlation for the same asset are excluded
+ * the correlation. By default, [excludeSame] the correlation for the same asset are excluded since this is always 1.0
  */
 fun Map<Asset, Timeserie>.correlation(
     minObservations: Int = 3,

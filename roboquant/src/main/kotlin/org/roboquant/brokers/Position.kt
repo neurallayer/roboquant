@@ -17,7 +17,6 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.*
-import java.math.BigDecimal
 import java.time.Instant
 
 /**
@@ -41,15 +40,6 @@ data class Position(
     val mktPrice: Double = avgPrice,
     val lastUpdate: Instant = Instant.MIN
 ) {
-
-    constructor(
-        asset: Asset,
-        size: Int,
-        avgPrice: Double = 0.0,
-        mktPrice: Double = avgPrice,
-        lastUpdate: Instant = Instant.MIN
-    ) : this(asset, Size(BigDecimal.valueOf(size.toLong())), avgPrice, mktPrice, lastUpdate)
-
 
     /**
      * The currency of this position, aka the currency of the underlying asset
@@ -154,9 +144,9 @@ data class Position(
         get() = asset.value(size, avgPrice)
 
     /**
-     * Is changing the position size with the provided [size] a reduction
+     * Would the overall position size be reduced given the provided [additional] size
      */
-    fun isReduction(size: Size) = (this.size + size).absoluteValue < size.absoluteValue
+    fun isReduced(additional: Size) : Boolean = (size + additional).absoluteValue < size.absoluteValue
 
 }
 

@@ -40,7 +40,7 @@ fun feedIEX() {
     val strategy = EMACrossover(10, 30)
     val roboquant = Roboquant(strategy, AccountSummary())
     roboquant.run(feed)
-    roboquant.broker.account.summary().log()
+    println(roboquant.broker.account.summary())
 }
 
 fun feedIEXLive() {
@@ -51,7 +51,7 @@ fun feedIEXLive() {
     val strategy = EMACrossover()
     val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
     roboquant.run(feed, Timeframe.next(5.minutes))
-    roboquant.broker.account.summary().log()
+    println(roboquant.broker.account.summary())
 }
 
 fun feedYahoo() {
@@ -80,8 +80,8 @@ fun feedPolygon() {
     val roboquant = Roboquant(strategy)
     roboquant.run(feed)
     val account = roboquant.broker.account
-    account.summary().log()
-    account.portfolio.summary().log()
+    println(account.summary())
+    println(account.portfolio.summary())
 }
 
 fun main() {

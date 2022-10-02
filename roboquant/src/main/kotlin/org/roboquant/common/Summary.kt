@@ -17,7 +17,6 @@
 package org.roboquant.common
 
 import java.text.DecimalFormat
-import java.util.logging.Level
 
 interface Summarizable {
 
@@ -37,7 +36,6 @@ class Summary(val content: String) {
     private val decimalFormatter = DecimalFormat(decimalPattern)
 
     companion object {
-        private val logger = Logging.getLogger(Summary::class)
         var decimalPattern = "#.000"
         var sep = ": "
     }
@@ -80,19 +78,6 @@ class Summary(val content: String) {
      */
     fun add(label: String) = children.add(Summary(label))
 
-    /**
-     * Directly print this summary to the standard out.
-     */
-    fun print(maxChildren: Int = Int.MAX_VALUE) = print(toString(maxChildren))
-
-    /**
-     * Log this summary using the standard roboquant logger.
-     *
-     * @param level At which level this summary should be logged, default is INFO
-     */
-    fun log(maxChildren: Int = Int.MAX_VALUE, level: Level = Level.INFO) = logger.log(level) {
-        toString(maxChildren)
-    }
 
     /**
      * To string
@@ -103,34 +88,18 @@ class Summary(val content: String) {
         return buffer.toString()
     }
 
-    /**
-     * To string
-     */
-    fun toString(maxChildren: Int): String {
-        val buffer = StringBuilder()
-        generate(buffer, "", "", maxChildren)
-        return buffer.toString()
-    }
-
     private fun generate(
         buffer: StringBuilder,
         prefix: String,
         childrenPrefix: String,
-        maxChildren: Int = Int.MAX_VALUE
     ) {
         buffer.append(prefix)
-        // if (children.isNotEmpty()) buffer.append(Logging.blue(content)) else buffer.append(content)
         buffer.append(content)
         buffer.append('\n')
         val it = children.iterator()
-        var cnt = 0
         while (it.hasNext()) {
             val next = it.next()
             if (it.hasNext()) {
-                if (++cnt > maxChildren) {
-                    buffer.append("$childrenPrefix└── ... ")
-                    return
-                }
                 next.generate(buffer, "$childrenPrefix├── ", "$childrenPrefix│   ")
             } else {
                 next.generate(buffer, "$childrenPrefix└── ", "$childrenPrefix    ")

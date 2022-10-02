@@ -28,7 +28,7 @@ import kotlin.math.sign
  * primitive, a [Long]
  */
 @JvmInline
-value class Size private constructor(private val value: Long) : Comparable<Size> {
+value class     Size private constructor(private val value: Long) : Comparable<Size> {
 
     /**
      * Translates an [Int] [value] to a [Size]
