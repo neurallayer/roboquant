@@ -54,7 +54,6 @@ internal class CSVFeedTest {
         val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
         val feed = CSVFeed(TestData.dataDir() + "US") {
             template = asset
-            priceValidate = true
         }
         val first = feed.first().actions.first() as PriceAction
         assertEquals("TEST123", first.asset.exchangeCode)

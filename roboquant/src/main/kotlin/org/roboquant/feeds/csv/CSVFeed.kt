@@ -30,7 +30,6 @@ import java.io.FileReader
 import java.nio.file.Path
 import java.time.Instant
 import kotlin.io.path.isDirectory
-import kotlin.math.absoluteValue
 
 /**
  * Read historic data from CSV files in a directory. It will traverse down if it finds subdirectories.
@@ -155,33 +154,8 @@ class CSVFeed(
                 }
             }
             if (errors > 0) logger.info { "Skipped $errors lines due to errors in $file" }
-            config.priceValidate && !validateResult(result) && return emptyList()
             return result
         }
-    }
-
-    /**
-     * Validate if the result for an asset has unusual movements in price.
-     * This could be an indication of incorrect or corrupt historic data.
-     *
-     * @param result
-     * @return
-     */
-    private fun validateResult(result: List<PriceEntry>): Boolean {
-        var last: Double? = null
-        for (step in result) {
-            val priceAction = step.price
-            val price = priceAction.getPrice()
-            if (last != null) {
-                val diff = (price - last) / last
-                if (diff.absoluteValue > config.priceThreshold) {
-                    logger.warning { "Validation error ${priceAction.asset.symbol} ${step.time} $diff" }
-                    return false
-                }
-            }
-            last = price
-        }
-        return true
     }
 
 }

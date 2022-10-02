@@ -23,6 +23,7 @@ import org.roboquant.common.*
 import java.io.Closeable
 import java.time.Instant
 import java.util.*
+import kotlin.math.absoluteValue
 
 /**
  * Interface that any feed needs to implement. A feed can deliver any type of information, ranging from
@@ -104,6 +105,51 @@ inline fun <reified T : Action> Feed.filter(
     }
     return@runBlocking result
 }
+
+/**
+ * Validate a feed for possible errors in the prices and return the result in the format Pair<Instant, PriceAction>.
+ * Optionally provide a [timeframe] and the [maxDiff] value when to flag a change as an error.
+ */
+fun Feed.validate(
+    timeframe: Timeframe = Timeframe.INFINITE,
+    maxDiff: Double = 0.5,
+): List<Pair<Instant, PriceAction>> = runBlocking {
+
+    val channel = EventChannel(timeframe = timeframe)
+
+    val job = launch {
+        play(channel)
+        channel.close()
+    }
+
+    val lastPrices = mutableMapOf<Asset, Double>()
+    val errors = mutableListOf<Pair<Instant, PriceAction>>()
+
+    try {
+        while (true) {
+            val o = channel.receive()
+            for ((asset, priceAction) in o.prices) {
+                val price = priceAction.getPrice()
+                val prev = lastPrices[asset]
+                if (prev != null) {
+                    val diff = (price - prev) / prev
+                    if (diff.absoluteValue > maxDiff) errors.add(Pair(o.time, priceAction))
+                }
+                lastPrices[asset] = price
+            }
+
+        }
+
+    } catch (_: ClosedReceiveChannelException) {
+
+    } finally {
+        channel.close()
+        if (job.isActive) job.cancel()
+    }
+    return@runBlocking errors
+}
+
+
 
 /**
  * Return a map with assets and their [Timeserie]

@@ -83,4 +83,15 @@ internal class RandomWalkTest {
         val result = feed.filter<PriceBar> { it.asset == asset }
         assertEquals(feed.timeline.size, result.size)
     }
+
+
+    @Test
+    fun validate() {
+        val feed = RandomWalk.lastYears()
+        val errors = feed.validate()
+        assertTrue(errors.isEmpty())
+
+        val errors2 = feed.validate(maxDiff = 0.000001)
+        assertFalse(errors2.isEmpty())
+    }
 }

@@ -39,8 +39,6 @@ import kotlin.io.path.div
  * @property parsePattern
  * @property parseTime
  * @property parseIsDate
- * @property priceValidate
- * @property priceThreshold
  * @property priceAdjust
  * @property skipZeroPrice
  * @property template
@@ -53,8 +51,6 @@ data class CSVConfig(
     var parsePattern: String = "",
     var parseTime: String = "",
     var parseIsDate: Boolean = true,
-    var priceValidate: Boolean = false,
-    var priceThreshold: Double = 0.5,
     var priceAdjust: Boolean = false,
     var skipZeroPrice: Boolean = true,
     var template: Asset = Asset("TEMPLATE")
@@ -155,8 +151,6 @@ data class CSVConfig(
                 "file.pattern" -> filePattern = value
                 "file.skip" -> fileSkip = value.split(",")
                 "price.adjust" -> priceAdjust = value.toBoolean()
-                "price.validate" -> priceValidate = value.toBoolean()
-                "price.threshold" -> priceThreshold = value.toDouble()
                 else -> {
                     logger.finer { "Found property $key with value $value" }
                 }
