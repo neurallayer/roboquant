@@ -35,8 +35,8 @@ internal class SimBrokerTest {
         val account = broker.place(emptyList(), event)
         assertTrue(account.openOrders.isEmpty())
         assertTrue(account.closedOrders.isEmpty())
-
-        broker.place(emptyList(), event)
+        assertTrue(account.trades.isEmpty())
+        assertEquals(USD, account.baseCurrency)
 
         val broker2 = SimBroker(100_000.00.USD.toWallet())
         assertEquals(USD, broker2.account.baseCurrency)
@@ -46,7 +46,7 @@ internal class SimBrokerTest {
     }
 
     @Test
-    fun basicPlaceOrder() {
+    fun placeOrders() {
         val er = FixedExchangeRates(USD, EUR to 0.8)
         Config.exchangeRates = er
         val broker = SimBroker()
@@ -59,6 +59,9 @@ internal class SimBrokerTest {
         account = broker.place(emptyList(), TestData.event2())
         assertEquals(1, account.openOrders.size)
         assertEquals(1, account.assets.size)
+        assertEquals(1, account.closedOrders.size)
+        assertEquals(1, account.trades.size)
+
     }
 
     @Test
@@ -67,27 +70,16 @@ internal class SimBrokerTest {
         val event = TestData.event()
         var account = broker.place(listOf(TestData.usMarketOrder()), event)
         assertEquals(1, account.portfolio.size)
-        assertEquals(1, account.portfolio.size)
+        assertEquals(1, account.trades.size)
+        assertEquals(1, account.closedOrders.size)
 
         account = broker.liquidatePortfolio()
         assertEquals(0, account.openOrders.size)
         assertEquals(0, account.portfolio.size)
+        assertEquals(2, account.trades.size)
         assertEquals(2, account.closedOrders.size)
 
     }
 
-    @Test
-    fun advancedPlaceOrder() {
-        val er = FixedExchangeRates(USD, EUR to 0.8)
-        Config.exchangeRates = er
-        val broker = SimBroker()
-        val event = TestData.event()
-        val orders = listOf(TestData.euMarketOrder(), TestData.usMarketOrder())
-        val account = broker.place(orders, event)
-        assertEquals(1, account.openOrders.size)
-        assertEquals(1, account.closedOrders.size)
-        // assertEquals(1, account.orders.filter { it.status === OrderStatus.INITIAL }.size)
-
-    }
 
 }
