@@ -137,8 +137,8 @@ class Account(
      * Provide a full summary of the account that contains all cash, orders, trades and open positions. During back
      * testing this can become a long list of items, so look at [summary] for a shorter summary.
      */
-    fun fullSummary(): Summary {
-        val s = summary()
+    fun fullSummary(singleCurrency: Boolean = false): Summary {
+        val s = summary(singleCurrency)
         s.add(cash.summary())
         s.add(portfolio.summary())
         s.add(openOrders.summary("open orders"))
@@ -267,7 +267,7 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
         val orders = sortedBy { it.id }
         val fmt = "%12s│%8s│%10s│%7s│%21s│%21s│%5s│ %-50s"
         val header =
-            String.format(fmt, "type", "asset", "status", "id", "opened at", "closed at", "ccy", "details")
+            String.format(fmt, "type", "symbol", "status", "id", "opened at", "closed at", "ccy", "details")
         s.add(header)
         orders.forEach {
             with(it) {
@@ -303,7 +303,7 @@ fun Collection<Trade>.summary(name: String = "trades"): Summary {
     } else {
         val trades = sortedBy { it.time }
         val fmt = "%24s│%10s│%11s│%14s│%14s│%14s│%12s│"
-        val header = String.format(fmt, "time", "asset", "qty", "cost", "fee", "p&l", "price")
+        val header = String.format(fmt, "time", "symbol", "size", "cost", "fee", "p&l", "price")
         s.add(header)
         trades.forEach {
             with(it) {
@@ -341,9 +341,9 @@ fun Collection<Position>.summary(name: String = "positions"): Summary {
         val fmt = "%14s│%10s│%14s│%14s│%14s│%14s│%14s│"
         val header = String.format(
             fmt,
-            "asset",
+            "symbol",
             "currency",
-            "quantity",
+            "size",
             "entry price",
             "market price",
             "market value",
@@ -358,8 +358,7 @@ fun Collection<Position>.summary(name: String = "positions"): Summary {
             val price = Amount(c, v.mktPrice).formatValue()
             val value = v.marketValue.formatValue()
             val pnl = Amount(c, v.unrealizedPNL.value).formatValue()
-            val asset = "${v.asset.type}:${v.asset.symbol}"
-            val line = String.format(fmt, asset, v.currency.currencyCode, pos, avgPrice, price, value, pnl)
+            val line = String.format(fmt, v.asset.symbol, v.currency.currencyCode, pos, avgPrice, price, value, pnl)
             s.add(line)
         }
     }

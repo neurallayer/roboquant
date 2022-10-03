@@ -70,17 +70,16 @@ fun closePosition() {
 
 fun showAccount() {
 
-    // If you don't have multiple currencies in your account
-    // you don't need to set up exchange rates
-    Config.exchangeRates = IBKRExchangeRates()
+    // If you have multiple currencies in your account
+    // you need to set up exchange rates
+    // Config.exchangeRates = IBKRExchangeRates()
 
     // Get the account object from the broker instance
     val broker = IBKRBroker()
     val account = broker.account
 
-    // Log the summary of the account and portfolio
-    println(account.summary())
-    println(account.portfolio.summary())
+    // Print the full summary of the account
+    println(account.fullSummary(singleCurrency = false))
 
     // Disconnect
     broker.disconnect()
