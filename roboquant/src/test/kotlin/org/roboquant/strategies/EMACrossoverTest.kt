@@ -20,7 +20,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
-import org.roboquant.logging.SilentLogger
+import org.roboquant.logging.MemoryLogger
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
@@ -29,16 +29,26 @@ internal class EMACrossoverTest {
     @Test
     fun simple() = runBlocking {
         val strategy = EMACrossover()
-        val roboquant = Roboquant(strategy, logger = SilentLogger())
+        strategy.recording = true
+        val roboquant = Roboquant(strategy, logger = MemoryLogger(false))
         roboquant.run(TestData.feed)
+        val names = roboquant.logger.metricNames
+
+        assertTrue(names.isNotEmpty())
+        val result = roboquant.logger.getMetric(names.first())
+        val firstResult = result.first().name
+
+        assertTrue(firstResult.endsWith(".slow") || firstResult.endsWith(".fast"))
     }
 
     @Test
     fun simple2() {
         val strategy1 = EMACrossover.EMA_5_15
-        val strategy2 = EMACrossover.EMA_50_200
+        val strategy2 = EMACrossover.EMA_12_26
+        val strategy3 = EMACrossover.EMA_50_200
         assertTrue(!strategy1.recording)
         assertNotEquals(strategy1, strategy2)
+        assertNotEquals(strategy2, strategy3)
     }
 
 }

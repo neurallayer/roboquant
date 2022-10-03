@@ -42,7 +42,7 @@ class EMACrossover(
     fastPeriod: Int = 12,
     slowPeriod: Int = 26,
     smoothing: Double = 2.0,
-    val minEvents: Int = slowPeriod
+    private val minEvents: Int = slowPeriod
 ) : PriceStrategy(prefix = "strategy.ema.") {
 
     private val fast = 1.0 - (smoothing / (fastPeriod + 1))
