@@ -38,15 +38,6 @@ import kotlin.math.absoluteValue
  *******************************************************************************************************************/
 
 /**
- * Make using string buffers a bit more pleasant
- *
- * @param s
- */
-operator fun StringBuffer.plusAssign(s: String) {
-    append(s)
-}
-
-/**
  * Compare an instant to a [timeframe]. This operator takes into account if the timeframe is inclusive or not of the
  * defined end date.
  */
@@ -56,11 +47,6 @@ operator fun Instant.compareTo(timeframe: Timeframe): Int {
         false -> if (this >= timeframe.end) 1 else if (this < timeframe.start) -1 else 0
     }
 }
-
-/**
- * Subtract a number of [millis] seconds to the instant
- */
-operator fun Instant.minus(millis: Int): Instant = minusMillis(millis.toLong())
 
 /**
  * Get the instant as ZonedDateTime UTC

@@ -56,6 +56,11 @@ internal class TimelineTest {
         val feed = TestData.feed()
         val data = feed.filter<PriceAction>()
         val timeseries = data.timeseries()
+
+        val (asset, first) = timeseries.entries.first()
+        assertEquals(data.lastIndex, first.toDoubleArray().lastIndex)
+        assertEquals(data.filter { it.second.asset == asset }.map{ it.first }, first.timeline())
+
         val corr = timeseries.correlation(excludeSame = false)
         assertTrue(corr.isNotEmpty())
         val pair = Pair(feed.assets.first(), feed.assets.first())

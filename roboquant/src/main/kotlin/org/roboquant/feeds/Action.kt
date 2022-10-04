@@ -218,9 +218,6 @@ data class TradePrice(override val asset: Asset, private val price: Double, over
     override val values
         get() = listOf(price, volume)
 
-    operator fun times(n: Number) = copy(price = price * n.toDouble())
-    operator fun div(n: Number) = copy(price = price / n.toDouble())
-
     companion object {
         fun fromValues(asset: Asset, values: List<Double>) = TradePrice(
             asset,
@@ -342,8 +339,8 @@ data class OrderBook(
 
     override val values
         get() = listOf(asks.size.toDouble()) +
-                asks.map { listOf(it.quantity, it.limit) }.flatten() +
-                bids.map { listOf(it.quantity, it.limit) }.flatten()
+                asks.map { listOf(it.size, it.limit) }.flatten() +
+                bids.map { listOf(it.size, it.limit) }.flatten()
 
     /**
      * Order book will by default return the unweighted **MIDPOINT** price. Other [types][type] that are supported are:
@@ -374,20 +371,20 @@ data class OrderBook(
     override val volume: Double
         get() = asks.volume() + bids.volume()
 
-    private fun List<OrderBookEntry>.volume() = this.sumOf { it.quantity.absoluteValue }
+    private fun List<OrderBookEntry>.volume() = this.sumOf { it.size.absoluteValue }
     private fun List<OrderBookEntry>.max() = this.maxOf { it.limit }
     private fun List<OrderBookEntry>.min() = this.minOf { it.limit }
 
     // override fun toString(): String = "$asset bids:${bids.size} asks:${asks.size}"
 
     /**
-     * Order book entry contains the [quantity] and [limit] price
+     * Order book entry contains the [size] and [limit] price
      *
-     * @property quantity
+     * @property size
      * @property limit
      * @constructor Create new Order book entry
      */
-    data class OrderBookEntry(val quantity: Double, val limit: Double)
+    data class OrderBookEntry(val size: Double, val limit: Double)
 }
 
 /**

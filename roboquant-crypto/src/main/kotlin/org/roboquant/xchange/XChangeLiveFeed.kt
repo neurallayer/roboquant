@@ -194,10 +194,12 @@ class XChangeLiveFeed(
      */
     private fun handleOrderBook(asset: Asset, orderBook: CryptoOrderBook) {
         logger.finer { "$orderBook event for $asset" }
-        val asks =
-            orderBook.asks.map { OrderBook.OrderBookEntry(it.cumulativeAmount.toDouble(), it.limitPrice.toDouble()) }
-        val bids =
-            orderBook.bids.map { OrderBook.OrderBookEntry(it.cumulativeAmount.toDouble(), it.limitPrice.toDouble()) }
+        val asks = orderBook.asks.map {
+            OrderBook.OrderBookEntry(it.cumulativeAmount.toDouble(), it.limitPrice.toDouble())
+        }
+        val bids = orderBook.bids.map {
+            OrderBook.OrderBookEntry(it.cumulativeAmount.toDouble(), it.limitPrice.toDouble())
+        }
         val item = OrderBook(asset, asks, bids)
         val now = if (useMachineTime) Instant.now() else orderBook.timeStamp.toInstant()
         val event = Event(listOf(item), now)

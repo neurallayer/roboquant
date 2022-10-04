@@ -191,7 +191,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     fun toInclusive() = Timeframe(start, end, true)
 
     /**
-     * Does the timeframe contain a certain [time].
+     * Does the timeframe contain the provided [time].
      */
     operator fun contains(time: Instant): Boolean {
         return (time >= start) && (time < end || (inclusive && time <= end))

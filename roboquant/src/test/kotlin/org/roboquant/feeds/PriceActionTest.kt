@@ -16,9 +16,9 @@
 
 package org.roboquant.feeds
 
+import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
-import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -37,6 +37,10 @@ internal class PriceActionTest {
 
         price = p.getPrice("WEIGHTED")
         assertEquals(9.25, price)
+
+        assertEquals(p.askPrice, p.getPrice("ASK"))
+        assertEquals(p.bidPrice, p.getPrice("BID"))
+        assertEquals(4.0, p.volume)
 
         val q = PriceQuote.fromValues(asset, p.values)
         assertEquals(p, q)
@@ -98,8 +102,6 @@ internal class PriceActionTest {
         assertEquals(p, q)
 
         assertEquals(100.0, p.volume)
-        val r = p * 2.0
-        assertEquals(20.0, r.getPrice())
     }
 
     @Test
@@ -119,5 +121,9 @@ internal class PriceActionTest {
 
         val q = OrderBook.fromValues(asset, p.values)
         assertEquals(p, q)
+        assertEquals(11.0, q.getPrice("ASK"))
+        assertEquals(10.1, q.getPrice("BID"))
+
+        assertEquals(4, q.entries)
     }
 }

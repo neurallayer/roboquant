@@ -27,12 +27,12 @@ import java.util.logging.Logger
  * Wrapper around a [Channel] for communicating the [events][Event] of a [Feed]. It uses asynchronous communication
  * so the producing and receiving parts are decoupled.
  *
- * It has built in support to restrict the events that are being send to a certain [timeframe]. It is guaranteed that
- * no events outside this timeframe can be delivered to the channel.
+ * It has built in support to limit the events that are being send to a certain [timeframe]. It is guaranteed that
+ * no events outside that timeframe can be delivered to the channel.
  *
  * @param capacity The capacity of the channel in the number of events it can store before blocking the sender
- * @property timeframe Limit the events to this timeframe only
- * @constructor
+ * @property timeframe Limit the events to this timeframe, default is INFINITE, so no limit
+ * @constructor create a new EventChannel
  *
  */
 open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timeframe.INFINITE) {
