@@ -302,7 +302,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
     }
 
     /**
-     * Depending on the duration of the timeframe, format the timeframe either with seconds or days
+     * Depending on the duration of the timeframe, format the timeframe either with milli, seconds, minutes or days
      * resolution.
      */
     override fun toString(): String {
