@@ -47,10 +47,14 @@ operator fun StringBuffer.plusAssign(s: String) {
 }
 
 /**
- * Compare an instant to a [timeframe].
+ * Compare an instant to a [timeframe]. This operator takes into account if the timeframe is inclusive or not of the
+ * defined end date.
  */
 operator fun Instant.compareTo(timeframe: Timeframe): Int {
-    return if (this >= timeframe.end) 1 else if (this < timeframe.start) -1 else 0
+    return when(timeframe.inclusive) {
+        true -> if (this > timeframe.end) 1 else if (this < timeframe.start) -1 else 0
+        false -> if (this >= timeframe.end) 1 else if (this < timeframe.start) -1 else 0
+    }
 }
 
 /**

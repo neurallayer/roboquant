@@ -23,20 +23,23 @@ import java.time.temporal.TemporalAmount
 import kotlin.math.pow
 
 /**
- * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time (exclusive). A
- * timeframe instance is immutable.  Like all time related logic in roboquant, it uses the [Instant] type to define
+ * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time. If [inclusive] is set
+ * to true the [end] time is inclusive, exclusive otherwise. The default is that the [end] time is exclusive.
+ *
+ * A timeframe instance is immutable.  Like all time related logic in roboquant, it uses the [Instant] type to define
  * a moment in time, in order to avoid potential timezone inconsistencies.
  *
  * All internal trading logic uses nanoseconds as the smallest difference between two times. However, some
- * visualizations and charts use milliseconds and the smallest time differences.
+ * visualizations and charts might use milliseconds and the smallest time differences.
  *
  * It can be used to limit the duration of a run to that specific timeframe, for example in a walk-forward. It can also
  * serve to limit a live-feed to a certain duration.
  *
- * @property start start of timeframe, inclusive
- * @property end end of timeframe, exclusive
+ * @property start start time of timeframe, inclusive
+ * @property end end time of timeframe
+ * @property inclusive should te end time be inclusive, default is false
  */
-data class Timeframe(val start: Instant, val end: Instant) {
+data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolean = false) {
 
     /**
      * Duration of timeframe
@@ -45,7 +48,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
         get() = Duration.between(start, end)
 
     init {
-        require(end > start) { "end time has to be larger than start time, found $start - $end" }
+        require(end >= start) { "end time has to be larger or equal than start time, found $start - $end" }
         require(start >= MIN) { "start time has to be larger or equal than $MIN" }
         require(end <= MAX) { "end time has to be smaller or equal than $MAX" }
     }
@@ -67,9 +70,6 @@ data class Timeframe(val start: Instant, val end: Instant) {
         val MAX: Instant = Instant.parse("2200-01-01T00:00:00Z")
 
         private const val ONE_YEAR_MILLIS = 365.0 * 24.0 * 3600.0 * 1000.0
-
-        private val Instant.inclusive: Instant
-            get() = plusNanos(1L)
 
         /**
          * Infinite timeframe that matches any time and is typically used when no filtering is required or the
@@ -129,9 +129,12 @@ data class Timeframe(val start: Instant, val end: Instant) {
             require(last >= first)
             val start = ZonedDateTime.of(first, 1, 1, 0, 0, 0, 0, zoneId)
             val stop = ZonedDateTime.of(last + 1, 1, 1, 0, 0, 0, 0, zoneId)
-            return Timeframe(start.toInstant(), stop.toInstant() - 1)
+            return Timeframe(start.toInstant(), stop.toInstant())
         }
 
+        /**
+         * String representation that caters for different durations.
+         */
         private fun String.toInstant(): Instant {
             val fStr = when (length) {
                 4 -> "$this-01-01T00:00:00Z"
@@ -180,34 +183,27 @@ data class Timeframe(val start: Instant, val end: Instant) {
             return Timeframe(start, start + period)
         }
 
-        /**
-         * Create a [Timeframe] with both the [start] and the [end] time being inclusive.
-         */
-        fun inclusive(start: Instant, end: Instant): Timeframe {
-            return Timeframe(start, end.inclusive)
-        }
-
     }
 
     /**
-     * Return a timeframe inclusive of the [end] value.
+     * Return a new timeframe inclusive of the [end] value.
      */
-    val inclusive
-        get() = Timeframe(start, end.inclusive)
+    fun toInclusive() = Timeframe(start, end, true)
 
     /**
      * Does the timeframe contain a certain [time].
      */
     operator fun contains(time: Instant): Boolean {
-        return (time >= start) && (time < end)
+        return (time >= start) && (time < end || (inclusive && time <= end))
     }
 
     /**
-     * Is this timeframe in a single day given the provided [zoneId].
+     * Is this timeframe located in a single day given the provided [zoneId].
      */
     fun isSingleDay(zoneId: ZoneId = Config.defaultZoneId): Boolean {
         if (start == Instant.MIN || end == Instant.MAX) return false
-        return start.atZone(zoneId).toLocalDate() == end.minusMillis(1).atZone(zoneId).toLocalDate()
+        val realEnd = if (inclusive) end else end.minusNanos(1)
+        return start.atZone(zoneId).toLocalDate() == realEnd.atZone(zoneId).toLocalDate()
     }
 
     /**
@@ -219,7 +215,8 @@ data class Timeframe(val start: Instant, val end: Instant) {
      *      val tf = TimeFrame.BlackMonday1987().extend(1.weeks)
      *
      */
-    fun extend(before: TemporalAmount, after: TemporalAmount = before) = Timeframe(start - before, end + after)
+    fun extend(before: TemporalAmount, after: TemporalAmount = before) =
+        Timeframe(start - before, end + after, inclusive)
 
     /**
      * Convert a timeframe to a timeline where each time is [step] size separated
@@ -230,7 +227,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
     fun toTimeline(step: TemporalAmount): Timeline {
         val timeline = mutableListOf<Instant>()
         var time = start
-        while (time < end) {
+        while (time <= this) {
             timeline.add(time)
             time += step
         }
@@ -250,7 +247,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
         val diff = duration.toMillis()
         val train = (diff * (1.0 - testSize)).toLong()
         val border = start.plus(train, ChronoUnit.MILLIS)
-        return Pair(Timeframe(start, border), Timeframe(border, end))
+        return Pair(Timeframe(start, border), Timeframe(border, end, inclusive))
     }
 
     /**
@@ -274,7 +271,8 @@ data class Timeframe(val start: Instant, val end: Instant) {
      * Provide a string representation of the timeframe
      */
     fun toRawString(): String {
-        return "[$start - $end]"
+        val lastChar = if (inclusive) ']' else '>'
+        return "[$start - $end$lastChar"
     }
 
     /**
@@ -302,14 +300,14 @@ data class Timeframe(val start: Instant, val end: Instant) {
      *
      *      val newTimeFrame = timeframe - 2.days
      */
-    operator fun minus(period: TemporalAmount) = Timeframe(start - period, end - period)
+    operator fun minus(period: TemporalAmount) = Timeframe(start - period, end - period, inclusive)
 
     /**
      * Add a [period] to this timeframe and return the result.
      *
      *      val newTimeFrame = timeframe + 2.days
      */
-    operator fun plus(period: TemporalAmount) = Timeframe(start + period, end + period)
+    operator fun plus(period: TemporalAmount) = Timeframe(start + period, end + period, inclusive)
 
     /**
      * Annualize a [percentage] based on the duration of this timeframe. So given x percent return

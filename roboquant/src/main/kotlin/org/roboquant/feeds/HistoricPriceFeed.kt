@@ -34,7 +34,7 @@ open class HistoricPriceFeed : HistoricFeed {
         get() = events.keys.toList()
 
     override val timeframe
-        get() = if (events.isEmpty()) Timeframe.INFINITE else Timeframe.inclusive(events.firstKey(), events.lastKey())
+        get() = if (events.isEmpty()) Timeframe.INFINITE else Timeframe(events.firstKey(), events.lastKey(), true)
 
     override val assets: SortedSet<Asset>
         get() = events.asSequence().map { entry -> entry.value.map { it.asset } }.flatten().toSortedSet()
