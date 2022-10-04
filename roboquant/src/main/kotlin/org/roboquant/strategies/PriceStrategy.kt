@@ -24,13 +24,13 @@ import java.time.Instant
  * Base class that can be extended by strategies that are only interested in a single price for an asset and not
  * other types of actions.
  */
-abstract class PriceStrategy(private val aspect: String = "DEFAULT", prefix: String = "strategy.") :
+abstract class PriceStrategy(private val priceType: String = "DEFAULT", prefix: String = "strategy.") :
     RecordingStrategy(prefix) {
 
     override fun generate(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
         for ((asset, priceAction) in event.prices) {
-            val price = priceAction.getPrice(aspect)
+            val price = priceAction.getPrice(priceType)
             val signal = generate(asset, price, event.time)
             if (signal != null) signals.add(signal)
         }

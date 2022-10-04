@@ -27,7 +27,7 @@ import kotlin.math.roundToInt
  * progress bar implementation works on the elapsed time. So how much time out the total time has passed, using the
  * time in the event as a reference.
  *
- * This implementation avoids unnecessary updates.
+ * This implementation avoids unnecessary updates, so overhead is limited.
  */
 internal class ProgressBar {
 

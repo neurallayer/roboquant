@@ -26,7 +26,7 @@ import org.roboquant.brokers.Account
  * informs you what is happening with that order. The most common way to access this information is through
  * [Account.openOrders] and [Account.closedOrders]
  *
- * This is an open class and can be extended by more advanced implementations.
+ * This is an open class and can be extended with more advanced implementations.
  *
  * @property order The underlying order
  * @property status The latest status
@@ -82,7 +82,8 @@ open class OrderState(
 }
 
 /**
- * The status an order can be in. The  flow is straight forward:
+ * The status an order can be in. The flow is straight forward and is adhered to by all broker implementations, even
+ * brokers that have more order statuses.
  *
  *  - [INITIAL] -> [ACCEPTED] -> [COMPLETED] | [CANCELLED] | [EXPIRED]
  *  - [INITIAL] -> [REJECTED]
@@ -94,13 +95,13 @@ enum class OrderStatus {
 
     /**
      * State of an order that has just been created. It will remain in this state until it is either
-     * [REJECTED] or [ACCEPTED].
+     * [REJECTED] or [ACCEPTED] by the broker.
      */
     INITIAL,
 
     /**
-     * The order has been received, validated and accepted. The order remains in this state until it goes to an
-     * end-state.
+     * The order has been received, validated and accepted by the broker. The order remains in this state until it
+     * goes to one of the end-states.
      */
     ACCEPTED,
 

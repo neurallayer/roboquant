@@ -24,7 +24,7 @@ import java.util.logging.Logger
 
 /**
  * Uses the [Logger] under the hood to log metric results, It will log everything by default at
- * [Level.INFO] level, but this can be configured
+ * [Level.INFO] level, but this can be configured.
  *
  * @constructor Create new Info logger
  */

@@ -28,6 +28,8 @@ import org.roboquant.common.Asset
  * - cancellation of an existing order
  * - update of an existing order
  *
+ * An order doesn't necessary have a size, for example in case of a cancellation order.
+ *
  * @property asset the underlying asset of the order
  * @property id a unique id of the order
  * @property tag an arbitrary tag that can be associated with this order, default is an empty string
@@ -37,7 +39,9 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
 
     companion object {
 
-        // Counter used for creating unique order ids
+        /**
+         * Counter used for creating unique order ids. Use [nextId] to get a new id.
+         */
         var ID = 0
 
         /**
@@ -51,7 +55,7 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
 
     override fun toString(): String {
         val infoStr = info().toString().removePrefix("{").removeSuffix("}")
-        return "$type id=$id asset=${asset.symbol} tag=$tag $infoStr"
+        return "type=$type id=$id asset=${asset.symbol} tag=$tag $infoStr"
     }
 
     /**
@@ -61,9 +65,8 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
         get() = this::class.simpleName?.removeSuffix("Order")?.uppercase() ?: "UNKNOWN"
 
     /**
-     * Provide extra info as map, used in displaying order information. Default is an empty map.
-     *
-     * @return
+     * Provide extra info as map, used in displaying order information. Default is an empty map and subclasses are
+     * expected to return a map with their additional properties like limit or trailing percentages.
      */
     open fun info(): Map<String, Any> = emptyMap()
 

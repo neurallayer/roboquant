@@ -22,9 +22,14 @@ import kotlinx.coroutines.*
  * Utility to make running experiments in parallel more convenient. Basic usage:
  *
  *      val jobs = ParallelJobs()
- *      jobs.add { roboquant.runAsync(feed) }
+ *      jobs.add {
+ *          val roboquant = ...
+ *          roboquant.runAsync(feed)
+ *      }
  *      jobs.joinAll()
  *
+ *  Note that most feeds and metric-loggers are thread-safe to use and can be shared among jobs, but that isn't true
+ *  for the other components like strategy, policy, metrics and broker.
  */
 class ParallelJobs {
 

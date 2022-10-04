@@ -25,7 +25,7 @@ import java.time.Instant
  * - How much time has passed since the order was first placed.
  * - Is the order completely filled or not yet
  *
- * When an order expires, the status is typically set [OrderStatus.EXPIRED] to indicate such event occurred.
+ * When an order expires, the status is set [OrderStatus.EXPIRED] to indicate such a condition occurred.
  */
 interface TimeInForce
 

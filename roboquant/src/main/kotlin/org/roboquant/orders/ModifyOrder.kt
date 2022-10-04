@@ -17,14 +17,14 @@
 package org.roboquant.orders
 
 /**
- * Update an existing SimpleOrder. It is up to the broker implementation to translate the updated order to the correct
- * message, so it can be processed.
+ * Update an existing open order. It is up to the broker implementation to translate the [update] order to the correct
+ * message, so it can be processed. Currently, only an order that is a [SingleOrder] can be updated.
  *
- * Typically, only a part of an open order can be updated, like the limit price of a limit order. For many other
- * types of changes, an order needs to be cancelled and a new one needs to be created.
+ * In real life, only certain parts of an open order can be updated, like the limit price of a limit order. For many
+ * other types of changes, an order needs to be cancelled first and then a new order needs to be created.
  **
- * @property original
- * @property update
+ * @property original the order you want to update
+ * @property update the updated order
  * @constructor Create new UpdateOrder
  */
 class UpdateOrder(

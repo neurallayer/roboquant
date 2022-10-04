@@ -333,12 +333,11 @@ fun Map<Asset, Position>.summary(name: String = "portfolio"): Summary = values.s
 fun Collection<Position>.summary(name: String = "positions"): Summary {
     val s = Summary(name)
 
-
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
         val positions = sortedBy { it.asset.symbol }
-        val fmt = "%14s│%10s│%14s│%14s│%14s│%14s│%14s│"
+        val fmt = "%8s│%9s│%8s│%14s│%14s│%14s│%14s│"
         val header = String.format(
             fmt,
             "symbol",

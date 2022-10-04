@@ -194,12 +194,12 @@ open class TrailOrder(
 class TrailLimitOrder(
     asset: Asset,
     size: Size,
-    trailPercentage: Double,
+    val trailPercentage: Double,
     val limitOffset: Double,
     tif: TimeInForce = GTC(),
     id: Int = nextId(),
     tag: String = ""
-) : TrailOrder(asset, size, trailPercentage, tif, id, tag) {
+) : SingleOrder(asset, size, tif, id, tag) {
 
     override fun info() = sortedMapOf(
         "size" to size,
