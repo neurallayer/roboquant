@@ -73,14 +73,6 @@ internal class TimeframeTest {
     }
 
     @Test
-    fun union() {
-        val tf1 = Timeframe.parse("2020-01-01", "2021-02-01")
-        val tf2 = Timeframe.parse("2021-01-01", "2022-01-01")
-
-        assertEquals(Timeframe(tf1.start, tf2.end), tf1.union(tf2))
-    }
-
-    @Test
     fun annualize() {
         val tf = Timeframe.fromYears(2019, 2019)
         val x = tf.annualize(0.1)

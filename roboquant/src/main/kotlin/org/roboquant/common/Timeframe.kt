@@ -217,36 +217,7 @@ data class Timeframe(val start: Instant, val end: Instant) {
     fun extend(before: TemporalAmount, after: TemporalAmount = before) = Timeframe(start - before, end + after)
 
     /**
-     * Calculate the intersection of this timeframe with an [other] timeframe and return
-     * the resulting timeframe
-     */
-    fun intersect(other: Timeframe): Timeframe {
-        val startTime = if (start > other.start) start else other.start
-        val stopTime = if (end < other.end) end else other.end
-        return Timeframe(startTime, stopTime)
-    }
-
-    /**
-     * Is there an overlap between this timeframe and an [other] timeframe
-     */
-    fun overlap(other: Timeframe): Boolean {
-        val startTime = if (start > other.start) start else other.start
-        val stopTime = if (end < other.end) end else other.end
-        return stopTime > startTime
-    }
-
-    /**
-     * Calculate the union of this timeframe with an [other] timeframe and return
-     * the resulting timeframe
-     */
-    fun union(other: Timeframe): Timeframe {
-        val startTime = if (start > other.start) other.start else start
-        val stopTime = if (end < other.end) other.end else end
-        return Timeframe(startTime, stopTime)
-    }
-
-    /**
-     * Convert a timeframe to a timeline where each time is [steps][step] size separated
+     * Convert a timeframe to a timeline where each time is [step] size separated
      *
      * Usage:
      *      timeframe.toTimeline(1.days)

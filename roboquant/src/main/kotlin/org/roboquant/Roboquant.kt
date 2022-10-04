@@ -69,16 +69,13 @@ class Roboquant(
     }
 
     /**
-     * Run and evaluate the underlying performance of the strategy and policy. You don't
-     * invoke this method directly but rather use the [run] method instead.
-     *
-     * Under the hood this method replies on the [step] method to take a single step.
+     * Run and evaluate the underlying performance of the strategy and policy. You don't invoke this method directly
+     * but rather use the [run] method instead. Under the hood this method replies on the [step] method to take a
+     * single step.
      */
     private suspend fun runPhase(feed: Feed, runInfo: RunInfo) {
 
-        if (!feed.timeframe.overlap(runInfo.timeframe)) return
-        runInfo.timeframe = runInfo.timeframe.intersect(feed.timeframe)
-
+        runInfo.timeframe = if (!runInfo.timeframe.isInfinite()) runInfo.timeframe else feed.timeframe
         val channel = EventChannel(channelCapacity, runInfo.timeframe)
         val job = Background.ioJob {
             try {
@@ -131,18 +128,19 @@ class Roboquant(
 
     /**
      * Start a new run using the provided [feed] as data. If no [timeframe] is provided all the events in the feed
-     * will be used. Optionally you can provide a [validation] timeframe that will trigger a separate validation phase.
-     * You can also repeat the run for a number of [episodes].
+     * will be used. You can provide a custom [name] that will help to later identify this run. If none is provided,
+     * a name will be generated with the format "run-<counter>"
      *
-     * You can provide a custom [name] that will help to later identify this run. If none is provided, a name will
-     * be generated with the format "run-<counter>"
+     * Optionally you can provide a [validation] timeframe that will trigger a separate validation phase. You can also
+     * repeat the run for a number of [episodes]. These two options come in play when you want to train machine learning
+     * based strategies.
      *
-     *  The following provides a schematic overview of the flow of a run:
+     * The following provides a schematic overview of the flow of a run:
      *
      * [Feed] -> [Strategy] -> [Policy] -> [Broker] -> [Metric] -> [MetricsLogger]
      *
      * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
-     * in parallel have also a look at [runAsync]
+     * in parallel have a look at [runAsync]
      */
     fun run(
         feed: Feed,
@@ -156,7 +154,8 @@ class Roboquant(
         }
 
     /**
-     * This is the same method as the [run] method but as the name already suggest, asynchronously.
+     * This is the same method as the [run] method but as the name already suggest, asynchronously. This makes it better
+     * suited for running back-test in parallel.
      *
      * @see [run]
      */
@@ -220,14 +219,15 @@ class Roboquant(
     }
 
     /**
-     * Provide a short summary of the state of this roboquant.
+     * Provide a short summary of this roboquant.
      */
     fun summary(): Summary {
         val s = Summary("roboquant")
         s.add("strategy", strategy::class.simpleName)
         s.add("policy", policy::class.simpleName)
         s.add("logger", logger::class.simpleName)
-        s.add("metrics", metrics.size)
+        val metricNames = metrics.map { it::class.simpleName }.joinToString()
+        s.add("metrics", metricNames)
         return s
     }
 
