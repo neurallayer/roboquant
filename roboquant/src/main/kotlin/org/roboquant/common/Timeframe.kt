@@ -77,13 +77,16 @@ data class Timeframe(val start: Instant, val end: Instant) {
          */
         val INFINITE = Timeframe(MIN, MAX)
 
+        // Different formatters used when displaying a timeframe
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         private val minutesFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         private val hoursFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH")
         private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         private val millisFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
-        // predefined Time-frames for significant events in history of trading
+        // *******************************************************************
+        // predefined timeframes for significant events in history of trading
+        // *******************************************************************
 
         /**
          * Black Monday is the name given to the global, and largely unexpected stock market crash on October 19, 1987.
@@ -148,6 +151,8 @@ data class Timeframe(val start: Instant, val end: Instant) {
          * 3. Year, month and day
          * 4. Full date and time
          *
+         * When not a complete datetime is provided, the missing part is the first possible time. So for example 2004
+         * becomes 2004-01-01T00:00:00Z
          */
         fun parse(first: String, last: String): Timeframe {
             val start = first.toInstant()
@@ -307,9 +312,9 @@ data class Timeframe(val start: Instant, val end: Instant) {
     operator fun plus(period: TemporalAmount) = Timeframe(start + period, end + period)
 
     /**
-     * Annualize a [percentage] based on the duration of this timeframe. So given x percent returns
-     * during a timeframe, what would be the returns per year. If this timeframe has higher than milliseconds precision,
-     * the remaining will not be used.
+     * Annualize a [percentage] based on the duration of this timeframe. So given x percent return
+     * during a timeframe, what would be the return for a full year. If this timeframe has higher than milliseconds
+     * precision, the remaining will not be used.
      *
      * [percentage] is expected to be provided as a fraction, for example 1% is 0.01
      */
