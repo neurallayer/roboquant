@@ -185,6 +185,11 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
     }
 
+    private fun beforeEnd(time: Instant): Boolean {
+        return time < end || (inclusive && time <= end)
+    }
+
+
     /**
      * Return a new timeframe inclusive of the [end] value.
      */
@@ -194,7 +199,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Does the timeframe contain the provided [time].
      */
     operator fun contains(time: Instant): Boolean {
-        return (time >= start) && (time < end || (inclusive && time <= end))
+        return (time >= start) && (beforeEnd(time))
     }
 
     /**
@@ -256,15 +261,17 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      */
     fun split(period: TemporalAmount): List<Timeframe> {
         val result = mutableListOf<Timeframe>()
-        var time = start
-        while (time < end) {
-            var stop = time + period
-            if (stop > end) stop = end
-            val timeframe = Timeframe(time, stop)
+        var last = start
+        while (true) {
+            val next = last + period
+            if (! beforeEnd(next)) {
+                result.add(Timeframe(last, end, inclusive))
+                return result
+            }
+            val timeframe = Timeframe(last, next)
             result.add(timeframe)
-            time = stop
+            last = next
         }
-        return result
     }
 
     /**
