@@ -44,7 +44,7 @@ class OANDABroker(
     /**
      * Configuration for OANDA
      */
-    val config = OANDAConfig()
+    private val config = OANDAConfig()
 
     private val ctx: Context
     private val accountID: AccountID
@@ -63,14 +63,14 @@ class OANDABroker(
      * you can trade.
      */
     val availableAssets
-        get() = availableAssetsMap.values
+        get() = availableAssetsMap.values.toSortedSet()
 
     init {
         config.configure()
         if (!config.demo) throw UnsupportedException("Currently only demo account usage is supported.")
         ctx = OANDA.getContext(config)
         accountID = OANDA.getAccountID(config.account, ctx)
-        availableAssetsMap = OANDA.getAvailableAssets(ctx, this.accountID)
+        availableAssetsMap = OANDA.getAvailableAssets(ctx, this.accountID).toSortedMap()
         initAccount()
     }
 

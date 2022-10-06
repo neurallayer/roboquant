@@ -185,6 +185,9 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
     }
 
+    /**
+     * Is the provided [time] still before the end of this timeframe
+     */
     private fun beforeEnd(time: Instant): Boolean {
         return time < end || (inclusive && time <= end)
     }
@@ -217,7 +220,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      *
      * ### Usage
      *      // Add 1 week before and after the black monday event
-     *      val tf = TimeFrame.BlackMonday1987().extend(1.weeks)
+     *      val tf = TimeFrame.BlackMonday1987.extend(1.weeks)
      *
      */
     fun extend(before: TemporalAmount, after: TemporalAmount = before) =

@@ -70,7 +70,7 @@ class BinanceBroker(
     }
 
     val availableAssets
-        get() = assetMap.values
+        get() = assetMap.values.toSortedSet()
 
     private fun updateAccount() {
         val balances = client.account.balances

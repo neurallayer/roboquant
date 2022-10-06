@@ -45,7 +45,7 @@ interface Broker : Lifecycle {
      * This will be invoked at each step in a run and provides the implementation with the opportunity to log additional
      * information. The default implementation is to return an empty map.
      *
-     * This map should NOT be mutated after it has been returned by this method.
+     * The returned map should NOT be mutated after it has been returned.
      */
     fun getMetrics(): MetricResults = emptyMap()
 

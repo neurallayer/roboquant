@@ -54,7 +54,7 @@ class IBKRBroker(
     override val account: Account
         get() = _account.toAccount()
 
-    val logger = Logging.getLogger(IBKRBroker::class)
+    private val logger = Logging.getLogger(IBKRBroker::class)
     private var orderId = 0
 
     // Track IB orders ids with roboquant orders
