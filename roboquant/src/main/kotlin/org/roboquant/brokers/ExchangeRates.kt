@@ -28,7 +28,6 @@ import java.time.Instant
  * - the amount to be converted
  *
  * Often you won't be using this interface directly, but rather invoke [Amount.convert].
- *
  */
 interface ExchangeRates {
 

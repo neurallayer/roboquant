@@ -47,7 +47,7 @@ interface TradingCalendar {
  * @property opening opening time, default is "09:30"
  * @property closing closing time, default is "16:00"
  * @property excludeDays which days of the week to exclude, default are SATURDAY and SUNDAY
- * @constructor Create new Simple trading calendar
+ * @constructor Create new Simple Trading Calendar
  */
 class SimpleTradingCalendar(
     private val opening: LocalTime = LocalTime.parse("09:30"),

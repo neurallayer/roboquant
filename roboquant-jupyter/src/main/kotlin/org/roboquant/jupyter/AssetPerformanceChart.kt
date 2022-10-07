@@ -21,6 +21,7 @@ import org.icepear.echarts.Treemap
 import org.icepear.echarts.charts.treemap.Breadcrumb
 import org.icepear.echarts.charts.treemap.TreemapSeries
 import org.icepear.echarts.charts.treemap.TreemapSeriesItemStyle
+import org.icepear.echarts.charts.treemap.TreemapSeriesLabel
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
@@ -93,6 +94,7 @@ class AssetPerformanceChart(
             .setData(data)
             .setBreadcrumb(Breadcrumb().setShow(false))
             .setItemStyle(TreemapSeriesItemStyle().setBorderColor("rgba(0,0,0,0)"))
+            .setLabel(TreemapSeriesLabel().setFormatter("{b}\n{@[1]}%"))
 
         val tooltip = Tooltip()
             .setPosition("top")

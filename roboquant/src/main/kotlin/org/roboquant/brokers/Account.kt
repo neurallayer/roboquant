@@ -24,18 +24,16 @@ import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 
 /**
- * Account represents a unified brokerage trading account and holds the following state:
+ * Account represents a brokerage trading account and is unified across broker implementations. This is an immutable
+ * class and tt holds the following state:
  *
  * - [cash] balances in the account
  * - the [portfolio] with its assets
  * - The past [trades]
  * - The [openOrders] and [closedOrders] and their state
  *
- * It supports multi-currency trading through the use of a pluggable currency converter. Without configuring such
- * plug-in it still supports single currency trading, so when all assets and cash balances are denoted in a single
- * currency.
- *
- * This is an immutable class.
+ * Some methods convert a multi-currency Wallet to a single-currency Amount. For this to work, you'll need to have
+ * the appropriate exchange rates defined [Config.exchangeRates].
  *
  * @property baseCurrency what is the base currency of the account
  * @property lastUpdate when was the account last updated
