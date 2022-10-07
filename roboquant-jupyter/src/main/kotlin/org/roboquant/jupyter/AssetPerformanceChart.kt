@@ -23,10 +23,7 @@ import org.icepear.echarts.charts.treemap.TreemapSeries
 import org.icepear.echarts.charts.treemap.TreemapSeriesItemStyle
 import org.icepear.echarts.charts.treemap.TreemapSeriesLabel
 import org.icepear.echarts.components.tooltip.Tooltip
-import org.roboquant.common.Amount
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetFilter
-import org.roboquant.common.Timeframe
+import org.roboquant.common.*
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
@@ -62,15 +59,14 @@ class AssetPerformanceChart(
         val finalEntries = entries.filter { assetFilter.filter(it.second.asset) }
         finalEntries.forEach { (time, priceAction) ->
             if (priceAction.volume.isFinite()) {
+                val asset = priceAction.asset
                 val price = priceAction.getPriceAmount(priceType)
-                val record = result.getOrPut(priceAction.asset) { mutableListOf(price.value, 0.0, 0.0) }
+                val record = result.getOrPut(asset) { mutableListOf(price.value, 0.0, 0.0) }
                 record[1] = price.value
-                val volume = if (compensateVolume) {
-                    price.convert(time = time) * priceAction.volume
-                } else {
-                    Amount(priceAction.asset.currency, priceAction.volume).convert(time = time)
-                }
-                record[2] += volume.value
+
+                val tradingSize = if (compensateVolume) Size(priceAction.volume) else Size.ONE
+                val tradingValue = asset.value(tradingSize, price.value)
+                record[2] += tradingValue.convert(time = time).value
             }
         }
         return result.map {
@@ -100,7 +96,7 @@ class AssetPerformanceChart(
             .setPosition("top")
             .setFormatter(
                 javascriptFunction(
-                    "return 'asset: ' + p.name + '<br>volume: ' + p.value[0]+ '<br>returns: ' + p.value[1]  + '%';"
+                    "return 'symbol: '+p.name+'<br>trading amount: '+p.value[0]+ '<br>returns: '+p.value[1]  + '%';"
                 )
             )
 
