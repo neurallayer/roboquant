@@ -23,14 +23,14 @@ import java.time.Instant
  * Class that holds the position of an asset in the portfolio. This implementation makes no assumptions about the
  * asset class, so it supports any type of asset class, ranging from stocks and options to cryptocurrencies.
  *
- * The actual [size] of the position is precise (doesn't lose precision like is the case with double) using the [Size]
- * class.
+ * Position instances are immutable, so updating a position requires to create a new instance. The actual [size] of the
+ * position is precise (doesn't lose precision like is the case with double) using the [Size] class.
  *
  * @property asset the asset of the position
- * @property size size of the position, not including any contract multiplier defined at asset level
+ * @property size size of the position, not including any contract multiplier defined at asset contract level
  * @property avgPrice average price paid, in the currency denoted by the asset
  * @property mktPrice Last known market price for this asset
- * @property lastUpdate When was the market price last updated
+ * @property lastUpdate When was this position last updated, typically with a new market price
  * @constructor Create a new Position
  */
 data class Position(

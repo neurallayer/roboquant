@@ -22,11 +22,11 @@ import org.roboquant.common.Size
 import java.time.Instant
 
 /**
- * Trade is created once an order has been (partially) filled and records various aspects of a trade like size,
- * price and fee. A single order can result in multiple trades, for example if an order is filled in batches.
+ * Trade is created once an order has been (partially) filled and records various aspects of a trade like its [size],
+ * [price] and [feeValue]. A single order can result in multiple trades, for example if an order is filled in batches.
  *
  * All the monetary amounts are denoted in the currency of the underlying asset. One important metric that can be
- * derived from trades is the realized profit and loss.
+ * derived from trades is the realized profit and loss [pnl].
  *
  * @property time The time of this trade
  * @property asset The underlying asset of this trade
@@ -60,7 +60,7 @@ data class Trade(
         get() = Amount(asset.currency, feeValue)
 
     /**
-     * Returns the realized profit & loss amount
+     * Returns the realized profit & loss amount of this trade
      */
     val pnl
         get() = Amount(asset.currency, pnlValue)

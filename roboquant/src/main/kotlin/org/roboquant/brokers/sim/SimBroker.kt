@@ -27,10 +27,14 @@ import java.time.Instant
 import java.util.logging.Logger
 
 /**
- * Simulated Broker that is used during back testing and live testing. It simulates both broker and exchange behavior.
- * It can be configured with various plug-ins that determine it exact behavior:
+ * Simulated Broker that is used sd the broker during back testing and live testing. It simulates both broker and
+ * exchange behavior. It can be configured with various plug-ins that determine it exact behavior:
  *
- * You can provide an [initialDeposit] and base currency
+ * @property initialDeposit initial deposit
+ * @param baseCurrency the base currency to use for reporting values
+ * @property feeModel the fee/commission model to use
+ * @property accountModel the account model (like cash or margin) to use
+ * @param pricingEngine the pricing engine to use to simulate trades
  * @constructor Create new SimBroker instance
  */
 class SimBroker(
@@ -136,11 +140,8 @@ class SimBroker(
     }
 
     /**
-     * Place [orders] at this broker and provide the event that just occurred. The event is just by the SimBroker to
-     * get the prices required to simulate the trading on an exchange.
-     *
-     * @param orders The new orders
-     * @param event
+     * Place [orders] at this broker and provide the [event] that just occurred. The event is just by the SimBroker to
+     * get the prices required to simulate the trading on an exchange. Return an updated [Account] instance
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.finer { "Received ${orders.size} orders at ${event.time}" }
@@ -170,6 +171,9 @@ class SimBroker(
         return place(orders, event)
     }
 
+    /**
+     * Reset the state
+     */
     override fun reset() {
         _account.clear()
         executionEngine.clear()

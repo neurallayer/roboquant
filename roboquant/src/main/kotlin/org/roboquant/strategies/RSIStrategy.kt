@@ -22,7 +22,7 @@ import java.time.Instant
 
 /**
  * Strategy using the Relative Strength Index of an asset to generate signals. RSI measures the magnitude of recent
- * price changes to evaluate overbought or oversold conditions in the price of a stock or other asset.
+ * price changes to evaluate overbought or oversold conditions in the price of an asset.
  *
  * If the RSI raise above the configured high threshold (default 70), a sell signal will be generated. And if the RSI
  * falls below the configured low threshold (default 30), a buy signal will be generated.

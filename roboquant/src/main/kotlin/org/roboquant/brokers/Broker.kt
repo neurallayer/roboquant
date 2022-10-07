@@ -27,7 +27,7 @@ import org.roboquant.orders.Order
 interface Broker : Lifecycle {
 
     /**
-     * Return a snapshot of the trading account that is guaranteed not to change after it has been returned.
+     * Return (a snapshot of) the trading account that is guaranteed not to change after it has been returned.
      */
     val account: Account
 

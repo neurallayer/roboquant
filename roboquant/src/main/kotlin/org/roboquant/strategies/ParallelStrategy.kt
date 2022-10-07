@@ -28,7 +28,7 @@ import org.roboquant.feeds.Event
  *
  * This will typically improve performance for strategies that are CPU or IO intensive and take some time to complete.
  * For very fast strategies this might not speed up the overall performance. Only the [generate] method is run in
- * parallel, other methods like reset and getMetrics are run sequential.
+ * parallel, other method invocations like reset and getMetrics are run sequential.
  *
  * There is no logic included to resolve conflicting signals, for example one strategy generates a BUY signal
  * and another strategy generates a SELL signal for the same asset. This is left to the policy to resolve.

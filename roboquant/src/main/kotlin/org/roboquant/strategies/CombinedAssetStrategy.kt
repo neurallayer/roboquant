@@ -22,10 +22,10 @@ import org.roboquant.metrics.MetricResults
 
 /**
  * Combine multiple strategies into one strategy. It is lazy in that if it encounters a new
- * asset for which it doesn't yet have a strategy for, it will invoke the provided builder.
+ * asset for which it doesn't yet have a strategy for, it will invoke the provided [strategyBuilder].
  *
  * @property strategyBuilder
- * @constructor Create new Combined strategy
+ * @constructor Create new Combined Asset Strategy
  */
 class CombinedAssetStrategy(val strategyBuilder: (asset: Asset) -> Strategy) : Strategy {
 

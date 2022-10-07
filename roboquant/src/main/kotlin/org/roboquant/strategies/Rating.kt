@@ -20,16 +20,16 @@ import kotlin.math.sign
 
 /**
  * Rating is the key component of a [Signal] that is a measure of the expected performance of an asset. It is an
- * enumeration and is closely modelled after how traditional analyst rate, using a 5 point score:
+ * enumeration and is closely modelled after how traditional analyst rate assets, using a 5 point score:
  *
- * - Buy: Also known as strong buy and "on the recommended list". Buy is a recommendation to purchase a specific
+ * - [BUY]: Also known as strong buy and "on the recommended list". Buy is a recommendation to purchase a specific
  *   asset.
- * - Sell: Also known as strong sell, it's a recommendation to sell an asset or to liquidate an asset.
- * - Hold: In general terms, an asset with a hold recommendation is expected to perform at the same pace as comparable
+ * - [SELL]: Also known as strong sell, it's a recommendation to sell an asset or to liquidate an asset.
+ * - [HOLD]: In general terms, an asset with a hold recommendation is expected to perform at the same pace as comparable
  *   assets or in-line with the market.
- * - Underperform: A recommendation that means an asset is expected to do slightly worse than the overall market
+ * - [UNDERPERFORM]: A recommendation that means an asset is expected to do slightly worse than the overall market
  *   return. Underperform can also be expressed as "moderate sell," "weak hold" and "underweight."
- * - Outperform: Also known as "moderate buy," "accumulate" and "overweight." Outperform is a recommendation
+ * - [OUTPERFORM]: Also known as "moderate buy," "accumulate" and "overweight." Outperform is a recommendation
  *   meaning an asset is expected to do slightly better than the market return.
  *
  *   @property value representation of a rating goes from 2 (BUY) to -2 (SELL)
