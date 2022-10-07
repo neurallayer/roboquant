@@ -19,6 +19,7 @@ package org.roboquant.policies
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.getPosition
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.Size
@@ -57,16 +58,12 @@ open class DefaultPolicy(
     /**
      * Calculate the exposure impact on the buying power
      */
-    private fun getExposure(account: Account, asset: Asset, size: Size, price: Double): Double {
-        val position = account.positions.getPosition(asset)
-
+    private fun getExposure(position: Position, asset: Asset, size: Size, price: Double): Amount {
         // No exposure if we reduce the overall position size
         return if (position.isReduced(size))  {
-            0.0
+            Amount(asset.currency, 0.0)
         } else {
-            val cost = asset.value(size, price).absoluteValue
-            val baseCurrencyCost = account.convert(cost)
-            return baseCurrencyCost.value
+            asset.value(size, price).absoluteValue
         }
     }
 
@@ -121,11 +118,13 @@ open class DefaultPolicy(
                     else
                         createBuyOrder(size, signal, price, position)
 
-                val exposure = getExposure(account, signal.asset, size, price)
-                if (order != null && exposure <= buyingPower) {
-                    logger.fine { "signal=${signal} amount=$amount exposure=$exposure order=$order" }
-                    orders.add(order)
-                    buyingPower -= exposure
+                if (order != null) {
+                    val exposure = account.convert(getExposure(position, signal.asset, size, price)).value
+                    if (exposure <= buyingPower) {
+                        logger.fine { "signal=${signal} amount=$amount exposure=$exposure order=$order" }
+                        orders.add(order)
+                        buyingPower -= exposure
+                    }
                 }
 
             }
