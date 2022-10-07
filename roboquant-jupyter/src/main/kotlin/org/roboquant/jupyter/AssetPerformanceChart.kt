@@ -93,10 +93,12 @@ class AssetPerformanceChart(
             .setLabel(TreemapSeriesLabel().setFormatter("{b}\n{@[1]}%"))
 
         val tooltip = Tooltip()
-            .setPosition("top")
             .setFormatter(
                 javascriptFunction(
-                    "return 'symbol: '+p.name+'<br>trading amount: '+p.value[0]+ '<br>returns: '+p.value[1]  + '%';"
+                    """return 
+                        |'symbol: '+p.name+
+                        |'<br>trading amount: '+p.value[0].toPrecision(4)+ 
+                        |'<br>returns: '+p.value[1]  + '%';""".trimMargin().replace("\n", "")
                 )
             )
 
