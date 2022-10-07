@@ -18,6 +18,7 @@ package org.roboquant.policies
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
+import org.roboquant.brokers.getPosition
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.Size
@@ -57,7 +58,7 @@ open class DefaultPolicy(
      * Calculate the exposure impact on the buying power
      */
     private fun getExposure(account: Account, asset: Asset, size: Size, price: Double): Double {
-        val position = account.portfolio.getValue(asset)
+        val position = account.positions.getPosition(asset)
 
         // No exposure if we reduce the overall position size
         return if (position.isReduced(size))  {
@@ -113,7 +114,7 @@ open class DefaultPolicy(
             if (price !== null) {
                 val amount = account.equityAmount * orderPercentage
                 val size = calcSize(amount, signal.asset, price, account)
-                val position = account.portfolio.getValue(asset)
+                val position = account.positions.getPosition(asset)
 
                 val order = if (signal.rating.isNegative)
                         createSellOrder(size, signal, price, position)

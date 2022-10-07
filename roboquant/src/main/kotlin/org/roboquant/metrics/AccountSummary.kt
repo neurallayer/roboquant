@@ -39,7 +39,7 @@ class AccountSummary : Metric {
         return metricResultsOf(
             "account.orders" to account.openOrders.size + account.closedOrders.size,
             "account.trades" to account.trades.size,
-            "account.positions" to account.portfolio.size,
+            "account.positions" to account.positions.size,
             "account.cash" to account.convert(account.cash, event.time).value,
             "account.buyingpower" to account.buyingPower.value,
             "account.equity" to account.convert(account.equity, event.time).value,

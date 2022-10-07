@@ -36,7 +36,7 @@ internal class AccountTest {
         assertEquals(Amount(Currency.USD, 0.0), account.cashAmount)
 
         assertEquals(Currency.USD, account.baseCurrency)
-        assertTrue(account.portfolio.isEmpty())
+        assertTrue(account.positions.isEmpty())
 
         val e = account.equity
         assertEquals(Wallet(), e)
@@ -74,8 +74,8 @@ internal class AccountTest {
     @Test
     fun extensions() {
         val account = TestData.usAccount()
-        assertEquals(account.portfolio.size, account.positions.long.size + account.positions.short.size)
-        assertContains(account.portfolio.keys, account.assets.first())
+        assertEquals(account.positions.size, account.positions.long.size + account.positions.short.size)
+        assertContains(account.positions.assets, account.assets.first())
 
     }
 

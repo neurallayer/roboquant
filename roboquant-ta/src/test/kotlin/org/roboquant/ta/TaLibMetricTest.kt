@@ -45,7 +45,7 @@ class TaLibMetricTest {
             emptyList(),
             emptyList(),
             emptyList(),
-            emptyMap(),
+            emptyList(),
             Amount(Currency.USD, 0.0)
         )
 

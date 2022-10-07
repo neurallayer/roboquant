@@ -81,7 +81,7 @@ fun feedPolygon() {
     roboquant.run(feed)
     val account = roboquant.broker.account
     println(account.summary())
-    println(account.portfolio.summary())
+    println(account.positions.summary())
 }
 
 fun main() {

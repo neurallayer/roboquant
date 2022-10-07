@@ -28,7 +28,7 @@ import kotlin.math.absoluteValue
  * class and tt holds the following state:
  *
  * - [cash] balances in the account
- * - the [portfolio] with its assets
+ * - the [positions] with its assets
  * - The past [trades]
  * - The [openOrders] and [closedOrders] and their state
  *
@@ -41,7 +41,7 @@ import kotlin.math.absoluteValue
  * @property trades List of all trades
  * @property openOrders List of [OrderState] of all open orders
  * @property closedOrders List of [OrderState] of all closed orders
- * @property portfolio Map of all open [Position]
+ * @property positions Map of all open [Position]
  * @property buyingPower amount of buying power remaining
  * @constructor Create new Account
  */
@@ -52,7 +52,7 @@ class Account(
     val trades: List<Trade>,
     val openOrders: List<OrderState>,
     val closedOrders: List<OrderState>,
-    val portfolio: Map<Asset, Position>,
+    val positions: List<Position>,
     val buyingPower: Amount
 ) : Summarizable {
 
@@ -72,19 +72,13 @@ class Account(
      * Total equity hold in the account. Equity is defined as sum of cash balances and the portfolio market value
      */
     val equity: Wallet
-        get() = cash + portfolio.marketValue
-
-    /**
-     * Open positions in the portfolio
-     */
-    val positions: Collection<Position>
-        get() = portfolio.values
+        get() = cash + positions.marketValue
 
     /**
      * Unique set of assets hold in the portfolio for which there is an open position
      */
     val assets: Set<Asset>
-        get() = portfolio.keys
+        get() = positions.map { it.asset }.toSet()
 
     /**
      * Get the associated trades for the provided [orders]. If no orders are provided all [closedOrders] linked to this
@@ -122,7 +116,7 @@ class Account(
         s.add("portfolio", c(positions.marketValue))
         s.add("long value", c(positions.long.marketValue))
         s.add("short value", c(positions.short.marketValue))
-        s.add("open positions", portfolio.size)
+        s.add("open positions", positions.size)
         s.add("unrealized p&l", c(positions.unrealizedPNL))
         s.add("realized p&l", c(trades.realizedPNL))
         s.add("trades", trades.size)
@@ -138,7 +132,7 @@ class Account(
     fun fullSummary(singleCurrency: Boolean = false): Summary {
         val s = summary(singleCurrency)
         s.add(cash.summary())
-        s.add(portfolio.summary())
+        s.add(positions.summary())
         s.add(openOrders.summary("open orders"))
         s.add(closedOrders.summary("closed orders"))
         s.add(trades.summary())
@@ -197,6 +191,15 @@ val Collection<Position>.long
 val Collection<Position>.short
     get() = filter { it.short }
 
+
+/**
+ * Return the position for an asset
+ */
+fun Collection<Position>.getPosition(asset: Asset) : Position {
+    return firstOrNull { it.asset == asset } ?: Position.empty(asset)
+}
+
+
 /**
  * Return the total unrealized PNL for a collection of positions
  */
@@ -247,6 +250,26 @@ fun Map<Asset, Position>.diff(target: Collection<Position>): Map<Asset, Size> {
     }
 
     for (position in this.values) {
+        if (position.asset !in result) result[position.asset] = -position.size
+    }
+
+    return result
+}
+
+/**
+ * Return the difference between this portfolio and a target set of positions
+ */
+fun Collection<Position>.diff(target: Collection<Position>): Map<Asset, Size> {
+    val result = mutableMapOf<Asset, Size>()
+
+    for (position in target) {
+        val targetSize = position.size
+        val sourceSize = getPosition(position.asset).size
+        val value = targetSize - sourceSize
+        if (!value.iszero) result[position.asset] = value
+    }
+
+    for (position in this) {
         if (position.asset !in result) result[position.asset] = -position.size
     }
 

@@ -69,13 +69,13 @@ internal class SimBrokerTest {
         val broker = SimBroker()
         val event = TestData.event()
         var account = broker.place(listOf(TestData.usMarketOrder()), event)
-        assertEquals(1, account.portfolio.size)
+        assertEquals(1, account.positions.size)
         assertEquals(1, account.trades.size)
         assertEquals(1, account.closedOrders.size)
 
         account = broker.liquidatePortfolio()
         assertEquals(0, account.openOrders.size)
-        assertEquals(0, account.portfolio.size)
+        assertEquals(0, account.positions.size)
         assertEquals(2, account.trades.size)
         assertEquals(2, account.closedOrders.size)
 

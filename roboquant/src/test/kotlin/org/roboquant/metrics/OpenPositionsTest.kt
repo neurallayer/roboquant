@@ -17,6 +17,7 @@
 package org.roboquant.metrics
 
 import org.roboquant.TestData
+import org.roboquant.brokers.assets
 import org.roboquant.feeds.Event
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -31,7 +32,7 @@ internal class OpenPositionsTest {
         val account = TestData.usAccount()
         val result = metric.calculate(account, Event.empty())
         assertFalse(result.isEmpty())
-        val symbol = account.portfolio.keys.first().symbol
+        val symbol = account.positions.assets.first().symbol
         assertContains(result, "position.$symbol.size")
         assertTrue(result.all { it.key.startsWith("position.") })
     }

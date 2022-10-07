@@ -151,7 +151,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
             trades.toList(),
             openOrders.values.toList(),
             closedOrders.toList(),
-            portfolio.toMap().withDefault { Position.empty(it) },
+            portfolio.values.toList(),
             buyingPower
         )
     }

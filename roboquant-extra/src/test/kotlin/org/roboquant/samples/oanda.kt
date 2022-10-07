@@ -136,7 +136,7 @@ fun oandaClosePositions() {
     Config.exchangeRates = OANDAExchangeRates()
 
     val target = mutableListOf<Position>() // target portfolio is an empty portfolio
-    val changes = broker.account.portfolio.diff(target)
+    val changes = broker.account.positions.diff(target)
     val orders = changes.map { MarketOrder(it.key, it.value) }
     broker.place(orders, Event.empty())
     println(broker.account.fullSummary())
@@ -153,7 +153,7 @@ fun oandaBroker() {
     Config.exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
     val broker = OANDABroker()
     println(broker.account.summary())
-    println(broker.account.portfolio.summary())
+    println(broker.account.positions.summary())
     println(broker.availableAssets.summary())
 
     val strategy = EMACrossover()
@@ -163,7 +163,7 @@ fun oandaBroker() {
     feed.subscribeOrderBook("EUR_USD", "GBP_USD", "GBP_EUR")
     val twoMinutes = Timeframe.next(5.minutes)
     roboquant.run(feed, twoMinutes)
-    println(broker.account.portfolio.summary())
+    println(broker.account.positions.summary())
 }
 
 fun oandaBroker3() {
