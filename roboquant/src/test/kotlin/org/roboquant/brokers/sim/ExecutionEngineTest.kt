@@ -19,6 +19,7 @@ package org.roboquant.brokers.sim
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Size
+import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -84,6 +85,27 @@ internal class ExecutionEngineTest {
         order = CancelOrder(state)
         success = engine.add(order)
         assertEquals(true, success)
+    }
+
+    @Test
+    fun testAddingCancelOrders() {
+        val engine = ExecutionEngine(NoCostPricingEngine())
+        val asset = TestData.usStock()
+
+        val origOrder = MarketOrder(asset, 100)
+        engine.add(origOrder)
+
+        val state = engine.orderStates.first()
+
+        val order = CancelOrder(state)
+        val success = engine.add(order)
+        assertEquals(true, success)
+
+        val executions = engine.execute(Event.empty())
+        assertEquals(0, executions.size)
+        assertEquals(2, engine.orderStates.size)
+        engine.removeClosedOrders()
+        assertEquals(0, engine.orderStates.size)
     }
 
     @Test

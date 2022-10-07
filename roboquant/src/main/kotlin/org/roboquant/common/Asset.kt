@@ -150,7 +150,7 @@ data class Asset(
      */
     fun value(size: Size, price: Double): Amount {
         // If size is zero, an unknown price (Double.NanN) is fine
-        return if (size.iszero) Amount(currency, 0.0) else Amount(currency, size * multiplier * price)
+        return if (size.iszero) Amount(currency, 0.0) else Amount(currency, size.toDouble() * multiplier * price)
     }
 
     /**

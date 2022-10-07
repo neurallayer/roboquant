@@ -69,7 +69,7 @@ data class Position(
             size.sign != newSize.sign -> p.copy(size = newSize)
 
             newSize.absoluteValue > size.absoluteValue -> {
-                val newAvgPrice = (size * avgPrice + p.size * p.avgPrice) / newSize.toDouble()
+                val newAvgPrice = (size.toDouble() * avgPrice + p.size.toDouble() * p.avgPrice) / newSize.toDouble()
                 p.copy(size = newSize, avgPrice = newAvgPrice)
             }
 

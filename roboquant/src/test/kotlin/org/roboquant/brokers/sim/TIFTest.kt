@@ -23,7 +23,6 @@ import org.roboquant.common.days
 import org.roboquant.common.seconds
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
-import java.math.BigDecimal
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -34,7 +33,7 @@ internal class TIFTest {
 
         override fun fill(pricing: Pricing): Execution? {
             if (fillPercentage != 0.0) {
-                val size = Size(BigDecimal.valueOf(order.size * fillPercentage))
+                val size = order.size * fillPercentage
                 return Execution(order, size, pricing.marketPrice(Size(100)))
             }
             return null

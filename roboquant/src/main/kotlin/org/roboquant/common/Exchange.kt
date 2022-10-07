@@ -21,7 +21,7 @@ import java.time.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Exchange contains the metadata of a marketplace or exchange.  When creating a new currency instance, use
+ * Exchange contains the metadata of a marketplace or exchange.  When creating a new Exchange instance, use
  * the [Exchange.getInstance] method. This ensures only a single instance of an exchange exists for a given currency
  * code and that allows for fast equality comparison.
  *
@@ -31,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap
  * @property zoneId The ZoneId of the exchange
  * @property currency The primary currency of the exchange
  * @property tradingCalendar The trading calendar
- * @constructor Create empty Exchange
  */
 class Exchange private constructor(
     val exchangeCode: String,

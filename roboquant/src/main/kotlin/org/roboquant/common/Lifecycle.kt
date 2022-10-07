@@ -19,9 +19,10 @@ package org.roboquant.common
 import org.roboquant.RunPhase
 
 /**
- * Interface implemented by all components used in a run (Strategy, Policy, Broker, Metric, MetricLogger). The component
- * will be informed that a phase has been started or ended. It provides the component with the opportunity to manage
- * its state so a phase can be started without any state remaining from previous runs.
+ * Interface implemented by all components used in a run (Strategy, Policy, Broker, Metric, MetricLogger).
+ *
+ * The component will be informed that a phase has been started or ended. It provides the component with the opportunity
+ * to manage its state so a phase can be started without any state remaining from previous runs.
  *
  * The default implementation of all the methods is to do nothing, so you only have to implement the methods relevant to
  * your component and can safely ignore the rest.

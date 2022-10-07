@@ -31,25 +31,26 @@ import java.util.*
 import java.util.logging.Logger
 
 /**
- * Feed that can handle large CSV files. The difference compared to the regular [CSVFeed] is that this feeds only loads
+ * Feed that can handle large CSV files. The difference compared to the regular [CSVFeed] is that this feed only loads
  * data from disk when required and disposes of it afterwards. So it has lower memory consumption, at the cost of
  * lower overall throughput. This feed doesn't implement the HistoricFeed interface since it doesn't know upfront
  * what the timeline will be.
  *
  * The individual lines in the CSV files are expected to be ordered from oldest to newest according to the included
- * timestamp and timestamps are unique in a single CSV file.
+ * timestamp, and timestamps are unique in a single CSV file.
  *
  * The LazyCSVFeed keeps files open to ensure good performance. So make sure your OS has enough open file descriptors
  * configured. For example on Linux you can check this with:
  *
  *      cat /proc/sys/fs/file-max
  *
- * If you use the same large sets of CSV regular, you might consider converting them onetime to an AvroFeed instead.
- * This has the same low memory usage but no negative performance impact.
+ * If you use the same large sets of CSV files regular, you might consider converting them onetime to an
+ * AvroFeed instead. This has the same low memory usage but no negative performance impact.
  *
  * @constructor
  *
- * @param path The directory that contains the CSV files
+ * @property path The directory that contains the CSV files
+ * @param configure The configuration
  */
 class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetFeed {
 
@@ -81,7 +82,7 @@ class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetF
         var last = Instant.MIN
         val readers = files.mapValues { IncrementalReader(it.key, it.value, config) }
         if (readers.isEmpty()) {
-            logger.warning("No files for processing")
+            logger.warning("No files to process")
             return
         }
 

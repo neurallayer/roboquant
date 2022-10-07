@@ -57,7 +57,6 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
  * 1) Support for charts using the Apache ECharts library
  * 2) Default imports
  * 3) Nicer exception handling
- *
  */
 internal class JupyterCore : JupyterIntegration() {
 

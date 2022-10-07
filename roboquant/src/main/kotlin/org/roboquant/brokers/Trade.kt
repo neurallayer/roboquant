@@ -50,19 +50,19 @@ data class Trade(
     /**
      * Returns total cost amount of this trade, including any fees.
      */
-    val totalCost
+    val totalCost: Amount
         get() = asset.value(size, price) + feeValue
 
     /**
      * Returns the fee amount
      */
-    val fee
+    val fee: Amount
         get() = Amount(asset.currency, feeValue)
 
     /**
      * Returns the realized profit & loss amount of this trade
      */
-    val pnl
+    val pnl: Amount
         get() = Amount(asset.currency, pnlValue)
 
 }

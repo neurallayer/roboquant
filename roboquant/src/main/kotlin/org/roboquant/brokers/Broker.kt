@@ -22,7 +22,8 @@ import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.Order
 
 /**
- * Interface for any broker implementation, used for both simulated and real brokers.
+ * Interface for any broker implementation, used for both simulated and real brokers. All brokers also implement the
+ * [Lifecycle] interface that allows them to manage internal state based on the phase of a run.
  */
 interface Broker : Lifecycle {
 
@@ -32,18 +33,18 @@ interface Broker : Lifecycle {
     val account: Account
 
     /**
-     * Place new [orders] at this broker. The [event] is useful for simulated brokers, but can also function
+     * Place a new set of [orders] at this broker. The [event] is useful for simulated brokers, but can also function
      * as a safeguard for other brokers (like not allowing to place orders when the current price is unknown).
      *
-     * After processing the [orders], this method returns an instance of the updated account. The returned instance of
-     * [Account] should reflect the latest status and be considered thread safe. It is important that the placed orders
-     * are already included in the account.
+     * After processing the [orders], this method returns an instance of the updated [Account]. This returned instance
+     * reflects the latest status, is immutable and thread safe. It is guaranteed that just placed order are included
+     * in the account object.
      */
     fun place(orders: List<Order>, event: Event): Account
 
     /**
-     * This will be invoked at each step in a run and provides the implementation with the opportunity to log additional
-     * information. The default implementation is to return an empty map.
+     * This method will be invoked at each step in a run and provides the implementation with the opportunity to
+     * log additional information. The default implementation is to return an empty map.
      *
      * The returned map should NOT be mutated after it has been returned.
      */

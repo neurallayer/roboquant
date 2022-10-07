@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class LazyCSVFeedTest {
@@ -30,6 +32,8 @@ internal class LazyCSVFeedTest {
         val priceBars = feed.filter<PriceBar>()
         assertTrue(priceBars.isNotEmpty())
         assertTrue(priceBars[0].first <= priceBars[1].first)
+        assertEquals(3, feed.assets.size)
+        assertContains(feed.assets, priceBars.first().second.asset)
     }
 
 }
