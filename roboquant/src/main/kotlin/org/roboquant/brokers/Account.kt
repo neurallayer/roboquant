@@ -41,7 +41,7 @@ import kotlin.math.absoluteValue
  * @property trades List of all trades
  * @property openOrders List of [OrderState] of all open orders
  * @property closedOrders List of [OrderState] of all closed orders
- * @property positions Map of all open [Position]
+ * @property positions List of all open [Position], with max one entry per asset
  * @property buyingPower amount of buying power remaining
  * @constructor Create new Account
  */
@@ -225,36 +225,6 @@ val Collection<Trade>.timeframe
 val List<OrderState>.assets
     get() = map { it.asset }.distinct().toSet()
 
-
-/**
- * Return true of the portfolio is long for the provided [asset], false otherwise
- */
-fun Map<Asset, Position>.isLong(asset: Asset) = get(asset)?.long ?: false
-
-/**
- * Return true of the portfolio is short for the provided [asset], false otherwise
- */
-fun Map<Asset, Position>.isShort(asset: Asset) = get(asset)?.short ?: false
-
-/**
- * Return the difference between this portfolio and a target set of positions
- */
-fun Map<Asset, Position>.diff(target: Collection<Position>): Map<Asset, Size> {
-    val result = mutableMapOf<Asset, Size>()
-
-    for (position in target) {
-        val targetSize = position.size
-        val sourceSize = getValue(position.asset).size
-        val value = targetSize - sourceSize
-        if (!value.iszero) result[position.asset] = value
-    }
-
-    for (position in this.values) {
-        if (position.asset !in result) result[position.asset] = -position.size
-    }
-
-    return result
-}
 
 /**
  * Return the difference between this portfolio and a target set of positions

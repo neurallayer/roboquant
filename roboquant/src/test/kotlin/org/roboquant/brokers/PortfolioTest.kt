@@ -22,8 +22,6 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Currency
 import org.roboquant.common.Size
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 internal class PortfolioTest {
 
@@ -38,8 +36,6 @@ internal class PortfolioTest {
 
         assertEquals(1000.0, portfolio.exposure.getValue(Currency.USD))
 
-        assertTrue(portfolio.isLong(c))
-        assertFalse(portfolio.isShort(c))
     }
 
 }
