@@ -34,6 +34,17 @@ internal class TimeframeTest {
         assertEquals(tf.end, subFrames.last().end)
     }
 
+
+    @Test
+    fun parse() {
+        val tf = Timeframe.parse("2019-01-01T00:00:00Z", "2020-01-01T00:00:00Z")
+        assertEquals(tf, Timeframe.parse("2019", "2020"))
+        assertEquals(tf, Timeframe.parse("2019-01", "2020-01"))
+        assertEquals(tf, Timeframe.parse("2019-01-01", "2020-01-01"))
+        assertEquals(tf, Timeframe.parse("2019-01-01T00:00:00", "2020-01-01T00:00:00"))
+        assertEquals(tf, Timeframe.parse("2019-01-01T00:00:00Z", "2020-01-01T00:00:00Z"))
+    }
+
     @Test
     fun constants() {
         val tf2 = Timeframe.INFINITE

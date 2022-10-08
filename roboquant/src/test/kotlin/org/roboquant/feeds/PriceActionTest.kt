@@ -19,6 +19,7 @@ package org.roboquant.feeds
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -64,6 +65,11 @@ internal class PriceActionTest {
         assertEquals(8.0, action.getPrice("LOW"))
         assertEquals(11.0, action.getPrice("CLOSE"))
         assertEquals(1000.0, action.volume)
+
+        val action2 = PriceBar(asset, 10, 12, 8, 11)
+        assertTrue(action2.volume.isNaN())
+
+        assertContains(action2.toString(), asset.symbol)
     }
 
     @Test

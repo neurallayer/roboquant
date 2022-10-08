@@ -29,6 +29,8 @@ import java.nio.file.Path
 import java.time.Instant
 import java.util.*
 import java.util.logging.Logger
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
 
 /**
  * Feed that can handle large CSV files. The difference compared to the regular [CSVFeed] is that this feed only loads
@@ -64,6 +66,7 @@ class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetF
         get() = files.keys.toSortedSet()
 
     init {
+        require(path.isDirectory() || path.isRegularFile()) { "$path does not exist" }
         logger.fine { "Scanning $path" }
         config.configure()
         files = path.toFile()
@@ -75,7 +78,7 @@ class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetF
             }.toMap()
 
         logger.info { "Scanned $path found ${files.size} files" }
-        if (files.isEmpty()) logger.warning { "No files for processing" }
+        if (files.isEmpty()) logger.warning { "No files to process" }
     }
 
     override suspend fun play(channel: EventChannel) {

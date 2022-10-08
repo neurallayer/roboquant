@@ -30,13 +30,16 @@ import java.io.FileReader
 import java.nio.file.Path
 import java.time.Instant
 import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
 
 /**
  * Read historic data from CSV files in a directory. It will traverse down if it finds subdirectories.
  *
- * This implementation will store the data in memory, using Double type to limit overall memory consumption. If you
- * don't have enough memory available, consider using [LazyCSVFeed] instead.
+ * This implementation will store the data in memory, using Double type for the prices. If you don't have enough memory
+ * available, consider using [LazyCSVFeed] instead.
  *
+ * @param path the directory that contains CSV files or a single CSV file
+ * @param configure the configuration to be used, see also [CSVConfig]
  * @constructor
  */
 class CSVFeed(
@@ -50,7 +53,7 @@ class CSVFeed(
     val config: CSVConfig = CSVConfig.fromFile(path)
 
     init {
-        require(path.isDirectory()) { "Directory $path does not exist" }
+        require(path.isDirectory() || path.isRegularFile()) { "$path does not exist" }
         config.configure()
 
         runBlocking {

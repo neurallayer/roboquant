@@ -30,8 +30,7 @@ import kotlin.io.path.div
  *
  * 1) Default config that will be applied if nothing else is provided
  * 2) The config.properties that can add and override the default config
- * 3) The config provided as a parameter that can override the previous step
- *
+ * 3) The config provided as a parameter to the Feed constructor that can override the previous step
  *
  * @property fileExtension
  * @property filePattern

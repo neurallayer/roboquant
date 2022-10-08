@@ -23,6 +23,8 @@ import org.roboquant.common.Exchange
 import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.PriceAction
 import java.time.Instant
+import kotlin.io.path.Path
+import kotlin.io.path.div
 import kotlin.test.*
 
 internal class CSVFeedTest {
@@ -37,6 +39,7 @@ internal class CSVFeedTest {
         assertEquals(6669, feed.timeline.size)
     }
 
+
     @Test
     fun noAssets() {
         assertFailsWith<Exception> {
@@ -50,9 +53,10 @@ internal class CSVFeedTest {
     }
 
     @Test
-    fun customBuilder() {
+    fun customConfig() {
         val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
-        val feed = CSVFeed(TestData.dataDir() + "US") {
+        val path = Path(TestData.dataDir() + "US") / Path("AAPL.csv")
+        val feed = CSVFeed(path) {
             template = asset
         }
         val first = feed.first().actions.first() as PriceAction
