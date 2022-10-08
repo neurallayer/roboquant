@@ -122,6 +122,6 @@ internal object TestData {
         return result
     }
 
-    val feed = RandomWalk.lastYears(1, 2, generateBars = true)
+    val feed = RandomWalk.lastYears(1, 2)
 
 }

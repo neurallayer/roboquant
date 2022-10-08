@@ -23,6 +23,7 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.months
 import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.feeds.test.HistoricTestFeed
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -44,7 +45,7 @@ internal class HistoricFeedTest {
 
     @Test
     fun firstLast() {
-        val feed: HistoricPriceFeed = RandomWalk.lastYears(nAssets = 2)
+        val feed: HistoricPriceFeed = HistoricTestFeed()
         assertDoesNotThrow {
             feed.first()
             feed.last()
@@ -58,8 +59,8 @@ internal class HistoricFeedTest {
 
     @Test
     fun testMerge() {
-        val feed1: HistoricPriceFeed = RandomWalk.lastYears(nAssets = 2)
-        val feed2: HistoricPriceFeed = RandomWalk.lastYears(nAssets = 3)
+        val feed1: HistoricPriceFeed = HistoricTestFeed()
+        val feed2: HistoricPriceFeed = HistoricTestFeed()
         feed1.merge(feed2)
         assertTrue(feed1.assets.containsAll(feed2.assets))
     }

@@ -20,16 +20,38 @@ package org.roboquant.samples
 
 import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
-import org.roboquant.common.Config
-import org.roboquant.common.ParallelJobs
-import org.roboquant.feeds.Feed
+import org.roboquant.common.*
+import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.AccountSummary
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMACrossover
+import java.util.*
 import kotlin.system.measureTimeMillis
+
+/**
+ * Basic test with minimal overhead
+ */
+fun base2() {
+
+    val timeline = Timeframe.parse("2022-01", "2022-02").toTimeline(1.seconds).take(10_000_000)
+    println(timeline.size)
+    val feed = RandomWalk(timeline, 100)
+    println(feed.assets.size)
+
+    repeat(2) {
+        val roboquant = Roboquant(EMACrossover(), ProgressMetric(), logger = LastEntryLogger(true))
+        val t = measureTimeMillis {
+            roboquant.run(feed)
+        }
+        println(roboquant.broker.account.summary(false))
+        println("time = $t ms")
+    }
+}
+
+
 
 /**
  * Basic test with minimal overhead
@@ -37,12 +59,12 @@ import kotlin.system.measureTimeMillis
 fun base() {
     val feed = RandomWalk.lastDays(7, 100)
 
-    repeat(3) {
+    repeat(5) {
+        val roboquant = Roboquant(EMACrossover(), AccountSummary(), logger = SilentLogger())
         val t = measureTimeMillis {
-            val roboquant = Roboquant(EMACrossover(), ProgressMetric(), logger = SilentLogger())
             roboquant.run(feed)
         }
-
+        println(roboquant.broker.account.summary(false))
         println("time = $t ms")
     }
 }
@@ -106,10 +128,10 @@ suspend fun main() {
     var time = Long.MAX_VALUE
 
     // Repeat three times to exclude Java compile time overhead of first run
-    repeat(3) {
+    repeat(1) {
         val t = measureTimeMillis {
             when ("BASE") {
-                "BASE" -> base()
+                "BASE" -> base2()
                 "BASE_PARALLEL" -> baseParallel(feed)
                 "PARALLEL" -> multiRunParallel(feed)
                 "MIXED" -> {
@@ -121,6 +143,6 @@ suspend fun main() {
         if (t < time) time = t
     }
 
-    println("\nFastest time $time ms")
+    // println("\nFastest time $time ms")
 
 }

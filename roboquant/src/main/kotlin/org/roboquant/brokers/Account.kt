@@ -105,7 +105,10 @@ class Account(
      */
     override fun summary(singleCurrency: Boolean): Summary {
 
-        fun c(w: Wallet): Any = if (singleCurrency) convert(w) else w
+        fun c(w: Wallet): Any {
+            if (w.isEmpty()) return Amount(baseCurrency, 0.0)
+            return if (singleCurrency) convert(w) else w
+        }
 
         val s = Summary("account")
         s.add("last update", lastUpdate.truncatedTo(ChronoUnit.SECONDS))
