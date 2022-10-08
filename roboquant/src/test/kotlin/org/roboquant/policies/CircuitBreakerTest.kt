@@ -56,6 +56,10 @@ internal class CircuitBreakerTest {
         orders = policy.act(emptyList(), account, Event.empty(time + 50.minutes))
         assertEquals(0, orders.size)
 
+        policy.reset()
+        orders = policy.act(emptyList(), account, Event.empty(time + 51.minutes))
+        assertEquals(3, orders.size)
+
         orders = policy.act(emptyList(), account, Event.empty(time + 120.minutes))
         assertEquals(3, orders.size)
 

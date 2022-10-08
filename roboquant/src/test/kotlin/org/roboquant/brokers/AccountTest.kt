@@ -69,6 +69,7 @@ internal class AccountTest {
 
         assertTrue(account.summary().content.isNotEmpty())
         assertTrue(account.fullSummary().content.isNotEmpty())
+        assertTrue(account.fullSummary(true).content.isNotEmpty())
     }
 
     @Test

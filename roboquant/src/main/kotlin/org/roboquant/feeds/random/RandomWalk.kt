@@ -24,7 +24,7 @@ import kotlin.random.Random
 import kotlin.random.asJavaRandom
 
 /**
- * Random walk creates a number of assets with a price history that follows a random walk using a
+ * Random walk creates number of assets with a price history that follows a random walk using a
  * Normal distribution. It can be useful for testing, since if your strategy does well using this feed, there
  * might be something suspicious going on.
  *
@@ -134,13 +134,7 @@ class RandomWalk(
             val timeline = Timeframe(first, last).toTimeline(1.minutes)
             return RandomWalk(timeline, nAssets)
         }
-
     }
-
-
-
-
-
 
 }
 

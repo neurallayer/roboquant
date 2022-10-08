@@ -42,6 +42,7 @@ internal class ExchangeTest {
         Exchange.addInstance("DUMMY2", "Europe/Paris")
         val exchange3 = Exchange.getInstance("DUMMY2")
         assertNotEquals(exchange2, exchange3)
+        assertEquals("DUMMY2", exchange3.toString())
 
         val d = LocalDate.parse("2021-02-02")
         val ct = exchange2.getClosingTime(d)

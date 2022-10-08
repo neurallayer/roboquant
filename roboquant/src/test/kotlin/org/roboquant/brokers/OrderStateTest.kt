@@ -24,6 +24,8 @@ import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class OrderStateTest {
 
@@ -32,6 +34,8 @@ internal class OrderStateTest {
         val order = TestData.usMarketOrder()
         var state = OrderState(order)
         assertEquals(OrderStatus.INITIAL, state.status)
+        assertFalse(state.closed)
+        assertTrue(state.open)
 
         val t = Instant.now()
         state = state.copy(t)

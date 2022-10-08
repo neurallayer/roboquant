@@ -31,6 +31,7 @@ internal class SingleOrderTest {
         assertEquals(100.0, order.size.toDouble())
         assertTrue(order.tif is GTC)
         assertTrue(order.buy)
+        assertEquals(1, order.direction)
         assertTrue(order.toString().isNotBlank())
     }
 

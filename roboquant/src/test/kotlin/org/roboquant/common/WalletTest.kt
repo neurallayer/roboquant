@@ -75,6 +75,10 @@ internal class WalletTest {
         val wallet2 = wallet + wallet - wallet
         assertNotEquals(wallet.hashCode(), wallet2.hashCode())
         assertEquals(wallet, wallet2)
+
+        val amount = 10.USD
+        val wallet3 = Wallet(amount) - amount
+        assertTrue(wallet3.isEmpty())
     }
 
     @Test
