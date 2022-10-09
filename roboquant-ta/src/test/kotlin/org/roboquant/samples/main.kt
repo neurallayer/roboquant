@@ -22,12 +22,12 @@ import org.roboquant.brokers.Account
 import org.roboquant.common.Size
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.avro.AvroFeed
-import org.roboquant.metrics.AccountSummary
+import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Order
 import org.roboquant.policies.DefaultPolicy
-import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Signal
 import org.roboquant.ta.TaLibMetric
 import org.roboquant.ta.TaLibStrategy
@@ -86,7 +86,7 @@ fun customPolicy() {
         }
     }
 
-    val roboquant = Roboquant(EMACrossover.EMA_12_26, AccountSummary(), policy = SmartLimitPolicy(atrPeriod = 5))
+    val roboquant = Roboquant(EMAStrategy.EMA_12_26, AccountMetric(), policy = SmartLimitPolicy(atrPeriod = 5))
     val feed = AvroFeed.sp500()
     roboquant.run(feed)
     println(roboquant.broker.account.summary())

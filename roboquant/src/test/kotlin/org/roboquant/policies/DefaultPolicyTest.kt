@@ -69,7 +69,7 @@ internal class DefaultPolicyTest {
     fun chaining() {
         val policy = DefaultPolicy()
             .resolve(SignalResolution.FIRST)
-            .oneOrderPerAsset()
+            .singleOrder()
             .circuitBreaker(10, 1.days)
         val signals = mutableListOf<Signal>()
         val event = Event(emptyList(), Instant.now())

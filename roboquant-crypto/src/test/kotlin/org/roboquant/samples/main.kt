@@ -30,9 +30,9 @@ import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.filter
-import org.roboquant.metrics.AccountSummary
+import org.roboquant.metrics.AccountMetric
 import org.roboquant.policies.DefaultPolicy
-import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.EMAStrategy
 import org.roboquant.xchange.XChangePollingLiveFeed
 import kotlin.system.measureTimeMillis
 import kotlin.test.assertEquals
@@ -69,7 +69,7 @@ fun readBinanceFeed() {
         val buyingPower = MarginAccount()
         val policy = DefaultPolicy(shorting = true)
         val broker = SimBroker(initialDeposit, accountModel = buyingPower)
-        val roboquant = Roboquant(EMACrossover(), AccountSummary(), broker = broker, policy = policy)
+        val roboquant = Roboquant(EMAStrategy(), AccountMetric(), broker = broker, policy = policy)
         roboquant.run(feed)
         println(roboquant.broker.account.summary())
     }

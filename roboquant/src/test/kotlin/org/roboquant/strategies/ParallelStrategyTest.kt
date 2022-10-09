@@ -24,9 +24,9 @@ internal class ParallelStrategyTest {
 
     @Test
     fun test() {
-        val s1 = EMACrossover(1, 3)
-        val s2 = EMACrossover(3, 5)
-        val s3 = ParallelStrategy(EMACrossover(1, 3), EMACrossover(3, 5))
+        val s1 = EMAStrategy(1, 3)
+        val s2 = EMAStrategy(3, 5)
+        val s3 = ParallelStrategy(EMAStrategy(1, 3), EMAStrategy(3, 5))
 
         for (event in TestData.events(20)) {
             val r1 = s1.generate(event)

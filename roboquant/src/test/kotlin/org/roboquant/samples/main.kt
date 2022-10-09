@@ -32,12 +32,12 @@ import org.roboquant.feeds.timeseries
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.toDoubleArray
-import org.roboquant.metrics.AccountSummary
-import org.roboquant.metrics.PNL
+import org.roboquant.metrics.AccountMetric
+import org.roboquant.metrics.PNLMetric
 import org.roboquant.metrics.ProgressMetric
-import org.roboquant.policies.BettingAgainstBeta
+import org.roboquant.policies.BettingAgainstBetaPolicy
 import org.roboquant.policies.DefaultPolicy
-import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.NoSignalStrategy
 import kotlin.math.absoluteValue
 import kotlin.system.measureTimeMillis
@@ -70,10 +70,10 @@ fun multiCurrency() {
     val cash = Wallet(100_000.USD)
     val broker = SimBroker(cash)
 
-    val strategy = EMACrossover.EMA_12_26
+    val strategy = EMAStrategy.EMA_12_26
     val policy = DefaultPolicy(orderPercentage = 0.02)
 
-    val roboquant = Roboquant(strategy, AccountSummary(), policy = policy, broker = broker, logger = MemoryLogger())
+    val roboquant = Roboquant(strategy, AccountMetric(), policy = policy, broker = broker, logger = MemoryLogger())
     roboquant.run(feed)
     println(broker.account.openOrders.summary())
 }
@@ -84,8 +84,8 @@ fun multiRun() {
 
     for (fast in 10..20..2) {
         for (slow in fast * 2..fast * 4..4) {
-            val strategy = EMACrossover(fast, slow)
-            val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
+            val strategy = EMAStrategy(fast, slow)
+            val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
             roboquant.run(feed, name = "run $fast-$slow")
         }
     }
@@ -99,8 +99,8 @@ suspend fun walkForwardParallel() {
     val jobs = ParallelJobs()
 
     feed.timeframe.split(2.years).forEach {
-        val strategy = EMACrossover()
-        val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
+        val strategy = EMAStrategy()
+        val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
         jobs.add {
             roboquant.runAsync(feed, runName = "run-$it")
         }
@@ -112,7 +112,7 @@ suspend fun walkForwardParallel() {
 }
 
 fun testingStrategies() {
-    val strategy = EMACrossover()
+    val strategy = EMAStrategy()
     val roboquant = Roboquant(strategy)
     val feed = CSVFeed("data/US")
 
@@ -151,7 +151,7 @@ fun beta() {
     val strategy = NoSignalStrategy()
     val marketAsset = feed.find("SPY")
 
-    val policy = BettingAgainstBeta(feed.assets, marketAsset, maxAssetsInPortfolio = 10)
+    val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, maxAssetsInPortfolio = 10)
     policy.recording = true
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, ProgressMetric(), policy = policy, logger = logger)
@@ -173,10 +173,10 @@ fun beta2() {
     feed.merge(market)
     val strategy = NoSignalStrategy()
     val marketAsset = feed.find("SPY")
-    val policy = BettingAgainstBeta(feed.assets, marketAsset, 60, maxAssetsInPortfolio = 10)
+    val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, 60, maxAssetsInPortfolio = 10)
     policy.recording = true
     val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, ProgressMetric(), PNL(), policy = policy, logger = logger)
+    val roboquant = Roboquant(strategy, ProgressMetric(), PNLMetric(), policy = policy, logger = logger)
     roboquant.run(feed)
     println(logger.summary())
     println(roboquant.broker.account.summary())

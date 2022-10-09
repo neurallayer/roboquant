@@ -30,7 +30,7 @@ import java.time.Instant
  * - If the fast EMA crosses under the slow EMA, generate a SELL signal
  * - Don't generate a signal in all other scenario's
  *
- * @constructor Create a new EMACrossover strategy
+ * @constructor Create a new EMAStrategy strategy
  *
  * @param fastPeriod The shorter period or fast EMA in number of steps
  * @param slowPeriod The longer period or slow EMA in number of steps
@@ -38,7 +38,7 @@ import java.time.Instant
  * @property minEvents minimal number of events observed before starting to execute the strategy, default is the same
  * as the slow period
  */
-class EMACrossover(
+class EMAStrategy(
     fastPeriod: Int = 12,
     slowPeriod: Int = 26,
     smoothing: Double = 2.0,
@@ -53,26 +53,26 @@ class EMACrossover(
         /**
          * Predefined EMA Crossover with 50 steps for fast EMA and 200 steps for slow EMA
          *
-         * @return new EMACrossover
+         * @return new EMAStrategy
          */
-        val EMA_50_200: EMACrossover
-            get() = EMACrossover(50, 200)
+        val EMA_50_200: EMAStrategy
+            get() = EMAStrategy(50, 200)
 
         /**
          * Predefined EMA Crossover with 12 steps for fast EMA and 26 steps for slow EMA
          *
-         * @return new EMACrossover
+         * @return new EMAStrategy
          */
-        val EMA_12_26: EMACrossover
-            get() = EMACrossover(12, 26)
+        val EMA_12_26: EMAStrategy
+            get() = EMAStrategy(12, 26)
 
         /**
          * Predefined EMA Crossover with 5 steps for fast EMA and 15 steps for slow EMA
          *
-         * @return new EMACrossover
+         * @return new EMAStrategy
          */
-        val EMA_5_15: EMACrossover
-            get() = EMACrossover(5, 15)
+        val EMA_5_15: EMAStrategy
+            get() = EMAStrategy(5, 15)
     }
 
     private inner class EMACalculator(initialPrice: Double) {

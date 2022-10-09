@@ -18,9 +18,8 @@ package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import org.roboquant.common.Amount
-import org.roboquant.common.Currency
-import org.roboquant.common.Wallet
+import org.roboquant.common.*
+import java.time.Instant
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -77,7 +76,14 @@ internal class AccountTest {
         val account = TestData.usAccount()
         assertEquals(account.positions.size, account.positions.long.size + account.positions.short.size)
         assertContains(account.positions.assets, account.assets.first())
+    }
 
+    @Test
+    fun trades() {
+        val time = Instant.now()
+        val trades = listOf(Trade(time, Asset("ABC"), Size(10), 10.0, 0.0, 0.0, 1))
+        assertEquals(1, trades.timeline.size)
+        assertEquals(Timeframe(time, time, true), trades.timeframe)
     }
 
 }

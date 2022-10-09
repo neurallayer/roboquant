@@ -20,16 +20,17 @@ import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 
 /**
- * Captures metrics for all open positions within the portfolio, so you can see how these progresses over the
- * duration of the run. For each open position it will record:
+ * Captures metrics for the open positions per asset, so you can see how these progresses over the
+ * duration of the run. For each open position it will record the following attributes:
  *
  * - size
  * - value
  * - cost
- * - unrealized P&L
+ * - pnl (unrealized)
  *
+ * The naming will be: `position.<symbol>.<attribute-name>
  */
-class OpenPositions : Metric {
+class PositionMetric : Metric {
 
     override fun calculate(account: Account, event: Event): MetricResults {
         val result = mutableMapOf<String, Double>()

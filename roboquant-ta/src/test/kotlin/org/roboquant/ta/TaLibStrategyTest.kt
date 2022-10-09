@@ -26,7 +26,7 @@ import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
@@ -214,7 +214,7 @@ internal class TaLibStrategyTest {
         // Default rule is false, meaning no signals
         val strategy = TaLibStrategy(30)
         val roboquant = Roboquant(strategy)
-        val feed = RandomWalk.lastYears(1, nAssets = 2)
+        val feed = RandomWalkFeed.lastYears(1, nAssets = 2)
         roboquant.run(feed)
         val account = roboquant.broker.account
         assertTrue(account.closedOrders.isEmpty())

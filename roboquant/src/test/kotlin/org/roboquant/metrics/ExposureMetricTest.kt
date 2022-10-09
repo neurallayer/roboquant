@@ -16,30 +16,17 @@
 
 package org.roboquant.metrics
 
-import org.junit.jupiter.api.Test
-import org.roboquant.RunPhase
+import kotlin.test.*
 import org.roboquant.TestData
-import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.filter
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
-internal class EventRecorderTest {
+internal class ExposureMetricTest {
 
     @Test
-    fun basic() {
+    fun calc() {
+        val metric = ExposureMetric()
         val (account, event) = TestData.metricInput()
-        val metric = EventRecorder()
-
-        assertTrue(metric.calculate(account, event).isEmpty())
-        metric.calculate(account, event)
-
-        var results = metric.filter<PriceAction>()
-        assertEquals(2, results.size)
-
-        metric.start(RunPhase.MAIN)
-        results = metric.filter()
-        assertTrue(results.isEmpty())
+        val result = metric.calculate(account, event)
+        assertTrue(result.isNotEmpty())
     }
 
 }

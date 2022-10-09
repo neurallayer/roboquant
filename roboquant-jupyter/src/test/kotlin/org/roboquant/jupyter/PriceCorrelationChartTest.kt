@@ -17,14 +17,14 @@
 package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.feeds.random.RandomWalkFeed
 import kotlin.test.assertTrue
 
 internal class PriceCorrelationChartTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears(1, 5)
+        val feed = RandomWalkFeed.lastYears(1, 5)
         val chart = PriceCorrelationChart(feed, feed.assets)
         assertTrue(chart.asHTML().isNotBlank())
     }

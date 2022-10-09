@@ -122,7 +122,7 @@ class OANDABroker(
     private fun syncAccount() {
         // OANDA makes doesn't report the all the required values, so this trick is required to calculate the required
         // cash value otherwise "equity = cash + portfolioValue" is not true
-        val portfolioValue = _account.portfolio.marketValue.convert(_account.baseCurrency).value
+        val portfolioValue = _account.marketValue.convert(_account.baseCurrency).value
         val acc = ctx.account.get(accountID).account
         val cashValue = acc.balance.doubleValue() - portfolioValue - acc.unrealizedPL.doubleValue()
 

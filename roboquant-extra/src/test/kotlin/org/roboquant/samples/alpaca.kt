@@ -24,9 +24,9 @@ import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.csv.CSVFeed
-import org.roboquant.metrics.AccountSummary
+import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
-import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.EMAStrategy
 import java.util.logging.Level
 
 fun alpacaBroker() {
@@ -34,8 +34,8 @@ fun alpacaBroker() {
         priceAdjust = true
     }
     val broker = AlpacaBroker()
-    val strategy = EMACrossover.EMA_12_26
-    val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
+    val strategy = EMAStrategy.EMA_12_26
+    val roboquant = Roboquant(strategy, AccountMetric(), broker = broker)
     roboquant.run(feed)
     println(broker.account.summary())
 }
@@ -54,8 +54,8 @@ fun allAlpaca() {
     val assets = account.assets
     feed.subscribeStocks(assets.distinct())
 
-    val strategy = EMACrossover(3, 5)
-    val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
+    val strategy = EMAStrategy(3, 5)
+    val roboquant = Roboquant(strategy, AccountMetric(), broker = broker)
     val tf = Timeframe.next(15.minutes)
     roboquant.run(feed, tf)
     feed.close()
@@ -77,7 +77,7 @@ fun alpacaLiveFeed() {
 
     feed.subscribeCrypto(listOf("*"))
     feed.heartbeatInterval = 30_000
-    val strategy = EMACrossover.EMA_5_15
+    val strategy = EMAStrategy.EMA_5_15
     val roboquant = Roboquant(strategy, ProgressMetric())
     val tf = Timeframe.next(10.minutes)
     roboquant.run(feed, tf)

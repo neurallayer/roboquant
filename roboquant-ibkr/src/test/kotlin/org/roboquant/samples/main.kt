@@ -29,10 +29,10 @@ import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRExchangeRates
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
-import org.roboquant.metrics.AccountSummary
+import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder
-import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.EMAStrategy
 import java.util.logging.Level
 
 fun exchangeRates() {
@@ -95,9 +95,9 @@ fun paperTrade(minutes: Int = 10) {
     val feed = IBKRLiveFeed()
     feed.subscribe(broker.account.assets)
 
-    val strategy = EMACrossover.EMA_5_15
+    val strategy = EMAStrategy.EMA_5_15
 
-    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric(), broker = broker)
+    val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker)
     val tf = Timeframe.next(minutes.minutes)
     roboquant.run(feed, tf)
     println(broker.account.summary())

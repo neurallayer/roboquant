@@ -45,7 +45,7 @@ import kotlin.math.max
  *
  * @property orderPercentage The percentage of overall equity value for a single order, default is 1% (0.01)
  * @property shorting Should the policy create orders that lead to short positions, default is false
- * @property oneOrderPerAsset Should there be only maximum one open order per asset at any time, default is true
+ * @property singleOrder Should there be only maximum one open order per asset at any time, default is true
  * @constructor Create new Default Policy
  */
 open class DefaultPolicy(

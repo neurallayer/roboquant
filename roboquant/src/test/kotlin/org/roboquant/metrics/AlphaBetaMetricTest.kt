@@ -24,20 +24,20 @@ import org.roboquant.brokers.Position
 import org.roboquant.common.Size
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.logging.LastEntryLogger
-import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
 import kotlin.test.assertTrue
 
-internal class AlphaBetaTest {
+internal class AlphaBetaMetricTest {
 
     @Test
     fun test() {
         val feed = TestData.feed
         val marketAsset = feed.assets.first()
-        val strategy = EMACrossover.EMA_5_15
-        val alphaBetaMetric = AlphaBeta(marketAsset, 50)
+        val strategy = EMAStrategy.EMA_5_15
+        val alphaBetaMetric = AlphaBetaMetric(marketAsset, 50)
         val logger = LastEntryLogger()
         val roboquant = Roboquant(strategy, alphaBetaMetric, logger = logger)
         roboquant.run(feed)
@@ -51,10 +51,10 @@ internal class AlphaBetaTest {
 
     @Test
     fun test2() {
-        val feed = RandomWalk.lastYears(1, nAssets = 1)
+        val feed = RandomWalkFeed.lastYears(1, nAssets = 1)
         val asset = feed.assets.first()
         val internalAccount = InternalAccount()
-        val metric = AlphaBeta(asset, 50)
+        val metric = AlphaBetaMetric(asset, 50)
 
         repeat(60) {
             val price = it + 10.0

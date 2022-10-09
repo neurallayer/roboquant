@@ -23,7 +23,7 @@ import org.roboquant.feeds.Event
 
 /**
  * Metric that calculates the realized and unrealized Profit and Loss. The unrealized PNL is calculated based
- * on the assets in the portfolio and their last known market prices. The realized PNL is based on actual trades made
+ * on the open positions and their last known market prices. The realized PNL is based on actual trades made
  * and the profit they generated. All amounts are converted to the base currency of the account.
  *
  * This metric can slow down back tests with many trades with several currencies, since at each step this metric
@@ -36,7 +36,7 @@ import org.roboquant.feeds.Event
  *
  * @constructor Create new PNL metric
  */
-class PNL : Metric {
+class PNLMetric : Metric {
 
     /**
      * Calculate any metrics given the event of information. This will be called at the

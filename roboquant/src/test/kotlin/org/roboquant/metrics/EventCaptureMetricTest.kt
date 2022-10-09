@@ -16,17 +16,33 @@
 
 package org.roboquant.metrics
 
-import kotlin.test.*
+import org.junit.jupiter.api.Test
+import org.roboquant.RunPhase
 import org.roboquant.TestData
+import org.roboquant.common.Timeframe
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-internal class PNLTest {
+internal class EventCaptureMetricTest {
 
     @Test
     fun basic() {
-        val metric = PNL()
         val (account, event) = TestData.metricInput()
-        val result = metric.calculate(account, event)
-        assertEquals(0.0, result.values.first())
+        val metric = EventCaptureMetric()
+
+        assertTrue(metric.calculate(account, event).isEmpty())
+        assertEquals(1, metric.timeline.size)
+        assertEquals(Timeframe(event.time, event.time, true), metric.timeframe)
+
+        metric.calculate(account, event)
+        var results = metric.filter<PriceAction>()
+        assertEquals(2, results.size)
+
+        metric.start(RunPhase.MAIN)
+        results = metric.filter()
+        assertTrue(results.isEmpty())
     }
 
 }

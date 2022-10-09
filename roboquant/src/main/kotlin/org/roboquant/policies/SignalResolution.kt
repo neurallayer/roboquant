@@ -84,7 +84,8 @@ fun List<Signal>.resolve(rule: SignalResolution): List<Signal> {
  * @property resolution
  * @constructor Create empty Signal resolver
  */
-private class SignalResolver(private val policy: Policy, private val resolution: SignalResolution) : Policy by policy {
+private class SignalResolverPolicy(private val policy: Policy, private val resolution: SignalResolution) :
+    Policy by policy {
 
     private val logger = Logging.getLogger(this::class)
 
@@ -99,4 +100,4 @@ private class SignalResolver(private val policy: Policy, private val resolution:
 /**
  * Resolve conflicting signals using the provided [resolution] before invoking the policy
  */
-fun Policy.resolve(resolution: SignalResolution) : Policy = SignalResolver(this, resolution)
+fun Policy.resolve(resolution: SignalResolution): Policy = SignalResolverPolicy(this, resolution)

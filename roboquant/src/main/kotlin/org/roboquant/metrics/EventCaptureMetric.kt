@@ -17,22 +17,26 @@
 package org.roboquant.metrics
 
 import org.roboquant.brokers.Account
+import org.roboquant.common.Timeframe
+import org.roboquant.common.Timeline
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
-import java.time.temporal.TemporalAmount
 import java.util.*
 
 /**
  * Capture events that can then be used later to display them in a graph or perform other post-run analysis. This metric
- * also implements the [Feed] API.
+ * also implements the [Feed] API, so captured events can be replayed afterwards as a feed.
  *
- * This metric is different from how most metrics work. It stores the result internally and does not
- * hand them over to a MetricsLogger. However, just like other metrics, it will reset its state at the beginning of a
+ * This metric works differently from most other metrics. It stores the result internally in memory and does not
+ * return them to a MetricsLogger. However, just like other metrics, it will reset its state at the beginning of a
  * new phase.
+ *
+ * @property timeframe the timeframe to capture, default is [Timeframe.INFINITE] (capture everything)
  */
-class EventRecorder(private val maxDuration: TemporalAmount? = null) : Metric, Feed {
+class EventCaptureMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, Feed {
 
+    private val limit = timeframe
     private val events = LinkedList<Event>()
 
     override fun calculate(account: Account, event: Event): MetricResults {
@@ -41,16 +45,18 @@ class EventRecorder(private val maxDuration: TemporalAmount? = null) : Metric, F
     }
 
     fun record(event: Event) {
-        events.add(event)
-        if (maxDuration != null) {
-            val firstTime = events.last().time - maxDuration
-            while (events.first().time < firstTime) events.removeFirst()
-        }
+        if (event.time in limit) events.add(event)
     }
 
     override fun reset() {
         events.clear()
     }
+
+    override val timeframe
+        get() = Timeframe(events.first.time, events.last.time, true)
+
+    val timeline: Timeline
+        get() = events.map { it.time }
 
     override suspend fun play(channel: EventChannel) {
         for (event in events) {

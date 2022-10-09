@@ -46,7 +46,7 @@ import kotlin.random.asJavaRandom
  * @property seed seed to use for initializing the random generator
  *
  */
-class RandomWalk(
+class RandomWalkFeed(
     override val timeline: Timeline,
     nAssets: Int = 10,
     private val generateBars: Boolean = true,
@@ -114,25 +114,25 @@ class RandomWalk(
      */
     companion object {
 
-        private val logger = Logging.getLogger(RandomWalk::class)
+        private val logger = Logging.getLogger(RandomWalkFeed::class)
 
         /**
          * Create a random walk for the last [years], generating daily prices
          */
-        fun lastYears(years: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalk {
+        fun lastYears(years: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalkFeed {
             val lastYear = LocalDate.now().year - 1
             val timeline = Timeframe.fromYears(lastYear - years + 1, lastYear).toTimeline(1.days)
-            return RandomWalk(timeline, nAssets, generateBars)
+            return RandomWalkFeed(timeline, nAssets, generateBars)
         }
 
         /**
          * Create a random walk for the last [days], generating minute prices.
          */
-        fun lastDays(days: Int = 1, nAssets: Int = 10): RandomWalk {
+        fun lastDays(days: Int = 1, nAssets: Int = 10): RandomWalkFeed {
             val last = Instant.now()
             val first = last - days.days
             val timeline = Timeframe(first, last).toTimeline(1.minutes)
-            return RandomWalk(timeline, nAssets)
+            return RandomWalkFeed(timeline, nAssets)
         }
     }
 

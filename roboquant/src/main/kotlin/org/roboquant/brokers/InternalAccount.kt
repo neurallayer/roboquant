@@ -156,6 +156,16 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
         )
     }
 
+
+    /**
+     * Return the total market value for this portfolio
+     */
+    val marketValue: Wallet
+        get() {
+            return portfolio.values.marketValue
+        }
+
+
 }
 
 /**

@@ -27,6 +27,7 @@ import org.roboquant.common.Config
 import org.roboquant.feeds.*
 import java.io.File
 import java.time.Instant
+import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.test.*
 
@@ -69,7 +70,7 @@ class AvroTest {
 
     @Test
     fun avroStep2() {
-        val feed2 = AvroFeed(fileName, useIndex = false)
+        val feed2 = AvroFeed(Path(fileName), useIndex = false)
         assertTrue(feed2.assets.isEmpty())
 
         runBlocking {

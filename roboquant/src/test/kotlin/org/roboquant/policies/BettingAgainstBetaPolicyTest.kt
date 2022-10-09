@@ -19,21 +19,21 @@ package org.roboquant.policies
 import org.roboquant.Roboquant
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.strategies.NoSignalStrategy
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class BettingAgainstBetaTest {
+class BettingAgainstBetaPolicyTest {
 
     @Test
     fun test() {
-        val feed = RandomWalk.lastYears()
+        val feed = RandomWalkFeed.lastYears()
         val assets = feed.assets.toList()
         val marketAsset = assets.first()
 
-        val policy = BettingAgainstBeta(assets, marketAsset)
+        val policy = BettingAgainstBetaPolicy(assets, marketAsset)
         val broker = SimBroker(accountModel = MarginAccount())
         val logger = MemoryLogger(false)
         val exp = Roboquant(NoSignalStrategy(), broker = broker, policy = policy, logger = logger)

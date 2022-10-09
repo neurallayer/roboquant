@@ -28,12 +28,12 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.filter
-import org.roboquant.metrics.AccountSummary
+import org.roboquant.metrics.AccountMetric
 import org.roboquant.oanda.*
 import org.roboquant.orders.FOK
 import org.roboquant.orders.MarketOrder
 import org.roboquant.policies.DefaultPolicy
-import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.EMAStrategy
 import java.util.logging.Level
 
 fun oanda() {
@@ -48,8 +48,8 @@ fun oanda() {
 fun forexAvro() {
     val feed = AvroFeed("/tmp/forex_march_2020.avro")
     Config.exchangeRates = OANDAExchangeRates()
-    val strategy = EMACrossover()
-    val roboquant = OANDA.roboquant(strategy, AccountSummary())
+    val strategy = EMAStrategy()
+    val roboquant = OANDA.roboquant(strategy, AccountMetric())
     roboquant.run(feed)
     println(roboquant.broker.account.summary())
 }
@@ -91,7 +91,7 @@ fun oanda2() {
     feed.retrieve("EUR_USD", "EUR_GBP", "GBP_USD")
     Config.exchangeRates = FeedExchangeRates(feed)
 
-    val roboquant = OANDA.roboquant(EMACrossover())
+    val roboquant = OANDA.roboquant(EMAStrategy())
     roboquant.run(feed)
     println(roboquant.broker.account.fullSummary())
 }
@@ -122,7 +122,7 @@ fun oandaPaperTrading() {
     feed.subscribeOrderBook(assets)
 
     val policy = DefaultPolicy(shorting = true)
-    val roboquant = Roboquant(EMACrossover.EMA_5_15, broker = broker, policy = policy)
+    val roboquant = Roboquant(EMAStrategy.EMA_5_15, broker = broker, policy = policy)
 
     val tf = Timeframe.next(5.minutes)
     roboquant.run(feed, tf)
@@ -156,8 +156,8 @@ fun oandaBroker() {
     println(broker.account.positions.summary())
     println(broker.availableAssets.summary())
 
-    val strategy = EMACrossover()
-    val roboquant = Roboquant(strategy, AccountSummary(), broker = broker)
+    val strategy = EMAStrategy()
+    val roboquant = Roboquant(strategy, AccountMetric(), broker = broker)
 
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "GBP_USD", "GBP_EUR")
@@ -177,9 +177,9 @@ fun oandaBroker3() {
     feed.subscribeOrderBook("GBP_USD", "EUR_USD", "EUR_GBP")
     feed.heartbeatInterval = 30_000L
 
-    val strategy = EMACrossover() // Use EMA Crossover strategy
+    val strategy = EMAStrategy() // Use EMA Crossover strategy
     val policy = DefaultPolicy(shorting = true) // We want to short if we do Forex trading
-    val roboquant = Roboquant(strategy, AccountSummary(), policy = policy, broker = broker)
+    val roboquant = Roboquant(strategy, AccountMetric(), policy = policy, broker = broker)
     val timeframe = Timeframe.next(1.minutes) // restrict the time from now for the next minutes
     roboquant.run(feed, timeframe)
     println(account.fullSummary())

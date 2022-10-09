@@ -9,9 +9,9 @@ import org.roboquant.feeds.Event
 
 /**
  * Scorecard calculates a common set of metrics that can be used to evaluate the performance of a strategy. If you
- * don't know what particular metrics to monitor, this is a good starting point.
+ * don't know which particular metrics to monitor, this is a good starting point.
  */
-class Scorecard(val prefix: String="scorecard.") : Metric {
+class ScorecardMetric(val prefix: String="scorecard.") : Metric {
 
     private var maxEquity = Double.NaN
     private var minEquity = Double.NaN

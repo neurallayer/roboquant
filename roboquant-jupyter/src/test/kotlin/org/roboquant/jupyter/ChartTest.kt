@@ -20,7 +20,7 @@ import org.icepear.echarts.Option
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.feeds.random.RandomWalkFeed
 import java.io.File
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -46,7 +46,7 @@ internal class ChartTest {
 
     @Test
     fun test() {
-        val f = RandomWalk.lastYears(1, 1, generateBars = true)
+        val f = RandomWalkFeed.lastYears(1, 1, generateBars = true)
         val asset = f.assets.first()
         val chart = PriceBarChart(f, asset)
         assertTrue(chart.asHTML().isNotBlank())

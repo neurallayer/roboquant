@@ -66,14 +66,15 @@ class VWAPMetric(val minSize: Int = 2) : Metric {
  * @property minSteps The minimum number of steps required
  * @constructor Create empty Daily VWAP calculator
  */
-private class VWAPDaily(private val minSteps: Int = 1) {
+private class VWAPDaily(private val minSteps: Int) {
 
     private val total = mutableListOf<Double>()
     private val volume = mutableListOf<Double>()
     private var last: Instant = Instant.MIN
 
     fun add(action: PriceBar, time: Instant) {
-        if (last != Instant.MIN && !action.asset.exchange.sameDay(time, last)) clear()
+        val exchange = action.asset.exchange
+        if (last != Instant.MIN && !exchange.sameDay(time, last)) clear()
         last = time
         val v = action.volume
         total.add(action.getPrice("TYPICAL") * v)
@@ -86,7 +87,7 @@ private class VWAPDaily(private val minSteps: Int = 1) {
         return total.sum() / volume.sum()
     }
 
-    fun clear() {
+    private fun clear() {
         total.clear()
         volume.clear()
         last = Instant.MIN

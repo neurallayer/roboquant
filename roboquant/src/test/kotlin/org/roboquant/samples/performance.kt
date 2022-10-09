@@ -22,12 +22,12 @@ import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.feeds.*
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.SilentLogger
-import org.roboquant.metrics.AccountSummary
+import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
-import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.EMAStrategy
 import java.util.*
 import kotlin.system.measureTimeMillis
 
@@ -38,11 +38,11 @@ fun base2() {
 
     val timeline = Timeframe.parse("2022-01", "2022-02").toTimeline(1.seconds).take(10_000_000)
     println(timeline.size)
-    val feed = RandomWalk(timeline, 100)
+    val feed = RandomWalkFeed(timeline, 100)
     println(feed.assets.size)
 
     repeat(2) {
-        val roboquant = Roboquant(EMACrossover(), ProgressMetric(), logger = LastEntryLogger(true))
+        val roboquant = Roboquant(EMAStrategy(), ProgressMetric(), logger = LastEntryLogger(true))
         val t = measureTimeMillis {
             roboquant.run(feed)
         }
@@ -57,10 +57,10 @@ fun base2() {
  * Basic test with minimal overhead
  */
 fun base() {
-    val feed = RandomWalk.lastDays(7, 100)
+    val feed = RandomWalkFeed.lastDays(7, 100)
 
     repeat(5) {
-        val roboquant = Roboquant(EMACrossover(), AccountSummary(), logger = SilentLogger())
+        val roboquant = Roboquant(EMAStrategy(), AccountMetric(), logger = SilentLogger())
         val t = measureTimeMillis {
             roboquant.run(feed)
         }
@@ -82,7 +82,7 @@ fun baseParallel(feed: Feed) = runBlocking {
         repeat(8) {
             val logger = LastEntryLogger()
             val roboquant = Roboquant(
-                EMACrossover(),
+                EMAStrategy(),
                 ProgressMetric(),
                 logger = logger
             )
@@ -106,8 +106,8 @@ suspend fun multiRunParallel(feed: Feed) {
 
     for (fast in 10..15) {
         for (slow in 20..25) {
-            val strategy = EMACrossover(fast, slow)
-            val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
+            val strategy = EMAStrategy(fast, slow)
+            val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
             jobs.add {
                 roboquant.runAsync(feed, runName = "run $fast-$slow")
             }
@@ -123,7 +123,7 @@ suspend fun main() {
     Config.printInfo()
 
     // Generate 1.008.000 price bars
-    val feed = RandomWalk.lastDays(7, 100)
+    val feed = RandomWalkFeed.lastDays(7, 100)
 
     var time = Long.MAX_VALUE
 

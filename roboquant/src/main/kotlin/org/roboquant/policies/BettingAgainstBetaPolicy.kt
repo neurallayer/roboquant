@@ -47,7 +47,7 @@ import kotlin.math.min
  *
  * @constructor Create new Betting Against Beta instance
  */
-open class BettingAgainstBeta(
+open class BettingAgainstBetaPolicy(
     assets: Collection<Asset>,
     val market: Asset,
     private val holdingPeriodDays: Int = 20,

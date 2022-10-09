@@ -26,11 +26,11 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.SilentLogger
-import org.roboquant.metrics.AccountSummary
+import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.Metric
 import org.roboquant.metrics.MetricResults
 import org.roboquant.metrics.ProgressMetric
-import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.RandomStrategy
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -39,8 +39,8 @@ internal class RoboquantTest {
 
     @Test
     fun simpleRun() {
-        val strategy = EMACrossover()
-        val roboquant = Roboquant(strategy, AccountSummary(), logger = SilentLogger())
+        val strategy = EMAStrategy()
+        val roboquant = Roboquant(strategy, AccountMetric(), logger = SilentLogger())
         roboquant.run(TestData.feed)
         val summary = roboquant.summary()
         assertTrue(summary.toString().isNotEmpty())
@@ -56,7 +56,7 @@ internal class RoboquantTest {
         }
 
         val feed = HistoricTestFeed(100..101)
-        val strategy = EMACrossover()
+        val strategy = EMAStrategy()
         val roboquant = Roboquant(strategy, MyBrokenMetric(), logger = SilentLogger())
         assertThrows<RoboquantException> {
             roboquant.run(feed)
@@ -68,7 +68,7 @@ internal class RoboquantTest {
     fun walkForward() {
         val strategy = RandomStrategy()
         val logger = MemoryLogger(false)
-        val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
+        val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
 
         val feed = TestData.feed
         for (timeframe in feed.split(2.years)) roboquant.run(feed, timeframe)
@@ -77,7 +77,7 @@ internal class RoboquantTest {
     @Test
     fun validationPhase() {
         val feed = TestData.feed
-        val strategy = EMACrossover()
+        val strategy = EMAStrategy()
         val logger = MemoryLogger(showProgress = false)
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
         val (train, test) = feed.timeframe.splitTrainTest(0.20)
@@ -89,18 +89,18 @@ internal class RoboquantTest {
 
     @Test
     fun runAsync() = runBlocking {
-        val strategy = EMACrossover()
+        val strategy = EMAStrategy()
 
-        val roboquant = Roboquant(strategy, AccountSummary(), logger = SilentLogger())
+        val roboquant = Roboquant(strategy, AccountMetric(), logger = SilentLogger())
         roboquant.runAsync(TestData.feed)
         assertTrue(roboquant.broker.account.trades.isNotEmpty())
     }
 
     @Test
     fun reset() {
-        val strategy = EMACrossover()
+        val strategy = EMAStrategy()
         val logger = MemoryLogger(showProgress = false)
-        val roboquant = Roboquant(strategy, AccountSummary(), logger = logger)
+        val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
         roboquant.run(TestData.feed)
         assertEquals(1, logger.runs.size)
         val lastHistory1 = logger.history.last()

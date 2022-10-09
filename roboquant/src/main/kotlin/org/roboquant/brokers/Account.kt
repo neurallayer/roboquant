@@ -69,13 +69,13 @@ class Account(
         get() = convert(equity)
 
     /**
-     * Total equity hold in the account. Equity is defined as sum of cash balances and the portfolio market value
+     * Total equity hold in the account. Equity is defined as sum of [cash] balances and the [positions] market value
      */
     val equity: Wallet
         get() = cash + positions.marketValue
 
     /**
-     * Unique set of assets hold in the portfolio for which there is an open position
+     * Unique set of assets hold in the open [positions]
      */
     val assets: Set<Asset>
         get() = positions.map { it.asset }.toSet()
@@ -99,7 +99,7 @@ class Account(
 
     /**
      * Provide a short summary that contains the high level account information, the available cash balances and
-     * the open positions in the portfolio.
+     * the open positions.
      *
      * @return The summary
      */
@@ -116,10 +116,10 @@ class Account(
         s.add("cash", c(cash))
         s.add("buying power", buyingPower)
         s.add("equity", c(equity))
-        s.add("portfolio", c(positions.marketValue))
+        s.add("positions", c(positions.marketValue))
         s.add("long value", c(positions.long.marketValue))
         s.add("short value", c(positions.short.marketValue))
-        s.add("open positions", positions.size)
+        s.add("assets", positions.size)
         s.add("unrealized p&l", c(positions.unrealizedPNL))
         s.add("realized p&l", c(trades.realizedPNL))
         s.add("trades", trades.size)
@@ -230,7 +230,7 @@ val List<OrderState>.assets
 
 
 /**
- * Return the difference between this portfolio and a target set of positions
+ * Return the difference between these positions and a target set of positions
  */
 fun Collection<Position>.diff(target: Collection<Position>): Map<Asset, Size> {
     val result = mutableMapOf<Asset, Size>()
@@ -314,11 +314,6 @@ fun Collection<Trade>.summary(name: String = "trades"): Summary {
     return s
 }
 
-/**
- * Create a [Summary] of this portfolio that contains an overview of the open positions.
- */
-@JvmName("summaryPortfolio")
-fun Map<Asset, Position>.summary(name: String = "portfolio"): Summary = values.summary(name)
 
 /**
  * Create a [Summary] of this portfolio that contains an overview of the open positions.

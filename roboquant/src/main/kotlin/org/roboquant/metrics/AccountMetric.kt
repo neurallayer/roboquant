@@ -20,20 +20,20 @@ import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 
 /**
- * Capture the following statistics about the [Account]:
+ * Capture the following high level statistics about the [Account]:
  *
  * - `account.orders`  Total number of orders, open and closed together
  * - `account.trades` Total number of trades
- * - `account.positions` Total number of open positions in the portfolio
+ * - `account.positions` Total number of open positions
  * - `account.cash` Total cash value
- * - `account.buyingPower` Buying power available in the account
+ * - `account.buyingPower` Buying power available
  * - `account.equity` Total equity value of the account
  *
  * All monetary values are denoted in base currency of the account
  *
- * @constructor Create new Account Summary metric
+ * @constructor Create new AccountSummaryMetric
  */
-class AccountSummary : Metric {
+class AccountMetric : Metric {
 
     override fun calculate(account: Account, event: Event): MetricResults {
         return metricResultsOf(

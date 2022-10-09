@@ -132,7 +132,7 @@ class TaLibStrategy(history: Int = 15) : Strategy {
         /**
          * EMA crossover using the TaLib under the hood.
          *
-         * See also [org.roboquant.strategies.EMACrossover] for more efficient implementation.
+         * See also [org.roboquant.strategies.EMAStrategy] for more efficient implementation.
          *
          * @param slow
          * @param fast

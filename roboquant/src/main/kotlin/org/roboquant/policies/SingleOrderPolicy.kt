@@ -24,12 +24,12 @@ import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 
 /**
- * Allow only one open order per asset. Signals generated when there is an open order for the same asset, will be
+ * Allow only a single open order per asset. Signals generated when there is an open order for the same asset, will be
  * removed before handing it over to the wrapped policy
  *
  * @property policy The policy to wrap
  */
-private class OneOrderPerAsset(private val policy: Policy) : Policy by policy {
+private class SingleOrderPolicy(private val policy: Policy) : Policy by policy {
 
     private val logger = Logging.getLogger(this::class)
 
@@ -44,6 +44,6 @@ private class OneOrderPerAsset(private val policy: Policy) : Policy by policy {
 
 
 /**
- * Ensure there is only one open order per asset at any given time.
+ * Ensure there is only a single open order per asset at any given time.
  */
-fun Policy.oneOrderPerAsset() : Policy = OneOrderPerAsset(this)
+fun Policy.singleOrder() : Policy = SingleOrderPolicy(this)

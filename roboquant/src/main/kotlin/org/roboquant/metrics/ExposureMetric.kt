@@ -22,17 +22,18 @@ import org.roboquant.feeds.Event
 import kotlin.math.absoluteValue
 
 /**
- * Calculate the portfolio total net and gross exposure relative to the total account value.
+ * Calculate the net and gross exposure of the open positions relative to the total account value.
  *
- * - Net exposure is the difference between a portfolio long positions and its short positions and is expressed
+ * - Net exposure is the difference between the long positions and the short positions and is expressed
  *   as a percentage of total account value
  *
- * - Gross exposure refers to the absolute level of a portfolio investments. It takes into account the value of both a
- * portfolio's long positions and short positions and is expressed as a percentage of total account value.
+ * - Gross exposure refers to the absolute level of exposure. It takes into account the absolute value
+ * of both the long positions and short positions and is expressed as a percentage of total account value.
  *
- * @constructor Create new Portfolio Exposure metric
+ * @constructor Create new ExposureMetric
  */
-class PortfolioExposure : Metric {
+class ExposureMetric : Metric {
+
     /**
      * Calculate any metrics given the event of information. This will be called at the
      * end of each step in a run.

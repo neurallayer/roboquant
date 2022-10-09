@@ -24,7 +24,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
@@ -98,7 +98,6 @@ internal object TestData {
     fun metricInput(time: Instant = time()): Pair<Account, Event> {
         val account = usAccount()
         val asset1 = account.assets.first()
-        // val asset2 = account.portfolio.assets.last()
         val moment = Event(listOf(TradePrice(asset1, 11.0)), time)
         return Pair(account, moment)
     }
@@ -122,6 +121,6 @@ internal object TestData {
         return result
     }
 
-    val feed = RandomWalk.lastYears(1, 2)
+    val feed = RandomWalkFeed.lastYears(1, 2)
 
 }

@@ -40,7 +40,7 @@ internal class SignalResolutionTest {
 
     @Test
     fun oneOrderPerAsset() {
-        val policy = TestPolicy().oneOrderPerAsset()
+        val policy = TestPolicy().singleOrder()
         val account = TestData.usAccount()
         val asset = account.openOrders.assets.first()
         val signals = listOf(Signal(asset, Rating.BUY))

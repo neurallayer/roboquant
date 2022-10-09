@@ -159,22 +159,6 @@ val Collection<Position>.marketValue: Wallet
     }
 
 /**
- * Return the total market value for this portfolio
- */
-val Map<Asset, Position>.marketValue: Wallet
-    get() {
-        return values.marketValue
-    }
-
-/**
- * Return the total exposure for this portfolio
- */
-val Map<Asset, Position>.exposure: Wallet
-    get() {
-        return values.sumOf { it.exposure }
-    }
-
-/**
  * Return the total exposure for a collection of positions
  */
 val Collection<Position>.exposure: Wallet

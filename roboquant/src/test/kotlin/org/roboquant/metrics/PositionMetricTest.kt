@@ -16,17 +16,24 @@
 
 package org.roboquant.metrics
 
-import kotlin.test.*
 import org.roboquant.TestData
+import org.roboquant.brokers.assets
+import org.roboquant.feeds.Event
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-internal class PortfolioExposureTest {
+internal class PositionMetricTest {
 
     @Test
     fun calc() {
-        val metric = PortfolioExposure()
-        val (account, event) = TestData.metricInput()
-        val result = metric.calculate(account, event)
-        assertTrue(result.isNotEmpty())
+        val metric = PositionMetric()
+        val account = TestData.usAccount()
+        val result = metric.calculate(account, Event.empty())
+        assertFalse(result.isEmpty())
+        val symbol = account.positions.assets.first().symbol
+        assertContains(result, "position.$symbol.size")
+        assertTrue(result.all { it.key.startsWith("position.") })
     }
-
 }

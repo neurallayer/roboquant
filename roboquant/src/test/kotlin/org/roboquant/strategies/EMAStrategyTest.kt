@@ -24,11 +24,11 @@ import org.roboquant.logging.MemoryLogger
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-internal class EMACrossoverTest {
+internal class EMAStrategyTest {
 
     @Test
     fun simple() = runBlocking {
-        val strategy = EMACrossover()
+        val strategy = EMAStrategy()
         strategy.recording = true
         val roboquant = Roboquant(strategy, logger = MemoryLogger(false))
         roboquant.run(TestData.feed)
@@ -43,9 +43,9 @@ internal class EMACrossoverTest {
 
     @Test
     fun simple2() {
-        val strategy1 = EMACrossover.EMA_5_15
-        val strategy2 = EMACrossover.EMA_12_26
-        val strategy3 = EMACrossover.EMA_50_200
+        val strategy1 = EMAStrategy.EMA_5_15
+        val strategy2 = EMAStrategy.EMA_12_26
+        val strategy3 = EMAStrategy.EMA_50_200
         assertTrue(!strategy1.recording)
         assertNotEquals(strategy1, strategy2)
         assertNotEquals(strategy2, strategy3)

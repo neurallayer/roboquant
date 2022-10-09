@@ -26,19 +26,19 @@ import org.roboquant.common.days
 import org.roboquant.common.minutes
 import org.roboquant.iex.Range
 import org.roboquant.logging.MemoryLogger
-import org.roboquant.metrics.AccountSummary
-import org.roboquant.metrics.OpenPositions
+import org.roboquant.metrics.AccountMetric
+import org.roboquant.metrics.PositionMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.polygon.PolygonHistoricFeed
-import org.roboquant.strategies.EMACrossover
+import org.roboquant.strategies.EMAStrategy
 import org.roboquant.yahoo.YahooHistoricFeed
 
 fun feedIEX() {
     val feed = org.roboquant.iex.IEXHistoricFeed()
     feed.retrieve("AAPL", "GOOGL", "FB", range = Range.TWO_YEARS)
 
-    val strategy = EMACrossover(10, 30)
-    val roboquant = Roboquant(strategy, AccountSummary())
+    val strategy = EMAStrategy(10, 30)
+    val roboquant = Roboquant(strategy, AccountMetric())
     roboquant.run(feed)
     println(roboquant.broker.account.summary())
 }
@@ -48,8 +48,8 @@ fun feedIEXLive() {
     val apple = Asset("AAPL")
     val google = Asset("GOOG")
     feed.subscribeTrades(apple, google)
-    val strategy = EMACrossover()
-    val roboquant = Roboquant(strategy, AccountSummary(), ProgressMetric())
+    val strategy = EMAStrategy()
+    val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric())
     roboquant.run(feed, Timeframe.next(5.minutes))
     println(roboquant.broker.account.summary())
 }
@@ -60,9 +60,9 @@ fun feedYahoo() {
     val google = Asset("GOOG")
     val last300Days = Timeframe.past(300.days)
     feed.retrieve(listOf(apple, google), timeframe = last300Days)
-    val strategy = EMACrossover()
+    val strategy = EMAStrategy()
     val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, AccountSummary(), OpenPositions(), logger = logger)
+    val roboquant = Roboquant(strategy, AccountMetric(), PositionMetric(), logger = logger)
     roboquant.run(feed)
     logger.summary(10)
 }
@@ -76,7 +76,7 @@ fun feedPolygon() {
     println(feed.timeline.size)
 
     // Use the feed
-    val strategy = EMACrossover()
+    val strategy = EMAStrategy()
     val roboquant = Roboquant(strategy)
     roboquant.run(feed)
     val account = roboquant.broker.account

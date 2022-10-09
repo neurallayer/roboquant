@@ -7,11 +7,11 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 
-internal class ScorecardTest {
+internal class ScorecardMetricTest {
 
     @Test
     fun test() {
-        val metric = Scorecard("myprefix.")
+        val metric = ScorecardMetric("myprefix.")
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(account, event)
         assertTrue(result.isNotEmpty())

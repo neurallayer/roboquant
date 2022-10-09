@@ -26,13 +26,13 @@ private const val EPS = 0.0000000001
 
 /**
  * Calculate the sharp ratio for the returns made. The ratio is the average return earned in excess of the risk-free
- * rate per unit of volatility or total risk. Volatility is a measure of the price fluctuations of the portfolio.
+ * rate per unit of volatility or total risk. Volatility is a measure of the price fluctuations of the positions.
  *
  * The following metrics will be calculated:
  *
  * - mean
  * - standard deviation
- * - SharpRatio
+ * - SharpRatioMetric
  *
  * @TODO validate formula
  *
@@ -41,7 +41,7 @@ private const val EPS = 0.0000000001
  * @constructor
  *
  */
-class SharpRatio(
+class SharpRatioMetric(
     private val riskFreeRate: Double = 0.0,
     private val minSteps: Int = 60,
 ) : Metric {
@@ -73,9 +73,9 @@ class SharpRatio(
                 val sharpRatio = (mean - riskFreeRate) / (std + EPS)
 
                 mapOf(
-                    "portfolio.mean" to mean,
-                    "portfolio.std" to std,
-                    "portfolio.sharpratio" to sharpRatio
+                    "returns.mean" to mean,
+                    "returns.std" to std,
+                    "returns.sharpratio" to sharpRatio
                 )
             } else {
                 emptyMap()

@@ -17,7 +17,7 @@
 package org.roboquant.ta
 
 import org.roboquant.Roboquant
-import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.ta4j.core.indicators.SMAIndicator
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator
 import org.ta4j.core.rules.CrossedDownIndicatorRule
@@ -50,7 +50,7 @@ internal class Ta4JStrategyTest {
         }
 
         val roboquant = Roboquant(strategy)
-        val feed = RandomWalk.lastYears(1, nAssets = 2)
+        val feed = RandomWalkFeed.lastYears(1, nAssets = 2)
         roboquant.run(feed)
         val account = roboquant.broker.account
         assertTrue(account.closedOrders.isNotEmpty())
@@ -61,7 +61,7 @@ internal class Ta4JStrategyTest {
         // Default rule is false, meaning no signals
         val strategy = Ta4jStrategy(maxBarCount = 30)
         val roboquant = Roboquant(strategy)
-        val feed = RandomWalk.lastYears(1, nAssets = 2)
+        val feed = RandomWalkFeed.lastYears(1, nAssets = 2)
         roboquant.run(feed)
         val account = roboquant.broker.account
         assertTrue(account.closedOrders.isEmpty())
