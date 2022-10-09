@@ -18,8 +18,10 @@ package org.roboquant.strategies.utils
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.Asset
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -50,6 +52,15 @@ internal class PriceBarSeriesTest {
             pb.add(entry.second)
         }
         assertTrue(pb.isAvailable(asset1))
+    }
+
+    @Test
+    fun adjustedClose() {
+        val asset = Asset("DEMO")
+        val pb = PriceBar.fromAdjustedClose(asset, 10, 11, 9, 10, 5, 100)
+        assertEquals(5.0, pb.open)
+        assertEquals(5.0, pb.close)
+        assertEquals(200.0, pb.volume)
     }
 
 

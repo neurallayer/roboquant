@@ -36,7 +36,7 @@ internal class CSVFeedTest {
         assertEquals(3, assets.size)
         val c2 = assets.getBySymbol("AAPL")
         assertEquals("AAPL", c2.symbol)
-        assertEquals(6669, feed.timeline.size)
+        assertEquals(2624, feed.timeline.size)
     }
 
 

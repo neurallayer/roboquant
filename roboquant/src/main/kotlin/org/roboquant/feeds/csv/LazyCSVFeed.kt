@@ -84,10 +84,6 @@ class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetF
     override suspend fun play(channel: EventChannel) {
         var last = Instant.MIN
         val readers = files.mapValues { IncrementalReader(it.key, it.value, config) }
-        if (readers.isEmpty()) {
-            logger.warning("No files to process")
-            return
-        }
 
         try {
             val queue = PriorityQueue<PriceEntry>(readers.size)
