@@ -34,6 +34,7 @@ import org.roboquant.strategies.Strategy
 import org.roboquant.strategies.utils.PriceBarSeries
 import java.lang.IllegalArgumentException
 import java.time.Instant
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -114,6 +115,7 @@ internal class TaLibStrategyTest {
         val strategy = TaLibSignalStrategy.breakout(10, 30)
         val x = run(strategy, 60)
         assertEquals(60, x.size)
+        assertContains(strategy.toString(), "30")
     }
 
     @Test
