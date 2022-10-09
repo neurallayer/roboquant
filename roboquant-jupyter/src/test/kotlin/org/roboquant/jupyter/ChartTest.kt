@@ -20,8 +20,10 @@ import org.icepear.echarts.Option
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
+import org.roboquant.common.USD
 import org.roboquant.feeds.random.RandomWalkFeed
 import java.io.File
+import java.time.Instant
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -59,6 +61,18 @@ internal class ChartTest {
 
     }
 
+
+    @Test
+    fun testGsonAdapters() {
+        val b = Chart.gsonBuilder.create()
+        assertDoesNotThrow {
+            b.toJson(Pair("A", "B"))
+            b.toJson(Triple("A", "B", "C"))
+            b.toJson(Instant.now())
+            b.toJson(100.USD)
+        }
+
+    }
 
     @Test
     fun testCodeGeneration() {

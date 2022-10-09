@@ -16,6 +16,7 @@
 
 package org.roboquant.logging
 
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.RunInfo
 import kotlin.test.*
 import org.roboquant.RunPhase
@@ -35,6 +36,11 @@ internal class MemoryLoggerTest {
     fun memoryLogger() {
         val logger = MemoryLogger(showProgress = false)
         assertTrue(logger.metricNames.isEmpty())
+
+        assertDoesNotThrow {
+            logger.summary(10).toString()
+        }
+
         val metrics = TestData.getMetrics()
         logger.log(metrics, TestData.getRunInfo())
         logger.end(RunPhase.VALIDATE)
