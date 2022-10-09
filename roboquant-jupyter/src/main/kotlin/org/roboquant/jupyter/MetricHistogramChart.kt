@@ -40,7 +40,7 @@ import java.math.RoundingMode
  * @property scale
  * @constructor Create empty Metric histogram
  */
-class MetricHistogram(
+class MetricHistogramChart(
     private val metricData: Collection<MetricsEntry>,
     private val binCount: Int = 20,
     private val scale: Int = 2
