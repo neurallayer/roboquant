@@ -31,7 +31,7 @@ import org.roboquant.feeds.Event
  *
  * All monetary values are denoted in base currency of the account
  *
- * @constructor Create new AccountSummaryMetric
+ * @constructor Create new AccountMetric instance
  */
 class AccountMetric : Metric {
 

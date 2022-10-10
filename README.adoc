@@ -35,8 +35,8 @@ To demonstrate how easy it is to get started, the following code snippet shows t
 
 [source,kotlin]
 ----
-val strategy = EMACrossover() // <1>
-val metric = AccountSummary() // <2>
+val strategy = EMAStrategy() // <1>
+val metric = AccountMetric() // <2>
 val roboquant = Roboquant(strategy, metric) // <3>
 
 val feed = CSVFeed("data/US") // <4>
