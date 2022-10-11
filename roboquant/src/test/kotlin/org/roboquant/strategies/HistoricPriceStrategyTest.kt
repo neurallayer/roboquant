@@ -17,25 +17,52 @@
 package org.roboquant.strategies
 
 import org.roboquant.TestData
+import org.roboquant.common.Asset
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class HistoricPriceStrategyTest {
 
-    private class MySubClass : HistoricPriceStrategy(10) {
+    private class MySubClass1 : HistoricPriceStrategy(10) {
+        var called = false
+
+        override fun generateSignal(asset: Asset, data: DoubleArray): Signal? {
+            called = true
+            return null
+        }
+    }
+
+
+    private class MySubClass2 : HistoricPriceStrategy(10) {
         var called = false
 
         override fun generateRating(data: DoubleArray): Rating? {
             called = true
             return null
         }
-
     }
 
     @Test
     fun test() {
-        val c = MySubClass()
+        val c = MySubClass1()
+        val event = TestData.event()
+        val signals = c.generate(event)
+        assertTrue(signals.isEmpty())
+        assertFalse(c.called)
+
+        repeat(10) { c.generate(event) }
+        assertTrue(c.called)
+
+        c.reset()
+        c.called = false
+        c.generate(event)
+        assertFalse(c.called)
+    }
+
+    @Test
+    fun test2() {
+        val c = MySubClass2()
         val event = TestData.event()
         val signals = c.generate(event)
         assertTrue(signals.isEmpty())

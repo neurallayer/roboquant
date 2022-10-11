@@ -116,6 +116,9 @@ internal class TaLibStrategyTest {
         val x = run(strategy, 60)
         assertEquals(60, x.size)
         assertContains(strategy.toString(), "30")
+
+        val strategy2 = TaLibSignalStrategy.breakout()
+        assertContains(strategy2.toString(), "100")
     }
 
     @Test
