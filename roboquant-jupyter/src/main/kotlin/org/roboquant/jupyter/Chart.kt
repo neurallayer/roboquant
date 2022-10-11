@@ -107,10 +107,10 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 abstract class Chart : Output() {
 
     /**
-     * Does the generated option JSON string contain Javascript. If true additional code will be generated to parse
+     * Does the generated option JSON string contain JavaScript. If true additional code will be generated to parse
      * this into a Javascript function.
      */
-    private var hasJavascript: Boolean = false
+    private var containsJavaScript: Boolean = false
 
     /**
      * Height for charts, default being 500 pixels. Subclasses can override this value
@@ -129,18 +129,6 @@ abstract class Chart : Output() {
          * Used to ensure the output divs have a unique id that is still deterministic
          */
         internal var counter = 0
-
-        /**
-         * Theme to use for plotting. When left to "auto", it will try to adapt to the theme set for
-         * Jupyter Lab (light or dark)
-         */
-        var theme = "auto"
-
-        /**
-         * If set to true, a console.log(option) statement will be included so the option parameter of echarts can be
-         * easily inspected in the console of the browser.
-         */
-        var debug = false
 
         /**
          * Maximum number of samples to plot in a chart. Certain types of charts can be become very large and as
@@ -191,31 +179,14 @@ abstract class Chart : Output() {
      */
     override fun asHTML(): String {
         val fragment = getOption().renderJson().trimStart()
-        val themeDetector = if (theme == "auto") {
-            "document.body.dataset.jpThemeLight == 'false' ? 'dark' : 'light'"
-        } else {
-            "'$theme'"
-        }
-
-        val debugStmt = if (debug) "console.log(option);" else ""
         val id = UUID.randomUUID().toString()
-
-        // Transfer a string into a javascript Function for tooltip formatting
-        val handleJS = if (hasJavascript)
-            """option.tooltip.formatter = new Function("p", option.tooltip.formatter);"""
-        else
-            ""
 
         return """
         <div style="width:100%;height:${height}px;" class="rqcharts" id="$id"></div>
         <script type="text/javascript">    
-            (function () {    
-                let elem = document.getElementById("$id"); 
-                let theme = $themeDetector;
-                let myChart = echarts.init(elem, theme);
-                let option = $fragment;$handleJS
-                myChart.setOption(option);
-                elem.ondblclick = function () { myChart.resize() }; $debugStmt
+            (function () {  
+                let option = $fragment;
+                renderEChart("$id", option, $containsJavaScript);
             })()
         </script>
         """.trimIndent()
@@ -299,7 +270,7 @@ abstract class Chart : Output() {
      * ```
      */
     protected fun javascriptFunction(function: String): String {
-        hasJavascript = true
+        containsJavaScript = true
         return function
     }
 

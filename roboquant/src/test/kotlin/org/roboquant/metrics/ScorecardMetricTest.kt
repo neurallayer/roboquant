@@ -1,10 +1,7 @@
 package org.roboquant.metrics
 
 import org.roboquant.TestData
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 
 internal class ScorecardMetricTest {
@@ -18,6 +15,10 @@ internal class ScorecardMetricTest {
         assertEquals(0.0, result["myprefix.winners"])
         assertEquals(0.0, result["myprefix.loosers"])
         assertNull(result["otherprefix.loosers"])
+
+        metric.reset()
+        val result2 = metric.calculate(account, event)
+        assertEquals(result, result2)
     }
 
 }

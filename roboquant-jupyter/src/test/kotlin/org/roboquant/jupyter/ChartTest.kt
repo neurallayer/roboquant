@@ -26,7 +26,6 @@ import java.io.File
 import java.time.Instant
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class ChartTest {
@@ -38,6 +37,11 @@ internal class ChartTest {
 
         init {
             javascriptFunction("return p;")
+        }
+
+        fun reduced(size: Int) : List<Int> {
+            val data = (1..size).toList()
+            return reduce(data).toList()
         }
 
         override fun getOption(): Option {
@@ -71,14 +75,23 @@ internal class ChartTest {
             b.toJson(Instant.now())
             b.toJson(100.USD)
         }
-
     }
+
+    @Test
+    fun testReduced() {
+        val chart = MyChart()
+        Chart.maxSamples = 10
+        assertEquals(10, chart.reduced(100).size)
+        Chart.maxSamples = Int.MAX_VALUE
+        assertEquals(100, chart.reduced(100).size)
+    }
+
+
 
     @Test
     fun testCodeGeneration() {
         val chart = MyChart()
         chart.height = 123
-        Chart.debug = true
 
         assertDoesNotThrow {
             chart.getOption().renderJson()
@@ -90,13 +103,7 @@ internal class ChartTest {
 
         val code = chart.asHTML()
         assertContains(code, "123px")
-        assertContains(code, "console.log")
-        assertContains(code, "new Function")
-
-        Chart.debug = false
-        val code2 = chart.asHTML()
-        assertFalse(code2.contains("console.log"))
-
+        assertContains(code, "renderEChart")
     }
 
 }

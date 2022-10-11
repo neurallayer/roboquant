@@ -59,6 +59,11 @@ internal class CurrencyTest {
         assertEquals(4, c.defaultFractionDigits)
         Currency.increaseDigits(-2)
         assertEquals(2, c.defaultFractionDigits)
+
+        Currency.increaseDigits()
+        assertEquals(5, c.defaultFractionDigits)
+        Currency.increaseDigits(-3)
+        assertEquals(2, c.defaultFractionDigits)
     }
 
 }
