@@ -96,11 +96,7 @@ class TaLibStrategy(history: Int = 15) : Strategy {
         }
 
         /**
-         * SMA crossover
-         *
-         * @param slow
-         * @param fast
-         * @return
+         * Returns a SMA crossover strategy with the provided [slow] and [fast] times
          */
         fun smaCrossover(slow: Int, fast: Int): TaLibStrategy {
             require(slow > 0 && fast > 0) { "Periods have to be larger than 0" }
@@ -130,13 +126,9 @@ class TaLibStrategy(history: Int = 15) : Strategy {
         }
 
         /**
-         * EMA crossover using the TaLib under the hood.
+         * Returns an EMA crossover Strategy using the provided [slow] and [fast] times.
          *
          * See also [org.roboquant.strategies.EMAStrategy] for more efficient implementation.
-         *
-         * @param slow
-         * @param fast
-         * @return
          */
         fun emaCrossover(slow: Int, fast: Int): TaLibStrategy {
             require(slow > 0 && fast > 0) { "Periods have to be larger than 0" }
@@ -179,13 +171,11 @@ class TaLibStrategy(history: Int = 15) : Strategy {
 
     /**
      * Define the buy condition, return true if you want to generate a BUY signal, false otherwise
-     *
      * # Example
      *
      *       strategy.buy { price ->
      *          ema(price.close, shortTerm) > ema(price.close, longTerm) && cdlMorningStar(price)
      *       }
-     *
      */
     fun buy(block: TaLib.(series: PriceBarSeries) -> Boolean) {
         buyFn = block
