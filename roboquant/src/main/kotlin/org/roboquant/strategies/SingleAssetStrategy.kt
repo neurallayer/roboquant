@@ -25,7 +25,7 @@ import java.time.Instant
 /**
  * Base class for strategies that are only interested in a single asset and generate a Signal
  *
- * @property asset The asset for which to apply this strategy
+ * @property asset The asset for which to apply this strategy. All other assets will be ignored.
  * @constructor Create new single asset strategy
  */
 abstract class SingleAssetStrategy(
@@ -45,7 +45,7 @@ abstract class SingleAssetStrategy(
 
     /**
      * Subclasses need to be implemented this method. It will only be invoked if there is
-     * a price action for the asset.
+     * a price action for the asset available.
      *
      * @param priceAction
      * @param time

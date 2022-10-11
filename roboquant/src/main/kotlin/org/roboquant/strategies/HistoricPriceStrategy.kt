@@ -23,12 +23,15 @@ import org.roboquant.strategies.utils.MovingWindow
 import org.roboquant.strategies.utils.PercentageMovingWindow
 
 /**
- * Base class for strategies that are interested in historic prices or returns.
+ * Base class for strategies that are interested in historic prices or returns. Subclasses should override one of the
+ * two following methods:
  *
- * @property period
- * @property priceType
- * @property useReturns
- * @constructor Create empty Historic price strategy
+ * [generateSignal] - full control over the Signal
+ * [generateRating] - only need to generate a Rating
+ *
+ * @property period period to keep track of historic data
+ * @property priceType the type of price to store, default is "DEFAULT"
+ * @property useReturns store returns instead of price
  */
 abstract class HistoricPriceStrategy(
     private val period: Int,
@@ -47,7 +50,7 @@ abstract class HistoricPriceStrategy(
             if (movingWindow.isAvailable()) {
                 val data = movingWindow.toDoubleArray()
                 assert(data.size == period)
-                val signal = generate(asset, movingWindow.toDoubleArray())
+                val signal = generateSignal(asset, movingWindow.toDoubleArray())
                 result.addNotNull(signal)
             }
         }
@@ -55,13 +58,19 @@ abstract class HistoricPriceStrategy(
     }
 
     /**
-     * Generate a signal based on the provided signal and asset
-     *
-     * @param asset
-     * @param data
-     * @return
+     * Generate a signal based on the provided [asset] and [data]. Default implementation is to call [generateRating]
+     * to get the rating.
      */
-    abstract fun generate(asset: Asset, data: DoubleArray): Signal?
+    open fun generateSignal(asset: Asset, data: DoubleArray): Signal? {
+        val rating = generateRating(data)
+        return if (rating == null) null else Signal(asset, rating)
+    }
+
+    /**
+     * Generate a [Rating] based on the provided [data]. If no rating can be provided, this method should return null
+     * which is also the default implementation.
+     */
+    open fun generateRating(data: DoubleArray): Rating? = null
 
     override fun reset() {
         super.reset()

@@ -17,15 +17,16 @@
 package org.roboquant.strategies
 
 import org.roboquant.TestData
-import org.roboquant.common.Asset
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class HistoricPriceStrategyTest {
 
     private class MySubClass : HistoricPriceStrategy(10) {
         var called = false
 
-        override fun generate(asset: Asset, data: DoubleArray): Signal? {
+        override fun generateRating(data: DoubleArray): Rating? {
             called = true
             return null
         }
