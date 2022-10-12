@@ -23,9 +23,7 @@ import org.jetbrains.kotlinx.jupyter.api.Renderable
 import java.io.File
 
 /**
- * Base class for anything that wants to generate output for notebooks. This takes care of difference between
- * classic notebooks and Jupyter-Lab.
- *
+ * Base class for anything that wants to generate output for notebooks.
  */
 abstract class Output : Renderable {
 
@@ -33,7 +31,7 @@ abstract class Output : Renderable {
 
         /**
          * Should the returned HTML be isolated (aka put in an iframe), default is false. Change this setting will
-         * impact all generated HTML snippet.
+         * impact all generated HTML.
          */
         var isolation = false
     }
