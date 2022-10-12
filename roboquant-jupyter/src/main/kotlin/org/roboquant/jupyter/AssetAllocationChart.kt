@@ -22,20 +22,18 @@ import org.icepear.echarts.Sunburst
 import org.icepear.echarts.charts.pie.PieSeries
 import org.icepear.echarts.charts.sunburst.SunburstSeries
 import org.icepear.echarts.components.tooltip.Tooltip
-import org.roboquant.brokers.Account
+import org.roboquant.brokers.Position
 import java.math.BigDecimal
 
 /**
- * Plot the allocation of assets as a pie chart
+ * Plot the allocation of assets (to be precise their exposure) in the provided positions.
  *
- * @property account the account to use
- * @property includeCash also include cash balances next to the assets in the portfolio, default is true
+ * @property positions the positions to use
  * @property includeAssetClass group per assetClass, default is false
  * @constructor Create a new asset allocation chart
  */
 class AssetAllocationChart(
-    private val account: Account,
-    private val includeCash: Boolean = true,
+    private val positions: Collection<Position>,
     private val includeAssetClass: Boolean = false,
 ) : Chart() {
 
@@ -45,16 +43,10 @@ class AssetAllocationChart(
 
     private fun toSeriesData(): List<Entry> {
         val result = mutableListOf<Entry>()
-        if (includeCash) {
-            for (amount in account.cash.toAmounts()) {
-                val localAmount = account.convert(amount).toBigDecimal()
-                result.add(Entry(amount.currency.displayName, localAmount, "CASH"))
-            }
-        }
 
-        for (position in account.positions.sortedBy { it.asset.symbol }) {
+        for (position in positions.sortedBy { it.asset.symbol }) {
             val asset = position.asset
-            val localAmount = account.convert(position.exposure).toBigDecimal()
+            val localAmount = position.exposure.convert().toBigDecimal()
             result.add(Entry(asset.symbol, localAmount, asset.type.name))
         }
         return result

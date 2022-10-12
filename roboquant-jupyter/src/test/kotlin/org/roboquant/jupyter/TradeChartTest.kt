@@ -32,7 +32,7 @@ internal class TradeChartTest {
     @Test
     fun test2() {
         val account = TestData.usAccount()
-        val chart = TradeChartByAsset(account.trades)
+        val chart = TradeAssetChart(account.trades)
         assertTrue(chart.asHTML().isNotBlank())
     }
 

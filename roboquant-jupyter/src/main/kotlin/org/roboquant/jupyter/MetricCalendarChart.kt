@@ -32,7 +32,7 @@ import kotlin.collections.*
 /**
  * Plots the metrics values on a calendar, so it is easy to visualize if there are days when there are outliers.
  */
-class CalendarChart(
+class MetricCalendarChart(
     private val metricsData: List<MetricsEntry>,
     private val fractionDigits: Int = 2,
     private val zoneId: ZoneId = Config.defaultZoneId

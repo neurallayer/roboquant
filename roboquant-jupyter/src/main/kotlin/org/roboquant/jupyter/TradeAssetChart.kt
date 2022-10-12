@@ -34,7 +34,7 @@ import org.roboquant.common.UnsupportedException
  * trades will be plotted but this is configurable
  *
  */
-class TradeChartByAsset(
+class TradeAssetChart(
     private val trades: List<Trade>,
     private val aspect: String = "pnl",
 ) : Chart() {
