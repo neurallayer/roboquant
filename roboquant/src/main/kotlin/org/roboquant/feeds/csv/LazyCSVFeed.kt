@@ -117,7 +117,10 @@ class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetF
             }
 
         } finally {
-            for (reader in readers.values) reader.close()
+            for (reader in readers.values) {
+                if (reader.errors > 0) logger.fine { "${reader.asset} has ${reader.errors} error" }
+                reader.close()
+            }
         }
     }
 
