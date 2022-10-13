@@ -27,7 +27,6 @@ import org.icepear.echarts.components.toolbox.ToolboxDataZoomFeature
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
-import org.roboquant.common.UnsupportedException
 
 /**
  * Trade chart plots the [trades] that have been generated during a run per Asset. By default, the realized pnl of the
@@ -40,28 +39,18 @@ class TradeAssetChart(
 ) : Chart() {
 
     init {
-        val validAspects = listOf("pnl", "fee", "cost", "quantity")
+        val validAspects = listOf("pnl", "fee", "cost", "size")
         require(aspect in validAspects) { "Unsupported aspect $aspect, valid values are $validAspects" }
     }
 
     private fun toSeriesData(assets: List<Asset>): List<List<Any>> {
         val d = mutableListOf<List<Any>>()
         for (trade in trades.sortedBy { it.time }) {
-            with(trade) {
-                val value = when (aspect) {
-                    "pnl" -> pnl.convert(time = time).toBigDecimal()
-                    "fee" -> fee.convert(time = time).toBigDecimal()
-                    "cost" -> totalCost.convert(time = time).toBigDecimal()
-                    "quantity" -> size.toBigDecimal()
-                    else -> throw UnsupportedException("Unsupported aspect $aspect")
-                }
-
-                val y = assets.indexOf(asset)
+                val value = trade.getValue(aspect)
+                val y = assets.indexOf(trade.asset)
                 val tooltip = trade.getTooltip()
-                d.add(listOf(time, y, value, tooltip))
-            }
+                d.add(listOf(trade.time, y, value, tooltip))
         }
-
         return d
     }
 

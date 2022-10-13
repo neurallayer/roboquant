@@ -44,6 +44,16 @@ internal fun Trade.getTooltip() : String {
             |order: $orderId""".trimMargin()
 }
 
+internal fun Trade.getValue(type: String) : BigDecimal {
+    return when (type) {
+        "pnl" -> pnl.convert(time = time).toBigDecimal()
+        "fee" -> fee.convert(time = time).toBigDecimal()
+        "cost" -> totalCost.convert(time = time).toBigDecimal()
+        "size" -> size.toBigDecimal()
+        else -> throw UnsupportedException("Unsupported aspect $type")
+    }
+}
+
 /**
  * Trade chart plots the trades of an [trades] that have been generated during a run. By default, the realized pnl of
  * the trades will be plotted but this can be changed. The possible options are pnl, fee, cost and quantity
@@ -62,18 +72,9 @@ open class TradeChart(
     private fun tradesToSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (trade in trades.sortedBy { it.time }) {
-            with(trade) {
-                val value = when (aspect) {
-                    "pnl" -> pnl.convert(time = time).toBigDecimal()
-                    "fee" -> fee.convert(time = time).toBigDecimal()
-                    "cost" -> totalCost.convert(time = time).toBigDecimal()
-                    "size" -> size.toBigDecimal()
-                    else -> throw UnsupportedException("Unsupported aspect $aspect")
-                }
-
+                val value = trade.getValue(aspect)
                 val tooltip = trade.getTooltip()
-                d.add(Triple(time, value, tooltip))
-            }
+                d.add(Triple(trade.time, value, tooltip))
         }
         return d
     }
