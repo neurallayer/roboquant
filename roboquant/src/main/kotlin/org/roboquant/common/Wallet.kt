@@ -210,7 +210,7 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
     /**
      * Provide a list representation of the amounts hold in this wallet
      */
-    fun toAmounts(): List<Amount> = data.map { Amount(it.key, it.value) }
+    private fun toAmounts(): List<Amount> = data.map { Amount(it.key, it.value) }
 
     /**
      * Provide a map representation of the amounts hold where the key is the [Currency] and the value is the amount.
