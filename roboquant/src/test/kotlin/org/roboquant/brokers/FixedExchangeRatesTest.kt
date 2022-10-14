@@ -18,7 +18,9 @@ package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Currency.Companion.EUR
+import org.roboquant.common.Currency.Companion.GBP
 import org.roboquant.common.Currency.Companion.USD
+import org.roboquant.common.GBP
 import org.roboquant.common.USD
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -27,7 +29,7 @@ internal class FixedExchangeRatesTest {
 
     @Test
     fun basic() {
-        val currencyConverter = FixedExchangeRates(USD, EUR to 1.2)
+        val currencyConverter = FixedExchangeRates(USD, EUR to 1.2, GBP to 1.2)
         assertEquals(USD, currencyConverter.baseCurrency)
 
         val now = Instant.now()
@@ -37,6 +39,9 @@ internal class FixedExchangeRatesTest {
 
         val r2 = currencyConverter.getRate(amount1, EUR, now)
         assertEquals(1.0 / 1.2, r2)
+
+        val r3 = currencyConverter.getRate(100.GBP, EUR, now)
+        assertEquals(1.2 / 1.2, r3)
     }
 
 }

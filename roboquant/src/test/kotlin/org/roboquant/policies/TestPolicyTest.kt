@@ -48,11 +48,21 @@ internal class TestPolicyTest {
     @Test
     fun order() {
         val policy = TestPolicy()
-        val signals = listOf(Signal(TestData.usStock(), Rating.BUY))
+
+        for (rating in listOf(Rating.BUY, Rating.SELL)) {
+            val signals = listOf(Signal(TestData.usStock(), rating))
+            val event = TestData.event2()
+            val account = InternalAccount().toAccount()
+            val orders = policy.act(signals, account, event)
+            assertTrue(orders.first() is MarketOrder)
+            assertTrue(policy.getMetrics().isEmpty())
+        }
+
+        val signals = listOf(Signal(TestData.usStock(), Rating.HOLD))
         val event = TestData.event2()
         val account = InternalAccount().toAccount()
         val orders = policy.act(signals, account, event)
-        assertTrue(orders.first() is MarketOrder)
-        assertTrue(policy.getMetrics().isEmpty())
+        assertTrue(orders.isEmpty())
+
     }
 }

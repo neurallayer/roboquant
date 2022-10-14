@@ -32,6 +32,7 @@ import org.roboquant.metrics.MetricResults
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.RandomStrategy
+import java.lang.IllegalArgumentException
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -65,13 +66,17 @@ internal class RoboquantTest {
     }
 
     @Test
-    fun walkForward() {
+    fun randomStrategy() {
         val strategy = RandomStrategy()
         val logger = MemoryLogger(false)
         val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
 
         val feed = TestData.feed
         for (timeframe in feed.split(2.years)) roboquant.run(feed, timeframe)
+
+        assertThrows<IllegalArgumentException> {
+            RandomStrategy(1.2)
+        }
     }
 
     @Test

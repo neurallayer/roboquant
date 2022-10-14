@@ -17,17 +17,20 @@
 package org.roboquant.common
 
 
-import org.junit.jupiter.api.Test
+import kotlin.test.*
 import org.junit.jupiter.api.assertDoesNotThrow
 
 class LoggingTest {
-
 
     @Test
     fun testBasic() {
         val logger = Logging.getLogger(this::class)
         assertDoesNotThrow {
-            logger.debug("fine")
+            logger.trace { "test" }
+            logger.debug { "test" }
+            logger.info { "test" }
+            logger.warn { "test" }
+            logger.error { "test" }
         }
     }
 
