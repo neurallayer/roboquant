@@ -153,7 +153,7 @@ class SimBroker(
     }
 
     /**
-     * Liquidate the portfolio. This comes in handy at the end of a back-test if you want to have no open positions
+     * Close the open positions. This comes in handy at the end of a back-test if you don't want to have open positions
      * left in the portfolio.
      *
      * This method performs the following two steps:
@@ -161,9 +161,9 @@ class SimBroker(
      * 2. close all positions by creating and processing [MarketOrder] for the required quantities, using the
      * last known market price for an asset as the price action.
      */
-    fun liquidatePortfolio(time: Instant = _account.lastUpdate): Account {
+    fun closePositions(time: Instant = _account.lastUpdate): Account {
         val cancelOrders = _account.openOrders.map { CancelOrder(it.value) }
-        val change = _account.portfolio.values.diff(emptyList())
+        val change = _account.portfolio.values.close()
         val changeOrders = change.map { MarketOrder(it.key, it.value) }
         val orders = cancelOrders + changeOrders
         val actions = _account.portfolio.values.map { TradePrice(it.asset, it.mktPrice) }

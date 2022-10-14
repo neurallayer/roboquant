@@ -56,6 +56,10 @@ internal class CSVFeedTest {
     fun customConfig() {
         val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
         val path = Path(TestData.dataDir() + "US") / Path("AAPL.csv")
+        val config = CSVConfig()
+        config.template = asset
+        assertEquals(asset, config.template)
+
         val feed = CSVFeed(path) {
             template = asset
         }

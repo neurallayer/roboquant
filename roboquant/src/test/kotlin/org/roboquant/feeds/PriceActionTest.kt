@@ -83,6 +83,9 @@ internal class PriceActionTest {
         val pb2 = PriceBar.fromValues(pb.asset, values)
         assertEquals(pb.asset, pb2.asset)
         assertEquals(pb.values, pb2.values)
+
+        val pb3 = PriceBar.fromAdjustedClose(asset, 2, 1, 1, 1, 0.5)
+        assertEquals(Double.NaN, pb3.volume)
     }
 
     @Test

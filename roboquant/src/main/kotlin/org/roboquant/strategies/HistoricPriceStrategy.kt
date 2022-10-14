@@ -17,6 +17,7 @@
 package org.roboquant.strategies
 
 import org.roboquant.common.Asset
+import org.roboquant.common.RoboquantException
 import org.roboquant.common.addNotNull
 import org.roboquant.feeds.Event
 import org.roboquant.strategies.utils.MovingWindow
@@ -67,10 +68,10 @@ abstract class HistoricPriceStrategy(
     }
 
     /**
-     * Generate a [Rating] based on the provided [data]. If no rating can be provided, this method should return null
-     * which is also the default implementation.
+     * Generate a [Rating] based on the provided [data]. If no rating can be provided, this method should return null.
      */
-    open fun generateRating(data: DoubleArray): Rating? = null
+    open fun generateRating(data: DoubleArray): Rating? =
+        throw RoboquantException("Should override generateSignal or generateRating")
 
     override fun reset() {
         super.reset()

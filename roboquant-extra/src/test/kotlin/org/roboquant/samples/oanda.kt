@@ -40,9 +40,7 @@ fun oanda() {
     val feed = OANDAHistoricFeed()
     feed.retrieve("EUR_USD", "USD_JPY", "GBP_USD")
     println(feed.assets.summary())
-    println(feed.timeline.size)
-    println(feed.timeframe)
-
+    println("events=${feed.timeline.size} timeframe=${feed.timeframe}")
 }
 
 fun forexAvro() {
@@ -135,8 +133,7 @@ fun oandaClosePositions() {
     Logging.setLevel(Level.FINE)
     Config.exchangeRates = OANDAExchangeRates()
 
-    val target = mutableListOf<Position>() // target portfolio is an empty portfolio
-    val changes = broker.account.positions.diff(target)
+    val changes = broker.account.positions.close()
     val orders = changes.map { MarketOrder(it.key, it.value) }
     broker.place(orders, Event.empty())
     println(broker.account.fullSummary())
@@ -200,7 +197,7 @@ fun oandaBroker2(createOrder: Boolean = true) {
 }
 
 fun main() {
-    when ("OANDA_LIVE_FEED2") {
+    when ("OANDA_FEED") {
         "OANDA_BROKER" -> oandaBroker()
         "OANDA_BROKER2" -> oandaBroker2()
         "OANDA_BROKER3" -> oandaBroker3()

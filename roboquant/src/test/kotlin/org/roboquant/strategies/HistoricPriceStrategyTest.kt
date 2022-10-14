@@ -16,8 +16,10 @@
 
 package org.roboquant.strategies
 
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.Asset
+import org.roboquant.common.RoboquantException
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -42,6 +44,9 @@ internal class HistoricPriceStrategyTest {
             return null
         }
     }
+
+    private class MySubclass3 : HistoricPriceStrategy(1)
+
 
     @Test
     fun test() {
@@ -75,6 +80,18 @@ internal class HistoricPriceStrategyTest {
         c.called = false
         c.generate(event)
         assertFalse(c.called)
+    }
+
+    @Test
+    fun test3() {
+        val c = MySubclass3()
+        val event = TestData.event()
+        assertThrows<RoboquantException> {
+            c.generate(event)
+            c.generate(event)
+            c.generate(event)
+        }
+
     }
 
 }

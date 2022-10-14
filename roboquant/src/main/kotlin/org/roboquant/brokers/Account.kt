@@ -230,7 +230,14 @@ val List<OrderState>.assets
 
 
 /**
- * Return the difference between these positions and a target set of positions
+ * Return the required sizing per asset to close the positions. This method doesn't close the actual open positions,
+ * just provides the information to do so.
+ */
+fun Collection<Position>.close() : Map<Asset, Size>  = diff(emptyList())
+
+
+/**
+ * Return the difference between these positions and a target set of positions.
  */
 fun Collection<Position>.diff(target: Collection<Position>): Map<Asset, Size> {
     val result = mutableMapOf<Asset, Size>()

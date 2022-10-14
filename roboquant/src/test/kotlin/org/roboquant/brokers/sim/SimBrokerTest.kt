@@ -73,7 +73,7 @@ internal class SimBrokerTest {
         assertEquals(1, account.trades.size)
         assertEquals(1, account.closedOrders.size)
 
-        account = broker.liquidatePortfolio()
+        account = broker.closePositions()
         assertEquals(0, account.openOrders.size)
         assertEquals(0, account.positions.size)
         assertEquals(2, account.trades.size)
