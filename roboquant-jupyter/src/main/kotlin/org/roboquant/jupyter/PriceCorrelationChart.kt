@@ -84,9 +84,8 @@ class PriceCorrelationChart(
                     list.add(price)
                 }
             }
-
-        } catch (exception: ClosedReceiveChannelException) {
-            logger.info(exception.message)
+        } catch (e: ClosedReceiveChannelException) {
+            logger.debug(e) { "channel closed" }
         } finally {
             channel.close()
             if (job.isActive) job.cancel()

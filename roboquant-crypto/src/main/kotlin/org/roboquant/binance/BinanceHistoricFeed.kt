@@ -79,9 +79,9 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
                     val now = Instant.ofEpochMilli(bar.closeTime)
                     add(now, action)
                 }
-                logger.fine { "Retrieved $asset for $timeframe" }
+                logger.debug { "Retrieved $asset for $timeframe" }
             } else {
-                logger.warning { "$symbol not found" }
+                logger.warn { "$symbol not found" }
             }
 
         }

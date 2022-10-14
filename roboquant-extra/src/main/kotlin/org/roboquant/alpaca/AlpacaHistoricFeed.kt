@@ -82,7 +82,7 @@ class AlpacaHistoricFeed(
                 val now = quote.timestamp.toInstant()
                 add(now, action)
             }
-            logger.fine { "Retrieved quote prices for asset $asset and $timeframe" }
+            logger.debug { "Retrieved quote prices for asset $asset and $timeframe" }
         }
     }
 
@@ -106,7 +106,7 @@ class AlpacaHistoricFeed(
                 val now = trade.timestamp.toInstant()
                 add(now, action)
             }
-            logger.fine { "Retrieved trade prices for asset $asset and $timeframe" }
+            logger.debug { "Retrieved trade prices for asset $asset and $timeframe" }
         }
     }
 
@@ -156,7 +156,7 @@ class AlpacaHistoricFeed(
                 val now = bar.timestamp.toInstant()
                 add(now, action)
             }
-            logger.fine { "Retrieved price bars for asset $asset and timeframe $timeframe" }
+            logger.debug { "Retrieved price bars for asset $asset and timeframe $timeframe" }
         }
     }
 

@@ -19,9 +19,7 @@
 package org.roboquant.ta
 
 import org.roboquant.common.Asset
-import org.roboquant.common.Logging
 import org.roboquant.common.addNotNull
-import org.roboquant.common.severe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.strategies.Rating
@@ -30,7 +28,6 @@ import org.roboquant.strategies.SignalType
 import org.roboquant.strategies.Strategy
 import org.roboquant.strategies.utils.PriceBarSeries
 import java.lang.Integer.max
-import java.util.logging.Logger
 
 /**
  * This strategy that makes it easy to implement different types strategies based on technical analysis indicators from
@@ -48,7 +45,6 @@ class TaLibSignalStrategy(
 ) : Strategy {
 
     private val buffers = mutableMapOf<Asset, PriceBarSeries>()
-    private val logger: Logger = Logging.getLogger(TaLibSignalStrategy::class)
     val taLib = TaLib()
 
     companion object {
@@ -82,16 +78,8 @@ class TaLibSignalStrategy(
             val asset = priceAction.asset
             val buffer = buffers.getOrPut(asset) { PriceBarSeries(asset, history) }
             if (buffer.add(priceAction)) {
-                try {
-                    val signal = block.invoke(taLib, buffer)
-                    signals.addNotNull(signal)
-                } catch (e: InsufficientData) {
-                    logger.severe(
-                        "Not enough data available to calculate the indicators, increase the history size",
-                        e
-                    )
-                    throw e
-                }
+                val signal = block.invoke(taLib, buffer)
+                signals.addNotNull(signal)
             }
         }
         return signals

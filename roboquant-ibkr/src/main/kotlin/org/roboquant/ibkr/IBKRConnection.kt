@@ -79,7 +79,7 @@ internal object IBKRConnection {
                 try {
                     reader.processMsgs()
                 } catch (e: Throwable) {
-                    logger.warning("Exception: " + e.message)
+                    logger.warn("Exception: " + e.message)
                 }
             }
         }.start()

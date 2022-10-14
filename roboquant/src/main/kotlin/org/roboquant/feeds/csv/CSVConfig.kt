@@ -104,9 +104,9 @@ data class CSVConfig(
             val file = filePath.toFile()
             val prop = Properties()
             if (file.exists()) {
-                logger.fine { "Found configuration file $file" }
+                logger.debug { "Found configuration file $file" }
                 prop.load(file.inputStream())
-                logger.finer { prop.toString() }
+                logger.trace { prop.toString() }
             }
             return prop.map { it.key.toString() to it.value.toString() }.toMap()
         }
@@ -151,7 +151,7 @@ data class CSVConfig(
                 "file.skip" -> fileSkip = value.split(",")
                 "price.adjust" -> priceAdjust = value.toBoolean()
                 else -> {
-                    logger.finer { "Found property $key with value $value" }
+                    logger.trace { "Found property $key with value $value" }
                 }
             }
         }

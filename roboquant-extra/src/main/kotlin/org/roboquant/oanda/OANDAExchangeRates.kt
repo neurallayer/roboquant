@@ -67,7 +67,7 @@ class OANDAExchangeRates(
             val quote1 = price.quoteHomeConversionFactors.positiveUnits.doubleValue()
             val quote2 = price.quoteHomeConversionFactors.negativeUnits.doubleValue()
             exchangeRates[pair] = Pair(quote1, quote2)
-            logger.finer { "Added $pair BUY=$quote1 SELL=$quote2" }
+            logger.trace { "Added $pair BUY=$quote1 SELL=$quote2" }
         }
         logger.info { "Added ${exchangeRates.size} exchange rates" }
     }

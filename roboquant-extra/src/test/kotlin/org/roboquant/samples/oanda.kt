@@ -21,7 +21,6 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.brokers.*
 import org.roboquant.common.*
-import org.roboquant.common.summary
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.OrderBook
 import org.roboquant.feeds.PriceBar
@@ -34,7 +33,6 @@ import org.roboquant.orders.FOK
 import org.roboquant.orders.MarketOrder
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.EMAStrategy
-import java.util.logging.Level
 
 fun oanda() {
     val feed = OANDAHistoricFeed()
@@ -130,7 +128,6 @@ fun oandaPaperTrading() {
 
 fun oandaClosePositions() {
     val broker = OANDABroker()
-    Logging.setLevel(Level.FINE)
     Config.exchangeRates = OANDAExchangeRates()
 
     val changes = broker.account.positions.close()
@@ -164,7 +161,6 @@ fun oandaBroker() {
 }
 
 fun oandaBroker3() {
-    Logging.setLevel(Level.FINE, "OANDABroker")
     Currency.increaseDigits(3)
 
     val broker = OANDABroker()
@@ -183,7 +179,6 @@ fun oandaBroker3() {
 }
 
 fun oandaBroker2(createOrder: Boolean = true) {
-    Logging.setLevel(Level.FINE, "OANDABroker")
     val broker = OANDABroker()
     println(broker.account.fullSummary())
     println(broker.availableAssets.summary())

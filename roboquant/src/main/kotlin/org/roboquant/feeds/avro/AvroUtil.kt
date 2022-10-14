@@ -119,7 +119,7 @@ object AvroUtil {
                             }
 
                             else -> {
-                                logger.warning("Unsupported price action encountered $action")
+                                logger.warn("Unsupported price action encountered $action")
                                 continue
                             }
                         }

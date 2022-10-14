@@ -25,7 +25,6 @@ import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.csv.AutoDetectTimeParser
 import java.time.Instant
-import java.util.logging.Logger
 
 class IBKRHistoricFeed(
     configure: IBKRConfig.() -> Unit = {}
@@ -82,7 +81,7 @@ class IBKRHistoricFeed(
         while (subscriptions.isNotEmpty() && Instant.now() <= endTime) Thread.sleep(1_000)
     }
 
-    inner class Wrapper(logger: Logger) : BaseWrapper(logger) {
+    inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
         override fun historicalData(reqId: Int, bar: Bar) {
             val asset = subscriptions[reqId]!!

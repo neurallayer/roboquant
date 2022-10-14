@@ -86,10 +86,6 @@
             <groupId>org.roboquant</groupId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.roboquant</groupId>
             <artifactId>binance-api-client</artifactId>
             <version>1.0.3</version>

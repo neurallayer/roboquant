@@ -16,43 +16,21 @@
 
 package org.roboquant.common
 
+
 import org.junit.jupiter.api.Test
-import java.util.logging.Level
-import kotlin.test.*
+import org.junit.jupiter.api.assertDoesNotThrow
 
 class LoggingTest {
 
+
     @Test
     fun testBasic() {
-        Logging.setDefaultLevel(Level.INFO)
-        val logger = Logging.getLogger("org.roboquant.test")
-        assertEquals("org.roboquant.test", logger.name)
-        assertEquals(Level.INFO, logger.level)
+        val logger = Logging.getLogger(this::class)
+        assertDoesNotThrow {
+            logger.debug("fine")
+        }
     }
 
-    @Test
-    fun testSetLevel() {
-        Logging.setDefaultLevel(Level.INFO)
-        val logger = Logging.getLogger("org.roboquant.test")
 
-        Logging.setLevel(Level.WARNING)
-        assertEquals(Level.WARNING, logger.level)
-        Logging.setLevel(Level.INFO)
-    }
-
-    @Test
-    fun testDefaultLevel() {
-        Logging.setDefaultLevel(Level.FINE)
-        val logger = Logging.getLogger("org.roboquant.test2")
-        assertEquals(Level.FINE, logger.level)
-        Logging.setDefaultLevel(Level.INFO)
-    }
-
-    @Test
-    fun testNames() {
-        Logging.getLogger("org.roboquant.test3")
-        val names = Logging.getLoggerNames()
-        assertContains(names, "org.roboquant.test3")
-    }
 
 }

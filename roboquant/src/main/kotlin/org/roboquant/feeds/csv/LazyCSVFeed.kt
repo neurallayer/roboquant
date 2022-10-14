@@ -28,7 +28,6 @@ import java.io.FileReader
 import java.nio.file.Path
 import java.time.Instant
 import java.util.*
-import java.util.logging.Logger
 import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
 
@@ -58,7 +57,7 @@ class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetF
 
     constructor(path: String, configure: CSVConfig.() -> Unit = {}) : this(Path.of(path), configure)
 
-    private val logger: Logger = Logging.getLogger(LazyCSVFeed::class)
+    private val logger = Logging.getLogger(LazyCSVFeed::class)
     private val files: Map<Asset, File>
     val config: CSVConfig = CSVConfig.fromFile(path)
 
@@ -67,7 +66,7 @@ class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetF
 
     init {
         require(path.isDirectory() || path.isRegularFile()) { "$path does not exist" }
-        logger.fine { "Scanning $path" }
+        logger.debug { "Scanning $path" }
         config.configure()
         files = path.toFile()
             .walk()
@@ -78,7 +77,7 @@ class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetF
             }.toMap()
 
         logger.info { "Scanned $path found ${files.size} files" }
-        if (files.isEmpty()) logger.warning { "No files to process" }
+        if (files.isEmpty()) logger.warn { "No files to process" }
     }
 
     override suspend fun play(channel: EventChannel) {
@@ -118,7 +117,7 @@ class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetF
 
         } finally {
             for (reader in readers.values) {
-                if (reader.errors > 0) logger.fine { "${reader.asset} has ${reader.errors} error" }
+                if (reader.errors > 0) logger.debug { "${reader.asset} has ${reader.errors} error" }
                 reader.close()
             }
         }

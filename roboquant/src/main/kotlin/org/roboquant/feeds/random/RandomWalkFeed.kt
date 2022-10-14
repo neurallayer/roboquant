@@ -59,7 +59,7 @@ class RandomWalkFeed(
     override val assets = 1.rangeTo(nAssets).map { template.copy(symbol = "Asset-$it") }.toSortedSet()
 
     init {
-        logger.fine {
+        logger.debug {
             "Created $nAssets assets with ${timeline.size} events and a timeline " +
                     "from ${timeline.first()} to ${timeline.last()}"
         }

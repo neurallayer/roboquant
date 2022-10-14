@@ -84,7 +84,7 @@ internal object AlpacaConnection {
         val result = mutableMapOf<String, Asset>()
         availableAssets.forEach {
             if (it.exchange != "OTC" || includeOTC) {
-                if (it.exchange !in exchangeCodes) logger.warning("Exchange ${it.exchange} not configured")
+                if (it.exchange !in exchangeCodes) logger.warn("Exchange ${it.exchange} not configured")
                 val assetClass = if (it.assetClass == AssetClass.CRYPTO) AssetType.CRYPTO else AssetType.STOCK
                 result[it.id] = Asset(it.symbol, assetClass, "USD", it.exchange)
             }

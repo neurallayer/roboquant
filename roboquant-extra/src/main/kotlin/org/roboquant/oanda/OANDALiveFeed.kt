@@ -100,7 +100,7 @@ class OANDALiveFeed(
                                     it.volume.toDouble()
                                 )
                             actions.add(action)
-                            logger.fine { "Got price bar at ${now.truncatedTo(ChronoUnit.SECONDS)} for $action" }
+                            logger.debug { "Got price bar at ${now.truncatedTo(ChronoUnit.SECONDS)} for $action" }
                         }
                     }
                 }
@@ -128,7 +128,7 @@ class OANDALiveFeed(
             if (asset != null)
                 assetMap[it] = asset
             else
-                logger.warning("No asset found for symbol $it. See broker.availableAssets for all available assets")
+                logger.warn("No asset found for symbol $it. See broker.availableAssets for all available assets")
         }
         jobs.add {
             var since: DateTime? = null
@@ -156,7 +156,7 @@ class OANDALiveFeed(
                             }
                         )
                     }
-                    logger.fine("Got ${actions.size} order-book actions")
+                    logger.debug("Got ${actions.size} order-book actions")
                     if (actions.isNotEmpty()) send(Event(actions, now))
                     since = resp.time
                 }

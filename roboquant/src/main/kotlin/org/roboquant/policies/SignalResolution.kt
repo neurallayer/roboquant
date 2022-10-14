@@ -91,7 +91,7 @@ private class SignalResolverPolicy(private val policy: Policy, private val resol
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val resolvedSignals = signals.resolve(resolution)
-        logger.fine { "signals in=${signals.size} out=${resolvedSignals.size}" }
+        logger.debug { "signals in=${signals.size} out=${resolvedSignals.size}" }
         return policy.act(resolvedSignals, account, event)
     }
 

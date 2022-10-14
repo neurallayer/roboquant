@@ -56,7 +56,7 @@ class OANDAHistoricFeed(configure: OANDAConfig.() -> Unit = {}) : HistoricPriceF
     ) {
         for (symbol in symbols) {
             if (symbol !in availableAssets) {
-                logger.warning("$symbol not in available assets")
+                logger.warn("$symbol not in available assets")
                 continue
             }
             val request = InstrumentCandlesRequest(InstrumentName(symbol))
@@ -66,7 +66,7 @@ class OANDAHistoricFeed(configure: OANDAConfig.() -> Unit = {}) : HistoricPriceF
                 .setGranularity(CandlestickGranularity.valueOf(granularity))
             val resp = ctx.instrument.candles(request)
             val asset = availableAssets[resp.instrument.toString()]!!
-            if (resp.candles.isEmpty()) logger.warning("No candles retrieved for $symbol for period $timeframe")
+            if (resp.candles.isEmpty()) logger.warn("No candles retrieved for $symbol for period $timeframe")
             resp.candles.forEach {
                 with(it.mid) {
                     val action =

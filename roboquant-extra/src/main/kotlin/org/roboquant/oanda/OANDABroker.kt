@@ -90,7 +90,7 @@ class OANDABroker(
         _account.portfolio.clear()
         val positions = ctx.position.listOpen(accountID).positions
         for (p in positions) {
-            logger.fine { "Received position $p" }
+            logger.debug { "Received position $p" }
             val symbol = p.instrument.toString()
             if (p.long.units.bigDecimalValue() != BigDecimal.ZERO) {
                 val position = getPosition(symbol, p.long)
@@ -157,7 +157,7 @@ class OANDABroker(
         o.instrument = InstrumentName(order.asset.symbol)
         o.setUnits(order.size.toBigDecimal())
         req.setOrder(o)
-        logger.fine { "Created OANDA order $o" }
+        logger.debug { "Created OANDA order $o" }
         return req
     }
 
@@ -168,7 +168,7 @@ class OANDABroker(
         o.setUnits(order.size.toBigDecimal())
         o.setPrice(order.limit)
         req.setOrder(o)
-        logger.fine { "Created OANDA order $o" }
+        logger.debug { "Created OANDA order $o" }
         return req
     }
 
@@ -177,7 +177,7 @@ class OANDABroker(
      * always TIF be submitted with FOK (FillOrKill) and ignore the requested TiF.
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        logger.finer { "received ${orders.size} orders and ${event.actions.size} actions" }
+        logger.trace { "received ${orders.size} orders and ${event.actions.size} actions" }
         _account.putOrders(orders.initialOrderState)
 
         for (order in orders) {
@@ -189,11 +189,11 @@ class OANDABroker(
             }
 
             val resp = ctx.order.create(orderRequest)
-            logger.fine { "Received response with last transaction Id ${resp.lastTransactionID}" }
+            logger.debug { "Received response with last transaction Id ${resp.lastTransactionID}" }
             if (resp.orderFillTransaction != null) {
                 val trx = resp.orderFillTransaction
                 state = OrderState(order, OrderStatus.COMPLETED, event.time, event.time)
-                logger.fine { "Received transaction $trx" }
+                logger.debug { "Received transaction $trx" }
                 processTrade(order, trx)
             } else if (resp.orderCancelTransaction != null) {
                 val trx = resp.orderCancelTransaction
@@ -208,9 +208,9 @@ class OANDABroker(
 
                     else -> OrderState(order, OrderStatus.REJECTED, event.time, event.time)
                 }
-                logger.fine { "Received order cancellation for $order with reason ${trx.reason}" }
+                logger.debug { "Received order cancellation for $order with reason ${trx.reason}" }
             } else {
-                logger.warning { "No order cancel or fill was returned for $order" }
+                logger.warn { "No order cancel or fill was returned for $order" }
             }
 
             _account.putOrder(state)

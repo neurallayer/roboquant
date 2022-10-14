@@ -30,7 +30,6 @@ import java.util.logging.Logger
  */
 class InfoLogger(
     private val splitMetrics: Boolean = false,
-    private val level: Level = Level.INFO
 ) : MetricsLogger {
 
     private val logger = Logging.getLogger(InfoLogger::class)
@@ -38,8 +37,9 @@ class InfoLogger(
     override fun log(results: MetricResults, info: RunInfo) {
         if (results.isEmpty()) return
 
+
         if (!splitMetrics)
-            logger.log(level) {
+            logger.info {
                 mapOf(
                     "run" to info.run,
                     "epoch" to info.episode,
@@ -50,7 +50,7 @@ class InfoLogger(
             }
         else
             results.forEach {
-                logger.log(level) {
+                logger.info {
                     mapOf(
                         "run" to info.run,
                         "epoch" to info.episode,
@@ -61,6 +61,7 @@ class InfoLogger(
                     ).toString()
                 }
             }
+
     }
 
 }

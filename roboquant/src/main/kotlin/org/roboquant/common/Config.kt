@@ -26,7 +26,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.ZoneId
 import java.util.*
-import java.util.logging.Logger
 import kotlin.io.path.div
 import kotlin.random.Random
 
@@ -41,7 +40,7 @@ import kotlin.random.Random
  */
 object Config {
 
-    private val logger: Logger = Logging.getLogger(Config::class)
+    private val logger = Logging.getLogger(Config::class)
     private val properties = mutableMapOf<String, String>()
     private const val ONE_MB = 1024 * 1024
     private const val DEFAULT_SEED = 42L
@@ -127,7 +126,7 @@ object Config {
         val path: Path = Paths.get(System.getProperty("user.home"), ".roboquant")
         if (Files.notExists(path)) {
             Files.createDirectory(path)
-            logger.finer { "Created new home directory $path" }
+            logger.trace { "Created new home directory $path" }
         }
         path
     }
@@ -148,12 +147,12 @@ object Config {
      * @return
      */
     fun getProperty(name: String, default: String): String {
-        logger.finer { "Finding property $name" }
+        logger.trace { "Finding property $name" }
         return properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name] ?: default
     }
 
     fun getProperty(name: String): String? {
-        logger.finer { "Finding property $name" }
+        logger.trace { "Finding property $name" }
         return properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name]
     }
 
@@ -167,7 +166,7 @@ object Config {
             fun load(path: Path) {
                 if (Files.exists(path)) {
                     prop.load(path.toFile().inputStream())
-                    logger.finer { "Found property file at $path" }
+                    logger.trace { "Found property file at $path" }
                 }
             }
 

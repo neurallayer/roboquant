@@ -86,7 +86,7 @@ class AlphaVantageHistoricFeed(
                 .fetchSync()
 
             if (result.errorMessage != null)
-                logger.warning(result.errorMessage)
+                logger.warn(result.errorMessage)
             else
                 handleIntraday(result)
         }
@@ -109,7 +109,7 @@ class AlphaVantageHistoricFeed(
                 .fetchSync()
 
             if (result.errorMessage != null)
-                logger.warning(result.errorMessage)
+                logger.warn(result.errorMessage)
             else
                 handleDaily(result)
         }
@@ -138,7 +138,7 @@ class AlphaVantageHistoricFeed(
             }
             logger.info { "Received prices for $symbol" }
         } catch (e: Throwable) {
-            logger.severe { e.toString() }
+            logger.error { e.toString() }
         }
     }
 
@@ -158,7 +158,7 @@ class AlphaVantageHistoricFeed(
             }
             logger.info { "Received prices for $symbol" }
         } catch (e: Throwable) {
-            logger.severe { e.toString() }
+            logger.error { e.toString() }
         }
     }
 

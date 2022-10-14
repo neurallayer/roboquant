@@ -27,7 +27,6 @@ import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
-import java.util.logging.Level
 
 fun alpacaBroker() {
     val feed = CSVFeed("data/US") {
@@ -72,7 +71,6 @@ fun alpacaConnection() {
 }
 
 fun alpacaLiveFeed() {
-    Logging.setLevel(Level.FINER)
     val feed = AlpacaLiveFeed()
 
     feed.subscribeCrypto(listOf("*"))

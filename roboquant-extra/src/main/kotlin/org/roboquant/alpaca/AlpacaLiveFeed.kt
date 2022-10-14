@@ -28,7 +28,6 @@ import net.jacobpeterson.alpaca.websocket.marketdata.MarketDataWebsocketInterfac
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
-import org.roboquant.common.severe
 import org.roboquant.feeds.*
 import java.io.IOException
 import java.time.Instant
@@ -96,7 +95,7 @@ class AlpacaLiveFeed(
         connection.connect()
         connection.waitForAuthorization(timeoutMillis, TimeUnit.MILLISECONDS)
         if (!connection.isValid) {
-            logger.severe("Couldn't establish websocket connection")
+            logger.warn("Couldn't establish websocket connection")
         } else {
             connection.setListener(listener)
         }
@@ -176,7 +175,7 @@ class AlpacaLiveFeed(
     @Suppress("TooGenericExceptionCaught")
     private fun handleMsg(msg: MarketDataMessage) {
         try {
-            logger.finer { "Received msg $msg" }
+            logger.trace { "Received msg $msg" }
             val action: PriceAction? = when (msg) {
                 is TradeMessage -> TradePrice(assetsMap[msg.symbol]!!, msg.price)
                 is QuoteMessage -> PriceQuote(
@@ -197,33 +196,33 @@ class AlpacaLiveFeed(
                 )
 
                 is SuccessMessage -> {
-                    logger.fine(msg.message); null
+                    logger.debug(msg.message); null
                 }
 
                 else -> {
-                    logger.warning("Unexpected msg $msg"); null
+                    logger.warn("Unexpected msg $msg"); null
                 }
             }
 
             if (action != null) {
                 val now = Instant.now()
-                logger.finer { "Received action $action at ${now.truncatedTo(ChronoUnit.SECONDS)}" }
+                logger.trace { "Received action $action at ${now.truncatedTo(ChronoUnit.SECONDS)}" }
                 val event = Event(listOf(action), now)
                 send(event)
             }
         } catch (e: Throwable) {
-            logger.severe("error during handling market data message", e)
+            logger.warn("error during handling market data message $e")
         }
     }
 
     private fun createListener(): MarketDataListener {
         return MarketDataListener { streamMessageType, msg ->
-            logger.finer { "Received message of type=$streamMessageType and msg=$msg" }
+            logger.trace { "Received message of type=$streamMessageType and msg=$msg" }
 
             when (streamMessageType) {
-                MarketDataMessageType.ERROR -> logger.warning("$msg")
+                MarketDataMessageType.ERROR -> logger.warn("$msg")
                 MarketDataMessageType.SUBSCRIPTION -> logger.info("subscription $msg")
-                MarketDataMessageType.SUCCESS -> logger.fine("success $msg")
+                MarketDataMessageType.SUCCESS -> logger.debug("success $msg")
                 else -> handleMsg(msg)
             }
         }

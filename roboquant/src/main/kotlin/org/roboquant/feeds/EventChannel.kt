@@ -21,7 +21,6 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.compareTo
-import java.util.logging.Logger
 
 /**
  * Wrapper around a [Channel] for communicating the [events][Event] of a [Feed]. It uses asynchronous communication
@@ -38,7 +37,7 @@ import java.util.logging.Logger
 open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timeframe.INFINITE) {
 
     private val channel = Channel<Event>(capacity)
-    private val logger: Logger = Logging.getLogger(EventChannel::class)
+    private val logger = Logging.getLogger(EventChannel::class)
 
     /**
      * True if the channel is done, false otherwise
@@ -59,11 +58,11 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
                 if (done) return
                 val dropped = channel.tryReceive().getOrNull()
                 if (dropped !== null)
-                    logger.fine { "dropped event for time ${dropped.time}" }
+                    logger.debug { "dropped event for time ${dropped.time}" }
             }
         } else {
             if (event.time > timeframe) {
-                logger.fine { "Offer ${event.time} after $timeframe, closing channel" }
+                logger.debug { "Offer ${event.time} after $timeframe, closing channel" }
                 close()
             }
         }
@@ -83,7 +82,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
             channel.send(event)
         } else {
             if (event.time > timeframe) {
-                logger.fine { "Send ${event.time} after $timeframe, closing channel" }
+                logger.debug { "Send ${event.time} after $timeframe, closing channel" }
                 close()
             }
         }

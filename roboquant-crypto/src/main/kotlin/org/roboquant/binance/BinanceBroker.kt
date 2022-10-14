@@ -122,14 +122,14 @@ class BinanceBroker(
                         placedOrders[newMarketOrder.orderId] = OrderState(order)
                     }
 
-                    else -> logger.warning {
+                    else -> logger.warn {
                         "supports only cancellation, market and limit orders, received ${order::class} instead"
                     }
 
                 }
 
             } else {
-                logger.warning { "BinanceBroker supports only CRYPTO assets, received ${asset.type} instead" }
+                logger.warn { "BinanceBroker supports only CRYPTO assets, received ${asset.type} instead" }
             }
         }
 

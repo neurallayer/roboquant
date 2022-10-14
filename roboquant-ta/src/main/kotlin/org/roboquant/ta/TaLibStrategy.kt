@@ -18,7 +18,6 @@
 
 package org.roboquant.ta
 
-import org.roboquant.common.Logging
 import org.roboquant.common.RoboquantException
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
@@ -28,7 +27,6 @@ import org.roboquant.strategies.Strategy
 import org.roboquant.strategies.utils.MultiAssetPriceBarSeries
 import org.roboquant.strategies.utils.PriceBarSeries
 import java.lang.Integer.max
-import java.util.logging.Logger
 
 /**
  * This strategy that makes it easy to implement different types strategies based on technical analysis indicators.
@@ -43,7 +41,6 @@ class TaLibStrategy(history: Int = 15) : Strategy {
     private var sellFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
     private var buyFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
     private val data = MultiAssetPriceBarSeries(history)
-    private val logger: Logger = Logging.getLogger(TaLibStrategy::class)
     val taLib = TaLib()
 
     companion object {
@@ -206,15 +203,9 @@ class TaLibStrategy(history: Int = 15) : Strategy {
         val results = mutableListOf<Signal>()
         for ((asset, priceAction) in event.prices) {
             if (priceAction is PriceBar && data.add(priceAction)) {
-                try {
-                    val series = data.getSeries(asset)
-                    if (buyFn.invoke(taLib, series)) results.add(Signal(asset, Rating.BUY))
-                    if (sellFn.invoke(taLib, series)) results.add(Signal(asset, Rating.SELL))
-                } catch (e: InsufficientData) {
-                    logger.severe("Not enough data available to calculate the indicators, increase history")
-                    logger.severe(e.message)
-                    throw e
-                }
+                val series = data.getSeries(asset)
+                if (buyFn.invoke(taLib, series)) results.add(Signal(asset, Rating.BUY))
+                if (sellFn.invoke(taLib, series)) results.add(Signal(asset, Rating.SELL))
             }
         }
         return results

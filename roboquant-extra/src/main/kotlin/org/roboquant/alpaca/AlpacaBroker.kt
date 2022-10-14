@@ -23,7 +23,6 @@ import net.jacobpeterson.alpaca.model.endpoint.common.enums.SortDirection
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.CurrentOrderStatus
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderSide
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce
-import net.jacobpeterson.alpaca.rest.AlpacaClientException
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.common.Currency
@@ -82,18 +81,14 @@ class AlpacaBroker(
      * Sync the roboquant account with the details from Alpaca account
      */
     private fun syncAccount() {
-        try {
-            val acc = alpacaAPI.account().get()
+        val acc = alpacaAPI.account().get()
 
-            _account.baseCurrency = Currency.getInstance(acc.currency)
-            _account.buyingPower = Amount(_account.baseCurrency, acc.buyingPower.toDouble())
+        _account.baseCurrency = Currency.getInstance(acc.currency)
+        _account.buyingPower = Amount(_account.baseCurrency, acc.buyingPower.toDouble())
 
-            _account.cash.clear()
-            _account.cash.set(_account.baseCurrency, acc.cash.toDouble())
-            _account.lastUpdate = Instant.now()
-        } catch (e: AlpacaClientException) {
-            logger.severe(e.stackTraceToString())
-        }
+        _account.cash.clear()
+        _account.cash.set(_account.baseCurrency, acc.cash.toDouble())
+        _account.lastUpdate = Instant.now()
     }
 
     /**
@@ -101,15 +96,11 @@ class AlpacaBroker(
      *
      */
     private fun syncPortfolio() {
-        try {
-            _account.portfolio.clear()
-            for (openPosition in alpacaAPI.positions().get()) {
-                logger.fine { "received $openPosition" }
-                val p = convertPos(openPosition)
-                _account.setPosition(p)
-            }
-        } catch (e: AlpacaClientException) {
-            logger.severe(e.stackTraceToString())
+        _account.portfolio.clear()
+        for (openPosition in alpacaAPI.positions().get()) {
+            logger.debug { "received $openPosition" }
+            val p = convertPos(openPosition)
+            _account.setPosition(p)
         }
     }
 
@@ -131,13 +122,9 @@ class AlpacaBroker(
      * Closed orders will be ignored.
      */
     private fun loadInitialOrders() {
-        try {
-            for (order in alpacaAPI.orders().get(CurrentOrderStatus.OPEN, null, null, null, null, false, null)) {
-                logger.fine { "received open $order" }
-                _account.putOrders(listOf(toOrder(order)))
-            }
-        } catch (e: AlpacaClientException) {
-            logger.severe(e.stackTraceToString())
+        for (order in alpacaAPI.orders().get(CurrentOrderStatus.OPEN, null, null, null, null, false, null)) {
+            logger.debug { "received open $order" }
+            _account.putOrders(listOf(toOrder(order)))
         }
     }
 
@@ -187,10 +174,10 @@ class AlpacaBroker(
         val trades = alpacaAPI.accountActivities().get(
             now, null, null, SortDirection.ASCENDING, 100, "", ActivityType.FILL
         )
-        logger.fine { "Found ${trades.size} fill activities" }
+        logger.debug { "Found ${trades.size} fill activities" }
         for (activity in trades.filterIsInstance<TradeActivity>()) {
             // Only add trades we know the order id of
-            logger.fine { "Found trade $activity" }
+            logger.debug { "Found trade $activity" }
             val order = orderMapping.filterValues { it.id == activity.orderId }.keys.firstOrNull()
             if (order != null && activity.id !in handledTrades) {
                 val trade = Trade(
@@ -256,13 +243,8 @@ class AlpacaBroker(
         syncTrades()
         for (order in orders) {
             if (order is SingleOrder) {
-                try {
-                    placeOrder(order)
-                    _account.putOrder(OrderState(order))
-                } catch (e: AlpacaClientException) {
-                    logger.severe("couldn't place order=$order", e)
-                    _account.putOrder(OrderState(order, status = OrderStatus.REJECTED))
-                }
+                placeOrder(order)
+                _account.putOrder(OrderState(order))
             } else {
                 throw UnsupportedException("Unsupported order type $order")
             }

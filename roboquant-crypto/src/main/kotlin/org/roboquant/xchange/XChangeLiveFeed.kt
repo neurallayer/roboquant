@@ -79,7 +79,7 @@ class XChangeLiveFeed(
 
     init {
         logger.info { "Establishing feed for exchange $exchangeName" }
-        if (!exchange.isAlive) logger.warning { "Exchange connection is not yet live" }
+        if (!exchange.isAlive) logger.warn { "Exchange connection is not yet live" }
     }
 
     /**
@@ -95,7 +95,7 @@ class XChangeLiveFeed(
             val asset = getAsset(cryptoPair)
             val subscription = service.getTrades(cryptoPair).subscribe(
                 { trade -> handleTrade(asset, trade) },
-                { throwable -> logger.warning { "Error in trade subscription ${throwable.stackTrace}" } })
+                { throwable -> logger.warn { "Error in trade subscription ${throwable.stackTrace}" } })
 
             subscriptions.add(subscription)
             assets.add(asset)
@@ -116,7 +116,7 @@ class XChangeLiveFeed(
             val subscription = service.getOrderBook(cryptoPair)
                 .subscribe(
                     { orderBook -> handleOrderBook(asset, orderBook) },
-                    { throwable -> logger.warning { "Error in order book subscription ${throwable.stackTrace}" } })
+                    { throwable -> logger.warn { "Error in order book subscription ${throwable.stackTrace}" } })
             subscriptions.add(subscription)
             assets.add(asset)
         }
@@ -138,11 +138,11 @@ class XChangeLiveFeed(
                 val subscription = service.getTicker(cryptoPair)
                     .subscribe(
                         { ticker -> handleTicker(asset, ticker) },
-                        { throwable -> logger.warning { "Error in ticker subscription ${throwable.stackTrace}" } })
+                        { throwable -> logger.warn { "Error in ticker subscription ${throwable.stackTrace}" } })
                 subscriptions.add(subscription)
                 assets.add(asset)
             } else {
-                logger.warning { "Error in converting $symbol to currency pair" }
+                logger.warn { "Error in converting $symbol to currency pair" }
             }
         }
     }
@@ -179,7 +179,7 @@ class XChangeLiveFeed(
      * @param trade
      */
     private fun handleTrade(asset: Asset, trade: Trade) {
-        logger.finer { "$trade event for $asset" }
+        logger.trace { "$trade event for $asset" }
         val item = TradePrice(asset, trade.price.toDouble(), trade.originalAmount.toDouble())
         val now = if (useMachineTime) Instant.now() else trade.timestamp.toInstant()
         val event = Event(listOf(item), now)
@@ -193,7 +193,7 @@ class XChangeLiveFeed(
      * @param orderBook
      */
     private fun handleOrderBook(asset: Asset, orderBook: CryptoOrderBook) {
-        logger.finer { "$orderBook event for $asset" }
+        logger.trace { "$orderBook event for $asset" }
         val asks = orderBook.asks.map {
             OrderBook.OrderBookEntry(it.cumulativeAmount.toDouble(), it.limitPrice.toDouble())
         }
@@ -213,9 +213,9 @@ class XChangeLiveFeed(
      * @param ticker
      */
     private fun handleTicker(asset: Asset, ticker: Ticker) {
-        logger.finer { "$ticker event for $asset" }
+        logger.trace { "$ticker event for $asset" }
         if (ticker.open == null) {
-            logger.finer { "Received ticker for ${asset.symbol} without open value" }
+            logger.trace { "Received ticker for ${asset.symbol} without open value" }
             return
         }
         val item = PriceBar(asset, ticker.open, ticker.high, ticker.low, ticker.last, ticker.volume)

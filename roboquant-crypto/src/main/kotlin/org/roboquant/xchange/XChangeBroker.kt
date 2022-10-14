@@ -85,7 +85,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
                 val currencyPair = CurrencyPair(asset.symbol, asset.currencyCode)
 
                 if (supportCurrencies != null && currencyPair !in supportCurrencies) {
-                    logger.warning { "Unsupported currency pair $currencyPair for exchange" }
+                    logger.warn { "Unsupported currency pair $currencyPair for exchange" }
                     return account
                 }
                 val orderId = orderId++.toString()
@@ -103,7 +103,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
                     }
 
                     else -> {
-                        logger.warning {
+                        logger.warn {
                             "only market and limit orders are supported, received ${order::class} instead"
                         }
                         _account.rejectOrder(order, event.time)
@@ -111,7 +111,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
                 }
 
             } else {
-                logger.warning { "only CRYPTO assets are supported, received ${asset.type} instead" }
+                logger.warn { "only CRYPTO assets are supported, received ${asset.type} instead" }
                 _account.rejectOrder(order, event.time)
             }
         }
@@ -132,7 +132,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
         val limitPrice = BigDecimal(order.limit)
         val limitOrder = CryptoLimitOrder(orderType, amount, currencyPair, orderId, null, limitPrice)
         val returnValue = tradeService.placeLimitOrder(limitOrder)
-        logger.fine { "Limit Order return value: $returnValue" }
+        logger.debug { "Limit Order return value: $returnValue" }
     }
 
     /**
@@ -146,7 +146,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
         val orderType = if (order.buy) CryptoOrder.OrderType.BID else CryptoOrder.OrderType.ASK
         val marketOrder = CryptoMarketOrder(orderType, amount, currencyPair)
         val returnValue = tradeService.placeMarketOrder(marketOrder)
-        logger.fine { "Market Order return value: $returnValue" }
+        logger.debug { "Market Order return value: $returnValue" }
     }
 
 }

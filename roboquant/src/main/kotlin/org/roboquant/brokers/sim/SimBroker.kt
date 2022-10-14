@@ -24,7 +24,6 @@ import org.roboquant.orders.CancelOrder
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import java.time.Instant
-import java.util.logging.Logger
 
 /**
  * Simulated Broker that is used sd the broker during back testing and live testing. It simulates both broker and
@@ -59,7 +58,7 @@ class SimBroker(
     private val _account = InternalAccount(baseCurrency)
 
     // Logger to use
-    private val logger: Logger = Logging.getLogger(SimBroker::class)
+    private val logger = Logging.getLogger(SimBroker::class)
 
     // Execution engine for simulating trades
     private val executionEngine = ExecutionEngine(pricingEngine)
@@ -135,7 +134,7 @@ class SimBroker(
 
     private fun updateBuyingPower() {
         val value = accountModel.getBuyingPower(_account)
-        logger.finer { "Calculated buying power $value" }
+        logger.trace { "Calculated buying power $value" }
         _account.buyingPower = value
     }
 
@@ -144,7 +143,7 @@ class SimBroker(
      * get the prices required to simulate the trading on an exchange. Return an updated [Account] instance
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        logger.finer { "Received ${orders.size} orders at ${event.time}" }
+        logger.trace { "Received ${orders.size} orders at ${event.time}" }
         simulateMarket(orders, event)
         _account.updateMarketPrices(event)
         _account.lastUpdate = event.time

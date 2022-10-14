@@ -20,12 +20,10 @@ import com.ib.client.Decimal
 import com.ib.client.EClientSocket
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
-import org.roboquant.common.severe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
-import java.util.logging.Logger
 
 /**
  * Get realtime bars from IBKR. Please note that often you need paid subscriptions to get this
@@ -65,21 +63,17 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
     @Suppress("TooGenericExceptionCaught")
     fun subscribe(assets: Collection<Asset>, interval: Int = 5, type: String = "MIDPOINT") {
         for (asset in assets) {
-            try {
-                val contract = IBKRConnection.getContract(asset)
-                client.reqRealTimeBars(++tickerId, contract, interval, type, false, arrayListOf())
-                subscriptions[tickerId] = asset
-                logger.info("Added subscription to receive realtime bars for ${contract.symbol()}")
-            } catch (e: Throwable) {
-                logger.severe("Error during subscribing to $asset", e)
-            }
+            val contract = IBKRConnection.getContract(asset)
+            client.reqRealTimeBars(++tickerId, contract, interval, type, false, arrayListOf())
+            subscriptions[tickerId] = asset
+            logger.info("Added subscription to receive realtime bars for ${contract.symbol()}")
         }
     }
 
     fun subscribe(vararg assets: Asset, interval: Int = 5, type: String = "MIDPOINT") =
         subscribe(assets.toList(), interval, type)
 
-    inner class Wrapper(logger: Logger) : BaseWrapper(logger) {
+    inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
         override fun realtimeBar(
             reqId: Int,
@@ -94,7 +88,7 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
         ) {
             val asset = subscriptions[reqId]
             if (asset == null) {
-                logger.warning("unexpected realtimeBar received with request id $reqId")
+                logger.warn("unexpected realtimeBar received with request id $reqId")
             } else {
                 val action = PriceBar(asset, open, high, low, close, volume.value().toDouble())
                 val now = Instant.ofEpochSecond(time) // IBKR uses seconds resolution

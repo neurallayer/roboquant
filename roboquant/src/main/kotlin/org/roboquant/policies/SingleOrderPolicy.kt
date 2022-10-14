@@ -37,7 +37,7 @@ private class SingleOrderPolicy(private val policy: Policy) : Policy by policy {
         val orders = policy.act(signals, account, event)
         val openOrderAssets = account.openOrders.assets
         val newOrders = orders.filter { ! openOrderAssets.contains(it.asset) }
-        logger.fine { "orders in=${orders.size} out=${orders.size}" }
+        logger.debug { "orders in=${orders.size} out=${orders.size}" }
         return newOrders
     }
 }

@@ -31,7 +31,6 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.logging.Logger
 import java.util.zip.ZipInputStream
 import kotlin.io.path.div
 import kotlin.io.path.notExists
@@ -58,7 +57,7 @@ import kotlin.io.path.notExists
 class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) :
     TimedExchangeRates(Currency.EUR) {
 
-    private val logger: Logger = Logging.getLogger(ECBExchangeRates::class)
+    private val logger = Logging.getLogger(ECBExchangeRates::class)
 
     /**
      * @suppress
@@ -102,7 +101,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
         val cacheFile = Config.home / "$day-$fileName"
 
         if (cacheFile.notExists()) {
-            logger.fine { "Caching $url as $cacheFile " }
+            logger.debug { "Caching $url as $cacheFile " }
             url.openStream().use {
                 Files.copy(it, cacheFile, StandardCopyOption.REPLACE_EXISTING)
             }
@@ -139,10 +138,10 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
             val zis = ZipInputStream(input)
             val entry = zis.nextEntry
             input = if (entry != null) {
-                logger.fine { "Found file ${entry.name} from $url" }
+                logger.debug { "Found file ${entry.name} from $url" }
                 zis
             } else {
-                logger.severe { "File $urlString is not compressed" }
+                logger.error { "File $urlString is not compressed" }
                 input.close()
                 url.openStream()
             }
@@ -169,7 +168,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
                     map[instant] = v
                 } catch (ex: NumberFormatException) {
                     // Will happen due to N/A values and trailing comma in the CSV file
-                    logger.fine { "Encounter number format exception for string $rateStr" }
+                    logger.debug { "Encounter number format exception for string $rateStr" }
                 }
             }
         }

@@ -53,7 +53,7 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 
     override fun getBuyingPower(account: InternalAccount): Amount {
         if (account.portfolio.values.any { it.short }) {
-            logger.warning("Having short positions while using cash account is not supported")
+            logger.warn("Having short positions while using cash account is not supported")
         }
 
         return account.cash.convert(account.baseCurrency, account.lastUpdate) - minimum

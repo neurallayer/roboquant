@@ -65,7 +65,7 @@ class Roboquant(
     private val components = listOf(strategy, policy, broker, logger) + metrics
 
     init {
-        kotlinLogger.fine { "Created new roboquant instance" }
+        kotlinLogger.debug { "Created new roboquant instance" }
     }
 
     /**
@@ -169,7 +169,7 @@ class Roboquant(
         require(episodes > 0) { "episodes need to be greater than zero" }
         val run = runName ?: "run-${runCounter++}"
         val runInfo = RunInfo(run)
-        kotlinLogger.fine { "Starting run $runInfo for $episodes episodes" }
+        kotlinLogger.debug { "Starting run $runInfo for $episodes episodes" }
 
         repeat(episodes) {
             runInfo.episode++
@@ -182,7 +182,7 @@ class Roboquant(
                 runPhase(feed, runInfo)
             }
         }
-        kotlinLogger.fine { "Finished run $runInfo" }
+        kotlinLogger.debug { "Finished run $runInfo" }
     }
 
     /**

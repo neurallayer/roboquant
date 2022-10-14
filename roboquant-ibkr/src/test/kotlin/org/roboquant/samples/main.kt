@@ -33,7 +33,6 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy
-import java.util.logging.Level
 
 fun exchangeRates() {
     val exchangeRates = IBKRExchangeRates()
@@ -43,7 +42,6 @@ fun exchangeRates() {
 }
 
 fun broker() {
-    Logging.setLevel(Level.FINE)
     Config.exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.1)
     val broker = IBKRBroker()
     println(broker.account.fullSummary())
@@ -53,8 +51,6 @@ fun broker() {
 }
 
 fun closePosition() {
-    Logging.setLevel(Level.FINE)
-    Logging.useSimpleFormat = false
     val broker = IBKRBroker()
     val account = broker.account
     println(account.fullSummary())

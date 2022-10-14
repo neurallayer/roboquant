@@ -65,7 +65,7 @@ class BinanceLiveFeed(
         factory = BinanceConnection.getFactory(config)
         client = factory.newWebSocketClient()
         assetMap = BinanceConnection.retrieveAssets(factory.newRestClient())
-        logger.fine { "Started BinanceFeed using web-socket client" }
+        logger.debug { "Started BinanceFeed using web-socket client" }
     }
 
     /**
@@ -92,7 +92,7 @@ class BinanceLiveFeed(
                 closeables.add(closable)
                 subscriptions[asset.symbol] = asset
             } else {
-                logger.warning { "Not found $symbol" }
+                logger.warn { "Not found $symbol" }
             }
         }
     }
@@ -100,7 +100,7 @@ class BinanceLiveFeed(
     private fun handle(resp: CandlestickEvent) {
         if (!resp.barFinal) return
 
-        logger.finer { "Received candlestick event for symbol ${resp.symbol}" }
+        logger.trace { "Received candlestick event for symbol ${resp.symbol}" }
         val asset = subscriptions[resp.symbol.uppercase()]
         if (asset != null) {
             val action = PriceBar(
@@ -115,7 +115,7 @@ class BinanceLiveFeed(
             val event = Event(listOf(action), now)
             send(event)
         } else {
-            logger.warning { "Received CandlestickEvent for unexpected symbol ${resp.symbol}" }
+            logger.warn { "Received CandlestickEvent for unexpected symbol ${resp.symbol}" }
         }
     }
 

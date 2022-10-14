@@ -91,10 +91,10 @@ class CSVFeed(
     private suspend fun readFiles(path: Path) {
         val files = readPath(path)
         if (files.isEmpty()) {
-            logger.warning { "Found no CSV files at $path" }
+            logger.warn { "Found no CSV files at $path" }
             return
         }
-        logger.fine { "Found ${files.size} CSV files" }
+        logger.debug { "Found ${files.size} CSV files" }
 
         val deferredList = mutableListOf<Deferred<Unit>>()
         for (file in files) {
@@ -151,7 +151,7 @@ class CSVFeed(
                         val step = config.processLine(asset, row.fields)
                         result += step
                     } catch (_: Throwable) {
-                        logger.fine { "${asset.symbol} $row" }
+                        logger.debug { "${asset.symbol} $row" }
                         errors += 1
                     }
                 }

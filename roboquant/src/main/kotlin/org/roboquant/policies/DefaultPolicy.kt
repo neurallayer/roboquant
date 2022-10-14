@@ -121,7 +121,7 @@ open class DefaultPolicy(
                 if (order != null) {
                     val exposure = account.convert(getExposure(position, signal.asset, size, price)).value
                     if (exposure <= buyingPower) {
-                        logger.fine { "signal=${signal} amount=$amount exposure=$exposure order=$order" }
+                        logger.debug { "signal=${signal} amount=$amount exposure=$exposure order=$order" }
                         orders.add(order)
                         buyingPower -= exposure
                     }

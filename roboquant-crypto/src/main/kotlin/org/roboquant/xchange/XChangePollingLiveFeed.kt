@@ -49,7 +49,7 @@ class XChangePollingLiveFeed(
     val availableAssets by lazy {
         val symbols = exchange.exchangeSymbols
         if (symbols == null) {
-            logger.warning("No symbols available")
+            logger.warn("No symbols available")
             listOf<Asset>()
         } else {
             symbols.map {
