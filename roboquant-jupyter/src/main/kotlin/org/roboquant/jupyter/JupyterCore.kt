@@ -21,7 +21,6 @@ import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.ThrowableRenderer
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
-import org.roboquant.common.Summarizable
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.concurrent.CopyOnWriteArrayList
@@ -72,9 +71,6 @@ internal class JupyterCore : JupyterIntegration() {
             execute("%logLevel warn")
         }
 
-        render<Summarizable> {
-            print(it.summary())
-        }
 
         /**
          * The resources that need to be loaded.

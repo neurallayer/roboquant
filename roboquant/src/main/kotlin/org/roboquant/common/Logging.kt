@@ -29,23 +29,23 @@ object Logging {
 
     class Logger(private val slf4jLogger : org.slf4j.Logger) : org.slf4j.Logger by slf4jLogger {
 
-        fun trace(throwable: Throwable? = null, messageProducer: () -> Any?) {
+        inline fun trace(throwable: Throwable? = null, messageProducer: () -> Any?) {
             if (isTraceEnabled) trace(messageProducer()?.toString(), throwable)
         }
 
-        fun debug(throwable: Throwable? = null, messageProducer: () -> Any?) {
+        inline fun debug(throwable: Throwable? = null, messageProducer: () -> Any?) {
             if (isDebugEnabled) trace(messageProducer()?.toString(), throwable)
         }
 
-        fun info(throwable: Throwable? = null, messageProducer: () -> Any?) {
+        inline fun info(throwable: Throwable? = null, messageProducer: () -> Any?) {
             if (isInfoEnabled) trace(messageProducer()?.toString(), throwable)
         }
 
-        fun warn(throwable: Throwable? = null, messageProducer: () -> Any?) {
+        inline fun warn(throwable: Throwable? = null, messageProducer: () -> Any?) {
             if (isWarnEnabled) trace(messageProducer()?.toString(), throwable)
         }
 
-        fun error(throwable: Throwable? = null, messageProducer: () -> Any?) {
+        inline fun error(throwable: Throwable? = null, messageProducer: () -> Any?) {
             if (isErrorEnabled) trace(messageProducer()?.toString(), throwable)
         }
 

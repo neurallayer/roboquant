@@ -54,7 +54,7 @@ class Account(
     val closedOrders: List<OrderState>,
     val positions: List<Position>,
     val buyingPower: Amount
-) : Summarizable {
+)  {
 
     /**
      * Cash balances converted to a single amount denoted in the [baseCurrency] of the account
@@ -103,7 +103,7 @@ class Account(
      *
      * @return The summary
      */
-    override fun summary(singleCurrency: Boolean): Summary {
+    fun summary(singleCurrency: Boolean = false) : Summary {
 
         fun c(w: Wallet): Any {
             if (w.isEmpty()) return Amount(baseCurrency, 0.0)
@@ -266,9 +266,9 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
         s.add("EMPTY")
     } else {
         val orders = sortedBy { it.id }
-        val fmt = "%12s│%8s│%10s│%7s│%21s│%21s│%5s│ %-50s"
+        val fmt = "%12s│%8s│%9s|%10s│%7s│%21s│%21s│%5s│ %-50s"
         val header =
-            String.format(fmt, "type", "symbol", "status", "id", "opened at", "closed at", "ccy", "details")
+            String.format(fmt, "type", "symbol", "currency", "status", "id", "opened at", "closed at", "ccy", "details")
         s.add(header)
         orders.forEach {
             with(it) {
@@ -279,6 +279,7 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
                     fmt,
                     order.type,
                     asset.symbol,
+                    asset.currency.currencyCode,
                     status,
                     order.id,
                     t1,
@@ -303,17 +304,18 @@ fun Collection<Trade>.summary(name: String = "trades"): Summary {
         s.add("EMPTY")
     } else {
         val trades = sortedBy { it.time }
-        val fmt = "%24s│%10s│%11s│%14s│%14s│%14s│%12s│"
-        val header = String.format(fmt, "time", "symbol", "size", "cost", "fee", "p&l", "price")
+        val fmt = "%24s│%8s│%9s|%11s│%14s│%14s│%14s│%12s│"
+        val header = String.format(fmt, "time", "symbol", "currency", "size", "cost", "fee", "p&l", "price")
         s.add(header)
         trades.forEach {
             with(it) {
+                val currency = asset.currency
                 val cost = totalCost.formatValue()
                 val fee = fee.formatValue()
                 val pnl = pnl.formatValue()
-                val price = Amount(asset.currency, price).formatValue()
+                val price = Amount(currency, price).formatValue()
                 val t = time.truncatedTo(ChronoUnit.SECONDS)
-                val line = String.format(fmt, t, asset.symbol, size, cost, fee, pnl, price)
+                val line = String.format(fmt, t, asset.symbol, currency.currencyCode, size, cost, fee, pnl, price)
                 s.add(line)
             }
         }
@@ -353,7 +355,7 @@ fun Collection<Position>.summary(name: String = "positions"): Summary {
             val price = Amount(c, v.mktPrice).formatValue()
             val value = v.marketValue.formatValue()
             val pnl = Amount(c, v.unrealizedPNL.value).formatValue()
-            val line = String.format(fmt, v.asset.symbol, v.currency.currencyCode, pos, avgPrice, price, value, pnl)
+            val line = String.format(fmt, v.asset.symbol, c.currencyCode, pos, avgPrice, price, value, pnl)
             s.add(line)
         }
     }

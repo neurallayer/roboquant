@@ -50,10 +50,10 @@ import kotlin.io.path.isRegularFile
  *
  * @constructor
  *
- * @property path The directory that contains the CSV files
- * @param configure The configuration
+ * @property path The directory that contains the CSV files or a single file
+ * @param configure any additional configuration to run
  */
-class LazyCSVFeed(val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetFeed {
+class LazyCSVFeed(private val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetFeed {
 
     constructor(path: String, configure: CSVConfig.() -> Unit = {}) : this(Path.of(path), configure)
 

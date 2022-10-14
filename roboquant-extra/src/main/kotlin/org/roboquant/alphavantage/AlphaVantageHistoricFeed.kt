@@ -121,45 +121,36 @@ class AlphaVantageHistoricFeed(
         return DateTimeFormatter.ofPattern(pattern).withZone(zoneId)
     }
 
-    @Suppress("TooGenericExceptionCaught")
     private fun handleIntraday(response: TimeSeriesResponse) {
-        try {
-            val symbol = response.metaData.symbol
-            logger.info { "Received time series response for $symbol" }
-            val asset = subscriptions[symbol]!!
-            val tz = response.metaData.timeZone ?: "America/New_York"
-            val dtf = getParser(tz)
-            response.stockUnits.forEach {
-                val action = if (generateSinglePrice) TradePrice(asset, it.close) else
-                    PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
+        val symbol = response.metaData.symbol
+        logger.info { "Received time series response for $symbol" }
+        val asset = subscriptions[symbol]!!
+        val tz = response.metaData.timeZone ?: "America/New_York"
+        val dtf = getParser(tz)
+        response.stockUnits.forEach {
+            val action = if (generateSinglePrice) TradePrice(asset, it.close) else
+                PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
 
-                val now = ZonedDateTime.parse(it.date, dtf).toInstant()
-                add(now, action)
-            }
-            logger.info { "Received prices for $symbol" }
-        } catch (e: Throwable) {
-            logger.error { e.toString() }
+            val now = ZonedDateTime.parse(it.date, dtf).toInstant()
+            add(now, action)
         }
+        logger.info { "Received prices for $symbol" }
     }
 
-    @Suppress("TooGenericExceptionCaught")
-    private fun handleDaily(response: TimeSeriesResponse) {
-        try {
-            val symbol = response.metaData.symbol
-            logger.info { "Received time series response for $symbol" }
-            val asset = subscriptions[symbol]!!
-            response.stockUnits.forEach {
-                val action = if (generateSinglePrice) TradePrice(asset, it.close) else
-                    PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
 
-                val localDate = LocalDate.parse(it.date)
-                val now = asset.exchange.getClosingTime(localDate)
-                add(now, action)
-            }
-            logger.info { "Received prices for $symbol" }
-        } catch (e: Throwable) {
-            logger.error { e.toString() }
+    private fun handleDaily(response: TimeSeriesResponse) {
+        val symbol = response.metaData.symbol
+        logger.info { "Received time series response for $symbol" }
+        val asset = subscriptions[symbol]!!
+        response.stockUnits.forEach {
+            val action = if (generateSinglePrice) TradePrice(asset, it.close) else
+                PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
+
+            val localDate = LocalDate.parse(it.date)
+            val now = asset.exchange.getClosingTime(localDate)
+            add(now, action)
         }
+        logger.info { "Received prices for $symbol" }
     }
 
 }

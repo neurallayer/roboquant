@@ -42,12 +42,6 @@ data class Position(
 ) {
 
     /**
-     * The currency of this position, aka the currency of the underlying asset
-     */
-    val currency: Currency
-        get() = asset.currency
-
-    /**
      * @suppress
      */
     companion object {

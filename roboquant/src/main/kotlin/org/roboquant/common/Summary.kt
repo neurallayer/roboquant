@@ -18,10 +18,6 @@ package org.roboquant.common
 
 import java.text.DecimalFormat
 
-interface Summarizable {
-
-    fun summary(singleCurrency: Boolean = true): Summary
-}
 
 /**
  * Summary allows to represent nested data into a tree like format. This is supported by several of the components
@@ -36,8 +32,8 @@ class Summary(val content: String) {
     private val decimalFormatter = DecimalFormat(decimalPattern)
 
     companion object {
-        var decimalPattern = "#.000"
-        var sep = ": "
+        const val decimalPattern = "#.000"
+        const val sep = ": "
     }
 
     /**
@@ -47,16 +43,21 @@ class Summary(val content: String) {
      */
     fun add(child: Summary) = children.add(child)
 
+
     /**
-     * Add a [label] with a numerical [value]. When adding a Float or Double, the decimal formatter will be used to
+     * Add a [label] with an int [value]. When adding a Float or Double, the decimal formatter will be used to
      * format it. Other numbers will be presented using the toString() method.
      */
-    fun add(label: String, value: Number) {
-        when (value) {
-            is Double -> children.add(Summary("$label$sep${decimalFormatter.format(value)}"))
-            is Float -> children.add(Summary("$label$sep${decimalFormatter.format(value)}"))
-            else -> children.add(Summary("$label$sep$value"))
-        }
+    fun add(label: String, value: Int) {
+        children.add(Summary("$label$sep$value"))
+    }
+
+    /**
+     * Add a [label] with a double [value]. When adding a Float or Double, the decimal formatter will be used to
+     * format it. Other numbers will be presented using the toString() method.
+     */
+    fun add(label: String, value: Double) {
+        children.add(Summary("$label$sep${decimalFormatter.format(value)}"))
     }
 
     /**
