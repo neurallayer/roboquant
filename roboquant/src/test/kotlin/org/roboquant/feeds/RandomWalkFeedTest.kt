@@ -84,7 +84,6 @@ internal class RandomWalkFeedTest {
         assertEquals(feed.timeline.size, result.size)
     }
 
-
     @Test
     fun validate() {
         val feed = RandomWalkFeed.lastYears()

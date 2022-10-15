@@ -110,7 +110,7 @@ open class DefaultPolicy(
 
             if (price !== null) {
                 val amount = account.equityAmount * orderPercentage
-                val size = calcSize(amount, signal.asset, price, account)
+                val size = calcSize(amount, signal.asset, price, event.time)
                 val position = account.positions.getPosition(asset)
 
                 val order = if (signal.rating.isNegative)

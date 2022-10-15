@@ -60,7 +60,11 @@ internal class MemoryLoggerTest {
         assertTrue(z.summary().toString().isNotEmpty())
         assertTrue(z.min() <= z.max())
 
-        logger.summary(3)
+        repeat(4) {
+            logger.log(metrics, TestData.getRunInfo())
+        }
+        assertEquals(logger.summary().toString(), logger.summary(1).toString())
+        assertNotEquals(logger.summary().toString(), logger.summary(3).toString())
     }
 
     @Test

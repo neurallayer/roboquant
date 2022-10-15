@@ -16,9 +16,14 @@
 
 package org.roboquant.policies
 
-import org.roboquant.brokers.Account
-import org.roboquant.common.*
+import org.roboquant.common.Amount
+import org.roboquant.common.Asset
+import org.roboquant.common.Size
 import org.roboquant.metrics.MetricResults
+import java.time.Instant
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
+import kotlin.collections.toMap
 
 /**
  * Contains a number of utility methods that are useful when implementing a new policy. For example
@@ -43,6 +48,9 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
         metrics["$prefix$key"] = value.toDouble()
     }
 
+    /**
+     * Return any recorded metrics
+     */
     override fun getMetrics(): MetricResults {
         val result = metrics.toMap()
         metrics.clear()
@@ -50,18 +58,21 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
     }
 
 
+    /**
+     * Reset the state, will also clear any recorded metrics.
+     */
     override fun reset() {
         metrics.clear()
     }
 
 
     /**
-     * Calculate the size that can be bought with the provided [amount] given the [price] in the currency of
-     * the [asset].
+     * Return the size that can be bought with the provided [amount] given the [price] in the currency of
+     * the [asset] at the provided [time]. This implementation assumes that you cannot buy fractional contracts.
      */
-    protected fun calcSize(amount: Amount, asset: Asset, price: Double, account: Account): Size {
+    protected fun calcSize(amount: Amount, asset: Asset, price: Double, time: Instant): Size {
         val singleContractPrice = asset.value(Size.ONE, price).value
-        val availableAssetCash = amount.convert(asset.currency, account.lastUpdate)
+        val availableAssetCash = amount.convert(asset.currency, time)
         return Size((availableAssetCash.value / singleContractPrice).toInt())
     }
 

@@ -50,10 +50,10 @@ internal class PriceActionTest {
     @Test
     fun testOrderBookEmpty() {
         val asset = TestData.euStock()
-        val event = OrderBook(asset, emptyList(), emptyList())
-        assertTrue(event.asks.isEmpty())
-        assertTrue(event.bids.isEmpty())
-
+        val action = OrderBook(asset, emptyList(), emptyList())
+        assertTrue(action.asks.isEmpty())
+        assertTrue(action.bids.isEmpty())
+        assertEquals(0.0, action.volume)
     }
 
     @Test
@@ -100,6 +100,7 @@ internal class PriceActionTest {
         val values = action.values
         val action2 = OrderBook.fromValues(action.asset, values)
         assertEquals(action, action2)
+        assertEquals(400.0, action.volume)
     }
 
     @Test

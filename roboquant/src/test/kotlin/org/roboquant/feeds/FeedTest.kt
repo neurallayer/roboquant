@@ -53,6 +53,8 @@ internal class FeedTest {
         val feed = MyFeed2()
         assertEquals(Timeframe.INFINITE, feed.timeframe)
         assertContains(feed.assets, Asset("AAB"))
+        assertEquals(Asset("AAA"), feed.assets.first() )
+        assertEquals(Asset("AAB"), feed.assets.last() )
     }
 
     @Test

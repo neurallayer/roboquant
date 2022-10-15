@@ -35,9 +35,9 @@ import kotlin.math.pow
  * It can be used to limit the duration of a run to that specific timeframe, for example in a walk-forward. It can also
  * serve to limit a live-feed to a certain duration.
  *
- * @property start start time of timeframe, inclusive
+ * @property start start time of timeframe, this is always inclusive
  * @property end end time of timeframe
- * @property inclusive should te end time be inclusive, default is false
+ * @property inclusive should te [end] time be inclusive, default is false
  */
 data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolean = false) {
 
@@ -206,7 +206,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Is this timeframe located in a single day given the provided [zoneId].
+     * Is this timeframe within a single day given the provided [zoneId].
      */
     fun isSingleDay(zoneId: ZoneId = Config.defaultZoneId): Boolean {
         if (start == Instant.MIN || end == Instant.MAX) return false
@@ -221,7 +221,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * ### Usage
      *      // Add 1 week before and after the black monday event
      *      val tf = TimeFrame.BlackMonday1987.extend(1.weeks)
-     *
      */
     fun extend(before: TemporalAmount, after: TemporalAmount = before) =
         Timeframe(start - before, end + after, inclusive)

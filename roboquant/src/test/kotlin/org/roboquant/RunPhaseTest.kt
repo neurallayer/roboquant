@@ -16,6 +16,7 @@
 
 package org.roboquant
 
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.*
 
 internal class RunPhaseTest {
@@ -24,6 +25,10 @@ internal class RunPhaseTest {
     fun test() {
         assertEquals("VALIDATE", RunPhase.VALIDATE.value)
         assertEquals("MAIN", RunPhase.MAIN.value)
+
+        assertThrows<IllegalArgumentException> {
+            RunPhase.valueOf("WRONG")
+        }
     }
 
 }

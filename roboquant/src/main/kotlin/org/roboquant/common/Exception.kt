@@ -23,7 +23,7 @@ import java.time.LocalDate
  *
  * @constructor
  *
- * @param msg
+ * @param msg The message to contain in the exception
  */
 open class RoboquantException(msg: String) : java.lang.Exception(msg)
 
