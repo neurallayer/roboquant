@@ -17,7 +17,7 @@
 package org.roboquant.common
 
 import org.roboquant.brokers.ExchangeRates
-import org.roboquant.brokers.SingleCurrencyOnly
+import org.roboquant.brokers.SingleCurrencyExchangeRates
 import org.roboquant.common.Config.baseCurrency
 import org.roboquant.common.Config.defaultZoneId
 import org.roboquant.common.Config.exchangeRates
@@ -78,10 +78,10 @@ object Config {
     var defaultZoneId: ZoneId = ZoneId.systemDefault()
 
     /**
-     * The exchange rates to use when dealing with multiple currencies. The default is [SingleCurrencyOnly] which as the
-     * name suggests doesn't support any conversions.
+     * The exchange rates to use when dealing with multiple currencies. The default is [SingleCurrencyExchangeRates]
+     * which as the name suggests doesn't support any conversions.
      */
-    var exchangeRates: ExchangeRates = SingleCurrencyOnly()
+    var exchangeRates: ExchangeRates = SingleCurrencyExchangeRates()
 
     /**
      * Default currency to use when reporting in a single currency

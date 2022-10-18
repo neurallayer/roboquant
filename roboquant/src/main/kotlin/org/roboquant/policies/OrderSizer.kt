@@ -27,14 +27,15 @@ import kotlin.math.floor
 /**
  * Sizer helps a policy to determine the sizing of orders.
  *
- * @constructor Create empty Sizer
+ * @constructor Create new OrderSizer
  */
 interface OrderSizer {
 
     /**
-     * Determine the maximum order size for the provided asset.
+     * Determine the maximum order size for the provided asset. When returning zero size, no order will be created.
      */
     fun size(asset: Asset, account: Account, remaining: Double, price: Double): Size
+
 }
 
 /**
@@ -82,3 +83,4 @@ class PercentageOrderSizer(
     }
 
 }
+

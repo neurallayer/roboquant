@@ -19,7 +19,7 @@ package org.roboquant.common
 import kotlinx.coroutines.*
 
 /**
- * Utility to make running experiments in parallel more convenient. Basic usage:
+ * Utility to make running jobs in parallel more convenient. Basic usage:
  *
  *      val jobs = ParallelJobs()
  *      jobs.add {

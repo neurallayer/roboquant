@@ -25,8 +25,13 @@ import java.time.format.DateTimeFormatter
 
 /**
  * Asset is used to uniquely identify a financial instrument. So it can represent a stock, a future or a
- * cryptocurrency. All of its properties are read-only, and assets are ideally only created once and reused
- * thereafter. An asset instance is immutable.
+ * cryptocurrency. See the [AssetType] for the supported types.
+ *
+ * For asset types that require additional information (like options or futures), the symbol name is expected to
+ * contain this information.
+ *
+ * All of its properties are read-only, and assets are ideally only created once and reused thereafter. An asset
+ * instance is immutable.
  *
  * @property symbol none empty symbol name, for derivatives like options or futures contract this includes the details
  * @property type type of asset class, default is [AssetType.STOCK]
@@ -222,8 +227,7 @@ fun Collection<Asset>.summary(): Summary {
 }
 
 /**
- * Asset filter allows to determine which assets will be considered in a certain operation.
- *
+ * Asset filter limit the assets that will be considered in a certain operation.
  */
 fun interface AssetFilter {
 
@@ -249,6 +253,14 @@ fun interface AssetFilter {
         }
 
         /**
+         * Include only the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive.
+         */
+        fun includeSymbols(vararg symbols: String): AssetFilter {
+            val set = symbols.map { it.uppercase() }.toSet()
+            return AssetFilter { asset: Asset -> asset.symbol.uppercase() in set }
+        }
+
+        /**
          * Exclude the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive.
          */
         fun excludeSymbols(vararg symbols: String): AssetFilter {
@@ -256,13 +268,7 @@ fun interface AssetFilter {
             return AssetFilter { asset: Asset -> asset.symbol.uppercase() !in set }
         }
 
-        /**
-         * Include only the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive.
-         */
-        fun includeSymbols(vararg symbols: String): AssetFilter {
-            val set = symbols.map { it.uppercase() }.toSet()
-            return AssetFilter { asset: Asset -> asset.symbol.uppercase() in set }
-        }
+
 
     }
 

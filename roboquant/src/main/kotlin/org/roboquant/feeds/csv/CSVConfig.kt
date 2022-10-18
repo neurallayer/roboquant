@@ -26,11 +26,11 @@ import java.util.regex.Pattern
 import kotlin.io.path.div
 
 /**
- * Takes care of the configuration of the CSV parsing. There three steps:
+ * Define the configuration to use when parsing CSV files. There three levels of configuration:
  *
  * 1) Default config that will be applied if nothing else is provided
- * 2) The config.properties that can add and override the default config
- * 3) The config provided as a parameter to the Feed constructor that can override the previous step
+ * 2) The config.properties that will be added and override the default config
+ * 3) The config provided as a parameter to the Feed constructor that will add/override the previous step
  *
  * @property fileExtension
  * @property filePattern

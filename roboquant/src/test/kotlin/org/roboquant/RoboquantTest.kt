@@ -86,9 +86,11 @@ internal class RoboquantTest {
         val logger = MemoryLogger(showProgress = false)
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
         val (train, test) = feed.timeframe.splitTrainTest(0.20)
-        roboquant.run(feed, train, test)
+        roboquant.run(feed, timeframe = train, validation = test, episodes = 2)
         val data = logger.getMetric("progress.events")
         assertEquals(2, data.map { it.info.phase }.distinct().size)
+        assertEquals(2, data.map { it.info.episode }.distinct().size)
+        assertEquals(1, data.map { it.info.run }.distinct().size)
         assertEquals(1, logger.runs.size)
     }
 

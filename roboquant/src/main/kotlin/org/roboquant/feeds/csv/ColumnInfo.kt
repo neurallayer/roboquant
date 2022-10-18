@@ -19,8 +19,8 @@ package org.roboquant.feeds.csv
 import javax.naming.ConfigurationException
 
 /**
- * Contains the info of what the columns are in a CSV file
- *
+ * Contains the info of what the columns are in a CSV file. This allows for dealing with a wide variety of CSV formats
+ * with different order and type of columns.
  */
 internal class ColumnInfo {
     var time: Int = -1
@@ -34,17 +34,23 @@ internal class ColumnInfo {
     val hasVolume
         get() = volume != -1
 
+    /**
+     * Autodetect the column types based on commonly used [header] names.
+     */
     fun detectColumns(header: List<String>) {
+        val notCapital = Regex("[^A-Z]")
         header.forEachIndexed { index, column ->
-            when (column.uppercase()) {
+            when (column.uppercase().replace(notCapital, "")) {
                 "TIME" -> time = index
                 "DATE" -> time = index
+                "DAY" -> time = index
+                "DAYTETIME" -> time = index
                 "OPEN" -> open = index
                 "HIGH" -> high = index
                 "LOW" -> low = index
                 "CLOSE" -> close = index
-                "ADJ_CLOSE" -> adjustedClose = index
-                "ADJ CLOSE" -> adjustedClose = index
+                "ADJCLOSE" -> adjustedClose = index
+                "ADJUSTEDCLOSE" -> adjustedClose = index
                 "VOLUME" -> volume = index
             }
         }
@@ -52,8 +58,6 @@ internal class ColumnInfo {
 
     /**
      * Parse a column definition using the provided [def]
-     *
-     * @param def
      */
     fun define(def: String) {
         def.forEachIndexed { index, char ->

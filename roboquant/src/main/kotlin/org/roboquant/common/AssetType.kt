@@ -17,9 +17,10 @@
 package org.roboquant.common
 
 /**
- * Enumeration with the supported asset types.
+ * Enumeration with the supported asset types. These can be used when creating a new asset.
  *
- * Please note that Crypto is an asset type of its own and not mapped to the FOREX asset type.
+ * Please note that Crypto is an asset type of its own and not mapped to the FOREX asset type. This allows to
+ * differentiate and apply different logic based on the type.
  *
  */
 enum class AssetType {

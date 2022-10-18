@@ -22,16 +22,12 @@ import org.roboquant.common.UnsupportedException
 import java.time.Instant
 
 /**
- * Currency converter that supports fixed exchange rates between currencies, so rates that don't change over the
- * duration of a run. It provides logic to convert between two currencies given this map of
- * exchange rates. It is smart in the sense that is able to convert between currencies even if there is no direct
- * exchange rate defined in the map for a given currency pair.
- *
- * It will throw an exception if a conversion is required for an unknown currency.
+ * This implementation actually cannot convert between currencies and only return an exchange rate if from and to are
+ * the same currency or the amount is zero. It will throw an [UnsupportedException] in other use cases.
  *
  * @constructor Create a new  single currency only
  */
-class SingleCurrencyOnly : ExchangeRates {
+class SingleCurrencyExchangeRates : ExchangeRates {
 
     /**
      * Convert between two currencies.

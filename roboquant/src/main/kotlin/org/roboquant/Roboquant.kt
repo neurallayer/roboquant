@@ -43,7 +43,7 @@ import java.time.Instant
 /**
  * Roboquant is the engine of the platform that ties [strategy], [policy] and [broker] together and caters to a wide
  * variety of testing and live trading scenarios. Through [metrics] and a [logger] it provides insights into the
- * performance of a [run].
+ * performance of a [run]. Only a strategy is required, the other components are optional.
  *
  * @property strategy The strategy to use, there is no default
  * @property metrics the various metrics to calculate during the runs, default is none
@@ -128,12 +128,13 @@ class Roboquant(
 
     /**
      * Start a new run using the provided [feed] as data. If no [timeframe] is provided all the events in the feed
-     * will be used. You can provide a custom [name] that will help to later identify this run. If none is provided,
-     * a name will be generated with the format "run-<counter>"
+     * will be processed. You can provide a custom [name] that will help to later identify this run. If none is
+     * provided, a name will be generated with the format "run-<counter>"
      *
-     * Optionally you can provide a [validation] timeframe that will trigger a separate validation phase. You can also
-     * repeat the run for a number of [episodes]. These two options come in play when you want to train machine learning
-     * based strategies.
+     * Optionally you can:
+     * 1. provide a [validation] timeframe that will trigger a separate validation phase.
+     * 2. repeat the run for a number of [episodes].
+     * These two options come in play when you want to train machine learning based strategies.
      *
      * The following provides a schematic overview of the flow of a run:
      *
@@ -155,7 +156,7 @@ class Roboquant(
 
     /**
      * This is the same method as the [run] method but as the name already suggest, asynchronously. This makes it better
-     * suited for running back-test in parallel.
+     * suited for running back-test in parallel. Other than that, it behaves exactly the same as the regular run method.
      *
      * @see [run]
      */
@@ -219,7 +220,7 @@ class Roboquant(
     }
 
     /**
-     * Provide a short summary of this roboquant.
+     * Provide a summary of this roboquant.
      */
     fun summary(): Summary {
         val s = Summary("roboquant")

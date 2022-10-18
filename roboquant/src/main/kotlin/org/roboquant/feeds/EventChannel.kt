@@ -24,7 +24,8 @@ import org.roboquant.common.compareTo
 
 /**
  * Wrapper around a [Channel] for communicating the [events][Event] of a [Feed]. It uses asynchronous communication
- * so the producing and receiving parts are decoupled.
+ * so the producing and receiving parts are decoupled. An EventChannel has limited capacity in order to prevent
+ * memory problems when using large data feeds.
  *
  * It has built in support to limit the events that are being send to a certain [timeframe]. It is guaranteed that
  * no events outside that timeframe can be delivered to the channel.
@@ -50,7 +51,7 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
      * adding the new event. So this is a non-blocking send.
      *
      * This method is often preferable over the regular [send] in live trading scenario's since it prioritize more
-     * actual data over a large backlog.
+     * recent data over maintaining a large backlog.
      */
     fun offer(event: Event) {
         if (event.time in timeframe) {

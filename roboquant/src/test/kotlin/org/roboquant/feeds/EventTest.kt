@@ -19,6 +19,7 @@ package org.roboquant.feeds
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Asset
 import java.time.Instant
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class EventTest {
@@ -34,11 +35,32 @@ internal class EventTest {
     }
 
     @Test
-    fun order() {
+    fun comparison() {
         val now = Instant.now()
         val event = Event(emptyList(), now)
         val event2 = Event(emptyList(), now.plusMillis(1))
         assertTrue(event2 > event)
     }
+
+
+    @Test
+    fun empty() {
+        val t = Instant.now()
+        val event = Event.empty(t)
+        assertTrue(event.actions.isEmpty())
+    }
+
+    @Test
+    fun prices() {
+        val t = Instant.now()
+        val event = Event(
+            listOf(TradePrice(Asset("ABC"), 100.0), TradePrice(Asset("CDE"), 50.0)),
+            t
+        )
+        assertTrue(event.actions.isNotEmpty())
+        assertEquals(2, event.prices.size)
+        assertEquals(100.0, event.getPrice(Asset("ABC")))
+    }
+
 
 }

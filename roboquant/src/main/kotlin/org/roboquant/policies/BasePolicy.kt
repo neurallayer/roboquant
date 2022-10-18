@@ -65,9 +65,8 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
         metrics.clear()
     }
 
-
     /**
-     * Return the size that can be bought with the provided [amount] given the [price] in the currency of
+     * Return the size that can be bought/sold with the provided [amount] given the [price] in the currency of
      * the [asset] at the provided [time]. This implementation assumes that you cannot buy fractional contracts.
      */
     protected fun calcSize(amount: Amount, asset: Asset, price: Double, time: Instant): Size {

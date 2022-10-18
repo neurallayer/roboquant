@@ -16,6 +16,7 @@
 
 package org.roboquant.common
 
+import org.roboquant.brokers.summary
 import java.time.Instant
 import java.util.*
 
@@ -244,18 +245,14 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
     /**
      * Summary overview of the wallet
      */
-    fun summary(title: String = "cash"): Summary {
-        val result = Summary(title)
-        val fmt = "%8s│%14s│"
-        val header = String.format(fmt, "currency", "amount")
-        result.add(header)
-        val currencies = currencies
+    fun summary(name: String = "cash"): Summary {
+        val lines = mutableListOf<List<Any>>()
+        lines.add(listOf("ccy", "amount"))
         for (currency in currencies.distinct().sortedBy { it.displayName }) {
             val t = getAmount(currency).formatValue()
-            val line = String.format(fmt, currency.currencyCode, t)
-            result.add(line)
+            lines.add(listOf(currency.currencyCode, t))
         }
-        return result
+        return lines.summary(name)
     }
 
     /**

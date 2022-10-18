@@ -184,11 +184,21 @@ fun beta2() {
 
 }
 
+
+fun simple() {
+    val strategy = EMAStrategy()
+    val feed = AvroFeed.sp500()
+    val roboquant = Roboquant(strategy)
+    roboquant.run(feed)
+    println(roboquant.broker.account.fullSummary())
+}
+
 suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("CORR") {
+    when ("SIMPLE") {
+        "SIMPLE" -> simple()
         "BETA" -> beta()
         "CORR" -> calcCorrelation()
         "BETA2" -> beta2()

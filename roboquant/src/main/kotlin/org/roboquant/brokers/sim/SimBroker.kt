@@ -26,8 +26,8 @@ import org.roboquant.orders.Order
 import java.time.Instant
 
 /**
- * Simulated Broker that is used sd the broker during back testing and live testing. It simulates both broker and
- * exchange behavior. It can be configured with various plug-ins that determine it exact behavior:
+ * Simulated Broker that is used as the broker during back testing and live testing. It simulates both broker and
+ * exchange behavior. It can be configured with various plug-ins that determine its exact behavior:
  *
  * @property initialDeposit initial deposit
  * @param baseCurrency the base currency to use for reporting values

@@ -59,10 +59,7 @@ class RandomWalkFeed(
     override val assets = 1.rangeTo(nAssets).map { template.copy(symbol = "Asset-$it") }.toSortedSet()
 
     init {
-        logger.debug {
-            "Created $nAssets assets with ${timeline.size} events and a timeline " +
-                    "from ${timeline.first()} to ${timeline.last()}"
-        }
+        logger.info { "assets=$nAssets events=${timeline.size} timeframe=$timeframe"}
     }
 
     private fun Random.firstPrice(): Double = nextDouble(50.0, 150.0)

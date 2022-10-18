@@ -75,7 +75,7 @@ fun showAccount() {
     val account = broker.account
 
     // Print the full summary of the account
-    println(account.fullSummary(singleCurrency = false))
+    println(account.fullSummary())
 
     // Disconnect
     broker.disconnect()

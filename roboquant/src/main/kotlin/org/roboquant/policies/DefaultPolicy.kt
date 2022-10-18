@@ -51,6 +51,7 @@ import kotlin.math.max
 open class DefaultPolicy(
     private val orderPercentage: Double = 0.01,
     private val shorting: Boolean = false,
+    private val priceType: String = "DEFAULt"
 ) : BasePolicy() {
 
     private val logger = Logging.getLogger(DefaultPolicy::class)
@@ -59,7 +60,7 @@ open class DefaultPolicy(
      * Calculate the exposure impact on the buying power
      */
     private fun getExposure(position: Position, asset: Asset, size: Size, price: Double): Amount {
-        // No exposure if we reduce the overall position size
+        // No exposure if we reduce the overall position size, so that is always allowed
         return if (position.isReduced(size))  {
             Amount(asset.currency, 0.0)
         } else {
@@ -71,7 +72,7 @@ open class DefaultPolicy(
 
         return when {
             position.long && signal.exit -> createOrder(signal, -position.size, price)
-            position.closed && signal.entry && shorting && size > 0 -> createOrder(signal, -size, price)
+            position.closed && signal.entry && shorting -> createOrder(signal, -size, price)
             else -> null
         }
 
@@ -105,8 +106,8 @@ open class DefaultPolicy(
         for (signal in signals.filter { it.rating !== Rating.HOLD }) {
             val asset = signal.asset
 
-            // We don't place an order if we don't know the current price
-            val price = event.getPrice(asset)
+            // We don't create an order if we don't know the current price
+            val price = event.getPrice(asset, priceType)
 
             if (price !== null) {
                 val amount = account.equityAmount * orderPercentage

@@ -25,11 +25,11 @@ import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 
-internal class SingleCurrencyOnlyTest {
+internal class SingleCurrencyExchangeRatesTest {
 
     @Test
     fun basic() {
-        val currencyConverter = SingleCurrencyOnly()
+        val currencyConverter = SingleCurrencyExchangeRates()
 
         val now = Instant.now()
         val amount1 = 100.USD

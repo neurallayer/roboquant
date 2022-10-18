@@ -54,7 +54,7 @@ class Account(
     val closedOrders: List<OrderState>,
     val positions: List<Position>,
     val buyingPower: Amount
-)  {
+) {
 
     /**
      * Cash balances converted to a single amount denoted in the [baseCurrency] of the account
@@ -98,12 +98,10 @@ class Account(
     fun convert(wallet: Wallet, time: Instant = lastUpdate): Amount = wallet.convert(baseCurrency, time)
 
     /**
-     * Provide a short summary that contains the high level account information, the available cash balances and
-     * the open positions.
-     *
-     * @return The summary
+     * Returns a summary that contains the high level account information, the available cash balances and
+     * the open positions. Optionally the summary can convert wallets to a [singleCurrency], default is not.
      */
-    fun summary(singleCurrency: Boolean = false) : Summary {
+    fun summary(singleCurrency: Boolean = false): Summary {
 
         fun c(w: Wallet): Any {
             if (w.isEmpty()) return Amount(baseCurrency, 0.0)
@@ -116,10 +114,10 @@ class Account(
         s.add("cash", c(cash))
         s.add("buying power", buyingPower)
         s.add("equity", c(equity))
-        s.add("positions", c(positions.marketValue))
+        s.add("open positions", positions.size)
+        s.add("positions value", c(positions.marketValue))
         s.add("long value", c(positions.long.marketValue))
         s.add("short value", c(positions.short.marketValue))
-        s.add("assets", positions.size)
         s.add("unrealized p&l", c(positions.unrealizedPNL))
         s.add("realized p&l", c(trades.realizedPNL))
         s.add("trades", trades.size)
@@ -194,14 +192,12 @@ val Collection<Position>.long
 val Collection<Position>.short
     get() = filter { it.short }
 
-
 /**
  * Return the position for an asset
  */
-fun Collection<Position>.getPosition(asset: Asset) : Position {
+fun Collection<Position>.getPosition(asset: Asset): Position {
     return firstOrNull { it.asset == asset } ?: Position.empty(asset)
 }
-
 
 /**
  * Return the total unrealized PNL for a collection of positions
@@ -233,7 +229,7 @@ val List<OrderState>.assets
  * Return the required sizing per asset to close the positions. This method doesn't close the actual open positions,
  * just provides the information to do so.
  */
-fun Collection<Position>.close() : Map<Asset, Size>  = diff(emptyList())
+fun Collection<Position>.close(): Map<Asset, Size> = diff(emptyList())
 
 
 /**
@@ -266,30 +262,28 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
         s.add("EMPTY")
     } else {
         val orders = sortedBy { it.id }
-        val fmt = "%12s│%8s│%9s|%10s│%7s│%21s│%21s│%5s│ %-50s"
-        val header =
-            String.format(fmt, "type", "symbol", "currency", "status", "id", "opened at", "closed at", "ccy", "details")
-        s.add(header)
+        val lines = mutableListOf<List<Any>>()
+        lines.add(listOf("type", "symbol", "ccy", "status", "id", "opened at", "closed at", "details"))
         orders.forEach {
             with(it) {
                 val t1 = openedAt.truncatedTo(ChronoUnit.SECONDS)
                 val t2 = closedAt.truncatedTo(ChronoUnit.SECONDS)
                 val infoString = order.info().toString().removeSuffix("}").removePrefix("{")
-                val line = String.format(
-                    fmt,
-                    order.type,
-                    asset.symbol,
-                    asset.currency.currencyCode,
-                    status,
-                    order.id,
-                    t1,
-                    t2,
-                    asset.currencyCode,
-                    infoString
+                lines.add(
+                    listOf(
+                        order.type,
+                        asset.symbol,
+                        asset.currencyCode,
+                        status,
+                        order.id,
+                        t1,
+                        t2,
+                        infoString
+                    )
                 )
-                s.add(line)
             }
         }
+        return lines.summary(name)
     }
     return s
 }
@@ -304,9 +298,8 @@ fun Collection<Trade>.summary(name: String = "trades"): Summary {
         s.add("EMPTY")
     } else {
         val trades = sortedBy { it.time }
-        val fmt = "%24s│%8s│%9s|%11s│%14s│%14s│%14s│%12s│"
-        val header = String.format(fmt, "time", "symbol", "currency", "size", "cost", "fee", "p&l", "price")
-        s.add(header)
+        val lines = mutableListOf<List<Any>>()
+        lines.add(listOf("time", "symbol", "ccy", "size", "cost", "fee", "rlzd p&l", "price"))
         trades.forEach {
             with(it) {
                 val currency = asset.currency
@@ -315,10 +308,10 @@ fun Collection<Trade>.summary(name: String = "trades"): Summary {
                 val pnl = pnl.formatValue()
                 val price = Amount(currency, price).formatValue()
                 val t = time.truncatedTo(ChronoUnit.SECONDS)
-                val line = String.format(fmt, t, asset.symbol, currency.currencyCode, size, cost, fee, pnl, price)
-                s.add(line)
+                lines.add(listOf(t, asset.symbol, currency.currencyCode, size, cost, fee, pnl, price))
             }
         }
+        return lines.summary(name)
     }
     return s
 }
@@ -335,18 +328,18 @@ fun Collection<Position>.summary(name: String = "positions"): Summary {
         s.add("EMPTY")
     } else {
         val positions = sortedBy { it.asset.symbol }
-        val fmt = "%8s│%9s│%8s│%14s│%14s│%14s│%14s│"
-        val header = String.format(
-            fmt,
-            "symbol",
-            "currency",
-            "size",
-            "entry price",
-            "market price",
-            "market value",
-            "unrlzd p&l"
+        val lines = mutableListOf<List<Any>>()
+        lines.add(
+            listOf(
+                "symbol",
+                "ccy",
+                "size",
+                "entry price",
+                "mkt price",
+                "mkt value",
+                "unrlzd p&l"
+            )
         )
-        s.add(header)
 
         for (v in positions) {
             val c = v.asset.currency
@@ -355,10 +348,36 @@ fun Collection<Position>.summary(name: String = "positions"): Summary {
             val price = Amount(c, v.mktPrice).formatValue()
             val value = v.marketValue.formatValue()
             val pnl = Amount(c, v.unrealizedPNL.value).formatValue()
-            val line = String.format(fmt, v.asset.symbol, c.currencyCode, pos, avgPrice, price, value, pnl)
-            s.add(line)
+            lines.add(listOf(v.asset.symbol, c.currencyCode, pos, avgPrice, price, value, pnl))
         }
+        return lines.summary(name)
     }
 
     return s
+}
+
+/**
+ * Create a summary for a collection of rows in which each row contains 1 or more columns
+ */
+fun Collection<List<Any>>.summary(name: String): Summary {
+    val maxSizes = mutableMapOf<Int, Int>()
+    for (line in this) {
+        for (column in line.withIndex()) {
+            val maxSize = maxSizes.getOrDefault(column.index, Int.MIN_VALUE)
+            val len = column.value.toString().length
+            if (len > maxSize) maxSizes[column.index] = len
+        }
+    }
+
+    val summary = Summary(name)
+    for (line in this) {
+        val result = StringBuffer()
+        for (column in line.withIndex()) {
+            val maxSize = maxSizes.getOrDefault(column.index, 9) + 1
+            val str = "%${maxSize}s│".format(column.value)
+            result.append(str)
+        }
+        summary.add(result.toString())
+    }
+    return summary
 }

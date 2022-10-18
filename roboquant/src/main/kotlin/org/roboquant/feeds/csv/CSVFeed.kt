@@ -33,13 +33,14 @@ import kotlin.io.path.isDirectory
 import kotlin.io.path.isRegularFile
 
 /**
- * Read historic data from CSV files in a directory. It will traverse down if it finds subdirectories.
+ * Read historic price data from CSV files in a directory. It will traverse down if it finds subdirectories. This
+ * implementation is thread safe and can be shared across multiple runs at the same time.
  *
- * This implementation will store the data in memory, using Double type for the prices. If you don't have enough memory
- * available, consider using [LazyCSVFeed] instead.
+ * This implementation will store all the data in memory, using Double type for the prices. If you don't have enough
+ * memory available, consider using [LazyCSVFeed] instead.
  *
  * @param path the directory that contains CSV files or a single CSV file
- * @param configure the configuration to be used, see also [CSVConfig]
+ * @param configure the configuration to be run, default is no additional configuration. See also [CSVConfig]
  * @constructor
  */
 class CSVFeed(

@@ -65,6 +65,14 @@ internal class CSVFeedTest {
         }
         val first = feed.first().actions.first() as PriceAction
         assertEquals("TEST123", first.asset.exchangeCode)
+
+        fun CSVConfig.myConfigure() {
+            template = Asset("TEMPLATE", exchangeCode = "TEST345")
+        }
+
+        val feed2 = CSVFeed(path, configure = CSVConfig::myConfigure)
+        val first2 = feed2.first().actions.first() as PriceAction
+        assertEquals("TEST345", first2.asset.exchangeCode)
     }
 
     @Test
