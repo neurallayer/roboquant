@@ -32,14 +32,12 @@ class Summary(val content: String) {
     private val decimalFormatter = DecimalFormat(decimalPattern)
 
     companion object {
-        const val decimalPattern = "#.000"
-        const val sep = ": "
+        private const val decimalPattern = "#.000"
+        private const val sep = ": "
     }
 
     /**
-     * Add a new summary as a child
-     *
-     * @param child
+     * Add a new summary as a [child]
      */
     fun add(child: Summary) = children.add(child)
 

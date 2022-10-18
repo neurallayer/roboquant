@@ -48,10 +48,14 @@ class CSVFeed(
     configure: CSVConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
+    /**
+     * Similar to main constructor, but this one takes the path argument as a String.
+     * @see CSVFeed
+     */
     constructor(path: String, configure: CSVConfig.() -> Unit = {}) : this(Path.of(path), configure)
 
     private val logger = Logging.getLogger(CSVFeed::class)
-    val config: CSVConfig = CSVConfig.fromFile(path)
+    private val config: CSVConfig = CSVConfig.fromFile(path)
 
     init {
         require(path.isDirectory() || path.isRegularFile()) { "$path does not exist" }
@@ -65,10 +69,7 @@ class CSVFeed(
     }
 
     /**
-     * Read a directory or file and all its descendants and return the found CSV files
-     *
-     * @param path
-     * @return
+     * Read a [path] (directory or single file) and all its descendants and return the found CSV files
      */
     private fun readPath(path: Path): List<File> {
         val entry = path.toFile()
@@ -84,10 +85,7 @@ class CSVFeed(
     }
 
     /**
-     * Read and parse CSV files in parallel to ensure fast processing of large datasets.
-     *
-     * @param path
-     * @return
+     * Read and parse CSV files in parallel from the [path] to ensure fast processing of large datasets.
      */
     private suspend fun readFiles(path: Path) {
         val files = readPath(path)

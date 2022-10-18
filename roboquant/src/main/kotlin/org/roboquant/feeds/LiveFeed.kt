@@ -38,6 +38,9 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
      */
     protected fun send(event: Event) = channel?.offer(event)
 
+    /**
+     * Returns true if this feed is currently active, false otherwise
+     */
     val isActive
         get() = channel != null
 

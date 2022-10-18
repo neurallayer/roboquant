@@ -59,7 +59,7 @@ class LazyCSVFeed(private val path: Path, configure: CSVConfig.() -> Unit = {}) 
 
     private val logger = Logging.getLogger(LazyCSVFeed::class)
     private val files: Map<Asset, File>
-    val config: CSVConfig = CSVConfig.fromFile(path)
+    private val config: CSVConfig = CSVConfig.fromFile(path)
 
     override val assets
         get() = files.keys.toSortedSet()

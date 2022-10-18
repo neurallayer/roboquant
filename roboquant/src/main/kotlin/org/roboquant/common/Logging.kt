@@ -27,26 +27,44 @@ import kotlin.reflect.KClass
  */
 object Logging {
 
+    /**
+     * Logger class that extends a SLF4J logger and allows for some Kotlin idiomatic usage patterns
+     */
     class Logger(private val slf4jLogger : org.slf4j.Logger) : org.slf4j.Logger by slf4jLogger {
 
+        /**
+         * @see org.slf4j.Logger.trace
+         */
         inline fun trace(throwable: Throwable? = null, messageProducer: () -> Any?) {
             if (isTraceEnabled) trace(messageProducer()?.toString(), throwable)
         }
 
+        /**
+         * @see org.slf4j.Logger.debug
+         */
         inline fun debug(throwable: Throwable? = null, messageProducer: () -> Any?) {
-            if (isDebugEnabled) trace(messageProducer()?.toString(), throwable)
+            if (isDebugEnabled) debug(messageProducer()?.toString(), throwable)
         }
 
+        /**
+         * @see org.slf4j.Logger.info
+         */
         inline fun info(throwable: Throwable? = null, messageProducer: () -> Any?) {
-            if (isInfoEnabled) trace(messageProducer()?.toString(), throwable)
+            if (isInfoEnabled) info(messageProducer()?.toString(), throwable)
         }
 
+        /**
+         * @see org.slf4j.Logger.warn
+         */
         inline fun warn(throwable: Throwable? = null, messageProducer: () -> Any?) {
-            if (isWarnEnabled) trace(messageProducer()?.toString(), throwable)
+            if (isWarnEnabled) warn(messageProducer()?.toString(), throwable)
         }
 
+        /**
+         * @see org.slf4j.Logger.error
+         */
         inline fun error(throwable: Throwable? = null, messageProducer: () -> Any?) {
-            if (isErrorEnabled) trace(messageProducer()?.toString(), throwable)
+            if (isErrorEnabled) error(messageProducer()?.toString(), throwable)
         }
 
     }
