@@ -109,20 +109,30 @@ class Account(
         }
 
         val s = Summary("account")
+        val p = Summary("positions")
+        val t = Summary("trades")
+        val o = Summary("orders")
+
         s.add("last update", lastUpdate.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
         s.add("cash", c(cash))
         s.add("buying power", buyingPower)
         s.add("equity", c(equity))
-        s.add("open positions", positions.size)
-        s.add("positions value", c(positions.marketValue))
-        s.add("long value", c(positions.long.marketValue))
-        s.add("short value", c(positions.short.marketValue))
-        s.add("unrealized p&l", c(positions.unrealizedPNL))
-        s.add("realized p&l", c(trades.realizedPNL))
-        s.add("trades", trades.size)
-        s.add("open orders", openOrders.size)
-        s.add("closed orders", closedOrders.size)
+
+        s.add(p)
+        p.add("open", positions.size)
+        p.add("total value", c(positions.marketValue))
+        p.add("long value", c(positions.long.marketValue))
+        p.add("short value", c(positions.short.marketValue))
+        p.add("unrealized p&l", c(positions.unrealizedPNL))
+
+        s.add(t)
+        t.add("trades", trades.size)
+        t.add("realized p&l", c(trades.realizedPNL))
+
+        s.add(o)
+        o.add("open orders", openOrders.size)
+        o.add("closed orders", closedOrders.size)
         return s
     }
 

@@ -11,7 +11,7 @@ import org.roboquant.feeds.Event
  * Scorecard calculates a common set of metrics that can be used to evaluate the performance of a strategy. If you
  * don't know which particular metrics to monitor, this is a good starting point.
  */
-class ScorecardMetric(val prefix: String="scorecard.") : Metric {
+class ScorecardMetric : Metric {
 
     private var maxEquity = Double.NaN
     private var minEquity = Double.NaN
@@ -45,6 +45,8 @@ class ScorecardMetric(val prefix: String="scorecard.") : Metric {
         val equity = account.equity.convert(account.baseCurrency, event.time).value
 
         updateMDD(equity)
+
+        val prefix ="scorecard."
 
         return metricResultsOf(
             "${prefix}winners" to winners,

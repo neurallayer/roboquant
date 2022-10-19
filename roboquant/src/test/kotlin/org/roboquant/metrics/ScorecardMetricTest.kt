@@ -8,12 +8,12 @@ internal class ScorecardMetricTest {
 
     @Test
     fun test() {
-        val metric = ScorecardMetric("myprefix.")
+        val metric = ScorecardMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(account, event)
         assertTrue(result.isNotEmpty())
-        assertEquals(0.0, result["myprefix.winners"])
-        assertEquals(0.0, result["myprefix.loosers"])
+        assertEquals(0.0, result["scorecard.winners"])
+        assertEquals(0.0, result["scorecard.loosers"])
         assertNull(result["otherprefix.loosers"])
 
         metric.reset()

@@ -38,6 +38,9 @@ import org.roboquant.feeds.Event
  */
 class ParallelStrategy(strategies: Collection<Strategy>) : CombinedStrategy(strategies) {
 
+    /**
+     * Create a new parallel strategy using the provided [strategies]
+     */
     constructor(vararg strategies: Strategy) : this(strategies.toList())
 
     /**

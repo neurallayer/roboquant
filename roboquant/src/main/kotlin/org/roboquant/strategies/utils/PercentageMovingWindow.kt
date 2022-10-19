@@ -77,14 +77,19 @@ class AssetReturns(val assets: Collection<Asset>, windowSize: Int, missingValue:
         }
     }
 
+    /**
+     * Return true if the history fully filled, so it is ready to be used.
+     */
     fun isAvailable() = buffers.values.first().isAvailable()
 
+    /**
+     * Return the stored values a DoubleArray. If this is called before the window is completely filled, it will
+     * contain Double.NaN values for the missing values.
+     */
     fun toDoubleArray(asset: Asset) = buffers.getValue(asset).toDoubleArray()
 
     /**
-     * Update the buffers with the latest prices
-     *
-     * @param event
+     * Update the buffers with the latest prices found in the [event]
      */
     fun add(event: Event) {
         val prices = event.prices

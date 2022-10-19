@@ -24,6 +24,9 @@ import org.roboquant.feeds.PriceBar
 /**
  * PriceBar Series is a moving window of OHLCV values for a single [asset].
  *
+ * @property asset the underlying asset for this price-bar series
+ * @param windowSize the size of the moving window
+ *
  * @constructor Create new PriceBar Series
  */
 class PriceBarSeries(val asset: Asset, windowSize: Int) {

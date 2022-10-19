@@ -90,13 +90,16 @@ class Exchange private constructor(
     }
 
     /**
-     * Convert a local [dateTime] to an Instant type
+     * Convert a local [dateTime] to an Instant type that reflects the timezone of the exchange.
      */
     fun getInstant(dateTime: LocalDateTime): Instant {
         val zdt = ZonedDateTime.of(dateTime, zoneId)
         return zdt.toInstant()
     }
 
+    /**
+     * @suppress
+     */
     override fun toString(): String {
         return exchangeCode
     }

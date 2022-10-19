@@ -25,10 +25,11 @@ import org.roboquant.metrics.MetricResults
  * conflicting signals, like simultaneously BUY and SELL signals for the same asset. Also, the strategies are
  * run sequential. For parallel execution see [ParallelStrategy]
  *
- * @property strategies
+ * @property strategies the strategies to combine
  * @constructor Create empty Combined strategy
  */
 open class CombinedStrategy(val strategies: Collection<Strategy>) : Strategy {
+
 
     constructor(vararg strategies: Strategy) : this(strategies.toList())
 

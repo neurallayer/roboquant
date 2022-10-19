@@ -19,7 +19,6 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.brokers.summary
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
@@ -68,10 +67,11 @@ fun feedYahoo() {
 }
 
 fun feedPolygon() {
+
+    // Get the feed
     val feed = PolygonHistoricFeed()
     val tf = Timeframe.fromYears(2021, 2022)
-    feed.retrieve("IBM", tf)
-    feed.retrieve("AAPL", tf)
+    feed.retrieve("IBM", "AAPL", timeframe = tf)
     println(feed.assets)
     println(feed.timeline.size)
 
@@ -80,8 +80,7 @@ fun feedPolygon() {
     val roboquant = Roboquant(strategy)
     roboquant.run(feed)
     val account = roboquant.broker.account
-    println(account.summary())
-    println(account.positions.summary())
+    println(account.fullSummary())
 }
 
 fun main() {

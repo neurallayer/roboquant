@@ -32,9 +32,7 @@ open class MovingWindow(private val windowSize: Int) {
     private var counter = 0L
 
     /**
-     * Add a new value to the end of the window
-     *
-     * @param value
+     * Add a new [value] to the end of the window
      */
     open fun add(value: Double) {
         val index = (counter % windowSize).toInt()
@@ -43,9 +41,7 @@ open class MovingWindow(private val windowSize: Int) {
     }
 
     /**
-     * Is the history fully filled, so it is ready to be used.
-     *
-     * @return True if the window is filled, false otherwise
+     * Return true if the history fully filled, so it is ready to be used.
      */
     fun isAvailable(): Boolean {
         return counter > windowSize

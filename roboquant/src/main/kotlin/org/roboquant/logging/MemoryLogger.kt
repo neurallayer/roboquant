@@ -121,6 +121,10 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
 
 }
 
+/**
+ * Group a collection of metric entries by a certain [period]. This for example enables to group by month and run
+ * statistics over each month.
+ */
 fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, Collection<MetricsEntry>> {
 
     val formatter = when (period) {

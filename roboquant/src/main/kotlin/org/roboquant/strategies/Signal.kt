@@ -20,17 +20,20 @@ import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 
 /**
- * Is the signal generated only for entry, exit or both.
+ * This enum class represents the type of signal: [ENTRY], [EXIT] or [BOTH] and can be used by more advanced
+ * strategies that provide different signals for entering and exiting a position.
+ *
+ * Please note it is up to the policy to use this additional information and simple implementations might ignore it.
  */
 enum class SignalType {
 
     /**
-     * Used only to enter of a position, meaning to open or increase a position size
+     * Used to signal to open a position, meaning to long/short or increase a position size
      */
     ENTRY,
 
     /**
-     * Used only to exit a position, meaning to close or decrease a position size
+     * Used to signal an exit a position, meaning to close or decrease a position size
      */
     EXIT,
 

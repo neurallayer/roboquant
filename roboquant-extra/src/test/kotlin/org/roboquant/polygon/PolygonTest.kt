@@ -33,8 +33,7 @@ internal class PolygonTest {
         val feed = PolygonHistoricFeed()
         val now = Instant.now() - 10.days
         val period = Timeframe(now - 50.days, now)
-        feed.retrieve("IBM", period)
-        feed.retrieve("AAPL", period)
+        feed.retrieve("IBM", "AAPL", timeframe = period)
         assertTrue(feed.timeline.isNotEmpty())
         assertEquals(2, feed.assets.size)
         assertContains(feed.assets.map { it.symbol }, "IBM")

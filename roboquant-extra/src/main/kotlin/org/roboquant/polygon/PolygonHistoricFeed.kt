@@ -43,7 +43,7 @@ class PolygonHistoricFeed(
     configure: PolygonConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-    val config = PolygonConfig()
+    private val config = PolygonConfig()
     private var client: PolygonRestClient
 
     init {
@@ -53,25 +53,34 @@ class PolygonHistoricFeed(
     }
 
     /**
-     * Retrieve [PriceBar] data for the provided [symbol]
+     * Retrieve [PriceBar] data for the provided [symbols] and [timeframe].
      */
-    fun retrieve(symbol: String, tf: Timeframe, multiplier: Int = 1, timespan: String = "day", limit: Int = 5000) {
-        val aggr = client.getAggregatesBlocking(
-            AggregatesParameters(
-                symbol,
-                multiplier.toLong(),
-                timespan,
-                tf.start.toEpochMilli().toString(),
-                tf.end.toEpochMilli().toString(),
-                limit = limit.toLong()
+    fun retrieve(
+        vararg symbols: String,
+        timeframe: Timeframe,
+        multiplier: Int = 1,
+        timespan: String = "day",
+        limit: Int = 5000
+    ) {
+        for (symbol in symbols) {
+            val aggr = client.getAggregatesBlocking(
+                AggregatesParameters(
+                    symbol,
+                    multiplier.toLong(),
+                    timespan,
+                    timeframe.start.toEpochMilli().toString(),
+                    timeframe.end.toEpochMilli().toString(),
+                    limit = limit.toLong()
+                )
             )
-        )
 
-        for (bar in aggr.results) {
-            val action =
-                PriceBar(Asset(symbol), doubleArrayOf(bar.open!!, bar.high!!, bar.low!!, bar.close!!, bar.volume!!))
-            val time = Instant.ofEpochMilli(bar.timestampMillis!!)
-            add(time, action)
+            val asset = Asset(symbol)
+            for (bar in aggr.results) {
+                val action =
+                    PriceBar(asset, doubleArrayOf(bar.open!!, bar.high!!, bar.low!!, bar.close!!, bar.volume!!))
+                val time = Instant.ofEpochMilli(bar.timestampMillis!!)
+                add(time, action)
+            }
         }
     }
 
