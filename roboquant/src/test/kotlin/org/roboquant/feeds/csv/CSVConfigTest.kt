@@ -3,7 +3,7 @@ package org.roboquant.feeds.csv
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Asset
-import org.roboquant.common.NoTrading
+import org.roboquant.common.NoTradingException
 import java.io.File
 import kotlin.test.*
 
@@ -31,7 +31,7 @@ internal class CSVConfigTest {
             config.processLine(asset, listOf("2022-01-03", "10.0", "11.0", "9.00", "10.0", "100"))
         }
 
-        assertThrows<NoTrading> {
+        assertThrows<NoTradingException> {
             config.processLine(asset, listOf("2022-01-01", "10.0", "11.0", "9.00", "10.0", "100"))
         }
 

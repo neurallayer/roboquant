@@ -64,7 +64,7 @@ internal class ExchangeTest {
             exchange.getClosingTime(localDate)
         }
 
-        assertFailsWith<NoTrading> {
+        assertFailsWith<NoTradingException> {
             val localDate = LocalDate.parse("2020-01-04")
             assertEquals(DayOfWeek.SATURDAY, localDate.dayOfWeek)
             exchange.getClosingTime(localDate)

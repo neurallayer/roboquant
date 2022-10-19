@@ -65,9 +65,9 @@ class ValidationException(msg: String) : RoboquantException(msg)
 class DoesNotComputeException(msg: String) : RoboquantException(msg)
 
 /**
- * No Trading exception is thrown when time calculations are requested for days that there is no trading, for example
+ * No Trading exception is thrown when time calculations are requested for days that there is no trading. For example
  * what is the closing time on a Sunday.
  *
  * @param date The day for trading
  */
-class NoTrading(date: LocalDate) : RoboquantException("$date is not a trading day")
+class NoTradingException(date: LocalDate) : RoboquantException("$date is not a trading day")

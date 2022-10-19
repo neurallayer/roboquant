@@ -61,7 +61,7 @@ class Exchange private constructor(
      */
     fun getOpeningTime(date: LocalDate): Instant {
         val opening = tradingCalendar.getOpeningTime(date)
-        if (opening === null) throw NoTrading(date)
+        if (opening === null) throw NoTradingException(date)
         val zdt = ZonedDateTime.of(date, opening, zoneId)
         return zdt.toInstant()
     }
@@ -71,7 +71,7 @@ class Exchange private constructor(
      */
     fun getClosingTime(date: LocalDate): Instant {
         val closing = tradingCalendar.getClosingTime(date)
-        if (closing === null) throw NoTrading(date)
+        if (closing === null) throw NoTradingException(date)
         val zdt = ZonedDateTime.of(date, closing, zoneId)
         return zdt.toInstant()
     }
