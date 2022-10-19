@@ -163,8 +163,8 @@ data class Asset(
     }
 
     /**
-     * Compares this object with the specified object for order. Returns zero if this object is equal
-     * to the specified [other] object, a negative number if it's less than [other], or a positive number
+     * Compares this asset with the [other] asset for order based on the [symbol] name. Returns zero if this asset
+     * is equal to the specified [other] asset, a negative number if it's less than [other], or a positive number
      * if it's greater than [other].
      */
     override fun compareTo(other: Asset): Int {
