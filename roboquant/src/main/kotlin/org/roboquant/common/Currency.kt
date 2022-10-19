@@ -48,6 +48,9 @@ class Currency private constructor(val currencyCode: String) {
             2
         }
 
+    /**
+     * @suppress
+     */
     companion object {
 
         /**

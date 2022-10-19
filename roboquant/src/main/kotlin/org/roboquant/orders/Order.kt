@@ -37,6 +37,9 @@ import org.roboquant.common.Asset
  **/
 abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
 
+    /**
+     * @suppress
+     */
     companion object {
 
         /**
@@ -53,6 +56,9 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
         }
     }
 
+    /**
+     * Returns a unified string representation for the different order types
+     */
     override fun toString(): String {
         val infoStr = info().toString().removePrefix("{").removeSuffix("}")
         return "type=$type id=$id asset=${asset.symbol} tag=$tag $infoStr"

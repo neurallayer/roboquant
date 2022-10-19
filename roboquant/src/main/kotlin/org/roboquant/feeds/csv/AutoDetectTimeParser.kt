@@ -37,6 +37,9 @@ class AutoDetectTimeParser : TimeParser {
         return parser.parse(text, exchange)
     }
 
+    /**
+     * @suppress
+     */
     private companion object Patterns {
 
         @Suppress("RegExpRepeatedSpace")

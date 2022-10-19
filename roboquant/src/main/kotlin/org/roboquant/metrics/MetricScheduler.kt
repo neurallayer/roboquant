@@ -52,6 +52,9 @@ class MetricScheduler(
     private val fireOnceInRow: Boolean = false
 ) : Metric {
 
+    /**
+     * Standard set of schedule patters
+     */
     companion object Schedules {
         /**
          * Schedule to run something every Friday

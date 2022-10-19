@@ -101,6 +101,9 @@ class Exchange private constructor(
         return exchangeCode
     }
 
+    /**
+     * @suppress
+     */
     companion object {
 
         private val instances = ConcurrentHashMap<String, Exchange>()

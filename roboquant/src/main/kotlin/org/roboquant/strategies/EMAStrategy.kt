@@ -49,6 +49,9 @@ class EMAStrategy(
     private val slow = 1.0 - (smoothing / (slowPeriod + 1))
     private val calculators = mutableMapOf<Asset, EMACalculator>()
 
+    /**
+     * Standard set of predefined EMA Strategies
+     */
     companion object Factory {
         /**
          * Predefined EMA Crossover with 50 steps for fast EMA and 200 steps for slow EMA

@@ -31,7 +31,10 @@ class Summary(val content: String) {
     private val children = mutableListOf<Summary>()
     private val decimalFormatter = DecimalFormat(decimalPattern)
 
-    companion object {
+    /**
+     * @suppress
+     */
+    private companion object {
         private const val decimalPattern = "#.000"
         private const val sep = ": "
     }

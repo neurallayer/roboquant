@@ -102,7 +102,7 @@ internal class ProgressBar {
         }
     }
 
-    companion object {
+    private companion object {
 
         private const val TOTAL_BAR_LENGTH = 40
 

@@ -40,13 +40,10 @@ class EventCaptureMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, Fe
     private val events = LinkedList<Event>()
 
     override fun calculate(account: Account, event: Event): MetricResults {
-        record(event)
+        if (event.time in limit) events.add(event)
         return emptyMap()
     }
 
-    fun record(event: Event) {
-        if (event.time in limit) events.add(event)
-    }
 
     override fun reset() {
         events.clear()
@@ -55,6 +52,9 @@ class EventCaptureMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, Fe
     override val timeframe
         get() = Timeframe(events.first.time, events.last.time, true)
 
+    /**
+     * Return the timeline of the events captured
+     */
     val timeline: Timeline
         get() = events.map { it.time }
 

@@ -45,13 +45,17 @@ import kotlin.math.min
  *
  * > Betting against Beta was first described in the Journal of Financial Economics
  *
+ * @property market the asset presenting the market
+ * @property holdingPeriodDays the holding period
+ * @property maxPositions the maximum number of open positions
+ *
  * @constructor Create new Betting Against Beta instance
  */
 open class BettingAgainstBetaPolicy(
     assets: Collection<Asset>,
     val market: Asset,
     private val holdingPeriodDays: Int = 20,
-    private val maxAssetsInPortfolio: Int = 20,
+    private val maxPositions: Int = 20,
     windowSize: Int = 120,
 ) : BasePolicy() {
 
@@ -93,7 +97,7 @@ open class BettingAgainstBetaPolicy(
     private fun rebalance(betas: List<Pair<Asset, Double>>, account: Account, event: Event): List<Order> {
         // maximum number of short and long assets we want to have in portfolio. Since there cannot be overlap,
         // the maximum number is always equal or smaller than half.
-        val max = min(betas.size / 2, maxAssetsInPortfolio / 2)
+        val max = min(betas.size / 2, maxPositions / 2)
 
         // exposure per position.
         val exposure = account.equity.convert(time = event.time) / (max * 2)

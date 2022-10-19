@@ -55,6 +55,10 @@ data class Asset(
         require(symbol.isNotBlank()) { "Symbol in an asset cannot be empty or blank" }
     }
 
+    /**
+     * Contains methods to create specific asset types, like options or futures using international standards to
+     * generate the appropriate symbol name.
+     */
     companion object {
 
         /**
@@ -236,6 +240,9 @@ fun interface AssetFilter {
      */
     fun filter(asset: Asset): Boolean
 
+    /**
+     * Standard set of Asset filters
+     */
     companion object {
 
         /**

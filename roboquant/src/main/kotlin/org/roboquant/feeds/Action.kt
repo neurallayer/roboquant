@@ -142,6 +142,9 @@ class PriceBar(
      */
     override fun toString(): String = "asset=${asset.symbol} OHLCV=${ohlcv.toList()}"
 
+    /**
+     * @suppress
+     */
     companion object {
 
         fun fromValues(asset: Asset, values: List<Double>) = PriceBar(asset, values.toDoubleArray())
@@ -218,6 +221,9 @@ data class TradePrice(override val asset: Asset, private val price: Double, over
     override val values
         get() = listOf(price, volume)
 
+    /**
+     * @suppress
+     */
     companion object {
         fun fromValues(asset: Asset, values: List<Double>) = TradePrice(
             asset,
@@ -259,6 +265,9 @@ data class PriceQuote(
     override val values
         get() = listOf(askPrice, askSize, bidPrice, bidSize)
 
+    /**
+     * @suppress
+     */
     companion object {
         fun fromValues(asset: Asset, values: List<Double>) = PriceQuote(
             asset,
@@ -312,6 +321,9 @@ data class OrderBook(
     val bids: List<OrderBookEntry>
 ) : PriceAction {
 
+    /**
+     * @suppress
+     */
     companion object {
 
         fun fromValues(asset: Asset, values: List<Double>): OrderBook {

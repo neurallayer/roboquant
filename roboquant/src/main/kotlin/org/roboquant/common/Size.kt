@@ -49,6 +49,9 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
      */
     constructor(value: String) : this(BigDecimal(value).multiply(BD_FRACTION).toLong())
 
+    /**
+     * @suppress
+     */
     companion object {
         // We use 8 digits scale
         private const val SCALE = 8

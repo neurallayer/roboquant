@@ -61,6 +61,9 @@ fun Collection<MetricsEntry>.high(n: Int = 10) = sortedBy { it }.takeLast(n)
  */
 fun Collection<MetricsEntry>.low(n: Int = 10) = sortedBy { it }.take(n)
 
+/**
+ * Return the difference (new - old) of the values
+ */
 fun Collection<MetricsEntry>.diff(): List<MetricsEntry> {
     val result = mutableListOf<MetricsEntry>()
     var first = true
@@ -79,6 +82,9 @@ fun Collection<MetricsEntry>.diff(): List<MetricsEntry> {
     return result
 }
 
+/**
+ * Return the percentage difference (new - old) / old  of the values
+ */
 fun Collection<MetricsEntry>.perc(): List<MetricsEntry> {
     val result = mutableListOf<MetricsEntry>()
     var first = true
@@ -97,11 +103,14 @@ fun Collection<MetricsEntry>.perc(): List<MetricsEntry> {
     return result
 }
 
-fun Collection<MetricsEntry>.summary(): Summary {
-    val result = Summary("Metrics")
+/**
+ * Provide a summary for the metrics
+ */
+fun Collection<MetricsEntry>.summary(name: String = "metrics"): Summary {
+    val result = Summary(name)
     val m = groupBy { it.name }
-    for ((name, values) in m) {
-        val child = Summary(name)
+    for ((metricName, values) in m) {
+        val child = Summary(metricName)
         child.add("size", values.size)
         if (values.isNotEmpty()) {
             val arr = values.toDoubleArray().clean()

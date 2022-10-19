@@ -44,7 +44,7 @@ class AvroTest {
 
     }
 
-    companion object {
+    internal companion object {
 
         @TempDir
         lateinit var folder: File

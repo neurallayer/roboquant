@@ -58,6 +58,9 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      */
     fun isInfinite() = this == INFINITE
 
+    /**
+     * @suppress
+     */
     companion object {
         /**
          * Minimum start date of a timeframe

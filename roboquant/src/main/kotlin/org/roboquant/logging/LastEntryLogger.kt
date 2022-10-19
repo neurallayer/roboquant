@@ -25,6 +25,8 @@ import org.roboquant.metrics.MetricResults
  * only care about the last recorded result and not the values of metrics at each step of a run.
  *
  * If you need access to the metric values at each step, use the [MemoryLogger] instead.
+ *
+ * @property showProgress display a progress bar, default is false
  */
 class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
 

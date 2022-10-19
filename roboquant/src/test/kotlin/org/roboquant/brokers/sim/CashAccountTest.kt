@@ -38,7 +38,10 @@ import kotlin.test.assertEquals
 
 internal class CashAccountTest {
 
-    companion object {
+    /**
+     * @suppress
+     */
+    internal companion object {
 
         internal fun update(broker: Broker, asset: Asset, price: Number, orderSize: Int = 0): Account {
             val orders = if (orderSize == 0) emptyList() else listOf(MarketOrder(asset, orderSize))

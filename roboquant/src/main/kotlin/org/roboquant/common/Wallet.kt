@@ -35,6 +35,10 @@ import java.util.*
 @Suppress("TooManyFunctions")
 class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashMap(3)) : Cloneable {
 
+
+    /**
+     * @suppress
+     */
     companion object {
 
         /**
