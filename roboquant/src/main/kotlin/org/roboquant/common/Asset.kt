@@ -231,7 +231,7 @@ fun Collection<Asset>.summary(): Summary {
 }
 
 /**
- * Asset filter limit the assets that will be considered in a certain operation.
+ * Asset filter limits the assets that will be processed in certain operations.
  */
 fun interface AssetFilter {
 
