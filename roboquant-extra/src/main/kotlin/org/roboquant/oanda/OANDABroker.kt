@@ -178,7 +178,7 @@ class OANDABroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.trace { "received ${orders.size} orders and ${event.actions.size} actions" }
-        _account.putOrders(orders.initialOrderState)
+        _account.initialOrders(orders)
 
         for (order in orders) {
             var state = OrderState(order, OrderStatus.INITIAL, event.time)
@@ -217,7 +217,7 @@ class OANDABroker(
         }
 
         // OANDA doesn't update positions quick enough, and so they don't reflect trades just made.
-        // so for now we put a sleep in here :(
+        // so for now we put a sleep in here for 1 second :(
         Thread.sleep(1000)
         syncPortfolio()
         syncAccount()

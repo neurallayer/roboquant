@@ -165,7 +165,7 @@ class Exchange private constructor(
             addInstance("", newYorkTimeZone, "USD")
 
             // Major North American exchanges
-            addInstance("US", newYorkTimeZone, "USD")
+            addInstance("US", newYorkTimeZone, "USD") // Generic US exchange
             addInstance("NYSE", newYorkTimeZone, "USD")
             addInstance("NASDAQ", newYorkTimeZone, "USD")
             addInstance("BATS", newYorkTimeZone, "USD")
@@ -191,6 +191,7 @@ class Exchange private constructor(
 
             // Generic 24x7 Crypto Exchange
             addInstance("CRYPTO", newYorkTimeZone, "USD", "00:00", "23:59:59.999")
+
         }
 
         /**

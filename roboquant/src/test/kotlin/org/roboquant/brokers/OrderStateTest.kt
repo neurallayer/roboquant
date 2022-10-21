@@ -61,10 +61,5 @@ internal class OrderStateTest {
         assertContains(account.openOrders.values.map { it.order }, order2)
     }
 
-    @Test
-    fun collectionExtensions() {
-        val orders = listOf(TestData.usMarketOrder(), TestData.usMarketOrder())
-        val states = orders.initialOrderState
-        assertContains(states.map { it.order }, orders.first())
-    }
+
 }

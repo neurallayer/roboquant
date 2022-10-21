@@ -166,24 +166,26 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
         }
 
 
-}
+    /**
+     * Reject an [order] at the provided [time]
+     */
+    fun rejectOrder(order: Order, time: Instant) {
+        putOrder(OrderState(order, OrderStatus.REJECTED, time, time))
+    }
 
-/**
- * Reject an [order] at the provided [time]
- */
-fun InternalAccount.rejectOrder(order: Order, time: Instant) {
-    putOrder(OrderState(order, OrderStatus.REJECTED, time, time))
-}
+    /**
+     * Accept an [order] at the provided [time]
+     */
+    fun acceptOrder(order: Order, time: Instant) {
+        putOrder(OrderState(order, OrderStatus.ACCEPTED, time, time))
+    }
 
-/**
- * Accept an [order] at the provided [time]
- */
-fun InternalAccount.acceptOrder(order: Order, time: Instant) {
-    putOrder(OrderState(order, OrderStatus.ACCEPTED, time, time))
-}
+    /**
+     * Add initial [orders]
+     */
+    fun initialOrders(orders: Collection<Order>) {
+        val newOrders =  orders.map { OrderState(it) }
+        putOrders(newOrders)
+    }
 
-/**
- * Return a set of initial orders
- */
-val Collection<Order>.initialOrderState
-    get() = map { OrderState(it) }
+}

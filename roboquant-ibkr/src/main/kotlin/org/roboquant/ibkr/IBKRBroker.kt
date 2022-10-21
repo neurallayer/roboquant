@@ -101,7 +101,7 @@ class IBKRBroker(
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        _account.putOrders(orders.initialOrderState)
+        _account.initialOrders(orders)
 
         // First we place the cancellation orders
         for (cancellation in orders.filterIsInstance<CancelOrder>()) {
