@@ -95,7 +95,7 @@ internal object IBKRConnection {
     fun getContract(asset: Asset): Contract {
         val contract = Contract()
         contract.symbol(asset.symbol)
-        contract.currency(asset.currencyCode)
+        contract.currency(asset.currency.currencyCode)
         if (asset.multiplier != 1.0) contract.multiplier(asset.multiplier.toString())
 
         when (asset.type) {
@@ -105,10 +105,10 @@ internal object IBKRConnection {
             else -> throw UnsupportedException("${asset.type} is not yet supported")
         }
 
-        val exchange = when (asset.exchangeCode) {
+        val exchange = when (asset.exchange.exchangeCode) {
             "NASDAQ" -> "ISLAND"
             "" -> "SMART"
-            else -> asset.exchangeCode
+            else -> asset.exchange.exchangeCode
         }
         contract.exchange(exchange)
 

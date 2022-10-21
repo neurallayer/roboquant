@@ -18,8 +18,8 @@
 package org.roboquant.common
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import java.math.BigDecimal
+import java.time.Instant
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -35,8 +35,8 @@ import java.time.format.DateTimeFormatter
  *
  * @property symbol none empty symbol name, for derivatives like options or futures contract this includes the details
  * @property type type of asset class, default is [AssetType.STOCK]
- * @property currencyCode currency code, default is "USD"
- * @property exchangeCode Exchange this asset is traded on, default is an empty string
+ * @property currency currency, default is [Currency.USD]
+ * @property exchange Exchange this asset is traded on, default is [Exchange.DEFAULT]
  * @property multiplier contract multiplier, default is 1.0
  * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
@@ -45,11 +45,23 @@ import java.time.format.DateTimeFormatter
 data class Asset(
     val symbol: String,
     val type: AssetType = AssetType.STOCK,
-    val currencyCode: String = "USD",
-    val exchangeCode: String = "",
+    val currency: Currency = Currency.USD,
+    val exchange: Exchange = Exchange.DEFAULT,
     val multiplier: Double = 1.0,
     val id: String = ""
 ) : Comparable<Asset> {
+
+    /**
+     * Alternative constructor that allows to use strings to identify the currency and exchange.
+     */
+    constructor(
+        symbol: String,
+        type: AssetType = AssetType.STOCK,
+        currencyCode: String,
+        exchangeCode: String = "",
+        multiplier: Double = 1.0,
+        id: String = ""
+    ) : this(symbol, type, Currency.getInstance(currencyCode), Exchange.getInstance(exchangeCode), multiplier, id)
 
     init {
         require(symbol.isNotBlank()) { "Symbol in an asset cannot be empty or blank" }
@@ -142,17 +154,6 @@ data class Asset(
             return Pair(Currency.getInstance(l), currency)
         }
 
-    /**
-     * Get the [Currency] of this asset based on the underlying currency code.
-     */
-    @Transient
-    val currency = Currency.getInstance(currencyCode)
-
-    /**
-     * Get the [Exchange] of this asset based on the underlying exchange code
-     */
-    val exchange
-        get() = Exchange.getInstance(exchangeCode)
 
     /**
      * What is the value of the asset given the provided [size] and [price]
@@ -199,13 +200,13 @@ fun Collection<Asset>.findByCurrencies(vararg currencyCodes: String): List<Asset
  * Find all assets based on their [currencyCodes]. Returns an empty list if no matching assets can be found.
  */
 fun Collection<Asset>.findByCurrencies(currencyCodes: Collection<String>): List<Asset> =
-    filter { it.currencyCode in currencyCodes }
+    filter { it.currency.currencyCode in currencyCodes }
 
 /**
  * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.
  */
 fun Collection<Asset>.findByExchanges(exchangeCodes: Collection<String>): List<Asset> =
-    filter { it.exchangeCode in exchangeCodes }
+    filter { it.exchange.exchangeCode in exchangeCodes }
 
 /**
  * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.
@@ -236,9 +237,9 @@ fun Collection<Asset>.summary(): Summary {
 fun interface AssetFilter {
 
     /**
-     * Returns true if the provided [asset] should be processed, false otherwise.
+     * Returns true if the provided [asset] should be processed at the provided time, false otherwise.
      */
-    fun filter(asset: Asset): Boolean
+    fun filter(asset: Asset, time: Instant): Boolean
 
     /**
      * Standard set of Asset filters
@@ -249,30 +250,35 @@ fun interface AssetFilter {
          * Include all assets, so this filer always return true
          */
         fun all(): AssetFilter {
-            return AssetFilter { true }
+            return AssetFilter { _: Asset, _: Instant -> true }
         }
 
         /**
          * Include only the assets that are denoted in the provided [currencies].
          */
         fun includeCurrencies(vararg currencies: Currency): AssetFilter {
-            return AssetFilter { asset: Asset -> asset.currency in currencies }
+            return AssetFilter { asset: Asset, _: Instant -> asset.currency in currencies }
         }
 
+        private val regEx = Regex("[^A-Z0-9]")
+        private fun String.standardize() = uppercase().replace(regEx, ".")
+
         /**
-         * Include only the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive.
+         * Include only the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive
+         * and all special characters are translated into '.' before comparing.
          */
         fun includeSymbols(vararg symbols: String): AssetFilter {
-            val set = symbols.map { it.uppercase() }.toSet()
-            return AssetFilter { asset: Asset -> asset.symbol.uppercase() in set }
+            val set = symbols.map { it.standardize() }.toSet()
+            return AssetFilter { asset: Asset, _: Instant  -> asset.symbol.standardize() in set }
         }
 
         /**
-         * Exclude the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive.
+         * Exclude the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive
+         * and all special characters are translated into '.' before comparing.
          */
         fun excludeSymbols(vararg symbols: String): AssetFilter {
-            val set = symbols.map { it.uppercase() }.toSet()
-            return AssetFilter { asset: Asset -> asset.symbol.uppercase() !in set }
+            val set = symbols.map { it.standardize() }.toSet()
+            return AssetFilter { asset: Asset, _: Instant  -> asset.symbol.standardize() !in set }
         }
 
 

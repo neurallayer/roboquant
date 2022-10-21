@@ -51,7 +51,7 @@ fun large(type: String) {
             val tmp = CSVFeed(d.toString()) {
                 fileExtension = ".us.txt"
                 parsePattern = "??T?OHLCV?"
-                template = Asset("TEMPLATE", exchangeCode = "NASDAQ")
+                template = Asset("TEMPLATE", exchange = Exchange.getInstance("NASDAQ"))
             }
             if (feed === null) feed = tmp else feed.merge(tmp)
         }
@@ -62,7 +62,7 @@ fun large(type: String) {
             val tmp = CSVFeed(d.toString()) {
                 fileExtension = ".us.txt"
                 parsePattern = "??T?OHLCV?"
-                template = Asset("TEMPLATE", exchangeCode = "NYSE")
+                template = Asset("TEMPLATE", exchange = Exchange.getInstance("NYSE"))
             }
             if (feed === null) feed = tmp else feed.merge(tmp)
         }
@@ -73,6 +73,60 @@ fun large(type: String) {
         AvroUtil.record(feed, avroFile.toString(), compressionLevel = 1)
     }
 }
+
+/**
+ * This will generate the extended Avro Feed which includes daily price bars for many US stocks for the last 80+ years.
+ * It includes stocks from NYSE and NASDAQ.
+ *
+ * Other feeds are a subset of this feed.
+ */
+fun sp500(type: String = "daily") {
+
+    val path = dataHome / "stooq/$type/us/"
+
+    val feed = CSVFeed(path / "nasdaq stocks") {
+        fileExtension = ".us.txt"
+        parsePattern = "??T?OHLCV?"
+        template = Asset("TEMPLATE", exchange = Exchange.getInstance("NASDAQ"))
+        assetBuilder = { name -> Asset(name.replace('-','.'), exchange = Exchange.getInstance("NASDAQ")) }
+    }
+
+    val tmp = CSVFeed(path / "nyse stocks") {
+        fileExtension = ".us.txt"
+        parsePattern = "??T?OHLCV?"
+        template = Asset("TEMPLATE", exchange = Exchange.getInstance("NYSE"))
+        assetBuilder = { name -> Asset(name.replace('-','.'), exchange = Exchange.getInstance("NYSE")) }
+    }
+    feed.merge(tmp)
+
+    val sp500File = Config.home / "5yr_sp500_v3.0.avro"
+    val symbols = sp500Symbols.toTypedArray()
+    val timeframe = Timeframe.fromYears(2017, 2021)
+    AvroUtil.record(
+        feed,
+        sp500File.toString(),
+        timeframe,
+        compressionLevel = 1,
+        assetFilter = AssetFilter.includeSymbols(*symbols)
+    )
+
+    val smallFile = Config.home  / "us_small_daily_v3.0.avro"
+    AvroUtil.record(
+        feed,
+        smallFile.toString(),
+        compressionLevel = 1,
+        assetFilter = AssetFilter.includeSymbols("AAPL", "AMZN", "TSLA", "IBM", "JNJ", "JPM")
+    )
+
+
+    val avroFeed = AvroFeed(sp500File)
+    println("timeframe=${avroFeed.timeframe} assets=${avroFeed.assets.size}")
+
+    val missed = symbols.filter { symbol -> ! avroFeed.assets.map { it.symbol }.contains(symbol)}
+    println(missed)
+
+}
+
 
 /**
  * Generate small avro files, with only few assets and limited events.
@@ -94,14 +148,19 @@ fun small(type: String) {
 }
 
 /**
- * Five years (2015 till 2020) of SP500 stocks
+ * Five years (begin of 2016 till end of 2020) of SP500 stocks
  */
 fun fiveYear_sp500() {
     val feed = AvroFeed(getAvroFile("daily"))
-    val assets = feed.assets.filter { it.symbol in sp500Symbols }.toSet()
-    println("Found ${assets.size} assets")
-    val avroFile = dataHome / "avro/5yr_sp500_v2.0.avro"
-    AvroUtil.record(feed, avroFile.toString(), Timeframe.fromYears(2016, 2020))
+    val avroFile = dataHome / "avro/5yr_sp500_v3.0.avro"
+    val timeframe = Timeframe.fromYears(2016, 2020)
+    val symbols = sp500Symbols.toTypedArray()
+    AvroUtil.record(
+        feed,
+        avroFile.toString(),
+        timeframe,
+        assetFilter = AssetFilter.includeSymbols(*symbols)
+    )
 }
 
 /**
@@ -118,11 +177,13 @@ fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("ALL_SP500") {
+    when ("SP500") {
         "LARGE2" -> {
             val t = measureTimeMillis { large("daily") }
             println(t)
         }
+
+        "SP500" -> sp500()
 
         "LARGE_US_DAILY" -> large("daily")
 

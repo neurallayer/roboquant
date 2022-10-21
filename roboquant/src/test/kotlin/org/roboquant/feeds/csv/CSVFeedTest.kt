@@ -54,7 +54,7 @@ internal class CSVFeedTest {
 
     @Test
     fun customConfig() {
-        val asset = Asset("TEMPLATE", exchangeCode = "TEST123")
+        val asset = Asset("TEMPLATE", currencyCode = "USD", exchangeCode = "TEST123")
         val path = Path(TestData.dataDir() + "US") / Path("AAPL.csv")
         val config = CSVConfig()
         config.template = asset
@@ -64,15 +64,15 @@ internal class CSVFeedTest {
             template = asset
         }
         val first = feed.first().actions.first() as PriceAction
-        assertEquals("TEST123", first.asset.exchangeCode)
+        assertEquals("TEST123", first.asset.exchange.exchangeCode)
 
         fun CSVConfig.myConfigure() {
-            template = Asset("TEMPLATE", exchangeCode = "TEST345")
+            template = Asset("TEMPLATE", currencyCode = "USD",exchangeCode = "TEST345")
         }
 
         val feed2 = CSVFeed(path, configure = CSVConfig::myConfigure)
         val first2 = feed2.first().actions.first() as PriceAction
-        assertEquals("TEST345", first2.asset.exchangeCode)
+        assertEquals("TEST345", first2.asset.exchange.exchangeCode)
     }
 
     @Test

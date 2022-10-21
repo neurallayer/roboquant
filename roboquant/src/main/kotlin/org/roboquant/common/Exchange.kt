@@ -17,8 +17,24 @@
 
 package org.roboquant.common
 
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import java.time.*
 import java.util.concurrent.ConcurrentHashMap
+
+
+internal object ExchangeSerializer : KSerializer<Exchange> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Exchange", PrimitiveKind.STRING)
+    override fun serialize(encoder: Encoder, value: Exchange) {
+        encoder.encodeString(value.exchangeCode)
+    }
+    override fun deserialize(decoder: Decoder): Exchange = Exchange.getInstance(decoder.decodeString())
+}
 
 /**
  * Exchange contains the metadata of a marketplace or exchange.  When creating a new Exchange instance, use
@@ -32,6 +48,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @property currency The primary currency of the exchange
  * @property tradingCalendar The trading calendar
  */
+@Serializable(with = ExchangeSerializer::class)
 class Exchange private constructor(
     val exchangeCode: String,
     val zoneId: ZoneId,
@@ -111,17 +128,16 @@ class Exchange private constructor(
 
         private val instances = ConcurrentHashMap<String, Exchange>()
 
-        private const val NY_TIMEZONE = "America/New_York"
-
         /**
-         * Returns the Exchange instance for the given [exchangeCode]. If no exchange is found, the default exchange
-         * is returned instead.
-         *
-         * @param exchangeCode the currency code for the currency, not limited to ISO-4217 codes like regular Java
-         * Currencies
-         * @return Returns the Currency instance for the given currency code
+         * Returns the Exchange instance for the given [exchangeCode]. If no exchange is found, a new exchange instance
+         * is created with the [Exchange.DEFAULT] parameters.
          */
-        fun getInstance(exchangeCode: String): Exchange = instances[exchangeCode] ?: DEFAULT
+        fun getInstance(exchangeCode: String): Exchange {
+            val result = instances.getOrPut(exchangeCode) {
+                Exchange(exchangeCode, DEFAULT.zoneId, DEFAULT.currency, DEFAULT.tradingCalendar)
+            }
+            return result
+        }
 
         /**
          * add the Exchange instance to the list. For a given [exchangeCode] there can only be one instance.
@@ -144,38 +160,42 @@ class Exchange private constructor(
         }
 
         init {
-            addInstance("", NY_TIMEZONE, "USD")
+            val newYorkTimeZone = "America/New_York"
 
-            // North American exchanges
-            addInstance("US", NY_TIMEZONE, "USD")
-            addInstance("NYSE", NY_TIMEZONE, "USD")
-            addInstance("NASDAQ", NY_TIMEZONE, "USD")
-            addInstance("BATS", NY_TIMEZONE, "USD")
-            addInstance("ARCA", NY_TIMEZONE, "USD")
-            addInstance("AMEX", NY_TIMEZONE, "USD")
+            addInstance("", newYorkTimeZone, "USD")
+
+            // Major North American exchanges
+            addInstance("US", newYorkTimeZone, "USD")
+            addInstance("NYSE", newYorkTimeZone, "USD")
+            addInstance("NASDAQ", newYorkTimeZone, "USD")
+            addInstance("BATS", newYorkTimeZone, "USD")
+            addInstance("CBOE", newYorkTimeZone, "USD")
+            addInstance("ARCA", newYorkTimeZone, "USD")
+            addInstance("AMEX", newYorkTimeZone, "USD")
             addInstance("TSX", "America/Toronto", "CAD")
 
-            // European exchanges
+            // Major European exchanges
             addInstance("AEB", "Europe/Amsterdam", "EUR", "09:00", "17:30")
             addInstance("LSE", "Europe/London", "GBP", "08:00", "16:30")
             addInstance("FSX", "Europe/Berlin", "EUR", "09:00", "17:30")
             addInstance("SIX", "Europe/Zurich", "CHF", "09:00", "17:20")
+            addInstance("PAR", "Europe/Paris", "EUR", "09:00", "17:30")
 
-            // Asian exchanges
+            // Major Asian exchanges
             addInstance("JPX", "Asia/Tokyo", "JPY", "09:00", "15:00")
             addInstance("SSE", "Asia/Shanghai", "CNY", "09:30", "15:00")
             addInstance("SEHK", "Asia/Hong_Kong", "CNY", "09:30", "16:00")
 
-            // Australian exchanges
+            // Major Australian exchanges
             addInstance("SSX", "Australia/Sydney", "AUD", "10:00", "16:00")
 
             // Generic 24x7 Crypto Exchange
-            addInstance("CRYPTO", NY_TIMEZONE, "USD", "00:00", "23:59:59.999")
+            addInstance("CRYPTO", newYorkTimeZone, "USD", "00:00", "23:59:59.999")
         }
 
         /**
          * The default exchange is the exchange with as exchangeCode an empty string and used as a fallback if an
-         * exchange cannot be found.
+         * exchange cannot be found. It uses NY timezone and USD as default currency.
          */
         val DEFAULT
             get() = getInstance("")

@@ -120,10 +120,9 @@ class AvroTest {
 
     @Test
     fun predefined() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AvroFeed.sp500()
-        assertTrue(feed.assets.size >= 500)
-        assertTrue(feed.timeframe.start > Instant.parse("2013-01-01T00:00:00Z"))
+        assertTrue(feed.assets.size >= 490)
+        assertTrue(feed.timeframe.start >= Instant.parse("2016-01-01T00:00:00Z"))
         assertContains(feed.assets.map { it.symbol }, "AAPL")
 
         val feed2 = AvroFeed.usTest()

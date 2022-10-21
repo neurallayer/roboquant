@@ -82,7 +82,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
             val asset = order.asset
             if (asset.type == AssetType.CRYPTO) {
 
-                val currencyPair = CurrencyPair(asset.symbol, asset.currencyCode)
+                val currencyPair = CurrencyPair(asset.symbol, asset.currency.currencyCode)
 
                 if (supportCurrencies != null && currencyPair !in supportCurrencies) {
                     logger.warn { "Unsupported currency pair $currencyPair for exchange" }

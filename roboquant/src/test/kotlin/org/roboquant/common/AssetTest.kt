@@ -20,6 +20,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
+import java.time.Instant
 import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -80,16 +81,17 @@ internal class AssetTest {
     fun testFilter() {
         val asset1 = Asset("abc")
         val assets = listOf(asset1, Asset("BCD"), Asset("CDE"))
-        var a = assets.filter { AssetFilter.all().filter(it) }
+        val time = Instant.now()
+        var a = assets.filter { AssetFilter.all().filter(it, time) }
         assertEquals(3, a.size)
 
-        a = assets.filter { AssetFilter.excludeSymbols("ABC").filter(it) }
+        a = assets.filter { AssetFilter.excludeSymbols("ABC").filter(it, time) }
         assertFalse(asset1 in a)
 
-        a = assets.filter { AssetFilter.includeSymbols("ABC").filter(it) }
+        a = assets.filter { AssetFilter.includeSymbols("ABC").filter(it, time) }
         assertTrue(asset1 in a)
 
-        a = assets.filter { AssetFilter.includeCurrencies(Currency.USD).filter(it) }
+        a = assets.filter { AssetFilter.includeCurrencies(Currency.USD).filter(it, time) }
         assertTrue(asset1 in a)
     }
 

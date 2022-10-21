@@ -94,7 +94,7 @@ object AvroUtil {
                     val event = channel.receive()
                     val now = event.time.toEpochMilli()
                     for (action in event.actions.filterIsInstance<PriceAction>()
-                        .filter { assetFilter.filter(it.asset) }) {
+                        .filter { assetFilter.filter(it.asset, event.time) }) {
                         val asset = action.asset
                         val assetStr = cache.getOrPut(asset) { Json.encodeToString(asset) }
                         record.put(0, now)

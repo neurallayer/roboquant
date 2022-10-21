@@ -161,8 +161,8 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
     companion object {
 
         private val logger = Logging.getLogger(AvroFeed::class)
-        private const val sp500File = "5yr_sp500_v2.0.avro"
-        private const val smallFile = "us_small_daily_v2.0.avro"
+        private const val sp500File = "5yr_sp500_v3.0.avro"
+        private const val smallFile = "us_small_daily_v3.0.avro"
 
         /**
          * 5 years worth of end of day [PriceBar] data for the companies listed in the S&P 500

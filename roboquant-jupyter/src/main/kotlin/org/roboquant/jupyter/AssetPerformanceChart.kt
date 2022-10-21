@@ -56,7 +56,7 @@ class AssetPerformanceChart(
     private fun fromFeed(): List<Map<String, Any>> {
         val result = mutableMapOf<Asset, MutableList<Double>>()  // start, last, volume
         val entries = feed.filter<PriceAction>(timeframe)
-        val finalEntries = entries.filter { assetFilter.filter(it.second.asset) }
+        val finalEntries = entries.filter { assetFilter.filter(it.second.asset, timeframe.start) }
         finalEntries.forEach { (time, priceAction) ->
             if (priceAction.volume.isFinite()) {
                 val asset = priceAction.asset

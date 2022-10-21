@@ -30,7 +30,7 @@ import org.roboquant.feeds.PriceAction
 class AssetFilterStrategy(private val strategy: Strategy, private val assetFilter: AssetFilter) : Strategy by strategy {
 
     override fun generate(event: Event): List<Signal> {
-        val actions = event.actions.filterIsInstance<PriceAction>().filter { assetFilter.filter(it.asset) }
+        val actions = event.actions.filterIsInstance<PriceAction>().filter { assetFilter.filter(it.asset, event.time) }
         val newEvent = Event(actions, event.time)
         return strategy.generate(newEvent)
     }

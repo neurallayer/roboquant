@@ -283,7 +283,7 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
                     listOf(
                         order.type,
                         asset.symbol,
-                        asset.currencyCode,
+                        asset.currency,
                         status,
                         order.id,
                         t1,
