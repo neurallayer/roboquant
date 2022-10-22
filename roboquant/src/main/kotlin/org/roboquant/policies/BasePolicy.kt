@@ -70,9 +70,13 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
     protected fun calcSize(amount: Amount, signal: Signal, price: Double, time: Instant): Size {
         val asset = signal.asset
         val singleContractPrice = asset.value(Size.ONE, price).value
-        val availableAssetCash = amount.convert(asset.currency, time)
-        val direction = if (signal.rating.isNegative) -1 else 1
-        return Size((availableAssetCash.value / singleContractPrice).toInt()) * direction
+        val availableAssetCash = amount.convert(asset.currency, time).value
+        return if (availableAssetCash <= 0.0) {
+            Size.ZERO
+        } else {
+            val direction = if (signal.rating.isNegative) -1 else 1
+            Size((availableAssetCash / singleContractPrice).toInt()) * direction
+        }
     }
 
 }
