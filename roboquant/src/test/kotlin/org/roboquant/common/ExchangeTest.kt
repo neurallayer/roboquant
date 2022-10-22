@@ -16,6 +16,9 @@
 
 package org.roboquant.common
 
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.DayOfWeek
@@ -53,6 +56,13 @@ internal class ExchangeTest {
             exchange3.getLocalDate(now)
         }
     }
+
+    @Test
+    fun serializer() {
+        assertEquals("\"US\"", Json.encodeToString(Exchange.US))
+        assertEquals(Exchange.US, Json.decodeFromString("\"US\""))
+    }
+
 
     @Test
     fun testNoTrading() {

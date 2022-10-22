@@ -16,8 +16,12 @@
 
 package org.roboquant.common
 
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class CurrencyTest {
 
@@ -49,6 +53,12 @@ internal class CurrencyTest {
         val x = Currency.USD
         val y = Currency.getInstance("USD")
         assertEquals(x, y)
+    }
+
+    @Test
+    fun serializer() {
+        assertEquals("\"EUR\"", Json.encodeToString(Currency.EUR))
+        assertEquals(Currency.EUR, Json.decodeFromString("\"EUR\""))
     }
 
     @Test
