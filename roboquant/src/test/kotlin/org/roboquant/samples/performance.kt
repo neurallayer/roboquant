@@ -16,22 +16,32 @@
 
 package org.roboquant.samples
 
-import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
-import org.roboquant.common.*
-import org.roboquant.feeds.*
+import org.roboquant.common.Config
+import org.roboquant.common.ParallelJobs
+import org.roboquant.common.Timeframe
+import org.roboquant.common.days
+import org.roboquant.feeds.HistoricFeed
+import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.filter
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
+import java.text.NumberFormat
 import kotlin.system.measureTimeMillis
 
 
+/**
+ * Try to make the results more reproducible by running the code multiple times and take best timing and
+ * always run a GC upfront.
+ */
 fun measure(block: () -> Unit) : Long {
     var best = Long.MAX_VALUE
-    repeat(4) {
+    repeat(5) {
+        System.gc()
         val t = measureTimeMillis(block)
         if (t < best) best = t
     }
@@ -43,31 +53,29 @@ fun measure(block: () -> Unit) : Long {
 /**
  * Basic test with minimal overhead
  */
-fun basePerformance(feed: HistoricFeed) {
-    val t = measure {
+fun basePerformance(feed: HistoricFeed): Long {
+    return measure {
         val roboquant = Roboquant(EMAStrategy(), logger = SilentLogger())
         roboquant.run(feed)
     }
-    println("basePerformance time=$t ms")
 }
 
 
 /**
  * Test iterating over the feed
  */
-fun feedPerformance(feed: HistoricFeed) {
-    val t = measure {
+fun feedPerformance(feed: HistoricFeed): Long {
+    return measure {
         feed.filter<PriceBar>()
     }
-    println("feedPerformance time=$t ms")
 }
 
 
 /**
  * Test with some metrics and logging overhead included
  */
-fun extensivePerformance(feed: HistoricFeed) {
-    val t = measure {
+fun extensivePerformance(feed: HistoricFeed): Long {
+    return measure {
         val roboquant = Roboquant(
             EMAStrategy(),
             AccountMetric(),
@@ -76,7 +84,6 @@ fun extensivePerformance(feed: HistoricFeed) {
         )
         roboquant.run(feed)
     }
-    println("extensivePerformance time=$t ms")
 }
 
 
@@ -84,9 +91,9 @@ fun extensivePerformance(feed: HistoricFeed) {
 /**
  * Parallel tests (8) with minimal overhead
  */
-fun parallelPerformance(feed: HistoricFeed) = runBlocking {
+fun parallelPerformance(feed: HistoricFeed): Long {
 
-    val t = measure {
+    return measure {
         val jobs = ParallelJobs()
 
         repeat(8) {
@@ -97,17 +104,16 @@ fun parallelPerformance(feed: HistoricFeed) = runBlocking {
         }
         jobs.joinAllBlocking()
     }
-    println("parallelPerformance time=$t ms")
 }
 
 
 fun run(feed: HistoricFeed) {
     val priceBars = feed.assets.size * feed.timeline.size
-    println("\n***** total number of candlesticks: $priceBars ******")
-    feedPerformance(feed)
-    basePerformance(feed)
-    extensivePerformance(feed)
-    parallelPerformance(feed)
+    println("\n***** total number of candlesticks: ${NumberFormat.getIntegerInstance().format(priceBars)} ******")
+    println("feed performance: ${feedPerformance(feed)}ms")
+    println("base performance: ${basePerformance(feed)}ms")
+    println("exte performance: ${extensivePerformance(feed)}ms")
+    println("feed performance: ${parallelPerformance(feed)}ms")
 }
 
 
