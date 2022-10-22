@@ -57,7 +57,7 @@ class RandomWalkFeed(
     override val assets = 1.rangeTo(nAssets).map { template.copy(symbol = "ASSET$it") }.toSortedSet()
 
     init {
-        logger.info { "assets=$nAssets events=${timeline.size} timeframe=$timeframe"}
+        logger.debug { "assets=$nAssets events=${timeline.size} timeframe=$timeframe"}
     }
 
     private fun SplittableRandom.firstPrice(): Double = nextDouble(50.0, 150.0)

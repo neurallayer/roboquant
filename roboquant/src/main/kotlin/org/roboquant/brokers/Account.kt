@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.apache.commons.math3.stat.descriptive.rank.Percentile
 import org.roboquant.common.*
 import org.roboquant.orders.OrderState
+import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
@@ -121,18 +122,29 @@ class Account(
 
         s.add(p)
         p.add("open", positions.size)
+        p.add("long", positions.long.size)
+        p.add("short", positions.short.size)
         p.add("total value", c(positions.marketValue))
         p.add("long value", c(positions.long.marketValue))
         p.add("short value", c(positions.short.marketValue))
         p.add("unrealized p&l", c(positions.unrealizedPNL))
 
         s.add(t)
-        t.add("trades", trades.size)
+        t.add("total", trades.size)
         t.add("realized p&l", c(trades.realizedPNL))
+        t.add("fee", trades.sumOf { it.fee })
+        t.add("first", trades.firstOrNull()?.time ?: "")
+        t.add("last", trades.lastOrNull()?.time ?: "")
+        t.add("winners", trades.count { it.pnl > 0 })
+        t.add("loosers", trades.count { it.pnl < 0 })
 
         s.add(o)
-        o.add("open orders", openOrders.size)
-        o.add("closed orders", closedOrders.size)
+        o.add("open", openOrders.size)
+        o.add("closed", closedOrders.size)
+        o.add("completed", closedOrders.filter { it.status == OrderStatus.COMPLETED }.size)
+        o.add("cancelled", closedOrders.filter { it.status == OrderStatus.CANCELLED }.size)
+        o.add("expired", closedOrders.filter { it.status == OrderStatus.EXPIRED }.size)
+        o.add("rejected", closedOrders.filter { it.status == OrderStatus.REJECTED }.size)
         return s
     }
 

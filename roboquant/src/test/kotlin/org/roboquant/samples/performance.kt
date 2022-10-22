@@ -48,7 +48,7 @@ fun basePerformance(feed: HistoricFeed) {
         val roboquant = Roboquant(EMAStrategy(), logger = SilentLogger())
         roboquant.run(feed)
     }
-    println("basePerformance time=$t")
+    println("basePerformance time=$t ms")
 }
 
 
@@ -59,7 +59,7 @@ fun feedPerformance(feed: HistoricFeed) {
     val t = measure {
         feed.filter<PriceBar>()
     }
-    println("feedPerformance time=$t")
+    println("feedPerformance time=$t ms")
 }
 
 
@@ -76,7 +76,7 @@ fun extensivePerformance(feed: HistoricFeed) {
         )
         roboquant.run(feed)
     }
-    println("extensivePerformance time=$t")
+    println("extensivePerformance time=$t ms")
 }
 
 
@@ -97,17 +97,17 @@ fun parallelPerformance(feed: HistoricFeed) = runBlocking {
         }
         jobs.joinAllBlocking()
     }
-    println("parallelPerformance time=$t")
+    println("parallelPerformance time=$t ms")
 }
 
 
 fun run(feed: HistoricFeed) {
     val priceBars = feed.assets.size * feed.timeline.size
     println("\n***** total number of candlesticks: $priceBars ******")
+    feedPerformance(feed)
     basePerformance(feed)
     extensivePerformance(feed)
     parallelPerformance(feed)
-    feedPerformance(feed)
 }
 
 

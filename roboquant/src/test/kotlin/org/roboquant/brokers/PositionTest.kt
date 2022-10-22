@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.junit.jupiter.api.Test
 import kotlin.test.*
 import org.roboquant.TestData
+import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import java.math.BigDecimal
 import kotlin.random.Random
@@ -44,6 +45,17 @@ internal class PositionTest {
         assertEquals(20.0, newPos.size.toDouble())
         assertEquals(0.0, pnl.value)
         assertEquals(240.0, newPos.exposure.value)
+    }
+
+
+    @Test
+    fun reduced() {
+        val position = Position(Asset("XYZ"), Size(100))
+        assertTrue(position.isReduced(Size(-100)))
+        assertTrue(position.isReduced(Size(-150)))
+        assertFalse(position.isReduced(Size(1)))
+        assertFalse(position.isReduced(Size(100)))
+        assertFalse(position.isReduced(Size(-300)))
     }
 
     @Test

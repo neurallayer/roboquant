@@ -19,10 +19,7 @@ package org.roboquant.policies
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.getPosition
-import org.roboquant.common.Amount
-import org.roboquant.common.Asset
-import org.roboquant.common.Logging
-import org.roboquant.common.Size
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
@@ -45,7 +42,6 @@ import kotlin.math.max
  *
  * @property orderPercentage The percentage of overall equity value for a single order, default is 1% (0.01)
  * @property shorting Should the policy create orders that lead to short positions, default is false
- * @property singleOrder Should there be only maximum one open order per asset at any time, default is true
  * @constructor Create new Default Policy
  */
 open class DefaultPolicy(
@@ -57,35 +53,16 @@ open class DefaultPolicy(
     private val logger = Logging.getLogger(DefaultPolicy::class)
 
     /**
-     * Calculate the exposure impact on the buying power
+     * Would the [signal] generate a reduced position size based on the current [position]
      */
-    private fun getExposure(position: Position, asset: Asset, size: Size, price: Double): Amount {
-        // No exposure if we reduce the overall position size, so that is always allowed
-        return if (position.isReduced(size))  {
-            Amount(asset.currency, 0.0)
-        } else {
-            asset.value(size, price).absoluteValue
+    private fun reducedPositionOrder(position: Position, signal: Signal) : Boolean {
+        with (position) {
+            if (open && signal.exit) {
+                if (long && signal.rating.isNegative) return true
+                if (short && signal.rating.isPositive) return true
+            }
         }
-    }
-
-    private fun createSellOrder(size: Size, signal: Signal, price: Double, position: Position): Order? {
-
-        return when {
-            position.long && signal.exit -> createOrder(signal, -position.size, price)
-            position.closed && signal.entry && shorting -> createOrder(signal, -size, price)
-            else -> null
-        }
-
-    }
-
-    private fun createBuyOrder(size: Size, signal: Signal, price: Double, position: Position): Order? {
-
-        return when {
-            position.short && signal.exit -> createOrder(signal, -position.size, price)
-            position.closed && signal.entry && size > 0 -> createOrder(signal, size, price)
-            else -> null
-        }
-
+        return false
     }
 
     /**
@@ -102,31 +79,43 @@ open class DefaultPolicy(
 
         val orders = mutableListOf<Order>()
         var buyingPower = max(account.buyingPower.value, 0.0)
+        val amount = account.equityAmount * orderPercentage
 
+        @Suppress("LoopWithTooManyJumpStatements")
         for (signal in signals.filter { it.rating !== Rating.HOLD }) {
             val asset = signal.asset
 
             // We don't create an order if we don't know the current price
             val price = event.getPrice(asset, priceType)
 
+            logger.debug { "signal=${signal} amount=$amount price=$price" }
+
             if (price !== null) {
-                val amount = account.equityAmount * orderPercentage
-                val size = calcSize(amount, signal.asset, price, event.time)
                 val position = account.positions.getPosition(asset)
+                if (reducedPositionOrder(position, signal)) {
+                    val order = createOrder(signal, -position.size, price)
+                    orders.addNotNull(order)
+                } else {
+                    if (position.open) continue // we don't increase position sizing
+                    if (! signal.entry) continue // signal doesn't allow to open new positions
 
-                val order = if (signal.rating.isNegative)
-                        createSellOrder(size, signal, price, position)
-                    else
-                        createBuyOrder(size, signal, price, position)
+                    val size = calcSize(amount, signal, price, event.time)
+                    if (size < 0 && ! shorting) continue
+                    if (size.iszero) continue
 
-                if (order != null) {
-                    val exposure = account.convert(getExposure(position, signal.asset, size, price)).value
-                    if (exposure <= buyingPower) {
+                    val assetExposure = asset.value(size, price).absoluteValue
+                    val exposure = account.convert(assetExposure, event.time).value
+                    if (exposure > buyingPower) continue
+                    val order = createOrder(signal, size, price)
+
+                    if (order != null) {
                         logger.debug { "signal=${signal} amount=$amount exposure=$exposure order=$order" }
                         orders.add(order)
                         buyingPower -= exposure
                     }
+
                 }
+
 
             }
         }

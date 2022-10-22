@@ -18,6 +18,7 @@ package org.roboquant.strategies
 
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
+import org.roboquant.strategies.SignalType.*
 
 /**
  * This enum class represents the type of signal: [ENTRY], [EXIT] or [BOTH] and can be used by more advanced
@@ -70,7 +71,7 @@ enum class SignalType {
 class Signal(
     val asset: Asset,
     val rating: Rating,
-    val type: SignalType = SignalType.BOTH,
+    val type: SignalType = BOTH,
     val takeProfit: Double = Double.NaN,
     val stopLoss: Double = Double.NaN,
     val probability: Double = Double.NaN,
@@ -81,7 +82,7 @@ class Signal(
      * Does this signal allow to function as an exit signal, so to close or decrease a position
      */
     val exit
-        get() = type === SignalType.EXIT || type === SignalType.BOTH
+        get() = type === EXIT || type === BOTH
 
     /**
      * Returns [takeProfit] as an [Amount]
@@ -99,12 +100,14 @@ class Signal(
      * Does this signal allow to function as an entry signal, so to open or increase a position
      */
     val entry
-        get() = type === SignalType.ENTRY || type === SignalType.BOTH
+        get() = type === ENTRY || type === BOTH
 
     /**
      * Does this signal conflict with an [other] signal. Two signals conflict if they contain the same asset but
      * opposite ratings. So one signal has a positive outlook and the other one is negative.
      */
     fun conflicts(other: Signal) = asset == other.asset && rating.conflicts(other.rating)
+
+
 
 }

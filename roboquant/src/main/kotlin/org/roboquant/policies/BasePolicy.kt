@@ -17,13 +17,11 @@
 package org.roboquant.policies
 
 import org.roboquant.common.Amount
-import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.metrics.MetricResults
+import org.roboquant.strategies.Signal
 import java.time.Instant
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
-import kotlin.collections.toMap
 
 /**
  * Contains a number of utility methods that are useful when implementing a new policy. For example
@@ -67,12 +65,14 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
 
     /**
      * Return the size that can be bought/sold with the provided [amount] given the [price] in the currency of
-     * the [asset] at the provided [time]. This implementation assumes that you cannot buy fractional contracts.
+     * the asset at the provided [time]. This implementation assumes that you cannot buy fractional contracts.
      */
-    protected fun calcSize(amount: Amount, asset: Asset, price: Double, time: Instant): Size {
+    protected fun calcSize(amount: Amount, signal: Signal, price: Double, time: Instant): Size {
+        val asset = signal.asset
         val singleContractPrice = asset.value(Size.ONE, price).value
         val availableAssetCash = amount.convert(asset.currency, time)
-        return Size((availableAssetCash.value / singleContractPrice).toInt())
+        val direction = if (signal.rating.isNegative) -1 else 1
+        return Size((availableAssetCash.value / singleContractPrice).toInt()) * direction
     }
 
 }
