@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("KotlinConstantConditions")
-
 package org.roboquant.samples
 
 import kotlinx.coroutines.runBlocking
@@ -23,32 +21,21 @@ import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.logging.LastEntryLogger
+import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
-import java.util.*
 import kotlin.system.measureTimeMillis
 
-/**
- * Basic test with minimal overhead
- */
-fun base2() {
 
-    val timeline = Timeframe.parse("2022-01", "2022-02").toTimeline(1.seconds).take(10_000_000)
-    println(timeline.size)
-    val feed = RandomWalkFeed(timeline, 100)
-    println(feed.assets.size)
-
-    repeat(2) {
-        val roboquant = Roboquant(EMAStrategy(), ProgressMetric(), logger = LastEntryLogger(true))
-        val t = measureTimeMillis {
-            roboquant.run(feed)
-        }
-        println(roboquant.broker.account.summary(false))
-        println("time = $t ms")
+fun measure(block: () -> Unit) : Long {
+    var best = Long.MAX_VALUE
+    repeat(4) {
+        val t = measureTimeMillis(block)
+        if (t < best) best = t
     }
+    return best
 }
 
 
@@ -56,93 +43,92 @@ fun base2() {
 /**
  * Basic test with minimal overhead
  */
-fun base() {
-    val feed = RandomWalkFeed.lastDays(7, 100)
-
-    repeat(5) {
-        val roboquant = Roboquant(EMAStrategy(), AccountMetric(), logger = SilentLogger())
-        val t = measureTimeMillis {
-            roboquant.run(feed)
-        }
-        println(roboquant.broker.account.summary(false))
-        println("time = $t ms")
+fun basePerformance(feed: HistoricFeed) {
+    val t = measure {
+        val roboquant = Roboquant(EMAStrategy(), logger = SilentLogger())
+        roboquant.run(feed)
     }
+    println("basePerformance time=$t")
+}
+
+
+/**
+ * Test iterating over the feed
+ */
+fun feedPerformance(feed: HistoricFeed) {
+    val t = measure {
+        feed.filter<PriceBar>()
+    }
+    println("feedPerformance time=$t")
+}
+
+
+/**
+ * Test with some metrics and logging overhead included
+ */
+fun extensivePerformance(feed: HistoricFeed) {
+    val t = measure {
+        val roboquant = Roboquant(
+            EMAStrategy(),
+            AccountMetric(),
+            ProgressMetric(),
+            logger = MemoryLogger(showProgress = false)
+        )
+        roboquant.run(feed)
+    }
+    println("extensivePerformance time=$t")
 }
 
 
 
 /**
- * Basic test with minimal overhead
+ * Parallel tests (8) with minimal overhead
  */
-fun baseParallel(feed: Feed) = runBlocking {
-    val jobs = ParallelJobs()
-    var actions = 0
+fun parallelPerformance(feed: HistoricFeed) = runBlocking {
 
-    val t = measureTimeMillis {
+    val t = measure {
+        val jobs = ParallelJobs()
+
         repeat(8) {
-            val logger = LastEntryLogger()
-            val roboquant = Roboquant(
-                EMAStrategy(),
-                ProgressMetric(),
-                logger = logger
-            )
             jobs.add {
+                val roboquant = Roboquant(EMAStrategy(it + 10, it + 20), logger = SilentLogger())
                 roboquant.run(feed)
-                actions += logger.getMetric("progress.actions").first().value.toInt()
             }
         }
-        jobs.joinAll()
+        jobs.joinAllBlocking()
     }
-    println("actions = $actions  time = $t")
+    println("parallelPerformance time=$t")
 }
 
-/**
- * Example of hyperparameter search using parallel runs.
- * Total 36 (6x6) combinations are explored.
- */
-suspend fun multiRunParallel(feed: Feed) {
-    val logger = LastEntryLogger()
-    val jobs = ParallelJobs()
 
-    for (fast in 10..15) {
-        for (slow in 20..25) {
-            val strategy = EMAStrategy(fast, slow)
-            val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
-            jobs.add {
-                roboquant.runAsync(feed, runName = "run $fast-$slow")
-            }
-        }
-    }
-
-    jobs.joinAll() // Make sure we wait for all jobs to finish
-    val maxEntry = logger.getMetric("account.equity").max()
-    println("${maxEntry.info.run}  => ${maxEntry.value} equity")
+fun run(feed: HistoricFeed) {
+    val priceBars = feed.assets.size * feed.timeline.size
+    println("\n***** total number of candlesticks: $priceBars ******")
+    basePerformance(feed)
+    extensivePerformance(feed)
+    parallelPerformance(feed)
+    feedPerformance(feed)
 }
 
-suspend fun main() {
+
+fun getFeed(events: Int, assets: Int): RandomWalkFeed {
+    val timeline = Timeframe.fromYears(1900, 2022).toTimeline(1.days).takeLast(events)
+    return RandomWalkFeed(timeline, assets)
+}
+
+fun main() {
     Config.printInfo()
 
-    // Generate 1.008.000 price bars
-    val feed = RandomWalkFeed.lastDays(7, 100)
+    // 500_000 candle sticks
+    var feed = getFeed(5000, 100)
+    run(feed)
 
-    var time = Long.MAX_VALUE
+    // 1_000_000 candle sticks
+    feed = getFeed(10_000, 100)
+    run(feed)
 
-    // Repeat three times to exclude Java compile time overhead of first run
-    repeat(1) {
-        val t = measureTimeMillis {
-            when ("BASE") {
-                "BASE" -> base2()
-                "BASE_PARALLEL" -> baseParallel(feed)
-                "PARALLEL" -> multiRunParallel(feed)
-                "MIXED" -> {
-                    base()
-                    multiRunParallel(feed)
-                }
-            }
-        }
-        if (t < time) time = t
-    }
-
-    // println("\nFastest time $time ms")
+    // 10_000_000 candle sticks
+    feed = getFeed(10_000, 1000)
+    run(feed)
 
 }

@@ -35,7 +35,7 @@ import java.time.format.DateTimeFormatter
  * @property symbol none empty symbol name, for derivatives like options or futures contract this includes the details
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currency currency, default is [Currency.USD]
- * @property exchange Exchange this asset is traded on, default is [Exchange.DEFAULT]
+ * @property exchange Exchange this asset is traded on, default is [Exchange.US]
  * @property multiplier contract multiplier, default is 1.0
  * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
@@ -45,7 +45,7 @@ data class Asset(
     val symbol: String,
     val type: AssetType = AssetType.STOCK,
     val currency: Currency = Currency.USD,
-    val exchange: Exchange = Exchange.DEFAULT,
+    val exchange: Exchange = Exchange.US,
     val multiplier: Double = 1.0,
     val id: String = ""
 ) : Comparable<Asset> {

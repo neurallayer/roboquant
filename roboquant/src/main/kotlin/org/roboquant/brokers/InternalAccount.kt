@@ -141,7 +141,8 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
     }
 
     /**
-     * Create an immutable [Account] instance that can be shared with other components (Policy and Metric).
+     * Create an immutable [Account] instance that can be shared with other components (Policy and Metric) and is
+     * guaranteed not to change after it has been created.
      */
     fun toAccount(): Account {
         return Account(

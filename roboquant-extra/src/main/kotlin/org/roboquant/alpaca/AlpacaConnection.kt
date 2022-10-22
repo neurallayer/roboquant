@@ -57,7 +57,7 @@ internal object AlpacaConnection {
 
     init {
         if (Exchange.exchanges.none { it.exchangeCode == "FTXU" }) {
-            Exchange.addInstance("FTXU", "UTC", "USD", opening = "00:00", closing = "23:59:59.999")
+            Exchange.addInstance("FTXU", "UTC", opening = "00:00", closing = "23:59:59.999")
         }
     }
 

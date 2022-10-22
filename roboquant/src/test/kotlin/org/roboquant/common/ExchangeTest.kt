@@ -28,7 +28,7 @@ internal class ExchangeTest {
 
     @Test
     fun test() {
-        assertEquals(Exchange.DEFAULT.zoneId, Exchange.getInstance("DUMMY").zoneId)
+        assertEquals(Exchange.US.zoneId, Exchange.getInstance("DUMMY").zoneId)
 
         Exchange.addInstance("DUMMY", "Europe/Paris")
         val exchange2 = Exchange.getInstance("DUMMY")

@@ -133,13 +133,13 @@ class AvroTest {
     @Test
     fun loadFromGithub() {
         Config.getProperty("FULL_COVERAGE") ?: return
-        val file = (Config.home / "us_small_daily_v2.0.avro").toFile()
+        val file = (Config.home / "us_small_daily_v3.0.avro").toFile()
         file.delete()
         assertFalse(file.exists())
         val feed = AvroFeed.usTest()
         assertTrue(feed.assets.size == 6)
 
-        val file2 = (Config.home / "us_small_daily_v2.0.avro").toFile()
+        val file2 = (Config.home / "us_small_daily_v3.0.avro").toFile()
         assertTrue(file2.exists())
     }
 

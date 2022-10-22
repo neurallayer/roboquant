@@ -25,6 +25,7 @@ import java.time.Instant
 import java.time.Period
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class RandomWalkFeedTest {
@@ -74,6 +75,25 @@ internal class RandomWalkFeedTest {
         val feed = RandomWalkFeed.lastDays(5)
         val tf = feed.split(100)
         assertTrue(tf.isNotEmpty())
+    }
+
+
+    @Test
+    fun reproducable() {
+        val timeline = Timeframe.fromYears(2000, 2001).toTimeline(1.days)
+        val feed1 = RandomWalkFeed(timeline, seed = 10)
+        val feed2 = RandomWalkFeed(timeline, seed = 10)
+        val feed3 = RandomWalkFeed(timeline, seed = 11)
+
+        assertEquals(feed1.assets, feed2.assets)
+        assertEquals(feed1.assets, feed3.assets)
+
+        val result1 =  feed1.filter<PriceBar> { it.asset.symbol == "ASSET1"}
+        val result2 =  feed2.filter<PriceBar> { it.asset.symbol == "ASSET1"}
+        val result3 =  feed3.filter<PriceBar> { it.asset.symbol == "ASSET1"}
+
+        assertEquals(result1.toString(), result2.toString())
+        assertNotEquals(result1.toString(), result3.toString())
     }
 
     @Test

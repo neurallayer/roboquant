@@ -20,13 +20,11 @@ import org.roboquant.common.*
 import org.roboquant.feeds.*
 import java.time.Instant
 import java.time.LocalDate
-import kotlin.random.Random
-import kotlin.random.asJavaRandom
+import java.util.*
 
 /**
- * Random walk creates number of assets with a price history that follows a random walk using a
- * Normal distribution. It can be useful for testing, since if your strategy does well using this feed, there
- * might be something suspicious going on.
+ * Random walk creates number of assets with a price history that follows a random walk. It can be useful for testing,
+ * since if your strategy does well using this feed, there might be something suspicious going on.
  *
  * Internally it uses a seeded random generator, so while is generates random data, the results can be reproduced if
  * instantiated with the same seed. It can generate [PriceBar] or [TradePrice] prices.
@@ -56,17 +54,17 @@ class RandomWalkFeed(
     private val seed: Int = 42
 ) : HistoricFeed {
 
-    override val assets = 1.rangeTo(nAssets).map { template.copy(symbol = "Asset-$it") }.toSortedSet()
+    override val assets = 1.rangeTo(nAssets).map { template.copy(symbol = "ASSET$it") }.toSortedSet()
 
     init {
         logger.info { "assets=$nAssets events=${timeline.size} timeframe=$timeframe"}
     }
 
-    private fun Random.firstPrice(): Double = nextDouble(50.0, 150.0)
+    private fun SplittableRandom.firstPrice(): Double = nextDouble(50.0, 150.0)
 
-    private fun Random.nextPrice(price: Double) : Double = price + asJavaRandom().nextGaussian()
+    private fun SplittableRandom.nextPrice(price: Double) : Double = price + nextDouble(-1.0, 1.0)
 
-    private fun Random.priceBar(asset: Asset, price: Double) : PriceAction {
+    private fun SplittableRandom.priceBar(asset: Asset, price: Double) : PriceAction {
         val v = mutableListOf(price)
         repeat(3) {
             v.add(price + (nextDouble(-priceRange, priceRange)))
@@ -83,14 +81,14 @@ class RandomWalkFeed(
     /**
      * Generate random single price actions
      */
-    private fun Random.tradePrice(asset: Asset, price: Double) : PriceAction {
+    private fun SplittableRandom.tradePrice(asset: Asset, price: Double) : PriceAction {
         val volume = nextInt(volumeRange, volumeRange*2)
         return TradePrice(asset, price, volume.toDouble())
     }
 
     override suspend fun play(channel: EventChannel) {
         val prices = mutableMapOf<Asset, Double>()
-        val random = Random(seed)
+        val random = SplittableRandom(seed.toLong())
         for (time in timeline) {
             val actions = mutableListOf<PriceAction>()
             for (asset in assets) {
