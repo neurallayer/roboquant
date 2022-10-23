@@ -5,14 +5,15 @@ import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.logging.MemoryLogger
+import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.AccountMetric
-import org.roboquant.metrics.ProgressMetric
+import org.roboquant.metrics.PNLMetric
 import org.roboquant.strategies.EMAStrategy
 import java.text.NumberFormat
 import kotlin.system.measureTimeMillis
 import kotlin.test.Test
+
 
 internal class PerformanceTest {
 
@@ -20,13 +21,11 @@ internal class PerformanceTest {
     private val logger = Logging.getLogger(PerformanceTest::class)
 
     /**
-     * Try to make the results more reproducible by running the code multiple times and take best timing and
-     * always run a GC upfront.
+     * Try to make the results more reproducible by running the code multiple times and take best timing.
      */
     private fun measure(block: () -> Unit) : Long {
         var best = Long.MAX_VALUE
         repeat(3) {
-            System.gc()
             val t = measureTimeMillis(block)
             if (t < best) best = t
         }
@@ -37,7 +36,7 @@ internal class PerformanceTest {
     /**
      * Basic test with minimal overhead
      */
-    private fun basePerformance(feed: HistoricFeed): Long {
+    private fun baseRun(feed: HistoricFeed): Long {
         return measure {
             val roboquant = Roboquant(EMAStrategy(), logger = SilentLogger())
             roboquant.run(feed)
@@ -46,9 +45,9 @@ internal class PerformanceTest {
 
 
     /**
-     * Test iterating over the feed
+     * Test iterating over the feed while filtering
      */
-    private fun feedPerformance(feed: HistoricFeed): Long {
+    private fun feedFilter(feed: HistoricFeed): Long {
         return measure {
             feed.filter<PriceBar> {
                 it.asset.symbol == "NOT_A_MATCH"
@@ -60,13 +59,13 @@ internal class PerformanceTest {
     /**
      * Test with some metrics and logging overhead included
      */
-    private fun extendedPerformance(feed: HistoricFeed): Long {
+    private fun extendedRun(feed: HistoricFeed): Long {
         return measure {
             val roboquant = Roboquant(
                 EMAStrategy(),
                 AccountMetric(),
-                ProgressMetric(),
-                logger = MemoryLogger(showProgress = false)
+                PNLMetric(),
+                logger = LastEntryLogger()
             )
             roboquant.run(feed)
         }
@@ -77,7 +76,7 @@ internal class PerformanceTest {
     /**
      * Parallel tests (8) with minimal overhead
      */
-    private fun parallelPerformance(feed: HistoricFeed): Long {
+    private fun parallelRuns(feed: HistoricFeed): Long {
 
         return measure {
             val jobs = ParallelJobs()
@@ -92,14 +91,18 @@ internal class PerformanceTest {
         }
     }
 
+    private fun log(name: String, t:Long) =
+        logger.info {
+            "     %-20s %20d ms".format(name, t)
+        }
 
-    private fun run(feed: HistoricFeed, size:String) {
+    private fun run(feed: HistoricFeed) {
         val priceBars = feed.assets.size * feed.timeline.size
-        logger.info("size=$size candlesticks=${NumberFormat.getIntegerInstance().format(priceBars)}")
-        logger.info("size=$size feed performance=${feedPerformance(feed)}ms")
-        logger.info("size=$size base performance=${basePerformance(feed)}ms")
-        logger.info("size=$size extended performance=${extendedPerformance(feed)}ms")
-        logger.info("size=$size parallel performance=${parallelPerformance(feed)}ms")
+        logger.info("******  ${NumberFormat.getIntegerInstance().format(priceBars)} candlesticks  ******")
+        log("feed filter", feedFilter(feed))
+        log("base run", baseRun(feed))
+        log("extended run", extendedRun(feed))
+        log("parallel runs", parallelRuns(feed))
     }
 
 
@@ -109,39 +112,39 @@ internal class PerformanceTest {
     }
 
     @Test
-    fun small() {
+    fun size1() {
         Config.getProperty(check) ?: return
 
         // 500_000 candle sticks
         val feed = getFeed(5000, 100)
-        run(feed, "SMALL")
+        run(feed)
     }
 
     @Test
-    fun medium() {
+    fun size2() {
         Config.getProperty(check) ?: return
 
         // 1_000_000 candle sticks
         val feed = getFeed(10_000, 100)
-        run(feed, "MEDIUM")
+        run(feed)
     }
 
     @Test
-    fun large() {
+    fun size3() {
         Config.getProperty(check) ?: return
 
         // 5_000_000 candle sticks
         val feed = getFeed(10_000, 500)
-        run(feed, "LARGE")
+        run(feed)
     }
 
     @Test
-    fun extraLarge() {
+    fun size4() {
         Config.getProperty(check) ?: return
 
         // 10_000_000 candle sticks
         val feed = getFeed(10_000, 1_000)
-        run(feed, "XLARGE")
+        run(feed)
     }
 
 
