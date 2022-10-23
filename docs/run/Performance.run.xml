@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Performance" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+  <configuration default="false" name="PerformanceTest" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
     <module name="roboquant" />
     <extension name="coverage">
       <pattern>
@@ -8,7 +8,7 @@
       </pattern>
     </extension>
     <option name="PACKAGE_NAME" value="org.roboquant" />
-    <option name="MAIN_CLASS_NAME" value="org.roboquant.Performance" />
+    <option name="MAIN_CLASS_NAME" value="org.roboquant.PerformanceTest" />
     <option name="METHOD_NAME" value="" />
     <option name="TEST_OBJECT" value="class" />
     <envs>

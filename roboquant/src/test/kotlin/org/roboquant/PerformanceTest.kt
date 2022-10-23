@@ -17,7 +17,9 @@ import java.text.NumberFormat
 import kotlin.system.measureTimeMillis
 import kotlin.test.Test
 
-internal class Performance {
+internal class PerformanceTest {
+
+    private val check = "TEST_PERFORMANCE"
 
     /**
      * Try to make the results more reproducible by running the code multiple times and take best timing and
@@ -102,13 +104,13 @@ internal class Performance {
 
 
     private fun getFeed(events: Int, assets: Int): RandomWalkFeed {
-        val timeline = Timeframe.fromYears(1900, 2022).toTimeline(1.days).takeLast(events)
+        val timeline = Timeframe.fromYears(1901, 2022).toTimeline(1.days).takeLast(events)
         return RandomWalkFeed(timeline, assets)
     }
 
     @Test
     fun small() {
-        Config.getProperty("TEST_PERFORMANCE") ?: return
+        Config.getProperty(check) ?: return
 
         // 500_000 candle sticks
         val feed = getFeed(5000, 100)
@@ -117,7 +119,7 @@ internal class Performance {
 
     @Test
     fun medium() {
-        Config.getProperty("TEST_PERFORMANCE") ?: return
+        Config.getProperty(check) ?: return
 
         // 1_000_000 candle sticks
         val feed = getFeed(10_000, 100)
@@ -126,7 +128,7 @@ internal class Performance {
 
     @Test
     fun large() {
-        Config.getProperty("TEST_PERFORMANCE") ?: return
+        Config.getProperty(check) ?: return
 
         // 5_000_000 candle sticks
         val feed = getFeed(10_000, 500)
@@ -135,7 +137,7 @@ internal class Performance {
 
     @Test
     fun extraLarge() {
-        Config.getProperty("TEST_PERFORMANCE") ?: return
+        Config.getProperty(check) ?: return
 
         // 10_000_000 candle sticks
         val feed = getFeed(10_000, 1_000)
