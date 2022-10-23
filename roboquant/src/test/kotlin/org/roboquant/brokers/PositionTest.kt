@@ -66,7 +66,6 @@ internal class PositionTest {
             val size2 = getRandomSize()
             val totalSize = Size(size1 + size2)
 
-            // println("$size2 ${Size(size2)}")
             val p1 = Position(contract, Size(size1), 10.0, 12.0)
             val p2 = Position(contract, Size(size2), 12.0, 12.0)
             val newPos = p1 + p2

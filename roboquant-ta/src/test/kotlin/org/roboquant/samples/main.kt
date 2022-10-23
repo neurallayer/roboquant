@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("KotlinConstantConditions")
 
 package org.roboquant.samples
 
@@ -83,7 +82,5 @@ fun customPolicy() {
 
 
 fun main() {
-    when ("POLICY") {
-        "POLICY" -> customPolicy()
-    }
+    customPolicy()
 }

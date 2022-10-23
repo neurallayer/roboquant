@@ -1,9 +1,6 @@
 package org.roboquant
 
-import org.roboquant.common.Config
-import org.roboquant.common.ParallelJobs
-import org.roboquant.common.Timeframe
-import org.roboquant.common.days
+import org.roboquant.common.*
 import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
@@ -20,6 +17,7 @@ import kotlin.test.Test
 internal class PerformanceTest {
 
     private val check = "TEST_PERFORMANCE"
+    private val logger = Logging.getLogger(PerformanceTest::class)
 
     /**
      * Try to make the results more reproducible by running the code multiple times and take best timing and
@@ -52,7 +50,9 @@ internal class PerformanceTest {
      */
     private fun feedPerformance(feed: HistoricFeed): Long {
         return measure {
-            feed.filter<PriceBar>()
+            feed.filter<PriceBar> {
+                it.asset.symbol == "NOT_A_MATCH"
+            }
         }
     }
 
@@ -93,13 +93,13 @@ internal class PerformanceTest {
     }
 
 
-    private fun run(feed: HistoricFeed) {
+    private fun run(feed: HistoricFeed, size:String) {
         val priceBars = feed.assets.size * feed.timeline.size
-        println("\n***** total number of candlesticks: ${NumberFormat.getIntegerInstance().format(priceBars)} ******")
-        println("feed performance: ${feedPerformance(feed)}ms")
-        println("base performance: ${basePerformance(feed)}ms")
-        println("extended performance: ${extendedPerformance(feed)}ms")
-        println("parallel performance: ${parallelPerformance(feed)}ms")
+        logger.info("size=$size candlesticks=${NumberFormat.getIntegerInstance().format(priceBars)}")
+        logger.info("size=$size feed performance=${feedPerformance(feed)}ms")
+        logger.info("size=$size base performance=${basePerformance(feed)}ms")
+        logger.info("size=$size extended performance=${extendedPerformance(feed)}ms")
+        logger.info("size=$size parallel performance=${parallelPerformance(feed)}ms")
     }
 
 
@@ -114,7 +114,7 @@ internal class PerformanceTest {
 
         // 500_000 candle sticks
         val feed = getFeed(5000, 100)
-        run(feed)
+        run(feed, "SMALL")
     }
 
     @Test
@@ -123,7 +123,7 @@ internal class PerformanceTest {
 
         // 1_000_000 candle sticks
         val feed = getFeed(10_000, 100)
-        run(feed)
+        run(feed, "MEDIUM")
     }
 
     @Test
@@ -132,7 +132,7 @@ internal class PerformanceTest {
 
         // 5_000_000 candle sticks
         val feed = getFeed(10_000, 500)
-        run(feed)
+        run(feed, "LARGE")
     }
 
     @Test
@@ -141,7 +141,7 @@ internal class PerformanceTest {
 
         // 10_000_000 candle sticks
         val feed = getFeed(10_000, 1_000)
-        run(feed)
+        run(feed, "XLARGE")
     }
 
 
