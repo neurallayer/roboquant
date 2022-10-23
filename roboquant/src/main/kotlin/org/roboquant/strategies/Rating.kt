@@ -16,7 +16,7 @@
 
 package org.roboquant.strategies
 
-import kotlin.math.sign
+import org.roboquant.strategies.Rating.*
 
 /**
  * Rating is the key component of a [Signal] that is a measure of the expected performance of an asset. It is an
@@ -64,31 +64,28 @@ enum class Rating(val value: Int) {
     SELL(-2);
 
     /**
-     * Is this a positive rating, so a BUY or an OUTPERFORM
+     * Return the direction of the rating, -1 for negative ratings, 1 for positive ratings and 0 otherwise (HOLD rating)
+     */
+    val direction: Int
+        get() = when {
+            isPositive -> 1
+            isNegative -> -1
+            else -> 0
+        }
+
+    /**
+     * Is this a positive rating, so a BUY or an OUTPERFORM rating
      */
     val isPositive: Boolean get() = this === BUY || this === OUTPERFORM
 
     /**
-     * Is this a negative rating, so a SELL or UNDERPERFORM
+     * Is this a negative rating, so a SELL or UNDERPERFORM rating
      */
     val isNegative: Boolean get() = this === SELL || this === UNDERPERFORM
 
     /**
-     * Return the inverse of this rating
-     */
-    fun inverse(): Rating {
-        return when (this) {
-            BUY -> SELL
-            OUTPERFORM -> UNDERPERFORM
-            HOLD -> HOLD
-            UNDERPERFORM -> OUTPERFORM
-            SELL -> BUY
-        }
-    }
-
-    /**
-     * Does this rating conflict with an [other] rating. Ratings only conflict if the direction is different. So for
+     * Does this rating conflict with an [other] rating. Ratings conflict if the direction is different. So for
      * example, a [BUY] and [OUTPERFORM] don't conflict.
      */
-    fun conflicts(other: Rating) = value.sign != other.value.sign
+    fun conflicts(other: Rating) = direction != other.direction
 }

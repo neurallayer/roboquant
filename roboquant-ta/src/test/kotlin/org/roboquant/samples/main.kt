@@ -30,17 +30,6 @@ import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Signal
 import org.roboquant.ta.TaLibMetric
-import org.roboquant.ta.TaLibStrategy
-
-fun vwap() {
-    val strategy = TaLibStrategy.vwap(20, 100)
-    val feed = AvroFeed.sp500()
-
-    val rq = Roboquant(strategy)
-    rq.run(feed)
-
-    println(rq.broker.account.summary())
-}
 
 
 fun customPolicy() {
@@ -95,7 +84,6 @@ fun customPolicy() {
 
 fun main() {
     when ("POLICY") {
-        "VWAP" -> vwap()
         "POLICY" -> customPolicy()
     }
 }

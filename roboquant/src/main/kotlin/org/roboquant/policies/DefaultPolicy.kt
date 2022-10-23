@@ -23,7 +23,6 @@ import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import kotlin.math.max
 
@@ -82,7 +81,7 @@ open class DefaultPolicy(
         val amount = account.equityAmount * orderPercentage
 
         @Suppress("LoopWithTooManyJumpStatements")
-        for (signal in signals.filter { it.rating !== Rating.HOLD }) {
+        for (signal in signals) {
             val asset = signal.asset
 
             // We don't create an order if we don't know the current price

@@ -43,11 +43,14 @@ class TaLibStrategy(history: Int = 15) : Strategy {
     private val data = MultiAssetPriceBarSeries(history)
     val taLib = TaLib()
 
-    companion object {
+    /**
+     * Contains set of predefined strategies
+     */
+    companion object Factory {
 
         /**
-         * When we hit a record high or low we generate a BUY or SELL signal. This implementation allows configuring
-         * multiple periods, where any period that register a record high or low will be sufficient.
+         * When we hit a record high or low we generate a BUY or SELL signal. This implementation supports multiple
+         * periods, where any period that register a record high or low will be sufficient to generate a signal.
          *
          * The exact rules for a single period being:
          *
@@ -58,7 +61,7 @@ class TaLibStrategy(history: Int = 15) : Strategy {
          * @param timePeriods
          * @return
          */
-        fun recordHighLow(vararg timePeriods: Int = intArrayOf(100)): TaLibStrategy {
+        fun recordHighLow(vararg timePeriods: Int): TaLibStrategy {
 
             require(timePeriods.isNotEmpty()) { "At least one period needs to be provided" }
             require(timePeriods.all { it > 1 }) { "Any provided period needs to be at least of size 2" }
@@ -102,23 +105,6 @@ class TaLibStrategy(history: Int = 15) : Strategy {
             val strategy = TaLibStrategy(slow)
             strategy.buy { sma(it.close, fast) > sma(it.close, slow) }
             strategy.sell { sma(it.close, fast) < sma(it.close, slow) }
-            return strategy
-        }
-
-        /**
-         * Vwap strategy buys if the VWAP is higher than the actual price by a certain margin and sells if the
-         * vwap is lower than the actual price by a certain margin. Although this strategy can be used for any interval
-         * between prices, it is most often used for day trading and small time-intervals between price events.
-         *
-         * @param period period to use to calculate the VWAP, default is 0.1%
-         * @param bips the margin in Bips
-         * @return
-         */
-        fun vwap(period: Int, bips: Int = 100): TaLibStrategy {
-            val percentage = bips / 10_000.0
-            val strategy = TaLibStrategy(period)
-            strategy.buy { vwap(it, period) > it.close.last() * (1.0 + percentage) }
-            strategy.sell { vwap(it, period) < it.close.last() * (1.0 - percentage) }
             return strategy
         }
 
@@ -227,33 +213,6 @@ fun TaLib.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) =
 
 fun TaLib.recordHigh(data: PriceBarSeries, period: Int, previous: Int = 0) = recordHigh(data.high, period, previous)
 
-@Suppress("UnusedReceiverParameter")
-fun TaLib.vwap(
-    high: DoubleArray,
-    low: DoubleArray,
-    close: DoubleArray,
-    volume: DoubleArray,
-    period: Int,
-    previous: Int = 0
-): Double {
-    val end = high.lastIndex - previous
-    var sumPrice = 0.0
-    var sumVolume = 0.0
-    val start = end - period + 1
-    if (start < 0) throw InsufficientData(
-        "insufficient data to calculate vwap, minimum lookback period is ${period + previous}"
-    )
-
-    for (i in start..end) {
-        val typicalPrice = (close[i] + high[i] + low[i]) / 3
-        sumPrice += typicalPrice * volume[i]
-        sumVolume += volume[i]
-    }
-    return sumPrice / sumVolume
-}
-
-fun TaLib.vwap(series: PriceBarSeries, period: Int, previous: Int = 0): Double =
-    vwap(series.high, series.low, series.close, series.volume, period, previous)
 
 /**
  * This exception is thrown when there is not enough (historic) data to run an algorithm, for example a technical

@@ -34,17 +34,19 @@ internal class RatingTest {
         assertTrue(rating.isNegative)
     }
 
-    @Test
-    fun inverse() {
-        assertEquals(Rating.BUY, Rating.BUY.inverse().inverse())
-        assertEquals(Rating.HOLD, Rating.HOLD.inverse())
-        assertEquals(Rating.OUTPERFORM, Rating.OUTPERFORM.inverse().inverse())
-    }
 
     @Test
     fun conflicts() {
         val rating = Rating.SELL
         assertTrue(rating.conflicts(Rating.BUY))
+    }
+
+    @Test
+    fun direction() {
+        assertEquals(1, Rating.BUY.direction)
+        assertEquals(1, Rating.OUTPERFORM.direction)
+        assertEquals(0, Rating.HOLD.direction)
+        assertEquals(-1, Rating.SELL.direction)
     }
 
     @Test

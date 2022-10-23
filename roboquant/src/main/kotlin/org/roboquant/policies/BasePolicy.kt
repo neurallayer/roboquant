@@ -74,8 +74,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
         return if (availableAssetCash <= 0.0) {
             Size.ZERO
         } else {
-            val direction = if (signal.rating.isNegative) -1 else 1
-            Size((availableAssetCash / singleContractPrice).toInt()) * direction
+            Size((availableAssetCash / singleContractPrice).toInt()) * signal.rating.direction
         }
     }
 
