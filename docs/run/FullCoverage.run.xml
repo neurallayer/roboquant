@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="With Coverage" type="JUnit" factoryName="JUnit">
+  <configuration default="false" name="FullCoverage" type="JUnit" factoryName="JUnit">
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="org.roboquant.ta.TaLib" />

@@ -72,6 +72,7 @@ data class Asset(
      */
     companion object {
 
+
         /**
          * Returns an option contract using the OCC (Options Clearing Corporation) option symbol standard.
          * The OCC option symbol string consists of four parts:

@@ -36,10 +36,10 @@ import java.util.*
  * all methods of predicting stock prices futile in the long run.
  *
  * @property timeline the timeline of this random walk.
- * @param nAssets the number of assets to generate
- * @property generateBars should PriceBars be generated or not
- * @property volumeRange
- * @property priceRange
+ * @param nAssets the number of assets to generate, symbol names will be ASSET1, ASSET2, ..., ASSET<N>
+ * @property generateBars should PriceBars be generated or plain TradePrice, default is true
+ * @property volumeRange what is the volume range
+ * @property priceRange what is the price range
  * @param template template to use when generating assets
  * @property seed seed to use for initializing the random generator
  *
