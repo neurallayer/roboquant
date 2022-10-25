@@ -40,7 +40,8 @@ import kotlin.math.max
  * - Never create BUY orders of which the total value is below a minimum amount (configurable)
  *
  * @property orderPercentage The percentage of overall equity value for a single order, default is 1% (0.01)
- * @property shorting Should the policy create orders that lead to short positions, default is false
+ * @property shorting Can the policy create orders that possibly lead to short positions, default is false
+ * @property priceType The type of price to use, default is "DEFAULT"
  * @constructor Create new Default Policy
  */
 open class DefaultPolicy(
@@ -80,6 +81,7 @@ open class DefaultPolicy(
         var buyingPower = max(account.buyingPower.value, 0.0)
         val amount = account.equityAmount * orderPercentage
 
+
         @Suppress("LoopWithTooManyJumpStatements")
         for (signal in signals) {
             val asset = signal.asset
@@ -92,7 +94,7 @@ open class DefaultPolicy(
             if (price !== null) {
                 val position = account.positions.getPosition(asset)
                 if (reducedPositionOrder(position, signal)) {
-                    val order = createOrder(signal, -position.size, price)
+                    val order = createOrder(signal, -position.size, price) // close position
                     orders.addNotNull(order)
                 } else {
                     if (position.open) continue // we don't increase position sizing

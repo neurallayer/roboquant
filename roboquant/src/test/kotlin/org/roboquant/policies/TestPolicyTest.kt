@@ -19,12 +19,17 @@ package org.roboquant.policies
 import org.roboquant.TestData
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.InternalAccount
+import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.TradePrice
+import org.roboquant.orders.CancelOrder
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
+import java.time.Instant
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class TestPolicyTest {
@@ -64,5 +69,40 @@ internal class TestPolicyTest {
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
 
+    }
+
+
+
+    private fun getAccount(): Account {
+        val iAccount = InternalAccount()
+        val asset = Asset("XYZ123")
+        iAccount.acceptOrder(MarketOrder(asset, 100), Instant.now())
+        assertTrue(iAccount.openOrders.isNotEmpty())
+        return iAccount.toAccount()
+    }
+
+
+    @Test
+    fun singleOrderCancel() {
+        val policy = TestPolicy().singleOrder("cancel")
+        val account = getAccount()
+        val asset = account.openOrders.first().asset
+        val signals = listOf(Signal(asset, Rating.BUY))
+        val event = Event(listOf(TradePrice(asset, 1.0)), Instant.now())
+        val orders = policy.act(signals, account, event)
+        assertTrue(orders.isNotEmpty())
+        assertTrue(orders.any { it is CancelOrder })
+        assertEquals(2, orders.size)
+    }
+
+    @Test
+    fun singleOrderRemove() {
+        val policy = TestPolicy().singleOrder("remove")
+        val account = getAccount()
+        val asset = account.openOrders.first().asset
+        val signals = listOf(Signal(asset, Rating.BUY))
+        val event = Event(listOf(TradePrice(asset, 1.0)), Instant.now())
+        val orders = policy.act(signals, account, event)
+        assertTrue(orders.isEmpty())
     }
 }

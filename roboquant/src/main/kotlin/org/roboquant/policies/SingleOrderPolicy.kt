@@ -20,30 +20,51 @@ import org.roboquant.brokers.Account
 import org.roboquant.brokers.assets
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
+import org.roboquant.orders.CancelOrder
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 
 /**
- * Allow only a single open order per asset. Signals generated when there is an open order for the same asset, will be
- * removed before handing it over to the wrapped policy
- *
- * @property policy The policy to wrap
+ * Allow only a single open order per asset. Orders generated when there is an open order for the same asset, will be
+ * removed or old orders will be cancelled.
  */
-private class SingleOrderPolicy(private val policy: Policy) : Policy by policy {
+private class SingleOrderPolicy(private val policy: Policy, val action: String) : Policy by policy {
 
     private val logger = Logging.getLogger(this::class)
 
+    init {
+        require(action in setOf("remove", "cancel"))
+    }
+
+    private fun removeNew(orders: List<Order>, account: Account): List<Order> {
+        val openOrderAssets = account.openOrders.assets
+        return orders.filter { it.asset !in openOrderAssets }
+    }
+
+    private fun cancelOld(orders: List<Order>, account: Account): List<Order> {
+        val newOrderAssets = orders.map { it.asset }.toSet()
+        val duplicates = account.openOrders.filter { it.asset in newOrderAssets }
+        return duplicates.map { CancelOrder(it) } + orders
+    }
+
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = policy.act(signals, account, event)
-        val openOrderAssets = account.openOrders.assets
-        val newOrders = orders.filter { ! openOrderAssets.contains(it.asset) }
-        logger.debug { "orders in=${orders.size} out=${orders.size}" }
+        val newOrders = when {
+            orders.isEmpty() -> orders
+            action == "remove" -> removeNew(orders, account)
+            else -> cancelOld(orders, account)
+        }
+
+        logger.debug { "orders in=${orders.size} out=${newOrders.size}" }
         return newOrders
     }
 }
 
 
 /**
- * Ensure there is only a single open order per asset at any given time.
+ * Ensure there is only one open order per asset at any given time. There are two possible actions, either "remove"
+ * new orders or "cancel" old orders (although that last [action] is not a guarantee since the cancellation might fail)
+ *
+ * Default is to remove new orders.
  */
-fun Policy.singleOrder() : Policy = SingleOrderPolicy(this)
+fun Policy.singleOrder(action: String = "remove") : Policy = SingleOrderPolicy(this, action)

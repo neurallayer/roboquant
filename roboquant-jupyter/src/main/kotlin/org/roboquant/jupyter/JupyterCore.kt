@@ -94,13 +94,6 @@ internal class JupyterCore : JupyterIntegration() {
             outputs.clear()
         }
 
-        repositories(
-            "*mavenLocal",
-            "https://repo1.maven.org/maven2/",
-            "https://jitpack.io",
-            "https://s01.oss.sonatype.org/content/repositories/snapshots"
-        )
-
     }
 
 }
