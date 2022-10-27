@@ -38,7 +38,8 @@ internal object BinanceConnection {
      */
     fun retrieveAssets(client: BinanceApiRestClient): Map<String, Asset> {
         return client.exchangeInfo.symbols.associate {
-            it.symbol to Asset.crypto(it.baseAsset, it.quoteAsset, "BINANCE")
+            val asset = Asset.crypto(it.baseAsset, it.quoteAsset, "BINANCE")
+            asset.symbol to asset
         }
     }
 

@@ -34,7 +34,7 @@ internal class BinanceHistoricFeedTestIT {
         assertEquals(asset.currencyPair, Pair(Currency.BTC, Currency.getInstance("BUSD")))
 
         val tf = Timeframe.past(100.days)
-        feed.retrieve("BTCBUSD", timeframe = tf)
+        feed.retrieve("BTC/BUSD", timeframe = tf)
         assertEquals(1, feed.assets.size)
     }
 

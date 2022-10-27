@@ -21,6 +21,7 @@ import com.binance.api.client.BinanceApiWebSocketClient
 import com.binance.api.client.domain.event.CandlestickEvent
 import com.binance.api.client.domain.market.CandlestickInterval
 import org.roboquant.common.Asset
+import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Logging
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Event
@@ -92,7 +93,7 @@ class BinanceLiveFeed(
                 closeables.add(closable)
                 subscriptions[asset.symbol] = asset
             } else {
-                logger.warn { "Not found $symbol" }
+                throw ConfigurationException("Not found $symbol")
             }
         }
     }

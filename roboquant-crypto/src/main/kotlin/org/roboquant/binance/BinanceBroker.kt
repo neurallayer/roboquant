@@ -137,7 +137,7 @@ class BinanceBroker(
     }
 
     private fun binanceSymbol(asset: Asset): String {
-        return asset.symbol.uppercase()
+        return asset.symbol.replace("/", "").uppercase()
     }
 
     /**
