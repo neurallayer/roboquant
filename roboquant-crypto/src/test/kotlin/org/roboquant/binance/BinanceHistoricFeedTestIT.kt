@@ -17,6 +17,7 @@
 package org.roboquant.binance
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -36,6 +37,10 @@ internal class BinanceHistoricFeedTestIT {
         val tf = Timeframe.past(100.days)
         feed.retrieve("BTC/BUSD", timeframe = tf)
         assertEquals(1, feed.assets.size)
+
+        assertThrows<ConfigurationException> {
+            feed.retrieve("WRONG_SYMBOL", timeframe = tf)
+        }
     }
 
 }
