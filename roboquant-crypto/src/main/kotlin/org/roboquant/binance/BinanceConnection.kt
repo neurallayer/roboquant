@@ -43,4 +43,8 @@ internal object BinanceConnection {
         }
     }
 
+    internal fun binanceSymbol(asset: Asset): String {
+        return asset.symbol.replace("/", "").uppercase()
+    }
+
 }

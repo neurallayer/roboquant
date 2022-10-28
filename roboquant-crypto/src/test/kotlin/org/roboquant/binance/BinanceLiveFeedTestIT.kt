@@ -18,6 +18,7 @@ package org.roboquant.binance
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
 import org.roboquant.feeds.PriceBar
@@ -27,6 +28,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class BinanceLiveFeedTestIT {
+
+    private val logger = Logging.getLogger(this::class)
 
     @Test
     fun testBinanceFeed() {
@@ -44,11 +47,14 @@ internal class BinanceLiveFeedTestIT {
             feed.subscribePriceBar("WRONG_SYMBOL")
         }
 
-        val timeframe = Timeframe.next(10.minutes)
-        val prices = feed.filter<PriceBar>(timeframe = timeframe)
+        val timeframe = Timeframe.next(3.minutes)
+        val prices = feed.filter<PriceBar>(timeframe = timeframe) {
+            logger.info { it }
+            true
+        }
         feed.close()
 
-        println(prices.size)
+        logger.info("found ${prices.size} prices")
         assertTrue(prices.isNotEmpty())
         assertEquals("BTC/BUSD", prices.first().second.asset.symbol)
     }

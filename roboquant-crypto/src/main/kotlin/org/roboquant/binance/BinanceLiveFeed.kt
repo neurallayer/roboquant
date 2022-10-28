@@ -90,7 +90,7 @@ class BinanceLiveFeed(
                 handle(it)
             }
             closeables.add(closable)
-            subscriptions[asset.symbol] = asset
+            subscriptions[finalSymbol] = asset
         }
     }
 
@@ -98,6 +98,7 @@ class BinanceLiveFeed(
         if (!resp.barFinal) return
 
         logger.trace { "Received candlestick event for symbol ${resp.symbol}" }
+
         val asset = subscriptions[resp.symbol.uppercase()]
         if (asset != null) {
             val action = PriceBar(
@@ -116,8 +117,13 @@ class BinanceLiveFeed(
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     override fun close() {
-        for (c in closeables) c.close()
+        for (c in closeables) try {
+            c.close()
+        } catch (e: Throwable) {
+            logger.warn { e }
+        }
         closeables.clear()
     }
 

@@ -24,6 +24,7 @@ import com.binance.api.client.domain.account.NewOrder.*
 import com.binance.api.client.domain.account.NewOrderResponse
 import com.binance.api.client.domain.account.request.CancelOrderRequest
 import com.binance.api.client.domain.account.request.OrderRequest
+import org.roboquant.binance.BinanceConnection.binanceSymbol
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.InternalAccount
@@ -136,9 +137,7 @@ class BinanceBroker(
         return account
     }
 
-    private fun binanceSymbol(asset: Asset): String {
-        return asset.symbol.replace("/", "").uppercase()
-    }
+
 
     /**
      * Cancel an order
