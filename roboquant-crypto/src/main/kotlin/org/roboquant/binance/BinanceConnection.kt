@@ -21,10 +21,14 @@ import com.binance.api.client.BinanceApiRestClient
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
 
+/**
+ * Configuration to connect to Binance exchange API's
+ */
 data class BinanceConfig(
     var publicKey: String = Config.getProperty("binance.public.key", ""),
     var secretKey: String = Config.getProperty("binance.secret.key", "")
 )
+
 
 internal object BinanceConnection {
 

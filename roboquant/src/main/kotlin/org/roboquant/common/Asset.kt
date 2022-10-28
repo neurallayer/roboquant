@@ -18,6 +18,7 @@
 package org.roboquant.common
 
 import kotlinx.serialization.Serializable
+import org.roboquant.brokers.summary
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -172,6 +173,7 @@ data class Asset(
         return symbol.compareTo(other.symbol)
     }
 
+
 }
 
 /**
@@ -220,13 +222,24 @@ fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset>
  */
 fun Collection<Asset>.random(n: Int): List<Asset> = shuffled().take(n)
 
+
 /**
  * Provide a [Summary] for a collection of assets
  */
-fun Collection<Asset>.summary(): Summary {
-    val result = Summary("assets")
-    for (asset in this) {
-        result.add("$asset")
+fun Collection<Asset>.summary(name: String = "assets"): Summary {
+    val s = Summary(name)
+    if (isEmpty()) {
+        s.add("EMPTY")
+    } else {
+        val lines = mutableListOf<List<Any>>()
+        lines.add(listOf("symbol", "type", "ccy", "exchange", "multiplier", "id"))
+        forEach {
+            with(it) {
+                lines.add(listOf(symbol, type, currency.currencyCode, exchange.exchangeCode, multiplier, id))
+            }
+        }
+        return lines.summary(name)
     }
-    return result
+    return s
 }
+

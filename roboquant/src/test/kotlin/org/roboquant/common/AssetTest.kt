@@ -21,6 +21,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
@@ -73,6 +74,8 @@ internal class AssetTest {
 
         val s = assets.summary()
         assertTrue { s.content.isNotEmpty() }
+        assertContains(s.toString(), "TEST")
+        assertContains(s.toString(), "TEST2")
     }
 
 }

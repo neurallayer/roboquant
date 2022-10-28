@@ -31,7 +31,7 @@ import java.util.*
  * This feed uses historic data from Yahoo Finance API. Be aware this is not the most stable API and
  * might at any time stop working correctly.
  *
- * @property adjClose
+ * @property adjClose should we use adjusted close
  * @constructor Create new Yahoo finance feed
  */
 class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFeed() {
@@ -68,7 +68,7 @@ class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFee
         retrieve(assets.toList(), timeframe = timeframe, interval = interval)
     }
 
-    // TODO validate time offset
+
     private fun handle(asset: Asset, quotes: List<HistoricalQuote>) {
 
         quotes.forEach {

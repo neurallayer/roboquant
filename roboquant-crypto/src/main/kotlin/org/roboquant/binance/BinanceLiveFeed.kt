@@ -34,7 +34,7 @@ typealias Interval = CandlestickInterval
 /**
  * Create a new feed based on live price actions coming from the Binance exchange.
  *
- * @property useMachineTime
+ * @property useMachineTime us the machine time as timestamp for generated events
  * @constructor
  *
  */
@@ -113,7 +113,7 @@ class BinanceLiveFeed(
             val event = Event(listOf(action), now)
             send(event)
         } else {
-            logger.warn { "Received CandlestickEvent for unexpected symbol ${resp.symbol}" }
+            logger.warn { "Received CandlestickEvent for unsubscribed symbol ${resp.symbol}" }
         }
     }
 
