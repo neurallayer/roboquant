@@ -125,9 +125,8 @@ fun historicFeed() {
     val feed = IBKRHistoricFeed()
 
     // This assumes you have a valid market subscription for European stocks
-    val template = Asset("TEMPLATE", AssetType.STOCK, "EUR", "AEB")
     val symbols = listOf("ABN", "ASML", "KPN")
-    val assets = symbols.map { template.copy(symbol = it) }
+    val assets = symbols.map { Asset(it, AssetType.STOCK, "EUR", "") }
     feed.retrieve(assets)
     feed.waitTillRetrieved()
     println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
@@ -138,10 +137,9 @@ fun historicFeed2() {
     val feed = IBKRHistoricFeed()
 
     // This assumes you have a valid market subscription for European stocks
-    val template = Asset("TEMPLATE", AssetType.STOCK, "EUR", "AEB")
     val symbols = listOf("ABN", "ASML", "KPN")
-    val assets = symbols.map { template.copy(symbol = it) }
-    feed.retrieve(assets, duration = "2 D", barSize = "30 mins")
+    val assets = symbols.map { Asset(it, AssetType.STOCK, "EUR", "") }
+    feed.retrieve(assets, duration = "5 D", barSize = "30 mins")
     feed.waitTillRetrieved()
     println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
     feed.disconnect()
@@ -149,7 +147,7 @@ fun historicFeed2() {
 
 fun main() {
 
-    when ("ACCOUNT") {
+    when ("HISTORIC2") {
         "ACCOUNT" -> showAccount()
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()

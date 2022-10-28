@@ -76,6 +76,10 @@ class IBKRHistoricFeed(
         dataType: String = "TRADES"
     ) = retrieve(assets.toList(), endDate, duration, barSize, dataType)
 
+    /**
+     * Block until all the subscribed data is retrieved. Right now just a simple sleep, in the future replaced with
+     * better mechanism.
+     */
     fun waitTillRetrieved(maxMillis: Int = 10_000) {
         val endTime = Instant.now() + maxMillis.millis
         while (subscriptions.isNotEmpty() && Instant.now() <= endTime) Thread.sleep(1_000)

@@ -17,25 +17,27 @@
 package org.roboquant.ibkr
 
 import org.junit.jupiter.api.Test
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Timeframe
-import org.roboquant.common.minutes
+import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import kotlin.test.assertTrue
 
 internal class IBKRLiveFeedTestIT {
 
+    private val logger = Logging.getLogger(this::class)
+
     @Test
     fun ibkrFeed() {
-        System.getProperty("TEST_IBKR") ?: return
+        Config.getProperty("TEST_IBKR") ?: return
 
         val feed = IBKRLiveFeed()
-        val contract = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
-        feed.subscribe(contract)
+        val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
+        feed.subscribe(asset, interval = 1)
 
-        val actions = feed.filter<PriceAction>(Timeframe.next(5.minutes))
+        val actions = feed.filter<PriceAction>(Timeframe.next(2.minutes)) {
+            logger.info("received price $it")
+            true
+        }
         assertTrue(actions.isNotEmpty())
     }
 

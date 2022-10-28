@@ -17,13 +17,14 @@
 package org.roboquant.ibkr
 
 import org.junit.jupiter.api.Test
+import org.roboquant.common.Config
 import kotlin.test.assertTrue
 
 internal class IBKRExchangeRatesTestIT {
 
     @Test
     fun test() {
-        System.getProperty("TEST_IBKR") ?: return
+        Config.getProperty("TEST_IBKR") ?: return
         val rates = IBKRExchangeRates()
         assertTrue(rates.exchangeRates.isNotEmpty())
         rates.refresh()

@@ -18,19 +18,19 @@ package org.roboquant.ibkr
 
 import java.time.Instant
 import org.junit.jupiter.api.Test
+import org.roboquant.common.Config
 import kotlin.test.assertTrue
 
 internal class IBKRBrokerTestIT {
 
     @Test
     fun test() {
-        System.getProperty("TEST_IBKR") ?: return
-        val broker = IBKRBroker()
+        Config.getProperty("TEST_IBKR") ?: return
         val past = Instant.now()
-
-        assertTrue(broker.account.lastUpdate > past)
+        val broker = IBKRBroker()
+        val account = broker.account
+        assertTrue(account.lastUpdate >= past)
         broker.disconnect()
-
     }
 
 }
