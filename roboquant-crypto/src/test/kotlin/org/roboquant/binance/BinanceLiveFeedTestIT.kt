@@ -47,6 +47,10 @@ internal class BinanceLiveFeedTestIT {
             feed.subscribePriceBar("WRONG_SYMBOL")
         }
 
+        assertThrows<IllegalArgumentException> {
+            feed.subscribePriceBar("BTC/BUSD", "WRONG_INTERVAL")
+        }
+
         val timeframe = Timeframe.next(3.minutes)
         val prices = feed.filter<PriceBar>(timeframe = timeframe) {
             logger.info { it }

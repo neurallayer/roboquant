@@ -20,6 +20,7 @@ import com.binance.api.client.BinanceApiClientFactory
 import com.binance.api.client.BinanceApiWebSocketClient
 import com.binance.api.client.domain.event.CandlestickEvent
 import com.binance.api.client.domain.market.CandlestickInterval
+import org.roboquant.binance.BinanceConnection.binanceSymbol
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.feeds.AssetFeed
@@ -54,6 +55,8 @@ class BinanceLiveFeed(
     val availableAssets
         get() = assetMap.values
 
+    private val intervals = Interval.values().map { it.toString()}
+
     /**
      * Get the assets that has been subscribed to
      */
@@ -76,30 +79,34 @@ class BinanceLiveFeed(
      */
     fun subscribePriceBar(
         vararg symbols: String,
-        interval: Interval = Interval.ONE_MINUTE
+        interval: String = "ONE_MINUTE"
     ) {
         require(symbols.isNotEmpty()) { "You need to provide at least 1 currency pair" }
+        require(interval in intervals) { "Invalid interval $interval, valid values are $intervals"}
+        val interval2 = Interval.valueOf(interval)
+
         for (symbol in symbols) {
-            val finalSymbol = symbol.replace("/", "")
             val asset = assetMap[symbol]
             require(asset != null) { "invalid $symbol"}
-            logger.info { "Subscribing to $symbol" }
+            logger.info { "Subscribing to $symbol with interval $interval" }
 
-            // API requires lowercase symbol
-            val closable = client.onCandlestickEvent(finalSymbol.lowercase(), interval) {
+            val bSymbol = binanceSymbol(asset)
+            val closable = client.onCandlestickEvent(bSymbol, interval2) {
                 handle(it)
             }
             closeables.add(closable)
-            subscriptions[finalSymbol] = asset
+            subscriptions[bSymbol] = asset
         }
     }
+
+
 
     private fun handle(resp: CandlestickEvent) {
         if (!resp.barFinal) return
 
         logger.trace { "Received candlestick event for symbol ${resp.symbol}" }
 
-        val asset = subscriptions[resp.symbol.uppercase()]
+        val asset = subscriptions[resp.symbol.lowercase()]
         if (asset != null) {
             val action = PriceBar(
                 asset,
