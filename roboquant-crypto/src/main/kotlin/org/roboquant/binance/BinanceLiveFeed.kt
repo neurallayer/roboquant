@@ -21,7 +21,6 @@ import com.binance.api.client.BinanceApiWebSocketClient
 import com.binance.api.client.domain.event.CandlestickEvent
 import com.binance.api.client.domain.market.CandlestickInterval
 import org.roboquant.common.Asset
-import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Logging
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Event
@@ -83,18 +82,15 @@ class BinanceLiveFeed(
         for (symbol in symbols) {
             val finalSymbol = symbol.replace("/", "")
             val asset = assetMap[symbol]
-            if (asset != null) {
-                logger.info { "Subscribing to $symbol" }
+            require(asset != null) { "invalid $symbol"}
+            logger.info { "Subscribing to $symbol" }
 
-                // API requires lowercase symbol
-                val closable = client.onCandlestickEvent(finalSymbol.lowercase(), interval) {
-                    handle(it)
-                }
-                closeables.add(closable)
-                subscriptions[asset.symbol] = asset
-            } else {
-                throw ConfigurationException("Not found $symbol")
+            // API requires lowercase symbol
+            val closable = client.onCandlestickEvent(finalSymbol.lowercase(), interval) {
+                handle(it)
             }
+            closeables.add(closable)
+            subscriptions[asset.symbol] = asset
         }
     }
 

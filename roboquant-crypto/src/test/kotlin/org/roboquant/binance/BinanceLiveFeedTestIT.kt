@@ -18,7 +18,6 @@ package org.roboquant.binance
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
 import org.roboquant.feeds.PriceBar
@@ -41,7 +40,7 @@ internal class BinanceLiveFeedTestIT {
         feed.subscribePriceBar("BTC/BUSD")
         assertFalse(feed.assets.isEmpty())
 
-        assertThrows<ConfigurationException> {
+        assertThrows<IllegalArgumentException> {
             feed.subscribePriceBar("WRONG_SYMBOL")
         }
 

@@ -64,25 +64,23 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
         val endTime = timeframe.end.toEpochMilli() - 1
         for (symbol in symbols) {
             val finalSymbol = symbol.replace("/", "")
-            val asset = assetMap[finalSymbol]
-            if (asset != null) {
-                val bars = client.getCandlestickBars(finalSymbol, interval, limit, startTime, endTime)
-                for (bar in bars) {
-                    val action = PriceBar(
-                        asset,
-                        bar.open.toDouble(),
-                        bar.high.toDouble(),
-                        bar.low.toDouble(),
-                        bar.close.toDouble(),
-                        bar.volume.toDouble()
-                    )
-                    val now = Instant.ofEpochMilli(bar.closeTime)
-                    add(now, action)
-                }
-                logger.debug { "Retrieved $asset for $timeframe" }
-            } else {
-                logger.warn { "$symbol not found" }
+            val asset = assetMap[symbol]
+            require(asset != null) { "invalid $symbol"}
+
+            val bars = client.getCandlestickBars(finalSymbol, interval, limit, startTime, endTime)
+            for (bar in bars) {
+                val action = PriceBar(
+                    asset,
+                    bar.open.toDouble(),
+                    bar.high.toDouble(),
+                    bar.low.toDouble(),
+                    bar.close.toDouble(),
+                    bar.volume.toDouble()
+                )
+                val now = Instant.ofEpochMilli(bar.closeTime)
+                add(now, action)
             }
+            logger.debug { "Retrieved $asset for $timeframe" }
 
         }
     }

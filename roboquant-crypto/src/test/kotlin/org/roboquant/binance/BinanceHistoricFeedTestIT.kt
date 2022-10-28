@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.*
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class BinanceHistoricFeedTestIT {
 
@@ -28,17 +27,17 @@ internal class BinanceHistoricFeedTestIT {
     fun test() {
         Config.getProperty("FULL_COVERAGE") ?: return
         val feed = BinanceHistoricFeed()
-        assertTrue(feed.availableAssets.isNotEmpty())
+        assertEquals(1, feed.availableAssets.findBySymbols("BTC/USDT").size)
 
-        val asset = feed.availableAssets.getBySymbol("BTC/BUSD")
+        val asset = feed.availableAssets.getBySymbol("BTC/USDT")
         assertEquals(asset.type, AssetType.CRYPTO)
-        assertEquals(asset.currencyPair, Pair(Currency.BTC, Currency.getInstance("BUSD")))
+        assertEquals(asset.currencyPair, Pair(Currency.BTC, Currency.getInstance("USDT")))
 
         val tf = Timeframe.past(100.days)
-        feed.retrieve("BTC/BUSD", timeframe = tf)
+        feed.retrieve("BTC/USDT", timeframe = tf)
         assertEquals(1, feed.assets.size)
 
-        assertThrows<ConfigurationException> {
+        assertThrows<IllegalArgumentException> {
             feed.retrieve("WRONG_SYMBOL", timeframe = tf)
         }
     }
