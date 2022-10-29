@@ -34,23 +34,15 @@ import org.roboquant.orders.MarketOrder
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.EMAStrategy
 
-fun oanda() {
+fun oandaHistoricFeed() {
     val feed = OANDAHistoricFeed()
     feed.retrieve("EUR_USD", "USD_JPY", "GBP_USD")
     println(feed.assets.summary())
     println("events=${feed.timeline.size} timeframe=${feed.timeframe}")
 }
 
-fun forexAvro() {
-    val feed = AvroFeed("/tmp/forex_march_2020.avro")
-    Config.exchangeRates = OANDAExchangeRates()
-    val strategy = EMAStrategy()
-    val roboquant = OANDA.roboquant(strategy, AccountMetric())
-    roboquant.run(feed)
-    println(roboquant.broker.account.summary())
-}
 
-fun oandaLong() {
+fun oandaRecord() {
     val feed = OANDAHistoricFeed()
     val timeframe = Timeframe.parse("2020-03-01", "2020-04-01")
     val symbols = listOf(
@@ -81,10 +73,20 @@ fun oandaLong() {
 
 }
 
-fun oanda2() {
+fun forexAvro() {
+    val feed = AvroFeed("/tmp/forex_march_2020.avro")
+    Config.exchangeRates = OANDAExchangeRates()
+    val strategy = EMAStrategy()
+    val roboquant = OANDA.roboquant(strategy, AccountMetric())
+    roboquant.run(feed)
+    println(roboquant.broker.account.summary())
+}
+
+
+fun oandaExchangeRates() {
     Currency.increaseDigits(3)
     val feed = OANDAHistoricFeed()
-    feed.retrieve("EUR_USD", "EUR_GBP", "GBP_USD")
+    feed.retrieve("EUR_USD", "GBP_USD")
     Config.exchangeRates = FeedExchangeRates(feed)
 
     val roboquant = OANDA.roboquant(EMAStrategy())
@@ -198,13 +200,13 @@ fun oandaBroker2(createOrder: Boolean = true) {
 }
 
 fun main() {
-    when ("OANDA_LIVE_ORDERBOOK") {
+    when ("OANDA_EXCHANGE_RATES") {
         "OANDA_BROKER" -> oandaBroker()
         "OANDA_BROKER2" -> oandaBroker2()
         "OANDA_BROKER3" -> oandaBroker3()
-        "OANDA_FEED" -> oanda()
-        "OANDA_FEED2" -> oanda2()
-        "OANDA_FEED3" -> oandaLong()
+        "OANDA_FEED" -> oandaHistoricFeed()
+        "OANDA_EXCHANGE_RATES" -> oandaExchangeRates()
+        "OANDA_RECORD" -> oandaRecord()
         "OANDA_AVRO" -> forexAvro()
         "OANDA_LIVE_PRICEBAR" -> oandaLivePriceBar()
         "OANDA_LIVE_ORDERBOOK" -> oandaLiveOrderBook()
