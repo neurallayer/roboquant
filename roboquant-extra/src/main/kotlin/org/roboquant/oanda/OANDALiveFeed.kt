@@ -42,7 +42,7 @@ class OANDALiveFeed(
     val config = OANDAConfig()
     private val ctx: Context
     private val accountID: AccountID
-    private val assetMap = mutableMapOf<String, Asset>()
+    private val subscriptions = mutableMapOf<String, Asset>()
     private val logger = Logging.getLogger(OANDALiveFeed::class)
     private val jobs = ParallelJobs()
 
@@ -57,7 +57,7 @@ class OANDALiveFeed(
     }
 
     override val assets
-        get() = assetMap.values.toSortedSet()
+        get() = subscriptions.values.toSortedSet()
 
     /**
      * Stop all background jobs
@@ -66,6 +66,9 @@ class OANDALiveFeed(
         jobs.cancelAll()
     }
 
+    /**
+     * Subscribe to price bars using a polling mechanism.
+     */
     fun subscribePriceBar(
         vararg symbols: String,
         granularity: String = "M1",
@@ -73,7 +76,11 @@ class OANDALiveFeed(
         delay: Long = 60_000L,
     ) {
         val gr = CandlestickGranularity.valueOf(granularity)
-        symbols.forEach { assetMap[it] = availableAssets[it]!! }
+        symbols.forEach {
+            val asset = availableAssets[it]
+            require(asset != null) { "invalid symbol $it"}
+            subscriptions[it] = asset
+        }
         val requests = symbols.map {
             InstrumentCandlesRequest(InstrumentName(it))
                 .setPrice(priceType)
@@ -111,24 +118,17 @@ class OANDALiveFeed(
         }
     }
 
-    fun subscribeOrderBook(vararg symbols: String, delay: Long = 5_000L) {
-        val assets = symbols.map { Asset(it) }
-        subscribeOrderBook(assets, delay = delay)
-    }
 
     /**
      * Subscribe to the order book data for the provided [assets]. Since this is a pulling solution, you can also
      * specify the [delay] interval between two pulls, default being 5000 milliseconds (so 5 second data)
      */
-    fun subscribeOrderBook(assets: Collection<Asset>, delay: Long = 5_000L) {
-        logger.info { "Subscribing to ${assets.size} order books" }
-        val symbols = assets.map { it.symbol }
+    fun subscribeOrderBook(vararg symbols: String, delay: Long = 5_000L) {
+        logger.info { "Subscribing to ${symbols.size} order books" }
         symbols.forEach {
             val asset = availableAssets[it]
-            if (asset != null)
-                assetMap[it] = asset
-            else
-                logger.warn("No asset found for symbol $it. See broker.availableAssets for all available assets")
+            require (asset != null) { "No available asset found for symbol $it"}
+            subscriptions[it] = asset
         }
         jobs.add {
             var since: DateTime? = null
@@ -139,7 +139,7 @@ class OANDALiveFeed(
                     val resp = ctx.pricing[request]
                     val now = Instant.now()
                     val actions = resp.prices.map {
-                        val asset = assetMap.getValue(it.instrument.toString())
+                        val asset = subscriptions.getValue(it.instrument.toString())
                         OrderBook(
                             asset,
                             it.asks.map { entry ->
@@ -156,7 +156,7 @@ class OANDALiveFeed(
                             }
                         )
                     }
-                    logger.debug("Got ${actions.size} order-book actions")
+                    logger.debug { "Got ${actions.size} order-book actions at $now" }
                     if (actions.isNotEmpty()) send(Event(actions, now))
                     since = resp.time
                 }

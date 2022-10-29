@@ -36,6 +36,7 @@ class IBKRHistoricFeed(
     private val logger = Logging.getLogger(IBKRHistoricFeed::class)
     private var client: EClientSocket
 
+
     init {
         config.configure()
         val wrapper = Wrapper(logger)

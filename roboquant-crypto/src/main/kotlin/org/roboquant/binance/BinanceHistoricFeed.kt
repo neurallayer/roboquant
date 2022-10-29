@@ -56,18 +56,17 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
     fun retrieve(
         vararg symbols: String,
         timeframe: Timeframe,
-        interval: Interval = Interval.DAILY,
+        interval: Interval = Interval.ONE_MINUTE,
         limit: Int = 1000
     ) {
         require(symbols.isNotEmpty()) { "You need to provide at least 1 symbol" }
+
         val startTime = timeframe.start.toEpochMilli()
         val endTime = timeframe.end.toEpochMilli() - 1
         for (symbol in symbols) {
-            val finalSymbol = symbol.replace("/", "")
             val asset = assetMap[symbol]
-            require(asset != null) { "invalid $symbol"}
-
-            val bars = client.getCandlestickBars(finalSymbol, interval, limit, startTime, endTime)
+            require(asset != null) { "invalid symbol $symbol"}
+            val bars = client.getCandlestickBars(symbol, interval, limit, startTime, endTime)
             for (bar in bars) {
                 val action = PriceBar(
                     asset,

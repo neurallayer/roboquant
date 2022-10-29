@@ -26,10 +26,10 @@ import javax.naming.ConfigurationException
 
 /**
  * Exchange rates implementation that retrieves the latest rates from OANDA. This implementation uses different
- * rates for BUY and SELL. If no assets are provided, all available assets will be used.
+ * rates for BUY and SELL. If no symbols are provided, all available FOREX & CRYPTO symbols will be used.
  */
 class OANDAExchangeRates(
-    assets: Collection<Asset> = emptyList(),
+    symbols: Collection<String> = emptyList(),
     configure: OANDAConfig.() -> Unit = {}
 ) : ExchangeRates {
 
@@ -37,7 +37,7 @@ class OANDAExchangeRates(
     private val ctx: Context
     private val accountID: AccountID
     private val logger = Logging.getLogger(OANDAExchangeRates::class)
-    private val symbols: List<String>
+    private val symbols: Collection<String>
 
     // Contains per currency pair the buy and sell rates
     private val exchangeRates = mutableMapOf<Pair<Currency, Currency>, Pair<Double, Double>>()
@@ -46,9 +46,7 @@ class OANDAExchangeRates(
         config.configure()
         ctx = OANDA.getContext(config)
         accountID = OANDA.getAccountID(config.account, ctx)
-        symbols = if (assets.isNotEmpty()) {
-            assets.map { it.symbol }
-        } else {
+        this.symbols = symbols.ifEmpty {
             OANDA.getAvailableAssets(ctx, accountID)
                 .filter { it.value.type in setOf(AssetType.FOREX, AssetType.CRYPTO) }.map { it.value.symbol }
         }

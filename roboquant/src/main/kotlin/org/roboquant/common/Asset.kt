@@ -36,7 +36,7 @@ import java.time.format.DateTimeFormatter
  * @property symbol none empty symbol name, for derivatives like options or futures contract this includes the details
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currency currency, default is [Currency.USD]
- * @property exchange Exchange this asset is traded on, default is [Exchange.US]
+ * @property exchange Exchange this asset is traded on, default is [Exchange.DEFAULT]
  * @property multiplier contract multiplier, default is 1.0
  * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
@@ -46,7 +46,7 @@ data class Asset(
     val symbol: String,
     val type: AssetType = AssetType.STOCK,
     val currency: Currency = Currency.USD,
-    val exchange: Exchange = Exchange.US,
+    val exchange: Exchange = Exchange.DEFAULT,
     val multiplier: Double = 1.0,
     val id: String = ""
 ) : Comparable<Asset> {
@@ -203,6 +203,12 @@ fun Collection<Asset>.findByCurrencies(vararg currencyCodes: String): List<Asset
  */
 fun Collection<Asset>.findByCurrencies(currencyCodes: Collection<String>): List<Asset> =
     filter { it.currency.currencyCode in currencyCodes }
+
+/**
+ * Get all unique symbols from the assets
+ */
+val Collection<Asset>.symbols: Array<String>
+    get() = map { it.symbol}.distinct().toTypedArray()
 
 /**
  * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.

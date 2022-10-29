@@ -124,9 +124,10 @@ class Exchange private constructor(
 
         /**
          * The default exchange is the exchange with as exchangeCode an empty string and used as a fallback if an
-         * exchange cannot be found. It uses NY timezone and USD as default currency.
+         * exchange cannot be found or an exchange is not specified. It uses NY timezone and USD as
+         * the default currency.
          */
-        val US : Exchange
+        val DEFAULT : Exchange
 
 
         /**
@@ -140,13 +141,13 @@ class Exchange private constructor(
 
         /**
          * Returns the Exchange instance for the given [exchangeCode]. If no exchange is found, a new exchange instance
-         * is created with the provided [exchangeCode] and the [Exchange.US] properties.
+         * is created with the provided [exchangeCode] and the [Exchange.DEFAULT] properties.
          *
          * If this is not the desired behavior, call [addInstance] first to have full control on teh added exchange.
          */
         fun getInstance(exchangeCode: String): Exchange {
             val result = instances.getOrPut(exchangeCode) {
-                Exchange(exchangeCode, US.zoneId, US.tradingCalendar)
+                Exchange(exchangeCode, DEFAULT.zoneId, DEFAULT.tradingCalendar)
             }
             return result
         }
@@ -171,11 +172,10 @@ class Exchange private constructor(
 
         init {
             val newYorkTimeZone = "America/New_York"
+            DEFAULT = addInstance("", newYorkTimeZone)
 
             // Major North American exchanges
             addInstance("US", newYorkTimeZone) // Generic US exchange
-            US = getInstance("US")
-
             addInstance("NYSE", newYorkTimeZone)
             addInstance("NASDAQ", newYorkTimeZone)
             addInstance("BATS", newYorkTimeZone)

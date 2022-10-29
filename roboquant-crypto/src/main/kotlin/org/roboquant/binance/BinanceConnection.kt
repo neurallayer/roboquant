@@ -19,10 +19,11 @@ package org.roboquant.binance
 import com.binance.api.client.BinanceApiClientFactory
 import com.binance.api.client.BinanceApiRestClient
 import org.roboquant.common.Asset
+import org.roboquant.common.AssetType
 import org.roboquant.common.Config
 
 /**
- * Configuration to connect to Binance exchange API's
+ * Configuration to connect to Binance exchange APIs
  */
 data class BinanceConfig(
     var publicKey: String = Config.getProperty("binance.public.key", ""),
@@ -42,13 +43,10 @@ internal object BinanceConnection {
      */
     fun retrieveAssets(client: BinanceApiRestClient): Map<String, Asset> {
         return client.exchangeInfo.symbols.associate {
-            val asset = Asset.crypto(it.baseAsset, it.quoteAsset, "BINANCE")
+            val asset = Asset(it.symbol, AssetType.CRYPTO, it.quoteAsset, "BINANCE")
             asset.symbol to asset
         }
     }
 
-    internal fun binanceSymbol(asset: Asset): String {
-        return asset.symbol.replace("/", "").lowercase()
-    }
 
 }

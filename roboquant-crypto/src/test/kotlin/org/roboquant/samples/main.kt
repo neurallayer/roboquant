@@ -39,19 +39,21 @@ import kotlin.test.assertEquals
 
 fun recordBinanceFeed() {
     val feed = BinanceHistoricFeed()
-    val timeframe = Timeframe.parse("2019-01-01", "2022-01-01")
-    // val timeframe = Timeframe.parse("2019-05-01", "2019-05-02")
+    println(feed.availableAssets.summary())
+    // val timeframe = Timeframe.parse("2019-01-01", "2019-01-03")
+    val timeframe = Timeframe.parse("2019-01-01", "2022-10-01")
     for (period in timeframe.split(12.hours)) {
-        feed.retrieve("BTCUSDC", "ETHUSDC", timeframe = period, interval = Interval.ONE_MINUTE)
+        feed.retrieve("BTCUST", "ETHUST", timeframe = period, interval = Interval.ONE_MINUTE)
         println("$period ${feed.timeline.size}")
-        Thread.sleep(2000)
+        Thread.sleep(10) // Sleep a bit to avoid hitting API limitations
     }
 
+    // Now store as Avro file
     val userHomeDir = System.getProperty("user.home")
     val fileName = "$userHomeDir/tmp/crypto.avro"
     AvroUtil.record(feed, fileName)
 
-    // Some sanity checks
+    // Some sanity checks if we stored what we captured
     val feed2 = AvroFeed(fileName)
     require(feed2.assets.size == feed.assets.size)
     require(feed2.timeline.size == feed.timeline.size)
@@ -97,7 +99,7 @@ fun xchangeFeed() {
 
 fun main() {
 
-    when ("READ") {
+    when ("RECORD") {
         "RECORD" -> recordBinanceFeed()
         "READ" -> readBinanceFeed()
         "XCHANGE" -> xchangeFeed()

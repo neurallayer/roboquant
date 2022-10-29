@@ -27,14 +27,13 @@ internal class BinanceHistoricFeedTestIT {
     fun test() {
         Config.getProperty("FULL_COVERAGE") ?: return
         val feed = BinanceHistoricFeed()
-        assertEquals(1, feed.availableAssets.findBySymbols("BTC/USDT").size)
+        assertEquals(1, feed.availableAssets.findBySymbols("BTCUST").size)
 
-        val asset = feed.availableAssets.getBySymbol("BTC/USDT")
+        val asset = feed.availableAssets.getBySymbol("BTCUST")
         assertEquals(asset.type, AssetType.CRYPTO)
-        assertEquals(asset.currencyPair, Pair(Currency.BTC, Currency.getInstance("USDT")))
 
         val tf = Timeframe.past(100.days)
-        feed.retrieve("BTC/USDT", timeframe = tf)
+        feed.retrieve("BTCBUSD", timeframe = tf)
         assertEquals(1, feed.assets.size)
 
         assertThrows<IllegalArgumentException> {

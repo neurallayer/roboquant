@@ -31,7 +31,7 @@ internal class ExchangeTest {
 
     @Test
     fun test() {
-        assertEquals(Exchange.US.zoneId, Exchange.getInstance("DUMMY").zoneId)
+        assertEquals(Exchange.DEFAULT.zoneId, Exchange.getInstance("DUMMY").zoneId)
 
         Exchange.addInstance("DUMMY", "Europe/Paris")
         val exchange2 = Exchange.getInstance("DUMMY")
@@ -59,8 +59,12 @@ internal class ExchangeTest {
 
     @Test
     fun serializer() {
-        assertEquals("\"US\"", Json.encodeToString(Exchange.US))
-        assertEquals(Exchange.US, Json.decodeFromString("\"US\""))
+        assertEquals("\"\"", Json.encodeToString(Exchange.DEFAULT))
+        assertEquals(Exchange.DEFAULT, Json.decodeFromString("\"\""))
+
+        val us = Exchange.getInstance("US")
+        assertEquals("\"US\"", Json.encodeToString(us))
+        assertEquals(us, Json.decodeFromString("\"US\""))
     }
 
 

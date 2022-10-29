@@ -92,19 +92,25 @@ fun oanda2() {
     println(roboquant.broker.account.fullSummary())
 }
 
-fun oandaLive() {
+fun oandaLiveOrderBook() {
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
     val tf = Timeframe.next(5.minutes)
-    val actions = feed.filter<OrderBook>(tf)
+    val actions = feed.filter<OrderBook>(tf) {
+        println(it)
+        true
+    }
     println(actions.size)
 }
 
-fun oandaLive2() {
+fun oandaLivePriceBar() {
     val feed = OANDALiveFeed()
     feed.subscribePriceBar("EUR_USD", "USD_JPY", "GBP_USD", granularity = "S5", delay = 5_000L)
     val tf = Timeframe.next(15.minutes)
-    val actions = feed.filter<PriceBar>(tf)
+    val actions = feed.filter<PriceBar>(tf) {
+        println(it)
+        true
+    }
     println(actions.size)
 }
 
@@ -114,8 +120,8 @@ fun oandaPaperTrading() {
     Config.exchangeRates = OANDAExchangeRates()
 
     val feed = OANDALiveFeed()
-    val assets = broker.availableAssets.findByCurrencies("EUR", "USD", "JPY", "GBP", "CAD", "CHF")
-    feed.subscribeOrderBook(assets)
+    val symbols = broker.availableAssets.findByCurrencies("EUR", "USD", "JPY", "GBP", "CAD", "CHF").symbols
+    feed.subscribeOrderBook(*symbols)
 
     val policy = DefaultPolicy(shorting = true)
     val roboquant = Roboquant(EMAStrategy.EMA_5_15, broker = broker, policy = policy)
@@ -192,7 +198,7 @@ fun oandaBroker2(createOrder: Boolean = true) {
 }
 
 fun main() {
-    when ("OANDA_FEED") {
+    when ("OANDA_LIVE_ORDERBOOK") {
         "OANDA_BROKER" -> oandaBroker()
         "OANDA_BROKER2" -> oandaBroker2()
         "OANDA_BROKER3" -> oandaBroker3()
@@ -200,8 +206,8 @@ fun main() {
         "OANDA_FEED2" -> oanda2()
         "OANDA_FEED3" -> oandaLong()
         "OANDA_AVRO" -> forexAvro()
-        "OANDA_LIVE_FEED" -> oandaLive()
-        "OANDA_LIVE_FEED2" -> oandaLive2()
+        "OANDA_LIVE_PRICEBAR" -> oandaLivePriceBar()
+        "OANDA_LIVE_ORDERBOOK" -> oandaLiveOrderBook()
         "OANDA_LIVE_RECORD" -> oandaLiveRecord()
         "OANDA_PAPER" -> oandaPaperTrading()
         "OANDA_CLOSE" -> oandaClosePositions()

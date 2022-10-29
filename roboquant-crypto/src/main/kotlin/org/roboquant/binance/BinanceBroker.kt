@@ -24,7 +24,6 @@ import com.binance.api.client.domain.account.NewOrder.*
 import com.binance.api.client.domain.account.NewOrderResponse
 import com.binance.api.client.domain.account.request.CancelOrderRequest
 import com.binance.api.client.domain.account.request.OrderRequest
-import org.roboquant.binance.BinanceConnection.binanceSymbol
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.InternalAccount
@@ -108,7 +107,7 @@ class BinanceBroker(
         for (order in orders) {
             val asset = order.asset
             if (asset.type == AssetType.CRYPTO) {
-                val symbol = binanceSymbol(asset)
+                val symbol = asset.symbol
 
                 when (order) {
                     is CancelOrder -> cancelOrder(order)
@@ -148,8 +147,7 @@ class BinanceBroker(
         val c = cancellation.order.order
         // require(c.id.isNotEmpty()) { "Require non empty id when cancelling and order $c" }
         require(c.asset.type == AssetType.CRYPTO) { "BinanceBroker only support CRYPTO orders ${c.asset}" }
-        val symbol = binanceSymbol(c.asset)
-        val r = CancelOrderRequest(symbol, c.id.toString())
+        val r = CancelOrderRequest(c.asset.symbol, c.id.toString())
         client.cancelOrder(r)
     }
 
