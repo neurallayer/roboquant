@@ -36,7 +36,7 @@ internal class AlphaBetaMetricTest {
     fun test() {
         val feed = TestData.feed
         val marketAsset = feed.assets.first()
-        val strategy = EMAStrategy.EMA_5_15
+        val strategy = EMAStrategy.PERIODS_5_15
         val alphaBetaMetric = AlphaBetaMetric(marketAsset, 50)
         val logger = LastEntryLogger()
         val roboquant = Roboquant(strategy, alphaBetaMetric, logger = logger)

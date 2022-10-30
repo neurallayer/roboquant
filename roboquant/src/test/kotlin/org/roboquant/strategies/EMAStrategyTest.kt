@@ -43,9 +43,9 @@ internal class EMAStrategyTest {
 
     @Test
     fun simple2() {
-        val strategy1 = EMAStrategy.EMA_5_15
-        val strategy2 = EMAStrategy.EMA_12_26
-        val strategy3 = EMAStrategy.EMA_50_200
+        val strategy1 = EMAStrategy.PERIODS_5_15
+        val strategy2 = EMAStrategy.PERIODS_12_26
+        val strategy3 = EMAStrategy.PERIODS_50_200
         assertTrue(!strategy1.recording)
         assertNotEquals(strategy1, strategy2)
         assertNotEquals(strategy2, strategy3)

@@ -24,6 +24,9 @@ import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.time.Instant
 import kotlin.math.max
 
 /**
@@ -31,23 +34,17 @@ import kotlin.math.max
  * can be configured to change it behavior. By default, this policy will create Market Orders, but this can be
  * changed by providing a different [createOrder] method in a subclass.
  *
- * It will adhere to the following rules when it converts signals into orders:
- *
- * - If there still is an open order outstanding for the same asset, don't do anything
- * - If there is already an open position for the same asset, don't increase the position
- * - A SELL order will liquidate the full position for that asset in the portfolio if available
- * - Never go short for an asset (configurable)
- * - Never create BUY orders of which the total value is below a minimum amount (configurable)
- *
- * @property orderPercentage The percentage of overall equity value for a single order, default is 1% (0.01)
+ * @property orderPercentage The percentage of overall equity value to allocate to a single order, default is 1% (0.01)
  * @property shorting Can the policy create orders that possibly lead to short positions, default is false
  * @property priceType The type of price to use, default is "DEFAULT"
+ * @property fractions For fractional trading, the amount of fractions (decimals) to allow for. Default is 0
  * @constructor Create new Default Policy
  */
 open class DefaultPolicy(
     private val orderPercentage: Double = 0.01,
     private val shorting: Boolean = false,
-    private val priceType: String = "DEFAULt"
+    private val priceType: String = "DEFAULT",
+    private val fractions: Int = 0
 ) : BasePolicy() {
 
     private val logger = Logging.getLogger(DefaultPolicy::class)
@@ -63,6 +60,22 @@ open class DefaultPolicy(
             }
         }
         return false
+    }
+
+    /**
+     * Return the size that can be bought/sold with the provided [amount] given the [price] in the currency of
+     * the asset at the provided [time]. This implementation will take into consideration the configured fractions
+     */
+    private fun calcSize(amount: Amount, signal: Signal, price: Double, time: Instant): Size {
+        val asset = signal.asset
+        val singleContractPrice = asset.value(Size.ONE, price).value
+        val availableAssetCash = amount.convert(asset.currency, time).value
+        return if (availableAssetCash <= 0.0) {
+            Size.ZERO
+        } else {
+            val size = BigDecimal(availableAssetCash / singleContractPrice).setScale(fractions, RoundingMode.DOWN)
+            Size(size) * signal.rating.direction
+        }
     }
 
     /**
@@ -101,8 +114,8 @@ open class DefaultPolicy(
                     if (! signal.entry) continue // signal doesn't allow to open new positions
 
                     val size = calcSize(amount, signal, price, event.time)
-                    if (size < 0 && ! shorting) continue
                     if (size.iszero) continue
+                    if (size < 0 && ! shorting) continue
 
                     val assetExposure = asset.value(size, price).absoluteValue
                     val exposure = account.convert(assetExposure, event.time).value

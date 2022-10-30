@@ -33,7 +33,7 @@ fun alpacaBroker() {
         priceAdjust = true
     }
     val broker = AlpacaBroker()
-    val strategy = EMAStrategy.EMA_12_26
+    val strategy = EMAStrategy.PERIODS_12_26
     val roboquant = Roboquant(strategy, AccountMetric(), broker = broker)
     roboquant.run(feed)
     println(broker.account.summary())
@@ -75,7 +75,7 @@ fun alpacaLiveFeed() {
 
     feed.subscribeCrypto(listOf("*"))
     feed.heartbeatInterval = 30_000
-    val strategy = EMAStrategy.EMA_5_15
+    val strategy = EMAStrategy.PERIODS_5_15
     val roboquant = Roboquant(strategy, ProgressMetric())
     val tf = Timeframe.next(10.minutes)
     roboquant.run(feed, tf)

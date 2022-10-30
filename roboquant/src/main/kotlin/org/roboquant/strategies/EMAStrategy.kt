@@ -26,14 +26,14 @@ import java.time.Instant
  *
  * The rules are straight forward:
  *
- * - If the fast EMA crosses over the slow EMA, generate a BUY signal
- * - If the fast EMA crosses under the slow EMA, generate a SELL signal
+ * - If the fast EMA trend crosses over the slow EMA trend, generate a BUY signal
+ * - If the fast EMA trend crosses under the slow EMA trend, generate a SELL signal
  * - Don't generate a signal in all other scenario's
  *
  * @constructor Create a new EMAStrategy strategy
  *
- * @param fastPeriod The shorter period or fast EMA in number of steps
- * @param slowPeriod The longer period or slow EMA in number of steps
+ * @param fastPeriod The shorter (fast) period or fast EMA in number of steps
+ * @param slowPeriod The longer (slow) period or slow EMA in number of steps
  * @param smoothing Smoothing factor to use, default is 2.0
  * @property minEvents minimal number of events observed before starting to execute the strategy, default is the same
  * as the slow period
@@ -50,15 +50,15 @@ class EMAStrategy(
     private val calculators = mutableMapOf<Asset, EMACalculator>()
 
     /**
-     * Standard set of predefined EMA Strategies
+     * Standard set of predefined EMA Strategies that are commonly used
      */
     companion object Factory {
         /**
-         * Predefined EMA Crossover with 50 steps for fast EMA and 200 steps for slow EMA
+         * Predefined EMA Crossover with 50 steps for the fast trend and 200 steps for slow trend
          *
          * @return new EMAStrategy
          */
-        val EMA_50_200: EMAStrategy
+        val PERIODS_50_200: EMAStrategy
             get() = EMAStrategy(50, 200)
 
         /**
@@ -66,7 +66,7 @@ class EMAStrategy(
          *
          * @return new EMAStrategy
          */
-        val EMA_12_26: EMAStrategy
+        val PERIODS_12_26: EMAStrategy
             get() = EMAStrategy(12, 26)
 
         /**
@@ -74,7 +74,7 @@ class EMAStrategy(
          *
          * @return new EMAStrategy
          */
-        val EMA_5_15: EMAStrategy
+        val PERIODS_5_15: EMAStrategy
             get() = EMAStrategy(5, 15)
     }
 

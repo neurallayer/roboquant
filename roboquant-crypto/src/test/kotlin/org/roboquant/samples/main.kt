@@ -34,15 +34,13 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.policies.DefaultPolicy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.xchange.XChangePollingLiveFeed
-import kotlin.system.measureTimeMillis
 import kotlin.test.assertEquals
 
 fun recordBinanceFeed() {
     val feed = BinanceHistoricFeed()
     println(feed.availableAssets.summary())
-    // val timeframe = Timeframe.parse("2019-01-01", "2019-01-03")
-    val timeframe = Timeframe.parse("2019-01-01", "2022-10-01")
-    for (period in timeframe.split(12.hours)) {
+    val twoYears = Timeframe.parse("2020-01-01", "2022-10-01")
+    for (period in twoYears.split(12.hours)) {
         feed.retrieve("BTCUST", "ETHUST", timeframe = period, interval = Interval.ONE_MINUTE)
         println("$period ${feed.timeline.size}")
         Thread.sleep(10) // Sleep a bit to avoid hitting API limitations
@@ -50,7 +48,7 @@ fun recordBinanceFeed() {
 
     // Now store as Avro file
     val userHomeDir = System.getProperty("user.home")
-    val fileName = "$userHomeDir/tmp/crypto.avro"
+    val fileName = "$userHomeDir/tmp/crypto_2years.avro"
     AvroUtil.record(feed, fileName)
 
     // Some sanity checks if we stored what we captured
@@ -61,21 +59,18 @@ fun recordBinanceFeed() {
     println("done")
 }
 
-fun readBinanceFeed() {
-    println("starting")
-    val t = measureTimeMillis {
-        val userHomeDir = System.getProperty("user.home")
-        val fileName = "$userHomeDir/tmp/crypto.avro"
-        val feed = AvroFeed(fileName, useIndex = true)
-        val initialDeposit = Amount("USDC", 100_000).toWallet()
-        val buyingPower = MarginAccount()
-        val policy = DefaultPolicy(shorting = true)
-        val broker = SimBroker(initialDeposit, accountModel = buyingPower)
-        val roboquant = Roboquant(EMAStrategy(), AccountMetric(), broker = broker, policy = policy)
-        roboquant.run(feed)
-        println(roboquant.broker.account.summary())
-    }
-    println(t)
+fun useBinanceFeed() {
+    val userHomeDir = System.getProperty("user.home")
+    val fileName = "$userHomeDir/tmp/crypto_2years.avro"
+    val feed = AvroFeed(fileName)
+
+    val initialDeposit = Amount("UST", 100_000).toWallet()
+    val marginAccount = MarginAccount()
+    val policy = DefaultPolicy(shorting = true, fractions = 4)
+    val broker = SimBroker(initialDeposit, accountModel = marginAccount)
+    val roboquant = Roboquant(EMAStrategy.PERIODS_5_15, AccountMetric(), broker = broker, policy = policy)
+    roboquant.run(feed)
+    println(roboquant.broker.account.summary())
 }
 
 fun xchangeFeed() {
@@ -99,9 +94,9 @@ fun xchangeFeed() {
 
 fun main() {
 
-    when ("RECORD") {
+    when ("USE") {
         "RECORD" -> recordBinanceFeed()
-        "READ" -> readBinanceFeed()
+        "USE" -> useBinanceFeed()
         "XCHANGE" -> xchangeFeed()
     }
 }

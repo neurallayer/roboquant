@@ -91,7 +91,7 @@ fun paperTrade(minutes: Int = 10) {
     val feed = IBKRLiveFeed()
     feed.subscribe(broker.account.assets)
 
-    val strategy = EMAStrategy.EMA_5_15
+    val strategy = EMAStrategy.PERIODS_5_15
 
     val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker)
     val tf = Timeframe.next(minutes.minutes)
