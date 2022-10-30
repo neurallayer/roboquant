@@ -27,6 +27,8 @@ import javax.naming.ConfigurationException
 /**
  * Exchange rates implementation that retrieves the latest rates from OANDA. This implementation uses different
  * rates for BUY and SELL. If no symbols are provided, all available FOREX & CRYPTO symbols will be used.
+ *
+ * Please note these are only the current exchange rates, so there is no history.
  */
 class OANDAExchangeRates(
     symbols: Collection<String> = emptyList(),
@@ -39,7 +41,7 @@ class OANDAExchangeRates(
     private val logger = Logging.getLogger(OANDAExchangeRates::class)
     private val symbols: Collection<String>
 
-    // Contains per currency pair the buy and sell rates
+    // Contains per currency pair the buy and sell exchange rates
     private val exchangeRates = mutableMapOf<Pair<Currency, Currency>, Pair<Double, Double>>()
 
     init {

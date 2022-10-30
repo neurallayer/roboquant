@@ -106,8 +106,12 @@ class AvroTest {
         val p1 = PriceBar.fromValues(asset, listOf(10.0, 10.0, 10.0, 10.0, 1000.0))
         val p2 = TradePrice(asset, 10.0, 1000.0)
         val p3 = PriceQuote(asset, 10.0, 1000.0, 10.0, 1000.0)
+        val p4 = OrderBook(asset,
+            listOf(OrderBook.OrderBookEntry(100.0, 11.0)),
+            listOf(OrderBook.OrderBookEntry(50.0, 9.0))
+            )
         val feed = MyFeed()
-        feed.event = Event(listOf(p1, p2, p3), Instant.now())
+        feed.event = Event(listOf(p1, p2, p3, p4), Instant.now())
 
         assertDoesNotThrow {
             AvroUtil.record(feed, fileName, compressionLevel = 0)
@@ -115,6 +119,8 @@ class AvroTest {
 
         val feed2 = AvroFeed(fileName)
         assertEquals(1, feed2.timeline.size)
+        val actions = feed2.filter<PriceAction>().map { it.second }
+        assertEquals(4, actions.size)
 
     }
 

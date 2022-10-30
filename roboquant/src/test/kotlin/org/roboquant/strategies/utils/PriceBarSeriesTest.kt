@@ -39,6 +39,9 @@ internal class PriceBarSeriesTest {
         }
         assertTrue(pb.isAvailable())
         assertTrue(pb.typical.isNotEmpty())
+        assertTrue(pb.volume.isNotEmpty())
+        pb.clear()
+        assertFalse(pb.isAvailable())
     }
 
     @Test

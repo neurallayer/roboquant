@@ -17,7 +17,10 @@
 package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Asset
+import org.roboquant.common.CAD
+import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.USD
@@ -36,6 +39,10 @@ internal class FeedExchangeRatesTest {
         val r = er.convert(100.USD, EUR, Instant.now())
         assertEquals(EUR, r.currency)
         assertEquals(118.0, r.value)
+
+        assertThrows<ConfigurationException> {
+            er.convert(100.CAD, EUR, Instant.now())
+        }
     }
 
 }
