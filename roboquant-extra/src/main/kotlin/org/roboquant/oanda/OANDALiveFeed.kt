@@ -124,7 +124,7 @@ class OANDALiveFeed(
      * specify the [delay] interval between two pulls, default being 5000 milliseconds (so 5 second data)
      */
     fun subscribeOrderBook(vararg symbols: String, delay: Long = 5_000L) {
-        logger.info { "Subscribing to ${symbols.size} order books" }
+        logger.info { "Subscribing to order books for ${symbols.size} symbols" }
         symbols.forEach {
             val asset = availableAssets[it]
             require (asset != null) { "No available asset found for symbol $it"}

@@ -22,6 +22,7 @@ import com.crazzyghost.alphavantage.parameters.OutputSize
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse
 import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.common.Asset
+import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Logging
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
@@ -86,7 +87,7 @@ class AlphaVantageHistoricFeed(
                 .fetchSync()
 
             if (result.errorMessage != null)
-                logger.warn(result.errorMessage)
+                throw ConfigurationException(result.errorMessage)
             else
                 handleIntraday(result)
         }
@@ -109,7 +110,7 @@ class AlphaVantageHistoricFeed(
                 .fetchSync()
 
             if (result.errorMessage != null)
-                logger.warn(result.errorMessage)
+                throw ConfigurationException(result.errorMessage)
             else
                 handleDaily(result)
         }

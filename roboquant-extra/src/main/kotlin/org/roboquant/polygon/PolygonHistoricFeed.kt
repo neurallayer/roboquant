@@ -18,7 +18,9 @@ package org.roboquant.polygon
 
 import io.polygon.kotlin.sdk.rest.AggregatesParameters
 import io.polygon.kotlin.sdk.rest.PolygonRestClient
+import io.polygon.kotlin.sdk.rest.reference.SupportedTickersParameters
 import org.roboquant.common.Asset
+import org.roboquant.common.AssetType
 import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.HistoricPriceFeed
@@ -46,11 +48,55 @@ class PolygonHistoricFeed(
     private val config = PolygonConfig()
     private var client: PolygonRestClient
 
+    /**
+     * Get available assets
+     */
+    val availableAssets : List<Asset> by lazy {
+        availableAssets()
+    }
+
     init {
         config.configure()
         require(config.key.isNotBlank()) { "No api key provided" }
         client = PolygonRestClient(config.key)
     }
+
+
+    private fun availableAssets(): List<Asset> {
+        val assets = mutableListOf<Asset>()
+        var done = false
+        var lastSymbol = ""
+
+        while (! done) {
+            val params = SupportedTickersParameters(limit = 10000, market = "stocks", tickerGT = lastSymbol)
+            val tickers = client.referenceClient.getSupportedTickersBlocking(params)
+            for (result in tickers.results!!) {
+                val currency = result.currencyName?.uppercase() ?: "USD"
+                val exchange = result.primaryExchange?.uppercase() ?: ""
+
+                val assetType = when(result.market) {
+                    "stocks" -> AssetType.STOCK
+                    "crypto" -> AssetType.CRYPTO
+                    "fx" -> AssetType.FOREX
+                    else -> continue
+                }
+
+                val asset = Asset(
+                    result.ticker.toString(),
+                    assetType,
+                    currency,
+                    exchange
+                )
+                assets.add(asset)
+            }
+            done = tickers.results!!.isEmpty()
+            lastSymbol = assets.last().symbol
+            Thread.sleep(12_000)
+        }
+
+        return assets
+    }
+
 
     /**
      * Retrieve [PriceBar] data for the provided [symbols] and [timeframe].

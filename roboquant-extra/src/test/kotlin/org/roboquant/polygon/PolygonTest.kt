@@ -16,9 +16,13 @@
 
 package org.roboquant.polygon
 
+import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
+import org.roboquant.common.minutes
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -37,5 +41,23 @@ internal class PolygonTest {
         assertTrue(feed.timeline.isNotEmpty())
         assertEquals(2, feed.assets.size)
         assertContains(feed.assets.map { it.symbol }, "IBM")
+    }
+
+    @Test
+    fun testAssets() {
+        Config.getProperty("TEST_POLYGON") ?: return
+        val feed = PolygonHistoricFeed()
+        val assets = feed.availableAssets
+        assertContains(assets.map { it.symbol }, "AAPL")
+    }
+
+    @Test
+    fun testLiveFeed() = runBlocking{
+        Config.getProperty("TEST_POLYGON") ?: return@runBlocking
+        val feed = PolygonLiveFeed()
+        feed.subscribe("IBM", "AAPL")
+        val actions = feed.filter<PriceAction>(Timeframe.next(5.minutes))
+        assertTrue(actions.isNotEmpty())
+        feed.disconnect()
     }
 }

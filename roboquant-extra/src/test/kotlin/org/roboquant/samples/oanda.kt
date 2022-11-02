@@ -96,13 +96,28 @@ fun oandaExchangeRates() {
 
 fun oandaLiveOrderBook() {
     val feed = OANDALiveFeed()
-    feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
-    val tf = Timeframe.next(5.minutes)
+    println(feed.availableAssets.size)
+    val symbols = feed.availableAssets.keys.take(100).toTypedArray()
+    feed.subscribeOrderBook(*symbols, delay = 500)
+    val tf = Timeframe.next(15.minutes)
     val actions = feed.filter<OrderBook>(tf) {
         println(it)
         true
     }
     println(actions.size)
+}
+
+
+fun oandaLiveRecord() {
+    val feed = OANDALiveFeed()
+
+    // Get all the FOREX pairs
+    val symbols = feed.availableAssets.filterValues { it.type == AssetType.FOREX }.keys.toTypedArray()
+    feed.subscribeOrderBook(*symbols, delay = 1_000)
+
+    // Record for the next 60 minutes
+    val tf = Timeframe.next(60.minutes)
+    AvroUtil.record(feed, "/tmp/oanda_forex.avro", tf)
 }
 
 fun oandaLivePriceBar() {
@@ -144,12 +159,6 @@ fun oandaClosePositions() {
     println(broker.account.fullSummary())
 }
 
-fun oandaLiveRecord() {
-    val feed = OANDALiveFeed()
-    feed.subscribeOrderBook("EUR_USD", "USD_JPY", "GBP_USD")
-    val tf = Timeframe.next(5.minutes)
-    AvroUtil.record(feed, "/tmp/oanda.avro", tf)
-}
 
 fun oandaBroker() {
     Config.exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
@@ -200,7 +209,7 @@ fun oandaBroker2(createOrder: Boolean = true) {
 }
 
 fun main() {
-    when ("OANDA_EXCHANGE_RATES") {
+    when ("OANDA_LIVE_RECORD") {
         "OANDA_BROKER" -> oandaBroker()
         "OANDA_BROKER2" -> oandaBroker2()
         "OANDA_BROKER3" -> oandaBroker3()

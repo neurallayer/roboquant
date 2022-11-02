@@ -19,10 +19,7 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
-import org.roboquant.common.days
-import org.roboquant.common.minutes
+import org.roboquant.common.*
 import org.roboquant.iex.Range
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.metrics.AccountMetric
@@ -70,6 +67,7 @@ fun feedPolygon() {
 
     // Get the feed
     val feed = PolygonHistoricFeed()
+    println(feed.availableAssets.summary())
     val tf = Timeframe.fromYears(2021, 2022)
     feed.retrieve("IBM", "AAPL", timeframe = tf)
     println(feed.assets)
