@@ -23,7 +23,8 @@ import org.roboquant.common.Currency
 import java.time.Instant
 
 /**
- * Currency convertor that can be filled by exchange rates provided by IBKR during the retrieval of the account values
+ * Currency convertor that will be populated by exchange rates provided by IBKR during
+ * the retrieval of the account values.
  */
 internal class IBKRExchangeRates(
     configure: IBKRConfig.() -> Unit = {}
@@ -41,11 +42,11 @@ internal class IBKRExchangeRates(
 
     fun refresh() {
         val wrapper = Wrapper()
-        val client = IBKRConnection.connect(wrapper, config)
+        val client = IBKR.connect(wrapper, config)
         client.reqCurrentTime()
         client.reqAccountUpdates(true, config.account.ifBlank { null })
         waitTillSynced()
-        IBKRConnection.disconnect(client)
+        IBKR.disconnect(client)
     }
 
     /**
@@ -53,7 +54,7 @@ internal class IBKRExchangeRates(
      */
     private fun waitTillSynced() {
         synchronized (lock) {
-            lock.wait(IBKRConnection.maxResponseTime)
+            lock.wait(IBKR.maxResponseTime)
         }
     }
 

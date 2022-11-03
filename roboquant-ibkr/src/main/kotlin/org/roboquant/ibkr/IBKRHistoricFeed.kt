@@ -39,11 +39,11 @@ class IBKRHistoricFeed(
     init {
         config.configure()
         val wrapper = Wrapper(logger)
-        client = IBKRConnection.connect(wrapper, config)
+        client = IBKR.connect(wrapper, config)
         client.reqCurrentTime()
     }
 
-    fun disconnect() = IBKRConnection.disconnect(client)
+    fun disconnect() = IBKR.disconnect(client)
 
     /**
      * Historical Data requests need to be assembled in such a way that only a few thousand bars are returned at a time.
@@ -57,8 +57,8 @@ class IBKRHistoricFeed(
         dataType: String = "TRADES"
     ) {
         for (asset in assets) {
-            val contract = IBKRConnection.getContract(asset)
-            val formatted = IBKRConnection.getFormattedTime(endDate)
+            val contract = IBKR.getContract(asset)
+            val formatted = IBKR.getFormattedTime(endDate)
             client.reqHistoricalData(++tickerId, contract, formatted, duration, barSize, dataType, 1, 1, false, null)
             subscriptions[tickerId] = asset
         }
@@ -85,7 +85,7 @@ class IBKRHistoricFeed(
         while (subscriptions.isNotEmpty() && Instant.now() <= endTime) Thread.sleep(1_000)
     }
 
-    inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
+    private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
         override fun historicalData(reqId: Int, bar: Bar) {
             val asset = subscriptions[reqId]!!

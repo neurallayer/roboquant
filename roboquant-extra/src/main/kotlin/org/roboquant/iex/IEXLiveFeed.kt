@@ -49,7 +49,7 @@ class IEXLiveFeed(
 
     init {
         config.configure()
-        client = IEXConnection.getClient(config)
+        client = IEX.getClient(config)
     }
 
     /**
@@ -57,7 +57,7 @@ class IEXLiveFeed(
      * as part of the feed.
      */
     fun subscribeQuotes(vararg assets: Asset, interval: Interval = Interval.ONE_MINUTE) {
-
+        require(assets.isNotEmpty()) { "Subscribe to at least one asset"}
         logger.info { "Subscribing to assets $assets" }
         val symbols = assets.map { it.symbol }.toTypedArray()
         assets.forEach { assetMap[it.symbol] = it }
@@ -71,10 +71,11 @@ class IEXLiveFeed(
     }
 
     /**
-     * Subscribe to one or more [assets]. If the symbol of the asset is found by IEX, [TradePrice] will be provided
-     * as part of the feed.
+     * Subscribe to the Trades for one or more [assets]. If the symbol of the asset is found by IEX, [TradePrice] will
+     * be provided as part of the feed.
      */
     fun subscribeTrades(vararg assets: Asset) {
+        require(assets.isNotEmpty()) { "Subscribe to at least one asset"}
         val symbols = assets.map { it.symbol }.toTypedArray()
         assets.forEach { assetMap[it.symbol] = it }
 

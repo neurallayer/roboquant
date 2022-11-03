@@ -23,11 +23,14 @@ import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.PriceBar
+import org.roboquant.polygon.Polygon.getWebSocketClient
 import java.time.Instant
 
 
 /**
- * Live data feed using market data from Polygon.io
+ * Live data feed using market data from Polygon.io. This feed requires one of the non-free
+ * subscriptions at Polygon.io since it uses the websocket API.
+ *
  * @TODO still needs to be tested.
  */
 class PolygonLiveFeed(
@@ -41,53 +44,26 @@ class PolygonLiveFeed(
     init {
         config.configure()
         require(config.key.isNotBlank()) { "No api key provided" }
-        client = getClient(config.key)
+        client = getWebSocketClient(config, this::handler)
         runBlocking {
             client.connect()
         }
     }
 
-    private fun getClient(polygonKey: String): PolygonWebSocketClient  {
-        val websocketClient = PolygonWebSocketClient(
-            polygonKey,
-            PolygonWebSocketCluster.Stocks,
-            object : PolygonWebSocketListener {
-                override fun onAuthenticated(client: PolygonWebSocketClient) {
-                    logger.trace("Connected!")
-                }
+    private fun handler(message: PolygonWebSocketMessage) {
 
-                override fun onReceive(
-                    client: PolygonWebSocketClient,
-                    message: PolygonWebSocketMessage
-                ) {
-
-
-                    when (message) {
-                        is PolygonWebSocketMessage.RawMessage -> println(String(message.data))
-                        is PolygonWebSocketMessage.StocksMessage.Aggregate -> {
-                            val asset = Asset(message.ticker.toString())
-                            val action = PriceBar(
-                                asset, message.openPrice!!, message.highPrice!!,
-                                message.lowPrice!!, message.closePrice!!, message.volume!!
-                            )
-                            send(Event(listOf(action), Instant.now()))
-                        }
-                        else -> println("Received Message: $message")
-                    }
-                }
-
-                override fun onDisconnect(client: PolygonWebSocketClient) {
-                    logger.trace("Disconnected!")
-                }
-
-                override fun onError(client: PolygonWebSocketClient, error: Throwable) {
-                    logger.warn(error) {}
-                }
-
-            })
-
-        return websocketClient
-
+        when (message) {
+            is PolygonWebSocketMessage.RawMessage -> logger.info(String(message.data))
+            is PolygonWebSocketMessage.StocksMessage.Aggregate -> {
+                val asset = Asset(message.ticker.toString())
+                val action = PriceBar(
+                    asset, message.openPrice!!, message.highPrice!!,
+                    message.lowPrice!!, message.closePrice!!, message.volume!!
+                )
+                send(Event(listOf(action), Instant.now()))
+            }
+            else -> logger.warn { "Received Message: $message" }
+        }
     }
 
     suspend fun subscribe(vararg symbols: String) {

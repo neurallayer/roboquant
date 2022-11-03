@@ -64,9 +64,9 @@ fun allAlpaca() {
 
 fun alpacaConnection() {
     val config = AlpacaConfig()
-    val api = AlpacaConnection.getAPI(config)
-    println(AlpacaConnection.getAvailableAssets(api).size)
-    println(AlpacaConnection.getAvailableAssets(api).values.filter { it.type == AssetType.CRYPTO })
+    val api = Alpaca.getAPI(config)
+    println(Alpaca.getAvailableAssets(api).size)
+    println(Alpaca.getAvailableAssets(api).values.filter { it.type == AssetType.CRYPTO })
 
 }
 

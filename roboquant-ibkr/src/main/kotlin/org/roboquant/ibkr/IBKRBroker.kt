@@ -21,6 +21,7 @@ import com.ib.client.*
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
+import org.roboquant.ibkr.IBKR.getAsset
 import org.roboquant.orders.*
 import org.roboquant.orders.OrderStatus
 import java.lang.Thread.sleep
@@ -67,7 +68,7 @@ class IBKRBroker(
         require(config.account.isBlank() || config.account.startsWith('D')) { "only paper trading is supported" }
         accountId = config.account.ifBlank { null }
         val wrapper = Wrapper(logger)
-        client = IBKRConnection.connect(wrapper, config)
+        client = IBKR.connect(wrapper, config)
         client.reqCurrentTime()
         client.reqAccountUpdates(true, accountId)
         // client.reqAccountSummary(9004, "All", "\$LEDGER:ALL")
@@ -81,7 +82,7 @@ class IBKRBroker(
     /**
      * Disconnect roboquant from TWS or IB Gateway
      */
-    fun disconnect() = IBKRConnection.disconnect(client)
+    fun disconnect() = IBKR.disconnect(client)
 
     /**
      * Wait till IBKR account is synchronized so roboquant has the correct assets and cash balance available.
@@ -108,6 +109,7 @@ class IBKRBroker(
             logger.debug("received order $cancellation")
             val id = cancellation.id
             val ibID = orderMap.filter { it.value.id == id }.keys.first()
+            logger.info("cancelling order with id $ibID at ${event.time}")
             client.cancelOrder(ibID, cancellation.tag)
         }
 
@@ -115,8 +117,8 @@ class IBKRBroker(
         for (order in orders.filterIsInstance<SingleOrder>()) {
             logger.debug("received order $order")
             val ibOrder = createIBOrder(order)
-            logger.debug("placing IBKR order with orderId ${ibOrder.orderId()}")
-            val contract = IBKRConnection.getContract(order.asset)
+            val contract = IBKR.getContract(order.asset)
+            logger.info("placing order $ibOrder for $contract at ${event.time}")
             client.placeOrder(ibOrder.orderId(), contract, ibOrder)
         }
 
@@ -125,18 +127,35 @@ class IBKRBroker(
     }
 
     /**
-     * convert roboquant [order] into IBKR order. Right now only support for few single type of orders
+     * convert roboquant [order] into IBKR order.
      */
     private fun createIBOrder(order: SingleOrder): IBOrder {
         val result = IBOrder()
         when (order) {
-            is MarketOrder -> result.orderType("MKT")
+
+            is MarketOrder -> {
+                result.orderType("MKT")
+            }
+
             is LimitOrder -> {
-                result.orderType("LMT"); result.lmtPrice(order.limit)
+                result.orderType("LMT")
+                result.lmtPrice(order.limit)
             }
 
             is StopOrder -> {
-                result.orderType("STP"); result.lmtPrice(order.stop)
+                result.orderType("STP")
+                result.auxPrice(order.stop)
+            }
+
+            is StopLimitOrder -> {
+                result.orderType("STP LMT")
+                result.lmtPrice(order.limit)
+                result.auxPrice(order.stop)
+            }
+
+            is TrailOrder -> {
+                result.orderType("TRAIL")
+                result.trailingPercent(order.trailPercentage)
             }
 
             else -> {
@@ -149,15 +168,16 @@ class IBKRBroker(
         result.totalQuantity(Decimal.get(order.size.toBigDecimal().abs()))
         if (accountId != null) result.account(accountId)
 
+        result.orderId(++orderId)
         orderMap[orderId] = order
-        result.orderId(orderId++)
+
         return result
     }
 
     /**
      * Overwrite the default wrapper
      */
-    inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
+    private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
         /**
          * Convert an IBOrder to a roboquant Order. This is only used during initial connect when retrieving any open
@@ -193,13 +213,15 @@ class IBKRBroker(
             if (openOrder != null) {
                 if (orderState.completedStatus() == "true") {
                     val slip = _account.openOrders[openOrder.id]
-                    if (slip != null) _account.putOrder(
-                        OrderState(
-                            slip.order,
-                            OrderStatus.COMPLETED,
-                            closedAt = Instant.parse(orderState.completedTime())
+                    if (slip != null) {
+                        _account.putOrder(
+                            OrderState(
+                                slip.order,
+                                OrderStatus.COMPLETED,
+                                closedAt = Instant.parse(orderState.completedTime())
+                            )
                         )
-                    )
+                    }
                 }
             } else {
                 val newOrder = toOrder(order, contract)
@@ -333,24 +355,7 @@ class IBKRBroker(
             _account.lastUpdate = Instant.now()
         }
 
-        /**
-         * Convert an IBKR contract to a roboquant asset
-         */
-        private fun Contract.getAsset(): Asset {
-            val result = IBKRConnection.assetMap[conid()]
-            result != null && return result
 
-            val exchangeCode = exchange() ?: primaryExch() ?: ""
-
-            val asset = when (secType()) {
-                Types.SecType.STK -> Asset(symbol(), AssetType.STOCK, currency(), exchangeCode)
-                Types.SecType.BOND -> Asset(symbol(), AssetType.BOND, currency(), exchangeCode)
-                else -> throw UnsupportedException("Unsupported asset type ${secType()}")
-            }
-
-            IBKRConnection.assetMap[conid()] = asset
-            return asset
-        }
 
     }
 }

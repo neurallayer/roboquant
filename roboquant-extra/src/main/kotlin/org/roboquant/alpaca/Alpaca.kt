@@ -39,7 +39,8 @@ data class AlpacaConfig(
     var publicKey: String = Config.getProperty("alpaca.public.key", ""),
     var secretKey: String = Config.getProperty("alpaca.secret.key", ""),
     var accountType: AccountType = AccountType.PAPER,
-    var dataType: DataType = DataType.IEX
+    var dataType: DataType = DataType.IEX,
+    var extendedHours: Boolean = false
 ) {
 
     init {
@@ -49,11 +50,11 @@ data class AlpacaConfig(
 }
 
 /**
- * Connect to Alpaca API, logic shared between the Alpaca Feeds and Alpaca Broker
+ * Logic shared between the Alpaca Feeds and Alpaca Broker
  */
-internal object AlpacaConnection {
+internal object Alpaca {
 
-    private val logger = Logging.getLogger(AlpacaConnection::class)
+    private val logger = Logging.getLogger(Alpaca::class)
 
     init {
         if (Exchange.exchanges.none { it.exchangeCode == "FTXU" }) {

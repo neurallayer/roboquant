@@ -52,10 +52,8 @@ fun feedIEXLive() {
 
 fun feedYahoo() {
     val feed = YahooHistoricFeed()
-    val apple = Asset("AAPL")
-    val google = Asset("GOOG")
     val last300Days = Timeframe.past(300.days)
-    feed.retrieve(listOf(apple, google), timeframe = last300Days)
+    feed.retrieve("AAPL", "GOOG", timeframe = last300Days)
     val strategy = EMAStrategy()
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, AccountMetric(), PositionMetric(), logger = logger)

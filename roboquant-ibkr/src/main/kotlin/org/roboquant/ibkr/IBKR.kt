@@ -26,6 +26,12 @@ import java.util.concurrent.ConcurrentHashMap
 
 /**
  * IBKR configuration properties
+ *
+ * @property host the host to connect to, default is 127.0.0.1 (local host)
+ * @property port the port to connect to, default is 4002
+ * @property account the account to use, default is empty string and system will use first account
+ * @property client the client id to use, default is 2
+ *
  * @constructor Create new IBKR config
  */
 data class IBKRConfig(
@@ -36,18 +42,18 @@ data class IBKRConfig(
 )
 
 /**
- * Shared utilities for both IBKR Broker Feed classes
+ * Shared logic for IBKR Broker and Feed classes
  */
-internal object IBKRConnection {
+internal object IBKR {
 
     // Timeout in millis when waiting for one or more response messages to arrive
     internal const val maxResponseTime = 5_000L
 
-    private val logger = Logging.getLogger(IBKRConnection::class)
+    private val logger = Logging.getLogger(IBKR::class)
     private val connections = mutableMapOf<Int, EClientSocket>()
 
     // Holds mapping between IBKR contract ids and assets.
-    val assetMap = ConcurrentHashMap<Int, Asset>()
+    private val assetMap = ConcurrentHashMap<Int, Asset>()
 
     fun disconnect(client: EClientSocket) {
         try {
@@ -115,6 +121,25 @@ internal object IBKRConnection {
         val id = assetMap.filterValues { it == asset }.keys.firstOrNull()
         if (id != null) contract.conid(id)
         return contract
+    }
+
+    /**
+     * Convert an IBKR contract to a roboquant asset
+     */
+    internal fun Contract.getAsset(): Asset {
+        val result = assetMap[conid()]
+        result != null && return result
+
+        val exchangeCode = exchange() ?: primaryExch() ?: ""
+
+        val asset = when (secType()) {
+            Types.SecType.STK -> Asset(symbol(), AssetType.STOCK, currency(), exchangeCode)
+            Types.SecType.BOND -> Asset(symbol(), AssetType.BOND, currency(), exchangeCode)
+            else -> throw UnsupportedException("Unsupported asset type ${secType()}")
+        }
+
+        assetMap[conid()] = asset
+        return asset
     }
 
 }

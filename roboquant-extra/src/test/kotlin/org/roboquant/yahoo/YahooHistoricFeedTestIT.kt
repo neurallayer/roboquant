@@ -16,28 +16,27 @@
 
 package org.roboquant.yahoo
 
-import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Config
+import org.roboquant.common.Timeframe
+import org.roboquant.common.symbols
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class YahooHistoricFeedTestIT {
+
 
     @Test
     fun test() {
         Config.getProperty("FULL_COVERAGE") ?: return
         val feed = YahooHistoricFeed()
-        val asset = Asset("AAPL")
-        val timeframe = Timeframe.fromYears(2018, 2020)
-        feed.retrieve(listOf(asset), timeframe = timeframe)
-        assertTrue(feed.assets.first().symbol == "AAPL")
+        val timeframe = Timeframe.fromYears(2018, 2019)
+        feed.retrieve("AAPL", "IBM", "JPM", timeframe = timeframe)
+        assertContains(feed.assets.symbols, "AAPL")
         assertTrue(feed.timeframe.start >= timeframe.start )
         assertTrue(feed.timeframe.end <= timeframe.end )
-
-        feed.retrieve("GOOGL", "AAPL", timeframe = Timeframe.fromYears(2019, 2020))
-        assertContains(feed.assets.map { it.symbol }, "GOOGL")
+        assertEquals(503, feed.timeline.size)
     }
 
 }

@@ -68,8 +68,8 @@ class AlpacaBroker(
 
     init {
         config.configure()
-        alpacaAPI = AlpacaConnection.getAPI(config)
-        assetsMap = AlpacaConnection.getAvailableAssets(alpacaAPI)
+        alpacaAPI = Alpaca.getAPI(config)
+        assetsMap = Alpaca.getAvailableAssets(alpacaAPI)
         availableAssets = assetsMap.values.toSortedSet()
         syncAccount()
         syncPortfolio()
@@ -215,13 +215,17 @@ class AlpacaBroker(
         }
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
-        val qty = order.size.toBigDecimal().abs().toInt()
+        val qty = order.size.toBigDecimal().abs()
 
         val alpacaOrder = when (order) {
-            is MarketOrder -> alpacaAPI.orders().requestMarketOrder(asset.symbol, qty, side, tif)
+            is MarketOrder -> alpacaAPI.orders()
+                .requestMarketOrder(asset.symbol, qty.toInt(), side, tif)
             is LimitOrder -> alpacaAPI.orders()
-                .requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, false)
-
+                .requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, config.extendedHours)
+            is StopOrder -> alpacaAPI.orders()
+                .requestStopOrder(asset.symbol, qty.toInt(), side, tif, order.stop, config.extendedHours)
+            is StopLimitOrder -> alpacaAPI.orders().requestStopLimitOrder(
+                asset.symbol, qty.toInt(), side, tif, order.limit, order.stop, config.extendedHours)
             else -> {
                 throw UnsupportedException(
                     "Unsupported order type $order. Right now only Market and Limit orders are mapped"

@@ -29,7 +29,7 @@ import kotlin.math.absoluteValue
  * @property logger
  * @constructor Create empty Base wrapper
  */
-open class BaseWrapper(private val logger: Logging.Logger) : DefaultEWrapper() {
+internal open class BaseWrapper(private val logger: Logging.Logger) : DefaultEWrapper() {
 
     override fun error(var1: Exception) {
         logger.warn("Received exception $var1")

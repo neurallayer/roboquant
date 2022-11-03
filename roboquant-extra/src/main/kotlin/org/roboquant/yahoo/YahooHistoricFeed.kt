@@ -16,16 +16,17 @@
 
 package org.roboquant.yahoo
 
-import org.roboquant.common.Asset
-import org.roboquant.common.Logging
-import org.roboquant.common.Timeframe
-import org.roboquant.common.toUTC
+import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import yahoofinance.YahooFinance
 import yahoofinance.histquotes.HistoricalQuote
-import yahoofinance.histquotes.Interval
 import java.util.*
+
+/**
+ * Interval for Yahoo feeds, options being DAILY, WEEKLY or MONTHLY
+ */
+typealias Interval = yahoofinance.histquotes.Interval
 
 /**
  * This feed uses historic data from Yahoo Finance API. Be aware this is not the most stable API and
@@ -39,33 +40,22 @@ class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFee
     private val logger = Logging.getLogger(YahooHistoricFeed::class)
 
     /**
-     * Retrieve historic [PriceBar] data from Yahoo Finance
-     *
-     * @param assets
-     * @param timeframe
-     * @param interval
+     * Retrieve historic [PriceBar] data from Yahoo Finance for the provided [symbols], [timeframe] and [interval].
      */
-    fun retrieve(assets: Collection<Asset>, timeframe: Timeframe, interval: Interval = Interval.DAILY) {
+    fun retrieve(
+        vararg symbols: String,
+        timeframe: Timeframe = Timeframe.past(1.years),
+        interval: Interval = Interval.DAILY
+    ) {
         val c1 = GregorianCalendar.from(timeframe.start.toUTC())
         val c2 = GregorianCalendar.from(timeframe.end.toUTC())
-        assets.forEach {
-            val quotes = YahooFinance.get(it.symbol)
-            val history = quotes.getHistory(c1, c2, interval)
-            handle(it, history)
-        }
-        this.assets.addAll(assets)
-    }
 
-    /**
-     * Retrieve historic [PriceBar] data from Yahoo Finance
-     *
-     * @param symbols
-     * @param timeframe
-     * @param interval
-     */
-    fun retrieve(vararg symbols: String, timeframe: Timeframe, interval: Interval = Interval.DAILY) {
-        val assets = symbols.map { Asset(it) }.toTypedArray()
-        retrieve(assets.toList(), timeframe = timeframe, interval = interval)
+        val quotes = YahooFinance.get(symbols, c1, c2, interval)
+        for (value in quotes.values) {
+            val asset = Asset(value.symbol, AssetType.STOCK, value.currency, value.stockExchange)
+            handle(asset, value.history)
+            assets.add(asset)
+        }
     }
 
 

@@ -67,7 +67,7 @@ class AlpacaLiveFeed(
 
     init {
         config.configure()
-        alpacaAPI = AlpacaConnection.getAPI(config)
+        alpacaAPI = Alpaca.getAPI(config)
         if (autoConnect) {
             connect(alpacaAPI.stockMarketDataStreaming())
             connect(alpacaAPI.cryptoMarketDataStreaming())
@@ -75,7 +75,7 @@ class AlpacaLiveFeed(
     }
 
     val availableAssets by lazy {
-        AlpacaConnection.getAvailableAssets(alpacaAPI).values.toSortedSet()
+        Alpaca.getAvailableAssets(alpacaAPI).values.toSortedSet()
     }
 
     /**

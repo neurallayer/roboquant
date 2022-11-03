@@ -49,7 +49,7 @@ class IEXHistoricFeed(
 
     init {
         config.configure()
-        client = IEXConnection.getClient(config)
+        client = IEX.getClient(config)
     }
 
     /**

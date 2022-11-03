@@ -20,7 +20,6 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
@@ -29,6 +28,7 @@ import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRExchangeRates
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
+import org.roboquant.logging.ConsoleLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder
@@ -81,24 +81,27 @@ fun showAccount() {
     broker.disconnect()
 }
 
-fun paperTrade(minutes: Int = 10) {
-
+fun paperTrade() {
     Config.exchangeRates = IBKRExchangeRates()
     val broker = IBKRBroker()
-    println(broker.account.positions.summary())
+    Thread.sleep(1_000)
+    val account = broker.account
+    println(account.fullSummary())
+    if (account.positions.isNotEmpty()) {
+        // Subscribe to the assets in the portfolio
+        val feed = IBKRLiveFeed()
+        feed.subscribe(broker.account.assets)
+        val strategy = EMAStrategy.PERIODS_5_15
+        val roboquant =
+            Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = ConsoleLogger())
+        val tf = Timeframe.next(60.minutes)
+        roboquant.run(feed, tf)
+        println(broker.account.fullSummary())
+        feed.disconnect()
+    }
 
-    // Subscribe to all assets in the portfolio
-    val feed = IBKRLiveFeed()
-    feed.subscribe(broker.account.assets)
-
-    val strategy = EMAStrategy.PERIODS_5_15
-
-    val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker)
-    val tf = Timeframe.next(minutes.minutes)
-    roboquant.run(feed, tf)
-    println(broker.account.summary())
     broker.disconnect()
-    feed.disconnect()
+    println("done")
 }
 
 fun liveFeedEU() {
@@ -147,14 +150,14 @@ fun historicFeed2() {
 
 fun main() {
 
-    when ("HISTORIC2") {
+    when ("PAPER_TRADE") {
         "ACCOUNT" -> showAccount()
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()
         "CLOSE_POSITION" -> closePosition()
         "LIVE_FEED_EU" -> liveFeedEU()
         "LIVE_FEED_US" -> liveFeedUS()
-        "PAPER_TRADE" -> paperTrade(30)
+        "PAPER_TRADE" -> paperTrade()
         "HISTORIC" -> historicFeed()
         "HISTORIC2" -> historicFeed2()
     }

@@ -34,13 +34,12 @@ import java.time.Instant
  * use a paper trading account if possible at all.
  *
  * @constructor
- *
  */
 class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
 
     private val config = IBKRConfig()
 
-    private var tickerId: Int = 0
+    private var reqId: Int = 0
     private var client: EClientSocket
     private val subscriptions = mutableMapOf<Int, Asset>()
     private val logger = Logging.getLogger(IBKRLiveFeed::class)
@@ -48,11 +47,11 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
     init {
         config.configure()
         val wrapper = Wrapper(logger)
-        client = IBKRConnection.connect(wrapper, config)
+        client = IBKR.connect(wrapper, config)
         client.reqCurrentTime()
     }
 
-    fun disconnect() = IBKRConnection.disconnect(client)
+    fun disconnect() = IBKR.disconnect(client)
 
     /**
      * Subscribe to the realtime bars for a particular contract. Often IBKR platform requires a subscription in order
@@ -60,12 +59,11 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
      *
      * @param assets
      */
-    @Suppress("TooGenericExceptionCaught")
     fun subscribe(assets: Collection<Asset>, interval: Int = 5, type: String = "MIDPOINT") {
         for (asset in assets) {
-            val contract = IBKRConnection.getContract(asset)
-            client.reqRealTimeBars(++tickerId, contract, interval, type, false, arrayListOf())
-            subscriptions[tickerId] = asset
+            val contract = IBKR.getContract(asset)
+            client.reqRealTimeBars(++reqId, contract, interval, type, false, arrayListOf())
+            subscriptions[reqId] = asset
             logger.info("Added subscription to receive realtime bars for ${contract.symbol()}")
         }
     }
@@ -73,7 +71,7 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
     fun subscribe(vararg assets: Asset, interval: Int = 5, type: String = "MIDPOINT") =
         subscribe(assets.toList(), interval, type)
 
-    inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
+    private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
         override fun realtimeBar(
             reqId: Int,

@@ -31,7 +31,8 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAmount
 
-typealias AlpacaPeriod = BarTimePeriod
+typealias BarPeriod = BarTimePeriod
+
 
 /**
  * Historic data feed using market data from Alpaca
@@ -47,20 +48,21 @@ class AlpacaHistoricFeed(
 
     init {
         config.configure()
-        alpacaAPI = AlpacaConnection.getAPI(config)
+        alpacaAPI = Alpaca.getAPI(config)
     }
 
     /**
      * All available assets that can be retrieved. See [assets] for the assets that have already been retrieved.
      */
     val availableAssets by lazy {
-        AlpacaConnection.getAvailableAssets(alpacaAPI).values.toSortedSet()
+        Alpaca.getAvailableAssets(alpacaAPI).values.toSortedSet()
     }
 
     /**
-     * Retrieve for a number of [symbols] and specified [timeframe] the [PriceQuote].
+     * Retrieve the [PriceQuote]for a number of [symbols] and specified [timeframe].
      */
     fun retrieveQuotes(vararg symbols: String, timeframe: Timeframe) {
+        require(symbols.isNotEmpty()) { "Subscribe to at least one symbol"}
         for (symbol in symbols) {
             val resp = alpacaAPI.stockMarketData().getQuotes(
                 symbol,
@@ -87,7 +89,7 @@ class AlpacaHistoricFeed(
     }
 
     /**
-     * Retrieve for a number of [symbols] and specified [timeframe] the [TradePrice].
+     * Retrieve the [TradePrice] for a number of [symbols] and specified [timeframe].
      */
     fun retrieveTrades(vararg symbols: String, timeframe: Timeframe) {
         for (symbol in symbols) {
@@ -114,17 +116,17 @@ class AlpacaHistoricFeed(
 
         return when {
             amt is ZonedPeriod && amt.units.contains(ChronoUnit.DAYS) && amt.toDays()
-                .toInt() > 0 -> Pair(AlpacaPeriod.DAY, amt.toDays().toInt())
+                .toInt() > 0 -> Pair(BarPeriod.DAY, amt.toDays().toInt())
 
-            amt is ZonedPeriod && amt.toHours() > 0 -> Pair(AlpacaPeriod.HOUR, amt.toHours().toInt())
-            amt is ZonedPeriod && amt.toMinutes() > 0 -> Pair(AlpacaPeriod.MINUTE, amt.toMinutes().toInt())
+            amt is ZonedPeriod && amt.toHours() > 0 -> Pair(BarPeriod.HOUR, amt.toHours().toInt())
+            amt is ZonedPeriod && amt.toMinutes() > 0 -> Pair(BarPeriod.MINUTE, amt.toMinutes().toInt())
             else -> throw UnsupportedException("$amt")
         }
 
     }
 
     /**
-     * Retrieve for a number of [symbols] and specified [timeframe] the [PriceBar] and [barSize].
+     * Retrieve the [PriceBar]  for a number of [symbols] and specified [timeframe] and [barSize].
      */
     fun retrieve(
         vararg symbols: String,

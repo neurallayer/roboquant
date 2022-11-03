@@ -36,7 +36,10 @@ data class IEXConfig(
     var sandbox: Boolean = true,
 )
 
-internal object IEXConnection {
+/**
+ * Shared logic for IEX feeds
+ */
+internal object IEX {
 
     fun getClient(config: IEXConfig): IEXCloudClient {
         require(config.publicKey.isNotBlank())

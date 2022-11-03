@@ -170,7 +170,7 @@ class Roboquant(
         require(episodes > 0) { "episodes need to be greater than zero" }
         val run = runName ?: "run-${runCounter++}"
         val runInfo = RunInfo(run)
-        kotlinLogger.debug { "Starting run $runInfo for $episodes episodes" }
+        kotlinLogger.debug { "starting run $runInfo for $episodes episodes" }
 
         repeat(episodes) {
             runInfo.episode++
@@ -196,6 +196,8 @@ class Roboquant(
     private fun step(orders: List<Order>, event: Event, runInfo: RunInfo): List<Order> {
         runInfo.step++
         runInfo.time = event.time
+
+        kotlinLogger.trace { "starting step $runInfo" }
 
         val account = broker.place(orders, event)
         runMetrics(account, event, runInfo)
