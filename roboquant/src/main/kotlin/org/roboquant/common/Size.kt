@@ -81,56 +81,62 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
 
 
     /**
-     * Returns true if the size is zero, false otherwise
+     * Returns true if the size is zero, false otherwise.
      */
     val iszero: Boolean
         get() = value == 0L
 
     /**
-     * Returns true if the size non-zero, false otherwise
+     * Returns true if the size non-zero, false otherwise.
      */
     val nonzero: Boolean
         get() = value != 0L
 
     /**
-     * Returns the absolute value of this value
+     * Returns true is this represents a fractional size, false otherwise.
+     */
+    val isFractional: Boolean
+        get() = (value % FRACTION) != 0L
+
+    /**
+     * Returns the absolute value of this value.
      */
     val absoluteValue: Size
         get() = Size(value.absoluteValue)
 
     /**
-     * Returns the sign of this value
+     * Returns the sign of this size.
      */
     val sign: Int
         get() = value.sign
 
     /**
-     * Multiplies this value by the [other] value.
+     * Multiplies this size by the [other] value.
      */
     operator fun times(other: Number): Size = Size(toDouble() * other.toDouble())
 
     /**
-     * Divides this value by the [other] value.
+     * Divides this size by the [other] value.
      */
     operator fun div(other: Number): Size = Size(toDouble() / other.toDouble())
 
     /**
-     * Adds the [other] value to this value.
+     * Adds the [other] size to this size.
      */
     operator fun plus(other: Size): Size = Size(value + other.value)
 
     /**
-     * Subtracts the [other] value from this value.
+     * Subtracts the [other] size from this size.
      */
     operator fun minus(other: Size): Size = Size(value - other.value)
 
     /**
-     * Compare the [other] number to this value.
+     * Compare the [other] number to this size.
      */
     operator fun compareTo(other: Number): Int = value.toDouble().compareTo(other.toDouble())
 
     /**
-     * Compare the [other] size to this value.
+     * Compare the [other] size to this size.
      */
     override operator fun compareTo(other: Size): Int = value.compareTo(other.value)
 

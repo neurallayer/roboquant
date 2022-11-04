@@ -16,6 +16,7 @@
 
 package org.roboquant.common
 
+import java.math.BigDecimal
 import kotlin.test.*
 
 internal class SizeTest {
@@ -33,8 +34,19 @@ internal class SizeTest {
         assertEquals("10", size.toString())
         assertEquals("10.00123", Size("10.00123").toString())
 
-        // More than max digits, should fail equality test
+        // More than max supported digits, should fail equality test
         assertNotEquals("10.123456789123", Size("10.123456789123").toString())
+    }
+
+    @Test
+    fun testFractional() {
+        val size = Size("10.10")
+        assertTrue(size.isFractional)
+        assertEquals(BigDecimal("10.10"), size.toBigDecimal().setScale(2))
+        assertEquals(10.10, size.toDouble())
+
+        val size2 = Size(100001)
+        assertFalse(size2.isFractional)
     }
 
 }

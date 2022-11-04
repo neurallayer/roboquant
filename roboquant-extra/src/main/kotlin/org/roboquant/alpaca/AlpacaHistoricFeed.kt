@@ -28,8 +28,6 @@ import org.roboquant.feeds.PriceQuote
 import org.roboquant.feeds.TradePrice
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalAmount
 
 typealias BarPeriod = BarTimePeriod
 
@@ -59,11 +57,20 @@ class AlpacaHistoricFeed(
     }
 
     /**
+     * Get an asset based on its symbol name
+     */
+    private fun getAsset(symbol: String) : Asset {
+        return availableAssets.first { it.symbol == symbol }
+    }
+
+
+    /**
      * Retrieve the [PriceQuote]for a number of [symbols] and specified [timeframe].
      */
     fun retrieveQuotes(vararg symbols: String, timeframe: Timeframe) {
         require(symbols.isNotEmpty()) { "Subscribe to at least one symbol"}
         for (symbol in symbols) {
+            val asset = getAsset(symbol)
             val resp = alpacaAPI.stockMarketData().getQuotes(
                 symbol,
                 ZonedDateTime.ofInstant(timeframe.start, zoneId),
@@ -72,7 +79,6 @@ class AlpacaHistoricFeed(
                 null,
             )
             resp.quotes == null && continue
-            val asset = Asset(symbol)
             for (quote in resp.quotes) {
                 val action = PriceQuote(
                     asset,
@@ -93,6 +99,7 @@ class AlpacaHistoricFeed(
      */
     fun retrieveTrades(vararg symbols: String, timeframe: Timeframe) {
         for (symbol in symbols) {
+            val asset = getAsset(symbol)
             val resp = alpacaAPI.stockMarketData().getTrades(
                 symbol,
                 ZonedDateTime.ofInstant(timeframe.start, zoneId),
@@ -102,7 +109,7 @@ class AlpacaHistoricFeed(
             )
 
             resp.trades == null && continue
-            val asset = Asset(symbol)
+
             for (trade in resp.trades) {
                 val action = TradePrice(asset, trade.price, trade.size.toDouble())
                 val now = trade.timestamp.toInstant()
@@ -112,47 +119,35 @@ class AlpacaHistoricFeed(
         }
     }
 
-    private fun fromTemporalAmount(amt: TemporalAmount): Pair<BarTimePeriod, Int> {
-
-        return when {
-            amt is ZonedPeriod && amt.units.contains(ChronoUnit.DAYS) && amt.toDays()
-                .toInt() > 0 -> Pair(BarPeriod.DAY, amt.toDays().toInt())
-
-            amt is ZonedPeriod && amt.toHours() > 0 -> Pair(BarPeriod.HOUR, amt.toHours().toInt())
-            amt is ZonedPeriod && amt.toMinutes() > 0 -> Pair(BarPeriod.MINUTE, amt.toMinutes().toInt())
-            else -> throw UnsupportedException("$amt")
-        }
-
-    }
 
     /**
-     * Retrieve the [PriceBar]  for a number of [symbols] and specified [timeframe] and [barSize].
+     * Retrieve the [PriceBar]  for a number of [symbols] and the specified [timeframe], [barDuration] and [barPeriod].
      */
     fun retrieve(
         vararg symbols: String,
         timeframe: Timeframe,
-        barSize: TemporalAmount = 1.days,
+        barDuration: Int = 1,
+        barPeriod: BarPeriod = BarPeriod.DAY
     ) {
         val barFeed = when (config.dataType) {
             DataAPIType.IEX -> BarFeed.IEX
             DataAPIType.SIP -> BarFeed.SIP
         }
-        val (alpacaPeriod, duration) = fromTemporalAmount(barSize)
         for (symbol in symbols) {
+            val asset = getAsset(symbol)
             val resp = alpacaAPI.stockMarketData().getBars(
                 symbol,
                 ZonedDateTime.ofInstant(timeframe.start, zoneId),
                 ZonedDateTime.ofInstant(timeframe.end, zoneId),
                 null,
                 null,
-                duration,
-                alpacaPeriod,
+                barDuration,
+                barPeriod,
                 BarAdjustment.ALL,
                 barFeed
             )
             resp.bars == null && continue
 
-            val asset = Asset(symbol)
             for (bar in resp.bars) {
                 val action = PriceBar(asset, bar.open, bar.high, bar.low, bar.close, bar.volume.toDouble())
                 val now = bar.timestamp.toInstant()

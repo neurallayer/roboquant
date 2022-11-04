@@ -131,12 +131,7 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
-        feed.retrieve(
-            "AAPL",
-            timeframe = tf,
-            barSize = 5.minutes
-        )
-
+        feed.retrieve("AAPL", timeframe= tf, barDuration = 5, barPeriod = BarPeriod.MINUTE)
         val actions = feed.filter<PriceAction>()
         assertEquals(5, Duration.between(actions[0].first, actions[1].first).toMinutes())
     }

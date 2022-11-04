@@ -20,10 +20,10 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.alpaca.*
-import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.csv.CSVFeed
+import org.roboquant.logging.InfoLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
@@ -42,8 +42,7 @@ fun alpacaBroker() {
 fun allAlpaca() {
     val broker = AlpacaBroker()
     val account = broker.account
-    println(account.summary())
-    println(account.positions.summary())
+    println(account.fullSummary())
 
     val feed = AlpacaLiveFeed()
     feed.heartbeatInterval = 30_000
@@ -54,12 +53,12 @@ fun allAlpaca() {
     feed.subscribeStocks(assets.distinct())
 
     val strategy = EMAStrategy(3, 5)
-    val roboquant = Roboquant(strategy, AccountMetric(), broker = broker)
-    val tf = Timeframe.next(15.minutes)
+    val roboquant = Roboquant(strategy, AccountMetric(), broker = broker, logger = InfoLogger())
+    val tf = Timeframe.next(30.minutes)
     roboquant.run(feed, tf)
     feed.close()
 
-    println(roboquant.broker.account.summary())
+    println(roboquant.broker.account.fullSummary())
 }
 
 fun alpacaConnection() {
@@ -90,7 +89,7 @@ fun alpacaHistoricFeed() {
     val feed = AlpacaHistoricFeed()
     val tf = Timeframe.past(100.days) - 15.minutes
     tf.split(1.days).forEach {
-        feed.retrieve("AAPL", "IBM", timeframe = it, barSize = 1.minutes)
+        feed.retrieve("AAPL", "IBM", timeframe = it, barPeriod = BarPeriod.MINUTE)
         println("timeline size is ${feed.timeline.size}")
 
         // Sleep a little to not exceed API call limits
@@ -130,7 +129,7 @@ fun alpacaHistoricFeed2() {
 }
 
 fun main() {
-    when ("ALPACA_HISTORIC_FEED") {
+    when ("ALPACA_ALL") {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_LIVE_FEED" -> alpacaLiveFeed()
         "ALPACA_CONNECTION" -> alpacaConnection()

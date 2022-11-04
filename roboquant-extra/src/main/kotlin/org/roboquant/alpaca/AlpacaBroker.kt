@@ -23,6 +23,7 @@ import net.jacobpeterson.alpaca.model.endpoint.common.enums.SortDirection
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.CurrentOrderStatus
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderSide
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce
+import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderType
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.common.Currency
@@ -93,7 +94,6 @@ class AlpacaBroker(
 
     /**
      * Sync positions in the portfolio based on positions received from Alpaca.
-     *
      */
     private fun syncPortfolio() {
         _account.portfolio.clear()
@@ -128,6 +128,9 @@ class AlpacaBroker(
         }
     }
 
+    /**
+     * Map Alpaca order states to roboquant order state
+     */
     private fun toState(order: AlpacaOrder, roboquantOrder: Order): OrderState {
         val status = when (order.status) {
             AlpacaOrderStatus.CANCELED -> OrderStatus.CANCELLED
@@ -150,15 +153,24 @@ class AlpacaBroker(
     private fun toOrder(order: AlpacaOrder): OrderState {
         val asset = assetsMap[order.assetId]!!
         val qty = if (order.side == OrderSide.BUY) order.quantity.toBigDecimal() else -order.quantity.toBigDecimal()
-        val marketOrder = MarketOrder(asset, Size(qty))
-        return toState(order, marketOrder)
+        val rqOrder = when (order.type) {
+            OrderType.MARKET -> MarketOrder(asset, Size(qty))
+            OrderType.LIMIT -> LimitOrder(asset, Size(qty), order.limitPrice.toDouble())
+            OrderType.STOP -> StopOrder(asset, Size(qty), order.stopPrice.toDouble())
+            OrderType.STOP_LIMIT -> StopLimitOrder(
+                asset,
+                Size(qty),
+                order.stopPrice.toDouble(),
+                order.limitPrice.toDouble()
+            )
+            else -> throw UnsupportedException("unsupported order type for order $order")
+        }
+
+        return toState(order, rqOrder)
     }
 
     /**
      * Convert an Alpaca position to a roboquant position
-     *
-     * @param pos the Alpaca position
-     * @return
      */
     private fun convertPos(pos: AlpacaPosition): Position {
         val asset = assetsMap.getValue(pos.assetId)
@@ -215,17 +227,28 @@ class AlpacaBroker(
         }
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
-        val qty = order.size.toBigDecimal().abs()
+        require(! order.size.isFractional) { "fractional orders are not supported"}
+
+        val qty = order.size.toBigDecimal().abs().toInt()
 
         val alpacaOrder = when (order) {
             is MarketOrder -> alpacaAPI.orders()
-                .requestMarketOrder(asset.symbol, qty.toInt(), side, tif)
+                .requestMarketOrder(asset.symbol, qty, side, tif)
+
             is LimitOrder -> alpacaAPI.orders()
                 .requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, config.extendedHours)
+
             is StopOrder -> alpacaAPI.orders()
-                .requestStopOrder(asset.symbol, qty.toInt(), side, tif, order.stop, config.extendedHours)
+                .requestStopOrder(asset.symbol, qty, side, tif, order.stop, config.extendedHours)
+
             is StopLimitOrder -> alpacaAPI.orders().requestStopLimitOrder(
-                asset.symbol, qty.toInt(), side, tif, order.limit, order.stop, config.extendedHours)
+                asset.symbol, qty, side, tif, order.limit, order.stop, config.extendedHours
+            )
+
+            is TrailOrder -> alpacaAPI.orders().requestTrailingStopPercentOrder(
+                asset.symbol, qty, side, tif, order.trailPercentage, config.extendedHours
+            )
+
             else -> {
                 throw UnsupportedException(
                     "Unsupported order type $order. Right now only Market and Limit orders are mapped"
