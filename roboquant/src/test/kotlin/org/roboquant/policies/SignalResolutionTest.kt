@@ -18,11 +18,14 @@ package org.roboquant.policies
 
 import org.roboquant.TestData
 import org.roboquant.brokers.assets
+import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
+import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class SignalResolutionTest {
@@ -48,5 +51,15 @@ internal class SignalResolutionTest {
         assertTrue(orders.isEmpty())
     }
 
+    @Test
+    fun testSignalShuffle() {
+        val policy = TestPolicy().shuffleSignals(Random(42))
+        val account = TestData.usAccount()
+        val assets = listOf(Asset("A"), Asset("B"), Asset("C"), Asset("D"))
+        val signals = assets.map { Signal(it, Rating.BUY) }
+        val orders = policy.act(signals, account, Event.empty())
+        assertEquals(signals.size, orders.size)
+        assertNotEquals(orders.map { it.asset }, assets)
+    }
 
 }

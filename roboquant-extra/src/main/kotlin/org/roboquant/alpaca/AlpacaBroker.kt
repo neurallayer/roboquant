@@ -59,7 +59,7 @@ class AlpacaBroker(
     private val alpacaAPI: AlpacaAPI
     private val handledTrades = mutableSetOf<String>()
     private val logger = Logging.getLogger(AlpacaOrder::class)
-    private val orderMapping = mutableMapOf<Order, AlpacaOrder>()
+    private val orderMapping = mutableMapOf<Order, String>()
 
     // All available assets
     val availableAssets: SortedSet<Asset>
@@ -110,21 +110,23 @@ class AlpacaBroker(
     private fun syncOrders() {
 
         val states = _account.openOrders.values.map {
-            val aOrder = orderMapping.getValue(it.order)
-            val order = alpacaAPI.orders().get(aOrder.id, false)
+            val aOrderId = orderMapping.getValue(it.order)
+            val order = alpacaAPI.orders().get(aOrderId, false)
             toState(order, it.order)
         }
         _account.putOrders(states)
     }
 
     /**
-     * Load the open orders already linked to the account. This is only called once during initialization.
-     * Closed orders will be ignored.
+     * Load the open orders already at the Alpaca account when starting. This is only called once during initialization.
+     * Closed orders will be ignored all together.
      */
     private fun loadInitialOrders() {
         for (order in alpacaAPI.orders().get(CurrentOrderStatus.OPEN, null, null, null, null, false, null)) {
             logger.debug { "received open $order" }
-            _account.putOrders(listOf(toOrder(order)))
+            val rqOrder = toOrder(order)
+            _account.putOrders(listOf(rqOrder))
+            orderMapping[rqOrder.order] = order.id
         }
     }
 
@@ -179,7 +181,7 @@ class AlpacaBroker(
     }
 
     /**
-     * Update the status of the open orders in the account with the latest order status from Alpaca
+     * Get teh trades from the Alpaca account and sync with the roboquant internal account
      */
     private fun syncTrades() {
         val now = ZonedDateTime.now()
@@ -190,7 +192,7 @@ class AlpacaBroker(
         for (activity in trades.filterIsInstance<TradeActivity>()) {
             // Only add trades we know the order id of
             logger.debug { "Found trade $activity" }
-            val order = orderMapping.filterValues { it.id == activity.orderId }.keys.firstOrNull()
+            val order = orderMapping.filterValues { it == activity.orderId }.keys.firstOrNull()
             if (order != null && activity.id !in handledTrades) {
                 val trade = Trade(
                     activity.transactionTime.toInstant(),
@@ -255,7 +257,7 @@ class AlpacaBroker(
                 )
             }
         }
-        orderMapping[order] = alpacaOrder
+        orderMapping[order] = alpacaOrder.id
         _account.putOrders(listOf(OrderState(order)))
 
     }

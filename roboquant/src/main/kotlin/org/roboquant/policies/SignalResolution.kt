@@ -17,10 +17,12 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
+import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
+import kotlin.random.Random
 
 /**
  * Different types of Signal Resolutions available
@@ -101,3 +103,27 @@ private class SignalResolverPolicy(private val policy: Policy, private val resol
  * Resolve conflicting signals using the provided [resolution] before invoking the policy
  */
 fun Policy.resolve(resolution: SignalResolution): Policy = SignalResolverPolicy(this, resolution)
+
+
+
+
+/**
+ * Shuffle signals before processing them in the policy, avoiding favoring assets that appears always first in the
+ * actions od an event.
+ *
+ * @property policy
+ * @constructor Create empty Signal resolver
+ */
+private class SignalShufflePolicy(private val policy: Policy, private val random: Random) : Policy by policy {
+
+
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+        return policy.act(signals.shuffled(random), account, event)
+    }
+
+}
+
+/**
+ * Shuffle signals using the provided [random] before invoking the policy
+ */
+fun Policy.shuffleSignals(random: Random = Config.random): Policy = SignalShufflePolicy(this, random)

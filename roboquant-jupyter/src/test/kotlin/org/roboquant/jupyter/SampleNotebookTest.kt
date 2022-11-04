@@ -101,8 +101,8 @@ private class NotebookTester : JupyterReplTestCase(RoboquantReplProvider) {
             if (cell.outputs.isNotEmpty()) {
                 val firstOutput = cell.outputs.first()
                 if (firstOutput is ExecuteResult && firstOutput.data.isNotEmpty()) {
-                    val value = firstOutput.data.entries.first()
-                    assertEquals(value.value.removeUUID(), result.removeUUID())
+                    val output = firstOutput.data.entries.first()
+                    assertEquals(output.value.removeUUID(), result.removeUUID())
                 }
             }
         }

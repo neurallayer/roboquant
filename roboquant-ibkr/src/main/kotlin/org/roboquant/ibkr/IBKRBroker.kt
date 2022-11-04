@@ -18,6 +18,7 @@
 package org.roboquant.ibkr
 
 import com.ib.client.*
+import com.ib.client.Types.Action
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
@@ -127,7 +128,7 @@ class IBKRBroker(
     }
 
     /**
-     * convert roboquant [order] into IBKR order.
+     * convert a roboquant [order] to an IBKR order.
      */
     private fun createIBOrder(order: SingleOrder): IBOrder {
         val result = IBOrder()
@@ -163,9 +164,10 @@ class IBKRBroker(
             }
         }
 
-        val action = if (order.size > 0) "BUY" else "SELL"
+        val action = if (order.buy) Action.BUY else Action.SELL
         result.action(action)
-        result.totalQuantity(Decimal.get(order.size.toBigDecimal().abs()))
+        val qty = Decimal.get(order.size.toBigDecimal().abs())
+        result.totalQuantity(qty)
         if (accountId != null) result.account(accountId)
 
         result.orderId(++orderId)
@@ -185,8 +187,16 @@ class IBKRBroker(
          */
         private fun toOrder(order: IBOrder, contract: Contract): Order {
             val asset = contract.getAsset()
-            val qty = if (order.action() == Types.Action.BUY) order.totalQuantity() else order.totalQuantity().negate()
-            return MarketOrder(asset, Size(qty.value()))
+            val qty = if (order.action() == Action.BUY) order.totalQuantity() else order.totalQuantity().negate()
+            val size = Size(qty.value())
+            return when (order.orderType()) {
+                OrderType.MKT -> MarketOrder(asset, size)
+                OrderType.LMT -> LimitOrder(asset, size, order.lmtPrice())
+                OrderType.STP -> StopOrder(asset, size, order.auxPrice())
+                OrderType.TRAIL -> TrailOrder(asset, size, order.trailingPercent())
+                OrderType.STP_LMT -> StopLimitOrder(asset, size, order.auxPrice(), order.lmtPrice())
+                else -> throw UnsupportedException("$order")
+            }
         }
 
         private fun toStatus(status: String): OrderStatus {
