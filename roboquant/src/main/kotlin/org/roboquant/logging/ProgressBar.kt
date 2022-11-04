@@ -63,7 +63,7 @@ internal class ProgressBar {
         currentPercent = percent
 
         if (post.isEmpty()) {
-            post = "${info.run} | episode=${info.episode} | phase=${info.phase} "
+            post = "${info.run} | episode=${info.episode} | phase=${info.phase}"
             pre = "${info.timeframe} | "
         }
 
@@ -104,7 +104,7 @@ internal class ProgressBar {
 
     private companion object {
 
-        private const val TOTAL_BAR_LENGTH = 40
+        private const val TOTAL_BAR_LENGTH = 36
 
         private fun getProgressChar(): Char {
             return if (System.getProperty("os.name").startsWith("Win")) '=' else '█'
