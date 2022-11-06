@@ -23,7 +23,7 @@ import org.roboquant.common.Logging
 import org.roboquant.common.millis
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.csv.AutoDetectTimeParser
+import org.roboquant.common.AutoDetectTimeParser
 import org.roboquant.ibkr.IBKR.getContract
 import java.time.Instant
 
@@ -88,18 +88,23 @@ class IBKRHistoricFeed(
 
     private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
+        private val timeParsers = mutableMapOf<Int, AutoDetectTimeParser>()
+
         override fun historicalData(reqId: Int, bar: Bar) {
             val asset = subscriptions[reqId]!!
             val action = PriceBar(
                 asset, bar.open(), bar.high(), bar.low(), bar.close(), bar.volume().value().toDouble()
             )
-            val parser = AutoDetectTimeParser()
-            val time = parser.parse(bar.time(), asset.exchange)
+            val parser = timeParsers.getOrPut(reqId) { AutoDetectTimeParser() }
+            val timeStr = bar.time()
+            val time = parser.parse(timeStr, asset.exchange)
             add(time, action)
+            logger.trace { "bar at $timeStr tranlated into $time and $action" }
         }
 
         override fun historicalDataEnd(reqId: Int, startDateStr: String, endDateStr: String) {
             val v = subscriptions.remove(reqId)
+            timeParsers.remove(reqId)
             logger.info("Finished retrieving $v")
         }
 

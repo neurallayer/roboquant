@@ -19,10 +19,8 @@ package org.roboquant.feeds.csv
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
-import org.roboquant.common.Exchange
 import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.PriceAction
-import java.time.Instant
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.test.*
@@ -92,23 +90,7 @@ internal class CSVFeedTest {
         assertFalse(ci2.hasVolume)
     }
 
-    @Test
-    fun localTimeParser() {
-        val exchange = Exchange.getInstance("US")
-        val parser = LocalTimeParser("dd-MM-yyyy HH:mm")
-        val instant = parser.parse("01-01-2020 16:00", exchange)
-        val closingTime = Instant.parse("2020-01-01T21:00:00Z")
-        assertEquals(closingTime, instant)
-    }
 
-    @Test
-    fun localDateParser() {
-        val exchange = Exchange.getInstance("US")
-        val parser = LocalDateParser("dd-MM-yyyy")
-        val instant = parser.parse("01-01-2020", exchange)
-        val closingTime = Instant.parse("2020-01-01T21:00:00Z")
-        assertEquals(closingTime, instant)
-    }
 
     @Test
     fun columnInfoTest() {

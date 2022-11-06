@@ -36,8 +36,6 @@ import kotlin.io.path.div
  * @property filePattern
  * @property fileSkip
  * @property parsePattern
- * @property parseTime
- * @property parseIsDate
  * @property priceAdjust
  * @property skipZeroPrice
  * @property template
@@ -48,8 +46,6 @@ data class CSVConfig(
     var filePattern: String = ".*",
     var fileSkip: List<String> = emptyList(),
     var parsePattern: String = "",
-    var parseTime: String = "",
-    var parseIsDate: Boolean = true,
     var priceAdjust: Boolean = false,
     var skipZeroPrice: Boolean = true,
     var template: Asset = Asset("TEMPLATE")
@@ -61,14 +57,8 @@ data class CSVConfig(
      */
     var assetBuilder: (String) -> Asset = { name -> template.copy(symbol = name) }
 
-    private val timeParser: TimeParser by lazy {
-        when {
-            parseTime.isEmpty() -> AutoDetectTimeParser()
-            parseTime.length < 11 -> LocalDateParser(parseTime)
-            else -> LocalTimeParser(parseTime)
-        }
+    private val timeParser: TimeParser = AutoDetectTimeParser()
 
-    }
 
     private val info = ColumnInfo()
     private val pattern by lazy { Pattern.compile(filePattern) }

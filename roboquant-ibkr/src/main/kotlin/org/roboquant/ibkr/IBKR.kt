@@ -128,7 +128,7 @@ internal object IBKR {
 
         val id = assetMap.filterValues { it == this }.keys.firstOrNull()
         if (id != null) contract.conid(id)
-        logger.info { contract }
+        logger.trace { "$this into $contract" }
         return contract
     }
 

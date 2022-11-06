@@ -169,7 +169,7 @@ fun historicFuturesFeed() {
 
 fun main() {
 
-    when ("HISTORIC3") {
+    when ("HISTORIC") {
         "ACCOUNT" -> showAccount()
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()
