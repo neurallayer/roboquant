@@ -20,7 +20,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
-import org.roboquant.feeds.random.RandomWalkFeed
 import java.time.Instant
 import java.time.Period
 import kotlin.test.assertEquals

@@ -24,7 +24,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.OrderBook
 import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.avro.AvroFeed
+import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.filter
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.oanda.*

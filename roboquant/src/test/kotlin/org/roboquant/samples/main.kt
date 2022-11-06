@@ -27,7 +27,7 @@ import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.avro.AvroFeed
+import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.timeseries

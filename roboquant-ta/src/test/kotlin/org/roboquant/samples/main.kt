@@ -20,7 +20,7 @@ import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.common.Size
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.avro.AvroFeed
+import org.roboquant.feeds.AvroFeed
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.LimitOrder

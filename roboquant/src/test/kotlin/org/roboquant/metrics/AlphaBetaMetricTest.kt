@@ -24,7 +24,7 @@ import org.roboquant.brokers.Position
 import org.roboquant.common.Size
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.RandomWalkFeed
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant

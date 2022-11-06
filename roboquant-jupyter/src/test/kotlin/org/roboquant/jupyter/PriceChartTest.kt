@@ -17,7 +17,7 @@
 package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.RandomWalkFeed
 import kotlin.test.assertTrue
 
 internal class PriceChartTest {

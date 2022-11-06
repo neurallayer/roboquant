@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds.avro
+package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.MethodOrderer.Alphanumeric
@@ -32,7 +32,7 @@ import kotlin.io.path.div
 import kotlin.test.*
 
 @TestMethodOrder(Alphanumeric::class)
-class AvroTest {
+class AvroFeedTest {
 
     private class MyFeed : Feed {
 

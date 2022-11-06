@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds.avro
+package org.roboquant.feeds
 
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch

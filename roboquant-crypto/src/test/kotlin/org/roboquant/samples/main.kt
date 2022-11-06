@@ -27,7 +27,7 @@ import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.avro.AvroFeed
+import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.filter
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.policies.DefaultPolicy

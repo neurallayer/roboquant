@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds.random
+package org.roboquant.feeds
 
 import org.roboquant.common.*
-import org.roboquant.feeds.*
 import java.time.Instant
 import java.time.LocalDate
 import java.util.*

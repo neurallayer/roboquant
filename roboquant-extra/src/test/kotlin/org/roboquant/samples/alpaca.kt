@@ -21,7 +21,7 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.alpaca.*
 import org.roboquant.common.*
-import org.roboquant.feeds.avro.AvroFeed
+import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.logging.InfoLogger
 import org.roboquant.metrics.AccountMetric

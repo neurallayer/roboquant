@@ -22,7 +22,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.months
-import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.test.HistoricTestFeed
 import java.time.Instant
 import kotlin.test.assertEquals

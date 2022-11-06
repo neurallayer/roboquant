@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.common.USD
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.RandomWalkFeed
 import java.io.File
 import java.time.Instant
 import kotlin.test.assertContains

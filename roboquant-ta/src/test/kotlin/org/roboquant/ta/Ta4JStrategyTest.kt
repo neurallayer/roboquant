@@ -17,7 +17,7 @@
 package org.roboquant.ta
 
 import org.roboquant.Roboquant
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.RandomWalkFeed
 import org.ta4j.core.indicators.SMAIndicator
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator
 import org.ta4j.core.rules.CrossedDownIndicatorRule
