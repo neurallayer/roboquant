@@ -18,10 +18,25 @@ package org.roboquant.ibkr
 
 import java.time.Instant
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Config
+import org.roboquant.common.ConfigurationException
 import kotlin.test.assertTrue
 
 internal class IBKRBrokerTestIT {
+
+
+    @Test
+    fun wrongConfig() {
+
+        assertThrows<ConfigurationException> {
+            IBKRBroker {
+                port = 87654
+            }
+        }
+
+    }
+
 
     @Test
     fun test() {

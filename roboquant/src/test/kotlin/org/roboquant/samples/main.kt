@@ -19,11 +19,13 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
+import org.roboquant.brokers.Account
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.fee
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
+import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.csv.CSVFeed
@@ -35,10 +37,12 @@ import org.roboquant.logging.toDoubleArray
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PNLMetric
 import org.roboquant.metrics.ProgressMetric
-import org.roboquant.policies.BettingAgainstBetaPolicy
-import org.roboquant.policies.DefaultPolicy
+import org.roboquant.orders.Order
+import org.roboquant.policies.*
+import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.NoSignalStrategy
+import org.roboquant.strategies.Signal
 import kotlin.math.absoluteValue
 import kotlin.system.measureTimeMillis
 
@@ -185,6 +189,32 @@ fun beta2() {
 }
 
 
+fun signalsOnly() {
+    class MyPolicy : BasePolicy(recording = true, prefix = "") {
+
+        override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+            for (signal in signals) {
+                record("signal.${signal.asset.symbol}", signal.rating.value)
+            }
+            return emptyList()
+        }
+
+    }
+    val feed = AvroFeed("/tmp/us_full_v3.0.avro")
+    val logger = MemoryLogger()
+
+    val strategy = CombinedStrategy(
+        EMAStrategy.PERIODS_50_200,
+        EMAStrategy.PERIODS_12_26
+    )
+
+    val policy = MyPolicy().resolve(SignalResolution.NO_CONFLICTS)
+
+    val roboquant = Roboquant(strategy, policy = policy, logger = logger)
+    roboquant.run(feed, Timeframe.past(5.years))
+    println(logger.summary(1))
+}
+
 fun simple() {
     val strategy = EMAStrategy()
     val feed = AvroFeed.sp500()
@@ -197,7 +227,7 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("SIMPLE") {
+    when ("SIGNALS") {
         "SIMPLE" -> simple()
         "BETA" -> beta()
         "CORR" -> calcCorrelation()
@@ -207,6 +237,7 @@ suspend fun main() {
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()
         "VOLATILITY" -> volatility()
+        "SIGNALS" -> signalsOnly()
     }
 
 }

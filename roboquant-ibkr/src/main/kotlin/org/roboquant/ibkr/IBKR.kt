@@ -75,7 +75,8 @@ internal object IBKR {
         val client = EClientSocket(wrapper, signal)
         client.isAsyncEConnect = false
         client.eConnect(config.host, config.port, config.client)
-        logger.info { "Connected to IBKR on $config" }
+        if (! client.isConnected) throw ConfigurationException("Couldn't connect with config $config")
+        logger.debug { "Connected with config $config" }
 
         val reader = EReader(client, signal)
         reader.start()
@@ -96,30 +97,38 @@ internal object IBKR {
     fun getFormattedTime(time: Instant): String = SimpleDateFormat("yyyyMMdd HH:mm:ss").format(Date.from(time))
 
     /**
-     * Convert a roboquant [asset] to an IBKR contract.
+     * Convert a roboquant asset to an IBKR contract.
      */
-    fun getContract(asset: Asset): Contract {
+    fun Asset.getContract(): Contract {
         val contract = Contract()
-        contract.symbol(asset.symbol)
-        contract.currency(asset.currency.currencyCode)
-        if (asset.multiplier != 1.0) contract.multiplier(asset.multiplier.toString())
+        contract.symbol(symbol)
+        contract.currency(currency.currencyCode)
+        if (multiplier != 1.0) contract.multiplier(multiplier.toString())
 
-        when (asset.type) {
+        when (type) {
             AssetType.STOCK -> contract.secType(Types.SecType.STK)
             AssetType.FOREX -> contract.secType(Types.SecType.CASH)
             AssetType.BOND -> contract.secType(Types.SecType.BOND)
-            else -> throw UnsupportedException("${asset.type} is not yet supported")
+            AssetType.FUTURES -> {
+                contract.secType(Types.SecType.FUT)
+                contract.localSymbol(symbol)
+                contract.symbol("")
+            }
+            else -> throw UnsupportedException("$type is not yet supported")
         }
 
-        val exchange = when (asset.exchange.exchangeCode) {
+
+
+        val exchange = when (exchange.exchangeCode) {
             "NASDAQ" -> "ISLAND"
             "" -> "SMART"
-            else -> asset.exchange.exchangeCode
+            else -> exchange.exchangeCode
         }
         contract.exchange(exchange)
 
-        val id = assetMap.filterValues { it == asset }.keys.firstOrNull()
+        val id = assetMap.filterValues { it == this }.keys.firstOrNull()
         if (id != null) contract.conid(id)
+        logger.info { contract }
         return contract
     }
 
@@ -135,6 +144,8 @@ internal object IBKR {
         val asset = when (secType()) {
             Types.SecType.STK -> Asset(symbol(), AssetType.STOCK, currency(), exchangeCode)
             Types.SecType.BOND -> Asset(symbol(), AssetType.BOND, currency(), exchangeCode)
+            Types.SecType.CASH -> Asset(symbol(), AssetType.FOREX, currency(), exchangeCode)
+            Types.SecType.FUT -> Asset(localSymbol(), AssetType.FUTURES, currency(), exchangeCode)
             else -> throw UnsupportedException("Unsupported asset type ${secType()}")
         }
 

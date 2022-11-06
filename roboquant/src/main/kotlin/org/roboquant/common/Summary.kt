@@ -35,7 +35,7 @@ class Summary(val content: String) {
      * @suppress
      */
     private companion object {
-        private const val decimalPattern = "#.000"
+        private const val decimalPattern = "#.###"
         private const val sep = ": "
     }
 

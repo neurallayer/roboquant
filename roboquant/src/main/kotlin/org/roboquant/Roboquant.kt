@@ -211,14 +211,11 @@ class Roboquant(
      */
     private fun runMetrics(account: Account, event: Event, runInfo: RunInfo) {
         val metricResult = mutableMapOf<String, Double>()
-        for (metric in metrics) {
-            metricResult.putAll(metric.calculate(account, event))
-        }
-
+        for (metric in metrics) metricResult.putAll(metric.calculate(account, event))
         metricResult.putAll(strategy.getMetrics())
         metricResult.putAll(policy.getMetrics())
         metricResult.putAll(broker.getMetrics())
-        logger.log(metricResult, runInfo.copy())
+        if (metricResult.isNotEmpty()) logger.log(metricResult, runInfo.copy())
     }
 
     /**

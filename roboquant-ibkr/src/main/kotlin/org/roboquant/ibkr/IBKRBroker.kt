@@ -23,6 +23,7 @@ import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.ibkr.IBKR.getAsset
+import org.roboquant.ibkr.IBKR.getContract
 import org.roboquant.orders.*
 import org.roboquant.orders.OrderStatus
 import java.lang.Thread.sleep
@@ -118,7 +119,7 @@ class IBKRBroker(
         for (order in orders.filterIsInstance<SingleOrder>()) {
             logger.debug("received order $order")
             val ibOrder = createIBOrder(order)
-            val contract = IBKR.getContract(order.asset)
+            val contract = order.asset.getContract()
             logger.info("placing order $ibOrder for $contract at ${event.time}")
             client.placeOrder(ibOrder.orderId(), contract, ibOrder)
         }

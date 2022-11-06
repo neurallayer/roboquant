@@ -148,9 +148,28 @@ fun historicFeed2() {
     feed.disconnect()
 }
 
+
+
+fun historicFuturesFeed() {
+    val feed = IBKRHistoricFeed()
+
+    // This assumes you have a valid market data subscriptions for these futures
+    val assets = listOf(
+        Asset("FGBL MAR 23", AssetType.FUTURES, "EUR", "EUREX"),
+        Asset("GCZ2", AssetType.FUTURES, "USD", "NYMEX"),
+    )
+    feed.retrieve(assets)
+    feed.waitTillRetrieved()
+    println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
+    feed.disconnect()
+}
+
+
+
+
 fun main() {
 
-    when ("PAPER_TRADE") {
+    when ("HISTORIC3") {
         "ACCOUNT" -> showAccount()
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()
@@ -160,6 +179,7 @@ fun main() {
         "PAPER_TRADE" -> paperTrade()
         "HISTORIC" -> historicFeed()
         "HISTORIC2" -> historicFeed2()
+        "HISTORIC3" -> historicFuturesFeed()
     }
 
 }
