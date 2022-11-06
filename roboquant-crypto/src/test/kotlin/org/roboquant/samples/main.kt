@@ -28,7 +28,6 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.avro.AvroFeed
-import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.filter
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.policies.DefaultPolicy
@@ -49,7 +48,7 @@ fun recordBinanceFeed() {
     // Now store as Avro file
     val userHomeDir = System.getProperty("user.home")
     val fileName = "$userHomeDir/tmp/crypto_2years.avro"
-    AvroUtil.record(feed, fileName)
+    AvroFeed.record(feed, fileName)
 
     // Some sanity checks if we stored what we captured
     val feed2 = AvroFeed(fileName)

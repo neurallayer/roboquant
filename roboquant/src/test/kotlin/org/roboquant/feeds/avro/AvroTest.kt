@@ -64,7 +64,7 @@ class AvroTest {
         val feed = TestData.feed
         assets.addAll(feed.assets)
         size = feed.timeline.size
-        AvroUtil.record(feed, fileName, compressionLevel = 0)
+        AvroFeed.record(feed, fileName, compressionLevel = 0)
         assertTrue(File(fileName).isFile)
     }
 
@@ -114,7 +114,7 @@ class AvroTest {
         feed.event = Event(listOf(p1, p2, p3, p4), Instant.now())
 
         assertDoesNotThrow {
-            AvroUtil.record(feed, fileName, compressionLevel = 0)
+            AvroFeed.record(feed, fileName, compressionLevel = 0)
         }
 
         val feed2 = AvroFeed(fileName)

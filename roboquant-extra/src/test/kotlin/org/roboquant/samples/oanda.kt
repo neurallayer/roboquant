@@ -25,7 +25,6 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.OrderBook
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.avro.AvroFeed
-import org.roboquant.feeds.avro.AvroUtil
 import org.roboquant.feeds.filter
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.oanda.*
@@ -69,7 +68,7 @@ fun oandaRecord() {
     println(feed.timeframe)
 
     // Now we store it in a local Avro file for later reuse
-    AvroUtil.record(feed, "/tmp/forex_march_2020.avro")
+    AvroFeed.record(feed, "/tmp/forex_march_2020.avro")
 
 }
 
@@ -117,7 +116,7 @@ fun oandaLiveRecord() {
 
     // Record for the next 60 minutes
     val tf = Timeframe.next(60.minutes)
-    AvroUtil.record(feed, "/tmp/oanda_forex.avro", tf)
+    AvroFeed.record(feed, "/tmp/oanda_forex.avro", tf)
 }
 
 fun oandaLivePriceBar() {

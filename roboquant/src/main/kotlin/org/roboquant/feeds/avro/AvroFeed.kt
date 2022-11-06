@@ -16,11 +16,21 @@
 
 package org.roboquant.feeds.avro
 
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.apache.avro.Schema
+import org.apache.avro.file.CodecFactory
 import org.apache.avro.file.DataFileReader
+import org.apache.avro.file.DataFileWriter
+import org.apache.avro.generic.GenericData
 import org.apache.avro.generic.GenericDatumReader
+import org.apache.avro.generic.GenericDatumWriter
 import org.apache.avro.generic.GenericRecord
+import org.apache.avro.io.DatumWriter
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import java.io.File
@@ -38,8 +48,6 @@ import java.time.Instant
  *
  * Compared to CSV files, Avro files contain typed values, making the parsing more efficient. Additionally, an Avro file
  * can be compressed efficiently, reducing the overall disk space required.
- *
- * Roboquant comes with a utility to create an Avro file based on another feed, see [AvroUtil]
  *
  * @constructor Create new Avro Feed
  */
@@ -199,6 +207,107 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
             }
             return path
         }
+
+
+        private const val schemaDef = """
+            {
+             "namespace": "org.roboquant",
+             "type": "record",
+             "name": "priceBars",
+             "fields": [
+                 {"name": "time", "type": "long"},
+                 {"name": "asset", "type": "string"},
+                 {"name": "type", "type": "int"},
+                 {"name": "values",  "type": {"type": "array", "items" : "double"}}
+             ] 
+            }  
+            """
+
+        /**
+         * Record the [PriceAction]s in a feed and store them in an Avro file that can be later used with an [AvroFeed].
+         */
+        fun record(
+            feed: Feed,
+            fileName: String,
+            timeframe: Timeframe = Timeframe.INFINITE,
+            compressionLevel: Int = 1,
+            assetFilter: AssetFilter = AssetFilter.all()
+        ) =
+            runBlocking {
+
+                val channel = EventChannel(timeframe = timeframe)
+                val file = File(fileName)
+                val schema = Schema.Parser().parse(schemaDef)
+                val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
+                val dataFileWriter = DataFileWriter(datumWriter)
+                dataFileWriter.setCodec(CodecFactory.deflateCodec(compressionLevel))
+
+                dataFileWriter.create(schema, file)
+
+                val cache = mutableMapOf<Asset, String>()
+
+                val job = launch {
+                    feed.play(channel)
+                    channel.close()
+                }
+
+                val arraySchema = Schema.createArray(Schema.create(Schema.Type.DOUBLE))
+                try {
+                    val record = GenericData.Record(schema)
+                    while (true) {
+                        val event = channel.receive()
+                        val now = event.time.toEpochMilli()
+                        for (action in event.actions.filterIsInstance<PriceAction>()
+                            .filter { assetFilter.filter(it.asset, event.time) }) {
+                            val asset = action.asset
+                            val assetStr = cache.getOrPut(asset) { Json.encodeToString(asset) }
+                            record.put(0, now)
+                            record.put(1, assetStr)
+
+                            val values: List<Double> = when (action) {
+
+                                is PriceBar -> {
+                                    record.put(2, 1); action.values
+                                }
+
+                                is TradePrice -> {
+                                    record.put(2, 2); action.values
+                                }
+
+                                is PriceQuote -> {
+                                    record.put(2, 3); action.values
+                                }
+
+                                is OrderBook -> {
+                                    record.put(2, 4); action.values
+                                }
+
+                                else -> {
+                                    logger.warn("Unsupported price action encountered $action")
+                                    continue
+                                }
+                            }
+
+                            val arr = GenericData.Array<Double>(values.size, arraySchema)
+                            arr.addAll(values)
+                            record.put(3, arr)
+                            dataFileWriter.append(record)
+                        }
+
+                        // We sync after each event, so we can later create an index that allows for faster access
+                        dataFileWriter.sync()
+                    }
+
+                } catch (_: ClosedReceiveChannelException) {
+                    // On purpose left empty, expected exception
+                } finally {
+                    channel.close()
+                    if (job.isActive) job.cancel()
+                    dataFileWriter.sync()
+                    dataFileWriter.close()
+                }
+            }
+
 
     }
 

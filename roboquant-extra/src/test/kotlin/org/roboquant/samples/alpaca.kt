@@ -21,7 +21,7 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.alpaca.*
 import org.roboquant.common.*
-import org.roboquant.feeds.avro.AvroUtil
+import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.logging.InfoLogger
 import org.roboquant.metrics.AccountMetric
@@ -98,7 +98,7 @@ fun alpacaHistoricFeed() {
     println("total timeframe is ${feed.timeframe}")
 
     // store the result in an Avro feed for future usage
-    AvroUtil.record(feed, "/tmp/alpaca.avro")
+    AvroFeed.record(feed, "/tmp/alpaca.avro")
 }
 
 fun alpacaHistoricFeed2() {
