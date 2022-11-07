@@ -130,12 +130,12 @@ class Roboquant(
      * will be processed. You can provide a custom [name] that will help to later identify this run. If none is
      * provided, a name will be generated with the format "run-<counter>"
      *
-     * Optionally you can:
-     * 1. provide a [validation] timeframe that will trigger a separate validation phase.
-     * 2. repeat the run for a number of [episodes].
-     * These last two options come into play when you want to run machine learning based strategies.
+     * Optionally you can provide:
+     * 1. a [validation] timeframe that will trigger a separate validation phase.
+     * 2. the number of [episodes] the run should be repeated.
      *
-     * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
+     * These last two options come into play when you want to run machine learning based strategies. This is the
+     * synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
      * in parallel have a look at [runAsync]
      */
     fun run(

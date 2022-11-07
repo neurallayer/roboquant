@@ -32,13 +32,13 @@ import kotlin.io.path.div
  * 2) The config.properties that will be added and override the default config
  * 3) The config provided as a parameter to the Feed constructor that will add/override the previous step
  *
- * @property fileExtension
- * @property filePattern
- * @property fileSkip
- * @property parsePattern
- * @property priceAdjust
+ * @property fileExtension file extensions to parse, default is '.csv'
+ * @property filePattern file patterns to take into considerations
+ * @property fileSkip list of files to skip
+ * @property parsePattern what do the columns present, if empty columns will be determined based on their name
+ * @property priceAdjust should the price be adjusted using a volume adjusted column
  * @property skipZeroPrice
- * @property template
+ * @property template The template to use in the default [assetBuilder]
  * @constructor Create new CSV config
  */
 data class CSVConfig(
@@ -52,17 +52,30 @@ data class CSVConfig(
 ) {
 
     /**
-     * Asset builder allows to create assets based on more than just the symbol name. The input it the filename
-     * without an extension in all capital letters and the returned value should be a valid Asset
+     * Asset builder allows to create assets based on more than just the symbol name. The input is the file that will
+     * be parsed and the returned value is a valid Asset.
+     *
+     * The default implementation will process the following steps:
+     *
+     * 1. Take the file name part of the file as the symbol name
+     * 2  Remove the [fileExtension] part
+     * 3. Convert to symbol name to uppercase
+     * 4. Use the [template] to create the actual asset, with only the symbol name variable
      */
-    var assetBuilder: (String) -> Asset = { name -> template.copy(symbol = name) }
+    var assetBuilder = this::defaultBuilder
 
     private val timeParser: TimeParser = AutoDetectTimeParser()
-
-
     private val info = ColumnInfo()
     private val pattern by lazy { Pattern.compile(filePattern) }
     private var hasColumnsDefined = false
+
+    /**
+     * default builder takes the file name, removes the file extension and uses that the symbol name
+     */
+    private fun defaultBuilder(file: File): Asset {
+        val symbol = file.name.substringBefore(fileExtension).uppercase()
+        return template.copy(symbol = symbol)
+    }
 
     init {
         require(parsePattern.isEmpty() || parsePattern.length > 5)
@@ -86,6 +99,7 @@ data class CSVConfig(
             return result
         }
 
+
         /**
          * Read properties from config file [path] is it exist.
          */
@@ -101,11 +115,6 @@ data class CSVConfig(
             return prop.map { it.key.toString() to it.value.toString() }.toMap()
         }
 
-    }
-
-    internal fun getAsset(fileName: String): Asset {
-        val name = fileName.substringBefore(fileExtension).uppercase()
-        return assetBuilder(name)
     }
 
     /**
@@ -135,14 +144,12 @@ data class CSVConfig(
         val newAssetConfig = config.filter { it.key.startsWith("asset.") }.mapKeys { it.key.substring(6) }
         template = getAssetTemplate(newAssetConfig)
         for ((key, value) in config) {
+            logger.debug { "Found property key=$key value=$value" }
             when (key) {
                 "file.extension" -> fileExtension = value
                 "file.pattern" -> filePattern = value
                 "file.skip" -> fileSkip = value.split(",")
                 "price.adjust" -> priceAdjust = value.toBoolean()
-                else -> {
-                    logger.trace { "Found property $key with value $value" }
-                }
             }
         }
 
@@ -194,10 +201,8 @@ data class CSVConfig(
     @Synchronized
     fun detectColumns(headers: List<String>) {
         if (hasColumnsDefined) return
-        if (parsePattern.isNotEmpty())
-            info.define(parsePattern)
-        else
-            info.detectColumns(headers)
+        if (parsePattern.isNotEmpty()) info.define(parsePattern)
+        else info.detectColumns(headers)
         hasColumnsDefined = true
         if (priceAdjust) require(info.adjustedClose != -1) { "No adjusted close prices found" }
 

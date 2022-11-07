@@ -22,7 +22,6 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.Account
 import org.roboquant.common.RoboquantException
 import org.roboquant.common.Timeframe
-import org.roboquant.common.years
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.logging.LastEntryLogger
@@ -33,9 +32,7 @@ import org.roboquant.metrics.Metric
 import org.roboquant.metrics.MetricResults
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
-import org.roboquant.strategies.RandomStrategy
 import org.roboquant.strategies.TestStrategy
-import java.lang.IllegalArgumentException
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -101,19 +98,7 @@ internal class RoboquantTest {
 
     }
 
-    @Test
-    fun randomStrategy() {
-        val strategy = RandomStrategy()
-        val logger = MemoryLogger(false)
-        val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
 
-        val feed = TestData.feed
-        for (timeframe in feed.split(2.years)) roboquant.run(feed, timeframe)
-
-        assertThrows<IllegalArgumentException> {
-            RandomStrategy(1.2)
-        }
-    }
 
     @Test
     fun validationPhase() {
