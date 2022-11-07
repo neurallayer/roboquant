@@ -50,6 +50,7 @@ import java.time.Instant
  * @property policy The policy to use, default is [DefaultPolicy]
  * @property broker the broker to use, default is [SimBroker]
  * @property logger the metrics logger to use, default is [MemoryLogger]
+ * @param channelCapacity the max capacity of the event channel, more capacity means more buffering
  */
 class Roboquant(
     val strategy: Strategy,
@@ -74,8 +75,6 @@ class Roboquant(
      * single step.
      */
     private suspend fun runPhase(feed: Feed, runInfo: RunInfo) {
-
-        runInfo.timeframe = if (!runInfo.timeframe.isInfinite()) runInfo.timeframe else feed.timeframe
         val channel = EventChannel(channelCapacity, runInfo.timeframe)
         val job = Background.ioJob {
             try {
@@ -134,18 +133,14 @@ class Roboquant(
      * Optionally you can:
      * 1. provide a [validation] timeframe that will trigger a separate validation phase.
      * 2. repeat the run for a number of [episodes].
-     * These two options come in play when you want to train machine learning based strategies.
-     *
-     * The following provides a schematic overview of the flow of a run:
-     *
-     * [Feed] -> [Strategy] -> [Policy] -> [Broker] -> [Metric] -> [MetricsLogger]
+     * These last two options come into play when you want to run machine learning based strategies.
      *
      * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
      * in parallel have a look at [runAsync]
      */
     fun run(
         feed: Feed,
-        timeframe: Timeframe = Timeframe.INFINITE,
+        timeframe: Timeframe = feed.timeframe,
         validation: Timeframe? = null,
         name: String? = null,
         episodes: Int = 1
@@ -162,7 +157,7 @@ class Roboquant(
      */
     suspend fun runAsync(
         feed: Feed,
-        timeframe: Timeframe = Timeframe.INFINITE,
+        timeframe: Timeframe = feed.timeframe,
         validation: Timeframe? = null,
         runName: String? = null,
         episodes: Int = 1

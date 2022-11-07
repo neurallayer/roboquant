@@ -18,8 +18,8 @@ package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.MarketDataMessage
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.SymbolMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.bar.BarMessage
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.control.SuccessMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.enums.MarketDataMessageType
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.quote.QuoteMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.trade.TradeMessage
@@ -122,7 +122,7 @@ class AlpacaLiveFeed(
         close()
     }
 
-    private val Collection<Asset>.symbols
+    private val Collection<Asset>.symbolsOrNull
         get() = if (isEmpty()) null else map { it.symbol }.distinct()
 
     fun subscribeStocks(
@@ -140,7 +140,8 @@ class AlpacaLiveFeed(
         trades: Collection<Asset> = emptyList(),
         quotes: Collection<Asset> = emptyList()
     ) {
-        alpacaAPI.stockMarketDataStreaming().subscribe(trades.symbols, quotes.symbols, priceBars.symbols)
+        alpacaAPI.stockMarketDataStreaming()
+            .subscribe(trades.symbolsOrNull, quotes.symbolsOrNull, priceBars.symbolsOrNull)
     }
 
     fun subscribeCrypto(
@@ -158,13 +159,15 @@ class AlpacaLiveFeed(
         trades: Collection<Asset> = emptyList(),
         quotes: Collection<Asset> = emptyList()
     ) {
-        alpacaAPI.cryptoMarketDataStreaming().subscribe(trades.symbols, quotes.symbols, priceBars.symbols)
+        alpacaAPI.cryptoMarketDataStreaming()
+            .subscribe(trades.symbolsOrNull, quotes.symbolsOrNull, priceBars.symbolsOrNull)
     }
 
     /**
      * Subscribe to price bar data identified by their [symbols].
      */
     fun subscribe(vararg symbols: String) {
+        symbols.forEach { require(assetsMap.contains(it)) { "Unknown symbol $it"} }
         val crypto = symbols.filter { it.isCrypto() }
         if (crypto.isNotEmpty()) subscribeCrypto(crypto)
 
@@ -176,39 +179,37 @@ class AlpacaLiveFeed(
     private fun handleMsg(msg: MarketDataMessage) {
         try {
             logger.trace { "Received msg $msg" }
-            val action: PriceAction? = when (msg) {
-                is TradeMessage -> TradePrice(assetsMap[msg.symbol]!!, msg.price)
-                is QuoteMessage -> PriceQuote(
-                    assetsMap[msg.symbol]!!,
-                    msg.askPrice,
-                    Double.NaN,
-                    msg.bidPrice,
-                    Double.NaN
-                )
+            if (msg is SymbolMessage) {
+                val asset = assetsMap[msg.symbol]!!
 
-                is BarMessage -> PriceBar(
-                    assetsMap[msg.symbol]!!,
-                    msg.open,
-                    msg.high,
-                    msg.low,
-                    msg.close,
-                    msg.tradeCount.toDouble()
-                )
+                val action: PriceAction? = when (msg) {
+                    is TradeMessage -> TradePrice(asset, msg.price)
+                    is QuoteMessage -> PriceQuote(
+                        asset,
+                        msg.askPrice,
+                        Double.NaN,
+                        msg.bidPrice,
+                        Double.NaN
+                    )
 
-                is SuccessMessage -> {
-                    logger.debug(msg.message); null
+                    is BarMessage -> PriceBar(
+                        asset,
+                        msg.open,
+                        msg.high,
+                        msg.low,
+                        msg.close,
+                        msg.tradeCount.toDouble()
+                    )
+
+                    else -> null
                 }
 
-                else -> {
-                    logger.warn("Unexpected msg $msg"); null
+                if (action != null) {
+                    val now = Instant.now()
+                    logger.trace { "Received action $action at ${now.truncatedTo(ChronoUnit.SECONDS)}" }
+                    val event = Event(listOf(action), now)
+                    send(event)
                 }
-            }
-
-            if (action != null) {
-                val now = Instant.now()
-                logger.trace { "Received action $action at ${now.truncatedTo(ChronoUnit.SECONDS)}" }
-                val event = Event(listOf(action), now)
-                send(event)
             }
         } catch (e: Throwable) {
             logger.warn("error during handling market data message $e")

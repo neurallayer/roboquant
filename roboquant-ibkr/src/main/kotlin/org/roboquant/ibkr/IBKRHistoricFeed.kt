@@ -43,7 +43,10 @@ class IBKRHistoricFeed(
         client = IBKR.connect(wrapper, config)
         client.reqCurrentTime()
     }
-
+    
+    /**
+     * Disconnect this client
+     */
     fun disconnect() = IBKR.disconnect(client)
 
     /**
