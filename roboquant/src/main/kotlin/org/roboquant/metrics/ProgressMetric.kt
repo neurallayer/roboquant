@@ -40,7 +40,7 @@ class ProgressMetric : Metric {
         actions += event.actions.size
         return metricResultsOf(
             "progress.actions" to actions,
-            "progress.events" to ++steps,
+            "progress.steps" to ++steps,
             "progress.trades" to account.trades.size,
             "progress.orders" to account.openOrders.size + account.closedOrders.size,
             "progress.walltime" to (Instant.now().toEpochMilli() - startTime),

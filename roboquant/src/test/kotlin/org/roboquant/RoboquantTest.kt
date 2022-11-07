@@ -21,9 +21,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.Account
 import org.roboquant.common.RoboquantException
+import org.roboquant.common.Timeframe
 import org.roboquant.common.years
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.test.HistoricTestFeed
+import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.AccountMetric
@@ -32,6 +34,7 @@ import org.roboquant.metrics.MetricResults
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.RandomStrategy
+import org.roboquant.strategies.TestStrategy
 import java.lang.IllegalArgumentException
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -46,6 +49,39 @@ internal class RoboquantTest {
         val summary = roboquant.summary()
         assertTrue(summary.toString().isNotEmpty())
     }
+
+
+    @Test
+    fun testDefaultTimeframe() {
+        val strategy = TestStrategy()
+        val feed = HistoricTestFeed()
+        val timeline = feed.timeline
+        val roboquant = Roboquant(strategy, ProgressMetric(), logger = LastEntryLogger())
+        roboquant.run(feed)
+        var steps = roboquant.logger.getMetric("progress.steps")
+        assertEquals(timeline.size, steps.last().value.toInt())
+
+        val offset = 3
+        val timeframe = Timeframe(timeline[2], timeline[2 + offset], inclusive = false )
+        roboquant.reset()
+        roboquant.run(feed, timeframe)
+        steps = roboquant.logger.getMetric("progress.steps")
+        assertEquals(offset, steps.last().value.toInt())
+    }
+
+    @Test
+    fun testTimeframe() {
+        val strategy = TestStrategy()
+        val feed = HistoricTestFeed()
+        val timeline = feed.timeline
+        val roboquant = Roboquant(strategy, ProgressMetric(), logger = LastEntryLogger())
+
+        val timeframe = Timeframe(timeline[2], timeline[5], inclusive = false )
+        roboquant.run(feed, timeframe)
+        val steps = roboquant.logger.getMetric("progress.steps")
+        assertEquals(3, steps.last().value.toInt())
+    }
+
 
     @Test
     fun brokenMetric() {
@@ -87,7 +123,7 @@ internal class RoboquantTest {
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
         val (train, test) = feed.timeframe.splitTrainTest(0.20)
         roboquant.run(feed, timeframe = train, validation = test, episodes = 2)
-        val data = logger.getMetric("progress.events")
+        val data = logger.getMetric("progress.steps")
         assertEquals(2, data.map { it.info.phase }.distinct().size)
         assertEquals(2, data.map { it.info.episode }.distinct().size)
         assertEquals(1, data.map { it.info.run }.distinct().size)
