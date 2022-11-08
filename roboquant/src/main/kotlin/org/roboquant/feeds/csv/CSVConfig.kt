@@ -37,7 +37,6 @@ import kotlin.io.path.div
  * @property fileSkip list of files to skip
  * @property parsePattern what do the columns present, if empty columns will be determined based on their name
  * @property priceAdjust should the price be adjusted using a volume adjusted column
- * @property skipZeroPrice
  * @property template The template to use in the default [assetBuilder]
  * @constructor Create new CSV config
  */
@@ -47,7 +46,6 @@ data class CSVConfig(
     var fileSkip: List<String> = emptyList(),
     var parsePattern: String = "",
     var priceAdjust: Boolean = false,
-    var skipZeroPrice: Boolean = true,
     var template: Asset = Asset("TEMPLATE")
 ) {
 
@@ -90,7 +88,8 @@ data class CSVConfig(
         private val logger = Logging.getLogger(CSVConfig::class)
 
         /**
-         * Read a CSV configuration from a [path]
+         * Read a CSV configuration from a [path]. It will use the standard config as base and merge all the
+         * additional settings found in the config file (if any).
          */
         internal fun fromFile(path: Path): CSVConfig {
             val result = CSVConfig()
@@ -141,8 +140,8 @@ data class CSVConfig(
      * @param config
      */
     fun merge(config: Map<String, String>) {
-        val newAssetConfig = config.filter { it.key.startsWith("asset.") }.mapKeys { it.key.substring(6) }
-        template = getAssetTemplate(newAssetConfig)
+        val assetConfig = config.filter { it.key.startsWith("asset.") }.mapKeys { it.key.substring(6) }
+        template = getAssetTemplate(assetConfig)
         for ((key, value) in config) {
             logger.debug { "Found property key=$key value=$value" }
             when (key) {
@@ -150,6 +149,8 @@ data class CSVConfig(
                 "file.pattern" -> filePattern = value
                 "file.skip" -> fileSkip = value.split(",")
                 "price.adjust" -> priceAdjust = value.toBoolean()
+                "parse.pattern" -> parsePattern = value
+
             }
         }
 
@@ -186,8 +187,6 @@ data class CSVConfig(
                 volume
             )
         }
-        // Skip the price action if the open price is zero. This is an often occurring data issue
-        if (skipZeroPrice && action.getPrice("OPEN") == 0.0) throw ValidationException("Found zero price")
 
         return PriceEntry(now, action)
     }

@@ -44,7 +44,7 @@ interface Action
 interface PriceAction : Action {
 
     /**
-     * Returns the asset of the action
+     * The underlying asset of the price action
      */
     val asset: Asset
 
@@ -54,29 +54,22 @@ interface PriceAction : Action {
      *
      * Any implementation is expected to return a default price if the type is not recognised. This way strategies
      * can work on a wide variety of feeds. It is convention to use uppercase strings for different types.
-     *
-     * @return
      */
     fun getPrice(type: String = "DEFAULT"): Double
 
     /**
-     * Same as [getPrice] but returns an [Amount], so this includes the currency. The default implementation should be
-     * sufficient for most cases.
+     * Same as [getPrice] but returns an [Amount], so this includes the currency of the asset.
      */
     fun getPriceAmount(type: String = "DEFAULT") = Amount(asset.currency, getPrice(type))
 
     /**
-     * Volume for the price action. If not implemented, it should return [Double.NaN]
+     * Volume for the price action. If not implemented, it should contain [Double.NaN]
      *
      * Volume in the context of a PriceAction can mean different things. For example is can be trade volume but also
-     * order-book volume, depending on the type of PriceAction.
+     * the total order-book volume, depending on the type of PriceAction.
      */
     val volume: Double
 
-    /**
-     * Return the values (prices and volume) as a list of doubles. This is used to serialize the price action
-     */
-    val values: List<Double>
 }
 
 /**
@@ -147,7 +140,6 @@ class PriceBar(
      */
     companion object {
 
-        fun fromValues(asset: Asset, values: List<Double>) = PriceBar(asset, values.toDoubleArray())
 
         /**
          * Create a new PriceBar and compensate all prices and volume for the [adjustedClose]. This result in all prices
@@ -198,11 +190,6 @@ class PriceBar(
         }
     }
 
-    /**
-     * return the contained values (OHLCV) as a list of Doubles
-     */
-    override val values
-        get() = ohlcv.toList()
 
 }
 
@@ -215,22 +202,9 @@ class PriceBar(
  * @property volume
  * @constructor Create empty Single price
  */
-data class TradePrice(override val asset: Asset, private val price: Double, override val volume: Double = Double.NaN) :
+data class TradePrice(override val asset: Asset, val price: Double, override val volume: Double = Double.NaN) :
     PriceAction {
 
-    override val values
-        get() = listOf(price, volume)
-
-    /**
-     * @suppress
-     */
-    companion object {
-        fun fromValues(asset: Asset, values: List<Double>) = TradePrice(
-            asset,
-            values[0],
-            values[1],
-        )
-    }
 
     /**
      * Return the underlying price. Since this event only holds a single price, the [type] parameter is not used.
@@ -245,7 +219,7 @@ data class TradePrice(override val asset: Asset, private val price: Double, over
 }
 
 /**
- * Price Quote for an asset. Most common use case is that this holds the National Best Bid and Offer and their volumes.
+ * Price Quote for an asset. Common use case is that this holds the National Best Bid and Offer and their volumes.
  *
  * @property asset
  * @property askPrice
@@ -262,21 +236,6 @@ data class PriceQuote(
     val bidSize: Double
 ) : PriceAction {
 
-    override val values
-        get() = listOf(askPrice, askSize, bidPrice, bidSize)
-
-    /**
-     * @suppress
-     */
-    companion object {
-        fun fromValues(asset: Asset, values: List<Double>) = PriceQuote(
-            asset,
-            values[0],
-            values[1],
-            values[2],
-            values[3]
-        )
-    }
 
     /**
      * Return the underlying price. The available [types][type] are:
@@ -321,27 +280,6 @@ data class OrderBook(
     val bids: List<OrderBookEntry>
 ) : PriceAction {
 
-    /**
-     * @suppress
-     */
-    companion object {
-
-        fun fromValues(asset: Asset, values: List<Double>): OrderBook {
-            val asks = mutableListOf<OrderBookEntry>()
-            val bids = mutableListOf<OrderBookEntry>()
-            val endAsks = 1 + 2 * values[0].toInt()
-            for (i in 1 until endAsks step 2) {
-                val entry = OrderBookEntry(values[i], values[i + 1])
-                asks.add(entry)
-            }
-
-            for (i in endAsks until values.lastIndex step 2) {
-                val entry = OrderBookEntry(values[i], values[i + 1])
-                bids.add(entry)
-            }
-            return OrderBook(asset, asks, bids)
-        }
-    }
 
     /**
      * Returns the total amount of entries (asks + bids)
@@ -349,10 +287,6 @@ data class OrderBook(
     val entries
         get() = asks.size + bids.size
 
-    override val values
-        get() = listOf(asks.size.toDouble()) +
-                asks.map { listOf(it.size, it.limit) }.flatten() +
-                bids.map { listOf(it.size, it.limit) }.flatten()
 
     /**
      * Order book will by default return the unweighted **MIDPOINT** price. Other [types][type] that are supported are:
@@ -378,7 +312,7 @@ data class OrderBook(
     }
 
     /**
-     * Returns the total outstanding volume of order book (bid + ask volumes combined)
+     * Returns the total outstanding volume of the order book (bid + ask volumes combined)
      */
     override val volume: Double
         get() = asks.volume() + bids.volume()

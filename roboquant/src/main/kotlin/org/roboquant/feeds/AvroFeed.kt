@@ -108,23 +108,14 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
     /**
      * Convert a generic Avro record to a [PriceAction]
      */
-    private fun recToPriceAction(rec: GenericRecord) : PriceAction {
+    private fun recToPriceAction(rec: GenericRecord): PriceAction {
         val assetId = rec.get(1).toString()
         val asset = assetLookup.getOrPut(assetId) { Json.decodeFromString(assetId) }
         val actionType = rec.get(2) as Int
 
         @Suppress("UNCHECKED_CAST")
         val values = rec.get(3) as List<Double>
-
-        return when (actionType) {
-            1 -> PriceBar.fromValues(asset, values)
-            2 -> TradePrice.fromValues(asset, values)
-            3 -> PriceQuote.fromValues(asset, values)
-            4 -> OrderBook.fromValues(asset, values)
-            else -> {
-                throw UnsupportedException("unsupported price action found")
-            }
-        }
+        return PriceActionSerializer.deserialize(asset, actionType, values)
     }
 
     /**
@@ -198,9 +189,7 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
                 val website = URL(url)
                 website.openStream().use { inputStream: InputStream ->
                     Files.copy(
-                        inputStream,
-                        path,
-                        StandardCopyOption.REPLACE_EXISTING
+                        inputStream, path, StandardCopyOption.REPLACE_EXISTING
                     )
                 }
                 require(Files.exists(path))
@@ -213,7 +202,7 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
             {
              "namespace": "org.roboquant",
              "type": "record",
-             "name": "priceBars",
+             "name": "priceActions",
              "fields": [
                  {"name": "time", "type": "long"},
                  {"name": "asset", "type": "string"},
@@ -232,86 +221,122 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
             timeframe: Timeframe = Timeframe.INFINITE,
             compressionLevel: Int = 1,
             assetFilter: AssetFilter = AssetFilter.all()
-        ) =
-            runBlocking {
+        ) = runBlocking {
 
-                val channel = EventChannel(timeframe = timeframe)
-                val file = File(fileName)
-                val schema = Schema.Parser().parse(schemaDef)
-                val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
-                val dataFileWriter = DataFileWriter(datumWriter)
-                dataFileWriter.setCodec(CodecFactory.deflateCodec(compressionLevel))
+            val channel = EventChannel(timeframe = timeframe)
+            val file = File(fileName)
+            val schema = Schema.Parser().parse(schemaDef)
+            val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
+            val dataFileWriter = DataFileWriter(datumWriter)
+            dataFileWriter.setCodec(CodecFactory.deflateCodec(compressionLevel))
 
-                dataFileWriter.create(schema, file)
+            dataFileWriter.create(schema, file)
 
-                val cache = mutableMapOf<Asset, String>()
+            val cache = mutableMapOf<Asset, String>()
 
-                val job = launch {
-                    feed.play(channel)
-                    channel.close()
-                }
+            val job = launch {
+                feed.play(channel)
+                channel.close()
+            }
 
-                val arraySchema = Schema.createArray(Schema.create(Schema.Type.DOUBLE))
-                try {
-                    val record = GenericData.Record(schema)
-                    while (true) {
-                        val event = channel.receive()
-                        val now = event.time.toEpochMilli()
-                        for (action in event.actions.filterIsInstance<PriceAction>()
-                            .filter { assetFilter.filter(it.asset, event.time) }) {
-                            val asset = action.asset
-                            val assetStr = cache.getOrPut(asset) { Json.encodeToString(asset) }
-                            record.put(0, now)
-                            record.put(1, assetStr)
+            val arraySchema = Schema.createArray(Schema.create(Schema.Type.DOUBLE))
+            try {
+                val record = GenericData.Record(schema)
+                while (true) {
+                    val event = channel.receive()
+                    val now = event.time.toEpochMilli()
+                    for (action in event.actions.filterIsInstance<PriceAction>()
+                        .filter { assetFilter.filter(it.asset, event.time) }) {
+                        val asset = action.asset
+                        val assetStr = cache.getOrPut(asset) { Json.encodeToString(asset) }
+                        record.put(0, now)
+                        record.put(1, assetStr)
 
-                            val values: List<Double> = when (action) {
+                        val (idx, values) = PriceActionSerializer.serialize(action)
+                        record.put(2, idx)
 
-                                is PriceBar -> {
-                                    record.put(2, 1); action.values
-                                }
-
-                                is TradePrice -> {
-                                    record.put(2, 2); action.values
-                                }
-
-                                is PriceQuote -> {
-                                    record.put(2, 3); action.values
-                                }
-
-                                is OrderBook -> {
-                                    record.put(2, 4); action.values
-                                }
-
-                                else -> {
-                                    logger.warn("Unsupported price action encountered $action")
-                                    continue
-                                }
-                            }
-
-                            val arr = GenericData.Array<Double>(values.size, arraySchema)
-                            arr.addAll(values)
-                            record.put(3, arr)
-                            dataFileWriter.append(record)
-                        }
-
-                        // We sync after each event, so we can later create an index that allows for faster access
-                        dataFileWriter.sync()
+                        val arr = GenericData.Array<Double>(values.size, arraySchema)
+                        arr.addAll(values)
+                        record.put(3, arr)
+                        dataFileWriter.append(record)
                     }
 
-                } catch (_: ClosedReceiveChannelException) {
-                    // On purpose left empty, expected exception
-                } finally {
-                    channel.close()
-                    if (job.isActive) job.cancel()
+                    // We sync after each event, so we can later create an index that allows for faster access
                     dataFileWriter.sync()
-                    dataFileWriter.close()
                 }
+
+            } catch (_: ClosedReceiveChannelException) {
+                // On purpose left empty, expected exception
+            } finally {
+                channel.close()
+                if (job.isActive) job.cancel()
+                dataFileWriter.sync()
+                dataFileWriter.close()
             }
+        }
 
 
     }
 
 
-
 }
 
+
+/**
+ * Used by AvroFeed to serialize and deserialize price actions
+ */
+private object PriceActionSerializer {
+
+    private const val PRICEBAR_IDX = 1
+    private const val TRADEPRICE_IDX = 2
+    private const val PRICEQUOTE_IDX = 3
+    private const val ORDERBOOK_IDX = 4
+
+    fun serialize(action: PriceAction): Pair<Int, List<Double>> {
+        return when (action) {
+            is PriceBar -> Pair(PRICEBAR_IDX, action.ohlcv.toList())
+            is TradePrice -> Pair(TRADEPRICE_IDX, listOf(action.price, action.volume))
+            is PriceQuote -> Pair(
+                PRICEQUOTE_IDX,
+                listOf(action.askPrice, action.askSize, action.bidPrice, action.bidSize)
+            )
+            is OrderBook -> Pair(ORDERBOOK_IDX, orderBookToValues(action))
+            else -> throw UnsupportedException("cannot serialize action=$action")
+        }
+    }
+
+    fun deserialize(asset: Asset, idx: Int, values: List<Double>): PriceAction {
+        return when (idx) {
+            PRICEBAR_IDX -> PriceBar(asset, values.toDoubleArray())
+            TRADEPRICE_IDX -> TradePrice(asset, values[0], values[1])
+            PRICEQUOTE_IDX -> PriceQuote(asset, values[0], values[1], values[2], values[3])
+            ORDERBOOK_IDX  -> orderBookFromValues(asset, values)
+            else -> throw UnsupportedException("cannot deserialize asset=$asset type=$idx")
+        }
+    }
+
+    private fun orderBookToValues(action: OrderBook) : List<Double> {
+        return listOf(action.asks.size.toDouble()) +
+                action.asks.map { listOf(it.size, it.limit) }.flatten() +
+                action.bids.map { listOf(it.size, it.limit) }.flatten()
+    }
+
+
+    private fun orderBookFromValues(asset: Asset, values: List<Double>): OrderBook {
+        val asks = mutableListOf<OrderBook.OrderBookEntry>()
+        val bids = mutableListOf<OrderBook.OrderBookEntry>()
+        val endAsks = 1 + 2 * values[0].toInt()
+        for (i in 1 until endAsks step 2) {
+            val entry = OrderBook.OrderBookEntry(values[i], values[i + 1])
+            asks.add(entry)
+        }
+
+        for (i in endAsks until values.lastIndex step 2) {
+            val entry = OrderBook.OrderBookEntry(values[i], values[i + 1])
+            bids.add(entry)
+        }
+        return OrderBook(asset, asks, bids)
+    }
+
+
+}

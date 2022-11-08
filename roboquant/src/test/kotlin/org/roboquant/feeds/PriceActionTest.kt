@@ -43,8 +43,6 @@ internal class PriceActionTest {
         assertEquals(p.bidPrice, p.getPrice("BID"))
         assertEquals(4.0, p.volume)
 
-        val q = PriceQuote.fromValues(asset, p.values)
-        assertEquals(p, q)
     }
 
     @Test
@@ -79,11 +77,6 @@ internal class PriceActionTest {
         assertEquals(1.0, pb.open)
         assertEquals(200.0, pb.volume)
 
-        val values = pb.values
-        val pb2 = PriceBar.fromValues(pb.asset, values)
-        assertEquals(pb.asset, pb2.asset)
-        assertEquals(pb.values, pb2.values)
-
         val pb3 = PriceBar.fromAdjustedClose(asset, 2, 1, 1, 1, 0.5)
         assertEquals(Double.NaN, pb3.volume)
     }
@@ -96,11 +89,10 @@ internal class PriceActionTest {
             listOf(OrderBook.OrderBookEntry(100.0, 10.0), OrderBook.OrderBookEntry(100.0, 10.0)),
             listOf(OrderBook.OrderBookEntry(100.0, 9.0), OrderBook.OrderBookEntry(100.0, 9.0))
         )
-
-        val values = action.values
-        val action2 = OrderBook.fromValues(action.asset, values)
-        assertEquals(action, action2)
         assertEquals(400.0, action.volume)
+        assertEquals(2, action.asks.size)
+        assertEquals(2, action.bids.size)
+        assertEquals(9.5, action.getPrice())
     }
 
     @Test
@@ -108,9 +100,6 @@ internal class PriceActionTest {
         val asset = Asset("DUMMY")
         val p = TradePrice(asset, 10.0, 100.0)
         assertEquals(10.0, p.getPrice("DEFAULT"))
-        val q = TradePrice.fromValues(asset, p.values)
-        assertEquals(p, q)
-
         assertEquals(100.0, p.volume)
     }
 
@@ -129,11 +118,5 @@ internal class PriceActionTest {
         price = p.getPrice("WEIGHTED")
         assertEquals(10.4, price)
 
-        val q = OrderBook.fromValues(asset, p.values)
-        assertEquals(p, q)
-        assertEquals(11.0, q.getPrice("ASK"))
-        assertEquals(10.1, q.getPrice("BID"))
-
-        assertEquals(4, q.entries)
     }
 }

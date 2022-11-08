@@ -20,10 +20,12 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.MethodOrderer.Alphanumeric
 import org.junit.jupiter.api.TestMethodOrder
 import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
+import org.roboquant.common.UnsupportedException
 import org.roboquant.feeds.*
 import java.io.File
 import java.time.Instant
@@ -87,7 +89,7 @@ class AvroFeedTest {
     }
 
     @Test
-    fun avroStep3() {
+    fun feedPlayback() {
         val feed3 = AvroFeed(fileName, useIndex = true)
         assertEquals(size, feed3.timeline.size)
         assertEquals(nAssets, feed3.assets.size)
@@ -101,15 +103,16 @@ class AvroFeedTest {
     }
 
     @Test
-    fun avroStep4() {
+    fun supportedPriceActions() {
         val asset = Asset("DUMMY")
-        val p1 = PriceBar.fromValues(asset, listOf(10.0, 10.0, 10.0, 10.0, 1000.0))
+        val p1 = PriceBar(asset, 10.0, 10.0, 10.0, 10.0, 1000.0)
         val p2 = TradePrice(asset, 10.0, 1000.0)
         val p3 = PriceQuote(asset, 10.0, 1000.0, 10.0, 1000.0)
-        val p4 = OrderBook(asset,
+        val p4 = OrderBook(
+            asset,
             listOf(OrderBook.OrderBookEntry(100.0, 11.0)),
             listOf(OrderBook.OrderBookEntry(50.0, 9.0))
-            )
+        )
         val feed = MyFeed()
         feed.event = Event(listOf(p1, p2, p3, p4), Instant.now())
 
@@ -122,6 +125,25 @@ class AvroFeedTest {
         val actions = feed2.filter<PriceAction>().map { it.second }
         assertEquals(4, actions.size)
 
+    }
+
+    @Test
+    fun unsupportedPriceAction() {
+
+        class MyPrice(override val asset: Asset, override val volume: Double) : PriceAction {
+            override fun getPrice(type: String): Double {
+                return 10.0
+            }
+        }
+
+        val asset = Asset("DUMMY")
+        val p1 = MyPrice(asset, 100.0)
+        val feed = MyFeed()
+        feed.event = Event(listOf(p1), Instant.now())
+
+        assertThrows<UnsupportedException> {
+            AvroFeed.record(feed, fileName)
+        }
     }
 
     @Test
