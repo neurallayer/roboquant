@@ -73,9 +73,9 @@ open class FlexPolicy(
 
     /**
      * Return the size that can be bought/sold with the provided [amount] given the [price] in the currency of
-     * the asset at the provided [time]. This implementation will take into consideration the configured fractions.
+     * the asset at the provided [time]. This implementation will take into consideration the configured [fractions].
      *
-     * This method will only be invoked if the signal is not a reduced position signal.
+     * This method will only be invoked if the signal is not reducing a position.
      */
     open fun calcSize(amount: Amount, signal: Signal, price: Double, time: Instant): Size {
         val asset = signal.asset
