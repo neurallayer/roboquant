@@ -103,7 +103,7 @@ open class FlexPolicy(
      *
      *      account.equityAmount * orderPercentage
      *
-     * Please note that closing a position is always possible since it doesn't rely on amount.
+     * Please note that closing a position is always possible since it doesn't rely on this amount.
      */
     open fun getOrderAmount(account: Account): Amount {
         return account.equityAmount * orderPercentage
