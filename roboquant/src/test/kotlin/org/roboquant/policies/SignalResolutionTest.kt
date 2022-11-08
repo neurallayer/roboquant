@@ -23,10 +23,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class SignalResolutionTest {
 
@@ -60,6 +57,18 @@ internal class SignalResolutionTest {
         val orders = policy.act(signals, account, Event.empty())
         assertEquals(signals.size, orders.size)
         assertNotEquals(orders.map { it.asset }, assets)
+    }
+
+    @Test
+    fun testSkipSymbols() {
+        val policy = TestPolicy().skipSymbols("A", "C")
+        val account = TestData.usAccount()
+        val assets = listOf(Asset("A"), Asset("B"), Asset("C"), Asset("D"))
+        val signals = assets.map { Signal(it, Rating.BUY) }
+        val orders = policy.act(signals, account, Event.empty())
+        val symbols = orders.map { it.asset.symbol }
+        assertTrue(symbols.contains("B"))
+        assertFalse(symbols.contains("C"))
     }
 
 }

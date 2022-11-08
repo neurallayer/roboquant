@@ -109,7 +109,7 @@ fun Policy.resolve(resolution: SignalResolution): Policy = SignalResolverPolicy(
 
 /**
  * Shuffle signals before processing them in the policy, avoiding favoring assets that appears always first in the
- * actions od an event.
+ * list of actions.
  *
  * @property policy
  * @constructor Create empty Signal resolver
@@ -127,3 +127,27 @@ private class SignalShufflePolicy(private val policy: Policy, private val random
  * Shuffle signals using the provided [random] before invoking the policy
  */
 fun Policy.shuffleSignals(random: Random = Config.random): Policy = SignalShufflePolicy(this, random)
+
+
+
+/**
+ * Shuffle signals before processing them in the policy, avoiding favoring assets that appears always first in the
+ * actions od an event.
+ *
+ * @property policy
+ * @constructor Create empty Signal resolver
+ */
+private class SkipSymbolsPolicy(private val policy: Policy, private val symbols: List<String>) : Policy by policy {
+
+
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+        val newSignals = signals.filter { it.asset.symbol !in symbols }
+        return policy.act(newSignals, account, event)
+    }
+
+}
+
+/**
+ * Skip [symbols] that are should not be processed into orders by removing them from the signals
+ */
+fun Policy.skipSymbols(vararg symbols: String): Policy = SkipSymbolsPolicy(this, symbols.asList())

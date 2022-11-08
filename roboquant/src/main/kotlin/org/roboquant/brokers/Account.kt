@@ -16,13 +16,11 @@
 
 package org.roboquant.brokers
 
-import org.apache.commons.math3.stat.descriptive.rank.Percentile
 import org.roboquant.common.*
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import kotlin.math.absoluteValue
 
 /**
  * Account represents a brokerage trading account and is unified across broker implementations. This is an immutable
@@ -110,9 +108,9 @@ class Account(
         }
 
         val s = Summary("account")
-        val p = Summary("positions")
-        val t = Summary("trades")
-        val o = Summary("orders")
+        val p = Summary("position summary")
+        val t = Summary("trade summry")
+        val o = Summary("order summary")
 
         s.add("last update", lastUpdate.truncatedTo(ChronoUnit.SECONDS))
         s.add("base currency", baseCurrency.displayName)
@@ -165,57 +163,37 @@ class Account(
 }
 
 /**
- * Return the PNL outliers for a collection of trades for a given [percentage]
+ * Get the total fee for a collection of trades
  */
-fun Collection<Trade>.outliers(percentage: Double = 0.95): List<Trade> {
-    val data = map { it.pnl.value.absoluteValue }.toDoubleArray()
-    val p = Percentile()
-    val boundary = p.evaluate(data, percentage * 100.0)
-    return filter { it.pnl.value.absoluteValue >= boundary }
-}
-
-/**
- * Return the PNL inliers for a collection of trades for a given [percentage]
- */
-fun Collection<Trade>.inliers(percentage: Double = 0.95): List<Trade> {
-    val data = map { it.pnl.value.absoluteValue }.toDoubleArray()
-    val p = Percentile()
-    val boundary = p.evaluate(data, percentage * 100.0)
-    return filter { it.pnl.value.absoluteValue < boundary }
-}
-
-/**
- * Return the total fee for a collection of trades
- */
-val Collection<Trade>.fee
+val Collection<Trade>.fee : Wallet
     get() = sumOf { it.fee }
 
 /**
- * Return the timeline for a collection of trades
+ * Get the timeline for a collection of trades
  */
 val Collection<Trade>.timeline
     get() = map { it.time }.distinct().sorted()
 
 /**
- * Return the unique assets for a collection of positions
+ * Get the unique assets for a collection of positions
  */
 val Collection<Position>.assets
     get() = map { it.asset }.distinct()
 
 /**
- * Return the long positions for a collection of positions
+ * Get the long positions for a collection of positions
  */
 val Collection<Position>.long
     get() = filter { it.long }
 
 /**
- * Return the short positions for a collection of positions
+ * Get the short positions for a collection of positions
  */
 val Collection<Position>.short
     get() = filter { it.short }
 
 /**
- * Return the position for an asset
+ * Return the first position found for an [asset]. If no position is found, an empty position will be returned.
  */
 fun Collection<Position>.getPosition(asset: Asset): Position {
     return firstOrNull { it.asset == asset } ?: Position.empty(asset)
@@ -224,26 +202,26 @@ fun Collection<Position>.getPosition(asset: Asset): Position {
 /**
  * Return the total unrealized PNL for a collection of positions
  */
-val Collection<Position>.unrealizedPNL
+val Collection<Position>.unrealizedPNL : Wallet
     get() = sumOf { it.unrealizedPNL }
 
 /**
  * Return the total realized PNL for a collection of trades
  */
-val Collection<Trade>.realizedPNL
+val Collection<Trade>.realizedPNL : Wallet
     get() = sumOf { it.pnl }
 
 /**
  * Return the timeframe for a collection of trades
  */
-val Collection<Trade>.timeframe
+val Collection<Trade>.timeframe : Timeframe
     get() = timeline.timeframe
 
 
 /**
  * Get the unique assets for a collection of order states
  */
-val List<OrderState>.assets
+val List<OrderState>.assets : Set<Asset>
     get() = map { it.asset }.distinct().toSet()
 
 
