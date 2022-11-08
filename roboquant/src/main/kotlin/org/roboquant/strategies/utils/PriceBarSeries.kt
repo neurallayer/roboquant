@@ -19,17 +19,17 @@ package org.roboquant.strategies.utils
 import org.roboquant.common.Asset
 import org.roboquant.common.div
 import org.roboquant.common.plus
+import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 
 /**
- * PriceBar Series is a moving window of OHLCV values for a single [asset].
+ * PriceBar Series is a moving window of OHLCV values.
  *
- * @property asset the underlying asset for this price-bar series
  * @param windowSize the size of the moving window
  *
  * @constructor Create new PriceBar Series
  */
-class PriceBarSeries(val asset: Asset, windowSize: Int) {
+class PriceBarSeries(windowSize: Int) {
 
     private val openSeries = MovingWindow(windowSize)
     private val highSeries = MovingWindow(windowSize)
@@ -77,7 +77,6 @@ class PriceBarSeries(val asset: Asset, windowSize: Int) {
      * Update the buffer with a new [priceBar]
      */
     fun add(priceBar: PriceBar): Boolean {
-        assert(priceBar.asset == asset)
         return add(priceBar.ohlcv)
     }
 
@@ -128,8 +127,17 @@ class MultiAssetPriceBarSeries(private val history: Int) {
      * Add a new priceBar and return true if already enough data, false otherwise
      */
     fun add(priceBar: PriceBar): Boolean {
-        val series = data.getOrPut(priceBar.asset) { PriceBarSeries(priceBar.asset, history) }
+        val series = data.getOrPut(priceBar.asset) { PriceBarSeries(history) }
         return series.add(priceBar)
+    }
+
+
+    /**
+     * Add all actions of the [PriceBar] found in the [event] to this series
+     */
+    fun add(event: Event) {
+        val priceBars = event.actions.filterIsInstance<PriceBar>()
+        priceBars.forEach { add(it) }
     }
 
     /**

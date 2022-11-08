@@ -30,7 +30,7 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.oanda.*
 import org.roboquant.orders.FOK
 import org.roboquant.orders.MarketOrder
-import org.roboquant.policies.DefaultPolicy
+import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
 
 fun oandaHistoricFeed() {
@@ -139,7 +139,7 @@ fun oandaPaperTrading() {
     val symbols = broker.availableAssets.findByCurrencies("EUR", "USD", "JPY", "GBP", "CAD", "CHF").symbols
     feed.subscribeOrderBook(*symbols)
 
-    val policy = DefaultPolicy(shorting = true)
+    val policy = FlexPolicy(shorting = true)
     val roboquant = Roboquant(EMAStrategy.PERIODS_5_15, broker = broker, policy = policy)
 
     val tf = Timeframe.next(5.minutes)
@@ -187,7 +187,7 @@ fun oandaBroker3() {
     feed.heartbeatInterval = 30_000L
 
     val strategy = EMAStrategy() // Use EMA Crossover strategy
-    val policy = DefaultPolicy(shorting = true) // We want to short if we do Forex trading
+    val policy = FlexPolicy(shorting = true) // We want to short if we do Forex trading
     val roboquant = Roboquant(strategy, AccountMetric(), policy = policy, broker = broker)
     val timeframe = Timeframe.next(1.minutes) // restrict the time from now for the next minutes
     roboquant.run(feed, timeframe)

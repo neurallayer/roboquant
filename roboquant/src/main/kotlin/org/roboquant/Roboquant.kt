@@ -34,7 +34,7 @@ import org.roboquant.logging.MemoryLogger
 import org.roboquant.logging.MetricsLogger
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.Order
-import org.roboquant.policies.DefaultPolicy
+import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.Policy
 import org.roboquant.strategies.Strategy
 import java.time.Duration
@@ -47,7 +47,7 @@ import java.time.Instant
  *
  * @property strategy The strategy to use, there is no default
  * @property metrics the various metrics to calculate during the runs, default is none
- * @property policy The policy to use, default is [DefaultPolicy]
+ * @property policy The policy to use, default is [FlexPolicy]
  * @property broker the broker to use, default is [SimBroker]
  * @property logger the metrics logger to use, default is [MemoryLogger]
  * @param channelCapacity the max capacity of the event channel, more capacity means more buffering
@@ -55,7 +55,7 @@ import java.time.Instant
 class Roboquant(
     val strategy: Strategy,
     vararg val metrics: Metric,
-    val policy: Policy = DefaultPolicy(),
+    val policy: Policy = FlexPolicy(),
     val broker: Broker = SimBroker(),
     val logger: MetricsLogger = MemoryLogger(),
     private val channelCapacity: Int = 100,

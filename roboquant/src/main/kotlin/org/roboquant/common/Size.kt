@@ -99,13 +99,13 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
         get() = (value % FRACTION) != 0L
 
     /**
-     * Returns the absolute value of this value.
+     * Returns the absolute value of this size.
      */
     val absoluteValue: Size
         get() = Size(value.absoluteValue)
 
     /**
-     * Returns the sign of this size.
+     * Returns the sign (direction) of this size.
      */
     val sign: Int
         get() = value.sign

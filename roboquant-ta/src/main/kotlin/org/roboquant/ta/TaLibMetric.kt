@@ -52,7 +52,7 @@ class TaLibMetric(
             event.prices.values.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset, event.time) }
         for (priceAction in actions) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSeries(asset, history) }
+            val buffer = buffers.getOrPut(asset) { PriceBarSeries(history) }
             if (buffer.add(priceAction)) {
                 val metric = block.invoke(taLib, buffer)
                 val name = "$name.${asset.symbol.lowercase()}"

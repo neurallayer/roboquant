@@ -75,7 +75,7 @@ fun multiCurrency() {
     val broker = SimBroker(cash)
 
     val strategy = EMAStrategy.PERIODS_12_26
-    val policy = DefaultPolicy(orderPercentage = 0.02)
+    val policy = FlexPolicy(orderPercentage = 0.02)
 
     val roboquant = Roboquant(strategy, AccountMetric(), policy = policy, broker = broker, logger = MemoryLogger())
     roboquant.run(feed)

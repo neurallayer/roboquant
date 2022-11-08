@@ -41,7 +41,7 @@ import java.lang.Integer.max
  */
 class TaLibSignalStrategy(
     private val history: Int = 15,
-    private var block: TaLib.(series: PriceBarSeries) -> Signal?
+    private var block: TaLib.(asset: Asset, series: PriceBarSeries) -> Signal?
 ) : Strategy {
 
     private val buffers = mutableMapOf<Asset, PriceBarSeries>()
@@ -51,12 +51,12 @@ class TaLibSignalStrategy(
 
         fun breakout(entryPeriod: Int = 100, exitPeriod: Int = 50): TaLibSignalStrategy {
             val maxPeriod = max(entryPeriod, exitPeriod)
-            return TaLibSignalStrategy(maxPeriod) { series ->
+            return TaLibSignalStrategy(maxPeriod) { asset, series ->
                 when {
-                    recordHigh(series.high, entryPeriod) -> Signal(series.asset, Rating.BUY, SignalType.BOTH)
-                    recordLow(series.low, entryPeriod) -> Signal(series.asset, Rating.SELL, SignalType.BOTH)
-                    recordLow(series.low, exitPeriod) -> Signal(series.asset, Rating.SELL, SignalType.EXIT)
-                    recordHigh(series.high, exitPeriod) -> Signal(series.asset, Rating.BUY, SignalType.EXIT)
+                    recordHigh(series.high, entryPeriod) -> Signal(asset, Rating.BUY, SignalType.BOTH)
+                    recordLow(series.low, entryPeriod) -> Signal(asset, Rating.SELL, SignalType.BOTH)
+                    recordLow(series.low, exitPeriod) -> Signal(asset, Rating.SELL, SignalType.EXIT)
+                    recordHigh(series.high, exitPeriod) -> Signal(asset, Rating.BUY, SignalType.EXIT)
                     else -> null
                 }
             }
@@ -76,9 +76,9 @@ class TaLibSignalStrategy(
         val signals = mutableListOf<Signal>()
         for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSeries(asset, history) }
+            val buffer = buffers.getOrPut(asset) { PriceBarSeries(history) }
             if (buffer.add(priceAction)) {
-                val signal = block.invoke(taLib, buffer)
+                val signal = block.invoke(taLib, asset, buffer)
                 signals.addNotNull(signal)
             }
         }

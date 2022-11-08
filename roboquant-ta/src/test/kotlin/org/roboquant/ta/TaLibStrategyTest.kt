@@ -68,11 +68,11 @@ internal class TaLibStrategyTest {
     @Test
     fun testTASignalStrategy() {
 
-        val strategy = TaLibSignalStrategy(20) { series ->
+        val strategy = TaLibSignalStrategy(20) { asset, series ->
             // record("test", 1)
             when {
-                cdlMorningStar(series) -> Signal(series.asset, Rating.BUY, source = "Morning Star")
-                cdl3BlackCrows(series) -> Signal(series.asset, Rating.SELL, source = "Black Crows")
+                cdlMorningStar(series) -> Signal(asset, Rating.BUY, source = "Morning Star")
+                cdl3BlackCrows(series) -> Signal(asset, Rating.SELL, source = "Black Crows")
                 else -> null
             }
         }
@@ -85,9 +85,9 @@ internal class TaLibStrategyTest {
     @Test
     fun testTASignalStrategyInsufficientData() {
 
-        val strategy = TaLibSignalStrategy(5) { series ->
-            if (cdlMorningStar(series)) Signal(series.asset, Rating.BUY)
-            else if (cdl3BlackCrows(series)) Signal(series.asset, Rating.SELL)
+        val strategy = TaLibSignalStrategy(5) { asset, series ->
+            if (cdlMorningStar(series)) Signal(asset, Rating.BUY)
+            else if (cdl3BlackCrows(series)) Signal(asset, Rating.SELL)
             else null
         }
 
@@ -127,7 +127,7 @@ internal class TaLibStrategyTest {
 
     private fun getPriceBarBuffer(size: Int): PriceBarSeries {
         val asset = Asset("XYZ")
-        val result = PriceBarSeries(asset, size)
+        val result = PriceBarSeries(size)
         repeat(size) {
             val pb = PriceBar(asset, 10.0, 12.0, 8.0, 11.0, 100 + it)
             result.add(pb)

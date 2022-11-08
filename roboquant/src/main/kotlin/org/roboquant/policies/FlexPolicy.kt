@@ -24,11 +24,9 @@ import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.utils.MovingWindow
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.Instant
-import kotlin.math.max
 
 /**
  * This is the default policy that will be used if no other policy is specified. There are several properties that
@@ -43,29 +41,26 @@ import kotlin.math.max
  * @property priceType The type of price to use, default is "DEFAULT"
  * @property fractions For fractional trading, the amount of fractions (decimals) to allow for. Default is 0
  * @property oneOrderOnly Only allow one order to be open for a given asset at a time, default is true
- * @property priceWindow Keep track of prices per asset for the provided period, default is 0
  * @constructor Create new Default Policy
  */
-open class DefaultPolicy(
+open class FlexPolicy(
     private val orderPercentage: Double = 0.01,
     private val shorting: Boolean = false,
     private val priceType: String = "DEFAULT",
     private val fractions: Int = 0,
     private val oneOrderOnly: Boolean = true,
-    private val priceWindow: Int = 0,
 ) : BasePolicy() {
 
-    private val logger = Logging.getLogger(DefaultPolicy::class)
-    private val prices = mutableMapOf<Asset, MovingWindow>()
+    private val logger = Logging.getLogger(FlexPolicy::class)
 
     /**
      * Would the [signal] generate a reduced position size based on the current [position]. Reduced positions signals
      * have some unique properties:
      *
      * 1. They are allowed independent of buying power available. So you can always close a position.
-     * 2. Only [Signal.exit] types are honoured
+     * 2. Only signals that are compatible with an exit strategy are allowed
      */
-    private fun reducedPositionSingal(position: Position, signal: Signal): Boolean {
+    private fun reducedPositionSignal(position: Position, signal: Signal): Boolean {
         with(position) {
             if (open && signal.exit) {
                 if (long && signal.rating.isNegative) return true
@@ -73,28 +68,6 @@ open class DefaultPolicy(
             }
         }
         return false
-    }
-
-    /**
-     * Stores prices for a [priceWindow] sized window. This can be used later for example in the [createOrder] method
-     * to implement volatility based orders.
-     */
-    open fun storePrices(event: Event) {
-        if (priceWindow > 0) {
-            event.prices.forEach {
-                val entry = prices.getOrPut(it.key) { MovingWindow(priceWindow)}
-                val price = it.value.getPrice(priceType)
-                entry.add(price)
-            }
-        }
-    }
-
-    /**
-     * Reset its state
-     */
-    override fun reset() {
-        super.reset()
-        prices.clear()
     }
 
 
@@ -126,64 +99,62 @@ open class DefaultPolicy(
     }
 
     /**
-     * Get the amount of cash to allocate to a new order. Default implementation is
+     * Get the amount of cash to allocate to a new order. Default implementation is using the following formula:
      *
      *      account.equityAmount * orderPercentage
      *
-     * Closing a position is always possible since it doesn't use this amount.
+     * Please note that closing a position is always possible since it doesn't rely on amount.
      */
     open fun getOrderAmount(account: Account): Amount {
         return account.equityAmount * orderPercentage
     }
+
 
     /**
      * @see Policy.act
      */
     @Suppress("ComplexMethod")
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
-        storePrices(event)
         if (signals.isEmpty()) return emptyList()
 
         val orders = mutableListOf<Order>()
-        var buyingPower = max(account.buyingPower.value, 0.0)
-        val amount = getOrderAmount(account)
+        var buyingPower = account.buyingPower
+        val amountPerOrder = getOrderAmount(account)
 
         @Suppress("LoopWithTooManyJumpStatements")
         for (signal in signals) {
             val asset = signal.asset
 
-            if (oneOrderOnly && account.openOrders.any { it.asset == signal.asset }) continue
-
-            // We don't create an order if we don't know the current price
+            if (oneOrderOnly && account.openOrders.any { it.asset == asset }) continue
             val price = event.getPrice(asset, priceType)
+            logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder price=$price" }
 
-            logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amount price=$price" }
-
+            // Don't create an order if we don't know the current price
             if (price !== null) {
 
                 val position = account.positions.getPosition(asset)
-                if (reducedPositionSingal(position, signal)) {
+                if (reducedPositionSignal(position, signal)) {
                     val order = createOrder(signal, -position.size, price) // close position
                     orders.addNotNull(order)
                 } else {
                     if (position.open) continue // we don't increase position sizing
                     if (!signal.entry) continue // signal doesn't allow to open new positions
 
-                    val size = calcSize(amount, signal, price, event.time)
+                    val size = calcSize(amountPerOrder, signal, price, event.time)
                     if (size.iszero) continue
                     if (size < 0 && !shorting) continue
 
+                    // Check if we have enough buying power to place the order
                     val assetExposure = asset.value(size, price).absoluteValue
-                    val exposure = account.convert(assetExposure, event.time).value
-                    if (exposure > buyingPower) continue
+                    val exposure = assetExposure.convert(buyingPower.currency, event.time).value
+                    if (exposure > buyingPower.value) continue // not enough buying power
+
                     val order = createOrder(signal, size, price)
-
                     if (order != null) {
-                        logger.debug { "signal=${signal} amount=$amount exposure=$exposure order=$order" }
+                        logger.debug { "signal=${signal} amount=$amountPerOrder exposure=$exposure order=$order" }
                         orders.add(order)
-                        buyingPower -= exposure
+                        buyingPower -= exposure // reduce buying power with exposed amount
                     }
-
                 }
 
             }

@@ -25,7 +25,7 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Order
-import org.roboquant.policies.DefaultPolicy
+import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Signal
 import org.roboquant.ta.TaLibMetric
@@ -34,10 +34,10 @@ import org.roboquant.ta.TaLibMetric
 fun customPolicy() {
 
     /**
-     * Custom Policy that extends the DefaultPolicy and captures the ATR (Average True Range) using the TaLibMetric. It
+     * Custom Policy that extends the FlexPolicy and captures the ATR (Average True Range) using the TaLibMetric. It
      * then uses the ATR to set the limit amount of a LimitOrder.
      */
-    class SmartLimitPolicy(private val atrPercentage: Double = 0.02, private val atrPeriod: Int) : DefaultPolicy() {
+    class SmartLimitPolicy(private val atrPercentage: Double = 0.02, private val atrPeriod: Int) : FlexPolicy() {
 
         // use TaLibMetric to calculate the ATR values
         private val atr = TaLibMetric("atr", atrPeriod + 1) { atr(it, atrPeriod) }
@@ -48,7 +48,7 @@ fun customPolicy() {
             // createOrder is invoked.
             atrMetrics = atr.calculate(account, event)
 
-            // Call the regular DefaultPolicy processing
+            // Call the regular FlexPolicy processing
             return super.act(signals, account, event)
         }
 

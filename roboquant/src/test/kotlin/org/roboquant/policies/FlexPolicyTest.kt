@@ -26,11 +26,11 @@ import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-internal class DefaultPolicyTest {
+internal class FlexPolicyTest {
 
     @Test
     fun order() {
-        val policy = DefaultPolicy()
+        val policy = FlexPolicy()
         val signals = mutableListOf<Signal>()
         val event = Event(emptyList(), Instant.now())
         val account = InternalAccount().toAccount()
@@ -41,7 +41,7 @@ internal class DefaultPolicyTest {
     @Test
     fun order2() {
 
-        class MyPolicy(val percentage: Double = 0.05) : DefaultPolicy() {
+        class MyPolicy(val percentage: Double = 0.05) : FlexPolicy() {
 
             override fun createOrder(signal: Signal, size: Size, price: Double): Order {
                 val asset = signal.asset
@@ -67,7 +67,7 @@ internal class DefaultPolicyTest {
 
     @Test
     fun chaining() {
-        val policy = DefaultPolicy()
+        val policy = FlexPolicy()
             .resolve(SignalResolution.FIRST)
             .circuitBreaker(10, 1.days)
         val signals = mutableListOf<Signal>()

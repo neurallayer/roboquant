@@ -30,7 +30,7 @@ import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.filter
 import org.roboquant.metrics.AccountMetric
-import org.roboquant.policies.DefaultPolicy
+import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.xchange.XChangePollingLiveFeed
 import kotlin.test.assertEquals
@@ -65,7 +65,7 @@ fun useBinanceFeed() {
 
     val initialDeposit = Amount("UST", 100_000).toWallet()
     val marginAccount = MarginAccount()
-    val policy = DefaultPolicy(shorting = true, fractions = 4)
+    val policy = FlexPolicy(shorting = true, fractions = 4)
     val broker = SimBroker(initialDeposit, accountModel = marginAccount)
     val roboquant = Roboquant(EMAStrategy.PERIODS_5_15, AccountMetric(), broker = broker, policy = policy)
     roboquant.run(feed)
