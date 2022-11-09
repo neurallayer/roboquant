@@ -32,6 +32,10 @@ internal class TimeframeTest {
         assertEquals(10, subFrames.size)
         assertEquals(tf.start, subFrames.first().start)
         assertEquals(tf.end, subFrames.last().end)
+
+        val tf2 = Timeframe.past(24.hours)
+        val subFrames2 = tf2.split(30.minutes)
+        assertEquals(48, subFrames2.size)
     }
 
 

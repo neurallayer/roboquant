@@ -60,7 +60,8 @@ internal class PriceBarSeriesTest {
     @Test
     fun adjustedClose() {
         val asset = Asset("DEMO")
-        val pb = PriceBar.fromAdjustedClose(asset, 10, 11, 9, 10, 5, 100)
+        val pb = PriceBar(asset, 10, 11, 9, 10, 100)
+        pb.adjustClose(5)
         assertEquals(5.0, pb.open)
         assertEquals(5.0, pb.close)
         assertEquals(200.0, pb.volume)

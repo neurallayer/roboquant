@@ -26,10 +26,6 @@ import java.lang.Integer.min
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.*
-import java.time.temporal.ChronoUnit
-import java.time.temporal.Temporal
-import java.time.temporal.TemporalAmount
-import java.time.temporal.TemporalUnit
 import kotlin.math.absoluteValue
 
 /********************************************************************************************************************
@@ -342,112 +338,51 @@ inline fun <T> Collection<T>.sumOf(
  * Extensions on Integer type to make instantiation of periods or duration more convenient
  *********************************************************************************************/
 
-/*
-val Int.years : Period
-    get() = Period.ofYears(this)
-
-val Int.months : Period
-    get() = Period.ofMonths(this)
-
-val Int.weeks : Period
-    get() = Period.ofWeeks(this)
-
-val Int.days : Period
-    get() = Period.ofDays(this)
-
-val Int.hours : Duration
-    get() = Duration.ofHours(this.toLong())
-
-val Int.minutes : Duration
-    get() = Duration.ofMinutes(this.toLong())
-
-val Int.seconds : Duration
-    get() = Duration.ofSeconds(this.toLong())
-
-val Int.millis : Duration
-    get() = Duration.ofMillis(this.toLong())
-*/
-
-/**
- * Unified approach to the different types of temporalAmounts found in Java: Period and Duration.
- */
-class ZonedPeriod(private val a: TemporalAmount, private val zoneId: ZoneId = Config.defaultZoneId) : TemporalAmount {
-
-    override fun get(unit: TemporalUnit): Long {
-        return a.get(unit)
-    }
-
-    override fun getUnits(): MutableList<TemporalUnit> {
-        return a.units
-    }
-
-    fun toDays() = a.get(ChronoUnit.DAYS)
-
-    fun toHours() = (a as Duration).toHours()
-
-    fun toMinutes() = (a as Duration).toMinutes()
-
-    override fun addTo(temporal: Temporal): Temporal {
-        val result = Instant.from(temporal).atZone(zoneId).plus(a)
-        return if (temporal is Instant) result.toInstant() else result
-    }
-
-    override fun subtractFrom(temporal: Temporal): Temporal {
-        val result = Instant.from(temporal).atZone(zoneId).minus(a)
-        return if (temporal is Instant) result.toInstant() else result
-    }
-
-    fun atZone(zoneId: ZoneId): ZonedPeriod {
-        return ZonedPeriod(a, zoneId)
-    }
-
-}
-
 /**
  * Convert number to years
  */
-val Number.years: ZonedPeriod
-    get() = ZonedPeriod(Period.ofYears(this.toInt()))
+val Int.years: Period
+    get() = Period.ofYears(this)
 
 /**
  * Convert number to months
  */
-val Number.months: ZonedPeriod
-    get() = ZonedPeriod(Period.ofMonths(this.toInt()))
+val Int.months: Period
+    get() = Period.ofMonths(this)
 
 /**
  * Convert number to weeks
  */
-val Number.weeks: ZonedPeriod
-    get() = ZonedPeriod(Period.ofWeeks(this.toInt()))
+val Int.weeks: Period
+    get() = Period.ofWeeks(this)
 
 /**
  * Convert number to days
  */
-val Number.days: ZonedPeriod
-    get() = ZonedPeriod(Period.ofDays(this.toInt()))
+val Int.days: Period
+    get() = Period.ofDays(this)
 
 /**
  * Convert number to hours
  */
-val Number.hours: ZonedPeriod
-    get() = ZonedPeriod(Duration.ofHours(this.toLong()))
+val Int.hours: Duration
+    get() = Duration.ofHours(this.toLong())
 
 /**
  * Convert number to minutes
  */
-val Number.minutes: ZonedPeriod
-    get() = ZonedPeriod(Duration.ofMinutes(this.toLong()))
+val Int.minutes: Duration
+    get() = Duration.ofMinutes(this.toLong())
 
 /**
  * Convert number to seconds
  */
-val Number.seconds: ZonedPeriod
-    get() = ZonedPeriod(Duration.ofSeconds(this.toLong()))
+val Int.seconds: Duration
+    get() = Duration.ofSeconds(this.toLong())
 
 /**
  * Convert number to millis
  */
-val Number.millis: ZonedPeriod
-    get() = ZonedPeriod(Duration.ofMillis(this.toLong()))
+val Int.millis: Duration
+    get() = Duration.ofMillis(this.toLong())
 

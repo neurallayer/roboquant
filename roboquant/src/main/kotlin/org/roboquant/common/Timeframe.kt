@@ -217,6 +217,21 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         return start.atZone(zoneId).toLocalDate() == realEnd.atZone(zoneId).toLocalDate()
     }
 
+
+    private fun Instant.add(temporalAmount: TemporalAmount) : Instant {
+        val zoneId = Config.defaultZoneId
+        val now = this.atZone(zoneId)
+        return (now + temporalAmount).toInstant()
+    }
+
+
+    private fun Instant.subtract(temporalAmount: TemporalAmount) : Instant {
+        val zoneId = Config.defaultZoneId
+        val now = this.atZone(zoneId)
+        return (now - temporalAmount).toInstant()
+    }
+
+
     /**
      * Extend a timeframe, both [before] and [after] the current timeframe. The current timeframe
      * remains unchanged and a new one is returned.
@@ -226,7 +241,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      *      val tf = TimeFrame.BlackMonday1987.extend(1.weeks)
      */
     fun extend(before: TemporalAmount, after: TemporalAmount = before) =
-        Timeframe(start - before, end + after, inclusive)
+        Timeframe(start.subtract(before), end.add(after), inclusive)
 
     /**
      * Convert a timeframe to a timeline where each time is [step] size separated
@@ -239,7 +254,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         var time = start
         while (time <= this) {
             timeline.add(time)
-            time += step
+            time = time.add(step)
         }
         return timeline
     }
@@ -268,7 +283,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         val result = mutableListOf<Timeframe>()
         var last = start
         while (true) {
-            val next = last + period
+            val next = last.add(period)
             if (! beforeEnd(next)) {
                 result.add(Timeframe(last, end, inclusive))
                 return result
@@ -312,14 +327,14 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      *
      *      val newTimeFrame = timeframe - 2.days
      */
-    operator fun minus(period: TemporalAmount) = Timeframe(start - period, end - period, inclusive)
+    operator fun minus(period: TemporalAmount) = Timeframe(start.subtract(period), end.subtract(period), inclusive)
 
     /**
      * Add a [period] to this timeframe and return the result.
      *
      *      val newTimeFrame = timeframe + 2.days
      */
-    operator fun plus(period: TemporalAmount) = Timeframe(start + period, end + period, inclusive)
+    operator fun plus(period: TemporalAmount) = Timeframe(start.add(period), end.add(period), inclusive)
 
     /**
      * Annualize a [percentage] based on the duration of this timeframe. So given x percent return

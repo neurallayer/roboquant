@@ -135,40 +135,20 @@ class PriceBar(
      */
     override fun toString(): String = "asset=${asset.symbol} OHLCV=${ohlcv.toList()}"
 
+
     /**
-     * @suppress
+     * Adjust this PriceBar conform the provided adjusted close [price]
      */
-    companion object {
-
-
-        /**
-         * Create a new PriceBar and compensate all prices and volume for the [adjustedClose]. This result in all prices
-         * being corrected with by a factor [adjustedClose]/[close] and the volume by a factor [close]/[adjustedClose]
-         */
-        @Suppress("LongParameterList")
-        fun fromAdjustedClose(
-            asset: Asset,
-            open: Number,
-            high: Number,
-            low: Number,
-            close: Number,
-            adjustedClose: Number,
-            volume: Number = Double.NaN
-        ): PriceBar {
-            val adj = adjustedClose.toDouble() / close.toDouble()
-            return PriceBar(
-                asset,
-                doubleArrayOf(
-                    open.toDouble() * adj,
-                    high.toDouble() * adj,
-                    low.toDouble() * adj,
-                    close.toDouble() * adj,
-                    volume.toDouble() / adj
-                )
-            )
-        }
-
+    fun adjustClose(price: Number)  {
+        val adj = price.toDouble() / close
+        ohlcv[0] *= adj
+        ohlcv[1] *= adj
+        ohlcv[2] *= adj
+        ohlcv[3] *= adj
+        ohlcv[4] /= adj
     }
+
+
 
     /**
      * Get the price for this price bar, default is the closing price. Supported types:

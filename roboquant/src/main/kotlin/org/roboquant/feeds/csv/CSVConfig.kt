@@ -17,7 +17,6 @@
 package org.roboquant.feeds.csv
 
 import org.roboquant.common.*
-import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.PriceBar
 import java.io.File
 import java.nio.file.Path
@@ -168,26 +167,15 @@ data class CSVConfig(
 
         val now = timeParser.parse(line[info.time], asset.exchange)
         val volume = if (info.hasVolume) line[info.volume].toDouble() else Double.NaN
-        val action: PriceAction = when {
-            priceAdjust -> PriceBar.fromAdjustedClose(
-                asset,
-                line[info.open].toDouble(),
-                line[info.high].toDouble(),
-                line[info.low].toDouble(),
-                line[info.adjustedClose].toDouble(),
-                line[info.volume].toDouble()
-            )
-
-            else -> PriceBar(
-                asset,
-                line[info.open].toDouble(),
-                line[info.high].toDouble(),
-                line[info.low].toDouble(),
-                line[info.close].toDouble(),
-                volume
-            )
-        }
-
+        val action = PriceBar(
+            asset,
+            line[info.open].toDouble(),
+            line[info.high].toDouble(),
+            line[info.low].toDouble(),
+            line[info.close].toDouble(),
+            volume
+        )
+        if (priceAdjust) action.adjustClose(line[info.adjustedClose].toDouble())
         return PriceEntry(now, action)
     }
 
