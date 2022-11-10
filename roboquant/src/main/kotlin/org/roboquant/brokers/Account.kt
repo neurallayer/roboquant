@@ -24,24 +24,24 @@ import java.time.temporal.ChronoUnit
 
 /**
  * Account represents a brokerage trading account and is unified across broker implementations. This is an immutable
- * class and tt holds the following state:
+ * class, and it holds the following state:
  *
  * - [cash] balances in the account
  * - the [positions] with its assets
  * - The past [trades]
  * - The [openOrders] and [closedOrders] and their state
  *
- * Some methods convert a multi-currency Wallet to a single-currency Amount. For this to work, you'll need to have
- * the appropriate exchange rates defined [Config.exchangeRates].
+ * Some convenience methods convert a multi-currency Wallet to a single-currency Amount. For this to work, you'll
+ * need to have the appropriate exchange rates defined at [Config.exchangeRates].
  *
  * @property baseCurrency what is the base currency of the account
  * @property lastUpdate when was the account last updated
  * @property cash cash balances
- * @property trades List of all trades
+ * @property trades List of all executed trades
  * @property openOrders List of [OrderState] of all open orders
  * @property closedOrders List of [OrderState] of all closed orders
- * @property positions List of all open [Position], with max one entry per asset
- * @property buyingPower amount of buying power remaining
+ * @property positions List of all open [Position], with maximum one entry per asset
+ * @property buyingPower amount of buying power available for trading
  * @constructor Create new Account
  */
 class Account(
@@ -55,8 +55,13 @@ class Account(
     val buyingPower: Amount
 ) {
 
+    init {
+        require(buyingPower.currency == baseCurrency) { "Buying power needs to be expressed in the baseCurrency"}
+    }
+
     /**
-     * Cash balances converted to a single amount denoted in the [baseCurrency] of the account
+     * Cash balances converted to a single amount denoted in the [baseCurrency] of the account. If you want to know
+     * how much cash is available for trading, please use [buyingPower] instead.
      */
     val cashAmount: Amount
         get() = convert(cash)
