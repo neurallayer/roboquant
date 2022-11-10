@@ -79,4 +79,5 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
 }
 
 
+fun Collection<Order>.contains(asset: Asset) = any { it.asset == asset}
 

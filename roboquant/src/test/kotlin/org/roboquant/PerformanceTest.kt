@@ -1,14 +1,18 @@
 package org.roboquant
 
+import org.roboquant.brokers.sim.MarginAccount
+import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.filter
 import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.filter
 import org.roboquant.logging.LastEntryLogger
 import org.roboquant.logging.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PNLMetric
+import org.roboquant.policies.FlexPolicy
+import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
 import java.text.NumberFormat
 import kotlin.system.measureTimeMillis
@@ -57,14 +61,24 @@ internal class PerformanceTest {
 
 
     /**
-     * Test with some metrics and logging overhead included
+     * Test with 3 strategies, margin account, shorting, extra metrics and logging overhead included
      */
     private fun extendedRun(feed: HistoricFeed): Long {
         return measure {
+
+            val strategy = CombinedStrategy(
+                EMAStrategy.PERIODS_5_15, EMAStrategy.PERIODS_12_26, EMAStrategy.PERIODS_50_200
+            )
+
+            val broker = SimBroker(accountModel = MarginAccount())
+            val policy = FlexPolicy(shorting = true)
+
             val roboquant = Roboquant(
-                EMAStrategy(),
+                strategy,
                 AccountMetric(),
                 PNLMetric(),
+                broker = broker,
+                policy = policy,
                 logger = LastEntryLogger()
             )
             roboquant.run(feed)
@@ -74,17 +88,17 @@ internal class PerformanceTest {
 
 
     /**
-     * Parallel tests (8) with minimal overhead
+     * Parallel tests (4) with minimal overhead
      */
     private fun parallelRuns(feed: HistoricFeed): Long {
 
         return measure {
             val jobs = ParallelJobs()
 
-            repeat(8) {
+            repeat(4) {
                 jobs.add {
-                    val roboquant = Roboquant(EMAStrategy(it + 10, it + 20), logger = SilentLogger())
-                    roboquant.run(feed)
+                    val roboquant = Roboquant(EMAStrategy(), logger = SilentLogger())
+                    roboquant.runAsync(feed)
                 }
             }
             jobs.joinAllBlocking()
@@ -101,8 +115,8 @@ internal class PerformanceTest {
         logger.info("******  ${NumberFormat.getIntegerInstance().format(priceBars)} candlesticks  ******")
         log("feed filter", feedFilter(feed))
         log("base run", baseRun(feed))
+        log("parallel runs (x4)", parallelRuns(feed))
         log("extended run", extendedRun(feed))
-        log("parallel runs", parallelRuns(feed))
     }
 
 

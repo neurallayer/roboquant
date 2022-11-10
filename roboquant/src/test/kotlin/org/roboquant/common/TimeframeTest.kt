@@ -78,9 +78,8 @@ internal class TimeframeTest {
         val tf = Timeframe.next(1.minutes)
         assertEquals(60, tf.end.epochSecond - tf.start.epochSecond)
 
-        val tf2 = tf.extend(1.days)
-        assertTrue { tf2.contains(tf.start) }
-        assertTrue { tf2.contains(tf.end) }
+        val tf2 = Timeframe.past(2.years)
+        assertEquals(tf2.start, (tf2 - 2.years).end)
 
         assertThrows<IllegalArgumentException> {
             Timeframe.fromYears(1800, 2000)

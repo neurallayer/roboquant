@@ -88,9 +88,8 @@ internal class AlpacaFeedTestIT {
     }
 
     private inline fun <reified T : PriceAction> testResult(feed: AlpacaHistoricFeed, tf: Timeframe) {
-        val tf2 = tf.extend(1.days)
-        assertTrue(tf2.contains(feed.timeline.first()))
-        assertTrue(tf2.contains(feed.timeline.last()))
+        assertTrue(tf.contains(feed.timeline.first()))
+        assertTrue(tf.contains(feed.timeline.last()))
 
         val actions = feed.filter<PriceAction>()
         val action = actions.first().second

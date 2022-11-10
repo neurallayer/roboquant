@@ -160,7 +160,7 @@ fun oandaClosePositions() {
 
 
 fun oandaBroker() {
-    Config.exchangeRates = FixedExchangeRates(Currency.EUR, Currency.USD to 0.9, Currency.GBP to 1.2)
+    Config.exchangeRates = OANDAExchangeRates()
     val broker = OANDABroker()
     println(broker.account.summary())
     println(broker.account.positions.summary())
@@ -171,8 +171,8 @@ fun oandaBroker() {
 
     val feed = OANDALiveFeed()
     feed.subscribeOrderBook("EUR_USD", "GBP_USD", "GBP_EUR")
-    val twoMinutes = Timeframe.next(5.minutes)
-    roboquant.run(feed, twoMinutes)
+    val tf = Timeframe.next(60.minutes)
+    roboquant.run(feed, tf)
     println(broker.account.positions.summary())
 }
 
@@ -208,7 +208,7 @@ fun oandaBroker2(createOrder: Boolean = true) {
 }
 
 fun main() {
-    when ("OANDA_LIVE_RECORD") {
+    when ("OANDA_BROKER") {
         "OANDA_BROKER" -> oandaBroker()
         "OANDA_BROKER2" -> oandaBroker2()
         "OANDA_BROKER3" -> oandaBroker3()

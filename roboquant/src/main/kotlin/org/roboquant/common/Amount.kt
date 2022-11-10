@@ -92,6 +92,14 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     override fun compareTo(other: Number): Int = value.compareTo(other.toDouble())
 
     /**
+     * Compare the [value] in this amount to an [other] amount
+     */
+    operator fun compareTo(other: Amount): Int {
+        require(this.currency == other.currency) { "Can only compare amounts with same currency"}
+        return value.compareTo(other.value)
+    }
+
+    /**
      * Convert this amount [to] a different currency. If no currency is provided, the [Config.baseCurrency] is used.
      * Optional you can provide a [time] at which the conversion should be calculated. If no time is provided the
      * current time is used.

@@ -136,7 +136,8 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         }
 
         /**
-         * String representation that caters for different durations.
+         * Parse string into Instant, that caters for different precisions. Missing parts will be added before
+         * the actual parsing.
          */
         private fun String.toInstant(): Instant {
             val fStr = when (length) {
@@ -171,7 +172,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
          */
         fun past(period: TemporalAmount): Timeframe {
             val end = Instant.now()
-            return Timeframe(end - period, end)
+            return Timeframe(end.subtract(period), end)
         }
 
         /**
@@ -183,7 +184,25 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
          */
         fun next(period: TemporalAmount): Timeframe {
             val start = Instant.now()
-            return Timeframe(start, start + period)
+            return Timeframe(start, start.add(period))
+        }
+
+        /**
+         * Util extension to allow also periods to be added to an Instant
+         */
+        private fun Instant.add(temporalAmount: TemporalAmount): Instant {
+            val zoneId = Config.defaultZoneId
+            val now = this.atZone(zoneId)
+            return (now + temporalAmount).toInstant()
+        }
+
+        /**
+         * Util extension to allow also periods to be subtracted from an Instant
+         */
+        private fun Instant.subtract(temporalAmount: TemporalAmount): Instant {
+            val zoneId = Config.defaultZoneId
+            val now = this.atZone(zoneId)
+            return (now - temporalAmount).toInstant()
         }
 
     }
@@ -218,34 +237,12 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
 
-    private fun Instant.add(temporalAmount: TemporalAmount) : Instant {
-        val zoneId = Config.defaultZoneId
-        val now = this.atZone(zoneId)
-        return (now + temporalAmount).toInstant()
-    }
 
-
-    private fun Instant.subtract(temporalAmount: TemporalAmount) : Instant {
-        val zoneId = Config.defaultZoneId
-        val now = this.atZone(zoneId)
-        return (now - temporalAmount).toInstant()
-    }
 
 
     /**
-     * Extend a timeframe, both [before] and [after] the current timeframe. The current timeframe
-     * remains unchanged and a new one is returned.
-     *
-     * ### Usage
-     *      // Add 1 week before and after the black monday event
-     *      val tf = TimeFrame.BlackMonday1987.extend(1.weeks)
-     */
-    fun extend(before: TemporalAmount, after: TemporalAmount = before) =
-        Timeframe(start.subtract(before), end.add(after), inclusive)
-
-    /**
-     * Convert a timeframe to a timeline where each time is [step] size separated
-     *
+     * Convert this timeframe to a [Timeline] where each time seperated by a [step] amount.
+     * If the temporalAmount is defined as a [Period], the [Config.defaultZoneId] will be used as the ZoneId.
      * Usage:
      *      timeframe.toTimeline(1.days)
      */
@@ -278,13 +275,15 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     /**
      * Split a timeframe in multiple individual timeframes each of the fixed [period] length. One common use case is
      * to create timeframes that can be used in a walk forward back-test.
+     *
+     * If the temporalAmount is defined as a [Period], the [Config.defaultZoneId] will be used as the ZoneId.
      */
     fun split(period: TemporalAmount): List<Timeframe> {
         val result = mutableListOf<Timeframe>()
         var last = start
         while (true) {
             val next = last.add(period)
-            if (! beforeEnd(next)) {
+            if (!beforeEnd(next)) {
                 result.add(Timeframe(last, end, inclusive))
                 return result
             }
@@ -323,14 +322,16 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Subtract a [period] from this timeframe and return the result
+     * Subtract a [period] from start- and end-time of this timeframe and return the result.
+     * If the temporalAmount is defined as a [Period], the [Config.defaultZoneId] will be used as the ZoneId.
      *
      *      val newTimeFrame = timeframe - 2.days
      */
     operator fun minus(period: TemporalAmount) = Timeframe(start.subtract(period), end.subtract(period), inclusive)
 
     /**
-     * Add a [period] to this timeframe and return the result.
+     * Add a [period] to start- and end-time of this timeframe and return the result.
+     * If the temporalAmount is defined as a [Period], the [Config.defaultZoneId] will be used as the ZoneId.
      *
      *      val newTimeFrame = timeframe + 2.days
      */

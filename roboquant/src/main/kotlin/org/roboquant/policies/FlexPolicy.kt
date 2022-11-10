@@ -18,15 +18,16 @@ package org.roboquant.policies
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
+import org.roboquant.brokers.contains
 import org.roboquant.brokers.getPosition
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
+import org.roboquant.orders.contains
 import org.roboquant.strategies.Signal
 import java.math.BigDecimal
 import java.math.RoundingMode
-import java.time.Instant
 
 /**
  * This is the default policy that will be used if no other policy is specified. There are several properties that
@@ -36,11 +37,13 @@ import java.time.Instant
  * policy will create Market Orders by default, but this can be changed by overwriting the [createOrder] method in
  * a subclass.
  *
- * @property orderPercentage The percentage of overall equity value to allocate to a single order, default is 1% (0.01)
+ * @property orderPercentage The percentage of the equity value to allocate to a single order, default is 1% (0.01)
  * @property shorting Can the policy create orders that possibly lead to short positions, default is false
  * @property priceType The type of price to use, default is "DEFAULT"
  * @property fractions For fractional trading, the amount of fractions (decimals) to allow for. Default is 0
  * @property oneOrderOnly Only allow one order to be open for a given asset at a time, default is true
+ * @property safetyMargin the percentage of the equity value that you don't want to allocate to orders. This way you
+ * are more likely stay away from bounced orders or margin calls. Default is same value as [orderPercentage]
  * @constructor Create new Default Policy
  */
 open class FlexPolicy(
@@ -49,6 +52,7 @@ open class FlexPolicy(
     private val priceType: String = "DEFAULT",
     private val fractions: Int = 0,
     private val oneOrderOnly: Boolean = true,
+    private val safetyMargin: Double = orderPercentage
 ) : BasePolicy() {
 
     private val logger = Logging.getLogger(FlexPolicy::class)
@@ -72,21 +76,15 @@ open class FlexPolicy(
 
 
     /**
-     * Return the size that can be bought/sold with the provided [amount] given the [price] in the currency of
-     * the asset at the provided [time]. This implementation will take into consideration the configured [fractions].
+     * Return the size that can be bought/sold with the provided [amount] and [price] of the asset. This implementation
+     * also takes into consideration the configured [fractions].
      *
      * This method will only be invoked if the signal is not reducing a position.
      */
-    open fun calcSize(amount: Amount, signal: Signal, price: Double, time: Instant): Size {
-        val asset = signal.asset
-        val singleContractPrice = asset.value(Size.ONE, price).value
-        val availableAssetCash = amount.convert(asset.currency, time).value
-        return if (availableAssetCash <= 0.0) {
-            Size.ZERO
-        } else {
-            val size = BigDecimal(availableAssetCash / singleContractPrice).setScale(fractions, RoundingMode.DOWN)
-            Size(size) * signal.rating.direction
-        }
+    open fun calcSize(amount: Double, signal: Signal, price: Double): Size {
+        val singleContractPrice = signal.asset.value(Size.ONE, price).value
+        val size = BigDecimal(amount / singleContractPrice).setScale(fractions, RoundingMode.DOWN)
+        return Size(size) * signal.rating.direction
     }
 
     /**
@@ -98,17 +96,6 @@ open class FlexPolicy(
         return MarketOrder(signal.asset, size)
     }
 
-    /**
-     * Get the amount of cash to allocate to a new order. Default implementation is using the following formula:
-     *
-     *      account.equityAmount * orderPercentage
-     *
-     * Please note that closing a position is always possible since it doesn't rely on this amount.
-     */
-    open fun getOrderAmount(account: Account): Amount {
-        return account.equityAmount * orderPercentage
-    }
-
 
     /**
      * @see Policy.act
@@ -118,14 +105,17 @@ open class FlexPolicy(
         if (signals.isEmpty()) return emptyList()
 
         val orders = mutableListOf<Order>()
-        var buyingPower = account.buyingPower
-        val amountPerOrder = getOrderAmount(account)
+        val equityAmount = account.equityAmount
+        val amountPerOrder = equityAmount * orderPercentage
+        val safetyAmount =  equityAmount * safetyMargin
+        var buyingPower = account.buyingPower - safetyAmount.value
 
         @Suppress("LoopWithTooManyJumpStatements")
         for (signal in signals) {
             val asset = signal.asset
 
-            if (oneOrderOnly && account.openOrders.any { it.asset == asset }) continue
+            if (oneOrderOnly && (account.openOrders.contains(asset)|| orders.contains(asset))) continue
+
             val price = event.getPrice(asset, priceType)
             logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder price=$price" }
 
@@ -139,21 +129,20 @@ open class FlexPolicy(
                 } else {
                     if (position.open) continue // we don't increase position sizing
                     if (!signal.entry) continue // signal doesn't allow to open new positions
+                    if (amountPerOrder > buyingPower) continue
 
-                    val size = calcSize(amountPerOrder, signal, price, event.time)
+                    val assetAmount = amountPerOrder.convert(asset.currency, event.time).value
+                    val size = calcSize(assetAmount, signal, price)
                     if (size.iszero) continue
                     if (size < 0 && !shorting) continue
 
-                    // Check if we have enough buying power to place the order
-                    val assetExposure = asset.value(size, price).absoluteValue
-                    val exposure = assetExposure.convert(buyingPower.currency, event.time).value
-                    if (exposure > buyingPower.value) continue // not enough buying power
-
                     val order = createOrder(signal, size, price)
                     if (order != null) {
-                        logger.debug { "signal=${signal} amount=$amountPerOrder exposure=$exposure order=$order" }
+                        val assetExposure = asset.value(size, price).absoluteValue
+                        val exposure = assetExposure.convert(buyingPower.currency, event.time).value
                         orders.add(order)
                         buyingPower -= exposure // reduce buying power with exposed amount
+                        logger.debug { "signal=${signal} amount=$amountPerOrder exposure=$exposure order=$order" }
                     }
                 }
 

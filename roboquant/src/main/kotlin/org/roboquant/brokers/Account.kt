@@ -288,6 +288,8 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
     return s
 }
 
+operator fun Collection<OrderState>.contains(asset: Asset) = any { it.asset == asset}
+
 /**
  * Create a summary of the trades
  */
