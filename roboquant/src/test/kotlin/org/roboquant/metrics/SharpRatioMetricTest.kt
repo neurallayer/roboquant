@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.feeds.test.HistoricTestFeed
-import org.roboquant.logging.MemoryLogger
+import org.roboquant.loggers.MemoryLogger
 import org.roboquant.strategies.TestStrategy
 import kotlin.test.assertTrue
 

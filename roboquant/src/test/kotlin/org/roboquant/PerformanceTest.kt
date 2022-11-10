@@ -7,8 +7,8 @@ import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.RandomWalkFeed
 import org.roboquant.feeds.filter
-import org.roboquant.logging.LastEntryLogger
-import org.roboquant.logging.SilentLogger
+import org.roboquant.loggers.LastEntryLogger
+import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PNLMetric
 import org.roboquant.policies.FlexPolicy

@@ -28,7 +28,7 @@ import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRExchangeRates
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
-import org.roboquant.logging.ConsoleLogger
+import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder

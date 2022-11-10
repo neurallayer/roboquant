@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
-package org.roboquant.logging
+package org.roboquant.loggers
 
 import org.roboquant.RunInfo
 import org.roboquant.metrics.MetricResults
 
 /**
- * Silent logger ignores all metrics results and only counts the number of invocations.
- * Used mainly during unit tests to suppress the output or memory usage of logging.
+ * Output metric results to the console using plain println. This works with Notebooks and standalone applications.
+ * By default, it will log all metrics of step in a single line, but by setting [splitMetrics] to true, every metric
+ * will be logged to a separate line.
  */
-class SilentLogger : MetricsLogger {
-
-    /**
-     * how many events have been received during this run
-     */
-    var events = 0L
-        private set
+class ConsoleLogger(private val splitMetrics: Boolean = false) : MetricsLogger {
 
     override fun log(results: MetricResults, info: RunInfo) {
-        events += 1
-    }
+        if (results.isEmpty()) return
 
-    override fun reset() {
-        events = 0L
+        if (splitMetrics) {
+            results.forEach {
+                println("$info ${it.key}=${it.value}")
+            }
+        } else {
+            println("$info $results")
+        }
     }
 
 }

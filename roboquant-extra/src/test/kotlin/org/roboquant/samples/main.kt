@@ -21,7 +21,7 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.iex.Range
-import org.roboquant.logging.MemoryLogger
+import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PositionMetric
 import org.roboquant.metrics.ProgressMetric

@@ -20,7 +20,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
-import org.roboquant.logging.MemoryLogger
+import org.roboquant.loggers.MemoryLogger
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 

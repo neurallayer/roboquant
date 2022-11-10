@@ -25,7 +25,7 @@ import org.roboquant.common.Size
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
 import org.roboquant.feeds.RandomWalkFeed
-import org.roboquant.logging.LastEntryLogger
+import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
 import kotlin.test.assertTrue

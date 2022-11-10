@@ -26,10 +26,10 @@ import org.icepear.echarts.components.dataZoom.DataZoom
 import org.roboquant.common.clean
 import org.roboquant.common.max
 import org.roboquant.common.min
-import org.roboquant.logging.MetricsEntry
-import org.roboquant.logging.getName
-import org.roboquant.logging.groupBy
-import org.roboquant.logging.toDoubleArray
+import org.roboquant.loggers.MetricsEntry
+import org.roboquant.loggers.getName
+import org.roboquant.loggers.groupBy
+import org.roboquant.loggers.toDoubleArray
 import java.math.MathContext
 import java.math.RoundingMode
 import java.time.temporal.ChronoUnit

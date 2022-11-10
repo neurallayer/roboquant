@@ -23,9 +23,9 @@ import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.series.LineStyle
-import org.roboquant.logging.MetricsEntry
-import org.roboquant.logging.getName
-import org.roboquant.logging.group
+import org.roboquant.loggers.MetricsEntry
+import org.roboquant.loggers.getName
+import org.roboquant.loggers.group
 import java.math.BigDecimal
 import java.math.RoundingMode
 

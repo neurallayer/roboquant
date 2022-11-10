@@ -20,7 +20,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
-import org.roboquant.logging.SilentLogger
+import org.roboquant.loggers.SilentLogger
 import kotlin.test.assertEquals
 
 internal class RSIStrategyTest {

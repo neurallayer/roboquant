@@ -23,7 +23,7 @@ import org.roboquant.alpaca.*
 import org.roboquant.common.*
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.csv.CSVFeed
-import org.roboquant.logging.InfoLogger
+import org.roboquant.loggers.InfoLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy

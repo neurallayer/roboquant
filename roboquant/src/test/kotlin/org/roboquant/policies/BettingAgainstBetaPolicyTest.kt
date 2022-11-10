@@ -20,7 +20,7 @@ import org.roboquant.Roboquant
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.feeds.RandomWalkFeed
-import org.roboquant.logging.MemoryLogger
+import org.roboquant.loggers.MemoryLogger
 import org.roboquant.strategies.NoSignalStrategy
 import kotlin.test.Test
 import kotlin.test.assertTrue

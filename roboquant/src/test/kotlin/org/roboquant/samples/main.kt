@@ -31,9 +31,9 @@ import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.timeseries
-import org.roboquant.logging.LastEntryLogger
-import org.roboquant.logging.MemoryLogger
-import org.roboquant.logging.toDoubleArray
+import org.roboquant.loggers.LastEntryLogger
+import org.roboquant.loggers.MemoryLogger
+import org.roboquant.loggers.toDoubleArray
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PNLMetric
 import org.roboquant.metrics.ProgressMetric

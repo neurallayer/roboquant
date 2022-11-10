@@ -14,35 +14,24 @@
  * limitations under the License.
  */
 
-package org.roboquant.logging
+package org.roboquant.loggers
 
-import org.roboquant.RunInfo
 import org.roboquant.RunPhase
 import org.roboquant.TestData
-import org.roboquant.common.Timeframe
-import java.time.Instant
 import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
-internal class SkipWarmupLoggerTest {
+internal class InfoLoggerTest {
 
     @Test
     fun test() {
         val metrics = TestData.getMetrics()
-        val logger = MemoryLogger(showProgress = false).skipFirst(10)
+        val logger = InfoLogger()
+        logger.log(metrics, TestData.getRunInfo())
+        logger.end(RunPhase.VALIDATE)
 
-        repeat(9) {
-            val info = RunInfo("run-1", 1, it, Instant.now(), Timeframe.INFINITE, RunPhase.MAIN)
-            logger.log(metrics, info)
-        }
-        assertTrue(logger.metricNames.isEmpty())
-
-        repeat(4) {
-            val info = RunInfo("run-1", 1, it + 9, Instant.now(), Timeframe.INFINITE, RunPhase.MAIN)
-            logger.log(metrics, info)
-        }
-        assertFalse(logger.metricNames.isEmpty())
+        val logger2 = InfoLogger(splitMetrics = true)
+        logger2.log(metrics, TestData.getRunInfo())
+        logger2.end(RunPhase.VALIDATE)
     }
 
 }

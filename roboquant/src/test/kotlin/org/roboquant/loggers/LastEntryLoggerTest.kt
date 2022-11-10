@@ -14,26 +14,30 @@
  * limitations under the License.
  */
 
-package org.roboquant.logging
+package org.roboquant.loggers
 
-import kotlin.test.*
+import org.roboquant.RunPhase
 import org.roboquant.TestData
-import kotlin.test.assertEquals
+import kotlin.test.*
 
-internal class SilentLoggerTest {
+internal class LastEntryLoggerTest {
 
     @Test
-    fun silentLogger() {
-        val logger = SilentLogger()
-        logger.log(TestData.getMetrics(), TestData.getRunInfo())
-        assertEquals(1, logger.events)
-        assertTrue(logger.metricNames.isEmpty())
-        assertTrue(logger.getMetric("key1").isEmpty())
+    fun test() {
+        val metrics = TestData.getMetrics()
+        val logger = LastEntryLogger()
+        assertFalse(logger.showProgress)
 
-        logger.log(TestData.getMetrics(), TestData.getRunInfo())
-        assertEquals(2, logger.events)
+        logger.log(metrics, TestData.getRunInfo())
+        logger.end(RunPhase.VALIDATE)
+        assertTrue(logger.metricNames.isNotEmpty())
+
+        val m1 = logger.metricNames.first()
+        val m = logger.getMetric(m1)
+        assertEquals(m1, m.first().name)
 
         logger.reset()
-        assertEquals(0L, logger.events)
+        assertTrue(logger.metricNames.isEmpty())
     }
+
 }

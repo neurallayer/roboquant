@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 
-package org.roboquant.logging
+package org.roboquant.loggers
 
-import org.roboquant.RunPhase
+import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import kotlin.test.*
 
-internal class LastEntryLoggerTest {
+internal class ConsoleLoggerTest {
 
     @Test
-    fun test() {
-        val metrics = TestData.getMetrics()
-        val logger = LastEntryLogger()
-        assertFalse(logger.showProgress)
+    fun consoleLogger() {
+        val logger = ConsoleLogger()
+        logger.log(TestData.getMetrics(), TestData.getRunInfo())
+    }
 
-        logger.log(metrics, TestData.getRunInfo())
-        logger.end(RunPhase.VALIDATE)
-        assertTrue(logger.metricNames.isNotEmpty())
-
-        val m1 = logger.metricNames.first()
-        val m = logger.getMetric(m1)
-        assertEquals(m1, m.first().name)
-
-        logger.reset()
-        assertTrue(logger.metricNames.isEmpty())
+    @Test
+    fun splitMetrics() {
+        val logger = ConsoleLogger(splitMetrics = true)
+        logger.log(TestData.getMetrics(), TestData.getRunInfo())
     }
 
 }

@@ -22,8 +22,8 @@ import org.icepear.echarts.components.title.Title
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.Config
 import org.roboquant.common.round
-import org.roboquant.logging.MetricsEntry
-import org.roboquant.logging.getName
+import org.roboquant.loggers.MetricsEntry
+import org.roboquant.loggers.getName
 import java.math.BigDecimal
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

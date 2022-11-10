@@ -16,7 +16,7 @@
 
 package org.roboquant.jupyter
 
-import org.roboquant.logging.MemoryLogger
+import org.roboquant.loggers.MemoryLogger
 import kotlin.test.assertTrue
 import org.junit.jupiter.api.Test
 

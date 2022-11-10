@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package org.roboquant.jupyter
+package org.roboquant.loggers
 
-import org.roboquant.loggers.MemoryLogger
-import org.junit.jupiter.api.Test
-import kotlin.test.assertTrue
+import kotlin.test.*
+import org.roboquant.TestData
+import kotlin.test.assertEquals
 
-internal class MetricHistogramChartTest {
+internal class SilentLoggerTest {
 
     @Test
-    fun test() {
-        val logger = MemoryLogger()
-        val data = logger.getMetric("test")
-        val chart = MetricHistogramChart(data)
-        assertTrue(chart.asHTML().isNotBlank())
-    }
+    fun silentLogger() {
+        val logger = SilentLogger()
+        logger.log(TestData.getMetrics(), TestData.getRunInfo())
+        assertEquals(1, logger.events)
+        assertTrue(logger.metricNames.isEmpty())
+        assertTrue(logger.getMetric("key1").isEmpty())
 
+        logger.log(TestData.getMetrics(), TestData.getRunInfo())
+        assertEquals(2, logger.events)
+
+        logger.reset()
+        assertEquals(0L, logger.events)
+    }
 }

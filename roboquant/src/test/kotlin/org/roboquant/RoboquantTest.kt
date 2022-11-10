@@ -24,9 +24,9 @@ import org.roboquant.common.RoboquantException
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.test.HistoricTestFeed
-import org.roboquant.logging.LastEntryLogger
-import org.roboquant.logging.MemoryLogger
-import org.roboquant.logging.SilentLogger
+import org.roboquant.loggers.LastEntryLogger
+import org.roboquant.loggers.MemoryLogger
+import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.Metric
 import org.roboquant.metrics.MetricResults

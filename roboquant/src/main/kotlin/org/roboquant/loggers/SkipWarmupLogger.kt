@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.logging
+package org.roboquant.loggers
 
 import org.roboquant.RunInfo
 import org.roboquant.metrics.MetricResults

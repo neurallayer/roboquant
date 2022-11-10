@@ -30,8 +30,8 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
-import org.roboquant.logging.MemoryLogger
-import org.roboquant.logging.MetricsLogger
+import org.roboquant.loggers.MemoryLogger
+import org.roboquant.loggers.MetricsLogger
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.Order
 import org.roboquant.policies.FlexPolicy

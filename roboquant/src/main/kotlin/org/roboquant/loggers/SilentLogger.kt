@@ -14,23 +14,29 @@
  * limitations under the License.
  */
 
-package org.roboquant.logging
+package org.roboquant.loggers
 
-import org.junit.jupiter.api.Test
-import org.roboquant.TestData
+import org.roboquant.RunInfo
+import org.roboquant.metrics.MetricResults
 
-internal class ConsoleLoggerTest {
+/**
+ * Silent logger ignores all metrics results and only counts the number of invocations.
+ * Used mainly during unit tests to suppress the output or memory usage of logging.
+ */
+class SilentLogger : MetricsLogger {
 
-    @Test
-    fun consoleLogger() {
-        val logger = ConsoleLogger()
-        logger.log(TestData.getMetrics(), TestData.getRunInfo())
+    /**
+     * how many events have been received during this run
+     */
+    var events = 0L
+        private set
+
+    override fun log(results: MetricResults, info: RunInfo) {
+        events += 1
     }
 
-    @Test
-    fun splitMetrics() {
-        val logger = ConsoleLogger(splitMetrics = true)
-        logger.log(TestData.getMetrics(), TestData.getRunInfo())
+    override fun reset() {
+        events = 0L
     }
 
 }

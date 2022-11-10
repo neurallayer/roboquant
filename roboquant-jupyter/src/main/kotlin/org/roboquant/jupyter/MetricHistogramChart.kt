@@ -25,10 +25,10 @@ import org.icepear.echarts.components.coord.cartesian.CategoryAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.tooltip.Tooltip
-import org.roboquant.logging.MetricsEntry
+import org.roboquant.loggers.MetricsEntry
 import org.roboquant.common.clean
-import org.roboquant.logging.getName
-import org.roboquant.logging.toDoubleArray
+import org.roboquant.loggers.getName
+import org.roboquant.loggers.toDoubleArray
 import java.math.BigDecimal
 import java.math.RoundingMode
 
