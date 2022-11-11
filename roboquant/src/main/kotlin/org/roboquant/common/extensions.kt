@@ -49,6 +49,9 @@ operator fun Instant.compareTo(timeframe: Timeframe): Int {
  */
 fun Instant.toUTC(): ZonedDateTime = atZone(ZoneId.of("UTC"))
 
+/**
+ * Create a summary for a collection of strings
+ */
 fun Collection<String>.summary(header: String = "values"): Summary {
     val result = Summary(header)
     forEach { result.add(it) }
@@ -69,6 +72,9 @@ fun Collection<String>.summary(header: String = "values"): Summary {
  */
 operator fun <T> List<T>.get(range: IntRange): List<T> = subList(max(0, range.first), min(this.size, range.last + 1))
 
+/**
+ * Extension function to allow *numpy* like indexing for lists, for example someList[0..10..2]
+ */
 operator fun IntRange.rangeTo(i: Int): IntProgression = IntProgression.fromClosedRange(first, last, i)
 
 /**
@@ -86,6 +92,9 @@ fun <T> MutableCollection<T>.addNotNull(elem: T?): Boolean {
  * Make working with Double Arrays a bit more fun
  ***********************************************************/
 
+/**
+ * Divide all elements in the array by [a] number
+ */
 operator fun DoubleArray.div(a: Number): DoubleArray {
     val result = clone()
     val n = a.toDouble()
@@ -93,6 +102,9 @@ operator fun DoubleArray.div(a: Number): DoubleArray {
     return result
 }
 
+/**
+* Multiple all elements in the array by [a] number
+*/
 operator fun DoubleArray.times(a: Number): DoubleArray {
     val result = clone()
     val n = a.toDouble()
@@ -100,6 +112,9 @@ operator fun DoubleArray.times(a: Number): DoubleArray {
     return result
 }
 
+/**
+* Subtract all elements in the array by [a] number
+*/
 operator fun DoubleArray.minus(a: Number): DoubleArray {
     val result = clone()
     val n = a.toDouble()
@@ -224,8 +239,6 @@ fun DoubleArray.returns(): DoubleArray {
 }
 
 
-
-
 /**
  * return the min and max values and [low], [mid] and [high] percentile. Passed percentiles should be between
  * 0.0 and 100.0. The default values are respectively: 5.0, 50.0 and 95.0
@@ -245,7 +258,6 @@ fun DoubleArray.percentiles(
         p.evaluate(high),
         max()
     )
-
 }
 
 

@@ -100,7 +100,7 @@ Then install the jar file in the local Maven repository on your machine using th
 
 [source, shell]
 ----
-mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.17 -Dpackaging=jar
+mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.20 -Dpackaging=jar
 ----
 
 If this artefact cannot be found in your local Maven repository during a build, the module `roboquant-ibkr` will automatically be skipped. So if you don't require integration with Interactive Brokers for your trading, you can skip this step.

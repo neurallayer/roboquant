@@ -78,6 +78,8 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
 
 }
 
-
+/**
+ * Returns true is the collection of orders contains at least one for [asset], false otherwise.
+ */
 fun Collection<Order>.contains(asset: Asset) = any { it.asset == asset}
 

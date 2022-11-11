@@ -249,7 +249,7 @@ data class RunInfo internal constructor(
 ) {
 
     /**
-     * What is the duration of the run so far
+     * Return the duration of the run so far
      */
     val duration: Duration
         get() = Duration.between(timeframe.start, time)

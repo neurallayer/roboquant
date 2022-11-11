@@ -41,6 +41,9 @@ class FeedExchangeRates(
 
     private val exchangeRates = mutableMapOf<Pair<Currency, Currency>, NavigableMap<Instant, Double>>()
 
+    /**
+     * Get the currencies that are part of these exchange rates
+     */
     val currencies
         get() = exchangeRates.keys.map { listOf(it.first, it.second) }.flatten().toSet()
 

@@ -39,7 +39,7 @@ import org.roboquant.feeds.Event
  */
 class PercentageMovingWindow(size: Int, private val missingValue: Double = Double.NaN) : MovingWindow(size) {
 
-    var last: Double = Double.NaN
+    private var last: Double = Double.NaN
 
     override fun add(value: Double) {
         val diff = (value - last) / last

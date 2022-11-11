@@ -293,6 +293,10 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
     return s
 }
 
+
+/**
+ * Returns true is the collection of orderStates contains at least one for [asset], false otherwise.
+ */
 operator fun Collection<OrderState>.contains(asset: Asset) = any { it.asset == asset}
 
 /**
