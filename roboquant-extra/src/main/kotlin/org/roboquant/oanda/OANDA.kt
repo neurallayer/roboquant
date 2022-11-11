@@ -25,6 +25,7 @@ import org.roboquant.brokers.sim.*
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Config
+import org.roboquant.common.UnsupportedException
 import org.roboquant.metrics.Metric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.Strategy
@@ -63,8 +64,10 @@ object OANDA {
     }
 
     internal fun getContext(config: OANDAConfig): Context {
-        val url = if (config.demo) "https://api-fxpractice.oanda.com/" else "https://api-fxtrade.oanda.com/"
-        require(config.key.isNotBlank()) { "Couldn't locate key" }
+        val url = if (config.demo) "https://api-fxpractice.oanda.com/" else
+            throw UnsupportedException("onyl demo account supported")
+        // else "https://api-fxtrade.oanda.com/"
+        require(config.key.isNotBlank()) { "couldn't find key" }
         return ContextBuilder(url).setToken(config.key).setApplication("roboquant").build()
     }
 

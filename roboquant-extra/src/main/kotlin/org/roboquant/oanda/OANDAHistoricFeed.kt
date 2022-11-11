@@ -44,28 +44,34 @@ class OANDAHistoricFeed(configure: OANDAConfig.() -> Unit = {}) : HistoricPriceF
         accountID = OANDA.getAccountID(config.account, ctx)
     }
 
-    val availableAssets by lazy {
+    private val availableAssetsMap by lazy {
         OANDA.getAvailableAssets(ctx, accountID)
     }
 
+    /**
+     * Return the available assets to retrieve
+     */
+    val availableAssets
+        get() = availableAssetsMap.values
+
+    /**
+     * Retrieve historic data for the provided [symbols]
+     */
     fun retrieve(
         vararg symbols: String,
         timeframe: Timeframe = Timeframe.past(1.days),
         granularity: String = "M1",
         priceType: String = "M",
     ) {
+        for (symbol in symbols) require(symbol in availableAssetsMap) { "symbol=$symbol not available"}
         for (symbol in symbols) {
-            if (symbol !in availableAssets) {
-                logger.warn("$symbol not in available assets")
-                continue
-            }
             val request = InstrumentCandlesRequest(InstrumentName(symbol))
                 .setPrice(priceType)
                 .setFrom(timeframe.start.toString())
                 .setTo(timeframe.end.toString())
                 .setGranularity(CandlestickGranularity.valueOf(granularity))
             val resp = ctx.instrument.candles(request)
-            val asset = availableAssets[resp.instrument.toString()]!!
+            val asset = availableAssetsMap[resp.instrument.toString()]!!
             if (resp.candles.isEmpty()) logger.warn("No candles retrieved for $symbol for period $timeframe")
             resp.candles.forEach {
                 with(it.mid) {

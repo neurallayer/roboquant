@@ -165,7 +165,7 @@
                         <configuration>
                             <jdkVersion>11</jdkVersion>
                             <suppressObviousFunctions>true</suppressObviousFunctions>
-                            <reportUndocumented>true</reportUndocumented>
+                            <reportUndocumented>false</reportUndocumented>
                             <suppressInheritedMembers>true</suppressInheritedMembers>
                             <sourceLinks>
                                 <link>

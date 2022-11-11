@@ -52,10 +52,19 @@ class OANDALiveFeed(
         accountID = OANDA.getAccountID(config.account, ctx)
     }
 
-    val availableAssets by lazy {
+    private val availableAssetsMap by lazy {
         OANDA.getAvailableAssets(ctx, this.accountID)
     }
 
+    /**
+     * Return all available assets to subscribe to
+     */
+    val availableAssets
+        get() = availableAssetsMap.values
+
+    /**
+     * Return all subscribed assets
+     */
     override val assets
         get() = subscriptions.values.toSortedSet()
 
@@ -77,8 +86,8 @@ class OANDALiveFeed(
     ) {
         val gr = CandlestickGranularity.valueOf(granularity)
         symbols.forEach {
-            val asset = availableAssets[it]
-            require(asset != null) { "invalid symbol $it"}
+            val asset = availableAssetsMap[it]
+            require(asset != null) { "invalid symbol=$it"}
             subscriptions[it] = asset
         }
         val requests = symbols.map {
@@ -94,7 +103,7 @@ class OANDALiveFeed(
                 val actions = mutableListOf<Action>()
                 for (request in requests) {
                     val resp = ctx.instrument.candles(request)
-                    val asset = availableAssets[resp.instrument.toString()]!!
+                    val asset = availableAssetsMap[resp.instrument.toString()]!!
                     resp.candles.forEach {
                         with(it.mid) {
                             val action =
@@ -126,7 +135,7 @@ class OANDALiveFeed(
     fun subscribeOrderBook(vararg symbols: String, delay: Long = 5_000L) {
         logger.info { "Subscribing to order books for ${symbols.size} symbols" }
         symbols.forEach {
-            val asset = availableAssets[it]
+            val asset = availableAssetsMap[it]
             require (asset != null) { "No available asset found for symbol $it"}
             subscriptions[it] = asset
         }
@@ -156,7 +165,7 @@ class OANDALiveFeed(
                             }
                         )
                     }
-                    logger.debug { "Got ${actions.size} order-book actions at $now" }
+                    logger.debug { "actions=${actions.size} type=order-book time=$now" }
                     if (actions.isNotEmpty()) send(Event(actions, now))
                     since = resp.time
                 }

@@ -42,7 +42,7 @@ internal class PriceActionTest {
         assertEquals(p.askPrice, p.getPrice("ASK"))
         assertEquals(p.bidPrice, p.getPrice("BID"))
         assertEquals(4.0, p.volume)
-
+        assertEquals(0.1, p.spread)
     }
 
     @Test
@@ -96,6 +96,7 @@ internal class PriceActionTest {
         assertEquals(2, action.asks.size)
         assertEquals(2, action.bids.size)
         assertEquals(9.5, action.getPrice())
+        assertEquals(0.1, action.spread)
     }
 
     @Test

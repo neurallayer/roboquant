@@ -18,24 +18,56 @@ package org.roboquant.loggers
 
 import org.roboquant.RunInfo
 import org.roboquant.metrics.MetricResults
+import java.text.DecimalFormat
+import java.time.temporal.ChronoUnit
 
 /**
  * Output metric results to the console using plain println. This works with Notebooks and standalone applications.
- * By default, it will log all metrics of step in a single line, but by setting [splitMetrics] to true, every metric
+ * By default, it will log all metrics of a step to a single line, but by setting [splitMetrics] to true, every metric
  * will be logged to a separate line.
+ *
+ * @see [InfoLogger]
+ *
+ * @property splitMetrics should every metric have its own output line, default is false
+ * @property precision the precision of the time output, default is [ChronoUnit.SECONDS]
  */
-class ConsoleLogger(private val splitMetrics: Boolean = false) : MetricsLogger {
+open class ConsoleLogger(
+    private val splitMetrics: Boolean = false,
+    private val precision: ChronoUnit = ChronoUnit.SECONDS
+) : MetricsLogger {
+
+    private val formatter = DecimalFormat("###,###,###,###,###.####")
+    private fun Map<*, *>.pretty() = toString().removePrefix("{").removeSuffix("}")
+
+    private fun MetricResults.format(): Map<String, String> {
+        return mapValues {
+            formatter.format(it.value)
+        }
+    }
+
+    protected fun getLines(results: MetricResults, info: RunInfo) : List<String> {
+        val time = info.time.truncatedTo(precision)
+        return if (!splitMetrics)
+                listOf(mapOf(
+                    "run" to info.run,
+                    "episode" to info.episode,
+                    "time" to time,
+                    "step" to info.step
+                ).pretty()  + ", " + results.format().pretty() )
+        else
+            results.map {
+                    mapOf(
+                        "run" to info.run,
+                        "episode" to info.episode,
+                        "time" to time,
+                        "step" to info.step,
+                        it.key to formatter.format(it.value)
+                    ).pretty()
+            }
+    }
 
     override fun log(results: MetricResults, info: RunInfo) {
-        if (results.isEmpty()) return
-
-        if (splitMetrics) {
-            results.forEach {
-                println("$info ${it.key}=${it.value}")
-            }
-        } else {
-            println("$info $results")
-        }
+        for (line in getLines(results, info)) println(line)
     }
 
 }

@@ -19,49 +19,28 @@ package org.roboquant.loggers
 import org.roboquant.RunInfo
 import org.roboquant.common.Logging
 import org.roboquant.metrics.MetricResults
+import java.time.temporal.ChronoUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 
 /**
  * Uses the [Logger] under the hood to log metric results, It will log everything by default at
- * [Level.INFO] level, but this can be configured.
+ * [Level.INFO] level.
+ *
+ * @property splitMetrics should every metric have its own logging line, default is false
+ * @property precision the precision of the time output, default is [ChronoUnit.SECONDS]
  *
  * @constructor Create new Info logger
  */
 class InfoLogger(
     private val splitMetrics: Boolean = false,
-) : MetricsLogger {
+    private val precision: ChronoUnit = ChronoUnit.SECONDS
+) : ConsoleLogger(splitMetrics, precision) {
 
     private val logger = Logging.getLogger(InfoLogger::class)
 
     override fun log(results: MetricResults, info: RunInfo) {
-        if (results.isEmpty()) return
-
-
-        if (!splitMetrics)
-            logger.info {
-                mapOf(
-                    "run" to info.run,
-                    "epoch" to info.episode,
-                    "time" to info.time,
-                    "step" to info.step,
-                    "metrics" to results
-                ).toString()
-            }
-        else
-            results.forEach {
-                logger.info {
-                    mapOf(
-                        "run" to info.run,
-                        "epoch" to info.episode,
-                        "time" to info.time,
-                        "step" to info.step,
-                        "name" to it.key,
-                        "value" to it.value
-                    ).toString()
-                }
-            }
-
+        if (logger.isInfoEnabled) for (line in getLines(results, info)) logger.info(line)
     }
 
 }

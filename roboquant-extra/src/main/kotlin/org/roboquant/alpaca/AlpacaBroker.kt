@@ -43,8 +43,6 @@ import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosit
  * See also the Alpaca feed components if you want to use Alpaca also for retrieving market data.
  *
  * @constructor Create new Alpaca broker
- *
- * @sample org.roboquant.samples.alpacaBroker
  */
 class AlpacaBroker(
     configure: AlpacaConfig.() -> Unit = {}

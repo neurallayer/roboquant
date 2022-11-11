@@ -30,14 +30,13 @@ import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
-import java.math.BigDecimal
 import java.time.Instant
 
 /**
  * Implementation of the [Broker] interface that can be used for paper- and live-trading using OANDA as your broker.
  */
 class OANDABroker(
-    private val maxLeverage: Double = 30.0, // Used to calculate buying power
+    private val maxLeverage: Double = 20.0, // Used to calculate buying power
     configure: OANDAConfig.() -> Unit = {}
 ) : Broker {
 
@@ -71,7 +70,7 @@ class OANDABroker(
         ctx = OANDA.getContext(config)
         accountID = OANDA.getAccountID(config.account, ctx)
         availableAssetsMap = OANDA.getAvailableAssets(ctx, this.accountID).toSortedMap()
-        initAccount()
+        sync()
     }
 
     private fun getPosition(symbol: String, p: PositionSide): Position {
@@ -83,20 +82,19 @@ class OANDABroker(
     }
 
     /**
-     * Update portfolio
-     *
+     * Update portfolio, only open positions are exposed in roboquant
      */
     private fun syncPortfolio() {
         _account.portfolio.clear()
         val positions = ctx.position.listOpen(accountID).positions
         for (p in positions) {
-            logger.debug { "Received position $p" }
+            logger.debug { "received position=$p" }
             val symbol = p.instrument.toString()
-            if (p.long.units.bigDecimalValue() != BigDecimal.ZERO) {
+            if (p.long.units.bigDecimalValue().signum() != 0) {
                 val position = getPosition(symbol, p.long)
                 _account.setPosition(position)
             }
-            if (p.short.units.bigDecimalValue() != BigDecimal.ZERO) {
+            if (p.short.units.bigDecimalValue().signum() != 0) {
                 val position = getPosition(symbol, p.short)
                 _account.setPosition(position)
             }
@@ -104,28 +102,26 @@ class OANDABroker(
     }
 
     /**
-     * First time when connecting, update the state of roboquant account with broker account. Only cash and positions
-     * are synced, and it is assumed there are no open orders pending.
+     * Sync the state of OANDA with roboquant. The order is important since sync of account requires portfolio input
      */
-    private fun initAccount() {
-        val acc = ctx.account.get(accountID).account
-        _account.baseCurrency = Currency.getInstance(acc.currency.toString())
-        lastTransactionId = acc.lastTransactionID
+    private fun sync() {
         syncPortfolio()
         syncAccount()
-        logger.info { "Found ${_account.portfolio.values.size} existing positions in portfolio" }
     }
 
     /**
      * Sync the internal roboquant account state with the account of OANDA
      */
     private fun syncAccount() {
-        // OANDA makes doesn't report the all the required values, so this trick is required to calculate the required
-        // cash value otherwise "equity = cash + portfolioValue" is not true
-        val portfolioValue = _account.marketValue.convert(_account.baseCurrency).value
         val acc = ctx.account.get(accountID).account
-        val cashValue = acc.balance.doubleValue() - portfolioValue - acc.unrealizedPL.doubleValue()
+        _account.baseCurrency = Currency.getInstance(acc.currency.toString())
+        lastTransactionId = acc.lastTransactionID
 
+        // OANDA makes doesn't expose all the required values, so this trick is required to calculate the required
+        // cash value otherwise "equity = cash + portfolioValue" doesn't hold true
+        val portfolioValue = _account.marketValue.convert(_account.baseCurrency).value
+        val cashValue = acc.balance.doubleValue() - portfolioValue
+        
         _account.cash.clear()
         _account.cash.set(_account.baseCurrency, cashValue)
 
@@ -219,8 +215,7 @@ class OANDABroker(
         // OANDA doesn't update positions quick enough, and so they don't reflect trades just made.
         // so for now we put a sleep in here for 1 second :(
         Thread.sleep(1000)
-        syncPortfolio()
-        syncAccount()
+        sync()
         return account
     }
 }

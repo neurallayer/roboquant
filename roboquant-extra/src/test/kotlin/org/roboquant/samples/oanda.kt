@@ -21,17 +21,16 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.brokers.*
 import org.roboquant.common.*
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.OrderBook
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.AvroFeed
-import org.roboquant.feeds.filter
+import org.roboquant.feeds.*
+import org.roboquant.loggers.InfoLogger
 import org.roboquant.metrics.AccountMetric
+import org.roboquant.metrics.ProgressMetric
 import org.roboquant.oanda.*
 import org.roboquant.orders.FOK
 import org.roboquant.orders.MarketOrder
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
+import java.text.DecimalFormat
 
 fun oandaHistoricFeed() {
     val feed = OANDAHistoricFeed()
@@ -96,11 +95,13 @@ fun oandaExchangeRates() {
 fun oandaLiveOrderBook() {
     val feed = OANDALiveFeed()
     println(feed.availableAssets.size)
-    val symbols = feed.availableAssets.keys.take(100).toTypedArray()
-    feed.subscribeOrderBook(*symbols, delay = 500)
-    val tf = Timeframe.next(15.minutes)
+    val symbols = feed.availableAssets.take(100).map { it.symbol }.toTypedArray()
+    feed.subscribeOrderBook(*symbols, delay = 1_000)
+    val tf = Timeframe.next(60.minutes)
+    val formatter = DecimalFormat("######.#")
     val actions = feed.filter<OrderBook>(tf) {
-        println(it)
+        val pip = formatter.format(it.spread * 10_000)
+        println("symbol=${it.asset.symbol} spread=$pip")
         true
     }
     println(actions.size)
@@ -111,7 +112,7 @@ fun oandaLiveRecord() {
     val feed = OANDALiveFeed()
 
     // Get all the FOREX pairs
-    val symbols = feed.availableAssets.filterValues { it.type == AssetType.FOREX }.keys.toTypedArray()
+    val symbols = feed.availableAssets.filter { it.type == AssetType.FOREX }.map { it.symbol }.toTypedArray()
     feed.subscribeOrderBook(*symbols, delay = 1_000)
 
     // Record for the next 60 minutes
@@ -130,50 +131,38 @@ fun oandaLivePriceBar() {
     println(actions.size)
 }
 
-fun oandaPaperTrading() {
-    Currency.increaseDigits(3) // We want to use extra digits when displaying amounts
-    val broker = OANDABroker()
+
+fun oandaBroker(closePositions: Boolean = true) {
     Config.exchangeRates = OANDAExchangeRates()
-
-    val feed = OANDALiveFeed()
-    val symbols = broker.availableAssets.findByCurrencies("EUR", "USD", "JPY", "GBP", "CAD", "CHF").symbols
-    feed.subscribeOrderBook(*symbols)
-
-    val policy = FlexPolicy(shorting = true)
-    val roboquant = Roboquant(EMAStrategy.PERIODS_5_15, broker = broker, policy = policy)
-
-    val tf = Timeframe.next(5.minutes)
-    roboquant.run(feed, tf)
-
-    println(roboquant.broker.account.fullSummary())
-}
-
-fun oandaClosePositions() {
     val broker = OANDABroker()
-    Config.exchangeRates = OANDAExchangeRates()
 
-    val changes = broker.account.positions.close()
-    val orders = changes.map { MarketOrder(it.key, it.value) }
-    broker.place(orders, Event.empty())
     println(broker.account.fullSummary())
-}
+    println(broker.availableAssets.summary("Available Assets"))
 
-
-fun oandaBroker() {
-    Config.exchangeRates = OANDAExchangeRates()
-    val broker = OANDABroker()
-    println(broker.account.summary())
-    println(broker.account.positions.summary())
-    println(broker.availableAssets.summary())
-
-    val strategy = EMAStrategy()
-    val roboquant = Roboquant(strategy, AccountMetric(), broker = broker)
+    val roboquant = Roboquant(
+        strategy = EMAStrategy(),
+        AccountMetric(), ProgressMetric(),
+        policy = FlexPolicy(shorting = true),
+        broker = broker,
+        logger = InfoLogger(splitMetrics = false)
+    )
 
     val feed = OANDALiveFeed()
-    feed.subscribeOrderBook("EUR_USD", "GBP_USD", "GBP_EUR")
+    val currencies = listOf(Currency.EUR, Currency.USD, Currency.GBP, Currency.JPY)
+    val symbols = broker.availableAssets.filter { it.currency in currencies && it.type != AssetType.CRYPTO }.symbols
+    feed.subscribeOrderBook(*symbols)
     val tf = Timeframe.next(60.minutes)
     roboquant.run(feed, tf)
+
+    // Close all open positions
+    if (closePositions) {
+        val sizes = broker.account.positions.close()
+        val orders = sizes.map { MarketOrder(it.key, it.value) }
+        broker.place(orders, Event.empty())
+    }
     println(broker.account.positions.summary())
+    feed.close()
+
 }
 
 fun oandaBroker3() {
@@ -219,8 +208,6 @@ fun main() {
         "OANDA_LIVE_PRICEBAR" -> oandaLivePriceBar()
         "OANDA_LIVE_ORDERBOOK" -> oandaLiveOrderBook()
         "OANDA_LIVE_RECORD" -> oandaLiveRecord()
-        "OANDA_PAPER" -> oandaPaperTrading()
-        "OANDA_CLOSE" -> oandaClosePositions()
     }
 }
 

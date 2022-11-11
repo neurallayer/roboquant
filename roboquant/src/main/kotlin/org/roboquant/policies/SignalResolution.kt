@@ -139,15 +139,16 @@ fun Policy.shuffleSignals(random: Random = Config.random): Policy = SignalShuffl
  */
 private class SkipSymbolsPolicy(private val policy: Policy, private val symbols: List<String>) : Policy by policy {
 
-
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val newSignals = signals.filter { it.asset.symbol !in symbols }
         return policy.act(newSignals, account, event)
     }
-
 }
 
 /**
  * Skip [symbols] that are should not be processed into orders by removing them from the signals
  */
 fun Policy.skipSymbols(vararg symbols: String): Policy = SkipSymbolsPolicy(this, symbols.asList())
+
+
+

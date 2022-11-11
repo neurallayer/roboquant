@@ -243,6 +243,16 @@ data class PriceQuote(
     override val volume: Double
         get() = askSize + bidSize
 
+
+    /**
+     * Return the spread percentage. The used formula is
+     *
+     *      spread = (lowest_aks - highest_bid) / lowest_ask
+     */
+    val spread : Double
+        get() = (askPrice - bidPrice) / askPrice
+
+
 }
 
 /**
@@ -260,13 +270,11 @@ data class OrderBook(
     val bids: List<OrderBookEntry>
 ) : PriceAction {
 
-
     /**
      * Returns the total amount of entries (asks + bids)
      */
     val entries
         get() = asks.size + bids.size
-
 
     /**
      * Order book will by default return the unweighted **MIDPOINT** price. Other [types][type] that are supported are:
@@ -290,6 +298,19 @@ data class OrderBook(
             else -> (asks.min() + bids.max()) / 2.0
         }
     }
+
+    /**
+     * Return the spread percentage. The used formula is
+     *
+     *      spread = (lowest_aks - highest_bid) / lowest_ask
+     */
+    val spread : Double
+        get() {
+            val ask = getPrice("ASK")
+            val bid = getPrice("BID")
+            return (ask - bid) / ask
+        }
+
 
     /**
      * Returns the total outstanding volume of the order book (bid + ask volumes combined)

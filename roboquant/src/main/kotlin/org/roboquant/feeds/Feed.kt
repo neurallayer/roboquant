@@ -150,7 +150,6 @@ fun Feed.validate(
 }
 
 
-
 /**
  * Return a map with assets and their [Timeserie]
  */
