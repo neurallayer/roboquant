@@ -86,15 +86,19 @@ The build and install is tested using JDK 17 runtime, however the generated libr
 
 TIP: If you plan to make many changes and updates to the source code, checkout the https://github.com/apache/maven-mvnd[Maven Daemon] project that provides much faster builds.
 
-If you want to deploy a release (and not a SNAPSHOT) to Maven Central, use the `-P release` option.
+If you want to deploy a release (and not just a SNAPSHOT) to Maven Central, use the `-P release` option. This will then also generate source- and documentation-jar files which are mandatory when deploying a release to Maven Central.
 
 [source,shell]
 ----
 mvn clean deploy -P release
 ----
 
+Of course this requires the having the right credentials for the Maven Central repo.
+
 == Interactive Brokers
-Unfortunately we are not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file yourself. You can download version `10.15` from here: https://interactivebrokers.github.io/# and within the downloaded archive file you'll find the required `TwsApi.jar`.
+If you don't require integration with Interactive Brokers for your trading, you can skip this step.
+
+Unfortunately it is not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file yourself. You can download version `10.20` from here: https://interactivebrokers.github.io/# and within the downloaded archive file you'll find the required `TwsApi.jar`.
 
 Then install the jar file in the local Maven repository on your machine using the following command:
 
@@ -103,4 +107,45 @@ Then install the jar file in the local Maven repository on your machine using th
 mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.20 -Dpackaging=jar
 ----
 
-If this artefact cannot be found in your local Maven repository during a build, the module `roboquant-ibkr` will automatically be skipped. So if you don't require integration with Interactive Brokers for your trading, you can skip this step.
+Then you can install including the module `roboquant-ibkr`
+
+[source, shell]
+----
+mvn install -p ibkr
+----
+
+If the artefact cannot be found in your local Maven repository during a build, the ibkr profile with the module `roboquant-ibkr` will be skipped.
+
+
+== Performance Test
+To run the built-in performance test, you can use the following command
+
+[source, shell]
+----
+mvn test -Dtest="org.roboquant.PerformanceTest" -DTEST_PERFORMANCE -pl roboquant
+----
+
+It should output someting like this:
+----
+[main] INFO org.roboquant.PerformanceTest - ******  500.000 candlesticks  ******
+[main] INFO org.roboquant.PerformanceTest -      feed filter                            92 ms
+[main] INFO org.roboquant.PerformanceTest -      base run                               91 ms
+[main] INFO org.roboquant.PerformanceTest -      parallel runs (x4)                    170 ms
+[main] INFO org.roboquant.PerformanceTest -      extended run                          440 ms
+[main] INFO org.roboquant.PerformanceTest - ******  1.000.000 candlesticks  ******
+[main] INFO org.roboquant.PerformanceTest -      feed filter                           172 ms
+[main] INFO org.roboquant.PerformanceTest -      base run                              186 ms
+[main] INFO org.roboquant.PerformanceTest -      parallel runs (x4)                    415 ms
+[main] INFO org.roboquant.PerformanceTest -      extended run                         1345 ms
+[main] INFO org.roboquant.PerformanceTest - ******  5.000.000 candlesticks  ******
+[main] INFO org.roboquant.PerformanceTest -      feed filter                           874 ms
+[main] INFO org.roboquant.PerformanceTest -      base run                              906 ms
+[main] INFO org.roboquant.PerformanceTest -      parallel runs (x4)                   1003 ms
+[main] INFO org.roboquant.PerformanceTest -      extended run                        10161 ms
+[main] INFO org.roboquant.PerformanceTest - ******  10.000.000 candlesticks  ******
+[main] INFO org.roboquant.PerformanceTest -      feed filter                          1890 ms
+[main] INFO org.roboquant.PerformanceTest -      base run                             1817 ms
+[main] INFO org.roboquant.PerformanceTest -      parallel runs (x4)                   1989 ms
+[main] INFO org.roboquant.PerformanceTest -      extended run                        11821 ms
+----
+

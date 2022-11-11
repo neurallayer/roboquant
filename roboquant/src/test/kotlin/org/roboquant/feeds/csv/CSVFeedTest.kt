@@ -40,7 +40,7 @@ internal class CSVFeedTest {
 
     @Test
     fun noAssets() {
-        assertFailsWith<Exception> {
+        assertFailsWith<IllegalArgumentException> {
             CSVFeed(TestData.dataDir() + "NON_Existing_DIR")
         }
 
@@ -50,22 +50,24 @@ internal class CSVFeedTest {
         assertTrue(feed1.assets.isEmpty())
     }
 
+
+
     @Test
     fun customConfig() {
-        val asset = Asset("TEMPLATE", currencyCode = "USD", exchangeCode = "TEST123")
+        val template = Asset("TEMPLATE", currencyCode = "USD", exchangeCode = "TEST123")
         val path = Path(TestData.dataDir() + "US") / Path("AAPL.csv")
         val config = CSVConfig()
-        config.template = asset
-        assertEquals(asset, config.template)
+        config.template = template
+        assertEquals(template, config.template)
 
         val feed = CSVFeed(path) {
-            template = asset
+            this.template = template
         }
         val first = feed.first().actions.first() as PriceAction
         assertEquals("TEST123", first.asset.exchange.exchangeCode)
 
         fun CSVConfig.myConfigure() {
-            template = Asset("TEMPLATE", currencyCode = "USD",exchangeCode = "TEST345")
+            this.template = Asset("TEMPLATE", currencyCode = "USD",exchangeCode = "TEST345")
         }
 
         val feed2 = CSVFeed(path, configure = CSVConfig::myConfigure)

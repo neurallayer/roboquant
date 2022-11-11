@@ -11,6 +11,18 @@ import kotlin.test.*
 internal class CSVConfigTest {
 
 
+
+    @Test
+    fun defaultConfig() {
+        val config = CSVConfig()
+        assertEquals(Asset("TEMPLATE"), config.template)
+        assertEquals(".csv", config.fileExtension)
+        assertTrue(config.fileSkip.isEmpty())
+        assertTrue(config.parsePattern.isEmpty())
+        assertEquals("defaultBuilder", config.assetBuilder.name)
+        assertEquals(false, config.priceAdjust)
+    }
+
     @Test
     fun basic() {
         val config = CSVConfig()
@@ -20,6 +32,7 @@ internal class CSVConfigTest {
         assertFalse(config.shouldParse(File("some_non_existing_file.csv")))
         assertFalse(config.shouldParse(File("somefile.dummy_extension")))
     }
+
 
     @Test
     fun process() {
