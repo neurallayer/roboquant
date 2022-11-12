@@ -84,7 +84,7 @@ mvn clean install
 
 The build and install is tested using JDK 17 runtime, however the generated libraries are targeted against JDK 11 in order to provide better compatibility for projects that still use older versions of the JDK.
 
-TIP: If you plan to make many changes and updates to the source code, checkout the https://github.com/apache/maven-mvnd[Maven Daemon] project that provides much faster builds.
+TIP: If you plan to make many changes and updates to the source code, checkout the https://github.com/apache/maven-mvnd[Maven Daemon] project that provides much faster builds. It is a almost 100% drop-in replacement of the regular maven and is much faster.
 
 If you want to deploy a release (and not just a SNAPSHOT) to Maven Central, use the `-P release` option. This will then also generate source- and documentation-jar files which are mandatory when deploying a release to Maven Central.
 
@@ -93,7 +93,7 @@ If you want to deploy a release (and not just a SNAPSHOT) to Maven Central, use 
 mvn clean deploy -P release
 ----
 
-Of course this requires the having the right credentials for the Maven Central repo.
+Of course this requires the having the right credentials for the Maven Central repo. It will also always build the `roboquant-ibkr` module, so you'll need the locally install IBKR Java client library.
 
 == Interactive Brokers
 If you don't require integration with Interactive Brokers for your trading, you can skip this step.
@@ -111,11 +111,21 @@ Then you can install including the module `roboquant-ibkr`
 
 [source, shell]
 ----
-mvn install -p ibkr
+mvn install -P ibkr
 ----
 
 If the artefact cannot be found in your local Maven repository during a build, the ibkr profile with the module `roboquant-ibkr` will be skipped.
 
+
+== Documentation
+There is a special `doc` profile to generate documentation and see if there is something missing
+
+[source, shell]
+----
+mvn dokka:dokka -P doc
+----
+
+Please note the `release` profile has its own dokka task to generate a javadoc jar file.
 
 == Performance Test
 To run the built-in performance test, you can use the following command
