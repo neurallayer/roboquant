@@ -123,6 +123,9 @@ abstract class Chart : Output() {
      */
     var title: String? = null
 
+    /**
+     * Settings that apply to all charts
+     */
     companion object {
 
         /**
@@ -139,8 +142,20 @@ abstract class Chart : Output() {
         var maxSamples = Int.MAX_VALUE
 
         // Make this variable so charts work for both Chinese and western users.
+
+        /**
+         * Color to use for positive elements, like profit
+         */
         var positiveColor: String = "#0C0" // Green
+
+        /**
+         * Color to use for negative elements, like loss
+         */
         var negativeColor: String = "#C00" // Red
+
+        /**
+         * Neutral Color
+         */
         var neutralColor: String = "#CC0" // Yellow
 
         internal val gsonBuilder = GsonBuilder()
@@ -281,7 +296,7 @@ abstract class Chart : Output() {
 
 }
 
-fun Option.renderJson(): String {
+internal fun Option.renderJson(): String {
     // Set default transparent background so charts look better with Jupyter Notebooks
     if (backgroundColor == null) backgroundColor = "rgba(0,0,0,0)"
 

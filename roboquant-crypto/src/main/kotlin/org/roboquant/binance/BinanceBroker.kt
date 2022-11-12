@@ -39,8 +39,11 @@ import java.time.Instant
  * Implementation of the broker interface for Binance exchange. This enables live trading of cryptocurrencies
  * on the Binance exchange. This broker only supports assets of the type [AssetType.CRYPTO].
  *
- * @constructor
+ * @param baseCurrencyCode The base currency to use
+ * @property useMachineTime
+ * @param configure additional configure logic, default is to do nothing
  *
+ * @constructor
  */
 class BinanceBroker(
     baseCurrencyCode: String = "USD",
@@ -52,6 +55,9 @@ class BinanceBroker(
     private val _account = InternalAccount(Currency.getInstance(baseCurrencyCode))
     private val config = BinanceConfig()
 
+    /**
+     * @see Broker.account
+     */
     override val account: Account
         get() = _account.toAccount()
 
@@ -62,13 +68,16 @@ class BinanceBroker(
 
     init {
         config.configure()
-        val factory = BinanceConnection.getFactory(config)
+        val factory = Binance.getFactory(config)
         client = factory.newRestClient()
         logger.info("Created BinanceBroker with client $client")
-        assetMap = BinanceConnection.retrieveAssets(client)
+        assetMap = Binance.retrieveAssets(client)
         updateAccount()
     }
 
+    /**
+     * Return all available assets to trade
+     */
     val availableAssets
         get() = assetMap.values.toSortedSet()
 

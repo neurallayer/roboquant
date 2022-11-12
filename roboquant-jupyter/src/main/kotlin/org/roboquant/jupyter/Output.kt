@@ -27,6 +27,9 @@ import java.io.File
  */
 abstract class Output : Renderable {
 
+    /**
+     * @suppress
+     */
     companion object {
 
         /**

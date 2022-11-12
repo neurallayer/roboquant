@@ -29,12 +29,17 @@ import org.roboquant.feeds.PriceBar
 import java.io.Closeable
 import java.time.Instant
 
+/**
+ * Alias for Binance Candlestick Interval
+ */
 typealias Interval = CandlestickInterval
 
 /**
  * Create a new feed based on live price actions coming from the Binance exchange.
  *
  * @property useMachineTime us the machine time as timestamp for generated events
+ * @param configure
+ *
  * @constructor
  *
  */
@@ -51,6 +56,10 @@ class BinanceLiveFeed(
     private val factory: BinanceApiClientFactory
     private val client: BinanceApiWebSocketClient
     private val assetMap: Map<String, Asset>
+
+    /**
+     * Get all available assets that can be subscribed to
+     */
     val availableAssets
         get() = assetMap.values
 
@@ -62,9 +71,9 @@ class BinanceLiveFeed(
 
     init {
         config.configure()
-        factory = BinanceConnection.getFactory(config)
+        factory = Binance.getFactory(config)
         client = factory.newWebSocketClient()
-        assetMap = BinanceConnection.retrieveAssets(factory.newRestClient())
+        assetMap = Binance.retrieveAssets(factory.newRestClient())
         logger.debug { "Started BinanceFeed using web-socket client" }
     }
 
@@ -118,6 +127,9 @@ class BinanceLiveFeed(
         }
     }
 
+    /**
+     * Close this feed and stop receiving market data
+     */
     @Suppress("TooGenericExceptionCaught")
     override fun close() {
         for (c in closeables) try {

@@ -46,6 +46,9 @@ class XChangePollingLiveFeed(
 
     private val jobs = ParallelJobs()
 
+    /**
+     * Assets that are available to subscribe to
+     */
     val availableAssets by lazy {
         val symbols = exchange.exchangeSymbols
         if (symbols == null) {
@@ -97,6 +100,9 @@ class XChangePollingLiveFeed(
         }
     }
 
+    /**
+     * Stop all running jobs
+     */
     override fun close() = jobs.cancelAll()
 
     /**

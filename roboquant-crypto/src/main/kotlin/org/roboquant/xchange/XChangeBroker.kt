@@ -43,6 +43,9 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
     private val _account = InternalAccount(Currency.getInstance(baseCurrencyCode))
 
+    /**
+     * @see Broker.account
+     */
     override val account: Account
         get() = _account.toAccount()
 

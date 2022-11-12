@@ -35,12 +35,17 @@ import java.lang.Integer.max
  * It is important that the strategy is initialized with a large enough history window to support the underlying
  * technical indicators you want to use. If the history is too small, it will lead to a runtime exception.
  *
+ * @param history the amount of history to track
  */
 class TaLibStrategy(history: Int = 15) : Strategy {
 
     private var sellFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
     private var buyFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
     private val data = MultiAssetPriceBarSeries(history)
+
+    /**
+     * The underlying TaLib that will be used to run the strategy
+     */
     val taLib = TaLib()
 
     /**
@@ -197,20 +202,35 @@ class TaLibStrategy(history: Int = 15) : Strategy {
         return results
     }
 
+    /**
+     * reset all history state
+     */
     override fun reset() {
         data.clear()
     }
 
 }
 
+/**
+ * Indicator for detecting record low
+ */
 fun TaLib.recordLow(low: DoubleArray, period: Int, previous: Int = 0) =
     minIndex(low, period, previous) == low.lastIndex - previous
 
+/**
+ * Indicator for detecting record low
+ */
 fun TaLib.recordLow(data: PriceBarSeries, period: Int, previous: Int = 0) = recordLow(data.low, period, previous)
 
+/**
+ * Indicator for detecting record low
+ */
 fun TaLib.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) =
     maxIndex(high, period, previous) == high.lastIndex - previous
 
+/**
+ * Indicator for detecting record low
+ */
 fun TaLib.recordHigh(data: PriceBarSeries, period: Int, previous: Int = 0) = recordHigh(data.high, period, previous)
 
 

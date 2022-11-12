@@ -24,6 +24,9 @@ import org.roboquant.common.Config
 
 /**
  * Configuration to connect to Binance exchange APIs
+ *
+ * @property publicKey the public key to use to connect to Binance
+ * @property secretKey the secret key to use to connect to Binance
  */
 data class BinanceConfig(
     var publicKey: String = Config.getProperty("binance.public.key", ""),
@@ -31,8 +34,14 @@ data class BinanceConfig(
 )
 
 
-internal object BinanceConnection {
+/**
+ * Shared functionality
+ */
+internal object Binance {
 
+    /**
+     * return the api client factory
+     */
     fun getFactory(config: BinanceConfig): BinanceApiClientFactory {
         return if (config.publicKey.isBlank()) BinanceApiClientFactory.newInstance()
         else BinanceApiClientFactory.newInstance(config.publicKey, config.secretKey)

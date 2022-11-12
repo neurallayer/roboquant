@@ -46,6 +46,10 @@ class TaLibMetric(
     private val taLib = TaLib()
     // private val logger: Logger = Logging.getLogger(TALibMetric::class)
 
+
+    /**
+     * @see Metric.calculate
+     */
     override fun calculate(account: Account, event: Event): MetricResults {
         val metrics = mutableMapOf<String, Double>()
         val actions =
@@ -62,6 +66,9 @@ class TaLibMetric(
         return metrics
     }
 
+    /**
+     * reset state of this metric
+     */
     override fun reset() {
         super.reset()
         buffers.clear()

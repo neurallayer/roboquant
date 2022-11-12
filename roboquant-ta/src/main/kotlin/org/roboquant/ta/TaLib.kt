@@ -33,6 +33,8 @@ import org.roboquant.strategies.utils.PriceBarSeries
 /**
  * This class wraps the excellent TALib library and makes it easy to use any of indicators provided by that library.
  * This wrapper is optimized for event based updates.
+ *
+ * @property core The TaLib core library that does the actual execution of the inidactors
  */
 class TaLib(var core: Core = Core()) {
 

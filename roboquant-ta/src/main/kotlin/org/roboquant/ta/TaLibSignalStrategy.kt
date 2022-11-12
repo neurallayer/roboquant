@@ -38,6 +38,9 @@ import java.lang.Integer.max
  * It is important that the strategy is initialized with a large enough [history] window to support the underlying
  * technical indicators you want to use. If the [history] is too small, it will lead to a runtime exception.
  *
+ * @property history the history to keep track of
+ * @property block the logic
+ *
  */
 class TaLibSignalStrategy(
     private val history: Int = 15,
@@ -45,10 +48,20 @@ class TaLibSignalStrategy(
 ) : Strategy {
 
     private val buffers = mutableMapOf<Asset, PriceBarSeries>()
+
+    /**
+     * Underlying [TaLib] instance to use when executing this strategy.
+     */
     val taLib = TaLib()
 
+    /**
+     * Some default TA strategies that are based off TaLibSignalStrategy
+     */
     companion object {
 
+        /**
+         * Breakout strategy that supports different entry and exit periods
+         */
         fun breakout(entryPeriod: Int = 100, exitPeriod: Int = 50): TaLibSignalStrategy {
             val maxPeriod = max(entryPeriod, exitPeriod)
             return TaLibSignalStrategy(maxPeriod) { asset, series ->
@@ -85,10 +98,16 @@ class TaLibSignalStrategy(
         return signals
     }
 
+    /**
+     * Reset all state
+     */
     override fun reset() {
         buffers.clear()
     }
 
+    /**
+     * @suppress
+     */
     override fun toString() = "TaLibSignalStrategy history=$history"
 
 }

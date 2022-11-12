@@ -41,11 +41,14 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
 
     init {
         config.configure()
-        factory = BinanceConnection.getFactory(config)
+        factory = Binance.getFactory(config)
         client = factory.newRestClient()
-        assetMap = BinanceConnection.retrieveAssets(client)
+        assetMap = Binance.retrieveAssets(client)
     }
 
+    /**
+     * Get the available assets for retrieving market data
+     */
     val availableAssets
         get() = assetMap.values
 

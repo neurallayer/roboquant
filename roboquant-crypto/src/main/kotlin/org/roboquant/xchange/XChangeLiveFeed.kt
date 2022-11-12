@@ -58,6 +58,9 @@ class XChangeLiveFeed(
     private val subscriptions = mutableListOf<Disposable>()
     private val exchangeName = exchange.toString()
 
+    /**
+     * Assets that are available to subscribe to
+     */
     val availableAssets by lazy {
         val meta = exchange.exchangeMetaData
         if (meta == null) {
