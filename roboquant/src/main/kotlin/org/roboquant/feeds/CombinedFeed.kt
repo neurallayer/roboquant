@@ -41,4 +41,11 @@ class CombinedFeed(vararg val feeds: LiveFeed) : Feed {
         jobs.joinAll()
     }
 
+    /**
+     * Close all underlying [feeds]
+     */
+    override fun close() {
+        feeds.forEach { it.close() }
+    }
+
 }

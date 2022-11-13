@@ -27,8 +27,10 @@ internal class LiveFeedTest {
 
     private class MyLiveFeed : LiveFeed() {
 
-        fun test(event: Event) {
-            send(event)
+        fun test() {
+            repeat(10) {
+                send(Event.empty())
+            }
         }
 
     }
@@ -37,8 +39,7 @@ internal class LiveFeedTest {
     fun basic(): Unit = runBlocking {
         val feed = MyLiveFeed()
         assertFalse(feed.isActive)
-
-        assertDoesNotThrow { feed.test(Event.empty()) }
+        assertDoesNotThrow { feed.test() }
 
         feed.heartbeatInterval = 10
         Background.ioJob {
@@ -56,12 +57,13 @@ internal class LiveFeedTest {
         val feed = CombinedFeed(feed1, feed2)
         Background.ioJob {
             feed.play(EventChannel())
-            assertTrue(feed1.isActive)
-            assertTrue(feed2.isActive)
         }
-        feed.close()
-        assertFalse(feed1.isActive)
-        assertFalse(feed2.isActive)
+
+        assertDoesNotThrow {
+            feed.close()
+            feed.close()
+        }
+
     }
 
 }
