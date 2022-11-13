@@ -19,10 +19,7 @@ package org.roboquant.alpaca
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import java.time.Duration
-import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class AlpacaFeedTestIT {
 
@@ -34,7 +31,7 @@ internal class AlpacaFeedTestIT {
         val feed = AlpacaLiveFeed()
         val assets = feed.availableAssets
         assertContains(assets.map { it.symbol }, "AAPL")
-        feed.subscribe("AAPL")
+        feed.subscribeStocks("AAPL")
         val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
@@ -50,7 +47,11 @@ internal class AlpacaFeedTestIT {
     fun test2() {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
-        feed.subscribe("AAPL")
+        feed.subscribeStocks("AAPL")
+        assertTrue(feed.stocks.symbols.contains("AAPL"))
+        assertContains(feed.assets.symbols, "AAPL")
+        assertFalse(feed.crypto.symbols.contains("AAPL"))
+
         val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
@@ -65,8 +66,8 @@ internal class AlpacaFeedTestIT {
     fun test4() {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
-        val asset = feed.availableAssets.first { it.type == AssetType.CRYPTO }
-        feed.subscribeCrypto(listOf(asset))
+        val symbol = feed.availableAssets.first { it.type == AssetType.CRYPTO }.symbol
+        feed.subscribeCrypto(symbol)
         val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
@@ -103,7 +104,7 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
-        feed.retrieveQuotes("AAPL", timeframe = tf)
+        feed.retrieveStockQuotes("AAPL", timeframe = tf)
         testResult<PriceQuote>(feed, tf)
     }
 
@@ -112,7 +113,7 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
-        feed.retrieveTrades("AAPL", timeframe = tf)
+        feed.retrieveStockTrades("AAPL", timeframe = tf)
         testResult<TradePrice>(feed, tf)
     }
 
@@ -121,7 +122,7 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
-        feed.retrieve("AAPL", timeframe = tf)
+        feed.retrieveStockPriceBars("AAPL", timeframe = tf)
         testResult<PriceBar>(feed, tf)
     }
 
@@ -130,7 +131,7 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaHistoricFeed()
         val tf = Timeframe.past(10.days) - 30.minutes
-        feed.retrieve("AAPL", timeframe= tf, barDuration = 5, barPeriod = BarPeriod.MINUTE)
+        feed.retrieveStockPriceBars("AAPL", timeframe= tf, barDuration = 5, barPeriod = BarPeriod.MINUTE)
         val actions = feed.filter<PriceAction>()
         assertEquals(5, Duration.between(actions[0].first, actions[1].first).toMinutes())
     }
@@ -140,7 +141,7 @@ internal class AlpacaFeedTestIT {
         System.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed(autoConnect = false)
         feed.connect()
-        feed.subscribeStocks(listOf("*"))
+        feed.subscribeStocks("*")
         val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {

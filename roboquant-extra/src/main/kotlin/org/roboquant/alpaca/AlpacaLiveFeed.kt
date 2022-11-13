@@ -26,12 +26,11 @@ import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.trade.
 import net.jacobpeterson.alpaca.websocket.marketdata.MarketDataListener
 import net.jacobpeterson.alpaca.websocket.marketdata.MarketDataWebsocketInterface
 import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
 import org.roboquant.feeds.*
 import java.io.IOException
 import java.time.Instant
-import java.time.temporal.ChronoUnit
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -57,45 +56,89 @@ class AlpacaLiveFeed(
         availableAssets.associateBy { it.symbol }
     }
 
-    private fun String.isCrypto() = assetsMap[this]!!.type == AssetType.CRYPTO
-
-    /**
-     * TODO return only subscribed assets
-     */
-    override val assets
-        get() = assetsMap.values.toSortedSet()
 
     init {
         config.configure()
         alpacaAPI = Alpaca.getAPI(config)
-        if (autoConnect) {
-            connect(alpacaAPI.stockMarketDataStreaming())
-            connect(alpacaAPI.cryptoMarketDataStreaming())
-        }
+        if (autoConnect) connect()
     }
 
-    val availableAssets by lazy {
-        Alpaca.getAvailableAssets(alpacaAPI).values.toSortedSet()
+    private val availableStocksMap : Map<String, Asset> by lazy {
+        Alpaca.getAvailableStocks(alpacaAPI)
+    }
+
+    private val availableCryptoMap : Map<String, Asset> by lazy {
+        Alpaca.getAvailableCrypto(alpacaAPI)
+    }
+
+    /**
+     * What are the available crypto to subscribe to
+     */
+    val availableCrypto: SortedSet<Asset>
+        get() = availableCryptoMap.values.toSortedSet()
+
+    /**
+     * What are the available stocks to subscribe to
+     */
+    val availableStocks: SortedSet<Asset>
+        get() = availableStocksMap.values.toSortedSet()
+
+    /**
+     * What are the all available assets to subscribe to, stocks and crypto combined
+     */
+    val availableAssets: SortedSet<Asset>
+        get() = (availableStocksMap.values + availableCryptoMap.values).toSortedSet()
+
+    /**
+     * Subscribed stock assets
+     */
+    val stocks : SortedSet<Asset>
+        get() {
+            val conn = alpacaAPI.stockMarketDataStreaming()
+            val symbols = conn.subscribedBars() + conn.subscribedBars() + conn.subscribedBars()
+            return symbols.distinct().map { availableStocksMap[it]!! }.toSortedSet()
+        }
+
+    /**
+     * Subscribed crypto assets
+     */
+    val crypto : SortedSet<Asset>
+        get() {
+            val conn = alpacaAPI.cryptoMarketDataStreaming()
+            val symbols = conn.subscribedBars() + conn.subscribedBars() + conn.subscribedBars()
+            return symbols.distinct().map { availableStocksMap[it]!! }.toSortedSet()
+        }
+
+    /**
+     * Get all subscribed assets, stocks and crypto combined
+     */
+    override val assets : SortedSet<Asset>
+        get() =  (stocks + crypto).toSortedSet()
+
+    /**
+     * Connect to streaming data for stock market and crypto market
+     */
+    fun connect() {
+        connectMarket((alpacaAPI.stockMarketDataStreaming()))
+        connectMarket((alpacaAPI.cryptoMarketDataStreaming()))
     }
 
     /**
      * Connect to ta market data provider and start listening. This can be the stocks or crypto market data feeds.
      */
-    fun connect(
-        connection: MarketDataWebsocketInterface = alpacaAPI.stockMarketDataStreaming(),
-        timeoutMillis: Long = 5_000
-    ) {
-        require(!connection.isConnected) { "Already connected, disconnect first" }
+    private fun connectMarket(connection: MarketDataWebsocketInterface) {
+        require(!connection.isConnected) { "already connected, disconnect first" }
+        val timeoutMillis: Long = 5_000
 
         connection.subscribeToControl(
             MarketDataMessageType.SUCCESS,
             MarketDataMessageType.SUBSCRIPTION,
-            MarketDataMessageType.ERROR
+            MarketDataMessageType.ERROR,
         )
         connection.connect()
         connection.waitForAuthorization(timeoutMillis, TimeUnit.MILLISECONDS)
         if (!connection.isValid) {
-            logger.warn("Couldn't establish websocket connection")
+            logger.warn("couldn't establish websocket connection")
         } else {
             connection.setListener(listener)
         }
@@ -122,63 +165,32 @@ class AlpacaLiveFeed(
         close()
     }
 
-    private val Collection<Asset>.symbolsOrNull
-        get() = if (isEmpty()) null else map { it.symbol }.distinct()
-
-    fun subscribeStocks(
-        priceBars: Collection<String>,
-        trades: Collection<String> = emptyList(),
-        quotes: Collection<String> = emptyList()
-    ) {
-        alpacaAPI.stockMarketDataStreaming()
-            .subscribe(trades.ifEmpty { null }, quotes.ifEmpty { null }, priceBars.ifEmpty { null })
+    fun subscribeStocks(vararg symbols: String, type: PriceActionType = PriceActionType.PRICE_BAR) {
+        require(symbols.isNotEmpty())
+        symbols.forEach { require(availableStocksMap.contains(it) || it == "*") }
+        val s = symbols.toList()
+        when(type) {
+            PriceActionType.PRICE_BAR -> alpacaAPI.stockMarketDataStreaming().subscribe(s, null, null)
+            PriceActionType.QUOTE -> alpacaAPI.stockMarketDataStreaming().subscribe(null, s, null)
+            PriceActionType.TRADE -> alpacaAPI.stockMarketDataStreaming().subscribe(null, null, s)
+        }
     }
 
-    @JvmName("subscribeStocksAssets")
-    fun subscribeStocks(
-        priceBars: Collection<Asset>,
-        trades: Collection<Asset> = emptyList(),
-        quotes: Collection<Asset> = emptyList()
-    ) {
-        alpacaAPI.stockMarketDataStreaming()
-            .subscribe(trades.symbolsOrNull, quotes.symbolsOrNull, priceBars.symbolsOrNull)
-    }
-
-    fun subscribeCrypto(
-        priceBars: Collection<String>,
-        trades: Collection<String> = emptyList(),
-        quotes: Collection<String> = emptyList()
-    ) {
-        alpacaAPI.cryptoMarketDataStreaming()
-            .subscribe(trades.ifEmpty { null }, quotes.ifEmpty { null }, priceBars.ifEmpty { null })
-    }
-
-    @JvmName("subscribeCryptoAssets")
-    fun subscribeCrypto(
-        priceBars: Collection<Asset>,
-        trades: Collection<Asset> = emptyList(),
-        quotes: Collection<Asset> = emptyList()
-    ) {
-        alpacaAPI.cryptoMarketDataStreaming()
-            .subscribe(trades.symbolsOrNull, quotes.symbolsOrNull, priceBars.symbolsOrNull)
-    }
-
-    /**
-     * Subscribe to price bar data identified by their [symbols].
-     */
-    fun subscribe(vararg symbols: String) {
-        symbols.forEach { require(assetsMap.contains(it)) { "Unknown symbol $it"} }
-        val crypto = symbols.filter { it.isCrypto() }
-        if (crypto.isNotEmpty()) subscribeCrypto(crypto)
-
-        val stocks = symbols.filter { !it.isCrypto() }
-        if (stocks.isNotEmpty()) subscribeStocks(stocks)
+    fun subscribeCrypto(vararg symbols: String, type: PriceActionType = PriceActionType.PRICE_BAR) {
+        require(symbols.isNotEmpty())
+        symbols.forEach { require(availableCryptoMap.contains(it) || it == "*") }
+        val s = symbols.toList()
+        when(type) {
+            PriceActionType.PRICE_BAR -> alpacaAPI.cryptoMarketDataStreaming().subscribe(s, null, null)
+            PriceActionType.QUOTE -> alpacaAPI.cryptoMarketDataStreaming().subscribe(null, s, null)
+            PriceActionType.TRADE -> alpacaAPI.cryptoMarketDataStreaming().subscribe(null, null, s)
+        }
     }
 
     @Suppress("TooGenericExceptionCaught")
     private fun handleMsg(msg: MarketDataMessage) {
         try {
-            logger.trace { "Received msg $msg" }
+            logger.trace { "received msg=$msg" }
             if (msg is SymbolMessage) {
                 val asset = assetsMap[msg.symbol]!!
 
@@ -191,7 +203,6 @@ class AlpacaLiveFeed(
                         msg.bidPrice,
                         Double.NaN
                     )
-
                     is BarMessage -> PriceBar(
                         asset,
                         msg.open,
@@ -200,30 +211,28 @@ class AlpacaLiveFeed(
                         msg.close,
                         msg.tradeCount.toDouble()
                     )
-
                     else -> null
                 }
-
                 if (action != null) {
                     val now = Instant.now()
-                    logger.trace { "Received action $action at ${now.truncatedTo(ChronoUnit.SECONDS)}" }
+                    logger.trace { "received action=$action time=$now" }
                     val event = Event(listOf(action), now)
                     send(event)
                 }
             }
         } catch (e: Throwable) {
-            logger.warn("error during handling market data message $e")
+            logger.warn(e) { "error during handling market data message" }
         }
     }
 
     private fun createListener(): MarketDataListener {
         return MarketDataListener { streamMessageType, msg ->
-            logger.trace { "Received message of type=$streamMessageType and msg=$msg" }
+            logger.trace { "received message of type=$streamMessageType and msg=$msg" }
 
             when (streamMessageType) {
-                MarketDataMessageType.ERROR -> logger.warn("$msg")
-                MarketDataMessageType.SUBSCRIPTION -> logger.info("subscription $msg")
-                MarketDataMessageType.SUCCESS -> logger.debug("success $msg")
+                MarketDataMessageType.ERROR -> logger.error("error msg=$msg")
+                MarketDataMessageType.SUBSCRIPTION -> logger.info("subscription msg=$msg")
+                MarketDataMessageType.SUCCESS -> logger.debug("success msg=$msg")
                 else -> handleMsg(msg)
             }
         }

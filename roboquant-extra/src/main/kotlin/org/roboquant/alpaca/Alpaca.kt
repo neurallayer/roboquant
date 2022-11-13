@@ -49,12 +49,16 @@ data class AlpacaConfig(
 
 }
 
+enum class PriceActionType {
+    PRICE_BAR,
+    QUOTE,
+    TRADE
+}
+
 /**
  * Logic shared between the Alpaca Feeds and Alpaca Broker
  */
 internal object Alpaca {
-
-    private val logger = Logging.getLogger(Alpaca::class)
 
     init {
         if (Exchange.exchanges.none { it.exchangeCode == "FTXU" }) {
@@ -62,12 +66,7 @@ internal object Alpaca {
         }
     }
 
-    /**
-     * Should OTC (over The Counter) assets be included, default is false
-     */
-    private var includeOTC = false
-
-    fun getAPI(
+    internal fun getAPI(
         config: AlpacaConfig
     ): AlpacaAPI {
         require(config.publicKey.isNotBlank()) { "No public key provided" }
@@ -76,21 +75,21 @@ internal object Alpaca {
     }
 
     /**
-     * Get the available assets
+     * Get the available stocks
      */
-    fun getAvailableAssets(api: AlpacaAPI): Map<String, Asset> {
-        val availableAssets = api.assets().get(AssetStatus.ACTIVE, AssetClass.CRYPTO) + api.assets()
-            .get(AssetStatus.ACTIVE, AssetClass.US_EQUITY)
-        val exchangeCodes = Exchange.exchanges.map { e -> e.exchangeCode }
-        val result = mutableMapOf<String, Asset>()
-        availableAssets.forEach {
-            if (it.exchange != "OTC" || includeOTC) {
-                if (it.exchange !in exchangeCodes) logger.warn("Exchange ${it.exchange} not configured")
-                val assetClass = if (it.assetClass == AssetClass.CRYPTO) AssetType.CRYPTO else AssetType.STOCK
-                result[it.id] = Asset(it.symbol, assetClass, "USD", it.exchange)
-            }
-        }
-        return result
+    internal fun getAvailableStocks(api: AlpacaAPI): Map<String, Asset> {
+        val assets = api.assets().get(AssetStatus.ACTIVE, AssetClass.US_EQUITY).filter { it.exchange != "OTC" }
+        val exchange = Exchange.getInstance("US")
+        return assets.map { Asset(it.symbol, AssetType.STOCK, exchange = exchange) }.associateBy { it.symbol }
+    }
+
+    /**
+     * Get the available crypto
+     */
+    internal fun getAvailableCrypto(api: AlpacaAPI): Map<String, Asset> {
+        val assets = api.assets().get(AssetStatus.ACTIVE, AssetClass.CRYPTO)
+        val exchange = Exchange.getInstance("CRYPTO")
+        return assets.map { Asset(it.symbol, AssetType.STOCK, exchange = exchange) }.associateBy { it.symbol }
     }
 
 }

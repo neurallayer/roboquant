@@ -58,23 +58,27 @@ class AlpacaBroker(
     private val handledTrades = mutableSetOf<String>()
     private val logger = Logging.getLogger(AlpacaOrder::class)
     private val orderMapping = mutableMapOf<Order, String>()
-
-    // All available assets
-    val availableAssets: SortedSet<Asset>
-
-    // Stored the asset by the Alpaca assetId
-    private val assetsMap: Map<String, Asset>
+    private val availableStocks : Map<String, Asset>
+    private val availableCrypto : Map<String, Asset>
 
     init {
         config.configure()
         alpacaAPI = Alpaca.getAPI(config)
-        assetsMap = Alpaca.getAvailableAssets(alpacaAPI)
-        availableAssets = assetsMap.values.toSortedSet()
+        availableStocks = Alpaca.getAvailableStocks(alpacaAPI)
+        availableCrypto = Alpaca.getAvailableCrypto(alpacaAPI)
         syncAccount()
         syncPortfolio()
         loadInitialOrders()
         // updateOpenOrders()
     }
+
+
+    // All available assets
+    val availableAssets: SortedSet<Asset>
+        get() = (availableStocks.values + availableCrypto.values).toSortedSet()
+
+    private fun getAsset(symbol: String) = availableStocks[symbol] ?: availableCrypto[symbol]
+
 
     /**
      * Sync the roboquant account with the details from Alpaca account
@@ -101,6 +105,10 @@ class AlpacaBroker(
             _account.setPosition(p)
         }
     }
+
+
+
+
 
     /**
      * Update the status of the open orders in the account with the latest order status from Alpaca
@@ -151,7 +159,7 @@ class AlpacaBroker(
      * Convert an alpaca order to a roboquant order
      */
     private fun toOrder(order: AlpacaOrder): OrderState {
-        val asset = assetsMap[order.assetId]!!
+        val asset = getAsset(order.symbol)!!
         val qty = if (order.side == OrderSide.BUY) order.quantity.toBigDecimal() else -order.quantity.toBigDecimal()
         val rqOrder = when (order.type) {
             OrderType.MARKET -> MarketOrder(asset, Size(qty))
@@ -173,7 +181,7 @@ class AlpacaBroker(
      * Convert an Alpaca position to a roboquant position
      */
     private fun convertPos(pos: AlpacaPosition): Position {
-        val asset = assetsMap.getValue(pos.assetId)
+        val asset = getAsset(pos.symbol)!!
         val size = Size(pos.quantity)
         return Position(asset, size, pos.averageEntryPrice.toDouble(), pos.currentPrice.toDouble())
     }

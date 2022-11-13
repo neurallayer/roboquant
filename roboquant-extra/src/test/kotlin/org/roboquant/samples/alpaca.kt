@@ -22,60 +22,66 @@ import org.roboquant.Roboquant
 import org.roboquant.alpaca.*
 import org.roboquant.common.*
 import org.roboquant.feeds.AvroFeed
-import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.loggers.InfoLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 
 fun alpacaBroker() {
-    val feed = CSVFeed("data/US") {
-        priceAdjust = true
-    }
     val broker = AlpacaBroker()
-    val strategy = EMAStrategy.PERIODS_12_26
-    val roboquant = Roboquant(strategy, AccountMetric(), broker = broker)
-    roboquant.run(feed)
-    println(broker.account.summary())
+    println(broker.account.fullSummary())
 }
 
-fun allAlpaca() {
+fun alpacaPaperTradeStocks() {
     val broker = AlpacaBroker()
     val account = broker.account
     println(account.fullSummary())
 
     val feed = AlpacaLiveFeed()
+
     feed.heartbeatInterval = 30_000
 
-    // Let trade all the assets that start with an A or are in our portfolio already
-    // val assets = feed.availableAssets.filter { it.symbol.startsWith("AA") } + account.portfolio.assets
-    val assets = account.assets
-    feed.subscribeStocks(assets.distinct())
+
+    // Lets pick 10 random stock symbols to trade
+    val symbols = feed.availableStocks.random(10).symbols
+    feed.subscribeStocks(*symbols)
 
     val strategy = EMAStrategy(3, 5)
-    val roboquant = Roboquant(strategy, AccountMetric(), broker = broker, logger = InfoLogger())
-    val tf = Timeframe.next(30.minutes)
+    val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = InfoLogger())
+    val tf = Timeframe.next(60.minutes)
     roboquant.run(feed, tf)
     feed.close()
 
     println(roboquant.broker.account.fullSummary())
 }
 
-fun alpacaConnection() {
-    val config = AlpacaConfig()
-    val api = Alpaca.getAPI(config)
-    println(Alpaca.getAvailableAssets(api).size)
-    println(Alpaca.getAvailableAssets(api).values.filter { it.type == AssetType.CRYPTO })
 
-}
-
-fun alpacaLiveFeed() {
+fun alpacaTradeCrypto() {
     val feed = AlpacaLiveFeed()
+    val symbols = feed.availableCrypto.random(10).symbols
+    println(symbols.toList())
 
-    feed.subscribeCrypto(listOf("*"))
+    feed.subscribeCrypto(*symbols)
     feed.heartbeatInterval = 30_000
     val strategy = EMAStrategy.PERIODS_5_15
     val roboquant = Roboquant(strategy, ProgressMetric())
+    val tf = Timeframe.next(10.minutes)
+    roboquant.run(feed, tf)
+    feed.close()
+    println(roboquant.broker.account.summary())
+}
+
+
+fun alpacaTradeStocks() {
+    val feed = AlpacaLiveFeed()
+
+    val symbols = feed.availableStocks.take(10).symbols
+    println(symbols.toList())
+
+    feed.subscribeStocks(*symbols, type=PriceActionType.QUOTE)
+    feed.heartbeatInterval = 30_000
+    val strategy = EMAStrategy.PERIODS_5_15
+    val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), logger = InfoLogger())
     val tf = Timeframe.next(10.minutes)
     roboquant.run(feed, tf)
     feed.close()
@@ -89,7 +95,7 @@ fun alpacaHistoricFeed() {
     val feed = AlpacaHistoricFeed()
     val tf = Timeframe.past(100.days) - 15.minutes
     tf.split(1.days).forEach {
-        feed.retrieve("AAPL", "IBM", timeframe = it, barPeriod = BarPeriod.MINUTE)
+        feed.retrieveStockPriceBars("AAPL", "IBM", timeframe = it, barPeriod = BarPeriod.MINUTE)
         println("timeline size is ${feed.timeline.size}")
 
         // Sleep a little to not exceed API call limits
@@ -124,17 +130,17 @@ fun alpacaHistoricFeed2() {
     // We get the data for last 200 days. The minus 15.minutes is to make sure we only request data that
     // the free subscriptions is entitled to and not the latest 15 minutes.
     val tf = Timeframe.past(200.days) - 15.minutes
-    feed.retrieve(*symbols, timeframe = tf)
+    feed.retrieveStockPriceBars(*symbols, timeframe = tf)
     println(feed.assets.summary())
 }
 
 fun main() {
-    when ("ALPACA_ALL") {
+    when ("ALPACA_TRADE_CRYPTO") {
         "ALPACA_BROKER" -> alpacaBroker()
-        "ALPACA_LIVE_FEED" -> alpacaLiveFeed()
-        "ALPACA_CONNECTION" -> alpacaConnection()
+        "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
+        "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()
         "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
         "ALPACA_HISTORIC_FEED2" -> alpacaHistoricFeed2()
-        "ALPACA_ALL" -> allAlpaca()
+        "ALPACA_PAPER_TRADE_STOCKS" -> alpacaPaperTradeStocks()
     }
 }
