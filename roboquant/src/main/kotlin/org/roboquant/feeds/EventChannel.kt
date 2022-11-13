@@ -21,6 +21,7 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.compareTo
+import java.io.Closeable
 
 /**
  * Wrapper around a [Channel] for communicating the [events][Event] of a [Feed]. It uses asynchronous communication
@@ -33,37 +34,37 @@ import org.roboquant.common.compareTo
  * @param capacity The capacity of the channel in the number of events it can store before blocking the sender
  * @property timeframe Limit the events to this timeframe, default is INFINITE, so no limit
  * @constructor create a new EventChannel
- *
  */
-open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timeframe.INFINITE) {
+open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timeframe.INFINITE) : Closeable {
 
     private val channel = Channel<Event>(capacity)
     private val logger = Logging.getLogger(EventChannel::class)
 
     /**
-     * True if the channel is done, false otherwise
+     * True if the event-channel is closed, false otherwise. A closed event-channel cannot be re-opened again and will
+     * throw exceptions if trying to write to it.
      */
-    var done: Boolean = false
+    var closed: Boolean = false
         private set
 
     /**
      * Add a new [event] to the channel. If the channel is full, it will remove older event first to make room, before
-     * adding the new event. So this is a non-blocking send.
+     * adding the new event. So this is a non-blocking method.
      *
-     * This method is often preferable over the regular [send] in live trading scenario's since it prioritize more
-     * recent data over maintaining a large backlog.
+     * This method is often preferable over the regular [send] in live market data scenario's since it prioritize more
+     * recent data over maintaining a large buffer.
      */
     fun offer(event: Event) {
         if (event.time in timeframe) {
             while (!channel.trySend(event).isSuccess) {
-                if (done) return
+                // if (closed) return
                 val dropped = channel.tryReceive().getOrNull()
                 if (dropped !== null)
                     logger.debug { "dropped event for time ${dropped.time}" }
             }
         } else {
             if (event.time > timeframe) {
-                logger.debug { "Offer ${event.time} after $timeframe, closing channel" }
+                logger.debug { "offer time=${event.time} timeframe=$timeframe, closing channel" }
                 close()
             }
         }
@@ -75,34 +76,35 @@ open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timefram
     operator fun iterator() = channel.iterator()
 
     /**
-     * Send an [event]. If the event is before the timeframe linked to this channel it will be
-     * ignored. And if the event is after the timeframe, the channel will be closed.
+     * Send an [event] on this channel. If the time of event is before the timeframe of this channel, it will be
+     * silently ignored. And if the event is after the timeframe, the channel will be [closed].
      */
     suspend fun send(event: Event) {
         if (event.time in timeframe) {
             channel.send(event)
         } else {
             if (event.time > timeframe) {
-                logger.debug { "Send ${event.time} after $timeframe, closing channel" }
+                logger.debug { "send time=${event.time} timeframe=$timeframe, closing channel" }
                 close()
             }
         }
     }
 
     /**
-     * Receive an event from the channel. Will throw a [ClosedReceiveChannelException] if the channel is already closed.
+     * Receive an event from the channel. This will throw a [ClosedReceiveChannelException] if the channel
+     * is [closed].
+     *
+     * @see Channel.receive
      */
     suspend fun receive(): Event {
-        while (true) {
-            return channel.receive()
-        }
+        return channel.receive()
     }
 
     /**
-     * Close this [EventChannel] and mark it as [done]
+     * Close this [EventChannel] and mark it as [closed]
      */
-    fun close() {
-        done = true
+    override fun close() {
+        closed = true
         channel.close()
     }
 

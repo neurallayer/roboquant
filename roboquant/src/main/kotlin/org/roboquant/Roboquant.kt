@@ -77,11 +77,7 @@ class Roboquant(
     private suspend fun runPhase(feed: Feed, runInfo: RunInfo) {
         val channel = EventChannel(channelCapacity, runInfo.timeframe)
         val job = Background.ioJob {
-            try {
-                feed.play(channel)
-            } finally {
-                channel.close()
-            }
+            channel.use { feed.play(it) }
         }
 
         start(runInfo.phase)

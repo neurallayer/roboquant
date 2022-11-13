@@ -51,12 +51,12 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
         this.channel = channel
         try {
             while (true) {
-                delay(heartbeatInterval)
                 val event = Event.empty()
                 channel.send(event)
+                delay(heartbeatInterval)
 
                 // Check so we don't wait for another heart beat
-                if (channel.done) break
+                // if (channel.done) break
             }
         } catch (_: ClosedSendChannelException) {
             // Expected exception

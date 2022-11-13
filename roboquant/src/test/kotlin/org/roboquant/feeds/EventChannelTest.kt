@@ -32,10 +32,10 @@ internal class EventChannelTest {
         repeat(5) {
             channel.send(event)
         }
-        assertFalse(channel.done)
+        assertFalse(channel.closed)
 
         channel.close()
-        assertTrue(channel.done)
+        assertTrue(channel.closed)
 
         assertFails {
             channel.send(event)
@@ -49,9 +49,9 @@ internal class EventChannelTest {
         repeat(11) {
             channel.offer(event)
         }
-        assertFalse(channel.done)
+        assertFalse(channel.closed)
         channel.close()
-        assertTrue(channel.done)
+        assertTrue(channel.closed)
 
     }
 
@@ -62,9 +62,9 @@ internal class EventChannelTest {
         val channel = EventChannel(timeframe = past)
         val event = Event.empty()
         channel.offer(event)
-        assertTrue(channel.done)
+        assertTrue(channel.closed)
         channel.close()
-        assertTrue(channel.done)
+        assertTrue(channel.closed)
     }
 
 }
