@@ -23,7 +23,14 @@ import net.jacobpeterson.alpaca.model.properties.DataAPIType
 import net.jacobpeterson.alpaca.model.properties.EndpointAPIType
 import org.roboquant.common.*
 
+/**
+ * Alias for EndpointAPIType
+ */
 typealias AccountType = EndpointAPIType
+
+/**
+ * Alias for DataAPIType
+ */
 typealias DataType = DataAPIType
 
 /**
@@ -39,20 +46,13 @@ data class AlpacaConfig(
     var publicKey: String = Config.getProperty("alpaca.public.key", ""),
     var secretKey: String = Config.getProperty("alpaca.secret.key", ""),
     var accountType: AccountType = AccountType.PAPER,
-    var dataType: DataType = DataType.IEX,
-    var extendedHours: Boolean = false
+    var dataType: DataType = DataType.IEX
 ) {
 
     init {
         require(accountType == AccountType.PAPER) { "Only Paper trading supported, received $accountType" }
     }
 
-}
-
-enum class PriceActionType {
-    PRICE_BAR,
-    QUOTE,
-    TRADE
 }
 
 /**

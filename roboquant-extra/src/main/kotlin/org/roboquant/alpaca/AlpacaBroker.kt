@@ -41,16 +41,21 @@ import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosit
  * in combination with roboquant.
  *
  * See also the Alpaca feed components if you want to use Alpaca also for retrieving market data.
- *
+ * @property extendedHours
+ * @param configure
  * @constructor Create new Alpaca broker
  */
 class AlpacaBroker(
+    private val extendedHours: Boolean = false,
     configure: AlpacaConfig.() -> Unit = {}
 ) : Broker {
 
     private val _account = InternalAccount()
     private val config = AlpacaConfig()
 
+    /**
+     * @see Broker.account
+     */
     override val account: Account
         get() = _account.toAccount()
 
@@ -73,7 +78,9 @@ class AlpacaBroker(
     }
 
 
-    // All available assets
+    /**
+     * Get all available assets to trade
+     */
     val availableAssets: SortedSet<Asset>
         get() = (availableStocks.values + availableCrypto.values).toSortedSet()
 
@@ -244,17 +251,17 @@ class AlpacaBroker(
                 .requestMarketOrder(asset.symbol, qty, side, tif)
 
             is LimitOrder -> alpacaAPI.orders()
-                .requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, config.extendedHours)
+                .requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, extendedHours)
 
             is StopOrder -> alpacaAPI.orders()
-                .requestStopOrder(asset.symbol, qty, side, tif, order.stop, config.extendedHours)
+                .requestStopOrder(asset.symbol, qty, side, tif, order.stop, extendedHours)
 
             is StopLimitOrder -> alpacaAPI.orders().requestStopLimitOrder(
-                asset.symbol, qty, side, tif, order.limit, order.stop, config.extendedHours
+                asset.symbol, qty, side, tif, order.limit, order.stop, extendedHours
             )
 
             is TrailOrder -> alpacaAPI.orders().requestTrailingStopPercentOrder(
-                asset.symbol, qty, side, tif, order.trailPercentage, config.extendedHours
+                asset.symbol, qty, side, tif, order.trailPercentage, extendedHours
             )
 
             else -> {

@@ -35,6 +35,28 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
+ * Different types of price action that can be subscribed to
+ */
+enum class PriceActionType {
+
+    /**
+     * PriceBar type
+     */
+    PRICE_BAR,
+
+    /**
+     * Quote type
+     */
+    QUOTE,
+
+    /**
+     * Trade type
+     */
+    TRADE
+}
+
+
+/**
  * Alpaca feed allows you to subscribe to live market data from Alpaca. Alpaca needs a key and secret in order to access
  * their API. This live feed support both stocks and crypto asset classes.
  *
@@ -47,6 +69,9 @@ class AlpacaLiveFeed(
     configure: AlpacaConfig.() -> Unit = {}
 ) : LiveFeed(), AssetFeed {
 
+    /**
+     * The config for connecting this feed
+     */
     val config = AlpacaConfig()
     private val alpacaAPI: AlpacaAPI
     private val logger = Logging.getLogger(AlpacaLiveFeed::class)
@@ -146,6 +171,9 @@ class AlpacaLiveFeed(
         close()
     }
 
+    /**
+     * Subscribe to stock market data based on the passed [symbols] and [type]
+     */
     fun subscribeStocks(vararg symbols: String, type: PriceActionType = PriceActionType.PRICE_BAR) {
         require(symbols.isNotEmpty())
         symbols.forEach { require(availableStocksMap.contains(it) || it == "*") }
@@ -158,6 +186,9 @@ class AlpacaLiveFeed(
         subscribedSymbols.addAll(s)
     }
 
+    /**
+     * Subscribe to crypto market data b based on the passed [symbols] and [type]
+     */
     fun subscribeCrypto(vararg symbols: String, type: PriceActionType = PriceActionType.PRICE_BAR) {
         require(symbols.isNotEmpty())
         symbols.forEach { require(availableCryptoMap.contains(it) || it == "*") }

@@ -34,6 +34,9 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 
+/**
+ * @see BarTimePeriod
+ */
 typealias BarPeriod = BarTimePeriod
 
 
@@ -44,12 +47,15 @@ class AlpacaHistoricFeed(
     configure: AlpacaConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-    private val stockData: StockMarketDataEndpoint
+    /**
+     * The config for connecting this feed
+     */
     val config = AlpacaConfig()
+
+    private val stockData: StockMarketDataEndpoint
     private val alpacaAPI: AlpacaAPI
     private val logger = Logging.getLogger(AlpacaHistoricFeed::class)
     private val zoneId: ZoneId = ZoneId.of("America/New_York")
-
 
     init {
         config.configure()
@@ -65,7 +71,9 @@ class AlpacaHistoricFeed(
         Alpaca.getAvailableCrypto(alpacaAPI)
     }
 
-    // All available assets
+    /**
+     * Get the available assets to retrieve
+     */
     val availableAssets: SortedSet<Asset>
         get() = (availableStocks.values + availableCrypto.values).toSortedSet()
 
