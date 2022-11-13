@@ -89,7 +89,7 @@ internal object Alpaca {
     internal fun getAvailableCrypto(api: AlpacaAPI): Map<String, Asset> {
         val assets = api.assets().get(AssetStatus.ACTIVE, AssetClass.CRYPTO)
         val exchange = Exchange.getInstance("CRYPTO")
-        return assets.map { Asset(it.symbol, AssetType.STOCK, exchange = exchange) }.associateBy { it.symbol }
+        return assets.map { Asset(it.symbol, AssetType.CRYPTO, exchange = exchange) }.associateBy { it.symbol }
     }
 
 }
