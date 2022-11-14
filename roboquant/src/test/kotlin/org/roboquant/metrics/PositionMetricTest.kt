@@ -19,10 +19,7 @@ package org.roboquant.metrics
 import org.roboquant.TestData
 import org.roboquant.brokers.assets
 import org.roboquant.feeds.Event
-import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class PositionMetricTest {
 
@@ -31,9 +28,13 @@ internal class PositionMetricTest {
         val metric = PositionMetric()
         val account = TestData.usAccount()
         val result = metric.calculate(account, Event.empty())
-        assertFalse(result.isEmpty())
+        assertEquals(account.positions.size * 4, result.size)
+
         val symbol = account.positions.assets.first().symbol
         assertContains(result, "position.$symbol.size")
+        assertContains(result, "position.$symbol.value")
+        assertContains(result, "position.$symbol.cost")
+        assertContains(result, "position.$symbol.pnl")
         assertTrue(result.all { it.key.startsWith("position.") })
     }
 }
