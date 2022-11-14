@@ -18,7 +18,9 @@ package org.roboquant.common
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.Instant
 import java.time.ZoneId
+import kotlin.math.absoluteValue
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -86,15 +88,18 @@ internal class TimeframeTest {
         }
     }
 
+
+    private fun Double.roughly(other: Double) = (this - other).absoluteValue < (0.01 + this.absoluteValue / 100.0)
+
     @Test
     fun annualize() {
         val tf = Timeframe.fromYears(2019, 2020)
         val x = tf.annualize(0.1)
-        assertTrue(x - 0.1 < 0.01)
+        assertTrue(x.roughly(0.1))
 
-        val tf2 = Timeframe.fromYears(2019, 2020)
+        val tf2 = Timeframe.fromYears(2019, 2021)
         val y = tf2.annualize(0.1)
-        assertTrue(0.05 - y < 0.1)
+        assertTrue(y.roughly(0.05))
     }
 
     @Test
@@ -115,6 +120,8 @@ internal class TimeframeTest {
     fun toTimeline() {
         val tf = Timeframe.parse("2020-01-01T18:00:00Z", "2021-12-31T18:00:00Z")
         val timeline = tf.toTimeline(1.days)
+        assertEquals(Instant.parse("2020-01-01T18:00:00Z"), timeline.first())
+        assertTrue(Instant.parse("2021-12-31T18:00:00Z") > timeline.last())
         assertTrue(timeline.size > 200)
     }
 }

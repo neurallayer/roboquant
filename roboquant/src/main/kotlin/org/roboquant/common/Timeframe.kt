@@ -237,10 +237,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         return start.atZone(zoneId).toLocalDate() == realEnd.atZone(zoneId).toLocalDate()
     }
 
-
-
-
-
     /**
      * Convert this timeframe to a [Timeline] where each time seperated by a [step] amount.
      * If the temporalAmount is defined as a [Period], the [Config.defaultZoneId] will be used as the ZoneId.
