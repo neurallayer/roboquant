@@ -271,7 +271,7 @@ data class OrderBook(
 ) : PriceAction {
 
     /**
-     * Returns the total amount of entries (asks + bids)
+     * Returns the total number of entries (asks + bids) in this order book
      */
     val entries
         get() = asks.size + bids.size
@@ -358,7 +358,7 @@ class NewsAction(val items: List<NewsItem>) : Action {
 
     /**
      * News item contains a single news item (text) with optionally extra metadata like
-     * the author
+     * the author or symbol.
      *
      * @property content
      * @property meta

@@ -25,10 +25,8 @@ import java.time.Instant
  * the start of a phase. The following metrics are captured:
  *
  * - `progress.actions`: The number of actions
- * - `progress.events`: The number of events (or steps)
- * - `progress.trades`: The number of trades
- * - `progress.orders`: The number of orders (open + closed)
- * - `progress.walltime`: The wall time in milliseconds
+ * - `progress.steps`: The number of steps (or events)
+ * - `progress.walltime`: The total wall time in milliseconds
  */
 class ProgressMetric : Metric {
 
@@ -41,8 +39,6 @@ class ProgressMetric : Metric {
         return metricResultsOf(
             "progress.actions" to actions,
             "progress.steps" to ++steps,
-            "progress.trades" to account.trades.size,
-            "progress.orders" to account.openOrders.size + account.closedOrders.size,
             "progress.walltime" to (Instant.now().toEpochMilli() - startTime),
         )
     }

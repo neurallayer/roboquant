@@ -26,7 +26,7 @@ import org.roboquant.feeds.Event
  * - `account.trades` Total number of trades
  * - `account.positions` Total number of open positions
  * - `account.cash` Total cash value
- * - `account.buyingPower` Buying power available
+ * - `account.buyingpower` Buying power available
  * - `account.equity` Total equity value of the account
  *
  * All monetary values are denoted in base currency of the account

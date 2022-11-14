@@ -28,5 +28,11 @@ internal class ProgressMetricTest {
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(account, event)
         assertTrue(result.isNotEmpty())
+        assertContains(result, "progress.actions")
+        assertContains(result, "progress.steps")
+        assertContains(result, "progress.walltime")
+
+        assertEquals(1.0, result["progress.steps"])
+        assertEquals(event.actions.size.toDouble(), result["progress.actions"])
     }
 }

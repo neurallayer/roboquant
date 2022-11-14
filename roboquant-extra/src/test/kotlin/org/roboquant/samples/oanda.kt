@@ -95,13 +95,14 @@ fun oandaExchangeRates() {
 fun oandaLiveOrderBook() {
     val feed = OANDALiveFeed()
     println(feed.availableAssets.size)
-    val symbols = feed.availableAssets.take(100).map { it.symbol }.toTypedArray()
+    val symbols = feed.availableAssets.take(25).symbols
     feed.subscribeOrderBook(*symbols, delay = 1_000)
     val tf = Timeframe.next(60.minutes)
-    val formatter = DecimalFormat("######.#")
+    val formatter = DecimalFormat("######.##")
     val actions = feed.filter<OrderBook>(tf) {
         val pip = formatter.format(it.spread * 10_000)
-        println("symbol=${it.asset.symbol} spread=$pip")
+        val price = formatter.format(it.getPrice())
+        println("symbol=${it.asset.symbol} price=$price spread=$pip")
         true
     }
     println(actions.size)
@@ -132,7 +133,7 @@ fun oandaLivePriceBar() {
 }
 
 
-fun oandaBroker(closePositions: Boolean = true) {
+fun oandaBroker(closePositions: Boolean = false) {
     Config.exchangeRates = OANDAExchangeRates()
     val broker = OANDABroker()
 
@@ -160,7 +161,7 @@ fun oandaBroker(closePositions: Boolean = true) {
         val orders = sizes.map { MarketOrder(it.key, it.value) }
         broker.place(orders, Event.empty())
     }
-    println(broker.account.positions.summary())
+    println(broker.account.fullSummary())
     feed.close()
 
 }
@@ -197,7 +198,7 @@ fun oandaBroker2(createOrder: Boolean = true) {
 }
 
 fun main() {
-    when ("OANDA_BROKER") {
+    when ("OANDA_LIVE_ORDERBOOK") {
         "OANDA_BROKER" -> oandaBroker()
         "OANDA_BROKER2" -> oandaBroker2()
         "OANDA_BROKER3" -> oandaBroker3()

@@ -231,8 +231,10 @@ val List<OrderState>.assets : Set<Asset>
 
 
 /**
- * Return the required sizing per asset to close the positions. This method doesn't close the actual open positions,
+ * Return the required sizes per asset to close the open positions. This method doesn't close the actual open positions,
  * just provides the information to do so.
+ *
+ *      val orders = positions.close().map { MarketOrder(it.key, it.value) }
  */
 fun Collection<Position>.close(): Map<Asset, Size> = diff(emptyList())
 

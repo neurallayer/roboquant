@@ -36,8 +36,11 @@ import org.roboquant.strategies.utils.MovingWindow
  *
  * @property referenceAsset Which asset to use as reference for the market volatility and returns, for example S&P 500
  * @property period Over how many events to calculate the beta
+ * @property priceType The type of price to use, default is "DEFAULT"
+ * @property riskFreeReturn the risk-free return, 1% is 0.01. Default is 0.0
+ * @property onlyAfterInitialTrade should we only start measuring after an initial trade has been executed, default is
+ * false
  * @constructor
- *
  */
 class AlphaBetaMetric(
     private val referenceAsset: Asset,
