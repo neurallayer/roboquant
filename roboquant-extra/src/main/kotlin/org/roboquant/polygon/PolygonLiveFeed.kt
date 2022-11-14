@@ -20,12 +20,35 @@ import io.polygon.kotlin.sdk.websocket.*
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.LiveFeed
-import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.*
 import org.roboquant.polygon.Polygon.getWebSocketClient
 import java.time.Instant
 
+/**
+ * Types of Price actions that can be subscribed to
+ */
+enum class PolygonActionType {
+
+    /**
+     * [TradePrice] actions
+     */
+    TRADE,
+
+    /**
+     * [PriceQuote] actions
+     */
+    QUOTE,
+
+    /**
+     * [PriceBar] actions aggregated per minute
+     */
+    BAR_PER_MINUTE,
+
+    /**
+     * [PriceBar] actions aggregated per second
+     */
+    BAR_PER_SECOND
+}
 
 /**
  * Live data feed using market data from Polygon.io. This feed requires one of the non-free
@@ -50,6 +73,9 @@ class PolygonLiveFeed(
         }
     }
 
+    /**
+     * Handle incoming messages
+     */
     private fun handler(message: PolygonWebSocketMessage) {
 
         when (message) {
@@ -62,18 +88,59 @@ class PolygonLiveFeed(
                 )
                 send(Event(listOf(action), Instant.now()))
             }
-            else -> logger.warn { "Received Message: $message" }
+
+            is PolygonWebSocketMessage.StocksMessage.Trade -> {
+                val asset = Asset(message.ticker.toString())
+                val action = TradePrice(asset, message.price!!, message.size ?: Double.NaN)
+                send(Event(listOf(action), Instant.now()))
+            }
+
+            is PolygonWebSocketMessage.StocksMessage.Quote -> {
+                val asset = Asset(message.ticker.toString())
+                val action = PriceQuote(
+                    asset,
+                    message.askPrice!!,
+                    message.askSize ?: Double.NaN,
+                    message.bidPrice!!,
+                    message.bidSize ?: Double.NaN,
+                )
+                send(Event(listOf(action), Instant.now()))
+            }
+
+            else -> logger.warn { "received message=$message" }
         }
     }
 
-    suspend fun subscribe(vararg symbols: String) {
-        val subscriptions = symbols.map {
-            PolygonWebSocketSubscription(PolygonWebSocketChannel.Stocks.Trades, it)
+    /**
+     * Subscribe to the [symbols] for the specified action [type]
+     */
+    suspend fun subscribe(vararg symbols: String, type: PolygonActionType = PolygonActionType.TRADE) {
+        val subscriptions = when (type) {
+
+            PolygonActionType.TRADE -> symbols.map {
+                PolygonWebSocketSubscription(PolygonWebSocketChannel.Stocks.Trades, it)
+            }
+
+            PolygonActionType.QUOTE -> symbols.map {
+                PolygonWebSocketSubscription(PolygonWebSocketChannel.Stocks.Quotes, it)
+            }
+
+            PolygonActionType.BAR_PER_MINUTE -> symbols.map {
+                PolygonWebSocketSubscription(PolygonWebSocketChannel.Stocks.AggPerMinute, it)
+            }
+
+            PolygonActionType.BAR_PER_SECOND -> symbols.map {
+                PolygonWebSocketSubscription(PolygonWebSocketChannel.Stocks.AggPerSecond, it)
+            }
+
         }
 
         client.subscribe(subscriptions)
     }
 
+    /**
+     * Disconnect from Polygon server and stop receiving market data
+     */
     suspend fun disconnect() {
         client.disconnect()
     }

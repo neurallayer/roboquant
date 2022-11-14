@@ -22,7 +22,6 @@ import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class IEXLiveTestIT {
@@ -30,11 +29,8 @@ internal class IEXLiveTestIT {
     @Test
     fun test() {
         System.getProperty("TEST_IEX") ?: return
-        val token = System.getProperty("IEX_PUBLISHABLE_TOKEN") ?: System.getenv("IEX_PUBLISHABLE_TOKEN")
-        val feed = IEXLiveFeed {
-            publicKey = token
-        }
-        assertEquals(token, feed.config.publicKey)
+        val feed = IEXLiveFeed()
+
         val asset = Asset("AAPL")
         feed.subscribeQuotes(asset)
         assertTrue(asset in feed.assets)

@@ -30,13 +30,20 @@ import org.roboquant.metrics.Metric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.Strategy
 
+/**
+ * Configuration for connecting to the OANDA APIs
+ *
+ * @property key what API key to use
+ * @property account which account to use
+ * @property demo is this a demo account, default is true
+ */
 data class OANDAConfig(
     var key: String = Config.getProperty("oanda.key", ""),
     var account: String = Config.getProperty("oanda.account", ""),
     var demo: Boolean = true
 )
 
-object OANDA {
+internal object OANDA {
 
     /**
      * Create a [Roboquant] instance configured for back testing OANDA trading. Although trading Forex is just like any

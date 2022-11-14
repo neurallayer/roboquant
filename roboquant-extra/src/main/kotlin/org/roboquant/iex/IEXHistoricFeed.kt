@@ -31,10 +31,16 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+/**
+ * @see ChartRange
+ */
 typealias Range = ChartRange
 
 /**
  * Feed of historic price data using IEX Cloud as the data source.
+ *
+ * @property template The templates to use to instantiate Assets based on their symbol name
+ * @param configure additional configuration
  *
  * @constructor
  */
@@ -43,7 +49,7 @@ class IEXHistoricFeed(
     configure: IEXConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-    val config = IEXConfig()
+    private val config = IEXConfig()
     private val logger = Logging.getLogger(IEXHistoricFeed::class)
     private val client: IEXCloudClient
 
@@ -118,7 +124,7 @@ class IEXHistoricFeed(
 
     private fun handlePriceBar(asset: Asset, charts: List<Chart>) {
         charts.filter { it.open !== null }.forEach {
-            val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
+            val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume ?: Double.NaN)
             val now = getInstant(asset, it.date, it.minute)
             add(now, action)
         }
@@ -128,7 +134,7 @@ class IEXHistoricFeed(
 
     private fun handleIntraday(asset: Asset, quotes: List<Intraday>) {
         quotes.filter { it.open !== null }.forEach {
-            val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
+            val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume ?: Double.NaN)
             val now = getInstant(asset, it.date, it.minute)
             add(now, action)
         }

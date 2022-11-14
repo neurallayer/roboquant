@@ -107,7 +107,7 @@ fun paperTrade() {
 fun liveFeedEU() {
     val feed = IBKRLiveFeed()
     val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
-    feed.subscribe(asset)
+    feed.subscribe(listOf(asset))
     val tf = Timeframe.next(1.minutes)
     val data = feed.filter<PriceAction>(tf)
     println(data.size)
@@ -117,7 +117,7 @@ fun liveFeedEU() {
 fun liveFeedUS() {
     val feed = IBKRLiveFeed()
     val asset = Asset("TSLA", AssetType.STOCK, "USD")
-    feed.subscribe(asset)
+    feed.subscribe(listOf(asset))
     val tf = Timeframe.next(1.minutes)
     val data = feed.filter<PriceAction>(tf)
     println(data.size)
@@ -147,7 +147,6 @@ fun historicFeed2() {
     println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
     feed.disconnect()
 }
-
 
 
 fun historicFuturesFeed() {

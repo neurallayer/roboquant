@@ -18,8 +18,6 @@ package org.roboquant.iex
 
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
-import org.roboquant.common.minutes
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import kotlin.test.assertTrue
@@ -34,7 +32,7 @@ internal class IEXHistoricFeedTestIT {
         feed.retrieveIntraday(listOf(asset))
         assertTrue(asset in feed.assets)
 
-        val actions = feed.filter<PriceAction>(Timeframe.next(5.minutes))
+        val actions = feed.filter<PriceAction>()
         assertTrue(actions.isNotEmpty())
     }
 
@@ -45,7 +43,7 @@ internal class IEXHistoricFeedTestIT {
         val asset = Asset("AAPL")
         feed.retrieve(listOf(asset))
         Thread.sleep(2000)
-        val actions = feed.filter<PriceAction>(Timeframe.next(5.minutes))
+        val actions = feed.filter<PriceAction>()
         assertTrue(actions.isNotEmpty())
     }
 
@@ -54,7 +52,7 @@ internal class IEXHistoricFeedTestIT {
         System.getProperty("TEST_IEX") ?: return
         val feed = IEXHistoricFeed()
         feed.retrieveIntraday("AAPL")
-        val actions = feed.filter<PriceAction>(Timeframe.next(5.minutes))
+        val actions = feed.filter<PriceAction>()
         assertTrue(actions.isNotEmpty())
     }
 

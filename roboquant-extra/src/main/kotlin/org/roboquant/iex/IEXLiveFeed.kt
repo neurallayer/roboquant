@@ -29,10 +29,16 @@ import pl.zankowski.iextrading4j.client.sse.request.stocks.QuoteInterval
 import pl.zankowski.iextrading4j.client.sse.request.stocks.QuoteSseRequestBuilder
 import java.time.Instant
 
+/**
+ * @see QuoteInterval
+ */
 typealias Interval = QuoteInterval
 
 /**
  * Live feed of trades and/or quotes from IEX Cloud for the subscribed assets.
+ *
+ * @property useMachineTime use machine time to tag events
+ * @param configure additional configuration
  */
 class IEXLiveFeed(
     private val useMachineTime: Boolean = true,
@@ -40,10 +46,13 @@ class IEXLiveFeed(
 ) : LiveFeed(), AssetFeed {
 
     private val logger = Logging.getLogger(IEXLiveFeed::class)
-    val config = IEXConfig()
+    private val config = IEXConfig()
     private val client: IEXCloudClient
     private val assetMap = mutableMapOf<String, Asset>()
 
+    /**
+     * @see AssetFeed.assets
+     */
     override val assets
         get() = assetMap.values.toSortedSet()
 

@@ -33,8 +33,17 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import com.crazzyghost.alphavantage.parameters.Interval as AlphaInterval
 
+/**
+ * @see AlphaInterval
+ */
 typealias Interval = AlphaInterval
 
+/**
+ * Configuration to connect to AlphaVantage APIs.
+ *
+ * @property key the API key
+ * @property timeout the timeout in seconds to use when establishing a connection
+ */
 data class AlphaVantageConfig(
     var key: String = org.roboquant.common.Config.getProperty("alphavantage.key", ""),
     var timeout: Int = 10
@@ -45,8 +54,8 @@ data class AlphaVantageConfig(
  *
  * @property compensateTimeZone compensate for timezone differences
  * @property generateSinglePrice generate a single price event (using the close price) or a price bar (OHLCV) event
+ * @param configure additional configuration
  * @constructor
- *
  */
 class AlphaVantageHistoricFeed(
     val compensateTimeZone: Boolean = true,
@@ -56,7 +65,7 @@ class AlphaVantageHistoricFeed(
 
     private val subscriptions = mutableMapOf<String, Asset>()
     private val logger = Logging.getLogger(AlpacaHistoricFeed::class)
-    val config = AlphaVantageConfig()
+    private val config = AlphaVantageConfig()
 
     init {
         config.configure()

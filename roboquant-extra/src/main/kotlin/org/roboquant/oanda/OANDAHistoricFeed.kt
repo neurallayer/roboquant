@@ -30,6 +30,8 @@ import java.time.Instant
 
 /**
  * Retrieve historic data from OANDA. Right now only [PriceBar] (= candlesticks) data is supported.
+ *
+ * @param configure additional configuration
  */
 class OANDAHistoricFeed(configure: OANDAConfig.() -> Unit = {}) : HistoricPriceFeed() {
 

@@ -25,17 +25,20 @@ import java.time.Instant
 import javax.naming.ConfigurationException
 
 /**
- * Exchange rates implementation that retrieves the latest rates from OANDA. This implementation uses different
+ * Exchange rates that retrieves the latest rates from OANDA. This implementation uses different
  * rates for BUY and SELL. If no symbols are provided, all available FOREX & CRYPTO symbols will be used.
  *
- * Please note these are only the current exchange rates, so there is no history.
+ * Please note these are only the current exchange rates, so there is are no historic rates provided.
+ *
+ * @param symbols a list of symbols to restrict the currencies loaded
+ * @param configure additional configuration settings to connect to OANDA
  */
 class OANDAExchangeRates(
     symbols: Collection<String> = emptyList(),
     configure: OANDAConfig.() -> Unit = {}
 ) : ExchangeRates {
 
-    val config = OANDAConfig()
+    private val config = OANDAConfig()
     private val ctx: Context
     private val accountID: AccountID
     private val logger = Logging.getLogger(OANDAExchangeRates::class)

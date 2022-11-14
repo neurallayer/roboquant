@@ -68,11 +68,8 @@ enum class PriceActionType {
 class AlpacaLiveFeed(
     configure: AlpacaConfig.() -> Unit = {}
 ) : LiveFeed(), AssetFeed {
-
-    /**
-     * The config for connecting this feed
-     */
-    val config = AlpacaConfig()
+    
+    private val config = AlpacaConfig()
     private val alpacaAPI: AlpacaAPI
     private val logger = Logging.getLogger(AlpacaLiveFeed::class)
     private val listener = createListener()

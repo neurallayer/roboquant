@@ -27,6 +27,11 @@ import org.roboquant.common.AutoDetectTimeParser
 import org.roboquant.ibkr.IBKR.getContract
 import java.time.Instant
 
+/**
+ * Historic prices from IBKR APIs
+ *
+ * @param configure additional configuration
+ */
 class IBKRHistoricFeed(
     configure: IBKRConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {

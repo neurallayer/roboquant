@@ -39,7 +39,6 @@ import java.time.Instant
 class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
 
     private val config = IBKRConfig()
-
     private var reqId: Int = 0
     private var client: EClientSocket
     private val subscriptions = mutableMapOf<Int, Asset>()
@@ -52,6 +51,9 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
         client.reqCurrentTime()
     }
 
+    /**
+     * Disconnect from the IBKR APIs and stop receiving market data
+     */
     fun disconnect() = IBKR.disconnect(client)
 
     /**
@@ -68,9 +70,6 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
             logger.info("Added subscription to receive realtime bars for ${contract.symbol()}")
         }
     }
-
-    fun subscribe(vararg assets: Asset, interval: Int = 5, type: String = "MIDPOINT") =
-        subscribe(assets.toList(), interval, type)
 
     private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 

@@ -39,9 +39,8 @@ import com.ib.client.OrderStatus as IBOrderStatus
  *
  * ## Use at your own risk, since there are no guarantees about the correct functioning of the roboquant software.
  *
- * @property accountId
+ * @param configure additional configuration
  * @constructor
- *
  */
 class IBKRBroker(
     configure: IBKRConfig.() -> Unit = {}
@@ -53,6 +52,9 @@ class IBKRBroker(
     private var client: EClientSocket
     private var _account = InternalAccount()
 
+    /**
+     * @see Broker.account
+     */
     override val account: Account
         get() = _account.toAccount()
 

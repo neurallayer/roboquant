@@ -33,13 +33,15 @@ import java.time.temporal.ChronoUnit
 import kotlin.collections.set
 
 /**
- * Retrieve live data from OANDA.
+ * Retrieve live market data from OANDA.
+ *
+ * @param configure additional configuration
  */
 class OANDALiveFeed(
     configure: OANDAConfig.() -> Unit = {}
 ) : LiveFeed(), AssetFeed {
 
-    val config = OANDAConfig()
+    private val config = OANDAConfig()
     private val ctx: Context
     private val accountID: AccountID
     private val subscriptions = mutableMapOf<String, Asset>()

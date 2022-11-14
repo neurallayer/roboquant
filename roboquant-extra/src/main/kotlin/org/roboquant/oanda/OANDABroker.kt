@@ -44,11 +44,13 @@ class OANDABroker(
      * Configuration for OANDA
      */
     private val config = OANDAConfig()
-
     private val ctx: Context
     private val accountID: AccountID
     private val _account = InternalAccount()
 
+    /**
+     * @see Broker.account
+     */
     override val account: Account
         get() = _account.toAccount()
 

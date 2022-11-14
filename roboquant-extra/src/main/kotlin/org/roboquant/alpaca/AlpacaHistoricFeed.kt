@@ -47,11 +47,8 @@ class AlpacaHistoricFeed(
     configure: AlpacaConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-    /**
-     * The config for connecting this feed
-     */
-    val config = AlpacaConfig()
 
+    private val config = AlpacaConfig()
     private val stockData: StockMarketDataEndpoint
     private val alpacaAPI: AlpacaAPI
     private val logger = Logging.getLogger(AlpacaHistoricFeed::class)
