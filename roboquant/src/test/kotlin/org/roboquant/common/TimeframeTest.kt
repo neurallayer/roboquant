@@ -88,7 +88,7 @@ internal class TimeframeTest {
 
     @Test
     fun annualize() {
-        val tf = Timeframe.fromYears(2019, 2019)
+        val tf = Timeframe.fromYears(2019, 2020)
         val x = tf.annualize(0.1)
         assertTrue(x - 0.1 < 0.01)
 
@@ -99,14 +99,14 @@ internal class TimeframeTest {
 
     @Test
     fun contains() {
-        val tf = Timeframe.fromYears(2019, 2019)
+        val tf = Timeframe.fromYears(2019, 2020)
         assertFalse(tf.end in tf)
         assertTrue(tf.end in tf.toInclusive())
     }
 
     @Test
     fun plusMinus() {
-        val tf = Timeframe.fromYears(2019, 2019)
+        val tf = Timeframe.fromYears(2019, 2020)
         val tf2 = tf + 2.years - 2.years
         assertEquals(tf, tf2)
     }

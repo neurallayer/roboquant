@@ -126,13 +126,14 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
             get() = parse("2020-02-17T00:00:00Z", "2020-03-17T00:00:00Z")
 
         /**
-         * Create a timeframe starting from 1 january of the [first] year until 31 december from the [last] year.
+         * Create a timeframe starting from 1 january of the [first] year until 1 january of
+         * the [last] year (excluding).
          */
         fun fromYears(first: Int, last: Int, zoneId: ZoneId = Config.defaultZoneId): Timeframe {
-            require(last >= first)
+            require(last > first)
             val start = ZonedDateTime.of(first, 1, 1, 0, 0, 0, 0, zoneId)
-            val stop = ZonedDateTime.of(last + 1, 1, 1, 0, 0, 0, 0, zoneId)
-            return Timeframe(start.toInstant(), stop.toInstant())
+            val stop = ZonedDateTime.of(last, 1, 1, 0, 0, 0, 0, zoneId)
+            return Timeframe(start.toInstant(), stop.toInstant(), inclusive = false)
         }
 
         /**

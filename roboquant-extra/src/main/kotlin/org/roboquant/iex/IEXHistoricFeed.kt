@@ -59,58 +59,39 @@ class IEXHistoricFeed(
     }
 
     /**
-     * Retrieve historic intraday price bars for one or more assets
-     *
-     * @param assets
-     */
-    fun retrieveIntraday(assets: Collection<Asset>) {
-        assets.forEach {
-            val quote = client.executeRequest(
-                IntradayRequestBuilder()
-                    .withSymbol(it.symbol)
-                    .build()
-            )
-            handleIntraday(it, quote)
-        }
-    }
-
-    /**
      * Retrieve historic end of day [PriceBar] for one or more symbols
      *
      * @param symbols
      */
     fun retrieveIntraday(vararg symbols: String) {
-        val assets = symbols.map { template.copy(symbol = it.uppercase()) }
-        retrieveIntraday(assets.toList())
+        symbols.forEach {
+            val quote = client.executeRequest(
+                IntradayRequestBuilder()
+                    .withSymbol(it)
+                    .build()
+            )
+            handleIntraday(template.copy(symbol = it), quote)
+        }
     }
 
     /**
      * Retrieve historic end of day [PriceBar] for one or more symbols
      *
      * @param symbols
+     * @param range the required range
      */
     fun retrieve(vararg symbols: String, range: Range = Range.FIVE_YEARS) {
-        val assets = symbols.map { template.copy(symbol = it.uppercase()) }
-        retrieve(assets.toList(), range = range)
-    }
-
-    /**
-     * Retrieve historic end of day [PriceBar] for one or more assets
-     *
-     * @param assets
-     */
-    fun retrieve(assets: Collection<Asset>, range: Range = Range.FIVE_YEARS) {
-
-        assets.forEach {
+        symbols.forEach {
             val chart = client.executeRequest(
                 ChartRequestBuilder()
                     .withChartRange(range)
-                    .withSymbol(it.symbol)
+                    .withSymbol(it)
                     .build()
             )
-            handlePriceBar(it, chart)
+            handlePriceBar(template.copy(symbol = it), chart)
         }
     }
+
 
     private fun getInstant(asset: Asset, date: String, minute: String?): Instant {
         return if (minute !== null) {

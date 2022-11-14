@@ -114,8 +114,8 @@ class RandomWalkFeed(
          * Create a random walk for the last [years], generating daily prices
          */
         fun lastYears(years: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalkFeed {
-            val lastYear = LocalDate.now().year - 1
-            val timeline = Timeframe.fromYears(lastYear - years + 1, lastYear).toTimeline(1.days)
+            val lastYear = LocalDate.now().year
+            val timeline = Timeframe.fromYears(lastYear - years, lastYear).toTimeline(1.days)
             return RandomWalkFeed(timeline, nAssets, generateBars)
         }
 

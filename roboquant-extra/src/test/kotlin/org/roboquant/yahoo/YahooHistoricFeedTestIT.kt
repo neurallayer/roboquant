@@ -31,12 +31,12 @@ internal class YahooHistoricFeedTestIT {
     fun test() {
         Config.getProperty("FULL_COVERAGE") ?: return
         val feed = YahooHistoricFeed()
-        val timeframe = Timeframe.fromYears(2018, 2019)
-        feed.retrieve("AAPL", "IBM", "JPM", timeframe = timeframe)
+        val timeframe = Timeframe.fromYears(2019, 2020)
+        feed.retrieve("AAPL", "IBM", timeframe = timeframe)
         assertContains(feed.assets.symbols, "AAPL")
         assertTrue(feed.timeframe.start >= timeframe.start )
         assertTrue(feed.timeframe.end <= timeframe.end )
-        assertEquals(503, feed.timeline.size)
+        assertEquals(252, feed.timeline.size)
     }
 
 }

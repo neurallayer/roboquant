@@ -41,9 +41,7 @@ fun feedIEX() {
 
 fun feedIEXLive() {
     val feed = org.roboquant.iex.IEXLiveFeed()
-    val apple = Asset("AAPL")
-    val google = Asset("GOOG")
-    feed.subscribeTrades(apple, google)
+    feed.subscribeTrades("AAPL", "GOOG")
     val strategy = EMAStrategy()
     val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric())
     roboquant.run(feed, Timeframe.next(5.minutes))
