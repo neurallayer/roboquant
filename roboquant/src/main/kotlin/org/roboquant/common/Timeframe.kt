@@ -336,8 +336,8 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
     /**
      * Annualize a [percentage] based on the duration of this timeframe. So given x percent return
-     * during a timeframe, what would be the return for a full year. If this timeframe has higher than milliseconds
-     * precision, the remaining will not be used.
+     * during a timeframe, what would be the return percentage for a full year (365 days). If this timeframe has higher
+     * than milliseconds precision, the remaining precision will not be used.
      *
      * [percentage] is expected to be provided as a fraction, for example 1% is 0.01
      */
