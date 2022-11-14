@@ -20,19 +20,22 @@ import org.junit.jupiter.api.Test
 import kotlin.test.*
 import org.roboquant.TestData
 
-internal class ProgressMetricTest {
+internal class AccountMetricTest {
 
     @Test
     fun calc() {
-        val metric = ProgressMetric()
+        val metric = AccountMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(account, event)
-        assertEquals(3, result.size)
-        assertContains(result, "progress.actions")
-        assertContains(result, "progress.steps")
-        assertContains(result, "progress.walltime")
-
-        assertEquals(1.0, result["progress.steps"])
-        assertEquals(event.actions.size.toDouble(), result["progress.actions"])
+        assertEquals(6, result.size)
+        assertContains(result, "account.orders")
+        assertContains(result, "account.trades")
+        assertContains(result, "account.equity")
+        assertContains(result, "account.positions")
+        assertContains(result, "account.buyingpower")
+        assertContains(result, "account.cash")
+        
+        assertEquals(account.trades.size.toDouble(), result["account.trades"])
+        assertEquals(account.positions.size.toDouble(), result["account.positions"])
     }
 }
