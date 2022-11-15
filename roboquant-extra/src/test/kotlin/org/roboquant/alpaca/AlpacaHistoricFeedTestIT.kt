@@ -74,7 +74,7 @@ internal class AlpacaHistoricFeedTestIT {
     }
 
     @Test
-    fun testHistoricBarsWithTimePeriodDuration() {
+    fun testHistoricBarsWithDuration() {
         Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AlpacaHistoricFeed()
         feed.retrieveStockPriceBars("AAPL", timeframe= timeframe, barDuration = 5, barPeriod = BarPeriod.MINUTE)

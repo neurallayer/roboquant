@@ -64,7 +64,6 @@ class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFee
         quotes.forEach {
             val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
             if (adjClose) action.adjustClose(it.adjClose)
-
             val now = it.date.toInstant()
             add(now, action)
         }

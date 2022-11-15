@@ -31,8 +31,8 @@ import pl.zankowski.iextrading4j.client.IEXTradingClient
  * @constructor Create new IEXCloud configuration
  */
 data class IEXCloudConfig(
-    var publicKey: String = Config.getProperty("iex.public.key", ""),
-    var secretKey: String = Config.getProperty("iex.secret.key", ""),
+    var publicKey: String = Config.getProperty("iexcloud.public.key", ""),
+    var secretKey: String = Config.getProperty("iexcloud.secret.key", ""),
     var sandbox: Boolean = true,
 )
 

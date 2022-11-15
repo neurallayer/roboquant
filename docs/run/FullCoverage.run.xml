@@ -12,17 +12,12 @@
         <option name="INCLUDE" value="false" />
       </pattern>
       <pattern>
-        <option name="PATTERN" value="org.roboquant.yahoo.*" />
+        <option name="PATTERN" value="org.roboquant.oanda.OANDALiveFeed" />
         <option name="ENABLED" value="true" />
         <option name="INCLUDE" value="false" />
       </pattern>
       <pattern>
-        <option name="PATTERN" value="org.roboquant.oanda.*" />
-        <option name="ENABLED" value="true" />
-        <option name="INCLUDE" value="false" />
-      </pattern>
-      <pattern>
-        <option name="PATTERN" value="org.roboquant.alpaca.*" />
+        <option name="PATTERN" value="org.roboquant.alpaca.AlpacaLiveFeed" />
         <option name="ENABLED" value="true" />
         <option name="INCLUDE" value="false" />
       </pattern>

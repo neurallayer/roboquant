@@ -26,7 +26,7 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class OANDAFeedTestIT {
+internal class OANDALiveFeedTestIT {
 
     private val liveTestTime = 30.seconds
     private val symbols = arrayListOf("EUR_USD", "USD_JPY", "GBP_USD").toTypedArray()
@@ -48,17 +48,4 @@ internal class OANDAFeedTestIT {
         }
     }
 
-    @Test
-    fun historicTest() {
-        System.getenv("TEST_OANDA") ?: return
-        val feed = OANDAHistoricFeed()
-        val tf = Timeframe.parse("2020-03-05", "2020-03-06")
-        feed.retrieve(*symbols, timeframe = tf)
-        assertEquals(3, feed.assets.size)
-
-        val tf2 = Timeframe.parse("2020-03-04", "2020-03-07")
-        assertTrue(tf2.contains(feed.timeline.first()))
-        assertTrue(tf2.contains(feed.timeline.last()))
-        feed.close()
-    }
 }
