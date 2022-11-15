@@ -212,26 +212,27 @@ class TaLibStrategy(history: Int = 15) : Strategy {
 }
 
 /**
- * Indicator for detecting record low
+ * Indicator for detecting record low based on an array with [low] historic prices
  */
 fun TaLib.recordLow(low: DoubleArray, period: Int, previous: Int = 0) =
     minIndex(low, period, previous) == low.lastIndex - previous
 
 /**
- * Indicator for detecting record low
+ * Indicator for detecting record based on historic priceBar [series]
  */
-fun TaLib.recordLow(data: PriceBarSeries, period: Int, previous: Int = 0) = recordLow(data.low, period, previous)
+fun TaLib.recordLow(series: PriceBarSeries, period: Int, previous: Int = 0) = recordLow(series.low, period, previous)
 
 /**
- * Indicator for detecting record low
+ * Indicator for detecting record high based on an array with [high] historic prices
  */
 fun TaLib.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) =
     maxIndex(high, period, previous) == high.lastIndex - previous
 
 /**
- * Indicator for detecting record low
+ * Indicator for detecting record high based on an array with historic [series]
  */
-fun TaLib.recordHigh(data: PriceBarSeries, period: Int, previous: Int = 0) = recordHigh(data.high, period, previous)
+fun TaLib.recordHigh(series: PriceBarSeries, period: Int, previous: Int = 0) =
+    recordHigh(series.high, period, previous)
 
 
 /**

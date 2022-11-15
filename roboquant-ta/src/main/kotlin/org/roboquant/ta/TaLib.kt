@@ -31,10 +31,13 @@ import org.roboquant.common.DoesNotComputeException
 import org.roboquant.strategies.utils.PriceBarSeries
 
 /**
- * This class wraps the excellent TALib library and makes it easy to use any of indicators provided by that library.
+ * This class wraps the excellent TA-Lib library and makes it easy to use the indicators provided by that library.
  * This wrapper is optimized for event based updates.
  *
- * @property core The TaLib core library that does the actual execution of the inidactors
+ * @see TaLibMetric
+ * @see TaLibStrategy
+ *
+ * @property core The TA-Lib core library that does the actual execution of the indicactors
  */
 class TaLib(var core: Core = Core()) {
 

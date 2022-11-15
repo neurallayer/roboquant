@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-@file:Suppress("ReturnCount", "MaxLineLength")
+@file:Suppress("TooGenericExceptionThrown", "MaxLineLength", "ReturnCount")
+@file:Repository("https://repo.maven.apache.org/maven2/")
+@file:DependsOn("com.google.code.gson:gson:2.9.0")
 
-package org.roboquant.generator
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import org.roboquant.common.ConfigurationException
-import org.roboquant.common.RoboquantException
+import com.google.gson.*
 import java.io.File
 
-private operator fun StringBuffer.plusAssign(str: Any) {
+operator fun StringBuffer.plusAssign(str: Any) {
     append(str.toString())
 }
 
@@ -35,7 +32,7 @@ private operator fun StringBuffer.plusAssign(str: Any) {
  * @property root
  * @constructor Create empty Base wrapper
  */
-internal open class BaseWrapper(val root: JsonObject) {
+open class BaseWrapper(val root: JsonObject) {
 
     protected fun JsonObject.getAttr(key: String): String = get(key).asString
     private fun String.unCapitalize() = get(0).lowercase() + substring(1)
@@ -152,7 +149,7 @@ internal open class BaseWrapper(val root: JsonObject) {
  * @property root
  * @constructor Create new TA builder
  */
-internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
+class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
 
     companion object {
         val startCode = """
@@ -184,7 +181,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
                 "Integer Array" -> "val output$cnt = IntArray(outputSize)\n"
                 "Double Array" -> "val output$cnt = DoubleArray(outputSize)\n"
                 else -> {
-                    throw RoboquantException("unexpected output type $type")
+                    throw Exception("unexpected output type $type")
                 }
             }
             cnt++
@@ -200,7 +197,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
             2 -> "Pair(output1.copyOfRange(0, last), output2.copyOfRange(0, last))"
             3 -> "Triple(output1.copyOfRange(0, last), output2.copyOfRange(0, last), output3.copyOfRange(0, last))"
             else -> {
-                throw RoboquantException("unexpected return size")
+                throw Exception("unexpected return size")
             }
         }
     }
@@ -214,7 +211,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
             2 -> "Pair<$type, $type>"
             3 -> "Triple<$type, $type, $type>"
             else -> {
-                throw RoboquantException("unexpected return size")
+                throw Exception("unexpected return size")
             }
         }
     }
@@ -258,7 +255,7 @@ internal class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
  * @property root
  * @constructor Create new TA builder
  */
-internal class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
+class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
 
     companion object {
         val startCode = """
@@ -302,7 +299,7 @@ internal class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
                 "Integer Array" -> "val output$cnt = IntArray(1)\n"
                 "Double Array" -> "val output$cnt = DoubleArray(1)\n"
                 else -> {
-                    throw ConfigurationException("unexpected output type $type")
+                    throw Exception("unexpected output type $type")
                 }
             }
             cnt++
@@ -335,7 +332,7 @@ internal class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
             2 -> "Pair(output1[0], output2[0])"
             3 -> "Triple(output1[0], output2[0], output3[0])"
             else -> {
-                throw ConfigurationException("unexpected return size")
+                throw Exception("unexpected return size")
             }
         }
     }
@@ -350,7 +347,7 @@ internal class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
             2 -> "Pair<$type, $type>"
             3 -> "Triple<$type, $type, $type>"
             else -> {
-                throw ConfigurationException("unexpected return size")
+                throw Exception("unexpected return size")
             }
         }
     }
@@ -435,7 +432,7 @@ internal class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
  */
 fun main() {
     println("starting")
-    val f = File("ta_func_api.json")
+    val f = File("../ta_func_api.json")
     require(f.isFile) { "File not found" }
 
     val jsonTree = JsonParser.parseString(f.readText())
@@ -469,5 +466,5 @@ fun main() {
     **/
 }
 
-
+main()
 
