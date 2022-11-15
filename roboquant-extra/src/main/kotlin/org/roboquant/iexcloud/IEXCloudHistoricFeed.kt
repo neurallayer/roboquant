@@ -15,7 +15,7 @@
  */
 @file:Suppress("DuplicatedCode")
 
-package org.roboquant.iex
+package org.roboquant.iexcloud
 
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
@@ -37,25 +37,25 @@ import java.time.LocalDateTime
 typealias Range = ChartRange
 
 /**
- * Feed of historic price data using IEX Cloud as the data source.
+ * Feed of historic price data using IEXCloud Cloud as the data source.
  *
  * @property template The templates to use to instantiate Assets based on their symbol name
  * @param configure additional configuration
  *
  * @constructor
  */
-class IEXHistoricFeed(
+class IEXCloudHistoricFeed(
     private val template: Asset = Asset("TEMPLATE"),
-    configure: IEXConfig.() -> Unit = {}
+    configure: IEXCloudConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-    private val config = IEXConfig()
-    private val logger = Logging.getLogger(IEXHistoricFeed::class)
+    private val config = IEXCloudConfig()
+    private val logger = Logging.getLogger(IEXCloudHistoricFeed::class)
     private val client: IEXCloudClient
 
     init {
         config.configure()
-        client = IEX.getClient(config)
+        client = IEXCloud.getClient(config)
     }
 
     /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.iex
+package org.roboquant.iexcloud
 
 import org.roboquant.common.Config
 import pl.zankowski.iextrading4j.client.IEXCloudClient
@@ -23,25 +23,25 @@ import pl.zankowski.iextrading4j.client.IEXTradingApiVersion
 import pl.zankowski.iextrading4j.client.IEXTradingClient
 
 /**
- * Configuration settings for connecting to IEX Cloud
+ * Configuration settings for connecting to IEXCloud Cloud
  *
  * @property publicKey
  * @property secretKey
  * @property sandbox
- * @constructor Create new IEX configuration
+ * @constructor Create new IEXCloud configuration
  */
-data class IEXConfig(
+data class IEXCloudConfig(
     var publicKey: String = Config.getProperty("iex.public.key", ""),
     var secretKey: String = Config.getProperty("iex.secret.key", ""),
     var sandbox: Boolean = true,
 )
 
 /**
- * Shared logic for IEX feeds
+ * Shared logic for IEXCloud feeds
  */
-internal object IEX {
+internal object IEXCloud {
 
-    fun getClient(config: IEXConfig): IEXCloudClient {
+    fun getClient(config: IEXCloudConfig): IEXCloudClient {
         require(config.publicKey.isNotBlank())
         var tokenBuilder = IEXCloudTokenBuilder().withPublishableToken(config.publicKey)
         if (config.secretKey.isNotBlank()) tokenBuilder = tokenBuilder.withSecretToken(config.secretKey)

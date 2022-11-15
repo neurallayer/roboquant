@@ -14,43 +14,27 @@
  * limitations under the License.
  */
 
-package org.roboquant.iex
+package org.roboquant.iexcloud
 
 import org.junit.jupiter.api.Test
+import org.roboquant.common.Timeframe
+import org.roboquant.common.minutes
 import org.roboquant.common.symbols
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import kotlin.test.assertTrue
 
-internal class IEXHistoricFeedTestIT {
+internal class IEXCloudLiveTestIT {
 
     @Test
     fun test() {
         System.getProperty("TEST_IEX") ?: return
-        val feed = IEXHistoricFeed()
-        feed.retrieveIntraday("AAPL")
+        val feed = IEXCloudLiveFeed()
+
+        feed.subscribeQuotes("AAPL")
         assertTrue("AAPL" in feed.assets.symbols)
 
-        val actions = feed.filter<PriceAction>()
-        assertTrue(actions.isNotEmpty())
-    }
-
-    @Test
-    fun testPriceBar() {
-        System.getProperty("TEST_IEX") ?: return
-        val feed = IEXHistoricFeed()
-        feed.retrieve("AAPL")
-        Thread.sleep(2000)
-        val actions = feed.filter<PriceAction>()
-        assertTrue(actions.isNotEmpty())
-    }
-
-    @Test
-    fun testIntraday() {
-        System.getProperty("TEST_IEX") ?: return
-        val feed = IEXHistoricFeed()
-        feed.retrieveIntraday("AAPL")
-        val actions = feed.filter<PriceAction>()
+        val actions = feed.filter<PriceAction>(Timeframe.next(5.minutes))
         assertTrue(actions.isNotEmpty())
     }
 

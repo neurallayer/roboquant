@@ -15,7 +15,7 @@
  */
 @file:Suppress("SpreadOperator")
 
-package org.roboquant.iex
+package org.roboquant.iexcloud
 
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
@@ -35,18 +35,18 @@ import java.time.Instant
 typealias Interval = QuoteInterval
 
 /**
- * Live feed of trades and/or quotes from IEX Cloud for the subscribed assets.
+ * Live feed of trades and/or quotes from IEXCloud Cloud for the subscribed assets.
  *
  * @property useMachineTime use machine time to tag events
  * @param configure additional configuration
  */
-class IEXLiveFeed(
+class IEXCloudLiveFeed(
     private val useMachineTime: Boolean = true,
-    configure: IEXConfig.() -> Unit = {}
+    configure: IEXCloudConfig.() -> Unit = {}
 ) : LiveFeed(), AssetFeed {
 
-    private val logger = Logging.getLogger(IEXLiveFeed::class)
-    private val config = IEXConfig()
+    private val logger = Logging.getLogger(IEXCloudLiveFeed::class)
+    private val config = IEXCloudConfig()
     private val client: IEXCloudClient
     private val assetMap = mutableMapOf<String, Asset>()
 
@@ -58,11 +58,11 @@ class IEXLiveFeed(
 
     init {
         config.configure()
-        client = IEX.getClient(config)
+        client = IEXCloud.getClient(config)
     }
 
     /**
-     * Subscribe to one or more [assets]. If the symbol of the asset is found by IEX, [PriceQuote] will be provided
+     * Subscribe to one or more [assets]. If the symbol of the asset is found by IEXCloud, [PriceQuote] will be provided
      * as part of the feed.
      */
     fun subscribeQuotes(vararg symbols: String, interval: Interval = Interval.ONE_MINUTE) {
@@ -79,8 +79,8 @@ class IEXLiveFeed(
     }
 
     /**
-     * Subscribe to the Trades for one or more [symbols]. If the symbol of the asset is found by IEX, [TradePrice] will
-     * be provided as part of the feed.
+     * Subscribe to the Trades for one or more [symbols]. If the symbol of the asset is found by IEXCloud,
+     * [TradePrice] will be provided as part of the feed.
      */
     fun subscribeTrades(vararg symbols: String) {
         require(symbols.isNotEmpty()) { "Subscribe to at least one symbol"}

@@ -20,7 +20,7 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.common.*
-import org.roboquant.iex.Range
+import org.roboquant.iexcloud.Range
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PositionMetric
@@ -30,7 +30,7 @@ import org.roboquant.strategies.EMAStrategy
 import org.roboquant.yahoo.YahooHistoricFeed
 
 fun feedIEX() {
-    val feed = org.roboquant.iex.IEXHistoricFeed()
+    val feed = org.roboquant.iexcloud.IEXCloudHistoricFeed()
     feed.retrieve("AAPL", "GOOGL", "FB", range = Range.TWO_YEARS)
 
     val strategy = EMAStrategy(10, 30)
@@ -40,7 +40,7 @@ fun feedIEX() {
 }
 
 fun feedIEXLive() {
-    val feed = org.roboquant.iex.IEXLiveFeed()
+    val feed = org.roboquant.iexcloud.IEXCloudLiveFeed()
     feed.subscribeTrades("AAPL", "GOOG")
     val strategy = EMAStrategy()
     val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric())
@@ -79,7 +79,7 @@ fun feedPolygon() {
 
 fun main() {
     when ("POLYGON") {
-        "IEX" -> feedIEX()
+        "IEXCloud" -> feedIEX()
         "IEX_LIVE" -> feedIEXLive()
         "YAHOO" -> feedYahoo()
         "POLYGON" -> feedPolygon()

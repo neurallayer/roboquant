@@ -7,7 +7,7 @@
         <option name="INCLUDE" value="false" />
       </pattern>
       <pattern>
-        <option name="PATTERN" value="org.roboquant.iex.*" />
+        <option name="PATTERN" value="org.roboquant.iexcloud.*" />
         <option name="ENABLED" value="true" />
         <option name="INCLUDE" value="false" />
       </pattern>
