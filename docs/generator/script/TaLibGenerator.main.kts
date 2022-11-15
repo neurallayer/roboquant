@@ -32,12 +32,12 @@ operator fun StringBuffer.plusAssign(str: Any) {
  * @property root
  * @constructor Create empty Base wrapper
  */
-open class BaseWrapper(val root: JsonObject) {
+class TaLibGenerator(private val root: JsonObject) {
 
-    protected fun JsonObject.getAttr(key: String): String = get(key).asString
+     fun JsonObject.getAttr(key: String): String = get(key).asString
     private fun String.unCapitalize() = get(0).lowercase() + substring(1)
 
-    protected fun JsonObject.getVariableName(key: String): String {
+     fun JsonObject.getVariableName(key: String): String {
         var result = get(key).asString
         result = result.replace(" ", "")
         result = result.replace("-", "")
@@ -46,7 +46,7 @@ open class BaseWrapper(val root: JsonObject) {
         return result
     }
 
-    protected fun getList(key: String): List<JsonObject> {
+     fun getList(key: String): List<JsonObject> {
         if (!root.has(key + "s")) return emptyList()
 
         val child = root.getAsJsonObject(key + "s").get(key)
@@ -58,15 +58,15 @@ open class BaseWrapper(val root: JsonObject) {
         return emptyList()
     }
 
-    protected val desc = root.getAttr("ShortDescription")
+     val desc = root.getAttr("ShortDescription")
     private val className: String = root.get("CamelCaseName").asString
-    protected val fnName = className.unCapitalize()
-    protected val fixedFnName = if (fnName == "cdlStickSandwhich") "cdlStickSandwich" else fnName
-    protected val inputParams = getInput()
-    protected val optional = getOptionalInput()
-    protected val firstInput = getList("RequiredInputArgument").first().getVariableName("Name")
-    protected val patternRecognition = root.getAttr("GroupId") == "Pattern Recognition"
-    protected val groupId = root.getAttr("GroupId")
+     val fnName = className.unCapitalize()
+     val fixedFnName = if (fnName == "cdlStickSandwhich") "cdlStickSandwich" else fnName
+     val inputParams = getInput()
+     val optional = getOptionalInput()
+     val firstInput = getList("RequiredInputArgument").first().getVariableName("Name")
+     val patternRecognition = root.getAttr("GroupId") == "Pattern Recognition"
+     val groupId = root.getAttr("GroupId")
 
     private fun getOptionalInput(): String {
         val result = StringBuffer()
@@ -78,7 +78,7 @@ open class BaseWrapper(val root: JsonObject) {
         return result.toString()
     }
 
-    protected fun callLookback(): String {
+     fun callLookback(): String {
         val result = StringBuffer("${fnName}Lookback(")
 
         val l = getList("OptionalInputArgument")
@@ -90,7 +90,7 @@ open class BaseWrapper(val root: JsonObject) {
         return result.toString()
     }
 
-    protected fun getInput(withType: Boolean = false): String {
+     fun getInput(withType: Boolean = false): String {
         val result = StringBuffer()
 
         val l = getList("RequiredInputArgument")
@@ -107,7 +107,7 @@ open class BaseWrapper(val root: JsonObject) {
         return result.removeSuffix(",").toString()
     }
 
-    protected fun getOutputNames(): String {
+     fun getOutputNames(): String {
         var result = ""
 
         val l = getList("OutputArgument")
@@ -119,7 +119,7 @@ open class BaseWrapper(val root: JsonObject) {
         return result.removeSuffix(",")
     }
 
-    protected val constructor: String
+     val constructor: String
         get() {
             val result = StringBuffer()
             val l = getList("OptionalInputArgument")
@@ -141,121 +141,7 @@ open class BaseWrapper(val root: JsonObject) {
             }
             return result.toString()
         }
-}
 
-/**
- * Generate a Wrapper for the TA-Lib library
- *
- * @property root
- * @constructor Create new TA builder
- */
-class TALibBatchGenerator(root: JsonObject) : BaseWrapper(root) {
-
-    companion object {
-        val startCode = """
-        @file:Suppress("MemberVisibilityCanBePrivate", "unused")
-        package org.roboquant.ta
-        
-        import com.tictactec.ta.lib.*
-       
-        /**
-         * TALib wrapper that supports the standard (batch oriented) API. So when invoking a method, you typically get 
-         * back an array with multiple results. 
-         *
-         */
-        object TaLibBatch {
-
-            var core:Core = Core()
-            
-    """.trimIndent()
-    }
-
-    private fun getOutputDecl(): String {
-        val result = StringBuffer()
-
-        val l = getList("OutputArgument")
-        var cnt = 1
-        l.forEach {
-            val type = it.getAttr("Type")
-            result += when (type) {
-                "Integer Array" -> "val output$cnt = IntArray(outputSize)\n"
-                "Double Array" -> "val output$cnt = DoubleArray(outputSize)\n"
-                else -> {
-                    throw Exception("unexpected output type $type")
-                }
-            }
-            cnt++
-        }
-        return result.toString().trimIndent()
-    }
-
-    private fun returnStatement(): String {
-
-        val l = getList("OutputArgument")
-        return when (l.size) {
-            1 -> "output1.copyOfRange(0, last)"
-            2 -> "Pair(output1.copyOfRange(0, last), output2.copyOfRange(0, last))"
-            3 -> "Triple(output1.copyOfRange(0, last), output2.copyOfRange(0, last), output3.copyOfRange(0, last))"
-            else -> {
-                throw Exception("unexpected return size")
-            }
-        }
-    }
-
-    private fun returnType(): String {
-
-        val l = getList("OutputArgument")
-        val type = if (l.first().getAttr("Type") == "Integer Array") "IntArray" else "DoubleArray"
-        return when (l.size) {
-            1 -> type
-            2 -> "Pair<$type, $type>"
-            3 -> "Triple<$type, $type, $type>"
-            else -> {
-                throw Exception("unexpected return size")
-            }
-        }
-    }
-
-    /**
-     * Build method that returns all available output values.
-     *
-     * @return
-     */
-    fun genMethod(): String {
-        return """
-            
-        /**
-         * Apply $desc on the provided input data and return the output result. If there is insufficient
-         * data to calculate the indicators, an [InsufficientData] will be thrown.
-         * This indicator belongs to the group $groupId.
-         */
-        fun $fixedFnName(${getInput(true)}, $constructor):  ${returnType()} {
-            val endIdx = $firstInput.lastIndex
-            val outputSize = $firstInput.size
-            ${getOutputDecl()}
-            val startOutput = MInteger()
-            val endOutput = MInteger()
-            val ret = core.$fnName(0, endIdx, $inputParams, $optional startOutput, endOutput, ${getOutputNames()})
-            if (ret != RetCode.Success) throw Exception(ret.toString())
-            val last = endOutput.value
-             if (last < 0) {
-                val lookback = core.${callLookback()}
-                throw InsufficientData("Not enough data to calculate $fixedFnName, required lookback period is ${'$'}lookback")
-            }
-            return ${returnStatement()}
-        }
-    """.trimIndent()
-    }
-
-}
-
-/**
- * Generate the wrappers for the TA-Lib library
- *
- * @property root
- * @constructor Create new TA builder
- */
-class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
 
     companion object {
         val startCode = """
@@ -272,6 +158,7 @@ class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
         
         import com.tictactec.ta.lib.*
         import org.roboquant.common.DoesNotComputeException
+        import org.roboquant.common.InsufficientDataException
         import org.roboquant.strategies.utils.PriceBarSeries
         
         /**
@@ -362,9 +249,9 @@ class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
         return """
             
         /**
-         * Calculate **$desc** using the provided input [data] and by default return the most recent result. 
+         * Calculate **$desc** using the provided input data and by default return the most recent result. 
          * You can set [previous] if you don't want the most recent result.
-         * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
+         * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
          *
          * This indicator belongs to the group **$groupId**.
          */
@@ -378,7 +265,7 @@ class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
             val last = endOutput.value - 1
             if (last < 0) {
                 val lookback = core.${callLookback()} + previous
-                throw InsufficientData("Not enough data to calculate $fixedFnName, minimal lookback period is ${'$'}lookback")
+                throw InsufficientDataException("Not enough data to calculate $fixedFnName, minimal lookback period is ${'$'}lookback")
             }
             return ${returnStatement()}
         }
@@ -414,7 +301,7 @@ class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
             """
                 
             /**
-             * Simple wrapper that allows to use price-bar [series] as input.
+             * Convencience method that allows to use a price-bar [series] as input.
              * @see [$fixedFnName]
              */ 
              """.trimIndent() + "\n$result"
@@ -432,8 +319,8 @@ class TaLibGenerator(root: JsonObject) : BaseWrapper(root) {
  */
 fun main() {
     println("starting")
-    val f = File("../ta_func_api.json")
-    require(f.isFile) { "File not found" }
+    val f = File("ta_func_api.json")
+    require(f.isFile) { "ta_func_api.json file not found, run: kotlinc -script script/TaLibGenerator.main.kts" }
 
     val jsonTree = JsonParser.parseString(f.readText())
     val obj = jsonTree.asJsonObject
@@ -449,21 +336,9 @@ fun main() {
         sb1 += b.genMethod()
     }
     sb1 += "}\n\n"
-    val file1 = File("/tmp/TaLib.kt")
+    println("Generated ${sb1.lines().size} lines of code")
+    val file1 = File("TaLib.kt")
     file1.writeText(sb1.toString())
-
-    /**
-    val sb2 = StringBuffer()
-    sb2 += TALibBatchGenerator.startCode
-    l.forEach {
-        val el = it as JsonObject
-        val b = TALibBatchGenerator(el)
-        sb2 += b.genMethod()
-    }
-    sb2 += "}\n\n"
-    val file2 = File("/tmp/TALibBatch.kt")
-    file2.writeText(sb2.toString())
-    **/
 }
 
 main()

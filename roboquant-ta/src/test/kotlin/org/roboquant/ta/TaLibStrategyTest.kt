@@ -22,6 +22,7 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.Roboquant
 import org.roboquant.RunPhase
 import org.roboquant.common.Asset
+import org.roboquant.common.InsufficientDataException
 import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
@@ -91,7 +92,7 @@ internal class TaLibStrategyTest {
             else null
         }
 
-        assertFailsWith<InsufficientData> {
+        assertFailsWith<InsufficientDataException> {
             run(strategy, 30)
         }
     }
@@ -120,7 +121,7 @@ internal class TaLibStrategyTest {
         val strategy = TaLibStrategy(3)
         strategy.buy { price -> cdlMorningStar(price) }
 
-        assertFailsWith<InsufficientData> {
+        assertFailsWith<InsufficientDataException> {
             run(strategy)
         }
     }

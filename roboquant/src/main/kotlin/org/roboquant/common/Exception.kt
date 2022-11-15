@@ -23,7 +23,7 @@ import java.time.LocalDate
  *
  * @constructor
  *
- * @param msg The message to contain in the exception
+ * @param msg  The message to include with the exception
  */
 open class RoboquantException(msg: String) : java.lang.Exception(msg)
 
@@ -32,7 +32,7 @@ open class RoboquantException(msg: String) : java.lang.Exception(msg)
  *
  * @constructor
  *
- * @param msg
+ * @param msg  The message to include with the exception
  */
 class UnsupportedException(msg: String) : RoboquantException(msg)
 
@@ -41,7 +41,7 @@ class UnsupportedException(msg: String) : RoboquantException(msg)
  *
  * @constructor
  *
- * @param msg
+ * @param msg  The message to include with the exception
  */
 class ConfigurationException(msg: String) : RoboquantException(msg)
 
@@ -50,7 +50,7 @@ class ConfigurationException(msg: String) : RoboquantException(msg)
  *
  * @constructor
  *
- * @param msg
+ * @param msg  The message to include with the exception
  */
 class ValidationException(msg: String) : RoboquantException(msg)
 
@@ -60,7 +60,7 @@ class ValidationException(msg: String) : RoboquantException(msg)
  *
  * @constructor
  *
- * @param msg
+ * @param msg  The message to include with the exception
  */
 class DoesNotComputeException(msg: String) : RoboquantException(msg)
 
@@ -71,3 +71,13 @@ class DoesNotComputeException(msg: String) : RoboquantException(msg)
  * @param date The day for trading
  */
 class NoTradingException(date: LocalDate) : RoboquantException("$date is not a trading day")
+
+
+
+/**
+ * This exception is thrown when there is not enough (historic) data to run an algorithm, for example a technical
+ * indicator.
+ *
+ * @param msg The message to include with the exception
+ */
+class InsufficientDataException(msg: String) : RoboquantException(msg)

@@ -18,7 +18,6 @@
 
 package org.roboquant.ta
 
-import org.roboquant.common.RoboquantException
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.strategies.Rating
@@ -234,9 +233,3 @@ fun TaLib.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) =
 fun TaLib.recordHigh(series: PriceBarSeries, period: Int, previous: Int = 0) =
     recordHigh(series.high, period, previous)
 
-
-/**
- * This exception is thrown when there is not enough (historic) data to run an algorithm, for example a technical
- * indicator.
- */
-class InsufficientData(msg: String) : RoboquantException(msg)
