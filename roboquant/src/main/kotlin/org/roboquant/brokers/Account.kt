@@ -268,10 +268,9 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
-        val orders = sortedBy { it.id }
         val lines = mutableListOf<List<Any>>()
         lines.add(listOf("type", "symbol", "ccy", "status", "id", "opened at", "closed at", "details"))
-        orders.forEach {
+        forEach {
             with(it) {
                 val t1 = openedAt.truncatedTo(ChronoUnit.SECONDS)
                 val t2 = closedAt.truncatedTo(ChronoUnit.SECONDS)
@@ -310,10 +309,9 @@ fun Collection<Trade>.summary(name: String = "trades"): Summary {
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
-        val trades = sortedBy { it.time }
         val lines = mutableListOf<List<Any>>()
         lines.add(listOf("time", "symbol", "ccy", "size", "cost", "fee", "rlzd p&l", "price"))
-        trades.forEach {
+        forEach {
             with(it) {
                 val currency = asset.currency
                 val cost = totalCost.formatValue()
@@ -340,7 +338,6 @@ fun Collection<Position>.summary(name: String = "positions"): Summary {
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
-        val positions = sortedBy { it.asset.symbol }
         val lines = mutableListOf<List<Any>>()
         lines.add(
             listOf(
@@ -354,7 +351,7 @@ fun Collection<Position>.summary(name: String = "positions"): Summary {
             )
         )
 
-        for (v in positions) {
+        for (v in this) {
             val c = v.asset.currency
             val pos = v.size
             val avgPrice = Amount(c, v.avgPrice).formatValue()
