@@ -26,6 +26,7 @@ import org.roboquant.loggers.InfoLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
+import java.time.Instant
 
 fun alpacaBroker() {
     val broker = AlpacaBroker()
@@ -107,6 +108,64 @@ fun alpacaHistoricFeed() {
     AvroFeed.record(feed, "/tmp/alpaca.avro")
 }
 
+
+/**
+ * Alpaca historic feed
+ */
+fun alpacaSP500Day() {
+    val feed = AlpacaHistoricFeed()
+    val now = Instant.now()
+    val tf = Timeframe(Instant.parse("2000-01-01T00:00:00Z"), now)
+
+    val feedSymbols = feed.availableAssets.symbols
+    val symbols = Universe.sp500.getAssets(now).symbols.filter { it in feedSymbols }
+    println("${symbols.size} symbols found")
+
+
+    symbols.forEach {
+        feed.retrieveStockPriceBars(it, timeframe = tf, barPeriod = BarPeriod.DAY)
+        println("symbol=$it")
+
+        // Sleep a little to not exceed API call limits
+        Thread.sleep(100)
+    }
+
+    println("total timeframe is ${feed.timeframe}")
+
+    // save the results in an Avro feed format for future usage
+    AvroFeed.record(feed, "/tmp/sp500_pricebar_v3.0.avro")
+}
+
+
+/**
+ * Alpaca historic feed
+ */
+fun alpacaSP500Minute() {
+    val feed = AlpacaHistoricFeed()
+    val now = Instant.now()
+    val tf = Timeframe.parse("2022-11-14T18:00:00Z", "2022-11-14T18:10:00Z") // 10 minutes of data
+
+    val feedSymbols = feed.availableAssets.symbols
+    val symbols = Universe.sp500.getAssets(now).symbols.filter { it in feedSymbols }
+    println("${symbols.size} symbols found")
+
+    symbols.forEach {
+        feed.retrieveStockQuotes(it, timeframe = tf)
+        println("symbol=$it")
+
+        // Sleep a little to not exceed API call limits
+        Thread.sleep(100)
+    }
+
+    println("total timeframe is ${feed.timeframe}")
+
+    // save the results in an Avro feed format for future usage
+    AvroFeed.record(feed, "/tmp/sp500_quotes_v3.0.avro")
+}
+
+
+
+
 fun alpacaHistoricFeed2() {
     val symbols = listOf(
         "AAPL",
@@ -135,12 +194,14 @@ fun alpacaHistoricFeed2() {
 }
 
 fun main() {
-    when ("ALPACA_TRADE_CRYPTO") {
+    when ("ALPACA_HISTORIC_SP500_DAY") {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
         "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()
         "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
         "ALPACA_HISTORIC_FEED2" -> alpacaHistoricFeed2()
+        "ALPACA_HISTORIC_SP500_DAY" -> alpacaSP500Day()
+        "ALPACA_HISTORIC_SP500_MINUTE" -> alpacaSP500Minute()
         "ALPACA_PAPER_TRADE_STOCKS" -> alpacaPaperTradeStocks()
     }
 }

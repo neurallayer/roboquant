@@ -18,6 +18,7 @@ package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.historical.bar.enums.BarTimePeriod
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.StockBarsResponse
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarAdjustment
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarFeed
 import net.jacobpeterson.alpaca.model.properties.DataAPIType
@@ -47,7 +48,7 @@ class AlpacaHistoricFeed(
     configure: AlpacaConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-
+    private val limit = 10_000
     private val config = AlpacaConfig()
     private val stockData: StockMarketDataEndpoint
     private val alpacaAPI: AlpacaAPI
@@ -60,11 +61,11 @@ class AlpacaHistoricFeed(
         stockData = alpacaAPI.stockMarketData()
     }
 
-    private val availableStocks : Map<String, Asset> by lazy {
+    private val availableStocks: Map<String, Asset> by lazy {
         Alpaca.getAvailableStocks(alpacaAPI)
     }
 
-    private val availableCrypto : Map<String, Asset> by lazy {
+    private val availableCrypto: Map<String, Asset> by lazy {
         Alpaca.getAvailableCrypto(alpacaAPI)
     }
 
@@ -80,28 +81,41 @@ class AlpacaHistoricFeed(
         get() = ZonedDateTime.ofInstant(this, zoneId)
 
 
+    private fun validateStockSymbols(symbols: Array<out String>) {
+        require(symbols.isNotEmpty()) { "specify at least one symbol" }
+        symbols.forEach {
+            require(availableStocks[it] != null){ "unknown symbol $it"}
+        }
+    }
+
     /**
-     * Retrieve the [PriceQuote] for a number of [symbols] and specified [timeframe].
+     * Retrieve the [PriceQuote] for a number of [symbols] and specified [timeframe]. If there is more than one quote
+     * for a certain asset at a certain point in time, the latest one will be stored.
      */
     fun retrieveStockQuotes(vararg symbols: String, timeframe: Timeframe) {
-        require(symbols.isNotEmpty()) { "retrieve at least one symbol"}
+        validateStockSymbols(symbols)
+
         val start = timeframe.start.zonedDateTime
         val end = timeframe.end.zonedDateTime
         for (symbol in symbols) {
-            val resp = stockData.getQuotes(symbol, start, end, null, null)
-            resp.quotes == null && return
-            val asset = getAsset(symbol)!!
-            for (quote in resp.quotes) {
-                val action = PriceQuote(
-                    asset,
-                    quote.askPrice,
-                    quote.askSize.toDouble(),
-                    quote.bidPrice,
-                    quote.bidSize.toDouble()
-                )
-                val now = quote.timestamp.toInstant()
-                add(now, action)
-            }
+            var nextPageToken: String? = null
+            do {
+                val resp = stockData.getQuotes(symbol, start, end, limit, nextPageToken)
+                resp.quotes == null && return
+                val asset = getAsset(symbol)!!
+                for (quote in resp.quotes) {
+                    val action = PriceQuote(
+                        asset,
+                        quote.askPrice,
+                        quote.askSize.toDouble(),
+                        quote.bidPrice,
+                        quote.bidSize.toDouble()
+                    )
+                    val now = quote.timestamp.toInstant()
+                    add(now, action)
+                }
+                nextPageToken = resp.nextPageToken
+            } while (nextPageToken != null)
             logger.debug { "retrieved prices type=quotes symbol=$symbol timeframe=$timeframe" }
         }
 
@@ -112,24 +126,38 @@ class AlpacaHistoricFeed(
      * Retrieve the [PriceQuote] for a number of [symbols] and specified [timeframe].
      */
     fun retrieveStockTrades(vararg symbols: String, timeframe: Timeframe) {
-        require(symbols.isNotEmpty()) { "retrieve at least one symbol"}
+        validateStockSymbols(symbols)
+
         val start = timeframe.start.zonedDateTime
         val end = timeframe.end.zonedDateTime
         for (symbol in symbols) {
-            val resp = stockData.getTrades(symbol, start, end, null, null)
-            resp.trades == null && return
-            val asset = getAsset(symbol)!!
+            var nextPageToken: String? = null
+            do {
+                val resp = stockData.getTrades(symbol, start, end, limit, nextPageToken)
+                resp.trades == null && return
+                val asset = getAsset(symbol)!!
 
-            for (trade in resp.trades) {
-                val action = TradePrice(asset, trade.price, trade.size.toDouble())
-                val now = trade.timestamp.toInstant()
-                add(now, action)
-            }
+                for (trade in resp.trades) {
+                    val action = TradePrice(asset, trade.price, trade.size.toDouble())
+                    val now = trade.timestamp.toInstant()
+                    add(now, action)
+                }
+                nextPageToken = resp.nextPageToken
+            } while (nextPageToken != null)
             logger.debug { "retrieved prices type=trades symbol=$symbol timeframe=$timeframe" }
         }
 
     }
 
+    private fun processBars(symbol: String, resp: StockBarsResponse) {
+        resp.bars == null && return
+        val asset = getAsset(symbol)!!
+        for (bar in resp.bars) {
+            val action = PriceBar(asset, bar.open, bar.high, bar.low, bar.close, bar.volume.toDouble())
+            val now = bar.timestamp.toInstant()
+            add(now, action)
+        }
+    }
 
     /**
      * Retrieve the [PriceBar]  for a number of [symbols] and the specified [timeframe], [barDuration] and [barPeriod].
@@ -140,32 +168,32 @@ class AlpacaHistoricFeed(
         barDuration: Int = 1,
         barPeriod: BarPeriod = BarPeriod.DAY
     ) {
+        validateStockSymbols(symbols)
+
         val barFeed = when (config.dataType) {
             DataAPIType.IEX -> BarFeed.IEX
             DataAPIType.SIP -> BarFeed.SIP
         }
         val start = timeframe.start.zonedDateTime
         val end = timeframe.end.zonedDateTime
-        for (symbol in symbols) {
-            val asset = getAsset(symbol)!!
-            val resp = stockData.getBars(
-                symbol,
-                start,
-                end,
-                10_000,
-                null,
-                barDuration,
-                barPeriod,
-                BarAdjustment.ALL,
-                barFeed
-            )
-            resp.bars == null && continue
 
-            for (bar in resp.bars) {
-                val action = PriceBar(asset, bar.open, bar.high, bar.low, bar.close, bar.volume.toDouble())
-                val now = bar.timestamp.toInstant()
-                add(now, action)
-            }
+        for (symbol in symbols) {
+            var nextPageToken: String? = null
+            do {
+                val resp = stockData.getBars(
+                    symbol,
+                    start,
+                    end,
+                    limit,
+                    nextPageToken,
+                    barDuration,
+                    barPeriod,
+                    BarAdjustment.ALL,
+                    barFeed
+                )
+                processBars(symbol, resp)
+                nextPageToken = resp.nextPageToken
+            } while (nextPageToken != null)
             logger.debug { "retrieved prices type=bars symbol=$symbol timeframe=$timeframe" }
         }
     }

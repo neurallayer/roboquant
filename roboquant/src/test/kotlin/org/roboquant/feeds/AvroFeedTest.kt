@@ -26,6 +26,7 @@ import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.UnsupportedException
+import org.roboquant.common.symbols
 import org.roboquant.feeds.*
 import java.io.File
 import java.time.Instant
@@ -151,23 +152,24 @@ class AvroFeedTest {
         val feed = AvroFeed.sp500()
         assertTrue(feed.assets.size >= 490)
         assertTrue(feed.timeframe.start >= Instant.parse("2016-01-01T00:00:00Z"))
-        assertContains(feed.assets.map { it.symbol }, "AAPL")
+        assertContains(feed.assets.symbols, "AAPL")
 
-        val feed2 = AvroFeed.usTest()
-        assertTrue(feed2.assets.size == 6)
-        assertContains(feed2.assets.map { it.symbol }, "AAPL")
+        val feed2 = AvroFeed.sp500Quotes()
+        assertTrue(feed2.assets.size >= 490)
+        assertContains(feed2.assets.symbols, "AAPL")
     }
 
     @Test
     fun loadFromGithub() {
         Config.getProperty("FULL_COVERAGE") ?: return
-        val file = (Config.home / "us_small_daily_v3.0.avro").toFile()
+        val fileName = "sp500_pricebar_v3.0.avro"
+        val file = (Config.home / fileName).toFile()
         file.delete()
         assertFalse(file.exists())
-        val feed = AvroFeed.usTest()
+        val feed = AvroFeed.sp500()
         assertTrue(feed.assets.size == 6)
 
-        val file2 = (Config.home / "us_small_daily_v3.0.avro").toFile()
+        val file2 = (Config.home / fileName).toFile()
         assertTrue(file2.exists())
     }
 

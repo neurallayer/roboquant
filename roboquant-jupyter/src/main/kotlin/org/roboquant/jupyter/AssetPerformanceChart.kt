@@ -49,30 +49,37 @@ class AssetPerformanceChart(
     private val assetFilter: AssetFilter = AssetFilter.all()
 ) : Chart() {
 
+    private class AssetReturns(
+        val initialPrice: Double,
+        var lastPrice: Double = initialPrice,
+        var volume: Double = 0.0
+    ) {
+        fun returns() = 100.0 * (lastPrice - initialPrice) / initialPrice
+    }
+
     /**
      * Play the feed and get price-actions
      * The output is usable for a treemap
      */
     private fun fromFeed(): List<Map<String, Any>> {
-        val result = mutableMapOf<Asset, MutableList<Double>>()  // start, last, volume
+        val result = mutableMapOf<Asset, AssetReturns>()
         val entries = feed.filter<PriceAction>(timeframe)
         val finalEntries = entries.filter { assetFilter.filter(it.second.asset, timeframe.start) }
         finalEntries.forEach { (time, priceAction) ->
             if (priceAction.volume.isFinite()) {
                 val asset = priceAction.asset
-                val price = priceAction.getPriceAmount(priceType)
-                val record = result.getOrPut(asset) { mutableListOf(price.value, 0.0, 0.0) }
-                record[1] = price.value
+                val price = priceAction.getPrice(priceType)
+                val record = result.getOrPut(asset) { AssetReturns(price) }
+                record.lastPrice = price
 
                 val tradingSize = if (compensateVolume) Size(priceAction.volume) else Size.ONE
-                val tradingValue = asset.value(tradingSize, price.value)
-                record[2] += tradingValue.convert(time = time).value
+                val tradingValue = asset.value(tradingSize, price)
+                record.volume += tradingValue.convert(time = time).value
             }
         }
         return result.map {
-            val returns = 100.0 * (it.value[1] - it.value[0]) / it.value[0]
-            val bdVolume = BigDecimal(it.value[2]).setScale(0, RoundingMode.HALF_DOWN)
-            val bdReturns = BigDecimal(returns).setScale(2, RoundingMode.HALF_DOWN)
+            val bdVolume = BigDecimal(it.value.volume).setScale(0, RoundingMode.HALF_DOWN)
+            val bdReturns = BigDecimal(it.value.returns()).setScale(2, RoundingMode.HALF_DOWN)
             mapOf("name" to it.key.symbol, "value" to listOf(bdVolume, bdReturns))
         }
     }

@@ -24,6 +24,7 @@ import kotlin.test.*
 internal class AlpacaHistoricFeedTestIT {
 
     private val timeframe = Timeframe.past(5.days) - 30.minutes
+    private val timeframe2 = Timeframe.past(3.days) - 30.minutes
 
     @Test
     fun testHistoricFeed() {
@@ -44,7 +45,7 @@ internal class AlpacaHistoricFeedTestIT {
         val actions = feed.filter<PriceAction>()
         val action = actions.first().second
         assertTrue(action is T)
-        assertEquals("AAPL", action.asset.symbol)
+        assertEquals("A", action.asset.symbol)
         feed.close()
         assertTrue(feed.assets.isEmpty())
     }
@@ -53,7 +54,7 @@ internal class AlpacaHistoricFeedTestIT {
     fun testHistoricQuotes() {
         Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AlpacaHistoricFeed()
-        feed.retrieveStockQuotes("AAPL", timeframe = timeframe)
+        feed.retrieveStockQuotes("A", timeframe = timeframe2)
         testResult<PriceQuote>(feed)
     }
 
@@ -61,7 +62,7 @@ internal class AlpacaHistoricFeedTestIT {
     fun testHistoricTrades() {
         Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AlpacaHistoricFeed()
-        feed.retrieveStockTrades("AAPL", timeframe = timeframe)
+        feed.retrieveStockTrades("A", timeframe = timeframe2)
         testResult<TradePrice>(feed)
     }
 
@@ -69,7 +70,7 @@ internal class AlpacaHistoricFeedTestIT {
     fun testHistoricBars() {
         Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AlpacaHistoricFeed()
-        feed.retrieveStockPriceBars("AAPL", timeframe = timeframe)
+        feed.retrieveStockPriceBars("A", timeframe = timeframe)
         testResult<PriceBar>(feed)
     }
 

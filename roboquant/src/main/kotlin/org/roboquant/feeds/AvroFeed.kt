@@ -77,7 +77,8 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
     }
 
     /**
-     * Build an index of where each time starts and get all assets found
+     * Build an index of where each time starts and also all assets found. The index helps to achieve faster read
+     * access if not starting from the beginning.
      */
     private fun buildIndex() {
         index.clear()
@@ -161,11 +162,11 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
     companion object {
 
         private val logger = Logging.getLogger(AvroFeed::class)
-        private const val sp500File = "5yr_sp500_v3.0.avro"
-        private const val smallFile = "us_small_daily_v3.0.avro"
+        private const val sp500File = "sp500_pricebar_v3.0.avro"
+        private const val sp500QuoteFile = "sp500_pricequote_v3.0.avro"
 
         /**
-         * 5 years worth of end of day [PriceBar] data for the companies listed in the S&P 500
+         * Daily [PriceBar] data for the companies listed in the S&P 500.
          */
         fun sp500(): AvroFeed {
             val path = download(sp500File)
@@ -173,13 +174,13 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
         }
 
         /**
-         * Small set of historic data with end of day [PriceBar] prices for 6 US stocks: AAPL, AMZN, TSLA, IBM,
-         * JNJ and JPM
+         * [PriceQuote] data for the companies listed in the S&P 500.
          */
-        fun usTest(): AvroFeed {
-            val path = download(smallFile)
+        fun sp500Quotes(): AvroFeed {
+            val path = download(sp500QuoteFile)
             return AvroFeed(path.toString())
         }
+
 
         private fun download(fileName: String): Path {
             val path: Path = Paths.get(Config.home.toString(), fileName)
@@ -261,8 +262,6 @@ class AvroFeed(private val path: String, useIndex: Boolean = true) : HistoricFee
                         dataFileWriter.append(record)
                     }
 
-                    // We sync after each event, so we can later create an index that allows for faster access
-                    dataFileWriter.sync()
                 }
 
             } catch (_: ClosedReceiveChannelException) {
