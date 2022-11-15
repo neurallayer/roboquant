@@ -166,9 +166,9 @@ class AvroFeedTest {
         val file = (Config.home / fileName).toFile()
         file.delete()
         assertFalse(file.exists())
-        val feed = AvroFeed.sp500()
-        assertTrue(feed.assets.size == 6)
 
+        // Force loading of file
+        AvroFeed.sp500()
         val file2 = (Config.home / fileName).toFile()
         assertTrue(file2.exists())
     }
