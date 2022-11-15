@@ -143,7 +143,7 @@ fun alpacaSP500Day() {
 fun alpacaSP500Minute() {
     val feed = AlpacaHistoricFeed()
     val now = Instant.now()
-    val tf = Timeframe.parse("2022-11-14T18:00:00Z", "2022-11-14T18:10:00Z") // 10 minutes of data
+    val tf = Timeframe.parse("2022-11-14T18:00:00Z", "2022-11-14T18:05:00Z") // 5 minutes of data
 
     val feedSymbols = feed.availableAssets.symbols
     val symbols = Universe.sp500.getAssets(now).symbols.filter { it in feedSymbols }
@@ -160,7 +160,7 @@ fun alpacaSP500Minute() {
     println("total timeframe is ${feed.timeframe}")
 
     // save the results in an Avro feed format for future usage
-    AvroFeed.record(feed, "/tmp/sp500_quotes_v3.0.avro")
+    AvroFeed.record(feed, "/tmp/sp500_pricequote_v3.0.avro")
 }
 
 
@@ -194,7 +194,7 @@ fun alpacaHistoricFeed2() {
 }
 
 fun main() {
-    when ("ALPACA_HISTORIC_SP500_DAY") {
+    when ("ALPACA_HISTORIC_SP500_MINUTE") {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
         "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()
