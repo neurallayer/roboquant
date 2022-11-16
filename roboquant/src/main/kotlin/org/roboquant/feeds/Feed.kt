@@ -31,7 +31,7 @@ import kotlin.math.absoluteValue
  *
  * Feeds can represent historic data, for example during back testing, and live feeds during live trading.
  */
-interface Feed : Closeable {
+interface Feed : AutoCloseable {
 
     /**
      * Timeframe of the feed. In case the timeframe is not known upfront, return the full timeframe [Timeframe.INFINITE]

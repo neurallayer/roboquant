@@ -26,7 +26,6 @@ import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.PriceBar
-import java.io.Closeable
 import java.time.Instant
 
 /**
@@ -46,12 +45,11 @@ typealias Interval = CandlestickInterval
 class BinanceLiveFeed(
     private val useMachineTime: Boolean = true,
     configure: BinanceConfig.() -> Unit = {}
-) :
-    LiveFeed(), AssetFeed {
+) : LiveFeed(), AssetFeed {
 
     private val subscriptions = mutableMapOf<String, Asset>()
     private val logger = Logging.getLogger(BinanceLiveFeed::class)
-    private val closeables = mutableListOf<Closeable>()
+    private val closeables = mutableListOf<AutoCloseable>()
     private val config = BinanceConfig()
     private val factory: BinanceApiClientFactory
     private val client: BinanceApiWebSocketClient

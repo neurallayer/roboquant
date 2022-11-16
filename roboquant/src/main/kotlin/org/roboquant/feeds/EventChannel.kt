@@ -21,7 +21,6 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.compareTo
-import java.io.Closeable
 
 /**
  * Wrapper around a [Channel] for communicating the [events][Event] of a [Feed]. It uses asynchronous communication
@@ -35,7 +34,7 @@ import java.io.Closeable
  * @property timeframe Limit the events to this timeframe, default is INFINITE, so no limit
  * @constructor create a new EventChannel
  */
-open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timeframe.INFINITE) : Closeable {
+open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timeframe.INFINITE) : AutoCloseable {
 
     private val channel = Channel<Event>(capacity)
     private val logger = Logging.getLogger(EventChannel::class)
