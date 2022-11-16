@@ -66,11 +66,6 @@ interface AssetFeed : Feed {
      */
     val assets: SortedSet<Asset>
 
-    /**
-     * Find an asset by its [symbol] name. If there are multiple assets with the same symbol name,
-     * the first one will be returned. If no asset is found, exception will be thrown
-     */
-    fun find(symbol: String): Asset = assets.getBySymbol(symbol)
 }
 
 /**

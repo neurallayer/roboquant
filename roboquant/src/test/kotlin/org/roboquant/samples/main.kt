@@ -153,7 +153,7 @@ fun beta() {
     val market = CSVFeed("/data/assets/stock-market/market/")
     feed.merge(market)
     val strategy = NoSignalStrategy()
-    val marketAsset = feed.find("SPY")
+    val marketAsset = feed.assets.getBySymbol("SPY")
 
     val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, maxPositions = 10)
     policy.recording = true
@@ -176,7 +176,7 @@ fun beta2() {
     }
     feed.merge(market)
     val strategy = NoSignalStrategy()
-    val marketAsset = feed.find("SPY")
+    val marketAsset = feed.assets.getBySymbol("SPY")
     val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, 60, maxPositions = 10)
     policy.recording = true
     val logger = MemoryLogger()

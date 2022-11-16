@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
+import org.roboquant.common.getBySymbol
 import org.roboquant.common.months
 import org.roboquant.feeds.test.HistoricTestFeed
 import java.time.Instant
@@ -39,7 +40,7 @@ internal class HistoricFeedTest {
         assertFalse(feed.timeline.isEmpty())
 
         val s = feed.assets.first().symbol
-        assertEquals(s, feed.find(s).symbol)
+        assertEquals(s, feed.assets.getBySymbol(s).symbol)
     }
 
     @Test
