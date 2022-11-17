@@ -36,25 +36,21 @@ interface HistoricFeed : AssetFeed {
     val timeline: Timeline
 
     /**
-     * TimeFrame of this feed. If it cannot be determined, [Timeframe.INFINITE] is returned instead.
+     * TimeFrame of this feed.
      */
     override val timeframe: Timeframe
-        get() = if (timeline.isEmpty()) Timeframe.INFINITE else timeline.timeframe
+        get() = timeline.timeframe
 
     /**
      * Draw a [random] sampled timeframe of a certain [size] from the historic feed and return a timeframe that
      * represents this sample.
      */
-    fun sample(size: Int, random: Random = Config.random): Timeframe {
-        val tl = timeline
-        val start = random.nextInt(tl.size - size)
-        return Timeframe(tl[start], tl[start + size])
-    }
+    fun sample(size: Int, samples: Int = 1, random: Random = Config.random) = timeline.sample(size, samples, random)
 
     /**
      * Split the timeframe of this feed in number of timeframes of equal [period].
      */
-    fun split(period: TemporalAmount) = timeframe.split(period)
+    fun split(period: TemporalAmount, overlap: TemporalAmount = 0.days) = timeframe.split(period, overlap)
 
     /**
      * Split the timeline of the feed in number of timeframes equal [size].

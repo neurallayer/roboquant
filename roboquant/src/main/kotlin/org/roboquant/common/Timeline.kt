@@ -17,6 +17,7 @@
 package org.roboquant.common
 
 import java.time.Instant
+import kotlin.random.Random
 
 /**
  * Timeline is an ordered list of [Instant] instances, sorted from old to new. Every [Instant] is unique.
@@ -24,6 +25,22 @@ import java.time.Instant
  * Currently, it is just a typealias for List<Instant>, but this might change in the future.
  */
 typealias Timeline = List<Instant>
+
+
+/**
+ * Draw a [random] sampled timeframe for [samples] time of a certain [size] from the historic feed and return
+ * the list of timeframes.
+ */
+fun Timeline.sample(size: Int, samples:Int = 1, random: Random = Config.random): List<Timeframe> {
+    val result = mutableListOf<Timeframe>()
+    val maxInt = this.size - size
+    repeat(samples) {
+        val start = random.nextInt(maxInt)
+        val sample = Timeframe(get(start), get(start + size))
+        result.add(sample)
+    }
+    return result
+}
 
 /**
  * Return the index of the time that is closets to the provided time but doesn't exceed it. So it is the most recent
@@ -49,13 +66,13 @@ fun Timeline.earliestNotBefore(time: Instant): Int? {
 }
 
 /**
- * Return the timeframe for this timeline. If the timeline is empty, an exception will be thrown.
+ * Return the timeframe for this timeline. If the timeline is empty, [Timeframe.EMPTY] will be returned
  */
 val Timeline.timeframe
-    get() = Timeframe(first(), last(), true)
+    get() = if (isEmpty()) Timeframe.EMPTY else Timeframe(first(), last(), true)
 
 /**
- * Split the timeline in chunks of [size]
+ * Split the timeline in chunks of [size] and return the corresponding timeframes
  */
 fun Timeline.split(size: Int): List<Timeframe> {
     require(size > 1) { "Minimum requires 2 elements in timeline" }

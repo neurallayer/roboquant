@@ -80,6 +80,11 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
          */
         val INFINITE = Timeframe(MIN, MAX)
 
+        /**
+         * The empty timeframe doesn't contain any time
+         */
+        val EMPTY = Timeframe(MIN, MIN)
+
         // Different formatters used when displaying a timeframe
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         private val minutesFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
@@ -275,7 +280,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      *
      * If the temporalAmount is defined as a [Period], the [Config.defaultZoneId] will be used as the ZoneId.
      */
-    fun split(period: TemporalAmount): List<Timeframe> {
+    fun split(period: TemporalAmount, overlap: TemporalAmount = 0.days): List<Timeframe> {
         val result = mutableListOf<Timeframe>()
         var last = start
         while (true) {
@@ -286,7 +291,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
             }
             val timeframe = Timeframe(last, next)
             result.add(timeframe)
-            last = next
+            last = next.minus(overlap)
         }
     }
 
