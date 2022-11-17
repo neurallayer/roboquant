@@ -97,7 +97,7 @@ class CSVFeed(
 
         val deferredList = mutableListOf<Deferred<Unit>>()
         for (file in files) {
-            val asset = config.assetBuilder(file)
+            val asset = config.assetBuilder(config, file)
             val deferred = Background.async {
                 val steps = readFile(asset, file)
                 for (step in steps) {

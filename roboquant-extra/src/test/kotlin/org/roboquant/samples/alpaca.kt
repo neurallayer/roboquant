@@ -112,7 +112,7 @@ fun alpacaHistoricFeed() {
 /**
  * Alpaca historic feed
  */
-fun alpacaSP500Day() {
+fun alpacaSP500PriceBar() {
     val feed = AlpacaHistoricFeed()
     val now = Instant.now()
     val tf = Timeframe(Instant.parse("2000-01-01T00:00:00Z"), now)
@@ -133,14 +133,14 @@ fun alpacaSP500Day() {
     println("total timeframe is ${feed.timeframe}")
 
     // save the results in an Avro feed format for future usage
-    AvroFeed.record(feed, "/tmp/sp500_pricebar_v3.0.avro")
+    AvroFeed.record(feed, "/tmp/sp500_pricebar_v4.0.avro")
 }
 
 
 /**
  * Alpaca historic feed
  */
-fun alpacaSP500Minute() {
+fun alpacaSP500PriceQuote() {
     val feed = AlpacaHistoricFeed()
     val now = Instant.now()
     val tf = Timeframe.parse("2022-11-14T18:00:00Z", "2022-11-14T18:05:00Z") // 5 minutes of data
@@ -154,16 +154,14 @@ fun alpacaSP500Minute() {
         println("symbol=$it")
 
         // Sleep a little to not exceed API call limits
-        Thread.sleep(100)
+        Thread.sleep(50)
     }
 
     println("total timeframe is ${feed.timeframe}")
 
     // save the results in an Avro feed format for future usage
-    AvroFeed.record(feed, "/tmp/sp500_pricequote_v3.0.avro")
+    AvroFeed.record(feed, "/tmp/sp500_pricequote_v4.0.avro")
 }
-
-
 
 
 fun alpacaHistoricFeed2() {
@@ -194,14 +192,14 @@ fun alpacaHistoricFeed2() {
 }
 
 fun main() {
-    when ("ALPACA_HISTORIC_SP500_MINUTE") {
+    when ("ALPACA_HISTORIC_SP500_PRICEBAR") {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
         "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()
         "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
         "ALPACA_HISTORIC_FEED2" -> alpacaHistoricFeed2()
-        "ALPACA_HISTORIC_SP500_DAY" -> alpacaSP500Day()
-        "ALPACA_HISTORIC_SP500_MINUTE" -> alpacaSP500Minute()
+        "ALPACA_HISTORIC_SP500_PRICEBAR" -> alpacaSP500PriceBar()
+        "ALPACA_HISTORIC_SP500_PRICEQUOTE" -> alpacaSP500PriceQuote()
         "ALPACA_PAPER_TRADE_STOCKS" -> alpacaPaperTradeStocks()
     }
 }

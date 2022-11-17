@@ -40,15 +40,17 @@ interface Feed : AutoCloseable {
         get() = Timeframe.INFINITE
 
     /**
-     * (Re)play the events of the feed on put these events on the provided [channel]. Once done, return from this
-     * method. Implementations that hold resources like open file descriptors, should carefully handle Channel
-     * related exceptions and make sure these resources are released before returning from the method.
+     * (Re)play the events of the feed by putting the events on the provided [channel]. Once done, return from this
+     * method.
      */
     suspend fun play(channel: EventChannel)
 
     /**
-     * Close the feed and free resources held by the feed. This is part of the [Closeable] interface that any feed
-     * can implement. If not implemented, the default behavior is to do nothing.
+     * A feed that may hold resources (such as file or socket handles) until it is closed. Calling the close() method
+     * of a feed ensures prompt release of these resources, avoiding resource exhaustion.
+     *
+     * This is part of the [Closeable] interface that any feed can override. If not implemented, the default behavior
+     * is to do nothing.
      */
     override fun close() {
         // default is to do nothing

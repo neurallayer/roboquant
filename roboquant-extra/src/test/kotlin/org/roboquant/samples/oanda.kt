@@ -118,7 +118,7 @@ fun oandaLiveRecord() {
 
     // Record for the next 60 minutes
     val tf = Timeframe.next(60.minutes)
-    AvroFeed.record(feed, "/tmp/oanda_forex.avro", tf)
+    AvroFeed.record(feed, "/tmp/oanda_forex.avro", timeframe = tf)
 }
 
 fun oandaLivePriceBar() {

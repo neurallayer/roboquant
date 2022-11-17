@@ -28,6 +28,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.AvroFeed
+import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.timeseries
@@ -43,6 +44,9 @@ import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.NoSignalStrategy
 import org.roboquant.strategies.Signal
+import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.div
 import kotlin.math.absoluteValue
 import kotlin.system.measureTimeMillis
 
@@ -215,6 +219,41 @@ fun signalsOnly() {
     println(logger.summary(1))
 }
 
+
+fun csv2Avro(pathStr: String = "/Users/peter/data/stooq/daily/us") {
+
+    val path = Path(pathStr)
+    val nasdaq = Exchange.getInstance("NASDAQ")
+    val nyse = Exchange.getInstance("NYSE")
+
+    fun CSVConfig.file2Symbol(file: File): String {
+        return file.name.removeSuffix(fileExtension).replace('-', '.').uppercase()
+    }
+
+    val feed = CSVFeed(path / "nasdaq stocks") {
+        fileExtension = ".us.txt"
+        parsePattern = "??T?OHLCV?"
+        assetBuilder = { file: File -> Asset(file2Symbol(file), exchange = nasdaq) }
+    }
+
+    val tmp = CSVFeed(path / "nyse stocks") {
+        fileExtension = ".us.txt"
+        parsePattern = "??T?OHLCV?"
+        assetBuilder = { file : File -> Asset(file2Symbol(file), exchange = nyse) }
+    }
+    feed.merge(tmp)
+
+    val sp500File = "/tmp/sp500_all_v3.0.avro"
+
+    AvroFeed.record(
+        feed,
+        sp500File
+    )
+
+}
+
+
+
 fun simple() {
     val strategy = EMAStrategy()
     val feed = AvroFeed.sp500()
@@ -227,9 +266,10 @@ suspend fun main() {
     // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
-    when ("SIGNALS") {
+    when ("CSV2AVRO") {
         "SIMPLE" -> simple()
         "BETA" -> beta()
+        "CSV2AVRO" -> csv2Avro()
         "CORR" -> calcCorrelation()
         "BETA2" -> beta2()
         "MULTI_RUN" -> multiRun()

@@ -30,6 +30,7 @@ import org.roboquant.common.symbols
 import org.roboquant.feeds.*
 import java.io.File
 import java.time.Instant
+import java.util.*
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.test.*
@@ -37,7 +38,7 @@ import kotlin.test.*
 @TestMethodOrder(Alphanumeric::class)
 class AvroFeedTest {
 
-    private class MyFeed : Feed {
+    private class MyFeed(override val assets: SortedSet<Asset>) : AssetFeed {
 
         lateinit var event: Event
 
@@ -67,14 +68,13 @@ class AvroFeedTest {
         val feed = TestData.feed
         assets.addAll(feed.assets)
         size = feed.timeline.size
-        AvroFeed.record(feed, fileName, compressionLevel = 0)
+        AvroFeed.record(feed, fileName)
         assertTrue(File(fileName).isFile)
     }
 
     @Test
     fun avroStep2() {
-        val feed2 = AvroFeed(Path(fileName), useIndex = false)
-        assertTrue(feed2.assets.isEmpty())
+        val feed2 = AvroFeed(Path(fileName))
 
         runBlocking {
             var past = Instant.MIN
@@ -91,7 +91,7 @@ class AvroFeedTest {
 
     @Test
     fun feedPlayback() {
-        val feed3 = AvroFeed(fileName, useIndex = true)
+        val feed3 = AvroFeed(fileName)
         assertEquals(size, feed3.timeline.size)
         assertEquals(nAssets, feed3.assets.size)
         assertEquals(assets.toSet(), feed3.assets.toSet())
@@ -114,11 +114,11 @@ class AvroFeedTest {
             listOf(OrderBook.OrderBookEntry(100.0, 11.0)),
             listOf(OrderBook.OrderBookEntry(50.0, 9.0))
         )
-        val feed = MyFeed()
+        val feed = MyFeed(sortedSetOf(asset))
         feed.event = Event(listOf(p1, p2, p3, p4), Instant.now())
 
         assertDoesNotThrow {
-            AvroFeed.record(feed, fileName, compressionLevel = 0)
+            AvroFeed.record(feed, fileName)
         }
 
         val feed2 = AvroFeed(fileName)
@@ -139,7 +139,7 @@ class AvroFeedTest {
 
         val asset = Asset("DUMMY")
         val p1 = MyPrice(asset, 100.0)
-        val feed = MyFeed()
+        val feed = MyFeed(sortedSetOf(asset))
         feed.event = Event(listOf(p1), Instant.now())
 
         assertThrows<UnsupportedException> {
@@ -162,7 +162,7 @@ class AvroFeedTest {
     @Test
     fun loadFromGithub() {
         Config.getProperty("FULL_COVERAGE") ?: return
-        val fileName = "sp500_pricebar_v3.0.avro"
+        val fileName = "sp500_pricebar_v4.0.avro"
         val file = (Config.home / fileName).toFile()
         file.delete()
         assertFalse(file.exists())

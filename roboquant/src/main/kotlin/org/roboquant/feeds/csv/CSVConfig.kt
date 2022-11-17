@@ -24,6 +24,8 @@ import java.util.*
 import java.util.regex.Pattern
 import kotlin.io.path.div
 
+
+
 /**
  * Define the configuration to use when parsing CSV files. There three levels of configuration:
  *
@@ -59,7 +61,7 @@ data class CSVConfig(
      * 3. Convert to symbol name to uppercase
      * 4. Use the [template] to create the actual asset, with only the symbol name variable
      */
-    var assetBuilder = this::defaultBuilder
+    var assetBuilder: CSVConfig.(File) -> Asset  = CSVConfig::defaultBuilder
 
     private val timeParser: TimeParser = AutoDetectTimeParser()
     private val info = ColumnInfo()
