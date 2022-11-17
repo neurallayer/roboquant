@@ -46,16 +46,19 @@ import kotlin.io.path.isRegularFile
 
 /**
  * Read price data from a single file in Avro format. This feed loads data lazy and disposes of it afterwards, so
- * memory footprint is low. Compared to CSV files, Avro files contain typed values, making the parsing more efficient.
+ * memory footprint is low. Compared to CSV files, Avro files are parsed much more efficient, making it a good
+ * solution for large back tests.
  *
  * Additionally, an Avro file can be compressed, reducing the overall disk space required.
+ *
+ * @property path the path where the Avro file can be found
  *
  * @constructor Create new Avro Feed
  */
 class AvroFeed(private val path: Path) : HistoricFeed {
 
     /**
-     * Create a new Avro Feed
+     * Instantiate an Avro Feed based on the Avro file at [path]
      */
     constructor(path: String) : this(Path.of(path))
 
@@ -177,7 +180,8 @@ class AvroFeed(private val path: Path) : HistoricFeed {
         private const val assetsMetaKey = "feed.assets"
 
         /**
-         * Get an AvroFeed containing end-of-day [PriceBar] data for the companies listed in the S&P 500.
+         * Get an AvroFeed containing end-of-day [PriceBar] data for the companies listed in the S&P 500. This feed
+         * contains 2.5 year of data.
          */
         fun sp500(): AvroFeed {
             val path = download(sp500File)
@@ -185,7 +189,8 @@ class AvroFeed(private val path: Path) : HistoricFeed {
         }
 
         /**
-         * Get an AvroFeed containing [PriceQuote] data for the companies listed in the S&P 500.
+         * Get an AvroFeed containing [PriceQuote] data for the companies listed in the S&P 500. This feed contains
+         * 5 minutes of data.
          */
         fun sp500Quotes(): AvroFeed {
             val path = download(sp500QuoteFile)
@@ -230,21 +235,22 @@ class AvroFeed(private val path: Path) : HistoricFeed {
             """
 
         /**
-         * Record the [PriceAction]s in a feed and store them in an Avro file that can be later used with an [AvroFeed].
+         * Record the price-actions in a [feed] and store them in an Avro [file] that can be later used as input for
+         * an AvroFeed. The provided [feed] needs to implement the [AssetFeed] interface.
          *
-         * Compression can be used which results in a smaller files at the cost of performance when accessing them. The
-         * Snappy compression codec is used, that achieves decent compression ratio while not limiting the performance
-         * overhead.
+         * [compression] can be enabled, which results in a smaller file. The `snappy` compression codec is used, that
+         * achieves decent compression ratio while using limited CPU usage.
+         *
+         * Additionally, you can filter on a [timeframe] and [assetFilter]. Default is to apply no filtering.
          */
         fun record(
             feed: AssetFeed,
-            fileName: String,
+            file: String,
             compression: Boolean = true,
             timeframe: Timeframe = Timeframe.INFINITE,
             assetFilter: AssetFilter = AssetFilter.all()
         ) = runBlocking {
             val channel = EventChannel(timeframe = timeframe)
-            val file = File(fileName)
             val schema = Schema.Parser().parse(schemaDef)
             val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
             val dataFileWriter = DataFileWriter(datumWriter)
@@ -254,7 +260,7 @@ class AvroFeed(private val path: Path) : HistoricFeed {
             val lookup = assets.withIndex().associate { it.value to it.index }
             val assetsMetaValue = Json.encodeToString(assets)
             dataFileWriter.setMeta(assetsMetaKey, assetsMetaValue)
-            dataFileWriter.create(schema, file)
+            dataFileWriter.create(schema, File(file))
 
             val job = launch {
                 feed.play(channel)

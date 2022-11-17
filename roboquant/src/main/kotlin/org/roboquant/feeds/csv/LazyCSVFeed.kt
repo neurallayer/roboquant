@@ -38,15 +38,15 @@ import kotlin.io.path.isRegularFile
  * what the timeline will be.
  *
  * The individual lines in the CSV files are expected to be ordered from oldest to newest according to the included
- * timestamp, and timestamps are unique in a single CSV file.
+ * timestamp, and timestamps are unique within a single CSV file.
  *
- * The LazyCSVFeed keeps files open to ensure good performance. So make sure your OS has enough open file descriptors
+ * The LazyCSVFeed keeps files open to ensure better performance. So make sure your OS has enough open file descriptors
  * configured. For example on Linux you can check this with:
  *
  *      cat /proc/sys/fs/file-max
  *
  * If you use the same large sets of CSV files regular, you might consider converting them onetime to an
- * AvroFeed instead. This has the same low memory usage but no negative performance impact.
+ * AvroFeed instead. This also has very low memory usage, but comes without negative performance impact.
  *
  * @constructor
  *

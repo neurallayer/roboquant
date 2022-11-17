@@ -18,21 +18,27 @@ package org.roboquant.feeds.csv
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.symbols
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class LazyCSVFeedTest {
 
     @Test
     fun play() {
-        val feed = LazyCSVFeed(TestData.dataDir() + "US")
+        val feed = LazyCSVFeed(TestData.dataDir() + "US") {
+            fileExtension = ".csv"
+            fileSkip = listOf("AAPL.csv")
+        }
         val priceBars = feed.filter<PriceBar>()
         assertTrue(priceBars.isNotEmpty())
         assertTrue(priceBars[0].first <= priceBars[1].first)
-        assertEquals(3, feed.assets.size)
+        assertEquals(2, feed.assets.size)
+        assertFalse("AAPL" in feed.assets.symbols)
         assertContains(feed.assets, priceBars.first().second.asset)
     }
 
