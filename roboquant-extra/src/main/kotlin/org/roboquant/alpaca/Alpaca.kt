@@ -36,11 +36,11 @@ typealias DataType = DataAPIType
 /**
  * Alpaca configuration properties
  *
- * @property publicKey
- * @property secretKey
- * @property accountType
- * @property dataType
- * @constructor Create empty Alpaca config
+ * @property publicKey the public key to access the API
+ * @property secretKey the secret key to access the API
+ * @property accountType account type, either PAPER or LIVE
+ * @property dataType type of data to use, IEX or SIP
+ * @constructor Create new Alpaca config
  */
 data class AlpacaConfig(
     var publicKey: String = Config.getProperty("alpaca.public.key", ""),
