@@ -65,7 +65,7 @@ internal class RandomWalkFeedTest {
         val tf2 = feed.split(Period.ofDays(50))
         assertTrue(tf2.isNotEmpty())
 
-        val tf3 = feed.sample(10)
+        val tf3 = feed.sample(10).first()
         assertFalse(tf3.isSingleDay())
     }
 

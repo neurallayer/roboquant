@@ -33,14 +33,13 @@ interface Broker : Lifecycle {
     val account: Account
 
     /**
-     * Place a new set of [orders] at this broker. The [event] is useful for simulated brokers, but can also function
-     * as a safeguard for other brokers (like not allowing to place orders when the current price is unknown).
+     * Place a new set of [orders] at this broker. The [event] contains the latest data from the used feed.
      *
      * After processing the [orders], this method returns an instance of the updated [Account]. This returned instance
      * reflects the latest status, is immutable and thread safe. It is guaranteed that just placed order are included
      * in the account object.
      */
-    fun place(orders: List<Order>, event: Event): Account
+    fun place(orders: List<Order>, event: Event = Event.empty()): Account
 
     /**
      * This method will be invoked at each step in a run and provides the implementation with the opportunity to

@@ -114,7 +114,7 @@ class Account(
 
         val s = Summary("account")
         val p = Summary("position summary")
-        val t = Summary("trade summry")
+        val t = Summary("trade summary")
         val o = Summary("order summary")
 
         s.add("last update", lastUpdate.truncatedTo(ChronoUnit.SECONDS))
