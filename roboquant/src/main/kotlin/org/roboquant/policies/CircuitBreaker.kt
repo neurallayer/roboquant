@@ -25,7 +25,7 @@ import java.time.temporal.TemporalAmount
 import java.util.*
 
 /**
- * Wraps another [policy] and based on tje configured throttle settings stops propagating orders to a broker.
+ * Wraps another [policy] and based on the configured throttle settings stops propagating orders to a broker.
  *
  * @property policy
  * @constructor Create new Chain Breaker
