@@ -214,8 +214,7 @@ abstract class Chart : Output() {
     override fun asHTMLPage(): String {
         val fragment = asHTML()
 
-        val classloader = Thread.currentThread().contextClassLoader
-        val stream = classloader.getResourceAsStream("js/echarts.min.js")!!
+        val stream = javaClass.getResourceAsStream("/js/echarts.min.js")!!
         val js = String(stream.readAllBytes(), StandardCharsets.UTF_8)
         val script = """<script type='text/javascript'>$js</script>"""
 

@@ -77,13 +77,10 @@ internal class JupyterCore : JupyterIntegration() {
          * The resources that need to be loaded.
          */
         resources {
-
             js("echarts") {
-                classPath("js/echarts.min.js")
+                classPath("/js/echarts.min.js")
             }
-
         }
-
 
         beforeCellExecution {
             outputs.clear()
