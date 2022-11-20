@@ -50,15 +50,6 @@ import kotlin.io.path.div
 import kotlin.math.absoluteValue
 import kotlin.system.measureTimeMillis
 
-fun volatility() {
-    val feed = AvroFeed.sp500()
-    val data = feed.filter<PriceBar> { it.asset.symbol == "IBM" }
-    val arr = data.map { it.second.close }.toDoubleArray()
-    val returns = arr.returns()
-    println(returns.variance())
-    println(returns.filter { it > 0.0 }.toDoubleArray().variance())
-    println(returns.filter { it < 0.0 }.toDoubleArray().variance())
-}
 
 fun multiCurrency() {
     val feed = CSVFeed("data/US") {
@@ -220,7 +211,7 @@ fun signalsOnly() {
 }
 
 
-fun csv2Avro(pathStr: String = "/Users/peter/data/stooq/daily/us") {
+fun csv2Avro(pathStr: String = "path") {
 
     val path = Path(pathStr)
     val nasdaq = Exchange.getInstance("NASDAQ")
@@ -263,7 +254,6 @@ fun simple() {
 }
 
 suspend fun main() {
-    // Logging.setDefaultLevel(Level.FINE)
     Config.printInfo()
 
     when ("CSV2AVRO") {
@@ -276,7 +266,6 @@ suspend fun main() {
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()
-        "VOLATILITY" -> volatility()
         "SIGNALS" -> signalsOnly()
     }
 

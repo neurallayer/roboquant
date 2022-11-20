@@ -17,12 +17,10 @@
 package org.roboquant.feeds.csv
 
 import de.siegmar.fastcsv.reader.CsvReader
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
-import org.roboquant.common.Background
 import org.roboquant.common.Logging
+import org.roboquant.common.ParallelJobs
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceAction
 import java.io.File
@@ -95,18 +93,17 @@ class CSVFeed(
         }
         logger.debug { "Found ${files.size} CSV files" }
 
-        val deferredList = mutableListOf<Deferred<Unit>>()
+        val jobs = ParallelJobs()
         for (file in files) {
             val asset = config.assetBuilder(config, file)
-            val deferred = Background.async {
+            jobs.add {
                 val steps = readFile(asset, file)
                 for (step in steps) {
                     add(step.time, step.price)
                 }
             }
-            deferredList.add(deferred)
         }
-        deferredList.awaitAll()
+        jobs.joinAll()
     }
 
 

@@ -28,20 +28,14 @@ import kotlinx.coroutines.*
 internal object Background {
 
     // private val CPUBoundScope = CoroutineScope(Dispatchers.Default + Job())
-    private val IOBoundScope = CoroutineScope(Dispatchers.IO + Job())
+    private val boundScope = CoroutineScope(Dispatchers.IO + Job())
 
     /**
      * Launch an IO bound [block] and return the job
      */
-    fun ioJob(block: suspend CoroutineScope.() -> Unit): Job {
-        return IOBoundScope.launch(block = block)
+    fun job(block: suspend CoroutineScope.() -> Unit): Job {
+        return boundScope.launch(block = block)
     }
 
-    /**
-     * Run an async [block] and return deferred result
-     */
-    fun <T> async(block: suspend CoroutineScope.() -> T): Deferred<T> {
-        return IOBoundScope.async(block = block)
-    }
-
+    
 }

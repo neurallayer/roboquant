@@ -23,8 +23,8 @@ import kotlin.test.*
 
 internal class AlpacaHistoricFeedTestIT {
 
-    private val timeframe = Timeframe.past(5.days) - 30.minutes
-    private val timeframe2 = Timeframe.past(3.days) - 30.minutes
+    private val timeframe = Timeframe.parse("2022-11-14T00:00:00Z", "2022-11-18T23:00:00Z")
+    private val timeframe2 = Timeframe.parse("2022-11-18T20:00:00Z", "2022-11-18T20:15:00Z")
 
     @Test
     fun testHistoricFeed() {

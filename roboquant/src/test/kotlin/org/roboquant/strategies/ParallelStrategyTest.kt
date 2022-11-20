@@ -18,21 +18,26 @@ package org.roboquant.strategies
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import kotlin.random.Random
 import kotlin.test.assertEquals
 
 internal class ParallelStrategyTest {
 
+    private fun getStrategy(r: Int) =  RandomStrategy(0.8, random = Random(r))
+
     @Test
     fun test() {
-        val s1 = EMAStrategy(1, 3)
-        val s2 = EMAStrategy(3, 5)
-        val s3 = ParallelStrategy(EMAStrategy(1, 3), EMAStrategy(3, 5))
+        val s1 = getStrategy(1)
+        val s2 = getStrategy(2)
+        val s3 = ParallelStrategy(getStrategy(1) , getStrategy(2))
 
         for (event in TestData.events(20)) {
             val r1 = s1.generate(event)
             val r2 = s2.generate(event)
             val r3 = s3.generate(event)
             assertEquals(r1.size + r2.size, r3.size)
+            if (r1.isNotEmpty()) assertEquals(r1.first().asset, r3.first().asset)
+            if (r2.isNotEmpty()) assertEquals(r2.last().asset, r3.last().asset)
         }
 
     }

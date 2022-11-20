@@ -16,14 +16,13 @@
 
 package org.roboquant
 
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.runBlocking
 import org.roboquant.RunPhase.MAIN
 import org.roboquant.RunPhase.VALIDATE
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.common.Background
 import org.roboquant.common.Logging
 import org.roboquant.common.Summary
 import org.roboquant.common.Timeframe
@@ -76,7 +75,9 @@ class Roboquant(
      */
     private suspend fun runPhase(feed: Feed, runInfo: RunInfo) {
         val channel = EventChannel(channelCapacity, runInfo.timeframe)
-        val job = Background.ioJob {
+        val scope = CoroutineScope(Dispatchers.Default + Job())
+
+        val job = scope.launch {
             channel.use { feed.play(it) }
         }
 
@@ -92,6 +93,7 @@ class Roboquant(
         } finally {
             end(runInfo.phase)
             if (job.isActive) job.cancel()
+            scope.cancel()
             channel.close()
         }
     }

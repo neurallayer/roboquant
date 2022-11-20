@@ -16,9 +16,7 @@
 
 package org.roboquant.strategies
 
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.runBlocking
-import org.roboquant.common.Background
+import kotlinx.coroutines.*
 import org.roboquant.feeds.Event
 
 /**
@@ -38,6 +36,8 @@ import org.roboquant.feeds.Event
  */
 class ParallelStrategy(strategies: Collection<Strategy>) : CombinedStrategy(strategies) {
 
+    private val scope = CoroutineScope(Dispatchers.Default + Job())
+
     /**
      * Create a new parallel strategy using the provided [strategies]
      */
@@ -51,7 +51,7 @@ class ParallelStrategy(strategies: Collection<Strategy>) : CombinedStrategy(stra
         runBlocking {
             val deferredList = mutableListOf<Deferred<List<Signal>>>()
             for (strategy in strategies) {
-                val deferred = Background.async {
+                val deferred = scope.async {
                     strategy.generate(event)
                 }
                 deferredList.add(deferred)

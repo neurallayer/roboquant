@@ -138,25 +138,25 @@ mvn test -Dtest="org.roboquant.PerformanceTest" -DTEST_PERFORMANCE -pl roboquant
 
 The output should look something like this:
 ----
-[main] INFO org.roboquant.PerformanceTest - ******  500.000 candlesticks  ******
-[main] INFO org.roboquant.PerformanceTest -      feed filter                            92 ms
-[main] INFO org.roboquant.PerformanceTest -      base run                               91 ms
-[main] INFO org.roboquant.PerformanceTest -      parallel runs (x4)                    170 ms
-[main] INFO org.roboquant.PerformanceTest -      extended run                          440 ms
-[main] INFO org.roboquant.PerformanceTest - ******  1.000.000 candlesticks  ******
-[main] INFO org.roboquant.PerformanceTest -      feed filter                           172 ms
-[main] INFO org.roboquant.PerformanceTest -      base run                              186 ms
-[main] INFO org.roboquant.PerformanceTest -      parallel runs (x4)                    415 ms
-[main] INFO org.roboquant.PerformanceTest -      extended run                         1345 ms
-[main] INFO org.roboquant.PerformanceTest - ******  5.000.000 candlesticks  ******
-[main] INFO org.roboquant.PerformanceTest -      feed filter                           874 ms
-[main] INFO org.roboquant.PerformanceTest -      base run                              906 ms
-[main] INFO org.roboquant.PerformanceTest -      parallel runs (x4)                   1003 ms
-[main] INFO org.roboquant.PerformanceTest -      extended run                        10161 ms
-[main] INFO org.roboquant.PerformanceTest - ******  10.000.000 candlesticks  ******
-[main] INFO org.roboquant.PerformanceTest -      feed filter                          1890 ms
-[main] INFO org.roboquant.PerformanceTest -      base run                             1817 ms
-[main] INFO org.roboquant.PerformanceTest -      parallel runs (x4)                   1989 ms
-[main] INFO org.roboquant.PerformanceTest -      extended run                        11821 ms
+INFO PerformanceTest - ******  500.000 candlesticks  ******
+INFO PerformanceTest -      feed filter                           125 ms
+INFO PerformanceTest -      base run                              182 ms
+INFO PerformanceTest -      parallel runs (x4)                    162 ms
+INFO PerformanceTest -      extended run                          378 ms
+INFO PerformanceTest - ******  1.000.000 candlesticks  ******
+INFO PerformanceTest -      feed filter                           174 ms
+INFO PerformanceTest -      base run                              185 ms
+INFO PerformanceTest -      parallel runs (x4)                    302 ms
+INFO PerformanceTest -      extended run                         1342 ms
+INFO PerformanceTest - ******  5.000.000 candlesticks  ******
+INFO PerformanceTest -      feed filter                           902 ms
+INFO PerformanceTest -      base run                              854 ms
+INFO PerformanceTest -      parallel runs (x4)                   1009 ms
+INFO PerformanceTest -      extended run                        11111 ms
+INFO PerformanceTest - ******  10.000.000 candlesticks  ******
+INFO PerformanceTest -      feed filter                          1944 ms
+INFO PerformanceTest -      base run                             1847 ms
+INFO PerformanceTest -      parallel runs (x4)                   2113 ms
+INFO PerformanceTest -      extended run                        10902 ms
 ----
 
