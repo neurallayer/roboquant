@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-@file:Suppress("WildcardImport")
-
 package org.roboquant.common
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 /**
  * Background object helps to deal with starting and running co-routines. Right now very light implementation, but
@@ -27,7 +28,6 @@ import kotlinx.coroutines.*
  */
 internal object Background {
 
-    // private val CPUBoundScope = CoroutineScope(Dispatchers.Default + Job())
     private val boundScope = CoroutineScope(Dispatchers.IO + Job())
 
     /**
@@ -37,5 +37,4 @@ internal object Background {
         return boundScope.launch(block = block)
     }
 
-    
 }
