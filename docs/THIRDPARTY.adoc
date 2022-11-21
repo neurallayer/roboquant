@@ -6,9 +6,9 @@ _Roboquant_ couldn't have been developed without the use of free and open source
 * https://kotlinlang.org[Kotlin]: modern, concise and safe programming language that makes writing code a joy.
 * https://ta-lib.org[TA-Lib]: an extensive and fast library of technical indicators.
 * https://github.com/ta4j/ta4j[Ta-4j]: another great library for technical analysis.
-* https://github.com/ECharts-Java/ECharts-Java[ECharts-Java]: a Java library that makes it very easy to create https://echarts.apache.org[ECharts] visualizations.
+* https://github.com/ECharts-Java/ECharts-Java[ECharts-Java]: a Java library that makes it easy to create https://echarts.apache.org[ECharts] visualizations.
 * https://avro.apache.org[Avro]: data serialization system for fast and efficient storage of large amounts of data.
-* https://commons.apache.org/proper/commons-math/[Commons Math]: a library of lightweight, self-contained mathematics and statistics components.
+* https://www.hipparchus.org/index.html[Hipparchus]: a library of lightweight, self-contained mathematics and statistics components.
 * https://www.jupyter.org[Jupyter]: the standard for interactive development and perhaps best known in combination with Python and R. But it also works like a charm with Kotlin.
 * https://github.com/osiegmar/FastCSV[FastCSV]: an ultra-fast and easy to use CSV parser.
 
