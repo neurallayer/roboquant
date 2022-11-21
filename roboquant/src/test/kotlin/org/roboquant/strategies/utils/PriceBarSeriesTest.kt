@@ -32,16 +32,16 @@ internal class PriceBarSeriesTest {
         val feed = TestData.feed
         val asset = feed.assets.first()
         val pb = PriceBarSeries(20)
-        assertFalse(pb.isAvailable())
+        assertFalse(pb.isFilled())
         val data = feed.filter<PriceBar> { it.asset === asset }
         for (entry in data) {
             pb.add(entry.second)
         }
-        assertTrue(pb.isAvailable())
+        assertTrue(pb.isFilled())
         assertTrue(pb.typical.isNotEmpty())
         assertTrue(pb.volume.isNotEmpty())
         pb.clear()
-        assertFalse(pb.isAvailable())
+        assertFalse(pb.isFilled())
     }
 
     @Test
@@ -49,12 +49,12 @@ internal class PriceBarSeriesTest {
         val feed = TestData.feed
         val asset1 = feed.assets.first()
         val pb = MultiAssetPriceBarSeries(10)
-        assertFalse(pb.isAvailable(asset1))
+        assertFalse(pb.isFilled(asset1))
         val data = feed.filter<PriceBar> { it.asset === asset1 }
         for (entry in data) {
             pb.add(entry.second)
         }
-        assertTrue(pb.isAvailable(asset1))
+        assertTrue(pb.isFilled(asset1))
     }
 
     @Test

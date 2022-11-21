@@ -18,16 +18,16 @@ package org.roboquant.strategies.utils
 
 import kotlin.test.*
 
-internal class MovingWindowTest {
+internal class PriceSeriesTest {
 
     @Test
     fun test() {
-        val buffer = MovingWindow(10)
+        val buffer = PriceSeries(10)
         repeat(5) { buffer.add(1.0) }
-        assertFalse(buffer.isAvailable())
+        assertFalse(buffer.isFilled())
 
         repeat(10) { buffer.add(1.0) }
-        assertTrue(buffer.isAvailable())
+        assertTrue(buffer.isFilled())
 
         val d = buffer.toDoubleArray()
         assertEquals(10, d.size)

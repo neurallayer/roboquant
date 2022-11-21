@@ -23,19 +23,21 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 
 /**
- * PriceBar Series is a moving window of OHLCV values.
+ * PriceBarSeries is a moving window of OHLCV values.
  *
  * @param windowSize the size of the moving window
  *
- * @constructor Create new PriceBar Series
+ * @constructor Create new instance of PriceBarSeries
  */
 class PriceBarSeries(windowSize: Int) {
 
-    private val openSeries = MovingWindow(windowSize)
-    private val highSeries = MovingWindow(windowSize)
-    private val lowSeries = MovingWindow(windowSize)
-    private val closeSeries = MovingWindow(windowSize)
-    private val volumeSeries = MovingWindow(windowSize)
+    // The individual moving windows
+
+    private val openSeries = PriceSeries(windowSize)
+    private val highSeries = PriceSeries(windowSize)
+    private val lowSeries = PriceSeries(windowSize)
+    private val closeSeries = PriceSeries(windowSize)
+    private val volumeSeries = PriceSeries(windowSize)
 
     /**
      * Open prices
@@ -90,18 +92,18 @@ class PriceBarSeries(windowSize: Int) {
         lowSeries.add(ohlcv[2])
         closeSeries.add(ohlcv[3])
         volumeSeries.add(ohlcv[4])
-        return isAvailable()
+        return isFilled()
     }
 
     /**
      * Is there enough data available
      */
-    fun isAvailable(): Boolean {
-        return openSeries.isAvailable()
+    fun isFilled(): Boolean {
+        return openSeries.isFilled()
     }
 
     /**
-     * Clear all captured prices
+     * Clear all stored prices and volumes
      */
     fun clear() {
         openSeries.clear()
@@ -114,20 +116,21 @@ class PriceBarSeries(windowSize: Int) {
 }
 
 /**
- * Multi asset price bar series that keeps a number of history price-bars in memory per asset.
+ * Multi asset price bar series that keeps a number of history price-bars in memory per asset. All the moving windows
+ * have the same size.
  *
- * @property history The number of historic price-bars per asset to keep
+ * @property windowSize The number of historic price-bars per asset to keep
  * @constructor Create new Multi asset price bar series
  */
-class MultiAssetPriceBarSeries(private val history: Int) {
+class MultiAssetPriceBarSeries(private val windowSize: Int) {
 
     private val data = mutableMapOf<Asset, PriceBarSeries>()
 
     /**
-     * Add a new priceBar and return true if already enough data, false otherwise
+     * Add a new priceBar and return true if already filled, false otherwise
      */
     fun add(priceBar: PriceBar): Boolean {
-        val series = data.getOrPut(priceBar.asset) { PriceBarSeries(history) }
+        val series = data.getOrPut(priceBar.asset) { PriceBarSeries(windowSize) }
         return series.add(priceBar)
     }
 
@@ -143,7 +146,7 @@ class MultiAssetPriceBarSeries(private val history: Int) {
     /**
      * Is there enough data captured for the provided [asset]
      */
-    fun isAvailable(asset: Asset) = data[asset]?.isAvailable() ?: false
+    fun isFilled(asset: Asset) = data[asset]?.isFilled() ?: false
 
     /**
      * Get the price bar series for the provided [asset]

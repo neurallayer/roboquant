@@ -21,31 +21,34 @@ import org.roboquant.feeds.Event
 import java.util.*
 
 /**
- * Moving Window that holds double values and is typically used by strategies for moving averages or replay buffers.
+ * Holds a fix amount of historic prices (double values). When adding a new value while the storage is full, the
+ * oldest one will be removed. This is typically used by strategies for rolling windows or replay buffers
  *
- * Internally it uses a double[] to hold its values. Instances of this class are not thread safe during updating.
+ * Internally it uses a double[] to hold its values. Instances of this class are not thread safe during updates.
  *
- * @property windowSize The size of the moving window
- * @constructor Create empty Circular buffer
+ * @property windowSize The size of window
+ * @constructor Create new instance of PriceSeries
  */
-open class MovingWindow(private val windowSize: Int) {
+open class PriceSeries(private val windowSize: Int) {
 
     private val data = DoubleArray(windowSize) { Double.NaN }
     private var counter = 0L
 
     /**
-     * Add a new [value] to the end of the window
+     * Add a new [value] to the end. If the window is full, the first element will be removed.
+     * Return true is the series is already completely filled, false otherwise
      */
-    open fun add(value: Double) {
+    open fun add(value: Double) : Boolean {
         val index = (counter % windowSize).toInt()
         data[index] = value
         counter++
+        return isFilled()
     }
 
     /**
-     * Return true if the history fully filled, so it is ready to be used.
+     * Return true if the rolling window is fully filled, so it is ready to be used.
      */
-    fun isAvailable(): Boolean {
+    fun isFilled(): Boolean {
         return counter > windowSize
     }
 
@@ -77,11 +80,11 @@ open class MovingWindow(private val windowSize: Int) {
 }
 
 /**
- * Add all the prices found in the event. If there is no entry yet, a new MovingWindow will be created
+ * Add all the prices found in the event. If there is no entry yet, a new PriceSeries will be created
  */
-fun MutableMap<Asset, MovingWindow>.addAll(event: Event, windowSize: Int, priceType: String = "DEFAULT") {
+fun MutableMap<Asset, PriceSeries>.addAll(event: Event, windowSize: Int, priceType: String = "DEFAULT") {
     for ((asset, action) in event.prices) {
-        val movingWindow = getOrPut(asset) { MovingWindow(windowSize)}
-        movingWindow.add(action.getPrice(priceType))
+        val priceSeries = getOrPut(asset) { PriceSeries(windowSize)}
+        priceSeries.add(action.getPrice(priceType))
     }
 }

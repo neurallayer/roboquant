@@ -28,7 +28,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.utils.MovingWindow
+import org.roboquant.strategies.utils.PriceSeries
 import org.roboquant.strategies.utils.addAll
 import java.time.Instant
 import java.time.temporal.TemporalAmount
@@ -65,7 +65,7 @@ open class BettingAgainstBetaPolicy(
 
     private var rebalanceDate = Instant.MIN
 
-    private val data = mutableMapOf<Asset, MovingWindow>()
+    private val data = mutableMapOf<Asset, PriceSeries>()
 
     init {
         require(market in assets) { "The selected market asset $market also has to be part of all assets" }
@@ -158,7 +158,7 @@ open class BettingAgainstBetaPolicy(
         data.addAll(event, windowSize, "DEFAULT")
 
         // Check if it is time to re-balance the portfolio
-        if (event.time >= rebalanceDate && data[market]!!.isAvailable()) {
+        if (event.time >= rebalanceDate && data[market]!!.isFilled()) {
             val betas = calculateBetas()
 
             // Update the re-balance date

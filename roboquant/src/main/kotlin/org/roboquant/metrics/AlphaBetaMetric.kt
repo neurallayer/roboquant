@@ -24,7 +24,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.returns
 import org.roboquant.common.totalReturns
 import org.roboquant.feeds.Event
-import org.roboquant.strategies.utils.MovingWindow
+import org.roboquant.strategies.utils.PriceSeries
 
 /**
  * Calculates the Alpha and Beta of an account. This implementation not only looks at the open positions, but
@@ -51,8 +51,8 @@ class AlphaBetaMetric(
     private val onlyAfterInitialTrade: Boolean = false
 ) : Metric {
 
-    private val marketData = MovingWindow(period + 1)
-    private val portfolioData = MovingWindow(period + 1)
+    private val marketData = PriceSeries(period + 1)
+    private val portfolioData = PriceSeries(period + 1)
 
     /**
      * Based on the provided [account] and [event], calculate any metrics and return them.
@@ -71,7 +71,7 @@ class AlphaBetaMetric(
             val value = account.equity.convert(time = event.time).value
             portfolioData.add(value)
 
-            if (marketData.isAvailable() && portfolioData.isAvailable()) {
+            if (marketData.isFilled() && portfolioData.isFilled()) {
                 val x1 = marketData.toDoubleArray()
                 val x2 = portfolioData.toDoubleArray()
 
