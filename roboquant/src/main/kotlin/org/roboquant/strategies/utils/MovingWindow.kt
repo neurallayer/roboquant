@@ -16,6 +16,8 @@
 
 package org.roboquant.strategies.utils
 
+import org.roboquant.common.Asset
+import org.roboquant.feeds.Event
 import java.util.*
 
 /**
@@ -72,4 +74,14 @@ open class MovingWindow(private val windowSize: Int) {
         Arrays.fill(data, Double.NaN)
     }
 
+}
+
+/**
+ * Add all the prices found in the event. If there is no entry yet, a new MovingWindow will be created
+ */
+fun MutableMap<Asset, MovingWindow>.addAll(event: Event, windowSize: Int, priceType: String = "DEFAULT") {
+    for ((asset, action) in event.prices) {
+        val movingWindow = getOrPut(asset) { MovingWindow(windowSize)}
+        movingWindow.add(action.getPrice(priceType))
+    }
 }

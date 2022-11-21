@@ -172,7 +172,7 @@ fun beta2() {
     feed.merge(market)
     val strategy = NoSignalStrategy()
     val marketAsset = feed.assets.getBySymbol("SPY")
-    val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, 60, maxPositions = 10)
+    val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, 60.days, maxPositions = 10)
     policy.recording = true
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, ProgressMetric(), PNLMetric(), policy = policy, logger = logger)

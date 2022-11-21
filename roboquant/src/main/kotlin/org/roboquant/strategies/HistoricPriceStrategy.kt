@@ -21,10 +21,9 @@ import org.roboquant.common.RoboquantException
 import org.roboquant.common.addNotNull
 import org.roboquant.feeds.Event
 import org.roboquant.strategies.utils.MovingWindow
-import org.roboquant.strategies.utils.PercentageMovingWindow
 
 /**
- * Base class for strategies that are interested in historic prices or returns. Subclasses should override one of the
+ * Base class for strategies that are interested in historic prices. Subclasses should override one of the
  * two following methods:
  *
  * [generateSignal] - full control over the Signal
@@ -32,12 +31,10 @@ import org.roboquant.strategies.utils.PercentageMovingWindow
  *
  * @property period period to keep track of historic data
  * @property priceType the type of price to store, default is "DEFAULT"
- * @property useReturns store returns instead of price
  */
 abstract class HistoricPriceStrategy(
     private val period: Int,
     private val priceType: String = "DEFAULT",
-    private val useReturns: Boolean = false
 ) : RecordingStrategy() {
 
     /**
@@ -49,7 +46,7 @@ abstract class HistoricPriceStrategy(
         val result = mutableListOf<Signal>()
         for ((asset, action) in event.prices) {
             val movingWindow =
-                history.getOrPut(asset) { if (useReturns) PercentageMovingWindow(period) else MovingWindow(period) }
+                history.getOrPut(asset) { MovingWindow(period) }
             movingWindow.add(action.getPrice(priceType))
             if (movingWindow.isAvailable()) {
                 val data = movingWindow.toDoubleArray()

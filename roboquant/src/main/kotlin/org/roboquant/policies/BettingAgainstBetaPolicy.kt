@@ -23,12 +23,15 @@ import org.roboquant.brokers.diff
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.common.days
+import org.roboquant.common.returns
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.utils.AssetReturns
+import org.roboquant.strategies.utils.MovingWindow
+import org.roboquant.strategies.utils.addAll
 import java.time.Instant
+import java.time.temporal.TemporalAmount
 import kotlin.math.floor
 import kotlin.math.min
 
@@ -46,21 +49,23 @@ import kotlin.math.min
  * > Betting against Beta was first described in the Journal of Financial Economics
  *
  * @property market the asset presenting the market
- * @property holdingPeriodDays the holding period
+ * @property holdingPeriod the holding period, default is 20.days
  * @property maxPositions the maximum number of open positions
+ * @property windowSize the windowSize, default is 120
  *
- * @constructor Create new Betting Against Beta instance
+ * @constructor Create new instance of Betting Against Beta
  */
 open class BettingAgainstBetaPolicy(
     assets: Collection<Asset>,
     val market: Asset,
-    private val holdingPeriodDays: Int = 20,
+    private val holdingPeriod: TemporalAmount = 20.days,
     private val maxPositions: Int = 20,
-    windowSize: Int = 120,
+    private val windowSize: Int = 120,
 ) : BasePolicy() {
 
     private var rebalanceDate = Instant.MIN
-    private val data = AssetReturns(assets, windowSize, Double.NaN)
+
+    private val data = mutableMapOf<Asset, MovingWindow>()
 
     init {
         require(market in assets) { "The selected market asset $market also has to be part of all assets" }
@@ -74,15 +79,15 @@ open class BettingAgainstBetaPolicy(
      */
     private fun calculateBetas(): List<Pair<Asset, Double>> {
         val betas = mutableListOf<Pair<Asset, Double>>()
-        val x = data.toDoubleArray(market)
-        data.assets.forEach { asset ->
+        val x = data.getValue(market).toDoubleArray().returns()
+        for ((asset, data2) in data) {
             if (asset != market) {
-                val y = data.toDoubleArray(asset)
+                val y = data2.toDoubleArray().returns()
                 val beta = Covariance().covariance(x, y)
                 if (!beta.isNaN()) betas.add(Pair(asset, beta))
             }
         }
-        // Sort the list by beta value, low to high
+        // Sort the list in place by beta value, low to high
         betas.sortBy { it.second }
         return betas
     }
@@ -150,14 +155,14 @@ open class BettingAgainstBetaPolicy(
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
 
         // First we update the buffers
-        data.add(event)
+        data.addAll(event, windowSize, "DEFAULT")
 
         // Check if it is time to re-balance the portfolio
-        if (event.time >= rebalanceDate && data.isAvailable()) {
+        if (event.time >= rebalanceDate && data[market]!!.isAvailable()) {
             val betas = calculateBetas()
 
             // Update the re-balance date
-            rebalanceDate = event.time + holdingPeriodDays.days
+            rebalanceDate = event.time + holdingPeriod
             return rebalance(betas, account, event)
         }
         return emptyList()

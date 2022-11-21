@@ -21,6 +21,8 @@ import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.feeds.RandomWalkFeed
 import org.roboquant.loggers.MemoryLogger
+import org.roboquant.loggers.toDoubleArray
+import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.NoSignalStrategy
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -29,16 +31,26 @@ class BettingAgainstBetaPolicyTest {
 
     @Test
     fun test() {
-        val feed = RandomWalkFeed.lastYears()
+        val feed = RandomWalkFeed.lastYears(nAssets = 20)
         val assets = feed.assets.toList()
         val marketAsset = assets.first()
 
-        val policy = BettingAgainstBetaPolicy(assets, marketAsset)
+        val policy = BettingAgainstBetaPolicy(assets, marketAsset, maxPositions = 6)
         val broker = SimBroker(accountModel = MarginAccount())
-        val logger = MemoryLogger(false)
-        val exp = Roboquant(NoSignalStrategy(), broker = broker, policy = policy, logger = logger)
-        exp.run(feed)
-        assertTrue(exp.broker.account.closedOrders.isNotEmpty())
+        val roboquant = Roboquant(
+            NoSignalStrategy(),
+            AccountMetric(),
+            broker = broker,
+            policy = policy,
+            logger = MemoryLogger(false)
+        )
+        roboquant.run(feed)
+        val account = roboquant.broker.account
+        assertTrue(account.closedOrders.isNotEmpty())
+        assertTrue(account.positions.size == 6)
+
+        val positionSizes = roboquant.logger.getMetric("account.positions")
+        assertTrue(positionSizes.toDoubleArray().all { it == 6.0 || it == 0.0 })
     }
 
 }
