@@ -16,11 +16,16 @@
 
 package org.roboquant.policies
 
+import org.roboquant.TestData
 import org.roboquant.brokers.InternalAccount
+import org.roboquant.common.Asset
 import org.roboquant.common.Size
+import org.roboquant.common.USD
 import org.roboquant.common.days
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
+import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.test.Test
@@ -37,6 +42,23 @@ internal class FlexPolicyTest {
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
     }
+
+    @Test
+    fun orderMinPrice() {
+        val policy = FlexPolicy(minPrice = 10.USD)
+        val asset = Asset("TEST123")
+        val signals = listOf(Signal(asset, Rating.BUY))
+
+        val event1 = Event(listOf(TradePrice(asset, 5.0)), Instant.now())
+        val account = TestData.usAccount()
+        val orders1 = policy.act(signals, account, event1)
+        assertTrue(orders1.isEmpty())
+
+        val event2 = Event(listOf(TradePrice(asset, 15.0)), Instant.now())
+        val orders2 = policy.act(signals, account, event2)
+        assertTrue(orders2.isNotEmpty())
+    }
+
 
     @Test
     fun order2() {

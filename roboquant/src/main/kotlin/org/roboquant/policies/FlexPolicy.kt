@@ -28,23 +28,26 @@ import org.roboquant.orders.contains
 import org.roboquant.strategies.Signal
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.Instant
 
 /**
  * This is the default policy that will be used if no other policy is specified. There are several properties that
  * can be specified during construction that changes its behavior.
  *
- * Also, many of its methods can be overwritten in a subclass to provide even more flexibility. For example, this
- * policy will create Market Orders by default, but this can be changed by overwriting the [createOrder] method in
+ * Also, some of its methods can be overwritten in a subclass to provide even more flexibility. For example, this
+ * policy will create [MarketOrder]s by default, but this can be changed by overwriting the [createOrder] method in
  * a subclass.
  *
  * @property orderPercentage The percentage of the equity value to allocate to a single order, default is 1% (0.01)
- * @property shorting Can the policy create orders that possibly lead to short positions, default is false
+ * @property shorting Can the policy create orders that lead to short positions, default is false
  * @property priceType The type of price to use, default is "DEFAULT"
  * @property fractions For fractional trading, the amount of fractions (decimals) to allow for. Default is 0
- * @property oneOrderOnly Only allow one order to be open for a given asset at a time, default is true
+ * @property oneOrderOnly Only allow one order to be open for a given asset at a given time, default is true
  * @property safetyMargin the percentage of the equity value that you don't want to allocate to orders. This way you
- * are more likely stay away from bounced orders or margin calls. Default is same value as [orderPercentage]
- * @constructor Create new Default Policy
+ * are more likely stay away from bounced orders or margin calls. Default is same percentage as [orderPercentage]
+ * @property minPrice the minimal price for an asset before opening a position, default is null (no minimum). This
+ * can be used to avoid trading penny stocks
+ * @constructor Create a new instance of FlexPolicy
  */
 open class FlexPolicy(
     private val orderPercentage: Double = 0.01,
@@ -52,7 +55,8 @@ open class FlexPolicy(
     private val priceType: String = "DEFAULT",
     private val fractions: Int = 0,
     private val oneOrderOnly: Boolean = true,
-    private val safetyMargin: Double = orderPercentage
+    private val safetyMargin: Double = orderPercentage,
+    private val minPrice: Amount? = null
 ) : BasePolicy() {
 
     private val logger = Logging.getLogger(FlexPolicy::class)
@@ -98,6 +102,17 @@ open class FlexPolicy(
 
 
     /**
+     * It the minimum price met for the provided [asset]. If the asset is in different currency than the minimum price,
+     * a conversion will take place.
+     */
+    private fun meetsMinPrice(asset: Asset, price: Double, time: Instant) : Boolean {
+        return if (minPrice == null)
+            true
+        else
+            minPrice.convert(asset.currency, time) <= price
+    }
+
+    /**
      * @see Policy.act
      */
     @Suppress("ComplexMethod")
@@ -135,6 +150,7 @@ open class FlexPolicy(
                     val size = calcSize(assetAmount, signal, price)
                     if (size.iszero) continue
                     if (size < 0 && !shorting) continue
+                    if (! meetsMinPrice(asset, price, event.time)) continue
 
                     val order = createOrder(signal, size, price)
                     if (order != null) {

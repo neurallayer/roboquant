@@ -78,7 +78,7 @@ internal class JupyterCore : JupyterIntegration() {
          */
         resources {
             js("echarts") {
-                classPath("/js/echarts.min.js")
+                classPath("js/echarts.min.js")
             }
         }
 

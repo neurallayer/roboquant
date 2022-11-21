@@ -61,6 +61,7 @@ internal object TestData {
         account.cash.deposit(100_000.USD)
         account.setPosition(Position(asset1, Size(100), 10.0))
         account.setPosition(Position(asset2, Size(100), 10.0))
+        account.buyingPower = 100_000.USD
 
         val order = OrderState(MarketOrder(asset1, 100), OrderStatus.INITIAL)
         account.putOrders(listOf(order))

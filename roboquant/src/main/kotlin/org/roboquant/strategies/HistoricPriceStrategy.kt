@@ -40,6 +40,9 @@ abstract class HistoricPriceStrategy(
     private val useReturns: Boolean = false
 ) : RecordingStrategy() {
 
+    /**
+     * Contain the history of all assets
+     */
     private val history = mutableMapOf<Asset, MovingWindow>()
 
     override fun generate(event: Event): List<Signal> {

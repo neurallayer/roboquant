@@ -46,42 +46,48 @@ import kotlin.io.path.isRegularFile
  *      cat /proc/sys/fs/file-max
  *
  * If you use the same large sets of CSV files regular, you might consider converting them onetime to an
- * AvroFeed instead. This also has very low memory usage, but comes without negative performance impact.
+ * AvroFeed instead. This has also low memory usage, but comes without negative performance impact.
  *
  * @constructor
  *
  * @property path The directory that contains the CSV files or a single file
- * @param configure any additional configuration to run
+ * @param configure any additional configuration for this feed
  */
 class LazyCSVFeed(private val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetFeed {
 
     constructor(path: String, configure: CSVConfig.() -> Unit = {}) : this(Path.of(path), configure)
 
     private val logger = Logging.getLogger(LazyCSVFeed::class)
-    private val files: Map<Asset, File>
+    private val filesMap: Map<Asset, File>
     private val config: CSVConfig = CSVConfig.fromFile(path)
 
+    /**
+     * Return the assets that are available in this feed
+     */
     override val assets
-        get() = files.keys.toSortedSet()
+        get() = filesMap.keys.toSortedSet()
 
     init {
         require(path.isDirectory() || path.isRegularFile()) { "$path does not exist" }
         logger.debug { "Scanning $path" }
         config.configure()
-        files = path.toFile()
+        filesMap = path.toFile()
             .walk()
             .filter { config.shouldParse(it) }
             .map { it.absoluteFile }
             .map { config.assetBuilder(config, it) to it }
             .toMap()
 
-        logger.info { "Scanned $path found ${files.size} files" }
-        if (files.isEmpty()) logger.warn { "No files to process" }
+        logger.info { "Scanned $path found ${filesMap.size} files" }
+        if (filesMap.isEmpty()) logger.warn { "No files to process" }
     }
 
+    /**
+     * @see AssetFeed.play
+     */
     override suspend fun play(channel: EventChannel) {
         var last = Instant.MIN
-        val readers = files.mapValues { IncrementalReader(it.key, it.value, config) }
+        val readers = filesMap.mapValues { IncrementalReader(it.key, it.value, config) }
 
         try {
             val queue = PriorityQueue<PriceEntry>(readers.size)
@@ -124,6 +130,9 @@ class LazyCSVFeed(private val path: Path, configure: CSVConfig.() -> Unit = {}) 
 
 }
 
+/**
+ * Will read a line at a time of a CSV file
+ */
 private class IncrementalReader(val asset: Asset, file: File, val config: CSVConfig) {
 
     private val reader = CsvReader.builder().skipEmptyRows(true).build(FileReader(file)).iterator()
@@ -136,6 +145,9 @@ private class IncrementalReader(val asset: Asset, file: File, val config: CSVCon
         }
     }
 
+    /**
+     * Return the next [PriceEntry] or null if done processing
+     */
     fun next(): PriceEntry? {
         while (reader.hasNext()) {
             val line = reader.next().fields
