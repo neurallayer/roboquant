@@ -16,7 +16,7 @@
 
 package org.roboquant.jupyter
 
-import org.apache.commons.math3.stat.descriptive.rank.Percentile
+import org.hipparchus.stat.descriptive.rank.Percentile
 import org.icepear.echarts.Boxplot
 import org.icepear.echarts.Option
 import org.icepear.echarts.charts.boxplot.BoxplotSeries

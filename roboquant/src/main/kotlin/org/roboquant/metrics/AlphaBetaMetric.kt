@@ -16,8 +16,9 @@
 
 package org.roboquant.metrics
 
-import org.apache.commons.math3.stat.correlation.Covariance
-import org.apache.commons.math3.stat.descriptive.moment.Variance
+
+import org.hipparchus.stat.correlation.Covariance
+import org.hipparchus.stat.descriptive.moment.Variance
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.returns

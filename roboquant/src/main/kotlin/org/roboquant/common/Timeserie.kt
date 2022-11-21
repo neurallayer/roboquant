@@ -16,7 +16,7 @@
 
 package org.roboquant.common
 
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation
+import org.hipparchus.stat.correlation.PearsonsCorrelation
 import java.time.Instant
 
 /**

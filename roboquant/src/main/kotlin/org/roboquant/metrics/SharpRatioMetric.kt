@@ -16,7 +16,7 @@
 
 package org.roboquant.metrics
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics
+import org.hipparchus.stat.descriptive.DescriptiveStatistics
 import org.roboquant.brokers.Account
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event

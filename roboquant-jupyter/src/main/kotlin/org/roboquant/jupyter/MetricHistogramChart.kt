@@ -16,7 +16,7 @@
 
 package org.roboquant.jupyter
 
-import org.apache.commons.math3.random.EmpiricalDistribution
+import org.hipparchus.stat.fitting.EmpiricalDistribution
 import org.icepear.echarts.Bar
 import org.icepear.echarts.Option
 import org.icepear.echarts.charts.bar.BarLabel

@@ -17,10 +17,10 @@
 
 package org.roboquant.common
 
-import org.apache.commons.math3.stat.descriptive.moment.*
-import org.apache.commons.math3.stat.descriptive.rank.Max
-import org.apache.commons.math3.stat.descriptive.rank.Min
-import org.apache.commons.math3.stat.descriptive.rank.Percentile
+import org.hipparchus.stat.descriptive.moment.*
+import org.hipparchus.stat.descriptive.rank.Max
+import org.hipparchus.stat.descriptive.rank.Min
+import org.hipparchus.stat.descriptive.rank.Percentile
 import java.lang.Integer.max
 import java.lang.Integer.min
 import java.math.BigDecimal

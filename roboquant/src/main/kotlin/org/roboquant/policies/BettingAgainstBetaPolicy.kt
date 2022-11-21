@@ -16,7 +16,7 @@
 
 package org.roboquant.policies
 
-import org.apache.commons.math3.stat.correlation.Covariance
+import org.hipparchus.stat.correlation.Covariance
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.diff

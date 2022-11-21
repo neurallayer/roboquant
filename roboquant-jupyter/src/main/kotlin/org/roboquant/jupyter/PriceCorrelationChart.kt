@@ -19,7 +19,7 @@ package org.roboquant.jupyter
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation
+import org.hipparchus.stat.correlation.PearsonsCorrelation
 import org.icepear.echarts.Heatmap
 import org.icepear.echarts.Option
 import org.icepear.echarts.charts.heatmap.HeatmapSeries
