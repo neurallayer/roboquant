@@ -16,6 +16,7 @@
 
 package org.roboquant.strategies.utils
 
+import org.roboquant.common.PriceSeries
 import kotlin.test.*
 
 internal class PriceSeriesTest {

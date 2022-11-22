@@ -17,7 +17,6 @@
 package org.roboquant.feeds
 
 import org.roboquant.common.*
-import java.time.temporal.TemporalAmount
 import kotlin.random.Random
 
 /**
@@ -50,7 +49,7 @@ interface HistoricFeed : AssetFeed {
     /**
      * Split the timeframe of this feed in number of timeframes of equal [period].
      */
-    fun split(period: TemporalAmount, overlap: TemporalAmount = 0.days) = timeframe.split(period, overlap)
+    fun split(period: TradingPeriod, overlap: TradingPeriod = 0.days) = timeframe.split(period, overlap)
 
     /**
      * Split the timeline of the feed in number of timeframes equal [size].

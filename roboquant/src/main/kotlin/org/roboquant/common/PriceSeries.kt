@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package org.roboquant.strategies.utils
+package org.roboquant.common
 
-import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 import java.util.*
 
 /**
- * Holds a fix amount of historic prices (double values). When adding a new value while the storage is full, the
+ * Holds a fix amount of historic prices (double values). When adding a new value while the buffer is full, the
  * oldest one will be removed. This is typically used by strategies for rolling windows or replay buffers
  *
- * Internally it uses a double[] to hold its values. Instances of this class are not thread safe during updates.
+ * Internally it uses a DoubleArray to hold its values. Instances of this class are not thread safe during updates.
  *
  * @property windowSize The size of window
  * @constructor Create new instance of PriceSeries
@@ -53,12 +52,12 @@ open class PriceSeries(private val windowSize: Int) {
     }
 
     /**
-     * Return the stored values a DoubleArray. If this is called before the window is completely filled, it will
+     * Return the stored values as a DoubleArray. If this is called before the window is completely filled, it will
      * contain Double.NaN values for the missing values.
      *
      * ## Usage
      *
-     *      if (movingWindow.isAvailable()) return movingWindow.toDoubleArray()
+     *      if (movingWindow.isFilled()) return movingWindow.toDoubleArray()
      *
      */
     fun toDoubleArray(): DoubleArray {
@@ -70,7 +69,7 @@ open class PriceSeries(private val windowSize: Int) {
     }
 
     /**
-     * Clear the state stored
+     * Clear the state stored and set all values back to Double.NaN
      */
     open fun clear() {
         counter = 0L
@@ -88,3 +87,4 @@ fun MutableMap<Asset, PriceSeries>.addAll(event: Event, windowSize: Int, priceTy
         priceSeries.add(action.getPrice(priceType))
     }
 }
+

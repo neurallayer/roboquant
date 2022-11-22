@@ -16,14 +16,12 @@
 
 package org.roboquant.feeds.test
 
-import org.roboquant.common.Asset
-import org.roboquant.common.days
+import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
 import java.time.Instant
-import java.time.temporal.TemporalAmount
 
 /**
  * Feed that will generate events for a series of prices using the system time. It can be used to validate if a
@@ -34,7 +32,7 @@ import java.time.temporal.TemporalAmount
 class HistoricTestFeed(
     vararg prices: Iterable<Number> = arrayOf(90..100, 100 downTo 90),
     start: Instant = Instant.parse("1970-01-01T12:00:00Z"),
-    duration: TemporalAmount = 1.days,
+    duration: TradingPeriod = 1.days,
     asset: Asset = Asset("TEST"),
     private val priceBar: Boolean = false,
     private val volume: Double = 1000.0

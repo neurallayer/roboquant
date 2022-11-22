@@ -35,6 +35,7 @@ internal class RSIStrategyTest {
         val roboquant = Roboquant(s, logger = SilentLogger())
         roboquant.run(feed)
 
+
     }
 
 }

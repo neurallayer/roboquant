@@ -21,7 +21,7 @@ import org.roboquant.common.div
 import org.roboquant.common.plus
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.strategies.utils.PriceSeries
+import org.roboquant.common.PriceSeries
 
 /**
  * PriceBarSeries is a moving window of OHLCV values.

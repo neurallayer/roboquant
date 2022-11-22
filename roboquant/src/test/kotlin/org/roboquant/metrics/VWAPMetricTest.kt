@@ -18,7 +18,7 @@ package org.roboquant.metrics
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import org.roboquant.common.days
+import org.roboquant.common.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

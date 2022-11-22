@@ -17,10 +17,12 @@
 package org.roboquant.ta
 
 import org.roboquant.common.Asset
-import org.roboquant.strategies.PriceStrategy
+import org.roboquant.feeds.Event
 import org.roboquant.strategies.Rating
+import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
-import java.time.Instant
+import org.roboquant.common.PriceSeries
+import org.roboquant.common.addAll
 
 /**
  * Strategy using the Relative Strength Index of an asset to generate signals. RSI measures the magnitude of recent
@@ -28,8 +30,6 @@ import java.time.Instant
  *
  * If the RSI raise above the configured high threshold (default 70), a sell signal will be generated. And if the RSI
  * falls below the configured low threshold (default 30), a buy signal will be generated.
- *
- * @see RSI
  *
  * @property lowThreshold
  * @property highThreshold
@@ -39,39 +39,30 @@ import java.time.Instant
 class RSIStrategy(
     val lowThreshold: Double = 30.0,
     val highThreshold: Double = 70.0,
-) : PriceStrategy(prefix = "rsi.") {
+    private val windowSize : Int = 14
+) : RecordingStrategy(prefix = "rsi.") {
 
-    private val calculators = mutableMapOf<Asset, RSI>()
+    private val history = mutableMapOf<Asset, PriceSeries>()
+    private val taLib = TaLib()
 
-    /**
-     * Subclasses need to implement this method and return optional a signal.
-     *
-     * @param asset
-     * @param price
-     * @param time
-     * @return
-     */
-    override fun generate(asset: Asset, price: Double, time: Instant): Signal? {
-        var result: Signal? = null
+    override fun reset() {
+        history.clear()
+    }
 
-        val rsi = calculators[asset]
-        if (rsi == null) {
-            calculators[asset] = RSI(price)
-        } else {
-            rsi.add(price)
-            if (rsi.isReady()) {
-                val value = rsi.calculate()
-                record(asset.symbol, value)
-                if (value > highThreshold)
-                    result = Signal(asset, Rating.SELL)
-                else if (value < lowThreshold)
-                    result = Signal(asset, Rating.BUY)
+    override fun generate(event: Event): List<Signal> {
+        history.addAll(event, windowSize + 1, "CLOSE")
+        val result = mutableListOf<Signal>()
+        for (asset in event.prices.keys) {
+            val data = history.getValue(asset)
+            if (data.isFilled()) {
+                val rsi = taLib.rsi(data.toDoubleArray(), windowSize)
+                record(asset.symbol, rsi)
+                if (rsi > highThreshold)
+                    result.add(Signal(asset, Rating.SELL))
+                else if (rsi < lowThreshold)
+                    result.add(Signal(asset, Rating.BUY))
             }
         }
         return result
-    }
-
-    override fun reset() {
-        calculators.clear()
     }
 }

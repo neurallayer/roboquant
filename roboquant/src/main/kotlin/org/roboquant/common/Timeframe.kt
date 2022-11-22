@@ -19,7 +19,6 @@ package org.roboquant.common
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalAmount
 import kotlin.math.pow
 
 /**
@@ -176,9 +175,9 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         /**
          * Create a timeframe from now - [period] to now
          */
-        fun past(period: TemporalAmount): Timeframe {
+        fun past(period: TradingPeriod): Timeframe {
             val end = Instant.now()
-            return Timeframe(end.subtract(period), end)
+            return Timeframe(end - period, end)
         }
 
         /**
@@ -188,27 +187,9 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
          *      val tf = TimeFrame.next(60.minutes)
          *      roboquant.run(feed, tf)
          */
-        fun next(period: TemporalAmount): Timeframe {
+        fun next(period: TradingPeriod): Timeframe {
             val start = Instant.now()
-            return Timeframe(start, start.add(period))
-        }
-
-        /**
-         * Util extension to allow also periods to be added to an Instant
-         */
-        private fun Instant.add(temporalAmount: TemporalAmount): Instant {
-            val zoneId = Config.defaultZoneId
-            val now = this.atZone(zoneId)
-            return (now + temporalAmount).toInstant()
-        }
-
-        /**
-         * Util extension to allow also periods to be subtracted from an Instant
-         */
-        private fun Instant.subtract(temporalAmount: TemporalAmount): Instant {
-            val zoneId = Config.defaultZoneId
-            val now = this.atZone(zoneId)
-            return (now - temporalAmount).toInstant()
+            return Timeframe(start, start + period)
         }
 
     }
@@ -248,12 +229,12 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Usage:
      *      timeframe.toTimeline(1.days)
      */
-    fun toTimeline(step: TemporalAmount): Timeline {
+    fun toTimeline(step: TradingPeriod): Timeline {
         val timeline = mutableListOf<Instant>()
         var time = start
         while (time <= this) {
             timeline.add(time)
-            time = time.add(step)
+            time += step
         }
         return timeline
     }
@@ -280,18 +261,18 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      *
      * If the temporalAmount is defined as a [Period], the [Config.defaultZoneId] will be used as the ZoneId.
      */
-    fun split(period: TemporalAmount, overlap: TemporalAmount = 0.days): List<Timeframe> {
+    fun split(period: TradingPeriod, overlap: TradingPeriod = 0.days): List<Timeframe> {
         val result = mutableListOf<Timeframe>()
         var last = start
         while (true) {
-            val next = last.add(period)
+            val next = last + period
             if (!beforeEnd(next)) {
                 result.add(Timeframe(last, end, inclusive))
                 return result
             }
             val timeframe = Timeframe(last, next)
             result.add(timeframe)
-            last = next.minus(overlap)
+            last = next - overlap
         }
     }
 
@@ -329,7 +310,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      *
      *      val newTimeFrame = timeframe - 2.days
      */
-    operator fun minus(period: TemporalAmount) = Timeframe(start.subtract(period), end.subtract(period), inclusive)
+    operator fun minus(period: TradingPeriod) = Timeframe(start - period, end - period, inclusive)
 
     /**
      * Add a [period] to start- and end-time of this timeframe and return the result.
@@ -337,7 +318,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      *
      *      val newTimeFrame = timeframe + 2.days
      */
-    operator fun plus(period: TemporalAmount) = Timeframe(start.add(period), end.add(period), inclusive)
+    operator fun plus(period: TradingPeriod) = Timeframe(start + period, end + period, inclusive)
 
     /**
      * Annualize a [percentage] based on the duration of this timeframe. So given x percent return

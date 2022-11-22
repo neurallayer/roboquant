@@ -17,7 +17,6 @@
 package org.roboquant.common
 
 import org.junit.jupiter.api.Test
-import java.time.ZonedDateTime
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -58,13 +57,6 @@ class ExtensionsTest {
         val small = 0.00000000000001
         assertTrue(small.iszero)
         assertFalse(small.nonzero)
-    }
-
-    @Test
-    fun numbers() {
-        val x = ZonedDateTime.now()
-        val y = x + 1.days + 2.months + 1.years + 2.weeks + 100.millis + 10.seconds + 30.minutes + 1.hours
-        assertTrue(y > x)
     }
 
     @Test

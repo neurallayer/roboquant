@@ -17,10 +17,7 @@
 package org.roboquant.polygon
 
 import kotlinx.coroutines.runBlocking
-import org.roboquant.common.Config
-import org.roboquant.common.Timeframe
-import org.roboquant.common.days
-import org.roboquant.common.minutes
+import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import java.time.Instant
@@ -56,7 +53,7 @@ internal class PolygonTest {
         Config.getProperty("TEST_POLYGON") ?: return@runBlocking
         val feed = PolygonLiveFeed()
         feed.subscribe("IBM", "AAPL")
-        val actions = feed.filter<PriceAction>(Timeframe.next(5.minutes))
+        val actions = feed.filter<PriceAction>(timeframe = Timeframe.next(5.minutes))
         assertTrue(actions.isNotEmpty())
         feed.disconnect()
     }

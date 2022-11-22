@@ -16,9 +16,7 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.common.Size
-import org.roboquant.common.UnsupportedException
-import org.roboquant.common.days
+import org.roboquant.common.*
 import org.roboquant.orders.*
 import java.time.Instant
 
@@ -55,7 +53,7 @@ abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHan
      */
     private fun expired(time: Instant): Boolean {
         return when (val tif = order.tif) {
-            is GTC -> time > state.openedAt + tif.maxDays.days
+            is GTC -> time > (state.openedAt + tif.maxDays.days)
             is DAY -> !order.asset.exchange.sameDay(state.openedAt, time)
             is FOK -> remaining.nonzero
             is GTD -> time > tif.date

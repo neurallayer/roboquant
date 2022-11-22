@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Test
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
 import java.time.Instant
-import java.time.Period
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
@@ -62,7 +61,7 @@ internal class RandomWalkFeedTest {
         val tf = feed.split(100)
         assertTrue(tf.isNotEmpty())
 
-        val tf2 = feed.split(Period.ofDays(50))
+        val tf2 = feed.split(50.days)
         assertTrue(tf2.isNotEmpty())
 
         val tf3 = feed.sample(10).first()

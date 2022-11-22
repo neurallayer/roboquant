@@ -26,6 +26,7 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import org.roboquant.common.*
 
 internal class OrderStateTest {
 

@@ -20,18 +20,14 @@ import org.hipparchus.stat.correlation.Covariance
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.diff
-import org.roboquant.common.Asset
-import org.roboquant.common.Size
-import org.roboquant.common.days
-import org.roboquant.common.returns
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.utils.PriceSeries
-import org.roboquant.strategies.utils.addAll
+import org.roboquant.common.PriceSeries
+import org.roboquant.common.addAll
 import java.time.Instant
-import java.time.temporal.TemporalAmount
 import kotlin.math.floor
 import kotlin.math.min
 
@@ -58,7 +54,7 @@ import kotlin.math.min
 open class BettingAgainstBetaPolicy(
     assets: Collection<Asset>,
     val market: Asset,
-    private val holdingPeriod: TemporalAmount = 20.days,
+    private val holdingPeriod: TradingPeriod = 20.days,
     private val maxPositions: Int = 20,
     private val windowSize: Int = 120,
 ) : BasePolicy() {

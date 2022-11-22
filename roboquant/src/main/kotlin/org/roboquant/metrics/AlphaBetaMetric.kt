@@ -24,7 +24,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.returns
 import org.roboquant.common.totalReturns
 import org.roboquant.feeds.Event
-import org.roboquant.strategies.utils.PriceSeries
+import org.roboquant.common.PriceSeries
 
 /**
  * Calculates the Alpha and Beta of an account. This implementation not only looks at the open positions, but

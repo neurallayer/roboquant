@@ -17,11 +17,11 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 import java.time.Instant
-import java.time.temporal.TemporalAmount
 import java.util.*
 
 /**
@@ -30,13 +30,13 @@ import java.util.*
  * @property policy
  * @constructor Create new Chain Breaker
  */
-internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, private val duration: TemporalAmount) :
+internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, private val period: TradingPeriod) :
     Policy by policy {
 
     private val history = LinkedList<Pair<Instant, Int>>()
 
     private fun exceeds(newOrders: Int, time: Instant): Boolean {
-        val lookbackTime = time - duration
+        val lookbackTime = time - period
         var orders = newOrders
         for (entry in history) {
             if (entry.first < lookbackTime) return false
@@ -66,7 +66,7 @@ internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, pr
 }
 
 /**
- * Limit the number of orders a policy can generate to [maxOrders] per [duration]. All the orders per step will be
+ * Limit the number of orders a policy can generate to [maxOrders] per [period]. All the orders per step will be
  * either added or ignored.
  *
  * Note: this circuit breaker will also block closing-position orders if a [maxOrders] limit is exceeded.
@@ -75,4 +75,4 @@ internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, pr
  *      // For example allow maximum of 5 orders per 8 hours
  *      val policy = myPolicy.circuitBreaker(5, 8.hours)
  */
-fun Policy.circuitBreaker(maxOrders: Int, duration: TemporalAmount) : Policy = CircuitBreaker(this, maxOrders, duration)
+fun Policy.circuitBreaker(maxOrders: Int, period: TradingPeriod) : Policy = CircuitBreaker(this, maxOrders, period)
