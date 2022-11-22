@@ -23,8 +23,6 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
-import org.roboquant.strategies.utils.MultiAssetPriceBarSeries
-import org.roboquant.strategies.utils.PriceBarSeries
 import java.lang.Integer.max
 
 /**

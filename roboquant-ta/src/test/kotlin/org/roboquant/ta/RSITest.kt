@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package org.roboquant.strategies
+package org.roboquant.ta
 
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
-import org.roboquant.Roboquant
-import org.roboquant.TestData
-import org.roboquant.loggers.SilentLogger
-import kotlin.test.assertEquals
+import kotlin.test.*
+import kotlin.random.Random
 
-internal class RSIStrategyTest {
+internal class RSITest {
 
     @Test
-    fun test() = runBlocking {
-        val s = RSIStrategy()
-        assertEquals(30.0, s.lowThreshold)
-        assertEquals(70.0, s.highThreshold)
-        val roboquant = Roboquant(s, logger = SilentLogger())
-        roboquant.run(TestData.feed)
+    fun test() {
+        val r = Random(42)
+        repeat(10) {
+            val rsi = RSI(100.0)
+            assertFalse(rsi.isReady())
+            repeat(50) {
+                rsi.add(100.0 + r.nextDouble() - 0.5)
+            }
+            assertTrue(rsi.isReady())
+            val v = rsi.calculate()
+            assertTrue(v >= 0.0)
+            assertTrue(v <= 100.0)
+        }
 
     }
-
 }

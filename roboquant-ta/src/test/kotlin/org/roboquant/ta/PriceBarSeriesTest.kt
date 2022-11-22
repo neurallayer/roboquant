@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.roboquant.strategies.utils
+package org.roboquant.ta
 
 import org.junit.jupiter.api.Test
-import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.RandomWalkFeed
 import org.roboquant.feeds.filter
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -27,9 +27,11 @@ import kotlin.test.assertTrue
 
 internal class PriceBarSeriesTest {
 
+    private val feed = RandomWalkFeed.lastYears(1, 2)
+
     @Test
     fun test() {
-        val feed = TestData.feed
+        val feed = feed
         val asset = feed.assets.first()
         val pb = PriceBarSeries(20)
         assertFalse(pb.isFilled())
@@ -46,7 +48,7 @@ internal class PriceBarSeriesTest {
 
     @Test
     fun test2() {
-        val feed = TestData.feed
+        val feed = feed
         val asset1 = feed.assets.first()
         val pb = MultiAssetPriceBarSeries(10)
         assertFalse(pb.isFilled(asset1))

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package org.roboquant.strategies
+package org.roboquant.ta
 
 import org.roboquant.common.Asset
-import org.roboquant.strategies.utils.RSI
+import org.roboquant.strategies.PriceStrategy
+import org.roboquant.strategies.Rating
+import org.roboquant.strategies.Signal
 import java.time.Instant
 
 /**

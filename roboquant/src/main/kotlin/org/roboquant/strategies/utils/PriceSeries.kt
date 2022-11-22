@@ -35,12 +35,12 @@ open class PriceSeries(private val windowSize: Int) {
     private var counter = 0L
 
     /**
-     * Add a new [value] to the end. If the window is full, the first element will be removed.
+     * Add a new [price] to the end. If the window is full, the first element will be removed.
      * Return true is the series is already completely filled, false otherwise
      */
-    open fun add(value: Double) : Boolean {
+    open fun add(price: Double) : Boolean {
         val index = (counter % windowSize).toInt()
-        data[index] = value
+        data[index] = price
         counter++
         return isFilled()
     }

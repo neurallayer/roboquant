@@ -29,7 +29,6 @@ package org.roboquant.ta
 import com.tictactec.ta.lib.*
 import org.roboquant.common.DoesNotComputeException
 import org.roboquant.common.InsufficientDataException
-import org.roboquant.strategies.utils.PriceBarSeries
 
 /**
  * This class wraps the excellent TA-Lib library and makes it easy to use indicators provided by that library.

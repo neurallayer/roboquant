@@ -32,7 +32,6 @@ import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
-import org.roboquant.strategies.utils.PriceBarSeries
 import java.lang.IllegalArgumentException
 import java.time.Instant
 import kotlin.test.assertContains

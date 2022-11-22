@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.strategies.utils
+package org.roboquant.ta
 
 /**
  * Relative Strength Index implementation with a small twist. It uses exponential moving average for all

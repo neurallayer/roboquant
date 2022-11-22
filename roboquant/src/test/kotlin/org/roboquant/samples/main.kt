@@ -25,13 +25,9 @@ import org.roboquant.brokers.fee
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.AvroFeed
+import org.roboquant.feeds.*
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
-import org.roboquant.feeds.filter
-import org.roboquant.feeds.timeseries
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.toDoubleArray
@@ -252,6 +248,7 @@ fun simple() {
     roboquant.run(feed)
     println(roboquant.broker.account.fullSummary())
 }
+
 
 suspend fun main() {
     Config.printInfo()

@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package org.roboquant.strategies.utils
+package org.roboquant.ta
 
 import org.roboquant.common.Asset
 import org.roboquant.common.div
 import org.roboquant.common.plus
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
+import org.roboquant.strategies.utils.PriceSeries
 
 /**
  * PriceBarSeries is a moving window of OHLCV values.
@@ -85,7 +86,7 @@ class PriceBarSeries(windowSize: Int) {
     /**
      * Update the buffer with a new [ohlcv] values
      */
-    fun add(ohlcv: DoubleArray): Boolean {
+    private fun add(ohlcv: DoubleArray): Boolean {
         assert(ohlcv.size == 5)
         openSeries.add(ohlcv[0])
         highSeries.add(ohlcv[1])

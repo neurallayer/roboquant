@@ -229,7 +229,7 @@ fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 /**
  * Get the returns (as a percentage). Formula used is
  *
- *      returns = (new -old) / old
+ *      returns = (new - old) / old
  */
 fun DoubleArray.returns(): DoubleArray {
     if (size < 2) return DoubleArray(0)

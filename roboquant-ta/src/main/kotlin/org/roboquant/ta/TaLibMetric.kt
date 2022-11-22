@@ -23,7 +23,6 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.metrics.Metric
 import org.roboquant.metrics.MetricResults
-import org.roboquant.strategies.utils.PriceBarSeries
 
 /**
  * Use a technical indicator from the Ta-Lib library as a metric. Metrics will be available under the
