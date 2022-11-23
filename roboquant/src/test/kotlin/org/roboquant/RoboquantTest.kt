@@ -55,15 +55,18 @@ internal class RoboquantTest {
         val timeline = feed.timeline
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = LastEntryLogger())
         roboquant.run(feed)
-        var steps = roboquant.logger.getMetric("progress.steps")
-        assertEquals(timeline.size, steps.last().value.toInt())
+        val step = roboquant.logger.getMetric("progress.steps").last()
+        assertEquals(timeline.size, step.value.toInt())
+        assertEquals(1, step.info.episode)
+        assertEquals(RunPhase.MAIN, step.info.phase)
+        assertEquals(timeline.size, step.info.step)
 
         val offset = 3
         val timeframe = Timeframe(timeline[2], timeline[2 + offset], inclusive = false )
         roboquant.reset()
         roboquant.run(feed, timeframe)
-        steps = roboquant.logger.getMetric("progress.steps")
-        assertEquals(offset, steps.last().value.toInt())
+        val step2 = roboquant.logger.getMetric("progress.steps").last()
+        assertEquals(offset, step2.value.toInt())
     }
 
     @Test
@@ -73,10 +76,11 @@ internal class RoboquantTest {
         val timeline = feed.timeline
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = LastEntryLogger())
 
-        val timeframe = Timeframe(timeline[2], timeline[5], inclusive = false )
+        val timeframe = Timeframe(timeline[2], timeline[5], inclusive = false)
         roboquant.run(feed, timeframe)
-        val steps = roboquant.logger.getMetric("progress.steps")
-        assertEquals(3, steps.last().value.toInt())
+        val step = roboquant.logger.getMetric("progress.steps").last()
+        assertEquals(3, step.value.toInt())
+        assertEquals(timeline[4], step.info.time)
     }
 
 

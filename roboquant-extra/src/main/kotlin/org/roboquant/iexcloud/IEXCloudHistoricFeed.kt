@@ -59,7 +59,7 @@ class IEXCloudHistoricFeed(
     }
 
     /**
-     * Retrieve historic end of day [PriceBar] for one or more symbols
+     * Retrieve historic intraday [PriceBar] for one or more symbols
      *
      * @param symbols
      */
@@ -92,10 +92,12 @@ class IEXCloudHistoricFeed(
         }
     }
 
-
-    private fun getInstant(asset: Asset, date: String, minute: String?): Instant {
-        return if (minute !== null) {
-            val dt = LocalDateTime.parse("${date}T$minute")
+    /**
+     * Handle different time format strings of the API
+     */
+    private fun getInstant(asset: Asset, date: String, time: String?): Instant {
+        return if (time !== null) {
+            val dt = LocalDateTime.parse("${date}T$time")
             asset.exchange.getInstant(dt)
         } else {
             val d = LocalDate.parse(date)
@@ -113,8 +115,8 @@ class IEXCloudHistoricFeed(
         logger.info { "Total ${timeline.size} steps from ${timeline.first()} to ${timeline.last()}" }
     }
 
-    private fun handleIntraday(asset: Asset, quotes: List<Intraday>) {
-        quotes.filter { it.open !== null }.forEach {
+    private fun handleIntraday(asset: Asset, intradays: List<Intraday>) {
+        intradays.filter { it.open !== null }.forEach {
             val action = PriceBar(asset, it.open, it.high, it.low, it.close, it.volume ?: Double.NaN)
             val now = getInstant(asset, it.date, it.minute)
             add(now, action)

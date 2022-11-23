@@ -46,6 +46,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     val duration: Duration
         get() = Duration.between(start, end)
 
+
     init {
         require(end >= start) { "end time has to be larger or equal than start time, found $start - $end" }
         require(start >= MIN) { "start time has to be larger or equal than $MIN" }
@@ -56,6 +57,12 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Is this an infinite timeframe
      */
     fun isInfinite() = this == INFINITE
+
+    /**
+     * Is this an empty timeframe
+     */
+     fun isEmpty() = start == end && ! inclusive
+
 
     /**
      * @suppress
@@ -80,7 +87,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         val INFINITE = Timeframe(MIN, MAX)
 
         /**
-         * The empty timeframe doesn't contain any time
+         * The empty timeframe doesn't contain any time.
          */
         val EMPTY = Timeframe(MIN, MIN)
 
@@ -173,7 +180,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         }
 
         /**
-         * Create a timeframe from now - [period] to now
+         * Create a timeframe from now minus the provided [period].
          */
         fun past(period: TradingPeriod): Timeframe {
             val end = Instant.now()
@@ -181,7 +188,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         }
 
         /**
-         * Create a timeframe from now for the provided duration. This is useful to restrict a live feed, so it
+         * Create a timeframe from now for the provided [period]. This is useful to restrict a live feed, so it
          * won't run forever.
          *
          *      val tf = TimeFrame.next(60.minutes)
@@ -195,12 +202,12 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Is the provided [time] still before the end of this timeframe
+     * Is the provided [time] before the end of this timeframe. For an [inclusive] timeframe, the [time] has to be
+     * before or equal the end time.
      */
     private fun beforeEnd(time: Instant): Boolean {
         return time < end || (inclusive && time <= end)
     }
-
 
     /**
      * Return a new timeframe inclusive of the [end] value.
@@ -215,7 +222,8 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Is this timeframe within a single day given the provided [zoneId].
+     * Is this timeframe within a single day given the provided [zoneId]. If no [zoneId] is provided the one
+     * configured at [Config.defaultZoneId] will be used.
      */
     fun isSingleDay(zoneId: ZoneId = Config.defaultZoneId): Boolean {
         if (start == Instant.MIN || end == Instant.MAX) return false
@@ -332,6 +340,12 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         val years = ONE_YEAR_MILLIS / period
         return (1.0 + percentage).pow(years) - 1.0
     }
+
+    /**
+     * Extend this period with a [before] and [after] period and return the result. If no [after] period is provided
+     * the same value as for [before] will be used.
+     */
+    fun extend(before: TradingPeriod, after: TradingPeriod = before) = Timeframe(start - before,end + after)
 
 }
 

@@ -101,9 +101,12 @@ internal class WalletTest {
     }
 
     @Test
-    fun extensions() {
+    fun multiCurrency() {
         val cash = 100.EUR + 200.USD
         assertTrue(cash.isMultiCurrency())
+
+        val cash2 = 100.EUR.toWallet()
+        assertFalse(cash2.isMultiCurrency())
     }
 
 }

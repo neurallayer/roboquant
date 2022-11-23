@@ -20,16 +20,18 @@ import org.junit.jupiter.api.Test
 import org.roboquant.common.symbols
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class IEXCloudHistoricFeedTestIT {
 
     @Test
-    fun test() {
+    fun testIntraday() {
         System.getProperty("TEST_IEX") ?: return
         val feed = IEXCloudHistoricFeed()
         feed.retrieveIntraday("AAPL")
         assertTrue("AAPL" in feed.assets.symbols)
+        assertFalse("IBM" in feed.assets.symbols)
 
         val actions = feed.filter<PriceAction>()
         assertTrue(actions.isNotEmpty())
@@ -45,13 +47,5 @@ internal class IEXCloudHistoricFeedTestIT {
         assertTrue(actions.isNotEmpty())
     }
 
-    @Test
-    fun testIntraday() {
-        System.getProperty("TEST_IEX") ?: return
-        val feed = IEXCloudHistoricFeed()
-        feed.retrieveIntraday("AAPL")
-        val actions = feed.filter<PriceAction>()
-        assertTrue(actions.isNotEmpty())
-    }
-
+    
 }

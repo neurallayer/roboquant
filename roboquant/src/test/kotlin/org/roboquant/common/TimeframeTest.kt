@@ -42,6 +42,19 @@ internal class TimeframeTest {
 
 
     @Test
+    fun empty() {
+        val empty = Timeframe.EMPTY
+        assertTrue(empty.isEmpty())
+
+        val now = Instant.now()
+        val empty2 = Timeframe(now, now)
+        assertTrue(empty2.isEmpty())
+
+        val empty3 = Timeframe(now, now + 1.millis)
+        assertFalse(empty3.isEmpty())
+    }
+
+    @Test
     fun parse() {
         val tf = Timeframe.parse("2019-01-01T00:00:00Z", "2020-01-01T00:00:00Z")
         assertEquals(tf, Timeframe.parse("2019", "2020"))

@@ -24,6 +24,7 @@ import net.jacobpeterson.alpaca.model.endpoint.orders.enums.CurrentOrderStatus
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderSide
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderType
+import net.jacobpeterson.alpaca.rest.AlpacaClientException
 import org.roboquant.brokers.*
 import org.roboquant.common.*
 import org.roboquant.common.Currency
@@ -37,13 +38,14 @@ import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderStatus as Alpac
 import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosition
 
 /**
- * Broker implementation for Alpaca. This implementation allows using the Alpaca live- and paper-trading capabilities
+ * Broker implementation for Alpaca. This implementation allows using the Alpaca live- and paper-trading accounts
  * in combination with roboquant.
  *
  * See also the Alpaca feed components if you want to use Alpaca also for retrieving market data.
- * @property extendedHours
- * @param configure
- * @constructor Create new Alpaca broker
+ *
+ * @property extendedHours enable extended hours for trading, default is false
+ * @param configure additional configuration parameters to connecting to the API
+ * @constructor Create a new instance of the AlpacaBroker
  */
 class AlpacaBroker(
     private val extendedHours: Boolean = false,
@@ -112,8 +114,6 @@ class AlpacaBroker(
             _account.setPosition(p)
         }
     }
-
-
 
 
 
@@ -194,7 +194,7 @@ class AlpacaBroker(
     }
 
     /**
-     * Get teh trades from the Alpaca account and sync with the roboquant internal account
+     * Sync the trades from the Alpaca account with the roboquant internal account
      */
     private fun syncTrades() {
         val now = ZonedDateTime.now()
@@ -222,6 +222,19 @@ class AlpacaBroker(
         }
     }
 
+
+    private fun cancelOrder(cancelation: CancelOrder) {
+        val now = Instant.now()
+        try {
+            val orderId = orderMapping[cancelation.order.order]
+            alpacaAPI.orders().cancel(orderId)
+            _account.putOrder(OrderState(cancelation, OrderStatus.COMPLETED, now, now))
+        } catch (exception: AlpacaClientException) {
+            _account.putOrder(OrderState(cancelation, OrderStatus.REJECTED, now, now))
+            logger.trace(exception) { "cancellation failed for order=$cancelation"}
+        }
+    }
+
     /**
      * Place an order at Alpaca.
      *
@@ -236,43 +249,29 @@ class AlpacaBroker(
         val tif = when (order.tif) {
             is GTC -> OrderTimeInForce.GOOD_UNTIL_CANCELLED
             is DAY -> OrderTimeInForce.DAY
-            else -> {
-                throw UnsupportedException("Unsupported TIF ${order.tif} for order $order")
-            }
+            else -> throw UnsupportedException("unsupported tif=${order.tif} for order=$order")
         }
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
-        require(! order.size.isFractional) { "fractional orders are not supported"}
+        require(! order.size.isFractional) { "fractional orders are not yet supported"}
 
         val qty = order.size.toBigDecimal().abs().toInt()
+        val api = alpacaAPI.orders()
 
         val alpacaOrder = when (order) {
-            is MarketOrder -> alpacaAPI.orders()
-                .requestMarketOrder(asset.symbol, qty, side, tif)
-
-            is LimitOrder -> alpacaAPI.orders()
-                .requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, extendedHours)
-
-            is StopOrder -> alpacaAPI.orders()
-                .requestStopOrder(asset.symbol, qty, side, tif, order.stop, extendedHours)
-
-            is StopLimitOrder -> alpacaAPI.orders().requestStopLimitOrder(
+            is MarketOrder -> api.requestMarketOrder(asset.symbol, qty, side, tif)
+            is LimitOrder -> api.requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, extendedHours)
+            is StopOrder -> api.requestStopOrder(asset.symbol, qty, side, tif, order.stop, extendedHours)
+            is StopLimitOrder -> api.requestStopLimitOrder(
                 asset.symbol, qty, side, tif, order.limit, order.stop, extendedHours
             )
-
-            is TrailOrder -> alpacaAPI.orders().requestTrailingStopPercentOrder(
+            is TrailOrder -> api.requestTrailingStopPercentOrder(
                 asset.symbol, qty, side, tif, order.trailPercentage, extendedHours
             )
-
-            else -> {
-                throw UnsupportedException(
-                    "Unsupported order type $order. Right now only Market and Limit orders are mapped"
-                )
-            }
+            else -> throw UnsupportedException("unsupported single order type order=$order")
         }
         orderMapping[order] = alpacaOrder.id
-        _account.putOrders(listOf(OrderState(order)))
-
+        _account.putOrder(OrderState(order))
     }
 
     /**
@@ -284,11 +283,10 @@ class AlpacaBroker(
         syncOrders()
         syncTrades()
         for (order in orders) {
-            if (order is SingleOrder) {
-                placeOrder(order)
-                _account.putOrder(OrderState(order))
-            } else {
-                throw UnsupportedException("Unsupported order type $order")
+            when(order) {
+                is SingleOrder -> placeOrder(order)
+                is CancelOrder -> cancelOrder(order)
+                else ->  throw UnsupportedException("unsupported order type order=$order")
             }
         }
         _account.lastUpdate = event.time

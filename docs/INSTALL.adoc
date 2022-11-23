@@ -129,7 +129,7 @@ mvn dokka:dokka -P doc
 Please note the `release` profile has its own dokka task to generate a javadoc jar file.
 
 == Performance Test
-To run the built-in performance test, you can use the following command
+To run the built-in performance test, you can use the following command:
 
 [source, shell]
 ----
@@ -159,4 +159,14 @@ INFO PerformanceTest -      base run                             1847 ms
 INFO PerformanceTest -      parallel runs (x4)                   2113 ms
 INFO PerformanceTest -      extended run                        10902 ms
 ----
+
+== Mutation Testing
+Although not enabled by default, roboquant also includes the PIT (see also https://PiTest.org) mutation testing plugin. you can use the following command to run it:
+
+[source, shell]
+----
+mvn test-compile org.pitest:pitest-maven:mutationCoverage
+----
+
+PIT runs the unit tests against automatically modified versions of the roboquant code. When the code changes, it should produce different results and cause one or more unit tests to fail. If no unit test fails, it may indicate an issue with that the test suite desn't validate enough behavior.
 

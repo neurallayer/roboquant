@@ -7,42 +7,44 @@ import java.time.ZonedDateTime
 import java.time.temporal.TemporalAmount
 
 /**
- * Trading Period is a duration that unified Duration and Period and allows to calculate with it easily. Under the hood
- * it will use [Config.defaultZoneId] when working with periods that require a timezone.
+ * Trading Period is a class that unifies the JVM classes Duration and Period and allows to calculate with it more
+ * easily.
+ *
+ * Under the hood it will use [Config.defaultZoneId] when working with periods that require a timezone.
  */
 @JvmInline
 value class TradingPeriod(val period : TemporalAmount)
 
 /**
- * Add a trading period to an instant
+ * Add a trading [period] to an instant
  */
-operator fun Instant.minus(p: TradingPeriod) : Instant {
+operator fun Instant.minus(period: TradingPeriod) : Instant {
     val zoneId = Config.defaultZoneId
     val now = this.atZone(zoneId)
-    return (now - p.period).toInstant()
+    return (now - period.period).toInstant()
 }
 
 /**
- * Subtract a trading period from an instant
+ * Subtract a trading [period] from an instant
  */
-operator fun Instant.plus(p: TradingPeriod): Instant {
+operator fun Instant.plus(period: TradingPeriod): Instant {
     val zoneId = Config.defaultZoneId
     val now = this.atZone(zoneId)
-    return (now + p.period).toInstant()
+    return (now + period.period).toInstant()
 }
 
 /**
- * Subtract a trading period from a zoned date-time
+ * Subtract a trading [period] from a zoned date-time
  */
-operator fun ZonedDateTime.minus(p: TradingPeriod) : ZonedDateTime {
-    return this - p.period
+operator fun ZonedDateTime.minus(period: TradingPeriod) : ZonedDateTime {
+    return this - period.period
 }
 
 /**
- * Add a trading period to a zoned date-time
+ * Add a trading [period] to a zoned date-time
  */
-operator fun ZonedDateTime.plus(p: TradingPeriod): ZonedDateTime {
-    return this + p.period
+operator fun ZonedDateTime.plus(period: TradingPeriod): ZonedDateTime {
+    return this + period.period
 }
 
 

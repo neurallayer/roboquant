@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 internal class TradingPeriodTest {
 
     @Test
-    fun test() {
+    fun basic() {
         val y = Period.ofDays(2)
         val x = TradingPeriod(y)
         assertEquals(y, x.period)
@@ -42,7 +42,7 @@ internal class TradingPeriodTest {
     }
 
     @Test
-    fun same() {
+    fun equal() {
         val z = ZonedDateTime.now(Config.defaultZoneId)
         val i = z.toInstant()
 
