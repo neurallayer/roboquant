@@ -152,8 +152,9 @@ class AlpacaBroker(
             AlpacaOrderStatus.EXPIRED -> OrderStatus.EXPIRED
             AlpacaOrderStatus.FILLED -> OrderStatus.COMPLETED
             AlpacaOrderStatus.REJECTED -> OrderStatus.REJECTED
+            AlpacaOrderStatus.ACCEPTED -> OrderStatus.ACCEPTED
             else -> {
-                logger.info { "Received UNSUPPORTED order status ${order.status}" }
+                logger.info { "received unsupported order status ${order.status}" }
                 OrderStatus.ACCEPTED
             }
         }
