@@ -17,7 +17,6 @@
 package org.roboquant.alpaca
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.brokers.summary
 import org.roboquant.common.Config
 import org.roboquant.feeds.Event
 import kotlin.test.Test
@@ -30,15 +29,23 @@ class AlpacaBrokerTestIT {
     fun test() {
         Config.getProperty("FULL_COVERAGE") ?: return
         val broker = AlpacaBroker()
+        val cash = broker.account.cash
 
-        assertTrue(broker.account.cash.isNotEmpty())
-        assertFalse(broker.account.cash.isMultiCurrency())
+        assertTrue(cash.isNotEmpty())
+        assertFalse(cash.isMultiCurrency())
         assertTrue(broker.availableAssets.isNotEmpty())
 
         assertDoesNotThrow {
             broker.place(emptyList(), Event.empty())
         }
-        println(broker.account.trades.summary())
+
+        assertDoesNotThrow {
+            broker.sync()
+            val account = broker.account
+            broker.account.fullSummary()
+            assertTrue(account.equity.isNotEmpty())
+        }
+
     }
 
 }

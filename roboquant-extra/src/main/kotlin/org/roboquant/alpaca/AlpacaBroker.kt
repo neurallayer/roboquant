@@ -178,6 +178,7 @@ class AlpacaBroker(
                 order.stopPrice.toDouble(),
                 order.limitPrice.toDouble()
             )
+            OrderType.TRAILING_STOP -> TrailOrder(asset, Size(qty), order.trailPercent.toDouble())
             else -> throw UnsupportedException("unsupported order type for order $order")
         }
 
@@ -203,7 +204,7 @@ class AlpacaBroker(
         )
         logger.debug { "Found ${trades.size} fill activities" }
         for (activity in trades.filterIsInstance<TradeActivity>()) {
-            // Only add trades we know the order id of
+            // Only add trades we know the order id of, ignore the rest
             logger.debug { "Found trade $activity" }
             val order = orderMapping.filterValues { it == activity.orderId }.keys.firstOrNull()
             if (order != null && activity.id !in handledTrades) {
@@ -222,6 +223,15 @@ class AlpacaBroker(
         }
     }
 
+    /**
+     * Sync the state of the Alpaca trading account with roboquant account state
+     */
+    fun sync() {
+        syncAccount()
+        syncPortfolio()
+        syncOrders()
+        syncTrades()
+    }
 
     private fun cancelOrder(cancelation: CancelOrder) {
         val now = Instant.now()
@@ -280,8 +290,6 @@ class AlpacaBroker(
      * @return the updated account that reflects the latest state
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        syncOrders()
-        syncTrades()
         for (order in orders) {
             when(order) {
                 is SingleOrder -> placeOrder(order)
@@ -290,6 +298,7 @@ class AlpacaBroker(
             }
         }
         _account.lastUpdate = event.time
+        sync()
         return _account.toAccount()
     }
 }

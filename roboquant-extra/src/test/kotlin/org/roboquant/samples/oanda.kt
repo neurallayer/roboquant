@@ -184,7 +184,8 @@ fun oandaBroker3() {
     println(account.fullSummary())
 }
 
-fun oandaBroker2(createOrder: Boolean = true) {
+fun oandaBroker2(createOrder: Boolean = false) {
+    Config.exchangeRates = OANDAExchangeRates()
     val broker = OANDABroker()
     println(broker.account.fullSummary())
     println(broker.availableAssets.summary())
@@ -198,7 +199,7 @@ fun oandaBroker2(createOrder: Boolean = true) {
 }
 
 fun main() {
-    when ("OANDA_LIVE_ORDERBOOK") {
+    when ("OANDA_BROKER2") {
         "OANDA_BROKER" -> oandaBroker()
         "OANDA_BROKER2" -> oandaBroker2()
         "OANDA_BROKER3" -> oandaBroker3()
