@@ -59,7 +59,7 @@ class OANDAExchangeRates(
     }
 
     /**
-     * Refresh the exchange rates
+     * Refresh the exchange rates from OANDA
      */
     fun refresh() {
         val request = PricingGetRequest(this.accountID, symbols)

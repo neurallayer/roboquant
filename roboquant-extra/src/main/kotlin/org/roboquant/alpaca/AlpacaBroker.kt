@@ -76,9 +76,7 @@ class AlpacaBroker(
         syncAccount()
         syncPortfolio()
         loadInitialOrders()
-        // updateOpenOrders()
     }
-
 
     /**
      * Get all available assets to trade
@@ -108,20 +106,18 @@ class AlpacaBroker(
      */
     private fun syncPortfolio() {
         _account.portfolio.clear()
-        for (openPosition in alpacaAPI.positions().get()) {
+        val positions = alpacaAPI.positions().get()
+        for (openPosition in positions) {
             logger.debug { "received $openPosition" }
             val p = convertPos(openPosition)
             _account.setPosition(p)
         }
     }
 
-
-
     /**
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
     private fun syncOrders() {
-
         val states = _account.openOrders.values.map {
             val aOrderId = orderMapping.getValue(it.order)
             val order = alpacaAPI.orders().get(aOrderId, false)
@@ -135,7 +131,8 @@ class AlpacaBroker(
      * Closed orders will be ignored all together.
      */
     private fun loadInitialOrders() {
-        for (order in alpacaAPI.orders().get(CurrentOrderStatus.OPEN, null, null, null, null, false, null)) {
+        val openOrders = alpacaAPI.orders().get(CurrentOrderStatus.OPEN, null, null, null, null, false, null)
+        for (order in openOrders) {
             logger.debug { "received open $order" }
             val rqOrder = toOrder(order)
             _account.putOrders(listOf(rqOrder))
@@ -225,7 +222,7 @@ class AlpacaBroker(
     }
 
     /**
-     * Sync the state of the Alpaca trading account with roboquant account state
+     * Sync the state of the Alpaca trading account with roboquant account state.
      */
     fun sync() {
         syncAccount()
@@ -234,6 +231,9 @@ class AlpacaBroker(
         syncTrades()
     }
 
+    /**
+     * Cancel an order
+     */
     private fun cancelOrder(cancelation: CancelOrder) {
         val now = Instant.now()
         try {
@@ -247,7 +247,7 @@ class AlpacaBroker(
     }
 
     /**
-     * Place an order at Alpaca.
+     * Place an order of type [SingleOrder] at Alpaca.
      *
      * @param order
      */
