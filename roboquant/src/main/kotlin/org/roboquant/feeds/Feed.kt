@@ -19,10 +19,27 @@ package org.roboquant.feeds
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.roboquant.common.*
-import java.io.Closeable
+import org.roboquant.common.Asset
+import org.roboquant.common.Observation
+import org.roboquant.common.Timeframe
+import org.roboquant.common.Timeserie
 import java.time.Instant
 import java.util.*
+import kotlin.collections.Collection
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.filter
+import kotlin.collections.filterIsInstance
+import kotlin.collections.groupBy
+import kotlin.collections.iterator
+import kotlin.collections.map
+import kotlin.collections.mapValues
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
+import kotlin.collections.toDoubleArray
 import kotlin.math.absoluteValue
 
 /**
@@ -34,7 +51,7 @@ import kotlin.math.absoluteValue
 interface Feed : AutoCloseable {
 
     /**
-     * Timeframe of the feed. In case the timeframe is not known upfront, return the full timeframe [Timeframe.INFINITE]
+     * Timeframe of the feed. In case the timeframe is not known upfront, the default is to return [Timeframe.INFINITE]
      */
     val timeframe: Timeframe
         get() = Timeframe.INFINITE
@@ -47,10 +64,10 @@ interface Feed : AutoCloseable {
 
     /**
      * A feed that may hold resources (such as file or socket handles) until it is closed. Calling the close() method
-     * of a feed ensures prompt release of these resources, avoiding resource exhaustion.
+     * on a feed ensures prompt release of these resources, avoiding resource exhaustion.
      *
-     * This is part of the [Closeable] interface that any feed can override. If not implemented, the default behavior
-     * is to do nothing.
+     * This is part of the [AutoCloseable] interface that any feed can override. If not implemented, the default
+     * behavior is to do nothing.
      */
     override fun close() {
         // default is to do nothing

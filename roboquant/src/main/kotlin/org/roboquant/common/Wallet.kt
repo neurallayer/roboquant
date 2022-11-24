@@ -16,7 +16,6 @@
 
 package org.roboquant.common
 
-import org.roboquant.brokers.summary
 import java.time.Instant
 import java.util.*
 
@@ -263,7 +262,7 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      * Convert this Wallet into a single [currency] amount. Under the hood is uses [Amount.convert] to perform the
      * actual conversions. Optional a [time] can be provided, the default is [Instant.now].
      */
-    fun convert(currency: Currency = Config.baseCurrency, time: Instant = Instant.now()): Amount {
+    fun convert(currency: Currency, time: Instant = Instant.now()): Amount {
         var sum = 0.0
         for (amount in toAmounts()) {
             sum += amount.convert(currency, time).value

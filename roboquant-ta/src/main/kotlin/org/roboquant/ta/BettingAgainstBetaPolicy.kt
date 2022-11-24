@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.policies
+package org.roboquant.ta
 
 import org.hipparchus.stat.correlation.Covariance
 import org.roboquant.brokers.Account
@@ -27,6 +27,7 @@ import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 import org.roboquant.common.PriceSeries
 import org.roboquant.common.addAll
+import org.roboquant.policies.BasePolicy
 import java.time.Instant
 import kotlin.math.floor
 import kotlin.math.min
@@ -38,7 +39,7 @@ import kotlin.math.min
  * It will then hold these positions for a number of days before re-evaluating the strategy. After re-evaluation, the
  * strategy will then generate the market orders required to achieve the desired new portfolio composition.
  *
- * Since this strategy controls the complete portfolio and not just generates signals, it is implemented as a [Policy]
+ * Since this strategy controls the complete portfolio and not just generates signals, it is implemented as a policy
  * and not a strategy. It doesn't use leverage or buying power, when re-balancing it just re-balances the total equity
  * of the account across the long and short positions.
  *
@@ -53,7 +54,7 @@ import kotlin.math.min
  */
 open class BettingAgainstBetaPolicy(
     assets: Collection<Asset>,
-    val market: Asset,
+    private val market: Asset,
     private val holdingPeriod: TradingPeriod = 20.days,
     private val maxPositions: Int = 20,
     private val windowSize: Int = 120,
@@ -101,7 +102,7 @@ open class BettingAgainstBetaPolicy(
         val max = min(betas.size / 2, maxPositions / 2)
 
         // exposure per position.
-        val exposure = account.equity.convert(time = event.time) / (max * 2)
+        val exposure = account.equity.convert(account.baseCurrency, time = event.time) / (max * 2)
 
         val targetPortfolio = mutableListOf<Position>()
         // Generate the long positions assets with a low beta

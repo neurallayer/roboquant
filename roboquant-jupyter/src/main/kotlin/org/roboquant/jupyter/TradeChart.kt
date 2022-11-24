@@ -24,6 +24,8 @@ import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.brokers.Trade
+import org.roboquant.common.Config
+import org.roboquant.common.Currency
 import org.roboquant.common.UnsupportedException
 import java.math.BigDecimal
 import java.time.Instant
@@ -44,11 +46,11 @@ internal fun Trade.getTooltip() : String {
             |order: $orderId""".trimMargin()
 }
 
-internal fun Trade.getValue(type: String) : BigDecimal {
+internal fun Trade.getValue(type: String, currency: Currency) : BigDecimal {
     return when (type) {
-        "pnl" -> pnl.convert(time = time).toBigDecimal()
-        "fee" -> fee.convert(time = time).toBigDecimal()
-        "cost" -> totalCost.convert(time = time).toBigDecimal()
+        "pnl" -> pnl.convert(currency, time = time).toBigDecimal()
+        "fee" -> fee.convert(currency, time = time).toBigDecimal()
+        "cost" -> totalCost.convert(currency, time = time).toBigDecimal()
         "size" -> size.toBigDecimal()
         else -> throw UnsupportedException("Unsupported aspect $type")
     }
@@ -61,6 +63,7 @@ internal fun Trade.getValue(type: String) : BigDecimal {
 open class TradeChart(
     private val trades: List<Trade>,
     private val aspect: String = "pnl",
+    private val currency: Currency = Config.baseCurrency,
 ) : Chart() {
 
     init {
@@ -72,7 +75,7 @@ open class TradeChart(
     private fun tradesToSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (trade in trades.sortedBy { it.time }) {
-                val value = trade.getValue(aspect)
+                val value = trade.getValue(aspect, currency)
                 val tooltip = trade.getTooltip()
                 d.add(Triple(trade.time, value, tooltip))
         }

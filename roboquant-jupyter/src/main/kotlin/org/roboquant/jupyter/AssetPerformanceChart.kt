@@ -46,6 +46,7 @@ class AssetPerformanceChart(
     private val timeframe: Timeframe = Timeframe.INFINITE,
     private val priceType: String = "DEFAULT",
     private val compensateVolume: Boolean = true,
+    private val currency: Currency = Config.baseCurrency,
     private val assetFilter: AssetFilter = AssetFilter.all()
 ) : Chart() {
 
@@ -74,7 +75,7 @@ class AssetPerformanceChart(
 
                 val tradingSize = if (compensateVolume) Size(priceAction.volume) else Size.ONE
                 val tradingValue = asset.value(tradingSize, price)
-                record.volume += tradingValue.convert(time = time).value
+                record.volume += tradingValue.convert(currency, time = time).value
             }
         }
         return result.map {

@@ -53,8 +53,6 @@ fun recordBinanceFeed() {
     // Some sanity checks if we stored what we captured
     val feed2 = AvroFeed(fileName)
     require(feed2.assets.size == feed.assets.size)
-    require(feed2.timeline.size == feed.timeline.size)
-
     println("done")
 }
 
@@ -73,7 +71,6 @@ fun useBinanceFeed() {
 }
 
 fun xchangeFeed() {
-
     val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
     val feed = XChangePollingLiveFeed(exchange)
     println(feed.availableAssets.summary())
@@ -86,9 +83,7 @@ fun xchangeFeed() {
     val timeframe = Timeframe.next(2.minutes)
     val result = feed.filter<PriceAction>(timeframe = timeframe)
     feed.close()
-
     assertEquals(AssetType.CRYPTO, result.first().second.asset.type)
-
 }
 
 fun main() {

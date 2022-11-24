@@ -16,9 +16,6 @@
 @file:Suppress("LongParameterList")
 
 package org.roboquant.common
-
-import kotlinx.serialization.Serializable
-import org.roboquant.brokers.summary
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -41,7 +38,6 @@ import java.time.format.DateTimeFormatter
  * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
  */
-@Serializable
 data class Asset(
     val symbol: String,
     val type: AssetType = AssetType.STOCK,

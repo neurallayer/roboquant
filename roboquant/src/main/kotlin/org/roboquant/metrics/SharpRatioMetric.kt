@@ -51,7 +51,7 @@ class SharpRatioMetric(
     private var lastTime: Instant = Instant.MIN
 
     override fun calculate(account: Account, event: Event): MetricResults {
-        val value = account.equity.convert(time = event.time).value
+        val value = account.equity.convert(account.baseCurrency, event.time).value
 
         if (lastTime == Instant.MIN) {
             lastValue = value

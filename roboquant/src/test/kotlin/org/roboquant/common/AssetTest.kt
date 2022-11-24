@@ -16,31 +16,15 @@
 
 package org.roboquant.common
 
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class AssetTest {
 
-    @Test
-    fun testAssetSerialization() {
-        val a = Asset("TEST")
-        val b = Asset("TEST2")
-        assertNotEquals(a, b)
-        assertEquals(a, a)
-
-        val s = Json.encodeToString(a)
-        assertTrue(s.isNotEmpty())
-
-        val c = Json.decodeFromString<Asset>(s)
-        assertEquals(a, c)
-    }
 
     @Test
     fun testContracts() {

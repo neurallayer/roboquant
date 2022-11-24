@@ -18,7 +18,6 @@ package org.roboquant.policies
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
-import org.roboquant.brokers.contains
 import org.roboquant.brokers.getPosition
 import org.roboquant.common.*
 import org.roboquant.feeds.Event

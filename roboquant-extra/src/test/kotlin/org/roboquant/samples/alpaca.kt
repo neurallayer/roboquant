@@ -27,6 +27,7 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
+import kotlin.io.path.div
 
 fun alpacaBroker() {
     val broker = AlpacaBroker()
@@ -127,13 +128,14 @@ fun alpacaSP500PriceBar() {
         println("symbol=$it")
 
         // Sleep a little to not exceed API call limits
-        Thread.sleep(100)
+        Thread.sleep(200)
     }
 
     println("total timeframe is ${feed.timeframe}")
 
     // save the results in an Avro feed format for future usage
-    AvroFeed.record(feed, "/tmp/sp500_pricebar_v4.0.avro")
+    val fileName = Config.home / "sp500_pricebar_v5.0.avro"
+    AvroFeed.record(feed, fileName.toString())
 }
 
 
@@ -154,13 +156,14 @@ fun alpacaSP500PriceQuote() {
         println("symbol=$it")
 
         // Sleep a little to not exceed API call limits
-        Thread.sleep(50)
+        Thread.sleep(200)
     }
 
     println("total timeframe is ${feed.timeframe}")
 
     // save the results in an Avro feed format for future usage
-    AvroFeed.record(feed, "/tmp/sp500_pricequote_v4.0.avro")
+    val fileName = Config.home / "sp500_pricequote_v5.0.avro"
+    AvroFeed.record(feed, fileName.toString())
 }
 
 
@@ -192,7 +195,7 @@ fun alpacaHistoricFeed2() {
 }
 
 fun main() {
-    when ("ALPACA_HISTORIC_SP500_PRICEBAR") {
+    when ("CREATE_SAMPLE_DATA") {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
         "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()
@@ -201,5 +204,6 @@ fun main() {
         "ALPACA_HISTORIC_SP500_PRICEBAR" -> alpacaSP500PriceBar()
         "ALPACA_HISTORIC_SP500_PRICEQUOTE" -> alpacaSP500PriceQuote()
         "ALPACA_PAPER_TRADE_STOCKS" -> alpacaPaperTradeStocks()
+        "CREATE_SAMPLE_DATA" -> { alpacaSP500PriceBar(); alpacaSP500PriceQuote()}
     }
 }

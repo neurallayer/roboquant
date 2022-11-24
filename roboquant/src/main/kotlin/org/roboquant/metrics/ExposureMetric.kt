@@ -55,12 +55,13 @@ class ExposureMetric : Metric {
                 shortExposure.deposit(position.marketValue)
         }
 
-        val longExposureValue = longExposure.convert(time = now).value
-        val shortExposureValue = shortExposure.convert(time = now).value
+        val currency = account.baseCurrency
+        val longExposureValue = longExposure.convert(currency, now).value
+        val shortExposureValue = shortExposure.convert(currency, now).value
         val netExposureValue = longExposureValue + shortExposureValue
         val grossExposureValue = longExposureValue.absoluteValue + shortExposureValue.absoluteValue
 
-        val total = account.cash.convert(time = event.time).value + netExposureValue
+        val total = account.cash.convert(currency, now).value + netExposureValue
 
         return mapOf(
             "exposure.net" to netExposureValue / total,

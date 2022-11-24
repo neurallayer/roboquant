@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.*
+import org.roboquant.orders.summary
 import java.time.Instant
 import kotlin.test.assertContains
 import kotlin.test.assertEquals

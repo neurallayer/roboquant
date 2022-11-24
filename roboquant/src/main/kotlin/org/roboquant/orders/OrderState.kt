@@ -16,10 +16,13 @@
 
 package org.roboquant.orders
 
+import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
+import org.roboquant.common.Summary
+import org.roboquant.common.summary
 import org.roboquant.orders.OrderStatus.*
 import java.time.Instant
-import org.roboquant.brokers.Account
+import java.time.temporal.ChronoUnit
 
 /**
  * Order State keeps track of the execution state of an order. After an order is placed at a broker, the OrderState
@@ -150,3 +153,54 @@ enum class OrderStatus {
         get() = this === INITIAL || this === ACCEPTED
 
 }
+
+
+/**
+ * Provide a summary for the orders
+ */
+@JvmName("summaryOrders")
+fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
+    val s = Summary(name)
+    if (isEmpty()) {
+        s.add("EMPTY")
+    } else {
+        val lines = mutableListOf<List<Any>>()
+        lines.add(listOf("type", "symbol", "ccy", "status", "id", "opened at", "closed at", "details"))
+        forEach {
+            with(it) {
+                val t1 = openedAt.truncatedTo(ChronoUnit.SECONDS)
+                val t2 = closedAt.truncatedTo(ChronoUnit.SECONDS)
+                val infoString = order.info().toString().removeSuffix("}").removePrefix("{")
+                lines.add(
+                    listOf(
+                        order.type,
+                        asset.symbol,
+                        asset.currency,
+                        status,
+                        order.id,
+                        t1,
+                        t2,
+                        infoString
+                    )
+                )
+            }
+        }
+        return lines.summary(name)
+    }
+    return s
+}
+
+
+/**
+ * Returns true is the collection of orderStates contains at least one for [asset], false otherwise.
+ */
+operator fun Collection<OrderState>.contains(asset: Asset) = any { it.asset == asset}
+
+
+/**
+ * Get the unique assets for a collection of order states
+ */
+val List<OrderState>.assets : Set<Asset>
+    get() = map { it.asset }.distinct().toSet()
+
+

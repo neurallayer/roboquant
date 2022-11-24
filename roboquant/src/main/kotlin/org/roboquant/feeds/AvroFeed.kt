@@ -19,9 +19,6 @@ package org.roboquant.feeds
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.apache.avro.Schema
 import org.apache.avro.file.CodecFactory
 import org.apache.avro.file.DataFileReader
@@ -31,8 +28,11 @@ import org.apache.avro.generic.GenericDatumReader
 import org.apache.avro.generic.GenericDatumWriter
 import org.apache.avro.generic.GenericRecord
 import org.apache.avro.io.DatumWriter
+import org.apache.avro.util.Utf8
 import org.roboquant.common.*
 import org.roboquant.feeds.*
+import org.roboquant.feeds.AssetSerializer.deserialize
+import org.roboquant.feeds.AssetSerializer.serialize
 import java.io.File
 import java.io.InputStream
 import java.net.URL
@@ -41,7 +41,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.time.Instant
-import java.util.SortedSet
+import java.util.*
 import kotlin.io.path.isRegularFile
 
 /**
@@ -55,26 +55,45 @@ import kotlin.io.path.isRegularFile
  *
  * @constructor Create new Avro Feed
  */
-class AvroFeed(private val path: Path) : HistoricFeed {
+class AvroFeed(private val path: Path) : Feed {
+
 
     /**
      * Instantiate an Avro Feed based on the Avro file at [path]
      */
     constructor(path: String) : this(Path.of(path))
 
-    private val assetLookup: List<Asset>
-    private val index  = buildIndex()
+    /**
+     * Contains mapping of JSON string to Asset
+     */
+    private val assetLookup = mutableMapOf<Utf8, Asset>()
 
-    override val assets: SortedSet<Asset>
-        get() = assetLookup.toSortedSet()
+    /**
+     * Index that holds time/position for quicker access rows
+     * in Avro file.
+     */
+    private val index: List<Pair<Instant, Long>>
 
-    override val timeline: Timeline
-        get() = index.map { it.first }
+    /**
+     * @see Feed.timeframe
+     */
+     override val timeframe: Timeframe
+
+
+    /**
+     * Get available assets.
+     */
+    val assets: SortedSet<Asset>
+        get() = assetLookup.values.toSortedSet()
+
 
     init {
         assert(path.isRegularFile()) { "$path is not a file"}
-        assetLookup = readAssets()
-        logger.info { "Loaded data from $path with timeframe $timeframe" }
+        val result = buildIndex()
+        index = result.first
+        timeframe = result.second
+
+        logger.info { "loaded feed with timeframe=$timeframe" }
     }
 
     private fun position(r: DataFileReader<GenericRecord>, time: Instant) {
@@ -85,34 +104,37 @@ class AvroFeed(private val path: Path) : HistoricFeed {
     }
 
 
-    private fun readAssets(): List<Asset> {
-        getReader().use {
-            val assetsJson = it.getMetaString(assetsMetaKey)
-            return Json.decodeFromString(assetsJson)
-        }
-    }
-
     /**
-     * Build an index of where each time starts. The index helps to achieve faster read
-     * access if not starting from the beginning.
+     * Build an index of where each time starts. The index helps to achieve faster read access if not starting
+     * from the beginning.
      */
-    private fun buildIndex() : List<Pair<Instant, Long>> {
+    private fun buildIndex() : Pair<List<Pair<Instant, Long>>, Timeframe> {
         var last = Long.MIN_VALUE
         val index = mutableListOf<Pair<Instant, Long>>()
-
+        var start = Long.MIN_VALUE
+        var prevPos = Long.MIN_VALUE
         getReader().use {
             while (it.hasNext()) {
                 val rec = it.next()
                 val t = rec[0] as Long
+
+                val asset = rec[1] as Utf8
+                if (!assetLookup.containsKey(asset)) assetLookup[asset] = asset.toString().deserialize()
                 if (t > last) {
+                    if (start == Long.MIN_VALUE) start = t
                     val pos = it.previousSync()
-                    val time = Instant.ofEpochMilli(t)
-                    index.add(Pair(time, pos))
+
+                    if (pos != prevPos) {
+                        val time = Instant.ofEpochMilli(t)
+                        index.add(Pair(time, pos))
+                        prevPos = pos
+                    }
                     last = t
                 }
             }
         }
-        return index
+        val timeframe = Timeframe(Instant.ofEpochMilli(start), Instant.ofEpochMilli(last))
+        return Pair(index, timeframe)
     }
 
     private fun getReader(): DataFileReader<GenericRecord> {
@@ -123,8 +145,8 @@ class AvroFeed(private val path: Path) : HistoricFeed {
      * Convert a generic Avro record to a [PriceAction]
      */
     private fun recToPriceAction(rec: GenericRecord): PriceAction {
-        val assetIdx = rec.get(1) as Int
-        val asset = assetLookup[assetIdx]
+        val assetStr = rec.get(1) as Utf8
+        val asset = assetLookup.getValue(assetStr)
         val actionType = rec.get(2) as Int
 
         @Suppress("UNCHECKED_CAST")
@@ -175,13 +197,13 @@ class AvroFeed(private val path: Path) : HistoricFeed {
     companion object {
 
         private val logger = Logging.getLogger(AvroFeed::class)
-        private const val sp500File = "sp500_pricebar_v4.0.avro"
-        private const val sp500QuoteFile = "sp500_pricequote_v4.0.avro"
-        private const val assetsMetaKey = "feed.assets"
+        private const val sp500File = "sp500_pricebar_v5.0.avro"
+        private const val sp500QuoteFile = "sp500_pricequote_v5.0.avro"
 
         /**
          * Get an AvroFeed containing end-of-day [PriceBar] data for the companies listed in the S&P 500. This feed
-         * contains 2.5 year of data.
+         * contains few years of public data, but please note that not all US exchanges are included, so the prices
+         * are not 100% accurate.
          */
         fun sp500(): AvroFeed {
             val path = download(sp500File)
@@ -189,14 +211,14 @@ class AvroFeed(private val path: Path) : HistoricFeed {
         }
 
         /**
-         * Get an AvroFeed containing [PriceQuote] data for the companies listed in the S&P 500. This feed contains
-         * 5 minutes of data.
+         * Get an AvroFeed containing [PriceQuote] data for the companies listed in the S&P 500. This feed
+         * contains few minutes of public data, but please note that not all US exchanges are included, so the prices
+         * are not 100% accurate.
          */
         fun sp500Quotes(): AvroFeed {
             val path = download(sp500QuoteFile)
             return AvroFeed(path)
         }
-
 
         /**
          * Download a file from GitHub if now yet present on local file system
@@ -222,12 +244,12 @@ class AvroFeed(private val path: Path) : HistoricFeed {
          */
         private const val schemaDef = """
             {
-             "namespace": "org.roboquant",
+             "namespace": "org.roboquant.avro.schema",
              "type": "record",
-             "name": "priceActions",
+             "name": "PriceAction",
              "fields": [
                  {"name": "time", "type": "long"},
-                 {"name": "asset", "type": "int"},
+                 {"name": "asset", "type": "string"},
                  {"name": "type", "type": "int"},
                  {"name": "values",  "type": {"type": "array", "items" : "double"}}
              ] 
@@ -235,7 +257,7 @@ class AvroFeed(private val path: Path) : HistoricFeed {
             """
 
         /**
-         * Record the price-actions in a [feed] and store them in an Avro [file] that can be later used as input for
+         * Record the price-actions in a [feed] and store them in an Avro [fileName] that can be later used as input for
          * an AvroFeed. The provided [feed] needs to implement the [AssetFeed] interface.
          *
          * [compression] can be enabled, which results in a smaller file. The `snappy` compression codec is used, that
@@ -243,24 +265,28 @@ class AvroFeed(private val path: Path) : HistoricFeed {
          *
          * Additionally, you can filter on a [timeframe] and [assetFilter]. Default is to apply no filtering.
          */
+        @Suppress("LongParameterList")
         fun record(
-            feed: AssetFeed,
-            file: String,
+            feed: Feed,
+            fileName: String,
             compression: Boolean = true,
             timeframe: Timeframe = Timeframe.INFINITE,
+            append: Boolean = false,
             assetFilter: AssetFilter = AssetFilter.all()
         ) = runBlocking {
             val channel = EventChannel(timeframe = timeframe)
             val schema = Schema.Parser().parse(schemaDef)
             val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
             val dataFileWriter = DataFileWriter(datumWriter)
-            if (compression) dataFileWriter.setCodec(CodecFactory.snappyCodec())
+            val file = File(fileName)
 
-            val assets = feed.assets.toList()
-            val lookup = assets.withIndex().associate { it.value to it.index }
-            val assetsMetaValue = Json.encodeToString(assets)
-            dataFileWriter.setMeta(assetsMetaKey, assetsMetaValue)
-            dataFileWriter.create(schema, File(file))
+            if (append) {
+                dataFileWriter.appendTo(file)
+            } else {
+                if (compression) dataFileWriter.setCodec(CodecFactory.snappyCodec())
+                dataFileWriter.create(schema, file)
+            }
+
 
             val job = launch {
                 feed.play(channel)
@@ -269,15 +295,17 @@ class AvroFeed(private val path: Path) : HistoricFeed {
 
             val arraySchema = Schema.createArray(Schema.create(Schema.Type.DOUBLE))
             try {
+                val cache = mutableMapOf<Asset, String>()
                 val record = GenericData.Record(schema)
                 while (true) {
                     val event = channel.receive()
                     val now = event.time.toEpochMilli()
                     for (action in event.actions.filterIsInstance<PriceAction>()
                         .filter { assetFilter.filter(it.asset, event.time) }) {
-                        val assetIdx = lookup[action.asset]
+                        val asset = action.asset
+                        val assetStr = cache.getOrPut(asset) { asset.serialize() }
                         record.put(0, now)
-                        record.put(1, assetIdx)
+                        record.put(1, assetStr)
 
                         val (idx, values) = PriceActionSerializer.serialize(action)
                         record.put(2, idx)
@@ -299,13 +327,61 @@ class AvroFeed(private val path: Path) : HistoricFeed {
                 dataFileWriter.close()
             }
         }
-
-
     }
-
 
 }
 
+/**
+ * Used by AvroFeed to serialize and deserialize Assets to a string. This is optimized for size.
+ */
+private object AssetSerializer {
+
+    /**
+     * Serialize an asset into a short string.
+     */
+    fun Asset.serialize(): String {
+        val sb = StringBuilder(symbol).append(SEP)
+        if (type != AssetType.STOCK) sb.append(type.name)
+        sb.append(SEP)
+        if (currency.currencyCode != "USD") sb.append(currency.currencyCode)
+        sb.append(SEP)
+        if (exchange.exchangeCode != "") sb.append(exchange.exchangeCode)
+        sb.append(SEP)
+        if (multiplier != 1.0) sb.append(multiplier)
+        sb.append(SEP)
+        if (id.isNotEmpty()) sb.append(id)
+        sb.append(SEP)
+
+        var cnt = 0
+        for (ch in sb.reversed()) if (ch == SEP) cnt++ else break
+        return sb.substring(0, sb.length - cnt)
+    }
+
+
+    /**
+     * Use the ASCII Unit Separator character. Should not interfere with used strings for symbol, exchange and currency
+     */
+    private const val SEP = '\u001F'
+
+    /**
+     * Deserialize a string into an asset. The string needs to have been created using [serialize]
+     *
+     * @return
+     */
+    fun String.deserialize(): Asset {
+        val e = split(SEP)
+        val l = e.size
+        return Asset(
+            e[0],
+            if (l > 1 && e[1].isNotEmpty()) AssetType.valueOf(e[1]) else AssetType.STOCK,
+            if (l > 2 && e[2].isNotEmpty()) e[2] else "USD",
+            if (l > 3) e[3] else "",
+            if (l > 4 && e[4].isNotEmpty()) e[4].toDouble() else 1.0,
+            if (l > 7) e[7] else "",
+        )
+
+    }
+}
 
 /**
  * Used by AvroFeed to serialize and deserialize [PriceAction] to a DoubleArray, so it can be stored in an Avro file.

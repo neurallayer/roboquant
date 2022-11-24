@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.policies
+package org.roboquant.ta
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.sim.MarginAccount

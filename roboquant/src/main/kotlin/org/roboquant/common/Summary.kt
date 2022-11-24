@@ -101,3 +101,30 @@ class Summary(val content: String) {
         }
     }
 }
+
+
+/**
+ * Create a summary for a collection of rows in which each row contains 1 or more columns
+ */
+fun Collection<List<Any>>.summary(name: String): Summary {
+    val maxSizes = mutableMapOf<Int, Int>()
+    for (line in this) {
+        for (column in line.withIndex()) {
+            val maxSize = maxSizes.getOrDefault(column.index, Int.MIN_VALUE)
+            val len = column.value.toString().length
+            if (len > maxSize) maxSizes[column.index] = len
+        }
+    }
+
+    val summary = Summary(name)
+    for (line in this) {
+        val result = StringBuffer()
+        for (column in line.withIndex()) {
+            val maxSize = maxSizes.getOrDefault(column.index, 9) + 1
+            val str = "%${maxSize}s│".format(column.value)
+            result.append(str)
+        }
+        summary.add(result.toString())
+    }
+    return summary
+}

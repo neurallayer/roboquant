@@ -67,7 +67,6 @@
         </plugins>
     </build>
 
-
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -84,18 +83,17 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlin-jupyter-api</artifactId>
-            <version>0.11.0-170</version>
+            <version>0.11.0-187</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlin-jupyter-test-kit</artifactId>
-            <version>0.11.0-170</version>
+            <version>0.11.0-187</version>
             <scope>test</scope>
         </dependency>
         <dependency>

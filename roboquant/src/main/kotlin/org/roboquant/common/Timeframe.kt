@@ -20,6 +20,7 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.pow
+import kotlin.random.Random
 
 /**
  * A timeframe represents a period of time defined by a [start] time (inclusive) and [end] time. If [inclusive] is set
@@ -78,6 +79,9 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
          */
         val MAX: Instant = Instant.parse("2200-01-01T00:00:00Z")
 
+        /**
+         * 1 Year expresses in milliseconds.
+         */
         private const val ONE_YEAR_MILLIS = 365.0 * 24.0 * 3600.0 * 1000.0
 
         /**
@@ -266,8 +270,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     /**
      * Split a timeframe in multiple individual timeframes each of the fixed [period] length. One common use case is
      * to create timeframes that can be used in a walk forward back-test.
-     *
-     * If the temporalAmount is defined as a [Period], the [Config.defaultZoneId] will be used as the ZoneId.
      */
     fun split(period: TradingPeriod, overlap: TradingPeriod = 0.days): List<Timeframe> {
         val result = mutableListOf<Timeframe>()
@@ -283,6 +285,22 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
             last = next - overlap
         }
     }
+
+    /**
+     * sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation
+     */
+    fun sample(period: TradingPeriod, samples: Int = 1, random: Random = Config.random): List<Timeframe> {
+        require(end - period > start) { "$period to large for $this" }
+        val result = mutableListOf<Timeframe>()
+        val duration = Timeframe(start, end - period).duration.toMillis()
+        repeat(samples) {
+            val offset = random.nextLong(duration)
+            val newStart = start.plusMillis(offset)
+            result.add(Timeframe(newStart, newStart + period))
+        }
+        return result
+    }
+
 
     /**
      * Provide a string representation of the timeframe

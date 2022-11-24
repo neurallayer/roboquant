@@ -27,6 +27,8 @@ import org.icepear.echarts.components.toolbox.ToolboxDataZoomFeature
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
+import org.roboquant.common.Config
+import org.roboquant.common.Currency
 
 /**
  * Trade chart plots the [trades] that have been generated during a run per Asset. By default, the realized pnl of the
@@ -36,6 +38,7 @@ import org.roboquant.common.Asset
 class TradeAssetChart(
     private val trades: List<Trade>,
     private val aspect: String = "pnl",
+    private val currency: Currency = Config.baseCurrency
 ) : Chart() {
 
     init {
@@ -46,7 +49,7 @@ class TradeAssetChart(
     private fun toSeriesData(assets: List<Asset>): List<List<Any>> {
         val d = mutableListOf<List<Any>>()
         for (trade in trades.sortedBy { it.time }) {
-                val value = trade.getValue(aspect)
+                val value = trade.getValue(aspect, currency)
                 val y = assets.indexOf(trade.asset)
                 val tooltip = trade.getTooltip()
                 d.add(listOf(trade.time, y, value, tooltip))

@@ -15,38 +15,6 @@ import java.time.temporal.TemporalAmount
 @JvmInline
 value class TradingPeriod(val period : TemporalAmount)
 
-/**
- * Add a trading [period] to an instant
- */
-operator fun Instant.minus(period: TradingPeriod) : Instant {
-    val zoneId = Config.defaultZoneId
-    val now = this.atZone(zoneId)
-    return (now - period.period).toInstant()
-}
-
-/**
- * Subtract a trading [period] from an instant
- */
-operator fun Instant.plus(period: TradingPeriod): Instant {
-    val zoneId = Config.defaultZoneId
-    val now = this.atZone(zoneId)
-    return (now + period.period).toInstant()
-}
-
-/**
- * Subtract a trading [period] from a zoned date-time
- */
-operator fun ZonedDateTime.minus(period: TradingPeriod) : ZonedDateTime {
-    return this - period.period
-}
-
-/**
- * Add a trading [period] to a zoned date-time
- */
-operator fun ZonedDateTime.plus(period: TradingPeriod): ZonedDateTime {
-    return this + period.period
-}
-
 
 /*********************************************************************************************
  * Extensions on Int type to make instantiation of TradingPeriods convenient
@@ -100,3 +68,37 @@ val Int.seconds: TradingPeriod
 val Int.millis: TradingPeriod
     get() = TradingPeriod(Duration.ofMillis(this.toLong()))
 
+
+
+
+/**
+ * Add a trading [period] to an instant
+ */
+operator fun Instant.minus(period: TradingPeriod) : Instant {
+    val zoneId = Config.defaultZoneId
+    val now = this.atZone(zoneId)
+    return (now - period.period).toInstant()
+}
+
+/**
+ * Subtract a trading [period] from an instant
+ */
+operator fun Instant.plus(period: TradingPeriod): Instant {
+    val zoneId = Config.defaultZoneId
+    val now = this.atZone(zoneId)
+    return (now + period.period).toInstant()
+}
+
+/**
+ * Subtract a trading [period] from a zoned date-time
+ */
+operator fun ZonedDateTime.minus(period: TradingPeriod) : ZonedDateTime {
+    return this - period.period
+}
+
+/**
+ * Add a trading [period] to a zoned date-time
+ */
+operator fun ZonedDateTime.plus(period: TradingPeriod): ZonedDateTime {
+    return this + period.period
+}

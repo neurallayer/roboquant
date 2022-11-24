@@ -17,24 +17,9 @@
 
 package org.roboquant.common
 
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import java.time.*
 import java.util.concurrent.ConcurrentHashMap
 
-
-internal object ExchangeSerializer : KSerializer<Exchange> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Exchange", PrimitiveKind.STRING)
-    override fun serialize(encoder: Encoder, value: Exchange) {
-        encoder.encodeString(value.exchangeCode)
-    }
-    override fun deserialize(decoder: Decoder): Exchange = Exchange.getInstance(decoder.decodeString())
-}
 
 /**
  * Exchange contains the metadata of a marketplace or exchange.  When creating a new Exchange instance, use
@@ -45,7 +30,6 @@ internal object ExchangeSerializer : KSerializer<Exchange> {
  * @property zoneId The ZoneId of the exchange
  * @property tradingCalendar The trading calendar
  */
-@Serializable(with = ExchangeSerializer::class)
 class Exchange private constructor(
     val exchangeCode: String,
     val zoneId: ZoneId,

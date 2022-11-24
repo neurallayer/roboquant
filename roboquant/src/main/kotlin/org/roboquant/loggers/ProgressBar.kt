@@ -62,9 +62,9 @@ internal class ProgressBar {
 
         currentPercent = percent
 
-        if (post.isEmpty()) {
-            post = "${info.run} | episode=${info.episode} | phase=${info.phase}"
+        if (pre.isEmpty()) {
             pre = "${info.timeframe} | "
+            post = "| ${info.run} | episode=${info.episode} | phase=${info.phase}"
         }
 
         draw(percent)
@@ -79,7 +79,7 @@ internal class ProgressBar {
             if (it <= filled) sb.append(progressChar) else sb.append(' ')
         }
 
-        sb.append("| ").append(post)
+        sb.append(post)
         if (percent == 100) sb.append("\n")
         val str = sb.toString()
 

@@ -100,11 +100,10 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     }
 
     /**
-     * Convert this amount [to] a different currency. If no currency is provided, the [Config.baseCurrency] is used.
-     * Optional you can provide a [time] at which the conversion should be calculated. If no time is provided the
-     * current time is used.
+     * Convert this amount [to] a different currency. Optional you can provide a [time] at which the conversion
+     * should be calculated. If no time is provided the current time is used.
      */
-    fun convert(to: Currency = Config.baseCurrency, time: Instant = Instant.now()): Amount {
+    fun convert(to: Currency, time: Instant = Instant.now()): Amount {
         return Config.exchangeRates.convert(this, to, time)
     }
 

@@ -68,7 +68,8 @@ class AlphaBetaMetric(
             val price = action.getPrice(priceType)
             marketData.add(price)
 
-            val value = account.equity.convert(time = event.time).value
+            val equity = account.equity
+            val value = account.convert(equity, time = event.time).value
             portfolioData.add(value)
 
             if (marketData.isFilled() && portfolioData.isFilled()) {

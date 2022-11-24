@@ -21,9 +21,7 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.brokers.fee
 import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.csv.CSVConfig
@@ -32,13 +30,11 @@ import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.toDoubleArray
 import org.roboquant.metrics.AccountMetric
-import org.roboquant.metrics.PNLMetric
-import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.Order
+import org.roboquant.orders.summary
 import org.roboquant.policies.*
 import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
-import org.roboquant.strategies.NoSignalStrategy
 import org.roboquant.strategies.Signal
 import java.io.File
 import kotlin.io.path.Path
@@ -139,47 +135,6 @@ fun calcCorrelation() {
 
 }
 
-fun beta() {
-    val feed = CSVFeed("/data/assets/stock-market/stocks/")
-    val market = CSVFeed("/data/assets/stock-market/market/")
-    feed.merge(market)
-    val strategy = NoSignalStrategy()
-    val marketAsset = feed.assets.getBySymbol("SPY")
-
-    val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, maxPositions = 10)
-    policy.recording = true
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, ProgressMetric(), policy = policy, logger = logger)
-    roboquant.run(feed)
-    println(logger.summary())
-    println(roboquant.broker.account.summary())
-
-}
-
-fun beta2() {
-    val feed = CSVFeed("/data/assets/us-stocks/Stocks") {
-        fileExtension = ".us.txt"
-    }
-    val market = CSVFeed("/data/assets/us-stocks/ETFs") {
-        fileExtension = ".us.txt"
-        filePattern = "spy.us.txt"
-
-    }
-    feed.merge(market)
-    val strategy = NoSignalStrategy()
-    val marketAsset = feed.assets.getBySymbol("SPY")
-    val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, 60.days, maxPositions = 10)
-    policy.recording = true
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, ProgressMetric(), PNLMetric(), policy = policy, logger = logger)
-    roboquant.run(feed)
-    println(logger.summary())
-    println(roboquant.broker.account.summary())
-    println(roboquant.broker.account.trades.fee)
-
-}
-
-
 fun signalsOnly() {
     class MyPolicy : BasePolicy(recording = true, prefix = "") {
 
@@ -250,15 +205,26 @@ fun simple() {
 }
 
 
+fun feed() {
+    repeat(3) {
+        val t = measureTimeMillis {
+            AvroFeed("/Users/peter/data/avro/us_pricebar_v4.0.avro")
+            println("feed")
+        }
+        println(t)
+    }
+
+}
+
+
 suspend fun main() {
     Config.printInfo()
 
-    when ("CSV2AVRO") {
+    when ("FEED") {
+        "FEED" -> feed()
         "SIMPLE" -> simple()
-        "BETA" -> beta()
         "CSV2AVRO" -> csv2Avro()
         "CORR" -> calcCorrelation()
-        "BETA2" -> beta2()
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
         "MC" -> multiCurrency()

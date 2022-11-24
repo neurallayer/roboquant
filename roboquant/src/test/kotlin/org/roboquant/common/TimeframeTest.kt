@@ -40,6 +40,16 @@ internal class TimeframeTest {
         assertEquals(48, subFrames2.size)
     }
 
+    @Test
+    fun sample() {
+        val tf = Timeframe.fromYears(1980, 1999)
+        val subFrames = tf.sample(2.months, 100)
+        assertEquals(100, subFrames.size)
+        assertTrue(subFrames.all { it.start >= tf.start })
+        assertTrue(subFrames.all { it.end <= tf.end })
+        assertTrue(subFrames.all { it.end == it.start + 2.months })
+    }
+
 
     @Test
     fun empty() {

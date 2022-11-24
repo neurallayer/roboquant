@@ -18,17 +18,70 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
+import org.roboquant.brokers.fee
+import org.roboquant.common.Config
 import org.roboquant.common.Size
-import org.roboquant.feeds.Event
+import org.roboquant.common.days
+import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.AvroFeed
+import org.roboquant.feeds.Event
+import org.roboquant.feeds.csv.CSVFeed
+import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.MetricResults
+import org.roboquant.metrics.PNLMetric
+import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Order
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.NoSignalStrategy
 import org.roboquant.strategies.Signal
+import org.roboquant.ta.BettingAgainstBetaPolicy
 import org.roboquant.ta.TaLibMetric
+
+
+fun beta() {
+    val feed = CSVFeed("/data/assets/stock-market/stocks/")
+    val market = CSVFeed("/data/assets/stock-market/market/")
+    feed.merge(market)
+    val strategy = NoSignalStrategy()
+    val marketAsset = feed.assets.getBySymbol("SPY")
+
+    val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, maxPositions = 10)
+    policy.recording = true
+    val logger = MemoryLogger()
+    val roboquant = Roboquant(strategy, ProgressMetric(), policy = policy, logger = logger)
+    roboquant.run(feed)
+    println(logger.summary())
+    println(roboquant.broker.account.summary())
+
+}
+
+fun beta2() {
+    val feed = CSVFeed("/data/assets/us-stocks/Stocks") {
+        fileExtension = ".us.txt"
+    }
+    val market = CSVFeed("/data/assets/us-stocks/ETFs") {
+        fileExtension = ".us.txt"
+        filePattern = "spy.us.txt"
+
+    }
+    feed.merge(market)
+    val strategy = NoSignalStrategy()
+    val marketAsset = feed.assets.getBySymbol("SPY")
+    val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, 60.days, maxPositions = 10)
+    policy.recording = true
+    val logger = MemoryLogger()
+    val roboquant = Roboquant(strategy, ProgressMetric(), PNLMetric(), policy = policy, logger = logger)
+    roboquant.run(feed)
+    println(logger.summary())
+    println(roboquant.broker.account.summary())
+    println(roboquant.broker.account.trades.fee)
+
+}
+
+
 
 
 fun customPolicy() {
@@ -80,7 +133,15 @@ fun customPolicy() {
     println(roboquant.broker.account.summary())
 }
 
-
+@Suppress("KotlinConstantConditions")
 fun main() {
-    customPolicy()
+    Config.printInfo()
+
+    when ("CUSTOM") {
+        "CUSTOM" -> customPolicy()
+        "BETA" -> beta()
+        "BETA2" -> beta2()
+    }
+
 }
+

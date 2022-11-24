@@ -17,9 +17,9 @@
 package org.roboquant.policies
 
 import org.roboquant.TestData
-import org.roboquant.brokers.assets
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
+import org.roboquant.orders.assets
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import kotlin.random.Random

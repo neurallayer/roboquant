@@ -17,11 +17,11 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.assets
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.orders.CancelOrder
 import org.roboquant.orders.Order
+import org.roboquant.orders.assets
 import org.roboquant.strategies.Signal
 
 /**

@@ -73,7 +73,7 @@ object Config {
 
     /**
      * Default zoneId to use for reporting purposes. Internally roboquant always uses the Instant type, so this is only
-     * used for displaying.
+     * used for displaying and when required when adding or subtracting periods
      */
     var defaultZoneId: ZoneId = ZoneId.systemDefault()
 

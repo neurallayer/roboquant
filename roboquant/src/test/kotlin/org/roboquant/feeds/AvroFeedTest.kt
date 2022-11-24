@@ -23,10 +23,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.TestData
-import org.roboquant.common.Asset
-import org.roboquant.common.Config
-import org.roboquant.common.UnsupportedException
-import org.roboquant.common.symbols
+import org.roboquant.common.*
 import org.roboquant.feeds.*
 import java.io.File
 import java.time.Instant
@@ -62,8 +59,6 @@ class AvroFeedTest {
 
     @Test
     fun avroStep1() {
-        // folder.create()
-        // fileName = folder.newFile("test.avro").path
         fileName = File(folder, "test.avro").path
         val feed = TestData.feed
         assets.addAll(feed.assets)
@@ -92,7 +87,6 @@ class AvroFeedTest {
     @Test
     fun feedPlayback() {
         val feed3 = AvroFeed(fileName)
-        assertEquals(size, feed3.timeline.size)
         assertEquals(nAssets, feed3.assets.size)
         assertEquals(assets.toSet(), feed3.assets.toSet())
 
@@ -122,7 +116,6 @@ class AvroFeedTest {
         }
 
         val feed2 = AvroFeed(fileName)
-        assertEquals(1, feed2.timeline.size)
         val actions = feed2.filter<PriceAction>().map { it.second }
         assertEquals(4, actions.size)
 
@@ -148,6 +141,24 @@ class AvroFeedTest {
     }
 
     @Test
+    fun append() {
+        val now = Instant.now()
+        val past = Timeframe(now - 2.years, now - 1.years).toTimeline(1.days)
+        val feed = RandomWalkFeed(past)
+        val fileName = File(folder, "test2.avro").path
+
+        AvroFeed.record(feed, fileName, compression = true)
+        var avroFeed =AvroFeed(fileName)
+        assertEquals(feed.assets, avroFeed.assets)
+
+        val past2 = Timeframe(now - 1.years, now).toTimeline(1.days)
+        val feed2 = RandomWalkFeed(past2)
+        AvroFeed.record(feed2, fileName, append = true)
+        avroFeed = AvroFeed(fileName)
+        assertEquals(feed.assets + feed2.assets,  avroFeed.assets)
+    }
+
+    @Test
     fun predefined() {
         val feed = AvroFeed.sp500()
         assertTrue(feed.assets.size >= 490)
@@ -162,7 +173,7 @@ class AvroFeedTest {
     @Test
     fun loadFromGithub() {
         Config.getProperty("FULL_COVERAGE") ?: return
-        val fileName = "sp500_pricebar_v4.0.avro"
+        val fileName = "sp500_pricebar_v5.0.avro"
         val file = (Config.home / fileName).toFile()
         file.delete()
         assertFalse(file.exists())

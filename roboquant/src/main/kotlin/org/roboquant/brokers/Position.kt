@@ -159,3 +159,105 @@ val Collection<Position>.exposure: Wallet
     get() {
         return sumOf { it.exposure }
     }
+
+
+/**
+ * Return the difference between these positions and a target set of positions.
+ */
+fun Collection<Position>.diff(target: Collection<Position>): Map<Asset, Size> {
+    val result = mutableMapOf<Asset, Size>()
+
+    for (position in target) {
+        val targetSize = position.size
+        val sourceSize = getPosition(position.asset).size
+        val value = targetSize - sourceSize
+        if (!value.iszero) result[position.asset] = value
+    }
+
+    for (position in this) {
+        if (position.asset !in result) result[position.asset] = -position.size
+    }
+
+    return result
+}
+
+
+
+/**
+ * Get the unique assets for a collection of positions
+ */
+val Collection<Position>.assets
+    get() = map { it.asset }.distinct()
+
+/**
+ * Get the long positions for a collection of positions
+ */
+val Collection<Position>.long
+    get() = filter { it.long }
+
+/**
+ * Get the short positions for a collection of positions
+ */
+val Collection<Position>.short
+    get() = filter { it.short }
+
+/**
+ * Return the first position found for an [asset]. If no position is found, an empty position will be returned.
+ */
+fun Collection<Position>.getPosition(asset: Asset): Position {
+    return firstOrNull { it.asset == asset } ?: Position.empty(asset)
+}
+
+/**
+ * Return the total unrealized PNL for a collection of positions
+ */
+val Collection<Position>.unrealizedPNL : Wallet
+    get() = sumOf { it.unrealizedPNL }
+
+
+/**
+ * Return the required sizes per asset to close the open positions. This method doesn't close the actual open positions,
+ * just provides the information to do so.
+ *
+ *      val orders = positions.close().map { MarketOrder(it.key, it.value) }
+ */
+fun Collection<Position>.close(): Map<Asset, Size> = diff(emptyList())
+
+
+/**
+ * Create a [Summary] of this portfolio that contains an overview of the open positions.
+ */
+@JvmName("summaryPositions")
+fun Collection<Position>.summary(name: String = "positions"): Summary {
+    val s = Summary(name)
+
+    if (isEmpty()) {
+        s.add("EMPTY")
+    } else {
+        val lines = mutableListOf<List<Any>>()
+        lines.add(
+            listOf(
+                "symbol",
+                "ccy",
+                "size",
+                "entry price",
+                "mkt price",
+                "mkt value",
+                "unrlzd p&l"
+            )
+        )
+
+        for (v in this) {
+            val c = v.asset.currency
+            val pos = v.size
+            val avgPrice = Amount(c, v.avgPrice).formatValue()
+            val price = Amount(c, v.mktPrice).formatValue()
+            val value = v.marketValue.formatValue()
+            val pnl = Amount(c, v.unrealizedPNL.value).formatValue()
+            lines.add(listOf(v.asset.symbol, c.currencyCode, pos, avgPrice, price, value, pnl))
+        }
+        return lines.summary(name)
+    }
+
+    return s
+}

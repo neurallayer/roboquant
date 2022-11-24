@@ -345,4 +345,3 @@ inline fun <T> Collection<T>.sumOf(
     if (singleCurrency) result.deposit(Amount(currency, value))
     return result
 }
-

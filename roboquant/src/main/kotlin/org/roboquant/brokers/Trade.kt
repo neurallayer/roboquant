@@ -16,10 +16,9 @@
 
 package org.roboquant.brokers
 
-import org.roboquant.common.Amount
-import org.roboquant.common.Asset
-import org.roboquant.common.Size
+import org.roboquant.common.*
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 /**
  * Trade is created once an order has been (partially) filled and records various aspects of a trade like its [size],
@@ -65,5 +64,57 @@ data class Trade(
     val pnl: Amount
         get() = Amount(asset.currency, pnlValue)
 
+}
+
+
+/**
+ * Get the total fee for a collection of trades
+ */
+val Collection<Trade>.fee : Wallet
+    get() = sumOf { it.fee }
+
+/**
+ * Get the timeline for a collection of trades
+ */
+val Collection<Trade>.timeline
+    get() = map { it.time }.distinct().sorted()
+
+/**
+ * Return the total realized PNL for a collection of trades
+ */
+val Collection<Trade>.realizedPNL : Wallet
+    get() = sumOf { it.pnl }
+
+/**
+ * Return the timeframe for a collection of trades
+ */
+val Collection<Trade>.timeframe : Timeframe
+    get() = timeline.timeframe
+
+/**
+* Create a summary of the trades
+*/
+@JvmName("summaryTrades")
+fun Collection<Trade>.summary(name: String = "trades"): Summary {
+    val s = Summary(name)
+    if (isEmpty()) {
+        s.add("EMPTY")
+    } else {
+        val lines = mutableListOf<List<Any>>()
+        lines.add(listOf("time", "symbol", "ccy", "size", "cost", "fee", "rlzd p&l", "price"))
+        forEach {
+            with(it) {
+                val currency = asset.currency
+                val cost = totalCost.formatValue()
+                val fee = fee.formatValue()
+                val pnl = pnl.formatValue()
+                val price = Amount(currency, price).formatValue()
+                val t = time.truncatedTo(ChronoUnit.SECONDS)
+                lines.add(listOf(t, asset.symbol, currency.currencyCode, size, cost, fee, pnl, price))
+            }
+        }
+        return lines.summary(name)
+    }
+    return s
 }
 

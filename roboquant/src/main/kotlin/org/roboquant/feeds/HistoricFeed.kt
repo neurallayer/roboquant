@@ -20,12 +20,11 @@ import org.roboquant.common.*
 import kotlin.random.Random
 
 /**
- * Historic feed represents a feed with historic data, useful for back testing. Examples are CSV files with
+ * Historic feed represents a feed of historic data, useful for back testing. Examples are CSV files with
  * stock data of the last years.
  *
- * It provides common functionality that can be used by subclasses implementing the [Feed] interface. However,
- * it is not mandatory and a feed can implement the Feed interface directly.
- *
+ * It provides common functionality that can be used by subclasses implementing the [Feed] interface; it contains
+ * access to the [timeline], [timeframe] and [assets] of the feed.
  */
 interface HistoricFeed : AssetFeed {
 

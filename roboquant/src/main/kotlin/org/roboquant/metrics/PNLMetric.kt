@@ -50,11 +50,11 @@ class PNLMetric : Metric {
         val result = mutableMapOf<String, Double>()
 
         val pnl = account.trades.realizedPNL
-        val realizedPNL = pnl.convert(time = event.time)
+        val realizedPNL = pnl.convert(account.baseCurrency, event.time)
         result["pnl.realized"] = realizedPNL.value
 
         val pnl2 = account.positions.unrealizedPNL
-        val unrealizedPNL = pnl2.convert(time = event.time)
+        val unrealizedPNL = pnl2.convert(account.baseCurrency, event.time)
         result["pnl.unrealized"] = unrealizedPNL.value
 
         result["pnl.total"] = realizedPNL.value + unrealizedPNL.value
