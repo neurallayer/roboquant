@@ -35,7 +35,7 @@ sealed interface OrderHandler {
     var state: OrderState
 
     /**
-     * Convenience attribute
+     * Convenience attribute to access the status
      */
     val status
         get() = state.status
