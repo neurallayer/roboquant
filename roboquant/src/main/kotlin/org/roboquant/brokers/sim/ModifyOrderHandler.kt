@@ -44,6 +44,10 @@ internal class UpdateOrderHandler(val order: UpdateOrder) : ModifyOrderHandler {
     }
 }
 
+
+/**
+ * Simulate the execution of a CancelOrder
+ */
 internal class CancelOrderHandler(val order: CancelOrder) : ModifyOrderHandler {
 
     override var state: OrderState = OrderState(order)
@@ -54,7 +58,7 @@ internal class CancelOrderHandler(val order: CancelOrder) : ModifyOrderHandler {
     override fun execute(handlers: List<OrderHandler>, time: Instant) {
         val handler = handlers.getSingleOrderHandler(order.order.id)
         state = if (handler != null && handler.state.status.open) {
-            handler.state = handler.state.copy(time, OrderStatus.EXPIRED)
+            handler.state = handler.state.copy(time, OrderStatus.CANCELLED)
             OrderState(order, OrderStatus.COMPLETED, time, time)
         } else {
             OrderState(order, OrderStatus.REJECTED, time, time)
