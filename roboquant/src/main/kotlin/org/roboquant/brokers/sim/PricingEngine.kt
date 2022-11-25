@@ -34,7 +34,7 @@ fun interface PricingEngine {
     fun getPricing(action: PriceAction, time: Instant): Pricing
 
     /**
-     * Clear any state of the pricing engine. Often a [PricingEngine] is stateless, but advanced engines might
+     * Clear any state of the pricing engine. Most [PricingEngine]s are stateless, but advanced engines might
      * implement some type of ripple-effect pricing behavior. The default implementation is to do nothing.
      */
     fun clear() {
@@ -75,17 +75,17 @@ interface Pricing {
 class SpreadPricingEngine(private val spreadInBips: Int = 10, private val priceType: String = "DEFAULT") :
     PricingEngine {
 
-    private class SpreadPricing(val price: Double, val slippagePercentage: Double) : Pricing {
+    private class SpreadPricing(val price: Double, val spreadPercentage: Double) : Pricing {
 
         override fun marketPrice(size: Size): Double {
-            val correction = if (size > 0) 1.0 + slippagePercentage else 1.0 - slippagePercentage
+            val correction = if (size > 0) 1.0 + spreadPercentage else 1.0 - spreadPercentage
             return price * correction
         }
     }
 
     override fun getPricing(action: PriceAction, time: Instant): Pricing {
-        val slippagePercentage = spreadInBips / 10_000.0
-        return SpreadPricing(action.getPrice(priceType), slippagePercentage)
+        val spreadPercentage = spreadInBips / 10_000.0
+        return SpreadPricing(action.getPrice(priceType), spreadPercentage)
     }
 }
 

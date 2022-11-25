@@ -24,7 +24,7 @@ import org.roboquant.common.Logging
  * Interface for modelling different types Accounts used in the [SimBroker], like a [CashAccount] or [MarginAccount]
  *
  * The main functionality is that at the end of each step the buying power is re-calculated and made
- * available in [Account.buyingPower].
+ * available in the attribute [Account.buyingPower].
  */
 interface AccountModel {
 
@@ -62,19 +62,19 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 }
 
 /**
- * Account model that supports trading with margin. The buying power calculation uses the following formula:
+ * Account model that supports trading with margin. The buying power is calculated using the following steps:
  *
  *      1. long value = long positions * maintenance margin long
  *      2. short value = short positions * maintenance margin short
  *      3. excess margin = equity - long value - short value - minimum equity
  *      4. buying power = excess margin * ( 1 / initial margin)
  *
- * Note: currently open orders are not taken into consideration when calculating the total buying power
+ * Note: currently open orders are not taken into consideration when calculating the total buying power.
  *
  * @property initialMargin the initial margin requirements, default to 50% (0.50)
  * @property maintenanceMarginLong the maintenance margin requirement for long positions, defaults to 30% (0.3)
  * @property maintenanceMarginShort the maintenance margin requirement for short positions, defaults to same value as
- * maintenanceMarginLong
+ * [maintenanceMarginLong]
  * @property minimumEquity the minimum equity requirement, defaults to 0.0 (denoted in [Account.baseCurrency])
  */
 class MarginAccount(

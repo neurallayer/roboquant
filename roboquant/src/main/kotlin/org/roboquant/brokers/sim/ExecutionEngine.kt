@@ -22,8 +22,8 @@ import java.util.*
 import kotlin.reflect.KClass
 
 /**
- * Order handler factory creates [OrderHandler] for an order. The provided handler is responsible for executing the
- * order.
+ * Order handler factory creates an [OrderHandler] for an order. The provided handler is responsible for simulating
+ * the executing the order.
  *
  * @param T
  * @constructor Create empty Order handler factory
@@ -59,7 +59,8 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
         val factories = mutableMapOf<KClass<*>, OrderHandlerFactory<Order>>()
 
         /**
-         * Return the order handler for the provided [order]
+         * Return the order handler for the provided [order]. This will throw an exception if no [OrderHandlerFactory]
+         * is registered for the order::class.
          */
         fun getHandler(order: Order): OrderHandler {
             val factory = factories.getValue(order::class)

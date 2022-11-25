@@ -44,9 +44,9 @@ sealed interface OrderHandler {
 
 /**
  * Interface for orders that update another order. These orders don't generate trades by themselves. Also, important
- * to note that:
+ * to note that the following logic applies:
  *
- *  - they are executed first, before the [TradeOrderHandler] orders are executed
+ *  - they are executed first, before any [TradeOrderHandler] orders are executed
  *  - they are always executed, even if there is no known price for the underlying asset at that moment in time
  *
  */
@@ -60,7 +60,7 @@ interface ModifyOrderHandler : OrderHandler {
 }
 
 /**
- * Interface for orders that might generate trades.
+ * Interface for orders that (might) generate trades.
  */
 interface TradeOrderHandler : OrderHandler {
 
