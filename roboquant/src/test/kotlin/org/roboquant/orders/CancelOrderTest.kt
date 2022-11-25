@@ -29,7 +29,7 @@ internal class CancelOrderTest {
         val order = MarketOrder(asset, 100)
         val state = OrderState(order)
         val oc = CancelOrder(state)
-        assertEquals(order, oc.order.order)
+        assertEquals(order, oc.state.order)
     }
 
     @Test

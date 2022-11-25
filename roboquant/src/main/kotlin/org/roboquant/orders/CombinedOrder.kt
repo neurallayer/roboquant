@@ -31,7 +31,7 @@ class OCOOrder(
     val second: SingleOrder,
     id: Int = nextId(),
     tag: String = ""
-) : Order(first.asset, id, tag) {
+) : CreateOrder(first.asset, id, tag) {
 
     init {
         require(first.asset == second.asset) { "OCO orders can only contain orders for the same asset" }
@@ -55,7 +55,7 @@ class OTOOrder(
     val second: SingleOrder,
     id: Int = nextId(),
     tag: String = ""
-) : Order(first.asset, id, tag) {
+) : CreateOrder(first.asset, id, tag) {
 
     init {
         require(first.asset == second.asset) { "OTO orders can only contain orders for the same asset" }
@@ -82,7 +82,7 @@ class BracketOrder(
     val stopLoss: SingleOrder,
     id: Int = nextId(),
     tag: String = ""
-) : Order(entry.asset, id, tag) {
+) : CreateOrder(entry.asset, id, tag) {
 
     init {
         require(entry.asset == takeProfit.asset && entry.asset == stopLoss.asset) {

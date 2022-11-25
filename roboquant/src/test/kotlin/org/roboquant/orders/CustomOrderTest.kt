@@ -24,7 +24,7 @@ import kotlin.test.assertTrue
 
 internal class CustomOrderTest {
 
-    private class MySpecialOrder(asset: Asset, id: Int) : Order(asset, id)
+    private class MySpecialOrder(asset: Asset, id: Int) : CreateOrder(asset, id, "")
 
     @Test
     fun basic() {

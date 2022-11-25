@@ -61,7 +61,7 @@ internal class CancelOrderHandler(val order: CancelOrder) : ModifyOrderHandler {
      * Cancel the orders for the provided [handlers] and [time]
      */
     override fun execute(handlers: List<OrderHandler>, time: Instant) {
-        val handler = handlers.getSingleOrderHandler(order.order.id)
+        val handler = handlers.getSingleOrderHandler(order.state.id)
         state = if (handler != null && handler.state.status.open) {
             handler.state = handler.state.copy(time, OrderStatus.CANCELLED)
             OrderState(order, OrderStatus.COMPLETED, time, time)

@@ -26,8 +26,8 @@ import org.roboquant.common.Size
  * @property size the size of the order
  * @property tif the Time In Force policy to use
  */
-abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, id: Int, tag: String = "") :
-    Order(asset, id, tag) {
+abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, id: Int, tag: String) :
+    CreateOrder(asset, id, tag) {
 
 
     init {

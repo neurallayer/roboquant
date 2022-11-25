@@ -53,7 +53,7 @@ internal class ModifyOrderHandlerTest {
         val cmd = CancelOrderHandler(order)
         cmd.execute(listOf(moc), Instant.now())
         assertEquals(OrderStatus.COMPLETED, cmd.state.status)
-        assertEquals(OrderStatus.EXPIRED, moc.state.status)
+        assertEquals(OrderStatus.CANCELLED, moc.state.status)
         assertEquals("type=CANCEL id=12345 asset=XYZ tag= size=100, tif=GTC", order.toString())
     }
 

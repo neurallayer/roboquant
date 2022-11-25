@@ -35,7 +35,7 @@ class UpdateOrder(
     val update: SingleOrder,
     id: Int = nextId(),
     tag: String = ""
-) : Order(original.order.asset, id, tag) {
+) : ModifyOrder(original.order.asset, id, tag) {
 
     init {
         require(original.order::class == update::class) { "update orders cannot change order type" }
@@ -48,18 +48,19 @@ class UpdateOrder(
 /**
  * Cancel an open order, will throw an exception if the order is not open anymore.
  *
- * @property order The order to cancel
+ * @property state The order to cancel
  * @param id
  */
 class CancelOrder(
-    val order: OrderState,
+    val state: OrderState,
     id: Int = nextId(),
     tag: String = ""
-) : Order(order.order.asset, id, tag) {
+) : ModifyOrder(state.order.asset, id, tag) {
 
     init {
-        require(order.status.open) { "Only open orders can be cancelled" }
+        require(state.status.open) { "Only open orders can be cancelled" }
+        require(state.order is CreateOrder) { "Only create orders can be cancelled" }
     }
 
-    override fun info() = order.order.info()
+    override fun info() = state.order.info()
 }

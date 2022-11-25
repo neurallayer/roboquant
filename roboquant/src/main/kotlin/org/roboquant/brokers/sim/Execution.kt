@@ -17,7 +17,7 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.common.Size
-import org.roboquant.orders.Order
+import org.roboquant.orders.CreateOrder
 
 /**
  * Return how much of the order was filled and against what price. The price is in
@@ -28,7 +28,7 @@ import org.roboquant.orders.Order
  * @property price The (average) price of the execution
  * @constructor Create new Execution
  */
-class Execution(val order: Order, val size: Size, val price: Double) {
+class Execution(val order: CreateOrder, val size: Size, val price: Double) {
 
     init {
         require(size.nonzero) { "Execution should have a non-zero quantity" }

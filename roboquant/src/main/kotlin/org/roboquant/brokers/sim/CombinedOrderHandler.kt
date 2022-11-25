@@ -19,10 +19,10 @@ package org.roboquant.brokers.sim
 import org.roboquant.orders.*
 import java.time.Instant
 
-internal class OCOOrderHandler(val order: OCOOrder) : TradeOrderHandler {
+internal class OCOOrderHandler(val order: OCOOrder) : CreateOrderHandler {
 
-    private val first = ExecutionEngine.getHandler(order.first) as TradeOrderHandler
-    private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler
+    private val first = ExecutionEngine.getHandler(order.first) as CreateOrderHandler
+    private val second = ExecutionEngine.getHandler(order.second) as CreateOrderHandler
     private var active = 0
 
     override var state: OrderState = OrderState(order)
@@ -53,12 +53,12 @@ internal class OCOOrderHandler(val order: OCOOrder) : TradeOrderHandler {
     }
 }
 
-internal class OTOOrderHandler(val order: OTOOrder) : TradeOrderHandler {
+internal class OTOOrderHandler(val order: OTOOrder) : CreateOrderHandler {
 
     override var state: OrderState = OrderState(order)
 
-    private val first = ExecutionEngine.getHandler(order.first) as TradeOrderHandler
-    private val second = ExecutionEngine.getHandler(order.second) as TradeOrderHandler
+    private val first = ExecutionEngine.getHandler(order.first) as CreateOrderHandler
+    private val second = ExecutionEngine.getHandler(order.second) as CreateOrderHandler
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         state = state.copy(time)
@@ -78,7 +78,7 @@ internal class OTOOrderHandler(val order: OTOOrder) : TradeOrderHandler {
     }
 }
 
-internal class BracketOrderHandler(order: BracketOrder) : TradeOrderHandler {
+internal class BracketOrderHandler(order: BracketOrder) : CreateOrderHandler {
 
     override var state: OrderState = OrderState(order)
 

@@ -35,7 +35,7 @@ import org.roboquant.common.Asset
  * @property tag an arbitrary tag that can be associated with this order, default is an empty string
  *
  **/
-abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
+abstract class Order(val asset: Asset, val id: Int, val tag: String) {
 
     /**
      * @suppress
@@ -77,6 +77,17 @@ abstract class Order(val asset: Asset, val id: Int, val tag: String = "") {
     open fun info(): Map<String, Any> = emptyMap()
 
 }
+
+/**
+ * Base class for all create orders.
+ */
+abstract class CreateOrder(asset: Asset, id: Int, tag: String) : Order(asset, id, tag)
+
+/**
+ * Base class for all modify orders.
+ */
+abstract class ModifyOrder(asset: Asset, id: Int, tag: String) : Order(asset, id, tag)
+
 
 /**
  * Returns true is the collection of orders contains at least one for [asset], false otherwise.

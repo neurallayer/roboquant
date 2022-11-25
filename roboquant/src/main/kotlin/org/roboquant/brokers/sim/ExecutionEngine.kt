@@ -106,8 +106,8 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
 
     }
 
-    // Return the trade-handlers
-    private val tradeHandlers = LinkedList<TradeOrderHandler>()
+    // Return the create-handlers
+    private val createHandlers = LinkedList<CreateOrderHandler>()
 
     // Return the modify-handlers
     private val modifyHandlers = LinkedList<ModifyOrderHandler>()
@@ -121,7 +121,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
      * Remove all handlers of closed orders
      */
     internal fun removeClosedOrders() {
-        tradeHandlers.removeIf { it.state.status.closed }
+        createHandlers.removeIf { it.state.status.closed }
         modifyHandlers.removeIf { it.state.status.closed }
     }
 
@@ -129,7 +129,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
      * Return the order states of all handlers
      */
     val orderStates
-        get() = tradeHandlers.map { it.state } + modifyHandlers.map { it.state }
+        get() = createHandlers.map { it.state } + modifyHandlers.map { it.state }
 
     /**
      * Add a new [order] to the execution engine. Orders can only be processed if there is a corresponding handler
@@ -139,10 +139,11 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
 
         return when (val handler = getHandler(order)) {
             is ModifyOrderHandler -> modifyHandlers.add(handler)
-            is TradeOrderHandler -> tradeHandlers.add(handler)
+            is CreateOrderHandler -> createHandlers.add(handler)
         }
 
     }
+
 
     /**
      * Add all [orders] to the execution engine.
@@ -165,13 +166,13 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
         // We always first execute modify orders. These are run even if there is
         // no price for the asset known
         for (handler in modifyHandlers.open()) {
-            handler.execute(tradeHandlers, event.time)
+            handler.execute(createHandlers, event.time)
         }
 
-        // Now run the trade order commands
+        // Now run the create order commands
         val executions = mutableListOf<Execution>()
         val prices = event.prices
-        for (handler in tradeHandlers.open()) {
+        for (handler in createHandlers.open()) {
             val action = prices[handler.state.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, event.time)
             val newExecutions = handler.execute(pricing, event.time)
@@ -184,7 +185,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
      * Clear any state in the execution engine. All the pending open orders will be removed.
      */
     fun clear() {
-        tradeHandlers.clear()
+        createHandlers.clear()
         pricingEngine.clear()
     }
 

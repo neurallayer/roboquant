@@ -25,7 +25,7 @@ import java.time.Instant
  *
  * @property order the single order to execute
  */
-abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : TradeOrderHandler {
+abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : CreateOrderHandler {
 
     /**
      * Fill size
