@@ -25,6 +25,11 @@ private fun List<OrderHandler>.getSingleOrderHandler(id: Int) =
         it.order.id == id
     }
 
+
+/**
+ * Simulate the execution of a UpdateOrder. Currently, no additional checks in place if the
+ * actual update would be valid in real life trading.
+ */
 internal class UpdateOrderHandler(val order: UpdateOrder) : ModifyOrderHandler {
 
     override var state: OrderState = OrderState(order)

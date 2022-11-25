@@ -31,11 +31,11 @@ import java.time.temporal.ChronoUnit
  *
  * This is an open class and can be extended with more advanced implementations.
  *
- * @property order The underlying order
+ * @property order The underlying order, which is read-only
  * @property status The latest status
- * @property openedAt When was the order execution first opened
- * @property closedAt When was the order execution closed
- * @constructor Create new Order state
+ * @property openedAt When was the order first placed is [Instant.MIN] until set
+ * @property closedAt When was the order closed, default is [Instant.MAX] until set
+ * @constructor Create new instance of OrderState
  */
 open class OrderState(
     val order: Order,
@@ -114,12 +114,12 @@ enum class OrderStatus {
     COMPLETED,
 
     /**
-     * The order was cancelled, normally by a cancellation order. This is an end-state.
+     * The order was cancelled, normally by a [CancelOrder]. This is an end-state.
      */
     CANCELLED,
 
     /**
-     *  The order has expired, normally triggered by a time-in-force policy. This is an end-state.
+     *  The order has expired, normally triggered by a [TimeInForce] policy. This is an end-state.
      */
     EXPIRED,
 
@@ -147,7 +147,7 @@ enum class OrderStatus {
         get() = this === COMPLETED || this === CANCELLED || this === EXPIRED || this === REJECTED
 
     /**
-     * Returns true if the order in an open state, so [INITIAL] or [ACCEPTED]
+     * Returns true if the order in an open state, so either [INITIAL] or [ACCEPTED]
      */
     val open: Boolean
         get() = this === INITIAL || this === ACCEPTED
@@ -200,7 +200,7 @@ operator fun Collection<OrderState>.contains(asset: Asset) = any { it.asset == a
 /**
  * Get the unique assets for a collection of order states
  */
-val List<OrderState>.assets : Set<Asset>
+val Collection<OrderState>.assets : Set<Asset>
     get() = map { it.asset }.distinct().toSet()
 
 

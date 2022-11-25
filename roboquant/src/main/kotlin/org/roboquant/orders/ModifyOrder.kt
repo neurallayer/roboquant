@@ -22,7 +22,10 @@ package org.roboquant.orders
  *
  * In real life, only certain parts of an open order can be updated, like the limit price of a limit order. For many
  * other types of changes, an order needs to be cancelled first and then a new order needs to be created.
- **
+ *
+ * Currently, there are no checks in the SimBroker if the updates would be possible in real life. So it is up to the
+ * user to only create "sensible" update orders.
+ *
  * @property original the order you want to update
  * @property update the updated order
  * @constructor Create new UpdateOrder
