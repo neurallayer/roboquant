@@ -74,11 +74,12 @@ internal class ExecutionEngineTest {
         val engine = ExecutionEngine(NoCostPricingEngine())
         val asset = TestData.usStock()
 
-        val origOrder = MarketOrder(asset, 100)
+        val origOrder = LimitOrder(asset, Size(100), 10.0)
         engine.add(origOrder)
         val state = engine.orderStates.first()
 
-        var order: Order = UpdateOrder(state, MarketOrder(asset, Size(50), id = origOrder.id))
+        val origOrder2 = LimitOrder(asset, Size(100), 11.0)
+        var order: Order = UpdateOrder(state, origOrder2, id = origOrder.id)
         var success = engine.add(order)
         assertEquals(true, success)
 

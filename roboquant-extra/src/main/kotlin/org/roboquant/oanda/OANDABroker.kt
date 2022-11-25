@@ -134,7 +134,7 @@ class OANDABroker(
     /**
      * Process a transaction/trade and update account accordingly
      */
-    private fun processTrade(order: Order, trx: OrderFillTransaction) {
+    private fun processTrade(order: CreateOrder, trx: OrderFillTransaction) {
         val time = Instant.parse(trx.time)
         val trade = Trade(
             time,
@@ -192,7 +192,7 @@ class OANDABroker(
                 val trx = resp.orderFillTransaction
                 state = OrderState(order, OrderStatus.COMPLETED, event.time, event.time)
                 logger.debug { "Received transaction $trx" }
-                processTrade(order, trx)
+                processTrade(order as CreateOrder, trx)
             } else if (resp.orderCancelTransaction != null) {
                 val trx = resp.orderCancelTransaction
 

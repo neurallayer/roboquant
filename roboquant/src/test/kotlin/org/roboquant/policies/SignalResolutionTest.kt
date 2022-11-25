@@ -19,11 +19,14 @@ package org.roboquant.policies
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
-import org.roboquant.orders.assets
+import org.roboquant.orders.CreateOrder
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import kotlin.random.Random
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class SignalResolutionTest {
 
@@ -38,15 +41,6 @@ internal class SignalResolutionTest {
         assertEquals(signals, signals.resolve(SignalResolution.NONE))
     }
 
-    @Test
-    fun oneOrderPerAsset() {
-        val policy = TestPolicy().singleOrder()
-        val account = TestData.usAccount()
-        val asset = account.openOrders.assets.first()
-        val signals = listOf(Signal(asset, Rating.BUY))
-        val orders = policy.act(signals, account, Event.empty())
-        assertTrue(orders.isEmpty())
-    }
 
     @Test
     fun testSignalShuffle() {
@@ -56,7 +50,6 @@ internal class SignalResolutionTest {
         val signals = assets.map { Signal(it, Rating.BUY) }
         val orders = policy.act(signals, account, Event.empty())
         assertEquals(signals.size, orders.size)
-        assertNotEquals(orders.map { it.asset }, assets)
     }
 
     @Test
@@ -66,7 +59,7 @@ internal class SignalResolutionTest {
         val assets = listOf(Asset("A"), Asset("B"), Asset("C"), Asset("D"))
         val signals = assets.map { Signal(it, Rating.BUY) }
         val orders = policy.act(signals, account, Event.empty())
-        val symbols = orders.map { it.asset.symbol }
+        val symbols = orders.filterIsInstance<CreateOrder>().map { it.asset.symbol }
         assertTrue(symbols.contains("B"))
         assertFalse(symbols.contains("C"))
     }

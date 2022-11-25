@@ -114,19 +114,19 @@ class BinanceBroker(
         _account.putOrders(slips)
 
         for (order in orders) {
-            val asset = order.asset
-            if (asset.type == AssetType.CRYPTO) {
-                val symbol = asset.symbol
+
 
                 when (order) {
                     is CancelOrder -> cancelOrder(order)
 
                     is LimitOrder -> {
+                        val symbol = order.asset.symbol
                         val newLimitOrder = trade(symbol, order)
                         placedOrders[newLimitOrder.orderId] = OrderState(order)
                     }
 
                     is MarketOrder -> {
+                        val symbol = order.asset.symbol
                         val newMarketOrder = trade(symbol, order)
                         placedOrders[newMarketOrder.orderId] = OrderState(order)
                     }
@@ -134,12 +134,8 @@ class BinanceBroker(
                     else -> logger.warn {
                         "supports only cancellation, market and limit orders, received ${order::class} instead"
                     }
-
                 }
 
-            } else {
-                logger.warn { "BinanceBroker supports only CRYPTO assets, received ${asset.type} instead" }
-            }
         }
 
         return account
@@ -155,8 +151,8 @@ class BinanceBroker(
     private fun cancelOrder(cancellation: CancelOrder) {
         val c = cancellation.state.order
         // require(c.id.isNotEmpty()) { "Require non empty id when cancelling and order $c" }
-        require(c.asset.type == AssetType.CRYPTO) { "BinanceBroker only support CRYPTO orders ${c.asset}" }
-        val r = CancelOrderRequest(c.asset.symbol, c.id.toString())
+        val order = cancellation.state.order as CreateOrder
+        val r = CancelOrderRequest(order.asset.symbol, c.id.toString())
         client.cancelOrder(r)
     }
 

@@ -81,7 +81,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        for (order in orders) {
+        for (order in orders.filterIsInstance<CreateOrder>()) {
             val asset = order.asset
             if (asset.type == AssetType.CRYPTO) {
 

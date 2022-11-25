@@ -19,6 +19,7 @@ package org.roboquant.orders
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.Summary
+import org.roboquant.common.UnsupportedException
 import org.roboquant.common.summary
 import org.roboquant.orders.OrderStatus.*
 import java.time.Instant
@@ -60,7 +61,7 @@ open class OrderState(
      * Returns the underlying asset
      */
     val asset: Asset
-        get() = order.asset
+        get() = if (order is CreateOrder) order.asset else throw UnsupportedException("")
 
     /**
      * Returns the id od the order

@@ -205,7 +205,7 @@ class AlpacaBroker(
             // Only add trades we know the order id of, ignore the rest
             logger.debug { "Found trade $activity" }
             val order = orderMapping.filterValues { it == activity.orderId }.keys.firstOrNull()
-            if (order != null && activity.id !in handledTrades) {
+            if (order != null && order is CreateOrder && activity.id !in handledTrades) {
                 val trade = Trade(
                     activity.transactionTime.toInstant(),
                     order.asset,

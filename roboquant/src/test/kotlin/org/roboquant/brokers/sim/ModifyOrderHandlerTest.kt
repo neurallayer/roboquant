@@ -17,8 +17,8 @@
 package org.roboquant.brokers.sim
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
-import org.roboquant.common.Size
 import org.roboquant.orders.CancelOrder
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus
@@ -36,11 +36,10 @@ internal class ModifyOrderHandlerTest {
         val moc = MarketOrderHandler(order1)
 
         val order2 = MarketOrder(asset, 50)
-        val order = UpdateOrder(moc.state, order2)
+        assertThrows<IllegalArgumentException> {
+            UpdateOrder(moc.state, order2)
+        }
 
-        val cmd = UpdateOrderHandler(order)
-        cmd.execute(listOf(moc), Instant.now())
-        assertEquals(Size(50), moc.order.size)
     }
 
     @Test
@@ -54,7 +53,7 @@ internal class ModifyOrderHandlerTest {
         cmd.execute(listOf(moc), Instant.now())
         assertEquals(OrderStatus.COMPLETED, cmd.state.status)
         assertEquals(OrderStatus.CANCELLED, moc.state.status)
-        assertEquals("type=CANCEL id=12345 asset=XYZ tag= size=100, tif=GTC", order.toString())
+        assertEquals("type=CANCEL id=12345 tag= size=100, tif=GTC", order.toString())
     }
 
 }
