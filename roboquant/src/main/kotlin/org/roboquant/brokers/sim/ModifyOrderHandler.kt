@@ -37,7 +37,7 @@ internal class UpdateOrderHandler(val order: UpdateOrder) : ModifyOrderHandler {
     /**
      * Update the orders for the provided [handlers] and [time]
      */
-    override fun execute(handlers: List<OrderHandler>, time: Instant) {
+    override fun execute(handlers: List<CreateOrderHandler>, time: Instant) {
         val handler = handlers.getSingleOrderHandler(order.original.id)
         state = if (handler != null && handler.state.status.open) {
             handler.order = order.update
@@ -60,13 +60,31 @@ internal class CancelOrderHandler(val order: CancelOrder) : ModifyOrderHandler {
     /**
      * Cancel the orders for the provided [handlers] and [time]
      */
-    override fun execute(handlers: List<OrderHandler>, time: Instant) {
-        val handler = handlers.getSingleOrderHandler(order.state.id)
+    override fun execute(handlers: List<CreateOrderHandler>, time: Instant) {
+        val handler = handlers.firstOrNull { it.state.id == order.state.id } // getSingleOrderHandler(order.state.id)
         state = if (handler != null && handler.state.status.open) {
             handler.state = handler.state.copy(time, OrderStatus.CANCELLED)
             OrderState(order, OrderStatus.COMPLETED, time, time)
         } else {
             OrderState(order, OrderStatus.REJECTED, time, time)
         }
+    }
+}
+
+/**
+ * Simulate the execution of a CancelAllOrder and cancel all open orders
+ */
+internal class CancelAllOrderHandler(val order: CancelAllOrder) : ModifyOrderHandler {
+
+    override var state: OrderState = OrderState(order)
+
+    /**
+     * Cancel the orders for the provided [handlers] and [time]
+     */
+    override fun execute(handlers: List<CreateOrderHandler>, time: Instant) {
+        for (handler in handlers) {
+            if (handler.status.open) handler.state = handler.state.copy(time, OrderStatus.CANCELLED)
+        }
+        state = OrderState(order, OrderStatus.COMPLETED, time, time)
     }
 }

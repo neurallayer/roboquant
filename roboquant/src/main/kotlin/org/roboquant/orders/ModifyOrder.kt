@@ -66,3 +66,12 @@ class CancelOrder(
 
     override fun info() = state.order.info()
 }
+
+
+/**
+ * Cancel all open orders
+ */
+class CancelAllOrder(
+    id: Int = nextId(),
+    tag: String = ""
+) : ModifyOrder(id, tag)

@@ -33,7 +33,7 @@ import org.roboquant.common.Asset
  * @property tag an arbitrary tag that can be associated with this order, default is an empty string
  *
  **/
-abstract class Order(val id: Int, val tag: String) {
+sealed class Order(val id: Int, val tag: String) {
 
     /**
      * @suppress

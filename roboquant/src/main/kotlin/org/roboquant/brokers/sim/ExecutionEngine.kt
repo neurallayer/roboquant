@@ -102,6 +102,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEn
             // Modify order types
             register<UpdateOrder> { UpdateOrderHandler(it) }
             register<CancelOrder> { CancelOrderHandler(it) }
+            register<CancelAllOrder> { CancelAllOrderHandler(it) }
         }
 
     }

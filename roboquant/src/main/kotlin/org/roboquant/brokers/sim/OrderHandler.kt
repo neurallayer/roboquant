@@ -53,9 +53,9 @@ sealed interface OrderHandler {
 interface ModifyOrderHandler : OrderHandler {
 
     /**
-     * Modify the orders for the provided [handlers] and [time]
+     * Modify the order for the provided [handlers] and [time]
      */
-    fun execute(handlers: List<OrderHandler>, time: Instant)
+    fun execute(handlers: List<CreateOrderHandler>, time: Instant)
 
 }
 
@@ -65,7 +65,7 @@ interface ModifyOrderHandler : OrderHandler {
 interface CreateOrderHandler : OrderHandler {
 
     /**
-     * Execute the orders for the provided [pricing] and [time]
+     * Execute the order for the provided [pricing] and [time]
      */
     fun execute(pricing: Pricing, time: Instant): List<Execution>
 
