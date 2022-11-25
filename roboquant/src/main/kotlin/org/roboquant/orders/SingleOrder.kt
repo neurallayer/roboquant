@@ -31,7 +31,7 @@ abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, i
 
 
     init {
-        require(size.nonzero) { "Orders require a non zero size" }
+        require(size.nonzero) { "orders require a non zero size" }
     }
 
     /**

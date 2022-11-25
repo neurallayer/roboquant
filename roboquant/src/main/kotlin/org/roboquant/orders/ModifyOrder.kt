@@ -39,9 +39,11 @@ class UpdateOrder(
 
     init {
         require(original.order::class == update::class) { "update orders cannot change order type" }
-        require(original.status.open) { "Only open orders can be updated" }
+        require(original.status.open) { "only open orders can be updated" }
+        if (original.order is SingleOrder) {
+            require(original.order.size == update.size) { "cannot update the size of an order"}
+        }
     }
-
     override fun info() = update.info()
 }
 
@@ -58,8 +60,8 @@ class CancelOrder(
 ) : ModifyOrder(state.order.asset, id, tag) {
 
     init {
-        require(state.status.open) { "Only open orders can be cancelled" }
-        require(state.order is CreateOrder) { "Only create orders can be cancelled" }
+        require(state.status.open) { "only open orders can be cancelled" }
+        require(state.order is CreateOrder) { "only create orders can be cancelled" }
     }
 
     override fun info() = state.order.info()
