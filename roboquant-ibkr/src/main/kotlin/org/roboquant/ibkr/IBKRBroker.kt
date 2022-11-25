@@ -98,6 +98,36 @@ class IBKRBroker(
         sleep(5_000)
     }
 
+
+    /**
+     * Cancel an order
+     */
+    private fun cancelOrder(cancellation: CancelOrder) {
+        logger.debug("received order $cancellation")
+        val id = cancellation.id
+        val ibID = orderMap.filter { it.value.id == id }.keys.first()
+        logger.info("cancelling order with id $ibID")
+        client.cancelOrder(ibID, cancellation.tag)
+
+        // There is no easy way to check for status of cancellation order
+        // So for we set it always to completed
+        val now = Instant.now()
+        val orderState = OrderState(cancellation, OrderStatus.COMPLETED, now, now)
+        _account.putOrder(orderState)
+    }
+
+    /**
+     * Place an order of type [SingleOrder]
+     */
+    private fun placeOrder(order: SingleOrder) {
+        logger.debug("received order $order")
+        val contract = order.asset.getContract()
+        val ibOrder = createIBOrder(order)
+        logger.info("placing order $ibOrder for $contract")
+        client.placeOrder(ibOrder.orderId(), contract, ibOrder)
+    }
+
+
     /**
      * Place zero or more [orders]
      *
@@ -106,24 +136,18 @@ class IBKRBroker(
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
+        // Make sure we store all orders
         _account.initialOrders(orders)
 
-        // First we place the cancellation orders
-        for (cancellation in orders.filterIsInstance<CancelOrder>()) {
-            logger.debug("received order $cancellation")
-            val id = cancellation.id
-            val ibID = orderMap.filter { it.value.id == id }.keys.first()
-            logger.info("cancelling order with id $ibID at ${event.time}")
-            client.cancelOrder(ibID, cancellation.tag)
-        }
+        for (order in orders) {
+            when(order)  {
+                is CancelOrder -> cancelOrder(order)
+                is SingleOrder -> placeOrder(order)
+                else -> {
+                    throw UnsupportedException("unsupported order type order=$order")
+                }
+            }
 
-        // And now the regular new orders
-        for (order in orders.filterIsInstance<SingleOrder>()) {
-            logger.debug("received order $order")
-            val ibOrder = createIBOrder(order)
-            val contract = order.asset.getContract()
-            logger.info("placing order $ibOrder for $contract at ${event.time}")
-            client.placeOrder(ibOrder.orderId(), contract, ibOrder)
         }
 
         // Return a clone so changes to account while running policies don't cause inconsistencies.
@@ -135,35 +159,14 @@ class IBKRBroker(
      */
     private fun createIBOrder(order: SingleOrder): IBOrder {
         val result = IBOrder()
-        when (order) {
-
-            is MarketOrder -> {
-                result.orderType("MKT")
-            }
-
-            is LimitOrder -> {
-                result.orderType("LMT")
-                result.lmtPrice(order.limit)
-            }
-
-            is StopOrder -> {
-                result.orderType("STP")
-                result.auxPrice(order.stop)
-            }
-
-            is StopLimitOrder -> {
-                result.orderType("STP LMT")
-                result.lmtPrice(order.limit)
-                result.auxPrice(order.stop)
-            }
-
-            is TrailOrder -> {
-                result.orderType("TRAIL")
-                result.trailingPercent(order.trailPercentage)
-            }
-
-            else -> {
-                throw UnsupportedException("unsupported order type $order")
+        with (result) {
+            when (order) {
+                is MarketOrder -> orderType(OrderType.MKT)
+                is LimitOrder -> { orderType(OrderType.LMT); lmtPrice(order.limit) }
+                is StopOrder -> { orderType(OrderType.STP); auxPrice(order.stop) }
+                is StopLimitOrder -> { orderType(OrderType.STP_LMT); lmtPrice(order.limit); auxPrice(order.stop) }
+                is TrailOrder -> { orderType(OrderType.TRAIL); trailingPercent(order.trailPercentage) }
+                else -> throw UnsupportedException("unsupported order type $order")
             }
         }
 
@@ -171,8 +174,8 @@ class IBKRBroker(
         result.action(action)
         val qty = Decimal.get(order.size.toBigDecimal().abs())
         result.totalQuantity(qty)
-        if (accountId != null) result.account(accountId)
 
+        if (accountId != null) result.account(accountId)
         result.orderId(++orderId)
         orderMap[orderId] = order
 
@@ -367,7 +370,6 @@ class IBKRBroker(
             logger.debug(timeStamp)
             _account.lastUpdate = Instant.now()
         }
-
 
 
     }
