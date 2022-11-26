@@ -18,6 +18,7 @@ package org.roboquant.brokers.sim
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.brokers.sim.execution.Execution
 import org.roboquant.common.Size
 import kotlin.test.assertEquals
 

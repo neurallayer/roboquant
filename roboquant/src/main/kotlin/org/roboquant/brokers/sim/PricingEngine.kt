@@ -43,8 +43,8 @@ fun interface PricingEngine {
 }
 
 /**
- * Pricing is provided as an argument [CreateOrderHandler.execute] so it can determine the price to use
- * when executing an order. The [PricingEngine] is the factory that creates these pricing.
+ * Pricing is used to determine the price to use when executing an order.
+ * The [PricingEngine] is the factory that creates these pricing.
  */
 interface Pricing {
 

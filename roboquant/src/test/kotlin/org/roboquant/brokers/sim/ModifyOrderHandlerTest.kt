@@ -19,6 +19,7 @@ package org.roboquant.brokers.sim
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
+import org.roboquant.brokers.sim.execution.*
 import org.roboquant.common.Size
 import org.roboquant.orders.*
 import java.time.Instant

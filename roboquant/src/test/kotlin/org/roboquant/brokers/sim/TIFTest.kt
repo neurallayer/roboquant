@@ -18,6 +18,8 @@ package org.roboquant.brokers.sim
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.brokers.sim.execution.Execution
+import org.roboquant.brokers.sim.execution.SingleOrderHandler
 import org.roboquant.common.*
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*

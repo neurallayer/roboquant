@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.roboquant.brokers.sim
+package org.roboquant.brokers.sim.execution
 
+import org.roboquant.brokers.sim.PricingEngine
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.util.*
@@ -46,7 +47,7 @@ fun interface OrderHandlerFactory<T : Order> {
  * @property pricingEngine pricing engine to use to determine the price
  * @constructor Create new Execution engine
  */
-class ExecutionEngine(private val pricingEngine: PricingEngine = NoCostPricingEngine()) {
+class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
     /**
      * @suppress

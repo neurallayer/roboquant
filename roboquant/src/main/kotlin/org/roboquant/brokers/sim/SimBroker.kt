@@ -17,6 +17,8 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.brokers.*
+import org.roboquant.brokers.sim.execution.Execution
+import org.roboquant.brokers.sim.execution.ExecutionEngine
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.brokers.sim
+package org.roboquant.brokers.sim.execution
 
 import org.roboquant.common.Size
 import org.roboquant.orders.CreateOrder
