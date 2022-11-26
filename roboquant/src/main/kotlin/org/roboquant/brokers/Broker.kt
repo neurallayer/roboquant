@@ -36,13 +36,13 @@ interface Broker : Lifecycle {
      * Place a new set of [orders] at this broker. The [event] contains the latest data from the used feed.
      *
      * After processing the [orders], this method returns an instance of the updated [Account]. This returned instance
-     * reflects the latest status, is immutable and thread safe. It is guaranteed that just placed order are included
-     * in the account object.
+     * reflects the latest status, is immutable and thread safe. The just placed orders are always included
+     * in the returned account object, either as open- or closed-orders.
      */
     fun place(orders: List<Order>, event: Event = Event.empty()): Account
 
     /**
-     * This method will be invoked at each step in a run and provides the implementation with the opportunity to
+     * This method will be invoked at each step in a run and provides the broker with the opportunity to
      * log additional information. The default implementation is to return an empty map.
      *
      * The returned map should NOT be mutated after it has been returned.

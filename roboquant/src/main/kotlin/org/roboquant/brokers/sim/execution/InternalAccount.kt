@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package org.roboquant.brokers
+package org.roboquant.brokers.sim.execution
 
+import org.roboquant.brokers.Account
+import org.roboquant.brokers.Position
+import org.roboquant.brokers.Trade
+import org.roboquant.brokers.marketValue
 import org.roboquant.common.*
 import org.roboquant.common.Config.baseCurrency
 import org.roboquant.feeds.Event
@@ -25,20 +29,12 @@ import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
- * Internal Account is only used by broker implementations, like the SimBroker. The broker is the only one with a
- * reference to this account and will communicate to the outside world (Policy and Metrics) only the immutable [Account]
- * version.
+ * Internal Account is meant to be used by broker implementations, like the SimBroker. The broker is the only one with a
+ * reference to the InternalAccount and will communicate to the outside world (Policy and Metrics) only the
+ * immutable [Account] version.
  *
- * - Cash balances in the account
- * - the [portfolio] with its assets
- * - The past [trades]
- * - The [openOrders] and [closedOrders] and their state
- *
- * It also supports multi-currency trading through the use of a pluggable currency converter. Without configuring such
- * plug-in it still supports single currency trading, so when all assets and cash balances are denoted in a single
- * currency.
- *
- * Only a broker should ever update the account. For other components like a policy, it should be used read-only.
+ * The Internal Account is designed to eliminate common mistakes, but is completely optional. The broker that come with
+ * roboquant all use this under the hood, but this is no hard requirement.
  *
  * @property baseCurrency The base currency to use for things like reporting
  * @constructor Create a new Account
@@ -58,12 +54,13 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
     /**
      * Open orders
      */
-    val openOrders = mutableMapOf<Int, OrderState>()
+    private val openOrders = mutableMapOf<Int, MutableOrderState>()
 
     /**
-     * Closed orders
+     * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
+     * closed
      */
-    val closedOrders = mutableListOf<OrderState>()
+    private val closedOrders = mutableListOf<OrderState>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -92,6 +89,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
         cash.clear()
     }
 
+
     /**
      * Set the position in a portfolio. If the position is closed, it is removed from the portfolio.
      */
@@ -104,25 +102,43 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
     }
 
     /**
-     * Put a single order, replacing existing one with the same order id or otherwise add it.
+     * Get the open orders
      */
-    fun putOrder(orderState: OrderState) {
-        val id = orderState.orderId
-        if (orderState.open) {
-            openOrders[id] = orderState
+    val orders: List<OrderState>
+        get() = openOrders.values.toList()
+
+
+    /**
+     * Add [orders] as initial orders. This is the first step a broker takes before further processing of the order.
+     * Other updates future will fail if there is no open order already present.
+     */
+    fun initializeOrders(orders: Collection<Order>) {
+        val newOrders =  orders.map { MutableOrderState(it) }
+        newOrders.forEach { openOrders[it.orderId] = it }
+    }
+
+
+    /**
+     * Update an [order] with a new [status] at a certain time. This only successful if order has been already added
+     * before. When an order reaches a close state it will be moved internally to a different store and no
+     * longer be directly accessible.
+     */
+    fun updateOrder(order: Order, time: Instant, status: OrderStatus) {
+        val id = order.id
+        val state = openOrders.getValue(id)
+        state.update(time, status)
+        if (state.open) {
+            openOrders[id] = state
         } else {
             // order is closed, so remove it from the open orders
-            openOrders.remove(id)
-            closedOrders.add(orderState)
+            openOrders.remove(id) ?: throw UnsupportedException("cannot close an order that was not open first")
+            closedOrders.add(state)
         }
     }
 
-    /**
-     * Put orders, replacing existing ones with the same order id or otherwise add them.
-     */
-    fun putOrders(orderStates: Collection<OrderState>) {
-        for (orderState in orderStates) putOrder(orderState)
-    }
+
+    fun addTrade(trade: Trade) = trades.add(trade)
+
 
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]
@@ -166,27 +182,30 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
             return portfolio.values.marketValue
         }
 
-
     /**
      * Reject an [order] at the provided [time]
      */
     fun rejectOrder(order: Order, time: Instant) {
-        putOrder(OrderState(order, OrderStatus.REJECTED, time, time))
+        updateOrder(order, time, OrderStatus.REJECTED)
     }
 
     /**
      * Accept an [order] at the provided [time]
      */
     fun acceptOrder(order: Order, time: Instant) {
-        putOrder(OrderState(order, OrderStatus.ACCEPTED, time, time))
+        updateOrder(order, time, OrderStatus.ACCEPTED)
     }
 
     /**
-     * Add initial [orders]
+     * Complete an [order] at the provided [time]
      */
-    fun initialOrders(orders: Collection<Order>) {
-        val newOrders =  orders.map { OrderState(it) }
-        putOrders(newOrders)
+    fun completeOrder(order: Order, time: Instant) {
+        updateOrder(order, time, OrderStatus.COMPLETED)
     }
+
+    /**
+     * Get an open order with the provided [orderId]
+     */
+    fun getOrder(orderId: Int): Order? = openOrders[orderId]?.order
 
 }

@@ -23,15 +23,13 @@ package org.roboquant.orders
  * @property second
  *
  * @constructor
- * @param id
  * @param tag
  */
 class OCOOrder(
     val first: SingleOrder,
     val second: SingleOrder,
-    id: Int = nextId(),
     tag: String = ""
-) : CreateOrder(first.asset, id, tag) {
+) : CreateOrder(first.asset, tag) {
 
     init {
         require(first.asset == second.asset) { "OCO orders can only contain orders for the same asset" }
@@ -47,15 +45,13 @@ class OCOOrder(
  * @property second
  * @constructor
  *
- * @param id
  * @param tag
  */
 class OTOOrder(
     val first: SingleOrder,
     val second: SingleOrder,
-    id: Int = nextId(),
     tag: String = ""
-) : CreateOrder(first.asset, id, tag) {
+) : CreateOrder(first.asset, tag) {
 
     init {
         require(first.asset == second.asset) { "OTO orders can only contain orders for the same asset" }
@@ -73,16 +69,14 @@ class OTOOrder(
  * @property stopLoss
  * @constructor
  *
- * @param id
  * @param tag
  */
 class BracketOrder(
     val entry: SingleOrder,
     val takeProfit: SingleOrder,
     val stopLoss: SingleOrder,
-    id: Int = nextId(),
     tag: String = ""
-) : CreateOrder(entry.asset, id, tag) {
+) : CreateOrder(entry.asset, tag) {
 
     init {
         require(entry.asset == takeProfit.asset && entry.asset == stopLoss.asset) {

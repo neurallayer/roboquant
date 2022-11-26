@@ -18,7 +18,7 @@ package org.roboquant.policies
 
 import org.roboquant.TestData
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.InternalAccount
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order

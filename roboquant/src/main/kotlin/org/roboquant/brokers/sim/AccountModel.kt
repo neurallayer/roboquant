@@ -17,6 +17,7 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.brokers.*
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Amount
 import org.roboquant.common.Logging
 

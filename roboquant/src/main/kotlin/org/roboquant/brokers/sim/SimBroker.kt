@@ -19,12 +19,13 @@ package org.roboquant.brokers.sim
 import org.roboquant.brokers.*
 import org.roboquant.brokers.sim.execution.Execution
 import org.roboquant.brokers.sim.execution.ExecutionEngine
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
-import org.roboquant.orders.CancelOrder
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
+import org.roboquant.orders.createCancelOrders
 import java.time.Instant
 
 /**
@@ -116,7 +117,7 @@ class SimBroker(
             execution.order.id
         )
 
-        _account.trades += newTrade
+        _account.addTrade(newTrade)
         _account.cash.withdraw(newTrade.totalCost)
     }
 
@@ -129,8 +130,10 @@ class SimBroker(
         for (execution in executions) updateAccount(execution, event.time)
 
         // Get the latest state of orders
-        val orderStates = executionEngine.orderStates
-        _account.putOrders(orderStates)
+        executionEngine.orderStates.forEach {
+            _account.updateOrder(it.order, event.time, it.status)
+        }
+
         executionEngine.removeClosedOrders()
     }
 
@@ -146,6 +149,7 @@ class SimBroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.trace { "Received ${orders.size} orders at ${event.time}" }
+        _account.initializeOrders(orders)
         simulateMarket(orders, event)
         _account.updateMarketPrices(event)
         _account.lastUpdate = event.time
@@ -158,18 +162,18 @@ class SimBroker(
      * left in the portfolio.
      *
      * This method performs the following two steps:
-     * 1. cancel all open orders
-     * 2. close all positions by creating and processing [MarketOrder] for the required quantities, using the
+     * 1. cancel open orders
+     * 2. close open positions by creating and processing [MarketOrder] for the required quantities, using the
      * last known market price for an asset as the price action.
      */
     fun closePositions(time: Instant = _account.lastUpdate): Account {
-        val cancelOrders = _account.openOrders.map { CancelOrder(it.value) }
-        val change = _account.portfolio.values.close()
+        val account = account
+        val cancelOrders = account.openOrders.createCancelOrders()
+        val change = account.positions.close()
         val changeOrders = change.map { MarketOrder(it.key, it.value) }
-        val orders = cancelOrders + changeOrders
-        val actions = _account.portfolio.values.map { TradePrice(it.asset, it.mktPrice) }
+        val actions = account.positions.map { TradePrice(it.asset, it.mktPrice) }
         val event = Event(actions, time)
-        return place(orders, event)
+        return place(cancelOrders + changeOrders, event)
     }
 
     /**

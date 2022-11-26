@@ -61,7 +61,6 @@ internal class SimBrokerTest {
         assertEquals(1, account.assets.size)
         assertEquals(1, account.closedOrders.size)
         assertEquals(1, account.trades.size)
-
     }
 
     @Test
@@ -77,6 +76,7 @@ internal class SimBrokerTest {
         assertEquals(0, account.openOrders.size)
         assertEquals(0, account.positions.size)
         assertEquals(2, account.trades.size)
+        println(account.fullSummary())
         assertEquals(2, account.closedOrders.size)
 
     }

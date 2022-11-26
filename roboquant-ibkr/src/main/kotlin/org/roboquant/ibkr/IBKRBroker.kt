@@ -20,6 +20,7 @@ package org.roboquant.ibkr
 import com.ib.client.*
 import com.ib.client.Types.Action
 import org.roboquant.brokers.*
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.ibkr.IBKR.getAsset
@@ -112,8 +113,7 @@ class IBKRBroker(
         // There is no easy way to check for status of cancellation order
         // So for we set it always to completed
         val now = Instant.now()
-        val orderState = OrderState(cancellation, OrderStatus.COMPLETED, now, now)
-        _account.putOrder(orderState)
+        _account.completeOrder(cancellation, now)
     }
 
     /**
@@ -137,7 +137,7 @@ class IBKRBroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         // Make sure we store all orders
-        _account.initialOrders(orders)
+        _account.initializeOrders(orders)
 
         for (order in orders) {
             when(order)  {
@@ -222,27 +222,21 @@ class IBKRBroker(
             logger.debug("$id")
         }
 
-        override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: IBOrderSate) {
-            logger.debug { "orderId=$orderId asset=${contract.symbol()} qty=${order.totalQuantity()} status=${orderState.status}" }
-            logger.trace { "$orderId $contract $order $orderState" }
+        override fun openOrder(orderId: Int, contract: Contract, ibOrder: IBOrder, orderState: IBOrderSate) {
+            logger.debug { "orderId=$orderId asset=${contract.symbol()} qty=${ibOrder.totalQuantity()} status=${orderState.status}" }
+            logger.trace { "$orderId $contract $ibOrder $orderState" }
             val openOrder = orderMap[orderId]
             if (openOrder != null) {
                 if (orderState.completedStatus() == "true") {
-                    val slip = _account.openOrders[openOrder.id]
-                    if (slip != null) {
-                        _account.putOrder(
-                            OrderState(
-                                slip.order,
-                                OrderStatus.COMPLETED,
-                                closedAt = Instant.parse(orderState.completedTime())
-                            )
-                        )
+                    val order = _account.getOrder(openOrder.id)
+                    if (order != null) {
+                        _account.updateOrder(order, Instant.parse(orderState.completedTime()), OrderStatus.COMPLETED)
                     }
                 }
             } else {
-                val newOrder = toOrder(order, contract)
+                val newOrder = toOrder(ibOrder, contract)
                 orderMap[orderId] = newOrder
-                _account.putOrder(OrderState(newOrder))
+                _account.initializeOrders(listOf(newOrder))
             }
         }
 
@@ -253,15 +247,11 @@ class IBKRBroker(
         ) {
             logger.debug { "oderId: $orderId status: $status filled: $filled" }
             val order = orderMap[orderId]
-            if (order == null)
+            if (order != null) {
+                val newStatus = toStatus(status!!)
+                _account.updateOrder(order,Instant.now(), newStatus )
+            } else {
                 logger.warn { "Received unknown open order with orderId $orderId" }
-            else {
-                val slip = _account.openOrders[order.id]
-                if (slip != null) {
-                    val newStatus = toStatus(status!!)
-                    val orderState = slip.copy(Instant.now(), newStatus)
-                    _account.putOrder(orderState)
-                }
             }
         }
 
@@ -306,6 +296,7 @@ class IBKRBroker(
             // Possible values BOT and SLD
             val size = if (execution.side() == "SLD") -execution.cumQty().value() else execution.cumQty().value()
             val order = orderMap[execution.orderId()]
+
             if (order != null) {
                 val trade = Trade(
                     Instant.now(),
@@ -317,7 +308,7 @@ class IBKRBroker(
                     order.id
                 )
                 tradeMap[id] = trade
-                _account.trades += trade
+                _account.addTrade(trade)
             }
         }
 

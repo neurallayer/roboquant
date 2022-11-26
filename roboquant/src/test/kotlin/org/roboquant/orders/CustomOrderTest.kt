@@ -24,16 +24,15 @@ import kotlin.test.assertTrue
 
 internal class CustomOrderTest {
 
-    private class MySpecialOrder(asset: Asset, id: Int) : CreateOrder(asset, id, "")
+    private class MySpecialOrder(asset: Asset) : CreateOrder(asset, "")
 
     @Test
     fun basic() {
         val asset = TestData.usStock()
-        val order = MySpecialOrder(asset, 123)
+        val order = MySpecialOrder(asset)
         assertTrue(order.info().isEmpty())
         assertTrue(order.toString().isNotBlank())
         assertEquals("MYSPECIAL", order.type)
-        assertEquals(123, order.id)
         assertEquals(asset, order.asset)
     }
 

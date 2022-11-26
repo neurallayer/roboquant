@@ -16,34 +16,19 @@
 
 package org.roboquant.orders
 
-import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.Summary
-import org.roboquant.common.UnsupportedException
 import org.roboquant.common.summary
 import org.roboquant.orders.OrderStatus.*
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-/**
- * Order State keeps track of the execution state of an order. After an order is placed at a broker, the OrderState
- * informs you what is happening with that order. The most common way to access this information is through
- * [Account.openOrders] and [Account.closedOrders]
- *
- * This is an open class and can be extended with more advanced implementations.
- *
- * @property order The underlying order, which is read-only
- * @property status The latest status
- * @property openedAt When was the order first placed is [Instant.MIN] until set
- * @property closedAt When was the order closed, default is [Instant.MAX] until set
- * @constructor Create new instance of OrderState
- */
-open class OrderState(
-    val order: Order,
-    val status: OrderStatus = INITIAL,
-    val openedAt: Instant = Instant.MIN,
-    val closedAt: Instant = Instant.MAX
-) {
+
+interface OrderState {
+    val order: Order
+    val status: OrderStatus
+    val openedAt: Instant
+    val closedAt: Instant
 
     /**
      * Returns true the order status is open, false otherwise
@@ -61,29 +46,15 @@ open class OrderState(
      * Returns the underlying asset
      */
     val asset: Asset
-        get() = if (order is CreateOrder) order.asset else throw UnsupportedException("")
+       get() = order.asset
 
     /**
      * Returns the id od the order
      */
     val orderId: Int
         get() = order.id
-
-    /**
-     * Update the [time] and [newStatus] of and return the new order state.
-     */
-    fun copy(time: Instant, newStatus: OrderStatus = ACCEPTED): OrderState {
-        return if (newStatus === ACCEPTED && status === INITIAL) {
-            OrderState(order, newStatus, time)
-        } else if (newStatus.closed && status.open) {
-            val openTime = if (openedAt === Instant.MIN) time else openedAt
-            OrderState(order, newStatus, openTime, time)
-        } else {
-            this
-        }
-    }
-
 }
+
 
 /**
  * The status an order can be in. The flow is straight forward and is adhered to by all broker implementations, even
@@ -172,6 +143,7 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
                 val t1 = openedAt.truncatedTo(ChronoUnit.SECONDS)
                 val t2 = closedAt.truncatedTo(ChronoUnit.SECONDS)
                 val infoString = order.info().toString().removeSuffix("}").removePrefix("{")
+
                 lines.add(
                     listOf(
                         order.type,
@@ -196,6 +168,13 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
  * Returns true is the collection of orderStates contains at least one for [asset], false otherwise.
  */
 operator fun Collection<OrderState>.contains(asset: Asset) = any { it.asset == asset}
+
+/**
+ * Create the required [CancelOrder]s to cancel the orders. Only [OrderStatus.open] orders of the type [CreateOrder]
+ * can be cancelled and will be returned.
+ */
+fun Collection<OrderState>.createCancelOrders() : List<CancelOrder> =
+    filter { it.order is CreateOrder && it.status.open }.map { CancelOrder(it) }
 
 
 /**

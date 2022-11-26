@@ -17,9 +17,9 @@
 package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.sim.Pricing
+import org.roboquant.common.Asset
 import org.roboquant.orders.CreateOrder
 import org.roboquant.orders.OrderState
-import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
@@ -35,13 +35,20 @@ sealed interface OrderHandler {
     /**
      * What is the order state
      */
-    var state: OrderState
+    val state: OrderState
 
     /**
      * Convenience attribute to access the status
      */
     val status
         get() = state.status
+
+    /**
+     * The underlying asset
+     */
+    val asset: Asset
+        get() = state.order.asset
+
 
 }
 
@@ -68,7 +75,7 @@ interface ModifyOrderHandler : OrderHandler {
 interface CreateOrderHandler : OrderHandler {
 
     /**
-     * Execute the order for the provided [pricing] and [time]
+     * Execute the order for the provided [pricing] and [time] and return zero or more [Execution]
      */
     fun execute(pricing: Pricing, time: Instant): List<Execution>
 
@@ -80,14 +87,7 @@ interface CreateOrderHandler : OrderHandler {
     /**
      * Cancel the order, return true if successful, false otherwise
      */
-    fun cancel(time: Instant) : Boolean {
-        return if (state.status.open) {
-            state = state.copy(time, OrderStatus.CANCELLED)
-            true
-        } else {
-            false
-        }
-    }
+    fun cancel(time: Instant) : Boolean
 
 }
 

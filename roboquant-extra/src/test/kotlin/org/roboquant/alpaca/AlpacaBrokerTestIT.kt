@@ -34,6 +34,7 @@ class AlpacaBrokerTestIT {
         assertTrue(cash.isNotEmpty())
         assertFalse(cash.isMultiCurrency())
         assertTrue(broker.availableAssets.isNotEmpty())
+        println(broker.account.fullSummary())
 
         assertDoesNotThrow {
             broker.place(emptyList(), Event.empty())

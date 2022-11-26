@@ -27,13 +27,19 @@ import org.roboquant.common.Asset
  * - cancellation of an existing order
  * - update of an existing order
  *
- * An order doesn't necessary have a size, for example in case of a cancellation order.
+ * An order doesn't necessary have a size, for example in case of a cancellation order. But every order is linked to
+ * a single asset.
  *
- * @property id a unique id of the order
  * @property tag an arbitrary tag that can be associated with this order, default is an empty string
+ * @property asset the underlying asset of the order
  *
  **/
-sealed class Order(val id: Int, val tag: String) {
+sealed class Order(val asset: Asset, val tag: String) {
+
+    /**
+     * order identifier that is automatically generated and unique per process
+     */
+    val id = nextId()
 
     /**
      * @suppress
@@ -41,7 +47,8 @@ sealed class Order(val id: Int, val tag: String) {
     companion object {
 
         /**
-         * Counter used for creating unique order ids. Use [nextId] to get a new id.
+         * Counter used for creating unique order ids. Normally you should not manually change this value since the
+         * unique ID generation is a manual process.
          */
         var ID = 0
 
@@ -49,7 +56,7 @@ sealed class Order(val id: Int, val tag: String) {
          * Generate the next order id
          */
         @Synchronized
-        fun nextId(): Int {
+        private fun nextId(): Int {
             return ID++
         }
     }
@@ -67,13 +74,6 @@ sealed class Order(val id: Int, val tag: String) {
      */
     open fun info(): Map<String, Any> = emptyMap()
 
-}
-
-/**
- * Base class for all create orders. A create-order is always associated with a single [asset]
- */
-abstract class CreateOrder(val asset: Asset, id: Int, tag: String) : Order(id, tag) {
-
     /**
      * Returns a unified string representation for the different order types
      */
@@ -81,25 +81,23 @@ abstract class CreateOrder(val asset: Asset, id: Int, tag: String) : Order(id, t
         val infoStr = info().toString().removePrefix("{").removeSuffix("}")
         return "type=$type id=$id asset=${asset.symbol} tag=$tag $infoStr"
     }
+
 }
 
 /**
- * Base class for all modify orders. Modify order are not associated with an asset.
+ * Base class for all create orders.
  */
-abstract class ModifyOrder(id: Int, tag: String) : Order(id, tag) {
-    /**
-     * Returns a unified string representation for the different order types
-     */
-    override fun toString(): String {
-        val infoStr = info().toString().removePrefix("{").removeSuffix("}")
-        return "type=$type id=$id tag=$tag $infoStr"
-    }
-}
+abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag)
 
 /**
- * Returns true is the collection of orders contains at least one for [asset], false otherwise.
+ * Base class for all modify orders. Modify orders can only modify createOrders
  */
-fun Collection<Order>.contains(asset: Asset) = any {
-    if (it is CreateOrder) it.asset == asset else false
-}
+abstract class ModifyOrder(asset: Asset, tag: String) : Order(asset, tag)
+
+
+/**
+ * Returns true is the collection of orders contains at least one order for [asset], false otherwise.
+ */
+operator fun Collection<Order>.contains(asset: Asset) = any { it.asset == asset }
+
 

@@ -26,16 +26,25 @@ internal class OCOOrderHandler(val order: OCOOrder) : CreateOrderHandler {
     private val second = ExecutionEngine.getHandler(order.second) as CreateOrderHandler
     private var active = 0
 
-    override var state: OrderState = OrderState(order)
+    override val state = MutableOrderState(order)
+
+    /**
+     * Cancel the order, return true if successful, false otherwise
+     */
+    override fun cancel(time: Instant) : Boolean{
+        first.cancel(time)
+        second.cancel(time)
+        return state.cancel(time)
+    }
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-        state = state.copy(time)
+        state.update(time)
 
         if (active == 0 || active == 1) {
             val result = first.execute(pricing, time)
             if (result.isNotEmpty()) {
                 active = 1
-                state = state.copy(time, first.state.status)
+                state.update(time, first.state.status)
                 return result
             }
 
@@ -45,7 +54,7 @@ internal class OCOOrderHandler(val order: OCOOrder) : CreateOrderHandler {
             val result = second.execute(pricing, time)
             if (result.isNotEmpty()) {
                 active = 2
-                state = state.copy(time, second.state.status)
+                state.update(time, second.state.status)
                 return result
             }
         }
@@ -56,23 +65,32 @@ internal class OCOOrderHandler(val order: OCOOrder) : CreateOrderHandler {
 
 internal class OTOOrderHandler(val order: OTOOrder) : CreateOrderHandler {
 
-    override var state: OrderState = OrderState(order)
+    override val state = MutableOrderState(order)
 
     private val first = ExecutionEngine.getHandler(order.first) as CreateOrderHandler
     private val second = ExecutionEngine.getHandler(order.second) as CreateOrderHandler
 
+    /**
+     * Cancel the order, return true if successful, false otherwise
+     */
+    override fun cancel(time: Instant) : Boolean{
+        first.cancel(time)
+        second.cancel(time)
+        return state.cancel(time)
+    }
+
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-        state = state.copy(time)
+        state.update(time)
         val result = mutableListOf<Execution>()
 
         if (first.state.status.open) {
             result.addAll(first.execute(pricing, time))
-            if (first.state.status.aborted) state.copy(time, first.state.status)
+            if (first.state.status.aborted) state.update(time, first.state.status)
         }
 
         if (first.state.status == OrderStatus.COMPLETED) {
             result.addAll(second.execute(pricing, time))
-            state = state.copy(time, second.state.status)
+            state.update(time, second.state.status)
         }
 
         return result
@@ -81,14 +99,23 @@ internal class OTOOrderHandler(val order: OTOOrder) : CreateOrderHandler {
 
 internal class BracketOrderHandler(order: BracketOrder) : CreateOrderHandler {
 
-    override var state: OrderState = OrderState(order)
-
+    override val state = MutableOrderState(order)
     private val main = ExecutionEngine.getHandler(order.entry) as SingleOrderHandler<*>
     private val profit = ExecutionEngine.getHandler(order.takeProfit) as SingleOrderHandler<*>
     private val loss = ExecutionEngine.getHandler(order.stopLoss) as SingleOrderHandler<*>
 
+    /**
+     * Cancel the order, return true if successful, false otherwise
+     */
+    override fun cancel(time: Instant) : Boolean {
+        main.cancel(time)
+        profit.cancel(time)
+        loss.cancel(time)
+        return state.cancel(time)
+    }
+
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-        state = state.copy(time)
+        state.update(time)
         if (main.state.status.open) return main.execute(pricing, time)
 
         val executions = mutableListOf<Execution>()
@@ -97,7 +124,7 @@ internal class BracketOrderHandler(order: BracketOrder) : CreateOrderHandler {
         if (profit.fill.iszero) executions.addAll(loss.execute(pricing, time))
 
         val remaining = main.qty + loss.fill + profit.fill
-        if (remaining.iszero) state = state.copy(time, OrderStatus.COMPLETED)
+        if (remaining.iszero) state.update(time, OrderStatus.COMPLETED)
         return executions
     }
 

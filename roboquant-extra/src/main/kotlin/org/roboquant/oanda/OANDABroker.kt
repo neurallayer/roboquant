@@ -27,6 +27,7 @@ import com.oanda.v20.transaction.OrderCancelReason
 import com.oanda.v20.transaction.OrderFillTransaction
 import com.oanda.v20.transaction.TransactionID
 import org.roboquant.brokers.*
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
@@ -145,7 +146,7 @@ class OANDABroker(
             trx.pl.doubleValue(),
             order.id
         )
-        _account.trades += trade
+        _account.addTrade(trade)
         _account.cash.set(_account.baseCurrency, trx.accountBalance.doubleValue())
     }
 
@@ -176,10 +177,10 @@ class OANDABroker(
      */
     override fun place(orders: List<Order>, event: Event): Account {
         logger.trace { "received ${orders.size} orders and ${event.actions.size} actions" }
-        _account.initialOrders(orders)
+        _account.initializeOrders(orders)
+        val time = event.time
 
         for (order in orders) {
-            var state = OrderState(order, OrderStatus.INITIAL, event.time)
             val orderRequest = when (order) {
                 is MarketOrder -> createOrderRequest(order)
                 is LimitOrder -> createOrderRequest(order)
@@ -190,28 +191,21 @@ class OANDABroker(
             logger.debug { "Received response with last transaction Id ${resp.lastTransactionID}" }
             if (resp.orderFillTransaction != null) {
                 val trx = resp.orderFillTransaction
-                state = OrderState(order, OrderStatus.COMPLETED, event.time, event.time)
+                _account.updateOrder(order, time, OrderStatus.COMPLETED)
                 logger.debug { "Received transaction $trx" }
                 processTrade(order as CreateOrder, trx)
             } else if (resp.orderCancelTransaction != null) {
                 val trx = resp.orderCancelTransaction
 
-                state = when (trx.reason) {
-                    OrderCancelReason.TIME_IN_FORCE_EXPIRED -> OrderState(
-                        order,
-                        OrderStatus.EXPIRED,
-                        event.time,
-                        event.time
-                    )
-
-                    else -> OrderState(order, OrderStatus.REJECTED, event.time, event.time)
+                when (trx.reason) {
+                    OrderCancelReason.TIME_IN_FORCE_EXPIRED -> _account.updateOrder(order, time, OrderStatus.EXPIRED)
+                    else -> _account.updateOrder(order, time, OrderStatus.REJECTED)
                 }
                 logger.debug { "Received order cancellation for $order with reason ${trx.reason}" }
             } else {
                 logger.warn { "No order cancel or fill was returned for $order" }
             }
 
-            _account.putOrder(state)
         }
 
         // OANDA doesn't update positions quick enough, and so they don't reflect trades just made.

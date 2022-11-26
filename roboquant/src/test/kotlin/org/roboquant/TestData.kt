@@ -17,18 +17,13 @@
 package org.roboquant
 
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.InternalAccount
 import org.roboquant.brokers.Position
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.HistoricFeed
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.TradePrice
-import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.*
 import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.io.File
 import java.time.Instant
@@ -49,8 +44,9 @@ internal object TestData {
         account.setPosition(Position(asset2, Size(100), 10.0))
 
         val order = MarketOrder(asset1, 100)
-        val state = OrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
-        account.putOrders(listOf(state))
+        // val state = MutableOrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
+        account.initializeOrders(listOf(order))
+        account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED)
         return account
     }
 
@@ -63,8 +59,8 @@ internal object TestData {
         account.setPosition(Position(asset2, Size(100), 10.0))
         account.buyingPower = 100_000.USD
 
-        val order = OrderState(MarketOrder(asset1, 100), OrderStatus.INITIAL)
-        account.putOrders(listOf(order))
+        val order = MarketOrder(asset1, 100)
+        account.initializeOrders(listOf(order))
         return account.toAccount()
     }
 

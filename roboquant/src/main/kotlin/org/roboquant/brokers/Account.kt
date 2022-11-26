@@ -30,7 +30,7 @@ import java.time.temporal.ChronoUnit
  * - [cash] balances in the account
  * - the [positions] with its assets
  * - The past [trades]
- * - The [openOrders] and [closedOrders] and their state
+ * - The [openOrders] and [closedOrders] state
  *
  * Some convenience methods convert a multi-currency Wallet to a single-currency Amount. For this to work, you'll
  * need to have the appropriate exchange rates defined at [Config.exchangeRates].

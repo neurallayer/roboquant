@@ -30,7 +30,6 @@ import org.roboquant.common.EUR
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import kotlin.test.Test
@@ -69,12 +68,15 @@ internal class CashAccountTest {
         assertEquals(result, account.cash.getAmount(result.currency))
 
         val order = MarketOrder(TestData.usStock(), 100)
-        val state = OrderState(order, OrderStatus.ACCEPTED, Instant.now())
-        account.putOrders(listOf(state))
+        account.initializeOrders(listOf(order))
         val result2 = uc.getBuyingPower(account)
 
         // Right now open orders are not taken into account
         assertEquals(result2.value, result.value)
+
+        account.updateOrder(order, Instant.now(), OrderStatus.ACCEPTED)
+        val result3 = uc.getBuyingPower(account)
+        assertEquals(result3.value, result.value)
     }
 
     @Test

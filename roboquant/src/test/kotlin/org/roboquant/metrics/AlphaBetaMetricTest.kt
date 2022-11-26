@@ -19,7 +19,7 @@ package org.roboquant.metrics
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
-import org.roboquant.brokers.InternalAccount
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.brokers.Position
 import org.roboquant.common.Size
 import org.roboquant.feeds.Event

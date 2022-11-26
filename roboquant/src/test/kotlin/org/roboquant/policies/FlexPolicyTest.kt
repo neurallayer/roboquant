@@ -17,7 +17,7 @@
 package org.roboquant.policies
 
 import org.roboquant.TestData
-import org.roboquant.brokers.InternalAccount
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.common.USD

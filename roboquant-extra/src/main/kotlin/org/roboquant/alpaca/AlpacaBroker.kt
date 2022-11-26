@@ -26,6 +26,7 @@ import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce
 import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderType
 import net.jacobpeterson.alpaca.rest.AlpacaClientException
 import org.roboquant.brokers.*
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
@@ -114,16 +115,25 @@ class AlpacaBroker(
         }
     }
 
+
+    private fun updateIAccountOrder(rqOrder: Order, order: AlpacaOrder) {
+        orderMapping[rqOrder] = order.id
+        val status = toState(order)
+        val close = order.filledAt ?: order.canceledAt ?: order.expiredAt
+        val closeTime = close?.toInstant() ?: Instant.MAX
+        _account.updateOrder(rqOrder, closeTime, status)
+    }
+
+
     /**
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
     private fun syncOrders() {
-        val states = _account.openOrders.values.map {
+        _account.orders.map {
             val aOrderId = orderMapping.getValue(it.order)
             val order = alpacaAPI.orders().get(aOrderId, false)
-            toState(order, it.order)
+            updateIAccountOrder(it.order, order)
         }
-        _account.putOrders(states)
     }
 
     /**
@@ -135,16 +145,16 @@ class AlpacaBroker(
         for (order in openOrders) {
             logger.debug { "received open $order" }
             val rqOrder = toOrder(order)
-            _account.putOrders(listOf(rqOrder))
-            orderMapping[rqOrder.order] = order.id
+            _account.initializeOrders(listOf(rqOrder))
+            updateIAccountOrder(rqOrder, order)
         }
     }
 
     /**
-     * Map Alpaca order states to roboquant order state
+     * Map Alpaca order states to roboquant order status
      */
-    private fun toState(order: AlpacaOrder, roboquantOrder: Order): OrderState {
-        val status = when (order.status) {
+    private fun toState(order: AlpacaOrder): OrderStatus {
+        return when (order.status) {
             AlpacaOrderStatus.CANCELED -> OrderStatus.CANCELLED
             AlpacaOrderStatus.EXPIRED -> OrderStatus.EXPIRED
             AlpacaOrderStatus.FILLED -> OrderStatus.COMPLETED
@@ -155,15 +165,12 @@ class AlpacaBroker(
                 OrderStatus.ACCEPTED
             }
         }
-        val close = order.filledAt ?: order.canceledAt ?: order.expiredAt
-        val closeTime = close?.toInstant() ?: Instant.MAX
-        return OrderState(roboquantOrder, status, order.createdAt.toInstant(), closeTime)
     }
 
     /**
-     * Convert an alpaca order to a roboquant order
+     * Convert an alpaca order to a roboquant order. This should only be called during loading of initial orders
      */
-    private fun toOrder(order: AlpacaOrder): OrderState {
+    private fun toOrder(order: AlpacaOrder): Order {
         val asset = getAsset(order.symbol)!!
         val qty = if (order.side == OrderSide.BUY) order.quantity.toBigDecimal() else -order.quantity.toBigDecimal()
         val rqOrder = when (order.type) {
@@ -180,7 +187,7 @@ class AlpacaBroker(
             else -> throw UnsupportedException("unsupported order type for order $order")
         }
 
-        return toState(order, rqOrder)
+        return rqOrder
     }
 
     /**
@@ -239,9 +246,9 @@ class AlpacaBroker(
         try {
             val orderId = orderMapping[cancelation.state.order]
             alpacaAPI.orders().cancel(orderId)
-            _account.putOrder(OrderState(cancelation, OrderStatus.COMPLETED, now, now))
+            _account.updateOrder(cancelation, now, OrderStatus.COMPLETED)
         } catch (exception: AlpacaClientException) {
-            _account.putOrder(OrderState(cancelation, OrderStatus.REJECTED, now, now))
+            _account.updateOrder(cancelation, now, OrderStatus.REJECTED)
             logger.trace(exception) { "cancellation failed for order=$cancelation"}
         }
     }
@@ -254,7 +261,7 @@ class AlpacaBroker(
     private fun placeOrder(order: SingleOrder) {
         val asset = order.asset
         require(asset.type in setOf(AssetType.STOCK, AssetType.CRYPTO)) {
-            "Only stocks and crypto supported, received ${asset.type}"
+            "only stocks and crypto supported, received ${asset.type}"
         }
 
         val tif = when (order.tif) {
@@ -282,7 +289,6 @@ class AlpacaBroker(
             else -> throw UnsupportedException("unsupported single order type order=$order")
         }
         orderMapping[order] = alpacaOrder.id
-        _account.putOrder(OrderState(order))
     }
 
     /**
@@ -291,11 +297,12 @@ class AlpacaBroker(
      * @return the updated account that reflects the latest state
      */
     override fun place(orders: List<Order>, event: Event): Account {
+        _account.initializeOrders(orders)
         for (order in orders) {
             when(order) {
                 is SingleOrder -> placeOrder(order)
                 is CancelOrder -> cancelOrder(order)
-                else ->  throw UnsupportedException("unsupported order type order=$order")
+                else -> throw UnsupportedException("unsupported order type order=$order")
             }
         }
         _account.lastUpdate = event.time

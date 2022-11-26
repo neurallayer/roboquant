@@ -18,6 +18,7 @@ package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.orders.summary
 import java.time.Instant
@@ -54,7 +55,7 @@ internal class AccountTest {
 
     @Test
     fun testIntervalValues() {
-        val account = TestData.internalAccount()
+        val account = TestData.internalAccount().toAccount()
         assertTrue(account.closedOrders.isNotEmpty())
         assertTrue(account.trades.isEmpty())
     }

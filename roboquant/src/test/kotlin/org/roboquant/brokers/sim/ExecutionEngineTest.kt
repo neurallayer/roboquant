@@ -81,7 +81,7 @@ internal class ExecutionEngineTest {
         val state = engine.orderStates.first()
 
         val origOrder2 = LimitOrder(asset, Size(100), 11.0)
-        var order: Order = UpdateOrder(state, origOrder2, id = origOrder.id)
+        var order: Order = UpdateOrder(state, origOrder2)
         var success = engine.add(order)
         assertEquals(true, success)
 

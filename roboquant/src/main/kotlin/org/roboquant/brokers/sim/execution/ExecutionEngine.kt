@@ -103,7 +103,6 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
             // Modify order types
             register<UpdateOrder> { UpdateOrderHandler(it) }
             register<CancelOrder> { CancelOrderHandler(it) }
-            register<CancelAllOrder> { CancelAllOrderHandler(it) }
         }
 
     }
@@ -130,8 +129,9 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
     /**
      * Return the order states of all handlers
      */
-    val orderStates
+    internal val orderStates
         get() = createHandlers.map { it.state } + modifyHandlers.map { it.state }
+
 
     /**
      * Add a new [order] to the execution engine. Orders can only be processed if there is a corresponding handler
@@ -164,20 +164,21 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
      * 2. Then process any regular order but only if there is a price action in the event for the underlying asses
      */
     fun execute(event: Event): List<Execution> {
+        val time = event.time
 
         // We always first execute modify orders. These are run even if there is
         // no price for the asset known
         for (handler in modifyHandlers.open()) {
-            handler.execute(createHandlers, event.time)
+            handler.execute(createHandlers, time)
         }
 
         // Now run the create order commands
         val executions = mutableListOf<Execution>()
         val prices = event.prices
         for (handler in createHandlers.open()) {
-            val action = prices[handler.state.asset] ?: continue
-            val pricing = pricingEngine.getPricing(action, event.time)
-            val newExecutions = handler.execute(pricing, event.time)
+            val action = prices[handler.asset] ?: continue
+            val pricing = pricingEngine.getPricing(action, time)
+            val newExecutions = handler.execute(pricing, time)
             executions.addAll(newExecutions)
         }
         return executions

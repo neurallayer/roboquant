@@ -32,7 +32,7 @@ internal class ModifyOrderHandlerTest {
 
 
     @Test
-    fun testUpdate() {
+    fun testLimitOrderHandler() {
         val order1 = LimitOrder(asset, Size(100), 10.0)
         val handler = LimitOrderHandler(order1)
 
@@ -44,7 +44,7 @@ internal class ModifyOrderHandlerTest {
 
 
     @Test
-    fun testFailingUpdate() {
+    fun testFailingMarketOrderHandler() {
         val order1 = MarketOrder(asset, 100)
         val moc = MarketOrderHandler(order1)
 
@@ -56,34 +56,16 @@ internal class ModifyOrderHandlerTest {
     }
 
     @Test
-    fun testCancellation() {
+    fun testCancelOrderHandler() {
         val order1 = MarketOrder(asset, 100)
         val moc = MarketOrderHandler(order1)
 
-        val order = CancelOrder(moc.state, id=12345)
+        val order = CancelOrder(moc.state)
 
         val cmd = CancelOrderHandler(order)
         cmd.execute(listOf(moc), Instant.now())
         assertEquals(OrderStatus.COMPLETED, cmd.state.status)
         assertEquals(OrderStatus.CANCELLED, moc.state.status)
-        assertEquals("type=CANCEL id=12345 tag= size=100, tif=GTC", order.toString())
-    }
-
-
-    @Test
-    fun testCancellationAll() {
-        val order1 = MarketOrder(asset, 100)
-        val moc1 = MarketOrderHandler(order1)
-        val moc2 = MarketOrderHandler(order1)
-
-        val order = CancelAllOrder(id=12345)
-
-        val cmd = CancelAllOrderHandler(order)
-        cmd.execute(listOf(moc1, moc2), Instant.now())
-        assertEquals(OrderStatus.COMPLETED, cmd.state.status)
-        assertEquals(OrderStatus.CANCELLED, moc1.state.status)
-        assertEquals(OrderStatus.CANCELLED, moc2.state.status)
-        assertEquals("type=CANCELALL id=12345 tag= ", order.toString())
     }
 
 

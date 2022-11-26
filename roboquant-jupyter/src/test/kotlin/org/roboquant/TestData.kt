@@ -17,14 +17,12 @@
 package org.roboquant
 
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.InternalAccount
 import org.roboquant.brokers.Position
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.common.USD
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderState
-import org.roboquant.orders.OrderStatus
 
 /**
  * Test data used in unit tests
@@ -38,9 +36,7 @@ object TestData {
         account.cash.deposit(100_000.USD)
         account.setPosition(Position(asset1, Size(100), 10.0))
         account.setPosition(Position(asset2, Size(100), 10.0))
-
-        val order = OrderState(MarketOrder(asset1, 100), OrderStatus.INITIAL)
-        account.putOrders(listOf(order))
+        account.initializeOrders(listOf(MarketOrder(asset1, 100)))
         return account.toAccount()
     }
 

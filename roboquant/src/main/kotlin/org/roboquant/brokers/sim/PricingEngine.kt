@@ -22,7 +22,7 @@ import java.time.Instant
 
 /**
  * Interface that any pricing engine needs to implement. Ideally implementations should be able to support any type
- * of price actions, although they can specialize for certain types of price actions, like a PriceBar.
+ * of [PriceAction], although they can specialize for certain types of price actions, like a PriceBar.
  */
 fun interface PricingEngine {
 
@@ -49,27 +49,27 @@ fun interface PricingEngine {
 interface Pricing {
 
     /**
-     * Get the lowest price for the provided [size]. Default is the [marketPrice]
+     * Get the lowest price available for the provided [size]. Default is the [marketPrice]
      * Typically this is used to evaluate if a limit or stop has been triggered.
      */
     fun lowPrice(size: Size): Double = marketPrice(size)
 
     /**
-     * Get the highest price for the provided [size]. Default is the [marketPrice]
+     * Get the highest price available  for the provided [size]. Default is the [marketPrice]
      * Typically this is used to evaluate if a limit or stop has been triggered.
      */
     fun highPrice(size: Size): Double = marketPrice(size)
 
     /**
-     * Get the market price for the provided [size]. There is no default implementation and a needs to be provided
-     * by the implementation.
+     * Get the market price for the provided [size] that should be used for a trade. There is no default implementation
+     * this needs to be implemented by the class.
      */
     fun marketPrice(size: Size): Double
 
 }
 
 /**
- * Pricing model that uses a constant [spreadInBips] to determine the trading price. It uses the same
+ * Pricing model that uses a constant [spreadInBips] to calculate the trading price. It uses the same
  * price for high, low and market prices. It works with any type of PriceAction.
  */
 class SpreadPricingEngine(private val spreadInBips: Int = 10, private val priceType: String = "DEFAULT") :
@@ -78,6 +78,8 @@ class SpreadPricingEngine(private val spreadInBips: Int = 10, private val priceT
     private class SpreadPricing(val price: Double, val spreadPercentage: Double) : Pricing {
 
         override fun marketPrice(size: Size): Double {
+            // If BUY -> market price will be higher
+            // if SELL -> market the price will be lower
             val correction = if (size > 0) 1.0 + spreadPercentage else 1.0 - spreadPercentage
             return price * correction
         }

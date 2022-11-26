@@ -26,7 +26,7 @@ import java.time.Instant
  *
  * @property order the single order to execute
  */
-abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : CreateOrderHandler {
+internal abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : CreateOrderHandler {
 
     /**
      * Fill size
@@ -47,7 +47,12 @@ abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : CreateOrderHa
     /**
      * Order state
      */
-    override var state: OrderState = OrderState(order)
+    override val state = MutableOrderState(order)
+
+    /**
+     * Cancel the order, return true if successful, false otherwise
+     */
+    override fun cancel(time: Instant) = state.cancel(time)
 
     /**
      * Validate TiF policy and return true if order has expired according to the policy.
@@ -67,29 +72,27 @@ abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : CreateOrderHa
      * Execute the order, using the provided [pricing] and [time]
      */
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-        state = state.copy(time)
+        state.update(time)
         val execution = fill(pricing)
         fill += execution?.size ?: Size.ZERO
 
         if (expired(time)) {
-            state = state.copy(time, OrderStatus.EXPIRED)
+            state.update(time, OrderStatus.EXPIRED)
             return emptyList()
         }
 
-        if (remaining.iszero) state = state.copy(time, OrderStatus.COMPLETED)
+        if (remaining.iszero) state.update(time, OrderStatus.COMPLETED)
         return if (execution == null) emptyList() else listOf(execution)
-
     }
 
     @Suppress("ReturnCount")
     override fun update(order: CreateOrder, time: Instant): Boolean {
-        if (status == OrderStatus.ACCEPTED &&  expired(time)) return false
-        if (! status.open) return false
+        if (status == OrderStatus.ACCEPTED && expired(time)) return false
+        if (status.closed) return false
         if (order::class != this.order::class) return false
 
         @Suppress("UNCHECKED_CAST")
         val newOrder = order as T
-
         if (newOrder.size != order.size) return false
         this.order = newOrder
         return true

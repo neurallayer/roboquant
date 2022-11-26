@@ -18,32 +18,32 @@ package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.brokers.sim.execution.MutableOrderState
 import org.roboquant.common.days
-import org.roboquant.orders.OrderState
+import org.roboquant.common.plus
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import org.roboquant.common.*
 
 internal class OrderStateTest {
 
     @Test
     fun basis() {
         val order = TestData.usMarketOrder()
-        var state = OrderState(order)
+        val state = MutableOrderState(order)
         assertEquals(OrderStatus.INITIAL, state.status)
         assertFalse(state.closed)
         assertTrue(state.open)
 
         val t = Instant.now()
-        state = state.copy(t)
+        state.update(t)
         assertEquals(OrderStatus.ACCEPTED, state.status)
 
         val t2 = t + 1.days
-        state = state.copy(t2, OrderStatus.COMPLETED)
+        state.update(t2, OrderStatus.COMPLETED)
         assertEquals(OrderStatus.COMPLETED, state.status)
         assertEquals(t, state.openedAt)
         assertEquals(t2, state.closedAt)
@@ -54,12 +54,14 @@ internal class OrderStateTest {
     fun internalAccountExtensions() {
         val order = TestData.usMarketOrder()
         val account = TestData.internalAccount()
+        account.initializeOrders(listOf(order))
         account.rejectOrder(order, Instant.now())
-        assertContains(account.closedOrders.map { it.order }, order)
+        assertContains(account.toAccount().closedOrders.map { it.order }, order)
 
         val order2 = TestData.usMarketOrder()
+        account.initializeOrders(listOf(order2))
         account.acceptOrder(order2, Instant.now())
-        assertContains(account.openOrders.values.map { it.order }, order2)
+        assertContains(account.orders.map { it.order }, order2)
     }
 
 

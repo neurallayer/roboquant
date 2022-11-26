@@ -168,5 +168,5 @@ Although not enabled by default, roboquant also includes the PIT (see also https
 mvn test-compile org.pitest:pitest-maven:mutationCoverage
 ----
 
-PIT runs the unit tests against automatically modified versions of the roboquant code. When the code changes, it should produce different results and cause one or more unit tests to fail. If no unit test fails, it may indicate an issue with that the test suite desn't validate enough behavior.
+PIT runs the unit tests against automatically modified versions of the roboquant code. When the code changes, it should produce different results and cause one or more unit tests to fail. If no unit tests fail, it may indicate an issue with that the test suite doesn't validate the expected behavior.
 

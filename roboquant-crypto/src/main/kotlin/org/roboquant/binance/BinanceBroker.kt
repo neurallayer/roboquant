@@ -26,7 +26,7 @@ import com.binance.api.client.domain.account.request.CancelOrderRequest
 import com.binance.api.client.domain.account.request.OrderRequest
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
-import org.roboquant.brokers.InternalAccount
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
@@ -62,7 +62,7 @@ class BinanceBroker(
         get() = _account.toAccount()
 
     private val logger = Logging.getLogger(BinanceBroker::class)
-    private val placedOrders = mutableMapOf<Long, OrderState>()
+    private val placedOrders = mutableMapOf<Long, Int>()
     private var orderId = 0
     private val assetMap: Map<String, Asset>
 
@@ -88,16 +88,15 @@ class BinanceBroker(
         }
 
         for (order in client.getOpenOrders(OrderRequest(""))) {
-            val o = placedOrders[order.orderId]
-            if (o !== null) {
-                val orderState = when (order.status) {
-                    com.binance.api.client.domain.OrderStatus.FILLED -> o.copy(Instant.now(), OrderStatus.COMPLETED)
-                    else -> o
-                }
-                _account.openOrders[order.orderId.toInt()] = orderState
-            } else {
-                logger.info("Received unknown order $order")
+            val orderId = placedOrders[order.orderId] ?: continue
+            val state = _account.getOrder(orderId) ?: continue
+
+            when (order.status) {
+                com.binance.api.client.domain.OrderStatus.FILLED ->
+                    _account.updateOrder(state, Instant.now(), OrderStatus.COMPLETED)
+                else -> _account.updateOrder(state, Instant.now(), OrderStatus.COMPLETED)
             }
+
         }
     }
 
@@ -108,10 +107,7 @@ class BinanceBroker(
      * @return
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        val slips = orders.map {
-            OrderState(it, OrderStatus.REJECTED, event.time, event.time)
-        }
-        _account.putOrders(slips)
+        _account.initializeOrders(orders)
 
         for (order in orders) {
 
@@ -122,13 +118,13 @@ class BinanceBroker(
                     is LimitOrder -> {
                         val symbol = order.asset.symbol
                         val newLimitOrder = trade(symbol, order)
-                        placedOrders[newLimitOrder.orderId] = OrderState(order)
+                        placedOrders[newLimitOrder.orderId] = order.id
                     }
 
                     is MarketOrder -> {
                         val symbol = order.asset.symbol
                         val newMarketOrder = trade(symbol, order)
-                        placedOrders[newMarketOrder.orderId] = OrderState(order)
+                        placedOrders[newMarketOrder.orderId] = order.id
                     }
 
                     else -> logger.warn {
