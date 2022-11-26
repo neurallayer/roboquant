@@ -66,7 +66,7 @@ open class OrderState(
     /**
      * Returns the id od the order
      */
-    val id: Int
+    val orderId: Int
         get() = order.id
 
     /**

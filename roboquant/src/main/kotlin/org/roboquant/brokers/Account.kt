@@ -90,7 +90,7 @@ class Account(
      * account instance are used.
      */
     fun getOrderTrades(orders: Collection<OrderState> = this.closedOrders): Map<OrderState, List<Trade>> =
-        orders.associateWith { order -> trades.filter { it.orderId == order.id } }.toMap()
+        orders.associateWith { order -> trades.filter { it.orderId == order.orderId } }.toMap()
 
     /**
      * Convert an [amount] to the account [baseCurrency] using last update of the account as a timestamp

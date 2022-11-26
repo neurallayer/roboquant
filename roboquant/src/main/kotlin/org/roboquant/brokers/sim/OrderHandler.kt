@@ -16,7 +16,9 @@
 
 package org.roboquant.brokers.sim
 
+import org.roboquant.orders.CreateOrder
 import org.roboquant.orders.OrderState
+import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
@@ -68,6 +70,23 @@ interface CreateOrderHandler : OrderHandler {
      * Execute the order for the provided [pricing] and [time]
      */
     fun execute(pricing: Pricing, time: Instant): List<Execution>
+
+    /**
+     * Update the order, return true if successful, false otherwise
+     */
+    fun update(order: CreateOrder, time: Instant) : Boolean = false
+
+    /**
+     * Cancel the order, return true if successful, false otherwise
+     */
+    fun cancel(time: Instant) : Boolean {
+        return if (state.status.open) {
+            state = state.copy(time, OrderStatus.CANCELLED)
+            true
+        } else {
+            false
+        }
+    }
 
 }
 

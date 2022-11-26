@@ -32,7 +32,7 @@ package org.roboquant.orders
  */
 class UpdateOrder(
     val original: OrderState,
-    val update: SingleOrder,
+    val update: CreateOrder,
     id: Int = nextId(),
     tag: String = ""
 ) : ModifyOrder( id, tag) {
@@ -40,9 +40,6 @@ class UpdateOrder(
     init {
         require(original.order::class == update::class) { "update orders cannot change order type" }
         require(original.status.open) { "only open orders can be updated" }
-        if (original.order is SingleOrder) {
-            require(original.order.size == update.size) { "cannot update the size of an order"}
-        }
     }
     override fun info() = update.info()
 }

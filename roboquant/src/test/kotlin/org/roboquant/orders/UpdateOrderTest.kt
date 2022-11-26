@@ -18,7 +18,6 @@ package org.roboquant.orders
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import org.roboquant.common.Size
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -29,7 +28,6 @@ internal class UpdateOrderTest {
         val originalOrder = TestData.euMarketOrder()
         val original = OrderState(originalOrder)
         val order = UpdateOrder(original, originalOrder)
-        assertEquals(Size(10), order.update.size)
         assertEquals(original, order.original)
         assertTrue(order.toString().isNotBlank())
     }

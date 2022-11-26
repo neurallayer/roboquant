@@ -19,20 +19,35 @@ package org.roboquant.brokers.sim
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
+import org.roboquant.common.Size
 import org.roboquant.orders.*
 import java.time.Instant
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class ModifyOrderHandlerTest {
 
     private val asset = TestData.usStock()
 
+
     @Test
     fun testUpdate() {
+        val order1 = LimitOrder(asset, Size(100), 10.0)
+        val handler = LimitOrderHandler(order1)
+
+        val order2 = LimitOrder(asset, Size(100), 11.0)
+        assertTrue(handler.update(order2, Instant.now()))
+
+        assertEquals(order2.limit, handler.order.limit)
+    }
+
+
+    @Test
+    fun testFailingUpdate() {
         val order1 = MarketOrder(asset, 100)
         val moc = MarketOrderHandler(order1)
 
-        val order2 = MarketOrder(asset, 50)
+        val order2 = LimitOrder(asset, Size(100), 10.0)
         assertThrows<IllegalArgumentException> {
             UpdateOrder(moc.state, order2)
         }

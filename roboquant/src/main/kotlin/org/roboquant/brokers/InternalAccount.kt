@@ -107,7 +107,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
      * Put a single order, replacing existing one with the same order id or otherwise add it.
      */
     fun putOrder(orderState: OrderState) {
-        val id = orderState.id
+        val id = orderState.orderId
         if (orderState.open) {
             openOrders[id] = orderState
         } else {

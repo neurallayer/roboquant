@@ -80,6 +80,20 @@ abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : CreateOrderHa
 
     }
 
+    @Suppress("ReturnCount")
+    override fun update(order: CreateOrder, time: Instant): Boolean {
+        if (status == OrderStatus.ACCEPTED &&  expired(time)) return false
+        if (! status.open) return false
+        if (order::class != this.order::class) return false
+
+        @Suppress("UNCHECKED_CAST")
+        val newOrder = order as T
+
+        if (newOrder.size != order.size) return false
+        this.order = newOrder
+        return true
+    }
+
     /**
      * Subclasses only need to implement this method
      */

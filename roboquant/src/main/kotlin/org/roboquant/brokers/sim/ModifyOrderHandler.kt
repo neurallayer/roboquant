@@ -20,10 +20,12 @@ import org.roboquant.orders.OrderState
 import org.roboquant.orders.*
 import java.time.Instant
 
-private fun List<OrderHandler>.getSingleOrderHandler(id: Int) =
-    filterIsInstance<SingleOrderHandler<SingleOrder>>().firstOrNull {
-        it.order.id == id
+
+private fun List<CreateOrderHandler>.getHandler(orderId: Int) : CreateOrderHandler? =
+    firstOrNull {
+        it.state.order.id == orderId
     }
+
 
 
 /**
@@ -38,9 +40,9 @@ internal class UpdateOrderHandler(val order: UpdateOrder) : ModifyOrderHandler {
      * Update the orders for the provided [handlers] and [time]
      */
     override fun execute(handlers: List<CreateOrderHandler>, time: Instant) {
-        val handler = handlers.getSingleOrderHandler(order.original.id)
-        state = if (handler != null && handler.state.status.open) {
-            handler.order = order.update
+        val handler = handlers.getHandler(order.original.orderId)
+
+        state = if (handler != null && handler.update(order.update, time)) {
             OrderState(order, OrderStatus.COMPLETED, time, time)
         } else {
             OrderState(order, OrderStatus.REJECTED, time, time)
@@ -61,9 +63,8 @@ internal class CancelOrderHandler(val order: CancelOrder) : ModifyOrderHandler {
      * Cancel the orders for the provided [handlers] and [time]
      */
     override fun execute(handlers: List<CreateOrderHandler>, time: Instant) {
-        val handler = handlers.firstOrNull { it.state.id == order.state.id } // getSingleOrderHandler(order.state.id)
-        state = if (handler != null && handler.state.status.open) {
-            handler.state = handler.state.copy(time, OrderStatus.CANCELLED)
+        val handler = handlers.getHandler(order.state.orderId )
+        state = if (handler !== null && handler.cancel(time)) {
             OrderState(order, OrderStatus.COMPLETED, time, time)
         } else {
             OrderState(order, OrderStatus.REJECTED, time, time)
@@ -82,9 +83,7 @@ internal class CancelAllOrderHandler(val order: CancelAllOrder) : ModifyOrderHan
      * Cancel the orders for the provided [handlers] and [time]
      */
     override fun execute(handlers: List<CreateOrderHandler>, time: Instant) {
-        for (handler in handlers) {
-            if (handler.status.open) handler.state = handler.state.copy(time, OrderStatus.CANCELLED)
-        }
+        for (handler in handlers) handler.cancel(time)
         state = OrderState(order, OrderStatus.COMPLETED, time, time)
     }
 }
