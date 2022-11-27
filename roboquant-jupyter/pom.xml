@@ -30,6 +30,10 @@
     <name>roboquant jupyter</name>
     <description>Adds additional Jupyter notebook features like charts to the roboquant algorithmic trading platform</description>
 
+    <properties>
+        <jupyter.version>0.11.0-170</jupyter.version>
+    </properties>
+
     <!-- start extra info -->
     <url>https://roboquant.org</url>
 
@@ -87,13 +91,13 @@
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlin-jupyter-api</artifactId>
-            <version>0.11.0-187</version>
+            <version>${jupyter.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlin-jupyter-test-kit</artifactId>
-            <version>0.11.0-187</version>
+            <version>${jupyter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -86,9 +86,10 @@ internal class JupyterCore : JupyterIntegration() {
             outputs.clear()
         }
 
+
         afterCellExecution { _, _ ->
             outputs.forEach {
-                this.display(it,null)
+                this.display(it)
             }
             outputs.clear()
         }
