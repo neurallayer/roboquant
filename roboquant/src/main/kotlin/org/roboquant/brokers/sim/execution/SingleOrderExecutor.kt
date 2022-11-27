@@ -26,7 +26,7 @@ import java.time.Instant
  *
  * @property order the single order to execute
  */
-internal abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : CreateOrderHandler {
+internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var order: T) : CreateOrderExecutor<T> {
 
     /**
      * Fill size
@@ -44,26 +44,36 @@ internal abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : Crea
     val remaining
         get() = qty - fill
 
+    // Used by time-in-force policies
+    private lateinit var openedAt: Instant
+
     /**
      * Order state
      */
-    override val state = MutableOrderState(order)
+    override var status : OrderStatus = OrderStatus.INITIAL
 
     /**
      * Cancel the order, return true if successful, false otherwise
      */
-    override fun cancel(time: Instant) = state.cancel(time)
+    override fun cancel(time: Instant) : Boolean {
+        return if (status.closed) {
+            false
+        } else {
+            status = OrderStatus.CANCELLED
+            true
+        }
+    }
 
     /**
      * Validate TiF policy and return true if order has expired according to the policy.
      */
     private fun expired(time: Instant): Boolean {
         return when (val tif = order.tif) {
-            is GTC -> time > (state.openedAt + tif.maxDays.days)
-            is DAY -> !order.asset.exchange.sameDay(state.openedAt, time)
+            is GTC -> time > (openedAt + tif.maxDays.days)
+            is DAY -> !order.asset.exchange.sameDay(openedAt, time)
             is FOK -> remaining.nonzero
             is GTD -> time > tif.date
-            is IOC -> time > state.openedAt
+            is IOC -> time > openedAt
             else -> throw UnsupportedException("Unsupported TIF $tif")
         }
     }
@@ -72,16 +82,20 @@ internal abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : Crea
      * Execute the order, using the provided [pricing] and [time]
      */
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-        state.update(time)
+        if (status == OrderStatus.INITIAL) {
+            status = OrderStatus.ACCEPTED
+            openedAt = time
+        }
+
         val execution = fill(pricing)
         fill += execution?.size ?: Size.ZERO
 
         if (expired(time)) {
-            state.update(time, OrderStatus.EXPIRED)
+            status = OrderStatus.EXPIRED
             return emptyList()
         }
 
-        if (remaining.iszero) state.update(time, OrderStatus.COMPLETED)
+        if (remaining.iszero) status = OrderStatus.COMPLETED
         return if (execution == null) emptyList() else listOf(execution)
     }
 
@@ -104,7 +118,7 @@ internal abstract class SingleOrderHandler<T : SingleOrder>(var order: T) : Crea
     abstract fun fill(pricing: Pricing): Execution?
 }
 
-internal class MarketOrderHandler(order: MarketOrder) : SingleOrderHandler<MarketOrder>(order) {
+internal class MarketOrderExecutor(order: MarketOrder) : SingleOrderExecutor<MarketOrder>(order) {
     override fun fill(pricing: Pricing): Execution = Execution(order, remaining, pricing.marketPrice(remaining))
 }
 
@@ -134,7 +148,7 @@ private fun getTrailStop(oldStop: Double, trail: Double, size: Size, pricing: Pr
 
 }
 
-internal class LimitOrderHandler(order: LimitOrder) : SingleOrderHandler<LimitOrder>(order) {
+internal class LimitOrderExecutor(order: LimitOrder) : SingleOrderExecutor<LimitOrder>(order) {
 
     override fun fill(pricing: Pricing): Execution? {
         return if (limitTrigger(order.limit, remaining, pricing)) {
@@ -146,7 +160,7 @@ internal class LimitOrderHandler(order: LimitOrder) : SingleOrderHandler<LimitOr
 
 }
 
-internal class StopOrderHandler(order: StopOrder) : SingleOrderHandler<StopOrder>(order) {
+internal class StopOrderExecutor(order: StopOrder) : SingleOrderExecutor<StopOrder>(order) {
 
     override fun fill(pricing: Pricing): Execution? {
         if (stopTrigger(order.stop, remaining, pricing)) return Execution(
@@ -157,7 +171,7 @@ internal class StopOrderHandler(order: StopOrder) : SingleOrderHandler<StopOrder
 
 }
 
-internal class StopLimitOrderHandler(order: StopLimitOrder) : SingleOrderHandler<StopLimitOrder>(order) {
+internal class StopLimitOrderExecutor(order: StopLimitOrder) : SingleOrderExecutor<StopLimitOrder>(order) {
 
     private var stopTriggered = false
 
@@ -174,7 +188,7 @@ internal class StopLimitOrderHandler(order: StopLimitOrder) : SingleOrderHandler
 
 }
 
-internal class TrailOrderHandler(order: TrailOrder) : SingleOrderHandler<TrailOrder>(order) {
+internal class TrailOrderExecutor(order: TrailOrder) : SingleOrderExecutor<TrailOrder>(order) {
 
     private var stop = Double.NaN
 
@@ -187,7 +201,7 @@ internal class TrailOrderHandler(order: TrailOrder) : SingleOrderHandler<TrailOr
 
 }
 
-internal class TrailLimitOrderHandler(order: TrailLimitOrder) : SingleOrderHandler<TrailLimitOrder>(order) {
+internal class TrailLimitOrderExecutor(order: TrailLimitOrder) : SingleOrderExecutor<TrailLimitOrder>(order) {
 
     private var stop: Double = Double.NaN
     private var stopTriggered = false

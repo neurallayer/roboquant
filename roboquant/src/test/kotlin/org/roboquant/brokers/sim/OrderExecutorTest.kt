@@ -27,7 +27,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
-internal class OrderHandlerTest {
+internal class OrderExecutorTest {
 
     private val asset = TestData.usStock()
 
@@ -39,7 +39,7 @@ internal class OrderHandlerTest {
     @Test
     fun testMarketOrder() {
         val order = MarketOrder(asset, 100)
-        val handler = MarketOrderHandler(order)
+        val handler = MarketOrderExecutor(order)
         var executions = handler.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
 
@@ -55,7 +55,7 @@ internal class OrderHandlerTest {
     @Test
     fun testStopOrder() {
         val order = StopOrder(asset, Size(-10), 99.0)
-        val handler = StopOrderHandler(order)
+        val handler = StopOrderExecutor(order)
         var executions = handler.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
 
@@ -66,7 +66,7 @@ internal class OrderHandlerTest {
     @Test
     fun testLimitOrder() {
         val order = LimitOrder(asset, Size(10), 99.0)
-        val handler = LimitOrderHandler(order)
+        val handler = LimitOrderExecutor(order)
         var executions = handler.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
 
@@ -77,7 +77,7 @@ internal class OrderHandlerTest {
     @Test
     fun testStopLimitOrder() {
         val order = StopLimitOrder(asset, Size(-10), 100.0, 98.0)
-        val handler = StopLimitOrderHandler(order)
+        val handler = StopLimitOrderExecutor(order)
 
         var executions = handler.execute(pricing(101), Instant.now())
         assertEquals(0, executions.size)
@@ -92,7 +92,7 @@ internal class OrderHandlerTest {
     @Test
     fun testTrailOrder() {
         val order = TrailOrder(asset, Size(-10), 0.01)
-        val handler = TrailOrderHandler(order)
+        val handler = TrailOrderExecutor(order)
         var executions = handler.execute(pricing(90), Instant.now())
         assertEquals(0, executions.size)
 
@@ -106,7 +106,7 @@ internal class OrderHandlerTest {
     @Test
     fun testTrailLimitOrder() {
         val order = TrailLimitOrder(asset, Size(-10), 0.01, -1.0)
-        val handler = TrailLimitOrderHandler(order)
+        val handler = TrailLimitOrderExecutor(order)
         var executions = handler.execute(pricing(90), Instant.now())
         assertEquals(0, executions.size)
 

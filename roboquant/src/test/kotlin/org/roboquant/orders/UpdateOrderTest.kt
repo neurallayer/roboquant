@@ -18,7 +18,6 @@ package org.roboquant.orders
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import org.roboquant.brokers.sim.execution.MutableOrderState
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -27,7 +26,7 @@ internal class UpdateOrderTest {
     @Test
     fun basic() {
         val originalOrder = TestData.euMarketOrder()
-        val original = MutableOrderState(originalOrder)
+        val original = OrderState(originalOrder)
         val order = UpdateOrder(original, originalOrder)
         assertEquals(original, order.original)
         assertTrue(order.toString().isNotBlank())

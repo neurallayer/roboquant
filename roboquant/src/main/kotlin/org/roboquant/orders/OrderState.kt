@@ -18,17 +18,24 @@ package org.roboquant.orders
 
 import org.roboquant.common.Asset
 import org.roboquant.common.Summary
+import org.roboquant.common.UnsupportedException
 import org.roboquant.common.summary
 import org.roboquant.orders.OrderStatus.*
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 
-interface OrderState {
-    val order: Order
-    val status: OrderStatus
-    val openedAt: Instant
+class OrderState private constructor(
+    val order: Order,
+    val status: OrderStatus,
+    val openedAt: Instant,
     val closedAt: Instant
+) {
+
+    /**
+     * Create a new OrderState instance with the status set to [OrderStatus.INITIAL]
+     */
+    constructor(order: Order) : this(order,INITIAL, Instant.MAX, Instant.MAX)
 
     /**
      * Returns true the order status is open, false otherwise
@@ -46,15 +53,28 @@ interface OrderState {
      * Returns the underlying asset
      */
     val asset: Asset
-       get() = order.asset
+        get() = order.asset
 
     /**
      * Returns the id od the order
      */
     val orderId: Int
         get() = order.id
-}
 
+
+    /**
+     * Update the order state with a [newStatus] and [time] and return the updated version. The
+     * original version won't be modified
+     */
+    fun update(newStatus: OrderStatus, time: Instant) : OrderState {
+        // if (newStatus == OrderStatus.INITIAL) return this
+        if (status.closed) throw UnsupportedException("cannot update a closed order, status=$status")
+        val newOpenedAt = if (openedAt == Instant.MAX) time else openedAt
+        val newClosedAt = if (newStatus.closed) time else closedAt
+        return OrderState(order, newStatus, newOpenedAt, newClosedAt )
+    }
+
+}
 
 /**
  * The status an order can be in. The flow is straight forward and is adhered to by all broker implementations, even

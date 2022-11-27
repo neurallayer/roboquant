@@ -19,7 +19,7 @@ package org.roboquant.brokers.sim
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.Execution
-import org.roboquant.brokers.sim.execution.SingleOrderHandler
+import org.roboquant.brokers.sim.execution.SingleOrderExecutor
 import org.roboquant.common.*
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
@@ -28,7 +28,7 @@ import kotlin.test.assertEquals
 
 internal class TIFTest {
 
-    class MySingleOrderHandler(order: MarketOrder) : SingleOrderHandler<MarketOrder>(order) {
+    class MySingleOrderExecutor(order: MarketOrder) : SingleOrderExecutor<MarketOrder>(order) {
         var fillPercentage: Double = 1.0
 
         override fun fill(pricing: Pricing): Execution? {
@@ -46,10 +46,10 @@ internal class TIFTest {
         return engine.getPricing(TradePrice(TestData.usStock(), price.toDouble()), Instant.now())
     }
 
-    private fun getOrderCommand(tif: TimeInForce, fillPercentage: Double = 1.0): MySingleOrderHandler {
+    private fun getOrderCommand(tif: TimeInForce, fillPercentage: Double = 1.0): MySingleOrderExecutor {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, Size(50), tif)
-        val result = MySingleOrderHandler(order)
+        val result = MySingleOrderExecutor(order)
         result.fillPercentage = fillPercentage
         return result
     }

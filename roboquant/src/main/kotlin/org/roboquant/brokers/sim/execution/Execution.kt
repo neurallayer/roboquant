@@ -31,7 +31,7 @@ import org.roboquant.orders.CreateOrder
 class Execution(val order: CreateOrder, val size: Size, val price: Double) {
 
     init {
-        require(size.nonzero) { "Execution should have a non-zero quantity" }
+        require(size.nonzero) { "Execution should have a non-zero size" }
     }
 
     /**

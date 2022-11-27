@@ -131,7 +131,7 @@ class SimBroker(
 
         // Get the latest state of orders
         executionEngine.orderStates.forEach {
-            _account.updateOrder(it.order, event.time, it.status)
+            _account.updateOrder(it.first, event.time, it.second)
         }
 
         executionEngine.removeClosedOrders()

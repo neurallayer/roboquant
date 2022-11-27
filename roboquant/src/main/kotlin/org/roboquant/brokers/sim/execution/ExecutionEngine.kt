@@ -23,26 +23,8 @@ import java.util.*
 import kotlin.reflect.KClass
 
 /**
- * Order handler factory creates an [OrderHandler] for an order. The provided handler is responsible for simulating
- * the executing the order.
- *
- * @param T
- * @constructor Create empty Order handler factory
- */
-fun interface OrderHandlerFactory<T : Order> {
-
-    /**
-     * Get a handler for the provided order
-     *
-     * @param order
-     * @return
-     */
-    fun getHandler(order: T): OrderHandler
-}
-
-/**
  * Engine that simulates how orders are executed on financial markets. For any order to be executed, it needs a
- * corresponding [OrderHandler] to be registered.
+ * corresponding [OrderExecutor] to be registered.
  *
  * @property pricingEngine pricing engine to use to determine the price
  * @constructor Create new Execution engine
@@ -55,15 +37,15 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
     companion object {
 
         /**
-         * All the registered [OrderHandlerFactory]
+         * All the registered [OrderExecutorFactory]
          */
-        val factories = mutableMapOf<KClass<*>, OrderHandlerFactory<Order>>()
+        val factories = mutableMapOf<KClass<*>, OrderExecutorFactory<Order>>()
 
         /**
-         * Return the order handler for the provided [order]. This will throw an exception if no [OrderHandlerFactory]
+         * Return the order handler for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
          * is registered for the order::class.
          */
-        fun getHandler(order: Order): OrderHandler {
+        fun getExecutor(order: Order): OrderExecutor<Order> {
             val factory = factories.getValue(order::class)
             return factory.getHandler(order)
         }
@@ -79,58 +61,58 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
          * Register a new order handler [factory] for order type [T]. If there was already an order handler registered
          * for the same class it will be replaced.
          */
-        inline fun <reified T : Order> register(factory: OrderHandlerFactory<T>) {
+        inline fun <reified T : Order> register(factory: OrderExecutorFactory<T>) {
             @Suppress("UNCHECKED_CAST")
-            factories[T::class] = factory as OrderHandlerFactory<Order>
+            factories[T::class] = factory as OrderExecutorFactory<Order>
         }
 
         init {
             // register all the default included order handlers
 
             // Single Order types
-            register<MarketOrder> { MarketOrderHandler(it) }
-            register<LimitOrder> { LimitOrderHandler(it) }
-            register<StopLimitOrder> { StopLimitOrderHandler(it) }
-            register<StopOrder> { StopOrderHandler(it) }
-            register<TrailLimitOrder> { TrailLimitOrderHandler(it) }
-            register<TrailOrder> { TrailOrderHandler(it) }
+            register<MarketOrder> { MarketOrderExecutor(it) }
+            register<LimitOrder> { LimitOrderExecutor(it) }
+            register<StopLimitOrder> { StopLimitOrderExecutor(it) }
+            register<StopOrder> { StopOrderExecutor(it) }
+            register<TrailLimitOrder> { TrailLimitOrderExecutor(it) }
+            register<TrailOrder> { TrailOrderExecutor(it) }
 
             // Advanced order types
-            register<BracketOrder> { BracketOrderHandler(it) }
-            register<OCOOrder> { OCOOrderHandler(it) }
-            register<OTOOrder> { OTOOrderHandler(it) }
+            register<BracketOrder> { BracketOrderExecutor(it) }
+            register<OCOOrder> { OCOOrderExecutor(it) }
+            register<OTOOrder> { OTOOrderExecutor(it) }
 
             // Modify order types
-            register<UpdateOrder> { UpdateOrderHandler(it) }
-            register<CancelOrder> { CancelOrderHandler(it) }
+            register<UpdateOrder> { UpdateOrderExecutor(it) }
+            register<CancelOrder> { CancelOrderExecutor(it) }
         }
 
     }
 
     // Return the create-handlers
-    private val createHandlers = LinkedList<CreateOrderHandler>()
+    private val createOrders = LinkedList<CreateOrderExecutor<*>>()
 
     // Return the modify-handlers
-    private val modifyHandlers = LinkedList<ModifyOrderHandler>()
+    private val modifyOrders = LinkedList<ModifyOrderExecutor<*>>()
 
     /**
      * Get the open order handlers
      */
-    private fun <T : OrderHandler> List<T>.open() = filter { it.status.open }
+    private fun <T : OrderExecutor<*>> List<T>.open() = filter { it.status.open }
 
     /**
-     * Remove all handlers of closed orders
+     * Remove all handlers of closed orders, both create orders and modify orders
      */
     internal fun removeClosedOrders() {
-        createHandlers.removeIf { it.state.status.closed }
-        modifyHandlers.removeIf { it.state.status.closed }
+        createOrders.removeIf { it.status.closed }
+        modifyOrders.removeIf { it.status.closed }
     }
 
     /**
      * Return the order states of all handlers
      */
     internal val orderStates
-        get() = createHandlers.map { it.state } + modifyHandlers.map { it.state }
+        get() = createOrders.map { Pair(it.order, it.status) } + modifyOrders.map { Pair(it.order, it.status) }
 
 
     /**
@@ -139,9 +121,9 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
      */
     fun add(order: Order): Boolean {
 
-        return when (val handler = getHandler(order)) {
-            is ModifyOrderHandler -> modifyHandlers.add(handler)
-            is CreateOrderHandler -> createHandlers.add(handler)
+        return when (val executor = getExecutor(order)) {
+            is ModifyOrderExecutor -> modifyOrders.add(executor)
+            is CreateOrderExecutor -> createOrders.add(executor)
         }
 
     }
@@ -154,6 +136,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
     fun addAll(orders: List<Order>) {
         for (order in orders) add(order)
     }
+
 
     /**
      * Execute all the handlers of orders that are not yet closed based on the [event].
@@ -168,14 +151,14 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
         // We always first execute modify orders. These are run even if there is
         // no price for the asset known
-        for (handler in modifyHandlers.open()) {
-            handler.execute(createHandlers, time)
+        for (handler in modifyOrders.open()) {
+            handler.execute(createOrders, time)
         }
 
         // Now run the create order commands
         val executions = mutableListOf<Execution>()
         val prices = event.prices
-        for (handler in createHandlers.open()) {
+        for (handler in createOrders.open()) {
             val action = prices[handler.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, time)
             val newExecutions = handler.execute(pricing, time)
@@ -188,7 +171,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
      * Clear any state in the execution engine. All the pending open orders will be removed.
      */
     fun clear() {
-        createHandlers.clear()
+        createOrders.clear()
         pricingEngine.clear()
     }
 

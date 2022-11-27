@@ -18,37 +18,12 @@ package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import org.roboquant.brokers.sim.execution.MutableOrderState
-import org.roboquant.common.days
-import org.roboquant.common.plus
-import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 internal class OrderStateTest {
 
-    @Test
-    fun basis() {
-        val order = TestData.usMarketOrder()
-        val state = MutableOrderState(order)
-        assertEquals(OrderStatus.INITIAL, state.status)
-        assertFalse(state.closed)
-        assertTrue(state.open)
 
-        val t = Instant.now()
-        state.update(t)
-        assertEquals(OrderStatus.ACCEPTED, state.status)
-
-        val t2 = t + 1.days
-        state.update(t2, OrderStatus.COMPLETED)
-        assertEquals(OrderStatus.COMPLETED, state.status)
-        assertEquals(t, state.openedAt)
-        assertEquals(t2, state.closedAt)
-
-    }
 
     @Test
     fun internalAccountExtensions() {

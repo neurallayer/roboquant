@@ -54,7 +54,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
     /**
      * Open orders
      */
-    private val openOrders = mutableMapOf<Int, MutableOrderState>()
+    private val openOrders = mutableMapOf<Int, OrderState>()
 
     /**
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
@@ -113,7 +113,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
      * Other updates future will fail if there is no open order already present.
      */
     fun initializeOrders(orders: Collection<Order>) {
-        val newOrders =  orders.map { MutableOrderState(it) }
+        val newOrders =  orders.map { OrderState(it) }
         newOrders.forEach { openOrders[it.orderId] = it }
     }
 
@@ -126,13 +126,13 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
     fun updateOrder(order: Order, time: Instant, status: OrderStatus) {
         val id = order.id
         val state = openOrders.getValue(id)
-        state.update(time, status)
-        if (state.open) {
+        val newState = state.update(status, time)
+        if (newState.open) {
             openOrders[id] = state
         } else {
             // order is closed, so remove it from the open orders
             openOrders.remove(id) ?: throw UnsupportedException("cannot close an order that was not open first")
-            closedOrders.add(state)
+            closedOrders.add(newState)
         }
     }
 
@@ -209,3 +209,4 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
     fun getOrder(orderId: Int): Order? = openOrders[orderId]?.order
 
 }
+

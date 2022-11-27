@@ -26,7 +26,7 @@ import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class ModifyOrderHandlerTest {
+internal class ModifyOrderExecutorTest {
 
     private val asset = TestData.usStock()
 
@@ -34,7 +34,7 @@ internal class ModifyOrderHandlerTest {
     @Test
     fun testLimitOrderHandler() {
         val order1 = LimitOrder(asset, Size(100), 10.0)
-        val handler = LimitOrderHandler(order1)
+        val handler = LimitOrderExecutor(order1)
 
         val order2 = LimitOrder(asset, Size(100), 11.0)
         assertTrue(handler.update(order2, Instant.now()))
@@ -43,14 +43,15 @@ internal class ModifyOrderHandlerTest {
     }
 
 
+
     @Test
     fun testFailingMarketOrderHandler() {
         val order1 = MarketOrder(asset, 100)
-        val moc = MarketOrderHandler(order1)
+        val state = OrderState(order1)
 
         val order2 = LimitOrder(asset, Size(100), 10.0)
         assertThrows<IllegalArgumentException> {
-            UpdateOrder(moc.state, order2)
+            UpdateOrder(state, order2)
         }
 
     }
@@ -58,15 +59,18 @@ internal class ModifyOrderHandlerTest {
     @Test
     fun testCancelOrderHandler() {
         val order1 = MarketOrder(asset, 100)
-        val moc = MarketOrderHandler(order1)
+        val exec1 = MarketOrderExecutor(order1)
 
-        val order = CancelOrder(moc.state)
+        val state = OrderState(order1)
+        val order = CancelOrder(state)
 
-        val cmd = CancelOrderHandler(order)
-        cmd.execute(listOf(moc), Instant.now())
-        assertEquals(OrderStatus.COMPLETED, cmd.state.status)
-        assertEquals(OrderStatus.CANCELLED, moc.state.status)
+        val cmd = CancelOrderExecutor(order)
+        cmd.execute(listOf(exec1), Instant.now())
+        assertEquals(OrderStatus.COMPLETED, cmd.status)
+        assertEquals(OrderStatus.CANCELLED, exec1.status)
     }
+
+
 
 
 }

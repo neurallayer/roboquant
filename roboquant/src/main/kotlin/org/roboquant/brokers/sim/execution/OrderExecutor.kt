@@ -17,37 +17,29 @@
 package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.sim.Pricing
-import org.roboquant.common.Asset
 import org.roboquant.orders.CreateOrder
-import org.roboquant.orders.OrderState
+import org.roboquant.orders.ModifyOrder
+import org.roboquant.orders.Order
+import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
  * Interface for any order handler. This is a sealed interface and there are only
  * two sub interfaces:
  *
- * 1. [ModifyOrderHandler] for orders that modify other orders
- * 2. [CreateOrderHandler] for orders that generate trades
+ * 1. [ModifyOrderExecutor] for orders that modify other orders
+ * 2. [CreateOrderExecutor] for orders that generate trades
  *
  */
-sealed interface OrderHandler {
+sealed interface OrderExecutor<T: Order> {
 
-    /**
-     * What is the order state
-     */
-    val state: OrderState
+    val order: T
 
-    /**
-     * Convenience attribute to access the status
-     */
-    val status
-        get() = state.status
+    val status: OrderStatus
+        get() = OrderStatus.INITIAL
 
-    /**
-     * The underlying asset
-     */
-    val asset: Asset
-        get() = state.order.asset
+    val asset
+        get() = order.asset
 
 
 }
@@ -56,23 +48,23 @@ sealed interface OrderHandler {
  * Interface for orders that update another order. These orders don't generate trades by themselves. Also, important
  * to note that the following logic applies:
  *
- *  - they are executed first, before any [CreateOrderHandler] orders are executed
+ *  - they are executed first, before any [CreateOrderExecutor] orders are executed
  *  - they are always executed, even if there is no known price for the underlying asset at that moment in time
  *
  */
-interface ModifyOrderHandler : OrderHandler {
+interface ModifyOrderExecutor<T : ModifyOrder> : OrderExecutor<T> {
 
     /**
      * Modify the order for the provided [handlers] and [time]
      */
-    fun execute(handlers: List<CreateOrderHandler>, time: Instant)
+    fun execute(handlers: List<CreateOrderExecutor<*>>, time: Instant)
 
 }
 
 /**
  * Interface for orders that (might) generate trades.
  */
-interface CreateOrderHandler : OrderHandler {
+interface CreateOrderExecutor<T : CreateOrder> : OrderExecutor<T> {
 
     /**
      * Execute the order for the provided [pricing] and [time] and return zero or more [Execution]

@@ -25,7 +25,7 @@ import org.roboquant.orders.*
 import java.time.Instant
 import kotlin.test.assertEquals
 
-internal class CombinedOrderHandlerTest {
+internal class CombinedOrderExecutorTest {
 
     private val asset = TestData.usStock()
 
@@ -39,7 +39,7 @@ internal class CombinedOrderHandlerTest {
         val order1 = MarketOrder(asset, 100)
         val order2 = MarketOrder(asset, 50)
         val order = OCOOrder(order1, order2)
-        val cmd = OCOOrderHandler(order)
+        val cmd = OCOOrderExecutor(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
         assertEquals(Size(100), executions.first().size)
@@ -50,7 +50,7 @@ internal class CombinedOrderHandlerTest {
         val order1 = LimitOrder(asset, Size(100), 90.0)
         val order2 = MarketOrder(asset, 50)
         val order = OCOOrder(order1, order2)
-        val cmd = OCOOrderHandler(order)
+        val cmd = OCOOrderExecutor(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
         assertEquals(Size(50), executions.first().size)
@@ -61,7 +61,7 @@ internal class CombinedOrderHandlerTest {
         val order1 = MarketOrder(asset, 100)
         val order2 = MarketOrder(asset, 50)
         val order = OTOOrder(order1, order2)
-        val cmd = OTOOrderHandler(order)
+        val cmd = OTOOrderExecutor(order)
         val executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(2, executions.size)
         assertEquals(Size(100), executions.first().size)
@@ -74,7 +74,7 @@ internal class CombinedOrderHandlerTest {
         val profit = LimitOrder(asset, Size(-50), 110.0)
         val loss = StopOrder(asset, Size(-50), 95.0)
         val order = BracketOrder(entry, profit, loss)
-        val cmd = BracketOrderHandler(order)
+        val cmd = BracketOrderExecutor(order)
 
         var executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
@@ -84,7 +84,7 @@ internal class CombinedOrderHandlerTest {
 
         executions = cmd.execute(pricing(111), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(OrderStatus.COMPLETED, cmd.state.status)
+        assertEquals(OrderStatus.COMPLETED, cmd.status)
 
     }
 

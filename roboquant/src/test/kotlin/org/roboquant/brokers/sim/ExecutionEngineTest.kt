@@ -19,9 +19,8 @@ package org.roboquant.brokers.sim
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.ExecutionEngine
-import org.roboquant.brokers.sim.execution.MarketOrderHandler
+import org.roboquant.brokers.sim.execution.MarketOrderExecutor
 import org.roboquant.common.Size
-import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
@@ -71,6 +70,7 @@ internal class ExecutionEngineTest {
         assertEquals(true, success)
     }
 
+    /*
     @Test
     fun testAddingModifyOrders() {
         val engine = ExecutionEngine(NoCostPricingEngine())
@@ -111,6 +111,8 @@ internal class ExecutionEngineTest {
         assertEquals(0, engine.orderStates.size)
     }
 
+     */
+
     @Test
     fun testRegister() {
 
@@ -118,12 +120,12 @@ internal class ExecutionEngineTest {
 
         val order = TestData.usMarketOrder()
         assertFails {
-            ExecutionEngine.getHandler(order)
+            ExecutionEngine.getExecutor(order)
         }
 
-        ExecutionEngine.register<MarketOrder> { MarketOrderHandler(it) }
-        val handler = ExecutionEngine.getHandler(order)
-        assertEquals("MarketOrderHandler", handler::class.simpleName)
+        ExecutionEngine.register<MarketOrder> { MarketOrderExecutor(it) }
+        val handler = ExecutionEngine.getExecutor(order)
+        assertEquals("MarketOrderExecutor", handler::class.simpleName)
     }
 
 }
