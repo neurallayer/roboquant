@@ -21,12 +21,6 @@ import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 
-internal fun List<CreateOrderExecutor<*>>.getExecutor(orderId: Int) : CreateOrderExecutor<*>? =
-    firstOrNull {
-        it.order.id == orderId
-    }
-
-
 /**
  * Simulate the execution of a CancelOrder
  */
@@ -35,12 +29,16 @@ internal class CancelOrderExecutor(override val order: CancelOrder) : ModifyOrde
     override var status: OrderStatus = OrderStatus.INITIAL
 
     /**
-     * Cancel the orders for the provided [handlers] and [time]
+     * Cancel the orders for the provided [executor] and [time]
      */
-    override fun execute(handlers: List<CreateOrderExecutor<*>>, time: Instant) {
+    override fun execute(executor: CreateOrderExecutor<*>?, time: Instant) {
+        if (executor == null) {
+            status = OrderStatus.REJECTED
+            return
+        }
+
         status = OrderStatus.ACCEPTED
-        val handler = handlers.getExecutor(order.state.orderId )
-        status = if (handler !== null && handler.cancel(time)) {
+        status = if (executor.cancel(time)) {
             OrderStatus.COMPLETED
         } else {
             OrderStatus.REJECTED

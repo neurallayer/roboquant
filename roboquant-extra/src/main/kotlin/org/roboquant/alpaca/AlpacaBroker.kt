@@ -247,7 +247,7 @@ class AlpacaBroker(
     private fun cancelOrder(cancelation: CancelOrder) {
         val now = Instant.now()
         try {
-            val orderId = orderMapping[cancelation.state.order]
+            val orderId = orderMapping[cancelation.order]
             alpacaAPI.orders().cancel(orderId)
             _account.updateOrder(cancelation, now, OrderStatus.COMPLETED)
         } catch (exception: AlpacaClientException) {

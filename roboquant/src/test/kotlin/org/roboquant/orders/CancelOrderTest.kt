@@ -17,10 +17,9 @@
 package org.roboquant.orders
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
-import java.time.Instant
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 internal class CancelOrderTest {
 
@@ -28,18 +27,16 @@ internal class CancelOrderTest {
     fun test() {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100)
-        val state = OrderState(order)
-        val oc = CancelOrder(state)
-        assertEquals(order, oc.state.order)
+        val oc = CancelOrder(order)
+        assertEquals(order, oc.order)
     }
 
     @Test
     fun testFailure() {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100)
-        val state = OrderState(order).update(OrderStatus.COMPLETED, Instant.now())
-        assertFailsWith<java.lang.IllegalArgumentException> {
-            CancelOrder(state)
+        assertDoesNotThrow {
+            CancelOrder(order)
         }
     }
 }

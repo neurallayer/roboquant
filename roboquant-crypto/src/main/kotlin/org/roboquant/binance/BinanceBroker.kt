@@ -138,16 +138,15 @@ class BinanceBroker(
     }
 
 
-
     /**
      * Cancel an order
      *
      * @param cancellation
      */
     private fun cancelOrder(cancellation: CancelOrder) {
-        val c = cancellation.state.order
+        val c = cancellation.order
         // require(c.id.isNotEmpty()) { "Require non empty id when cancelling and order $c" }
-        val order = cancellation.state.order as CreateOrder
+        val order = cancellation.order
         val r = CancelOrderRequest(order.asset.symbol, c.id.toString())
         client.cancelOrder(r)
     }

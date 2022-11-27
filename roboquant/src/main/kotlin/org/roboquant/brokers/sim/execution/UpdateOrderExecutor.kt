@@ -13,13 +13,16 @@ internal class UpdateOrderExecutor(override val order: UpdateOrder) : ModifyOrde
     override var status: OrderStatus = OrderStatus.INITIAL
 
     /**
-     * Update the orders for the provided [handlers] and [time]
+     * Update the orders for the provided [executor] and [time]
      */
-    override fun execute(handlers: List<CreateOrderExecutor<*>>, time: Instant) {
-        status = OrderStatus.ACCEPTED
-        val handler = handlers.getExecutor(order.original.orderId)
+    override fun execute(executor: CreateOrderExecutor<*>?, time: Instant) {
+        if (executor == null) {
+            status = OrderStatus.REJECTED
+            return
+        }
 
-        status = if (handler != null && handler.update(order.update, time)) {
+        status = OrderStatus.ACCEPTED
+        status = if (executor.update(order.update, time)) {
             OrderStatus.COMPLETED
         } else {
             OrderStatus.REJECTED

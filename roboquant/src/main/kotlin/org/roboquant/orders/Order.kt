@@ -63,10 +63,10 @@ sealed class Order(val asset: Asset, val tag: String) {
 
 
     /**
-     * What is the type of order, default is the class name without the order suffix
+     * What is the type of order, default is the class name without any order suffix
      */
-    open val type
-        get() = this::class.simpleName?.removeSuffix("Order")?.uppercase() ?: "UNKNOWN"
+    open val type: String
+        get() = this::class.simpleName?.uppercase()?.removeSuffix("ORDER") ?: "UNKNOWN"
 
     /**
      * Provide extra info as map, used in displaying order information. Default is an empty map and subclasses are
@@ -85,16 +85,19 @@ sealed class Order(val asset: Asset, val tag: String) {
 }
 
 /**
- * Base class for all types of create orders.
+ * Base class for all types of create orders. This ranges from a simple [MarketOrder], all the way to advanced order
+ * types like [BracketOrder].
  */
 abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag)
 
 /**
- * Base class for all types of modify orders. Two most commonly used sub-classed are the CancelOrder and UpdateOrder.
+ * Base class for all types of modify orders. Two most commonly used subclasses are the [CancelOrder] and [UpdateOrder].
  *
- * lease note that Modify orders can only modify createOrders
+ * Please note that modify orders by design can only modify createOrders
+ *
+ * @property order the (create-)order that will be modified
  */
-abstract class ModifyOrder(asset: Asset, tag: String) : Order(asset, tag)
+abstract class ModifyOrder(val order: CreateOrder, tag: String) : Order(order.asset, tag)
 
 
 

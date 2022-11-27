@@ -17,44 +17,42 @@
 package org.roboquant.orders
 
 /**
- * Update an existing open order. It is up to the broker implementation to translate the [update] order to the correct
+ * Update an existing order. It is up to the broker implementation to translate the [update] order to the correct
  * message, so it can be processed. Only an order that is a [CreateOrder] can be updated.
+ *
+ * The SimBroker, like many other brokers, can only modify open orders. But that is currently not enforced. And even
+ * when enforced at creation time, when the order arrives at the broker, the underlying order can just be closed.
  *
  * In real life, only certain parts of an open order can be updated, like the limit price of a limit order. For many
  * other types of changes, an order needs to be cancelled first and then a new order needs to be created.
  *
- * @property original the order you want to update
+ * @param order the order you want to update
  * @property update the updated order
  * @constructor Create new UpdateOrder
  */
 class UpdateOrder(
-    val original: OrderState,
+    order: CreateOrder,
     val update: CreateOrder,
     tag: String = ""
-) : ModifyOrder(original.order.asset, tag) {
+) : ModifyOrder(order, tag) {
 
     init {
-        require(original.order::class == update::class) { "cannot update order type" }
-        require(original.order.asset == update.asset) { "cannot update asset" }
-        require(original.status.open) { "only open orders can be updated" }
+        require(order::class == update::class) { "cannot update order type" }
+        require(order.asset == update.asset) { "cannot update asset" }
     }
-    override fun info() = update.info() + mapOf("modified-id" to original.orderId)
+
+    override fun info() = update.info() + mapOf("modified-id" to order.id)
 }
 
 /**
  * Cancel an open order, will throw an exception if the order is not open anymore.
  *
- * @property state The order to cancel
+ * @property order The order to cancel
  */
 class CancelOrder(
-    val state: OrderState,
+    order: CreateOrder,
     tag: String = ""
-) : ModifyOrder(state.order.asset, tag) {
+) : ModifyOrder(order, tag) {
 
-    init {
-        require(state.status.open) { "only open orders can be cancelled" }
-        require(state.order is CreateOrder) { "only create orders can be cancelled" }
-    }
-
-    override fun info() = mapOf("modified-id" to state.orderId)
+    override fun info() = mapOf("modified-id" to order.id)
 }

@@ -27,20 +27,28 @@ import java.time.Instant
  * Interface for any order handler. This is a sealed interface and there are only
  * two sub interfaces:
  *
- * 1. [ModifyOrderExecutor] for orders that modify other orders
- * 2. [CreateOrderExecutor] for orders that generate trades
+ * 1. [ModifyOrderExecutor] for orders that modify other orders, but don't generate trades themselves
+ * 2. [CreateOrderExecutor] for new orders that can possibly generate trades
  *
  */
 sealed interface OrderExecutor<T: Order> {
 
+    /**
+     * The order to be executed
+     */
     val order: T
 
+    /**
+     * The current status of the order execution
+     */
     val status: OrderStatus
         get() = OrderStatus.INITIAL
 
+    /**
+     * The underlying asset of the order
+     */
     val asset
         get() = order.asset
-
 
 }
 
@@ -55,9 +63,10 @@ sealed interface OrderExecutor<T: Order> {
 interface ModifyOrderExecutor<T : ModifyOrder> : OrderExecutor<T> {
 
     /**
-     * Modify the order for the provided [handlers] and [time]
+     * Modify the order of the provided [executor] and [time]. Implementations need to handle the fact that no
+     * executor is found and a null is passed instead.
      */
-    fun execute(handlers: List<CreateOrderExecutor<*>>, time: Instant)
+    fun execute(executor: CreateOrderExecutor<*>?, time: Instant)
 
 }
 

@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.roboquant.brokers.sim
+package org.roboquant.brokers.sim.execution
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
-import org.roboquant.brokers.sim.execution.*
 import org.roboquant.common.Size
 import org.roboquant.orders.*
 import java.time.Instant
@@ -47,11 +46,9 @@ internal class ModifyOrderExecutorTest {
     @Test
     fun testFailingMarketOrderHandler() {
         val order1 = MarketOrder(asset, 100)
-        val state = OrderState(order1)
-
         val order2 = LimitOrder(asset, Size(100), 10.0)
         assertThrows<IllegalArgumentException> {
-            UpdateOrder(state, order2)
+            UpdateOrder(order1, order2)
         }
 
     }
@@ -61,11 +58,10 @@ internal class ModifyOrderExecutorTest {
         val order1 = MarketOrder(asset, 100)
         val exec1 = MarketOrderExecutor(order1)
 
-        val state = OrderState(order1)
-        val order = CancelOrder(state)
+        val order = CancelOrder(order1)
 
         val cmd = CancelOrderExecutor(order)
-        cmd.execute(listOf(exec1), Instant.now())
+        cmd.execute(exec1, Instant.now())
         assertEquals(OrderStatus.COMPLETED, cmd.status)
         assertEquals(OrderStatus.CANCELLED, exec1.status)
     }

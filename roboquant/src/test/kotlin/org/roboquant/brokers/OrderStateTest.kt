@@ -17,27 +17,54 @@
 package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
-import org.roboquant.TestData
+import org.junit.jupiter.api.assertThrows
+import org.roboquant.common.Asset
+import org.roboquant.common.UnsupportedException
+import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.OrderState
+import org.roboquant.orders.OrderStatus
 import java.time.Instant
-import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 internal class OrderStateTest {
 
+    private fun validate(state: OrderState, status: OrderStatus, opened: Instant, closed: Instant) {
+        assertEquals(status, state.status)
+        assertEquals(opened, state.openedAt)
+        assertEquals(closed, state.closedAt)
+    }
 
 
     @Test
-    fun internalAccountExtensions() {
-        val order = TestData.usMarketOrder()
-        val account = TestData.internalAccount()
-        account.initializeOrders(listOf(order))
-        account.rejectOrder(order, Instant.now())
-        assertContains(account.toAccount().closedOrders.map { it.order }, order)
+    fun regularFlow() {
+        val order = MarketOrder(Asset("TEST"), 100)
+        var state = OrderState(order)
+        validate(state, OrderStatus.INITIAL, Instant.MAX, Instant.MAX)
 
-        val order2 = TestData.usMarketOrder()
-        account.initializeOrders(listOf(order2))
-        account.acceptOrder(order2, Instant.now())
-        assertContains(account.orders.map { it.order }, order2)
+        val opened = Instant.now()
+        state = state.update(OrderStatus.ACCEPTED, opened)
+        validate(state, OrderStatus.ACCEPTED, opened, Instant.MAX)
+
+        val closed = Instant.now()
+        state = state.update(OrderStatus.COMPLETED, closed)
+        validate(state, OrderStatus.COMPLETED, opened, closed)
     }
+
+    @Test
+    fun errorFlow() {
+        val order = MarketOrder(Asset("TEST"), 100)
+        var state = OrderState(order)
+
+        val closed = Instant.now()
+        state = state.update(OrderStatus.COMPLETED, closed)
+        validate(state, OrderStatus.COMPLETED, closed, closed)
+
+        assertThrows<UnsupportedException> {
+            state.update(OrderStatus.COMPLETED, closed)
+        }
+
+    }
+
 
 
 }
