@@ -85,19 +85,17 @@ sealed class Order(val asset: Asset, val tag: String) {
 }
 
 /**
- * Base class for all create orders.
+ * Base class for all types of create orders.
  */
 abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag)
 
 /**
- * Base class for all modify orders. Modify orders can only modify createOrders
+ * Base class for all types of modify orders. Two most commonly used sub-classed are the CancelOrder and UpdateOrder.
+ *
+ * lease note that Modify orders can only modify createOrders
  */
 abstract class ModifyOrder(asset: Asset, tag: String) : Order(asset, tag)
 
 
-/**
- * Returns true is the collection of orders contains at least one order for [asset], false otherwise.
- */
-operator fun Collection<Order>.contains(asset: Asset) = any { it.asset == asset }
 
 

@@ -112,6 +112,12 @@ open class FlexPolicy(
     }
 
     /**
+     * Returns true is the collection of orders contains at least one order for [asset], false otherwise.
+     */
+    private operator fun Collection<Order>.contains(asset: Asset) = any { it.asset == asset }
+
+
+    /**
      * @see Policy.act
      */
     @Suppress("ComplexMethod")

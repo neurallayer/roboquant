@@ -119,9 +119,12 @@ class AlpacaBroker(
     private fun updateIAccountOrder(rqOrder: Order, order: AlpacaOrder) {
         orderMapping[rqOrder] = order.id
         val status = toState(order)
-        val close = order.filledAt ?: order.canceledAt ?: order.expiredAt
-        val closeTime = close?.toInstant() ?: Instant.MAX
-        _account.updateOrder(rqOrder, closeTime, status)
+        val time = if (status.open) {
+            order.submittedAt ?: order.createdAt ?: ZonedDateTime.now()
+        } else {
+            order.filledAt ?: order.canceledAt ?: order.expiredAt ?: ZonedDateTime.now()
+        }
+        _account.updateOrder(rqOrder, time.toInstant(), status)
     }
 
 

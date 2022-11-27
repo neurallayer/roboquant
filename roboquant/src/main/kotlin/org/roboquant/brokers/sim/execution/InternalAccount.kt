@@ -128,7 +128,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
         val state = openOrders.getValue(id)
         val newState = state.update(status, time)
         if (newState.open) {
-            openOrders[id] = state
+            openOrders[id] = newState
         } else {
             // order is closed, so remove it from the open orders
             openOrders.remove(id) ?: throw UnsupportedException("cannot close an order that was not open first")
