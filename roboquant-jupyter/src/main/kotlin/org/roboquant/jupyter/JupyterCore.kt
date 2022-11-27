@@ -72,7 +72,6 @@ internal class JupyterCore : JupyterIntegration() {
             execute("%logLevel warn")
         }
 
-
         /**
          * The resources that need to be loaded.
          */
@@ -85,7 +84,6 @@ internal class JupyterCore : JupyterIntegration() {
         beforeCellExecution {
             outputs.clear()
         }
-
 
         afterCellExecution { _, _ ->
             outputs.forEach {
