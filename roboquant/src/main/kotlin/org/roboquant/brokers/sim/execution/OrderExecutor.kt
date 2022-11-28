@@ -24,11 +24,11 @@ import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
- * Interface for any order handler. This is a sealed interface and there are only
+ * Interface for any order executor. This is a sealed interface and there are only
  * two sub interfaces:
  *
  * 1. [ModifyOrderExecutor] for orders that modify other orders, but don't generate trades themselves
- * 2. [CreateOrderExecutor] for new orders that can possibly generate trades
+ * 2. [CreateOrderExecutor] for new orders that (possibly) generate trades
  *
  * Any change to the status or order should only be done it the OrderExecutor itself, thus keep this logic isolated to
  * that particular implementation.
@@ -80,12 +80,12 @@ interface CreateOrderExecutor<T : CreateOrder> : OrderExecutor<T> {
     fun execute(pricing: Pricing, time: Instant): List<Execution>
 
     /**
-     * Update the order, return true if successful, false otherwise
+     * Update the order, return true if the update was successful, false otherwise
      */
     fun update(order: CreateOrder, time: Instant) : Boolean = false
 
     /**
-     * Cancel the order, return true if successful, false otherwise
+     * Cancel the order, return true if the cancellation was successful, false otherwise
      */
     fun cancel(time: Instant) : Boolean
 

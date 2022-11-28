@@ -32,12 +32,13 @@ import java.time.Instant
  * Simulated Broker that is used as the broker during back testing and live testing. It simulates both broker and
  * exchange behavior. It can be configured with various plug-ins that determine its exact behavior:
  *
- * @property initialDeposit initial deposit
- * @param baseCurrency the base currency to use for reporting values
- * @property feeModel the fee/commission model to use
- * @property accountModel the account model (like cash or margin) to use
- * @param pricingEngine the pricing engine to use to simulate trades
- * @constructor Create new SimBroker instance
+ * @property initialDeposit initial deposit, default is 1 million USD
+ * @param baseCurrency the base currency to use for reporting values, default is the (first) currency found in the
+ * initial deposit
+ * @property feeModel the fee/commission model to use, default is [NoFeeModel]
+ * @property accountModel the account model (like cash or margin) to use, default is [CashAccount]
+ * @param pricingEngine the pricing engine to use to simulate trades, default is [SpreadPricingEngine]
+ * @constructor Create new instance of SimBroker
  */
 class SimBroker(
     private val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
@@ -48,7 +49,7 @@ class SimBroker(
 ) : Broker {
 
     /**
-     * Create a new SimBroker with a [deposit] in currency
+     * Create a new SimBroker with a [deposit] in a [currencyCode]
      */
     constructor(deposit: Number, currencyCode: String = "USD") : this(
         Amount(
@@ -171,7 +172,7 @@ class SimBroker(
     }
 
     /**
-     * Reset all the state and set the cash balance to the [initialDeposit] again.
+     * Reset all the state and set the cash balance to the [initialDeposit].
      */
     override fun reset() {
         _account.clear()

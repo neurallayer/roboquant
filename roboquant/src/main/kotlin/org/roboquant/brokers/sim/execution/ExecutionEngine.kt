@@ -29,7 +29,7 @@ import kotlin.reflect.KClass
  * @property pricingEngine pricing engine to use to determine the price
  * @constructor Create new Execution engine
  */
-internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
+class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
     /**
      * @suppress
@@ -45,22 +45,22 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
          * Return the order handler for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
          * is registered for the order::class.
          */
-        fun <T: Order>getExecutor(order: T): OrderExecutor<T> {
+        internal fun <T: Order>getExecutor(order: T): OrderExecutor<T> {
             val factory = factories.getValue(order::class)
 
             @Suppress("UNCHECKED_CAST")
-            return factory.getHandler(order) as OrderExecutor<T>
+            return factory.getExecutor(order) as OrderExecutor<T>
         }
 
         /**
          * Return the order handler for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
          * is registered for the order::class.
          */
-        fun <T: CreateOrder>getCreateOrderExecutor(order: T): CreateOrderExecutor<T> {
+        internal fun <T: CreateOrder>getCreateOrderExecutor(order: T): CreateOrderExecutor<T> {
             val factory = factories.getValue(order::class)
 
             @Suppress("UNCHECKED_CAST")
-            return factory.getHandler(order) as CreateOrderExecutor<T>
+            return factory.getExecutor(order) as CreateOrderExecutor<T>
         }
 
         /**
@@ -132,7 +132,7 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
      * Add a new [order] to the execution engine. Orders can only be processed if there is a corresponding handler
      * registered for the order class.
      */
-    fun add(order: Order): Boolean {
+    internal fun add(order: Order): Boolean {
 
         return when (val executor = getExecutor(order)) {
             is ModifyOrderExecutor -> modifyOrders.add(executor)
@@ -146,7 +146,7 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
      * Add all [orders] to the execution engine.
      * @see [add]
      */
-    fun addAll(orders: List<Order>) {
+    internal fun addAll(orders: List<Order>) {
         for (order in orders) add(order)
     }
 
@@ -160,7 +160,7 @@ internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
      * 2. Then process any regular create order, but only if there is a price action in the event for the
      * underlying asses
      */
-    fun execute(event: Event): List<Execution> {
+    internal fun execute(event: Event): List<Execution> {
         val time = event.time
 
         // We always first execute modify-orders. These are run even if there is no known price for the asset

@@ -25,7 +25,7 @@ import java.time.Instant
 private const val EPS = 0.0000000001
 
 /**
- * Calculate sevral metrics for the returns.
+ * Calculate several metrics for the returns.
  *
  * Please note that this metric calculates the returns based on the total equity of the account.
  *

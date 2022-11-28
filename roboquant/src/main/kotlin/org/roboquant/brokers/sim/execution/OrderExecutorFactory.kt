@@ -3,7 +3,7 @@ package org.roboquant.brokers.sim.execution
 import org.roboquant.orders.Order
 
 /**
- * Factory creates an [OrderExecutor] for an order. The provided handler is responsible for simulating
+ * Factory that creates an [OrderExecutor] for an order. The provided executor is responsible for simulating
  * the executing of the order.
  *
  * @param T type of order
@@ -11,10 +11,7 @@ import org.roboquant.orders.Order
 fun interface OrderExecutorFactory<T : Order> {
 
     /**
-     * Get a handler for the provided order
-     *
-     * @param order
-     * @return
+     * Get an executor for the provided [order]
      */
-    fun getHandler(order: T): OrderExecutor<T>
+    fun getExecutor(order: T): OrderExecutor<T>
 }
