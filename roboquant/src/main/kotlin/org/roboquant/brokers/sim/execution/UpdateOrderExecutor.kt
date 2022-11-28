@@ -5,8 +5,8 @@ import org.roboquant.orders.UpdateOrder
 import java.time.Instant
 
 /**
- * Simulate the execution of a UpdateOrder. Currently, no additional checks in place if the
- * actual update would be valid in real life trading.
+ * Simulate the execution of a UpdateOrder. Currently, no additional checks are in place if the actual update would
+ * be valid in real life trading.
  */
 internal class UpdateOrderExecutor(override val order: UpdateOrder) : ModifyOrderExecutor<UpdateOrder> {
 

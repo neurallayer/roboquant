@@ -29,7 +29,7 @@ import kotlin.reflect.KClass
  * @property pricingEngine pricing engine to use to determine the price
  * @constructor Create new Execution engine
  */
-class ExecutionEngine(private val pricingEngine: PricingEngine) {
+internal class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
     /**
      * @suppress
@@ -45,9 +45,22 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
          * Return the order handler for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
          * is registered for the order::class.
          */
-        fun getExecutor(order: Order): OrderExecutor<Order> {
+        fun <T: Order>getExecutor(order: T): OrderExecutor<T> {
             val factory = factories.getValue(order::class)
-            return factory.getHandler(order)
+
+            @Suppress("UNCHECKED_CAST")
+            return factory.getHandler(order) as OrderExecutor<T>
+        }
+
+        /**
+         * Return the order handler for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
+         * is registered for the order::class.
+         */
+        fun <T: CreateOrder>getCreateOrderExecutor(order: T): CreateOrderExecutor<T> {
+            val factory = factories.getValue(order::class)
+
+            @Suppress("UNCHECKED_CAST")
+            return factory.getHandler(order) as CreateOrderExecutor<T>
         }
 
         /**
@@ -139,28 +152,28 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
 
     /**
-     * Execute all the handlers of orders that are not yet closed based on the [event].
+     * Execute all the orders that are not yet closed based on the [event] and return the resulting executions.
      *
      * Underlying Logic:
      *
      * 1. First process any open modify orders (like cancel or update)
-     * 2. Then process any regular order but only if there is a price action in the event for the underlying asses
+     * 2. Then process any regular create order, but only if there is a price action in the event for the
+     * underlying asses
      */
     fun execute(event: Event): List<Execution> {
         val time = event.time
 
-        // We always first execute modify orders. These are run even if there is
-        // no price for the asset known
+        // We always first execute modify-orders. These are run even if there is no known price for the asset
         for (handler in modifyOrders.open()) {
             val createHandler = createOrders.firstOrNull { it.order.id == handler.order.id }
             handler.execute(createHandler, time)
         }
 
-        // Now run the create order commands
+        // Now execute the create-orders. These are only run if there is a known price
         val executions = mutableListOf<Execution>()
         val prices = event.prices
         for (handler in createOrders.open()) {
-            val action = prices[handler.asset] ?: continue
+            val action = prices[handler.order.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, time)
             val newExecutions = handler.execute(pricing, time)
             executions.addAll(newExecutions)
@@ -169,7 +182,8 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
     }
 
     /**
-     * Clear any state in the execution engine. All the pending open orders will be removed.
+     * Clear any state in the execution engine. All the pending (open) orders will be removed.
+     * Only the registered execution factories will remain.
      */
     fun clear() {
         createOrders.clear()

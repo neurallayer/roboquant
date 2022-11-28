@@ -29,7 +29,9 @@ internal class CancelOrderExecutor(override val order: CancelOrder) : ModifyOrde
     override var status: OrderStatus = OrderStatus.INITIAL
 
     /**
-     * Cancel the orders for the provided [executor] and [time]
+     * Cancel the orders for the provided [executor] and [time].
+     *
+     * @see ModifyOrderExecutor.execute
      */
     override fun execute(executor: CreateOrderExecutor<*>?, time: Instant) {
         if (executor == null) {

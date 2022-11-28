@@ -31,7 +31,7 @@ internal class TIFTest {
     class MySingleOrderExecutor(order: MarketOrder) : SingleOrderExecutor<MarketOrder>(order) {
         var fillPercentage: Double = 1.0
 
-        override fun fill(pricing: Pricing): Execution? {
+        override fun fill(remaining: Size, pricing: Pricing): Execution? {
             if (fillPercentage != 0.0) {
                 val size = order.size * fillPercentage
                 return Execution(order, size, pricing.marketPrice(Size(100)))

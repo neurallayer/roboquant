@@ -3,18 +3,14 @@ package org.roboquant.brokers.sim.execution
 import org.roboquant.brokers.sim.Pricing
 import org.roboquant.orders.OTOOrder
 import org.roboquant.orders.OrderStatus
-import org.roboquant.orders.SingleOrder
 import java.time.Instant
 
 internal class OTOOrderExecutor(override val order: OTOOrder) : CreateOrderExecutor<OTOOrder> {
 
     override var status: OrderStatus = OrderStatus.INITIAL
 
-    @Suppress("UNCHECKED_CAST")
-    private val first = ExecutionEngine.getExecutor(order.first) as CreateOrderExecutor<SingleOrder>
-
-    @Suppress("UNCHECKED_CAST")
-    private val second = ExecutionEngine.getExecutor(order.second) as CreateOrderExecutor<SingleOrder>
+    private val first = ExecutionEngine.getCreateOrderExecutor(order.first)
+    private val second = ExecutionEngine.getCreateOrderExecutor(order.second)
 
     /**
      * Cancel the order, return true if successful, false otherwise

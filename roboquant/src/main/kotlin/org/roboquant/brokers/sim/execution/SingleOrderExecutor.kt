@@ -22,27 +22,24 @@ import org.roboquant.orders.*
 import java.time.Instant
 
 /**
- * Base class for executing single orders. It will take care of Time-In-Force handling and status management.
+ * Base class for executing single orders. It takes care of Time-In-Force handling and status management and makes
+ * the implementation of concrete single orders like a MarketOrder a lot easier.
  *
  * @property order the single order to execute
  */
 internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var order: T) : CreateOrderExecutor<T> {
 
     /**
-     * Fill size
+     * Fill so far
      */
     var fill = Size.ZERO
-
-    /**
-     * Quantity
-     */
-    var qty = order.size
+        private set
 
     /**
      * Remaining order size
      */
-    val remaining
-        get() = qty - fill
+    private val remaining
+        get() = order.size - fill
 
     // Used by time-in-force policies
     private lateinit var openedAt: Instant
@@ -88,7 +85,7 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
             openedAt = time
         }
 
-        val execution = fill(pricing)
+        val execution = fill(remaining, pricing)
         fill += execution?.size ?: Size.ZERO
 
         if (expired(time)) {
@@ -118,9 +115,9 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
     }
 
     /**
-     * Subclasses only need to implement this method and don't worry about time-in-force and state management.
+     * Subclasses only need to implement this method and don't need to worry about time-in-force and state management.
      */
-    abstract fun fill(pricing: Pricing): Execution?
+    abstract fun fill(remaining: Size, pricing: Pricing): Execution?
 }
 
 internal class MarketOrderExecutor(order: MarketOrder) : SingleOrderExecutor<MarketOrder>(order) {
@@ -129,7 +126,8 @@ internal class MarketOrderExecutor(order: MarketOrder) : SingleOrderExecutor<Mar
      * Market orders will always fill completely against the [pricing] provided. It uses [Pricing.marketPrice] to
      * get the actual price.
      */
-    override fun fill(pricing: Pricing): Execution = Execution(order, remaining, pricing.marketPrice(remaining))
+    override fun fill(remaining: Size, pricing: Pricing): Execution =
+        Execution(order, remaining, pricing.marketPrice(remaining))
 }
 
 private fun stopTrigger(stop: Double, size: Size, pricing: Pricing): Boolean {
@@ -160,7 +158,7 @@ private fun getTrailStop(oldStop: Double, trail: Double, size: Size, pricing: Pr
 
 internal class LimitOrderExecutor(order: LimitOrder) : SingleOrderExecutor<LimitOrder>(order) {
 
-    override fun fill(pricing: Pricing): Execution? {
+    override fun fill(remaining: Size, pricing: Pricing): Execution? {
         return if (limitTrigger(order.limit, remaining, pricing)) {
             Execution(order, remaining, order.limit)
         } else {
@@ -175,11 +173,11 @@ internal class StopOrderExecutor(order: StopOrder) : SingleOrderExecutor<StopOrd
     /**
      * Stop orders will fill completely only if the configured stop price is triggered.
      */
-    override fun fill(pricing: Pricing): Execution? {
-        if (stopTrigger(order.stop, remaining, pricing)) return Execution(
-            order, remaining, pricing.marketPrice(remaining)
-        )
-        return null
+    override fun fill(remaining: Size, pricing: Pricing): Execution? {
+        return if (stopTrigger(order.stop, remaining, pricing))
+            Execution(order, remaining, pricing.marketPrice(remaining))
+        else
+            null
     }
 
 }
@@ -188,13 +186,10 @@ internal class StopLimitOrderExecutor(order: StopLimitOrder) : SingleOrderExecut
 
     private var stopTriggered = false
 
-    override fun fill(pricing: Pricing): Execution? {
+    override fun fill(remaining: Size, pricing: Pricing): Execution? {
         if (!stopTriggered) stopTriggered = stopTrigger(order.stop, remaining, pricing)
-        if (stopTriggered && limitTrigger(order.limit, remaining, pricing)) return Execution(
-            order,
-            remaining,
-            order.limit
-        )
+        if (stopTriggered && limitTrigger(order.limit, remaining, pricing))
+            return Execution(order, remaining, order.limit)
 
         return null
     }
@@ -205,11 +200,12 @@ internal class TrailOrderExecutor(order: TrailOrder) : SingleOrderExecutor<Trail
 
     private var stop = Double.NaN
 
-    override fun fill(pricing: Pricing): Execution? {
+    override fun fill(remaining: Size, pricing: Pricing): Execution? {
         stop = getTrailStop(stop, order.trailPercentage, remaining, pricing)
-        return if (stopTrigger(stop, remaining, pricing)) Execution(
-            order, remaining, pricing.marketPrice(remaining)
-        ) else null
+        return if (stopTrigger(stop, remaining, pricing))
+            Execution(order, remaining, pricing.marketPrice(remaining)
+        ) else
+            null
     }
 
 }
@@ -219,12 +215,14 @@ internal class TrailLimitOrderExecutor(order: TrailLimitOrder) : SingleOrderExec
     private var stop: Double = Double.NaN
     private var stopTriggered = false
 
-    override fun fill(pricing: Pricing): Execution? {
+    override fun fill(remaining: Size, pricing: Pricing): Execution? {
         stop = getTrailStop(stop, order.trailPercentage, remaining, pricing)
         if (!stopTriggered) stopTriggered = stopTrigger(stop, remaining, pricing)
         val limit = stop + order.limitOffset
-        return if (stopTriggered && limitTrigger(limit, remaining, pricing)) Execution(order, remaining, limit)
-        else null
+        return if (stopTriggered && limitTrigger(limit, remaining, pricing))
+            Execution(order, remaining, limit)
+        else
+            null
     }
 
 }

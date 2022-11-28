@@ -30,6 +30,8 @@ import java.time.Instant
  * 1. [ModifyOrderExecutor] for orders that modify other orders, but don't generate trades themselves
  * 2. [CreateOrderExecutor] for new orders that can possibly generate trades
  *
+ * Any change to the status or order should only be done it the OrderExecutor itself, thus keep this logic isolated to
+ * that particular implementation.
  */
 sealed interface OrderExecutor<T: Order> {
 
@@ -44,11 +46,6 @@ sealed interface OrderExecutor<T: Order> {
     val status: OrderStatus
         get() = OrderStatus.INITIAL
 
-    /**
-     * The underlying asset of the order
-     */
-    val asset
-        get() = order.asset
 
 }
 
@@ -63,8 +60,10 @@ sealed interface OrderExecutor<T: Order> {
 interface ModifyOrderExecutor<T : ModifyOrder> : OrderExecutor<T> {
 
     /**
-     * Modify the order of the provided [executor] and [time]. Implementations need to handle the fact that no
-     * executor is found and a null is passed instead.
+     * Modify the order of the provided [executor] and [time].
+     *
+     * Implementations need to handle the fact that no executor is found and a null is passed instead. Typically, they
+     * would set their own status to REJECTED.
      */
     fun execute(executor: CreateOrderExecutor<*>?, time: Instant)
 

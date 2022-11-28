@@ -61,7 +61,8 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
             logger.warn("Having short positions while using cash account is not supported")
         }
 
-        account.buyingPower = account.cash.convert(account.baseCurrency, account.lastUpdate) - minimum
+        val buyingPower = account.cash.convert(account.baseCurrency, account.lastUpdate) - minimum
+        account.buyingPower = buyingPower
     }
 
 }
@@ -107,19 +108,6 @@ class MarginAccount(
         require(maintenanceMarginShort in 0.0..1.0) { "maintenanceMarginShort between 0.0 and 1.0" }
     }
 
-    /*
-    override fun getBuyingPower(account: InternalAccount): Amount {
-        val excessMargin = account.cash + account.portfolio.marketValue
-
-        val positions = account.portfolio.values
-        excessMargin.withdraw(positions.long.exposure * maintenanceMarginLong)
-        excessMargin.withdraw(positions.short.exposure * maintenanceMarginShort)
-        excessMargin.withdraw(Amount(account.baseCurrency, minimumEquity))
-        val buyingPower = excessMargin * (1.0 / initialMargin)
-        return buyingPower.convert(account.baseCurrency, account.lastUpdate)
-    }
-     */
-
     /**
      * @see [AccountModel.updateAccount]
      */
@@ -137,7 +125,8 @@ class MarginAccount(
         val shortExposure = positions.short.exposure.convert(currency, time) * maintenanceMarginShort
         excessMargin.withdraw(shortExposure)
 
-        account.buyingPower = excessMargin.convert(currency, time) * (1.0 / initialMargin)
+        val buyingPower = excessMargin.convert(currency, time) * (1.0 / initialMargin)
+        account.buyingPower = buyingPower
     }
 
 }

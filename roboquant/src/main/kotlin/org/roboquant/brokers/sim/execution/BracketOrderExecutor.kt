@@ -52,7 +52,7 @@ internal class BracketOrderExecutor(override val order: BracketOrder) : CreateOr
         if (loss.fill.iszero) executions.addAll(profit.execute(pricing, time))
         if (profit.fill.iszero) executions.addAll(loss.execute(pricing, time))
 
-        val remaining = entry.qty + loss.fill + profit.fill
+        val remaining = entry.order.size + loss.fill + profit.fill
         if (remaining.iszero) status = OrderStatus.COMPLETED
         return executions
     }
