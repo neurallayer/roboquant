@@ -23,24 +23,22 @@ import org.roboquant.feeds.PriceBar
 import java.time.Instant
 
 /**
- * Calculate the daily VWAP (Volume Weighted Average Price) for all the assets in a feed
+ * Calculate the daily VWAP (Volume Weighted Average Price) for all the assets in a feed.
  *
- * @property minSize minimum number of events before calculating the first VWAP
- * @constructor Create new VWAP metric
+ * Please note VWAP is a single-day indicator, as soon as the metric detects that a new trading day started, the VWAP
+ * will be reset. Also, it requires [PriceBar] data to be fully accurate since it needs the "TYPICAL" price.
+ *
+ *      VWAP = Cumulative Typical Price x Volume/Cumulative Volume
+ *
+ * @property minSize minimum number of events before calculating the first VWAP, default is 2
+ * @constructor Create new instance of the VWAPMetric
  */
 class VWAPMetric(val minSize: Int = 2) : Metric {
 
     private val calculators = mutableMapOf<Asset, VWAPDaily>()
 
     /**
-     * Calculate the metric given the account and step. This method will be invoked at the
-     * end of each step in a run. The result is [Map] with keys being a unique metric name and the value
-     * the calculated metric value. If no metrics are calculated, an empty map should be returned instead.
-     *
-     * Please note VWAP is a single-day indicator, so it only makes sense in the context of intraday events.
-     *
-     * @param account
-     * @return
+     * @see Metric.calculate
      */
     override fun calculate(account: Account, event: Event): MetricResults {
         val result = mutableMapOf<String, Double>()

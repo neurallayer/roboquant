@@ -21,8 +21,8 @@ import org.roboquant.feeds.Event
 import java.time.Instant
 
 /**
- * Metric that capture the progress of the run. The captured values are the total since
- * the start of a phase. The following metrics are captured:
+ * Metric that capture the progress of a run. The captured values are the total since the start of a phase. The
+ * following metrics are captured:
  *
  * - `progress.actions`: The number of actions
  * - `progress.steps`: The number of steps (or events)

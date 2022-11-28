@@ -26,25 +26,20 @@ import org.roboquant.feeds.Event
  * on the open positions and their last known market prices. The realized PNL is based on actual trades made
  * and the profit they generated. All amounts are converted to the base currency of the account.
  *
- * This metric can slow down back tests with many trades with several currencies, since at each step this metric
- * iterates over all available trades to calculate the realized PNL.
+ * This metric can slow down back-tests with many trades, since at each step this metric iterates over all available
+ * trades to calculate the realized PNL.
  *
  * Metric names used:
  * - pnl.realized
  * - pnl.unrealized
  * - pnl.total (= realized + unrealized)
  *
- * @constructor Create new PNL metric
+ * @constructor Create a new instance of the PNLMetric
  */
 class PNLMetric : Metric {
 
     /**
-     * Calculate any metrics given the event of information. This will be called at the
-     * end of each step in a run. The result is returned using the base currency of
-     * the account. It contains the following three metrics
-     *
-     * @param account
-     * @return
+     * @see Metric.calculate
      */
     override fun calculate(account: Account, event: Event): MetricResults {
         val result = mutableMapOf<String, Double>()

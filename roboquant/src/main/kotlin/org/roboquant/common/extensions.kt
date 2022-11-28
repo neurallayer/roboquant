@@ -331,7 +331,7 @@ inline fun <T> Collection<T>.sumOf(
     forEach {
         val amount = selector(it)
         if (singleCurrency) {
-            if (amount.currency == currency) {
+            if (amount.currency === currency) {
                 value += amount.value
             } else {
                 singleCurrency = false

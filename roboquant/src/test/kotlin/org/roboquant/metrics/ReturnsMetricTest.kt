@@ -19,16 +19,17 @@ package org.roboquant.metrics
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
+import org.roboquant.common.months
 import org.roboquant.feeds.test.HistoricTestFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.strategies.TestStrategy
 import kotlin.test.assertTrue
 
-internal class SharpRatioMetricTest {
+internal class ReturnsMetricTest {
 
     @Test
     fun basic() {
-        val metric = SharpRatioMetric()
+        val metric = ReturnsMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(account, event)
         assertTrue(result.isEmpty())
@@ -36,14 +37,14 @@ internal class SharpRatioMetricTest {
 
     @Test
     fun test2() {
-        val feed = HistoricTestFeed(100..200)
+        val feed = HistoricTestFeed(100..300)
         val strategy = TestStrategy()
-        val metric = SharpRatioMetric()
+        val metric = ReturnsMetric(period = 1.months)
         val logger = MemoryLogger(false)
         val roboquant = Roboquant(strategy, metric, logger = logger)
         roboquant.run(feed)
 
-        val sharpRatio = logger.getMetric("returns.sharpratio").last().value
+        val sharpRatio = logger.getMetric("returns.sharperatio").last().value
         assertTrue(!sharpRatio.isNaN())
 
         val mean = logger.getMetric("returns.mean").last().value
@@ -51,7 +52,6 @@ internal class SharpRatioMetricTest {
 
         val std = logger.getMetric("returns.std").last().value
         assertTrue(!std.isNaN())
-
     }
 
 }
