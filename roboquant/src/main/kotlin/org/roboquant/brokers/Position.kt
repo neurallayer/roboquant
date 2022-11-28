@@ -145,7 +145,7 @@ data class Position(
 }
 
 /**
- * Return the total market value for a collection of positions
+ * Return the total market value for a collection of positions.
  */
 val Collection<Position>.marketValue: Wallet
     get() {
@@ -153,7 +153,7 @@ val Collection<Position>.marketValue: Wallet
     }
 
 /**
- * Return the total exposure for a collection of positions
+ * Return the total exposure for a collection of positions.
  */
 val Collection<Position>.exposure: Wallet
     get() {
@@ -182,21 +182,20 @@ fun Collection<Position>.diff(target: Collection<Position>): Map<Asset, Size> {
 }
 
 
-
 /**
- * Get the unique assets for a collection of positions
+ * Get the assets for a collection of positions
  */
 val Collection<Position>.assets
     get() = map { it.asset }.distinct()
 
 /**
- * Get the long positions for a collection of positions
+ * Get all the long positions for a collection of positions
  */
 val Collection<Position>.long
     get() = filter { it.long }
 
 /**
- * Get the short positions for a collection of positions
+ * Get all the short positions for a collection of positions
  */
 val Collection<Position>.short
     get() = filter { it.short }
@@ -217,11 +216,12 @@ val Collection<Position>.unrealizedPNL : Wallet
 
 /**
  * Return the required sizes per asset to close the open positions. This method doesn't close the actual open positions,
- * just provides the information to do so.
+ * just provides the information to do so as a Pair<Asset, Size>.
  *
  *      val orders = positions.close().map { MarketOrder(it.key, it.value) }
  */
-fun Collection<Position>.close(): Map<Asset, Size> = diff(emptyList())
+val Collection<Position>.closeSizes: Map<Asset, Size>
+    get() = diff(emptyList())
 
 
 /**

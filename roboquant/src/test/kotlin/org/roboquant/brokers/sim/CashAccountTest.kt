@@ -64,19 +64,19 @@ internal class CashAccountTest {
     fun test() {
         val account = TestData.internalAccount()
         val uc = CashAccount()
-        val result = uc.getBuyingPower(account)
-        assertEquals(result, account.cash.getAmount(result.currency))
+        uc.updateAccount(account)
+        assertEquals(account.cash, account.buyingPower.toWallet())
 
         val order = MarketOrder(TestData.usStock(), 100)
         account.initializeOrders(listOf(order))
-        val result2 = uc.getBuyingPower(account)
+        uc.updateAccount(account)
 
         // Right now open orders are not taken into account
-        assertEquals(result2.value, result.value)
+        assertEquals(account.cash, account.buyingPower.toWallet())
 
         account.updateOrder(order, Instant.now(), OrderStatus.ACCEPTED)
-        val result3 = uc.getBuyingPower(account)
-        assertEquals(result3.value, result.value)
+        uc.updateAccount(account)
+        assertEquals(account.cash, account.buyingPower.toWallet())
     }
 
     @Test

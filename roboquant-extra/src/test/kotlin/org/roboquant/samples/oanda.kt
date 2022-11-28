@@ -157,7 +157,7 @@ fun oandaBroker(closePositions: Boolean = false) {
 
     // Close all open positions
     if (closePositions) {
-        val sizes = broker.account.positions.close()
+        val sizes = broker.account.positions.closeSizes
         val orders = sizes.map { MarketOrder(it.key, it.value) }
         broker.place(orders, Event.empty())
     }

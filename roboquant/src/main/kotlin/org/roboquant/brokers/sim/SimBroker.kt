@@ -137,12 +137,6 @@ class SimBroker(
         executionEngine.removeClosedOrders()
     }
 
-    private fun updateBuyingPower() {
-        val value = accountModel.getBuyingPower(_account)
-        logger.trace { "Calculated buying power $value" }
-        _account.buyingPower = value
-    }
-
     /**
      * Place [orders] at this broker and provide the [event] that just occurred. The event is just by the SimBroker to
      * get the prices required to simulate the trading on an exchange. Return an updated [Account] instance
@@ -153,13 +147,13 @@ class SimBroker(
         simulateMarket(orders, event)
         _account.updateMarketPrices(event)
         _account.lastUpdate = event.time
-        updateBuyingPower()
+        accountModel.updateAccount(_account)
         return account
     }
 
     /**
-     * Close the open positions. This comes in handy at the end of a back-test if you don't want to have open positions
-     * left in the portfolio.
+     * Close the open positions and return the updated account. This comes in handy at the end of a back-test if you
+     * don't want to have open positions left in the portfolio.
      *
      * This method performs the following two steps:
      * 1. cancel open orders
@@ -169,7 +163,7 @@ class SimBroker(
     fun closePositions(time: Instant = _account.lastUpdate): Account {
         val account = account
         val cancelOrders = account.openOrders.createCancelOrders()
-        val change = account.positions.close()
+        val change = account.positions.closeSizes
         val changeOrders = change.map { MarketOrder(it.key, it.value) }
         val actions = account.positions.map { TradePrice(it.asset, it.mktPrice) }
         val event = Event(actions, time)
@@ -177,13 +171,13 @@ class SimBroker(
     }
 
     /**
-     * Reset the state
+     * Reset all the state and set the cash balance to the [initialDeposit] again.
      */
     override fun reset() {
         _account.clear()
         executionEngine.clear()
         _account.cash.deposit(initialDeposit)
-        updateBuyingPower()
+        accountModel.updateAccount(_account)
     }
 
 }

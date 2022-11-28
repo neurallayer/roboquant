@@ -256,6 +256,7 @@ class AlpacaBroker(
         }
     }
 
+
     /**
      * Place an order of type [SingleOrder] at Alpaca.
      *

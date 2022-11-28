@@ -40,7 +40,7 @@ internal object RoboquantReplProvider : ReplProvider {
 
     private class DisplayHandlerImpl : DisplayHandler {
 
-        override fun handleDisplay(value: Any, host: ExecutionHost, id: String?) { /* NOP */
+        override fun handleDisplay(value: Any, host: ExecutionHost) { /* NOP */
         }
 
         override fun handleUpdate(value: Any, host: ExecutionHost, id: String?) { /* NOP */

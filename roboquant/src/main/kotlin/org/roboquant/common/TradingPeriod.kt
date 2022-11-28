@@ -11,6 +11,8 @@ import java.time.temporal.TemporalAmount
  * easily.
  *
  * Under the hood it will use [Config.defaultZoneId] when working with periods that require a timezone.
+ *
+ * @property period the period that this applies to
  */
 @JvmInline
 value class TradingPeriod(val period : TemporalAmount)
@@ -69,10 +71,8 @@ val Int.millis: TradingPeriod
     get() = TradingPeriod(Duration.ofMillis(this.toLong()))
 
 
-
-
 /**
- * Add a trading [period] to an instant
+ * Subtract a trading [period] to an instant
  */
 operator fun Instant.minus(period: TradingPeriod) : Instant {
     val zoneId = Config.defaultZoneId
@@ -81,7 +81,7 @@ operator fun Instant.minus(period: TradingPeriod) : Instant {
 }
 
 /**
- * Subtract a trading [period] from an instant
+ * Add a trading [period] from an instant
  */
 operator fun Instant.plus(period: TradingPeriod): Instant {
     val zoneId = Config.defaultZoneId

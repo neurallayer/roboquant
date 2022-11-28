@@ -45,10 +45,16 @@ class RSIStrategy(
     private val history = mutableMapOf<Asset, PriceSeries>()
     private val taLib = TaLib()
 
+    /**
+     * reset the history
+     */
     override fun reset() {
         history.clear()
     }
 
+    /**
+     * @see RecordingStrategy.generate
+     */
     override fun generate(event: Event): List<Signal> {
         history.addAll(event, windowSize + 1, "CLOSE")
         val result = mutableListOf<Signal>()

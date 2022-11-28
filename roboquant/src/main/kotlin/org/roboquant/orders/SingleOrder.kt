@@ -20,8 +20,10 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Size
 
 /**
- * SingleOrder types are plain non-combined orders with a pre-defined quantity and Time in Force policy. Many well-known
+ * SingleOrder types are plain non-combined orders with a pre-defined [size] and [TimeInForce] policy. Many well-known
  * order types fall under this category, like Market-, Limit- and Trail-orders.
+ *
+ * This abstract class contains common functionality across the different SingleOrder types.
  *
  * @property size the size of the order
  * @property tif the Time In Force policy to use

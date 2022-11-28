@@ -109,11 +109,11 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
 
 
     /**
-     * Add [orders] as initial orders. This is the first step a broker takes before further processing of the order.
-     * Other updates future will fail if there is no open order already present.
+     * Add [orders] as initial orders. This is the first step a broker should take before further processing
+     * the orders. Future updates using the [updateOrder] method will fail if there is no known order already present.
      */
     fun initializeOrders(orders: Collection<Order>) {
-        val newOrders =  orders.map { OrderState(it) }
+        val newOrders = orders.map { OrderState(it) }
         newOrders.forEach { openOrders[it.orderId] = it }
     }
 
@@ -136,9 +136,12 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
         }
     }
 
-
-    fun addTrade(trade: Trade) = trades.add(trade)
-
+    /**
+     * Add a new [trade] to this internal account
+     */
+    fun addTrade(trade: Trade) {
+        trades.add(trade)
+    }
 
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]
@@ -172,7 +175,6 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
             buyingPower
         )
     }
-
 
     /**
      * Return the total market value for this portfolio

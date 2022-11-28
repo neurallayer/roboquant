@@ -22,18 +22,19 @@ import org.roboquant.common.Amount
 import org.roboquant.common.Logging
 
 /**
- * Interface for modelling different types Accounts used in the [SimBroker], like a [CashAccount] or [MarginAccount]
+ * Interface for modelling different types of Accounts used in the [SimBroker], like a [CashAccount] or [MarginAccount]
  *
- * The main functionality is that at the end of each step the buying power is re-calculated and made
- * available in the attribute [Account.buyingPower].
+ * Currently, the main functionality is that at the end of each step the buying power is re-calculated and stored
+ * in the attribute [Account.buyingPower]. But in the future the implementation could make other updates to the account,
+ * for example calculate borrow feeds or interest rates that might apply.
  */
 interface AccountModel {
 
     /**
-     * Returns the total amount of remaining buying power for a given [account]. The returned amount should be
-     * denoted the base currency of the account.
+     * Update the [account] based on the rules within the account model. Currently only the buying-power is calculated
+     * and set.
      */
-    fun getBuyingPower(account: InternalAccount): Amount
+    fun updateAccount(account: InternalAccount)
 
 }
 
@@ -52,12 +53,15 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 
     private val logger = Logging.getLogger(CashAccount::class)
 
-    override fun getBuyingPower(account: InternalAccount): Amount {
+    /**
+     * @see [AccountModel.updateAccount]
+     */
+    override fun updateAccount(account: InternalAccount) {
         if (account.portfolio.values.any { it.short }) {
             logger.warn("Having short positions while using cash account is not supported")
         }
 
-        return account.cash.convert(account.baseCurrency, account.lastUpdate) - minimum
+        account.buyingPower = account.cash.convert(account.baseCurrency, account.lastUpdate) - minimum
     }
 
 }
@@ -116,8 +120,10 @@ class MarginAccount(
     }
      */
 
-
-    override fun getBuyingPower(account: InternalAccount): Amount {
+    /**
+     * @see [AccountModel.updateAccount]
+     */
+    override fun updateAccount(account: InternalAccount) {
         val time = account.lastUpdate
         val currency = account.baseCurrency
         val positions = account.portfolio.values
@@ -131,7 +137,7 @@ class MarginAccount(
         val shortExposure = positions.short.exposure.convert(currency, time) * maintenanceMarginShort
         excessMargin.withdraw(shortExposure)
 
-        return excessMargin.convert(currency, time) * (1.0 / initialMargin)
+        account.buyingPower = excessMargin.convert(currency, time) * (1.0 / initialMargin)
     }
 
 }

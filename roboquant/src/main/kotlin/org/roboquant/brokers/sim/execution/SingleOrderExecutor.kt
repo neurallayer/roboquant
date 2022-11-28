@@ -22,7 +22,7 @@ import org.roboquant.orders.*
 import java.time.Instant
 
 /**
- * Base class for executing single orders
+ * Base class for executing single orders. It will take care of Time-In-Force handling and status management.
  *
  * @property order the single order to execute
  */
@@ -48,12 +48,13 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
     private lateinit var openedAt: Instant
 
     /**
-     * Order state
+     * Order status
      */
     override var status : OrderStatus = OrderStatus.INITIAL
 
     /**
-     * Cancel the order, return true if successful, false otherwise
+     * Cancel the order, return true if successful, false otherwise. Any open SingleOrder can be cancelled, closed
+     * orders not.
      */
     override fun cancel(time: Instant) : Boolean {
         return if (status.closed) {
@@ -65,7 +66,7 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
     }
 
     /**
-     * Validate TiF policy and return true if order has expired according to the policy.
+     * Validate TiF policy and return true if order has expired according to the defined policy.
      */
     private fun expired(time: Instant): Boolean {
         return when (val tif = order.tif) {
@@ -74,12 +75,12 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
             is FOK -> remaining.nonzero
             is GTD -> time > tif.date
             is IOC -> time > openedAt
-            else -> throw UnsupportedException("Unsupported TIF $tif")
+            else -> throw UnsupportedException("unsupported time-in-force policy tif=$tif")
         }
     }
 
     /**
-     * Execute the order, using the provided [pricing] and [time]
+     * Execute the order, using the provided [pricing] and [time] as input.
      */
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
         if (status == OrderStatus.INITIAL) {
@@ -103,22 +104,31 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
     override fun update(order: CreateOrder, time: Instant): Boolean {
         if (status == OrderStatus.ACCEPTED && expired(time)) return false
         if (status.closed) return false
-        if (order::class != this.order::class) return false
 
         @Suppress("UNCHECKED_CAST")
-        val newOrder = order as T
-        if (newOrder.size != order.size) return false
-        this.order = newOrder
-        return true
+        val newOrder = order as? T
+        return if (newOrder != null) {
+            if (newOrder.size != order.size) return false
+            this.order = newOrder
+            true
+        } else {
+            false
+        }
+
     }
 
     /**
-     * Subclasses only need to implement this method
+     * Subclasses only need to implement this method and don't worry about time-in-force and state management.
      */
     abstract fun fill(pricing: Pricing): Execution?
 }
 
 internal class MarketOrderExecutor(order: MarketOrder) : SingleOrderExecutor<MarketOrder>(order) {
+
+    /**
+     * Market orders will always fill completely against the [pricing] provided. It uses [Pricing.marketPrice] to
+     * get the actual price.
+     */
     override fun fill(pricing: Pricing): Execution = Execution(order, remaining, pricing.marketPrice(remaining))
 }
 
@@ -162,6 +172,9 @@ internal class LimitOrderExecutor(order: LimitOrder) : SingleOrderExecutor<Limit
 
 internal class StopOrderExecutor(order: StopOrder) : SingleOrderExecutor<StopOrder>(order) {
 
+    /**
+     * Stop orders will fill completely only if the configured stop price is triggered.
+     */
     override fun fill(pricing: Pricing): Execution? {
         if (stopTrigger(order.stop, remaining, pricing)) return Execution(
             order, remaining, pricing.marketPrice(remaining)
