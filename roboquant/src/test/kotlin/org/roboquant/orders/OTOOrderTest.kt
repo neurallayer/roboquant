@@ -32,8 +32,8 @@ internal class OTOOrderTest {
             MarketOrder(asset, 200)
         )
 
-        assertTrue(order.first is MarketOrder)
-        assertEquals(order.first.asset, order.asset)
+        assertTrue(order.primary is MarketOrder)
+        assertEquals(order.primary.asset, order.asset)
         assertTrue(order.toString().isNotBlank())
     }
 

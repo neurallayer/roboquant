@@ -78,7 +78,8 @@ class SimBroker(
     }
 
     /**
-     * Update the portfolio with the provided [position] and return the realized PNL.
+     * Update the portfolio with the provided [position] and return the realized PNL as a consequence of this position
+     * change.
      */
     private fun updatePosition(position: Position): Amount {
         val asset = position.asset
@@ -101,9 +102,10 @@ class SimBroker(
         execution: Execution,
         time: Instant
     ) {
-
         val asset = execution.order.asset
         val position = Position(asset, execution.size, execution.price)
+
+        // Are there any fees to be considered
         val fee = feeModel.calculate(execution)
 
         // PNL includes the fee
@@ -122,19 +124,24 @@ class SimBroker(
         _account.cash.withdraw(newTrade.totalCost)
     }
 
+    /**
+     * Invoke the [executionEngine] to simulate the execution of open orders and update the internal account afterwards
+     * with any trades made.
+     */
     private fun simulateMarket(newOrders: List<Order>, event: Event) {
         // Add new orders to the execution engine and run it with the latest events
         executionEngine.addAll(newOrders)
         val executions = executionEngine.execute(event)
 
-        // Process the new executions
+        // Process any new executions to be reflected in the trades and cash balance
         for (execution in executions) updateAccount(execution, event.time)
 
-        // Get the latest state of orders
+        // Get the latest state of orders and update the status of internal account
         executionEngine.orderStates.forEach {
             _account.updateOrder(it.first, event.time, it.second)
         }
 
+        // Now it is safe to remove closed orders
         executionEngine.removeClosedOrders()
     }
 
@@ -172,7 +179,7 @@ class SimBroker(
     }
 
     /**
-     * Reset all the state and set the cash balance to the [initialDeposit].
+     * Reset all the state and set the cash balance back to the [initialDeposit].
      */
     override fun reset() {
         _account.clear()

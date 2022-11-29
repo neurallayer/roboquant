@@ -32,6 +32,8 @@ import org.roboquant.common.Asset
  *
  * @property tag an arbitrary tag that can be associated with this order, default is an empty string
  * @property asset the underlying asset of the order
+ * @property tag an (optional) tag that can be used to store additional information, for example relate the order to
+ * a specific signal for future traceability.
  *
  **/
 sealed class Order(val asset: Asset, val tag: String) {
@@ -96,6 +98,7 @@ abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag)
  * Please note that modify orders by design can only modify createOrders
  *
  * @property order the (create-)order that will be modified
+ * @param tag an optional tag
  */
 abstract class ModifyOrder(val order: CreateOrder, tag: String) : Order(order.asset, tag)
 

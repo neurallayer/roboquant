@@ -32,6 +32,16 @@ internal class CancelOrderTest {
     }
 
     @Test
+    fun state() {
+        val asset = TestData.usStock()
+        val order = MarketOrder(asset, 100)
+        val oc = CancelOrder(OrderState(order), "some tag")
+        assertEquals(order, oc.order)
+        assertEquals("some tag", oc.tag)
+    }
+
+
+    @Test
     fun testFailure() {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100)

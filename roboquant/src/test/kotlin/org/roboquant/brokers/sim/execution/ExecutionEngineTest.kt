@@ -52,7 +52,7 @@ internal class ExecutionEngineTest {
         val asset = TestData.usStock()
         val size = Size(100)
 
-        var order: Order = OCOOrder(LimitOrder(asset, size, 200.0), LimitOrder(asset, -size, 200.0))
+        var order: Order = OCOOrder(LimitOrder(asset, -size, 200.0), StopOrder(asset, -size, 190.0))
         var success = engine.add(order)
         assertEquals(true, success)
 

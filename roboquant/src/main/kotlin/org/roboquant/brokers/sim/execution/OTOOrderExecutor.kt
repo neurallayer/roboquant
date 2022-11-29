@@ -9,8 +9,8 @@ internal class OTOOrderExecutor(override val order: OTOOrder) : CreateOrderExecu
 
     override var status: OrderStatus = OrderStatus.INITIAL
 
-    private val first = ExecutionEngine.getCreateOrderExecutor(order.first)
-    private val second = ExecutionEngine.getCreateOrderExecutor(order.second)
+    private val first = ExecutionEngine.getCreateOrderExecutor(order.primary)
+    private val second = ExecutionEngine.getCreateOrderExecutor(order.secondary)
 
     /**
      * Cancel the order, return true if successful, false otherwise

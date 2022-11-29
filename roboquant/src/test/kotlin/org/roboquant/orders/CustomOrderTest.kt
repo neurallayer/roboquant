@@ -19,6 +19,7 @@ package org.roboquant.orders
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
+import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -34,6 +35,17 @@ internal class CustomOrderTest {
         assertTrue(order.toString().isNotBlank())
         assertEquals("MYSPECIAL", order.type)
         assertEquals(asset, order.asset)
+    }
+
+    @Test
+    fun state() {
+        val asset = TestData.usStock()
+        val order = MySpecialOrder(asset)
+        val state = OrderState(order)
+        assertEquals(OrderStatus.INITIAL, state.status)
+
+        val newState = state.update(OrderStatus.COMPLETED, Instant.now())
+        assertEquals(OrderStatus.COMPLETED, newState.status)
     }
 
 }

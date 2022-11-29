@@ -16,24 +16,24 @@
 
 package org.roboquant.orders
 
-import org.junit.jupiter.api.Test
-import org.roboquant.TestData
-import org.roboquant.common.Size
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+/**
+ * Cancel a create-order.
+ *
+ * @param order the order to cancel
+ * @param tag an optional tag
+ */
+class CancelOrder(
+    order: CreateOrder,
+    tag: String = ""
+) : ModifyOrder(order, tag) {
 
-class OCOOrderTest {
-
-    @Test
-    fun test() {
-        val asset = TestData.usStock()
-        val order = OCOOrder(
-            LimitOrder(asset, Size(100), 10.9),
-            StopOrder(asset, Size(100), 11.1)
-        )
-        assertEquals(order.first.asset, order.asset)
-        assertTrue(order.toString().isNotBlank())
-
+    /**
+     * Create instance of CancelOrder based on the [OrderState] of an open order. This will throw an exception if
+     * the order is not open anymore or if the passed state doesn't contain a create-order.
+     */
+    constructor(state: OrderState, tag:String="") : this(state.order as CreateOrder, tag) {
+        require(state.open) { "only open orders can be cancelled"}
     }
 
+    override fun info() = mapOf("modified-id" to order.id)
 }

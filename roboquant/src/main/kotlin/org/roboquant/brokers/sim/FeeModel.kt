@@ -25,7 +25,7 @@ import kotlin.math.absoluteValue
 interface FeeModel {
 
     /**
-     * Any fees or commissions applicable for the provided [execution]. The returned value should be denoted in the
+     * Any fees or commissions applicable for the provided [execution]. The returned value is denoted in the
      * currency of the underlying asset of the order.
      *
      * Typically, a fee should be a positive value, unless you want to model rebates and other rewards.

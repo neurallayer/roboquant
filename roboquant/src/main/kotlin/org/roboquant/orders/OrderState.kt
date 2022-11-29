@@ -18,17 +18,17 @@ package org.roboquant.orders
 
 import org.roboquant.common.Asset
 import org.roboquant.common.Summary
-import org.roboquant.common.UnsupportedException
 import org.roboquant.common.summary
 import org.roboquant.orders.OrderStatus.*
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 /**
- * Keeps track of the state of an order. This is a read-only class and any [update] will generate a new instance.
+ * Keeps track of the state of an order. This is a read-only class and any [update] will generate a new instance (also
+ * sometimes referred to an Immutable State Pattern).
  *
  * @property order the order that is tracked
- * @property status the actual status
+ * @property status the actual status or the order
  * @property openedAt when was the order first opened, if not yet known the value is [Instant.MAX]
  * @property closedAt  when was the order closed, if not yet known the value is [Instant.MAX]
  */
@@ -58,13 +58,13 @@ class OrderState private constructor(
         get() = status.closed
 
     /**
-     * Returns the underlying asset
+     * Returns the asset of the order
      */
     val asset: Asset
         get() = order.asset
 
     /**
-     * Returns the id od the order
+     * Returns the id of the order
      */
     val orderId: Int
         get() = order.id
@@ -72,11 +72,14 @@ class OrderState private constructor(
 
     /**
      * Update the order state with a [newStatus] and [time] and return the updated version. The
-     * original version won't be modified
+     * original version won't be modified.
+     *
+     * This method will take care that the right state transition happens. And if it is not allowed, it will throw an
+     * IllegalState Exception.
      */
     fun update(newStatus: OrderStatus, time: Instant) : OrderState {
         // if (newStatus == OrderStatus.INITIAL) return this
-        if (status.closed) throw UnsupportedException("cannot update a closed order, status=$status")
+        if (status.closed) throw IllegalStateException("cannot update a closed order, status=$status")
         val newOpenedAt = if (openedAt == Instant.MAX) time else openedAt
         val newClosedAt = if (newStatus.closed) time else closedAt
         return OrderState(order, newStatus, newOpenedAt, newClosedAt )
@@ -84,14 +87,12 @@ class OrderState private constructor(
 
 }
 
-
 private fun Instant.toPrettyString() : String {
     return if (this == Instant.MAX) "-" else this.truncatedTo(ChronoUnit.SECONDS).toString()
 }
 
-
 /**
- * Provide a summary for the orders
+ * Provide a summary for the collection of OrderState
  */
 @JvmName("summaryOrders")
 fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
