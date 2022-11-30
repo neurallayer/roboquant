@@ -20,9 +20,11 @@ import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.common.Size
+import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
+import kotlin.test.assertTrue
 
 internal class ExecutionEngineTest {
 
@@ -69,7 +71,7 @@ internal class ExecutionEngineTest {
         assertEquals(true, success)
     }
 
-    /*
+
     @Test
     fun testAddingModifyOrders() {
         val engine = ExecutionEngine(NoCostPricingEngine())
@@ -77,14 +79,12 @@ internal class ExecutionEngineTest {
 
         val origOrder = LimitOrder(asset, Size(100), 10.0)
         engine.add(origOrder)
-        val state = engine.orderStates.first()
-
         val origOrder2 = LimitOrder(asset, Size(100), 11.0)
-        var order: Order = UpdateOrder(state, origOrder2)
+        var order: Order = UpdateOrder(origOrder, origOrder2)
         var success = engine.add(order)
         assertEquals(true, success)
 
-        order = CancelOrder(state)
+        order = CancelOrder(origOrder)
         success = engine.add(order)
         assertEquals(true, success)
     }
@@ -95,22 +95,21 @@ internal class ExecutionEngineTest {
         val asset = TestData.usStock()
 
         val origOrder = MarketOrder(asset, 100)
-        engine.add(origOrder)
+        assertTrue(engine.add(origOrder))
 
-        val state = engine.orderStates.first()
-
-        val order = CancelOrder(state)
-        val success = engine.add(order)
-        assertEquals(true, success)
+        val order = CancelOrder(origOrder)
+        assertTrue(engine.add(order))
 
         val executions = engine.execute(Event.empty())
         assertEquals(0, executions.size)
         assertEquals(2, engine.orderStates.size)
+        engine.orderStates.forEach { println(it) }
+        assertTrue(engine.orderStates.all { it.second.closed })
         engine.removeClosedOrders()
         assertEquals(0, engine.orderStates.size)
     }
 
-     */
+
 
     @Test
     fun testRegister() {

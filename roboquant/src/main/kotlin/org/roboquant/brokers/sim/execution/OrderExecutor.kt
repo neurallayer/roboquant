@@ -60,6 +60,11 @@ sealed interface OrderExecutor<T: Order> {
 interface ModifyOrderExecutor<T : ModifyOrder> : OrderExecutor<T> {
 
     /**
+     * The create-order that needs be modified
+     */
+    val createOrder: CreateOrder
+
+    /**
      * Modify the order of the provided [executor] and [time].
      *
      * Implementations need to handle the fact that no executor is found and a null is passed instead. Typically, they

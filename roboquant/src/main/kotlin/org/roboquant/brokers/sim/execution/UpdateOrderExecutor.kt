@@ -1,5 +1,6 @@
 package org.roboquant.brokers.sim.execution
 
+import org.roboquant.orders.CreateOrder
 import org.roboquant.orders.OrderStatus
 import org.roboquant.orders.UpdateOrder
 import java.time.Instant
@@ -11,6 +12,9 @@ import java.time.Instant
 internal class UpdateOrderExecutor(override val order: UpdateOrder) : ModifyOrderExecutor<UpdateOrder> {
 
     override var status: OrderStatus = OrderStatus.INITIAL
+
+    override val createOrder: CreateOrder
+        get() = order.order
 
     /**
      * Update the orders for the provided [executor] and [time]

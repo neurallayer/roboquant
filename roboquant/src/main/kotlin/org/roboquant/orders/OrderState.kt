@@ -133,10 +133,10 @@ operator fun Collection<OrderState>.contains(asset: Asset) = any { it.asset == a
 
 /**
  * Create the required [CancelOrder]s to cancel the orders. Only [OrderStatus.open] orders of the type [CreateOrder]
- * can be cancelled and will be returned.
+ * can be cancelled and will be included in the returned cancellations.
  */
 fun Collection<OrderState>.createCancelOrders() : List<CancelOrder> =
-    filter { it.status.open }.map{ it.order }.filterIsInstance<CreateOrder>().map { CancelOrder(it) }
+    filter { it.status.open && it.order is CreateOrder }.map { CancelOrder(it) }
 
 
 /**

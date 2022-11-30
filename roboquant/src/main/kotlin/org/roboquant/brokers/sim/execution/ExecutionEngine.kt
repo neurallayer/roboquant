@@ -165,7 +165,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
         // We always first execute modify-orders. These are run even if there is no known price for the asset
         for (handler in modifyOrders.open()) {
-            val createHandler = createOrders.firstOrNull { it.order.id == handler.order.id }
+            val createHandler = createOrders.firstOrNull { it.order.id == handler.createOrder.id }
             handler.execute(createHandler, time)
         }
 

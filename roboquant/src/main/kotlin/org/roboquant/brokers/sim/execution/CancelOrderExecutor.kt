@@ -17,6 +17,7 @@
 package org.roboquant.brokers.sim.execution
 
 import org.roboquant.orders.CancelOrder
+import org.roboquant.orders.CreateOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
@@ -27,6 +28,9 @@ import java.time.Instant
 internal class CancelOrderExecutor(override val order: CancelOrder) : ModifyOrderExecutor<CancelOrder> {
 
     override var status: OrderStatus = OrderStatus.INITIAL
+
+    override val createOrder: CreateOrder
+        get() = order.order
 
     /**
      * Cancel the orders for the provided [executor] and [time].
