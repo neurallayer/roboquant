@@ -17,7 +17,6 @@
 package org.roboquant.brokers.sim.execution
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.Pricing
@@ -38,23 +37,20 @@ internal class CombinedOrderExecutorTest {
 
     @Test
     fun testOCO() {
-        val order1 = MarketOrder(asset, 100)
-        val order2 = MarketOrder(asset, 100)
+        val size = Size(-100)
+        val order1 = StopOrder(asset, size, 90.0)
+        val order2 = LimitOrder(asset, size, 110.0)
         val order = OCOOrder(order1, order2)
         val cmd = OCOOrderExecutor(order)
-        val executions = cmd.execute(pricing(100), Instant.now())
-        assertEquals(1, executions.size)
-        assertEquals(Size(100), executions.first().size)
+        var executions = cmd.execute(pricing(100), Instant.now())
+        assertEquals(0, executions.size)
+        assertEquals(OrderStatus.ACCEPTED, cmd.status)
+
+        executions = cmd.execute(pricing(120), Instant.now())
+        assertEquals(size, executions.first().size)
+        assertEquals(OrderStatus.COMPLETED, cmd.status)
     }
 
-    @Test
-    fun testOCOFails() {
-        val order1 = LimitOrder(asset, Size(100), 90.0)
-        val order2 = MarketOrder(asset, 50)
-        assertThrows<IllegalArgumentException> {
-            OCOOrder(order1, order2)
-        }
-    }
 
     @Test
     fun testOTO() {
@@ -66,10 +62,11 @@ internal class CombinedOrderExecutorTest {
         assertEquals(2, executions.size)
         assertEquals(Size(100), executions.first().size)
         assertEquals(Size(50), executions.last().size)
+        assertEquals(OrderStatus.COMPLETED, cmd.status)
     }
 
     @Test
-    fun testBracker() {
+    fun testBracketOrder() {
         val entry = MarketOrder(asset, 50)
         val profit = LimitOrder(asset, Size(-50), 110.0)
         val loss = StopOrder(asset, Size(-50), 95.0)
@@ -78,9 +75,11 @@ internal class CombinedOrderExecutorTest {
 
         var executions = cmd.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
+        assertEquals(OrderStatus.ACCEPTED, cmd.status)
 
         executions = cmd.execute(pricing(102), Instant.now())
         assertEquals(0, executions.size)
+        assertEquals(OrderStatus.ACCEPTED, cmd.status)
 
         executions = cmd.execute(pricing(111), Instant.now())
         assertEquals(1, executions.size)

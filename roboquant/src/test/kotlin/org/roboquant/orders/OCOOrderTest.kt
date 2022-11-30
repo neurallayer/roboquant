@@ -17,6 +17,7 @@
 package org.roboquant.orders
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.Size
 import kotlin.test.assertEquals
@@ -24,9 +25,11 @@ import kotlin.test.assertTrue
 
 class OCOOrderTest {
 
+    val asset = TestData.usStock()
+
     @Test
     fun test() {
-        val asset = TestData.usStock()
+
         val order = OCOOrder(
             LimitOrder(asset, Size(100), 10.9),
             StopOrder(asset, Size(100), 11.1)
@@ -34,6 +37,15 @@ class OCOOrderTest {
         assertEquals(order.first.asset, order.asset)
         assertTrue(order.toString().isNotBlank())
 
+    }
+
+    @Test
+    fun testOCOFails() {
+        val order1 = LimitOrder(asset, Size(100), 90.0)
+        val order2 = MarketOrder(asset, 50)
+        assertThrows<IllegalArgumentException> {
+            OCOOrder(order1, order2)
+        }
     }
 
 }
