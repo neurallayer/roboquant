@@ -40,7 +40,7 @@ typealias DataType = DataAPIType
  * @property secretKey the secret key to access the API
  * @property accountType account type, either PAPER or LIVE
  * @property dataType type of data to use, IEX or SIP
- * @constructor Create new Alpaca config
+ * @constructor Create a new instance of AlpacaConfig
  */
 data class AlpacaConfig(
     var publicKey: String = Config.getProperty("alpaca.public.key", ""),
@@ -50,10 +50,12 @@ data class AlpacaConfig(
 ) {
 
     init {
-        require(accountType == AccountType.PAPER) { "Only Paper trading supported, received $accountType" }
+        require(accountType == AccountType.PAPER) { "only Paper trading currently supported, received $accountType" }
     }
 
 }
+
+
 
 /**
  * Logic shared between the Alpaca Feeds and Alpaca Broker
@@ -69,8 +71,8 @@ internal object Alpaca {
     internal fun getAPI(
         config: AlpacaConfig
     ): AlpacaAPI {
-        require(config.publicKey.isNotBlank()) { "No public key provided" }
-        require(config.secretKey.isNotBlank()) { "No secret key provided" }
+        require(config.publicKey.isNotBlank()) { "no public key provided" }
+        require(config.secretKey.isNotBlank()) { "no secret key provided" }
         return AlpacaAPI(config.publicKey, config.secretKey, config.accountType, config.dataType)
     }
 

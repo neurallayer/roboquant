@@ -70,6 +70,7 @@ class ReturnsMetric(
         }
 
         if (time >= nextTime) {
+
             val value = account.equity.convert(account.baseCurrency, event.time).value
             val periodReturn = (value - lastValue) / lastValue
             val tf = Timeframe(lastTime, time)
@@ -78,27 +79,25 @@ class ReturnsMetric(
             nextTime = time + period
             lastTime = time
             lastValue = value
+
+            if (stats.n >= minPeriods) {
+
+                // Calculate the three metrics
+                val mean = stats.mean
+                val std = stats.standardDeviation
+                val sharpeRatio = (mean - riskFreeRate) / (std + EPS)
+
+                return mapOf(
+                    "returns.mean" to mean,
+                    "returns.std" to std,
+                    "returns.sharperatio" to sharpeRatio,
+                    "returns.min" to stats.min,
+                    "returns.max" to stats.max,
+                    "returns.last" to returns
+                )
+            }
         }
-
-        return if (stats.n >= minPeriods) {
-
-            // Calculate the three metrics
-            val mean = stats.mean
-
-            val std = stats.standardDeviation
-            val sharpeRatio = (mean - riskFreeRate) / (std + EPS)
-
-            mapOf(
-                "returns.mean" to mean,
-                "returns.std" to std,
-                "returns.sharperatio" to sharpeRatio,
-                "returns.max" to stats.max,
-                "returns.min" to stats.min,
-                "returns.last" to lastValue
-            )
-        } else {
-            emptyMap()
-        }
+        return emptyMap()
     }
 
     override fun reset() {

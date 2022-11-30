@@ -19,12 +19,12 @@ package org.roboquant.brokers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Asset
-import org.roboquant.common.UnsupportedException
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class OrderStateTest {
 
@@ -39,14 +39,17 @@ internal class OrderStateTest {
     fun regularFlow() {
         val order = MarketOrder(Asset("TEST"), 100)
         var state = OrderState(order)
+        assertTrue(state.open)
         validate(state, OrderStatus.INITIAL, Instant.MAX, Instant.MAX)
 
         val opened = Instant.now()
         state = state.update(OrderStatus.ACCEPTED, opened)
+        assertTrue(state.open)
         validate(state, OrderStatus.ACCEPTED, opened, Instant.MAX)
 
         val closed = Instant.now()
         state = state.update(OrderStatus.COMPLETED, closed)
+        assertTrue(state.closed)
         validate(state, OrderStatus.COMPLETED, opened, closed)
     }
 
@@ -59,7 +62,8 @@ internal class OrderStateTest {
         state = state.update(OrderStatus.COMPLETED, closed)
         validate(state, OrderStatus.COMPLETED, closed, closed)
 
-        assertThrows<UnsupportedException> {
+        // Cannot update an already closed order
+        assertThrows<IllegalStateException> {
             state.update(OrderStatus.COMPLETED, closed)
         }
 

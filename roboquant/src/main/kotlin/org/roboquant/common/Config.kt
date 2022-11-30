@@ -147,7 +147,7 @@ object Config {
      * @return
      */
     fun getProperty(name: String, default: String): String {
-        logger.trace { "Finding property $name" }
+        logger.trace { "finding property $name" }
         return properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name] ?: default
     }
 
@@ -155,7 +155,7 @@ object Config {
      * Return property value, or null if not found.
      */
     fun getProperty(name: String): String? {
-        logger.trace { "Finding property $name" }
+        logger.trace { "finding property $name" }
         return properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name]
     }
 

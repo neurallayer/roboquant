@@ -112,7 +112,7 @@ class IEXCloudHistoricFeed(
             add(now, action)
         }
         logger.info { "Received data for $asset" }
-        logger.info { "Total ${timeline.size} steps from ${timeline.first()} to ${timeline.last()}" }
+        logger.info { "Total ${timeline.size} events from ${timeline.first()} to ${timeline.last()}" }
     }
 
     private fun handleIntraday(asset: Asset, intradays: List<Intraday>) {
@@ -122,7 +122,7 @@ class IEXCloudHistoricFeed(
             add(now, action)
         }
         logger.info { "Received data for $asset" }
-        logger.info { "Total ${timeline.size} steps from ${timeline.first()} to ${timeline.last()}" }
+        logger.info { "Total ${timeline.size} events from ${timeline.first()} to ${timeline.last()}" }
     }
 
 }
