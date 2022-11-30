@@ -4,11 +4,14 @@ import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.sumOf
 
 /**
- * Basic calculator that calculates: cash balance - open orders. So no leverage or margin is available for trading.
- * This is the default BuyingPower and can be used to model a plain Cash Account.
+ * Basic calculator that calculates: cash balance - open orders. No leverage or margin is available for trading.
+ * This is the default AccountModel and can be used to model a plain trading cash account.
  *
  * You should not short positions when using the CashModel since that is almost never allowed in the real world
- * and also not supported. However if you do, the short exposure is deducted from the cash amount.
+ * and also not supported. If you do anyhow, the short exposures are deducted from the buying power. So the used
+ * calculation is:
+ *
+ *      buying power = cash - short exposure
  *
  * Note: currently open orders are not taken into consideration when calculating the total buying power
  *

@@ -48,6 +48,8 @@ internal class OrderExecutorTest {
         assertTrue(execution.value != 0.0)
         assertEquals(execution.order.asset.currency, execution.amount.currency)
 
+        assertEquals(OrderStatus.COMPLETED, handler.status)
+
         assertFails {
             executions = handler.execute(pricing(100), Instant.now())
         }
@@ -62,6 +64,7 @@ internal class OrderExecutorTest {
 
         executions = handler.execute(pricing(98), Instant.now())
         assertEquals(1, executions.size)
+        assertEquals(OrderStatus.COMPLETED, handler.status)
     }
 
     @Test
@@ -70,9 +73,11 @@ internal class OrderExecutorTest {
         val handler = LimitOrderExecutor(order)
         var executions = handler.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
+        assertEquals(OrderStatus.ACCEPTED, handler.status)
 
         executions = handler.execute(pricing(98), Instant.now())
         assertEquals(1, executions.size)
+        assertEquals(OrderStatus.COMPLETED, handler.status)
     }
 
     @Test
@@ -82,12 +87,15 @@ internal class OrderExecutorTest {
 
         var executions = handler.execute(pricing(101), Instant.now())
         assertEquals(0, executions.size)
+        assertEquals(OrderStatus.ACCEPTED, handler.status)
 
         executions = handler.execute(pricing(97), Instant.now())
         assertEquals(0, executions.size)
+        assertEquals(OrderStatus.ACCEPTED, handler.status)
 
         executions = handler.execute(pricing(99), Instant.now())
         assertEquals(1, executions.size)
+        assertEquals(OrderStatus.COMPLETED, handler.status)
     }
 
     @Test
@@ -96,12 +104,15 @@ internal class OrderExecutorTest {
         val handler = TrailOrderExecutor(order)
         var executions = handler.execute(pricing(90), Instant.now())
         assertEquals(0, executions.size)
+        assertEquals(OrderStatus.ACCEPTED, handler.status)
 
         executions = handler.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
+        assertEquals(OrderStatus.ACCEPTED, handler.status)
 
         executions = handler.execute(pricing(98), Instant.now())
         assertEquals(1, executions.size)
+        assertEquals(OrderStatus.COMPLETED, handler.status)
     }
 
     @Test
@@ -110,15 +121,19 @@ internal class OrderExecutorTest {
         val handler = TrailLimitOrderExecutor(order)
         var executions = handler.execute(pricing(90), Instant.now())
         assertEquals(0, executions.size)
+        assertEquals(OrderStatus.ACCEPTED, handler.status)
 
         executions = handler.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
+        assertEquals(OrderStatus.ACCEPTED, handler.status)
 
         executions = handler.execute(pricing(95), Instant.now())
         assertEquals(0, executions.size)
+        assertEquals(OrderStatus.ACCEPTED, handler.status)
 
         executions = handler.execute(pricing(99), Instant.now())
         assertEquals(1, executions.size)
+        assertEquals(OrderStatus.COMPLETED, handler.status)
     }
 
 }

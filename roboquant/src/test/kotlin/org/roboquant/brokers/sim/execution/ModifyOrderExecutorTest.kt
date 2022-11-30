@@ -17,41 +17,16 @@
 package org.roboquant.brokers.sim.execution
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.Size
 import org.roboquant.orders.*
 import java.time.Instant
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class ModifyOrderExecutorTest {
 
     private val asset = TestData.usStock()
 
-
-    @Test
-    fun testLimitOrderHandler() {
-        val order1 = LimitOrder(asset, Size(100), 10.0)
-        val handler = LimitOrderExecutor(order1)
-
-        val order2 = LimitOrder(asset, Size(100), 11.0)
-        assertTrue(handler.update(order2, Instant.now()))
-
-        assertEquals(order2.limit, handler.order.limit)
-    }
-
-
-
-    @Test
-    fun testFailingMarketOrderHandler() {
-        val order1 = MarketOrder(asset, 100)
-        val order2 = LimitOrder(asset, Size(100), 10.0)
-        assertThrows<IllegalArgumentException> {
-            UpdateOrder(order1, order2)
-        }
-
-    }
 
     @Test
     fun testCancelOrderHandler() {
@@ -65,6 +40,24 @@ internal class ModifyOrderExecutorTest {
         assertEquals(OrderStatus.COMPLETED, cmd.status)
         assertEquals(OrderStatus.CANCELLED, exec1.status)
     }
+
+    @Test
+    fun testUpdateOrderHandler() {
+        val order1 = LimitOrder(asset, Size(100), 110.0)
+        val exec1 = LimitOrderExecutor(order1)
+        assertEquals(OrderStatus.INITIAL, exec1.status)
+
+        val order2 = LimitOrder(asset, Size(100), 120.0)
+        val order = UpdateOrder(order1, order2)
+
+        val cmd = UpdateOrderExecutor(order)
+        assertEquals(OrderStatus.INITIAL, cmd.status)
+
+        cmd.execute(exec1, Instant.now())
+        assertEquals(OrderStatus.COMPLETED, cmd.status)
+        assertEquals(120.0, exec1.order.limit)
+    }
+
 
 
 
