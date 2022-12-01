@@ -44,8 +44,6 @@ sealed interface OrderExecutor<T: Order> {
      * The current status of the order execution
      */
     val status: OrderStatus
-        get() = OrderStatus.INITIAL
-
 
 }
 
@@ -87,7 +85,7 @@ interface CreateOrderExecutor<T : CreateOrder> : OrderExecutor<T> {
     /**
      * Update the order, return true if the update was successful, false otherwise
      */
-    fun update(order: CreateOrder, time: Instant) : Boolean = false
+    fun update(order: CreateOrder, time: Instant) : Boolean
 
     /**
      * Cancel the order, return true if the cancellation was successful, false otherwise

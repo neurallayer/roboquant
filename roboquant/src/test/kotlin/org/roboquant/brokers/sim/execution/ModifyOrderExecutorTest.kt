@@ -29,7 +29,7 @@ internal class ModifyOrderExecutorTest {
 
 
     @Test
-    fun testCancelOrderHandler() {
+    fun testCancelOrderExecutor() {
         val order1 = MarketOrder(asset, 100)
         val exec1 = MarketOrderExecutor(order1)
 
@@ -42,7 +42,7 @@ internal class ModifyOrderExecutorTest {
     }
 
     @Test
-    fun testUpdateOrderHandler() {
+    fun testUpdateOrderExecutor() {
         val order1 = LimitOrder(asset, Size(100), 110.0)
         val exec1 = LimitOrderExecutor(order1)
         assertEquals(OrderStatus.INITIAL, exec1.status)

@@ -18,6 +18,7 @@ package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.sim.Pricing
 import org.roboquant.orders.BracketOrder
+import org.roboquant.orders.CreateOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
@@ -56,5 +57,7 @@ internal class BracketOrderExecutor(override val order: BracketOrder) : CreateOr
         if (remaining.iszero) status = OrderStatus.COMPLETED
         return executions
     }
+
+    override fun update(order: CreateOrder, time: Instant) = false
 
 }

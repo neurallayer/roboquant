@@ -42,7 +42,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
         val factories = mutableMapOf<KClass<*>, OrderExecutorFactory<Order>>()
 
         /**
-         * Return the order handler for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
+         * Return the order executor for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
          * is registered for the order::class.
          */
         internal fun <T: Order>getExecutor(order: T): OrderExecutor<T> {
@@ -53,7 +53,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
         }
 
         /**
-         * Return the order handler for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
+         * Return the order executor for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
          * is registered for the order::class.
          */
         internal fun <T: CreateOrder>getCreateOrderExecutor(order: T): CreateOrderExecutor<T> {
@@ -64,14 +64,14 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
         }
 
         /**
-         * Unregister the order handler for order type [T]
+         * Unregister the order executor factory for order type [T]
          */
         inline fun <reified T : Order> unregister() {
             factories.remove(T::class)
         }
 
         /**
-         * Register a new order handler [factory] for order type [T]. If there was already an order handler registered
+         * Register a new order executor [factory] for order type [T]. If there was already a factory registered
          * for the same class it will be replaced.
          */
         inline fun <reified T : Order> register(factory: OrderExecutorFactory<T>) {
@@ -102,19 +102,19 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
     }
 
-    // Return the create-handlers
+    // Return the create-order executors
     private val createOrders = LinkedList<CreateOrderExecutor<*>>()
 
-    // Return the modify-handlers
+    // Return the modify-order executors
     private val modifyOrders = LinkedList<ModifyOrderExecutor<*>>()
 
     /**
-     * Get the open order handlers
+     * Get the open order executors
      */
     private fun <T : OrderExecutor<*>> List<T>.open() = filter { it.status.open }
 
     /**
-     * Remove all handlers of closed orders, both create orders and modify orders
+     * Remove all executors of closed orders, both create orders and modify orders
      */
     internal fun removeClosedOrders() {
         createOrders.removeIf { it.status.closed }
@@ -122,14 +122,14 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
     }
 
     /**
-     * Return the order states of all handlers
+     * Return the order states of all executors
      */
     internal val orderStates
         get() = createOrders.map { Pair(it.order, it.status) } + modifyOrders.map { Pair(it.order, it.status) }
 
 
     /**
-     * Add a new [order] to the execution engine. Orders can only be processed if there is a corresponding handler
+     * Add a new [order] to the execution engine. Orders can only be processed if there is a corresponding executor
      * registered for the order class.
      */
     internal fun add(order: Order): Boolean {
@@ -164,18 +164,18 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
         val time = event.time
 
         // We always first execute modify-orders. These are run even if there is no known price for the asset
-        for (handler in modifyOrders.open()) {
-            val createHandler = createOrders.firstOrNull { it.order.id == handler.createOrder.id }
-            handler.execute(createHandler, time)
+        for (executor in modifyOrders.open()) {
+            val createHandler = createOrders.firstOrNull { it.order.id == executor.createOrder.id }
+            executor.execute(createHandler, time)
         }
 
         // Now execute the create-orders. These are only run if there is a known price
         val executions = mutableListOf<Execution>()
         val prices = event.prices
-        for (handler in createOrders.open()) {
-            val action = prices[handler.order.asset] ?: continue
+        for (executor in createOrders.open()) {
+            val action = prices[executor.order.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, time)
-            val newExecutions = handler.execute(pricing, time)
+            val newExecutions = executor.execute(pricing, time)
             executions.addAll(newExecutions)
         }
         return executions

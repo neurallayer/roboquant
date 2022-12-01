@@ -122,8 +122,8 @@ internal class ExecutionEngineTest {
         }
 
         ExecutionEngine.register<MarketOrder> { MarketOrderExecutor(it) }
-        val handler = ExecutionEngine.getExecutor(order)
-        assertEquals("MarketOrderExecutor", handler::class.simpleName)
+        val executor = ExecutionEngine.getExecutor(order)
+        assertEquals("MarketOrderExecutor", executor::class.simpleName)
     }
 
 }

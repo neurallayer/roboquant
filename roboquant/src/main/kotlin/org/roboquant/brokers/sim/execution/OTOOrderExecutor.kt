@@ -1,6 +1,7 @@
 package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.sim.Pricing
+import org.roboquant.orders.CreateOrder
 import org.roboquant.orders.OTOOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
@@ -42,4 +43,6 @@ internal class OTOOrderExecutor(override val order: OTOOrder) : CreateOrderExecu
 
         return result
     }
+
+    override fun update(order: CreateOrder, time: Instant) = false
 }

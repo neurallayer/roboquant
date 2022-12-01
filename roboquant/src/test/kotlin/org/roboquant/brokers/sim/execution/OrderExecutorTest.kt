@@ -40,100 +40,100 @@ internal class OrderExecutorTest {
     @Test
     fun testMarketOrder() {
         val order = MarketOrder(asset, 100)
-        val handler = MarketOrderExecutor(order)
-        var executions = handler.execute(pricing(100), Instant.now())
+        val executor = MarketOrderExecutor(order)
+        var executions = executor.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
 
         val execution = executions.first()
         assertTrue(execution.value != 0.0)
         assertEquals(execution.order.asset.currency, execution.amount.currency)
 
-        assertEquals(OrderStatus.COMPLETED, handler.status)
+        assertEquals(OrderStatus.COMPLETED, executor.status)
 
         assertFails {
-            executions = handler.execute(pricing(100), Instant.now())
+            executions = executor.execute(pricing(100), Instant.now())
         }
     }
 
     @Test
     fun testStopOrder() {
         val order = StopOrder(asset, Size(-10), 99.0)
-        val handler = StopOrderExecutor(order)
-        var executions = handler.execute(pricing(100), Instant.now())
+        val executor = StopOrderExecutor(order)
+        var executions = executor.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
 
-        executions = handler.execute(pricing(98), Instant.now())
+        executions = executor.execute(pricing(98), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(OrderStatus.COMPLETED, handler.status)
+        assertEquals(OrderStatus.COMPLETED, executor.status)
     }
 
     @Test
     fun testLimitOrder() {
         val order = LimitOrder(asset, Size(10), 99.0)
-        val handler = LimitOrderExecutor(order)
-        var executions = handler.execute(pricing(100), Instant.now())
+        val executor = LimitOrderExecutor(order)
+        var executions = executor.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
-        assertEquals(OrderStatus.ACCEPTED, handler.status)
+        assertEquals(OrderStatus.ACCEPTED, executor.status)
 
-        executions = handler.execute(pricing(98), Instant.now())
+        executions = executor.execute(pricing(98), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(OrderStatus.COMPLETED, handler.status)
+        assertEquals(OrderStatus.COMPLETED, executor.status)
     }
 
     @Test
     fun testStopLimitOrder() {
         val order = StopLimitOrder(asset, Size(-10), 100.0, 98.0)
-        val handler = StopLimitOrderExecutor(order)
+        val executor = StopLimitOrderExecutor(order)
 
-        var executions = handler.execute(pricing(101), Instant.now())
+        var executions = executor.execute(pricing(101), Instant.now())
         assertEquals(0, executions.size)
-        assertEquals(OrderStatus.ACCEPTED, handler.status)
+        assertEquals(OrderStatus.ACCEPTED, executor.status)
 
-        executions = handler.execute(pricing(97), Instant.now())
+        executions = executor.execute(pricing(97), Instant.now())
         assertEquals(0, executions.size)
-        assertEquals(OrderStatus.ACCEPTED, handler.status)
+        assertEquals(OrderStatus.ACCEPTED, executor.status)
 
-        executions = handler.execute(pricing(99), Instant.now())
+        executions = executor.execute(pricing(99), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(OrderStatus.COMPLETED, handler.status)
+        assertEquals(OrderStatus.COMPLETED, executor.status)
     }
 
     @Test
     fun testTrailOrder() {
         val order = TrailOrder(asset, Size(-10), 0.01)
-        val handler = TrailOrderExecutor(order)
-        var executions = handler.execute(pricing(90), Instant.now())
+        val executor = TrailOrderExecutor(order)
+        var executions = executor.execute(pricing(90), Instant.now())
         assertEquals(0, executions.size)
-        assertEquals(OrderStatus.ACCEPTED, handler.status)
+        assertEquals(OrderStatus.ACCEPTED, executor.status)
 
-        executions = handler.execute(pricing(100), Instant.now())
+        executions = executor.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
-        assertEquals(OrderStatus.ACCEPTED, handler.status)
+        assertEquals(OrderStatus.ACCEPTED, executor.status)
 
-        executions = handler.execute(pricing(98), Instant.now())
+        executions = executor.execute(pricing(98), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(OrderStatus.COMPLETED, handler.status)
+        assertEquals(OrderStatus.COMPLETED, executor.status)
     }
 
     @Test
     fun testTrailLimitOrder() {
         val order = TrailLimitOrder(asset, Size(-10), 0.01, -1.0)
-        val handler = TrailLimitOrderExecutor(order)
-        var executions = handler.execute(pricing(90), Instant.now())
+        val executor = TrailLimitOrderExecutor(order)
+        var executions = executor.execute(pricing(90), Instant.now())
         assertEquals(0, executions.size)
-        assertEquals(OrderStatus.ACCEPTED, handler.status)
+        assertEquals(OrderStatus.ACCEPTED, executor.status)
 
-        executions = handler.execute(pricing(100), Instant.now())
+        executions = executor.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)
-        assertEquals(OrderStatus.ACCEPTED, handler.status)
+        assertEquals(OrderStatus.ACCEPTED, executor.status)
 
-        executions = handler.execute(pricing(95), Instant.now())
+        executions = executor.execute(pricing(95), Instant.now())
         assertEquals(0, executions.size)
-        assertEquals(OrderStatus.ACCEPTED, handler.status)
+        assertEquals(OrderStatus.ACCEPTED, executor.status)
 
-        executions = handler.execute(pricing(99), Instant.now())
+        executions = executor.execute(pricing(99), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(OrderStatus.COMPLETED, handler.status)
+        assertEquals(OrderStatus.COMPLETED, executor.status)
     }
 
 }
