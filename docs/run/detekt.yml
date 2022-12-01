@@ -509,7 +509,6 @@ style:
     active: true
     ignoreOverridableFunction: true
     ignoreActualFunction: true
-    excludedFunctions: []
   LibraryCodeMustSpecifyReturnType:
     active: true
     excludes: ['**']
@@ -590,8 +589,6 @@ style:
   ReturnCount:
     active: true
     max: 3
-    excludedFunctions:
-      - 'equals'
     excludeLabeled: false
     excludeReturnFromLambda: true
     excludeGuardClauses: false

@@ -29,7 +29,7 @@ internal class CSVConfigTest {
         val config = CSVConfig()
         config.fileExtension = ".csv"
         assertEquals(Asset("TEMPLATE"), config.template)
-        assertEquals(Asset("ABN"), config.assetBuilder(config, File("ABN.csv")))
+        assertEquals(Asset("ABN"), config.assetBuilder(File("ABN.csv")))
         assertFalse(config.shouldParse(File("some_non_existing_file.csv")))
         assertFalse(config.shouldParse(File("somefile.dummy_extension")))
     }

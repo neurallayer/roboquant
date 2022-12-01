@@ -230,9 +230,10 @@ fun Collection<Asset>.random(n: Int): List<Asset> = shuffled().take(n)
  * Provide a [Summary] for a collection of assets
  */
 fun Collection<Asset>.summary(name: String = "assets"): Summary {
-    val s = Summary(name)
-    if (isEmpty()) {
+    return if (isEmpty()) {
+        val s = Summary(name)
         s.add("EMPTY")
+        s
     } else {
         val lines = mutableListOf<List<Any>>()
         lines.add(listOf("symbol", "type", "ccy", "exchange", "multiplier", "id"))
@@ -241,8 +242,8 @@ fun Collection<Asset>.summary(name: String = "assets"): Summary {
                 lines.add(listOf(symbol, type, currency.currencyCode, exchange.exchangeCode, multiplier, id))
             }
         }
-        return lines.summary(name)
+        lines.summary(name)
     }
-    return s
+
 }
 

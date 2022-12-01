@@ -44,7 +44,7 @@ internal class ColumnInfo {
                 "TIME" -> time = index
                 "DATE" -> time = index
                 "DAY" -> time = index
-                "DAYTETIME" -> time = index
+                "DATETIME" -> time = index
                 "TIMESTAMP" -> time = index
                 "OPEN" -> open = index
                 "HIGH" -> high = index

@@ -21,43 +21,29 @@ import org.roboquant.common.Asset
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.RandomWalkFeed
 import org.roboquant.feeds.filter
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class PriceBarSeriesTest {
+internal class MultiAssetPriceBarSeriesTest {
 
     private val feed = RandomWalkFeed.lastYears(1, 2)
+
 
     @Test
     fun test() {
         val feed = feed
-        val asset = feed.assets.first()
-        val pb = PriceBarSeries(20)
-        assertFalse(pb.isFilled())
-        val data = feed.filter<PriceBar> { it.asset === asset }
+        val asset1 = feed.assets.first()
+        val pb = MultiAssetPriceBarSeries(10)
+        assertFalse(pb.isFilled(asset1))
+        val data = feed.filter<PriceBar> { it.asset === asset1 }
         for (entry in data) {
             pb.add(entry.second)
         }
-        assertTrue(pb.isFilled())
-        assertTrue(pb.typical.isNotEmpty())
-        assertTrue(pb.volume.isNotEmpty())
-        pb.clear()
-        assertFalse(pb.isFilled())
+        assertTrue(pb.isFilled(asset1))
+
+        val asset2 = Asset("HJSDHJS")
+        assertFalse(pb.isFilled(asset2))
     }
-
-
-
-    @Test
-    fun adjustedClose() {
-        val asset = Asset("DEMO")
-        val pb = PriceBar(asset, 10, 11, 9, 10, 100)
-        pb.adjustClose(5)
-        assertEquals(5.0, pb.open)
-        assertEquals(5.0, pb.close)
-        assertEquals(200.0, pb.volume)
-    }
-
 
 
 

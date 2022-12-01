@@ -61,7 +61,9 @@ data class CSVConfig(
      * 3. Convert to symbol name to uppercase
      * 4. Use the [template] to create the actual asset, with only the symbol name variable
      */
-    var assetBuilder: CSVConfig.(File) -> Asset  = CSVConfig::defaultBuilder
+    var assetBuilder: (File) -> Asset  = {
+            file -> defaultBuilder(file)
+    }
 
     private val timeParser: TimeParser = AutoDetectTimeParser()
     private val info = ColumnInfo()

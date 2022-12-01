@@ -145,7 +145,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
          * the [last] year (excluding).
          */
         fun fromYears(first: Int, last: Int, zoneId: ZoneId = Config.defaultZoneId): Timeframe {
-            require(last > first)
             val start = ZonedDateTime.of(first, 1, 1, 0, 0, 0, 0, zoneId)
             val stop = ZonedDateTime.of(last, 1, 1, 0, 0, 0, 0, zoneId)
             return Timeframe(start.toInstant(), stop.toInstant(), inclusive = false)

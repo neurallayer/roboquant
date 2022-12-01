@@ -95,7 +95,7 @@ class CSVFeed(
 
         val jobs = ParallelJobs()
         for (file in files) {
-            val asset = config.assetBuilder(config, file)
+            val asset = config.assetBuilder(file)
             jobs.add {
                 val steps = readFile(asset, file)
                 for (step in steps) {

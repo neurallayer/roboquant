@@ -65,6 +65,18 @@ internal class TimeframeTest {
     }
 
     @Test
+    fun extend() {
+        val tf = Timeframe.fromYears(1990, 2000)
+        val tf2 = tf.extend(2.years, 5.years)
+        assertTrue(tf.start in tf2)
+        assertTrue(tf.end in tf2)
+        assertTrue(tf.start - 1.years in tf2)
+        assertTrue(tf.end + 4.years in tf2)
+        assertFalse(tf.start - 3.years in tf2)
+        assertFalse(tf.end + 6.years in tf2)
+    }
+
+    @Test
     fun parse() {
         val tf = Timeframe.parse("2019-01-01T00:00:00Z", "2020-01-01T00:00:00Z")
         assertEquals(tf, Timeframe.parse("2019", "2020"))

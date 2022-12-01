@@ -18,6 +18,7 @@ package org.roboquant.common
 
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -27,7 +28,7 @@ internal class AssetTest {
 
 
     @Test
-    fun testContracts() {
+    fun testAssetTypeConstructors() {
         val a = Asset.optionContract("SPX", LocalDate.parse("2014-11-22"), 'P', "19.50")
         assertEquals("SPX   141122P00019500", a.symbol)
 
@@ -37,8 +38,15 @@ internal class AssetTest {
         val c = Asset.forexPair("EUR_USD")
         assertEquals("EUR/USD", c.symbol)
 
+        assertThrows<UnsupportedException> {
+            Asset.forexPair("dsgTYUYUSDD")
+        }
+
         val d = Asset.forexPair("EURUSD")
         assertEquals("EUR/USD", d.symbol)
+
+        val cr = Asset.crypto("BTC", "USDT", "COINBASE")
+        assertEquals("BTC/USDT", cr.symbol)
 
     }
 
@@ -60,6 +68,9 @@ internal class AssetTest {
         assertTrue { s.content.isNotEmpty() }
         assertContains(s.toString(), "TEST")
         assertContains(s.toString(), "TEST2")
+
+        val e = emptyList<Asset>()
+        assertContains(e.summary().toString(), "EMPTY")
     }
 
 }

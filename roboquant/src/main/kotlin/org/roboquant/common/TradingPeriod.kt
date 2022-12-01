@@ -3,6 +3,7 @@ package org.roboquant.common
 import java.time.Duration
 import java.time.Instant
 import java.time.Period
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.temporal.TemporalAmount
 
@@ -85,6 +86,14 @@ operator fun Instant.minus(period: TradingPeriod) : Instant {
  */
 operator fun Instant.plus(period: TradingPeriod): Instant {
     val zoneId = Config.defaultZoneId
+    val now = this.atZone(zoneId)
+    return (now + period.period).toInstant()
+}
+
+/**
+ * Add a trading [period] from an instant at a given [zoneId]
+ */
+fun Instant.plus(period: TradingPeriod, zoneId: ZoneId): Instant {
     val now = this.atZone(zoneId)
     return (now + period.period).toInstant()
 }

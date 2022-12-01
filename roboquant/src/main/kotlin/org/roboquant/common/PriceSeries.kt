@@ -20,10 +20,11 @@ import org.roboquant.feeds.Event
 import java.util.*
 
 /**
- * Holds a fix amount of historic prices (double values). When adding a new value while the buffer is full, the
+ * Holds a fix amount of historic prices. When adding a new value while the buffer is full, the
  * oldest one will be removed. This is typically used by strategies for rolling windows or replay buffers
  *
- * Internally it uses a DoubleArray to hold its values. Instances of this class are not thread safe during updates.
+ * Internally it uses a DoubleArray to hold the price values. Instances of this class are not thread safe
+ * during updates.
  *
  * @property windowSize The size of window
  * @constructor Create new instance of PriceSeries
