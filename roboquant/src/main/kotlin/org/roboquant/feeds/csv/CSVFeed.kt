@@ -106,7 +106,7 @@ class CSVFeed(
         jobs.joinAll()
     }
 
-
+    @Suppress("TooGenericExceptionCaught")
     private fun readFile(asset: Asset, file: File): List<PriceEntry> {
         val reader = CsvReader.builder().skipEmptyRows(true).build(FileReader(file))
         reader.use {
@@ -121,8 +121,8 @@ class CSVFeed(
                     try {
                         val step = config.processLine(asset, row.fields)
                         result += step
-                    } catch (_: Throwable) {
-                        logger.debug { "${asset.symbol} $row" }
+                    } catch (t: Throwable) {
+                        logger.debug(t) { "${asset.symbol} $row" }
                         errors += 1
                     }
                 }

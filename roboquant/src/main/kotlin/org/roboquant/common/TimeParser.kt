@@ -92,13 +92,13 @@ class AutoDetectTimeParser : TimeParser {
     private companion object Patterns {
 
         @Suppress("RegExpRepeatedSpace")
-        private val patterns = mapOf(
+        private val patterns = listOf(
             """19\d{6}""".toRegex() to LocalDateParser("yyyyMMdd"),
             """20\d{6}""".toRegex() to LocalDateParser("yyyyMMdd"),
-            """\d{4}-\d{2}-\d{2}""".toRegex() to LocalDateParser("yyyy-MM-dd"),
             """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".toRegex() to TimeParser { str, _ -> Instant.parse(str) },
             """\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm:ss"),
             """\d{4}-\d{2}-\d{2} \d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm"),
+            """\d{4}-\d{2}-\d{2}""".toRegex() to LocalDateParser("yyyy-MM-dd"),
             """\d{8} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd HH:mm:ss"),
             """\d{8}  \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd  HH:mm:ss"),
             """-?\d{1,19}""".toRegex() to TimeParser { str, _ -> Instant.ofEpochMilli(str.toLong()) }
@@ -111,7 +111,9 @@ class AutoDetectTimeParser : TimeParser {
     private fun detect(sample: String) {
         synchronized(this) {
             if (!this::parser.isInitialized) {
-                parser = patterns.entries.first { it.key.matches(sample) }.value
+                val match = patterns.first { it.first.matches(sample) }
+                parser = match.second
+
             }
         }
     }

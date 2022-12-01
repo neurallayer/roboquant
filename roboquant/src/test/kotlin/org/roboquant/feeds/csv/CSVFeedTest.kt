@@ -37,6 +37,38 @@ internal class CSVFeedTest {
     }
 
     @Test
+    fun getAssetsEU() {
+        val feed = CSVFeed(TestData.dataDir() + "EU") {
+            template = Asset("TEMPLATE", currency = Currency.EUR, exchange = Exchange.getInstance("AEB"))
+        }
+        val assets = feed.assets
+        assertEquals(3, assets.size)
+        val c2 = assets.getBySymbol("ASML")
+        assertEquals("ASML", c2.symbol)
+    }
+
+    @Test
+    fun testIntra() {
+        val feed = CSVFeed(TestData.dataDir() + "INTRA")
+        val assets = feed.assets
+        assertEquals(2, assets.size)
+    }
+
+    @Test
+    fun getForexCSV() {
+        val feed = CSVFeed(TestData.dataDir() + "FX1") {
+            assetBuilder = {
+                val str = it.name.removeSuffix(".csv")
+                Asset.forexPair(str)
+            }
+        }
+        val assets = feed.assets
+        assertEquals(2, assets.size)
+        assertEquals(Currency.USD, assets.first().currency)
+    }
+
+
+    @Test
     fun getMinutesCSV() {
         val feed = CSVFeed(TestData.dataDir() + "FX2") {
             assetBuilder = {
@@ -58,7 +90,7 @@ internal class CSVFeedTest {
         }
 
         val feed1 = CSVFeed(TestData.dataDir() + "US") {
-            fileExtension = "non_existing_ext"
+            fileExtension = ".non_existing_ext"
         }
         assertTrue(feed1.assets.isEmpty())
     }

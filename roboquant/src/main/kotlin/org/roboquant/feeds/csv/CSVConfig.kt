@@ -74,7 +74,7 @@ data class CSVConfig(
      * default builder takes the file name, removes the file extension and uses that the symbol name
      */
     private fun defaultBuilder(file: File): Asset {
-        val symbol = file.name.substringBefore(fileExtension).uppercase()
+        val symbol = file.name.removeSuffix(fileExtension).uppercase()
         return template.copy(symbol = symbol)
     }
 
