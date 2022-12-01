@@ -194,8 +194,6 @@ fun csv2Avro(pathStr: String = "path") {
 
 }
 
-
-
 fun simple() {
     val strategy = EMAStrategy()
     val feed = AvroFeed.sp500()
@@ -204,24 +202,10 @@ fun simple() {
     println(roboquant.broker.account.fullSummary())
 }
 
-
-fun feed() {
-    repeat(3) {
-        val t = measureTimeMillis {
-            AvroFeed("/Users/peter/data/avro/us_pricebar_v4.0.avro")
-            println("feed")
-        }
-        println(t)
-    }
-
-}
-
-
 suspend fun main() {
     Config.printInfo()
 
     when ("FEED") {
-        "FEED" -> feed()
         "SIMPLE" -> simple()
         "CSV2AVRO" -> csv2Avro()
         "CORR" -> calcCorrelation()

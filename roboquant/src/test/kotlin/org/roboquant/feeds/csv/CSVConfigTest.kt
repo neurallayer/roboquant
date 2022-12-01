@@ -23,6 +23,7 @@ internal class CSVConfigTest {
         assertEquals(false, config.priceAdjust)
     }
 
+
     @Test
     fun basic() {
         val config = CSVConfig()
