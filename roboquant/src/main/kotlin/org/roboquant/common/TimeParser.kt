@@ -106,7 +106,7 @@ class AutoDetectTimeParser : TimeParser {
     }
 
     /**
-     * Detect on the first [sample] received what the time format is.
+     * Detect on the first [sample] received what the time format is and set the parser accordingly.
      */
     private fun detect(sample: String) {
         synchronized(this) {

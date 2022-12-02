@@ -24,6 +24,7 @@ import com.binance.api.client.domain.account.NewOrder.*
 import com.binance.api.client.domain.account.NewOrderResponse
 import com.binance.api.client.domain.account.request.CancelOrderRequest
 import com.binance.api.client.domain.account.request.OrderRequest
+import com.binance.api.client.domain.OrderStatus as BinanceOrderStatus
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.sim.execution.InternalAccount
@@ -92,9 +93,15 @@ class BinanceBroker(
             val state = _account.getOrder(orderId) ?: continue
 
             when (order.status) {
-                com.binance.api.client.domain.OrderStatus.FILLED ->
+                BinanceOrderStatus.FILLED ->
                     _account.updateOrder(state, Instant.now(), OrderStatus.COMPLETED)
-                else -> _account.updateOrder(state, Instant.now(), OrderStatus.COMPLETED)
+                BinanceOrderStatus.CANCELED ->
+                    _account.updateOrder(state, Instant.now(), OrderStatus.CANCELLED)
+                BinanceOrderStatus.EXPIRED ->
+                    _account.updateOrder(state, Instant.now(), OrderStatus.EXPIRED)
+                BinanceOrderStatus.REJECTED ->
+                    _account.updateOrder(state, Instant.now(), OrderStatus.REJECTED)
+                else -> _account.updateOrder(state, Instant.now(), OrderStatus.ACCEPTED)
             }
 
         }
@@ -145,7 +152,6 @@ class BinanceBroker(
      */
     private fun cancelOrder(cancellation: CancelOrder) {
         val c = cancellation.order
-        // require(c.id.isNotEmpty()) { "Require non empty id when cancelling and order $c" }
         val order = cancellation.order
         val r = CancelOrderRequest(order.asset.symbol, c.id.toString())
         client.cancelOrder(r)
