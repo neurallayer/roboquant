@@ -28,12 +28,9 @@ import java.util.*
 import kotlin.collections.Collection
 import kotlin.collections.List
 import kotlin.collections.Map
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.collections.filter
 import kotlin.collections.filterIsInstance
 import kotlin.collections.groupBy
-import kotlin.collections.iterator
 import kotlin.collections.map
 import kotlin.collections.mapValues
 import kotlin.collections.mutableListOf
@@ -112,7 +109,7 @@ inline fun <reified T : Action> Feed.filter(
         }
 
     } catch (_: ClosedReceiveChannelException) {
-
+        // Intentionally left empty
     } finally {
         channel.close()
         if (job.isActive) job.cancel()
