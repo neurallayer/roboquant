@@ -130,11 +130,13 @@
         <dependency>
             <groupId>io.socket</groupId>
             <artifactId>socket.io-client</artifactId>
+            <!--suppress MavenPackageUpdate -->
             <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>
+            <!--suppress MavenPackageUpdate -->
             <version>2.34</version>
         </dependency>
         <dependency>
