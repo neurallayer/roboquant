@@ -42,7 +42,7 @@ import java.time.Instant
  * @property priceType The type of price to use, default is "DEFAULT"
  * @property fractions For fractional trading, the amount of fractions (decimals) to allow for. Default is 0
  * @property oneOrderOnly Only allow one order to be open for a given asset at a given time, default is true
- * @property safetyMargin the percentage of the equity value that you don't want to allocate to orders. This way you
+ * @property safetyMargin the percentage of the equity value that don't get allocated to orders. This way you
  * are more likely stay away from bounced orders or margin calls. Default is same percentage as [orderPercentage]
  * @property minPrice the minimal price for an asset before opening a position, default is null (no minimum). This
  * can be used to avoid trading penny stocks
