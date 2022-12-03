@@ -152,7 +152,7 @@ fun Feed.validate(
         }
 
     } catch (_: ClosedReceiveChannelException) {
-
+        // Intentionally left empty
     } finally {
         channel.close()
         if (job.isActive) job.cancel()

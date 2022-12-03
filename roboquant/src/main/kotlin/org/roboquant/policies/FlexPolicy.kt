@@ -105,10 +105,7 @@ open class FlexPolicy(
      * a conversion will take place.
      */
     private fun meetsMinPrice(asset: Asset, price: Double, time: Instant) : Boolean {
-        return if (minPrice == null)
-            true
-        else
-            minPrice.convert(asset.currency, time) <= price
+        return minPrice == null || minPrice.convert(asset.currency, time) <= price
     }
 
     /**

@@ -78,7 +78,6 @@ class OrderState private constructor(
      * IllegalState Exception.
      */
     fun update(newStatus: OrderStatus, time: Instant) : OrderState {
-        // if (newStatus == OrderStatus.INITIAL) return this
         if (status.closed) throw IllegalStateException("cannot update a closed order, status=$status")
         val newOpenedAt = if (openedAt == Instant.MAX) time else openedAt
         val newClosedAt = if (newStatus.closed) time else closedAt

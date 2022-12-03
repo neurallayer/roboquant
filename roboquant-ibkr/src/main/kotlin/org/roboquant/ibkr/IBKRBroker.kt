@@ -76,10 +76,10 @@ class IBKRBroker(
         client = IBKR.connect(wrapper, config)
         client.reqCurrentTime()
         client.reqAccountUpdates(true, accountId)
-        // client.reqAccountSummary(9004, "All", "\$LEDGER:ALL")
+        // for now don't request: client.reqAccountSummary(9004, "All", "\$LEDGER:ALL")
 
         // Only request orders created with this client, so roboquant
-        // doesn't use client.reqAllOpenOrders()
+        // doesn't use: client.reqAllOpenOrders()
         client.reqOpenOrders()
         waitTillSynced()
     }
