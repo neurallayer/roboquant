@@ -120,11 +120,9 @@
             <version>4.1.81.Final</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson</groupId>
-            <artifactId>jackson-bom</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
             <version>2.14.1</version>
-            <scope>import</scope>
-            <type>pom</type>
         </dependency>
     </dependencies>
 
