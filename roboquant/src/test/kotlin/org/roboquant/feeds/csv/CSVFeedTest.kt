@@ -17,6 +17,7 @@
 package org.roboquant.feeds.csv
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
@@ -33,7 +34,7 @@ internal class CSVFeedTest {
         assertEquals(3, assets.size)
         val c2 = assets.getBySymbol("AAPL")
         assertEquals("AAPL", c2.symbol)
-        assertEquals(2624, feed.timeline.size)
+        assertEquals(199, feed.timeline.size)
     }
 
     @Test
@@ -123,32 +124,39 @@ internal class CSVFeedTest {
     @Test
     fun testColumnInfo() {
         val ci = ColumnInfo()
-        ci.detectColumns(listOf("OPEN", "dummy", "high", "close"))
+        ci.detectColumns(listOf("OPEN", "dummy", "high", "close", "TIME"))
         assertEquals(0, ci.open)
         assertEquals(2, ci.high)
         assertEquals(3, ci.close)
+        assertEquals(4, ci.time)
 
         val ci2 = ColumnInfo()
-        ci2.define("OXHC")
+        ci2.define("OXHCT")
         assertEquals(0, ci2.open)
         assertEquals(2, ci2.high)
         assertEquals(3, ci2.close)
         assertEquals(-1, ci2.adjustedClose)
+        assertEquals(4, ci.time)
         assertFalse(ci2.hasVolume)
     }
-
 
 
     @Test
     fun columnInfoTest() {
         val a = ColumnInfo()
-        a.define("XOHXLC")
-        assertEquals(1, a.open)
-        assertEquals(5, a.close)
+        a.define("XTOHXLC")
+        assertEquals(2, a.open)
+        assertEquals(6, a.close)
 
         assertFails {
             a.define("QQQ")
         }
+
+        // T is mandatory in the provided pattern
+        assertThrows<IllegalArgumentException> {
+            ColumnInfo().define("XOHXLC")
+        }
+
     }
 
 }

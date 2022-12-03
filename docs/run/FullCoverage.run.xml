@@ -7,11 +7,6 @@
         <option name="INCLUDE" value="false" />
       </pattern>
       <pattern>
-        <option name="PATTERN" value="org.roboquant.iexcloud.*" />
-        <option name="ENABLED" value="true" />
-        <option name="INCLUDE" value="false" />
-      </pattern>
-      <pattern>
         <option name="PATTERN" value="org.roboquant.oanda.OANDALiveFeed" />
         <option name="ENABLED" value="true" />
         <option name="INCLUDE" value="false" />
