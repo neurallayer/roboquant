@@ -91,11 +91,6 @@
             <version>3.0.25</version>
         </dependency>
         <dependency>
-            <groupId>pl.zankowski</groupId>
-            <artifactId>iextrading4j-client</artifactId>
-            <version>3.4.5</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.crazzyghost</groupId>
             <artifactId>alphavantage-java</artifactId>
             <version>1.6.2</version>
@@ -126,23 +121,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.13</version>
-        </dependency>
-        <dependency>
-            <groupId>io.socket</groupId>
-            <artifactId>socket.io-client</artifactId>
-            <!--suppress MavenPackageUpdate -->
-            <version>1.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-common</artifactId>
-            <!--suppress MavenPackageUpdate -->
-            <version>2.34</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20220924</version>
         </dependency>
     </dependencies>
 
