@@ -23,7 +23,7 @@
     <parent>
         <artifactId>roboquant-parent</artifactId>
         <groupId>org.roboquant</groupId>
-        <version>0.9.8</version>
+        <version>0.9.9-SNAPSHOT</version>
     </parent>
 
     <artifactId>roboquant-crypto</artifactId>
@@ -56,7 +56,7 @@
     <!-- end extra info -->
 
     <properties>
-        <xchange.version>5.0.13</xchange.version>
+        <xchange.version>5.0.14</xchange.version>
     </properties>
 
     <build>
@@ -114,11 +114,6 @@
         </dependency>
 
         <!-- Fix issues -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.81.Final</version>
-        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
