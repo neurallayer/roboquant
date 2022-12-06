@@ -49,13 +49,13 @@ roboquant.run(feed) // <5>
 <5> Run the back test
 
 == Installation
+
 === Library
-Just add roboquant and any of the additional modules as a dependency to your build tool, like Maven or Gradle. See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant.
+You can devevelop our own trading application in your favourite IDE using _roboquant_ as a library.
 
-Latest available versions:
+image:/docs/idea_screenshot.png[IntelliJ IDEA]
 
-- Stable version: image:https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&[Maven Central]
-- Snapshot version: image:https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org[Sonatype Nexus (Snapshots)]
+Just add roboquant and optional any of the additional modules as a dependency to your build tool, like Maven or Gradle.
 
 ==== Maven
 Add the following dependency to your `pom.xml` file:
@@ -75,17 +75,26 @@ Add the following line to your gradle script:
 implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'
 ----
 
+See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant.
+
+Latest available versions:
+
+- Regular version: image:https://img.shields.io/maven-central/v/org.roboquant/roboquant?color=blue&[Maven Central]
+- Snapshot version: image:https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org[Sonatype Nexus (Snapshots)]
+
 === Jupyter Notebooks
-If you already have Docker installed, all it takes is a single command to have a fully functional Jupyter Lab environment available:
+You can also inteactively develop your own stategies using a Jupyter Notebook.
+
+image:/docs/jupyter_screenshot.png[Jupyter Lab]
+
+If you already have Docker installed, all it takes is a single command to have a fully functional Jupyter Notebook environment available:
 
 [source,shell]
 ----
 docker run --rm -p 8888:8888 roboquant/jupyter 
 ----
 
-This image also comes with several tutorials included. And if you just want to try it without any installation, go to image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/tutorials]
-
-image:/docs/jupyter-lab.png[Jupyter Lab]
+This image also comes with several tutorials included. And if you just want to try it without any installation, go to image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=tree/notebooks/,window=_blank]
 
 == Features
 Some key features of roboquant are:

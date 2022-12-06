@@ -29,15 +29,15 @@ import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
- * Internal Account is meant to be used by broker implementations, like the SimBroker. The broker is the only one with a
- * reference to the InternalAccount and will communicate to the outside world (Policy and Metrics) only the
- * immutable [Account] version.
+ * Internal Account is meant to be used by broker implementations, like the SimBroker. The broker is the only one with
+ * a reference to the InternalAccount and will communicate the state to the outside world (Policy and Metrics) using
+ * the immutable [Account] version.
  *
- * The Internal Account is designed to eliminate common mistakes, but is completely optional. The broker that come with
- * roboquant all use this under the hood, but this is no hard requirement.
+ * The Internal Account is designed to eliminate common mistakes, but is completely optional. The brokers that come
+ * with roboquant all use this class under the hood, but that is no hard requirement.
  *
  * @property baseCurrency The base currency to use for things like reporting
- * @constructor Create a new Account
+ * @constructor Create a new instance of InternalAccount
  */
 class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
 
@@ -58,7 +58,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
 
     /**
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
-     * closed
+     * closed.
      */
     private val closedOrders = mutableListOf<OrderState>()
 
@@ -73,7 +73,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
     var buyingPower: Amount = Amount(baseCurrency, 0.0)
 
     /**
-     * Portfolio with its positions
+     * Portfolio with its open positions. Positions are removed as soon as they are closed
      */
     val portfolio = mutableMapOf<Asset, Position>()
 
@@ -91,7 +91,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
 
 
     /**
-     * Set the position in a portfolio. If the position is closed, it is removed from the portfolio.
+     * Set the [position] a portfolio. If the position is closed, it is removed all together from the [portfolio].
      */
     fun setPosition(position: Position) {
         if (position.closed) {
@@ -120,8 +120,8 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
 
     /**
      * Update an [order] with a new [status] at a certain time. This only successful if order has been already added
-     * before. When an order reaches a close state it will be moved internally to a different store and no
-     * longer be directly accessible.
+     * before and is not yet closed. When an order reaches a close state it will be moved internally to a
+     * different store and no longer be directly accessible.
      */
     fun updateOrder(order: Order, time: Instant, status: OrderStatus) {
         val id = order.id

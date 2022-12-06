@@ -30,7 +30,7 @@ import java.time.Instant
 
 /**
  * Simulated Broker that is used as the broker during back testing and live testing. It simulates both broker and
- * exchange behavior. It can be configured with various plug-ins that determine its exact behavior:
+ * exchange behavior. It can be configured with various plug-ins during initiation time that determine its behavior.
  *
  * @property initialDeposit initial deposit, default is 1 million USD
  * @param baseCurrency the base currency to use for reporting values, default is the (first) currency found in the
@@ -40,7 +40,7 @@ import java.time.Instant
  * @param pricingEngine the pricing engine to use to simulate trades, default is [SpreadPricingEngine]
  * @constructor Create new instance of SimBroker
  */
-class SimBroker(
+open class SimBroker(
     private val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val feeModel: FeeModel = NoFeeModel(),
@@ -74,7 +74,7 @@ class SimBroker(
         get() = _account.toAccount()
 
     init {
-        reset()
+        this.reset()
     }
 
     /**

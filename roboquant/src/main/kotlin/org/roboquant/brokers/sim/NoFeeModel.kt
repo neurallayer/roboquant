@@ -22,6 +22,9 @@ import org.roboquant.brokers.sim.execution.Execution
  */
 class NoFeeModel : FeeModel {
 
+    /**
+     * @see FeeModel.calculate
+     */
     override fun calculate(execution: Execution): Double = 0.0
 
 }

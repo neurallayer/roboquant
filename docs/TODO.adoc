@@ -33,14 +33,13 @@ Ensure the API is stable and start including AI and Machine Learning support
 
 == Version 1.0 (end of 2022)
 
-This version is all about adding stabilizing conecpts and APIs. Although there is already integration available in earlier versions, that is just to validate the architectural concepts and design choices:
+This version is all about adding stabilizing concepts and APIs. Although there is already integration available in earlier versions, that is just to validate the architectural concepts and design choices:
 
 * [X] Improve the test coverage
 * [X] Stabilize the exposed APIs
 * [X] Optimize performance and avoid regressions
 * [X] Refactor the order execution simulation
 * [X] Improve the running of roboquant notebooks on public infra
-
 
 == Version 2 and later (2023 and beyond)
 
