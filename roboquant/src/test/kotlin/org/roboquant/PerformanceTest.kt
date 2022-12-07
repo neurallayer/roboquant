@@ -30,11 +30,13 @@ import org.roboquant.metrics.PNLMetric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
-import java.text.NumberFormat
 import kotlin.system.measureTimeMillis
 import kotlin.test.Test
 
-
+/**
+ * Performance test that runs a number of back-tests scenarios against different
+ * feed sizes to measure performance and detect possible regressions.
+ */
 internal class PerformanceTest {
 
     private val check = "TEST_PERFORMANCE"
@@ -102,7 +104,6 @@ internal class PerformanceTest {
     }
 
 
-
     /**
      * Parallel tests (4) with minimal overhead
      */
@@ -123,18 +124,18 @@ internal class PerformanceTest {
 
     private fun log(name: String, t:Long) =
         logger.info {
-            "     %-20s %20d ms".format(name, t)
+            "    %-18s%8d ms".format(name, t)
         }
 
     private fun run(feed: HistoricFeed) {
         val priceBars = feed.assets.size * feed.timeline.size
-        logger.info("******  ${NumberFormat.getIntegerInstance().format(priceBars)} candlesticks  ******")
+        val size = "%,10d".format(priceBars)
+        logger.info("**** $size candlesticks ****")
         log("feed filter", feedFilter(feed))
         log("base run", baseRun(feed))
         log("parallel runs (x4)", parallelRuns(feed))
         log("extended run", extendedRun(feed))
     }
-
 
     private fun getFeed(events: Int, assets: Int): RandomWalkFeed {
         val timeline = Timeframe.fromYears(1901, 2022).toTimeline(1.days).takeLast(events)

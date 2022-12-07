@@ -83,18 +83,18 @@ Latest available versions:
 - Snapshot version: image:https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org[Sonatype Nexus (Snapshots)]
 
 === Jupyter Notebooks
-You can also inteactively develop your own stategies using a Jupyter Notebook.
+You can interactively develop your own stategies using a Jupyter Notebook.
 
 image:/docs/jupyter_screenshot.png[Jupyter Lab]
 
-If you already have Docker installed, all it takes is a single command to have a fully functional Jupyter Notebook environment available:
+If you just want to try it out without any installation, go to image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=tree/notebooks/,window=_blank]
+
+If you already have Docker installed, all it takes is a single command to have a fully functional Jupyter Notebook environment available on your local machine. This image also comes with several notebooks included.
 
 [source,shell]
 ----
 docker run --rm -p 8888:8888 roboquant/jupyter 
 ----
-
-This image also comes with several tutorials included. And if you just want to try it without any installation, go to image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=tree/notebooks/,window=_blank]
 
 == Features
 Some key features of roboquant are:
