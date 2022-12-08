@@ -21,7 +21,7 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
-import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -38,21 +38,28 @@ internal class BinanceLiveFeedTestIT {
         val feed = BinanceLiveFeed()
         val availableAssets = feed.availableAssets
         assertTrue(availableAssets.isNotEmpty())
+        println(availableAssets.first())
+
+        val symbol = "BTCBUSD"
 
         assertTrue(feed.assets.isEmpty())
-        feed.subscribePriceBar("BTC/BUSD")
+        feed.subscribePriceBar(symbol)
         assertFalse(feed.assets.isEmpty())
+        assertTrue { feed.assets.all { it.symbol == symbol } }
 
         assertThrows<IllegalArgumentException> {
             feed.subscribePriceBar("WRONG_SYMBOL")
         }
 
         assertThrows<IllegalArgumentException> {
-            feed.subscribePriceBar("BTC/BUSD", "WRONG_INTERVAL")
+            feed.subscribePriceBar(symbol, "WRONG_INTERVAL")
         }
 
+        feed.subscribePriceQuote(symbol)
+        assertTrue { feed.assets.all { it.symbol == symbol } }
+
         val timeframe = Timeframe.next(3.minutes)
-        val prices = feed.filter<PriceBar>(timeframe = timeframe) {
+        val prices = feed.filter<PriceAction>(timeframe = timeframe) {
             logger.info { it }
             true
         }
@@ -60,8 +67,12 @@ internal class BinanceLiveFeedTestIT {
 
         logger.info("found ${prices.size} prices")
         assertTrue(prices.isNotEmpty())
-        assertEquals("BTC/BUSD", prices.first().second.asset.symbol)
+        assertEquals(symbol, prices.first().second.asset.symbol)
+        assertEquals(symbol, prices.last().second.asset.symbol)
     }
+
+
+
 
 }
 

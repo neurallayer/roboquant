@@ -19,13 +19,11 @@ package org.roboquant.binance
 import com.binance.api.client.BinanceApiClientFactory
 import com.binance.api.client.BinanceApiWebSocketClient
 import com.binance.api.client.domain.event.CandlestickEvent
+import com.binance.api.client.domain.event.TickerEvent
 import com.binance.api.client.domain.market.CandlestickInterval
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
-import org.roboquant.feeds.AssetFeed
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.LiveFeed
-import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.*
 import java.time.Instant
 
 /**
@@ -36,8 +34,8 @@ typealias Interval = CandlestickInterval
 /**
  * Create a new feed based on live price actions coming from the Binance exchange.
  *
- * @property useMachineTime us the machine time as timestamp for generated events
- * @param configure
+ * @property useMachineTime use the machine time as timestamp for the generated events
+ * @param configure additional configuration
  *
  * @constructor
  *
@@ -72,33 +70,72 @@ class BinanceLiveFeed(
         factory = Binance.getFactory(config)
         client = factory.newWebSocketClient()
         assetMap = Binance.retrieveAssets(factory.newRestClient())
-        logger.debug { "Started BinanceFeed using web-socket client" }
+        logger.debug { "started BinanceLiveFeed using web-socket client" }
+    }
+
+    private fun registerSymbols(symbols: Array<out String>) {
+        require(symbols.isNotEmpty()) { "You need to provide at least 1 symbol" }
+        for (symbol in symbols) require (assetMap.contains(symbol)) { "unknown symbol $symbol"}
+        for (symbol in symbols) {
+            val asset = assetMap.getValue(symbol)
+            subscriptions[symbol] = asset
+        }
     }
 
     /**
      * Subscribe to the [PriceBar] actions for one or more symbols
      *
-     * @param symbols the currency pairs you want to subscribe to
+     * @param symbols the currency pairs symbols you want to subscribe to
      * @param interval the interval of the PriceBar. Default is  1 minute
      */
     fun subscribePriceBar(
         vararg symbols: String,
         interval: Interval = Interval.ONE_MINUTE
     ) {
-        require(symbols.isNotEmpty()) { "You need to provide at least 1 currency pair" }
-        for (symbol in symbols) {
-            val asset = assetMap[symbol]
-            require(asset != null) { "invalid symbol $symbol"}
-            logger.info { "Subscribing to $symbol with interval $interval" }
-            subscriptions[symbol] = asset
+        registerSymbols(symbols)
+        val subscription = symbols.joinToString(",") { it.lowercase() }
+        val closable = client.onCandlestickEvent(subscription, interval) {
+            handle(it)
+        }
+        closeables.add(closable)
+        logger.info { "subscribed to $interval price-bars for $subscription" }
+    }
+
+    /**
+     * Subscribe to the [PriceQuote] actions for one or more symbols
+     *
+     * @param symbols the currency pairs symbols you want to subscribe to
+     */
+    fun subscribePriceQuote(
+        vararg symbols: String,
+    ) {
+        registerSymbols(symbols)
+        val subscription = symbols.joinToString(",") { it.lowercase() }
+        val closable = client.onTickerEvent(subscription) {
+            handle(it)
+        }
+        closeables.add(closable)
+        logger.info { "subscribed to price-quotes for $subscription" }
+    }
+
+    private fun handle(resp: TickerEvent) {
+        val asset = subscriptions[resp.symbol]
+        if (asset != null) {
+            val action = PriceQuote(
+                asset,
+                resp.bestAskPrice.toDouble(),
+                resp.bestAskQuantity.toDouble(),
+                resp.bestBidPrice.toDouble(),
+                resp.bestBidQuantity.toDouble()
+            )
+
+            val now = if (useMachineTime) Instant.now() else Instant.ofEpochMilli(resp.eventTime)
+            val event = Event(listOf(action), now)
+            send(event)
+        } else {
+            logger.warn { "Received TickerEvent for unsubscribed symbol ${resp.symbol}" }
         }
 
-        for (symbol in symbols) {
-            val closable = client.onCandlestickEvent(symbol, interval) {
-                handle(it)
-            }
-            closeables.add(closable)
-        }
     }
 
 
@@ -133,7 +170,7 @@ class BinanceLiveFeed(
         for (c in closeables) try {
             c.close()
         } catch (e: Throwable) {
-            logger.warn { e }
+            logger.debug { e }
         }
         closeables.clear()
     }
