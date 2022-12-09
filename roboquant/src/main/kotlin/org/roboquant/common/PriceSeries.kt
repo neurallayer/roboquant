@@ -49,8 +49,15 @@ open class PriceSeries(private val windowSize: Int) {
      * Return true if the rolling window is fully filled, so it is ready to be used.
      */
     fun isFilled(): Boolean {
-        return counter > windowSize
+        return counter >= windowSize
     }
+
+    /**
+     * return the size of this price series
+     */
+     val size: Int
+        get() = if (counter > windowSize) windowSize else counter.toInt()
+
 
     /**
      * Return the stored values as a DoubleArray. If this is called before the window is completely filled, it will

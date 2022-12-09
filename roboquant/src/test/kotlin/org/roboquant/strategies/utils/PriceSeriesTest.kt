@@ -23,15 +23,22 @@ internal class PriceSeriesTest {
 
     @Test
     fun test() {
-        val buffer = PriceSeries(10)
-        repeat(5) { buffer.add(1.0) }
-        assertFalse(buffer.isFilled())
+        val series = PriceSeries(10)
+        repeat(5) { series.add(1.0) }
+        assertFalse(series.isFilled())
+        assertEquals(5, series.size)
+        assertContains(series.toDoubleArray().toList(), Double.NaN)
 
-        repeat(10) { buffer.add(1.0) }
-        assertTrue(buffer.isFilled())
+        repeat(5) { series.add(1.0) }
+        assertTrue(series.isFilled())
+        assertEquals(10, series.size)
+        assertFalse(series.toDoubleArray().toList().contains(Double.NaN))
 
-        val d = buffer.toDoubleArray()
-        assertEquals(10, d.size)
+        repeat(5) { series.add(1.0) }
+        assertTrue(series.isFilled())
+        assertEquals(10, series.size)
+
+        assertEquals(10, series.toDoubleArray().size)
     }
 
 }
