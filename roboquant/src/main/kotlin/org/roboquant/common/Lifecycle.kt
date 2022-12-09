@@ -45,7 +45,7 @@ interface Lifecycle {
     }
 
     /**
-     * Reset the state to its initial state, default implementation is to take no action.
+     * Reset the state of the component to its initial state, default implementation is to take no action.
      */
     fun reset() {
         // default is to do nothing

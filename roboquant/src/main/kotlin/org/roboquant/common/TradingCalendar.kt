@@ -60,10 +60,19 @@ class SimpleTradingCalendar(
         LocalTime.parse(closing)
     )
 
+    /**
+     * @see TradingCalendar.getOpeningTime
+     */
     override fun getOpeningTime(date: LocalDate): LocalTime? = if (!isTradingDay(date)) null else opening
 
+    /**
+     * @see TradingCalendar.getClosingTime
+     */
     override fun getClosingTime(date: LocalDate): LocalTime? = if (!isTradingDay(date)) null else closing
 
+    /**
+     * @see TradingCalendar.isTradingDay
+     */
     override fun isTradingDay(date: LocalDate): Boolean = date.dayOfWeek !in excludeDays
 
 }
