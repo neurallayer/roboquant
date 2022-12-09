@@ -102,6 +102,13 @@ class PriceBarSeries(windowSize: Int) {
     }
 
     /**
+     * Return the size of this series
+     */
+    val size: Int
+        get() = openSeries.size
+
+
+    /**
      * Clear all stored prices and volumes
      */
     fun clear() {

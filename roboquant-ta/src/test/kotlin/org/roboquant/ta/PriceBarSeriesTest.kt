@@ -19,46 +19,38 @@ package org.roboquant.ta
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Asset
 import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.RandomWalkFeed
-import org.roboquant.feeds.filter
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class PriceBarSeriesTest {
 
-    private val feed = RandomWalkFeed.lastYears(1, 2)
+    private val asset = Asset("DEMO")
+    private val pb = PriceBar(asset, 10, 11, 9, 10, 100)
 
     @Test
     fun test() {
-        val feed = feed
-        val asset = feed.assets.first()
-        val pb = PriceBarSeries(20)
-        assertFalse(pb.isFilled())
-        val data = feed.filter<PriceBar> { it.asset === asset }
-        for (entry in data) {
-            pb.add(entry.second)
-        }
-        assertTrue(pb.isFilled())
-        assertTrue(pb.typical.isNotEmpty())
-        assertTrue(pb.volume.isNotEmpty())
-        pb.clear()
-        assertFalse(pb.isFilled())
+        val pbs = PriceBarSeries(10)
+        repeat(5) { pbs.add(pb) }
+        assertFalse(pbs.isFilled())
+        assertEquals(5, pbs.size)
+
+        repeat(5) { pbs.add(pb) }
+        assertTrue(pbs.isFilled())
+        assertEquals(10, pbs.size)
+
+        repeat(5) { pbs.add(pb) }
+        assertTrue(pbs.isFilled())
+        assertEquals(10, pbs.size)
+
+        assertEquals(10, pbs.open.size)
+        assertEquals(10, pbs.typical.size)
+
+        pbs.clear()
+        assertFalse(pbs.isFilled())
+        assertEquals(10, pbs.open.size)
+        assertTrue { pbs.close.all { it.isNaN() } }
     }
-
-
-
-    @Test
-    fun adjustedClose() {
-        val asset = Asset("DEMO")
-        val pb = PriceBar(asset, 10, 11, 9, 10, 100)
-        pb.adjustClose(5)
-        assertEquals(5.0, pb.open)
-        assertEquals(5.0, pb.close)
-        assertEquals(200.0, pb.volume)
-    }
-
-
 
 
 }

@@ -24,6 +24,8 @@ internal class PriceSeriesTest {
     @Test
     fun test() {
         val series = PriceSeries(10)
+        assertTrue { series.toDoubleArray().all { it.isNaN() } }
+
         repeat(5) { series.add(1.0) }
         assertFalse(series.isFilled())
         assertEquals(5, series.size)
@@ -39,6 +41,10 @@ internal class PriceSeriesTest {
         assertEquals(10, series.size)
 
         assertEquals(10, series.toDoubleArray().size)
+
+        series.clear()
+        assertTrue { series.toDoubleArray().all { it.isNaN() } }
+        assertEquals(0, series.size)
     }
 
 }
