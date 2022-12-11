@@ -47,7 +47,7 @@ class EMAStrategy(
 
     private val fast = 1.0 - (smoothing / (fastPeriod + 1))
     private val slow = 1.0 - (smoothing / (slowPeriod + 1))
-    private val calculators = mutableMapOf<Asset, EMACalculator>()
+    private val calculators = HashMap<Asset, EMACalculator>()
 
     /**
      * Standard set of predefined EMA Strategies that are commonly used
