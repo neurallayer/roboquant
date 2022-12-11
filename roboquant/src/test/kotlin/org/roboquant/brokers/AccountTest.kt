@@ -40,7 +40,7 @@ internal class AccountTest {
         assertTrue(account.positions.isEmpty())
 
         val e = account.equity
-        assertEquals(Wallet(), e)
+        assertTrue(e.isEmpty())
 
         assertTrue(account.trades.isEmpty())
         assertTrue(account.trades.realizedPNL.isEmpty())

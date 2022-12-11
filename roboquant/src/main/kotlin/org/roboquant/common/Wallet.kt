@@ -68,14 +68,14 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
      * Get the amount for a certain [currency]. If the currency is not found, a zero [Amount] will be returned.
      */
     fun getAmount(currency: Currency): Amount {
-        val value = data[currency] ?: 0.0
-        return Amount(currency, value)
+        return Amount(currency, get(currency))
     }
 
     /**
      * Return the value for a certain [currency]. If the currency is not found, 0.0 will be returned.
      */
-    fun getValue(currency: Currency): Double = data[currency] ?: 0.0
+    operator fun get(currency: Currency): Double = data[currency] ?: 0.0
+
 
     /**
      * Is this wallet instance empty

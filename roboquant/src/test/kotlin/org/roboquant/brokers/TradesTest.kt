@@ -18,13 +18,13 @@ package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import org.roboquant.common.Currency
+import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.Size
 import org.roboquant.common.USD
+import org.roboquant.common.get
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import org.roboquant.common.get
 
 internal class TradesTest {
 
@@ -43,8 +43,8 @@ internal class TradesTest {
             trades.add(trade2)
         }
 
-        assertEquals(200.USD.toWallet(), trades.fee)
-        assertEquals(100.USD.toWallet(), trades.realizedPNL)
+        assertEquals(200.USD, trades.fee.getAmount(USD))
+        assertEquals(100.USD, trades.realizedPNL.getAmount(USD))
         assertEquals(20, trades.timeline.size)
 
         assertTrue(trades.summary().content == "trades")
@@ -53,7 +53,7 @@ internal class TradesTest {
         assertTrue(s.toString().isNotEmpty())
 
         val trades2 = trades[0..4]
-        assertEquals(50.USD, trades2.fee.getAmount(Currency.USD))
+        assertEquals(50.USD, trades2.fee.getAmount(USD))
         assertEquals(5, trades2.timeline.size)
 
     }

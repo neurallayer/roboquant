@@ -41,7 +41,7 @@ internal class WalletTest {
     fun deposit() {
         val wallet = Wallet()
         wallet.deposit(12.USD)
-        assertEquals(12.0, wallet.getValue(usd))
+        assertEquals(12.0, wallet[usd])
 
         wallet.deposit(13.USD)
         assertEquals(25.USD, wallet.getAmount(usd))
@@ -59,7 +59,7 @@ internal class WalletTest {
     fun withdraw() {
         val wallet = Wallet()
         wallet.withdraw(12.USD)
-        assertEquals(-12.0, wallet.getValue(usd))
+        assertEquals(-12.0, wallet[usd])
 
         var metrics = wallet.toMap()
         assertContains(metrics, usd)

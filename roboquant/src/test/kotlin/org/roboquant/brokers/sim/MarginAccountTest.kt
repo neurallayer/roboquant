@@ -40,7 +40,7 @@ internal class MarginAccountTest {
         val cc = account.baseCurrency
         val uc = MarginAccount()
         uc.updateAccount(account)
-        assertTrue(account.buyingPower.value > account.cash.getValue(cc))
+        assertTrue(account.buyingPower.value > account.cash[cc])
     }
 
     @Test
@@ -49,7 +49,7 @@ internal class MarginAccountTest {
         val cc = account.baseCurrency
         val uc = MarginAccount(20.0)
         uc.updateAccount(account)
-        assertTrue(account.buyingPower.value > account.cash.getValue(cc))
+        assertTrue(account.buyingPower.value > account.cash[cc])
     }
 
     private fun update(broker: Broker, asset: Asset, price: Number, orderSize: Int = 0): Account {
