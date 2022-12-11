@@ -58,7 +58,7 @@ internal class AmountTest {
     fun test() {
         val c1 = 100.EUR + 200.USD
         val c2 = 200.USD + 100.EUR
-        val c3 = listOf(100.EUR, 200.USD).sum()
+        val c3 = listOf(100.EUR, 200.USD).toWallet()
         assertEquals(c1, c2)
         assertEquals(c1, c3)
 

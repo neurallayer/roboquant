@@ -119,17 +119,17 @@ class OANDABroker(
         val acc = ctx.account.get(accountID).account
         _account.baseCurrency = Currency.getInstance(acc.currency.toString())
         lastTransactionId = acc.lastTransactionID
+        _account.lastUpdate = Instant.now()
 
         // OANDA makes doesn't expose all the required values, so this trick is required to calculate the required
         // cash value otherwise "equity = cash + portfolioValue" doesn't hold true
-        val portfolioValue = _account.marketValue.convert(_account.baseCurrency).value
+        val portfolioValue = _account.marketValue.convert(_account.baseCurrency, _account.lastUpdate).value
         val cashValue = acc.balance.doubleValue() - portfolioValue
 
         _account.cash.clear()
         _account.cash.set(_account.baseCurrency, cashValue)
 
         _account.buyingPower = Amount(_account.baseCurrency, acc.marginAvailable.doubleValue() * maxLeverage)
-        _account.lastUpdate = Instant.now()
     }
 
     /**

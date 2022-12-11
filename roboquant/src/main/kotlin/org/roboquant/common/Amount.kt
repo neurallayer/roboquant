@@ -22,7 +22,7 @@ import java.time.Instant
 import kotlin.math.absoluteValue
 
 /**
- * An amount can hold the [value] for a single [currency].
+ * An amount can hold the monetary [value] for a single [currency].
  *
  * For storing monetary amounts internally it uses [Double], since it is accurate enough for trading while providing
  * large performance benefits over BigDecimal.
@@ -211,9 +211,7 @@ val Number.USDT
 /**
  * Add all the amounts together and return the resulting wallet.
  */
-fun Iterable<Amount>.sum(): Wallet {
-    val result = Wallet()
-    for (amount in this) result.deposit(amount)
-    return result
+fun Collection<Amount>.toWallet(): Wallet {
+    return sumOf { it }
 }
 

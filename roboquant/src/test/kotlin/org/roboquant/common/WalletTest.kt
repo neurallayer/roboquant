@@ -73,7 +73,6 @@ internal class WalletTest {
     fun plusMinus() {
         val wallet = Wallet(10.USD, 20.EUR)
         val wallet2 = wallet + wallet - wallet
-        assertNotEquals(wallet.hashCode(), wallet2.hashCode())
         assertEquals(wallet, wallet2)
 
         val amount = 10.USD

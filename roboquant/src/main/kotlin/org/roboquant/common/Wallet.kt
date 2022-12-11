@@ -18,6 +18,7 @@ package org.roboquant.common
 
 import java.time.Instant
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * Wallet contains amounts of different currencies at the same time. So for example a single instance of Wallet can
@@ -32,7 +33,7 @@ import java.util.*
  * the [convert] method if you want to do so.
  */
 @Suppress("TooManyFunctions")
-class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashMap(3)) : Cloneable {
+class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneable {
 
 
     /**
@@ -44,7 +45,7 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
          * Create a Wallet based on the [amount]
          */
         operator fun invoke(amount: Amount): Wallet =
-            Wallet(IdentityHashMap(mapOf(amount.currency to amount.value)))
+            Wallet(hashMapOf((amount.currency to amount.value)))
 
         /**
          * Create a Wallet based on the [amounts]
@@ -58,10 +59,10 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
     }
 
     /**
-     * Return the currencies that are hold in this wallet sorted by [Currency.currencyCode]
+     * Return the currencies that are hold in this wallet
      */
-    val currencies: List<Currency>
-        get() = data.keys.sortedBy { it.currencyCode }.toList()
+    val currencies: Set<Currency>
+        get() = data.keys
 
     /**
      * Get the amount for a certain [currency]. If the currency is not found, a zero [Amount] will be returned.
@@ -202,7 +203,7 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      * Create a clone of this wallet
      */
     @Suppress("UNCHECKED_CAST")
-    public override fun clone(): Wallet = Wallet(data.clone() as IdentityHashMap<Currency, Double>)
+    public override fun clone(): Wallet = Wallet(data.clone() as HashMap<Currency, Double>)
 
     /**
      * Clear this Wallet instance, removing all the amounts it is holding.
@@ -226,16 +227,14 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      * formatting the values.
      */
     override fun toString(): String {
-        val sb = StringBuffer()
-        for (amount in toAmounts()) sb.append("$amount, ")
-        return sb.toString().removeSuffix(", ")
+        return toAmounts().joinToString(",")
     }
 
     /**
-     * A wallet only equals another wallet if they hold the same currencies and corresponding amounts.
+     * A wallet equals another wallet if they hold the same currencies and corresponding amounts.
      */
     override fun equals(other: Any?) : Boolean {
-        return if (other is Wallet) toMap() == other.toMap() else false
+        return if (other is Wallet) data == other.data else false
     }
 
     /**
@@ -251,7 +250,7 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
     fun summary(name: String = "cash"): Summary {
         val lines = mutableListOf<List<Any>>()
         lines.add(listOf("ccy", "amount"))
-        for (currency in currencies.distinct().sortedBy { it.displayName }) {
+        for (currency in currencies.sortedBy { it.currencyCode }) {
             val t = getAmount(currency).formatValue()
             lines.add(listOf(currency.currencyCode, t))
         }
