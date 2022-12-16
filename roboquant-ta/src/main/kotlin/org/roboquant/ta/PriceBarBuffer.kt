@@ -16,63 +16,62 @@
 
 package org.roboquant.ta
 
-import org.roboquant.common.PriceSeries
+import org.roboquant.common.PriceBuffer
 import org.roboquant.common.div
 import org.roboquant.common.plus
 import org.roboquant.feeds.PriceBar
 
 /**
- * PriceBarSeries is a moving window of OHLCV values.
+ * PriceBarBuffer is a moving window of OHLCV values of fixed capacity.
  *
- * @param windowSize the size of the moving window
+ * @param capacity the size of buffer
  *
- * @constructor Create new instance of PriceBarSeries
+ * @constructor Create new instance of PriceBarBuffer
  */
-class PriceBarSeries(windowSize: Int) {
+class PriceBarBuffer(capacity: Int) {
 
-    // The individual moving windows
-
-    private val openSeries = PriceSeries(windowSize)
-    private val highSeries = PriceSeries(windowSize)
-    private val lowSeries = PriceSeries(windowSize)
-    private val closeSeries = PriceSeries(windowSize)
-    private val volumeSeries = PriceSeries(windowSize)
+    // The individual buffers
+    private val openBuffer = PriceBuffer(capacity)
+    private val highBuffer = PriceBuffer(capacity)
+    private val lowBuffer = PriceBuffer(capacity)
+    private val closeBuffer = PriceBuffer(capacity)
+    private val volumeBuffer = PriceBuffer(capacity)
 
     /**
      * Open prices
      */
     val open
-        get() = openSeries.toDoubleArray()
+        get() = openBuffer.toDoubleArray()
 
     /**
      * High prices
      */
     val high
-        get() = highSeries.toDoubleArray()
+        get() = highBuffer.toDoubleArray()
 
     /**
      * Low prices
      */
     val low
-        get() = lowSeries.toDoubleArray()
+        get() = lowBuffer.toDoubleArray()
 
     /**
      * Close prices
      */
     val close
-        get() = closeSeries.toDoubleArray()
+        get() = closeBuffer.toDoubleArray()
 
     /**
      * Volume
      */
     val volume
-        get() = volumeSeries.toDoubleArray()
+        get() = volumeBuffer.toDoubleArray()
 
     /**
      * Typical prices ( high + low + close / 3)
      */
     val typical
-        get() = (highSeries.toDoubleArray() + lowSeries.toDoubleArray() + closeSeries.toDoubleArray()) / 3.0
+        get() = (highBuffer.toDoubleArray() + lowBuffer.toDoubleArray() + closeBuffer.toDoubleArray()) / 3.0
 
     /**
      * Update the buffer with a new [priceBar]
@@ -86,11 +85,11 @@ class PriceBarSeries(windowSize: Int) {
      */
     private fun add(ohlcv: DoubleArray): Boolean {
         assert(ohlcv.size == 5)
-        openSeries.add(ohlcv[0])
-        highSeries.add(ohlcv[1])
-        lowSeries.add(ohlcv[2])
-        closeSeries.add(ohlcv[3])
-        volumeSeries.add(ohlcv[4])
+        openBuffer.add(ohlcv[0])
+        highBuffer.add(ohlcv[1])
+        lowBuffer.add(ohlcv[2])
+        closeBuffer.add(ohlcv[3])
+        volumeBuffer.add(ohlcv[4])
         return isFull()
     }
 
@@ -98,26 +97,28 @@ class PriceBarSeries(windowSize: Int) {
      * Is there enough data available
      */
     fun isFull(): Boolean {
-        return openSeries.isFull()
+        return openBuffer.isFull()
     }
 
     /**
      * Return the size of this series
      */
     val size: Int
-        get() = openSeries.size
+        get() = openBuffer.size
 
 
     /**
      * Clear all stored prices and volumes
      */
     fun clear() {
-        openSeries.clear()
-        highSeries.clear()
-        lowSeries.clear()
-        closeSeries.clear()
-        volumeSeries.clear()
+        openBuffer.clear()
+        highBuffer.clear()
+        lowBuffer.clear()
+        closeBuffer.clear()
+        volumeBuffer.clear()
     }
 
 }
+
+
 

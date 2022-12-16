@@ -25,7 +25,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
-import org.roboquant.common.PriceSeries
+import org.roboquant.common.PriceBuffer
 import org.roboquant.common.addAll
 import org.roboquant.policies.BasePolicy
 import java.time.Instant
@@ -62,7 +62,7 @@ open class BettingAgainstBetaPolicy(
 
     private var rebalanceDate = Instant.MIN
 
-    private val data = mutableMapOf<Asset, PriceSeries>()
+    private val data = mutableMapOf<Asset, PriceBuffer>()
 
     init {
         require(market in assets) { "The selected market asset $market also has to be part of all assets" }

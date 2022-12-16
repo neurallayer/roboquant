@@ -16,14 +16,14 @@
 
 package org.roboquant.strategies.utils
 
-import org.roboquant.common.PriceSeries
+import org.roboquant.common.PriceBuffer
 import kotlin.test.*
 
-internal class PriceSeriesTest {
+internal class PriceBufferTest {
 
     @Test
     fun test() {
-        val series = PriceSeries(10)
+        val series = PriceBuffer(10)
         assertTrue { series.toDoubleArray().all { it.isNaN() } }
 
         repeat(5) { series.add(1.0) }

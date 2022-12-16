@@ -43,10 +43,10 @@ import java.lang.Integer.max
  */
 class TaLibSignalStrategy(
     private val history: Int = 15,
-    private var block: TaLib.(asset: Asset, series: PriceBarSeries) -> Signal?
+    private var block: TaLib.(asset: Asset, series: PriceBarBuffer) -> Signal?
 ) : Strategy {
 
-    private val buffers = mutableMapOf<Asset, PriceBarSeries>()
+    private val buffers = mutableMapOf<Asset, PriceBarBuffer>()
 
     /**
      * Underlying [TaLib] instance to use when executing this strategy.
@@ -88,7 +88,7 @@ class TaLibSignalStrategy(
         val signals = mutableListOf<Signal>()
         for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSeries(history) }
+            val buffer = buffers.getOrPut(asset) { PriceBarBuffer(history) }
             if (buffer.add(priceAction)) {
                 val signal = block.invoke(taLib, asset, buffer)
                 signals.addNotNull(signal)

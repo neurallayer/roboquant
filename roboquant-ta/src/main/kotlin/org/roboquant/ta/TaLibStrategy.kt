@@ -18,6 +18,7 @@
 
 package org.roboquant.ta
 
+import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.strategies.Rating
@@ -34,11 +35,11 @@ import java.lang.Integer.max
  *
  * @param history the amount of history to track
  */
-class TaLibStrategy(history: Int = 15) : Strategy {
+class TaLibStrategy(private val history: Int = 15) : Strategy {
 
-    private var sellFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
-    private var buyFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
-    private val data = MultiAssetPriceBarSeries(history)
+    private var sellFn: TaLib.(series: PriceBarBuffer) -> Boolean = { false }
+    private var buyFn: TaLib.(series: PriceBarBuffer) -> Boolean = { false }
+    private val data = mutableMapOf<Asset, PriceBarBuffer>()
 
     /**
      * The underlying TaLib that will be used to run the strategy
@@ -162,7 +163,7 @@ class TaLibStrategy(history: Int = 15) : Strategy {
      *          ema(price.close, shortTerm) > ema(price.close, longTerm) && cdlMorningStar(price)
      *       }
      */
-    fun buy(block: TaLib.(series: PriceBarSeries) -> Boolean) {
+    fun buy(block: TaLib.(series: PriceBarBuffer) -> Boolean) {
         buyFn = block
     }
 
@@ -176,7 +177,7 @@ class TaLibStrategy(history: Int = 15) : Strategy {
      *      }
      *
      */
-    fun sell(block: TaLib.(series: PriceBarSeries) -> Boolean) {
+    fun sell(block: TaLib.(series: PriceBarBuffer) -> Boolean) {
         sellFn = block
     }
 
@@ -189,9 +190,11 @@ class TaLibStrategy(history: Int = 15) : Strategy {
      */
     override fun generate(event: Event): List<Signal> {
         val results = mutableListOf<Signal>()
-        for ((asset, priceAction) in event.prices) {
-            if (priceAction is PriceBar && data.add(priceAction)) {
-                val series = data.getSeries(asset)
+        for (priceBar in event.actions.filterIsInstance<PriceBar>()) {
+            val asset = priceBar.asset
+            val buffer = data.getOrPut(asset) { PriceBarBuffer(history) }
+            if (buffer.add(priceBar)) {
+                val series = data.getValue(asset)
                 if (buyFn.invoke(taLib, series)) results.add(Signal(asset, Rating.BUY))
                 if (sellFn.invoke(taLib, series)) results.add(Signal(asset, Rating.SELL))
             }
@@ -217,7 +220,7 @@ fun TaLib.recordLow(low: DoubleArray, period: Int, previous: Int = 0) =
 /**
  * Indicator for detecting record based on historic priceBar [series]
  */
-fun TaLib.recordLow(series: PriceBarSeries, period: Int, previous: Int = 0) = recordLow(series.low, period, previous)
+fun TaLib.recordLow(series: PriceBarBuffer, period: Int, previous: Int = 0) = recordLow(series.low, period, previous)
 
 /**
  * Indicator for detecting record high based on an array with [high] historic prices
@@ -228,6 +231,6 @@ fun TaLib.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) =
 /**
  * Indicator for detecting record high based on an array with historic [series]
  */
-fun TaLib.recordHigh(series: PriceBarSeries, period: Int, previous: Int = 0) =
+fun TaLib.recordHigh(series: PriceBarBuffer, period: Int, previous: Int = 0) =
     recordHigh(series.high, period, previous)
 

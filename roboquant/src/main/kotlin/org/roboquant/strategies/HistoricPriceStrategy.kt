@@ -20,7 +20,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.RoboquantException
 import org.roboquant.common.addNotNull
 import org.roboquant.feeds.Event
-import org.roboquant.common.PriceSeries
+import org.roboquant.common.PriceBuffer
 
 /**
  * Base class for strategies that are interested in historic prices. Subclasses should override one of the
@@ -40,17 +40,17 @@ abstract class HistoricPriceStrategy(
     /**
      * Contain the history of all assets
      */
-    private val history = mutableMapOf<Asset, PriceSeries>()
+    private val history = mutableMapOf<Asset, PriceBuffer>()
 
     override fun generate(event: Event): List<Signal> {
         val result = mutableListOf<Signal>()
         for ((asset, action) in event.prices) {
-            val priceSeries = history.getOrPut(asset) { PriceSeries(period) }
-            priceSeries.add(action.getPrice(priceType))
-            if (priceSeries.isFull()) {
-                val data = priceSeries.toDoubleArray()
+            val priceBuffer = history.getOrPut(asset) { PriceBuffer(period) }
+            val price = action.getPrice(priceType)
+            if (priceBuffer.add(price)) {
+                val data = priceBuffer.toDoubleArray()
                 assert(data.size == period)
-                val signal = generateSignal(asset, priceSeries.toDoubleArray())
+                val signal = generateSignal(asset, priceBuffer.toDoubleArray())
                 result.addNotNull(signal)
             }
         }

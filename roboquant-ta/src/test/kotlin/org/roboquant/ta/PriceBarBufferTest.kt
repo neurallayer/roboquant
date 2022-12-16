@@ -23,14 +23,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class PriceBarSeriesTest {
+internal class PriceBarBufferTest {
 
     private val asset = Asset("DEMO")
     private val pb = PriceBar(asset, 10, 11, 9, 10, 100)
 
     @Test
     fun test() {
-        val pbs = PriceBarSeries(10)
+        val pbs = PriceBarBuffer(10)
         repeat(5) { pbs.add(pb) }
         assertFalse(pbs.isFull())
         assertEquals(5, pbs.size)
