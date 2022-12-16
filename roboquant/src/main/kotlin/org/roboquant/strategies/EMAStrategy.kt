@@ -21,8 +21,7 @@ import java.time.Instant
 
 /**
  * Strategy that use the crossover of two Exponential Moving Averages (EMA) to generate a BUY or SELL signal. It is
- * frequently used in FOREX trading, but can also be applied to other asset classes. This is a computational and memory
- * efficient implementation since it doesn't store historic prices in memory.
+ * frequently used in FOREX trading, but can also be applied to other asset classes.
  *
  * The rules are straight forward:
  *
@@ -30,27 +29,31 @@ import java.time.Instant
  * - If the fast EMA trend crosses under the slow EMA trend, generate a SELL signal
  * - Don't generate a signal in all other scenario's
  *
+ * This is a computational and memory efficient implementation since it doesn't store historic prices in memory.
+ *
  * @constructor Create a new EMAStrategy strategy
  *
- * @param fastPeriod The shorter (fast) period or fast EMA in number of steps
- * @param slowPeriod The longer (slow) period or slow EMA in number of steps
+ * @param fastPeriod The shorter (fast) period or fast EMA in number of events, default is 12
+ * @param slowPeriod The longer (slow) period or slow EMA in number of events, default is 26
  * @param smoothing Smoothing factor to use, default is 2.0
  * @property minEvents minimal number of events observed before starting to execute the strategy, default is the same
+ * @property priceType the type of price to use, like "CLOSE" or "OPEN", default is "DEFAULT"
  * as the slow period
  */
 class EMAStrategy(
     fastPeriod: Int = 12,
     slowPeriod: Int = 26,
     smoothing: Double = 2.0,
-    private val minEvents: Int = slowPeriod
-) : PriceStrategy(prefix = "strategy.ema.") {
+    private val minEvents: Int = slowPeriod,
+    priceType: String = "DEFAULT"
+) : PriceStrategy(priceType = priceType, prefix = "strategy.ema.") {
 
     private val fast = 1.0 - (smoothing / (fastPeriod + 1))
     private val slow = 1.0 - (smoothing / (slowPeriod + 1))
     private val calculators = HashMap<Asset, EMACalculator>()
 
     /**
-     * Standard set of predefined EMA Strategies that are commonly used
+     * Standard set of predefined EMA Strategies that are commonly used in the industry
      */
     companion object Factory {
         /**

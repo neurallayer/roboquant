@@ -26,20 +26,20 @@ import java.util.*
  * Internally it uses a DoubleArray to hold the price values. Instances of this class are not thread safe
  * during updates.
  *
- * @property windowSize The size of window
+ * @property capacity The number of historic prices to retain, aka the capacity of the buffer
  * @constructor Create new instance of PriceSeries
  */
-open class PriceSeries(private val windowSize: Int) {
+open class PriceSeries(private val capacity: Int) {
 
-    private val data = DoubleArray(windowSize) { Double.NaN }
+    private val data = DoubleArray(capacity) { Double.NaN }
     private var counter = 0L
 
     /**
-     * Add a new [price] to the end. If the window is full, the first element will be removed.
-     * Return true is the series is already completely filled, false otherwise
+     * Append a new [price] to the end of the buffer. If the buffer is full, the first element will be removed to make
+     * room. Return true is the buffer is full, false otherwise
      */
     open fun add(price: Double) : Boolean {
-        val index = (counter % windowSize).toInt()
+        val index = (counter % capacity).toInt()
         data[index] = price
         counter++
         return isFilled()
@@ -49,18 +49,18 @@ open class PriceSeries(private val windowSize: Int) {
      * Return true if the rolling window is fully filled, so it is ready to be used.
      */
     fun isFilled(): Boolean {
-        return counter >= windowSize
+        return counter >= capacity
     }
 
     /**
      * return the size of this price series
      */
      val size: Int
-        get() = if (counter > windowSize) windowSize else counter.toInt()
+        get() = if (counter > capacity) capacity else counter.toInt()
 
 
     /**
-     * Return the stored values as a DoubleArray. If this is called before the window is completely filled, it will
+     * Return the stored values as a DoubleArray. If this is called before the window is full, it will
      * contain Double.NaN values for the missing values.
      *
      * ## Usage
@@ -69,15 +69,15 @@ open class PriceSeries(private val windowSize: Int) {
      *
      */
     fun toDoubleArray(): DoubleArray {
-        val result = DoubleArray(windowSize)
-        val offset = (counter % windowSize).toInt()
-        System.arraycopy(data, offset, result, 0, windowSize - offset)
-        System.arraycopy(data, 0, result, windowSize - offset, offset)
+        val result = DoubleArray(capacity)
+        val offset = (counter % capacity).toInt()
+        System.arraycopy(data, offset, result, 0, capacity - offset)
+        System.arraycopy(data, 0, result, capacity - offset, offset)
         return result
     }
 
     /**
-     * Clear the state stored and set all values back to Double.NaN
+     * Clear the buffer
      */
     open fun clear() {
         counter = 0L
@@ -89,9 +89,9 @@ open class PriceSeries(private val windowSize: Int) {
 /**
  * Add all the prices found in the event. If there is no entry yet, a new PriceSeries will be created
  */
-fun MutableMap<Asset, PriceSeries>.addAll(event: Event, windowSize: Int, priceType: String = "DEFAULT") {
+fun MutableMap<Asset, PriceSeries>.addAll(event: Event, capacity: Int, priceType: String = "DEFAULT") {
     for ((asset, action) in event.prices) {
-        val priceSeries = getOrPut(asset) { PriceSeries(windowSize)}
+        val priceSeries = getOrPut(asset) { PriceSeries(capacity)}
         priceSeries.add(action.getPrice(priceType))
     }
 }

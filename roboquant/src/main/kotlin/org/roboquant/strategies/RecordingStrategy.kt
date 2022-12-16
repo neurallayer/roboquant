@@ -24,7 +24,7 @@ import org.roboquant.metrics.MetricResults
  *
  * @property prefix Prefix to use when logging a metric, default is "strategy."
  * @property recording Should metrics be recorded or not. Some strategies can record a lot of metrics, so this disables
- * that recording and as a consequence might be faster and/or use less memory.
+ * that recording and as a consequence might result in faster runs and/or use less memory usage.
  *
  */
 abstract class RecordingStrategy(private val prefix: String = "strategy.", var recording: Boolean = false) : Strategy {
