@@ -27,17 +27,17 @@ internal class PriceSeriesTest {
         assertTrue { series.toDoubleArray().all { it.isNaN() } }
 
         repeat(5) { series.add(1.0) }
-        assertFalse(series.isFilled())
+        assertFalse(series.isFull())
         assertEquals(5, series.size)
-        assertContains(series.toDoubleArray().toList(), Double.NaN)
+        assertEquals(5, series.toDoubleArray().size)
 
         repeat(5) { series.add(1.0) }
-        assertTrue(series.isFilled())
+        assertTrue(series.isFull())
         assertEquals(10, series.size)
         assertFalse(series.toDoubleArray().toList().contains(Double.NaN))
 
         repeat(5) { series.add(1.0) }
-        assertTrue(series.isFilled())
+        assertTrue(series.isFull())
         assertEquals(10, series.size)
 
         assertEquals(10, series.toDoubleArray().size)

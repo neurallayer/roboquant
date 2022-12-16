@@ -47,7 +47,7 @@ abstract class HistoricPriceStrategy(
         for ((asset, action) in event.prices) {
             val priceSeries = history.getOrPut(asset) { PriceSeries(period) }
             priceSeries.add(action.getPrice(priceType))
-            if (priceSeries.isFilled()) {
+            if (priceSeries.isFull()) {
                 val data = priceSeries.toDoubleArray()
                 assert(data.size == period)
                 val signal = generateSignal(asset, priceSeries.toDoubleArray())

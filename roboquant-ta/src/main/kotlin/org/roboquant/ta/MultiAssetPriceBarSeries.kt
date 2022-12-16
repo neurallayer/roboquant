@@ -51,7 +51,7 @@ class MultiAssetPriceBarSeries(private val windowSize: Int) {
     /**
      * Is there enough data captured for the provided [asset]
      */
-    fun isFilled(asset: Asset) = data[asset]?.isFilled() ?: false
+    fun isFilled(asset: Asset) = data[asset]?.isFull() ?: false
 
     /**
      * Get the price bar series for the provided [asset]

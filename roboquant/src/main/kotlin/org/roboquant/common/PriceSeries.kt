@@ -17,7 +17,6 @@
 package org.roboquant.common
 
 import org.roboquant.feeds.Event
-import java.util.*
 
 /**
  * Holds a fix amount of historic prices. When adding a new value while the buffer is full, the
@@ -31,7 +30,7 @@ import java.util.*
  */
 open class PriceSeries(private val capacity: Int) {
 
-    private val data = DoubleArray(capacity) { Double.NaN }
+    private val data = DoubleArray(capacity)
     private var counter = 0L
 
     /**
@@ -42,13 +41,13 @@ open class PriceSeries(private val capacity: Int) {
         val index = (counter % capacity).toInt()
         data[index] = price
         counter++
-        return isFilled()
+        return isFull()
     }
 
     /**
      * Return true if the rolling window is fully filled, so it is ready to be used.
      */
-    fun isFilled(): Boolean {
+    fun isFull(): Boolean {
         return counter >= capacity
     }
 
@@ -60,20 +59,24 @@ open class PriceSeries(private val capacity: Int) {
 
 
     /**
-     * Return the stored values as a DoubleArray. If this is called before the window is full, it will
-     * contain Double.NaN values for the missing values.
+     * Return the stored values as a DoubleArray. If this method is invoked before the buffer is full, it will
+     * return a smaller array of length [PriceSeries.size].
      *
      * ## Usage
      *
-     *      if (movingWindow.isFilled()) return movingWindow.toDoubleArray()
-     *
+     *      if (movingWindow.isFull()) return movingWindow.toDoubleArray()
      */
-    fun toDoubleArray(): DoubleArray {
-        val result = DoubleArray(capacity)
-        val offset = (counter % capacity).toInt()
-        System.arraycopy(data, offset, result, 0, capacity - offset)
-        System.arraycopy(data, 0, result, capacity - offset, offset)
-        return result
+    fun toDoubleArray() : DoubleArray {
+        val result = DoubleArray(size)
+        return if (counter > capacity) {
+            val offset = (counter % capacity).toInt()
+            System.arraycopy(data, offset, result, 0, capacity - offset)
+            System.arraycopy(data, 0, result, capacity - offset, offset)
+            result
+        } else {
+            System.arraycopy(data, 0, result, 0, result.size)
+            result
+        }
     }
 
     /**
@@ -81,7 +84,6 @@ open class PriceSeries(private val capacity: Int) {
      */
     open fun clear() {
         counter = 0L
-        Arrays.fill(data, Double.NaN)
     }
 
 }

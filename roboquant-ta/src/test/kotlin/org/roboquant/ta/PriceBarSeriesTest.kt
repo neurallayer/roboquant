@@ -32,23 +32,23 @@ internal class PriceBarSeriesTest {
     fun test() {
         val pbs = PriceBarSeries(10)
         repeat(5) { pbs.add(pb) }
-        assertFalse(pbs.isFilled())
+        assertFalse(pbs.isFull())
         assertEquals(5, pbs.size)
 
         repeat(5) { pbs.add(pb) }
-        assertTrue(pbs.isFilled())
+        assertTrue(pbs.isFull())
         assertEquals(10, pbs.size)
 
         repeat(5) { pbs.add(pb) }
-        assertTrue(pbs.isFilled())
+        assertTrue(pbs.isFull())
         assertEquals(10, pbs.size)
 
         assertEquals(10, pbs.open.size)
         assertEquals(10, pbs.typical.size)
 
         pbs.clear()
-        assertFalse(pbs.isFilled())
-        assertEquals(10, pbs.open.size)
+        assertFalse(pbs.isFull())
+        assertEquals(0, pbs.open.size)
         assertTrue { pbs.close.all { it.isNaN() } }
     }
 

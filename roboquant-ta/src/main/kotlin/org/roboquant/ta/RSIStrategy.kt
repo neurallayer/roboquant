@@ -60,7 +60,7 @@ class RSIStrategy(
         val result = mutableListOf<Signal>()
         for (asset in event.prices.keys) {
             val data = history.getValue(asset)
-            if (data.isFilled()) {
+            if (data.isFull()) {
                 val rsi = taLib.rsi(data.toDoubleArray(), windowSize)
                 record(asset.symbol, rsi)
                 if (rsi > highThreshold)

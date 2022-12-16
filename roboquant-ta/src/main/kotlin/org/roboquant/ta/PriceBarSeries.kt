@@ -91,14 +91,14 @@ class PriceBarSeries(windowSize: Int) {
         lowSeries.add(ohlcv[2])
         closeSeries.add(ohlcv[3])
         volumeSeries.add(ohlcv[4])
-        return isFilled()
+        return isFull()
     }
 
     /**
      * Is there enough data available
      */
-    fun isFilled(): Boolean {
-        return openSeries.isFilled()
+    fun isFull(): Boolean {
+        return openSeries.isFull()
     }
 
     /**

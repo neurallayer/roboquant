@@ -155,7 +155,7 @@ open class BettingAgainstBetaPolicy(
         data.addAll(event, windowSize, "DEFAULT")
 
         // Check if it is time to re-balance the portfolio
-        if (event.time >= rebalanceDate && data[market]!!.isFilled()) {
+        if (event.time >= rebalanceDate && data[market]!!.isFull()) {
             val betas = calculateBetas()
 
             // Update the re-balance date
