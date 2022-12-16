@@ -22,7 +22,7 @@ import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.Observation
 import org.roboquant.common.Timeframe
-import org.roboquant.common.Timeserie
+import org.roboquant.common.TimeSerie
 import java.time.Instant
 import java.util.*
 import kotlin.collections.Collection
@@ -162,11 +162,11 @@ fun Feed.validate(
 
 
 /**
- * Return a map with assets and their [Timeserie]
+ * Return a map with assets and their [TimeSerie]
  */
 inline fun <reified T : PriceAction> List<Pair<Instant, T>>.timeseries(
     type: String = "DEFAULT"
-): Map<Asset, Timeserie> {
+): Map<Asset, TimeSerie> {
     return groupBy { it.second.asset }.mapValues { it2 ->
         it2.value.map { Observation(it.first, it.second.getPrice(type)) }
     }

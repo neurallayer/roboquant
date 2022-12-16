@@ -35,21 +35,21 @@ class Observation(val time: Instant, val value: Double) : Comparable<Observation
 }
 
 /**
- * Timeserie is an ordered list of [Observations][Observation] sorted from oldest to newest. There can be no
+ * TimeSerie is an ordered list of [Observations][Observation] sorted from oldest to newest. There can be no
  * observations with the same [Observation.time] in a timeserie.
  */
-typealias Timeserie = List<Observation>
+typealias TimeSerie = List<Observation>
 
 /**
  * Return the values of the timeserie as a [DoubleArray]
  */
-fun Timeserie.toDoubleArray(): DoubleArray = map { it.value }.toDoubleArray()
+fun TimeSerie.toDoubleArray(): DoubleArray = map { it.value }.toDoubleArray()
 
 /**
  * Return the correlation between two timeseries, [a] and [b]. Only observations at the same time will be taken into
  * account and correlation is calculated if there are at least [minObservations] observations.
  */
-fun correlation(a: Timeserie, b: Timeserie, minObservations: Int = 3): Double {
+fun correlation(a: TimeSerie, b: TimeSerie, minObservations: Int = 3): Double {
     require(a.isNotEmpty() && b.isNotEmpty())
     var offset1 = 0
     var offset2 = 0
@@ -83,7 +83,7 @@ fun correlation(a: Timeserie, b: Timeserie, minObservations: Int = 3): Double {
  * Return the correlations for the timeseries, ensuring that at least [minObservations] are available for calculating
  * the correlation. By default, [excludeSame] the correlation for the same asset are excluded since this is always 1.0
  */
-fun Map<Asset, Timeserie>.correlation(
+fun Map<Asset, TimeSerie>.correlation(
     minObservations: Int = 3,
     excludeSame: Boolean = true
 ): Map<Pair<Asset, Asset>, Double> {
@@ -102,6 +102,6 @@ fun Map<Asset, Timeserie>.correlation(
 }
 
 /**
- * Return the [Timeline] of the [Timeserie]
+ * Return the [Timeline] of the [TimeSerie]
  */
-fun Timeserie.timeline(): Timeline = map { it.time }
+fun TimeSerie.timeline(): Timeline = map { it.time }

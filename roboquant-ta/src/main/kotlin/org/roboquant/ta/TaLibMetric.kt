@@ -38,10 +38,10 @@ class TaLibMetric(
     private val name: String,
     private val history: Int = 15,
     private val assetFilter: AssetFilter = AssetFilter.all(),
-    private var block: TaLib.(series: PriceBarBuffer) -> Double
+    private var block: TaLib.(series: PriceBarSerie) -> Double
 ) : Metric {
 
-    private val buffers = mutableMapOf<Asset, PriceBarBuffer>()
+    private val buffers = mutableMapOf<Asset, PriceBarSerie>()
     private val taLib = TaLib()
     // private val logger: Logger = Logging.getLogger(TALibMetric::class)
 
@@ -55,7 +55,7 @@ class TaLibMetric(
             event.prices.values.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset, event.time) }
         for (priceAction in actions) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarBuffer(history) }
+            val buffer = buffers.getOrPut(asset) { PriceBarSerie(history) }
             if (buffer.add(priceAction)) {
                 val metric = block.invoke(taLib, buffer)
                 val name = "$name.${asset.symbol.lowercase()}"

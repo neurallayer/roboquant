@@ -18,19 +18,21 @@ package org.roboquant.ta
 
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Asset
+import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
+import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class PriceBarBufferTest {
+internal class PriceBarSerieTest {
 
     private val asset = Asset("DEMO")
     private val pb = PriceBar(asset, 10, 11, 9, 10, 100)
 
     @Test
     fun test() {
-        val pbs = PriceBarBuffer(10)
+        val pbs = PriceBarSerie(10)
         repeat(5) { pbs.add(pb) }
         assertFalse(pbs.isFull())
         assertEquals(5, pbs.size)
@@ -50,6 +52,24 @@ internal class PriceBarBufferTest {
         assertFalse(pbs.isFull())
         assertEquals(0, pbs.open.size)
         assertTrue { pbs.close.all { it.isNaN() } }
+    }
+
+    @Test
+    fun test2() {
+        val pbs = PriceBarSeries(10)
+        repeat(5) { pbs.add(pb) }
+        assertEquals(1, pbs.size)
+
+        var priceBarSerie = pbs.getValue(asset)
+        assertFalse(priceBarSerie.isFull())
+
+        val event = Event(listOf(pb), Instant.now())
+        repeat(5) {
+            pbs.addAll(event)
+        }
+        assertEquals(1, pbs.size)
+        priceBarSerie = pbs.getValue(asset)
+        assertTrue(priceBarSerie.isFull())
     }
 
 

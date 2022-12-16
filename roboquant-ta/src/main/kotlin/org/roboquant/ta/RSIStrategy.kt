@@ -21,7 +21,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
-import org.roboquant.common.PriceBuffer
+import org.roboquant.common.PriceSerie
 import org.roboquant.common.addAll
 
 /**
@@ -42,7 +42,7 @@ class RSIStrategy(
     private val windowSize : Int = 14
 ) : RecordingStrategy(prefix = "rsi.") {
 
-    private val history = mutableMapOf<Asset, PriceBuffer>()
+    private val history = mutableMapOf<Asset, PriceSerie>()
     private val taLib = TaLib()
 
     /**

@@ -123,9 +123,9 @@ internal class TaLibStrategyTest {
         }
     }
 
-    private fun getPriceBarBuffer(size: Int): PriceBarBuffer {
+    private fun getPriceBarBuffer(size: Int): PriceBarSerie {
         val asset = Asset("XYZ")
-        val result = PriceBarBuffer(size)
+        val result = PriceBarSerie(size)
         repeat(size) {
             val pb = PriceBar(asset, 10.0, 12.0, 8.0, 11.0, 100 + it)
             result.add(pb)

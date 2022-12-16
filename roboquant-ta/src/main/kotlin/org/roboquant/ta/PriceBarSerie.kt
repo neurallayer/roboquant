@@ -16,26 +16,26 @@
 
 package org.roboquant.ta
 
-import org.roboquant.common.PriceBuffer
+import org.roboquant.common.PriceSerie
 import org.roboquant.common.div
 import org.roboquant.common.plus
 import org.roboquant.feeds.PriceBar
 
 /**
- * PriceBarBuffer is a moving window of OHLCV values of fixed capacity.
+ * PriceBarSerie is a moving window of OHLCV values (PriceBar) of fixed capacity for a single asset.
  *
  * @param capacity the size of buffer
  *
- * @constructor Create new instance of PriceBarBuffer
+ * @constructor Create new instance of PriceBarSerie
  */
-class PriceBarBuffer(capacity: Int) {
+class PriceBarSerie(capacity: Int) {
 
     // The individual buffers
-    private val openBuffer = PriceBuffer(capacity)
-    private val highBuffer = PriceBuffer(capacity)
-    private val lowBuffer = PriceBuffer(capacity)
-    private val closeBuffer = PriceBuffer(capacity)
-    private val volumeBuffer = PriceBuffer(capacity)
+    private val openBuffer = PriceSerie(capacity)
+    private val highBuffer = PriceSerie(capacity)
+    private val lowBuffer = PriceSerie(capacity)
+    private val closeBuffer = PriceSerie(capacity)
+    private val volumeBuffer = PriceSerie(capacity)
 
     /**
      * Open prices
@@ -119,6 +119,9 @@ class PriceBarBuffer(capacity: Int) {
     }
 
 }
+
+
+
 
 
 

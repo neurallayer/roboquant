@@ -26,9 +26,9 @@ import org.roboquant.feeds.Event
  * updates.
  *
  * @property capacity The number of historic prices to retain, aka the capacity of the buffer
- * @constructor Create new instance of PriceBuffer
+ * @constructor Create new instance of PriceSerie
  */
-open class PriceBuffer(private val capacity: Int) {
+open class PriceSerie(private val capacity: Int) {
 
     private val data = DoubleArray(capacity)
     private var counter = 0L
@@ -60,7 +60,7 @@ open class PriceBuffer(private val capacity: Int) {
 
     /**
      * Return the stored values as a DoubleArray. If this method is invoked before the buffer is full, it will
-     * return a smaller array of length [PriceBuffer.size].
+     * return a smaller array of length [PriceSerie.size].
      *
      * ## Usage
      *
@@ -89,12 +89,12 @@ open class PriceBuffer(private val capacity: Int) {
 }
 
 /**
- * Add all the prices found in the event. If there is no entry yet, a new PriceBuffer will be created
+ * Add all the prices found in the event. If there is no entry yet, a new PriceSerie will be created
  */
-fun MutableMap<Asset, PriceBuffer>.addAll(event: Event, capacity: Int, priceType: String = "DEFAULT") {
+fun MutableMap<Asset, PriceSerie>.addAll(event: Event, capacity: Int, priceType: String = "DEFAULT") {
     for ((asset, action) in event.prices) {
-        val priceBuffer = getOrPut(asset) { PriceBuffer(capacity)}
-        priceBuffer.add(action.getPrice(priceType))
+        val priceSerie = getOrPut(asset) { PriceSerie(capacity)}
+        priceSerie.add(action.getPrice(priceType))
     }
 }
 
