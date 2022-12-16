@@ -19,11 +19,11 @@ package org.roboquant.common
 import org.roboquant.feeds.Event
 
 /**
- * Holds a fix amount of historic prices. When adding a new value while the buffer is full, the
- * oldest one will be removed. This is typically used by strategies for rolling windows or replay buffers
+ * Holds a fix amount of historic prices. When adding a new value while the buffer is full, the oldest one will be
+ * removed (aka a circular buffer). This is typically used by strategies for to track rolling windows or replay buffers.
  *
- * Internally it uses a DoubleArray to hold the price values. Instances of this class are not thread safe
- * during updates.
+ * Internally it uses a DoubleArray to hold the price values. Instances of this class are not thread safe during
+ * updates.
  *
  * @property capacity The number of historic prices to retain, aka the capacity of the buffer
  * @constructor Create new instance of PriceSeries
@@ -35,7 +35,7 @@ open class PriceSeries(private val capacity: Int) {
 
     /**
      * Append a new [price] to the end of the buffer. If the buffer is full, the first element will be removed to make
-     * room. Return true is the buffer is full, false otherwise
+     * room. Returns true is the buffer is full, false otherwise
      */
     open fun add(price: Double) : Boolean {
         val index = (counter % capacity).toInt()
