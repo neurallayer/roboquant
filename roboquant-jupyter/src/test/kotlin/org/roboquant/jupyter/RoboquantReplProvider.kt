@@ -24,7 +24,7 @@ import org.jetbrains.kotlinx.jupyter.api.libraries.ExecutionHost
 import org.jetbrains.kotlinx.jupyter.api.libraries.LibraryResolutionInfo
 import org.jetbrains.kotlinx.jupyter.common.getHttp
 import org.jetbrains.kotlinx.jupyter.common.jsonObject
-import org.jetbrains.kotlinx.jupyter.defaultRepositories
+import org.jetbrains.kotlinx.jupyter.defaultRepositoriesCoordinates
 import org.jetbrains.kotlinx.jupyter.defaultRuntimeProperties
 import org.jetbrains.kotlinx.jupyter.libraries.AbstractLibraryResolutionInfo
 import org.jetbrains.kotlinx.jupyter.libraries.ByNothingLibraryResolutionInfo
@@ -40,7 +40,7 @@ internal object RoboquantReplProvider : ReplProvider {
 
     private class DisplayHandlerImpl : DisplayHandler {
 
-        override fun handleDisplay(value: Any, host: ExecutionHost) { /* NOP */
+        override fun handleDisplay(value: Any, host: ExecutionHost, id: String?) { /* NOP */
         }
 
         override fun handleUpdate(value: Any, host: ExecutionHost, id: String?) { /* NOP */
@@ -54,7 +54,7 @@ internal object RoboquantReplProvider : ReplProvider {
             displayHandler = DisplayHandlerImpl(),
             scriptClasspath = classpath,
             homeDir = null,
-            mavenRepositories = defaultRepositories,
+            mavenRepositories = defaultRepositoriesCoordinates,
             libraryResolver =  urlEditingResolver,
             runtimeProperties = defaultRuntimeProperties,
             scriptReceivers = emptyList(),

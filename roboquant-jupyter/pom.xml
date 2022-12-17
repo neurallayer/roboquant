@@ -31,7 +31,7 @@
     <description>Adds additional Jupyter notebook features like charts to the roboquant algorithmic trading platform</description>
 
     <properties>
-        <jupyter.version>0.11.0-170</jupyter.version>
+        <jupyter.version>0.11.0-196</jupyter.version>
     </properties>
 
     <!-- start extra info -->
