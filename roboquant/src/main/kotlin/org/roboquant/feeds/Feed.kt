@@ -20,23 +20,10 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
-import org.roboquant.common.Observation
 import org.roboquant.common.Timeframe
-import org.roboquant.common.TimeSerie
 import java.time.Instant
 import java.util.*
-import kotlin.collections.Collection
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.filter
-import kotlin.collections.filterIsInstance
-import kotlin.collections.groupBy
-import kotlin.collections.map
-import kotlin.collections.mapValues
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
-import kotlin.collections.toDoubleArray
 import kotlin.math.absoluteValue
 
 /**
@@ -158,18 +145,6 @@ fun Feed.validate(
         if (job.isActive) job.cancel()
     }
     return@runBlocking errors
-}
-
-
-/**
- * Return a map with assets and their [TimeSerie]
- */
-inline fun <reified T : PriceAction> List<Pair<Instant, T>>.timeSeries(
-    type: String = "DEFAULT"
-): Map<Asset, TimeSerie> {
-    return groupBy { it.second.asset }.mapValues { it2 ->
-        it2.value.map { Observation(it.first, it.second.getPrice(type)) }
-    }
 }
 
 
