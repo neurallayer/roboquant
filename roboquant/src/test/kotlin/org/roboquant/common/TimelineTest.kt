@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
-import org.roboquant.feeds.timeseries
 import org.roboquant.feeds.toDoubleArray
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -36,7 +35,6 @@ internal class TimelineTest {
         assertEquals(timeline.lastIndex, timeline.latestNotAfter(last))
         assertEquals(0, timeline.earliestNotBefore(first))
     }
-
 
     @Test
     fun sample() {
@@ -55,25 +53,6 @@ internal class TimelineTest {
     fun timeframe() {
         val tf = timeline.timeframe
         assertEquals(Timeframe(timeline.first(), timeline.last(), true), tf)
-    }
-
-    @Test
-    fun correlation() {
-        val feed = TestData.feed()
-        val data = feed.filter<PriceAction>()
-        val timeseries = data.timeseries()
-
-        val (asset, first) = timeseries.entries.first()
-        assertEquals(data.lastIndex, first.toDoubleArray().lastIndex)
-        assertEquals(data.filter { it.second.asset == asset }.map{ it.first }, first.timeline())
-
-        val corr = timeseries.correlation(excludeSame = false)
-        assertTrue(corr.isNotEmpty())
-        val pair = Pair(feed.assets.first(), feed.assets.first())
-        assertTrue(corr[pair]!! in 0.999..1.001)
-
-        val arr = data.map { it.second }.toDoubleArray()
-        assertTrue { arr.isNotEmpty() }
     }
 
     @Test

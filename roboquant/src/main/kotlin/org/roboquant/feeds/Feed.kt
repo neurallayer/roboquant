@@ -164,13 +164,14 @@ fun Feed.validate(
 /**
  * Return a map with assets and their [TimeSerie]
  */
-inline fun <reified T : PriceAction> List<Pair<Instant, T>>.timeseries(
+inline fun <reified T : PriceAction> List<Pair<Instant, T>>.timeSeries(
     type: String = "DEFAULT"
 ): Map<Asset, TimeSerie> {
     return groupBy { it.second.asset }.mapValues { it2 ->
         it2.value.map { Observation(it.first, it.second.getPrice(type)) }
     }
 }
+
 
 /**
  * Convert a collection of price actions to a double array

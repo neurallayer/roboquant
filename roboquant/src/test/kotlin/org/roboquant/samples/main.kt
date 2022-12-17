@@ -39,7 +39,6 @@ import org.roboquant.strategies.Signal
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.div
-import kotlin.math.absoluteValue
 import kotlin.system.measureTimeMillis
 
 
@@ -122,18 +121,6 @@ fun testingStrategies() {
 
 }
 
-fun calcCorrelation() {
-    val feed = AvroFeed.sp500()
-    val data = feed.filter<PriceBar>(Timeframe.coronaCrash2020)
-    val timeseries = data.timeseries()
-    val result = timeseries.correlation()
-
-    val mostUncorrelated = result.toList().sortedBy { it.second.absoluteValue }.take(50)
-    for ((assets, corr) in mostUncorrelated) {
-        println("${assets.first.symbol} ${assets.second.symbol} = $corr")
-    }
-
-}
 
 fun signalsOnly() {
     class MyPolicy : BasePolicy(recording = true, prefix = "") {
@@ -208,7 +195,6 @@ suspend fun main() {
     when ("FEED") {
         "SIMPLE" -> simple()
         "CSV2AVRO" -> csv2Avro()
-        "CORR" -> calcCorrelation()
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
         "MC" -> multiCurrency()
