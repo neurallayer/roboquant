@@ -227,11 +227,11 @@ fun DoubleArray.kurtosis(): Double {
 fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 
 /**
- * Get the returns (as a percentage). Formula used is
+ * Return the percentage change.  The resulting array size will be 1 smaller than the original one. Formula used is:
  *
  *      returns = (new - old) / old
  */
-fun DoubleArray.returns(): DoubleArray {
+fun DoubleArray.percentageChange(): DoubleArray {
     if (size < 2) return DoubleArray(0)
     val result = DoubleArray(size - 1)
     for (n in 1..lastIndex) result[n - 1] = (get(n) - get(n - 1)) / get(n - 1)
@@ -262,11 +262,11 @@ fun DoubleArray.percentiles(
 
 
 /**
- * Get the total return (as a percentage). Formula used is
+ * Get the total percentage change. Formula used is
  *
  *      returns = (last - first) / first
  */
-fun DoubleArray.totalReturns(): Double {
+fun DoubleArray.totalPercentageChange(): Double {
     return if (size < 2)
         0.0
     else
@@ -304,6 +304,7 @@ fun String.toCurrencyPair(): Pair<Currency, Currency>? {
         val c2 = Currency.getInstance(codes.last().uppercase())
         Pair(c1, c2)
     } else if (codes.size == 1 && length == 6) {
+        // Assume we have two currency-codes, each of length 3
         val c1 = Currency.getInstance(substring(0, 3).uppercase())
         val c2 = Currency.getInstance(substring(3, 6).uppercase())
         Pair(c1, c2)

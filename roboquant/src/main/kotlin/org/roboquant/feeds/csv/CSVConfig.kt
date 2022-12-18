@@ -18,6 +18,8 @@ package org.roboquant.feeds.csv
 
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.util.AutoDetectTimeParser
+import org.roboquant.feeds.util.TimeParser
 import java.io.File
 import java.nio.file.Path
 import java.util.*

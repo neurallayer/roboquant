@@ -24,7 +24,7 @@ import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.USD
-import org.roboquant.feeds.test.HistoricTestFeed
+import org.roboquant.feeds.util.HistoricTestFeed
 import java.time.Instant
 import kotlin.test.assertEquals
 

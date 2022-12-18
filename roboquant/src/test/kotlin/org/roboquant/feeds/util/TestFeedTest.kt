@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds
+package org.roboquant.feeds.util
 
 import kotlinx.coroutines.*
 import org.junit.jupiter.api.Test
@@ -22,8 +22,9 @@ import kotlin.test.*
 import org.roboquant.TestData
 import org.roboquant.common.Background
 import org.roboquant.common.Timeframe
-import org.roboquant.feeds.test.LiveTestFeed
-import org.roboquant.feeds.test.HistoricTestFeed
+import org.roboquant.feeds.EventChannel
+import org.roboquant.feeds.Feed
+import org.roboquant.feeds.PriceAction
 
 fun play(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE): EventChannel {
     val channel = EventChannel(timeframe = timeframe)

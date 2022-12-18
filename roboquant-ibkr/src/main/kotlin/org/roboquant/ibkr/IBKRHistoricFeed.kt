@@ -21,7 +21,7 @@ import com.ib.client.EClientSocket
 import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
-import org.roboquant.common.AutoDetectTimeParser
+import org.roboquant.feeds.util.AutoDetectTimeParser
 import org.roboquant.ibkr.IBKR.getContract
 import java.time.Instant
 

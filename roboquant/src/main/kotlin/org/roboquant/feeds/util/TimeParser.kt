@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.roboquant.common
+package org.roboquant.feeds.util
 
+import org.roboquant.common.Exchange
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -49,7 +50,7 @@ private class LocalTimeParser(pattern: String) : TimeParser {
 }
 
 /**
- * Parser that parses local dates
+ * Parser that parses local dates and uses the exchange closing time to determine the time.
  * @param pattern
  */
 private class LocalDateParser(pattern: String) : TimeParser {
@@ -68,8 +69,7 @@ private class LocalDateParser(pattern: String) : TimeParser {
 
 
 /**
- * Auto-detect the appropriate time parser based on the first sample it receives. This is the default time parser
- * if no configuration was found for the pattern to use
+ * Auto-detect the appropriate time parser to use based on the first sample it receives.
  *
  * @constructor Create new AutoDetect time parser
  */
@@ -81,7 +81,7 @@ class AutoDetectTimeParser : TimeParser {
      * @see TimeParser.parse
      */
     override fun parse(text: String, exchange: Exchange): Instant {
-        // If this is the first time calling, lets detect the format
+        // If this is the first time calling, detect the format and parser to use
         if (!this::parser.isInitialized) detect(text)
         return parser.parse(text, exchange)
     }
@@ -113,7 +113,6 @@ class AutoDetectTimeParser : TimeParser {
             if (!this::parser.isInitialized) {
                 val match = patterns.first { it.first.matches(sample) }
                 parser = match.second
-
             }
         }
     }

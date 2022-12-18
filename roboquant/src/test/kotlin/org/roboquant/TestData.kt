@@ -21,7 +21,7 @@ import org.roboquant.brokers.Position
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.*
-import org.roboquant.feeds.test.HistoricTestFeed
+import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus

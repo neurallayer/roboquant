@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds.test
+package org.roboquant.feeds.util
 
 import kotlinx.coroutines.delay
 import org.roboquant.common.Asset

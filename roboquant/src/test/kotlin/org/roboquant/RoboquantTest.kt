@@ -23,7 +23,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.common.RoboquantException
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.test.HistoricTestFeed
+import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger

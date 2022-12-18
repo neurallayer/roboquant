@@ -23,7 +23,7 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.getBySymbol
 import org.roboquant.common.months
-import org.roboquant.feeds.test.HistoricTestFeed
+import org.roboquant.feeds.util.HistoricTestFeed
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -69,7 +69,7 @@ internal class HistoricFeedTest {
     fun play() {
         var past = Instant.MIN
         runBlocking {
-            for (event in play(TestData.feed)) {
+            for (event in org.roboquant.feeds.util.play(TestData.feed)) {
                 assertTrue(event.time > past)
                 past = event.time
             }

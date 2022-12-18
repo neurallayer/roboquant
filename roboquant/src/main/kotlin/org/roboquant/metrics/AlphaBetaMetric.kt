@@ -21,8 +21,8 @@ import org.hipparchus.stat.correlation.Covariance
 import org.hipparchus.stat.descriptive.moment.Variance
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
-import org.roboquant.common.returns
-import org.roboquant.common.totalReturns
+import org.roboquant.common.percentageChange
+import org.roboquant.common.totalPercentageChange
 import org.roboquant.feeds.Event
 import org.roboquant.common.PriceSerie
 
@@ -76,14 +76,15 @@ class AlphaBetaMetric(
                 val x1 = marketData.toDoubleArray()
                 val x2 = portfolioData.toDoubleArray()
 
-                val marketReturns = x1.returns()
-                val portfolioReturns = x1.returns()
+                val marketReturns = x1.percentageChange()
+                val portfolioReturns = x1.percentageChange()
 
                 val covariance = Covariance().covariance(portfolioReturns, marketReturns)
                 val variance = Variance().evaluate(marketReturns)
                 val beta = covariance / variance
 
-                val alpha = (x1.totalReturns() - riskFreeReturn) - beta * (x2.totalReturns() - riskFreeReturn)
+                val alpha =
+                    (x1.totalPercentageChange() - riskFreeReturn) - beta * (x2.totalPercentageChange() - riskFreeReturn)
                 return mapOf(
                     "account.alpha" to alpha,
                     "account.beta" to beta

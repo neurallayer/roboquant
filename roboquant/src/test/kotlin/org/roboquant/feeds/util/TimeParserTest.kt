@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.roboquant.common
+package org.roboquant.feeds.util
 
+import org.roboquant.common.Exchange
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals

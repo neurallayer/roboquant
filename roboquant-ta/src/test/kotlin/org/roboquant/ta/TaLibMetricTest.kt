@@ -25,7 +25,7 @@ import org.roboquant.common.Wallet
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
-import org.roboquant.feeds.test.HistoricTestFeed
+import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.metrics.MetricResults
 import java.time.Instant
 import kotlin.test.assertTrue

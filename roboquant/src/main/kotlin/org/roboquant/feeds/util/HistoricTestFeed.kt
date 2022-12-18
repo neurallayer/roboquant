@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds.test
+package org.roboquant.feeds.util
 
 import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
