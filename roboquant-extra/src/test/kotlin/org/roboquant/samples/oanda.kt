@@ -75,7 +75,9 @@ fun forexAvro() {
     val feed = AvroFeed("/tmp/forex_march_2020.avro")
     Config.exchangeRates = OANDAExchangeRates()
     val strategy = EMAStrategy()
-    val roboquant = OANDA.roboquant(strategy, AccountMetric())
+    val policy = FlexPolicy(shorting = true)
+    val broker = OANDA.createSimBroker()
+    val roboquant = Roboquant(strategy, AccountMetric(), policy = policy, broker = broker)
     roboquant.run(feed)
     println(roboquant.broker.account.summary())
 }
@@ -87,7 +89,9 @@ fun oandaExchangeRates() {
     feed.retrieve("EUR_USD", "GBP_USD")
     Config.exchangeRates = FeedExchangeRates(feed)
 
-    val roboquant = OANDA.roboquant(EMAStrategy())
+    val policy = FlexPolicy(shorting = true)
+    val broker = OANDA.createSimBroker()
+    val roboquant = Roboquant(EMAStrategy(), AccountMetric(), policy = policy, broker = broker)
     roboquant.run(feed)
     println(roboquant.broker.account.fullSummary())
 }

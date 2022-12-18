@@ -25,16 +25,16 @@ import org.roboquant.feeds.Feed
 import java.util.*
 
 /**
- * Capture events that can then be used later to display them in a graph or perform other post-run analysis. This metric
- * also implements the [Feed] API, so captured events can be replayed afterwards as a feed.
+ * Record events that can then be used later to display them in a graph or perform other post-run analysis. This metric
+ * also implements the [Feed] API, so recorded events can be replayed afterwards as a normal feed.
  *
- * This metric works differently from most other metrics. It stores the result internally in memory and does not
+ * This metric works differently from most other metrics. It stores the events internally in memory and does not
  * return them to a MetricsLogger. However, just like other metrics, it will reset its state at the beginning of a
  * new phase.
  *
- * @property timeframe the timeframe to capture, default is [Timeframe.INFINITE] (capture everything)
+ * @property timeframe the timeframe to record, default is [Timeframe.INFINITE] (record all events)
  */
-class EventCaptureMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, Feed {
+class EventRecorderMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, Feed {
 
     private val limit = timeframe
     private val events = LinkedList<Event>()
@@ -44,11 +44,16 @@ class EventCaptureMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, Fe
         return emptyMap()
     }
 
-
+    /**
+     * Reset all state
+     */
     override fun reset() {
         events.clear()
     }
 
+    /**
+     * The actual timeframe so far recorded
+     */
     override val timeframe
         get() = Timeframe(events.first.time, events.last.time, true)
 
@@ -58,6 +63,9 @@ class EventCaptureMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, Fe
     val timeline: Timeline
         get() = events.map { it.time }
 
+    /**
+     * Play the events recorded so far
+     */
     override suspend fun play(channel: EventChannel) {
         for (event in events) {
             channel.send(event)

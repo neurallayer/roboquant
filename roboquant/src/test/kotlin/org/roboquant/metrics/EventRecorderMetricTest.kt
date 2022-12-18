@@ -25,12 +25,12 @@ import org.roboquant.feeds.filter
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class EventCaptureMetricTest {
+internal class EventRecorderMetricTest {
 
     @Test
     fun basic() {
         val (account, event) = TestData.metricInput()
-        val metric = EventCaptureMetric()
+        val metric = EventRecorderMetric()
 
         assertTrue(metric.calculate(account, event).isEmpty())
         assertEquals(1, metric.timeline.size)

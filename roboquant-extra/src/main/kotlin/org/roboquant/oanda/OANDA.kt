@@ -20,15 +20,11 @@ import com.oanda.v20.Context
 import com.oanda.v20.ContextBuilder
 import com.oanda.v20.account.AccountID
 import com.oanda.v20.primitives.InstrumentType
-import org.roboquant.Roboquant
-import org.roboquant.brokers.sim.*
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Config
-import org.roboquant.common.UnsupportedException
-import org.roboquant.metrics.Metric
-import org.roboquant.policies.FlexPolicy
-import org.roboquant.strategies.Strategy
+import org.roboquant.brokers.sim.MarginAccount
+import org.roboquant.brokers.sim.NoFeeModel
+import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.brokers.sim.SpreadPricingEngine
+import org.roboquant.common.*
 
 /**
  * Configuration for connecting to the OANDA APIs
@@ -43,31 +39,33 @@ data class OANDAConfig(
     var demo: Boolean = true
 )
 
-internal object OANDA {
+/**
+ * @suppress
+ */
+object OANDA {
 
     /**
-     * Create a [Roboquant] instance configured for back testing OANDA trading. Although trading Forex is just like any
+     * Create a [SimBroker] instance configured for back testing OANDA trading. Although trading Forex is just like any
      * another asset class, there are some configuration parameters that are different from assets classes like stocks:
-     * - Being short is as common as being long
-     * - The spread cost (for common currency pairs) is smaller than with most stocks
+     * - The spread cost (for common currency pairs) is smaller than with stocks
      * - Leverage is high
      * - There are no fees or commissions
      */
-    fun roboquant(strategy: Strategy, vararg metrics: Metric): Roboquant {
-        // We allow shorting
-        val policy = FlexPolicy(shorting = true)
-
+    fun createSimBroker(deposit: Amount = 100_00.USD): SimBroker {
         // No commissions or fees
         val feeModel = NoFeeModel()
 
-        // We use a lower spread model, since the default of 10 BIPS is too much for most Forex trading
+        // We use a lower spread model, since the default of 10 BIPS is too much for most Forex/CFD trading
         // We select 2.0 BIPS
         val pricingEngine = SpreadPricingEngine(2)
         val buyingPowerModel = MarginAccount(20.0)
-        val broker = SimBroker(feeModel = feeModel, accountModel = buyingPowerModel, pricingEngine = pricingEngine)
 
-        @Suppress("SpreadOperator")
-        return Roboquant(strategy, *metrics, policy = policy, broker = broker)
+        return SimBroker(
+            initialDeposit = deposit.toWallet(),
+            feeModel = feeModel,
+            accountModel = buyingPowerModel,
+            pricingEngine = pricingEngine
+        )
     }
 
     internal fun getContext(config: OANDAConfig): Context {
