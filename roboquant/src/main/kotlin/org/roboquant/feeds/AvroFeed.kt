@@ -77,7 +77,7 @@ class AvroFeed(private val path: Path) : Feed {
     /**
      * @see Feed.timeframe
      */
-     override val timeframe: Timeframe
+    override val timeframe: Timeframe
 
 
     /**
@@ -88,7 +88,7 @@ class AvroFeed(private val path: Path) : Feed {
 
 
     init {
-        assert(path.isRegularFile()) { "$path is not a file"}
+        assert(path.isRegularFile()) { "$path is not a file" }
         val result = buildIndex()
         index = result.first
         timeframe = result.second
@@ -108,7 +108,7 @@ class AvroFeed(private val path: Path) : Feed {
      * Build an index of where each time starts. The index helps to achieve faster read access if not starting
      * from the beginning.
      */
-    private fun buildIndex() : Pair<List<Pair<Instant, Long>>, Timeframe> {
+    private fun buildIndex(): Pair<List<Pair<Instant, Long>>, Timeframe> {
         var last = Long.MIN_VALUE
         val index = mutableListOf<Pair<Instant, Long>>()
         var start = Long.MIN_VALUE
@@ -133,7 +133,10 @@ class AvroFeed(private val path: Path) : Feed {
                 }
             }
         }
-        val timeframe = Timeframe(Instant.ofEpochMilli(start), Instant.ofEpochMilli(last))
+        val timeframe = if (start == Long.MIN_VALUE)
+            Timeframe.EMPTY
+        else
+            Timeframe(Instant.ofEpochMilli(start), Instant.ofEpochMilli(last))
         return Pair(index, timeframe)
     }
 
@@ -401,6 +404,7 @@ private object PriceActionSerializer {
                 PRICEQUOTE_IDX,
                 listOf(action.askPrice, action.askSize, action.bidPrice, action.bidSize)
             )
+
             is OrderBook -> Pair(ORDERBOOK_IDX, orderBookToValues(action))
             else -> throw UnsupportedException("cannot serialize action=$action")
         }
@@ -411,12 +415,12 @@ private object PriceActionSerializer {
             PRICEBAR_IDX -> PriceBar(asset, values.toDoubleArray())
             TRADEPRICE_IDX -> TradePrice(asset, values[0], values[1])
             PRICEQUOTE_IDX -> PriceQuote(asset, values[0], values[1], values[2], values[3])
-            ORDERBOOK_IDX  -> orderBookFromValues(asset, values)
+            ORDERBOOK_IDX -> orderBookFromValues(asset, values)
             else -> throw UnsupportedException("cannot deserialize asset=$asset type=$idx")
         }
     }
 
-    private fun orderBookToValues(action: OrderBook) : List<Double> {
+    private fun orderBookToValues(action: OrderBook): List<Double> {
         return listOf(action.asks.size.toDouble()) +
                 action.asks.map { listOf(it.size, it.limit) }.flatten() +
                 action.bids.map { listOf(it.size, it.limit) }.flatten()

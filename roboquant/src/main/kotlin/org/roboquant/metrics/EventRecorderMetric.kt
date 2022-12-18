@@ -22,6 +22,7 @@ import org.roboquant.common.Timeline
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
+import org.roboquant.feeds.timeframe
 import java.util.*
 
 /**
@@ -52,10 +53,10 @@ class EventRecorderMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, F
     }
 
     /**
-     * The actual timeframe so far recorded
+     * The actual timeframe recorded so far.
      */
     override val timeframe
-        get() = Timeframe(events.first.time, events.last.time, true)
+        get() = events.timeframe
 
     /**
      * Return the timeline of the events captured

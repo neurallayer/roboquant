@@ -17,6 +17,7 @@
 package org.roboquant.feeds
 
 import org.roboquant.common.Asset
+import org.roboquant.common.Timeframe
 import java.time.Instant
 
 /**
@@ -68,5 +69,9 @@ data class Event(val actions: List<Action>, val time: Instant) : Comparable<Even
 
 }
 
-
+/**
+ * Return the Timeframe matching the list of events. The list is expected to be ordered.
+ */
+val List<Event>.timeframe : Timeframe
+    get() = if (isEmpty()) Timeframe.EMPTY else Timeframe(first().time, last().time, inclusive = true)
 

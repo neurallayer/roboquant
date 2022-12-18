@@ -32,6 +32,7 @@ operator fun StringBuffer.plusAssign(str: Any) {
  * @property root
  * @constructor Create empty Base wrapper
  */
+@Suppress("MemberVisibilityCanBePrivate")
 class TaLibGenerator(private val root: JsonObject) {
 
      fun JsonObject.getAttr(key: String): String = get(key).asString
@@ -194,21 +195,6 @@ class TaLibGenerator(private val root: JsonObject) {
         return result.toString().trimIndent()
     }
 
-    /**
-    private fun returnStatementInssuficientData(): String {
-    if (patternRecognition) return "false"
-
-    val l = getList("OutputArgument")
-    return when(l.size) {
-    1 -> "Double.NaN"
-    2 -> "Pair(Double.NaN, Double.NaN)"
-    3 -> "Triple(Double.NaN, Double.NaN, Double.NaN)"
-    else -> {
-    throw Exception("unexpected return size")
-    }
-    }
-    }
-     */
 
     private fun returnStatement(): String {
         if (patternRecognition) return "output1[0] != 0"
