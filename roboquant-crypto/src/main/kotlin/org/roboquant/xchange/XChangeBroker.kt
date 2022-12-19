@@ -64,8 +64,6 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
     /**
      * Update the account
-     * @TODO: implement real update
-     *
      */
     private fun updateAccount() {
         val info = accountService.accountInfo
@@ -76,7 +74,6 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
     /**
      * Place orders on a XChange supported exchange using the trade service.
-     * @TODO test with a real account on several XChange supported exchanges
      *
      * @param orders
      * @return

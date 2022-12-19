@@ -108,8 +108,6 @@ class BinanceBroker(
     }
 
     /**
-     * @TODO test with a real account on BinanceBroker
-     *
      * @param orders
      * @return
      */

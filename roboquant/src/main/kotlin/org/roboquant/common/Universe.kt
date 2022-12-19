@@ -40,7 +40,6 @@ interface Universe {
 
         /**
          * Return a universe containing all the S&P 500 assets.
-         * @TODO currently ignores the date when assets where added/removed from S&P 500
          */
         val sp500 : Universe by lazy { SP500() }
 

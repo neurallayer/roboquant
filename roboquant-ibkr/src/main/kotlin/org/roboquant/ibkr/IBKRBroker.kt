@@ -92,7 +92,6 @@ class IBKRBroker(
     /**
      * Wait till IBKR account is synchronized so roboquant has the correct assets and cash balance available.
      *
-     * @TODO: replace sleep with real check
      */
     private fun waitTillSynced() {
         @Suppress("MagicNumber")

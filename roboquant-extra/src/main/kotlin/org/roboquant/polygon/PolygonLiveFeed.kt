@@ -54,7 +54,6 @@ enum class PolygonActionType {
  * Live data feed using market data from Polygon.io. This feed requires one of the non-free
  * subscriptions at Polygon.io since it uses the websocket API.
  *
- * @TODO still needs to be tested.
  */
 class PolygonLiveFeed(
     configure: PolygonConfig.() -> Unit = {}
