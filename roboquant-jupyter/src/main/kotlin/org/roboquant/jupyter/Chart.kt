@@ -295,7 +295,10 @@ abstract class Chart : Output() {
 
 }
 
-internal fun Option.renderJson(): String {
+/**
+ * Convert the option to a JSON string
+ */
+fun Option.renderJson(): String {
     // Set default transparent background so charts look better with Jupyter Notebooks
     if (backgroundColor == null) backgroundColor = "rgba(0,0,0,0)"
 
