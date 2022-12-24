@@ -166,12 +166,18 @@ class AlpacaLiveFeed(
         close()
     }
 
+    private fun validateSymbols(symbols: Array<out String>, map: Map<String, Asset>) {
+        require(symbols.isNotEmpty()) { "provide at least one symbol" }
+        symbols.forEach {
+            require(map.contains(it) || it == "*") { "unknown symbol $it" }
+        }
+    }
+
     /**
      * Subscribe to stock market data based on the passed [symbols] and [type]
      */
     fun subscribeStocks(vararg symbols: String, type: PriceActionType = PriceActionType.PRICE_BAR) {
-        require(symbols.isNotEmpty())
-        symbols.forEach { require(availableStocksMap.contains(it) || it == "*") }
+        validateSymbols(symbols, availableStocksMap)
         val s = symbols.toList()
         when(type) {
             PriceActionType.TRADE -> alpacaAPI.stockMarketDataStreaming().subscribe(s, null, null)
@@ -185,8 +191,7 @@ class AlpacaLiveFeed(
      * Subscribe to crypto market data b based on the passed [symbols] and [type]
      */
     fun subscribeCrypto(vararg symbols: String, type: PriceActionType = PriceActionType.PRICE_BAR) {
-        require(symbols.isNotEmpty())
-        symbols.forEach { require(availableCryptoMap.contains(it) || it == "*") }
+        validateSymbols(symbols, availableCryptoMap)
         val s = symbols.toList()
         when(type) {
             PriceActionType.TRADE -> alpacaAPI.cryptoMarketDataStreaming().subscribe(s, null, null)
