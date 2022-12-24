@@ -24,8 +24,9 @@ jupyter nbconvert --clear-output --inplace ./*.ipynb
 # Now regenerate the outputs
 jupyter nbconvert --execute --inplace ./*.ipynb
 
-# Removed some JS
+# Removed most of static echarts file
 for FILE in *.ipynb; do
-  sed -n '1h;1!H;${g;s/kotlinQueues.*appendChild/replace/;p;}' $FILE > tmp.ipynb
-  mv tmp.ipynb $FILE
+  # shellcheck disable=SC2016
+  sed -n '1h;1!H;${g;s/kotlinQueues.*appendChild/replace/;p;}' "$FILE" > tmp.ipynb
+  mv tmp.ipynb "$FILE"
 done
