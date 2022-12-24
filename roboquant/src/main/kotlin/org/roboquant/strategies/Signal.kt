@@ -62,10 +62,11 @@ enum class SignalType {
  * @property asset The asset for which this rating applies
  * @property rating The rating for the asset
  * @property type The type of signal, entry, exit or both. [SignalType.BOTH] is the default
- * @property takeProfit An optional take profit price in the same currency as the asset
- * @property stopLoss An optional stop loss price in the same currency as the asset
- * @property probability Optional the probability (value between 0.0 and 1.0) for the provided rating.
- * @property source Optional the source of the signal, for example the strategy name that generated the signal
+ * @property takeProfit An optional take profit price in the same currency as the asset, default is Double.NaN
+ * @property stopLoss An optional stop loss price in the same currency as the asset, default is Double.NaN
+ * @property probability Optional the probability (value between 0.0 and 1.0) for the provided rating, default is
+ * Double.NaN
+ * @property tag Optional extra tag, for example the strategy name that generated the signal, default is empty String
  * @constructor Create a new Signal
  */
 class Signal(
@@ -75,7 +76,7 @@ class Signal(
     val takeProfit: Double = Double.NaN,
     val stopLoss: Double = Double.NaN,
     val probability: Double = Double.NaN,
-    val source: String = ""
+    val tag: String = ""
 ) {
 
     /**

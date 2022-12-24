@@ -21,6 +21,8 @@ import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.feeds.*
+import org.roboquant.polygon.Polygon.availableAssets
+import org.roboquant.polygon.Polygon.getRestClient
 import org.roboquant.polygon.Polygon.getWebSocketClient
 import java.time.Instant
 
@@ -52,16 +54,21 @@ enum class PolygonActionType {
 
 /**
  * Live data feed using market data from Polygon.io. This feed requires one of the non-free
- * subscriptions at Polygon.io since it uses the websocket API.
+ * subscriptions from Polygon.io since it uses the websocket API.
  *
+ * @param configure additional configuration logic
+ * @property useComputerTime use the computer time to stamp events or use the polygon supplied timestamps,
+ * default is true
  */
 class PolygonLiveFeed(
-    configure: PolygonConfig.() -> Unit = {}
+    configure: PolygonConfig.() -> Unit = {},
+    private val useComputerTime: Boolean = true
 ) : LiveFeed() {
 
     private val config = PolygonConfig()
     private var client: PolygonWebSocketClient
     private val logger = Logging.getLogger(PolygonLiveFeed::class)
+    private val subscriptions = mutableMapOf<String, Asset>()
 
     init {
         config.configure()
@@ -73,6 +80,27 @@ class PolygonLiveFeed(
     }
 
     /**
+     * Return the available assets. Due to the amount of API calls made, this requires a
+     * non-free subscription at Polygon.io
+     */
+    val availableAssets : List<Asset> by lazy {
+        availableAssets(getRestClient(config))
+    }
+
+
+    private fun getTime(endTime: Long?): Instant {
+        return if (useComputerTime || endTime == null) Instant.now() else Instant.ofEpochMilli(endTime)
+    }
+
+    /**
+     * Get the full asset based on the symbol (aka ticker)
+     */
+    private fun getSubscriptionAsset(symbol: String): Asset {
+        return subscriptions.getValue(symbol)
+    }
+
+
+    /**
      * Handle incoming messages
      */
     private fun handler(message: PolygonWebSocketMessage) {
@@ -80,22 +108,22 @@ class PolygonLiveFeed(
         when (message) {
             is PolygonWebSocketMessage.RawMessage -> logger.info(String(message.data))
             is PolygonWebSocketMessage.StocksMessage.Aggregate -> {
-                val asset = Asset(message.ticker.toString())
+                val asset = getSubscriptionAsset(message.ticker!!)
                 val action = PriceBar(
                     asset, message.openPrice!!, message.highPrice!!,
-                    message.lowPrice!!, message.closePrice!!, message.volume!!
+                    message.lowPrice!!, message.closePrice!!, message.volume ?: Double.NaN
                 )
-                send(Event(listOf(action), Instant.now()))
+                send(Event(listOf(action), getTime(message.endTimestampMillis)))
             }
 
             is PolygonWebSocketMessage.StocksMessage.Trade -> {
-                val asset = Asset(message.ticker.toString())
+                val asset = getSubscriptionAsset(message.ticker!!)
                 val action = TradePrice(asset, message.price!!, message.size ?: Double.NaN)
-                send(Event(listOf(action), Instant.now()))
+                send(Event(listOf(action), getTime(message.timestampMillis)))
             }
 
             is PolygonWebSocketMessage.StocksMessage.Quote -> {
-                val asset = Asset(message.ticker.toString())
+                val asset = getSubscriptionAsset(message.ticker!!)
                 val action = PriceQuote(
                     asset,
                     message.askPrice!!,
@@ -103,7 +131,7 @@ class PolygonLiveFeed(
                     message.bidPrice!!,
                     message.bidSize ?: Double.NaN,
                 )
-                send(Event(listOf(action), Instant.now()))
+                send(Event(listOf(action), getTime(message.timestampMillis)))
             }
 
             else -> logger.warn { "received message=$message" }
@@ -114,7 +142,13 @@ class PolygonLiveFeed(
      * Subscribe to the [symbols] for the specified action [type]
      */
     suspend fun subscribe(vararg symbols: String, type: PolygonActionType = PolygonActionType.TRADE) {
-        val subscriptions = when (type) {
+
+        // val assets = symbols.map { symbol -> availableAssets.first { it.symbol ==  symbol } }
+        // associateBy { it.symbol }
+        val assets = symbols.map { Asset(it) }.associateBy { it.symbol }
+        subscriptions.putAll(assets)
+
+        val polygonSubs = when (type) {
 
             PolygonActionType.TRADE -> symbols.map {
                 PolygonWebSocketSubscription(PolygonWebSocketChannel.Stocks.Trades, it)
@@ -134,7 +168,7 @@ class PolygonLiveFeed(
 
         }
 
-        client.subscribe(subscriptions)
+        client.subscribe(polygonSubs)
     }
 
     /**

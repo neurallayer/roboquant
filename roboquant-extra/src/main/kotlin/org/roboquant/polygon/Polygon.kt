@@ -66,7 +66,7 @@ internal object Polygon {
                 }
 
                 override fun onReceive(client: PolygonWebSocketClient, message: PolygonWebSocketMessage) {
-                    logger.trace {message}
+                    logger.trace { message }
                     handler(message)
                 }
 
@@ -91,7 +91,12 @@ internal object Polygon {
 
         while (!done) {
             val lastSymbol = assets.lastOrNull()?.symbol ?: ""
-            val params = SupportedTickersParameters(limit = 10000, market = "stocks", tickerGT = lastSymbol)
+            val params = SupportedTickersParameters(
+                limit = 1000,
+                market = "stocks",
+                activeSymbolsOnly = true,
+                tickerGT = lastSymbol
+            )
             val results = client.referenceClient.getSupportedTickersBlocking(params).results ?: emptyList()
             for (result in results) {
                 val currency = result.currencyName?.uppercase() ?: "USD"
@@ -113,7 +118,6 @@ internal object Polygon {
                 assets.add(asset)
             }
             done = results.isEmpty()
-
         }
         return assets
     }

@@ -30,7 +30,7 @@ internal class PolygonTest {
 
     @Test
     fun testHistoricFeed() {
-        Config.getProperty("FULL_COVERAGE") ?: return
+        Config.getProperty("TEST_POLYGON") ?: return
         val feed = PolygonHistoricFeed()
         val now = Instant.now() - 10.days
         val period = Timeframe(now - 50.days, now)

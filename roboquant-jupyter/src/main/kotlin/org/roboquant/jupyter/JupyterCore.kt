@@ -59,7 +59,6 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
  */
 internal class JupyterCore : JupyterIntegration() {
 
-
     companion object {
         private val outputs = CopyOnWriteArrayList<Output>()
         internal fun addOutput(output: Output) = outputs.add(output)

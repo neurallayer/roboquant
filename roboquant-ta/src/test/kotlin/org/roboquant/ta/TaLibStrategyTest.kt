@@ -69,8 +69,8 @@ internal class TaLibStrategyTest {
         val strategy = TaLibSignalStrategy(20) { asset, series ->
             // record("test", 1)
             when {
-                cdlMorningStar(series) -> Signal(asset, Rating.BUY, source = "Morning Star")
-                cdl3BlackCrows(series) -> Signal(asset, Rating.SELL, source = "Black Crows")
+                cdlMorningStar(series) -> Signal(asset, Rating.BUY, tag = "Morning Star")
+                cdl3BlackCrows(series) -> Signal(asset, Rating.SELL, tag = "Black Crows")
                 else -> null
             }
         }
