@@ -76,10 +76,10 @@ open class BettingAgainstBetaPolicy(
      */
     private fun calculateBetas(): List<Pair<Asset, Double>> {
         val betas = mutableListOf<Pair<Asset, Double>>()
-        val x = data.getValue(market).toDoubleArray().percentageChange()
+        val x = data.getValue(market).toDoubleArray().returns()
         for ((asset, data2) in data) {
             if (asset != market) {
-                val y = data2.toDoubleArray().percentageChange()
+                val y = data2.toDoubleArray().returns()
                 val beta = Covariance().covariance(x, y)
                 if (!beta.isNaN()) betas.add(Pair(asset, beta))
             }

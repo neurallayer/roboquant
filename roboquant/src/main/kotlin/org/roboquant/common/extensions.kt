@@ -227,14 +227,26 @@ fun DoubleArray.kurtosis(): Double {
 fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 
 /**
- * Return the percentage change.  The resulting array size will be 1 smaller than the original one. Formula used is:
+ * Return the returns. The resulting array size will be 1 smaller than the original one. Formula used is:
  *
- *      returns = (new - old) / old
+ *      returns = new/old - 1.0
  */
-fun DoubleArray.percentageChange(): DoubleArray {
+fun DoubleArray.returns(): DoubleArray {
     if (size < 2) return DoubleArray(0)
     val result = DoubleArray(size - 1)
-    for (n in 1..lastIndex) result[n - 1] = (get(n) - get(n - 1)) / get(n - 1)
+    for (n in 1..lastIndex) result[n - 1] = get(n)/get(n - 1) - 1.0
+    return result
+}
+
+/**
+ * Return the growth rates. The resulting array size will be 1 smaller than the original one. Formula used is:
+ *
+ *     growthRate = new/old
+ */
+fun DoubleArray.growthRates(): DoubleArray {
+    if (size < 2) return DoubleArray(0)
+    val result = DoubleArray(size - 1)
+    for (n in 1..lastIndex) result[n - 1] = get(n)/get(n - 1)
     return result
 }
 
@@ -264,20 +276,20 @@ fun DoubleArray.percentiles(
 /**
  * Get the total percentage change. Formula used is
  *
- *      returns = (last - first) / first
+ *      return = last/first - 1.0
  */
-fun DoubleArray.totalPercentageChange(): Double {
+fun DoubleArray.totalReturn(): Double {
     return if (size < 2)
         0.0
     else
-        (last() - first()) / first()
+        last()/first() - 1.0
 }
 
 // Values smaller than this value are considered to be zero
 private const val EPS = 0.0000001
 
 /**
- * Is this value zero, allows for small rounding errors.
+ * Is this value zero, this implementation allows for small rounding errors.
  */
 val Double.iszero
     get() = this.absoluteValue < EPS

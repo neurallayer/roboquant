@@ -39,9 +39,17 @@ class ExtensionsTest {
     @Test
     fun returns() {
         val a = doubleArrayOf(10.0, 20.0, 10.0)
-        assertEquals(2, a.percentageChange().size)
-        assertEquals(1.0, a.percentageChange()[0])
-        assertEquals(-0.5, a.percentageChange()[1])
+        assertEquals(2, a.returns().size)
+        assertEquals(1.0, a.returns()[0])
+        assertEquals(-0.5, a.returns()[1])
+    }
+
+    @Test
+    fun growthRates() {
+        val a = doubleArrayOf(10.0, 20.0, 10.0)
+        assertEquals(2, a.growthRates().size)
+        assertEquals(2.0, a.growthRates()[0])
+        assertEquals(0.5, a.growthRates()[1])
     }
 
     @Test
