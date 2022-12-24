@@ -65,6 +65,9 @@ class ExtensionsTest {
         val small = 0.00000000000001
         assertTrue(small.iszero)
         assertFalse(small.nonzero)
+        val big = 0.01
+        assertFalse(big.iszero)
+        assertTrue(big.nonzero)
     }
 
     @Test
