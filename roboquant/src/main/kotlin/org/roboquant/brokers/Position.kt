@@ -140,7 +140,7 @@ data class Position(
     /**
      * Would the overall position size be reduced given the provided [additional] size
      */
-    fun isReduced(additional: Size) : Boolean = (size + additional).absoluteValue < size.absoluteValue
+    fun isReduced(additional: Size): Boolean = (size + additional).absoluteValue < size.absoluteValue
 
 }
 
@@ -210,7 +210,7 @@ fun Collection<Position>.getPosition(asset: Asset): Position {
 /**
  * Return the total unrealized PNL for a collection of positions
  */
-val Collection<Position>.unrealizedPNL : Wallet
+val Collection<Position>.unrealizedPNL: Wallet
     get() = sumOf { it.unrealizedPNL }
 
 

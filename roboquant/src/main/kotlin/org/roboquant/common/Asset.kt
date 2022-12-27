@@ -16,6 +16,7 @@
 @file:Suppress("LongParameterList")
 
 package org.roboquant.common
+
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -148,7 +149,7 @@ data class Asset(
      */
     val currencyPair: Pair<Currency, Currency>
         get() {
-            val base = symbol.split('/', '_', ':','.', ' ').first()
+            val base = symbol.split('/', '_', ':', '.', ' ').first()
             return Pair(Currency.getInstance(base), currency)
         }
 
@@ -205,7 +206,7 @@ fun Collection<Asset>.findByCurrencies(currencyCodes: Collection<String>): List<
  * Get all unique symbols from the assets
  */
 val Collection<Asset>.symbols: Array<String>
-    get() = map { it.symbol}.distinct().toTypedArray()
+    get() = map { it.symbol }.distinct().toTypedArray()
 
 /**
  * Find all assets based on their [exchangeCodes]. Returns an empty list if no matching assets can be found.

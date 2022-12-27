@@ -70,7 +70,7 @@ data class Trade(
 /**
  * Get the total fee for a collection of trades
  */
-val Collection<Trade>.fee : Wallet
+val Collection<Trade>.fee: Wallet
     get() = sumOf { it.fee }
 
 /**
@@ -82,18 +82,18 @@ val Collection<Trade>.timeline
 /**
  * Return the total realized PNL for a collection of trades
  */
-val Collection<Trade>.realizedPNL : Wallet
+val Collection<Trade>.realizedPNL: Wallet
     get() = sumOf { it.pnl }
 
 /**
  * Return the timeframe for a collection of trades
  */
-val Collection<Trade>.timeframe : Timeframe
+val Collection<Trade>.timeframe: Timeframe
     get() = timeline.timeframe
 
 /**
-* Create a summary of the trades
-*/
+ * Create a summary of the trades
+ */
 @JvmName("summaryTrades")
 fun Collection<Trade>.summary(name: String = "trades"): Summary {
     val s = Summary(name)

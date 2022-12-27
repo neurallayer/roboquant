@@ -110,5 +110,4 @@ class Signal(
     fun conflicts(other: Signal) = asset == other.asset && rating.conflicts(other.rating)
 
 
-
 }

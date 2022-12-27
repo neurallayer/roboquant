@@ -47,13 +47,13 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
     /**
      * Order status
      */
-    override var status : OrderStatus = OrderStatus.INITIAL
+    override var status: OrderStatus = OrderStatus.INITIAL
 
     /**
      * Cancel the order, return true if successful, false otherwise. Any open SingleOrder can be cancelled, closed
      * orders not.
      */
-    override fun cancel(time: Instant) : Boolean {
+    override fun cancel(time: Instant): Boolean {
         return if (status.closed) {
             false
         } else {
@@ -203,8 +203,9 @@ internal class TrailOrderExecutor(order: TrailOrder) : SingleOrderExecutor<Trail
     override fun fill(remaining: Size, pricing: Pricing): Execution? {
         stop = getTrailStop(stop, order.trailPercentage, remaining, pricing)
         return if (stopTrigger(stop, remaining, pricing))
-            Execution(order, remaining, pricing.marketPrice(remaining)
-        ) else
+            Execution(
+                order, remaining, pricing.marketPrice(remaining)
+            ) else
             null
     }
 

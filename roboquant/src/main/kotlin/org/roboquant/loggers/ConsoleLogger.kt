@@ -45,24 +45,26 @@ open class ConsoleLogger(
         }
     }
 
-    protected fun getLines(results: MetricResults, info: RunInfo) : List<String> {
+    protected fun getLines(results: MetricResults, info: RunInfo): List<String> {
         val time = info.time.truncatedTo(precision)
         return if (!splitMetrics)
-                listOf(mapOf(
+            listOf(
+                mapOf(
                     "run" to info.run,
                     "episode" to info.episode,
                     "time" to time,
                     "step" to info.step
-                ).pretty()  + ", " + results.format().pretty() )
+                ).pretty() + ", " + results.format().pretty()
+            )
         else
             results.map {
-                    mapOf(
-                        "run" to info.run,
-                        "episode" to info.episode,
-                        "time" to time,
-                        "step" to info.step,
-                        it.key to formatter.format(it.value)
-                    ).pretty()
+                mapOf(
+                    "run" to info.run,
+                    "episode" to info.episode,
+                    "time" to time,
+                    "step" to info.step,
+                    it.key to formatter.format(it.value)
+                ).pretty()
             }
     }
 

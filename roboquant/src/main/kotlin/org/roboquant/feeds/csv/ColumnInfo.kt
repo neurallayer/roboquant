@@ -62,7 +62,7 @@ internal class ColumnInfo {
      */
     fun define(def: String) {
         val str = def.uppercase()
-        require(str.contains('T')) { "time (T) is mandatory when providing column definitions, found $def"}
+        require(str.contains('T')) { "time (T) is mandatory when providing column definitions, found $def" }
         str.forEachIndexed { index, char ->
             when (char) {
                 'T' -> time = index

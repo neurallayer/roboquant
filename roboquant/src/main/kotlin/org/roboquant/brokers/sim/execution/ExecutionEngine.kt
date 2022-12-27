@@ -45,7 +45,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
          * Return the order executor for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
          * is registered for the order::class.
          */
-        internal fun <T: Order>getExecutor(order: T): OrderExecutor<T> {
+        internal fun <T : Order> getExecutor(order: T): OrderExecutor<T> {
             val factory = factories.getValue(order::class)
 
             @Suppress("UNCHECKED_CAST")
@@ -56,7 +56,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
          * Return the order executor for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
          * is registered for the order::class.
          */
-        internal fun <T: CreateOrder>getCreateOrderExecutor(order: T): CreateOrderExecutor<T> {
+        internal fun <T : CreateOrder> getCreateOrderExecutor(order: T): CreateOrderExecutor<T> {
             val factory = factories.getValue(order::class)
 
             @Suppress("UNCHECKED_CAST")

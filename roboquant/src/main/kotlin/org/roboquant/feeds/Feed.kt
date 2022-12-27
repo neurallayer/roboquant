@@ -60,7 +60,7 @@ interface Feed : AutoCloseable {
 }
 
 /**
- * Implementations of AssetFeed need to provide the [assets] it contains.
+ * Implementations of AssetFeed need to list the [assets] it contains.
  */
 interface AssetFeed : Feed {
 

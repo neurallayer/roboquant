@@ -32,7 +32,7 @@ interface Universe {
     /**
      * Return the list of assets in this universe at the given [time]
      */
-    fun getAssets(time: Instant) : List<Asset>
+    fun getAssets(time: Instant): List<Asset>
 
     /**
      * Set of standard universes like the assets in the S&P 500 index
@@ -42,7 +42,7 @@ interface Universe {
         /**
          * Return a universe containing all the S&P 500 assets.
          */
-        val sp500 : Universe by lazy { SP500() }
+        val sp500: Universe by lazy { SP500() }
 
 
     }
@@ -53,7 +53,7 @@ private class SP500 : Universe {
     private val assets: List<Asset>
 
     init {
-        val stream =  SP500::class.java.getResourceAsStream("/sp500.csv")!!
+        val stream = SP500::class.java.getResourceAsStream("/sp500.csv")!!
         val content = String(stream.readAllBytes(), StandardCharsets.UTF_8)
         stream.close()
         val builder = NamedCsvReader.builder().fieldSeparator(';').build(content)

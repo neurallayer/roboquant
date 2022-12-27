@@ -52,7 +52,7 @@ class FeedExchangeRates(
     }
 
     private fun setRates(feed: Feed) {
-        val actions = feed.filter<PriceAction> {it.asset.type in assetTypes }
+        val actions = feed.filter<PriceAction> { it.asset.type in assetTypes }
         for ((now, action) in actions) {
             val asset = action.asset
             val rate = action.getPrice(priceType)
@@ -79,7 +79,7 @@ class FeedExchangeRates(
         if (result !== null) return result
 
         result = find(Pair(amount.currency, to), time)
-        if (result !== null) return 1.0/result
+        if (result !== null) return 1.0 / result
         throw ConfigurationException("No conversion for $amount to $to")
     }
 

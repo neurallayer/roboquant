@@ -32,7 +32,7 @@ import java.time.temporal.TemporalAmount
  * @property period the period that this applies to
  */
 @JvmInline
-value class TradingPeriod(val period : TemporalAmount)
+value class TradingPeriod(val period: TemporalAmount)
 
 
 /*********************************************************************************************
@@ -91,7 +91,7 @@ val Int.millis: TradingPeriod
 /**
  * Subtract a trading [period] to an instant
  */
-operator fun Instant.minus(period: TradingPeriod) : Instant {
+operator fun Instant.minus(period: TradingPeriod): Instant {
     val zoneId = Config.defaultZoneId
     val now = this.atZone(zoneId)
     return (now - period.period).toInstant()
@@ -117,7 +117,7 @@ fun Instant.plus(period: TradingPeriod, zoneId: ZoneId): Instant {
 /**
  * Subtract a trading [period] from a zoned date-time
  */
-operator fun ZonedDateTime.minus(period: TradingPeriod) : ZonedDateTime {
+operator fun ZonedDateTime.minus(period: TradingPeriod): ZonedDateTime {
     return this - period.period
 }
 

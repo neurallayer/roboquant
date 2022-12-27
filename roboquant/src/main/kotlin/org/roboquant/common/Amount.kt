@@ -95,7 +95,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
      * Compare the [value] in this amount to an [other] amount
      */
     operator fun compareTo(other: Amount): Int {
-        require(this.currency == other.currency) { "Can only compare amounts with same currency"}
+        require(this.currency == other.currency) { "Can only compare amounts with same currency" }
         return value.compareTo(other.value)
     }
 

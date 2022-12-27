@@ -47,14 +47,14 @@ private const val EPS = 0.0000000001
 class ReturnsMetric(
     private val riskFreeRate: Double = 0.0,
     private val minPeriods: Int = 2,
-    private val period : TradingPeriod = 1.years,
+    private val period: TradingPeriod = 1.years,
     private val annualize: Boolean = true
 ) : Metric {
 
     private var stats = DescriptiveStatistics()
     private var lastValue: Double = Double.NaN
     private var lastTime: Instant = Instant.MIN
-    private var nextTime : Instant = Instant.MIN
+    private var nextTime: Instant = Instant.MIN
 
     /**
      * @see Metric.calculate

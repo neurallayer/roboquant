@@ -57,7 +57,7 @@ class Account(
 ) {
 
     init {
-        require(buyingPower.currency == baseCurrency) { "Buying power needs to be expressed in the baseCurrency"}
+        require(buyingPower.currency == baseCurrency) { "Buying power needs to be expressed in the baseCurrency" }
     }
 
     /**

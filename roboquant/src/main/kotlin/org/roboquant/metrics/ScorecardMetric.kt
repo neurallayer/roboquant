@@ -48,7 +48,7 @@ class ScorecardMetric : Metric {
 
         val mdd = (minEquity - maxEquity) / maxEquity
 
-        if (maxMDD.isNaN() || mdd< maxMDD) maxMDD = mdd
+        if (maxMDD.isNaN() || mdd < maxMDD) maxMDD = mdd
     }
 
 
@@ -68,7 +68,7 @@ class ScorecardMetric : Metric {
 
         updateMDD(equity)
 
-        val prefix ="scorecard."
+        val prefix = "scorecard."
 
         return metricResultsOf(
             "${prefix}winners" to winners,
@@ -77,7 +77,7 @@ class ScorecardMetric : Metric {
 
             "${prefix}losers" to loosers,
             "${prefix}losers.total" to totalLoosing,
-            "${prefix}losing.avg" to totalLoosing/loosers,
+            "${prefix}losing.avg" to totalLoosing / loosers,
 
             "${prefix}profit.realized" to realizedPNL,
             "${prefix}profit.unrealized" to unrealizedPNL,

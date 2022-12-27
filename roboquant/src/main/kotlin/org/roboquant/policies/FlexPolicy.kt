@@ -104,7 +104,7 @@ open class FlexPolicy(
      * It the minimum price met for the provided [asset]. If the asset is in different currency than the minimum price,
      * a conversion will take place.
      */
-    private fun meetsMinPrice(asset: Asset, price: Double, time: Instant) : Boolean {
+    private fun meetsMinPrice(asset: Asset, price: Double, time: Instant): Boolean {
         return minPrice == null || minPrice.convert(asset.currency, time) <= price
     }
 
@@ -124,14 +124,14 @@ open class FlexPolicy(
         val orders = mutableListOf<Order>()
         val equityAmount = account.equityAmount
         val amountPerOrder = equityAmount * orderPercentage
-        val safetyAmount =  equityAmount * safetyMargin
+        val safetyAmount = equityAmount * safetyMargin
         var buyingPower = account.buyingPower - safetyAmount.value
 
         @Suppress("LoopWithTooManyJumpStatements")
         for (signal in signals) {
             val asset = signal.asset
 
-            if (oneOrderOnly && (account.openOrders.contains(asset)|| orders.contains(asset))) continue
+            if (oneOrderOnly && (account.openOrders.contains(asset) || orders.contains(asset))) continue
 
             val price = event.getPrice(asset, priceType)
             logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder price=$price" }
@@ -152,7 +152,7 @@ open class FlexPolicy(
                     val size = calcSize(assetAmount, signal, price)
                     if (size.iszero) continue
                     if (size < 0 && !shorting) continue
-                    if (! meetsMinPrice(asset, price, event.time)) continue
+                    if (!meetsMinPrice(asset, price, event.time)) continue
 
                     val order = createOrder(signal, size, price)
                     if (order != null) {

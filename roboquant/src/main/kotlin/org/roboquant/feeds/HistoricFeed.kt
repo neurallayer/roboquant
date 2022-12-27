@@ -23,8 +23,8 @@ import kotlin.random.Random
  * Historic feed represents a feed of historic data, useful for back testing. Examples are CSV files with
  * stock data of the last years.
  *
- * It provides common functionality that can be used by subclasses implementing the [Feed] interface; it contains
- * access to the [timeline], [timeframe] and [assets] of the feed.
+ * This interface defines common functionality that can be used by subclasses implementing the [Feed] interface;
+ * it contains access to the [timeline], [timeframe] and [assets] of the feed.
  */
 interface HistoricFeed : AssetFeed {
 

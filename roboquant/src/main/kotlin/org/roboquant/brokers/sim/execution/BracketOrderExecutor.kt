@@ -32,7 +32,7 @@ internal class BracketOrderExecutor(override val order: BracketOrder) : CreateOr
     /**
      * Cancel the order, return true if successful, false otherwise
      */
-    override fun cancel(time: Instant) : Boolean {
+    override fun cancel(time: Instant): Boolean {
         return if (status.closed) {
             false
         } else {

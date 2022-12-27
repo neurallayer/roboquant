@@ -35,7 +35,7 @@ internal class OCOOrderExecutor(override val order: OCOOrder) : CreateOrderExecu
     /**
      * Cancel the order, return true if successful, false otherwise
      */
-    override fun cancel(time: Instant) : Boolean {
+    override fun cancel(time: Instant): Boolean {
         return if (status.closed) {
             false
         } else {
@@ -53,7 +53,7 @@ internal class OCOOrderExecutor(override val order: OCOOrder) : CreateOrderExecu
             val result = first.execute(pricing, time)
             if (result.isNotEmpty()) {
                 active = 1
-                status =  first.status
+                status = first.status
                 return result
             }
 
@@ -63,7 +63,7 @@ internal class OCOOrderExecutor(override val order: OCOOrder) : CreateOrderExecu
             val result = second.execute(pricing, time)
             if (result.isNotEmpty()) {
                 active = 2
-                status =  second.status
+                status = second.status
                 return result
             }
         }

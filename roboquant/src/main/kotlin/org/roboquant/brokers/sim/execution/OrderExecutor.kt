@@ -33,7 +33,7 @@ import java.time.Instant
  * Any change to the status or order should only be done it the OrderExecutor itself, thus keep this logic isolated to
  * that particular implementation.
  */
-sealed interface OrderExecutor<T: Order> {
+sealed interface OrderExecutor<T : Order> {
 
     /**
      * The order to be executed
@@ -85,12 +85,12 @@ interface CreateOrderExecutor<T : CreateOrder> : OrderExecutor<T> {
     /**
      * Update the order, return true if the update was successful, false otherwise
      */
-    fun update(order: CreateOrder, time: Instant) : Boolean
+    fun update(order: CreateOrder, time: Instant): Boolean
 
     /**
      * Cancel the order, return true if the cancellation was successful, false otherwise
      */
-    fun cancel(time: Instant) : Boolean
+    fun cancel(time: Instant): Boolean
 
 }
 

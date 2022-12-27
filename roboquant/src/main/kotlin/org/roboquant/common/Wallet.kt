@@ -35,7 +35,6 @@ import kotlin.collections.HashMap
 @Suppress("TooManyFunctions")
 class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneable {
 
-
     /**
      * @suppress
      */
@@ -234,7 +233,7 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
     /**
      * A wallet equals another wallet if they hold the same currencies and corresponding amounts.
      */
-    override fun equals(other: Any?) : Boolean {
+    override fun equals(other: Any?): Boolean {
         return if (other is Wallet) data == other.data else false
     }
 

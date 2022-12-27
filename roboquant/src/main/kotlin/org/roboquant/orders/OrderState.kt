@@ -25,7 +25,7 @@ import java.time.temporal.ChronoUnit
 
 /**
  * Keeps track of the state of an order. This is a read-only class and any [update] will generate a new instance (also
- * sometimes referred to an Immutable State Pattern).
+ * sometimes referred to as the Immutable State Pattern).
  *
  * @property order the order that is tracked
  * @property status the actual status or the order
@@ -37,13 +37,13 @@ class OrderState private constructor(
     val status: OrderStatus,
     val openedAt: Instant,
     val closedAt: Instant
-)  {
+) {
 
     /**
      * Create a new OrderState instance with the status set to [OrderStatus.INITIAL]. This is the only way
      * to create a new OrderState. Sequential updates should be done using the [update] method.
      */
-    constructor(order: Order) : this(order,INITIAL, Instant.MAX, Instant.MAX)
+    constructor(order: Order) : this(order, INITIAL, Instant.MAX, Instant.MAX)
 
     /**
      * Returns true the order status is open, false otherwise
@@ -77,16 +77,16 @@ class OrderState private constructor(
      * This method will take care that the right state transition happens. And if it is not allowed, it will throw an
      * IllegalState Exception.
      */
-    fun update(newStatus: OrderStatus, time: Instant) : OrderState {
+    fun update(newStatus: OrderStatus, time: Instant): OrderState {
         if (status.closed) throw IllegalStateException("cannot update a closed order, status=$status")
         val newOpenedAt = if (openedAt == Instant.MAX) time else openedAt
         val newClosedAt = if (newStatus.closed) time else closedAt
-        return OrderState(order, newStatus, newOpenedAt, newClosedAt )
+        return OrderState(order, newStatus, newOpenedAt, newClosedAt)
     }
 
 }
 
-private fun Instant.toPrettyString() : String {
+private fun Instant.toPrettyString(): String {
     return if (this == Instant.MAX) "-" else this.truncatedTo(ChronoUnit.SECONDS).toString()
 }
 
@@ -128,20 +128,20 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
 /**
  * Returns true is the collection of orderStates contains at least one for [asset], false otherwise.
  */
-operator fun Collection<OrderState>.contains(asset: Asset) = any { it.asset == asset}
+operator fun Collection<OrderState>.contains(asset: Asset) = any { it.asset == asset }
 
 /**
  * Create the required [CancelOrder]s to cancel the orders. Only [OrderStatus.open] orders of the type [CreateOrder]
  * can be cancelled and will be included in the returned cancellations.
  */
-fun Collection<OrderState>.createCancelOrders() : List<CancelOrder> =
+fun Collection<OrderState>.createCancelOrders(): List<CancelOrder> =
     filter { it.status.open && it.order is CreateOrder }.map { CancelOrder(it) }
 
 
 /**
  * Get the unique assets for a collection of order states
  */
-val Collection<OrderState>.assets : Set<Asset>
+val Collection<OrderState>.assets: Set<Asset>
     get() = map { it.asset }.distinct().toSet()
 
 

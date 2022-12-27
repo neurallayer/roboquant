@@ -75,4 +75,4 @@ internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, pr
  *      // For example allow maximum of 5 orders per 8 hours
  *      val policy = myPolicy.circuitBreaker(5, 8.hours)
  */
-fun Policy.circuitBreaker(maxOrders: Int, period: TradingPeriod) : Policy = CircuitBreaker(this, maxOrders, period)
+fun Policy.circuitBreaker(maxOrders: Int, period: TradingPeriod): Policy = CircuitBreaker(this, maxOrders, period)
