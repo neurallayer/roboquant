@@ -84,7 +84,7 @@ class AlpacaHistoricFeed(
     private fun validateStockSymbols(symbols: Array<out String>) {
         require(symbols.isNotEmpty()) { "specify at least one symbol" }
         symbols.forEach {
-            require(availableStocks[it] != null){ "unknown symbol $it"}
+            require(availableStocks[it] != null) { "unknown symbol $it" }
         }
     }
 

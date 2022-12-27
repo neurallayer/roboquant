@@ -37,7 +37,7 @@ open class PriceSerie(private val capacity: Int) {
      * Append a new [price] to the end of the buffer. If the buffer is full, the first element will be removed to make
      * room. Returns true is the buffer is full, false otherwise
      */
-    open fun add(price: Double) : Boolean {
+    open fun add(price: Double): Boolean {
         val index = (counter % capacity).toInt()
         data[index] = price
         counter++
@@ -54,7 +54,7 @@ open class PriceSerie(private val capacity: Int) {
     /**
      * return the size of this price series
      */
-     val size: Int
+    val size: Int
         get() = if (counter > capacity) capacity else counter.toInt()
 
 
@@ -66,7 +66,7 @@ open class PriceSerie(private val capacity: Int) {
      *
      *      if (movingWindow.isFull()) return movingWindow.toDoubleArray()
      */
-    fun toDoubleArray() : DoubleArray {
+    fun toDoubleArray(): DoubleArray {
         val result = DoubleArray(size)
         return if (counter > capacity) {
             val offset = (counter % capacity).toInt()
@@ -93,7 +93,7 @@ open class PriceSerie(private val capacity: Int) {
  */
 fun MutableMap<Asset, PriceSerie>.addAll(event: Event, capacity: Int, priceType: String = "DEFAULT") {
     for ((asset, action) in event.prices) {
-        val priceSerie = getOrPut(asset) { PriceSerie(capacity)}
+        val priceSerie = getOrPut(asset) { PriceSerie(capacity) }
         priceSerie.add(action.getPrice(priceType))
     }
 }

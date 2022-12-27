@@ -95,12 +95,16 @@ class BinanceBroker(
             when (order.status) {
                 BinanceOrderStatus.FILLED ->
                     _account.updateOrder(state, Instant.now(), OrderStatus.COMPLETED)
+
                 BinanceOrderStatus.CANCELED ->
                     _account.updateOrder(state, Instant.now(), OrderStatus.CANCELLED)
+
                 BinanceOrderStatus.EXPIRED ->
                     _account.updateOrder(state, Instant.now(), OrderStatus.EXPIRED)
+
                 BinanceOrderStatus.REJECTED ->
                     _account.updateOrder(state, Instant.now(), OrderStatus.REJECTED)
+
                 else -> _account.updateOrder(state, Instant.now(), OrderStatus.ACCEPTED)
             }
 
@@ -117,25 +121,25 @@ class BinanceBroker(
         for (order in orders) {
 
 
-                when (order) {
-                    is CancelOrder -> cancelOrder(order)
+            when (order) {
+                is CancelOrder -> cancelOrder(order)
 
-                    is LimitOrder -> {
-                        val symbol = order.asset.symbol
-                        val newLimitOrder = trade(symbol, order)
-                        placedOrders[newLimitOrder.orderId] = order.id
-                    }
-
-                    is MarketOrder -> {
-                        val symbol = order.asset.symbol
-                        val newMarketOrder = trade(symbol, order)
-                        placedOrders[newMarketOrder.orderId] = order.id
-                    }
-
-                    else -> logger.warn {
-                        "supports only cancellation, market and limit orders, received ${order::class} instead"
-                    }
+                is LimitOrder -> {
+                    val symbol = order.asset.symbol
+                    val newLimitOrder = trade(symbol, order)
+                    placedOrders[newLimitOrder.orderId] = order.id
                 }
+
+                is MarketOrder -> {
+                    val symbol = order.asset.symbol
+                    val newMarketOrder = trade(symbol, order)
+                    placedOrders[newMarketOrder.orderId] = order.id
+                }
+
+                else -> logger.warn {
+                    "supports only cancellation, market and limit orders, received ${order::class} instead"
+                }
+            }
 
         }
 

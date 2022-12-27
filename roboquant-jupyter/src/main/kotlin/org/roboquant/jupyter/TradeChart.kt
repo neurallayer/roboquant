@@ -31,7 +31,7 @@ import java.math.BigDecimal
 import java.time.Instant
 
 
-internal fun Trade.getTooltip() : String {
+internal fun Trade.getTooltip(): String {
     val pnl = pnl.toBigDecimal()
     val totalCost = totalCost.toBigDecimal()
     val fee = fee.toBigDecimal()
@@ -46,7 +46,7 @@ internal fun Trade.getTooltip() : String {
             |order: $orderId""".trimMargin()
 }
 
-internal fun Trade.getValue(type: String, currency: Currency) : BigDecimal {
+internal fun Trade.getValue(type: String, currency: Currency): BigDecimal {
     return when (type) {
         "pnl" -> pnl.convert(currency, time = time).toBigDecimal()
         "fee" -> fee.convert(currency, time = time).toBigDecimal()
@@ -75,9 +75,9 @@ open class TradeChart(
     private fun tradesToSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (trade in trades.sortedBy { it.time }) {
-                val value = trade.getValue(aspect, currency)
-                val tooltip = trade.getTooltip()
-                d.add(Triple(trade.time, value, tooltip))
+            val value = trade.getValue(aspect, currency)
+            val tooltip = trade.getTooltip()
+            d.add(Triple(trade.time, value, tooltip))
         }
         return d
     }

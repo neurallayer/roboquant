@@ -49,7 +49,7 @@ internal class PolygonTest {
     }
 
     @Test
-    fun testLiveFeed() = runBlocking{
+    fun testLiveFeed() = runBlocking {
         Config.getProperty("TEST_POLYGON") ?: return@runBlocking
         val feed = PolygonLiveFeed()
         feed.subscribe("IBM", "AAPL")

@@ -55,20 +55,20 @@ class RandomWalkFeed(
     override val assets = 1.rangeTo(nAssets).map { template.copy(symbol = "ASSET$it") }.toSortedSet()
 
     init {
-        logger.debug { "assets=$nAssets events=${timeline.size} timeframe=$timeframe"}
+        logger.debug { "assets=$nAssets events=${timeline.size} timeframe=$timeframe" }
     }
 
     private fun SplittableRandom.firstPrice(): Double = nextDouble(50.0, 150.0)
 
-    private fun SplittableRandom.nextPrice(price: Double) : Double = price + nextDouble(-1.0, 1.0)
+    private fun SplittableRandom.nextPrice(price: Double): Double = price + nextDouble(-1.0, 1.0)
 
-    private fun SplittableRandom.priceBar(asset: Asset, price: Double) : PriceAction {
+    private fun SplittableRandom.priceBar(asset: Asset, price: Double): PriceAction {
         val v = mutableListOf(price)
         repeat(3) {
             v.add(price + (nextDouble(-priceRange, priceRange)))
         }
         v.sort()
-        val volume = nextInt(volumeRange, volumeRange*2)
+        val volume = nextInt(volumeRange, volumeRange * 2)
         return if (nextBoolean()) {
             PriceBar(asset, v[1], v[3], v[0], v[2], volume)
         } else {
@@ -79,8 +79,8 @@ class RandomWalkFeed(
     /**
      * Generate random single price actions
      */
-    private fun SplittableRandom.tradePrice(asset: Asset, price: Double) : PriceAction {
-        val volume = nextInt(volumeRange, volumeRange*2)
+    private fun SplittableRandom.tradePrice(asset: Asset, price: Double): PriceAction {
+        val volume = nextInt(volumeRange, volumeRange * 2)
         return TradePrice(asset, price, volume.toDouble())
     }
 
@@ -91,7 +91,7 @@ class RandomWalkFeed(
             val actions = mutableListOf<PriceAction>()
             for (asset in assets) {
                 val lastPrice = prices[asset]
-                val price =  if (lastPrice == null) random.firstPrice() else random.nextPrice(lastPrice)
+                val price = if (lastPrice == null) random.firstPrice() else random.nextPrice(lastPrice)
                 val action = if (generateBars) random.priceBar(asset, price) else random.tradePrice(asset, price)
                 actions.add(action)
                 prices[asset] = if (price < priceRange * 10) priceRange * 10 else price

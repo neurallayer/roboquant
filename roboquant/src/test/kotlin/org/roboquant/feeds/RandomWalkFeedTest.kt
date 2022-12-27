@@ -87,9 +87,9 @@ internal class RandomWalkFeedTest {
         assertEquals(feed1.assets, feed2.assets)
         assertEquals(feed1.assets, feed3.assets)
 
-        val result1 =  feed1.filter<PriceBar> { it.asset.symbol == "ASSET1"}
-        val result2 =  feed2.filter<PriceBar> { it.asset.symbol == "ASSET1"}
-        val result3 =  feed3.filter<PriceBar> { it.asset.symbol == "ASSET1"}
+        val result1 = feed1.filter<PriceBar> { it.asset.symbol == "ASSET1" }
+        val result2 = feed2.filter<PriceBar> { it.asset.symbol == "ASSET1" }
+        val result3 = feed3.filter<PriceBar> { it.asset.symbol == "ASSET1" }
 
         assertEquals(result1.toString(), result2.toString())
         assertNotEquals(result1.toString(), result3.toString())

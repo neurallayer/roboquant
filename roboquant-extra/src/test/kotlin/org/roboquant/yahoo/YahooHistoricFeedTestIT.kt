@@ -34,8 +34,8 @@ internal class YahooHistoricFeedTestIT {
         val timeframe = Timeframe.fromYears(2019, 2020)
         feed.retrieve("AAPL", "IBM", timeframe = timeframe)
         assertContains(feed.assets.symbols, "AAPL")
-        assertTrue(feed.timeframe.start >= timeframe.start )
-        assertTrue(feed.timeframe.end <= timeframe.end )
+        assertTrue(feed.timeframe.start >= timeframe.start)
+        assertTrue(feed.timeframe.end <= timeframe.end)
         assertEquals(252, feed.timeline.size)
     }
 

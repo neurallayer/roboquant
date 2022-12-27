@@ -56,7 +56,6 @@ data class AlpacaConfig(
 }
 
 
-
 /**
  * Logic shared between the Alpaca Feeds and Alpaca Broker
  */

@@ -23,13 +23,13 @@ import kotlin.test.assertEquals
 
 internal class ParallelStrategyTest {
 
-    private fun getStrategy(r: Int) =  RandomStrategy(0.8, random = Random(r))
+    private fun getStrategy(r: Int) = RandomStrategy(0.8, random = Random(r))
 
     @Test
     fun test() {
         val s1 = getStrategy(1)
         val s2 = getStrategy(2)
-        val s3 = ParallelStrategy(getStrategy(1) , getStrategy(2))
+        val s3 = ParallelStrategy(getStrategy(1), getStrategy(2))
 
         for (event in TestData.events(20)) {
             val r1 = s1.generate(event)

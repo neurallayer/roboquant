@@ -38,7 +38,7 @@ import kotlin.math.absoluteValue
  * defined end date.
  */
 operator fun Instant.compareTo(timeframe: Timeframe): Int {
-    return when(timeframe.inclusive) {
+    return when (timeframe.inclusive) {
         true -> if (this > timeframe.end) 1 else if (this < timeframe.start) -1 else 0
         false -> if (this >= timeframe.end) 1 else if (this < timeframe.start) -1 else 0
     }
@@ -103,8 +103,8 @@ operator fun DoubleArray.div(a: Number): DoubleArray {
 }
 
 /**
-* Multiple all elements in the array by [a] number
-*/
+ * Multiple all elements in the array by [a] number
+ */
 operator fun DoubleArray.times(a: Number): DoubleArray {
     val result = clone()
     val n = a.toDouble()
@@ -113,8 +113,8 @@ operator fun DoubleArray.times(a: Number): DoubleArray {
 }
 
 /**
-* Subtract all elements in the array by [a] number
-*/
+ * Subtract all elements in the array by [a] number
+ */
 operator fun DoubleArray.minus(a: Number): DoubleArray {
     val result = clone()
     val n = a.toDouble()
@@ -234,7 +234,7 @@ fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 fun DoubleArray.returns(): DoubleArray {
     if (size < 2) return DoubleArray(0)
     val result = DoubleArray(size - 1)
-    for (n in 1..lastIndex) result[n - 1] = get(n)/get(n - 1) - 1.0
+    for (n in 1..lastIndex) result[n - 1] = get(n) / get(n - 1) - 1.0
     return result
 }
 
@@ -246,7 +246,7 @@ fun DoubleArray.returns(): DoubleArray {
 fun DoubleArray.growthRates(): DoubleArray {
     if (size < 2) return DoubleArray(0)
     val result = DoubleArray(size - 1)
-    for (n in 1..lastIndex) result[n - 1] = get(n)/get(n - 1)
+    for (n in 1..lastIndex) result[n - 1] = get(n) / get(n - 1)
     return result
 }
 
@@ -282,7 +282,7 @@ fun DoubleArray.totalReturn(): Double {
     return if (size < 2)
         0.0
     else
-        last()/first() - 1.0
+        last() / first() - 1.0
 }
 
 // Values smaller than this value are considered to be zero

@@ -68,7 +68,7 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
         val endTime = timeframe.end.toEpochMilli() - 1
         for (symbol in symbols) {
             val asset = assetMap[symbol]
-            require(asset != null) { "invalid symbol $symbol"}
+            require(asset != null) { "invalid symbol $symbol" }
             val bars = client.getCandlestickBars(symbol, interval, limit, startTime, endTime)
             for (bar in bars) {
                 val action = PriceBar(

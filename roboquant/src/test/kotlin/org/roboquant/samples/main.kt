@@ -133,6 +133,7 @@ fun signalsOnly() {
         }
 
     }
+
     val feed = AvroFeed("/tmp/us_full_v3.0.avro")
     val logger = MemoryLogger()
 
@@ -168,7 +169,7 @@ fun csv2Avro(pathStr: String = "path") {
     val tmp = CSVFeed(path / "nyse stocks") {
         fileExtension = ".us.txt"
         parsePattern = "??T?OHLCV?"
-        assetBuilder = { file : File -> Asset(file2Symbol(file), exchange = nyse) }
+        assetBuilder = { file: File -> Asset(file2Symbol(file), exchange = nyse) }
     }
     feed.merge(tmp)
 

@@ -68,7 +68,7 @@ enum class PriceActionType {
 class AlpacaLiveFeed(
     configure: AlpacaConfig.() -> Unit = {}
 ) : LiveFeed(), AssetFeed {
-    
+
     private val config = AlpacaConfig()
     private val alpacaAPI: AlpacaAPI
     private val logger = Logging.getLogger(AlpacaLiveFeed::class)
@@ -85,11 +85,11 @@ class AlpacaLiveFeed(
         connect()
     }
 
-    private val availableStocksMap : Map<String, Asset> by lazy {
+    private val availableStocksMap: Map<String, Asset> by lazy {
         Alpaca.getAvailableStocks(alpacaAPI)
     }
 
-    private val availableCryptoMap : Map<String, Asset> by lazy {
+    private val availableCryptoMap: Map<String, Asset> by lazy {
         Alpaca.getAvailableCrypto(alpacaAPI)
     }
 
@@ -115,8 +115,8 @@ class AlpacaLiveFeed(
     /**
      * Get all subscribed assets, stocks and crypto combined
      */
-    override val assets : SortedSet<Asset>
-        get() =  subscribedSymbols.map { assetsMap[it]!! }.toSortedSet()
+    override val assets: SortedSet<Asset>
+        get() = subscribedSymbols.map { assetsMap[it]!! }.toSortedSet()
 
     /**
      * Connect to streaming data for stock market and crypto market
@@ -179,7 +179,7 @@ class AlpacaLiveFeed(
     fun subscribeStocks(vararg symbols: String, type: PriceActionType = PriceActionType.PRICE_BAR) {
         validateSymbols(symbols, availableStocksMap)
         val s = symbols.toList()
-        when(type) {
+        when (type) {
             PriceActionType.TRADE -> alpacaAPI.stockMarketDataStreaming().subscribe(s, null, null)
             PriceActionType.QUOTE -> alpacaAPI.stockMarketDataStreaming().subscribe(null, s, null)
             PriceActionType.PRICE_BAR -> alpacaAPI.stockMarketDataStreaming().subscribe(null, null, s)
@@ -193,7 +193,7 @@ class AlpacaLiveFeed(
     fun subscribeCrypto(vararg symbols: String, type: PriceActionType = PriceActionType.PRICE_BAR) {
         validateSymbols(symbols, availableCryptoMap)
         val s = symbols.toList()
-        when(type) {
+        when (type) {
             PriceActionType.TRADE -> alpacaAPI.cryptoMarketDataStreaming().subscribe(s, null, null)
             PriceActionType.QUOTE -> alpacaAPI.cryptoMarketDataStreaming().subscribe(null, s, null)
             PriceActionType.PRICE_BAR -> alpacaAPI.cryptoMarketDataStreaming().subscribe(null, null, s)
@@ -217,6 +217,7 @@ class AlpacaLiveFeed(
                         msg.bidPrice,
                         Double.NaN
                     )
+
                     is BarMessage -> PriceBar(
                         asset,
                         msg.open,
@@ -225,6 +226,7 @@ class AlpacaLiveFeed(
                         msg.close,
                         msg.tradeCount.toDouble()
                     )
+
                     else -> null
                 }
                 if (action != null) {

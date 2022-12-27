@@ -55,7 +55,7 @@ internal object RoboquantReplProvider : ReplProvider {
             scriptClasspath = classpath,
             homeDir = null,
             mavenRepositories = defaultRepositoriesCoordinates,
-            libraryResolver =  urlEditingResolver,
+            libraryResolver = urlEditingResolver,
             runtimeProperties = defaultRuntimeProperties,
             scriptReceivers = emptyList(),
             isEmbedded = true,

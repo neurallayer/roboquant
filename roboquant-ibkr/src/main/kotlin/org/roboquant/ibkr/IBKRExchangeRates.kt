@@ -53,7 +53,7 @@ internal class IBKRExchangeRates(
      * Wait till IBKR account is synchronized so roboquant has the correct assets and cash balance available.
      */
     private fun waitTillSynced() {
-        synchronized (lock) {
+        synchronized(lock) {
             lock.wait(IBKR.maxResponseTime)
         }
     }
@@ -96,7 +96,7 @@ internal class IBKRExchangeRates(
         }
 
         override fun accountDownloadEnd(p0: String?) {
-            synchronized (lock) {
+            synchronized(lock) {
                 lock.notify()
             }
         }

@@ -137,7 +137,7 @@ class PriceBar(
     /**
      * Adjust this PriceBar conform the provided adjusted close [price]
      */
-    fun adjustClose(price: Number)  {
+    fun adjustClose(price: Number) {
         val adj = price.toDouble() / close
         ohlcv[0] *= adj
         ohlcv[1] *= adj
@@ -145,7 +145,6 @@ class PriceBar(
         ohlcv[3] *= adj
         ohlcv[4] /= adj
     }
-
 
 
     /**
@@ -247,7 +246,7 @@ data class PriceQuote(
      *
      *      spread = (lowest_aks - highest_bid) / lowest_ask
      */
-    val spread : Double
+    val spread: Double
         get() = (askPrice - bidPrice) / askPrice
 
 
@@ -302,7 +301,7 @@ data class OrderBook(
      *
      *      spread = (lowest_aks - highest_bid) / lowest_ask
      */
-    val spread : Double
+    val spread: Double
         get() {
             val ask = getPrice("ASK")
             val bid = getPrice("BID")

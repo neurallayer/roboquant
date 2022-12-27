@@ -89,7 +89,7 @@ class OANDALiveFeed(
         val gr = CandlestickGranularity.valueOf(granularity)
         symbols.forEach {
             val asset = availableAssetsMap[it]
-            require(asset != null) { "invalid symbol=$it"}
+            require(asset != null) { "invalid symbol=$it" }
             subscriptions[it] = asset
         }
         val requests = symbols.map {
@@ -138,7 +138,7 @@ class OANDALiveFeed(
         logger.info { "Subscribing to order books for ${symbols.size} symbols" }
         symbols.forEach {
             val asset = availableAssetsMap[it]
-            require (asset != null) { "No available asset found for symbol $it"}
+            require(asset != null) { "No available asset found for symbol $it" }
             subscriptions[it] = asset
         }
         jobs.add {

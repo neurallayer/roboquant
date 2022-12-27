@@ -69,5 +69,4 @@ internal class TradingPeriodTest {
     }
 
 
-
 }

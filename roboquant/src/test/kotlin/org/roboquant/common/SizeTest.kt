@@ -24,13 +24,13 @@ internal class SizeTest {
     @Test
     fun test() {
         val size = Size(10)
-        assertEquals(Size(5), size/2)
-        assertEquals(Size(20), size*2)
+        assertEquals(Size(5), size / 2)
+        assertEquals(Size(20), size * 2)
         assertEquals(Size(0), Size.ZERO)
         assertEquals(Size(1), Size.ONE)
         assertEquals(Size(13), size + Size(3))
         assertEquals(Size(9), size - Size.ONE)
-        assertEquals(Size(-10), - size)
+        assertEquals(Size(-10), -size)
         assertEquals("10", size.toString())
         assertEquals("10.00123", Size("10.00123").toString())
 

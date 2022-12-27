@@ -45,7 +45,7 @@ internal class PerformanceTest {
     /**
      * Try to make the results more reproducible by running the code multiple times and take best timing.
      */
-    private fun measure(block: () -> Unit) : Long {
+    private fun measure(block: () -> Unit): Long {
         var best = Long.MAX_VALUE
         repeat(3) {
             val t = measureTimeMillis(block)
@@ -122,7 +122,7 @@ internal class PerformanceTest {
         }
     }
 
-    private fun log(name: String, t:Long) =
+    private fun log(name: String, t: Long) =
         logger.info {
             "    %-18s%8d ms".format(name, t)
         }

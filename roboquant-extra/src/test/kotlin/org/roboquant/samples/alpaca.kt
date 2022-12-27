@@ -80,7 +80,7 @@ fun alpacaTradeStocks() {
     val symbols = feed.availableStocks.take(10).symbols
     println(symbols.toList())
 
-    feed.subscribeStocks(*symbols, type=PriceActionType.QUOTE)
+    feed.subscribeStocks(*symbols, type = PriceActionType.QUOTE)
     feed.heartbeatInterval = 30_000
     val strategy = EMAStrategy.PERIODS_5_15
     val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), logger = InfoLogger())
@@ -204,6 +204,8 @@ fun main() {
         "ALPACA_HISTORIC_SP500_PRICEBAR" -> alpacaSP500PriceBar()
         "ALPACA_HISTORIC_SP500_PRICEQUOTE" -> alpacaSP500PriceQuote()
         "ALPACA_PAPER_TRADE_STOCKS" -> alpacaPaperTradeStocks()
-        "CREATE_SAMPLE_DATA" -> { alpacaSP500PriceBar(); alpacaSP500PriceQuote()}
+        "CREATE_SAMPLE_DATA" -> {
+            alpacaSP500PriceBar(); alpacaSP500PriceQuote()
+        }
     }
 }

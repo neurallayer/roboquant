@@ -149,14 +149,14 @@ class AvroFeedTest {
         val fileName = File(folder, "test2.avro").path
 
         AvroFeed.record(feed, fileName, compression = true)
-        var avroFeed =AvroFeed(fileName)
+        var avroFeed = AvroFeed(fileName)
         assertEquals(feed.assets, avroFeed.assets)
 
         val past2 = Timeframe(now - 1.years, now).toTimeline(1.days)
         val feed2 = RandomWalkFeed(past2)
         AvroFeed.record(feed2, fileName, append = true)
         avroFeed = AvroFeed(fileName)
-        assertEquals(feed.assets + feed2.assets,  avroFeed.assets)
+        assertEquals(feed.assets + feed2.assets, avroFeed.assets)
     }
 
     @Test

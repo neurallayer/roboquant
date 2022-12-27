@@ -139,7 +139,7 @@ class IBKRBroker(
         _account.initializeOrders(orders)
 
         for (order in orders) {
-            when(order)  {
+            when (order) {
                 is CancelOrder -> cancelOrder(order)
                 is SingleOrder -> placeOrder(order)
                 else -> {
@@ -158,13 +158,25 @@ class IBKRBroker(
      */
     private fun createIBOrder(order: SingleOrder): IBOrder {
         val result = IBOrder()
-        with (result) {
+        with(result) {
             when (order) {
                 is MarketOrder -> orderType(OrderType.MKT)
-                is LimitOrder -> { orderType(OrderType.LMT); lmtPrice(order.limit) }
-                is StopOrder -> { orderType(OrderType.STP); auxPrice(order.stop) }
-                is StopLimitOrder -> { orderType(OrderType.STP_LMT); lmtPrice(order.limit); auxPrice(order.stop) }
-                is TrailOrder -> { orderType(OrderType.TRAIL); trailingPercent(order.trailPercentage) }
+                is LimitOrder -> {
+                    orderType(OrderType.LMT); lmtPrice(order.limit)
+                }
+
+                is StopOrder -> {
+                    orderType(OrderType.STP); auxPrice(order.stop)
+                }
+
+                is StopLimitOrder -> {
+                    orderType(OrderType.STP_LMT); lmtPrice(order.limit); auxPrice(order.stop)
+                }
+
+                is TrailOrder -> {
+                    orderType(OrderType.TRAIL); trailingPercent(order.trailPercentage)
+                }
+
                 else -> throw UnsupportedException("unsupported order type $order")
             }
         }
@@ -248,7 +260,7 @@ class IBKRBroker(
             val order = orderMap[orderId]
             if (order != null) {
                 val newStatus = toStatus(status!!)
-                _account.updateOrder(order,Instant.now(), newStatus )
+                _account.updateOrder(order, Instant.now(), newStatus)
             } else {
                 logger.warn { "Received unknown open order with orderId $orderId" }
             }

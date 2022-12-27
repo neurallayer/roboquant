@@ -39,7 +39,7 @@ import org.roboquant.common.addAll
 class RSIStrategy(
     val lowThreshold: Double = 30.0,
     val highThreshold: Double = 70.0,
-    private val windowSize : Int = 14
+    private val windowSize: Int = 14
 ) : RecordingStrategy(prefix = "rsi.") {
 
     private val history = mutableMapOf<Asset, PriceSerie>()

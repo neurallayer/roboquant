@@ -27,7 +27,6 @@ import kotlin.test.*
 internal class CSVConfigTest {
 
 
-
     @Test
     fun defaultConfig() {
         val config = CSVConfig()

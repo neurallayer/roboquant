@@ -75,7 +75,7 @@ internal object IBKR {
         val client = EClientSocket(wrapper, signal)
         client.isAsyncEConnect = false
         client.eConnect(config.host, config.port, config.client)
-        if (! client.isConnected) throw ConfigurationException("Couldn't connect with config $config")
+        if (!client.isConnected) throw ConfigurationException("Couldn't connect with config $config")
         logger.debug { "Connected with config $config" }
 
         val reader = EReader(client, signal)
@@ -114,9 +114,9 @@ internal object IBKR {
                 contract.localSymbol(symbol)
                 contract.symbol("")
             }
+
             else -> throw UnsupportedException("$type is not yet supported")
         }
-
 
 
         val exchange = when (exchange.exchangeCode) {

@@ -75,7 +75,7 @@ class BinanceLiveFeed(
 
     private fun registerSymbols(symbols: Array<out String>) {
         require(symbols.isNotEmpty()) { "You need to provide at least 1 symbol" }
-        for (symbol in symbols) require (assetMap.contains(symbol)) { "unknown symbol $symbol"}
+        for (symbol in symbols) require(assetMap.contains(symbol)) { "unknown symbol $symbol" }
         for (symbol in symbols) {
             val asset = assetMap.getValue(symbol)
             subscriptions[symbol] = asset

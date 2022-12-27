@@ -66,8 +66,8 @@ class AlpacaBroker(
     private val handledTrades = mutableSetOf<String>()
     private val logger = Logging.getLogger(AlpacaOrder::class)
     private val orderMapping = mutableMapOf<Order, String>()
-    private val availableStocks : Map<String, Asset>
-    private val availableCrypto : Map<String, Asset>
+    private val availableStocks: Map<String, Asset>
+    private val availableCrypto: Map<String, Asset>
 
     init {
         config.configure()
@@ -186,6 +186,7 @@ class AlpacaBroker(
                 order.stopPrice.toDouble(),
                 order.limitPrice.toDouble()
             )
+
             OrderType.TRAILING_STOP -> TrailOrder(asset, Size(qty), order.trailPercent.toDouble())
             else -> throw UnsupportedException("unsupported order type for order $order")
         }
@@ -252,7 +253,7 @@ class AlpacaBroker(
             _account.updateOrder(cancelation, now, OrderStatus.COMPLETED)
         } catch (exception: AlpacaClientException) {
             _account.updateOrder(cancelation, now, OrderStatus.REJECTED)
-            logger.trace(exception) { "cancellation failed for order=$cancelation"}
+            logger.trace(exception) { "cancellation failed for order=$cancelation" }
         }
     }
 
@@ -275,7 +276,7 @@ class AlpacaBroker(
         }
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
-        require(! order.size.isFractional) { "fractional orders are not yet supported"}
+        require(!order.size.isFractional) { "fractional orders are not yet supported" }
 
         val qty = order.size.toBigDecimal().abs().toInt()
         val api = alpacaAPI.orders()
@@ -287,9 +288,11 @@ class AlpacaBroker(
             is StopLimitOrder -> api.requestStopLimitOrder(
                 asset.symbol, qty, side, tif, order.limit, order.stop, extendedHours
             )
+
             is TrailOrder -> api.requestTrailingStopPercentOrder(
                 asset.symbol, qty, side, tif, order.trailPercentage, extendedHours
             )
+
             else -> throw UnsupportedException("unsupported single order type order=$order")
         }
         orderMapping[order] = alpacaOrder.id
@@ -303,7 +306,7 @@ class AlpacaBroker(
     override fun place(orders: List<Order>, event: Event): Account {
         _account.initializeOrders(orders)
         for (order in orders) {
-            when(order) {
+            when (order) {
                 is SingleOrder -> placeOrder(order)
                 is CancelOrder -> cancelOrder(order)
                 else -> throw UnsupportedException("unsupported order type order=$order")

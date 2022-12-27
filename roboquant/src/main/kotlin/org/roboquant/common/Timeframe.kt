@@ -62,7 +62,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     /**
      * Is this an empty timeframe
      */
-     fun isEmpty() = start == end && ! inclusive
+    fun isEmpty() = start == end && !inclusive
 
 
     /**
@@ -362,7 +362,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Extend this period with a [before] and [after] period and return the result. If no [after] period is provided
      * the same value as for [before] will be used.
      */
-    fun extend(before: TradingPeriod, after: TradingPeriod = before) = Timeframe(start - before,end + after)
+    fun extend(before: TradingPeriod, after: TradingPeriod = before) = Timeframe(start - before, end + after)
 
 }
 

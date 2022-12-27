@@ -97,7 +97,6 @@ internal class CSVFeedTest {
     }
 
 
-
     @Test
     fun customConfig() {
         val template = Asset("TEMPLATE", currencyCode = "USD", exchangeCode = "TEST123")
@@ -113,7 +112,7 @@ internal class CSVFeedTest {
         assertEquals("TEST123", first.asset.exchange.exchangeCode)
 
         fun CSVConfig.myConfigure() {
-            this.template = Asset("TEMPLATE", currencyCode = "USD",exchangeCode = "TEST345")
+            this.template = Asset("TEMPLATE", currencyCode = "USD", exchangeCode = "TEST345")
         }
 
         val feed2 = CSVFeed(path, configure = CSVConfig::myConfigure)

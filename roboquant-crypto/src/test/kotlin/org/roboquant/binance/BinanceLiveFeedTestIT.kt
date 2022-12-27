@@ -72,7 +72,5 @@ internal class BinanceLiveFeedTestIT {
     }
 
 
-
-
 }
 

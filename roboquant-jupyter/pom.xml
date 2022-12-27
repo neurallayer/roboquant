@@ -28,7 +28,8 @@
     <artifactId>roboquant-jupyter</artifactId>
     <packaging>jar</packaging>
     <name>roboquant jupyter</name>
-    <description>Adds additional Jupyter notebook features like charts to the roboquant algorithmic trading platform</description>
+    <description>Adds additional Jupyter notebook features like charts to the roboquant algorithmic trading platform
+    </description>
 
     <properties>
         <jupyter.version>0.11.0-210</jupyter.version>

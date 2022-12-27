@@ -25,7 +25,7 @@ import kotlin.test.assertEquals
 internal class TimeParserTest {
 
 
-    private fun parse(time: String) : Instant {
+    private fun parse(time: String): Instant {
         val tp = AutoDetectTimeParser()
         val exchange = Exchange.getInstance("US")
         return tp.parse(time, exchange)

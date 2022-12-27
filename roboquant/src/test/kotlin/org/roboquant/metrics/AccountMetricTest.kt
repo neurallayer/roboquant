@@ -34,7 +34,7 @@ internal class AccountMetricTest {
         assertContains(result, "account.positions")
         assertContains(result, "account.buyingpower")
         assertContains(result, "account.cash")
-        
+
         assertEquals(account.trades.size.toDouble(), result["account.trades"])
         assertEquals(account.positions.size.toDouble(), result["account.positions"])
     }

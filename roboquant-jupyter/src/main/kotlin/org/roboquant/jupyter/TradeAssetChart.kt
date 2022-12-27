@@ -49,10 +49,10 @@ class TradeAssetChart(
     private fun toSeriesData(assets: List<Asset>): List<List<Any>> {
         val d = mutableListOf<List<Any>>()
         for (trade in trades.sortedBy { it.time }) {
-                val value = trade.getValue(aspect, currency)
-                val y = assets.indexOf(trade.asset)
-                val tooltip = trade.getTooltip()
-                d.add(listOf(trade.time, y, value, tooltip))
+            val value = trade.getValue(aspect, currency)
+            val y = assets.indexOf(trade.asset)
+            val tooltip = trade.getTooltip()
+            d.add(listOf(trade.time, y, value, tooltip))
         }
         return d
     }

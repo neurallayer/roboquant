@@ -112,7 +112,7 @@ class Exchange private constructor(
          * exchange cannot be found or an exchange is not specified. It uses NY timezone and USD as
          * the default currency.
          */
-        val DEFAULT : Exchange
+        val DEFAULT: Exchange
 
 
         /**
@@ -189,7 +189,6 @@ class Exchange private constructor(
 
 
         }
-
 
 
     }

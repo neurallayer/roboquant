@@ -39,7 +39,7 @@ internal class ChartTest {
             javascriptFunction("return p;")
         }
 
-        fun reduced(size: Int) : List<Int> {
+        fun reduced(size: Int): List<Int> {
             val data = (1..size).toList()
             return reduce(data).toList()
         }
@@ -85,7 +85,6 @@ internal class ChartTest {
         Chart.maxSamples = Int.MAX_VALUE
         assertEquals(100, chart.reduced(100).size)
     }
-
 
 
     @Test

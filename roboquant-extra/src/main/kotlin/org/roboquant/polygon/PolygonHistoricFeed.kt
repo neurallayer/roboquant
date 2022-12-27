@@ -48,7 +48,7 @@ class PolygonHistoricFeed(
      * Return the available assets. Due to the amount of API calls made, this requires a
      * non-free subscription at Polygon.io
      */
-    val availableAssets : List<Asset> by lazy {
+    val availableAssets: List<Asset> by lazy {
         availableAssets(client)
     }
 

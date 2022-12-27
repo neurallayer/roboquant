@@ -65,7 +65,7 @@ class OANDAHistoricFeed(configure: OANDAConfig.() -> Unit = {}) : HistoricPriceF
         granularity: String = "M1",
         priceType: String = "M",
     ) {
-        for (symbol in symbols) require(symbol in availableAssetsMap) { "symbol=$symbol not available"}
+        for (symbol in symbols) require(symbol in availableAssetsMap) { "symbol=$symbol not available" }
         for (symbol in symbols) {
             val request = InstrumentCandlesRequest(InstrumentName(symbol))
                 .setPrice(priceType)
