@@ -21,7 +21,7 @@ import org.roboquant.common.Lifecycle
 import org.roboquant.metrics.MetricResults
 
 /**
- * Interface that a metrics logger will need to implement. It is called by roboquant after metrics have been calculated
+ * Interface that a metrics logger will need to implement. It is called by Roboquant after metrics have been calculated
  * to store and/or log them.
  *
  * A metrics logger also extends the [Lifecycle] interface.

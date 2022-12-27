@@ -23,8 +23,9 @@ import java.time.Instant
 
 
 /**
- * Universe is a collection of assets. Where it differs from regular collections, is that it can change over time. So
- * the assets in the collection at time `t` can be different from the assets in the collection at time `t+1`.
+ * Universe is a collection of assets. Where it differs from regular collections, is that teh assets that belong to the
+ * collection can change over time. So the assets in the collection at time `t` can be different from the assets in
+ * the collection at time `t+1`.
  */
 interface Universe {
 

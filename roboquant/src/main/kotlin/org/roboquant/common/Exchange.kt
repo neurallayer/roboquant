@@ -22,9 +22,10 @@ import java.util.concurrent.ConcurrentHashMap
 
 
 /**
- * Exchange contains the metadata of a marketplace or exchange.  When creating a new Exchange instance, use
- * the [Exchange.getInstance] method. This ensures only a single instance of an exchange exists for a given exchange
- * code and that allows for fast equality comparison.
+ * Exchange contains the metadata of a marketplace or exchange.
+ *
+ * When creating a new Exchange instance, use the [Exchange.getInstance] method. This ensures only a single instance
+ * of an exchange exists for a given exchange code and that allows for fast equality comparison.
  *
  * @property exchangeCode The exchange code
  * @property zoneId The ZoneId of the exchange

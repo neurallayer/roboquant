@@ -24,7 +24,7 @@ import org.roboquant.common.compareTo
 
 /**
  * Wrapper around a [Channel] for communicating the [events][Event] of a [Feed]. It uses asynchronous communication
- * so the producing and receiving parts are decoupled. An EventChannel has limited capacity in order to prevent
+ * so the producing and consuming parts are decoupled. An EventChannel has limited capacity in order to prevent
  * memory problems when using large data feeds.
  *
  * It has built in support to limit the events that are being send to a certain [timeframe]. It is guaranteed that

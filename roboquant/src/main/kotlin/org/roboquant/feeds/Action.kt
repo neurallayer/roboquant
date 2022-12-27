@@ -21,17 +21,15 @@ import org.roboquant.common.Asset
 import kotlin.math.absoluteValue
 
 /**
- * An action is the lowest level of information contained in an Event and can be anything from a price action for an
- * asset to an annual report or a Twitter tweet. An action doesn't have to be linked to a particular asset, although
- * many are.
+ * An action is the lowest level of information contained in an [Event] and can be anything from a price action for an
+ * asset to an annual report or a Twitter tweet. An action doesn't have to be linked to a particular asset, price
+ * actions are.
  *
  * The content of the action is determined by the class implementing this interface. Strategies are expected to filter
  * on those types of actions they are interested in.
  *
- * Actions are bundled in a [Event], that contain all the actions that happen at a certain moment in time.
- *
  * # Example
- *      event.actions.filterByType<PriceAction>(). ...
+ *      event.actions.filterByType<PriceBar>(). ...
  *
  */
 interface Action
@@ -63,7 +61,7 @@ interface PriceAction : Action {
     fun getPriceAmount(type: String = "DEFAULT") = Amount(asset.currency, getPrice(type))
 
     /**
-     * Volume for the price action. If not implemented, it should contain [Double.NaN]
+     * Volume for the price action. If not implemented, it should return [Double.NaN]
      *
      * Volume in the context of a PriceAction can mean different things. For example is can be trade volume but also
      * the total order-book volume, depending on the type of PriceAction.

@@ -22,7 +22,7 @@ import kotlin.collections.HashMap
 
 /**
  * Wallet contains amounts of different currencies at the same time. So for example a single instance of Wallet can
- * contain both USD and EURO amounts.
+ * contain both USD and EUR amounts.
  *
  * You can add other currencies to a Wallet instance. If the currency is already present in the Wallet, it
  * will be added to the existing amount, otherwise the currency and amount will be added.

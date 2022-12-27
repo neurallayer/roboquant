@@ -21,15 +21,14 @@ import kotlin.random.Random
 
 /**
  * Timeline is an ordered list of [Instant] instances, sorted from old to new. Every [Instant] is unique.
- *
  * Currently, it is just a typealias for List<Instant>, but this might change in the future.
  */
 typealias Timeline = List<Instant>
 
 
 /**
- * Draw a [random] sampled timeframe for [samples] time of a certain [size] from the historic feed and return
- * the list of timeframes.
+ * Draw [random] sampled timeframes of a certain [size] from the historic feed and return
+ * the list of timeframes. Default is to return on 1 [samples].
  */
 fun Timeline.sample(size: Int, samples:Int = 1, random: Random = Config.random): List<Timeframe> {
     val result = mutableListOf<Timeframe>()
@@ -55,9 +54,8 @@ fun Timeline.latestNotAfter(time: Instant): Int? {
 }
 
 /**
- * Return the index of the time that is closets to the provided time but doesn't proceed it.
- *
- * If no such time is found return null
+ * Return the index of the time that is closets to the provided time but is not before it. If no such time is found,
+ * this method returns null.
  */
 fun Timeline.earliestNotBefore(time: Instant): Int? {
     var idx = binarySearch(time)
@@ -66,13 +64,15 @@ fun Timeline.earliestNotBefore(time: Instant): Int? {
 }
 
 /**
- * Return the timeframe for this timeline. If the timeline is empty, [Timeframe.EMPTY] will be returned
+ * Return the timeframe for this timeline. If the timeline is empty, [Timeframe.EMPTY] will be returned. Both the first
+ * and last entry of the timeline are included in the returned timeframe.
  */
 val Timeline.timeframe
     get() = if (isEmpty()) Timeframe.EMPTY else Timeframe(first(), last(), true)
 
 /**
- * Split the timeline in chunks of [size] and return the corresponding timeframes
+ * Split the timeline in chunks of [size] and return the corresponding timeframes. The last timeframe can be smaller
+ * than the requested size if there aren't enough entries remaining.
  */
 fun Timeline.split(size: Int): List<Timeframe> {
     require(size > 1) { "Minimum requires 2 elements in timeline" }
