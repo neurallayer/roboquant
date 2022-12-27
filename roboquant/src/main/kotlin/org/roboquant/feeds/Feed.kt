@@ -27,7 +27,7 @@ import kotlin.collections.set
 import kotlin.math.absoluteValue
 
 /**
- * Interface that any feed needs to implement. A feed can deliver any type of information, ranging from
+ * Interface that any data feed needs to implement. A feed can deliver any type of information, ranging from
  * stock prices to content of social media.
  *
  * Feeds can represent historic data, for example during back testing, and live feeds during live trading.
@@ -47,7 +47,7 @@ interface Feed : AutoCloseable {
     suspend fun play(channel: EventChannel)
 
     /**
-     * A feed that may hold resources (such as file or socket handles) until it is closed. Calling the close() method
+     * A feed may hold resources (such as file or socket handles) until it is closed. Calling the close() method
      * on a feed ensures prompt release of these resources, avoiding resource exhaustion.
      *
      * This is part of the [AutoCloseable] interface that any feed can override. If not implemented, the default

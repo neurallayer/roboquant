@@ -26,6 +26,12 @@ import org.roboquant.feeds.Event
 /**
  * Scorecard calculates a common set of metrics that can be used to evaluate the performance of a strategy. If you
  * don't know which particular metrics to monitor, this is a good starting point.
+ *
+ * - winners
+ * - losers
+ * - profit
+ * - max draw-down
+ *
  */
 class ScorecardMetric : Metric {
 
@@ -69,9 +75,9 @@ class ScorecardMetric : Metric {
             "${prefix}winning.total" to totalWinning,
             "${prefix}winning.avg" to totalWinning / winners,
 
-            "${prefix}loosers" to loosers,
-            "${prefix}loosers.total" to totalLoosing,
-            "${prefix}loosing.avg" to totalLoosing/loosers,
+            "${prefix}losers" to loosers,
+            "${prefix}losers.total" to totalLoosing,
+            "${prefix}losing.avg" to totalLoosing/loosers,
 
             "${prefix}profit.realized" to realizedPNL,
             "${prefix}profit.unrealized" to unrealizedPNL,

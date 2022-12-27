@@ -22,8 +22,8 @@ import java.time.LocalDate
 import java.util.*
 
 /**
- * Random walk creates number of assets with a price history that follows a random walk. It can be useful for testing,
- * since if your strategy does well using this feed, there might be something suspicious going on.
+ * Random walk feed contains number of assets with a price history that follows a random walk. It can be useful for
+ * testing, since if your strategy does well using this feed, there might be something suspicious going on.
  *
  * Internally it uses a seeded random generator, so while is generates random data, the results can be reproduced if
  * instantiated with the same seed. It can generate [PriceBar] or [TradePrice] prices.
@@ -35,13 +35,12 @@ import java.util.*
  * all methods of predicting stock prices futile in the long run.
  *
  * @property timeline the timeline of this random walk.
- * @param nAssets the number of assets to generate, symbol names will be ASSET1, ASSET2, ..., ASSET<N>
+ * @param nAssets the number of assets to generate, symbol names will be ASSET1, ASSET2, ..., ASSET<N>. Default is 10.
  * @property generateBars should PriceBars be generated or plain TradePrice, default is true
- * @property volumeRange what is the volume range
- * @property priceRange what is the price range
+ * @property volumeRange what is the volume range, default = 1000
+ * @property priceRange what is the price range. default is 1.0
  * @param template template to use when generating assets
- * @property seed seed to use for initializing the random generator
- *
+ * @property seed seed to use for initializing the random generator, default is 42
  */
 class RandomWalkFeed(
     override val timeline: Timeline,

@@ -29,8 +29,8 @@ internal class ScorecardMetricTest {
         val result = metric.calculate(account, event)
         assertTrue(result.isNotEmpty())
         assertEquals(0.0, result["scorecard.winners"])
-        assertEquals(0.0, result["scorecard.loosers"])
-        assertNull(result["otherprefix.loosers"])
+        assertEquals(0.0, result["scorecard.losers"])
+        assertNull(result["otherprefix.looers"])
 
         metric.reset()
         val result2 = metric.calculate(account, event)

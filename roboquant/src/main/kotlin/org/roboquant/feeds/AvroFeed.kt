@@ -49,7 +49,7 @@ import kotlin.io.path.isRegularFile
  * memory footprint is low. Compared to CSV files, Avro files are parsed more efficient, making it a good fit for large
  * back tests. Additionally, an Avro file can be compressed, reducing the overall disk space required.
  *
- * When the feed is first created, the implementation will create an internal index for faster random access.
+ * When the feed is instantiated, it will create an internal index for faster random access.
  *
  * @property path the path where the Avro file can be found
  *

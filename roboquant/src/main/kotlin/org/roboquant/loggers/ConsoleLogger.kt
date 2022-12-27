@@ -29,7 +29,7 @@ import java.time.temporal.ChronoUnit
  * @see [InfoLogger]
  *
  * @property splitMetrics should every metric have its own output line, default is false
- * @property precision the precision of the time output, default is [ChronoUnit.SECONDS]
+ * @property precision the precision of the time displayed, default is [ChronoUnit.SECONDS]
  */
 open class ConsoleLogger(
     private val splitMetrics: Boolean = false,

@@ -23,18 +23,16 @@ import org.roboquant.common.Asset
  *
  * An order can cover different of use cases:
  *
- * - a buy or sell order (perhaps the most common use case), ranging from simple market order to advanced order types
+ * - a buy or sell order (the most common use case), ranging from simple market order to advanced order types
  * - cancellation of an existing order
  * - update of an existing order
  *
  * An order doesn't necessary have a size, for example in case of a cancellation order. But every order is linked to
  * a single asset.
  *
- * @property tag an arbitrary tag that can be associated with this order, default is an empty string
  * @property asset the underlying asset of the order
  * @property tag an (optional) tag that can be used to store additional information, for example relate the order to
  * a specific signal for future traceability.
- *
  **/
 sealed class Order(val asset: Asset, val tag: String) {
 

@@ -23,10 +23,10 @@ import org.roboquant.feeds.PriceBar
 import java.time.Instant
 
 /**
- * Calculate the daily VWAP (Volume Weighted Average Price) for all the assets in a feed.
+ * Calculate the daily VWAP (Volume Weighted Average Price) for the assets in a feed.
  *
  * Please note VWAP is a single-day indicator, as soon as the metric detects that a new trading day started, the VWAP
- * will be reset. Also, it requires [PriceBar] data to be fully accurate since it needs the "TYPICAL" price.
+ * will be reset. Also, it requires [PriceBar] data to be fully accurate, since it needs the "TYPICAL" price.
  *
  *      VWAP = Cumulative Typical Price x Volume/Cumulative Volume
  *
