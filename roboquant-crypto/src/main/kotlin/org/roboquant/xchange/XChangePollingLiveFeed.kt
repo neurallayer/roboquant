@@ -19,6 +19,7 @@ package org.roboquant.xchange
 import kotlinx.coroutines.delay
 import org.knowm.xchange.Exchange
 import org.knowm.xchange.currency.CurrencyPair
+import org.knowm.xchange.instrument.Instrument
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
@@ -50,7 +51,7 @@ class XChangePollingLiveFeed(
      * Assets that are available to subscribe to
      */
     val availableAssets by lazy {
-        val symbols = exchange.exchangeSymbols
+        val symbols = exchange.exchangeInstruments
         if (symbols == null) {
             logger.warn("No symbols available")
             listOf<Asset>()
@@ -82,7 +83,8 @@ class XChangePollingLiveFeed(
             while (!done) {
                 for (symbol in symbols) {
                     val currencyPair = symbol.toCurrencyPair()!!
-                    val cryptoPair = CurrencyPair(currencyPair.first.currencyCode, currencyPair.second.currencyCode)
+                    val cryptoPair: Instrument =
+                        CurrencyPair(currencyPair.first.currencyCode, currencyPair.second.currencyCode)
                     val result = service.getTrades(cryptoPair)
                     for (trade in result.trades) {
                         println(trade)

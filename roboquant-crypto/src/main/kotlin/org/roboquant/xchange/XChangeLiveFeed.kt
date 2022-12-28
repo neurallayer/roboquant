@@ -62,15 +62,14 @@ class XChangeLiveFeed(
      * Assets that are available to subscribe to
      */
     val availableAssets by lazy {
-        val meta = exchange.exchangeMetaData
+        val meta = exchange.exchangeInstruments
         if (meta == null) {
             logger.info("No metadata available")
-            listOf<Asset>()
+            emptyList<Asset>()
         } else {
-            val pairs = meta.currencyPairs
-            pairs.map {
-                val symbol = "${it.key.base.currencyCode}_${it.key.counter.currencyCode}"
-                Asset(symbol, AssetType.CRYPTO, it.key.counter.currencyCode, exchangeName)
+            meta.map {
+                val symbol = "${it.base.currencyCode}_${it.counter.currencyCode}"
+                Asset(symbol, AssetType.CRYPTO, it.counter.currencyCode, exchangeName)
             }
         }
     }

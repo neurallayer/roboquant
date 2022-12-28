@@ -53,7 +53,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
     private val logger = Logging.getLogger(XChangeBroker::class)
     private val tradeService = exchange.tradeService
     private val accountService = exchange.accountService
-    private val supportCurrencies = exchange.exchangeSymbols
+    private val supportCurrencies = exchange.exchangeInstruments.map { CurrencyPair(it.base, it.counter) }
     private val placedOrders = mutableMapOf<String, SingleOrder>()
     private var orderId = 0
 
@@ -85,7 +85,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
                 val currencyPair = CurrencyPair(asset.symbol, asset.currency.currencyCode)
 
-                if (supportCurrencies != null && currencyPair !in supportCurrencies) {
+                if (supportCurrencies.isNotEmpty() && currencyPair !in supportCurrencies) {
                     logger.warn { "Unsupported currency pair $currencyPair for exchange" }
                     return account
                 }

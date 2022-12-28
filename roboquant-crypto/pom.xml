@@ -56,7 +56,7 @@
     <!-- end extra info -->
 
     <properties>
-        <xchange.version>5.0.14</xchange.version>
+        <xchange.version>5.1.0</xchange.version>
     </properties>
 
     <build>
