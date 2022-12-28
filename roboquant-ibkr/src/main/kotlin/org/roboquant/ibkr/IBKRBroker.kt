@@ -23,8 +23,8 @@ import org.roboquant.brokers.*
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.ibkr.IBKR.getAsset
-import org.roboquant.ibkr.IBKR.getContract
+import org.roboquant.ibkr.IBKR.toAsset
+import org.roboquant.ibkr.IBKR.toContract
 import org.roboquant.orders.*
 import org.roboquant.orders.OrderStatus
 import java.lang.Thread.sleep
@@ -72,11 +72,12 @@ class IBKRBroker(
         config.configure()
         require(config.account.isBlank() || config.account.startsWith('D')) { "only paper trading is supported" }
         accountId = config.account.ifBlank { null }
+        logger.info { "using account=$accountId" }
         val wrapper = Wrapper(logger)
         client = IBKR.connect(wrapper, config)
         client.reqCurrentTime()
         client.reqAccountUpdates(true, accountId)
-        // for now don't request: client.reqAccountSummary(9004, "All", "\$LEDGER:ALL")
+        // client.reqAccountSummary(9004, "All", "\$LEDGER:ALL")
 
         // Only request orders created with this client, so roboquant
         // doesn't use: client.reqAllOpenOrders()
@@ -119,10 +120,14 @@ class IBKRBroker(
      * Place an order of type [SingleOrder]
      */
     private fun placeOrder(order: SingleOrder) {
-        logger.debug("received order $order")
-        val contract = order.asset.getContract()
+        logger.info("received order=$order")
+        val contract = order.asset.toContract()
         val ibOrder = createIBOrder(order)
-        logger.info("placing order $ibOrder for $contract")
+        logger.info {
+            with(ibOrder) {
+                "placing order id=${orderId()} size=${totalQuantity()} type=${orderType()} contract=$contract"
+            }
+        }
         client.placeOrder(ibOrder.orderId(), contract, ibOrder)
     }
 
@@ -203,7 +208,7 @@ class IBKRBroker(
          * orders linked to the account.
          */
         private fun toOrder(order: IBOrder, contract: Contract): Order {
-            val asset = contract.getAsset()
+            val asset = contract.toAsset()
             val qty = if (order.action() == Action.BUY) order.totalQuantity() else order.totalQuantity().negate()
             val size = Size(qty.value())
             return when (order.orderType()) {
@@ -256,7 +261,7 @@ class IBKRBroker(
             remaining: Decimal, avgFillPrice: Double, permId: Int, parentId: Int,
             lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
         ) {
-            logger.debug { "oderId: $orderId status: $status filled: $filled" }
+            logger.debug { "orderstatus oderId=$orderId status=$status filled=$filled" }
             val order = orderMap[orderId]
             if (order != null) {
                 val newStatus = toStatus(status!!)
@@ -311,7 +316,7 @@ class IBKRBroker(
             if (order != null) {
                 val trade = Trade(
                     Instant.now(),
-                    contract.getAsset(),
+                    contract.toAsset(),
                     Size(size),
                     execution.avgPrice(),
                     Double.NaN,
@@ -332,7 +337,7 @@ class IBKRBroker(
         }
 
         override fun updateAccountValue(key: String, value: String, currency: String?, accountName: String?) {
-            logger.debug { "updateAccountValue $key $value $currency $accountName" }
+            logger.debug { "updateAccountValue key=$key value=$value currency=$currency account=$accountName" }
 
             if (key == "AccountCode") require(value.startsWith('D')) {
                 "currently only paper trading account is supported, found $value"
@@ -342,7 +347,7 @@ class IBKRBroker(
                 when (key) {
                     "BuyingPower" -> {
                         _account.baseCurrency = Currency.getInstance(currency)
-                        _account.buyingPower = Amount(account.baseCurrency, value.toDouble())
+                        _account.buyingPower = Amount(_account.baseCurrency, value.toDouble())
                     }
 
                     "CashBalance" -> _account.cash.set(Currency.getInstance(currency), value.toDouble())
@@ -362,7 +367,7 @@ class IBKRBroker(
         ) {
             logger.debug { "updatePortfolio asset: ${contract.symbol()} position: $position price: $marketPrice cost: $averageCost" }
             logger.trace { "updatePortfolio $contract $position $marketPrice $averageCost" }
-            val asset = contract.getAsset()
+            val asset = contract.toAsset()
             val size = Size(position.value())
             val p = Position(asset, size, averageCost, marketPrice, Instant.now())
             _account.setPosition(p)

@@ -131,7 +131,7 @@ class PriceBar(
     /**
      * String representation of this price-bar
      */
-    override fun toString(): String = "asset=${asset.symbol} OHLCV=${ohlcv.toList()}"
+    override fun toString(): String = "symbol=${asset.symbol} ohlcv=${ohlcv.toList()}"
 
 
     /**

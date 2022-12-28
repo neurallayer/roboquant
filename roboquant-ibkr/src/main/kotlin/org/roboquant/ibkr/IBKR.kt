@@ -99,7 +99,7 @@ internal object IBKR {
     /**
      * Convert a roboquant asset to an IBKR contract.
      */
-    fun Asset.getContract(): Contract {
+    fun Asset.toContract(): Contract {
         val contract = Contract()
         contract.symbol(symbol)
         contract.currency(currency.currencyCode)
@@ -115,7 +115,7 @@ internal object IBKR {
                 contract.symbol("")
             }
 
-            else -> throw UnsupportedException("$type is not yet supported")
+            else -> throw UnsupportedException("asset type $type is not yet supported")
         }
 
 
@@ -135,7 +135,7 @@ internal object IBKR {
     /**
      * Convert an IBKR contract to a roboquant asset
      */
-    internal fun Contract.getAsset(): Asset {
+    internal fun Contract.toAsset(): Asset {
         val result = assetMap[conid()]
         result != null && return result
 

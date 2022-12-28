@@ -23,7 +23,7 @@ import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.PriceBar
-import org.roboquant.ibkr.IBKR.getContract
+import org.roboquant.ibkr.IBKR.toContract
 import java.time.Instant
 
 /**
@@ -64,7 +64,7 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
      */
     fun subscribe(assets: Collection<Asset>, interval: Int = 5, type: String = "MIDPOINT") {
         for (asset in assets) {
-            val contract = asset.getContract()
+            val contract = asset.toContract()
             client.reqRealTimeBars(++reqId, contract, interval, type, false, arrayListOf())
             subscriptions[reqId] = asset
             logger.info("Added subscription to receive realtime bars for ${contract.symbol()}")

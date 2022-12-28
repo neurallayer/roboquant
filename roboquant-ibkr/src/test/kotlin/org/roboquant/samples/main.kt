@@ -84,22 +84,21 @@ fun showAccount() {
 fun paperTrade() {
     Config.exchangeRates = IBKRExchangeRates()
     val broker = IBKRBroker()
-    Thread.sleep(1_000)
+    Thread.sleep(5_000)
     val account = broker.account
     println(account.fullSummary())
-    if (account.positions.isNotEmpty()) {
-        // Subscribe to the assets in the portfolio
-        val feed = IBKRLiveFeed()
-        feed.subscribe(broker.account.assets)
-        val strategy = EMAStrategy.PERIODS_5_15
-        val roboquant =
-            Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = ConsoleLogger())
-        val tf = Timeframe.next(60.minutes)
-        roboquant.run(feed, tf)
-        println(broker.account.fullSummary())
-        feed.disconnect()
-    }
 
+    val feed = IBKRLiveFeed()
+    val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
+    feed.subscribe(listOf(asset))
+
+    val strategy = EMAStrategy.PERIODS_5_15
+    val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = ConsoleLogger())
+    val tf = Timeframe.next(60.minutes)
+    roboquant.run(feed, tf)
+
+    println(broker.account.fullSummary())
+    feed.disconnect()
     broker.disconnect()
     println("done")
 }
@@ -108,8 +107,11 @@ fun liveFeedEU() {
     val feed = IBKRLiveFeed()
     val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
     feed.subscribe(listOf(asset))
-    val tf = Timeframe.next(1.minutes)
-    val data = feed.filter<PriceAction>(tf)
+    val tf = Timeframe.next(10.minutes)
+    val data = feed.filter<PriceAction>(tf) {
+        println(it)
+        true
+    }
     println(data.size)
     feed.disconnect()
 }
@@ -119,7 +121,10 @@ fun liveFeedUS() {
     val asset = Asset("TSLA", AssetType.STOCK, "USD")
     feed.subscribe(listOf(asset))
     val tf = Timeframe.next(1.minutes)
-    val data = feed.filter<PriceAction>(tf)
+    val data = feed.filter<PriceAction>(tf) {
+        println(it)
+        true
+    }
     println(data.size)
     feed.disconnect()
 }
@@ -166,7 +171,7 @@ fun historicFuturesFeed() {
 
 fun main() {
 
-    when ("HISTORIC") {
+    when ("PAPER_TRADE") {
         "ACCOUNT" -> showAccount()
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()

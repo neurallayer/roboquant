@@ -22,7 +22,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.util.AutoDetectTimeParser
-import org.roboquant.ibkr.IBKR.getContract
+import org.roboquant.ibkr.IBKR.toContract
 import java.time.Instant
 
 /**
@@ -64,7 +64,7 @@ class IBKRHistoricFeed(
         dataType: String = "TRADES"
     ) {
         for (asset in assets) {
-            val contract = asset.getContract()
+            val contract = asset.toContract()
             val formatted = IBKR.getFormattedTime(endDate)
             client.reqHistoricalData(++tickerId, contract, formatted, duration, barSize, dataType, 1, 1, false, null)
             subscriptions[tickerId] = asset
