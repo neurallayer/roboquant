@@ -109,8 +109,8 @@ class Exchange private constructor(
 
         /**
          * The default exchange is the exchange with as exchangeCode an empty string and used as a fallback if an
-         * exchange cannot be found or an exchange is not specified. It uses NY timezone and USD as
-         * the default currency.
+         * exchange cannot be found or an exchange is not specified. It uses NY timezone and USD as its default
+         * currency.
          */
         val DEFAULT: Exchange
 

@@ -337,7 +337,7 @@ class AvroFeed(private val path: Path) : Feed {
 /**
  * Used by AvroFeed to serialize and deserialize Assets to a string. This is optimized for size.
  */
-private object AssetSerializer {
+internal object AssetSerializer {
 
     /**
      * Serialize an asset into a short string.
@@ -374,13 +374,14 @@ private object AssetSerializer {
     fun String.deserialize(): Asset {
         val e = split(SEP)
         val l = e.size
+        require(l <= 6) { "Invalid format" }
         return Asset(
             e[0],
             if (l > 1 && e[1].isNotEmpty()) AssetType.valueOf(e[1]) else AssetType.STOCK,
             if (l > 2 && e[2].isNotEmpty()) e[2] else "USD",
             if (l > 3) e[3] else "",
             if (l > 4 && e[4].isNotEmpty()) e[4].toDouble() else 1.0,
-            if (l > 7) e[7] else "",
+            if (l > 5) e[5] else "",
         )
 
     }
@@ -389,7 +390,7 @@ private object AssetSerializer {
 /**
  * Used by AvroFeed to serialize and deserialize [PriceAction] to a DoubleArray, so it can be stored in an Avro file.
  */
-private object PriceActionSerializer {
+internal object PriceActionSerializer {
 
     private const val PRICEBAR_IDX = 1
     private const val TRADEPRICE_IDX = 2

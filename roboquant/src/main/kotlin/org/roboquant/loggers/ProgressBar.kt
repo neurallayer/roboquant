@@ -89,7 +89,6 @@ internal class ProgressBar {
             lastOutput = str
             System.out.flush()
         }
-
     }
 
     /**

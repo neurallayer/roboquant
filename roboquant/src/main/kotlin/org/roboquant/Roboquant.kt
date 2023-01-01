@@ -209,7 +209,9 @@ class Roboquant(
         metricResult.putAll(strategy.getMetrics())
         metricResult.putAll(policy.getMetrics())
         metricResult.putAll(broker.getMetrics())
-        if (metricResult.isNotEmpty()) logger.log(metricResult, runInfo.copy())
+
+        // Always call the logger, so things like progress bar can be updated
+        logger.log(metricResult, runInfo.copy())
     }
 
     /**

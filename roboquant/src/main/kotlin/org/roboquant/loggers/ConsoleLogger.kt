@@ -69,6 +69,7 @@ open class ConsoleLogger(
     }
 
     override fun log(results: MetricResults, info: RunInfo) {
+        if (results.isEmpty()) return
         for (line in getLines(results, info)) println(line)
     }
 

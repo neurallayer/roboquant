@@ -16,9 +16,7 @@
 
 package org.roboquant.brokers
 
-import org.roboquant.common.Amount
-import org.roboquant.common.AssetType
-import org.roboquant.common.ConfigurationException
+import org.roboquant.common.*
 import org.roboquant.common.Currency
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceAction
@@ -50,6 +48,17 @@ class FeedExchangeRates(
     init {
         setRates(feed)
     }
+
+    /**
+     * Returns the currency pair (base and quote values) for a crypto or forex asset. The symbol does need to
+     * contain a separator to split.
+     */
+    private val Asset.currencyPair: Pair<Currency, Currency>
+        get() {
+            val base = symbol.split('/', '_', ':', '.', ' ').first()
+            return Pair(Currency.getInstance(base), currency)
+        }
+
 
     private fun setRates(feed: Feed) {
         val actions = feed.filter<PriceAction> { it.asset.type in assetTypes }

@@ -25,6 +25,8 @@ import org.junit.jupiter.api.io.TempDir
 import org.roboquant.TestData
 import org.roboquant.common.*
 import org.roboquant.feeds.*
+import org.roboquant.feeds.AssetSerializer.deserialize
+import org.roboquant.feeds.AssetSerializer.serialize
 import org.roboquant.feeds.util.play
 import java.io.File
 import java.time.Instant
@@ -183,6 +185,23 @@ class AvroFeedTest {
         AvroFeed.sp500()
         val file2 = (Config.home / fileName).toFile()
         assertTrue(file2.exists())
+    }
+
+    @Test
+    fun assetSerialization() {
+        val asset1 = Asset("XYZ")
+        val str = asset1.serialize()
+        assertEquals("XYZ", str)
+        val asset2 = str.deserialize()
+        assertEquals(asset1, asset2)
+
+        val asset3 =
+            Asset("XYZ", AssetType.BOND, currencyCode = "EUR", exchangeCode = "AEB", multiplier = 2.0, id = "123")
+        val str3 = asset3.serialize()
+        assertEquals("XYZ\u001FBOND\u001FEUR\u001FAEB\u001F2.0\u001F123", str3)
+        val asset4 = str3.deserialize()
+        assertEquals(asset3, asset4)
+
     }
 
 }

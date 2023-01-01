@@ -17,9 +17,7 @@
 package org.roboquant.metrics
 
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.realizedPNL
 import org.roboquant.brokers.unrealizedPNL
-import org.roboquant.common.sumOf
 import org.roboquant.feeds.Event
 
 
@@ -45,7 +43,6 @@ class ScorecardMetric : Metric {
             minEquity = equity
         } else if (equity < minEquity) minEquity = equity
 
-
         val mdd = (minEquity - maxEquity) / maxEquity
 
         if (maxMDD.isNaN() || mdd < maxMDD) maxMDD = mdd
@@ -54,15 +51,20 @@ class ScorecardMetric : Metric {
 
     override fun calculate(account: Account, event: Event): MetricResults {
 
-        val winnersList = account.trades.filter { it.pnl > 0 }.toList()
+        val pnl =  account.trades.map { it.pnl.convert(account.baseCurrency, event.time).value }
+
+        val winnersList = pnl.filter { it > 0.0 }
         val winners = winnersList.count()
-        val totalWinning = winnersList.sumOf { it.pnl }.convert(account.baseCurrency, event.time).value
+        val totalWinning = winnersList.sum()
+        val maxWinning = winnersList.maxOrNull() ?: Double.NaN
 
-        val loosersList = account.trades.filter { it.pnl < 0.0 }
+        val loosersList = pnl.filter { it < 0.0 }
         val loosers = loosersList.count()
-        val totalLoosing = loosersList.sumOf { it.pnl }.convert(account.baseCurrency, event.time).value
+        val totalLoosing = loosersList.sum()
+        val maxLoosing = loosersList.minOrNull()  ?: Double.NaN
 
-        val realizedPNL = account.trades.realizedPNL.convert(account.baseCurrency, event.time).value
+        val realizedPNL = pnl.sum()
+
         val unrealizedPNL = account.positions.unrealizedPNL.convert(account.baseCurrency, event.time).value
         val equity = account.equity.convert(account.baseCurrency, event.time).value
 
@@ -72,12 +74,14 @@ class ScorecardMetric : Metric {
 
         return metricResultsOf(
             "${prefix}winners" to winners,
-            "${prefix}winning.total" to totalWinning,
-            "${prefix}winning.avg" to totalWinning / winners,
+            "${prefix}winners.total" to totalWinning,
+            "${prefix}winners.avg" to totalWinning / winners,
+            "${prefix}winners.largest" to maxWinning,
 
             "${prefix}losers" to loosers,
             "${prefix}losers.total" to totalLoosing,
-            "${prefix}losing.avg" to totalLoosing / loosers,
+            "${prefix}losers.avg" to totalLoosing / loosers,
+            "${prefix}losers.largest" to maxLoosing,
 
             "${prefix}profit.realized" to realizedPNL,
             "${prefix}profit.unrealized" to unrealizedPNL,

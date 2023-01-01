@@ -46,6 +46,7 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
     @Synchronized
     override fun log(results: MetricResults, info: RunInfo) {
         if (showProgress) progressBar.update(info)
+        if (results.isEmpty()) return
         if (history.size >= maxHistorySize) history.removeFirst()
         history.add(Pair(results, info))
     }

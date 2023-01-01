@@ -40,6 +40,7 @@ class InfoLogger(
     private val logger = Logging.getLogger(InfoLogger::class)
 
     override fun log(results: MetricResults, info: RunInfo) {
+        if (results.isEmpty()) return
         if (logger.isInfoEnabled) for (line in getLines(results, info)) logger.info(line)
     }
 

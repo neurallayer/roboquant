@@ -22,7 +22,7 @@ import java.time.Instant
 
 /**
  * Pricing model that uses a constant [spreadInBips] to calculate the trading price. It uses the same
- * price for high, low and market prices. It works with any type of PriceAction.
+ * price for high, low and market prices. It works with any type of [PriceAction].
  */
 class SpreadPricingEngine(private val spreadInBips: Int = 10, private val priceType: String = "DEFAULT") :
     PricingEngine {

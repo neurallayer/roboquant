@@ -143,16 +143,6 @@ data class Asset(
 
     }
 
-    /**
-     * Returns the currency pair (base and quote values) for a crypto or forex asset. The symbol does need to
-     * contain a separator to split.
-     */
-    val currencyPair: Pair<Currency, Currency>
-        get() {
-            val base = symbol.split('/', '_', ':', '.', ' ').first()
-            return Pair(Currency.getInstance(base), currency)
-        }
-
 
     /**
      * What is the value of the asset given the provided [size] and [price]

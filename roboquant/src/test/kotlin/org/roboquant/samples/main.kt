@@ -37,6 +37,7 @@ import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Signal
 import java.io.File
+import java.time.Instant
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.system.measureTimeMillis
@@ -153,9 +154,7 @@ fun signalsOnly() {
 fun csv2Avro(pathStr: String = "path") {
 
     val path = Path(pathStr)
-    val nasdaq = Exchange.getInstance("NASDAQ")
-    val nyse = Exchange.getInstance("NYSE")
-
+    
     fun CSVConfig.file2Symbol(file: File): String {
         return file.name.removeSuffix(fileExtension).replace('-', '.').uppercase()
     }
@@ -163,22 +162,29 @@ fun csv2Avro(pathStr: String = "path") {
     val feed = CSVFeed(path / "nasdaq stocks") {
         fileExtension = ".us.txt"
         parsePattern = "??T?OHLCV?"
-        assetBuilder = { file: File -> Asset(file2Symbol(file), exchange = nasdaq) }
+        assetBuilder = { file: File -> Asset(file2Symbol(file)) }
     }
 
     val tmp = CSVFeed(path / "nyse stocks") {
         fileExtension = ".us.txt"
         parsePattern = "??T?OHLCV?"
-        assetBuilder = { file: File -> Asset(file2Symbol(file), exchange = nyse) }
+        assetBuilder = { file: File -> Asset(file2Symbol(file)) }
     }
     feed.merge(tmp)
 
-    val sp500File = "/tmp/sp500_all_v3.0.avro"
+    val sp500File = "/tmp/sp500_pricebar_v5.0.avro"
+
+    val symbols = Universe.sp500.getAssets(Instant.now()).symbols
 
     AvroFeed.record(
         feed,
-        sp500File
+        sp500File,
+        timeframe = Timeframe.fromYears(2020, 2023),
+        assetFilter = AssetFilter.includeSymbols(*symbols)
     )
+
+    val avroFeed = AvroFeed(sp500File)
+    println("assets=${avroFeed.assets.size} timeframe=${avroFeed.timeframe}")
 
 }
 
@@ -193,9 +199,9 @@ fun simple() {
 suspend fun main() {
     Config.printInfo()
 
-    when ("FEED") {
+    when ("CSV2AVRO") {
         "SIMPLE" -> simple()
-        "CSV2AVRO" -> csv2Avro()
+        "CSV2AVRO" -> csv2Avro("somepath")
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
         "MC" -> multiCurrency()
