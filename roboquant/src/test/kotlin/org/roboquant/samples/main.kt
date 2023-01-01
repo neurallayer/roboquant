@@ -154,7 +154,7 @@ fun signalsOnly() {
 fun csv2Avro(pathStr: String = "path") {
 
     val path = Path(pathStr)
-    
+
     fun CSVConfig.file2Symbol(file: File): String {
         return file.name.removeSuffix(fileExtension).replace('-', '.').uppercase()
     }

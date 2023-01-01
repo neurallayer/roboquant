@@ -16,7 +16,6 @@
 
 package org.roboquant.jupyter
 
-import org.apache.commons.text.StringEscapeUtils
 import org.jetbrains.kotlinx.jupyter.api.HTML
 import org.jetbrains.kotlinx.jupyter.api.ThrowableRenderer
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
@@ -34,7 +33,22 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
         return true
     }
 
-    private fun String?.escapeHtml(): String = StringEscapeUtils.escapeHtml4(this ?: "")
+    @Suppress("ComplexCondition")
+    private fun String?.escapeHtml(): String {
+        if (this == null) return ""
+        val str = this
+        return buildString {
+            for (c in str) {
+                if (c.code > 127 || c == '"' || c == '\'' || c == '<' || c == '>' || c == '&') {
+                    append("&#")
+                    append(c.code)
+                    append(';')
+                } else {
+                    append(c)
+                }
+            }
+        }
+    }
 
     override fun render(throwable: Throwable): Any {
         val output = StringWriter()
