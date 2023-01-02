@@ -27,7 +27,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.common.PriceSerie
 
 /**
- * Calculates the Alpha and Beta of an account. This implementation not only looks at the open positions, but
+ * Calculates the Alpha and Beta of an account. This implementation not only looks at the portfolio positions, but
  * looks at the returns of the complete account, so including cash balances.
  *
  * - Alpha is a measure of the performance of an investment as compared to the market

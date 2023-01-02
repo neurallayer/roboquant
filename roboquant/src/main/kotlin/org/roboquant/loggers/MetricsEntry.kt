@@ -19,7 +19,6 @@ package org.roboquant.loggers
 import org.roboquant.RunInfo
 import org.roboquant.common.Summary
 import org.roboquant.common.clean
-import org.roboquant.common.std
 
 /**
  * Single metric entry ([name] and [value]) with the associated [RunInfo]. This is a read-only class.
@@ -117,7 +116,6 @@ fun Collection<MetricsEntry>.summary(name: String = "metrics"): Summary {
             child.add("min", arr.minOrNull())
             child.add("max", arr.maxOrNull())
             child.add("avg", arr.average())
-            child.add("std", arr.std())
             child.add("runs", values.map { it.info.run }.distinct().size)
             val timeline = map { it.info.time }.sorted()
             child.add("first time", timeline.first())

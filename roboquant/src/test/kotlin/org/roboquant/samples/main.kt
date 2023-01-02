@@ -98,7 +98,7 @@ suspend fun walkForwardParallel() {
     }
 
     jobs.joinAll() // Make sure we wait for all jobs to finish
-    val avgEquity = logger.getMetric("account.equity").toDoubleArray().mean()
+    val avgEquity = logger.getMetric("account.equity").toDoubleArray().average()
     println(avgEquity)
 }
 

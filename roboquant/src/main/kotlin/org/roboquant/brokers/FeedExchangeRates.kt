@@ -39,6 +39,8 @@ class FeedExchangeRates(
 
     private val exchangeRates = mutableMapOf<Pair<Currency, Currency>, NavigableMap<Instant, Double>>()
 
+    private val logger = Logging.getLogger(this::class)
+
     /**
      * Get the currencies that are part of these exchange rates
      */
@@ -49,24 +51,19 @@ class FeedExchangeRates(
         setRates(feed)
     }
 
-    /**
-     * Returns the currency pair (base and quote values) for a crypto or forex asset. The symbol does need to
-     * contain a separator to split.
-     */
-    private val Asset.currencyPair: Pair<Currency, Currency>
-        get() {
-            val base = symbol.split('/', '_', ':', '.', ' ').first()
-            return Pair(Currency.getInstance(base), currency)
-        }
-
 
     private fun setRates(feed: Feed) {
         val actions = feed.filter<PriceAction> { it.asset.type in assetTypes }
         for ((now, action) in actions) {
             val asset = action.asset
             val rate = action.getPrice(priceType)
-            val map = exchangeRates.getOrPut(asset.currencyPair) { TreeMap() }
-            map[now] = rate
+            val pair = asset.symbol.toCurrencyPair()
+            if (pair != null) {
+                val map = exchangeRates.getOrPut(pair) { TreeMap() }
+                map[now] = rate
+            } else {
+                logger.warn { "could map asset to currency pair $asset" }
+            }
         }
     }
 

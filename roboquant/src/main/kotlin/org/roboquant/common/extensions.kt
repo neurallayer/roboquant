@@ -17,10 +17,6 @@
 
 package org.roboquant.common
 
-import org.hipparchus.stat.descriptive.moment.*
-import org.hipparchus.stat.descriptive.rank.Max
-import org.hipparchus.stat.descriptive.rank.Min
-import org.hipparchus.stat.descriptive.rank.Percentile
 import java.lang.Integer.max
 import java.lang.Integer.min
 import java.math.BigDecimal
@@ -172,54 +168,6 @@ operator fun DoubleArray.plus(a: DoubleArray): DoubleArray {
     return result
 }
 
-/**
- * Return the max value from the array
- */
-fun DoubleArray.max(): Double {
-    return Max().evaluate(this)
-}
-
-/**
- * Return the min value from the array
- */
-fun DoubleArray.min(): Double {
-    return Min().evaluate(this)
-}
-
-/**
- * Return the mean value from the array
- */
-fun DoubleArray.mean(): Double {
-    return Mean().evaluate(this)
-}
-
-/**
- * Return the standard deviation value from the array
- */
-fun DoubleArray.std(): Double {
-    return StandardDeviation().evaluate(this)
-}
-
-/**
- * Return the variance value from the array
- */
-fun DoubleArray.variance(): Double {
-    return Variance().evaluate(this)
-}
-
-/**
- * Return the skewness value from the array
- */
-fun DoubleArray.skewness(): Double {
-    return Skewness().evaluate(this)
-}
-
-/**
- * Return the kurtosis value from the array
- */
-fun DoubleArray.kurtosis(): Double {
-    return Kurtosis().evaluate(this)
-}
 
 /**
  * Remove non-finite values from a DoubleArray and return this new array. The removed values include Inf and NaN values.
@@ -252,29 +200,7 @@ fun DoubleArray.growthRates(): DoubleArray {
 
 
 /**
- * return the min and max values and [low], [mid] and [high] percentile. Passed percentiles should be between
- * 0.0 and 100.0. The default values are respectively: 5.0, 50.0 and 95.0
- */
-fun DoubleArray.percentiles(
-    low: Double = 5.0,
-    mid: Double = 50.0,
-    high: Double = 95.0
-): List<Double> {
-    val p = Percentile()
-    p.data = this
-
-    return listOf(
-        min(),
-        p.evaluate(low),
-        p.evaluate(mid),
-        p.evaluate(high),
-        max()
-    )
-}
-
-
-/**
- * Get the total percentage change. Formula used is
+ * Get the total return. Formula used is
  *
  *      return = last/first - 1.0
  */
@@ -310,7 +236,7 @@ fun Number.round(fractions: Int = 2): BigDecimal =
  * Convert a string to a currency pair. Returns null if it could not determine the currencies.
  */
 fun String.toCurrencyPair(): Pair<Currency, Currency>? {
-    val codes = split('_', '-', ' ', '/', ':')
+    val codes = split('_', '-', ' ', '/', '.', ':')
     return if (codes.size == 2) {
         val c1 = Currency.getInstance(codes.first().uppercase())
         val c2 = Currency.getInstance(codes.last().uppercase())

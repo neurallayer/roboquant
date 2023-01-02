@@ -24,8 +24,6 @@ import org.icepear.echarts.components.coord.cartesian.CategoryAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.roboquant.common.clean
-import org.roboquant.common.max
-import org.roboquant.common.min
 import org.roboquant.loggers.MetricsEntry
 import org.roboquant.loggers.getName
 import org.roboquant.loggers.groupBy

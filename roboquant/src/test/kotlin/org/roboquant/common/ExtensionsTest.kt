@@ -25,18 +25,6 @@ import kotlin.test.assertTrue
 class ExtensionsTest {
 
     @Test
-    fun testDouble() {
-        val a = doubleArrayOf(1.0, 2.0, 3.0, 2.0)
-        assertEquals(1.5, a.kurtosis())
-        assertEquals(2.0, a.mean())
-        assertEquals(0.816496580927726, a.std())
-        assertEquals(0.0, a.skewness())
-        assertEquals(0.6666666666666666, a.variance())
-
-        assertEquals(1.0, (a / 2.0).mean())
-    }
-
-    @Test
     fun returns() {
         val a = doubleArrayOf(10.0, 20.0, 10.0)
         assertEquals(2, a.returns().size)
@@ -52,13 +40,6 @@ class ExtensionsTest {
         assertEquals(0.5, a.growthRates()[1])
     }
 
-    @Test
-    fun testPercentiles() {
-        val a = doubleArrayOf(5.0, 10.0, 20.0, 30.0, 35.0)
-        val p = a.percentiles()
-        assertEquals(5, p.size)
-        assertEquals(listOf(5.0, 5.0, 20.0, 35.0, 35.0), p)
-    }
 
     @Test
     fun testRounding() {
