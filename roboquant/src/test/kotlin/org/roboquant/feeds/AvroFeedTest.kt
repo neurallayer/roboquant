@@ -176,7 +176,7 @@ class AvroFeedTest {
     @Test
     fun loadFromGithub() {
         Config.getProperty("FULL_COVERAGE") ?: return
-        val fileName = "sp500_pricebar_v5.0.avro"
+        val fileName = "sp500_pricebar_v5.1.avro"
         val file = (Config.home / fileName).toFile()
         file.delete()
         assertFalse(file.exists())

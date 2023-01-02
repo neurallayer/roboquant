@@ -172,7 +172,7 @@ fun csv2Avro(pathStr: String = "path") {
     }
     feed.merge(tmp)
 
-    val sp500File = "/tmp/sp500_pricebar_v5.0.avro"
+    val sp500File = "/tmp/sp500_pricebar_v5.1.avro"
 
     val symbols = Universe.sp500.getAssets(Instant.now()).symbols
 

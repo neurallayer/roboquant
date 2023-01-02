@@ -200,7 +200,7 @@ class AvroFeed(private val path: Path) : Feed {
     companion object {
 
         private val logger = Logging.getLogger(AvroFeed::class)
-        private const val sp500File = "sp500_pricebar_v5.0.avro"
+        private const val sp500File = "sp500_pricebar_v5.1.avro"
         private const val sp500QuoteFile = "sp500_pricequote_v5.0.avro"
 
         /**
