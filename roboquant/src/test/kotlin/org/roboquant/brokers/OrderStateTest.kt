@@ -22,6 +22,7 @@ import org.roboquant.common.Asset
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
+import org.roboquant.orders.cancel
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -32,6 +33,18 @@ internal class OrderStateTest {
         assertEquals(status, state.status)
         assertEquals(opened, state.openedAt)
         assertEquals(closed, state.closedAt)
+    }
+
+    @Test
+    fun orderStateExtensions() {
+        val order = MarketOrder(Asset("TEST"), 100)
+        var state = OrderState(order)
+        var c = listOf(state).cancel()
+        assertEquals(1, c.size)
+
+        state = state.update(OrderStatus.COMPLETED, Instant.now())
+        c = listOf(state).cancel()
+        assertEquals(0, c.size)
     }
 
 

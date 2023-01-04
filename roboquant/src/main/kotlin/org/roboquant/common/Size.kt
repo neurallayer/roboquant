@@ -73,7 +73,7 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
     }
 
     /**
-     * Converts this [Size] value to [Double], this conversion might loose some precision
+     * Converts this [Size] value to [Double], with this conversion might lose precision
      */
     fun toDouble() = value / FRACTION.toDouble()
 

@@ -145,3 +145,9 @@ val Collection<OrderState>.assets: Set<Asset>
     get() = map { it.asset }.distinct().toSet()
 
 
+/**
+ * Return list of CancelOrder for any open orders in the collection
+ */
+fun Collection<OrderState>.cancel(): List<CancelOrder> {
+    return this.filter { it.status.open }.map { CancelOrder(it) }
+}
