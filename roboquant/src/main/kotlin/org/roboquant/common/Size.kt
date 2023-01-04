@@ -22,7 +22,7 @@ import kotlin.math.sign
 
 /**
  * Represents the size of orders, positions and trades. This implementation is precise up to 8 decimals, ensuring that
- * order and position sizes are accurate enough when dealing with fractional orders.
+ * order and position sizes are accurate enough when dealing for example with fractional orders.
  *
  * Since this implementation is a value class, there is no overhead compared to for example a Double or Long.
  */
@@ -30,22 +30,25 @@ import kotlin.math.sign
 value class Size private constructor(private val value: Long) : Comparable<Size> {
 
     /**
-     * Translates an [Int] [value] to a [Size]
+     * Creates a Size instance based a an [Int] [value]
      */
     constructor(value: Int) : this(value * FRACTION)
 
     /**
-     * Translates a [BigDecimal] [value] to a [Size]
+     * Creates a Size instance based a [BigDecimal] [value]
      */
     constructor(value: BigDecimal) : this(value.multiply(BD_FRACTION).toLong())
 
     /**
-     * Translates a [Double] [value] to a [Size]
+     * Creates a Size instance based a [Double] [value]. Be careful when using this constructor since a Double is not
+     * always precise. Better to use the constructor with a string as its parameter instead:
+     *
+     *      Size("0.001")
      */
     constructor(value: Double) : this(BigDecimal.valueOf(value))
 
     /**
-     * Translates the [String] representation of a numeric [value] to a Size
+     * Creates a Size instance based on the [String] representation of a numeric [value]
      */
     constructor(value: String) : this(BigDecimal(value).multiply(BD_FRACTION).toLong())
 
