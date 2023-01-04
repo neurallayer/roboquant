@@ -98,14 +98,14 @@ Of course this requires the having the right credentials for deploying to the Ma
 == Interactive Brokers
 If you don't require integration with Interactive Brokers for your trading, you can skip this step.
 
-Unfortunately it is not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file yourself. You can download version `10.20` from here: https://interactivebrokers.github.io/# and within the downloaded archive file you'll find the required `TwsApi.jar`.
+Unfortunately it is not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file yourself. You can download the stable version `10.19` from here: https://interactivebrokers.github.io/# and within the downloaded archive file you'll find the required `TwsApi.jar`.
 
 
 Then install the jar file in the local Maven repository on your machine using the following command:
 
 [source, shell]
 ----
-mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.20 -Dpackaging=jar
+mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.19 -Dpackaging=jar
 ----
 
 After this step, you can install the modules including the `roboquant-ibkr` module
@@ -123,7 +123,7 @@ There is a special `doc` profile to generate documentation and see if there is s
 
 [source, shell]
 ----
-mvn dokka:dokka -P doc
+mvn dokka:dokka -P doc | grep WARNING
 ----
 
 Please note the `release` profile has its own dokka task to generate a javadoc jar file.
@@ -161,12 +161,14 @@ INFO PerformanceTest -      extended run                        10902 ms
 ----
 
 == Mutation Testing
-Although not enabled by default, roboquant also includes the PIT (see also https://PiTest.org) mutation testing plugin. you can use the following command to run it:
+Although not enabled by default, roboquant also includes the PIT (see also https://PiTest.org) mutation testing plugin. You can use the following command to invoke it:
 
 [source, shell]
 ----
 mvn test-compile org.pitest:pitest-maven:mutationCoverage
 ----
 
-PIT runs the unit tests against automatically modified versions of the roboquant code. When the code changes, it should produce different results and cause one or more unit tests to fail. If no unit tests fail, it may indicate an issue with that the test suite doesn't validate the expected behavior.
+PIT runs the unit tests against automatically modified versions of the roboquant code. When the code changes, it should produce different results and cause one or more unit tests to fail. If no unit tests fail at all, it may indicate that the test suite doesn't validate the expected behavior.
+
+In future releases of _roboquant_ it is planned to use mutation testing more in order to improve the overall *real* test coverage.
 

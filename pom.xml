@@ -67,7 +67,7 @@
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <kotlin.version>1.8.0</kotlin.version>
         <slf4j.version>2.0.4</slf4j.version>
-        <ibkr.version>10.20</ibkr.version>
+        <ibkr.version>10.19</ibkr.version>
     </properties>
 
     <repositories>
