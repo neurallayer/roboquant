@@ -146,5 +146,5 @@ internal object Polygon {
         return assets
     }
      */
-    
+
 }
