@@ -139,7 +139,7 @@ class PolygonLiveFeed(
     }
 
     /**
-     * Subscribe to the [symbols] for the specified action [type], default is PolygonActionType.TRADE
+     * Subscribe to the [symbols] for the specified action [type], default action is `PolygonActionType.TRADE`
      */
     suspend fun subscribe(vararg symbols: String, type: PolygonActionType = PolygonActionType.TRADE) {
 
