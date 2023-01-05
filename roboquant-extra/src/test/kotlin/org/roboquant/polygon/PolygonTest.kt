@@ -17,6 +17,7 @@
 package org.roboquant.polygon
 
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
@@ -27,6 +28,22 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class PolygonTest {
+
+
+    @Test
+    fun supportedAssets() {
+        Config.getProperty("TEST_POLYGON") ?: return
+        val feed = PolygonHistoricFeed()
+        val assets = feed.availableAssets
+        assertTrue(assets.size > 3000)
+
+        assertDoesNotThrow {
+            assets.getBySymbol("AAPL")
+            assets.getBySymbol("JPM")
+            assets.getBySymbol("TSLA")
+        }
+    }
+
 
     @Test
     fun testHistoricFeed() {

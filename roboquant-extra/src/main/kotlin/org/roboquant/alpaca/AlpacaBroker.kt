@@ -132,10 +132,14 @@ class AlpacaBroker(
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
     private fun syncOrders() {
-        _account.orders.map {
-            val aOrderId = orderMapping.getValue(it.order)
-            val order = alpacaAPI.orders().get(aOrderId, false)
-            updateIAccountOrder(it.order, order)
+        _account.orders.forEach {
+            val aOrderId = orderMapping[it.order]
+            if (aOrderId != null) {
+                val order = alpacaAPI.orders().get(aOrderId, false)
+                updateIAccountOrder(it.order, order)
+            } else {
+                logger.warn("cannot find order ${it.order} in orderMap")
+            }
         }
     }
 

@@ -18,14 +18,12 @@ package org.roboquant.polygon
 
 import io.polygon.kotlin.sdk.rest.PolygonRestClient
 import io.polygon.kotlin.sdk.rest.reference.SupportedTickersParameters
+import io.polygon.kotlin.sdk.rest.reference.TickerDTO
 import io.polygon.kotlin.sdk.websocket.PolygonWebSocketClient
 import io.polygon.kotlin.sdk.websocket.PolygonWebSocketCluster
 import io.polygon.kotlin.sdk.websocket.PolygonWebSocketListener
 import io.polygon.kotlin.sdk.websocket.PolygonWebSocketMessage
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Config
-import org.roboquant.common.Logging
+import org.roboquant.common.*
 
 
 /**
@@ -84,8 +82,45 @@ internal object Polygon {
 
     }
 
+    private fun TickerDTO.toAsset() : Asset? {
+        val currency = currencyName?.uppercase() ?: "USD"
+        val exchange = primaryExchange?.uppercase() ?: ""
+
+        val assetType = when (market) {
+            "stocks" -> AssetType.STOCK
+            "crypto" -> AssetType.CRYPTO
+            "fx" -> AssetType.FOREX
+            else -> return null
+        }
+
+        return Asset(
+            ticker.toString(),
+            assetType,
+            currency,
+            exchange
+        )
+    }
 
     internal fun availableAssets(client: PolygonRestClient): List<Asset> {
+        val assets = mutableListOf<Asset>()
+        val params = SupportedTickersParameters(
+            limit = 1000,
+            market = "stocks",
+            sortBy = "ticker",
+            sortDescending = false,
+            activeSymbolsOnly = true,
+        )
+
+        client.referenceClient.listSupportedTickers(params).asSequence().forEach {
+            val asset = it.toAsset()
+            assets.addNotNull(asset)
+        }
+
+        return assets
+    }
+
+    /*
+    internal fun availableAssets2(client: PolygonRestClient): List<Asset> {
         val assets = mutableListOf<Asset>()
         var done = false
 
@@ -94,33 +129,22 @@ internal object Polygon {
             val params = SupportedTickersParameters(
                 limit = 1000,
                 market = "stocks",
+                sortBy = "ticker",
+                sortDescending = false,
                 activeSymbolsOnly = true,
                 tickerGT = lastSymbol
             )
+
             val results = client.referenceClient.getSupportedTickersBlocking(params).results ?: emptyList()
             for (result in results) {
-                val currency = result.currencyName?.uppercase() ?: "USD"
-                val exchange = result.primaryExchange?.uppercase() ?: ""
-
-                val assetType = when (result.market) {
-                    "stocks" -> AssetType.STOCK
-                    "crypto" -> AssetType.CRYPTO
-                    "fx" -> AssetType.FOREX
-                    else -> continue
-                }
-
-                val asset = Asset(
-                    result.ticker.toString(),
-                    assetType,
-                    currency,
-                    exchange
-                )
-                assets.add(asset)
+                val asset = result.toAsset()
+                assets.addNotNull(asset)
             }
             done = results.isEmpty()
         }
+
         return assets
     }
-
-
+     */
+    
 }
