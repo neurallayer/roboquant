@@ -15,6 +15,8 @@
  */
 
 
+@file:Suppress("unused")
+
 package org.roboquant.common
 
 import java.time.*
@@ -108,14 +110,6 @@ class Exchange private constructor(
     companion object {
 
         /**
-         * The default exchange is the exchange with as exchangeCode an empty string and used as a fallback if an
-         * exchange cannot be found or an exchange is not specified. It uses NY timezone and USD as its default
-         * currency.
-         */
-        val DEFAULT: Exchange
-
-
-        /**
          * List of all the registered exchanges
          */
         val exchanges
@@ -123,6 +117,7 @@ class Exchange private constructor(
 
 
         private val instances = ConcurrentHashMap<String, Exchange>()
+        private const val newYorkTimeZone = "America/New_York"
 
         /**
          * Returns the Exchange instance for the given [exchangeCode]. If no exchange is found, a new exchange instance
@@ -155,41 +150,103 @@ class Exchange private constructor(
             return instance
         }
 
-        init {
-            val newYorkTimeZone = "America/New_York"
-            DEFAULT = addInstance("", newYorkTimeZone)
 
-            // Major North American exchanges
-            addInstance("US", newYorkTimeZone) // Generic US exchange
-            addInstance("NYSE", newYorkTimeZone)
-            addInstance("NASDAQ", newYorkTimeZone)
-            addInstance("BATS", newYorkTimeZone)
-            addInstance("CBOE", newYorkTimeZone)
-            addInstance("ARCA", newYorkTimeZone)
-            addInstance("AMEX", newYorkTimeZone)
-            addInstance("TSX", "America/Toronto")
+        /**
+         * The default exchange is the exchange with as exchangeCode an empty string and used as a fallback if an
+         * exchange cannot be found or an exchange is not specified. It uses New  York timezone and USD as its default
+         * currency.
+         */
+        val DEFAULT = addInstance("", newYorkTimeZone)
 
-            // Major European exchanges
-            addInstance("AEB", "Europe/Amsterdam", "09:00", "17:30")
-            addInstance("LSE", "Europe/London", "08:00", "16:30")
-            addInstance("FSX", "Europe/Berlin", "09:00", "17:30")
-            addInstance("SIX", "Europe/Zurich", "09:00", "17:20")
-            addInstance("PAR", "Europe/Paris", "09:00", "17:30")
+        /**
+         * Generic US Exchange
+         */
+        val US = addInstance("US", newYorkTimeZone)
 
-            // Major Asian exchanges
-            addInstance("JPX", "Asia/Tokyo", "09:00", "15:00")
-            addInstance("SSE", "Asia/Shanghai", "09:30", "15:00")
-            addInstance("SEHK", "Asia/Hong_Kong", "09:30", "16:00")
+        /**
+         * New York Stock Exchange (US)
+         */
+        val NYSE = addInstance("NYSE", newYorkTimeZone)
 
-            // Major Australian exchanges
-            addInstance("SSX", "Australia/Sydney", "10:00", "16:00")
+        /**
+         * NASDAQ (US) Stock Exchange
+         */
+        val NASDAQ = addInstance("NASDAQ", newYorkTimeZone)
 
-            // Generic 24x7 Crypto Exchange
-            addInstance("CRYPTO", newYorkTimeZone, "00:00", "23:59:59.999")
+        /**
+         * BATS (US) Stock Exchange
+         */
+        val BATS = addInstance("BATS", newYorkTimeZone)
 
+        /**
+         * CBOE (US) Stock Exchange
+         */
+        val CBOE = addInstance("CBOE", newYorkTimeZone)
 
-        }
+        /**
+         * ARCA (US) Stock Exchange
+         */
+        val ARCA = addInstance("ARCA", newYorkTimeZone)
 
+        /**
+         * AMEX (US) Stock Exchange
+         */
+        val AMEX = addInstance("AMEX", newYorkTimeZone)
+
+        /**
+         * Toronto Stock Exchange
+         */
+        val TSX = addInstance("TSX", "America/Toronto")
+
+        /**
+         * Amsterdam Stock Exchange
+         */
+        val AEB = addInstance("AEB", "Europe/Amsterdam", "09:00", "17:30")
+
+        /**
+         * London Stock Exchange
+         */
+        val LSE = addInstance("LSE", "Europe/London", "08:00", "16:30")
+
+        /**
+         * German Stock Exchange
+         */
+        val DEX = addInstance("DEX", "Europe/Berlin", "09:00", "17:30")
+
+        /**
+         * Swiss Stock Exchange
+         */
+        val SIX = addInstance("SIX", "Europe/Zurich", "09:00", "17:20")
+
+        /**
+         * Paris Stock Exchange
+         */
+        val PAR = addInstance("PAR", "Europe/Paris", "09:00", "17:30")
+
+        /**
+         * Tokyo Stock Exchange
+         */
+        val JPX = addInstance("JPX", "Asia/Tokyo", "09:00", "15:00")
+
+        /**
+         * Shanghai Stock Exchange
+         */
+        val SSE = addInstance("SSE", "Asia/Shanghai", "09:30", "15:00")
+
+        /**
+         * Hong Kong Stock Exchange
+         */
+        val SEKH = addInstance("SEHK", "Asia/Hong_Kong", "09:30", "16:00")
+
+        /**
+         * Sydney Stock Exchange
+         */
+        val SSX = addInstance("SSX", "Australia/Sydney", "10:00", "16:00")
+
+        /**
+         * Generic 24x7 Crypto Exchange
+         */
+        val CRYPTO = addInstance("CRYPTO", newYorkTimeZone, "00:00", "23:59:59.999")
 
     }
 }

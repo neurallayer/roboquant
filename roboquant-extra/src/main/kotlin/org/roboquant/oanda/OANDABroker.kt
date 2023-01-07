@@ -176,7 +176,6 @@ class OANDABroker(
      * always TIF be submitted with FOK (FillOrKill) and ignore the requested TiF.
      */
     override fun place(orders: List<Order>, event: Event): Account {
-        logger.trace { "received ${orders.size} orders and ${event.actions.size} actions" }
         _account.initializeOrders(orders)
         val time = event.time
 

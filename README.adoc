@@ -48,6 +48,8 @@ roboquant.run(feed) // <5>
 <4> What data should be used, in this case CSV files
 <5> Run the back test
 
+You can find out more at the online https://roboquant.org/tutorial/index.html[tutorial^].
+
 == Installation
 
 === Library
@@ -75,7 +77,7 @@ Add the following line to your gradle script:
 implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'
 ----
 
-See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use roboquant.
+See also link:/docs/INSTALL.adoc[installation guide] for more ways to install and use _roboquant_.
 
 Latest available versions:
 
@@ -89,7 +91,7 @@ image:/docs/jupyter_screenshot.png[Jupyter Lab]
 
 If you just want to try it out without any installation, go to image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=tree/notebooks/,window=_blank]
 
-If you already have Docker installed, all it takes is a single command to have a fully functional Jupyter Notebook environment available on your local machine. This image also comes with several notebooks included.
+If you already have Docker installed, all it takes is a single command to have a fully functional Jupyter Notebook environment available on your local machine. This image also comes with several example notebooks included.
 
 [source,shell]
 ----

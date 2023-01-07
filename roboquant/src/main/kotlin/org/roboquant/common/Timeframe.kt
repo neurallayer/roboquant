@@ -98,7 +98,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         // Different formatters used when displaying a timeframe
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         private val minutesFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        private val hoursFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH")
+        private val hoursFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         private val millisFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 

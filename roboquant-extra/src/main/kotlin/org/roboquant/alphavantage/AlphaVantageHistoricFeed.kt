@@ -112,8 +112,7 @@ class AlphaVantageHistoricFeed(
             val symbol = asset.symbol
             subscriptions[symbol] = asset
             val result = AlphaVantage.api()
-                .timeSeries()
-                .daily()
+                .timeSeries().daily().adjusted()
                 .forSymbol(symbol)
                 .outputSize(OutputSize.FULL)
                 .fetchSync()

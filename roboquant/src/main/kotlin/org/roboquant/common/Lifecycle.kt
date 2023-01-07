@@ -24,8 +24,6 @@ import org.roboquant.RunPhase
  * The component will be informed that a phase has been started or ended. It provides the component with the opportunity
  * to manage its state so a phase can be started without any state remaining from previous runs.
  *
- * The default implementation of all the methods is to do nothing, so you only have to implement the methods relevant to
- * your component and can safely ignore the rest.
  */
 interface Lifecycle {
 
@@ -45,7 +43,9 @@ interface Lifecycle {
     }
 
     /**
-     * Reset the state of the component to its initial state, default implementation is to take no action.
+     * Reset the state of the component to its initial state, default implementation is to take no action. This is
+     * typically the only method to override when wanting to reset some internal state since by default the [start]
+     * method invokes this method.
      */
     fun reset() {
         // default is to do nothing

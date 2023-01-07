@@ -237,7 +237,7 @@ class AlpacaBroker(
     }
 
     /**
-     * Sync the state of the Alpaca trading account with roboquant account state.
+     * Sync the state of the Alpaca broker account with roboquant account state.
      */
     fun sync() {
         syncAccount()

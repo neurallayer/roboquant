@@ -19,6 +19,7 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
+import org.roboquant.alphavantage.AlphaVantageHistoricFeed
 import org.roboquant.common.*
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
@@ -57,9 +58,26 @@ fun feedPolygon() {
     println(account.fullSummary())
 }
 
+fun alphaVantage() {
+    val feed = AlphaVantageHistoricFeed()
+
+    val assets = listOf(
+        // regular US stock
+        Asset("IBM"),
+
+        // stock listed on non-US exchange
+        Asset("DAI.DEX", currency = Currency.EUR, exchange = Exchange.DEX)
+    )
+
+    feed.retrieveDaily(*assets.toTypedArray())
+    feed.retrieveIntraday(Asset("TSLA"))
+    println(feed.timeframe)
+}
+
 fun main() {
-    when ("POLYGON") {
+    when ("ALPHA") {
         "YAHOO" -> feedYahoo()
         "POLYGON" -> feedPolygon()
+        "ALPHA" -> alphaVantage()
     }
 }

@@ -49,7 +49,7 @@ import java.time.Instant
  * @property policy The policy to use, default is [FlexPolicy]
  * @property broker the broker to use, default is [SimBroker]
  * @property logger the metrics logger to use, default is [MemoryLogger]
- * @param channelCapacity the max capacity of the event channel, more capacity means more buffering
+ * @param channelCapacity the max capacity of the event channel, more capacity means more buffering. Default is 100.
  */
 class Roboquant(
     val strategy: Strategy,
@@ -80,7 +80,6 @@ class Roboquant(
         val job = scope.launch {
             channel.use { feed.play(it) }
         }
-
 
         start(runInfo.phase)
         try {
@@ -164,7 +163,7 @@ class Roboquant(
         require(episodes > 0) { "episodes need to be greater than zero" }
         val run = runName ?: "run-${runCounter++}"
         val runInfo = RunInfo(run)
-        kotlinLogger.debug { "starting run $runInfo for $episodes episodes" }
+        kotlinLogger.debug { "starting run=$runInfo for $episodes episodes" }
 
         repeat(episodes) {
             runInfo.episode++
@@ -190,8 +189,7 @@ class Roboquant(
     private fun step(orders: List<Order>, event: Event, runInfo: RunInfo): List<Order> {
         runInfo.step++
         runInfo.time = event.time
-
-        kotlinLogger.trace { "starting step $runInfo" }
+        kotlinLogger.trace { "starting step info=$runInfo oders=${orders.size} actions=${event.actions.size}" }
 
         val account = broker.place(orders, event)
         runMetrics(account, event, runInfo)
@@ -209,6 +207,7 @@ class Roboquant(
         metricResult.putAll(strategy.getMetrics())
         metricResult.putAll(policy.getMetrics())
         metricResult.putAll(broker.getMetrics())
+        kotlinLogger.trace { "captured metrics=${metricResult.size}" }
 
         // Always call the logger, so things like progress bar can be updated
         logger.log(metricResult, runInfo.copy())
