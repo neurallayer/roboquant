@@ -83,8 +83,6 @@ internal object Polygon {
     }
 
     private fun TickerDTO.toAsset() : Asset? {
-        val currency = currencyName?.uppercase() ?: "USD"
-        val exchange = primaryExchange?.uppercase() ?: ""
 
         val assetType = when (market) {
             "stocks" -> AssetType.STOCK
@@ -92,6 +90,9 @@ internal object Polygon {
             "fx" -> AssetType.FOREX
             else -> return null
         }
+
+        val currency = currencyName?.uppercase() ?: "USD"
+        val exchange = primaryExchange?.uppercase() ?: ""
 
         return Asset(
             ticker.toString(),
@@ -118,33 +119,5 @@ internal object Polygon {
 
         return assets
     }
-
-    /*
-    internal fun availableAssets2(client: PolygonRestClient): List<Asset> {
-        val assets = mutableListOf<Asset>()
-        var done = false
-
-        while (!done) {
-            val lastSymbol = assets.lastOrNull()?.symbol ?: ""
-            val params = SupportedTickersParameters(
-                limit = 1000,
-                market = "stocks",
-                sortBy = "ticker",
-                sortDescending = false,
-                activeSymbolsOnly = true,
-                tickerGT = lastSymbol
-            )
-
-            val results = client.referenceClient.getSupportedTickersBlocking(params).results ?: emptyList()
-            for (result in results) {
-                val asset = result.toAsset()
-                assets.addNotNull(asset)
-            }
-            done = results.isEmpty()
-        }
-
-        return assets
-    }
-     */
 
 }
