@@ -42,18 +42,17 @@ class PNLMetric : Metric {
      * @see Metric.calculate
      */
     override fun calculate(account: Account, event: Event): MetricResults {
-        val result = mutableMapOf<String, Double>()
-
         val pnl = account.trades.realizedPNL
-        val realizedPNL = pnl.convert(account.baseCurrency, event.time)
-        result["pnl.realized"] = realizedPNL.value
+        val realizedPNL = pnl.convert(account.baseCurrency, event.time).value
 
         val pnl2 = account.positions.unrealizedPNL
-        val unrealizedPNL = pnl2.convert(account.baseCurrency, event.time)
-        result["pnl.unrealized"] = unrealizedPNL.value
+        val unrealizedPNL = pnl2.convert(account.baseCurrency, event.time).value
 
-        result["pnl.total"] = realizedPNL.value + unrealizedPNL.value
-        return result
+        return mapOf(
+            "pnl.realized" to realizedPNL,
+            "pnl.unrealized" to unrealizedPNL,
+            "pnl.total" to realizedPNL + unrealizedPNL
+        )
     }
 
 }
