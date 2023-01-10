@@ -100,16 +100,15 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
         s.add("EMPTY")
     } else {
         val lines = mutableListOf<List<Any>>()
-        lines.add(listOf("type", "symbol", "ccy", "status", "id", "opened at", "closed at", "details"))
+        lines.add(listOf("type", "symbol", "status", "id", "opened at", "closed at", "details"))
         forEach {
             with(it) {
-                val infoString = order.info().toString().removeSuffix("}").removePrefix("{")
+                val infoString = order.info().map { entry -> "${entry.key}=${entry.value}" }.joinToString(" ")
 
                 lines.add(
                     listOf(
                         order.type,
                         asset.symbol,
-                        asset.currency,
                         status,
                         order.id,
                         openedAt.toPrettyString(),

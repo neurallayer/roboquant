@@ -43,7 +43,7 @@ class XChangePollingLiveFeed(
 
     private val logger = Logging.getLogger(XChangePollingLiveFeed::class)
     private val service = exchange.marketDataService
-    private val exchangeName = exchange.toString()
+    private val exchangeName = exchange.exchangeSpecification?.exchangeName ?: exchange.toString()
 
     private val jobs = ParallelJobs()
 

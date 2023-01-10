@@ -56,7 +56,7 @@ class XChangeLiveFeed(
     private val logger = Logging.getLogger(XChangeLiveFeed::class)
     private val service: StreamingMarketDataService = exchange.streamingMarketDataService
     private val subscriptions = mutableListOf<Disposable>()
-    private val exchangeName = exchange.toString()
+    private val exchangeName = exchange.exchangeSpecification?.exchangeName ?: exchange.toString()
 
     /**
      * Assets that are available to subscribe to
@@ -97,7 +97,7 @@ class XChangeLiveFeed(
             val asset = getAsset(cryptoPair)
             val subscription = service.getTrades(cryptoPair).subscribe(
                 { trade -> handleTrade(asset, trade) },
-                { throwable -> logger.warn { "Error in trade subscription ${throwable.stackTrace}" } })
+                { throwable -> logger.warn(throwable) { "Error in trade subscription" } })
 
             subscriptions.add(subscription)
             assets.add(asset)
@@ -118,7 +118,7 @@ class XChangeLiveFeed(
             val subscription = service.getOrderBook(cryptoPair)
                 .subscribe(
                     { orderBook -> handleOrderBook(asset, orderBook) },
-                    { throwable -> logger.warn { "Error in order book subscription ${throwable.stackTrace}" } })
+                    { throwable -> logger.warn(throwable) { "Error in order book subscription" } })
             subscriptions.add(subscription)
             assets.add(asset)
         }
@@ -126,9 +126,7 @@ class XChangeLiveFeed(
 
     /**
      * Subscribe to live ticker updates from the exchange. The resulting events will contain
-     * [PriceBar] actions (OHLCV). This is especially suited for technical analysis like candle stick
-     * patterns.
-     *
+     * [PriceQuote] actions.
      */
     fun subscribeTicker(vararg symbols: String) {
         for (symbol in symbols) {
@@ -140,7 +138,8 @@ class XChangeLiveFeed(
                 val subscription = service.getTicker(cryptoPair)
                     .subscribe(
                         { ticker -> handleTicker(asset, ticker) },
-                        { throwable -> logger.warn { "Error in ticker subscription ${throwable.stackTrace}" } })
+                        { throwable -> logger.warn(throwable) { "Error in ticker subscription" } }
+                    )
                 subscriptions.add(subscription)
                 assets.add(asset)
             } else {
@@ -209,18 +208,20 @@ class XChangeLiveFeed(
     }
 
     /**
-     * Process ticker callback and create [PriceBar] actions.
+     * Process ticker callback and create [PriceQuote] actions.
      *
      * @param asset
      * @param ticker
      */
     private fun handleTicker(asset: Asset, ticker: Ticker) {
         logger.trace { "$ticker event for $asset" }
-        if (ticker.open == null) {
-            logger.trace { "Received ticker for ${asset.symbol} without open value" }
-            return
-        }
-        val item = PriceBar(asset, ticker.open, ticker.high, ticker.low, ticker.last, ticker.volume)
+        val item = PriceQuote(
+            asset,
+            ticker.ask.toDouble(),
+            ticker.askSize.toDouble(),
+            ticker.bid.toDouble(),
+            ticker.bidSize.toDouble()
+        )
         val now = if (useMachineTime) Instant.now() else ticker.timestamp.toInstant()
         val event = Event(listOf(item), now)
         send(event)

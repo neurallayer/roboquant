@@ -24,7 +24,7 @@ import java.time.Instant
  * Pricing model that uses a constant [spreadInBips] to calculate the trading price. It uses the same
  * price for high, low and market prices. It works with any type of [PriceAction].
  */
-class SpreadPricingEngine(private val spreadInBips: Int = 10, private val priceType: String = "DEFAULT") :
+class SpreadPricingEngine(private val spreadInBips: Number = 10, private val priceType: String = "DEFAULT") :
     PricingEngine {
 
     private class SpreadPricing(val price: Double, val spreadPercentage: Double) : Pricing {
@@ -38,7 +38,7 @@ class SpreadPricingEngine(private val spreadInBips: Int = 10, private val priceT
     }
 
     override fun getPricing(action: PriceAction, time: Instant): Pricing {
-        val spreadPercentage = spreadInBips / 10_000.0
+        val spreadPercentage = spreadInBips.toDouble() / 10_000.0
         return SpreadPricing(action.getPrice(priceType), spreadPercentage)
     }
 }
