@@ -42,7 +42,8 @@ import java.time.Instant
 /**
  * Roboquant is the engine of the platform that ties [strategy], [policy] and [broker] together and caters to a wide
  * variety of testing and live trading scenarios. Through [metrics] and a [logger] it provides insights into the
- * performance of a [run]. Only a strategy is required, the other components are optional.
+ * performance of a [run]. Only a strategy is required when instantiating a Roboquant, the other parameters are
+ * optional.
  *
  * @property strategy The strategy to use, there is no default
  * @property metrics the various metrics to calculate during the runs, default is none
@@ -257,7 +258,7 @@ data class RunInfo internal constructor(
 }
 
 /**
- * Enumeration of the different phases that a run can be in, [MAIN] and [VALIDATE]. Especially with self learning
+ * Enumeration of the two different phases that a run can be in, [MAIN] and [VALIDATE]. Especially with self learning
  * strategies, it is important that you evaluate your strategy on yet unseen data, so you don't over-fit.
  *
  * See also [Roboquant.run] how to run your strategy with different phases enabled.
