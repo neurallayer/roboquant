@@ -145,7 +145,8 @@ data class Asset(
 
 
     /**
-     * What is the value of the asset given the provided [size] and [price]
+     * What is the value of the asset given the provided [size] and [price]. The calculation takes the [multiplier]
+     * of the asset into account.
      */
     fun value(size: Size, price: Double): Amount {
         // If size is zero, an unknown price (Double.NanN) is fine

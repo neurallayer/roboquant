@@ -25,7 +25,7 @@ import org.roboquant.common.Size
  *
  * This abstract class contains common functionality across the different SingleOrder types.
  *
- * @property size the size of the order
+ * @property size the size of the order, use a negative size for a SELL order
  * @property tif the Time In Force policy to use
  */
 abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, tag: String) :

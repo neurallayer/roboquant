@@ -37,7 +37,7 @@ import java.time.Instant
  * initial deposit
  * @property feeModel the fee/commission model to use, default is [NoFeeModel]
  * @property accountModel the account model (like cash or margin) to use, default is [CashAccount]
- * @param pricingEngine the pricing engine to use to simulate trades, default is [SpreadPricingEngine]
+ * @param pricingEngine the pricing engine to use to calculate trade pricing, default is [SpreadPricingEngine]
  * @constructor Create new instance of SimBroker
  */
 open class SimBroker(
@@ -49,13 +49,10 @@ open class SimBroker(
 ) : Broker {
 
     /**
-     * Create a new SimBroker with a [deposit] in a [currencyCode]
+     * Create a new SimBroker with a [deposit] denoted in a single [currencyCode].
      */
     constructor(deposit: Number, currencyCode: String = "USD") : this(
-        Amount(
-            Currency.getInstance(currencyCode),
-            deposit
-        ).toWallet()
+        Amount(Currency.getInstance(currencyCode), deposit).toWallet()
     )
 
     // Internally used account to store the state
@@ -64,7 +61,7 @@ open class SimBroker(
     // Logger to use
     private val logger = Logging.getLogger(SimBroker::class)
 
-    // Execution engine for simulating trades
+    // Execution engine used for simulating trades
     private val executionEngine = ExecutionEngine(pricingEngine)
 
     /**

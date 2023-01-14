@@ -44,15 +44,10 @@ import kotlin.io.path.notExists
  * in the world. However, please note that:
  *
  * 1. The published rates are all in relationship to the Euro. So they only go back to the introduction date of
- * the Euro and don't cover earlier periods
- * 2. Cryptocurrencies are not included in this file
+ * the Euro and don't cover earlier periods.
+ * 2. Cryptocurrencies are not included in this file.
  *
- * # Example usage
- *
- *      val exchangeRates = ECBReferenceRates("data/RATES/rates.csv")
- *      val account = DefaultAccount(exchangeRates)
- *
- * @constructor Create a new  ECB exchange rates converter
+ * @constructor Create a new  ECB Exchange rates converter
  */
 class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) :
     TimedExchangeRates(Currency.EUR) {
@@ -68,7 +63,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
 
         /**
          * Load the latest exchange rate file directly from the ECB website. This method [uses cache][useCache] by
-         * default to avoid unnecessary requests.
+         * default to avoid making unnecessary requests.
          */
         fun fromWeb(useCache: Boolean = true) = ECBExchangeRates(DEFAULT_ECB_URL, compressed = true, useCache)
 

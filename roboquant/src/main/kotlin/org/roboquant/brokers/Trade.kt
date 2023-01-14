@@ -22,7 +22,7 @@ import java.time.temporal.ChronoUnit
 
 /**
  * Trade is created once an order has been (partially) filled and records various aspects of a trade like its [size],
- * [price] and [feeValue]. A single order can result in multiple trades, for example if an order is filled in batches.
+ * [price] and [feeValue]. A single order can result in multiple trades, for example if the order is filled in batches.
  *
  * All the monetary amounts are denoted in the currency of the underlying asset. One important metric that can be
  * derived from trades is the realized profit and loss [pnl].

@@ -24,7 +24,7 @@ import org.roboquant.brokers.sim.execution.InternalAccount
  *
  * Currently, the main functionality is that at the end of each step the buying power is re-calculated and stored
  * in the attribute [Account.buyingPower]. But in the future the implementation could make other updates to the account,
- * for example calculate borrow feeds or interest rates that might apply.
+ * for example calculate borrow fees or interest rates that might apply.
  */
 interface AccountModel {
 
