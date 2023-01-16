@@ -17,13 +17,14 @@
 package org.roboquant.orders
 
 /**
- * One Triggers Other order, if the primary order it executed, the secondary order will automatically be activated,
+ * One Triggers Other order, if the primary order it executed, the secondary order will automatically be activated. Both
+ * orders require the same asset.
  *
- * @property primary
- * @property secondary
- * @constructor
- *
- * @param tag
+ * @property primary the primary order
+ * @property secondary the secondary order
+ * @param tag an optional tag
+ * @constructor create a new instance of a OTOOrder
+
  */
 class OTOOrder(
     val primary: SingleOrder,

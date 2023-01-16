@@ -17,15 +17,16 @@
 package org.roboquant.orders
 
 /**
- * Update an existing order. It is up to the broker implementation to translate the [update] order to the correct
- * message, so it can be processed. Only an order that is a [CreateOrder] can be updated.
+ * Update an existing open order. It is up to the broker implementation to translate the [update] order to the
+ * correct message, so it can be processed. Only an order that is a [CreateOrder] can be updated.
  *
- * The SimBroker, like real brokers, can only modify open orders. In real life, only certain parts of an open order
+ * The SimBroker, like real brokers, can only modify open orders. In live trading, only certain parts of an open order
  * can be updated, like the limit price of a limit order. For many other types of changes, an order needs to be
  * cancelled first and then a new order needs to be created.
  *
  * @param order the order you want to update
  * @property update the updated order, of the same type and asset as the original order
+ * @param tag an optional tag to link to this order
  * @constructor Create new UpdateOrder
  */
 class UpdateOrder(

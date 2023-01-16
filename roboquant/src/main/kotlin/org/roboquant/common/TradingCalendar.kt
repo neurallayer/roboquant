@@ -19,8 +19,8 @@ package org.roboquant.common
 import java.time.*
 
 /**
- * Trading calendar is used to define when an [Exchange] is open for trading. Timezone conversions
- * are handled by the [Exchange] class, the trading calendar only deals with [LocalDate] and [LocalTime] instances.
+ * Trading calendar defines when an [Exchange] is open for trading. Timezone conversions are handled by the [Exchange]
+ * class, so the trading calendar only deals with [LocalDate] and [LocalTime] instances.
  */
 interface TradingCalendar {
 
@@ -43,6 +43,7 @@ interface TradingCalendar {
 
 /**
  * Simple trading calendar that supports a fixed open and close time and optional exclude certain days of the week.
+ * There is no support for public holidays or bank holidays.
  *
  * @property opening opening time, default is "09:30"
  * @property closing closing time, default is "16:00"

@@ -37,8 +37,8 @@ import org.roboquant.orders.*
 import java.time.Instant
 
 /**
- * Implementation of the broker interface for Binance exchange. This enables live trading of cryptocurrencies
- * on the Binance exchange. This broker only supports assets of the type [AssetType.CRYPTO].
+ * Implementation of the broker interface for the Binance exchange. This enables paper- and live-trading of
+ * cryptocurrencies on the Binance exchange. This broker only supports assets of the type [AssetType.CRYPTO].
  *
  * @param baseCurrencyCode The base currency to use
  * @property useMachineTime

@@ -18,7 +18,7 @@ package org.roboquant.orders
 
 /**
  * One Cancels Other order. If either the first or second other is executed, the other one will be cancelled. This
- * implementation requires that both orders have the same size.
+ * implementation requires that both orders have the same size and asset.
  *
  * @property first the first of the two OCO orders
  * @property second the second of the two OCO orders

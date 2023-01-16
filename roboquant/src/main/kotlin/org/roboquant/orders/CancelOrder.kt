@@ -17,7 +17,7 @@
 package org.roboquant.orders
 
 /**
- * Cancel a create-order.
+ * Cancel an open create-order.
  *
  * @param order the order to cancel
  * @param tag an optional tag

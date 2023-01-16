@@ -18,6 +18,8 @@ package org.roboquant.orders
 
 /**
  * Bracket order that enables you to place an order and at the same time place orders to take profit and restrict loss.
+ * All three sub-orders require the to have the same asset. Additionally, the size of the [takeProfit] and [stopLoss]
+ * orders should be opposite of the [entry] order.
  *
  * Although the SimBroker is very flexible and support any type of single order, real brokers often are more limited.
  * So it is advised to restrict your orders to the following subsets if you want to go live:
