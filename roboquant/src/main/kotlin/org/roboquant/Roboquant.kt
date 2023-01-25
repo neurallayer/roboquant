@@ -130,8 +130,9 @@ class Roboquant(
      * provided, a name will be generated with the format "run-<counter>"
      *
      * Optionally you can provide:
-     * 1. a [validation] timeframe that will trigger a separate validation phase.
-     * 2. the number of [episodes] the run should be repeated.
+     * 1. a [timeframe] timeframe that will limit duration of main phase.
+     * 2. a [validation] timeframe that will trigger a separate validation phase.
+     * 3. the number of [episodes] the run should be repeated.
      *
      * These last two options come into play when you want to run machine learning based strategies. This is the
      * synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs

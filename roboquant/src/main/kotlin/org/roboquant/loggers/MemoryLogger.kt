@@ -92,6 +92,12 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
     }
 
     /**
+     * Return the recorded run phases
+     */
+    val runPhases: List<Pair<String, RunPhase>>
+        get() = history.map { Pair(it.second.run, it.second.phase) }.distinct().sortedBy { it.first }
+
+    /**
      * Get all the recorded runs in this logger
      */
     val runs

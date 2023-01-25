@@ -53,7 +53,7 @@ class PriceCorrelationChart(
     }
 
     private fun Pair<List<Double>, List<Double>>.clean(): Pair<DoubleArray, DoubleArray> {
-        val max = Integer.max(first.size, second.size)
+        val max = Integer.min(first.size, second.size)
         val r1 = mutableListOf<Double>()
         val r2 = mutableListOf<Double>()
         for (i in 0 until max) {
