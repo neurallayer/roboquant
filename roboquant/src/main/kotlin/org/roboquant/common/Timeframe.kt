@@ -18,7 +18,6 @@ package org.roboquant.common
 
 import java.time.*
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -251,22 +250,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Split a timeframe into two parts, one for training and one for test using the provided [testSize]
-     * for determining the size of test. [testSize] should be a number between 0.0 and 1.0, for example
-     * 0.25 means use last 25% as test timeframe.
-     *
-     * It returns a [Pair] of timeframes, the first one being the training timeframe and the second being the
-     * test timeframe.
-     */
-    fun splitTrainTest(testSize: Double): Pair<Timeframe, Timeframe> {
-        require(testSize in 0.0..1.0) { "Test size has to between 0.0 and 1.0" }
-        val diff = duration.toMillis()
-        val train = (diff * (1.0 - testSize)).toLong()
-        val border = start.plus(train, ChronoUnit.MILLIS)
-        return Pair(Timeframe(start, border), Timeframe(border, end, inclusive))
-    }
-
-    /**
      * Split a timeframe in multiple individual timeframes each of the fixed [period] length. One common use case is
      * to create timeframes that can be used in a walk forward back-test.
      */
@@ -283,6 +266,19 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
             result.add(timeframe)
             last = next - overlap
         }
+    }
+
+    /**
+     * Return the Instant based on the percentage based offset of this timeframe.
+     *
+     * example usage:
+     *      val validation = feed.timeframe.offset(0.8)
+     *      rq.run(feed, feed.timeframe, validation)
+     */
+    fun offset(percentage: Double) : Instant {
+        require(percentage in 0.0..1.0) { "percentage as to be in 0..1"}
+        val offset = this.duration.toMillis() * percentage
+        return start.plusMillis(offset.toLong())
     }
 
     /**
