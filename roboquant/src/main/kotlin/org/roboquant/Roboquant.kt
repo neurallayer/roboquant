@@ -132,7 +132,6 @@ class Roboquant(
      * Optionally you can provide:
      * 1. a [timeframe] timeframe that will limit duration of main phase.
      * 2. a [validation] timeframe that will trigger a separate validation phase.
-     * 3. the number of [episodes] the run should be repeated.
      *
      * These last two options come into play when you want to run machine learning based strategies. This is the
      * synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
@@ -143,10 +142,9 @@ class Roboquant(
         timeframe: Timeframe = feed.timeframe,
         validation: Timeframe? = null,
         name: String? = null,
-        episodes: Int = 1
     ) =
         runBlocking {
-            runAsync(feed, timeframe, validation, name, episodes)
+            runAsync(feed, timeframe, validation, name)
         }
 
     /**
@@ -160,24 +158,20 @@ class Roboquant(
         timeframe: Timeframe = feed.timeframe,
         validation: Timeframe? = null,
         runName: String? = null,
-        episodes: Int = 1
     ) {
-        require(episodes > 0) { "episodes need to be greater than zero" }
         val run = runName ?: "run-${runCounter++}"
         val runInfo = RunInfo(run)
-        kotlinLogger.debug { "starting run=$runInfo for $episodes episodes" }
+        kotlinLogger.debug { "starting run=$runInfo" }
 
-        repeat(episodes) {
-            runInfo.episode++
-            runInfo.phase = MAIN
-            runInfo.timeframe = timeframe
+        runInfo.phase = MAIN
+        runInfo.timeframe = timeframe
+        runPhase(feed, runInfo)
+        if (validation !== null) {
+            runInfo.timeframe = validation
+            runInfo.phase = VALIDATE
             runPhase(feed, runInfo)
-            if (validation !== null) {
-                runInfo.timeframe = validation
-                runInfo.phase = VALIDATE
-                runPhase(feed, runInfo)
-            }
         }
+
         kotlinLogger.debug { "Finished run $runInfo" }
     }
 
@@ -234,7 +228,6 @@ class Roboquant(
  * Run related info provided to metrics loggers together with the metric results.
  *
  * @property run the name of the run
- * @property episode the episode number
  * @property step the step
  * @property time the time
  * @property timeframe the total timeframe of the run, if not known it will be [Timeframe.INFINITE]
@@ -243,7 +236,6 @@ class Roboquant(
  */
 data class RunInfo internal constructor(
     val run: String,
-    var episode: Int = 0,
     var step: Int = 0,
     var time: Instant = Instant.MIN,
     var timeframe: Timeframe = Timeframe.INFINITE,

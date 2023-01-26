@@ -33,13 +33,13 @@ internal class SkipWarmupLoggerTest {
         val logger = MemoryLogger(showProgress = false).skipFirst(10)
 
         repeat(9) {
-            val info = RunInfo("run-1", 1, it, Instant.now(), Timeframe.INFINITE, RunPhase.MAIN)
+            val info = RunInfo("run-1", it, Instant.now(), Timeframe.INFINITE, RunPhase.MAIN)
             logger.log(metrics, info)
         }
         assertTrue(logger.metricNames.isEmpty())
 
         repeat(4) {
-            val info = RunInfo("run-1", 1, it + 9, Instant.now(), Timeframe.INFINITE, RunPhase.MAIN)
+            val info = RunInfo("run-1", it + 9, Instant.now(), Timeframe.INFINITE, RunPhase.MAIN)
             logger.log(metrics, info)
         }
         assertFalse(logger.metricNames.isEmpty())

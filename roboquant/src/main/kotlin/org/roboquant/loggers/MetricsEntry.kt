@@ -34,7 +34,7 @@ data class MetricsEntry(val name: String, val value: Double, val info: RunInfo) 
      * Get a key that uniquely defines the metric across a run and episode.
      */
     internal val groupId
-        get() = """${name}/${info.run}/${info.episode}"""
+        get() = """${name}/${info.run}"""
 
     /**
      * Compare two metric entries based on their [value]

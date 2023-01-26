@@ -51,7 +51,6 @@ open class ConsoleLogger(
             listOf(
                 mapOf(
                     "run" to info.run,
-                    "episode" to info.episode,
                     "time" to time,
                     "step" to info.step
                 ).pretty() + ", " + results.format().pretty()
@@ -60,7 +59,6 @@ open class ConsoleLogger(
             results.map {
                 mapOf(
                     "run" to info.run,
-                    "episode" to info.episode,
                     "time" to time,
                     "step" to info.step,
                     it.key to formatter.format(it.value)

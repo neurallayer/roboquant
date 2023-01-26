@@ -64,7 +64,7 @@ internal class ProgressBar {
 
         if (pre.isEmpty()) {
             pre = "${info.timeframe} | "
-            post = "| ${info.run} | episode=${info.episode} | phase=${info.phase}"
+            post = "| ${info.run} | phase=${info.phase}"
         }
 
         draw(percent)

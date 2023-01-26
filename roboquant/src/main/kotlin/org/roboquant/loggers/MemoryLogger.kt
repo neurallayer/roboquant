@@ -103,10 +103,6 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
     val runs
         get() = history.map { it.second.run }.distinct().sorted()
 
-    /**
-     * Get available episodes for a specific [run]
-     */
-    fun getEpisodes(run: String) = history.filter { it.second.run == run }.map { it.second.episode }.distinct().sorted()
 
     /**
      * Get the unique list of metric names that have been captured

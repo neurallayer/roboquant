@@ -57,7 +57,6 @@ internal class RoboquantTest {
         roboquant.run(feed)
         val step = roboquant.logger.getMetric("progress.steps").last()
         assertEquals(timeline.size, step.value.toInt())
-        assertEquals(1, step.info.episode)
         assertEquals(RunPhase.MAIN, step.info.phase)
         assertEquals(timeline.size, step.info.step)
 
@@ -110,10 +109,9 @@ internal class RoboquantTest {
         val logger = MemoryLogger(showProgress = false)
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
         val (train, test) = feed.timeframe.splitTrainTest(0.20)
-        roboquant.run(feed, timeframe = train, validation = test, episodes = 2)
+        roboquant.run(feed, timeframe = train, validation = test)
         val data = logger.getMetric("progress.steps")
         assertEquals(2, data.map { it.info.phase }.distinct().size)
-        assertEquals(2, data.map { it.info.episode }.distinct().size)
         assertEquals(1, data.map { it.info.run }.distinct().size)
         assertEquals(1, logger.runs.size)
     }

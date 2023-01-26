@@ -52,8 +52,6 @@ internal class MemoryLoggerTest {
         val z = logger.getMetric(metrics.keys.first())
         assertEquals(1, z.size)
 
-        assertEquals(1, logger.getEpisodes("run-1").size)
-
         assertEquals(1, logger.runPhases.size)
 
         assertEquals(1, logger.runs.size)
