@@ -116,9 +116,8 @@ fun testingStrategies() {
     }
 
     // Walk forward learning
-    feed.split(2.years).forEach {
-        val vadidation = it.offset(0.8)
-        roboquant.run(feed, it, vadidation)
+    feed.split(2.years).map { it.splitTrainTest(0.2) }.forEach { (train, test) ->
+        roboquant.run(feed, train, test)
     }
 
 }

@@ -69,6 +69,35 @@ class Roboquant(
         kotlinLogger.debug { "Created new roboquant instance" }
     }
 
+    /**
+     * Run and evaluate the underlying performance of the strategy and policy. You don't invoke this method directly
+     * but rather use the [run] method instead. Under the hood this method replies on the [step] method to take a
+     * single step.
+     */
+    private suspend fun runPhase(feed: Feed, runInfo: RunInfo) {
+        val channel = EventChannel(channelCapacity, runInfo.timeframe)
+        val scope = CoroutineScope(Dispatchers.Default + Job())
+
+        val job = scope.launch {
+            channel.use { feed.play(it) }
+        }
+
+        start(runInfo.phase)
+        try {
+            var orders = listOf<Order>()
+            while (true) {
+                val event = channel.receive()
+                orders = step(orders, event, runInfo)
+            }
+        } catch (_: ClosedReceiveChannelException) {
+            // intentionally empty
+        } finally {
+            end(runInfo.phase)
+            if (job.isActive) job.cancel()
+            scope.cancel()
+            channel.close()
+        }
+    }
 
     /**
      * Inform components of the start of a [runPhase], this provides them with the opportunity to clear state and
@@ -111,7 +140,7 @@ class Roboquant(
     fun run(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        validation: Instant? = null,
+        validation: Timeframe? = null,
         name: String? = null,
     ) =
         runBlocking {
@@ -120,49 +149,27 @@ class Roboquant(
 
     /**
      * This is the same method as the [run] method but as the name already suggest, asynchronously. This makes it better
-     * suited for running back-test in parallel. Other than that, it behaves the same as the regular run method.
+     * suited for running back-test in parallel. Other than that, it behaves exactly the same as the regular run method.
      *
      * @see [run]
      */
     suspend fun runAsync(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        validation: Instant? = null,
+        validation: Timeframe? = null,
         runName: String? = null,
     ) {
-        require (validation == null || validation in timeframe) { "validation date $validation not in $timeframe"}
         val run = runName ?: "run-${runCounter++}"
         val runInfo = RunInfo(run)
         kotlinLogger.debug { "starting run=$runInfo" }
 
         runInfo.phase = MAIN
         runInfo.timeframe = timeframe
-        val channel = EventChannel(channelCapacity, runInfo.timeframe)
-        val scope = CoroutineScope(Dispatchers.Default + Job())
-
-        val job = scope.launch {
-            channel.use { feed.play(it) }
-        }
-
-        start(runInfo.phase)
-        try {
-            var orders = listOf<Order>()
-            while (true) {
-                val event = channel.receive()
-                if (validation != null && runInfo.phase == MAIN && event.time >= validation) {
-                    end(runInfo.phase)
-                    runInfo.phase = VALIDATE
-                    start(runInfo.phase)
-                }
-                orders = step(orders, event, runInfo)
-            }
-        } catch (_: ClosedReceiveChannelException) {
-            // intentionally empty
-        } finally {
-            end(runInfo.phase)
-            if (job.isActive) job.cancel()
-            scope.cancel()
-            channel.close()
+        runPhase(feed, runInfo)
+        if (validation !== null) {
+            runInfo.timeframe = validation
+            runInfo.phase = VALIDATE
+            runPhase(feed, runInfo)
         }
 
         kotlinLogger.debug { "Finished run $runInfo" }
