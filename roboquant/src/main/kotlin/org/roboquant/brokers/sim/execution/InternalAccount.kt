@@ -33,8 +33,8 @@ import java.time.Instant
  * a reference to the InternalAccount and will communicate the state to the outside world (Policy and Metrics) using
  * the immutable [Account] version.
  *
- * The Internal Account is designed to eliminate common mistakes, but is completely optional. The brokers that come
- * with roboquant all use this class under the hood, but that is no hard requirement.
+ * The Internal Account is designed to eliminate common mistakes, but is completely optional to use. The brokers that
+ * come with roboquant use this class under the hood, but that is no hard requirement.
  *
  * @property baseCurrency The base currency to use for things like reporting
  * @constructor Create a new instance of InternalAccount

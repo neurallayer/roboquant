@@ -23,7 +23,7 @@ import java.time.Instant
 
 /**
  * Base class for executing single orders. It takes care of Time-In-Force handling and status management and makes
- * the implementation of concrete single orders like a MarketOrder a lot easier.
+ * the implementation of concrete single order executors like a MarketOrder easier.
  *
  * @property order the single order to execute
  */

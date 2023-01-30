@@ -24,8 +24,7 @@ import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 /**
- * Interface for any order executor. This is a sealed interface and there are only
- * two sub interfaces:
+ * Interface for any order executor. This is a sealed interface and there are only two sub interfaces:
  *
  * 1. [ModifyOrderExecutor] for orders that modify other orders, but don't generate trades themselves
  * 2. [CreateOrderExecutor] for new orders that (possibly) generate trades
@@ -73,7 +72,7 @@ interface ModifyOrderExecutor<T : ModifyOrder> : OrderExecutor<T> {
 }
 
 /**
- * Interface for orders that (might) generate trades.
+ * Interface for orders that can generate trades.
  */
 interface CreateOrderExecutor<T : CreateOrder> : OrderExecutor<T> {
 

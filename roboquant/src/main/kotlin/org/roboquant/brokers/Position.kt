@@ -126,6 +126,9 @@ data class Position(
     /**
      * The gross exposure for this position based on last known market price, in the currency denoted by the asset.
      * The difference with the [marketValue] property is that short positions also result in a positive exposure.
+     *
+     * Please note that this is the position exposure and doesn't take into account (stop-) orders that might limit
+     * the exposure.
      */
     val exposure: Amount
         get() = marketValue.absoluteValue

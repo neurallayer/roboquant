@@ -159,6 +159,9 @@ class Roboquant(
         validation: Timeframe? = null,
         runName: String? = null,
     ) {
+        require(validation == null || validation.start >= timeframe.end) {
+            "validation should start after main timeframe"
+        }
         val run = runName ?: "run-${runCounter++}"
         val runInfo = RunInfo(run)
         kotlinLogger.debug { "starting run=$runInfo" }
