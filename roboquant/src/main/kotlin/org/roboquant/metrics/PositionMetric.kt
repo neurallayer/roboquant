@@ -23,10 +23,10 @@ import org.roboquant.feeds.Event
  * Captures metrics for the open positions per asset, so you can see how these progresses over the
  * duration of the run. For each open position it will record the following attributes:
  *
- * - size
- * - value
- * - cost
- * - pnl (unrealized)
+ * - size; the position size, a negative size for a short position
+ * - value; the total position market value, denoted in the currency of the asset
+ * - cost; the total position cost, denoted in the currency of the asset
+ * - pnl; the total unrealized profit & loss, denoted in the currency of the asset
  *
  * The naming will be: `position.<symbol>.<attribute-name>
  */

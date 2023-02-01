@@ -19,6 +19,7 @@ package org.roboquant.jupyter
 import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.junit.jupiter.api.Test
 import org.roboquant.common.RoboquantException
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class JupyterCoreTest {
@@ -26,7 +27,8 @@ internal class JupyterCoreTest {
     @Test
     fun test() {
         JupyterCore()
-        Output.isolation = false
+        legacyNotebookMode = false
+        assertEquals(legacyNotebookMode, JupyterCore.isolation)
     }
 
     @Test
@@ -41,7 +43,7 @@ internal class JupyterCoreTest {
 
     @Test
     fun core() {
-        class TestOutput : Output() {
+        class TestHTMLOutput : HTMLOutput() {
             override fun asHTML(): String {
                 return "<div>Hello</div>"
             }
@@ -52,7 +54,7 @@ internal class JupyterCoreTest {
 
         }
 
-        val output = TestOutput()
+        val output = TestHTMLOutput()
         val result = JupyterCore.addOutput(output)
         assertTrue(result)
     }

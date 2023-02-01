@@ -25,7 +25,7 @@ import java.util.*
  * Random walk feed contains number of assets with a price history that follows a random walk. It can be useful for
  * testing, since if your strategy does well using this feed, there might be something suspicious going on.
  *
- * Internally it uses a seeded random generator, so while is generates random data, the results can be reproduced if
+ * Internally it uses a seeded random generator. So while is generates random data, the results can be reproduced if
  * instantiated with the same seed. It can generate [PriceBar] or [TradePrice] prices.
  *
  * ## Background

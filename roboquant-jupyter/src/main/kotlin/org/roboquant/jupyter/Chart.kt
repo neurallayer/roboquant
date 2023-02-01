@@ -104,7 +104,7 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 /**
  * Base class all roboquant charts in Notebooks. Subclasses should implement at least the [getOption] method.
  */
-abstract class Chart : Output() {
+abstract class Chart : HTMLOutput() {
 
     /**
      * Does the generated option JSON string contain JavaScript. If true additional code will be generated to parse
@@ -174,6 +174,13 @@ abstract class Chart : Output() {
             }
         }
 
+        fun getScript(): String {
+            val stream = Companion::class.java.getResourceAsStream("/js/echarts.min.js")!!
+            val js = String(stream.readAllBytes(), StandardCharsets.UTF_8)
+            return """<script type='text/javascript'>$js</script>"""
+
+        }
+
     }
 
     /**
@@ -213,10 +220,7 @@ abstract class Chart : Output() {
      */
     override fun asHTMLPage(): String {
         val fragment = asHTML()
-
-        val stream = javaClass.getResourceAsStream("/js/echarts.min.js")!!
-        val js = String(stream.readAllBytes(), StandardCharsets.UTF_8)
-        val script = """<script type='text/javascript'>$js</script>"""
+        val script = getScript()
 
         return """
         <html>

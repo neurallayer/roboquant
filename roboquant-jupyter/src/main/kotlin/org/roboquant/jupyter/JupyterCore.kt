@@ -59,10 +59,17 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
                 <pre style="background: transparent;">${output.toString().escapeHtml()}</pre>         
            </details>      
         """.trimIndent()
-        return HTML(result, Output.isolation)
+        return HTML(result, JupyterCore.isolation)
     }
 
 }
+
+/**
+ * Should all HTML output be rendered in legacy mode (iFrames), default is false
+ */
+var legacyNotebookMode: Boolean
+    get() = JupyterCore.isolation
+    set(value) { JupyterCore.isolation = value}
 
 /**
  * Integration with Kotlin based Jupyter notebook kernels. Some main features:
@@ -74,8 +81,9 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
 internal class JupyterCore : JupyterIntegration() {
 
     companion object {
-        private val outputs = CopyOnWriteArrayList<Output>()
-        internal fun addOutput(output: Output) = outputs.add(output)
+        private val HTMLOutputs = CopyOnWriteArrayList<HTMLOutput>()
+        internal fun addOutput(htmlOutput: HTMLOutput) = HTMLOutputs.add(htmlOutput)
+        internal var isolation = false
     }
 
     override fun Builder.onLoaded() {
@@ -94,19 +102,29 @@ internal class JupyterCore : JupyterIntegration() {
             }
         }
 
+        render<HTMLOutput> {
+            if (isolation) HTML(it.asHTMLPage(), true) else HTML(it.asHTML(), false)
+        }
+
         beforeCellExecution {
-            outputs.clear()
+            HTMLOutputs.clear()
         }
 
         afterCellExecution { _, _ ->
-            outputs.forEach {
+            HTMLOutputs.forEach {
                 this.display(it, null)
             }
-            outputs.clear()
+            HTMLOutputs.clear()
         }
 
     }
 
 }
 
-
+/**
+ * Render the output in a Notebook cell. When a [HTMLOutput] result is not the last statement in a Notebook cell, you
+ * can use this to make sure it is still rendered.
+ */
+fun HTMLOutput.render() {
+    JupyterCore.addOutput(this)
+}

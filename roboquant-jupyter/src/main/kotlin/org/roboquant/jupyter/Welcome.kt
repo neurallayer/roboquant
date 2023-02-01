@@ -21,7 +21,7 @@ import org.roboquant.common.Config
 /**
  * Provides current environment settings in HTML format suitable for displaying in a Jupyter Notebook.
  */
-class Welcome : Output() {
+class Welcome : HTMLOutput() {
 
     /**
      * Return the welcome message with the main environment settings as an HTML snippet.

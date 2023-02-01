@@ -16,42 +16,13 @@
 
 package org.roboquant.jupyter
 
-import org.jetbrains.kotlinx.jupyter.api.DisplayResult
-import org.jetbrains.kotlinx.jupyter.api.HTML
-import org.jetbrains.kotlinx.jupyter.api.Notebook
-import org.jetbrains.kotlinx.jupyter.api.Renderable
 import java.io.File
 
 /**
- * Base class for anything that wants to generate output for notebooks.
+ * Base class for anything that can output HTML
  */
-abstract class Output : Renderable {
+abstract class HTMLOutput  {
 
-    /**
-     * @suppress
-     */
-    companion object {
-
-        /**
-         * Should the returned HTML be isolated (aka put in an iframe), default is false. Change this setting will
-         * impact all generated HTML.
-         */
-        var isolation = false
-    }
-
-    /**
-     * Render notebook
-     */
-    override fun render(notebook: Notebook): DisplayResult {
-        return if (isolation) HTML(asHTMLPage(), true) else HTML(asHTML(), false)
-    }
-
-    /**
-     * Invoking render will make sure output is displayed in a notebook, even if it is not last statement of a cell.
-     */
-    fun render() {
-        JupyterCore.addOutput(this)
-    }
 
     /**
      * Save HTML output to a file with name [filename] on the server.
