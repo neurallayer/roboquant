@@ -91,6 +91,25 @@ val Collection<Trade>.realizedPNL: Wallet
 val Collection<Trade>.timeframe: Timeframe
     get() = timeline.timeframe
 
+
+
+fun Collection<Trade>.lines() : List<List<Any>> {
+    val lines = mutableListOf<List<Any>>()
+    lines.add(listOf("time", "symbol", "ccy", "size", "cost", "fee", "rlzd p&l", "price"))
+    forEach {
+        with(it) {
+            val currency = asset.currency
+            val cost = totalCost.formatValue()
+            val fee = fee.formatValue()
+            val pnl = pnl.formatValue()
+            val price = Amount(currency, price).formatValue()
+            val t = time.truncatedTo(ChronoUnit.SECONDS)
+            lines.add(listOf(t, asset.symbol, currency.currencyCode, size, cost, fee, pnl, price))
+        }
+    }
+    return lines
+}
+
 /**
  * Create a summary of the trades
  */
@@ -100,19 +119,7 @@ fun Collection<Trade>.summary(name: String = "trades"): Summary {
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
-        val lines = mutableListOf<List<Any>>()
-        lines.add(listOf("time", "symbol", "ccy", "size", "cost", "fee", "rlzd p&l", "price"))
-        forEach {
-            with(it) {
-                val currency = asset.currency
-                val cost = totalCost.formatValue()
-                val fee = fee.formatValue()
-                val pnl = pnl.formatValue()
-                val price = Amount(currency, price).formatValue()
-                val t = time.truncatedTo(ChronoUnit.SECONDS)
-                lines.add(listOf(t, asset.symbol, currency.currencyCode, size, cost, fee, pnl, price))
-            }
-        }
+        val lines = this.lines()
         return lines.summary(name)
     }
     return s

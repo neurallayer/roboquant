@@ -157,5 +157,5 @@ fun Collection<MetricsEntry>.toDoubleArray() = map { it.value }.toDoubleArray()
  * Generate a name for a collection of metric entries
  */
 fun Collection<MetricsEntry>.getName(): String {
-    return map { it.name }.distinct().joinToString("/") { it.replace('.', ' ') }
+    return map { it.name }.distinct().joinToString("/") { it.replace('.', ' ')}
 }

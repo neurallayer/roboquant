@@ -49,7 +49,7 @@ class MetricChart(
         val yAxis = ValueAxis().setScale(true)
 
         val chart = Line()
-            .setTitle(title ?: "Metric: ${metricsData.getName()}")
+            .setTitle(title ?: metricsData.getName())
             .addXAxis(xAxis)
             .addYAxis(yAxis)
             .setTooltip("axis")

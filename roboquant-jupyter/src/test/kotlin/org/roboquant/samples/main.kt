@@ -2,50 +2,165 @@ package org.roboquant.samples
 
 import org.jetbrains.kotlinx.jupyter.joinToLines
 import org.roboquant.Roboquant
+import org.roboquant.brokers.lines
+import org.roboquant.common.round
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.jupyter.*
-import org.roboquant.loggers.MetricsLogger
+import org.roboquant.loggers.MetricsEntry
 import org.roboquant.loggers.diff
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ScorecardMetric
+import org.roboquant.orders.lines
 import org.roboquant.strategies.EMAStrategy
 
 private class HTMLReport(
-    private val charts : List<Chart> = emptyList(),
-    private val logger: MetricsLogger? = null
-) : HTMLOutput (
-) {
+    private val roboquant: Roboquant,
+) : HTMLOutput() {
+
+    val logger
+        get() = roboquant.logger
+
+    val charts
+        get() = listOf(
+            { MetricChart(roboquant.logger.getMetric("scorecard.equity")) },
+            { MetricChart(roboquant.logger.getMetric("scorecard.mdd")) },
+            { MetricChart(roboquant.logger.getMetric("scorecard.winners")) },
+            { MetricChart(roboquant.logger.getMetric("scorecard.losers")) },
+            { MetricChart(roboquant.logger.getMetric("scorecard.profit.realized")) },
+            { TradeChart(roboquant.broker.account.trades) },
+            { MetricCalendarChart(roboquant.logger.getMetric("scorecard.equity").diff()) },
+            { MetricCalendarChart(roboquant.logger.getMetric("scorecard.winners").diff()) },
+            { MetricCalendarChart(roboquant.logger.getMetric("scorecard.losers").diff()) },
+        )
+
+    private fun getTableCell(entry: MetricsEntry): String {
+        val splittedName = entry.name.split('.')
+        val name = splittedName.subList(1, splittedName.size).joinToString(" ")
+        val value = entry.value.round(2).toString().removeSuffix(".00")
+        return "<td>$name</td><td align=right>$value</td>"
+    }
+
 
     private fun metricsToHTML(): String {
-        if (logger == null) return ""
-        val metrics = logger.metricNames.map { logger.getMetric(it).last() }
-        val rows = metrics.map { """
-            <tr>
-                <td>${it.name}</td>                        
-                <td>${it.value}</td>  
-            </tr>""".trimIndent() }.joinToLines()
-
-        return "<table>$rows</table>\n"
+        val metricsMap = logger.metricNames.map { logger.getMetric(it).last() }.groupBy { it.name.split('.').first() }
+        val result = StringBuffer()
+        for ((prefix, metrics) in metricsMap) {
+            result += "<div class='flex-item'><table frame=void rules=rows class='table'><caption>$prefix</caption>"
+            for (metric in metrics) {
+                result += "<tr>"
+                result += getTableCell(metric)
+                result += "</tr>"
+            }
+            result += "</table></div>"
+        }
+        return result.toString()
     }
+
+    private fun linesToHTML(lines: List<List<Any>>, caption: String): String {
+        val result = StringBuffer()
+        val style = "overflow: scroll; max-height:700px; flex: 33%;"
+        result +=
+            "<div class='flex-item' style='$style'><table frame=void rules=rows class=table><caption>$caption</caption>"
+        val header = lines.first()
+        result += "<tr>"
+        for (column in header) {
+            result += "<th>$column</th>"
+        }
+        result += "</tr>"
+        lines.subList(1, lines.size).forEach {
+            result += "<tr>"
+            for (column in it) {
+                result += "<td>$column</td>"
+            }
+            result += "</tr>"
+        }
+        result += "</table></div>"
+        return result.toString()
+    }
+
 
     private fun chartsToHTML(): String {
         return charts.map {
-            "<div>${it.asHTML()}</div>"
+            """<div class="flex-item" style="flex: 25%;">
+                    <div class="chart">
+                    ${it().asHTML()}
+                    </div>
+               </div>""".trimIndent()
         }.joinToLines()
     }
 
 
     override fun asHTML(): String {
+        val account = roboquant.broker.account
+        val orders = account.closedOrders + account.openOrders
         return """
-            ${metricsToHTML()}
-            ${chartsToHTML()}
+             <div class="flex-container">
+                 <h2>Metrics</h2>
+                 ${metricsToHTML()}
+             </div>
+             <div class="flex-container">
+                <h2>Account</h2>
+                ${linesToHTML(account.trades.lines(), "Trades")}
+                ${linesToHTML(orders.lines(), "Orders")}
+                ${linesToHTML(account.positions.lines(), "Positions")}
+            </div>
+            <div class="flex-container">
+                <h2>Charts</h2>
+                ${chartsToHTML()}
+            </div>
         """.trimIndent()
     }
 
     override fun asHTMLPage(): String {
         return """
-            <html>
+            <!doctype html>
+            <html lang="en">
             <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+          
+            <style>
+             * {
+                box-sizing: border-box;
+             }
+            
+            .flex-container {
+              display: flex;
+              flex-wrap: wrap;
+              align-items: flex-start;
+              margin: 20px;
+              border: 1px solid black;
+            }
+            
+            h2 {
+                flex: 100%;
+                text-align: center;
+            }
+            
+            .flex-item {
+              min-width: 300px;
+              padding: 10px;
+            }
+            
+            .chart {
+               background-color: #fafafa; 
+               border: 1px solid #DDD;
+               overflow: auto;
+            }
+            
+            .table {
+               background-color: #fafafa; 
+               overflow: auto;
+               width: 100%;
+               max-height: 700;
+            }
+            
+            caption {
+                font-weight: bold;
+                font-size: 150%;
+                margin-botton: 10px;
+            }
+            
+            </style>
             ${Chart.getScript()}
             </head>
             <body>
@@ -58,21 +173,14 @@ private class HTMLReport(
 
 }
 
+private operator fun StringBuffer.plusAssign(s: String) {
+    this.append(s)
+}
+
 fun main() {
     val rq = Roboquant(EMAStrategy(), ScorecardMetric(), AccountMetric())
     val feed = AvroFeed.sp500()
     rq.run(feed)
-    val equity = rq.logger.getMetric("account.equity")
-    val chart1 = MetricChart(equity)
-    chart1.height = 1000
-
-    val chart2 = TradeChart(rq.broker.account.trades)
-    chart2.height = 1000
-
-    val chart3 = MetricCalendarChart(equity.diff())
-    chart3.height = 1000
-
-    val charts = listOf(chart1, chart2, chart3)
-    val report = HTMLReport(charts, rq.logger)
+    val report = HTMLReport(rq)
     report.toHTMLFile("/tmp/test.html")
 }

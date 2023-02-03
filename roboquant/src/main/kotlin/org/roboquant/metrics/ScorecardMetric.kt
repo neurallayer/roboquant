@@ -33,21 +33,14 @@ import org.roboquant.feeds.Event
  */
 class ScorecardMetric : Metric {
 
-    private var maxEquity = Double.NaN
-    private var minEquity = Double.NaN
-    private var maxMDD = Double.NaN
+    private var peakValue = Double.NaN
+    private var mdd = Double.NaN
 
     private fun updateMDD(equity: Double) {
-        if (maxEquity.isNaN() || equity > maxEquity) {
-            maxEquity = equity
-            minEquity = equity
-        } else if (equity < minEquity) minEquity = equity
-
-        val mdd = (minEquity - maxEquity) / maxEquity
-
-        if (maxMDD.isNaN() || mdd < maxMDD) maxMDD = mdd
+        if (peakValue.isNaN() || equity > peakValue) peakValue = equity
+        val dd = (equity - peakValue) / peakValue
+        if (mdd.isNaN() || dd < mdd) mdd = dd
     }
-
 
     override fun calculate(account: Account, event: Event): MetricResults {
 
@@ -87,13 +80,12 @@ class ScorecardMetric : Metric {
             "${prefix}profit.unrealized" to unrealizedPNL,
             "${prefix}equity" to equity,
 
-            "${prefix}mdd" to maxMDD
+            "${prefix}mdd" to mdd
         )
     }
 
     override fun reset() {
-        maxEquity = Double.NaN
-        minEquity = Double.NaN
-        maxMDD = Double.NaN
+        peakValue = Double.NaN
+        mdd = Double.NaN
     }
 }

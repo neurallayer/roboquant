@@ -90,6 +90,30 @@ private fun Instant.toPrettyString(): String {
     return if (this == Instant.MAX) "-" else this.truncatedTo(ChronoUnit.SECONDS).toString()
 }
 
+
+fun Collection<OrderState>.lines() : List<List<Any>> {
+    val lines = mutableListOf<List<Any>>()
+    lines.add(listOf("type", "symbol", "status", "id", "opened at", "closed at", "details"))
+    forEach {
+        with(it) {
+            val infoString = order.info().map { entry -> "${entry.key}=${entry.value}" }.joinToString(" ")
+
+            lines.add(
+                listOf(
+                    order.type,
+                    asset.symbol,
+                    status,
+                    order.id,
+                    openedAt.toPrettyString(),
+                    closedAt.toPrettyString(),
+                    infoString
+                )
+            )
+        }
+    }
+    return lines
+}
+
 /**
  * Provide a summary for the collection of OrderState
  */
@@ -99,25 +123,7 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
-        val lines = mutableListOf<List<Any>>()
-        lines.add(listOf("type", "symbol", "status", "id", "opened at", "closed at", "details"))
-        forEach {
-            with(it) {
-                val infoString = order.info().map { entry -> "${entry.key}=${entry.value}" }.joinToString(" ")
-
-                lines.add(
-                    listOf(
-                        order.type,
-                        asset.symbol,
-                        status,
-                        order.id,
-                        openedAt.toPrettyString(),
-                        closedAt.toPrettyString(),
-                        infoString
-                    )
-                )
-            }
-        }
+        val lines = lines()
         return lines.summary(name)
     }
     return s

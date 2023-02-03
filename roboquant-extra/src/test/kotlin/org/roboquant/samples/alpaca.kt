@@ -170,7 +170,6 @@ fun alpacaSP500PriceQuote() {
 fun alpacaHistoricFeed2() {
     val symbols = listOf(
         "AAPL",
-        "FB",
         "IBM",
         "JPM",
         "MSFT",
@@ -195,7 +194,7 @@ fun alpacaHistoricFeed2() {
 }
 
 fun main() {
-    when ("CREATE_SAMPLE_DATA") {
+    when ("ALPACA_HISTORIC_FEED2") {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
         "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()

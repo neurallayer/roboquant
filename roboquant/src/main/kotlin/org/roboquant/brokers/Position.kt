@@ -227,6 +227,33 @@ val Collection<Position>.closeSizes: Map<Asset, Size>
     get() = diff(emptyList())
 
 
+
+fun Collection<Position>.lines() : List<List<Any>> {
+    val lines = mutableListOf<List<Any>>()
+    lines.add(
+        listOf(
+            "symbol",
+            "ccy",
+            "size",
+            "entry price",
+            "mkt price",
+            "mkt value",
+            "unrlzd p&l"
+        )
+    )
+
+    for (v in this) {
+        val c = v.asset.currency
+        val pos = v.size
+        val avgPrice = Amount(c, v.avgPrice).formatValue()
+        val price = Amount(c, v.mktPrice).formatValue()
+        val value = v.marketValue.formatValue()
+        val pnl = Amount(c, v.unrealizedPNL.value).formatValue()
+        lines.add(listOf(v.asset.symbol, c.currencyCode, pos, avgPrice, price, value, pnl))
+    }
+    return lines
+}
+
 /**
  * Create a [Summary] of this portfolio that contains an overview of the open positions.
  */
@@ -237,28 +264,7 @@ fun Collection<Position>.summary(name: String = "positions"): Summary {
     if (isEmpty()) {
         s.add("EMPTY")
     } else {
-        val lines = mutableListOf<List<Any>>()
-        lines.add(
-            listOf(
-                "symbol",
-                "ccy",
-                "size",
-                "entry price",
-                "mkt price",
-                "mkt value",
-                "unrlzd p&l"
-            )
-        )
-
-        for (v in this) {
-            val c = v.asset.currency
-            val pos = v.size
-            val avgPrice = Amount(c, v.avgPrice).formatValue()
-            val price = Amount(c, v.mktPrice).formatValue()
-            val value = v.marketValue.formatValue()
-            val pnl = Amount(c, v.unrealizedPNL.value).formatValue()
-            lines.add(listOf(v.asset.symbol, c.currencyCode, pos, avgPrice, price, value, pnl))
-        }
+        val lines =lines()
         return lines.summary(name)
     }
 
