@@ -8,10 +8,10 @@ import org.roboquant.feeds.AvroFeed
 import org.roboquant.jupyter.*
 import org.roboquant.loggers.MetricsEntry
 import org.roboquant.loggers.diff
-import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.orders.lines
 import org.roboquant.strategies.EMAStrategy
+import java.nio.charset.StandardCharsets
 
 private class HTMLReport(
     private val roboquant: Roboquant,
@@ -21,7 +21,15 @@ private class HTMLReport(
         get() = roboquant.logger
 
     val charts
-        get() = listOf(
+        get() = logger.metricNames.map {
+            { MetricChart(roboquant.logger.getMetric(it)) }
+        } + logger.metricNames.map {
+            { MetricCalendarChart(roboquant.logger.getMetric(it).diff()) }
+        } + logger.metricNames.map {
+            { MetricHistogramChart(roboquant.logger.getMetric(it)) }
+        }
+
+        /**
             { MetricChart(roboquant.logger.getMetric("scorecard.equity")) },
             { MetricChart(roboquant.logger.getMetric("scorecard.mdd")) },
             { MetricChart(roboquant.logger.getMetric("scorecard.winners")) },
@@ -32,6 +40,7 @@ private class HTMLReport(
             { MetricCalendarChart(roboquant.logger.getMetric("scorecard.winners").diff()) },
             { MetricCalendarChart(roboquant.logger.getMetric("scorecard.losers").diff()) },
         )
+            **/
 
     private fun getTableCell(entry: MetricsEntry): String {
         val splittedName = entry.name.split('.')
@@ -81,7 +90,7 @@ private class HTMLReport(
 
     private fun chartsToHTML(): String {
         return charts.map {
-            """<div class="flex-item" style="flex: 25%;">
+            """<div class="flex-item" style="flex: 700px;">
                     <div class="chart">
                     ${it().asHTML()}
                     </div>
@@ -111,55 +120,20 @@ private class HTMLReport(
         """.trimIndent()
     }
 
+
+    fun loadStyle() : String {
+        val stream = this::class.java.getResourceAsStream("/css/report.css")!!
+        return String(stream.readAllBytes(), StandardCharsets.UTF_8)
+    }
+
     override fun asHTMLPage(): String {
         return """
             <!doctype html>
             <html lang="en">
             <head>
             <meta name="viewport" content="width=device-width, initial-scale=1">
-          
             <style>
-             * {
-                box-sizing: border-box;
-             }
-            
-            .flex-container {
-              display: flex;
-              flex-wrap: wrap;
-              align-items: flex-start;
-              margin: 20px;
-              border: 1px solid black;
-            }
-            
-            h2 {
-                flex: 100%;
-                text-align: center;
-            }
-            
-            .flex-item {
-              min-width: 300px;
-              padding: 10px;
-            }
-            
-            .chart {
-               background-color: #fafafa; 
-               border: 1px solid #DDD;
-               overflow: auto;
-            }
-            
-            .table {
-               background-color: #fafafa; 
-               overflow: auto;
-               width: 100%;
-               max-height: 700;
-            }
-            
-            caption {
-                font-weight: bold;
-                font-size: 150%;
-                margin-botton: 10px;
-            }
-            
+            ${loadStyle()}
             </style>
             ${Chart.getScript()}
             </head>
@@ -178,7 +152,7 @@ private operator fun StringBuffer.plusAssign(s: String) {
 }
 
 fun main() {
-    val rq = Roboquant(EMAStrategy(), ScorecardMetric(), AccountMetric())
+    val rq = Roboquant(EMAStrategy(), ScorecardMetric())
     val feed = AvroFeed.sp500()
     rq.run(feed)
     val report = HTMLReport(rq)

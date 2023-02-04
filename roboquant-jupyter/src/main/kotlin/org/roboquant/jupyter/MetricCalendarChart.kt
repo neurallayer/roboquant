@@ -33,12 +33,13 @@ import kotlin.collections.*
  * Plots the metrics values on a calendar, so it is easy to visualize if there are days when there are outliers.
  */
 class MetricCalendarChart(
-    private val metricsData: List<MetricsEntry>,
+    metricsData: List<MetricsEntry>,
     private val fractionDigits: Int = 2,
     private val zoneId: ZoneId = Config.defaultZoneId
 ) : Chart() {
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)
+    private val metricsData = metricsData.filter { it.value.isFinite() }
 
     private fun prepData(): Map<Int, List<Pair<String, BigDecimal>>> {
         val perYear = metricsData.groupBy { it.info.time.atZone(zoneId).year }

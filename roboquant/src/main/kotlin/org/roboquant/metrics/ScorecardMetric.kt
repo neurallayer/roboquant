@@ -61,11 +61,20 @@ class ScorecardMetric : Metric {
         val unrealizedPNL = account.positions.unrealizedPNL.convert(account.baseCurrency, event.time).value
         val equity = account.equity.convert(account.baseCurrency, event.time).value
 
+        val cash = account.cash.convert(account.baseCurrency, event.time).value
+
         updateMDD(equity)
 
         val prefix = "scorecard."
 
         return metricResultsOf(
+            "${prefix}trades" to account.trades.size,
+            "${prefix}orders.closed" to account.closedOrders.size,
+            "${prefix}orders.open" to account.openOrders.size,
+            "${prefix}positions" to account.positions.size,
+            "${prefix}buyingpower" to account.buyingPower.value,
+            "${prefix}cash" to cash,
+
             "${prefix}winners" to winners,
             "${prefix}winners.total" to totalWinning,
             "${prefix}winners.avg" to totalWinning / winners,

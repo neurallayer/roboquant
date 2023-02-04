@@ -1,0 +1,40 @@
+* {
+    box-sizing: border-box;
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    margin: 20px;
+    border: 1px solid black;
+}
+
+h2 {
+    flex: 100%;
+    text-align: center;
+}
+
+.flex-item {
+    min-width: 300px;
+    padding: 10px;
+}
+
+.chart {
+    background-color: #fafafa;
+    border: 1px solid #DDD;
+    overflow: auto;
+}
+
+.table {
+    background-color: #fafafa;
+    overflow: auto;
+    width: 100%;
+    max-height: 700px;
+}
+
+caption {
+    font-weight: bold;
+    font-size: 150%;
+    margin-bottom: 10px;
+}

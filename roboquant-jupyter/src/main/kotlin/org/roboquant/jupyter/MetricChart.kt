@@ -83,12 +83,13 @@ class MetricChart(
         val d = mutableListOf<Pair<Any, Number>>()
         for (entry in this) {
             val value = entry.value
-            val roundedValue = BigDecimal(value).setScale(fractionDigits, RoundingMode.HALF_DOWN)
-            if (useTime)
-                d.add(Pair(entry.info.time, roundedValue))
-            else
-                d.add(Pair(entry.info.step.toString(), roundedValue))
-
+            if (value.isFinite()) {
+                val roundedValue = BigDecimal(value).setScale(fractionDigits, RoundingMode.HALF_DOWN)
+                if (useTime)
+                    d.add(Pair(entry.info.time, roundedValue))
+                else
+                    d.add(Pair(entry.info.step.toString(), roundedValue))
+            }
         }
         return d
     }
