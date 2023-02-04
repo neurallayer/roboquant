@@ -13,9 +13,14 @@ import org.roboquant.orders.lines
 import org.roboquant.strategies.EMAStrategy
 import java.nio.charset.StandardCharsets
 
-private class HTMLReport(
+private class Scorecard(
     private val roboquant: Roboquant,
 ) : HTMLOutput() {
+
+
+    init {
+        require(roboquant.metrics.any { it is ScorecardMetric })  { "No ScorecardMetric configured"}
+    }
 
     val logger
         get() = roboquant.logger
@@ -29,24 +34,16 @@ private class HTMLReport(
             { MetricHistogramChart(roboquant.logger.getMetric(it)) }
         }
 
-        /**
-            { MetricChart(roboquant.logger.getMetric("scorecard.equity")) },
-            { MetricChart(roboquant.logger.getMetric("scorecard.mdd")) },
-            { MetricChart(roboquant.logger.getMetric("scorecard.winners")) },
-            { MetricChart(roboquant.logger.getMetric("scorecard.losers")) },
-            { MetricChart(roboquant.logger.getMetric("scorecard.profit.realized")) },
-            { TradeChart(roboquant.broker.account.trades) },
-            { MetricCalendarChart(roboquant.logger.getMetric("scorecard.equity").diff()) },
-            { MetricCalendarChart(roboquant.logger.getMetric("scorecard.winners").diff()) },
-            { MetricCalendarChart(roboquant.logger.getMetric("scorecard.losers").diff()) },
-        )
-            **/
+
+    private fun createCells(name: String, value: Any): String {
+        return "<td>$name</td><td align=right>$value</td>"
+    }
 
     private fun getTableCell(entry: MetricsEntry): String {
         val splittedName = entry.name.split('.')
         val name = splittedName.subList(1, splittedName.size).joinToString(" ")
         val value = entry.value.round(2).toString().removeSuffix(".00")
-        return "<td>$name</td><td align=right>$value</td>"
+        return createCells(name, value)
     }
 
 
@@ -60,8 +57,11 @@ private class HTMLReport(
                 result += getTableCell(metric)
                 result += "</tr>"
             }
+            result += "<tr>${createCells("start time", logger.getMetric("scorecard.equity").first().info.time)}</tr>"
+            result += "<tr>${createCells("end time", logger.getMetric("scorecard.equity").last().info.time)}</tr>"
             result += "</table></div>"
         }
+
         return result.toString()
     }
 
@@ -71,11 +71,11 @@ private class HTMLReport(
         result +=
             "<div class='flex-item' style='$style'><table frame=void rules=rows class=table><caption>$caption</caption>"
         val header = lines.first()
-        result += "<tr>"
+        result += "<thead><tr>"
         for (column in header) {
             result += "<th>$column</th>"
         }
-        result += "</tr>"
+        result += "</tr></thead><tbody>"
         lines.subList(1, lines.size).forEach {
             result += "<tr>"
             for (column in it) {
@@ -83,7 +83,7 @@ private class HTMLReport(
             }
             result += "</tr>"
         }
-        result += "</table></div>"
+        result += "</tbody></table></div>"
         return result.toString()
     }
 
@@ -121,7 +121,7 @@ private class HTMLReport(
     }
 
 
-    fun loadStyle() : String {
+    private fun loadStyle() : String {
         val stream = this::class.java.getResourceAsStream("/css/report.css")!!
         return String(stream.readAllBytes(), StandardCharsets.UTF_8)
     }
@@ -155,6 +155,6 @@ fun main() {
     val rq = Roboquant(EMAStrategy(), ScorecardMetric())
     val feed = AvroFeed.sp500()
     rq.run(feed)
-    val report = HTMLReport(rq)
+    val report = Scorecard(rq)
     report.toHTMLFile("/tmp/test.html")
 }

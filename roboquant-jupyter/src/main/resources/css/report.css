@@ -20,6 +20,12 @@ h2 {
     padding: 10px;
 }
 
+th {
+    position: sticky;
+    top: 0;
+    background: #DDD;
+}
+
 .chart {
     background-color: #fafafa;
     border: 1px solid #DDD;

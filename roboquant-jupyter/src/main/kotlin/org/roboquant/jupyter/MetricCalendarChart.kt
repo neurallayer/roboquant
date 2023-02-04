@@ -100,7 +100,7 @@ class MetricCalendarChart(
         val min = metricsData.map { it.value }.minOfOrNull { it }
 
         return Option()
-            .setTitle(Title().setText(title ?: "Daily results ${metricsData.getName()}"))
+            .setTitle(Title().setText(title ?: metricsData.getName()))
             .setSeries(getSeriesOptions(data))
             .setCalendar(getCalendars(data))
             .setVisualMap(getVisualMap(min, max))

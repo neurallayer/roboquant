@@ -18,8 +18,34 @@ package org.roboquant.metrics
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.unrealizedPNL
+import org.roboquant.common.Asset
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
+import java.time.Instant
 
+
+class AssetReturn(private val startTime: Instant, private val startPrice: Double) {
+
+    private var lastTime: Instant = startTime
+    private var lastPrice: Double = startPrice
+
+    private val duration
+        get() = Timeframe(startTime, lastTime).duration
+
+    fun update(time: Instant, price: Double) {
+        lastTime = time
+        lastPrice = price
+    }
+
+    val returns : Double
+        get() = (lastPrice - startPrice) / startPrice
+
+    fun weight(timeframe: Timeframe): Double {
+        return 1.0 * duration.toMillis() / timeframe.duration.toMillis()
+    }
+
+
+}
 
 /**
  * Scorecard calculates a common set of metrics that can be used to evaluate the performance of a strategy. If you
@@ -35,11 +61,38 @@ class ScorecardMetric : Metric {
 
     private var peakValue = Double.NaN
     private var mdd = Double.NaN
+    private var firstTime = Instant.MIN
+    private val assetsReturns = mutableMapOf<Asset, AssetReturn>()
 
     private fun updateMDD(equity: Double) {
         if (peakValue.isNaN() || equity > peakValue) peakValue = equity
         val dd = (equity - peakValue) / peakValue
         if (mdd.isNaN() || dd < mdd) mdd = dd
+    }
+
+    private fun updateAlpha(event: Event) : Double {
+
+        for ((asset, action) in event.prices) {
+            val price = action.getPrice()
+            val assetReturn = assetsReturns.getOrPut(asset) {  AssetReturn(event.time, price) }
+            assetReturn.update(event.time, price)
+        }
+
+        return if (firstTime == Instant.MIN) {
+            firstTime = event.time
+            0.0
+        } else {
+            var sumReturn = 0.0
+            var sumW = 0.0
+            val tf = Timeframe(firstTime, event.time)
+            for (assetReturn in assetsReturns.values) {
+                val w = assetReturn.weight(tf)
+                sumReturn += assetReturn.returns * w
+                sumW += w
+            }
+            sumReturn / sumW
+        }
+
     }
 
     override fun calculate(account: Account, event: Event): MetricResults {
@@ -62,6 +115,7 @@ class ScorecardMetric : Metric {
         val equity = account.equity.convert(account.baseCurrency, event.time).value
 
         val cash = account.cash.convert(account.baseCurrency, event.time).value
+        val mktReturn = updateAlpha(event)
 
         updateMDD(equity)
 
@@ -74,6 +128,7 @@ class ScorecardMetric : Metric {
             "${prefix}positions" to account.positions.size,
             "${prefix}buyingpower" to account.buyingPower.value,
             "${prefix}cash" to cash,
+            "${prefix}marketreturn" to mktReturn,
 
             "${prefix}winners" to winners,
             "${prefix}winners.total" to totalWinning,
@@ -96,5 +151,7 @@ class ScorecardMetric : Metric {
     override fun reset() {
         peakValue = Double.NaN
         mdd = Double.NaN
+        firstTime = Instant.MIN
+        assetsReturns.clear()
     }
 }
