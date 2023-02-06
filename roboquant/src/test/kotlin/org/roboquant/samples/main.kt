@@ -151,7 +151,7 @@ fun signalsOnly() {
 }
 
 
-fun csv2Avro(pathStr: String = "path") {
+fun csv2Avro(pathStr: String = "path", onlySP500: Boolean = true) {
 
     val path = Path(pathStr)
 
@@ -172,15 +172,15 @@ fun csv2Avro(pathStr: String = "path") {
     }
     feed.merge(tmp)
 
-    val sp500File = "/tmp/sp500_pricebar_v5.1.avro"
+    val sp500File = "/tmp/pricebars.avro"
 
     val symbols = Universe.sp500.getAssets(Instant.now()).symbols
+    val filter = if (onlySP500) AssetFilter.includeSymbols(*symbols) else AssetFilter.all()
 
     AvroFeed.record(
         feed,
         sp500File,
-        timeframe = Timeframe.fromYears(2020, 2023),
-        assetFilter = AssetFilter.includeSymbols(*symbols)
+        assetFilter = filter
     )
 
     val avroFeed = AvroFeed(sp500File)
@@ -201,7 +201,7 @@ suspend fun main() {
 
     when ("CSV2AVRO") {
         "SIMPLE" -> simple()
-        "CSV2AVRO" -> csv2Avro("somepath")
+        "CSV2AVRO" -> csv2Avro("/Users/peter/data/stooq/daily/us", false)
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
         "MC" -> multiCurrency()

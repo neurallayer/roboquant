@@ -36,9 +36,11 @@ import org.roboquant.orders.Order
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.NoSignalStrategy
+import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.ta.BettingAgainstBetaPolicy
 import org.roboquant.ta.TaLibMetric
+import org.roboquant.ta.TaLibSignalStrategy
 
 
 fun beta() {
@@ -81,6 +83,23 @@ fun beta2() {
 
 }
 
+fun macd() {
+    val strategy = TaLibSignalStrategy(35) { asset, prices ->
+        val (_, _, diff) = macd(prices, 12, 26, 9)
+        val (_, _, diff2) = macd(prices, 12, 26, 9, 1)
+        when {
+            diff < 0.0 && diff2 > 0.0 -> Signal(asset, Rating.BUY)
+            diff > 0.0 && diff2 < 0.0 -> Signal(asset, Rating.SELL)
+            else -> null
+        }
+    }
+
+    val rq = Roboquant(strategy)
+    val feed = AvroFeed.sp500()
+    rq.run(feed)
+    println(rq.broker.account.summary())
+
+}
 
 fun customPolicy() {
 
@@ -135,10 +154,11 @@ fun customPolicy() {
 fun main() {
     Config.printInfo()
 
-    when ("CUSTOM") {
+    when ("MACD") {
         "CUSTOM" -> customPolicy()
         "BETA" -> beta()
         "BETA2" -> beta2()
+        "MACD" -> macd()
     }
 
 }

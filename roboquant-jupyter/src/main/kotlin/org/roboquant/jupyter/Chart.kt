@@ -29,6 +29,7 @@ import java.lang.reflect.Type
 import java.nio.charset.StandardCharsets
 import java.time.Instant
 import java.util.*
+import kotlin.math.roundToInt
 
 /**
  * Type adaptor for Gson that allows to use Pair that get serialized as a list
@@ -188,8 +189,8 @@ abstract class Chart : HTMLOutput() {
      */
     protected fun <T> reduce(data: Collection<T>): Collection<T> {
         return if (data.size > maxSamples) {
-            val skip = data.size / maxSamples
-            data.filterIndexed { index, _ -> index % skip == 1 }
+            val skip = (0.5 + data.size / maxSamples).roundToInt()
+            data.filterIndexed { index, _ -> index % skip == 0 }
         } else {
             data
         }

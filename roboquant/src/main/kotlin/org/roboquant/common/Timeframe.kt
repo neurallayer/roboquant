@@ -82,7 +82,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         /**
          * 1 Year expresses in milliseconds.
          */
-        private const val ONE_YEAR_MILLIS = 365.0 * 24.0 * 3600.0 * 1000.0
+        const val ONE_YEAR_MILLIS = 365.0 * 24.0 * 3600.0 * 1000.0
 
         /**
          * Infinite timeframe that matches any time and is typically used when no filtering is required or the

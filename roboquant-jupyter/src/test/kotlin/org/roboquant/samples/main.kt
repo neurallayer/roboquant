@@ -2,14 +2,18 @@ package org.roboquant.samples
 
 import org.jetbrains.kotlinx.jupyter.joinToLines
 import org.roboquant.Roboquant
-import org.roboquant.brokers.lines
+import org.roboquant.brokers.sim.MarginAccount
+import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.round
+import org.roboquant.common.years
 import org.roboquant.feeds.AvroFeed
-import org.roboquant.jupyter.*
+import org.roboquant.jupyter.Chart
+import org.roboquant.jupyter.HTMLOutput
+import org.roboquant.jupyter.MetricChart
 import org.roboquant.loggers.MetricsEntry
-import org.roboquant.loggers.diff
+import org.roboquant.metrics.ReturnsMetric2
 import org.roboquant.metrics.ScorecardMetric
-import org.roboquant.orders.lines
+import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
 import java.nio.charset.StandardCharsets
 
@@ -17,10 +21,11 @@ private class Scorecard(
     private val roboquant: Roboquant,
 ) : HTMLOutput() {
 
-
+    /**
     init {
-        require(roboquant.metrics.any { it is ScorecardMetric })  { "No ScorecardMetric configured"}
+       require(roboquant.metrics.any { it is ScorecardMetric })  { "No ScorecardMetric configured"}
     }
+    */
 
     val logger
         get() = roboquant.logger
@@ -28,12 +33,7 @@ private class Scorecard(
     val charts
         get() = logger.metricNames.map {
             { MetricChart(roboquant.logger.getMetric(it)) }
-        } + logger.metricNames.map {
-            { MetricCalendarChart(roboquant.logger.getMetric(it).diff()) }
-        } + logger.metricNames.map {
-            { MetricHistogramChart(roboquant.logger.getMetric(it)) }
         }
-
 
     private fun createCells(name: String, value: Any): String {
         return "<td>$name</td><td align=right>$value</td>"
@@ -42,7 +42,7 @@ private class Scorecard(
     private fun getTableCell(entry: MetricsEntry): String {
         val splittedName = entry.name.split('.')
         val name = splittedName.subList(1, splittedName.size).joinToString(" ")
-        val value = entry.value.round(2).toString().removeSuffix(".00")
+        val value = if (entry.value.isFinite()) entry.value.round(2).toString().removeSuffix(".00") else "NaN"
         return createCells(name, value)
     }
 
@@ -57,14 +57,16 @@ private class Scorecard(
                 result += getTableCell(metric)
                 result += "</tr>"
             }
-            result += "<tr>${createCells("start time", logger.getMetric("scorecard.equity").first().info.time)}</tr>"
-            result += "<tr>${createCells("end time", logger.getMetric("scorecard.equity").last().info.time)}</tr>"
+            val name = logger.metricNames.first()
+            result += "<tr>${createCells("start time", logger.getMetric(name).first().info.time)}</tr>"
+            result += "<tr>${createCells("end time", logger.getMetric(name).last().info.time)}</tr>"
             result += "</table></div>"
         }
 
         return result.toString()
     }
 
+    /*
     private fun linesToHTML(lines: List<List<Any>>, caption: String): String {
         val result = StringBuffer()
         val style = "overflow: scroll; max-height:700px; flex: 33%;"
@@ -86,6 +88,8 @@ private class Scorecard(
         result += "</tbody></table></div>"
         return result.toString()
     }
+    */
+
 
 
     private fun chartsToHTML(): String {
@@ -100,26 +104,17 @@ private class Scorecard(
 
 
     override fun asHTML(): String {
-        val account = roboquant.broker.account
-        val orders = account.closedOrders + account.openOrders
         return """
              <div class="flex-container">
                  <h2>Metrics</h2>
                  ${metricsToHTML()}
              </div>
-             <div class="flex-container">
-                <h2>Account</h2>
-                ${linesToHTML(account.trades.lines(), "Trades")}
-                ${linesToHTML(orders.lines(), "Orders")}
-                ${linesToHTML(account.positions.lines(), "Positions")}
-            </div>
             <div class="flex-container">
                 <h2>Charts</h2>
                 ${chartsToHTML()}
             </div>
         """.trimIndent()
     }
-
 
     private fun loadStyle() : String {
         val stream = this::class.java.getResourceAsStream("/css/report.css")!!
@@ -152,9 +147,22 @@ private operator fun StringBuffer.plusAssign(s: String) {
 }
 
 fun main() {
-    val rq = Roboquant(EMAStrategy(), ScorecardMetric())
-    val feed = AvroFeed.sp500()
-    rq.run(feed)
+    Chart.maxSamples = 1_000
+    val rq = Roboquant(
+        // TestStrategy(100),
+        EMAStrategy(12, 26),
+        ReturnsMetric2(),
+        ScorecardMetric(),
+        broker = SimBroker(accountModel = MarginAccount()),
+        policy = FlexPolicy(shorting = true)
+    )
+    val feed = AvroFeed("/Users/peter/data/avro/all_1962_2023.avro")
+    // val feed = AvroFeed.sp500()
+    feed.timeframe.split(5.years, 3.years).forEach {
+        rq.run(feed, it)
+    }
+
     val report = Scorecard(rq)
     report.toHTMLFile("/tmp/test.html")
+    println(rq.broker.account.summary())
 }

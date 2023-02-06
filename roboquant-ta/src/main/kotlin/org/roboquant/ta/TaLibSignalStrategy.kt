@@ -75,6 +75,24 @@ class TaLibSignalStrategy(
 
         }
 
+        /**
+         * MACD strategy
+         */
+        fun macd() : TaLibSignalStrategy {
+
+            val strategy = TaLibSignalStrategy(35) { asset, prices ->
+                val (_, _, diff) = macd(prices, 12, 26, 9)
+                val (_, _, diff2) = macd(prices, 12, 26, 9, 1)
+                when {
+                    diff < 0.0 && diff2 >= 0.0 -> Signal(asset, Rating.BUY)
+                    diff > 0.0 && diff2 <= 0.0 -> Signal(asset, Rating.SELL)
+                    else -> null
+                }
+            }
+
+            return strategy
+        }
+
     }
 
     /**

@@ -18,6 +18,7 @@ package org.roboquant.ta
 
 import com.tictactec.ta.lib.Compatibility
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.Roboquant
 import org.roboquant.RunPhase
@@ -32,10 +33,7 @@ import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import java.lang.IllegalArgumentException
 import java.time.Instant
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class TaLibStrategyTest {
 
@@ -111,6 +109,22 @@ internal class TaLibStrategyTest {
 
         val strategy2 = TaLibSignalStrategy.breakout()
         assertContains(strategy2.toString(), "100")
+    }
+
+
+    @Test
+    fun taSignalMacd() {
+        val strategy = TaLibSignalStrategy.macd()
+        assertDoesNotThrow {
+            val x = run(strategy, 30)
+            assertEquals(30, x.size)
+            assertTrue { x.all { it.value.isEmpty() } }
+        }
+
+        assertDoesNotThrow {
+            val x = run(TaLibSignalStrategy.macd(), 120)
+            assertFalse { x.all { it.value.isEmpty() } }
+        }
     }
 
     @Test
