@@ -84,6 +84,10 @@ internal class AmountTest {
         val f = c1.formatValue(4)
         assertEquals("100.0000", f)
         assertEquals("EUR 100.00", c1.toString())
+
+        val c2 = 10000.USD
+        val f2 = c2.toString()
+        assertEquals("USD 10,000.00", f2)
     }
 
 }

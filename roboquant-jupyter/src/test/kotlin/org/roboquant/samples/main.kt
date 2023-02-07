@@ -4,6 +4,7 @@ import org.jetbrains.kotlinx.jupyter.joinToLines
 import org.roboquant.Roboquant
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.common.Config
 import org.roboquant.common.round
 import org.roboquant.common.years
 import org.roboquant.feeds.AvroFeed
@@ -16,6 +17,7 @@ import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
 import java.nio.charset.StandardCharsets
+import kotlin.io.path.div
 
 private class Scorecard(
     private val roboquant: Roboquant,
@@ -135,8 +137,7 @@ private class Scorecard(
             <body>
             ${asHTML()}
             </body>
-            </html>
-           
+            </html>      
         """.trimIndent()
     }
 
@@ -149,15 +150,14 @@ private operator fun StringBuffer.plusAssign(s: String) {
 fun main() {
     Chart.maxSamples = 1_000
     val rq = Roboquant(
-        // TestStrategy(100),
         EMAStrategy(12, 26),
         ReturnsMetric2(),
         ScorecardMetric(),
         broker = SimBroker(accountModel = MarginAccount()),
         policy = FlexPolicy(shorting = true)
     )
-    val feed = AvroFeed("/Users/peter/data/avro/all_1962_2023.avro")
-    // val feed = AvroFeed.sp500()
+    val path = Config.home / "all_1962_2023.avro"
+    val feed = AvroFeed(path)
     feed.timeframe.split(5.years, 3.years).forEach {
         rq.run(feed, it)
     }

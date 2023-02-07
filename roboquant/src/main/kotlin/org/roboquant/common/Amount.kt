@@ -18,7 +18,9 @@ package org.roboquant.common
 
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.NumberFormat
 import java.time.Instant
+import java.util.*
 import kotlin.math.absoluteValue
 
 /**
@@ -74,7 +76,13 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
      * Format the value hold in this amount based on the currency. For example USD would have two fraction digits
      * by default while JPY would have none.
      */
-    fun formatValue(fractionDigits: Int = currency.defaultFractionDigits) = toBigDecimal(fractionDigits).toString()
+    fun formatValue(fractionDigits: Int = currency.defaultFractionDigits) : String {
+        val formatEN = NumberFormat.getInstance(Locale.ENGLISH)
+        formatEN.minimumFractionDigits = fractionDigits
+        formatEN.maximumFractionDigits = fractionDigits
+        return formatEN.format(value)
+        // toBigDecimal(fractionDigits).toString()
+    }
 
     /**
      * Convert the value to BigDecimal using the number of digits defined for the currency. Internally roboquant
