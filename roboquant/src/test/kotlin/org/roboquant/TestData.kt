@@ -38,7 +38,7 @@ internal object TestData {
     fun internalAccount(): InternalAccount {
         val asset1 = Asset("AAA")
         val asset2 = Asset("AAB")
-        val account = InternalAccount()
+        val account = InternalAccount(Currency.USD)
         account.cash.deposit(100_000.USD)
         account.setPosition(Position(asset1, Size(100), 10.0))
         account.setPosition(Position(asset2, Size(100), 10.0))
@@ -53,7 +53,7 @@ internal object TestData {
     fun usAccount(): Account {
         val asset1 = Asset("AAA")
         val asset2 = Asset("AAB")
-        val account = InternalAccount()
+        val account = InternalAccount(Currency.USD)
         account.cash.deposit(100_000.USD)
         account.setPosition(Position(asset1, Size(100), 10.0))
         account.setPosition(Position(asset2, Size(100), 10.0))

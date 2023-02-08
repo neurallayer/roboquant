@@ -30,7 +30,7 @@ internal class AccountTest {
 
     @Test
     fun basis() {
-        val iAccount = InternalAccount()
+        val iAccount = InternalAccount(Currency.USD)
         val account = iAccount.toAccount()
         val amount = account.equityAmount.value
         assertEquals(0.00, amount)

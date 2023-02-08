@@ -21,7 +21,6 @@ import org.roboquant.brokers.Position
 import org.roboquant.brokers.Trade
 import org.roboquant.brokers.marketValue
 import org.roboquant.common.*
-import org.roboquant.common.Config.baseCurrency
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderState
@@ -39,7 +38,7 @@ import java.time.Instant
  * @property baseCurrency The base currency to use for things like reporting
  * @constructor Create a new instance of InternalAccount
  */
-class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
+class InternalAccount(var baseCurrency: Currency) {
 
     /**
      * When was the account last updated, default if not set is [Instant.MIN]
@@ -68,7 +67,7 @@ class InternalAccount(var baseCurrency: Currency = Config.baseCurrency) {
     val cash: Wallet = Wallet()
 
     /**
-     * Remaining buying power of the account denoted in the [baseCurrency] of the account.
+     * Remaining buying power of the account denoted in the [InternalAccount.baseCurrency] of the account.
      */
     var buyingPower: Amount = Amount(baseCurrency, 0.0)
 

@@ -21,6 +21,7 @@ import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.brokers.Position
+import org.roboquant.common.Currency
 import org.roboquant.common.Size
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
@@ -53,7 +54,7 @@ internal class AlphaBetaMetricTest {
     fun test2() {
         val feed = RandomWalkFeed.lastYears(1, nAssets = 1)
         val asset = feed.assets.first()
-        val internalAccount = InternalAccount()
+        val internalAccount = InternalAccount(Currency.USD)
         val metric = AlphaBetaMetric(asset, 50)
 
         repeat(60) {

@@ -53,7 +53,7 @@ class AlpacaBroker(
     configure: AlpacaConfig.() -> Unit = {}
 ) : Broker {
 
-    private val _account = InternalAccount()
+    private val _account = InternalAccount(Currency.USD)
     private val config = AlpacaConfig()
 
     /**

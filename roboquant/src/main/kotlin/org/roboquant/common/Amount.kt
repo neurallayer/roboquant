@@ -77,11 +77,11 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
      * by default while JPY would have none.
      */
     fun formatValue(fractionDigits: Int = currency.defaultFractionDigits) : String {
+        // We don't use default locale to make output more reproducible
         val formatEN = NumberFormat.getInstance(Locale.ENGLISH)
         formatEN.minimumFractionDigits = fractionDigits
         formatEN.maximumFractionDigits = fractionDigits
         return formatEN.format(value)
-        // toBigDecimal(fractionDigits).toString()
     }
 
     /**

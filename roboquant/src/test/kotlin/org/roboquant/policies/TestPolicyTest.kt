@@ -19,6 +19,7 @@ package org.roboquant.policies
 import org.roboquant.TestData
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.sim.execution.InternalAccount
+import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
@@ -39,7 +40,7 @@ internal class TestPolicyTest {
     @Test
     fun basic() {
         val policy = MyPolicy()
-        val account = InternalAccount().toAccount()
+        val account = InternalAccount(Currency.USD).toAccount()
         val orders = policy.act(emptyList(), account, Event.empty())
         assertTrue(orders.isEmpty())
         assertTrue(policy.getMetrics().isEmpty())
@@ -52,7 +53,7 @@ internal class TestPolicyTest {
         for (rating in listOf(Rating.BUY, Rating.SELL)) {
             val signals = listOf(Signal(TestData.usStock(), rating))
             val event = TestData.event2()
-            val account = InternalAccount().toAccount()
+            val account = InternalAccount(Currency.USD).toAccount()
             val orders = policy.act(signals, account, event)
             assertTrue(orders.first() is MarketOrder)
             assertTrue(policy.getMetrics().isEmpty())
@@ -60,7 +61,7 @@ internal class TestPolicyTest {
 
         val signals = listOf(Signal(TestData.usStock(), Rating.HOLD))
         val event = TestData.event2()
-        val account = InternalAccount().toAccount()
+        val account = InternalAccount(Currency.USD).toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
     }

@@ -19,6 +19,7 @@ package org.roboquant.brokers.sim.execution
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Asset
+import org.roboquant.common.Currency
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
@@ -29,7 +30,7 @@ internal class InternalAccountTest {
 
     @Test
     fun internalAccountOrders() {
-        val account = InternalAccount()
+        val account = InternalAccount(Currency.USD)
         val order = MarketOrder(Asset("Test"), 100)
         account.initializeOrders(listOf(order))
 
@@ -49,7 +50,7 @@ internal class InternalAccountTest {
 
     @Test
     fun internalAccountErrors() {
-        val account = InternalAccount()
+        val account = InternalAccount(Currency.USD)
         val order = MarketOrder(Asset("Test"), 100)
 
         // Should fail because order is unknown

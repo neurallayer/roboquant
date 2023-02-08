@@ -47,7 +47,7 @@ class OANDABroker(
     private val config = OANDAConfig()
     private val ctx: Context
     private val accountID: AccountID
-    private val _account = InternalAccount()
+    private val _account = InternalAccount(Currency.USD)
 
     /**
      * @see Broker.account

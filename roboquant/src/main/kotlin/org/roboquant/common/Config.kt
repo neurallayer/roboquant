@@ -72,19 +72,19 @@ object Config {
     }
 
     /**
-     * Default zoneId to use for reporting purposes. Internally roboquant always uses the Instant type, so this is only
-     * used for displaying and when required when adding or subtracting periods
+     * Default zoneId to use for reporting purposes. Internally roboquant always uses the Instant type, so this
+     * property is only used for displaying and when required for adding or subtracting periods.
      */
     var defaultZoneId: ZoneId = ZoneId.systemDefault()
 
     /**
      * The exchange rates to use when dealing with multiple currencies. The default is [SingleCurrencyExchangeRates]
-     * which as the name suggests doesn't support any conversions.
+     * which as the name suggests doesn't support conversions between currencies.
      */
     var exchangeRates: ExchangeRates = SingleCurrencyExchangeRates()
 
     /**
-     * Default currency to use when reporting in a single currency
+     * Default currency to use when reporting in a single currency.
      */
     var baseCurrency: Currency = Currency.USD
 

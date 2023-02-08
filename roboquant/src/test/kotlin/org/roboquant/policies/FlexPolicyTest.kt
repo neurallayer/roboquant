@@ -18,10 +18,7 @@ package org.roboquant.policies
 
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.InternalAccount
-import org.roboquant.common.Asset
-import org.roboquant.common.Size
-import org.roboquant.common.USD
-import org.roboquant.common.days
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
@@ -38,7 +35,7 @@ internal class FlexPolicyTest {
         val policy = FlexPolicy()
         val signals = mutableListOf<Signal>()
         val event = Event(emptyList(), Instant.now())
-        val account = InternalAccount().toAccount()
+        val account = InternalAccount(Currency.USD).toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
     }
@@ -81,7 +78,7 @@ internal class FlexPolicyTest {
         val policy = MyPolicy()
         val signals = mutableListOf<Signal>()
         val event = Event(emptyList(), Instant.now())
-        val account = InternalAccount().toAccount()
+        val account = InternalAccount(Currency.USD).toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
 
@@ -94,7 +91,7 @@ internal class FlexPolicyTest {
             .circuitBreaker(10, 1.days)
         val signals = mutableListOf<Signal>()
         val event = Event(emptyList(), Instant.now())
-        val account = InternalAccount().toAccount()
+        val account = InternalAccount(Currency.USD).toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
     }

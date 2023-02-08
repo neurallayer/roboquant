@@ -51,7 +51,7 @@ class IBKRBroker(
 
     private val accountId: String?
     private var client: EClientSocket
-    private var _account = InternalAccount()
+    private var _account = InternalAccount(Currency.USD)
 
     /**
      * @see Broker.account
