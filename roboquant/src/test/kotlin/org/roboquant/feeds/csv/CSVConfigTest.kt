@@ -36,7 +36,7 @@ internal class CSVConfigTest {
         assertTrue(config.parsePattern.isEmpty())
         assertEquals(false, config.priceAdjust)
         assertEquals(true, config.hasHeader)
-        assertEquals(',', config.seperator)
+        assertEquals(',', config.separator)
     }
 
 

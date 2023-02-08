@@ -83,7 +83,7 @@ class CSVFeed(
                     Asset.forexPair(currencyPair)
                 }
                 parsePattern = "TOHLC" // There is no volume included in these files
-                seperator = ';'
+                separator = ';'
                 hasHeader = false
             }
         }
@@ -147,7 +147,7 @@ class CSVFeed(
 
     @Suppress("TooGenericExceptionCaught")
     private fun readFile(asset: Asset, file: File): List<PriceEntry> {
-        val reader = CsvReader.builder().fieldSeparator(config.seperator).skipEmptyRows(true).build(FileReader(file))
+        val reader = CsvReader.builder().fieldSeparator(config.separator).skipEmptyRows(true).build(FileReader(file))
         reader.use {
             val result = mutableListOf<PriceEntry>()
             var errors = 0

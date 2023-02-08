@@ -39,6 +39,8 @@ import kotlin.io.path.div
  * @property parsePattern what do the columns present, if empty columns will be determined based on their name
  * @property priceAdjust should the price be adjusted using a volume adjusted column
  * @property template The template to use in the default [assetBuilder]
+ * @property hasHeader do the CSV files have a header, default is true
+ * @property separator the field separator character, default is ',' (comma)
  * @constructor Create new CSV config
  */
 data class CSVConfig(
@@ -49,7 +51,7 @@ data class CSVConfig(
     var priceAdjust: Boolean = false,
     var template: Asset = Asset("TEMPLATE"),
     var hasHeader: Boolean = true,
-    var seperator: Char = ','
+    var separator: Char = ','
 ) {
 
     /**
