@@ -95,6 +95,7 @@ class AutoDetectTimeParser : TimeParser {
         private val patterns = listOf(
             """19\d{6}""".toRegex() to LocalDateParser("yyyyMMdd"),
             """20\d{6}""".toRegex() to LocalDateParser("yyyyMMdd"),
+            """\d{8} \d{6}""".toRegex() to LocalTimeParser("yyyyMMdd HHmmss"),
             """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".toRegex() to TimeParser { str, _ -> Instant.parse(str) },
             """\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm:ss"),
             """\d{4}-\d{2}-\d{2} \d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm"),

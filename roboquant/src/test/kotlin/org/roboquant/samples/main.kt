@@ -20,11 +20,11 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
+import org.roboquant.brokers.ECBExchangeRates
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.*
-import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
@@ -36,12 +36,10 @@ import org.roboquant.policies.*
 import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Signal
-import java.io.File
 import java.time.Instant
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.system.measureTimeMillis
-
 
 fun multiCurrency() {
     val feed = CSVFeed("data/US") {
@@ -154,22 +152,8 @@ fun signalsOnly() {
 fun csv2Avro(pathStr: String = "path", onlySP500: Boolean = true) {
 
     val path = Path(pathStr)
-
-    fun CSVConfig.file2Symbol(file: File): String {
-        return file.name.removeSuffix(fileExtension).replace('-', '.').uppercase()
-    }
-
-    val feed = CSVFeed(path / "nasdaq stocks") {
-        fileExtension = ".us.txt"
-        parsePattern = "??T?OHLCV?"
-        assetBuilder = { file: File -> Asset(file2Symbol(file)) }
-    }
-
-    val tmp = CSVFeed(path / "nyse stocks") {
-        fileExtension = ".us.txt"
-        parsePattern = "??T?OHLCV?"
-        assetBuilder = { file: File -> Asset(file2Symbol(file)) }
-    }
+    val feed = CSVFeed.fromStooq((path / "nasdaq stocks").toString())
+    val tmp = CSVFeed.fromStooq((path / "nyse stocks").toString())
     feed.merge(tmp)
 
     val sp500File = "/tmp/pricebars.avro"
@@ -196,10 +180,22 @@ fun simple() {
     println(roboquant.broker.account.fullSummary())
 }
 
+fun forexFeed() {
+    val path = System.getProperty("user.home") + "/data/forex/"
+    val feed = CSVFeed.fromHistData(path)
+
+    println("timeframe=${feed.timeframe} symbols=${feed.assets.symbols.toList()}")
+    Config.exchangeRates = ECBExchangeRates.fromWeb()
+    val strategy = EMAStrategy()
+    val rq = Roboquant(strategy, AccountMetric())
+    rq.run(feed)
+    println(rq.broker.account.summary())
+}
+
 suspend fun main() {
     Config.printInfo()
 
-    when ("CSV2AVRO") {
+    when ("FOREX") {
         "SIMPLE" -> simple()
         "CSV2AVRO" -> csv2Avro("/Users/peter/data/stooq/daily/us", false)
         "MULTI_RUN" -> multiRun()
@@ -207,6 +203,7 @@ suspend fun main() {
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()
         "SIGNALS" -> signalsOnly()
+        "FOREX" -> forexFeed()
     }
 
 }

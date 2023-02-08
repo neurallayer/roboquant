@@ -66,6 +66,45 @@ class CSVFeed(
         logger.info { "events=${timeline.size} assets=${assets.size} timeframe=$timeframe" }
     }
 
+    companion object {
+
+        /**
+         * Process historical PriceBar Forex data downloaded from [HistData](http://HistData.com).
+         * Please note that tick data is not supported, only the 1-minute price-bars are.
+         */
+        fun fromHistData(path: String) : CSVFeed {
+            return CSVFeed(path) {
+                assetBuilder = {
+                    val fileName = it.name
+                    assert(fileName.startsWith("DAT_ASCII_")) {
+                        "not a histdata.com file, should start with DAT_ASCII_"
+                    }
+                    val currencyPair = fileName.split('_')[2]
+                    Asset.forexPair(currencyPair)
+                }
+                parsePattern = "TOHLC" // There is no volume included in these files
+                seperator = ';'
+                hasHeader = false
+            }
+        }
+
+        /**
+         * Process historical US stock PriceBar data downloaded from [Stooq](http://stooq.pl).
+         */
+        fun fromStooq(path: String) : CSVFeed {
+            fun CSVConfig.file2Symbol(file: File): String {
+                return file.name.removeSuffix(fileExtension).replace('-', '.').uppercase()
+            }
+
+            return CSVFeed(path) {
+                fileExtension = ".us.txt"
+                parsePattern = "??T?OHLCV?"
+                assetBuilder = { file: File -> Asset(file2Symbol(file)) }
+            }
+        }
+
+    }
+
     /**
      * Read a [path] (directory or single file) and all its descendants and return the found CSV files
      */
@@ -108,15 +147,16 @@ class CSVFeed(
 
     @Suppress("TooGenericExceptionCaught")
     private fun readFile(asset: Asset, file: File): List<PriceEntry> {
-        val reader = CsvReader.builder().skipEmptyRows(true).build(FileReader(file))
+        val reader = CsvReader.builder().fieldSeparator(config.seperator).skipEmptyRows(true).build(FileReader(file))
         reader.use {
             val result = mutableListOf<PriceEntry>()
             var errors = 0
-            var first = true
+            var isHeader = config.hasHeader
+            if (config.parsePattern.isNotEmpty()) config.detectColumns(emptyList())
             for (row in it) {
-                if (first) {
+                if (isHeader) {
                     config.detectColumns(row.fields)
-                    first = false
+                    isHeader = false
                 } else {
                     try {
                         val step = config.processLine(asset, row.fields)

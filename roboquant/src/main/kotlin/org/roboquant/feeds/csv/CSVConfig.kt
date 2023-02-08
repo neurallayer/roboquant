@@ -47,7 +47,9 @@ data class CSVConfig(
     var fileSkip: List<String> = emptyList(),
     var parsePattern: String = "",
     var priceAdjust: Boolean = false,
-    var template: Asset = Asset("TEMPLATE")
+    var template: Asset = Asset("TEMPLATE"),
+    var hasHeader: Boolean = true,
+    var seperator: Char = ','
 ) {
 
     /**
