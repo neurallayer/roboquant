@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets
 
 /**
  * Generate an HTML report that contains the recorded metrics of one or more runs.
+ *
+ * @param maxSamples maximum samples prt chart to use when creating charts.
  */
 class MetricsReport(
     private val roboquant: Roboquant,

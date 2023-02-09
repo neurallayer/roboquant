@@ -111,7 +111,7 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
         get() = history.map { it.first.keys }.flatten().distinct().sorted()
 
     /**
-     * Get results for a metric specified by its [name]. It will include all the runs and episodes for that metric.
+     * Get results for a metric specified by its [name]. It will include all the runs for that metric.
      */
     override fun getMetric(name: String): List<MetricsEntry> {
         val result = mutableListOf<MetricsEntry>()

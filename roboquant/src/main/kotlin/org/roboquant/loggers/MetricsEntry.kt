@@ -31,10 +31,10 @@ import org.roboquant.common.clean
 data class MetricsEntry(val name: String, val value: Double, val info: RunInfo) : Comparable<MetricsEntry> {
 
     /**
-     * Get a key that uniquely defines the metric across a run and episode.
+     * Get a key that uniquely defines the metric across a run.
      */
     internal val groupId
-        get() = """${name}/${info.run}"""
+        get() = "${name}/${info.run}/${info.phase}"
 
     /**
      * Compare two metric entries based on their [value]
@@ -46,7 +46,7 @@ data class MetricsEntry(val name: String, val value: Double, val info: RunInfo) 
 }
 
 /**
- * Group a collection of metrics by their unique [MetricsEntry.groupId] (run and episode)
+ * Group a collection of metrics by their unique combination of name, run and phase.
  */
 fun Collection<MetricsEntry>.group(): Map<String, List<MetricsEntry>> = groupBy { it.groupId }
 
@@ -73,7 +73,8 @@ fun Collection<MetricsEntry>.diff(): List<MetricsEntry> {
             first = false
         } else {
             val newValue = entry.value - prev
-            val newEntry = entry.copy(value = newValue)
+            val newName = entry.name + ".diff"
+            val newEntry = entry.copy(name = newName, value = newValue)
             result.add(newEntry)
             prev = entry.value
         }
@@ -94,7 +95,8 @@ fun Collection<MetricsEntry>.perc(): List<MetricsEntry> {
             first = false
         } else {
             val newValue = 100.0 * (entry.value - prev) / prev
-            val newEntry = entry.copy(value = newValue)
+            val newName = entry.name + ".perc"
+            val newEntry = entry.copy(name = newName, value = newValue)
             result.add(newEntry)
             prev = entry.value
         }

@@ -42,6 +42,22 @@ class MetricChart(
     private val fractionDigits: Int = 2
 ) : Chart() {
 
+
+    /**
+     * Identify common suffix (same run/phase), so they can be removed from the series name
+     */
+    private fun commonSuffix(keys: Set<String>) : String {
+        if (keys.isEmpty()) return ""
+        val parts = keys.first().split("/")
+
+        for (i in parts.lastIndex downTo 1) {
+            val suffix = parts.takeLast(i).joinToString("/")
+            if (keys.all { it.endsWith(suffix) }) return "/$suffix"
+        }
+        return ""
+    }
+
+    
     /** @suppress */
     override fun getOption(): Option {
 
@@ -54,14 +70,15 @@ class MetricChart(
             .addYAxis(yAxis)
             .setTooltip("axis")
 
-        // Every combination of a run and episode will be its own series
+        // Every combination of a run and metric name will be its own series
         val series = metricsData.group()
+        val suffix = commonSuffix(series.keys)
         series.forEach { (name, entries) ->
             val d = reduce(entries.toSeriesData())
             val lineSeries = LineSeries()
                 .setData(d)
                 .setShowSymbol(false)
-                .setName(name)
+                .setName(name.removeSuffix(suffix))
                 .setLineStyle(LineStyle().setWidth(1))
 
             chart.addSeries(lineSeries)
