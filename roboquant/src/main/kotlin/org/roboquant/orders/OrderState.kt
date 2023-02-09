@@ -91,7 +91,7 @@ private fun Instant.toPrettyString(): String {
 }
 
 
-fun Collection<OrderState>.lines() : List<List<Any>> {
+fun Collection<OrderState>.lines(): List<List<Any>> {
     val lines = mutableListOf<List<Any>>()
     lines.add(listOf("type", "symbol", "status", "id", "opened at", "closed at", "details"))
     forEach {

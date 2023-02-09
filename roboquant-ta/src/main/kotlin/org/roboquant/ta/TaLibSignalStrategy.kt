@@ -78,7 +78,7 @@ class TaLibSignalStrategy(
         /**
          * MACD strategy
          */
-        fun macd() : TaLibSignalStrategy {
+        fun macd(): TaLibSignalStrategy {
 
             val strategy = TaLibSignalStrategy(35) { asset, prices ->
                 val (_, _, diff) = macd(prices, 12, 26, 9)

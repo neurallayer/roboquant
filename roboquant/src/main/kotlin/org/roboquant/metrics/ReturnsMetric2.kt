@@ -95,8 +95,7 @@ class ReturnsMetric2(
     }
 
 
-
-    private fun sharpRatio2(portfolioReturns: DoubleArray, benchmarkReturns: DoubleArray) : Double {
+    private fun sharpRatio2(portfolioReturns: DoubleArray, benchmarkReturns: DoubleArray): Double {
         val t = times.eventsPerYears()
         val accessReturns = portfolioReturns - benchmarkReturns
         val stdExcessReturns = StandardDeviation().evaluate(accessReturns) * sqrt(t)

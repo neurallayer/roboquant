@@ -57,7 +57,7 @@ class MetricChart(
         return ""
     }
 
-    
+
     /** @suppress */
     override fun getOption(): Option {
 
@@ -93,11 +93,10 @@ class MetricChart(
 
     /**
      * Convert a list of entries to data-format suitable for chart series.
-     * @return
      */
-    private fun List<MetricsEntry>.toSeriesData(): List<Pair<Any, Number>> {
+    private fun List<MetricsEntry>.toSeriesData(): List<Pair<Any, BigDecimal>> {
 
-        val d = mutableListOf<Pair<Any, Number>>()
+        val d = mutableListOf<Pair<Any, BigDecimal>>()
         for (entry in this) {
             val value = entry.value
             if (value.isFinite()) {

@@ -72,7 +72,7 @@ class CSVFeed(
          * Process historical PriceBar Forex data downloaded from [HistData](http://HistData.com).
          * Please note that tick data is not supported, only the 1-minute price-bars are.
          */
-        fun fromHistData(path: String) : CSVFeed {
+        fun fromHistData(path: String): CSVFeed {
             return CSVFeed(path) {
                 assetBuilder = {
                     val fileName = it.name
@@ -91,7 +91,7 @@ class CSVFeed(
         /**
          * Process historical US stock PriceBar data downloaded from [Stooq](http://stooq.pl).
          */
-        fun fromStooq(path: String) : CSVFeed {
+        fun fromStooq(path: String): CSVFeed {
             fun CSVConfig.file2Symbol(file: File): String {
                 return file.name.removeSuffix(fileExtension).replace('-', '.').uppercase()
             }

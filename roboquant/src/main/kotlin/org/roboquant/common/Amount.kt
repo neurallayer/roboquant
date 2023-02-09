@@ -76,7 +76,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
      * Format the value hold in this amount based on the currency. For example USD would have two fraction digits
      * by default while JPY would have none.
      */
-    fun formatValue(fractionDigits: Int = currency.defaultFractionDigits) : String {
+    fun formatValue(fractionDigits: Int = currency.defaultFractionDigits): String {
         // We don't use default locale to make output more reproducible
         val formatEN = NumberFormat.getInstance(Locale.ENGLISH)
         formatEN.minimumFractionDigits = fractionDigits

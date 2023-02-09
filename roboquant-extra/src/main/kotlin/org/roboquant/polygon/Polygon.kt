@@ -82,7 +82,7 @@ internal object Polygon {
 
     }
 
-    private fun TickerDTO.toAsset() : Asset? {
+    private fun TickerDTO.toAsset(): Asset? {
 
         val assetType = when (market) {
             "stocks" -> AssetType.STOCK

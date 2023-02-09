@@ -45,7 +45,7 @@ class ScorecardMetric : Metric {
 
     override fun calculate(account: Account, event: Event): MetricResults {
 
-        val pnl =  account.trades.map { it.pnl.convert(account.baseCurrency, event.time).value }
+        val pnl = account.trades.map { it.pnl.convert(account.baseCurrency, event.time).value }
 
         val winnersList = pnl.filter { it > 0.0 }
         val winners = winnersList.count()
@@ -55,7 +55,7 @@ class ScorecardMetric : Metric {
         val loosersList = pnl.filter { it < 0.0 }
         val loosers = loosersList.count()
         val totalLoosing = loosersList.sum()
-        val maxLoosing = loosersList.minOrNull()  ?: Double.NaN
+        val maxLoosing = loosersList.minOrNull() ?: Double.NaN
 
         val realizedPNL = pnl.sum()
 
