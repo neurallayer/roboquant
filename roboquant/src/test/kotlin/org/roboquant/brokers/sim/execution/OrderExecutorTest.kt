@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.Pricing
+import org.roboquant.brokers.sim.SpreadPricingEngine
 import org.roboquant.common.Size
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
@@ -34,6 +35,11 @@ internal class OrderExecutorTest {
 
     private fun pricing(price: Number): Pricing {
         val engine = NoCostPricingEngine()
+        return engine.getPricing(TradePrice(asset, price.toDouble()), Instant.now())
+    }
+
+    private fun pricing2(price: Number): Pricing {
+        val engine = SpreadPricingEngine(200)
         return engine.getPricing(TradePrice(asset, price.toDouble()), Instant.now())
     }
 
@@ -64,6 +70,20 @@ internal class OrderExecutorTest {
 
         executions = executor.execute(pricing(98), Instant.now())
         assertEquals(1, executions.size)
+        assertEquals(98.0, executions.first().price)
+        assertEquals(OrderStatus.COMPLETED, executor.status)
+    }
+
+    @Test
+    fun testStopOrder2() {
+        val order = StopOrder(asset, Size(-10), 99.0)
+        val executor = StopOrderExecutor(order)
+        var executions = executor.execute(pricing2(102), Instant.now())
+        assertEquals(0, executions.size)
+
+        executions = executor.execute(pricing2(97), Instant.now())
+        assertEquals(1, executions.size)
+        assertEquals(97.0 * 0.98, executions.first().price)
         assertEquals(OrderStatus.COMPLETED, executor.status)
     }
 

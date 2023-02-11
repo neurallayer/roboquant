@@ -26,7 +26,6 @@ import org.icepear.echarts.components.marker.MarkPoint
 import org.icepear.echarts.components.series.ItemStyle
 import org.icepear.echarts.components.series.LineStyle
 import org.roboquant.brokers.Trade
-import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
@@ -71,7 +70,7 @@ class PriceChart(
             val entry = mapOf(
                 "value" to trade.size.toBigDecimal(),
                 "xAxis" to trade.time,
-                "yAxis" to Amount(trade.asset.currency, trade.price).toBigDecimal()
+                "yAxis" to trade.price // Amount(trade.asset.currency, trade.price).toBigDecimal()
             )
             result.add(entry)
         }
