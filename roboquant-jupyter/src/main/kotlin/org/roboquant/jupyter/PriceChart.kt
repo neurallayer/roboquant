@@ -31,7 +31,6 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
-import java.math.BigDecimal
 import java.time.Instant
 
 /**
@@ -51,11 +50,13 @@ class PriceChart(
     /**
      * Play the feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
      */
-    private fun fromFeed(): List<Pair<Instant, BigDecimal>> {
+    private fun fromFeed(): List<Pair<Instant, Double>> {
         val entries = feed.filter<PriceAction>(timeframe) { it.asset == asset }
         val data = entries.map {
-            val price = it.second.getPriceAmount(priceType)
-            it.first to price.toBigDecimal()
+            // val price = it.second.getPriceAmount(priceType)
+            // it.first to price.toBigDecimal()
+            val price = it.second.getPrice(priceType)
+            it.first to price
         }
         return data
     }

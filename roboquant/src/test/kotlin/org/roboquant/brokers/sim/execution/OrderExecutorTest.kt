@@ -83,7 +83,7 @@ internal class OrderExecutorTest {
 
         executions = executor.execute(pricing2(97), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(97.0 * 0.98, executions.first().price)
+        assertEquals(97.0 * 0.99, executions.first().price)
         assertEquals(OrderStatus.COMPLETED, executor.status)
     }
 

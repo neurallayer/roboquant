@@ -21,24 +21,27 @@ import org.roboquant.feeds.PriceAction
 import java.time.Instant
 
 /**
- * Pricing model that uses a constant [spreadInBips] to calculate the trading price. It uses the same
- * price for high, low and market prices. It works with any type of [PriceAction].
+ * Pricing model that uses a constant [spreadInBips] to calculate the trading price. If for example the spread is
+ * 10 Bips (default), the BUY price will increase with 0.05 percent and the SELL price decrease by 0.05 percent so
+ * that the spread between the two is 0.1% (aka 10 Bips).
+ *
+ * It uses the same price for high, low and market prices. It works with any type of [PriceAction].
  */
 class SpreadPricingEngine(private val spreadInBips: Number = 10, private val priceType: String = "DEFAULT") :
     PricingEngine {
 
-    private class SpreadPricing(val price: Double, val spreadPercentage: Double) : Pricing {
+    private class SpreadPricing(private val price: Double, private val percentage: Double) : Pricing {
 
         override fun marketPrice(size: Size): Double {
             // If BUY -> market price will be higher
             // if SELL -> market the price will be lower
-            val correction = if (size > 0) 1.0 + spreadPercentage else 1.0 - spreadPercentage
+            val correction = if (size > 0) 1.0 + percentage else 1.0 - percentage
             return price * correction
         }
     }
 
     override fun getPricing(action: PriceAction, time: Instant): Pricing {
-        val spreadPercentage = spreadInBips.toDouble() / 10_000.0
+        val spreadPercentage = spreadInBips.toDouble() / 20_000.0
         return SpreadPricing(action.getPrice(priceType), spreadPercentage)
     }
 }

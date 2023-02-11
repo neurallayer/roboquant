@@ -20,9 +20,13 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.Account
+import org.roboquant.brokers.sim.NoCostPricingEngine
+import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.RoboquantException
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
@@ -34,6 +38,7 @@ import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 internal class RoboquantTest {
@@ -140,6 +145,23 @@ internal class RoboquantTest {
         val lastHistory2 = logger.history.last()
 
         assertEquals(lastHistory1, lastHistory2)
+    }
+
+    @Test
+    fun prices() {
+        val feed = TestData.feed
+        val rq =
+            Roboquant(EMAStrategy(), broker = SimBroker(pricingEngine = NoCostPricingEngine()), logger = SilentLogger())
+        rq.run(feed)
+
+        val trades = rq.broker.account.trades
+        assertTrue(trades.isNotEmpty())
+        for (trade in trades) {
+            val tf = Timeframe(trade.time, trade.time, true)
+            val pricebar = feed.filter<PriceAction>(timeframe = tf).firstOrNull { it.second.asset == trade.asset }
+            assertNotNull(pricebar)
+            assertEquals(pricebar.second.getPrice(), trade.price)
+        }
     }
 
 }

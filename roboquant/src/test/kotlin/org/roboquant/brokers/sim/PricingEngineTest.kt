@@ -22,8 +22,8 @@ class PricingEngineTest {
 
     @Test
     fun spreadPricing() {
-        // Pricing engine with 100 BIPS (1%) spread
-        val pe = SpreadPricingEngine(100, "OPEN")
+        // Pricing engine with 100 BIPS (2%) spread
+        val pe = SpreadPricingEngine(200, "OPEN")
         val pricing = pe.getPricing(priceBar, Instant.now())
         val price = pricing.marketPrice(Size(100))
         assertEquals(priceBar.getPrice("OPEN") * 1.01, price)
