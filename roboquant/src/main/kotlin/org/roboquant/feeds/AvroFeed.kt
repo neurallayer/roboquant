@@ -97,10 +97,11 @@ class AvroFeed(private val path: Path) : Feed {
     }
 
     private fun position(r: DataFileReader<GenericRecord>, time: Instant) {
-        var idx = index.binarySearch { it.first.compareTo(time) }
-        idx = if (idx < 0) -idx - 1 else idx
-        if (idx >= index.size) idx = index.size - 1
-        if (idx >= 0) r.seek(index[idx].second)
+        val idx = index.binarySearch { it.first.compareTo(time) }
+        when {
+           idx > 0 -> r.seek(index[idx-1].second)
+           idx < -1 ->  r.seek(index[-idx-2].second)
+        }
     }
 
 
@@ -202,6 +203,7 @@ class AvroFeed(private val path: Path) : Feed {
         private val logger = Logging.getLogger(AvroFeed::class)
         private const val sp500File = "sp500_pricebar_v5.1.avro"
         private const val sp500QuoteFile = "sp500_pricequote_v5.0.avro"
+        private const val forexFile = "forex_pricebar_v5.1.avro"
 
         /**
          * Get an AvroFeed containing end-of-day [PriceBar] data for the companies listed in the S&P 500. This feed
@@ -220,6 +222,14 @@ class AvroFeed(private val path: Path) : Feed {
          */
         fun sp500Quotes(): AvroFeed {
             val path = download(sp500QuoteFile)
+            return AvroFeed(path)
+        }
+
+        /**
+         * Get an AvroFeed containing 1 minute [PriceBar] data for EUR/USD and GPB/USD currency pair.
+         */
+        fun forex(): AvroFeed {
+            val path = download(forexFile)
             return AvroFeed(path)
         }
 

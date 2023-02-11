@@ -209,7 +209,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * before or equal the end time.
      */
     private fun beforeEnd(time: Instant): Boolean {
-        return time < end || (inclusive && time <= end)
+        return time < end || (inclusive && time == end)
     }
 
     /**
@@ -323,7 +323,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
             else -> dayFormatter
         }
 
-        val fmt = formatter.withZone(Config.defaultZoneId)
+        val fmt = formatter.withZone(ZoneId.of("UTC"))
         val s1 = if (start == MIN) "MIN" else if (start == MAX) "MAX" else fmt.format(start)
         val s2 = if (end == MIN) "MIN" else if (end == MAX) "MAX" else fmt.format(end)
         return "$s1 - $s2"

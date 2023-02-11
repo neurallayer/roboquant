@@ -307,6 +307,9 @@ fun Option.renderJson(): String {
     // Set default transparent background so charts look better with Jupyter Notebooks
     if (backgroundColor == null) backgroundColor = "rgba(0,0,0,0)"
 
+    // Use UTC, makes it easier to compare charts and values
+    useUTC = true
+
     // Set the default grid if none is set already
     if (grid == null) {
         val grid = Grid().setContainLabel(true).setRight("3%").setLeft("3%")

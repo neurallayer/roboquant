@@ -17,6 +17,7 @@
 package org.roboquant.common
 
 import org.junit.jupiter.api.Test
+import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -91,5 +92,18 @@ class ExtensionsTest {
         val s = listOf("a", "b", "c")
         assertTrue(s.summary().content.contains('a'))
 
+    }
+
+    @Test
+    fun instant() {
+        val t = Instant.now()
+        assertTrue( t > Timeframe(t, t))
+        assertFalse( t < Timeframe(t, t))
+
+        assertFalse(t > Timeframe(t,t, true))
+        assertFalse(t < Timeframe(t,t, true))
+
+        assertTrue(t in Timeframe(t,t, true))
+        assertFalse(t in Timeframe(t,t))
     }
 }

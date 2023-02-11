@@ -22,6 +22,7 @@ import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.ECBExchangeRates
 import org.roboquant.brokers.FixedExchangeRates
+import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.*
@@ -40,6 +41,7 @@ import java.time.Instant
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.system.measureTimeMillis
+import kotlin.test.assertEquals
 
 fun multiCurrency() {
     val feed = CSVFeed("data/US") {
@@ -192,10 +194,30 @@ fun forexFeed() {
     println(rq.broker.account.summary())
 }
 
+
+fun forexRun() {
+    val feed = AvroFeed.forex()
+    Currency.increaseDigits(3)
+    val rq = Roboquant(EMAStrategy(), AccountMetric(), broker = SimBroker(pricingEngine = NoCostPricingEngine()))
+    rq.run(feed, timeframe = Timeframe.parse("2022-01-03", "2022-02-10"))
+
+    for (trade in rq.broker.account.trades) {
+        val tf = Timeframe(trade.time, trade.time, true)
+        val pricebar = feed.filter<PriceAction>(timeframe = tf).firstOrNull { it.second.asset == trade.asset}
+        if (pricebar == null) {
+            println(trade)
+            println(feed.filter<PriceAction>(timeframe = tf))
+            throw RoboquantException("couldn't find trade action")
+        } else {
+            assertEquals(pricebar.second.getPrice(), trade.price)
+        }
+    }
+}
+
 suspend fun main() {
     Config.printInfo()
 
-    when ("FOREX") {
+    when ("FOREX_RUN") {
         "SIMPLE" -> simple()
         "CSV2AVRO" -> csv2Avro("/Users/peter/data/stooq/daily/us", false)
         "MULTI_RUN" -> multiRun()
@@ -204,6 +226,7 @@ suspend fun main() {
         "TESTING" -> testingStrategies()
         "SIGNALS" -> signalsOnly()
         "FOREX" -> forexFeed()
+        "FOREX_RUN" -> forexRun()
     }
 
 }
