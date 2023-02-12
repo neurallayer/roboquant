@@ -36,7 +36,16 @@ internal class BracketOrderTest {
         assertTrue(order.entry is MarketOrder)
         assertTrue(order.stopLoss is StopOrder)
         assertTrue(order.toString().isNotBlank())
+    }
 
+    @Test
+    fun predef() {
+        val asset = TestData.usStock()
+        val size = Size(10)
+        val order = BracketOrder.marketTrailStop(asset, size, 100.0, 0.05, 0.01)
+        assertTrue(order.entry is MarketOrder)
+        assertTrue(order.stopLoss is StopOrder)
+        assertTrue(order.takeProfit is LimitOrder)
     }
 
 }

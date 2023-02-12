@@ -71,6 +71,28 @@ fun oandaRecord() {
 
 }
 
+
+fun oandaRecord2() {
+    val feed = OANDAHistoricFeed()
+    val timeframe = Timeframe.parse("2022-01-01", "2023-01-01")
+    val symbols = arrayOf("EUR_USD")
+
+    // There is a limit on what we can download per API call, so we split it in individual days
+    for (tf in timeframe.split(1.days)) {
+        feed.retrieve(*symbols, timeframe = tf)
+        println(feed.timeline.size)
+        Thread.sleep(100) // let's play nice and not overload things
+    }
+    println(feed.assets.summary())
+    println(feed.timeline.size)
+    println(feed.timeframe)
+
+    // Now we store it in a local Avro file for later reuse
+    AvroFeed.record(feed, "/tmp/forex_pricebar_v5.1.avro")
+}
+
+
+
 fun forexAvro() {
     val feed = AvroFeed("/tmp/forex_march_2020.avro")
     Config.exchangeRates = OANDAExchangeRates()
@@ -203,13 +225,14 @@ fun oandaBroker2(createOrder: Boolean = false) {
 }
 
 fun main() {
-    when ("OANDA_BROKER2") {
+    when ("OANDA_RECORD2") {
         "OANDA_BROKER" -> oandaBroker()
         "OANDA_BROKER2" -> oandaBroker2()
         "OANDA_BROKER3" -> oandaBroker3()
         "OANDA_FEED" -> oandaHistoricFeed()
         "OANDA_EXCHANGE_RATES" -> oandaExchangeRates()
         "OANDA_RECORD" -> oandaRecord()
+        "OANDA_RECORD2" -> oandaRecord2()
         "OANDA_AVRO" -> forexAvro()
         "OANDA_LIVE_PRICEBAR" -> oandaLivePriceBar()
         "OANDA_LIVE_ORDERBOOK" -> oandaLiveOrderBook()

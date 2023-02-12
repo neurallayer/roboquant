@@ -226,7 +226,7 @@ class AvroFeed(private val path: Path) : Feed {
         }
 
         /**
-         * Get an AvroFeed containing 1 minute [PriceBar] data for EUR/USD and GPB/USD currency pair.
+         * Get an AvroFeed containing 1 minute [PriceBar] data for EUR/USD currency pair.
          */
         fun forex(): AvroFeed {
             val path = download(forexFile)
