@@ -19,6 +19,7 @@ package org.roboquant.orders
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Size
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class BracketOrderTest {
@@ -44,8 +45,8 @@ internal class BracketOrderTest {
         val size = Size(10)
         val order = BracketOrder.marketTrailStop(asset, size, 100.0, 0.05, 0.01)
         assertTrue(order.entry is MarketOrder)
-        assertTrue(order.stopLoss is StopOrder)
-        assertTrue(order.takeProfit is LimitOrder)
+        assertEquals(100.0 * 0.99,  (order.stopLoss as StopOrder).stop)
+        assertEquals(0.05,  (order.takeProfit as TrailOrder).trailPercentage)
     }
 
 }
