@@ -54,14 +54,17 @@ private class SP500 : Universe {
 
     init {
         val stream = SP500::class.java.getResourceAsStream("/sp500.csv")!!
-        val content = String(stream.readAllBytes(), StandardCharsets.UTF_8)
-        stream.close()
-        val builder = NamedCsvReader.builder().fieldSeparator(';').build(content)
-        val us = Exchange.getInstance("US")
-        assets = builder.map { Asset(it.getField("Symbol"), currency = USD, exchange = us) }
+        stream.use {inputStream ->
+            val content = String(inputStream.readAllBytes(), StandardCharsets.UTF_8)
+            val builder = NamedCsvReader.builder().fieldSeparator(';').build(content)
+            val us = Exchange.getInstance("US")
+            assets = builder.map { Asset(it.getField("Symbol"), currency = USD, exchange = us) }
+        }
     }
 
-
+    /**
+     * Return the SP500 stocks (for now ignoring the time).
+     */
     override fun getAssets(time: Instant): List<Asset> {
         return assets
     }

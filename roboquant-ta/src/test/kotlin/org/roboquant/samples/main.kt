@@ -38,9 +38,7 @@ import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.NoSignalStrategy
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
-import org.roboquant.ta.BettingAgainstBetaPolicy
-import org.roboquant.ta.TaLibMetric
-import org.roboquant.ta.TaLibSignalStrategy
+import org.roboquant.ta.*
 
 
 fun beta() {
@@ -149,6 +147,7 @@ fun customPolicy() {
     roboquant.run(feed)
     println(roboquant.broker.account.summary())
 }
+
 
 @Suppress("KotlinConstantConditions")
 fun main() {

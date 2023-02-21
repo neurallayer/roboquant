@@ -41,7 +41,7 @@ class Exchange private constructor(
 
     /**
      * Returns true if the two provided times ([first] and [second]) belong to the same trading day. They can be
-     * outside trading hours as long as they are in the same calendar day.
+     * outside trading hours as long as they are in the same calendar day with respect to the [zoneId] of the exchange.
      */
     fun sameDay(first: Instant, second: Instant): Boolean {
         val dt1 = LocalDate.ofInstant(first, zoneId)

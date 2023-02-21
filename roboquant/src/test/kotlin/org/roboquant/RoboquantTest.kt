@@ -22,6 +22,7 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.common.ParallelJobs
 import org.roboquant.common.RoboquantException
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
@@ -146,6 +147,23 @@ internal class RoboquantTest {
 
         assertEquals(lastHistory1, lastHistory2)
     }
+
+
+    @Test
+    fun massiveParallel() {
+        val feed = TestData.feed
+        val jobs = ParallelJobs()
+
+        repeat(50) {
+            jobs.add {
+                val roboquant = Roboquant(EMAStrategy(), logger = SilentLogger())
+                roboquant.runAsync(feed)
+            }
+        }
+        jobs.joinAllBlocking()
+
+    }
+
 
     @Test
     fun prices() {
