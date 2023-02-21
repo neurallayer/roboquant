@@ -55,7 +55,9 @@ class BracketOrder(
 
     override fun info() = sortedMapOf("entry" to entry, "takeProfit" to takeProfit, "stopLoss" to "stopLoss")
 
-
+    /**
+     * Common bracket-orders
+     */
     companion object {
 
         /**

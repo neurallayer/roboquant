@@ -175,6 +175,9 @@ abstract class Chart : HTMLOutput() {
             }
         }
 
+        /**
+         * Get the HTML script tag that contains all the required JavaScript embedded for the chart solution.
+         */
         fun getScript(): String {
             val stream = Companion::class.java.getResourceAsStream("/js/echarts.min.js")!!
             val js = String(stream.readAllBytes(), StandardCharsets.UTF_8)

@@ -227,7 +227,7 @@ val Collection<Position>.closeSizes: Map<Asset, Size>
     get() = diff(emptyList())
 
 
-fun Collection<Position>.lines(): List<List<Any>> {
+private fun Collection<Position>.lines(): List<List<Any>> {
     val lines = mutableListOf<List<Any>>()
     lines.add(
         listOf(

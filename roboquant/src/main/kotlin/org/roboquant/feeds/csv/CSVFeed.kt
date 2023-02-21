@@ -66,6 +66,9 @@ class CSVFeed(
         logger.info { "events=${timeline.size} assets=${assets.size} timeframe=$timeframe" }
     }
 
+    /**
+     * Predefined CSVFeed configurations for common market data providers
+     */
     companion object {
 
         /**
