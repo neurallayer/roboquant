@@ -6,25 +6,27 @@ import org.roboquant.common.Timeframe
 import java.util.*
 
 /**
- * Combines several feeds into a single new feed. It works both with historic feeds and live feeds, however it may cause
- * delay in the delivery of events in live feeds. If you don't want this, use [CombinedLiveFeed] instead.
+ * Combines several feeds into a single new feed. It works both with historic feeds and live feeds. However, it may
+ * cause delay in the delivery of events in live feeds. If you don't want this, use [CombinedLiveFeed] instead.
  *
- * @property feeds
- * @property channelCapacity the channel capacity to use per feed.
- * @constructor Create empty Relay channel
+ * @property feeds the feeds to combine in a single new feed
+ * @property channelCapacity the channel capacity to use per feed
+ * @constructor Create new Combined Feed
  */
 class CombinedFeed(vararg val feeds: Feed, private val channelCapacity:Int = 1) : Feed {
 
     private data class QueueEntry(val event: Event, val channel: EventChannel) : Comparable<QueueEntry> {
 
-        override fun compareTo(other: QueueEntry): Int {
-            return event.compareTo(other.event)
-        }
+        override fun compareTo(other: QueueEntry) = event.compareTo(other.event)
 
     }
 
+    init {
+        require(channelCapacity >= 1) { "channelCapacity should be >= 1"}
+    }
+
     /**
-     * Return the total timeframe of all feeds combined
+     * Return the total timeframe of all the feeds combined
      */
     override val timeframe: Timeframe
         get() {
@@ -52,6 +54,8 @@ class CombinedFeed(vararg val feeds: Feed, private val channelCapacity:Int = 1) 
         while (queue.isNotEmpty()) {
             val (event, channel) = queue.remove()
             mainChannel.send(event)
+
+            // Try to fill the queue with a new event from the channel that was just consumed.
             try {
                 val newEvent = channel.receive()
                 val entry = QueueEntry(newEvent, channel)
