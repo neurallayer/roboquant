@@ -9,7 +9,6 @@ There are two ways to use roboquant:
 . As a library in your own Kotlin or Java application. If you plan to develop large and complex trading strategies, this is the good approach since you have the full power of an IDE like IntelliJ IDEA at your disposal.
 
 == Jupyter Notebook
-
 If you have already Docker installed, it only takes a single command to have a fully functional Jupyter Lab environment available:
 
 [source,shell]
@@ -119,7 +118,7 @@ WARNING: If the artefact cannot be found in your local Maven repository during a
 
 
 == Documentation
-There is a special `doc` profile to generate documentation and see if there is something missing
+There is a special `doc` profile to generate documentation and see if there is something missing. You can run the following command to find missing documentation:
 
 [source, shell]
 ----

@@ -72,6 +72,19 @@ Add the following dependency to your `pom.xml` file:
 </dependency>
 ----
 
+or if you want to create your own new algo-trading project from scratch, you can run a Maven Archetype:
+
+[source,shell]
+----
+mvn archetype:generate                          \
+-DarchetypeGroupId=org.roboquant                \
+-DarchetypeArtifactId=roboquant-quickstart      \
+-DarchetypeVersion=1.0                          \
+-DgroupId=org.mydomain                          \
+-DartifactId=myapp                              \
+-Dversion=1.0-SNAPSHOT
+----
+
 ==== Gradle
 Add the following line to your gradle script:
 [source,groovy]
@@ -91,7 +104,7 @@ You can interactively develop your own stategies using a Jupyter Notebook.
 
 image:/docs/jupyter_screenshot.png[Jupyter Lab]
 
-If you just want to try it out without any installation, go to image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=tree/notebooks/,window=_blank]
+If you just want to try it out without any installation, go to image:https://mybinder.org/badge_logo.svg[Binder,link=https://mybinder.org/v2/gh/neurallayer/roboquant-notebook/main?urlpath=lab/tree/notebooks/,window=_blank]
 
 If you already have Docker installed, all it takes is a single command to have a fully functional Jupyter Notebook environment available on your local machine. This image also comes with several example notebooks included.
 
