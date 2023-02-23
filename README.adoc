@@ -79,7 +79,7 @@ or if you want to create your own new algo-trading project from scratch, you can
 mvn archetype:generate                          \
 -DarchetypeGroupId=org.roboquant                \
 -DarchetypeArtifactId=roboquant-quickstart      \
--DarchetypeVersion=1.0                          \
+-DarchetypeVersion=1.1.0                        \
 -DgroupId=org.mydomain                          \
 -DartifactId=myapp                              \
 -Dversion=1.0-SNAPSHOT
