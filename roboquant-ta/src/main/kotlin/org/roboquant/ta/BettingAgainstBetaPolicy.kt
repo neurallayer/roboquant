@@ -24,12 +24,9 @@ import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
-import org.roboquant.strategies.Signal
-import org.roboquant.common.PriceSerie
-import org.roboquant.common.addAll
 import org.roboquant.policies.BasePolicy
+import org.roboquant.strategies.Signal
 import java.time.Instant
-import kotlin.math.floor
 import kotlin.math.min
 
 /**
@@ -89,6 +86,7 @@ open class BettingAgainstBetaPolicy(
         return betas
     }
 
+
     /**
      * Re-balance the portfolio based on the calculated betas.
      *
@@ -104,15 +102,19 @@ open class BettingAgainstBetaPolicy(
         // exposure per position.
         val exposure = account.equity.convert(account.baseCurrency, time = event.time) / (max * 2)
 
+        fun getPosition(asset: Asset, price: Double, direction: Int) : Position? {
+            val assetAmount = exposure.convert(asset.currency, event.time).value
+            val size = asset.contractSize(assetAmount, price) * direction
+            return if (! size.iszero) Position(asset, size) else null
+        }
+
         val targetPortfolio = mutableListOf<Position>()
         // Generate the long positions assets with a low beta
         betas.subList(0, max).forEach { (asset, _) ->
             val price = event.getPrice(asset)
             if (price != null) {
-                val assetAmount = exposure.convert(asset.currency, event.time).value
-                val singleContractValue = asset.value(Size.ONE, price).value
-                val holding = floor(assetAmount / singleContractValue).toInt()
-                if (holding != 0) targetPortfolio.add(Position(asset, Size(holding)))
+                val position = getPosition(asset, price, 1)
+                targetPortfolio.addNotNull(position)
             }
         }
 
@@ -120,10 +122,8 @@ open class BettingAgainstBetaPolicy(
         betas.reversed().subList(0, max).forEach { (asset, _) ->
             val price = event.getPrice(asset)
             if (price != null) {
-                val assetAmount = exposure.convert(asset.currency, event.time).value
-                val singleContractValue = asset.value(Size.ONE, price).value
-                val holding = floor(assetAmount / singleContractValue).toInt()
-                if (holding != 0) targetPortfolio.add(Position(asset, Size(-holding)))
+                val position = getPosition(asset, price, -1)
+                targetPortfolio.addNotNull(position)
             }
         }
 
@@ -135,7 +135,7 @@ open class BettingAgainstBetaPolicy(
     }
 
     /**
-     * Override this method if you want to override the default creation of MarketOrders with a different
+     * Override this method if you want to change the default creation of [MarketOrder] with a different
      * order type like LimitOrders. Return null if you don't want to create an order for a certain asset.
      */
     open fun createOrder(asset: Asset, size: Size, account: Account, event: Event): Order? {

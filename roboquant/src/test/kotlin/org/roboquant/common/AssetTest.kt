@@ -22,10 +22,23 @@ import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class AssetTest {
 
+    @Test
+    fun basic() {
+        val a = Asset("ABC")
+        val b = Asset("XYZ")
+        val c = Asset("ABC")
+        val d = Asset("ABC", AssetType.BOND)
+
+        assertEquals("ABC", a.symbol)
+        assertEquals(a, c)
+        assertNotEquals(b, c)
+        assertNotEquals(c, d)
+    }
 
     @Test
     fun testAssetTypeConstructors() {
@@ -71,6 +84,19 @@ internal class AssetTest {
 
         val e = emptyList<Asset>()
         assertContains(e.summary().toString(), "EMPTY")
+    }
+
+    @Test
+    fun contractSize() {
+        val a = Asset("ABC", multiplier = 100.0)
+        val s = a.contractSize(1000.0, 1.0)
+        assertEquals(Size(10), s)
+
+        val s2 = a.contractSize(1000.0, 1.0, 4)
+        assertEquals(Size(10), s2)
+
+        val s3 = a.contractSize(250.0, 1.0, 4)
+        assertEquals(Size("2.5"), s3)
     }
 
 }

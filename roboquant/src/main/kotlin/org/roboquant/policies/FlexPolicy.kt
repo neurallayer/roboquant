@@ -25,8 +25,6 @@ import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.orders.contains
 import org.roboquant.strategies.Signal
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.time.Instant
 
 /**
@@ -85,9 +83,7 @@ open class FlexPolicy(
      * This method will only be invoked if the signal is not reducing a position.
      */
     open fun calcSize(amount: Double, signal: Signal, price: Double): Size {
-        val singleContractPrice = signal.asset.value(Size.ONE, price).value
-        val size = BigDecimal(amount / singleContractPrice).setScale(fractions, RoundingMode.DOWN)
-        return Size(size) * signal.rating.direction
+        return signal.asset.contractSize(amount, price, fractions) * signal.rating.direction
     }
 
     /**

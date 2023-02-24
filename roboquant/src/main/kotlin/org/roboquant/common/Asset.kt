@@ -18,6 +18,7 @@
 package org.roboquant.common
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -69,7 +70,6 @@ data class Asset(
      * generate the appropriate symbol name.
      */
     companion object {
-
 
         /**
          * Returns an option contract using the OCC (Options Clearing Corporation) option symbol standard.
@@ -162,6 +162,15 @@ data class Asset(
         return symbol.compareTo(other.symbol)
     }
 
+    /**
+     * Calculate the contract size for a given [amount] and [price]. It supports fractional sizes by providing a
+     * number of [fractions] bigger than 0. When rounding is required, this will always round down.
+     */
+    fun contractSize(amount: Double, price: Double, fractions: Int = 0): Size {
+        val singleContractPrice = value(Size.ONE, price).value
+        val size = BigDecimal(amount / singleContractPrice).setScale(fractions, RoundingMode.DOWN)
+        return Size(size)
+    }
 
 }
 
