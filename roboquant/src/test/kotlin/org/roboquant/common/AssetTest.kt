@@ -46,7 +46,13 @@ internal class AssetTest {
         assertEquals("SPX   141122P00019500", a.symbol)
 
         val b = Asset.futureContract("GC", 'Z', 18)
+        val b2 = Asset.futureContract("GC", 'Z', 2018)
         assertEquals("GCZ18", b.symbol)
+        assertEquals(b, b2)
+
+        assertThrows<IllegalArgumentException> {
+            Asset.futureContract("GC", 'P', 18)
+        }
 
         val c = Asset.forexPair("EUR_USD")
         assertEquals("EUR/USD", c.symbol)

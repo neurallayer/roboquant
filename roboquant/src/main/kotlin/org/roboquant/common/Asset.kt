@@ -33,6 +33,7 @@ import java.time.format.DateTimeFormatter
  * instance is immutable.
  *
  * @property symbol none empty symbol name, for derivatives like options or futures contract this includes the details
+ * that identify the contract
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currency currency, default is [Currency.USD]
  * @property exchange Exchange this asset is traded on, default is [Exchange.DEFAULT]
@@ -90,6 +91,7 @@ data class Asset(
             exchangeCode: String = "",
             id: String = ""
         ): Asset {
+            require(type in setOf('P', 'C')) { "Type should be P or C"}
             val formatter = DateTimeFormatter.ofPattern("yyMMdd")
             val optionSymbol = "%-6s".format(symbol.uppercase()) +
                     expiration.format(formatter) +
@@ -111,7 +113,10 @@ data class Asset(
             multiplier: Double = 1.0,
             id: String = ""
         ): Asset {
-            val futureSymbol = "$symbol$month$year"
+            val months = listOf('F', 'G', 'H', 'J', 'K', 'M', 'N', 'Q', 'U', 'V', 'X', 'Z')
+            require(month in months) { "$month not one of $months" }
+            val yearCode = year.toString()
+            val futureSymbol = "$symbol$month${yearCode.takeLast(2)}"
             return Asset(futureSymbol, AssetType.FUTURES, currencyCode, exchangeCode, multiplier, id)
         }
 
@@ -122,7 +127,8 @@ data class Asset(
             Asset("$base/$quote", AssetType.CRYPTO, quote, exchangeCode)
 
         /**
-         * Returns a forex currency pair asset based on the provided [symbol].
+         * Returns a forex currency pair asset based on the provided [symbol]. This method will try to determine the
+         * base and quote currency based on the provided symbol name.
          */
         fun forexPair(symbol: String): Asset {
             val codes = symbol.split('_', '-', ' ', '/', ':')
@@ -145,7 +151,7 @@ data class Asset(
 
 
     /**
-     * What is the value of the asset given the provided [size] and [price]. The calculation takes the [multiplier]
+     * Return the value of the asset given the provided [size] and [price]. The calculation takes the [multiplier]
      * of the asset into account.
      */
     fun value(size: Size, price: Double): Amount {
@@ -163,12 +169,14 @@ data class Asset(
     }
 
     /**
-     * Calculate the contract size for a given [amount] and [price]. It supports fractional sizes by providing a
-     * number of [fractions] bigger than 0. When rounding is required, this will always round down.
+     * Return the contract size for a given [amount] and [price]. The provided amount and price should be denoted in
+     * the currency of the asset. When rounding is required, this method will always round down.
+     *
+     * It supports fractional sizes by providing a number of [fractions] bigger than 0.
      */
     fun contractSize(amount: Double, price: Double, fractions: Int = 0): Size {
-        val singleContractPrice = value(Size.ONE, price).value
-        val size = BigDecimal(amount / singleContractPrice).setScale(fractions, RoundingMode.DOWN)
+        val singleContractValue = value(Size.ONE, price).value
+        val size = BigDecimal(amount / singleContractValue).setScale(fractions, RoundingMode.DOWN)
         return Size(size)
     }
 
