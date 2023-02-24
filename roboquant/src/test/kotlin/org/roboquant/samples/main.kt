@@ -217,10 +217,10 @@ fun forexRun() {
 
 suspend fun main() {
     Config.printInfo()
-
+    
     when ("FOREX_RUN") {
         "SIMPLE" -> simple()
-        "CSV2AVRO" -> csv2Avro("/Users/peter/data/stooq/daily/us", false)
+        "CSV2AVRO" -> csv2Avro("/tmp/daily/us", false)
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
         "MC" -> multiCurrency()
