@@ -19,6 +19,7 @@ package org.roboquant.feeds
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
+import org.roboquant.common.USD
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -35,6 +36,7 @@ internal class PriceActionTest {
         assertEquals(3.0, p.bidSize)
         var price = p.getPrice()
         assertEquals(9.5, price)
+        assertEquals(9.5.USD, p.getPriceAmount())
 
         price = p.getPrice("WEIGHTED")
         assertEquals(9.25, price)

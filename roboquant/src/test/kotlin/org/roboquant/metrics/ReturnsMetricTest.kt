@@ -20,9 +20,12 @@ import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.common.months
+import org.roboquant.feeds.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.loggers.MemoryLogger
+import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
+import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
 internal class ReturnsMetricTest {
@@ -33,6 +36,15 @@ internal class ReturnsMetricTest {
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(account, event)
         assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun basic2() {
+        val metric = ReturnsMetric2(minSize = 250)
+        val feed = RandomWalkFeed.lastYears(2)
+        val rq = Roboquant(EMAStrategy(), metric, logger = MemoryLogger(showProgress = false))
+        rq.run(feed)
+        assertContains(rq.logger.metricNames, "returns.sharperatio")
     }
 
     @Test
