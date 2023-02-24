@@ -303,7 +303,7 @@
                     </executions>
                     <configuration>
                         <args>
-                            <!-- arg>-Xuse-k2</arg -->
+                            <!-- arg>-language-version=2.0</arg -->
                             <!-- arg>-Xbackend-threads=0</arg -->
                             <!-- arg>-Xcontext-receivers</arg -->
                             <!-- arg>-Xexplicit-api=strict</arg -->
