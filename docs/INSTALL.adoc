@@ -92,7 +92,7 @@ If you want to deploy a release (and not just a SNAPSHOT) to Maven Central, use 
 mvn clean deploy -P release
 ----
 
-Of course this requires the having the right credentials for deploying to the Maven Central repo. Also note that autoReleaseAfterClose is set to false, meaning that if everything was sucessfull, you still need to (manually) release the software.
+Of course this requires the having the right credentials for deploying to the Maven Central repo. Also note that `autoReleaseAfterClose` of the `nexus-staging-maven-plugin` is set to false, meaning that if the deployment was sucessfull, you still need to (manually) release the software from staging to production.
 
 == Interactive Brokers
 If you don't require integration with Interactive Brokers for your trading, you can skip this step.
@@ -107,7 +107,7 @@ Then install the jar file in the local Maven repository on your machine using th
 mvn install:install-file -Dfile=TwsApi.jar -DgroupId=com.interactivebrokers -DartifactId=tws-api -Dversion=10.19 -Dpackaging=jar
 ----
 
-After this step, you can install the modules including the `roboquant-ibkr` module
+After this step, you can compile and install the modules including the `roboquant-ibkr` module
 
 [source, shell]
 ----
