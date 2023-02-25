@@ -46,7 +46,7 @@ class MetricChart(
     /**
      * Identify common suffix (same run/phase), so they can be removed from the series name
      */
-    private fun commonSuffix(keys: Set<String>) : String {
+    private fun commonSuffix(keys: Set<String>): String {
         if (keys.isEmpty()) return ""
         val parts = keys.first().split("/")
 

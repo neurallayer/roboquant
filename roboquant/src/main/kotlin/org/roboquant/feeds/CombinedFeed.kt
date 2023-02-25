@@ -13,7 +13,7 @@ import java.util.*
  * @property channelCapacity the channel capacity to use per feed
  * @constructor Create new Combined Feed
  */
-class CombinedFeed(vararg val feeds: Feed, private val channelCapacity:Int = 1) : Feed {
+class CombinedFeed(vararg val feeds: Feed, private val channelCapacity: Int = 1) : Feed {
 
     private data class QueueEntry(val event: Event, val channel: EventChannel) : Comparable<QueueEntry> {
 
@@ -22,7 +22,7 @@ class CombinedFeed(vararg val feeds: Feed, private val channelCapacity:Int = 1) 
     }
 
     init {
-        require(channelCapacity >= 1) { "channelCapacity should be >= 1"}
+        require(channelCapacity >= 1) { "channelCapacity should be >= 1" }
     }
 
     /**

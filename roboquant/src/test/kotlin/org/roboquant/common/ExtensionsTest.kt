@@ -97,13 +97,13 @@ class ExtensionsTest {
     @Test
     fun instant() {
         val t = Instant.now()
-        assertTrue( t > Timeframe(t, t))
-        assertFalse( t < Timeframe(t, t))
+        assertTrue(t > Timeframe(t, t))
+        assertFalse(t < Timeframe(t, t))
 
-        assertFalse(t > Timeframe(t,t, true))
-        assertFalse(t < Timeframe(t,t, true))
+        assertFalse(t > Timeframe(t, t, true))
+        assertFalse(t < Timeframe(t, t, true))
 
-        assertTrue(t in Timeframe(t,t, true))
-        assertFalse(t in Timeframe(t,t))
+        assertTrue(t in Timeframe(t, t, true))
+        assertFalse(t in Timeframe(t, t))
     }
 }

@@ -203,7 +203,7 @@ fun forexRun() {
 
     for (trade in rq.broker.account.trades) {
         val tf = Timeframe(trade.time, trade.time, true)
-        val pricebar = feed.filter<PriceAction>(timeframe = tf).firstOrNull { it.second.asset == trade.asset}
+        val pricebar = feed.filter<PriceAction>(timeframe = tf).firstOrNull { it.second.asset == trade.asset }
         if (pricebar == null) {
             println(trade)
             println(feed.filter<PriceAction>(timeframe = tf))
@@ -217,7 +217,7 @@ fun forexRun() {
 
 suspend fun main() {
     Config.printInfo()
-    
+
     when ("FOREX_RUN") {
         "SIMPLE" -> simple()
         "CSV2AVRO" -> csv2Avro("/tmp/daily/us", false)

@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets
  */
 class MetricsReport(
     private val roboquant: Roboquant,
-    maxSamples : Int = 10_000
+    maxSamples: Int = 10_000
 ) : HTMLOutput() {
 
     init {
@@ -82,7 +82,7 @@ class MetricsReport(
         """.trimIndent()
     }
 
-    private fun loadStyle() : String {
+    private fun loadStyle(): String {
         val stream = this::class.java.getResourceAsStream("/css/report.css")!!
         return String(stream.readAllBytes(), StandardCharsets.UTF_8)
     }

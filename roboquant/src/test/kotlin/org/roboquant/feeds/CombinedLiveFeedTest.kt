@@ -87,5 +87,4 @@ internal class CombinedLiveFeedTest {
     }
 
 
-
 }

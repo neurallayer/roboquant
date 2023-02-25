@@ -44,7 +44,6 @@ interface Universe {
          */
         val sp500: Universe by lazy { SP500() }
 
-
     }
 }
 
@@ -54,7 +53,7 @@ private class SP500 : Universe {
 
     init {
         val stream = SP500::class.java.getResourceAsStream("/sp500.csv")!!
-        stream.use {inputStream ->
+        stream.use { inputStream ->
             val content = String(inputStream.readAllBytes(), StandardCharsets.UTF_8)
             val builder = NamedCsvReader.builder().fieldSeparator(';').build(content)
             val us = Exchange.getInstance("US")

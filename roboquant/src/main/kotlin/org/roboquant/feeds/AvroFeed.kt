@@ -99,8 +99,8 @@ class AvroFeed(private val path: Path) : Feed {
     private fun position(r: DataFileReader<GenericRecord>, time: Instant) {
         val idx = index.binarySearch { it.first.compareTo(time) }
         when {
-           idx > 0 -> r.seek(index[idx-1].second)
-           idx < -1 ->  r.seek(index[-idx-2].second)
+            idx > 0 -> r.seek(index[idx - 1].second)
+            idx < -1 -> r.seek(index[-idx - 2].second)
         }
     }
 

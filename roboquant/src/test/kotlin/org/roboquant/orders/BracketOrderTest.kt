@@ -45,8 +45,8 @@ internal class BracketOrderTest {
         val size = Size(10)
         val order = BracketOrder.marketTrailStop(asset, size, 100.0, 0.05, 0.01)
         assertTrue(order.entry is MarketOrder)
-        assertEquals(100.0 * 0.99,  (order.stopLoss as StopOrder).stop)
-        assertEquals(0.05,  (order.takeProfit as TrailOrder).trailPercentage)
+        assertEquals(100.0 * 0.99, (order.stopLoss as StopOrder).stop)
+        assertEquals(0.05, (order.takeProfit as TrailOrder).trailPercentage)
     }
 
 }

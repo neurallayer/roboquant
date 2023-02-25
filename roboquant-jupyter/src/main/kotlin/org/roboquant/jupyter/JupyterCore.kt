@@ -69,7 +69,9 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
  */
 var legacyNotebookMode: Boolean
     get() = JupyterCore.isolation
-    set(value) { JupyterCore.isolation = value}
+    set(value) {
+        JupyterCore.isolation = value
+    }
 
 /**
  * Integration with Kotlin based Jupyter notebook kernels. Some main features:

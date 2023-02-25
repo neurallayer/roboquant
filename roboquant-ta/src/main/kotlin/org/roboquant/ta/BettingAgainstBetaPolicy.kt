@@ -102,10 +102,10 @@ open class BettingAgainstBetaPolicy(
         // exposure per position.
         val exposure = account.equity.convert(account.baseCurrency, time = event.time) / (max * 2)
 
-        fun getPosition(asset: Asset, price: Double, direction: Int) : Position? {
+        fun getPosition(asset: Asset, price: Double, direction: Int): Position? {
             val assetAmount = exposure.convert(asset.currency, event.time).value
             val size = asset.contractSize(assetAmount, price) * direction
-            return if (! size.iszero) Position(asset, size) else null
+            return if (!size.iszero) Position(asset, size) else null
         }
 
         val targetPortfolio = mutableListOf<Position>()

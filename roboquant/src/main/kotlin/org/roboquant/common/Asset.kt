@@ -91,7 +91,7 @@ data class Asset(
             exchangeCode: String = "",
             id: String = ""
         ): Asset {
-            require(type in setOf('P', 'C')) { "Type should be P or C"}
+            require(type in setOf('P', 'C')) { "Type should be P or C" }
             val formatter = DateTimeFormatter.ofPattern("yyMMdd")
             val optionSymbol = "%-6s".format(symbol.uppercase()) +
                     expiration.format(formatter) +

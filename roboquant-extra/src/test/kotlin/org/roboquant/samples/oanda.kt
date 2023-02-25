@@ -92,7 +92,6 @@ fun oandaRecord2() {
 }
 
 
-
 fun forexAvro() {
     val feed = AvroFeed("/tmp/forex_march_2020.avro")
     Config.exchangeRates = OANDAExchangeRates()

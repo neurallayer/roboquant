@@ -21,7 +21,7 @@ import java.io.File
 /**
  * Base class for anything that can output HTML
  */
-abstract class HTMLOutput  {
+abstract class HTMLOutput {
 
 
     /**
