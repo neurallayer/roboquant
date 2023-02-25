@@ -92,7 +92,7 @@ If you want to deploy a release (and not just a SNAPSHOT) to Maven Central, use 
 mvn clean deploy -P release
 ----
 
-Of course this requires the having the right credentials for deploying to the Maven Central repo.
+Of course this requires the having the right credentials for deploying to the Maven Central repo. Also note that autoReleaseAfterClose is set to false, meaning that if everything was sucessfull, you still need to (manually) release the software.
 
 == Interactive Brokers
 If you don't require integration with Interactive Brokers for your trading, you can skip this step.
