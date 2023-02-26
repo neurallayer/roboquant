@@ -1,7 +1,6 @@
 = Installation
 :icons: font
 
-
 There are two ways to use roboquant:
 
 . Interactively in a Jupyter notebook. If you want to get up and running quickly, and want to experiment with many strategies, this is the best approach. Additionally, you get many charts out-of-the-box.
