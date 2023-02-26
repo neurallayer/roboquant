@@ -40,7 +40,11 @@ import kotlin.test.Test
 internal class PerformanceTest {
 
     private val check = "TEST_PERFORMANCE"
+    private val concurrency = "PARALLEL"
     private val logger = Logging.getLogger(PerformanceTest::class)
+
+
+    private val parallel = Config.getProperty(concurrency)?.toInt() ?: 4
 
     /**
      * Try to make the results more reproducible by running the code multiple times and take best timing.
@@ -105,14 +109,13 @@ internal class PerformanceTest {
 
 
     /**
-     * Parallel tests (4) with minimal overhead
+     * Parallel tests
      */
     private fun parallelRuns(feed: HistoricFeed): Long {
 
         return measure {
             val jobs = ParallelJobs()
-
-            repeat(4) {
+            repeat(parallel) {
                 jobs.add {
                     val roboquant = Roboquant(EMAStrategy(), logger = SilentLogger())
                     roboquant.runAsync(feed)
@@ -124,16 +127,16 @@ internal class PerformanceTest {
 
     private fun log(name: String, t: Long) =
         logger.info {
-            "    %-18s%8d ms".format(name, t)
+            "    %-19s%8d ms".format(name, t)
         }
 
     private fun run(feed: HistoricFeed) {
         val priceBars = feed.assets.size * feed.timeline.size
         val size = "%,10d".format(priceBars)
-        logger.info("**** $size candlesticks ****")
+        logger.info("**** $size candlesticks  ****")
         log("feed filter", feedFilter(feed))
         log("base run", baseRun(feed))
-        log("parallel runs (x4)", parallelRuns(feed))
+        log("parallel runs (x$parallel)", parallelRuns(feed))
         log("extended run", extendedRun(feed))
     }
 
@@ -177,6 +180,5 @@ internal class PerformanceTest {
         val feed = getFeed(10_000, 1_000)
         run(feed)
     }
-
 
 }
