@@ -132,11 +132,6 @@ internal class PerformanceTest {
             "    %-20s%8d ms".format(name, t)
         }
 
-    private fun log2(name: String, t: Long) =
-        logger.info {
-            "    %-20s%8d Mbars/s".format(name, t)
-        }
-
     private fun run(feed: HistoricFeed) {
         val priceBars = feed.assets.size * feed.timeline.size
         val size = "%,10d".format(priceBars)
