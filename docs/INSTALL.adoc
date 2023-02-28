@@ -127,13 +127,13 @@ mvn dokka:dokka -P doc | grep WARNING
 Please note the `release` profile has its own dokka task to generate a javadoc jar file.
 
 == Performance Test
-To run the built-in performance test, you can use the following command:
+To run the built-in performance tests, you can use the following command:
 
 [source, shell]
 ----
-mvn test -Dtest="org.roboquant.PerformanceTest" -DTEST_PERFORMANCE -DPARALLEL=4 -pl roboquant
+./mvnw test -P performance -Dparallel=4
 ----
-The `-DPARALLEL=4` flag determines how many parallel runs to use in the performance test (the default is 4 is you don't include this flag). The output will look something like this:
+The `-Dparallel=4 flag determines how many parallel runs to use in the performance test (the default is equal to amount of cores if you don't include this flag). The output will look something like this:
 
 ----
 INFO PerformanceTest - ****    500.000 candlesticks  ****
@@ -157,6 +157,7 @@ INFO PerformanceTest -     base run               1815 ms
 INFO PerformanceTest -     parallel runs (x4)     2060 ms
 INFO PerformanceTest -     extended run          11706 ms
 ----
+
 
 == Mutation Testing
 Although not enabled by default, roboquant also includes the PIT (see also https://PiTest.org) mutation testing plugin. You can use the following command to invoke it:

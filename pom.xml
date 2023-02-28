@@ -68,6 +68,7 @@
         <kotlin.version>1.8.10</kotlin.version>
         <slf4j.version>2.0.6</slf4j.version>
         <ibkr.version>10.19</ibkr.version>
+        <surefire.failIfNoSpecifiedTests>false</surefire.failIfNoSpecifiedTests>
     </properties>
 
     <repositories>
@@ -103,6 +104,15 @@
             </activation>
             <modules>
                 <module>roboquant-ibkr</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>performance</id>
+            <properties>
+                <test>org.roboquant.PerformanceTest</test>
+            </properties>
+            <modules>
+                <module>roboquant</module>
             </modules>
         </profile>
         <profile>
@@ -353,6 +363,9 @@
                     <version>3.0.0-M7</version>
                     <configuration>
                         <consoleOutputReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5ConsoleOutputReporter" />
+                        <excludes>
+                            <exclude>**/*PerformanceTest*</exclude>
+                        </excludes>
                     </configuration>
                 </plugin>
                 <plugin>

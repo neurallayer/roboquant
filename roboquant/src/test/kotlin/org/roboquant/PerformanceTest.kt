@@ -42,8 +42,7 @@ import kotlin.system.measureTimeMillis
  */
 internal class PerformanceTest {
 
-    private val check = "TEST_PERFORMANCE"
-    private val concurrency = "PARALLEL"
+    private val concurrency = "parallel"
     private val logger = Logging.getLogger(PerformanceTest::class)
 
 
@@ -133,14 +132,22 @@ internal class PerformanceTest {
             "    %-20s%8d ms".format(name, t)
         }
 
+    private fun log2(name: String, t: Long) =
+        logger.info {
+            "    %-20s%8d Mbars/s".format(name, t)
+        }
+
     private fun run(feed: HistoricFeed) {
         val priceBars = feed.assets.size * feed.timeline.size
         val size = "%,10d".format(priceBars)
         logger.info("***** $size candlesticks *****")
         log("feed filter", feedFilter(feed))
         log("base run", baseRun(feed))
-        log("parallel runs (x$parallel)", parallelRuns(feed))
+        val p = parallelRuns(feed)
+        log("parallel runs (x$parallel)", p)
         log("extended run", extendedRun(feed))
+        val throughput = priceBars * parallel.toLong() / (p * 1000L)
+        logger.info("    throughput $throughput million candles/s")
     }
 
     private fun getFeed(events: Int, assets: Int): RandomWalkFeed {
@@ -158,8 +165,6 @@ internal class PerformanceTest {
 
     @Test
     fun size1() {
-        Config.getProperty(check) ?: return
-
         // 500_000 candle sticks
         val feed = getFeed(5000, 100)
         run(feed)
@@ -167,8 +172,6 @@ internal class PerformanceTest {
 
     @Test
     fun size2() {
-        Config.getProperty(check) ?: return
-
         // 1_000_000 candle sticks
         val feed = getFeed(10_000, 100)
         run(feed)
@@ -176,8 +179,6 @@ internal class PerformanceTest {
 
     @Test
     fun size3() {
-        Config.getProperty(check) ?: return
-
         // 5_000_000 candle sticks
         val feed = getFeed(10_000, 500)
         run(feed)
@@ -185,11 +186,10 @@ internal class PerformanceTest {
 
     @Test
     fun size4() {
-        Config.getProperty(check) ?: return
-
         // 10_000_000 candle sticks
         val feed = getFeed(10_000, 1_000)
         run(feed)
     }
+
 
 }
