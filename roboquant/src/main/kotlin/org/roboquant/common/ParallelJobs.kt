@@ -33,6 +33,7 @@ import kotlinx.coroutines.*
  */
 class ParallelJobs {
 
+    // Optimized for CPU bound jobs
     private val scope = CoroutineScope(Dispatchers.Default + Job())
     private val jobs = mutableListOf<Job>()
 
@@ -63,7 +64,6 @@ class ParallelJobs {
      * Cancel all the jobs
      */
     fun cancelAll() {
-        // jobs.forEach { it.cancelAndJoin() }
         jobs.forEach { it.cancel() }
         jobs.clear()
     }

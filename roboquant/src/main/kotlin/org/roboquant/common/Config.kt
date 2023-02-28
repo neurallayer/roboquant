@@ -46,22 +46,41 @@ object Config {
     private const val DEFAULT_SEED = 42L
 
     /**
-     * Meta data about build en the environments
+     * @property jvm the JVM name and version
+     * @property os the OS name and version
+     * @property memory the max amount of memory in MB
+     * @property cores the number of cpu cores
+     * @property version the version of roboquant
+     * @property build the build time of roboquant
      */
-    val info: Map<String, String> by lazy {
-        val result = mutableMapOf<String, String>()
-        result["jvm"] = System.getProperty("java.vm.name") + " " + System.getProperty("java.version")
-        result["os"] = System.getProperty("os.name") + " " + System.getProperty("os.version")
-        result["memory"] = (Runtime.getRuntime().maxMemory() / ONE_MB).toString()
+    class EnvInfo internal constructor(
+        val jvm: String,
+        val os: String,
+        val memory: Long,
+        val cores: Int,
+        val version: String,
+        val build: String
+    )
 
+    /**
+     * Metadata about the build en environment
+     */
+    val info: EnvInfo by lazy {
         val prop = Properties()
         val stream = Config::class.java.getResourceAsStream("/roboquant.properties")!!
-        prop.load(stream)
-        stream.close()
-        prop.forEach {
-            result[it.key.toString()] = it.value.toString()
+        stream.use {
+            prop.load(stream)
         }
-        result
+
+        EnvInfo(
+            System.getProperty("java.vm.name") + " " + System.getProperty("java.version"),
+            System.getProperty("os.name") + " " + System.getProperty("os.version"),
+            Runtime.getRuntime().maxMemory() / ONE_MB,
+            Runtime.getRuntime().availableProcessors(),
+            prop.getProperty("version"),
+            prop.getProperty("build")
+        )
+
     }
 
     /**
@@ -99,13 +118,13 @@ object Config {
     fun printInfo() {
         val msg = """             _______
             | $   $ |             roboquant  
-            |   o   |             version: ${info["version"]}  
-            |_[___]_|             build: ${info["build"]}
-        ___ ___|_|___ ___         os: ${info["os"]}       
+            |   o   |             version: ${info.version}  
+            |_[___]_|             build: ${info.build}
+        ___ ___|_|___ ___         os: ${info.os}       
        ()___)       ()___)        home: $home
-      // / |         | \ \\       jvm: ${info["jvm"]}  
-     (___) |_________| (___)      memory: ${info["memory"]}MB 
-      | |   __/___\__   | |
+      // / |         | \ \\       jvm: ${info.jvm}  
+     (___) |_________| (___)      memory: ${info.memory}MB 
+      | |   __/___\__   | |       cpu cores: ${info.cores}  
       /_\  |_________|  /_\
      // \\  |||   |||  // \\
      \\ //  |||   |||  \\ //

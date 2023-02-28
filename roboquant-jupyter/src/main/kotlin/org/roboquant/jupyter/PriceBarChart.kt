@@ -57,7 +57,8 @@ import org.roboquant.feeds.filter
  * by setting [useTime] to false.
  *
  * Besides the prices, you can also provide [trades] to be plotted in the same chart. This will help to visualize when
- * a certain price move triggered a trade.
+ * a certain price move triggered a trade. When supplying trades, the corresponding [Trade.size] will we plotted
+ * as markers.
  */
 class PriceBarChart(
     private val feed: Feed,

@@ -34,8 +34,10 @@ import org.roboquant.feeds.filter
 import java.time.Instant
 
 /**
- * Plot the prices of an [asset] found in the [feed] and optionally the [trades] made for that same asset. This
- * chart supports any type of PriceAction.
+ * Plot the prices of an [asset] found in the [feed] and optionally the [trades] made for that same asset. When
+ * supplying trades, the corresponding [Trade.size] will we plotted as markers.
+ *
+ * This chart supports any type of PriceAction.
  *
  * If you want to plot a candlestick chart, use the [PriceBarChart] instead.
  */

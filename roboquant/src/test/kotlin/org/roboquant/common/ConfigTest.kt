@@ -22,7 +22,7 @@ internal class ConfigTest {
 
     @Test
     fun test() {
-        val version = Config.info.getValue("version")
+        val version = Config.info.version
         assertTrue(version.isNotBlank())
         Config.printInfo()
 

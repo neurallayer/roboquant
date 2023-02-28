@@ -16,6 +16,8 @@
 
 package org.roboquant
 
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
@@ -31,11 +33,12 @@ import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
 import kotlin.system.measureTimeMillis
-import kotlin.test.Test
+
 
 /**
- * Performance test that runs a number of back-tests scenarios against different
- * feed sizes to measure performance and detect possible regressions.
+ * Performance test that runs a number of back-tests scenarios against different feed sizes to measure performance
+ * and detect possible regressions. Each test is run 3 times in order to minimize fluctuations cause by outside events
+ * like virus scanners.
  */
 internal class PerformanceTest {
 
@@ -44,7 +47,7 @@ internal class PerformanceTest {
     private val logger = Logging.getLogger(PerformanceTest::class)
 
 
-    private val parallel = Config.getProperty(concurrency)?.toInt() ?: 4
+    private val parallel = Config.getProperty(concurrency)?.toInt() ?: Config.info.cores
 
     /**
      * Try to make the results more reproducible by running the code multiple times and take best timing.
@@ -127,13 +130,13 @@ internal class PerformanceTest {
 
     private fun log(name: String, t: Long) =
         logger.info {
-            "    %-19s%8d ms".format(name, t)
+            "    %-20s%8d ms".format(name, t)
         }
 
     private fun run(feed: HistoricFeed) {
         val priceBars = feed.assets.size * feed.timeline.size
         val size = "%,10d".format(priceBars)
-        logger.info("**** $size candlesticks  ****")
+        logger.info("***** $size candlesticks *****")
         log("feed filter", feedFilter(feed))
         log("base run", baseRun(feed))
         log("parallel runs (x$parallel)", parallelRuns(feed))
@@ -143,6 +146,14 @@ internal class PerformanceTest {
     private fun getFeed(events: Int, assets: Int): RandomWalkFeed {
         val timeline = Timeframe.fromYears(1901, 2022).toTimeline(1.days).takeLast(events)
         return RandomWalkFeed(timeline, assets)
+    }
+
+    companion object {
+        @BeforeAll
+        @JvmStatic
+        fun info() {
+            Config.printInfo()
+        }
     }
 
     @Test

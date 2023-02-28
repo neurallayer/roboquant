@@ -28,23 +28,21 @@ class Welcome : HTMLOutput() {
      */
     @Suppress("MaxLineLength")
     override fun asHTML(): String {
-        val jvmInfo = Config.info["jvm"]
-        val osInfo = Config.info["os"]
-        val memoryInfo = Config.info["memory"]
-        val date = Config.info["build"]
-        val version = Config.info["version"]
 
-        return """
+        with (Config.info) {
+            return """
             <img src="https://roboquant.org/img/avatar.png" alt="roboquant logo" align="left" style="margin-right: 20px; max-height:160px;"/>
             <span>
                 <b style="color: rgb(50,150,200);font-size: 150%;"> roboquant </b> $version<br>
-                <b> build:</b> $date<br>
+                <b> build:</b> $build<br>
                 <b> home:</b> ${Config.home}<br>
-                <b> os:</b> $osInfo<br>
-                <b> jvm:</b> $jvmInfo<br>
-                <b> memory:</b> $memoryInfo MB<br>
+                <b> os:</b> $os<br>
+                <b> jvm:</b> $jvm<br>
+                <b> memory:</b> $memory MB<br>
+                <b> cpu cores:</b> $cores<br>
             </span>
             """.trimIndent()
+        }
     }
 
     /**
