@@ -104,6 +104,38 @@ inline fun <reified T : Action> Feed.filter(
     return@runBlocking result
 }
 
+
+/**
+ * Convert a feed to a list of events, optionally limited to the provided [timeframe].
+ */
+fun Feed.toList(
+    timeframe: Timeframe = Timeframe.INFINITE,
+): List<Event> = runBlocking {
+
+    val channel = EventChannel(timeframe = timeframe)
+    val result = mutableListOf<Event>()
+
+    val job = launch {
+        play(channel)
+        channel.close()
+    }
+
+    try {
+        while (true) {
+            val event = channel.receive()
+            result.add(event)
+        }
+    } catch (_: ClosedReceiveChannelException) {
+        // Intentionally left empty
+    } finally {
+        channel.close()
+        if (job.isActive) job.cancel()
+    }
+    return@runBlocking result
+}
+
+
+
 /**
  * Validate a feed for possible errors in the prices and return the result in the format Pair<Instant, PriceAction>.
  * Optionally provide a [timeframe] and the [maxDiff] value when to flag a change as an error.

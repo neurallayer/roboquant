@@ -127,37 +127,58 @@ mvn dokka:dokka -P doc | grep WARNING
 Please note the `release` profile has its own dokka task to generate a javadoc jar file.
 
 == Performance Test
-To run the built-in performance tests, you can use the following command:
+To run the built-in performance tests, you can use the following maven command:
 
 [source, shell]
 ----
-./mvnw test -P performance -Dparallel=4
+./mvnw test -P performance -Dparallel=8
 ----
-The `-Dparallel=4 flag determines how many parallel runs to use in the performance test (the default is equal to amount of cores if you don't include this flag). The output will look something like this:
+The optional `-Dparallel=8` flag determines how many parallel runs to use in the performance test. The default is equal to amount of cores if you don't include this flag. The output will look something like this:
 
 ----
-INFO PerformanceTest - ****    500.000 candlesticks  ****
-INFO PerformanceTest -     feed filter              95 ms
-INFO PerformanceTest -     base run                 95 ms
-INFO PerformanceTest -     parallel runs (x4)      148 ms
-INFO PerformanceTest -     extended run            412 ms
-INFO PerformanceTest - ****  1.000.000 candlesticks  ****
-INFO PerformanceTest -     feed filter             170 ms
-INFO PerformanceTest -     base run                187 ms
-INFO PerformanceTest -     parallel runs (x4)      293 ms
-INFO PerformanceTest -     extended run           1397 ms
-INFO PerformanceTest - ****  5.000.000 candlesticks  ****
-INFO PerformanceTest -     feed filter             848 ms
-INFO PerformanceTest -     base run                900 ms
-INFO PerformanceTest -     parallel runs (x4)     1015 ms
-INFO PerformanceTest -     extended run           9577 ms
-INFO PerformanceTest - **** 10.000.000 candlesticks  ****
-INFO PerformanceTest -     feed filter            1849 ms
-INFO PerformanceTest -     base run               1815 ms
-INFO PerformanceTest -     parallel runs (x4)     2060 ms
-INFO PerformanceTest -     extended run          11706 ms
+             _______
+            | $   $ |             roboquant
+            |   o   |             version: 1.2.0-SNAPSHOT
+            |_[___]_|             build: 2023-03-01T12:43:08Z
+        ___ ___|_|___ ___         os: Mac OS X 13.2.1
+       ()___)       ()___)        home: /Users/peter/.roboquant
+      // / |         | \ \\       jvm: OpenJDK 64-Bit Server VM 19.0.2
+     (___) |_________| (___)      memory: 4096MB
+      | |   __/___\__   | |       cpu cores: 8
+      /_\  |_________|  /_\
+     // \\  |||   |||  // \\
+     \\ //  |||   |||  \\ //
+           ()__) ()__)
+           ///     \\\
+        __///_     _\\\__
+       |______|   |______|
+INFO PerformanceTest - *****    500.000 candlesticks *****
+INFO PerformanceTest -     feed filter               10 ms
+INFO PerformanceTest -     base run                  87 ms
+INFO PerformanceTest -     parallel runs (x8)       184 ms
+INFO PerformanceTest -     extended run             571 ms
+INFO PerformanceTest -     throughput 21 million candles/s
+INFO PerformanceTest - *****  1.000.000 candlesticks *****
+INFO PerformanceTest -     feed filter               27 ms
+INFO PerformanceTest -     base run                 181 ms
+INFO PerformanceTest -     parallel runs (x8)       442 ms
+INFO PerformanceTest -     extended run            1598 ms
+INFO PerformanceTest -     throughput 18 million candles/s
+INFO PerformanceTest - *****  5.000.000 candlesticks *****
+INFO PerformanceTest -     feed filter              103 ms
+INFO PerformanceTest -     base run                 513 ms
+INFO PerformanceTest -     parallel runs (x8)       774 ms
+INFO PerformanceTest -     extended run           14420 ms
+INFO PerformanceTest -     throughput 51 million candles/s
+INFO PerformanceTest - ***** 10.000.000 candlesticks *****
+INFO PerformanceTest -     feed filter               92 ms
+INFO PerformanceTest -     base run                 709 ms
+INFO PerformanceTest -     parallel runs (x8)      1198 ms
+INFO PerformanceTest -     extended run           14309 ms
+INFO PerformanceTest -     throughput 66 million candles/s
 ----
 
+The mean purpose is to test the performance and stability of the back-test engine itself, not any specific feed, strategy or metric.
 
 == Mutation Testing
 Although not enabled by default, roboquant also includes the PIT (see also https://PiTest.org) mutation testing plugin. You can use the following command to invoke it:

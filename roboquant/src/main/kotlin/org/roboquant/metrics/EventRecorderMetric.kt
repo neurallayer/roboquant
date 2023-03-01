@@ -19,10 +19,7 @@ package org.roboquant.metrics
 import org.roboquant.brokers.Account
 import org.roboquant.common.Timeframe
 import org.roboquant.common.Timeline
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.EventChannel
-import org.roboquant.feeds.Feed
-import org.roboquant.feeds.timeframe
+import org.roboquant.feeds.*
 import java.util.*
 
 /**
@@ -44,6 +41,7 @@ class EventRecorderMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, F
         if (event.time in limit) events.add(event)
         return emptyMap()
     }
+
 
     /**
      * Reset all state

@@ -21,10 +21,7 @@ import org.junit.jupiter.api.Test
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
-import org.roboquant.feeds.HistoricFeed
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.RandomWalkFeed
-import org.roboquant.feeds.filter
+import org.roboquant.feeds.*
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
@@ -35,17 +32,35 @@ import org.roboquant.strategies.EMAStrategy
 import kotlin.system.measureTimeMillis
 
 
+private class WrappingFeed(feed: Feed) : Feed {
+
+    private val events: List<Event>
+
+    init {
+        events = feed.toList()
+    }
+
+
+    override suspend fun play(channel: EventChannel) {
+        for (event in events) {
+            channel.send(event)
+        }
+    }
+
+}
+
 /**
  * Performance test that runs a number of back-tests scenarios against different feed sizes to measure performance
- * and detect possible regressions. Each test is run 3 times in order to minimize fluctuations cause by outside events
- * like virus scanners.
+ * and detect possible performance regressions. Each test is run 3 times in order to minimize fluctuations cause by
+ * outside events like virus scanners.
+ *
+ * The main purpose is to validate the performance, throughput and stability of the back test engine, not any particular
+ * feed, strategy or metric.
  */
 internal class PerformanceTest {
 
     private val concurrency = "parallel"
     private val logger = Logging.getLogger(PerformanceTest::class)
-
-
     private val parallel = Config.getProperty(concurrency)?.toInt() ?: Config.info.cores
 
     /**
@@ -64,7 +79,7 @@ internal class PerformanceTest {
     /**
      * Basic test with minimal overhead
      */
-    private fun baseRun(feed: HistoricFeed): Long {
+    private fun baseRun(feed: Feed): Long {
         return measure {
             val roboquant = Roboquant(EMAStrategy(), logger = SilentLogger())
             roboquant.run(feed)
@@ -75,7 +90,7 @@ internal class PerformanceTest {
     /**
      * Test iterating over the feed while filtering
      */
-    private fun feedFilter(feed: HistoricFeed): Long {
+    private fun feedFilter(feed: Feed): Long {
         return measure {
             feed.filter<PriceBar> {
                 it.asset.symbol == "NOT_A_MATCH"
@@ -87,11 +102,13 @@ internal class PerformanceTest {
     /**
      * Test with 3 strategies, margin account, shorting, extra metrics and logging overhead included
      */
-    private fun extendedRun(feed: HistoricFeed): Long {
+    private fun extendedRun(feed: Feed): Long {
         return measure {
 
             val strategy = CombinedStrategy(
-                EMAStrategy.PERIODS_5_15, EMAStrategy.PERIODS_12_26, EMAStrategy.PERIODS_50_200
+                EMAStrategy.PERIODS_5_15,
+                EMAStrategy.PERIODS_12_26,
+                EMAStrategy.PERIODS_50_200
             )
 
             val broker = SimBroker(accountModel = MarginAccount())
@@ -113,7 +130,7 @@ internal class PerformanceTest {
     /**
      * Parallel tests
      */
-    private fun parallelRuns(feed: HistoricFeed): Long {
+    private fun parallelRuns(feed: Feed): Long {
 
         return measure {
             val jobs = ParallelJobs()
@@ -132,10 +149,14 @@ internal class PerformanceTest {
             "    %-20s%8d ms".format(name, t)
         }
 
-    private fun run(feed: HistoricFeed) {
-        val priceBars = feed.assets.size * feed.timeline.size
+    private fun run(origFeed: HistoricFeed) {
+        val priceBars = origFeed.assets.size * origFeed.timeline.size
         val size = "%,10d".format(priceBars)
         logger.info("***** $size candlesticks *****")
+
+        // We wrap the feed, so we don't measure the performance of
+        // the random generator of the RandomWalkFeed.
+        val feed = WrappingFeed(origFeed)
         log("feed filter", feedFilter(feed))
         log("base run", baseRun(feed))
         val p = parallelRuns(feed)
@@ -160,6 +181,7 @@ internal class PerformanceTest {
 
     @Test
     fun size1() {
+        Config.getProperty("FULL_COVERAGE") != null && return
         // 500_000 candle sticks
         val feed = getFeed(5000, 100)
         run(feed)
@@ -167,6 +189,7 @@ internal class PerformanceTest {
 
     @Test
     fun size2() {
+        Config.getProperty("FULL_COVERAGE") !=  null && return
         // 1_000_000 candle sticks
         val feed = getFeed(10_000, 100)
         run(feed)
@@ -174,6 +197,7 @@ internal class PerformanceTest {
 
     @Test
     fun size3() {
+        Config.getProperty("FULL_COVERAGE") !=  null && return
         // 5_000_000 candle sticks
         val feed = getFeed(10_000, 500)
         run(feed)
@@ -181,10 +205,13 @@ internal class PerformanceTest {
 
     @Test
     fun size4() {
+        Config.getProperty("FULL_COVERAGE") !=  null && return
         // 10_000_000 candle sticks
         val feed = getFeed(10_000, 1_000)
         run(feed)
     }
+
+
 
 
 }
