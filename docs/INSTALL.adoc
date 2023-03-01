@@ -178,7 +178,7 @@ INFO PerformanceTest -     extended run           14309 ms
 INFO PerformanceTest -     throughput 66 million candles/s
 ----
 
-The mean purpose is to test the performance and stability of the back-test engine itself, not any specific feed, strategy or metric.
+The main purpose is to test the performance and stability of the back-test engine itself, not any specific feed, strategy or metric. So the overhead of those type of components is kept to a minimum, while still running full back tests.
 
 == Mutation Testing
 Although not enabled by default, roboquant also includes the PIT (see also https://PiTest.org) mutation testing plugin. You can use the following command to invoke it:
