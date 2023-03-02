@@ -167,7 +167,7 @@ object Config {
      */
     fun getProperty(name: String, default: String): String {
         logger.trace { "finding property $name" }
-        return properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name] ?: default
+        return getProperty(name) ?: default
     }
 
     /**
@@ -175,7 +175,10 @@ object Config {
      */
     fun getProperty(name: String): String? {
         logger.trace { "finding property $name" }
-        return properties[name] ?: System.getProperty(name) ?: System.getenv(name) ?: env[name]
+        return properties[name]
+            ?: System.getProperty(name)
+            ?: System.getenv(name.replace('.', '_'))
+            ?: env[name]
     }
 
     /**
