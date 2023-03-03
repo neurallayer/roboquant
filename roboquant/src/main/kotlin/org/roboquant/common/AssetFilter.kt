@@ -19,7 +19,10 @@ package org.roboquant.common
 import java.time.Instant
 
 /**
- * Asset filter limits the assets that will be processed in certain operations at a given time.
+ * Asset filter limits the price actions that will be processed in certain operations at a given time. Filters can work
+ * on a combination of asset and time.
+ *
+ * Common use case are strategies that are only interested in a subset of assets that are available in a feed.
  */
 fun interface AssetFilter {
 
@@ -31,19 +34,20 @@ fun interface AssetFilter {
     fun filter(asset: Asset, time: Instant): Boolean
 
     /**
-     * Standard set of Asset filters
+     * Standard set of predefined filters
      */
     companion object {
 
         /**
-         * Include all assets, so this filer always return true
+         * Include all assets, so this filter always returns true
          */
         fun all(): AssetFilter {
             return AssetFilter { _: Asset, _: Instant -> true }
         }
 
         /**
-         * Include only the assets that are denoted in the provided [currencies].
+         * Include only the assets that are denoted in the provided [currencies]. For example only include assets that
+         * are denoted in USD and ignore other currencies.
          */
         fun includeCurrencies(vararg currencies: Currency): AssetFilter {
             return AssetFilter { asset: Asset, _: Instant -> asset.currency in currencies }
@@ -54,7 +58,7 @@ fun interface AssetFilter {
 
         /**
          * Include only the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive
-         * and all special characters are translated into '.' before comparing.
+         * and all special characters are translated into a '.' character before comparing.
          */
         fun includeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.standardize() }.toSet()
@@ -63,7 +67,7 @@ fun interface AssetFilter {
 
         /**
          * Exclude the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive
-         * and all special characters are translated into '.' before comparing.
+         * and all special characters are translated into a '.' character before comparing.
          */
         fun excludeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.standardize() }.toSet()

@@ -24,7 +24,7 @@ import org.roboquant.metrics.MetricResults
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class CombinedStrategyTest {
+internal class CombinedStrategyTest {
 
     class MyStrategy : Strategy {
 
