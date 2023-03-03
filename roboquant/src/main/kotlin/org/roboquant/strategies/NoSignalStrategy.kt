@@ -26,7 +26,7 @@ import org.roboquant.feeds.Event
  * ## Example
  *      val roboquant =  Roboquant(NoSignalStrategy(), MyCustomPolicy())
  *
- * @constructor Create new NoSignalStrategy
+ * @constructor Create a new instance of the NoSignalStrategy
  */
 class NoSignalStrategy : Strategy {
     override fun generate(event: Event): List<Signal> {

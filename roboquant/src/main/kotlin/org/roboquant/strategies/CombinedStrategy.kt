@@ -26,7 +26,7 @@ import org.roboquant.metrics.MetricResults
  * run sequential. For parallel execution see [ParallelStrategy]
  *
  * @property strategies the strategies to combine
- * @constructor Create empty Combined strategy
+ * @constructor Create a new instance of a Combined Strategy
  */
 open class CombinedStrategy(val strategies: Collection<Strategy>) : Strategy {
 

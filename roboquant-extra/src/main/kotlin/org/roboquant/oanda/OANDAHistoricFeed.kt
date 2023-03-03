@@ -29,7 +29,8 @@ import org.roboquant.feeds.PriceBar
 import java.time.Instant
 
 /**
- * Retrieve historic data from OANDA. Right now only [PriceBar] (= candlesticks) data is supported.
+ * Retrieve historic data from OANDA. Right now only [PriceBar] (= candlesticks) data is supported. Please notice that
+ * the free paper trading account doesn't allow to retrieve data for the last 15 minutes.
  *
  * @param configure additional configuration
  */

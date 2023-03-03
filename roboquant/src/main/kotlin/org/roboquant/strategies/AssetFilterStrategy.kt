@@ -21,7 +21,9 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
 
 /**
- * Only allow price actions that meet the provided [assetFilter] to be passed to the underlying [strategy]
+ * Only allow price actions that meet the provided [assetFilter] to be passed to the underlying [strategy].
+ *
+ * @see Strategy.filter
  *
  * @property strategy the strategy to use after the filter has been applied
  * @property assetFilter the asset filter to apply
@@ -38,8 +40,10 @@ class AssetFilterStrategy(private val strategy: Strategy, private val assetFilte
 }
 
 /**
- * Convenience extension method
+ * Convenience extension method to create a [AssetFilterStrategy].
  *
- * @param assetFilter
+ * @see AssetFilterStrategy
+ *
+ * @param assetFilter the asset filter to apply
  */
 fun Strategy.filter(assetFilter: AssetFilter) = AssetFilterStrategy(this, assetFilter)

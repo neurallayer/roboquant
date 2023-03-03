@@ -41,7 +41,7 @@ typealias Interval = AlphaInterval
 /**
  * Configuration to connect to AlphaVantage APIs.
  *
- * @property key the API key
+ * @property key the API key for accessing the Alpha Vantage API, property name is alphavantage.key
  * @property timeout the timeout in seconds to use when establishing a connection
  */
 data class AlphaVantageConfig(
@@ -52,10 +52,10 @@ data class AlphaVantageConfig(
 /**
  * AlphaVantage feed, currently just a PoC to validate we can retrieve data.
  *
- * @property compensateTimeZone compensate for timezone differences
+ * @property compensateTimeZone compensate for timezone differences, default is true
  * @property generateSinglePrice generate a single price event (using the close price) or a price bar (OHLCV) event
  * @param configure additional configuration
- * @constructor
+ * @constructor create a new instance of the Alpha Vantage Feed
  */
 class AlphaVantageHistoricFeed(
     val compensateTimeZone: Boolean = true,

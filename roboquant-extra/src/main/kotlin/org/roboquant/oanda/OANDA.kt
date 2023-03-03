@@ -29,8 +29,8 @@ import org.roboquant.common.*
 /**
  * Configuration for connecting to the OANDA APIs
  *
- * @property key what API key to use
- * @property account which account to use
+ * @property key the API key to use (property name oanda.key)
+ * @property account which account to use, if no account is provided the first one found will be used
  * @property demo is this a demo account, default is true
  */
 data class OANDAConfig(
@@ -51,7 +51,7 @@ object OANDA {
      * - Leverage is high
      * - There are no fees or commissions
      */
-    fun createSimBroker(deposit: Amount = 100_00.USD): SimBroker {
+    fun createSimBroker(deposit: Amount = 10_000.USD): SimBroker {
         // No commissions or fees
         val feeModel = NoFeeModel()
 
@@ -70,9 +70,9 @@ object OANDA {
 
     internal fun getContext(config: OANDAConfig): Context {
         val url = if (config.demo) "https://api-fxpractice.oanda.com/" else
-            throw UnsupportedException("onyl demo account supported")
+            throw UnsupportedException("only demo account is supported")
         // else "https://api-fxtrade.oanda.com/"
-        require(config.key.isNotBlank()) { "couldn't find key" }
+        require(config.key.isNotBlank()) { "couldn't find oanda.key" }
         return ContextBuilder(url).setToken(config.key).setApplication("roboquant").build()
     }
 

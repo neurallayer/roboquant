@@ -49,19 +49,23 @@ class BracketOrder(
             "bracket orders can only contain orders for the same asset"
         }
         require(entry.size == -takeProfit.size && entry.size == -stopLoss.size) {
-            "bracket orders takeProfit and stopLoss orders need to close the entry order"
+            "takeProfit and stopLoss orders need to have opposite sizes of the entry order"
         }
     }
 
     override fun info() = sortedMapOf("entry" to entry, "takeProfit" to takeProfit, "stopLoss" to "stopLoss")
 
     /**
-     * Common bracket-orders
+     * Common bracket-orders, making it easier to create one without the risk of introducing mistakes in the sizing and
+     * limits of the underlying orders.
      */
     companion object {
 
         /**
-         * Create a bracket order
+         * Create a bracket order meeting the following criteria:
+         * - the entry order is a [MarketOrder] for the provided [asset] and [size]
+         * - the take profit order is a [TrailOrder] with the specified [trailPercentage]
+         * - the stop loss order is a [StopOrder] using a stop priced based on the provided [stopPercentage]
          */
         fun marketTrailStop(
             asset: Asset,

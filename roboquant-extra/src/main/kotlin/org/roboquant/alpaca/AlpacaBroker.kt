@@ -45,7 +45,7 @@ import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosit
  * See also the Alpaca feed components if you want to use Alpaca also for retrieving market data.
  *
  * @property extendedHours enable extended hours for trading, default is false
- * @param configure additional configuration parameters to connecting to the API
+ * @param configure additional configuration parameters to connecting to the Alpaca API
  * @constructor Create a new instance of the AlpacaBroker
  */
 class AlpacaBroker(
@@ -80,7 +80,7 @@ class AlpacaBroker(
     }
 
     /**
-     * Get all available assets to trade
+     * Get all available assets to trade (both stocks and cryptocurrencies)
      */
     val availableAssets: SortedSet<Asset>
         get() = (availableStocks.values + availableCrypto.values).toSortedSet()
@@ -89,7 +89,7 @@ class AlpacaBroker(
 
 
     /**
-     * Sync the roboquant account with the details from Alpaca account
+     * Sync the roboquant account with the current state from Alpaca account. Alpaca state is always leading.
      */
     private fun syncAccount() {
         val acc = alpacaAPI.account().get()

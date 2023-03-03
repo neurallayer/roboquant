@@ -29,17 +29,17 @@ import org.roboquant.strategies.SignalType.*
 enum class SignalType {
 
     /**
-     * Used to signal to open a position, meaning to long/short or increase a position size
+     * Used to signal to open or increase a position size.
      */
     ENTRY,
 
     /**
-     * Used to signal an exit a position, meaning to close or decrease a position size
+     * Used to signal to close or decrease a position size.
      */
     EXIT,
 
     /**
-     * Can be used for entry or exit of a position
+     * Can be used for opening or closing of a position.
      */
     BOTH
 }

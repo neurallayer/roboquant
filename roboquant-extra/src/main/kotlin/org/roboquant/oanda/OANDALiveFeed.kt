@@ -33,7 +33,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.collections.set
 
 /**
- * Retrieve live market data from OANDA.
+ * Retrieve live market data from OANDA. Currently [PriceBar] and [OrderBook] data is supported.
  *
  * @param configure additional configuration
  */

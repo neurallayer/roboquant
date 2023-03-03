@@ -36,10 +36,10 @@ typealias DataType = DataAPIType
 /**
  * Alpaca configuration properties
  *
- * @property publicKey the public key to access the API
- * @property secretKey the secret key to access the API
- * @property accountType account type, either PAPER or LIVE
- * @property dataType type of data to use, IEX or SIP
+ * @property publicKey the public key to access the API (property name is alpaca.public.key)
+ * @property secretKey the secret key to access the API (property name is alpaca.secret.key)
+ * @property accountType account type, either PAPER or LIVE, default is PAPER
+ * @property dataType type of data to use, IEX or SIP, default is IEX
  * @constructor Create a new instance of AlpacaConfig
  */
 data class AlpacaConfig(
@@ -85,7 +85,7 @@ internal object Alpaca {
     }
 
     /**
-     * Get the available crypto
+     * Get the available crypto assets
      */
     internal fun getAvailableCrypto(api: AlpacaAPI): Map<String, Asset> {
         val assets = api.assets().get(AssetStatus.ACTIVE, AssetClass.CRYPTO)

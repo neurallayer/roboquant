@@ -35,6 +35,11 @@ import java.time.Instant
 
 /**
  * Implementation of the [Broker] interface that can be used for paper- and live-trading using OANDA as your broker.
+ *
+ * @property maxLeverage maximum leverage, used to calculate the buying power.
+ * @param configure additional configuration
+ *
+ * @constructor create a new instance of OANDABroker
  */
 class OANDABroker(
     private val maxLeverage: Double = 20.0, // Used to calculate buying power

@@ -32,8 +32,8 @@ typealias Interval = yahoofinance.histquotes.Interval
  * This feed uses historic data from Yahoo Finance API. Be aware this is not the most stable API and
  * might at any time stop working correctly.
  *
- * @property adjClose should we use adjusted close
- * @constructor Create new Yahoo finance feed
+ * @property adjClose should we use adjusted close, default is true
+ * @constructor Create new historic Yahoo Finance feed
  */
 class YahooHistoricFeed(private val adjClose: Boolean = true) : HistoricPriceFeed() {
 

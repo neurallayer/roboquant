@@ -25,7 +25,6 @@ internal class MetricsReportTest {
             val file = File(folder, "test.html")
             report.toHTMLFile(file.toString())
             assertTrue(file.exists())
-
         }
 
         rq.run(f)

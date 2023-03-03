@@ -28,12 +28,10 @@ import org.roboquant.common.*
 
 /**
  * Configuration for Polygon connections
+ *
+ * @property key the polygon api key to use (property name is polygon.key)
  */
 data class PolygonConfig(
-
-    /**
-     * API key to access polygon.io
-     */
     var key: String = Config.getProperty("polygon.key", "")
 )
 
