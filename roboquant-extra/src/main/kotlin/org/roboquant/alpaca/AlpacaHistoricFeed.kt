@@ -166,7 +166,8 @@ class AlpacaHistoricFeed(
         vararg symbols: String,
         timeframe: Timeframe,
         barDuration: Int = 1,
-        barPeriod: BarPeriod = BarPeriod.DAY
+        barPeriod: BarPeriod = BarPeriod.DAY,
+        barAdjustment: BarAdjustment = BarAdjustment.ALL
     ) {
         validateStockSymbols(symbols)
 
@@ -188,7 +189,7 @@ class AlpacaHistoricFeed(
                     nextPageToken,
                     barDuration,
                     barPeriod,
-                    BarAdjustment.ALL,
+                    barAdjustment,
                     barFeed
                 )
                 processBars(symbol, resp)
