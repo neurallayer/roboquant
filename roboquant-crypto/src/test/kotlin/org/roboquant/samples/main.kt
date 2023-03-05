@@ -22,6 +22,7 @@ import org.knowm.xchange.ExchangeFactory
 import org.knowm.xchange.bitstamp.BitstampExchange
 import org.roboquant.Roboquant
 import org.roboquant.binance.BinanceHistoricFeed
+import org.roboquant.binance.BinanceLiveFeed
 import org.roboquant.binance.Interval
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
@@ -29,6 +30,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.filter
+import org.roboquant.feeds.toList
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
@@ -70,6 +72,16 @@ fun useBinanceFeed() {
     println(roboquant.broker.account.summary())
 }
 
+
+fun binanceLiveFeed() {
+    val feed = BinanceLiveFeed()
+    feed.subscribePriceBar("BTCBUSD", "ETHBUSD", interval = Interval.ONE_MINUTE)
+    val events = feed.toList(Timeframe.next(10.minutes)).filter { it.actions.isNotEmpty() }
+    println(events.size)
+
+}
+
+
 fun xchangeFeed() {
     val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
     val feed = XChangePollingLiveFeed(exchange)
@@ -88,9 +100,10 @@ fun xchangeFeed() {
 
 fun main() {
 
-    when ("USE") {
+    when ("LIVE") {
         "RECORD" -> recordBinanceFeed()
         "USE" -> useBinanceFeed()
         "XCHANGE" -> xchangeFeed()
+        "LIVE" -> binanceLiveFeed()
     }
 }

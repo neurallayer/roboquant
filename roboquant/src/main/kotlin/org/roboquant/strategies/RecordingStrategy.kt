@@ -32,10 +32,8 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
     private val metrics = mutableMapOf<String, Double>()
 
     /**
-     * Get the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this
+     * Return the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this
      * method twice in a row won't return the same result.
-     *
-     * @return
      */
     override fun getMetrics(): MetricResults {
         val result = metrics.toMap()
@@ -44,10 +42,8 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
     }
 
     /**
-     * Record a new metric. If there is already a metric recorded with the same key, it will be overridden.
-     *
-     * @param key
-     * @param value
+     * Record a new metric with the given [key] and [value]. If there is already a metric recorded with the same key,
+     * it will be overridden.
      */
     fun record(key: String, value: Double) {
         if (!recording) return
