@@ -37,8 +37,7 @@ typealias Interval = CandlestickInterval
  * @property useMachineTime use the machine time as timestamp for the generated events
  * @param configure additional configuration
  *
- * @constructor
- *
+ * @constructor create a new instance of BinanceLiveFeed
  */
 class BinanceLiveFeed(
     private val useMachineTime: Boolean = true,
@@ -54,13 +53,13 @@ class BinanceLiveFeed(
     private val assetMap: Map<String, Asset>
 
     /**
-     * Get all available assets that can be subscribed to
+     * Get all available assets that can be subscribed to, including their symbols
      */
     val availableAssets
         get() = assetMap.values
 
     /**
-     * Get the assets that has been subscribed to
+     * Get the assets that have been subscribed to
      */
     override val assets
         get() = subscriptions.values.toSortedSet()
@@ -83,10 +82,10 @@ class BinanceLiveFeed(
     }
 
     /**
-     * Subscribe to the [PriceBar] actions for one or more symbols
+     * Subscribe to the price-bars for one or more [symbols]. Optional provide what the [interval] should be for
+     * the price-bars, default is 1 minute.
      *
-     * @param symbols the currency pairs symbols you want to subscribe to
-     * @param interval the interval of the PriceBar. Default is  1 minute
+     * @see availableAssets
      */
     fun subscribePriceBar(
         vararg symbols: String,
@@ -102,9 +101,9 @@ class BinanceLiveFeed(
     }
 
     /**
-     * Subscribe to the [PriceQuote] actions for one or more symbols
+     * Subscribe to the price-quotes for one or more [symbols].
      *
-     * @param symbols the currency pairs symbols you want to subscribe to
+     * @see availableAssets
      */
     fun subscribePriceQuote(
         vararg symbols: String,

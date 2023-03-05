@@ -78,7 +78,6 @@ fun binanceLiveFeed() {
     feed.subscribePriceBar("BTCBUSD", "ETHBUSD", interval = Interval.ONE_MINUTE)
     val events = feed.toList(Timeframe.next(10.minutes)).filter { it.actions.isNotEmpty() }
     println(events.size)
-
 }
 
 
