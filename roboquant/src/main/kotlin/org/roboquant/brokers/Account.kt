@@ -142,7 +142,7 @@ class Account(
         t.add("first", trades.firstOrNull()?.time ?: "")
         t.add("last", trades.lastOrNull()?.time ?: "")
         t.add("winners", trades.count { it.pnl > 0 })
-        t.add("loosers", trades.count { it.pnl < 0 })
+        t.add("losers", trades.count { it.pnl < 0 })
 
         s.add(o)
         o.add("open", openOrders.size)

@@ -55,7 +55,7 @@ You can find out more at the online https://roboquant.org/tutorial/index.html[tu
 == Installation
 
 === Library
-You can devevelop our own trading application in your favourite IDE using _roboquant_ as a library.
+You can develop our own trading application in your favourite IDE using _roboquant_ as a library.
 
 image:/docs/idea_screenshot.png[IntelliJ IDEA]
 
@@ -100,7 +100,7 @@ Latest available versions:
 - Snapshot version: image:https://img.shields.io/nexus/s/org.roboquant/roboquant?server=https%3A%2F%2Fs01.oss.sonatype.org[Sonatype Nexus (Snapshots)]
 
 === Jupyter Notebooks
-You can interactively develop your own stategies using a Jupyter Notebook.
+You can interactively develop your own strategies using a Jupyter Notebook.
 
 image:/docs/jupyter_screenshot.png[Jupyter Lab]
 

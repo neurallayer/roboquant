@@ -52,10 +52,10 @@ class ScorecardMetric : Metric {
         val totalWinning = winnersList.sum()
         val maxWinning = winnersList.maxOrNull() ?: Double.NaN
 
-        val loosersList = pnl.filter { it < 0.0 }
-        val loosers = loosersList.count()
-        val totalLoosing = loosersList.sum()
-        val maxLoosing = loosersList.minOrNull() ?: Double.NaN
+        val losersList = pnl.filter { it < 0.0 }
+        val losers = losersList.count()
+        val totalLoosing = losersList.sum()
+        val maxLoosing = losersList.minOrNull() ?: Double.NaN
 
         val realizedPNL = pnl.sum()
 
@@ -82,9 +82,9 @@ class ScorecardMetric : Metric {
             "${prefix}winners.avg" to totalWinning / winners,
             "${prefix}winners.largest" to maxWinning,
 
-            "${prefix}losers" to loosers,
+            "${prefix}losers" to losers,
             "${prefix}losers.total" to totalLoosing,
-            "${prefix}losers.avg" to totalLoosing / loosers,
+            "${prefix}losers.avg" to totalLoosing / losers,
             "${prefix}losers.largest" to maxLoosing,
 
             "${prefix}profit.realized" to realizedPNL,

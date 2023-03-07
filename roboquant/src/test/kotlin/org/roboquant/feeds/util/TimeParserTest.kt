@@ -32,7 +32,7 @@ internal class TimeParserTest {
     }
 
     @Test
-    fun autoDetectCurrenct() {
+    fun autoDetectCurrent() {
         val result = Instant.parse("2022-01-04T21:00:00Z")
         assertEquals(result, parse("20220104"))
         assertEquals(result, parse("2022-01-04"))

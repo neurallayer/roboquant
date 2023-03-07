@@ -40,7 +40,7 @@ internal class BracketOrderTest {
     }
 
     @Test
-    fun predef() {
+    fun predefined() {
         val asset = TestData.usStock()
         val size = Size(10)
         val order = BracketOrder.marketTrailStop(asset, size, 100.0, 0.05, 0.01)

@@ -249,15 +249,15 @@ class AlpacaBroker(
     /**
      * Cancel an order
      */
-    private fun cancelOrder(cancelation: CancelOrder) {
+    private fun cancelOrder(cancellation: CancelOrder) {
         val now = Instant.now()
         try {
-            val orderId = orderMapping[cancelation.order]
+            val orderId = orderMapping[cancellation.order]
             alpacaAPI.orders().cancel(orderId)
-            _account.updateOrder(cancelation, now, OrderStatus.COMPLETED)
+            _account.updateOrder(cancellation, now, OrderStatus.COMPLETED)
         } catch (exception: AlpacaClientException) {
-            _account.updateOrder(cancelation, now, OrderStatus.REJECTED)
-            logger.trace(exception) { "cancellation failed for order=$cancelation" }
+            _account.updateOrder(cancellation, now, OrderStatus.REJECTED)
+            logger.trace(exception) { "cancellation failed for order=$cancellation" }
         }
     }
 

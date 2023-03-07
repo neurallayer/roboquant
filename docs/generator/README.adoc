@@ -3,7 +3,7 @@
 This directory contains the code used to generate a wrapper for TA-Lib. It generates Kotlin code based on a JSON definition file that is also included in this directory.
 
 == Run
-To run the script and replace the current source witht the new one, you can run the following commands:
+To run the script and replace the current source with the new one, you can run the following commands:
 
 [source,shell]
 ----
