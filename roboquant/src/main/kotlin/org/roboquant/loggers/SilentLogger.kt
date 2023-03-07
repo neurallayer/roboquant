@@ -32,7 +32,7 @@ class SilentLogger : MetricsLogger {
         private set
 
     override fun log(results: MetricResults, info: RunInfo) {
-        events += 1
+        events++
     }
 
     override fun reset() {

@@ -116,4 +116,26 @@ internal class MemoryLoggerTest {
         assertEquals(50, data.groupBy(ChronoUnit.YEARS).values.first().size)
     }
 
+    @Test
+    fun groupAndFlatten() {
+        val logger = MemoryLogger(showProgress = false)
+        var runInfo = RunInfo("run", time = Instant.parse("2021-01-02T00:00:00Z"))
+
+        repeat(50) {
+            val metrics = metricResultsOf("key1" to it)
+            runInfo = runInfo.copy(run = "run-$it", time = runInfo.time + 2.days)
+            logger.log(metrics, runInfo)
+
+            runInfo = runInfo.copy(run = "run-$it", time = runInfo.time + 1.days)
+            logger.log(metrics, runInfo)
+        }
+
+        val data = logger.getMetric("key1")
+        assertEquals(100, data.size)
+
+        val map = data.group()
+        assertEquals(50, map.size)
+        assertEquals(data, map.flatten())
+    }
+
 }

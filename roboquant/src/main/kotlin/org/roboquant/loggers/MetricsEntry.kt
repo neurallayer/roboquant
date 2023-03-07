@@ -23,10 +23,10 @@ import org.roboquant.common.clean
 /**
  * Single metric entry ([name] and [value]) with the associated [RunInfo]. This is a read-only class.
  *
- * @property name
- * @property value
- * @property info
- * @constructor Create empty Metrics entry
+ * @property name the name of the metric
+ * @property value the value of the metric
+ * @property info the metadata, like time of the metric
+ * @constructor Create a new instance of Metrics entry
  */
 data class MetricsEntry(val name: String, val value: Double, val info: RunInfo) : Comparable<MetricsEntry> {
 
@@ -45,10 +45,16 @@ data class MetricsEntry(val name: String, val value: Double, val info: RunInfo) 
 
 }
 
+
 /**
  * Group a collection of metrics by their unique combination of name, run and phase.
  */
 fun Collection<MetricsEntry>.group(): Map<String, List<MetricsEntry>> = groupBy { it.groupId }
+
+/**
+ * Flatten a map to a list of metric entries sorted by their time
+ */
+fun Map<String, List<MetricsEntry>>.flatten() = values.flatten().sorted()
 
 /**
  * Get the [n] highest entries, default being 10
