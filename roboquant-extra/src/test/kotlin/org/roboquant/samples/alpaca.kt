@@ -22,6 +22,7 @@ import org.roboquant.Roboquant
 import org.roboquant.alpaca.*
 import org.roboquant.common.*
 import org.roboquant.feeds.AvroFeed
+import org.roboquant.feeds.toList
 import org.roboquant.loggers.InfoLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
@@ -190,7 +191,12 @@ fun alpacaHistoricFeed2() {
     // the free subscriptions is entitled to and not the latest 15 minutes.
     val tf = Timeframe.past(200.days) - 15.minutes
     feed.retrieveStockPriceBars(*symbols, timeframe = tf)
-    println(feed.assets.summary())
+    val events = feed.toList()
+
+    with(events) {
+        println("events=$size start=${first().time} last=${last().time}")
+    }
+
 }
 
 fun main() {
