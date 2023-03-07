@@ -40,6 +40,11 @@ import java.util.*
  */
 typealias BarPeriod = BarTimePeriod
 
+/**
+ * @see BarAdjustment
+ */
+typealias BarAdjustment = BarAdjustment
+
 
 /**
  * Historic data feed using market data from Alpaca
