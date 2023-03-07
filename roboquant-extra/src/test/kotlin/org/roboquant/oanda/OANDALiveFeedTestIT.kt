@@ -16,6 +16,8 @@
 
 package org.roboquant.oanda
 
+import com.oanda.v20.RequestException
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Timeframe
 import org.roboquant.common.seconds
 import org.roboquant.feeds.OrderBook
@@ -46,6 +48,17 @@ internal class OANDALiveFeedTestIT {
         } else {
             println("No actions found, perhaps exchange is closed")
         }
+    }
+
+    @Test
+    fun correctException() {
+
+        assertThrows<RequestException> {
+            OANDALiveFeed {
+                key = "wrong_key"
+            }
+        }
+
     }
 
 }

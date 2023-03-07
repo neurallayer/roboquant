@@ -16,6 +16,8 @@
 
 package org.roboquant.oanda
 
+import com.oanda.v20.RequestException
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Timeframe
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -39,4 +41,16 @@ internal class OANDAHistoricFeedTestIT {
         assertTrue(tf2.contains(feed.timeline.last()))
         feed.close()
     }
+
+    @Test
+    fun correctException() {
+
+        assertThrows<RequestException> {
+            OANDAHistoricFeed {
+                key = "wrong_key"
+            }
+        }
+
+    }
+
 }

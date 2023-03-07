@@ -16,7 +16,9 @@
 
 package org.roboquant.oanda
 
+import com.oanda.v20.RequestException
 import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Config
 import org.roboquant.feeds.Event
 import kotlin.test.Test
@@ -37,6 +39,17 @@ internal class OANDABrokerTestIT {
             broker.place(emptyList(), Event.empty())
         }
 
+
+    }
+
+    @Test
+    fun correctException() {
+
+        assertThrows<RequestException> {
+            OANDABroker {
+                key = "wrong_key"
+            }
+        }
 
     }
 }
