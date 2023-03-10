@@ -80,10 +80,6 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-        <repository>
-            <id>kotlin.dev</id>
-            <url>https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/</url>
-        </repository>
     </repositories>
 
     <distributionManagement>
