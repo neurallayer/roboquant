@@ -32,8 +32,8 @@ class MetricsReport(
     }
 
     private fun getTableCell(entry: MetricsEntry): String {
-        val splittedName = entry.name.split('.')
-        val name = splittedName.subList(1, splittedName.size).joinToString(" ")
+        val splitName = entry.name.split('.')
+        val name = splitName.subList(1, splitName.size).joinToString(" ")
         val value = if (entry.value.isFinite()) entry.value.round(2).toString().removeSuffix(".00") else "NaN"
         return createCells(name, value)
     }
