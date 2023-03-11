@@ -26,6 +26,7 @@ import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class FlexPolicyTest {
@@ -38,6 +39,18 @@ internal class FlexPolicyTest {
         val account = InternalAccount(Currency.USD).toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
+    }
+
+    @Test
+    fun order3() {
+        val policy = FlexPolicy()
+        val orders = run(policy)
+        assertTrue(orders.isNotEmpty())
+
+        val order = orders.first()
+        assertTrue(order is MarketOrder)
+        assertEquals("TEST123", order.asset.symbol)
+        assertEquals(Size(204), order.size)
     }
 
     @Test
@@ -83,6 +96,50 @@ internal class FlexPolicyTest {
         assertTrue(orders.isEmpty())
 
     }
+
+
+    private fun run(policy: FlexPolicy): List<Order> {
+        val asset = Asset("TEST123")
+        val signals = listOf(Signal(asset, Rating.BUY))
+        val event = Event(listOf(TradePrice(asset, 5.0)), Instant.now())
+        val account = TestData.usAccount()
+        return policy.act(signals, account, event)
+    }
+
+    @Test
+    fun predefined() {
+        val policy = FlexPolicy.bracketOrders()
+        val orders = run(policy)
+        assertTrue(orders.isNotEmpty())
+
+        val first = orders.first()
+        assertTrue(first is BracketOrder)
+
+        val entry = first.entry
+        val stop = first.stopLoss
+        val profit = first.takeProfit
+
+        assertTrue(entry is MarketOrder)
+
+        assertTrue(stop is StopOrder)
+        assertEquals(5.0 * 0.99, stop.stop)
+
+        assertTrue(profit is TrailOrder)
+        assertEquals(0.05, profit.trailPercentage)
+    }
+
+    @Test
+    fun predefined2() {
+        val policy = FlexPolicy.limitOrders()
+        val orders = run(policy)
+        assertTrue(orders.isNotEmpty())
+
+        val first = orders.first()
+        assertTrue(first is LimitOrder)
+        assertEquals(5*0.99, first.limit)
+    }
+
+
 
     @Test
     fun chaining() {

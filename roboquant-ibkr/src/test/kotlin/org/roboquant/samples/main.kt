@@ -21,10 +21,7 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.common.*
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.filter
-import org.roboquant.feeds.toList
+import org.roboquant.feeds.*
 import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRExchangeRates
 import org.roboquant.ibkr.IBKRHistoricFeed
@@ -159,15 +156,16 @@ fun retrieveBatch() {
             feed.retrieve(assets, closingTime, "1 D", "1 min")
             feed.waitTillRetrieved()
             Thread.sleep(2000)
-            println(feed.toList().size)
-            println(feed.timeline.distinct().size)
-            println(feed.timeframe.end)
+
+            println("events=${feed.toList().size} timeline=${feed.timeline.distinct().size} tf=${feed.timeframe.end}")
         }
         start = start.plusDays(1)
     }
 
     println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
     feed.disconnect()
+
+    AvroFeed.record(feed, "/tmp/1_minute_aeb.avro")
 }
 
 

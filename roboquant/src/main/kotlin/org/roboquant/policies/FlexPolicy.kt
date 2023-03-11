@@ -21,9 +21,7 @@ import org.roboquant.brokers.Position
 import org.roboquant.brokers.getPosition
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.Order
-import org.roboquant.orders.contains
+import org.roboquant.orders.*
 import org.roboquant.strategies.Signal
 import java.time.Instant
 
@@ -57,6 +55,54 @@ open class FlexPolicy(
 ) : BasePolicy() {
 
     private val logger = Logging.getLogger(FlexPolicy::class)
+
+    /**
+     * Common used FlexPolicies
+     */
+    companion object {
+
+        /**
+         * FlexPolicy that generates bracket orders
+         */
+        fun bracketOrders(
+            trailPercentage: Double = 0.05,
+            stopPercentage: Double = 0.01,
+            orderPercentage: Double = 0.01,
+            shorting: Boolean = false
+        ): FlexPolicy {
+            class MyPolicy : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting) {
+
+                override fun createOrder(signal: Signal, size: Size, price: Double): Order {
+                    return BracketOrder.marketTrailStop(signal.asset, size, price, trailPercentage, stopPercentage)
+                }
+            }
+
+            return MyPolicy()
+        }
+
+
+        /**
+         * FlexPolicy that generates limit orders
+         */
+        fun limitOrders(
+            limitPercentage: Double = 0.01,
+            orderPercentage: Double = 0.01,
+            shorting: Boolean = false
+        ): FlexPolicy {
+            class MyPolicy : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting) {
+
+                override fun createOrder(signal: Signal, size: Size, price: Double): Order {
+                    // BUY orders have below market price limit, and SELL order above
+                    val limitOffset = limitPercentage * size.sign
+                    val limitPrice = price * (1.0 - limitOffset)
+                    return LimitOrder(signal.asset, size, limitPrice)
+                }
+            }
+
+            return MyPolicy()
+        }
+
+    }
 
     /**
      * Would the [signal] generate a reduced position size based on the current [position]. Reduced positions signals
