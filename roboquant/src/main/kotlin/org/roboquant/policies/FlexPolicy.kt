@@ -42,7 +42,7 @@ import java.time.Instant
  * are more likely stay away from bounced orders or margin calls. Default is same percentage as [orderPercentage]
  * @property minPrice the minimal price for an asset before opening a position, default is null (no minimum). This
  * can be used to avoid trading penny stocks
- * @constructor Create a new instance of FlexPolicy
+ * @constructor Create a new instance of a FlexPolicy
  */
 open class FlexPolicy(
     private val orderPercentage: Double = 0.01,
@@ -57,12 +57,18 @@ open class FlexPolicy(
     private val logger = Logging.getLogger(FlexPolicy::class)
 
     /**
-     * Common used FlexPolicies
+     * Set of predefined FlexPolicies
      */
     companion object {
 
         /**
-         * FlexPolicy that generates bracket orders
+         * Return a FlexPolicy that generates bracket orders, with the following characteristics:
+         * - a market order for entry
+         * - trail-order for take profit with provided [trailPercentage], default is 5%
+         * - stop-loss order for limiting loss with provided [stopPercentage], default is 1%
+         *
+         * @see FlexPolicy
+         * @see BracketOrder.marketTrailStop
          */
         fun bracketOrders(
             trailPercentage: Double = 0.05,
@@ -82,7 +88,7 @@ open class FlexPolicy(
 
 
         /**
-         * FlexPolicy that generates limit orders
+         * FlexPolicy that generates limit orders.
          */
         fun limitOrders(
             limitPercentage: Double = 0.01,

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("LongParameterList")
 
 package org.roboquant.polygon
 
@@ -61,7 +62,8 @@ class PolygonHistoricFeed(
         timeframe: Timeframe,
         multiplier: Int = 1,
         timespan: String = "day",
-        limit: Int = 5000
+        limit: Int = 5000,
+        adjusted: Boolean = true
     ) {
         for (symbol in symbols) {
             val aggr = client.getAggregatesBlocking(
@@ -71,7 +73,8 @@ class PolygonHistoricFeed(
                     timespan,
                     timeframe.start.toEpochMilli().toString(),
                     timeframe.end.toEpochMilli().toString(),
-                    limit = limit.toLong()
+                    ! adjusted,
+                    limit.toLong()
                 )
             )
 
