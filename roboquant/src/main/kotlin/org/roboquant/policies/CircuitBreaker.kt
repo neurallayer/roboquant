@@ -25,7 +25,7 @@ import java.time.Instant
 import java.util.*
 
 /**
- * Wraps another [policy] and based on the configured throttle settings stops propagating orders to a broker.
+ * Wraps another [policy] and based on the configured settings throttle the generation of orders.
  *
  * @property policy
  * @constructor Create new Chain Breaker
@@ -69,7 +69,7 @@ internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, pr
  * Limit the number of orders a policy can generate to [maxOrders] per [period]. All the orders per step will be
  * either added or ignored.
  *
- * Note: this circuit breaker will also block closing-position orders if a [maxOrders] limit is exceeded.
+ * Note: this circuit breaker will also block closing-position orders if the [maxOrders] limit is exceeded.
  *
  * Usage:
  *      // For example allow maximum of 5 orders per 8 hours
