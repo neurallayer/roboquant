@@ -26,7 +26,7 @@ internal class JupyterCoreTest {
 
     @Test
     fun test() {
-        JupyterCore()
+        JupyterCore(null, mutableMapOf())
         legacyNotebookMode = false
         assertEquals(legacyNotebookMode, JupyterCore.isolation)
     }

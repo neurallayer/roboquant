@@ -26,7 +26,6 @@ import org.icepear.echarts.components.toolbox.*
 import org.icepear.echarts.components.visualMap.ContinousVisualMap
 import org.roboquant.common.Amount
 import java.lang.reflect.Type
-import java.nio.charset.StandardCharsets
 import java.time.Instant
 import java.util.*
 import kotlin.math.roundToInt
@@ -129,6 +128,10 @@ abstract class Chart : HTMLOutput() {
      */
     companion object {
 
+        @Suppress("MaxLineLength")
+        internal const val scriptUrl =
+            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant@1.1.0/roboquant-jupyter/src/main/resources/js/echarts.min.js"
+
         /**
          * Used to ensure the output divs have a unique id that is still deterministic
          */
@@ -176,13 +179,15 @@ abstract class Chart : HTMLOutput() {
         }
 
         /**
-         * Get the HTML script tag that contains all the required JavaScript embedded for the chart solution.
+         * Get the HTML script tag for the required JavaScript.
          */
         fun getScript(): String {
+            return """<script type='text/javascript' src='$scriptUrl'></script>"""
+            /*
             val stream = Companion::class.java.getResourceAsStream("/js/echarts.min.js")!!
             val js = String(stream.readAllBytes(), StandardCharsets.UTF_8)
             return """<script type='text/javascript'>$js</script>"""
-
+            */
         }
 
     }

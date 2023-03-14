@@ -16,16 +16,16 @@
 
 package org.roboquant.jupyter
 
-import org.jetbrains.kotlinx.jupyter.api.HTML
-import org.jetbrains.kotlinx.jupyter.api.ThrowableRenderer
+import org.jetbrains.kotlinx.jupyter.api.*
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
+import org.roboquant.common.Logging
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * Make exceptions a bit nicer to deal with in notebooks
+ * Present exceptions a bit nicer in notebooks
  */
 internal class RoboquantThrowableRenderer : ThrowableRenderer {
 
@@ -80,29 +80,78 @@ var legacyNotebookMode: Boolean
  * 2) Default imports
  * 3) Nicer exception handling
  */
-internal class JupyterCore : JupyterIntegration() {
+internal class JupyterCore(
+    private val notebook: Notebook?,
+    private val options: MutableMap<String, String?>
+) : JupyterIntegration() {
+
+    init {
+        logger.debug { options.toMap() }
+        logger.debug { notebook }
+    }
 
     companion object {
+        private val logger = Logging.getLogger(JupyterCore::class)
         private val HTMLOutputs = CopyOnWriteArrayList<HTMLOutput>()
         internal fun addOutput(htmlOutput: HTMLOutput) = HTMLOutputs.add(htmlOutput)
         internal var isolation = false
     }
 
     override fun Builder.onLoaded() {
+        val version = options["version"] ?: "1.2.0-SNAPSHOT"
+
+        val d = mutableListOf("org.roboquant:roboquant-ta:$version")
+        if (options["extra"].toBoolean()) d.add("org.roboquant:roboquant-extra:$version")
+        if (options["crypto"].toBoolean()) d.add("org.roboquant:roboquant-crypto:$version")
+        if (options["ibkr"].toBoolean()) d.add("org.roboquant:roboquant-ibkr:$version")
+        @Suppress("SpreadOperator")
+        dependencies(*d.toTypedArray())
+
+        // Only applies to Datalore
+        if (notebook.jupyterClientType == JupyterClientType.KOTLIN_NOTEBOOK) {
+            isolation = true
+        }
+
+        import(
+            "org.roboquant.*",
+            "org.roboquant.loggers.*",
+            "org.roboquant.common.*",
+            "org.roboquant.metrics.*",
+            "org.roboquant.strategies.*",
+            "org.roboquant.orders.*",
+            "org.roboquant.feeds.*",
+            "org.roboquant.feeds.csv.*",
+            "org.roboquant.brokers.sim.*",
+            "org.roboquant.brokers.*",
+            "org.roboquant.policies.*",
+            "org.roboquant.jupyter.*",
+            "java.time.Instant",
+            "java.time.temporal.ChronoUnit",
+            "org.roboquant.ta.*"
+        )
+
 
         onLoaded {
             addThrowableRenderer(RoboquantThrowableRenderer())
             execute("%logLevel warn")
         }
 
+
+        resources {
+            js("echarts") {
+                url(Chart.scriptUrl)
+            }
+        }
+
         /**
          * The resources that need to be loaded.
-         */
+
         resources {
             js("echarts") {
                 classPath("js/echarts.min.js")
             }
         }
+         */
 
         render<HTMLOutput> {
             if (isolation) HTML(it.asHTMLPage(), true) else HTML(it.asHTML(), false)
@@ -125,7 +174,7 @@ internal class JupyterCore : JupyterIntegration() {
 
 /**
  * Render the output in a Notebook cell. When a [HTMLOutput] result is not the last statement in a Notebook cell, you
- * can use this to make sure it is still rendered.
+ * can use this to make sure it is still gets rendered.
  */
 fun HTMLOutput.render() {
     JupyterCore.addOutput(this)

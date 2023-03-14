@@ -205,7 +205,7 @@ class InternalAccount(var baseCurrency: Currency) {
     }
 
     /**
-     * Get an open order with the provided [orderId]
+     * Get an open order with the provided [orderId], or null if not found
      */
     fun getOrder(orderId: Int): Order? = openOrders[orderId]?.order
 
