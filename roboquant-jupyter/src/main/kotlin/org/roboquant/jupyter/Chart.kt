@@ -130,7 +130,7 @@ abstract class Chart : HTMLOutput() {
 
         @Suppress("MaxLineLength")
         internal const val scriptUrl =
-            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant@1.1.0/roboquant-jupyter/src/main/resources/js/echarts.min.js"
+            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant/roboquant-jupyter/src/main/resources/js/echarts.min.js"
 
         /**
          * Used to ensure the output divs have a unique id that is still deterministic
@@ -212,12 +212,23 @@ abstract class Chart : HTMLOutput() {
         val fragment = getOption().renderJson().trimStart()
         val id = UUID.randomUUID().toString()
 
+        val convertor = if (containsJavaScript)
+            "option.tooltip.formatter = new Function('p', option.tooltip.formatter);"
+        else
+            ""
+
         return """
         <div style="width:100%;height:${height}px;" class="rqcharts" id="$id"></div>
         <script type="text/javascript">    
-            (function () {  
-                let option = $fragment;
-                renderEChart("$id", option, $containsJavaScript);
+            (function () {
+                console.log("registered chart $id");
+                let option = $fragment;$convertor
+                window.call_echarts(
+                    function () {
+                        console.log("rendering chart $id");
+                        window.renderEChart("$id", option);
+                    }
+                );
             })()
         </script>
         """.trimIndent()

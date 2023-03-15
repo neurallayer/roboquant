@@ -19,6 +19,7 @@ package org.roboquant.jupyter
 import org.jetbrains.kotlinx.jupyter.api.*
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
+import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -98,7 +99,7 @@ internal class JupyterCore(
     }
 
     override fun Builder.onLoaded() {
-        val version = options["version"] ?: "1.2.0-SNAPSHOT"
+        val version = options["version"] ?: Config.info.version
 
         val d = mutableListOf("org.roboquant:roboquant-ta:$version")
         if (options["extra"].toBoolean()) d.add("org.roboquant:roboquant-extra:$version")
@@ -142,16 +143,6 @@ internal class JupyterCore(
                 url(Chart.scriptUrl)
             }
         }
-
-        /**
-         * The resources that need to be loaded.
-
-        resources {
-            js("echarts") {
-                classPath("js/echarts.min.js")
-            }
-        }
-         */
 
         render<HTMLOutput> {
             if (isolation) HTML(it.asHTMLPage(), true) else HTML(it.asHTML(), false)

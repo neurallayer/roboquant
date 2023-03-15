@@ -373,6 +373,14 @@ class IBKRBroker(
             _account.setPosition(p)
         }
 
+        override fun position(account: String?, contract: Contract?, pos: Decimal?, avgCost: Double) {
+            logger.debug { "$account, $contract, $pos, $avgCost" }
+        }
+
+        override fun positionEnd() {
+            logger.debug { "position end" }
+        }
+
         override fun updateAccountTime(timeStamp: String) {
             logger.debug(timeStamp)
             _account.lastUpdate = Instant.now()
