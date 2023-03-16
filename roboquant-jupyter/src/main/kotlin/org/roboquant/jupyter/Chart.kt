@@ -130,7 +130,7 @@ abstract class Chart : HTMLOutput() {
 
         @Suppress("MaxLineLength")
         internal const val scriptUrl =
-            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant/roboquant-jupyter/src/main/resources/js/echarts.min.js"
+            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant@1.2.0/roboquant-jupyter/src/main/resources/js/echarts.min.js"
 
         /**
          * Used to ensure the output divs have a unique id that is still deterministic
