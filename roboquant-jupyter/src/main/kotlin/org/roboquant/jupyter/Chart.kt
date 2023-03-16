@@ -246,6 +246,9 @@ abstract class Chart : HTMLOutput() {
         <html>
             <head>
                 $script
+                <script type="text/javascript">
+                    window.call_echarts = window.call_echarts || function(f) { f(); };    
+                </script>
                 <style type='text/css' media='screen'>
                     html { margin: 0px; padding: 0px; min-height: ${height}px;}
                     body { margin: 0px; padding: 10px; min-height: ${height}px;}
