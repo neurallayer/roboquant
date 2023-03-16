@@ -41,22 +41,4 @@ internal class JupyterCoreTest {
         assertTrue { output is MimeTypedResult }
     }
 
-    @Test
-    fun core() {
-        class TestHTMLOutput : HTMLOutput() {
-            override fun asHTML(): String {
-                return "<div>Hello</div>"
-            }
-
-            override fun asHTMLPage(): String {
-                return "<html><div>Hello</div></html>"
-            }
-
-        }
-
-        val output = TestHTMLOutput()
-        val result = JupyterCore.addOutput(output)
-        assertTrue(result)
-    }
-
 }

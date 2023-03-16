@@ -23,7 +23,6 @@ import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import java.io.PrintWriter
 import java.io.StringWriter
-import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Present exceptions a bit nicer in notebooks
@@ -93,9 +92,8 @@ internal class JupyterCore(
 
     companion object {
         private val logger = Logging.getLogger(JupyterCore::class)
-        private val HTMLOutputs = CopyOnWriteArrayList<HTMLOutput>()
-        internal fun addOutput(htmlOutput: HTMLOutput) = HTMLOutputs.add(htmlOutput)
         internal var isolation = false
+        internal var host: KotlinKernelHost? = null
     }
 
     override fun Builder.onLoaded() {
@@ -135,6 +133,7 @@ internal class JupyterCore(
         onLoaded {
             addThrowableRenderer(RoboquantThrowableRenderer())
             execute("%logLevel warn")
+            host = this
         }
 
 
@@ -148,17 +147,6 @@ internal class JupyterCore(
             if (isolation) HTML(it.asHTMLPage(), true) else HTML(it.asHTML(), false)
         }
 
-        beforeCellExecution {
-            HTMLOutputs.clear()
-        }
-
-        afterCellExecution { _, _ ->
-            HTMLOutputs.forEach {
-                this.display(it, null)
-            }
-            HTMLOutputs.clear()
-        }
-
     }
 
 }
@@ -168,5 +156,5 @@ internal class JupyterCore(
  * can use this to make sure it is still gets rendered.
  */
 fun HTMLOutput.render() {
-    JupyterCore.addOutput(this)
+    JupyterCore.host?.display(this, null)
 }

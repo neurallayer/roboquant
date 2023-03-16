@@ -16,7 +16,12 @@
 
 package org.roboquant.jupyter
 
+import org.roboquant.Roboquant
 import org.roboquant.common.Config
+import org.roboquant.common.months
+import org.roboquant.feeds.AvroFeed
+import org.roboquant.metrics.AccountMetric
+import org.roboquant.strategies.EMAStrategy
 
 /**
  * Provides current environment settings in HTML format suitable for displaying in a Jupyter Notebook.
@@ -56,6 +61,74 @@ class Welcome : HTMLOutput() {
             </body>
         </html>
         """.trimIndent()
+    }
+
+    /**
+     * Run a small demo back test and display resulting equity curve
+     */
+    fun demo1(): Chart {
+        val strategy = EMAStrategy()
+        val metric = AccountMetric()
+        val roboquant = Roboquant(strategy, metric)
+        val feed = AvroFeed.sp500()
+        println("""
+            ┌───────────────┐
+            │     INPUT     │
+            └───────────────┘
+            val strategy = EMAStrategy()
+            val metric = AccountMetric()
+            val roboquant = Roboquant(strategy, metric)
+            
+            val feed = AvroFeed.sp500()
+            roboquant.run(feed)
+            
+            val equity = roboquant.logger.getMetric("account.equity")
+            MetricChart(equity)
+            
+            ┌───────────────┐
+            │    Output     │
+            └───────────────┘
+        """.trimIndent())
+
+        roboquant.run(feed)
+        val equity = roboquant.logger.getMetric("account.equity")
+        return MetricChart(equity)
+    }
+
+    /**
+     * Run a small walk-forward test and display resulting equity curve
+     */
+    fun demo2(): Chart {
+        val strategy = EMAStrategy()
+        val metric = AccountMetric()
+        val roboquant = Roboquant(strategy, metric)
+        val feed = AvroFeed.sp500()
+        println("""
+            ┌───────────────┐
+            │     INPUT     │
+            └───────────────┘
+            val strategy = EMAStrategy()
+            val metric = AccountMetric()
+            val roboquant = Roboquant(strategy, metric)
+            
+            val feed = AvroFeed.sp500()
+            feed.timeframe.split(6.months).forEach {
+                roboquant.run(feed, it)
+            }
+            
+            val equity = roboquant.logger.getMetric("account.equity")
+            MetricChart(equity)
+            
+            ┌───────────────┐
+            │    Output     │
+            └───────────────┘
+        """.trimIndent())
+
+        feed.timeframe.split(6.months).forEach {
+            roboquant.run(feed, it)
+        }
+        val equity = roboquant.logger.getMetric("account.equity")
+        return MetricChart(equity)
     }
 
 }
