@@ -37,6 +37,9 @@ internal class WelcomeTest {
 
         val chart2 = Welcome().demo2()
         assertTrue(chart2 is MetricChart)
+
+        val chart3 = Welcome().demo3()
+        assertTrue(chart3 is PriceBarChart)
     }
 
 }

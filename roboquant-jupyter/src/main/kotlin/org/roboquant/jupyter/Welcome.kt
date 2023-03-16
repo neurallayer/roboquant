@@ -18,6 +18,7 @@ package org.roboquant.jupyter
 
 import org.roboquant.Roboquant
 import org.roboquant.common.Config
+import org.roboquant.common.getBySymbol
 import org.roboquant.common.months
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.metrics.AccountMetric
@@ -129,6 +130,29 @@ class Welcome : HTMLOutput() {
         }
         val equity = roboquant.logger.getMetric("account.equity")
         return MetricChart(equity)
+    }
+
+
+    /**
+     * View feed data
+     */
+    fun demo3(): Chart {
+        println("""
+            ┌───────────────┐
+            │     INPUT     │
+            └───────────────┘
+            val feed = AvroFeed.sp500()
+            val apple = feed.assets.getBySymbol("AAPL")
+            PriceBarChart(feed, apple)
+            
+            ┌───────────────┐
+            │    Output     │
+            └───────────────┘
+        """.trimIndent())
+
+        val feed = AvroFeed.sp500()
+        val apple = feed.assets.getBySymbol("AAPL")
+        return PriceBarChart(feed, apple)
     }
 
 }

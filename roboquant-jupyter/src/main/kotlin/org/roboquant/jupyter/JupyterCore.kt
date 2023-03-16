@@ -129,13 +129,13 @@ internal class JupyterCore(
             "org.roboquant.ta.*"
         )
 
+        // Improve output of exceptions
+        addThrowableRenderer(RoboquantThrowableRenderer())
 
         onLoaded {
-            addThrowableRenderer(RoboquantThrowableRenderer())
-            execute("%logLevel warn")
             host = this
+            execute("%logLevel warn")
         }
-
 
         resources {
             js("echarts") {
