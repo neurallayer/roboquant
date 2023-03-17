@@ -98,13 +98,14 @@ internal class JupyterCore(
 
     override fun Builder.onLoaded() {
         val version = options["version"] ?: Config.info.version
+        logger.debug { "version=$version" }
         val deps = mutableSetOf("org.roboquant:roboquant-ta:$version")
         val load = options["modules"] ?: ""
-        if (load.isNotBlank()) {
-            load.split(':').forEach {
-                deps.add("org.roboquant:roboquant-$it:$version")
-            }
+        logger.debug { "modules=$load" }
+        load.split(':').forEach {
+            if (it.isNotBlank()) deps.add("org.roboquant:roboquant-$it:$version")
         }
+
         @Suppress("SpreadOperator")
         dependencies(*deps.toTypedArray())
 
