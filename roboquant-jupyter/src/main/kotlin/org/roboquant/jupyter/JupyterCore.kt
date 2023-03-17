@@ -98,13 +98,15 @@ internal class JupyterCore(
 
     override fun Builder.onLoaded() {
         val version = options["version"] ?: Config.info.version
-
-        val d = mutableListOf("org.roboquant:roboquant-ta:$version")
-        if (options["extra"].toBoolean()) d.add("org.roboquant:roboquant-extra:$version")
-        if (options["crypto"].toBoolean()) d.add("org.roboquant:roboquant-crypto:$version")
-        if (options["ibkr"].toBoolean()) d.add("org.roboquant:roboquant-ibkr:$version")
+        val deps = mutableSetOf("org.roboquant:roboquant-ta:$version")
+        val load = options["modules"] ?: ""
+        if (load.isNotBlank()) {
+            load.split(':').forEach {
+                deps.add("org.roboquant:roboquant-$it:$version")
+            }
+        }
         @Suppress("SpreadOperator")
-        dependencies(*d.toTypedArray())
+        dependencies(*deps.toTypedArray())
 
         // Only applies to Datalore
         if (notebook.jupyterClientType == JupyterClientType.KOTLIN_NOTEBOOK) {
