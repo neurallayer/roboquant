@@ -130,7 +130,7 @@ abstract class Chart : HTMLOutput() {
 
         @Suppress("MaxLineLength")
         internal const val scriptUrl =
-            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant@1.2.0/roboquant-jupyter/src/main/resources/js/echarts.min.js"
+            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant/roboquant-jupyter/src/main/resources/js/echarts.min.js"
 
         /**
          * Used to ensure the output divs have a unique id that is still deterministic
@@ -183,11 +183,6 @@ abstract class Chart : HTMLOutput() {
          */
         fun getScript(): String {
             return """<script type='text/javascript' src='$scriptUrl'></script>"""
-            /*
-            val stream = Companion::class.java.getResourceAsStream("/js/echarts.min.js")!!
-            val js = String(stream.readAllBytes(), StandardCharsets.UTF_8)
-            return """<script type='text/javascript'>$js</script>"""
-            */
         }
 
     }
@@ -210,7 +205,6 @@ abstract class Chart : HTMLOutput() {
      */
     override fun asHTML(): String {
         val fragment = getOption().renderJson().trimStart()
-        val id = UUID.randomUUID().toString()
 
         val convertor = if (containsJavaScript)
             "option.tooltip.formatter = new Function('p', option.tooltip.formatter);"
@@ -218,15 +212,17 @@ abstract class Chart : HTMLOutput() {
             ""
 
         return """
-        <div style="width:100%;height:${height}px;" class="rqcharts" id="$id"></div>
-        <script type="text/javascript">    
+        <div style="width:100%;height:${height}px;" class="rqcharts"></div>
+        <script type="text/javascript">
+            
             (function () {
-                console.log("registered chart $id");
+                let parentElem = document.currentScript.previousElementSibling;
+                console.log("registered new chart");
                 let option = $fragment;$convertor
                 window.call_echarts(
                     function () {
-                        console.log("rendering chart $id");
-                        window.renderEChart("$id", option);
+                        console.log("rendering chart");
+                        window.renderEChart(parentElem, option);
                     }
                 );
             })()
