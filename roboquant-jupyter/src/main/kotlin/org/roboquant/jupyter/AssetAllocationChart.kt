@@ -28,7 +28,7 @@ import org.roboquant.common.Currency
 import java.math.BigDecimal
 
 /**
- * Plot the allocation of assets (to be precise their exposure) in the provided positions.
+ * Plot the exposure of assets in the provided positions.
  *
  * @property positions the positions to use
  * @property includeAssetClass group per assetClass, default is false

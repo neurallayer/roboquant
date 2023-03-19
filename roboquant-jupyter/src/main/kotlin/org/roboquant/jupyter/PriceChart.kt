@@ -28,6 +28,8 @@ import org.icepear.echarts.components.series.LineStyle
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
+import org.roboquant.common.getBySymbol
+import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
@@ -48,6 +50,21 @@ class PriceChart(
     private val timeframe: Timeframe = Timeframe.INFINITE,
     private val priceType: String = "DEFAULT"
 ) : Chart() {
+
+    /**
+     * Plot the prices of a [symbol] found in a [feed] and optionally the [trades] made for that same
+     * asset.
+     *
+     * @see PriceChart
+     */
+    constructor(
+        feed: AssetFeed,
+        symbol: String,
+        trades: Collection<Trade> = emptyList(),
+        timeframe: Timeframe = Timeframe.INFINITE,
+        priceType: String = "DEFAULT"
+    ) : this(feed, feed.assets.getBySymbol(symbol), trades, timeframe, priceType)
+
 
     /**
      * Play the feed and filter the provided asset for price bar data. The output is suitable for candle stock charts

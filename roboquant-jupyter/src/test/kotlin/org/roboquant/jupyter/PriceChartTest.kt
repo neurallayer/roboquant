@@ -18,6 +18,8 @@ package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
 import org.roboquant.feeds.RandomWalkFeed
+import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class PriceChartTest {
@@ -25,8 +27,15 @@ internal class PriceChartTest {
     @Test
     fun test() {
         val feed = RandomWalkFeed.lastYears(1)
-        val chart = PriceChart(feed, feed.assets.first())
+        val asset = feed.assets.first()
+        val chart = PriceChart(feed, asset)
         assertTrue(chart.asHTML().isNotBlank())
+
+        val chart2 = PriceChart(feed, asset.symbol)
+        assertEquals(chart.asHTML(), chart2.asHTML())
+
+        val chart3 = PriceChart(feed, asset.symbol, priceType = "OPEN")
+        assertNotEquals(chart2, chart3)
     }
 
 }

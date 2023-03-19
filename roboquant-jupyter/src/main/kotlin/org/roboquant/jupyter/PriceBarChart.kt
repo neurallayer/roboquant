@@ -73,6 +73,8 @@ class PriceBarChart(
     /**
      * Plot the price-bars of a [symbol] found in a [feed] and optionally the [trades] made for that same
      * asset.
+     *
+     * @see PriceBarChart
      */
     constructor(
         feed: AssetFeed,
