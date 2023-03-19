@@ -128,9 +128,12 @@ abstract class Chart : HTMLOutput() {
      */
     companion object {
 
+        // Which version of echarts.min.js to use
+        private const val commit = "b8619353627cad0811d1772227b7a5977e18cfd0"
+
         @Suppress("MaxLineLength")
         internal const val scriptUrl =
-            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant/roboquant-jupyter/src/main/resources/js/echarts.min.js"
+            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant@$commit/roboquant-jupyter/src/main/resources/js/echarts.min.js"
 
         /**
          * Used to ensure the output divs have a unique id that is still deterministic

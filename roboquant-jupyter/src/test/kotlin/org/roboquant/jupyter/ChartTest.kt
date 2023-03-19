@@ -59,6 +59,9 @@ internal class ChartTest {
         assertEquals(700, chart.height)
         assertContains(chart.asHTML(), asset.symbol)
 
+        val chart2 = PriceBarChart(f, asset.symbol)
+        assertEquals(chart.asHTML(), chart2.asHTML())
+
         val file = File(folder, "test.html")
         chart.toHTMLFile(file.toString())
         assertTrue(file.exists())

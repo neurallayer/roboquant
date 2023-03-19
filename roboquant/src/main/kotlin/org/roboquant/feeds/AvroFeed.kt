@@ -55,7 +55,7 @@ import kotlin.io.path.isRegularFile
  *
  * @constructor Create new Avro Feed
  */
-class AvroFeed(private val path: Path) : Feed {
+class AvroFeed(private val path: Path) : AssetFeed {
 
 
     /**
@@ -83,7 +83,7 @@ class AvroFeed(private val path: Path) : Feed {
     /**
      * Get available assets.
      */
-    val assets: SortedSet<Asset>
+    override val assets: SortedSet<Asset>
         get() = assetLookup.values.toSortedSet()
 
 

@@ -42,12 +42,14 @@ import org.icepear.echarts.origin.util.SeriesOption
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
+import org.roboquant.common.getBySymbol
+import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 
 /**
- * Plot the price-bars (candlesticks) of an asset found in a [feed] and optionally the [trades] made for that same
+ * Plot the price-bars (candlesticks) of an [asset] found in a [feed] and optionally the [trades] made for that same
  * asset.
  *
  * This will only plot candlesticks if the feed also contains price actions of the type [PriceBar] for the
@@ -68,9 +70,21 @@ class PriceBarChart(
     private val useTime: Boolean = true
 ) : Chart() {
 
+    /**
+     * Plot the price-bars of a [symbol] found in a [feed] and optionally the [trades] made for that same
+     * asset.
+     */
+    constructor(
+        feed: AssetFeed,
+        symbol: String,
+        trades: Collection<Trade> = emptyList(),
+        timeframe: Timeframe = Timeframe.INFINITE,
+        useTime: Boolean = true
+    ) : this(feed, feed.assets.getBySymbol(symbol), trades, timeframe, useTime)
+
 
     init {
-        // Default height is not that suitable, so we increase it to 700
+        // Default height is not that suitable for this chart type, so we increase it to 700
         height = 700
     }
 
