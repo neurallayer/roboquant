@@ -99,6 +99,13 @@ class IBKRBroker(
         sleep(5_000)
     }
 
+    private fun IBOrder.log(contract: Contract) {
+        logger.info {
+            "placing order id=${orderId()} size=${totalQuantity()} type=${orderType()} contract=$contract"
+        }
+    }
+
+
     /**
      * Cancel an order
      */
@@ -122,11 +129,7 @@ class IBKRBroker(
         logger.info("received order=$order")
         val contract = order.asset.toContract()
         val ibOrder = createIBOrder(order)
-        logger.info {
-            with(ibOrder) {
-                "placing order id=${orderId()} size=${totalQuantity()} type=${orderType()} contract=$contract"
-            }
-        }
+        ibOrder.log(contract)
         client.placeOrder(ibOrder.orderId(), contract, ibOrder)
     }
 
@@ -145,6 +148,7 @@ class IBKRBroker(
             when (order) {
                 is CancelOrder -> cancelOrder(order)
                 is SingleOrder -> placeOrder(order)
+                is BracketOrder -> placeBracketOrder(order)
                 else -> {
                     throw UnsupportedException("unsupported order type order=$order")
                 }
@@ -194,6 +198,24 @@ class IBKRBroker(
         orderMap[orderId] = order
 
         return result
+    }
+
+
+    private fun placeBracketOrder(order: BracketOrder) {
+
+        val entry = createIBOrder(order.entry)
+        val profit = createIBOrder(order.takeProfit)
+        profit.parentId(entry.orderId())
+        val loss = createIBOrder(order.stopLoss)
+        loss.parentId(entry.orderId())
+        loss.transmit(true)
+        val orders = listOf(entry, profit, loss)
+        val contract = order.entry.asset.toContract()
+
+        for (o in orders) {
+            o.log(contract)
+            client.placeOrder(o.orderId(), contract, o)
+        }
     }
 
     /**

@@ -29,6 +29,7 @@ import org.roboquant.ibkr.IBKRLiveFeed
 import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
+import org.roboquant.orders.BracketOrder
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy
 import java.time.DayOfWeek
@@ -72,7 +73,9 @@ fun showAccount() {
 
     // Get the account object from the broker instance
     val broker = IBKRBroker()
+    Thread.sleep(5_000)
     val account = broker.account
+
 
     // Print the full summary of the account
     println(account.fullSummary())
@@ -102,6 +105,31 @@ fun paperTrade() {
     broker.disconnect()
     println("done")
 }
+
+
+fun placeOrder() {
+    Config.exchangeRates = IBKRExchangeRates()
+    val broker = IBKRBroker()
+    Thread.sleep(5_000)
+    val account = broker.account
+    println(account.fullSummary())
+
+
+    val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
+    val order = BracketOrder.marketTrailStop(
+        asset,
+        Size.ONE,
+        14.50
+    )
+
+    broker.place(listOf(order), Event.empty())
+    Thread.sleep(5_000)
+    val account2 = broker.account
+    println(account2.fullSummary())
+    broker.disconnect()
+    println("done")
+}
+
 
 fun liveFeedEU() {
     val feed = IBKRLiveFeed()
@@ -182,6 +210,8 @@ fun historicFeed2() {
 }
 
 
+
+
 fun historicFuturesFeed() {
     val feed = IBKRHistoricFeed()
 
@@ -199,7 +229,7 @@ fun historicFuturesFeed() {
 
 fun main() {
 
-    when ("PAPER_TRADE") {
+    when ("ACCOUNT") {
         "ACCOUNT" -> showAccount()
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()
@@ -211,6 +241,7 @@ fun main() {
         "HISTORIC2" -> historicFeed2()
         "HISTORIC3" -> historicFuturesFeed()
         "BATCH" -> retrieveBatch()
+        "PLACE_ORDER" -> placeOrder()
     }
 
 }
