@@ -169,8 +169,6 @@ fun retrieveBatch() {
 }
 
 
-
-
 fun historicFeed2() {
     val feed = IBKRHistoricFeed()
 
@@ -201,7 +199,7 @@ fun historicFuturesFeed() {
 
 fun main() {
 
-    when ("BATCH") {
+    when ("PAPER_TRADE") {
         "ACCOUNT" -> showAccount()
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()

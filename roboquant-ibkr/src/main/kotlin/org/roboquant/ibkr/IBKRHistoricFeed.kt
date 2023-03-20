@@ -142,7 +142,7 @@ class IBKRHistoricFeed(
             logger.trace { "bar at $timeStr tranlated into $time and $action" }
         }
 
-        override fun historicalDataEnd(reqId: Int, startDateStr: String, endDateStr: String) {
+        override fun historicalDataEnd(reqId: Int, startDateStr: String?, endDateStr: String?) {
             val v = subscriptions.remove(reqId)
             logger.info("Finished retrieving $v")
         }

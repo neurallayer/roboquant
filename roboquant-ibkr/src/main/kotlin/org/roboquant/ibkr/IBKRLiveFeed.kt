@@ -80,15 +80,16 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
             high: Double,
             low: Double,
             close: Double,
-            volume: Decimal,
-            wap: Decimal,
+            volume: Decimal?,
+            wap: Decimal?,
             count: Int
         ) {
             val asset = subscriptions[reqId]
             if (asset == null) {
                 logger.warn("unexpected realtimeBar received with request id $reqId")
             } else {
-                val action = PriceBar(asset, open, high, low, close, volume.value().toDouble())
+                val v = volume?.value()?.toDouble() ?: Double.NaN
+                val action = PriceBar(asset, open, high, low, close, v)
                 val now = Instant.ofEpochSecond(time) // IBKR uses seconds resolution
                 val event = Event(listOf(action), now)
                 send(event)
