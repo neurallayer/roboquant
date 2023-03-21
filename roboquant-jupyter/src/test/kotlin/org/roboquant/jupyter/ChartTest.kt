@@ -54,13 +54,16 @@ internal class ChartTest {
     fun test() {
         val f = RandomWalkFeed.lastYears(1, 1, generateBars = true)
         val asset = f.assets.first()
+        Chart.counter = 0
         val chart = PriceBarChart(f, asset)
-        assertTrue(chart.asHTML().isNotBlank())
+        val html = chart.asHTML()
+        assertTrue(html.isNotBlank())
         assertEquals(700, chart.height)
-        assertContains(chart.asHTML(), asset.symbol)
+        assertContains(html, asset.symbol)
 
+        Chart.counter = 0
         val chart2 = PriceBarChart(f, asset.symbol)
-        assertEquals(chart.asHTML(), chart2.asHTML())
+        assertEquals(html, chart2.asHTML())
 
         val file = File(folder, "test.html")
         chart.toHTMLFile(file.toString())

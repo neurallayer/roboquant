@@ -28,14 +28,18 @@ internal class PriceChartTest {
     fun test() {
         val feed = RandomWalkFeed.lastYears(1)
         val asset = feed.assets.first()
+        Chart.counter = 0
         val chart = PriceChart(feed, asset)
-        assertTrue(chart.asHTML().isNotBlank())
+        val html = chart.asHTML()
+        assertTrue(html.isNotBlank())
 
+        Chart.counter = 0
         val chart2 = PriceChart(feed, asset.symbol)
-        assertEquals(chart.asHTML(), chart2.asHTML())
+        assertEquals(html, chart2.asHTML())
 
+        Chart.counter = 0
         val chart3 = PriceChart(feed, asset.symbol, priceType = "OPEN")
-        assertNotEquals(chart2, chart3)
+        assertNotEquals(html, chart3.asHTML())
     }
 
 }

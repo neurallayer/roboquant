@@ -208,28 +208,31 @@ abstract class Chart : HTMLOutput() {
      */
     override fun asHTML(): String {
         val fragment = getOption().renderJson().trimStart()
-
+        val id = "roboquant-${counter++}"
         val convertor = if (containsJavaScript)
             "option.tooltip.formatter = new Function('p', option.tooltip.formatter);"
         else
             ""
 
-        return """
-        <div style="width:100%;height:${height}px;" class="rqcharts"></div>
-        <script type="text/javascript">
-            
-            (function () {
-                let parentElem = document.currentScript.previousElementSibling;
-                console.log("registered new chart");
-                let option = $fragment;$convertor
-                window.call_echarts(
-                    function () {
-                        console.log("rendering chart");
-                        window.renderEChart(parentElem, option);
+        return """ 
+        <div style="width:100%;height:${height}px;" class="rqcharts" id="$id">
+            <script type="text/javascript">
+                (function () {
+                    let parentElem = document.currentScript.parentElement;
+                    if (parentElem.tagName == "HEAD") {
+                        parentElem = document.getElementById("$id");
                     }
-                );
-            })()
-        </script>
+                    console.log("registered new chart");
+                    let option = $fragment;$convertor
+                    window.call_echarts(
+                        function () {
+                            console.log("rendering chart");
+                            window.renderEChart(parentElem, option);
+                        }
+                    );
+                })()
+            </script>
+        </div>
         """.trimIndent()
     }
 
