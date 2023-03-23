@@ -96,9 +96,6 @@ class MetricsReport(
             <style>
             ${loadStyle()}
             </style>
-             <script type="text/javascript">
-                window.call_echarts = window.call_echarts || function(f) { f(); };    
-             </script>
             ${Chart.getScript()}
             </head>
             <body>
