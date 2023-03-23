@@ -148,7 +148,7 @@ abstract class Chart : HTMLOutput() {
          */
         var maxSamples = Int.MAX_VALUE
 
-        // Make this variable so charts work for both Chinese and western users.
+        // Make this a variable so charts work for both Chinese and western users.
 
         /**
          * Color to use for positive elements, like profit
@@ -191,7 +191,7 @@ abstract class Chart : HTMLOutput() {
     }
 
     /**
-     * Reduce the sample size in order to ensure the browser can plot it and remain responsive.
+     * Reduce the sample size in order to ensure the browser can display the chart while remaining responsive.
      */
     protected fun <T> reduce(data: Collection<T>): Collection<T> {
         return if (data.size > maxSamples) {
@@ -264,7 +264,7 @@ abstract class Chart : HTMLOutput() {
     }
 
     /**
-     * Return the standard toolbox
+     * Return a standard toolbox that can be included in a chart
      */
     protected fun getToolbox(includeMagicType: Boolean = true): Toolbox {
         val features = mutableMapOf(
@@ -279,7 +279,7 @@ abstract class Chart : HTMLOutput() {
     }
 
     /**
-     * Return the basic toolbox
+     * Return a basic toolbox hat can be included in a chart
      */
     protected fun getBasicToolbox(): Toolbox {
         val features = mutableMapOf(
