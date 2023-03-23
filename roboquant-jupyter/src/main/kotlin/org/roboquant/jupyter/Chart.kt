@@ -129,7 +129,7 @@ abstract class Chart : HTMLOutput() {
     companion object {
 
         // Which version of echarts.min.js to use
-        private const val commit = "b8619353627cad0811d1772227b7a5977e18cfd0"
+        private const val commit = "3bf8cde65fe922f58063095186c6bef5846dbee9"
 
         @Suppress("MaxLineLength")
         internal const val scriptUrl =
