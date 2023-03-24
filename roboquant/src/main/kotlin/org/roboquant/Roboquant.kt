@@ -65,7 +65,7 @@ class Roboquant(
     private val channelCapacity: Int = 100,
 ) {
 
-    private var runCounter = 0
+    private var runCounter = -1
     private val kotlinLogger = Logging.getLogger(Roboquant::class)
     private val components = listOf(strategy, policy, broker, logger) + metrics
 
@@ -125,7 +125,7 @@ class Roboquant(
      */
     fun reset() {
         for (component in components) component.reset()
-        runCounter = 0
+        runCounter = -1
     }
 
     /**
@@ -166,7 +166,7 @@ class Roboquant(
         require(validation == null || validation.start >= timeframe.end) {
             "validation should start after main timeframe"
         }
-        val run = runName ?: "run-${runCounter++}"
+        val run = runName ?: "run-${++runCounter}"
         val runInfo = RunInfo(run)
         kotlinLogger.debug { "starting run=$runInfo" }
 
@@ -231,25 +231,24 @@ class Roboquant(
     /**
      * Close the open positions of the underlying broker account. This comes in handy at the end of a run if you
      * don't want to have open positions left in the portfolio. You can optionally provide the [time], [phase] and
-     * [runName] used to close the positions and log the metrics.
+     * [runName] to use to close the positions and log the metrics.
      *
-     * This method performs the following two steps:
-     * 1. cancel open orders
-     * 2. close open positions by creating and processing [MarketOrder] for the required quantities, using the
-     * last known market price for an asset as the price action
-     * 3. run all metrics
+     * This method performs the following steps:
+     * 1. cancel existing open orders
+     * 2. close open positions by placing [MarketOrder] for the required opposite sizes
+     * 3. run and log the metrics
      */
     fun closePositions(time: Instant? = null, phase: RunPhase = MAIN, runName: String? = null) {
         val account = broker.account
-        val orderTime = time ?: account.lastUpdate
+        val eventTime = time ?: account.lastUpdate
         val cancelOrders = account.openOrders.createCancelOrders()
         val change = account.positions.closeSizes
         val changeOrders = change.map { MarketOrder(it.key, it.value) }
         val orders = cancelOrders + changeOrders
         val actions = account.positions.map { TradePrice(it.asset, it.mktPrice) }
-        val event = Event(actions, orderTime)
+        val event = Event(actions, eventTime)
         val run = runName ?: "run-${runCounter}"
-        val runInfo = RunInfo(run, orderTime, phase = phase)
+        val runInfo = RunInfo(run, eventTime, phase = phase)
         val newAccount = broker.place(orders, event)
         runMetrics(newAccount, event, runInfo)
     }
