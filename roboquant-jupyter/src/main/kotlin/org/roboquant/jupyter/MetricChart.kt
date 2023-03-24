@@ -97,14 +97,14 @@ class MetricChart(
     private fun List<MetricsEntry>.toSeriesData(): List<Pair<Any, BigDecimal>> {
 
         val d = mutableListOf<Pair<Any, BigDecimal>>()
-        for (entry in this) {
+        for ((step, entry) in withIndex()) {
             val value = entry.value
             if (value.isFinite()) {
                 val roundedValue = BigDecimal(value).setScale(fractionDigits, RoundingMode.HALF_DOWN)
                 if (useTime)
                     d.add(Pair(entry.info.time, roundedValue))
                 else
-                    d.add(Pair(entry.info.step.toString(), roundedValue))
+                    d.add(Pair(step, roundedValue))
             }
         }
         return d

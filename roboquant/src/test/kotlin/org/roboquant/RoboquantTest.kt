@@ -64,7 +64,6 @@ internal class RoboquantTest {
         val step = roboquant.logger.getMetric("progress.steps").last()
         assertEquals(timeline.size, step.value.toInt())
         assertEquals(RunPhase.MAIN, step.info.phase)
-        assertEquals(timeline.size, step.info.step)
 
         val offset = 3
         val timeframe = Timeframe(timeline[2], timeline[2 + offset], inclusive = false)

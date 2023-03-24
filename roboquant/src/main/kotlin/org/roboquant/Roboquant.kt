@@ -186,7 +186,6 @@ class Roboquant(
      *
      */
     private fun step(orders: List<Order>, event: Event, runInfo: RunInfo): List<Order> {
-        runInfo.step++
         runInfo.time = event.time
         kotlinLogger.trace { "starting step info=$runInfo orders=${orders.size} actions=${event.actions.size}" }
 
@@ -231,7 +230,6 @@ class Roboquant(
  * Run related info provided to metrics loggers together with the metric results.
  *
  * @property run the name of the run
- * @property step the step
  * @property time the time
  * @property timeframe the total timeframe of the run, if not known it will be [Timeframe.INFINITE]
  * @property phase the phase of the run
@@ -239,7 +237,6 @@ class Roboquant(
  */
 data class RunInfo internal constructor(
     val run: String,
-    var step: Int = 0,
     var time: Instant = Instant.MIN,
     var timeframe: Timeframe = Timeframe.INFINITE,
     var phase: RunPhase = MAIN
