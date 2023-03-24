@@ -22,6 +22,7 @@ import org.roboquant.RunPhase.MAIN
 import org.roboquant.RunPhase.VALIDATE
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
+import org.roboquant.brokers.closeSizes
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Logging
 import org.roboquant.common.Summary
@@ -29,10 +30,13 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
+import org.roboquant.feeds.TradePrice
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.MetricsLogger
 import org.roboquant.metrics.Metric
+import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
+import org.roboquant.orders.createCancelOrders
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.Policy
 import org.roboquant.strategies.Strategy
@@ -224,6 +228,32 @@ class Roboquant(
         return s
     }
 
+    /**
+     * Close the open positions of the underlying broker account. This comes in handy at the end of a run if you
+     * don't want to have open positions left in the portfolio. You can optionally provide the [time], [phase] and
+     * [runName] used to close the positions and log the metrics.
+     *
+     * This method performs the following two steps:
+     * 1. cancel open orders
+     * 2. close open positions by creating and processing [MarketOrder] for the required quantities, using the
+     * last known market price for an asset as the price action
+     * 3. run all metrics
+     */
+    fun closePositions(time: Instant? = null, phase: RunPhase = MAIN, runName: String? = null) {
+        val account = broker.account
+        val orderTime = time ?: account.lastUpdate
+        val cancelOrders = account.openOrders.createCancelOrders()
+        val change = account.positions.closeSizes
+        val changeOrders = change.map { MarketOrder(it.key, it.value) }
+        val orders = cancelOrders + changeOrders
+        val actions = account.positions.map { TradePrice(it.asset, it.mktPrice) }
+        val event = Event(actions, orderTime)
+        val run = runName ?: "run-${runCounter}"
+        val runInfo = RunInfo(run, orderTime, phase = phase)
+        val newAccount = broker.place(orders, event)
+        runMetrics(newAccount, event, runInfo)
+    }
+
 }
 
 /**
@@ -233,7 +263,7 @@ class Roboquant(
  * @property time the time
  * @property timeframe the total timeframe of the run, if not known it will be [Timeframe.INFINITE]
  * @property phase the phase of the run
- * @constructor Create new RunInfo object
+ * @constructor Create a new RunInfo object
  */
 data class RunInfo internal constructor(
     val run: String,

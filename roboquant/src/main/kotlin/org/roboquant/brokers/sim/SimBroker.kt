@@ -16,16 +16,16 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.brokers.*
+import org.roboquant.brokers.Account
+import org.roboquant.brokers.Broker
+import org.roboquant.brokers.Position
+import org.roboquant.brokers.Trade
 import org.roboquant.brokers.sim.execution.Execution
 import org.roboquant.brokers.sim.execution.ExecutionEngine
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.TradePrice
-import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
-import org.roboquant.orders.createCancelOrders
 import java.time.Instant
 
 /**
@@ -154,25 +154,6 @@ open class SimBroker(
         _account.lastUpdate = event.time
         accountModel.updateAccount(_account)
         return account
-    }
-
-    /**
-     * Close the open positions and return the updated account. This comes in handy at the end of a back-test if you
-     * don't want to have open positions left in the portfolio.
-     *
-     * This method performs the following two steps:
-     * 1. cancel open orders
-     * 2. close open positions by creating and processing [MarketOrder] for the required quantities, using the
-     * last known market price for an asset as the price action.
-     */
-    fun closePositions(time: Instant = _account.lastUpdate): Account {
-        val account = account
-        val cancelOrders = account.openOrders.createCancelOrders()
-        val change = account.positions.closeSizes
-        val changeOrders = change.map { MarketOrder(it.key, it.value) }
-        val actions = account.positions.map { TradePrice(it.asset, it.mktPrice) }
-        val event = Event(actions, time)
-        return place(cancelOrders + changeOrders, event)
     }
 
     /**

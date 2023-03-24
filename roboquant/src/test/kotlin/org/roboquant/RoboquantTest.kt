@@ -51,8 +51,36 @@ internal class RoboquantTest {
         roboquant.run(TestData.feed)
         val summary = roboquant.summary()
         assertTrue(summary.toString().isNotEmpty())
+
+        val account = roboquant.broker.account
+        assertTrue(account.trades.isNotEmpty())
+        assertTrue(account.positions.isEmpty())
+        assertTrue(account.openOrders.isEmpty())
+        assertTrue(account.closedOrders.isNotEmpty())
     }
 
+    @Test
+    fun liquidateTest() {
+        val broker = SimBroker()
+        val event = TestData.event()
+        var account = broker.place(listOf(TestData.usMarketOrder()), event)
+        assertEquals(1, account.positions.size)
+        assertEquals(1, account.trades.size)
+        assertEquals(1, account.closedOrders.size)
+
+        val roboquant = Roboquant(EMAStrategy(), AccountMetric(), broker = broker)
+        var equity = roboquant.logger.getMetric("account.equity")
+        assertEquals(0, equity.size)
+        roboquant.closePositions()
+        account = broker.account
+        assertEquals(0, account.openOrders.size)
+        assertEquals(0, account.positions.size)
+        assertEquals(2, account.trades.size)
+        assertEquals(2, account.closedOrders.size)
+
+        equity = roboquant.logger.getMetric("account.equity")
+        assertEquals(1, equity.size)
+    }
 
     @Test
     fun testDefaultTimeframe() {
