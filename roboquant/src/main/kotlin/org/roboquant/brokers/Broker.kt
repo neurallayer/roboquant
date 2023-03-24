@@ -33,9 +33,9 @@ interface Broker : Lifecycle {
     val account: Account
 
     /**
-     * Place a new set of [orders] at this broker. The [event] contains the latest data from the used feed.
+     * Place a new set of [orders] at this broker. The [event] contains the latest actions from the feed.
      *
-     * After processing the [orders], this method returns an instance of the updated [Account]. This returned instance
+     * After processing the [orders], this method returns an updated instance of the [Account]. This returned instance
      * reflects the latest status, is immutable and thread safe. The just placed orders are always included
      * in the returned account object, either as open- or closed-orders.
      */
@@ -48,5 +48,11 @@ interface Broker : Lifecycle {
      * The returned map should NOT be mutated after it has been returned.
      */
     fun getMetrics(): MetricResults = emptyMap()
+
+    /**
+     * Refresh the state of the broker and the underlying account. The default implementation invokes the [place]
+     * method without any orders or event.
+     */
+    fun refresh() : Account = place(emptyList())
 
 }

@@ -19,6 +19,7 @@ package org.roboquant.jupyter
 import org.jetbrains.kotlinx.jupyter.api.*
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
+import org.roboquant.brokers.Account
 import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import java.io.PrintWriter
@@ -148,6 +149,10 @@ internal class JupyterCore(
 
         render<HTMLOutput> {
             if (isolation) HTML(it.asHTMLPage(), true) else HTML(it.asHTML(), false)
+        }
+
+        render<Account> {
+            print(it.summary())
         }
 
     }
