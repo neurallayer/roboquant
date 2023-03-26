@@ -110,7 +110,7 @@ If you already have Docker installed, all it takes is a single command to have a
 
 [source,shell]
 ----
-docker run --rm -p 8888:8888 roboquant/jupyter 
+docker run -p 8888:8888 roboquant/jupyter
 ----
 
 == Features

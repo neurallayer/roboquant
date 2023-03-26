@@ -30,7 +30,12 @@ import java.time.format.DateTimeFormatter
 import kotlin.collections.*
 
 /**
- * Plots the metrics values on a calendar, so it is easy to visualize if there are days when there are outliers.
+ * Plots the metrics values on a calendar, so it is easy to visualize if there are days when there are outliers. Next
+ * to the calendar a visual map will be plotted that allows to filter days based on the selected range of values.
+ *
+ * @param metricsData the data
+ * @property fractionDigits the number of digits to use, default is 2
+ * @property zoneId the time zone to use, default is [Config.defaultZoneId]
  */
 class MetricCalendarChart(
     metricsData: List<MetricsEntry>,

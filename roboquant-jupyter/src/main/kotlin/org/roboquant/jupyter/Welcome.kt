@@ -18,7 +18,6 @@ package org.roboquant.jupyter
 
 import org.roboquant.Roboquant
 import org.roboquant.common.Config
-import org.roboquant.common.getBySymbol
 import org.roboquant.common.months
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.metrics.AccountMetric
@@ -134,7 +133,7 @@ class Welcome : HTMLOutput() {
 
 
     /**
-     * View feed data
+     * View feed data demo
      */
     fun demo3(): Chart {
         println("""
@@ -142,8 +141,7 @@ class Welcome : HTMLOutput() {
             │     INPUT     │
             └───────────────┘
             val feed = AvroFeed.sp500()
-            val apple = feed.assets.getBySymbol("AAPL")
-            PriceBarChart(feed, apple)
+            PriceBarChart(feed, "AAPL")
             
             ┌───────────────┐
             │    Output     │
@@ -151,8 +149,7 @@ class Welcome : HTMLOutput() {
         """.trimIndent())
 
         val feed = AvroFeed.sp500()
-        val apple = feed.assets.getBySymbol("AAPL")
-        return PriceBarChart(feed, apple)
+        return PriceBarChart(feed, "AAPL")
     }
 
 }

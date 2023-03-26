@@ -30,9 +30,10 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
- * A MetricChart will plot a metric that is captured during one or more runs.
+ * A MetricChart will plot a metric that is captured during one or more runs. If there is more than one run found in
+ * the provided [metricsData], each run will be plotted as a separate series.
  *
- * @property metricsData the data to use
+ * @property metricsData the metric data to use
  * @property useTime should be X axis be a timescale (or a step scale)
  * @property fractionDigits how many digits to use for presenting the metric values
  */

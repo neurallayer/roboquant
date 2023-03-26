@@ -6,9 +6,10 @@ import org.roboquant.loggers.MetricsEntry
 import java.nio.charset.StandardCharsets
 
 /**
- * Generate an HTML report that contains the recorded metrics of one or more runs.
+ * Generate an HTML report that contains the recorded metrics of one or more runs. The report will contain both a
+ * table with metric values and charts.
  *
- * @param maxSamples maximum samples prt chart to use when creating charts.
+ * @param maxSamples maximum samples per chart to use when creating charts.
  */
 class MetricsReport(
     private val roboquant: Roboquant,
