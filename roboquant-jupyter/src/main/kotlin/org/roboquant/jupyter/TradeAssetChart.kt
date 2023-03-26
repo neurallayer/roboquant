@@ -29,10 +29,11 @@ import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.Currency
+import java.math.BigDecimal
 
 /**
  * Trade chart plots the [trades] that have been generated during a run per Asset. By default, the realized pnl of the
- * trades will be plotted but this is configurable
+ * trades will be used to color the value, but this is configurable.
  *
  */
 class TradeAssetChart(
@@ -70,12 +71,18 @@ class TradeAssetChart(
         val tooltip = Tooltip()
             .setFormatter(javascriptFunction("return p.value[3];"))
 
+        val valueDim = 2
+        val min = d.minOfOrNull { it[valueDim] as BigDecimal }
+        val max = d.maxOfOrNull { it[valueDim] as BigDecimal }
+        val vm = getVisualMap(min, max).setDimension(valueDim)
+
         val chart = Scatter()
             .setTitle(title ?: "Trade Chart $aspect")
             .addSeries(series)
             .addYAxis(CategoryAxis().setData(yAxisData).setSplitArea(SplitArea().setShow(true)))
             .addXAxis(TimeAxis())
             .setTooltip(tooltip)
+            .setVisualMap(vm)
 
         val option = chart.option
 

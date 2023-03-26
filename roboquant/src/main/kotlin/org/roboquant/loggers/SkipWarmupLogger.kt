@@ -17,6 +17,7 @@
 package org.roboquant.loggers
 
 import org.roboquant.RunInfo
+import org.roboquant.RunPhase
 import org.roboquant.metrics.MetricResults
 
 /**
@@ -31,17 +32,23 @@ import org.roboquant.metrics.MetricResults
  */
 class SkipWarmupLogger(private val logger: MetricsLogger, private val skip: Int = -1) : MetricsLogger by logger {
 
-    var step = 0
+    private var step = 0
 
+    /**
+     * @see MetricsLogger.log
+     */
     override fun log(results: MetricResults, info: RunInfo) {
         step++
         if (step <= skip) return
         logger.log(results, info)
     }
 
-    override fun reset() {
-        logger.reset()
+    /**
+     * @see MetricsLogger.start
+     */
+    override fun start(runPhase: RunPhase) {
         step = 0
+        logger.start(runPhase)
     }
 
 }

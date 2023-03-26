@@ -133,10 +133,11 @@ abstract class Chart : HTMLOutput() {
 
         @Suppress("MaxLineLength")
         internal const val scriptUrl =
-            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant@$commit/roboquant-jupyter/src/main/resources/js/echarts.min.js"
+            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant@$commit/roboquant-jupyter/src/main/resources/js/echarts.min.js?version=$commit"
 
         /**
-         * Used to ensure the output divs have a unique id that is still deterministic
+         * Used to ensure the output divs have a unique id. This is only used in classic notebooks since then the
+         * JavaScript cannot access the DIV by document.currentScript.parentElement and will fall back to the id.
          */
         internal var counter = 0
 
