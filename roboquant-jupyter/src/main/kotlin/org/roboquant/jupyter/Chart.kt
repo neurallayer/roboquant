@@ -102,7 +102,7 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 }
 
 /**
- * Base class all roboquant charts in Notebooks. Subclasses should implement at least the [getOption] method.
+ * Base class all roboquant charts. Subclasses should implement at least the [getOption] method.
  */
 abstract class Chart : HTMLOutput() {
 

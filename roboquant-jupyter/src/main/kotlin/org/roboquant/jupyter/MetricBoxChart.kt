@@ -37,8 +37,8 @@ import java.time.temporal.ChronoUnit
  * low-, mid- and high percentiles. It provides a good indication how the values of a certain metric are distributed
  * during a certain [period].
  *
- * @property metricData the data to use
- * @property period the period to use for one box
+ * @property metricData the metric data to use
+ * @property period the period to use for one box to calculate percentiles
  * @property lowPercentile the low percentile, default is 25.0
  * @property midPercentile the mid-percentile, default is 50.0
  * @property highPercentile the high percentile, default is 75.0

@@ -12,7 +12,7 @@ If you have already Docker installed, it only takes a single command to have a f
 
 [source,shell]
 ----
-docker run --rm -p 8888:8888 roboquant/jupyter
+docker run -p 8888:8888 roboquant/jupyter
 ----
 
 This will pull the image from DockerHub and run it on your local machine. The image comes with several notebooks that demonstrate how to develop and run your own strategies.
