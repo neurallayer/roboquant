@@ -21,6 +21,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
+import org.roboquant.feeds.toList
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -80,11 +81,13 @@ internal class PolygonTest {
     @Test
     fun testHFinancialsFeed() {
         Config.getProperty("FULL_COVERAGE") ?: return
-        val feed = PolygonFinancialFeed()
+        val feed = PolygonFinancialsFeed()
         feed.retrieve("AAPL", "TSLA")
         assertEquals(2, feed.assets.size)
         assertTrue(feed.timeline.isNotEmpty())
         assertContains(feed.assets.symbols, "AAPL")
         assertContains(feed.assets.symbols, "TSLA")
+
+        assertTrue(feed.toList().flatMap { it.actions }.all { it is SecFiling })
     }
 }

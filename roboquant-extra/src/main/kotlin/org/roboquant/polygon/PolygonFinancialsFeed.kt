@@ -18,8 +18,7 @@
 package org.roboquant.polygon
 
 import io.polygon.kotlin.sdk.rest.PolygonRestClient
-import io.polygon.kotlin.sdk.rest.experimental.ExperimentalAPI
-import io.polygon.kotlin.sdk.rest.experimental.FinancialsParameters
+import io.polygon.kotlin.sdk.rest.experimental.*
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
@@ -32,16 +31,29 @@ import java.util.*
 
 
 /**
- * The financial data (a subset of the XBRL report submitted to the SEC) that is included as actions in a feed.
+ * The financials data (a subset of the XBRL report submitted to the SEC) that is included as actions in a feed.
+ *
+ * @property asset
+ * @property balanceSheet
+ * @property cashFlowStatement
+ * @property incomeStatement
+ * @property comprehensiveIncome
  */
-data class SecFiling(val asset: Asset) : Action
-
+data class SecFiling(
+    val asset: Asset,
+    val balanceSheet: Map<String, Double>,
+    val cashFlowStatement: Map<String, Double>,
+    val incomeStatement: Map<String, Double>,
+    val comprehensiveIncome: Map<String, Double>
+) : Action
 
 /**
- * Financial data feed from Polygon.io. Under the hood, Polygon uses the SEC Filing as the source. As a result this
- * data may be delivered later after a financial period has completed.
+ * This feed provide financials data retrieved from Polygon.io.
+ *
+ * Under the hood, Polygon uses the SEC Filing as the source. As a result this data will only be available much later
+ * after a financial period has completed. This feed using the filing date as moment in time to mark the data.
  */
-class PolygonFinancialFeed(
+class PolygonFinancialsFeed(
     configure: PolygonConfig.() -> Unit = {}
 ) : HistoricFeed {
 
@@ -73,25 +85,46 @@ class PolygonFinancialFeed(
         availableAssets(client)
     }
 
+    @OptIn(ExperimentalAPI::class)
+    private fun FinancialForm?.toMap() = this?.mapValues { it.value.value } ?: emptyMap()
+
+    @OptIn(ExperimentalAPI::class)
+    private fun financials2Action(symbol: String, forms: FinancialForms): SecFiling {
+        val asset = Asset(symbol)
+        val balanceSheet = forms.balanceSheet.toMap()
+        val cashFlowStatement = forms.cashFlowStatement.toMap()
+        val incomeStatement = forms.incomeStatement.toMap()
+        val comprehensiveIncome = forms.comprehensiveIncome.toMap()
+        return SecFiling(
+            asset,
+            balanceSheet,
+            cashFlowStatement,
+            incomeStatement,
+            comprehensiveIncome
+        )
+    }
 
     /**
-     * Retrieve [SecFiling] data for the provided [symbols].
+     * Retrieve [SecFiling] data for the provided [symbols]. The [coverPeriod] determines the type of financials and
+     * [limit] the maximum number of results returned
      *
      * This is just a first feasibility test and no useful attributes are yet included.
      */
     @OptIn(ExperimentalAPI::class)
     fun retrieve(
-        vararg symbols: String
+        vararg symbols: String,
+        coverPeriod : String = "quarterly",
+        limit : Int = 10,
     ) {
+        require(coverPeriod in setOf("annual", "quarterly", "ttm"))
         for (symbol in symbols) {
-            val param = FinancialsParameters(ticker=symbol)
+            val param = FinancialsParameters(ticker = symbol, limit = limit, timeframe = coverPeriod)
             val results = client.experimentalClient.getFinancialsBlocking(param).results ?: emptyList()
-            for (financial in results) {
-                logger.trace { financial }
-                if (financial.filingDate == null) continue
-                val asset = Asset(symbol)
-                val action = SecFiling(asset)
-                val time = Instant.parse(financial.filingDate + "T23:59:59Z")
+            for (financials in results) {
+                logger.trace { financials }
+                if (financials.filingDate == null || financials.financials == null) continue
+                val action = financials2Action(symbol, financials.financials!!)
+                val time = Instant.parse(financials.filingDate + "T23:59:59Z")
                 add(time, action)
             }
         }
