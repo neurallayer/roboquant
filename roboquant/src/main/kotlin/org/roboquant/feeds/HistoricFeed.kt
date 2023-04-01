@@ -34,7 +34,7 @@ interface HistoricFeed : AssetFeed {
     val timeline: Timeline
 
     /**
-     * TimeFrame of this feed.
+     * Timeframe of this feed
      */
     override val timeframe: Timeframe
         get() = timeline.timeframe

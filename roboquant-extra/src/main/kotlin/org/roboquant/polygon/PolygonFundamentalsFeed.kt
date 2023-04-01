@@ -18,12 +18,18 @@
 package org.roboquant.polygon
 
 import io.polygon.kotlin.sdk.rest.PolygonRestClient
-import io.polygon.kotlin.sdk.rest.experimental.*
+import io.polygon.kotlin.sdk.rest.experimental.ExperimentalAPI
+import io.polygon.kotlin.sdk.rest.experimental.FinancialForm
+import io.polygon.kotlin.sdk.rest.experimental.FinancialForms
+import io.polygon.kotlin.sdk.rest.experimental.FinancialsParameters
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.Timeline
-import org.roboquant.feeds.*
+import org.roboquant.feeds.Action
+import org.roboquant.feeds.Event
+import org.roboquant.feeds.EventChannel
+import org.roboquant.feeds.HistoricFeed
 import org.roboquant.polygon.Polygon.availableAssets
 import org.roboquant.polygon.Polygon.getRestClient
 import java.time.Instant
@@ -62,12 +68,21 @@ class PolygonFundamentalsFeed(
     private val events = sortedMapOf<Instant, MutableList<SecFiling>>()
     private val logger = Logging.getLogger(this::class)
 
+    /**
+     * @see HistoricFeed.timeline
+     */
     override val timeline: Timeline
         get() = events.keys.toList()
 
+    /**
+     * @see HistoricFeed.timeframe
+     */
     override val timeframe
         get() = if (events.isEmpty()) Timeframe.INFINITE else Timeframe(events.firstKey(), events.lastKey(), true)
 
+    /**
+     * @see HistoricFeed.assets
+     */
     override val assets: SortedSet<Asset>
         get() = events.asSequence().map { entry -> entry.value.map { it.asset } }.flatten().toSortedSet()
 
