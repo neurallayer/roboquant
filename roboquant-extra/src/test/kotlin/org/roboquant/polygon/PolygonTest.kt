@@ -79,12 +79,13 @@ internal class PolygonTest {
 
 
     @Test
-    fun testHFinancialsFeed() {
+    fun testFundamentalsFeed() {
         Config.getProperty("FULL_COVERAGE") ?: return
-        val feed = PolygonFinancialsFeed()
+        val feed = PolygonFundamentalsFeed()
         feed.retrieve("AAPL", "TSLA")
         assertEquals(2, feed.assets.size)
         assertTrue(feed.timeline.isNotEmpty())
+        assertTrue(! feed.timeframe.isInfinite())
         assertContains(feed.assets.symbols, "AAPL")
         assertContains(feed.assets.symbols, "TSLA")
 

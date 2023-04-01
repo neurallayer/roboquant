@@ -33,13 +33,13 @@ import java.util.*
 /**
  * The financials data (a subset of the XBRL report submitted to the SEC) that is included as actions in a feed.
  *
- * @property asset
- * @property balanceSheet
- * @property cashFlowStatement
- * @property incomeStatement
- * @property comprehensiveIncome
+ * @property asset the asset of the filing
+ * @property balanceSheet the balance sheet properties
+ * @property cashFlowStatement the cash flow statement properties
+ * @property incomeStatement the income flow statement properties
+ * @property comprehensiveIncome the comprehensive flow statement properties
  */
-data class SecFiling(
+data class SecFiling internal constructor(
     val asset: Asset,
     val balanceSheet: Map<String, Double>,
     val cashFlowStatement: Map<String, Double>,
@@ -48,12 +48,12 @@ data class SecFiling(
 ) : Action
 
 /**
- * This feed provide financials data retrieved from Polygon.io.
+ * This feed provide fundamentals data retrieved from Polygon.io.
  *
  * Under the hood, Polygon uses the SEC Filing as the source. As a result this data will only be available much later
  * after a financial period has completed. This feed using the filing date as moment in time to mark the data.
  */
-class PolygonFinancialsFeed(
+class PolygonFundamentalsFeed(
     configure: PolygonConfig.() -> Unit = {}
 ) : HistoricFeed {
 

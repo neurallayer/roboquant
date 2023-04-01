@@ -21,7 +21,7 @@
     "TooManyFunctions",
     "WildcardImport",
     "MaxLineLength",
-    "LongParameterList", "GrazieInspection", "SpellCheckingInspection"
+    "LongParameterList", "SpellCheckingInspection"
 )
 
 package org.roboquant.ta

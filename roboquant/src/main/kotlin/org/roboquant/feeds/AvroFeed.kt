@@ -30,7 +30,6 @@ import org.apache.avro.generic.GenericRecord
 import org.apache.avro.io.DatumWriter
 import org.apache.avro.util.Utf8
 import org.roboquant.common.*
-import org.roboquant.feeds.*
 import org.roboquant.feeds.AssetSerializer.deserialize
 import org.roboquant.feeds.AssetSerializer.serialize
 import java.io.File

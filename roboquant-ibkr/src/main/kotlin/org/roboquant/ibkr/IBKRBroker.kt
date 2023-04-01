@@ -110,7 +110,7 @@ class IBKRBroker(
      * Cancel an order
      */
     private fun cancelOrder(cancellation: CancelOrder) {
-        logger.debug("received order $cancellation")
+        logger.debug { "received order $cancellation" }
         val id = cancellation.id
         val ibID = orderMap.filter { it.value.id == id }.keys.first()
         logger.info("cancelling order with id $ibID")

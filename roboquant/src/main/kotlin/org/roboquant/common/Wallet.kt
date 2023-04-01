@@ -17,8 +17,6 @@
 package org.roboquant.common
 
 import java.time.Instant
-import java.util.*
-import kotlin.collections.HashMap
 
 /**
  * Wallet contains amounts of different currencies at the same time. So for example a single instance of Wallet can
