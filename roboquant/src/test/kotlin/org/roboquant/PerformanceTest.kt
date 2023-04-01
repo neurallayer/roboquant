@@ -20,7 +20,10 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.common.*
+import org.roboquant.common.Config
+import org.roboquant.common.ParallelJobs
+import org.roboquant.common.Timeframe
+import org.roboquant.common.days
 import org.roboquant.feeds.*
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.SilentLogger
@@ -60,7 +63,6 @@ private class WrappingFeed(feed: Feed) : Feed {
 internal class PerformanceTest {
 
     private val concurrency = "parallel"
-    private val logger = Logging.getLogger(PerformanceTest::class)
     private val parallel = Config.getProperty(concurrency)?.toInt() ?: Config.info.cores
 
     /**
@@ -75,7 +77,6 @@ internal class PerformanceTest {
         return best
     }
 
-
     /**
      * Basic test with minimal overhead
      */
@@ -85,7 +86,6 @@ internal class PerformanceTest {
             roboquant.run(feed)
         }
     }
-
 
     /**
      * Test iterating over the feed while filtering
@@ -97,7 +97,6 @@ internal class PerformanceTest {
             }
         }
     }
-
 
     /**
      * Test with 3 strategies, margin account, shorting, extra metrics and logging overhead included
@@ -126,7 +125,6 @@ internal class PerformanceTest {
         }
     }
 
-
     /**
      * Parallel tests
      */
@@ -145,14 +143,14 @@ internal class PerformanceTest {
     }
 
     private fun log(name: String, t: Long) =
-        logger.info {
+        println(
             "    %-20s%8d ms".format(name, t)
-        }
+        )
 
     private fun run(origFeed: HistoricFeed) {
         val priceBars = origFeed.assets.size * origFeed.timeline.size
         val size = "%,10d".format(priceBars)
-        logger.info("***** $size candlesticks *****")
+        println("\n***** $size candlesticks *****")
 
         // We wrap the feed, so we don't measure the performance of
         // the random generator of the RandomWalkFeed.
@@ -163,7 +161,7 @@ internal class PerformanceTest {
         log("parallel runs (x$parallel)", p)
         log("extended run", extendedRun(feed))
         val throughput = priceBars * parallel.toLong() / (p * 1000L)
-        logger.info("    throughput $throughput million candles/s")
+        println("    throughput $throughput million candles/s")
     }
 
     private fun getFeed(events: Int, assets: Int): RandomWalkFeed {
@@ -189,7 +187,7 @@ internal class PerformanceTest {
 
     @Test
     fun size2() {
-        Config.getProperty("FULL_COVERAGE") !=  null && return
+        Config.getProperty("FULL_COVERAGE") != null && return
         // 1_000_000 candle sticks
         val feed = getFeed(10_000, 100)
         run(feed)
@@ -197,7 +195,7 @@ internal class PerformanceTest {
 
     @Test
     fun size3() {
-        Config.getProperty("FULL_COVERAGE") !=  null && return
+        Config.getProperty("FULL_COVERAGE") != null && return
         // 5_000_000 candle sticks
         val feed = getFeed(10_000, 500)
         run(feed)
@@ -205,13 +203,10 @@ internal class PerformanceTest {
 
     @Test
     fun size4() {
-        Config.getProperty("FULL_COVERAGE") !=  null && return
+        Config.getProperty("FULL_COVERAGE") != null && return
         // 10_000_000 candle sticks
         val feed = getFeed(10_000, 1_000)
         run(feed)
     }
-
-
-
 
 }
