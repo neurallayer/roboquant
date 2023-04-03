@@ -73,7 +73,6 @@ fun showAccount() {
 
     // Get the account object from the broker instance
     val broker = IBKRBroker()
-    Thread.sleep(5_000)
     val account = broker.account
 
 
@@ -110,10 +109,8 @@ fun paperTrade() {
 fun placeOrder() {
     Config.exchangeRates = IBKRExchangeRates()
     val broker = IBKRBroker()
-    Thread.sleep(5_000)
     val account = broker.account
     println(account.fullSummary())
-
 
     val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
     val order = BracketOrder.marketTrailStop(

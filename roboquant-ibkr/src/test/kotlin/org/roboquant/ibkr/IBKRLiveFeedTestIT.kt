@@ -28,11 +28,13 @@ internal class IBKRLiveFeedTestIT {
 
     @Test
     fun ibkrFeed() {
-        Config.getProperty("TEST_IBKR") ?: return
+        Config.getProperty("test.ibkr") ?: return
 
         val feed = IBKRLiveFeed()
         val assets = listOf(Asset("ABN", AssetType.STOCK, "EUR", "AEB"))
         feed.subscribe(assets, interval = 1)
+
+        feed.subscribe(Asset("KPN", AssetType.STOCK, "EUR", "AEB"))
 
         val actions = feed.filter<PriceAction>(Timeframe.next(2.minutes)) {
             logger.info("received price $it")

@@ -203,7 +203,7 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
     }
 
     override fun currentTime(time: Long) {
-        logger.debug { EWrapperMsgGenerator.currentTime(time).toString() }
+        logger.info { EWrapperMsgGenerator.currentTime(time).toString() }
 
         // If more than 60 seconds difference, give a warning
         val diff = Instant.now().epochSecond - time
@@ -320,7 +320,7 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
     }
 
     override fun accountUpdateMultiEnd(reqId: Int) {
-        logger.trace("Not yet implemented")
+        logger.info("accountUpdateMultiEnd")
     }
 
     override fun securityDefinitionOptionalParameter(

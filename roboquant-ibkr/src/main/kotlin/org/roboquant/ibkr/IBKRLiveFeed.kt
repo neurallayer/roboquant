@@ -71,6 +71,13 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
         }
     }
 
+    /**
+     * @see subscribe
+     */
+    fun subscribe(vararg assets: Asset, interval: Int = 5, type: String = "MIDPOINT") =
+        subscribe(assets.toList(), interval, type)
+
+
     private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
         override fun realtimeBar(

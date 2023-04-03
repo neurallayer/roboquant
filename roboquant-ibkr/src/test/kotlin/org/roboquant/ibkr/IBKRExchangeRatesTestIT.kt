@@ -24,7 +24,7 @@ internal class IBKRExchangeRatesTestIT {
 
     @Test
     fun test() {
-        Config.getProperty("TEST_IBKR") ?: return
+        Config.getProperty("test.ibkr") ?: return
         val rates = IBKRExchangeRates()
         assertTrue(rates.exchangeRates.isNotEmpty())
         rates.refresh()

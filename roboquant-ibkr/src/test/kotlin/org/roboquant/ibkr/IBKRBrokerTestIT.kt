@@ -16,11 +16,12 @@
 
 package org.roboquant.ibkr
 
-import java.time.Instant
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.roboquant.brokers.summary
 import org.roboquant.common.Config
 import org.roboquant.common.ConfigurationException
+import java.time.Instant
 import kotlin.test.assertTrue
 
 internal class IBKRBrokerTestIT {
@@ -40,10 +41,12 @@ internal class IBKRBrokerTestIT {
 
     @Test
     fun test() {
-        Config.getProperty("TEST_IBKR") ?: return
+        Config.getProperty("test.ibkr") ?: return
         val past = Instant.now()
         val broker = IBKRBroker()
         val account = broker.account
+        println(account.summary())
+        println(account.positions.summary())
         assertTrue(account.lastUpdate >= past)
         broker.disconnect()
     }

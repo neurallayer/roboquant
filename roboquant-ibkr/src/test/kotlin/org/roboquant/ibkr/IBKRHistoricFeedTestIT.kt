@@ -28,7 +28,7 @@ internal class IBKRHistoricFeedTestIT {
 
     @Test
     fun ibkrFeed() {
-        Config.getProperty("TEST_IBKR") ?: return
+        Config.getProperty("test.ibkr") ?: return
 
         val feed = IBKRHistoricFeed()
         val symbols = listOf("ABN", "ASML", "KPN")

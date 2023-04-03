@@ -15,8 +15,9 @@ If you have already Docker installed, it only takes a single command to have a f
 docker run -p 8888:8888 roboquant/jupyter
 ----
 
-This will pull the image from DockerHub and run it on your local machine. The image comes with several notebooks that demonstrate how to develop and run your own strategies.
+This will pull the latest image from DockerHub and run it on your local machine. The image comes with several notebooks included that demonstrate how to develop and run your own strategies.
 
+If you don't have Docker yet installed on your computer, check out https://www.docker.com/get-started[Docker get started] and download `Docker Desktop` from there. If you are running Linux, then your distribution likely already has Docker included.
 If you don't have Docker yet installed on your computer, check out https://www.docker.com/get-started[Docker get started] and download `Docker Desktop` from there. If you are running Linux, then your distribution likely already has Docker included.
 
 If you don't want to install anything locally, you can:
@@ -96,7 +97,7 @@ Of course this requires the having the right credentials for deploying to the Ma
 == Interactive Brokers
 If you don't require integration with Interactive Brokers for your trading, you can skip this step.
 
-Unfortunately it is not allowed to redistribute the Interactive Brokers Java client, so you'll have to download the TwsApi.jar file yourself. You can download the stable version `10.19` from here: https://interactivebrokers.github.io/# and within the downloaded archive file you'll find the required `TwsApi.jar`.
+Unfortunately it is not allowed to redistribute the Interactive Brokers Java client. So you'll have to download the TwsApi.jar file yourself. You can download the stable version `10.19` from here: https://interactivebrokers.github.io and within the downloaded archive file you'll find the required `TwsApi.jar`.
 
 
 Then install the jar file in the local Maven repository on your machine using the following command:
@@ -139,9 +140,9 @@ The output will look something like this:
 ----
              _______
             | $   $ |             roboquant
-            |   o   |             version: 1.2.0-SNAPSHOT
-            |_[___]_|             build: 2023-03-01T12:43:08Z
-        ___ ___|_|___ ___         os: Mac OS X 13.2.1
+            |   o   |             version: 1.3.0
+            |_[___]_|             build: 2023-04-03T09:39:47Z
+        ___ ___|_|___ ___         os: Mac OS X 13.3
        ()___)       ()___)        home: /Users/peter/.roboquant
       // / |         | \ \\       jvm: OpenJDK 64-Bit Server VM 19.0.2
      (___) |_________| (___)      memory: 4096MB
@@ -153,30 +154,34 @@ The output will look something like this:
            ///     \\\
         __///_     _\\\__
        |______|   |______|
-INFO PerformanceTest - *****    500.000 candlesticks *****
-INFO PerformanceTest -     feed filter               10 ms
-INFO PerformanceTest -     base run                  87 ms
-INFO PerformanceTest -     parallel runs (x8)       184 ms
-INFO PerformanceTest -     extended run             571 ms
-INFO PerformanceTest -     throughput 21 million candles/s
-INFO PerformanceTest - *****  1.000.000 candlesticks *****
-INFO PerformanceTest -     feed filter               27 ms
-INFO PerformanceTest -     base run                 181 ms
-INFO PerformanceTest -     parallel runs (x8)       442 ms
-INFO PerformanceTest -     extended run            1598 ms
-INFO PerformanceTest -     throughput 18 million candles/s
-INFO PerformanceTest - *****  5.000.000 candlesticks *****
-INFO PerformanceTest -     feed filter              103 ms
-INFO PerformanceTest -     base run                 513 ms
-INFO PerformanceTest -     parallel runs (x8)       774 ms
-INFO PerformanceTest -     extended run           14420 ms
-INFO PerformanceTest -     throughput 51 million candles/s
-INFO PerformanceTest - ***** 10.000.000 candlesticks *****
-INFO PerformanceTest -     feed filter               92 ms
-INFO PerformanceTest -     base run                 709 ms
-INFO PerformanceTest -     parallel runs (x8)      1198 ms
-INFO PerformanceTest -     extended run           14309 ms
-INFO PerformanceTest -     throughput 66 million candles/s
+
+*****    500.000 candlesticks *****
+    feed filter               20 ms
+    base run                 119 ms
+    parallel runs (x8)       270 ms
+    extended run             560 ms
+    throughput 14 million candles/s
+
+*****  1.000.000 candlesticks *****
+    feed filter               39 ms
+    base run                 172 ms
+    parallel runs (x8)       390 ms
+    extended run            1613 ms
+    throughput 20 million candles/s
+
+*****  5.000.000 candlesticks *****
+    feed filter              189 ms
+    base run                 520 ms
+    parallel runs (x8)       744 ms
+    extended run           14987 ms
+    throughput 53 million candles/s
+
+***** 10.000.000 candlesticks *****
+    feed filter              123 ms
+    base run                 705 ms
+    parallel runs (x8)      1220 ms
+    extended run           15689 ms
+    throughput 65 million candles/s
 ----
 
 The main purpose is to test the performance and stability of the back-test engine itself, not any specific feed, strategy or metric. So the overhead of those type of components is kept to a minimum, while still running full back tests.

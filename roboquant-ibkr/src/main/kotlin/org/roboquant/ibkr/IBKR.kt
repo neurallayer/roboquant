@@ -76,7 +76,7 @@ internal object IBKR {
         client.isAsyncEConnect = false
         client.eConnect(config.host, config.port, config.client)
         if (!client.isConnected) throw ConfigurationException("Couldn't connect with config $config")
-        logger.debug { "Connected with config $config" }
+        logger.info { "Connected with config $config" }
 
         val reader = EReader(client, signal)
         reader.start()
