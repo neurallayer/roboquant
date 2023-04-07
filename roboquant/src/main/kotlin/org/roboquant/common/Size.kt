@@ -35,13 +35,16 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
     constructor(value: Int) : this(value * FRACTION)
 
     /**
-     * Creates a Size instance based a [BigDecimal] [value]
+     * Creates a Size instance based a [BigDecimal] [value]. If the value cannot be represented 100% accurate, an
+     * exception is thrown.
      */
     constructor(value: BigDecimal) : this(value.multiply(BD_FRACTION).longValueExact())
 
     /**
      * Creates a Size instance based a [Double] [value]. Be careful when using this constructor since a Double is not
-     * always precise. Better to use the constructor with a string or BigDecimal as its parameter instead:
+     * always precise. Also overflows and lost of precisions don't lead to an exception.
+     *
+     * Better to use the Size constructor with a [String] or [BigDecimal] as its parameter instead:
      *
      *      Size("0.001")
      */
@@ -75,12 +78,12 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
     }
 
     /**
-     * Converts this [Size] value to [Double], with this conversion might lose precision
+     * Converts this [Size] value to a [Double], this conversion might lose precision
      */
     fun toDouble() = value / FRACTION.toDouble()
 
     /**
-     * Converts this [Size] value to [BigDecimal]
+     * Converts this [Size] value to a [BigDecimal]
      */
     fun toBigDecimal(): BigDecimal = BigDecimal(value).setScale(SCALE).divide(BD_FRACTION)
 
@@ -111,17 +114,19 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
 
     /**
      * Returns the sign (direction) of this size.
+     *
+     * @see Long.sign
      */
     val sign: Int
         get() = value.sign
 
     /**
-     * Multiplies this size by the [other] value.
+     * Multiplies this size by the [other] value. This method might lose precision.
      */
     operator fun times(other: Number): Size = Size(toDouble() * other.toDouble())
 
     /**
-     * Divides this size by the [other] value.
+     * Divides this size by the [other] value. This method might lose precision.
      */
     operator fun div(other: Number): Size = Size(toDouble() / other.toDouble())
 
