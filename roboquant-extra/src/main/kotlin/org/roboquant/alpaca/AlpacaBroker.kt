@@ -20,10 +20,7 @@ import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.model.endpoint.accountactivities.TradeActivity
 import net.jacobpeterson.alpaca.model.endpoint.accountactivities.enums.ActivityType
 import net.jacobpeterson.alpaca.model.endpoint.common.enums.SortDirection
-import net.jacobpeterson.alpaca.model.endpoint.orders.enums.CurrentOrderStatus
-import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderSide
-import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderTimeInForce
-import net.jacobpeterson.alpaca.model.endpoint.orders.enums.OrderType
+import net.jacobpeterson.alpaca.model.endpoint.orders.enums.*
 import net.jacobpeterson.alpaca.rest.AlpacaClientException
 import org.roboquant.brokers.*
 import org.roboquant.brokers.sim.execution.InternalAccount
@@ -175,13 +172,31 @@ class AlpacaBroker(
     }
 
     /**
+     * Supports both regular Market Orders and Bracket Market Order
+     */
+    private fun toMarketOrder(order: AlpacaOrder): Order {
+        val asset = getAsset(order.symbol)!!
+        val qty = if (order.side == OrderSide.BUY) order.quantity.toBigDecimal() else -order.quantity.toBigDecimal()
+        val size = Size(qty)
+
+        if (order.orderClass == OrderClass.SIMPLE) return MarketOrder(asset, size)
+        if (order.orderClass == OrderClass.BRACKET) return BracketOrder(
+            MarketOrder(asset, size),
+            LimitOrder(asset, - size, order.limitPrice.toDouble()),
+            StopLimitOrder(asset, -size, order.stopPrice.toDouble(), order.limitPrice.toDouble())
+        )
+
+        throw UnsupportedException("unsupported order type for order $order")
+    }
+
+    /**
      * Convert an alpaca order to a roboquant order. This should only be called during loading of initial orders
      */
     private fun toOrder(order: AlpacaOrder): Order {
         val asset = getAsset(order.symbol)!!
         val qty = if (order.side == OrderSide.BUY) order.quantity.toBigDecimal() else -order.quantity.toBigDecimal()
         val rqOrder = when (order.type) {
-            OrderType.MARKET -> MarketOrder(asset, Size(qty))
+            OrderType.MARKET -> toMarketOrder(order)
             OrderType.LIMIT -> LimitOrder(asset, Size(qty), order.limitPrice.toDouble())
             OrderType.STOP -> StopOrder(asset, Size(qty), order.stopPrice.toDouble())
             OrderType.STOP_LIMIT -> StopLimitOrder(
@@ -190,7 +205,6 @@ class AlpacaBroker(
                 order.stopPrice.toDouble(),
                 order.limitPrice.toDouble()
             )
-
             OrderType.TRAILING_STOP -> TrailOrder(asset, Size(qty), order.trailPercent.toDouble())
             else -> throw UnsupportedException("unsupported order type for order $order")
         }
@@ -262,6 +276,37 @@ class AlpacaBroker(
     }
 
 
+    private fun placeBracketOrder(order: BracketOrder) {
+
+        val api = alpacaAPI.orders()
+        val side = if (order.entry.buy) OrderSide.BUY else OrderSide.SELL
+        val entry = order.entry as MarketOrder
+        val tp = order.takeProfit as LimitOrder
+        val sl = order.stopLoss as StopLimitOrder
+
+        val tif = when (entry.tif) {
+            is GTC -> OrderTimeInForce.GOOD_UNTIL_CANCELLED
+            is DAY -> OrderTimeInForce.DAY
+            else -> throw UnsupportedException("unsupported tif=${entry.tif} for order=$order")
+        }
+
+        require(!entry.size.isFractional) { "fractional orders are not supported for barcket orders" }
+        val qty = entry.size.toBigDecimal().abs().toInt()
+
+        val alpacaOrder = api.requestMarketBracketOrder(
+            entry.asset.symbol,
+            qty,
+            side,
+            tif,
+            tp.limit,
+            sl.stop,
+            sl.limit
+        )
+
+        orderMapping[order] = alpacaOrder.id
+
+    }
+
     /**
      * Place an order of type [SingleOrder] at Alpaca.
      *
@@ -280,23 +325,23 @@ class AlpacaBroker(
         }
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
-        require(!order.size.isFractional) { "fractional orders are not yet supported" }
+        require(order.size.isFractional && order !is LimitOrder) {
+            "fractional orders only supported for limit orders"
+        }
 
-        val qty = order.size.toBigDecimal().abs().toInt()
+        val qty = order.size.toBigDecimal().abs()
         val api = alpacaAPI.orders()
 
         val alpacaOrder = when (order) {
-            is MarketOrder -> api.requestMarketOrder(asset.symbol, qty, side, tif)
+            is MarketOrder -> api.requestMarketOrder(asset.symbol, qty.toInt(), side, tif)
             is LimitOrder -> api.requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, extendedHours)
-            is StopOrder -> api.requestStopOrder(asset.symbol, qty, side, tif, order.stop, extendedHours)
+            is StopOrder -> api.requestStopOrder(asset.symbol, qty.toInt(), side, tif, order.stop, extendedHours)
             is StopLimitOrder -> api.requestStopLimitOrder(
-                asset.symbol, qty, side, tif, order.limit, order.stop, extendedHours
+                asset.symbol, qty.toInt(), side, tif, order.limit, order.stop, extendedHours
             )
-
             is TrailOrder -> api.requestTrailingStopPercentOrder(
-                asset.symbol, qty, side, tif, order.trailPercentage, extendedHours
+                asset.symbol, qty.toInt(), side, tif, order.trailPercentage, extendedHours
             )
-
             else -> throw UnsupportedException("unsupported single order type order=$order")
         }
         orderMapping[order] = alpacaOrder.id
@@ -313,6 +358,7 @@ class AlpacaBroker(
             when (order) {
                 is SingleOrder -> placeOrder(order)
                 is CancelOrder -> cancelOrder(order)
+                is BracketOrder -> placeBracketOrder(order)
                 else -> throw UnsupportedException("unsupported order type order=$order")
             }
         }

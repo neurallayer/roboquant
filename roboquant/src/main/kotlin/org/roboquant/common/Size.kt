@@ -37,20 +37,21 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
     /**
      * Creates a Size instance based a [BigDecimal] [value]
      */
-    constructor(value: BigDecimal) : this(value.multiply(BD_FRACTION).toLong())
+    constructor(value: BigDecimal) : this(value.multiply(BD_FRACTION).longValueExact())
 
     /**
      * Creates a Size instance based a [Double] [value]. Be careful when using this constructor since a Double is not
-     * always precise. Better to use the constructor with a string as its parameter instead:
+     * always precise. Better to use the constructor with a string or BigDecimal as its parameter instead:
      *
      *      Size("0.001")
      */
-    constructor(value: Double) : this(BigDecimal.valueOf(value))
+    constructor(value: Double) : this(BigDecimal.valueOf(value).multiply(BD_FRACTION).toLong())
 
     /**
-     * Creates a Size instance based on the [String] representation of a numeric [value]
+     * Creates a Size instance based on the [String] representation of a numeric [value]. If the value cannot be
+     * represented 100% accurate, an exception is thrown.
      */
-    constructor(value: String) : this(BigDecimal(value).multiply(BD_FRACTION).toLong())
+    constructor(value: String) : this(BigDecimal(value).multiply(BD_FRACTION).longValueExact())
 
     /**
      * @suppress
@@ -70,6 +71,7 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
          * Size of one
          */
         val ONE = Size(1)
+
     }
 
     /**

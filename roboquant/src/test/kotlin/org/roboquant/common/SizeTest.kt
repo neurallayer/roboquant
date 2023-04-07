@@ -16,8 +16,13 @@
 
 package org.roboquant.common
 
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class SizeTest {
 
@@ -33,9 +38,22 @@ internal class SizeTest {
         assertEquals(Size(-10), -size)
         assertEquals("10", size.toString())
         assertEquals("10.00123", Size("10.00123").toString())
+    }
 
-        // More than max supported digits, should fail equality test
-        assertNotEquals("10.123456789123", Size("10.123456789123").toString())
+    @Test
+    fun testOverflow() {
+        assertDoesNotThrow {
+            Size("12345678.12345")
+        }
+
+        assertThrows<ArithmeticException> {
+            Size("10000000000000000")
+        }
+
+        assertThrows<ArithmeticException> {
+            Size("100000.123456789")
+        }
+
     }
 
     @Test
@@ -45,6 +63,10 @@ internal class SizeTest {
         assertEquals(BigDecimal("10.10"), size.toBigDecimal().setScale(2))
         assertEquals(10.10, size.toDouble())
 
+        // Equality test
+        assertEquals(size, Size("10.10"))
+
+        // test not fractional
         val size2 = Size(100001)
         assertFalse(size2.isFractional)
     }

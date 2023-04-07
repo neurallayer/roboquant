@@ -112,11 +112,11 @@ fun placeOrder() {
     val account = broker.account
     println(account.fullSummary())
 
-    val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
-    val order = BracketOrder.marketTrailStop(
+    val asset = Asset("TSLA", AssetType.STOCK, "USD", "SMART")
+    val order = BracketOrder.limitTrailStop(
         asset,
         Size.ONE,
-        14.50
+        185.50
     )
 
     broker.place(listOf(order), Event.empty())
@@ -205,8 +205,6 @@ fun historicFeed2() {
     println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
     feed.disconnect()
 }
-
-
 
 
 fun historicFuturesFeed() {

@@ -82,6 +82,7 @@ class IBKRBroker(
     private var client: EClientSocket
     private var _account = InternalAccount(Currency.USD)
     private var accountUpdate = AccountUpdate()
+    private var accountUpdateLock = Object()
 
     /**
      * @see Broker.account
@@ -109,16 +110,18 @@ class IBKRBroker(
         client.reqAccountUpdates(true, accountId)
         // client.reqAccountSummary(9004, "All", "\$LEDGER:ALL")
 
+        // Open orders already send as part of connection
         // Only request orders created with this client, so don't use: client.reqAllOpenOrders()
-        client.reqOpenOrders()
+        // client.reqOpenOrders()
         updateAccount()
     }
 
 
     private fun updateAccount() {
-        val now = Instant.now()
         client.reqAccountUpdates(true, accountId)
-        while (_account.lastUpdate < now) Thread.sleep(1_000)
+        synchronized(accountUpdateLock) {
+            accountUpdateLock.wait(IBKR.maxResponseTime)
+        }
     }
 
     /**
@@ -290,6 +293,7 @@ class IBKRBroker(
             logger.trace { "$orderId $contract $order $orderState" }
             val openOrder = orderMap[orderId]
             if (openOrder != null) {
+                println("existing order orderId=$orderId status=${orderState.status}")
                 if (orderState.completedStatus() == "true") {
                     val o = _account.getOrder(openOrder.id)
                     if (o != null) {
@@ -297,9 +301,13 @@ class IBKRBroker(
                     }
                 }
             } else {
+                println("new order orderId=$orderId parentId=${order.parentId()} status=${orderState.status}")
+                // if (order.parentId() > 0) return // right now no support for open bracket orders
                 val newOrder = toOrder(order, contract)
                 orderMap[orderId] = newOrder
                 _account.initializeOrders(listOf(newOrder))
+                val newStatus = toStatus(orderState.status)
+                _account.updateOrder(newOrder, Instant.now(), newStatus)
             }
         }
 
@@ -369,6 +377,7 @@ class IBKRBroker(
         }
 
         override fun openOrderEnd() {
+            println("openOrderEnd")
             logger.debug("openOrderEnd")
         }
 
@@ -378,6 +387,11 @@ class IBKRBroker(
 
             // Reset to clean state
             accountUpdate = AccountUpdate()
+            // println("waiting")
+            synchronized(accountUpdateLock) {
+                // println("notify")
+                accountUpdateLock.notify()
+            }
         }
 
         override fun updateAccountValue(key: String, value: String, currency: String?, accountName: String?) {

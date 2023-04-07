@@ -53,7 +53,7 @@ class BracketOrder(
         }
     }
 
-    override fun info() = sortedMapOf("entry" to entry, "takeProfit" to takeProfit, "stopLoss" to "stopLoss")
+    override fun info() = sortedMapOf("entry" to entry, "takeProfit" to takeProfit, "stopLoss" to stopLoss)
 
     /**
      * Common bracket-orders, making it easier to create one without the risk of introducing mistakes in the sizing and
@@ -78,6 +78,30 @@ class BracketOrder(
             val stopPrice = price * (1.0 - (size.sign * stopPercentage))
             return BracketOrder(
                 MarketOrder(asset, size),
+                TrailOrder(asset, -size, trailPercentage),
+                StopOrder(asset, -size, stopPrice)
+            )
+        }
+
+        /**
+         * Create a bracket order meeting the following criteria:
+         * - the entry order is a [LimitOrder] with the provided [limitPrice], [asset] and [size]
+         * - the take profit order is a [TrailOrder] with the specified [trailPercentage]
+         * - the stop loss order is a [StopOrder] using a stop priced based on the provided [stopPercentage] relative
+         * to the limitPrice.
+         */
+        @Suppress("LongParameterList")
+        fun limitTrailStop(
+            asset: Asset,
+            size: Size,
+            limitPrice: Double,
+            trailPercentage: Double = 0.05, // 5%
+            stopPercentage: Double = 0.01 // 1%
+        ): BracketOrder {
+            require(stopPercentage > 0.0) { "stopPercentage should be a positive value, for example 0.05 for 5%" }
+            val stopPrice = limitPrice * (1.0 - (size.sign * stopPercentage))
+            return BracketOrder(
+                LimitOrder(asset, size, limitPrice),
                 TrailOrder(asset, -size, trailPercentage),
                 StopOrder(asset, -size, stopPrice)
             )
