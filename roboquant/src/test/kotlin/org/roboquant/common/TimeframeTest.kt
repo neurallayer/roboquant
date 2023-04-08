@@ -18,6 +18,7 @@ package org.roboquant.common
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import kotlin.math.absoluteValue
@@ -159,4 +160,25 @@ internal class TimeframeTest {
         assertTrue(Instant.parse("2021-12-31T18:00:00Z") > timeline.last())
         assertTrue(timeline.size > 200)
     }
+
+
+    @Test
+    fun testTrainTestSplit() {
+        val tf = Timeframe.fromYears(2010, 2020)
+        val (a, b) = tf.splitTrainTest(0.5)
+        assertTrue(a.duration - b.duration < Duration.ofDays(2))
+
+        val (c, d) = tf.splitTrainTest(5.years)
+        assertTrue(c.duration - d.duration < Duration.ofDays(2))
+
+        assertThrows<java.lang.IllegalArgumentException> {
+            tf.splitTrainTest(11.years)
+        }
+
+        assertThrows<java.lang.IllegalArgumentException> {
+            tf.splitTrainTest(1.2)
+        }
+
+    }
+
 }

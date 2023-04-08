@@ -25,15 +25,21 @@ import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
-import org.roboquant.feeds.*
+import org.roboquant.feeds.AvroFeed
+import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.csv.CSVFeed
+import org.roboquant.feeds.filter
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.toDoubleArray
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.Order
 import org.roboquant.orders.summary
-import org.roboquant.policies.*
+import org.roboquant.policies.BasePolicy
+import org.roboquant.policies.FlexPolicy
+import org.roboquant.policies.SignalResolution
+import org.roboquant.policies.resolve
 import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Signal
@@ -93,7 +99,7 @@ suspend fun walkForwardParallel() {
         val strategy = EMAStrategy()
         val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
         jobs.add {
-            roboquant.runAsync(feed, runName = "run-$it")
+            roboquant.runAsync(feed, name = "run-$it")
         }
     }
 
@@ -101,6 +107,50 @@ suspend fun walkForwardParallel() {
     val avgEquity = logger.getMetric("account.equity").toDoubleArray().average()
     println(avgEquity)
 }
+
+fun wfo() {
+    val feed = AvroFeed.sp500()
+    val logger = LastEntryLogger()
+    fun objective(rq: Roboquant) = rq.logger.getMetric("account.equity").last().value
+    data class BestPerformer<T>(val performance: Double, val params: T)
+
+    // Create the combinations of params we want to optimize over
+    val combinations = mutableListOf<Pair<Int, Int>>()
+    repeat(10) { first ->
+        repeat(10) {second ->
+            val fast = first + 2
+            val slow = first + second + 3
+            combinations.add(Pair(fast, slow))
+        }
+    }
+
+    // Run walk forward back tests
+    feed.timeframe.split(12.months, 9.months).forEach { tf ->
+        val (train, test) = tf.splitTrainTest(3.months)
+        var best = BestPerformer(Double.MIN_VALUE, Pair(0,0))
+
+        // Find best parameters
+        combinations.forEach {
+            val strategy = EMAStrategy(it.first, it.second)
+            val roboquant = Roboquant(strategy, AccountMetric(), logger = LastEntryLogger())
+            roboquant.run(feed, timeframe = train)
+            val performance = objective(roboquant)
+            if (performance > best.performance) {
+                best = BestPerformer(performance, it)
+            }
+            print(".")
+        }
+
+        // Run out of sample test
+        println("\n$best")
+        val combo = best.params
+        val strategy = EMAStrategy(combo.first, combo.second)
+        val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
+        roboquant.run(feed, name = "run-$tf", timeframe = test)
+    }
+    println(logger.getMetric("account.equity").map { it.value })
+}
+
 
 fun testingStrategies() {
     val strategy = EMAStrategy()
@@ -218,10 +268,11 @@ fun forexRun() {
 suspend fun main() {
     Config.printInfo()
 
-    when ("FOREX_RUN") {
+    when ("WFO") {
         "SIMPLE" -> simple()
         "CSV2AVRO" -> csv2Avro("/tmp/daily/us", false)
         "MULTI_RUN" -> multiRun()
+        "WFO" -> wfo()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()

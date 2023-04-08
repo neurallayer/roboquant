@@ -161,12 +161,12 @@ class Roboquant(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
         validation: Timeframe? = null,
-        runName: String? = null,
+        name: String? = null,
     ) {
         require(validation == null || validation.start >= timeframe.end) {
             "validation should start after main timeframe"
         }
-        val run = runName ?: "run-${++runCounter}"
+        val run = name ?: "run-${++runCounter}"
         val runInfo = RunInfo(run)
         kotlinLogger.debug { "starting run=$runInfo" }
 

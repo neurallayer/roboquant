@@ -135,7 +135,7 @@ open class BettingAgainstBetaPolicy(
     }
 
     /**
-     * Override this method if you want to change the default creation of [MarketOrder] with a different
+     * Override this method if you want to change the default creation of a [MarketOrder] with a different
      * order type like LimitOrders. Return null if you don't want to create an order for a certain asset.
      */
     open fun createOrder(asset: Asset, size: Size, account: Account, event: Event): Order? {
