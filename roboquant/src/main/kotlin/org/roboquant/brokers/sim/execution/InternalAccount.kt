@@ -175,6 +175,7 @@ class InternalAccount(var baseCurrency: Currency) {
         )
     }
 
+
     /**
      * Return the total market value for this portfolio
      */

@@ -23,6 +23,7 @@ import org.roboquant.common.Config
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.USD
+import org.roboquant.common.Wallet
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -31,6 +32,8 @@ internal class SimBrokerTest {
     @Test
     fun basicSimBrokerTest() {
         val broker = SimBroker()
+        assertEquals(Wallet(1_000_000.USD), broker.initialDeposit)
+
         val event = TestData.event()
         val account = broker.place(emptyList(), event)
         assertTrue(account.openOrders.isEmpty())
@@ -39,6 +42,7 @@ internal class SimBrokerTest {
         assertEquals(USD, account.baseCurrency)
 
         val broker2 = SimBroker(100_000.00.USD.toWallet())
+        assertEquals(Wallet(100_000.USD), broker2.initialDeposit)
         assertEquals(USD, broker2.account.baseCurrency)
 
         val metrics = broker.getMetrics()

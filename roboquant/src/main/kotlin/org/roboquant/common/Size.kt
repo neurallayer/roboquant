@@ -17,6 +17,7 @@
 package org.roboquant.common
 
 import java.math.BigDecimal
+import java.math.RoundingMode
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
@@ -119,6 +120,11 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
      */
     val sign: Int
         get() = value.sign
+
+    /**
+     * Round the size to nearest fraction
+     */
+    fun round(scale: Int) = Size(toBigDecimal().setScale(scale, RoundingMode.DOWN))
 
     /**
      * Multiplies this size by the [other] value. This method might lose precision.

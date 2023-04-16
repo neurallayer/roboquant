@@ -28,6 +28,7 @@ import org.roboquant.feeds.Event
  * - `account.cash` Total cash value
  * - `account.buyingpower` Buying power available
  * - `account.equity` the equity value of the account (= cash + positions)
+ * - `account.growth` the growth percentage of equity value
  *
  * All monetary values are denoted in base currency of the account
  *
@@ -35,16 +36,27 @@ import org.roboquant.feeds.Event
  */
 class AccountMetric : Metric {
 
+    private var initialEquity = Double.NaN
+
     override fun calculate(account: Account, event: Event): MetricResults {
+
+        val equity = account.convert(account.equity, event.time).value
+        if (initialEquity.isNaN()) initialEquity = equity
+
         return metricResultsOf(
             "account.orders" to account.openOrders.size + account.closedOrders.size,
             "account.trades" to account.trades.size,
             "account.positions" to account.positions.size,
             "account.cash" to account.convert(account.cash, event.time).value,
             "account.buyingpower" to account.buyingPower.value,
-            "account.equity" to account.convert(account.equity, event.time).value,
+            "account.equity" to equity,
+            "account.growth" to (equity - initialEquity) / initialEquity
         )
 
+    }
+
+    override fun reset() {
+        initialEquity = Double.NaN
     }
 
 }

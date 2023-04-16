@@ -17,8 +17,9 @@
 package org.roboquant.metrics
 
 import org.junit.jupiter.api.Test
-import kotlin.test.*
 import org.roboquant.TestData
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 internal class AccountMetricTest {
 
@@ -27,13 +28,14 @@ internal class AccountMetricTest {
         val metric = AccountMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(account, event)
-        assertEquals(6, result.size)
+        assertEquals(7, result.size)
         assertContains(result, "account.orders")
         assertContains(result, "account.trades")
         assertContains(result, "account.equity")
         assertContains(result, "account.positions")
         assertContains(result, "account.buyingpower")
         assertContains(result, "account.cash")
+        assertContains(result, "account.growth")
 
         assertEquals(account.trades.size.toDouble(), result["account.trades"])
         assertEquals(account.positions.size.toDouble(), result["account.positions"])

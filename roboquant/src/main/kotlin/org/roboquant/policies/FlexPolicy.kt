@@ -44,17 +44,18 @@ import java.time.Instant
  * can be used to avoid trading penny stocks
  * @constructor Create a new instance of a FlexPolicy
  */
+@Suppress("MemberVisibilityCanBePrivate")
 open class FlexPolicy(
-    private val orderPercentage: Double = 0.01,
-    private val shorting: Boolean = false,
-    private val priceType: String = "DEFAULT",
-    private val fractions: Int = 0,
-    private val oneOrderOnly: Boolean = true,
-    private val safetyMargin: Double = orderPercentage,
-    private val minPrice: Amount? = null
+    protected val orderPercentage: Double = 0.01,
+    protected val shorting: Boolean = false,
+    protected val priceType: String = "DEFAULT",
+    protected val fractions: Int = 0,
+    protected val oneOrderOnly: Boolean = true,
+    protected val safetyMargin: Double = orderPercentage,
+    protected val minPrice: Amount? = null
 ) : BasePolicy() {
 
-    private val logger = Logging.getLogger(FlexPolicy::class)
+    protected val logger = Logging.getLogger(FlexPolicy::class)
 
     /**
      * Set of predefined FlexPolicies
@@ -173,6 +174,7 @@ open class FlexPolicy(
         val equityAmount = account.equityAmount
         val amountPerOrder = equityAmount * orderPercentage
         val safetyAmount = equityAmount * safetyMargin
+        val time = event.time
         var buyingPower = account.buyingPower - safetyAmount.value
 
         @Suppress("LoopWithTooManyJumpStatements")
@@ -185,35 +187,35 @@ open class FlexPolicy(
             logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder price=$price" }
 
             // Don't create an order if we don't know the current price
-            if (price !== null) {
+            if (price == null) continue
 
-                val position = account.positions.getPosition(asset)
-                if (reducedPositionSignal(position, signal)) {
-                    val order = createOrder(signal, -position.size, price) // close position
-                    orders.addNotNull(order)
-                } else {
-                    if (position.open) continue // we don't increase position sizing
-                    if (!signal.entry) continue // signal doesn't allow to open new positions
-                    if (amountPerOrder > buyingPower) continue
+            val position = account.positions.getPosition(asset)
+            if (reducedPositionSignal(position, signal)) {
+                val order = createOrder(signal, -position.size, price) // close position
+                orders.addNotNull(order)
+            } else {
+                if (position.open) continue // we don't increase position sizing
+                if (!signal.entry) continue // signal doesn't allow to open new positions
+                if (amountPerOrder > buyingPower) continue // not enough buying power left
 
-                    val assetAmount = amountPerOrder.convert(asset.currency, event.time).value
-                    val size = calcSize(assetAmount, signal, price)
-                    if (size.iszero) continue
-                    if (size < 0 && !shorting) continue
-                    if (!meetsMinPrice(asset, price, event.time)) continue
+                val assetAmount = amountPerOrder.convert(asset.currency, time).value
+                val size = calcSize(assetAmount, signal, price)
+                if (size.iszero) continue
+                if (size < 0 && !shorting) continue
+                if (!meetsMinPrice(asset, price, time)) continue
 
-                    val order = createOrder(signal, size, price)
-                    if (order != null) {
-                        val assetExposure = asset.value(size, price).absoluteValue
-                        val exposure = assetExposure.convert(buyingPower.currency, event.time).value
-                        orders.add(order)
-                        buyingPower -= exposure // reduce buying power with exposed amount
-                        logger.debug { "signal=${signal} amount=$amountPerOrder exposure=$exposure order=$order" }
-                    }
+                val order = createOrder(signal, size, price)
+                if (order != null) {
+                    val assetExposure = asset.value(size, price).absoluteValue
+                    val exposure = assetExposure.convert(buyingPower.currency, time).value
+                    orders.add(order)
+                    buyingPower -= exposure // reduce buying power with the exposed amount
+                    logger.debug { "buyingPower=$buyingPower exposure=$exposure order=$order" }
                 }
-
             }
+
         }
+
         record("policy.signals", signals.size)
         record("policy.orders", orders.size)
         return orders

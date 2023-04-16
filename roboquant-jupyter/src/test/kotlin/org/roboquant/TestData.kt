@@ -19,8 +19,8 @@ package org.roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.sim.execution.InternalAccount
+import org.roboquant.common.Amount
 import org.roboquant.common.Asset
-import org.roboquant.common.Currency
 import org.roboquant.common.Size
 import org.roboquant.common.USD
 import org.roboquant.orders.MarketOrder
@@ -31,10 +31,12 @@ import org.roboquant.orders.MarketOrder
 object TestData {
 
     fun usAccount(): Account {
+        val amount: Amount = 100_000.USD
         val asset1 = Asset("AAA")
         val asset2 = Asset("AAB")
-        val account = InternalAccount(Currency.USD)
-        account.cash.deposit(100_000.USD)
+        val account = InternalAccount(amount.currency)
+        account.cash.deposit(amount)
+        account.buyingPower = amount
         account.setPosition(Position(asset1, Size(100), 10.0))
         account.setPosition(Position(asset2, Size(100), 10.0))
         account.initializeOrders(listOf(MarketOrder(asset1, 100)))

@@ -16,11 +16,7 @@
 
 package org.roboquant.common
 
-import java.time.Duration
-import java.time.Instant
-import java.time.Period
-import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time.*
 import java.time.temporal.TemporalAmount
 
 /**
@@ -32,7 +28,21 @@ import java.time.temporal.TemporalAmount
  * @property period the period that this applies to
  */
 @JvmInline
-value class TradingPeriod(val period: TemporalAmount)
+value class TradingPeriod(val period: TemporalAmount) {
+
+    operator fun plus(other: TradingPeriod) : TradingPeriod {
+        if (period is Period && other.period is Period) return TradingPeriod(period+other.period)
+        if (period is Duration && other.period is Duration) return TradingPeriod(period+other.period)
+        throw UnsupportedException("can only add simular type of trading periods together")
+    }
+
+    operator fun minus(other: TradingPeriod) : TradingPeriod {
+        if (period is Period && other.period is Period) return TradingPeriod(period-other.period)
+        if (period is Duration && other.period is Duration) return TradingPeriod(period-other.period)
+        throw UnsupportedException("can only subtract simular type of trading periods together")
+    }
+
+}
 
 
 /*********************************************************************************************

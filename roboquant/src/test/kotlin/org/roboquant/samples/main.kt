@@ -109,24 +109,25 @@ suspend fun walkForwardParallel() {
 }
 
 fun wfo() {
-    val feed = AvroFeed.sp500()
+    val feed = AvroFeed(Config.home /"all_1962_2023.avro")
     val logger = LastEntryLogger()
+    val startEq = 1_000_000.00
     fun objective(rq: Roboquant) = rq.logger.getMetric("account.equity").last().value
     data class BestPerformer<T>(val performance: Double, val params: T)
 
     // Create the combinations of params we want to optimize over
     val combinations = mutableListOf<Pair<Int, Int>>()
-    repeat(10) { first ->
-        repeat(10) {second ->
-            val fast = first + 2
-            val slow = first + second + 3
+    listOf(5, 10, 15, 20).forEach { fast ->
+        repeat(3) { second ->
+            val slow = fast * (second + 1)
             combinations.add(Pair(fast, slow))
         }
     }
 
+
     // Run walk forward back tests
-    feed.timeframe.split(12.months, 9.months).forEach { tf ->
-        val (train, test) = tf.splitTrainTest(3.months)
+    feed.timeframe.split(10.years, 7.years).forEach { tf ->
+        val (train, test) = tf.splitTrainTest(3.years)
         var best = BestPerformer(Double.MIN_VALUE, Pair(0,0))
 
         // Find best parameters
@@ -147,6 +148,10 @@ fun wfo() {
         val strategy = EMAStrategy(combo.first, combo.second)
         val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
         roboquant.run(feed, name = "run-$tf", timeframe = test)
+        val eq = roboquant.logger.getMetric("account.equity").last().value
+        val testAnnualEq = test.annualize((eq - startEq) / startEq)
+        val trainAnualEq = train.annualize((best.performance - startEq) / startEq)
+        println("efficiency ratio=${testAnnualEq/trainAnualEq}")
     }
     println(logger.getMetric("account.equity").map { it.value })
 }

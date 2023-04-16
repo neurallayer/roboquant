@@ -19,6 +19,8 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.fee
+import org.roboquant.brokers.sim.MarginAccount
+import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Config
 import org.roboquant.common.Size
 import org.roboquant.common.days
@@ -38,10 +40,13 @@ import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.NoSignalStrategy
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
-import org.roboquant.ta.*
+import org.roboquant.ta.AtrPolicy
+import org.roboquant.ta.BettingAgainstBetaPolicy
+import org.roboquant.ta.TaLibMetric
+import org.roboquant.ta.TaLibSignalStrategy
 
 
-fun beta() {
+private fun beta() {
     val feed = CSVFeed("/data/assets/stock-market/stocks/")
     val market = CSVFeed("/data/assets/stock-market/market/")
     feed.merge(market)
@@ -58,7 +63,7 @@ fun beta() {
 
 }
 
-fun beta2() {
+private fun beta2() {
     val feed = CSVFeed("/data/assets/us-stocks/Stocks") {
         fileExtension = ".us.txt"
     }
@@ -81,7 +86,7 @@ fun beta2() {
 
 }
 
-fun macd() {
+private fun macd() {
     val strategy = TaLibSignalStrategy(35) { asset, prices ->
         val (_, _, diff) = macd(prices, 12, 26, 9)
         val (_, _, diff2) = macd(prices, 12, 26, 9, 1)
@@ -99,7 +104,7 @@ fun macd() {
 
 }
 
-fun customPolicy() {
+private fun customPolicy() {
 
     /**
      * Custom Policy that extends the FlexPolicy and captures the ATR (Average True Range) using the TaLibMetric. It
@@ -148,16 +153,28 @@ fun customPolicy() {
     println(roboquant.broker.account.summary())
 }
 
+private fun atrPolicy() {
+    val strategy = EMAStrategy.PERIODS_5_15
+    val policy = AtrPolicy(10, 6.0, 3.0, orderPercentage = 0.02, atRisk = Double.NaN, shorting = true)
+    val broker = SimBroker(accountModel = MarginAccount(minimumEquity = 50_000.0))
+    val rq = Roboquant(strategy, broker = broker, policy = policy)
+
+    val feed = AvroFeed.sp500()
+    rq.run(feed)
+    println(rq.broker.account.summary())
+}
+
 
 @Suppress("KotlinConstantConditions")
 fun main() {
     Config.printInfo()
 
-    when ("MACD") {
+    when ("ATR") {
         "CUSTOM" -> customPolicy()
         "BETA" -> beta()
         "BETA2" -> beta2()
         "MACD" -> macd()
+        "ATR" -> atrPolicy()
     }
 
 }

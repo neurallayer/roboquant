@@ -41,7 +41,7 @@ import java.time.Instant
  * @constructor Create new instance of SimBroker
  */
 open class SimBroker(
-    private val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
+    val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val feeModel: FeeModel = NoFeeModel(),
     private val accountModel: AccountModel = CashAccount(),
