@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.roboquant</groupId>
             <artifactId>binance-api-client</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.5</version>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
