@@ -40,10 +40,10 @@ import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.NoSignalStrategy
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
-import org.roboquant.ta.AtrPolicy
-import org.roboquant.ta.BettingAgainstBetaPolicy
-import org.roboquant.ta.TaLibMetric
-import org.roboquant.ta.TaLibSignalStrategy
+import org.roboquant.ta.*
+import org.ta4j.core.indicators.bollinger.BollingerBandFacade
+import org.ta4j.core.indicators.helpers.ClosePriceIndicator
+import org.ta4j.core.rules.CrossedUpIndicatorRule
 
 
 private fun beta() {
@@ -102,6 +102,32 @@ private fun macd() {
     rq.run(feed)
     println(rq.broker.account.summary())
 
+}
+
+
+
+private fun ta4j() {
+    // How big a look-back period should we use
+    val period = 20
+
+    val strategy = Ta4jStrategy(maxBarCount = period)
+
+    strategy.buy { series ->
+        val b = BollingerBandFacade(series, period, 1.0)
+        val closePrice = ClosePriceIndicator(series)
+        CrossedUpIndicatorRule(closePrice, b.upper())
+    }
+
+    strategy.sell { series ->
+        val b = BollingerBandFacade(series, period, 1.0)
+        val closePrice = ClosePriceIndicator(series)
+        CrossedUpIndicatorRule(closePrice, b.lower())
+    }
+
+    val rq = Roboquant(strategy)
+    val feed = AvroFeed.sp500()
+    rq.run(feed)
+    println(rq.broker.account.summary())
 }
 
 private fun customPolicy() {
@@ -175,6 +201,7 @@ fun main() {
         "BETA2" -> beta2()
         "MACD" -> macd()
         "ATR" -> atrPolicy()
+        "TA4J" -> ta4j()
     }
 
 }

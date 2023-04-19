@@ -27,11 +27,12 @@ import org.roboquant.binance.Interval
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
-import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.AvroFeed
+import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
 import org.roboquant.metrics.AccountMetric
+import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.xchange.XChangePollingLiveFeed
@@ -81,6 +82,20 @@ fun binanceLiveFeed() {
 }
 
 
+fun binanceBackTest() {
+    val strategy = EMAStrategy()
+    val initialDeposit = Amount("BUSD", 100_000).toWallet()
+    val roboquant = Roboquant(strategy, ScorecardMetric(), broker = SimBroker(initialDeposit))
+
+    val feed = BinanceHistoricFeed()
+    val threeYears = Timeframe.parse("2020-01-01", "2023-01-01")
+    feed.retrieve("BTCBUSD", "ETHBUSD", timeframe = threeYears, interval = Interval.DAILY)
+
+    roboquant.run(feed)
+    println(roboquant.broker.account.summary())
+}
+
+
 fun xchangeFeed() {
     val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
     val feed = XChangePollingLiveFeed(exchange)
@@ -99,10 +114,11 @@ fun xchangeFeed() {
 
 fun main() {
 
-    when ("LIVE") {
+    when ("HISTORIC") {
         "RECORD" -> recordBinanceFeed()
         "USE" -> useBinanceFeed()
         "XCHANGE" -> xchangeFeed()
         "LIVE" -> binanceLiveFeed()
+        "HISTORIC" -> binanceBackTest()
     }
 }
