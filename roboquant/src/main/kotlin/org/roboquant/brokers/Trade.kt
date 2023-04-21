@@ -16,7 +16,9 @@
 
 package org.roboquant.brokers
 
+import org.roboquant.RunInfo
 import org.roboquant.common.*
+import org.roboquant.loggers.MetricsEntry
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -64,6 +66,11 @@ data class Trade(
     val pnl: Amount
         get() = Amount(asset.currency, pnlValue)
 
+    /**
+     * Returns the PNL as a percentage of overall revenue of the trade
+     */
+    val pnlPercentage: Double
+        get() = pnlValue / - totalCost.value
 }
 
 
@@ -90,6 +97,15 @@ val Collection<Trade>.realizedPNL: Wallet
  */
 val Collection<Trade>.timeframe: Timeframe
     get() = timeline.timeframe
+
+/**
+ * Convert collection of trades to PNL percentage metrics
+ */
+fun Collection<Trade>.toPNLPercentageMetrics(): List<MetricsEntry> {
+    return map {
+        MetricsEntry("trade.pnl", it.pnlPercentage, RunInfo("run", it.time))
+    }
+}
 
 
 private fun Collection<Trade>.lines(): List<List<Any>> {

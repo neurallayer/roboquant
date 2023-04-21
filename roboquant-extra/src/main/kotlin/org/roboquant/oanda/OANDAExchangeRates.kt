@@ -55,6 +55,8 @@ class OANDAExchangeRates(
             OANDA.getAvailableAssets(ctx, accountID)
                 .filter { it.value.type in setOf(AssetType.FOREX, AssetType.CRYPTO) }.map { it.value.symbol }
         }
+        logger.debug {  OANDA.getAvailableAssets(ctx, accountID).toList() }
+        require(this.symbols.isNotEmpty()) { "no available currency pairs found for account=$accountID"}
         refresh()
     }
 
@@ -62,7 +64,7 @@ class OANDAExchangeRates(
      * Refresh the exchange rates from OANDA
      */
     fun refresh() {
-        val request = PricingGetRequest(this.accountID, symbols)
+        val request = PricingGetRequest(accountID, symbols)
         val resp = ctx.pricing[request]
         for (price in resp.prices) {
             val symbol = price.instrument.toString()

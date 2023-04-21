@@ -32,6 +32,8 @@ internal class OANDAHistoricFeedTestIT {
     fun historicTest() {
         System.getenv("FULL_COVERAGE") ?: return
         val feed = OANDAHistoricFeed()
+        assertTrue(feed.availableAssets.isNotEmpty())
+
         val tf = Timeframe.parse("2020-03-05", "2020-03-06")
         feed.retrieve(*symbols, timeframe = tf)
         assertEquals(3, feed.assets.size)

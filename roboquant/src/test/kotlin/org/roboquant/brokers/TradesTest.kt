@@ -22,6 +22,7 @@ import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.Size
 import org.roboquant.common.USD
 import org.roboquant.common.get
+import org.roboquant.common.iszero
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -39,12 +40,12 @@ internal class TradesTest {
             trades.add(trade1)
 
             now = now.plusSeconds(60)
-            val trade2 = Trade(now, asset, Size(-10), 100.0, 10.0, 10.0, i)
+            val trade2 = Trade(now, asset, Size(-10), 100.0, 0.0, 100.0, i)
             trades.add(trade2)
         }
 
-        assertEquals(200.USD, trades.fee.getAmount(USD))
-        assertEquals(100.USD, trades.realizedPNL.getAmount(USD))
+        assertEquals(100.USD, trades.fee.getAmount(USD))
+        assertEquals(1000.USD, trades.realizedPNL.getAmount(USD))
         assertEquals(20, trades.timeline.size)
 
         assertTrue(trades.summary().content == "trades")
@@ -53,9 +54,16 @@ internal class TradesTest {
         assertTrue(s.toString().isNotEmpty())
 
         val trades2 = trades[0..4]
-        assertEquals(50.USD, trades2.fee.getAmount(USD))
+        assertEquals(30.USD, trades2.fee.getAmount(USD))
         assertEquals(5, trades2.timeline.size)
 
+        val metrics = trades.toPNLPercentageMetrics()
+        assertTrue(metrics.isNotEmpty())
+        assertTrue(metrics.first().value.iszero)
+        assertEquals(0.1, metrics.last().value)
+
+        assertTrue(trades.first().pnlPercentage.iszero)
+        assertEquals(0.1, trades.last().pnlPercentage)
     }
 
 

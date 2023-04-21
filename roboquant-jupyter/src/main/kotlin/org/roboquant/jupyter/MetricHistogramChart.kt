@@ -25,8 +25,8 @@ import org.icepear.echarts.components.coord.cartesian.CategoryAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.tooltip.Tooltip
-import org.roboquant.loggers.MetricsEntry
 import org.roboquant.common.clean
+import org.roboquant.loggers.MetricsEntry
 import org.roboquant.loggers.getName
 import org.roboquant.loggers.toDoubleArray
 import java.math.BigDecimal
@@ -38,25 +38,33 @@ import java.math.RoundingMode
  * @property metricData
  * @property binCount
  * @property scale
+ * @property minBinSize
  * @constructor Create empty Metric histogram
  */
 class MetricHistogramChart(
     private val metricData: Collection<MetricsEntry>,
     private val binCount: Int = 20,
-    private val scale: Int = 2
+    private val scale: Int = 2,
+    private val minBinSize: Int = 0,
 ) : Chart() {
 
     private fun toSeriesData(): List<Pair<String, Long>> {
-        val result = mutableListOf<Pair<String, Long>>()
         val f = EmpiricalDistribution(binCount)
         val data = metricData.toDoubleArray().clean()
         if (data.isEmpty()) return emptyList()
 
+        val result = mutableListOf<Pair<String, Long>>()
         f.load(data)
+        var binSize = 0L
         for (i in 0 until binCount) {
             val roundedValue = BigDecimal(f.upperBounds[i]).setScale(scale, RoundingMode.HALF_DOWN)
-            val e = Pair("$roundedValue", f.binStats[i].n)
-            result.add(e)
+            binSize += f.binStats[i].n
+            val last =  i == binCount -1
+            if (binSize >= minBinSize || (last && binSize > 0)) {
+                val e = Pair("$roundedValue", binSize)
+                result.add(e)
+                binSize = 0
+            }
         }
         return result
     }
