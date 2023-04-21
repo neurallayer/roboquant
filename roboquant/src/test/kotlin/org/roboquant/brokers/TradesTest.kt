@@ -18,31 +18,41 @@ package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
+import org.roboquant.common.*
 import org.roboquant.common.Currency.Companion.USD
-import org.roboquant.common.Size
-import org.roboquant.common.USD
-import org.roboquant.common.get
-import org.roboquant.common.iszero
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class TradesTest {
 
-    @Test
-    fun test() {
+    private fun getTrades(): List<Trade> {
         val trades = mutableListOf<Trade>()
         val asset = TestData.usStock()
         var now = Instant.now()
+        val size = Size(10)
         for (i in 1..10) {
             now = now.plusSeconds(60)
-            val trade1 = Trade(now, asset, Size(10), 100.0, 10.0, 0.0, i)
+            val trade1 = Trade(now, asset, size, 100.0, 10.0, 0.0, i)
             trades.add(trade1)
 
             now = now.plusSeconds(60)
-            val trade2 = Trade(now, asset, Size(-10), 100.0, 0.0, 100.0, i)
+            val trade2 = Trade(now, asset, -size, 100.0, 0.0, 100.0, i)
             trades.add(trade2)
         }
+        return trades
+    }
+
+    @Test
+    fun basic() {
+        val trade = Trade(Instant.now(), Asset("TEST"), -Size(10), 100.0, 5.0, 100.0, 1)
+        assertEquals(-995.0, trade.totalCost.value)
+        assertEquals(100.0/995.0, trade.pnlPercentage)
+    }
+
+    @Test
+    fun testAggr() {
+        val trades = getTrades()
 
         assertEquals(100.USD, trades.fee.getAmount(USD))
         assertEquals(1000.USD, trades.realizedPNL.getAmount(USD))

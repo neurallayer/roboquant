@@ -58,11 +58,6 @@
             <version>3.17.0</version>
         </dependency>
         <dependency>
-            <groupId>org.roboquant</groupId>
-            <artifactId>oanda-v20</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.crazzyghost</groupId>
             <artifactId>alphavantage-java</artifactId>
             <version>1.6.2</version>
@@ -88,11 +83,6 @@
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.15</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.14</version>
         </dependency>
     </dependencies>
 
