@@ -131,6 +131,9 @@ abstract class Chart : HTMLOutput() {
         // Which version of echarts.min.js to use
         private const val commit = "3bf8cde65fe922f58063095186c6bef5846dbee9"
 
+        // Prefix for encoding functions
+        // private const val functionPrefix = "@@FUNCtion@@"
+
         @Suppress("MaxLineLength")
         internal const val scriptUrl =
             "https://cdn.jsdelivr.net/gh/neurallayer/roboquant@$commit/roboquant-jupyter/src/main/resources/js/echarts.min.js?version=$commit"
