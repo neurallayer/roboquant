@@ -78,7 +78,6 @@ private class InstantAdapter : JsonSerializer<Instant> {
         jsonSerializationContext: JsonSerializationContext
     ): JsonElement {
         return jsonSerializationContext.serialize(jsonElement.toEpochMilli())
-        // return jsonSerializationContext.serialize(jsonElement.toString())
     }
 
 }
@@ -128,15 +127,14 @@ abstract class Chart : HTMLOutput() {
      */
     companion object {
 
-        // Which version of echarts.min.js to use
-        private const val commit = "3bf8cde65fe922f58063095186c6bef5846dbee9"
+        // Which commit of echarts.min.js to use
+        private const val commit = "bdd685c1b4ab63b94b82a5ed2fc664c4b6450460"
 
         // Prefix for encoding functions
-        // private const val functionPrefix = "@@FUNCtion@@"
+        // private const val functionPrefix = "@@FUNCTION@@"
 
-        @Suppress("MaxLineLength")
         internal const val scriptUrl =
-            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant@$commit/roboquant-jupyter/src/main/resources/js/echarts.min.js?version=$commit"
+            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@$commit/echarts.min.js?version=$commit"
 
         /**
          * Used to ensure the output divs have a unique id. This is only used in classic notebooks since then the
@@ -186,7 +184,7 @@ abstract class Chart : HTMLOutput() {
         }
 
         /**
-         * Get the HTML script tag for the required JavaScript.
+         * Get the HTML script tag to include the required JavaScript.
          */
         fun getScript(): String {
             return """<script type='text/javascript' src='$scriptUrl'></script>"""
