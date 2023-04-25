@@ -199,7 +199,7 @@ val Number.INR
     get() = Amount(Currency.INR, toDouble())
 
 
-// Extensions to make it easier to create amounts for common crypto currencies
+// Extensions to make it easier to create amounts for common cryptocurrencies
 
 /**
  * Amount in [Currency.BTC]
