@@ -95,17 +95,15 @@ class MetricChart(
     /**
      * Convert a list of entries to data-format suitable for chart series.
      */
-    private fun List<MetricsEntry>.toSeriesData(): List<Pair<Any, BigDecimal>> {
+    private fun List<MetricsEntry>.toSeriesData(): List<Pair<Long, BigDecimal>> {
 
-        val d = mutableListOf<Pair<Any, BigDecimal>>()
+        val d = mutableListOf<Pair<Long, BigDecimal>>()
         for ((step, entry) in withIndex()) {
             val value = entry.value
             if (value.isFinite()) {
-                val roundedValue = BigDecimal(value).setScale(fractionDigits, RoundingMode.HALF_DOWN)
-                if (useTime)
-                    d.add(Pair(entry.info.time, roundedValue))
-                else
-                    d.add(Pair(step, roundedValue))
+                val y = BigDecimal(value).setScale(fractionDigits, RoundingMode.HALF_DOWN)
+                val x = if (useTime) entry.info.time.toEpochMilli() else step.toLong()
+                d.add(Pair(x, y))
             }
         }
         return d

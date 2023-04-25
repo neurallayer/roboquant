@@ -170,9 +170,14 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
         }
 
         // Now execute the create-orders. These are only run if there is a known price
+        val openCreateOrders = createOrders.open()
+
+        // Return if nothing to do to avoid creation of event.prices
+        if (openCreateOrders.isEmpty()) return emptyList()
+
         val executions = mutableListOf<Execution>()
         val prices = event.prices
-        for (executor in createOrders.open()) {
+        for (executor in openCreateOrders) {
             val action = prices[executor.order.asset] ?: continue
             val pricing = pricingEngine.getPricing(action, time)
             val newExecutions = executor.execute(pricing, time)

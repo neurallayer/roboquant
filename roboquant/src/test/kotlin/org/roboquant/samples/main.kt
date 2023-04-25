@@ -32,6 +32,7 @@ import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.filter
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
+import org.roboquant.loggers.SilentLogger
 import org.roboquant.loggers.toDoubleArray
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.Order
@@ -270,10 +271,16 @@ fun forexRun() {
 }
 
 
+fun profileTest() {
+    val feed = AvroFeed.sp500()
+    val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = SilentLogger())
+    rq.run(feed)
+}
+
 suspend fun main() {
     Config.printInfo()
 
-    when ("WFO") {
+    when ("PROFILE") {
         "SIMPLE" -> simple()
         "CSV2AVRO" -> csv2Avro("/tmp/daily/us", false)
         "MULTI_RUN" -> multiRun()
@@ -284,6 +291,7 @@ suspend fun main() {
         "SIGNALS" -> signalsOnly()
         "FOREX" -> forexFeed()
         "FOREX_RUN" -> forexRun()
+        "PROFILE" -> profileTest()
     }
 
 }
