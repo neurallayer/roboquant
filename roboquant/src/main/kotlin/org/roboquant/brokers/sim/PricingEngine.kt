@@ -21,7 +21,7 @@ import java.time.Instant
 
 /**
  * Interface that any pricing engine needs to implement. Ideally implementations should be able to support any type
- * of [PriceAction], although they can specialize for certain types of price actions, like a PriceBar.
+ * of [PriceAction], although they can specialize for certain types of price actions, like a PriceBar or OrderBook.
  */
 fun interface PricingEngine {
 

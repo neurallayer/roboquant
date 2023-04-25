@@ -19,7 +19,7 @@ import org.roboquant.brokers.sim.execution.Execution
 import kotlin.math.absoluteValue
 
 /**
- * Default fee model, using a fixed percentage fee of total absolute value of the execution.
+ * Fee model using a fixed percentage fee of total absolute value of the execution.
  *
  * @property feePercentage fee as a percentage of total execution cost, 0.01 = 1%. Default is 0.0
  * @constructor Create a new percentage fee model

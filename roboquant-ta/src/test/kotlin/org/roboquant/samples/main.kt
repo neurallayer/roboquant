@@ -159,8 +159,7 @@ private fun customPolicy() {
             val metricName = "atr.${signal.asset.symbol.lowercase()}"
             val value = atrMetrics[metricName]
             return if (value != null) {
-                val direction = if (size > 0) 1 else -1
-                val limit = price - direction * value * atrPercentage
+                val limit = price - size.sign * value * atrPercentage
                 LimitOrder(signal.asset, size, limit)
             } else {
                 null

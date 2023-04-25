@@ -40,13 +40,13 @@ abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, t
      * Returns true if this is a buy order, false otherwise.
      */
     val buy
-        get() = size > 0.0
+        get() = size.isPositive
 
     /**
      * Returns true if this is a sell order, false otherwise.
      */
     val sell
-        get() = size < 0.0
+        get() = size.isNegative
 
     /**
      * Returns the direction of the order, 1 being BUY and -1 being SELL

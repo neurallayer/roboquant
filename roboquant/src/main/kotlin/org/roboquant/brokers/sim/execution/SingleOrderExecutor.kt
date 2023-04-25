@@ -17,7 +17,10 @@
 package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.sim.Pricing
-import org.roboquant.common.*
+import org.roboquant.common.Size
+import org.roboquant.common.UnsupportedException
+import org.roboquant.common.days
+import org.roboquant.common.plus
 import org.roboquant.orders.*
 import java.time.Instant
 
@@ -131,18 +134,18 @@ internal class MarketOrderExecutor(order: MarketOrder) : SingleOrderExecutor<Mar
 }
 
 private fun stopTrigger(stop: Double, size: Size, pricing: Pricing): Boolean {
-    return if (size < 0.0) pricing.lowPrice(size) <= stop
+    return if (size.isNegative) pricing.lowPrice(size) <= stop
     else pricing.highPrice(size) >= stop
 }
 
 private fun limitTrigger(limit: Double, size: Size, pricing: Pricing): Boolean {
-    return if (size < 0.0) pricing.highPrice(size) >= limit
+    return if (size.isNegative) pricing.highPrice(size) >= limit
     else pricing.lowPrice(size) <= limit
 }
 
 private fun getTrailStop(oldStop: Double, trail: Double, size: Size, pricing: Pricing): Double {
 
-    return if (size < 0.0) {
+    return if (size.isNegative) {
         // Sell stop
         val price = pricing.highPrice(size)
         val newStop = price * (1.0 - trail)

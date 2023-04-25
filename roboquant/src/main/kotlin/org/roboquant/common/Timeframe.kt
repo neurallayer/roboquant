@@ -70,17 +70,17 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      */
     companion object {
         /**
-         * Minimum start date of a timeframe
+         * Minimum start date of a timeframe, being 1900-01-01T00:00:00Z
          */
         val MIN: Instant = Instant.parse("1900-01-01T00:00:00Z")
 
         /**
-         * Maximum end date of a timeframe
+         * Maximum end date of a timeframe, being 2200-01-01T00:00:00Z
          */
         val MAX: Instant = Instant.parse("2200-01-01T00:00:00Z")
 
         /**
-         * 1 Year expresses in milliseconds.
+         * 365 days expresses in milliseconds.
          */
         const val ONE_YEAR_MILLIS = 365.0 * 24.0 * 3600.0 * 1000.0
 

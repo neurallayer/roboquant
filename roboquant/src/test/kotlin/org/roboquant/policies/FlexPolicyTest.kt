@@ -78,7 +78,7 @@ internal class FlexPolicyTest {
 
             override fun createOrder(signal: Signal, size: Size, price: Double): Order {
                 val asset = signal.asset
-                val direction = if (size > 0) 1.0 else -1.0
+                val direction = if (size.isPositive) 1.0 else -1.0
                 val percentage = percentage * direction
 
                 return BracketOrder(

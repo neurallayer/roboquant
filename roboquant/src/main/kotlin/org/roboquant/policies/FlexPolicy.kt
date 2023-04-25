@@ -201,7 +201,7 @@ open class FlexPolicy(
                 val assetAmount = amountPerOrder.convert(asset.currency, time).value
                 val size = calcSize(assetAmount, signal, price)
                 if (size.iszero) continue
-                if (size < 0 && !shorting) continue
+                if (size.isNegative && !shorting) continue
                 if (!meetsMinPrice(asset, price, time)) continue
 
                 val order = createOrder(signal, size, price)

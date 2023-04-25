@@ -41,16 +41,36 @@ internal class SizeTest {
     }
 
     @Test
+    fun testDerived() {
+        val size = Size(10)
+        assertTrue(size.isPositive)
+        assertEquals(1, size.sign)
+        assertFalse(size.isFractional)
+        assertTrue(size < 20)
+        assertTrue(size > 5)
+
+        val size2 = Size(-10)
+        assertTrue(size2.isNegative)
+        assertEquals(-1, size2.sign)
+        assertFalse(size2.isFractional)
+        assertTrue(size2 < -5)
+        assertTrue(size2 > -20)
+    }
+
+
+    @Test
     fun testOverflow() {
         assertDoesNotThrow {
             Size("12345678.12345")
         }
 
         assertThrows<ArithmeticException> {
+            // Overflow
             Size("10000000000000000")
         }
 
         assertThrows<ArithmeticException> {
+            // Lost precision
             Size("100000.123456789")
         }
 

@@ -283,6 +283,5 @@ inline fun <T> Collection<T>.sumOf(
             result.deposit(amount)
         }
     }
-    if (singleCurrency) result.deposit(Amount(currency, value))
-    return result
+    return if (singleCurrency) Amount(currency, value).toWallet() else result
 }

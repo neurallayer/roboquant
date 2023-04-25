@@ -23,7 +23,7 @@ import kotlin.math.sign
 
 /**
  * Represents the size of orders, positions and trades. This implementation is precise up to 8 decimals, ensuring that
- * order and position sizes are accurate enough when dealing for example with fractional orders.
+ * order and position sizes are accurate enough when dealing with fractional orders.
  *
  * Since this implementation is a value class, there is no overhead compared to for example a Double or Long.
  */
@@ -102,6 +102,18 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
         get() = value != 0L
 
     /**
+     * Return true is positive size, false otherwise
+     */
+    val isPositive : Boolean
+        get() = value > 0
+
+    /**
+     * Return true is negative size, false otherwise
+     */
+    val isNegative : Boolean
+        get() = value < 0
+
+    /**
      * Returns true is this represents a fractional size, false otherwise.
      */
     val isFractional: Boolean
@@ -147,9 +159,9 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
     operator fun minus(other: Size): Size = Size(value - other.value)
 
     /**
-     * Compare the [other] number to this size.
+     * Compare the [other] Int to this size.
      */
-    operator fun compareTo(other: Number): Int = value.toDouble().compareTo(other.toDouble())
+    operator fun compareTo(other: Int): Int = compareTo(Size(other))
 
     /**
      * Compare the [other] size to this size.

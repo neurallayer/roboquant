@@ -103,7 +103,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
      * Compare the [value] in this amount to an [other] amount
      */
     operator fun compareTo(other: Amount): Int {
-        require(this.currency == other.currency) { "Can only compare amounts with same currency" }
+        require(this.currency == other.currency) { "Can only compare amounts of the same currency" }
         return value.compareTo(other.value)
     }
 
@@ -116,7 +116,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     }
 
     /**
-     * Convert this amount to a [Wallet]
+     * Convert this amount to a [Wallet] instance.
      */
     fun toWallet(): Wallet {
         return Wallet(this)
@@ -197,6 +197,9 @@ val Number.RUB
  */
 val Number.INR
     get() = Amount(Currency.INR, toDouble())
+
+
+// Extensions to make it easier to create amounts for common crypto currencies
 
 /**
  * Amount in [Currency.BTC]

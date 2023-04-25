@@ -35,7 +35,7 @@ class SpreadPricingEngine(private val spreadInBips: Number = 10, private val pri
         override fun marketPrice(size: Size): Double {
             // If BUY -> market price will be higher
             // if SELL -> market the price will be lower
-            val correction = if (size > 0) 1.0 + percentage else 1.0 - percentage
+            val correction = 1.0 + (size.sign * percentage)
             return price * correction
         }
     }

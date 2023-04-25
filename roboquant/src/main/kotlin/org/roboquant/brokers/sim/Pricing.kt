@@ -18,7 +18,7 @@ package org.roboquant.brokers.sim
 import org.roboquant.common.Size
 
 /**
- * Pricing is used to determine the price to use when executing an order.
+ * Pricing is used to determine the actual trade price to use when executing an order.
  * The [PricingEngine] is the factory that creates these pricing.
  */
 interface Pricing {

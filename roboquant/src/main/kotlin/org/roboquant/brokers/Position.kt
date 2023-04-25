@@ -95,13 +95,13 @@ data class Position(
      * Is this a short position
      */
     val short: Boolean
-        get() = size < 0
+        get() = size.isNegative
 
     /**
      * Is this a long position
      */
     val long: Boolean
-        get() = size > 0
+        get() = size.isPositive
 
     /**
      * Is this an open position
