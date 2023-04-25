@@ -19,11 +19,14 @@ package org.roboquant.brokers.sim
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.common.Config
+import org.roboquant.common.*
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
-import org.roboquant.common.USD
-import org.roboquant.common.Wallet
+import org.roboquant.feeds.Event
+import org.roboquant.feeds.TradePrice
+import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.OrderStatus
+import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -47,10 +50,46 @@ internal class SimBrokerTest {
 
         val metrics = broker.getMetrics()
         assertTrue(metrics.isEmpty())
+
+        broker2.refresh()
+        assertEquals(Wallet(100_000.USD), broker2.initialDeposit)
     }
 
+
     @Test
-    fun placeOrders() {
+    fun placeSingleCurrencyOrder() {
+        val broker = SimBroker()
+
+        val asset = Asset("TEST")
+        val order = MarketOrder(asset, 10)
+        val price = TradePrice(asset, 100.0)
+        val now = Instant.now()
+        val event = Event(listOf(price), now)
+
+        val account = broker.place(listOf(order), event)
+        assertEquals(1,account.closedOrders.size)
+        assertEquals(0, account.openOrders.size)
+        val orderState = account.closedOrders.first()
+        assertEquals(now, orderState.openedAt)
+        assertEquals(now, orderState.closedAt)
+        assertEquals(OrderStatus.COMPLETED, orderState.status)
+        assertEquals(asset, orderState.asset)
+
+        assertEquals(1, account.trades.size)
+        val trade = account.trades.first()
+        assertEquals(Size(10), trade.size)
+        assertEquals(now, trade.time)
+
+        assertEquals(broker.initialDeposit - trade.totalCost, account.cash)
+
+        assertEquals(1, account.positions.size)
+        val pos = account.positions.first()
+        assertEquals(Size(10), pos.size)
+    }
+
+
+    @Test
+    fun placeMultipleOrders() {
         val er = FixedExchangeRates(USD, EUR to 0.8)
         Config.exchangeRates = er
         val broker = SimBroker()
@@ -66,8 +105,6 @@ internal class SimBrokerTest {
         assertEquals(1, account.closedOrders.size)
         assertEquals(1, account.trades.size)
     }
-
-
 
 
 }

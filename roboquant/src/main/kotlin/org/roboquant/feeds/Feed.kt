@@ -105,6 +105,37 @@ inline fun <reified T : Action> Feed.filter(
 }
 
 
+
+/**
+ * Convenience method to apply some logic to a feed
+ */
+inline fun <reified T : Action> Feed.apply(
+    timeframe: Timeframe = Timeframe.INFINITE,
+    crossinline block: (T, Instant) -> Unit
+) = runBlocking {
+
+    val channel = EventChannel(timeframe = timeframe)
+
+    val job = launch {
+        play(channel)
+        channel.close()
+    }
+
+    try {
+        while (true) {
+            val o = channel.receive()
+            o.actions.filterIsInstance<T>().forEach { block(it, o.time) }
+        }
+
+    } catch (_: ClosedReceiveChannelException) {
+        // Intentionally left empty
+    } finally {
+        channel.close()
+        if (job.isActive) job.cancel()
+    }
+
+}
+
 /**
  * Convert a feed to a list of events, optionally limited to the provided [timeframe].
  */
@@ -133,8 +164,6 @@ fun Feed.toList(
     }
     return@runBlocking result
 }
-
-
 
 /**
  * Validate a feed for possible errors in the prices and return the result in the format Pair<Instant, PriceAction>.
@@ -178,7 +207,6 @@ fun Feed.validate(
     }
     return@runBlocking errors
 }
-
 
 /**
  * Convert a collection of price actions to a double array
