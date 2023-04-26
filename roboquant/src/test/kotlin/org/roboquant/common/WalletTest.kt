@@ -37,6 +37,26 @@ internal class WalletTest {
         assertTrue { wallet.toString().contains("USD") }
     }
 
+
+    @Test
+    fun empty() {
+        val wallet = Wallet()
+        assertTrue(wallet.isEmpty())
+
+        wallet.deposit(0.USD)
+        assertTrue(wallet.isEmpty())
+        assertTrue(wallet.currencies.isEmpty())
+        assertFalse(wallet.isMultiCurrency())
+
+        wallet.deposit(1.USD)
+        assertFalse(wallet.isEmpty())
+        assertFalse(wallet.isMultiCurrency())
+
+        wallet.withdraw(1.USD)
+        assertTrue(wallet.isEmpty())
+        assertFalse(wallet.isMultiCurrency())
+    }
+
     @Test
     fun deposit() {
         val wallet = Wallet()
