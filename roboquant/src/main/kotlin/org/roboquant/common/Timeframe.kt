@@ -225,10 +225,9 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Is this timeframe within a single day given the provided [zoneId]. If no [zoneId] is provided the one
-     * configured at [Config.defaultZoneId] will be used.
+     * Is this timeframe within a single day given the provided [zoneId].
      */
-    fun isSingleDay(zoneId: ZoneId = Config.defaultZoneId): Boolean {
+    fun isSingleDay(zoneId: ZoneId): Boolean {
         if (start == Instant.MIN || end == Instant.MAX) return false
         val realEnd = if (inclusive) end else end.minusNanos(1)
         return start.atZone(zoneId).toLocalDate() == realEnd.atZone(zoneId).toLocalDate()
@@ -236,7 +235,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
     /**
      * Convert this timeframe to a [Timeline] where each time seperated by a [step] amount.
-     * If the temporalAmount is defined as a [Period], the [Config.defaultZoneId] will be used as the ZoneId.
+     * If the temporalAmount is defined as a [Period], UTC will be used as the ZoneId.
      * Usage:
      *      timeframe.toTimeline(1.days)
      */
@@ -345,7 +344,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
     /**
      * Subtract a [period] from start- and end-time of this timeframe and return the result.
-     * If the temporalAmount is defined as a [Period], the [Config.defaultZoneId] will be used as the ZoneId.
+     * If the temporalAmount is defined as a [Period], UTC will be used as the ZoneId.
      *
      *      val newTimeFrame = timeframe - 2.days
      */
@@ -353,7 +352,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
     /**
      * Add a [period] to start- and end-time of this timeframe and return the result.
-     * If the temporalAmount is defined as a [Period], the [Config.defaultZoneId] will be used as the ZoneId.
+     * If the temporalAmount is defined as a [Period], UTC will be used as the ZoneId.
      *
      *      val newTimeFrame = timeframe + 2.days
      */

@@ -186,21 +186,21 @@ fun Collection<Position>.diff(target: Collection<Position>): Map<Asset, Size> {
 
 
 /**
- * Get the assets for a collection of positions
+ * Get the set of distinct assets for a collection of positions
  */
-val Collection<Position>.assets
-    get() = map { it.asset }.distinct()
+val Collection<Position>.assets: Set<Asset>
+    get() = map { it.asset }.distinct().toSet()
 
 /**
  * Get all the long positions for a collection of positions
  */
-val Collection<Position>.long
+val Collection<Position>.long: List<Position>
     get() = filter { it.long }
 
 /**
  * Get all the short positions for a collection of positions
  */
-val Collection<Position>.short
+val Collection<Position>.short: List<Position>
     get() = filter { it.short }
 
 /**

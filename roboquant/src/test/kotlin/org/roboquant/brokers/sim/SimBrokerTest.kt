@@ -19,6 +19,7 @@ package org.roboquant.brokers.sim
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.FixedExchangeRates
+import org.roboquant.brokers.assets
 import org.roboquant.common.*
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
@@ -101,7 +102,7 @@ internal class SimBrokerTest {
 
         account = broker.place(emptyList(), TestData.event2())
         assertEquals(1, account.openOrders.size)
-        assertEquals(1, account.assets.size)
+        assertEquals(1, account.positions.assets.size)
         assertEquals(1, account.closedOrders.size)
         assertEquals(1, account.trades.size)
     }

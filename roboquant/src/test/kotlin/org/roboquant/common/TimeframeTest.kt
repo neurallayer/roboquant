@@ -93,11 +93,13 @@ internal class TimeframeTest {
         assertEquals(Timeframe.INFINITE, tf2)
         assertTrue(tf2.isInfinite())
 
-        assertTrue(Timeframe.blackMonday1987.isSingleDay(ZoneId.of("America/New_York")))
-        assertFalse(Timeframe.coronaCrash2020.isSingleDay())
-        assertTrue(Timeframe.flashCrash2010.isSingleDay(ZoneId.of("America/New_York")))
-        assertFalse(Timeframe.financialCrisis2008.isSingleDay())
-        assertFalse(Timeframe.tenYearBullMarket2009.isSingleDay())
+        val zoneId = ZoneId.of("America/New_York")
+
+        assertTrue(Timeframe.blackMonday1987.isSingleDay(zoneId))
+        assertFalse(Timeframe.coronaCrash2020.isSingleDay(zoneId))
+        assertTrue(Timeframe.flashCrash2010.isSingleDay(zoneId))
+        assertFalse(Timeframe.financialCrisis2008.isSingleDay(zoneId))
+        assertFalse(Timeframe.tenYearBullMarket2009.isSingleDay(zoneId))
     }
 
     @Test

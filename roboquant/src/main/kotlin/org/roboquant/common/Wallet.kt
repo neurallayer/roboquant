@@ -18,6 +18,7 @@ package org.roboquant.common
 
 import java.time.Instant
 
+
 /**
  * Wallet contains amounts of different currencies at the same time. So for example a single instance of Wallet can
  * contain both USD and EUR amounts.

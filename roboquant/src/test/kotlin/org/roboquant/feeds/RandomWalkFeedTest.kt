@@ -22,6 +22,7 @@ import org.roboquant.common.Timeframe
 import org.roboquant.common.days
 import org.roboquant.feeds.util.play
 import java.time.Instant
+import java.time.ZoneId
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
@@ -66,7 +67,7 @@ internal class RandomWalkFeedTest {
         assertTrue(tf2.isNotEmpty())
 
         val tf3 = feed.sample(10).first()
-        assertFalse(tf3.isSingleDay())
+        assertFalse(tf3.isSingleDay(ZoneId.of("UTC")))
     }
 
     @Test

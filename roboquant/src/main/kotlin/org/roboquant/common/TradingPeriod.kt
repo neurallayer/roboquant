@@ -19,16 +19,18 @@ package org.roboquant.common
 import java.time.*
 import java.time.temporal.TemporalAmount
 
+
+private val UTC = ZoneId.of("UTC")
+
 /**
  * Trading Period is a class that unifies the JVM classes Duration and Period and allows to calculate with it more
  * easily.
- *
- * Under the hood it will use [Config.defaultZoneId] when working with periods that require a timezone.
  *
  * @property period the period that this applies to
  */
 @JvmInline
 value class TradingPeriod(val period: TemporalAmount) {
+
 
     operator fun plus(other: TradingPeriod) : TradingPeriod {
         if (period is Period && other.period is Period) return TradingPeriod(period+other.period)
@@ -61,11 +63,6 @@ val Int.years: TradingPeriod
 val Int.months: TradingPeriod
     get() = TradingPeriod(Period.ofMonths(this))
 
-/**
- * Convert number to weeks
- */
-val Int.weeks: TradingPeriod
-    get() = TradingPeriod(Period.ofWeeks(this))
 
 /**
  * Convert number to days
@@ -102,8 +99,7 @@ val Int.millis: TradingPeriod
  * Subtract a trading [period] to an instant
  */
 operator fun Instant.minus(period: TradingPeriod): Instant {
-    val zoneId = Config.defaultZoneId
-    val now = this.atZone(zoneId)
+    val now = this.atZone(UTC)
     return (now - period.period).toInstant()
 }
 
@@ -111,8 +107,7 @@ operator fun Instant.minus(period: TradingPeriod): Instant {
  * Add a trading [period] from an instant
  */
 operator fun Instant.plus(period: TradingPeriod): Instant {
-    val zoneId = Config.defaultZoneId
-    val now = this.atZone(zoneId)
+    val now = this.atZone(UTC)
     return (now + period.period).toInstant()
 }
 

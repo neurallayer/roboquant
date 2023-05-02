@@ -20,6 +20,7 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
+import org.roboquant.brokers.assets
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.ibkr.IBKRBroker
@@ -47,7 +48,7 @@ fun broker() {
     val broker = IBKRBroker()
     println(broker.account.fullSummary())
     Thread.sleep(5000)
-    println(broker.account.assets)
+    println(broker.account.positions.assets)
     broker.disconnect()
 }
 

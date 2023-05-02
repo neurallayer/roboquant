@@ -22,7 +22,7 @@
 
     <artifactId>roboquant-parent</artifactId>
     <groupId>org.roboquant</groupId>
-    <version>1.4.0</version>
+    <version>1.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>roboquant parent</name>
     <description>Algorithmic trading platform written in Kotlin</description>
@@ -443,6 +443,11 @@
             <version>${kotlin.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-datetime-jvm</artifactId>
+            <version>0.4.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test-junit5</artifactId>
             <version>${kotlin.version}</version>
@@ -462,7 +467,7 @@
             <dependency>
                 <artifactId>roboquant</artifactId>
                 <groupId>org.roboquant</groupId>
-                <version>1.4.0</version>
+                <version>1.5.0-SNAPSHOT</version>
             </dependency>
             <!-- end standard versions -->
         </dependencies>

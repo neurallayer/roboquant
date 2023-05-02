@@ -18,6 +18,7 @@ package org.roboquant
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
+import org.roboquant.brokers.assets
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.*
@@ -94,7 +95,7 @@ internal object TestData {
 
     fun metricInput(time: Instant = time()): Pair<Account, Event> {
         val account = usAccount()
-        val asset1 = account.assets.first()
+        val asset1 = account.positions.assets.first()
         val moment = Event(listOf(TradePrice(asset1, 11.0)), time)
         return Pair(account, moment)
     }

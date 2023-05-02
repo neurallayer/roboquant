@@ -37,7 +37,7 @@ internal class TradingPeriodTest {
     @Test
     fun numbers() {
         val x = ZonedDateTime.now()
-        val y = x + 1.days + 2.months + 1.years + 2.weeks + 100.millis + 10.seconds + 30.minutes + 1.hours
+        val y = x + 1.days + 2.months + 1.years + 100.millis + 10.seconds + 30.minutes + 1.hours
         assertTrue(y > x)
     }
 
