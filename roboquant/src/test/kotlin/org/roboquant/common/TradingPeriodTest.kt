@@ -18,7 +18,7 @@ package org.roboquant.common
 
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.Instant
-import java.time.Period
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,16 +27,8 @@ import kotlin.test.assertTrue
 internal class TradingPeriodTest {
 
     @Test
-    fun basic() {
-        val y = Period.ofDays(2)
-        val x = TradingPeriod(y)
-        assertEquals(y, x.period)
-    }
-
-
-    @Test
     fun numbers() {
-        val x = ZonedDateTime.now()
+        val x = Instant.now()
         val y = x + 1.days + 2.months + 1.years + 100.millis + 10.seconds + 30.minutes + 1.hours
         assertTrue(y > x)
     }
@@ -51,7 +43,7 @@ internal class TradingPeriodTest {
 
     @Test
     fun zonedDateTime() {
-        val t = ZonedDateTime.now()
+        val t = Instant.now()
         assertDoesNotThrow {
             t + 2.years - 100.millis + 1.hours
         }
@@ -59,8 +51,10 @@ internal class TradingPeriodTest {
 
     @Test
     fun equal() {
-        val z = ZonedDateTime.now(Config.defaultZoneId)
+        val utc = ZoneId.of("UTC")
+        val z = ZonedDateTime.now(utc)
         val i = z.toInstant()
+        assertEquals(z, i.atZone(utc))
 
         val z2 = z + 1.years - 100.millis
         val i2 = i + 1.years - 100.millis

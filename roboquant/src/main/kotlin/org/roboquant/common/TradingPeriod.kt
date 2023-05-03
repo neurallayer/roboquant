@@ -17,31 +17,71 @@
 package org.roboquant.common
 
 import java.time.*
-import java.time.temporal.TemporalAmount
 
-
-private val UTC = ZoneId.of("UTC")
+private fun createDuration(hours: Int, minutes: Int, seconds: Int, nanos: Long): Duration {
+    var result = Duration.ZERO
+    if (hours != 0) result = result.plusHours(hours.toLong())
+    if (minutes != 0) result = result.plusMinutes(minutes.toLong())
+    if (seconds != 0) result = result.plusSeconds(seconds.toLong())
+    if (nanos != 0L) result = result.plusNanos(nanos)
+    return result
+}
 
 /**
- * Trading Period is a class that unifies the JVM classes Duration and Period and allows to calculate with it more
- * easily.
- *
- * @property period the period that this applies to
+ * TradingPeriod is an immutable class that unifies the JVM classes Duration and Period and allows to use periods
+ * more easily in your code. It can store periods as small as nanosecond.
  */
-@JvmInline
-value class TradingPeriod(val period: TemporalAmount) {
+class TradingPeriod internal constructor(internal val period: Period, internal val duration: Duration) {
 
+    /**
+     * Create a new instance of TradingPeriod
+     */
+    constructor(
+        years: Int = 0,
+        months: Int = 0,
+        days: Int = 0,
+        hours: Int = 0,
+        minutes: Int = 0,
+        seconds: Int = 0,
+        nanos: Long = 0L
+    ): this(Period.of(years, months, days), createDuration(hours, minutes, seconds, nanos))
 
-    operator fun plus(other: TradingPeriod) : TradingPeriod {
-        if (period is Period && other.period is Period) return TradingPeriod(period+other.period)
-        if (period is Duration && other.period is Duration) return TradingPeriod(period+other.period)
-        throw UnsupportedException("can only add simular type of trading periods together")
+    /**
+     * Add an [other] trading period
+     */
+    operator fun plus(other: TradingPeriod) =
+        TradingPeriod(period.plus(other.period), duration.plus(other.duration))
+
+    /**
+     * Subtract an [other] trading period
+     */
+    operator fun minus(other: TradingPeriod) =
+        TradingPeriod(period.minus(other.period), duration.minus(other.duration))
+
+    /**
+     * String representation
+     */
+    override fun toString(): String {
+        return "$period $duration"
     }
 
-    operator fun minus(other: TradingPeriod) : TradingPeriod {
-        if (period is Period && other.period is Period) return TradingPeriod(period-other.period)
-        if (period is Duration && other.period is Duration) return TradingPeriod(period-other.period)
-        throw UnsupportedException("can only subtract simular type of trading periods together")
+    /**
+     * Only equals if all values are the same
+     */
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return if (other is TradingPeriod) {
+            period == other.period && duration == other.duration
+        } else {
+            false
+        }
+    }
+
+    /**
+     * @see [Object.hashCode]
+     */
+    override fun hashCode(): Int {
+        return period.hashCode() + duration.hashCode()
     }
 
 }
@@ -52,83 +92,83 @@ value class TradingPeriod(val period: TemporalAmount) {
  *********************************************************************************************/
 
 /**
- * Convert number to years
+ * Convert an Int to a [TradingPeriod] of years
  */
-val Int.years: TradingPeriod
-    get() = TradingPeriod(Period.ofYears(this))
+val Int.years
+    get() = TradingPeriod(this)
 
 /**
- * Convert number to months
+ * Convert an Int to a [TradingPeriod] of months
  */
-val Int.months: TradingPeriod
-    get() = TradingPeriod(Period.ofMonths(this))
-
+val Int.months
+    get() = TradingPeriod(0,this)
 
 /**
- * Convert number to days
+ * Convert an Int to a [TradingPeriod] of days
  */
-val Int.days: TradingPeriod
-    get() = TradingPeriod(Period.ofDays(this))
+val Int.days
+    get() = TradingPeriod(0,0,this)
 
 /**
- * Convert number to hours
+ * Convert an Int to a [TradingPeriod] of hours
  */
-val Int.hours: TradingPeriod
-    get() = TradingPeriod(Duration.ofHours(this.toLong()))
+val Int.hours
+    get() = TradingPeriod(0,0,0, this)
 
 /**
- * Convert number to minutes
+ * Convert an Int to a [TradingPeriod] of minutes
  */
-val Int.minutes: TradingPeriod
-    get() = TradingPeriod(Duration.ofMinutes(this.toLong()))
+val Int.minutes
+    get() = TradingPeriod(0,0,0,0,this)
 
 /**
- * Convert number to seconds
+ * Convert an Int to a [TradingPeriod] of seconds
  */
-val Int.seconds: TradingPeriod
-    get() = TradingPeriod(Duration.ofSeconds(this.toLong()))
+val Int.seconds
+    get() = TradingPeriod(0,0,0,0,0,this)
 
 /**
- * Convert number to millis
+ * Convert an Int to a [TradingPeriod] of milliseconds
  */
-val Int.millis: TradingPeriod
-    get() = TradingPeriod(Duration.ofMillis(this.toLong()))
-
+val Int.millis
+    get() = (this * 1_000_000L).nanos
 
 /**
- * Subtract a trading [period] to an instant
+ * Convert an Int to a [TradingPeriod] of nanoseconds
  */
-operator fun Instant.minus(period: TradingPeriod): Instant {
-    val now = this.atZone(UTC)
-    return (now - period.period).toInstant()
-}
+val Long.nanos
+    get() = TradingPeriod(0,0,0,0,0,0,this)
 
 /**
- * Add a trading [period] from an instant
- */
-operator fun Instant.plus(period: TradingPeriod): Instant {
-    val now = this.atZone(UTC)
-    return (now + period.period).toInstant()
-}
-
-/**
- * Add a trading [period] from an instant at a given [zoneId]
+ * Add a [period] using the provided [zoneId]
  */
 fun Instant.plus(period: TradingPeriod, zoneId: ZoneId): Instant {
-    val now = this.atZone(zoneId)
-    return (now + period.period).toInstant()
+    return atZone(zoneId).plus(period.period).toInstant().plus(period.duration)
 }
 
 /**
- * Subtract a trading [period] from a zoned date-time
+ * Subtract a [period] using the provided [zoneId]
  */
-operator fun ZonedDateTime.minus(period: TradingPeriod): ZonedDateTime {
-    return this - period.period
+fun Instant.minus(period: TradingPeriod, zoneId: ZoneId): Instant {
+    return atZone(zoneId).minus(period.period).toInstant().minus(period.duration)
 }
 
 /**
- * Add a trading [period] to a zoned date-time
+ * Add a [period] using UTC
  */
-operator fun ZonedDateTime.plus(period: TradingPeriod): ZonedDateTime {
-    return this + period.period
-}
+operator fun Instant.plus(period: TradingPeriod) = plus(period, ZoneOffset.UTC)
+
+/**
+ * Add a [period]
+ */
+operator fun ZonedDateTime.plus(period: TradingPeriod): ZonedDateTime = plus(period.period).plus(period.duration)
+
+/**
+ * Subtract a [period] using UTC
+ */
+operator fun Instant.minus(period: TradingPeriod) = minus(period, ZoneOffset.UTC)
+
+/**
+ * Subtract a [period]
+ */
+operator fun ZonedDateTime.minus(period: TradingPeriod): ZonedDateTime = minus(period.period).minus(period.duration)
