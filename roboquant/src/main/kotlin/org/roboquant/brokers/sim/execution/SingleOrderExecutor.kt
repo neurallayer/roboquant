@@ -30,7 +30,7 @@ import java.time.Instant
  *
  * @property order the single order to execute
  */
-internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var order: T) : CreateOrderExecutor<T> {
+internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var order: T) : OrderExecutor<T> {
 
     /**
      * Fill so far
@@ -56,13 +56,11 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
      * Cancel the order, return true if successful, false otherwise. Any open SingleOrder can be cancelled, closed
      * orders not.
      */
-    override fun cancel(time: Instant): Boolean {
-        return if (status.closed) {
-            false
-        } else {
-            status = OrderStatus.CANCELLED
-            true
-        }
+    private fun cancel(time: Instant): Boolean {
+        if (status == OrderStatus.ACCEPTED && expired(time)) status = OrderStatus.EXPIRED
+        if (status.closed) return false
+        status = OrderStatus.CANCELLED
+        return true
     }
 
     /**
@@ -101,7 +99,7 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
     }
 
     @Suppress("ReturnCount")
-    override fun update(order: CreateOrder, time: Instant): Boolean {
+    fun update(order: CreateOrder, time: Instant): Boolean {
         if (status == OrderStatus.ACCEPTED && expired(time)) return false
         if (status.closed) return false
 
@@ -116,6 +114,16 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
         }
 
     }
+
+    override fun modify(modifyOrder: ModifyOrder, time: Instant): Boolean {
+        return when(modifyOrder) {
+            is CancelOrder -> cancel(time)
+            is UpdateOrder -> update(modifyOrder.update, time)
+            else -> false
+        }
+    }
+
+
 
     /**
      * Subclasses only need to implement this method and don't need to worry about time-in-force and state management.

@@ -16,12 +16,12 @@
 package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.sim.Pricing
-import org.roboquant.orders.CreateOrder
+import org.roboquant.orders.CancelOrder
 import org.roboquant.orders.OTOOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
-internal class OTOOrderExecutor(override val order: OTOOrder) : CreateOrderExecutor<OTOOrder> {
+internal class OTOOrderExecutor(override val order: OTOOrder) : OrderExecutor<OTOOrder> {
 
     override var status: OrderStatus = OrderStatus.INITIAL
 
@@ -31,12 +31,12 @@ internal class OTOOrderExecutor(override val order: OTOOrder) : CreateOrderExecu
     /**
      * Cancel the order, return true if successful, false otherwise
      */
-    override fun cancel(time: Instant): Boolean {
+    fun cancel(cancelOrder: CancelOrder, time: Instant): Boolean {
         return if (status.closed) {
             false
         } else {
-            first.cancel(time)
-            second.cancel(time)
+            first.modify(cancelOrder, time)
+            second.modify(cancelOrder, time)
             status = OrderStatus.CANCELLED
             true
         }
@@ -59,5 +59,5 @@ internal class OTOOrderExecutor(override val order: OTOOrder) : CreateOrderExecu
         return result
     }
 
-    override fun update(order: CreateOrder, time: Instant) = false
+
 }

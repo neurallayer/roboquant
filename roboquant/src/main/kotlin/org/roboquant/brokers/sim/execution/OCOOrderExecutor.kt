@@ -16,12 +16,13 @@
 package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.sim.Pricing
-import org.roboquant.orders.CreateOrder
+import org.roboquant.orders.CancelOrder
+import org.roboquant.orders.ModifyOrder
 import org.roboquant.orders.OCOOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
-internal class OCOOrderExecutor(override val order: OCOOrder) : CreateOrderExecutor<OCOOrder> {
+internal class OCOOrderExecutor(override val order: OCOOrder) : OrderExecutor<OCOOrder> {
 
     private val first = ExecutionEngine.getCreateOrderExecutor(order.first)
     private val second = ExecutionEngine.getCreateOrderExecutor(order.second)
@@ -35,12 +36,12 @@ internal class OCOOrderExecutor(override val order: OCOOrder) : CreateOrderExecu
     /**
      * Cancel the order, return true if successful, false otherwise
      */
-    override fun cancel(time: Instant): Boolean {
+    private fun cancel(cancelOrder: CancelOrder, time: Instant): Boolean {
         return if (status.closed) {
             false
         } else {
-            first.cancel(time)
-            second.cancel(time)
+            first.modify(cancelOrder, time)
+            second.modify(cancelOrder, time)
             status = OrderStatus.CANCELLED
             true
         }
@@ -71,5 +72,10 @@ internal class OCOOrderExecutor(override val order: OCOOrder) : CreateOrderExecu
         return emptyList()
     }
 
-    override fun update(order: CreateOrder, time: Instant) = false
+    override fun modify(modifyOrder: ModifyOrder, time: Instant): Boolean {
+        return when(modifyOrder) {
+            is CancelOrder -> cancel(modifyOrder, time)
+            else -> false
+        }
+    }
 }

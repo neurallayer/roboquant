@@ -18,11 +18,12 @@ package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.sim.Pricing
 import org.roboquant.orders.BracketOrder
-import org.roboquant.orders.CreateOrder
+import org.roboquant.orders.CancelOrder
+import org.roboquant.orders.ModifyOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
-internal class BracketOrderExecutor(override val order: BracketOrder) : CreateOrderExecutor<BracketOrder> {
+internal class BracketOrderExecutor(override val order: BracketOrder) : OrderExecutor<BracketOrder> {
 
     override var status: OrderStatus = OrderStatus.INITIAL
     private val entry = ExecutionEngine.getExecutor(order.entry) as SingleOrderExecutor<*>
@@ -32,13 +33,13 @@ internal class BracketOrderExecutor(override val order: BracketOrder) : CreateOr
     /**
      * Cancel the order, return true if successful, false otherwise
      */
-    override fun cancel(time: Instant): Boolean {
+    private fun cancel(cancelOrder: CancelOrder, time: Instant): Boolean {
         return if (status.closed) {
             false
         } else {
-            entry.cancel(time)
-            profit.cancel(time)
-            loss.cancel(time)
+            entry.modify(cancelOrder, time)
+            profit.modify(cancelOrder, time)
+            loss.modify(cancelOrder, time)
             status = OrderStatus.CANCELLED
             true
         }
@@ -58,6 +59,11 @@ internal class BracketOrderExecutor(override val order: BracketOrder) : CreateOr
         return executions
     }
 
-    override fun update(order: CreateOrder, time: Instant) = false
+    override fun modify(modifyOrder: ModifyOrder, time: Instant): Boolean {
+        return when(modifyOrder) {
+            is CancelOrder -> cancel(modifyOrder, time)
+            else -> false
+        }
+    }
 
 }
