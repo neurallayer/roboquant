@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.jupyter
+package org.roboquant.jupyter.dataframe
 
 /**
 import org.jetbrains.kotlinx.dataframe.DataFrame

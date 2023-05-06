@@ -20,12 +20,13 @@ import java.time.Instant
 
 /**
  * Time in force (TiF) allows to put an expiration or fill policy on an order. It determines how long an order remains
- * active before it expires. There are two aspects that can determine if an order expires:
+ * active before it expires. There are two triggers that can determine if an order expires:
  *
- * - How much time has passed since the order was first placed.
- * - Is the order completely filled or not yet
+ * - How much *time* has passed since the order was first placed.
+ * - How much of the order is *filled* already
  *
- * When an order expires, the status is set [OrderStatus.EXPIRED] to indicate such a condition occurred.
+ * When an order expires, the status of the order state is set [OrderStatus.EXPIRED] to indicate such a
+ * condition occurred.
  */
 interface TimeInForce
 

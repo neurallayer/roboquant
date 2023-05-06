@@ -31,6 +31,7 @@ import org.roboquant.common.Asset
  * a single asset.
  *
  * @property asset the underlying asset of the order
+ * @property id a unique order identifier
  * @property tag an (optional) tag that can be used to store additional information, for example relate the order to
  * a specific signal for future traceability.
  **/
@@ -86,7 +87,7 @@ sealed class Order(val asset: Asset, val tag: String) {
 
 /**
  * Base class for all types of create orders. This ranges from a simple [MarketOrder], all the way to advanced order
- * types like [BracketOrder].
+ * types like a [BracketOrder].
  */
 abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag)
 

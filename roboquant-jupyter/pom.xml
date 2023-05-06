@@ -80,6 +80,7 @@
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>dataframe-core</artifactId>
             <version>0.11.0-dev-1608</version>
+            <scope>provided</scope>
         </dependency -->
     </dependencies>
 
