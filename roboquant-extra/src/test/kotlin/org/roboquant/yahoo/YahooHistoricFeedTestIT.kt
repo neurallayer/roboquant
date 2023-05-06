@@ -29,7 +29,7 @@ internal class YahooHistoricFeedTestIT {
 
     @Test
     fun test() {
-        Config.getProperty("FULL_COVERAGE") ?: return
+        Config.getProperty("YAHOO_COVERAGE") ?: return
         val feed = YahooHistoricFeed()
         val timeframe = Timeframe.fromYears(2019, 2020)
         feed.retrieve("AAPL", "IBM", timeframe = timeframe)
