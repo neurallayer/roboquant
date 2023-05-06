@@ -20,6 +20,7 @@ import de.siegmar.fastcsv.reader.NamedCsvReader
 import org.roboquant.common.Currency.Companion.USD
 import java.nio.charset.StandardCharsets
 import java.time.Instant
+import java.time.LocalDate
 
 
 /**
@@ -30,7 +31,7 @@ import java.time.Instant
 interface Universe {
 
     /**
-     * Return the list of assets in this universe at the given [time]
+     * Return the list of assets in this universe at the given point in [time]
      */
     fun getAssets(time: Instant): List<Asset>
 
@@ -49,7 +50,8 @@ interface Universe {
 
 private class SP500 : Universe {
 
-    private val assets: List<Asset>
+    private val startSP500 = LocalDate.parse("1960-01-01")
+    private val assets: List<Pair<Asset, Timeframe>>
 
     init {
         val stream = SP500::class.java.getResourceAsStream("/sp500.csv")!!
@@ -57,15 +59,23 @@ private class SP500 : Universe {
             val content = String(inputStream.readAllBytes(), StandardCharsets.UTF_8)
             val builder = NamedCsvReader.builder().fieldSeparator(';').build(content)
             val us = Exchange.getInstance("US")
-            assets = builder.map { Asset(it.getField("Symbol"), currency = USD, exchange = us) }
+            assets = builder.map {
+                val symbol = it.getField("Symbol")
+                val asset = Asset(symbol, currency = USD, exchange = us)
+                val date = it.getField("Date")
+                val startDate = if (date.isNotEmpty()) LocalDate.parse(it.getField("Date")) else startSP500
+                val start = startDate.atTime(0,0).atZone(us.zoneId).toInstant()
+                val timeframe = Timeframe(start, Timeframe.MAX)
+                Pair(asset, timeframe)
+            }
         }
     }
 
     /**
-     * Return the SP500 stocks (for now ignoring the time).
+     * Return the SP500 stocks (for now ignoring mostly the time).
      */
     override fun getAssets(time: Instant): List<Asset> {
-        return assets
+        return assets.filter { it.second.contains(time) }.map { it.first }
     }
 
 }

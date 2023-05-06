@@ -143,14 +143,18 @@ val Long.nanos
  * Add a [period] using the provided [zoneId]
  */
 fun Instant.plus(period: TradingPeriod, zoneId: ZoneId): Instant {
-    return atZone(zoneId).plus(period.period).toInstant().plus(period.duration)
+    // Optimized path for HFT
+    val result = if (period.period == Period.ZERO) this else atZone(zoneId).plus(period.period).toInstant()
+    return result.plus(period.duration)
 }
 
 /**
  * Subtract a [period] using the provided [zoneId]
  */
 fun Instant.minus(period: TradingPeriod, zoneId: ZoneId): Instant {
-    return atZone(zoneId).minus(period.period).toInstant().minus(period.duration)
+    // Optimized path for HFT
+    val result = if (period.period == Period.ZERO) this else atZone(zoneId).minus(period.period).toInstant()
+    return result.minus(period.duration)
 }
 
 /**

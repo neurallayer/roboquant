@@ -164,7 +164,7 @@ EPAM;EPAM Systems;Information Technology;2021-12-14;1352010
 EQIX;Equinix;Real Estate;2015-03-20;1101239
 EQR;Equity Residential;Real Estate;2001-12-03;906107
 EQT;EQT;Energy;2022-10-03;33213
-ES;Eversource;Utilities;2009;72741
+ES;Eversource;Utilities;2009-01-01;72741
 ESS;Essex Property Trust;Real Estate;2014-04-02;920522
 ETN;Eaton Corporation;Industrials;;1551182
 ETR;Entergy;Utilities;1957-03-04;65984
@@ -427,7 +427,7 @@ SWKS;Skyworks Solutions;Information Technology;2015-03-12;4127
 SYF;Synchrony Financial;Financials;2015-11-18;1601712
 SYK;Stryker Corporation;Health Care;2000-12-12;310764
 SYY;Sysco;Consumer Staples;1986-12-31;96021
-T;AT&T;Communication Services;1983-11-30 (1957-03-04);732717
+T;AT&T;Communication Services;1983-11-30;732717
 TAP;Molson Coors Beverage Company;Consumer Staples;1976-06-30;24545
 TDG;TransDigm Group;Industrials;2016-06-03;1260221
 TDY;Teledyne Technologies;Information Technology;2020-06-22;1094285
@@ -468,7 +468,7 @@ VFC;VF Corporation;Consumer Discretionary;1979-06-30;103379
 VICI;Vici Properties;Real Estate;2022-06-08;1705696
 VLO;Valero Energy;Energy;;1035002
 VMC;Vulcan Materials Company;Materials;1999-06-30;1396009
-VNO;Vornado Realty Trust;Real Estate;2005;899689
+VNO;Vornado Realty Trust;Real Estate;2005-01-01;899689
 VRSK;Verisk;Industrials;2015-10-08;1442145
 VRSN;Verisign;Information Technology;2006-02-01;1014473
 VRTX;Vertex Pharmaceuticals;Health Care;2013-09-23;875320

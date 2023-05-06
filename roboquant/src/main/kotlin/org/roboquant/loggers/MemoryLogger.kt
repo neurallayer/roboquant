@@ -18,10 +18,11 @@ package org.roboquant.loggers
 
 import org.roboquant.RunInfo
 import org.roboquant.RunPhase
-import org.roboquant.common.Config
 import org.roboquant.common.Summary
 import org.roboquant.metrics.MetricResults
 import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.*
 
@@ -67,7 +68,6 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
         progressBar.reset()
     }
 
-
     /**
      * Provided a summary of the recorded metrics for [last] events (default is 1)
      */
@@ -103,7 +103,6 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
     val runs
         get() = history.map { it.second.run }.distinct().sorted()
 
-
     /**
      * Get the unique list of metric names that have been captured
      */
@@ -128,7 +127,10 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
  * Group a collection of metric entries by a certain [period]. This for example enables to group by month and run
  * statistics over each month.
  */
-fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, Collection<MetricsEntry>> {
+fun Collection<MetricsEntry>.groupBy(
+    period: ChronoUnit,
+    zoneId: ZoneId = ZoneOffset.UTC
+): Map<String, Collection<MetricsEntry>> {
 
     val formatter = when (period) {
         ChronoUnit.YEARS -> SimpleDateFormat("yyyy")
@@ -141,7 +143,7 @@ fun Collection<MetricsEntry>.groupBy(period: ChronoUnit): Map<String, Collection
             throw IllegalArgumentException("Unsupported value $period")
         }
     }
-    formatter.timeZone = TimeZone.getTimeZone(Config.defaultZoneId)
+    formatter.timeZone = TimeZone.getTimeZone(zoneId)
     return groupBy {
         val date = Date.from(it.info.time)
         formatter.format(date)
