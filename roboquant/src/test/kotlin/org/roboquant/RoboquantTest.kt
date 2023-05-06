@@ -49,8 +49,12 @@ internal class RoboquantTest {
         val strategy = EMAStrategy()
         val roboquant = Roboquant(strategy, AccountMetric(), logger = SilentLogger())
         roboquant.run(TestData.feed)
-        val summary = roboquant.summary()
-        assertTrue(summary.toString().isNotEmpty())
+        val summary = roboquant.toString()
+        assertTrue(summary.isNotEmpty())
+        assertEquals(
+            "strategy=EMAStrategy policy=FlexPolicy logger=SilentLogger metrics=[AccountMetric] broker=SimBroker",
+            summary
+        )
 
         val account = roboquant.broker.account
         assertTrue(account.trades.isNotEmpty())
@@ -115,7 +119,6 @@ internal class RoboquantTest {
         assertEquals(timeline[4], step.info.time)
     }
 
-
     @Test
     fun brokenMetric() {
         class MyBrokenMetric : Metric {
@@ -133,7 +136,6 @@ internal class RoboquantTest {
         }
 
     }
-
 
     @Test
     fun validationPhase() {
@@ -175,7 +177,6 @@ internal class RoboquantTest {
         assertEquals(lastHistory1, lastHistory2)
     }
 
-
     @Test
     fun massiveParallel() {
         val feed = TestData.feed
@@ -190,7 +191,6 @@ internal class RoboquantTest {
         jobs.joinAllBlocking()
 
     }
-
 
     @Test
     fun prices() {

@@ -25,7 +25,6 @@ import org.roboquant.brokers.Broker
 import org.roboquant.brokers.closeSizes
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Logging
-import org.roboquant.common.Summary
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
@@ -167,12 +166,10 @@ class Roboquant(
             "validation should start after main timeframe"
         }
         val run = name ?: "run-${++runCounter}"
-        val runInfo = RunInfo(run)
+        val runInfo = RunInfo(run, timeframe = timeframe, phase = MAIN)
         kotlinLogger.debug { "starting run=$runInfo" }
-
-        runInfo.phase = MAIN
-        runInfo.timeframe = timeframe
         runPhase(feed, runInfo)
+
         if (validation !== null) {
             runInfo.timeframe = validation
             runInfo.phase = VALIDATE
@@ -211,21 +208,20 @@ class Roboquant(
         metricResult.putAll(broker.getMetrics())
         kotlinLogger.trace { "captured metrics=${metricResult.size}" }
 
-        // Always call the logger, so things like progress bar can be updated
+        // Always call the logger, so things like a progress bar can be updated
         logger.log(metricResult, runInfo.copy())
     }
 
     /**
-     * Provide a summary of this roboquant.
+     * Provide a string representation of this roboquant.
      */
-    fun summary(): Summary {
-        val s = Summary("roboquant")
-        s.add("strategy", strategy::class.simpleName)
-        s.add("policy", policy::class.simpleName)
-        s.add("logger", logger::class.simpleName)
-        val metricNames = metrics.map { it::class.simpleName }.joinToString()
-        s.add("metrics", metricNames)
-        return s
+    override fun toString() : String {
+        val s = strategy::class.simpleName
+        val p = policy::class.simpleName
+        val l = logger::class.simpleName
+        val b = broker::class.simpleName
+        val m = metrics.map { it::class.simpleName }.toString()
+        return "strategy=$s policy=$p logger=$l metrics=$m broker=$b"
     }
 
     /**

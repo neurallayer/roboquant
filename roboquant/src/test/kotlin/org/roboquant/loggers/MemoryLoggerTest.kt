@@ -18,16 +18,14 @@ package org.roboquant.loggers
 
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.RunInfo
-import kotlin.test.*
 import org.roboquant.RunPhase
 import org.roboquant.TestData
-import org.roboquant.common.*
+import org.roboquant.common.days
+import org.roboquant.common.plus
 import org.roboquant.metrics.metricResultsOf
 import java.time.Instant
-import java.time.ZoneId
 import java.time.temporal.ChronoUnit
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
+import kotlin.test.*
 
 internal class MemoryLoggerTest {
 
@@ -97,7 +95,6 @@ internal class MemoryLoggerTest {
 
     @Test
     fun groupBy() {
-        Config.defaultZoneId = ZoneId.of("America/New_York")
         val logger = MemoryLogger(showProgress = false)
         var runInfo = RunInfo("run-1", time = Instant.parse("2021-01-02T00:00:00Z"))
 
