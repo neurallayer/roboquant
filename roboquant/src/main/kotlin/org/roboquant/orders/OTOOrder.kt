@@ -24,7 +24,6 @@ package org.roboquant.orders
  * @property secondary the secondary order
  * @param tag an optional tag
  * @constructor create a new instance of a OTOOrder
-
  */
 class OTOOrder(
     val primary: SingleOrder,
