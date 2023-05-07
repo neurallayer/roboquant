@@ -64,6 +64,9 @@ class AtrPolicy(
     private val data = PriceBarSeries(atrPeriod + 1) // we need 1 observation extra
     private val talib = TaLib()
 
+    /**
+     * @see FlexPolicy.calcSize
+     */
     override fun calcSize(amount: Double, signal: Signal, price: Double): Size {
         val asset = signal.asset
 
@@ -87,6 +90,9 @@ class AtrPolicy(
         }
     }
 
+    /**
+     * @see FlexPolicy.act
+     */
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         data.addAll(event)
         return super.act(signals, account, event)
@@ -100,6 +106,9 @@ class AtrPolicy(
         return talib.atr(serie, atrPeriod).coerceAtLeast(minAtr)
     }
 
+    /**
+     * @see FlexPolicy.createOrder
+     */
     override fun createOrder(signal: Signal, size: Size, price: Double): Order? {
         val asset = signal.asset
 
@@ -118,7 +127,9 @@ class AtrPolicy(
         return BracketOrder(entry, takeProfit, stopLoss)
     }
 
-
+    /**
+     * @see FlexPolicy.start
+     */
     override fun start(runPhase: RunPhase) {
         super.start(runPhase)
         data.clear()
