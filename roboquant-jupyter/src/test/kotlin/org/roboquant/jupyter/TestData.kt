@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.roboquant
+package org.roboquant.jupyter
 
+import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.sim.execution.InternalAccount
@@ -23,12 +24,22 @@ import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.common.USD
+import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.loggers.SilentLogger
 import org.roboquant.orders.MarketOrder
+import org.roboquant.strategies.TestStrategy
 
 /**
  * Test data used in unit tests
  */
 object TestData {
+
+    val fullAccount by lazy {
+        val feed = RandomWalkFeed.lastYears()
+        val rq = Roboquant(TestStrategy(), logger = SilentLogger())
+        rq.run(feed)
+        rq.broker.account
+    }
 
     fun usAccount(): Account {
         val amount: Amount = 100_000.USD

@@ -86,6 +86,7 @@ internal class JupyterCore(
     private val options: MutableMap<String, String?>
 ) : JupyterIntegration() {
 
+
     init {
         logger.debug { options.toMap() }
         logger.debug { notebook }
@@ -130,7 +131,7 @@ internal class JupyterCore(
             "org.roboquant.jupyter.*",
             "java.time.Instant",
             "java.time.temporal.ChronoUnit",
-            "org.roboquant.ta.*"
+            "org.roboquant.ta.*",
         )
 
         // Improve output of exceptions
