@@ -24,6 +24,18 @@ import kotlin.test.assertTrue
 
 internal class SingleOrderTest {
 
+
+    @Test
+    fun orderId() {
+        Order.setId(10)
+        val asset = TestData.usStock()
+        val order1 = MarketOrder(asset, 100)
+        assertEquals(10, order1.id)
+
+        val order2 = MarketOrder(asset, 100)
+        assertEquals(11, order2.id)
+    }
+
     @Test
     fun testMarketOrder() {
         val asset = TestData.usStock()

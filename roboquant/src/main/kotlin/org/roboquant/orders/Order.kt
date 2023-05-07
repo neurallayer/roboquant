@@ -48,13 +48,20 @@ sealed class Order(val asset: Asset, val tag: String) {
     companion object {
 
         /**
-         * Counter used for creating unique order ids. Normally you should not manually change this value since the
-         * unique ID generation is a manual process.
+         * Counter used for creating unique order ids.
          */
-        var ID = 0
+        private var ID = 0
 
         /**
-         * Generate the next order id
+         * Set the order id to its [initial value][initialValue]
+         */
+        @Synchronized
+        fun setId(initialValue: Int) {
+            ID = initialValue
+        }
+
+        /**
+        * Generate the next order id
          */
         @Synchronized
         private fun nextId(): Int {
