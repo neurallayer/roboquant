@@ -149,7 +149,6 @@ data class Asset(
 
     }
 
-
     /**
      * Return the value of the asset given the provided [size] and [price]. The calculation takes the [multiplier]
      * of the asset into account.
@@ -167,6 +166,7 @@ data class Asset(
     override fun compareTo(other: Asset): Int {
         return symbol.compareTo(other.symbol)
     }
+
 
     /**
      * Return the contract size for a given [amount] and [price]. The provided amount and price should be denoted in
