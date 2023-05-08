@@ -24,11 +24,11 @@ import java.time.Instant
  * Event contains a list of [actions] that all happened at the same moment in time ([time]). There are no restrictions
  * on the type of information contained in a [Action] and different type of actions can be mixed in a single event.
  *
- * @property actions the list of actions that are part of this event
+ * @property actions the colelction of actions that are part of this event
  * @property time the time that the actions in this event became available
  *
  */
-data class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
+data class Event(val actions: Collection<Action>, val time: Instant) : Comparable<Event> {
 
     /**
      * @suppress
