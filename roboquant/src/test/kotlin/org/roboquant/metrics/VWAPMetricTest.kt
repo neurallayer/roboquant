@@ -18,7 +18,6 @@ package org.roboquant.metrics
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import org.roboquant.common.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -41,9 +40,6 @@ internal class VWAPMetricTest {
         result = metric.calculate(account, event)
         assertTrue(result.isEmpty())
 
-        val resetEvent = event.copy(time = event.time + 1.days)
-        result = metric.calculate(account, resetEvent)
-        assertTrue(result.isEmpty())
     }
 
 }

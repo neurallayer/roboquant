@@ -28,7 +28,7 @@ import java.time.Instant
  * @property time the time that the actions in this event became available
  *
  */
-data class Event(val actions: Collection<Action>, val time: Instant) : Comparable<Event> {
+class Event(val actions: Collection<Action>, val time: Instant) : Comparable<Event> {
 
     /**
      * @suppress
