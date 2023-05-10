@@ -100,10 +100,7 @@ private class FastFeed(val nAssets : Int, val events: Int) : Feed {
  */
 private object Performance {
 
-    private const val concurrency = "parallel"
-    private val parallel = Config.getProperty(concurrency)?.toInt() ?: Config.info.cores
     private const val skip = 999 // create signal in 1 out of 999 price-action
-
     private fun getStrategy(skip:Int) : Strategy = FastStrategy(skip)
 
     /**
@@ -122,14 +119,19 @@ private object Performance {
     /**
      * Basic test with minimal overhead
      */
-    private fun seqRun(feed: FastFeed): Long {
-        return measure {
+    private fun seqRun(feed: FastFeed, backTests: Int): Pair<Long, Int> {
+        var trades = 0
+        val t = measure {
             // sequential
-            repeat(parallel) {
+            trades = 0
+            repeat(backTests) {
                 val roboquant = Roboquant(getStrategy(skip), logger = SilentLogger())
                 roboquant.run(feed)
+                trades += roboquant.broker.account.trades.size
             }
+
         }
+        return Pair(t, trades)
     }
 
     /**
@@ -145,7 +147,7 @@ private object Performance {
     }
 
     /**
-     * Test with 3 strategies, margin account, shorting, extra metrics and some logging overhead included
+     * Test with 3 strategies, margin account, shorting, metrics and some logging overhead included
      */
     private fun extendedRun(feed: FastFeed): Long {
         return measure {
@@ -174,11 +176,11 @@ private object Performance {
     /**
      * Run parallel back tests
      */
-    private fun parRun(feed: Feed): Long {
+    private fun parRun(feed: Feed, backTests: Int): Long {
 
         return measure {
             val jobs = ParallelJobs()
-            repeat(parallel) {
+            repeat(backTests) {
                 jobs.add {
                     val roboquant = Roboquant(getStrategy(skip), logger = SilentLogger(), channelCapacity = 3)
                     roboquant.runAsync(feed)
@@ -191,33 +193,34 @@ private object Performance {
     @Suppress("ImplicitDefaultLocale")
     fun test() {
         Config.printInfo()
-        data class Combination(val events: Int, val assets: Int)
+        data class Combination(val events: Int, val assets: Int, val backTests: Int)
         val combinations = listOf(
-            Combination(10_000, 100),
-            Combination(10_000, 500),
-            Combination(20_000, 500),
-            Combination(50_000, 1_000),
-            Combination(50_000, 2_000),
-            Combination(100_000, 5_000),
-            Combination(200_000, 5_000)
+            Combination(1_000, 10, 100),
+            Combination(1_000, 50, 100),
+            Combination(2_000, 50, 100),
+            Combination(5_000, 100, 100),
+            Combination(5_000, 200, 100),
+            Combination(10_000, 500, 100),
+            Combination(20_000, 500, 100)
         )
 
-        val header = String.format("%8s %8s %8s %8s %10s %16s %14s %11s",
-            "candles", "assets", "events", "feed", "full-run", "sequential-run","parallel-run", "candles/s"
+        val header = String.format("\n%8S %8S %8S %11S %8S %9S %16S %14S %8S %11S",
+            "candles", "assets", "events", "backtests", "feed", "ext-run",
+            "sequential-run","parallel-run", "trades", "candles/s"
             )
 
-        println("\n performance test with maximum of $parallel parallel back tests\n")
         println(header)
-        println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        for ((events, assets) in combinations ) {
-            val feed = FastFeed(assets, events / parallel)
+        println(" " + "━".repeat(header.length - 2))
+        for ((events, assets, backTests) in combinations ) {
+            val feed = FastFeed(assets, events)
             val t1 = feedFilter(feed)
             val t2 = extendedRun(feed)
-            val t3 = seqRun(feed)
-            val t4 = parRun(feed)
+            val (t3, trades) = seqRun(feed, backTests)
+            val t4 = parRun(feed, backTests)
 
-            val line = String.format("%7dM %8d %8d %6dms %8dms %14dms %12dms %10dM",
-                    assets*events/1_000_000, assets, events, t1, t2, t3, t4, feed.size * parallel / (t4 * 1000)
+            val candles = assets*events*backTests/1_000_000
+            val line = String.format("%7dM %8d %8d %11d %6dms %7dms %14dms %12dms %8d %10dM",
+                    candles, assets, events, backTests, t1, t2, t3, t4, trades, feed.size * backTests / (t4 * 1000)
                 )
             println(line)
         }
@@ -228,6 +231,9 @@ private object Performance {
 
 }
 
+/**
+ * Run the performance test
+ */
 fun main() {
     Performance.test()
 }
