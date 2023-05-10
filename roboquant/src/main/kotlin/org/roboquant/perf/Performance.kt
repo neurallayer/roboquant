@@ -212,9 +212,12 @@ private object Performance {
         println(header)
         println(" " + "━".repeat(header.length - 2))
         for ((events, assets, backTests) in combinations ) {
+            // single run
             val feed = FastFeed(assets, events)
             val t1 = feedFilter(feed)
             val t2 = extendedRun(feed)
+
+            // multi-run
             val (t3, trades) = seqRun(feed, backTests)
             val t4 = parRun(feed, backTests)
 
