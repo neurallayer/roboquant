@@ -277,10 +277,29 @@ fun profileTest() {
     rq.run(feed)
 }
 
+
+fun performanceTest() {
+    val feed = AvroFeed(Config.home / "all_1962_2023.avro")
+    repeat(3) {
+        val t = measureTimeMillis {
+            val jobs = ParallelJobs()
+            repeat(4) {
+                jobs.add {
+                    val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = SilentLogger())
+                    rq.run(feed)
+                }
+            }
+            jobs.joinAllBlocking()
+        }
+        println(t)
+    }
+}
+
+
 suspend fun main() {
     Config.printInfo()
 
-    when ("PROFILE") {
+    when ("PERFORMANCE") {
         "SIMPLE" -> simple()
         "CSV2AVRO" -> csv2Avro("/tmp/daily/us", false)
         "MULTI_RUN" -> multiRun()
@@ -292,6 +311,7 @@ suspend fun main() {
         "FOREX" -> forexFeed()
         "FOREX_RUN" -> forexRun()
         "PROFILE" -> profileTest()
+        "PERFORMANCE" -> performanceTest()
     }
 
 }

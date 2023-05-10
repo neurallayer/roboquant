@@ -159,6 +159,14 @@ data class Asset(
     }
 
     /**
+     * Faster hashcode than default
+     */
+    override fun hashCode(): Int {
+        return symbol.hashCode()
+    }
+
+
+    /**
      * Compares this asset with the [other] asset for order based on the [symbol] name. Returns zero if this asset
      * is equal to the specified [other] asset, a negative number if it's less than [other], or a positive number
      * if it's greater than [other].
@@ -178,6 +186,20 @@ data class Asset(
         val singleContractValue = value(Size.ONE, price).value
         val size = BigDecimal(amount / singleContractValue).setScale(fractions, RoundingMode.DOWN)
         return Size(size)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Asset
+
+        if (symbol != other.symbol) return false
+        if (type != other.type) return false
+        if (currency != other.currency) return false
+        if (exchange != other.exchange) return false
+        if (multiplier != other.multiplier) return false
+        return id == other.id
     }
 
 }

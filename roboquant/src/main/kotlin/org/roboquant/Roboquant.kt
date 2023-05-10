@@ -188,7 +188,7 @@ class Roboquant(
      */
     private fun step(orders: List<Order>, event: Event, runInfo: RunInfo): List<Order> {
         runInfo.time = event.time
-        kotlinLogger.trace { "starting step info=$runInfo orders=${orders.size} actions=${event.actions.size}" }
+        kotlinLogger.trace { "starting step info=$runInfo orders=${orders.size}" }
 
         val account = broker.place(orders, event)
         runMetrics(account, event, runInfo)

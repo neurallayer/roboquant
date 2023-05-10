@@ -40,10 +40,10 @@ class AvroFeedTest {
 
     private class MyFeed(override val assets: SortedSet<Asset>) : AssetFeed {
 
-        lateinit var event: Event
+        val events = mutableListOf<Event>()
 
         override suspend fun play(channel: EventChannel) {
-            channel.send(event)
+            for (event in events) channel.send(event)
         }
 
     }
@@ -112,7 +112,11 @@ class AvroFeedTest {
             listOf(OrderBook.OrderBookEntry(50.0, 9.0))
         )
         val feed = MyFeed(sortedSetOf(asset))
-        feed.event = Event(listOf(p1, p2, p3, p4), Instant.now())
+        val now = Instant.now()
+        feed.events.add(Event(listOf(p1), now + 1.millis))
+        feed.events.add(Event(listOf(p2), now + 2.millis))
+        feed.events.add(Event(listOf(p3), now + 3.millis))
+        feed.events.add(Event(listOf(p4), now + 4.millis))
 
         assertDoesNotThrow {
             AvroFeed.record(feed, fileName)
@@ -136,7 +140,7 @@ class AvroFeedTest {
         val asset = Asset("DUMMY")
         val p1 = MyPrice(asset, 100.0)
         val feed = MyFeed(sortedSetOf(asset))
-        feed.event = Event(listOf(p1), Instant.now())
+        feed.events.add(Event(listOf(p1), Instant.now()))
 
         assertThrows<UnsupportedException> {
             AvroFeed.record(feed, fileName)

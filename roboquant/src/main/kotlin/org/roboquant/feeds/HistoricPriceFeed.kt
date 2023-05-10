@@ -20,7 +20,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import org.roboquant.common.Timeline
 import java.time.Instant
-import java.util.SortedSet
+import java.util.*
 
 /**
  * Base class that provides a foundation for data feeds that provide historic prices. It uses a sorted map to store
@@ -28,7 +28,7 @@ import java.util.SortedSet
  */
 open class HistoricPriceFeed : HistoricFeed {
 
-    private val events = sortedMapOf<Instant, MutableList<PriceAction>>()
+    private val events = sortedMapOf<Instant, MutableMap<Asset, PriceAction>>()
 
     override val timeline: Timeline
         get() = events.keys.toList()
@@ -37,7 +37,7 @@ open class HistoricPriceFeed : HistoricFeed {
         get() = if (events.isEmpty()) Timeframe.INFINITE else Timeframe(events.firstKey(), events.lastKey(), true)
 
     override val assets: SortedSet<Asset>
-        get() = events.asSequence().map { entry -> entry.value.map { it.asset } }.flatten().toSortedSet()
+        get() = events.values.map { it.keys }.flatten().toSortedSet()
 
     /**
      * Return the first event in this feed
@@ -74,17 +74,17 @@ open class HistoricPriceFeed : HistoricFeed {
      */
     @Synchronized
     protected fun add(time: Instant, action: PriceAction) {
-        val actions = events.getOrPut(time) { mutableListOf() }
-        actions.add(action)
+        val actions = events.getOrPut(time) { mutableMapOf() }
+        actions[action.asset] = action
     }
 
     /**
      * Add all new [actions] to this feed at the provided [time]
      */
     @Synchronized
-    protected fun addAll(time: Instant, actions: Collection<PriceAction>) {
-        val existing = events.getOrPut(time) { mutableListOf() }
-        existing.addAll(actions)
+    protected fun addAll(time: Instant, actions: MutableMap<Asset, PriceAction>) {
+        val existing = events.getOrPut(time) { mutableMapOf() }
+        existing.putAll(actions)
     }
 
     /**

@@ -166,7 +166,8 @@ class AvroFeed(private val path: Path) : AssetFeed {
     override suspend fun play(channel: EventChannel) {
         val timeframe = channel.timeframe
         var last = Instant.MIN
-        var actions = mutableListOf<PriceAction>()
+        var actions = HashMap<Asset, PriceAction>()
+        // var actions = ArrayList<PriceAction>()
 
         getReader().use {
             position(it, timeframe.start)
@@ -181,13 +182,15 @@ class AvroFeed(private val path: Path) : AssetFeed {
                 if (now != last) {
                     if (actions.isNotEmpty()) channel.send(Event(actions, last))
                     last = now
-                    actions = mutableListOf()
+                    actions = HashMap<Asset, PriceAction>(actions.size.coerceAtLeast(16))
+                    // actions = ArrayList<PriceAction>(actions.size)
                 }
 
                 if (now > timeframe) break
 
                 val action = recToPriceAction(rec)
-                actions.add(action)
+                actions[action.asset] = action
+                // actions.add(action)
             }
             if (actions.isNotEmpty()) channel.send(Event(actions, last))
         }
