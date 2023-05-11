@@ -16,7 +16,6 @@
 
 package org.roboquant.perf
 
-
 import org.roboquant.Roboquant
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
@@ -32,6 +31,7 @@ import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import java.time.Instant
+import kotlin.math.roundToInt
 import kotlin.system.exitProcess
 import kotlin.system.measureTimeMillis
 
@@ -204,9 +204,9 @@ private object Performance {
             Combination(20_000, 500, 100)
         )
 
-        val header = String.format("\n%8S %8S %8S %11S %8S %9S %16S %14S %8S %11S",
-            "candles", "assets", "events", "backtests", "feed", "ext-run",
-            "sequential-run","parallel-run", "trades", "candles/s"
+        val header = String.format("\n%8S %6S %6S %4S %7S %7S %10S %7S %6S %9S",
+            "candles", "assets", "events", "runs", "feed", "full",
+            "sequential","parallel", "trades", "candles/s"
             )
 
         println(header)
@@ -222,8 +222,10 @@ private object Performance {
             val t4 = parRun(feed, backTests)
 
             val candles = assets*events*backTests/1_000_000
-            val line = String.format("%7dM %8d %8d %11d %6dms %7dms %14dms %12dms %8d %10dM",
-                    candles, assets, events, backTests, t1, t2, t3, t4, trades, feed.size * backTests / (t4 * 1000)
+            val line = String.format("%6dM %7d %6d %4d %5dms %5dms %7dms %7dms %5dK %8dM",
+                    candles, assets, events, backTests,
+                    t1, t2, t3, t4,
+                    (trades/1_000.0).roundToInt(), feed.size * backTests / (t4 * 1000)
                 )
             println(line)
         }

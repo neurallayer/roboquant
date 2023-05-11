@@ -28,7 +28,12 @@
     <artifactId>roboquant</artifactId>
     <packaging>jar</packaging>
     <name>roboquant</name>
-    <description>roboquant is an open source algorithmic trading platform written in Kotlin.</description>
+    <description>roboquant is a fast algorithmic trading platform written in Kotlin.</description>
+
+    <properties>
+        <!-- make it easy to run the performance test: ./mvnw exec:java -pl roboquant -->
+        <exec.mainClass>org.roboquant.perf.PerformanceKt</exec.mainClass>
+    </properties>
 
     <build>
         <plugins>

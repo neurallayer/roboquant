@@ -69,7 +69,6 @@
         <slf4j.version>2.0.7</slf4j.version>
         <ibkr.version>10.19</ibkr.version>
         <surefire.failIfNoSpecifiedTests>false</surefire.failIfNoSpecifiedTests>
-        <exec.mainClass>org.roboquant.perf.PerformanceKt</exec.mainClass>
     </properties>
 
     <repositories>
@@ -270,6 +269,15 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>performance</id>
+            <properties>
+                <test>org.roboquant.PerformanceTest</test>
+            </properties>
+            <modules>
+                <module>roboquant</module>
+            </modules>
         </profile>
     </profiles>
 
