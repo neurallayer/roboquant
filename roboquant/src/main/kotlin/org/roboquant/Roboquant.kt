@@ -87,7 +87,7 @@ class Roboquant(
 
         start(runInfo.phase)
         try {
-            var orders = listOf<Order>()
+            var orders = emptyList<Order>()
             while (true) {
                 val event = channel.receive()
                 orders = step(orders, event, runInfo)

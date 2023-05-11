@@ -20,6 +20,7 @@ package org.roboquant.common
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
+import java.time.Month
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -45,14 +46,10 @@ internal class AssetTest {
         val a = Asset.optionContract("SPX", LocalDate.parse("2014-11-22"), 'P', "19.50")
         assertEquals("SPX   141122P00019500", a.symbol)
 
-        val b = Asset.futureContract("GC", 'Z', 18)
-        val b2 = Asset.futureContract("GC", 'Z', 2018)
+        val b = Asset.futureContract("GC", Month.DECEMBER, 18)
+        val b2 = Asset.futureContract("GC", Month.DECEMBER, 2018)
         assertEquals("GCZ18", b.symbol)
         assertEquals(b, b2)
-
-        assertThrows<IllegalArgumentException> {
-            Asset.futureContract("GC", 'P', 18)
-        }
 
         val c = Asset.forexPair("EUR_USD")
         assertEquals("EUR/USD", c.symbol)
@@ -101,8 +98,7 @@ internal class AssetTest {
         val s2 = a.contractSize(1000.0, 1.0, 4)
         assertEquals(Size(10), s2)
 
-        val s3 = a.contractSize(250.0, 1.0, 4)
-        assertEquals(Size("2.5"), s3)
+        assertThrows<java.lang.IllegalArgumentException> { a.contractSize(250.0, 1.0, -1) }
     }
 
 }

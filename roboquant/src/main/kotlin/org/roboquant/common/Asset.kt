@@ -20,6 +20,7 @@ package org.roboquant.common
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
+import java.time.Month
 import java.time.format.DateTimeFormatter
 
 /**
@@ -102,21 +103,22 @@ data class Asset(
         }
 
         /**
-         * Returns a future contract based on the provided parameters
+         * Returns a future contract based on the provided parameters. It will generate a [symbol] name using the
+         * Future Contract Trading Code standard.
          */
         fun futureContract(
             symbol: String,
-            month: Char,
+            month: Month,
             year: Int,
             currencyCode: String = "USD",
             exchangeCode: String = "",
             multiplier: Double = 1.0,
             id: String = ""
         ): Asset {
-            val months = listOf('F', 'G', 'H', 'J', 'K', 'M', 'N', 'Q', 'U', 'V', 'X', 'Z')
-            require(month in months) { "$month not one of $months" }
+            val months = arrayOf('F', 'G', 'H', 'J', 'K', 'M', 'N', 'Q', 'U', 'V', 'X', 'Z')
+            val monthEncoding = months[month.value - 1]
             val yearCode = year.toString()
-            val futureSymbol = "$symbol$month${yearCode.takeLast(2)}"
+            val futureSymbol = "$symbol$monthEncoding${yearCode.takeLast(2)}"
             return Asset(futureSymbol, AssetType.FUTURES, currencyCode, exchangeCode, multiplier, id)
         }
 
@@ -159,7 +161,7 @@ data class Asset(
     }
 
     /**
-     * Faster hashcode than default
+     * Faster hashcode that is well distributed than the default data class generated one
      */
     override fun hashCode(): Int {
         return symbol.hashCode()
@@ -183,6 +185,7 @@ data class Asset(
      * It supports fractional sizes by providing a number of [fractions] bigger than 0.
      */
     fun contractSize(amount: Double, price: Double, fractions: Int = 0): Size {
+        require (fractions >= 0) { "factions has to be >= 0, found $fractions" }
         val singleContractValue = value(Size.ONE, price).value
         val size = BigDecimal(amount / singleContractValue).setScale(fractions, RoundingMode.DOWN)
         return Size(size)
