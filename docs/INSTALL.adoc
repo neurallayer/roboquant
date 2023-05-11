@@ -132,21 +132,20 @@ To run the built-in performance tests, you can use the following maven command:
 
 [source, shell]
 ----
-./mvnw test -P performance -Dparallel=8
+./mvnw compile exec:java -pl roboquant
 ----
-The optional `-Dparallel=8` flag determines how many parallel runs to use in the performance test. The default is equal to amount of cores if you don't include this flag. Because the focus is on performance, this test uses a lot more memory than regular back tests.
 
-The output will look something like this:
+The output should look something like this:
 ----
-             _______
+            _______
             | $   $ |             roboquant
-            |   o   |             version: 1.3.0
-            |_[___]_|             build: 2023-04-03T09:39:47Z
-        ___ ___|_|___ ___         os: Mac OS X 13.3
-       ()___)       ()___)        home: /Users/peter/.roboquant
-      // / |         | \ \\       jvm: OpenJDK 64-Bit Server VM 19.0.2
-     (___) |_________| (___)      memory: 4096MB
-      | |   __/___\__   | |       cpu cores: 8
+            |   o   |             version: 1.5.0-SNAPSHOT
+            |_[___]_|             build: 2023-05-11T06:49:52Z
+        ___ ___|_|___ ___         os: Linux 5.15.0-1031-aws
+       ()___)       ()___)        home: /home/ubuntu/.roboquant
+      // / |         | \ \\       jvm: OpenJDK 64-Bit Server VM 17.0.6
+     (___) |_________| (___)      memory: 30688MB
+      | |   __/___\__   | |       cpu cores: 64
       /_\  |_________|  /_\
      // \\  |||   |||  // \\
      \\ //  |||   |||  \\ //
@@ -155,46 +154,17 @@ The output will look something like this:
         __///_     _\\\__
        |______|   |______|
 
-*****    500.000 candlesticks *****
-    feed filter               20 ms
-    base run                 119 ms
-    parallel runs (x8)       270 ms
-    extended run             560 ms
-    throughput 14 million candles/s
-
-*****  1.000.000 candlesticks *****
-    feed filter               39 ms
-    base run                 172 ms
-    parallel runs (x8)       390 ms
-    extended run            1613 ms
-    throughput 20 million candles/s
-
-*****  5.000.000 candlesticks *****
-    feed filter              189 ms
-    base run                 520 ms
-    parallel runs (x8)       744 ms
-    extended run           14987 ms
-    throughput 53 million candles/s
-
-***** 10.000.000 candlesticks *****
-    feed filter              123 ms
-    base run                 705 ms
-    parallel runs (x8)      1220 ms
-    extended run           15689 ms
-    throughput 65 million candles/s
+ CANDLES ASSETS EVENTS RUNS    FEED    FULL SEQUENTIAL PARALLEL TRADES CANDLES/S
+ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     1M      10   1000  100     7ms    19ms     123ms      37ms     1K       27M
+     5M      50   1000  100     4ms    12ms     241ms      19ms     5K      263M
+    10M      50   2000  100    12ms    17ms     456ms      40ms    10K      250M
+    50M     100   5000  100    18ms    85ms    1833ms     149ms    50K      335M
+   100M     200   5000  100    34ms   167ms    3481ms     237ms   100K      421M
+   500M     500  10000  100   172ms   630ms   21594ms    1128ms   500K      443M
+  1000M     500  20000  100   345ms  1387ms   44519ms    2962ms  1000K      337M
 ----
 
 The main purpose is to test the performance and stability of the back-test engine itself, not any specific feed, strategy or metric. So the overhead of those type of components is kept to a minimum, while still running full back tests.
 
-== Mutation Testing
-Although not enabled by default, roboquant also includes the PIT (see also https://PiTest.org) mutation testing plugin. You can use the following command to invoke it:
-
-[source, shell]
-----
-mvn test-compile org.pitest:pitest-maven:mutationCoverage
-----
-
-PIT runs the unit tests against automatically modified versions of the roboquant code. When the code changes, it should produce different results and cause one or more unit tests to fail. If no unit tests fail at all, it may indicate that the test suite doesn't validate the expected behavior.
-
-In future releases of _roboquant_ it is planned to use mutation testing more in order to improve the overall *real* test coverage.
 
