@@ -51,6 +51,8 @@ internal class AssetTest {
         assertEquals("GCZ18", b.symbol)
         assertEquals(b, b2)
 
+        assertEquals("GCF20", Asset.futureContract("GC", Month.JANUARY, 2020).symbol)
+
         val c = Asset.forexPair("EUR_USD")
         assertEquals("EUR/USD", c.symbol)
 
@@ -90,6 +92,15 @@ internal class AssetTest {
     }
 
     @Test
+    fun contractValue() {
+        val a = Asset("ABC", multiplier = 100.0)
+        assertEquals(25000.0.USD, a.value(Size(10), 25.0))
+
+        val b = Asset("ABC")
+        assertEquals((-250.0).USD, b.value(Size(-10), 25.0))
+    }
+
+    @Test
     fun contractSize() {
         val a = Asset("ABC", multiplier = 100.0)
         val s = a.contractSize(1000.0, 1.0)
@@ -98,6 +109,7 @@ internal class AssetTest {
         val s2 = a.contractSize(1000.0, 1.0, 4)
         assertEquals(Size(10), s2)
 
+        // decimal fractions cannot be negative
         assertThrows<java.lang.IllegalArgumentException> { a.contractSize(250.0, 1.0, -1) }
     }
 
