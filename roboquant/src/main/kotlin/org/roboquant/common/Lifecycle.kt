@@ -16,6 +16,7 @@
 
 package org.roboquant.common
 
+import org.roboquant.RunInfo
 import org.roboquant.RunPhase
 
 /**
@@ -28,10 +29,10 @@ import org.roboquant.RunPhase
 interface Lifecycle {
 
     /**
-     * Invoked at the start of a [runPhase]. Default implementation is to invoke [reset], which is suitable for
+     * Invoked at the start of a [run]. Default implementation is to invoke [reset], which is suitable for
      * many type of components.
      */
-    fun start(runPhase: RunPhase) {
+    fun start(run: RunInfo) {
         reset()
     }
 

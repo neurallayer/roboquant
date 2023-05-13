@@ -203,7 +203,6 @@ fun signalsOnly() {
 
     val roboquant = Roboquant(strategy, policy = policy, logger = logger)
     roboquant.run(feed, Timeframe.past(5.years))
-    println(logger.summary(1))
 }
 
 

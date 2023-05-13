@@ -18,9 +18,9 @@ package org.roboquant.loggers
 
 import org.roboquant.RunInfo
 import org.roboquant.RunPhase
-import org.roboquant.common.Summary
 import org.roboquant.metrics.MetricResults
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
@@ -31,7 +31,7 @@ import java.util.*
  *  metric results after a run. This is also the default metric logger for roboquant if none is specified.
  *
  * If you log very large amounts of metric data, this could cause memory issues. But for normal back testing
- * this should not pose a problem. By specifying [maxHistorySize] you can further limit the amount stored in memory.
+ * this should not pose a problem.
  *
  * By default, a bar will be shown that shows the progress of a run, but by setting [showProgress] to false this can be
  * disabled. And although the MemoryLogger can be used in multiple runs at the same time, that is not true for the
@@ -39,21 +39,26 @@ import java.util.*
  *
  * @property showProgress should a progress bar be displayed, default is true
  */
-class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize: Int = Int.MAX_VALUE) : MetricsLogger {
+class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
 
-    internal val history = mutableListOf<Pair<MetricResults, RunInfo>>()
+    // internal val history = mutableListOf<Pair<MetricResults, RunInfo>>()
+    internal class Entry(val time: Instant, val metrics: MetricResults)
+    internal val history = mutableMapOf<String, MutableList<Entry>>()
     private val progressBar = ProgressBar()
 
     @Synchronized
     override fun log(results: MetricResults, info: RunInfo) {
         if (showProgress) progressBar.update(info)
         if (results.isEmpty()) return
-        if (history.size >= maxHistorySize) history.removeFirst()
-        history.add(Pair(results, info))
+        history.getValue(info.run).add(Entry(info.time, results))
     }
 
-    override fun start(runPhase: RunPhase) {
-        if (showProgress) progressBar.reset()
+    override fun start(run: RunInfo) {
+        if (showProgress) {
+            progressBar.reset()
+            progressBar.timeframe = run.timeframe
+        }
+        history[run.run] = mutableListOf()
     }
 
     override fun end(runPhase: RunPhase) {
@@ -68,55 +73,30 @@ class MemoryLogger(var showProgress: Boolean = true, private val maxHistorySize:
         progressBar.reset()
     }
 
-    /**
-     * Provided a summary of the recorded metrics for [last] events (default is 1)
-     */
-    fun summary(last: Int = 1): Summary {
-        val s = Summary("Metrics")
-        val lastEntry = history.lastOrNull()
-        if (lastEntry == null) {
-            s.add("No Data")
-        } else {
-            for (i in history.lastIndex downTo history.lastIndex - last) {
-                if (i >= 0) {
-                    val step = history[i]
-                    val t = Summary("${step.second.time}")
-                    for (entry in step.first) {
-                        t.add(entry.key, entry.value)
-                    }
-                    s.add(t)
-                }
-            }
-        }
-        return s
-    }
-
-    /**
-     * Return the recorded run phases
-     */
-    val runPhases: List<Pair<String, RunPhase>>
-        get() = history.map { Pair(it.second.run, it.second.phase) }.distinct().sortedBy { it.first }
 
     /**
      * Get all the recorded runs in this logger
      */
-    val runs
-        get() = history.map { it.second.run }.distinct().sorted()
+    val runs: Set<String>
+        get() = history.keys
 
     /**
      * Get the unique list of metric names that have been captured
      */
     override val metricNames: List<String>
-        get() = history.map { it.first.keys }.flatten().distinct().sorted()
+        get() = history.values.asSequence().flatten().map { it.metrics.keys }.flatten().distinct().sorted().toList()
 
     /**
      * Get results for a metric specified by its [name]. It will include all the runs for that metric.
      */
     override fun getMetric(name: String): List<MetricsEntry> {
         val result = mutableListOf<MetricsEntry>()
-        for (entry in history) {
-            val value = entry.first[name]
-            if (value != null) result.add(MetricsEntry(name, value, entry.second))
+        for ((run, entries) in history) {
+            for (entry in entries) {
+                val value = entry.metrics[name]
+                if (value != null) result.add(MetricsEntry(name, value, RunInfo(run, time=entry.time)))
+            }
+
         }
         return result
     }

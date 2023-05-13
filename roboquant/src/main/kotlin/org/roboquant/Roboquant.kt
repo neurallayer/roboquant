@@ -85,7 +85,7 @@ class Roboquant(
             channel.use { feed.play(it) }
         }
 
-        start(runInfo.phase)
+        start(runInfo)
         try {
             var orders = emptyList<Order>()
             while (true) {
@@ -106,8 +106,9 @@ class Roboquant(
      * Inform components of the start of a [runPhase], this provides them with the opportunity to clear state and
      * re-initialize values if required.
      */
-    private fun start(runPhase: RunPhase) {
-        for (component in components) component.start(runPhase)
+    private fun start(runInfo: RunInfo) {
+        val info = runInfo.copy()
+        for (component in components) component.start(info)
     }
 
     /**
@@ -260,7 +261,7 @@ class Roboquant(
  * @property phase the phase of the run
  * @constructor Create a new RunInfo object
  */
-data class RunInfo internal constructor(
+data class RunInfo (
     val run: String,
     var time: Instant = Instant.MIN,
     var timeframe: Timeframe = Timeframe.INFINITE,

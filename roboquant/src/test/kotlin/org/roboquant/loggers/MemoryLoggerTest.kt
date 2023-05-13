@@ -16,7 +16,6 @@
 
 package org.roboquant.loggers
 
-import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.RunInfo
 import org.roboquant.RunPhase
 import org.roboquant.TestData
@@ -25,7 +24,10 @@ import org.roboquant.common.plus
 import org.roboquant.metrics.metricResultsOf
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class MemoryLoggerTest {
 
@@ -34,11 +36,9 @@ internal class MemoryLoggerTest {
         val logger = MemoryLogger(showProgress = false)
         assertTrue(logger.metricNames.isEmpty())
 
-        assertDoesNotThrow {
-            logger.summary(10).toString()
-        }
 
         val metrics = TestData.getMetrics()
+        logger.start(TestData.getRunInfo())
         logger.log(metrics, TestData.getRunInfo())
         logger.end(RunPhase.VALIDATE)
         assertFalse(logger.metricNames.isEmpty())
@@ -50,7 +50,6 @@ internal class MemoryLoggerTest {
         val z = logger.getMetric(metrics.keys.first())
         assertEquals(1, z.size)
 
-        assertEquals(1, logger.runPhases.size)
 
         assertEquals(1, logger.runs.size)
 
@@ -60,13 +59,12 @@ internal class MemoryLoggerTest {
         repeat(4) {
             logger.log(metrics, TestData.getRunInfo())
         }
-        assertEquals(logger.summary().toString(), logger.summary(1).toString())
-        assertNotEquals(logger.summary().toString(), logger.summary(3).toString())
     }
 
     @Test
     fun testMetricsEntry() {
         val logger = MemoryLogger(showProgress = false)
+        logger.start(TestData.getRunInfo())
         repeat(12) {
             val metrics = metricResultsOf("key1" to it)
             logger.log(metrics, TestData.getRunInfo())
@@ -97,6 +95,7 @@ internal class MemoryLoggerTest {
     fun groupBy() {
         val logger = MemoryLogger(showProgress = false)
         var runInfo = RunInfo("run-1", time = Instant.parse("2021-01-02T00:00:00Z"))
+        logger.start(runInfo)
 
         repeat(50) {
             val metrics = metricResultsOf("key1" to it)
@@ -105,6 +104,8 @@ internal class MemoryLoggerTest {
         }
 
         val data = logger.getMetric("key1")
+        assertEquals(50, data.size)
+
         assertEquals(50, data.groupBy(ChronoUnit.MINUTES).size)
         assertEquals(50, data.groupBy(ChronoUnit.DAYS).size)
         assertEquals(15, data.groupBy(ChronoUnit.WEEKS).size)
@@ -118,12 +119,16 @@ internal class MemoryLoggerTest {
         val logger = MemoryLogger(showProgress = false)
         var runInfo = RunInfo("run", time = Instant.parse("2021-01-02T00:00:00Z"))
 
+
+
         repeat(50) {
+            val run = "run-$it"
+            logger.start(RunInfo(run))
             val metrics = metricResultsOf("key1" to it)
-            runInfo = runInfo.copy(run = "run-$it", time = runInfo.time + 2.days)
+            runInfo = runInfo.copy(run = run, time = runInfo.time + 2.days)
             logger.log(metrics, runInfo)
 
-            runInfo = runInfo.copy(run = "run-$it", time = runInfo.time + 1.days)
+            runInfo = runInfo.copy(run = run, time = runInfo.time + 1.days)
             logger.log(metrics, runInfo)
         }
 

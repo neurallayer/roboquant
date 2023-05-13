@@ -37,7 +37,6 @@ fun feedYahoo() {
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, AccountMetric(), PositionMetric(), logger = logger)
     roboquant.run(feed)
-    logger.summary(10)
 }
 
 fun feedPolygon() {

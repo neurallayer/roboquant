@@ -46,7 +46,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
         }
     }
 
-    override fun start(runPhase: RunPhase) {
+    override fun start(run: RunInfo) {
         if (showProgress) progressBar.reset()
     }
 

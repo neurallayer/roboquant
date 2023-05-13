@@ -58,7 +58,6 @@ private fun beta() {
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, ProgressMetric(), policy = policy, logger = logger)
     roboquant.run(feed)
-    println(logger.summary())
     println(roboquant.broker.account.summary())
 
 }
@@ -80,7 +79,6 @@ private fun beta2() {
     val logger = MemoryLogger()
     val roboquant = Roboquant(strategy, ProgressMetric(), PNLMetric(), policy = policy, logger = logger)
     roboquant.run(feed)
-    println(logger.summary())
     println(roboquant.broker.account.summary())
     println(roboquant.broker.account.trades.fee)
 
