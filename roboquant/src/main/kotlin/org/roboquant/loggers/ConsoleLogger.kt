@@ -16,7 +16,7 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.RunInfo
+import org.roboquant.Step
 import org.roboquant.metrics.MetricResults
 import java.text.DecimalFormat
 import java.time.temporal.ChronoUnit
@@ -45,28 +45,28 @@ open class ConsoleLogger(
         }
     }
 
-    protected fun getLines(results: MetricResults, info: RunInfo): List<String> {
-        val time = info.time.truncatedTo(precision)
+    protected fun getLines(results: MetricResults, step: Step): List<String> {
+        val time = step.time.truncatedTo(precision)
         return if (!splitMetrics)
             listOf(
                 mapOf(
-                    "run" to info.run,
+                    "run" to step.run,
                     "time" to time
                 ).pretty() + ", " + results.format().pretty()
             )
         else
             results.map {
                 mapOf(
-                    "run" to info.run,
+                    "run" to step.run,
                     "time" to time,
                     it.key to formatter.format(it.value)
                 ).pretty()
             }
     }
 
-    override fun log(results: MetricResults, info: RunInfo) {
+    override fun log(results: MetricResults, step: Step) {
         if (results.isEmpty()) return
-        for (line in getLines(results, info)) println(line)
+        for (line in getLines(results, step)) println(line)
     }
 
 }

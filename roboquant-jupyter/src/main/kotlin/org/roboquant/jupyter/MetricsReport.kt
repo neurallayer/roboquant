@@ -51,8 +51,8 @@ class MetricsReport(
                 result += "</tr>"
             }
             val name = logger.metricNames.first()
-            result += "<tr>${createCells("start time", logger.getMetric(name).first().info.time)}</tr>"
-            result += "<tr>${createCells("end time", logger.getMetric(name).last().info.time)}</tr>"
+            result += "<tr>${createCells("start time", logger.getMetric(name).first().step.time)}</tr>"
+            result += "<tr>${createCells("end time", logger.getMetric(name).last().step.time)}</tr>"
             result += "</table></div>"
         }
 

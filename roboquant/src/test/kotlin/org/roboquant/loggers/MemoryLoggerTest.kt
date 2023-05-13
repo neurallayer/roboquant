@@ -17,6 +17,7 @@
 package org.roboquant.loggers
 
 import org.roboquant.RunInfo
+import org.roboquant.Step
 import org.roboquant.TestData
 import org.roboquant.common.days
 import org.roboquant.common.plus
@@ -38,9 +39,10 @@ internal class MemoryLoggerTest {
 
         val metrics = TestData.getMetrics()
         val runInfo = TestData.getRunInfo()
+        val step = TestData.getStep()
 
         logger.start(runInfo)
-        logger.log(metrics, runInfo)
+        logger.log(metrics, step)
         logger.end(runInfo)
         assertFalse(logger.metricNames.isEmpty())
         assertEquals(metrics.size, logger.metricNames.size)
@@ -58,7 +60,7 @@ internal class MemoryLoggerTest {
         assertTrue(z.min() <= z.max())
 
         repeat(4) {
-            logger.log(metrics, TestData.getRunInfo())
+            logger.log(metrics, TestData.getStep())
         }
     }
 
@@ -68,7 +70,7 @@ internal class MemoryLoggerTest {
         logger.start(TestData.getRunInfo())
         repeat(12) {
             val metrics = metricResultsOf("key1" to it)
-            logger.log(metrics, TestData.getRunInfo())
+            logger.log(metrics, TestData.getStep())
         }
         val data = logger.getMetric("key1")
         assertEquals(12, data.size)
@@ -95,13 +97,13 @@ internal class MemoryLoggerTest {
     @Test
     fun groupBy() {
         val logger = MemoryLogger(showProgress = false)
-        var runInfo = RunInfo("run-1", time = Instant.parse("2021-01-02T00:00:00Z"))
-        logger.start(runInfo)
+        logger.start(TestData.getRunInfo())
 
+        var step = TestData.getStep()
         repeat(50) {
             val metrics = metricResultsOf("key1" to it)
-            logger.log(metrics, runInfo)
-            runInfo = runInfo.copy(time = runInfo.time + 2.days)
+            logger.log(metrics, step)
+            step = step.copy(time = step.time + 2.days)
         }
 
         val data = logger.getMetric("key1")
@@ -118,19 +120,19 @@ internal class MemoryLoggerTest {
     @Test
     fun groupAndFlatten() {
         val logger = MemoryLogger(showProgress = false)
-        var runInfo = RunInfo("run", time = Instant.parse("2021-01-02T00:00:00Z"))
-
+        val time = Instant.parse("2021-01-02T00:00:00Z")
 
 
         repeat(50) {
             val run = "run-$it"
-            logger.start(RunInfo(run))
+            val runInfo = RunInfo(run, time = time)
+            logger.start(runInfo)
             val metrics = metricResultsOf("key1" to it)
-            runInfo = runInfo.copy(run = run, time = runInfo.time + 2.days)
-            logger.log(metrics, runInfo)
+            var step = Step(run, time = time + 2.days)
+            logger.log(metrics,step)
 
-            runInfo = runInfo.copy(run = run, time = runInfo.time + 1.days)
-            logger.log(metrics, runInfo)
+            step = step.copy(time = step.time + 1.days)
+            logger.log(metrics, step)
         }
 
         val data = logger.getMetric("key1")

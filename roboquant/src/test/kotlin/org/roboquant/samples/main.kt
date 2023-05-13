@@ -88,7 +88,7 @@ fun multiRun() {
         }
     }
     val maxEntry = logger.getMetric("account.equity").max()
-    println(maxEntry.info.run)
+    println(maxEntry)
 }
 
 suspend fun walkForwardParallel() {

@@ -17,6 +17,7 @@
 package org.roboquant.loggers
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
 
 internal class ConsoleLoggerTest {
@@ -24,13 +25,17 @@ internal class ConsoleLoggerTest {
     @Test
     fun consoleLogger() {
         val logger = ConsoleLogger()
-        logger.log(TestData.getMetrics(), TestData.getRunInfo())
+        assertDoesNotThrow {
+            logger.log(TestData.getMetrics(), TestData.getStep())
+        }
     }
 
     @Test
     fun splitMetrics() {
         val logger = ConsoleLogger(splitMetrics = true)
-        logger.log(TestData.getMetrics(), TestData.getRunInfo())
+        assertDoesNotThrow {
+            logger.log(TestData.getMetrics(), TestData.getStep())
+        }
     }
 
 }

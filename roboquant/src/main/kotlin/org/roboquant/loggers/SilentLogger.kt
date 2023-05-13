@@ -16,7 +16,7 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.RunInfo
+import org.roboquant.Step
 import org.roboquant.metrics.MetricResults
 
 /**
@@ -31,7 +31,7 @@ class SilentLogger : MetricsLogger {
     var events = 0L
         private set
 
-    override fun log(results: MetricResults, info: RunInfo) {
+    override fun log(results: MetricResults, step: Step) {
         events++
     }
 

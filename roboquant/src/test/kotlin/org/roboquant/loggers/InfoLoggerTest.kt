@@ -27,12 +27,12 @@ internal class InfoLoggerTest {
         val metrics = TestData.getMetrics()
         val logger = InfoLogger()
         assertDoesNotThrow {
-            logger.log(metrics, TestData.getRunInfo())
+            logger.log(metrics, TestData.getStep())
         }
         val logger2 = InfoLogger(splitMetrics = true)
 
         assertDoesNotThrow {
-            logger2.log(metrics, TestData.getRunInfo())
+            logger2.log(metrics, TestData.getStep())
         }
     }
 

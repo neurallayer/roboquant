@@ -17,7 +17,7 @@
 package org.roboquant.loggers
 
 import org.roboquant.RunInfo
-import org.roboquant.RunPhase
+import org.roboquant.Step
 import org.roboquant.metrics.MetricResults
 
 /**
@@ -32,16 +32,16 @@ import org.roboquant.metrics.MetricResults
 class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
 
     // Key is runName + phase + metricName
-    private val history = mutableMapOf<Triple<String, RunPhase, String>, MetricsEntry>()
+    private val history = mutableMapOf<Pair<String, String>, MetricsEntry>()
     private val progressBar = ProgressBar()
 
     @Synchronized
-    override fun log(results: MetricResults, info: RunInfo) {
-        if (showProgress) progressBar.update(info)
+    override fun log(results: MetricResults, step: Step) {
+        if (showProgress) progressBar.update(step)
 
         for ((t, u) in results) {
-            val key = Triple(info.run, info.phase, t)
-            val value = MetricsEntry(t, u, info)
+            val key = Pair(step.run, t)
+            val value = MetricsEntry(t, u, step)
             history[key] = value
         }
     }
@@ -66,7 +66,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
      * Get the unique list of metric names that have been captured
      */
     override val metricNames: List<String>
-        get() = history.map { it.key.third }.distinct().sorted()
+        get() = history.map { it.key.second }.distinct().sorted()
 
     /**
      * Get results for the metric specified by its [name].

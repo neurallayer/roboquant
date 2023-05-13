@@ -16,7 +16,7 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.RunInfo
+import org.roboquant.Step
 import org.roboquant.common.Lifecycle
 import org.roboquant.metrics.MetricResults
 
@@ -29,11 +29,11 @@ import org.roboquant.metrics.MetricResults
 interface MetricsLogger : Lifecycle {
 
     /**
-     * Log the [results] of the metric calculations. Also [info] is provided about when these results where captured.
+     * Log the [results] of the metric calculations. Also [step] is provided about when these results where captured.
      * This method is invoked once at the end of each step within a run with all the metrics that where captured during
      * that step. It should be noted that the provided results can be empty.
      */
-    fun log(results: MetricResults, info: RunInfo)
+    fun log(results: MetricResults, step: Step)
 
     /**
      * Get all the logged entries for a specific metric. This is optional to implement since not all loggers store

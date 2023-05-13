@@ -108,6 +108,10 @@ internal object TestData {
         return RunInfo("run-1", Instant.now(), Timeframe.INFINITE, RunPhase.MAIN)
     }
 
+    fun getStep(): Step {
+        return Step("run-1", Instant.now())
+    }
+
     fun events(n: Int = 100, asset: Asset = usStock()): List<Event> {
         val start = time()
         val result = mutableListOf<Event>()

@@ -16,7 +16,7 @@
 
 package org.roboquant.brokers
 
-import org.roboquant.RunInfo
+import org.roboquant.Step
 import org.roboquant.common.*
 import org.roboquant.loggers.MetricsEntry
 import java.time.Instant
@@ -103,7 +103,7 @@ val Collection<Trade>.timeframe: Timeframe
  */
 fun Collection<Trade>.toPNLPercentageMetrics(): List<MetricsEntry> {
     return map {
-        MetricsEntry("trade.pnl", it.pnlPercentage, RunInfo("run", it.time))
+        MetricsEntry("trade.pnl", it.pnlPercentage, Step("run", it.time))
     }
 }
 

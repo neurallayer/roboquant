@@ -47,12 +47,12 @@ class MetricCalendarChart(
     private val metricsData = metricsData.filter { it.value.isFinite() }
 
     private fun prepData(): Map<Int, List<Pair<String, BigDecimal>>> {
-        val perYear = metricsData.groupBy { it.info.time.atZone(zoneId).year }
+        val perYear = metricsData.groupBy { it.step.time.atZone(zoneId).year }
         val result = mutableMapOf<Int, List<Pair<String, BigDecimal>>>()
         perYear.forEach { (t, u) ->
             // If there is more than 1 value per day, sum them together.
             val summed =
-                u.groupBy { timeFormatter.format(it.info.time) }.mapValues { it.value.sumOf { entry -> entry.value } }
+                u.groupBy { timeFormatter.format(it.step.time) }.mapValues { it.value.sumOf { entry -> entry.value } }
             result[t] = summed.mapValues { it.value.round(fractionDigits) }.toList()
         }
         return result.toSortedMap()

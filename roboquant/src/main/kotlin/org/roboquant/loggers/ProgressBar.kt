@@ -16,7 +16,7 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.RunInfo
+import org.roboquant.Step
 import org.roboquant.common.Timeframe
 import java.time.Instant
 import java.util.*
@@ -50,11 +50,12 @@ internal class ProgressBar {
     }
 
 
-    fun update(info: RunInfo) {
+    fun update(step: Step) {
 
         // Only if percentage changes we are going to refresh
         val totalDuration = timeframe.duration
-        var percent = (info.duration.seconds * 100.0 / totalDuration.seconds).roundToInt()
+        val currentDuration = Timeframe(timeframe.start, step.time).duration
+        var percent = (currentDuration.seconds * 100.0 / totalDuration.seconds).roundToInt()
         percent = min(percent, 100)
         if (percent == currentPercent) return
 
@@ -67,7 +68,7 @@ internal class ProgressBar {
 
         if (pre.isEmpty()) {
             pre = "$timeframe | "
-            post = "| ${info.run} | phase=${info.phase}"
+            post = "| ${step.run}"
         }
 
         draw(percent)

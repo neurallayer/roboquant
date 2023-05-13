@@ -39,7 +39,6 @@ import org.roboquant.orders.createCancelOrders
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.Policy
 import org.roboquant.strategies.Strategy
-import java.time.Duration
 import java.time.Instant
 
 /**
@@ -211,7 +210,8 @@ class Roboquant(
         kotlinLogger.trace { "captured metrics=${metricResult.size}" }
 
         // Always call the logger, so things like a progress bar can be updated
-        logger.log(metricResult, runInfo.copy())
+        val step = Step(runInfo.run, runInfo.time)
+        logger.log(metricResult, step)
     }
 
     /**
@@ -267,15 +267,13 @@ data class RunInfo (
     var time: Instant = Instant.MIN,
     var timeframe: Timeframe = Timeframe.INFINITE,
     var phase: RunPhase = MAIN
-) {
+)
 
-    /**
-     * Return the duration of the run so far
-     */
-    val duration: Duration
-        get() = Duration.between(timeframe.start, time)
+data class Step(
+    val run: String,
+    var time: Instant,
+)
 
-}
 
 /**
  * Enumeration of the two different phases that a run can be in, [MAIN] and [VALIDATE]. Especially with self learning

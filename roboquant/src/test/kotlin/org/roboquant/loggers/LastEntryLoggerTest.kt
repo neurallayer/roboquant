@@ -30,7 +30,7 @@ internal class LastEntryLoggerTest {
         val logger = LastEntryLogger()
         assertFalse(logger.showProgress)
 
-        logger.log(metrics, TestData.getRunInfo())
+        logger.log(metrics, TestData.getStep())
         logger.end(TestData.getRunInfo())
         assertTrue(logger.metricNames.isNotEmpty())
 

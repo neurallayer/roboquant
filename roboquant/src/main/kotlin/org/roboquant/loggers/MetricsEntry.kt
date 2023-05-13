@@ -17,6 +17,7 @@
 package org.roboquant.loggers
 
 import org.roboquant.RunInfo
+import org.roboquant.Step
 import org.roboquant.common.Summary
 import org.roboquant.common.clean
 
@@ -25,16 +26,16 @@ import org.roboquant.common.clean
  *
  * @property name the name of the metric
  * @property value the value of the metric
- * @property info the metadata, like time of the metric
+ * @property step the step metadata (time and run) of the metric
  * @constructor Create a new instance of Metrics entry
  */
-data class MetricsEntry(val name: String, val value: Double, val info: RunInfo) : Comparable<MetricsEntry> {
+data class MetricsEntry(val name: String, val value: Double, val step: Step) : Comparable<MetricsEntry> {
 
     /**
      * Get a key that uniquely defines the metric across a run.
      */
     internal val groupId
-        get() = "${name}/${info.run}/${info.phase}"
+        get() = "${name}/${step.run}/}"
 
     /**
      * Compare two metric entries based on their [value]
@@ -124,8 +125,8 @@ fun Collection<MetricsEntry>.summary(name: String = "metrics"): Summary {
             child.add("min", arr.minOrNull())
             child.add("max", arr.maxOrNull())
             child.add("avg", arr.average())
-            child.add("runs", values.map { it.info.run }.distinct().size)
-            val timeline = map { it.info.time }.sorted()
+            child.add("runs", values.map { it.step.run }.distinct().size)
+            val timeline = map { it.step.time }.sorted()
             child.add("first time", timeline.first())
             child.add("last time", timeline.last())
         }

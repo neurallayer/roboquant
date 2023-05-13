@@ -17,6 +17,7 @@
 package org.roboquant.loggers
 
 import org.roboquant.RunInfo
+import org.roboquant.Step
 import org.roboquant.metrics.MetricResults
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -46,10 +47,10 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     private val progressBar = ProgressBar()
 
     @Synchronized
-    override fun log(results: MetricResults, info: RunInfo) {
-        if (showProgress) progressBar.update(info)
+    override fun log(results: MetricResults, step: Step) {
+        if (showProgress) progressBar.update(step)
         if (results.isEmpty()) return
-        history.getValue(info.run).add(Entry(info.time, results))
+        history.getValue(step.run).add(Entry(step.time, results))
     }
 
     override fun start(run: RunInfo) {
@@ -93,7 +94,7 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
         for ((run, entries) in history) {
             for (entry in entries) {
                 val value = entry.metrics[name]
-                if (value != null) result.add(MetricsEntry(name, value, RunInfo(run, time=entry.time)))
+                if (value != null) result.add(MetricsEntry(name, value, Step(run, entry.time)))
             }
 
         }
@@ -124,7 +125,7 @@ fun Collection<MetricsEntry>.groupBy(
     }
     formatter.timeZone = TimeZone.getTimeZone(zoneId)
     return groupBy {
-        val date = Date.from(it.info.time)
+        val date = Date.from(it.step.time)
         formatter.format(date)
     }
 }

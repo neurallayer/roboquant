@@ -102,7 +102,7 @@ class MetricChart(
             val value = entry.value
             if (value.isFinite()) {
                 val y = BigDecimal(value).setScale(fractionDigits, RoundingMode.HALF_DOWN)
-                val x = if (useTime) entry.info.time.toEpochMilli() else step.toLong()
+                val x = if (useTime) entry.step.time.toEpochMilli() else step.toLong()
                 d.add(Pair(x, y))
             }
         }
