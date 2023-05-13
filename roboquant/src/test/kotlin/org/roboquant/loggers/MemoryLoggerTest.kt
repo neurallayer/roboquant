@@ -17,7 +17,6 @@
 package org.roboquant.loggers
 
 import org.roboquant.RunInfo
-import org.roboquant.RunPhase
 import org.roboquant.TestData
 import org.roboquant.common.days
 import org.roboquant.common.plus
@@ -38,9 +37,11 @@ internal class MemoryLoggerTest {
 
 
         val metrics = TestData.getMetrics()
-        logger.start(TestData.getRunInfo())
-        logger.log(metrics, TestData.getRunInfo())
-        logger.end(RunPhase.VALIDATE)
+        val runInfo = TestData.getRunInfo()
+
+        logger.start(runInfo)
+        logger.log(metrics, runInfo)
+        logger.end(runInfo)
         assertFalse(logger.metricNames.isEmpty())
         assertEquals(metrics.size, logger.metricNames.size)
 

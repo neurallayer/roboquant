@@ -22,18 +22,28 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.Roboquant
 import org.roboquant.RunInfo
-import org.roboquant.RunPhase
-import org.roboquant.common.*
+import org.roboquant.common.Asset
+import org.roboquant.common.InsufficientDataException
+import org.roboquant.common.plus
+import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.filter
 import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.filter
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
-import java.lang.IllegalArgumentException
 import java.time.Instant
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.all
+import kotlin.collections.first
+import kotlin.collections.isNotEmpty
+import kotlin.collections.last
+import kotlin.collections.listOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
 import kotlin.test.*
 
 internal class TaLibStrategyTest {

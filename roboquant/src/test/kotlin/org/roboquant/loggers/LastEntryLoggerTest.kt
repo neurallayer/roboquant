@@ -16,9 +16,11 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.RunPhase
 import org.roboquant.TestData
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class LastEntryLoggerTest {
 
@@ -29,7 +31,7 @@ internal class LastEntryLoggerTest {
         assertFalse(logger.showProgress)
 
         logger.log(metrics, TestData.getRunInfo())
-        logger.end(RunPhase.VALIDATE)
+        logger.end(TestData.getRunInfo())
         assertTrue(logger.metricNames.isNotEmpty())
 
         val m1 = logger.metricNames.first()

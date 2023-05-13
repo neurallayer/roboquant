@@ -17,7 +17,6 @@
 package org.roboquant.loggers
 
 import org.roboquant.RunInfo
-import org.roboquant.RunPhase
 import org.roboquant.metrics.MetricResults
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -61,7 +60,7 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
         history[run.run] = mutableListOf()
     }
 
-    override fun end(runPhase: RunPhase) {
+    override fun end(run: RunInfo) {
         if (showProgress) progressBar.done()
     }
 

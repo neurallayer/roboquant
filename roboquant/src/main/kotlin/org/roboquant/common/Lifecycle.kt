@@ -17,7 +17,6 @@
 package org.roboquant.common
 
 import org.roboquant.RunInfo
-import org.roboquant.RunPhase
 
 /**
  * Interface implemented by all components used in a run (Strategy, Policy, Broker, Metric, MetricLogger).
@@ -37,9 +36,9 @@ interface Lifecycle {
     }
 
     /**
-     * Invoked at the end of a [runPhase]. Default implementation is to take no action.
+     * Invoked at the end of a [run]. Default implementation is to take no action.
      */
-    fun end(runPhase: RunPhase) {
+    fun end(run: RunInfo) {
         // default is to do nothing
     }
 

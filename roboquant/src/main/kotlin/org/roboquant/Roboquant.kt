@@ -95,7 +95,7 @@ class Roboquant(
         } catch (_: ClosedReceiveChannelException) {
             // intentionally empty
         } finally {
-            end(runInfo.phase)
+            end(runInfo)
             if (job.isActive) job.cancel()
             scope.cancel()
             channel.close()
@@ -115,8 +115,9 @@ class Roboquant(
      * Inform components of the end of a [runPhase], this provides them with the opportunity to release resources
      * if required or process aggregated results.
      */
-    private fun end(runPhase: RunPhase) {
-        for (component in components) component.end(runPhase)
+    private fun end(runInfo: RunInfo) {
+        val info = runInfo.copy()
+        for (component in components) component.end(info)
     }
 
     /**
