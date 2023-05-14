@@ -104,10 +104,6 @@ internal object TestData {
         return mapOf("key1" to 12.0, "key2" to 13.0)
     }
 
-    fun getRunInfo(): String {
-        return "run-1"
-    }
-
     fun events(n: Int = 100, asset: Asset = usStock()): List<Event> {
         val start = time()
         val result = mutableListOf<Event>()

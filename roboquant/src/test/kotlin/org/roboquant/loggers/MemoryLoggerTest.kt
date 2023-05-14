@@ -116,8 +116,6 @@ internal class MemoryLoggerTest {
     @Test
     fun groupAndFlatten() {
         val logger = MemoryLogger(showProgress = false)
-        val time = Instant.parse("2021-01-02T00:00:00Z")
-
 
         repeat(50) {
             val run = "run-$it"
