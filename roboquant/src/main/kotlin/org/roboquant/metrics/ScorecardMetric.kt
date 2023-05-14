@@ -43,7 +43,7 @@ class ScorecardMetric : Metric {
         if (mdd.isNaN() || dd < mdd) mdd = dd
     }
 
-    override fun calculate(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): Map<String, Double>  {
 
         val pnl = account.trades.map { it.pnl.convert(account.baseCurrency, event.time).value }
 

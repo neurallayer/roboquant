@@ -116,18 +116,28 @@ internal class MemoryLoggerTest {
     @Test
     fun groupAndFlatten() {
         val logger = MemoryLogger(showProgress = false)
+        val now = Instant.now()
 
         repeat(50) {
             val run = "run-$it"
             logger.start(run, Timeframe.INFINITE)
             val metrics = metricResultsOf("key1" to it)
-            logger.log(metrics, Instant.now(), run)
-            logger.log(metrics,Instant.now(), run)
+            logger.log(metrics, now + it.days, run)
+            logger.log(metrics, now + it.days + 1.days, run)
         }
 
         val data = logger.getMetric("key1")
         assertEquals(100, data.values.flatten().size)
         assertEquals(50, data.size)
+
+        val earliest = data.earliestRun().first().value
+        assertEquals(0.0, earliest)
+
+        val latest = data.latestRun().first().value
+        assertEquals(49.0, latest)
+
     }
+
+
 
 }

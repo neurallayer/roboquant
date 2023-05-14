@@ -62,7 +62,7 @@ class ReturnsMetric(
     /**
      * @see Metric.calculate
      */
-    override fun calculate(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): Map<String, Double>  {
         val time = event.time
 
         // Initialize first time

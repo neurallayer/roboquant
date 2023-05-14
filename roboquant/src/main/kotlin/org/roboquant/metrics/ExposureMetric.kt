@@ -43,7 +43,7 @@ class ExposureMetric : Metric {
      * @param account
      * @return
      */
-    override fun calculate(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): Map<String, Double>  {
         val longExposure = Wallet()
         val shortExposure = Wallet()
         val now = event.time

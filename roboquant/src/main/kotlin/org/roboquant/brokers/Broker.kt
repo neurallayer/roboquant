@@ -18,7 +18,6 @@ package org.roboquant.brokers
 
 import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
-import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.Order
 
 /**
@@ -47,7 +46,7 @@ interface Broker : Lifecycle {
      *
      * The returned map should NOT be mutated after it has been returned.
      */
-    fun getMetrics(): MetricResults = emptyMap()
+    fun getMetrics(): Map<String, Double> = emptyMap()
 
     /**
      * Refresh the state of the broker and the underlying account. The default implementation invokes the [place]

@@ -28,7 +28,7 @@ typealias MetricResults = Map<String, Double>
 /**
  * Convert pairs of <String, number> to metric results. Any number will be converted to Double.
  */
-fun metricResultsOf(vararg metricResults: Pair<String, Number>): MetricResults {
+fun metricResultsOf(vararg metricResults: Pair<String, Number>): Map<String, Double>  {
     return metricResults.associate { Pair(it.first, it.second.toDouble()) }
 }
 
@@ -48,7 +48,7 @@ interface Metric : Lifecycle {
      * Calculate the metric given the [account] and [event] and return the results. This method will be invoked at the
      * end of each step in a run.
      */
-    fun calculate(account: Account, event: Event): MetricResults
+    fun calculate(account: Account, event: Event): Map<String, Double>
 
 }
 

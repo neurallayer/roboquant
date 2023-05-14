@@ -22,7 +22,6 @@ import org.roboquant.common.AssetFilter
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.metrics.Metric
-import org.roboquant.metrics.MetricResults
 
 /**
  * Use a technical indicator from the Ta-Lib library as a metric. Metrics will be available under the
@@ -49,7 +48,7 @@ class TaLibMetric(
     /**
      * @see Metric.calculate
      */
-    override fun calculate(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): Map<String, Double>  {
         val metrics = mutableMapOf<String, Double>()
         val actions =
             event.actions.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset, event.time) }

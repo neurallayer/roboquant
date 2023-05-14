@@ -16,8 +16,6 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.metrics.MetricResults
-
 /**
  * Recording strategy allows subclasses to record metrics during their processing. With the [recording] flag you can
  * enable or disable the actual recording of the metrics.
@@ -35,7 +33,7 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
      * Return the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this
      * method twice in a row won't return the same result.
      */
-    override fun getMetrics(): MetricResults {
+    override fun getMetrics(): Map<String, Double>  {
         val result = metrics.toMap()
         metrics.clear()
         return result

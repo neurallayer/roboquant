@@ -18,7 +18,6 @@ package org.roboquant.strategies
 
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
-import org.roboquant.metrics.MetricResults
 
 /**
  * Combine the output of several strategies into a single list of signals. There is no logic included to filter
@@ -55,7 +54,7 @@ open class CombinedStrategy(val strategies: Collection<Strategy>) : Strategy {
         for (strategy in strategies) strategy.reset()
     }
 
-    override fun getMetrics(): MetricResults {
+    override fun getMetrics(): Map<String, Double>  {
         val result = mutableMapOf<String, Double>()
         strategies.forEach { result += it.getMetrics() }
         return result

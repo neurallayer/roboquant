@@ -40,6 +40,9 @@ internal class ProgressBar {
 
     private var lastOutput = ""
 
+    /**
+     * Start a progress bar for the [run] and [timeframe]
+     */
     fun start(run: String, timeframe: Timeframe) {
         currentPercent = -1
         post = "| $run"
@@ -49,7 +52,9 @@ internal class ProgressBar {
         this.timeframe = timeframe
     }
 
-
+    /**
+     * Update the progress bar, giving the provided [time]
+     */
     fun update(time: Instant) {
 
         // Only if percentage changes we are going to refresh

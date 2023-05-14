@@ -38,10 +38,6 @@ data class MetricsEntry(val value: Double, val time: Instant) : Comparable<Metri
 }
 
 
-/**
- * Flatten a map to a list of metric entries sorted by their time
- */
-fun Map<String, List<MetricsEntry>>.flatten() = values.flatten().sorted()
 
 /**
  * Get the [n] highest entries, default being 10
