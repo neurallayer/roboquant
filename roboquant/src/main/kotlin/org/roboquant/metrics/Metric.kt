@@ -23,7 +23,7 @@ import org.roboquant.feeds.Event
 /**
  * Alias for metric results, that is a Map with the key being the metric name and the value a number
  */
-typealias MetricResults = Map<String, Double>
+// typealias Map<String, Double> = Map<String, Double>
 
 /**
  * Convert pairs of <String, number> to metric results. Any number will be converted to Double.

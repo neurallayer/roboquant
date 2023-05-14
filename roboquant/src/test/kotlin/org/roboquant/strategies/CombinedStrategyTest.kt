@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
-import org.roboquant.metrics.MetricResults
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -32,7 +31,7 @@ internal class CombinedStrategyTest {
             return emptyList()
         }
 
-        override fun getMetrics(): MetricResults {
+        override fun getMetrics(): Map<String, Double> {
             return emptyMap()
         }
 

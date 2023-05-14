@@ -23,7 +23,6 @@ import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.util.HistoricTestFeed
-import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus
 import java.io.File
@@ -100,7 +99,7 @@ internal object TestData {
         return Pair(account, moment)
     }
 
-    fun getMetrics(): MetricResults {
+    fun getMetrics(): Map<String, Double> {
         return mapOf("key1" to 12.0, "key2" to 13.0)
     }
 

@@ -26,7 +26,6 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.util.HistoricTestFeed
-import org.roboquant.metrics.MetricResults
 import java.time.Instant
 import kotlin.test.assertTrue
 
@@ -54,7 +53,7 @@ class TaLibMetricTest {
 
         val feed = HistoricTestFeed(100 until 111, priceBar = true)
         val events = feed.filter<PriceBar>()
-        var mResult: MetricResults = emptyMap()
+        var mResult = emptyMap<String, Double>()
         for (event in events) {
             mResult = metric.calculate(account, Event(listOf(event.second), event.first))
         }

@@ -16,7 +16,6 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.metrics.MetricResults
 import java.time.Instant
 
 /**
@@ -31,7 +30,7 @@ class SilentLogger : MetricsLogger {
     var events = 0L
         private set
 
-    override fun log(results: MetricResults, time: Instant, run: String) {
+    override fun log(results: Map<String, Double>, time: Instant, run: String) {
         events++
     }
 

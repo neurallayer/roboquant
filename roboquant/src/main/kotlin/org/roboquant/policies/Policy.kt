@@ -19,7 +19,6 @@ package org.roboquant.policies
 import org.roboquant.brokers.Account
 import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
-import org.roboquant.metrics.MetricResults
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 
@@ -49,6 +48,6 @@ interface Policy : Lifecycle {
      *
      * This map should NOT be mutated after it has been returned by this method.
      */
-    fun getMetrics(): MetricResults = emptyMap()
+    fun getMetrics(): Map<String, Double> = emptyMap()
 
 }

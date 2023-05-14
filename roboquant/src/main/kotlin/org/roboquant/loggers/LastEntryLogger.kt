@@ -17,7 +17,6 @@
 package org.roboquant.loggers
 
 import org.roboquant.common.Timeframe
-import org.roboquant.metrics.MetricResults
 import java.time.Instant
 
 /**
@@ -36,7 +35,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
     private val progressBar = ProgressBar()
 
     @Synchronized
-    override fun log(results: MetricResults, time: Instant, run: String) {
+    override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (showProgress) progressBar.update(time)
 
         for ((t, u) in results) {

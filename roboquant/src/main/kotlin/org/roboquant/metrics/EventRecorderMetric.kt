@@ -37,7 +37,7 @@ class EventRecorderMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, F
     private val limit = timeframe
     private val events = LinkedList<Event>()
 
-    override fun calculate(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): Map<String, Double> {
         if (event.time in limit) events.add(event)
         return emptyMap()
     }

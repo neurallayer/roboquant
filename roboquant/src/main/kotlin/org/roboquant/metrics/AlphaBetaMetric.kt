@@ -57,7 +57,7 @@ class AlphaBetaMetric(
     /**
      * Based on the provided [account] and [event], calculate any metrics and return them.
      */
-    override fun calculate(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): Map<String, Double> {
         val action = event.prices[referenceAsset]
 
         // Can we already start recording measures or do we have to wait for

@@ -16,7 +16,6 @@
 
 package org.roboquant.policies
 
-import org.roboquant.metrics.MetricResults
 import kotlin.collections.set
 
 /**
@@ -45,7 +44,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
     /**
      * Return any recorded metrics
      */
-    override fun getMetrics(): MetricResults {
+    override fun getMetrics(): Map<String, Double> {
         val result = metrics.toMap()
         metrics.clear()
         return result

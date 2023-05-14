@@ -30,7 +30,6 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
-import org.roboquant.metrics.MetricResults
 import org.roboquant.metrics.PNLMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.LimitOrder
@@ -138,7 +137,7 @@ private fun customPolicy() {
 
         // use TaLibMetric to calculate the ATR values
         private val atr = TaLibMetric("atr", atrPeriod + 1) { atr(it, atrPeriod) }
-        private var atrMetrics: MetricResults = emptyMap()
+        private var atrMetrics = emptyMap<String, Double>()
 
         override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
             // Update the metrics and store the results, so we have them available when the

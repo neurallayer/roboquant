@@ -17,7 +17,6 @@
 package org.roboquant.loggers
 
 import org.roboquant.common.Timeframe
-import org.roboquant.metrics.MetricResults
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId
@@ -40,13 +39,13 @@ import java.util.*
  */
 class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
 
-    // internal val history = mutableListOf<Pair<MetricResults, Run>>()
-    internal class Entry(val time: Instant, val metrics: MetricResults)
+    // internal val history = mutableListOf<Pair<Map<String, Double>, Run>>()
+    internal class Entry(val time: Instant, val metrics: Map<String, Double>)
     internal val history = mutableMapOf<String, MutableList<Entry>>()
     private val progressBar = ProgressBar()
 
     @Synchronized
-    override fun log(results: MetricResults, time: Instant, run: String) {
+    override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (showProgress) progressBar.update(time)
         if (results.isEmpty()) return
         history.getValue(run).add(Entry(time, results))

@@ -16,7 +16,6 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.metrics.MetricResults
 import java.text.DecimalFormat
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -39,13 +38,13 @@ open class ConsoleLogger(
     private val formatter = DecimalFormat("###,###,###,###,###.####")
     private fun Map<*, *>.pretty() = toString().removePrefix("{").removeSuffix("}")
 
-    private fun MetricResults.format(): Map<String, String> {
+    private fun Map<String, Double>.format(): Map<String, String> {
         return mapValues {
             formatter.format(it.value)
         }
     }
 
-    protected fun getLines(results: MetricResults, time: Instant, run: String): List<String> {
+    protected fun getLines(results: Map<String, Double>, time: Instant, run: String): List<String> {
         val niceTime = time.truncatedTo(precision)
         return if (!splitMetrics)
             listOf(
@@ -64,7 +63,7 @@ open class ConsoleLogger(
             }
     }
 
-    override fun log(results: MetricResults, time: Instant, run: String) {
+    override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (results.isEmpty()) return
         for (line in getLines(results, time, run)) println(line)
     }

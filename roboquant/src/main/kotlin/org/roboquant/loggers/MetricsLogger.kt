@@ -30,7 +30,7 @@ interface MetricsLogger : Lifecycle {
 
     /**
      * Log the [results] of the metric calculations. Also [time] is provided about when these results where captured and
-     * [run] to indicate the run name.
+     * [run] to provide the run name.
      *
      * This method is invoked once at the end of each step within a run with all the metrics that where captured during
      * that step. It should be noted that the provided results can be empty.

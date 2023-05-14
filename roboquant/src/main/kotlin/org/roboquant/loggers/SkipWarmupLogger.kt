@@ -17,7 +17,6 @@
 package org.roboquant.loggers
 
 import org.roboquant.common.Timeframe
-import org.roboquant.metrics.MetricResults
 import java.time.Instant
 
 /**
@@ -37,7 +36,7 @@ class SkipWarmupLogger(private val logger: MetricsLogger, private val skip: Int 
     /**
      * @see MetricsLogger.log
      */
-    override fun log(results: MetricResults, time: Instant, run: String) {
+    override fun log(results: Map<String, Double>, time: Instant, run: String) {
         stepCounter++
         if (stepCounter <= skip) return
         logger.log(results, time, run)

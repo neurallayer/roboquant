@@ -38,7 +38,7 @@ class AccountMetric : Metric {
 
     private var initialEquity = Double.NaN
 
-    override fun calculate(account: Account, event: Event): MetricResults {
+    override fun calculate(account: Account, event: Event): Map<String, Double> {
 
         val equity = account.convert(account.equity, event.time).value
         if (initialEquity.isNaN()) initialEquity = equity

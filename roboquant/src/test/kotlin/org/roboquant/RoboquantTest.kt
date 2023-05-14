@@ -34,7 +34,6 @@ import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.Metric
-import org.roboquant.metrics.MetricResults
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
@@ -123,7 +122,7 @@ internal class RoboquantTest {
     @Test
     fun brokenMetric() {
         class MyBrokenMetric : Metric {
-            override fun calculate(account: Account, event: Event): MetricResults {
+            override fun calculate(account: Account, event: Event): Map<String, Double> {
                 throw RoboquantException("Broken")
             }
 

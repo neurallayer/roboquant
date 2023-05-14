@@ -18,7 +18,6 @@ package org.roboquant.strategies
 
 import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
-import org.roboquant.metrics.MetricResults
 
 /**
  * The Strategy is the interface that a trading strategy will need to implement. A strategy receives an
@@ -47,7 +46,7 @@ interface Strategy : Lifecycle {
      *
      * This map should NOT be mutated after it has been returned by this method.
      */
-    fun getMetrics(): MetricResults = emptyMap()
+    fun getMetrics(): Map<String, Double> = emptyMap()
 
 }
 
