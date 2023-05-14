@@ -16,7 +16,7 @@
 
 package org.roboquant.ta
 
-import org.roboquant.RunInfo
+import org.roboquant.Run
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
@@ -130,7 +130,7 @@ class AtrPolicy(
     /**
      * @see FlexPolicy.start
      */
-    override fun start(run: RunInfo) {
+    override fun start(run: Run) {
         super.start(run)
         data.clear()
     }

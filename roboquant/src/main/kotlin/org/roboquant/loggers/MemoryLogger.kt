@@ -16,7 +16,7 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.RunInfo
+import org.roboquant.Run
 import org.roboquant.Step
 import org.roboquant.metrics.MetricResults
 import java.text.SimpleDateFormat
@@ -41,7 +41,7 @@ import java.util.*
  */
 class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
 
-    // internal val history = mutableListOf<Pair<MetricResults, RunInfo>>()
+    // internal val history = mutableListOf<Pair<MetricResults, Run>>()
     internal class Entry(val time: Instant, val metrics: MetricResults)
     internal val history = mutableMapOf<String, MutableList<Entry>>()
     private val progressBar = ProgressBar()
@@ -53,15 +53,15 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
         history.getValue(step.run).add(Entry(step.time, results))
     }
 
-    override fun start(run: RunInfo) {
+    override fun start(run: Run) {
         if (showProgress) {
             progressBar.reset()
             progressBar.timeframe = run.timeframe
         }
-        history[run.run] = mutableListOf()
+        history[run.name] = mutableListOf()
     }
 
-    override fun end(run: RunInfo) {
+    override fun end(run: Run) {
         if (showProgress) progressBar.done()
     }
 

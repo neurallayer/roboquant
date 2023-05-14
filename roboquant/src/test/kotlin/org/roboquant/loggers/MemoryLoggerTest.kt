@@ -16,7 +16,7 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.RunInfo
+import org.roboquant.Run
 import org.roboquant.Step
 import org.roboquant.TestData
 import org.roboquant.common.days
@@ -125,7 +125,7 @@ internal class MemoryLoggerTest {
 
         repeat(50) {
             val run = "run-$it"
-            val runInfo = RunInfo(run, time = time)
+            val runInfo = Run(run)
             logger.start(runInfo)
             val metrics = metricResultsOf("key1" to it)
             var step = Step(run, time = time + 2.days)

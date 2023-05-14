@@ -16,13 +16,13 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.RunInfo
+import org.roboquant.Run
 import org.roboquant.Step
 import org.roboquant.common.Summary
 import org.roboquant.common.clean
 
 /**
- * Single metric entry ([name] and [value]) with the associated [RunInfo]. This is a read-only class.
+ * Single metric entry ([name] and [value]) with the associated [Run]. This is a read-only class.
  *
  * @property name the name of the metric
  * @property value the value of the metric

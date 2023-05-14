@@ -73,7 +73,7 @@ internal class RoboquantTest {
         assertEquals(1, account.closedOrders.size)
 
         val logger = MemoryLogger(showProgress = false)
-        logger.start(RunInfo("test"))
+        logger.start(Run("test"))
         val roboquant = Roboquant(EMAStrategy(), AccountMetric(), broker = broker, logger = logger)
         var equity = roboquant.logger.getMetric("account.equity")
         assertEquals(0, equity.size)

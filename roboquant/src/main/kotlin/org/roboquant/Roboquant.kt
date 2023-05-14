@@ -76,25 +76,25 @@ class Roboquant(
      * but rather use the [run] method instead. Under the hood this method replies on the [step] method to take a
      * single step.
      */
-    private suspend fun runPhase(feed: Feed, runInfo: RunInfo) {
-        val channel = EventChannel(channelCapacity, runInfo.timeframe)
+    private suspend fun runPhase(feed: Feed, run: Run) {
+        val channel = EventChannel(channelCapacity, run.timeframe)
         val scope = CoroutineScope(Dispatchers.Default + Job())
 
         val job = scope.launch {
             channel.use { feed.play(it) }
         }
 
-        start(runInfo)
+        start(run)
         try {
             var orders = emptyList<Order>()
             while (true) {
                 val event = channel.receive()
-                orders = step(orders, event, runInfo)
+                orders = step(orders, event, run)
             }
         } catch (_: ClosedReceiveChannelException) {
             // intentionally empty
         } finally {
-            end(runInfo)
+            end(run)
             if (job.isActive) job.cancel()
             scope.cancel()
             channel.close()
@@ -105,8 +105,8 @@ class Roboquant(
      * Inform components of the start of a [runPhase], this provides them with the opportunity to clear state and
      * re-initialize values if required.
      */
-    private fun start(runInfo: RunInfo) {
-        val info = runInfo.copy()
+    private fun start(run: Run) {
+        val info = run.copy()
         for (component in components) component.start(info)
     }
 
@@ -114,8 +114,8 @@ class Roboquant(
      * Inform components of the end of a [runPhase], this provides them with the opportunity to release resources
      * if required or process aggregated results.
      */
-    private fun end(runInfo: RunInfo) {
-        val info = runInfo.copy()
+    private fun end(run: Run) {
+        val info = run.copy()
         for (component in components) component.end(info)
     }
 
@@ -167,7 +167,7 @@ class Roboquant(
             "validation should start after main timeframe"
         }
         val run = name ?: "run-${++runCounter}"
-        val runInfo = RunInfo(run, timeframe = timeframe, phase = MAIN)
+        val runInfo = Run(run, timeframe = timeframe, phase = MAIN)
         kotlinLogger.debug { "starting run=$runInfo" }
         runPhase(feed, runInfo)
 
@@ -187,12 +187,12 @@ class Roboquant(
      *  feed --|event|--> broker --|account|--> metrics -> strategy --|signals|--> policy --|orders|-->
      *
      */
-    private fun step(orders: List<Order>, event: Event, runInfo: RunInfo): List<Order> {
-        runInfo.time = event.time
-        kotlinLogger.trace { "starting step info=$runInfo orders=${orders.size}" }
+    private fun step(orders: List<Order>, event: Event, run: Run): List<Order> {
+        val step = Step(run.name, event.time)
+        kotlinLogger.trace { "starting step=$step orders=${orders.size}" }
 
         val account = broker.place(orders, event)
-        runMetrics(account, event, runInfo)
+        runMetrics(account, event, step)
         val signals = strategy.generate(event)
         return policy.act(signals, account, event)
     }
@@ -201,7 +201,7 @@ class Roboquant(
      * Calculate the configured [metrics] and log the results. This includes also metrics that are recorded
      * by the [strategy], [policy] and [broker].
      */
-    private fun runMetrics(account: Account, event: Event, runInfo: RunInfo) {
+    private fun runMetrics(account: Account, event: Event, step: Step) {
         val metricResult = mutableMapOf<String, Double>()
         for (metric in metrics) metricResult.putAll(metric.calculate(account, event))
         metricResult.putAll(strategy.getMetrics())
@@ -210,7 +210,6 @@ class Roboquant(
         kotlinLogger.trace { "captured metrics=${metricResult.size}" }
 
         // Always call the logger, so things like a progress bar can be updated
-        val step = Step(runInfo.run, runInfo.time)
         logger.log(metricResult, step)
     }
 
@@ -228,7 +227,7 @@ class Roboquant(
 
     /**
      * Close the open positions of the underlying broker account. This comes in handy at the end of a run if you
-     * don't want to have open positions left in the portfolio. You can optionally provide the [time], [phase] and
+     * don't want to have open positions left in the portfolio. You can optionally provide the [time] and
      * [runName] to use to close the positions and log the metrics.
      *
      * This method performs the following steps:
@@ -236,7 +235,7 @@ class Roboquant(
      * 2. close open positions by placing [MarketOrder] for the required opposite sizes
      * 3. run and log the metrics
      */
-    fun closePositions(time: Instant? = null, phase: RunPhase = MAIN, runName: String? = null) {
+    fun closePositions(time: Instant? = null, runName: String? = null) {
         val account = broker.account
         val eventTime = time ?: account.lastUpdate
         val cancelOrders = account.openOrders.createCancelOrders()
@@ -246,9 +245,9 @@ class Roboquant(
         val actions = account.positions.map { TradePrice(it.asset, it.mktPrice) }
         val event = Event(actions, eventTime)
         val run = runName ?: "run-${runCounter}"
-        val runInfo = RunInfo(run, eventTime, phase = phase)
+        val step = Step(run, eventTime)
         val newAccount = broker.place(orders, event)
-        runMetrics(newAccount, event, runInfo)
+        runMetrics(newAccount, event, step)
     }
 
 }
@@ -256,15 +255,13 @@ class Roboquant(
 /**
  * Run related info provided to metrics loggers together with the metric results.
  *
- * @property run the name of the run
- * @property time the time
+ * @property name the name of the run
  * @property timeframe the total timeframe of the run, if not known it will be [Timeframe.INFINITE]
  * @property phase the phase of the run
- * @constructor Create a new RunInfo object
+ * @constructor Create a new Run object
  */
-data class RunInfo (
-    val run: String,
-    var time: Instant = Instant.MIN,
+data class Run (
+    val name: String,
     var timeframe: Timeframe = Timeframe.INFINITE,
     var phase: RunPhase = MAIN
 )

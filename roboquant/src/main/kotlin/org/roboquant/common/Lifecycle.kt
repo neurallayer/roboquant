@@ -16,7 +16,7 @@
 
 package org.roboquant.common
 
-import org.roboquant.RunInfo
+import org.roboquant.Run
 
 /**
  * Interface implemented by all components used in a run (Strategy, Policy, Broker, Metric, MetricLogger).
@@ -31,14 +31,14 @@ interface Lifecycle {
      * Invoked at the start of a [run]. Default implementation is to invoke [reset], which is suitable for
      * many type of components.
      */
-    fun start(run: RunInfo) {
+    fun start(run: Run) {
         reset()
     }
 
     /**
      * Invoked at the end of a [run]. Default implementation is to take no action.
      */
-    fun end(run: RunInfo) {
+    fun end(run: Run) {
         // default is to do nothing
     }
 

@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.Roboquant
-import org.roboquant.RunInfo
+import org.roboquant.Run
 import org.roboquant.common.Asset
 import org.roboquant.common.InsufficientDataException
 import org.roboquant.common.plus
@@ -160,7 +160,7 @@ internal class TaLibStrategyTest {
 
     private fun run(s: Strategy, n: Int = 150): Map<Instant, List<Signal>> {
         s.reset()
-        s.start(RunInfo("test"))
+        s.start(Run("test"))
         val nHalf = n / 2
         val feed = HistoricTestFeed(100 until 100 + nHalf, 100 + nHalf - 1 downTo 100, priceBar = true)
         val events = feed.filter<PriceBar>()

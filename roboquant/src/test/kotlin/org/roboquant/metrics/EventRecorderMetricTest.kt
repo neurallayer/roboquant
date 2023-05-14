@@ -17,7 +17,7 @@
 package org.roboquant.metrics
 
 import org.junit.jupiter.api.Test
-import org.roboquant.RunInfo
+import org.roboquant.Run
 import org.roboquant.TestData
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.PriceAction
@@ -40,7 +40,7 @@ internal class EventRecorderMetricTest {
         var results = metric.filter<PriceAction>()
         assertEquals(2, results.size)
 
-        metric.start(RunInfo("test"))
+        metric.start(Run("test"))
         results = metric.filter()
         assertTrue(results.isEmpty())
     }

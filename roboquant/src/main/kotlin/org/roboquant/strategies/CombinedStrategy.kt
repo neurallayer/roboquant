@@ -16,7 +16,7 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.RunInfo
+import org.roboquant.Run
 import org.roboquant.feeds.Event
 import org.roboquant.metrics.MetricResults
 
@@ -43,11 +43,11 @@ open class CombinedStrategy(val strategies: Collection<Strategy>) : Strategy {
         return signals
     }
 
-    override fun start(run: RunInfo) {
+    override fun start(run: Run) {
         for (strategy in strategies) strategy.start(run)
     }
 
-    override fun end(run: RunInfo) {
+    override fun end(run: Run) {
         for (strategy in strategies) strategy.end(run)
     }
 

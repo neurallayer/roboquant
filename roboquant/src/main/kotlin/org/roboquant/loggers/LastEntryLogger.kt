@@ -16,7 +16,7 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.RunInfo
+import org.roboquant.Run
 import org.roboquant.Step
 import org.roboquant.metrics.MetricResults
 
@@ -46,11 +46,11 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
         }
     }
 
-    override fun start(run: RunInfo) {
+    override fun start(run: Run) {
         if (showProgress) progressBar.reset()
     }
 
-    override fun end(run: RunInfo) {
+    override fun end(run: Run) {
         if (showProgress) progressBar.done()
     }
 

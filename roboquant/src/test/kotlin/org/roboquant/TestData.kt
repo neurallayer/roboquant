@@ -104,8 +104,8 @@ internal object TestData {
         return mapOf("key1" to 12.0, "key2" to 13.0)
     }
 
-    fun getRunInfo(): RunInfo {
-        return RunInfo("run-1", Instant.now(), Timeframe.INFINITE, RunPhase.MAIN)
+    fun getRunInfo(): Run {
+        return Run("run-1", Timeframe.INFINITE)
     }
 
     fun getStep(): Step {
