@@ -24,8 +24,6 @@ import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.series.LineStyle
 import org.roboquant.loggers.MetricsEntry
-import org.roboquant.loggers.getName
-import org.roboquant.loggers.group
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -38,7 +36,7 @@ import java.math.RoundingMode
  * @property fractionDigits how many digits to use for presenting the metric values
  */
 class MetricChart(
-    private val metricsData: Collection<MetricsEntry>,
+    private val metricsData: Map<String,List<MetricsEntry>>,
     private val useTime: Boolean = true,
     private val fractionDigits: Int = 2
 ) : Chart() {
@@ -66,15 +64,14 @@ class MetricChart(
         val yAxis = ValueAxis().setScale(true)
 
         val chart = Line()
-            .setTitle(title ?: metricsData.getName())
+            .setTitle(title)
             .addXAxis(xAxis)
             .addYAxis(yAxis)
             .setTooltip("axis")
 
         // Every combination of a run and metric name will be its own series
-        val series = metricsData.group()
-        val suffix = commonSuffix(series.keys)
-        series.forEach { (name, entries) ->
+        val suffix = commonSuffix(metricsData.keys)
+        metricsData.forEach { (name, entries) ->
             val d = reduce(entries.toSeriesData())
             val lineSeries = LineSeries()
                 .setData(d)
@@ -102,7 +99,7 @@ class MetricChart(
             val value = entry.value
             if (value.isFinite()) {
                 val y = BigDecimal(value).setScale(fractionDigits, RoundingMode.HALF_DOWN)
-                val x = if (useTime) entry.step.time.toEpochMilli() else step.toLong()
+                val x = if (useTime) entry.time.toEpochMilli() else step.toLong()
                 d.add(Pair(x, y))
             }
         }

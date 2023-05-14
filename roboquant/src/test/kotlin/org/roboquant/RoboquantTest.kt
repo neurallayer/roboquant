@@ -73,7 +73,7 @@ internal class RoboquantTest {
         assertEquals(1, account.closedOrders.size)
 
         val logger = MemoryLogger(showProgress = false)
-        logger.start(Run("test"))
+        logger.start("test", Timeframe.INFINITE)
         val roboquant = Roboquant(EMAStrategy(), AccountMetric(), broker = broker, logger = logger)
         var equity = roboquant.logger.getMetric("account.equity")
         assertEquals(0, equity.size)
@@ -94,15 +94,15 @@ internal class RoboquantTest {
         val feed = HistoricTestFeed()
         val timeline = feed.timeline
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = LastEntryLogger())
-        roboquant.run(feed)
-        val entry = roboquant.logger.getMetric("progress.steps").last()
+        roboquant.run(feed, name = "test")
+        val entry = roboquant.logger.getMetric("progress.steps")["test"]!!.last()
         assertEquals(timeline.size, entry.value.toInt())
 
         val offset = 3
         val timeframe = Timeframe(timeline[2], timeline[2 + offset], inclusive = false)
         roboquant.reset()
-        roboquant.run(feed, timeframe)
-        val step2 = roboquant.logger.getMetric("progress.steps").last()
+        roboquant.run(feed, timeframe,  name = "test")
+        val step2 = roboquant.logger.getMetric("progress.steps")["test"]!!.last()
         assertEquals(offset, step2.value.toInt())
     }
 
@@ -115,9 +115,9 @@ internal class RoboquantTest {
 
         val timeframe = Timeframe(timeline[2], timeline[5], inclusive = false)
         roboquant.run(feed, timeframe)
-        val step = roboquant.logger.getMetric("progress.steps").last()
+        val step = roboquant.logger.getMetric("progress.steps").values.last().last()
         assertEquals(3, step.value.toInt())
-        assertEquals(timeline[4], step.step.time)
+        assertEquals(timeline[4], step.time)
     }
 
     @Test
@@ -136,20 +136,6 @@ internal class RoboquantTest {
             roboquant.run(feed)
         }
 
-    }
-
-    @Test
-    fun validationPhase() {
-        val feed = TestData.feed
-        val strategy = EMAStrategy()
-        val logger = MemoryLogger(showProgress = false)
-        val roboquant = Roboquant(strategy, ProgressMetric(), logger = logger)
-        val (train, test) = feed.timeframe.splitTrainTest(0.20)
-        roboquant.run(feed, timeframe = train, validation = test)
-        val data = logger.getMetric("progress.steps")
-        // assertEquals(2, data.map { it.info.phase }.distinct().size)
-        assertEquals(1, data.map { it.step.run }.distinct().size)
-        assertEquals(1, logger.runs.size)
     }
 
     @Test

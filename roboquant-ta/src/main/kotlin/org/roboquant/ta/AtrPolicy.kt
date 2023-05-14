@@ -16,10 +16,10 @@
 
 package org.roboquant.ta
 
-import org.roboquant.Run
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import org.roboquant.policies.FlexPolicy
@@ -130,8 +130,8 @@ class AtrPolicy(
     /**
      * @see FlexPolicy.start
      */
-    override fun start(run: Run) {
-        super.start(run)
+    override fun start(run: String, timeframe: Timeframe) {
+        super.start(run, Timeframe.INFINITE)
         data.clear()
     }
 

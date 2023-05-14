@@ -76,15 +76,15 @@ class Roboquant(
      * but rather use the [run] method instead. Under the hood this method replies on the [step] method to take a
      * single step.
      */
-    private suspend fun runPhase(feed: Feed, run: Run) {
-        val channel = EventChannel(channelCapacity, run.timeframe)
+    private suspend fun runPhase(feed: Feed, run: String, timeframe: Timeframe) {
+        val channel = EventChannel(channelCapacity, timeframe)
         val scope = CoroutineScope(Dispatchers.Default + Job())
 
         val job = scope.launch {
             channel.use { feed.play(it) }
         }
 
-        start(run)
+        start(run, timeframe)
         try {
             var orders = emptyList<Order>()
             while (true) {
@@ -105,18 +105,16 @@ class Roboquant(
      * Inform components of the start of a [runPhase], this provides them with the opportunity to clear state and
      * re-initialize values if required.
      */
-    private fun start(run: Run) {
-        val info = run.copy()
-        for (component in components) component.start(info)
+    private fun start(run: String, timeframe: Timeframe) {
+        for (component in components) component.start(run,timeframe)
     }
 
     /**
      * Inform components of the end of a [runPhase], this provides them with the opportunity to release resources
      * if required or process aggregated results.
      */
-    private fun end(run: Run) {
-        val info = run.copy()
-        for (component in components) component.end(info)
+    private fun end(run: String) {
+        for (component in components) component.end(run)
     }
 
     /**
@@ -167,17 +165,11 @@ class Roboquant(
             "validation should start after main timeframe"
         }
         val run = name ?: "run-${++runCounter}"
-        val runInfo = Run(run, timeframe = timeframe, phase = MAIN)
-        kotlinLogger.debug { "starting run=$runInfo" }
-        runPhase(feed, runInfo)
+        kotlinLogger.debug { "starting run=$run timeframe=$timeframe" }
+        runPhase(feed, run, timeframe)
 
-        if (validation !== null) {
-            runInfo.timeframe = validation
-            runInfo.phase = VALIDATE
-            runPhase(feed, runInfo)
-        }
-
-        kotlinLogger.debug { "Finished run $runInfo" }
+        if (validation !== null) runPhase(feed, run, validation)
+        kotlinLogger.debug { "Finished run=$run" }
     }
 
     /**
@@ -187,12 +179,11 @@ class Roboquant(
      *  feed --|event|--> broker --|account|--> metrics -> strategy --|signals|--> policy --|orders|-->
      *
      */
-    private fun step(orders: List<Order>, event: Event, run: Run): List<Order> {
-        val step = Step(run.name, event.time)
-        kotlinLogger.trace { "starting step=$step orders=${orders.size}" }
+    private fun step(orders: List<Order>, event: Event, run: String): List<Order> {
+        kotlinLogger.trace { "starting time=$${event.time} orders=${orders.size}" }
 
         val account = broker.place(orders, event)
-        runMetrics(account, event, step)
+        runMetrics(account, event, run)
         val signals = strategy.generate(event)
         return policy.act(signals, account, event)
     }
@@ -201,7 +192,7 @@ class Roboquant(
      * Calculate the configured [metrics] and log the results. This includes also metrics that are recorded
      * by the [strategy], [policy] and [broker].
      */
-    private fun runMetrics(account: Account, event: Event, step: Step) {
+    private fun runMetrics(account: Account, event: Event, run: String) {
         val metricResult = mutableMapOf<String, Double>()
         for (metric in metrics) metricResult.putAll(metric.calculate(account, event))
         metricResult.putAll(strategy.getMetrics())
@@ -210,7 +201,7 @@ class Roboquant(
         kotlinLogger.trace { "captured metrics=${metricResult.size}" }
 
         // Always call the logger, so things like a progress bar can be updated
-        logger.log(metricResult, step)
+        logger.log(metricResult, event.time, run)
     }
 
     /**
@@ -245,31 +236,11 @@ class Roboquant(
         val actions = account.positions.map { TradePrice(it.asset, it.mktPrice) }
         val event = Event(actions, eventTime)
         val run = runName ?: "run-${runCounter}"
-        val step = Step(run, eventTime)
         val newAccount = broker.place(orders, event)
-        runMetrics(newAccount, event, step)
+        runMetrics(newAccount, event, run)
     }
 
 }
-
-/**
- * Run related info provided to metrics loggers together with the metric results.
- *
- * @property name the name of the run
- * @property timeframe the total timeframe of the run, if not known it will be [Timeframe.INFINITE]
- * @property phase the phase of the run
- * @constructor Create a new Run object
- */
-data class Run (
-    val name: String,
-    var timeframe: Timeframe = Timeframe.INFINITE,
-    var phase: RunPhase = MAIN
-)
-
-data class Step(
-    val run: String,
-    var time: Instant,
-)
 
 
 /**

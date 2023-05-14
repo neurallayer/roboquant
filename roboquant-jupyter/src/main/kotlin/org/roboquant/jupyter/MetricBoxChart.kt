@@ -25,7 +25,6 @@ import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.roboquant.common.clean
 import org.roboquant.loggers.MetricsEntry
-import org.roboquant.loggers.getName
 import org.roboquant.loggers.groupBy
 import org.roboquant.loggers.toDoubleArray
 import java.math.MathContext
@@ -82,11 +81,10 @@ class MetricBoxChart(
         val yData = data.map { it.second }
 
         val series = BoxplotSeries()
-            .setName(metricData.getName())
             .setData(yData)
 
         val chart = Boxplot()
-            .setTitle(title ?: metricData.getName())
+            .setTitle(title)
             .addSeries(series)
             .addYAxis(ValueAxis())
             .addXAxis(CategoryAxis().setData(xData))

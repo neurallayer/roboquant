@@ -104,12 +104,8 @@ internal object TestData {
         return mapOf("key1" to 12.0, "key2" to 13.0)
     }
 
-    fun getRunInfo(): Run {
-        return Run("run-1", Timeframe.INFINITE)
-    }
-
-    fun getStep(): Step {
-        return Step("run-1", Instant.now())
+    fun getRunInfo(): String {
+        return "run-1"
     }
 
     fun events(n: Int = 100, asset: Asset = usStock()): List<Event> {

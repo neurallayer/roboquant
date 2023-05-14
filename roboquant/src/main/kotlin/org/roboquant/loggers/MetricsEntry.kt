@@ -16,26 +16,17 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.Run
-import org.roboquant.Step
-import org.roboquant.common.Summary
-import org.roboquant.common.clean
+import java.time.Instant
 
 /**
- * Single metric entry ([name] and [value]) with the associated [Run]. This is a read-only class.
+ * Single metric entry ([time] and [value]). This is a read-only class.
  *
- * @property name the name of the metric
  * @property value the value of the metric
- * @property step the step metadata (time and run) of the metric
+ * @property time the time of the metric
  * @constructor Create a new instance of Metrics entry
  */
-data class MetricsEntry(val name: String, val value: Double, val step: Step) : Comparable<MetricsEntry> {
+data class MetricsEntry(val value: Double, val time: Instant) : Comparable<MetricsEntry> {
 
-    /**
-     * Get a key that uniquely defines the metric across a run.
-     */
-    internal val groupId
-        get() = "${name}/${step.run}/}"
 
     /**
      * Compare two metric entries based on their [value]
@@ -46,11 +37,6 @@ data class MetricsEntry(val name: String, val value: Double, val step: Step) : C
 
 }
 
-
-/**
- * Group a collection of metrics by their unique combination of name, run and phase.
- */
-fun Collection<MetricsEntry>.group(): Map<String, List<MetricsEntry>> = groupBy { it.groupId }
 
 /**
  * Flatten a map to a list of metric entries sorted by their time
@@ -80,8 +66,7 @@ fun Collection<MetricsEntry>.diff(): List<MetricsEntry> {
             first = false
         } else {
             val newValue = entry.value - prev
-            val newName = entry.name + ".diff"
-            val newEntry = entry.copy(name = newName, value = newValue)
+            val newEntry = entry.copy(value = newValue)
             result.add(newEntry)
             prev = entry.value
         }
@@ -102,8 +87,7 @@ fun Collection<MetricsEntry>.perc(): List<MetricsEntry> {
             first = false
         } else {
             val newValue = 100.0 * (entry.value - prev) / prev
-            val newName = entry.name + ".perc"
-            val newEntry = entry.copy(name = newName, value = newValue)
+            val newEntry = entry.copy(value = newValue)
             result.add(newEntry)
             prev = entry.value
         }
@@ -111,26 +95,3 @@ fun Collection<MetricsEntry>.perc(): List<MetricsEntry> {
     return result
 }
 
-/**
- * Provide a summary for the metrics
- */
-fun Collection<MetricsEntry>.summary(name: String = "metrics"): Summary {
-    val result = Summary(name)
-    val m = groupBy { it.name }
-    for ((metricName, values) in m) {
-        val child = Summary(metricName)
-        child.add("size", values.size)
-        if (values.isNotEmpty()) {
-            val arr = values.toDoubleArray().clean()
-            child.add("min", arr.minOrNull())
-            child.add("max", arr.maxOrNull())
-            child.add("avg", arr.average())
-            child.add("runs", values.map { it.step.run }.distinct().size)
-            val timeline = map { it.step.time }.sorted()
-            child.add("first time", timeline.first())
-            child.add("last time", timeline.last())
-        }
-        result.add(child)
-    }
-    return result
-}

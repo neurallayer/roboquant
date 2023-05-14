@@ -27,18 +27,16 @@ import kotlin.test.assertTrue
 internal class EMAStrategyTest {
 
     @Test
-    fun simple() = runBlocking {
+    fun simpleTest() = runBlocking {
         val strategy = EMAStrategy()
         strategy.recording = true
         val roboquant = Roboquant(strategy, logger = MemoryLogger(false))
-        roboquant.run(TestData.feed)
+        roboquant.run(TestData.feed, name = "test")
         val names = roboquant.logger.metricNames
 
         assertTrue(names.isNotEmpty())
-        val result = roboquant.logger.getMetric(names.first())
-        val firstResult = result.first().name
-
-        assertTrue(firstResult.endsWith(".slow") || firstResult.endsWith(".fast"))
+        val metrics = roboquant.logger.getMetric(names.first())["test"]!!
+        assertTrue(metrics.isNotEmpty())
     }
 
     @Test

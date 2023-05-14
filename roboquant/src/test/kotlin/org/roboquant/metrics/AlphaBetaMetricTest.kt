@@ -19,13 +19,13 @@ package org.roboquant.metrics
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
-import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.brokers.Position
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Currency
 import org.roboquant.common.Size
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.TradePrice
 import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.TradePrice
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
@@ -41,12 +41,12 @@ internal class AlphaBetaMetricTest {
         val alphaBetaMetric = AlphaBetaMetric(marketAsset, 50)
         val logger = LastEntryLogger()
         val roboquant = Roboquant(strategy, alphaBetaMetric, logger = logger)
-        roboquant.run(feed)
+        roboquant.run(feed, name = "test")
 
-        val alpha = logger.getMetric("account.alpha").last().value
+        val alpha = logger.getMetric("account.alpha")["test"]!!.last().value
         assertTrue(!alpha.isNaN())
 
-        val beta = logger.getMetric("account.beta").last().value
+        val beta = logger.getMetric("account.beta")["test"]!!.last().value
         assertTrue(!beta.isNaN())
     }
 

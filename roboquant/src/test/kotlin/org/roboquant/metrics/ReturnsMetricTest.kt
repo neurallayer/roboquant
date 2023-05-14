@@ -54,15 +54,15 @@ internal class ReturnsMetricTest {
         val metric = ReturnsMetric(period = 1.months)
         val logger = MemoryLogger(false)
         val roboquant = Roboquant(strategy, metric, logger = logger)
-        roboquant.run(feed)
+        roboquant.run(feed, name = "test")
 
-        val sharpRatio = logger.getMetric("returns.sharperatio").last().value
+        val sharpRatio = logger.getMetric("returns.sharperatio")["test"]!!.last().value
         assertTrue(!sharpRatio.isNaN())
 
-        val mean = logger.getMetric("returns.mean").last().value
+        val mean = logger.getMetric("returns.mean")["test"]!!.last().value
         assertTrue(!mean.isNaN())
 
-        val std = logger.getMetric("returns.std").last().value
+        val std = logger.getMetric("returns.std")["test"]!!.last().value
         assertTrue(!std.isNaN())
     }
 

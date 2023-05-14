@@ -16,9 +16,9 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.Run
-import org.roboquant.Step
+import org.roboquant.common.Timeframe
 import org.roboquant.metrics.MetricResults
+import java.time.Instant
 
 /**
  * This logger wraps another [MetricsLogger] and allows to configure a number of steps at the start of a run at which
@@ -37,18 +37,18 @@ class SkipWarmupLogger(private val logger: MetricsLogger, private val skip: Int 
     /**
      * @see MetricsLogger.log
      */
-    override fun log(results: MetricResults, step: Step) {
+    override fun log(results: MetricResults, time: Instant, run: String) {
         stepCounter++
         if (stepCounter <= skip) return
-        logger.log(results, step)
+        logger.log(results, time, run)
     }
 
     /**
      * @see MetricsLogger.start
      */
-    override fun start(run: Run) {
+    override fun start(run: String, timeframe: Timeframe) {
         stepCounter = 0
-        logger.start(run)
+        logger.start(run, Timeframe.INFINITE)
     }
 
 }

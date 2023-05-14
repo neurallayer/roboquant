@@ -18,7 +18,7 @@ package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
 import org.roboquant.loggers.MemoryLogger
-import kotlin.test.*
+import kotlin.test.assertTrue
 
 internal class MetricBoxChartTest {
 
@@ -26,7 +26,7 @@ internal class MetricBoxChartTest {
     fun test() {
         val logger = MemoryLogger()
         val data = logger.getMetric("test")
-        val chart = MetricBoxChart(data)
+        val chart = MetricBoxChart(data.values.flatten())
         assertTrue(chart.asHTML().isNotBlank())
     }
 

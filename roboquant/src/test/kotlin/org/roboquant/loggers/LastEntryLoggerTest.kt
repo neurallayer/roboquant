@@ -17,8 +17,8 @@
 package org.roboquant.loggers
 
 import org.roboquant.TestData
+import java.time.Instant
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -30,13 +30,12 @@ internal class LastEntryLoggerTest {
         val logger = LastEntryLogger()
         assertFalse(logger.showProgress)
 
-        logger.log(metrics, TestData.getStep())
+        logger.log(metrics, Instant.now(), "test")
         logger.end(TestData.getRunInfo())
         assertTrue(logger.metricNames.isNotEmpty())
 
         val m1 = logger.metricNames.first()
-        val m = logger.getMetric(m1)
-        assertEquals(m1, m.first().name)
+        val m = logger.getMetric(m1)["test"]!!
 
         logger.reset()
         assertTrue(logger.metricNames.isEmpty())

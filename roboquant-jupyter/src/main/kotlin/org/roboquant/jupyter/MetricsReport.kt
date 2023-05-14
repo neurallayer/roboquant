@@ -1,7 +1,6 @@
 package org.roboquant.jupyter
 
 import org.roboquant.Roboquant
-import org.roboquant.common.round
 import org.roboquant.loggers.MetricsEntry
 import java.nio.charset.StandardCharsets
 
@@ -32,27 +31,27 @@ class MetricsReport(
         return "<td>$name</td><td align=right>$value</td>"
     }
 
-    private fun getTableCell(entry: MetricsEntry): String {
-        val splitName = entry.name.split('.')
+    private fun getTableCell(entry: Map.Entry<String, List<MetricsEntry>>): String {
+        val splitName = entry.key.split('.')
         val name = splitName.subList(1, splitName.size).joinToString(" ")
-        val value = if (entry.value.isFinite()) entry.value.round(2).toString().removeSuffix(".00") else "NaN"
+        // val value = if (entry.value.isFinite()) entry.value.round(2).toString().removeSuffix(".00") else "NaN"
+        val value = 2.0
         return createCells(name, value)
     }
 
 
     private fun metricsToHTML(): String {
-        val metricsMap = logger.metricNames.map { logger.getMetric(it).last() }.groupBy { it.name.split('.').first() }
+        val metricsMap = logger.metricNames.map { it to logger.getMetric(it) }
         val result = StringBuffer()
-        for ((prefix, metrics) in metricsMap) {
-            result += "<div class='flex-item'><table frame=void rules=rows class='table'><caption>$prefix</caption>"
+        for ((name, metrics) in metricsMap) {
+            result += "<div class='flex-item'><table frame=void rules=rows class='table'><caption>$name</caption>"
             for (metric in metrics) {
                 result += "<tr>"
                 result += getTableCell(metric)
                 result += "</tr>"
             }
-            val name = logger.metricNames.first()
-            result += "<tr>${createCells("start time", logger.getMetric(name).first().step.time)}</tr>"
-            result += "<tr>${createCells("end time", logger.getMetric(name).last().step.time)}</tr>"
+            // result += "<tr>${createCells("start time", logger.getMetric(name).first().step.time)}</tr>"
+            // result += "<tr>${createCells("end time", logger.getMetric(name).last().step.time)}</tr>"
             result += "</table></div>"
         }
 

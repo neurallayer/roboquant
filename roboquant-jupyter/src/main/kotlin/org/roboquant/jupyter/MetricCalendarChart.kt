@@ -23,7 +23,6 @@ import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.Config
 import org.roboquant.common.round
 import org.roboquant.loggers.MetricsEntry
-import org.roboquant.loggers.getName
 import java.math.BigDecimal
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -47,12 +46,12 @@ class MetricCalendarChart(
     private val metricsData = metricsData.filter { it.value.isFinite() }
 
     private fun prepData(): Map<Int, List<Pair<String, BigDecimal>>> {
-        val perYear = metricsData.groupBy { it.step.time.atZone(zoneId).year }
+        val perYear = metricsData.groupBy { it.time.atZone(zoneId).year }
         val result = mutableMapOf<Int, List<Pair<String, BigDecimal>>>()
         perYear.forEach { (t, u) ->
             // If there is more than 1 value per day, sum them together.
             val summed =
-                u.groupBy { timeFormatter.format(it.step.time) }.mapValues { it.value.sumOf { entry -> entry.value } }
+                u.groupBy { timeFormatter.format(it.time) }.mapValues { it.value.sumOf { entry -> entry.value } }
             result[t] = summed.mapValues { it.value.round(fractionDigits) }.toList()
         }
         return result.toSortedMap()
@@ -106,7 +105,7 @@ class MetricCalendarChart(
         val min = metricsData.map { it.value }.minOfOrNull { it }
 
         return Option()
-            .setTitle(Title().setText(title ?: metricsData.getName()))
+            .setTitle(Title().setText(title))
             .setSeries(getSeriesOptions(data))
             .setCalendar(getCalendars(data))
             .setVisualMap(getVisualMap(min, max))

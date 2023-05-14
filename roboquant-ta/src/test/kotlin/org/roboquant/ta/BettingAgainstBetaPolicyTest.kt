@@ -44,12 +44,12 @@ class BettingAgainstBetaPolicyTest {
             policy = policy,
             logger = MemoryLogger(false)
         )
-        roboquant.run(feed)
+        roboquant.run(feed, name = "test")
         val account = roboquant.broker.account
         assertTrue(account.closedOrders.isNotEmpty())
         assertTrue(account.positions.size == 6)
 
-        val positionSizes = roboquant.logger.getMetric("account.positions")
+        val positionSizes = roboquant.logger.getMetric("account.positions")["test"]!!
         assertTrue(positionSizes.toDoubleArray().all { it == 6.0 || it == 0.0 })
     }
 

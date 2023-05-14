@@ -17,6 +17,8 @@
 package org.roboquant.loggers
 
 import org.roboquant.TestData
+import org.roboquant.common.Timeframe
+import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -27,15 +29,15 @@ internal class SkipWarmupLoggerTest {
     fun test() {
         val metrics = TestData.getMetrics()
         val logger = MemoryLogger(showProgress = false).skipFirst(10)
-        logger.start(TestData.getRunInfo())
+        logger.start("test", Timeframe.INFINITE)
 
         repeat(9) {
-            logger.log(metrics, TestData.getStep())
+            logger.log(metrics, Instant.now(), "test")
         }
         assertTrue(logger.metricNames.isEmpty())
 
         repeat(4) {
-            logger.log(metrics, TestData.getStep())
+            logger.log(metrics, Instant.now(), "test")
         }
         assertFalse(logger.metricNames.isEmpty())
     }

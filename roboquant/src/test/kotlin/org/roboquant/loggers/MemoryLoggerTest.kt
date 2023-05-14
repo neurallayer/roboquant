@@ -16,9 +16,8 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.Run
-import org.roboquant.Step
 import org.roboquant.TestData
+import org.roboquant.common.Timeframe
 import org.roboquant.common.days
 import org.roboquant.common.plus
 import org.roboquant.metrics.metricResultsOf
@@ -38,41 +37,38 @@ internal class MemoryLoggerTest {
 
 
         val metrics = TestData.getMetrics()
-        val runInfo = TestData.getRunInfo()
-        val step = TestData.getStep()
 
-        logger.start(runInfo)
-        logger.log(metrics, step)
-        logger.end(runInfo)
+        logger.start("test", Timeframe.INFINITE)
+        logger.log(metrics, Instant.now(), "test")
+        logger.end("test")
         assertFalse(logger.metricNames.isEmpty())
         assertEquals(metrics.size, logger.metricNames.size)
 
-        val t = logger.getMetric(metrics.keys.first())
+        val t = logger.getMetric(metrics.keys.first())["test"]!!
         assertEquals(1, t.size)
 
-        val z = logger.getMetric(metrics.keys.first())
+        val z = logger.getMetric(metrics.keys.first())["test"]!!
         assertEquals(1, z.size)
 
 
         assertEquals(1, logger.runs.size)
 
-        assertTrue(z.summary().toString().isNotEmpty())
         assertTrue(z.min() <= z.max())
 
         repeat(4) {
-            logger.log(metrics, TestData.getStep())
+            logger.log(metrics,Instant.now(), "test")
         }
     }
 
     @Test
     fun testMetricsEntry() {
         val logger = MemoryLogger(showProgress = false)
-        logger.start(TestData.getRunInfo())
+        logger.start("test", Timeframe.INFINITE)
         repeat(12) {
             val metrics = metricResultsOf("key1" to it)
-            logger.log(metrics, TestData.getStep())
+            logger.log(metrics, Instant.now(), "test")
         }
-        val data = logger.getMetric("key1")
+        val data = logger.getMetric("key1")["test"]!!
         assertEquals(12, data.size)
         val dataDiff = data.diff()
         assertEquals(11, dataDiff.size)
@@ -97,16 +93,16 @@ internal class MemoryLoggerTest {
     @Test
     fun groupBy() {
         val logger = MemoryLogger(showProgress = false)
-        logger.start(TestData.getRunInfo())
+        logger.start("test", Timeframe.INFINITE)
 
-        var step = TestData.getStep()
+        var start = Instant.now()
         repeat(50) {
             val metrics = metricResultsOf("key1" to it)
-            logger.log(metrics, step)
-            step = step.copy(time = step.time + 2.days)
+            logger.log(metrics, start, "test")
+            start += 2.days
         }
 
-        val data = logger.getMetric("key1")
+        val data = logger.getMetric("key1")["test"]!!
         assertEquals(50, data.size)
 
         assertEquals(50, data.groupBy(ChronoUnit.MINUTES).size)
@@ -125,22 +121,15 @@ internal class MemoryLoggerTest {
 
         repeat(50) {
             val run = "run-$it"
-            val runInfo = Run(run)
-            logger.start(runInfo)
+            logger.start(run, Timeframe.INFINITE)
             val metrics = metricResultsOf("key1" to it)
-            var step = Step(run, time = time + 2.days)
-            logger.log(metrics,step)
-
-            step = step.copy(time = step.time + 1.days)
-            logger.log(metrics, step)
+            logger.log(metrics, Instant.now(), run)
+            logger.log(metrics,Instant.now(), run)
         }
 
         val data = logger.getMetric("key1")
-        assertEquals(100, data.size)
-
-        val map = data.group()
-        assertEquals(50, map.size)
-        assertEquals(data, map.flatten())
+        assertEquals(100, data.values.flatten().size)
+        assertEquals(50, data.size)
     }
 
 }

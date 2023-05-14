@@ -16,8 +16,8 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.Step
 import org.roboquant.metrics.MetricResults
+import java.time.Instant
 
 /**
  * Silent logger ignores all metrics results and only counts the number of invocations.
@@ -31,7 +31,7 @@ class SilentLogger : MetricsLogger {
     var events = 0L
         private set
 
-    override fun log(results: MetricResults, step: Step) {
+    override fun log(results: MetricResults, time: Instant, run: String) {
         events++
     }
 

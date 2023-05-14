@@ -87,7 +87,7 @@ fun multiRun() {
             roboquant.run(feed, name = "run $fast-$slow")
         }
     }
-    val maxEntry = logger.getMetric("account.equity").max()
+    val maxEntry = logger.getMetric("account.equity").values.flatten().max()
     println(maxEntry)
 }
 
@@ -105,56 +105,8 @@ suspend fun walkForwardParallel() {
     }
 
     jobs.joinAll() // Make sure we wait for all jobs to finish
-    val avgEquity = logger.getMetric("account.equity").toDoubleArray().average()
+    val avgEquity = logger.getMetric("account.equity").values.flatten().toDoubleArray().average()
     println(avgEquity)
-}
-
-fun wfo() {
-    val feed = AvroFeed(Config.home /"all_1962_2023.avro")
-    val logger = LastEntryLogger()
-    val startEq = 1_000_000.00
-    fun objective(rq: Roboquant) = rq.logger.getMetric("account.equity").last().value
-    data class BestPerformer<T>(val performance: Double, val params: T)
-
-    // Create the combinations of params we want to optimize over
-    val combinations = mutableListOf<Pair<Int, Int>>()
-    listOf(5, 10, 15, 20).forEach { fast ->
-        repeat(3) { second ->
-            val slow = fast * (second + 1)
-            combinations.add(Pair(fast, slow))
-        }
-    }
-
-
-    // Run walk forward back tests
-    feed.timeframe.split(10.years, 7.years).forEach { tf ->
-        val (train, test) = tf.splitTrainTest(3.years)
-        var best = BestPerformer(Double.MIN_VALUE, Pair(0,0))
-
-        // Find best parameters
-        combinations.forEach {
-            val strategy = EMAStrategy(it.first, it.second)
-            val roboquant = Roboquant(strategy, AccountMetric(), logger = LastEntryLogger())
-            roboquant.run(feed, timeframe = train)
-            val performance = objective(roboquant)
-            if (performance > best.performance) {
-                best = BestPerformer(performance, it)
-            }
-            print(".")
-        }
-
-        // Run out of sample test
-        println("\n$best")
-        val combo = best.params
-        val strategy = EMAStrategy(combo.first, combo.second)
-        val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
-        roboquant.run(feed, name = "run-$tf", timeframe = test)
-        val eq = roboquant.logger.getMetric("account.equity").last().value
-        val testAnnualEq = test.annualize((eq - startEq) / startEq)
-        val trainAnualEq = train.annualize((best.performance - startEq) / startEq)
-        println("efficiency ratio=${testAnnualEq/trainAnualEq}")
-    }
-    println(logger.getMetric("account.equity").map { it.value })
 }
 
 
@@ -302,7 +254,6 @@ suspend fun main() {
         "SIMPLE" -> simple()
         "CSV2AVRO" -> csv2Avro("/tmp/daily/us", false)
         "MULTI_RUN" -> multiRun()
-        "WFO" -> wfo()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()

@@ -19,6 +19,7 @@ package org.roboquant.loggers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
+import java.time.Instant
 
 internal class ConsoleLoggerTest {
 
@@ -26,7 +27,7 @@ internal class ConsoleLoggerTest {
     fun consoleLogger() {
         val logger = ConsoleLogger()
         assertDoesNotThrow {
-            logger.log(TestData.getMetrics(), TestData.getStep())
+            logger.log(TestData.getMetrics(), Instant.now(), "test")
         }
     }
 
@@ -34,7 +35,7 @@ internal class ConsoleLoggerTest {
     fun splitMetrics() {
         val logger = ConsoleLogger(splitMetrics = true)
         assertDoesNotThrow {
-            logger.log(TestData.getMetrics(), TestData.getStep())
+            logger.log(TestData.getMetrics(), Instant.now(), "test")
         }
     }
 

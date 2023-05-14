@@ -16,9 +16,9 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.Step
 import org.roboquant.common.Logging
 import org.roboquant.metrics.MetricResults
+import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -39,9 +39,9 @@ class InfoLogger(
 
     private val logger = Logging.getLogger(InfoLogger::class)
 
-    override fun log(results: MetricResults, step: Step) {
+    override fun log(results: MetricResults, time: Instant, run: String) {
         if (results.isEmpty()) return
-        if (logger.isInfoEnabled) for (line in getLines(results, step)) logger.info(line)
+        if (logger.isInfoEnabled) for (line in getLines(results, time, run)) logger.info(line)
     }
 
 }

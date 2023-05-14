@@ -17,6 +17,7 @@
 package org.roboquant.loggers
 
 import org.roboquant.TestData
+import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -26,12 +27,12 @@ internal class SilentLoggerTest {
     @Test
     fun silentLogger() {
         val logger = SilentLogger()
-        logger.log(TestData.getMetrics(), TestData.getStep())
+        logger.log(TestData.getMetrics(), Instant.now(), "test")
         assertEquals(1, logger.events)
         assertTrue(logger.metricNames.isEmpty())
         assertTrue(logger.getMetric("key1").isEmpty())
 
-        logger.log(TestData.getMetrics(), TestData.getStep())
+        logger.log(TestData.getMetrics(), Instant.now(), "test")
         assertEquals(2, logger.events)
 
         logger.reset()

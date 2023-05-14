@@ -18,6 +18,7 @@ package org.roboquant.loggers
 
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
+import java.time.Instant
 import kotlin.test.Test
 
 internal class InfoLoggerTest {
@@ -27,12 +28,12 @@ internal class InfoLoggerTest {
         val metrics = TestData.getMetrics()
         val logger = InfoLogger()
         assertDoesNotThrow {
-            logger.log(metrics, TestData.getStep())
+            logger.log(metrics, Instant.now(), "test")
         }
         val logger2 = InfoLogger(splitMetrics = true)
 
         assertDoesNotThrow {
-            logger2.log(metrics, TestData.getStep())
+            logger2.log(metrics, Instant.now(), "test")
         }
     }
 

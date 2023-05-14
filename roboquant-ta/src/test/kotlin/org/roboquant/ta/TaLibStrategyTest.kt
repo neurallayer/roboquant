@@ -21,11 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.Roboquant
-import org.roboquant.Run
-import org.roboquant.common.Asset
-import org.roboquant.common.InsufficientDataException
-import org.roboquant.common.plus
-import org.roboquant.common.seconds
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.RandomWalkFeed
@@ -35,14 +31,6 @@ import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import java.time.Instant
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.all
-import kotlin.collections.first
-import kotlin.collections.isNotEmpty
-import kotlin.collections.last
-import kotlin.collections.listOf
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
 import kotlin.test.*
 
@@ -160,7 +148,7 @@ internal class TaLibStrategyTest {
 
     private fun run(s: Strategy, n: Int = 150): Map<Instant, List<Signal>> {
         s.reset()
-        s.start(Run("test"))
+        s.start("test", Timeframe.INFINITE)
         val nHalf = n / 2
         val feed = HistoricTestFeed(100 until 100 + nHalf, 100 + nHalf - 1 downTo 100, priceBar = true)
         val events = feed.filter<PriceBar>()

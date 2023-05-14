@@ -16,9 +16,9 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.Run
-import org.roboquant.Step
+import org.roboquant.common.Timeframe
 import org.roboquant.metrics.MetricResults
+import java.time.Instant
 
 /**
  * Stores the last value of a metric for a particular run and phase in memory. This is more memory efficient than
@@ -36,21 +36,21 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
     private val progressBar = ProgressBar()
 
     @Synchronized
-    override fun log(results: MetricResults, step: Step) {
-        if (showProgress) progressBar.update(step)
+    override fun log(results: MetricResults, time: Instant, run: String) {
+        if (showProgress) progressBar.update(time)
 
         for ((t, u) in results) {
-            val key = Pair(step.run, t)
-            val value = MetricsEntry(t, u, step)
+            val key = Pair(run, t)
+            val value = MetricsEntry(u, time)
             history[key] = value
         }
     }
 
-    override fun start(run: Run) {
-        if (showProgress) progressBar.reset()
+    override fun start(run: String, timeframe: Timeframe) {
+        if (showProgress) progressBar.start(run, timeframe)
     }
 
-    override fun end(run: Run) {
+    override fun end(run: String) {
         if (showProgress) progressBar.done()
     }
 
@@ -59,7 +59,6 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
      */
     override fun reset() {
         history.clear()
-        progressBar.reset()
     }
 
     /**
@@ -71,8 +70,8 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
     /**
      * Get results for the metric specified by its [name].
      */
-    override fun getMetric(name: String): List<MetricsEntry> {
-        return history.values.filter { it.name == name }
+    override fun getMetric(name: String): Map<String, List<MetricsEntry>> {
+        return history.filter { it.key.second == name }.map { it.key.first to listOf(it.value) }.toMap()
     }
 
 }

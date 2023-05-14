@@ -27,7 +27,6 @@ import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.clean
 import org.roboquant.loggers.MetricsEntry
-import org.roboquant.loggers.getName
 import org.roboquant.loggers.toDoubleArray
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -76,13 +75,12 @@ class MetricHistogramChart(
         val xData = d.map { it.first }.toTypedArray()
 
         val series = BarSeries()
-            .setName(metricData.getName())
             .setBarWidth("70%")
             .setData(data)
             .setLabel(BarLabel().setShow(true))
 
         val chart = Bar()
-            .setTitle(title ?: metricData.getName())
+            .setTitle(title)
             .addYAxis(ValueAxis().setScale(true))
             .addXAxis(CategoryAxis().setData(xData).setAxisTick(mapOf("alignWithLabel" to true)))
             .addSeries(series)

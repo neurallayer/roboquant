@@ -16,8 +16,7 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.Run
-import org.roboquant.Step
+import org.roboquant.common.Timeframe
 import org.roboquant.metrics.MetricResults
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -47,21 +46,20 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     private val progressBar = ProgressBar()
 
     @Synchronized
-    override fun log(results: MetricResults, step: Step) {
-        if (showProgress) progressBar.update(step)
+    override fun log(results: MetricResults, time: Instant, run: String) {
+        if (showProgress) progressBar.update(time)
         if (results.isEmpty()) return
-        history.getValue(step.run).add(Entry(step.time, results))
+        history.getValue(run).add(Entry(time, results))
     }
 
-    override fun start(run: Run) {
+    override fun start(run: String, timeframe: Timeframe) {
         if (showProgress) {
-            progressBar.reset()
-            progressBar.timeframe = run.timeframe
+            progressBar.start(run, timeframe)
         }
-        history[run.name] = mutableListOf()
+        history[run] = mutableListOf()
     }
 
-    override fun end(run: Run) {
+    override fun end(run: String) {
         if (showProgress) progressBar.done()
     }
 
@@ -70,7 +68,6 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
      */
     override fun reset() {
         history.clear()
-        progressBar.reset()
     }
 
 
@@ -89,14 +86,15 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     /**
      * Get results for a metric specified by its [name]. It will include all the runs for that metric.
      */
-    override fun getMetric(name: String): List<MetricsEntry> {
-        val result = mutableListOf<MetricsEntry>()
+    override fun getMetric(name: String): Map<String, List<MetricsEntry>> {
+        val result = mutableMapOf<String, List<MetricsEntry>>()
         for ((run, entries) in history) {
-            for (entry in entries) {
-                val value = entry.metrics[name]
-                if (value != null) result.add(MetricsEntry(name, value, Step(run, entry.time)))
+            val metrics = entries.filter { it.metrics.contains(name) }
+            if (metrics.isNotEmpty()) {
+                result[run] = metrics.map {
+                    MetricsEntry(it.metrics.getValue(name), it.time)
+                }
             }
-
         }
         return result
     }
@@ -125,7 +123,7 @@ fun Collection<MetricsEntry>.groupBy(
     }
     formatter.timeZone = TimeZone.getTimeZone(zoneId)
     return groupBy {
-        val date = Date.from(it.step.time)
+        val date = Date.from(it.time)
         formatter.format(date)
     }
 }
@@ -135,9 +133,3 @@ fun Collection<MetricsEntry>.groupBy(
  */
 fun Collection<MetricsEntry>.toDoubleArray() = map { it.value }.toDoubleArray()
 
-/**
- * Generate a name for a collection of metric entries
- */
-fun Collection<MetricsEntry>.getName(): String {
-    return map { it.name }.distinct().joinToString("/") { it.replace('.', ' ') }
-}

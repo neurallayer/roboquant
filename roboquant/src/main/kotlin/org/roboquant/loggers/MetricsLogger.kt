@@ -16,9 +16,10 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.Step
 import org.roboquant.common.Lifecycle
 import org.roboquant.metrics.MetricResults
+import java.time.Instant
+
 
 /**
  * Interface that a metrics logger will need to implement. It is called by Roboquant after metrics have been calculated
@@ -29,17 +30,17 @@ import org.roboquant.metrics.MetricResults
 interface MetricsLogger : Lifecycle {
 
     /**
-     * Log the [results] of the metric calculations. Also [step] is provided about when these results where captured.
+     * Log the [results] of the metric calculations. Also [time] is provided about when these results where captured.
      * This method is invoked once at the end of each step within a run with all the metrics that where captured during
      * that step. It should be noted that the provided results can be empty.
      */
-    fun log(results: MetricResults, step: Step)
+    fun log(results: MetricResults, time: Instant, run: String)
 
     /**
      * Get all the logged entries for a specific metric. This is optional to implement since not all loggers store
      * the metrics. Use [metricNames] to see which metrics are available.
      */
-    fun getMetric(name: String): List<MetricsEntry> = emptyList()
+    fun getMetric(name: String): Map<String, List<MetricsEntry>> = emptyMap()
 
     /**
      * The list of metric names that are available and can be retrieved with the [getMetric].
