@@ -15,7 +15,9 @@
  */
 package org.roboquant.brokers.sim
 
+import org.roboquant.brokers.Trade
 import org.roboquant.brokers.sim.execution.Execution
+import java.time.Instant
 
 /**
  * Fee model that adds no additional fee or commissions to trade executions.
@@ -25,6 +27,6 @@ class NoFeeModel : FeeModel {
     /**
      * @see FeeModel.calculate
      */
-    override fun calculate(execution: Execution): Double = 0.0
+    override fun calculate(execution: Execution, time: Instant, trades: List<Trade>): Double = 0.0
 
 }

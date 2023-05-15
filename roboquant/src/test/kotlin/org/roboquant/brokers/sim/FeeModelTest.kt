@@ -20,15 +20,18 @@ import org.junit.jupiter.api.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.Execution
 import org.roboquant.common.Size
+import java.time.Instant
 import kotlin.test.assertEquals
 
 internal class FeeModelTest {
+
+    private val trades = TestData.internalAccount().trades
 
     @Test
     fun testDefaultCostModel() {
         val model = PercentageFeeModel(feePercentage = 0.01)
         val order = TestData.usMarketOrder()
-        val fee = model.calculate(Execution(order, Size(5), 100.0))
+        val fee = model.calculate(Execution(order, Size(5), 100.0), Instant.now(), trades)
         assertEquals(5.0, fee)
     }
 
@@ -36,7 +39,7 @@ internal class FeeModelTest {
     fun noCostModel() {
         val model = NoFeeModel()
         val order = TestData.usMarketOrder()
-        val fee = model.calculate(Execution(order, Size(100), 10.0))
+        val fee = model.calculate(Execution(order, Size(100), 10.0), Instant.now(), trades)
         assertEquals(0.0, fee)
     }
 

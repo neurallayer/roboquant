@@ -103,7 +103,7 @@ open class SimBroker(
         val position = Position(asset, execution.size, execution.price)
 
         // Are there any fees to be considered
-        val fee = feeModel.calculate(execution)
+        val fee = feeModel.calculate(execution, time, this._account.trades)
 
         // PNL includes the fee
         val pnl = updatePosition(position) - fee

@@ -123,13 +123,12 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
         }
     }
 
-
-
     /**
      * Subclasses only need to implement this method and don't need to worry about time-in-force and state management.
      */
     abstract fun fill(remaining: Size, pricing: Pricing): Execution?
 }
+
 
 internal class MarketOrderExecutor(order: MarketOrder) : SingleOrderExecutor<MarketOrder>(order) {
 

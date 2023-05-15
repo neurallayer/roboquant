@@ -15,7 +15,9 @@
  */
 package org.roboquant.brokers.sim
 
+import org.roboquant.brokers.Trade
 import org.roboquant.brokers.sim.execution.Execution
+import java.time.Instant
 import kotlin.math.absoluteValue
 
 /**
@@ -28,7 +30,7 @@ class PercentageFeeModel(
     private val feePercentage: Double = 0.0,
 ) : FeeModel {
 
-    override fun calculate(execution: Execution): Double {
+    override fun calculate(execution: Execution, time: Instant, trades: List<Trade>): Double {
         return execution.value.absoluteValue * feePercentage
     }
 
