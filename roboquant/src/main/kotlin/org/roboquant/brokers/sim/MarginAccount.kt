@@ -43,7 +43,6 @@ class MarginAccount(
     private val maintenanceMarginLong: Double = 0.3,
     private val maintenanceMarginShort: Double = maintenanceMarginLong,
     private val minimumEquity: Double = 0.0
-    // private val includeOpenOrders: Boolean = false
 ) : AccountModel {
 
     /**

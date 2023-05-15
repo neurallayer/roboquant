@@ -26,7 +26,6 @@ import java.time.Instant
 class NoCostPricingEngine(private val priceType: String = "DEFAULT") : PricingEngine {
 
     private class NoCostPricing(val price: Double) : Pricing {
-
         override fun marketPrice(size: Size) = price
     }
 
