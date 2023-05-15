@@ -80,7 +80,7 @@ class AlpacaHistoricFeed(
     val availableAssets: SortedSet<Asset>
         get() = (availableStocks.values + availableCrypto.values).toSortedSet()
 
-    private fun getAsset(symbol: String) = availableStocks[symbol] ?: availableCrypto[symbol]
+    private fun getAsset(symbol: String) = availableStocks[symbol] ?: availableCrypto.getValue(symbol)
 
     private val Instant.zonedDateTime
         get() = ZonedDateTime.ofInstant(this, zoneId)
@@ -107,7 +107,7 @@ class AlpacaHistoricFeed(
             do {
                 val resp = stockData.getQuotes(symbol, start, end, limit, nextPageToken)
                 resp.quotes == null && return
-                val asset = getAsset(symbol)!!
+                val asset = getAsset(symbol)
                 for (quote in resp.quotes) {
                     val action = PriceQuote(
                         asset,
@@ -140,7 +140,7 @@ class AlpacaHistoricFeed(
             do {
                 val resp = stockData.getTrades(symbol, start, end, limit, nextPageToken)
                 resp.trades == null && return
-                val asset = getAsset(symbol)!!
+                val asset = getAsset(symbol)
 
                 for (trade in resp.trades) {
                     val action = TradePrice(asset, trade.price, trade.size.toDouble())
@@ -156,7 +156,7 @@ class AlpacaHistoricFeed(
 
     private fun processBars(symbol: String, resp: StockBarsResponse) {
         resp.bars == null && return
-        val asset = getAsset(symbol)!!
+        val asset = getAsset(symbol)
         for (bar in resp.bars) {
             val action = PriceBar(asset, bar.open, bar.high, bar.low, bar.close, bar.volume.toDouble())
             val now = bar.timestamp.toInstant()

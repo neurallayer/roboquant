@@ -82,7 +82,7 @@ class AlpacaBroker(
     val availableAssets: SortedSet<Asset>
         get() = (availableStocks.values + availableCrypto.values).toSortedSet()
 
-    private fun getAsset(symbol: String) = availableStocks[symbol] ?: availableCrypto[symbol]
+    private fun getAsset(symbol: String) = availableStocks[symbol] ?: availableCrypto.getValue(symbol)
 
 
     /**
@@ -175,7 +175,7 @@ class AlpacaBroker(
      * Supports both regular Market Orders and Bracket Market Order
      */
     private fun toMarketOrder(order: AlpacaOrder): Order {
-        val asset = getAsset(order.symbol)!!
+        val asset = getAsset(order.symbol)
         val qty = if (order.side == OrderSide.BUY) order.quantity.toBigDecimal() else -order.quantity.toBigDecimal()
         val size = Size(qty)
 
@@ -193,7 +193,7 @@ class AlpacaBroker(
      * Convert an alpaca order to a roboquant order. This should only be called during loading of initial orders
      */
     private fun toOrder(order: AlpacaOrder): Order {
-        val asset = getAsset(order.symbol)!!
+        val asset = getAsset(order.symbol)
         val qty = if (order.side == OrderSide.BUY) order.quantity.toBigDecimal() else -order.quantity.toBigDecimal()
         val rqOrder = when (order.type) {
             OrderType.MARKET -> toMarketOrder(order)
@@ -216,7 +216,7 @@ class AlpacaBroker(
      * Convert an Alpaca position to a roboquant position
      */
     private fun convertPos(pos: AlpacaPosition): Position {
-        val asset = getAsset(pos.symbol)!!
+        val asset = getAsset(pos.symbol)
         val size = Size(pos.quantity)
         return Position(asset, size, pos.averageEntryPrice.toDouble(), pos.currentPrice.toDouble())
     }

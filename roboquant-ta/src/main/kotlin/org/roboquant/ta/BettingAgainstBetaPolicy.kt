@@ -46,6 +46,7 @@ import kotlin.math.min
  * @property holdingPeriod the holding period, default is 20.days
  * @property maxPositions the maximum number of open positions
  * @property windowSize the windowSize, default is 120
+ * @property priceType the type of price to use, default is DEFAULT
  *
  * @constructor Create new instance of Betting Against Beta
  */
@@ -55,6 +56,7 @@ open class BettingAgainstBetaPolicy(
     private val holdingPeriod: TradingPeriod = 20.days,
     private val maxPositions: Int = 20,
     private val windowSize: Int = 120,
+    private val priceType: String = "DEFAULT"
 ) : BasePolicy() {
 
     private var rebalanceDate = Instant.MIN
@@ -152,10 +154,10 @@ open class BettingAgainstBetaPolicy(
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
 
         // First we update the buffers
-        data.addAll(event, windowSize, "DEFAULT")
+        data.addAll(event, windowSize, priceType)
 
         // Check if it is time to re-balance the portfolio
-        if (event.time >= rebalanceDate && data[market]!!.isFull()) {
+        if (event.time >= rebalanceDate && data.getValue(market).isFull()) {
             val betas = calculateBetas()
 
             // Update the re-balance date

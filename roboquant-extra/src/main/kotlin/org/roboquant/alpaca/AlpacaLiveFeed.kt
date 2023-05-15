@@ -116,7 +116,7 @@ class AlpacaLiveFeed(
      * Get all subscribed assets, stocks and crypto combined
      */
     override val assets: SortedSet<Asset>
-        get() = subscribedSymbols.map { assetsMap[it]!! }.toSortedSet()
+        get() = subscribedSymbols.map { assetsMap.getValue(it) }.toSortedSet()
 
     /**
      * Connect to streaming data for stock market and crypto market
@@ -206,7 +206,7 @@ class AlpacaLiveFeed(
         try {
             logger.trace { "received msg=$msg" }
             if (msg is SymbolMessage) {
-                val asset = assetsMap[msg.symbol]!!
+                val asset = assetsMap.getValue(msg.symbol)
 
                 val action: PriceAction? = when (msg) {
                     is TradeMessage -> TradePrice(asset, msg.price)
