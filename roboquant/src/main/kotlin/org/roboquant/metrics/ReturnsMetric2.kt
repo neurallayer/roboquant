@@ -12,8 +12,6 @@ import org.roboquant.common.Timeframe
 import org.roboquant.common.minus
 import org.roboquant.feeds.Event
 import java.time.Instant
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.collections.set
 import kotlin.math.sqrt
 

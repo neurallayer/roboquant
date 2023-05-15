@@ -35,7 +35,7 @@ internal class LastEntryLoggerTest {
         assertTrue(logger.metricNames.isNotEmpty())
 
         val m1 = logger.metricNames.first()
-        val m = logger.getMetric(m1)["test"]!!
+        val m = logger.getMetric(m1).latestRun()
         assertTrue(m.isNotEmpty())
 
         logger.reset()

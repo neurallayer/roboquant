@@ -5,16 +5,19 @@ import org.roboquant.common.Logging
 import java.time.Instant
 import kotlin.math.absoluteValue
 
+
+
 @Suppress("TooManyFunctions")
 internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
-
-
+    
+    private val traceMsg = "Not yet implemented"
+    
     override fun tickPrice(tickerId: Int, field: Int, price: Double, attrib: TickAttrib?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun tickSize(tickerId: Int, field: Int, size: Decimal?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun tickOptionComputation(
@@ -30,15 +33,15 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         theta: Double,
         undPrice: Double
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun tickGeneric(tickerId: Int, tickType: Int, value: Double) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun tickString(tickerId: Int, tickType: Int, value: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun tickEFP(
@@ -52,7 +55,7 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         dividendImpact: Double,
         dividendsToLastTradeDate: Double
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun orderStatus(
@@ -68,19 +71,19 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         whyHeld: String?,
         mktCapPrice: Double
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun openOrder(orderId: Int, contract: Contract, order: Order, orderState: OrderState) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun openOrderEnd() {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun updateAccountValue(key: String, value: String, currency: String?, accountName: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun updatePortfolio(
@@ -93,39 +96,39 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         realizedPNL: Double,
         accountName: String?
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun updateAccountTime(timeStamp: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun accountDownloadEnd(accountName: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun nextValidId(orderId: Int) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun contractDetails(reqId: Int, contractDetails: ContractDetails) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun bondContractDetails(reqId: Int, contractDetails: ContractDetails) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun contractDetailsEnd(reqId: Int) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun execDetails(reqId: Int, contract: Contract, execution: Execution) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun execDetailsEnd(reqId: Int) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun updateMktDepth(
@@ -136,7 +139,7 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         price: Double,
         size: Decimal?
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun updateMktDepthL2(
@@ -149,27 +152,27 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         size: Decimal?,
         isSmartDepth: Boolean
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun updateNewsBulletin(msgId: Int, msgType: Int, message: String?, origExchange: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun managedAccounts(accountsList: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun receiveFA(faDataType: Int, xml: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun historicalData(reqId: Int, bar: Bar) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun scannerParameters(xml: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun scannerData(
@@ -181,11 +184,11 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         projection: String?,
         legsStr: String?
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun scannerDataEnd(reqId: Int) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun realtimeBar(
@@ -199,7 +202,7 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         wap: Decimal?,
         count: Int
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun currentTime(time: Long) {
@@ -211,63 +214,63 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
     }
 
     override fun fundamentalData(reqId: Int, data: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun deltaNeutralValidation(reqId: Int, deltaNeutralContract: DeltaNeutralContract?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun tickSnapshotEnd(reqId: Int) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun marketDataType(reqId: Int, marketDataType: Int) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun commissionReport(commissionReport: CommissionReport) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun position(account: String?, contract: Contract?, pos: Decimal?, avgCost: Double) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun positionEnd() {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun accountSummary(reqId: Int, account: String?, tag: String, value: String?, currency: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun accountSummaryEnd(reqId: Int) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun verifyMessageAPI(apiData: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun verifyCompleted(isSuccessful: Boolean, errorText: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun verifyAndAuthMessageAPI(apiData: String?, xyzChallenge: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun verifyAndAuthCompleted(isSuccessful: Boolean, errorText: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun displayGroupList(reqId: Int, groups: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun displayGroupUpdated(reqId: Int, contractInfo: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun error(e: Exception?) {
@@ -286,11 +289,11 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
     }
 
     override fun connectionClosed() {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun connectAck() {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun positionMulti(
@@ -301,11 +304,11 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         pos: Decimal?,
         avgCost: Double
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun positionMultiEnd(reqId: Int) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun accountUpdateMulti(
@@ -316,7 +319,7 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         value: String?,
         currency: String?
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun accountUpdateMultiEnd(reqId: Int) {
@@ -332,31 +335,31 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         expirations: Set<String>?,
         strikes: Set<Double>?
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun securityDefinitionOptionalParameterEnd(reqId: Int) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun softDollarTiers(reqId: Int, tiers: Array<SoftDollarTier?>?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun familyCodes(familyCodes: Array<FamilyCode?>?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun symbolSamples(reqId: Int, contractDescriptions: Array<ContractDescription?>?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun historicalDataEnd(reqId: Int, startDateStr: String?, endDateStr: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun mktDepthExchanges(depthMktDataDescriptions: Array<DepthMktDataDescription?>?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun tickNews(
@@ -367,23 +370,23 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         headline: String?,
         extraData: String?
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun smartComponents(reqId: Int, theMap: Map<Int, Map.Entry<String, Char>>?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun tickReqParams(tickerId: Int, minTick: Double, bboExchange: String?, snapshotPermissions: Int) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun newsProviders(newsProviders: Array<NewsProvider?>?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun newsArticle(requestId: Int, articleType: Int, articleText: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun historicalNews(
@@ -393,39 +396,39 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         articleId: String?,
         headline: String?
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun historicalNewsEnd(requestId: Int, hasMore: Boolean) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun headTimestamp(reqId: Int, headTimestamp: String) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun histogramData(reqId: Int, items: List<HistogramEntry>?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun historicalDataUpdate(reqId: Int, bar: Bar) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun rerouteMktDataReq(reqId: Int, conId: Int, exchange: String) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun rerouteMktDepthReq(reqId: Int, conId: Int, exchange: String) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun marketRule(marketRuleId: Int, priceIncrements: Array<PriceIncrement?>?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun pnl(reqId: Int, dailyPnL: Double, unrealizedPnL: Double, realizedPnL: Double) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun pnlSingle(
@@ -436,19 +439,19 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         realizedPnL: Double,
         value: Double
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun historicalTicks(reqId: Int, ticks: List<HistoricalTick>?, done: Boolean) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun historicalTicksBidAsk(reqId: Int, ticks: List<HistoricalTickBidAsk>?, done: Boolean) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun historicalTicksLast(reqId: Int, ticks: List<HistoricalTickLast>?, done: Boolean) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun tickByTickAllLast(
@@ -461,7 +464,7 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         exchange: String?,
         specialConditions: String?
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun tickByTickBidAsk(
@@ -473,35 +476,35 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         askSize: Decimal?,
         tickAttribBidAsk: TickAttribBidAsk?
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun tickByTickMidPoint(reqId: Int, time: Long, midPoint: Double) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun orderBound(orderId: Long, apiClientId: Int, apiOrderId: Int) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun completedOrder(contract: Contract?, order: Order?, orderState: OrderState?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun completedOrdersEnd() {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun replaceFAEnd(reqId: Int, text: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun wshMetaData(reqId: Int, dataJson: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun wshEventData(reqId: Int, dataJson: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun historicalSchedule(
@@ -511,10 +514,10 @@ internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
         timeZone: String?,
         sessions: List<HistoricalSession>?
     ) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 
     override fun userInfo(reqId: Int, whiteBrandingId: String?) {
-        logger.trace("Not yet implemented")
+        logger.trace(traceMsg)
     }
 }

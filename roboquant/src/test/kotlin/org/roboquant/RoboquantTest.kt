@@ -32,6 +32,7 @@ import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
+import org.roboquant.loggers.latestRun
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.Metric
 import org.roboquant.metrics.ProgressMetric
@@ -94,14 +95,14 @@ internal class RoboquantTest {
         val timeline = feed.timeline
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = LastEntryLogger())
         roboquant.run(feed, name = "test")
-        val entry = roboquant.logger.getMetric("progress.steps")["test"]!!.last()
+        val entry = roboquant.logger.getMetric("progress.steps").latestRun().last()
         assertEquals(timeline.size, entry.value.toInt())
 
         val offset = 3
         val timeframe = Timeframe(timeline[2], timeline[2 + offset], inclusive = false)
         roboquant.reset()
         roboquant.run(feed, timeframe,  name = "test")
-        val step2 = roboquant.logger.getMetric("progress.steps")["test"]!!.last()
+        val step2 = roboquant.logger.getMetric("progress.steps").latestRun().last()
         assertEquals(offset, step2.value.toInt())
     }
 

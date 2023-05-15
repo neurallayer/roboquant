@@ -21,6 +21,7 @@ import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.feeds.RandomWalkFeed
 import org.roboquant.loggers.MemoryLogger
+import org.roboquant.loggers.latestRun
 import org.roboquant.loggers.toDoubleArray
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.NoSignalStrategy
@@ -49,7 +50,7 @@ class BettingAgainstBetaPolicyTest {
         assertTrue(account.closedOrders.isNotEmpty())
         assertTrue(account.positions.size == 6)
 
-        val positionSizes = roboquant.logger.getMetric("account.positions")["test"]!!
+        val positionSizes = roboquant.logger.getMetric("account.positions").latestRun()
         assertTrue(positionSizes.toDoubleArray().all { it == 6.0 || it == 0.0 })
     }
 

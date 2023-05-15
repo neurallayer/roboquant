@@ -44,10 +44,10 @@ internal class MemoryLoggerTest {
         assertFalse(logger.metricNames.isEmpty())
         assertEquals(metrics.size, logger.metricNames.size)
 
-        val t = logger.getMetric(metrics.keys.first())["test"]!!
+        val t = logger.getMetric(metrics.keys.first()).latestRun()
         assertEquals(1, t.size)
 
-        val z = logger.getMetric(metrics.keys.first())["test"]!!
+        val z = logger.getMetric(metrics.keys.first()).latestRun()
         assertEquals(1, z.size)
 
 
@@ -68,7 +68,7 @@ internal class MemoryLoggerTest {
             val metrics = metricResultsOf("key1" to it)
             logger.log(metrics, Instant.now(), "test")
         }
-        val data = logger.getMetric("key1")["test"]!!
+        val data = logger.getMetric("key1").latestRun()
         assertEquals(12, data.size)
         val dataDiff = data.diff()
         assertEquals(11, dataDiff.size)
@@ -102,7 +102,7 @@ internal class MemoryLoggerTest {
             start += 2.days
         }
 
-        val data = logger.getMetric("key1")["test"]!!
+        val data = logger.getMetric("key1").latestRun()
         assertEquals(50, data.size)
 
         assertEquals(50, data.groupBy(ChronoUnit.MINUTES).size)

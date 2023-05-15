@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.loggers.MemoryLogger
+import org.roboquant.loggers.latestRun
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
@@ -35,7 +36,7 @@ internal class EMAStrategyTest {
         val names = roboquant.logger.metricNames
 
         assertTrue(names.isNotEmpty())
-        val metrics = roboquant.logger.getMetric(names.first())["test"]!!
+        val metrics = roboquant.logger.getMetric(names.first()).latestRun()
         assertTrue(metrics.isNotEmpty())
     }
 

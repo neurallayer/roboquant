@@ -23,6 +23,7 @@ import org.roboquant.common.months
 import org.roboquant.feeds.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.loggers.MemoryLogger
+import org.roboquant.loggers.latestRun
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
 import kotlin.test.assertContains
@@ -56,13 +57,13 @@ internal class ReturnsMetricTest {
         val roboquant = Roboquant(strategy, metric, logger = logger)
         roboquant.run(feed, name = "test")
 
-        val sharpRatio = logger.getMetric("returns.sharperatio")["test"]!!.last().value
+        val sharpRatio = logger.getMetric("returns.sharperatio").latestRun().last().value
         assertTrue(!sharpRatio.isNaN())
 
-        val mean = logger.getMetric("returns.mean")["test"]!!.last().value
+        val mean = logger.getMetric("returns.mean").latestRun().last().value
         assertTrue(!mean.isNaN())
 
-        val std = logger.getMetric("returns.std")["test"]!!.last().value
+        val std = logger.getMetric("returns.std").latestRun().last().value
         assertTrue(!std.isNaN())
     }
 

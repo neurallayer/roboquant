@@ -27,6 +27,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.RandomWalkFeed
 import org.roboquant.feeds.TradePrice
 import org.roboquant.loggers.LastEntryLogger
+import org.roboquant.loggers.latestRun
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
 import kotlin.test.assertTrue
@@ -43,10 +44,10 @@ internal class AlphaBetaMetricTest {
         val roboquant = Roboquant(strategy, alphaBetaMetric, logger = logger)
         roboquant.run(feed, name = "test")
 
-        val alpha = logger.getMetric("account.alpha")["test"]!!.last().value
+        val alpha = logger.getMetric("account.alpha").latestRun().last().value
         assertTrue(!alpha.isNaN())
 
-        val beta = logger.getMetric("account.beta")["test"]!!.last().value
+        val beta = logger.getMetric("account.beta").latestRun().last().value
         assertTrue(!beta.isNaN())
     }
 
