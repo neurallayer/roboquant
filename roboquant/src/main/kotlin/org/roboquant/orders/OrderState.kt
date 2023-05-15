@@ -19,7 +19,7 @@ package org.roboquant.orders
 import org.roboquant.common.Asset
 import org.roboquant.common.Summary
 import org.roboquant.common.summary
-import org.roboquant.orders.OrderStatus.*
+import org.roboquant.orders.OrderStatus.INITIAL
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -78,7 +78,7 @@ class OrderState private constructor(
      * IllegalState Exception.
      */
     fun update(newStatus: OrderStatus, time: Instant): OrderState {
-        if (status.closed) throw IllegalStateException("cannot update a closed order, status=$status")
+        check (! status.closed) { "cannot update a closed order, status=$status" }
         val newOpenedAt = if (openedAt == Instant.MAX) time else openedAt
         val newClosedAt = if (newStatus.closed) time else closedAt
         return OrderState(order, newStatus, newOpenedAt, newClosedAt)

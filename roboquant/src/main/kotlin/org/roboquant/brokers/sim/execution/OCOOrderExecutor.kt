@@ -24,8 +24,8 @@ import java.time.Instant
 
 internal class OCOOrderExecutor(override val order: OCOOrder) : OrderExecutor<OCOOrder> {
 
-    private val first = ExecutionEngine.getCreateOrderExecutor(order.first)
-    private val second = ExecutionEngine.getCreateOrderExecutor(order.second)
+    private val first = ExecutionEngine.getExecutor(order.first)
+    private val second = ExecutionEngine.getExecutor(order.second)
     private var active = 0
 
     override var status: OrderStatus = OrderStatus.INITIAL
