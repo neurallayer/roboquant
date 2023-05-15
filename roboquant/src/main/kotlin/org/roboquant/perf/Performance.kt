@@ -75,13 +75,11 @@ private class FastFeed(val nAssets : Int, val events: Int) : Feed {
     override suspend fun play(channel: EventChannel) {
         repeat(events) {
             val actions = HashMap<Asset, PriceBar>(nAssets)
-            // val actions = ArrayList<PriceBar>(nAssets)
             val open = 100.0 + 10 * (it / events)
             val data = doubleArrayOf(open,open+1.0,open-1.0,open, 500.0)
             for (asset in assets) {
                 val action = PriceBar(asset, data)
                 actions[asset] = action
-                // actions.add(action)
             }
             channel.send(Event(actions, start + it.millis))
         }
@@ -122,7 +120,7 @@ private object Performance {
     private fun seqRun(feed: FastFeed, backTests: Int): Pair<Long, Int> {
         var trades = 0
         val t = measure {
-            // sequential
+            // sequential runs
             trades = 0
             repeat(backTests) {
                 val roboquant = Roboquant(getStrategy(skip), logger = SilentLogger())

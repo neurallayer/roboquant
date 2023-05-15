@@ -90,7 +90,7 @@ class PriceChart(
             val entry = mapOf(
                 "value" to trade.size.toBigDecimal(),
                 "xAxis" to trade.time,
-                "yAxis" to trade.price // Amount(trade.asset.currency, trade.price).toBigDecimal()
+                "yAxis" to trade.price
             )
             result.add(entry)
         }

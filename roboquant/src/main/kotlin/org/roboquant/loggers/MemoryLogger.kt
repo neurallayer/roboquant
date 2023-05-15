@@ -39,7 +39,6 @@ import java.util.*
  */
 class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
 
-    // internal val history = mutableListOf<Pair<Map<String, Double>, Run>>()
     internal class Entry(val time: Instant, val metrics: Map<String, Double>)
     internal val history = mutableMapOf<String, MutableList<Entry>>()
     private val progressBar = ProgressBar()
@@ -48,13 +47,15 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (showProgress) progressBar.update(time)
         if (results.isEmpty()) return
-        history.getValue(run).add(Entry(time, results))
+        val entries = history.getOrPut(run) { mutableListOf() }
+        entries.add(Entry(time, results))
     }
 
     override fun start(run: String, timeframe: Timeframe) {
         if (showProgress) {
             progressBar.start(run, timeframe)
         }
+        // Clear any previous run with the same name
         history[run] = mutableListOf()
     }
 
