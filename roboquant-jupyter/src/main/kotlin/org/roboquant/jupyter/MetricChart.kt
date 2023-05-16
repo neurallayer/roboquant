@@ -53,9 +53,10 @@ class MetricChart(
     companion object {
 
         /**
-         * Create an equity based on a number of recorded walk forward runs
+         * Create a chart based on a metric for a number of recorded walk forward runs. Because at the start of each
+         * walk forward the metric might be reset, the metric is first converted to percentages.
          */
-        fun walkForwardEquity(metricsData: Map<String,List<MetricsEntry>>, fractionDigits: Int = 2): MetricChart {
+        fun walkForward(metricsData: Map<String,List<MetricsEntry>>, fractionDigits: Int = 2): MetricChart {
             val d = metricsData.perc().flatten()
             var v = 100.0
             val data = d.map {
