@@ -78,14 +78,16 @@ fun Collection<MetricsEntry>.perc(): List<MetricsEntry> {
     var first = true
     var prev = 0.0
     for (entry in this) {
+        val value = entry.value
+        if (! value.isFinite()) continue
         if (first) {
-            prev = entry.value
+            prev = value
             first = false
         } else {
-            val newValue = 100.0 * (entry.value - prev) / prev
+            val newValue = 100.0 * (value - prev) / prev
             val newEntry = entry.copy(value = newValue)
             result.add(newEntry)
-            prev = entry.value
+            prev = value
         }
     }
     return result

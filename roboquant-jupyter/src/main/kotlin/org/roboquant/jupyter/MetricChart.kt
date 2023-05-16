@@ -24,6 +24,8 @@ import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.series.LineStyle
 import org.roboquant.loggers.MetricsEntry
+import org.roboquant.loggers.flatten
+import org.roboquant.loggers.perc
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -41,6 +43,29 @@ class MetricChart(
     private val fractionDigits: Int = 2
 ) : Chart() {
 
+    /**
+     * Plot a single run
+     */
+    constructor(metricsData: List<MetricsEntry>, useTime: Boolean=true, fractionDigits: Int =2) :
+            this(mapOf("" to metricsData), useTime, fractionDigits)
+
+
+    companion object {
+
+        /**
+         * Create an equity based on a number of recorded walk forward runs
+         */
+        fun walkForwardEquity(metricsData: Map<String,List<MetricsEntry>>, fractionDigits: Int = 2): MetricChart {
+            val d = metricsData.perc().flatten()
+            var v = 100.0
+            val data = d.map {
+                v *= (1.0 + it.value / 100.0)
+                MetricsEntry(v, it.time)
+            }
+            return MetricChart(data, true, fractionDigits)
+        }
+
+    }
 
     /**
      * Identify common suffix (same run/phase), so they can be removed from the series name
