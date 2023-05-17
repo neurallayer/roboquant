@@ -16,6 +16,7 @@
 
 package org.roboquant.loggers
 
+import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -83,18 +84,23 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     override val metricNames: List<String>
         get() = history.values.asSequence().flatten().map { it.metrics.keys }.flatten().distinct().sorted().toList()
 
+
     /**
      * Get results for a metric specified by its [name]. It will include all the runs for that metric.
      */
-    override fun getMetric(name: String): Map<String, List<MetricsEntry>> {
-        val result = mutableMapOf<String, List<MetricsEntry>>()
+    override fun getMetric(name: String): Map<String, TimeSeries> {
+        val result = mutableMapOf<String, TimeSeries>()
         for ((run, entries) in history) {
-            val metrics = entries.filter { it.metrics.contains(name) }
-            if (metrics.isNotEmpty()) {
-                result[run] = metrics.map {
-                    MetricsEntry(it.metrics.getValue(name), it.time)
+            val values = mutableListOf<Double>()
+            val times = mutableListOf<Instant>()
+            entries.forEach {
+                val e = it.metrics[name]
+                if (e != null) {
+                    values.add(e)
+                    times.add(it.time)
                 }
             }
+            if (values.isNotEmpty()) result[run] = TimeSeries(values.toDoubleArray(), times)
         }
         return result
     }

@@ -33,7 +33,6 @@ import org.roboquant.feeds.filter
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
-import org.roboquant.loggers.toDoubleArray
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.Order
 import org.roboquant.orders.summary
@@ -87,7 +86,7 @@ fun multiRun() {
             roboquant.run(feed, name = "run $fast-$slow")
         }
     }
-    val maxEntry = logger.getMetric("account.equity").values.flatten().max()
+    val maxEntry = logger.getMetric("account.equity").flatten().max()
     println(maxEntry)
 }
 
@@ -105,7 +104,7 @@ suspend fun walkForwardParallel() {
     }
 
     jobs.joinAll() // Make sure we wait for all jobs to finish
-    val avgEquity = logger.getMetric("account.equity").values.flatten().toDoubleArray().average()
+    val avgEquity = logger.getMetric("account.equity").flatten().average()
     println(avgEquity)
 }
 

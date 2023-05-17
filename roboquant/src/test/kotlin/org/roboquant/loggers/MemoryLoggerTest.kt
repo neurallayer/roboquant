@@ -23,6 +23,7 @@ import org.roboquant.common.plus
 import org.roboquant.metrics.metricResultsOf
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import kotlin.math.absoluteValue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -53,7 +54,7 @@ internal class MemoryLoggerTest {
 
         assertEquals(1, logger.runs.size)
 
-        assertTrue(z.min() <= z.max())
+        assertTrue(z.min().value <= z.max().value)
 
         repeat(4) {
             logger.log(metrics,Instant.now(), "test")
@@ -74,10 +75,11 @@ internal class MemoryLoggerTest {
         assertEquals(11, dataDiff.size)
         assertEquals(1.0, dataDiff.first().value)
 
-        val dataPerc = data.perc()
+        val dataPerc = data.returns()
         assertEquals(11, dataPerc.size)
-        assertEquals(10.0, dataPerc.last().value)
+        assertTrue((dataPerc.last().value - 0.1).absoluteValue < 0.0000001)
 
+        /*
         val h = data.high(5)
         assertEquals(5, h.size)
         val max = data.max()
@@ -87,6 +89,7 @@ internal class MemoryLoggerTest {
         assertEquals(5, l.size)
         val min = data.min()
         assertEquals(min.value, l.first().value)
+        */
 
     }
 

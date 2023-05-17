@@ -1,7 +1,7 @@
 package org.roboquant.jupyter
 
 import org.roboquant.Roboquant
-import org.roboquant.loggers.MetricsEntry
+import org.roboquant.common.TimeSeries
 import java.nio.charset.StandardCharsets
 
 /**
@@ -31,7 +31,7 @@ class MetricsReport(
         return "<td>$name</td><td align=right>$value</td>"
     }
 
-    private fun getTableCell(entry: Map.Entry<String, List<MetricsEntry>>): String {
+    private fun getTableCell(entry: Map.Entry<String, TimeSeries>): String {
         val splitName = entry.key.split('.')
         val name = splitName.subList(1, splitName.size).joinToString(" ")
         // val value = if (entry.value.isFinite()) entry.value.round(2).toString().removeSuffix(".00") else "NaN"

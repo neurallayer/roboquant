@@ -23,9 +23,8 @@ import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.series.LineStyle
-import org.roboquant.loggers.MetricsEntry
-import org.roboquant.loggers.flatten
-import org.roboquant.loggers.perc
+import org.roboquant.common.TimeSeries
+import org.roboquant.common.flatten
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -38,32 +37,40 @@ import java.math.RoundingMode
  * @property fractionDigits how many digits to use for presenting the metric values
  */
 class MetricChart(
-    private val metricsData: Map<String,List<MetricsEntry>>,
+    private val metricsData: Map<String, TimeSeries>,
     private val useTime: Boolean = true,
     private val fractionDigits: Int = 2
 ) : Chart() {
 
+
     /**
      * Plot a single run
      */
-    constructor(metricsData: List<MetricsEntry>, useTime: Boolean=true, fractionDigits: Int =2) :
+    constructor(metricsData: TimeSeries, useTime: Boolean = true, fractionDigits: Int = 2) :
             this(mapOf("" to metricsData), useTime, fractionDigits)
 
 
     companion object {
 
-        /**
-         * Create a chart based on a metric for a number of recorded walk forward runs. Because at the start of each
-         * walk forward the metric might be reset, the metric is first converted to percentages.
-         */
-        fun walkForward(metricsData: Map<String,List<MetricsEntry>>, fractionDigits: Int = 2): MetricChart {
-            val d = metricsData.perc().flatten()
-            var v = 100.0
-            val data = d.map {
-                v *= (1.0 + it.value / 100.0)
-                MetricsEntry(v, it.time)
+        fun walkForward(
+            metricsData: Map<String, TimeSeries>,
+            fractionDigits: Int = 2,
+            monteCarlo: Int = 0
+        ): MetricChart {
+            require(monteCarlo >= 0)
+            require(fractionDigits >=0)
+
+            val d = metricsData.mapValues { it.value.returns() }.flatten()
+            var data = d.runningFold(100.0)
+            if (monteCarlo == 0) return MetricChart(mapOf("" to data))
+
+            val result = mutableMapOf("orginal" to data)
+            repeat(monteCarlo) {
+                data = d.shuffle().runningFold(100.0)
+                result["mc-$it"] = data
             }
-            return MetricChart(data, true, fractionDigits)
+            return MetricChart(result)
+
         }
 
     }
@@ -81,7 +88,6 @@ class MetricChart(
         }
         return ""
     }
-
 
     /** @suppress */
     override fun getOption(): Option {
@@ -118,7 +124,7 @@ class MetricChart(
     /**
      * Convert a list of entries to data-format suitable for chart series.
      */
-    private fun List<MetricsEntry>.toSeriesData(): List<Pair<Long, BigDecimal>> {
+    private fun TimeSeries.toSeriesData(): List<Pair<Long, BigDecimal>> {
 
         val d = mutableListOf<Pair<Long, BigDecimal>>()
         for ((step, entry) in withIndex()) {

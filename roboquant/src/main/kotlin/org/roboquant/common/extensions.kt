@@ -180,12 +180,19 @@ fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 /**
  * Return the returns. The resulting array size will be 1 smaller than the original one. Formula used is:
  *
- *      returns = new/old - 1.0
+ *      return = new/old - 1.0
  */
 fun DoubleArray.returns(): DoubleArray {
     if (size < 2) return DoubleArray(0)
     val result = DoubleArray(size - 1)
     for (n in 1..lastIndex) result[n - 1] = get(n) / get(n - 1) - 1.0
+    return result
+}
+
+fun DoubleArray.diff(): DoubleArray {
+    if (size < 2) return DoubleArray(0)
+    val result = DoubleArray(size - 1)
+    for (n in 1..lastIndex) result[n - 1] = get(n) - get(n - 1)
     return result
 }
 

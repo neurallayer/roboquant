@@ -25,9 +25,8 @@ import org.icepear.echarts.components.coord.cartesian.CategoryAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.tooltip.Tooltip
+import org.roboquant.common.TimeSeries
 import org.roboquant.common.clean
-import org.roboquant.loggers.MetricsEntry
-import org.roboquant.loggers.toDoubleArray
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -41,7 +40,7 @@ import java.math.RoundingMode
  * @constructor Create empty Metric histogram
  */
 class MetricHistogramChart(
-    private val metricData: Collection<MetricsEntry>,
+    private val metricData: TimeSeries,
     private val binCount: Int = 20,
     private val scale: Int = 2,
     private val minBinSize: Int = 0,

@@ -16,6 +16,7 @@
 
 package org.roboquant.loggers
 
+import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
 import java.time.Instant
 
@@ -69,8 +70,15 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
     /**
      * Get results for the metric specified by its [name].
      */
-    override fun getMetric(name: String): Map<String, List<MetricsEntry>> {
-        return history.filter { it.key.second == name }.map { it.key.first to listOf(it.value) }.toMap()
+    override fun getMetric(name: String): Map<String, TimeSeries> {
+        val result = mutableMapOf<String, TimeSeries>()
+        for ((key, value) in history) {
+            if (key.second == name) {
+                result[key.first] = TimeSeries(doubleArrayOf(value.value), listOf(value.time))
+            }
+        }
+        return result
+       // history.filter { it.key.second == name }.map { it.key.first to listOf(it.value) }.toMap()
     }
 
 }

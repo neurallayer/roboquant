@@ -23,10 +23,8 @@ import org.icepear.echarts.charts.boxplot.BoxplotSeries
 import org.icepear.echarts.components.coord.cartesian.CategoryAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
+import org.roboquant.common.TimeSeries
 import org.roboquant.common.clean
-import org.roboquant.loggers.MetricsEntry
-import org.roboquant.loggers.groupBy
-import org.roboquant.loggers.toDoubleArray
 import java.math.MathContext
 import java.math.RoundingMode
 import java.time.temporal.ChronoUnit
@@ -44,7 +42,7 @@ import java.time.temporal.ChronoUnit
  * @property precision the precision to use, default is 8
  */
 class MetricBoxChart(
-    private val metricData: Collection<MetricsEntry>,
+    private val metricData: TimeSeries,
     private val period: ChronoUnit = ChronoUnit.MONTHS,
     private val lowPercentile: Double = 25.0,
     private val midPercentile: Double = 50.0,

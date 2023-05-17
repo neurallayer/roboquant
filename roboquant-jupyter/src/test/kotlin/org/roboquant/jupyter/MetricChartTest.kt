@@ -49,4 +49,17 @@ internal class MetricChartTest {
         assertTrue(chart.asHTML().isNotBlank())
     }
 
+    @Test
+    fun predefined2() {
+        val logger = MemoryLogger()
+        val data = logger.getMetric("test")
+        val chart = MetricChart.walkForward(data)
+
+        assertDoesNotThrow {
+            chart.getOption().renderJson()
+        }
+
+        assertTrue(chart.asHTML().isNotBlank())
+    }
+
 }

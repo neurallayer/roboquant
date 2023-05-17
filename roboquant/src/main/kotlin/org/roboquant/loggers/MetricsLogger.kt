@@ -17,6 +17,7 @@
 package org.roboquant.loggers
 
 import org.roboquant.common.Lifecycle
+import org.roboquant.common.TimeSeries
 import java.time.Instant
 
 
@@ -44,7 +45,7 @@ interface MetricsLogger : Lifecycle {
      * This is optional to implement for a MetricsLogger since not all loggers store the metrics. Use [metricNames] to
      * see which metrics are available.
      */
-    fun getMetric(name: String): Map<String, List<MetricsEntry>> = emptyMap()
+    fun getMetric(name: String): Map<String, TimeSeries> = emptyMap()
 
     /**
      * The list of metric names that are available and can be retrieved with the [getMetric].
@@ -57,13 +58,13 @@ interface MetricsLogger : Lifecycle {
 /**
  * Get the metrics for the run that starts the earliest in time
  */
-fun Map<String, List<MetricsEntry>>.earliestRun() : List<MetricsEntry> = values.minBy { it.first().time }
+fun Map<String, TimeSeries>.earliestRun() : TimeSeries = values.minBy { it.first().time }
 
 
 /**
  * Get the metrics for the run that starts the earliest in time
  */
-fun Map<String, List<MetricsEntry>>.latestRun() : List<MetricsEntry> = values.maxBy { it.last().time }
+fun Map<String, TimeSeries>.latestRun() : TimeSeries = values.maxBy { it.last().time }
 
 
 /**
