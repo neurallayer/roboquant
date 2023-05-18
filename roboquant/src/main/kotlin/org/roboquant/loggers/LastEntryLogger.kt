@@ -32,7 +32,7 @@ import java.time.Instant
 class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
 
     // Key is runName + phase + metricName
-    private val history = mutableMapOf<Pair<String, String>, MetricsEntry>()
+    private val history = mutableMapOf<Pair<String, String>, Pair<Instant, Double>>()
     private val progressBar = ProgressBar()
 
     @Synchronized
@@ -41,7 +41,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
 
         for ((t, u) in results) {
             val key = Pair(run, t)
-            val value = MetricsEntry(u, time)
+            val value = Pair(time, u)
             history[key] = value
         }
     }
@@ -74,11 +74,10 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
         val result = mutableMapOf<String, TimeSeries>()
         for ((key, value) in history) {
             if (key.second == name) {
-                result[key.first] = TimeSeries(doubleArrayOf(value.value), listOf(value.time))
+                result[key.first] = TimeSeries(doubleArrayOf(value.second), listOf(value.first))
             }
         }
         return result
-       // history.filter { it.key.second == name }.map { it.key.first to listOf(it.value) }.toMap()
     }
 
 }

@@ -22,7 +22,6 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.feeds.RandomWalkFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.latestRun
-import org.roboquant.loggers.toDoubleArray
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.NoSignalStrategy
 import kotlin.test.Test

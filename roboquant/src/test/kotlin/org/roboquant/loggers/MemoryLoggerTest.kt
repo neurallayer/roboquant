@@ -79,18 +79,6 @@ internal class MemoryLoggerTest {
         assertEquals(11, dataPerc.size)
         assertTrue((dataPerc.last().value - 0.1).absoluteValue < 0.0000001)
 
-        /*
-        val h = data.high(5)
-        assertEquals(5, h.size)
-        val max = data.max()
-        assertEquals(max.value, h.last().value)
-
-        val l = data.low(5)
-        assertEquals(5, l.size)
-        val min = data.min()
-        assertEquals(min.value, l.first().value)
-        */
-
     }
 
     @Test

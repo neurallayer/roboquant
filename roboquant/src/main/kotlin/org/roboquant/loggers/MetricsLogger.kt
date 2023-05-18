@@ -67,32 +67,3 @@ fun Map<String, TimeSeries>.earliestRun() : TimeSeries = values.minBy { it.first
 fun Map<String, TimeSeries>.latestRun() : TimeSeries = values.maxBy { it.last().time }
 
 
-/**
- * Flatten a map to a list of metric entries sorted by their time. If there is overlap in time between runs and
- * [overlap] is set to false, the earlier run will win and later runs entries that overlap will be ignored.
- */
-fun Map<String, List<MetricsEntry>>.flatten(overlap: Boolean = false): List<MetricsEntry> {
-    val sortedEntries = values.sortedBy { it.first().time }
-    val result = mutableListOf<MetricsEntry>()
-    var last = Instant.MIN
-    for (entries in sortedEntries) {
-        for (entry in entries) {
-            if (!overlap && entry.time <= last) continue
-            result.add(entry)
-            last = entry.time
-        }
-
-    }
-    return result
-}
-
-
-/**
- * Return the diff of each metrics per run
- */
-fun Map<String, List<MetricsEntry>>.diff() = mapValues { it.value.diff() }
-
-/**
- * Return the diff of each metrics per run
- */
-fun Map<String, List<MetricsEntry>>.perc() = mapValues { it.value.perc() }

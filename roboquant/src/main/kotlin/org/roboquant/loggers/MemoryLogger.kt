@@ -18,12 +18,7 @@ package org.roboquant.loggers
 
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
-import java.text.SimpleDateFormat
 import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
-import java.util.*
 
 /**
  * Store metric results in memory. Very convenient in a Jupyter notebook when you want to inspect or visualize
@@ -106,36 +101,4 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     }
 
 }
-
-/**
- * Group a collection of metric entries by a certain [period]. This for example enables to group them by month and run
- * statistics over each month.
- */
-fun Collection<MetricsEntry>.groupBy(
-    period: ChronoUnit,
-    zoneId: ZoneId = ZoneOffset.UTC
-): Map<String, Collection<MetricsEntry>> {
-
-    val formatter = when (period) {
-        ChronoUnit.YEARS -> SimpleDateFormat("yyyy")
-        ChronoUnit.MONTHS -> SimpleDateFormat("yyyy-MM")
-        ChronoUnit.WEEKS -> SimpleDateFormat("yyyy-ww")
-        ChronoUnit.DAYS -> SimpleDateFormat("yyyy-DDD")
-        ChronoUnit.HOURS -> SimpleDateFormat("yyyy-DDD-HH")
-        ChronoUnit.MINUTES -> SimpleDateFormat("yyyy-DDD-HH-mm")
-        else -> {
-            throw IllegalArgumentException("Unsupported value $period")
-        }
-    }
-    formatter.timeZone = TimeZone.getTimeZone(zoneId)
-    return groupBy {
-        val date = Date.from(it.time)
-        formatter.format(date)
-    }
-}
-
-/**
- * Convert a collection of metric entries into a double array.
- */
-fun Collection<MetricsEntry>.toDoubleArray() = map { it.value }.toDoubleArray()
 

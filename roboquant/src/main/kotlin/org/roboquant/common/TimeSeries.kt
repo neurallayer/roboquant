@@ -153,3 +153,16 @@ fun Map<String, TimeSeries>.flatten(noOverlap: Boolean = true): TimeSeries {
     return TimeSeries(result)
 }
 
+/**
+ * Convert a sorted by time collection to a [TimeSeries] object
+ */
+inline fun <T> Collection<T>.toTimeSeries(block: (T) -> Pair<Instant, Double>): TimeSeries {
+    val values = DoubleArray(size)
+    val times = ArrayList<Instant>(size)
+    forEachIndexed { cnt, elem ->
+        val (t, v) = block(elem)
+        values[cnt] = v
+        times.add(t)
+    }
+    return TimeSeries(values, times)
+}

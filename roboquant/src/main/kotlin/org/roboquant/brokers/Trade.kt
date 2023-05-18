@@ -17,7 +17,6 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.*
-import org.roboquant.loggers.MetricsEntry
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -100,10 +99,8 @@ val Collection<Trade>.timeframe: Timeframe
 /**
  * Convert collection of trades to PNL percentage metrics
  */
-fun Collection<Trade>.toPNLPercentageMetrics(): List<MetricsEntry> {
-    return map {
-        MetricsEntry(it.pnlPercentage, it.time)
-    }
+fun Collection<Trade>.toPNLPercentageMetrics(): TimeSeries {
+    return toTimeSeries { Pair(it.time, it.pnlPercentage) }
 }
 
 
