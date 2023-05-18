@@ -104,7 +104,7 @@ private object Performance {
     /**
      * Try to make the results more reproducible by running the code multiple times and take best time.
      */
-    private fun measure(block: () -> Unit): Long {
+    private inline fun measure(block: () -> Unit): Long {
         var best = Long.MAX_VALUE
         repeat(3) {
             System.gc()

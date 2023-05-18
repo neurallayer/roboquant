@@ -24,14 +24,16 @@ import java.time.temporal.ChronoUnit
 import java.util.*
 
 
-class MetricEntry(val time: Instant, val value: Double)
+class Observation(val time: Instant, val value: Double)
+
+// private typealias Observation = Pair<Instant, Double>
 
 /**
- * Optimized implementation of data TimeSeries that allows for easy and fast calculations of metric results.
+ * Optimized implementation of data TimeSeries that allows for easy and fast calculations.
  */
-class TimeSeries(private val values: DoubleArray, private val timeline: Timeline) : Iterable<MetricEntry> {
+class TimeSeries(private val values: DoubleArray, private val timeline: Timeline) : Iterable<Observation> {
 
-    constructor(values: List<MetricEntry>) : this(
+    constructor(values: List<Observation>) : this(
         values.map { it.value }.toDoubleArray(), values.map { it.time }
     )
 
@@ -42,7 +44,7 @@ class TimeSeries(private val values: DoubleArray, private val timeline: Timeline
         get() = values.size
 
     private class MetricEntriesIterator(private val values: DoubleArray, private val times: List<Instant>) :
-        Iterator<MetricEntry> {
+        Iterator<Observation> {
 
         var count = 0
 
@@ -50,9 +52,9 @@ class TimeSeries(private val values: DoubleArray, private val timeline: Timeline
             return count < values.size
         }
 
-        override fun next(): MetricEntry {
+        override fun next(): Observation {
             if (count >= values.size) throw NoSuchElementException()
-            val result = MetricEntry(times[count], values[count])
+            val result = Observation(times[count], values[count])
             count++
             return result
         }
@@ -119,14 +121,14 @@ class TimeSeries(private val values: DoubleArray, private val timeline: Timeline
 
     fun growthRates() = TimeSeries(values.growthRates(), timeline.drop(1))
 
-    override fun iterator(): Iterator<MetricEntry> {
+    override fun iterator(): Iterator<Observation> {
         return MetricEntriesIterator(values, timeline)
     }
 
     fun toDoubleArray() = values
 
-    fun toList(): List<MetricEntry> {
-        return values.zip(timeline).map { MetricEntry(it.second, it.first) }
+    fun toList(): List<Observation> {
+        return values.zip(timeline).map { Observation(it.second, it.first) }
     }
 
     fun isNotEmpty() = size > 0
@@ -140,7 +142,7 @@ class TimeSeries(private val values: DoubleArray, private val timeline: Timeline
  */
 fun Map<String, TimeSeries>.flatten(noOverlap: Boolean = true): TimeSeries {
     val sortedTimeSeries = values.sortedBy { it.first().time }
-    val result = mutableListOf<MetricEntry>()
+    val result = mutableListOf<Observation>()
     var last = Instant.MIN
     for (timeSeries in sortedTimeSeries) {
         for (entry in timeSeries) {
