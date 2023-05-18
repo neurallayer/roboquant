@@ -58,12 +58,12 @@ interface MetricsLogger : Lifecycle {
 /**
  * Get the metrics for the run that starts the earliest in time
  */
-fun Map<String, TimeSeries>.earliestRun() : TimeSeries = values.minBy { it.first().time }
+fun Map<String, TimeSeries>.earliestRun() : TimeSeries = values.minBy { it.timeline.first() }
 
 
 /**
  * Get the metrics for the run that starts the earliest in time
  */
-fun Map<String, TimeSeries>.latestRun() : TimeSeries = values.maxBy { it.last().time }
+fun Map<String, TimeSeries>.latestRun() : TimeSeries = values.maxBy { it.timeline.last() }
 
 

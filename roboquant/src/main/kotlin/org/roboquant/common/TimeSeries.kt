@@ -26,12 +26,11 @@ import java.util.*
 
 class Observation(val time: Instant, val value: Double)
 
-// private typealias Observation = Pair<Instant, Double>
 
 /**
- * Optimized implementation of data TimeSeries that allows for easy and fast calculations.
+ * Optimized implementation of time series data that allows for easy and fast calculations.
  */
-class TimeSeries(private val values: DoubleArray, private val timeline: Timeline) : Iterable<Observation> {
+class TimeSeries(val values: DoubleArray, val timeline: Timeline) : Iterable<Observation> {
 
     constructor(values: List<Observation>) : this(
         values.map { it.value }.toDoubleArray(), values.map { it.time }
@@ -65,6 +64,13 @@ class TimeSeries(private val values: DoubleArray, private val timeline: Timeline
         val newValues = values.copyOf()
         newValues.shuffle(Config.random)
         return TimeSeries(newValues, timeline)
+    }
+
+
+    inline fun forEach(block: (Instant, Double) -> Unit) {
+        for (i in values.indices) {
+            block(timeline[i], values[i])
+        }
     }
 
     init {
@@ -108,7 +114,7 @@ class TimeSeries(private val values: DoubleArray, private val timeline: Timeline
             }
         }
         formatter.timeZone = TimeZone.getTimeZone(zoneId)
-        return groupBy {
+        return toList().groupBy {
             val date = Date.from(it.time)
             formatter.format(date)
         }.mapValues { TimeSeries(it.value) }
@@ -141,7 +147,7 @@ class TimeSeries(private val values: DoubleArray, private val timeline: Timeline
  * [noOverlap] is set to true, the earlier run will win and later runs entries that overlap will be ignored.
  */
 fun Map<String, TimeSeries>.flatten(noOverlap: Boolean = true): TimeSeries {
-    val sortedTimeSeries = values.sortedBy { it.first().time }
+    val sortedTimeSeries = values.sortedBy { it.timeline.first() }
     val result = mutableListOf<Observation>()
     var last = Instant.MIN
     for (timeSeries in sortedTimeSeries) {
