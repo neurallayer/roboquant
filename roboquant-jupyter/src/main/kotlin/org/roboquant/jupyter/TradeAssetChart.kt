@@ -27,7 +27,6 @@ import org.icepear.echarts.components.toolbox.ToolboxDataZoomFeature
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
-import org.roboquant.common.Config
 import org.roboquant.common.Currency
 import java.math.BigDecimal
 
@@ -39,7 +38,7 @@ import java.math.BigDecimal
 class TradeAssetChart(
     private val trades: List<Trade>,
     private val aspect: String = "pnl",
-    private val currency: Currency = Config.baseCurrency
+    private val currency: Currency? = null
 ) : Chart() {
 
     init {
@@ -48,9 +47,12 @@ class TradeAssetChart(
     }
 
     private fun toSeriesData(assets: List<Asset>): List<List<Any>> {
+        if (trades.isEmpty()) return emptyList()
+        val curr = currency ?: trades.first().asset.currency
+
         val d = mutableListOf<List<Any>>()
         for (trade in trades.sortedBy { it.time }) {
-            val value = trade.getValue(aspect, currency)
+            val value = trade.getValue(aspect, curr)
             val y = assets.indexOf(trade.asset)
             val tooltip = trade.getTooltip()
             d.add(listOf(trade.time, y, value, tooltip))

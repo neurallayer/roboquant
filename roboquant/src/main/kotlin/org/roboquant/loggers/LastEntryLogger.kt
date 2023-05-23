@@ -74,7 +74,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
         val result = mutableMapOf<String, TimeSeries>()
         for ((key, value) in history) {
             if (key.second == name) {
-                result[key.first] = TimeSeries(doubleArrayOf(value.second), listOf(value.first))
+                result[key.first] = TimeSeries(listOf(value.first), doubleArrayOf(value.second))
             }
         }
         return result

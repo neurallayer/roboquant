@@ -23,7 +23,6 @@ import org.icepear.echarts.charts.pie.PieSeries
 import org.icepear.echarts.charts.sunburst.SunburstSeries
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.brokers.Position
-import org.roboquant.common.Config
 import org.roboquant.common.Currency
 import java.math.BigDecimal
 
@@ -37,7 +36,7 @@ import java.math.BigDecimal
 class AssetAllocationChart(
     private val positions: Collection<Position>,
     private val includeAssetClass: Boolean = false,
-    private val currency: Currency = Config.baseCurrency
+    private val currency: Currency? = null
 ) : Chart() {
 
     private class Entry(val name: String, val value: BigDecimal, val type: String) {
@@ -45,11 +44,13 @@ class AssetAllocationChart(
     }
 
     private fun toSeriesData(): List<Entry> {
+        if (positions.isEmpty()) return emptyList()
+        val curr = currency ?: positions.first().asset.currency
         val result = mutableListOf<Entry>()
 
         for (position in positions.sortedBy { it.asset.symbol }) {
             val asset = position.asset
-            val localAmount = position.exposure.convert(currency).toBigDecimal()
+            val localAmount = position.exposure.convert(curr).toBigDecimal()
             result.add(Entry(asset.symbol, localAmount, asset.type.name))
         }
         return result

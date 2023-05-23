@@ -18,6 +18,7 @@ package org.roboquant.feeds
 
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
+import org.roboquant.feeds.OrderBook.OrderBookEntry
 import kotlin.math.absoluteValue
 
 /**
@@ -220,7 +221,7 @@ data class PriceQuote(
      * - WEIGHTED
      * - ASK
      * - BID
-     * - MEAN (also the default)
+     * - MEAN (also known as MIDPOINT and the default)
      *
      * @return
      */

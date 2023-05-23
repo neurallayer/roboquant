@@ -72,5 +72,11 @@ internal class PriceBarSerieTest {
         assertTrue(priceBarSerie.isFull())
     }
 
+    @Test
+    fun extensions() {
+        val pbs: PriceBarSerie? = null
+        assertFalse(pbs.isFull())
+    }
+
 
 }

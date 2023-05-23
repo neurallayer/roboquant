@@ -95,7 +95,7 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
                     times.add(it.time)
                 }
             }
-            if (values.isNotEmpty()) result[run] = TimeSeries(values.toDoubleArray(), times)
+            if (values.isNotEmpty()) result[run] = TimeSeries(times, values.toDoubleArray())
         }
         return result
     }

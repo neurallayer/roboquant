@@ -170,7 +170,7 @@ class CSVFeed(
                     }
                 }
             }
-            if (errors > 0) logger.info { "Skipped $errors lines due to errors in $file" }
+            if (errors > 0) logger.warn { "Skipped $errors lines due to errors in $file" }
             return result
         }
     }

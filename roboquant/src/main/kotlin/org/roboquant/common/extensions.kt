@@ -26,6 +26,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlin.math.absoluteValue
 
+
 /********************************************************************************************************************
  * This file contains the extensions for classes that are part of standard Java and Kotlin libraries. Extensions for
  * classes that are part of roboquant should not be included in this file.
@@ -194,6 +195,22 @@ fun DoubleArray.diff(): DoubleArray {
     val result = DoubleArray(size - 1)
     for (n in 1..lastIndex) result[n - 1] = get(n) - get(n - 1)
     return result
+}
+
+
+fun DoubleArray.indexOfMax() : Int {
+    if (isEmpty()) return -1
+    var maxAt = 0
+    for (i in indices) if (get(i) > get(maxAt)) maxAt = i
+    return maxAt
+}
+
+
+fun DoubleArray.indexOfMin() : Int {
+    if (isEmpty()) return -1
+    var minAt = 0
+    for (i in indices) if (get(i) < get(minAt)) minAt = i
+    return minAt
 }
 
 /**

@@ -120,7 +120,10 @@ class PriceBarSerie(capacity: Int) {
 
 }
 
-
+/**
+ * Small utility that also works when instance is null
+ */
+fun PriceBarSerie?.isFull() = this?.isFull() ?: false
 
 
 

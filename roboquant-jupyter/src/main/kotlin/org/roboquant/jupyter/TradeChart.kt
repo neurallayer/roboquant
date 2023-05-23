@@ -24,7 +24,6 @@ import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.brokers.Trade
-import org.roboquant.common.Config
 import org.roboquant.common.Currency
 import org.roboquant.common.UnsupportedException
 import java.math.BigDecimal
@@ -63,7 +62,7 @@ internal fun Trade.getValue(type: String, currency: Currency): BigDecimal {
 open class TradeChart(
     private val trades: List<Trade>,
     private val aspect: String = "pnl",
-    private val currency: Currency = Config.baseCurrency,
+    private val currency: Currency? = null,
 ) : Chart() {
 
     init {
@@ -73,9 +72,11 @@ open class TradeChart(
 
 
     private fun tradesToSeriesData(): List<Triple<Instant, BigDecimal, String>> {
+        if (trades.isEmpty()) return emptyList()
+        val curr = currency ?: trades.first().asset.currency
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (trade in trades.sortedBy { it.time }) {
-            val value = trade.getValue(aspect, currency)
+            val value = trade.getValue(aspect, curr)
             val tooltip = trade.getTooltip()
             d.add(Triple(trade.time, value, tooltip))
         }

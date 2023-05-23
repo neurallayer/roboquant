@@ -18,13 +18,10 @@ package org.roboquant.common
 
 import org.roboquant.brokers.ExchangeRates
 import org.roboquant.brokers.SingleCurrencyExchangeRates
-import org.roboquant.common.Config.baseCurrency
-import org.roboquant.common.Config.defaultZoneId
 import org.roboquant.common.Config.exchangeRates
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.time.ZoneId
 import java.util.*
 import kotlin.io.path.div
 import kotlin.random.Random
@@ -33,8 +30,6 @@ import kotlin.random.Random
  * Configuration for roboquant that contains access to environment properties and has several global properties
  * that can be set:
  *
- * - base currency [baseCurrency]
- * - the default time zone [defaultZoneId]
  * - exchange rates [exchangeRates]
  *
  */
@@ -91,21 +86,10 @@ object Config {
     }
 
     /**
-     * Default zoneId to use for reporting purposes. Internally roboquant always uses the Instant type, so this
-     * property is only used for displaying and when required for adding or subtracting periods.
-     */
-    var defaultZoneId: ZoneId = ZoneId.systemDefault()
-
-    /**
      * The exchange rates to use when dealing with multiple currencies. The default is [SingleCurrencyExchangeRates]
      * which as the name suggests doesn't support conversions between currencies.
      */
     var exchangeRates: ExchangeRates = SingleCurrencyExchangeRates()
-
-    /**
-     * Default currency to use when reporting in a single currency.
-     */
-    var baseCurrency: Currency = Currency.USD
 
     /**
      * Default random to use, typically used by methods as a default value when other random generator is provided

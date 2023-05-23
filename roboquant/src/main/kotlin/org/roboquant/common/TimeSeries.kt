@@ -26,15 +26,19 @@ import java.util.*
 
 class Observation(val time: Instant, val value: Double)
 
-
 /**
- * Optimized implementation of time series data that allows for easy and fast calculations.
+ * Optimized implementation of time series data that allows for easy and fast calculations. The times are stored as
+ * a [timeline] and the [values] are stored as a DoubleArray.
  */
-class TimeSeries(val values: DoubleArray, val timeline: Timeline) : Iterable<Observation> {
+class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Observation> {
 
     constructor(values: List<Observation>) : this(
-        values.map { it.value }.toDoubleArray(), values.map { it.time }
+        values.map { it.time }, values.map { it.value }.toDoubleArray()
     )
+
+    init {
+        assert(timeline.size == values.size)
+    }
 
     val timeframe
         get() = timeline.timeframe
@@ -42,7 +46,7 @@ class TimeSeries(val values: DoubleArray, val timeline: Timeline) : Iterable<Obs
     val size
         get() = values.size
 
-    private class MetricEntriesIterator(private val values: DoubleArray, private val times: List<Instant>) :
+    private class ObservationIterator(private val times: List<Instant>, private val values: DoubleArray) :
         Iterator<Observation> {
 
         var count = 0
@@ -63,7 +67,7 @@ class TimeSeries(val values: DoubleArray, val timeline: Timeline) : Iterable<Obs
     fun shuffle(): TimeSeries {
         val newValues = values.copyOf()
         newValues.shuffle(Config.random)
-        return TimeSeries(newValues, timeline)
+        return TimeSeries(timeline, newValues)
     }
 
 
@@ -77,23 +81,43 @@ class TimeSeries(val values: DoubleArray, val timeline: Timeline) : Iterable<Obs
         require(values.size == timeline.size) { "values and times need to have the same size" }
     }
 
-    operator fun plus(other: Number) = TimeSeries(values + other, timeline)
+    operator fun plus(other: Number) = TimeSeries(timeline, values + other)
 
-    operator fun minus(other: Number) = TimeSeries(values - other, timeline)
+    operator fun minus(other: Number) = TimeSeries(timeline, values - other)
 
-    operator fun times(other: Number) = TimeSeries(values * other, timeline)
+    operator fun times(other: Number) = TimeSeries(timeline, values * other)
 
-    operator fun div(other: Number) = TimeSeries(values / other, timeline)
+    operator fun div(other: Number) = TimeSeries(timeline, values / other)
 
-    fun returns() = TimeSeries(values.returns(), timeline.drop(1))
+    fun returns() = TimeSeries(timeline.drop(1), values.returns())
 
-    fun max() = toList().maxBy { it.value }
+    fun max(): Observation {
+        val idx = values.indexOfMax()
+        return Observation(timeline[idx], values[idx])
+    }
 
-    fun min() = toList().minBy { it.value }
+    fun min(): Observation {
+        val idx = values.indexOfMin()
+        return Observation(timeline[idx], values[idx])
+    }
+
+
+    fun clean() : TimeSeries {
+        val x = ArrayList<Instant>(size)
+        val y = ArrayList<Double>(size)
+        for (i in values.indices) {
+            val value = values[i]
+            if (value.isFinite()) {
+                x.add(timeline[i])
+                y.add(value)
+            }
+        }
+        return TimeSeries(x, y.toDoubleArray())
+    }
 
     fun average() = values.average()
 
-    fun diff()  = TimeSeries(values.diff(), timeline.drop(1))
+    fun diff()  = TimeSeries(timeline.drop(1), values.diff())
 
     fun sum() = values.sum()
 
@@ -122,14 +146,16 @@ class TimeSeries(val values: DoubleArray, val timeline: Timeline) : Iterable<Obs
 
     fun runningFold(initial: Double): TimeSeries {
         val newData = values.runningFold(initial) { last, current -> (current + 1.0) * last }.drop(1)
-        return TimeSeries(newData.toDoubleArray(), timeline)
+        return TimeSeries(timeline, newData.toDoubleArray())
     }
 
-    fun growthRates() = TimeSeries(values.growthRates(), timeline.drop(1))
+    fun growthRates() = TimeSeries(timeline.drop(1), values.growthRates())
+
 
     override fun iterator(): Iterator<Observation> {
-        return MetricEntriesIterator(values, timeline)
+        return ObservationIterator(timeline, values)
     }
+
 
     fun toDoubleArray() = values
 
@@ -143,8 +169,9 @@ class TimeSeries(val values: DoubleArray, val timeline: Timeline) : Iterable<Obs
 }
 
 /**
- * Flatten a map of TimeSeries to a single TimeSeries sorted by their time. If there is overlap in time between runs and
- * [noOverlap] is set to true, the earlier run will win and later runs entries that overlap will be ignored.
+ * Flatten a Map of TimeSeries to a single TimeSeries sorted by their time. If there is overlap in time between runs and
+ * [noOverlap] is set to true, the earlier run observations will be used and later runs observations that overlap will
+ * be ignored.
  */
 fun Map<String, TimeSeries>.flatten(noOverlap: Boolean = true): TimeSeries {
     val sortedTimeSeries = values.sortedBy { it.timeline.first() }
@@ -172,5 +199,5 @@ inline fun <T> Collection<T>.toTimeSeries(block: (T) -> Pair<Instant, Double>): 
         values[cnt] = v
         times.add(t)
     }
-    return TimeSeries(values, times)
+    return TimeSeries(times, values)
 }

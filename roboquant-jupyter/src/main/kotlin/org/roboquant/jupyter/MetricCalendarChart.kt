@@ -20,7 +20,6 @@ import org.icepear.echarts.Option
 import org.icepear.echarts.charts.heatmap.HeatmapSeries
 import org.icepear.echarts.components.title.Title
 import org.icepear.echarts.components.tooltip.Tooltip
-import org.roboquant.common.Config
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.round
 import java.math.BigDecimal
@@ -34,12 +33,12 @@ import kotlin.collections.*
  *
  * @param metricsData the data
  * @property fractionDigits the number of digits to use, default is 2
- * @property zoneId the time zone to use, default is [Config.defaultZoneId]
+ * @property zoneId the time zone to use, default is UTC
  */
 class MetricCalendarChart(
     metricsData: TimeSeries,
     private val fractionDigits: Int = 2,
-    private val zoneId: ZoneId = Config.defaultZoneId
+    private val zoneId: ZoneId = ZoneId.of("UTC")
 ) : Chart() {
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)

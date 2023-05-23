@@ -22,8 +22,10 @@ import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.ECBExchangeRates
 import org.roboquant.brokers.FixedExchangeRates
+import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.Event
@@ -246,6 +248,35 @@ fun performanceTest() {
 }
 
 
+fun cfd() {
+
+    val feed = CSVFeed("/tmp/DE40CASH.csv") {
+        template = Asset("TEMPLATE", AssetType.CFD, Currency.EUR, Exchange.DEX)
+    }
+    require(feed.assets.size == 1)
+
+    val strategy = EMAStrategy()
+
+    // We don't want the default initial deposit in USD, since then we need a currency convertor
+    val initialDeposit = 10_000.EUR.toWallet()
+
+    // We configure a large leverage of 50x, so we 10_000 x 50 = 500_000K buyingpower to start with
+    val leverage = 50.0
+    val broker = SimBroker(initialDeposit, accountModel = MarginAccount(leverage = leverage))
+
+    // Since we only trade in 1 asset and have a lot of leverage, we allow up to 1000% of our equity (10k) allocated to
+    // one order
+    val orderPercentage = 10.0
+    val policy = FlexPolicy(shorting = true, orderPercentage = orderPercentage, safetyMargin = 0.5)
+    val roboquant = Roboquant(strategy, AccountMetric(), broker = broker, policy = policy)
+    roboquant.run(feed)
+
+    val account = roboquant.broker.account
+    println(account.summary())
+    println(account.trades.summary())
+}
+
+
 suspend fun main() {
     Config.printInfo()
 
@@ -261,6 +292,7 @@ suspend fun main() {
         "FOREX_RUN" -> forexRun()
         "PROFILE" -> profileTest()
         "PERFORMANCE" -> performanceTest()
+        "CFD" -> cfd()
     }
 
 }

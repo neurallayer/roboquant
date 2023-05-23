@@ -16,6 +16,7 @@
 
 package org.roboquant.feeds.util
 
+import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Exchange
 import java.time.Instant
 import java.time.LocalDate
@@ -112,7 +113,8 @@ class AutoDetectTimeParser : TimeParser {
     private fun detect(sample: String) {
         synchronized(this) {
             if (!this::parser.isInitialized) {
-                val match = patterns.first { it.first.matches(sample) }
+                val match = patterns.firstOrNull { it.first.matches(sample) }
+                    ?: throw ConfigurationException("No suitable time parser found for time=$sample")
                 parser = match.second
             }
         }

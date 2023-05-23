@@ -16,7 +16,9 @@
 
 package org.roboquant.feeds.csv
 
-import org.roboquant.common.*
+import org.roboquant.common.Asset
+import org.roboquant.common.AssetType
+import org.roboquant.common.Logging
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.util.AutoDetectTimeParser
 import org.roboquant.feeds.util.TimeParser
@@ -146,7 +148,7 @@ data class CSVConfig(
      *
      * @param config
      */
-    fun merge(config: Map<String, String>) {
+    private fun merge(config: Map<String, String>) {
         val assetConfig = config.filter { it.key.startsWith("asset.") }.mapKeys { it.key.substring(6) }
         template = getAssetTemplate(assetConfig)
         for ((key, value) in config) {
@@ -191,16 +193,22 @@ data class CSVConfig(
      * Detect columns in a CSV file. Either by a pre-defined parsePattern or else automatically based on the header
      * names provided
      *
-     * @param headers
+     * @param header the header fields
      */
     @Synchronized
-    fun detectColumns(headers: List<String>) {
+    internal fun detectColumns(header: List<String>) {
         if (hasColumnsDefined) return
         if (parsePattern.isNotEmpty()) info.define(parsePattern)
-        else info.detectColumns(headers)
+        else info.detectColumns(header)
         hasColumnsDefined = true
-        if (priceAdjust) require(info.adjustedClose != -1) { "No adjusted close prices found" }
-
+        require(info.time != -1) { "No time column found in header=$header" }
+        require(info.open != -1) { "No open-prices column found in header=$header" }
+        require(info.low != -1) { "No low-prices column found in header=$header" }
+        require(info.high != -1) { "No high-prices column found in header=$header" }
+        require(info.close != -1) { "No close-prices column found in header=$header" }
+        if (priceAdjust) require(info.adjustedClose != -1) {
+            "No adjusted close prices column found in header=$header"
+        }
     }
 }
 

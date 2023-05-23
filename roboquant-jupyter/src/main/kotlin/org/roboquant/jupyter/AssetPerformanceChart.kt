@@ -46,7 +46,7 @@ class AssetPerformanceChart(
     private val timeframe: Timeframe = Timeframe.INFINITE,
     private val priceType: String = "DEFAULT",
     private val compensateVolume: Boolean = true,
-    private val currency: Currency = Config.baseCurrency,
+    private val currency: Currency? = null,
     private val assetFilter: AssetFilter = AssetFilter.all()
 ) : Chart() {
 
@@ -66,6 +66,10 @@ class AssetPerformanceChart(
         val result = mutableMapOf<Asset, AssetReturns>()
         val entries = feed.filter<PriceAction>(timeframe)
         val finalEntries = entries.filter { assetFilter.filter(it.second.asset, timeframe.start) }
+        if (finalEntries.isEmpty()) return emptyList()
+
+        val curr = currency ?: finalEntries.first().second.asset.currency
+
         finalEntries.forEach { (time, priceAction) ->
             if (priceAction.volume.isFinite()) {
                 val asset = priceAction.asset
@@ -75,7 +79,7 @@ class AssetPerformanceChart(
 
                 val tradingSize = if (compensateVolume) Size(priceAction.volume) else Size.ONE
                 val tradingValue = asset.value(tradingSize, price)
-                record.volume += tradingValue.convert(currency, time = time).value
+                record.volume += tradingValue.convert(curr, time = time).value
             }
         }
         return result.map {
