@@ -31,6 +31,7 @@ import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.csv.CSVFeed
+import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.feeds.filter
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
@@ -46,6 +47,8 @@ import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Signal
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.system.measureTimeMillis
@@ -249,10 +252,20 @@ fun performanceTest() {
 
 
 fun cfd() {
+    val dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+
+    fun parse(line: List<String>, asset: Asset): Instant {
+        val text = line[0] + " " + line[1]
+        val dt = LocalDateTime.parse(text, dtf)
+        return asset.exchange.getInstant(dt)
+    }
 
     val feed = CSVFeed("/tmp/DE40CASH.csv") {
         template = Asset("TEMPLATE", AssetType.CFD, Currency.EUR, Exchange.DEX)
+        separator = '\t'
+        timeParser = TimeParser { a,b -> parse(a,b) }
     }
+
     require(feed.assets.size == 1)
 
     val strategy = EMAStrategy()
@@ -280,7 +293,7 @@ fun cfd() {
 suspend fun main() {
     Config.printInfo()
 
-    when ("PERFORMANCE") {
+    when ("CFD") {
         "SIMPLE" -> simple()
         "CSV2AVRO" -> csv2Avro("/tmp/daily/us", false)
         "MULTI_RUN" -> multiRun()

@@ -21,7 +21,10 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Asset
 import org.roboquant.common.NoTradingException
 import java.io.File
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 
 internal class CSVConfigTest {
@@ -55,14 +58,14 @@ internal class CSVConfigTest {
     fun process() {
         val config = CSVConfig()
         val asset = Asset("ABC")
-        config.detectColumns(listOf("TIME", "OPEN", "HIGH", "LOW", "CLOSE", "VOLUME"))
+        config.configure(listOf("TIME", "OPEN", "HIGH", "LOW", "CLOSE", "VOLUME"))
 
         assertDoesNotThrow {
-            config.processLine(asset, listOf("2022-01-03", "10.0", "11.0", "9.00", "10.0", "100"))
+            config.processLine(listOf("2022-01-03", "10.0", "11.0", "9.00", "10.0", "100"), asset)
         }
 
         assertThrows<NoTradingException> {
-            config.processLine(asset, listOf("2022-01-01", "10.0", "11.0", "9.00", "10.0", "100"))
+            config.processLine(listOf("2022-01-01", "10.0", "11.0", "9.00", "10.0", "100"), asset)
         }
 
     }

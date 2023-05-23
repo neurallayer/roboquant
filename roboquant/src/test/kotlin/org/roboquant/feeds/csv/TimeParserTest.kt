@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds.util
+package org.roboquant.feeds.csv
 
-import org.roboquant.common.Exchange
+import org.roboquant.common.Asset
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,8 +27,8 @@ internal class TimeParserTest {
 
     private fun parse(time: String): Instant {
         val tp = AutoDetectTimeParser()
-        val exchange = Exchange.getInstance("US")
-        return tp.parse(time, exchange)
+        val asset = Asset("TEST")
+        return tp.parse(listOf(time), asset)
     }
 
     @Test

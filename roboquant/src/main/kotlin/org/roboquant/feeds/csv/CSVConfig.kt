@@ -19,9 +19,6 @@ package org.roboquant.feeds.csv
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.util.AutoDetectTimeParser
-import org.roboquant.feeds.util.TimeParser
 import java.io.File
 import java.nio.file.Path
 import java.util.*
@@ -53,7 +50,9 @@ data class CSVConfig(
     var priceAdjust: Boolean = false,
     var template: Asset = Asset("TEMPLATE"),
     var hasHeader: Boolean = true,
-    var separator: Char = ','
+    var separator: Char = ',',
+    var timeParser: TimeParser = AutoDetectTimeParser(),
+    var priceParser: PriceParser = PriceBarParser()
 ) {
 
     /**
@@ -71,10 +70,10 @@ data class CSVConfig(
         defaultBuilder(file)
     }
 
-    private val timeParser: TimeParser = AutoDetectTimeParser()
-    private val info = ColumnInfo()
+
     private val pattern by lazy { Pattern.compile(filePattern) }
-    private var hasColumnsDefined = false
+    private var isInitialized = false
+
 
     /**
      * default builder takes the file name, removes the file extension and uses that the symbol name
@@ -173,19 +172,9 @@ data class CSVConfig(
      * @param line
      * @return
      */
-    internal fun processLine(asset: Asset, line: List<String>): PriceEntry {
-
-        val now = timeParser.parse(line[info.time], asset.exchange)
-        val volume = if (info.hasVolume) line[info.volume].toDouble() else Double.NaN
-        val action = PriceBar(
-            asset,
-            line[info.open].toDouble(),
-            line[info.high].toDouble(),
-            line[info.low].toDouble(),
-            line[info.close].toDouble(),
-            volume
-        )
-        if (priceAdjust) action.adjustClose(line[info.adjustedClose].toDouble())
+    internal fun processLine(line: List<String>, asset: Asset): PriceEntry {
+        val now = timeParser.parse(line, asset)
+        val action = priceParser.parse(line, asset)
         return PriceEntry(now, action)
     }
 
@@ -196,19 +185,11 @@ data class CSVConfig(
      * @param header the header fields
      */
     @Synchronized
-    internal fun detectColumns(header: List<String>) {
-        if (hasColumnsDefined) return
-        if (parsePattern.isNotEmpty()) info.define(parsePattern)
-        else info.detectColumns(header)
-        hasColumnsDefined = true
-        require(info.time != -1) { "No time column found in header=$header" }
-        require(info.open != -1) { "No open-prices column found in header=$header" }
-        require(info.low != -1) { "No low-prices column found in header=$header" }
-        require(info.high != -1) { "No high-prices column found in header=$header" }
-        require(info.close != -1) { "No close-prices column found in header=$header" }
-        if (priceAdjust) require(info.adjustedClose != -1) {
-            "No adjusted close prices column found in header=$header"
-        }
+    internal fun configure(header: List<String>) {
+        if (isInitialized) return
+        timeParser.init(header, this)
+        priceParser.init(header, this)
+        isInitialized = true
     }
 }
 

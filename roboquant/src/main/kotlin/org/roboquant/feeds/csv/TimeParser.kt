@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds.util
+package org.roboquant.feeds.csv
 
+import org.roboquant.common.Asset
 import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Exchange
 import java.time.Instant
@@ -29,17 +30,24 @@ import java.time.format.DateTimeFormatter
  */
 fun interface TimeParser {
 
+    fun init(header: List<String>, config: CSVConfig) {}
+
     /**
-     * Return an [Instant] given the provided [text] string and [exchange]
+     * Return an [Instant] given the provided [line] of strings and [asset]
      */
-    fun parse(text: String, exchange: Exchange): Instant
+    fun parse(line: List<String>, asset: Asset): Instant
 }
 
+
+private fun interface AuteDetectParser {
+
+    fun parse(text: String, exchange: Exchange): Instant
+}
 
 /**
  * Datetime parser that parses local date-time
  */
-private class LocalTimeParser(pattern: String) : TimeParser {
+private class LocalTimeParser(pattern: String) : AuteDetectParser {
 
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
 
@@ -54,7 +62,7 @@ private class LocalTimeParser(pattern: String) : TimeParser {
  * Parser that parses local dates and uses the exchange closing time to determine the time.
  * @param pattern
  */
-private class LocalDateParser(pattern: String) : TimeParser {
+private class LocalDateParser(pattern: String) : AuteDetectParser {
 
     private val dtf: DateTimeFormatter = DateTimeFormatter.ofPattern(pattern)
 
@@ -76,15 +84,30 @@ private class LocalDateParser(pattern: String) : TimeParser {
  */
 class AutoDetectTimeParser : TimeParser {
 
-    private lateinit var parser: TimeParser
+    private lateinit var parser: AuteDetectParser
+    private var time = 0
+
+    override fun init(header: List<String>, config: CSVConfig) {
+        val notCapital = Regex("[^A-Z]")
+        header.forEachIndexed { index, column ->
+            when (column.uppercase().replace(notCapital, "")) {
+                "TIME" -> time = index
+                "DATE" -> time = index
+                "DAY" -> time = index
+                "DATETIME" -> time = index
+                "TIMESTAMP" -> time = index
+            }
+        }
+    }
 
     /**
      * @see TimeParser.parse
      */
-    override fun parse(text: String, exchange: Exchange): Instant {
+    override fun parse(line: List<String>, asset: Asset): Instant {
         // If this is the first time calling, detect the format and parser to use
+        val text = line[time]
         if (!this::parser.isInitialized) detect(text)
-        return parser.parse(text, exchange)
+        return parser.parse(text, asset.exchange)
     }
 
     /**
@@ -97,13 +120,13 @@ class AutoDetectTimeParser : TimeParser {
             """19\d{6}""".toRegex() to LocalDateParser("yyyyMMdd"),
             """20\d{6}""".toRegex() to LocalDateParser("yyyyMMdd"),
             """\d{8} \d{6}""".toRegex() to LocalTimeParser("yyyyMMdd HHmmss"),
-            """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".toRegex() to TimeParser { str, _ -> Instant.parse(str) },
+            """\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z""".toRegex() to AuteDetectParser { text, _ -> Instant.parse(text) },
             """\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm:ss"),
             """\d{4}-\d{2}-\d{2} \d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyy-MM-dd HH:mm"),
             """\d{4}-\d{2}-\d{2}""".toRegex() to LocalDateParser("yyyy-MM-dd"),
             """\d{8} \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd HH:mm:ss"),
             """\d{8}  \d{2}:\d{2}:\d{2}""".toRegex() to LocalTimeParser("yyyyMMdd  HH:mm:ss"),
-            """-?\d{1,19}""".toRegex() to TimeParser { str, _ -> Instant.ofEpochMilli(str.toLong()) }
+            """-?\d{1,19}""".toRegex() to AuteDetectParser { text, _ -> Instant.ofEpochMilli(text.toLong()) }
         )
     }
 

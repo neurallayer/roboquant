@@ -142,10 +142,9 @@ private class IncrementalReader(val asset: Asset, file: File, val config: CSVCon
     var errors = 0L
 
     init {
-        if (config.parsePattern.isNotEmpty()) config.detectColumns(emptyList())
         if (config.hasHeader && reader.hasNext()) {
             val line = reader.next().fields
-            config.detectColumns(line)
+            config.configure(line)
         }
     }
 
@@ -156,7 +155,7 @@ private class IncrementalReader(val asset: Asset, file: File, val config: CSVCon
         while (reader.hasNext()) {
             val line = reader.next().fields
             try {
-                return config.processLine(asset, line)
+                return config.processLine(line, asset)
             } catch (_: Throwable) {
                 errors++
             }

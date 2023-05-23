@@ -155,14 +155,13 @@ class CSVFeed(
             val result = mutableListOf<PriceEntry>()
             var errors = 0
             var isHeader = config.hasHeader
-            if (config.parsePattern.isNotEmpty()) config.detectColumns(emptyList())
             for (row in it) {
                 if (isHeader) {
-                    config.detectColumns(row.fields)
+                    config.configure(row.fields)
                     isHeader = false
                 } else {
                     try {
-                        val step = config.processLine(asset, row.fields)
+                        val step = config.processLine(row.fields, asset)
                         result += step
                     } catch (t: Throwable) {
                         logger.debug(t) { "${asset.symbol} $row" }
