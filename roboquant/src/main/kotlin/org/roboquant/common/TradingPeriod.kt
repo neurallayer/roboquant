@@ -125,7 +125,7 @@ val Int.minutes
  * Convert an Int to a [TradingPeriod] of seconds
  */
 val Int.seconds
-    get() = TradingPeriod(0,0,0,0,0,this)
+    get() = TradingPeriod(0,0,0,0,0,this,0L)
 
 /**
  * Convert an Int to a [TradingPeriod] of milliseconds

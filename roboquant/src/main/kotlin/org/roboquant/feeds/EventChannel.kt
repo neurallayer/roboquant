@@ -30,11 +30,11 @@ import org.roboquant.common.compareTo
  * It has built in support to limit the events that are being send to a certain [timeframe]. It is guaranteed that
  * no events outside that timeframe can be delivered to the channel.
  *
- * @param capacity The capacity of the channel in the number of events it can store before blocking the sender
+ * @property capacity The capacity of the channel in the number of events it can store before blocking the sender
  * @property timeframe Limit the events to this timeframe, default is INFINITE, so no limit
  * @constructor create a new EventChannel
  */
-open class EventChannel(capacity: Int = 100, val timeframe: Timeframe = Timeframe.INFINITE) : AutoCloseable {
+open class EventChannel(val capacity: Int = 100, val timeframe: Timeframe = Timeframe.INFINITE) : AutoCloseable {
 
     private val channel = Channel<Event>(capacity)
     private val logger = Logging.getLogger(EventChannel::class)

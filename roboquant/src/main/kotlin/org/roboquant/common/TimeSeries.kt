@@ -37,7 +37,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     )
 
     init {
-        assert(timeline.size == values.size)
+        require(timeline.size == values.size)
     }
 
     val timeframe
