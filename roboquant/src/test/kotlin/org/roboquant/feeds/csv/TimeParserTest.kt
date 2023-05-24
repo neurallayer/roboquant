@@ -26,7 +26,7 @@ internal class TimeParserTest {
 
 
     private fun parse(time: String): Instant {
-        val tp = AutoDetectTimeParser()
+        val tp = AutoDetectTimeParser(0)
         val asset = Asset("TEST")
         return tp.parse(listOf(time), asset)
     }

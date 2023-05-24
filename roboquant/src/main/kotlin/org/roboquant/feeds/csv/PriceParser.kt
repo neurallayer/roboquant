@@ -39,14 +39,15 @@ fun interface PriceParser {
 /**
  * Parse lines and create PriceBar
  */
-class PriceBarParser(private var priceAdjust: Boolean = false) : PriceParser {
-
-    private var open: Int = -1
-    private var high: Int = -1
-    private var low: Int = -1
-    private var close: Int = -1
-    private var volume: Int = -1
-    private var adjustedClose: Int = -1
+class PriceBarParser(
+    private var open: Int = -1,
+    private var high: Int = -1,
+    private var low: Int = -1,
+    private var close: Int = -1,
+    private var volume: Int = -1,
+    private var adjustedClose: Int = -1,
+    private var priceAdjust: Boolean = false
+) : PriceParser {
 
     private fun validate() {
         require(open != -1) { "No open-prices column" }
@@ -59,7 +60,6 @@ class PriceBarParser(private var priceAdjust: Boolean = false) : PriceParser {
     }
 
     override fun init(header: List<String>, config: CSVConfig) {
-        this.priceAdjust = config.priceAdjust
         val notCapital = Regex("[^A-Z]")
         header.forEachIndexed { index, column ->
             when (column.uppercase().replace(notCapital, "")) {
@@ -97,16 +97,15 @@ class PriceBarParser(private var priceAdjust: Boolean = false) : PriceParser {
 
 }
 
-
 /**
  * Parse lines and create PriceBar
  */
-class PriceQuoteParser : PriceParser {
-
-    private var ask: Int = -1
-    private var bid: Int = -1
-    private var bidVolume: Int = -1
-    private var askVolume: Int = -1
+class PriceQuoteParser(
+    private var ask: Int = -1,
+    private var bid: Int = -1,
+    private var bidVolume: Int = -1,
+    private var askVolume: Int = -1,
+) : PriceParser {
 
     private fun validate() {
         require(ask != -1) { "No ask-prices column" }

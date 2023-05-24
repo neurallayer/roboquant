@@ -27,7 +27,7 @@ internal class PriceParserTest {
 
     @Test
     fun priceBarParser() {
-        val parser = PriceBarParser(false)
+        val parser = PriceBarParser()
 
         assertThrows<IllegalArgumentException> {
             parser.init(listOf("time"), CSVConfig())

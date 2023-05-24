@@ -31,6 +31,7 @@ import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.csv.CSVFeed
+import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.feeds.filter
 import org.roboquant.loggers.LastEntryLogger
@@ -56,10 +57,10 @@ import kotlin.test.assertEquals
 
 fun multiCurrency() {
     val feed = CSVFeed("data/US") {
-        priceAdjust = true
+        priceParser = PriceBarParser(priceAdjust = true)
     }
     val feed2 = CSVFeed("data/EU") {
-        priceAdjust = true
+        priceParser = PriceBarParser(priceAdjust = true)
         template = Asset("TEMPLATE", currencyCode = "EUR")
     }
     feed.merge(feed2)

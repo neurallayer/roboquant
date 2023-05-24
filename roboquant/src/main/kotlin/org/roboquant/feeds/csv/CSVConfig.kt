@@ -36,7 +36,6 @@ import kotlin.io.path.div
  * @property filePattern file patterns to take into considerations
  * @property fileSkip list of files to skip
  * @property parsePattern what do the columns present, if empty columns will be determined based on their name
- * @property priceAdjust should the price be adjusted using a volume adjusted column
  * @property template The template to use in the default [assetBuilder]
  * @property hasHeader do the CSV files have a header, default is true
  * @property separator the field separator character, default is ',' (comma)
@@ -47,7 +46,6 @@ data class CSVConfig(
     var filePattern: String = ".*",
     var fileSkip: List<String> = emptyList(),
     var parsePattern: String = "",
-    var priceAdjust: Boolean = false,
     var template: Asset = Asset("TEMPLATE"),
     var hasHeader: Boolean = true,
     var separator: Char = ',',
@@ -156,7 +154,6 @@ data class CSVConfig(
                 "file.extension" -> fileExtension = value
                 "file.pattern" -> filePattern = value
                 "file.skip" -> fileSkip = value.split(",")
-                "price.adjust" -> priceAdjust = value.toBoolean()
                 "parse.pattern" -> parsePattern = value
 
             }

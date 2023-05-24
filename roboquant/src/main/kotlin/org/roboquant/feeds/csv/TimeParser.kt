@@ -82,20 +82,20 @@ private class LocalDateParser(pattern: String) : AuteDetectParser {
  *
  * @constructor Create new AutoDetect time parser
  */
-class AutoDetectTimeParser : TimeParser {
+class AutoDetectTimeParser(private var timeColumn: Int = -1) : TimeParser {
 
     private lateinit var parser: AuteDetectParser
-    private var time = 0
 
     override fun init(header: List<String>, config: CSVConfig) {
+        if (timeColumn != -1) return
         val notCapital = Regex("[^A-Z]")
         header.forEachIndexed { index, column ->
             when (column.uppercase().replace(notCapital, "")) {
-                "TIME" -> time = index
-                "DATE" -> time = index
-                "DAY" -> time = index
-                "DATETIME" -> time = index
-                "TIMESTAMP" -> time = index
+                "TIME" -> timeColumn = index
+                "DATE" -> timeColumn = index
+                "DAY" -> timeColumn = index
+                "DATETIME" -> timeColumn = index
+                "TIMESTAMP" -> timeColumn = index
             }
         }
     }
@@ -105,7 +105,7 @@ class AutoDetectTimeParser : TimeParser {
      */
     override fun parse(line: List<String>, asset: Asset): Instant {
         // If this is the first time calling, detect the format and parser to use
-        val text = line[time]
+        val text = line[timeColumn]
         if (!this::parser.isInitialized) detect(text)
         return parser.parse(text, asset.exchange)
     }
