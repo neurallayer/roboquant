@@ -30,7 +30,10 @@ import java.time.format.DateTimeFormatter
  */
 fun interface TimeParser {
 
-    fun init(header: List<String>, config: CSVConfig) {}
+    /**
+     * Initialize the parser based on the header. Default is to do nothing.
+     */
+    fun init(header: List<String>) {}
 
     /**
      * Return an [Instant] given the provided [line] of strings and [asset]
@@ -86,7 +89,7 @@ class AutoDetectTimeParser(private var timeColumn: Int = -1) : TimeParser {
 
     private lateinit var parser: AuteDetectParser
 
-    override fun init(header: List<String>, config: CSVConfig) {
+    override fun init(header: List<String>) {
         if (timeColumn != -1) return
         val notCapital = Regex("[^A-Z]")
         header.forEachIndexed { index, column ->

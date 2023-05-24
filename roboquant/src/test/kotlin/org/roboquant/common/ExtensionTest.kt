@@ -23,7 +23,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class ExtensionsTest {
+class ExtensionTest {
 
     @Test
     fun returns() {

@@ -49,9 +49,9 @@ interface PriceAction : Action {
 
     /**
      * Get the price for this PriceAction. If more than one price is available, optionally the
-     * [type] of price can be passed as a parameter. For example "CLOSE" in case of a candlestick.
+     * [type] of price can be passed as a parameter. For example, "CLOSE" in case of a candlestick.
      *
-     * Any implementation is expected to return a default price if the type is not recognised. This way strategies
+     * Any implementation is expected to return a default price if the type is not recognized. This way strategies
      * can work on a wide variety of feeds. It is convention to use uppercase strings for different types.
      */
     fun getPrice(type: String = "DEFAULT"): Double
@@ -64,7 +64,7 @@ interface PriceAction : Action {
     /**
      * Volume for the price action. If not implemented, it should return [Double.NaN]
      *
-     * Volume in the context of a PriceAction can mean different things. For example is can be trade volume but also
+     * Volume in the context of a PriceAction can mean different things. For example, is can be trade volume but also
      * the total order-book volume, depending on the type of PriceAction.
      */
     val volume: Double
@@ -243,7 +243,7 @@ data class PriceQuote(
 
 
     /**
-     * Return the spread percentage. The used formula is
+     * Returns the spread percentage. The used formula is
      *
      *      spread = (lowest_aks - highest_bid) / lowest_ask
      */
@@ -255,12 +255,12 @@ data class PriceQuote(
 
 /**
  * Contains an order book for an asset at a certain moment in time. The entries in the order book, both
- * ask and bid, are modelled as a list of [OrderBookEntry]
+ * ask and bid, are modeled as a list of [OrderBookEntry]
  *
  * @property asset
  * @property asks
  * @property bids
- * @constructor Create empty Order book
+ * @constructor Create a new order book
  */
 data class OrderBook(
     override val asset: Asset,

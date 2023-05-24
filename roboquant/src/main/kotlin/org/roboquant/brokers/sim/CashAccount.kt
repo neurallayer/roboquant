@@ -26,7 +26,7 @@ import org.roboquant.common.sumOf
  * and also not supported. If you do anyway, the short exposures are for the full 100% deducted from the buying power.
  * So the used calculation is:
  *
- *      buying power = cash - short exposure - minimum
+ *      Buying power = cash - short exposure - minimum
  *
  * Note: currently open orders are not taken into consideration when calculating the total buying power
  *

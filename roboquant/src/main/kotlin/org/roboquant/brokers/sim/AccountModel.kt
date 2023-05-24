@@ -20,11 +20,11 @@ import org.roboquant.brokers.Account
 import org.roboquant.brokers.sim.execution.InternalAccount
 
 /**
- * Interface for modelling different types of Accounts used in the [SimBroker], like a [CashAccount] or [MarginAccount]
+ * Interface for modeling different types of Accounts used in the [SimBroker], like a [CashAccount] or [MarginAccount]
  *
  * Currently, the main functionality is that at the end of each step the buying power is re-calculated and made
- * available in the attribute [Account.buyingPower]. But in the future the implementation could make other updates
- * to the account, for example calculate borrow fees or interest rates that might apply.
+ * available in the attribute [Account.buyingPower]. But in the future, the implementation could make other updates
+ * to the account, for example, calculate borrowing fees or interest rates that might apply.
  */
 interface AccountModel {
 

@@ -63,20 +63,20 @@ class XChangePollingLiveFeed(
         }
     }
 
-    private val assetsMap = mutableMapOf<String, Asset>()
+    private val assetMap = mutableMapOf<String, Asset>()
 
     /**
      * Assets that are subscribed to
      */
     val assets
-        get() = assetsMap.values
+        get() = assetMap.values
 
     /**
      * Subscribe to live trade updates from the exchange. The resulting actions will be of the
      * type of [TradePrice] events.
      */
     fun subscribeTrade(vararg symbols: String, pollingDelayMillis: Int = 60_000) {
-        for (symbol in symbols) assetsMap[symbol] = getAsset(symbol)
+        for (symbol in symbols) assetMap[symbol] = getAsset(symbol)
 
         jobs.add {
             var done = false
@@ -88,7 +88,7 @@ class XChangePollingLiveFeed(
                     val result = service.getTrades(cryptoPair)
                     for (trade in result.trades) {
                         println(trade)
-                        val asset = assetsMap[symbol]!!
+                        val asset = assetMap[symbol]!!
                         val item = TradePrice(asset, trade.price.toDouble(), trade.originalAmount.toDouble())
                         val now = trade.timestamp.toInstant()
                         val event = Event(listOf(item), now)

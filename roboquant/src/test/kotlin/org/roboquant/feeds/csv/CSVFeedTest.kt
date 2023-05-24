@@ -23,6 +23,9 @@ import org.roboquant.common.Currency
 import org.roboquant.common.Exchange
 import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.PriceAction
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.test.assertEquals
@@ -85,6 +88,47 @@ internal class CSVFeedTest {
         assertEquals(1, assets.size)
         assertEquals(Currency.USD, assets.first().currency)
         assertEquals(9, feed.timeline.size)
+    }
+
+    @Test
+    fun mt5PriceBar() {
+        val dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+
+        fun parse(line: List<String>, asset: Asset): Instant {
+            val text = line[0] + " " + line[1]
+            val dt = LocalDateTime.parse(text, dtf)
+            return asset.exchange.getInstant(dt)
+        }
+
+        val feed = CSVFeed(TestData.dataDir() + "MT5/TEST_M1.csv") {
+            assetBuilder = { Asset("MSFT") }
+            separator = '\t'
+            timeParser = TimeParser { a,b -> parse(a,b) }
+        }
+        val assets = feed.assets
+        assertEquals(1, assets.size)
+        assertEquals(16, feed.timeline.size)
+    }
+
+    @Test
+    fun mt5PriceQuote() {
+        val dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss.SSS")
+
+        fun parse(line: List<String>, asset: Asset): Instant {
+            val text = line[0] + " " + line[1]
+            val dt = LocalDateTime.parse(text, dtf)
+            return asset.exchange.getInstant(dt)
+        }
+
+        val feed = CSVFeed(TestData.dataDir() + "MT5/TEST_QUOTES.csv") {
+            assetBuilder = { Asset("MSFT") }
+            separator = '\t'
+            timeParser = TimeParser { a,b -> parse(a,b) }
+            priceParser = PriceQuoteParser()
+        }
+        val assets = feed.assets
+        assertEquals(1, assets.size)
+        assertEquals(49, feed.timeline.size)
     }
 
 

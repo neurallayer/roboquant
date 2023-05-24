@@ -176,16 +176,15 @@ data class CSVConfig(
     }
 
     /**
-     * Detect columns in a CSV file. Either by a pre-defined parsePattern or else automatically based on the header
-     * names provided
+     * Configure the time & price parsers based on the provided header
      *
      * @param header the header fields
      */
     @Synchronized
     internal fun configure(header: List<String>) {
         if (isInitialized) return
-        timeParser.init(header, this)
-        priceParser.init(header, this)
+        timeParser.init(header)
+        priceParser.init(header)
         isInitialized = true
     }
 }

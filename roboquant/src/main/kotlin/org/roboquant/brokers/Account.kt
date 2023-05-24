@@ -24,8 +24,8 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 /**
- * Account represents a brokerage trading account and is unified across all broker implementations. This is an immutable
- * class, and it holds the following state:
+ * The Account represents a brokerage trading account and is unified across all broker implementations.
+ * This is an immutable class, and it holds the following state:
  *
  * - buying power
  * - base currency
@@ -34,7 +34,8 @@ import java.time.temporal.ChronoUnit
  * - The past [trades]
  * - The [openOrders] and [closedOrders] state
  *
- * Some convenience methods convert a multi-currency Wallet to a single-currency Amount. For this to work, you'll
+ * Some convenience methods convert a multi-currency Wallet to a single-currency Amount.
+ * For this to work, you'll
  * need to have the appropriate exchange rates defined at [Config.exchangeRates].
  *
  * @property baseCurrency what is the base currency of the account

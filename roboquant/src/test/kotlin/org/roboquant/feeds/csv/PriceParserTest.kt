@@ -30,18 +30,25 @@ internal class PriceParserTest {
         val parser = PriceBarParser()
 
         assertThrows<IllegalArgumentException> {
-            parser.init(listOf("time"), CSVConfig())
+            parser.init(listOf("time"))
         }
 
         assertDoesNotThrow {
-            parser.init(listOf("open", "high", "low", "close", "volume"), CSVConfig())
+            parser.init(listOf("open", "high", "low", "close", "volume"))
         }
 
         val asset = Asset("TEST")
         val pb = parser.parse(listOf("10.0", "11.0", "9.0", "10.50", ""), asset)
         assertEquals(11.0, pb.high)
+    }
 
 
+    @Test
+    fun priceBarParser2() {
+        val parser = PriceBarParser(open = 4, high = 3, low = 2, close = 1, volume = 5)
+        val asset = Asset("TEST")
+        val pb = parser.parse(listOf("dummy", "10.50", "9.0", "11.0", "10", "100"), asset)
+        assertEquals(11.0, pb.high)
     }
 
     @Test
@@ -49,11 +56,11 @@ internal class PriceParserTest {
         val parser = PriceQuoteParser()
 
         assertThrows<IllegalArgumentException> {
-            parser.init(listOf("time"), CSVConfig())
+            parser.init(listOf("time"))
         }
 
         assertDoesNotThrow {
-            parser.init(listOf("ask", "bid"), CSVConfig())
+            parser.init(listOf("ask", "bid"))
         }
 
         val asset = Asset("TEST")

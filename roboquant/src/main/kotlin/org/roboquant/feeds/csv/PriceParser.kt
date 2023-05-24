@@ -27,10 +27,13 @@ import java.time.Instant
  */
 fun interface PriceParser {
 
-    fun init(header: List<String>, config: CSVConfig) {}
+    /**
+     * Initialize the parser based on the header. Default is to do nothing.
+     */
+    fun init(header: List<String>) {}
 
     /**
-     * Return an [Instant] given the provided [line] of strings and [asset]
+     * Return an [PriceAction] given the provided [line] of strings and [asset]
      */
     fun parse(line: List<String>, asset: Asset): PriceAction
 
@@ -59,7 +62,7 @@ class PriceBarParser(
         }
     }
 
-    override fun init(header: List<String>, config: CSVConfig) {
+    override fun init(header: List<String>) {
         val notCapital = Regex("[^A-Z]")
         header.forEachIndexed { index, column ->
             when (column.uppercase().replace(notCapital, "")) {
@@ -112,7 +115,7 @@ class PriceQuoteParser(
         require(bid != -1) { "No bid-prices column found" }
     }
 
-    override fun init(header: List<String>, config: CSVConfig) {
+    override fun init(header: List<String>) {
         val notCapital = Regex("[^A-Z]")
         header.forEachIndexed { index, column ->
             when (column.uppercase().replace(notCapital, "")) {

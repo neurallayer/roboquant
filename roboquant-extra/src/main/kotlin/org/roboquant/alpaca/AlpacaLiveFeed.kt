@@ -75,7 +75,7 @@ class AlpacaLiveFeed(
     private val listener = createListener()
     private val subscribedSymbols = mutableListOf<String>()
 
-    private val assetsMap by lazy {
+    private val assetMap by lazy {
         availableAssets.associateBy { it.symbol }
     }
 
@@ -116,7 +116,7 @@ class AlpacaLiveFeed(
      * Get all subscribed assets, stocks and crypto combined
      */
     override val assets: SortedSet<Asset>
-        get() = subscribedSymbols.map { assetsMap.getValue(it) }.toSortedSet()
+        get() = subscribedSymbols.map { assetMap.getValue(it) }.toSortedSet()
 
     /**
      * Connect to streaming data for stock market and crypto market
@@ -206,7 +206,7 @@ class AlpacaLiveFeed(
         try {
             logger.trace { "received msg=$msg" }
             if (msg is SymbolMessage) {
-                val asset = assetsMap.getValue(msg.symbol)
+                val asset = assetMap.getValue(msg.symbol)
 
                 val action: PriceAction? = when (msg) {
                     is TradeMessage -> TradePrice(asset, msg.price)
