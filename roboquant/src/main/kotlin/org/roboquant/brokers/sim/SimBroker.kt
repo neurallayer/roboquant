@@ -38,7 +38,7 @@ import java.time.Instant
  * @property feeModel the fee/commission model to use, default is [NoFeeModel]
  * @property accountModel the account model (like cash or margin) to use, default is [CashAccount]
  * @param pricingEngine the pricing engine to use to calculate trade pricing, default is [SpreadPricingEngine]
- * @constructor Create new instance of SimBroker
+ * @constructor Create a new instance of SimBroker
  */
 open class SimBroker(
     val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
@@ -90,7 +90,7 @@ open class SimBroker(
     /**
      * Update the account based on an execution. This will perform the following steps:
      *
-     * 1. Update the cash position
+     * 1. Update cash positions
      * 2. Update the portfolio position for the underlying asset
      * 3. Create and add a trade object to the account
      *
@@ -102,7 +102,7 @@ open class SimBroker(
         val asset = execution.order.asset
         val position = Position(asset, execution.size, execution.price)
 
-        // Are there any fees to be considered
+        // Calculate the fees that apply to this execution
         val fee = feeModel.calculate(execution, time, this._account.trades)
 
         // PNL includes the fee

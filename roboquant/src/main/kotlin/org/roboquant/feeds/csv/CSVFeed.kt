@@ -34,7 +34,7 @@ import kotlin.io.path.isRegularFile
  * Read historic price data from CSV files in a directory. It will traverse down if it finds subdirectories. This
  * implementation is thread safe and can be shared across multiple runs at the same time.
  *
- * This implementation will store all the data in memory, using Double type for the prices. If you don't have enough
+ * This implementation will store all the data in memory, using [Double] for the prices. If you don't have enough
  * memory available, consider using [LazyCSVFeed] instead.
  *
  * @param path the directory that contains CSV files or a single CSV file
@@ -47,7 +47,7 @@ class CSVFeed(
 ) : HistoricPriceFeed() {
 
     /**
-     * Similar to main constructor, but this one takes the path argument as a String.
+     * Similar to the main constructor, but this one takes the path argument as a String.
      * @see CSVFeed
      */
     constructor(path: String, configure: CSVConfig.() -> Unit = {}) : this(Path.of(path), configure)
@@ -72,20 +72,23 @@ class CSVFeed(
     companion object {
 
         /**
-         * Process historical PriceBar Forex data downloaded from [HistData](http://HistData.com).
-         * Please note that tick data is not supported, only the 1-minute price-bars are.
+         * Process historical PriceBar Forex data downloaded from [HistData](http://HistData.com) in the generic ASCII
+         * format.
+         *
+         * Please note that tick data is not supported, only the price-bars are.
          */
         fun fromHistData(path: String): CSVFeed {
             return CSVFeed(path) {
                 assetBuilder = {
                     val fileName = it.name
                     assert(fileName.startsWith("DAT_ASCII_")) {
-                        "not a histdata.com file, should start with DAT_ASCII_"
+                        "not a histdata.com file, filename should start with DAT_ASCII_"
                     }
                     val currencyPair = fileName.split('_')[2]
                     Asset.forexPair(currencyPair)
                 }
-                parsePattern = "TOHLC" // There is no volume included in these files
+                priceParser = PriceBarParser(1,2,3,4)
+                timeParser = AutoDetectTimeParser(0)
                 separator = ';'
                 hasHeader = false
             }
@@ -101,8 +104,8 @@ class CSVFeed(
 
             return CSVFeed(path) {
                 fileExtension = ".us.txt"
-                parsePattern = "??T?OHLCV?"
                 assetBuilder = { file: File -> Asset(file2Symbol(file)) }
+                timeParser = AutoDetectTimeParser(2)
             }
         }
 

@@ -46,7 +46,7 @@ class MarginAccount(
 ) : AccountModel {
 
     /**
-     * Create a margin based on a [leverage]. Effectively all margins values will be set to 1/leverage. Optional can
+     * Create a margin based on a [leverage]. Effectively, all margins values will be set to 1/leverage. Optional can
      * provide a minimum cash amount that needs to remain in the account.
      */
     constructor(leverage: Double, minimum: Double = 0.0) : this(

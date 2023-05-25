@@ -18,10 +18,7 @@ package org.roboquant.feeds.csv
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import org.roboquant.common.Asset
-import org.roboquant.common.Currency
-import org.roboquant.common.Exchange
-import org.roboquant.common.getBySymbol
+import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
 import java.time.Instant
 import java.time.LocalDateTime
@@ -131,6 +128,22 @@ internal class CSVFeedTest {
         assertEquals(49, feed.timeline.size)
     }
 
+
+    @Test
+    fun histData() {
+        val feed = CSVFeed.fromHistData(TestData.dataDir() + "/HISTDATA")
+        assertEquals(1, feed.assets.size)
+        assertEquals(20, feed.timeline.size)
+        assertEquals(Timeframe.parse("2023-05-01T00:00:00Z", "2023-05-01T00:19:00Z").toInclusive(), feed.timeframe)
+    }
+
+    @Test
+    fun stooqData() {
+        val feed = CSVFeed.fromStooq(TestData.dataDir() + "/STOOQ")
+        assertEquals(1, feed.assets.size)
+        assertEquals(20, feed.timeline.size)
+        assertEquals(Timeframe.parse("1984-09-07T20:00:00Z", "1984-10-04T20:00:00Z").toInclusive(), feed.timeframe)
+    }
 
     @Test
     fun noAssets() {

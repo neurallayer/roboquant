@@ -27,7 +27,7 @@ import org.roboquant.common.Asset
  * - cancellation of an existing order
  * - update of an existing order
  *
- * An order doesn't necessary have a size, for example in case of a cancellation order. But every order is linked to
+ * An order doesn't necessary has a size. For example, in case of a cancellation order. But every order is linked to
  * a single asset.
  *
  * @property asset the underlying asset of the order

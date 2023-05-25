@@ -35,7 +35,6 @@ import kotlin.io.path.div
  * @property fileExtension file extensions to parse, default is '.csv'
  * @property filePattern file patterns to take into considerations
  * @property fileSkip list of files to skip
- * @property parsePattern what do the columns present, if empty columns will be determined based on their name
  * @property template The template to use in the default [assetBuilder]
  * @property hasHeader do the CSV files have a header, default is true
  * @property separator the field separator character, default is ',' (comma)
@@ -45,7 +44,6 @@ data class CSVConfig(
     var fileExtension: String = ".csv",
     var filePattern: String = ".*",
     var fileSkip: List<String> = emptyList(),
-    var parsePattern: String = "",
     var template: Asset = Asset("TEMPLATE"),
     var hasHeader: Boolean = true,
     var separator: Char = ',',
@@ -54,13 +52,13 @@ data class CSVConfig(
 ) {
 
     /**
-     * Asset builder allows to create assets based on more than just the symbol name. The input is the file that will
-     * be parsed and the returned value is a valid Asset.
+     * The asset builder allows creating assets based on more than just the symbol name.
+     * The input is the file that will be parsed, and the returned value is a valid Asset.
      *
      * The default implementation will process the following steps:
      *
-     * 1. Take the file name part of the file as the symbol name
-     * 2  Remove the [fileExtension] part
+     * 1. Use the file name part of the file as symbol name
+     * 2. Remove the [fileExtension] part
      * 3. Convert to symbol name to uppercase
      * 4. Use the [template] to create the actual asset, with only the symbol name variable
      */
@@ -74,16 +72,13 @@ data class CSVConfig(
 
 
     /**
-     * default builder takes the file name, removes the file extension and uses that the symbol name
+     * The default builder takes the file name, removes the file extension and uses that the symbol name
      */
     private fun defaultBuilder(file: File): Asset {
         val symbol = file.name.removeSuffix(fileExtension).uppercase()
         return template.copy(symbol = symbol)
     }
 
-    init {
-        require(parsePattern.isEmpty() || parsePattern.length > 5)
-    }
 
     /**
      * @suppress
@@ -154,8 +149,6 @@ data class CSVConfig(
                 "file.extension" -> fileExtension = value
                 "file.pattern" -> filePattern = value
                 "file.skip" -> fileSkip = value.split(",")
-                "parse.pattern" -> parsePattern = value
-
             }
         }
 

@@ -100,7 +100,7 @@ open class FlexPolicy(
             class MyPolicy : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting) {
 
                 override fun createOrder(signal: Signal, size: Size, price: Double): Order {
-                    // BUY orders have below market price limit, and SELL order above
+                    // BUY orders have a below market price limit, and SELL order above
                     val limitOffset = limitPercentage * size.sign
                     val limitPrice = price * (1.0 - limitOffset)
                     return LimitOrder(signal.asset, size, limitPrice)

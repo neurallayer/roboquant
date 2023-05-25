@@ -63,9 +63,9 @@ class BracketOrder(
 
         /**
          * Create a bracket order meeting the following criteria:
-         * - the entry order is a [MarketOrder] for the provided [asset] and [size]
-         * - the take profit order is a [TrailOrder] with the specified [trailPercentage]
-         * - the stop loss order is a [StopOrder] using a stop priced based on the provided [stopPercentage]
+         * - the entry-order is a [MarketOrder] for the provided [asset] and [size]
+         * - the take-profit order is a [TrailOrder] with the specified [trailPercentage]
+         * - the stop-loss order is a [StopOrder] using a stop priced based on the provided [stopPercentage]
          */
         fun marketTrailStop(
             asset: Asset,

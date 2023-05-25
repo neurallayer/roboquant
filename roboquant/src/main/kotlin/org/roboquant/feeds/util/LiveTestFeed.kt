@@ -28,7 +28,7 @@ import java.time.Instant
  * @property prices the prices to use, expressed as one or more int progressions
  * @property asset
  * @property delayInMillis How much delay between two events, default is 1000ms
- * @constructor Create new Test feed
+ * @constructor Create a new Test feed
  */
 class LiveTestFeed(
     private vararg val prices: Iterable<Number> = arrayOf(90..100, 100 downTo 90),

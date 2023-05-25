@@ -20,14 +20,14 @@ import org.roboquant.common.Asset
 import java.time.Instant
 
 /**
- * Strategy that use the crossover of two Exponential Moving Averages (EMA) to generate a BUY or SELL signal. It is
+ * Strategy that uses the crossover of two Exponential Moving Averages (EMA) to generate a BUY or SELL signal. It is
  * frequently used in FOREX trading, but can also be applied to other asset classes.
  *
  * The rules are straight forward:
  *
  * - If the fast EMA trend crosses over the slow EMA trend, generate a BUY signal
  * - If the fast EMA trend crosses under the slow EMA trend, generate a SELL signal
- * - Don't generate a signal in all other scenario's
+ * - Don't generate a signal in all other scenarios
  *
  * This is a computational and memory efficient implementation since it doesn't store historic prices in memory.
  *
@@ -35,7 +35,7 @@ import java.time.Instant
  *
  * @param fastPeriod The shorter (fast) period or fast EMA in number of events, default is 12
  * @param slowPeriod The longer (slow) period or slow EMA in number of events, default is 26
- * @param smoothing Smoothing factor to use, default is 2.0
+ * @param smoothing The smoothing factor to use, default is 2.0
  * @property minEvents minimal number of events observed before starting to execute the strategy, default is the same
  * @property priceType the type of price to use, like "CLOSE" or "OPEN", default is "DEFAULT"
  * as the slow period

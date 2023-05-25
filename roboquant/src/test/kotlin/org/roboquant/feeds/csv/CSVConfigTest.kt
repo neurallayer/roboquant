@@ -36,7 +36,6 @@ internal class CSVConfigTest {
         assertEquals(Asset("TEMPLATE"), config.template)
         assertEquals(".csv", config.fileExtension)
         assertTrue(config.fileSkip.isEmpty())
-        assertTrue(config.parsePattern.isEmpty())
         assertEquals(true, config.hasHeader)
         assertEquals(',', config.separator)
     }

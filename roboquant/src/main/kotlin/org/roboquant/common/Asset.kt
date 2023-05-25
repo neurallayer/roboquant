@@ -146,7 +146,7 @@ data class Asset(
             } else {
                 throw UnsupportedException("Cannot parse $symbol to currency pair")
             }
-            return Asset("$base/$quote", AssetType.FOREX, quote)
+            return Asset("$base/$quote", AssetType.FOREX, quote, "FOREX")
         }
 
     }

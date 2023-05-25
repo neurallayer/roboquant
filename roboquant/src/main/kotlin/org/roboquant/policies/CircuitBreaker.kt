@@ -17,7 +17,8 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
-import org.roboquant.common.*
+import org.roboquant.common.TradingPeriod
+import org.roboquant.common.minus
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
@@ -72,7 +73,9 @@ internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, pr
  * Note: this circuit breaker will also block closing-position orders if the [maxOrders] limit is exceeded.
  *
  * Usage:
- *      // For example allow maximum of 5 orders per 8 hours
- *      val policy = myPolicy.circuitBreaker(5, 8.hours)
+ * ```
+ * // For example allow maximum of 5 orders per 8 hours
+ * val policy = myPolicy.circuitBreaker(5, 8.hours)
+ * ```
  */
 fun Policy.circuitBreaker(maxOrders: Int, period: TradingPeriod): Policy = CircuitBreaker(this, maxOrders, period)

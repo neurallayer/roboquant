@@ -16,7 +16,9 @@
 
 package org.roboquant.common
 
-import java.time.*
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.LocalTime
 
 /**
  * Trading calendar defines when an [Exchange] is open for trading. Timezone conversions are handled by the [Exchange]
@@ -42,13 +44,13 @@ interface TradingCalendar {
 }
 
 /**
- * Simple trading calendar that supports a fixed open and close time and optional exclude certain days of the week.
+ * Simple trading calendar that supports a fixed open and close time and optionally exclude certain days of the week.
  * There is no support for public holidays or bank holidays.
  *
  * @property opening opening time, default is "09:30"
  * @property closing closing time, default is "16:00"
- * @property excludeDays which days of the week to exclude, default are SATURDAY and SUNDAY
- * @constructor Create new Simple Trading Calendar
+ * @property excludeDays which days of the week to exclude, default is SATURDAY and SUNDAY
+ * @constructor Create a new Simple Trading Calendar
  */
 class SimpleTradingCalendar(
     private val opening: LocalTime = LocalTime.parse("09:30"),

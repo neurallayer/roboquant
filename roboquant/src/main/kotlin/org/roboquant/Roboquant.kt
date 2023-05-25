@@ -118,7 +118,7 @@ class Roboquant(
     }
 
     /**
-     * Reset all state including that of the used underlying components. This allows to start a fresh run with the same
+     * Reset the state including that of the used underlying components. This allows starting a fresh run with the same
      * configuration as the original instance. This will also reset the run counter in this roboquant instance.
      */
     fun reset() {
@@ -244,7 +244,7 @@ class Roboquant(
 
 
 /**
- * Enumeration of the two different phases that a run can be in, [MAIN] and [VALIDATE]. Especially with self learning
+ * Enumeration of the two different phases that a run can be in, [MAIN] and [VALIDATE]. Especially with self-learning
  * strategies, it is important that you evaluate your strategy on yet unseen data, so you don't over-fit.
  *
  * See also [Roboquant.run] how to run your strategy with different phases enabled.

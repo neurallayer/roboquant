@@ -33,18 +33,14 @@ so do familiarize yourself with the following guidelines.
 ** Build the project to make sure it all works and passes the tests.
 * If you fix a bug:
 ** Write a test that reproduces the bug.
-** Fixes without tests are accepted only in exceptional circumstances if it can be shown that writing the
- corresponding test is too hard or otherwise impractical.
-** Follow the style of writing tests that is used in this project:
- name test classes as `xxxTest`. Don't use backticks or underscores in test names.
+** Fixes without tests are accepted only in exceptional circumstances if it can be shown that writing the corresponding test is too hard or otherwise impractical.
+** Follow the style of writing tests that is used in this project: name test classes as `xxxTest`. Don't use backticks or underscores in test names.
 * If you introduce any new public APIs:
 ** All new APIs must come with documentation and tests.
-** If you plan API additions, then please start by submitting an issue with the proposed API design
- to gather community feedback.
+** If you plan API additions, then please start by submitting an issue with the proposed API design to gather community feedback.
 ** Contact the maintainers to coordinate any big piece of work in advance via submitting an issue.
 * If you fix documentation:
-** If you plan extensive rewrites/additions to the docs, then please contact the maintainers.
- to coordinate the work in advance.
+** If you plan extensive rewrites/additions to the docs, then please contact the maintainers to coordinate the work in advance.
 
 == PR workflow
 

@@ -133,7 +133,7 @@ class Exchange private constructor(
         }
 
         /**
-         * add an exchange instance to the list. For a given [exchangeCode] there can only be one instance so this will
+         * Add an exchange instance to the list. For a given [exchangeCode] there can only be one instance so this will
          * override existing exchange with same exchangeCode. The [opening] and [closing] times are local times and the
          * [zone] is the time zone like for example `America/New_York`.
          */
@@ -246,7 +246,12 @@ class Exchange private constructor(
         /**
          * Generic 24x7 Crypto Exchange
          */
-        val CRYPTO = addInstance("CRYPTO", newYorkTimeZone, "00:00", "23:59:59.999")
+        val CRYPTO = addInstance("CRYPTO", "UTC", "00:00", "23:59:59.999")
+
+        /**
+         * Generic 24x7 Forex Exchange
+         */
+        val FOREX = addInstance("FOREX", "UTC", "00:00", "23:59:59.999")
 
     }
 }

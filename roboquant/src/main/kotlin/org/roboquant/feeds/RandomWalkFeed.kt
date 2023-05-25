@@ -22,10 +22,10 @@ import java.time.LocalDate
 import java.util.*
 
 /**
- * Random walk feed contains number of assets with a price history that follows a random walk. It can be useful for
- * testing, since if your strategy does well using this feed, there might be something suspicious going on.
+ * Random walk feed contains a number of assets with a price history that follows a random walk. It can be useful for
+ * testing since, if your strategy does well using this feed, there might be something suspicious going on.
  *
- * Internally it uses a seeded random generator. So while is generates random data, the results can be reproduced if
+ * Internally, it uses a seeded random generator. So while it generates random data, the results can be reproduced if
  * instantiated with the same seed. It can generate [PriceBar] or [TradePrice] prices.
  *
  * ## Background
@@ -38,7 +38,7 @@ import java.util.*
  * @param nAssets the number of assets to generate, symbol names will be ASSET1, ASSET2, ..., ASSET<N>. Default is 10.
  * @property generateBars should PriceBars be generated or plain TradePrice, default is true
  * @property volumeRange what is the volume range, default = 1000
- * @property priceRange what is the price range. default is 1.0
+ * @property priceRange the price range. default is 1.0
  * @param template template to use when generating assets
  * @property seed seed to use for initializing the random generator, default is 42
  */

@@ -20,7 +20,7 @@ package org.roboquant.common
  * Interface implemented by all components used in a run (Strategy, Policy, Broker, Metric, MetricLogger).
  *
  * The component will be informed that a phase has been started or ended. It provides the component with the opportunity
- * to manage its state so a phase can be started without any state remaining from previous runs.
+ * to manage its state, so a phase can be started without any state remaining from previous runs.
  *
  */
 interface Lifecycle {
@@ -34,7 +34,7 @@ interface Lifecycle {
     }
 
     /**
-     * Invoked at the end of a [run]. Default implementation is to take no action.
+     * Invoked at the end of a [run]. The default implementation is to take no action.
      */
     fun end(run: String) {
         // default is to do nothing

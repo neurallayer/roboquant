@@ -198,7 +198,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
     }
 
     /**
-     * Standard set of Avro feeds that come with roboquant and will be downloaded first time when invoked. They are
+     * Standard set of Avro feeds that come with roboquant and will be downloaded the first time when invoked. They are
      * stored at <User.Home>/.roboquant and reused from there later on.
      */
     companion object {

@@ -98,7 +98,7 @@ class Signal(
         get() = Amount(asset.currency, stopLoss)
 
     /**
-     * Does this signal allow to function as an entry signal, so to open or increase a position
+     * Returns true if this signal can function as an entry signal, false otherwise
      */
     val entry
         get() = type === ENTRY || type === BOTH

@@ -86,31 +86,31 @@ data class Position(
     }
 
     /**
-     * Is this a closed position, or in other words is the size equal to 0
+     * Returns true if this is a closed position, false otherwise
      */
     val closed: Boolean
         get() = size.iszero
 
     /**
-     * Is this a short position
+     * IReturns true if this is a short position, false otherwise
      */
     val short: Boolean
         get() = size.isNegative
 
     /**
-     * Is this a long position
+     * Returns true if this is a long position, false otherwise
      */
     val long: Boolean
         get() = size.isPositive
 
     /**
-     * Is this an open position
+     * Returns true if this is a open position, false otherwise
      */
     val open: Boolean
         get() = !size.iszero
 
     /**
-     * The unrealized profit & loss for this position based on the [avgPrice] and last known market [mktPrice],
+     * Returns the unrealized profit & loss for this position based on the [avgPrice] and last known market [mktPrice],
      * in the currency denoted by the asset
      */
     val unrealizedPNL: Amount

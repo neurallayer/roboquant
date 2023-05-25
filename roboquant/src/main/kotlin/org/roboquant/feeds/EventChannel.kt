@@ -27,7 +27,7 @@ import org.roboquant.common.compareTo
  * so the producing and consuming parts are decoupled. An EventChannel has limited capacity in order to prevent
  * memory problems when using large data feeds.
  *
- * It has built in support to limit the events that are being send to a certain [timeframe]. It is guaranteed that
+ * It has built in support to limit the events that are being sent to a certain [timeframe]. It is guaranteed that
  * no events outside that timeframe can be delivered to the channel.
  *
  * @property capacity The capacity of the channel in the number of events it can store before blocking the sender
@@ -50,7 +50,7 @@ open class EventChannel(val capacity: Int = 100, val timeframe: Timeframe = Time
      * Add a new [event] to the channel. If the channel is full, it will remove older event first to make room, before
      * adding the new event. So this is a non-blocking method.
      *
-     * This method is often preferable over the regular [send] in live market data scenario's since it prioritize more
+     * This method is often preferable over the regular [send] in live market data scenario's since it prioritizes more
      * recent data over maintaining a large buffer.
      */
     fun offer(event: Event) {

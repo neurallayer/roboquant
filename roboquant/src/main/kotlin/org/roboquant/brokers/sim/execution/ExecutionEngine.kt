@@ -23,7 +23,7 @@ import java.util.*
 import kotlin.reflect.KClass
 
 /**
- * Engine that simulates how orders are executed on financial markets. For any create order to be executed, it needs a
+ * Engine that simulates how orders are executed on financial markets. For any create-order to be executed, it needs a
  * corresponding [OrderExecutor] to be registered.
  *
  * @property pricingEngine pricing engine to use to determine the price
@@ -142,9 +142,9 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
      *
      * Underlying Logic:
      *
-     * 1. First process any open modify orders (like cancel or update)
-     * 2. Then process any regular create order, but only if there is a price action in the event for the
-     * underlying asses
+     * 1. First process open modify-orders (like cancel or update)
+     * 2. Then process regular create-orders, but only if there is a price action in the event for the
+     * underlying asset
      */
     internal fun execute(event: Event): List<Execution> {
         val time = event.time

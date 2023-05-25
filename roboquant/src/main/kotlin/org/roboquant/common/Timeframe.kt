@@ -32,7 +32,7 @@ import kotlin.random.Random
  * All internal trading logic uses nanoseconds as the smallest difference between two times. However, some
  * visualizations and charts might use milliseconds and the smallest time differences.
  *
- * It can be used to limit the duration of a run to that specific timeframe, for example in a walk-forward. It can also
+ * It can be used to limit the duration of a run to that specific timeframe, for example, in a walk-forward. It can also
  * serve to limit a live-feed to a certain duration.
  *
  * @property start start time of timeframe, this is always inclusive
@@ -55,12 +55,12 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Is this an infinite timeframe
+     * Return true is this is an infinite timeframe, false otherwise
      */
     fun isInfinite() = this == INFINITE
 
     /**
-     * Is this an empty timeframe
+     * Return true is this is an empty timeframe, false otherwise
      */
     fun isEmpty() = start == end && !inclusive
 
@@ -70,12 +70,12 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      */
     companion object {
         /**
-         * Minimum start date of a timeframe, being 1900-01-01T00:00:00Z
+         * The minimum start date of a timeframe, being 1900-01-01T00:00:00Z
          */
         val MIN: Instant = Instant.parse("1900-01-01T00:00:00Z")
 
         /**
-         * Maximum end date of a timeframe, being 2200-01-01T00:00:00Z
+         * The maximum end date of a timeframe, being 2200-01-01T00:00:00Z
          */
         val MAX: Instant = Instant.parse("2200-01-01T00:00:00Z")
 
@@ -102,9 +102,9 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         private val millisFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
-        // *******************************************************************
-        // predefined timeframes for significant events in history of trading
-        // *******************************************************************
+        // **********************************************************************
+        // predefined timeframes for significant events in the history of trading
+        // **********************************************************************
 
         /**
          * Black Monday is the name given to the global, and largely unexpected stock market crash on October 19, 1987.
@@ -151,7 +151,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         }
 
         /**
-         * Parse string into Instant, that caters for different precisions. Missing parts will be added before
+         * Parse string into an [Instant], that caters for different precisions. The missing parts will be added before
          * the actual parsing.
          */
         private fun String.toInstant(): Instant {
@@ -167,13 +167,13 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
         /**
          * Create a timeframe based on the [first] and [last] time provided. The times are to be provided as a string
-         * and the following formats are supported:
+         * with the following formats are supported:
          * 1. Year only
          * 2. Year and month
          * 3. Year, month and day
          * 4. Full date and time
          *
-         * When not a complete datetime is provided, the missing part is the first possible time. So for example 2004
+         * When not a complete datetime is provided, the missing part is the first possible time. For example, 2004
          * becomes 2004-01-01T00:00:00Z
          */
         fun parse(first: String, last: String): Timeframe {

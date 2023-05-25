@@ -47,7 +47,7 @@ import kotlin.io.path.notExists
  * the Euro and don't cover earlier periods.
  * 2. Cryptocurrencies are not included in this file.
  *
- * @constructor Create a new  ECB Exchange rates converter
+ * @constructor Create a new ECB Exchange rates converter
  */
 class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boolean = false) :
     TimedExchangeRates(Currency.EUR) {
@@ -120,7 +120,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
         var url = URL(urlString)
 
         /**
-         * See if we need to cache it. We get it max once per day in that case and don't put high load on ECB website
+         * See if we need to cache it. We get it max once per day in that case and don't put a high load on the website
          */
         if (cache && url.protocol.uppercase().startsWith("HTTP")) {
             url = cache(url)
