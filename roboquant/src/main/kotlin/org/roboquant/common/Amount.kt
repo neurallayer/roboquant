@@ -73,7 +73,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
         get() = Amount(currency, value.absoluteValue)
 
     /**
-     * Format the value hold in this amount based on the currency. For example USD would have two fraction digits
+     * Format the value hold in this amount based on the currency. For example, USD would have two fraction digits
      * by default while JPY would have none.
      */
     fun formatValue(fractionDigits: Int = currency.defaultFractionDigits): String {
@@ -85,7 +85,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     }
 
     /**
-     * Convert the value to BigDecimal using the number of digits defined for the currency. Internally roboquant
+     * Convert the value to BigDecimal using the number of digits defined for the currency. Internally, roboquant
      * doesn't use BigDecimals, but this method is used to enable a nicer display of currency amounts.
      */
     fun toBigDecimal(fractionDigits: Int = currency.defaultFractionDigits): BigDecimal =
@@ -109,7 +109,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
 
     /**
      * Convert this amount [to] a different currency. Optional you can provide a [time] at which the conversion
-     * should be calculated. If no time is provided the current time is used.
+     * should be calculated. If no time is provided, the current time is used.
      */
     fun convert(to: Currency, time: Instant = Instant.now()): Amount {
         return Config.exchangeRates.convert(this, to, time)

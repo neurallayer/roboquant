@@ -38,15 +38,15 @@ import java.time.temporal.ChronoUnit
  * For this to work, you'll
  * need to have the appropriate exchange rates defined at [Config.exchangeRates].
  *
- * @property baseCurrency what is the base currency of the account
- * @property lastUpdate when was the account last updated
+ * @property baseCurrency the base currency of the account
+ * @property lastUpdate time that the account was last updated
  * @property cash cash balances
  * @property trades List of all executed trades
  * @property openOrders List of [OrderState] of all open orders
  * @property closedOrders List of [OrderState] of all closed orders
  * @property positions List of all open [Position], with maximum one entry per asset
  * @property buyingPower amount of buying power available for trading
- * @constructor Create new Account
+ * @constructor Create a new Account
  */
 class Account(
     val baseCurrency: Currency,

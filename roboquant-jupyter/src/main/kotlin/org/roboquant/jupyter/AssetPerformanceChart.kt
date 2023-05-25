@@ -35,10 +35,10 @@ import java.math.RoundingMode
  * This chart works on feeds that contain [price actions][PriceAction] that also have [volume][PriceAction.volume]
  * information
  *
- * If you mix different type of price actions in this feed the result might become less reliable due to the
+ * If you mix different types of price actions in this feed, the result might become less reliable due to the
  * different ways that volume is calculated.
  *
- * @property compensateVolume should the chart compensate the volume by multiplying it with the price or is the
+ * @property compensateVolume compensate the volume by multiplying it with the price, or is the
  * volume already expressed in a monetary amount.
  */
 class AssetPerformanceChart(

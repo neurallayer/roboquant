@@ -16,7 +16,10 @@
 
 package org.roboquant.feeds.util
 
-import org.roboquant.common.*
+import org.roboquant.common.Asset
+import org.roboquant.common.TradingPeriod
+import org.roboquant.common.days
+import org.roboquant.common.plus
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.PriceBar
@@ -27,7 +30,7 @@ import java.time.Instant
  * Feed that will generate events for a series of prices using the system time. It can be used to validate if a
  * strategy is behaving as expected given a known set of prices.
  *
- * @constructor Create new Test feed
+ * @constructor Create a new Test feed
  */
 class HistoricTestFeed(
     vararg prices: Iterable<Number> = arrayOf(90..100, 100 downTo 90),

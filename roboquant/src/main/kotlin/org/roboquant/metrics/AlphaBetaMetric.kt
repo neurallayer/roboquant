@@ -21,10 +21,10 @@ import org.hipparchus.stat.correlation.Covariance
 import org.hipparchus.stat.descriptive.moment.Variance
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
+import org.roboquant.common.PriceSerie
 import org.roboquant.common.returns
 import org.roboquant.common.totalReturn
 import org.roboquant.feeds.Event
-import org.roboquant.common.PriceSerie
 
 /**
  * Calculates the Alpha and Beta of an account. This implementation not only looks at the portfolio positions, but
@@ -33,9 +33,9 @@ import org.roboquant.common.PriceSerie
  * - Alpha is a measure of the performance of an investment as compared to the market
  * - Beta is a measure of the volatility (or systematic risk) of the account compared to the market
  *
- * The provided risk-free return should be for the same duration as period.
+ * The provided risk-free return should be for the same duration as a period.
  *
- * @property referenceAsset Which asset to use as reference for the market volatility and returns, for example S&P 500
+ * @property referenceAsset The asset to use as reference for the market volatility and returns
  * @property period Over how many events to calculate the beta
  * @property priceType The type of price to use, default is "DEFAULT"
  * @property riskFreeReturn the risk-free return, 1% is 0.01. Default is 0.0

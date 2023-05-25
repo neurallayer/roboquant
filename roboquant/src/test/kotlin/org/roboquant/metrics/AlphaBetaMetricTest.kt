@@ -62,7 +62,7 @@ internal class AlphaBetaMetricTest {
             val price = it + 10.0
             val event = Event(listOf(TradePrice(asset, price)), Instant.now())
 
-            // Our portfolio is exactly same as market reference asset, so ALPHA should be 0 and BETA 1
+            // Our portfolio is exactly the same as market reference asset, so ALPHA should be 0 and BETA 1
             internalAccount.setPosition(Position(asset, Size(10), 10.0, price))
             val account = internalAccount.toAccount()
 

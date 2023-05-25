@@ -19,8 +19,8 @@ package org.roboquant.common
 /**
  * Enumeration with the supported asset types. These can be used when creating a new asset.
  *
- * Please note that Crypto is an asset type of its own and not mapped to the FOREX asset type. This allows to
- * differentiate and apply different logic based on the type.
+ * Please note that Crypto is an asset type of its own and not mapped to the FOREX asset type. This allows
+ * differentiating and applying different logic based on the type.
  *
  */
 enum class AssetType {
@@ -57,7 +57,7 @@ enum class AssetType {
     BOND,
 
     /**
-     * Contract For Difference, is a contract between a buyer and a seller that stipulates that the buyer must pay
+     * `Contract For Difference`, is a contract between a buyer and a seller that stipulates that the buyer must pay
      * the seller the difference between the current value of an asset and its value at contract time.
      */
     CFD,

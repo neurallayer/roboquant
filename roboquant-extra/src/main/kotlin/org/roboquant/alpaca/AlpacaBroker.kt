@@ -86,7 +86,7 @@ class AlpacaBroker(
 
 
     /**
-     * Sync the roboquant account with the current state from Alpaca account. Alpaca state is always leading.
+     * Sync the roboquant account with the current state from an Alpaca account. Alpaca state is always leading.
      */
     private fun syncAccount() {
         val acc = alpacaAPI.account().get()

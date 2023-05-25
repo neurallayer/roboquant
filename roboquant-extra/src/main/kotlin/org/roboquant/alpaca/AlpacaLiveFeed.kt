@@ -58,7 +58,7 @@ enum class PriceActionType {
 
 /**
  * Alpaca feed allows you to subscribe to live market data from Alpaca. Alpaca needs a key and secret in order to access
- * their API. This live feed support both stocks and crypto asset classes.
+ * their API. This live feed supports both stocks and crypto asset classes.
  *
  * You can provide these to the constructor or set them as environment variables.
  *
@@ -94,32 +94,32 @@ class AlpacaLiveFeed(
     }
 
     /**
-     * What are the available crypto to subscribe to
+     * Returns the available crypto to subscribe to
      */
     val availableCrypto: SortedSet<Asset>
         get() = availableCryptoMap.values.toSortedSet()
 
     /**
-     * What are the available stocks to subscribe to
+     * Returns the available stocks to subscribe to
      */
     val availableStocks: SortedSet<Asset>
         get() = availableStocksMap.values.toSortedSet()
 
     /**
-     * What are the all available assets to subscribe to, stocks and crypto combined
+     * Returns all available assets to subscribe to, stocks and crypto combined
      */
     val availableAssets: SortedSet<Asset>
         get() = (availableStocksMap.values + availableCryptoMap.values).toSortedSet()
 
 
     /**
-     * Get all subscribed assets, stocks and crypto combined
+     * Returns  subscribed assets, stocks and crypto combined
      */
     override val assets: SortedSet<Asset>
         get() = subscribedSymbols.map { assetMap.getValue(it) }.toSortedSet()
 
     /**
-     * Connect to streaming data for stock market and crypto market
+     * Connect to streaming data for the stock market and crypto market
      */
     fun connect() {
         connectMarket((alpacaAPI.stockMarketDataStreaming()))

@@ -20,9 +20,9 @@ import java.time.Instant
 
 /**
  * Asset filter limits the price actions that will be processed in certain operations at a given time. Filters can work
- * on a combination of asset and time.
+ * on a combination of assets and time.
  *
- * Common use case are strategies that are only interested in a subset of assets that are available in a feed.
+ * Common use case is strategies that are only interested in a subset of assets that are available in a feed.
  */
 fun interface AssetFilter {
 

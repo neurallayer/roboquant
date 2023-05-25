@@ -34,13 +34,13 @@ import java.time.Instant
  * a subclass.
  *
  * @property orderPercentage The percentage of the equity value to allocate to a single order, default is 1% (0.01). In
- * case of an account with high leverage, this value can be larger than 1 (100%).
+ * the case of an account with high leverage, this value can be larger than 1 (100%).
  * @property shorting Can the policy create orders that potentially lead to short positions, default is false
  * @property priceType The type of price to use, default is "DEFAULT"
- * @property fractions For fractional trading, the amount of fractions (decimals) to allow for. Default is 0
+ * @property fractions For fractional trading, the number of fractions (decimals) to allow for. Default is 0
  * @property oneOrderOnly Only allow one order to be open for a given asset at a given time, default is true
- * @property safetyMargin the percentage of the equity value that don't get allocated to orders. This way you
- * are more likely stay away from bounced orders and margin calls. Default is same percentage as [orderPercentage]
+ * @property safetyMargin the percentage of the equity value that don't get allocated to orders. This way, you
+ * are more likely to stay away from bounced orders and margin calls. Default is same percentage as [orderPercentage]
  * @property minPrice the minimal price for an asset before opening a position, default is null (no minimum). This
  * can be used to avoid trading penny stocks
  * @constructor Create a new instance of a FlexPolicy
@@ -196,7 +196,7 @@ open class FlexPolicy(
                 orders.addNotNull(order)
             } else {
                 if (position.open) continue // we don't increase position sizing
-                if (!signal.entry) continue // signal doesn't allow to open new positions
+                if (!signal.entry) continue // signal doesn't allow opening new positions
                 if (amountPerOrder > buyingPower) continue // not enough buying power left
 
                 val assetAmount = amountPerOrder.convert(asset.currency, time).value

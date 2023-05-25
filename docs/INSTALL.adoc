@@ -57,7 +57,7 @@ Next to `roboquant`, the following additional artefacts are available for inclus
 * *roboquant-ibkr* Adds support for Interactive Brokers
 
 == Building from source
-First start with cloning the roboquant GitHub repository to your local disk. The quickest way to be up and running is then to install IntelliJ IDEA (either the free community edition or the paid Ultimate version) and open the directory you just cloned. IntelliJ IDEA will recognize it as Kotlin/Maven project, and you can build it and run test directly from the IDE.
+First start with cloning the roboquant GitHub repository to your local disk. The quickest way to be up and running is then to install IntelliJ IDEA (either the free community edition or the paid Ultimate version) and open the directory you just cloned. IntelliJ IDEA will recognize it as a Kotlin/Maven project, and you can build it and run test directly from the IDE.
 
 _Roboquant_ uses a directory setup that is similar to most other Kotlin projects:
 
@@ -81,9 +81,9 @@ Roboquant uses Maven wrapper for the build process, so building and installing t
 ./mvnw clean install
 ----
 
-The build and install is tested using JDK 17 runtime, however the generated libraries are targeted against JDK 11 in order to provide better compatibility for projects that still use older versions of the JDK.
+The build and install is tested using JDK 17 runtime. However, the generated libraries are targeted against JDK 11 in order to provide better compatibility for projects that still use older versions of the JDK.
 
-TIP: If you plan to make many changes and updates to the source code, checkout the https://github.com/apache/maven-mvnd[Maven Daemon] project that provides much faster builds. It is an almost 100% drop-in replacement of the regular maven and is much faster.
+TIP: If you plan to make many changes and updates to the source code, checkout the https://github.com/apache/maven-mvnd[Maven Daemon] project that provides faster builds. It is an almost 100% drop-in replacement of the regular maven and is much faster.
 
 If you want to deploy a regular release or snapshot, use the `-P release` option. This will include the required plugins and also generate source- and documentation-jar files. Additionally, it will also build and deploy the `roboquant-ibkr` module, so you'll need the locally installed IBKR Java client library.
 

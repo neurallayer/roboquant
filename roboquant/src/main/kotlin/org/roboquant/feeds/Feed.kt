@@ -65,7 +65,7 @@ interface Feed : AutoCloseable {
 interface AssetFeed : Feed {
 
     /**
-     * Sorted set of all the assets contained in this feed
+     * Returns a sorted set of all the assets contained in this feed
      */
     val assets: SortedSet<Asset>
 

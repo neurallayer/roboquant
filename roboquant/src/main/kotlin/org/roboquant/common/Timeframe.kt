@@ -193,9 +193,10 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         /**
          * Create a timeframe from now for the provided [period]. This is useful to restrict a live feed, so it
          * won't run forever.
-         *
-         *      val tf = TimeFrame.next(60.minutes)
-         *      roboquant.run(feed, tf)
+         *```
+         * val tf = TimeFrame.next(60.minutes)
+         * roboquant.run(feed, tf)
+         * ```
          */
         fun next(period: TradingPeriod): Timeframe {
             val start = Instant.now()
@@ -237,7 +238,9 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Convert this timeframe to a [Timeline] where each time seperated by a [step] amount.
      * If the temporalAmount is defined as a [Period], UTC will be used as the ZoneId.
      * Usage:
-     *      timeframe.toTimeline(1.days)
+     * ```
+     * timeframe.toTimeline(1.days)
+     * ```
      */
     fun toTimeline(step: TradingPeriod): Timeline {
         val timeline = mutableListOf<Instant>()
@@ -252,7 +255,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     /**
      * Split a timeframe into two parts, one for training and one for test using the provided [testSize]
      * for determining the size of test. [testSize] should be a number between 0.0 and 1.0, for example
-     * 0.25 means use last 25% as test timeframe.
+     * 0.25 means use last 25% as a test timeframe.
      *
      * It returns a [Pair] of timeframes, the first one being the training timeframe and the second being the
      * test timeframe.

@@ -106,7 +106,7 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 abstract class Chart : HTMLOutput() {
 
     /**
-     * Does the generated option JSON string contain JavaScript. If true additional code will be generated to parse
+     * Does the generated option JSON string contain JavaScript. If true, additional code will be generated to parse
      * this into a Javascript function.
      */
     private var containsJavaScript: Boolean = false

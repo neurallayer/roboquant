@@ -99,7 +99,7 @@ sealed class Order(val asset: Asset, val tag: String) {
 abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag)
 
 /**
- * Base class for all types of modify orders. Two most commonly used subclasses are the [CancelOrder] and [UpdateOrder].
+ * Base class for all types of modify-orders. Two most commonly used subclasses are the [CancelOrder] and [UpdateOrder].
  *
  * Please note that modify orders by design can only modify createOrders
  *

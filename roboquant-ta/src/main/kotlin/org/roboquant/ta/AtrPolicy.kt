@@ -39,7 +39,7 @@ import kotlin.math.absoluteValue
  * - takeProfit is a [LimitOrder] with the limit set at an offset of the current price of [atrProfit] * ATR
  * - stopLoss is a [StopOrder] with the stop set at an offset of the current price of [atrLoss] * ATR
  *
- * The implementation will take care ensuring offsets are done correctly based on a BUY or SELL order.
+ * The implementation will take care of ensuring offsets are done correctly based on a BUY or SELL order.
  *
  * @property atrPeriod
  * @property atrProfit

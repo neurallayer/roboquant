@@ -222,9 +222,9 @@ class Roboquant(
      * [runName] to use to close the positions and log the metrics.
      *
      * This method performs the following steps:
-     * 1. cancel existing open orders
-     * 2. close open positions by placing [MarketOrder] for the required opposite sizes
-     * 3. run and log the metrics
+     * 1. Cancel existing open orders
+     * 2. Close open positions by placing [MarketOrder] for the required opposite sizes
+     * 3. Run and log the metrics
      */
     fun closePositions(time: Instant? = null, runName: String? = null) {
         val account = broker.account

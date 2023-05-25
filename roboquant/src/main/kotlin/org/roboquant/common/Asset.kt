@@ -33,8 +33,8 @@ import java.time.format.DateTimeFormatter
  * All of its properties are read-only, and assets are ideally only created once and reused thereafter. An asset
  * instance is immutable.
  *
- * @property symbol none empty symbol name, for derivatives like options or futures contract this includes the details
- * that identify the contract
+ * @property symbol none empty symbol name, for derivatives like options this includes the details that identify the
+ * contract
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currency currency, default is [Currency.USD]
  * @property exchange Exchange this asset is traded on, default is [Exchange.DEFAULT]
@@ -74,7 +74,7 @@ data class Asset(
     companion object {
 
         /**
-         * Returns an option contract using the OCC (Options Clearing Corporation) option symbol standard.
+         * Returns an option contract using the OCC (`Options Clearing Corporation`) option symbol standard.
          * The OCC option symbol string consists of four parts:
          *
          * 1. uppercase [symbol] of the underlying stock or ETF, padded with trailing spaces to 6 characters
