@@ -40,7 +40,7 @@ data class BinanceConfig(
 internal object Binance {
 
     /**
-     * return the api client factory
+     * Returns the api client factory
      */
     fun getFactory(config: BinanceConfig): BinanceApiClientFactory {
         return if (config.publicKey.isBlank()) BinanceApiClientFactory.newInstance()

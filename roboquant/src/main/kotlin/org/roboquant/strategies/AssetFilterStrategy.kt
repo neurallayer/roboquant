@@ -27,7 +27,7 @@ import org.roboquant.feeds.PriceAction
  *
  * @property strategy the strategy to use after the filter has been applied
  * @property assetFilter the asset filter to apply
- * @constructor Create new Asset filter strategy
+ * @constructor Create a new Asset filter strategy
  */
 class AssetFilterStrategy(private val strategy: Strategy, private val assetFilter: AssetFilter) : Strategy by strategy {
 

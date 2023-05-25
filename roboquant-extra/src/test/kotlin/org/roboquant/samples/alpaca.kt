@@ -92,7 +92,7 @@ fun alpacaTradeStocks() {
 }
 
 /**
- * Alpaca historic feed example where we retrieve 1 minutes price-bars in batches of 1 day for 100 days.
+ * Alpaca historic feed example where we retrieve 1-minutes price-bars in batches of 1 day for 100 days.
  */
 fun alpacaHistoricFeed() {
     val feed = AlpacaHistoricFeed()
@@ -187,8 +187,8 @@ fun alpacaHistoricFeed2() {
     ).toTypedArray()
     val feed = AlpacaHistoricFeed()
 
-    // We get the data for last 200 days. The minus 15.minutes is to make sure we only request data that
-    // the free subscriptions is entitled to and not the latest 15 minutes.
+    // We get the data for the last 200 days. The minus 15.minutes is to make sure we only request data that
+    // the free subscriptions are entitled to and not the latest 15 minutes.
     val tf = Timeframe.past(200.days) - 15.minutes
     feed.retrieveStockPriceBars(*symbols, timeframe = tf)
     val events = feed.toList()

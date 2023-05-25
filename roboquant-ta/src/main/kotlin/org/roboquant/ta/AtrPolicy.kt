@@ -44,7 +44,7 @@ import kotlin.math.absoluteValue
  * @property atrPeriod
  * @property atrProfit
  * @property atrLoss
- * @property atRisk max percentage of the orderPercentage that can be at risk. If null, no risk based sizing will be
+ * @property atRisk max percentage of the orderPercentage that can be at risk. If null, no risk-based sizing will be
  * applied/
  */
 class AtrPolicy(

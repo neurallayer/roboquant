@@ -176,7 +176,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
             while (it.hasNext()) {
                 val rec = it.next()
 
-                // Optimize unnecessary parsing of whole record
+                // Optimize unnecessary parsing of the whole record
                 val now = Instant.ofEpochMilli(rec[0] as Long)
                 if (now < timeframe) continue
 
@@ -210,7 +210,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
 
         /**
          * Get an AvroFeed containing end-of-day [PriceBar] data for the companies listed in the S&P 500. This feed
-         * contains few years of public data, but please note that not all US exchanges are included, so the prices
+         * contains a few years of public data. But please note that not all US exchanges are included, so the prices
          * are not 100% accurate.
          */
         fun sp500(): AvroFeed {
@@ -220,7 +220,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
 
         /**
          * Get an AvroFeed containing [PriceQuote] data for the companies listed in the S&P 500. This feed
-         * contains few minutes of public data, but please note that not all US exchanges are included, so the prices
+         *  contains a few minutes of public data. But please note that not all US exchanges are included, so the prices
          * are not 100% accurate.
          */
         fun sp500Quotes(): AvroFeed {
@@ -229,7 +229,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
         }
 
         /**
-         * Get an AvroFeed containing 1 minute [PriceBar] data for EUR/USD currency pair.
+         * Get an AvroFeed containing 1 minute [PriceBar] data for an EUR/USD currency pair.
          */
         fun forex(): AvroFeed {
             val path = download(forexFile)
@@ -237,7 +237,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
         }
 
         /**
-         * Download a file from GitHub if now yet present on local file system
+         * Download a file from GitHub if now yet present on the local file system.
          */
         private fun download(fileName: String): Path {
             val path: Path = Paths.get(Config.home.toString(), fileName)
@@ -256,7 +256,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
         }
 
         /**
-         * Schema used to store different type of [PriceAction]
+         * Schema used to store different types of [PriceAction]
          */
         private const val schemaDef = """
             {

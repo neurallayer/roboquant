@@ -143,7 +143,7 @@ abstract class Chart : HTMLOutput() {
         internal var counter = 0
 
         /**
-         * Maximum number of samples to plot in a chart. Certain types of charts can be become very large and as
+         * Maximum number of samples to plot in a chart. Certain types of charts can become very large and as
          * a result make your browser unresponsive. By lowering this value (default is [Int.MAX_VALUE])
          * before serializing the result to the browser, the sample size will first be reduced. A good value might
          * be 100_000, but this depends on your computer.
@@ -239,7 +239,7 @@ abstract class Chart : HTMLOutput() {
     }
 
     /**
-     * Generates a standalone HTML page for the chart. This page can be saved and for example viewed in a
+     * Generates a standalone HTML page for the chart. This page can be saved and, for example, viewed in a
      * standalone browser.
      */
     override fun asHTMLPage(): String {

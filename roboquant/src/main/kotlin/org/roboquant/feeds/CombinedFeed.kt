@@ -11,7 +11,7 @@ import java.util.*
  *
  * @property feeds the feeds to combine in a single new feed
  * @property channelCapacity the channel capacity to use per feed
- * @constructor Create new Combined Feed
+ * @constructor Create a new Combined Feed
  */
 class CombinedFeed(vararg val feeds: Feed, private val channelCapacity: Int = 1) : Feed {
 

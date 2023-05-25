@@ -60,8 +60,8 @@ class AlphaBetaMetric(
     override fun calculate(account: Account, event: Event): Map<String, Double> {
         val action = event.prices[referenceAsset]
 
-        // Can we already start recording measures or do we have to wait for
-        // an initial trade
+        // Can we already start recording the measures, or do we have to wait for
+        // an initial trade?
         val start = !onlyAfterInitialTrade || account.trades.isNotEmpty()
 
         if (action !== null && start) {

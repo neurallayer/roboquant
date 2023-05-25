@@ -19,9 +19,10 @@ package org.roboquant.policies
 import kotlin.collections.set
 
 /**
- * Contains a number of utility methods that are useful when implementing a new policy. For example
- * how to deal with conflicting signals or how to handle amounts in a multi-currency environment. It also contains
- * a simple method to record metrics.
+ * Contains a number of utility methods that are useful when implementing a new policy.
+ *
+ * For example, how to deal with conflicting signals or how to handle amounts in a multi-currency environment. It
+ * also contains a simple method to record metrics.
  *
  * @property recording should metrics be recorded, default is false
  * @constructor Create empty Base policy

@@ -21,15 +21,15 @@ import org.roboquant.common.Size
 
 /**
  * Bracket order enables you to place an order and at the same time place orders to take profit and limit the loss.
- * All three sub-orders require the to have the same underlying asset. Additionally, the size of the [takeProfit]
+ * All three sub-orders require having the same underlying asset. Additionally, the size of the [takeProfit]
  * and [stopLoss] orders should be opposite of the [entry] order.
  *
- * Although the SimBroker is very flexible and support any type of single order, real brokers often are more limited.
+ * Although the SimBroker is very flexible and supports any type of single order, real brokers often are more limited.
  * So it is advised to restrict your orders to the following subsets if you want to go live:
  *
- * - entry order is either a Market or Limit order
- * - takeProfit is a Limit order
- * - stopLoss is a StopLoss or StopLimit order
+ * - entry order - either a Market or Limit order
+ * - takeProfit - a Limit order
+ * - stopLoss - a StopLoss or StopLimit order
  *
  * @property entry the entry order
  * @property takeProfit the take profit order

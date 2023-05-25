@@ -51,7 +51,7 @@ enum class SignalType {
  *
  * - Take profit price for that asset
  * - Stop loss price for that asset
- * - The probability, or in other words how sure the strategy is about the signal
+ * - The probability, or in other words, how sure the strategy is about the signal
  *
  * It depends on the policy how these signals are translated into actual orders, but possible scenarios are:
  *
@@ -66,7 +66,7 @@ enum class SignalType {
  * @property stopLoss An optional stop loss price in the same currency as the asset, default is Double.NaN
  * @property probability Optional the probability (value between 0.0 and 1.0) for the provided rating, default is
  * Double.NaN
- * @property tag Optional extra tag, for example the strategy name that generated the signal, default is empty String
+ * @property tag Optional extra tag, for example, the strategy name that generated the signal, default is empty String
  * @constructor Create a new Signal
  */
 class Signal(
@@ -80,7 +80,7 @@ class Signal(
 ) {
 
     /**
-     * Does this signal allow to function as an exit signal, so to close or decrease a position
+     * Is this signal (also) an exit signal, so to close or decrease a position?
      */
     val exit
         get() = type === EXIT || type === BOTH

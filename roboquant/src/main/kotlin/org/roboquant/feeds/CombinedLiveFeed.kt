@@ -24,7 +24,7 @@ import org.roboquant.common.ParallelJobs
  * by the channel, the channel closes for all feeds.
  *
  * @property feeds
- * @constructor Create new Combined Live Feed
+ * @constructor Create a new Combined Live Feed
  */
 class CombinedLiveFeed(vararg val feeds: LiveFeed) : Feed {
 

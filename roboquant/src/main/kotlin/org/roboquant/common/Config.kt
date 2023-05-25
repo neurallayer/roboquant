@@ -92,7 +92,8 @@ object Config {
     var exchangeRates: ExchangeRates = SingleCurrencyExchangeRates()
 
     /**
-     * Default random to use, typically used by methods as a default value when other random generator is provided
+     * Default [Random] number generator to use, typically used by methods as a default value when no other random
+     * number generator is provided
      */
     var random: Random = Random(DEFAULT_SEED)
 

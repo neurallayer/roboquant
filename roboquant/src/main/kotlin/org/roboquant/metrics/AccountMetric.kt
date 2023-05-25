@@ -20,7 +20,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 
 /**
- * Capture the following high level statistics about the [Account]:
+ * Capture the following high-level statistics about the [Account]:
  *
  * - `account.orders`  Total number of orders, open and closed together
  * - `account.trades` Total number of trades
@@ -30,7 +30,7 @@ import org.roboquant.feeds.Event
  * - `account.equity` the equity value of the account (= cash + positions)
  * - `account.growth` the growth percentage of equity value
  *
- * All monetary values are denoted in base currency of the account
+ * All monetary values are denoted in the base currency of the account
  *
  * @constructor Create new AccountMetric instance
  */

@@ -108,7 +108,7 @@ class Account(
     fun convert(wallet: Wallet, time: Instant = lastUpdate): Amount = wallet.convert(baseCurrency, time)
 
     /**
-     * Returns a summary that contains the high level account information, the available cash balances and
+     * Returns a summary that contains the high-level account information, the available cash balances and
      * the open positions. Optionally the summary can convert wallets to a [singleCurrency], default is not.
      */
     fun summary(singleCurrency: Boolean = false): Summary {

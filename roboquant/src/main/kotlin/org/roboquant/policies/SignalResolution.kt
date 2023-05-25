@@ -58,7 +58,7 @@ enum class SignalResolution {
 }
 
 /**
- * Resolve potential conflicting signals. For many strategies this might not be necessary since there is always only 1
+ * Resolve potential conflicting signals. For many strategies, this might not be necessary since there is always only 1
  * signal per asset, but as strategies are combined, this issue might pop up. You can specify the resolution [rule]
  * to apply when solving conflicts.
  *
@@ -128,8 +128,8 @@ fun Policy.shuffleSignals(random: Random = Config.random): Policy = SignalShuffl
 
 
 /**
- * Shuffle signals before processing them in the policy, avoiding favoring assets that appears always first in the
- * actions od an event.
+ * Shuffle signals before processing them in the policy, avoiding favoring assets that appear always first in the
+ * actions of an event.
  *
  * @property policy
  * @constructor Create empty Signal resolver
@@ -143,7 +143,7 @@ private class SkipSymbolsPolicy(private val policy: Policy, private val symbols:
 }
 
 /**
- * Skip [symbols] that are should not be processed into orders by removing them from the signals
+ * Skip [symbols] that should not be converted into orders by removing them from the signals
  */
 fun Policy.skipSymbols(vararg symbols: String): Policy = SkipSymbolsPolicy(this, symbols.asList())
 

@@ -27,7 +27,7 @@ class AggregatorFeedTest {
 
     @Test
     fun basic2() {
-        // 5 seconds window with 1 millis resolution
+        // 5-seconds window with 1 millis resolution
         val timeline = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z").toTimeline(1.millis)
         val feed = RandomWalkFeed(timeline, generateBars = false)
         val items1 = feed.toList()

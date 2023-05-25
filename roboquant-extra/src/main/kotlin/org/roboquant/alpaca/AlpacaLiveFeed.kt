@@ -113,7 +113,7 @@ class AlpacaLiveFeed(
 
 
     /**
-     * Returns  subscribed assets, stocks and crypto combined
+     * Returns subscribed assets, stocks and crypto combined
      */
     override val assets: SortedSet<Asset>
         get() = subscribedSymbols.map { assetMap.getValue(it) }.toSortedSet()

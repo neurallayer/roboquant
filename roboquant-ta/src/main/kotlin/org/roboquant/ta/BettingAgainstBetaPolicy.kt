@@ -48,7 +48,7 @@ import kotlin.math.min
  * @property windowSize the windowSize, default is 120
  * @property priceType the type of price to use, default is DEFAULT
  *
- * @constructor Create new instance of Betting Against Beta
+ * @constructor Create a new instance of Betting Against Beta
  */
 open class BettingAgainstBetaPolicy(
     assets: Collection<Asset>,
@@ -68,7 +68,7 @@ open class BettingAgainstBetaPolicy(
     }
 
     /**
-     * Calculate the betas for the assets. If a beta cannot be calculated, for example due to missing data,
+     * Calculate the betas for the assets. If a beta cannot be calculated, for example, due to missing data,
      * it will not be included in the returned result.
      *
      * @return

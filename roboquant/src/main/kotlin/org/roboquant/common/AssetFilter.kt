@@ -28,7 +28,7 @@ fun interface AssetFilter {
 
     /**
      * Returns true if the provided [asset] should be processed at the provided [time], false otherwise. The time can
-     * be used by implementations to support asset collections that change over time, like for example the S&P 500
+     * be used by implementations to support asset collections that change over time, like, for example, the S&P 500
      * index.
      */
     fun filter(asset: Asset, time: Instant): Boolean
