@@ -33,7 +33,7 @@ internal class ECBExchangeRatesTest {
 
     @Test
     fun testECBReferenceRates() {
-        val fileName = TestData.dataDir() + "RATES/eurofxref-hist.csv"
+        val fileName = TestData.dataDir() + "ECB/eurofxref-hist.csv"
         val x = ECBExchangeRates.fromFile(fileName)
 
         var c = x.getRate(100.EUR, EUR, Instant.now())
