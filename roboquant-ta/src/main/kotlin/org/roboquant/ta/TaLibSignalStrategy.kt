@@ -49,7 +49,7 @@ class TaLibSignalStrategy(
     private val buffers = mutableMapOf<Asset, PriceBarSerie>()
 
     /**
-     * Underlying [TaLib] instance to use when executing this strategy.
+     * The underlying [TaLib] instance that is used when executing this strategy.
      */
     val taLib = TaLib()
 
@@ -116,7 +116,7 @@ class TaLibSignalStrategy(
     }
 
     /**
-     * Reset all state
+     * Reset all the state
      */
     override fun reset() {
         buffers.clear()
