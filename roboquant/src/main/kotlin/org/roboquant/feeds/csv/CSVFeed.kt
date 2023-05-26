@@ -66,50 +66,6 @@ class CSVFeed(
         logger.info { "events=${timeline.size} assets=${assets.size} timeframe=$timeframe" }
     }
 
-    /**
-     * Predefined CSVFeed configurations for common market data providers
-     */
-    companion object {
-
-        /**
-         * Process historical PriceBar Forex data downloaded from [HistData](http://HistData.com) in the generic ASCII
-         * format.
-         *
-         * Please note that tick data is not supported, only the price-bars are.
-         */
-        fun fromHistData(path: String): CSVFeed {
-            return CSVFeed(path) {
-                assetBuilder = {
-                    val fileName = it.name
-                    assert(fileName.startsWith("DAT_ASCII_")) {
-                        "not a histdata.com file, filename should start with DAT_ASCII_"
-                    }
-                    val currencyPair = fileName.split('_')[2]
-                    Asset.forexPair(currencyPair)
-                }
-                priceParser = PriceBarParser(1,2,3,4)
-                timeParser = AutoDetectTimeParser(0)
-                separator = ';'
-                hasHeader = false
-            }
-        }
-
-        /**
-         * Process historical US stock PriceBar data downloaded from [Stooq](http://stooq.pl).
-         */
-        fun fromStooq(path: String): CSVFeed {
-            fun CSVConfig.file2Symbol(file: File): String {
-                return file.name.removeSuffix(fileExtension).replace('-', '.').uppercase()
-            }
-
-            return CSVFeed(path) {
-                fileExtension = ".us.txt"
-                assetBuilder = { file: File -> Asset(file2Symbol(file)) }
-                timeParser = AutoDetectTimeParser(2)
-            }
-        }
-
-    }
 
     /**
      * Read a [path] (directory or single file) and all its descendants and return the found CSV files
@@ -140,7 +96,7 @@ class CSVFeed(
 
         val jobs = ParallelJobs()
         for (file in files) {
-            val asset = config.assetBuilder(file)
+            val asset = config.assetBuilder.build(file)
             jobs.add {
                 val steps = readFile(asset, file)
                 for (step in steps) {

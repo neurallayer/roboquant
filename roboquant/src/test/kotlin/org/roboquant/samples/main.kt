@@ -20,7 +20,6 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.ECBExchangeRates
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.NoCostPricingEngine
@@ -50,7 +49,6 @@ import org.roboquant.strategies.Signal
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.system.measureTimeMillis
 import kotlin.test.assertEquals
@@ -163,47 +161,12 @@ fun signalsOnly() {
 }
 
 
-fun csv2Avro(pathStr: String = "path", onlySP500: Boolean = true) {
-
-    val path = Path(pathStr)
-    val feed = CSVFeed.fromStooq((path / "nasdaq stocks").toString())
-    val tmp = CSVFeed.fromStooq((path / "nyse stocks").toString())
-    feed.merge(tmp)
-
-    val sp500File = "/tmp/pricebars.avro"
-
-    val symbols = Universe.sp500.getAssets(Instant.now()).symbols
-    val filter = if (onlySP500) AssetFilter.includeSymbols(*symbols) else AssetFilter.all()
-
-    AvroFeed.record(
-        feed,
-        sp500File,
-        assetFilter = filter
-    )
-
-    val avroFeed = AvroFeed(sp500File)
-    println("assets=${avroFeed.assets.size} timeframe=${avroFeed.timeframe}")
-
-}
-
 fun simple() {
     val strategy = EMAStrategy()
     val feed = AvroFeed.sp500()
     val roboquant = Roboquant(strategy)
     roboquant.run(feed)
     println(roboquant.broker.account.fullSummary())
-}
-
-fun forexFeed() {
-    val path = System.getProperty("user.home") + "/data/forex/"
-    val feed = CSVFeed.fromHistData(path)
-
-    println("timeframe=${feed.timeframe} symbols=${feed.assets.symbols.toList()}")
-    Config.exchangeRates = ECBExchangeRates.fromWeb()
-    val strategy = EMAStrategy()
-    val rq = Roboquant(strategy, AccountMetric())
-    rq.run(feed)
-    println(rq.broker.account.summary())
 }
 
 
@@ -296,13 +259,11 @@ suspend fun main() {
 
     when ("CFD") {
         "SIMPLE" -> simple()
-        "CSV2AVRO" -> csv2Avro("/tmp/daily/us", false)
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()
         "SIGNALS" -> signalsOnly()
-        "FOREX" -> forexFeed()
         "FOREX_RUN" -> forexRun()
         "PROFILE" -> profileTest()
         "PERFORMANCE" -> performanceTest()

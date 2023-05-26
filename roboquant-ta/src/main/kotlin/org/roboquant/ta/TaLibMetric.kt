@@ -65,7 +65,7 @@ class TaLibMetric(
     }
 
     /**
-     * reset state of this metric
+     * Reset the state of this metric
      */
     override fun reset() {
         super.reset()

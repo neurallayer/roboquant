@@ -34,7 +34,6 @@ internal class CSVConfigTest {
     fun defaultConfig() {
         val config = CSVConfig()
         assertEquals(Asset("TEMPLATE"), config.template)
-        assertEquals(".csv", config.fileExtension)
         assertTrue(config.fileSkip.isEmpty())
         assertEquals(true, config.hasHeader)
         assertEquals(',', config.separator)
@@ -44,9 +43,8 @@ internal class CSVConfigTest {
     @Test
     fun basic() {
         val config = CSVConfig()
-        config.fileExtension = ".csv"
         assertEquals(Asset("TEMPLATE"), config.template)
-        assertEquals(Asset("ABN"), config.assetBuilder(File("ABN.csv")))
+        assertEquals(Asset("ABN"), config.assetBuilder.build(File("ABN.csv")))
         assertFalse(config.shouldParse(File("some_non_existing_file.csv")))
         assertFalse(config.shouldParse(File("somefile.dummy_extension")))
     }

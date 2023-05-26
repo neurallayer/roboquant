@@ -21,6 +21,10 @@ import org.roboquant.common.AssetType
 import org.roboquant.common.Logging
 import java.io.File
 import java.nio.file.Path
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.io.path.div
@@ -32,7 +36,6 @@ import kotlin.io.path.div
  * 2) The config.properties that will be added and override the default config
  * 3) The config provided as a parameter to the Feed constructor that will add/override the previous step
  *
- * @property fileExtension file extensions to parse, default is '.csv'
  * @property filePattern file patterns to take into considerations
  * @property fileSkip list of files to skip
  * @property template The template to use in the default [assetBuilder]
@@ -41,52 +44,81 @@ import kotlin.io.path.div
  * @constructor Create new CSV config
  */
 data class CSVConfig(
-    var fileExtension: String = ".csv",
-    var filePattern: String = ".*",
+    var filePattern: String = ".*.csv",
     var fileSkip: List<String> = emptyList(),
     var template: Asset = Asset("TEMPLATE"),
     var hasHeader: Boolean = true,
     var separator: Char = ',',
     var timeParser: TimeParser = AutoDetectTimeParser(),
-    var priceParser: PriceParser = PriceBarParser()
+    var priceParser: PriceParser = PriceBarParser(),
+    var assetBuilder: AssetBuilder = DefaultAssetBuilder(template)
 ) {
-
-    /**
-     * The asset builder allows creating assets based on more than just the symbol name.
-     * The input is the file that will be parsed, and the returned value is a valid Asset.
-     *
-     * The default implementation will process the following steps:
-     *
-     * 1. Use the file name part of the file as symbol name
-     * 2. Remove the [fileExtension] part
-     * 3. Convert to symbol name to uppercase
-     * 4. Use the [template] to create the actual asset, with only the symbol name variable
-     */
-    var assetBuilder: (File) -> Asset = { file ->
-        defaultBuilder(file)
-    }
-
 
     private val pattern by lazy { Pattern.compile(filePattern) }
     private var isInitialized = false
 
-
-    /**
-     * The default builder takes the file name, removes the file extension and uses that the symbol name
-     */
-    private fun defaultBuilder(file: File): Asset {
-        val symbol = file.name.removeSuffix(fileExtension).uppercase()
-        return template.copy(symbol = symbol)
-    }
-
-
     /**
      * @suppress
      */
-    internal companion object {
+    companion object {
 
         private const val configFileName = "config.properties"
         private val logger = Logging.getLogger(CSVConfig::class)
+
+        /**
+         * Get a CSVConfig suited to parsing stooq CSV files
+         */
+        fun forStooq(template: Asset = Asset("TEMPLATE")): CSVConfig {
+            val fileExtension = ".us.txt"
+            fun file2Symbol(file: File): String {
+                return file.name.removeSuffix(fileExtension).replace('-', '.').uppercase()
+            }
+
+            return CSVConfig(
+                timeParser = AutoDetectTimeParser(2),
+                assetBuilder = { file: File -> template.copy(symbol = file2Symbol(file)) }
+            )
+        }
+
+
+
+        fun forMT5(template: Asset = Asset("TEMPLATE"), priceQuote: Boolean = false) : CSVConfig {
+            val dtf = if (priceQuote)
+                DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss.SSS")
+            else
+                DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
+
+            val priceParser = if (priceQuote) PriceQuoteParser(3,2) else PriceBarParser(2,3,4,5,6)
+
+            fun parse(line: List<String>): Instant {
+                val text = line[0] + " " + line[1]
+                val dt = LocalDateTime.parse(text, dtf)
+                return dt.toInstant(ZoneOffset.UTC)
+            }
+
+            return CSVConfig (
+                template = template,
+                separator = '\t',
+                timeParser = { a, _ -> parse(a) },
+                priceParser = priceParser
+            )
+
+        }
+
+        fun forHistData(): CSVConfig {
+            val result = CSVConfig (
+                priceParser = PriceBarParser(1,2,3,4),
+                timeParser = AutoDetectTimeParser(0),
+                separator = ';',
+                hasHeader = false,
+                assetBuilder = { file: File ->
+                    val currencyPair = file.name.split('_')[2]
+                    Asset.forexPair(currencyPair)
+                }
+            )
+            return result
+        }
+
 
         /**
          * Read a CSV configuration from a [path]. It will use the standard config as base and merge all the
@@ -122,7 +154,7 @@ data class CSVConfig(
      */
     internal fun shouldParse(file: File): Boolean {
         val name = file.name
-        return file.isFile && name.endsWith(fileExtension) && pattern.matcher(name).matches() && name !in fileSkip
+        return file.isFile && pattern.matcher(name).matches() && name !in fileSkip
     }
 
     private fun getAssetTemplate(config: Map<String, String>): Asset {
@@ -146,7 +178,6 @@ data class CSVConfig(
         for ((key, value) in config) {
             logger.debug { "Found property key=$key value=$value" }
             when (key) {
-                "file.extension" -> fileExtension = value
                 "file.pattern" -> filePattern = value
                 "file.skip" -> fileSkip = value.split(",")
             }

@@ -31,7 +31,6 @@ internal class LazyCSVFeedTest {
     @Test
     fun play() {
         val feed = LazyCSVFeed(TestData.dataDir() + "US") {
-            fileExtension = ".csv"
             fileSkip = listOf("AAPL.csv")
         }
         val priceBars = feed.filter<PriceBar>()

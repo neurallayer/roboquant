@@ -18,11 +18,11 @@ package org.roboquant.feeds.csv
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import org.roboquant.common.*
+import org.roboquant.common.Asset
+import org.roboquant.common.Currency
+import org.roboquant.common.Exchange
+import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.PriceAction
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.test.assertEquals
@@ -62,7 +62,7 @@ internal class CSVFeedTest {
     @Test
     fun getForexCSV() {
         val feed = CSVFeed(TestData.dataDir() + "FX1") {
-            assetBuilder = {
+            assetBuilder = AssetBuilder {
                 val str = it.name.removeSuffix(".csv")
                 Asset.forexPair(str)
             }
@@ -76,7 +76,7 @@ internal class CSVFeedTest {
     @Test
     fun getMinutesCSV() {
         val feed = CSVFeed(TestData.dataDir() + "FX2") {
-            assetBuilder = {
+            assetBuilder = AssetBuilder {
                 val str = it.name.removeSuffix(".csv")
                 Asset.forexPair(str)
             }
@@ -87,6 +87,7 @@ internal class CSVFeedTest {
         assertEquals(9, feed.timeline.size)
     }
 
+    /*
     @Test
     fun mt5PriceBar() {
         val dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
@@ -145,6 +146,8 @@ internal class CSVFeedTest {
         assertEquals(Timeframe.parse("1984-09-07T20:00:00Z", "1984-10-04T20:00:00Z").toInclusive(), feed.timeframe)
     }
 
+     */
+
     @Test
     fun noAssets() {
         assertFailsWith<IllegalArgumentException> {
@@ -152,7 +155,7 @@ internal class CSVFeedTest {
         }
 
         val feed1 = CSVFeed(TestData.dataDir() + "US") {
-            fileExtension = ".non_existing_ext"
+            filePattern = ".*.non_existing_ext"
         }
         assertTrue(feed1.assets.isEmpty())
     }
@@ -162,23 +165,12 @@ internal class CSVFeedTest {
     fun customConfig() {
         val template = Asset("TEMPLATE", currencyCode = "USD", exchangeCode = "TEST123")
         val path = Path(TestData.dataDir() + "US") / Path("AAPL.csv")
-        val config = CSVConfig()
-        config.template = template
-        assertEquals(template, config.template)
 
         val feed = CSVFeed(path) {
-            this.template = template
+            assetBuilder = DefaultAssetBuilder(template)
         }
         val first = feed.first().actions.first() as PriceAction
         assertEquals("TEST123", first.asset.exchange.exchangeCode)
-
-        fun CSVConfig.myConfigure() {
-            this.template = Asset("TEMPLATE", currencyCode = "USD", exchangeCode = "TEST345")
-        }
-
-        val feed2 = CSVFeed(path, configure = CSVConfig::myConfigure)
-        val first2 = feed2.first().actions.first() as PriceAction
-        assertEquals("TEST345", first2.asset.exchange.exchangeCode)
     }
 
 

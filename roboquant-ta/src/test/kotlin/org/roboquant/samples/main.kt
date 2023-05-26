@@ -18,19 +18,16 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.fee
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Config
 import org.roboquant.common.Size
-import org.roboquant.common.days
 import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
-import org.roboquant.metrics.PNLMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Order
@@ -61,27 +58,6 @@ private fun beta() {
 
 }
 
-private fun beta2() {
-    val feed = CSVFeed("/data/assets/us-stocks/Stocks") {
-        fileExtension = ".us.txt"
-    }
-    val market = CSVFeed("/data/assets/us-stocks/ETFs") {
-        fileExtension = ".us.txt"
-        filePattern = "spy.us.txt"
-
-    }
-    feed.merge(market)
-    val strategy = NoSignalStrategy()
-    val marketAsset = feed.assets.getBySymbol("SPY")
-    val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, 60.days, maxPositions = 10)
-    policy.recording = true
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, ProgressMetric(), PNLMetric(), policy = policy, logger = logger)
-    roboquant.run(feed)
-    println(roboquant.broker.account.summary())
-    println(roboquant.broker.account.trades.fee)
-
-}
 
 private fun macd() {
     val strategy = TaLibSignalStrategy(35) { asset, prices ->
@@ -194,7 +170,6 @@ fun main() {
     when ("ATR") {
         "CUSTOM" -> customPolicy()
         "BETA" -> beta()
-        "BETA2" -> beta2()
         "MACD" -> macd()
         "ATR" -> atrPolicy()
         "TA4J" -> ta4j()

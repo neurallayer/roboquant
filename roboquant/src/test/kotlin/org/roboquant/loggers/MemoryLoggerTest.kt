@@ -86,7 +86,7 @@ internal class MemoryLoggerTest {
         val logger = MemoryLogger(showProgress = false)
         logger.start("test", Timeframe.INFINITE)
 
-        var start = Instant.now()
+        var start = Instant.parse("2022-01-01T00:00:00Z")
         repeat(50) {
             val metrics = metricResultsOf("key1" to it)
             logger.log(metrics, start, "test")

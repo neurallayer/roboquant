@@ -75,7 +75,7 @@ class LazyCSVFeed(private val path: Path, configure: CSVConfig.() -> Unit = {}) 
             .walk()
             .filter { config.shouldParse(it) }
             .map { it.absoluteFile }
-            .map { config.assetBuilder(it) to it }
+            .map { config.assetBuilder.build(it) to it }
             .toMap()
 
         logger.info { "Scanned $path found ${filesMap.size} files" }
