@@ -40,7 +40,7 @@ private const val EPS = 0.0000000001
  * - returns.max
  * - returns.last
  *
- * @property riskFreeRate The annualized risk-free rate used in the Sharpe Ratio, for example 4% would be 0.04.
+ * @property riskFreeRate The annualized risk-free rate used in the Sharpe Ratio, for example, 4% would be 0.04.
  * Default is 0.0
  * @property minPeriods The minimal number of periods before calculating the metrics, default is 2
  * @property period The duration of a single period, default is 1 year.

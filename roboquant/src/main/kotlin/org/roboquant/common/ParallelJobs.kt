@@ -33,7 +33,7 @@ import kotlinx.coroutines.*
  */
 class ParallelJobs {
 
-    // Optimized for CPU bound jobs
+    // Optimized for CPU-bound jobs
     private val scope = CoroutineScope(Dispatchers.Default + Job())
     private val jobs = mutableListOf<Job>()
 
@@ -55,7 +55,7 @@ class ParallelJobs {
     }
 
     /**
-     * How many jobs are there
+     * Number of available jobs.
      */
     val size
         get() = jobs.size

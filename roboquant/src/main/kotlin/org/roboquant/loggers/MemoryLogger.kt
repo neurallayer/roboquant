@@ -24,7 +24,7 @@ import java.time.Instant
  * Store metric results in memory. Very convenient in a Jupyter notebook when you want to inspect or visualize
  *  metric results after a run. This is also the default metric logger for roboquant if none is specified.
  *
- * If you log very large amounts of metric data, this could cause memory issues. But for normal back testing
+ * If you log very large amounts of metric data, this could cause memory issues. But for normal back testing,
  * this should not pose a problem.
  *
  * By default, a bar will be shown that shows the progress of a run, but by setting [showProgress] to false this can be

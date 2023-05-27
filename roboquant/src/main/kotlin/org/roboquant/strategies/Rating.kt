@@ -37,29 +37,29 @@ import org.roboquant.strategies.Rating.*
 enum class Rating(val value: Int) {
 
     /**
-     * Buy rating, is a recommendation to purchase a specific asset.
+     * Buy rating is a recommendation to purchase a specific asset.
      */
     BUY(2),
 
     /**
-     * Outperform rating, is a recommendation meaning an asset is expected to do slightly better than the market return.
+     * Outperform rating is a recommendation meaning an asset is expected to do slightly better than the market return.
      */
     OUTPERFORM(1),
 
     /**
-     * Hold rating, a recommendation that means an asset is expected to perform at the same pace as comparable assets
+     * Hold rating is a recommendation that means an asset is expected to perform at the same pace as comparable assets
      * or in-line with the market.
      */
     HOLD(0),
 
     /**
-     * Underperform rating, a recommendation that means an asset is expected to do slightly worse than the overall
+     * Underperform rating is a recommendation that means an asset is expected to do slightly worse than the overall
      * market return.
      */
     UNDERPERFORM(-1),
 
     /**
-     * Sell rating. a recommendation to sell an asset or to liquidate an asset.
+     * Sell rating is a recommendation to sell an asset or to liquidate an asset.
      */
     SELL(-2);
 

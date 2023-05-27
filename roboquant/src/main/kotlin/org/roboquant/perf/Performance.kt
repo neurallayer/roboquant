@@ -102,7 +102,7 @@ private object Performance {
     private fun getStrategy(skip:Int) : Strategy = FastStrategy(skip)
 
     /**
-     * Try to make the results more reproducible by running the code multiple times and take best time.
+     * Try to make the results more reproducible by running the code multiple times and take the best time.
      */
     private inline fun measure(block: () -> Unit): Long {
         var best = Long.MAX_VALUE

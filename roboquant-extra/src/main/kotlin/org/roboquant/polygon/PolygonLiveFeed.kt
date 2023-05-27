@@ -16,7 +16,10 @@
 
 package org.roboquant.polygon
 
-import io.polygon.kotlin.sdk.websocket.*
+import io.polygon.kotlin.sdk.websocket.PolygonWebSocketChannel
+import io.polygon.kotlin.sdk.websocket.PolygonWebSocketClient
+import io.polygon.kotlin.sdk.websocket.PolygonWebSocketMessage
+import io.polygon.kotlin.sdk.websocket.PolygonWebSocketSubscription
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
@@ -57,7 +60,7 @@ enum class PolygonActionType {
  * subscriptions from Polygon.io since it uses the websocket API.
  *
  * @param configure additional configuration logic
- * @property useComputerTime use the computer time to stamp events or use the polygon supplied timestamps,
+ * @property useComputerTime use the computer time to stamp events or use the Polygon-supplied timestamps,
  * default is true
  */
 class PolygonLiveFeed(
@@ -80,7 +83,7 @@ class PolygonLiveFeed(
     }
 
     /**
-     * Return the available assets. Due to the amount of API calls made, this requires a
+     * Return the available assets. Due to the number of API calls made, this requires a
      * non-free subscription at Polygon.io
      */
     val availableAssets: List<Asset> by lazy {

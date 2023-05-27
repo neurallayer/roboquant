@@ -46,7 +46,7 @@ fun interface AssetFilter {
         }
 
         /**
-         * Include only the assets that are denoted in the provided [currencies]. For example only include assets that
+         * Include only the assets that are denoted in the provided [currencies]. For example, only include assets that
          * are denoted in USD and ignore other currencies.
          */
         fun includeCurrencies(vararg currencies: Currency): AssetFilter {

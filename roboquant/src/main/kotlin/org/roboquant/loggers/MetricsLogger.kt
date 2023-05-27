@@ -42,8 +42,8 @@ interface MetricsLogger : Lifecycle {
      * Get all the logged entries for a specific metric. The result is a Map with the key the run and the value the
      * metrics.
      *
-     * This is optional to implement for a MetricsLogger since not all loggers store the metrics. Use [metricNames] to
-     * see which metrics are available.
+     * This is optional to implement for a MetricsLogger since not all logger stores the metrics. Use [metricNames]
+     * to see which metrics are available.
      */
     fun getMetric(name: String): Map<String, TimeSeries> = emptyMap()
 

@@ -17,7 +17,7 @@
 package org.roboquant.orders
 
 /**
- * One Triggers Other order, if the primary order it executed, the secondary order will automatically be activated. Both
+ * `One Triggers Other` order, if the primary order it executed, the secondary order will automatically be activated. Both
  * orders require the same asset.
  *
  * @property primary the primary order

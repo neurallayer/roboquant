@@ -32,13 +32,12 @@ import org.roboquant.common.Asset
  *
  * @property asset the underlying asset of the order
  * @property id a unique order identifier
- * @property tag an (optional) tag that can be used to store additional information, for example relate the order to
- * a specific signal for future traceability.
+ * @property tag an (optional) tag that can be used to store additional information
  **/
 sealed class Order(val asset: Asset, val tag: String) {
 
     /**
-     * order identifier that is automatically generated and unique per process
+     * The order identifier that is automatically generated and unique per process
      */
     val id = nextId()
 

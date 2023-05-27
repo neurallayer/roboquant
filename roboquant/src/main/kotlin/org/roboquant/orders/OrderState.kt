@@ -75,7 +75,7 @@ class OrderState private constructor(
      * original version won't be modified.
      *
      * This method will take care that the right state transition happens. And if it is not allowed, it will throw an
-     * IllegalState Exception.
+     * `IllegalStateException`.
      */
     fun update(newStatus: OrderStatus, time: Instant): OrderState {
         check (! status.closed) { "cannot update a closed order, status=$status" }

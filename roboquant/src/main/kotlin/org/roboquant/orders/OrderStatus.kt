@@ -57,10 +57,10 @@ enum class OrderStatus {
 
     /**
      *  The order has been rejected. This is an end-state and could occur when:
-     *  - The order is not valid, for example you try to short an asset while that is not allowed
+     *  - The order is not valid, for example, you try to short an asset while that is not allowed
      *  - You don't have enough buyingPower to place a new order
      *  - The order type is not supported by the broker
-     *  - The provided asset is not recognised or cannot be traded on your account
+     *  - The provided asset is not recognized or cannot be traded on your account
      */
     REJECTED;
 

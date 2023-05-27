@@ -104,7 +104,7 @@ data class Position(
         get() = size.isPositive
 
     /**
-     * Returns true if this is a open position, false otherwise
+     * Returns true if this is an open position, false otherwise
      */
     val open: Boolean
         get() = !size.iszero

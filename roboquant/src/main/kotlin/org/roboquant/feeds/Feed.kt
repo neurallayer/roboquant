@@ -30,7 +30,7 @@ import kotlin.math.absoluteValue
  * Interface that any data feed needs to implement. A feed can deliver any type of information, ranging from
  * stock prices to content of social media.
  *
- * Feeds can represent historic data, for example during back testing, and live feeds during live trading.
+ * Feeds can represent historic data, for example, during back testing, and live feeds during live trading.
  */
 interface Feed : AutoCloseable {
 

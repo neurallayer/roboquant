@@ -30,7 +30,7 @@ import java.math.BigDecimal
 import java.time.Instant
 
 /**
- * Order chart plots order sizes over time. Most common use case is to plot the order sizes of a single asset, but
+ * Order chart plots order sizes over time. The most common use case is to plot the order sizes of a single asset, but
  * this is not a strict requirement.
  *
  * Please not this chart only display orders of the type [SingleOrder] and will ignore other order types. Often trades

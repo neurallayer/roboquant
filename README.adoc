@@ -47,7 +47,7 @@ roboquant.run(feed) // <5>
 <1> Create the strategy that you want to validate
 <2> Define the metrics you want to monitor during the back-test
 <3> Create a Roboquant instance, the engine of the platform
-<4> What data should be used, in this case CSV files
+<4> What data should be used, in this case, CSV files
 <5> Run the back test
 
 You can find out more at the online https://roboquant.org/tutorial/index.html[tutorial^].
@@ -72,7 +72,7 @@ Add the following dependency to your `pom.xml` file:
 </dependency>
 ----
 
-or if you want to create your own new algo-trading project from scratch, you can run a Maven Archetype:
+Or if you want to create your own new algo-trading project from scratch, you can run a Maven Archetype:
 
 [source,shell]
 ----
@@ -124,7 +124,7 @@ Some key features of roboquant are:
 * [x] Trade on multi-markets with multi-currencies
 * [x] Developed under open source with a permissive Apache license
 * [x] Use Jupyter Notebooks with insightful charts if you prefer interactive development
-* [x] Batteries included, for example 150+ technical indicators and ready to use datasets
+* [x] Batteries included, for example, 150+ technical indicators and ready to use datasets
 * [x] Out of the box integration with Alpaca, Interactive Brokers, Yahoo Finance, Alpha Vantage, Polygon, ECB, Binance and most other crypto exchanges
 
 See also https://roboquant.org/background/features.html[Features] for a more extensive feature list and how roboquant compares to some other platforms.

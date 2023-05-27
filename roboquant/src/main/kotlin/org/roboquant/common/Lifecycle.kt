@@ -27,7 +27,7 @@ interface Lifecycle {
 
     /**
      * Invoked at the start of a [run]. Default implementation is to invoke [reset], which is suitable for
-     * many type of components.
+     * many types of components.
      */
     fun start(run: String, timeframe: Timeframe) {
         reset()

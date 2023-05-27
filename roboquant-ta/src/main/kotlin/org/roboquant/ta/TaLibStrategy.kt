@@ -47,15 +47,15 @@ class TaLibStrategy(history: Int = 15) : RecordingStrategy(recording = true) {
     val taLib = TaLib()
 
     /**
-     * Contains set of predefined strategies
+     * Contains several popular predefined strategies.
      */
     companion object Factory {
 
         /**
-         * When we hit a record high or low we generate a BUY or SELL signal. This implementation supports multiple
-         * periods, where any period that register a record high or low will be sufficient to generate a signal.
+         * When we hit a record high or low, we generate a BUY or SELL signal. This implementation supports multiple
+         * periods, where any period that registers a record high or low will be sufficient to generate a signal.
          *
-         * The exact rules for a single period being:
+         * The exact rules for a single period are:
          *
          * * Is the last price a record high compared to previous n-days, generate a BUY signal
          * * Is the last price a record low compared to previous n-days, generate a SELL signal
@@ -158,10 +158,11 @@ class TaLibStrategy(history: Int = 15) : RecordingStrategy(recording = true) {
     /**
      * Define the buy condition, return true if you want to generate a BUY signal, false otherwise
      * # Example
-     *
-     *       strategy.buy { price ->
-     *          ema(price.close, shortTerm) > ema(price.close, longTerm) && cdlMorningStar(price)
-     *       }
+     * ```
+     * strategy.buy { price ->
+     *      ema(price.close, shortTerm) > ema(price.close, longTerm) && cdlMorningStar(price)
+     * }
+     * ```
      */
     fun buy(block: TaLib.(series: PriceBarSerie) -> Boolean) {
         buyFn = block
@@ -171,11 +172,11 @@ class TaLibStrategy(history: Int = 15) : RecordingStrategy(recording = true) {
      * Define the sell conditions, return true if you want to generate a SELL signal, false otherwise
      *
      * # Example
-     *
-     *      strategy.sell { price ->
-     *          cdl3BlackCrows(price) || cdl2Crows(price)
-     *      }
-     *
+     * ```
+     * strategy.sell { price ->
+     *      cdl3BlackCrows(price) || cdl2Crows(price)
+     * }
+     * ```
      */
     fun sell(block: TaLib.(series: PriceBarSerie) -> Boolean) {
         sellFn = block
@@ -186,7 +187,6 @@ class TaLibStrategy(history: Int = 15) : RecordingStrategy(recording = true) {
      * but this is not a strict requirement.
      *
      * @see Strategy.generate
-     *
      */
     override fun generate(event: Event): List<Signal> {
         val results = mutableListOf<Signal>()
@@ -202,7 +202,7 @@ class TaLibStrategy(history: Int = 15) : RecordingStrategy(recording = true) {
     }
 
     /**
-     * reset all history state
+     * Reset all the history state
      */
     override fun reset() {
         priceBarSeries.clear()

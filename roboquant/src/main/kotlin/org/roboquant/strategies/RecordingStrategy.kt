@@ -49,7 +49,7 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
     }
 
     /**
-     * any recorded metric will be cleared.
+     * Any recorded metric will be cleared.
      */
     override fun reset() {
         metrics.clear()

@@ -21,9 +21,10 @@ import org.roboquant.feeds.PriceAction
 import java.time.Instant
 
 /**
- * Pricing model that uses a constant [spreadInBips] to calculate the trading price. If for example the spread is
- * 10 Bips (default), the BUY price will increase with 0.05 percent and the SELL price decrease by 0.05 percent so
- * that the spread between the two is 0.1% (aka 10 Bips).
+ * Pricing model that uses a constant [spreadInBips] to calculate the trading price.
+ *
+ * If, for example, the spread is 10 Bips (default), the BUY price will increase by 0.05 percent, and the SELL price
+ * decreases by 0.05 percent so that the spread between the two is 0.1% (aka 10 Bips).
  *
  * It uses the same price for high, low and market prices. It works with any type of [PriceAction].
  */

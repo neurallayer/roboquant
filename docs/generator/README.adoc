@@ -12,6 +12,6 @@ mv TaLib.kt ../../roboquant-ta/src/main/kotlin/org/roboquant/ta/TaLib.kt
 ----
 
 == Background
-TA-Lib is great library for technical analysis. It comes with 200 indicators out of the box, ranging from moving averages to detecting all kind of candlestick patterns. It is available in many languages and used by many traders.
+TA-Lib is a great library for technical analysis. It comes with 200 indicators out of the box, ranging from moving averages to detecting all kinds of candlestick patterns. It is available in many languages and used by many traders.
 
 The native Java version of the TA-Lib library is high performant, but can be difficult to use. So roboquant provides this wrapper to make it convenient to include these indicators in your own trading strategies.

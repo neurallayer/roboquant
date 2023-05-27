@@ -24,7 +24,6 @@ import com.binance.api.client.domain.account.NewOrder.*
 import com.binance.api.client.domain.account.NewOrderResponse
 import com.binance.api.client.domain.account.request.CancelOrderRequest
 import com.binance.api.client.domain.account.request.OrderRequest
-import com.binance.api.client.domain.OrderStatus as BinanceOrderStatus
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.sim.execution.InternalAccount
@@ -35,6 +34,7 @@ import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
+import com.binance.api.client.domain.OrderStatus as BinanceOrderStatus
 
 /**
  * Implementation of the broker interface for the Binance exchange. This enables paper- and live-trading of
@@ -177,7 +177,7 @@ class BinanceBroker(
     }
 
     /**
-     * place a market order for a currency pair
+     * Place a market order for a currency pair
      *
      * @param symbol
      * @param order

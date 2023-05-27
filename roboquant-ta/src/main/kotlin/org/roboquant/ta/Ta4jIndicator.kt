@@ -25,6 +25,9 @@ import org.ta4j.core.BaseBarSeries
 import org.ta4j.core.BaseBarSeriesBuilder
 import java.time.Instant
 
+/**
+ * This class enables the creation of an Indicator based on the `Ta4j` library.
+ */
 class Ta4jIndicator(
     private val maxBarCount: Int = -1,
     private val block: (BarSeries) -> Map<String, Double>
@@ -36,6 +39,9 @@ class Ta4jIndicator(
         clear()
     }
 
+    /**
+     * @see Indicator.calculate
+     */
     override fun calculate(action: Action, time: Instant): Map<String, Double> {
         return if (action is PriceBar) {
             series.addBar(time.toUTC(), action.open, action.high, action.low, action.close, action.volume)
@@ -45,6 +51,9 @@ class Ta4jIndicator(
         }
     }
 
+    /**
+     * @see Indicator.clear
+     */
     override fun clear() {
         series = BaseBarSeriesBuilder().build()
         if (maxBarCount >= 0) series.maximumBarCount = maxBarCount

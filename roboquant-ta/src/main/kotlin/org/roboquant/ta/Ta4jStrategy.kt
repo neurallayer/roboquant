@@ -21,7 +21,6 @@ import org.roboquant.common.toUTC
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.strategies.Rating
-import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import org.ta4j.core.BarSeries
@@ -38,9 +37,8 @@ import org.ta4j.core.rules.BooleanRule
  * @constructor Create a new Ta4jStrategy
  */
 class Ta4jStrategy(
-    private val maxBarCount: Int = -1,
-    recording: Boolean = true
-) : RecordingStrategy(recording = recording) {
+    private val maxBarCount: Int = -1
+) : Strategy {
 
     private var buyingRule: (BarSeries) -> Rule = { BooleanRule.FALSE }
     private var sellingRule: (BarSeries) -> Rule = { BooleanRule.FALSE }

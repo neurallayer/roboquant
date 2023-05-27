@@ -20,6 +20,16 @@ import org.roboquant.feeds.Action
 import org.roboquant.metrics.Indicator
 import java.time.Instant
 
+/**
+ * This class enables the creation of an Indicator based on TaLib.
+ *
+ * Example:
+ * ```
+ * val indicator = TaLibIndicator(barCount) {
+ *      mapOf("ema" to ema(it, barCount))
+ * }
+ * ```
+ */
 class TaLibIndicator  (
     barCount: Int = 20,
     private val block: TaLib.(series: PriceBarSerie) -> Map<String, Double>
@@ -36,6 +46,9 @@ class TaLibIndicator  (
         }
     }
 
+    /**
+     * @see Indicator.clear
+     */
     override fun clear() {
         series.clear()
     }
@@ -44,29 +57,42 @@ class TaLibIndicator  (
      * Commonly used indicators using the TaLib library
      */
     companion object {
-        
+
+        /**
+         * Return a Relative Strength Indicator for the provided [barCount]
+         */
         fun rsi(barCount: Int = 10) : TaLibIndicator {
             return TaLibIndicator(barCount+1) {
-                mapOf("rsi" to rsi(it, barCount))
-            }
-        }
-        
-        fun bbands(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator(barCount) {
-                val (high, mid, low) = bbands(it, barCount)
-                mapOf("bb.low" to low, "bb.high" to high, "bb.mid" to mid)
-            }
-        }
-        
-        fun ema(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator(barCount) {
-                mapOf("ema" to ema(it, barCount))
+                mapOf("rsi$barCount" to rsi(it, barCount))
             }
         }
 
+        /**
+         * Return a Bollinger Band Indicator for the provided [barCount]
+         */
+        fun bbands(barCount: Int = 10) : TaLibIndicator {
+            return TaLibIndicator(barCount) {
+                val (high, mid, low) = bbands(it, barCount)
+                val prefix = "bb$barCount"
+                mapOf("$prefix.low" to low, "$prefix.high" to high, "$prefix.mid" to mid)
+            }
+        }
+
+        /**
+         * Return an Exponential Moving Average Indicator for the provided [barCount]
+         */
+        fun ema(barCount: Int = 10) : TaLibIndicator {
+            return TaLibIndicator(barCount) {
+                mapOf("ema$barCount" to ema(it, barCount))
+            }
+        }
+
+        /**
+         * Return an Simple Moving Average Indicator for the provided [barCount]
+         */
         fun sma(barCount: Int = 10) : TaLibIndicator {
             return TaLibIndicator(barCount) {
-                mapOf("sma" to sma(it, barCount))
+                mapOf("sma$barCount" to sma(it, barCount))
             }
         }
         
