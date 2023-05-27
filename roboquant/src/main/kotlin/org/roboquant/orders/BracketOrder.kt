@@ -25,11 +25,11 @@ import org.roboquant.common.Size
  * and [stopLoss] orders should be opposite of the [entry] order.
  *
  * Although the SimBroker is very flexible and supports any type of single order, real brokers often are more limited.
- * So it is advised to restrict your orders to the following subsets if you want to go live:
+ * So it is advised to restrict your bracket orders to the following subsets if you plan to go live:
  *
- * - entry order - either a Market or Limit order
- * - takeProfit - a Limit order
- * - stopLoss - a StopLoss or StopLimit order
+ * - The entry order - either a Market or Limit order
+ * - The takeProfit order - a Limit order
+ * - The stopLoss order - a StopLoss or StopLimit order
  *
  * @property entry the entry order
  * @property takeProfit the take profit order
@@ -85,9 +85,9 @@ class BracketOrder(
 
         /**
          * Create a bracket order meeting the following criteria:
-         * - the entry order is a [LimitOrder] with the provided [limitPrice], [asset] and [size]
-         * - the take profit order is a [TrailOrder] with the specified [trailPercentage]
-         * - the stop loss order is a [StopOrder] using a stop priced based on the provided [stopPercentage] relative
+         * - the entry-order is a [LimitOrder] with the provided [limitPrice], [asset] and [size]
+         * - the take-profit order is a [TrailOrder] with the specified [trailPercentage]
+         * - the stop-loss order is a [StopOrder] using a stop priced based on the provided [stopPercentage] relative
          * to the limitPrice.
          */
         @Suppress("LongParameterList")

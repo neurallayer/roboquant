@@ -165,6 +165,6 @@ The output should look something like this:
   1000M     500  20000  100   345ms  1387ms   44519ms    2962ms  1000K      337M
 ----
 
-The main purpose is to test the performance and stability of the back-test engine itself, not any specific feed, strategy or metric. So the overhead of those type of components is kept to a minimum, while still running full back tests.
+NOTE: The main purpose is to test the performance and stability of the back-test engine itself, not any specific feed, strategy or metric. So the overhead of those components is kept to a minimum, while still running full back tests.
 
 
