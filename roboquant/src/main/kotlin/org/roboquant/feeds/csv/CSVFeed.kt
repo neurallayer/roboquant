@@ -38,34 +38,35 @@ import kotlin.io.path.isRegularFile
  * memory available, consider using [LazyCSVFeed] instead.
  *
  * @param path the directory that contains CSV files or a single CSV file
- * @param configure the configuration to be run, default is no additional configuration. See also [CSVConfig]
+ * @param config the configuration to be run, default is no additional configuration. See also [CSVConfig]
  * @constructor
  */
 class CSVFeed(
     path: Path,
+    val config: CSVConfig,
     configure: CSVConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-    /**
-     * Similar to the main constructor, but this one takes the path argument as a String.
-     * @see CSVFeed
-     */
-    constructor(path: String, configure: CSVConfig.() -> Unit = {}) : this(Path.of(path), configure)
-
     private val logger = Logging.getLogger(CSVFeed::class)
-    private val config: CSVConfig = CSVConfig.fromFile(path)
+
+    constructor(path: Path, configure: CSVConfig.() -> Unit = {}) : this(path, CSVConfig.fromFile(path), configure)
+
+    constructor(path: String, configure: CSVConfig.() -> Unit = {}) : this(
+        Path.of(path),
+        CSVConfig.fromFile(Path.of(path)),
+        configure
+    )
+
 
     init {
         require(path.isDirectory() || path.isRegularFile()) { "$path does not exist" }
         config.configure()
-
         runBlocking {
             readFiles(path)
         }
 
         logger.info { "events=${timeline.size} assets=${assets.size} timeframe=$timeframe" }
     }
-
 
     /**
      * Read a [path] (directory or single file) and all its descendants and return the found CSV files

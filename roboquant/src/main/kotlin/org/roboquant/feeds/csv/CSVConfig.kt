@@ -55,6 +55,7 @@ data class CSVConfig(
 ) {
 
     private val pattern by lazy { Pattern.compile(filePattern) }
+
     private var isInitialized = false
 
     /**
@@ -69,12 +70,12 @@ data class CSVConfig(
          * Get a CSVConfig suited to parsing stooq CSV files
          */
         fun forStooq(template: Asset = Asset("TEMPLATE")): CSVConfig {
-            val fileExtension = ".us.txt"
             fun file2Symbol(file: File): String {
-                return file.name.removeSuffix(fileExtension).replace('-', '.').uppercase()
+                return file.name.removeSuffix(".us.txt").replace('-', '.').uppercase()
             }
 
             return CSVConfig(
+                filePattern = ".*.txt",
                 timeParser = AutoDetectTimeParser(2),
                 assetBuilder = { file: File -> template.copy(symbol = file2Symbol(file)) }
             )
@@ -83,6 +84,12 @@ data class CSVConfig(
 
 
         fun forMT5(template: Asset = Asset("TEMPLATE"), priceQuote: Boolean = false) : CSVConfig {
+
+            fun assetBuilder(file: File): Asset {
+                val symbol = file.name.split('_').first().uppercase()
+                return template.copy(symbol = symbol)
+            }
+
             val dtf = if (priceQuote)
                 DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss.SSS")
             else
@@ -97,7 +104,7 @@ data class CSVConfig(
             }
 
             return CSVConfig (
-                template = template,
+                assetBuilder = { assetBuilder(it) } ,
                 separator = '\t',
                 timeParser = { a, _ -> parse(a) },
                 priceParser = priceParser

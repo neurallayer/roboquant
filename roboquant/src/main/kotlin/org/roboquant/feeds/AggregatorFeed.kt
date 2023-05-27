@@ -106,7 +106,7 @@ class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TradingPerio
                 for (action in event.actions) {
                     val pb = getPriceBar(action)
 
-                    // If we don't recognise it as a supported PriceAction, just directly forward the action
+                    // If we don't recognize it as a supported PriceAction, just directly forward the action
                     if (pb == null) {
                         result.add(action)
                         continue

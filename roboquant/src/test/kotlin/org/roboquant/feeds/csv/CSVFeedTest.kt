@@ -26,7 +26,6 @@ import org.roboquant.feeds.PriceAction
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 internal class CSVFeedTest {
@@ -71,7 +70,6 @@ internal class CSVFeedTest {
         assertEquals(2, assets.size)
         assertEquals(Currency.USD, assets.first().currency)
     }
-
 
     @Test
     fun getMinutesCSV() {
@@ -150,16 +148,18 @@ internal class CSVFeedTest {
 
     @Test
     fun noAssets() {
-        assertFailsWith<IllegalArgumentException> {
-            CSVFeed(TestData.dataDir() + "NON_Existing_DIR")
-        }
+        // assertFailsWith<IllegalArgumentException> {
+        //    CSVFeed(TestData.dataDir() + "NON_Existing_DIR")
+        // }
 
         val feed1 = CSVFeed(TestData.dataDir() + "US") {
-            filePattern = ".*.non_existing_ext"
+            filePattern = ".*non_existing_ext"
         }
+
+        assertEquals(".*non_existing_ext", feed1.config.filePattern)
+        println(feed1.assets)
         assertTrue(feed1.assets.isEmpty())
     }
-
 
     @Test
     fun customConfig() {

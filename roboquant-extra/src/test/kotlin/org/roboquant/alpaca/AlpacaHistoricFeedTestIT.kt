@@ -16,11 +16,15 @@
 
 package org.roboquant.alpaca
 
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarAdjustment
-import org.roboquant.common.*
+import org.roboquant.common.AssetType
+import org.roboquant.common.Config
+import org.roboquant.common.Timeframe
+import org.roboquant.common.findByCurrencies
 import org.roboquant.feeds.*
 import java.time.Duration
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class AlpacaHistoricFeedTestIT {
 
@@ -79,7 +83,13 @@ internal class AlpacaHistoricFeedTestIT {
     fun testHistoricBarsWithDuration() {
         Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AlpacaHistoricFeed()
-        feed.retrieveStockPriceBars("AAPL", timeframe = timeframe, barDuration = 5, barPeriod = BarPeriod.MINUTE)
+        feed.retrieveStockPriceBars(
+            "AAPL",
+            timeframe = timeframe,
+            barDuration = 5,
+            barPeriod = BarPeriod.MINUTE,
+            barAdjustment = BarAdjustment.ALL
+        )
         val actions = feed.filter<PriceAction>()
         assertEquals(5, Duration.between(actions[0].first, actions[1].first).toMinutes())
     }

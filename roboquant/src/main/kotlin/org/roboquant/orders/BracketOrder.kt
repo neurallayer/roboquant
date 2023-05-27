@@ -20,7 +20,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Size
 
 /**
- * Bracket order enables you to place an order and at the same time place orders to take profit and limit the loss.
+ * A bracket order enables you to place an order and at the same time place orders to take profit and limit the loss.
  * All three sub-orders require having the same underlying asset. Additionally, the size of the [takeProfit]
  * and [stopLoss] orders should be opposite of the [entry] order.
  *

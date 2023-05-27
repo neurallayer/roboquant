@@ -30,8 +30,8 @@ import org.roboquant.feeds.Event
  * Calculates the Alpha and Beta of an account. This implementation not only looks at the portfolio positions, but
  * looks at the returns of the complete account, so including cash balances.
  *
- * - Alpha is a measure of the performance of an investment as compared to the market
- * - Beta is a measure of the volatility (or systematic risk) of the account compared to the market
+ * - Alpha measures the performance of an investment as compared to the market
+ * - Beta measures the volatility (or systematic risk) of the account compared to the market
  *
  * The provided risk-free return should be for the same duration as a period.
  *

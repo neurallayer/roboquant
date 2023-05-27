@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.roboquant.common.Asset
 import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.util.HistoricTestFeed
+import org.roboquant.metrics.apply
 import org.ta4j.core.indicators.SMAIndicator
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator
 import org.ta4j.core.rules.CrossedUpIndicatorRule
@@ -27,7 +28,7 @@ class Ta4jIndicatorTest {
             mapOf("crossup" to value)
         }
         val feed = feed()
-        val result = ind.run(feed)
+        val result = feed.apply(feed.assets.first(), ind)
         assertEquals(1, result.size)
         assertEquals("crossup.test", result.keys.first())
         assertEquals(feed.timeline.size, result.values.first().size)

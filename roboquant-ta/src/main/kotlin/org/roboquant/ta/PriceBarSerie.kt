@@ -19,6 +19,7 @@ package org.roboquant.ta
 import org.roboquant.common.PriceSerie
 import org.roboquant.common.div
 import org.roboquant.common.plus
+import org.roboquant.feeds.Action
 import org.roboquant.feeds.PriceBar
 
 /**
@@ -26,7 +27,7 @@ import org.roboquant.feeds.PriceBar
  *
  * @param capacity the size of buffer
  *
- * @constructor Create new instance of PriceBarSerie
+ * @constructor Create a new instance of PriceBarSerie
  */
 class PriceBarSerie(capacity: Int) {
 
@@ -81,7 +82,19 @@ class PriceBarSerie(capacity: Int) {
     }
 
     /**
-     * Update the buffer with a new [ohlcv] values
+     * Update the buffer with a new [action], but only if the action is a price-bar.
+     * Return true if a value has been added and it is full.
+     */
+    fun add(action: Action) : Boolean {
+        return if (action is PriceBar) {
+            add(action.ohlcv)
+        } else {
+            false
+        }
+    }
+
+    /**
+     * Update the buffer with a new [ohlcv] values and true if series is full.
      */
     private fun add(ohlcv: DoubleArray): Boolean {
         assert(ohlcv.size == 5)
@@ -94,7 +107,7 @@ class PriceBarSerie(capacity: Int) {
     }
 
     /**
-     * Is there enough data available
+     * Return true if there is enough data available.
      */
     fun isFull(): Boolean {
         return openBuffer.isFull()

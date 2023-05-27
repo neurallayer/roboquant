@@ -18,9 +18,13 @@ package org.roboquant.feeds.csv
 
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.NoTradingException
+import org.roboquant.common.Timeframe
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.div
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -28,7 +32,6 @@ import kotlin.test.assertTrue
 
 
 internal class CSVConfigTest {
-
 
     @Test
     fun defaultConfig() {
@@ -39,6 +42,46 @@ internal class CSVConfigTest {
         assertEquals(',', config.separator)
     }
 
+    @Test
+    fun stooq() {
+        val config = CSVConfig.forStooq()
+        val feed = CSVFeed(Path.of(TestData.dataDir()) / "STOOQ", config) {}
+        assertEquals(1, feed.assets.size)
+        assertEquals(20, feed.timeline.size)
+        assertEquals(Timeframe.parse("1984-09-07T20:00:00Z", "1984-10-04T20:00:00Z").toInclusive(), feed.timeframe)
+    }
+
+    @Test
+    fun histData() {
+        val config = CSVConfig.forHistData()
+        val feed = CSVFeed(Path.of(TestData.dataDir()) / "HISTDATA", config) {}
+        assertEquals(1, feed.assets.size)
+        assertEquals(20, feed.timeline.size)
+        assertEquals(Timeframe.parse("2023-05-01T00:00:00Z", "2023-05-01T00:19:00Z").toInclusive(), feed.timeframe)
+    }
+
+    @Test
+    fun mt5PriceBar() {
+        val config = CSVConfig.forMT5()
+        val feed = CSVFeed(Path.of(TestData.dataDir()) / "MT5/TEST_M1.csv", config) {}
+        assertEquals(1, feed.assets.size)
+        assertEquals(16, feed.timeline.size)
+        assertEquals("TEST", feed.assets.first().symbol)
+        assertEquals(Timeframe.parse("2023-01-03T16:00:00Z", "2023-01-05T17:00:00Z").toInclusive(), feed.timeframe)
+    }
+
+    @Test
+    fun mt5PriceQuote() {
+        val config = CSVConfig.forMT5(priceQuote = true)
+        val feed = CSVFeed(Path.of(TestData.dataDir()) / "MT5/TEST_QUOTES.csv", config) {}
+        assertEquals(1, feed.assets.size)
+        assertEquals(49, feed.timeline.size)
+        assertEquals("TEST", feed.assets.first().symbol)
+        assertEquals(
+            Timeframe.parse("2023-04-14T19:00:00.846Z", "2023-04-14T19:01:24.271Z").toInclusive(),
+            feed.timeframe
+        )
+    }
 
     @Test
     fun basic() {
@@ -48,7 +91,6 @@ internal class CSVConfigTest {
         assertFalse(config.shouldParse(File("some_non_existing_file.csv")))
         assertFalse(config.shouldParse(File("somefile.dummy_extension")))
     }
-
 
     @Test
     fun process() {

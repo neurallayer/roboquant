@@ -16,36 +16,62 @@
 
 package org.roboquant.ta
 
-import org.roboquant.common.Asset
-import org.roboquant.common.Observation
-import org.roboquant.common.TimeSeries
-import org.roboquant.common.Timeframe
-import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.apply
+import org.roboquant.feeds.Action
+import org.roboquant.metrics.Indicator
+import java.time.Instant
 
-class TaLibIndicator(
-    private val maxBarCount: Int = 20,
+class TaLibIndicator  (
+    barCount: Int = 20,
     private val block: TaLib.(series: PriceBarSerie) -> Map<String, Double>
-) {
+) : Indicator {
 
-    fun run(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE): Map<String, TimeSeries> {
-        val buffers = mutableMapOf<Asset, PriceBarSerie>()
-        val taLib = TaLib()
-        val result = mutableMapOf<String, MutableList<Observation>>()
-        feed.apply<PriceBar>(timeframe = timeframe) { price, time ->
-            val asset = price.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSerie(maxBarCount) }
-            if (buffer.add(price)) {
-                val metric = block.invoke(taLib, buffer)
-                for ((key, value) in metric) {
-                    val k = "$key.${asset.symbol.lowercase()}"
-                    val l = result.getOrPut(k) { mutableListOf() }
-                    l.add(Observation(time, value))
-                }
+    private val taLib = TaLib()
+    private val series = PriceBarSerie(barCount)
+
+    override fun calculate(action: Action, time: Instant): Map<String, Double> {
+        return if (series.add(action)) {
+            block.invoke(taLib, series)
+        } else {
+            emptyMap()
+        }
+    }
+
+    override fun clear() {
+        series.clear()
+    }
+
+    /**
+     * Commonly used indicators using the TaLib library
+     */
+    companion object {
+        
+        fun rsi(barCount: Int = 10) : TaLibIndicator {
+            return TaLibIndicator(barCount+1) {
+                mapOf("rsi" to rsi(it, barCount))
             }
         }
-        return result.mapValues { TimeSeries(it.value) }
+        
+        fun bbands(barCount: Int = 10) : TaLibIndicator {
+            return TaLibIndicator(barCount) {
+                val (high, mid, low) = bbands(it, barCount)
+                mapOf("bb.low" to low, "bb.high" to high, "bb.mid" to mid)
+            }
+        }
+        
+        fun ema(barCount: Int = 10) : TaLibIndicator {
+            return TaLibIndicator(barCount) {
+                mapOf("ema" to ema(it, barCount))
+            }
+        }
+
+        fun sma(barCount: Int = 10) : TaLibIndicator {
+            return TaLibIndicator(barCount) {
+                mapOf("sma" to sma(it, barCount))
+            }
+        }
+        
+        
     }
 
 }
+

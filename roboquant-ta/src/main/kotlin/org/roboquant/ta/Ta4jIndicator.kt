@@ -16,39 +16,38 @@
 
 package org.roboquant.ta
 
-import org.roboquant.common.*
-import org.roboquant.feeds.Feed
+import org.roboquant.common.toUTC
+import org.roboquant.feeds.Action
 import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.apply
+import org.roboquant.metrics.Indicator
 import org.ta4j.core.BarSeries
 import org.ta4j.core.BaseBarSeries
 import org.ta4j.core.BaseBarSeriesBuilder
+import java.time.Instant
 
-class Ta4jIndicator(private val maxBarCount: Int = -1, private val block: (BarSeries) -> Map<String, Double>) {
+class Ta4jIndicator(
+    private val maxBarCount: Int = -1,
+    private val block: (BarSeries) -> Map<String, Double>
+) : Indicator {
 
-    private fun MutableMap<Asset, BaseBarSeries>.getSeries(asset: Asset): BaseBarSeries {
-        return getOrPut(asset) {
-            val series = BaseBarSeriesBuilder().withName(asset.symbol).build()
-            if (maxBarCount >= 0) series.maximumBarCount = maxBarCount
-            series
+    private lateinit var series: BaseBarSeries
+
+    init {
+        clear()
+    }
+
+    override fun calculate(action: Action, time: Instant): Map<String, Double> {
+        return if (action is PriceBar) {
+            series.addBar(time.toUTC(), action.open, action.high, action.low, action.close, action.volume)
+            block(series)
+        } else {
+            emptyMap()
         }
     }
 
-    fun run(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE): Map<String, TimeSeries> {
-        val data = mutableMapOf<Asset, BaseBarSeries>()
-        val result = mutableMapOf<String, MutableList<Observation>>()
-        feed.apply<PriceBar>(timeframe = timeframe) { price, time ->
-            val asset = price.asset
-            val series = data.getSeries(asset)
-            series.addBar(time.toUTC(), price.open, price.high, price.low, price.close, price.volume)
-            val metric = block(series)
-            for ((key, value) in metric) {
-                val k = "$key.${asset.symbol.lowercase()}"
-                val l = result.getOrPut(k) { mutableListOf() }
-                l.add(Observation(time, value))
-            }
-        }
-        return result.mapValues { TimeSeries(it.value) }
+    override fun clear() {
+        series = BaseBarSeriesBuilder().build()
+        if (maxBarCount >= 0) series.maximumBarCount = maxBarCount
     }
 
 }

@@ -97,7 +97,7 @@ open class BettingAgainstBetaPolicy(
      * @return
      */
     private fun rebalance(betas: List<Pair<Asset, Double>>, account: Account, event: Event): List<Order> {
-        // maximum number of short and long assets we want to have in portfolio. Since there cannot be overlap,
+        // The maximum number of short and long assets we want to have in the portfolio. Since there cannot be overlap,
         // the maximum number is always equal or smaller than half.
         val max = min(betas.size / 2, maxPositions / 2)
 

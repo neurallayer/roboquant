@@ -29,9 +29,10 @@ import kotlin.math.absoluteValue
 
 
 /**
- * This policy uses ATR (Average True Range) to
- * - create a [BracketOrder] with ATR based take profit and stop loss values
- * - optionally reduce the sizing based on the ATR.
+ * This policy uses ATR (Average True Range) to:
+ *
+ * - Create a [BracketOrder] with ATR based take profit and stop loss values
+ * - Optionally reduce the sizing based on the ATR.
  *
  * The bracket order will have the following contained orders:
  *

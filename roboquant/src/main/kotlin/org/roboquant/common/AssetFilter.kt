@@ -57,7 +57,7 @@ fun interface AssetFilter {
         private fun String.standardize() = uppercase().replace(regEx, ".")
 
         /**
-         * Include only the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive
+         * Include only the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive,
          * and all special characters are replaced with a '.' character before comparing.
          */
         fun includeSymbols(vararg symbols: String): AssetFilter {
@@ -66,7 +66,7 @@ fun interface AssetFilter {
         }
 
         /**
-         * Exclude the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive
+         * Exclude the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive,
          * and all special characters are translated into a '.' character before comparing.
          */
         fun excludeSymbols(vararg symbols: String): AssetFilter {

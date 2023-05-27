@@ -21,6 +21,7 @@ package org.roboquant.ta
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.strategies.Rating
+import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import java.lang.Integer.max
@@ -34,7 +35,7 @@ import java.lang.Integer.max
  *
  * @param history the amount of history to track
  */
-class TaLibStrategy(history: Int = 15) : Strategy {
+class TaLibStrategy(history: Int = 15) : RecordingStrategy(recording = true) {
 
     private var sellFn: TaLib.(series: PriceBarSerie) -> Boolean = { false }
     private var buyFn: TaLib.(series: PriceBarSerie) -> Boolean = { false }
