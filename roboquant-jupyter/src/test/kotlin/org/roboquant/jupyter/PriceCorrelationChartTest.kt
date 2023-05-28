@@ -16,6 +16,8 @@
 
 package org.roboquant.jupyter
 
+import org.icepear.echarts.charts.heatmap.HeatmapSeries
+import org.icepear.echarts.origin.util.SeriesOption
 import org.junit.jupiter.api.Test
 import org.roboquant.feeds.RandomWalkFeed
 import kotlin.test.assertTrue
@@ -27,6 +29,14 @@ internal class PriceCorrelationChartTest {
         val feed = RandomWalkFeed.lastYears(1, 5)
         val chart = PriceCorrelationChart(feed, feed.assets)
         assertTrue(chart.asHTML().isNotBlank())
+    }
+
+    @Test
+    fun option() {
+        val feed = RandomWalkFeed.lastYears(1, 5)
+        val series = PriceCorrelationChart(feed, feed.assets).getOption().series
+        assertTrue(series is Array<*> && series.isArrayOf<SeriesOption>())
+        assertTrue(series.first() is HeatmapSeries)
     }
 
 }

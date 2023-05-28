@@ -16,6 +16,8 @@
 
 package org.roboquant.jupyter
 
+import org.icepear.echarts.charts.pie.PieSeries
+import org.icepear.echarts.origin.util.SeriesOption
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
@@ -26,6 +28,14 @@ internal class AssetAllocationChartTest {
         val account = TestData.usAccount()
         val chart = AssetAllocationChart(account.positions)
         assertTrue(chart.asHTML().isNotBlank())
+    }
+
+    @Test
+    fun option() {
+        val account = TestData.usAccount()
+        val series = AssetAllocationChart(account.positions).getOption().series
+        assertTrue(series is Array<*> && series.isArrayOf<SeriesOption>())
+        assertTrue(series.first() is PieSeries)
     }
 
 }
