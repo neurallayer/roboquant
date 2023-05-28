@@ -38,7 +38,8 @@ import kotlin.io.path.isRegularFile
  * memory available, consider using [LazyCSVFeed] instead.
  *
  * @param path the directory that contains CSV files or a single CSV file
- * @param config the configuration to be run, default is no additional configuration. See also [CSVConfig]
+ * @property config the configuration to be run, default is no additional configuration. See also [CSVConfig]
+ * @param configure optional modifications of the default configuration
  * @constructor
  */
 class CSVFeed(
@@ -48,6 +49,8 @@ class CSVFeed(
 ) : HistoricPriceFeed() {
 
     private val logger = Logging.getLogger(CSVFeed::class)
+
+    constructor(path: String, config: CSVConfig,) : this(Path.of(path), config)
 
     constructor(path: Path, configure: CSVConfig.() -> Unit = {}) : this(path, CSVConfig.fromFile(path), configure)
 
