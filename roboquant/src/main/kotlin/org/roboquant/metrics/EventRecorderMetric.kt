@@ -47,7 +47,7 @@ class EventRecorderMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, F
 
 
     /**
-     * Reset all state
+     * Reset the state
      */
     override fun reset() {
         events.clear()

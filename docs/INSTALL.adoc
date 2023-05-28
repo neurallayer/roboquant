@@ -92,12 +92,12 @@ If you want to deploy a regular release or snapshot, use the `-P release` option
 ./mvnw clean deploy -P release
 ----
 
-Of course this requires the having the right credentials for deploying to the Maven Central repo. Also note that `autoReleaseAfterClose` of the `nexus-staging-maven-plugin` is set to false, meaning that if the deployment was sucessfull, you still need to (manually) release the software from staging to production.
+Of course, this requires the having the right credentials for deploying to the Maven Central repo. Also note that `autoReleaseAfterClose` of the `nexus-staging-maven-plugin` is set to false, meaning that if the deployment was sucessfull, you still need to (manually) release the software from staging to production.
 
 == Interactive Brokers
 If you don't require integration with Interactive Brokers for your trading, you can skip this step.
 
-Unfortunately it is not allowed to redistribute the Interactive Brokers Java client. So you'll have to download the TwsApi.jar file yourself. You can download the stable version `10.19` from here: https://interactivebrokers.github.io and within the downloaded archive file you'll find the required `TwsApi.jar`.
+Unfortunately, it is not allowed to redistribute the Interactive Brokers Java client. So you'll have to download the TwsApi.jar file yourself. You can download the stable version `10.19` from here: https://interactivebrokers.github.io and within the downloaded archive file you'll find the required `TwsApi.jar`.
 
 
 Then install the jar file in the local Maven repository on your machine using the following command:

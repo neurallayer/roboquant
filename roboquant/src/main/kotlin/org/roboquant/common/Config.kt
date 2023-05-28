@@ -87,7 +87,7 @@ object Config {
 
     /**
      * The exchange rates to use when dealing with multiple currencies. The default is [SingleCurrencyExchangeRates]
-     * which as the name suggests doesn't support conversions between currencies.
+     * which as the name suggests will not support conversions between currencies.
      */
     var exchangeRates: ExchangeRates = SingleCurrencyExchangeRates()
 

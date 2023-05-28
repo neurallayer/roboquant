@@ -65,8 +65,8 @@ class ValidationException(msg: String) : RoboquantException(msg)
 class DoesNotComputeException(msg: String) : RoboquantException(msg)
 
 /**
- * No Trading exception is thrown when time calculations are requested for days that there is no trading. For example
- * what is the closing time on a Sunday.
+ * No Trading exception is thrown when time information is requested for days that there is no trading. For example,
+ * what is the closing time on a Sunday?
  *
  * @param date The day for trading
  */
@@ -74,7 +74,7 @@ class NoTradingException(date: LocalDate) : RoboquantException("$date is not a t
 
 
 /**
- * This exception is thrown when there is not enough (historic) data to run an algorithm, for example a technical
+ * This exception is thrown when there is not enough (historic) data to run an algorithm, for example, a technical
  * indicator.
  *
  * @param msg The message to include with the exception

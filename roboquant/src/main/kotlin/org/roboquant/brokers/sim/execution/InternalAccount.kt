@@ -119,7 +119,7 @@ class InternalAccount(var baseCurrency: Currency) {
 
     /**
      * Update an [order] with a new [status] at a certain time. This only successful if order has been already added
-     * before and is not yet closed. When an order reaches a close state it will be moved internally to a
+     * before and is not yet closed. When an order reaches the close state, it will be moved internally to a
      * different store and no longer be directly accessible.
      */
     fun updateOrder(order: Order, time: Instant, status: OrderStatus) {

@@ -57,7 +57,7 @@ fun closePosition() {
     val account = broker.account
     println(account.fullSummary())
 
-    // Now let's place a new market sell order
+    // Place a new market sell order
     val position = account.positions.first()
     val order = MarketOrder(position.asset, -position.size)
     broker.place(listOf(order), Event.empty())

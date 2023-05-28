@@ -76,7 +76,7 @@ sealed class Order(val asset: Asset, val tag: String) {
         get() = this::class.simpleName?.uppercase()?.removeSuffix("ORDER") ?: "UNKNOWN"
 
     /**
-     * Provide extra info as map, used in displaying order information. Default is an empty map and subclasses are
+     * Provide extra info as a map, used in displaying order information. Default is an empty map and subclasses are
      * expected to return a map with their additional properties like limit or trailing percentages.
      */
     open fun info(): Map<String, Any> = emptyMap()

@@ -22,7 +22,7 @@ import kotlin.reflect.KClass
 /**
  * Simple Logging object that provides utility methods to create loggers and supports lazy logging
  *
- * Please note this is a logger that can is used in Kotlin source code, not to be confused with a MetricsLogger
+ * Please note this is a logger that is used in Kotlin source code, not to be confused with a MetricsLogger
  * that can be used to log metrics during a run.
  */
 object Logging {

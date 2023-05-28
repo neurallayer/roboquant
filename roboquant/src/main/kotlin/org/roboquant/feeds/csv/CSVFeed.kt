@@ -50,7 +50,7 @@ class CSVFeed(
 
     private val logger = Logging.getLogger(CSVFeed::class)
 
-    constructor(path: String, config: CSVConfig,) : this(Path.of(path), config)
+    constructor(path: String, config: CSVConfig) : this(Path.of(path), config)
 
     constructor(path: Path, configure: CSVConfig.() -> Unit = {}) : this(path, CSVConfig.fromFile(path), configure)
 

@@ -58,7 +58,7 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
 
     /**
      * Subscribe to the realtime bars for a particular contract. Often IBKR platform requires a subscription in order
-     * to be able to receive realtime bars. Please check the documentation at hte IBKR website for more details.
+     * to be able to receive realtime bars. Please check the documentation at the IBKR website for more details.
      *
      * @param assets
      */
