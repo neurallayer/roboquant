@@ -70,7 +70,7 @@ data class CSVConfig(
         /**
          * Returns a CSVConfig suited for parsing stooq.com CSV files
          */
-        fun forStooq(template: Asset = Asset("TEMPLATE")): CSVConfig {
+        fun stooq(template: Asset = Asset("TEMPLATE")): CSVConfig {
             fun file2Symbol(file: File): String {
                 return file.name.removeSuffix(".us.txt").replace('-', '.').uppercase()
             }
@@ -86,7 +86,7 @@ data class CSVConfig(
         /**
          * Returns a CSVConfig suited for parsing MT5 CSV files
          */
-        fun forMT5(template: Asset = Asset("TEMPLATE"), priceQuote: Boolean = false) : CSVConfig {
+        fun mt5(template: Asset = Asset("TEMPLATE"), priceQuote: Boolean = false) : CSVConfig {
 
             fun assetBuilder(file: File): Asset {
                 val symbol = file.name.split('_').first().uppercase()
@@ -118,7 +118,7 @@ data class CSVConfig(
         /**
          * Returns a CSVConfig suited for parsing HistData.com ASCII CSV files
          */
-        fun forHistData(): CSVConfig {
+        fun histData(): CSVConfig {
             val result = CSVConfig (
                 priceParser = PriceBarParser(1,2,3,4),
                 timeParser = AutoDetectTimeParser(0),
@@ -133,7 +133,7 @@ data class CSVConfig(
         }
 
         /**
-         * Returns a CSVConfig suited for parsing HistData.com ASCII CSV files
+         * Returns a CSVConfig suited for parsing Yahoo Finance ASCII CSV files
          */
         fun yahoo(template: Asset = Asset("TEMPLATE")): CSVConfig {
             val result = CSVConfig (
@@ -155,7 +155,7 @@ data class CSVConfig(
          * Be aware that these trades are not aggregated, so a feed based on these files can have multiple events for
          * the same asset at the same time.
          */
-        fun forKraken(): CSVConfig {
+        fun kraken(): CSVConfig {
             val exchange = Exchange.CRYPTO
             val result = CSVConfig (
                 priceParser = TradePriceParser(1,2),

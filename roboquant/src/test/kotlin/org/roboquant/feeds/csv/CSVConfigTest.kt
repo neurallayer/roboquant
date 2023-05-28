@@ -45,7 +45,7 @@ internal class CSVConfigTest {
 
     @Test
     fun stooq() {
-        val config = CSVConfig.forStooq()
+        val config = CSVConfig.stooq()
         val feed = CSVFeed(Path.of(TestData.dataDir()) / "STOOQ", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(20, feed.timeline.size)
@@ -54,7 +54,7 @@ internal class CSVConfigTest {
 
     @Test
     fun histData() {
-        val config = CSVConfig.forHistData()
+        val config = CSVConfig.histData()
         val feed = CSVFeed(Path.of(TestData.dataDir()) / "HISTDATA", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(20, feed.timeline.size)
@@ -73,7 +73,7 @@ internal class CSVConfigTest {
 
     @Test
     fun kraken() {
-        val config = CSVConfig.forKraken()
+        val config = CSVConfig.kraken()
         val feed = CSVFeed(Path.of(TestData.dataDir()) / "KRAKEN", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(4, feed.timeline.size)
@@ -83,7 +83,7 @@ internal class CSVConfigTest {
 
     @Test
     fun mt5PriceBar() {
-        val config = CSVConfig.forMT5()
+        val config = CSVConfig.mt5()
         val feed = CSVFeed(Path.of(TestData.dataDir()) / "MT5/TEST_M1.csv", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(16, feed.timeline.size)
@@ -93,7 +93,7 @@ internal class CSVConfigTest {
 
     @Test
     fun mt5PriceQuote() {
-        val config = CSVConfig.forMT5(priceQuote = true)
+        val config = CSVConfig.mt5(priceQuote = true)
         val feed = CSVFeed(Path.of(TestData.dataDir()) / "MT5/TEST_QUOTES.csv", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(49, feed.timeline.size)
