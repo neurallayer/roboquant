@@ -298,9 +298,10 @@ data class OrderBook(
     }
 
     /**
-     * Return the spread percentage. The used formula is
-     *
-     *      spread = (lowest_aks - highest_bid) / lowest_ask
+     * Returns the spread percentage. The used formula is:
+     * ```
+     * spread = (lowest_aks - highest_bid) / lowest_ask
+     * ```
      */
     val spread: Double
         get() {

@@ -19,8 +19,8 @@ package org.roboquant.orders
 import java.time.Instant
 
 /**
- * Time in force (TiF) allows to put an expiration or fill policy on an order. It determines how long an order remains
- * active before it expires. There are two triggers that can determine if an order expires:
+ * Time in force (TiF) allows you to put an expiration or fill policy on an order. It determines how long an order
+ * remains active before it expires. There are two triggers that can determine if an order expires:
  *
  * - How much *time* has passed since the order was first placed.
  * - How much of the order is *filled* already
@@ -93,10 +93,10 @@ class DAY : TimeInForce {
 }
 
 /**
- * Fill or Kill (FOK) policy. A Fill or Kill policy is to be executed immediately at the market or a specified price
- * or canceled if not filled.
+ * Fill Or Kill (FOK) policy. A Fill or Kill policy is to be executed immediately at the market or a specified price
+ * or cancelled if not filled.
  *
- * @constructor Create new FOK tif
+ * @constructor Create a new FOK tif
  */
 class FOK : TimeInForce {
 

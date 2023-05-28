@@ -19,6 +19,7 @@ package org.roboquant.common
 import org.roboquant.brokers.ExchangeRates
 import org.roboquant.brokers.SingleCurrencyExchangeRates
 import org.roboquant.common.Config.exchangeRates
+import org.roboquant.common.Config.random
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -27,10 +28,11 @@ import kotlin.io.path.div
 import kotlin.random.Random
 
 /**
- * Configuration for roboquant that contains access to environment properties and has several global properties
+ * The configuration for roboquant that contains access to environment properties and has several global properties
  * that can be set:
  *
  * - exchange rates [exchangeRates]
+ * - [random] number generator
  *
  */
 object Config {

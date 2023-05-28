@@ -62,6 +62,16 @@ internal class CSVConfigTest {
     }
 
     @Test
+    fun yahoo() {
+        val config = CSVConfig.yahoo()
+        val feed = CSVFeed(Path.of(TestData.dataDir()) / "YAHOO", config) {}
+        assertEquals(1, feed.assets.size)
+        assertEquals("MSFT", feed.assets.first().symbol)
+        assertEquals(9, feed.timeline.size)
+        assertEquals(Timeframe.parse("2023-05-26T13:30:00Z", "2023-05-26T13:38:00Z").toInclusive(), feed.timeframe)
+    }
+
+    @Test
     fun kraken() {
         val config = CSVConfig.forKraken()
         val feed = CSVFeed(Path.of(TestData.dataDir()) / "KRAKEN", config) {}

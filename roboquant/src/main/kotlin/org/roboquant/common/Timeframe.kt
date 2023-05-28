@@ -166,8 +166,10 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         }
 
         /**
-         * Create a timeframe based on the [first] and [last] time provided. The times are to be provided as a string
-         * with the following formats are supported:
+         * Create a timeframe based on the [first] and [last] time provided. By default, the last time is
+         * not [inclusive].
+         *
+         * The times are to be provided as a string with the following formats are supported:
          * 1. Year only
          * 2. Year and month
          * 3. Year, month and day
@@ -176,10 +178,10 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
          * When not a complete datetime is provided, the missing part is the first possible time. For example, 2004
          * becomes 2004-01-01T00:00:00Z
          */
-        fun parse(first: String, last: String): Timeframe {
+        fun parse(first: String, last: String, inclusive: Boolean = false): Timeframe {
             val start = first.toInstant()
             val stop = last.toInstant()
-            return Timeframe(start, stop)
+            return Timeframe(start, stop, inclusive)
         }
 
         /**

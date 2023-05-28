@@ -133,6 +133,23 @@ data class CSVConfig(
         }
 
         /**
+         * Returns a CSVConfig suited for parsing HistData.com ASCII CSV files
+         */
+        fun yahoo(template: Asset = Asset("TEMPLATE")): CSVConfig {
+            val result = CSVConfig (
+                priceParser = PriceBarParser(1,2,3,4, autodetect = false),
+                timeParser = { columns, _ -> Instant.parse(columns[0]) },
+                separator = ',',
+                hasHeader = true,
+                assetBuilder = { file: File ->
+                    val symbol = file.name.split(' ')[0].uppercase()
+                    template.copy(symbol =  symbol)
+                }
+            )
+            return result
+        }
+
+        /**
          * Returns a CSVConfig suited for parsing Kraken CSV trade files.
          *
          * Be aware that these trades are not aggregated, so a feed based on these files can have multiple events for

@@ -50,7 +50,8 @@ class PriceBarParser(
     private var close: Int = -1,
     private var volume: Int = -1,
     private var adjustedClose: Int = -1,
-    private var priceAdjust: Boolean = false
+    private var priceAdjust: Boolean = false,
+    private var autodetect : Boolean = true
 ) : PriceParser {
 
     private fun validate() {
@@ -64,16 +65,18 @@ class PriceBarParser(
     }
 
     override fun init(header: List<String>) {
-        val notCapital = Regex("[^A-Z]")
-        header.forEachIndexed { index, column ->
-            when (column.uppercase().replace(notCapital, "")) {
-                "OPEN" -> open = index
-                "HIGH" -> high = index
-                "LOW" -> low = index
-                "CLOSE" -> close = index
-                "ADJCLOSE" -> adjustedClose = index
-                "ADJUSTEDCLOSE" -> adjustedClose = index
-                "VOLUME" -> volume = index
+        if (autodetect) {
+            val notCapital = Regex("[^A-Z]")
+            header.forEachIndexed { index, column ->
+                when (column.uppercase().replace(notCapital, "")) {
+                    "OPEN" -> open = index
+                    "HIGH" -> high = index
+                    "LOW" -> low = index
+                    "CLOSE" -> close = index
+                    "ADJCLOSE" -> adjustedClose = index
+                    "ADJUSTEDCLOSE" -> adjustedClose = index
+                    "VOLUME" -> volume = index
+                }
             }
         }
         validate()
@@ -109,6 +112,7 @@ class PriceQuoteParser(
     private var bid: Int = -1,
     private var bidVolume: Int = -1,
     private var askVolume: Int = -1,
+    private var autodetect : Boolean = true
 ) : PriceParser {
 
     private fun validate() {
@@ -117,15 +121,17 @@ class PriceQuoteParser(
     }
 
     override fun init(header: List<String>) {
-        val notCapital = Regex("[^A-Z]")
-        header.forEachIndexed { index, column ->
-            when (column.uppercase().replace(notCapital, "")) {
-                "ASK" -> ask = index
-                "BID" -> bid = index
-                "ASKVOLUME" -> askVolume = index
-                "BIDVOLUME" -> bidVolume = index
-                "ASKSIZE" -> askVolume = index
-                "BIDSIZE" -> bidVolume = index
+        if (autodetect) {
+            val notCapital = Regex("[^A-Z]")
+            header.forEachIndexed { index, column ->
+                when (column.uppercase().replace(notCapital, "")) {
+                    "ASK" -> ask = index
+                    "BID" -> bid = index
+                    "ASKVOLUME" -> askVolume = index
+                    "BIDVOLUME" -> bidVolume = index
+                    "ASKSIZE" -> askVolume = index
+                    "BIDSIZE" -> bidVolume = index
+                }
             }
         }
         validate()
@@ -155,6 +161,7 @@ class PriceQuoteParser(
 class TradePriceParser(
     private var price: Int = -1,
     private var volume: Int = -1,
+    private var autodetect : Boolean = true
 ) : PriceParser {
 
     private fun validate() {
@@ -162,11 +169,13 @@ class TradePriceParser(
     }
 
     override fun init(header: List<String>) {
-        val notCapital = Regex("[^A-Z]")
-        header.forEachIndexed { index, column ->
-            when (column.uppercase().replace(notCapital, "")) {
-                "PRICE" -> price = index
-                "VOLUME" -> volume = index
+        if (autodetect) {
+            val notCapital = Regex("[^A-Z]")
+            header.forEachIndexed { index, column ->
+                when (column.uppercase().replace(notCapital, "")) {
+                    "PRICE" -> price = index
+                    "VOLUME" -> volume = index
+                }
             }
         }
         validate()
