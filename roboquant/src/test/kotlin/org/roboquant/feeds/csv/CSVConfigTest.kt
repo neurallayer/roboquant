@@ -22,6 +22,7 @@ import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.NoTradingException
 import org.roboquant.common.Timeframe
+import org.roboquant.feeds.toList
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.div
@@ -58,6 +59,16 @@ internal class CSVConfigTest {
         assertEquals(1, feed.assets.size)
         assertEquals(20, feed.timeline.size)
         assertEquals(Timeframe.parse("2023-05-01T00:00:00Z", "2023-05-01T00:19:00Z").toInclusive(), feed.timeframe)
+    }
+
+    @Test
+    fun kraken() {
+        val config = CSVConfig.forKraken()
+        val feed = CSVFeed(Path.of(TestData.dataDir()) / "KRAKEN", config) {}
+        assertEquals(1, feed.assets.size)
+        assertEquals(4, feed.timeline.size)
+        assertEquals(20, feed.toList().map { it.actions }.flatten().size)
+        assertEquals(Timeframe.parse("2017-08-01T16:03:53Z", "2017-08-01T16:04:00Z").toInclusive(), feed.timeframe)
     }
 
     @Test

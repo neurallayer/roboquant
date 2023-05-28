@@ -20,6 +20,7 @@ import org.roboquant.common.Asset
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceQuote
+import org.roboquant.feeds.TradePrice
 import java.time.Instant
 
 /**
@@ -147,3 +148,40 @@ class PriceQuoteParser(
 
 }
 
+
+/**
+ * Parse lines and create PriceBar
+ */
+class TradePriceParser(
+    private var price: Int = -1,
+    private var volume: Int = -1,
+) : PriceParser {
+
+    private fun validate() {
+        require(price != -1) { "No ask-prices column" }
+    }
+
+    override fun init(header: List<String>) {
+        val notCapital = Regex("[^A-Z]")
+        header.forEachIndexed { index, column ->
+            when (column.uppercase().replace(notCapital, "")) {
+                "PRICE" -> price = index
+                "VOLUME" -> volume = index
+            }
+        }
+        validate()
+    }
+
+    /**
+     * Return an [Instant] given the provided [line] of strings and [asset]
+     */
+    override fun parse(line: List<String>, asset: Asset): TradePrice {
+        val volume = if (volume != -1) line[volume].toDouble() else Double.NaN
+        return TradePrice(
+            asset,
+            line[price].toDouble(),
+            volume
+        )
+    }
+
+}

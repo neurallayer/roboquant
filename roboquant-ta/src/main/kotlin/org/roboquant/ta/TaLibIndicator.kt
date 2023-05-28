@@ -91,7 +91,7 @@ class TaLibIndicator  (
         }
 
         /**
-         * Return an Simple Moving Average Indicator for the provided [barCount]
+         * Return a Simple Moving Average Indicator for the provided [barCount]
          */
         fun sma(barCount: Int = 10) : TaLibIndicator {
             return TaLibIndicator(barCount) {

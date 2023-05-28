@@ -16,9 +16,7 @@
 
 package org.roboquant.feeds.csv
 
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Logging
+import org.roboquant.common.*
 import java.io.File
 import java.nio.file.Path
 import java.time.Instant
@@ -70,7 +68,7 @@ data class CSVConfig(
         private val logger = Logging.getLogger(CSVConfig::class)
 
         /**
-         * Get a CSVConfig suited to parsing stooq CSV files
+         * Returns a CSVConfig suited for parsing stooq.com CSV files
          */
         fun forStooq(template: Asset = Asset("TEMPLATE")): CSVConfig {
             fun file2Symbol(file: File): String {
@@ -85,7 +83,9 @@ data class CSVConfig(
         }
 
 
-
+        /**
+         * Returns a CSVConfig suited for parsing MT5 CSV files
+         */
         fun forMT5(template: Asset = Asset("TEMPLATE"), priceQuote: Boolean = false) : CSVConfig {
 
             fun assetBuilder(file: File): Asset {
@@ -115,6 +115,9 @@ data class CSVConfig(
 
         }
 
+        /**
+         * Returns a CSVConfig suited for parsing HistData.com ASCII CSV files
+         */
         fun forHistData(): CSVConfig {
             val result = CSVConfig (
                 priceParser = PriceBarParser(1,2,3,4),
@@ -124,6 +127,30 @@ data class CSVConfig(
                 assetBuilder = { file: File ->
                     val currencyPair = file.name.split('_')[2]
                     Asset.forexPair(currencyPair)
+                }
+            )
+            return result
+        }
+
+        /**
+         * Returns a CSVConfig suited for parsing Kraken CSV trade files.
+         *
+         * Be aware that these trades are not aggregated, so a feed based on these files can have multiple events for
+         * the same asset at the same time.
+         */
+        fun forKraken(): CSVConfig {
+            val exchange = Exchange.CRYPTO
+            val result = CSVConfig (
+                priceParser = TradePriceParser(1,2),
+                timeParser =  { columns, _ -> Instant.ofEpochSecond(columns[0].toLong()) },
+                hasHeader = false,
+                assetBuilder = { file: File ->
+                    val currencyPair = file.nameWithoutExtension.toCurrencyPair()!!
+                    Asset.crypto(
+                        currencyPair.first.currencyCode,
+                        currencyPair.second.currencyCode,
+                        exchange.exchangeCode
+                    )
                 }
             )
             return result

@@ -28,7 +28,7 @@ import java.util.*
  */
 open class HistoricPriceFeed : HistoricFeed {
 
-    private val events = sortedMapOf<Instant, MutableMap<Asset, PriceAction>>()
+    private val events = sortedMapOf<Instant, MutableList<PriceAction>>()
 
     override val timeline: Timeline
         get() = events.keys.toList()
@@ -37,7 +37,7 @@ open class HistoricPriceFeed : HistoricFeed {
         get() = if (events.isEmpty()) Timeframe.INFINITE else Timeframe(events.firstKey(), events.lastKey(), true)
 
     override val assets: SortedSet<Asset>
-        get() = events.values.map { it.keys }.flatten().toSortedSet()
+        get() = events.values.map { it.map {a ->  a.asset} }.flatten().toSortedSet()
 
     /**
      * Return the first event in this feed
@@ -74,17 +74,17 @@ open class HistoricPriceFeed : HistoricFeed {
      */
     @Synchronized
     protected fun add(time: Instant, action: PriceAction) {
-        val actions = events.getOrPut(time) { mutableMapOf() }
-        actions[action.asset] = action
+        val actions = events.getOrPut(time) { mutableListOf() }
+        actions.add(action)
     }
 
     /**
      * Add all new [actions] to this feed at the provided [time]
      */
     @Synchronized
-    protected fun addAll(time: Instant, actions: MutableMap<Asset, PriceAction>) {
-        val existing = events.getOrPut(time) { mutableMapOf() }
-        existing.putAll(actions)
+    protected fun addAll(time: Instant, actions: List<PriceAction>) {
+        val existing = events.getOrPut(time) { mutableListOf() }
+        existing.addAll(actions)
     }
 
     /**
