@@ -45,11 +45,6 @@
             <artifactId>roboquant</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.yahoofinance-api</groupId>
-            <artifactId>YahooFinanceAPI</artifactId>
-            <version>3.17.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.crazzyghost</groupId>
             <artifactId>alphavantage-java</artifactId>
             <version>1.6.2</version>

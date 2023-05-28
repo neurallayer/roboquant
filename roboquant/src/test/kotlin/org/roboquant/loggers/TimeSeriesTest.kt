@@ -34,6 +34,16 @@ class TimeSeriesTest {
     }
 
     @Test
+    fun shuffle() {
+        val data = doubleArrayOf(100.0, 150.0, 200.0)
+        val t = Timeframe.fromYears(2020, 2021).toTimeline(1.days).take(3)
+        val ts = TimeSeries(t, data)
+        val ts2 = ts.shuffle()
+        assertEquals(ts.size, ts2.size)
+        assertEquals(ts.average(), ts2.average())
+    }
+
+    @Test
     fun testClean() {
         val data = doubleArrayOf(100.0, Double.NaN, 200.0)
         val t = Timeframe.fromYears(2020, 2021).toTimeline(1.days).take(3)

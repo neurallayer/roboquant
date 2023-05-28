@@ -16,6 +16,7 @@
 
 package org.roboquant.loggers
 
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
@@ -102,6 +103,10 @@ internal class MemoryLoggerTest {
         assertEquals(4, data.groupBy(ChronoUnit.MONTHS).size)
         assertEquals(1, data.groupBy(ChronoUnit.YEARS).size)
         assertEquals(50, data.groupBy(ChronoUnit.YEARS).values.first().size)
+
+        assertThrows<IllegalArgumentException> {
+            data.groupBy(ChronoUnit.MICROS)
+        }
     }
 
     @Test

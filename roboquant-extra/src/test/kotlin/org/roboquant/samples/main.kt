@@ -21,23 +21,9 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.alphavantage.AlphaVantageHistoricFeed
 import org.roboquant.common.*
-import org.roboquant.loggers.MemoryLogger
-import org.roboquant.metrics.AccountMetric
-import org.roboquant.metrics.PositionMetric
 import org.roboquant.polygon.PolygonHistoricFeed
 import org.roboquant.strategies.EMAStrategy
-import org.roboquant.yahoo.YahooHistoricFeed
 
-
-fun feedYahoo() {
-    val feed = YahooHistoricFeed()
-    val last300Days = Timeframe.past(300.days)
-    feed.retrieve("AAPL", "GOOG", timeframe = last300Days)
-    val strategy = EMAStrategy()
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, AccountMetric(), PositionMetric(), logger = logger)
-    roboquant.run(feed)
-}
 
 fun feedPolygon() {
 
@@ -75,7 +61,6 @@ fun alphaVantage() {
 
 fun main() {
     when ("ALPHA") {
-        "YAHOO" -> feedYahoo()
         "POLYGON" -> feedPolygon()
         "ALPHA" -> alphaVantage()
     }

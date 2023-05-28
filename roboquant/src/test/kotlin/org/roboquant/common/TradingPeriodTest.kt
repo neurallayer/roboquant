@@ -42,6 +42,13 @@ internal class TradingPeriodTest {
     }
 
     @Test
+    fun calc() {
+        val t = 2.years - 1.hours + 1.hours
+        assertEquals(2.years, t)
+        assertEquals("P2Y PT0S", t.toString())
+    }
+
+    @Test
     fun zonedDateTime() {
         val t = Instant.now()
         assertDoesNotThrow {
