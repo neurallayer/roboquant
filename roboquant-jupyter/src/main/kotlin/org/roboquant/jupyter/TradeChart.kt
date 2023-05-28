@@ -35,7 +35,7 @@ internal fun Trade.getTooltip(): String {
     val totalCost = totalCost.toBigDecimal()
     val fee = fee.toBigDecimal()
     return """
-            |asset: ${asset.symbol}<br>
+            |symbol: ${asset.symbol}<br>
             |currency: ${asset.currency}<br>
             |time: $time<br>
             |size: $size<br>

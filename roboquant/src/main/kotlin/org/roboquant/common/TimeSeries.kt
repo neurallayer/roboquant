@@ -32,6 +32,7 @@ class Observation(val time: Instant, val value: Double)
  * Optimized implementation of time series data that allows for easy and fast calculations. The times are stored as
  * a [timeline] and the [values] are stored as a DoubleArray.
  */
+@Suppress("TooManyFunctions")
 class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Observation> {
 
     constructor(values: List<Observation>) : this(
@@ -94,15 +95,35 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
         require(values.size == timeline.size) { "values and times need to have the same size" }
     }
 
+    /**
+     * Add a number to all values in this timeseries
+     */
     operator fun plus(other: Number) = TimeSeries(timeline, values + other)
 
+    /**
+     * Subtract a number to all values in this timeseries
+     */
     operator fun minus(other: Number) = TimeSeries(timeline, values - other)
 
+    /**
+     * Multiply a number to all values in this timeseries
+     */
     operator fun times(other: Number) = TimeSeries(timeline, values * other)
 
+    /**
+     * Divide a number to all values in this timeseries
+     */
     operator fun div(other: Number) = TimeSeries(timeline, values / other)
 
+    /**
+     * Create the returns for all values
+     */
     fun returns() = TimeSeries(timeline.drop(1), values.returns())
+
+    /**
+     * Normalize the values by dividing all values by the first value
+     */
+    fun normalize() = TimeSeries(timeline, values / values.first())
 
     /**
      * Return the observation that contains the maximum value.
@@ -141,8 +162,14 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
      */
     fun average() = values.average()
 
+    /**
+     * Return the difference for all values
+     */
     fun diff()  = TimeSeries(timeline.drop(1), values.diff())
 
+    /**
+     * Return the sum over all values
+     */
     fun sum() = values.sum()
 
     /**
@@ -216,6 +243,7 @@ fun Map<String, TimeSeries>.flatten(noOverlap: Boolean = true): TimeSeries {
     }
     return TimeSeries(result)
 }
+
 
 /**
  * Convert a sorted by time collection to a [TimeSeries] object

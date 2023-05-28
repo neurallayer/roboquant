@@ -136,6 +136,39 @@ inline fun <reified T : Action> Feed.apply(
 
 }
 
+
+
+/**
+ * Convenience method to apply some logic to a feed
+ */
+inline fun Feed.applyEvents(
+    timeframe: Timeframe = Timeframe.INFINITE,
+    crossinline block: (Event) -> Unit
+) = runBlocking {
+
+    val channel = EventChannel(timeframe = timeframe)
+
+    val job = launch {
+        play(channel)
+        channel.close()
+    }
+
+    try {
+        while (true) {
+            val o = channel.receive()
+            block(o)
+        }
+
+    } catch (_: ClosedReceiveChannelException) {
+        // Intentionally left empty
+    } finally {
+        channel.close()
+        if (job.isActive) job.cancel()
+    }
+
+}
+
+
 /**
  * Convert a feed to a list of events, optionally limited to the provided [timeframe].
  */
