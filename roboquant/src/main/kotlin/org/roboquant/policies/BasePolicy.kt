@@ -53,7 +53,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
 
 
     /**
-     * Reset the state, will also clear any recorded metrics.
+     * Reset the state, including any recorded metrics.
      */
     override fun reset() {
         metrics.clear()

@@ -30,11 +30,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
-import kotlin.collections.Collection
-import kotlin.collections.isNotEmpty
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
-import kotlin.collections.toList
 
 /**
  * Historic prices from IBKR APIs
@@ -115,8 +111,8 @@ class IBKRHistoricFeed(
     ) = retrieve(assets.toList(), endDate, duration, barSize, dataType)
 
     /**
-     * Block until all the subscribed data is retrieved. Right now just a simple sleep, in the future replaced with
-     * better mechanism.
+     * Block until all the subscribed data is retrieved. Right now, the implementation is a sleep statement.
+     * But in the future it will be replaced with a better mechanism.
      */
     fun waitTillRetrieved(maxMillis: Int = 10_000) {
         val endTime = Instant.now() + maxMillis.millis

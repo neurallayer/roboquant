@@ -27,6 +27,7 @@ import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.clean
+import org.roboquant.common.flatten
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -45,6 +46,13 @@ class MetricHistogramChart(
     private val scale: Int = 2,
     private val minBinSize: Int = 0,
 ) : Chart() {
+
+    constructor(
+        metricData: Map<String, TimeSeries>,
+        binCount: Int = 20,
+        scale: Int = 2,
+        minBinSize: Int = 0,
+    ) : this (metricData.flatten(true), binCount, scale, minBinSize)
 
     private fun toSeriesData(): List<Pair<String, Long>> {
         val f = EmpiricalDistribution(binCount)

@@ -19,12 +19,15 @@ package org.roboquant.metrics
 import org.roboquant.brokers.Account
 import org.roboquant.common.Timeframe
 import org.roboquant.common.Timeline
-import org.roboquant.feeds.*
+import org.roboquant.feeds.Event
+import org.roboquant.feeds.EventChannel
+import org.roboquant.feeds.Feed
+import org.roboquant.feeds.timeframe
 import java.util.*
 
 /**
- * Record events that can then be used later to display them in a graph or perform other post-run analysis. This metric
- * also implements the [Feed] API, so recorded events can be replayed afterwards as a normal feed.
+ * Record events that can then be used to later display them in a graph or perform another post-run analysis.
+ * This metric also implements the [Feed] API, so recorded events can be replayed afterwards as a normal feed.
  *
  * This metric works differently from most other metrics. It stores the events internally in memory and does not
  * return them to a MetricsLogger. However, just like other metrics, it will reset its state at the beginning of a

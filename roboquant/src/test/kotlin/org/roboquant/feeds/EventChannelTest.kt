@@ -57,7 +57,7 @@ internal class EventChannelTest {
 
     @Test
     fun timeframeOffer() {
-        // Create channel with timeframe in the past
+        // Create a channel with timeframe in the past
         val past = Timeframe.fromYears(2015, 2017)
         val channel = EventChannel(timeframe = past)
         val event = Event.empty()

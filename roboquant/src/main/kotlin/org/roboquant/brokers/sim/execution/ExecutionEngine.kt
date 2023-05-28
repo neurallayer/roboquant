@@ -61,7 +61,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
 
         /**
          * Register a new order executor [factory] for order type [T]. If there was already a factory registered
-         * for the same class it will be replaced.
+         * for the same class, it will be replaced.
          */
         inline fun <reified T : CreateOrder> register(factory: OrderExecutorFactory<T>) {
             @Suppress("UNCHECKED_CAST")
@@ -164,7 +164,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
         // Now execute the create-orders. These are only run if there is a known price
         val openCreateOrders = executors.open()
 
-        // Return if nothing to do to avoid creation of event.prices
+        // Return if there is nothing to do, to avoid the creation of event.prices
         if (openCreateOrders.isEmpty()) return emptyList()
 
         val executions = mutableListOf<Execution>()

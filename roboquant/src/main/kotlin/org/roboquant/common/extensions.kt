@@ -248,7 +248,7 @@ val Double.iszero
     get() = this.absoluteValue < EPS
 
 /**
- * is this a non-zero number, allows for small rounding errors.
+ * Return true if this is a non-zero number, allows for small rounding errors.
  */
 val Double.nonzero
     get() = this.absoluteValue >= EPS
@@ -269,7 +269,7 @@ fun String.toCurrencyPair(): Pair<Currency, Currency>? {
         val c2 = Currency.getInstance(codes.last().uppercase())
         Pair(c1, c2)
     } else if (codes.size == 1 && length == 6) {
-        // Assume we have two currency-codes, each of length 3
+        // Assume we have two currency-codes, each of lengths 3
         val c1 = Currency.getInstance(substring(0, 3).uppercase())
         val c2 = Currency.getInstance(substring(3, 6).uppercase())
         Pair(c1, c2)
@@ -282,9 +282,10 @@ fun String.toCurrencyPair(): Pair<Currency, Currency>? {
  * Extension to use sumOf for [Amount] values. This implementation has an optimized path in case the sum is over
  * amounts of a single currency.
  *
- * example:
- *
- *      val realizedPNL = account.trades.sumOf { it.pnl }
+ * Example:
+ * ```
+ * val realizedPNL = account.trades.sumOf { it.pnl }
+ * ```
  */
 inline fun <T> Collection<T>.sumOf(
     selector: (T) -> Amount

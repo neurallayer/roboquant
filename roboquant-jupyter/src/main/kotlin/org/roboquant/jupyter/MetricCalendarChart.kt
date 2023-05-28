@@ -21,6 +21,7 @@ import org.icepear.echarts.charts.heatmap.HeatmapSeries
 import org.icepear.echarts.components.title.Title
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.TimeSeries
+import org.roboquant.common.flatten
 import org.roboquant.common.round
 import java.math.BigDecimal
 import java.time.ZoneId
@@ -40,6 +41,12 @@ class MetricCalendarChart(
     private val fractionDigits: Int = 2,
     private val zoneId: ZoneId = ZoneId.of("UTC")
 ) : Chart() {
+
+    /**
+     * Create a calendar chart from multiple runs. The data will be flattened before plotted.
+     */
+    constructor(metricsData: Map<String, TimeSeries>, fractionDigits: Int =2, zoneId: ZoneId = ZoneId.of("UTC")) :
+            this(metricsData.flatten(true), fractionDigits, zoneId)
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)
     private val metricsData = metricsData.filter { it.value.isFinite() }

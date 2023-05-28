@@ -32,7 +32,7 @@ import java.time.Instant
 interface ExchangeRates {
 
     /**
-     * Get the exchange rate required to convert a monetary [amount] in [to] another currency at  specific moment
+     * Get the exchange rate required to convert a monetary [amount] in [to] another currency at a specific moment
      * in [time].
      *
      * It depends on the implementation if all parameters are also actually used by the underlying algorithm. If a

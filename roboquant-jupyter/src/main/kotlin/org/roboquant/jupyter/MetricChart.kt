@@ -33,7 +33,7 @@ import java.math.RoundingMode
  * the provided [metricsData], each run will be plotted as a separate series.
  *
  * @property metricsData the metric data to use
- * @property useTime should the X axis be a timescale (or a step scale)
+ * @property useTime use a linear timescale for the x-axis.
  * @property fractionDigits how many digits to use for presenting the metric values
  */
 class MetricChart(

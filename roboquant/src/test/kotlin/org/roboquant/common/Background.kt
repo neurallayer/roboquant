@@ -23,8 +23,8 @@ import kotlinx.coroutines.launch
 
 /**
  * Background object helps to deal with starting and running co-routines. Right now very light implementation, but
- * in future features can be added without impacting rest of code. This is used internally only, see [ParallelJobs]
- * for the public facing implementation.
+ * in future features can be added without impacting the rest of the code. This is used internally only,
+ * see [ParallelJobs] for the public API.
  */
 internal object Background {
 

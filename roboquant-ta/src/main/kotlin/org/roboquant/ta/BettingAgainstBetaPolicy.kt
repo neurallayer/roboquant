@@ -153,7 +153,7 @@ open class BettingAgainstBetaPolicy(
      */
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
 
-        // First we update the buffers
+        // First, we update the buffers
         data.addAll(event, windowSize, priceType)
 
         // Check if it is time to re-balance the portfolio

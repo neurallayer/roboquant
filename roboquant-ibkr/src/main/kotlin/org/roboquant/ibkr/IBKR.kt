@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * @property host the host to connect to, default is 127.0.0.1 (local host)
  * @property port the port to connect to, default is 4002
- * @property account the account to use, default is empty string and system will use first account
+ * @property account the account to use, default is empty string and the system will use the first account found
  * @property client the client id to use, default is 2
  *
  * @constructor Create new IBKR config
