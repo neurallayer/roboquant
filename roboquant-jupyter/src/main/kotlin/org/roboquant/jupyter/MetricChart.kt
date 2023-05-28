@@ -49,9 +49,20 @@ class MetricChart(
     constructor(metricsData: TimeSeries, useTime: Boolean = true, fractionDigits: Int = 2) :
             this(mapOf("" to metricsData), useTime, fractionDigits)
 
-
+    /**
+     * @suppress
+     */
     companion object {
 
+        /**
+         * Return a chart based on multiple runs. Because each run starts fresh, not the absolute values, but the
+         * returns are used to flatten runs to a single timeline.
+         *
+         * ```
+         * val data = roboquant.logger.getMetric("account.equity")
+         * MetricChart.walkForward(data, monteCarlo = true)
+         * ```
+         */
         fun walkForward(
             metricsData: Map<String, TimeSeries>,
             fractionDigits: Int = 2,

@@ -41,7 +41,10 @@ import kotlin.io.path.div
  * @property template The template to use in the default [assetBuilder]
  * @property hasHeader do the CSV files have a header, default is true
  * @property separator the field separator character, default is ',' (comma)
- * @constructor Create new CSV config
+ * @property timeParser the parser to use for parsing the time column(s)
+ * @property priceParser the parser to use for parsing the price and volume column(s)
+ * @property assetBuilder the builder to use to create the assets of the price-actions
+ * @constructor Create a new CSV config
  */
 data class CSVConfig(
     var filePattern: String = ".*.csv",

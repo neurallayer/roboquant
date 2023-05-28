@@ -25,12 +25,18 @@ import java.util.*
 
 /**
  * An observation represents a single [value] of the type [Double] at a precise moment in [time].
+ *
+ * @property time the time the value was observed
+ * @property value the value of the observation
  */
 class Observation(val time: Instant, val value: Double)
 
 /**
  * Optimized implementation of time series data that allows for easy and fast calculations. The times are stored as
  * a [timeline] and the [values] are stored as a DoubleArray.
+ *
+ * @property timeline the timeline
+ * @property values the array of values
  */
 @Suppress("TooManyFunctions")
 class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Observation> {
@@ -173,7 +179,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     fun sum() = values.sum()
 
     /**
-     * Group my a certain [period]
+     * Returns this timeseries grouped by the provided [period]
      */
     fun groupBy(
         period: ChronoUnit,
@@ -188,7 +194,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
             ChronoUnit.HOURS -> SimpleDateFormat("yyyy-DDD-HH")
             ChronoUnit.MINUTES -> SimpleDateFormat("yyyy-DDD-HH-mm")
             else -> {
-                throw IllegalArgumentException("Unsupported value $period")
+                throw IllegalArgumentException("Unsupported value for period: $period")
             }
         }
         formatter.timeZone = TimeZone.getTimeZone(zoneId)
@@ -198,25 +204,41 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
         }.mapValues { TimeSeries(it.value) }
     }
 
+    /**
+     * Returns a TimeSeries
+     */
     fun runningFold(initial: Double): TimeSeries {
         val newData = values.runningFold(initial) { last, current -> (current + 1.0) * last }.drop(1)
         return TimeSeries(timeline, newData.toDoubleArray())
     }
 
+    /**
+     * Returns a TimeSeries containing the growth-rates of the values
+     */
     fun growthRates() = TimeSeries(timeline.drop(1), values.growthRates())
 
-
+    /**
+     * Returns an iterator containing the observations
+     */
     override fun iterator(): Iterator<Observation> {
         return ObservationIterator(timeline, values)
     }
 
-
+    /**
+     * Returns the values as a DoubleArray.
+     */
     fun toDoubleArray() = values
 
+    /**
+     * Returns a list containing the observations
+     */
     fun toList(): List<Observation> {
         return values.zip(timeline).map { Observation(it.second, it.first) }
     }
 
+    /**
+     * Returns true if not empty, false otherwise.
+     */
     fun isNotEmpty() = size > 0
 
 

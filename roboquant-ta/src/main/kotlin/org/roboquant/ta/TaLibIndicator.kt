@@ -38,6 +38,9 @@ class TaLibIndicator  (
     private val taLib = TaLib()
     private val series = PriceBarSerie(barCount)
 
+    /**
+     * @see Indicator.calculate
+     */
     override fun calculate(action: Action, time: Instant): Map<String, Double> {
         return if (series.add(action)) {
             block.invoke(taLib, series)

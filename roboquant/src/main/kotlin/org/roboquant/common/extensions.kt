@@ -190,6 +190,9 @@ fun DoubleArray.returns(): DoubleArray {
     return result
 }
 
+/**
+ * Returns an array with the difference between the elements
+ */
 fun DoubleArray.diff(): DoubleArray {
     if (size < 2) return DoubleArray(0)
     val result = DoubleArray(size - 1)
@@ -197,7 +200,9 @@ fun DoubleArray.diff(): DoubleArray {
     return result
 }
 
-
+/**
+ * Returns the index of the first maximum value
+ */
 fun DoubleArray.indexOfMax() : Int {
     if (isEmpty()) return -1
     var maxAt = 0
@@ -206,6 +211,9 @@ fun DoubleArray.indexOfMax() : Int {
 }
 
 
+/**
+ * Returns the index of the first minimum value
+ */
 fun DoubleArray.indexOfMin() : Int {
     if (isEmpty()) return -1
     var minAt = 0
