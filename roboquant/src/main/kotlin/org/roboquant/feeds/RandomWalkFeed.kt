@@ -38,7 +38,7 @@ import java.util.*
  * @param nAssets the number of assets to generate, symbol names will be ASSET1, ASSET2, ..., ASSET<N>. Default is 10.
  * @property generateBars should PriceBars be generated or plain TradePrice, default is true
  * @property volumeRange what is the volume range, default = 1000
- * @property priceRange the price range. default is 1.0
+ * @property priceRange the price range, the default is 1.0
  * @param template template to use when generating assets
  * @property seed seed to use for initializing the random generator, default is 42
  */

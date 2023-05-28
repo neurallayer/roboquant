@@ -31,7 +31,7 @@ import java.time.Instant
  */
 class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
 
-    // Key is runName + phase + metricName
+    // The key is runName + phase + metricName
     private val history = mutableMapOf<Pair<String, String>, Pair<Instant, Double>>()
     private val progressBar = ProgressBar()
 

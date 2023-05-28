@@ -27,7 +27,7 @@ import org.roboquant.feeds.Event
  * Roboquant makes no assumptions on the type of strategy. It can range from a technical indicator all the way
  * to sentiment analysis using machine learning.
  *
- * A strategy only has access to an event. In case a strategy requires also to have access to the Account,
+ * A strategy only has access to an event. In case a strategy requires to also have access to the Account,
  * it should be implemented as a Policy instead.
  */
 interface Strategy : Lifecycle {

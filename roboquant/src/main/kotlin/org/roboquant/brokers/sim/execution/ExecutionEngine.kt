@@ -179,7 +179,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
     }
 
     /**
-     * Clear any state in the execution engine. All the pending (open) orders will be removed.
+     * Clear the state in the execution engine. All the pending (open) orders will be removed.
      * Only the registered execution factories will remain.
      */
     fun clear() {

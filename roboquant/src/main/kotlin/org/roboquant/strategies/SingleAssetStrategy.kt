@@ -26,7 +26,7 @@ import java.time.Instant
  * Base class for strategies that are only interested in a single asset and generate a Signal
  *
  * @property asset The asset for which to apply this strategy. All other assets will be ignored.
- * @constructor Create new single asset strategy
+ * @constructor Create a new single asset strategy
  */
 abstract class SingleAssetStrategy(
     protected val asset: Asset,

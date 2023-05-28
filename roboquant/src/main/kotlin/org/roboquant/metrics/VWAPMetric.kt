@@ -31,7 +31,7 @@ import java.time.Instant
  *      VWAP = Cumulative Typical Price x Volume/Cumulative Volume
  *
  * @property minSize minimum number of events before calculating the first VWAP, default is 2
- * @constructor Create new instance of the VWAPMetric
+ * @constructor Create a new instance of the VWAPMetric
  */
 class VWAPMetric(val minSize: Int = 2) : Metric {
 

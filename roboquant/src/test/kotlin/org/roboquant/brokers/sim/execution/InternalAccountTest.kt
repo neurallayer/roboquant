@@ -53,7 +53,7 @@ internal class InternalAccountTest {
         val account = InternalAccount(Currency.USD)
         val order = MarketOrder(Asset("Test"), 100)
 
-        // Should fail because order is unknown
+        // Should fail because the order is unknown
         assertThrows<NoSuchElementException> {
             account.updateOrder(order, Instant.now(), OrderStatus.ACCEPTED)
         }

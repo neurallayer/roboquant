@@ -20,11 +20,11 @@ import java.text.DecimalFormat
 
 
 /**
- * Summary allows to represent nested data into a tree like format. This is supported by several of the components
+ * Summary allows representing nested data into a tree like format. This is supported by several of the components
  * in roboquant if you invoke their summary() method.
  *
  * @property content The content for the summary
- * @constructor Create new Summary
+ * @constructor Create a new Summary
  */
 class Summary(val content: String) {
 

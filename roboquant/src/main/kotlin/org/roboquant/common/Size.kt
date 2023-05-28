@@ -25,7 +25,7 @@ import kotlin.math.sign
  * Represents the size of orders, positions and trades. This implementation is precise up to 8 decimals, ensuring that
  * order and position sizes are accurate enough when dealing with fractional orders.
  *
- * Since this implementation is a value class, there is no overhead compared to for example a Double or Long.
+ * Since this implementation is a value class, there is no overhead compared to a Double or Long.
  */
 @JvmInline
 value class Size private constructor(private val value: Long) : Comparable<Size> {
@@ -43,7 +43,7 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
 
     /**
      * Creates a Size instance based a [Double] [value]. Be careful when using this constructor since a Double is not
-     * always precise. Also overflows and lost of precisions don't lead to an exception.
+     * always precise. Also overflows and lost of precision don't lead to an exception.
      *
      * Better to use the Size constructor with a [String] or [BigDecimal] as its parameter instead:
      *

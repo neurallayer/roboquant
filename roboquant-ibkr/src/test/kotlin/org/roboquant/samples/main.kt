@@ -57,7 +57,7 @@ fun closePosition() {
     val account = broker.account
     println(account.fullSummary())
 
-    // Now lets place a new market sell order
+    // Now let's place a new market sell order
     val position = account.positions.first()
     val order = MarketOrder(position.asset, -position.size)
     broker.place(listOf(order), Event.empty())
@@ -68,8 +68,7 @@ fun closePosition() {
 
 fun showAccount() {
 
-    // If you have multiple currencies in your account
-    // you need to set up exchange rates
+    // If you have multiple currencies in your trading-account, you need to set up exchange rates
     // Config.exchangeRates = IBKRExchangeRates()
 
     // Get the account object from the broker instance

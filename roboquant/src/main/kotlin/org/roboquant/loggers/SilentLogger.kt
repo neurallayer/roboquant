@@ -25,7 +25,7 @@ import java.time.Instant
 class SilentLogger : MetricsLogger {
 
     /**
-     * how many events have been received during this run
+     * Return the number of events that have been received during this run
      */
     var events = 0L
         private set

@@ -64,7 +64,7 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
     }
 
     /**
-     * Validate TiF policy and return true if order has expired according to the defined policy.
+     * Validate TiF policy and return true if the order has expired according to the defined policy.
      */
     private fun expired(time: Instant): Boolean {
         return when (val tif = order.tif) {

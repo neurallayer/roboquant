@@ -106,7 +106,7 @@ fun Policy.resolve(resolution: SignalResolution): Policy = SignalResolverPolicy(
 
 
 /**
- * Shuffle signals before processing them in the policy, avoiding favoring assets that appears always first in the
+ * Shuffle signals before processing them in the policy, avoiding favouring assets that appear always first in the
  * list of actions.
  *
  * @property policy
