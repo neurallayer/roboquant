@@ -22,7 +22,7 @@ import java.lang.Integer.min
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.Instant
-import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import kotlin.math.absoluteValue
 
@@ -47,7 +47,7 @@ operator fun Instant.compareTo(timeframe: Timeframe): Int {
 /**
  * Get the instant as ZonedDateTime UTC
  */
-fun Instant.toUTC(): ZonedDateTime = atZone(ZoneId.of("UTC"))
+fun Instant.toUTC(): ZonedDateTime = atZone(ZoneOffset.UTC)
 
 /**
  * Create a summary for a collection of strings

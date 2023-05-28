@@ -23,7 +23,9 @@ import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.*
 
-
+/**
+ * An observation represents a single [value] of the type [Double] at a precise moment in [time].
+ */
 class Observation(val time: Instant, val value: Double)
 
 /**
@@ -40,9 +42,15 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
         require(timeline.size == values.size)
     }
 
+    /**
+     * Return the timeframe of this time-series
+     */
     val timeframe
         get() = timeline.timeframe
 
+    /**
+     * Return the size of this time-series
+     */
     val size
         get() = values.size
 
@@ -64,13 +72,18 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
 
     }
 
+    /**
+     * Return a randomly shuffled copy of this time-series
+     */
     fun shuffle(): TimeSeries {
         val newValues = values.copyOf()
         newValues.shuffle(Config.random)
         return TimeSeries(timeline, newValues)
     }
 
-
+    /**
+     * Iterate of this time-series
+     */
     inline fun forEach(block: (Instant, Double) -> Unit) {
         for (i in values.indices) {
             block(timeline[i], values[i])
@@ -91,17 +104,25 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
 
     fun returns() = TimeSeries(timeline.drop(1), values.returns())
 
+    /**
+     * Return the observation that contains the maximum value.
+     */
     fun max(): Observation {
         val idx = values.indexOfMax()
         return Observation(timeline[idx], values[idx])
     }
 
+    /**
+     * Return the observation that contains the minimum value.
+     */
     fun min(): Observation {
         val idx = values.indexOfMin()
         return Observation(timeline[idx], values[idx])
     }
 
-
+    /**
+     * Return a clean time-series in which all values are finite.
+     */
     fun clean() : TimeSeries {
         val x = ArrayList<Instant>(size)
         val y = ArrayList<Double>(size)
@@ -115,12 +136,18 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
         return TimeSeries(x, y.toDoubleArray())
     }
 
+    /**
+     * Return the average of all values
+     */
     fun average() = values.average()
 
     fun diff()  = TimeSeries(timeline.drop(1), values.diff())
 
     fun sum() = values.sum()
 
+    /**
+     * Group my a certain [period]
+     */
     fun groupBy(
         period: ChronoUnit,
         zoneId: ZoneId = ZoneOffset.UTC

@@ -19,13 +19,32 @@ package org.roboquant.feeds.csv
 import org.roboquant.common.Asset
 import java.io.File
 
+/**
+ *
+ */
 fun interface AssetBuilder {
+
+    /**
+     * Based on a [file], return an instance of [Asset]
+     */
     fun build(file: File) : Asset
 }
 
+/**
+ * The default asset builder uses a file name without its extension as the symbol name. It uses the [template] for
+ * the other attributes of the asset.
+ *
+ * @property template the asset to use as a template.
+ */
 class DefaultAssetBuilder(private val template: Asset) : AssetBuilder {
+
+    private val notCapital = Regex("[^A-Z]")
+
+    /**
+     * @see AssetBuilder.build
+     */
     override fun build(file: File): Asset {
-        val symbol = file.nameWithoutExtension.uppercase()
+        val symbol = file.nameWithoutExtension.uppercase().replace(notCapital, ".")
         return template.copy(symbol = symbol)
     }
 

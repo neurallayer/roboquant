@@ -46,7 +46,7 @@ internal class ProgressBar {
     fun start(run: String, timeframe: Timeframe) {
         currentPercent = -1
         post = "| $run"
-        pre = "$timeframe | "
+        pre = "${timeframe.toPrettyString()} | "
         nextUpdate = Instant.MIN
         lastOutput = ""
         this.timeframe = timeframe

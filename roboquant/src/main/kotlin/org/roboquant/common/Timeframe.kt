@@ -326,10 +326,20 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
+     * Return a string representation of the timeframe
+     */
+    override fun toString(): String {
+        val s1 = if (start == MIN) "MIN" else if (start == MAX) "MAX" else start.toString()
+        val s2 = if (end == MIN) "MIN" else if (end == MAX) "MAX" else end.toString()
+        val end = if (inclusive) ']' else '>'
+        return "[$s1 - $s2$end"
+    }
+
+    /**
      * Depending on the duration of the timeframe, format the timeframe either with milli, seconds, minutes or days
      * resolution.
      */
-    override fun toString(): String {
+    fun toPrettyString(): String {
         val d = duration.toSeconds()
         val formatter = when {
             d < 1 -> millisFormatter // less than 1 second
@@ -339,7 +349,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
             else -> dayFormatter
         }
 
-        val fmt = formatter.withZone(ZoneId.of("UTC"))
+        val fmt = formatter.withZone(ZoneOffset.UTC)
         val s1 = if (start == MIN) "MIN" else if (start == MAX) "MAX" else fmt.format(start)
         val s2 = if (end == MIN) "MIN" else if (end == MAX) "MAX" else fmt.format(end)
         return "$s1 - $s2"
@@ -364,9 +374,9 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     /**
      * Annualize a [percentage] based on the duration of this timeframe. So given x percent return
      * during a timeframe, what would be the return percentage for a full year (365 days). If this timeframe has higher
-     * than milliseconds precision, the remaining precision will not be used.
+     * than millisecond precision, the remaining precision will not be used.
      *
-     * [percentage] is expected to be provided as a fraction, for example 1% is 0.01
+     * [percentage] is expected to be provided as a fraction — for example, 1% is 0.01
      */
     fun annualize(percentage: Double): Double {
         val period = duration.toMillis()

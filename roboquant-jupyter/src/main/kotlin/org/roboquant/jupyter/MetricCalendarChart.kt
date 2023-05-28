@@ -25,6 +25,7 @@ import org.roboquant.common.flatten
 import org.roboquant.common.round
 import java.math.BigDecimal
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import kotlin.collections.*
 
@@ -45,7 +46,7 @@ class MetricCalendarChart(
     /**
      * Create a calendar chart from multiple runs. The data will be flattened before plotted.
      */
-    constructor(metricsData: Map<String, TimeSeries>, fractionDigits: Int =2, zoneId: ZoneId = ZoneId.of("UTC")) :
+    constructor(metricsData: Map<String, TimeSeries>, fractionDigits: Int =2, zoneId: ZoneId = ZoneOffset.UTC) :
             this(metricsData.flatten(true), fractionDigits, zoneId)
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)

@@ -29,6 +29,7 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import com.crazzyghost.alphavantage.parameters.Interval as AlphaInterval
@@ -126,7 +127,7 @@ class AlphaVantageHistoricFeed(
 
     private fun getParser(timezone: String): DateTimeFormatter {
         val pattern = "yyyy-MM-dd HH:mm:ss"
-        val zoneId = if (compensateTimeZone) ZoneId.of(timezone) else ZoneId.of("UTC")
+        val zoneId = if (compensateTimeZone) ZoneId.of(timezone) else ZoneOffset.UTC
         return DateTimeFormatter.ofPattern(pattern).withZone(zoneId)
     }
 
