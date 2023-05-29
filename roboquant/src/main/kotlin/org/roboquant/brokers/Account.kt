@@ -24,7 +24,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 /**
- * The Account represents a brokerage trading account and is unified across all broker implementations.
+ * An account represents a brokerage trading account and is unified across all broker implementations.
  * This is an immutable class, and it holds the following state:
  *
  * - buying power

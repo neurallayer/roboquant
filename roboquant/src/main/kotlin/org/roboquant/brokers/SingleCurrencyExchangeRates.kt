@@ -25,7 +25,7 @@ import java.time.Instant
  * This implementation actually cannot convert between currencies and only return an exchange rate if from and to are
  * the same currency or the amount is zero. It will throw an [UnsupportedException] in other use cases.
  *
- * @constructor Create a new  single currency only
+ * @constructor Create a new single currency exchange rate
  */
 class SingleCurrencyExchangeRates : ExchangeRates {
 

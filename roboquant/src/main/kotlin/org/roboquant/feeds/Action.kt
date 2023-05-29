@@ -173,7 +173,7 @@ class PriceBar(
 
 /**
  * Holds a single price for an asset and optional the volume. Often this reflects an actual trade, but it can
- * also be used in other scenario's.
+ * also be used in a different scenario.
  *
  * @property asset
  * @property price

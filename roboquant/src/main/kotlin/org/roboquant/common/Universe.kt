@@ -72,7 +72,7 @@ private class SP500 : Universe {
     }
 
     /**
-     * Return the SP500 stocks (for now ignoring mostly the time).
+     * Return the SP500 stocks (for now, ignoring mostly the time).
      */
     override fun getAssets(time: Instant): List<Asset> {
         return assets.filter { it.second.contains(time) }.map { it.first }

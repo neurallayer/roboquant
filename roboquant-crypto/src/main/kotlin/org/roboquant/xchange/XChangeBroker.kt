@@ -18,7 +18,8 @@ package org.roboquant.xchange
 
 import org.knowm.xchange.Exchange
 import org.knowm.xchange.currency.CurrencyPair
-import org.roboquant.brokers.*
+import org.roboquant.brokers.Account
+import org.roboquant.brokers.Broker
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.AssetType
 import org.roboquant.common.Currency
@@ -137,7 +138,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
     }
 
     /**
-     * place a market order for a currency pair
+     * Place a market order for a currency pair
      *
      * @param currencyPair
      * @param order

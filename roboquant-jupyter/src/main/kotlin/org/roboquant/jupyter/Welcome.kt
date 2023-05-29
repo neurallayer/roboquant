@@ -64,7 +64,7 @@ class Welcome : HTMLOutput() {
     }
 
     /**
-     * Run a small demo back test and display resulting equity curve
+     * Run a small demo back test and display the resulting equity curve
      */
     fun demo1(): Chart {
         val strategy = EMAStrategy()
@@ -96,7 +96,7 @@ class Welcome : HTMLOutput() {
     }
 
     /**
-     * Run a small walk-forward test and display resulting equity curve
+     * Run a small walk-forward test and display the resulting equity curve
      */
     fun demo2(): Chart {
         val strategy = EMAStrategy()
