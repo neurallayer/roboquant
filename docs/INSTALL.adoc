@@ -139,7 +139,7 @@ The output should look something like this:
 ----
             _______
             | $   $ |             roboquant
-            |   o   |             version: 1.5.0-SNAPSHOT
+            |   o   |             version: 1.5.0
             |_[___]_|             build: 2023-05-11T06:49:52Z
         ___ ___|_|___ ___         os: Linux 5.15.0-1031-aws
        ()___)       ()___)        home: /home/ubuntu/.roboquant
