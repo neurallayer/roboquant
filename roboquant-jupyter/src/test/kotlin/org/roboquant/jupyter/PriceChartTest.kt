@@ -17,12 +17,27 @@
 package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.roboquant.feeds.Action
+import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.metrics.Indicator
+import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class PriceChartTest {
+
+    class MyIndicator : Indicator {
+        override fun calculate(action: Action, time: Instant): Map<String, Double> {
+            return if (action is PriceAction)
+                mapOf("plusone" to action.getPrice() + 1.0)
+            else
+                emptyMap()
+        }
+    }
+
 
     @Test
     fun test() {
@@ -40,6 +55,19 @@ internal class PriceChartTest {
         Chart.counter = 0
         val chart3 = PriceChart(feed, asset.symbol, priceType = "OPEN")
         assertNotEquals(html, chart3.asHTML())
+    }
+
+
+    @Test
+    fun indicators() {
+        val feed = RandomWalkFeed.lastYears(1)
+        val asset = feed.assets.first()
+        val ind = MyIndicator()
+        Chart.counter = 0
+        assertDoesNotThrow {
+            PriceChart(feed, asset, indicators = arrayOf(ind))
+        }
+
     }
 
 }

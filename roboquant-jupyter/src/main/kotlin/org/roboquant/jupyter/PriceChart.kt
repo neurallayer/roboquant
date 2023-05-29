@@ -18,22 +18,23 @@ package org.roboquant.jupyter
 
 import org.icepear.echarts.Line
 import org.icepear.echarts.Option
+import org.icepear.echarts.charts.line.LineAreaStyle
 import org.icepear.echarts.charts.line.LineSeries
 import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
+import org.icepear.echarts.components.legend.Legend
 import org.icepear.echarts.components.marker.MarkPoint
 import org.icepear.echarts.components.series.ItemStyle
 import org.icepear.echarts.components.series.LineStyle
 import org.roboquant.brokers.Trade
-import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
-import org.roboquant.common.getBySymbol
+import org.roboquant.common.*
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
-import java.time.Instant
+import org.roboquant.metrics.Indicator
+import org.roboquant.metrics.apply
 
 /**
  * Plot the prices of an [asset] found in the [feed] and optionally the [trades] made for that same asset. When
@@ -48,7 +49,8 @@ class PriceChart(
     private val asset: Asset,
     private val trades: Collection<Trade> = emptyList(),
     private val timeframe: Timeframe = Timeframe.INFINITE,
-    private val priceType: String = "DEFAULT"
+    private val priceType: String = "DEFAULT",
+    private vararg val indicators: Indicator
 ) : Chart() {
 
     /**
@@ -69,7 +71,7 @@ class PriceChart(
     /**
      * Play the feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
      */
-    private fun fromFeed(): List<Pair<Instant, Double>> {
+    private fun priceSeries(): LineSeries {
         val entries = feed.filter<PriceAction>(timeframe) { it.asset == asset }
         val data = entries.map {
             // val price = it.second.getPriceAmount(priceType)
@@ -77,7 +79,34 @@ class PriceChart(
             val price = it.second.getPrice(priceType)
             it.first to price
         }
-        return data
+
+        return LineSeries()
+            .setData(reduce(data))
+            .setName("price")
+            .setShowSymbol(false)
+            .setLineStyle(LineStyle().setWidth(1))
+            .setAreaStyle(LineAreaStyle().setOpacity(0.1))
+    }
+
+
+    private fun indicatorsSeries(): List<LineSeries> {
+        val data = mutableMapOf<String, TimeSeries>()
+        for (indicator in indicators) {
+            val map = feed.apply(indicator, asset, timeframe = timeframe, addSymbolPostfix = false)
+            data.putAll(map)
+        }
+        val result = mutableListOf<LineSeries>()
+        val currency = asset.currency
+        for ((key, timeseries) in data) {
+            val values = reduce(timeseries.map { Pair(it.time, Amount(currency,it.value).toBigDecimal()) })
+            val lineSeries = LineSeries()
+                .setData(values)
+                .setName(key)
+                .setShowSymbol(false)
+                .setLineStyle(LineStyle().setWidth(1))
+            result.add(lineSeries)
+        }
+        return result
     }
 
     /**
@@ -99,16 +128,11 @@ class PriceChart(
 
     /** @suppress */
     override fun getOption(): Option {
-        val line = reduce(fromFeed())
-        val timeframe = if (line.size > 1) Timeframe(line.first().first, line.last().first).toString() else ""
 
-        val lineSeries = LineSeries()
-            .setData(line)
-            .setShowSymbol(false)
-            .setLineStyle(LineStyle().setWidth(1))
+        val priceLineSeries = priceSeries()
 
         val mpData = markPointsData()
-        if (mpData.isNotEmpty()) lineSeries.markPoint = MarkPoint()
+        if (mpData.isNotEmpty()) priceLineSeries.markPoint = MarkPoint()
             .setData(mpData)
             .setItemStyle(ItemStyle().setColor(neutralColor))
 
@@ -116,11 +140,18 @@ class PriceChart(
         val yAxis = ValueAxis().setScale(true)
 
         val chart = Line()
-            .setTitle(title ?: "${asset.symbol} $timeframe")
-            .addSeries(lineSeries)
+            .setTitle(title ?: asset.symbol)
+            .addSeries(priceLineSeries)
             .addXAxis(xAxis)
             .addYAxis(yAxis)
             .setTooltip("axis")
+
+        val indicatorLiceSeries = indicatorsSeries()
+        for (s in indicatorLiceSeries) chart.addSeries(s)
+        if (indicatorLiceSeries.isNotEmpty()) {
+            val legendData = indicatorLiceSeries.map { it.name }
+            chart.setLegend(Legend().setData(legendData.toTypedArray()))
+        }
 
         val option = chart.option
         option.backgroundColor = "rgba(0,0,0,0)"

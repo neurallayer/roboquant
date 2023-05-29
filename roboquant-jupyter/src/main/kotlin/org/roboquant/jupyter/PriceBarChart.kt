@@ -20,6 +20,7 @@ import org.icepear.echarts.Option
 import org.icepear.echarts.charts.bar.BarSeries
 import org.icepear.echarts.charts.candlestick.CandlestickItemStyle
 import org.icepear.echarts.charts.candlestick.CandlestickSeries
+import org.icepear.echarts.charts.line.LineSeries
 import org.icepear.echarts.components.coord.AxisLine
 import org.icepear.echarts.components.coord.CategoryAxisTick
 import org.icepear.echarts.components.coord.SplitArea
@@ -33,6 +34,7 @@ import org.icepear.echarts.components.grid.Grid
 import org.icepear.echarts.components.marker.MarkPoint
 import org.icepear.echarts.components.series.Encode
 import org.icepear.echarts.components.series.ItemStyle
+import org.icepear.echarts.components.series.LineStyle
 import org.icepear.echarts.components.title.Title
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.icepear.echarts.components.visualMap.PiecewiseVisualMap
@@ -40,13 +42,13 @@ import org.icepear.echarts.components.visualMap.VisualPiece
 import org.icepear.echarts.origin.coord.cartesian.AxisOption
 import org.icepear.echarts.origin.util.SeriesOption
 import org.roboquant.brokers.Trade
-import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
-import org.roboquant.common.getBySymbol
+import org.roboquant.common.*
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
+import org.roboquant.metrics.Indicator
+import org.roboquant.metrics.apply
 
 /**
  * Plot the price-bars (candlesticks) of an [asset] found in a [feed] and optionally the [trades] made for that same
@@ -67,7 +69,8 @@ class PriceBarChart(
     private val asset: Asset,
     private val trades: Collection<Trade> = emptyList(),
     private val timeframe: Timeframe = Timeframe.INFINITE,
-    private val useTime: Boolean = true
+    private val useTime: Boolean = true,
+    private vararg val indicators: Indicator
 ) : Chart() {
 
     /**
@@ -88,6 +91,26 @@ class PriceBarChart(
     init {
         // Default height is not that suitable for this chart type, so we increase it to 700
         height = 700
+    }
+
+    private fun indicatorsSeries(): List<LineSeries> {
+        val data = mutableMapOf<String, TimeSeries>()
+        for (indicator in indicators) {
+            val map = feed.apply(indicator, asset, timeframe = timeframe)
+            data.putAll(map)
+        }
+        val result = mutableListOf<LineSeries>()
+        val currency = asset.currency
+        for ((key, timeseries) in data) {
+            val values = reduce(timeseries.map { Pair(it.time, Amount(currency,it.value).toBigDecimal()) })
+            val lineSeries = LineSeries()
+                .setData(values)
+                .setName(key)
+                .setShowSymbol(false)
+                .setLineStyle(LineStyle().setWidth(1))
+            result.add(lineSeries)
+        }
+        return result
     }
 
     /**
@@ -125,7 +148,7 @@ class PriceBarChart(
     /**
      * Get the series for prices (ohlc) and volume
      */
-    private fun getSeries(): Array<SeriesOption> {
+    private fun getSeries(): List<SeriesOption> {
         val markPoint = MarkPoint()
             .setData(markPoints().toTypedArray())
             .setItemStyle(ItemStyle().setColor(neutralColor))
@@ -153,7 +176,11 @@ class PriceBarChart(
             .setLarge(true)
             .setColor("#fbe9e")
 
-        return arrayOf(series1, series2)
+        val series3 = indicatorsSeries()
+
+        return listOf(series1, series2) + series3
+
+        // return arrayOf(series1, series2)
     }
 
     private fun getVM(): PiecewiseVisualMap {
@@ -222,20 +249,16 @@ class PriceBarChart(
 
     /** @suppress */
     override fun getOption(): Option {
-
         val line = reduce(fromFeed())
-        val timeframe = if (line.size > 1) Timeframe.parse(line.first()[0].toString(), line.last()[0].toString())
-            .toString() else ""
-
         val dataset = Dataset().setSource(line)
         val tooltip = Tooltip().setTrigger("axis")
 
         return Option()
-            .setTitle(Title().setText(title ?: "${asset.symbol} $timeframe"))
+            .setTitle(Title().setText(title ?: asset.symbol))
             .setGrid(getGrids())
             .setToolbox(getToolbox())
             .setDataset(dataset)
-            .setSeries(getSeries())
+            .setSeries(getSeries().toTypedArray())
             .setXAxis(getXAxis())
             .setYAxis(getYAxis())
             .setToolbox(getToolbox())

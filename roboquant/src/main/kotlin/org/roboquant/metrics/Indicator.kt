@@ -52,6 +52,7 @@ fun Feed.apply(
     indicator: Indicator,
     vararg assets: Asset,
     timeframe: Timeframe = Timeframe.INFINITE,
+    addSymbolPostfix: Boolean = true
 ): Map<String, TimeSeries> {
     val result = mutableMapOf<String, MutableList<Observation>>()
     for (asset in assets) {
@@ -61,7 +62,7 @@ fun Feed.apply(
             if (action.asset == asset) {
                 val metric = indicator.calculate(action, time)
                 for ((key, value) in metric) {
-                    val k = "$key.$postfix"
+                    val k = if (addSymbolPostfix) "$key.$postfix" else key
                     val l = result.getOrPut(k) { mutableListOf() }
                     l.add(Observation(time, value))
                 }
