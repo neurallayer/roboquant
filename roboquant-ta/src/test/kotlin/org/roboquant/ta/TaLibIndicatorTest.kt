@@ -24,7 +24,7 @@ class TaLibIndicatorTest {
             )
         }
         val feed = feed()
-        val result = feed.apply(feed.assets.first(), ind)
+        val result = feed.apply(ind, feed.assets.first())
         assertEquals(2, result.size)
         assertContains(result, "rsi.test")
         assertContains(result, "max.test")
@@ -34,18 +34,24 @@ class TaLibIndicatorTest {
     @Test
     fun predefined() {
         val feed = feed()
+        val asset = feed.assets.first()
         assertDoesNotThrow {
-            feed.apply(feed.assets.first(), TaLibIndicator.rsi())
+            feed.apply(TaLibIndicator.rsi(), asset)
         }
         assertDoesNotThrow {
-            feed.apply(feed.assets.first(), TaLibIndicator.bbands())
+            feed.apply(TaLibIndicator.bbands(), asset)
         }
         assertDoesNotThrow {
-            feed.apply(feed.assets.first(), TaLibIndicator.ema())
+            feed.apply(TaLibIndicator.ema(), asset)
         }
         assertDoesNotThrow {
-            feed.apply(feed.assets.first(), TaLibIndicator.sma())
+            feed.apply(TaLibIndicator.sma(), asset)
         }
+
+        assertDoesNotThrow {
+            feed.apply(TaLibIndicator.mfi(), asset)
+        }
+
     }
 
 

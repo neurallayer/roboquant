@@ -32,12 +32,12 @@ import java.time.Instant
  *
  * A typical use-case is using a Chart to plot an indicator, possible together with the prices of an asset.
  */
-fun interface Indicator  {
+fun interface Indicator {
 
     /**
      * Calculate the indicator values
      */
-    fun calculate(action: Action, time: Instant) : Map<String, Double>
+    fun calculate(action: Action, time: Instant): Map<String, Double>
 
     /**
      * Clear any state
@@ -45,21 +45,26 @@ fun interface Indicator  {
     fun clear() {}
 }
 
-
 /**
  * Apply a feed to an indicator
  */
-fun Feed.apply(asset: Asset, indicator: Indicator, timeframe: Timeframe = Timeframe.INFINITE): Map<String, TimeSeries> {
-    indicator.clear()
+fun Feed.apply(
+    indicator: Indicator,
+    vararg assets: Asset,
+    timeframe: Timeframe = Timeframe.INFINITE,
+): Map<String, TimeSeries> {
     val result = mutableMapOf<String, MutableList<Observation>>()
-    val postfix = asset.symbol.lowercase()
-    apply<PriceAction>(timeframe = timeframe) { action, time ->
-        if (action.asset == asset) {
-            val metric = indicator.calculate(action, time)
-            for ((key, value) in metric) {
-                val k = "$key.$postfix"
-                val l = result.getOrPut(k) { mutableListOf() }
-                l.add(Observation(time, value))
+    for (asset in assets) {
+        indicator.clear()
+        val postfix = asset.symbol.lowercase()
+        apply<PriceAction>(timeframe = timeframe) { action, time ->
+            if (action.asset == asset) {
+                val metric = indicator.calculate(action, time)
+                for ((key, value) in metric) {
+                    val k = "$key.$postfix"
+                    val l = result.getOrPut(k) { mutableListOf() }
+                    l.add(Observation(time, value))
+                }
             }
         }
     }

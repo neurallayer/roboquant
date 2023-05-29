@@ -62,7 +62,7 @@ class TaLibIndicator  (
     companion object {
 
         /**
-         * Return a Relative Strength Indicator for the provided [barCount]
+         * Return a `Relative Strength Indicator` for the provided [barCount]
          */
         fun rsi(barCount: Int = 10) : TaLibIndicator {
             return TaLibIndicator(barCount+1) {
@@ -71,7 +71,7 @@ class TaLibIndicator  (
         }
 
         /**
-         * Return a Bollinger Band Indicator for the provided [barCount]
+         * Return a `Bollinger Bands` Indicator for the provided [barCount]
          */
         fun bbands(barCount: Int = 10) : TaLibIndicator {
             return TaLibIndicator(barCount) {
@@ -82,7 +82,7 @@ class TaLibIndicator  (
         }
 
         /**
-         * Return an Exponential Moving Average Indicator for the provided [barCount]
+         * Return an `Exponential Moving Average` Indicator for the provided [barCount]
          */
         fun ema(barCount: Int = 10) : TaLibIndicator {
             return TaLibIndicator(barCount) {
@@ -91,15 +91,23 @@ class TaLibIndicator  (
         }
 
         /**
-         * Return a Simple Moving Average Indicator for the provided [barCount]
+         * Return a `Simple Moving Average` Indicator for the provided [barCount]
          */
         fun sma(barCount: Int = 10) : TaLibIndicator {
             return TaLibIndicator(barCount) {
                 mapOf("sma$barCount" to sma(it, barCount))
             }
         }
-        
-        
+
+        /**
+         * Return a `Money Flow In` Indicator for the provided [barCount]
+         */
+        fun mfi(barCount: Int = 10) : TaLibIndicator {
+            return TaLibIndicator(barCount+1) {
+                mapOf("mfi$barCount" to mfi(it, barCount))
+            }
+        }
+
     }
 
 }

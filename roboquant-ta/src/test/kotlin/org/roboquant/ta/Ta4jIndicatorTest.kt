@@ -28,7 +28,7 @@ class Ta4jIndicatorTest {
             mapOf("crossup" to value)
         }
         val feed = feed()
-        val result = feed.apply(feed.assets.first(), ind)
+        val result = feed.apply(ind, feed.assets.first())
         assertEquals(1, result.size)
         assertEquals("crossup.test", result.keys.first())
         assertEquals(feed.timeline.size, result.values.first().size)
