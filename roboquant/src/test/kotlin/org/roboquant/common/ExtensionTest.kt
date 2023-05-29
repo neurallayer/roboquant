@@ -41,6 +41,17 @@ class ExtensionTest {
         assertEquals(0.5, a.growthRates()[1])
     }
 
+    @Test
+    fun paths() {
+        val p1 = "/tmp" / "dummy/test.txt"
+        assertEquals("/tmp/dummy/test.txt", p1)
+
+        val p2 = "/Users/home/john" / ".roboquant/file.avro"
+        assertEquals("/Users/home/john/.roboquant/file.avro", p2)
+
+        val p3 = "/tmp/dummy" / "../test.txt"
+        assertEquals("/tmp/test.txt", p3)
+    }
 
     @Test
     fun testRounding() {

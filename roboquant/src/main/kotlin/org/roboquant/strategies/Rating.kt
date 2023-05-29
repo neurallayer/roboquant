@@ -19,7 +19,7 @@ package org.roboquant.strategies
 import org.roboquant.strategies.Rating.*
 
 /**
- * Rating is the key component of a [Signal] that is a measure of the expected performance of an asset. It is an
+ * Rating is the key component of a [Signal] that is a measure of the expected performance. It is an
  * enumeration and is closely modelled after how traditional analyst rate assets, using a 5 point score:
  *
  * - [BUY]: Also known as strong buy and "on the recommended list". Buy is a recommendation to purchase a specific

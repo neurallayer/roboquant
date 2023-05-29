@@ -37,31 +37,26 @@ import kotlin.io.path.isRegularFile
  * This implementation will store all the data in memory, using [Double] for the prices. If you don't have enough
  * memory available, consider using [LazyCSVFeed] instead.
  *
- * @param path the directory that contains CSV files or a single CSV file
+ * @param pathStr the directory that contains CSV files or a single CSV file
  * @property config the configuration to be run, default is no additional configuration. See also [CSVConfig]
  * @param configure optional modifications of the default configuration
  * @constructor
  */
-class CSVFeed(
-    path: Path,
+class CSVFeed internal constructor(
+    pathStr: String,
     val config: CSVConfig,
-    configure: CSVConfig.() -> Unit = {}
+    configure: CSVConfig.() -> Unit
 ) : HistoricPriceFeed() {
 
     private val logger = Logging.getLogger(CSVFeed::class)
 
-    constructor(path: String, config: CSVConfig) : this(Path.of(path), config)
+    constructor(path: String, config: CSVConfig = CSVConfig.fromFile(path)) : this(path, config, {})
 
-    constructor(path: Path, configure: CSVConfig.() -> Unit = {}) : this(path, CSVConfig.fromFile(path), configure)
-
-    constructor(path: String, configure: CSVConfig.() -> Unit = {}) : this(
-        Path.of(path),
-        CSVConfig.fromFile(Path.of(path)),
-        configure
-    )
+    constructor(path: String, configure: CSVConfig.() -> Unit) : this(path, CSVConfig.fromFile(path), configure)
 
 
     init {
+        val path = Path.of(pathStr)
         require(path.isDirectory() || path.isRegularFile()) { "$path does not exist" }
         config.configure()
         runBlocking {
@@ -81,7 +76,7 @@ class CSVFeed(
         } else {
             entry
                 .walk()
-                .filter { config.shouldParse(it) }
+                .filter { config.shouldInclude(it) }
                 .map { it.absoluteFile }
                 .toList()
         }

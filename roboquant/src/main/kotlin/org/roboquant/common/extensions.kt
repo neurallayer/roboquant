@@ -210,6 +210,13 @@ fun DoubleArray.indexOfMax() : Int {
     return maxAt
 }
 
+/**
+ * Allow to manipulate strings like paths
+ */
+operator fun String.div(other: String) : String {
+    val p = java.nio.file.Path.of(this, other).normalize()
+    return p.toString()
+}
 
 /**
  * Returns the index of the first minimum value

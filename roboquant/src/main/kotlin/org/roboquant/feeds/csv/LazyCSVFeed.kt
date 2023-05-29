@@ -50,16 +50,23 @@ import kotlin.io.path.isRegularFile
  *
  * @constructor
  *
- * @property path The directory that contains the CSV files or a single file
+ * @param pathStr The directory that contains the CSV files or a single file
+ * @property config the config to use for parsing
  * @param configure any additional configuration for this feed
  */
-class LazyCSVFeed(private val path: Path, configure: CSVConfig.() -> Unit = {}) : AssetFeed {
+class LazyCSVFeed internal constructor(
+    pathStr: String,
+    val config: CSVConfig,
+    configure: CSVConfig.() -> Unit
+) : AssetFeed {
 
-    constructor(path: String, configure: CSVConfig.() -> Unit = {}) : this(Path.of(path), configure)
+    constructor(path: String, config: CSVConfig = CSVConfig.fromFile(path)) : this(path, config, {})
+
+    constructor(path: String, configure: CSVConfig.() -> Unit) : this(path, CSVConfig.fromFile(path), configure)
+
 
     private val logger = Logging.getLogger(LazyCSVFeed::class)
     private val filesMap: Map<Asset, File>
-    private val config: CSVConfig = CSVConfig.fromFile(path)
 
     /**
      * Return the assets that are available in this feed
@@ -68,12 +75,12 @@ class LazyCSVFeed(private val path: Path, configure: CSVConfig.() -> Unit = {}) 
         get() = filesMap.keys.toSortedSet()
 
     init {
+        val path = Path.of(pathStr)
         require(path.isDirectory() || path.isRegularFile()) { "$path does not exist" }
-        logger.debug { "Scanning $path" }
         config.configure()
         filesMap = path.toFile()
             .walk()
-            .filter { config.shouldParse(it) }
+            .filter { config.shouldInclude(it) }
             .map { it.absoluteFile }
             .map { config.assetBuilder.build(it) to it }
             .toMap()

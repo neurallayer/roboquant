@@ -23,9 +23,9 @@ import org.roboquant.common.Asset
  *
  * An order can cover different of use cases:
  *
- * - a buy or sell order (the most common use case), ranging from simple market order to advanced order types
- * - cancellation of an existing order
- * - update of an existing order
+ * - A buy- or sell-order (the most common use case), ranging from simple market order to advanced order types
+ * - Cancellation of an existing order
+ * - Update of an existing order
  *
  * An order doesn't necessary has a size. For example, in case of a cancellation order. But every order is linked to
  * a single asset.

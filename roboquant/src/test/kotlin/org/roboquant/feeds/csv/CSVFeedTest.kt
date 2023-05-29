@@ -18,14 +18,10 @@ package org.roboquant.feeds.csv
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import org.roboquant.common.Asset
-import org.roboquant.common.Currency
-import org.roboquant.common.Exchange
-import org.roboquant.common.getBySymbol
+import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
-import kotlin.io.path.Path
-import kotlin.io.path.div
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 internal class CSVFeedTest {
@@ -85,86 +81,25 @@ internal class CSVFeedTest {
         assertEquals(9, feed.timeline.size)
     }
 
-    /*
-    @Test
-    fun mt5PriceBar() {
-        val dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
-
-        fun parse(line: List<String>, asset: Asset): Instant {
-            val text = line[0] + " " + line[1]
-            val dt = LocalDateTime.parse(text, dtf)
-            return asset.exchange.getInstant(dt)
-        }
-
-        val feed = CSVFeed(TestData.dataDir() + "MT5/TEST_M1.csv") {
-            assetBuilder = { Asset("MSFT") }
-            separator = '\t'
-            timeParser = TimeParser { a,b -> parse(a,b) }
-        }
-        val assets = feed.assets
-        assertEquals(1, assets.size)
-        assertEquals(16, feed.timeline.size)
-    }
-
-    @Test
-    fun mt5PriceQuote() {
-        val dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss.SSS")
-
-        fun parse(line: List<String>, asset: Asset): Instant {
-            val text = line[0] + " " + line[1]
-            val dt = LocalDateTime.parse(text, dtf)
-            return asset.exchange.getInstant(dt)
-        }
-
-        val feed = CSVFeed(TestData.dataDir() + "MT5/TEST_QUOTES.csv") {
-            assetBuilder = { Asset("MSFT") }
-            separator = '\t'
-            timeParser = TimeParser { a,b -> parse(a,b) }
-            priceParser = PriceQuoteParser()
-        }
-        val assets = feed.assets
-        assertEquals(1, assets.size)
-        assertEquals(49, feed.timeline.size)
-    }
-
-
-    @Test
-    fun histData() {
-        val feed = CSVFeed.fromHistData(TestData.dataDir() + "/HISTDATA")
-        assertEquals(1, feed.assets.size)
-        assertEquals(20, feed.timeline.size)
-        assertEquals(Timeframe.parse("2023-05-01T00:00:00Z", "2023-05-01T00:19:00Z").toInclusive(), feed.timeframe)
-    }
-
-    @Test
-    fun stooqData() {
-        val feed = CSVFeed.fromStooq(TestData.dataDir() + "/STOOQ")
-        assertEquals(1, feed.assets.size)
-        assertEquals(20, feed.timeline.size)
-        assertEquals(Timeframe.parse("1984-09-07T20:00:00Z", "1984-10-04T20:00:00Z").toInclusive(), feed.timeframe)
-    }
-
-     */
 
     @Test
     fun noAssets() {
-        // assertFailsWith<IllegalArgumentException> {
-        //    CSVFeed(TestData.dataDir() + "NON_Existing_DIR")
-        // }
+        assertFailsWith<IllegalArgumentException> {
+            CSVFeed(TestData.dataDir() + "NON_Existing_DIR")
+        }
 
         val feed1 = CSVFeed(TestData.dataDir() + "US") {
             filePattern = ".*non_existing_ext"
         }
 
         assertEquals(".*non_existing_ext", feed1.config.filePattern)
-        println(feed1.assets)
         assertTrue(feed1.assets.isEmpty())
     }
 
     @Test
     fun customConfig() {
         val template = Asset("TEMPLATE", currencyCode = "USD", exchangeCode = "TEST123")
-        val path = Path(TestData.dataDir() + "US") / Path("AAPL.csv")
+        val path = TestData.dataDir() / "US/AAPL.csv"
 
         val feed = CSVFeed(path) {
             assetBuilder = DefaultAssetBuilder(template)

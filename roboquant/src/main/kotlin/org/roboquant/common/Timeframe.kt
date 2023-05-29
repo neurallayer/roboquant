@@ -88,7 +88,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
          * Infinite timeframe that matches any time and is typically used when no filtering is required or the
          * exact timeframe is yet unknown.
          */
-        val INFINITE = Timeframe(MIN, MAX)
+        val INFINITE = Timeframe(MIN, MAX, true)
 
         /**
          * The empty timeframe doesn't contain any time.
@@ -97,10 +97,10 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
         // Different formatters used when displaying a timeframe
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        private val minutesFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        private val hoursFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        private val minuteFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        private val hourFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        private val millisFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+        private val milliFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
         // **********************************************************************
         // predefined timeframes for significant events in the history of trading
@@ -134,8 +134,8 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
             get() = parse("2010-05-06T19:30:00Z", "2010-05-06T20:15:00Z")
 
         /**
-         * After it became clear that COVID-19 virus would also impact countries outside China, many exchanges worldwide
-         * crashed due to the uncertainty of the impact that the virus would have on economies and companies.
+         * After it became clear that the COVID-19 virus would also impact countries outside China, many exchanges
+         * worldwide crashed due to the uncertainty of the impact it would have.
          */
         val coronaCrash2020
             get() = parse("2020-02-17T00:00:00Z", "2020-03-17T00:00:00Z")
@@ -256,7 +256,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
     /**
      * Split a timeframe into two parts, one for training and one for test using the provided [testSize]
-     * for determining the size of test. [testSize] should be a number between 0.0 and 1.0, for example
+     * for determining the size of test. [testSize] should be a number between 0.0 and 1.0, for example,
      * 0.25 means use last 25% as a test timeframe.
      *
      * It returns a [Pair] of timeframes, the first one being the training timeframe and the second being the
@@ -304,7 +304,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation
+     * Sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation
      */
     fun sample(period: TradingPeriod, samples: Int = 1, random: Random = Config.random): List<Timeframe> {
         require(end - period > start) { "$period to large for $this" }
@@ -344,10 +344,10 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     fun toPrettyString(): String {
         val d = duration.toSeconds()
         val formatter = when {
-            d < 1 -> millisFormatter // less than 1 second
+            d < 1 -> milliFormatter // less than 1 second
             d < 60 -> secondFormatter // less than 1 minute
-            d < 3600 -> minutesFormatter // less than 1 hour
-            d < 3600 * 24 -> hoursFormatter // less than 1 day
+            d < 3600 -> minuteFormatter // less than 1 hour
+            d < 3600 * 24 -> hourFormatter // less than 1 day
             else -> dayFormatter
         }
 
@@ -360,16 +360,18 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     /**
      * Subtract a [period] from start- and end-time of this timeframe and return the result.
      * If the temporalAmount is defined as a [Period], UTC will be used as the ZoneId.
-     *
-     *      val newTimeFrame = timeframe - 2.days
+     * ```
+     * val newTimeFrame = timeframe - 2.days
+     * ```
      */
     operator fun minus(period: TradingPeriod) = Timeframe(start - period, end - period, inclusive)
 
     /**
      * Add a [period] to start- and end-time of this timeframe and return the result.
      * If the temporalAmount is defined as a [Period], UTC will be used as the ZoneId.
-     *
-     *      val newTimeFrame = timeframe + 2.days
+     * ```
+     * val newTimeFrame = timeframe + 2.days
+     * ```
      */
     operator fun plus(period: TradingPeriod) = Timeframe(start + period, end + period, inclusive)
 

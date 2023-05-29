@@ -22,10 +22,9 @@ import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.NoTradingException
 import org.roboquant.common.Timeframe
+import org.roboquant.common.div
 import org.roboquant.feeds.toList
 import java.io.File
-import java.nio.file.Path
-import kotlin.io.path.div
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -46,16 +45,25 @@ internal class CSVConfigTest {
     @Test
     fun stooq() {
         val config = CSVConfig.stooq()
-        val feed = CSVFeed(Path.of(TestData.dataDir()) / "STOOQ", config) {}
+        val feed = CSVFeed(TestData.dataDir() / "STOOQ", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(20, feed.timeline.size)
         assertEquals(Timeframe.parse("1984-09-07T20:00:00Z", "1984-10-04T20:00:00Z").toInclusive(), feed.timeframe)
     }
 
     @Test
+    fun stooq2() {
+        val config = CSVConfig.stooq()
+        val feed = LazyCSVFeed(TestData.dataDir() / "STOOQ", config) {}
+        assertEquals(1, feed.assets.size)
+        assertEquals(20, feed.toList().size)
+        assertEquals(Timeframe.INFINITE, feed.timeframe)
+    }
+
+    @Test
     fun histData() {
         val config = CSVConfig.histData()
-        val feed = CSVFeed(Path.of(TestData.dataDir()) / "HISTDATA", config) {}
+        val feed = CSVFeed(TestData.dataDir() / "HISTDATA", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(20, feed.timeline.size)
         assertEquals(Timeframe.parse("2023-05-01T00:00:00Z", "2023-05-01T00:19:00Z").toInclusive(), feed.timeframe)
@@ -64,7 +72,7 @@ internal class CSVConfigTest {
     @Test
     fun yahoo() {
         val config = CSVConfig.yahoo()
-        val feed = CSVFeed(Path.of(TestData.dataDir()) / "YAHOO", config) {}
+        val feed = CSVFeed(TestData.dataDir() / "YAHOO", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals("MSFT", feed.assets.first().symbol)
         assertEquals(9, feed.timeline.size)
@@ -74,7 +82,7 @@ internal class CSVConfigTest {
     @Test
     fun kraken() {
         val config = CSVConfig.kraken()
-        val feed = CSVFeed(Path.of(TestData.dataDir()) / "KRAKEN", config) {}
+        val feed = CSVFeed(TestData.dataDir() / "KRAKEN", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(4, feed.timeline.size)
         assertEquals(20, feed.toList().map { it.actions }.flatten().size)
@@ -84,7 +92,7 @@ internal class CSVConfigTest {
     @Test
     fun mt5PriceBar() {
         val config = CSVConfig.mt5()
-        val feed = CSVFeed(Path.of(TestData.dataDir()) / "MT5/TEST_M1.csv", config) {}
+        val feed = CSVFeed(TestData.dataDir() / "MT5/TEST_M1.csv", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(16, feed.timeline.size)
         assertEquals("TEST", feed.assets.first().symbol)
@@ -94,7 +102,7 @@ internal class CSVConfigTest {
     @Test
     fun mt5PriceQuote() {
         val config = CSVConfig.mt5(priceQuote = true)
-        val feed = CSVFeed(Path.of(TestData.dataDir()) / "MT5/TEST_QUOTES.csv", config) {}
+        val feed = CSVFeed(TestData.dataDir() / "MT5/TEST_QUOTES.csv", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(49, feed.timeline.size)
         assertEquals("TEST", feed.assets.first().symbol)
@@ -109,8 +117,8 @@ internal class CSVConfigTest {
         val config = CSVConfig()
         assertEquals(Asset("TEMPLATE"), config.template)
         assertEquals(Asset("ABN"), config.assetBuilder.build(File("ABN.csv")))
-        assertFalse(config.shouldParse(File("some_non_existing_file.csv")))
-        assertFalse(config.shouldParse(File("somefile.dummy_extension")))
+        assertFalse(config.shouldInclude(File("some_non_existing_file.csv")))
+        assertFalse(config.shouldInclude(File("somefile.dummy_extension")))
     }
 
     @Test

@@ -65,7 +65,7 @@ data class Trade(
         get() = Amount(asset.currency, pnlValue)
 
     /**
-     * Returns the PNL as a percentage of overall revenue of the trade
+     * Returns the PNL as a percentage of the trade
      */
     val pnlPercentage: Double
         get() = pnlValue / - totalCost.value

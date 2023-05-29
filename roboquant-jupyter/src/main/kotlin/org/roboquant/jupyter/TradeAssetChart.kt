@@ -32,7 +32,7 @@ import java.math.BigDecimal
 
 /**
  * Trade chart plots the [trades] that have been generated during a run per Asset. By default, the realized pnl of the
- * trades will be used to color the value, but this is configurable.
+ * trades will be used to colour the value, but this is configurable.
  *
  */
 class TradeAssetChart(

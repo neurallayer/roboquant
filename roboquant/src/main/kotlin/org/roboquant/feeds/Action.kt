@@ -244,8 +244,9 @@ data class PriceQuote(
 
     /**
      * Returns the spread percentage. The used formula is
-     *
-     *      spread = (lowest_aks - highest_bid) / lowest_ask
+     * ```
+     * spread = (lowest_aks - highest_bid) / lowest_ask
+     * ```
      */
     val spread: Double
         get() = (askPrice - bidPrice) / askPrice

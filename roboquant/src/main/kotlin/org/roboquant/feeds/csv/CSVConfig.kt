@@ -178,9 +178,9 @@ data class CSVConfig(
          * Read a CSV configuration from a [path]. It will use the standard config as base and merge all the
          * additional settings found in the config file (if any).
          */
-        internal fun fromFile(path: Path): CSVConfig {
+        internal fun fromFile(path: String): CSVConfig {
             val result = CSVConfig()
-            val cfg = readConfigFile(path)
+            val cfg = readConfigFile(Path.of(path))
             result.merge(cfg)
             return result
         }
@@ -204,9 +204,9 @@ data class CSVConfig(
     }
 
     /**
-     * Should the provided [file] be parsed or skipped all together, true is parsed
+     * Returns true is the provided [file] be included, false otherwise
      */
-    internal fun shouldParse(file: File): Boolean {
+    internal fun shouldInclude(file: File): Boolean {
         val name = file.name
         return file.isFile && pattern.matcher(name).matches() && name !in fileSkip
     }
