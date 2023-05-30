@@ -7,7 +7,7 @@ Run extended unit tests to improve code coverage. By default, these extra unit t
 The overall goal is to maintain a roboquant test coverage > 90%.
 
 == Performance with Flight recorder
-Runs a mixed performance test with flight recorder enabled. The resulting `roboquant_recording.jfr` file can be opened with a tool like VisualVM and further inspection.
+Run a mixed performance test with flight recorder enabled. The resulting `roboquant_recording.jfr` file can be opened with a tool like VisualVM and further inspection.
 
 == Detekt
 detekt.yaml contains the Detekt rules that are being used to validate the code against.

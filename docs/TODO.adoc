@@ -2,7 +2,7 @@
 
 == Introduction
 
-There are still many features planned for _roboquant_. For sure the lists on this page are also not complete and new features will pop up over time. Prioritization might shift based also based on community input and contribution.
+There are still many features planned for _roboquant_. For sure, the lists on this page are also not complete and new features will pop up over time. Prioritization might shift based also based on community input and contribution.
 
 But at least it gives insight into the current planning when to add certain features. And of course PRs are very welcome and might very well expedite certain features. 
 

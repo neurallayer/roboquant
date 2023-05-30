@@ -45,7 +45,7 @@ fun Timeline.sample(size: Int, samples: Int = 1, random: Random = Config.random)
  * Return the index of the time that is closets to the provided time but doesn't exceed it. So it is the most recent
  * time but without looking into the future.
  *
- * If no such time is found return null
+ * If no such time is found, return null
  */
 fun Timeline.latestNotAfter(time: Instant): Int? {
     var idx = binarySearch(time)
@@ -65,7 +65,7 @@ fun Timeline.earliestNotBefore(time: Instant): Int? {
 
 /**
  * Return the timeframe for this timeline. If the timeline is empty, [Timeframe.EMPTY] will be returned. Both the first
- * and last entry of the timeline are included in the returned timeframe.
+ * and last entries of the timeline are included in the returned timeframe.
  */
 val Timeline.timeframe
     get() = if (isEmpty()) Timeframe.EMPTY else Timeframe(first(), last(), true)

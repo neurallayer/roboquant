@@ -58,7 +58,7 @@ fun interface AssetFilter {
 
         /**
          * Include only the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive,
-         * and all special characters are replaced with a '.' character before comparing.
+         * and all special characters are replaced with a `.` character before comparing.
          */
         fun includeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.standardize() }.toSet()

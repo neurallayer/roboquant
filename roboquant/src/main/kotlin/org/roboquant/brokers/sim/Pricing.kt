@@ -30,7 +30,7 @@ interface Pricing {
     fun lowPrice(size: Size): Double = marketPrice(size)
 
     /**
-     * Get the highest price available  for the provided [size]. Default is the [marketPrice]
+     * Get the highest price available for the provided [size], default is the [marketPrice]
      * Typically this is used to evaluate if a limit or stop has been triggered.
      */
     fun highPrice(size: Size): Double = marketPrice(size)

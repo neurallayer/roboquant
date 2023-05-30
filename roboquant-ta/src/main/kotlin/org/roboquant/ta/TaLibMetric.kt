@@ -28,7 +28,7 @@ import org.roboquant.metrics.Metric
  * name: [name].symbol with the symbol in lowercase.
  *
  * @property name the base name of the metric
- * @property history how much history should be kept before invoking the metric
+ * @property history how much history should be kept before invoking the provided [block]
  * @property assetFilter which assets to process, default is [AssetFilter.all]
  * @property block the logic to use as an indicator
  * @constructor Create new metric

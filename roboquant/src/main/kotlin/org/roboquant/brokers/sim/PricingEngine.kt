@@ -27,7 +27,7 @@ fun interface PricingEngine {
 
     /**
      * Return a pricing (calculator) for the provided price [action] and [time]. Although most often not used, advanced
-     * pricing calculators can be dependent on the [time]. For example certain FOREX exchanges might be more
+     * pricing calculators can be dependent on the [time]. For example, certain FOREX exchanges might be more
      * volatile during certain timeframes and this can be reflected in the [PricingEngine].
      */
     fun getPricing(action: PriceAction, time: Instant): Pricing

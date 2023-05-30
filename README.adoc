@@ -119,7 +119,7 @@ Some key features of roboquant are:
 * [x] Very fast back-testing, even on large volumes of historical data
 * [x] Easy to develop your own strategies and integrate with third party brokers and data providers
 * [x] Trade in multiple asset classes at the same time
-* [x] Run anything from a technical indicator to complex machine learning based strategies
+* [x] Run anything from a technical indicator to complex machine-learning based strategies
 * [x] Easy to transition from back-testing to live trading
 * [x] Trade on multi-markets with multi-currencies
 * [x] Developed under open source with a permissive Apache license
@@ -138,6 +138,6 @@ Besides all the link:docs/THIRDPARTY.adoc[great open source software] that is po
 image:https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png[JetBrains,100,100]
 
 == Disclaimer
-_Roboquant_ also comes with live trading capabilities. Using this is at your own risk and there are *NO GUARANTEES* about the correct functioning of the software.
+_Roboquant_ also comes with live trading capabilities. Using this is at your own risk, and there are *NO GUARANTEES* about the correct functioning of the software.
 
 PR are more than welcome, see also the link:/docs/CONTRIBUTING.adoc[Contribution Guide] document. If you're missing some features, just open an issue on GitHub. See also the link:/docs/TODO.adoc[todo documentation] for already identified backlog items if you look for something to work on.

@@ -132,10 +132,10 @@ class Roboquant(
      * provided, a name will be generated with the format "run-<counter>"
      *
      * Optionally you can provide:
-     * 1. a [timeframe] timeframe that will limit duration of main phase.
+     * 1. a [timeframe] timeframe that will limit duration of the main phase.
      * 2. a [validation] timeframe that will trigger a separate validation phase.
      *
-     * These last two options come into play when you want to run machine learning based strategies. This is the
+     * These last two options come into play when you want to run machine-learning based strategies. This is the
      * synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
      * in parallel have a look at [runAsync]
      */
@@ -150,8 +150,9 @@ class Roboquant(
         }
 
     /**
-     * This is the same method as the [run] method but as the name already suggest, asynchronously. This makes it better
-     * suited for running back-test in parallel. Other than that, it behaves exactly the same as the regular run method.
+     * This is the same method as the [run] method but as the name already suggests, asynchronously. This makes it
+     * better suited for running back-test in parallel. Other than that, it behaves exactly the same as the regular
+     * run method.
      *
      * @see [run]
      */
