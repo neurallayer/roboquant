@@ -20,12 +20,12 @@ import org.junit.jupiter.api.Test
 import org.roboquant.feeds.RandomWalkFeed
 import kotlin.test.assertTrue
 
-internal class AssetPerformanceChartTest {
+internal class PerformanceChartTest {
 
     @Test
     fun test() {
         val feed = RandomWalkFeed.lastYears(1)
-        val chart = AssetPerformanceChart(feed)
+        val chart = PerformanceChart(feed)
         assertTrue(chart.asHTML().isNotBlank())
     }
 

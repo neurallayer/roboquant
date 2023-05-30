@@ -31,17 +31,18 @@ import org.roboquant.common.flatten
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+
 /**
- * Chart that takes [metricData] and creates a histogram of it. The number of [binCount] to display is configurable.
+ * Chart that takes [timeSeries] and creates a histogram of it. The number of [binCount] to display is configurable.
  *
- * @property metricData
+ * @property timeSeries
  * @property binCount
  * @property scale
  * @property minBinSize
  * @constructor Create empty Metric histogram
  */
-class MetricHistogramChart(
-    private val metricData: TimeSeries,
+class HistogramChart(
+    private val timeSeries: TimeSeries,
     private val binCount: Int = 20,
     private val scale: Int = 2,
     private val minBinSize: Int = 0,
@@ -56,7 +57,7 @@ class MetricHistogramChart(
 
     private fun toSeriesData(): List<Pair<String, Long>> {
         val f = EmpiricalDistribution(binCount)
-        val data = metricData.toDoubleArray().clean()
+        val data = timeSeries.toDoubleArray().clean()
         if (data.isEmpty()) return emptyList()
 
         val result = mutableListOf<Pair<String, Long>>()

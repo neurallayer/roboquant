@@ -18,16 +18,28 @@ package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.loggers.MemoryLogger
 import kotlin.test.assertTrue
 
-internal class MetricChartTest {
+internal class TimeSeriesChartTest {
+
 
     @Test
     fun test() {
-        val logger = MemoryLogger()
-        val data = logger.getMetric("test")
-        val chart = MetricChart(data)
+        val data = TestData.data
+        val chart = TimeSeriesChart(data)
+
+        assertDoesNotThrow {
+            chart.getOption().renderJson()
+        }
+
+        assertTrue(chart.asHTML().isNotBlank())
+    }
+
+
+    @Test
+    fun single() {
+        val data = TestData.data
+        val chart = TimeSeriesChart(data.values.first())
 
         assertDoesNotThrow {
             chart.getOption().renderJson()
@@ -38,9 +50,8 @@ internal class MetricChartTest {
 
     @Test
     fun predefined() {
-        val logger = MemoryLogger()
-        val data = logger.getMetric("test")
-        val chart = MetricChart.walkForward(data)
+        val data = TestData.data
+        val chart = TimeSeriesChart.walkForward(data)
 
         assertDoesNotThrow {
             chart.getOption().renderJson()
@@ -51,9 +62,8 @@ internal class MetricChartTest {
 
     @Test
     fun predefined2() {
-        val logger = MemoryLogger()
-        val data = logger.getMetric("test")
-        val chart = MetricChart.walkForward(data)
+        val data = TestData.data
+        val chart = TimeSeriesChart.walkForward(data)
 
         assertDoesNotThrow {
             chart.getOption().renderJson()

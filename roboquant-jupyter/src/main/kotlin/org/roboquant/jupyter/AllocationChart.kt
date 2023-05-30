@@ -33,7 +33,7 @@ import java.math.BigDecimal
  * @property includeAssetClass group per assetClass, default is false
  * @constructor Create a new asset allocation chart
  */
-class AssetAllocationChart(
+class AllocationChart(
     private val positions: Collection<Position>,
     private val includeAssetClass: Boolean = false,
     private val currency: Currency? = null

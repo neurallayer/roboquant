@@ -16,18 +16,26 @@
 
 package org.roboquant.jupyter
 
+import org.icepear.echarts.charts.pie.PieSeries
+import org.icepear.echarts.origin.util.SeriesOption
 import org.junit.jupiter.api.Test
-import org.roboquant.loggers.MemoryLogger
 import kotlin.test.assertTrue
 
-internal class MetricBoxChartTest {
+internal class AllocationChartTest {
 
     @Test
     fun test() {
-        val logger = MemoryLogger()
-        val data = logger.getMetric("test")
-        val chart = MetricBoxChart(data)
+        val account = TestData.usAccount()
+        val chart = AllocationChart(account.positions)
         assertTrue(chart.asHTML().isNotBlank())
+    }
+
+    @Test
+    fun option() {
+        val account = TestData.usAccount()
+        val series = AllocationChart(account.positions).getOption().series
+        assertTrue(series is Array<*> && series.isArrayOf<SeriesOption>())
+        assertTrue(series.first() is PieSeries)
     }
 
 }

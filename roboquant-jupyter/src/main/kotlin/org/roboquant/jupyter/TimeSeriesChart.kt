@@ -29,25 +29,25 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
- * A MetricChart will plot a metric that is captured during one or more runs. If there is more than one run found in
- * the provided [metricsData], each run will be plotted as a separate series.
+ * A TimeSeriesChart will plot a metric that is captured during one or more runs. If there is more than one time-series
+ * found in the provided [data], each time-series will be plotted as a separate series.
  *
- * @property metricsData the metric data to use
+ * @property data the metric data to use
  * @property useTime use a linear timescale for the x-axis.
  * @property fractionDigits how many digits to use for presenting the metric values
  */
-class MetricChart(
-    private val metricsData: Map<String, TimeSeries>,
+class TimeSeriesChart(
+    private val data: Map<String, TimeSeries>,
     private val useTime: Boolean = true,
     private val fractionDigits: Int = 2
 ) : Chart() {
 
 
     /**
-     * Plot a single run
+     * Plot a time-series
      */
-    constructor(metricsData: TimeSeries, useTime: Boolean = true, fractionDigits: Int = 2) :
-            this(mapOf("" to metricsData), useTime, fractionDigits)
+    constructor(timeSeries: TimeSeries, useTime: Boolean = true, fractionDigits: Int = 2) :
+            this(mapOf("" to timeSeries), useTime, fractionDigits)
 
     /**
      * @suppress
@@ -60,27 +60,27 @@ class MetricChart(
          *
          * ```
          * val data = roboquant.logger.getMetric("account.equity")
-         * MetricChart.walkForward(data, monteCarlo = true)
+         * TimeSeriesChart.walkForward(data, monteCarlo = true)
          * ```
          */
         fun walkForward(
             metricsData: Map<String, TimeSeries>,
             fractionDigits: Int = 2,
             monteCarlo: Int = 0
-        ): MetricChart {
+        ): TimeSeriesChart {
             require(monteCarlo >= 0)
             require(fractionDigits >=0)
 
             val d = metricsData.mapValues { it.value.returns() }.flatten()
             var data = d.runningFold(100.0)
-            if (monteCarlo == 0) return MetricChart(mapOf("" to data))
+            if (monteCarlo == 0) return TimeSeriesChart(mapOf("" to data))
 
             val result = mutableMapOf("orginal" to data)
             repeat(monteCarlo) {
                 data = d.shuffle().runningFold(100.0)
                 result["mc-$it"] = data
             }
-            return MetricChart(result)
+            return TimeSeriesChart(result)
 
         }
 
@@ -113,8 +113,8 @@ class MetricChart(
             .setTooltip("axis")
 
         // Every combination of a run and metric name will be its own series
-        val suffix = commonSuffix(metricsData.keys)
-        metricsData.forEach { (name, entries) ->
+        val suffix = commonSuffix(data.keys)
+        data.forEach { (name, entries) ->
             val d = reduce(entries.toSeriesData())
             val lineSeries = LineSeries()
                 .setData(d)

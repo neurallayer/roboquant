@@ -24,7 +24,7 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 /**
- * The order-state keeps track of the state of a placed order. This is a read-only class and any [update] will generate
+ * The order-state keeps track of a placed order. This is a read-only class and any [update] will generate
  * a new instance (also sometimes referred to as the Immutable State Pattern).
  *
  * @property order the order that is tracked

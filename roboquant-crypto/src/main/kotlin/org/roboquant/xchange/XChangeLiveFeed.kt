@@ -23,16 +23,17 @@ import org.knowm.xchange.currency.CurrencyPair
 import org.knowm.xchange.dto.marketdata.Ticker
 import org.knowm.xchange.dto.marketdata.Trade
 import org.roboquant.common.*
+import org.roboquant.common.Currency
 import org.roboquant.feeds.*
 import java.time.Instant
-import java.util.TreeSet
+import java.util.*
 import org.knowm.xchange.dto.marketdata.OrderBook as CryptoOrderBook
 
 /**
  * Get live-streaming feeds from dozens of bitcoin exchanges. This feed uses the XChange library
  * to connect to the different exchanges to get the trade and order book feeds for a currency pair.
  *
- * XChange is a Java library providing a streamlined API for interacting with 60+ Bitcoin and Altcoin exchanges
+ * XChange is a Java library providing a streamlined API for interacting with 60+ Bitcoin and Altcoin exchanges,
  * providing a consistent interface for trading and accessing market data.
  *
  * See also https://knowm.org/open-source/xchange/
@@ -174,7 +175,7 @@ class XChangeLiveFeed(
 
     /**
      * Handle trade events and put them on the channel to be processed. In case there is
-     * no run yet started and as a result there is no active channel, the trade events will be ignored.
+     * no run yet started, and as a result, there is no active channel, the trade events will be ignored.
      *
      * @param asset
      * @param trade

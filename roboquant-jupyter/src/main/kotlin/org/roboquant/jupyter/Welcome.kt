@@ -83,7 +83,7 @@ class Welcome : HTMLOutput() {
             roboquant.run(feed)
             
             val equity = roboquant.logger.getMetric("account.equity")
-            MetricChart(equity)
+            TimeSeriesChart(equity)
             
             ┌───────────────┐
             │    Output     │
@@ -92,7 +92,7 @@ class Welcome : HTMLOutput() {
 
         roboquant.run(feed)
         val equity = roboquant.logger.getMetric("account.equity")
-        return MetricChart(equity)
+        return TimeSeriesChart(equity)
     }
 
     /**
@@ -117,7 +117,7 @@ class Welcome : HTMLOutput() {
             }
             
             val equity = roboquant.logger.getMetric("account.equity")
-            MetricChart(equity)
+            TimeSeriesChart(equity)
             
             ┌───────────────┐
             │    Output     │
@@ -128,7 +128,7 @@ class Welcome : HTMLOutput() {
             roboquant.run(feed, it)
         }
         val equity = roboquant.logger.getMetric("account.equity")
-        return MetricChart(equity)
+        return TimeSeriesChart(equity)
     }
 
 

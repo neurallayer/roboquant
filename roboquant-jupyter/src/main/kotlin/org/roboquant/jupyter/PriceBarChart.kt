@@ -20,7 +20,6 @@ import org.icepear.echarts.Option
 import org.icepear.echarts.charts.bar.BarSeries
 import org.icepear.echarts.charts.candlestick.CandlestickItemStyle
 import org.icepear.echarts.charts.candlestick.CandlestickSeries
-import org.icepear.echarts.charts.line.LineSeries
 import org.icepear.echarts.components.coord.AxisLine
 import org.icepear.echarts.components.coord.CategoryAxisTick
 import org.icepear.echarts.components.coord.SplitArea
@@ -34,7 +33,6 @@ import org.icepear.echarts.components.grid.Grid
 import org.icepear.echarts.components.marker.MarkPoint
 import org.icepear.echarts.components.series.Encode
 import org.icepear.echarts.components.series.ItemStyle
-import org.icepear.echarts.components.series.LineStyle
 import org.icepear.echarts.components.title.Title
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.icepear.echarts.components.visualMap.PiecewiseVisualMap
@@ -42,20 +40,21 @@ import org.icepear.echarts.components.visualMap.VisualPiece
 import org.icepear.echarts.origin.coord.cartesian.AxisOption
 import org.icepear.echarts.origin.util.SeriesOption
 import org.roboquant.brokers.Trade
-import org.roboquant.common.*
+import org.roboquant.common.Asset
+import org.roboquant.common.Timeframe
+import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.metrics.Indicator
-import org.roboquant.metrics.apply
 
 /**
  * Plot the price-bars (candlesticks) of an [asset] found in a [feed] and optionally the [trades] made for that same
  * asset.
  *
- * This will only plot candlesticks if the feed also contains price actions of the type [PriceBar] for the
- * provided [timeframe]. If this is not the case you can use the [PriceChart] instead to plot prices.
+ * This chart will only plot candlesticks if the feed also contains price actions of the type [PriceBar] for the
+ * provided [timeframe]. If this is not the case, you can use the [PriceChart] instead to plot the prices.
  *
  * By default, the chart will use a linear timeline, meaning gaps like a weekend will show-up. This can be disabled
  * by setting [useTime] to false.
@@ -93,25 +92,6 @@ class PriceBarChart(
         height = 700
     }
 
-    private fun indicatorsSeries(): List<LineSeries> {
-        val data = mutableMapOf<String, TimeSeries>()
-        for (indicator in indicators) {
-            val map = feed.apply(indicator, asset, timeframe = timeframe)
-            data.putAll(map)
-        }
-        val result = mutableListOf<LineSeries>()
-        val currency = asset.currency
-        for ((key, timeseries) in data) {
-            val values = reduce(timeseries.map { Pair(it.time, Amount(currency,it.value).toBigDecimal()) })
-            val lineSeries = LineSeries()
-                .setData(values)
-                .setName(key)
-                .setShowSymbol(false)
-                .setLineStyle(LineStyle().setWidth(1))
-            result.add(lineSeries)
-        }
-        return result
-    }
 
     /**
      * Play a feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
@@ -176,7 +156,7 @@ class PriceBarChart(
             .setLarge(true)
             .setColor("#fbe9e")
 
-        val series3 = indicatorsSeries()
+        val series3 = indicators.toLineSeries(feed, asset, timeframe)
 
         return listOf(series1, series2) + series3
 

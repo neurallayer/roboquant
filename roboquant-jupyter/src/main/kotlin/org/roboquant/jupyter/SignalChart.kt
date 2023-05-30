@@ -31,8 +31,6 @@ import org.roboquant.strategies.Strategy
 import java.time.Instant
 
 
-
-
 /**
  * A SignalChart allows you to plot the signals created by a strategy over the events in feed. The result is a
  * scatter plot where each signal is a dot. The value is equivalent to the rating of the signal.

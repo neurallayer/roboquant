@@ -24,7 +24,7 @@ class MetricsReport(
 
     private val charts
         get() = logger.metricNames.map {
-            { MetricChart(roboquant.logger.getMetric(it)) }
+            { TimeSeriesChart(roboquant.logger.getMetric(it)) }
         }
 
     private fun createCells(name: String, value: Any): String {

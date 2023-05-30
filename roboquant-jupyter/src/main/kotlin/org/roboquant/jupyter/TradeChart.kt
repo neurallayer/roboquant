@@ -19,11 +19,15 @@ package org.roboquant.jupyter
 import org.icepear.echarts.Option
 import org.icepear.echarts.Scatter
 import org.icepear.echarts.charts.scatter.ScatterSeries
+import org.icepear.echarts.components.coord.SplitArea
+import org.icepear.echarts.components.coord.cartesian.CategoryAxis
 import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
+import org.icepear.echarts.components.toolbox.ToolboxDataZoomFeature
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.brokers.Trade
+import org.roboquant.common.Asset
 import org.roboquant.common.Currency
 import org.roboquant.common.UnsupportedException
 import java.math.BigDecimal
@@ -57,12 +61,14 @@ internal fun Trade.getValue(type: String, currency: Currency): BigDecimal {
 
 /**
  * Trade chart plots the trades of an [trades] that have been generated during a run. By default, the realized pnl of
- * the trades will be plotted but this can be changed. The possible options are pnl, fee, cost and quantity
+ * the trades will be plotted but this can be changed. The possible options are pnl, fee, cost and quantity.
+ *
  */
-open class TradeChart(
+class TradeChart(
     private val trades: List<Trade>,
     private val aspect: String = "pnl",
     private val currency: Currency? = null,
+    private val perAsset: Boolean = false
 ) : Chart() {
 
     init {
@@ -83,7 +89,7 @@ open class TradeChart(
         return d
     }
 
-    override fun getOption(): Option {
+    private fun getOptionNormal(): Option {
 
         val data = tradesToSeriesData()
         val max = data.maxOfOrNull { it.second }
@@ -112,4 +118,63 @@ open class TradeChart(
 
         return option
     }
+
+    private fun toSeriesData2(assets: List<Asset>): List<List<Any>> {
+        if (trades.isEmpty()) return emptyList()
+        val curr = currency ?: trades.first().asset.currency
+
+        val d = mutableListOf<List<Any>>()
+        for (trade in trades.sortedBy { it.time }) {
+            val value = trade.getValue(aspect, curr)
+            val y = assets.indexOf(trade.asset)
+            val tooltip = trade.getTooltip()
+            d.add(listOf(trade.time, y, value, tooltip))
+        }
+        return d
+    }
+
+    private fun getOptionPerAsset(): Option {
+        val assets = trades.map { it.asset }.distinct().sortedBy { it.symbol }
+        val d = toSeriesData2(assets)
+
+        val series = ScatterSeries()
+            .setSymbolSize(10)
+            .setData(d)
+
+        val yAxisData = assets.map { it.symbol }.toTypedArray()
+
+        val tooltip = Tooltip()
+            .setFormatter(javascriptFunction("return p.value[3];"))
+
+        val valueDim = 2
+        val min = d.minOfOrNull { it[valueDim] as BigDecimal }
+        val max = d.maxOfOrNull { it[valueDim] as BigDecimal }
+        val vm = getVisualMap(min, max).setDimension(valueDim)
+
+        val chart = Scatter()
+            .setTitle(title ?: "Trade Chart $aspect")
+            .addSeries(series)
+            .addYAxis(CategoryAxis().setData(yAxisData).setSplitArea(SplitArea().setShow(true)))
+            .addXAxis(TimeAxis())
+            .setTooltip(tooltip)
+            .setVisualMap(vm)
+
+        val option = chart.option
+
+        // Allow for both horizontal and vertical zooming
+        val toolbox = getToolbox(false)
+        val feature = toolbox.feature
+        feature["dataZoom"] = ToolboxDataZoomFeature()
+        toolbox.feature = feature
+        option.setToolbox(toolbox)
+        option.setDataZoom(DataZoom())
+
+        return option
+    }
+
+    override fun getOption(): Option {
+        return if (perAsset) getOptionPerAsset() else getOptionNormal()
+    }
+
+
 }

@@ -16,27 +16,18 @@
 
 package org.roboquant.jupyter
 
-import org.icepear.echarts.charts.heatmap.HeatmapSeries
-import org.icepear.echarts.origin.util.SeriesOption
 import org.junit.jupiter.api.Test
-import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.loggers.MemoryLogger
 import kotlin.test.assertTrue
 
-internal class PriceCorrelationChartTest {
+internal class CalendarChartTest {
 
     @Test
     fun test() {
-        val feed = RandomWalkFeed.lastYears(1, 5)
-        val chart = PriceCorrelationChart(feed, feed.assets)
+        val logger = MemoryLogger()
+        val data = logger.getMetric("test")
+        val chart = CalendarChart(data)
         assertTrue(chart.asHTML().isNotBlank())
-    }
-
-    @Test
-    fun option() {
-        val feed = RandomWalkFeed.lastYears(1, 5)
-        val series = PriceCorrelationChart(feed, feed.assets).getOption().series
-        assertTrue(series is Array<*> && series.isArrayOf<SeriesOption>())
-        assertTrue(series.first() is HeatmapSeries)
     }
 
 }

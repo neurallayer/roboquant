@@ -20,13 +20,13 @@ import org.junit.jupiter.api.Test
 import org.roboquant.loggers.MemoryLogger
 import kotlin.test.assertTrue
 
-internal class MetricHistogramChartTest {
+internal class BoxChartTest {
 
     @Test
     fun test() {
         val logger = MemoryLogger()
         val data = logger.getMetric("test")
-        val chart = MetricHistogramChart(data)
+        val chart = BoxChart(data)
         assertTrue(chart.asHTML().isNotBlank())
     }
 

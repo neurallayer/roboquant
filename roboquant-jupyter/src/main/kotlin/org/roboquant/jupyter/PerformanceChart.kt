@@ -38,10 +38,10 @@ import java.math.RoundingMode
  * If you mix different types of price actions in this feed, the result might become less reliable due to the
  * different ways that volume is calculated.
  *
- * @property compensateVolume compensate the volume by multiplying it with the price, or is the
- * volume already expressed in a monetary amount.
+ * @property compensateVolume compensate the volume by multiplying it with the price. If the volume is already expressed
+ * in a monetary amount, set this to false.
  */
-class AssetPerformanceChart(
+class PerformanceChart(
     private val feed: Feed,
     private val timeframe: Timeframe = Timeframe.INFINITE,
     private val priceType: String = "DEFAULT",

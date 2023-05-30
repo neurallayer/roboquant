@@ -51,11 +51,11 @@ so do familiarize yourself with the following guidelines.
 . Reviewer leaves the comments or marks the PR with the label "LGTM."
 . Contributor answers the comments or fixes the proposed PR.
 . Reviewer marks the PR with the label "LGTM."
-. Maintainer could suggest merging the master branch to the PR branch a few times due to changes in the `master` branch.
+. Maintainer could suggest merging the main branch to the PR branch a few times due to changes in the `main` branch.
 . Maintainer runs TC builds (unit tests and examples as integration tests).
 . The TC writes the result (passed or not passed) to the PR checks at the bottom of the proposed PR.
 . If it is possible, maintainers share the details of the failed build with the contributor.
-. Maintainer merges the PR if all checks are successful and there is no conflict with the master branch.
+. Maintainer merges the PR if all checks are successful and there is no conflict with the main branch.
 
 == How to fix an existing issue
 
@@ -65,12 +65,10 @@ so do familiarize yourself with the following guidelines.
 ** Ensure that the issue not only describes a problem, but also describes a solution that has received positive feedback. Propose a solution if there isn't any.
 * If you are going to submit your first PR in roboquant project:
 ** Find tickets with the label https://github.com/neurallayer/roboquant/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+no%3Aassignee["good first issue"]
- which are not assigned to somebody.
+which are not assigned to somebody.
 * If you are an experienced developer with good knowledge of Kotlin, roboquant and trading, find tickets with the label
- https://github.com/neurallayer/roboquant/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+second+issue%22+no%3Aassignee["good second issue"],
- which are not assigned to somebody.
-* If you are ready to participate in library design and add new functionality, find tickets with the label
- https://github.com/neurallayer/roboquant/issues?q=is%3Aissue+is%3Aopen+label%3Aresearch["research"], or join our https://github.com/neurallayer/roboquant/discussions[discussions].
+https://github.com/neurallayer/roboquant/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+second+issue%22+no%3Aassignee["good second issue"], which are not assigned to somebody.
+* If you are ready to participate in library design and add new functionality, find tickets with the label https://github.com/neurallayer/roboquant/issues?q=is%3Aissue+is%3Aopen+label%3Aresearch["research"], or join our https://github.com/neurallayer/roboquant/discussions[discussions].
 
 == Building
 

@@ -36,6 +36,27 @@ import org.roboquant.feeds.filter
 import org.roboquant.metrics.Indicator
 import org.roboquant.metrics.apply
 
+internal fun Array<out Indicator>.toLineSeries(feed: Feed, asset: Asset, timeframe: Timeframe): List<LineSeries> {
+    val data = mutableMapOf<String, TimeSeries>()
+    for (indicator in this) {
+        val map = feed.apply(indicator, asset, timeframe = timeframe, addSymbolPostfix = false)
+        data.putAll(map)
+    }
+    val result = mutableListOf<LineSeries>()
+    val currency = asset.currency
+    for ((key, timeseries) in data) {
+        val values = timeseries.map { Pair(it.time, Amount(currency,it.value).toBigDecimal()) }
+        val lineSeries = LineSeries()
+            .setData(values)
+            .setName(key)
+            .setShowSymbol(false)
+            .setLineStyle(LineStyle().setWidth(1))
+        result.add(lineSeries)
+    }
+    return result
+}
+
+
 /**
  * Plot the prices of an [asset] found in the [feed] and optionally the [trades] made for that same asset. When
  * supplying trades, the corresponding [Trade.size] will we plotted as markers.
@@ -89,26 +110,6 @@ class PriceChart(
     }
 
 
-    private fun indicatorsSeries(): List<LineSeries> {
-        val data = mutableMapOf<String, TimeSeries>()
-        for (indicator in indicators) {
-            val map = feed.apply(indicator, asset, timeframe = timeframe, addSymbolPostfix = false)
-            data.putAll(map)
-        }
-        val result = mutableListOf<LineSeries>()
-        val currency = asset.currency
-        for ((key, timeseries) in data) {
-            val values = reduce(timeseries.map { Pair(it.time, Amount(currency,it.value).toBigDecimal()) })
-            val lineSeries = LineSeries()
-                .setData(values)
-                .setName(key)
-                .setShowSymbol(false)
-                .setLineStyle(LineStyle().setWidth(1))
-            result.add(lineSeries)
-        }
-        return result
-    }
-
     /**
      * Generate mark points that will highlight when a trade happened.
      */
@@ -146,7 +147,7 @@ class PriceChart(
             .addYAxis(yAxis)
             .setTooltip("axis")
 
-        val indicatorLiceSeries = indicatorsSeries()
+        val indicatorLiceSeries = indicators.toLineSeries(feed, asset, timeframe)
         for (s in indicatorLiceSeries) chart.addSeries(s)
         if (indicatorLiceSeries.isNotEmpty()) {
             val legendData = indicatorLiceSeries.map { it.name }

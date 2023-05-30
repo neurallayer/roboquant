@@ -29,7 +29,7 @@ import org.roboquant.feeds.TradePrice
  * Get live-streaming feeds from dozens of bitcoin exchanges. This feed uses the XChange library
  * to connect to the different exchanges to get the trade and order book feeds for a currency pair, using polling.
  *
- * XChange is a Java library providing a streamlined API for interacting with 60+ Bitcoin and Altcoin exchanges
+ * XChange is a Java library providing a streamlined API for interacting with 60+ Bitcoin and Altcoin exchanges,
  * providing a consistent interface for trading and accessing market data.
  *
  * See also https://knowm.org/open-source/xchange/

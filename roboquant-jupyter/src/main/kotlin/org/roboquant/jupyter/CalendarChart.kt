@@ -33,12 +33,12 @@ import kotlin.collections.*
  * Plots the metrics values on a calendar, so it is easy to visualize if there are days when there are outliers. Next
  * to the calendar, a visual map is being plotted that allows filtering days based on the selected range of values.
  *
- * @param metricsData the data
+ * @param timeSeries the data
  * @property fractionDigits the number of digits to use, default is 2
  * @property zoneId the time zone to use, default is UTC
  */
-class MetricCalendarChart(
-    metricsData: TimeSeries,
+class CalendarChart(
+    timeSeries: TimeSeries,
     private val fractionDigits: Int = 2,
     private val zoneId: ZoneId = ZoneId.of("UTC")
 ) : Chart() {
@@ -50,7 +50,7 @@ class MetricCalendarChart(
             this(metricsData.flatten(true), fractionDigits, zoneId)
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)
-    private val metricsData = metricsData.filter { it.value.isFinite() }
+    private val metricsData = timeSeries.filter { it.value.isFinite() }
 
     private fun prepData(): Map<Int, List<Pair<String, BigDecimal>>> {
         val perYear = metricsData.groupBy { it.time.atZone(zoneId).year }

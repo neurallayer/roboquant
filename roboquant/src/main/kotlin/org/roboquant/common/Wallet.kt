@@ -155,7 +155,7 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
     }
 
     /**
-     * Deposit a monetary [amount][Amount]. If the currency already exist, it
+     * Deposit a monetary [amount][Amount]. If the currency already exists, it
      * will be added to the existing value, otherwise a new entry will be created.
      */
     fun deposit(amount: Amount) {
@@ -166,7 +166,7 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
     }
 
     /**
-     * Deposit the amounts hold in an [other] Wallet instance into this one.
+     * Deposit the amount hold in an [other] Wallet instance into this one.
      */
     fun deposit(other: Wallet) {
         for (amount in other.toAmounts()) {
@@ -183,7 +183,7 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
     }
 
     /**
-     * Withdraw the amounts hold in an [other] Wallet instance into this one.
+     * Withdraw the amount hold in an [other] Wallet instance into this one.
      */
     fun withdraw(other: Wallet) {
         for (amount in other.toAmounts()) {
@@ -212,7 +212,7 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
     }
 
     /**
-     * Provide a list representation of the amounts hold in this wallet
+     * Provide a list representation of the amount hold in this wallet
      */
     private fun toAmounts(): List<Amount> = data.map { Amount(it.key, it.value) }
 

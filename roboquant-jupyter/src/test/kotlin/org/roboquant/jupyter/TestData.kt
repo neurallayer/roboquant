@@ -25,7 +25,9 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.common.USD
 import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
+import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.TestStrategy
 
@@ -52,6 +54,14 @@ object TestData {
         account.setPosition(Position(asset2, Size(100), 10.0))
         account.initializeOrders(listOf(MarketOrder(asset1, 100)))
         return account.toAccount()
+    }
+
+    val data by lazy {
+        val feed = RandomWalkFeed.lastYears()
+        val rq = Roboquant(TestStrategy(), AccountMetric(), logger = MemoryLogger(false))
+        rq.run(feed, name = "run1")
+        rq.run(feed, name = "run2")
+        rq.logger.getMetric("account.equity")
     }
 
 }

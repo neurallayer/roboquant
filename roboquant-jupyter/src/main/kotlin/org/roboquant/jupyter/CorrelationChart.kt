@@ -37,7 +37,7 @@ import java.util.*
 /**
  * Shows the correlation matrix between the prices of two or more [assets] that are present in the provided [feed]
  */
-class PriceCorrelationChart(
+class CorrelationChart(
     private val feed: Feed,
     private val assets: Collection<Asset>,
     private val timeframe: Timeframe = Timeframe.INFINITE,

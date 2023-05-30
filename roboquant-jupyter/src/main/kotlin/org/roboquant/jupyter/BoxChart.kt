@@ -35,15 +35,15 @@ import java.time.temporal.ChronoUnit
  * low-, mid- and high percentiles. It provides a good indication how the values of a certain metric are distributed
  * during a certain [period].
  *
- * @property metricData the metric data to use
+ * @property timeSeries the metric data to use
  * @property period the period to use for one box to calculate percentiles
  * @property lowPercentile the low percentile, default is 25.0
  * @property midPercentile the mid-percentile, default is 50.0
  * @property highPercentile the high percentile, default is 75.0
  * @property precision the precision to use, default is 8
  */
-class MetricBoxChart(
-    private val metricData: TimeSeries,
+class BoxChart(
+    private val timeSeries: TimeSeries,
     private val period: ChronoUnit = ChronoUnit.MONTHS,
     private val lowPercentile: Double = 25.0,
     private val midPercentile: Double = 50.0,
@@ -67,7 +67,7 @@ class MetricBoxChart(
     private fun toSeriesData(): List<Pair<String, Any>> {
         val result = mutableListOf<Pair<String, Any>>()
         val ctx = MathContext(precision, RoundingMode.HALF_DOWN)
-        for (d in metricData.groupBy(period)) {
+        for (d in timeSeries.groupBy(period)) {
             val arr = d.value.toDoubleArray().clean()
             if (arr.isNotEmpty()) {
                 val p = Percentile()

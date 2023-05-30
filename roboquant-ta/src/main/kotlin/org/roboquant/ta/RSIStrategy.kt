@@ -17,18 +17,18 @@
 package org.roboquant.ta
 
 import org.roboquant.common.Asset
+import org.roboquant.common.PriceSerie
+import org.roboquant.common.addAll
 import org.roboquant.feeds.Event
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
-import org.roboquant.common.PriceSerie
-import org.roboquant.common.addAll
 
 /**
  * Strategy using the Relative Strength Index of an asset to generate signals. RSI measures the magnitude of recent
  * price changes to evaluate overbought or oversold conditions in the price of an asset.
  *
- * If the RSI raise above the configured high threshold (default 70), a sell signal will be generated. And if the RSI
+ * If the RSI raises above the configured high threshold (default 70), a sell signal will be generated. And if the RSI
  * falls below the configured low threshold (default 30), a buy signal will be generated.
  *
  * @property lowThreshold
@@ -46,7 +46,7 @@ class RSIStrategy(
     private val taLib = TaLib()
 
     /**
-     * reset the history
+     * Reset the history
      */
     override fun reset() {
         history.clear()
