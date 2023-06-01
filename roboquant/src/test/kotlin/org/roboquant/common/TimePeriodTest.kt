@@ -24,7 +24,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class TradingPeriodTest {
+internal class TimePeriodTest {
 
     @Test
     fun numbers() {

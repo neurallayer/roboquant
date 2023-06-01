@@ -28,11 +28,15 @@ import org.roboquant.common.flatten
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+
+@Deprecated("Renamed to TimeSeriesChart", ReplaceWith("TimeSeriesChart", "org.roboquant.jupyter.TimeSeriesChart"))
+typealias MetricChart = TimeSeriesChart
+
 /**
  * A TimeSeriesChart will plot a metric that is captured during one or more runs. If there is more than one time-series
- * found in the provided [data], each time-series will be plotted as a separate series.
+ * found in the provided [data], each time-series will be plotted as a separate colored line.
  *
- * @property data the metric data to use
+ * @property data the time series data to use
  * @property useTime use a linear timescale for the x-axis.
  * @property fractionDigits how many digits to use for presenting the metric values
  */
@@ -42,9 +46,8 @@ class TimeSeriesChart(
     private val fractionDigits: Int = 2
 ) : Chart() {
 
-
     /**
-     * Plot a time-series
+     * Plot a single time-series
      */
     constructor(timeSeries: TimeSeries, useTime: Boolean = true, fractionDigits: Int = 2) :
             this(mapOf("" to timeSeries), useTime, fractionDigits)
@@ -69,7 +72,7 @@ class TimeSeriesChart(
             monteCarlo: Int = 0
         ): TimeSeriesChart {
             require(monteCarlo >= 0)
-            require(fractionDigits >=0)
+            require(fractionDigits >= 0)
 
             val d = metricsData.mapValues { it.value.returns() }.flatten()
             var data = d.runningFold(100.0)

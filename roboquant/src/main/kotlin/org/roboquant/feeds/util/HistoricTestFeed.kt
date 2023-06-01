@@ -17,7 +17,7 @@
 package org.roboquant.feeds.util
 
 import org.roboquant.common.Asset
-import org.roboquant.common.TradingPeriod
+import org.roboquant.common.TimePeriod
 import org.roboquant.common.days
 import org.roboquant.common.plus
 import org.roboquant.feeds.HistoricPriceFeed
@@ -35,7 +35,7 @@ import java.time.Instant
 class HistoricTestFeed(
     vararg prices: Iterable<Number> = arrayOf(90..100, 100 downTo 90),
     start: Instant = Instant.parse("1970-01-01T12:00:00Z"),
-    duration: TradingPeriod = 1.days,
+    duration: TimePeriod = 1.days,
     asset: Asset = Asset("TEST"),
     private val priceBar: Boolean = false,
     private val volume: Double = 1000.0

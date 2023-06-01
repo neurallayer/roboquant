@@ -52,6 +52,10 @@ class TaLibIndicatorTest {
             feed.apply(TaLibIndicator.mfi(), asset)
         }
 
+        assertDoesNotThrow {
+            feed.apply(TaLibIndicator.stochastic(), asset)
+        }
+
     }
 
 

@@ -187,7 +187,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         /**
          * Create a timeframe from now minus the provided [period].
          */
-        fun past(period: TradingPeriod): Timeframe {
+        fun past(period: TimePeriod): Timeframe {
             val end = Instant.now()
             return Timeframe(end - period, end)
         }
@@ -200,7 +200,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
          * roboquant.run(feed, tf)
          * ```
          */
-        fun next(period: TradingPeriod): Timeframe {
+        fun next(period: TimePeriod): Timeframe {
             val start = Instant.now()
             return Timeframe(start, start + period)
         }
@@ -244,7 +244,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * timeframe.toTimeline(1.days)
      * ```
      */
-    fun toTimeline(step: TradingPeriod): Timeline {
+    fun toTimeline(step: TimePeriod): Timeline {
         val timeline = mutableListOf<Instant>()
         var time = start
         while (time <= this) {
@@ -278,7 +278,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * It returns a [Pair] of timeframes, the first one being the training timeframe and the second being the
      * test timeframe.
      */
-    fun splitTrainTest(testSize: TradingPeriod): Pair<Timeframe, Timeframe> {
+    fun splitTrainTest(testSize: TimePeriod): Pair<Timeframe, Timeframe> {
         val border = end - testSize
         require (border > start) { "testSize should be smaller than timeframe"}
         return Pair(Timeframe(start, border), Timeframe(border, end, inclusive))
@@ -288,7 +288,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Split a timeframe in multiple individual timeframes each of the fixed [period] length. One common use case is
      * to create timeframes that can be used in a walk forward back-test.
      */
-    fun split(period: TradingPeriod, overlap: TradingPeriod = 0.days): List<Timeframe> {
+    fun split(period: TimePeriod, overlap: TimePeriod = 0.days): List<Timeframe> {
         val result = mutableListOf<Timeframe>()
         var last = start
         while (true) {
@@ -306,7 +306,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     /**
      * Sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation
      */
-    fun sample(period: TradingPeriod, samples: Int = 1, random: Random = Config.random): List<Timeframe> {
+    fun sample(period: TimePeriod, samples: Int = 1, random: Random = Config.random): List<Timeframe> {
         require(end - period > start) { "$period to large for $this" }
         val result = mutableListOf<Timeframe>()
         val duration = Timeframe(start, end - period).duration.toMillis()
@@ -364,7 +364,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * val newTimeFrame = timeframe - 2.days
      * ```
      */
-    operator fun minus(period: TradingPeriod) = Timeframe(start - period, end - period, inclusive)
+    operator fun minus(period: TimePeriod) = Timeframe(start - period, end - period, inclusive)
 
     /**
      * Add a [period] to start- and end-time of this timeframe and return the result.
@@ -373,7 +373,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * val newTimeFrame = timeframe + 2.days
      * ```
      */
-    operator fun plus(period: TradingPeriod) = Timeframe(start + period, end + period, inclusive)
+    operator fun plus(period: TimePeriod) = Timeframe(start + period, end + period, inclusive)
 
     /**
      * Annualize a [percentage] based on the duration of this timeframe. So given x percent return
@@ -392,7 +392,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Extend this period with a [before] and [after] period and return the result. If no [after] period is provided
      * the same value as for [before] will be used.
      */
-    fun extend(before: TradingPeriod, after: TradingPeriod = before) = Timeframe(start - before, end + after)
+    fun extend(before: TimePeriod, after: TimePeriod = before) = Timeframe(start - before, end + after)
 
 }
 

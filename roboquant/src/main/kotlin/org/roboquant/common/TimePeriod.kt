@@ -27,14 +27,17 @@ private fun createDuration(hours: Int, minutes: Int, seconds: Int, nanos: Long):
     return result
 }
 
+@Deprecated("Renamed to TimePeriod", ReplaceWith("TimePeriod","org.roboquant.common.TimePeriod"))
+typealias TradingPeriod=TimePeriod
+
 /**
- * TradingPeriod is an immutable class that unifies the JVM classes Duration and Period and allows to use periods
+ * TimePeriod is an immutable class that unifies the JVM classes Duration and Period and allows to use periods
  * more easily in your code. It can store periods as small as nanosecond.
  */
-class TradingPeriod internal constructor(internal val period: Period, internal val duration: Duration) {
+class TimePeriod internal constructor(internal val period: Period, internal val duration: Duration) {
 
     /**
-     * Create a new instance of TradingPeriod
+     * Create a new instance of TimePeriod
      */
     constructor(
         years: Int = 0,
@@ -49,14 +52,14 @@ class TradingPeriod internal constructor(internal val period: Period, internal v
     /**
      * Add an [other] trading period
      */
-    operator fun plus(other: TradingPeriod) =
-        TradingPeriod(period.plus(other.period), duration.plus(other.duration))
+    operator fun plus(other: TimePeriod) =
+        TimePeriod(period.plus(other.period), duration.plus(other.duration))
 
     /**
      * Subtract an [other] trading period
      */
-    operator fun minus(other: TradingPeriod) =
-        TradingPeriod(period.minus(other.period), duration.minus(other.duration))
+    operator fun minus(other: TimePeriod) =
+        TimePeriod(period.minus(other.period), duration.minus(other.duration))
 
     /**
      * String representation
@@ -70,7 +73,7 @@ class TradingPeriod internal constructor(internal val period: Period, internal v
      */
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        return if (other is TradingPeriod) {
+        return if (other is TimePeriod) {
             period == other.period && duration == other.duration
         } else {
             false
@@ -92,57 +95,57 @@ class TradingPeriod internal constructor(internal val period: Period, internal v
  *********************************************************************************************/
 
 /**
- * Convert an Int to a [TradingPeriod] of years
+ * Convert an Int to a [TimePeriod] of years
  */
 val Int.years
-    get() = TradingPeriod(this)
+    get() = TimePeriod(this)
 
 /**
- * Convert an Int to a [TradingPeriod] of months
+ * Convert an Int to a [TimePeriod] of months
  */
 val Int.months
-    get() = TradingPeriod(0,this)
+    get() = TimePeriod(0,this)
 
 /**
- * Convert an Int to a [TradingPeriod] of days
+ * Convert an Int to a [TimePeriod] of days
  */
 val Int.days
-    get() = TradingPeriod(0,0,this)
+    get() = TimePeriod(0,0,this)
 
 /**
- * Convert an Int to a [TradingPeriod] of hours
+ * Convert an Int to a [TimePeriod] of hours
  */
 val Int.hours
-    get() = TradingPeriod(0,0,0, this)
+    get() = TimePeriod(0,0,0, this)
 
 /**
- * Convert an Int to a [TradingPeriod] of minutes
+ * Convert an Int to a [TimePeriod] of minutes
  */
 val Int.minutes
-    get() = TradingPeriod(0,0,0,0,this)
+    get() = TimePeriod(0,0,0,0,this)
 
 /**
- * Convert an Int to a [TradingPeriod] of seconds
+ * Convert an Int to a [TimePeriod] of seconds
  */
 val Int.seconds
-    get() = TradingPeriod(0,0,0,0,0,this,0L)
+    get() = TimePeriod(0,0,0,0,0,this,0L)
 
 /**
- * Convert an Int to a [TradingPeriod] of milliseconds
+ * Convert an Int to a [TimePeriod] of milliseconds
  */
 val Int.millis
     get() = (this * 1_000_000L).nanos
 
 /**
- * Convert an Int to a [TradingPeriod] of nanoseconds
+ * Convert an Int to a [TimePeriod] of nanoseconds
  */
 val Long.nanos
-    get() = TradingPeriod(0,0,0,0,0,0,this)
+    get() = TimePeriod(0,0,0,0,0,0,this)
 
 /**
  * Add a [period] using the provided [zoneId]
  */
-fun Instant.plus(period: TradingPeriod, zoneId: ZoneId): Instant {
+fun Instant.plus(period: TimePeriod, zoneId: ZoneId): Instant {
     // Optimized path for HFT
     val result = if (period.period == Period.ZERO) this else atZone(zoneId).plus(period.period).toInstant()
     return result.plus(period.duration)
@@ -151,7 +154,7 @@ fun Instant.plus(period: TradingPeriod, zoneId: ZoneId): Instant {
 /**
  * Subtract a [period] using the provided [zoneId]
  */
-fun Instant.minus(period: TradingPeriod, zoneId: ZoneId): Instant {
+fun Instant.minus(period: TimePeriod, zoneId: ZoneId): Instant {
     // Optimized path for HFT
     val result = if (period.period == Period.ZERO) this else atZone(zoneId).minus(period.period).toInstant()
     return result.minus(period.duration)
@@ -160,19 +163,19 @@ fun Instant.minus(period: TradingPeriod, zoneId: ZoneId): Instant {
 /**
  * Add a [period] using UTC
  */
-operator fun Instant.plus(period: TradingPeriod) = plus(period, ZoneOffset.UTC)
+operator fun Instant.plus(period: TimePeriod) = plus(period, ZoneOffset.UTC)
 
 /**
  * Add a [period]
  */
-operator fun ZonedDateTime.plus(period: TradingPeriod): ZonedDateTime = plus(period.period).plus(period.duration)
+operator fun ZonedDateTime.plus(period: TimePeriod): ZonedDateTime = plus(period.period).plus(period.duration)
 
 /**
  * Subtract a [period] using UTC
  */
-operator fun Instant.minus(period: TradingPeriod) = minus(period, ZoneOffset.UTC)
+operator fun Instant.minus(period: TimePeriod) = minus(period, ZoneOffset.UTC)
 
 /**
  * Subtract a [period]
  */
-operator fun ZonedDateTime.minus(period: TradingPeriod): ZonedDateTime = minus(period.period).minus(period.duration)
+operator fun ZonedDateTime.minus(period: TimePeriod): ZonedDateTime = minus(period.period).minus(period.duration)

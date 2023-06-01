@@ -108,6 +108,16 @@ class TaLibIndicator  (
             }
         }
 
+        /**
+         * Return a `Stochastic` Indicator for the provided periods
+         */
+        fun stochastic(fastKPeriod: Int = 5, slowKPeriod: Int = 3, slowDPeriod : Int = slowKPeriod) : TaLibIndicator {
+            return TaLibIndicator(fastKPeriod + slowKPeriod + 1) {
+                val (d, k) = stoch(it, fastKPeriod, slowKPeriod, slowDPeriod = slowDPeriod)
+                mapOf("stochatic.d" to d, "stochatic.k" to k)
+            }
+        }
+
     }
 
 }
