@@ -40,7 +40,6 @@ class TaLibMetric(
 
     private val buffers = mutableMapOf<Asset, PriceBarSerie>()
     private val taLib = TaLib()
-    // private val logger: Logger = Logging.getLogger(TALibMetric::class)
 
     /**
      * @see Metric.calculate

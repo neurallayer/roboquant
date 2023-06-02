@@ -55,7 +55,7 @@ class TaLibSignalStrategy(
          * Breakout strategy that supports different entry and exit periods
          */
         fun breakout(entryPeriod: Int = 100, exitPeriod: Int = 50): TaLibSignalStrategy {
-            return TaLibSignalStrategy() { asset, series ->
+            return TaLibSignalStrategy { asset, series ->
                 when {
                     recordHigh(series.high, entryPeriod) -> Signal(asset, Rating.BUY, SignalType.BOTH)
                     recordLow(series.low, entryPeriod) -> Signal(asset, Rating.SELL, SignalType.BOTH)
@@ -72,7 +72,7 @@ class TaLibSignalStrategy(
          */
         fun macd(): TaLibSignalStrategy {
 
-            val strategy = TaLibSignalStrategy() { asset, prices ->
+            val strategy = TaLibSignalStrategy { asset, prices ->
                 val (_, _, diff) = macd(prices, 12, 26, 9)
                 val (_, _, diff2) = macd(prices, 12, 26, 9, 1)
                 when {

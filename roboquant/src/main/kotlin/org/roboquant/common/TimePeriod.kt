@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("unused")
+
 package org.roboquant.common
 
 import java.time.*
@@ -26,6 +28,7 @@ private fun createDuration(hours: Int, minutes: Int, seconds: Int, nanos: Long):
     if (nanos != 0L) result = result.plusNanos(nanos)
     return result
 }
+
 
 @Deprecated("Renamed to TimePeriod", ReplaceWith("TimePeriod","org.roboquant.common.TimePeriod"))
 typealias TradingPeriod=TimePeriod

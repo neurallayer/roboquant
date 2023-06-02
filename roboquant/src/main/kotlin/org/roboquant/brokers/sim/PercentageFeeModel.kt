@@ -21,7 +21,8 @@ import java.time.Instant
 import kotlin.math.absoluteValue
 
 /**
- * Fee model using a fixed percentage fee of total absolute value of the execution.
+ * The PercentageFeeModel defines a percentage of total value as the fee. For every trade it will calculate to the
+ * total value and then use the [feePercentage] as the fee.
  *
  * @property feePercentage fee as a percentage of total execution cost, 0.01 = 1%. Default is 0.0
  * @constructor Create a new percentage fee model

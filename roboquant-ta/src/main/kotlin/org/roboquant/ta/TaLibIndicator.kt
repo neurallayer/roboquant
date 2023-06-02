@@ -68,7 +68,7 @@ class TaLibIndicator  (
          * Return a `Relative Strength Indicator` for the provided [barCount]
          */
         fun rsi(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator() {
+            return TaLibIndicator {
                 mapOf("rsi$barCount" to rsi(it, barCount))
             }
         }
@@ -77,7 +77,7 @@ class TaLibIndicator  (
          * Return a `Bollinger Bands` Indicator for the provided [barCount]
          */
         fun bbands(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator() {
+            return TaLibIndicator {
                 val (high, mid, low) = bbands(it, barCount)
                 val prefix = "bb$barCount"
                 mapOf("$prefix.low" to low, "$prefix.high" to high, "$prefix.mid" to mid)
@@ -88,7 +88,7 @@ class TaLibIndicator  (
          * Return an `Exponential Moving Average` Indicator for the provided [barCount]
          */
         fun ema(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator() {
+            return TaLibIndicator {
                 mapOf("ema$barCount" to ema(it, barCount))
             }
         }
@@ -97,7 +97,7 @@ class TaLibIndicator  (
          * Return a `Simple Moving Average` Indicator for the provided [barCount]
          */
         fun sma(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator() {
+            return TaLibIndicator {
                 mapOf("sma$barCount" to sma(it, barCount))
             }
         }
@@ -106,7 +106,7 @@ class TaLibIndicator  (
          * Return a `Money Flow In` Indicator for the provided [barCount]
          */
         fun mfi(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator() {
+            return TaLibIndicator {
                 mapOf("mfi$barCount" to mfi(it, barCount))
             }
         }
@@ -115,7 +115,7 @@ class TaLibIndicator  (
          * Return a `Stochastic` Indicator for the provided periods
          */
         fun stochastic(fastKPeriod: Int = 5, slowKPeriod: Int = 3, slowDPeriod : Int = slowKPeriod) : TaLibIndicator {
-            return TaLibIndicator() {
+            return TaLibIndicator {
                 val (d, k) = stoch(it, fastKPeriod, slowKPeriod, slowDPeriod = slowDPeriod)
                 mapOf("stochatic.d" to d, "stochatic.k" to k)
             }
