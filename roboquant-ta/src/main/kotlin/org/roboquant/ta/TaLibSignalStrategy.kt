@@ -33,11 +33,7 @@ import org.roboquant.strategies.Strategy
  *
  * This strategy requires [PriceBar] data and common use cases are candlestick patterns and moving average strategies.
  *
- * It is important that the strategy is initialized with a large enough [history] window to support the underlying
- * technical indicators you want to use. If the [history] is too small, it will lead to a runtime exception.
- *
- * @property block the logic
- *
+ * @property block the logic that will generate a signal
  */
 class TaLibSignalStrategy(
     private var block: TaLib.(asset: Asset, series: PriceBarSerie) -> Signal?
