@@ -17,17 +17,17 @@
 package org.roboquant.strategies
 
 import org.roboquant.common.Asset
+import org.roboquant.common.PriceSerie
 import org.roboquant.common.RoboquantException
 import org.roboquant.common.addNotNull
 import org.roboquant.feeds.Event
-import org.roboquant.common.PriceSerie
 
 /**
- * Base class for strategies that are interested in historic prices. Subclasses should override one of the
+ * The base class for strategies that are interested in historic prices. Subclasses should override one of the
  * two following methods:
  *
- * [generateSignal] - full control over the Signal
- * [generateRating] - only need to generate a Rating
+ * [generateSignal] - You have full control over the generated Signal
+ * [generateRating] - You only need to provide a Rating
  *
  * @property period period to keep track of historic data
  * @property priceType the type of price to store, default is "DEFAULT"

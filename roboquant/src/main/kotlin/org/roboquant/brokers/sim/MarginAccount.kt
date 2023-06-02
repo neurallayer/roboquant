@@ -23,7 +23,7 @@ import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Amount
 
 /**
- * Account model that supports trading with margin. The buying power is calculated using the following steps:
+ * An account model that supports trading with margin. The buying power is calculated using the following steps:
  *
  *      1. long value = long positions * maintenance margin long
  *      2. short value = short positions * maintenance margin short

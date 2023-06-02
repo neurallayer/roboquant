@@ -19,15 +19,16 @@ package org.roboquant.common
 import kotlinx.coroutines.*
 
 /**
- * Utility to make running jobs in parallel more convenient. Basic usage:
+ * This is utility to make running jobs in parallel more convenient. Basic usage:
  *
- *      val jobs = ParallelJobs()
- *      jobs.add {
- *          val roboquant = Roboquant(...)
- *          roboquant.runAsync(feed)
- *      }
- *      jobs.joinAll()
- *
+ * ```
+ * val jobs = ParallelJobs()
+ * jobs.add {
+ *      val roboquant = Roboquant(...)
+ *      roboquant.runAsync(feed)
+ * }
+ * jobs.joinAll()
+ *```
  *  Note that most feeds and metric-loggers can be shared among jobs, but that isn't true for the other components
  *  like strategy, policy, metrics and broker.
  */

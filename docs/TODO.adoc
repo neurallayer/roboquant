@@ -20,7 +20,7 @@ Version 0.8 is all about making sure that (back-)testing works, and the most com
 * [x] Add documentation on how to install and get started
 * [x] Support for advanced order types
 * [x] Add info on key design concepts behind the software, so it becomes easier to contribute
-* [x] Bring back Interactive Brokers integration. The code was already developed, but due to license restrictions the TwsApi.jar file could not be included with roboquant.
+* [x] Bring back Interactive Brokers integration. The code was already developed, but due to license restrictions, the TwsApi.jar file could not be included with roboquant.
 * [x] See how to best fit crypto trading with current account structure
 
 == Version 0.9.x (2022)

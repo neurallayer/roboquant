@@ -24,8 +24,8 @@ import java.time.Instant
  * Interface for all types of currency converters that will convert an amount from one currency to another currency.
  * The interface allows currency conversions to take the following aspects into account (next to the two currencies):
  *
- * - the time of the conversion
- * - the amount to be converted
+ * - The time of the conversion
+ * - The amount to be converted
  *
  * Often you won't be using this interface directly, but rather invoke [Amount.convert].
  */
