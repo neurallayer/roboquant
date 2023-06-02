@@ -25,28 +25,31 @@ import java.time.Instant
  *
  * Example:
  * ```
- * val indicator = TaLibIndicator(barCount) {
- *      mapOf("ema" to ema(it, barCount))
+ * val indicator = TaLibIndicator() {
+ *      mapOf("ema" to ema(it, 20))
  * }
  * ```
  */
 class TaLibIndicator  (
-    barCount: Int = 20,
     private val block: TaLib.(series: PriceBarSerie) -> Map<String, Double>
 ) : Indicator {
 
     private val taLib = TaLib()
-    private val series = PriceBarSerie(barCount)
+    private val series = PriceBarSerie(1)
 
     /**
      * @see Indicator.calculate
      */
     override fun calculate(action: Action, time: Instant): Map<String, Double> {
-        return if (series.add(action)) {
-            block.invoke(taLib, series)
-        } else {
-            emptyMap()
+        if (series.add(action)) {
+            try {
+                return block.invoke(taLib, series)
+            } catch (ex: InsufficientData) {
+                // Increase the capacity if we don't have enough data yet
+                series.increaseCapacity(ex.minSize)
+            }
         }
+        return emptyMap()
     }
 
     /**
@@ -65,7 +68,7 @@ class TaLibIndicator  (
          * Return a `Relative Strength Indicator` for the provided [barCount]
          */
         fun rsi(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator(barCount+1) {
+            return TaLibIndicator() {
                 mapOf("rsi$barCount" to rsi(it, barCount))
             }
         }
@@ -74,7 +77,7 @@ class TaLibIndicator  (
          * Return a `Bollinger Bands` Indicator for the provided [barCount]
          */
         fun bbands(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator(barCount) {
+            return TaLibIndicator() {
                 val (high, mid, low) = bbands(it, barCount)
                 val prefix = "bb$barCount"
                 mapOf("$prefix.low" to low, "$prefix.high" to high, "$prefix.mid" to mid)
@@ -85,7 +88,7 @@ class TaLibIndicator  (
          * Return an `Exponential Moving Average` Indicator for the provided [barCount]
          */
         fun ema(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator(barCount) {
+            return TaLibIndicator() {
                 mapOf("ema$barCount" to ema(it, barCount))
             }
         }
@@ -94,7 +97,7 @@ class TaLibIndicator  (
          * Return a `Simple Moving Average` Indicator for the provided [barCount]
          */
         fun sma(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator(barCount) {
+            return TaLibIndicator() {
                 mapOf("sma$barCount" to sma(it, barCount))
             }
         }
@@ -103,7 +106,7 @@ class TaLibIndicator  (
          * Return a `Money Flow In` Indicator for the provided [barCount]
          */
         fun mfi(barCount: Int = 10) : TaLibIndicator {
-            return TaLibIndicator(barCount+1) {
+            return TaLibIndicator() {
                 mapOf("mfi$barCount" to mfi(it, barCount))
             }
         }
@@ -112,7 +115,7 @@ class TaLibIndicator  (
          * Return a `Stochastic` Indicator for the provided periods
          */
         fun stochastic(fastKPeriod: Int = 5, slowKPeriod: Int = 3, slowDPeriod : Int = slowKPeriod) : TaLibIndicator {
-            return TaLibIndicator(fastKPeriod + slowKPeriod + 1) {
+            return TaLibIndicator() {
                 val (d, k) = stoch(it, fastKPeriod, slowKPeriod, slowDPeriod = slowDPeriod)
                 mapOf("stochatic.d" to d, "stochatic.k" to k)
             }

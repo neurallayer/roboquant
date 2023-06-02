@@ -26,9 +26,23 @@
 
 package org.roboquant.ta
 
-import com.tictactec.ta.lib.*
+import com.tictactec.ta.lib.Core
+import com.tictactec.ta.lib.MAType
+import com.tictactec.ta.lib.MInteger
+import com.tictactec.ta.lib.RetCode
 import org.roboquant.common.DoesNotComputeException
-import org.roboquant.common.InsufficientDataException
+
+/**
+ * This exception is thrown if there is insufficient historic data to calculate an indicator. Since this exception is
+ * also used to also automatically increase historic buffer sizes, the exception is optimized to not include a
+ * stack trace.
+ *
+ * @param indicator the inidcator name
+ * @property minSize the minimum amount of data to calculate this indicator
+ */
+class InsufficientData(indicator: String, val minSize: Int) :
+    Throwable("innsuffient data to calculate $indicator, miniumum is $minSize", null, true, false)
+
 
 /**
  * This class wraps the excellent TA-Lib library and makes it easy to use indicators provided by that library.
@@ -44,7 +58,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Trigonometric ACos** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -58,11 +72,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.acosLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate acos, minimal lookback period is $lookback")
+            throw InsufficientData("acos", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -73,7 +86,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Chaikin A/D Line** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Volume Indicators**.
      */
@@ -87,11 +100,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.adLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate ad, minimal lookback period is $lookback")
+            throw InsufficientData("ad", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -103,7 +115,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Arithmetic Add** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Operators**.
      */
@@ -117,16 +129,15 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.addLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate add, minimal lookback period is $lookback")
+            throw InsufficientData("add", lookback + 1)
         }
         return output1[0]
     }
 
-
     /**
      * Calculate **Chaikin A/D Oscillator** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Volume Indicators**.
      */
@@ -160,11 +171,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.adOscLookback(fastPeriod, slowPeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate adOsc, minimal lookback period is $lookback")
+            throw InsufficientData("adOsc", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -176,7 +186,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Average Directional Movement Index** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -190,11 +200,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.adxLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate adx, minimal lookback period is $lookback")
+            throw InsufficientData("adx", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -206,7 +215,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Average Directional Movement Index Rating** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -220,11 +229,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.adxrLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate adxr, minimal lookback period is $lookback")
+            throw InsufficientData("adxr", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -236,7 +244,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Absolute Price Oscillator** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -256,11 +264,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.apoLookback(fastPeriod, slowPeriod, mAType) + previous
-            throw InsufficientDataException("Not enough data to calculate apo, minimal lookback period is $lookback")
+            throw InsufficientData("apo", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -277,7 +284,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Aroon** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -292,11 +299,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.aroonLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate aroon, minimal lookback period is $lookback")
+            throw InsufficientData("aroon", lookback + 1)
         }
         return Pair(output1[0], output2[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -308,7 +314,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Aroon Oscillator** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -322,11 +328,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.aroonOscLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate aroonOsc, minimal lookback period is $lookback")
+            throw InsufficientData("aroonOsc", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -338,7 +343,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Trigonometric ASin** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -352,11 +357,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.asinLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate asin, minimal lookback period is $lookback")
+            throw InsufficientData("asin", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -367,7 +371,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Trigonometric ATan** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -381,11 +385,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.atanLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate atan, minimal lookback period is $lookback")
+            throw InsufficientData("atan", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -396,7 +399,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Average True Range** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Volatility Indicators**.
      */
@@ -410,11 +413,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.atrLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate atr, minimal lookback period is $lookback")
+            throw InsufficientData("atr", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -426,7 +428,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Average Price** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Price Transform**.
      */
@@ -446,11 +448,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.avgPriceLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate avgPrice, minimal lookback period is $lookback")
+            throw InsufficientData("avgPrice", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -462,7 +463,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Bollinger Bands** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -498,11 +499,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.bbandsLookback(timePeriod, deviationsup, deviationsdown, mAType) + previous
-            throw InsufficientDataException("Not enough data to calculate bbands, minimal lookback period is $lookback")
+            throw InsufficientData("bbands", lookback + 1)
         }
         return Triple(output1[0], output2[0], output3[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -520,7 +520,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Beta** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Statistic Functions**.
      */
@@ -534,16 +534,15 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.betaLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate beta, minimal lookback period is $lookback")
+            throw InsufficientData("beta", lookback + 1)
         }
         return output1[0]
     }
 
-
     /**
      * Calculate **Balance Of Power** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -557,11 +556,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.bopLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate bop, minimal lookback period is $lookback")
+            throw InsufficientData("bop", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -573,7 +571,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Commodity Channel Index** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -587,11 +585,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cciLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate cci, minimal lookback period is $lookback")
+            throw InsufficientData("cci", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -603,7 +600,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Two Crows** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -623,11 +620,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl2CrowsLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdl2Crows, minimal lookback period is $lookback")
+            throw InsufficientData("cdl2Crows", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -639,7 +635,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Three Black Crows** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -659,11 +655,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3BlackCrowsLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdl3BlackCrows, minimal lookback period is $lookback")
+            throw InsufficientData("cdl3BlackCrows", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -675,7 +670,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Three Inside Up/Down** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -695,11 +690,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3InsideLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdl3Inside, minimal lookback period is $lookback")
+            throw InsufficientData("cdl3Inside", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -711,7 +705,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Three-Line Strike** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -731,11 +725,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3LineStrikeLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdl3LineStrike, minimal lookback period is $lookback")
+            throw InsufficientData("cdl3LineStrike", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -747,7 +740,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Three Outside Up/Down** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -767,11 +760,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3OutsideLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdl3Outside, minimal lookback period is $lookback")
+            throw InsufficientData("cdl3Outside", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -783,7 +775,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Three Stars In The South** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -803,11 +795,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3StarsInSouthLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdl3StarsInSouth, minimal lookback period is $lookback")
+            throw InsufficientData("cdl3StarsInSouth", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -819,7 +810,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Three Advancing White Soldiers** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -839,11 +830,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdl3WhiteSoldiersLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdl3WhiteSoldiers, minimal lookback period is $lookback")
+            throw InsufficientData("cdl3WhiteSoldiers", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -855,7 +845,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Abandoned Baby** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -877,11 +867,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlAbandonedBabyLookback(penetration) + previous
-            throw InsufficientDataException("Not enough data to calculate cdlAbandonedBaby, minimal lookback period is $lookback")
+            throw InsufficientData("cdlAbandonedBaby", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -893,7 +882,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Advance Block** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -913,11 +902,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlAdvanceBlockLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlAdvanceBlock, minimal lookback period is $lookback")
+            throw InsufficientData("cdlAdvanceBlock", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -929,7 +917,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Belt-hold** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -949,11 +937,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlBeltHoldLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlBeltHold, minimal lookback period is $lookback")
+            throw InsufficientData("cdlBeltHold", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -965,7 +952,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Breakaway** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -985,11 +972,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlBreakawayLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlBreakaway, minimal lookback period is $lookback")
+            throw InsufficientData("cdlBreakaway", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1001,7 +987,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Closing Marubozu** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1021,11 +1007,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlClosingMarubozuLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlClosingMarubozu, minimal lookback period is $lookback")
+            throw InsufficientData("cdlClosingMarubozu", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1037,7 +1022,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Concealing Baby Swallow** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1057,11 +1042,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlConcealBabysWallLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlConcealBabysWall, minimal lookback period is $lookback")
+            throw InsufficientData("cdlConcealBabysWall", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1073,7 +1057,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Counterattack** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1093,11 +1077,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlCounterAttackLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlCounterAttack, minimal lookback period is $lookback")
+            throw InsufficientData("cdlCounterAttack", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1109,7 +1092,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Dark Cloud Cover** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1131,11 +1114,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlDarkCloudCoverLookback(penetration) + previous
-            throw InsufficientDataException("Not enough data to calculate cdlDarkCloudCover, minimal lookback period is $lookback")
+            throw InsufficientData("cdlDarkCloudCover", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1147,7 +1129,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Doji** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1167,11 +1149,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlDojiLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlDoji, minimal lookback period is $lookback")
+            throw InsufficientData("cdlDoji", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1183,7 +1164,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Doji Star** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1203,11 +1184,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlDojiStarLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlDojiStar, minimal lookback period is $lookback")
+            throw InsufficientData("cdlDojiStar", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1219,7 +1199,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Dragonfly Doji** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1239,11 +1219,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlDragonflyDojiLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlDragonflyDoji, minimal lookback period is $lookback")
+            throw InsufficientData("cdlDragonflyDoji", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1255,7 +1234,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Engulfing Pattern** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1275,11 +1254,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlEngulfingLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlEngulfing, minimal lookback period is $lookback")
+            throw InsufficientData("cdlEngulfing", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1291,7 +1269,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Evening Doji Star** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1323,11 +1301,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlEveningDojiStarLookback(penetration) + previous
-            throw InsufficientDataException("Not enough data to calculate cdlEveningDojiStar, minimal lookback period is $lookback")
+            throw InsufficientData("cdlEveningDojiStar", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1339,7 +1316,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Evening Star** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1361,11 +1338,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlEveningStarLookback(penetration) + previous
-            throw InsufficientDataException("Not enough data to calculate cdlEveningStar, minimal lookback period is $lookback")
+            throw InsufficientData("cdlEveningStar", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1377,7 +1353,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Up/Down-gap side-by-side white lines** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1397,11 +1373,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlGapSideSideWhiteLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlGapSideSideWhite, minimal lookback period is $lookback")
+            throw InsufficientData("cdlGapSideSideWhite", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1413,7 +1388,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Gravestone Doji** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1433,11 +1408,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlGravestoneDojiLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlGravestoneDoji, minimal lookback period is $lookback")
+            throw InsufficientData("cdlGravestoneDoji", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1449,7 +1423,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Hammer** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1469,11 +1443,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHammerLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlHammer, minimal lookback period is $lookback")
+            throw InsufficientData("cdlHammer", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1485,7 +1458,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Hanging Man** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1505,11 +1478,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHangingManLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlHangingMan, minimal lookback period is $lookback")
+            throw InsufficientData("cdlHangingMan", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1521,7 +1493,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Harami Pattern** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1541,11 +1513,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHaramiLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlHarami, minimal lookback period is $lookback")
+            throw InsufficientData("cdlHarami", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1557,7 +1528,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Harami Cross Pattern** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1577,11 +1548,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHaramiCrossLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlHaramiCross, minimal lookback period is $lookback")
+            throw InsufficientData("cdlHaramiCross", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1593,7 +1563,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **High-Wave Candle** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1613,11 +1583,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHignWaveLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlHignWave, minimal lookback period is $lookback")
+            throw InsufficientData("cdlHignWave", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1629,7 +1598,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Hikkake Pattern** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1649,11 +1618,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHikkakeLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlHikkake, minimal lookback period is $lookback")
+            throw InsufficientData("cdlHikkake", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1665,7 +1633,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Modified Hikkake Pattern** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1685,11 +1653,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHikkakeModLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlHikkakeMod, minimal lookback period is $lookback")
+            throw InsufficientData("cdlHikkakeMod", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1701,7 +1668,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Homing Pigeon** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1721,11 +1688,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlHomingPigeonLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlHomingPigeon, minimal lookback period is $lookback")
+            throw InsufficientData("cdlHomingPigeon", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1737,7 +1703,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Identical Three Crows** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1757,11 +1723,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlIdentical3CrowsLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlIdentical3Crows, minimal lookback period is $lookback")
+            throw InsufficientData("cdlIdentical3Crows", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1773,7 +1738,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **In-Neck Pattern** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1793,11 +1758,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlInNeckLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlInNeck, minimal lookback period is $lookback")
+            throw InsufficientData("cdlInNeck", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1809,7 +1773,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Inverted Hammer** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1829,11 +1793,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlInvertedHammerLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlInvertedHammer, minimal lookback period is $lookback")
+            throw InsufficientData("cdlInvertedHammer", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1845,7 +1808,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Kicking** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1865,11 +1828,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlKickingLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlKicking, minimal lookback period is $lookback")
+            throw InsufficientData("cdlKicking", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1881,7 +1843,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Kicking - bull/bear determined by the longer marubozu** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1901,11 +1863,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlKickingByLengthLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlKickingByLength, minimal lookback period is $lookback")
+            throw InsufficientData("cdlKickingByLength", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1917,7 +1878,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Ladder Bottom** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1937,11 +1898,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlLadderBottomLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlLadderBottom, minimal lookback period is $lookback")
+            throw InsufficientData("cdlLadderBottom", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1953,7 +1913,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Long Legged Doji** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -1973,11 +1933,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlLongLeggedDojiLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlLongLeggedDoji, minimal lookback period is $lookback")
+            throw InsufficientData("cdlLongLeggedDoji", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -1989,7 +1948,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Long Line Candle** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2009,11 +1968,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlLongLineLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlLongLine, minimal lookback period is $lookback")
+            throw InsufficientData("cdlLongLine", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2025,7 +1983,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Marubozu** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2045,11 +2003,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlMarubozuLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlMarubozu, minimal lookback period is $lookback")
+            throw InsufficientData("cdlMarubozu", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2061,7 +2018,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Matching Low** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2081,11 +2038,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlMatchingLowLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlMatchingLow, minimal lookback period is $lookback")
+            throw InsufficientData("cdlMatchingLow", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2097,7 +2053,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Mat Hold** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2118,11 +2074,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlMatHoldLookback(penetration) + previous
-            throw InsufficientDataException("Not enough data to calculate cdlMatHold, minimal lookback period is $lookback")
+            throw InsufficientData("cdlMatHold", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2134,7 +2089,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Morning Doji Star** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2166,11 +2121,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlMorningDojiStarLookback(penetration) + previous
-            throw InsufficientDataException("Not enough data to calculate cdlMorningDojiStar, minimal lookback period is $lookback")
+            throw InsufficientData("cdlMorningDojiStar", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2182,7 +2136,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Morning Star** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2204,11 +2158,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlMorningStarLookback(penetration) + previous
-            throw InsufficientDataException("Not enough data to calculate cdlMorningStar, minimal lookback period is $lookback")
+            throw InsufficientData("cdlMorningStar", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2220,7 +2173,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **On-Neck Pattern** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2240,11 +2193,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlOnNeckLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlOnNeck, minimal lookback period is $lookback")
+            throw InsufficientData("cdlOnNeck", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2256,7 +2208,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Piercing Pattern** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2276,11 +2228,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlPiercingLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlPiercing, minimal lookback period is $lookback")
+            throw InsufficientData("cdlPiercing", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2292,7 +2243,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Rickshaw Man** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2312,11 +2263,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlRickshawManLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlRickshawMan, minimal lookback period is $lookback")
+            throw InsufficientData("cdlRickshawMan", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2328,7 +2278,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Rising/Falling Three Methods** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2348,11 +2298,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlRiseFall3MethodsLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlRiseFall3Methods, minimal lookback period is $lookback")
+            throw InsufficientData("cdlRiseFall3Methods", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2364,7 +2313,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Separating Lines** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2384,11 +2333,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlSeperatingLinesLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlSeperatingLines, minimal lookback period is $lookback")
+            throw InsufficientData("cdlSeperatingLines", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2400,7 +2348,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Shooting Star** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2420,11 +2368,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlShootingStarLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlShootingStar, minimal lookback period is $lookback")
+            throw InsufficientData("cdlShootingStar", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2436,7 +2383,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Short Line Candle** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2456,11 +2403,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlShortLineLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlShortLine, minimal lookback period is $lookback")
+            throw InsufficientData("cdlShortLine", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2472,7 +2418,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Spinning Top** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2492,11 +2438,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlSpinningTopLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlSpinningTop, minimal lookback period is $lookback")
+            throw InsufficientData("cdlSpinningTop", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2508,7 +2453,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Stalled Pattern** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2528,11 +2473,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlStalledPatternLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlStalledPattern, minimal lookback period is $lookback")
+            throw InsufficientData("cdlStalledPattern", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2544,7 +2488,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Stick Sandwich** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2564,11 +2508,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlStickSandwhichLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlStickSandwich, minimal lookback period is $lookback")
+            throw InsufficientData("cdlStickSandwich", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2580,7 +2523,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Takuri (Dragonfly Doji with very long lower shadow)** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2600,11 +2543,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlTakuriLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlTakuri, minimal lookback period is $lookback")
+            throw InsufficientData("cdlTakuri", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2616,7 +2558,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Tasuki Gap** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2636,11 +2578,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlTasukiGapLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlTasukiGap, minimal lookback period is $lookback")
+            throw InsufficientData("cdlTasukiGap", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2652,7 +2593,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Thrusting Pattern** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2672,11 +2613,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlThrustingLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlThrusting, minimal lookback period is $lookback")
+            throw InsufficientData("cdlThrusting", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2688,7 +2628,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Tristar Pattern** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2708,11 +2648,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlTristarLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlTristar, minimal lookback period is $lookback")
+            throw InsufficientData("cdlTristar", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2724,7 +2663,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Unique 3 River** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2744,11 +2683,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlUnique3RiverLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlUnique3River, minimal lookback period is $lookback")
+            throw InsufficientData("cdlUnique3River", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2760,7 +2698,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Upside Gap Two Crows** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2780,11 +2718,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlUpsideGap2CrowsLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlUpsideGap2Crows, minimal lookback period is $lookback")
+            throw InsufficientData("cdlUpsideGap2Crows", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2796,7 +2733,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Upside/Downside Gap Three Methods** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Pattern Recognition**.
      */
@@ -2816,11 +2753,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cdlXSideGap3MethodsLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cdlXSideGap3Methods, minimal lookback period is $lookback")
+            throw InsufficientData("cdlXSideGap3Methods", lookback + 1)
         }
         return output1[0] != 0
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2832,7 +2768,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Ceil** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -2846,11 +2782,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.ceilLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate ceil, minimal lookback period is $lookback")
+            throw InsufficientData("ceil", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2861,7 +2796,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Chande Momentum Oscillator** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -2875,11 +2810,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cmoLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate cmo, minimal lookback period is $lookback")
+            throw InsufficientData("cmo", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2890,7 +2824,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Pearson's Correlation Coefficient (r)** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Statistic Functions**.
      */
@@ -2904,16 +2838,15 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.correlLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate correl, minimal lookback period is $lookback")
+            throw InsufficientData("correl", lookback + 1)
         }
         return output1[0]
     }
 
-
     /**
      * Calculate **Vector Trigonometric Cos** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -2927,11 +2860,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.cosLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cos, minimal lookback period is $lookback")
+            throw InsufficientData("cos", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2942,7 +2874,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Trigonometric Cosh** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -2956,11 +2888,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.coshLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate cosh, minimal lookback period is $lookback")
+            throw InsufficientData("cosh", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -2971,7 +2902,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Double Exponential Moving Average** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -2985,11 +2916,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.demaLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate dema, minimal lookback period is $lookback")
+            throw InsufficientData("dema", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3000,7 +2930,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Arithmetic Div** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Operators**.
      */
@@ -3014,16 +2944,15 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.divLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate div, minimal lookback period is $lookback")
+            throw InsufficientData("div", lookback + 1)
         }
         return output1[0]
     }
 
-
     /**
      * Calculate **Directional Movement Index** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -3037,11 +2966,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.dxLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate dx, minimal lookback period is $lookback")
+            throw InsufficientData("dx", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3053,7 +2981,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Exponential Moving Average** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -3067,11 +2995,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.emaLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate ema, minimal lookback period is $lookback")
+            throw InsufficientData("ema", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3082,7 +3009,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Arithmetic Exp** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -3096,11 +3023,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.expLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate exp, minimal lookback period is $lookback")
+            throw InsufficientData("exp", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3111,7 +3037,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Floor** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -3125,11 +3051,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.floorLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate floor, minimal lookback period is $lookback")
+            throw InsufficientData("floor", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3140,7 +3065,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Hilbert Transform - Dominant Cycle Period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Cycle Indicators**.
      */
@@ -3154,11 +3079,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htDcPeriodLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate htDcPeriod, minimal lookback period is $lookback")
+            throw InsufficientData("htDcPeriod", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3169,7 +3093,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Hilbert Transform - Dominant Cycle Phase** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Cycle Indicators**.
      */
@@ -3183,11 +3107,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htDcPhaseLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate htDcPhase, minimal lookback period is $lookback")
+            throw InsufficientData("htDcPhase", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3198,7 +3121,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Hilbert Transform - Phasor Components** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Cycle Indicators**.
      */
@@ -3213,11 +3136,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htPhasorLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate htPhasor, minimal lookback period is $lookback")
+            throw InsufficientData("htPhasor", lookback + 1)
         }
         return Pair(output1[0], output2[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3228,7 +3150,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Hilbert Transform - SineWave** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Cycle Indicators**.
      */
@@ -3243,11 +3165,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htSineLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate htSine, minimal lookback period is $lookback")
+            throw InsufficientData("htSine", lookback + 1)
         }
         return Pair(output1[0], output2[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3258,7 +3179,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Hilbert Transform - Instantaneous Trendline** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -3272,11 +3193,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htTrendlineLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate htTrendline, minimal lookback period is $lookback")
+            throw InsufficientData("htTrendline", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3287,7 +3207,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Hilbert Transform - Trend vs Cycle Mode** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Cycle Indicators**.
      */
@@ -3301,11 +3221,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.htTrendModeLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate htTrendMode, minimal lookback period is $lookback")
+            throw InsufficientData("htTrendMode", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3316,7 +3235,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Kaufman Adaptive Moving Average** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -3330,11 +3249,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.kamaLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate kama, minimal lookback period is $lookback")
+            throw InsufficientData("kama", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3345,7 +3263,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Linear Regression** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Statistic Functions**.
      */
@@ -3359,11 +3277,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.linearRegLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate linearReg, minimal lookback period is $lookback")
+            throw InsufficientData("linearReg", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3375,7 +3292,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Linear Regression Angle** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Statistic Functions**.
      */
@@ -3389,11 +3306,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.linearRegAngleLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate linearRegAngle, minimal lookback period is $lookback")
+            throw InsufficientData("linearRegAngle", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3405,7 +3321,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Linear Regression Intercept** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Statistic Functions**.
      */
@@ -3419,11 +3335,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.linearRegInterceptLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate linearRegIntercept, minimal lookback period is $lookback")
+            throw InsufficientData("linearRegIntercept", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3435,7 +3350,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Linear Regression Slope** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Statistic Functions**.
      */
@@ -3449,11 +3364,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.linearRegSlopeLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate linearRegSlope, minimal lookback period is $lookback")
+            throw InsufficientData("linearRegSlope", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3465,7 +3379,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Log Natural** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -3479,11 +3393,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.lnLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate ln, minimal lookback period is $lookback")
+            throw InsufficientData("ln", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3494,7 +3407,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Log10** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -3508,11 +3421,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.log10Lookback() + previous
-            throw InsufficientDataException("Not enough data to calculate log10, minimal lookback period is $lookback")
+            throw InsufficientData("log10", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3523,7 +3435,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Moving average** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -3537,11 +3449,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.movingAverageLookback(timePeriod, mAType) + previous
-            throw InsufficientDataException("Not enough data to calculate movingAverage, minimal lookback period is $lookback")
+            throw InsufficientData("movingAverage", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3553,7 +3464,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Moving Average Convergence/Divergence** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -3587,11 +3498,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.macdLookback(fastPeriod, slowPeriod, signalPeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate macd, minimal lookback period is $lookback")
+            throw InsufficientData("macd", lookback + 1)
         }
         return Triple(output1[0], output2[0], output3[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3608,7 +3518,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **MACD with controllable MA type** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -3649,11 +3559,10 @@ class TaLib(var core: Core = Core()) {
         if (last < 0) {
             val lookback =
                 core.macdExtLookback(fastPeriod, fastMA, slowPeriod, slowMA, signalPeriod, signalMA) + previous
-            throw InsufficientDataException("Not enough data to calculate macdExt, minimal lookback period is $lookback")
+            throw InsufficientData("macdExt", lookback + 1)
         }
         return Triple(output1[0], output2[0], output3[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3673,7 +3582,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Moving Average Convergence/Divergence Fix 12/26** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -3689,11 +3598,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.macdFixLookback(signalPeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate macdFix, minimal lookback period is $lookback")
+            throw InsufficientData("macdFix", lookback + 1)
         }
         return Triple(output1[0], output2[0], output3[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3705,7 +3613,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **MESA Adaptive Moving Average** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -3725,11 +3633,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.mamaLookback(fastLimit, slowLimit) + previous
-            throw InsufficientDataException("Not enough data to calculate mama, minimal lookback period is $lookback")
+            throw InsufficientData("mama", lookback + 1)
         }
         return Pair(output1[0], output2[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3745,7 +3652,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Moving average with variable period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -3777,16 +3684,15 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.movingAverageVariablePeriodLookback(minimumPeriod, maximumPeriod, mAType) + previous
-            throw InsufficientDataException("Not enough data to calculate movingAverageVariablePeriod, minimal lookback period is $lookback")
+            throw InsufficientData("movingAverageVariablePeriod", lookback + 1)
         }
         return output1[0]
     }
 
-
     /**
      * Calculate **Highest value over a specified period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Operators**.
      */
@@ -3800,11 +3706,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.maxLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate max, minimal lookback period is $lookback")
+            throw InsufficientData("max", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3815,7 +3720,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Index of highest value over a specified period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Operators**.
      */
@@ -3829,11 +3734,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.maxIndexLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate maxIndex, minimal lookback period is $lookback")
+            throw InsufficientData("maxIndex", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3845,7 +3749,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Median Price** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Price Transform**.
      */
@@ -3859,11 +3763,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.medPriceLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate medPrice, minimal lookback period is $lookback")
+            throw InsufficientData("medPrice", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3874,7 +3777,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Money Flow Index** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -3895,11 +3798,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.mfiLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate mfi, minimal lookback period is $lookback")
+            throw InsufficientData("mfi", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3911,7 +3813,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **MidPoint over period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -3925,11 +3827,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.midPointLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate midPoint, minimal lookback period is $lookback")
+            throw InsufficientData("midPoint", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3941,7 +3842,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Midpoint Price over period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -3955,11 +3856,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.midPriceLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate midPrice, minimal lookback period is $lookback")
+            throw InsufficientData("midPrice", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -3971,7 +3871,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Lowest value over a specified period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Operators**.
      */
@@ -3985,11 +3885,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate min, minimal lookback period is $lookback")
+            throw InsufficientData("min", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4000,7 +3899,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Index of lowest value over a specified period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Operators**.
      */
@@ -4014,11 +3913,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minIndexLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate minIndex, minimal lookback period is $lookback")
+            throw InsufficientData("minIndex", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4030,7 +3928,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Lowest and highest values over a specified period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Operators**.
      */
@@ -4045,11 +3943,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minMaxLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate minMax, minimal lookback period is $lookback")
+            throw InsufficientData("minMax", lookback + 1)
         }
         return Pair(output1[0], output2[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4061,7 +3958,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Indexes of lowest and highest values over a specified period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Operators**.
      */
@@ -4076,11 +3973,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minMaxIndexLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate minMaxIndex, minimal lookback period is $lookback")
+            throw InsufficientData("minMaxIndex", lookback + 1)
         }
         return Pair(output1[0], output2[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4092,7 +3988,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Minus Directional Indicator** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4112,11 +4008,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minusDILookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate minusDI, minimal lookback period is $lookback")
+            throw InsufficientData("minusDI", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4128,7 +4023,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Minus Directional Movement** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4142,11 +4037,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.minusDMLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate minusDM, minimal lookback period is $lookback")
+            throw InsufficientData("minusDM", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4158,7 +4052,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Momentum** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4172,11 +4066,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.momLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate mom, minimal lookback period is $lookback")
+            throw InsufficientData("mom", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4187,7 +4080,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Arithmetic Mult** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Operators**.
      */
@@ -4201,16 +4094,15 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.multLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate mult, minimal lookback period is $lookback")
+            throw InsufficientData("mult", lookback + 1)
         }
         return output1[0]
     }
 
-
     /**
      * Calculate **Normalized Average True Range** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Volatility Indicators**.
      */
@@ -4224,11 +4116,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.natrLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate natr, minimal lookback period is $lookback")
+            throw InsufficientData("natr", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4240,7 +4131,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **On Balance Volume** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Volume Indicators**.
      */
@@ -4254,16 +4145,15 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.obvLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate obv, minimal lookback period is $lookback")
+            throw InsufficientData("obv", lookback + 1)
         }
         return output1[0]
     }
 
-
     /**
      * Calculate **Plus Directional Indicator** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4283,11 +4173,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.plusDILookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate plusDI, minimal lookback period is $lookback")
+            throw InsufficientData("plusDI", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4299,7 +4188,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Plus Directional Movement** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4313,11 +4202,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.plusDMLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate plusDM, minimal lookback period is $lookback")
+            throw InsufficientData("plusDM", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4329,7 +4217,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Percentage Price Oscillator** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4349,11 +4237,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.ppoLookback(fastPeriod, slowPeriod, mAType) + previous
-            throw InsufficientDataException("Not enough data to calculate ppo, minimal lookback period is $lookback")
+            throw InsufficientData("ppo", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4370,7 +4257,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Rate of change : ((price/prevPrice)-1) * 100** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4384,11 +4271,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.rocLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate roc, minimal lookback period is $lookback")
+            throw InsufficientData("roc", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4399,7 +4285,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Rate of change Percentage: (price-prevPrice)/prevPrice** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4413,11 +4299,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.rocPLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate rocP, minimal lookback period is $lookback")
+            throw InsufficientData("rocP", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4428,7 +4313,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Rate of change ratio: (price/prevPrice)** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4442,11 +4327,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.rocRLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate rocR, minimal lookback period is $lookback")
+            throw InsufficientData("rocR", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4457,7 +4341,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Rate of change ratio 100 scale: (price/prevPrice) * 100** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4471,11 +4355,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.rocR100Lookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate rocR100, minimal lookback period is $lookback")
+            throw InsufficientData("rocR100", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4487,7 +4370,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Relative Strength Index** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4501,11 +4384,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.rsiLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate rsi, minimal lookback period is $lookback")
+            throw InsufficientData("rsi", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4516,7 +4398,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Parabolic SAR** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -4536,11 +4418,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.sarLookback(accelerationFactor, aFMaximum) + previous
-            throw InsufficientDataException("Not enough data to calculate sar, minimal lookback period is $lookback")
+            throw InsufficientData("sar", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4556,7 +4437,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Parabolic SAR - Extended** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -4607,11 +4488,10 @@ class TaLib(var core: Core = Core()) {
                 aFShort,
                 aFMaxShort,
             ) + previous
-            throw InsufficientDataException("Not enough data to calculate sarExt, minimal lookback period is $lookback")
+            throw InsufficientData("sarExt", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4645,7 +4525,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Trigonometric Sin** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -4659,11 +4539,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.sinLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate sin, minimal lookback period is $lookback")
+            throw InsufficientData("sin", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4674,7 +4553,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Trigonometric Sinh** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -4688,11 +4567,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.sinhLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate sinh, minimal lookback period is $lookback")
+            throw InsufficientData("sinh", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4703,7 +4581,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Simple Moving Average** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -4717,11 +4595,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.smaLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate sma, minimal lookback period is $lookback")
+            throw InsufficientData("sma", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4732,7 +4609,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Square Root** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -4746,11 +4623,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.sqrtLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate sqrt, minimal lookback period is $lookback")
+            throw InsufficientData("sqrt", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4761,7 +4637,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Standard Deviation** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Statistic Functions**.
      */
@@ -4775,11 +4651,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.stdDevLookback(timePeriod, deviations) + previous
-            throw InsufficientDataException("Not enough data to calculate stdDev, minimal lookback period is $lookback")
+            throw InsufficientData("stdDev", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4791,7 +4666,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Stochastic** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4831,11 +4706,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.stochLookback(fastKPeriod, slowKPeriod, slowKMA, slowDPeriod, slowDMA) + previous
-            throw InsufficientDataException("Not enough data to calculate stoch, minimal lookback period is $lookback")
+            throw InsufficientData("stoch", lookback + 1)
         }
         return Pair(output1[0], output2[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4854,7 +4728,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Stochastic Fast** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4890,11 +4764,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.stochFLookback(fastKPeriod, fastDPeriod, fastDMA) + previous
-            throw InsufficientDataException("Not enough data to calculate stochF, minimal lookback period is $lookback")
+            throw InsufficientData("stochF", lookback + 1)
         }
         return Pair(output1[0], output2[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4911,7 +4784,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Stochastic Relative Strength Index** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -4945,11 +4818,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.stochRsiLookback(timePeriod, fastKPeriod, fastDPeriod, fastDMA) + previous
-            throw InsufficientDataException("Not enough data to calculate stochRsi, minimal lookback period is $lookback")
+            throw InsufficientData("stochRsi", lookback + 1)
         }
         return Pair(output1[0], output2[0])
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -4967,7 +4839,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Arithmetic Subtraction** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Operators**.
      */
@@ -4981,16 +4853,15 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.subLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate sub, minimal lookback period is $lookback")
+            throw InsufficientData("sub", lookback + 1)
         }
         return output1[0]
     }
 
-
     /**
      * Calculate **Summation** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Operators**.
      */
@@ -5004,11 +4875,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.sumLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate sum, minimal lookback period is $lookback")
+            throw InsufficientData("sum", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5019,7 +4889,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Triple Exponential Moving Average (T3)** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -5033,11 +4903,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.t3Lookback(timePeriod, volumeFactor) + previous
-            throw InsufficientDataException("Not enough data to calculate t3, minimal lookback period is $lookback")
+            throw InsufficientData("t3", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5049,7 +4918,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Trigonometric Tan** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -5063,11 +4932,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.tanLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate tan, minimal lookback period is $lookback")
+            throw InsufficientData("tan", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5078,7 +4946,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Vector Trigonometric Tanh** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Math Transform**.
      */
@@ -5092,11 +4960,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.tanhLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate tanh, minimal lookback period is $lookback")
+            throw InsufficientData("tanh", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5107,7 +4974,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Triple Exponential Moving Average** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -5121,11 +4988,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.temaLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate tema, minimal lookback period is $lookback")
+            throw InsufficientData("tema", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5136,7 +5002,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **True Range** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Volatility Indicators**.
      */
@@ -5150,11 +5016,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.trueRangeLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate trueRange, minimal lookback period is $lookback")
+            throw InsufficientData("trueRange", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5166,7 +5031,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Triangular Moving Average** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -5180,11 +5045,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.trimaLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate trima, minimal lookback period is $lookback")
+            throw InsufficientData("trima", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5196,7 +5060,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **1-day Rate-Of-Change (ROC) of a Triple Smooth EMA** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -5210,11 +5074,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.trixLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate trix, minimal lookback period is $lookback")
+            throw InsufficientData("trix", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5225,7 +5088,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Time serie Forecast** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Statistic Functions**.
      */
@@ -5239,11 +5102,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.tsfLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate tsf, minimal lookback period is $lookback")
+            throw InsufficientData("tsf", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5254,7 +5116,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Typical Price** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Price Transform**.
      */
@@ -5268,11 +5130,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.typPriceLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate typPrice, minimal lookback period is $lookback")
+            throw InsufficientData("typPrice", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5283,7 +5144,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Ultimate Oscillator** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -5317,11 +5178,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.ultOscLookback(firstPeriod, secondPeriod, thirdPeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate ultOsc, minimal lookback period is $lookback")
+            throw InsufficientData("ultOsc", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5338,7 +5198,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Variance** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Statistic Functions**.
      */
@@ -5352,11 +5212,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.varianceLookback(timePeriod, deviations) + previous
-            throw InsufficientDataException("Not enough data to calculate variance, minimal lookback period is $lookback")
+            throw InsufficientData("variance", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5368,7 +5227,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Weighted Close Price** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Price Transform**.
      */
@@ -5382,11 +5241,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.wclPriceLookback() + previous
-            throw InsufficientDataException("Not enough data to calculate wclPrice, minimal lookback period is $lookback")
+            throw InsufficientData("wclPrice", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5397,7 +5255,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Williams' %R** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Momentum Indicators**.
      */
@@ -5417,11 +5275,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.willRLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate willR, minimal lookback period is $lookback")
+            throw InsufficientData("willR", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.
@@ -5433,7 +5290,7 @@ class TaLib(var core: Core = Core()) {
     /**
      * Calculate **Weighted Moving Average** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
-     * If there is insufficient data to calculate the indicators, an [InsufficientDataException] will be thrown.
+     * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
      * This indicator belongs to the group **Overlap Studies**.
      */
@@ -5447,11 +5304,10 @@ class TaLib(var core: Core = Core()) {
         val last = endOutput.value - 1
         if (last < 0) {
             val lookback = core.wmaLookback(timePeriod) + previous
-            throw InsufficientDataException("Not enough data to calculate wma, minimal lookback period is $lookback")
+            throw InsufficientData("wma", lookback + 1)
         }
         return output1[0]
     }
-
 
     /**
      * Convencience method that allows to use a price-bar [serie] as input.

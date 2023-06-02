@@ -17,7 +17,7 @@ class TaLibIndicatorTest {
 
     @Test
     fun basic() {
-        val ind = TaLibIndicator(15) {
+        val ind = TaLibIndicator() {
             mapOf(
                 "rsi" to rsi(it, timePeriod = 14),
                 "max" to max(it, timePeriod = 10)
@@ -36,7 +36,8 @@ class TaLibIndicatorTest {
         val feed = feed()
         val asset = feed.assets.first()
         assertDoesNotThrow {
-            feed.apply(TaLibIndicator.rsi(), asset)
+            val map = feed.apply(TaLibIndicator.rsi(), asset)
+            assertEquals(88, map.values.first().size)
         }
         assertDoesNotThrow {
             feed.apply(TaLibIndicator.bbands(), asset)

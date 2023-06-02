@@ -17,7 +17,10 @@
 package org.roboquant.strategies.utils
 
 import org.roboquant.common.PriceSerie
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class PriceSerieTest {
 
@@ -45,6 +48,22 @@ internal class PriceSerieTest {
         series.clear()
         assertTrue { series.toDoubleArray().all { it.isNaN() } }
         assertEquals(0, series.size)
+    }
+
+    @Test
+    fun capacity() {
+        val series = PriceSerie(10)
+        repeat(5) { series.add(1.0) }
+
+        series.increaeseCapacity(20)
+        assertFalse(series.isFull())
+        assertEquals(5, series.size)
+        assertEquals(5, series.toDoubleArray().size)
+
+        repeat(20) { series.add(1.0) }
+        assertTrue(series.isFull())
+        assertEquals(20, series.size)
+        assertEquals(20, series.toDoubleArray().size)
     }
 
 }

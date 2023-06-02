@@ -72,11 +72,3 @@ class DoesNotComputeException(msg: String) : RoboquantException(msg)
  */
 class NoTradingException(date: LocalDate) : RoboquantException("$date is not a trading day")
 
-
-/**
- * This exception is thrown when there is not enough (historic) data to run an algorithm, for example, a technical
- * indicator.
- *
- * @param msg The message to include with the exception
- */
-class InsufficientDataException(msg: String) : RoboquantException(msg)

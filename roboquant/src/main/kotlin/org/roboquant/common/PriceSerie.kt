@@ -22,15 +22,15 @@ import org.roboquant.feeds.Event
  * Holds a fix amount of historic prices. When adding a new value while the buffer is full, the oldest one will be
  * removed (aka a circular buffer). This is typically used by strategies for to track rolling windows or replay buffers.
  *
- * Internally it uses a DoubleArray to hold the price values. Instances of this class are not thread safe during
+ * Internally, it uses a DoubleArray to hold the price values. Instances of this class are not thread safe during
  * updates.
  *
  * @property capacity The number of historic prices to retain, aka the capacity of the buffer
- * @constructor Create new instance of PriceSerie
+ * @constructor Create a new instance of PriceSerie
  */
-open class PriceSerie(private val capacity: Int) {
+open class PriceSerie(private var capacity: Int) {
 
-    private val data = DoubleArray(capacity)
+    private var data = DoubleArray(capacity)
     private var counter = 0L
 
     /**
@@ -78,6 +78,18 @@ open class PriceSerie(private val capacity: Int) {
             result
         }
     }
+
+    /**
+     * Increase the capacity to the [newCapacity]
+     */
+    fun increaeseCapacity(newCapacity: Int) {
+        require(newCapacity > capacity)
+        val oldData = toDoubleArray()
+        data = DoubleArray(newCapacity)
+        System.arraycopy(oldData, 0, data, 0, size)
+        capacity = newCapacity
+    }
+
 
     /**
      * Clear the buffer

@@ -33,7 +33,7 @@ class TaLibMetricTest {
 
     @Test
     fun test() {
-        val metric = TaLibMetric("ema10", 10) { series ->
+        val metric = TaLibMetric("ema10") { series ->
             ema(series.close, 10)
         }
 

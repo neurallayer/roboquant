@@ -28,14 +28,12 @@ import org.roboquant.metrics.Metric
  * name: [name].symbol with the symbol in lowercase.
  *
  * @property name the base name of the metric
- * @property history how much history should be kept before invoking the provided [block]
  * @property assetFilter which assets to process, default is [AssetFilter.all]
  * @property block the logic to use as an indicator
  * @constructor Create new metric
  */
 class TaLibMetric(
     private val name: String,
-    private val history: Int = 15,
     private val assetFilter: AssetFilter = AssetFilter.all(),
     private var block: TaLib.(series: PriceBarSerie) -> Double
 ) : Metric {
@@ -44,21 +42,24 @@ class TaLibMetric(
     private val taLib = TaLib()
     // private val logger: Logger = Logging.getLogger(TALibMetric::class)
 
-
     /**
      * @see Metric.calculate
      */
-    override fun calculate(account: Account, event: Event): Map<String, Double>  {
+    override fun calculate(account: Account, event: Event): Map<String, Double> {
         val metrics = mutableMapOf<String, Double>()
         val actions =
             event.actions.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset, event.time) }
         for (priceAction in actions) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSerie(history) }
+            val buffer = buffers.getOrPut(asset) { PriceBarSerie(1) }
             if (buffer.add(priceAction)) {
-                val metric = block.invoke(taLib, buffer)
-                val name = "$name.${asset.symbol.lowercase()}"
-                metrics[name] = metric
+                try {
+                    val metric = block.invoke(taLib, buffer)
+                    val name = "$name.${asset.symbol.lowercase()}"
+                    metrics[name] = metric
+                } catch (ex: InsufficientData) {
+                    buffer.increaseCapacity(ex.minSize)
+                }
             }
         }
         return metrics

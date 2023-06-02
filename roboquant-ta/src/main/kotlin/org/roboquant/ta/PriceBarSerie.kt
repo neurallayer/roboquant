@@ -131,6 +131,17 @@ class PriceBarSerie(capacity: Int) {
         volumeBuffer.clear()
     }
 
+    /**
+     * Set the capacity of the buffers to [newCapacity]
+     */
+    fun increaseCapacity(newCapacity: Int) {
+        openBuffer.increaeseCapacity(newCapacity)
+        highBuffer.increaeseCapacity(newCapacity)
+        lowBuffer.increaeseCapacity(newCapacity)
+        closeBuffer.increaeseCapacity(newCapacity)
+        volumeBuffer.increaeseCapacity(newCapacity)
+    }
+
 }
 
 /**

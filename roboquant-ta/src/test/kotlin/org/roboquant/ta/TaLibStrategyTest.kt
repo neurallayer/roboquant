@@ -21,7 +21,10 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.Roboquant
-import org.roboquant.common.*
+import org.roboquant.common.Asset
+import org.roboquant.common.Timeframe
+import org.roboquant.common.plus
+import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.RandomWalkFeed
@@ -32,7 +35,10 @@ import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import java.time.Instant
 import kotlin.collections.set
-import kotlin.test.*
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class TaLibStrategyTest {
 
@@ -63,7 +69,7 @@ internal class TaLibStrategyTest {
     @Test
     fun testTASignalStrategy() {
 
-        val strategy = TaLibSignalStrategy(20) { asset, series ->
+        val strategy = TaLibSignalStrategy() { asset, series ->
             // record("test", 1)
             when {
                 cdlMorningStar(series) -> Signal(asset, Rating.BUY, tag = "Morning Star")
@@ -75,20 +81,6 @@ internal class TaLibStrategyTest {
         val x = run(strategy, 30)
         assertEquals(30, x.size)
         assertEquals(strategy.taLib.core.compatibility, Compatibility.Default)
-    }
-
-    @Test
-    fun testTASignalStrategyInsufficientData() {
-
-        val strategy = TaLibSignalStrategy(5) { asset, series ->
-            if (cdlMorningStar(series)) Signal(asset, Rating.BUY)
-            else if (cdl3BlackCrows(series)) Signal(asset, Rating.SELL)
-            else null
-        }
-
-        assertFailsWith<InsufficientDataException> {
-            run(strategy, 30)
-        }
     }
 
     @Test
@@ -104,10 +96,7 @@ internal class TaLibStrategyTest {
         val strategy = TaLibSignalStrategy.breakout(10, 30)
         val x = run(strategy, 60)
         assertEquals(60, x.size)
-        assertContains(strategy.toString(), "30")
-
-        val strategy2 = TaLibSignalStrategy.breakout()
-        assertContains(strategy2.toString(), "100")
+        assertContains(strategy.toString(), "TaLibSignalStrategy")
     }
 
 
@@ -126,15 +115,6 @@ internal class TaLibStrategyTest {
         }
     }
 
-    @Test
-    fun testFail() {
-        val strategy = TaLibStrategy(3)
-        strategy.buy { price -> cdlMorningStar(price) }
-
-        assertFailsWith<InsufficientDataException> {
-            run(strategy)
-        }
-    }
 
     private fun getPriceBarBuffer(size: Int): PriceBarSerie {
         val asset = Asset("XYZ")

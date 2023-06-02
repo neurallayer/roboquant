@@ -194,8 +194,12 @@ class TaLibStrategy(history: Int = 15) : RecordingStrategy(recording = true) {
             if (priceBarSeries.add(priceBar)) {
                 val asset = priceBar.asset
                 val priceSerie = priceBarSeries.getValue(asset)
-                if (buyFn.invoke(taLib, priceSerie)) results.add(Signal(asset, Rating.BUY))
-                if (sellFn.invoke(taLib, priceSerie)) results.add(Signal(asset, Rating.SELL))
+                try {
+                    if (buyFn.invoke(taLib, priceSerie)) results.add(Signal(asset, Rating.BUY))
+                    if (sellFn.invoke(taLib, priceSerie)) results.add(Signal(asset, Rating.SELL))
+                } catch (ex: InsufficientData) {
+                    priceSerie.increaseCapacity(ex.minSize)
+                }
             }
         }
         return results

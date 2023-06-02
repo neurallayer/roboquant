@@ -60,7 +60,7 @@ private fun beta() {
 
 
 private fun macd() {
-    val strategy = TaLibSignalStrategy(35) { asset, prices ->
+    val strategy = TaLibSignalStrategy() { asset, prices ->
         val (_, _, diff) = macd(prices, 12, 26, 9)
         val (_, _, diff2) = macd(prices, 12, 26, 9, 1)
         when {
@@ -112,7 +112,7 @@ private fun customPolicy() {
     class SmartLimitPolicy(private val atrPercentage: Double = 0.02, private val atrPeriod: Int) : FlexPolicy() {
 
         // use TaLibMetric to calculate the ATR values
-        private val atr = TaLibMetric("atr", atrPeriod + 1) { atr(it, atrPeriod) }
+        private val atr = TaLibMetric("atr") { atr(it, atrPeriod) }
         private var atrMetrics = emptyMap<String, Double>()
 
         override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {

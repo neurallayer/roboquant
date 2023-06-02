@@ -26,7 +26,6 @@ import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.SignalType
 import org.roboquant.strategies.Strategy
-import java.lang.Integer.max
 
 /**
  * This strategy that makes it easy to implement different types strategies based on technical analysis indicators from
@@ -37,12 +36,10 @@ import java.lang.Integer.max
  * It is important that the strategy is initialized with a large enough [history] window to support the underlying
  * technical indicators you want to use. If the [history] is too small, it will lead to a runtime exception.
  *
- * @property history the history to keep track of
  * @property block the logic
  *
  */
 class TaLibSignalStrategy(
-    private val history: Int = 15,
     private var block: TaLib.(asset: Asset, series: PriceBarSerie) -> Signal?
 ) : Strategy {
 
@@ -62,8 +59,7 @@ class TaLibSignalStrategy(
          * Breakout strategy that supports different entry and exit periods
          */
         fun breakout(entryPeriod: Int = 100, exitPeriod: Int = 50): TaLibSignalStrategy {
-            val maxPeriod = max(entryPeriod, exitPeriod)
-            return TaLibSignalStrategy(maxPeriod) { asset, series ->
+            return TaLibSignalStrategy() { asset, series ->
                 when {
                     recordHigh(series.high, entryPeriod) -> Signal(asset, Rating.BUY, SignalType.BOTH)
                     recordLow(series.low, entryPeriod) -> Signal(asset, Rating.SELL, SignalType.BOTH)
@@ -80,7 +76,7 @@ class TaLibSignalStrategy(
          */
         fun macd(): TaLibSignalStrategy {
 
-            val strategy = TaLibSignalStrategy(35) { asset, prices ->
+            val strategy = TaLibSignalStrategy() { asset, prices ->
                 val (_, _, diff) = macd(prices, 12, 26, 9)
                 val (_, _, diff2) = macd(prices, 12, 26, 9, 1)
                 when {
@@ -106,10 +102,14 @@ class TaLibSignalStrategy(
         val signals = mutableListOf<Signal>()
         for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSerie(history) }
+            val buffer = buffers.getOrPut(asset) { PriceBarSerie(1) }
             if (buffer.add(priceAction)) {
-                val signal = block.invoke(taLib, asset, buffer)
-                signals.addNotNull(signal)
+                try {
+                    val signal = block.invoke(taLib, asset, buffer)
+                    signals.addNotNull(signal)
+                } catch (ex: InsufficientData) {
+                    buffer.increaseCapacity(ex.minSize)
+                }
             }
         }
         return signals
@@ -125,7 +125,7 @@ class TaLibSignalStrategy(
     /**
      * @suppress
      */
-    override fun toString() = "TaLibSignalStrategy history=$history"
+    override fun toString() = "TaLibSignalStrategy"
 
 }
 
