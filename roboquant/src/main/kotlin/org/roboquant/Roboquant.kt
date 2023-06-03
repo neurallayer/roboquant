@@ -52,7 +52,7 @@ import java.time.Instant
  * @property policy The policy to use, default is [FlexPolicy]
  * @property broker the broker to use, default is [SimBroker]
  * @property logger the metrics logger to use, default is [MemoryLogger]
- * @param channelCapacity the max capacity of the event channel, more capacity means more buffering. Default is 100.
+ * @param channelCapacity the max capacity of the event channel, more capacity means more buffering. Default is 10.
  */
 class Roboquant(
     val strategy: Strategy,
@@ -60,7 +60,7 @@ class Roboquant(
     val policy: Policy = FlexPolicy(),
     val broker: Broker = SimBroker(),
     val logger: MetricsLogger = MemoryLogger(),
-    private val channelCapacity: Int = 100,
+    private val channelCapacity: Int = 10,
 ) {
 
     private var runCounter = -1
