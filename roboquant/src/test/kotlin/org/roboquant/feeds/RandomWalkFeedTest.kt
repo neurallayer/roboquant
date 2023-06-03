@@ -77,6 +77,14 @@ internal class RandomWalkFeedTest {
         assertTrue(tf.isNotEmpty())
     }
 
+    @Test
+    fun toList() {
+        val feed = RandomWalkFeed.lastYears()
+        val list = feed.toList()
+        assertTrue(list.isNotEmpty())
+        assertEquals(list.size, feed.toList().size)
+    }
+
 
     @Test
     fun reproducable() {

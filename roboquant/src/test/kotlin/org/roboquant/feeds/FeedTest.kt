@@ -67,5 +67,14 @@ internal class FeedTest {
         }
     }
 
+    @Test
+    fun toList() {
+        val feed = TestData.feed()
+        val l = feed.toList()
+        assertEquals(98, l.size)
+        val actions = l.map { it.actions }.flatten()
+        assertEquals(98, actions.filterIsInstance<PriceBar>().size)
+    }
+
 
 }

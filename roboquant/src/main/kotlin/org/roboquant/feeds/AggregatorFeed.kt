@@ -22,8 +22,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
 import org.roboquant.common.TimePeriod
+import org.roboquant.common.Timeframe
 import org.roboquant.common.plus
 import java.time.Instant
 import kotlin.collections.set
@@ -47,7 +47,6 @@ import kotlin.math.min
 class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimePeriod) : Feed {
 
     private class Entry(val bar: PriceBar, val expiration: Instant)
-    private val history = mutableMapOf<Asset, Entry>()
 
     /**
      * Provide the timeframe, this can be off (shorter) since upfront it is not known what the actions are that are
@@ -99,6 +98,7 @@ class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimePeriod) 
         }
 
         try {
+            val history = mutableMapOf<Asset, Entry>()
             while (true) {
                 val result = mutableListOf<Action>()
                 val event = c.receive()

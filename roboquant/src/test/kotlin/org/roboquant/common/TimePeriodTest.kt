@@ -49,6 +49,25 @@ internal class TimePeriodTest {
     }
 
     @Test
+    fun toStringTest() {
+        val t = 2.years + 1.months + 1.days - 1.hours + 12.minutes - 30.seconds + 100.millis
+        assertEquals("P2Y1M1D PT-48M-29.9S", t.toString())
+
+        val t2 = 30.seconds
+        assertEquals("P0D PT30S", t2.toString())
+
+        val t3 = 1.days
+        assertEquals("P1D PT0S", t3.toString())
+    }
+
+    @Test
+    fun parsing() {
+        val t = 2.years + 1.months + 1.days - 1.hours + 12.minutes - 30.seconds + 100.millis
+        val t2 = TimePeriod.parse(t.toString())
+        assertEquals(t, t2)
+    }
+
+    @Test
     fun zonedDateTime() {
         val t = Instant.now()
         assertDoesNotThrow {
