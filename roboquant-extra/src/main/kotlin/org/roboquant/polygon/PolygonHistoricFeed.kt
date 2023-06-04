@@ -19,8 +19,7 @@ package org.roboquant.polygon
 
 import io.polygon.kotlin.sdk.rest.AggregatesParameters
 import io.polygon.kotlin.sdk.rest.PolygonRestClient
-import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
+import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.polygon.Polygon.availableAssets
@@ -78,10 +77,17 @@ class PolygonHistoricFeed(
                 )
             )
 
+            val tp = when(timespan) {
+                "day" -> multiplier.days
+                "minute" -> multiplier.minutes
+                "hour" -> multiplier.hours
+                else -> null
+            }
+
             val asset = Asset(symbol)
             for (bar in aggr.results) {
                 val action =
-                    PriceBar(asset, doubleArrayOf(bar.open!!, bar.high!!, bar.low!!, bar.close!!, bar.volume!!))
+                    PriceBar(asset, doubleArrayOf(bar.open!!, bar.high!!, bar.low!!, bar.close!!, bar.volume!!), tp)
                 val time = Instant.ofEpochMilli(bar.timestampMillis!!)
                 add(time, action)
             }

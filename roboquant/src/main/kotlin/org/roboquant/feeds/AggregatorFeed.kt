@@ -58,27 +58,31 @@ class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimePeriod) 
     private operator fun PriceBar.plus(other: PriceBar) : PriceBar {
         val high = max(other.high, high)
         val low = min(other.low, low)
-        return PriceBar(asset, open, high, low, other.close, volume + other.volume)
+        return PriceBar(asset, open, high, low, other.close, volume + other.volume, aggregationPeriod)
     }
 
     private fun getPriceBar(action: Action) : PriceBar? {
         return when (action) {
 
-            is PriceBar -> action
+            is PriceBar -> {
+                with (action) {
+                    PriceBar(action.asset, open, high, low, close, volume, aggregationPeriod)
+                }
+            }
 
             is TradePrice -> {
                 val price = action.price
-                PriceBar(action.asset, price, price, price, price, action.volume)
+                PriceBar(action.asset, price, price, price, price, action.volume, aggregationPeriod)
             }
 
             is PriceQuote -> {
                 val price = action.getPrice("MIDPOINT")
-                PriceBar(action.asset, price, price, price, price, action.volume)
+                PriceBar(action.asset, price, price, price, price, action.volume, aggregationPeriod)
             }
 
             is OrderBook -> {
                 val price = action.getPrice("MIDPOINT")
-                PriceBar(action.asset, price, price, price, price, action.volume)
+                PriceBar(action.asset, price, price, price, price, action.volume, aggregationPeriod)
             }
 
             else -> null
@@ -106,7 +110,7 @@ class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimePeriod) 
                 for (action in event.actions) {
                     val pb = getPriceBar(action)
 
-                    // If we don't recognize it as a supported PriceAction, just directly forward the action
+                    // If we don't recognize it as a supported PriceAction, we just directly propagate the action
                     if (pb == null) {
                         result.add(action)
                         continue

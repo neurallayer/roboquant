@@ -21,6 +21,10 @@ class AggregatorFeedTest {
         assertTrue((items2[1].time.epochSecond - items2[0].time.epochSecond) >= (15*60))
         assertEquals(feed.timeframe, aggFeed.timeframe)
 
+        val pb = items2.first().actions.first()
+        assertTrue(pb is PriceBar)
+        assertEquals(15.minutes, pb.timeSpan)
+
         assertTrue(items1.first().time <= items1.first().time)
         assertTrue(items1.last().time >= items1.last().time)
     }
@@ -54,9 +58,15 @@ class AggregatorFeedTest {
 
         val aggFeed1 = AggregatorFeed(rw, 1.seconds)
         assertEquals(4, aggFeed1.toList().size)
+        val pb1 = aggFeed1.toList().first().actions.first()
+        assertTrue(pb1 is PriceBar)
+        assertEquals(1.seconds, pb1.timeSpan)
 
         val aggFeed2 = AggregatorFeed(rw, 2.seconds)
         assertEquals(2, aggFeed2.toList().size)
+        val pb2 = aggFeed2.toList().first().actions.first()
+        assertTrue(pb2 is PriceBar)
+        assertEquals(2.seconds, pb2.timeSpan)
 
         val feed = CombinedFeed(aggFeed1, aggFeed2)
         val items2 = feed.toList()

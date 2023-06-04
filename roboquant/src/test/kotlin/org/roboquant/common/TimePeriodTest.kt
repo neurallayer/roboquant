@@ -45,19 +45,19 @@ internal class TimePeriodTest {
     fun calc() {
         val t = 2.years - 1.hours + 1.hours
         assertEquals(2.years, t)
-        assertEquals("P2Y PT0S", t.toString())
+        assertEquals("P2YT0S", t.toString())
     }
 
     @Test
     fun toStringTest() {
         val t = 2.years + 1.months + 1.days - 1.hours + 12.minutes - 30.seconds + 100.millis
-        assertEquals("P2Y1M1D PT-48M-29.9S", t.toString())
+        assertEquals("P2Y1M1DT-48M-29.9S", t.toString())
 
         val t2 = 30.seconds
-        assertEquals("P0D PT30S", t2.toString())
+        assertEquals("P0DT30S", t2.toString())
 
         val t3 = 1.days
-        assertEquals("P1D PT0S", t3.toString())
+        assertEquals("P1DT0S", t3.toString())
     }
 
     @Test

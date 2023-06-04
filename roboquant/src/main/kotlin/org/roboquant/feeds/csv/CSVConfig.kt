@@ -82,11 +82,14 @@ data class CSVConfig(
             )
         }
 
-
         /**
          * Returns a CSVConfig suited for parsing MT5 CSV files
          */
-        fun mt5(template: Asset = Asset("TEMPLATE"), priceQuote: Boolean = false) : CSVConfig {
+        fun mt5(
+            template: Asset = Asset("TEMPLATE"),
+            priceQuote: Boolean = false,
+            timeSpan: TimePeriod? = null
+        ): CSVConfig {
 
             fun assetBuilder(file: File): Asset {
                 val symbol = file.name.split('_').first().uppercase()
@@ -98,7 +101,8 @@ data class CSVConfig(
             else
                 DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
 
-            val priceParser = if (priceQuote) PriceQuoteParser(3,2) else PriceBarParser(2,3,4,5,6)
+            val priceParser =
+                if (priceQuote) PriceQuoteParser(3, 2) else PriceBarParser(2, 3, 4, 5, 6, timeSpan = timeSpan)
 
             fun parse(line: List<String>): Instant {
                 val text = line[0] + " " + line[1]
@@ -106,8 +110,8 @@ data class CSVConfig(
                 return dt.toInstant(ZoneOffset.UTC)
             }
 
-            return CSVConfig (
-                assetBuilder = { assetBuilder(it) } ,
+            return CSVConfig(
+                assetBuilder = { assetBuilder(it) },
                 separator = '\t',
                 timeParser = { a, _ -> parse(a) },
                 priceParser = priceParser
@@ -119,8 +123,8 @@ data class CSVConfig(
          * Returns a CSVConfig suited for parsing HistData.com ASCII CSV files
          */
         fun histData(): CSVConfig {
-            val result = CSVConfig (
-                priceParser = PriceBarParser(1,2,3,4),
+            val result = CSVConfig(
+                priceParser = PriceBarParser(1, 2, 3, 4),
                 timeParser = AutoDetectTimeParser(0),
                 separator = ';',
                 hasHeader = false,
@@ -136,14 +140,14 @@ data class CSVConfig(
          * Returns a CSVConfig suited for parsing Yahoo Finance ASCII CSV files
          */
         fun yahoo(template: Asset = Asset("TEMPLATE")): CSVConfig {
-            val result = CSVConfig (
-                priceParser = PriceBarParser(1,2,3,4, autodetect = false),
+            val result = CSVConfig(
+                priceParser = PriceBarParser(1, 2, 3, 4, autodetect = false),
                 timeParser = { columns, _ -> Instant.parse(columns[0]) },
                 separator = ',',
                 hasHeader = true,
                 assetBuilder = { file: File ->
                     val symbol = file.name.split(' ')[0].uppercase()
-                    template.copy(symbol =  symbol)
+                    template.copy(symbol = symbol)
                 }
             )
             return result
@@ -157,9 +161,9 @@ data class CSVConfig(
          */
         fun kraken(): CSVConfig {
             val exchange = Exchange.CRYPTO
-            val result = CSVConfig (
-                priceParser = TradePriceParser(1,2),
-                timeParser =  { columns, _ -> Instant.ofEpochSecond(columns[0].toLong()) },
+            val result = CSVConfig(
+                priceParser = TradePriceParser(1, 2),
+                timeParser = { columns, _ -> Instant.ofEpochSecond(columns[0].toLong()) },
                 hasHeader = false,
                 assetBuilder = { file: File ->
                     val currencyPair = file.nameWithoutExtension.toCurrencyPair()!!
@@ -173,7 +177,6 @@ data class CSVConfig(
             return result
         }
 
-
         /**
          * Read a CSV configuration from a [path]. It will use the standard config as base and merge all the
          * additional settings found in the config file (if any).
@@ -184,7 +187,6 @@ data class CSVConfig(
             result.merge(cfg)
             return result
         }
-
 
         /**
          * Read properties from config file [path] is it exist.

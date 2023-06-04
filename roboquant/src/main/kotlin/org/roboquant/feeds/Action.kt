@@ -18,6 +18,7 @@ package org.roboquant.feeds
 
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
+import org.roboquant.common.TimePeriod
 import org.roboquant.feeds.OrderBook.OrderBookEntry
 import kotlin.math.absoluteValue
 
@@ -81,7 +82,8 @@ interface PriceAction : Action {
  */
 class PriceBar(
     override val asset: Asset,
-    val ohlcv: DoubleArray
+    val ohlcv: DoubleArray,
+    val timeSpan: TimePeriod? = null
 ) : PriceAction {
 
     /**
@@ -93,10 +95,12 @@ class PriceBar(
         high: Number,
         low: Number,
         close: Number,
-        volume: Number = Double.NaN
+        volume: Number = Double.NaN,
+        timeSpan: TimePeriod? = null
     ) : this(
         asset,
-        doubleArrayOf(open.toDouble(), high.toDouble(), low.toDouble(), close.toDouble(), volume.toDouble())
+        doubleArrayOf(open.toDouble(), high.toDouble(), low.toDouble(), close.toDouble(), volume.toDouble()),
+        timeSpan
     )
 
     /**

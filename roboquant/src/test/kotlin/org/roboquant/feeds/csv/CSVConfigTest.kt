@@ -19,10 +19,8 @@ package org.roboquant.feeds.csv
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
-import org.roboquant.common.Asset
-import org.roboquant.common.NoTradingException
-import org.roboquant.common.Timeframe
-import org.roboquant.common.div
+import org.roboquant.common.*
+import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.toList
 import java.io.File
 import kotlin.test.Test
@@ -91,12 +89,16 @@ internal class CSVConfigTest {
 
     @Test
     fun mt5PriceBar() {
-        val config = CSVConfig.mt5()
+        val config = CSVConfig.mt5(timeSpan = 1.minutes)
         val feed = CSVFeed(TestData.dataDir() / "MT5/TEST_M1.csv", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(16, feed.timeline.size)
         assertEquals("TEST", feed.assets.first().symbol)
         assertEquals(Timeframe.parse("2023-01-03T16:00:00Z", "2023-01-05T17:00:00Z").toInclusive(), feed.timeframe)
+
+        val pb = feed.toList().first().actions.first()
+        assertTrue(pb is PriceBar)
+        assertEquals(1.minutes, pb.timeSpan)
     }
 
     @Test
