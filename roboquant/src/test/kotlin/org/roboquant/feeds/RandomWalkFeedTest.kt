@@ -20,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
+import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.play
 import java.time.Instant
 import java.time.ZoneId
@@ -114,11 +115,14 @@ internal class RandomWalkFeedTest {
 
     @Test
     fun validate() {
-        val feed = RandomWalkFeed.lastYears()
-        val errors = feed.validate()
+        val feed = HistoricTestFeed(90..110)
+
+        // within 2% range
+        val errors = feed.validate(maxDiff = 0.02)
         assertTrue(errors.isEmpty())
 
-        val errors2 = feed.validate(maxDiff = 0.000001)
+        // within 0.5% range
+        val errors2 = feed.validate(maxDiff = 0.005)
         assertFalse(errors2.isEmpty())
     }
 }

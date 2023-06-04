@@ -25,6 +25,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.common.USD
 import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
@@ -56,12 +57,19 @@ object TestData {
         return account.toAccount()
     }
 
+
     val data by lazy {
-        val feed = RandomWalkFeed.lastYears()
+        val feed = HistoricTestFeed(50..150)
         val rq = Roboquant(TestStrategy(), AccountMetric(), logger = MemoryLogger(false))
         rq.run(feed, name = "run1")
         rq.run(feed, name = "run2")
         rq.logger.getMetric("account.equity")
+    }
+
+    fun loadFile(name: String): String {
+        val classloader = Thread.currentThread().contextClassLoader
+        val bytes = classloader.getResourceAsStream(name)!!.readAllBytes()
+        return String(bytes)
     }
 
 }

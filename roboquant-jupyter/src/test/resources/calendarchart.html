@@ -1,0 +1,29 @@
+        <html>
+            <head>
+                <script type='text/javascript' src='https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@bdd685c1b4ab63b94b82a5ed2fc664c4b6450460/echarts.min.js?version=bdd685c1b4ab63b94b82a5ed2fc664c4b6450460'></script>
+                <style type='text/css' media='screen'>
+                    html { margin: 0px; padding: 0px; min-height: 100px;}
+                    body { margin: 0px; padding: 10px; min-height: 100px;}
+                </style>
+            </head>
+            <body>
+                <div style="width:100%;height:100px;" class="rqcharts" id="roboquant-0">
+    <script type="text/javascript">
+        (function () {
+            let parentElem = document.currentScript.parentElement;
+            if (parentElem.tagName == "HEAD") {
+                parentElem = document.getElementById("roboquant-0");
+            }
+            console.log("registered new chart");
+            let option = {"backgroundColor":"rgba(0,0,0,0)","useUTC":true,"title":{},"grid":{"right":"3%","left":"3%","containLabel":true},"calendar":[],"toolbox":{"feature":{"saveAsImage":{},"restore":{},"dataView":{"readOnly":true}}},"tooltip":{"formatter":"var f \u003d echarts.format.formatTime(\u0027yyyy-MM-dd\u0027, p.data[0]);return f + \u0027: \u0027 + p.data[1];","position":"top"},"visualMap":{"top":"top","left":"center","min":-1,"max":1,"orient":"horizontal","color":["#0C0","#CC0","#C00"],"calculable":true},"series":[]};option.tooltip.formatter = new Function('p', option.tooltip.formatter);
+            window.call_echarts(
+                function () {
+                    console.log("rendering chart");
+                    window.renderEChart(parentElem, option);
+                }
+            );
+        })()
+    </script>
+</div>
+            </body>
+        </html>

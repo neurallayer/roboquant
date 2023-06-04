@@ -205,6 +205,7 @@ fun Feed.toList(
 fun Feed.validate(
     timeframe: Timeframe = Timeframe.INFINITE,
     maxDiff: Double = 0.5,
+    priceType: String = "DEFAULT"
 ): List<Pair<Instant, PriceAction>> = runBlocking {
 
     val channel = EventChannel(timeframe = timeframe)
@@ -221,7 +222,7 @@ fun Feed.validate(
         while (true) {
             val o = channel.receive()
             for ((asset, priceAction) in o.prices) {
-                val price = priceAction.getPrice()
+                val price = priceAction.getPrice(priceType)
                 val prev = lastPrices[asset]
                 if (prev != null) {
                     val diff = (price - prev) / prev

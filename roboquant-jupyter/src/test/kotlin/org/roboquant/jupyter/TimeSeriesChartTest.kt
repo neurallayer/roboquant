@@ -18,6 +18,7 @@ package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class TimeSeriesChartTest {
@@ -26,6 +27,7 @@ internal class TimeSeriesChartTest {
     @Test
     fun test() {
         val data = TestData.data
+
         val chart = TimeSeriesChart(data)
 
         assertDoesNotThrow {
@@ -33,6 +35,11 @@ internal class TimeSeriesChartTest {
         }
 
         assertTrue(chart.asHTML().isNotBlank())
+
+        Chart.counter = 0
+        val str = TestData.loadFile("timeserieschart.html")
+        assertEquals(str, chart.asHTMLPage())
+
     }
 
 

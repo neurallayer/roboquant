@@ -17,15 +17,13 @@
 package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
-import org.roboquant.loggers.MemoryLogger
 import kotlin.test.assertTrue
 
 internal class HistogramChartTest {
 
     @Test
     fun test() {
-        val logger = MemoryLogger()
-        val data = logger.getMetric("test")
+        val data = TestData.data
         val chart = HistogramChart(data)
         assertTrue(chart.asHTML().isNotBlank())
     }
