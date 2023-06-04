@@ -221,7 +221,7 @@ abstract class Chart : HTMLOutput() {
             <script type="text/javascript">
                 (function () {
                     let parentElem = document.currentScript.parentElement;
-                    if (parentElem.tagName == "HEAD") {
+                    if (parentElem.tagName === "HEAD") {
                         parentElem = document.getElementById("$id");
                     }
                     console.log("registered new chart");
@@ -247,12 +247,13 @@ abstract class Chart : HTMLOutput() {
         val script = getScript()
 
         return """
-        <html>
+        <html lang="en">
             <head>
+                <title>roboquant chart</title>
                 $script
-                <style type='text/css' media='screen'>
-                    html { margin: 0px; padding: 0px; min-height: ${height}px;}
-                    body { margin: 0px; padding: 10px; min-height: ${height}px;}
+                <style media='screen'>
+                    html { margin: 0; padding: 0; min-height: ${height}px;}
+                    body { margin: 0; padding: 10px; min-height: ${height}px;}
                 </style>
             </head>
             <body>

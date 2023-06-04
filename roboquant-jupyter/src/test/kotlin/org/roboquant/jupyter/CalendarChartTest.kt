@@ -17,7 +17,6 @@
 package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
-import org.roboquant.loggers.MemoryLogger
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -25,9 +24,7 @@ internal class CalendarChartTest {
 
     @Test
     fun test() {
-        val logger = MemoryLogger()
-        val data = logger.getMetric("test")
-
+        val data = TestData.data
         val chart = CalendarChart(data)
         assertTrue(chart.asHTML().isNotBlank())
 

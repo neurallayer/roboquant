@@ -1,9 +1,10 @@
-        <html>
+        <html lang="en">
             <head>
+                <title>roboquant chart</title>
                 <script type='text/javascript' src='https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@bdd685c1b4ab63b94b82a5ed2fc664c4b6450460/echarts.min.js?version=bdd685c1b4ab63b94b82a5ed2fc664c4b6450460'></script>
-                <style type='text/css' media='screen'>
-                    html { margin: 0px; padding: 0px; min-height: 500px;}
-                    body { margin: 0px; padding: 10px; min-height: 500px;}
+                <style media='screen'>
+                    html { margin: 0; padding: 0; min-height: 500px;}
+                    body { margin: 0; padding: 10px; min-height: 500px;}
                 </style>
             </head>
             <body>
@@ -11,7 +12,7 @@
     <script type="text/javascript">
         (function () {
             let parentElem = document.currentScript.parentElement;
-            if (parentElem.tagName == "HEAD") {
+            if (parentElem.tagName === "HEAD") {
                 parentElem = document.getElementById("roboquant-0");
             }
             console.log("registered new chart");
