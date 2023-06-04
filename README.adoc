@@ -133,7 +133,7 @@ See also https://roboquant.org/background/features.html[Features] for a more ext
 Roboquant is distributed under the link:/LICENSE[Apache 2.0 License]. The Apache 2.0 license is a permissive license, meaning there are few restrictions on the use of the code.
 
 == Thanks
-Besides all the link:docs/THIRDPARTY.adoc[great open source software] that is powering _roboquant_, also special thanks to JetBrains for making a https://www.jetbrains.com/community/opensource/[license] available of *IntelliJ IDEA*.
+Besides all the link:docs/THIRDPARTY.adoc[great open source software] that is powering _roboquant_, also special thanks to JetBrains for making a https://www.jetbrains.com/community/opensource/[license] available for *IntelliJ IDEA*.
 
 image:https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png[JetBrains,100,100]
 

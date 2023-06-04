@@ -4,7 +4,7 @@
 
 There are still many features planned for _roboquant_. For sure, the lists on this page are also not complete and new features will pop up over time. Prioritization might shift based also based on community input and contribution.
 
-But at least it gives insight into the current planning when to add certain features. And of course PRs are very welcome and might very well expedite certain features. 
+But at least it gives insight into the current planning when to add certain features. And of course, PRs are very welcome and might very well expedite certain features.
 
 See also the link:CONTRIBUTING.adoc[contributing] page on how to submit a PR.
 
@@ -20,7 +20,7 @@ Version 0.8 is all about making sure that (back-)testing works, and the most com
 * [x] Add documentation on how to install and get started
 * [x] Support for advanced order types
 * [x] Add info on key design concepts behind the software, so it becomes easier to contribute
-* [x] Bring back Interactive Brokers integration. The code was already developed, but due to license restrictions, the TwsApi.jar file could not be included with roboquant.
+* [x] Bring back Interactive Brokers integration
 * [x] See how to best fit crypto trading with current account structure
 
 == Version 0.9.x (2022)

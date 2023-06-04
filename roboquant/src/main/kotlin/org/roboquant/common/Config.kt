@@ -31,8 +31,8 @@ import kotlin.random.Random
  * The configuration for roboquant that contains access to environment properties and has several global properties
  * that can be set:
  *
- * - exchange rates [exchangeRates]
- * - [random] number generator
+ * - The exchange rates [exchangeRates]
+ * - The [random] number generator
  *
  */
 object Config {
@@ -138,13 +138,13 @@ object Config {
     }
 
     /**
-     * Get property value. Tries to find the property in the following order
+     * Get a property value. It will try to find the property in the following order:
      *
      *  0. Properties set using [Config.setProperty]
      *  1. System properties (java -D syntax)
      *  2. Environment variables set by the OS
-     *  3. "dotenv" or ".env" property file in the current working directory
-     *  4. ".env" property file in roboquant home directory ($USER/.roboquant)
+     *  3. A "dotenv" or ".env" property file in the current working directory
+     *  4. The ".env" property file in roboquant home directory ($USER/.roboquant)
      *
      * If nothing is found, it will return the default value or if that is not provided null.
      * Results are not cached, so any changes made to a file are picked immediately.

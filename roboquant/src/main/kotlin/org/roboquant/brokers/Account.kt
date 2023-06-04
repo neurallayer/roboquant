@@ -27,12 +27,12 @@ import java.time.temporal.ChronoUnit
  * An account represents a brokerage trading account and is unified across all broker implementations.
  * This is an immutable class, and it holds the following state:
  *
- * - buying power
- * - base currency
- * - [cash] balances in the account
- * - [positions] with its assets
- * - past [trades]
- * - [openOrders] and [closedOrders] state
+ * - The buying power
+ * - The base currency
+ * - All the [cash] balances in the account
+ * - All the open [positions] with its assets
+ * - The past [trades]
+ * - The [openOrders] and [closedOrders] state
  *
  * Some convenience methods convert a multi-currency Wallet to a single-currency Amount.
  * For this to work, you'll

@@ -25,10 +25,10 @@ import org.roboquant.common.Amount
 /**
  * An account model that supports trading with margin. The buying power is calculated using the following steps:
  *
- *      1. long value = long positions * maintenance margin long
- *      2. short value = short positions * maintenance margin short
- *      3. excess margin = equity - long value - short value - minimum equity
- *      4. buying power = excess margin * ( 1 / initial margin)
+ *      1. Long value = long positions * maintenance margin long
+ *      2. Short value = short positions * maintenance margin short
+ *      3. Excess margin = equity - long value - short value - minimum equity
+ *      4. Buying power = excess margin * ( 1 / initial margin)
  *
  * Note: currently open orders are not taken into consideration when calculating the total buying power.
  *

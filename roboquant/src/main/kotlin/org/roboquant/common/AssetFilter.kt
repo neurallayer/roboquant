@@ -67,7 +67,7 @@ fun interface AssetFilter {
 
         /**
          * Exclude the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive,
-         * and all special characters are translated into a '.' character before comparing.
+         * and all special characters are translated into a dot character before comparing.
          */
         fun excludeSymbols(vararg symbols: String): AssetFilter {
             val set = symbols.map { it.standardize() }.toSet()

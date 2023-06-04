@@ -129,7 +129,7 @@ class InternalAccount(var baseCurrency: Currency) {
         if (newState.open) {
             openOrders[id] = newState
         } else {
-            // order is closed, so remove it from the open orders
+            // The order is closed, so remove it from the open orders
             openOrders.remove(id) ?: throw UnsupportedException("cannot close an order that was not open first")
             closedOrders.add(newState)
         }

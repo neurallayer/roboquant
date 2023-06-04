@@ -8,7 +8,7 @@ The flow of data between the components is as follows:
 
 It is the Roboquant that orchestrates and coordinates this flow of data. 
 
-The core module doesn't contain the integration with 3rd party data providers and brokers. For this see the 
+The core module doesn't contain the integration with 3rd party data providers and brokers. For this, see the 
 roboquant-extra and roboquant-crypto modules.
 
 # Package org.roboquant.feeds
@@ -25,7 +25,7 @@ If you want to use other feeds, have a look at the roboquant-extra and roboquant
 
 # Package org.roboquant.strategies
 
-Strategies contain the logic that interpreted the events in a feed and generates zero or more Signal. So a strategy
+Strategies contain the logic that interpreted the events in a feed and generates zero or more signals. So a strategy
 doesn't directly generate an Order (that is left to a Policy).
 
 

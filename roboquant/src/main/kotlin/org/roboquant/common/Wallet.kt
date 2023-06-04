@@ -217,7 +217,7 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
     private fun toAmounts(): List<Amount> = data.map { Amount(it.key, it.value) }
 
     /**
-     * Returns a map of the amounts hold where the key is the [Currency] and the value is the amount.
+     * Returns a map where the key is the [Currency] and the value is the amount.
      */
     fun toMap(): Map<Currency, Double> = data.toMap()
 
