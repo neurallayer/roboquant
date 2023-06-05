@@ -48,7 +48,7 @@ interface HistoricFeed : AssetFeed {
     /**
      * Split the timeframe of this feed in number of timeframes of equal [period].
      */
-    fun split(period: TimePeriod, overlap: TimePeriod = 0.days) = timeframe.split(period, overlap)
+    fun split(period: TimeSpan, overlap: TimeSpan = 0.days) = timeframe.split(period, overlap)
 
     /**
      * Split the timeline of the feed in number of timeframes equal [size].

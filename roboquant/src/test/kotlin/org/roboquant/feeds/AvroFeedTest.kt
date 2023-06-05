@@ -27,6 +27,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.AssetSerializer.deserialize
 import org.roboquant.feeds.AssetSerializer.serialize
+import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.play
 import java.io.File
 import java.time.Instant
@@ -53,7 +54,6 @@ class AvroFeedTest {
         @TempDir
         lateinit var folder: File
 
-        // private val folder = TemporaryFolder()
         private lateinit var fileName: String
         private var size: Int = 0
         private const val nAssets = 2
@@ -65,7 +65,7 @@ class AvroFeedTest {
         fileName = File(folder, "test.avro").path
         val feed = TestData.feed
         assets.addAll(feed.assets)
-        size = feed.timeline.size
+        size = feed.toList().size
         AvroFeed.record(feed, fileName)
         assertTrue(File(fileName).isFile)
     }
@@ -150,32 +150,74 @@ class AvroFeedTest {
     @Test
     fun append() {
         val now = Instant.now()
-        val past = Timeframe(now - 2.years, now - 1.years).toTimeline(1.days)
-        val feed = RandomWalkFeed(past)
+        val past = Timeframe(now - 2.years, now - 1.years)
+        val feed = RandomWalkFeed(past, 1.days)
         val fileName = File(folder, "test2.avro").path
 
         AvroFeed.record(feed, fileName, compression = true)
         var avroFeed = AvroFeed(fileName)
         assertEquals(feed.assets, avroFeed.assets)
 
-        val past2 = Timeframe(now - 1.years, now).toTimeline(1.days)
-        val feed2 = RandomWalkFeed(past2)
+        val past2 = Timeframe(now - 1.years, now)
+        val feed2 = RandomWalkFeed(past2, 1.days)
         AvroFeed.record(feed2, fileName, append = true)
         avroFeed = AvroFeed(fileName)
         assertEquals(feed.assets + feed2.assets, avroFeed.assets)
     }
 
     @Test
-    fun predefined() {
+    fun timeSpan() {
+        val feed = HistoricTestFeed(priceBar = true)
+        val pb = feed.toList().first().actions.first()
+        assertTrue(pb is PriceBar)
+        assertEquals(1.days, pb.timeSpan)
+
+        val fileName = File(folder, "test_timespan.avro").path
+        AvroFeed.record(feed, fileName, compression = true)
+
+        val avroFeed = AvroFeed(fileName)
+        val pb2 = avroFeed.toList().first().actions.first()
+        assertTrue(pb2 is PriceBar)
+        assertEquals(1.days, pb2.timeSpan)
+    }
+
+    @Test
+    fun predefinedSP500() {
         val feed = AvroFeed.sp500()
         assertTrue(feed.assets.size >= 490)
         assertTrue(feed.timeframe.start >= Instant.parse("2016-01-01T00:00:00Z"))
         assertContains(feed.assets.symbols, "AAPL")
-
-        val feed2 = AvroFeed.sp500Quotes()
-        assertTrue(feed2.assets.size >= 490)
-        assertContains(feed2.assets.symbols, "AAPL")
+        assertDoesNotThrow {
+            var found = false
+            feed.filter<PriceBar> { found=true;false }
+            assertTrue(found)
+        }
     }
+
+    @Test
+    fun predefinedQuotes() {
+        val feed = AvroFeed.sp500Quotes()
+        assertTrue(feed.assets.size >= 490)
+        assertContains(feed.assets.symbols, "AAPL")
+        assertDoesNotThrow {
+            var found = false
+            feed.filter<PriceQuote> { found=true;false }
+            assertTrue(found)
+        }
+    }
+
+    @Test
+    fun predefinedForex() {
+        val feed = AvroFeed.forex()
+        assertEquals(1, feed.assets.size)
+        assertContains(feed.assets.symbols, "EUR_USD")
+        assertDoesNotThrow {
+            var found = false
+            feed.filter<PriceBar> { found=true;false }
+            assertTrue(found)
+        }
+    }
+
 
     @Test
     fun loadFromGithub() {

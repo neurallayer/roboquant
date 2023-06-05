@@ -33,11 +33,11 @@ internal class HistoricFeedTest {
 
     @Test
     fun test() {
-        val feed: HistoricFeed = RandomWalkFeed.lastYears()
-        val tfs = feed.split(1.months)
+        val feed = RandomWalkFeed.lastYears()
+        val tfs = feed.timeframe.split(1.months)
         assertEquals(12, tfs.size)
         assertEquals(10, feed.assets.size)
-        assertFalse(feed.timeline.isEmpty())
+        assertFalse(feed.toList().isEmpty())
 
         val s = feed.assets.first().symbol
         assertEquals(s, feed.assets.getBySymbol(s).symbol)

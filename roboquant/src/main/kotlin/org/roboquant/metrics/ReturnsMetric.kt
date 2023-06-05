@@ -19,7 +19,7 @@ package org.roboquant.metrics
 import org.hipparchus.stat.descriptive.DescriptiveStatistics
 import org.roboquant.brokers.Account
 import org.roboquant.common.Timeframe
-import org.roboquant.common.TimePeriod
+import org.roboquant.common.TimeSpan
 import org.roboquant.common.plus
 import org.roboquant.common.years
 import org.roboquant.feeds.Event
@@ -50,7 +50,7 @@ private const val EPS = 0.0000000001
 class ReturnsMetric(
     private val riskFreeRate: Double = 0.0,
     private val minPeriods: Int = 2,
-    private val period: TimePeriod = 1.years,
+    private val period: TimeSpan = 1.years,
     private val annualize: Boolean = true
 ) : Metric {
 

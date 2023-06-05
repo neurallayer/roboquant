@@ -22,7 +22,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import org.roboquant.common.Asset
-import org.roboquant.common.TimePeriod
+import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.common.plus
 import java.time.Instant
@@ -44,7 +44,7 @@ import kotlin.math.min
  * @property feed the feed to use that has the prices that need to be aggregated
  * @property aggregationPeriod the aggregation period, for example `15.minutes`
  */
-class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimePeriod) : Feed {
+class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimeSpan) : Feed {
 
     private class Entry(val bar: PriceBar, val expiration: Instant)
 

@@ -34,7 +34,8 @@ import java.util.*
  * future movement. In short, random walk theory proclaims that stocks take a random and unpredictable path that makes
  * all methods of predicting stock prices futile in the long run.
  *
- * @property timeline the timeline of this random walk.
+ * @property timeframe the timeframe of this random walk
+ * @property timeSpan the timeSpan between two events
  * @param nAssets the number of assets to generate, symbol names will be ASSET1, ASSET2, ..., ASSET<N>. Default is 10.
  * @property generateBars should PriceBars be generated or plain TradePrice, default is true
  * @property volumeRange what is the volume range, default = 1000
@@ -43,7 +44,8 @@ import java.util.*
  * @property seed seed to use for initializing the random generator, default is 42
  */
 class RandomWalkFeed(
-    override val timeline: Timeline,
+    override val timeframe: Timeframe,
+    private val timeSpan : TimeSpan = 1.days,
     nAssets: Int = 10,
     private val generateBars: Boolean = true,
     private val volumeRange: Int = 1000,
@@ -54,8 +56,19 @@ class RandomWalkFeed(
 
     override val assets = 1.rangeTo(nAssets).map { template.copy(symbol = "ASSET$it") }.toSortedSet()
 
+    override val timeline: Timeline
+        get() {
+            val result = mutableListOf<Instant>()
+            var time = timeframe.start
+            while (timeframe.contains(time)) {
+                result.add(time)
+                time += timeSpan
+            }
+            return result
+        }
+
     init {
-        logger.debug { "assets=$nAssets events=${timeline.size} timeframe=$timeframe" }
+        logger.debug { "assets=$nAssets timeframe=$timeframe" }
     }
 
     private fun SplittableRandom.firstPrice(): Double = nextDouble(50.0, 150.0)
@@ -70,9 +83,9 @@ class RandomWalkFeed(
         v.sort()
         val volume = nextInt(volumeRange, volumeRange * 2)
         return if (nextBoolean()) {
-            PriceBar(asset, v[1], v[3], v[0], v[2], volume)
+            PriceBar(asset, v[1], v[3], v[0], v[2], volume, timeSpan)
         } else {
-            PriceBar(asset, v[2], v[3], v[0], v[1], volume)
+            PriceBar(asset, v[2], v[3], v[0], v[1], volume, timeSpan)
         }
     }
 
@@ -87,7 +100,8 @@ class RandomWalkFeed(
     override suspend fun play(channel: EventChannel) {
         val prices = mutableMapOf<Asset, Double>()
         val random = SplittableRandom(seed.toLong())
-        for (time in timeline) {
+        var time = timeframe.start
+        while (timeframe.contains(time)) {
             val actions = mutableListOf<PriceAction>()
             for (asset in assets) {
                 val lastPrice = prices[asset]
@@ -99,6 +113,7 @@ class RandomWalkFeed(
             }
             val event = Event(actions, time)
             channel.send(event)
+            time += timeSpan
         }
     }
 
@@ -114,8 +129,8 @@ class RandomWalkFeed(
          */
         fun lastYears(years: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalkFeed {
             val lastYear = LocalDate.now().year
-            val timeline = Timeframe.fromYears(lastYear - years, lastYear).toTimeline(1.days)
-            return RandomWalkFeed(timeline, nAssets, generateBars)
+            val tf = Timeframe.fromYears(lastYear - years, lastYear)
+            return RandomWalkFeed(tf, 1.days, nAssets, generateBars)
         }
 
         /**
@@ -124,8 +139,8 @@ class RandomWalkFeed(
         fun lastDays(days: Int = 1, nAssets: Int = 10): RandomWalkFeed {
             val last = Instant.now()
             val first = last - days.days
-            val timeline = Timeframe(first, last).toTimeline(1.minutes)
-            return RandomWalkFeed(timeline, nAssets)
+            val tf = Timeframe(first, last)
+            return RandomWalkFeed(tf, 1.minutes, nAssets)
         }
     }
 

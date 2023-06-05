@@ -32,8 +32,8 @@ class AggregatorFeedTest {
     @Test
     fun basic2() {
         // 5-seconds window with 1 millis resolution
-        val timeline = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z").toTimeline(1.millis)
-        val feed = RandomWalkFeed(timeline, generateBars = false)
+        val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
+        val feed = RandomWalkFeed(timeframe, 1.millis, generateBars = false)
         val items1 = feed.toList()
 
         val aggFeed = AggregatorFeed(feed, 1.seconds)
@@ -52,8 +52,8 @@ class AggregatorFeedTest {
     @Test
     fun combined() {
         // 5-seconds window with 1 millis resolution
-        val timeline = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z").toTimeline(1.millis)
-        val rw = RandomWalkFeed(timeline, generateBars = false)
+        val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
+        val rw = RandomWalkFeed(timeframe,1.millis, generateBars = false)
         val items1 = rw.toList()
 
         val aggFeed1 = AggregatorFeed(rw, 1.seconds)

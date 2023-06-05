@@ -23,7 +23,6 @@ import org.roboquant.common.days
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.play
 import java.time.Instant
-import java.time.ZoneId
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
@@ -41,7 +40,7 @@ internal class RandomWalkFeedTest {
             now = step.time
             cnt++
         }
-        assertEquals(feed.timeline.size, cnt)
+        assertEquals(feed.toList().size, cnt)
         assertEquals(feed.assets.size, 20)
     }
 
@@ -51,32 +50,19 @@ internal class RandomWalkFeedTest {
         val event = play(feed).receive()
         assertTrue(event.actions.first() is TradePrice)
 
-        val tl = Timeframe.fromYears(2010, 2012).toTimeline(1.days)
+        val tl = Timeframe.fromYears(2010, 2012)
         val feed2 = RandomWalkFeed(tl, generateBars = true)
         val item2 = play(feed2).receive()
-        assertEquals(tl, feed2.timeline)
         assertTrue(item2.actions.first() is PriceBar)
     }
 
     @Test
     fun historic() {
         val feed = RandomWalkFeed.lastYears()
-        val tf = feed.split(100)
-        assertTrue(tf.isNotEmpty())
-
-        val tf2 = feed.split(50.days)
+        val tf2 = feed.timeframe.split(50.days)
         assertTrue(tf2.isNotEmpty())
-
-        val tf3 = feed.sample(10).first()
-        assertFalse(tf3.isSingleDay(ZoneId.of("UTC")))
     }
 
-    @Test
-    fun historic2() {
-        val feed = RandomWalkFeed.lastDays(5)
-        val tf = feed.split(100)
-        assertTrue(tf.isNotEmpty())
-    }
 
     @Test
     fun toList() {
@@ -89,7 +75,7 @@ internal class RandomWalkFeedTest {
 
     @Test
     fun reproducable() {
-        val timeline = Timeframe.fromYears(2000, 2001).toTimeline(1.days)
+        val timeline = Timeframe.fromYears(2000, 2001)
         val feed1 = RandomWalkFeed(timeline, seed = 10)
         val feed2 = RandomWalkFeed(timeline, seed = 10)
         val feed3 = RandomWalkFeed(timeline, seed = 11)

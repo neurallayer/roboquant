@@ -17,7 +17,7 @@
 package org.roboquant.feeds.csv
 
 import org.roboquant.common.Asset
-import org.roboquant.common.TimePeriod
+import org.roboquant.common.TimeSpan
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceQuote
@@ -53,7 +53,7 @@ class PriceBarParser(
     private var adjustedClose: Int = -1,
     private var priceAdjust: Boolean = false,
     private var autodetect : Boolean = true,
-    private var timeSpan: TimePeriod? = null
+    private var timeSpan: TimeSpan? = null
 ) : PriceParser {
 
     private fun validate() {

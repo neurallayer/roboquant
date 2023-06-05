@@ -64,7 +64,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
     constructor(path: String) : this(Path.of(path))
 
     /**
-     * Contains mapping of JSON string to Asset
+     * Contains mapping of an Avro UTF8 string to an Asset
      */
     private val assetLookup = mutableMapOf<Utf8, Asset>()
 
@@ -148,14 +148,20 @@ class AvroFeed(private val path: Path) : AssetFeed {
     /**
      * Convert a generic Avro record to a [PriceAction]
      */
-    private fun recToPriceAction(rec: GenericRecord): PriceAction {
+    private fun recToPriceAction(rec: GenericRecord, serializer: PriceActionSerializer): PriceAction {
         val assetStr = rec.get(1) as Utf8
         val asset = assetLookup.getValue(assetStr)
         val actionType = rec.get(2) as Int
 
         @Suppress("UNCHECKED_CAST")
         val values = rec.get(3) as List<Double>
-        return PriceActionSerializer.deserialize(asset, actionType, values)
+
+        return if (rec.hasField("other")) {
+            val other = rec.get("other") as Utf8?
+            serializer.deserialize(asset, actionType, values, other?.toString())
+        } else {
+            serializer.deserialize(asset, actionType, values, null)
+        }
     }
 
     /**
@@ -167,8 +173,8 @@ class AvroFeed(private val path: Path) : AssetFeed {
     override suspend fun play(channel: EventChannel) {
         val timeframe = channel.timeframe
         var last = Instant.MIN
-        var actions = HashMap<Asset, PriceAction>()
-        // var actions = ArrayList<PriceAction>()
+        var actions = ArrayList<PriceAction>()
+        val serializer = PriceActionSerializer()
 
         getReader().use {
             position(it, timeframe.start)
@@ -183,15 +189,13 @@ class AvroFeed(private val path: Path) : AssetFeed {
                 if (now != last) {
                     if (actions.isNotEmpty()) channel.send(Event(actions, last))
                     last = now
-                    actions = HashMap<Asset, PriceAction>(actions.size.coerceAtLeast(16))
-                    // actions = ArrayList<PriceAction>(actions.size)
+                    actions = ArrayList<PriceAction>(actions.size)
                 }
 
                 if (now > timeframe) break
 
-                val action = recToPriceAction(rec)
-                actions[action.asset] = action
-                // actions.add(action)
+                val action = recToPriceAction(rec, serializer)
+                actions.add(action)
             }
             if (actions.isNotEmpty()) channel.send(Event(actions, last))
         }
@@ -267,7 +271,8 @@ class AvroFeed(private val path: Path) : AssetFeed {
                  {"name": "time", "type": "long"},
                  {"name": "asset", "type": "string"},
                  {"name": "type", "type": "int"},
-                 {"name": "values",  "type": {"type": "array", "items" : "double"}}
+                 {"name": "values",  "type": {"type": "array", "items" : "double"}},
+                 {"name": "other", "type": ["null", "string"], "default": null}
              ] 
             }  
             """
@@ -313,6 +318,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
             try {
                 val cache = mutableMapOf<Asset, String>()
                 val record = GenericData.Record(schema)
+                val serializer = PriceActionSerializer()
                 while (true) {
                     val event = channel.receive()
                     val now = event.time.toEpochMilli()
@@ -323,12 +329,14 @@ class AvroFeed(private val path: Path) : AssetFeed {
                         record.put(0, now)
                         record.put(1, assetStr)
 
-                        val (idx, values) = PriceActionSerializer.serialize(action)
-                        record.put(2, idx)
+                        val serialization = serializer.serialize(action)
+                        record.put(2, serialization.type)
 
-                        val arr = GenericData.Array<Double>(values.size, arraySchema)
-                        arr.addAll(values)
+                        val arr = GenericData.Array<Double>(serialization.values.size, arraySchema)
+                        arr.addAll(serialization.values)
                         record.put(3, arr)
+
+                        record.put(4, serialization.other)
                         dataFileWriter.append(record)
                     }
 
@@ -400,36 +408,53 @@ internal object AssetSerializer {
     }
 }
 
+
 /**
  * Used by AvroFeed to serialize and deserialize [PriceAction] to a DoubleArray, so it can be stored in an Avro file.
  */
-internal object PriceActionSerializer {
+internal class PriceActionSerializer {
 
-    private const val PRICEBAR_IDX = 1
-    private const val TRADEPRICE_IDX = 2
-    private const val PRICEQUOTE_IDX = 3
-    private const val ORDERBOOK_IDX = 4
+    internal class Serialization(val type: Int, val values: List<Double>, val other: String? = null)
 
-    fun serialize(action: PriceAction): Pair<Int, List<Double>> {
+    private val timeSpans = mutableMapOf<String, TimeSpan>()
+
+    private companion object {
+        private const val PRICEBAR_IDX = 1
+        private const val TRADEPRICE_IDX = 2
+        private const val PRICEQUOTE_IDX = 3
+        private const val ORDERBOOK_IDX = 4
+    }
+
+    fun serialize(action: PriceAction): Serialization {
         return when (action) {
-            is PriceBar -> Pair(PRICEBAR_IDX, action.ohlcv.toList())
-            is TradePrice -> Pair(TRADEPRICE_IDX, listOf(action.price, action.volume))
-            is PriceQuote -> Pair(
+            is PriceBar -> Serialization(PRICEBAR_IDX, action.ohlcv.toList(), action.timeSpan?.toString())
+            is TradePrice -> Serialization(TRADEPRICE_IDX, listOf(action.price, action.volume))
+            is PriceQuote -> Serialization(
                 PRICEQUOTE_IDX,
                 listOf(action.askPrice, action.askSize, action.bidPrice, action.bidSize)
             )
 
-            is OrderBook -> Pair(ORDERBOOK_IDX, orderBookToValues(action))
+            is OrderBook -> Serialization(ORDERBOOK_IDX, orderBookToValues(action))
             else -> throw UnsupportedException("cannot serialize action=$action")
         }
     }
 
-    fun deserialize(asset: Asset, idx: Int, values: List<Double>): PriceAction {
+
+    private fun getPriceBar(asset: Asset, values: DoubleArray, other: String?): PriceBar {
+        val timeSpan =  if (other != null) {
+            timeSpans.getOrPut(other) {TimeSpan.parse(other)}
+        } else {
+            null
+        }
+        return PriceBar(asset, values, timeSpan)
+    }
+
+    fun deserialize(asset: Asset, idx: Int, values: List<Double>, other: String?): PriceAction {
         return when (idx) {
-            PRICEBAR_IDX -> PriceBar(asset, values.toDoubleArray())
+            PRICEBAR_IDX -> getPriceBar(asset, values.toDoubleArray(), other)
             TRADEPRICE_IDX -> TradePrice(asset, values[0], values[1])
             PRICEQUOTE_IDX -> PriceQuote(asset, values[0], values[1], values[2], values[3])
-            ORDERBOOK_IDX -> orderBookFromValues(asset, values)
+            ORDERBOOK_IDX -> getOrderBook(asset, values)
             else -> throw UnsupportedException("cannot deserialize asset=$asset type=$idx")
         }
     }
@@ -441,7 +466,7 @@ internal object PriceActionSerializer {
     }
 
 
-    private fun orderBookFromValues(asset: Asset, values: List<Double>): OrderBook {
+    private fun getOrderBook(asset: Asset, values: List<Double>): OrderBook {
         val asks = mutableListOf<OrderBook.OrderBookEntry>()
         val bids = mutableListOf<OrderBook.OrderBookEntry>()
         val endAsks = 1 + 2 * values[0].toInt()

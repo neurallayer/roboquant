@@ -24,7 +24,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class TimePeriodTest {
+internal class TimeSpanTest {
 
     @Test
     fun numbers() {
@@ -63,7 +63,7 @@ internal class TimePeriodTest {
     @Test
     fun parsing() {
         val t = 2.years + 1.months + 1.days - 1.hours + 12.minutes - 30.seconds + 100.millis
-        val t2 = TimePeriod.parse(t.toString())
+        val t2 = TimeSpan.parse(t.toString())
         assertEquals(t, t2)
     }
 

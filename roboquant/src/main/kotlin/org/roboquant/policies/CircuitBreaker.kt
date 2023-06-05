@@ -17,7 +17,7 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
-import org.roboquant.common.TimePeriod
+import org.roboquant.common.TimeSpan
 import org.roboquant.common.minus
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
@@ -31,7 +31,7 @@ import java.util.*
  * @property policy
  * @constructor Create new Chain Breaker
  */
-internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, private val period: TimePeriod) :
+internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, private val period: TimeSpan) :
     Policy by policy {
 
     private val history = LinkedList<Pair<Instant, Int>>()
@@ -78,4 +78,4 @@ internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, pr
  * val policy = myPolicy.circuitBreaker(5, 8.hours)
  * ```
  */
-fun Policy.circuitBreaker(maxOrders: Int, period: TimePeriod): Policy = CircuitBreaker(this, maxOrders, period)
+fun Policy.circuitBreaker(maxOrders: Int, period: TimeSpan): Policy = CircuitBreaker(this, maxOrders, period)

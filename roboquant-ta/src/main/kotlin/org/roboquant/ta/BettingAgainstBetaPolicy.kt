@@ -53,7 +53,7 @@ import kotlin.math.min
 open class BettingAgainstBetaPolicy(
     assets: Collection<Asset>,
     private val market: Asset,
-    private val holdingPeriod: TimePeriod = 20.days,
+    private val holdingPeriod: TimeSpan = 20.days,
     private val maxPositions: Int = 20,
     private val windowSize: Int = 120,
     private val priceType: String = "DEFAULT"

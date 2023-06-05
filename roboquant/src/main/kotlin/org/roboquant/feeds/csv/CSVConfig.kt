@@ -88,7 +88,7 @@ data class CSVConfig(
         fun mt5(
             template: Asset = Asset("TEMPLATE"),
             priceQuote: Boolean = false,
-            timeSpan: TimePeriod? = null
+            timeSpan: TimeSpan? = null
         ): CSVConfig {
 
             fun assetBuilder(file: File): Asset {

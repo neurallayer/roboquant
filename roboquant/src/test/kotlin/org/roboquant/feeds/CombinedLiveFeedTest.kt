@@ -17,8 +17,8 @@
 package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
-import org.roboquant.feeds.util.LiveTestFeed
 import org.junit.jupiter.api.Test
+import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.feeds.util.play
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -53,7 +53,7 @@ internal class CombinedLiveFeedTest {
             cnt++
             t = step.time
         }
-        assertEquals(f1.timeline.size + f2.timeline.size, cnt)
+        assertEquals(f1.toList().size + f2.toList().size, cnt)
     }
 
     @Test
@@ -70,7 +70,7 @@ internal class CombinedLiveFeedTest {
             cnt++
             t = step.time
         }
-        assertEquals(f1.timeline.size + f2.timeline.size, cnt)
+        assertEquals(f1.toList().size + f2.toList().size, cnt)
     }
 
     @Test
