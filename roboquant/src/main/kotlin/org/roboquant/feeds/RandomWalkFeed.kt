@@ -35,7 +35,7 @@ import java.util.*
  * all methods of predicting stock prices futile in the long run.
  *
  * @property timeframe the timeframe of this random walk
- * @property timeSpan the timeSpan between two events
+ * @property timeSpan the timeSpan between two events, default is `1.days`
  * @param nAssets the number of assets to generate, symbol names will be ASSET1, ASSET2, ..., ASSET<N>. Default is 10.
  * @property generateBars should PriceBars be generated or plain TradePrice, default is true
  * @property volumeRange what is the volume range, default = 1000
@@ -50,12 +50,18 @@ class RandomWalkFeed(
     private val generateBars: Boolean = true,
     private val volumeRange: Int = 1000,
     private val priceRange: Double = 1.0,
-    template: Asset = Asset("TEMPLATE"),
+    template: Asset = Asset("ASSET"),
     private val seed: Int = 42
 ) : HistoricFeed {
 
-    override val assets = 1.rangeTo(nAssets).map { template.copy(symbol = "ASSET$it") }.toSortedSet()
+    /**
+     * The assets contained in this feed. Each asset has a unique symbol name of `template.symbol<nr>`
+     */
+    override val assets = 1.rangeTo(nAssets).map { template.copy(symbol = "${template.symbol}$it") }.toSortedSet()
 
+    /**
+     * The timeline
+     */
     override val timeline: Timeline
         get() {
             val result = mutableListOf<Instant>()
@@ -97,6 +103,9 @@ class RandomWalkFeed(
         return TradePrice(asset, price, volume.toDouble())
     }
 
+    /**
+     * @see Feed.play
+     */
     override suspend fun play(channel: EventChannel) {
         val prices = mutableMapOf<Asset, Double>()
         val random = SplittableRandom(seed.toLong())
@@ -136,11 +145,11 @@ class RandomWalkFeed(
         /**
          * Create a random walk for the last [days], generating minute prices.
          */
-        fun lastDays(days: Int = 1, nAssets: Int = 10): RandomWalkFeed {
+        fun lastDays(days: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalkFeed {
             val last = Instant.now()
             val first = last - days.days
             val tf = Timeframe(first, last)
-            return RandomWalkFeed(tf, 1.minutes, nAssets)
+            return RandomWalkFeed(tf, 1.minutes, nAssets, generateBars)
         }
     }
 
