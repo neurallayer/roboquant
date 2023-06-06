@@ -18,9 +18,7 @@ package org.roboquant.binance
 
 import com.binance.api.client.BinanceApiClientFactory
 import com.binance.api.client.BinanceApiRestClient
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Config
+import org.roboquant.common.*
 
 /**
  * Configuration to connect to Binance exchange APIs
@@ -54,6 +52,20 @@ internal object Binance {
         return client.exchangeInfo.symbols.associate {
             val asset = Asset(it.symbol, AssetType.CRYPTO, it.quoteAsset, "BINANCE")
             asset.symbol to asset
+        }
+    }
+
+    fun interval2TimeSpan(interval: Interval) : TimeSpan? {
+        return when(interval) {
+            Interval.ONE_MINUTE -> 1.minutes
+            Interval.DAILY -> 1.days
+            Interval.FIFTEEN_MINUTES -> 15.minutes
+            Interval.FIVE_MINUTES -> 5.minutes
+            Interval.HOURLY -> 1.hours
+            Interval.FOUR_HOURLY -> 4.hours
+            Interval.MONTHLY -> 1.months
+            Interval.WEEKLY -> 7.days
+            else -> null
         }
     }
 

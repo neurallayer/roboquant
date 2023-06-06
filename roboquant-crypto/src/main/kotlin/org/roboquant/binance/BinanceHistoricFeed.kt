@@ -64,6 +64,8 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
     ) {
         require(symbols.isNotEmpty()) { "You need to provide at least 1 symbol" }
 
+        val timeSpan = Binance.interval2TimeSpan(interval)
+
         val startTime = timeframe.start.toEpochMilli()
         val endTime = timeframe.end.toEpochMilli() - 1
         for (symbol in symbols) {
@@ -77,7 +79,8 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
                     bar.high.toDouble(),
                     bar.low.toDouble(),
                     bar.close.toDouble(),
-                    bar.volume.toDouble()
+                    bar.volume.toDouble(),
+                    timeSpan
                 )
                 val now = Instant.ofEpochMilli(bar.closeTime)
                 add(now, action)

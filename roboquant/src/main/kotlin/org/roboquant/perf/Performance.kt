@@ -26,10 +26,7 @@ import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PNLMetric
 import org.roboquant.policies.FlexPolicy
-import org.roboquant.strategies.CombinedStrategy
-import org.roboquant.strategies.Rating
-import org.roboquant.strategies.Signal
-import org.roboquant.strategies.Strategy
+import org.roboquant.strategies.*
 import java.time.Instant
 import kotlin.math.roundToInt
 import kotlin.system.exitProcess
@@ -234,9 +231,25 @@ private object Performance {
 
 }
 
+
+private object Memory {
+
+    fun test() {
+        Config.printInfo()
+        val rq = Roboquant(EMAStrategy(), AccountMetric())
+        val feed = RandomWalkFeed.lastYears(5, nAssets = 500)
+        rq.run(feed)
+        exitProcess(0)
+    }
+
+}
+
 /**
  * Run the performance test
  */
 fun main() {
-    Performance.test()
+    if (Config.getProperty("memory") == "true")
+        Memory.test()
+    else
+        Performance.test()
 }

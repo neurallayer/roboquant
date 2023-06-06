@@ -23,6 +23,7 @@ import com.binance.api.client.domain.event.TickerEvent
 import com.binance.api.client.domain.market.CandlestickInterval
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
+import org.roboquant.common.TimeSpan
 import org.roboquant.feeds.*
 import java.time.Instant
 
@@ -93,8 +94,9 @@ class BinanceLiveFeed(
     ) {
         registerSymbols(symbols)
         val subscription = symbols.joinToString(",") { it.lowercase() }
+        val timeSpan = Binance.interval2TimeSpan(interval)
         val closable = client.onCandlestickEvent(subscription, interval) {
-            handle(it)
+            handle(it, timeSpan)
         }
         closeables.add(closable)
         logger.info { "subscribed to $interval price-bars for $subscription" }
@@ -138,7 +140,7 @@ class BinanceLiveFeed(
     }
 
 
-    private fun handle(resp: CandlestickEvent) {
+    private fun handle(resp: CandlestickEvent, timeSpan: TimeSpan?) {
         if (!resp.barFinal) return
 
         logger.trace { "Received candlestick event for symbol ${resp.symbol}" }
@@ -151,7 +153,8 @@ class BinanceLiveFeed(
                 resp.high.toDouble(),
                 resp.low.toDouble(),
                 resp.close.toDouble(),
-                resp.volume.toDouble()
+                resp.volume.toDouble(),
+                timeSpan
             )
             val now = if (useMachineTime) Instant.now() else Instant.ofEpochMilli(resp.closeTime)
             val event = Event(listOf(action), now)

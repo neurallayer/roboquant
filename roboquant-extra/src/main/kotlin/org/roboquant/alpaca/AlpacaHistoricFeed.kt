@@ -23,9 +23,7 @@ import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.e
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarFeed
 import net.jacobpeterson.alpaca.model.properties.DataAPIType
 import net.jacobpeterson.alpaca.rest.endpoint.marketdata.stock.StockMarketDataEndpoint
-import org.roboquant.common.Asset
-import org.roboquant.common.Logging
-import org.roboquant.common.Timeframe
+import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceQuote
@@ -94,8 +92,7 @@ class AlpacaHistoricFeed(
     }
 
     /**
-     * Retrieve the [PriceQuote] for a number of [symbols] and specified [timeframe]. If there is more than one quote
-     * for a certain asset at a certain point in time, the latest one will be stored.
+     * Retrieve the [PriceQuote] for a number of [symbols] and specified [timeframe].
      */
     fun retrieveStockQuotes(vararg symbols: String, timeframe: Timeframe) {
         validateStockSymbols(symbols)
@@ -154,11 +151,11 @@ class AlpacaHistoricFeed(
 
     }
 
-    private fun processBars(symbol: String, resp: StockBarsResponse) {
+    private fun processBars(symbol: String, resp: StockBarsResponse, timeSpan: TimeSpan?) {
         resp.bars == null && return
         val asset = getAsset(symbol)
         for (bar in resp.bars) {
-            val action = PriceBar(asset, bar.open, bar.high, bar.low, bar.close, bar.volume.toDouble())
+            val action = PriceBar(asset, bar.open, bar.high, bar.low, bar.close, bar.volume.toDouble(), timeSpan)
             val now = bar.timestamp.toInstant()
             add(now, action)
         }
@@ -183,6 +180,13 @@ class AlpacaHistoricFeed(
         val start = timeframe.start.zonedDateTime
         val end = timeframe.end.zonedDateTime
 
+        val timeSpan = when(barPeriod) {
+            BarPeriod.DAY -> barDuration.days
+            BarPeriod.MINUTE -> barDuration.minutes
+            BarPeriod.HOUR -> barDuration.hours
+            else -> null
+        }
+
         for (symbol in symbols) {
             var nextPageToken: String? = null
             do {
@@ -197,7 +201,7 @@ class AlpacaHistoricFeed(
                     barAdjustment,
                     barFeed
                 )
-                processBars(symbol, resp)
+                processBars(symbol, resp, timeSpan)
                 nextPageToken = resp.nextPageToken
             } while (nextPageToken != null)
             logger.debug { "retrieved prices type=bars symbol=$symbol timeframe=$timeframe" }
