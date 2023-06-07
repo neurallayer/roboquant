@@ -20,8 +20,8 @@ import java.time.Instant
 
 
 /**
- * A wallet contains the [Amount]s of different currencies. For example, a single instance of a Wallet can
- * contain both USD and EUR amounts.
+ * A wallet holds the [Amount]s of different currencies. For example, a single instance of a Wallet can
+ * hold both USD and EUR amounts.
  *
  * You can add other currencies to a Wallet instance. If the currency is already present in the Wallet, it
  * will be added to the existing amount, otherwise the currency and amount will be added.

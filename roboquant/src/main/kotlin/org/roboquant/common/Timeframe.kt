@@ -224,6 +224,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Does the timeframe contain the provided [time].
      */
     operator fun contains(time: Instant): Boolean {
+        if (isInfinite()) return true
         return (time >= start) && (beforeEnd(time))
     }
 
@@ -247,7 +248,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     fun toTimeline(step: TimeSpan): Timeline {
         val timeline = mutableListOf<Instant>()
         var time = start
-        while (time <= this) {
+        while (contains(time)) {
             timeline.add(time)
             time += step
         }
@@ -316,15 +317,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
             result.add(Timeframe(newStart, newStart + period))
         }
         return result
-    }
-
-
-    /**
-     * Provide a string representation of the timeframe
-     */
-    fun toRawString(): String {
-        val lastChar = if (inclusive) ']' else '>'
-        return "[$start - $end$lastChar"
     }
 
     /**

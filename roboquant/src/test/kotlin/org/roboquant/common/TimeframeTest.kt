@@ -109,7 +109,7 @@ internal class TimeframeTest {
         val s2 = tf2.toString()
         assertTrue(s2.isNotBlank())
 
-        val s3 = tf2.toRawString()
+        val s3 = tf2.toPrettyString()
         assertTrue(s3.isNotBlank())
     }
 

@@ -21,18 +21,24 @@ import org.roboquant.common.Timeframe
 import java.time.Instant
 
 /**
- * Event contains a list of [actions] that all happened at the same moment in time ([time]).
+ * An event contains a list of [actions] that all happened at the same moment in [time].
  *
- * @property actions the collection of actions that are part of this event
+ * @property actions the list of actions that are part of this event
  * @property time the time that the actions in this event became available
  */
-interface Event : Comparable<Event> {
+class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
 
-    // The actions of the event
-    val actions: Collection<Action>
 
-    // the time the event was observed
-    val time: Instant
+    /**
+     * Convenience property for accessing the price actions in this event. The result is cached so that accessing
+     * this property multiple times is quick.
+     *
+     * If there are multiple price actions for a single asset in the event, the last one found will be returned. If
+     * you require access to all prices for an asset, access [actions] directly.
+     */
+    val prices: Map<Asset, PriceAction> by lazy {
+        actions.filterIsInstance<PriceAction>().associateBy { it.asset }
+    }
 
     /**
      * @suppress
@@ -40,35 +46,19 @@ interface Event : Comparable<Event> {
     companion object {
 
         /**
-         * Create an event without any [actions] with as default [time] the current system time.
+         * Return an event without any [actions] with as default [time] the current system time.
          */
-        fun empty(time: Instant = Instant.now()) : Event = GenericEvent(emptyList(), time)
+        fun empty(time: Instant = Instant.now()) : Event = Event(emptyList(), time)
 
-        /**
-         * Create a new Event based on a collection of actions.
-         */
-        operator fun invoke(actions: Collection<Action>, time: Instant) : Event = GenericEvent(actions, time)
-
-        /**
-         * Create a new Event based on a map of price-actions. The resulting event is optimized for accessing prices,
-         * but can only contain one price-action per asset per event.
-         */
-        operator fun invoke(actions: Map<Asset,PriceAction>, time: Instant) : Event = PriceEvent(actions, time)
     }
 
-    /**
-     * Convenience property for accessing the price actions in this event. The result is cached so that accessing
-     * this property multiple times is quick.
-     *
-     * If there are multiple price actions for a single asset in the event, the last one found will be returned.
-     */
-    val prices: Map<Asset, PriceAction>
 
     /**
      * Convenience method to get a single price for an [asset] or null if there is no price action present for
      * the asset in this event. Optionally you can specify the [type] of price.
      *
-     * If there are multiple price actions for a single asset in the event, the last one found will be returned.
+     * If there are multiple price actions for a single asset in the event, the last one found will be returned. If
+     * you require access to all prices for an asset, access [actions] directly.
      */
     fun getPrice(asset: Asset, type: String = "DEFAULT"): Double? {
         return prices[asset]?.getPrice(type)
@@ -81,37 +71,9 @@ interface Event : Comparable<Event> {
     override fun compareTo(other: Event): Int = time.compareTo(other.time)
 }
 
-/**
- * Event contains a list of [actions] that all happened at the same moment in time ([time]). There are no restrictions
- * on the type of information contained in a [Action] and different type of actions can be mixed in a single event.
- *
- * @property actions the collection of actions that are part of this event
- * @property time the time that the actions in this event became available
- *
- */
-private class GenericEvent(override val actions: Collection<Action>, override val time: Instant) : Event {
-
-    override val prices: Map<Asset, PriceAction> by lazy {
-        actions.filterIsInstance<PriceAction>().associateBy { it.asset }
-    }
-}
 
 /**
- * Event contains a list of [prices] that all happened at the same moment in time ([time]).
- *
- * @property actions the collection of actions that are part of this event
- * @property time the time that the actions in this event became available
- */
-private class PriceEvent(override val prices: Map<Asset, PriceAction>, override val time: Instant): Event {
-
-    override val actions: Collection<PriceAction>
-        get() = prices.values
-
-}
-
-
-/**
- * Return the Timeframe matching the list of events. The list is expected to be ordered.
+ * Return the Timeframe matching the list of events. The collection has to be chronologically ordered.
  */
 val Collection<Event>.timeframe: Timeframe
     get() = if (isEmpty()) Timeframe.EMPTY else Timeframe(first().time, last().time, inclusive = true)

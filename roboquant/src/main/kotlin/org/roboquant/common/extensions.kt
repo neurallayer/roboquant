@@ -63,9 +63,9 @@ fun Collection<String>.summary(header: String = "values"): Summary {
  * inclusive. Returns a view on the original list, so no copy is made.
  *
  * ## Example
- *
- *      a = someList[0..10]
- *
+ *```
+ * val a = someList[0..10]
+ *```
  * @param T
  * @param range
  * @return

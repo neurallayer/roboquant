@@ -24,9 +24,9 @@ import java.time.LocalDate
 
 
 /**
- * A `Universe` is a collection of assets. Where it differs from regular collections, is that the assets that belong
- * to the collection can change over time. So the assets in the collection at time `t` can be different from the assets
- * in the collection at time `t+1`.
+ * A `Universe` represents a collection of assets. Where it differs from regular collections, is that the assets that
+ * belong to the collection can change over time. So the assets in the collection at time `t` can be different from
+ * the assets in the collection at time `t+1`.
  */
 interface Universe {
 
@@ -41,13 +41,16 @@ interface Universe {
     companion object Factory {
 
         /**
-         * Return a universe containing all the S&P 500 assets.
+         * Return the universe of all the S&P 500 stocks.
          */
         val sp500: Universe by lazy { SP500() }
 
     }
 }
 
+/**
+ * SP500 asset collection
+ */
 private class SP500 : Universe {
 
     private val startSP500 = LocalDate.parse("1960-01-01")

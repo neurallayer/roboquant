@@ -26,6 +26,13 @@ internal class AssetFilterTest {
 
 
     @Test
+    fun custom() {
+        val fn = AssetFilter { _: Asset, _: Instant -> false  }
+        assertFalse(fn.filter(Asset("123"), Instant.now()))
+    }
+
+
+    @Test
     fun testFilter() {
         val asset1 = Asset("abc")
         val assets = listOf(asset1, Asset("BCD"), Asset("CDE"))
@@ -34,6 +41,9 @@ internal class AssetFilterTest {
         assertEquals(3, a.size)
 
         a = assets.filter { AssetFilter.excludeSymbols("ABC").filter(it, time) }
+        assertFalse(asset1 in a)
+
+        a = assets.filter { AssetFilter.excludeSymbols("aBc").filter(it, time) }
         assertFalse(asset1 in a)
 
         a = assets.filter { AssetFilter.includeSymbols("ABC").filter(it, time) }

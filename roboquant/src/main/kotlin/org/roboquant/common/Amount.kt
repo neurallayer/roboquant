@@ -24,13 +24,13 @@ import java.util.*
 import kotlin.math.absoluteValue
 
 /**
- * An amount can hold the monetary [value] for a single [currency].
+ * An amount holds the monetary [value] for a single [currency].
  *
  * For storing monetary amounts internally it uses [Double], since it is accurate enough for trading while providing
  * large performance benefits over BigDecimal.
  *
  * @property currency the currency of the amount
- * @property value the value amount
+ * @property value the value of the amount
  */
 data class Amount(val currency: Currency, val value: Double) : Comparable<Number> {
 

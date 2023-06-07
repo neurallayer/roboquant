@@ -27,7 +27,7 @@ import java.net.URL
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.time.LocalDate
-import java.time.ZoneOffset
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -149,7 +149,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
         val currencies = lines.first().drop(1).filter { it.isNotBlank() }.map { Currency.getInstance(it) }
 
         // The timezone of the ECB
-        val zoneId = ZoneOffset.UTC
+        val zoneId = ZoneId.of("Europe/Brussels")
         val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(zoneId)
         for (line in lines.drop(1)) {
 

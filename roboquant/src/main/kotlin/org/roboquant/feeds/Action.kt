@@ -78,7 +78,9 @@ interface PriceAction : Action {
  *
  * In order to optimize memory and reduce GC overhead, internally the values are stored in a DoubleArray.
  *
+ * @property asset the asset of the price-bar
  * @property ohlcv contains the values of this price-bar as doubles
+ * @property timeSpan the timeSpan of the price-bar, default is null
  */
 class PriceBar(
     override val asset: Asset,
@@ -136,7 +138,8 @@ class PriceBar(
     /**
      * String representation of this price-bar
      */
-    override fun toString(): String = "symbol=${asset.symbol} ohlcv=${ohlcv.toList()}"
+    override fun toString(): String =
+        "symbol=${asset.symbol} ohlcv=${ohlcv.toList()} timeSpan=${timeSpan?.toString() ?: "unknown"}"
 
 
     /**
@@ -179,10 +182,10 @@ class PriceBar(
  * Holds a single price for an asset and optional the volume. Often this reflects an actual trade, but it can
  * also be used in a different scenario.
  *
- * @property asset
- * @property price
- * @property volume
- * @constructor Create empty Single price
+ * @property asset the asset of the trade
+ * @property price the price of the trade
+ * @property volume the volume of the trade, default is Double.NaN
+ * @constructor Create a new instance of Trade Price
  */
 data class TradePrice(override val asset: Asset, val price: Double, override val volume: Double = Double.NaN) :
     PriceAction {

@@ -21,10 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
 import java.time.Month
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class AssetTest {
 
@@ -37,8 +34,17 @@ internal class AssetTest {
 
         assertEquals("ABC", a.symbol)
         assertEquals(a, c)
+        assertEquals(a, a)
         assertNotEquals(b, c)
         assertNotEquals(c, d)
+    }
+
+    @Test
+    fun sorting() {
+        val a = Asset("ABC")
+        val b = Asset("ABD")
+        assertTrue(b > a)
+        assertFalse(a > a)
     }
 
     @Test

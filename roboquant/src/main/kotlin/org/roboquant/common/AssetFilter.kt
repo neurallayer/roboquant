@@ -19,7 +19,7 @@ package org.roboquant.common
 import java.time.Instant
 
 /**
- * Asset filter limits the price actions that will be processed in certain operations at a given time. Filters can work
+ * Asset filter limits the assets that will be processed in certain operations at a given time. Filters can work
  * on a combination of assets and time.
  *
  * Common use case is strategies that are only interested in a subset of assets that are available in a feed.

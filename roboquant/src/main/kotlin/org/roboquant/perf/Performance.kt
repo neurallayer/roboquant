@@ -71,12 +71,12 @@ private class FastFeed(val nAssets : Int, val events: Int) : Feed {
 
     override suspend fun play(channel: EventChannel) {
         repeat(events) {
-            val actions = HashMap<Asset, PriceBar>(nAssets)
+            val actions = ArrayList<PriceBar>(nAssets)
             val open = 100.0 + 10 * (it / events)
             val data = doubleArrayOf(open,open+1.0,open-1.0,open, 500.0)
             for (asset in assets) {
                 val action = PriceBar(asset, data)
-                actions[asset] = action
+                actions.add(action)
             }
             channel.send(Event(actions, start + it.millis))
         }
