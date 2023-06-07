@@ -73,7 +73,7 @@ data class Position(
     }
 
     /**
-     * How much PNL would be realized when [update] a position. This doesn't change the position itself, just
+     * How much PNL would be realized when [update] a position. This doesn't change the position itself, it just
      * calculates the potential realized PNL.
      */
     fun realizedPNL(update: Position): Amount {
