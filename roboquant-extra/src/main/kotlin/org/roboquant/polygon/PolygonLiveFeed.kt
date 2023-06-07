@@ -23,6 +23,8 @@ import io.polygon.kotlin.sdk.websocket.PolygonWebSocketSubscription
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
+import org.roboquant.common.minutes
+import org.roboquant.common.seconds
 import org.roboquant.feeds.*
 import org.roboquant.polygon.Polygon.availableAssets
 import org.roboquant.polygon.Polygon.getRestClient
@@ -112,9 +114,16 @@ class PolygonLiveFeed(
             is PolygonWebSocketMessage.RawMessage -> logger.info(String(message.data))
             is PolygonWebSocketMessage.StocksMessage.Aggregate -> {
                 val asset = getSubscribedAsset(message.ticker)
+                val timeSpan = when(message.eventType) {
+                    "AM" -> 1.minutes
+                    "A" -> 1.seconds
+                    else -> null
+                }
+
                 val action = PriceBar(
                     asset, message.openPrice!!, message.highPrice!!,
-                    message.lowPrice!!, message.closePrice!!, message.volume ?: Double.NaN
+                    message.lowPrice!!, message.closePrice!!, message.volume ?: Double.NaN,
+                    timeSpan
                 )
                 send(Event(listOf(action), getTime(message.endTimestampMillis)))
             }
