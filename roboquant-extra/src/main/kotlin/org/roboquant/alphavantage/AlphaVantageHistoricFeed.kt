@@ -21,9 +21,7 @@ import com.crazzyghost.alphavantage.Config
 import com.crazzyghost.alphavantage.parameters.OutputSize
 import com.crazzyghost.alphavantage.timeseries.response.TimeSeriesResponse
 import org.roboquant.alpaca.AlpacaHistoricFeed
-import org.roboquant.common.Asset
-import org.roboquant.common.ConfigurationException
-import org.roboquant.common.Logging
+import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
@@ -32,6 +30,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.collections.set
 import com.crazzyghost.alphavantage.parameters.Interval as AlphaInterval
 
 /**
@@ -137,9 +136,17 @@ class AlphaVantageHistoricFeed(
         val asset = subscriptions[symbol]!!
         val tz = response.metaData.timeZone ?: "America/New_York"
         val dtf = getParser(tz)
+        println(response.metaData.interval)
+        val timeSpan = when (response.metaData.interval) {
+            "5min" -> 5.minutes
+            "15min" -> 15.minutes
+            "30min" -> 30.minutes
+            "60min" -> 60.minutes
+            else -> null
+        }
         response.stockUnits.forEach {
             val action = if (generateSinglePrice) TradePrice(asset, it.close) else
-                PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
+                PriceBar(asset, it.open, it.high, it.low, it.close, it.volume, timeSpan)
 
             val now = ZonedDateTime.parse(it.date, dtf).toInstant()
             add(now, action)
@@ -154,7 +161,7 @@ class AlphaVantageHistoricFeed(
         val asset = subscriptions[symbol]!!
         response.stockUnits.forEach {
             val action = if (generateSinglePrice) TradePrice(asset, it.close) else
-                PriceBar(asset, it.open, it.high, it.low, it.close, it.volume)
+                PriceBar(asset, it.open, it.high, it.low, it.close, it.volume, 1.days)
 
             val localDate = LocalDate.parse(it.date)
             val now = asset.exchange.getClosingTime(localDate)
