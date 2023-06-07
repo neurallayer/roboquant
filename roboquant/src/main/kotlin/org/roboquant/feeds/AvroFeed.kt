@@ -227,7 +227,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
          * Get an AvroFeed containing [PriceQuote] data for the companies listed in the S&P 500. This feed contains
          * a few minutes of public data.
          *
-         * Please note that not all US exchanges are included, so the prices re not 100% accurate.
+         * Please note that not all US exchanges are included, so the prices are not 100% accurate.
          */
         fun sp500Quotes(): AvroFeed {
             val path = download(sp500QuoteFile)
