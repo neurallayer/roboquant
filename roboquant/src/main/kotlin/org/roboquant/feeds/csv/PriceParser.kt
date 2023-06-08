@@ -149,8 +149,8 @@ class PriceQuoteParser(
         return PriceQuote(
             asset,
             line[ask].toDouble(),
-            line[bid].toDouble(),
             volume1,
+            line[bid].toDouble(),
             volume2
         )
     }
