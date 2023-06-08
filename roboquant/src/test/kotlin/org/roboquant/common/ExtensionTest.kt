@@ -18,6 +18,7 @@ package org.roboquant.common
 
 import org.junit.jupiter.api.Test
 import java.time.Instant
+import kotlin.io.path.Path
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
@@ -43,14 +44,11 @@ class ExtensionTest {
 
     @Test
     fun paths() {
-        val p1 = "/tmp" / "dummy/test.txt"
-        assertEquals("/tmp/dummy/test.txt", p1)
+        val p1 = "tmp" / "dummy" / "test.txt"
+        assertEquals(Path("tmp", "dummy", "test.txt"), Path(p1))
 
-        val p2 = "/Users/home/john" / ".roboquant/file.avro"
-        assertEquals("/Users/home/john/.roboquant/file.avro", p2)
-
-        val p3 = "/tmp/dummy" / "../test.txt"
-        assertEquals("/tmp/test.txt", p3)
+        val p2 = "tmp" / "dummy" / ".." / "test.txt"
+        assertEquals(Path("tmp", "test.txt"), Path(p2))
     }
 
     @Test

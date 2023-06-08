@@ -211,7 +211,12 @@ fun DoubleArray.indexOfMax() : Int {
 }
 
 /**
- * Allow to manipulate strings like paths
+ * Allows manipulating strings as if they were paths. It will automatically normalize the path if required.
+ *
+ * Example:
+ * ```
+ * val feed = CSVFeed("some-dir" / "some-sub-dir")
+ * ```
  */
 operator fun String.div(other: String) : String {
     val p = java.nio.file.Path.of(this, other).normalize()
