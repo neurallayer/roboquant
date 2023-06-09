@@ -37,9 +37,9 @@ internal class TimeSeriesChartTest {
         assertTrue(chart.asHTML().isNotBlank())
 
         Chart.counter = 0
-        // chart.toHTMLFile("timeserieschart.html")
-        val str = TestData.loadFile("timeserieschart.html")
-        assertEquals(str, chart.asHTMLPage())
+        // chart.toHTMLFile("timeserieschart.txt")
+        val str = TestData.loadFile("timeserieschart.txt")
+        assertEquals(str.removeEOL(), chart.asHTMLPage().removeEOL())
 
     }
 

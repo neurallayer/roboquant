@@ -32,6 +32,9 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.TestStrategy
 
+
+internal fun String.removeEOL() = this.replace("\n", "").replace("\r", "")
+
 /**
  * Test data used in unit tests
  */

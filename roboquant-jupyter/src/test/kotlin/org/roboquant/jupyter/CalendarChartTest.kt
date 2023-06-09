@@ -29,8 +29,8 @@ internal class CalendarChartTest {
         assertTrue(chart.asHTML().isNotBlank())
 
         Chart.counter = 0
-        // chart.toHTMLFile("calendarchart.html")
-        assertEquals(TestData.loadFile("calendarchart.html"), chart.asHTMLPage())
+        // chart.toHTMLFile("calendarchart.txt")
+        assertEquals(TestData.loadFile("calendarchart.txt").removeEOL(), chart.asHTMLPage().removeEOL())
     }
 
 }
