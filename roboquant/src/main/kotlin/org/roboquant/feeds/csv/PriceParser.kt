@@ -108,7 +108,7 @@ class PriceBarParser(
 }
 
 /**
- * Parse lines and create PriceBar
+ *Parse lines and create PriceQuote
  */
 class PriceQuoteParser(
     private var ask: Int = -1,
