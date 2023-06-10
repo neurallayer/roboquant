@@ -43,6 +43,8 @@ import java.time.Instant
  * are more likely to stay away from bounced orders and margin calls. Default is same percentage as [orderPercentage]
  * @property minPrice the minimal price for an asset before opening a position, default is null (no minimum). This
  * can be used to avoid trading penny stocks
+ * @param recording should the policy record metrics, default is false.
+ * When enabled, it will record the number of `actions`, `signals` and `orders`.
  * @constructor Create a new instance of a FlexPolicy
  */
 @Suppress("MemberVisibilityCanBePrivate")
@@ -53,8 +55,9 @@ open class FlexPolicy(
     protected val fractions: Int = 0,
     protected val oneOrderOnly: Boolean = true,
     protected val safetyMargin: Double = orderPercentage,
-    protected val minPrice: Amount? = null
-) : BasePolicy() {
+    protected val minPrice: Amount? = null,
+    recording: Boolean = false
+) : BasePolicy(recording = recording) {
 
     protected val logger = Logging.getLogger(FlexPolicy::class)
 
@@ -163,62 +166,69 @@ open class FlexPolicy(
      */
     private operator fun Collection<Order>.contains(asset: Asset) = any { it.asset == asset }
 
+    /**
+     * Record basic metrics, `actions`, `signals` and `orders`.
+     */
+    open fun record(orders: List<Order>, signals: List<Signal>, event: Event) {
+        record("actions", event.actions.size)
+        record("signals", signals.size)
+        record("orders", orders.size)
+    }
 
     /**
      * @see Policy.act
      */
     @Suppress("ComplexMethod")
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
-        if (signals.isEmpty()) return emptyList()
-
         val orders = mutableListOf<Order>()
-        val equityAmount = account.equityAmount
-        val amountPerOrder = equityAmount * orderPercentage
-        val safetyAmount = equityAmount * safetyMargin
-        val time = event.time
-        var buyingPower = account.buyingPower - safetyAmount.value
 
-        @Suppress("LoopWithTooManyJumpStatements")
-        for (signal in signals) {
-            val asset = signal.asset
+        if (signals.isNotEmpty()) {
+            val equityAmount = account.equityAmount
+            val amountPerOrder = equityAmount * orderPercentage
+            val safetyAmount = equityAmount * safetyMargin
+            val time = event.time
+            var buyingPower = account.buyingPower - safetyAmount.value
 
-            if (oneOrderOnly && (account.openOrders.contains(asset) || orders.contains(asset))) continue
+            @Suppress("LoopWithTooManyJumpStatements")
+            for (signal in signals) {
+                val asset = signal.asset
 
-            val price = event.getPrice(asset, priceType)
-            logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder price=$price" }
+                if (oneOrderOnly && (account.openOrders.contains(asset) || orders.contains(asset))) continue
 
-            // Don't create an order if we don't know the current price
-            if (price == null) continue
+                val price = event.getPrice(asset, priceType)
+                logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder price=$price" }
 
-            val position = account.positions.getPosition(asset)
-            if (reducedPositionSignal(position, signal)) {
-                val order = createOrder(signal, -position.size, price) // close position
-                orders.addNotNull(order)
-            } else {
-                if (position.open) continue // we don't increase position sizing
-                if (!signal.entry) continue // signal doesn't allow opening new positions
-                if (amountPerOrder > buyingPower) continue // not enough buying power left
+                // Don't create an order if we don't know the current price
+                if (price == null) continue
 
-                val assetAmount = amountPerOrder.convert(asset.currency, time).value
-                val size = calcSize(assetAmount, signal, price)
-                if (size.iszero) continue
-                if (size.isNegative && !shorting) continue
-                if (!meetsMinPrice(asset, price, time)) continue
+                val position = account.positions.getPosition(asset)
+                if (reducedPositionSignal(position, signal)) {
+                    val order = createOrder(signal, -position.size, price) // close position
+                    orders.addNotNull(order)
+                } else {
+                    if (position.open) continue // we don't increase position sizing
+                    if (!signal.entry) continue // signal doesn't allow opening new positions
+                    if (amountPerOrder > buyingPower) continue // not enough buying power left
 
-                val order = createOrder(signal, size, price)
-                if (order != null) {
-                    val assetExposure = asset.value(size, price).absoluteValue
-                    val exposure = assetExposure.convert(buyingPower.currency, time).value
-                    orders.add(order)
-                    buyingPower -= exposure // reduce buying power with the exposed amount
-                    logger.debug { "buyingPower=$buyingPower exposure=$exposure order=$order" }
+                    val assetAmount = amountPerOrder.convert(asset.currency, time).value
+                    val size = calcSize(assetAmount, signal, price)
+                    if (size.iszero) continue
+                    if (size.isNegative && !shorting) continue
+                    if (!meetsMinPrice(asset, price, time)) continue
+
+                    val order = createOrder(signal, size, price)
+                    if (order != null) {
+                        val assetExposure = asset.value(size, price).absoluteValue
+                        val exposure = assetExposure.convert(buyingPower.currency, time).value
+                        orders.add(order)
+                        buyingPower -= exposure // reduce buying power with the exposed amount
+                        logger.debug { "buyingPower=$buyingPower exposure=$exposure order=$order" }
+                    }
                 }
+
             }
-
         }
-
-        record("policy.signals", signals.size)
-        record("policy.orders", orders.size)
+        if (recording) record(orders, signals, event)
         return orders
     }
 }

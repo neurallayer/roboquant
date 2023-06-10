@@ -26,6 +26,7 @@ import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -43,6 +44,20 @@ internal class FlexPolicyTest {
     }
 
     @Test
+    fun recording() {
+        val policy = FlexPolicy(recording = true)
+        val signals = mutableListOf<Signal>()
+        val event = Event(emptyList(), Instant.now())
+        val account = InternalAccount(Currency.USD).toAccount()
+        policy.act(signals, account, event)
+        val metrics = policy.getMetrics()
+        assertTrue(metrics.isNotEmpty())
+        assertContains(metrics, "policy.actions")
+        assertContains(metrics, "policy.signals")
+        assertContains(metrics, "policy.orders")
+    }
+
+    @Test
     fun order3() {
         val policy = FlexPolicy()
         val orders = run(policy)
@@ -53,6 +68,8 @@ internal class FlexPolicyTest {
         assertEquals("TEST123", order.asset.symbol)
         assertEquals(Size(204), order.size)
     }
+
+
 
     @Test
     fun orderMinPrice() {

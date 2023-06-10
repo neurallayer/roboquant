@@ -32,7 +32,9 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.TestStrategy
 
-
+/**
+ * Remove end-of-line characters so test results are the same on different operating-systems.
+ */
 internal fun String.removeEOL() = this.replace("\n", "").replace("\r", "")
 
 /**
