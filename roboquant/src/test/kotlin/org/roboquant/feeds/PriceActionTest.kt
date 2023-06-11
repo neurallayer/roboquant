@@ -99,6 +99,8 @@ internal class PriceActionTest {
         assertEquals(2, action.bids.size)
         assertEquals(9.5, action.getPrice())
         assertEquals(0.1, action.spread)
+        assertEquals(9.0, action.bestBid)
+        assertEquals(10.0, action.bestOffer)
     }
 
     @Test

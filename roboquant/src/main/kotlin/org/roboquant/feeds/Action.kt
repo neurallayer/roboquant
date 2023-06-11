@@ -293,17 +293,29 @@ data class OrderBook(
      */
     override fun getPrice(type: String): Double {
         return when (type) {
-            "ASK" -> asks.min()
-            "BID" -> bids.max()
+            "ASK" -> bestOffer
+            "BID" -> bestBid
             "WEIGHTED" -> {
                 val askVolume = asks.volume()
                 val bidVolume = bids.volume()
                 (asks.min() * askVolume + bids.max() * bidVolume) / (askVolume + bidVolume)
             }
 
-            else -> (asks.min() + bids.max()) / 2.0
+            else -> (bestBid + bestOffer) / 2.0
         }
     }
+
+    /**
+     * Return the best (maximum) bid-price available in the order book
+     */
+    val bestBid: Double
+        get() = bids.max()
+
+    /**
+     * Return the best (minimum) offer-price (aka ask-price) available in the order book
+     */
+    val bestOffer: Double
+        get() = asks.min()
 
     /**
      * Returns the spread percentage. The used formula is:

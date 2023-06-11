@@ -21,6 +21,7 @@ import org.roboquant.brokers.Position
 import org.roboquant.brokers.getPosition
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceAction
 import org.roboquant.orders.*
 import org.roboquant.strategies.Signal
 import java.time.Instant
@@ -79,11 +80,13 @@ open class FlexPolicy(
             trailPercentage: Double = 0.05,
             stopPercentage: Double = 0.01,
             orderPercentage: Double = 0.01,
-            shorting: Boolean = false
+            shorting: Boolean = false,
+            priceType: String = "DEFAULT"
         ): FlexPolicy {
-            class MyPolicy : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting) {
+            class MyPolicy : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting, priceType = priceType) {
 
-                override fun createOrder(signal: Signal, size: Size, price: Double): Order {
+                override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order {
+                    val price = priceAction.getPrice(priceType)
                     return BracketOrder.marketTrailStop(signal.asset, size, price, trailPercentage, stopPercentage)
                 }
             }
@@ -98,11 +101,14 @@ open class FlexPolicy(
         fun limitOrders(
             limitPercentage: Double = 0.01,
             orderPercentage: Double = 0.01,
-            shorting: Boolean = false
+            shorting: Boolean = false,
+            priceType: String = "DEFAULT"
         ): FlexPolicy {
-            class MyPolicy : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting) {
+            class MyPolicy : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting, priceType = priceType) {
 
-                override fun createOrder(signal: Signal, size: Size, price: Double): Order {
+                override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order {
+                    val price = priceAction.getPrice(priceType)
+
                     // BUY orders have a below market price limit, and SELL order above
                     val limitOffset = limitPercentage * size.sign
                     val limitPrice = price * (1.0 - limitOffset)
@@ -144,18 +150,19 @@ open class FlexPolicy(
     }
 
     /**
-     * Create a new order based on the [signal], [size] and current [price]. Overwrite this method if you want to
-     * create other orders types than the default [MarketOrder]. This method should return null to indicate no order
-     * should be created at all.
+     * Create a new order based on the [signal], [size] and current [priceAction].
+     * This method should return null to indicate no order should be created at all.
+     *
+     * Overwrite this method if you want to create orders other than the default [MarketOrder].
      */
-    open fun createOrder(signal: Signal, size: Size, price: Double): Order? {
+    open fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order? {
         return MarketOrder(signal.asset, size)
     }
 
 
     /**
      * It the minimum price met for the provided [asset]. If the asset is in different currency than the minimum price,
-     * a conversion will take place.
+     * a conversion will first take place.
      */
     private fun meetsMinPrice(asset: Asset, price: Double, time: Instant): Boolean {
         return minPrice == null || minPrice.convert(asset.currency, time) <= price
@@ -195,15 +202,15 @@ open class FlexPolicy(
 
                 if (oneOrderOnly && (account.openOrders.contains(asset) || orders.contains(asset))) continue
 
-                val price = event.getPrice(asset, priceType)
-                logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder price=$price" }
-
                 // Don't create an order if we don't know the current price
-                if (price == null) continue
+                val priceAction = event.prices[asset] ?: continue
+
+                val price = priceAction.getPrice(priceType)
+                logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder action=$priceAction" }
 
                 val position = account.positions.getPosition(asset)
                 if (reducedPositionSignal(position, signal)) {
-                    val order = createOrder(signal, -position.size, price) // close position
+                    val order = createOrder(signal, -position.size, priceAction) // close position
                     orders.addNotNull(order)
                 } else {
                     if (position.open) continue // we don't increase position sizing
@@ -216,7 +223,7 @@ open class FlexPolicy(
                     if (size.isNegative && !shorting) continue
                     if (!meetsMinPrice(asset, price, time)) continue
 
-                    val order = createOrder(signal, size, price)
+                    val order = createOrder(signal, size, priceAction)
                     if (order != null) {
                         val assetExposure = asset.value(size, price).absoluteValue
                         val exposure = assetExposure.convert(buyingPower.currency, time).value

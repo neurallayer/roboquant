@@ -22,45 +22,28 @@ import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Config
 import org.roboquant.common.Size
-import org.roboquant.common.getBySymbol
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.csv.CSVFeed
-import org.roboquant.loggers.MemoryLogger
+import org.roboquant.feeds.PriceAction
 import org.roboquant.metrics.AccountMetric
-import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Order
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
-import org.roboquant.strategies.NoSignalStrategy
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
-import org.roboquant.ta.*
+import org.roboquant.ta.AtrPolicy
+import org.roboquant.ta.Ta4jStrategy
+import org.roboquant.ta.TaLibMetric
+import org.roboquant.ta.TaLibSignalStrategy
 import org.ta4j.core.indicators.bollinger.BollingerBandFacade
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator
 import org.ta4j.core.rules.CrossedUpIndicatorRule
 
 
-private fun beta() {
-    val feed = CSVFeed("/data/assets/stock-market/stocks/")
-    val market = CSVFeed("/data/assets/stock-market/market/")
-    feed.merge(market)
-    val strategy = NoSignalStrategy()
-    val marketAsset = feed.assets.getBySymbol("SPY")
-
-    val policy = BettingAgainstBetaPolicy(feed.assets, marketAsset, maxPositions = 10)
-    policy.recording = true
-    val logger = MemoryLogger()
-    val roboquant = Roboquant(strategy, ProgressMetric(), policy = policy, logger = logger)
-    roboquant.run(feed)
-    println(roboquant.broker.account.summary())
-
-}
-
 
 private fun macd() {
-    val strategy = TaLibSignalStrategy() { asset, prices ->
+    val strategy = TaLibSignalStrategy { asset, prices ->
         val (_, _, diff) = macd(prices, 12, 26, 9)
         val (_, _, diff2) = macd(prices, 12, 26, 9, 1)
         when {
@@ -128,9 +111,10 @@ private fun customPolicy() {
          * Override the default behavior of creating a simple MarkerOrder. Create limit BUY and SELL orders with the
          * actual limit based on the ATR of the underlying asset.
          */
-        override fun createOrder(signal: Signal, size: Size, price: Double): Order? {
+        override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order? {
             val metricName = "atr.${signal.asset.symbol.lowercase()}"
             val value = atrMetrics[metricName]
+            val price = priceAction.getPrice(priceType)
             return if (value != null) {
                 val limit = price - size.sign * value * atrPercentage
                 LimitOrder(signal.asset, size, limit)
@@ -169,7 +153,6 @@ fun main() {
 
     when ("ATR") {
         "CUSTOM" -> customPolicy()
-        "BETA" -> beta()
         "MACD" -> macd()
         "ATR" -> atrPolicy()
         "TA4J" -> ta4j()

@@ -21,6 +21,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceAction
 import org.roboquant.orders.*
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.Signal
@@ -54,8 +55,9 @@ class AtrPolicy(
     private val atrLoss: Double = 2.0,
     orderPercentage: Double = 0.02,
     private val atRisk: Double? = null,
-    shorting: Boolean = false
-) : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting) {
+    shorting: Boolean = false,
+    priceType: String = "DEFAULT"
+) : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting, priceType = priceType) {
 
 
     init {
@@ -110,8 +112,9 @@ class AtrPolicy(
     /**
      * @see FlexPolicy.createOrder
      */
-    override fun createOrder(signal: Signal, size: Size, price: Double): Order? {
+    override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order? {
         val asset = signal.asset
+        val price = priceAction.getPrice(priceType)
 
         // Calculate the ATR and make it relative to the direction of the size
         val atr = getAtr(asset, price) * size.sign
