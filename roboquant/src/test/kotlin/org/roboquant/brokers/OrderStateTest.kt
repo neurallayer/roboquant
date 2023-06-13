@@ -19,10 +19,7 @@ package org.roboquant.brokers
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Asset
-import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderState
-import org.roboquant.orders.OrderStatus
-import org.roboquant.orders.cancel
+import org.roboquant.orders.*
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -46,7 +43,6 @@ internal class OrderStateTest {
         c = listOf(state).cancel()
         assertEquals(0, c.size)
     }
-
 
     @Test
     fun regularFlow() {
@@ -80,6 +76,14 @@ internal class OrderStateTest {
             state.update(OrderStatus.COMPLETED, closed)
         }
 
+    }
+
+    @Test
+    fun assets() {
+        val asset = Asset("TEST")
+        val order = MarketOrder(asset, 100)
+        val states = listOf(OrderState(order))
+        assertEquals(setOf(asset), states.assets)
     }
 
 
