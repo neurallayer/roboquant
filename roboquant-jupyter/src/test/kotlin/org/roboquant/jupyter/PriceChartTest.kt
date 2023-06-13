@@ -17,11 +17,13 @@
 package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertDoesNotThrow
+import org.roboquant.Roboquant
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Action
-import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.Indicator
+import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -29,14 +31,6 @@ import kotlin.test.assertTrue
 
 internal class PriceChartTest {
 
-    class MyIndicator : Indicator {
-        override fun calculate(action: Action, time: Instant): Map<String, Double> {
-            return if (action is PriceAction)
-                mapOf("plusone" to action.getPrice() + 1.0)
-            else
-                emptyMap()
-        }
-    }
 
 
     @Test
@@ -57,17 +51,38 @@ internal class PriceChartTest {
         assertNotEquals(html, chart3.asHTML())
     }
 
+    @Test
+    fun trades() {
+        val tf = Timeframe.fromYears(2020, 2021)
+        val feed = RandomWalkFeed(tf)
+        val rq = Roboquant(EMAStrategy.PERIODS_5_15, logger = SilentLogger())
+        rq.run(feed)
+
+        val trades = rq.broker.account.trades
+        assertTrue(trades.isNotEmpty())
+        val asset = trades.first().asset
+        Chart.counter = 0
+        val chart = PriceChart(feed, asset, trades = trades)
+        assertTrue(chart.asHTML().isNotEmpty())
+    }
+
 
     @Test
     fun indicators() {
-        val feed = RandomWalkFeed.lastYears(1)
+        class MyIndicator : Indicator {
+            override fun calculate(action: Action, time: Instant): Map<String, Double> {
+                return mapOf("one" to 1.0, "two" to 2.0)
+            }
+        }
+
+        val tf = Timeframe.fromYears(2020, 2021)
+        val feed = RandomWalkFeed(tf)
         val asset = feed.assets.first()
         val ind = MyIndicator()
         Chart.counter = 0
-        assertDoesNotThrow {
-            PriceChart(feed, asset, indicators = arrayOf(ind))
-        }
 
+        val chart = PriceChart(feed, asset, indicators = arrayOf(ind))
+        assertTrue(chart.asHTML().isNotEmpty())
     }
 
 }

@@ -64,13 +64,24 @@ internal class PriceActionTest {
         assertEquals(12.0, action.getPrice("HIGH"))
         assertEquals(8.0, action.getPrice("LOW"))
         assertEquals(11.0, action.getPrice("CLOSE"))
-        assertEquals(1000.0, action.volume)
 
         val action2 = PriceBar(asset, 10, 12, 8, 11)
         assertTrue(action2.volume.isNaN())
 
         assertContains(action2.toString(), asset.symbol)
     }
+
+    @Test
+    fun priceBarMethods() {
+        val asset = TestData.euStock()
+        val action = PriceBar(asset, 10, 12, 8, 11, 1000)
+        assertEquals(10.0, action.open)
+        assertEquals(12.0, action.high)
+        assertEquals(8.0, action.low)
+        assertEquals(11.0, action.close)
+        assertEquals(1000.0, action.volume)
+    }
+
 
     @Test
     fun priceBarAdjustClose() {
@@ -109,6 +120,7 @@ internal class PriceActionTest {
         val p = TradePrice(asset, 10.0, 100.0)
         assertEquals(10.0, p.getPrice("DEFAULT"))
         assertEquals(100.0, p.volume)
+        assertEquals(10.0, p.price)
     }
 
     @Test
