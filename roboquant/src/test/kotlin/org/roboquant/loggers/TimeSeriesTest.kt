@@ -57,6 +57,23 @@ class TimeSeriesTest {
         assertEquals(2, ts2.size)
     }
 
+    @Test
+    fun testTime() {
+        val data = doubleArrayOf(100.0, Double.NaN, 200.0)
+        val t = Timeframe.fromYears(2020, 2021).toTimeline(1.days).take(3)
+        val ts = TimeSeries(t, data)
+        assertEquals(Timeframe.parse("2020-01-01", "2020-01-03", true), ts.timeframe)
+    }
+
+    @Test
+    fun testOperators() {
+        val data = doubleArrayOf(100.0, Double.NaN, 200.0)
+        val t = Timeframe.fromYears(2020, 2021).toTimeline(1.days).take(3)
+        val ts = TimeSeries(t, data)
+
+        val ts2 = (((ts + 1.0) * 2.0) - 2.0) / 2.0
+        assertEquals(100.0, ts2.values[0])
+    }
 
 
 }

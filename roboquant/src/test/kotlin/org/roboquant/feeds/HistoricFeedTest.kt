@@ -21,10 +21,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
-import org.roboquant.common.getBySymbol
-import org.roboquant.common.months
+import org.roboquant.common.*
 import org.roboquant.feeds.util.HistoricTestFeed
 import java.time.Instant
+import java.util.*
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -42,6 +43,30 @@ internal class HistoricFeedTest {
         val s = feed.assets.first().symbol
         assertEquals(s, feed.assets.getBySymbol(s).symbol)
     }
+
+
+    @Test
+    fun custom() {
+        val tf = Timeframe.fromYears(2020, 2021)
+        val asset = Asset("ABC")
+        class MyFeed : HistoricFeed {
+            override val timeline: Timeline
+                get() = tf.toTimeline(1.days)
+            override val assets: SortedSet<Asset>
+                get() = sortedSetOf(asset)
+
+            override suspend fun play(channel: EventChannel) {
+                // NOP
+            }
+
+        }
+
+        val feed = MyFeed()
+        assertTrue(tf.end >= feed.timeframe.end)
+        assertTrue(feed.timeframe.inclusive)
+        assertContains(feed.assets, asset)
+    }
+
 
     @Test
     fun firstLast() {
