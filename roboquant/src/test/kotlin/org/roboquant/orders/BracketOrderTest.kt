@@ -17,6 +17,7 @@
 package org.roboquant.orders
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.Size
 import kotlin.test.assertEquals
@@ -37,6 +38,30 @@ internal class BracketOrderTest {
         assertTrue(order.entry is MarketOrder)
         assertTrue(order.stopLoss is StopOrder)
         assertTrue(order.toString().isNotBlank())
+    }
+
+    @Test
+    fun fail() {
+        val asset = TestData.usStock()
+        val asset2 = TestData.euStock()
+        val size = Size(10)
+
+        assertThrows<IllegalArgumentException> {
+            BracketOrder(
+                MarketOrder(asset, size),
+                LimitOrder(asset2, -size, 101.0),
+                StopOrder(asset, -size, 99.0),
+            )
+        }
+
+        assertThrows<IllegalArgumentException> {
+            BracketOrder(
+                MarketOrder(asset, size),
+                LimitOrder(asset2, Size(-11), 101.0),
+                StopOrder(asset, -size, 99.0),
+            )
+        }
+
     }
 
     @Test
