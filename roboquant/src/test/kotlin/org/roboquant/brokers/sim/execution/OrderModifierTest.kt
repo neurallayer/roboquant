@@ -39,6 +39,7 @@ internal class OrderModifierTest {
       assertEquals(OrderStatus.CANCELLED, exec1.status)
   }
 
+
   @Test
   fun testUpdateOrderExecutor() {
       val order1 = LimitOrder(asset, Size(100), 110.0)

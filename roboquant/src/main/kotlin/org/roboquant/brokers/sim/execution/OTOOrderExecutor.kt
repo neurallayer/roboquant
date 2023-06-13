@@ -17,6 +17,7 @@ package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.sim.Pricing
 import org.roboquant.orders.CancelOrder
+import org.roboquant.orders.ModifyOrder
 import org.roboquant.orders.OTOOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
@@ -57,6 +58,13 @@ internal class OTOOrderExecutor(override val order: OTOOrder) : OrderExecutor<OT
         }
 
         return result
+    }
+
+    override fun modify(modifyOrder: ModifyOrder, time: Instant): Boolean {
+        return when(modifyOrder) {
+            is CancelOrder -> cancel(modifyOrder, time)
+            else -> false
+        }
     }
 
 

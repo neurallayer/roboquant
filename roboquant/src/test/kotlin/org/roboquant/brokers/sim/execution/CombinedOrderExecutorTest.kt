@@ -51,6 +51,33 @@ internal class CombinedOrderExecutorTest {
         assertEquals(OrderStatus.COMPLETED, cmd.status)
     }
 
+    @Test
+    fun cancelOCO() {
+        val size = Size(-100)
+        val order1 = StopOrder(asset, size, 90.0)
+        val order2 = LimitOrder(asset, size, 110.0)
+        val order = OCOOrder(order1, order2)
+        val exec1 = OCOOrderExecutor(order)
+
+        val cancel = CancelOrder(order)
+        val result = exec1.modify(cancel, Instant.now())
+        assertEquals(true, result)
+        assertEquals(OrderStatus.CANCELLED, exec1.status)
+    }
+
+    @Test
+    fun cancelOTO() {
+        val size = Size(-100)
+        val order1 = StopOrder(asset, size, 90.0)
+        val order2 = LimitOrder(asset, size, 110.0)
+        val order = OTOOrder(order1, order2)
+        val exec1 = OTOOrderExecutor(order)
+
+        val cancel = CancelOrder(order)
+        val result = exec1.modify(cancel, Instant.now())
+        assertEquals(true, result)
+        assertEquals(OrderStatus.CANCELLED, exec1.status)
+    }
 
     @Test
     fun testOTO() {
