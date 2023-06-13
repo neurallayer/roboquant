@@ -29,7 +29,7 @@ import java.util.*
  * @property time the time the value was observed
  * @property value the value of the observation
  */
-class Observation(val time: Instant, val value: Double)
+data class Observation(val time: Instant, val value: Double)
 
 /**
  * Optimized implementation of time series data that allows for easy and fast calculations. The times are stored as
