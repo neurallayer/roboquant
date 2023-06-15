@@ -141,7 +141,6 @@ class PriceBar(
     override fun toString(): String =
         "symbol=${asset.symbol} ohlcv=${ohlcv.toList()} timeSpan=${timeSpan?.toString() ?: "unknown"}"
 
-
     /**
      * Adjust this PriceBar conform the provided adjusted close [price]
      */
@@ -153,7 +152,6 @@ class PriceBar(
         ohlcv[3] *= adj
         ohlcv[4] /= adj
     }
-
 
     /**
      * Get the price for this price bar, default is the closing price. Supported types:
@@ -190,7 +188,6 @@ class PriceBar(
 data class TradePrice(override val asset: Asset, val price: Double, override val volume: Double = Double.NaN) :
     PriceAction {
 
-
     /**
      * Return the underlying price. Since this event only holds a single price, the [type] parameter is not used.
      *
@@ -221,7 +218,6 @@ data class PriceQuote(
     val bidSize: Double
 ) : PriceAction {
 
-
     /**
      * Return the underlying price. The available [types][type] are:
      *
@@ -247,7 +243,6 @@ data class PriceQuote(
      */
     override val volume: Double
         get() = askSize + bidSize
-
 
     /**
      * Returns the spread percentage. The used formula is
@@ -329,7 +324,6 @@ data class OrderBook(
             val bid = getPrice("BID")
             return (ask - bid) / ask
         }
-
 
     /**
      * Returns the total outstanding volume of the order book (bid + ask volumes combined)

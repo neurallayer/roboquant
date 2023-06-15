@@ -52,7 +52,6 @@ internal class CurrencyTest {
         assertEquals(x, y)
     }
 
-
     @Test
     fun test3() {
         val c = Currency.getInstance("DUMMY")

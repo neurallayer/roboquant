@@ -44,7 +44,6 @@ internal class PriceParserTest {
         assertEquals(11.0, pb.high)
     }
 
-
     @Test
     fun priceBarParser2() {
         val parser = PriceBarParser(open = 4, high = 3, low = 2, close = 1, volume = 5)

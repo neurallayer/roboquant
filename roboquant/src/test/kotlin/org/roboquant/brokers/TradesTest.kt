@@ -47,7 +47,7 @@ internal class TradesTest {
     fun basic() {
         val trade = Trade(Instant.now(), Asset("TEST"), -Size(10), 100.0, 5.0, 100.0, 1)
         assertEquals(-995.0, trade.totalCost.value)
-        assertEquals(100.0/995.0, trade.pnlPercentage)
+        assertEquals(100.0 / 995.0, trade.pnlPercentage)
     }
 
     @Test

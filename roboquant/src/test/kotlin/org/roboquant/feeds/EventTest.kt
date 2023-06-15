@@ -42,7 +42,6 @@ internal class EventTest {
         assertTrue(event2 > event)
     }
 
-
     @Test
     fun empty() {
         val t = Instant.now()

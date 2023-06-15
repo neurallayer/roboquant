@@ -27,7 +27,7 @@ fun interface AssetBuilder {
     /**
      * Based on a [file], return an instance of [Asset]
      */
-    fun build(file: File) : Asset
+    fun build(file: File): Asset
 }
 
 /**

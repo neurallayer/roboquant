@@ -18,7 +18,7 @@ class AggregatorFeedTest {
         val aggFeed = AggregatorFeed(feed, 15.minutes)
         val items2 = aggFeed.toList()
         assertTrue(items2.isNotEmpty())
-        assertTrue((items2[1].time.epochSecond - items2[0].time.epochSecond) >= (15*60))
+        assertTrue((items2[1].time.epochSecond - items2[0].time.epochSecond) >= (15 * 60))
         assertEquals(feed.timeframe, aggFeed.timeframe)
 
         val pb = items2.first().actions.first()
@@ -53,7 +53,7 @@ class AggregatorFeedTest {
     fun combined() {
         // 5-seconds window with 1 millis resolution
         val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
-        val rw = RandomWalkFeed(timeframe,1.millis, generateBars = false)
+        val rw = RandomWalkFeed(timeframe, 1.millis, generateBars = false)
         val items1 = rw.toList()
 
         val aggFeed1 = AggregatorFeed(rw, 1.seconds)

@@ -106,7 +106,7 @@ class Roboquant(
      * re-initialize values if required.
      */
     private fun start(run: String, timeframe: Timeframe) {
-        for (component in components) component.start(run,timeframe)
+        for (component in components) component.start(run, timeframe)
     }
 
     /**
@@ -208,7 +208,7 @@ class Roboquant(
     /**
      * Provide a string representation of this roboquant.
      */
-    override fun toString() : String {
+    override fun toString(): String {
         val s = strategy::class.simpleName
         val p = policy::class.simpleName
         val l = logger::class.simpleName
@@ -242,7 +242,6 @@ class Roboquant(
     }
 
 }
-
 
 /**
  * Enumeration of the two different phases that a run can be in, [MAIN] and [VALIDATE]. Especially with self-learning

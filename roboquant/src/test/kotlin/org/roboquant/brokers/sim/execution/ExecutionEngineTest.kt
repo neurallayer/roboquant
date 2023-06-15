@@ -71,7 +71,6 @@ internal class ExecutionEngineTest {
         assertEquals(true, success)
     }
 
-
     @Test
     fun testAddingModifyOrders() {
         val engine = ExecutionEngine(NoCostPricingEngine())
@@ -108,7 +107,6 @@ internal class ExecutionEngineTest {
         engine.removeClosedOrders()
         assertEquals(0, engine.orderStates.size)
     }
-
 
     @Test
     fun testRegister() {

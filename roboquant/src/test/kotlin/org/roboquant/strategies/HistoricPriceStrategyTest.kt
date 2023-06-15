@@ -47,7 +47,6 @@ internal class HistoricPriceStrategyTest {
 
     private class MySubclass3 : HistoricPriceStrategy(1)
 
-
     @Test
     fun test() {
         val c = MySubClass1()

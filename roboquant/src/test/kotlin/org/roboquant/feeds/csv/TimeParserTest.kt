@@ -24,7 +24,6 @@ import kotlin.test.assertEquals
 
 internal class TimeParserTest {
 
-
     private fun parse(time: String): Instant {
         val tp = AutoDetectTimeParser(0)
         val asset = Asset("TEST")
@@ -42,7 +41,6 @@ internal class TimeParserTest {
         assertEquals(result, parse("20220104  16:00:00"))
         assertEquals(result, parse(result.toEpochMilli().toString()))
     }
-
 
     @Test
     fun autoDetectOld() {

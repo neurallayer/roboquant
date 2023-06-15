@@ -46,7 +46,7 @@ interface OrderExecutor<T : CreateOrder> {
     /**
      * Modify the order, return true if it was successful, false otherwise. Default is to return false
      */
-    fun modify(modifyOrder: ModifyOrder, time: Instant) : Boolean = false
+    fun modify(modifyOrder: ModifyOrder, time: Instant): Boolean = false
 
 }
 

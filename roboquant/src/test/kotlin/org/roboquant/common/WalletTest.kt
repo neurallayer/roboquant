@@ -37,7 +37,6 @@ internal class WalletTest {
         assertTrue { wallet.toString().contains("USD") }
     }
 
-
     @Test
     fun empty() {
         val wallet = Wallet()

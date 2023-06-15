@@ -75,7 +75,6 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
      */
     operator fun get(currency: Currency): Double = data[currency] ?: 0.0
 
-
     /**
      * Is this wallet instance empty
      */

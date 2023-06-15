@@ -53,7 +53,7 @@ class HistogramChart(
         binCount: Int = 20,
         scale: Int = 2,
         minBinSize: Int = 0,
-    ) : this (metricData.flatten(true), binCount, scale, minBinSize)
+    ) : this(metricData.flatten(true), binCount, scale, minBinSize)
 
     private fun toSeriesData(): List<Pair<String, Long>> {
         val f = EmpiricalDistribution(binCount)
@@ -66,7 +66,7 @@ class HistogramChart(
         for (i in 0 until binCount) {
             val roundedValue = BigDecimal(f.upperBounds[i]).setScale(scale, RoundingMode.HALF_DOWN)
             binSize += f.binStats[i].n
-            val last =  i == binCount -1
+            val last = i == binCount - 1
             if (binSize >= minBinSize || (last && binSize > 0)) {
                 val e = Pair("$roundedValue", binSize)
                 result.add(e)

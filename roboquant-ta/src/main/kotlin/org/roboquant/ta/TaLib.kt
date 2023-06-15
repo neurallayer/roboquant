@@ -43,7 +43,6 @@ import org.roboquant.common.DoesNotComputeException
 class InsufficientData(indicator: String, val minSize: Int) :
     Throwable("innsuffient data to calculate $indicator, miniumum is $minSize", null, true, false)
 
-
 /**
  * This class wraps the excellent TA-Lib library and makes it easy to use indicators provided by that library.
  * This wrapper is optimized for usage within roboquant and supports streaming/event based updates.

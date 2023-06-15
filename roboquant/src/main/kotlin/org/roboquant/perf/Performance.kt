@@ -59,21 +59,21 @@ private class FastStrategy(private val skip: Int) : Strategy {
 /**
  * Fast feed
  */
-private class FastFeed(val nAssets : Int, val events: Int) : Feed {
+private class FastFeed(val nAssets: Int, val events: Int) : Feed {
 
     private val assets = mutableListOf<Asset>()
     private val start = Instant.parse("2000-01-01T00:00:00Z")
     val size = nAssets * events
 
     init {
-        repeat(nAssets) {  assets.add(Asset("TEST-$it")) }
+        repeat(nAssets) { assets.add(Asset("TEST-$it")) }
     }
 
     override suspend fun play(channel: EventChannel) {
         repeat(events) {
             val actions = ArrayList<PriceBar>(nAssets)
             val open = 100.0 + 10 * (it / events)
-            val data = doubleArrayOf(open,open+1.0,open-1.0,open, 500.0)
+            val data = doubleArrayOf(open, open + 1.0, open - 1.0, open, 500.0)
             for (asset in assets) {
                 val action = PriceBar(asset, data)
                 actions.add(action)
@@ -96,7 +96,7 @@ private class FastFeed(val nAssets : Int, val events: Int) : Feed {
 private object Performance {
 
     private const val skip = 999 // create signal in 1 out of 999 price-action
-    private fun getStrategy(skip:Int) : Strategy = FastStrategy(skip)
+    private fun getStrategy(skip: Int): Strategy = FastStrategy(skip)
 
     /**
      * Try to make the results more reproducible by running the code multiple times and take the best time.
@@ -148,9 +148,9 @@ private object Performance {
         return measure {
 
             val strategy = CombinedStrategy(
-                getStrategy(skip -1),
+                getStrategy(skip - 1),
                 getStrategy(skip),
-                getStrategy(skip +1),
+                getStrategy(skip + 1),
             )
 
             val broker = SimBroker(accountModel = MarginAccount())
@@ -189,6 +189,7 @@ private object Performance {
     fun test() {
         Config.printInfo()
         data class Combination(val events: Int, val assets: Int, val backTests: Int)
+
         val combinations = listOf(
             Combination(1_000, 10, 100),
             Combination(1_000, 50, 100),
@@ -199,14 +200,15 @@ private object Performance {
             Combination(20_000, 500, 100)
         )
 
-        val header = String.format("\n%8S %6S %6S %4S %7S %7S %10S %7S %6S %9S",
+        val header = String.format(
+            "\n%8S %6S %6S %4S %7S %7S %10S %7S %6S %9S",
             "candles", "assets", "events", "runs", "feed", "full",
-            "sequential","parallel", "trades", "candles/s"
-            )
+            "sequential", "parallel", "trades", "candles/s"
+        )
 
         println(header)
         println(" " + "━".repeat(header.length - 2))
-        for ((events, assets, backTests) in combinations ) {
+        for ((events, assets, backTests) in combinations) {
             // single run
             val feed = FastFeed(assets, events)
             val t1 = feedFilter(feed)
@@ -216,12 +218,13 @@ private object Performance {
             val (t3, trades) = seqRun(feed, backTests)
             val t4 = parRun(feed, backTests)
 
-            val candles = assets*events*backTests/1_000_000
-            val line = String.format("%6dM %7d %6d %4d %5dms %5dms %7dms %7dms %5dK %8dM",
-                    candles, assets, events, backTests,
-                    t1, t2, t3, t4,
-                    (trades/1_000.0).roundToInt(), feed.size * backTests / (t4 * 1000)
-                )
+            val candles = assets * events * backTests / 1_000_000
+            val line = String.format(
+                "%6dM %7d %6d %4d %5dms %5dms %7dms %7dms %5dK %8dM",
+                candles, assets, events, backTests,
+                t1, t2, t3, t4,
+                (trades / 1_000.0).roundToInt(), feed.size * backTests / (t4 * 1000)
+            )
             println(line)
         }
         println()

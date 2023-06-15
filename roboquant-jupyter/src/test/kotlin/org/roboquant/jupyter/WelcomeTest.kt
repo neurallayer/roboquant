@@ -29,7 +29,6 @@ internal class WelcomeTest {
         assertTrue { w.asHTMLPage().contains(snippet) }
     }
 
-
     @Test
     fun testDemo() {
         val chart1 = Welcome().demo1()

@@ -25,34 +25,32 @@ import kotlin.test.assertEquals
 
 internal class OrderModifierTest {
 
-  private val asset = TestData.usStock()
+    private val asset = TestData.usStock()
 
+    @Test
+    fun testCancelOrderExecutor() {
+        val order1 = MarketOrder(asset, 100)
+        val exec1 = MarketOrderExecutor(order1)
 
-  @Test
-  fun testCancelOrderExecutor() {
-      val order1 = MarketOrder(asset, 100)
-      val exec1 = MarketOrderExecutor(order1)
+        val cancel = CancelOrder(order1)
+        val result = exec1.modify(cancel, Instant.now())
+        assertEquals(true, result)
+        assertEquals(OrderStatus.CANCELLED, exec1.status)
+    }
 
-      val cancel = CancelOrder(order1)
-      val result = exec1.modify(cancel, Instant.now())
-      assertEquals(true, result)
-      assertEquals(OrderStatus.CANCELLED, exec1.status)
-  }
+    @Test
+    fun testUpdateOrderExecutor() {
+        val order1 = LimitOrder(asset, Size(100), 110.0)
+        val exec1 = LimitOrderExecutor(order1)
+        assertEquals(OrderStatus.INITIAL, exec1.status)
 
+        val order2 = LimitOrder(asset, Size(100), 120.0)
+        val order = UpdateOrder(order1, order2)
 
-  @Test
-  fun testUpdateOrderExecutor() {
-      val order1 = LimitOrder(asset, Size(100), 110.0)
-      val exec1 = LimitOrderExecutor(order1)
-      assertEquals(OrderStatus.INITIAL, exec1.status)
-
-      val order2 = LimitOrder(asset, Size(100), 120.0)
-      val order = UpdateOrder(order1, order2)
-
-      val result = exec1.modify(order, Instant.now())
-      assertEquals(true, result)
-      assertEquals(120.0, exec1.order.limit)
-  }
+        val result = exec1.modify(order, Instant.now())
+        assertEquals(true, result)
+        assertEquals(120.0, exec1.order.limit)
+    }
 
 
 }

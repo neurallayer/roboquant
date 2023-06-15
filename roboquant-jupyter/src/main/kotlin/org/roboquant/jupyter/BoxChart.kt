@@ -55,13 +55,13 @@ class BoxChart(
      * Create box plot from multiple runs
      */
     constructor(
-        metricData: Map<String,TimeSeries>,
+        metricData: Map<String, TimeSeries>,
         period: ChronoUnit = ChronoUnit.MONTHS,
         lowPercentile: Double = 25.0,
         midPercentile: Double = 50.0,
         highPercentile: Double = 75.0,
         precision: Int = 8
-    ) : this(metricData.flatten(true), period, lowPercentile,midPercentile,highPercentile,precision)
+    ) : this(metricData.flatten(true), period, lowPercentile, midPercentile, highPercentile, precision)
 
 
     private fun toSeriesData(): List<Pair<String, Any>> {

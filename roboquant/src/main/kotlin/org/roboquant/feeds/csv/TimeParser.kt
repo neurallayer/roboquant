@@ -79,7 +79,6 @@ private class LocalDateParser(pattern: String) : AuteDetectParser {
 
 }
 
-
 /**
  * Auto-detect the appropriate time parser to use based on the first sample it receives.
  *

@@ -52,7 +52,6 @@ class PolygonHistoricFeed(
         availableAssets(client)
     }
 
-
     /**
      * Retrieve [PriceBar] data for the provided [symbols] and [timeframe].
      */
@@ -72,12 +71,12 @@ class PolygonHistoricFeed(
                     timespan,
                     timeframe.start.toEpochMilli().toString(),
                     timeframe.end.toEpochMilli().toString(),
-                    ! adjusted,
+                    !adjusted,
                     limit.toLong()
                 )
             )
 
-            val tp = when(timespan) {
+            val tp = when (timespan) {
                 "day" -> multiplier.days
                 "minute" -> multiplier.minutes
                 "hour" -> multiplier.hours

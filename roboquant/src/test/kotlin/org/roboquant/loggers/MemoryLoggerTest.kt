@@ -37,7 +37,6 @@ internal class MemoryLoggerTest {
         val logger = MemoryLogger(showProgress = false)
         assertTrue(logger.metricNames.isEmpty())
 
-
         val metrics = TestData.getMetrics()
 
         logger.start("test", Timeframe.INFINITE)
@@ -58,7 +57,7 @@ internal class MemoryLoggerTest {
         assertTrue(z.min().value <= z.max().value)
 
         repeat(4) {
-            logger.log(metrics,Instant.now(), "test")
+            logger.log(metrics, Instant.now(), "test")
         }
     }
 
@@ -133,7 +132,6 @@ internal class MemoryLoggerTest {
         assertEquals(49.0, latest)
 
     }
-
 
 
 }

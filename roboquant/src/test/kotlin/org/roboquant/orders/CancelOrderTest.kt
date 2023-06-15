@@ -40,7 +40,6 @@ internal class CancelOrderTest {
         assertEquals("some tag", oc.tag)
     }
 
-
     @Test
     fun testFailure() {
         val asset = TestData.usStock()

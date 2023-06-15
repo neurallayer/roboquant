@@ -104,8 +104,6 @@ inline fun <reified T : Action> Feed.filter(
     return@runBlocking result
 }
 
-
-
 /**
  * Convenience method to apply some logic to a feed
  */
@@ -136,8 +134,6 @@ inline fun <reified T : Action> Feed.apply(
 
 }
 
-
-
 /**
  * Convenience method to apply some logic to a feed
  */
@@ -167,7 +163,6 @@ inline fun Feed.applyEvents(
     }
 
 }
-
 
 /**
  * Convert a feed to a list of events, optionally limited to the provided [timeframe].

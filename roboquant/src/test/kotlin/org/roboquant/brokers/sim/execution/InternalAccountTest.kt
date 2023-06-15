@@ -27,7 +27,6 @@ import kotlin.test.assertEquals
 
 internal class InternalAccountTest {
 
-
     @Test
     fun internalAccountOrders() {
         val account = InternalAccount(Currency.USD)

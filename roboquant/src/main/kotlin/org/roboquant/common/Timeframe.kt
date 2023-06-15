@@ -64,7 +64,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      */
     fun isEmpty() = start == end && !inclusive
 
-
     /**
      * @suppress
      */
@@ -271,7 +270,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         return Pair(Timeframe(start, border), Timeframe(border, end, inclusive))
     }
 
-
     /**
      * Split a timeframe into two parts, one for training and one for test using the provided [testSize]
      * for determining the size of test. [testSize] period should be smaller than the total duration of the timeframe.
@@ -281,7 +279,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      */
     fun splitTrainTest(testSize: TimeSpan): Pair<Timeframe, Timeframe> {
         val border = end - testSize
-        require (border > start) { "testSize should be smaller than timeframe"}
+        require(border > start) { "testSize should be smaller than timeframe" }
         return Pair(Timeframe(start, border), Timeframe(border, end, inclusive))
     }
 

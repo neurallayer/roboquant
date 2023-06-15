@@ -227,7 +227,7 @@ fun cfd() {
     val feed = CSVFeed("/tmp/DE40CASH.csv") {
         template = Asset("TEMPLATE", AssetType.CFD, Currency.EUR, Exchange.DEX)
         separator = '\t'
-        timeParser = TimeParser { a,b -> parse(a,b) }
+        timeParser = TimeParser { a, b -> parse(a, b) }
     }
 
     require(feed.assets.size == 1)

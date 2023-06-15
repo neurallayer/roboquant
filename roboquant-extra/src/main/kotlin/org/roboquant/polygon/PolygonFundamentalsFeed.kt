@@ -128,8 +128,8 @@ class PolygonFundamentalsFeed(
     @OptIn(ExperimentalAPI::class)
     fun retrieve(
         vararg symbols: String,
-        coverPeriod : String = "quarterly",
-        limit : Int = 10,
+        coverPeriod: String = "quarterly",
+        limit: Int = 10,
     ) {
         require(coverPeriod in setOf("annual", "quarterly", "ttm"))
         for (symbol in symbols) {

@@ -28,7 +28,6 @@ import org.roboquant.strategies.Signal
 import kotlin.math.absoluteValue
 
 
-
 /**
  * This policy uses ATR (Average True Range) to:
  *
@@ -75,10 +74,10 @@ class AtrPolicy(
 
         // Calculate the max size
         val maxSize = asset.contractSize(amount, price, fractions)
-        if ( atRisk == null ) return maxSize
+        if (atRisk == null) return maxSize
 
         val atr = getAtr(asset, price)
-        if (! atr.isFinite()) return Size.ZERO
+        if (!atr.isFinite()) return Size.ZERO
 
         // Calculate the max loss based on the max size and atr
         val maxLoss = asset.value(maxSize, atr * atrLoss).value
@@ -118,7 +117,7 @@ class AtrPolicy(
 
         // Calculate the ATR and make it relative to the direction of the size
         val atr = getAtr(asset, price) * size.sign
-        if (! atr.isFinite()) return null
+        if (!atr.isFinite()) return null
 
         // Create the actual orders
         val entry = MarketOrder(asset, size)

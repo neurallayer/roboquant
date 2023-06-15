@@ -136,7 +136,6 @@ class IBKRBroker(
         }
     }
 
-
     /**
      * Cancel an order
      */
@@ -409,7 +408,7 @@ class IBKRBroker(
                         accountUpdate.buyingPower = value.toDouble()
                     }
 
-                    "CashBalance" ->  accountUpdate.cash.set(c, value.toDouble())
+                    "CashBalance" -> accountUpdate.cash.set(c, value.toDouble())
                 }
             }
         }

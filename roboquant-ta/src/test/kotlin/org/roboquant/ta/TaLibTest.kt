@@ -55,8 +55,6 @@ class TaLibTest {
 
     }
 
-
-
     @Test
     fun test2() {
         val lib = TaLib()
@@ -65,14 +63,14 @@ class TaLibTest {
             lib.sma(series, 20)
         } catch (ex: InsufficientData) {
 
-            series.increaseCapacity(ex.minSize -1)
+            series.increaseCapacity(ex.minSize - 1)
             assertThrows<InsufficientData> {
                 lib.sma(series, 20)
             }
 
             series.increaseCapacity(ex.minSize)
             assertDoesNotThrow {
-                lib.sma(series,20)
+                lib.sma(series, 20)
             }
 
             assertThrows<InsufficientData> {
@@ -80,8 +78,6 @@ class TaLibTest {
             }
         }
     }
-
-
 
     @Test
     fun test3() {
@@ -91,14 +87,14 @@ class TaLibTest {
             lib.sma(series, 20, 4)
         } catch (ex: InsufficientData) {
 
-            series.increaseCapacity(ex.minSize -1)
+            series.increaseCapacity(ex.minSize - 1)
             assertThrows<InsufficientData> {
                 lib.sma(series, 20, 4)
             }
 
             series.increaseCapacity(ex.minSize)
             assertDoesNotThrow {
-                lib.sma(series,20, 4)
+                lib.sma(series, 20, 4)
             }
 
             assertThrows<InsufficientData> {
@@ -107,4 +103,4 @@ class TaLibTest {
         }
     }
 
-    }
+}

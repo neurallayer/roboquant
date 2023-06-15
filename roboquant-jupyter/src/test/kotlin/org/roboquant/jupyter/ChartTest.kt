@@ -71,7 +71,6 @@ internal class ChartTest {
 
     }
 
-
     @Test
     fun testGsonAdapters() {
         val b = Chart.gsonBuilder.create()
@@ -91,7 +90,6 @@ internal class ChartTest {
         Chart.maxSamples = Int.MAX_VALUE
         assertEquals(100, chart.reduced(100).size)
     }
-
 
     @Test
     fun testCodeGeneration() {

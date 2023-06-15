@@ -198,7 +198,6 @@ val Number.RUB
 val Number.INR
     get() = Amount(Currency.INR, toDouble())
 
-
 // Extensions to make it easier to create amounts for common cryptocurrencies
 
 /**

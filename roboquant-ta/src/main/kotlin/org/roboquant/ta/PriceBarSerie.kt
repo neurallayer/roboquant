@@ -85,7 +85,7 @@ class PriceBarSerie(capacity: Int) {
      * Update the buffer with a new [action], but only if the action is a price-bar.
      * Return true if a value has been added and it is full.
      */
-    fun add(action: Action) : Boolean {
+    fun add(action: Action): Boolean {
         return if (action is PriceBar) {
             add(action.ohlcv)
         } else {
@@ -118,7 +118,6 @@ class PriceBarSerie(capacity: Int) {
      */
     val size: Int
         get() = openBuffer.size
-
 
     /**
      * Clear all stored prices and volumes

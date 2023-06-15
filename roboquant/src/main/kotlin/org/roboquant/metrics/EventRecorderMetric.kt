@@ -45,7 +45,6 @@ class EventRecorderMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, F
         return emptyMap()
     }
 
-
     /**
      * Reset the state
      */

@@ -26,7 +26,6 @@ import kotlin.test.assertEquals
 internal class RSIStrategyTest {
     private val feed = RandomWalkFeed.lastYears(1, 2)
 
-
     @Test
     fun test() = runBlocking {
         val s = RSIStrategy()
@@ -34,7 +33,6 @@ internal class RSIStrategyTest {
         assertEquals(70.0, s.highThreshold)
         val roboquant = Roboquant(s, logger = SilentLogger())
         roboquant.run(feed)
-
 
     }
 

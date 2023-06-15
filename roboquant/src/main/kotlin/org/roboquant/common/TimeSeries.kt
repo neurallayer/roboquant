@@ -150,7 +150,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     /**
      * Return a clean time-series in which all values are finite.
      */
-    fun clean() : TimeSeries {
+    fun clean(): TimeSeries {
         val x = ArrayList<Instant>(size)
         val y = ArrayList<Double>(size)
         for (i in values.indices) {
@@ -171,7 +171,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     /**
      * Return the difference for all values
      */
-    fun diff()  = TimeSeries(timeline.drop(1), values.diff())
+    fun diff() = TimeSeries(timeline.drop(1), values.diff())
 
     /**
      * Return the sum over all values
@@ -265,7 +265,6 @@ fun Map<String, TimeSeries>.flatten(noOverlap: Boolean = true): TimeSeries {
     }
     return TimeSeries(result)
 }
-
 
 /**
  * Convert a sorted by time collection to a [TimeSeries] object

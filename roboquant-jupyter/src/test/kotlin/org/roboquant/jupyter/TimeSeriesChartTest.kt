@@ -23,7 +23,6 @@ import kotlin.test.assertTrue
 
 internal class TimeSeriesChartTest {
 
-
     @Test
     fun test() {
         val data = TestData.data
@@ -42,7 +41,6 @@ internal class TimeSeriesChartTest {
         assertEquals(str.removeEOL(), chart.asHTMLPage().removeEOL())
 
     }
-
 
     @Test
     fun single() {

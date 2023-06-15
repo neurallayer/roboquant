@@ -51,7 +51,6 @@ internal class TimeframeTest {
         assertTrue(subFrames.all { it.end == it.start + 2.months })
     }
 
-
     @Test
     fun empty() {
         val empty = Timeframe.EMPTY
@@ -162,7 +161,6 @@ internal class TimeframeTest {
         assertTrue(Instant.parse("2021-12-31T18:00:00Z") > timeline.last())
         assertTrue(timeline.size > 200)
     }
-
 
     @Test
     fun testTrainTestSplit() {

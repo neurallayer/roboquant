@@ -81,7 +81,6 @@ internal class CSVFeedTest {
         assertEquals(9, feed.timeline.size)
     }
 
-
     @Test
     fun noAssets() {
         assertFailsWith<IllegalArgumentException> {

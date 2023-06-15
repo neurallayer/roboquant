@@ -163,7 +163,6 @@ val Collection<Position>.exposure: Wallet
         return sumOf { it.exposure }
     }
 
-
 /**
  * Return the difference between these positions and a target set of positions.
  */
@@ -183,7 +182,6 @@ fun Collection<Position>.diff(target: Collection<Position>): Map<Asset, Size> {
 
     return result
 }
-
 
 /**
  * Get the set of distinct assets for a collection of positions
@@ -215,7 +213,6 @@ fun Collection<Position>.getPosition(asset: Asset): Position {
  */
 val Collection<Position>.unrealizedPNL: Wallet
     get() = sumOf { it.unrealizedPNL }
-
 
 /**
  * Return the required sizes per asset to close the open positions. This method doesn't close the actual open positions,

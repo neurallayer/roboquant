@@ -28,7 +28,6 @@ import kotlin.test.assertTrue
 
 internal class PositionTest {
 
-
     private fun getRandomSize(): BigDecimal {
         val l = Random.nextLong(9_999_999)
         return BigDecimal("10.$l")
@@ -46,7 +45,6 @@ internal class PositionTest {
         assertEquals(0.0, pnl.value)
         assertEquals(240.0, newPos.exposure.value)
     }
-
 
     @Test
     fun reduced() {

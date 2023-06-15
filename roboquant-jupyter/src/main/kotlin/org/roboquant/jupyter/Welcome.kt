@@ -34,7 +34,7 @@ class Welcome : HTMLOutput() {
     @Suppress("MaxLineLength")
     override fun asHTML(): String {
 
-        with (Config.info) {
+        with(Config.info) {
             return """
             <img src="https://roboquant.org/img/avatar.png" alt="roboquant logo" align="left" style="margin-right: 20px; max-height:160px;"/>
             <span>
@@ -71,7 +71,8 @@ class Welcome : HTMLOutput() {
         val metric = AccountMetric()
         val roboquant = Roboquant(strategy, metric)
         val feed = AvroFeed.sp500()
-        println("""
+        println(
+            """
             ┌───────────────┐
             │     INPUT     │
             └───────────────┘
@@ -88,7 +89,8 @@ class Welcome : HTMLOutput() {
             ┌───────────────┐
             │    Output     │
             └───────────────┘
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         roboquant.run(feed)
         val equity = roboquant.logger.getMetric("account.equity")
@@ -103,7 +105,8 @@ class Welcome : HTMLOutput() {
         val metric = AccountMetric()
         val roboquant = Roboquant(strategy, metric)
         val feed = AvroFeed.sp500()
-        println("""
+        println(
+            """
             ┌───────────────┐
             │     INPUT     │
             └───────────────┘
@@ -122,7 +125,8 @@ class Welcome : HTMLOutput() {
             ┌───────────────┐
             │    Output     │
             └───────────────┘
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         feed.timeframe.split(6.months).forEach {
             roboquant.run(feed, it)
@@ -131,12 +135,12 @@ class Welcome : HTMLOutput() {
         return TimeSeriesChart(equity)
     }
 
-
     /**
      * View feed data demo
      */
     fun demo3(): Chart {
-        println("""
+        println(
+            """
             ┌───────────────┐
             │     INPUT     │
             └───────────────┘
@@ -146,7 +150,8 @@ class Welcome : HTMLOutput() {
             ┌───────────────┐
             │    Output     │
             └───────────────┘
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         val feed = AvroFeed.sp500()
         return PriceBarChart(feed, "AAPL")

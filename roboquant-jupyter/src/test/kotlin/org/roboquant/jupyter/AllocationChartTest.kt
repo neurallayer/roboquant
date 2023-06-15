@@ -30,7 +30,6 @@ internal class AllocationChartTest {
         assertTrue(chart.asHTML().isNotBlank())
     }
 
-
     @Test
     fun testPerAssetClass() {
         val account = TestData.usAccount()

@@ -24,7 +24,6 @@ import kotlin.test.assertTrue
 
 internal class SingleOrderTest {
 
-
     @Test
     fun orderId() {
         Order.setId(10)

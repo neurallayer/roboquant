@@ -56,7 +56,6 @@ internal class SimBrokerTest {
         assertEquals(Wallet(100_000.USD), broker2.initialDeposit)
     }
 
-
     @Test
     fun placeSingleCurrencyOrder() {
         val broker = SimBroker()
@@ -68,7 +67,7 @@ internal class SimBrokerTest {
         val event = Event(listOf(price), now)
 
         val account = broker.place(listOf(order), event)
-        assertEquals(1,account.closedOrders.size)
+        assertEquals(1, account.closedOrders.size)
         assertEquals(0, account.openOrders.size)
         val orderState = account.closedOrders.first()
         assertEquals(now, orderState.openedAt)
@@ -87,7 +86,6 @@ internal class SimBrokerTest {
         val pos = account.positions.first()
         assertEquals(Size(10), pos.size)
     }
-
 
     @Test
     fun placeMultipleOrders() {

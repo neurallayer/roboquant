@@ -54,7 +54,7 @@ class AtrPolicyTest {
         // Create an ATR of $1
         repeat(12) {
             val p = 5.0
-            val priceBar = PriceBar(asset,p+it,p+it,p+it,p+it)
+            val priceBar = PriceBar(asset, p + it, p + it, p + it, p + it)
             val event = Event(listOf(priceBar), now + it.millis)
             val o = policy.act(signals, account, event)
             orders.addAll(o)
@@ -83,7 +83,7 @@ class AtrPolicyTest {
 
     @Test
     fun bracketSizingAtr() {
-        val p = AtrPolicy(10, 4.0, 2.0, orderPercentage = 0.02,atRisk = 0.1)
+        val p = AtrPolicy(10, 4.0, 2.0, orderPercentage = 0.02, atRisk = 0.1)
         val orders = run(p)
         assertTrue(orders.isNotEmpty())
         val order = orders.last()
@@ -95,7 +95,7 @@ class AtrPolicyTest {
     @Test
     fun bracketSizingAtrValidation() {
         assertThrows<IllegalArgumentException> {
-            AtrPolicy(10, 4.0, 2.0, orderPercentage = 0.02,atRisk = 1.3)
+            AtrPolicy(10, 4.0, 2.0, orderPercentage = 0.02, atRisk = 1.3)
         }
     }
 

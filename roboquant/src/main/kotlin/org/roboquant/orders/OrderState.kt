@@ -69,7 +69,6 @@ class OrderState private constructor(
     val orderId: Int
         get() = order.id
 
-
     /**
      * Update the order state with a [newStatus] and [time] and return the updated version. The
      * original version won't be modified.
@@ -78,7 +77,7 @@ class OrderState private constructor(
      * `IllegalStateException`.
      */
     fun update(newStatus: OrderStatus, time: Instant): OrderState {
-        check (! status.closed) { "cannot update a closed order, status=$status" }
+        check(!status.closed) { "cannot update a closed order, status=$status" }
         val newOpenedAt = if (openedAt == Instant.MAX) time else openedAt
         val newClosedAt = if (newStatus.closed) time else closedAt
         return OrderState(order, newStatus, newOpenedAt, newClosedAt)
@@ -129,7 +128,6 @@ fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
     return s
 }
 
-
 /**
  * Returns true is the collection of orderStates contains at least one for [asset], false otherwise.
  */
@@ -142,13 +140,11 @@ operator fun Collection<OrderState>.contains(asset: Asset) = any { it.asset == a
 fun Collection<OrderState>.createCancelOrders(): List<CancelOrder> =
     filter { it.status.open && it.order is CreateOrder }.map { CancelOrder(it) }
 
-
 /**
  * Get the unique assets for a collection of order states
  */
 val Collection<OrderState>.assets: Set<Asset>
     get() = map { it.asset }.distinct().toSet()
-
 
 /**
  * Return list of CancelOrder for any open orders in the collection

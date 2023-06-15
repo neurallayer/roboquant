@@ -44,11 +44,11 @@ internal class HistoricFeedTest {
         assertEquals(s, feed.assets.getBySymbol(s).symbol)
     }
 
-
     @Test
     fun custom() {
         val tf = Timeframe.fromYears(2020, 2021)
         val asset = Asset("ABC")
+
         class MyFeed : HistoricFeed {
             override val timeline: Timeline
                 get() = tf.toTimeline(1.days)
@@ -66,7 +66,6 @@ internal class HistoricFeedTest {
         assertTrue(feed.timeframe.inclusive)
         assertContains(feed.assets, asset)
     }
-
 
     @Test
     fun firstLast() {

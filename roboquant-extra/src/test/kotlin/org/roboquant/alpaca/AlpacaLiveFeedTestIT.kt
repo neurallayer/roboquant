@@ -81,7 +81,6 @@ internal class AlpacaLiveFeedTestIT {
         }
     }
 
-
     @Test
     fun test3() {
         System.getProperty("TEST_ALPACA") ?: return

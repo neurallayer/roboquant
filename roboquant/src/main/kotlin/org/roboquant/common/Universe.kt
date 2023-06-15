@@ -67,7 +67,7 @@ private class SP500 : Universe {
                 val asset = Asset(symbol, currency = USD, exchange = us)
                 val date = it.getField("Date")
                 val startDate = if (date.isNotEmpty()) LocalDate.parse(it.getField("Date")) else startSP500
-                val start = startDate.atTime(0,0).atZone(us.zoneId).toInstant()
+                val start = startDate.atTime(0, 0).atZone(us.zoneId).toInstant()
                 val timeframe = Timeframe(start, Timeframe.MAX)
                 Pair(asset, timeframe)
             }

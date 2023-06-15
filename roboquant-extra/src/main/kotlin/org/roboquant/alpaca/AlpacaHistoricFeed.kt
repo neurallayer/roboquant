@@ -123,7 +123,6 @@ class AlpacaHistoricFeed(
 
     }
 
-
     /**
      * Retrieve the [PriceQuote] for a number of [symbols] and specified [timeframe].
      */
@@ -180,7 +179,7 @@ class AlpacaHistoricFeed(
         val start = timeframe.start.zonedDateTime
         val end = timeframe.end.zonedDateTime
 
-        val timeSpan = when(barPeriod) {
+        val timeSpan = when (barPeriod) {
             BarPeriod.DAY -> barDuration.days
             BarPeriod.MINUTE -> barDuration.minutes
             BarPeriod.HOUR -> barDuration.hours

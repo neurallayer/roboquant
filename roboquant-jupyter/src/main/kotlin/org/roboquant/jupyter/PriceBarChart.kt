@@ -92,7 +92,6 @@ class PriceBarChart(
         height = 700
     }
 
-
     /**
      * Play a feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
      */

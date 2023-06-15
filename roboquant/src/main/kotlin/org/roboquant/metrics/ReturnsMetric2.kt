@@ -37,7 +37,6 @@ private class TimeBuffer(val size: Int) {
     fun clear() = data.clear()
 }
 
-
 /**
  * Improvement over original returns metric
  */
@@ -110,7 +109,7 @@ class ReturnsMetric2(
 
     private fun DoubleArray.cumReturns() = fold(1.0) { last, d -> last * (d + 1.0) } - 1.0
 
-    override fun calculate(account: Account, event: Event): Map<String, Double>  {
+    override fun calculate(account: Account, event: Event): Map<String, Double> {
         times.add(event.time)
         updateBenchmark(event)
         updateAccount(account)

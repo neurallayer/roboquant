@@ -82,7 +82,6 @@ internal class PriceActionTest {
         assertEquals(1000.0, action.volume)
     }
 
-
     @Test
     fun priceBarAdjustClose() {
         val asset = TestData.euStock()
@@ -95,7 +94,6 @@ internal class PriceActionTest {
         pb.adjustClose(0.5)
         assertEquals(Double.NaN, pb3.volume)
     }
-
 
     @Test
     fun orderBook() {

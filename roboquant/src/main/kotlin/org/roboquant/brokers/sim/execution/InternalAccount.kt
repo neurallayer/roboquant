@@ -88,7 +88,6 @@ class InternalAccount(var baseCurrency: Currency) {
         cash.clear()
     }
 
-
     /**
      * Set the [position] a portfolio. If the position is closed, it is removed all together from the [portfolio].
      */
@@ -106,7 +105,6 @@ class InternalAccount(var baseCurrency: Currency) {
     val orders: List<OrderState>
         get() = openOrders.values.toList()
 
-
     /**
      * Add [orders] as initial orders. This is the first step a broker should take before further processing
      * the orders. Future updates using the [updateOrder] method will fail if there is no known order already present.
@@ -115,7 +113,6 @@ class InternalAccount(var baseCurrency: Currency) {
         val newOrders = orders.map { OrderState(it) }
         newOrders.forEach { openOrders[it.orderId] = it }
     }
-
 
     /**
      * Update an [order] with a new [status] at a certain time. This only successful if order has been already added
@@ -174,7 +171,6 @@ class InternalAccount(var baseCurrency: Currency) {
             buyingPower
         )
     }
-
 
     /**
      * Return the total market value for this portfolio

@@ -34,7 +34,6 @@ internal class RatingTest {
         assertTrue(rating.isNegative)
     }
 
-
     @Test
     fun conflicts() {
         val rating = Rating.SELL

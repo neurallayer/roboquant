@@ -55,17 +55,17 @@ class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimeSpan) : 
     override val timeframe: Timeframe
         get() = feed.timeframe
 
-    private operator fun PriceBar.plus(other: PriceBar) : PriceBar {
+    private operator fun PriceBar.plus(other: PriceBar): PriceBar {
         val high = max(other.high, high)
         val low = min(other.low, low)
         return PriceBar(asset, open, high, low, other.close, volume + other.volume, aggregationPeriod)
     }
 
-    private fun getPriceBar(action: Action) : PriceBar? {
+    private fun getPriceBar(action: Action): PriceBar? {
         return when (action) {
 
             is PriceBar -> {
-                with (action) {
+                with(action) {
                     PriceBar(action.asset, open, high, low, close, volume, aggregationPeriod)
                 }
             }

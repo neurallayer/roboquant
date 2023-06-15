@@ -44,7 +44,6 @@ fun alpacaPaperTradeStocks() {
 
     feed.heartbeatInterval = 30_000
 
-
     // Lets pick 10 random stock symbols to trade
     val symbols = feed.availableStocks.random(10).symbols
     feed.subscribeStocks(*symbols)
@@ -110,7 +109,6 @@ fun alpacaHistoricFeed() {
     AvroFeed.record(feed, "/tmp/alpaca.avro")
 }
 
-
 /**
  * Alpaca historic feed
  */
@@ -138,7 +136,6 @@ fun alpacaSP500PriceBar() {
     val fileName = Config.home / "sp500_pricebar_v5.0.avro"
     AvroFeed.record(feed, fileName.toString())
 }
-
 
 /**
  * Alpaca historic feed

@@ -51,7 +51,6 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
         return result
     }
 
-
     /**
      * Reset the state, including any recorded metrics.
      */

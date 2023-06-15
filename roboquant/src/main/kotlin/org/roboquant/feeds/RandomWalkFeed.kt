@@ -45,7 +45,7 @@ import java.util.*
  */
 class RandomWalkFeed(
     override val timeframe: Timeframe,
-    private val timeSpan : TimeSpan = 1.days,
+    private val timeSpan: TimeSpan = 1.days,
     nAssets: Int = 10,
     private val generateBars: Boolean = true,
     private val volumeRange: Int = 1000,

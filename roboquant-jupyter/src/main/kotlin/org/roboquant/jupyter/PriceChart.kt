@@ -45,7 +45,7 @@ internal fun Array<out Indicator>.toLineSeries(feed: Feed, asset: Asset, timefra
     val result = mutableListOf<LineSeries>()
     val currency = asset.currency
     for ((key, timeseries) in data) {
-        val values = timeseries.map { Pair(it.time, Amount(currency,it.value).toBigDecimal()) }
+        val values = timeseries.map { Pair(it.time, Amount(currency, it.value).toBigDecimal()) }
         val lineSeries = LineSeries()
             .setData(values)
             .setName(key)
@@ -55,7 +55,6 @@ internal fun Array<out Indicator>.toLineSeries(feed: Feed, asset: Asset, timefra
     }
     return result
 }
-
 
 /**
  * Plot the prices of an [asset] found in the [feed] and optionally the [trades] made for that same asset. When
@@ -88,7 +87,6 @@ class PriceChart(
         priceType: String = "DEFAULT"
     ) : this(feed, feed.assets.getBySymbol(symbol), trades, timeframe, priceType)
 
-
     /**
      * Play the feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
      */
@@ -108,7 +106,6 @@ class PriceChart(
             .setLineStyle(LineStyle().setWidth(1))
             .setAreaStyle(LineAreaStyle().setOpacity(0.1))
     }
-
 
     /**
      * Generate mark points that will highlight when a trade happened.

@@ -167,7 +167,6 @@ data class Asset(
         return symbol.hashCode()
     }
 
-
     /**
      * Compares this asset with the [other] asset for order based on the [symbol] name. Returns zero if this asset
      * is equal to the specified [other] asset, a negative number if it's less than [other], or a positive number
@@ -177,7 +176,6 @@ data class Asset(
         return symbol.compareTo(other.symbol)
     }
 
-
     /**
      * Return the contract size for a given [amount] and [price]. The provided amount and price should be denoted in
      * the currency of the asset. When rounding is required, this method will always round down.
@@ -185,7 +183,7 @@ data class Asset(
      * It supports fractional sizes by providing a number of [fractions] bigger than 0.
      */
     fun contractSize(amount: Double, price: Double, fractions: Int = 0): Size {
-        require (fractions >= 0) { "factions has to be >= 0, found $fractions" }
+        require(fractions >= 0) { "factions has to be >= 0, found $fractions" }
         val singleContractValue = value(Size.ONE, price).value
         val size = BigDecimal(amount / singleContractValue).setScale(fractions, RoundingMode.DOWN)
         return Size(size)
@@ -261,7 +259,6 @@ fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset>
  * collection
  */
 fun Collection<Asset>.random(n: Int): List<Asset> = shuffled().take(n)
-
 
 /**
  * Provide a [Summary] for a collection of assets

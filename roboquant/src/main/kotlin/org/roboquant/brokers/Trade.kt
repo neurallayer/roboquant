@@ -68,9 +68,8 @@ data class Trade(
      * Returns the PNL as a percentage of the trade
      */
     val pnlPercentage: Double
-        get() = pnlValue / - totalCost.value
+        get() = pnlValue / -totalCost.value
 }
-
 
 /**
  * Get the total fee for a collection of trades

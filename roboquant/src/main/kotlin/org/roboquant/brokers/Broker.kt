@@ -52,6 +52,6 @@ interface Broker : Lifecycle {
      * Refresh the state of the broker and the underlying account. The default implementation invokes the [place]
      * method without any orders or event.
      */
-    fun refresh() : Account = place(emptyList())
+    fun refresh(): Account = place(emptyList())
 
 }

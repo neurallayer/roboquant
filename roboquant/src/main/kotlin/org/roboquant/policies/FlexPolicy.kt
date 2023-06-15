@@ -94,7 +94,6 @@ open class FlexPolicy(
             return MyPolicy()
         }
 
-
         /**
          * FlexPolicy that generates limit orders.
          */
@@ -138,7 +137,6 @@ open class FlexPolicy(
         return false
     }
 
-
     /**
      * Return the size that can be bought/sold with the provided [amount] and [price] of the asset. This implementation
      * also takes into consideration the configured [fractions].
@@ -158,7 +156,6 @@ open class FlexPolicy(
     open fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order? {
         return MarketOrder(signal.asset, size)
     }
-
 
     /**
      * It the minimum price met for the provided [asset]. If the asset is in different currency than the minimum price,

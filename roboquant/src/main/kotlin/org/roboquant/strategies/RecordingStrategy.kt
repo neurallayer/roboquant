@@ -33,7 +33,7 @@ abstract class RecordingStrategy(private val prefix: String = "strategy.", var r
      * Return the recorded metrics. After this method has been invoked, the metrics are also cleared, so calling this
      * method twice in a row won't return the same result.
      */
-    override fun getMetrics(): Map<String, Double>  {
+    override fun getMetrics(): Map<String, Double> {
         val result = metrics.toMap()
         metrics.clear()
         return result

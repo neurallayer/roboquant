@@ -43,7 +43,6 @@ operator fun Instant.compareTo(timeframe: Timeframe): Int {
     }
 }
 
-
 /**
  * Get the instant as ZonedDateTime UTC
  */
@@ -172,7 +171,6 @@ operator fun DoubleArray.plus(a: DoubleArray): DoubleArray {
     return result
 }
 
-
 /**
  * Remove non-finite values from a DoubleArray and return this new array. The removed values include Inf and NaN values.
  */
@@ -203,7 +201,7 @@ fun DoubleArray.diff(): DoubleArray {
 /**
  * Returns the index of the first maximum value
  */
-fun DoubleArray.indexOfMax() : Int {
+fun DoubleArray.indexOfMax(): Int {
     if (isEmpty()) return -1
     var maxAt = 0
     for (i in indices) if (get(i) > get(maxAt)) maxAt = i
@@ -218,7 +216,7 @@ fun DoubleArray.indexOfMax() : Int {
  * val feed = CSVFeed("some-dir" / "some-sub-dir")
  * ```
  */
-operator fun String.div(other: String) : String {
+operator fun String.div(other: String): String {
     val p = java.nio.file.Path.of(this, other).normalize()
     return p.toString()
 }
@@ -226,7 +224,7 @@ operator fun String.div(other: String) : String {
 /**
  * Returns the index of the first minimum value
  */
-fun DoubleArray.indexOfMin() : Int {
+fun DoubleArray.indexOfMin(): Int {
     if (isEmpty()) return -1
     var minAt = 0
     for (i in indices) if (get(i) < get(minAt)) minAt = i
@@ -244,7 +242,6 @@ fun DoubleArray.growthRates(): DoubleArray {
     for (n in 1..lastIndex) result[n - 1] = get(n) / get(n - 1)
     return result
 }
-
 
 /**
  * Get the total return. Formula used is

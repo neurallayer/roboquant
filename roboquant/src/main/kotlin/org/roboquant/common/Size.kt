@@ -88,7 +88,6 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
      */
     fun toBigDecimal(): BigDecimal = BigDecimal(value).setScale(SCALE).divide(BD_FRACTION)
 
-
     /**
      * Returns true if the size is zero, false otherwise.
      */
@@ -104,13 +103,13 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
     /**
      * Return true is positive size, false otherwise
      */
-    val isPositive : Boolean
+    val isPositive: Boolean
         get() = value > 0
 
     /**
      * Return true is negative size, false otherwise
      */
-    val isNegative : Boolean
+    val isNegative: Boolean
         get() = value < 0
 
     /**

@@ -41,7 +41,7 @@ class PNLMetric : Metric {
     /**
      * @see Metric.calculate
      */
-    override fun calculate(account: Account, event: Event): Map<String, Double>  {
+    override fun calculate(account: Account, event: Event): Map<String, Double> {
         val pnl = account.trades.realizedPNL
         val realizedPNL = pnl.convert(account.baseCurrency, event.time).value
 

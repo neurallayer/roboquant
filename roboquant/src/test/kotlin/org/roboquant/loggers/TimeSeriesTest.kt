@@ -9,7 +9,6 @@ import kotlin.test.assertEquals
 
 class TimeSeriesTest {
 
-
     @Test
     fun test() {
         val data = DoubleArray(100) { 10.0 }

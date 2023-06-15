@@ -118,7 +118,6 @@ internal object IBKR {
             else -> throw UnsupportedException("asset type $type is not yet supported")
         }
 
-
         val exchange = when (exchange.exchangeCode) {
             "NASDAQ" -> "ISLAND"
             "" -> "SMART"

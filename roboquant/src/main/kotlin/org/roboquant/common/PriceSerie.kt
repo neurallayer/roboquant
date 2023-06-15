@@ -57,7 +57,6 @@ open class PriceSerie(private var capacity: Int) {
     val size: Int
         get() = if (counter > capacity) capacity else counter.toInt()
 
-
     /**
      * Return the stored values as a DoubleArray. If this method is invoked before the buffer is full, it will
      * return a smaller array of length [PriceSerie.size].
@@ -89,7 +88,6 @@ open class PriceSerie(private var capacity: Int) {
         System.arraycopy(oldData, 0, data, 0, size)
         capacity = newCapacity
     }
-
 
     /**
      * Clear the buffer

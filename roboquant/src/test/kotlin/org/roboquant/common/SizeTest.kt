@@ -57,7 +57,6 @@ internal class SizeTest {
         assertTrue(size2 > -20)
     }
 
-
     @Test
     fun testOverflow() {
         assertDoesNotThrow {

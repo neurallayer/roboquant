@@ -120,7 +120,6 @@ class BinanceBroker(
 
         for (order in orders) {
 
-
             when (order) {
                 is CancelOrder -> cancelOrder(order)
 
@@ -145,7 +144,6 @@ class BinanceBroker(
 
         return account
     }
-
 
     /**
      * Cancel an order

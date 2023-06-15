@@ -26,7 +26,6 @@ import kotlin.test.assertTrue
 
 internal class IBKRBrokerTestIT {
 
-
     @Test
     fun wrongConfig() {
 
@@ -37,7 +36,6 @@ internal class IBKRBrokerTestIT {
         }
 
     }
-
 
     @Test
     fun test() {

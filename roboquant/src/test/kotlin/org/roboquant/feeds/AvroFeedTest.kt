@@ -189,7 +189,7 @@ class AvroFeedTest {
         assertContains(feed.assets.symbols, "AAPL")
         assertDoesNotThrow {
             var found = false
-            feed.filter<PriceBar> { found=true;false }
+            feed.filter<PriceBar> { found = true;false }
             assertTrue(found)
         }
     }
@@ -201,7 +201,7 @@ class AvroFeedTest {
         assertContains(feed.assets.symbols, "AAPL")
         assertDoesNotThrow {
             var found = false
-            feed.filter<PriceQuote> { found=true;false }
+            feed.filter<PriceQuote> { found = true;false }
             assertTrue(found)
         }
     }
@@ -213,11 +213,10 @@ class AvroFeedTest {
         assertContains(feed.assets.symbols, "EUR_USD")
         assertDoesNotThrow {
             var found = false
-            feed.filter<PriceBar> { found=true;false }
+            feed.filter<PriceBar> { found = true;false }
             assertTrue(found)
         }
     }
-
 
     @Test
     fun loadFromGithub() {

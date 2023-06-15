@@ -89,12 +89,11 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
     }
 
     private class ModifyOrderState(val order: ModifyOrder, var status: OrderStatus = OrderStatus.INITIAL)
+
     private val modifiers = LinkedList<ModifyOrderState>()
 
     // Return the create-order executors
     private val executors = LinkedList<OrderExecutor<*>>()
-
-
 
     /**
      * Get the open order executors
@@ -115,18 +114,16 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
     internal val orderStates
         get() = executors.map { Pair(it.order, it.status) } + modifiers.map { Pair(it.order, it.status) }
 
-
     /**
      * Add a new [order] to the execution engine. Orders can only be processed if there is a corresponding executor
      * registered for the order class.
      */
     internal fun add(order: Order): Boolean {
-        return when(order) {
+        return when (order) {
             is ModifyOrder -> modifiers.add(ModifyOrderState(order, OrderStatus.INITIAL))
             is CreateOrder -> executors.add(getExecutor(order))
         }
     }
-
 
     /**
      * Add all [orders] to the execution engine.
@@ -135,7 +132,6 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
     internal fun addAll(orders: List<Order>) {
         for (order in orders) add(order)
     }
-
 
     /**
      * Execute all the orders that are not yet closed based on the [event] and return the resulting executions.

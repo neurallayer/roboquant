@@ -41,7 +41,6 @@ internal class SignalResolutionTest {
         assertEquals(signals, signals.resolve(SignalResolution.NONE))
     }
 
-
     @Test
     fun testSignalShuffle() {
         val policy = TestPolicy().shuffleSignals(Random(42))

@@ -104,7 +104,6 @@ class PolygonLiveFeed(
         return subscriptions.getValue(symbol!!)
     }
 
-
     /**
      * Handle incoming messages
      */
@@ -114,7 +113,7 @@ class PolygonLiveFeed(
             is PolygonWebSocketMessage.RawMessage -> logger.info(String(message.data))
             is PolygonWebSocketMessage.StocksMessage.Aggregate -> {
                 val asset = getSubscribedAsset(message.ticker)
-                val timeSpan = when(message.eventType) {
+                val timeSpan = when (message.eventType) {
                     "AM" -> 1.minutes
                     "A" -> 1.seconds
                     else -> null

@@ -41,7 +41,6 @@ import org.ta4j.core.indicators.helpers.ClosePriceIndicator
 import org.ta4j.core.rules.CrossedUpIndicatorRule
 
 
-
 private fun macd() {
     val strategy = TaLibSignalStrategy { asset, prices ->
         val (_, _, diff) = macd(prices, 12, 26, 9)
@@ -59,7 +58,6 @@ private fun macd() {
     println(rq.broker.account.summary())
 
 }
-
 
 
 private fun ta4j() {
@@ -145,7 +143,6 @@ private fun atrPolicy() {
     rq.run(feed)
     println(rq.broker.account.summary())
 }
-
 
 @Suppress("KotlinConstantConditions")
 fun main() {

@@ -116,7 +116,7 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
     }
 
     override fun modify(modifyOrder: ModifyOrder, time: Instant): Boolean {
-        return when(modifyOrder) {
+        return when (modifyOrder) {
             is CancelOrder -> cancel(time)
             is UpdateOrder -> update(modifyOrder.update, time)
             else -> false

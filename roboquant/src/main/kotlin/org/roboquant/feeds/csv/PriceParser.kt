@@ -52,7 +52,7 @@ class PriceBarParser(
     private var volume: Int = -1,
     private var adjustedClose: Int = -1,
     private var priceAdjust: Boolean = false,
-    private var autodetect : Boolean = true,
+    private var autodetect: Boolean = true,
     private var timeSpan: TimeSpan? = null
 ) : PriceParser {
 
@@ -115,7 +115,7 @@ class PriceQuoteParser(
     private var bid: Int = -1,
     private var bidVolume: Int = -1,
     private var askVolume: Int = -1,
-    private var autodetect : Boolean = true
+    private var autodetect: Boolean = true
 ) : PriceParser {
 
     private fun validate() {
@@ -157,14 +157,13 @@ class PriceQuoteParser(
 
 }
 
-
 /**
  * Parse lines and create PriceBar
  */
 class TradePriceParser(
     private var price: Int = -1,
     private var volume: Int = -1,
-    private var autodetect : Boolean = true
+    private var autodetect: Boolean = true
 ) : PriceParser {
 
     private fun validate() {

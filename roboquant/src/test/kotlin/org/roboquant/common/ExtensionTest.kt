@@ -92,7 +92,6 @@ class ExtensionTest {
         assertNull("dummy".toCurrencyPair())
     }
 
-
     @Test
     fun other() {
         val i = 1..10..2

@@ -31,7 +31,6 @@ data class BinanceConfig(
     var secretKey: String = Config.getProperty("binance.secret.key", "")
 )
 
-
 /**
  * Shared functionality
  */
@@ -55,8 +54,8 @@ internal object Binance {
         }
     }
 
-    fun interval2TimeSpan(interval: Interval) : TimeSpan? {
-        return when(interval) {
+    fun interval2TimeSpan(interval: Interval): TimeSpan? {
+        return when (interval) {
             Interval.ONE_MINUTE -> 1.minutes
             Interval.DAILY -> 1.days
             Interval.FIFTEEN_MINUTES -> 15.minutes

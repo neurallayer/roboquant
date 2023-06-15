@@ -60,14 +60,13 @@ sealed class Order(val asset: Asset, val tag: String) {
         }
 
         /**
-        * Generate the next order id
+         * Generate the next order id
          */
         @Synchronized
         private fun nextId(): Int {
             return ID++
         }
     }
-
 
     /**
      * What is the type of order, default is the class name without any order suffix

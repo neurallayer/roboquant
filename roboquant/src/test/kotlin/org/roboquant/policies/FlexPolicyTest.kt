@@ -33,7 +33,6 @@ import kotlin.test.assertTrue
 
 internal class FlexPolicyTest {
 
-
     @Test
     fun order() {
         val policy = FlexPolicy()
@@ -70,8 +69,6 @@ internal class FlexPolicyTest {
         assertEquals(Size(204), order.size)
     }
 
-
-
     @Test
     fun orderMinPrice() {
         val policy = FlexPolicy(minPrice = 10.USD)
@@ -88,7 +85,6 @@ internal class FlexPolicyTest {
         assertTrue(orders2.isNotEmpty())
     }
 
-
     @Test
     fun order2() {
 
@@ -99,7 +95,7 @@ internal class FlexPolicyTest {
                 val direction = if (size.isPositive) 1.0 else -1.0
                 val percentage = percentage * direction
                 val price = priceAction.getPrice(priceType)
-                
+
                 return BracketOrder(
                     MarketOrder(asset, size),
                     LimitOrder(asset, size, price * (1 + percentage)),
@@ -156,10 +152,8 @@ internal class FlexPolicyTest {
 
         val first = orders.first()
         assertTrue(first is LimitOrder)
-        assertEquals(5*0.99, first.limit)
+        assertEquals(5 * 0.99, first.limit)
     }
-
-
 
     @Test
     fun chaining() {

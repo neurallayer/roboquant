@@ -84,7 +84,6 @@ class AlpacaBroker(
 
     private fun getAsset(symbol: String) = availableStocks[symbol] ?: availableCrypto.getValue(symbol)
 
-
     /**
      * Sync the roboquant account with the current state from an Alpaca account. Alpaca state is always leading.
      */
@@ -123,7 +122,6 @@ class AlpacaBroker(
         }
         _account.updateOrder(rqOrder, time.toInstant(), status)
     }
-
 
     /**
      * Update the status of the open orders in the account with the latest order status from Alpaca
@@ -182,7 +180,7 @@ class AlpacaBroker(
         if (order.orderClass == OrderClass.SIMPLE) return MarketOrder(asset, size)
         if (order.orderClass == OrderClass.BRACKET) return BracketOrder(
             MarketOrder(asset, size),
-            LimitOrder(asset, - size, order.limitPrice.toDouble()),
+            LimitOrder(asset, -size, order.limitPrice.toDouble()),
             StopLimitOrder(asset, -size, order.stopPrice.toDouble(), order.limitPrice.toDouble())
         )
 
@@ -205,6 +203,7 @@ class AlpacaBroker(
                 order.stopPrice.toDouble(),
                 order.limitPrice.toDouble()
             )
+
             OrderType.TRAILING_STOP -> TrailOrder(asset, Size(qty), order.trailPercent.toDouble())
             else -> throw UnsupportedException("unsupported order type for order $order")
         }
@@ -339,9 +338,11 @@ class AlpacaBroker(
             is StopLimitOrder -> api.requestStopLimitOrder(
                 asset.symbol, qty.toInt(), side, tif, order.limit, order.stop, extendedHours
             )
+
             is TrailOrder -> api.requestTrailingStopPercentOrder(
                 asset.symbol, qty.toInt(), side, tif, order.trailPercentage, extendedHours
             )
+
             else -> throw UnsupportedException("unsupported single order type order=$order")
         }
         orderMapping[order] = alpacaOrder.id

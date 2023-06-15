@@ -101,7 +101,7 @@ internal class RoboquantTest {
         val offset = 3
         val timeframe = Timeframe(timeline[2], timeline[2 + offset], inclusive = false)
         roboquant.reset()
-        roboquant.run(feed, timeframe,  name = "test")
+        roboquant.run(feed, timeframe, name = "test")
         val step2 = roboquant.logger.getMetric("progress.steps").latestRun().last()
         assertEquals(offset, step2.value.toInt())
     }

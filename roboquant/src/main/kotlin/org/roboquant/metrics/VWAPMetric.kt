@@ -40,7 +40,7 @@ class VWAPMetric(val minSize: Int = 2) : Metric {
     /**
      * @see Metric.calculate
      */
-    override fun calculate(account: Account, event: Event): Map<String, Double>  {
+    override fun calculate(account: Account, event: Event): Map<String, Double> {
         val result = mutableMapOf<String, Double>()
         for (priceBar in event.prices.values.filterIsInstance<PriceBar>()) {
             val calc = calculators.getOrPut(priceBar.asset) { VWAPDaily(minSize) }

@@ -57,7 +57,6 @@ import kotlin.io.path.isRegularFile
  */
 class AvroFeed(private val path: Path) : AssetFeed {
 
-
     /**
      * Instantiate an Avro Feed based on the Avro file at [path]
      */
@@ -78,7 +77,6 @@ class AvroFeed(private val path: Path) : AssetFeed {
      * @see Feed.timeframe
      */
     override val timeframe: Timeframe
-
 
     /**
      * Get available assets.
@@ -103,7 +101,6 @@ class AvroFeed(private val path: Path) : AssetFeed {
             idx < -1 -> r.seek(index[-idx - 2].second)
         }
     }
-
 
     /**
      * Build an index of where each time starts. The index helps to achieve faster read access if not starting
@@ -310,7 +307,6 @@ class AvroFeed(private val path: Path) : AssetFeed {
                 dataFileWriter.create(schema, file)
             }
 
-
             val job = launch {
                 feed.play(channel)
                 channel.close()
@@ -383,7 +379,6 @@ internal object AssetSerializer {
         return sb.substring(0, sb.length - cnt)
     }
 
-
     /**
      * Use the ASCII Unit Separator character. Should not interfere with used strings for symbol, exchange and currency
      */
@@ -409,7 +404,6 @@ internal object AssetSerializer {
 
     }
 }
-
 
 /**
  * Used by AvroFeed to serialize and deserialize [PriceAction] to a DoubleArray, so it can be stored in an Avro file.
@@ -443,8 +437,8 @@ internal class PriceActionSerializer {
 
 
     private fun getPriceBar(asset: Asset, values: DoubleArray, other: String?): PriceBar {
-        val timeSpan =  if (other != null) {
-            timeSpans.getOrPut(other) {TimeSpan.parse(other)}
+        val timeSpan = if (other != null) {
+            timeSpans.getOrPut(other) { TimeSpan.parse(other) }
         } else {
             null
         }

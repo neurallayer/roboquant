@@ -104,7 +104,6 @@ private class SignalResolverPolicy(private val policy: Policy, private val resol
  */
 fun Policy.resolve(resolution: SignalResolution): Policy = SignalResolverPolicy(this, resolution)
 
-
 /**
  * Shuffle signals before processing them in the policy, avoiding favouring assets that appear always first in the
  * list of actions.
@@ -113,7 +112,6 @@ fun Policy.resolve(resolution: SignalResolution): Policy = SignalResolverPolicy(
  * @constructor Create empty Signal resolver
  */
 private class SignalShufflePolicy(private val policy: Policy, private val random: Random) : Policy by policy {
-
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         return policy.act(signals.shuffled(random), account, event)
@@ -125,7 +123,6 @@ private class SignalShufflePolicy(private val policy: Policy, private val random
  * Shuffle signals using the provided [random] before invoking the policy
  */
 fun Policy.shuffleSignals(random: Random = Config.random): Policy = SignalShufflePolicy(this, random)
-
 
 /**
  * Shuffle signals before processing them in the policy, avoiding favoring assets that appear always first in the

@@ -30,7 +30,6 @@ import kotlin.test.assertTrue
 
 internal class PolygonTest {
 
-
     @Test
     fun supportedAssets() {
         Config.getProperty("TEST_POLYGON") ?: return
@@ -44,7 +43,6 @@ internal class PolygonTest {
             assets.getBySymbol("TSLA")
         }
     }
-
 
     @Test
     fun testHistoricFeed() {
@@ -76,8 +74,6 @@ internal class PolygonTest {
         feed.disconnect()
     }
 
-
-
     @Test
     fun testFundamentalsFeed() {
         Config.getProperty("FULL_COVERAGE") ?: return
@@ -85,7 +81,7 @@ internal class PolygonTest {
         feed.retrieve("AAPL", "TSLA")
         assertEquals(2, feed.assets.size)
         assertTrue(feed.timeline.isNotEmpty())
-        assertTrue(! feed.timeframe.isInfinite())
+        assertTrue(!feed.timeframe.isInfinite())
         assertContains(feed.assets.symbols, "AAPL")
         assertContains(feed.assets.symbols, "TSLA")
 

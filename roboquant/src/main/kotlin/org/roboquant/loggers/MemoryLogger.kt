@@ -36,6 +36,7 @@ import java.time.Instant
 class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
 
     internal class Entry(val time: Instant, val metrics: Map<String, Double>)
+
     internal val history = mutableMapOf<String, MutableList<Entry>>()
     private val progressBar = ProgressBar()
 
@@ -66,7 +67,6 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
         history.clear()
     }
 
-
     /**
      * Get all the recorded runs in this logger
      */
@@ -78,7 +78,6 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
      */
     override val metricNames: List<String>
         get() = history.values.asSequence().flatten().map { it.metrics.keys }.flatten().distinct().sorted().toList()
-
 
     /**
      * Get results for a metric specified by its [name]. It will include all the runs for that metric.

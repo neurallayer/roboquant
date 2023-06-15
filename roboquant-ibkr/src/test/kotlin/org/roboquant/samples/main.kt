@@ -75,7 +75,6 @@ fun showAccount() {
     val broker = IBKRBroker()
     val account = broker.account
 
-
     // Print the full summary of the account
     println(account.fullSummary())
 

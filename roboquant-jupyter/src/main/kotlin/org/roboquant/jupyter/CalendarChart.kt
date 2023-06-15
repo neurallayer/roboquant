@@ -46,7 +46,7 @@ class CalendarChart(
     /**
      * Create a calendar chart from multiple runs. The data will be flattened before plotted.
      */
-    constructor(metricsData: Map<String, TimeSeries>, fractionDigits: Int =2, zoneId: ZoneId = ZoneOffset.UTC) :
+    constructor(metricsData: Map<String, TimeSeries>, fractionDigits: Int = 2, zoneId: ZoneId = ZoneOffset.UTC) :
             this(metricsData.flatten(true), fractionDigits, zoneId)
 
     private val timeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(zoneId)

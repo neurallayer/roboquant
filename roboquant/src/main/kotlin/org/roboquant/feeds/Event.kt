@@ -28,7 +28,6 @@ import java.time.Instant
  */
 class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
 
-
     /**
      * Convenience property for accessing the price actions in this event. The result is cached so that accessing
      * this property multiple times is quick.
@@ -48,10 +47,9 @@ class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
         /**
          * Return an event without any [actions] with as default [time] the current system time.
          */
-        fun empty(time: Instant = Instant.now()) : Event = Event(emptyList(), time)
+        fun empty(time: Instant = Instant.now()): Event = Event(emptyList(), time)
 
     }
-
 
     /**
      * Convenience method to get a single price for an [asset] or null if there is no price action present for
@@ -70,7 +68,6 @@ class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
      */
     override fun compareTo(other: Event): Int = time.compareTo(other.time)
 }
-
 
 /**
  * Return the Timeframe matching the list of events. The collection has to be chronologically ordered.

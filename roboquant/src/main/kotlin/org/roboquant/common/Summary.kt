@@ -44,7 +44,6 @@ class Summary(val content: String) {
      */
     fun add(child: Summary) = children.add(child)
 
-
     /**
      * Add a [label] with an int [value]. When adding a Float or Double, the decimal formatter will be used to
      * format it. Other numbers will be presented using the toString() method.
@@ -66,12 +65,10 @@ class Summary(val content: String) {
      */
     fun add(label: String, value: Any?) = children.add(Summary("$label$sep$value"))
 
-
     /**
      * Add a [label] to this summary
      */
     fun add(label: String) = children.add(Summary(label))
-
 
     /**
      * To string
@@ -101,7 +98,6 @@ class Summary(val content: String) {
         }
     }
 }
-
 
 /**
  * Create a summary for a collection of rows in which each row contains 1 or more columns

@@ -6,12 +6,11 @@ import java.time.Instant
 import kotlin.math.absoluteValue
 
 
-
 @Suppress("TooManyFunctions")
 internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
-    
+
     private val traceMsg = "Not yet implemented"
-    
+
     override fun tickPrice(tickerId: Int, field: Int, price: Double, attrib: TickAttrib?) {
         logger.trace(traceMsg)
     }

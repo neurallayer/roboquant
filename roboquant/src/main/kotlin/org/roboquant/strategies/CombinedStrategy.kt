@@ -29,7 +29,6 @@ import org.roboquant.feeds.Event
  */
 open class CombinedStrategy(val strategies: Collection<Strategy>) : Strategy {
 
-
     constructor(vararg strategies: Strategy) : this(strategies.toList())
 
     override fun generate(event: Event): List<Signal> {
@@ -54,7 +53,7 @@ open class CombinedStrategy(val strategies: Collection<Strategy>) : Strategy {
         for (strategy in strategies) strategy.reset()
     }
 
-    override fun getMetrics(): Map<String, Double>  {
+    override fun getMetrics(): Map<String, Double> {
         val result = mutableMapOf<String, Double>()
         strategies.forEach { result += it.getMetrics() }
         return result

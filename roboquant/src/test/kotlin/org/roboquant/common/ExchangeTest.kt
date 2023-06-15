@@ -55,7 +55,6 @@ internal class ExchangeTest {
         }
     }
 
-
     @Test
     fun testNoTrading() {
         val exchange = Exchange.getInstance("US")

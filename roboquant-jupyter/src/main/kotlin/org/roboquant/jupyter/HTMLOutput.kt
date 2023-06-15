@@ -23,7 +23,6 @@ import java.io.File
  */
 abstract class HTMLOutput {
 
-
     /**
      * Save HTML output to a file with name [filename] on the server.
      */

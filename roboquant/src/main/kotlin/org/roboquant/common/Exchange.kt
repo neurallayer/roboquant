@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 @file:Suppress("unused")
 
 package org.roboquant.common
@@ -115,7 +114,6 @@ class Exchange private constructor(
         val exchanges
             get() = instances.values
 
-
         private val instances = ConcurrentHashMap<String, Exchange>()
         private const val newYorkTimeZone = "America/New_York"
 
@@ -149,7 +147,6 @@ class Exchange private constructor(
             instances[exchangeCode] = instance
             return instance
         }
-
 
         /**
          * The default exchange is the exchange with as exchangeCode an empty string and used as a fallback if an

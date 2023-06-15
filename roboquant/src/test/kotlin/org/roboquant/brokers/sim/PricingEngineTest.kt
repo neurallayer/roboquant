@@ -19,7 +19,6 @@ class PricingEngineTest {
         assertEquals(priceBar.getPrice(), price)
     }
 
-
     @Test
     fun spreadPricing() {
         // Pricing engine with 100 BIPS (2%) spread

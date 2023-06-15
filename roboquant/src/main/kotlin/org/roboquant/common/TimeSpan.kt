@@ -21,8 +21,8 @@ package org.roboquant.common
 import java.time.*
 
 
-@Deprecated("Renamed to TimeSpan", ReplaceWith("TimeSpan","org.roboquant.common.TimeSpan"))
-typealias TradingPeriod=TimeSpan
+@Deprecated("Renamed to TimeSpan", ReplaceWith("TimeSpan", "org.roboquant.common.TimeSpan"))
+typealias TradingPeriod = TimeSpan
 
 /**
  * TimeSpan is an immutable class that unifies the JVM classes Duration and Period and allows to use durations
@@ -43,7 +43,7 @@ class TimeSpan internal constructor(internal val period: Period, internal val du
         minutes: Int = 0,
         seconds: Int = 0,
         nanos: Long = 0L
-    ): this(Period.of(years, months, days), createDuration(hours, minutes, seconds, nanos))
+    ) : this(Period.of(years, months, days), createDuration(hours, minutes, seconds, nanos))
 
     /**
      * @suppress
@@ -59,7 +59,7 @@ class TimeSpan internal constructor(internal val period: Period, internal val du
          * P[n]Y[n]M[n]DT[n]H[n]M[n]S
          * ```
          */
-        fun parse(text: String) : TimeSpan {
+        fun parse(text: String): TimeSpan {
             val parts = text.split('T')
             return TimeSpan(Period.parse(parts[0]), Duration.parse("PT" + parts[1]))
         }
@@ -119,7 +119,6 @@ class TimeSpan internal constructor(internal val period: Period, internal val du
 
 }
 
-
 /*********************************************************************************************
  * Extensions on Int type to make instantiation of TradingPeriods convenient
  *********************************************************************************************/
@@ -134,31 +133,31 @@ val Int.years
  * Convert an Int to a [TimeSpan] of months
  */
 val Int.months
-    get() = TimeSpan(0,this)
+    get() = TimeSpan(0, this)
 
 /**
  * Convert an Int to a [TimeSpan] of days
  */
 val Int.days
-    get() = TimeSpan(0,0,this)
+    get() = TimeSpan(0, 0, this)
 
 /**
  * Convert an Int to a [TimeSpan] of hours
  */
 val Int.hours
-    get() = TimeSpan(0,0,0, this)
+    get() = TimeSpan(0, 0, 0, this)
 
 /**
  * Convert an Int to a [TimeSpan] of minutes
  */
 val Int.minutes
-    get() = TimeSpan(0,0,0,0,this)
+    get() = TimeSpan(0, 0, 0, 0, this)
 
 /**
  * Convert an Int to a [TimeSpan] of seconds
  */
 val Int.seconds
-    get() = TimeSpan(0,0,0,0,0,this,0L)
+    get() = TimeSpan(0, 0, 0, 0, 0, this, 0L)
 
 /**
  * Convert an Int to a [TimeSpan] of milliseconds
@@ -170,7 +169,7 @@ val Int.millis
  * Convert an Int to a [TimeSpan] of nanoseconds
  */
 val Long.nanos
-    get() = TimeSpan(0,0,0,0,0,0,this)
+    get() = TimeSpan(0, 0, 0, 0, 0, 0, this)
 
 /**
  * Add a [period] using the provided [zoneId]

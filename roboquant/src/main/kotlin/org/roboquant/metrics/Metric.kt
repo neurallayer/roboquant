@@ -28,7 +28,7 @@ import org.roboquant.feeds.Event
 /**
  * Convert pairs of <String, number> to metric results. Any number will be converted to Double.
  */
-fun metricResultsOf(vararg metricResults: Pair<String, Number>): Map<String, Double>  {
+fun metricResultsOf(vararg metricResults: Pair<String, Number>): Map<String, Double> {
     return metricResults.associate { Pair(it.first, it.second.toDouble()) }
 }
 

@@ -24,13 +24,11 @@ import kotlin.test.assertTrue
 
 internal class AssetFilterTest {
 
-
     @Test
     fun custom() {
-        val fn = AssetFilter { _: Asset, _: Instant -> false  }
+        val fn = AssetFilter { _: Asset, _: Instant -> false }
         assertFalse(fn.filter(Asset("123"), Instant.now()))
     }
-
 
     @Test
     fun testFilter() {

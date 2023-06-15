@@ -31,8 +31,6 @@ import kotlin.test.assertTrue
 
 internal class PriceChartTest {
 
-
-
     @Test
     fun test() {
         val feed = RandomWalkFeed.lastYears(1)
@@ -65,7 +63,6 @@ internal class PriceChartTest {
         val chart = PriceChart(feed, asset, trades = trades)
         assertTrue(chart.asHTML().isNotEmpty())
     }
-
 
     @Test
     fun indicators() {

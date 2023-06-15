@@ -90,7 +90,6 @@ internal class TaLibStrategyTest {
         assertEquals(60, x.size)
     }
 
-
     @Test
     fun taSignalBreakout() {
         val strategy = TaLibSignalStrategy.breakout(10, 30)
@@ -98,7 +97,6 @@ internal class TaLibStrategyTest {
         assertEquals(60, x.size)
         assertContains(strategy.toString(), "TaLibSignalStrategy")
     }
-
 
     @Test
     fun taSignalMacd() {

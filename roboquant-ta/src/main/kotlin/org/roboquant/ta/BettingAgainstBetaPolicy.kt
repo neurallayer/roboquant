@@ -88,7 +88,6 @@ open class BettingAgainstBetaPolicy(
         return betas
     }
 
-
     /**
      * Re-balance the portfolio based on the calculated betas.
      *
