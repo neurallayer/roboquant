@@ -60,9 +60,18 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
     fun disconnect() = IBKR.disconnect(client)
 
     /**
-     * Subscribe to the realtime bars for a set of [assets]. The [interval] specifies the number of seconds between the
-     * price-bars, default being 5. Lastly, the type specifies what is used to calculate the price-bars, default being
-     * MIDPOINT of the order-book.
+     * Subscribe to the realtime bars for a set of [assets].
+     *
+     * The [interval] specifies the number of seconds between the
+     * price-bars. IBKR currently only supports 5 seconds.
+     *
+     * The [type] specifies what price is used to calculate the price-bars, default being MIDPOINT of the order-book.
+     * All the available options for the [type] parameter are:
+     *
+     * - TRADES
+     * - MIDPOINT
+     * - BID
+     * - ASK
      *
      * Often IBKR platform requires a subscription in order to be able to receive realtime bars. Please check the
      * documentation on the IBKR website for more details.
@@ -102,7 +111,7 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
             } else {
                 val v = volume?.value()?.toDouble() ?: Double.NaN
                 val action = PriceBar(subscription.asset, open, high, low, close, v, subscription.interval.seconds)
-                val now = Instant.ofEpochSecond(time) // IBKR uses seconds resolution
+                val now = Instant.ofEpochSecond(time) // IBKR uses second-resolution
                 val event = Event(listOf(action), now)
                 send(event)
             }
