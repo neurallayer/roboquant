@@ -43,8 +43,8 @@ import java.time.Instant
  * @property safetyMargin the percentage of the equity value that don't get allocated to orders. This way, you
  * are more likely to stay away from bounced orders and margin calls. Default is same percentage as [orderPercentage]
  * @property minPrice the minimal price for an asset before opening a position, default is null (no minimum). This
- * can be used to avoid trading penny stocks
- * @param recording should the policy record metrics, default is false.
+ * can be used to avoid trading penny stocks.
+ * @param enableMetrics should the policy record metrics, default is false.
  * When enabled, it will record the number of `actions`, `signals` and `orders`.
  * @constructor Create a new instance of a FlexPolicy
  */
@@ -57,8 +57,8 @@ open class FlexPolicy(
     protected val oneOrderOnly: Boolean = true,
     protected val safetyMargin: Double = orderPercentage,
     protected val minPrice: Amount? = null,
-    recording: Boolean = false
-) : BasePolicy(recording = recording) {
+    enableMetrics: Boolean = false
+) : BasePolicy(recording = enableMetrics) {
 
     protected val logger = Logging.getLogger(FlexPolicy::class)
 
@@ -66,6 +66,31 @@ open class FlexPolicy(
      * Set of predefined FlexPolicies
      */
     companion object {
+
+        /**
+         * This policy uses a percentage of the available buying-power to calculate the order amount (in contrast
+         * to the default implementation that uses a percentage of the equity):
+         *
+         * The used formula is:
+         *
+         * ```
+         * orderAmount = buyingPower * orderPercentage
+         * ```
+         */
+        fun singleAsset(orderPercentage: Double = 0.9, fractions: Int = 4, enableMetrics: Boolean = false): FlexPolicy {
+            class SinglePolicy : FlexPolicy(
+                orderPercentage = orderPercentage,
+                safetyMargin = 0.0,
+                shorting = true,
+                fractions = fractions,
+                enableMetrics = enableMetrics
+            ) {
+                override fun amountPerOrder(account: Account): Amount {
+                    return account.buyingPower * orderPercentage
+                }
+            }
+            return SinglePolicy()
+        }
 
         /**
          * Return a FlexPolicy that generates bracket orders, with the following characteristics:
@@ -158,6 +183,23 @@ open class FlexPolicy(
     }
 
     /**
+     * Return the amount that should be allocated to a single order.
+     *
+     * The default implementation is:
+     * ```
+     * amount per order = account.equityAmount * orderPercentage
+     * ```
+     *
+     * Since this formula is based on equity, the amount stays relatively stable.
+     *
+     * When trading a single asset only, you might want to overwrite this method and base the order amount on the
+     * `account.buyingPower` instead.
+     */
+    open fun amountPerOrder(account: Account): Amount {
+        return account.equityAmount * orderPercentage
+    }
+
+    /**
      * It the minimum price met for the provided [asset]. If the asset is in different currency than the minimum price,
      * a conversion will first take place.
      */
@@ -171,12 +213,19 @@ open class FlexPolicy(
     private operator fun Collection<Order>.contains(asset: Asset) = any { it.asset == asset }
 
     /**
-     * Record basic metrics, `actions`, `signals` and `orders`.
+     * Record basic metrics: `actions`, `signals`, `orders.new`, `orders.open`, `orders.closed`,
+     * `positions` and `buyingpower`.
+     * s
+     * The main purpose is to better understand when the policy is not behaving as expected.
      */
-    open fun record(orders: List<Order>, signals: List<Signal>, event: Event) {
+    open fun record(orders: List<Order>, signals: List<Signal>, event: Event, account: Account) {
         record("actions", event.actions.size)
         record("signals", signals.size)
-        record("orders", orders.size)
+        record("orders.new", orders.size)
+        record("orders.open", account.openOrders.size)
+        record("orders.closed", account.closedOrders.size)
+        record("positions", account.positions.size)
+        record("buyingpower", account.buyingPower.value)
     }
 
     /**
@@ -188,10 +237,10 @@ open class FlexPolicy(
 
         if (signals.isNotEmpty()) {
             val equityAmount = account.equityAmount
-            val amountPerOrder = equityAmount * orderPercentage
             val safetyAmount = equityAmount * safetyMargin
             val time = event.time
             var buyingPower = account.buyingPower - safetyAmount.value
+            val amountPerOrder = amountPerOrder(account)
 
             @Suppress("LoopWithTooManyJumpStatements")
             for (signal in signals) {
@@ -221,18 +270,22 @@ open class FlexPolicy(
                     if (!meetsMinPrice(asset, price, time)) continue
 
                     val order = createOrder(signal, size, priceAction)
-                    if (order != null) {
-                        val assetExposure = asset.value(size, price).absoluteValue
-                        val exposure = assetExposure.convert(buyingPower.currency, time).value
-                        orders.add(order)
-                        buyingPower -= exposure // reduce buying power with the exposed amount
-                        logger.debug { "buyingPower=$buyingPower exposure=$exposure order=$order" }
+                    if (order == null) {
+                        logger.trace { "no order created time=$time signal=$signal" }
+                        continue
                     }
+
+                    val assetExposure = asset.value(size, price).absoluteValue
+                    val exposure = assetExposure.convert(buyingPower.currency, time).value
+                    orders.add(order)
+                    buyingPower -= exposure // reduce buying power with the exposed amount
+                    logger.debug { "buyingPower=$buyingPower exposure=$exposure order=$order" }
+
                 }
 
             }
         }
-        if (recording) record(orders, signals, event)
+        if (recording) record(orders, signals, event, account)
         return orders
     }
 }

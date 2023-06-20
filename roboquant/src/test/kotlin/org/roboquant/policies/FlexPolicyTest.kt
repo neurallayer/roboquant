@@ -45,7 +45,7 @@ internal class FlexPolicyTest {
 
     @Test
     fun recording() {
-        val policy = FlexPolicy(recording = true)
+        val policy = FlexPolicy(enableMetrics = true)
         val signals = mutableListOf<Signal>()
         val event = Event(emptyList(), Instant.now())
         val account = InternalAccount(Currency.USD).toAccount()
@@ -54,7 +54,7 @@ internal class FlexPolicyTest {
         assertTrue(metrics.isNotEmpty())
         assertContains(metrics, "policy.actions")
         assertContains(metrics, "policy.signals")
-        assertContains(metrics, "policy.orders")
+        assertContains(metrics, "policy.orders.new")
     }
 
     @Test

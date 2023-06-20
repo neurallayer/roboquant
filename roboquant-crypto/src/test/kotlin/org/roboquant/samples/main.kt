@@ -31,6 +31,7 @@ import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
+import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.policies.FlexPolicy
@@ -61,7 +62,7 @@ fun recordBinanceFeed() {
 
 fun useBinanceFeed() {
     val userHomeDir = System.getProperty("user.home")
-    val fileName = "$userHomeDir/tmp/crypto_2years.avro"
+    val fileName = userHomeDir / "tmp" / "crypto_2years.avro"
     val feed = AvroFeed(fileName)
 
     val initialDeposit = Amount("UST", 100_000).toWallet()
@@ -81,6 +82,23 @@ fun binanceLiveFeed() {
     println(events.size)
 }
 
+
+
+fun binanceForwardTest() {
+    val feed = BinanceLiveFeed()
+
+    // We ony trade Bitcoin/BUSD
+    feed.subscribePriceQuote("BTCBUSD")
+    val strategy = EMAStrategy.PERIODS_5_15
+    val initialDeposit = Amount("BUSD", 10_000).toWallet()
+    val broker = SimBroker(initialDeposit)
+    val policy = FlexPolicy.singleAsset(enableMetrics = true)
+    val rq = Roboquant(strategy, broker = broker, policy = policy, logger = ConsoleLogger())
+
+    // We'll run the forward test for thirty minutes
+    val tf = Timeframe.next(30.minutes)
+    rq.run(feed, tf)
+}
 
 fun binanceBackTest() {
     val strategy = EMAStrategy()
@@ -114,11 +132,12 @@ fun xchangeFeed() {
 
 fun main() {
 
-    when ("HISTORIC") {
+    when ("FORWARD") {
         "RECORD" -> recordBinanceFeed()
         "USE" -> useBinanceFeed()
         "XCHANGE" -> xchangeFeed()
         "LIVE" -> binanceLiveFeed()
         "HISTORIC" -> binanceBackTest()
+        "FORWARD" -> binanceForwardTest()
     }
 }
