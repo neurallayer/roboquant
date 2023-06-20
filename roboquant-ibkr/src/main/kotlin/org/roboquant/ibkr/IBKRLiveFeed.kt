@@ -39,12 +39,12 @@ import java.time.Instant
  */
 class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
 
-    private class Request(val asset:Asset, val interval: Int)
+    private class Subscription(val asset:Asset, val interval: Int)
 
     private val config = IBKRConfig()
     private var reqId: Int = 0
     private var client: EClientSocket
-    private val subscriptions = mutableMapOf<Int, Request>()
+    private val subscriptions = mutableMapOf<Int, Subscription>()
     private val logger = Logging.getLogger(IBKRLiveFeed::class)
 
     init {
@@ -60,16 +60,18 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
     fun disconnect() = IBKR.disconnect(client)
 
     /**
-     * Subscribe to the realtime bars for a particular contract. Often IBKR platform requires a subscription in order
-     * to be able to receive realtime bars. Please check the documentation at the IBKR website for more details.
+     * Subscribe to the realtime bars for a set of [assets]. The [interval] specifies the number of seconds between the
+     * price-bars, default being 5. Lastly, the type specifies what is used to calculate the price-bars, default being
+     * MIDPOINT of the order-book.
      *
-     * @param assets
+     * Often IBKR platform requires a subscription in order to be able to receive realtime bars. Please check the
+     * documentation on the IBKR website for more details.
      */
     fun subscribe(assets: Collection<Asset>, interval: Int = 5, type: String = "MIDPOINT") {
         for (asset in assets) {
             val contract = asset.toContract()
             client.reqRealTimeBars(++reqId, contract, interval, type, false, arrayListOf())
-            subscriptions[reqId] = Request(asset, interval)
+            subscriptions[reqId] = Subscription(asset, interval)
             logger.info("Added subscription to receive realtime bars for ${contract.symbol()}")
         }
     }
@@ -94,12 +96,12 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
             wap: Decimal?,
             count: Int
         ) {
-            val request = subscriptions[reqId]
-            if (request == null) {
+            val subscription = subscriptions[reqId]
+            if (subscription == null) {
                 logger.warn("unexpected realtimeBar received with request id $reqId")
             } else {
                 val v = volume?.value()?.toDouble() ?: Double.NaN
-                val action = PriceBar(request.asset, open, high, low, close, v, request.interval.seconds)
+                val action = PriceBar(subscription.asset, open, high, low, close, v, subscription.interval.seconds)
                 val now = Instant.ofEpochSecond(time) // IBKR uses seconds resolution
                 val event = Event(listOf(action), now)
                 send(event)
