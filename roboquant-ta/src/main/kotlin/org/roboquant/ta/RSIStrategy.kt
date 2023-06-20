@@ -39,7 +39,8 @@ import org.roboquant.strategies.Signal
 class RSIStrategy(
     val lowThreshold: Double = 30.0,
     val highThreshold: Double = 70.0,
-    private val windowSize: Int = 14
+    private val windowSize: Int = 14,
+    private val priceType: String = "DEFAULT"
 ) : RecordingStrategy(prefix = "rsi.") {
 
     private val history = mutableMapOf<Asset, PriceSerie>()
@@ -56,7 +57,7 @@ class RSIStrategy(
      * @see RecordingStrategy.generate
      */
     override fun generate(event: Event): List<Signal> {
-        history.addAll(event, 1, "CLOSE")
+        history.addAll(event, 1, priceType)
         val result = mutableListOf<Signal>()
         for (asset in event.prices.keys) {
             val data = history.getValue(asset)

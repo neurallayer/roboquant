@@ -88,7 +88,8 @@ fun binanceForwardTest() {
     val feed = BinanceLiveFeed()
 
     // We ony trade Bitcoin/BUSD
-    feed.subscribePriceQuote("BTCBUSD")
+    // feed.subscribePriceQuote("BTCBUSD")
+    feed.subscribePriceBar("BTCBUSD")
     val strategy = EMAStrategy.PERIODS_5_15
     val initialDeposit = Amount("BUSD", 10_000).toWallet()
     val broker = SimBroker(initialDeposit)

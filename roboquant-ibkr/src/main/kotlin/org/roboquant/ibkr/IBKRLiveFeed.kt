@@ -20,6 +20,7 @@ import com.ib.client.Decimal
 import com.ib.client.EClientSocket
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
+import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
 import org.roboquant.feeds.PriceBar
@@ -38,10 +39,12 @@ import java.time.Instant
  */
 class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
 
+    private class Request(val asset:Asset, val interval: Int)
+
     private val config = IBKRConfig()
     private var reqId: Int = 0
     private var client: EClientSocket
-    private val subscriptions = mutableMapOf<Int, Asset>()
+    private val subscriptions = mutableMapOf<Int, Request>()
     private val logger = Logging.getLogger(IBKRLiveFeed::class)
 
     init {
@@ -66,7 +69,7 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
         for (asset in assets) {
             val contract = asset.toContract()
             client.reqRealTimeBars(++reqId, contract, interval, type, false, arrayListOf())
-            subscriptions[reqId] = asset
+            subscriptions[reqId] = Request(asset, interval)
             logger.info("Added subscription to receive realtime bars for ${contract.symbol()}")
         }
     }
@@ -91,12 +94,12 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
             wap: Decimal?,
             count: Int
         ) {
-            val asset = subscriptions[reqId]
-            if (asset == null) {
+            val request = subscriptions[reqId]
+            if (request == null) {
                 logger.warn("unexpected realtimeBar received with request id $reqId")
             } else {
                 val v = volume?.value()?.toDouble() ?: Double.NaN
-                val action = PriceBar(asset, open, high, low, close, v)
+                val action = PriceBar(request.asset, open, high, low, close, v, request.interval.seconds)
                 val now = Instant.ofEpochSecond(time) // IBKR uses seconds resolution
                 val event = Event(listOf(action), now)
                 send(event)
