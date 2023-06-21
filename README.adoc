@@ -116,7 +116,7 @@ docker run -p 8888:8888 roboquant/jupyter
 == Features
 Some key features of roboquant are:
 
-* [x] Very fast back-testing, even on large volumes of historical data
+* [x] Blazingly fast back-testing, even on large volumes of historical data
 * [x] Easy to develop your own strategies and integrate with third party brokers and data providers
 * [x] Trade in multiple asset classes at the same time
 * [x] Run anything from a technical indicator to complex machine-learning based strategies

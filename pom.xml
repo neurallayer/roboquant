@@ -393,7 +393,7 @@
         </pluginManagement>
 
         <plugins>
-            <!-- We don't use Java, so lets disable the default Java compiler -->
+            <!-- We don't use Java, so lets disable the Java compiler plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
