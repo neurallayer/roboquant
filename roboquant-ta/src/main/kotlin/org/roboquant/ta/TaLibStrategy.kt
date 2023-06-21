@@ -27,8 +27,9 @@ import org.roboquant.strategies.Strategy
 import java.lang.Integer.max
 
 /**
- * This strategy that makes it easy to implement different types strategies based on technical analysis indicators.
+ * This strategy makes it easy to implement different types strategies based on technical analysis indicators.
  * This strategy requires [PriceBar] data and common use cases are candlestick patterns and moving average strategies.
+ * This strategy assumes all price-bars have the same time-span.
  *
  * It is important that the strategy is initialized with a large enough history window to support the underlying
  * technical indicators you want to use. If the history is too small, it will lead to a runtime exception.

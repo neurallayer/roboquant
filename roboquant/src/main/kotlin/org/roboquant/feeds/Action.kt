@@ -154,13 +154,14 @@ class PriceBar(
     }
 
     /**
-     * Get the price for this price bar, default is the closing price. Supported types:
+     * Get the price for this price bar, default is the closing price.
      *
-     *  CLOSE, OPEN, LOW, HIGH, TYPICAL
+     * The supported types are: CLOSE, OPEN, LOW, HIGH, TYPICAL, with the default type being "CLOSE".
      *
      * Example:
-     *      val price = action.getPrice("OPEN")
-     *
+     * ```
+     * val price = action.getPrice("OPEN")
+     * ```
      */
     override fun getPrice(type: String): Double {
         return when (type) {

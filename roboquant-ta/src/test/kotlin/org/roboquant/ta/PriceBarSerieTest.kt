@@ -18,6 +18,7 @@ package org.roboquant.ta
 
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Asset
+import org.roboquant.common.plus
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
@@ -29,6 +30,18 @@ internal class PriceBarSerieTest {
 
     private val asset = Asset("DEMO")
     private val pb = PriceBar(asset, 10, 11, 9, 10, 100)
+
+    private fun getPBS(size: Int): PriceBarSerie {
+        val pbs = PriceBarSerie(size)
+        val ohlvc = doubleArrayOf(100.0, 101.0, 99.0, 100.0, 10000.0)
+        repeat(size) {
+            val newOhlcv = ohlvc + it
+            newOhlcv[4] = 10000.0
+            val pb = PriceBar(Asset("ABC"), newOhlcv)
+            pbs.add(pb)
+        }
+        return pbs
+    }
 
     @Test
     fun test() {
@@ -70,6 +83,45 @@ internal class PriceBarSerieTest {
         assertEquals(1, pbs.size)
         priceBarSerie = pbs.getValue(asset)
         assertTrue(priceBarSerie.isFull())
+    }
+
+
+    @Test
+    fun agg() {
+        val pbs = getPBS(93)
+        assertTrue(pbs.isFull())
+
+        // an aggregate of 1 is just an expensive copy ;)
+        val agg1 = pbs.aggregate(1)
+        assertEquals(agg1.high.toList(), pbs.high.toList())
+        assertEquals(agg1.volume.toList(), pbs.volume.toList())
+        assertEquals(agg1[1].toList(), pbs[1].toList())
+
+        // aggregate 10 entries
+        val pbs2 = pbs.aggregate(10)
+        assertTrue(pbs2.isFull())
+        assertEquals(9, pbs2.size) // should not have processed the last incomplete set
+
+        assertEquals(100.0, pbs2.open.first())
+        assertEquals(109.0, pbs2.close.first())
+        assertEquals(100000.0, pbs2.volume.first())
+
+        assertEquals(110.0, pbs2.high.first())
+        assertEquals(99.0, pbs2.low.first())
+
+        assertEquals(190.0, pbs2.high.last())
+        assertEquals(179.0, pbs2.low.last())
+    }
+
+    @Test
+    fun agg2() {
+        val pbs = getPBS(100)
+        assertTrue(pbs.isFull())
+
+        // aggregate 10 entries
+        val pbs2 = pbs.aggregate(10)
+        assertTrue(pbs2.isFull())
+        assertEquals(10, pbs2.size) // should have processed the last set
     }
 
     @Test
