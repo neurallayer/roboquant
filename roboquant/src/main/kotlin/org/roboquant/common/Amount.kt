@@ -34,10 +34,19 @@ import kotlin.math.absoluteValue
  */
 data class Amount(val currency: Currency, val value: Double) : Comparable<Number> {
 
+    /**
+     * Create an Amount instance based on provided [currency] and [value].
+     * The value will be converted to a [Double], which might involve rounding.
+     */
     constructor(currency: Currency, value: Number) : this(currency, value.toDouble())
+
+    /**
+     * Create an Amount instance based on provided [currencyCode] and [value].
+     * The value will be converted to a [Double], which might involve rounding.
+     */
     constructor(currencyCode: String, value: Number) : this(Currency.getInstance(currencyCode), value.toDouble())
 
-    // Common operators that make working with Amounts more pleasant
+    // Common operators that make working with Amounts more convenient
 
     /** @suppress */
     operator fun times(d: Number): Amount = Amount(currency, value * d.toDouble())
