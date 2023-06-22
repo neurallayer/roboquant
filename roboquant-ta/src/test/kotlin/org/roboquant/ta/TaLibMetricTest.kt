@@ -27,6 +27,8 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.util.HistoricTestFeed
 import java.time.Instant
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class TaLibMetricTest {
@@ -58,6 +60,8 @@ class TaLibMetricTest {
             mResult = metric.calculate(account, Event(listOf(event.second), event.first))
         }
         assertTrue(mResult.isNotEmpty())
+        assertEquals(feed.assets.size, mResult.size)
+        assertContains(mResult, "ema10.${feed.assets.first().symbol.lowercase()}")
 
         assertDoesNotThrow {
             metric.reset()

@@ -25,11 +25,10 @@ import org.roboquant.metrics.Metric
 
 /**
  * Use a technical indicator from the Ta-Lib library as a metric. Metrics will be available under the
- * name: [name].symbol with the symbol in lowercase.
+ * name: <metricName>.<symbol> with the symbol in lowercase.
  *
- * @property name the base name of the metric
  * @property assetFilter which assets to process, default is [AssetFilter.all]
- * @property block the logic to use as an indicator
+ * @property block the logic to use as a metric
  * @constructor Create new metric
  */
 class TaLibMetric(
@@ -52,7 +51,8 @@ class TaLibMetric(
             val buffer = buffers.getOrPut(asset) { PriceBarSerie(1) }
             if (buffer.add(priceAction)) {
                 try {
-                    val newMetrics = block.invoke(taLib, buffer).mapKeys { "$it.${asset.symbol.lowercase()}" }
+                    val postFix = asset.symbol.lowercase()
+                    val newMetrics = block.invoke(taLib, buffer).mapKeys { "${it.key}.$postFix" }
                     metrics.putAll(newMetrics)
 
                 } catch (ex: InsufficientData) {
