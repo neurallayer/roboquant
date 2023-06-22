@@ -33,9 +33,8 @@ import org.roboquant.metrics.Metric
  * @constructor Create new metric
  */
 class TaLibMetric(
-    private val name: String,
     private val assetFilter: AssetFilter = AssetFilter.all(),
-    private var block: TaLib.(series: PriceBarSerie) -> Double
+    private var block: TaLib.(series: PriceBarSerie) -> Map<String, Double>
 ) : Metric {
 
     private val buffers = mutableMapOf<Asset, PriceBarSerie>()
@@ -53,9 +52,9 @@ class TaLibMetric(
             val buffer = buffers.getOrPut(asset) { PriceBarSerie(1) }
             if (buffer.add(priceAction)) {
                 try {
-                    val metric = block.invoke(taLib, buffer)
-                    val name = "$name.${asset.symbol.lowercase()}"
-                    metrics[name] = metric
+                    val newMetrics = block.invoke(taLib, buffer).mapKeys { "$it.${asset.symbol.lowercase()}" }
+                    metrics.putAll(newMetrics)
+
                 } catch (ex: InsufficientData) {
                     buffer.increaseCapacity(ex.minSize)
                 }

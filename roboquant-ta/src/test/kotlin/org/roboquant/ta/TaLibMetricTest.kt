@@ -33,8 +33,8 @@ class TaLibMetricTest {
 
     @Test
     fun test() {
-        val metric = TaLibMetric("ema10") { series ->
-            ema(series.close, 10)
+        val metric = TaLibMetric { series ->
+            mapOf("ema10" to ema(series.close, 10))
         }
 
         val account = Account(

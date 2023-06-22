@@ -93,7 +93,7 @@ private fun customPolicy() {
     class SmartLimitPolicy(private val atrPercentage: Double = 0.02, private val atrPeriod: Int) : FlexPolicy() {
 
         // use TaLibMetric to calculate the ATR values
-        private val atr = TaLibMetric("atr") { atr(it, atrPeriod) }
+        private val atr = TaLibMetric { mapOf("atr" to atr(it, atrPeriod)) }
         private var atrMetrics = emptyMap<String, Double>()
 
         override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
