@@ -57,6 +57,7 @@
         <module>roboquant-jupyter</module>
         <module>roboquant-extra</module>
         <module>roboquant-crypto</module>
+        <module>roboquant-perf</module>
         <!-- module roboquant-ibkr is part of ibkr profile since it relies on a locally installed library -->
     </modules>
 

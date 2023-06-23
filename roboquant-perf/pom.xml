@@ -25,10 +25,15 @@
         <version>1.6.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>roboquant</artifactId>
+    <artifactId>roboquant-perf</artifactId>
     <packaging>jar</packaging>
-    <name>roboquant</name>
-    <description>roboquant is a fast algorithmic trading platform written in Kotlin.</description>
+    <name>roboquant performance</name>
+    <description>roboquant performance test</description>
+
+    <properties>
+        <!-- make it easy to run the performance test: ./mvnw exec:java -pl roboquant-perf -->
+        <exec.mainClass>org.roboquant.perf.PerformanceKt</exec.mainClass>
+    </properties>
 
     <build>
         <plugins>
@@ -41,41 +46,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-core</artifactId>
-            <version>1.7.1</version>
+            <groupId>org.roboquant</groupId>
+            <artifactId>roboquant</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.siegmar</groupId>
-            <artifactId>fastcsv</artifactId>
-            <version>2.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hipparchus</groupId>
-            <artifactId>hipparchus-stat</artifactId>
-            <version>2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.avro</groupId>
-            <artifactId>avro</artifactId>
-            <version>1.11.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xerial.snappy</groupId>
-            <artifactId>snappy-java</artifactId>
-            <version>1.1.10.1</version>
-        </dependency>
-
-        <!-- Fix Issues -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.15.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.15.2</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
     </dependencies>
 
