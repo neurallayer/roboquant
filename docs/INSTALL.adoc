@@ -132,7 +132,7 @@ To run the built-in performance tests, you can use the following maven command:
 
 [source, shell]
 ----
-./mvnw compile exec:java -pl roboquant
+./mvnw compile exec:java -pl roboquant-perf
 ----
 
 The output should look something like this:
