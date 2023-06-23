@@ -20,7 +20,7 @@ import org.roboquant.common.*
 import java.time.Instant
 
 /**
- * Class that holds the position of an asset in the portfolio. This implementation makes no assumptions about the
+ * This class holds the position of an asset in the portfolio. The implementation makes no assumptions about the
  * asset class, so it supports any type of asset class, ranging from stocks and options to cryptocurrencies.
  *
  * Position instances are immutable, so updating a position requires creating a new instance. The actual [size] of the
@@ -73,8 +73,8 @@ data class Position(
     }
 
     /**
-     * How much PNL would be realized when [update] a position. This doesn't change the position itself, it just
-     * calculates the potential realized PNL.
+     * How much PNL would be realized when an [update] to a position would happen.
+     * This method doesn't modify the position itself, it just calculates the potential realized PNL.
      */
     fun realizedPNL(update: Position): Amount {
         val newSize = size + update.size

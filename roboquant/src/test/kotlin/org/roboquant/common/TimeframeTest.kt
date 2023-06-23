@@ -41,6 +41,32 @@ internal class TimeframeTest {
         assertEquals(48, subFrames2.size)
     }
 
+
+    @Test
+    fun split2() {
+        val tf = Timeframe.parse("2020-01-01", "2020-08-01")
+        val subFrames1 = tf.split(3.months)
+        assertEquals(3, subFrames1.size)
+        assertFalse(subFrames1.last().inclusive)
+
+        val subFrames2 = tf.split(3.months, includeRemaining = false)
+        assertEquals(2, subFrames2.size)
+        assertFalse(subFrames1.last().inclusive)
+    }
+
+    @Test
+    fun split3() {
+        val tf = Timeframe.parse("2020-01-01", "2020-08-01", inclusive = true)
+        val subFrames1 = tf.split(3.months)
+        assertEquals(3, subFrames1.size)
+        assertTrue(subFrames1.last().inclusive)
+
+        val subFrames2 = tf.split(3.months, includeRemaining = false)
+        assertEquals(2, subFrames2.size)
+        assertTrue(subFrames1.last().inclusive)
+    }
+
+
     @Test
     fun sample() {
         val tf = Timeframe.fromYears(1980, 1999)

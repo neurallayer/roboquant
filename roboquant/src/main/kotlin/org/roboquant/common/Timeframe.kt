@@ -184,7 +184,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         }
 
         /**
-         * Create a timeframe from now minus the provided [period].
+         * Create a timeframe till now minus the provided [period].
          */
         fun past(period: TimeSpan): Timeframe {
             val end = Instant.now()
@@ -192,11 +192,12 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         }
 
         /**
-         * Create a timeframe from now for the provided [period]. This is useful to restrict a live feed, so it
-         * won't run forever.
+         * Create a timeframe from now for the provided [period].
+         *
+         * This is useful to restrict a live feed, so it won't run forever.
          *```
          * val tf = TimeFrame.next(60.minutes)
-         * roboquant.run(feed, tf)
+         * roboquant.run(liveFeed, tf)
          * ```
          */
         fun next(period: TimeSpan): Timeframe {
@@ -244,14 +245,12 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * timeframe.toTimeline(1.days)
      * ```
      */
-    fun toTimeline(step: TimeSpan): Timeline {
-        val timeline = mutableListOf<Instant>()
+    fun toTimeline(step: TimeSpan) = buildList {
         var time = start
-        while (contains(time)) {
-            timeline.add(time)
+        while (this@Timeframe.contains(time)) {
+            add(time)
             time += step
         }
-        return timeline
     }
 
     /**
@@ -283,38 +282,46 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         return Pair(Timeframe(start, border), Timeframe(border, end, inclusive))
     }
 
+
     /**
-     * Split a timeframe in multiple individual timeframes each of the fixed [period] length. One common use case is
-     * to create timeframes that can be used in a walk forward back-test.
+     * Split a timeframe in multiple individual timeframes each of the fixed [period] length.
+     * Optionally, an [overlap] can be specified, with the default being zero.
+     *
+     * When [includeRemaining] is set to true, the remaining part that is smaller than the specified [period] will still
+     * be included, default is true.
+     *
+     * One common use case is to create timeframes that can be used in a walk forward back-test.
      */
-    fun split(period: TimeSpan, overlap: TimeSpan = 0.days): List<Timeframe> {
-        val result = mutableListOf<Timeframe>()
-        var last = start
-        while (true) {
-            val next = last + period
-            if (!beforeEnd(next)) {
-                result.add(Timeframe(last, end, inclusive))
-                return result
+    fun split(period: TimeSpan, overlap: TimeSpan = 0.days, includeRemaining: Boolean = true) = buildList {
+        var begin = start
+        var done = false
+        while (! done) {
+            val last =  begin + period
+            val tf = when {
+                last < end -> Timeframe(begin, last)
+                last == end && inclusive -> Timeframe(begin, end, true)
+                includeRemaining -> Timeframe(begin, end, inclusive)
+                else -> null
             }
-            val timeframe = Timeframe(last, next)
-            result.add(timeframe)
-            last = next - overlap
+            addNotNull(tf)
+            done = tf == null || tf.end == end
+            begin = last - overlap
         }
     }
+
+
 
     /**
      * Sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation
      */
-    fun sample(period: TimeSpan, samples: Int = 1, random: Random = Config.random): List<Timeframe> {
+    fun sample(period: TimeSpan, samples: Int = 1, random: Random = Config.random)= buildList {
         require(end - period > start) { "$period to large for $this" }
-        val result = mutableListOf<Timeframe>()
         val duration = Timeframe(start, end - period).duration.toMillis()
         repeat(samples) {
             val offset = random.nextLong(duration)
             val newStart = start.plusMillis(offset)
-            result.add(Timeframe(newStart, newStart + period))
+            add(Timeframe(newStart, newStart + period))
         }
-        return result
     }
 
     /**
