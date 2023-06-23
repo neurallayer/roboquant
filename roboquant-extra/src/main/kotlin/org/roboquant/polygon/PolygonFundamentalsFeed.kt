@@ -56,7 +56,7 @@ data class SecFiling internal constructor(
 /**
  * This feed provides fundamental data retrieved from Polygon.io.
  *
- * Under the hood, Polygon uses the SEC Filing as the source. As a result, this data will only be available much later
+ * Under the hood, Polygon uses the SEC Filing as its source. As a result, this data will only be available much later
  * after a financial period has completed. This feed uses the filing date as time to mark the data.
  */
 class PolygonFundamentalsFeed(

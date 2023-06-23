@@ -29,6 +29,9 @@ import java.time.Instant
  *      mapOf("ema" to ema(it, 20))
  * }
  * ```
+ *
+ * @param block the function that should return a map containing the indicator values.
+ *
  */
 class TaLibIndicator(
     private val block: TaLib.(series: PriceBarSerie) -> Map<String, Double>

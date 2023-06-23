@@ -25,7 +25,7 @@ import org.roboquant.metrics.Metric
 
 /**
  * Use a technical indicator from the Ta-Lib library as a metric. Metrics will be available under the
- * name: <metricName>.<symbol> with the symbol in lowercase.
+ * name: <metricName>.<symbol> with the symbol name in lowercase.
  *
  * @property assetFilter which assets to process, default is [AssetFilter.all]
  * @property block the logic to use as a metric

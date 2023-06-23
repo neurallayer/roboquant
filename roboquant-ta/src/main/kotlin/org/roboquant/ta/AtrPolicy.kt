@@ -124,7 +124,7 @@ class AtrPolicy(
 
         val limitPrice = price + (atr * atrProfit)
         val stopPrice = price - (atr * atrLoss)
-        if (limitPrice <= 0 || stopPrice <= 0) return null // unlikely, be better be safe
+        if (limitPrice <= 0 || stopPrice <= 0) return null // unlikely, but better to be safe
         val takeProfit = LimitOrder(asset, -size, limitPrice)
         val stopLoss = StopOrder(asset, -size, stopPrice)
         return BracketOrder(entry, takeProfit, stopLoss)

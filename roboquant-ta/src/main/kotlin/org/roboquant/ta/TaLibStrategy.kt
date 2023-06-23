@@ -34,9 +34,10 @@ import java.lang.Integer.max
  * It is important that the strategy is initialized with a large enough history window to support the underlying
  * technical indicators you want to use. If the history is too small, it will lead to a runtime exception.
  *
- * @param history the amount of history to track
+ * @param history the amount of history to track. If not enough history is available to calculate the indicators, the
+ * history will be automatically increased until it is able to perform the calculations.
  */
-class TaLibStrategy(history: Int = 15) : RecordingStrategy(recording = true) {
+class TaLibStrategy(history: Int = 1) : RecordingStrategy(recording = true) {
 
     private var sellFn: TaLib.(series: PriceBarSerie) -> Boolean = { false }
     private var buyFn: TaLib.(series: PriceBarSerie) -> Boolean = { false }
