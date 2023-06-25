@@ -142,7 +142,7 @@ object Config {
      *
      *  0. Properties set using [Config.setProperty]
      *  1. System properties (java -D syntax)
-     *  2. Environment variables set by the OS
+     *  2. Environment variables set by the OS (all capitals and underscores)
      *  3. A "dotenv" or ".env" property file in the current working directory
      *  4. The ".env" property file in roboquant home directory ($USER/.roboquant)
      *
@@ -164,7 +164,8 @@ object Config {
         logger.trace { "finding property $name" }
         return properties[name]
             ?: System.getProperty(name)
-            ?: System.getenv(name.replace('.', '_'))
+            ?: System.getenv(name.replace('.', '_').uppercase())
+            ?: System.getenv(name)
             ?: env[name]
     }
 
