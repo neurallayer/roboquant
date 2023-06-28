@@ -92,10 +92,10 @@ class PerformanceChart(
     /** @suppress */
     override fun getOption(): Option {
         val data = fromFeed()
-        val max = data.maxOf {
+        val max = data.maxOfOrNull {
             val x = it["value"] as List<*>
             x[1] as BigDecimal
-        }
+        } ?: BigDecimal.ONE
 
         val series = TreemapSeries()
             .setName("assets")
