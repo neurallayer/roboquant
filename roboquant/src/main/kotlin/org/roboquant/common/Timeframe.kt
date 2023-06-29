@@ -282,7 +282,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         return Pair(Timeframe(start, border), Timeframe(border, end, inclusive))
     }
 
-
     /**
      * Split a timeframe in multiple individual timeframes each of the fixed [period] length.
      * Optionally, an [overlap] can be specified, with the default being zero.
@@ -295,8 +294,8 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     fun split(period: TimeSpan, overlap: TimeSpan = 0.days, includeRemaining: Boolean = true) = buildList {
         var begin = start
         var done = false
-        while (! done) {
-            val last =  begin + period
+        while (!done) {
+            val last = begin + period
             val tf = when {
                 last < end -> Timeframe(begin, last)
                 last == end && inclusive -> Timeframe(begin, end, true)
@@ -309,12 +308,10 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         }
     }
 
-
-
     /**
      * Sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation
      */
-    fun sample(period: TimeSpan, samples: Int = 1, random: Random = Config.random)= buildList {
+    fun sample(period: TimeSpan, samples: Int = 1, random: Random = Config.random) = buildList {
         require(end - period > start) { "$period to large for $this" }
         val duration = Timeframe(start, end - period).duration.toMillis()
         repeat(samples) {

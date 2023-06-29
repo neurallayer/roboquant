@@ -41,7 +41,6 @@ internal class TimeframeTest {
         assertEquals(48, subFrames2.size)
     }
 
-
     @Test
     fun split2() {
         val tf = Timeframe.parse("2020-01-01", "2020-08-01")
@@ -65,7 +64,6 @@ internal class TimeframeTest {
         assertEquals(2, subFrames2.size)
         assertTrue(subFrames1.last().inclusive)
     }
-
 
     @Test
     fun sample() {

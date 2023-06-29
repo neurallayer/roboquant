@@ -109,7 +109,7 @@ class PriceBarSerie(capacity: Int) {
     /**
      * Returns the OHLCV values at the specified [index] as a [DoubleArray]
      */
-    operator fun get(index: Int) : DoubleArray =
+    operator fun get(index: Int): DoubleArray =
         doubleArrayOf(open[index], high[index], low[index], close[index], volume[index])
 
     /**
@@ -141,24 +141,23 @@ class PriceBarSerie(capacity: Int) {
      */
     fun aggregate(number: Int): PriceBarSerie {
         require(number > 0) { "number should be larger than 0" }
-        val result = PriceBarSerie(size/number)
+        val result = PriceBarSerie(size / number)
         for (i in 0 until size step number) {
             if (i + number > size) break
             val open = open[i]
             var total = 0.0
-            var lowest= low[i]
+            var lowest = low[i]
             var highest = high[i]
-            for (j in i until i+number) {
+            for (j in i until i + number) {
                 if (low[j] < lowest) lowest = low[j]
                 if (high[j] > highest) highest = high[j]
                 total += volume[j]
             }
-            val ohlcv = doubleArrayOf(open, highest, lowest, close[i+number-1], total)
+            val ohlcv = doubleArrayOf(open, highest, lowest, close[i + number - 1], total)
             result.add(ohlcv)
         }
         return result
     }
-
 
     /**
      * Set the capacity of the buffers to [newCapacity]. Existing stored values will be retained.

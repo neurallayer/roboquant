@@ -39,7 +39,7 @@ import java.time.Instant
  */
 class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
 
-    private class Subscription(val asset:Asset, val interval: Int)
+    private class Subscription(val asset: Asset, val interval: Int)
 
     private val config = IBKRConfig()
     private var reqId: Int = 0

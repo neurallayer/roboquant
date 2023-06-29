@@ -85,7 +85,6 @@ internal class PriceBarSerieTest {
         assertTrue(priceBarSerie.isFull())
     }
 
-
     @Test
     fun agg() {
         val pbs = getPBS(93)
