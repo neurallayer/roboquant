@@ -65,7 +65,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>11</kotlin.compiler.jvmTarget>
-        <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
+        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <kotlin.version>1.9.0-RC</kotlin.version>
         <slf4j.version>2.0.7</slf4j.version>
         <ibkr.version>10.19</ibkr.version>
