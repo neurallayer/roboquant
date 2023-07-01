@@ -112,10 +112,18 @@ class BinanceBroker(
     }
 
     /**
+     * @see Broker.getAccount
+     */
+    override fun getAccount(event: Event): Account {
+        updateAccount()
+        return account
+    }
+
+    /**
      * @param orders
      * @return
      */
-    override fun place(orders: List<Order>, event: Event): Account {
+    override fun place(orders: List<Order>) {
         _account.initializeOrders(orders)
 
         for (order in orders) {
@@ -142,7 +150,6 @@ class BinanceBroker(
 
         }
 
-        return account
     }
 
     /**

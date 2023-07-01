@@ -34,7 +34,6 @@ import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.MetricsLogger
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.Order
 import org.roboquant.orders.createCancelOrders
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.Policy
@@ -86,10 +85,14 @@ class Roboquant(
 
         start(run, timeframe)
         try {
-            var orders = emptyList<Order>()
             while (true) {
                 val event = channel.receive()
-                orders = step(orders, event, run)
+                val account = broker.getAccount(event)
+                runMetrics(account, event, run)
+                val signals = strategy.generate(event)
+                val orders = policy.act(signals, account, event)
+                broker.place(orders)
+                kotlinLogger.trace { "starting time=$${event.time} orders=${orders.size}" }
             }
         } catch (_: ClosedReceiveChannelException) {
             // intentionally empty
@@ -173,21 +176,6 @@ class Roboquant(
         kotlinLogger.debug { "Finished run=$run" }
     }
 
-    /**
-     * Take a single step in the timeline. The broker is always invoked before the strategy and policy to ensure it is
-     * impossible to look ahead in the future. So the loop really is:
-     *
-     *  feed --|event|--> broker --|account|--> metrics -> strategy --|signals|--> policy --|orders|-->
-     *
-     */
-    private fun step(orders: List<Order>, event: Event, run: String): List<Order> {
-        kotlinLogger.trace { "starting time=$${event.time} orders=${orders.size}" }
-
-        val account = broker.place(orders, event)
-        runMetrics(account, event, run)
-        val signals = strategy.generate(event)
-        return policy.act(signals, account, event)
-    }
 
     /**
      * Calculate the configured [metrics] and log the results. This includes also metrics that are recorded
@@ -237,7 +225,8 @@ class Roboquant(
         val actions = account.positions.map { TradePrice(it.asset, it.mktPrice) }
         val event = Event(actions, eventTime)
         val run = runName ?: "run-${runCounter}"
-        val newAccount = broker.place(orders, event)
+        broker.place(orders)
+        val newAccount = broker.getAccount(event)
         runMetrics(newAccount, event, run)
     }
 

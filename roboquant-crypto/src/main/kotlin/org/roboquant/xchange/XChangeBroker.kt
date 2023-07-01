@@ -27,6 +27,7 @@ import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.math.BigDecimal
+import java.time.Instant
 import org.knowm.xchange.dto.Order as CryptoOrder
 import org.knowm.xchange.dto.trade.LimitOrder as CryptoLimitOrder
 import org.knowm.xchange.dto.trade.MarketOrder as CryptoMarketOrder
@@ -74,12 +75,22 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
     }
 
     /**
+     * @see Broker.getAccount
+     */
+    override fun getAccount(event: Event): Account {
+        updateAccount()
+        return account
+    }
+
+
+    /**
      * Place orders on a XChange supported exchange using the trade service.
      *
      * @param orders
      * @return
      */
-    override fun place(orders: List<Order>, event: Event): Account {
+    override fun place(orders: List<Order>) {
+        val now = Instant.now()
         for (order in orders.filterIsInstance<CreateOrder>()) {
             val asset = order.asset
             if (asset.type == AssetType.CRYPTO) {
@@ -88,37 +99,36 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
                 if (supportCurrencies.isNotEmpty() && currencyPair !in supportCurrencies) {
                     logger.warn { "Unsupported currency pair $currencyPair for exchange" }
-                    return account
+                    return
                 }
                 val orderId = orderId++.toString()
                 when (order) {
                     is LimitOrder -> {
                         trade(currencyPair, order, orderId)
                         placedOrders[orderId] = order
-                        _account.acceptOrder(order, event.time)
+                        _account.acceptOrder(order, now)
                     }
 
                     is MarketOrder -> {
                         trade(currencyPair, order)
                         placedOrders[orderId] = order
-                        _account.acceptOrder(order, event.time)
+                        _account.acceptOrder(order, now)
                     }
 
                     else -> {
                         logger.warn {
                             "only market and limit orders are supported, received ${order::class} instead"
                         }
-                        _account.rejectOrder(order, event.time)
+                        _account.rejectOrder(order, now)
                     }
                 }
 
             } else {
                 logger.warn { "only CRYPTO assets are supported, received ${asset.type} instead" }
-                _account.rejectOrder(order, event.time)
+                _account.rejectOrder(order, now)
             }
         }
 
-        return account
     }
 
     /**

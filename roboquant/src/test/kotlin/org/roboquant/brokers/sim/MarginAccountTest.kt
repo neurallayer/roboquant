@@ -56,7 +56,8 @@ internal class MarginAccountTest {
         val orders = if (orderSize == 0) emptyList() else listOf(MarketOrder(asset, orderSize))
         val action = TradePrice(asset, price.toDouble())
         val event = Event(listOf(action), Instant.now())
-        return broker.place(orders, event)
+        broker.place(orders)
+        return broker.getAccount(event)
     }
 
     private fun getSimBroker(deposit: Amount, accountModel: AccountModel): SimBroker {

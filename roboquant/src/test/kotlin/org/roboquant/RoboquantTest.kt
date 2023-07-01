@@ -67,7 +67,8 @@ internal class RoboquantTest {
     fun liquidateTest() {
         val broker = SimBroker()
         val event = TestData.event()
-        var account = broker.place(listOf(TestData.usMarketOrder()), event)
+        broker.place(listOf(TestData.usMarketOrder()))
+        var account = broker.getAccount(event)
         assertEquals(1, account.positions.size)
         assertEquals(1, account.trades.size)
         assertEquals(1, account.closedOrders.size)

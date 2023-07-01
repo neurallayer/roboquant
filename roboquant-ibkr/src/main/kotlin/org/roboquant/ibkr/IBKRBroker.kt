@@ -161,14 +161,16 @@ class IBKRBroker(
         client.placeOrder(ibOrder.orderId(), contract, ibOrder)
     }
 
+    override fun getAccount(event: Event): Account {
+        return account
+    }
+
     /**
      * Place zero or more [orders]
      *
      * @param orders
-     * @param event
-     * @return
      */
-    override fun place(orders: List<Order>, event: Event): Account {
+    override fun place(orders: List<Order>) {
         // Make sure we store all orders
         _account.initializeOrders(orders)
 
@@ -184,9 +186,6 @@ class IBKRBroker(
             }
 
         }
-
-        // Return a clone so changes to account while running policies don't cause inconsistencies.
-        return _account.toAccount()
     }
 
     /**
