@@ -104,15 +104,15 @@ object Config {
      */
     fun printInfo() {
         val msg = """             _______
-            | $   $ |             roboquant  
-            |   o   |             version: ${info.version}  
+            | $   $ |             roboquant
+            |   o   |             version: ${info.version}
             |_[___]_|             build: ${info.build}
-        ___ ___|_|___ ___         os: ${info.os}       
+        ___ ___|_|___ ___         os: ${info.os}
        ()___)       ()___)        home: $home
-      // / |         | \ \\       jvm: ${info.jvm}  
-     (___) |_________| (___)      memory: ${info.memory}MB 
-      | |   __/___\__   | |       cpu cores: ${info.cores}  
-      /_\  |_________|  /_\
+      /  / |         | \  \       jvm: ${info.jvm}
+     (___) |_________| (___)      kotlin: ${KotlinVersion.CURRENT}
+      | |   __/___\__   | |       memory: ${info.memory}MB
+      /_\  |_________|  /_\       cpu cores: ${info.cores}
      // \\  |||   |||  // \\
      \\ //  |||   |||  \\ //
            ()__) ()__)
