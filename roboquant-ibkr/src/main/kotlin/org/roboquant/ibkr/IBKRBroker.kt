@@ -162,6 +162,8 @@ class IBKRBroker(
     }
 
     override fun getAccount(event: Event): Account {
+        // For IBKR, the account update happens asynchronously in the background.
+        // So no need to call the IBKR APIs to retrieve the latest state.
         return account
     }
 

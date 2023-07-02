@@ -142,7 +142,7 @@ open class SimBroker(
     }
 
     /**
-     * Run the simulation for the provided [event] and return the updated account state.
+     * Run the simulation given the provided [event] and return the updated account.
      */
     override fun getAccount(event: Event): Account {
         simulateMarket(event)

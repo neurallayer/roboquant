@@ -87,11 +87,11 @@ class Roboquant(
         try {
             while (true) {
                 val event = channel.receive()
-                val account = broker.getAccount(event)
-                runMetrics(account, event, run)
                 val signals = strategy.generate(event)
+                val account = broker.getAccount(event)
                 val orders = policy.act(signals, account, event)
                 broker.place(orders)
+                runMetrics(account, event, run)
                 kotlinLogger.trace { "starting time=$${event.time} orders=${orders.size}" }
             }
         } catch (_: ClosedReceiveChannelException) {
@@ -103,6 +103,7 @@ class Roboquant(
             channel.close()
         }
     }
+
 
     /**
      * Inform components of the start of a [runPhase], this provides them with the opportunity to clear state and

@@ -53,7 +53,7 @@ internal class SimBrokerTest {
         val metrics = broker.getMetrics()
         assertTrue(metrics.isEmpty())
 
-        broker2.refresh()
+        // broker2.refresh()
         assertEquals(Wallet(100_000.USD), broker2.initialDeposit)
     }
 

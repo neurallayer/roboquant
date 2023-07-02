@@ -32,7 +32,7 @@ interface Broker : Lifecycle {
     val account: Account
 
     /**
-     * Return a new fresh copy of the account state
+     * Return a newly synced copy of the account state
      */
     fun getAccount(event: Event) : Account
 
@@ -48,11 +48,5 @@ interface Broker : Lifecycle {
      * The returned map should NOT be mutated after it has been returned.
      */
     fun getMetrics(): Map<String, Double> = emptyMap()
-
-    /**
-     * Refresh the state of the broker and the underlying account. The default implementation invokes the [place]
-     * method without any orders or event.
-     */
-    fun refresh(): Account = account
 
 }
