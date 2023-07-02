@@ -112,11 +112,10 @@ class BinanceBroker(
     }
 
     /**
-     * @see Broker.getAccount
+     * @see Broker.sync
      */
-    override fun getAccount(event: Event): Account {
+    override fun sync(event: Event) {
         updateAccount()
-        return account
     }
 
     /**

@@ -32,18 +32,24 @@ interface Broker : Lifecycle {
     val account: Account
 
     /**
-     * Return a newly synced copy of the account state
+     * Sync the state of the account with the broker.
+     *
+     * Typically, this method will invoke the underlying broker API to obtain the latest state of positions, orders,
+     * trades, cash and buying power.
+     *
+     * Optionally an [event] can be provided, although normally only the SimBroker requires this to simulate
+     * trade executions. If no event is provided, an empty event will be used instead.
      */
-    fun getAccount(event: Event) : Account
+    fun sync(event: Event = Event.empty())
 
     /**
-     * Place a new series of [orders] at this broker
+     * Place a new series of new [orders] at this broker.
      */
     fun place(orders: List<Order>)
 
     /**
      * This method will be invoked at each step in a run and provides the broker with the opportunity to
-     * log additional information. The default implementation is to return an empty map.
+     * provide additional metrics. The default implementation is to return an empty map.
      *
      * The returned map should NOT be mutated after it has been returned.
      */

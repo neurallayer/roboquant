@@ -161,10 +161,9 @@ class IBKRBroker(
         client.placeOrder(ibOrder.orderId(), contract, ibOrder)
     }
 
-    override fun getAccount(event: Event): Account {
+    override fun sync(event: Event) {
         // For IBKR, the account update happens asynchronously in the background.
-        // So no need to call the IBKR APIs to retrieve the latest state.
-        return account
+        // NOP
     }
 
     /**

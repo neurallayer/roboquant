@@ -87,11 +87,17 @@ class Roboquant(
         try {
             while (true) {
                 val event = channel.receive()
+
+                // Sync with broker and run metrics
+                broker.sync(event)
+                val account = broker.account
+                runMetrics(account, event, run)
+
+                // Generate signals and place orders
                 val signals = strategy.generate(event)
-                val account = broker.getAccount(event)
                 val orders = policy.act(signals, account, event)
                 broker.place(orders)
-                runMetrics(account, event, run)
+
                 kotlinLogger.trace { "starting time=$${event.time} orders=${orders.size}" }
             }
         } catch (_: ClosedReceiveChannelException) {
@@ -227,7 +233,8 @@ class Roboquant(
         val event = Event(actions, eventTime)
         val run = runName ?: "run-${runCounter}"
         broker.place(orders)
-        val newAccount = broker.getAccount(event)
+        broker.sync(event)
+        val newAccount = broker.account
         runMetrics(newAccount, event, run)
     }
 

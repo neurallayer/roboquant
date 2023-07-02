@@ -47,7 +47,8 @@ internal class CashAccountTest {
             val action = TradePrice(asset, price.toDouble())
             val event = Event(listOf(action), Instant.now())
             broker.place(orders)
-            return broker.getAccount(event)
+            broker.sync(event)
+            return broker.account
         }
 
         internal fun getSimBroker(deposit: Amount, accountModel: AccountModel): SimBroker {

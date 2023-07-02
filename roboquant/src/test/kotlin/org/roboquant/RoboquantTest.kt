@@ -68,7 +68,8 @@ internal class RoboquantTest {
         val broker = SimBroker()
         val event = TestData.event()
         broker.place(listOf(TestData.usMarketOrder()))
-        var account = broker.getAccount(event)
+        broker.sync(event)
+        var account = broker.account
         assertEquals(1, account.positions.size)
         assertEquals(1, account.trades.size)
         assertEquals(1, account.closedOrders.size)

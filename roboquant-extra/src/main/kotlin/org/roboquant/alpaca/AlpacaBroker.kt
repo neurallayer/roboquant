@@ -260,11 +260,10 @@ class AlpacaBroker(
     }
 
     /**
-     * @see Broker.getAccount
+     * @see Broker.sync
      */
-    override fun getAccount(event: Event): Account {
+    override fun sync(event: Event) {
         sync()
-        return account
     }
 
     /**
