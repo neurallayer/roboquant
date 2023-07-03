@@ -26,7 +26,7 @@ typealias TradingPeriod = TimeSpan
 
 /**
  * TimeSpan is an immutable class that unifies the JVM classes Duration and Period and allows to use durations
- * more easily in your code. It can store periods as small as nanosecond.
+ * more easily in your code. It can store time-spans as small as nanoseconds.
  *
  * It is loosely modelled after the time duration, as described in ISO 8601.
  */

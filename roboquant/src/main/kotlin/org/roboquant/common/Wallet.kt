@@ -26,7 +26,7 @@ import java.time.Instant
  * You can add other currencies to a Wallet instance. If the currency is already present in the Wallet, it
  * will be added to the existing amount, otherwise the currency and amount will be added.
  *
- * It is used throughout roboquant in order to support trading in multiple assets with different currency denominations.
+ * It is used throughout roboquant in order to support trading in assets with different currency denominations.
  *
  * Wallet by itself will never convert currencies when depositing or withdrawing amounts. But you can invoke
  * the [convert] method if you want to do so.

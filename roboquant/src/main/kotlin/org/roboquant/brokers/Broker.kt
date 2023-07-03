@@ -43,15 +43,13 @@ interface Broker : Lifecycle {
     fun sync(event: Event = Event.empty())
 
     /**
-     * Place a new series of new [orders] at this broker.
+     * Place new [orders] at this broker.
      */
     fun place(orders: List<Order>)
 
     /**
      * This method will be invoked at each step in a run and provides the broker with the opportunity to
      * provide additional metrics. The default implementation is to return an empty map.
-     *
-     * The returned map should NOT be mutated after it has been returned.
      */
     fun getMetrics(): Map<String, Double> = emptyMap()
 

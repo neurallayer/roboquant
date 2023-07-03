@@ -17,29 +17,30 @@
 package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
-import org.roboquant.common.EUR
 import org.roboquant.common.USD
+import org.roboquant.common.UnsupportedException
 import java.time.Instant
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 
-internal class SingleCurrencyExchangeRatesTest {
+internal class NoExchangeRatesTest {
 
     @Test
     fun basic() {
-        val currencyConverter = SingleCurrencyExchangeRates()
+        val currencyConverter = NoExchangeRates()
 
         val now = Instant.now()
         val amount1 = 100.USD
         val rate = currencyConverter.getRate(amount1, USD, now)
         assertEquals(1.0, rate)
 
-        val amount = currencyConverter.convert(0.USD, EUR, now)
-        assertEquals(0.EUR, amount)
+        assertThrows<UnsupportedException> {
+            currencyConverter.convert(0.USD, EUR, now)
+        }
 
-        assertFails {
+        assertThrows<UnsupportedException>  {
             currencyConverter.getRate(amount1, EUR, now)
         }
     }

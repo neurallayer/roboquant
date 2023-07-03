@@ -20,8 +20,8 @@ import java.time.Instant
 import kotlin.random.Random
 
 /**
- * Timeline is an ordered list of [Instant] instances, sorted from old to new. Every [Instant] is unique.
- * Currently, it is just a typealias for List<Instant>, but this might change in the future.
+ * Timeline is an ordered list of [Instant] instances, sorted from old to new. Every [Instant] entry in the list is
+ * unique. Currently, it is just a typealias for List<Instant>, but this might change in the future.
  */
 typealias Timeline = List<Instant>
 

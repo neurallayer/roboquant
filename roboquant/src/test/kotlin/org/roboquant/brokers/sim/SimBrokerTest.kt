@@ -33,10 +33,24 @@ import kotlin.test.assertTrue
 
 internal class SimBrokerTest {
 
+
+    @Test
+    fun defaults() {
+        val broker = SimBroker()
+        assertEquals(Wallet(1_000_000.USD), broker.initialDeposit)
+        assertTrue(broker.getMetrics().isEmpty())
+        val account = broker.account
+        assertEquals(USD, account.baseCurrency)
+        assertEquals(Wallet(1_000_000.USD), account.cash)
+        assertTrue(account.positions.isEmpty())
+        assertTrue(account.openOrders.isEmpty())
+        assertTrue(account.closedOrders.isEmpty())
+        assertTrue(account.trades.isEmpty())
+    }
+
     @Test
     fun basicSimBrokerTest() {
         val broker = SimBroker()
-        assertEquals(Wallet(1_000_000.USD), broker.initialDeposit)
 
         val event = TestData.event()
         broker.place(emptyList())
@@ -56,6 +70,23 @@ internal class SimBrokerTest {
 
         // broker2.refresh()
         assertEquals(Wallet(100_000.USD), broker2.initialDeposit)
+    }
+
+    @Test
+    fun logic() {
+        val broker = SimBroker()
+        val asset = Asset("TEST")
+        val order = MarketOrder(asset, 10)
+        val price = TradePrice(asset, 100.0)
+        val now = Instant.now()
+        val event = Event(listOf(price), now)
+
+        broker.place(listOf(order))
+        broker.sync(event)
+
+        val account1 = broker.account
+        val account2 = broker.account
+        assertEquals(account1.equity, account2.equity)
     }
 
     @Test

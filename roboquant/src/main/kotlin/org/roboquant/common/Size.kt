@@ -46,8 +46,9 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
      * always precise. Also overflows and lost of precision don't lead to an exception.
      *
      * Better to use the Size constructor with a [String] or [BigDecimal] as its parameter instead:
-     *
-     *      Size("0.001")
+     * ```
+     * val size = Size("0.001")
+     * ```
      */
     constructor(value: Double) : this(BigDecimal.valueOf(value).multiply(BD_FRACTION).toLong())
 
