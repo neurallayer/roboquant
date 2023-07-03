@@ -31,7 +31,7 @@ import java.time.Instant
 class NoExchangeRates : ExchangeRates {
 
     /**
-     * Convert between two currencies.
+     * Return the conversion rate between two currencies.
      * @see ExchangeRates.getRate
      *
      * @param to

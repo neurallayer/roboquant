@@ -49,7 +49,7 @@ interface Broker : Lifecycle {
 
     /**
      * This method will be invoked at each step in a run and provides the broker with the opportunity to
-     * provide additional metrics. The default implementation is to return an empty map.
+     * provide additional metrics. The default implementation returns an empty map.
      */
     fun getMetrics(): Map<String, Double> = emptyMap()
 
