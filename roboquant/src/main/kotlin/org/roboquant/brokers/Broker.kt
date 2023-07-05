@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
+import java.time.Instant
 
 /**
  * Interface for any broker implementation, used for both simulated and real brokers. All brokers also implement the
@@ -44,8 +45,11 @@ interface Broker : Lifecycle {
 
     /**
      * Place new [orders] at this broker.
+     *
+     * Optional provide a [time] that can be used by the broker to determine you are not submitting back test orders to
+     * a real broker.
      */
-    fun place(orders: List<Order>)
+    fun place(orders: List<Order>, time: Instant = Instant.now())
 
     /**
      * This method will be invoked at each step in a run and provides the broker with the opportunity to

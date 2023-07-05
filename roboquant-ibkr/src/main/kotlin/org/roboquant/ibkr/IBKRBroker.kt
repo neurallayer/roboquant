@@ -171,7 +171,9 @@ class IBKRBroker(
      *
      * @param orders
      */
-    override fun place(orders: List<Order>) {
+    override fun place(orders: List<Order>, time: Instant) {
+        if (time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+
         // Make sure we store all orders
         _account.initializeOrders(orders)
 

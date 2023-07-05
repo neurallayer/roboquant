@@ -154,8 +154,8 @@ open class SimBroker(
     /**
      * Place the [orders] at the broker.
      */
-    override fun place(orders: List<Order>) {
-        logger.trace { "Received ${orders.size}" }
+    override fun place(orders: List<Order>, time: Instant) {
+        logger.trace { "Received orders=${orders.size} time=$time" }
         _account.initializeOrders(orders)
         executionEngine.addAll(orders)
     }

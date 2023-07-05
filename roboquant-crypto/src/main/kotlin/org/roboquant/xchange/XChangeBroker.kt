@@ -21,9 +21,7 @@ import org.knowm.xchange.currency.CurrencyPair
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.sim.execution.InternalAccount
-import org.roboquant.common.AssetType
-import org.roboquant.common.Currency
-import org.roboquant.common.Logging
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.math.BigDecimal
@@ -88,7 +86,9 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
      * @param orders
      * @return
      */
-    override fun place(orders: List<Order>) {
+    override fun place(orders: List<Order>, time: Instant) {
+        if (time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+
         val now = Instant.now()
         for (order in orders.filterIsInstance<CreateOrder>()) {
             val asset = order.asset

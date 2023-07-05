@@ -360,7 +360,9 @@ class AlpacaBroker(
      *
      * @return the updated account that reflects the latest state
      */
-    override fun place(orders: List<Order>) {
+    override fun place(orders: List<Order>, time: Instant) {
+        if (time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+
         _account.initializeOrders(orders)
         for (order in orders) {
             when (order) {
