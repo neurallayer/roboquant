@@ -25,6 +25,7 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.RoboquantException
 import org.roboquant.common.Timeframe
+import org.roboquant.common.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
@@ -123,6 +124,21 @@ internal class RoboquantTest {
     }
 
     @Test
+    fun testWarmUp() {
+        val strategy = TestStrategy()
+        val feed = HistoricTestFeed()
+        val initial = 101.USD.toWallet()
+        val broker = SimBroker(initial)
+        val logger = MemoryLogger()
+        val roboquant = Roboquant(strategy, ProgressMetric(), broker = broker, logger = logger)
+        roboquant.warmup(feed, Timeframe.INFINITE)
+        assertTrue(logger.history.isEmpty())
+        val account = broker.account
+        assertTrue(account.trades.isEmpty())
+        assertEquals(initial, account.cash)
+    }
+
+    @Test
     fun brokenMetric() {
         class MyBrokenMetric : Metric {
             override fun calculate(account: Account, event: Event): Map<String, Double> {
@@ -138,6 +154,14 @@ internal class RoboquantTest {
             roboquant.run(feed)
         }
 
+    }
+
+    @Test
+    fun warmupAsync() = runBlocking {
+        val strategy = EMAStrategy()
+        val roboquant = Roboquant(strategy, AccountMetric(), logger = SilentLogger())
+        roboquant.warmupAsync(TestData.feed, Timeframe.INFINITE)
+        assertTrue(roboquant.broker.account.trades.isEmpty())
     }
 
     @Test
