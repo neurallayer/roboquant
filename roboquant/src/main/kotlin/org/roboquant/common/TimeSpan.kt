@@ -20,7 +20,9 @@ package org.roboquant.common
 
 import java.time.*
 
-
+/**
+ * Deprecated, use [TimeSpan] instead
+ */
 @Deprecated("Renamed to TimeSpan", ReplaceWith("TimeSpan", "org.roboquant.common.TimeSpan"))
 typealias TradingPeriod = TimeSpan
 
