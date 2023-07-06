@@ -22,7 +22,10 @@ import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.assets
 import org.roboquant.common.*
-import org.roboquant.feeds.*
+import org.roboquant.feeds.AvroFeed
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
+import org.roboquant.feeds.toList
 import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRExchangeRates
 import org.roboquant.ibkr.IBKRHistoricFeed
@@ -60,7 +63,7 @@ fun closePosition() {
     // Place a new market sell order
     val position = account.positions.first()
     val order = MarketOrder(position.asset, -position.size)
-    broker.place(listOf(order), Event.empty())
+    broker.place(listOf(order))
     Thread.sleep(10_000)
     println(account.fullSummary())
     broker.disconnect()
@@ -118,7 +121,7 @@ fun placeOrder() {
         185.50
     )
 
-    broker.place(listOf(order), Event.empty())
+    broker.place(listOf(order))
     Thread.sleep(5_000)
     val account2 = broker.account
     println(account2.fullSummary())

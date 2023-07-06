@@ -260,6 +260,13 @@ class AlpacaBroker(
     }
 
     /**
+     * @see Broker.sync
+     */
+    override fun sync(event: Event) {
+        sync()
+    }
+
+    /**
      * Cancel an order
      */
     private fun cancelOrder(cancellation: CancelOrder) {
@@ -353,7 +360,9 @@ class AlpacaBroker(
      *
      * @return the updated account that reflects the latest state
      */
-    override fun place(orders: List<Order>, event: Event): Account {
+    override fun place(orders: List<Order>, time: Instant) {
+        if (time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+
         _account.initializeOrders(orders)
         for (order in orders) {
             when (order) {
@@ -363,8 +372,6 @@ class AlpacaBroker(
                 else -> throw UnsupportedException("unsupported order type order=$order")
             }
         }
-        _account.lastUpdate = event.time
-        sync()
-        return _account.toAccount()
+
     }
 }

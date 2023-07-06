@@ -27,10 +27,7 @@ import com.binance.api.client.domain.account.request.OrderRequest
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.sim.execution.InternalAccount
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Currency
-import org.roboquant.common.Logging
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.*
 import java.time.Instant
@@ -112,10 +109,18 @@ class BinanceBroker(
     }
 
     /**
+     * @see Broker.sync
+     */
+    override fun sync(event: Event) {
+        updateAccount()
+    }
+
+    /**
      * @param orders
      * @return
      */
-    override fun place(orders: List<Order>, event: Event): Account {
+    override fun place(orders: List<Order>, time: Instant) {
+        if (time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
         _account.initializeOrders(orders)
 
         for (order in orders) {
@@ -142,7 +147,6 @@ class BinanceBroker(
 
         }
 
-        return account
     }
 
     /**

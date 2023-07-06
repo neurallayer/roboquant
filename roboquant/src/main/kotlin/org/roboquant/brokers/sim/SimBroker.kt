@@ -125,9 +125,8 @@ open class SimBroker(
      * Invoke the [executionEngine] to simulate the execution of open orders and update the internal account afterwards
      * with any trades made.
      */
-    private fun simulateMarket(newOrders: List<Order>, event: Event) {
+    private fun simulateMarket(event: Event) {
         // Add new orders to the execution engine and run it with the latest events
-        executionEngine.addAll(newOrders)
         val executions = executionEngine.execute(event)
 
         // Process any new executions to be reflected in the trades and cash balance
@@ -138,22 +137,27 @@ open class SimBroker(
             _account.updateOrder(it.first, event.time, it.second)
         }
 
-        // Now it is safe to remove closed orders
+        // Now it is safe to remove closed orders from the execution engine
         executionEngine.removeClosedOrders()
     }
 
     /**
-     * Place [orders] at this broker and provide the [event] that just occurred. The event is just by the SimBroker to
-     * get the prices required to simulate the trading on an exchange. Return an updated [Account] instance
+     * Run the simulation given the provided [event] and return the updated account.
      */
-    override fun place(orders: List<Order>, event: Event): Account {
-        logger.trace { "Received ${orders.size} orders at ${event.time}" }
-        _account.initializeOrders(orders)
-        simulateMarket(orders, event)
+    override fun sync(event: Event) {
+        simulateMarket(event)
         _account.updateMarketPrices(event)
         _account.lastUpdate = event.time
         accountModel.updateAccount(_account)
-        return account
+    }
+
+    /**
+     * Place the [orders] at the broker.
+     */
+    override fun place(orders: List<Order>, time: Instant) {
+        logger.trace { "Received orders=${orders.size} time=$time" }
+        _account.initializeOrders(orders)
+        executionEngine.addAll(orders)
     }
 
     /**

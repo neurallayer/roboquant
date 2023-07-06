@@ -18,7 +18,6 @@ package org.roboquant.alpaca
 
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.Config
-import org.roboquant.feeds.Event
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -37,7 +36,7 @@ class AlpacaBrokerTestIT {
         println(broker.account.fullSummary())
 
         assertDoesNotThrow {
-            broker.place(emptyList(), Event.empty())
+            broker.place(emptyList())
         }
 
         assertDoesNotThrow {

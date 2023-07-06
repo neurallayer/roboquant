@@ -161,14 +161,19 @@ class IBKRBroker(
         client.placeOrder(ibOrder.orderId(), contract, ibOrder)
     }
 
+    override fun sync(event: Event) {
+        // For IBKR, the account update happens asynchronously in the background.
+        // NOP
+    }
+
     /**
      * Place zero or more [orders]
      *
      * @param orders
-     * @param event
-     * @return
      */
-    override fun place(orders: List<Order>, event: Event): Account {
+    override fun place(orders: List<Order>, time: Instant) {
+        if (time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+
         // Make sure we store all orders
         _account.initializeOrders(orders)
 
@@ -184,9 +189,6 @@ class IBKRBroker(
             }
 
         }
-
-        // Return a clone so changes to account while running policies don't cause inconsistencies.
-        return _account.toAccount()
     }
 
     /**

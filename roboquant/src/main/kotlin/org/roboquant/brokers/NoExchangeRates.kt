@@ -22,15 +22,16 @@ import org.roboquant.common.UnsupportedException
 import java.time.Instant
 
 /**
- * This implementation actually cannot convert between currencies and only return an exchange rate if from and to are
- * the same currency or the amount is zero. It will throw an [UnsupportedException] in other use cases.
+ * This implementation will not convert between different currencies and only return an exchange rate of 1.0 if from
+ * and to are the same currency.
+ * It will throw an [UnsupportedException] in all other use cases.
  *
- * @constructor Create a new single currency exchange rate
+ * @constructor Create a new instance
  */
-class SingleCurrencyExchangeRates : ExchangeRates {
+class NoExchangeRates : ExchangeRates {
 
     /**
-     * Convert between two currencies.
+     * Return the conversion rate between two currencies.
      * @see ExchangeRates.getRate
      *
      * @param to
@@ -38,7 +39,7 @@ class SingleCurrencyExchangeRates : ExchangeRates {
      * @return The rate to use
      */
     override fun getRate(amount: Amount, to: Currency, time: Instant): Double {
-        (amount.currency === to || amount.value == 0.0) && return 1.0
+        amount.currency === to && return 1.0
         throw UnsupportedException("Cannot convert $amount to $to")
     }
 

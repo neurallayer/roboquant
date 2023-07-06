@@ -53,7 +53,7 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
             progressBar.start(run, timeframe)
         }
         // Clear any previous run with the same name
-        history[run] = mutableListOf()
+        history.remove(run)
     }
 
     override fun end(run: String) {

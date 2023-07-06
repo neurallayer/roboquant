@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
+import java.time.Instant
 
 /**
  * Interface for any broker implementation, used for both simulated and real brokers. All brokers also implement the
@@ -32,26 +33,28 @@ interface Broker : Lifecycle {
     val account: Account
 
     /**
-     * Place a new set of [orders] at this broker. The [event] contains the latest actions from the feed.
+     * Sync the state of the account with the broker.
      *
-     * After processing the [orders], this method returns an updated instance of the [Account]. This returned instance
-     * reflects the latest status, is immutable and thread safe. The just placed orders are always included
-     * in the returned account object, either as open- or closed-orders.
+     * Typically, this method will invoke the underlying broker API to obtain the latest state of positions, orders,
+     * trades, cash and buying power.
+     *
+     * Optionally an [event] can be provided, although normally only the SimBroker requires this to simulate
+     * trade executions. If no event is provided, an empty event will be used instead.
      */
-    fun place(orders: List<Order>, event: Event = Event.empty()): Account
+    fun sync(event: Event = Event.empty())
+
+    /**
+     * Place new [orders] at this broker.
+     *
+     * Optional provide a [time] that can be used by the broker to determine you are not submitting back test orders to
+     * a real broker.
+     */
+    fun place(orders: List<Order>, time: Instant = Instant.now())
 
     /**
      * This method will be invoked at each step in a run and provides the broker with the opportunity to
-     * log additional information. The default implementation is to return an empty map.
-     *
-     * The returned map should NOT be mutated after it has been returned.
+     * provide additional metrics. The default implementation returns an empty map.
      */
     fun getMetrics(): Map<String, Double> = emptyMap()
-
-    /**
-     * Refresh the state of the broker and the underlying account. The default implementation invokes the [place]
-     * method without any orders or event.
-     */
-    fun refresh(): Account = place(emptyList())
 
 }

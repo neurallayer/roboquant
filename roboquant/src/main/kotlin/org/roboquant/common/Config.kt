@@ -17,7 +17,7 @@
 package org.roboquant.common
 
 import org.roboquant.brokers.ExchangeRates
-import org.roboquant.brokers.SingleCurrencyExchangeRates
+import org.roboquant.brokers.NoExchangeRates
 import org.roboquant.common.Config.exchangeRates
 import org.roboquant.common.Config.random
 import java.nio.file.Files
@@ -88,10 +88,10 @@ object Config {
     }
 
     /**
-     * The exchange rates to use when dealing with multiple currencies. The default is [SingleCurrencyExchangeRates]
+     * The exchange rates to use when dealing with multiple currencies. The default is [NoExchangeRates]
      * which as the name suggests will not support conversions between currencies.
      */
-    var exchangeRates: ExchangeRates = SingleCurrencyExchangeRates()
+    var exchangeRates: ExchangeRates = NoExchangeRates()
 
     /**
      * Default [Random] number generator to use, typically used by methods as a default value when no other random
