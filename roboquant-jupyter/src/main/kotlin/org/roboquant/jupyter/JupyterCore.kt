@@ -112,7 +112,7 @@ internal class JupyterCore(
         dependencies(*deps.toTypedArray())
 
         // Only applies to Datalore
-        if (notebook.jupyterClientType == JupyterClientType.KOTLIN_NOTEBOOK) {
+        if (notebook.jupyterClientType == JupyterClientType.DATALORE) {
             isolation = true
         }
 
