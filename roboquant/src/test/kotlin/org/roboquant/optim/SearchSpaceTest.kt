@@ -46,8 +46,8 @@ class SearchSpaceTest {
     @Test
     fun empty() {
         val space = EmptySearchSpace()
-        assertEquals(0, space.size)
-        assertTrue(space.materialize().toList().isEmpty())
+        assertEquals(1, space.size)
+        assertEquals(1, space.materialize().toList().size)
     }
 
 

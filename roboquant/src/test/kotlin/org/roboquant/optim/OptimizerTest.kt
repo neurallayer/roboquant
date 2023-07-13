@@ -39,5 +39,19 @@ class OptimizerTest {
     }
 
 
+    @Test
+    fun noParams() {
+        val space = EmptySearchSpace()
+        val opt = Optimizer(space, "account.equity") {
+            Roboquant(EMAStrategy(), AccountMetric(), logger = LastEntryLogger())
+        }
+
+        val feed = RandomWalkFeed.lastYears(1, nAssets = 1)
+        val r1 = opt.train(feed)
+        assertTrue(r1.isNotEmpty())
+
+    }
+
+
 
 }

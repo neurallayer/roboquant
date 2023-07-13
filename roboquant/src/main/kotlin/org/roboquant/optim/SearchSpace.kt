@@ -40,15 +40,21 @@ interface SearchSpace {
 
 }
 
-
+/**
+ * If you just want to run a certain type of back test without any hyperparameter search, you can use this search space.
+ * It contains a single entry with no parameters.
+ */
 class EmptySearchSpace : SearchSpace {
 
     override fun materialize(): Iterable<Params> {
-        return emptyList<Params>().asIterable()
+        return listOf(Params()).asIterable()
     }
 
+    /**
+     * @see SearchSpace.size
+     */
     override val size: Int
-        get() = 0
+        get() = 1
 
 }
 
