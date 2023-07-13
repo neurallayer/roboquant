@@ -1,7 +1,9 @@
 package org.roboquant.optim
 
 import org.roboquant.Roboquant
-import org.roboquant.common.*
+import org.roboquant.common.ParallelJobs
+import org.roboquant.common.TimeSpan
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 import java.util.*
 
@@ -38,9 +40,9 @@ class Optimizer(
         space, MetricScore(evalMetric), getRoboquant
     )
 
-    /**
+    /*
      * Walk-forward with validation (out of sample)
-     */
+
     fun walkForward(
         feed: Feed,
         period: TimeSpan,
@@ -67,9 +69,8 @@ class Optimizer(
         return results
     }
 
-    /**
-     * Walk-forward without validation (out of sample)
-     */
+
+
     fun walkForward(feed: Feed, period: TimeSpan, anchored: Boolean = false): List<RunResult> {
         require(!feed.timeframe.isInfinite()) { "feed needs known timeframe" }
         val start = feed.timeframe.start
@@ -112,6 +113,8 @@ class Optimizer(
 
     }
 
+    */
+
     /**
      * Run a Monte Carlo simulation
      */
@@ -150,7 +153,7 @@ class Optimizer(
 
     /**
      * Train the solution in parallel
-     */
+
     fun train2(feed: Feed, tf: Timeframe): List<RunResult> {
         val results = mutableListOf<RunResult>()
         for (params in space.materialize()) {
@@ -166,9 +169,7 @@ class Optimizer(
         return results
     }
 
-    /**
-     * Run the validation phase
-     */
+
     private fun validate(feed: Feed, timeframe: Timeframe, params: Params): RunResult {
         val rq = getRoboquant(params)
         val name = "validate-${run++}"
@@ -177,6 +178,7 @@ class Optimizer(
         // println("phase=validation result=$result")
         return RunResult(params, s, timeframe, name)
     }
+    */
 
 
 }

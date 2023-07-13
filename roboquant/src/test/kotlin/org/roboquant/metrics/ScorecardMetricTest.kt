@@ -16,8 +16,16 @@
 
 package org.roboquant.metrics
 
+import org.roboquant.Roboquant
 import org.roboquant.TestData
-import kotlin.test.*
+import org.roboquant.common.Timeframe
+import org.roboquant.loggers.SilentLogger
+import org.roboquant.optim.Score
+import org.roboquant.strategies.EMAStrategy
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 
 internal class ScorecardMetricTest {
@@ -35,6 +43,15 @@ internal class ScorecardMetricTest {
         metric.reset()
         val result2 = metric.calculate(account, event)
         assertEquals(result, result2)
+    }
+
+    @Test
+    fun annual() {
+        val rq = Roboquant(EMAStrategy(), logger = SilentLogger())
+        rq.run(TestData.feed)
+
+        val score = Score.annualizedEquityGrowth(rq, Timeframe.fromYears(2019, 2020))
+        assertTrue(score.isFinite())
     }
 
 }

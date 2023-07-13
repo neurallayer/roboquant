@@ -46,7 +46,7 @@ import kotlin.io.path.isRegularFile
  *      cat /proc/sys/fs/file-max
  *
  * If you use the same large sets of CSV files regular, you might consider converting them onetime to an
- * `AvroFeed` instead. This has also low-memory usage, but comes without negative performance impact.
+ * `AvroFeed` instead. This has also low-memory usage, but comes without a negative performance impact.
  *
  * @constructor
  *

@@ -17,8 +17,6 @@
 package org.roboquant.optim
 
 
-import org.roboquant.common.Config
-
 /**
  * Interface for all types of search spaces
  */
@@ -146,6 +144,7 @@ class GridSearch : SearchSpace {
         params[name] = values.toList()
     }
 
+    /*
     fun nextRandomSample() : Params {
         val result = Params()
         for ((key, values) in params) {
@@ -154,6 +153,7 @@ class GridSearch : SearchSpace {
         }
         return result
     }
+    */
 
 
     fun add(name: String, samples: Int, fn: () -> Any) {

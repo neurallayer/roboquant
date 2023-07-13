@@ -99,6 +99,14 @@ internal class TaLibStrategyTest {
     }
 
     @Test
+    fun taSignalSuperTrend() {
+        val strategy = TaLibSignalStrategy.superTrend()
+        val x = run(strategy, 60)
+        assertEquals(60, x.size)
+        assertContains(strategy.toString(), "TaLibSignalStrategy")
+    }
+
+    @Test
     fun taSignalMacd() {
         val strategy = TaLibSignalStrategy.macd()
         assertDoesNotThrow {

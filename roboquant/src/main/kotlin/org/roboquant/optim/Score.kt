@@ -28,6 +28,24 @@ fun interface Score {
 
     fun calculate(roboquant: Roboquant, timeframe: Timeframe) : Double
 
+    /**
+     * Predefined score functions
+     */
+    companion object {
+
+        /**
+         * The annualized growth as a [Score] function
+         */
+        fun annualizedEquityGrowth(roboquant: Roboquant, timeframe: Timeframe): Double {
+            val broker = roboquant.broker
+            require(broker is SimBroker) { "this score function only works with SimBroker"}
+            val account = broker.account
+            val startDeposit = broker.initialDeposit.convert(account.baseCurrency, timeframe.start).value
+            val percentage = (account.equityAmount.value - startDeposit) / startDeposit
+            return timeframe.annualize(percentage)
+        }
+    }
+
 }
 
 /**
@@ -40,16 +58,4 @@ class MetricScore(private val metricName: String) : Score {
         return if (metrics.isNotEmpty()) metrics.values.last().values.last() else Double.NaN
     }
 
-}
-
-
-/**
- * Sample score function that calculates and returns the annualized equity growth
- */
-fun annualizedEquityGrowth(roboquant: Roboquant, timeframe: Timeframe): Double {
-    val broker = roboquant.broker as SimBroker
-    val account = broker.account
-    val startDeposit = broker.initialDeposit.convert(account.baseCurrency, timeframe.start).value
-    val percentage = (account.equityAmount.value - startDeposit) / startDeposit
-    return timeframe.annualize(percentage)
 }
