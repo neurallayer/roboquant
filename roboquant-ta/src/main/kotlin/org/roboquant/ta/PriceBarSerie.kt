@@ -137,7 +137,13 @@ class PriceBarSerie(capacity: Int) {
     }
 
     /**
-     * Aggregate a [number] of price-bars into a new PriceBarSerie.
+     * Aggregate a [number] of price-bars into a new PriceBarSerie. If the stored price-bars have gaps in the timeline,
+     * you might not want to use this.
+     *
+     * Example:
+     * ```
+     * val priceBarSerie5Minutes = priceBarSerie1Minute.aggregate(5)
+     * ```
      */
     fun aggregate(number: Int): PriceBarSerie {
         require(number > 0) { "number should be larger than 0" }

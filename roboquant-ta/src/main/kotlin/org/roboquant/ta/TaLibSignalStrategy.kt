@@ -85,6 +85,23 @@ class TaLibSignalStrategy(
             return strategy
         }
 
+        /**
+         * Super trend strategy
+         */
+        fun superTrend(period: Int = 14, multiplier: Double = 1.0) : TaLibSignalStrategy {
+            val strategy = TaLibSignalStrategy { asset, prices ->
+                val atr = multiplier * atr(prices, period)
+                val mid = (prices.high.last() + prices.low.last()) / 2.0
+                val curr = prices.close.last()
+                when {
+                    mid + atr > curr -> Signal(asset, Rating.BUY)
+                    mid - atr < curr -> Signal(asset, Rating.SELL)
+                    else -> null
+                }
+            }
+            return strategy
+        }
+
     }
 
     /**

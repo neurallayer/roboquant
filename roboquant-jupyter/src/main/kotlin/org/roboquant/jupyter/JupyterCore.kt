@@ -17,9 +17,9 @@
 package org.roboquant.jupyter
 
 import org.jetbrains.kotlinx.jupyter.api.*
+import org.jetbrains.kotlinx.jupyter.api.libraries.ColorScheme
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
-import org.roboquant.brokers.Account
 import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import java.io.PrintWriter
@@ -111,7 +111,7 @@ internal class JupyterCore(
         @Suppress("SpreadOperator")
         dependencies(*deps.toTypedArray())
 
-        // Only applies to Datalore
+        // Applies to notebooks in Datalore
         if (notebook.jupyterClientType == JupyterClientType.DATALORE) {
             isolation = true
         }
@@ -149,12 +149,13 @@ internal class JupyterCore(
         }
 
         render<HTMLOutput> {
+            if (notebook.jupyterClientType == JupyterClientType.KOTLIN_NOTEBOOK) {
+                val theme = if (notebook.currentColorScheme == ColorScheme.DARK) "dark" else "light"
+                HTMLOutput.notebookTheme = theme
+            }
             if (isolation) HTML(it.asHTMLPage(), true) else HTML(it.asHTML(), false)
         }
 
-        render<Account> {
-            print(it.summary())
-        }
 
     }
 

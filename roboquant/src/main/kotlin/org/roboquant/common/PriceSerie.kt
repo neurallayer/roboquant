@@ -35,7 +35,9 @@ open class PriceSerie(private var capacity: Int) {
 
     /**
      * Append a new [price] to the end of the buffer. If the buffer is full, the first element will be removed to make
-     * room. Returns true is the buffer is full, false otherwise
+     * room.
+     *
+     * Returns true is the buffer is full, false otherwise
      */
     open fun add(price: Double): Boolean {
         val index = (counter % capacity).toInt()
@@ -90,10 +92,11 @@ open class PriceSerie(private var capacity: Int) {
     }
 
     /**
-     * Clear the buffer
+     * Clear the buffer and reset the capacity to the initial [capacity]
      */
     open fun clear() {
         counter = 0L
+        data = DoubleArray(capacity)
     }
 
 }

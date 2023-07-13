@@ -23,6 +23,16 @@ import java.io.File
  */
 abstract class HTMLOutput {
 
+    companion object {
+        // In case the notebook theme is known, it is stored here
+        // right now only IntelliJ notebooks support this feature
+        internal var notebookTheme: String? = null
+            set(value) {
+                require(value in setOf("light", "dark"))
+                field = value
+            }
+    }
+
     /**
      * Save HTML output to a file with name [filename] on the server.
      */

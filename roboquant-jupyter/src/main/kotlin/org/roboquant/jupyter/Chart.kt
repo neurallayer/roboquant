@@ -128,11 +128,9 @@ abstract class Chart : HTMLOutput() {
     companion object {
 
         // Which commit of echarts.min.js to use
-        private const val commit = "bdd685c1b4ab63b94b82a5ed2fc664c4b6450460"
+        private const val commit = "029d3e10fb657cd57f0d511f21ff7595faebcfcb"
 
-        // Prefix for encoding functions
-        // private const val functionPrefix = "@@FUNCTION@@"
-
+        // Use a CDN to cache the JavaScript file
         internal const val scriptUrl =
             "https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@$commit/echarts.min.js?version=$commit"
 
@@ -141,6 +139,18 @@ abstract class Chart : HTMLOutput() {
          * JavaScript cannot access the DIV by document.currentScript.parentElement and will fall back to the id.
          */
         internal var counter = 0
+
+        /**
+         * The theme to use for charts, valid options are auto, light and dark with the default being auto. When set
+         * to auto, roboquant will try to match the chart theme to the notebook theme.
+         */
+        var theme = "auto"
+            get() = if (field == "auto") notebookTheme ?: field else field
+            set(value) {
+                require(value in setOf("auto", "light", "dark")) { "valid options are auto, light and dark"}
+                field = value
+            }
+
 
         /**
          * Maximum number of samples to plot in a chart. Certain types of charts can become very large and as
@@ -224,12 +234,10 @@ abstract class Chart : HTMLOutput() {
                     if (parentElem.tagName === "HEAD") {
                         parentElem = document.getElementById("$id");
                     }
-                    console.log("registered new chart");
-                    let option = $fragment;$convertor
+                    const option = $fragment;$convertor
                     window.call_echarts(
                         function () {
-                            console.log("rendering chart");
-                            window.renderEChart(parentElem, option);
+                            window.renderEChart(parentElem, "$theme", option);
                         }
                     );
                 })()
