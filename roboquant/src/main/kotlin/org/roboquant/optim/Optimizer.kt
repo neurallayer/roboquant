@@ -40,6 +40,20 @@ class Optimizer(
         space, MetricScore(evalMetric), getRoboquant
     )
 
+
+    fun walkForward(feed: Feed, period: TimeSpan, anchored: Boolean = false): List<RunResult> {
+        require(!feed.timeframe.isInfinite()) { "feed needs known timeframe" }
+        val start = feed.timeframe.start
+        val results = mutableListOf<RunResult>()
+        feed.timeframe.split(period).forEach {
+            val timeframe = if (anchored) Timeframe(start, it.end, it.inclusive) else it
+            val result = train(feed, timeframe)
+            results.addAll(result)
+        }
+        return results
+    }
+
+
     /*
      * Walk-forward with validation (out of sample)
 
@@ -69,19 +83,6 @@ class Optimizer(
         return results
     }
 
-
-
-    fun walkForward(feed: Feed, period: TimeSpan, anchored: Boolean = false): List<RunResult> {
-        require(!feed.timeframe.isInfinite()) { "feed needs known timeframe" }
-        val start = feed.timeframe.start
-        val results = mutableListOf<RunResult>()
-        feed.timeframe.split(period).forEach {
-            val timeframe = if (anchored) Timeframe(start, it.end, it.inclusive) else it
-            val result = train(feed, timeframe)
-            results.addAll(result)
-        }
-        return results
-    }
 
 
     fun walkForward2(
