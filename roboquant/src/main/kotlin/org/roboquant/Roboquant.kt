@@ -196,23 +196,16 @@ class Roboquant(
      * Start a new run using the provided [feed] as data. If no [timeframe] is provided all the events in the feed
      * will be processed. You can provide a custom [name] that will help to later identify this run. If none is
      * provided, a name will be generated with the format "run-<counter>"
-     *
-     * Optionally you can provide:
-     * 1. a [timeframe] timeframe that will limit duration of the main phase.
-     * 2. a [validation] timeframe that will trigger a separate validation phase.
-     *
-     * These last two options come into play when you want to run machine-learning based strategies. This is the
-     * synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
+     * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
      * in parallel have a look at [runAsync]
      */
     fun run(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        validation: Timeframe? = null,
         name: String? = null,
     ) =
         runBlocking {
-            runAsync(feed, timeframe, validation, name)
+            runAsync(feed, timeframe, name)
         }
 
     /**
@@ -225,17 +218,11 @@ class Roboquant(
     suspend fun runAsync(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        validation: Timeframe? = null,
         name: String? = null,
     ) {
-        require(validation == null || validation.start >= timeframe.end) {
-            "validation should start after main timeframe"
-        }
         val run = name ?: "run-${++runCounter}"
         kotlinLogger.debug { "starting run=$run timeframe=$timeframe" }
         runPhase(feed, run, timeframe)
-
-        if (validation !== null) runPhase(feed, run, validation)
         kotlinLogger.debug { "Finished run=$run" }
     }
 
