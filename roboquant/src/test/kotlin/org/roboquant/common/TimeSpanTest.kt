@@ -42,6 +42,15 @@ internal class TimeSpanTest {
     }
 
     @Test
+    fun zero() {
+        val ts = TimeSpan.ZERO
+        assertTrue(ts.isZero)
+
+        val ts2 = ts + TimeSpan.ZERO
+        assertEquals(ts, ts2)
+    }
+
+    @Test
     fun calc() {
         val t = 2.years - 1.hours + 1.hours
         assertEquals(2.years, t)

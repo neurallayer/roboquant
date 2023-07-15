@@ -184,8 +184,11 @@ class Roboquant(
      * Reset the state including that of the used underlying components. This allows starting a fresh run with the same
      * configuration as the original instance. This will also reset the run counter in this roboquant instance.
      */
-    fun reset() {
-        for (component in components) component.reset()
+    fun reset(includeLogger: Boolean = true) {
+        for (component in components) {
+            if (! includeLogger && component is MetricsLogger) continue
+            component.reset()
+        }
         runCounter = -1
     }
 

@@ -60,6 +60,11 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     fun isInfinite() = this == INFINITE
 
     /**
+     * Return true is this being a finite timeframe, false otherwise
+     */
+    fun isFinite() = this != INFINITE
+
+    /**
      * Return true is this is an empty timeframe, false otherwise
      */
     fun isEmpty() = start == end && !inclusive
@@ -291,7 +296,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      *
      * One common use case is to create timeframes that can be used in a walk forward back-test.
      */
-    fun split(period: TimeSpan, overlap: TimeSpan = 0.days, includeRemaining: Boolean = true) = buildList {
+    fun split(period: TimeSpan, overlap: TimeSpan = TimeSpan.ZERO, includeRemaining: Boolean = true) = buildList {
         var begin = start
         var done = false
         while (!done) {
@@ -309,7 +314,37 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation
+     * Split a timeframe in multiple individual timeframes each of the fixed [period] length.
+     * Optionally, an [overlap] can be specified, with the default being zero.
+     *
+     * When [includeRemaining] is set to true, the remaining part that is smaller than the specified [period] will still
+     * be included, default is true.
+     *
+     * One common use case is to create timeframes that can be used in a walk forward back-test.
+     */
+    fun split2(period: TimeSpan, overlap: TimeSpan, includeRemaining: Boolean = true) = buildList {
+        var begin = start
+        var done = false
+        while (!done) {
+            val last = begin + period
+            val border = begin + overlap
+            val tf = when {
+                last < end -> Pair(Timeframe(begin, border), Timeframe(border, last))
+                last == end && inclusive -> Pair(Timeframe(begin, border),  Timeframe(border, end, true))
+                includeRemaining -> Pair(Timeframe(begin, border), Timeframe(border, end, inclusive))
+                else -> null
+            }
+            addNotNull(tf)
+            done = tf == null || tf.second.end == end
+            begin = last - overlap
+        }
+    }
+
+
+
+    /**
+     * Sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation. It uses
+     * millisecond resolution for the start of timeframes.
      */
     fun sample(period: TimeSpan, samples: Int = 1, random: Random = Config.random) = buildList {
         require(end - period > start) { "$period to large for $this" }

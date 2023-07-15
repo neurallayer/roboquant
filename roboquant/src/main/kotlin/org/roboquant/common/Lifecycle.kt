@@ -30,7 +30,7 @@ interface Lifecycle {
      * many types of components.
      */
     fun start(run: String, timeframe: Timeframe) {
-        reset()
+        // reset()
     }
 
     /**

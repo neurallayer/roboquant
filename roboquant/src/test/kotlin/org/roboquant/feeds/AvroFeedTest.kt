@@ -92,6 +92,7 @@ class AvroFeedTest {
         val feed3 = AvroFeed(fileName)
         assertEquals(nAssets, feed3.assets.size)
         assertEquals(assets.toSet(), feed3.assets.toSet())
+        assertTrue(feed3.timeframe.inclusive)
 
         runBlocking {
             var cnt = 0

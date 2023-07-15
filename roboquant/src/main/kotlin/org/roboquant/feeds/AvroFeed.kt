@@ -134,7 +134,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
         val timeframe = if (start == Long.MIN_VALUE)
             Timeframe.EMPTY
         else
-            Timeframe(Instant.ofEpochMilli(start), Instant.ofEpochMilli(last))
+            Timeframe(Instant.ofEpochMilli(start), Instant.ofEpochMilli(last), true)
         return Pair(index, timeframe)
     }
 

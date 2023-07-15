@@ -7,6 +7,7 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 import java.util.*
 
+data class RunResult(val params: Params, val score: Double, val timeframe: Timeframe, val name: String)
 
 /**
  * Create a mutable synchronized list
@@ -30,7 +31,7 @@ class Optimizer(
 
     private var run = 0
 
-    data class RunResult(val params: Params, val score: Double, val timeframe: Timeframe, val name: String)
+
 
     /**
      * Using the default objective to maximize a metric. The default objective will use the last entry of the
