@@ -47,6 +47,7 @@ interface MetricsLogger : Lifecycle {
      */
     fun getMetric(name: String): Map<String, TimeSeries> = emptyMap()
 
+
     /**
      * The list of metric names that are available and can be retrieved with the [getMetric].
      */

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.optim
+package org.roboquant.backtest
 
 
 /**
@@ -23,18 +23,23 @@ package org.roboquant.optim
 interface SearchSpace {
 
     /**
-     * get a iterable over the parameters
+     * Returns an [Iterable] over the parameters defined in this search space.
      */
     fun materialize() : Iterable<Params>
 
     /**
-     * Update the search space based on an observation. This is not used by current search spaces, but is required for
-     * future search spaces like Bayesian search that update their behavior based on observations.
+     * Update the search space based on an observation.
+     * The observation is a combination of the selected [params] and the resulting [score].
+     *
+     * This is not used by current search spaces, but is required for future search spaces like Bayesian search that
+     * update their behavior based on observations.
+     *
+     * The default implementation is to do nothing.
      */
     fun update(params: Params, score: Double) {}
 
     /**
-     * Total max size of number of parameter combinations
+     * Returns the total number of parameter combinations found in this search space
      */
     val size: Int
 
@@ -42,7 +47,7 @@ interface SearchSpace {
 
 /**
  * If you just want to run a certain type of back test without any hyperparameter search, you can use this search space.
- * It contains a single entry with no parameters.
+ * It contains a single entry with no parameters, so iterating over this search space will run exactly once.
  */
 class EmptySearchSpace : SearchSpace {
 
@@ -61,8 +66,10 @@ class EmptySearchSpace : SearchSpace {
 
 /**
  * Random Search Space
+ *
+ * @property size the total number of samples that will be drawn from this random search space
  */
-class RandomSearch(val samples: Int) : SearchSpace {
+class RandomSearch(override val size: Int) : SearchSpace {
 
     private class Entry(val list: List<Any>?, val fn: (() -> Any)?)
     private class DoneException : Throwable()
@@ -78,7 +85,7 @@ class RandomSearch(val samples: Int) : SearchSpace {
     }
 
     private fun calcPermutations()  {
-        repeat(samples) {
+        repeat(size) {
             val p = Params()
             for ((key, values) in params) {
                 val value = if (values.list != null) values.list.random() else values.fn?.let { it() }
@@ -93,8 +100,6 @@ class RandomSearch(val samples: Int) : SearchSpace {
         return list
     }
 
-    override val size: Int
-        get() = samples
 
     /**
      * Add a parameter function

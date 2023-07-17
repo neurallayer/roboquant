@@ -20,7 +20,7 @@ import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.common.Timeframe
 import org.roboquant.loggers.SilentLogger
-import org.roboquant.optim.Score
+import org.roboquant.backtest.Score
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
 import kotlin.test.assertEquals

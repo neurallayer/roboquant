@@ -14,16 +14,27 @@
  * limitations under the License.
  */
 
-package org.roboquant.optim
+package org.roboquant.backtest
 
 
-
+/**
+ * Holds the (hyper-)parameters that can be used in back tests that try to find the optimum set of parameters.
+ */
 class Params : LinkedHashMap<String, Any>() {
 
+    /**
+     * Returns the string value for the provided parameter [name]
+     */
     fun getString(name: String) = get(name) as String
 
+    /**
+     * Returns the int value for the provided parameter [name]
+     */
     fun getInt(name: String) = get(name) as Int
 
+    /**
+     * Returns the double value for the provided parameter [name]
+     */
     fun getDouble(name: String) = get(name) as Double
 
 }

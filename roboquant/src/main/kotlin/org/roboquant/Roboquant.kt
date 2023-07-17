@@ -32,6 +32,7 @@ import org.roboquant.feeds.Feed
 import org.roboquant.feeds.TradePrice
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.MetricsLogger
+import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.createCancelOrders
@@ -53,16 +54,29 @@ import java.time.Instant
  * @property logger the metrics logger to use, default is [MemoryLogger]
  * @param channelCapacity the max capacity of the event channel, more capacity means more buffering. Default is 10.
  */
-class Roboquant(
+data class Roboquant(
     val strategy: Strategy,
-    vararg val metrics: Metric,
+    val metrics: List<Metric>,
     val policy: Policy = FlexPolicy(),
     val broker: Broker = SimBroker(),
     val logger: MetricsLogger = MemoryLogger(),
     private val channelCapacity: Int = 10,
 ) {
 
-    private var runCounter = -1
+    /**
+     * Convenience constructor that instead on a list of Metrics, accept a vararg of metrics.
+     *
+     * @see Roboquant
+     */
+    constructor(
+        strategy: Strategy,
+        vararg metrics: Metric,
+        policy: Policy = FlexPolicy(),
+        broker: Broker = SimBroker(),
+        logger: MetricsLogger = MemoryLogger(),
+        channelCapacity: Int = 10
+    ) : this(strategy, metrics.toList(), policy, broker, logger, channelCapacity)
+
     private val kotlinLogger = Logging.getLogger(Roboquant::class)
     private val components = listOf(strategy, policy, broker, logger) + metrics
 
@@ -70,49 +84,6 @@ class Roboquant(
         kotlinLogger.debug { "Created new roboquant instance" }
     }
 
-    /**
-     * Run and evaluate the underlying performance of the strategy and policy. You don't invoke this method directly
-     * but rather use the [run] method instead. Under the hood this method replies on the [step] method to take a
-     * single step.
-     */
-    private suspend fun runPhase(feed: Feed, run: String, timeframe: Timeframe) {
-        val channel = EventChannel(channelCapacity, timeframe)
-        val scope = CoroutineScope(Dispatchers.Default + Job())
-
-        val job = scope.launch {
-            channel.use { feed.play(it) }
-        }
-
-        start(run, timeframe)
-        try {
-            while (true) {
-                val event = channel.receive()
-                val time = event.time
-
-                // Sync with broker and run metrics
-                broker.sync(event)
-                val account = broker.account
-                val metricResult = getMetrics(account, event)
-                logger.log(metricResult, time, run)
-
-                // Generate signals and place orders
-                val signals = strategy.generate(event)
-                val orders = policy.act(signals, account, event)
-                broker.place(orders, time)
-
-                kotlinLogger.trace {
-                    "time=$${event.time} actions=${event.actions.size} signals=${signals.size} orders=${orders.size}"
-                }
-            }
-        } catch (_: ClosedReceiveChannelException) {
-            // intentionally empty
-        } finally {
-            end(run)
-            if (job.isActive) job.cancel()
-            scope.cancel()
-            channel.close()
-        }
-    }
 
     /**
      * Run a warm-up. It is similar to a normal [run] with the following two exceptions:
@@ -165,18 +136,18 @@ class Roboquant(
     }
 
     /**
-     * Inform components of the start of a [runPhase], this provides them with the opportunity to clear state and
-     * re-initialize values if required.
+     * Inform components of the start of a new [run].
      */
     private fun start(run: String, timeframe: Timeframe) {
+        kotlinLogger.debug { "starting run=$run timeframe=$timeframe" }
         for (component in components) component.start(run, timeframe)
     }
 
     /**
-     * Inform components of the end of a [run], this provides them with the opportunity to release resources
-     * if required or process aggregated results.
+     * Inform components of the end of a new [run].
      */
     private fun end(run: String) {
+        kotlinLogger.debug { "Finished run=$run" }
         for (component in components) component.end(run)
     }
 
@@ -186,11 +157,17 @@ class Roboquant(
      */
     fun reset(includeLogger: Boolean = true) {
         for (component in components) {
-            if (! includeLogger && component is MetricsLogger) continue
+            if (!includeLogger && component is MetricsLogger) continue
             component.reset()
         }
-        runCounter = -1
     }
+
+    /**
+     * Returns a copy of this instance but with the [SilentLogger] enabled.
+     *
+     * This is typically used during warmup and training phases when metrics output are not of interest.
+     */
+    fun silent() = copy(logger = SilentLogger())
 
     /**
      * Start a new run using the provided [feed] as data. If no [timeframe] is provided all the events in the feed
@@ -202,11 +179,10 @@ class Roboquant(
     fun run(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        name: String? = null,
-    ) =
-        runBlocking {
-            runAsync(feed, timeframe, name)
-        }
+        name: String = "run",
+    ) = runBlocking {
+        runAsync(feed, timeframe, name)
+    }
 
     /**
      * This is the same method as the [run] method but as the name already suggests, asynchronously. This makes it
@@ -218,12 +194,45 @@ class Roboquant(
     suspend fun runAsync(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        name: String? = null,
+        name: String = "run",
     ) {
-        val run = name ?: "run-${++runCounter}"
-        kotlinLogger.debug { "starting run=$run timeframe=$timeframe" }
-        runPhase(feed, run, timeframe)
-        kotlinLogger.debug { "Finished run=$run" }
+        val channel = EventChannel(channelCapacity, timeframe)
+        val scope = CoroutineScope(Dispatchers.Default + Job())
+
+        val job = scope.launch {
+            channel.use { feed.play(it) }
+        }
+
+        start(name, timeframe)
+        try {
+            while (true) {
+                val event = channel.receive()
+                val time = event.time
+
+                // Sync with broker and run metrics
+                broker.sync(event)
+                val account = broker.account
+                val metricResult = getMetrics(account, event)
+                logger.log(metricResult, time, name)
+
+                // Generate signals and place orders
+                val signals = strategy.generate(event)
+                val orders = policy.act(signals, account, event)
+                broker.place(orders, time)
+
+                kotlinLogger.trace {
+                    "time=$${event.time} actions=${event.actions.size} signals=${signals.size} orders=${orders.size}"
+                }
+            }
+        } catch (_: ClosedReceiveChannelException) {
+            // intentionally empty
+        } finally {
+            end(name)
+            if (job.isActive) job.cancel()
+            scope.cancel()
+            channel.close()
+        }
+
     }
 
     /**
@@ -259,7 +268,7 @@ class Roboquant(
      * 2. Close open positions by placing [MarketOrder] for the required opposite sizes
      * 3. Run and log the metrics
      */
-    fun closePositions(time: Instant? = null, runName: String? = null) {
+    fun closePositions(time: Instant? = null, runName: String = "close") {
         val account = broker.account
         val eventTime = time ?: account.lastUpdate
         val cancelOrders = account.openOrders.createCancelOrders()
@@ -268,12 +277,11 @@ class Roboquant(
         val orders = cancelOrders + changeOrders
         val actions = account.positions.map { TradePrice(it.asset, it.mktPrice) }
         val event = Event(actions, eventTime)
-        val run = runName ?: "run-${runCounter}"
         broker.place(orders)
         broker.sync(event)
         val newAccount = broker.account
         val metricResult = getMetrics(newAccount, event)
-        logger.log(metricResult, event.time, run)
+        logger.log(metricResult, event.time, runName)
     }
 
 }

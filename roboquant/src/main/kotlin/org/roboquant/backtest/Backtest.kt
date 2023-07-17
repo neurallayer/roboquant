@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package org.roboquant.optim
+package org.roboquant.backtest
 
 import org.roboquant.Roboquant
+import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.common.plus
@@ -29,6 +30,15 @@ import org.roboquant.feeds.Feed
  */
 class Backtest(val feed: Feed, val roboquant: Roboquant) {
 
+    init {
+        require(roboquant.broker is SimBroker) { "Only a SimBroker can be used for back testing"}
+    }
+
+
+    private val broker
+        get() = roboquant.broker as SimBroker
+
+
     /**
      * Run a warmup and return the remaining timeframe
      */
@@ -36,7 +46,8 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
         require(timeframe.isFinite())
         val end = timeframe.start + period
         val tf = Timeframe(timeframe.start, end)
-        roboquant.warmup(feed, tf)
+        roboquant.silent().run(feed, tf) // Run without logging
+        broker.reset() // Reset the broker after a warmup
         return timeframe.copy(start = end)
     }
 
@@ -50,7 +61,8 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
     }
 
     /**
-     * Run a walk forward using the provided period and warmup. The warmup is exclusive.
+     * Run a walk forward using the provided [period] and [warmup].
+     * The [warmup] is optional and will always directly precede the provided [period].
      */
     fun walkForward(
         period: TimeSpan,
@@ -64,6 +76,12 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
         }
     }
 
+    /**
+     * Run a Monte Carlo simulation of a number of [samples] to find out how metrics of interest are distributed
+     * given the provided [period].
+     *
+     * Optional each period can be preceded by a [warmup] time-span.
+     */
     fun monteCarlo(
         period: TimeSpan,
         samples: Int,

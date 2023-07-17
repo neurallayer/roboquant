@@ -1,10 +1,12 @@
-package org.roboquant.optim
+package org.roboquant.backtest
 
 import org.roboquant.Roboquant
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
+import org.roboquant.loggers.LastEntryLogger
+import org.roboquant.loggers.MetricsLogger
 import java.util.*
 
 data class RunResult(val params: Params, val score: Double, val timeframe: Timeframe, val name: String)
@@ -14,18 +16,21 @@ data class RunResult(val params: Params, val score: Double, val timeframe: Timef
  */
 fun <T> mutableSynchronisedListOf(): MutableList<T> = Collections.synchronizedList(mutableListOf<T>())
 
+
 /**
  * Default optimizer that implements default back-test optimization strategies to find a set of optimal parameter
  * values.
  *
  * @property space search space
  * @property score scoring function
+ * @property trainLogger the metrics logger to use for training phases, default is L
  * @property getRoboquant function that returns an instance of roboquant based on passed parameters
  *
  */
 class Optimizer(
     private val space: SearchSpace,
     private val score: Score,
+    private val trainLogger: MetricsLogger = LastEntryLogger(),
     private val getRoboquant: (Params) -> Roboquant
 ) {
 
@@ -38,7 +43,7 @@ class Optimizer(
      * provided [evalMetric] as the value to optimize.
      */
     constructor(space: SearchSpace, evalMetric: String, getRoboquant: (Params) -> Roboquant) : this(
-        space, MetricScore(evalMetric), getRoboquant
+        space, MetricScore(evalMetric), LastEntryLogger(), getRoboquant
     )
 
 
@@ -142,7 +147,7 @@ class Optimizer(
             jobs.add {
                 val rq = getRoboquant(params)
                 val name = "train-${run++}"
-                rq.runAsync(feed, tf, name = name)
+                rq.copy(logger = trainLogger).runAsync(feed, tf, name = name)
                 val s = score.calculate(rq, tf)
                 val result = RunResult(params, s, tf, name)
                 results.add(result)

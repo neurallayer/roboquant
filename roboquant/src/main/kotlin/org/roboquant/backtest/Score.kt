@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.optim
+package org.roboquant.backtest
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.sim.SimBroker
@@ -22,7 +22,7 @@ import org.roboquant.common.Timeframe
 
 
 /**
- * Functional interface for defining a scoring function
+ * Functional interface for defining a scoring function that is used during (hyper-)parameter optimizations.
  */
 fun interface Score {
 
@@ -34,11 +34,11 @@ fun interface Score {
     companion object {
 
         /**
-         * The annualized growth as a [Score] function
+         * The annualized equity growth as a [Score] function.
+         * This function works best for longer timeframe runs (over 3 months).
          */
         fun annualizedEquityGrowth(roboquant: Roboquant, timeframe: Timeframe): Double {
-            val broker = roboquant.broker
-            require(broker is SimBroker) { "this score function only works with SimBroker"}
+            val broker = roboquant.broker as SimBroker
             val account = broker.account
             val startDeposit = broker.initialDeposit.convert(account.baseCurrency, timeframe.start).value
             val percentage = (account.equityAmount.value - startDeposit) / startDeposit
@@ -49,7 +49,7 @@ fun interface Score {
 }
 
 /**
- * Use the last value of recorded metric name to get the score.
+ * Use the last value of recorded metric name as the score.
  */
 class MetricScore(private val metricName: String) : Score {
 

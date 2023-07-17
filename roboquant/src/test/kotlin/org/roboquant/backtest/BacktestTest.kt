@@ -1,4 +1,4 @@
-package org.roboquant.optim
+package org.roboquant.backtest
 
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant

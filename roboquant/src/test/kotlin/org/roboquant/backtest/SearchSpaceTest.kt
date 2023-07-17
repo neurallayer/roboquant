@@ -1,4 +1,4 @@
-package org.roboquant.optim
+package org.roboquant.backtest
 
 import org.roboquant.common.Config
 import kotlin.test.Test
