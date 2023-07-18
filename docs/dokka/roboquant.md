@@ -1,15 +1,8 @@
 # Module roboquant
 
-The roboquant module contains the functionality required to create trading strategies and back-test them.
+The roboquant module contains the core functionality required to create trading strategies and run them.  
 
-The flow of data between the components is as follows:
-
-    Feed --|event|--> Strategy --|signal|--> Policy --|order|--> Broker --|account|--> Metric
-
-It is the Roboquant that orchestrates and coordinates this flow of data. 
-
-The core module doesn't contain the integration with 3rd party data providers and brokers. For this, see the 
-roboquant-extra and roboquant-crypto modules.
+This module doesn't contain the integration with 3rd party data providers and brokers. For this, see the roboquant-extra and roboquant-crypto modules.
 
 # Package org.roboquant.feeds
 
@@ -21,7 +14,7 @@ comes with several feeds out of the box:
 - test: for testing against a predefined set of prices
 - avro: for creating and reading historic prices in AVRO files
 
-If you want to use other feeds, have a look at the roboquant-extra and roboquant-crypto modules.
+If you want to use other brokers and feeds, have a look at the roboquant-extra and roboquant-crypto modules.
 
 # Package org.roboquant.strategies
 
@@ -29,7 +22,7 @@ Strategies contain the logic that interpreted the events in a feed and generates
 doesn't directly generate an Order (that is left to a Policy).
 
 
-# Package org.roboquant.policy
+# Package org.roboquant.policies
 
 Policies receive zero or more signals and based on these signals create orders. 
 

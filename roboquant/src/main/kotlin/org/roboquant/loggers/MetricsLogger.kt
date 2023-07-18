@@ -39,10 +39,10 @@ interface MetricsLogger : Lifecycle {
     fun log(results: Map<String, Double>, time: Instant, run: String)
 
     /**
-     * Get all the logged entries for a specific metric. The result is a Map with the key the run and the value the
-     * metrics.
+     * Get all the logged data for a specific metric identified by its [name].
+     * The result is a Map with the key being the run-name and the value being the [TimeSeries].
      *
-     * This is optional to implement for a MetricsLogger since not all logger stores the metrics. Use [metricNames]
+     * This is optional to implement for a MetricsLogger since not all metric-loggers store metrics. Use [metricNames]
      * to see which metrics are available.
      */
     fun getMetric(name: String): Map<String, TimeSeries> = emptyMap()
@@ -62,7 +62,7 @@ interface MetricsLogger : Lifecycle {
 fun Map<String, TimeSeries>.earliestRun(): TimeSeries = values.minBy { it.timeline.first() }
 
 /**
- * Get the metrics for the run that starts the earliest in time
+ * Get the metrics for the run that ends the latest in time
  */
 fun Map<String, TimeSeries>.latestRun(): TimeSeries = values.maxBy { it.timeline.last() }
 

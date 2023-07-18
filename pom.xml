@@ -107,6 +107,7 @@
             <id>release</id>
             <properties>
                 <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
+                <dokka.includes>docs/dokka</dokka.includes>
             </properties>
             <modules>
                 <module>roboquant-ibkr</module>
@@ -167,8 +168,15 @@
                         <configuration>
                             <jdkVersion>11</jdkVersion>
                             <suppressObviousFunctions>true</suppressObviousFunctions>
-                            <reportUndocumented>false</reportUndocumented>
+                            <reportUndocumented>true</reportUndocumented>
                             <suppressInheritedMembers>true</suppressInheritedMembers>
+                            <includes>
+                                <include>${dokka.includes}/roboquant.md</include>
+                                <include>${dokka.includes}/roboquant-extra.md</include>
+                                <include>${dokka.includes}/roboquant-ibkr.md</include>
+                                <include>${dokka.includes}/roboquant-jupyter.md</include>
+                                <include>${dokka.includes}/roboquant-ta.md</include>
+                            </includes>
                             <sourceLinks>
                                 <link>
                                     <path>${basedir}/src/main/kotlin</path>
@@ -190,6 +198,7 @@
             <id>doc</id>
             <properties>
                 <kotlin.compiler.incremental>false</kotlin.compiler.incremental>
+                <dokka.includes>docs/dokka</dokka.includes>
             </properties>
             <build>
                 <plugins>
@@ -249,6 +258,13 @@
                             <suppressObviousFunctions>true</suppressObviousFunctions>
                             <reportUndocumented>true</reportUndocumented>
                             <suppressInheritedMembers>true</suppressInheritedMembers>
+                            <includes>
+                                <include>${dokka.includes}/roboquant.md</include>
+                                <include>${dokka.includes}/roboquant-extra.md</include>
+                                <include>${dokka.includes}/roboquant-ibkr.md</include>
+                                <include>${dokka.includes}/roboquant-jupyter.md</include>
+                                <include>${dokka.includes}/roboquant-ta.md</include>
+                            </includes>
                             <sourceLinks>
                                 <link>
                                     <path>${basedir}/src/main/kotlin</path>
