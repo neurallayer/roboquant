@@ -16,14 +16,15 @@
 
 package org.roboquant.loggers
 
+import org.roboquant.common.Observation
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
 import java.time.Instant
 
 /**
- * Stores the last value of a metric for a particular run and phase in memory. This is more memory efficient than
- * the [MemoryLogger] if you only care about the last recorded result and not the values of metrics at each step
- * of a run.
+ * Stores the last value of a metric for a particular run in memory.
+ * This is more memory efficient than the [MemoryLogger] if you only care about the last recorded result and not the
+ * values of metrics at each step of a run.
  *
  * If you need access to the metric values at each step, use the [MemoryLogger] instead.
  *
@@ -31,8 +32,8 @@ import java.time.Instant
  */
 class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
 
-    // The key is runName + phase + metricName
-    private val history = mutableMapOf<Pair<String, String>, Pair<Instant, Double>>()
+    // The key is runName
+    private val history = mutableMapOf<String, MutableMap<String, Observation>>()
     private val progressBar = ProgressBar()
 
     @Synchronized
@@ -40,13 +41,14 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
         if (showProgress) progressBar.update(time)
 
         for ((t, u) in results) {
-            val key = Pair(run, t)
-            val value = Pair(time, u)
-            history[key] = value
+            val map = history.getOrPut(run) { mutableMapOf() }
+            val value = Observation(time, u)
+            map[t] = value
         }
     }
 
     override fun start(run: String, timeframe: Timeframe) {
+        history.remove(run)
         if (showProgress) progressBar.start(run, timeframe)
     }
 
@@ -65,19 +67,21 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
      * Get the unique list of metric names that have been captured
      */
     override val metricNames: List<String>
-        get() = history.map { it.key.second }.distinct().sorted()
+        get() = history.values.map { it.keys }.flatten().distinct().sorted()
 
     /**
      * Get results for the metric specified by its [name].
      */
     override fun getMetric(name: String): Map<String, TimeSeries> {
-        val result = mutableMapOf<String, TimeSeries>()
-        for ((key, value) in history) {
-            if (key.second == name) {
-                result[key.first] = TimeSeries(listOf(value.first), doubleArrayOf(value.second))
+        val result = mutableMapOf<String, MutableList<Observation>>()
+        for ((run, metrics) in history) {
+            for ((k,v) in metrics)
+            if (k == name) {
+                val h = result.getOrPut(run) { mutableListOf() }
+                h.add(v)
             }
         }
-        return result
+        return result.mapValues { TimeSeries(it.value.sorted()) }
     }
 
 }

@@ -131,7 +131,8 @@ internal class RoboquantTest {
         val broker = SimBroker(initial)
         val logger = MemoryLogger()
         val roboquant = Roboquant(strategy, ProgressMetric(), broker = broker, logger = logger)
-        roboquant.warmup(feed, Timeframe.INFINITE)
+        roboquant.silent().run(feed, Timeframe.INFINITE)
+        roboquant.broker.reset()
         assertTrue(logger.history.isEmpty())
         val account = broker.account
         assertTrue(account.trades.isEmpty())
@@ -156,13 +157,6 @@ internal class RoboquantTest {
 
     }
 
-    @Test
-    fun warmupAsync() = runBlocking {
-        val strategy = EMAStrategy()
-        val roboquant = Roboquant(strategy, AccountMetric(), logger = SilentLogger())
-        roboquant.warmupAsync(TestData.feed, Timeframe.INFINITE)
-        assertTrue(roboquant.broker.account.trades.isEmpty())
-    }
 
     @Test
     fun runAsync() = runBlocking {

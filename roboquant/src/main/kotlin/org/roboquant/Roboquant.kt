@@ -18,8 +18,6 @@ package org.roboquant
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import org.roboquant.RunPhase.MAIN
-import org.roboquant.RunPhase.VALIDATE
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.closeSizes
@@ -84,56 +82,6 @@ data class Roboquant(
         kotlinLogger.debug { "Created new roboquant instance" }
     }
 
-
-    /**
-     * Run a warm-up. It is similar to a normal [run] with the following two exceptions:
-     * - metrics are not logged
-     * - orders are not placed at the broker
-     *
-     * Typically used to allow strategies to capture enough historic data required to execute its logic.
-     */
-    fun warmup(feed: Feed, timeframe: Timeframe, run: String = "warmup") = runBlocking {
-        warmupAsync(feed, timeframe, run)
-    }
-
-    /**
-     * Identical to [warmup], but now running asynchronously.
-     */
-    suspend fun warmupAsync(feed: Feed, timeframe: Timeframe, run: String = "warmup") {
-        val channel = EventChannel(channelCapacity, timeframe)
-        val scope = CoroutineScope(Dispatchers.Default + Job())
-
-        val job = scope.launch {
-            channel.use { feed.play(it) }
-        }
-
-        start(run, timeframe)
-        try {
-            while (true) {
-                val event = channel.receive()
-
-                // Sync with broker and run metrics
-                broker.sync(event)
-                val account = broker.account
-                getMetrics(account, event)
-
-                // Generate signals and place orders
-                val signals = strategy.generate(event)
-                val orders = policy.act(signals, account, event)
-
-                kotlinLogger.trace {
-                    "time=$${event.time} actions=${event.actions.size} signals=${signals.size} orders=${orders.size}"
-                }
-            }
-        } catch (_: ClosedReceiveChannelException) {
-            // intentionally empty
-        } finally {
-            end(run)
-            if (job.isActive) job.cancel()
-            scope.cancel()
-            channel.close()
-        }
-    }
 
     /**
      * Inform components of the start of a new [run].
@@ -284,25 +232,4 @@ data class Roboquant(
         logger.log(metricResult, event.time, runName)
     }
 
-}
-
-/**
- * Enumeration of the two different phases that a run can be in, [MAIN] and [VALIDATE]. Especially with self-learning
- * strategies, it is important that you evaluate your strategy on yet unseen data, so you don't over-fit.
- *
- * See also [Roboquant.run] how to run your strategy with different phases enabled.
- *
- * @property value String value of the run phase
- */
-enum class RunPhase(val value: String) {
-
-    /**
-     * Main run phase
-     */
-    MAIN("MAIN"),
-
-    /**
-     * Validation run phase
-     */
-    VALIDATE("VALIDATE"),
 }

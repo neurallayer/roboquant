@@ -23,7 +23,7 @@ import java.time.Instant
 
 /**
  * Interface for any broker implementation, used for both simulated and real brokers. All brokers also implement the
- * [Lifecycle] interface that allows them to manage internal state based on the phase of a run.
+ * [Lifecycle] interface that allows them to manage internal state.
  */
 interface Broker : Lifecycle {
 

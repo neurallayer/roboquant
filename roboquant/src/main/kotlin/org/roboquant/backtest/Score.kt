@@ -26,7 +26,7 @@ import org.roboquant.common.Timeframe
  */
 fun interface Score {
 
-    fun calculate(roboquant: Roboquant, timeframe: Timeframe) : Double
+    fun calculate(roboquant: Roboquant, run: String, timeframe: Timeframe) : Double
 
     /**
      * Predefined score functions
@@ -53,9 +53,9 @@ fun interface Score {
  */
 class MetricScore(private val metricName: String) : Score {
 
-    override fun calculate(roboquant: Roboquant, timeframe: Timeframe): Double {
-        val metrics = roboquant.logger.getMetric(metricName)
-        return if (metrics.isNotEmpty()) metrics.values.last().values.last() else Double.NaN
+    override fun calculate(roboquant: Roboquant, run: String, timeframe: Timeframe): Double {
+        val metrics = roboquant.logger.getMetric(metricName)[run] ?: return Double.NaN
+        return metrics.values.last()
     }
 
 }

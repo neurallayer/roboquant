@@ -23,7 +23,7 @@ fun <T> mutableSynchronisedListOf(): MutableList<T> = Collections.synchronizedLi
  *
  * @property space search space
  * @property score scoring function
- * @property trainLogger the metrics logger to use for training phases, default is L
+ * @property trainLogger the metrics logger to use for training phases, default is [LastEntryLogger]
  * @property getRoboquant function that returns an instance of roboquant based on passed parameters
  *
  */
@@ -148,7 +148,7 @@ class Optimizer(
                 val rq = getRoboquant(params)
                 val name = "train-${run++}"
                 rq.copy(logger = trainLogger).runAsync(feed, tf, name = name)
-                val s = score.calculate(rq, tf)
+                val s = score.calculate(rq, name, tf)
                 val result = RunResult(params, s, tf, name)
                 results.add(result)
             }
