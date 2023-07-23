@@ -131,7 +131,7 @@ internal class RoboquantTest {
         val broker = SimBroker(initial)
         val logger = MemoryLogger()
         val roboquant = Roboquant(strategy, ProgressMetric(), broker = broker, logger = logger)
-        roboquant.silent().run(feed, Timeframe.INFINITE)
+        roboquant.copy(logger = SilentLogger()).run(feed, Timeframe.INFINITE)
         roboquant.broker.reset()
         assertTrue(logger.history.isEmpty())
         val account = broker.account

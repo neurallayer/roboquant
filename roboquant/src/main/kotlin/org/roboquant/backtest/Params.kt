@@ -18,22 +18,22 @@ package org.roboquant.backtest
 
 
 /**
- * Holds the (hyper-)parameters that can be used in back tests that try to find the optimum set of parameters.
+ * Holds the (hyper-)parameters that can be used in a [SearchSpace] to define that search space.
  */
 class Params : LinkedHashMap<String, Any>() {
 
     /**
-     * Returns the string value for the provided parameter [name]
+     * Returns the [String] value for the provided parameter [name]
      */
     fun getString(name: String) = get(name) as String
 
     /**
-     * Returns the int value for the provided parameter [name]
+     * Returns the [Int] value for the provided parameter [name]
      */
     fun getInt(name: String) = get(name) as Int
 
     /**
-     * Returns the double value for the provided parameter [name]
+     * Returns the [Double] value for the provided parameter [name]
      */
     fun getDouble(name: String) = get(name) as Double
 

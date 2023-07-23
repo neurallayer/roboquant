@@ -35,7 +35,9 @@ fun interface Score {
 
         /**
          * The annualized equity growth as a [Score] function.
-         * This function works best for longer timeframe runs (over 3 months).
+         *
+         * This function works best for longer timeframe runs (over 3 months). Otherwise, calculated values can have
+         * large fluctuations.
          */
         fun annualizedEquityGrowth(roboquant: Roboquant, timeframe: Timeframe): Double {
             val broker = roboquant.broker as SimBroker
@@ -50,11 +52,15 @@ fun interface Score {
 
 /**
  * Use the last value of recorded metric name as the score.
+ *
+ * Use this with a metrics logger that supports the retrieval of metrics.
  */
 class MetricScore(private val metricName: String) : Score {
 
     override fun calculate(roboquant: Roboquant, run: String, timeframe: Timeframe): Double {
-        val metrics = roboquant.logger.getMetric(metricName)[run] ?: return Double.NaN
+        val logger = roboquant.logger
+        // assert(logger.metricNames.contains(metricName)) { "$metricName not found in logger" }
+        val metrics = logger.getMetric(metricName)[run] ?: return Double.NaN
         return metrics.values.last()
     }
 

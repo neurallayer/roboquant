@@ -20,10 +20,7 @@ import org.roboquant.TestData
 import org.roboquant.common.millis
 import org.roboquant.common.plus
 import java.time.Instant
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class LastEntryLoggerTest {
 
@@ -36,6 +33,7 @@ internal class LastEntryLoggerTest {
         logger.log(metrics, Instant.now(), "test")
         logger.end("test")
         assertTrue(logger.metricNames.isNotEmpty())
+        assertContains(logger.metricNames, metrics.keys.first())
 
         val m1 = logger.metricNames.first()
         val m = logger.getMetric(m1).latestRun()

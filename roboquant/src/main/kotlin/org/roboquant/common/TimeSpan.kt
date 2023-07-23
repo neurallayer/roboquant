@@ -191,6 +191,7 @@ val Long.nanos
  */
 fun Instant.plus(period: TimeSpan, zoneId: ZoneId): Instant {
     // Optimized path for HFT
+    if (period == TimeSpan.ZERO) return this
     val result = if (period.period == Period.ZERO) this else atZone(zoneId).plus(period.period).toInstant()
     return result.plus(period.duration)
 }
@@ -200,6 +201,7 @@ fun Instant.plus(period: TimeSpan, zoneId: ZoneId): Instant {
  */
 fun Instant.minus(period: TimeSpan, zoneId: ZoneId): Instant {
     // Optimized path for HFT
+    if (period == TimeSpan.ZERO) return this
     val result = if (period.period == Period.ZERO) this else atZone(zoneId).minus(period.period).toInstant()
     return result.minus(period.duration)
 }

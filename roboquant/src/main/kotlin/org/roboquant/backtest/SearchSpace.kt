@@ -20,12 +20,8 @@ package org.roboquant.backtest
 /**
  * Interface for all types of search spaces
  */
-interface SearchSpace {
+interface SearchSpace : Iterable<Params> {
 
-    /**
-     * Returns an [Iterable] over the parameters defined in this search space.
-     */
-    fun materialize() : Iterable<Params>
 
     /**
      * Update the search space based on an observation.
@@ -47,12 +43,12 @@ interface SearchSpace {
 
 /**
  * If you just want to run a certain type of back test without any hyperparameter search, you can use this search space.
- * It contains a single entry with no parameters, so iterating over this search space will run exactly once.
+ * It contains a single entry with no parameters, so iterating over this search space will run a back test exactly once.
  */
 class EmptySearchSpace : SearchSpace {
 
-    override fun materialize(): Iterable<Params> {
-        return listOf(Params()).asIterable()
+    override fun iterator(): Iterator<Params> {
+        return  listOf(Params()).listIterator()
     }
 
     /**
@@ -66,6 +62,10 @@ class EmptySearchSpace : SearchSpace {
 
 /**
  * Random Search Space
+ *
+ * In Random Search, we try random combinations of the values of the [Params] and evaluate the trading strategy
+ * for these selected combination.
+ * The number of combinations is limited to [size].
  *
  * @property size the total number of samples that will be drawn from this random search space
  */
@@ -96,9 +96,10 @@ class RandomSearch(override val size: Int) : SearchSpace {
 
     }
 
-    override fun materialize(): List<Params> {
-        return list
+    override fun iterator(): Iterator<Params> {
+        return  list.listIterator()
     }
+
 
 
     /**
@@ -120,7 +121,11 @@ class RandomSearch(override val size: Int) : SearchSpace {
 }
 
 /**
- * Create a Grid Search Space
+ * Create a Grid Search Space.
+ *
+ * In Grid Search, we try every combination of the values of the [Params] and evaluate the trading strategy for
+ * each combination
+ *
  */
 class GridSearch : SearchSpace {
 
@@ -155,17 +160,6 @@ class GridSearch : SearchSpace {
         params[name] = values.toList()
     }
 
-    /*
-    fun nextRandomSample() : Params {
-        val result = Params()
-        for ((key, values) in params) {
-            val idx = Config.random.nextInt(values.lastIndex)
-            result[key] = values[idx]
-        }
-        return result
-    }
-    */
-
 
     fun add(name: String, samples: Int, fn: () -> Any) {
         params[name] = (1..samples).map { fn() }
@@ -175,8 +169,8 @@ class GridSearch : SearchSpace {
     override val size
         get() = params.map { it.value.size }.reduce(Int::times)
 
-    override fun materialize(): List<Params> {
-        return list
+    override fun iterator(): Iterator<Params> {
+        return  list.listIterator()
     }
 }
 

@@ -20,6 +20,12 @@ import org.roboquant.common.Observation
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
 import java.time.Instant
+import java.util.*
+
+/**
+ * Create a mutable synchronized list
+ */
+// fun <K,V> mutableSynchronisedMapOf(): MutableMap<K,V> = Collections.synchronizedMap(mutableMapOf<K,V>())
 
 /**
  * Stores the last value of a metric for a particular run in memory.
@@ -33,17 +39,19 @@ import java.time.Instant
 class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
 
     // The key is runName
-    private val history = mutableMapOf<String, MutableMap<String, Observation>>()
+    private val history = Hashtable<String, MutableMap<String, Observation>>()
     private val progressBar = ProgressBar()
 
     @Synchronized
     override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (showProgress) progressBar.update(time)
 
-        for ((t, u) in results) {
+        if (results.isNotEmpty()) {
             val map = history.getOrPut(run) { mutableMapOf() }
-            val value = Observation(time, u)
-            map[t] = value
+            for ((t, u) in results) {
+                val value = Observation(time, u)
+                map[t] = value
+            }
         }
     }
 
@@ -72,6 +80,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
     /**
      * Get results for the metric specified by its [name].
      */
+    @Synchronized
     override fun getMetric(name: String): Map<String, TimeSeries> {
         val result = mutableMapOf<String, MutableList<Observation>>()
         for ((run, metrics) in history) {

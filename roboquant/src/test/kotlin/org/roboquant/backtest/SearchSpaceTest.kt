@@ -16,7 +16,7 @@ class SearchSpaceTest {
             Config.random.nextInt()
         }
 
-        val params = space.materialize()
+        val params = space.iterator().asSequence().toList()
         assertEquals(100, params.size)
         assertTrue(params.all { it.contains("p1") })
         assertTrue(params.all { it.contains("p2") })
@@ -32,7 +32,7 @@ class SearchSpaceTest {
             Config.random.nextInt()
         }
 
-        val params = space.materialize()
+        val params = space.toList()
         assertEquals(3*100*100, params.size)
         assertEquals(100*100, params.filter{
             it.getString("p1") == "a"
@@ -46,8 +46,8 @@ class SearchSpaceTest {
     @Test
     fun empty() {
         val space = EmptySearchSpace()
-        assertEquals(1, space.size)
-        assertEquals(1, space.materialize().toList().size)
+        val params = space.iterator().asSequence().toList()
+        assertEquals(1, params.size)
     }
 
 

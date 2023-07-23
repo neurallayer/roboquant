@@ -20,13 +20,17 @@ import org.roboquant.Roboquant
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
-import org.roboquant.common.plus
 import org.roboquant.feeds.Feed
 
 
 /**
- * Run back test without parameter optimizations. This is useful to get insights into the performance over different
- * timeframes.
+ * Run back tests without parameter optimizations.
+ * The back tests in this class will be run sequentially.
+ *
+ * These types of back tests are especially useful to get insights into the performance over different timeframes.
+ *
+ * @property feed The feed to use during the back tests
+ * @property roboquant The roboquant instance to use during the back tests
  */
 class Backtest(val feed: Feed, val roboquant: Roboquant) {
 
@@ -34,30 +38,12 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
         require(roboquant.broker is SimBroker) { "Only a SimBroker can be used for back testing"}
     }
 
-
-    private val broker
-        get() = roboquant.broker as SimBroker
-
-
-    /**
-     * Run a warmup and return the remaining timeframe
-     */
-    private fun warmup(timeframe: Timeframe, period: TimeSpan) : Timeframe {
-        require(timeframe.isFinite())
-        val end = timeframe.start + period
-        val tf = Timeframe(timeframe.start, end)
-        roboquant.silent().run(feed, tf) // Run without logging
-        broker.reset() // Reset the broker after a warmup
-        return timeframe.copy(start = end)
-    }
-
     /**
      * Perform a single run over the provided [timeframe] using the provided [warmup] period. The timeframe is
      * including the warmup period.
      */
     fun singleRun(timeframe: Timeframe = feed.timeframe, warmup: TimeSpan = TimeSpan.ZERO) {
-        val tf = if (! warmup.isZero) warmup(timeframe, warmup) else timeframe
-        roboquant.run(feed, tf, name = "run-$tf")
+        roboquant.run(feed, timeframe, warmup, name = "run-$timeframe")
     }
 
     /**
@@ -70,8 +56,7 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
     ) {
         require(feed.timeframe.isFinite()) { "feed needs a finite timeframe" }
         feed.timeframe.split(period, warmup).forEach {
-            val tf = if (! warmup.isZero) warmup(it, warmup) else it
-            roboquant.run(feed, tf, name = "run-$tf")
+            roboquant.run(feed, it, warmup, name = "run-$it")
             roboquant.reset(false)
         }
     }
@@ -80,7 +65,7 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
      * Run a Monte Carlo simulation of a number of [samples] to find out how metrics of interest are distributed
      * given the provided [period].
      *
-     * Optional each period can be preceded by a [warmup] time-span.
+     * Optional each period can include a [warmup] time-span.
      */
     fun monteCarlo(
         period: TimeSpan,
@@ -88,9 +73,8 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
         warmup: TimeSpan = TimeSpan.ZERO,
     ) {
         require(feed.timeframe.isFinite()) { "feed needs a finite timeframe" }
-        feed.timeframe.sample(period + warmup, samples).forEach  {
-            val tf = if (! warmup.isZero) warmup(it, warmup) else it
-            roboquant.run(feed, tf, name = "run-$tf")
+        feed.timeframe.sample(period, samples).forEach  {
+            roboquant.run(feed, it, warmup, name = "run-$it")
             roboquant.reset(false)
         }
     }

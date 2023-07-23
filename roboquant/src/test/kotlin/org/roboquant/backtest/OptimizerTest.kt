@@ -27,14 +27,34 @@ class OptimizerTest {
         val feed = RandomWalkFeed.lastYears(1, nAssets = 1)
 
 
-        val r1 = opt.train(feed)
+        val r1 = opt.train(feed, feed.timeframe)
         assertTrue(r1.isNotEmpty())
 
-        val r2 = opt.walkForward(feed, 6.months, false)
+        val r2 = opt.walkForward(feed, 6.months)
         assertTrue(r2.isNotEmpty())
 
         val r3 = opt.monteCarlo(feed, 6.months, 5)
         assertTrue(r3.isNotEmpty())
+
+    }
+
+    @Test
+    fun complete() {
+        val space = GridSearch()
+        space.add("x", 3..15)
+        space.add("y", 2..10)
+
+        val logger = LastEntryLogger()
+        val opt = Optimizer(space, "account.equity") { params ->
+            val x =  params.getInt("x")
+            val y = x + params.getInt("y")
+            val s = EMAStrategy(x, y)
+            Roboquant(s, AccountMetric(), logger = logger)
+        }
+
+        val feed = RandomWalkFeed.lastYears(3, nAssets = 2)
+        val r2 = opt.walkForward(feed, 9.months, 3.months, 0.months, false)
+        println(r2)
 
     }
 
@@ -47,7 +67,7 @@ class OptimizerTest {
         }
 
         val feed = RandomWalkFeed.lastYears(1, nAssets = 1)
-        val r1 = opt.train(feed)
+        val r1 = opt.train(feed, feed.timeframe)
         assertTrue(r1.isNotEmpty())
 
     }

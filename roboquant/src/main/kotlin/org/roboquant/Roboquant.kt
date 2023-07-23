@@ -23,14 +23,15 @@ import org.roboquant.brokers.Broker
 import org.roboquant.brokers.closeSizes
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Logging
+import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
+import org.roboquant.common.plus
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.TradePrice
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.MetricsLogger
-import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.createCancelOrders
@@ -110,26 +111,23 @@ data class Roboquant(
         }
     }
 
-    /**
-     * Returns a copy of this instance but with the [SilentLogger] enabled.
-     *
-     * This is typically used during warmup and training phases when metrics output are not of interest.
-     */
-    fun silent() = copy(logger = SilentLogger())
 
     /**
      * Start a new run using the provided [feed] as data. If no [timeframe] is provided all the events in the feed
      * will be processed. You can provide a custom [name] that will help to later identify this run. If none is
      * provided, a name will be generated with the format "run-<counter>"
+     * Additionally you can provide a [warmup] period in which no metrics will be logged or orders placed.
+     *
      * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
      * in parallel have a look at [runAsync]
      */
     fun run(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        name: String = "run",
+        warmup: TimeSpan = TimeSpan.ZERO,
+        name: String = "run"
     ) = runBlocking {
-        runAsync(feed, timeframe, name)
+        runAsync(feed, timeframe, warmup, name)
     }
 
     /**
@@ -142,7 +140,8 @@ data class Roboquant(
     suspend fun runAsync(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        name: String = "run",
+        warmup: TimeSpan = TimeSpan.ZERO,
+        name: String = "run"
     ) {
         val channel = EventChannel(channelCapacity, timeframe)
         val scope = CoroutineScope(Dispatchers.Default + Job())
@@ -152,6 +151,8 @@ data class Roboquant(
         }
 
         start(name, timeframe)
+        val warmupEnd = timeframe.start + warmup
+
         try {
             while (true) {
                 val event = channel.receive()
@@ -161,12 +162,12 @@ data class Roboquant(
                 broker.sync(event)
                 val account = broker.account
                 val metricResult = getMetrics(account, event)
-                logger.log(metricResult, time, name)
+                if (time >= warmupEnd) logger.log(metricResult, time, name)
 
                 // Generate signals and place orders
                 val signals = strategy.generate(event)
                 val orders = policy.act(signals, account, event)
-                broker.place(orders, time)
+                if (time >= warmupEnd) broker.place(orders, time)
 
                 kotlinLogger.trace {
                     "time=$${event.time} actions=${event.actions.size} signals=${signals.size} orders=${orders.size}"
