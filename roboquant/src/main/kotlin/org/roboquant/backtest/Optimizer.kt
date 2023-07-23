@@ -124,7 +124,7 @@ open class Optimizer(
      * The logger to use for training phase. By default, this logger is discarded after the run and score is
      * calculated
      */
-    protected fun getTrainLogger() = MemoryLogger(false)
+    open fun getTrainLogger() = MemoryLogger(false)
 
     /**
      * Train the solution in parallel
