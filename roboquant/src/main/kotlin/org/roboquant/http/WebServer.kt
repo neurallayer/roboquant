@@ -30,7 +30,9 @@ import org.roboquant.orders.lines
 import java.io.OutputStream
 import java.net.InetSocketAddress
 
-
+/**
+ * Metric used to capture basic information of a run that is displayed on the web pages.
+ */
 private class WebMetric : Metric {
 
     var account: Account? = null
@@ -103,9 +105,17 @@ internal class Authenticator(private val username: String, private val password:
 }
 
 /**
- * Very lightweight webserver that enables to run a trading strategy and view some key metrics while it is running.
- * There is support for basic-auth, but this is not very secure since username & password are sent in plain-text
- * to the server.
+ * Very lightweight webserver that enables you to run a trading strategy and view some key metrics while it is running.
+ * There is support for basic-auth, but this is not very secure since username & password are sent in
+ * plain-text to the server.
+ *
+ * Example:
+ *
+ * ```
+ * val ws = WebServer()
+ * ws.runAsync(roboquant, feed, Timeframe.next(8.hours))
+ * ws.start()
+ * ```
  *
  * This server might be replaced in the future for a more secure solution.
  *
@@ -133,7 +143,7 @@ class WebServer(port: Int = 8000, username: String, password: String) {
         val warmup: TimeSpan = TimeSpan.ZERO
     )
 
-
+    // basic bootstrap page
     private val template = """
         <!doctype html>
         <html lang="en">
