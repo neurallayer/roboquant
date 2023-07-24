@@ -109,9 +109,16 @@ internal class Authenticator(private val username: String, private val password:
  *
  * This server might be replaced in the future for a more secure solution.
  *
- * @param port The port the webserver should be running on
+ * @param port the port the webserver should be running on
+ * @param username the username to be used for basic authentication
+ * @param password the password to be used for basic authentication
  */
-class WebServer(port: Int = 8000, username: String = "", password: String = "") {
+class WebServer(port: Int = 8000, username: String, password: String) {
+
+    /**
+     * Create a web server without basic authentication
+     */
+    constructor(port: Int = 8000) : this(port, "", "")
 
     private val runs = mutableMapOf<String, RunInfo>()
     private val server: HttpServer = HttpServer.create(InetSocketAddress(port), 0)
@@ -209,7 +216,7 @@ class WebServer(port: Int = 8000, username: String = "", password: String = "") 
 
     /**
      * Start a new run and make core metrics available to the webserver. You can start multiple runs in the same
-     * webserver. Each run will have a unique sequential name.
+     * webserver instance. Each run will have its unique name.
      */
     suspend fun runAsync(roboquant: Roboquant, feed: Feed, timeframe: Timeframe, warmup: TimeSpan = TimeSpan.ZERO) {
         val metric = WebMetric()
