@@ -31,6 +31,7 @@ import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
+import org.roboquant.http.WebServer
 import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ScorecardMetric
@@ -100,6 +101,22 @@ fun binanceForwardTest() {
     rq.run(feed, tf)
 }
 
+
+suspend fun binanceWebServer() {
+    val feed = BinanceLiveFeed()
+    feed.subscribePriceBar("BTCBUSD")
+    val strategy = EMAStrategy.PERIODS_5_15
+    val initialDeposit = Amount("BUSD", 10_000).toWallet()
+    val broker = SimBroker(initialDeposit)
+    val policy = FlexPolicy.singleAsset(enableMetrics = true)
+    val rq = Roboquant(strategy, broker = broker, policy = policy, logger = ConsoleLogger())
+
+    val server = WebServer(username= "test", password="secret")
+    server.start()
+    val tf = Timeframe.next(4.hours)
+    server.runAsync(rq, feed, tf)
+}
+
 fun binanceBackTest() {
     val strategy = EMAStrategy()
     val initialDeposit = Amount("BUSD", 100_000).toWallet()
@@ -130,14 +147,15 @@ fun xchangeFeed() {
     assertEquals(AssetType.CRYPTO, result.first().second.asset.type)
 }
 
-fun main() {
+suspend fun main() {
 
-    when ("FORWARD") {
+    when ("WEB") {
         "RECORD" -> recordBinanceFeed()
         "USE" -> useBinanceFeed()
         "XCHANGE" -> xchangeFeed()
         "LIVE" -> binanceLiveFeed()
         "HISTORIC" -> binanceBackTest()
         "FORWARD" -> binanceForwardTest()
+        "WEB" -> binanceWebServer()
     }
 }
