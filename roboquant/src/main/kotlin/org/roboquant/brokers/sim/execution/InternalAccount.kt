@@ -143,8 +143,9 @@ class InternalAccount(var baseCurrency: Currency) {
      * Update the open positions in the portfolio with the current market prices as found in the [event]
      */
     fun updateMarketPrices(event: Event, priceType: String = "DEFAULT") {
-        val prices = event.prices
+        if (portfolio.isEmpty()) return
 
+        val prices = event.prices
         for ((asset, position) in portfolio) {
             val priceAction = prices[asset]
             if (priceAction != null) {

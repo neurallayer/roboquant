@@ -33,7 +33,7 @@ class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
      * this property multiple times is quick.
      *
      * If there are multiple price actions for a single asset in the event, the last one found will be returned. If
-     * you require access to all prices for an asset, access [actions] directly.
+     * you require access to all prices for an asset, iterate over the [actions] directly.
      */
     val prices: Map<Asset, PriceAction> by lazy {
         actions.filterIsInstance<PriceAction>().associateBy { it.asset }
