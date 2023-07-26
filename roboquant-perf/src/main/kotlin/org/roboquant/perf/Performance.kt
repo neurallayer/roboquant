@@ -33,7 +33,9 @@ import kotlin.system.exitProcess
 import kotlin.system.measureTimeMillis
 
 /**
- * Simple fast strategy
+ * Simple fast strategy.
+ *
+ * Not realistic, but with minimal overhead to ensure we can measure the performance of the engine and not the strategy.
  */
 private class FastStrategy(private val skip: Int) : Strategy {
 
@@ -57,27 +59,29 @@ private class FastStrategy(private val skip: Int) : Strategy {
 }
 
 /**
- * Fast feed
+ * Fast feed.
+ *
+ * Not realistic, but with minimal overhead to ensure we can measure the performance of the engine and are not
+ * impacted by the feed.
  */
-private class FastFeed(val nAssets: Int, val events: Int) : Feed {
+private class FastFeed(nAssets: Int, val events: Int) : Feed {
 
     private val assets = mutableListOf<Asset>()
     private val start = Instant.parse("2000-01-01T00:00:00Z")
+    val actions = ArrayList<PriceBar>(nAssets)
     val size = nAssets * events
 
     init {
         repeat(nAssets) { assets.add(Asset("TEST-$it")) }
+        val data = doubleArrayOf(100.0, 101.0, 99.0, 100.0, 10000.0)
+        for (asset in assets) {
+            val action = PriceBar(asset, data)
+            actions.add(action)
+        }
     }
 
     override suspend fun play(channel: EventChannel) {
         repeat(events) {
-            val actions = ArrayList<PriceBar>(nAssets)
-            val open = 100.0 + 10 * (it / events)
-            val data = doubleArrayOf(open, open + 1.0, open - 1.0, open, 500.0)
-            for (asset in assets) {
-                val action = PriceBar(asset, data)
-                actions.add(action)
-            }
             channel.send(Event(actions, start + it.millis))
         }
     }
@@ -90,8 +94,7 @@ private class FastFeed(val nAssets: Int, val events: Int) : Feed {
  * outside events like virus scanners.
  *
  * The main purpose is to validate the performance, throughput and stability of the back test engine, not any particular
- * feed, strategy or metric. So the used feed and strategy are optimized for this test and not something you would
- * normally use.
+ * feed, strategy or metric. So the used feed and strategy are optimized for this test and not realistic at all.
  */
 private object Performance {
 
@@ -177,6 +180,7 @@ private object Performance {
             val jobs = ParallelJobs()
             repeat(backTests) {
                 jobs.add {
+                    // use lower channel capacity to limit memory bandwidth
                     val roboquant = Roboquant(getStrategy(skip), logger = SilentLogger(), channelCapacity = 3)
                     roboquant.runAsync(feed)
                 }

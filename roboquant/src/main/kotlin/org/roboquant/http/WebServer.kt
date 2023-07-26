@@ -68,29 +68,37 @@ private class WebMetric : Metric {
 
     override fun toString(): String {
         val acc = account ?: return "Not yet run"
+        val summary = listOf(
+            listOf("name", "value"),
+            listOf("last update", acc.lastUpdate),
+            listOf("events", events),
+            listOf("actions", actions),
+            listOf("buying power", acc.buyingPower),
+            listOf("equity", acc.equity),
+            listOf("open positions", acc.positions.size),
+            listOf("open orders", acc.openOrders.size),
+            listOf("closed orders", acc.closedOrders.size),
+            listOf("trades", acc.trades.size),
+        )
+
         return """
-                <div>
-                    <h3>summary</h3>
-                    <p>events: $events</p>
-                    <p>actions: $actions</p>
-                    <p>buying power: ${acc.buyingPower}</p>
-                    <p>equity: ${acc.equity}</p>
+                <h2>summary</h2>
+                ${summary.toTable()}
+            
+                <h2>cash</h2>
+                ${acc.cash}
                 
-                    <h3>cash</h3>
-                    ${acc.cash}
-                    
-                    <h3>positions</h3> 
-                    ${acc.positions.lines().toTable()}
-                    
-                    <h3>open orders</h3>
-                    ${acc.openOrders.lines().toTable()}
-                    
-                    <h3>closed orders</h3>
-                    ${acc.closedOrders.lines().toTable()}
-                    
-                    <h3>trades</h3>
-                    ${acc.trades.lines().toTable()}                   
-                </div>
+                <h2>positions</h2> 
+                ${acc.positions.lines().toTable()}
+                
+                <h2>open orders</h2>
+                ${acc.openOrders.lines().toTable()}
+                
+                <h2>closed orders</h2>
+                ${acc.closedOrders.lines().toTable()}
+                
+                <h2>trades</h2>
+                ${acc.trades.lines().toTable()}                                
             """.trimIndent()
     }
 
@@ -163,7 +171,7 @@ class WebServer(port: Int = 8000, username: String, password: String) {
     private fun detailsRun(run: String): String {
         val result = StringBuilder()
         val info = runs.getValue(run)
-        result.append("<h2>${run}</h2>")
+        result.append("<h1>${run}</h1>")
         result.append(info.metric.toString())
         result.append("<br/><a href='/'>Back</a>".trimIndent())
         return String.format(template, result)

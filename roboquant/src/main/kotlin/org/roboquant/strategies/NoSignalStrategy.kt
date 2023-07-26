@@ -21,7 +21,7 @@ import org.roboquant.feeds.Event
 /**
  * Strategy that doesn't generate any signals. This is especially useful if you develop your Strategy as
  * a Policy (for example, when you require access to the Account). In that case, the NoSignalStrategy just serves as
- * a pass through and all logic can be handled by the policy.
+ * a pass-through and all logic can be handled by the policy.
  *
  * ## Example
  * ```
