@@ -77,6 +77,17 @@ class InternalAccount(var baseCurrency: Currency) {
     val portfolio = mutableMapOf<Asset, Position>()
 
     /**
+     * Remove all closed orders and trades.
+     *
+     * This won't impact the functioning of the internal account and speedup large back test with many orders.
+     * However, some metrics that rely on all orders/trades being available won't function properly.
+     */
+    internal fun removeClosedOrdersAndTrades() {
+        closedOrders.clear()
+        trades.clear()
+    }
+
+    /**
      * Clear all the state in this account.
      */
     fun clear() {

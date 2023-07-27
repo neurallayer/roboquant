@@ -181,7 +181,11 @@ private object Performance {
             repeat(backTests) {
                 jobs.add {
                     // use lower channel capacity to limit memory bandwidth
-                    val roboquant = Roboquant(getStrategy(skip), logger = SilentLogger(), channelCapacity = 3)
+                    val roboquant = Roboquant(
+                        getStrategy(skip),
+                        logger = SilentLogger(),
+                        channelCapacity = 3
+                    )
                     roboquant.runAsync(feed)
                 }
             }
@@ -199,9 +203,13 @@ private object Performance {
             Combination(1_000, 50, 100),
             Combination(2_000, 50, 100),
             Combination(5_000, 100, 100),
+
             Combination(5_000, 200, 100),
             Combination(10_000, 500, 100),
-            Combination(20_000, 500, 100)
+            Combination(20_000, 500, 100),
+
+            // Combination(25*3600, 1, 100),
+
         )
 
         val header = String.format(
@@ -215,13 +223,14 @@ private object Performance {
         for ((events, assets, backTests) in combinations) {
             // single run
             val feed = FastFeed(assets, events)
-            val t1 = feedFilter(feed)
-            val t2 = extendedRun(feed)
+            val t1 = feedFilter(feed) // Test iterating over feed
+            val t2 = extendedRun(feed) // Test a more complete back test
 
-            // multi-run
+            // multi-run to test engine scalability
             val (t3, trades) = seqRun(feed, backTests)
             val t4 = parRun(feed, backTests)
 
+            // Calculate the total number of candles processed in millions
             val candles = assets * events * backTests / 1_000_000
             val line = String.format(
                 "%6dM %7d %6d %4d %5dms %5dms %7dms %7dms %5dK %8dM",
@@ -234,10 +243,7 @@ private object Performance {
         println()
         exitProcess(0)
     }
-
-
 }
-
 
 private object Memory {
 

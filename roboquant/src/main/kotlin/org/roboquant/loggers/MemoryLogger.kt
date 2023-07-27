@@ -84,19 +84,28 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
      */
     override fun getMetric(name: String): Map<String, TimeSeries> {
         val result = mutableMapOf<String, TimeSeries>()
-        for ((run, entries) in history) {
-            val values = mutableListOf<Double>()
-            val times = mutableListOf<Instant>()
-            entries.forEach {
-                val e = it.metrics[name]
-                if (e != null) {
-                    values.add(e)
-                    times.add(it.time)
-                }
-            }
-            if (values.isNotEmpty()) result[run] = TimeSeries(times, values.toDoubleArray())
+        for (run in history.keys) {
+            val ts = getMetric(name, run)
+            if (ts.isNotEmpty()) result[run] = ts
         }
         return result
+    }
+
+    /**
+     * Get results for a metric specified by its [name] for a single [run]
+     */
+    override fun getMetric(name: String, run: String): TimeSeries {
+        val entries = history[run] ?: return TimeSeries(emptyList())
+        val values = mutableListOf<Double>()
+        val times = mutableListOf<Instant>()
+        entries.forEach {
+            val e = it.metrics[name]
+            if (e != null) {
+                values.add(e)
+                times.add(it.time)
+            }
+        }
+        return TimeSeries(times, values.toDoubleArray())
     }
 
 }

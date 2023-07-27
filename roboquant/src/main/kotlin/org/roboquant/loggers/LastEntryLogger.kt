@@ -82,15 +82,22 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
      */
     @Synchronized
     override fun getMetric(name: String): Map<String, TimeSeries> {
-        val result = mutableMapOf<String, MutableList<Observation>>()
-        for ((run, metrics) in history) {
-            for ((k,v) in metrics)
-            if (k == name) {
-                val h = result.getOrPut(run) { mutableListOf() }
-                h.add(v)
-            }
+        val result = mutableMapOf<String, TimeSeries>()
+        for (run in history.keys) {
+            val ts = getMetric(name, run)
+            if (ts.isNotEmpty()) result[run] = ts
         }
-        return result.mapValues { TimeSeries(it.value.sorted()) }
+        return result
+    }
+
+    /**
+     * Get results for the metric specified by its [name].
+     */
+    override fun getMetric(name: String, run: String): TimeSeries {
+        val entries = history[run] ?: return TimeSeries(emptyList())
+        val v = entries[name]
+        val result = if (v == null) emptyList() else listOf(v)
+        return TimeSeries(result)
     }
 
 }

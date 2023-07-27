@@ -22,8 +22,8 @@ import org.roboquant.orders.Order
 import java.time.Instant
 
 /**
- * Interface for any broker implementation, used for both simulated and real brokers. All brokers also implement the
- * [Lifecycle] interface that allows them to manage internal state.
+ * Interface for any broker implementation, used for both simulated and real brokers.
+ * Brokers can also implement the [Lifecycle] interface that allows them to manage internal state.
  */
 interface Broker : Lifecycle {
 
@@ -33,7 +33,7 @@ interface Broker : Lifecycle {
     val account: Account
 
     /**
-     * Sync the state of the account with the broker.
+     * Sync the state of the roboquant with the broker.
      *
      * Typically, this method will invoke the underlying broker API to obtain the latest state of positions, orders,
      * trades, cash and buying power.
@@ -46,8 +46,8 @@ interface Broker : Lifecycle {
     /**
      * Place new [orders] at this broker.
      *
-     * Optional provide a [time] that can be used by the broker to determine you are not submitting back test orders to
-     * a real broker.
+     * Optional provide a [time] that can be used by the broker as a safety check to determine you are not submitting
+     * back test orders to a real broker.
      */
     fun place(orders: List<Order>, time: Instant = Instant.now())
 

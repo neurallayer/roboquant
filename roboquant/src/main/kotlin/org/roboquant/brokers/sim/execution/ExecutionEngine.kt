@@ -145,7 +145,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
     internal fun execute(event: Event): List<Execution> {
         val time = event.time
 
-        // We always first execute modify-orders. These are run even if there is no known price for the asset
+        // We always first execute modify-orders. These are executed even if there is no known price for the asset
         for (modifyOrderState in modifiers) {
             val modifyOrder = modifyOrderState.order
             modifyOrderState.status = OrderStatus.ACCEPTED
@@ -157,7 +157,7 @@ class ExecutionEngine(private val pricingEngine: PricingEngine) {
             }
         }
 
-        // Now execute the create-orders. These are only run if there is a known price
+        // Now execute the create-orders. These are only executed if there is a known price
         val openCreateOrders = executors.open()
 
         // Return if there is nothing to do, to avoid the creation of event.prices

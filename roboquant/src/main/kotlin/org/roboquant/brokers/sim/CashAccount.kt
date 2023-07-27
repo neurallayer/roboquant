@@ -22,8 +22,12 @@ import org.roboquant.common.sumOf
  * AccountModel that models a plain cash account. No additional leverage or margin is available for trading.
  * This is the default AccountModel if none is specified during instantiation of a SimBroker
  *
- * You should not short positions when using the CashAccount since that is almost never allowed in the real world
- * and also not supported. If you do anyway, the short exposures are for the full 100% deducted from the buying power.
+ * You should typically not short positions when using the CashAccount since that is almost never allowed in the real
+ * world and also not supported.
+ *
+ * If you want to do it anyway, tThen the short exposures are for the full 100%
+ * deducted from the buying power.
+ *
  * So the used calculation is:
  *
  *      Buying power = cash - short exposure - minimum
@@ -39,8 +43,11 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
      * @see [AccountModel.updateAccount]
      */
     override fun updateAccount(account: InternalAccount) {
-        val shortExposure = account.portfolio.values.filter { it.short }.sumOf { it.exposure }
-        val cash = account.cash - shortExposure
+        var cash = account.cash
+        if (account.portfolio.isNotEmpty()) {
+            val shortExposure = account.portfolio.values.filter { it.short }.sumOf { it.exposure }
+            cash -= shortExposure
+        }
 
         val buyingPower = cash.convert(account.baseCurrency, account.lastUpdate) - minimum
         account.buyingPower = buyingPower
