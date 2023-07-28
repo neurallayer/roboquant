@@ -176,9 +176,9 @@ class InternalAccount(var baseCurrency: Currency) {
             baseCurrency,
             lastUpdate,
             cash.clone(),
-            trades.toList(),
+            trades.subList(0, trades.size),
             openOrders.values.toList(),
-            closedOrders.toList(),
+            closedOrders.subList(0, closedOrders.size),
             portfolio.values.toList(),
             buyingPower
         )
