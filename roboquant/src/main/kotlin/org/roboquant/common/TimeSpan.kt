@@ -135,7 +135,7 @@ class TimeSpan internal constructor(internal val period: Period, internal val du
 }
 
 /*********************************************************************************************
- * Extensions on Int type to make instantiation of TradingPeriods convenient
+ * Extensions on the Int type to make instantiation of TradingPeriods convenient
  *********************************************************************************************/
 
 /**

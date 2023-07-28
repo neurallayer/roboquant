@@ -77,10 +77,10 @@ data class Asset(
          * Returns an option contract using the OCC (`Options Clearing Corporation`) option symbol standard.
          * The OCC option symbol string consists of four parts:
          *
-         * 1. uppercase [symbol] of the underlying stock or ETF, padded with trailing spaces to 6 characters
-         * 2. [expiration] date, in the format `yymmdd`
-         * 3. Option [type], single character either P(ut) or C(all)
-         * 4. strike price, as the [price] x 1000, front padded with 0 to make it 8 digits
+         * 1. Uppercase [symbol] of the underlying stock or ETF, padded with trailing spaces to 6 characters
+         * 2. The [expiration] date, in the format `yymmdd`
+         * 3. The Option [type], single character either P(ut) or C(all)
+         * 4. The strike price, as the [price] x 1000, front padded with 0 to make it 8 digits
          */
         fun optionContract(
             symbol: String,

@@ -42,8 +42,9 @@ import kotlin.io.path.isRegularFile
  *
  * The LazyCSVFeed keeps files open to ensure better performance. So make sure your OS has enough open file descriptors
  * configured. For example, on Linux you can check this with:
- *
- *      cat /proc/sys/fs/file-max
+ * ```
+ * cat /proc/sys/fs/file-max
+ * ```
  *
  * If you use the same large sets of CSV files regular, you might consider converting them onetime to an
  * `AvroFeed` instead. This has also low-memory usage, but comes without a negative performance impact.

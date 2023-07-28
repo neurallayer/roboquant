@@ -27,7 +27,7 @@ Version 0.8 is all about making sure that (back-)testing works, and the most com
 
 Ensure the API is stable and start including AI and Machine Learning support
 
-* [X] Improve documentation, notebooks and examples
+* [X] Improve documentation, notebooks, and examples
 * [X] Include demo feeds for quick experimentation
 * [X] Use better approach for generating charts
 

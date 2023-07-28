@@ -30,10 +30,11 @@ import org.roboquant.feeds.Event
  * all available trades to calculate the realized PNL.
  *
  * Metric names used:
+ * ```
  * - pnl.realized
  * - pnl.unrealized
  * - pnl.total (= realized + unrealized)
- *
+ * ```
  * @constructor Create a new instance of the PNLMetric
  */
 class PNLMetric : Metric {

@@ -79,7 +79,7 @@ fun Timeline.split(size: Int): List<Timeframe> {
     val chunks = chunked(size)
     val result = mutableListOf<Timeframe>()
     for (chunk in chunks) {
-        if (size > 1) result.add(Timeframe(chunk.first(), chunk.last()))
+        if (chunk.size > 1) result.add(Timeframe(chunk.first(), chunk.last()))
     }
     result[result.lastIndex] = result.last().toInclusive()
     return result

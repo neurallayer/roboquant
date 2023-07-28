@@ -318,7 +318,7 @@ class AlpacaBroker(
      *
      * @param order
      */
-    private fun placeOrder(order: SingleOrder) {
+    private fun placeSingleOrder(order: SingleOrder) {
         val asset = order.asset
         require(asset.type in setOf(AssetType.STOCK, AssetType.CRYPTO)) {
             "only stocks and crypto supported, received ${asset.type}"
@@ -338,6 +338,7 @@ class AlpacaBroker(
         val qty = order.size.toBigDecimal().abs()
         val api = alpacaAPI.orders()
 
+        @Suppress("KotlinConstantConditions")
         val alpacaOrder = when (order) {
             is MarketOrder -> api.requestMarketOrder(asset.symbol, qty.toInt(), side, tif)
             is LimitOrder -> api.requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, extendedHours)
@@ -366,7 +367,7 @@ class AlpacaBroker(
         _account.initializeOrders(orders)
         for (order in orders) {
             when (order) {
-                is SingleOrder -> placeOrder(order)
+                is SingleOrder -> placeSingleOrder(order)
                 is CancelOrder -> cancelOrder(order)
                 is BracketOrder -> placeBracketOrder(order)
                 else -> throw UnsupportedException("unsupported order type order=$order")

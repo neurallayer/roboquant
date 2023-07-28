@@ -64,8 +64,9 @@ open class PriceSerie(private var capacity: Int) {
      * return a smaller array of length [PriceSerie.size].
      *
      * ## Usage
-     *
-     *      if (movingWindow.isFull()) return movingWindow.toDoubleArray()
+     * ```
+     * if (movingWindow.isFull()) return movingWindow.toDoubleArray()
+     * ```
      */
     fun toDoubleArray(): DoubleArray {
         val result = DoubleArray(size)

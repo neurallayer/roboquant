@@ -39,11 +39,11 @@ import org.knowm.xchange.dto.marketdata.OrderBook as CryptoOrderBook
  * See also https://knowm.org/open-source/xchange/
  *
  * # Example usage
- *
- *      val exchange = StreamingExchangeFactory.INSTANCE.createExchange(BitstampStreamingExchange::class.java)
- *      exchange.connect().blockingAwait()
- *      val feed =  CryptoFeed(exchange)
- *
+ * ```
+ *  val exchange = StreamingExchangeFactory.INSTANCE.createExchange(BitstampStreamingExchange::class.java)
+ *  exchange.connect().blockingAwait()
+ *  val feed = CryptoFeed(exchange)
+ * ```
  * @property useMachineTime use the local machine time to stamp the event or the exchange provided timestamp.
  * @constructor
  *

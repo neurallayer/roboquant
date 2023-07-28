@@ -54,7 +54,7 @@ internal class IBKRExchangeRates(
      */
     private fun waitTillSynced() {
         synchronized(lock) {
-            lock.wait(IBKR.maxResponseTime)
+            lock.wait(IBKR.MAX_RESPONSE_TIME)
         }
     }
 

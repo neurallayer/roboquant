@@ -25,10 +25,10 @@ import java.time.Instant
  * Scorecard calculates a common set of metrics that can be used to evaluate the performance of a strategy. If you
  * don't know which particular metrics to monitor, this is a good starting point.
  *
- * - winners
- * - losers
- * - profit
- * - max draw-down
+ * - The winners
+ * - The losers
+ * - The profit
+ * - The max draw-down
  *
  */
 class ScorecardMetric : Metric {

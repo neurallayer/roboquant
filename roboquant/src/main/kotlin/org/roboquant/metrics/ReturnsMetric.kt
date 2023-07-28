@@ -18,8 +18,8 @@ package org.roboquant.metrics
 
 import org.hipparchus.stat.descriptive.DescriptiveStatistics
 import org.roboquant.brokers.Account
-import org.roboquant.common.Timeframe
 import org.roboquant.common.TimeSpan
+import org.roboquant.common.Timeframe
 import org.roboquant.common.plus
 import org.roboquant.common.years
 import org.roboquant.feeds.Event
@@ -33,12 +33,14 @@ private const val EPS = 0.0000000001
  * Please note that this metric calculates the returns based on the total equity of the account.
  *
  * The following metrics will be calculated:
+ * ```
  * - returns.mean
  * - returns.std
  * - returns.sharperatio
  * - returns.min
  * - returns.max
  * - returns.last
+ *```
  *
  * @property riskFreeRate The annualized risk-free rate used in the Sharpe Ratio, for example, 4% would be 0.04.
  * Default is 0.0

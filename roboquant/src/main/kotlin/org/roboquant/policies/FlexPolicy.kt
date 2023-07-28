@@ -215,7 +215,7 @@ open class FlexPolicy(
     /**
      * Record basic metrics: `actions`, `signals`, `orders.new`, `orders.open`, `orders.closed`,
      * `positions` and `buyingpower`.
-     * s
+     *
      * The main purpose is to better understand when the policy is not behaving as expected.
      */
     open fun record(orders: List<Order>, signals: List<Signal>, event: Event, account: Account) {

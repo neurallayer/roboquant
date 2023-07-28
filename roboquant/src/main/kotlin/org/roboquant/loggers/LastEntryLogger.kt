@@ -23,11 +23,6 @@ import java.time.Instant
 import java.util.*
 
 /**
- * Create a mutable synchronized list
- */
-// fun <K,V> mutableSynchronisedMapOf(): MutableMap<K,V> = Collections.synchronizedMap(mutableMapOf<K,V>())
-
-/**
  * Stores the last value of a metric for a particular run in memory.
  * This is more memory efficient than the [MemoryLogger] if you only care about the last recorded result and not the
  * values of metrics at each step of a run.

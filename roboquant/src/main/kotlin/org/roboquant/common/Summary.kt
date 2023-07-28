@@ -29,14 +29,14 @@ import java.text.DecimalFormat
 class Summary(val content: String) {
 
     private val children = mutableListOf<Summary>()
-    private val decimalFormatter = DecimalFormat(decimalPattern)
+    private val decimalFormatter = DecimalFormat(DECIMAL_PATTERN)
 
     /**
      * @suppress
      */
     private companion object {
-        private const val decimalPattern = "#.###"
-        private const val sep = ": "
+        private const val DECIMAL_PATTERN = "#.###"
+        private const val SEP = ": "
     }
 
     /**
@@ -49,7 +49,7 @@ class Summary(val content: String) {
      * format it. Other numbers will be presented using the toString() method.
      */
     fun add(label: String, value: Int) {
-        children.add(Summary("$label$sep$value"))
+        children.add(Summary("$label$SEP$value"))
     }
 
     /**
@@ -57,13 +57,13 @@ class Summary(val content: String) {
      * format it. Other numbers will be presented using the toString() method.
      */
     fun add(label: String, value: Double) {
-        children.add(Summary("$label$sep${decimalFormatter.format(value)}"))
+        children.add(Summary("$label$SEP${decimalFormatter.format(value)}"))
     }
 
     /**
      * Add a [label] and [value] to this summary
      */
-    fun add(label: String, value: Any?) = children.add(Summary("$label$sep$value"))
+    fun add(label: String, value: Any?) = children.add(Summary("$label$SEP$value"))
 
     /**
      * Add a [label] to this summary

@@ -115,7 +115,7 @@ class Exchange private constructor(
             get() = instances.values
 
         private val instances = ConcurrentHashMap<String, Exchange>()
-        private const val newYorkTimeZone = "America/New_York"
+        private const val NY_TIMEZONE = "America/New_York"
 
         /**
          * Returns the Exchange instance for the given [exchangeCode]. If no exchange is found, a new exchange instance
@@ -153,42 +153,42 @@ class Exchange private constructor(
          * exchange cannot be found or an exchange is not specified. It uses New York timezone and USD as its default
          * currency.
          */
-        val DEFAULT = addInstance("", newYorkTimeZone)
+        val DEFAULT = addInstance("", NY_TIMEZONE)
 
         /**
          * Generic US Exchange
          */
-        val US = addInstance("US", newYorkTimeZone)
+        val US = addInstance("US", NY_TIMEZONE)
 
         /**
          * New York Stock Exchange (US)
          */
-        val NYSE = addInstance("NYSE", newYorkTimeZone)
+        val NYSE = addInstance("NYSE", NY_TIMEZONE)
 
         /**
          * NASDAQ (US) Stock Exchange
          */
-        val NASDAQ = addInstance("NASDAQ", newYorkTimeZone)
+        val NASDAQ = addInstance("NASDAQ", NY_TIMEZONE)
 
         /**
          * BATS (US) Stock Exchange
          */
-        val BATS = addInstance("BATS", newYorkTimeZone)
+        val BATS = addInstance("BATS", NY_TIMEZONE)
 
         /**
          * CBOE (US) Stock Exchange
          */
-        val CBOE = addInstance("CBOE", newYorkTimeZone)
+        val CBOE = addInstance("CBOE", NY_TIMEZONE)
 
         /**
          * ARCA (US) Stock Exchange
          */
-        val ARCA = addInstance("ARCA", newYorkTimeZone)
+        val ARCA = addInstance("ARCA", NY_TIMEZONE)
 
         /**
          * AMEX (US) Stock Exchange
          */
-        val AMEX = addInstance("AMEX", newYorkTimeZone)
+        val AMEX = addInstance("AMEX", NY_TIMEZONE)
 
         /**
          * Toronto Stock Exchange

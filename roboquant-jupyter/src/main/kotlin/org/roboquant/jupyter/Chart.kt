@@ -128,11 +128,11 @@ abstract class Chart : HTMLOutput() {
     companion object {
 
         // Which commit of echarts.min.js to use
-        private const val commit = "029d3e10fb657cd57f0d511f21ff7595faebcfcb"
+        private const val COMMIT = "029d3e10fb657cd57f0d511f21ff7595faebcfcb"
 
         // Use a CDN to cache the JavaScript file
-        internal const val scriptUrl =
-            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@$commit/echarts.min.js?version=$commit"
+        internal const val JSURL =
+            "https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@$COMMIT/echarts.min.js?version=$COMMIT"
 
         /**
          * Used to ensure the output divs have a unique id. This is only used in classic notebooks since then the
@@ -197,7 +197,7 @@ abstract class Chart : HTMLOutput() {
          * Get the HTML script tag to include the required JavaScript.
          */
         fun getScript(): String {
-            return """<script type='text/javascript' src='$scriptUrl'></script>"""
+            return """<script type='text/javascript' src='$JSURL'></script>"""
         }
 
     }

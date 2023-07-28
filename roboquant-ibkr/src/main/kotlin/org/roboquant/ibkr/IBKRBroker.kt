@@ -120,7 +120,7 @@ class IBKRBroker(
     private fun updateAccount() {
         client.reqAccountUpdates(true, accountId)
         synchronized(accountUpdateLock) {
-            accountUpdateLock.wait(IBKR.maxResponseTime)
+            accountUpdateLock.wait(IBKR.MAX_RESPONSE_TIME)
         }
     }
 

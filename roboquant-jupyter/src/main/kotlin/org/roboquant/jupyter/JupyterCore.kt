@@ -144,7 +144,7 @@ internal class JupyterCore(
 
         resources {
             js("echarts") {
-                url(Chart.scriptUrl)
+                url(Chart.JSURL)
             }
         }
 

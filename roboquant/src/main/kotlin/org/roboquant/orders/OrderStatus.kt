@@ -65,7 +65,8 @@ enum class OrderStatus {
     REJECTED;
 
     /**
-     * Returns true if the order has been aborted. That implies it is in one of the following three "error" end-states:
+     * Returns true if the order has been aborted.
+     * That implies it is in one of the following three "error" end states:
      * [CANCELLED], [EXPIRED], [REJECTED]
      */
     val aborted: Boolean

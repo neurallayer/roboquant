@@ -69,7 +69,7 @@ class PriceBarSerie(capacity: Int) {
         get() = volumeBuffer.toDoubleArray()
 
     /**
-     * Typical prices ( high + low + close / 3)
+     * Typical prices (high + low + close / 3)
      */
     val typical
         get() = (highBuffer.toDoubleArray() + lowBuffer.toDoubleArray() + closeBuffer.toDoubleArray()) / 3.0

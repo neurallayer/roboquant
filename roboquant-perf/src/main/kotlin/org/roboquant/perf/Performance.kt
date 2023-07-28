@@ -98,7 +98,7 @@ private class FastFeed(nAssets: Int, val events: Int) : Feed {
  */
 private object Performance {
 
-    private const val skip = 999 // create signal in 1 out of 999 price-action
+    private const val SKIP = 999 // create signal in 1 out of 999 price-action
     private fun getStrategy(skip: Int): Strategy = FastStrategy(skip)
 
     /**
@@ -123,7 +123,7 @@ private object Performance {
             // sequential runs
             trades = 0
             repeat(backTests) {
-                val roboquant = Roboquant(getStrategy(skip), logger = SilentLogger())
+                val roboquant = Roboquant(getStrategy(SKIP), logger = SilentLogger())
                 roboquant.run(feed)
                 trades += roboquant.broker.account.trades.size
             }
@@ -151,9 +151,9 @@ private object Performance {
         return measure {
 
             val strategy = CombinedStrategy(
-                getStrategy(skip - 1),
-                getStrategy(skip),
-                getStrategy(skip + 1),
+                getStrategy(SKIP - 1),
+                getStrategy(SKIP),
+                getStrategy(SKIP + 1),
             )
 
             val broker = SimBroker(accountModel = MarginAccount())
@@ -182,7 +182,7 @@ private object Performance {
                 jobs.add {
                     // use lower channel capacity to limit memory bandwidth
                     val roboquant = Roboquant(
-                        getStrategy(skip),
+                        getStrategy(SKIP),
                         logger = SilentLogger(),
                         channelCapacity = 3
                     )

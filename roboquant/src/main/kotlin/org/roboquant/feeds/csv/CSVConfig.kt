@@ -64,7 +64,7 @@ data class CSVConfig(
      */
     companion object {
 
-        private const val configFileName = "config.properties"
+        private const val CONFIG_FILE = "config.properties"
         private val logger = Logging.getLogger(CSVConfig::class)
 
         /**
@@ -192,7 +192,7 @@ data class CSVConfig(
          * Read properties from config file [path] is it exist.
          */
         private fun readConfigFile(path: Path): Map<String, String> {
-            val filePath = path / configFileName
+            val filePath = path / CONFIG_FILE
             val file = filePath.toFile()
             val prop = Properties()
             if (file.exists()) {

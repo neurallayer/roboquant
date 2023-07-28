@@ -205,9 +205,9 @@ class AvroFeed(private val path: Path) : AssetFeed {
     companion object {
 
         private val logger = Logging.getLogger(AvroFeed::class)
-        private const val sp500File = "sp500_pricebar_v5.1.avro"
-        private const val sp500QuoteFile = "sp500_pricequote_v5.0.avro"
-        private const val forexFile = "forex_pricebar_v5.1.avro"
+        private const val SP500FILE = "sp500_pricebar_v5.1.avro"
+        private const val SP500QUOTEFILE = "sp500_pricequote_v5.0.avro"
+        private const val FOREXFILE = "forex_pricebar_v5.1.avro"
 
         /**
          * Get an AvroFeed containing end-of-day [PriceBar] data for the companies listed in the S&P 500. This feed
@@ -216,7 +216,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
          * Please note that not all US exchanges are included, so the prices are not 100% accurate.
          */
         fun sp500(): AvroFeed {
-            val path = download(sp500File)
+            val path = download(SP500FILE)
             return AvroFeed(path)
         }
 
@@ -227,7 +227,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
          * Please note that not all US exchanges are included, so the prices are not 100% accurate.
          */
         fun sp500Quotes(): AvroFeed {
-            val path = download(sp500QuoteFile)
+            val path = download(SP500QUOTEFILE)
             return AvroFeed(path)
         }
 
@@ -235,7 +235,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
          * Get an AvroFeed containing 1 minute [PriceBar] data for an EUR/USD currency pair.
          */
         fun forex(): AvroFeed {
-            val path = download(forexFile)
+            val path = download(FOREXFILE)
             return AvroFeed(path)
         }
 
@@ -261,7 +261,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
         /**
          * Schema used to store different types of [PriceAction]
          */
-        private const val schemaDef = """
+        private const val SCHEMA = """
             {
              "namespace": "org.roboquant.avro.schema",
              "type": "record",
@@ -295,7 +295,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
             assetFilter: AssetFilter = AssetFilter.all()
         ) = runBlocking {
             val channel = EventChannel(timeframe = timeframe)
-            val schema = Schema.Parser().parse(schemaDef)
+            val schema = Schema.Parser().parse(SCHEMA)
             val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
             val dataFileWriter = DataFileWriter(datumWriter)
             val file = File(fileName)

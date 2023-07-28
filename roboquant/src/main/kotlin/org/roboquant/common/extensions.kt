@@ -178,8 +178,9 @@ fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 
 /**
  * Return the returns. The resulting array size will be 1 smaller than the original one. Formula used is:
- *
- *      return = new/old - 1.0
+ * ```
+ * return = new/old - 1.0
+ * ```
  */
 fun DoubleArray.returns(): DoubleArray {
     if (size < 2) return DoubleArray(0)
@@ -245,8 +246,9 @@ fun DoubleArray.growthRates(): DoubleArray {
 
 /**
  * Get the total return. Formula used is
- *
- *      return = last/first - 1.0
+ * ```
+ * return = last/first - 1.0
+ * ```
  */
 fun DoubleArray.totalReturn(): Double {
     return if (size < 2)

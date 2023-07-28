@@ -174,7 +174,7 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
     }
 
     /**
-     * Withdraw  a monetary [amount][Amount]. If the currency already exists, it
+     * Withdraw a monetary [amount][Amount]. If the currency already exists, it
      * will be deducted from the existing value, otherwise a new entry will be created.
      */
     fun withdraw(amount: Amount) {
