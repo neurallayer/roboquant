@@ -113,8 +113,10 @@ suspend fun binanceWebServer() {
 
     val server = WebServer(username= "test", password="secret")
     server.start()
-    val tf = Timeframe.next(4.hours)
+    val tf = Timeframe.next(8.hours)
     server.runAsync(rq, feed, tf)
+    server.stop()
+    feed.close()
 }
 
 fun binanceBackTest() {
