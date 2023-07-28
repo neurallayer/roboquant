@@ -18,6 +18,7 @@ package org.roboquant.backtest
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
 
 
@@ -26,7 +27,7 @@ import org.roboquant.common.Timeframe
  */
 fun interface Score {
 
-    fun calculate(roboquant: Roboquant, run: String, timeframe: Timeframe) : Double
+    fun calculate(roboquant: Roboquant, run: String, timeframe: Timeframe): Double
 
     /**
      * Predefined score functions
@@ -51,17 +52,37 @@ fun interface Score {
 }
 
 /**
- * Use the last value of recorded metric name as the score.
+ * Use a recorded metric as the basis of the score.
  *
  * Use this with a metrics logger that supports the retrieval of metrics.
+ *
+ * @param metricName the metric name to use
+ * @param reduce the function to use to go from a [TimeSeries] to a [Double], default being last entry,
  */
-class MetricScore(private val metricName: String) : Score {
+class MetricScore(private val metricName: String, private val reduce: (TimeSeries) -> Double = Companion::last) :
+    Score {
+
+    /**
+     * Some typical reduce functions to derive a [Double] value out of a [TimeSeries]
+      */
+    companion object {
+
+        fun last(ts: TimeSeries) = ts.values.last()
+        fun mean(ts: TimeSeries) = ts.values.average()
+        fun max(ts: TimeSeries) = ts.values.max()
+        fun min(ts: TimeSeries) = ts.values.max()
+        fun annualized(ts: TimeSeries) : Double {
+            if (ts.size < 2) return Double.NaN
+            val perc = (ts.values.last() - ts.values.first()) / ts.values.first()
+            return ts.timeframe.annualize(perc)
+        }
+
+    }
+
 
     override fun calculate(roboquant: Roboquant, run: String, timeframe: Timeframe): Double {
-        val logger = roboquant.logger
-        // assert(logger.metricNames.contains(metricName)) { "$metricName not found in logger" }
-        val metrics = logger.getMetric(metricName)[run] ?: return Double.NaN
-        return metrics.values.last()
+        val metrics = roboquant.logger.getMetric(metricName, run)
+        return if (metrics.isNotEmpty()) reduce(metrics) else Double.NaN
     }
 
 }
