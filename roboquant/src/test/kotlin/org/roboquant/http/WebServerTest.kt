@@ -19,8 +19,8 @@ class WebServerTest {
         assertDoesNotThrow {
             runBlocking {
                 val ws = WebServer()
-                ws.runAsync(rq, feed, feed.timeframe)
                 ws.start()
+                ws.runAsync(rq, feed, feed.timeframe)
                 ws.stop()
             }
         }
