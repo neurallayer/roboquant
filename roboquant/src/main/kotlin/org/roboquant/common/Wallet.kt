@@ -17,6 +17,7 @@
 package org.roboquant.common
 
 import java.time.Instant
+import java.util.*
 
 
 /**
@@ -32,7 +33,7 @@ import java.time.Instant
  * the [convert] method if you want to do so.
  */
 @Suppress("TooManyFunctions")
-class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneable {
+class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashMap(1)) : Cloneable {
 
     /**
      * @suppress
@@ -42,8 +43,12 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
         /**
          * Create a Wallet based on the [amount]
          */
-        operator fun invoke(amount: Amount): Wallet =
-            Wallet(hashMapOf((amount.currency to amount.value)))
+        operator fun invoke(amount: Amount): Wallet {
+            val data = IdentityHashMap<Currency, Double>(1)
+            data[amount.currency] = amount.value
+            return Wallet(data)
+        }
+
 
         /**
          * Create a Wallet based on the [amounts]
@@ -201,7 +206,7 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
      * Create a clone of this wallet
      */
     @Suppress("UNCHECKED_CAST")
-    public override fun clone(): Wallet = Wallet(data.clone() as HashMap<Currency, Double>)
+    public override fun clone(): Wallet = Wallet(data.clone() as IdentityHashMap<Currency, Double>)
 
     /**
      * Clear this Wallet instance, removing all the amounts it is holding.
@@ -232,7 +237,7 @@ class Wallet(private val data: HashMap<Currency, Double> = HashMap(1)) : Cloneab
      * A wallet equals another wallet if they hold the same currencies and corresponding amounts.
      */
     override fun equals(other: Any?): Boolean {
-        return if (other is Wallet) data == other.data else false
+        return if (other is Wallet) toMap() == other.toMap() else false
     }
 
     /**

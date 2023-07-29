@@ -48,7 +48,7 @@ class InternalAccount(var baseCurrency: Currency) {
     /**
      * The trades that have been executed
      */
-    val trades = mutableListOf<Trade>()
+    var trades = mutableListOf<Trade>()
 
     /**
      * Open orders
@@ -59,7 +59,7 @@ class InternalAccount(var baseCurrency: Currency) {
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
      * closed.
      */
-    private val closedOrders = mutableListOf<OrderState>()
+    private var closedOrders = mutableListOf<OrderState>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -83,18 +83,23 @@ class InternalAccount(var baseCurrency: Currency) {
      * However, some metrics that rely on all orders/trades being available won't function properly.
      */
     internal fun removeClosedOrdersAndTrades() {
-        closedOrders.clear()
-        trades.clear()
+        // Create new instances since clear() could impact previously returned
+        // accounts since they contain sub-lists of the closedOrders and trades.
+        closedOrders = mutableListOf()
+        trades = mutableListOf()
     }
 
     /**
      * Clear all the state in this account.
      */
     fun clear() {
+        // Create new instances since clear() could impact previously returned
+        // accounts since they contain sub-lists of the closedOrders and trades.
+        closedOrders = mutableListOf()
+        trades = mutableListOf()
+
         lastUpdate = Instant.MIN
-        trades.clear()
         openOrders.clear()
-        closedOrders.clear()
         portfolio.clear()
         cash.clear()
     }
@@ -166,6 +171,7 @@ class InternalAccount(var baseCurrency: Currency) {
             }
         }
     }
+
 
     /**
      * Create an immutable [Account] instance that can be shared with other components (Policy and Metric) and is
