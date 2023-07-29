@@ -26,9 +26,25 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.Feed
 import org.roboquant.metrics.Metric
+import org.roboquant.orders.Order
 import org.roboquant.orders.lines
+import org.roboquant.policies.Policy
+import org.roboquant.strategies.Signal
 import java.io.OutputStream
 import java.net.InetSocketAddress
+
+/**
+ * Allows a policy to be paused, aka don't generate orders.
+ */
+private class PausablePolicy(val policy: Policy, var pause: Boolean = false) : Policy by policy {
+
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+        // Still invoke the policy so any state can be updated if required.
+        val orders = policy.act(signals, account, event)
+        return if (pause) emptyList() else orders
+    }
+
+}
 
 /**
  * Metric used to capture basic information of a run that is displayed on the web pages.
@@ -177,24 +193,53 @@ class WebServer(port: Int = 8000, username: String, password: String) {
         return String.format(template, result)
     }
 
+    private fun pause(run: String) {
+        val info = runs.getValue(run)
+        val policy = info.roboquant.policy as PausablePolicy
+        policy.pause = true
+    }
 
-    private fun overviewRuns(): String {
+    private fun resume(run: String) {
+        val info = runs.getValue(run)
+        val policy = info.roboquant.policy as PausablePolicy
+        policy.pause = false
+    }
+
+
+    private fun overviewRuns(query: String): String {
+        println(query)
+        if (query.isNotBlank()) {
+            val (action, run) = query.split('=')
+            when (action) {
+                "pause" -> pause(run)
+                "resume" -> resume(run)
+            }
+        }
+
         val result = StringBuilder()
         result.append(
             """
-            <table class=table><tr><th>Run</th><th>Timeframe</th><th>Orders</th><th>Last Update</th><th>Actions</th></tr>
+            <table class=table><tr><th>Run</th><th>Timeframe</th><th>State</th><th>Orders</th><th>Last Update</th><th>Actions</th></tr>
         """.trimIndent()
         )
         for ((run, info) in runs) {
             val account = info.metric.account
             val orders = if (account != null) account.closedOrders.size + account.openOrders.size else 0
+            val paused = (info.roboquant.policy as PausablePolicy).pause
+            val state = if (paused) "paused" else "running"
 
             result.append("<tr>")
             result.append("<td>$run</td>")
             result.append("<td>${info.timeframe}</td>")
+            result.append("<td>$state</td>")
             result.append("<td>$orders</td>")
             result.append("<td>${account?.lastUpdate}</td>")
-            result.append("<td><a href='/runs/$run'>Details</a></td>")
+            result.append("""
+                <td>
+                    <a href='/runs/$run'>Details</a>
+                    <a href='/?pause=$run'>Pause</a>
+                    <a href='/?resume=$run'>Resume</a>
+                </td>""")
             result.append("</tr>")
         }
         result.append("</table>")
@@ -210,9 +255,8 @@ class WebServer(port: Int = 8000, username: String, password: String) {
             val path = it.requestURI.path
             val content = when {
                 path.startsWith("/runs/") -> detailsRun(path.split('/').last())
-                else -> overviewRuns()
+                else -> overviewRuns(it.requestURI.query ?: "")
             }
-            println(it.requestURI.path)
             val response = content.encodeToByteArray()
             it.sendResponseHeaders(200, response.size.toLong())
             val os: OutputStream = it.responseBody
@@ -240,7 +284,7 @@ class WebServer(port: Int = 8000, username: String, password: String) {
         val metric = WebMetric()
         val run = "run-${run++}"
 
-        val rq = roboquant.copy(metrics = roboquant.metrics + metric)
+        val rq = roboquant.copy(metrics = roboquant.metrics + metric, policy = PausablePolicy(roboquant.policy))
         runs[run] = RunInfo(metric, rq, feed, timeframe, warmup)
         rq.runAsync(feed, timeframe, warmup, run)
     }
