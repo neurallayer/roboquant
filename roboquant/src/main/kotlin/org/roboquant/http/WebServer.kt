@@ -270,10 +270,11 @@ class WebServer(port: Int = 8000, username: String, password: String) {
     }
 
     /**
-     * Stop the server, optionally provide a [delay] in seconds
+     * Stop the server, optionally provide a [delay] in seconds. This will also close the feeds
      */
     fun stop(delay: Int = 0) {
         server.stop(delay)
+        for (info in runs.values) try { info.feed.close() } catch(_: RuntimeException) {}
     }
 
     /**

@@ -69,6 +69,12 @@
             <groupId>org.icepear.echarts</groupId>
             <artifactId>echarts-java</artifactId>
             <version>1.0.7</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.jknack</groupId>
+                    <artifactId>handlebars</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

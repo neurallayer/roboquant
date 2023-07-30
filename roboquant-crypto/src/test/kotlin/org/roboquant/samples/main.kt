@@ -116,7 +116,6 @@ suspend fun binanceWebServer() {
     val tf = Timeframe.next(8.hours)
     server.runAsync(rq, feed, tf)
     server.stop()
-    feed.close()
 }
 
 fun binanceBackTest() {
