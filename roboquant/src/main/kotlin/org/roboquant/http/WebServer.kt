@@ -167,8 +167,8 @@ internal class Authenticator2(private val username: String, private val password
  *
  * ```
  * val ws = WebServer()
- * ws.runAsync(roboquant, feed, Timeframe.next(8.hours))
  * ws.start()
+ * ws.runAsync(roboquant, feed, Timeframe.next(8.hours))
  * ```
  *
  * This server might be replaced in the future for a more secure solution.
