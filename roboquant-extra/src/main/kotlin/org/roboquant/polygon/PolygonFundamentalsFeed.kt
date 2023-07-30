@@ -136,7 +136,7 @@ class PolygonFundamentalsFeed(
             val param = FinancialsParameters(ticker = symbol, limit = limit, timeframe = coverPeriod)
             val results = client.experimentalClient.getFinancialsBlocking(param).results ?: emptyList()
             for (financials in results) {
-                logger.trace { financials }
+                logger.trace { financials.toString() }
                 if (financials.filingDate == null || financials.financials == null) continue
                 val action = financials2Action(symbol, financials.financials!!)
                 val time = Instant.parse(financials.filingDate + "T23:59:59Z")

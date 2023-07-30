@@ -88,8 +88,8 @@ internal class JupyterCore(
 
 
     init {
-        logger.debug { options.toMap() }
-        logger.debug { notebook }
+        logger.debug { options.toMap().toString() }
+        logger.debug { notebook.toString() }
     }
 
     companion object {

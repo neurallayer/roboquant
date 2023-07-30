@@ -172,7 +172,7 @@ class BinanceLiveFeed(
         for (c in closeables) try {
             c.close()
         } catch (e: Throwable) {
-            logger.debug { e }
+            logger.debug(e) { "error during closing feed" }
         }
         closeables.clear()
     }

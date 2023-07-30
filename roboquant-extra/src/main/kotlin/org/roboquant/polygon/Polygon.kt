@@ -62,7 +62,7 @@ internal object Polygon {
                 }
 
                 override fun onReceive(client: PolygonWebSocketClient, message: PolygonWebSocketMessage) {
-                    logger.trace { message }
+                    logger.trace { message.toString() }
                     handler(message)
                 }
 
@@ -71,7 +71,7 @@ internal object Polygon {
                 }
 
                 override fun onError(client: PolygonWebSocketClient, error: Throwable) {
-                    logger.warn(error) {}
+                    logger.warn(error) { "websocket error" }
                 }
 
             })

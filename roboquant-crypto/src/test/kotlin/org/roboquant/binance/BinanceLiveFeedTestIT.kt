@@ -60,7 +60,6 @@ internal class BinanceLiveFeedTestIT {
 
         val timeframe = Timeframe.next(3.minutes)
         val prices = feed.filter<PriceAction>(timeframe = timeframe) {
-            logger.info { it }
             true
         }
         feed.close()

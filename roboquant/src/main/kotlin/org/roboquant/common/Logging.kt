@@ -28,43 +28,43 @@ import kotlin.reflect.KClass
 object Logging {
 
     /**
-     * Logger class that extends a SLF4J logger and allows for some Kotlin idiomatic usage patterns
+     * Logger class that extends a SLF4J logger and allows for Kotlin idiomatic usage patterns
      */
     class Logger(private val slf4jLogger: org.slf4j.Logger) : org.slf4j.Logger by slf4jLogger {
 
         /**
          * @see org.slf4j.Logger.trace
          */
-        inline fun trace(throwable: Throwable? = null, messageProducer: () -> Any?) {
-            if (isTraceEnabled) trace(messageProducer()?.toString(), throwable)
+        inline fun trace(throwable: Throwable? = null, messageProducer: () -> String) {
+            if (isTraceEnabled) trace(messageProducer(), throwable)
         }
 
         /**
          * @see org.slf4j.Logger.debug
          */
-        inline fun debug(throwable: Throwable? = null, messageProducer: () -> Any?) {
-            if (isDebugEnabled) debug(messageProducer()?.toString(), throwable)
+        inline fun debug(throwable: Throwable? = null, messageProducer: () -> String) {
+            if (isDebugEnabled) debug(messageProducer(), throwable)
         }
 
         /**
          * @see org.slf4j.Logger.info
          */
-        inline fun info(throwable: Throwable? = null, messageProducer: () -> Any?) {
-            if (isInfoEnabled) info(messageProducer()?.toString(), throwable)
+        inline fun info(throwable: Throwable? = null, messageProducer: () -> String) {
+            if (isInfoEnabled) info(messageProducer(), throwable)
         }
 
         /**
          * @see org.slf4j.Logger.warn
          */
-        inline fun warn(throwable: Throwable? = null, messageProducer: () -> Any?) {
-            if (isWarnEnabled) warn(messageProducer()?.toString(), throwable)
+        inline fun warn(throwable: Throwable? = null, messageProducer: () -> String) {
+            if (isWarnEnabled) warn(messageProducer(), throwable)
         }
 
         /**
          * @see org.slf4j.Logger.error
          */
-        inline fun error(throwable: Throwable? = null, messageProducer: () -> Any?) {
-            if (isErrorEnabled) error(messageProducer()?.toString(), throwable)
+        inline fun error(throwable: Throwable? = null, messageProducer: () -> String) {
+            if (isErrorEnabled) error(messageProducer(), throwable)
         }
 
     }

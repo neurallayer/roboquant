@@ -120,13 +120,43 @@ private class WebMetric : Metric {
 
 }
 
-internal class Authenticator(private val username: String, private val password: String) :
+internal class RoboquantAuthenticator(private val username: String, private val password: String) :
     BasicAuthenticator("roboquant") {
     override fun checkCredentials(username: String?, password: String?): Boolean {
         return (username == this.username && password == this.password)
     }
 
 }
+
+/*
+internal class Authenticator2(private val username: String, private val password: String) : Authenticator() {
+
+
+    private fun ByteArray.toHex() : String {
+        val sb = java.lang.StringBuilder()
+        for (b in this) sb.append(String.format("%02X ", b))
+        return sb.toString().uppercase()
+    }
+
+    private fun getOnce() : String {
+        val md = MessageDigest.getInstance("MD5")
+        val uuid = UUID.randomUUID().toString().encodeToByteArray()
+        return md.digest(uuid).toHex()
+    }
+
+    override fun authenticate(exchange: HttpExchange): Result {
+        val auth = exchange.requestHeaders["Authorization"]
+        if (auth.isNullOrEmpty()) {
+            exchange.responseHeaders["WWW-Authenticate"] = """Digest realm="roboquant"""""
+            return Retry(401)
+        }
+        return Success(HttpPrincipal(username, "roboquant"))
+    }
+
+
+}
+*/
+
 
 /**
  * Very lightweight webserver that enables you to run a trading strategy and view some key metrics while it is running.
@@ -157,7 +187,8 @@ class WebServer(port: Int = 8000, username: String, password: String) {
     private val runs = mutableMapOf<String, RunInfo>()
     private val server: HttpServer = HttpServer.create(InetSocketAddress(port), 0)
     private var run = 0
-    private val authenticator: Authenticator? = if (username.isNotEmpty()) Authenticator(username, password) else null
+    private val roboquantAuthenticator: RoboquantAuthenticator? =
+        if (username.isNotEmpty()) RoboquantAuthenticator(username, password) else null
 
     private data class RunInfo(
         val metric: WebMetric,
@@ -234,12 +265,14 @@ class WebServer(port: Int = 8000, username: String, password: String) {
             result.append("<td>$state</td>")
             result.append("<td>$orders</td>")
             result.append("<td>${account?.lastUpdate}</td>")
-            result.append("""
+            result.append(
+                """
                 <td>
                     <a href='/runs/$run'>Details</a>
                     <a href='/?pause=$run'>Pause</a>
                     <a href='/?resume=$run'>Resume</a>
-                </td>""")
+                </td>"""
+            )
             result.append("</tr>")
         }
         result.append("</table>")
@@ -264,7 +297,7 @@ class WebServer(port: Int = 8000, username: String, password: String) {
             os.close()
         }
 
-        if (authenticator != null) ctx.setAuthenticator(authenticator)
+        if (roboquantAuthenticator != null) ctx.setAuthenticator(roboquantAuthenticator)
 
         server.start()
     }
@@ -274,7 +307,10 @@ class WebServer(port: Int = 8000, username: String, password: String) {
      */
     fun stop(delay: Int = 0) {
         server.stop(delay)
-        for (info in runs.values) try { info.feed.close() } catch(_: RuntimeException) {}
+        for (info in runs.values) try {
+            info.feed.close()
+        } catch (_: RuntimeException) {
+        }
     }
 
     /**
