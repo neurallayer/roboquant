@@ -19,6 +19,7 @@ package org.roboquant.loggers
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
 import java.time.Instant
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Store metric results in memory. Very convenient in a Jupyter notebook when you want to inspect or visualize
@@ -37,13 +38,14 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
 
     internal class Entry(val time: Instant, val metrics: Map<String, Double>)
 
-    internal val history = mutableMapOf<String, MutableList<Entry>>()
+    // Use a ConcurrentHashMap if this logger is used in parallel back-testing
+    internal val history = ConcurrentHashMap<String, MutableList<Entry>>()
     private val progressBar = ProgressBar()
 
-    @Synchronized
     override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (showProgress) progressBar.update(time)
         if (results.isEmpty()) return
+
         val entries = history.getOrPut(run) { mutableListOf() }
         entries.add(Entry(time, results))
     }
@@ -71,7 +73,7 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
      * Get all the recorded runs in this logger
      */
     val runs: Set<String>
-        get() = history.keys
+        get() = history.keys.toSortedSet()
 
     /**
      * Get the unique list of metric names that have been captured
@@ -88,7 +90,7 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
             val ts = getMetric(name, run)
             if (ts.isNotEmpty()) result[run] = ts
         }
-        return result
+        return result.toSortedMap()
     }
 
     /**

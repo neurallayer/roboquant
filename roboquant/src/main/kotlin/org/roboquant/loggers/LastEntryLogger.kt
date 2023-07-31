@@ -20,7 +20,7 @@ import org.roboquant.common.Observation
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
 import java.time.Instant
-import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Stores the last value of a metric for a particular run in memory.
@@ -34,10 +34,9 @@ import java.util.*
 class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
 
     // The key is runName
-    private val history = Hashtable<String, MutableMap<String, Observation>>()
+    private val history = ConcurrentHashMap<String, MutableMap<String, Observation>>()
     private val progressBar = ProgressBar()
 
-    @Synchronized
     override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (showProgress) progressBar.update(time)
 
@@ -75,7 +74,6 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
     /**
      * Get results for the metric specified by its [name].
      */
-    @Synchronized
     override fun getMetric(name: String): Map<String, TimeSeries> {
         val result = mutableMapOf<String, TimeSeries>()
         for (run in history.keys) {

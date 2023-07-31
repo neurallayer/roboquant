@@ -73,6 +73,14 @@ internal class TimeframeTest {
         assertTrue(subFrames.all { it.start >= tf.start })
         assertTrue(subFrames.all { it.end <= tf.end })
         assertTrue(subFrames.all { it.end == it.start + 2.months })
+
+        tf.split(1.years).forEach { period ->
+            period.sample(1.months, 100).forEach {
+                assertTrue(period.contains(it.start))
+                assertTrue(period.contains(it.end))
+            }
+        }
+
     }
 
     @Test
