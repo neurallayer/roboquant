@@ -106,7 +106,7 @@ internal class ChartTest {
 
         val code = chart.asHTML()
         assertContains(code, "123px")
-        assertContains(code, "renderEChart")
+        assertContains(code, "echarts.init")
     }
 
 }

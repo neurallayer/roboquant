@@ -128,7 +128,7 @@ abstract class Chart : HTMLOutput() {
     companion object {
 
         // Which commit of echarts.min.js to use
-        private const val COMMIT = "029d3e10fb657cd57f0d511f21ff7595faebcfcb"
+        private const val COMMIT = "fddcad9e93c1c15495c70f358f1ccbb595f0964f"
 
         // Use a CDN to cache the JavaScript file
         internal const val JSURL =
@@ -226,18 +226,28 @@ abstract class Chart : HTMLOutput() {
         else
             ""
 
+        val themeStatement = if (theme == "auto") """
+            let theme = document.body.dataset.jpThemeLight === 'false' ? 'dark' : 'light'
+        """.trimIndent() else """
+            let theme='$theme'
+        """.trimIndent()
+
         return """ 
         <div style="width:100%;height:${height}px;" class="rqcharts" id="$id">
             <script type="text/javascript">
                 (function () {
-                    let parentElem = document.currentScript.parentElement;
-                    if (parentElem.tagName === "HEAD") {
-                        parentElem = document.getElementById("$id");
+                    let elem = document.currentScript.parentElement;
+                    if (elem.tagName === "HEAD") {
+                        elem = document.getElementById("$id");
                     }
                     const option = $fragment;$convertor
                     window.call_echarts(
                         function () {
-                            window.renderEChart(parentElem, "$theme", option);
+                            $themeStatement;
+                            let myChart = echarts.init(elem, theme);
+                            myChart.setOption(option);
+                            let resizeObserver = new ResizeObserver(() => myChart.resize());
+                            resizeObserver.observe(elem);
                         }
                     );
                 })()
