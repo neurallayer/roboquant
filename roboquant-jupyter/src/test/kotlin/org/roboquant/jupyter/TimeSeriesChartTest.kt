@@ -18,19 +18,9 @@ package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import java.io.File
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class TimeSeriesChartTest {
-
-    fun testFile(chart: Chart, fileName: String) {
-        val fullName = "src/test/resources/" + fileName
-        val file = File(fullName)
-        if (! file.exists()) chart.toHTMLFile(fullName)
-        val str = TestData.loadFile("timeserieschart.txt")
-        assertEquals(str.removeEOL(), chart.asHTMLPage().removeEOL())
-    }
 
     @Test
     fun test() {
