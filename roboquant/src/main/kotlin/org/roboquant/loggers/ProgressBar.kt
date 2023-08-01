@@ -37,7 +37,6 @@ internal class ProgressBar {
     private var pre: String = ""
     private var post: String = ""
     private var nextUpdate = Instant.MIN
-
     private var lastOutput = ""
 
     /**

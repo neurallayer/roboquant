@@ -13,7 +13,7 @@ import kotlin.test.Test
 class WebServerTest {
 
     @Test
-    fun basic()  {
+    fun basic() {
         Config.getProperty("FULL_COVERAGE") ?: return
         val feed = RandomWalkFeed(Timeframe.fromYears(2000, 2001))
         val rq = Roboquant(EMAStrategy(), logger = SilentLogger())

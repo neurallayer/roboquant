@@ -49,7 +49,6 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
             return Wallet(data)
         }
 
-
         /**
          * Create a Wallet based on the [amounts]
          */

@@ -323,7 +323,7 @@ class WebServer(port: Int = 8000, username: String, password: String) {
 
         val rq = roboquant.copy(metrics = roboquant.metrics + metric, policy = PausablePolicy(roboquant.policy))
         runs[run] = RunInfo(metric, rq, feed, timeframe, warmup)
-        rq.runAsync(feed, timeframe, warmup, run)
+        rq.runAsync(feed, timeframe, run, warmup)
     }
 
 

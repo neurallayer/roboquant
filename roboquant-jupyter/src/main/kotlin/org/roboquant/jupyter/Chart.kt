@@ -147,10 +147,9 @@ abstract class Chart : HTMLOutput() {
         var theme = "auto"
             get() = if (field == "auto") notebookTheme ?: field else field
             set(value) {
-                require(value in setOf("auto", "light", "dark")) { "valid options are auto, light and dark"}
+                require(value in setOf("auto", "light", "dark")) { "valid options are auto, light and dark" }
                 field = value
             }
-
 
         /**
          * Maximum number of samples to plot in a chart. Certain types of charts can become very large and as

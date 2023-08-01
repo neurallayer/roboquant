@@ -111,7 +111,7 @@ suspend fun binanceWebServer() {
     val policy = FlexPolicy.singleAsset(enableMetrics = true)
     val rq = Roboquant(strategy, broker = broker, policy = policy, logger = ConsoleLogger())
 
-    val server = WebServer(username= "test", password="secret")
+    val server = WebServer(username = "test", password = "secret")
     server.start()
     val tf = Timeframe.next(8.hours)
     server.runAsync(rq, feed, tf)

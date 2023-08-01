@@ -27,7 +27,6 @@ import kotlin.test.assertTrue
 
 class ScoreTest {
 
-
     @Test
     fun basic() {
         val feed = RandomWalkFeed.lastYears(1)

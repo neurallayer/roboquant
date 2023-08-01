@@ -157,7 +157,6 @@ internal class RoboquantTest {
 
     }
 
-
     @Test
     fun runAsync() = runBlocking {
         val strategy = EMAStrategy()

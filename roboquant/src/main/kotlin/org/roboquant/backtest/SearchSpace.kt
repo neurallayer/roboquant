@@ -22,7 +22,6 @@ package org.roboquant.backtest
  */
 interface SearchSpace : Iterable<Params> {
 
-
     /**
      * Update the search space based on an observation.
      * The observation is a combination of the selected [params] and the resulting [score].
@@ -48,7 +47,7 @@ interface SearchSpace : Iterable<Params> {
 class EmptySearchSpace : SearchSpace {
 
     override fun iterator(): Iterator<Params> {
-        return  listOf(Params()).listIterator()
+        return listOf(Params()).listIterator()
     }
 
     /**
@@ -58,7 +57,6 @@ class EmptySearchSpace : SearchSpace {
         get() = 1
 
 }
-
 
 /**
  * Random Search Space
@@ -80,11 +78,12 @@ class RandomSearch(override val size: Int) : SearchSpace {
     private val list: List<Params> by lazy {
         try {
             calcPermutations()
-        } catch (_: DoneException) {}
+        } catch (_: DoneException) {
+        }
         permutations
     }
 
-    private fun calcPermutations()  {
+    private fun calcPermutations() {
         repeat(size) {
             val p = Params()
             for ((key, values) in params) {
@@ -97,10 +96,8 @@ class RandomSearch(override val size: Int) : SearchSpace {
     }
 
     override fun iterator(): Iterator<Params> {
-        return  list.listIterator()
+        return list.listIterator()
     }
-
-
 
     /**
      * Add a parameter function
@@ -115,7 +112,6 @@ class RandomSearch(override val size: Int) : SearchSpace {
     fun add(name: String, values: Iterable<Any>) {
         params[name] = Entry(values.toList(), null)
     }
-
 
 
 }
@@ -138,14 +134,14 @@ class GridSearch : SearchSpace {
     private val permutations = mutableListOf<Params>()
 
 
-    private fun calcPermutations(entry: Params = Params(), idx: Int = 0)  {
+    private fun calcPermutations(entry: Params = Params(), idx: Int = 0) {
         val (key, values) = entries[idx]
         for (value in values) {
             entry[key] = value
             if (idx == entries.lastIndex) {
                 permutations.add(entry.clone() as Params)
             } else {
-                calcPermutations(entry, idx+1)
+                calcPermutations(entry, idx + 1)
             }
         }
 
@@ -170,10 +166,9 @@ class GridSearch : SearchSpace {
         get() = params.map { it.value.size }.reduce(Int::times)
 
     override fun iterator(): Iterator<Params> {
-        return  list.listIterator()
+        return list.listIterator()
     }
 }
-
 
 
 infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {

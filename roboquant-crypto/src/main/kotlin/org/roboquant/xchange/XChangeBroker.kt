@@ -79,7 +79,6 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
         updateAccount()
     }
 
-
     /**
      * Place orders on a XChange supported exchange using the trade service.
      *

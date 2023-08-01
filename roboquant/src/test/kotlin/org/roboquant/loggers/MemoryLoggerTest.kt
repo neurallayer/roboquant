@@ -88,7 +88,6 @@ internal class MemoryLoggerTest {
 
     }
 
-
     @Test
     fun testMetricsEntry() {
         val logger = MemoryLogger(showProgress = false)

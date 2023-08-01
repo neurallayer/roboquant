@@ -83,9 +83,8 @@ data class Roboquant(
         kotlinLogger.debug { "Created new roboquant instance" }
     }
 
-
     /**
-     * Inform components of the start of a new [run].
+     * Inform components of the start of a new [run] with the provided [timeframe].
      */
     private fun start(run: String, timeframe: Timeframe) {
         kotlinLogger.debug { "starting run=$run timeframe=$timeframe" }
@@ -93,7 +92,7 @@ data class Roboquant(
     }
 
     /**
-     * Inform components of the end of a new [run].
+     * Inform components of the end of a [run].
      */
     private fun end(run: String) {
         kotlinLogger.debug { "Finished run=$run" }
@@ -102,7 +101,9 @@ data class Roboquant(
 
     /**
      * Reset the state including that of the used underlying components. This allows starting a fresh run with the same
-     * configuration as the original instance. This will also reset the run counter in this roboquant instance.
+     * configuration as the original instance.
+     *
+     * By default, also the [logger] will be reset. If you don't want this, set [includeLogger] to false.
      */
     fun reset(includeLogger: Boolean = true) {
         for (component in components) {
@@ -111,24 +112,26 @@ data class Roboquant(
         }
     }
 
-
     /**
      * Start a new run using the provided [feed] as data. If no [timeframe] is provided all the events in the feed
      * will be processed. You can provide a custom [name] that will help to later identify this run. If none is
-     * provided, a name will be generated with the format "run-<counter>"
-     * Additionally you can provide a [warmup] period in which no metrics will be logged or orders placed.
+     * provided, the default [name] "run" will be used.
+     * Additionally, you can provide a [warmup] period in which no metrics will be logged or orders placed.
+     *
+     * By default, at the beginning of a run, all components (besides the logger) will be [reset] and typically discard
+     * their state. If you don't want this behavior set [reset] to false.
      *
      * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
-     * in parallel have a look at [runAsync]
+     * in parallel, use the [runAsync] method.
      */
     fun run(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        warmup: TimeSpan = TimeSpan.ZERO,
         name: String = "run",
+        warmup: TimeSpan = TimeSpan.ZERO,
         reset: Boolean = true
     ) = runBlocking {
-        runAsync(feed, timeframe, warmup, name, reset)
+        runAsync(feed, timeframe, name, warmup, reset)
     }
 
     /**
@@ -141,8 +144,8 @@ data class Roboquant(
     suspend fun runAsync(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        warmup: TimeSpan = TimeSpan.ZERO,
         name: String = "run",
+        warmup: TimeSpan = TimeSpan.ZERO,
         reset: Boolean = true
     ) {
         val channel = EventChannel(channelCapacity, timeframe)

@@ -64,14 +64,14 @@ class MetricScore(private val metricName: String, private val reduce: (TimeSerie
 
     /**
      * Some typical reduce functions to derive a [Double] value out of a [TimeSeries]
-      */
+     */
     companion object {
 
         fun last(ts: TimeSeries) = ts.values.last()
         fun mean(ts: TimeSeries) = ts.values.average()
         fun max(ts: TimeSeries) = ts.values.max()
         fun min(ts: TimeSeries) = ts.values.max()
-        fun annualized(ts: TimeSeries) : Double {
+        fun annualized(ts: TimeSeries): Double {
             if (ts.size < 2) return Double.NaN
             val perc = (ts.values.last() - ts.values.first()) / ts.values.first()
             return ts.timeframe.annualize(perc)

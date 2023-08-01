@@ -46,7 +46,6 @@ open class Optimizer(
 
     private var run = 0
 
-
     /**
      * Using the default objective to maximize a metric. The default objective will use the last entry of the
      * provided [evalMetric] as the value to optimize.
@@ -103,8 +102,6 @@ open class Optimizer(
         return results
     }
 
-
-
     /**
      * Run a Monte Carlo simulation
      */
@@ -135,9 +132,9 @@ open class Optimizer(
         for (params in space) {
             jobs.add {
                 val rq = getRoboquant(params).copy(logger = getTrainLogger())
-                require(rq.broker is SimBroker) { "Only a SimBroker can be used for back testing"}
+                require(rq.broker is SimBroker) { "Only a SimBroker can be used for back testing" }
                 val name = "train-${run++}"
-                rq.runAsync(feed, tf, warmup, name = name)
+                rq.runAsync(feed, tf, name = name, warmup)
                 val s = score.calculate(rq, name, tf)
                 val result = RunResult(params, s, tf, name)
                 results.add(result)
@@ -151,10 +148,10 @@ open class Optimizer(
 
     private fun validate(feed: Feed, timeframe: Timeframe, params: Params, warmup: TimeSpan): RunResult {
         val rq = getRoboquant(params)
-        require(rq.broker is SimBroker) { "Only a SimBroker can be used for back testing"}
+        require(rq.broker is SimBroker) { "Only a SimBroker can be used for back testing" }
 
         val name = "validate-${run++}"
-        rq.run(feed, timeframe, warmup, name = name)
+        rq.run(feed, timeframe, name = name, warmup)
         val s = score.calculate(rq, name, timeframe)
         // println("phase=validation result=$result")
         return RunResult(params, s, timeframe, name)

@@ -35,7 +35,7 @@ import org.roboquant.feeds.Feed
 class Backtest(val feed: Feed, val roboquant: Roboquant) {
 
     init {
-        require(roboquant.broker is SimBroker) { "Only a SimBroker can be used for back testing"}
+        require(roboquant.broker is SimBroker) { "Only a SimBroker can be used for back testing" }
     }
 
     /**
@@ -43,7 +43,7 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
      * including the warmup period.
      */
     fun singleRun(timeframe: Timeframe = feed.timeframe, warmup: TimeSpan = TimeSpan.ZERO) {
-        roboquant.run(feed, timeframe, warmup, name = "run-$timeframe")
+        roboquant.run(feed, timeframe, name = "run-$timeframe", warmup)
     }
 
     /**
@@ -56,7 +56,7 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
     ) {
         require(feed.timeframe.isFinite()) { "feed needs a finite timeframe" }
         feed.timeframe.split(period, warmup).forEach {
-            roboquant.run(feed, it, warmup, name = "run-$it")
+            roboquant.run(feed, it, name = "run-$it", warmup)
             roboquant.reset(false)
         }
     }
@@ -73,8 +73,8 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
         warmup: TimeSpan = TimeSpan.ZERO,
     ) {
         require(feed.timeframe.isFinite()) { "feed needs a finite timeframe" }
-        feed.timeframe.sample(period, samples).forEach  {
-            roboquant.run(feed, it, warmup, name = "run-$it")
+        feed.timeframe.sample(period, samples).forEach {
+            roboquant.run(feed, it, name = "run-$it", warmup)
             roboquant.reset(false)
         }
     }

@@ -313,7 +313,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         }
     }
 
-
     /**
      * Sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation. It uses
      * millisecond resolution for the start of timeframes.

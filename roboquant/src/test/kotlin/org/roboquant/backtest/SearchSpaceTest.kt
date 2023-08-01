@@ -33,8 +33,8 @@ class SearchSpaceTest {
         }
 
         val params = space.toList()
-        assertEquals(3*100*100, params.size)
-        assertEquals(100*100, params.filter{
+        assertEquals(3 * 100 * 100, params.size)
+        assertEquals(100 * 100, params.filter {
             it.getString("p1") == "a"
         }.size)
 

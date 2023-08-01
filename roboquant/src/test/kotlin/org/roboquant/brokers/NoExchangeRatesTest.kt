@@ -40,7 +40,7 @@ internal class NoExchangeRatesTest {
             currencyConverter.convert(0.USD, EUR, now)
         }
 
-        assertThrows<UnsupportedException>  {
+        assertThrows<UnsupportedException> {
             currencyConverter.getRate(amount1, EUR, now)
         }
     }

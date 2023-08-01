@@ -28,7 +28,7 @@ internal class CalendarChartTest {
         assertTrue(chart.asHTML().isNotBlank())
 
         Chart.counter = 0
-        TestData.testFile(chart,"calendarchart.txt")
+        TestData.testFile(chart, "calendarchart.txt")
     }
 
 }

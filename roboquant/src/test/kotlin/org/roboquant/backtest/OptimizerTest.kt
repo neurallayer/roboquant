@@ -18,14 +18,13 @@ class OptimizerTest {
         space.add("y", 2..10)
 
         val opt = Optimizer(space, "account.equity") { params ->
-            val x =  params.getInt("x")
+            val x = params.getInt("x")
             val y = x + params.getInt("y")
             val s = EMAStrategy(x, y)
             Roboquant(s, AccountMetric(), logger = LastEntryLogger())
         }
 
         val feed = RandomWalkFeed.lastYears(1, nAssets = 1)
-
 
         val r1 = opt.train(feed, feed.timeframe)
         assertTrue(r1.isNotEmpty())
@@ -46,7 +45,7 @@ class OptimizerTest {
 
         val logger = LastEntryLogger()
         val opt = Optimizer(space, "account.equity") { params ->
-            val x =  params.getInt("x")
+            val x = params.getInt("x")
             val y = x + params.getInt("y")
             val s = EMAStrategy(x, y)
             Roboquant(s, AccountMetric(), logger = logger)
@@ -57,7 +56,6 @@ class OptimizerTest {
         println(r2)
 
     }
-
 
     @Test
     fun noParams() {
@@ -71,7 +69,6 @@ class OptimizerTest {
         assertTrue(r1.isNotEmpty())
 
     }
-
 
 
 }

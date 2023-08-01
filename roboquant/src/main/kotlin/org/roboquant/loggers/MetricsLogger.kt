@@ -53,8 +53,7 @@ interface MetricsLogger : Lifecycle {
      *  This is optional to implement for a MetricsLogger since not all metric-loggers store metrics.
      *  Use [metricNames] to see which metrics are available.
      */
-    fun getMetric(name: String, run: String) : TimeSeries = getMetric(name)[run] ?: TimeSeries(emptyList())
-
+    fun getMetric(name: String, run: String): TimeSeries = getMetric(name)[run] ?: TimeSeries(emptyList())
 
     /**
      * The list of metric names that are available and can be retrieved with the [getMetric].

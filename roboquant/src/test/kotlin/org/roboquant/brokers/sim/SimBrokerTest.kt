@@ -33,7 +33,6 @@ import kotlin.test.assertTrue
 
 internal class SimBrokerTest {
 
-
     @Test
     fun defaults() {
         val broker = SimBroker()
