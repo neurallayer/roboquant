@@ -18,7 +18,7 @@ package org.roboquant.backtest
 
 
 /**
- * Holds the (hyper-)parameters that can be used in a [SearchSpace] to define that search space.
+ * Holds the (hyper-)parameters that can be used in a [SearchSpace] to define that space.
  */
 class Params : LinkedHashMap<String, Any>() {
 
