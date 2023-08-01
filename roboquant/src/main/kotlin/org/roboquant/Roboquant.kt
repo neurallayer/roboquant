@@ -125,9 +125,10 @@ data class Roboquant(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
         warmup: TimeSpan = TimeSpan.ZERO,
-        name: String = "run"
+        name: String = "run",
+        reset: Boolean = true
     ) = runBlocking {
-        runAsync(feed, timeframe, warmup, name)
+        runAsync(feed, timeframe, warmup, name, reset)
     }
 
     /**
@@ -141,7 +142,8 @@ data class Roboquant(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
         warmup: TimeSpan = TimeSpan.ZERO,
-        name: String = "run"
+        name: String = "run",
+        reset: Boolean = true
     ) {
         val channel = EventChannel(channelCapacity, timeframe)
         val scope = CoroutineScope(Dispatchers.Default + Job())
@@ -152,6 +154,7 @@ data class Roboquant(
 
         start(name, timeframe)
         val warmupEnd = timeframe.start + warmup
+        if (reset) reset(false)
 
         try {
             while (true) {

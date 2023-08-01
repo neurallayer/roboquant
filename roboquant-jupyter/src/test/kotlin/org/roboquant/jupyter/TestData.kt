@@ -31,6 +31,7 @@ import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.TestStrategy
+import kotlin.test.assertEquals
 
 /**
  * Remove end-of-line characters so test results are the same on different operating-systems.
@@ -75,6 +76,18 @@ object TestData {
         val classloader = Thread.currentThread().contextClassLoader
         val bytes = classloader.getResourceAsStream(name)!!.readAllBytes()
         return String(bytes)
+    }
+
+    fun testFile(chart: Chart, fileName: String) {
+        val classloader = Thread.currentThread().contextClassLoader
+        val url = classloader.getResource(fileName)
+        if (url === null) {
+            val fullName = "src/test/resources/$fileName"
+            chart.toHTMLFile(fullName)
+        }
+
+        val str = loadFile(fileName)
+        assertEquals(str.removeEOL(), chart.asHTMLPage().removeEOL())
     }
 
 }

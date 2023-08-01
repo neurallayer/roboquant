@@ -17,7 +17,6 @@
 package org.roboquant.jupyter
 
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class CalendarChartTest {
@@ -29,8 +28,7 @@ internal class CalendarChartTest {
         assertTrue(chart.asHTML().isNotBlank())
 
         Chart.counter = 0
-        // chart.toHTMLFile("src/test/resources/calendarchart.txt")
-        assertEquals(TestData.loadFile("calendarchart.txt").removeEOL(), chart.asHTMLPage().removeEOL())
+        TestData.testFile(chart,"calendarchart.txt")
     }
 
 }
