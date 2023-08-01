@@ -56,7 +56,7 @@ class ParallelJobs {
     }
 
     /**
-     * Number of available jobs.
+     * Number of instantiated jobs.
      */
     val size
         get() = jobs.size

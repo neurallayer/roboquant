@@ -134,7 +134,7 @@ open class Optimizer(
                 val rq = getRoboquant(params).copy(logger = getTrainLogger())
                 require(rq.broker is SimBroker) { "Only a SimBroker can be used for back testing" }
                 val name = "train-${run++}"
-                rq.runAsync(feed, tf, name = name, warmup)
+                rq.runAsync(feed, tf, name, warmup)
                 val s = score.calculate(rq, name, tf)
                 val result = RunResult(params, s, tf, name)
                 results.add(result)

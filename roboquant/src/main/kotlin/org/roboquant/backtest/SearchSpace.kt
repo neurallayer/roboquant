@@ -18,7 +18,9 @@ package org.roboquant.backtest
 
 
 /**
- * Interface for all types of search spaces
+ * Interface for all types of search spaces.
+ * A search space contains the parameters that define the space as well as how these parameters are accessed,
+ * for example, grid or random.
  */
 interface SearchSpace : Iterable<Params> {
 
@@ -34,7 +36,8 @@ interface SearchSpace : Iterable<Params> {
     fun update(params: Params, score: Double) {}
 
     /**
-     * Returns the total number of parameter combinations found in this search space
+     * Returns the total number of parameter combinations in this search space.
+     * This will determine how many back tests are required to find the optimum parameter combination.
      */
     val size: Int
 
@@ -152,6 +155,9 @@ class GridSearch : SearchSpace {
         permutations
     }
 
+    /**
+     * Add a parameter [name] with [values] to the search space
+     */
     fun add(name: String, values: Iterable<Any>) {
         params[name] = values.toList()
     }

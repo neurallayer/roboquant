@@ -44,7 +44,7 @@ fun interface Score {
             val broker = roboquant.broker as SimBroker
             val account = broker.account
             val startDeposit = broker.initialDeposit.convert(account.baseCurrency, timeframe.start).value
-            val percentage = (account.equityAmount.value - startDeposit) / startDeposit
+            val percentage = account.equityAmount.value/startDeposit - 1.0
             return timeframe.annualize(percentage)
         }
     }
@@ -73,7 +73,7 @@ class MetricScore(private val metricName: String, private val reduce: (TimeSerie
         fun min(ts: TimeSeries) = ts.values.max()
         fun annualized(ts: TimeSeries): Double {
             if (ts.size < 2) return Double.NaN
-            val perc = (ts.values.last() - ts.values.first()) / ts.values.first()
+            val perc = ts.values.last()/ts.values.first() - 1.0
             return ts.timeframe.annualize(perc)
         }
 

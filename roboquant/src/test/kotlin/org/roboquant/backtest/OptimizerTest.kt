@@ -53,8 +53,7 @@ class OptimizerTest {
 
         val feed = RandomWalkFeed.lastYears(3, nAssets = 2)
         val r2 = opt.walkForward(feed, 9.months, 3.months, 0.months, false)
-        println(r2)
-
+        assertTrue(r2.isNotEmpty())
     }
 
     @Test

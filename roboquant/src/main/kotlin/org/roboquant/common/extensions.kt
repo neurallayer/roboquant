@@ -298,12 +298,14 @@ fun String.toCurrencyPair(): Pair<Currency, Currency>? {
 }
 
 /**
- * Extension to use sumOf for [Amount] values. This implementation has an optimized path in case the sum is over
- * amounts of a single currency.
+ * Extension to use sumOf for [Amount] values.
+ * The result is of type [Wallet], even if summing over a single currency
+ *
+ * This implementation has an optimized path in case the sum is over amounts of a single currency.
  *
  * Example:
  * ```
- * val realizedPNL = account.trades.sumOf { it.pnl }
+ * val totalPNL = account.trades.sumOf { it.pnl }
  * ```
  */
 inline fun <T> Collection<T>.sumOf(
