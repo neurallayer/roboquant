@@ -80,7 +80,7 @@ data class Roboquant(
     private val components = listOf(strategy, policy, broker, logger) + metrics
 
     init {
-        kotlinLogger.debug { "Created new roboquant instance" }
+        kotlinLogger.debug { "Created new roboquant instance=$this" }
     }
 
     /**
@@ -155,9 +155,9 @@ data class Roboquant(
             channel.use { feed.play(it) }
         }
 
+        if (reset) reset(false)
         start(name, timeframe)
         val warmupEnd = timeframe.start + warmup
-        if (reset) reset(false)
 
         try {
             while (true) {
@@ -168,12 +168,12 @@ data class Roboquant(
                 broker.sync(event)
                 val account = broker.account
                 val metricResult = getMetrics(account, event)
-                if (time >= warmupEnd) logger.log(metricResult, time, name)
+                if (time >= warmupEnd) logger.log(metricResult, time, name) else logger.log(emptyMap(), time, name)
 
                 // Generate signals and place orders
                 val signals = strategy.generate(event)
                 val orders = policy.act(signals, account, event)
-                if (time >= warmupEnd) broker.place(orders, time)
+                if (time >= warmupEnd) broker.place(orders, time) else broker.place(emptyList(), time)
 
                 kotlinLogger.trace {
                     "time=$${event.time} actions=${event.actions.size} signals=${signals.size} orders=${orders.size}"

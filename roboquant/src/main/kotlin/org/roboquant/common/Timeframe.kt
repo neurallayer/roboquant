@@ -316,15 +316,21 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     /**
      * Sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation. It uses
      * millisecond resolution for the start of timeframes.
+     *
+     * The returned list will not contain duplicate timeframes (sampling without replacement).
      */
-    fun sample(period: TimeSpan, samples: Int = 1, random: Random = Config.random) = buildList {
-        require(end - period > start) { "$period to large for $this" }
+    fun sample(period: TimeSpan, samples: Int = 1, random: Random = Config.random) : List<Timeframe> {
+        require(samples >= 1) {"samples need to be >= 1"}
+        require(end - period > start) { "period=$period to large for timeframe=$this" }
         val duration = Timeframe(start, end - period).duration.toMillis()
-        repeat(samples) {
+        require(duration > samples) { "not enough data to sample $samples"}
+        val result = mutableSetOf<Timeframe>()
+        while(result.size < samples) {
             val offset = random.nextLong(duration)
             val newStart = start.plusMillis(offset)
-            add(Timeframe(newStart, newStart + period))
+            result.add(Timeframe(newStart, newStart + period))
         }
+        return result.toList()
     }
 
     /**

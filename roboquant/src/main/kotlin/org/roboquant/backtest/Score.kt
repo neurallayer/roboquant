@@ -17,6 +17,7 @@
 package org.roboquant.backtest
 
 import org.roboquant.Roboquant
+import org.roboquant.backtest.MetricScore.Companion.last
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
@@ -57,20 +58,39 @@ fun interface Score {
  * Use this with a metrics logger that supports the retrieval of metrics.
  *
  * @param metricName the metric name to use
- * @param reduce the function to use to go from a [TimeSeries] to a [Double], default being last entry,
+ * @param reduce the function to use to go from a [TimeSeries] to a [Double], default being [last],
  */
 class MetricScore(private val metricName: String, private val reduce: (TimeSeries) -> Double = Companion::last) :
     Score {
 
     /**
-     * Some typical reduce functions to derive a [Double] value out of a [TimeSeries]
+     * Common reduce functions to derive a [Double] value out of a [TimeSeries]
      */
     companion object {
 
+        /**
+         * Use the last value
+         */
         fun last(ts: TimeSeries) = ts.values.last()
+
+        /**
+         * Use the mean of all values
+         */
         fun mean(ts: TimeSeries) = ts.values.average()
+
+        /**
+         * Use the max of all values
+         */
         fun max(ts: TimeSeries) = ts.values.max()
+
+        /**
+         * Use the min of all values
+         */
         fun min(ts: TimeSeries) = ts.values.max()
+
+        /**
+         * Use the annualized percentage growth
+         */
         fun annualized(ts: TimeSeries): Double {
             if (ts.size < 2) return Double.NaN
             val perc = ts.values.last()/ts.values.first() - 1.0

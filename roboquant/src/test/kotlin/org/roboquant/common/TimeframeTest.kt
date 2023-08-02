@@ -80,7 +80,22 @@ internal class TimeframeTest {
                 assertTrue(period.contains(it.end))
             }
         }
+    }
 
+    @Test
+    fun sample2() {
+        val tf = Timeframe.parse("2020-01-01T00:00:00", "2020-01-01T00:00:01")
+        assertThrows<java.lang.IllegalArgumentException> {
+            tf.sample(1.hours)
+        }
+
+        assertThrows<java.lang.IllegalArgumentException> {
+            tf.sample(10.millis, 1200)
+        }
+
+        val tfs = tf.sample(10.millis, 700)
+        assertEquals(700, tfs.size)
+        assertEquals(700, tfs.toSet().size)
     }
 
     @Test

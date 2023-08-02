@@ -25,7 +25,7 @@ import org.roboquant.feeds.Feed
 
 /**
  * Run back tests without parameter optimizations.
- * The back tests in this class will be run sequentially.
+ * The back tests in this class will run sequentially.
  *
  * These types of back tests are especially useful to get insights into the performance over different timeframes.
  *
