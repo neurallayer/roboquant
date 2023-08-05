@@ -5,7 +5,6 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
-import org.roboquant.common.minus
 import org.roboquant.feeds.Feed
 import org.roboquant.loggers.MemoryLogger
 import java.util.*
@@ -55,23 +54,6 @@ open class Optimizer(
     )
 
 
-    fun walkForward(
-        feed: Feed,
-        period: TimeSpan,
-        warmup: TimeSpan = TimeSpan.ZERO,
-        anchored: Boolean = false
-    ): List<RunResult> {
-        require(!feed.timeframe.isInfinite()) { "feed needs known timeframe" }
-        val start = feed.timeframe.start
-        val results = mutableListOf<RunResult>()
-        feed.timeframe.split(period).forEach {
-            val timeframe = if (anchored) Timeframe(start, it.end, it.inclusive) else it
-            val result = train(feed, timeframe, warmup)
-            results.addAll(result)
-        }
-        return results
-    }
-
     /**
      * Run a walk forward
      */
@@ -87,32 +69,48 @@ open class Optimizer(
         val feedStart = feed.timeframe.start
         val results = mutableListOf<RunResult>()
 
-        timeframe.split(period + validation, period).forEach {
-            val trainEnd = it.end - validation
-            val trainStart = if (anchored) feedStart else it.start
-            val trainTimeframe = Timeframe(trainStart, trainEnd)
-            val result = train(feed, trainTimeframe, warmup)
-            results.addAll(result)
-            val best = result.maxBy { entry -> entry.score }
-            // println("phase=training timeframe=$timeframe equity=${best.second} params=${best.first}")
-            val validationTimeframe = Timeframe(trainEnd, it.end, it.inclusive)
-            val score = validate(feed, validationTimeframe, best.params, warmup)
-            results.add(score)
+        val trueValidation = validation + warmup
+        timeframe.split(period + validation, period, false).forEach {
+            val tf = if (anchored) it.copy(start = feedStart) else it
+            val (train, valid) = tf.splitTrainTest(trueValidation, warmup)
+            val r = trainAndValidate(feed, train, valid, warmup)
+            results.addAll(r)
         }
+        return results
+    }
+
+
+    private fun trainAndValidate(
+        feed: Feed,
+        trainTimeframe: Timeframe,
+        validationTimeframe: Timeframe,
+        warmup: TimeSpan
+    ): List<RunResult> {
+        val results = mutableListOf<RunResult>()
+        val result = train(feed, trainTimeframe, warmup)
+        results.addAll(result)
+        val best = result.maxBy { entry -> entry.score }
+        val score = validate(feed, validationTimeframe, best.params, warmup)
+        results.add(score)
         return results
     }
 
     /**
      * Run a Monte Carlo simulation
      */
-    fun monteCarlo(feed: Feed, period: TimeSpan, samples: Int, warmup: TimeSpan = TimeSpan.ZERO): List<RunResult> {
+    fun monteCarlo(
+        feed: Feed,
+        period: TimeSpan,
+        validation: TimeSpan,
+        samples: Int,
+        warmup: TimeSpan = TimeSpan.ZERO
+    ): List<RunResult> {
         val results = mutableSynchronisedListOf<RunResult>()
         require(!feed.timeframe.isInfinite()) { "feed needs known timeframe" }
-        feed.timeframe.sample(period, samples).forEach {
-            val result = train(feed, it, warmup)
-            results.addAll(result)
-            // val best = result.maxBy { it.score }
-            // println("timeframe=$it equity=${best.score} params=${best.params}")
+        feed.timeframe.sample(period + validation, samples).forEach {
+            val (train, valid) = it.splitTrainTest(validation)
+            val r = trainAndValidate(feed, train, valid, warmup)
+            results.addAll(r)
         }
         return results
     }
@@ -151,9 +149,8 @@ open class Optimizer(
         require(rq.broker is SimBroker) { "Only a SimBroker can be used for back testing" }
 
         val name = "validate-${run++}"
-        rq.run(feed, timeframe, name = name, warmup)
+        rq.run(feed, timeframe, name, warmup)
         val s = score.calculate(rq, name, timeframe)
-        // println("phase=validation result=$result")
         return RunResult(params, s, timeframe, name)
     }
 

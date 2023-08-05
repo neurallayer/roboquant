@@ -173,7 +173,7 @@ val Int.seconds
     get() = TimeSpan(0, 0, 0, 0, 0, this, 0L)
 
 /**
- * Convert an Int to a [TimeSpan] of milliseconds
+ * Convert a Long to a [TimeSpan] of milliseconds
  */
 val Int.millis
     get() = (this * 1_000_000L).nanos

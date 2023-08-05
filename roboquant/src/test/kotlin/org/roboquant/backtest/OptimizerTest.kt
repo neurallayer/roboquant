@@ -29,10 +29,10 @@ class OptimizerTest {
         val r1 = opt.train(feed, feed.timeframe)
         assertTrue(r1.isNotEmpty())
 
-        val r2 = opt.walkForward(feed, 6.months)
+        val r2 = opt.walkForward(feed, 6.months, 2.months)
         assertTrue(r2.isNotEmpty())
 
-        val r3 = opt.monteCarlo(feed, 6.months, 5)
+        val r3 = opt.monteCarlo(feed, 6.months, 3.months, 5)
         assertTrue(r3.isNotEmpty())
 
     }

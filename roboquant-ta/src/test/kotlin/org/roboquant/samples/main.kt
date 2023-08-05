@@ -32,10 +32,7 @@ import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
-import org.roboquant.ta.AtrPolicy
-import org.roboquant.ta.Ta4jStrategy
-import org.roboquant.ta.TaLibMetric
-import org.roboquant.ta.TaLibSignalStrategy
+import org.roboquant.ta.*
 import org.ta4j.core.indicators.bollinger.BollingerBandFacade
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator
 import org.ta4j.core.rules.CrossedUpIndicatorRule
@@ -144,15 +141,59 @@ private fun atrPolicy() {
     println(rq.broker.account.summary())
 }
 
+@Suppress("CyclomaticComplexMethod")
+private fun tenkan() {
+
+    /**
+     * Midpoint Moving Average
+     */
+    fun TaLib.mma(priceBarSerie: PriceBarSerie, period: Int): Double {
+        return (max(priceBarSerie.high, period) + min(priceBarSerie.low, period)) / 2.0
+    }
+
+    /**
+     * Tenkan indicator
+     */
+    fun TaLib.tenkan(priceBarSerie: PriceBarSerie) = mma(priceBarSerie, 9)
+
+    /**
+     * Kijun indicator
+     */
+    fun TaLib.kijun(priceBarSerie: PriceBarSerie) = mma(priceBarSerie, 26)
+
+    val strategy = TaLibSignalStrategy {asset, series ->
+        val tenkan = tenkan(series)
+        val kijun = kijun(series)
+        when {
+            tenkan > kijun && series.open.last() < tenkan && series.close.last() > tenkan -> Signal(asset, Rating.BUY)
+            tenkan < kijun && series.close.last() < kijun -> Signal(asset, Rating.SELL)
+            else -> null
+        }
+    }
+
+    // val broker = SimBroker(pricingEngine = SpreadPricingEngine(1.5))
+    // val rq = Roboquant(strategy, AccountMetric(), broker = broker)
+    // val feed = AvroFeed.forex()
+
+    val rq = Roboquant(strategy, AccountMetric())
+    val feed = AvroFeed.sp500()
+
+    println(feed.timeframe)
+    rq.run(feed)
+    println(rq.broker.account.summary())
+
+}
+
 @Suppress("KotlinConstantConditions")
 fun main() {
     Config.printInfo()
 
-    when ("ATR") {
+    when ("TENKAN") {
         "CUSTOM" -> customPolicy()
         "MACD" -> macd()
         "ATR" -> atrPolicy()
         "TA4J" -> ta4j()
+        "TENKAN" -> tenkan()
     }
 
 }

@@ -281,10 +281,10 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * It returns a [Pair] of timeframes, the first one being the training timeframe and the second being the
      * test timeframe.
      */
-    fun splitTrainTest(testSize: TimeSpan): Pair<Timeframe, Timeframe> {
+    fun splitTrainTest(testSize: TimeSpan, overlap: TimeSpan = TimeSpan.ZERO): Pair<Timeframe, Timeframe> {
         val border = end - testSize
         require(border > start) { "testSize should be smaller than timeframe" }
-        return Pair(Timeframe(start, border), Timeframe(border, end, inclusive))
+        return Pair(Timeframe(start, border), Timeframe(border - overlap, end, inclusive))
     }
 
     /**
@@ -312,6 +312,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
             begin = last - overlap
         }
     }
+
 
     /**
      * Sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation. It uses

@@ -31,6 +31,9 @@ internal class TimeSpanTest {
         val x = Instant.now()
         val y = x + 1.days + 2.months + 1.years + 100.millis + 10.seconds + 30.minutes + 1.hours
         assertTrue(y > x)
+
+        val diff = 1.years + 10.seconds
+        assertEquals(x, x + diff - diff)
     }
 
     @Test
