@@ -37,7 +37,7 @@ import java.time.Instant
  *
  * @constructor
  */
-class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
+class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed(30_000) {
 
     private class Subscription(val asset: Asset, val interval: Int)
 

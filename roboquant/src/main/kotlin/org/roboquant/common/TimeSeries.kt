@@ -256,7 +256,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
  * be ignored.
  */
 fun Map<String, TimeSeries>.flatten(noOverlap: Boolean = true): TimeSeries {
-    // Optimized path for a map with only 1 entry
+    // Optimized path for a map with only one entry
     if (size == 1) return values.first()
     val sortedTimeSeries = values.sortedBy { it.timeline.first() }
     val result = mutableListOf<Observation>()

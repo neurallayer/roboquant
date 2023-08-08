@@ -25,6 +25,7 @@ import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import kotlin.math.absoluteValue
+import kotlin.math.ln
 
 
 /********************************************************************************************************************
@@ -234,13 +235,29 @@ fun DoubleArray.indexOfMin(): Int {
 
 /**
  * Return the growth rates. The resulting array size will be 1 smaller than the original one. Formula used is:
- *
- *     growthRate = new/old
+ * ```
+ * growthRate = new/old
+ * ```
  */
 fun DoubleArray.growthRates(): DoubleArray {
     if (size < 2) return DoubleArray(0)
     val result = DoubleArray(size - 1)
     for (n in 1..lastIndex) result[n - 1] = get(n) / get(n - 1)
+    return result
+}
+
+
+/**
+ * Return the log growth rates. The resulting array size will be 1 smaller than the original one.
+ * The used formula is:
+ *```
+ * logGrowthRate = ln(new/old)
+ * ```
+ */
+fun DoubleArray.logGrowthRates(): DoubleArray {
+    if (size < 2) return DoubleArray(0)
+    val result = DoubleArray(size - 1)
+    for (n in 1..lastIndex) result[n - 1] = ln(get(n) / get(n - 1))
     return result
 }
 

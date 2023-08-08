@@ -26,6 +26,7 @@ import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
+import org.roboquant.http.WebServer
 import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRExchangeRates
 import org.roboquant.ibkr.IBKRHistoricFeed
@@ -85,7 +86,7 @@ fun showAccount() {
     broker.disconnect()
 }
 
-fun paperTrade() {
+suspend fun paperTrade() {
     Config.exchangeRates = IBKRExchangeRates()
     val broker = IBKRBroker()
     Thread.sleep(5_000)
@@ -93,17 +94,25 @@ fun paperTrade() {
     println(account.fullSummary())
 
     val feed = IBKRLiveFeed()
-    val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
+    // val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
+    val asset = Asset("TSLA", AssetType.STOCK, "USD", "NASDAQ")
     feed.subscribe(listOf(asset))
 
     val strategy = EMAStrategy.PERIODS_5_15
     val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = ConsoleLogger())
     val tf = Timeframe.next(60.minutes)
-    roboquant.run(feed, tf)
 
+
+    val server = WebServer()
+    server.start()
+
+    server.runAsync(roboquant, feed, tf)
     println(broker.account.fullSummary())
+
+    server.stop()
     feed.disconnect()
     broker.disconnect()
+
     println("done")
 }
 
@@ -224,9 +233,9 @@ fun historicFuturesFeed() {
 }
 
 
-fun main() {
+suspend fun main() {
 
-    when ("ACCOUNT") {
+    when ("PAPER_TRADE") {
         "ACCOUNT" -> showAccount()
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()

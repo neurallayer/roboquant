@@ -57,6 +57,8 @@ private fun macd() {
 }
 
 
+
+
 private fun ta4j() {
     // How big a look-back period should we use
     val period = 20

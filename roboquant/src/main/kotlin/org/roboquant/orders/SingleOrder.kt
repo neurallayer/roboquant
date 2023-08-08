@@ -49,7 +49,7 @@ abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, t
         get() = size.isNegative
 
     /**
-     * Returns the direction of the order, 1 being BUY and -1 being SELL
+     * Returns the direction of the order, `1` being BUY and `-1` being SELL
      */
     val direction
         get() = if (buy) 1 else -1

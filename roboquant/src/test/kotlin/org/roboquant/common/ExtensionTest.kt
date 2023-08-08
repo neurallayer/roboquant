@@ -43,6 +43,13 @@ class ExtensionTest {
     }
 
     @Test
+    fun logGrowthRates() {
+        val a = doubleArrayOf(10.0, 20.0, 10.0)
+        assertEquals(2, a.logGrowthRates().size)
+        assertEquals(0.0, a.logGrowthRates()[0] + a.logGrowthRates()[1])
+    }
+
+    @Test
     fun paths() {
         val p1 = "tmp" / "dummy" / "test.txt"
         assertEquals(Path("tmp", "dummy", "test.txt"), Path(p1))

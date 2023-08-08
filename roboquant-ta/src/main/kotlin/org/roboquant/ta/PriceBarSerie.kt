@@ -24,6 +24,8 @@ import org.roboquant.feeds.PriceBar
 
 /**
  * PriceBarSerie is a moving window of OHLCV values (PriceBar) of fixed capacity for a single asset.
+ * So when the capacity is reached, this oldest entry will be removed. You can however increase the capacity
+ * using [increaseCapacity].
  *
  * @param capacity the size of buffer
  *

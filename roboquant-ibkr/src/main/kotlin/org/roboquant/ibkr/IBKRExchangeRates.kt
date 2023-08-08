@@ -50,7 +50,7 @@ internal class IBKRExchangeRates(
     }
 
     /**
-     * Wait till IBKR account is synchronized so roboquant has the correct assets and cash balance available.
+     * Wait till IBKR account is synchronized, so roboquant has the correct assets and cash balance available.
      */
     private fun waitTillSynced() {
         synchronized(lock) {

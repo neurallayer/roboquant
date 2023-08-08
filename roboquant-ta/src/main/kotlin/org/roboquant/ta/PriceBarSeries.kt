@@ -11,8 +11,8 @@ import org.roboquant.feeds.PriceBar
  */
 class PriceBarSeries private constructor(
     private val capacity: Int,
-    private val series: MutableMap<Asset, PriceBarSerie>
-) : MutableMap<Asset, PriceBarSerie> by series {
+    private val map: MutableMap<Asset, PriceBarSerie>
+) : MutableMap<Asset, PriceBarSerie> by map {
 
     /**
      * Create a new PriceBarSeries with the provided [capacity] per asset.
@@ -23,7 +23,7 @@ class PriceBarSeries private constructor(
      * Add a single [priceBar]
      */
     fun add(priceBar: PriceBar): Boolean {
-        val priceBuffer = series.getOrPut(priceBar.asset) { PriceBarSerie(capacity) }
+        val priceBuffer = map.getOrPut(priceBar.asset) { PriceBarSerie(capacity) }
         priceBuffer.add(priceBar)
         return priceBuffer.isFull()
     }
@@ -33,7 +33,7 @@ class PriceBarSeries private constructor(
      */
     fun addAll(event: Event) {
         for (action in event.actions.filterIsInstance<PriceBar>()) {
-            val priceBuffer = series.getOrPut(action.asset) { PriceBarSerie(capacity) }
+            val priceBuffer = map.getOrPut(action.asset) { PriceBarSerie(capacity) }
             priceBuffer.add(action)
         }
     }

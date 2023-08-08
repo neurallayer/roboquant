@@ -18,6 +18,7 @@ package org.roboquant.http
 
 import com.sun.net.httpserver.BasicAuthenticator
 import com.sun.net.httpserver.HttpServer
+import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.lines
@@ -207,6 +208,7 @@ class WebServer(port: Int = 8000, username: String, password: String) {
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <title>roboquant runs</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+            <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
           </head>
           <body>
             %s
@@ -215,12 +217,54 @@ class WebServer(port: Int = 8000, username: String, password: String) {
         </html>
         """.trimIndent()
 
+
+    private val metrics = """
+        <select id=metricnames>
+            <option value="">None</option>
+        %s
+        </select>
+        <div id="metricschart"></div>
+        <script>
+            %s
+            
+            document.getElementById("metricnames").onchange = updateMetricChart;
+            const elem = document.getElementById("metricschart")    
+            const chart = LightweightCharts.createChart(elem, {
+                height: 300,
+                autoSize: true
+            });
+            const lineSeries = chart.addLineSeries();
+            function updateMetricChart(dropDown) {
+                const value = document.getElementById("metricnames").value;
+                if (value == "") return;
+                fetch("/runs/" + run + "/metrics/" + value).then(function(resp){
+                    console.log(resp);
+                    return resp.json();
+                }).then(function(data) {
+                    console.log(data);
+                    lineSeries.setData(data);
+                });
+                console.log(value);
+            };
+        </script>
+    """.trimIndent()
+
+
+    private fun getMetricsCharts(run: String, info: RunInfo): String {
+        val metricNames = info.roboquant.logger.metricNames
+        val dropDown = metricNames.map { "<option value=$it>$it</option>" }
+        val runStmt = """const run="$run";"""
+        return String.format(metrics, dropDown, runStmt)
+    }
+
+
     private fun detailsRun(run: String): String {
         val result = StringBuilder()
         val info = runs.getValue(run)
         result.append("<h1>${run}</h1>")
         result.append(info.metric.toString())
-        result.append("<br/><a href='/'>Back</a>".trimIndent())
+        result.append(getMetricsCharts(run, info))
+        result.append("<br/><a href='/'>Back</a>")
         return String.format(template, result)
     }
 
@@ -286,8 +330,11 @@ class WebServer(port: Int = 8000, username: String, password: String) {
         server.executor = null
         val ctx = server.createContext("/") {
             val path = it.requestURI.path
+            val elems = path.split('/')
             val content = when {
+                path.matches(Regex("/runs/.*/metrics/.*")) ->  metricsData(elems[4], elems[2])
                 path.startsWith("/runs/") -> detailsRun(path.split('/').last())
+                path.startsWith("/metrics/") -> metricsData(path.split('/').last(), "run-0")
                 else -> overviewRuns(it.requestURI.query ?: "")
             }
             val response = content.encodeToByteArray()
@@ -302,6 +349,20 @@ class WebServer(port: Int = 8000, username: String, password: String) {
         server.start()
     }
 
+    private fun metricsData(metricName: String, run: String): String {
+        println("$metricName $run")
+        val data = StringBuilder("[")
+        val info = runs.getValue(run)
+        val metrics = info.roboquant.logger.getMetric(metricName, run)
+        metrics.forEachIndexed { index, observation ->
+            data.append("""{"time":${observation.time.epochSecond},"value":${observation.value}}""")
+            if (index < (metrics.size -1)) data.append(",")
+        }
+        data.append("]")
+        println(data.toString())
+        return data.toString()
+    }
+
     /**
      * Stop the server, optionally provide a [delay] in seconds. This will also close the feeds
      */
@@ -311,6 +372,11 @@ class WebServer(port: Int = 8000, username: String, password: String) {
             info.feed.close()
         } catch (_: RuntimeException) {
         }
+    }
+
+
+    fun run(roboquant: Roboquant, feed: Feed, timeframe: Timeframe, warmup: TimeSpan = TimeSpan.ZERO) = runBlocking {
+        runAsync(roboquant, feed, timeframe, warmup)
     }
 
     /**

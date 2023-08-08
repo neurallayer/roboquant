@@ -166,7 +166,7 @@ open class FlexPolicy(
      * Return the size that can be bought/sold with the provided [amount] and [price] of the asset. This implementation
      * also takes into consideration the configured [fractions].
      *
-     * This method will only be invoked if the signal is not reducing a position.
+     * This method will only be invoked if the signal is not closing a position.
      */
     open fun calcSize(amount: Double, signal: Signal, price: Double): Size {
         return signal.asset.contractSize(amount, price, fractions) * signal.rating.direction

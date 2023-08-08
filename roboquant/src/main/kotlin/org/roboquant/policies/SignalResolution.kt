@@ -58,9 +58,10 @@ enum class SignalResolution {
 }
 
 /**
- * Resolve potential conflicting signals. For many strategies, this might not be necessary since there is always only 1
- * signal per asset, but as strategies are combined, this issue might pop up. You can specify the resolution [rule]
- * to apply when solving conflicts.
+ * Resolve potential conflicting signals.
+ * For many strategies, this might not be necessary since there is always only one signal per asset, but as strategies
+ * are combined, this issue might pop up.
+ * You can specify the resolution [rule] to apply when solving conflicts.
  *
  * It returns the list of signals without any conflicts according to the configured rule.
  */

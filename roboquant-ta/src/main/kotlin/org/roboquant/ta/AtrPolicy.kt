@@ -19,37 +19,37 @@ package org.roboquant.ta
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
-import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
 import org.roboquant.orders.*
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.Signal
-import kotlin.math.absoluteValue
 
 
 /**
- * This policy uses ATR (Average True Range) to:
+ * This policy is a subclass of [FlexPolicy] and uses ATR (Average True Range) to:
  *
  * - Create a [BracketOrder] with ATR based take profit and stop loss values
  * - Optionally reduce the sizing based on the ATR.
  *
- * The bracket order will have the following contained orders:
+ * The bracket order will by default have the following contained orders:
  *
  * - The entry order is a [MarketOrder]
  * - The takeProfit is a [LimitOrder] with the limit set at an offset of the current price of [atrProfit] * ATR
  * - The stopLoss is a [StopOrder] with the stop set at an offset of the current price of [atrLoss] * ATR
  *
+ * But you can subclass this class and overwrite the corresponding methods like getEntryOrder(...)
+ *
  * The implementation will take care of ensuring offsets are done correctly based on a BUY or SELL order.
  *
- * @property atrPeriod
- * @property atrProfit
- * @property atrLoss
- * @property atRisk max percentage of the orderPercentage that can be at risk. If null, no risk-based sizing will be
- * applied/
+ * @property atrPeriod period to use for calculating the atr, default is 20
+ * @property atrProfit the ATR multiplier for profit orders to use
+ * @property atrLoss the ATR multiplier for stop loss orders to use
+ * @property atRisk max percentage of the order value that can be at risk.
+ * If null, no risk-based sizing will be applied.
  */
-class AtrPolicy(
-    private val atrPeriod: Int = 10,
+open class AtrPolicy(
+    private val atrPeriod: Int = 20,
     private val atrProfit: Double = 4.0,
     private val atrLoss: Double = 2.0,
     orderPercentage: Double = 0.02,
@@ -63,30 +63,21 @@ class AtrPolicy(
         require(atRisk == null || atRisk in 0.0..1.0)
     }
 
-    private val data = PriceBarSeries(atrPeriod + 1) // we need 1 observation extra
+    private val data = PriceBarSeries(atrPeriod + 1) // we need one observation extra
     private val talib = TaLib()
 
     /**
-     * @see FlexPolicy.calcSize
+     * Resize the order size if the value at risk is too large.
      */
-    override fun calcSize(amount: Double, signal: Signal, price: Double): Size {
-        val asset = signal.asset
-
-        // Calculate the max size
-        val maxSize = asset.contractSize(amount, price, fractions)
+    private fun resize(maxSize: Size, atr: Double, price: Double): Size {
         if (atRisk == null) return maxSize
+        val risk = atr * atrLoss
+        val limit = atRisk * price
 
-        val atr = getAtr(asset, price)
-        if (!atr.isFinite()) return Size.ZERO
-
-        // Calculate the max loss based on the max size and atr
-        val maxLoss = asset.value(maxSize, atr * atrLoss).value
-
-        // Reduce size if maxLoss is bigger than value at risk
-        val diff = maxLoss / (atRisk * amount)
-        return if (diff > 1) {
-            val newSize = maxSize / diff
-            newSize.round(fractions) * signal.rating.direction
+        // Reduce the size if risk is bigger than limit
+        return if (risk > limit) {
+            val newSize = maxSize * limit / risk
+            newSize.round(fractions)
         } else {
             maxSize
         }
@@ -100,12 +91,52 @@ class AtrPolicy(
         return super.act(signals, account, event)
     }
 
-    private fun getAtr(asset: Asset, price: Double): Double {
+    /**
+     * Calculate the ATR for an [asset].
+     */
+    private fun getAtr(asset: Asset): Double {
         val serie = data[asset]
         if (serie == null || !serie.isFull()) return Double.NaN
+        return talib.atr(serie, atrPeriod)
+    }
 
-        val minAtr = (price * 0.0001).absoluteValue
-        return talib.atr(serie, atrPeriod).coerceAtLeast(minAtr)
+    /**
+     * Return the entry order to use in the bracket order. The default is a [MarketOrder].
+     */
+    open fun getEntryOrder(asset: Asset, size: Size, atr: Double, price: Double): SingleOrder? =
+        MarketOrder(asset, size)
+
+    /**
+     * Return the take profit order to use in the bracket order. The default is a [LimitOrder].
+     */
+    open fun getTakeProfitOrder(asset: Asset, size: Size, atr: Double, price: Double): SingleOrder? {
+        val limitPrice = price - (atr * atrProfit * size.sign)
+        if (limitPrice <= 0) return null
+        return LimitOrder(asset, size, limitPrice)
+
+    }
+
+    /**
+     * Return the stop loss order to use in the bracket order. The default is a [StopOrder].
+     */
+    open fun getStopLossOrder(asset: Asset, size: Size, atr: Double, price: Double): SingleOrder? {
+        val stopPrice = price + (atr * atrLoss * size.sign)
+        if (stopPrice <= 0) return null
+        return StopOrder(asset, size, stopPrice)
+    }
+
+    /**
+     * @see FlexPolicy.calcSize
+     *
+     * This implementation adds functionality that if the value at risk is larger than the defined [atRisk] percentage
+     * of the total order amount, the size will be reduced accordingly.
+     */
+    override fun calcSize(amount: Double, signal: Signal, price: Double): Size {
+        val maxSize = super.calcSize(amount, signal, price)
+        return if (atRisk == null) maxSize else {
+            val atr = getAtr(signal.asset)
+            if (!atr.isFinite()) Size.ZERO else resize(maxSize, atr, price)
+        }
     }
 
     /**
@@ -113,28 +144,28 @@ class AtrPolicy(
      */
     override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order? {
         val asset = signal.asset
-        val price = priceAction.getPrice(priceType)
 
-        // Calculate the ATR and make it relative to the direction of the size
-        val atr = getAtr(asset, price) * size.sign
-        if (!atr.isFinite()) return null
+        // Calculate the ATR
+        val atr = getAtr(asset)
+        if (!atr.isFinite() || atr == 0.0) return null
 
         // Create the actual orders
-        val entry = MarketOrder(asset, size)
+        val price = priceAction.getPrice(priceType)
+        val entry = getEntryOrder(asset, size, atr, price)
+        val profit = getTakeProfitOrder(asset, -size, atr, price)
+        val loss = getStopLossOrder(asset, -size, atr, price)
 
-        val limitPrice = price + (atr * atrProfit)
-        val stopPrice = price - (atr * atrLoss)
-        if (limitPrice <= 0 || stopPrice <= 0) return null // unlikely, but better to be safe
-        val takeProfit = LimitOrder(asset, -size, limitPrice)
-        val stopLoss = StopOrder(asset, -size, stopPrice)
-        return BracketOrder(entry, takeProfit, stopLoss)
+        return if (entry != null && profit != null && loss != null)
+            BracketOrder(entry, profit, loss)
+        else
+            null
     }
 
     /**
-     * @see FlexPolicy.start
+     * @see FlexPolicy.reset
      */
-    override fun start(run: String, timeframe: Timeframe) {
-        super.start(run, Timeframe.INFINITE)
+    override fun reset() {
+        super.reset()
         data.clear()
     }
 

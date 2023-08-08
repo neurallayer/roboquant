@@ -100,7 +100,7 @@ class LazyCSVFeed internal constructor(
         try {
             val queue = PriorityQueue<PriceEntry>(readers.size)
 
-            // Initialize the queue by filling it with 1 entry from each reader
+            // Initialize the queue by filling it with one entry from each reader
             for (entries in readers.values) {
                 val entry = entries.next()
                 if (entry != null) queue.add(entry)

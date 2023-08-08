@@ -26,6 +26,7 @@ import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.common.plus
 import java.time.Instant
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 import kotlin.math.max
 import kotlin.math.min
@@ -102,7 +103,7 @@ class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimeSpan) : 
         }
 
         try {
-            val history = mutableMapOf<Asset, Entry>()
+            val history = ConcurrentHashMap<Asset, Entry>()
             while (true) {
                 val result = mutableListOf<Action>()
                 val event = c.receive()
@@ -123,16 +124,20 @@ class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimeSpan) : 
                         history[asset] = Entry(pb, expiration)
                     } else {
                         val newPb = entry.bar + pb
-                        if (time > entry.expiration) {
-                            result.add(newPb)
-                            history.remove(asset)
-                        } else {
-                            history[asset] = Entry(newPb, entry.expiration)
-                        }
+                        history[asset] = Entry(newPb, entry.expiration)
                     }
                 }
 
-                if (result.isNotEmpty()) {
+                // Check for the expired ones
+                for ((asset, entry) in history) {
+                    if (time > entry.expiration) {
+                        result.add(entry.bar)
+                        history.remove(asset)
+                    }
+                }
+
+                // When we received an empty event (like a heartbeat), also propagate that
+                if (result.isNotEmpty() || event.actions.isEmpty()) {
                     val newEvent = Event(result, time)
                     channel.send(newEvent)
                 }

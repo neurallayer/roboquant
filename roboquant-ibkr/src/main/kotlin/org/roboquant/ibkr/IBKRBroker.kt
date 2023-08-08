@@ -107,7 +107,7 @@ class IBKRBroker(
         val wrapper = Wrapper(logger)
         client = IBKR.connect(wrapper, config)
         client.reqCurrentTime()
-        client.reqAccountUpdates(true, accountId)
+        // client.reqAccountUpdates(true, accountId)
         // client.reqAccountSummary(9004, "All", "\$LEDGER:ALL")
 
         // Open orders already send as part of connection
@@ -162,8 +162,8 @@ class IBKRBroker(
     }
 
     override fun sync(event: Event) {
-        // For IBKR, the account update happens asynchronously in the background.
-        // NOP
+        client.reqOpenOrders()
+        updateAccount()
     }
 
     /**
@@ -254,8 +254,8 @@ class IBKRBroker(
     private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
         /**
-         * Convert an IBOrder to a roboquant Order. This is only used during initial connect when retrieving any open
-         * orders linked to the account.
+         * Convert an IBOrder to a roboquant Order.
+         * This is only used during initial connection when retrieving any open orders linked to the account.
          */
         private fun toOrder(order: IBOrder, contract: Contract): Order {
             val asset = contract.toAsset()

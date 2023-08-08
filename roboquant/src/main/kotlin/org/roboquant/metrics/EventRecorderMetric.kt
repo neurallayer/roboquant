@@ -17,12 +17,8 @@
 package org.roboquant.metrics
 
 import org.roboquant.brokers.Account
-import org.roboquant.common.Timeframe
-import org.roboquant.common.Timeline
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.EventChannel
-import org.roboquant.feeds.Feed
-import org.roboquant.feeds.timeframe
+import org.roboquant.common.*
+import org.roboquant.feeds.*
 import java.util.*
 
 /**
@@ -30,18 +26,22 @@ import java.util.*
  * This metric also implements the [Feed] API, so recorded events can be replayed afterwards as a normal feed.
  *
  * This metric works differently from most other metrics. It stores the events internally in memory and does not
- * return them to a MetricsLogger. However, just like other metrics, it will reset its state at the beginning of a
- * new phase.
+ * return them to a MetricsLogger. However, just like other metrics, it will reset its state when `reset()` is invoked.
  *
- * @property timeframe the timeframe to record, default is [Timeframe.INFINITE] (record all events)
+ * @property timeSpan the timeSpan to record, default is 1 year.
  */
-class EventRecorderMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, Feed {
+class EventRecorderMetric(val timeSpan: TimeSpan = 1.years) : Metric, AssetFeed {
 
-    private val limit = timeframe
-    private val events = LinkedList<Event>()
+    private val events = Collections.synchronizedList(LinkedList<Event>())
 
     override fun calculate(account: Account, event: Event): Map<String, Double> {
-        if (event.time in limit) events.add(event)
+        events.add(event)
+        val cutOff = event.time - timeSpan
+        synchronized(events) {
+            for (entry in events.toList()) {
+                if (entry.time < cutOff) events.removeFirst() else break
+            }
+        }
         return emptyMap()
     }
 
@@ -49,8 +49,16 @@ class EventRecorderMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, F
      * Reset the state
      */
     override fun reset() {
-        events.clear()
+        synchronized(events) {
+            events.clear()
+        }
     }
+
+    override val assets: SortedSet<Asset>
+        get() = synchronized(events) {
+            events.map { it.actions.filterIsInstance<PriceAction>().map { action -> action.asset } }.flatten()
+                .toSortedSet()
+        }
 
     /**
      * The actual timeframe recorded so far.
@@ -68,8 +76,10 @@ class EventRecorderMetric(timeframe: Timeframe = Timeframe.INFINITE) : Metric, F
      * Play the events recorded so far
      */
     override suspend fun play(channel: EventChannel) {
-        for (event in events) {
+        val localEvents = synchronized(events) { events.toList() }
+        for (event in localEvents) {
             channel.send(event)
         }
+
     }
 }

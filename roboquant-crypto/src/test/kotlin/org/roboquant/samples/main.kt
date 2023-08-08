@@ -33,6 +33,7 @@ import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
 import org.roboquant.http.WebServer
 import org.roboquant.loggers.ConsoleLogger
+import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.policies.FlexPolicy
@@ -109,7 +110,7 @@ suspend fun binanceWebServer() {
     val initialDeposit = Amount("BUSD", 10_000).toWallet()
     val broker = SimBroker(initialDeposit)
     val policy = FlexPolicy.singleAsset(enableMetrics = true)
-    val rq = Roboquant(strategy, broker = broker, policy = policy, logger = ConsoleLogger())
+    val rq = Roboquant(strategy, AccountMetric(), broker = broker, policy = policy, logger = MemoryLogger())
 
     val server = WebServer(username = "test", password = "secret")
     server.start()

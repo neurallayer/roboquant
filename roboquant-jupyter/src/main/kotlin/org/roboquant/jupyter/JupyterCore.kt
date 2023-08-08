@@ -77,9 +77,9 @@ var legacyNotebookMode: Boolean
 /**
  * Integration with Kotlin based Jupyter notebook kernels. Some main features:
  *
- * 1) Support for charts using Apache ECharts library
- * 2) Default imports
- * 3) Nicer exception handling
+ * 1. Support for charts using Apache ECharts library
+ * 2. Default imports
+ * 3. Nicer exception handling
  */
 internal class JupyterCore(
     private val notebook: Notebook?,
