@@ -23,19 +23,21 @@ import org.roboquant.alpaca.*
 import org.roboquant.common.*
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.toList
+import org.roboquant.http.WebServer
 import org.roboquant.loggers.InfoLogger
+import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
 import kotlin.io.path.div
 
-fun alpacaBroker() {
+private fun alpacaBroker() {
     val broker = AlpacaBroker()
     println(broker.account.fullSummary())
 }
 
-fun alpacaPaperTradeStocks() {
+private fun alpacaPaperTradeStocks() {
     val broker = AlpacaBroker()
     val account = broker.account
     println(account.fullSummary())
@@ -58,7 +60,7 @@ fun alpacaPaperTradeStocks() {
 }
 
 
-fun alpacaTradeCrypto() {
+private fun alpacaTradeCrypto() {
     val feed = AlpacaLiveFeed()
     val symbols = feed.availableCrypto.random(10).symbols
     println(symbols.toList())
@@ -74,7 +76,7 @@ fun alpacaTradeCrypto() {
 }
 
 
-fun alpacaTradeStocks() {
+private fun alpacaTradeStocks() {
     val feed = AlpacaLiveFeed()
 
     val symbols = feed.availableStocks.take(10).symbols
@@ -90,10 +92,32 @@ fun alpacaTradeStocks() {
     println(roboquant.broker.account.summary())
 }
 
+private fun alpacaPaperTrade() {
+    val feed = AlpacaLiveFeed()
+
+    val symbols = feed.availableStocks.take(10).symbols
+    println(symbols.toList())
+
+    feed.subscribeStocks(*symbols, type = PriceActionType.QUOTE)
+    feed.heartbeatInterval = 30_000
+    val strategy = EMAStrategy.PERIODS_5_15
+    val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), logger = MemoryLogger(false))
+    val tf = Timeframe.next(10.minutes)
+
+    val server = WebServer()
+    server.start()
+
+    server.run(roboquant, feed, tf)
+    server.stop()
+    feed.close()
+    println(roboquant.broker.account.summary())
+}
+
+
 /**
  * Alpaca historic feed example where we retrieve 1-minutes price-bars in batches of 1 day for 100 days.
  */
-fun alpacaHistoricFeed() {
+private fun alpacaHistoricFeed() {
     val feed = AlpacaHistoricFeed()
     val tf = Timeframe.past(100.days) - 15.minutes
     tf.split(1.days).forEach {
@@ -112,7 +136,7 @@ fun alpacaHistoricFeed() {
 /**
  * Alpaca historic feed
  */
-fun alpacaSP500PriceBar() {
+private fun alpacaSP500PriceBar() {
     val feed = AlpacaHistoricFeed()
     val now = Instant.now()
     val tf = Timeframe(Instant.parse("2000-01-01T00:00:00Z"), now)
@@ -140,7 +164,7 @@ fun alpacaSP500PriceBar() {
 /**
  * Alpaca historic feed
  */
-fun alpacaSP500PriceQuote() {
+private fun alpacaSP500PriceQuote() {
     val feed = AlpacaHistoricFeed()
     val now = Instant.now()
     val tf = Timeframe.parse("2022-11-14T18:00:00Z", "2022-11-14T18:05:00Z") // 5 minutes of data
@@ -165,7 +189,7 @@ fun alpacaSP500PriceQuote() {
 }
 
 
-fun alpacaHistoricFeed2() {
+private fun alpacaHistoricFeed2() {
     val symbols = listOf(
         "AAPL",
         "IBM",
@@ -197,10 +221,11 @@ fun alpacaHistoricFeed2() {
 }
 
 fun main() {
-    when ("ALPACA_HISTORIC_SP500_PRICEQUOTE") {
+    when ("PAPER_TRADE") {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
         "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()
+        "PAPER_TRADE" -> alpacaPaperTrade()
         "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
         "ALPACA_HISTORIC_FEED2" -> alpacaHistoricFeed2()
         "ALPACA_HISTORIC_SP500_PRICEBAR" -> alpacaSP500PriceBar()

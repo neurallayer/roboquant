@@ -20,6 +20,7 @@ import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.MarketDataMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.SymbolMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.bar.BarMessage
+import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.control.ErrorMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.enums.MarketDataMessageType
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.quote.QuoteMessage
 import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.realtime.trade.TradeMessage
@@ -233,7 +234,10 @@ class AlpacaLiveFeed(
                     val event = Event(listOf(action), now)
                     send(event)
                 }
+            } else if (msg is ErrorMessage) {
+                logger.error(msg.message)
             }
+
         } catch (e: Throwable) {
             logger.warn(e) { "error during handling market data message" }
         }

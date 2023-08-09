@@ -18,6 +18,7 @@ package org.roboquant.policies
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
+import org.roboquant.brokers.exposure
 import org.roboquant.brokers.getPosition
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
@@ -90,6 +91,30 @@ open class FlexPolicy(
                 }
             }
             return SinglePolicy()
+        }
+
+        /**
+         * Capital-based flex policy.
+         */
+        fun capitalBased(
+            orderPercentage: Double = 0.01,
+            fractions: Int = 0,
+            enableMetrics: Boolean = false
+        ): FlexPolicy {
+            class CapiltalBasedPolicy : FlexPolicy(
+                orderPercentage = orderPercentage,
+                safetyMargin = 0.0,
+                shorting = true,
+                fractions = fractions,
+                enableMetrics = enableMetrics
+            ) {
+                override fun amountPerOrder(account: Account): Amount {
+                    val capital =  account.positions.exposure + account.buyingPower
+                    val amount = account.convert(capital)
+                    return amount * orderPercentage
+                }
+            }
+            return CapiltalBasedPolicy()
         }
 
         /**

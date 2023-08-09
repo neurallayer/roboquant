@@ -73,13 +73,14 @@ class Account(
         get() = convert(cash)
 
     /**
-     * [equity] converted to a single amount denoted in the [baseCurrency] of the account
+     * [equity] converted to a single amount denoted in the [baseCurrency] of the account.
      */
     val equityAmount: Amount
         get() = convert(equity)
 
     /**
-     * Total equity hold in the account. Equity is defined as sum of [cash] balances and the [positions] market value
+     * Total equity hold in the account.
+     * Equity is defined as the sum of [cash] balances and the market value of the open [positions].
      */
     val equity: Wallet
         get() = cash + positions.marketValue

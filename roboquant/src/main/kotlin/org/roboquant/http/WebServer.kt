@@ -21,14 +21,11 @@ import com.sun.net.httpserver.HttpServer
 import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.lines
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.Feed
-import org.roboquant.metrics.Metric
 import org.roboquant.orders.Order
-import org.roboquant.orders.lines
 import org.roboquant.policies.Policy
 import org.roboquant.strategies.Signal
 import java.io.OutputStream
@@ -43,80 +40,6 @@ private class PausablePolicy(val policy: Policy, var pause: Boolean = false) : P
         // Still invoke the policy so any state can be updated if required.
         val orders = policy.act(signals, account, event)
         return if (pause) emptyList() else orders
-    }
-
-}
-
-/**
- * Metric used to capture basic information of a run that is displayed on the web pages.
- */
-private class WebMetric : Metric {
-
-    var account: Account? = null
-    var events = 0
-    var actions = 0
-
-    override fun calculate(account: Account, event: Event): Map<String, Double> {
-        this.account = account
-        events++
-        actions += event.actions.size
-        return emptyMap()
-    }
-
-
-    fun List<List<Any>>.toTable(): String {
-        val result = StringBuilder("<table class=table>")
-        result.append("<tr>")
-
-        result.append("</tr>")
-        var c = "th"
-        for (row in this) {
-            result.append("<tr>")
-            for (column in row) {
-                result.append("<$c>$column</$c>")
-            }
-            result.append("</tr>")
-            c = "td"
-        }
-        result.append("</table>")
-        return result.toString()
-    }
-
-
-    override fun toString(): String {
-        val acc = account ?: return "Not yet run"
-        val summary = listOf(
-            listOf("name", "value"),
-            listOf("last update", acc.lastUpdate),
-            listOf("events", events),
-            listOf("actions", actions),
-            listOf("buying power", acc.buyingPower),
-            listOf("equity", acc.equity),
-            listOf("open positions", acc.positions.size),
-            listOf("open orders", acc.openOrders.size),
-            listOf("closed orders", acc.closedOrders.size),
-            listOf("trades", acc.trades.size),
-        )
-
-        return """
-                <h2>summary</h2>
-                ${summary.toTable()}
-            
-                <h2>cash</h2>
-                ${acc.cash}
-                
-                <h2>positions</h2> 
-                ${acc.positions.lines().toTable()}
-                
-                <h2>open orders</h2>
-                ${acc.openOrders.lines().toTable()}
-                
-                <h2>closed orders</h2>
-                ${acc.closedOrders.lines().toTable()}
-                
-                <h2>trades</h2>
-                ${acc.trades.lines().toTable()}                                
-            """.trimIndent()
     }
 
 }
@@ -211,7 +134,9 @@ class WebServer(port: Int = 8000, username: String, password: String) {
             <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
           </head>
           <body>
+            <div class=container>
             %s
+            </div>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
           </body>
         </html>

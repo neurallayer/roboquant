@@ -89,7 +89,6 @@ fun showAccount() {
 suspend fun paperTrade() {
     Config.exchangeRates = IBKRExchangeRates()
     val broker = IBKRBroker()
-    Thread.sleep(5_000)
     val account = broker.account
     println(account.fullSummary())
 
