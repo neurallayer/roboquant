@@ -17,22 +17,27 @@ package org.roboquant.brokers.sim
 
 import org.roboquant.brokers.Trade
 import org.roboquant.brokers.sim.execution.Execution
+import org.roboquant.common.percent
 import java.time.Instant
 import kotlin.math.absoluteValue
 
 /**
  * The PercentageFeeModel defines a percentage of total value as the fee. For every trade it will calculate to the
- * total value and then use the [feePercentage] as the fee.
+ * total value and then use the [fee] as the fee.
  *
- * @property feePercentage fee as a percentage of total execution cost, 0.01 = 1%. Default is 0.0
+ * @property fee fee as a fraction of total execution cost. Default is 0.percent
  * @constructor Create a new percentage fee model
  */
 class PercentageFeeModel(
-    private val feePercentage: Double = 0.0,
+    private val fee: Double = 0.percent,
 ) : FeeModel {
 
+    init {
+        require(fee in 0.0..1.0) {  "Fee should be between zero and one" }
+    }
+
     override fun calculate(execution: Execution, time: Instant, trades: List<Trade>): Double {
-        return execution.value.absoluteValue * feePercentage
+        return execution.value.absoluteValue * fee
     }
 
 }

@@ -24,10 +24,9 @@ import kotlin.collections.set
  * For example, how to deal with conflicting signals or how to handle amounts in a multi-currency environment. It
  * also contains a simple method to record metrics.
  *
- * @property recording should metrics be recorded, default is false
- * @constructor Create empty Base policy
+ * @property enableMetrics should metrics be exposed, default is false
  */
-abstract class BasePolicy(private val prefix: String = "policy.", var recording: Boolean = false) : Policy {
+abstract class BasePolicy(private val prefix: String = "policy.", var enableMetrics: Boolean = false) : Policy {
 
     private val metrics = mutableMapOf<String, Double>()
 
@@ -38,7 +37,7 @@ abstract class BasePolicy(private val prefix: String = "policy.", var recording:
      * @param value The value of the metric
      */
     protected fun record(key: String, value: Number) {
-        if (!recording) return
+        if (!enableMetrics) return
         metrics["$prefix$key"] = value.toDouble()
     }
 

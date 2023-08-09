@@ -22,6 +22,7 @@ import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Config
 import org.roboquant.common.Size
+import org.roboquant.common.percent
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
@@ -89,7 +90,7 @@ private fun customPolicy() {
      * Custom Policy that extends the FlexPolicy and captures the ATR (Average True Range) using the TaLibMetric. It
      * then uses the ATR to set the limit amount of a LimitOrder.
      */
-    class SmartLimitPolicy(private val atrPercentage: Double = 0.02, private val atrPeriod: Int) : FlexPolicy() {
+    class SmartLimitPolicy(private val atrPercentage: Double = 200.percent, private val atrPeriod: Int) : FlexPolicy() {
 
         // use TaLibMetric to calculate the ATR values
         private val atr = TaLibMetric { mapOf("atr" to atr(it, atrPeriod)) }
@@ -111,7 +112,7 @@ private fun customPolicy() {
         override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order? {
             val metricName = "atr.${signal.asset.symbol.lowercase()}"
             val value = atrMetrics[metricName]
-            val price = priceAction.getPrice(priceType)
+            val price = priceAction.getPrice(config.priceType)
             return if (value != null) {
                 val limit = price - size.sign * value * atrPercentage
                 LimitOrder(signal.asset, size, limit)
@@ -134,7 +135,10 @@ private fun customPolicy() {
 
 private fun atrPolicy() {
     val strategy = EMAStrategy.PERIODS_5_15
-    val policy = AtrPolicy(10, 6.0, 3.0, orderPercentage = 0.02, atRisk = Double.NaN, shorting = true)
+    val policy = AtrPolicy(10, 6.0, 3.0, null) {
+        orderPercentage = 0.02
+        shorting = true
+    }
     val broker = SimBroker(accountModel = MarginAccount(minimumEquity = 50_000.0))
     val rq = Roboquant(strategy, broker = broker, policy = policy)
 

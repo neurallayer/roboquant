@@ -69,7 +69,10 @@ fun useBinanceFeed() {
 
     val initialDeposit = Amount("UST", 100_000).toWallet()
     val marginAccount = MarginAccount()
-    val policy = FlexPolicy(shorting = true, fractions = 4)
+    val policy = FlexPolicy {
+        shorting = true
+        fractions = 4
+    }
     val broker = SimBroker(initialDeposit, accountModel = marginAccount)
     val roboquant = Roboquant(EMAStrategy.PERIODS_5_15, AccountMetric(), broker = broker, policy = policy)
     roboquant.run(feed)
@@ -94,7 +97,7 @@ fun binanceForwardTest() {
     val strategy = EMAStrategy.PERIODS_5_15
     val initialDeposit = Amount("BUSD", 10_000).toWallet()
     val broker = SimBroker(initialDeposit)
-    val policy = FlexPolicy.singleAsset(enableMetrics = true)
+    val policy = FlexPolicy.singleAsset()
     val rq = Roboquant(strategy, broker = broker, policy = policy, logger = ConsoleLogger())
 
     // We'll run the forward test for thirty minutes
@@ -109,7 +112,7 @@ suspend fun binanceWebServer() {
     val strategy = EMAStrategy.PERIODS_5_15
     val initialDeposit = Amount("BUSD", 10_000).toWallet()
     val broker = SimBroker(initialDeposit)
-    val policy = FlexPolicy.singleAsset(enableMetrics = true)
+    val policy = FlexPolicy.singleAsset()
     val rq = Roboquant(strategy, AccountMetric(), broker = broker, policy = policy, logger = MemoryLogger())
 
     val server = WebServer(username = "test", password = "secret")

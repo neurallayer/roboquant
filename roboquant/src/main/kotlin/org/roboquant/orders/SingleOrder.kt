@@ -152,7 +152,7 @@ class StopLimitOrder(
  *
  * @property asset asset of the order
  * @property size size of the order
- * @property trailPercentage positive percentage, for example 0.1 for 10% trail
+ * @property trailPercentage positive percentage, for example `10.percent` for 10% trail
  * @property tif time in force policy, default is GTC
  * @property id the order identifier
  * @constructor Create empty Trail order

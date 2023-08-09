@@ -45,7 +45,8 @@ internal class FlexPolicyTest {
 
     @Test
     fun recording() {
-        val policy = FlexPolicy(enableMetrics = true)
+        val policy = FlexPolicy()
+        policy.enableMetrics = true
         val signals = mutableListOf<Signal>()
         val event = Event(emptyList(), Instant.now())
         val account = InternalAccount(Currency.USD).toAccount()
@@ -71,7 +72,9 @@ internal class FlexPolicyTest {
 
     @Test
     fun orderMinPrice() {
-        val policy = FlexPolicy(minPrice = 10.USD)
+        val policy = FlexPolicy {
+            minPrice = 10.USD
+        }
         val asset = Asset("TEST123")
         val signals = listOf(Signal(asset, Rating.BUY))
 
@@ -94,7 +97,7 @@ internal class FlexPolicyTest {
                 val asset = signal.asset
                 val direction = if (size.isPositive) 1.0 else -1.0
                 val percentage = percentage * direction
-                val price = priceAction.getPrice(priceType)
+                val price = priceAction.getPrice(config.priceType)
 
                 return BracketOrder(
                     MarketOrder(asset, size),

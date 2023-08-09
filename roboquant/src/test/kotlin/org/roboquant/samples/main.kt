@@ -33,6 +33,8 @@ import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.feeds.filter
+import org.roboquant.feeds.util.LiveTestFeed
+import org.roboquant.http.WebServer
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
@@ -72,7 +74,9 @@ fun multiCurrency() {
     val broker = SimBroker(cash)
 
     val strategy = EMAStrategy.PERIODS_12_26
-    val policy = FlexPolicy(orderPercentage = 0.02)
+    val policy = FlexPolicy {
+        orderPercentage = 0.02
+    }
 
     val roboquant = Roboquant(strategy, AccountMetric(), policy = policy, broker = broker, logger = MemoryLogger())
     roboquant.run(feed)
@@ -137,7 +141,7 @@ fun testingStrategies() {
 
 
 fun signalsOnly() {
-    class MyPolicy : BasePolicy(recording = true, prefix = "") {
+    class MyPolicy : BasePolicy(enableMetrics = true, prefix = "") {
 
         override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
             for (signal in signals) {
@@ -216,6 +220,17 @@ fun performanceTest() {
     }
 }
 
+fun web() {
+    val server = WebServer()
+    server.start()
+    val feed = LiveTestFeed(100..120, 120 downTo 80, 80 .. 140, priceBar = true)
+    val roboquant = Roboquant(EMAStrategy(), AccountMetric())
+    server.run(roboquant, feed, Timeframe.next(2.minutes))
+
+    server.stop()
+
+}
+
 
 fun cfd() {
     val dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
@@ -245,8 +260,11 @@ fun cfd() {
 
     // Since we only trade in 1 asset and have leverage, we allow up to 1000% of our equity (10k) allocated to
     // one order
-    val orderPercentage = 10.0
-    val policy = FlexPolicy(shorting = true, orderPercentage = orderPercentage, safetyMargin = 0.5)
+    val policy = FlexPolicy.capitalBased {
+        shorting = true
+        orderPercentage = 90.percent
+        safetyMargin = 10.percent
+    }
     val roboquant = Roboquant(strategy, AccountMetric(), broker = broker, policy = policy)
     roboquant.run(feed)
 
@@ -259,7 +277,7 @@ fun cfd() {
 suspend fun main() {
     Config.printInfo()
 
-    when ("CFD") {
+    when ("WEB") {
         "SIMPLE" -> simple()
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
@@ -270,6 +288,7 @@ suspend fun main() {
         "PROFILE" -> profileTest()
         "PERFORMANCE" -> performanceTest()
         "CFD" -> cfd()
+        "WEB" -> web()
     }
 
 }

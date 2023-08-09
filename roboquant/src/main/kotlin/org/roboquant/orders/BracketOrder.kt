@@ -18,6 +18,7 @@ package org.roboquant.orders
 
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
+import org.roboquant.common.percent
 
 /**
  * A bracket order enables you to place an order and at the same time place orders to take profit and limit the loss.
@@ -71,8 +72,8 @@ class BracketOrder(
             asset: Asset,
             size: Size,
             price: Double,
-            trailPercentage: Double = 0.05, // 5%
-            stopPercentage: Double = 0.01 // 1%
+            trailPercentage: Double = 5.percent, // 5%
+            stopPercentage: Double = 1.percent // 1%
         ): BracketOrder {
             require(stopPercentage > 0.0) { "stopPercentage should be a positive value, for example 0.05 for 5%" }
             val stopPrice = price * (1.0 - (size.sign * stopPercentage))
@@ -95,8 +96,8 @@ class BracketOrder(
             asset: Asset,
             size: Size,
             limitPrice: Double,
-            trailPercentage: Double = 0.05, // 5%
-            stopPercentage: Double = 0.01 // 1%
+            trailPercentage: Double =  5.percent, // 5%
+            stopPercentage: Double = 1.percent // 1%
         ): BracketOrder {
             require(stopPercentage > 0.0) { "stopPercentage should be a positive value, for example 0.05 for 5%" }
             val stopPrice = limitPrice * (1.0 - (size.sign * stopPercentage))

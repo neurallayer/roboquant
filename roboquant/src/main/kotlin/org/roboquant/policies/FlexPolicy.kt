@@ -28,15 +28,11 @@ import org.roboquant.strategies.Signal
 import java.time.Instant
 
 /**
- * This is the default policy that will be used if no other policy is specified. There are several properties that
- * can be specified during construction that changes its behavior.
+ * Configuration parameters for the [FlexPolicy].
  *
- * Also, some of its methods can be overwritten in a subclass to provide even more flexibility. For example, this
- * policy will create [MarketOrder]s by default, but this can be changed by overwriting the [createOrder] method in
- * a subclass.
- *
- * @property orderPercentage The percentage of the equity value to allocate to a single order, default is 1% (0.01). In
- * the case of an account with high leverage, this value can be larger than 1 (100%).
+ * @property orderPercentage The percentage of the equity value to allocate to a single order.
+ * The default is 1.percent (0.01).
+ * In the case of an account with high leverage, this value can be larger than 1 (100%).
  * @property shorting Can the policy create orders that potentially lead to short positions, default is false
  * @property priceType The type of price to use, default is "DEFAULT"
  * @property fractions For fractional trading, the number of fractions (decimals) to allow for. Default is 0
@@ -45,23 +41,50 @@ import java.time.Instant
  * are more likely to stay away from bounced orders and margin calls. Default is same percentage as [orderPercentage]
  * @property minPrice the minimal price for an asset before opening a position, default is null (no minimum). This
  * can be used to avoid trading penny stocks.
- * @param enableMetrics should the policy record metrics, default is false.
- * When enabled, it will record the number of `actions`, `signals` and `orders`.
- * @constructor Create a new instance of a FlexPolicy
  */
-@Suppress("MemberVisibilityCanBePrivate")
+open class FlexPolicyConfig(
+    var orderPercentage: Double = 1.percent,
+    var shorting: Boolean = false,
+    var priceType: String = "DEFAULT",
+    var fractions: Int = 0,
+    var oneOrderOnly: Boolean = true,
+    var safetyMargin: Double = orderPercentage,
+    var minPrice: Amount? = null,
+)
+
+/**
+ * This is the default policy that will be used if no other policy is specified.
+ * There are several properties that can be specified during construction that change the underlying behavior:
+ *
+ * ```
+ * val policy = FlexPolicy {
+ *      orderPercentage = 2.percent
+ * }
+ * ```
+ *
+ * See also [FlexPolicyConfig] for more details.
+ *
+ * Also, some methods can be overwritten in a subclass to provide even more flexibility.
+ * For example, this policy will create [MarketOrder]s by default, but this can be changed by overwriting
+ * the [createOrder] method in a subclass.
+ *
+ * When [enableMetrics] is set to true, it will record the number of `actions`, `signals` and `orders`.
+ *
+ * @constructor Create a new instance of a FlexPolicy
+ * @param configure additional configuration parameters
+ */
 open class FlexPolicy(
-    protected val orderPercentage: Double = 0.01,
-    protected val shorting: Boolean = false,
-    protected val priceType: String = "DEFAULT",
-    protected val fractions: Int = 0,
-    protected val oneOrderOnly: Boolean = true,
-    protected val safetyMargin: Double = orderPercentage,
-    protected val minPrice: Amount? = null,
-    enableMetrics: Boolean = false
-) : BasePolicy(recording = enableMetrics) {
+    configure: FlexPolicyConfig.() -> Unit = {}
+) : BasePolicy() {
 
     protected val logger = Logging.getLogger(FlexPolicy::class)
+
+    // Holds all the configuration
+    protected val config = FlexPolicyConfig()
+
+    init {
+        config.configure()
+    }
 
     /**
      * Set of predefined FlexPolicies
@@ -78,16 +101,12 @@ open class FlexPolicy(
          * orderAmount = buyingPower * orderPercentage
          * ```
          */
-        fun singleAsset(orderPercentage: Double = 0.9, fractions: Int = 4, enableMetrics: Boolean = false): FlexPolicy {
+        fun singleAsset(configure: FlexPolicyConfig.() -> Unit = {}): FlexPolicy {
             class SinglePolicy : FlexPolicy(
-                orderPercentage = orderPercentage,
-                safetyMargin = 0.0,
-                shorting = true,
-                fractions = fractions,
-                enableMetrics = enableMetrics
+                configure
             ) {
                 override fun amountPerOrder(account: Account): Amount {
-                    return account.buyingPower * orderPercentage
+                    return account.buyingPower * config.orderPercentage
                 }
             }
             return SinglePolicy()
@@ -97,21 +116,13 @@ open class FlexPolicy(
          * Capital-based flex policy.
          */
         fun capitalBased(
-            orderPercentage: Double = 0.01,
-            fractions: Int = 0,
-            enableMetrics: Boolean = false
+            configure: FlexPolicyConfig.() -> Unit = {}
         ): FlexPolicy {
-            class CapiltalBasedPolicy : FlexPolicy(
-                orderPercentage = orderPercentage,
-                safetyMargin = 0.0,
-                shorting = true,
-                fractions = fractions,
-                enableMetrics = enableMetrics
-            ) {
+            class CapiltalBasedPolicy : FlexPolicy(configure) {
                 override fun amountPerOrder(account: Account): Amount {
-                    val capital =  account.positions.exposure + account.buyingPower
+                    val capital = account.positions.exposure + account.buyingPower
                     val amount = account.convert(capital)
-                    return amount * orderPercentage
+                    return amount * config.orderPercentage
                 }
             }
             return CapiltalBasedPolicy()
@@ -127,16 +138,14 @@ open class FlexPolicy(
          * @see BracketOrder.marketTrailStop
          */
         fun bracketOrders(
-            trailPercentage: Double = 0.05,
-            stopPercentage: Double = 0.01,
-            orderPercentage: Double = 0.01,
-            shorting: Boolean = false,
-            priceType: String = "DEFAULT"
+            trailPercentage: Double = 5.percent,
+            stopPercentage: Double = 1.percent,
+            configure: FlexPolicyConfig.() -> Unit = {}
         ): FlexPolicy {
-            class MyPolicy : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting, priceType = priceType) {
+            class MyPolicy : FlexPolicy(configure = configure) {
 
                 override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order {
-                    val price = priceAction.getPrice(priceType)
+                    val price = priceAction.getPrice(config.priceType)
                     return BracketOrder.marketTrailStop(signal.asset, size, price, trailPercentage, stopPercentage)
                 }
             }
@@ -145,18 +154,25 @@ open class FlexPolicy(
         }
 
         /**
-         * FlexPolicy that generates limit orders.
+         * FlexPolicy that generates limit orders for entry orders.
+         *
+         * If [limitPercentage] is a positive value, the following logic applies,
+         *
+         * ```
+         * BUY orders have a below market price limit, and SELL order above market price.
+         * ```
+         *
+         * @param limitPercentage the limit as percentage of the price
+         *
          */
         fun limitOrders(
-            limitPercentage: Double = 0.01,
-            orderPercentage: Double = 0.01,
-            shorting: Boolean = false,
-            priceType: String = "DEFAULT"
+            limitPercentage: Double = 1.percent,
+            configure: FlexPolicyConfig.() -> Unit = {}
         ): FlexPolicy {
-            class MyPolicy : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting, priceType = priceType) {
+            class MyPolicy : FlexPolicy(configure = configure) {
 
                 override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order {
-                    val price = priceAction.getPrice(priceType)
+                    val price = priceAction.getPrice(config.priceType)
 
                     // BUY orders have a below market price limit, and SELL order above
                     val limitOffset = limitPercentage * size.sign
@@ -189,12 +205,12 @@ open class FlexPolicy(
 
     /**
      * Return the size that can be bought/sold with the provided [amount] and [price] of the asset. This implementation
-     * also takes into consideration the configured [fractions].
+     * also takes into consideration the configured [FlexPolicyConfig.fractions].
      *
      * This method will only be invoked if the signal is not closing a position.
      */
     open fun calcSize(amount: Double, signal: Signal, price: Double): Size {
-        return signal.asset.contractSize(amount, price, fractions) * signal.rating.direction
+        return signal.asset.contractSize(amount, price, config.fractions) * signal.rating.direction
     }
 
     /**
@@ -221,7 +237,7 @@ open class FlexPolicy(
      * `account.buyingPower` instead.
      */
     open fun amountPerOrder(account: Account): Amount {
-        return account.equityAmount * orderPercentage
+        return account.equityAmount * config.orderPercentage
     }
 
     /**
@@ -229,6 +245,7 @@ open class FlexPolicy(
      * a conversion will first take place.
      */
     private fun meetsMinPrice(asset: Asset, price: Double, time: Instant): Boolean {
+        val minPrice = config.minPrice
         return minPrice == null || minPrice.convert(asset.currency, time) <= price
     }
 
@@ -262,7 +279,7 @@ open class FlexPolicy(
 
         if (signals.isNotEmpty()) {
             val equityAmount = account.equityAmount
-            val safetyAmount = equityAmount * safetyMargin
+            val safetyAmount = equityAmount * config.safetyMargin
             val time = event.time
             var buyingPower = account.buyingPower - safetyAmount.value
             val amountPerOrder = amountPerOrder(account)
@@ -271,12 +288,12 @@ open class FlexPolicy(
             for (signal in signals) {
                 val asset = signal.asset
 
-                if (oneOrderOnly && (account.openOrders.contains(asset) || orders.contains(asset))) continue
+                if (config.oneOrderOnly && (account.openOrders.contains(asset) || orders.contains(asset))) continue
 
                 // Don't create an order if we don't know the current price
                 val priceAction = event.prices[asset] ?: continue
 
-                val price = priceAction.getPrice(priceType)
+                val price = priceAction.getPrice(config.priceType)
                 logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder action=$priceAction" }
 
                 val position = account.positions.getPosition(asset)
@@ -291,7 +308,7 @@ open class FlexPolicy(
                     val assetAmount = amountPerOrder.convert(asset.currency, time).value
                     val size = calcSize(assetAmount, signal, price)
                     if (size.iszero) continue
-                    if (size.isNegative && !shorting) continue
+                    if (size.isNegative && !config.shorting) continue
                     if (!meetsMinPrice(asset, price, time)) continue
 
                     val order = createOrder(signal, size, priceAction)
@@ -310,7 +327,7 @@ open class FlexPolicy(
 
             }
         }
-        if (recording) record(orders, signals, event, account)
+        if (enableMetrics) record(orders, signals, event, account)
         return orders
     }
 }

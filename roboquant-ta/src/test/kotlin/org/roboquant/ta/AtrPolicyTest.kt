@@ -64,7 +64,9 @@ class AtrPolicyTest {
 
     @Test
     fun bracketATR() {
-        val p = AtrPolicy(10, 4.0, 2.0, orderPercentage = 0.02, atRisk = null)
+        val p = AtrPolicy(10, 4.0, 2.0, null) {
+            orderPercentage = 0.02
+        }
         val orders = run(p)
         assertTrue(orders.isNotEmpty())
 
@@ -83,7 +85,9 @@ class AtrPolicyTest {
 
     @Test
     fun bracketSizingAtr() {
-        val p = AtrPolicy(10, 4.0, 2.0, orderPercentage = 0.02, atRisk = 0.1)
+        val p = AtrPolicy(10, 4.0, 2.0, 0.1) {
+            orderPercentage = 0.02
+        }
         val orders = run(p)
         assertTrue(orders.isNotEmpty())
         val order = orders.last()
@@ -95,7 +99,9 @@ class AtrPolicyTest {
     @Test
     fun bracketSizingAtrValidation() {
         assertThrows<IllegalArgumentException> {
-            AtrPolicy(10, 4.0, 2.0, orderPercentage = 0.02, atRisk = 1.3)
+            AtrPolicy(10, 4.0, 2.0, 1.3) {
+                orderPercentage = 0.02
+            }
         }
     }
 

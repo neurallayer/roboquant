@@ -3,6 +3,7 @@ package org.roboquant.brokers.sim
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
+import org.roboquant.common.bips
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -21,8 +22,8 @@ class PricingEngineTest {
 
     @Test
     fun spreadPricing() {
-        // Pricing engine with 100 BIPS (2%) spread
-        val pe = SpreadPricingEngine(200, "OPEN")
+        // Pricing engine with 200 BIPS (2%) spread
+        val pe = SpreadPricingEngine(200.bips, "OPEN")
         val pricing = pe.getPricing(priceBar, Instant.now())
         val price = pricing.marketPrice(Size(100))
         assertEquals(priceBar.getPrice("OPEN") * 1.01, price)

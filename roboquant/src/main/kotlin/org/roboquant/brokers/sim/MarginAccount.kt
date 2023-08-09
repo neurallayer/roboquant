@@ -21,6 +21,7 @@ import org.roboquant.brokers.marketValue
 import org.roboquant.brokers.short
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Amount
+import org.roboquant.common.percent
 
 /**
  * An account model that supports trading with margin. The buying power is calculated using the following steps:
@@ -39,8 +40,8 @@ import org.roboquant.common.Amount
  * @property minimumEquity the minimum equity requirement, defaults to 0.0 (denoted in Account.baseCurrency)
  */
 class MarginAccount(
-    private val initialMargin: Double = 0.50,
-    private val maintenanceMarginLong: Double = 0.3,
+    private val initialMargin: Double = 50.percent,
+    private val maintenanceMarginLong: Double = 30.percent,
     private val maintenanceMarginShort: Double = maintenanceMarginLong,
     private val minimumEquity: Double = 0.0
 ) : AccountModel {

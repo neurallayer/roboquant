@@ -22,6 +22,7 @@ import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.Pricing
 import org.roboquant.brokers.sim.SpreadPricingEngine
 import org.roboquant.common.Size
+import org.roboquant.common.bips
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
 import java.time.Instant
@@ -39,7 +40,7 @@ internal class OrderExecutorTest {
     }
 
     private fun pricing2(price: Number): Pricing {
-        val engine = SpreadPricingEngine(200)
+        val engine = SpreadPricingEngine(200.bips)
         return engine.getPricing(TradePrice(asset, price.toDouble()), Instant.now())
     }
 

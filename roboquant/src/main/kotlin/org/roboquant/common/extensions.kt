@@ -280,14 +280,26 @@ private const val EPS = 0.0000001
 /**
  * Is this value zero, this implementation allows for small rounding errors.
  */
-val Double.iszero
+val Double.iszero: Boolean
     get() = this.absoluteValue < EPS
 
 /**
  * Return true if this is a non-zero number, allows for small rounding errors.
  */
-val Double.nonzero
+val Double.nonzero: Boolean
     get() = this.absoluteValue >= EPS
+
+/**
+ * The number as percentage. For example, `10.percent` equals `0.01`
+ */
+val Number.percent: Double
+    get() = this.toDouble() / 100.0
+
+/**
+ * The number as bips. For example, `10.bips` equals `0.0001`
+ */
+val Number.bips: Double
+    get() = this.toDouble() / 10_000.0
 
 /**
  * Return a rounded number with the specified number of fractions as a BigDecimal

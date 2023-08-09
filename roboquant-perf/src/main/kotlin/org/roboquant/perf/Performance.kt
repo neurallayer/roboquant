@@ -157,7 +157,9 @@ private object Performance {
             )
 
             val broker = SimBroker(accountModel = MarginAccount())
-            val policy = FlexPolicy(shorting = true)
+            val policy = FlexPolicy {
+                shorting = true
+            }
 
             val roboquant = Roboquant(
                 strategy,

@@ -23,6 +23,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
 import org.roboquant.orders.*
 import org.roboquant.policies.FlexPolicy
+import org.roboquant.policies.FlexPolicyConfig
 import org.roboquant.strategies.Signal
 
 
@@ -52,11 +53,9 @@ open class AtrPolicy(
     private val atrPeriod: Int = 20,
     private val atrProfit: Double = 4.0,
     private val atrLoss: Double = 2.0,
-    orderPercentage: Double = 0.02,
     private val atRisk: Double? = null,
-    shorting: Boolean = false,
-    priceType: String = "DEFAULT"
-) : FlexPolicy(orderPercentage = orderPercentage, shorting = shorting, priceType = priceType) {
+    configure: FlexPolicyConfig.() -> Unit = {}
+) : FlexPolicy(configure = configure) {
 
 
     init {
@@ -77,7 +76,7 @@ open class AtrPolicy(
         // Reduce the size if risk is bigger than limit
         return if (risk > limit) {
             val newSize = maxSize * limit / risk
-            newSize.round(fractions)
+            newSize.round(config.fractions)
         } else {
             maxSize
         }
@@ -150,7 +149,7 @@ open class AtrPolicy(
         if (!atr.isFinite() || atr == 0.0) return null
 
         // Create the actual orders
-        val price = priceAction.getPrice(priceType)
+        val price = priceAction.getPrice(config.priceType)
         val entry = getEntryOrder(asset, size, atr, price)
         val profit = getTakeProfitOrder(asset, -size, atr, price)
         val loss = getStopLossOrder(asset, -size, atr, price)
