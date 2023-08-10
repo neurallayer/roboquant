@@ -1,6 +1,7 @@
-package org.roboquant.jupyter
+package org.roboquant.charts
 
 import org.junit.jupiter.api.assertDoesNotThrow
+import org.roboquant.charts.SignalChart
 import org.roboquant.feeds.RandomWalkFeed
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test

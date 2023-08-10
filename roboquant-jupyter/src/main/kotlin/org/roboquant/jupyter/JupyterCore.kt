@@ -20,6 +20,8 @@ import org.jetbrains.kotlinx.jupyter.api.*
 import org.jetbrains.kotlinx.jupyter.api.libraries.ColorScheme
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
+import org.roboquant.charts.Chart
+import org.roboquant.charts.HTMLOutput
 import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import java.io.PrintWriter
@@ -129,6 +131,7 @@ internal class JupyterCore(
             "org.roboquant.brokers.*",
             "org.roboquant.policies.*",
             "org.roboquant.jupyter.*",
+            "org.roboquant.charts.*",
             "java.time.Instant",
             "java.time.temporal.ChronoUnit",
             "org.roboquant.ta.*",

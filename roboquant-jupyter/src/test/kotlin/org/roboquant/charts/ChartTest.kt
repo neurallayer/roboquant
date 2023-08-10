@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.jupyter
+package org.roboquant.charts
 
 import org.icepear.echarts.Option
 import org.junit.jupiter.api.Test
@@ -22,6 +22,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.common.USD
 import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.jupyter.render
 import java.io.File
 import java.time.Instant
 import kotlin.test.assertContains

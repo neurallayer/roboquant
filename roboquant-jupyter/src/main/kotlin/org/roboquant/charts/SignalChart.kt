@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.jupyter
+package org.roboquant.charts
 
 import org.icepear.echarts.Option
 import org.icepear.echarts.Scatter

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package org.roboquant.jupyter
+package org.roboquant.charts
 
 import org.junit.jupiter.api.Test
+import org.roboquant.feeds.RandomWalkFeed
 import kotlin.test.assertTrue
 
-internal class OrderChartTest {
+internal class PerformanceChartTest {
 
     @Test
     fun test() {
-        val account = TestData.fullAccount
-        val chart = OrderChart(account.closedOrders)
+        val feed = RandomWalkFeed.lastYears(1)
+        val chart = PerformanceChart(feed)
         assertTrue(chart.asHTML().isNotBlank())
     }
 

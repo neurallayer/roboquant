@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package org.roboquant.jupyter
+package org.roboquant.charts
 
 import org.junit.jupiter.api.Test
-import org.roboquant.loggers.MemoryLogger
+import org.roboquant.jupyter.TestData
 import kotlin.test.assertTrue
 
-internal class BoxChartTest {
+internal class CalendarChartTest {
 
     @Test
     fun test() {
-        val logger = MemoryLogger()
-        val data = logger.getMetric("test")
-        val chart = BoxChart(data)
+        val data = TestData.data
+        val chart = CalendarChart(data)
         assertTrue(chart.asHTML().isNotBlank())
+
+        Chart.counter = 0
+        TestData.testFile(chart, "calendarchart.txt")
     }
 
 }

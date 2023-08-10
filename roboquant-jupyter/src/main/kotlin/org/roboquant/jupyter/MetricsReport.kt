@@ -1,6 +1,9 @@
 package org.roboquant.jupyter
 
 import org.roboquant.Roboquant
+import org.roboquant.charts.Chart
+import org.roboquant.charts.HTMLOutput
+import org.roboquant.charts.TimeSeriesChart
 import org.roboquant.common.TimeSeries
 import java.nio.charset.StandardCharsets
 

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,33 +14,20 @@
  * limitations under the License.
  */
 
-package org.roboquant.jupyter
+package org.roboquant.charts
 
 import org.junit.jupiter.api.Test
-import org.roboquant.charts.PriceBarChart
-import org.roboquant.charts.TimeSeriesChart
+import org.roboquant.loggers.MemoryLogger
 import kotlin.test.assertTrue
 
-internal class WelcomeTest {
+internal class BoxChartTest {
 
     @Test
     fun test() {
-        val w = Welcome()
-        val snippet = w.asHTML()
-        assertTrue(snippet.isNotBlank())
-        assertTrue { w.asHTMLPage().contains(snippet) }
-    }
-
-    @Test
-    fun testDemo() {
-        val chart1 = Welcome().demo1()
-        assertTrue(chart1 is TimeSeriesChart)
-
-        val chart2 = Welcome().demo2()
-        assertTrue(chart2 is TimeSeriesChart)
-
-        val chart3 = Welcome().demo3()
-        assertTrue(chart3 is PriceBarChart)
+        val logger = MemoryLogger()
+        val data = logger.getMetric("test")
+        val chart = BoxChart(data)
+        assertTrue(chart.asHTML().isNotBlank())
     }
 
 }

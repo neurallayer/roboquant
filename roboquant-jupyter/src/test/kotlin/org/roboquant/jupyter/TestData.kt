@@ -20,6 +20,7 @@ import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.sim.execution.InternalAccount
+import org.roboquant.charts.Chart
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
@@ -72,7 +73,7 @@ object TestData {
         rq.logger.getMetric("account.equity")
     }
 
-    fun loadFile(name: String): String {
+    private fun loadFile(name: String): String {
         val classloader = Thread.currentThread().contextClassLoader
         val bytes = classloader.getResourceAsStream(name)!!.readAllBytes()
         return String(bytes)
