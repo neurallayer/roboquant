@@ -19,16 +19,17 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>roboquant-parent</artifactId>
         <groupId>org.roboquant</groupId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>roboquant</artifactId>
+    <artifactId>roboquant-binance</artifactId>
     <packaging>jar</packaging>
-    <name>roboquant</name>
-    <description>roboquant is a fast algorithmic trading platform written in Kotlin.</description>
+    <name>roboquant binance</name>
+    <description>Binance support for roboquant algorithmic trading platform</description>
 
     <build>
         <plugins>
@@ -41,41 +42,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-core</artifactId>
-            <version>1.7.3</version>
+            <artifactId>roboquant</artifactId>
+            <groupId>org.roboquant</groupId>
         </dependency>
         <dependency>
-            <groupId>de.siegmar</groupId>
-            <artifactId>fastcsv</artifactId>
-            <version>2.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hipparchus</groupId>
-            <artifactId>hipparchus-stat</artifactId>
-            <version>2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.avro</groupId>
-            <artifactId>avro</artifactId>
-            <version>1.11.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.xerial.snappy</groupId>
-            <artifactId>snappy-java</artifactId>
-            <version>1.1.10.1</version>
-        </dependency>
-
-        <!-- Fix Issues -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>2.15.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.15.2</version>
+            <groupId>org.roboquant</groupId>
+            <artifactId>binance-api-client</artifactId>
+            <version>1.0.5</version>
         </dependency>
     </dependencies>
 
