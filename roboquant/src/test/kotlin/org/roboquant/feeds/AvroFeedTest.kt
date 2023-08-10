@@ -24,7 +24,6 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.TestData
 import org.roboquant.common.*
-import org.roboquant.feeds.*
 import org.roboquant.feeds.AssetSerializer.deserialize
 import org.roboquant.feeds.AssetSerializer.serialize
 import org.roboquant.feeds.util.HistoricTestFeed
@@ -56,7 +55,7 @@ class AvroFeedTest {
 
         private lateinit var fileName: String
         private var size: Int = 0
-        private const val nAssets = 2
+        private const val NR_ASSETS = 2
         var assets = mutableListOf<Asset>()
     }
 
@@ -79,7 +78,7 @@ class AvroFeedTest {
             var cnt = 0
             for (event in play(feed2)) {
                 assertTrue(event.time > past)
-                assertEquals(nAssets, event.actions.size)
+                assertEquals(NR_ASSETS, event.actions.size)
                 past = event.time
                 cnt++
             }
@@ -90,7 +89,7 @@ class AvroFeedTest {
     @Test
     fun feedPlayback() {
         val feed3 = AvroFeed(fileName)
-        assertEquals(nAssets, feed3.assets.size)
+        assertEquals(NR_ASSETS, feed3.assets.size)
         assertEquals(assets.toSet(), feed3.assets.toSet())
         assertTrue(feed3.timeframe.inclusive)
 

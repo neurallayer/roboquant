@@ -73,7 +73,7 @@ internal class MarginAccountTest {
 
     @Test
     fun testMarginAccountLong() {
-        // Slide 2 example in code
+        // Slide-2 example in code
         val initial = 1_000_000.JPY
         val broker = getSimBroker(initial, MarginAccount())
         val abc = Asset("ABC", currencyCode = "JPY")
@@ -101,7 +101,7 @@ internal class MarginAccountTest {
 
     @Test
     fun testMarginAccountShort() {
-        // The example on slide 3 in code
+        // The example on slide-3 in code
         val initial = 20_000.USD
         val broker = getSimBroker(initial, MarginAccount())
         val abc = Asset("ABC", currencyCode = "USD")

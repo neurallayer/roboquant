@@ -27,8 +27,6 @@ import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.AvroFeed
-import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
 import org.roboquant.http.WebServer
 import org.roboquant.loggers.ConsoleLogger
@@ -37,7 +35,6 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
-import kotlin.test.assertEquals
 
 fun recordBinanceFeed() {
     val feed = BinanceHistoricFeed()
@@ -89,8 +86,7 @@ fun binanceLiveFeed() {
 fun binanceForwardTest() {
     val feed = BinanceLiveFeed()
 
-    // We ony trade Bitcoin/BUSD
-    // feed.subscribePriceQuote("BTCBUSD")
+    // We ony trade Bitcoin
     feed.subscribePriceBar("BTCBUSD")
     val strategy = EMAStrategy.PERIODS_5_15
     val initialDeposit = Amount("BUSD", 10_000).toWallet()

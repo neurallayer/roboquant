@@ -17,7 +17,7 @@ class TaLibIndicatorTest {
 
     @Test
     fun basic() {
-        val ind = TaLibIndicator() {
+        val ind = TaLibIndicator {
             mapOf(
                 "rsi" to rsi(it, timePeriod = 14),
                 "max" to max(it, timePeriod = 10)

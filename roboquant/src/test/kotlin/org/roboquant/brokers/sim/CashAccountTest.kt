@@ -83,7 +83,7 @@ internal class CashAccountTest {
 
     @Test
     fun testCashAccount() {
-        // Slide 1 example in code
+        // Slide one example in code
         val initial = 10_000.EUR
         val broker = getSimBroker(initial, accountModel = CashAccount())
         val abc = Asset("ABC", currencyCode = "EUR")

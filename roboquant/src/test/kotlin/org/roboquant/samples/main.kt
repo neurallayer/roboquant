@@ -262,7 +262,7 @@ fun cfd() {
     val leverage = 50.0
     val broker = SimBroker(initialDeposit, accountModel = MarginAccount(leverage = leverage))
 
-    // Since we only trade in 1 asset and have leverage, we allow up to 1000% of our equity (10k) allocated to
+    // Since we only trade in one asset and have leverage, we allow up to 1000% of our equity (10k) allocated to
     // one order
     val policy = FlexPolicy.capitalBased {
         shorting = true
