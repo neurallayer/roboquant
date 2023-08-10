@@ -141,7 +141,11 @@ fun testingStrategies() {
 
 
 fun signalsOnly() {
-    class MyPolicy : BasePolicy(enableMetrics = true, prefix = "") {
+    class MyPolicy : BasePolicy(prefix = "") {
+
+        init {
+            enableMetrics = true
+        }
 
         override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
             for (signal in signals) {

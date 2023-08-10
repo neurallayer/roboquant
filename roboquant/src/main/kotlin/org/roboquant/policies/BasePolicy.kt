@@ -26,7 +26,12 @@ import kotlin.collections.set
  *
  * @property enableMetrics should metrics be exposed, default is false
  */
-abstract class BasePolicy(private val prefix: String = "policy.", var enableMetrics: Boolean = false) : Policy {
+abstract class BasePolicy(private val prefix: String = "policy.", ) : Policy {
+
+    /**
+     * should metrics be exposed, default is false
+     */
+    var enableMetrics: Boolean = false
 
     private val metrics = mutableMapOf<String, Double>()
 

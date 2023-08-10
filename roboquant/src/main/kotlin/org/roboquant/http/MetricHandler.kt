@@ -26,9 +26,10 @@ internal class MetricHandler(private val runs: Map<String, WebServer.RunInfo>) :
         val run = elem.first()
         val metricName = elem.last()
 
-        val data = StringBuilder("[")
         val info = runs.getValue(run)
         val metrics = info.roboquant.logger.getMetric(metricName, run)
+
+        val data = StringBuilder("[")
         metrics.forEachIndexed { index, observation ->
             data.append("""{"time":${observation.time.epochSecond},"value":${observation.value}}""")
             if (index < (metrics.size -1)) data.append(",")

@@ -45,6 +45,7 @@ internal class DetailHandler(private val runs: Map<String, WebServer.RunInfo>) :
                 }).then(function(data) {
                     console.log(data);
                     lineSeries.setData(data);
+                    chart.timeScale().fitContent();
                 });
                 console.log(value);
             };

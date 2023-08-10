@@ -32,6 +32,24 @@ import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
 import kotlin.io.path.div
 
+
+private val symbols = listOf(
+    "AAPL",
+    "IBM",
+    "JPM",
+    "MSFT",
+    "TSLA",
+    "GOOGL",
+    "AMZN",
+    "BRK.A",
+    "V",
+    "BABA",
+    "NVDA",
+    "JNJ",
+    "TSM",
+    "WMT"
+).toTypedArray()
+
 private fun alpacaBroker() {
     val broker = AlpacaBroker()
     println(broker.account.fullSummary())
@@ -94,15 +112,13 @@ private fun alpacaTradeStocks() {
 
 private fun alpacaPaperTrade() {
     val feed = AlpacaLiveFeed()
-
-    val symbols = feed.availableStocks.take(10).symbols
-    println(symbols.toList())
-
-    feed.subscribeStocks(*symbols, type = PriceActionType.QUOTE)
+    feed.subscribeStocks(*symbols, type = PriceActionType.PRICE_BAR)
     feed.heartbeatInterval = 30_000
     val strategy = EMAStrategy.PERIODS_5_15
-    val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), logger = MemoryLogger(false))
-    val tf = Timeframe.next(10.minutes)
+    val broker = AlpacaBroker()
+    val roboquant =
+        Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = MemoryLogger(false))
+    val tf = Timeframe.next(60.minutes)
 
     val server = WebServer()
     server.start()
@@ -112,7 +128,6 @@ private fun alpacaPaperTrade() {
     feed.close()
     println(roboquant.broker.account.summary())
 }
-
 
 /**
  * Alpaca historic feed example where we retrieve 1-minutes price-bars in batches of 1 day for 100 days.
