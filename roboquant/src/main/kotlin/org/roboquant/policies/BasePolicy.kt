@@ -26,7 +26,7 @@ import kotlin.collections.set
  *
  * @property enableMetrics should metrics be exposed, default is false
  */
-abstract class BasePolicy(private val prefix: String = "policy.", ) : Policy {
+abstract class BasePolicy(private val prefix: String = "policy.") : Policy {
 
     /**
      * should metrics be exposed, default is false
