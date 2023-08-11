@@ -31,7 +31,7 @@ import java.math.RoundingMode
 /**
  * Deprecated, use [TimeSeriesChart] instead
  */
-@Deprecated("Renamed to TimeSeriesChart", ReplaceWith("TimeSeriesChart", "org.roboquant.jupyter.TimeSeriesChart"))
+@Deprecated("Renamed to TimeSeriesChart", ReplaceWith("TimeSeriesChart", "org.roboquant.charts.TimeSeriesChart"))
 typealias MetricChart = TimeSeriesChart
 
 /**
