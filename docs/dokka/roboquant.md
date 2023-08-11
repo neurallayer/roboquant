@@ -3,7 +3,7 @@
 The roboquant module contains the core functionality required to create trading strategies and run them.  
 
 This module doesn't contain the integration with 3rd party data providers and brokers. 
-For this, see the roboquant-extra and roboquant-crypto modules.
+For this, see the additional `roboquant-...` modules like `roboquant-alpaca`.
 
 # Package org.roboquant.feeds
 
