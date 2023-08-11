@@ -103,7 +103,7 @@ fun Collection<Trade>.toPNLPercentageMetrics(): TimeSeries {
 }
 
 
-internal fun Collection<Trade>.lines(): List<List<Any>> {
+fun Collection<Trade>.lines(): List<List<Any>> {
     val lines = mutableListOf<List<Any>>()
     lines.add(listOf("time", "symbol", "ccy", "size", "cost", "fee", "rlzd p&l", "price"))
     forEach {

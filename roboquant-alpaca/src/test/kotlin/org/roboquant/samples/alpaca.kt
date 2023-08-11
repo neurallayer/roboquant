@@ -23,9 +23,7 @@ import org.roboquant.alpaca.*
 import org.roboquant.common.*
 import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.toList
-import org.roboquant.http.WebServer
 import org.roboquant.loggers.InfoLogger
-import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
@@ -97,9 +95,6 @@ private fun alpacaTradeCrypto() {
 private fun alpacaTradeStocks() {
     val feed = AlpacaLiveFeed()
 
-    val symbols = feed.availableStocks.take(10).symbols
-    println(symbols.toList())
-
     feed.subscribeStocks(*symbols, type = PriceActionType.QUOTE)
     feed.heartbeatInterval = 30_000
     val strategy = EMAStrategy.PERIODS_5_15
@@ -110,24 +105,6 @@ private fun alpacaTradeStocks() {
     println(roboquant.broker.account.summary())
 }
 
-private fun alpacaPaperTrade() {
-    val feed = AlpacaLiveFeed()
-    feed.subscribeStocks(*symbols, type = PriceActionType.PRICE_BAR)
-    feed.heartbeatInterval = 30_000
-    val strategy = EMAStrategy.PERIODS_5_15
-    val broker = AlpacaBroker()
-    val roboquant =
-        Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = MemoryLogger(false))
-    val tf = Timeframe.next(60.minutes)
-
-    val server = WebServer()
-    server.start()
-
-    server.run(roboquant, feed, tf)
-    server.stop()
-    feed.close()
-    println(roboquant.broker.account.summary())
-}
 
 /**
  * Alpaca historic feed example where we retrieve 1-minutes price-bars in batches of 1 day for 100 days.
@@ -240,7 +217,6 @@ fun main() {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
         "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()
-        "PAPER_TRADE" -> alpacaPaperTrade()
         "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
         "ALPACA_HISTORIC_FEED2" -> alpacaHistoricFeed2()
         "ALPACA_HISTORIC_SP500_PRICEBAR" -> alpacaSP500PriceBar()

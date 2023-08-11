@@ -3,7 +3,7 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.common.Config
 import org.roboquant.feeds.AvroFeed
-import org.roboquant.jupyter.MetricsReport
+import org.roboquant.charts.MetricsReport
 import org.roboquant.metrics.ReturnsMetric2
 import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.strategies.EMAStrategy

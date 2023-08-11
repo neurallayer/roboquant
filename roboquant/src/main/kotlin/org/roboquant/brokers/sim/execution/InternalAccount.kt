@@ -16,6 +16,7 @@
 
 package org.roboquant.brokers.sim.execution
 
+import org.roboquant.backtest.mutableSynchronisedListOf
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.Trade
@@ -48,7 +49,7 @@ class InternalAccount(var baseCurrency: Currency) {
     /**
      * The trades that have been executed
      */
-    var trades = mutableListOf<Trade>()
+    var trades = mutableSynchronisedListOf<Trade>()
 
     /**
      * Open orders
@@ -59,7 +60,7 @@ class InternalAccount(var baseCurrency: Currency) {
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
      * closed.
      */
-    private var closedOrders = mutableListOf<OrderState>()
+    private var closedOrders = mutableSynchronisedListOf<OrderState>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -85,8 +86,8 @@ class InternalAccount(var baseCurrency: Currency) {
     internal fun removeClosedOrdersAndTrades() {
         // Create new instances since clear() could impact previously returned
         // accounts since they contain sub-lists of the closedOrders and trades.
-        closedOrders = mutableListOf()
-        trades = mutableListOf()
+        closedOrders = mutableSynchronisedListOf()
+        trades = mutableSynchronisedListOf()
     }
 
     /**
@@ -95,8 +96,8 @@ class InternalAccount(var baseCurrency: Currency) {
     fun clear() {
         // Create new instances since clear() could impact previously returned
         // accounts since they contain sub-lists of the closedOrders and trades.
-        closedOrders = mutableListOf()
-        trades = mutableListOf()
+        closedOrders = mutableSynchronisedListOf()
+        trades = mutableSynchronisedListOf()
 
         lastUpdate = Instant.MIN
         openOrders.clear()
@@ -133,12 +134,12 @@ class InternalAccount(var baseCurrency: Currency) {
     /**
      * Update an [order] with a new [status] at a certain time. This only successful if order has been already added
      * before and is not yet closed. When an order reaches the close state, it will be moved internally to a
-     * different store and no longer be directly accessible.
+     * different store and is no longer directly accessible.
      */
     fun updateOrder(order: Order, time: Instant, status: OrderStatus) {
         val id = order.id
         val state = openOrders.getValue(id)
-        val newState = state.update(status, time)
+        val newState = state.update(status, time, order)
         if (newState.open) {
             openOrders[id] = newState
         } else {
@@ -184,6 +185,7 @@ class InternalAccount(var baseCurrency: Currency) {
             trades.subList(0, trades.size),
             openOrders.values.toList(),
             closedOrders.subList(0, closedOrders.size),
+            // closedOrders.toList(),
             portfolio.values.toList(),
             buyingPower
         )

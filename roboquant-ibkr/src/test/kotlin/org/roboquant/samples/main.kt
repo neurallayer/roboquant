@@ -18,7 +18,6 @@
 
 package org.roboquant.samples
 
-import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.assets
 import org.roboquant.common.*
@@ -26,17 +25,12 @@ import org.roboquant.feeds.AvroFeed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
-import org.roboquant.http.WebServer
 import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRExchangeRates
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
-import org.roboquant.loggers.ConsoleLogger
-import org.roboquant.metrics.AccountMetric
-import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.BracketOrder
 import org.roboquant.orders.MarketOrder
-import org.roboquant.strategies.EMAStrategy
 import java.time.DayOfWeek
 import java.time.LocalDate
 
@@ -84,35 +78,6 @@ fun showAccount() {
 
     // Disconnect
     broker.disconnect()
-}
-
-suspend fun paperTrade() {
-    Config.exchangeRates = IBKRExchangeRates()
-    val broker = IBKRBroker()
-    val account = broker.account
-    println(account.fullSummary())
-
-    val feed = IBKRLiveFeed()
-    // val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
-    val asset = Asset("TSLA", AssetType.STOCK, "USD", "NASDAQ")
-    feed.subscribe(listOf(asset))
-
-    val strategy = EMAStrategy.PERIODS_5_15
-    val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = ConsoleLogger())
-    val tf = Timeframe.next(60.minutes)
-
-
-    val server = WebServer()
-    server.start()
-
-    server.runAsync(roboquant, feed, tf)
-    println(broker.account.fullSummary())
-
-    server.stop()
-    feed.disconnect()
-    broker.disconnect()
-
-    println("done")
 }
 
 
@@ -232,7 +197,7 @@ fun historicFuturesFeed() {
 }
 
 
-suspend fun main() {
+fun main() {
 
     when ("PAPER_TRADE") {
         "ACCOUNT" -> showAccount()
@@ -241,7 +206,6 @@ suspend fun main() {
         "CLOSE_POSITION" -> closePosition()
         "LIVE_FEED_EU" -> liveFeedEU()
         "LIVE_FEED_US" -> liveFeedUS()
-        "PAPER_TRADE" -> paperTrade()
         "HISTORIC" -> historicFeed()
         "HISTORIC2" -> historicFeed2()
         "HISTORIC3" -> historicFuturesFeed()

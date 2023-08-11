@@ -70,17 +70,17 @@ class OrderState private constructor(
         get() = order.id
 
     /**
-     * Update the order state with a [newStatus] and [time] and return the updated version. The
-     * original version won't be modified.
+     * Update the order state with a [newStatus] and [time] and optionally a new [order]. Return the updated version.
+     * The original order state won't be modified.
      *
      * This method will take care that the right state transition happens. And if it is not allowed, it will throw an
      * `IllegalStateException`.
      */
-    fun update(newStatus: OrderStatus, time: Instant): OrderState {
+    fun update(newStatus: OrderStatus, time: Instant, newOrder: Order = order): OrderState {
         check(!status.closed) { "cannot update a closed order, status=$status" }
         val newOpenedAt = if (openedAt == Instant.MAX) time else openedAt
         val newClosedAt = if (newStatus.closed) time else closedAt
-        return OrderState(order, newStatus, newOpenedAt, newClosedAt)
+        return OrderState(newOrder, newStatus, newOpenedAt, newClosedAt)
     }
 
 }
@@ -90,7 +90,7 @@ private fun Instant.toPrettyString(): String {
 }
 
 
-internal fun Collection<OrderState>.lines(): List<List<Any>> {
+fun Collection<OrderState>.lines(): List<List<Any>> {
     val lines = mutableListOf<List<Any>>()
     lines.add(listOf("type", "symbol", "status", "id", "opened at", "closed at", "details"))
     forEach {

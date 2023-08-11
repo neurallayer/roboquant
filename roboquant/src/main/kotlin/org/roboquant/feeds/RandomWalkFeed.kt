@@ -16,6 +16,7 @@
 
 package org.roboquant.feeds
 
+import kotlinx.coroutines.delay
 import org.roboquant.common.*
 import java.time.Instant
 import java.time.LocalDate
@@ -51,7 +52,8 @@ class RandomWalkFeed(
     private val volumeRange: Int = 1000,
     private val priceRange: Double = 1.0,
     template: Asset = Asset("ASSET"),
-    private val seed: Int = 42
+    private val seed: Int = 42,
+    var delay: Long = 0L
 ) : HistoricFeed {
 
     /**
@@ -123,6 +125,7 @@ class RandomWalkFeed(
             val event = Event(actions, time)
             channel.send(event)
             time += timeSpan
+            if (delay > 0) delay(delay)
         }
     }
 

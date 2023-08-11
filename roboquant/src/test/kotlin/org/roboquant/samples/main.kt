@@ -33,8 +33,6 @@ import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.feeds.filter
-import org.roboquant.feeds.util.LiveTestFeed
-import org.roboquant.http.WebServer
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
@@ -224,17 +222,6 @@ fun performanceTest() {
     }
 }
 
-fun web() {
-    val server = WebServer()
-    server.start()
-    val feed = LiveTestFeed(100..120, 120 downTo 80, 80 .. 140, priceBar = true)
-    val roboquant = Roboquant(EMAStrategy(), AccountMetric())
-    server.run(roboquant, feed, Timeframe.next(2.minutes))
-
-    server.stop()
-
-}
-
 
 fun cfd() {
     val dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
@@ -292,7 +279,6 @@ suspend fun main() {
         "PROFILE" -> profileTest()
         "PERFORMANCE" -> performanceTest()
         "CFD" -> cfd()
-        "WEB" -> web()
     }
 
 }
