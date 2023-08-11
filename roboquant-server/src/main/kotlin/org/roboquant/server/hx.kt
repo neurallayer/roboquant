@@ -30,7 +30,6 @@ fun HTMLTag.hxTarget(value: String) {
 }
 
 
-
 fun HTMLTag.hxBoost(value: Boolean) {
     attributes += "hx-boost" to value.toString()
 }

@@ -168,6 +168,7 @@ internal class JupyterCore(
  * Render the output in a Notebook cell. When a [HTMLOutput] result is not the last statement in a Notebook cell, you
  * can use this method to make sure it still gets rendered.
  */
+@Suppress("unused")
 fun HTMLOutput.render() {
     JupyterCore.host?.display(this, null)
 }

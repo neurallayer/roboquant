@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,7 +26,7 @@ abstract class HTMLOutput {
     companion object {
         // In case the notebook theme is known, it is stored here
         // right now only IntelliJ notebooks support this feature
-        internal var notebookTheme: String? = null
+        var notebookTheme: String? = null
             set(value) {
                 require(value in setOf("light", "dark"))
                 field = value

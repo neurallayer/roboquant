@@ -24,6 +24,7 @@ import org.icepear.echarts.Option
 import org.icepear.echarts.components.grid.Grid
 import org.icepear.echarts.components.toolbox.*
 import org.icepear.echarts.components.visualMap.ContinousVisualMap
+import org.roboquant.charts.Chart.Companion.gsonBuilder
 import org.roboquant.common.Amount
 import java.lang.reflect.Type
 import java.time.Instant
@@ -131,7 +132,7 @@ abstract class Chart : HTMLOutput() {
         private const val COMMIT = "fddcad9e93c1c15495c70f358f1ccbb595f0964f"
 
         // Use a CDN to cache the JavaScript file
-        internal const val JSURL =
+        const val JSURL =
             "https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@$COMMIT/echarts.min.js?version=$COMMIT"
 
         /**
@@ -356,6 +357,6 @@ fun Option.renderJson(): String {
         val grid = Grid().setContainLabel(true).setRight("3%").setLeft("3%")
         setGrid(grid)
     }
-    return Chart.gsonBuilder.create().toJson(this)
+    return gsonBuilder.create().toJson(this)
 }
 

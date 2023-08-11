@@ -53,6 +53,7 @@
 
     <modules>
         <module>roboquant</module>
+        <module>roboquant-charts</module>
         <module>roboquant-ta</module>
         <module>roboquant-jupyter</module>
         <module>roboquant-alphavantage</module>
@@ -465,6 +466,11 @@
             <!-- enforce standard versions of following libraries across modules -->
             <dependency>
                 <artifactId>roboquant</artifactId>
+                <groupId>org.roboquant</groupId>
+                <version>2.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <artifactId>roboquant-charts</artifactId>
                 <groupId>org.roboquant</groupId>
                 <version>2.0.0-SNAPSHOT</version>
             </dependency>

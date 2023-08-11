@@ -17,22 +17,14 @@
 package org.roboquant.charts
 
 import org.junit.jupiter.api.Test
-import org.roboquant.jupyter.TestData
 import kotlin.test.assertTrue
 
-internal class TradeChartTest {
+internal class OrderChartTest {
 
     @Test
     fun test() {
         val account = TestData.fullAccount
-        val chart = TradeChart(account.trades)
-        assertTrue(chart.asHTML().isNotBlank())
-    }
-
-    @Test
-    fun test2() {
-        val account = TestData.fullAccount
-        val chart = TradeChart(account.trades, perAsset = true)
+        val chart = OrderChart(account.closedOrders)
         assertTrue(chart.asHTML().isNotBlank())
     }
 

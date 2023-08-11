@@ -22,7 +22,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.common.USD
 import org.roboquant.feeds.RandomWalkFeed
-import org.roboquant.jupyter.render
 import java.io.File
 import java.time.Instant
 import kotlin.test.assertContains
@@ -101,9 +100,6 @@ internal class ChartTest {
             chart.getOption().renderJson()
         }
 
-        assertDoesNotThrow {
-            chart.render()
-        }
 
         val code = chart.asHTML()
         assertContains(code, "123px")

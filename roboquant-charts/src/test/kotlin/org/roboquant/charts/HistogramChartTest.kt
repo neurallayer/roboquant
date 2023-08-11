@@ -17,15 +17,14 @@
 package org.roboquant.charts
 
 import org.junit.jupiter.api.Test
-import org.roboquant.jupyter.TestData
 import kotlin.test.assertTrue
 
-internal class OrderChartTest {
+internal class HistogramChartTest {
 
     @Test
     fun test() {
-        val account = TestData.fullAccount
-        val chart = OrderChart(account.closedOrders)
+        val data = TestData.data
+        val chart = HistogramChart(data)
         assertTrue(chart.asHTML().isNotBlank())
     }
 

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.roboquant.jupyter
+package org.roboquant.charts
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.sim.execution.InternalAccount
-import org.roboquant.charts.Chart
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
