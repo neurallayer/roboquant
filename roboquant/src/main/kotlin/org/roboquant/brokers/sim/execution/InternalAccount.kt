@@ -16,7 +16,6 @@
 
 package org.roboquant.brokers.sim.execution
 
-import org.roboquant.backtest.mutableSynchronisedListOf
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.Trade
@@ -49,7 +48,7 @@ class InternalAccount(var baseCurrency: Currency) {
     /**
      * The trades that have been executed
      */
-    var trades = mutableSynchronisedListOf<Trade>()
+    var trades = mutableListOf<Trade>()
 
     /**
      * Open orders
@@ -60,7 +59,7 @@ class InternalAccount(var baseCurrency: Currency) {
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
      * closed.
      */
-    private var closedOrders = mutableSynchronisedListOf<OrderState>()
+    private var closedOrders = mutableListOf<OrderState>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -86,8 +85,8 @@ class InternalAccount(var baseCurrency: Currency) {
     internal fun removeClosedOrdersAndTrades() {
         // Create new instances since clear() could impact previously returned
         // accounts since they contain sub-lists of the closedOrders and trades.
-        closedOrders = mutableSynchronisedListOf()
-        trades = mutableSynchronisedListOf()
+        closedOrders = mutableListOf()
+        trades = mutableListOf()
     }
 
     /**
@@ -96,8 +95,8 @@ class InternalAccount(var baseCurrency: Currency) {
     fun clear() {
         // Create new instances since clear() could impact previously returned
         // accounts since they contain sub-lists of the closedOrders and trades.
-        closedOrders = mutableSynchronisedListOf()
-        trades = mutableSynchronisedListOf()
+        closedOrders = mutableListOf()
+        trades = mutableListOf()
 
         lastUpdate = Instant.MIN
         openOrders.clear()
@@ -182,10 +181,9 @@ class InternalAccount(var baseCurrency: Currency) {
             baseCurrency,
             lastUpdate,
             cash.clone(),
-            trades.subList(0, trades.size),
+            trades.toList(),
             openOrders.values.toList(),
-            closedOrders.subList(0, closedOrders.size),
-            // closedOrders.toList(),
+            closedOrders.toList(),
             portfolio.values.toList(),
             buyingPower
         )

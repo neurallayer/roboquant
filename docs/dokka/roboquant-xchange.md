@@ -4,4 +4,4 @@ The roboquant-xchange module contains the additional functionality to integrate 
 
 # Package org.roboquant.xchange
 
-Use the XChange library to access most leading crypto exchange in the world.
+Wrapper classes for the XChange library that access most leading crypto exchange in the world. There are wrapeprs for brokers, historic feeds and live feeeds.
