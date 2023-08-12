@@ -29,7 +29,7 @@ class SignalChartTest {
         val strat = EMAStrategy()
         val chart = SignalChart(feed, strat)
         assertDoesNotThrow {
-            chart.asHTML()
+            chart.getOption()
         }
 
     }

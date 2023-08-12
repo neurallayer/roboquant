@@ -25,14 +25,14 @@ internal class TradeChartTest {
     fun test() {
         val account = TestData.fullAccount
         val chart = TradeChart(account.trades)
-        assertTrue(chart.asHTML().isNotBlank())
+        assertTrue(chart.getOption().renderJson().isNotBlank())
     }
 
     @Test
     fun test2() {
         val account = TestData.fullAccount
         val chart = TradeChart(account.trades, perAsset = true)
-        assertTrue(chart.asHTML().isNotBlank())
+        assertTrue(chart.getOption().renderJson().isNotBlank())
     }
 
 }

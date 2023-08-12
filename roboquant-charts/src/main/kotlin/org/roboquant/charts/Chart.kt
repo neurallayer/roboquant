@@ -104,13 +104,14 @@ private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 /**
  * Base class all roboquant charts. Subclasses should implement at least the [getOption] method.
  */
-abstract class Chart : HTMLOutput() {
+abstract class Chart {
 
     /**
-     * Does the generated option JSON string contain JavaScript. If true, additional code will be generated to parse
-     * this into a Javascript function.
+     * Does the generated option JSON string contain JavaScript.
+     * If true, additional client-side code might be generated to parse the JSON part into a Javascript function.
      */
-    private var containsJavaScript: Boolean = false
+    var containsJavaScript: Boolean = false
+        protected set
 
     /**
      * Height for charts, default being 500 pixels. Subclasses can override this value
@@ -134,23 +135,6 @@ abstract class Chart : HTMLOutput() {
         // Use a CDN to cache the JavaScript file
         const val JSURL =
             "https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@$COMMIT/echarts.min.js?version=$COMMIT"
-
-        /**
-         * Used to ensure the output divs have a unique id. This is only used in classic notebooks since then the
-         * JavaScript cannot access the DIV by document.currentScript.parentElement and will fall back to the id.
-         */
-        internal var counter = 0
-
-        /**
-         * The theme to use for charts, valid options are auto, light and dark with the default being auto. When set
-         * to auto, roboquant will try to match the chart theme to the notebook theme.
-         */
-        var theme = "auto"
-            get() = if (field == "auto") notebookTheme ?: field else field
-            set(value) {
-                require(value in setOf("auto", "light", "dark")) { "valid options are auto, light and dark" }
-                field = value
-            }
 
         /**
          * Maximum number of samples to plot in a chart. Certain types of charts can become very large and as
@@ -214,72 +198,6 @@ abstract class Chart : HTMLOutput() {
         }
     }
 
-    /**
-     * Generates the HTML snippet required to draw a chart. This is an HTML snippet and not a full HTML page,
-     * and it is suitable to be rendered in the cell output of a Jupyter notebook.
-     */
-    override fun asHTML(): String {
-        val fragment = getOption().renderJson().trimStart()
-        val id = "roboquant-${counter++}"
-        val convertor = if (containsJavaScript)
-            "option.tooltip.formatter = new Function('p', option.tooltip.formatter);"
-        else
-            ""
-
-        val themeStatement = if (theme == "auto") """
-            let theme = document.body.dataset.jpThemeLight === 'false' ? 'dark' : 'light'
-        """.trimIndent() else """
-            let theme='$theme'
-        """.trimIndent()
-
-        return """ 
-        <div style="width:100%;height:${height}px;" class="rqcharts" id="$id">
-            <script type="text/javascript">
-                (function () {
-                    let elem = document.currentScript.parentElement;
-                    if (elem.tagName === "HEAD") {
-                        elem = document.getElementById("$id");
-                    }
-                    const option = $fragment;$convertor
-                    window.call_echarts(
-                        function () {
-                            $themeStatement;
-                            let myChart = echarts.init(elem, theme);
-                            myChart.setOption(option);
-                            let resizeObserver = new ResizeObserver(() => myChart.resize());
-                            resizeObserver.observe(elem);
-                        }
-                    );
-                })()
-            </script>
-        </div>
-        """.trimIndent()
-    }
-
-    /**
-     * Generates a standalone HTML page for the chart. This page can be saved and, for example, viewed in a
-     * standalone browser.
-     */
-    override fun asHTMLPage(): String {
-        val fragment = asHTML()
-        val script = getScript()
-
-        return """
-        <html lang="en">
-            <head>
-                <title>roboquant chart</title>
-                $script
-                <style media='screen'>
-                    html { margin: 0; padding: 0; min-height: ${height}px;}
-                    body { margin: 0; padding: 10px; min-height: ${height}px;}
-                </style>
-            </head>
-            <body>
-                $fragment
-            </body>
-        </html>
-        """.trimIndent()
-    }
 
     /**
      * Return a standard toolbox that can be included in a chart

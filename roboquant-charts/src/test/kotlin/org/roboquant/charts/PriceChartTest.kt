@@ -35,18 +35,14 @@ internal class PriceChartTest {
     fun test() {
         val feed = RandomWalkFeed.lastYears(1)
         val asset = feed.assets.first()
-        Chart.counter = 0
         val chart = PriceChart(feed, asset)
-        val html = chart.asHTML()
+        val html = chart.getOption().renderJson()
         assertTrue(html.isNotBlank())
 
-        Chart.counter = 0
         val chart2 = PriceChart(feed, asset.symbol)
-        assertEquals(html, chart2.asHTML())
-
-        Chart.counter = 0
+        assertEquals(html, chart2.getOption().renderJson())
         val chart3 = PriceChart(feed, asset.symbol, priceType = "OPEN")
-        assertNotEquals(html, chart3.asHTML())
+        assertNotEquals(html, chart3.getOption().renderJson())
     }
 
     @Test
@@ -59,9 +55,8 @@ internal class PriceChartTest {
         val trades = rq.broker.account.trades
         assertTrue(trades.isNotEmpty())
         val asset = trades.first().asset
-        Chart.counter = 0
         val chart = PriceChart(feed, asset, trades = trades)
-        assertTrue(chart.asHTML().isNotEmpty())
+        assertTrue(chart.getOption().renderJson().isNotEmpty())
     }
 
     @Test
@@ -76,10 +71,9 @@ internal class PriceChartTest {
         val feed = RandomWalkFeed(tf)
         val asset = feed.assets.first()
         val ind = MyIndicator()
-        Chart.counter = 0
 
         val chart = PriceChart(feed, asset, indicators = arrayOf(ind))
-        assertTrue(chart.asHTML().isNotEmpty())
+        assertTrue(chart.getOption().renderJson().isNotEmpty())
     }
 
 }

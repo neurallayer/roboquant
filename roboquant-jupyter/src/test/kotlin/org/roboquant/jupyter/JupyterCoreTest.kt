@@ -25,10 +25,10 @@ import kotlin.test.assertTrue
 internal class JupyterCoreTest {
 
     @Test
-    fun test() {
+    fun testDefaults() {
         JupyterCore(null, mutableMapOf())
-        legacyNotebookMode = false
-        assertEquals(legacyNotebookMode, JupyterCore.isolation)
+        assertEquals(false, NotebookConfig.isolation)
+        assertEquals("auto", NotebookConfig.theme)
     }
 
     @Test

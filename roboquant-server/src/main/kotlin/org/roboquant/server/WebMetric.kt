@@ -17,11 +17,9 @@
 package org.roboquant.server
 
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.lines
 import org.roboquant.common.Amount
 import org.roboquant.feeds.Event
 import org.roboquant.metrics.Metric
-import org.roboquant.orders.lines
 
 /**
  * Metric used to capture basic information of a run that is displayed on the web pages.
@@ -38,27 +36,6 @@ class WebMetric : Metric {
         actions += event.actions.size
         return emptyMap()
     }
-
-    fun  getPositions(): List<List<Any>> {
-        val acc = account ?: return emptyList()
-        return acc.positions.lines()
-    }
-
-    fun  getOpenOrders(): List<List<Any>> {
-        val acc = account ?: return emptyList()
-        return acc.openOrders.lines()
-    }
-
-    fun  getClosedOrders(): List<List<Any>> {
-        val acc = account ?: return emptyList()
-        return acc.closedOrders.lines()
-    }
-
-    fun  getTrades(): List<List<Any>> {
-        val acc = account ?: return emptyList()
-        return acc.trades.lines()
-    }
-
 
     fun  getCash(): List<List<Any>> {
         val acc = account ?: return emptyList()

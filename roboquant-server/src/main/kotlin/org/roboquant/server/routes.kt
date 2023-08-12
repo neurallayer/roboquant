@@ -21,6 +21,8 @@ import io.ktor.server.application.*
 import io.ktor.server.html.*
 import io.ktor.server.routing.*
 import kotlinx.html.*
+import org.roboquant.brokers.lines
+import org.roboquant.orders.lines
 
 /*
 val blocks = mutableMapOf<String, FlowContent.() -> Unit>()
@@ -146,6 +148,7 @@ fun Route.getRun() {
         val id = call.parameters["id"] ?: ""
         val info = runs.getValue(id)
         val metric = info.metric
+        val acc = info.metric.account!!
         call.respondHtml(HttpStatusCode.OK) {
             page("Details $id") {
                 a(href="/") {
@@ -153,10 +156,10 @@ fun Route.getRun() {
                 }
                 table("account summary",metric.getsummary())
                 table("cash", metric.getCash())
-                table("open positions", metric.getPositions())
-                table("open orders", metric.getOpenOrders())
-                table("closed orders", metric.getClosedOrders())
-                table("trades", metric.getTrades())
+                table("open positions", acc.positions.lines())
+                table("open orders", acc.openOrders.lines())
+                table("closed orders", acc.closedOrders.lines())
+                table("trades", acc.trades.lines())
             }
         }
     }

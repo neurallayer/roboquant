@@ -21,7 +21,6 @@ import org.jetbrains.kotlinx.jupyter.api.libraries.ColorScheme
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
 import org.roboquant.charts.Chart
-import org.roboquant.charts.HTMLOutput
 import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import java.io.PrintWriter
@@ -62,19 +61,26 @@ internal class RoboquantThrowableRenderer : ThrowableRenderer {
                 <pre style="background: transparent;">${output.toString().escapeHtml()}</pre>         
            </details>      
         """.trimIndent()
-        return HTML(result, JupyterCore.isolation)
+        return HTML(result, NotebookConfig.isolation)
     }
 
 }
 
 /**
- * Should all HTML output be rendered in legacy mode (iFrames), default is false
+ * Holds configuration for notebooks
  */
-var legacyNotebookMode: Boolean
-    get() = JupyterCore.isolation
-    set(value) {
-        JupyterCore.isolation = value
-    }
+object NotebookConfig {
+    /**
+     * Should all HTML output be rendered in iFrames, default is false
+     */
+    var isolation: Boolean = false
+
+    /**
+     * Theme to use for rendering. Default is "auto"
+     */
+    var theme = "auto"
+
+}
 
 /**
  * Integration with Kotlin based Jupyter notebook kernels. Some main features:
@@ -96,7 +102,6 @@ internal class JupyterCore(
 
     companion object {
         private val logger = Logging.getLogger(JupyterCore::class)
-        internal var isolation = false
         internal var host: KotlinKernelHost? = null
     }
 
@@ -115,7 +120,7 @@ internal class JupyterCore(
 
         // Applies to notebooks in Datalore
         if (notebook.jupyterClientType == JupyterClientType.DATALORE) {
-            isolation = true
+            NotebookConfig.isolation = true
         }
 
         import(
@@ -151,24 +156,29 @@ internal class JupyterCore(
             }
         }
 
-        render<HTMLOutput> {
-            if (notebook.jupyterClientType == JupyterClientType.KOTLIN_NOTEBOOK) {
-                val theme = if (notebook.currentColorScheme == ColorScheme.DARK) "dark" else "light"
-                HTMLOutput.notebookTheme = theme
-            }
-            if (isolation) HTML(it.asHTMLPage(), true) else HTML(it.asHTML(), false)
+
+        render<Welcome> {
+            if (NotebookConfig.isolation) HTML(it.asHTMLPage(), true) else HTML(it.asHTML(), false)
         }
 
+        render<Chart> {
+            var theme = NotebookConfig.theme
+            if (theme == "auto" && notebook.jupyterClientType == JupyterClientType.KOTLIN_NOTEBOOK) {
+                theme = if (notebook.currentColorScheme == ColorScheme.DARK) "dark" else "light"
+            }
+            if (NotebookConfig.isolation) HTML(it.asHTMLPage(theme), true) else HTML(it.asHTML(theme), false)
+        }
 
     }
 
 }
 
 /**
- * Render the output in a Notebook cell. When a [HTMLOutput] result is not the last statement in a Notebook cell, you
- * can use this method to make sure it still gets rendered.
+ * Render a [Chart] in a Notebook cell.
+ * When a chart is not the last statement in a Notebook cell, you can use this method to make sure it still
+ * gets rendered.
  */
 @Suppress("unused")
-fun HTMLOutput.render() {
+fun Chart.render() {
     JupyterCore.host?.display(this, null)
 }

@@ -32,10 +32,9 @@ internal class TimeSeriesChartTest {
             chart.getOption().renderJson()
         }
 
-        assertTrue(chart.asHTML().isNotBlank())
+        assertTrue(chart.getOption().renderJson().isNotBlank())
 
-        Chart.counter = 0
-        TestData.testFile(chart, "timeserieschart.txt")
+        TestData.testFile(chart, "timeserieschart")
     }
 
     @Test
@@ -47,7 +46,7 @@ internal class TimeSeriesChartTest {
             chart.getOption().renderJson()
         }
 
-        assertTrue(chart.asHTML().isNotBlank())
+        assertTrue(chart.getOption().renderJson().isNotBlank())
     }
 
     @Test
@@ -59,7 +58,7 @@ internal class TimeSeriesChartTest {
             chart.getOption().renderJson()
         }
 
-        assertTrue(chart.asHTML().isNotBlank())
+        assertTrue(chart.getOption().renderJson().isNotBlank())
     }
 
     @Test
@@ -71,7 +70,7 @@ internal class TimeSeriesChartTest {
             chart.getOption().renderJson()
         }
 
-        assertTrue(chart.asHTML().isNotBlank())
+        assertTrue(chart.getOption().renderJson().isNotBlank())
     }
 
 }

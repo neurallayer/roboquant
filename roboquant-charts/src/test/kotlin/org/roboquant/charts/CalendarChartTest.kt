@@ -25,10 +25,9 @@ internal class CalendarChartTest {
     fun test() {
         val data = TestData.data
         val chart = CalendarChart(data)
-        assertTrue(chart.asHTML().isNotBlank())
+        assertTrue(chart.getOption().renderJson().isNotBlank())
 
-        Chart.counter = 0
-        TestData.testFile(chart, "calendarchart.txt")
+        TestData.testFile(chart, "calendarchart")
     }
 
 }

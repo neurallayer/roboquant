@@ -18,7 +18,6 @@ package org.roboquant.jupyter
 
 import org.roboquant.Roboquant
 import org.roboquant.charts.Chart
-import org.roboquant.charts.HTMLOutput
 import org.roboquant.charts.PriceBarChart
 import org.roboquant.charts.TimeSeriesChart
 import org.roboquant.common.Config
@@ -30,13 +29,13 @@ import org.roboquant.strategies.EMAStrategy
 /**
  * Provides current environment settings in HTML format suitable for displaying in a Jupyter Notebook.
  */
-class Welcome : HTMLOutput() {
+class Welcome {
 
     /**
      * Return the welcome message with the main environment settings as an HTML snippet.
      */
     @Suppress("MaxLineLength")
-    override fun asHTML(): String {
+    fun asHTML(): String {
 
         with(Config.info) {
             return """
@@ -57,7 +56,7 @@ class Welcome : HTMLOutput() {
     /**
      * Generate a full HTML Welcome page.
      */
-    override fun asHTMLPage(): String {
+    fun asHTMLPage(): String {
         return """
         <html>
             <body>

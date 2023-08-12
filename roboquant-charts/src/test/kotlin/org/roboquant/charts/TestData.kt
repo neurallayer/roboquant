@@ -31,6 +31,7 @@ import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.TestStrategy
+import java.io.FileWriter
 import kotlin.test.assertEquals
 
 /**
@@ -78,16 +79,20 @@ object TestData {
         return String(bytes)
     }
 
-    fun testFile(chart: Chart, fileName: String) {
+    fun testFile(chart: Chart, baseName: String) {
         val classloader = Thread.currentThread().contextClassLoader
+        val fileName = "$baseName.json"
         val url = classloader.getResource(fileName)
         if (url === null) {
             val fullName = "src/test/resources/$fileName"
-            chart.toHTMLFile(fullName)
+            val json = chart.getOption().renderJson()
+            val f = FileWriter(fullName)
+            f.write(json)
+            f.close()
         }
 
         val str = loadFile(fileName)
-        assertEquals(str.removeEOL(), chart.asHTMLPage().removeEOL())
+        assertEquals(str.removeEOL(), chart.getOption().renderJson().removeEOL())
     }
 
 }

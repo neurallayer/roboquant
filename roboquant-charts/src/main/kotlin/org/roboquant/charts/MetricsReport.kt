@@ -18,6 +18,7 @@ package org.roboquant.charts
 
 import org.roboquant.Roboquant
 import org.roboquant.common.TimeSeries
+import java.io.File
 import java.nio.charset.StandardCharsets
 
 /**
@@ -29,7 +30,7 @@ import java.nio.charset.StandardCharsets
 class MetricsReport(
     private val roboquant: Roboquant,
     maxSamples: Int = 10_000
-) : HTMLOutput() {
+) {
 
     init {
         Chart.maxSamples = maxSamples
@@ -56,6 +57,30 @@ class MetricsReport(
     }
 
 
+    /**
+     * Generates the HTML snippet required to draw a chart.
+     */
+    private fun Chart.asHTML(id: String): String {
+        var fragment = getOption().renderJson().trimStart()
+        if (containsJavaScript) fragment += "option.tooltip.formatter = new Function('p', option.tooltip.formatter);"
+
+        return """ 
+        <div style="width:100%;height:${height}px;" class="rqcharts" id="$id">
+            <script type="text/javascript">
+                (function() {
+                    let elem = document.getElementById("$id");
+                    const option = $fragment
+                    let myChart = echarts.init(elem, theme);
+                    myChart.setOption(option);
+                    let resizeObserver = new ResizeObserver(() => myChart.resize());
+                    resizeObserver.observe(elem);
+                })();
+            </script>
+        </div>
+        """.trimIndent()
+    }
+
+
     private fun metricsToHTML(): String {
         val metricsMap = logger.metricNames.map { it to logger.getMetric(it) }
         val result = StringBuffer()
@@ -76,16 +101,18 @@ class MetricsReport(
 
 
     private fun chartsToHTML(): String {
+        var id = 0
         return charts.joinToString {
             """<div class="flex-item" style="flex: 700px;">
                     <div class="chart">
-                    ${it().asHTML()}
+                    ${it().asHTML("chart-${id++}")}
                     </div>
                </div>""".trimIndent()
         }
+
     }
 
-    override fun asHTML(): String {
+    private fun asHTML(): String {
         return """
              <div class="flex-container">
                  <h2>Metrics</h2>
@@ -103,7 +130,7 @@ class MetricsReport(
         return String(stream.readAllBytes(), StandardCharsets.UTF_8)
     }
 
-    override fun asHTMLPage(): String {
+    private fun asHTMLPage(): String {
         return """
             <!doctype html>
             <html lang="en">
@@ -119,6 +146,15 @@ class MetricsReport(
             </body>
             </html>      
         """.trimIndent()
+    }
+
+    /**
+     * Save HTML output to a file with name [filename] on the server.
+     */
+    fun toHTMLFile(filename: String) {
+        val content = asHTMLPage()
+        val f = File(filename)
+        f.writeText(content)
     }
 
     private operator fun StringBuffer.plusAssign(s: String) {

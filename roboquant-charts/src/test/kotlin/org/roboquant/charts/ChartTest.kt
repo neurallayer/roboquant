@@ -19,19 +19,14 @@ package org.roboquant.charts
 import org.icepear.echarts.Option
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.io.TempDir
 import org.roboquant.common.USD
 import org.roboquant.feeds.RandomWalkFeed
-import java.io.File
 import java.time.Instant
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class ChartTest {
-
-    @TempDir
-    lateinit var folder: File
 
     private class MyChart : Chart() {
 
@@ -54,20 +49,15 @@ internal class ChartTest {
     fun test() {
         val f = RandomWalkFeed.lastYears(1, 1, generateBars = true)
         val asset = f.assets.first()
-        Chart.counter = 0
         val chart = PriceBarChart(f, asset)
-        val html = chart.asHTML()
+        val html = chart.getOption().renderJson()
         assertTrue(html.isNotBlank())
         assertEquals(700, chart.height)
         assertContains(html, asset.symbol)
 
-        Chart.counter = 0
         val chart2 = PriceBarChart(f, asset.symbol)
-        assertEquals(html, chart2.asHTML())
+        assertEquals(html, chart2.getOption().renderJson())
 
-        val file = File(folder, "test.html")
-        chart.toHTMLFile(file.toString())
-        assertTrue(file.exists())
 
     }
 
@@ -100,10 +90,6 @@ internal class ChartTest {
             chart.getOption().renderJson()
         }
 
-
-        val code = chart.asHTML()
-        assertContains(code, "123px")
-        assertContains(code, "echarts.init")
     }
 
 }
