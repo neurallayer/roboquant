@@ -17,6 +17,7 @@
 
 package org.roboquant.server
 
+import kotlinx.html.FORM
 import kotlinx.html.HTMLTag
 
 fun HTMLTag.hxGet(value: String) {
@@ -29,7 +30,22 @@ fun HTMLTag.hxTarget(value: String) {
     attributes += "hx-target" to value
 }
 
+fun FORM.hxPost(value: String) {
+    attributes += "hx-post" to value
+}
 
 fun HTMLTag.hxBoost(value: Boolean) {
     attributes += "hx-boost" to value.toString()
+}
+
+
+fun HTMLTag.echarts() {
+    attributes += "hx-ext" to "echarts"
+}
+
+
+
+
+fun HTMLTag.hxExt(value: Boolean) {
+    attributes += "hx-ext" to value.toString()
 }

@@ -20,6 +20,7 @@ import org.roboquant.Roboquant
 import org.roboquant.common.TimeSeries
 import java.io.File
 import java.nio.charset.StandardCharsets
+import java.text.DecimalFormat
 
 /**
  * Generate an HTML report that contains the recorded metrics of one or more runs. The report will contain both a
@@ -41,7 +42,12 @@ class MetricsReport(
 
     private val charts
         get() = logger.metricNames.map {
-            { TimeSeriesChart(roboquant.logger.getMetric(it)) }
+            {
+                val data = roboquant.logger.getMetric(it)
+                val chart = TimeSeriesChart(data)
+                chart.title = it
+                chart
+            }
         }
 
     private fun createCells(name: String, value: Any): String {
@@ -50,9 +56,13 @@ class MetricsReport(
 
     private fun getTableCell(entry: Map.Entry<String, TimeSeries>): String {
         val splitName = entry.key.split('.')
+        val formatter = DecimalFormat("#.####")
         val name = splitName.subList(1, splitName.size).joinToString(" ")
-        // val value = if (entry.value.isFinite()) entry.value.round(2).toString().removeSuffix(".00") else "NaN"
-        val value = 2.0
+        val data = entry.value.values
+        val value = if (data.isNotEmpty() && data.last().isFinite())
+            formatter.format(entry.value.last().value)
+        else
+            "NaN"
         return createCells(name, value)
     }
 
@@ -70,7 +80,7 @@ class MetricsReport(
                 (function() {
                     let elem = document.getElementById("$id");
                     const option = $fragment
-                    let myChart = echarts.init(elem, theme);
+                    let myChart = echarts.init(elem);
                     myChart.setOption(option);
                     let resizeObserver = new ResizeObserver(() => myChart.resize());
                     resizeObserver.observe(elem);

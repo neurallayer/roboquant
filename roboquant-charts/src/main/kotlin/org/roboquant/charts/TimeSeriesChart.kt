@@ -32,6 +32,7 @@ import java.math.RoundingMode
  * Deprecated, use [TimeSeriesChart] instead
  */
 @Deprecated("Renamed to TimeSeriesChart", ReplaceWith("TimeSeriesChart", "org.roboquant.charts.TimeSeriesChart"))
+@Suppress("unused")
 typealias MetricChart = TimeSeriesChart
 
 /**

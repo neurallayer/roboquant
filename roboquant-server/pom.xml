@@ -28,7 +28,7 @@
     <artifactId>roboquant-server</artifactId>
     <packaging>jar</packaging>
     <name>roboquant server</name>
-    <description>server to run roboquant algorithmic trading strategies</description>
+    <description>webserver to run roboquant algorithmic trading strategies</description>
 
     <properties>
         <ktor_version>2.3.3</ktor_version>
@@ -47,6 +47,10 @@
         <dependency>
             <groupId>org.roboquant</groupId>
             <artifactId>roboquant</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.roboquant</groupId>
+            <artifactId>roboquant-charts</artifactId>
         </dependency>
         <dependency>
             <groupId>io.ktor</groupId>

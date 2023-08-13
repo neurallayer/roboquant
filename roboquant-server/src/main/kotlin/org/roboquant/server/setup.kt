@@ -33,6 +33,7 @@ internal fun Application.setup() {
     routing {
         listRuns()
         getRun()
+        getChart()
     }
 }
 
@@ -64,6 +65,7 @@ internal fun Application.setupSecure(username: String, password: String) {
         authenticate("auth-digest") {
             listRuns()
             getRun()
+            getChart()
         }
     }
 

@@ -19,71 +19,55 @@ package org.roboquant.server
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.html.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.util.*
 import kotlinx.html.*
 import org.roboquant.brokers.lines
+import org.roboquant.charts.TimeSeriesChart
+import org.roboquant.charts.renderJson
 import org.roboquant.orders.lines
 
-/*
-val blocks = mutableMapOf<String, FlowContent.() -> Unit>()
-
-
-fun FlowContent.serverside(id:String, block: FlowContent.() -> Unit) {
-    blocks[id] = block
-}
-
-
-fun Application.routes() {
-    routing {
-        get("/serverside/{id}") {
-            val id = call.parameters["id"]!!
-            val block = blocks[id]!!
-
-            call.respond(HttpStatusCode.OK) {
-                createHTML().article {
-                    this.block()
-                }
-            }
-
-        }
-    }
-}
-
-fun FlowContent.test() {
-    val x = 12
-    a(href = "/serverside/123") {
-        hxBoost(true)
-        serverside("123") {
-           p {
-               +"test $x"
-           }
-       }
-    }
-
-}
-*/
-
-private fun FlowContent.table(caption: String, list: List<List<Any>>)  {
-    table(classes = "table text-end") {
+private fun FlowContent.table(caption: String, list: List<List<Any>>) {
+    table(classes = "table text-end my-4") {
         caption {
             +caption
         }
-        tr {
-            for (header in list.first()) {
-                th { +header.toString() }
+        thead {
+            tr {
+                for (header in list.first()) {
+                    th { +header.toString() }
+                }
             }
         }
 
-        for (row in list.drop(1)) {
-            tr {
-                for (c in row) {
-                    td { +c.toString() }
+        tbody {
+            for (row in list.drop(1)) {
+                tr {
+                    for (c in row) {
+                        td { +c.toString() }
+                    }
                 }
             }
         }
     }
 }
 
+
+fun Route.getChart() {
+    post("/echarts") {
+        val parameters = call.receiveParameters()
+        val metric = parameters.getOrFail("metric")
+        val run = parameters.getOrFail("run")
+        val logger = runs.getValue(run).roboquant.logger
+        val data = logger.getMetric(metric)
+        val chart = TimeSeriesChart(data)
+        chart.title = metric
+        val json = chart.getOption().renderJson()
+        call.respondText(json)
+    }
+}
 
 fun Route.listRuns() {
     get("/") {
@@ -106,28 +90,28 @@ fun Route.listRuns() {
                     tr {
                         th { +"run name" }
                         th { +"state" }
-                        th { +"events"}
-                        th { +"last update"}
-                        th { +"actions"}
+                        th { +"events" }
+                        th { +"last update" }
+                        th { +"actions" }
                     }
                     runs.forEach { (run, info) ->
                         val acc = info.metric.account!!
                         val policy = info.roboquant.policy as PausablePolicy
                         val state = if (policy.pause) "pause" else "running"
                         tr {
-                            td {+run}
-                            td {+state}
-                            td {+info.metric.events.toString()}
-                            td {+acc.lastUpdate.toString()}
+                            td { +run }
+                            td { +state }
+                            td { +info.metric.events.toString() }
+                            td { +acc.lastUpdate.toString() }
                             td {
                                 a(href = "/run/$run") {
                                     +"details"
                                 }
-                                br{}
+                                br {}
                                 a(href = "/?action=pause&run=$run") {
                                     +"pause"
                                 }
-                                br{}
+                                br {}
                                 a(href = "/?action=resume&run=$run") {
                                     +"resume"
                                 }
@@ -143,23 +127,78 @@ fun Route.listRuns() {
 }
 
 
+private fun FlowContent.echarts(id: String, width: String = "100%", height: String = "800px") {
+    div {
+        attributes["id"] = id
+        attributes["hx-ext"] = "echarts"
+        style = "width:$width;height:$height;"
+    }
+    script(type = ScriptType.textJavaScript) {
+        unsafe {
+            raw(
+                """
+                (function() {    
+                    let elem = document.getElementById('$id')
+                    let chart = echarts.init(elem);
+                    let resizeObserver = new ResizeObserver(() => chart.resize());
+                    resizeObserver.observe(elem);
+                    elem.style.setProperty('display', 'none');
+                })();
+                """.trimIndent()
+            )
+        }
+    }
+}
+
+fun FlowContent.metricForm(target: String, run: String, metricNames: List<String>) {
+    form {
+        hxPost("/echarts")
+        hxTarget(target)
+        select(classes = "form-select") {
+            name = "metric"
+            metricNames.forEach {
+                option { value = it; +it }
+            }
+        }
+
+        input(type = InputType.hidden, name = "run") { value=run }
+
+        button(type = ButtonType.submit, classes = "btn btn-primary") {
+            +"Get Chart"
+
+        }
+    }
+}
+
+
+fun List<List<Any>>.takeLastPlusHeader(n: Int): List<List<Any>> {
+    return listOf(first()) + drop(1).takeLast(n)
+}
+
 fun Route.getRun() {
     get("/run/{id}") {
         val id = call.parameters["id"] ?: ""
         val info = runs.getValue(id)
         val metric = info.metric
+        val metricNames = info.roboquant.logger.metricNames
         val acc = info.metric.account!!
         call.respondHtml(HttpStatusCode.OK) {
             page("Details $id") {
-                a(href="/") {
-                    +"Back to overview"
+                a(href = "/") { +"Back to overview" }
+                table("account summary", metric.getsummary())
+                div(classes = "row my-4") {
+                    div(classes = "col-2") {
+                        metricForm("#echarts123456", id, metricNames)
+                    }
+                    div(classes = "col-10") {
+                        echarts("echarts123456", height = "400px")
+                    }
                 }
-                table("account summary",metric.getsummary())
                 table("cash", metric.getCash())
                 table("open positions", acc.positions.lines())
                 table("open orders", acc.openOrders.lines())
-                table("closed orders", acc.closedOrders.lines())
-                table("trades", acc.trades.lines())
+                table("closed orders", acc.closedOrders.lines().takeLastPlusHeader(10))
+                table("trades", acc.trades.lines().takeLastPlusHeader(10))
             }
         }
     }
