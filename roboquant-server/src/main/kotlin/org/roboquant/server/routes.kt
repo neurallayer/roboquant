@@ -194,7 +194,7 @@ fun Route.getRun() {
                         echarts("echarts123456", height = "400px")
                     }
                 }
-                table("cash", metric.getCash())
+                // table("cash", metric.getCash())
                 table("open positions", acc.positions.lines())
                 table("open orders", acc.openOrders.lines())
                 table("closed orders", acc.closedOrders.lines().takeLastPlusHeader(10))

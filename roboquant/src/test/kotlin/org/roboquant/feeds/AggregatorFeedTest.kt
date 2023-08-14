@@ -4,6 +4,9 @@ import org.roboquant.common.Timeframe
 import org.roboquant.common.millis
 import org.roboquant.common.minutes
 import org.roboquant.common.seconds
+import org.roboquant.feeds.util.LiveTestFeed
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -28,6 +31,47 @@ class AggregatorFeedTest {
         assertTrue(items1.first().time <= items1.first().time)
         assertTrue(items1.last().time >= items1.last().time)
     }
+
+    @Test
+    fun aggregatorFeed2() {
+        val tf = Timeframe.parse("2022-01-01T12:00:00","2022-01-01T15:00:00" )
+        val feed = RandomWalkFeed(tf, 1.minutes, nAssets = 1)
+        val ts = 15.minutes
+        val aggFeed = AggregatorFeed2(feed, ts)
+        var lastTime: Instant? = null
+        aggFeed.apply<PriceBar> { pb, t ->
+            assertEquals(ts, pb.timeSpan)
+            if (lastTime != null) {
+                val diff =  lastTime!!.until(t, ChronoUnit.MILLIS)
+                assertEquals(15*60*1000L, diff)
+            }
+            lastTime = t
+        }
+        assertTrue(lastTime != null)
+
+    }
+
+    @Test
+    fun aggregatorLiveFeed() {
+        val delay=5
+        val feed = LiveTestFeed(50..100, delayInMillis = delay)
+        val ts = (delay*10).millis
+        val aggFeed = AggregatorLiveFeed(feed, ts)
+        var lastTime: Instant? = null
+        aggFeed.apply<PriceBar> { pb, t ->
+            assertEquals(ts, pb.timeSpan)
+            // println("$t ${Instant.now()}")
+            if (lastTime != null) {
+                val diff =  lastTime!!.until(t, ChronoUnit.MILLIS)
+                assertEquals(delay * 10L, diff)
+            }
+            lastTime = t
+        }
+        assertTrue(lastTime != null)
+
+    }
+
+
 
     @Test
     fun basic2() {

@@ -16,6 +16,8 @@
 
 package org.roboquant.feeds
 
+import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
@@ -24,6 +26,7 @@ import org.roboquant.common.Timeframe
 import java.util.*
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class FeedTest {
 
@@ -74,6 +77,28 @@ internal class FeedTest {
         assertEquals(98, l.size)
         val actions = l.map { it.actions }.flatten()
         assertEquals(98, actions.filterIsInstance<PriceBar>().size)
+    }
+
+
+    @Test
+    fun background() = runBlocking {
+        val feed = TestData.feed()
+        val size = feed.toList().size
+
+        val channel = EventChannel(100)
+        assertFalse(channel.closed)
+        val job = feed.runBackgroud(channel)
+        job.join()
+        assertTrue(channel.closed)
+        assertTrue(job.isCompleted)
+
+        var e = 0
+        for (x in channel) {
+            assertTrue(x.actions.isNotEmpty())
+            e++
+        }
+        assertEquals(size, e)
+        assertTrue(channel.closed)
     }
 
 

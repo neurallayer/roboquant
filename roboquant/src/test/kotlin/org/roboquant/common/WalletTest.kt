@@ -106,6 +106,12 @@ internal class WalletTest {
     }
 
     @Test
+    fun toStr() {
+        val wallet = Wallet(10.USD, 20.101.EUR)
+        assertEquals("EUR 20.10 + USD 10.00", wallet.toString())
+    }
+
+    @Test
     fun operators() {
         val wallet = Wallet(10.USD, 20.EUR)
         val wallet2 = wallet + wallet - wallet

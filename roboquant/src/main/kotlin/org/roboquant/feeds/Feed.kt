@@ -16,9 +16,8 @@
 
 package org.roboquant.feeds
 
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import java.time.Instant
@@ -242,3 +241,16 @@ fun Feed.validate(
  */
 fun Collection<PriceAction>.toDoubleArray(type: String = "DEFAULT"): DoubleArray =
     this.map { it.getPrice(type) }.toDoubleArray()
+
+/**
+ * Run a feed in the background using the provided [channel] and close the channel once done.
+ * This method returns the corresponding [Job] instance.
+ */
+internal fun Feed.runBackgroud(channel: EventChannel) : Job {
+    val scope = CoroutineScope(Dispatchers.Default + Job())
+    return scope.launch {
+        channel.use {
+            play(it)
+        }
+    }
+}

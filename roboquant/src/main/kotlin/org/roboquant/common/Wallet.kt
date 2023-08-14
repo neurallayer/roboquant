@@ -227,9 +227,10 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
     /**
      * Create a string representation of this wallet with respecting currency preferred settings when
      * formatting the values.
+     * The amounts will be sorted by currency-code.
      */
     override fun toString(): String {
-        return toAmounts().joinToString(",")
+        return toAmounts().sortedBy { it.currency.currencyCode }.joinToString(" + ")
     }
 
     /**

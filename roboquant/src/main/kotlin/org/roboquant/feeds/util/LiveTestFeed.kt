@@ -39,7 +39,7 @@ class LiveTestFeed(
 ) : LiveFeed() {
 
     init {
-        require(delayInMillis >= 0)
+        require(delayInMillis > 0)
         require(prices.isNotEmpty())
     }
 

@@ -34,7 +34,8 @@ import org.roboquant.common.compareTo
  * @property timeframe Limit the events to this timeframe, default is INFINITE, so no limit
  * @constructor create a new EventChannel
  */
-open class EventChannel(val capacity: Int = 10, val timeframe: Timeframe = Timeframe.INFINITE) : AutoCloseable {
+open class EventChannel(val capacity: Int = 10, val timeframe: Timeframe = Timeframe.INFINITE) : AutoCloseable,
+    Cloneable {
 
     private val channel = Channel<Event>(capacity)
     private val logger = Logging.getLogger(EventChannel::class)
@@ -106,5 +107,13 @@ open class EventChannel(val capacity: Int = 10, val timeframe: Timeframe = Timef
         closed = true
         channel.close()
     }
+
+    /**
+     * Make a copy. Events on the channel will not be copied, and the new channel will be open by default.
+     */
+    public override fun clone(): EventChannel {
+        return EventChannel(capacity, timeframe)
+    }
+
 
 }

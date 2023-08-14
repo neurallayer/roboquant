@@ -26,13 +26,10 @@ import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
-import org.roboquant.feeds.AvroFeed
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.*
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
-import org.roboquant.feeds.filter
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
@@ -178,6 +175,15 @@ fun simple() {
 }
 
 
+fun aggregator() {
+    val forex = AvroFeed.forex()
+    val feed = AggregatorFeed2(forex, 15.minutes)
+    feed.apply<PriceAction> { _, time ->
+        println(time)
+    }
+}
+
+
 fun forexRun() {
     val feed = AvroFeed.forex()
     Currency.increaseDigits(3)
@@ -268,7 +274,7 @@ fun cfd() {
 suspend fun main() {
     Config.printInfo()
 
-    when ("WEB") {
+    when ("AGG") {
         "SIMPLE" -> simple()
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
@@ -279,6 +285,7 @@ suspend fun main() {
         "PROFILE" -> profileTest()
         "PERFORMANCE" -> performanceTest()
         "CFD" -> cfd()
+        "AGG" -> aggregator()
     }
 
 }

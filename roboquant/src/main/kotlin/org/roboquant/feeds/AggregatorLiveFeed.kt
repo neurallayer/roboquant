@@ -1,0 +1,147 @@
+/*
+ * Copyright 2020-2023 Neural Layer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.roboquant.feeds
+
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import org.roboquant.common.Asset
+import org.roboquant.common.TimeSpan
+import org.roboquant.common.Timeframe
+import org.roboquant.common.plus
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+import kotlin.collections.set
+import kotlin.math.max
+import kotlin.math.min
+
+/**
+ * Aggregate prices in a live [feed] to a [PriceBar]. The [aggregationPeriod] is configurable. Right now there is
+ * support for aggregating the following types of price actions:
+ *
+ * 1. PriceBar
+ * 2. TradePrice
+ * 3. PriceQuote (midpoint)
+ * 4. OrderBook (midpoint)
+ *
+ * If an action is not recognized, it is ignored.
+ *
+ * @property feed the feed to use that has the prices that need to be aggregated
+ * @property aggregationPeriod the aggregation period, for example `15.minutes`
+ * @property remaining should any remaining actions be sent, default is true
+ *
+ */
+class AggregatorLiveFeed(
+    private val feed: LiveFeed,
+    private val aggregationPeriod: TimeSpan,
+    private val remaining: Boolean = true
+) : Feed {
+
+    private fun Instant.expirationTime(): Instant {
+        val intervalMillis = until(this + aggregationPeriod, ChronoUnit.MILLIS)
+        val adjustedInstantMillis = toEpochMilli() / intervalMillis * intervalMillis
+        return Instant.ofEpochMilli(adjustedInstantMillis) + aggregationPeriod
+    }
+
+    /**
+     * Provide the timeframe, this can be slightly off since upfront it is not known what the actions are that are
+     * in the underlying feed.
+     */
+    override val timeframe: Timeframe
+        get() = feed.timeframe.extend(aggregationPeriod)
+
+    private operator fun PriceBar.plus(other: PriceBar): PriceBar {
+        val high = max(other.high, high)
+        val low = min(other.low, low)
+        return PriceBar(asset, open, high, low, other.close, volume + other.volume, aggregationPeriod)
+    }
+
+
+    /**
+     * @see Feed.play
+     */
+    @Suppress("CyclomaticComplexMethod")
+    override suspend fun play(channel: EventChannel) {
+        val inputChannel = EventChannel(channel.capacity, channel.timeframe)
+        val scope = CoroutineScope(Dispatchers.Default + Job())
+
+        val history = mutableMapOf<Asset, PriceBar>()
+        var expiration: Instant = Instant.now().expirationTime()
+
+        val job2 = scope.launch {
+            while(true) {
+                val newEvent = synchronized(history) {
+                    val newEvent = Event(history.values.toList(), expiration)
+                    history.clear()
+                    newEvent
+                }
+
+                if (newEvent.actions.isNotEmpty()) channel.send(newEvent)
+                expiration += aggregationPeriod
+                val intervalMillis = Instant.now().until(expiration, ChronoUnit.MILLIS)
+                delay(intervalMillis)
+                // println("wakeup after $intervalMillis millis")
+            }
+        }
+
+        val job = scope.launch {
+            inputChannel.use {
+                feed.play(it)
+            }
+        }
+
+        try {
+            while (true) {
+                val event = inputChannel.receive()
+                val actions = event.actions
+
+                // Send heart beats from the original feed
+                if (actions.isEmpty()) {
+                    channel.send(event)
+                    continue
+                }
+
+                synchronized(history) {
+                    for (action in actions) {
+                        val pb = getPriceBar(action, aggregationPeriod) ?: continue
+                        val asset = pb.asset
+                        val entry = history[asset]
+                        if (entry == null) {
+                            history[asset] = pb
+                        } else {
+                            history[asset] = entry + pb
+                        }
+                    }
+                }
+
+
+            }
+
+        } catch (_: ClosedReceiveChannelException) {
+            // NOP
+        } finally {
+
+            // Send remaining
+            if (remaining && history.isNotEmpty()) {
+                val newEvent = Event(history.values.toList(), expiration)
+                channel.send(newEvent)
+            }
+            if (job.isActive) job.cancel()
+            if (job2.isActive) job2.cancel()
+        }
+    }
+
+}

@@ -17,7 +17,6 @@
 package org.roboquant.server
 
 import org.roboquant.brokers.Account
-import org.roboquant.common.Amount
 import org.roboquant.feeds.Event
 import org.roboquant.metrics.Metric
 
@@ -37,13 +36,6 @@ class WebMetric : Metric {
         return emptyMap()
     }
 
-    fun  getCash(): List<List<Any>> {
-        val acc = account ?: return emptyList()
-        val result = listOf(listOf("currency", "amount"))
-        return result + acc.cash.toMap().map { listOf(it.key.toString(), Amount(it.key, it.value).formatValue()) }
-    }
-
-
     fun getsummary(): List<List<Any>> {
         val acc = account ?: return emptyList()
         return listOf(
@@ -52,6 +44,7 @@ class WebMetric : Metric {
             listOf("events", events),
             listOf("actions", actions),
             listOf("buying power", acc.buyingPower),
+            listOf("cash", acc.cash),
             listOf("equity", acc.equity),
             listOf("open positions", acc.positions.size),
             listOf("open orders", acc.openOrders.size),

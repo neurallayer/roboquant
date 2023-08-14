@@ -31,6 +31,7 @@ import kotlin.collections.set
 import kotlin.math.max
 import kotlin.math.min
 
+
 /**
  * Aggregate prices in a [feed] to a [PriceBar]. The [aggregationPeriod] is configurable. Right now there is support for
  * aggregating the following types of price actions:
@@ -62,33 +63,6 @@ class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimeSpan) : 
         return PriceBar(asset, open, high, low, other.close, volume + other.volume, aggregationPeriod)
     }
 
-    private fun getPriceBar(action: Action): PriceBar? {
-        return when (action) {
-
-            is PriceBar -> {
-                with(action) {
-                    PriceBar(action.asset, open, high, low, close, volume, aggregationPeriod)
-                }
-            }
-
-            is TradePrice -> {
-                val price = action.price
-                PriceBar(action.asset, price, price, price, price, action.volume, aggregationPeriod)
-            }
-
-            is PriceQuote -> {
-                val price = action.getPrice("MIDPOINT")
-                PriceBar(action.asset, price, price, price, price, action.volume, aggregationPeriod)
-            }
-
-            is OrderBook -> {
-                val price = action.getPrice("MIDPOINT")
-                PriceBar(action.asset, price, price, price, price, action.volume, aggregationPeriod)
-            }
-
-            else -> null
-        }
-    }
 
     /**
      * @suppress
@@ -109,7 +83,7 @@ class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimeSpan) : 
                 val event = c.receive()
                 val time = event.time
                 for (action in event.actions) {
-                    val pb = getPriceBar(action)
+                    val pb = getPriceBar(action, aggregationPeriod)
 
                     // If we don't recognize it as a supported PriceAction, we just directly propagate the action
                     if (pb == null) {
@@ -149,4 +123,32 @@ class AggregatorFeed(val feed: Feed, private val aggregationPeriod: TimeSpan) : 
         }
     }
 
+}
+
+internal fun getPriceBar(action: Action, timeSpan: TimeSpan?): PriceBar? {
+    return when (action) {
+
+        is PriceBar -> {
+            with(action) {
+                PriceBar(action.asset, open, high, low, close, volume, timeSpan)
+            }
+        }
+
+        is TradePrice -> {
+            val price = action.price
+            PriceBar(action.asset, price, price, price, price, action.volume, timeSpan)
+        }
+
+        is PriceQuote -> {
+            val price = action.getPrice("MIDPOINT")
+            PriceBar(action.asset, price, price, price, price, action.volume, timeSpan)
+        }
+
+        is OrderBook -> {
+            val price = action.getPrice("MIDPOINT")
+            PriceBar(action.asset, price, price, price, price, action.volume, timeSpan)
+        }
+
+        else -> null
+    }
 }
