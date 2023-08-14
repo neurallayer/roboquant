@@ -26,9 +26,9 @@ import kotlin.test.assertEquals
 
 class TaLibTest {
 
-    private fun getSeries(size: Int): PriceBarSerie {
+    private fun getSeries(size: Int): PriceBarSeries {
         val feed = HistoricTestFeed(100 until 200, priceBar = true)
-        val series = PriceBarSerie(size)
+        val series = PriceBarSeries(size)
         feed.apply<PriceBar> { pb, _ ->
             series.add(pb)
         }

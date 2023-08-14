@@ -39,9 +39,11 @@ import java.lang.Integer.max
  */
 class TaLibStrategy(history: Int = 1) : RecordingStrategy(recording = true) {
 
-    private var sellFn: TaLib.(series: PriceBarSerie) -> Boolean = { false }
-    private var buyFn: TaLib.(series: PriceBarSerie) -> Boolean = { false }
-    private val priceBarSeries = PriceBarSeries(history)
+    private var sellFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
+    private var buyFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
+
+    // Contains the historic PriceBarSeries per Asset
+    private val assetPriceBarSeries = AssetPriceBarSeries(history)
 
     /**
      * The underlying TaLib that will be used to run the strategy
@@ -166,7 +168,7 @@ class TaLibStrategy(history: Int = 1) : RecordingStrategy(recording = true) {
      * }
      * ```
      */
-    fun buy(block: TaLib.(series: PriceBarSerie) -> Boolean) {
+    fun buy(block: TaLib.(series: PriceBarSeries) -> Boolean) {
         buyFn = block
     }
 
@@ -180,7 +182,7 @@ class TaLibStrategy(history: Int = 1) : RecordingStrategy(recording = true) {
      * }
      * ```
      */
-    fun sell(block: TaLib.(series: PriceBarSerie) -> Boolean) {
+    fun sell(block: TaLib.(series: PriceBarSeries) -> Boolean) {
         sellFn = block
     }
 
@@ -193,9 +195,9 @@ class TaLibStrategy(history: Int = 1) : RecordingStrategy(recording = true) {
     override fun generate(event: Event): List<Signal> {
         val results = mutableListOf<Signal>()
         for (priceBar in event.actions.filterIsInstance<PriceBar>()) {
-            if (priceBarSeries.add(priceBar)) {
+            if (assetPriceBarSeries.add(priceBar)) {
                 val asset = priceBar.asset
-                val priceSerie = priceBarSeries.getValue(asset)
+                val priceSerie = assetPriceBarSeries.getValue(asset)
                 try {
                     if (buyFn.invoke(taLib, priceSerie)) results.add(Signal(asset, Rating.BUY))
                     if (sellFn.invoke(taLib, priceSerie)) results.add(Signal(asset, Rating.SELL))
@@ -211,7 +213,7 @@ class TaLibStrategy(history: Int = 1) : RecordingStrategy(recording = true) {
      * Reset all the history state
      */
     override fun reset() {
-        priceBarSeries.clear()
+        assetPriceBarSeries.clear()
     }
 
 }
@@ -225,7 +227,7 @@ fun TaLib.recordLow(low: DoubleArray, period: Int, previous: Int = 0) =
 /**
  * Indicator for detecting record based on historic priceBar [series]
  */
-fun TaLib.recordLow(series: PriceBarSerie, period: Int, previous: Int = 0) = recordLow(series.low, period, previous)
+fun TaLib.recordLow(series: PriceBarSeries, period: Int, previous: Int = 0) = recordLow(series.low, period, previous)
 
 /**
  * Indicator for detecting record high based on an array with [high] historic prices
@@ -236,6 +238,6 @@ fun TaLib.recordHigh(high: DoubleArray, period: Int, previous: Int = 0) =
 /**
  * Indicator for detecting record high based on an array with historic [series]
  */
-fun TaLib.recordHigh(series: PriceBarSerie, period: Int, previous: Int = 0) =
+fun TaLib.recordHigh(series: PriceBarSeries, period: Int, previous: Int = 0) =
     recordHigh(series.high, period, previous)
 

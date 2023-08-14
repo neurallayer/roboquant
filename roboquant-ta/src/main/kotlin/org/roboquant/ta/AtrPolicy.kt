@@ -62,7 +62,7 @@ open class AtrPolicy(
         require(atRisk == null || atRisk in 0.0..1.0)
     }
 
-    private val data = PriceBarSeries(atrPeriod + 1) // we need one observation extra
+    private val data = AssetPriceBarSeries(atrPeriod + 1) // we need one observation extra
     private val talib = TaLib()
 
     /**

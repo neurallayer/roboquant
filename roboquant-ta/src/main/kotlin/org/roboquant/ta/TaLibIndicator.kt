@@ -34,11 +34,11 @@ import java.time.Instant
  *
  */
 class TaLibIndicator(
-    private val block: TaLib.(series: PriceBarSerie) -> Map<String, Double>
+    private val block: TaLib.(series: PriceBarSeries) -> Map<String, Double>
 ) : Indicator {
 
     private val taLib = TaLib()
-    private val series = PriceBarSerie(1)
+    private val series = PriceBarSeries(1)
 
     /**
      * @see Indicator.calculate

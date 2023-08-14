@@ -36,10 +36,10 @@ import org.roboquant.strategies.Strategy
  * @property block the logic that will generate a signal
  */
 class TaLibSignalStrategy(
-    private var block: TaLib.(asset: Asset, series: PriceBarSerie) -> Signal?
+    private var block: TaLib.(asset: Asset, series: PriceBarSeries) -> Signal?
 ) : Strategy {
 
-    private val buffers = mutableMapOf<Asset, PriceBarSerie>()
+    private val buffers = mutableMapOf<Asset, PriceBarSeries>()
 
     /**
      * The underlying [TaLib] instance that is used when executing this strategy.
@@ -115,7 +115,7 @@ class TaLibSignalStrategy(
         val signals = mutableListOf<Signal>()
         for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSerie(1) }
+            val buffer = buffers.getOrPut(asset) { PriceBarSeries(1) }
             if (buffer.add(priceAction)) {
                 try {
                     val signal = block.invoke(taLib, asset, buffer)

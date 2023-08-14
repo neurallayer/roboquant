@@ -33,10 +33,10 @@ import org.roboquant.metrics.Metric
  */
 class TaLibMetric(
     private val assetFilter: AssetFilter = AssetFilter.all(),
-    private var block: TaLib.(series: PriceBarSerie) -> Map<String, Double>
+    private var block: TaLib.(series: PriceBarSeries) -> Map<String, Double>
 ) : Metric {
 
-    private val buffers = mutableMapOf<Asset, PriceBarSerie>()
+    private val buffers = mutableMapOf<Asset, PriceBarSeries>()
     private val taLib = TaLib()
 
     /**
@@ -48,7 +48,7 @@ class TaLibMetric(
             event.actions.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset, event.time) }
         for (priceAction in actions) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSerie(1) }
+            val buffer = buffers.getOrPut(asset) { PriceBarSeries(1) }
             if (buffer.add(priceAction)) {
                 try {
                     val postFix = asset.symbol.lowercase()

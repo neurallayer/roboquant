@@ -26,13 +26,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class PriceBarSerieTest {
+internal class PriceBarSeriesTest {
 
     private val asset = Asset("DEMO")
     private val pb = PriceBar(asset, 10, 11, 9, 10, 100)
 
-    private fun getPBS(size: Int): PriceBarSerie {
-        val pbs = PriceBarSerie(size)
+    private fun getPBS(size: Int): PriceBarSeries {
+        val pbs = PriceBarSeries(size)
         val ohlvc = doubleArrayOf(100.0, 101.0, 99.0, 100.0, 10000.0)
         repeat(size) {
             val newOhlcv = ohlvc + it
@@ -45,7 +45,7 @@ internal class PriceBarSerieTest {
 
     @Test
     fun test() {
-        val pbs = PriceBarSerie(10)
+        val pbs = PriceBarSeries(10)
         repeat(5) { pbs.add(pb) }
         assertFalse(pbs.isFull())
         assertEquals(5, pbs.size)
@@ -69,7 +69,7 @@ internal class PriceBarSerieTest {
 
     @Test
     fun test2() {
-        val pbs = PriceBarSeries(10)
+        val pbs = AssetPriceBarSeries(10)
         repeat(5) { pbs.add(pb) }
         assertEquals(1, pbs.size)
 
@@ -123,11 +123,6 @@ internal class PriceBarSerieTest {
         assertEquals(10, pbs2.size) // should have processed the last set
     }
 
-    @Test
-    fun extensions() {
-        val pbs: PriceBarSerie? = null
-        assertFalse(pbs.isFull())
-    }
 
 
 }

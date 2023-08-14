@@ -80,7 +80,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [acos]
      */
-    fun acos(serie: PriceBarSerie, previous: Int = 0) = acos(serie.close, previous)
+    fun acos(serie: PriceBarSeries, previous: Int = 0) = acos(serie.close, previous)
 
     /**
      * Calculate **Chaikin A/D Line** using the provided input data and by default return the most recent result.
@@ -108,7 +108,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [ad]
      */
-    fun ad(serie: PriceBarSerie, previous: Int = 0) =
+    fun ad(serie: PriceBarSeries, previous: Int = 0) =
         ad(serie.high, serie.low, serie.close, serie.volume, previous)
 
     /**
@@ -179,7 +179,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [adOsc]
      */
-    fun adOsc(serie: PriceBarSerie, fastPeriod: Int = 3, slowPeriod: Int = 10, previous: Int = 0) =
+    fun adOsc(serie: PriceBarSeries, fastPeriod: Int = 3, slowPeriod: Int = 10, previous: Int = 0) =
         adOsc(serie.high, serie.low, serie.close, serie.volume, fastPeriod, slowPeriod, previous)
 
     /**
@@ -208,7 +208,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [adx]
      */
-    fun adx(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun adx(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         adx(serie.high, serie.low, serie.close, timePeriod, previous)
 
     /**
@@ -237,7 +237,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [adxr]
      */
-    fun adxr(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun adxr(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         adxr(serie.high, serie.low, serie.close, timePeriod, previous)
 
     /**
@@ -273,7 +273,7 @@ class TaLib(var core: Core = Core()) {
      * @see [apo]
      */
     fun apo(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         fastPeriod: Int = 12,
         slowPeriod: Int = 26,
         mAType: MAType = MAType.Ema,
@@ -307,7 +307,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [aroon]
      */
-    fun aroon(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun aroon(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         aroon(serie.high, serie.low, timePeriod, previous)
 
     /**
@@ -336,7 +336,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [aroonOsc]
      */
-    fun aroonOsc(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun aroonOsc(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         aroonOsc(serie.high, serie.low, timePeriod, previous)
 
     /**
@@ -365,7 +365,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [asin]
      */
-    fun asin(serie: PriceBarSerie, previous: Int = 0) = asin(serie.close, previous)
+    fun asin(serie: PriceBarSeries, previous: Int = 0) = asin(serie.close, previous)
 
     /**
      * Calculate **Vector Trigonometric ATan** using the provided input data and by default return the most recent result.
@@ -393,7 +393,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [atan]
      */
-    fun atan(serie: PriceBarSerie, previous: Int = 0) = atan(serie.close, previous)
+    fun atan(serie: PriceBarSeries, previous: Int = 0) = atan(serie.close, previous)
 
     /**
      * Calculate **Average True Range** using the provided input data and by default return the most recent result.
@@ -421,7 +421,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [atr]
      */
-    fun atr(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun atr(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         atr(serie.high, serie.low, serie.close, timePeriod, previous)
 
     /**
@@ -456,7 +456,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [avgPrice]
      */
-    fun avgPrice(serie: PriceBarSerie, previous: Int = 0) =
+    fun avgPrice(serie: PriceBarSeries, previous: Int = 0) =
         avgPrice(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -508,7 +508,7 @@ class TaLib(var core: Core = Core()) {
      * @see [bbands]
      */
     fun bbands(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         timePeriod: Int = 5,
         deviationsup: Double = 2.000000e+0,
         deviationsdown: Double = 2.000000e+0,
@@ -564,7 +564,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [bop]
      */
-    fun bop(serie: PriceBarSerie, previous: Int = 0) =
+    fun bop(serie: PriceBarSeries, previous: Int = 0) =
         bop(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -593,7 +593,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cci]
      */
-    fun cci(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun cci(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         cci(serie.high, serie.low, serie.close, timePeriod, previous)
 
     /**
@@ -628,7 +628,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdl2Crows]
      */
-    fun cdl2Crows(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdl2Crows(serie: PriceBarSeries, previous: Int = 0) =
         cdl2Crows(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -663,7 +663,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdl3BlackCrows]
      */
-    fun cdl3BlackCrows(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdl3BlackCrows(serie: PriceBarSeries, previous: Int = 0) =
         cdl3BlackCrows(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -698,7 +698,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdl3Inside]
      */
-    fun cdl3Inside(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdl3Inside(serie: PriceBarSeries, previous: Int = 0) =
         cdl3Inside(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -733,7 +733,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdl3LineStrike]
      */
-    fun cdl3LineStrike(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdl3LineStrike(serie: PriceBarSeries, previous: Int = 0) =
         cdl3LineStrike(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -768,7 +768,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdl3Outside]
      */
-    fun cdl3Outside(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdl3Outside(serie: PriceBarSeries, previous: Int = 0) =
         cdl3Outside(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -803,7 +803,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdl3StarsInSouth]
      */
-    fun cdl3StarsInSouth(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdl3StarsInSouth(serie: PriceBarSeries, previous: Int = 0) =
         cdl3StarsInSouth(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -838,7 +838,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdl3WhiteSoldiers]
      */
-    fun cdl3WhiteSoldiers(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdl3WhiteSoldiers(serie: PriceBarSeries, previous: Int = 0) =
         cdl3WhiteSoldiers(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -875,7 +875,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlAbandonedBaby]
      */
-    fun cdlAbandonedBaby(serie: PriceBarSerie, penetration: Double = 3.000000e-1, previous: Int = 0) =
+    fun cdlAbandonedBaby(serie: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
         cdlAbandonedBaby(serie.open, serie.high, serie.low, serie.close, penetration, previous)
 
     /**
@@ -910,7 +910,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlAdvanceBlock]
      */
-    fun cdlAdvanceBlock(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlAdvanceBlock(serie: PriceBarSeries, previous: Int = 0) =
         cdlAdvanceBlock(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -945,7 +945,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlBeltHold]
      */
-    fun cdlBeltHold(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlBeltHold(serie: PriceBarSeries, previous: Int = 0) =
         cdlBeltHold(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -980,7 +980,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlBreakaway]
      */
-    fun cdlBreakaway(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlBreakaway(serie: PriceBarSeries, previous: Int = 0) =
         cdlBreakaway(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1015,7 +1015,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlClosingMarubozu]
      */
-    fun cdlClosingMarubozu(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlClosingMarubozu(serie: PriceBarSeries, previous: Int = 0) =
         cdlClosingMarubozu(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1050,7 +1050,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlConcealBabysWall]
      */
-    fun cdlConcealBabysWall(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlConcealBabysWall(serie: PriceBarSeries, previous: Int = 0) =
         cdlConcealBabysWall(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1085,7 +1085,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlCounterAttack]
      */
-    fun cdlCounterAttack(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlCounterAttack(serie: PriceBarSeries, previous: Int = 0) =
         cdlCounterAttack(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1122,7 +1122,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlDarkCloudCover]
      */
-    fun cdlDarkCloudCover(serie: PriceBarSerie, penetration: Double = 5.000000e-1, previous: Int = 0) =
+    fun cdlDarkCloudCover(serie: PriceBarSeries, penetration: Double = 5.000000e-1, previous: Int = 0) =
         cdlDarkCloudCover(serie.open, serie.high, serie.low, serie.close, penetration, previous)
 
     /**
@@ -1157,7 +1157,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlDoji]
      */
-    fun cdlDoji(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlDoji(serie: PriceBarSeries, previous: Int = 0) =
         cdlDoji(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1192,7 +1192,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlDojiStar]
      */
-    fun cdlDojiStar(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlDojiStar(serie: PriceBarSeries, previous: Int = 0) =
         cdlDojiStar(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1227,7 +1227,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlDragonflyDoji]
      */
-    fun cdlDragonflyDoji(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlDragonflyDoji(serie: PriceBarSeries, previous: Int = 0) =
         cdlDragonflyDoji(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1262,7 +1262,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlEngulfing]
      */
-    fun cdlEngulfing(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlEngulfing(serie: PriceBarSeries, previous: Int = 0) =
         cdlEngulfing(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1309,7 +1309,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlEveningDojiStar]
      */
-    fun cdlEveningDojiStar(serie: PriceBarSerie, penetration: Double = 3.000000e-1, previous: Int = 0) =
+    fun cdlEveningDojiStar(serie: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
         cdlEveningDojiStar(serie.open, serie.high, serie.low, serie.close, penetration, previous)
 
     /**
@@ -1346,7 +1346,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlEveningStar]
      */
-    fun cdlEveningStar(serie: PriceBarSerie, penetration: Double = 3.000000e-1, previous: Int = 0) =
+    fun cdlEveningStar(serie: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
         cdlEveningStar(serie.open, serie.high, serie.low, serie.close, penetration, previous)
 
     /**
@@ -1381,7 +1381,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlGapSideSideWhite]
      */
-    fun cdlGapSideSideWhite(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlGapSideSideWhite(serie: PriceBarSeries, previous: Int = 0) =
         cdlGapSideSideWhite(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1416,7 +1416,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlGravestoneDoji]
      */
-    fun cdlGravestoneDoji(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlGravestoneDoji(serie: PriceBarSeries, previous: Int = 0) =
         cdlGravestoneDoji(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1451,7 +1451,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlHammer]
      */
-    fun cdlHammer(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlHammer(serie: PriceBarSeries, previous: Int = 0) =
         cdlHammer(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1486,7 +1486,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlHangingMan]
      */
-    fun cdlHangingMan(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlHangingMan(serie: PriceBarSeries, previous: Int = 0) =
         cdlHangingMan(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1521,7 +1521,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlHarami]
      */
-    fun cdlHarami(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlHarami(serie: PriceBarSeries, previous: Int = 0) =
         cdlHarami(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1556,7 +1556,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlHaramiCross]
      */
-    fun cdlHaramiCross(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlHaramiCross(serie: PriceBarSeries, previous: Int = 0) =
         cdlHaramiCross(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1591,7 +1591,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlHignWave]
      */
-    fun cdlHignWave(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlHignWave(serie: PriceBarSeries, previous: Int = 0) =
         cdlHignWave(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1626,7 +1626,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlHikkake]
      */
-    fun cdlHikkake(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlHikkake(serie: PriceBarSeries, previous: Int = 0) =
         cdlHikkake(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1661,7 +1661,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlHikkakeMod]
      */
-    fun cdlHikkakeMod(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlHikkakeMod(serie: PriceBarSeries, previous: Int = 0) =
         cdlHikkakeMod(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1696,7 +1696,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlHomingPigeon]
      */
-    fun cdlHomingPigeon(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlHomingPigeon(serie: PriceBarSeries, previous: Int = 0) =
         cdlHomingPigeon(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1731,7 +1731,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlIdentical3Crows]
      */
-    fun cdlIdentical3Crows(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlIdentical3Crows(serie: PriceBarSeries, previous: Int = 0) =
         cdlIdentical3Crows(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1766,7 +1766,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlInNeck]
      */
-    fun cdlInNeck(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlInNeck(serie: PriceBarSeries, previous: Int = 0) =
         cdlInNeck(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1801,7 +1801,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlInvertedHammer]
      */
-    fun cdlInvertedHammer(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlInvertedHammer(serie: PriceBarSeries, previous: Int = 0) =
         cdlInvertedHammer(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1836,7 +1836,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlKicking]
      */
-    fun cdlKicking(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlKicking(serie: PriceBarSeries, previous: Int = 0) =
         cdlKicking(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1871,7 +1871,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlKickingByLength]
      */
-    fun cdlKickingByLength(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlKickingByLength(serie: PriceBarSeries, previous: Int = 0) =
         cdlKickingByLength(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1906,7 +1906,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlLadderBottom]
      */
-    fun cdlLadderBottom(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlLadderBottom(serie: PriceBarSeries, previous: Int = 0) =
         cdlLadderBottom(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1941,7 +1941,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlLongLeggedDoji]
      */
-    fun cdlLongLeggedDoji(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlLongLeggedDoji(serie: PriceBarSeries, previous: Int = 0) =
         cdlLongLeggedDoji(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -1976,7 +1976,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlLongLine]
      */
-    fun cdlLongLine(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlLongLine(serie: PriceBarSeries, previous: Int = 0) =
         cdlLongLine(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2011,7 +2011,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlMarubozu]
      */
-    fun cdlMarubozu(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlMarubozu(serie: PriceBarSeries, previous: Int = 0) =
         cdlMarubozu(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2046,7 +2046,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlMatchingLow]
      */
-    fun cdlMatchingLow(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlMatchingLow(serie: PriceBarSeries, previous: Int = 0) =
         cdlMatchingLow(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2082,7 +2082,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlMatHold]
      */
-    fun cdlMatHold(serie: PriceBarSerie, penetration: Double = 5.000000e-1, previous: Int = 0) =
+    fun cdlMatHold(serie: PriceBarSeries, penetration: Double = 5.000000e-1, previous: Int = 0) =
         cdlMatHold(serie.open, serie.high, serie.low, serie.close, penetration, previous)
 
     /**
@@ -2129,7 +2129,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlMorningDojiStar]
      */
-    fun cdlMorningDojiStar(serie: PriceBarSerie, penetration: Double = 3.000000e-1, previous: Int = 0) =
+    fun cdlMorningDojiStar(serie: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
         cdlMorningDojiStar(serie.open, serie.high, serie.low, serie.close, penetration, previous)
 
     /**
@@ -2166,7 +2166,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlMorningStar]
      */
-    fun cdlMorningStar(serie: PriceBarSerie, penetration: Double = 3.000000e-1, previous: Int = 0) =
+    fun cdlMorningStar(serie: PriceBarSeries, penetration: Double = 3.000000e-1, previous: Int = 0) =
         cdlMorningStar(serie.open, serie.high, serie.low, serie.close, penetration, previous)
 
     /**
@@ -2201,7 +2201,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlOnNeck]
      */
-    fun cdlOnNeck(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlOnNeck(serie: PriceBarSeries, previous: Int = 0) =
         cdlOnNeck(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2236,7 +2236,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlPiercing]
      */
-    fun cdlPiercing(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlPiercing(serie: PriceBarSeries, previous: Int = 0) =
         cdlPiercing(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2271,7 +2271,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlRickshawMan]
      */
-    fun cdlRickshawMan(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlRickshawMan(serie: PriceBarSeries, previous: Int = 0) =
         cdlRickshawMan(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2306,7 +2306,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlRiseFall3Methods]
      */
-    fun cdlRiseFall3Methods(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlRiseFall3Methods(serie: PriceBarSeries, previous: Int = 0) =
         cdlRiseFall3Methods(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2341,7 +2341,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlSeperatingLines]
      */
-    fun cdlSeperatingLines(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlSeperatingLines(serie: PriceBarSeries, previous: Int = 0) =
         cdlSeperatingLines(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2376,7 +2376,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlShootingStar]
      */
-    fun cdlShootingStar(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlShootingStar(serie: PriceBarSeries, previous: Int = 0) =
         cdlShootingStar(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2411,7 +2411,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlShortLine]
      */
-    fun cdlShortLine(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlShortLine(serie: PriceBarSeries, previous: Int = 0) =
         cdlShortLine(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2446,7 +2446,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlSpinningTop]
      */
-    fun cdlSpinningTop(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlSpinningTop(serie: PriceBarSeries, previous: Int = 0) =
         cdlSpinningTop(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2481,7 +2481,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlStalledPattern]
      */
-    fun cdlStalledPattern(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlStalledPattern(serie: PriceBarSeries, previous: Int = 0) =
         cdlStalledPattern(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2516,7 +2516,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlStickSandwich]
      */
-    fun cdlStickSandwich(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlStickSandwich(serie: PriceBarSeries, previous: Int = 0) =
         cdlStickSandwich(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2551,7 +2551,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlTakuri]
      */
-    fun cdlTakuri(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlTakuri(serie: PriceBarSeries, previous: Int = 0) =
         cdlTakuri(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2586,7 +2586,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlTasukiGap]
      */
-    fun cdlTasukiGap(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlTasukiGap(serie: PriceBarSeries, previous: Int = 0) =
         cdlTasukiGap(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2621,7 +2621,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlThrusting]
      */
-    fun cdlThrusting(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlThrusting(serie: PriceBarSeries, previous: Int = 0) =
         cdlThrusting(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2656,7 +2656,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlTristar]
      */
-    fun cdlTristar(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlTristar(serie: PriceBarSeries, previous: Int = 0) =
         cdlTristar(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2691,7 +2691,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlUnique3River]
      */
-    fun cdlUnique3River(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlUnique3River(serie: PriceBarSeries, previous: Int = 0) =
         cdlUnique3River(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2726,7 +2726,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlUpsideGap2Crows]
      */
-    fun cdlUpsideGap2Crows(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlUpsideGap2Crows(serie: PriceBarSeries, previous: Int = 0) =
         cdlUpsideGap2Crows(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2761,7 +2761,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cdlXSideGap3Methods]
      */
-    fun cdlXSideGap3Methods(serie: PriceBarSerie, previous: Int = 0) =
+    fun cdlXSideGap3Methods(serie: PriceBarSeries, previous: Int = 0) =
         cdlXSideGap3Methods(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
@@ -2790,7 +2790,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [ceil]
      */
-    fun ceil(serie: PriceBarSerie, previous: Int = 0) = ceil(serie.close, previous)
+    fun ceil(serie: PriceBarSeries, previous: Int = 0) = ceil(serie.close, previous)
 
     /**
      * Calculate **Chande Momentum Oscillator** using the provided input data and by default return the most recent result.
@@ -2818,7 +2818,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cmo]
      */
-    fun cmo(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) = cmo(serie.close, timePeriod, previous)
+    fun cmo(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) = cmo(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Pearson's Correlation Coefficient (r)** using the provided input data and by default return the most recent result.
@@ -2868,7 +2868,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cos]
      */
-    fun cos(serie: PriceBarSerie, previous: Int = 0) = cos(serie.close, previous)
+    fun cos(serie: PriceBarSeries, previous: Int = 0) = cos(serie.close, previous)
 
     /**
      * Calculate **Vector Trigonometric Cosh** using the provided input data and by default return the most recent result.
@@ -2896,7 +2896,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [cosh]
      */
-    fun cosh(serie: PriceBarSerie, previous: Int = 0) = cosh(serie.close, previous)
+    fun cosh(serie: PriceBarSeries, previous: Int = 0) = cosh(serie.close, previous)
 
     /**
      * Calculate **Double Exponential Moving Average** using the provided input data and by default return the most recent result.
@@ -2924,7 +2924,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [dema]
      */
-    fun dema(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) = dema(serie.close, timePeriod, previous)
+    fun dema(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = dema(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Vector Arithmetic Div** using the provided input data and by default return the most recent result.
@@ -2974,7 +2974,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [dx]
      */
-    fun dx(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun dx(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         dx(serie.high, serie.low, serie.close, timePeriod, previous)
 
     /**
@@ -3003,7 +3003,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [ema]
      */
-    fun ema(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) = ema(serie.close, timePeriod, previous)
+    fun ema(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = ema(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Vector Arithmetic Exp** using the provided input data and by default return the most recent result.
@@ -3031,7 +3031,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [exp]
      */
-    fun exp(serie: PriceBarSerie, previous: Int = 0) = exp(serie.close, previous)
+    fun exp(serie: PriceBarSeries, previous: Int = 0) = exp(serie.close, previous)
 
     /**
      * Calculate **Vector Floor** using the provided input data and by default return the most recent result.
@@ -3059,7 +3059,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [floor]
      */
-    fun floor(serie: PriceBarSerie, previous: Int = 0) = floor(serie.close, previous)
+    fun floor(serie: PriceBarSeries, previous: Int = 0) = floor(serie.close, previous)
 
     /**
      * Calculate **Hilbert Transform - Dominant Cycle Period** using the provided input data and by default return the most recent result.
@@ -3087,7 +3087,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [htDcPeriod]
      */
-    fun htDcPeriod(serie: PriceBarSerie, previous: Int = 0) = htDcPeriod(serie.close, previous)
+    fun htDcPeriod(serie: PriceBarSeries, previous: Int = 0) = htDcPeriod(serie.close, previous)
 
     /**
      * Calculate **Hilbert Transform - Dominant Cycle Phase** using the provided input data and by default return the most recent result.
@@ -3115,7 +3115,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [htDcPhase]
      */
-    fun htDcPhase(serie: PriceBarSerie, previous: Int = 0) = htDcPhase(serie.close, previous)
+    fun htDcPhase(serie: PriceBarSeries, previous: Int = 0) = htDcPhase(serie.close, previous)
 
     /**
      * Calculate **Hilbert Transform - Phasor Components** using the provided input data and by default return the most recent result.
@@ -3144,7 +3144,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [htPhasor]
      */
-    fun htPhasor(serie: PriceBarSerie, previous: Int = 0) = htPhasor(serie.close, previous)
+    fun htPhasor(serie: PriceBarSeries, previous: Int = 0) = htPhasor(serie.close, previous)
 
     /**
      * Calculate **Hilbert Transform - SineWave** using the provided input data and by default return the most recent result.
@@ -3173,7 +3173,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [htSine]
      */
-    fun htSine(serie: PriceBarSerie, previous: Int = 0) = htSine(serie.close, previous)
+    fun htSine(serie: PriceBarSeries, previous: Int = 0) = htSine(serie.close, previous)
 
     /**
      * Calculate **Hilbert Transform - Instantaneous Trendline** using the provided input data and by default return the most recent result.
@@ -3201,7 +3201,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [htTrendline]
      */
-    fun htTrendline(serie: PriceBarSerie, previous: Int = 0) = htTrendline(serie.close, previous)
+    fun htTrendline(serie: PriceBarSeries, previous: Int = 0) = htTrendline(serie.close, previous)
 
     /**
      * Calculate **Hilbert Transform - Trend vs Cycle Mode** using the provided input data and by default return the most recent result.
@@ -3229,7 +3229,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [htTrendMode]
      */
-    fun htTrendMode(serie: PriceBarSerie, previous: Int = 0) = htTrendMode(serie.close, previous)
+    fun htTrendMode(serie: PriceBarSeries, previous: Int = 0) = htTrendMode(serie.close, previous)
 
     /**
      * Calculate **Kaufman Adaptive Moving Average** using the provided input data and by default return the most recent result.
@@ -3257,7 +3257,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [kama]
      */
-    fun kama(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) = kama(serie.close, timePeriod, previous)
+    fun kama(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = kama(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Linear Regression** using the provided input data and by default return the most recent result.
@@ -3285,7 +3285,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [linearReg]
      */
-    fun linearReg(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun linearReg(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         linearReg(serie.close, timePeriod, previous)
 
     /**
@@ -3314,7 +3314,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [linearRegAngle]
      */
-    fun linearRegAngle(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun linearRegAngle(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         linearRegAngle(serie.close, timePeriod, previous)
 
     /**
@@ -3343,7 +3343,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [linearRegIntercept]
      */
-    fun linearRegIntercept(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun linearRegIntercept(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         linearRegIntercept(serie.close, timePeriod, previous)
 
     /**
@@ -3372,7 +3372,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [linearRegSlope]
      */
-    fun linearRegSlope(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun linearRegSlope(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         linearRegSlope(serie.close, timePeriod, previous)
 
     /**
@@ -3401,7 +3401,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [ln]
      */
-    fun ln(serie: PriceBarSerie, previous: Int = 0) = ln(serie.close, previous)
+    fun ln(serie: PriceBarSeries, previous: Int = 0) = ln(serie.close, previous)
 
     /**
      * Calculate **Vector Log10** using the provided input data and by default return the most recent result.
@@ -3429,7 +3429,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [log10]
      */
-    fun log10(serie: PriceBarSerie, previous: Int = 0) = log10(serie.close, previous)
+    fun log10(serie: PriceBarSeries, previous: Int = 0) = log10(serie.close, previous)
 
     /**
      * Calculate **Moving average** using the provided input data and by default return the most recent result.
@@ -3457,7 +3457,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [movingAverage]
      */
-    fun movingAverage(serie: PriceBarSerie, timePeriod: Int = 30, mAType: MAType = MAType.Ema, previous: Int = 0) =
+    fun movingAverage(serie: PriceBarSeries, timePeriod: Int = 30, mAType: MAType = MAType.Ema, previous: Int = 0) =
         movingAverage(serie.close, timePeriod, mAType, previous)
 
     /**
@@ -3507,7 +3507,7 @@ class TaLib(var core: Core = Core()) {
      * @see [macd]
      */
     fun macd(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         fastPeriod: Int = 12,
         slowPeriod: Int = 26,
         signalPeriod: Int = 9,
@@ -3568,7 +3568,7 @@ class TaLib(var core: Core = Core()) {
      * @see [macdExt]
      */
     fun macdExt(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         fastPeriod: Int = 12,
         fastMA: MAType = MAType.Ema,
         slowPeriod: Int = 26,
@@ -3606,7 +3606,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [macdFix]
      */
-    fun macdFix(serie: PriceBarSerie, signalPeriod: Int = 9, previous: Int = 0) =
+    fun macdFix(serie: PriceBarSeries, signalPeriod: Int = 9, previous: Int = 0) =
         macdFix(serie.close, signalPeriod, previous)
 
     /**
@@ -3642,7 +3642,7 @@ class TaLib(var core: Core = Core()) {
      * @see [mama]
      */
     fun mama(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         fastLimit: Double = 5.000000e-1,
         slowLimit: Double = 5.000000e-2,
         previous: Int = 0
@@ -3714,7 +3714,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [max]
      */
-    fun max(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) = max(serie.close, timePeriod, previous)
+    fun max(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = max(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Index of highest value over a specified period** using the provided input data and by default return the most recent result.
@@ -3742,7 +3742,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [maxIndex]
      */
-    fun maxIndex(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) =
+    fun maxIndex(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
         maxIndex(serie.close, timePeriod, previous)
 
     /**
@@ -3771,7 +3771,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [medPrice]
      */
-    fun medPrice(serie: PriceBarSerie, previous: Int = 0) = medPrice(serie.high, serie.low, previous)
+    fun medPrice(serie: PriceBarSeries, previous: Int = 0) = medPrice(serie.high, serie.low, previous)
 
     /**
      * Calculate **Money Flow Index** using the provided input data and by default return the most recent result.
@@ -3806,7 +3806,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [mfi]
      */
-    fun mfi(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun mfi(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         mfi(serie.high, serie.low, serie.close, serie.volume, timePeriod, previous)
 
     /**
@@ -3835,7 +3835,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [midPoint]
      */
-    fun midPoint(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun midPoint(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         midPoint(serie.close, timePeriod, previous)
 
     /**
@@ -3864,7 +3864,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [midPrice]
      */
-    fun midPrice(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun midPrice(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         midPrice(serie.high, serie.low, timePeriod, previous)
 
     /**
@@ -3893,7 +3893,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [min]
      */
-    fun min(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) = min(serie.close, timePeriod, previous)
+    fun min(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = min(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Index of lowest value over a specified period** using the provided input data and by default return the most recent result.
@@ -3921,7 +3921,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [minIndex]
      */
-    fun minIndex(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) =
+    fun minIndex(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
         minIndex(serie.close, timePeriod, previous)
 
     /**
@@ -3951,7 +3951,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [minMax]
      */
-    fun minMax(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) =
+    fun minMax(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
         minMax(serie.close, timePeriod, previous)
 
     /**
@@ -3981,7 +3981,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [minMaxIndex]
      */
-    fun minMaxIndex(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) =
+    fun minMaxIndex(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
         minMaxIndex(serie.close, timePeriod, previous)
 
     /**
@@ -4016,7 +4016,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [minusDI]
      */
-    fun minusDI(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun minusDI(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         minusDI(serie.high, serie.low, serie.close, timePeriod, previous)
 
     /**
@@ -4045,7 +4045,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [minusDM]
      */
-    fun minusDM(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun minusDM(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         minusDM(serie.high, serie.low, timePeriod, previous)
 
     /**
@@ -4074,7 +4074,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [mom]
      */
-    fun mom(serie: PriceBarSerie, timePeriod: Int = 10, previous: Int = 0) = mom(serie.close, timePeriod, previous)
+    fun mom(serie: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = mom(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Vector Arithmetic Mult** using the provided input data and by default return the most recent result.
@@ -4124,7 +4124,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [natr]
      */
-    fun natr(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun natr(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         natr(serie.high, serie.low, serie.close, timePeriod, previous)
 
     /**
@@ -4181,7 +4181,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [plusDI]
      */
-    fun plusDI(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun plusDI(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         plusDI(serie.high, serie.low, serie.close, timePeriod, previous)
 
     /**
@@ -4210,7 +4210,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [plusDM]
      */
-    fun plusDM(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun plusDM(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         plusDM(serie.high, serie.low, timePeriod, previous)
 
     /**
@@ -4246,7 +4246,7 @@ class TaLib(var core: Core = Core()) {
      * @see [ppo]
      */
     fun ppo(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         fastPeriod: Int = 12,
         slowPeriod: Int = 26,
         mAType: MAType = MAType.Ema,
@@ -4279,7 +4279,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [roc]
      */
-    fun roc(serie: PriceBarSerie, timePeriod: Int = 10, previous: Int = 0) = roc(serie.close, timePeriod, previous)
+    fun roc(serie: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = roc(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Rate of change Percentage: (price-prevPrice)/prevPrice** using the provided input data and by default return the most recent result.
@@ -4307,7 +4307,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [rocP]
      */
-    fun rocP(serie: PriceBarSerie, timePeriod: Int = 10, previous: Int = 0) = rocP(serie.close, timePeriod, previous)
+    fun rocP(serie: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = rocP(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Rate of change ratio: (price/prevPrice)** using the provided input data and by default return the most recent result.
@@ -4335,7 +4335,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [rocR]
      */
-    fun rocR(serie: PriceBarSerie, timePeriod: Int = 10, previous: Int = 0) = rocR(serie.close, timePeriod, previous)
+    fun rocR(serie: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) = rocR(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Rate of change ratio 100 scale: (price/prevPrice) * 100** using the provided input data and by default return the most recent result.
@@ -4363,7 +4363,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [rocR100]
      */
-    fun rocR100(serie: PriceBarSerie, timePeriod: Int = 10, previous: Int = 0) =
+    fun rocR100(serie: PriceBarSeries, timePeriod: Int = 10, previous: Int = 0) =
         rocR100(serie.close, timePeriod, previous)
 
     /**
@@ -4392,7 +4392,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [rsi]
      */
-    fun rsi(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) = rsi(serie.close, timePeriod, previous)
+    fun rsi(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) = rsi(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Parabolic SAR** using the provided input data and by default return the most recent result.
@@ -4427,7 +4427,7 @@ class TaLib(var core: Core = Core()) {
      * @see [sar]
      */
     fun sar(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         accelerationFactor: Double = 2.000000e-2,
         aFMaximum: Double = 2.000000e-1,
         previous: Int = 0
@@ -4497,7 +4497,7 @@ class TaLib(var core: Core = Core()) {
      * @see [sarExt]
      */
     fun sarExt(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         startValue: Double = 0.000000e+0,
         offsetonReverse: Double = 0.000000e+0,
         aFInitLong: Double = 2.000000e-2,
@@ -4547,7 +4547,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [sin]
      */
-    fun sin(serie: PriceBarSerie, previous: Int = 0) = sin(serie.close, previous)
+    fun sin(serie: PriceBarSeries, previous: Int = 0) = sin(serie.close, previous)
 
     /**
      * Calculate **Vector Trigonometric Sinh** using the provided input data and by default return the most recent result.
@@ -4575,7 +4575,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [sinh]
      */
-    fun sinh(serie: PriceBarSerie, previous: Int = 0) = sinh(serie.close, previous)
+    fun sinh(serie: PriceBarSeries, previous: Int = 0) = sinh(serie.close, previous)
 
     /**
      * Calculate **Simple Moving Average** using the provided input data and by default return the most recent result.
@@ -4603,7 +4603,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [sma]
      */
-    fun sma(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) = sma(serie.close, timePeriod, previous)
+    fun sma(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = sma(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Vector Square Root** using the provided input data and by default return the most recent result.
@@ -4631,7 +4631,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [sqrt]
      */
-    fun sqrt(serie: PriceBarSerie, previous: Int = 0) = sqrt(serie.close, previous)
+    fun sqrt(serie: PriceBarSeries, previous: Int = 0) = sqrt(serie.close, previous)
 
     /**
      * Calculate **Standard Deviation** using the provided input data and by default return the most recent result.
@@ -4659,7 +4659,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [stdDev]
      */
-    fun stdDev(serie: PriceBarSerie, timePeriod: Int = 5, deviations: Double = 1.000000e+0, previous: Int = 0) =
+    fun stdDev(serie: PriceBarSeries, timePeriod: Int = 5, deviations: Double = 1.000000e+0, previous: Int = 0) =
         stdDev(serie.close, timePeriod, deviations, previous)
 
     /**
@@ -4715,7 +4715,7 @@ class TaLib(var core: Core = Core()) {
      * @see [stoch]
      */
     fun stoch(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         fastKPeriod: Int = 5,
         slowKPeriod: Int = 3,
         slowKMA: MAType = MAType.Ema,
@@ -4773,7 +4773,7 @@ class TaLib(var core: Core = Core()) {
      * @see [stochF]
      */
     fun stochF(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         fastKPeriod: Int = 5,
         fastDPeriod: Int = 3,
         fastDMA: MAType = MAType.Ema,
@@ -4827,7 +4827,7 @@ class TaLib(var core: Core = Core()) {
      * @see [stochRsi]
      */
     fun stochRsi(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         timePeriod: Int = 14,
         fastKPeriod: Int = 5,
         fastDPeriod: Int = 3,
@@ -4883,7 +4883,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [sum]
      */
-    fun sum(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) = sum(serie.close, timePeriod, previous)
+    fun sum(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = sum(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Triple Exponential Moving Average (T3)** using the provided input data and by default return the most recent result.
@@ -4911,7 +4911,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [t3]
      */
-    fun t3(serie: PriceBarSerie, timePeriod: Int = 5, volumeFactor: Double = 7.000000e-1, previous: Int = 0) =
+    fun t3(serie: PriceBarSeries, timePeriod: Int = 5, volumeFactor: Double = 7.000000e-1, previous: Int = 0) =
         t3(serie.close, timePeriod, volumeFactor, previous)
 
     /**
@@ -4940,7 +4940,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [tan]
      */
-    fun tan(serie: PriceBarSerie, previous: Int = 0) = tan(serie.close, previous)
+    fun tan(serie: PriceBarSeries, previous: Int = 0) = tan(serie.close, previous)
 
     /**
      * Calculate **Vector Trigonometric Tanh** using the provided input data and by default return the most recent result.
@@ -4968,7 +4968,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [tanh]
      */
-    fun tanh(serie: PriceBarSerie, previous: Int = 0) = tanh(serie.close, previous)
+    fun tanh(serie: PriceBarSeries, previous: Int = 0) = tanh(serie.close, previous)
 
     /**
      * Calculate **Triple Exponential Moving Average** using the provided input data and by default return the most recent result.
@@ -4996,7 +4996,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [tema]
      */
-    fun tema(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) = tema(serie.close, timePeriod, previous)
+    fun tema(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = tema(serie.close, timePeriod, previous)
 
     /**
      * Calculate **True Range** using the provided input data and by default return the most recent result.
@@ -5024,7 +5024,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [trueRange]
      */
-    fun trueRange(serie: PriceBarSerie, previous: Int = 0) =
+    fun trueRange(serie: PriceBarSeries, previous: Int = 0) =
         trueRange(serie.high, serie.low, serie.close, previous)
 
     /**
@@ -5053,7 +5053,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [trima]
      */
-    fun trima(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) =
+    fun trima(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) =
         trima(serie.close, timePeriod, previous)
 
     /**
@@ -5082,7 +5082,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [trix]
      */
-    fun trix(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) = trix(serie.close, timePeriod, previous)
+    fun trix(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = trix(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Time serie Forecast** using the provided input data and by default return the most recent result.
@@ -5110,7 +5110,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [tsf]
      */
-    fun tsf(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) = tsf(serie.close, timePeriod, previous)
+    fun tsf(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) = tsf(serie.close, timePeriod, previous)
 
     /**
      * Calculate **Typical Price** using the provided input data and by default return the most recent result.
@@ -5138,7 +5138,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [typPrice]
      */
-    fun typPrice(serie: PriceBarSerie, previous: Int = 0) = typPrice(serie.high, serie.low, serie.close, previous)
+    fun typPrice(serie: PriceBarSeries, previous: Int = 0) = typPrice(serie.high, serie.low, serie.close, previous)
 
     /**
      * Calculate **Ultimate Oscillator** using the provided input data and by default return the most recent result.
@@ -5187,7 +5187,7 @@ class TaLib(var core: Core = Core()) {
      * @see [ultOsc]
      */
     fun ultOsc(
-        serie: PriceBarSerie,
+        serie: PriceBarSeries,
         firstPeriod: Int = 7,
         secondPeriod: Int = 14,
         thirdPeriod: Int = 28,
@@ -5220,7 +5220,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [variance]
      */
-    fun variance(serie: PriceBarSerie, timePeriod: Int = 5, deviations: Double = 1.000000e+0, previous: Int = 0) =
+    fun variance(serie: PriceBarSeries, timePeriod: Int = 5, deviations: Double = 1.000000e+0, previous: Int = 0) =
         variance(serie.close, timePeriod, deviations, previous)
 
     /**
@@ -5249,7 +5249,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [wclPrice]
      */
-    fun wclPrice(serie: PriceBarSerie, previous: Int = 0) = wclPrice(serie.high, serie.low, serie.close, previous)
+    fun wclPrice(serie: PriceBarSeries, previous: Int = 0) = wclPrice(serie.high, serie.low, serie.close, previous)
 
     /**
      * Calculate **Williams' %R** using the provided input data and by default return the most recent result.
@@ -5283,7 +5283,7 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [willR]
      */
-    fun willR(serie: PriceBarSerie, timePeriod: Int = 14, previous: Int = 0) =
+    fun willR(serie: PriceBarSeries, timePeriod: Int = 14, previous: Int = 0) =
         willR(serie.high, serie.low, serie.close, timePeriod, previous)
 
     /**
@@ -5312,6 +5312,6 @@ class TaLib(var core: Core = Core()) {
      * Convencience method that allows to use a price-bar [serie] as input.
      * @see [wma]
      */
-    fun wma(serie: PriceBarSerie, timePeriod: Int = 30, previous: Int = 0) = wma(serie.close, timePeriod, previous)
+    fun wma(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = wma(serie.close, timePeriod, previous)
 }
 

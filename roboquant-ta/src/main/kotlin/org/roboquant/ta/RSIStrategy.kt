@@ -17,7 +17,7 @@
 package org.roboquant.ta
 
 import org.roboquant.common.Asset
-import org.roboquant.common.PriceSerie
+import org.roboquant.common.PriceSeries
 import org.roboquant.common.addAll
 import org.roboquant.feeds.Event
 import org.roboquant.strategies.Rating
@@ -43,7 +43,7 @@ class RSIStrategy(
     private val priceType: String = "DEFAULT"
 ) : RecordingStrategy(prefix = "rsi.") {
 
-    private val history = mutableMapOf<Asset, PriceSerie>()
+    private val history = mutableMapOf<Asset, PriceSeries>()
     private val taLib = TaLib()
 
     /**

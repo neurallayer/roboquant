@@ -153,19 +153,19 @@ private fun tenkan() {
     /**
      * Midpoint Moving Average
      */
-    fun TaLib.mma(priceBarSerie: PriceBarSerie, period: Int): Double {
-        return (max(priceBarSerie.high, period) + min(priceBarSerie.low, period)) / 2.0
+    fun TaLib.mma(priceBarSeries: PriceBarSeries, period: Int): Double {
+        return (max(priceBarSeries.high, period) + min(priceBarSeries.low, period)) / 2.0
     }
 
     /**
      * Tenkan indicator
      */
-    fun TaLib.tenkan(priceBarSerie: PriceBarSerie) = mma(priceBarSerie, 9)
+    fun TaLib.tenkan(priceBarSeries: PriceBarSeries) = mma(priceBarSeries, 9)
 
     /**
      * Kijun indicator
      */
-    fun TaLib.kijun(priceBarSerie: PriceBarSerie) = mma(priceBarSerie, 26)
+    fun TaLib.kijun(priceBarSeries: PriceBarSeries) = mma(priceBarSeries, 26)
 
     val strategy = TaLibSignalStrategy {asset, series ->
         val tenkan = tenkan(series)

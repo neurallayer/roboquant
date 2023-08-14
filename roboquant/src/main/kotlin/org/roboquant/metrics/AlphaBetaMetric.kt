@@ -21,7 +21,7 @@ import org.hipparchus.stat.correlation.Covariance
 import org.hipparchus.stat.descriptive.moment.Variance
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
-import org.roboquant.common.PriceSerie
+import org.roboquant.common.PriceSeries
 import org.roboquant.common.returns
 import org.roboquant.common.totalReturn
 import org.roboquant.feeds.Event
@@ -51,8 +51,8 @@ class AlphaBetaMetric(
     private val onlyAfterInitialTrade: Boolean = false
 ) : Metric {
 
-    private val marketData = PriceSerie(period + 1)
-    private val portfolioData = PriceSerie(period + 1)
+    private val marketData = PriceSeries(period + 1)
+    private val portfolioData = PriceSeries(period + 1)
 
     /**
      * Based on the provided [account] and [event], calculate any metrics and return them.

@@ -61,7 +61,7 @@ open class BettingAgainstBetaPolicy(
 
     private var rebalanceDate = Instant.MIN
 
-    private val data = mutableMapOf<Asset, PriceSerie>()
+    private val data = mutableMapOf<Asset, PriceSeries>()
 
     init {
         require(market in assets) { "The selected market asset $market also has to be part of all assets" }

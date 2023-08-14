@@ -7,7 +7,7 @@ import org.hipparchus.stat.descriptive.moment.StandardDeviation
 import org.hipparchus.stat.descriptive.moment.Variance
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
-import org.roboquant.common.PriceSerie
+import org.roboquant.common.PriceSeries
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minus
 import org.roboquant.feeds.Event
@@ -49,8 +49,8 @@ class ReturnsMetric2(
 
     private val prices = mutableMapOf<Asset, Double>()
     private var equity = Double.NaN
-    private val benchmarkReturns = PriceSerie(maxSize)
-    private val accountReturns = PriceSerie(maxSize)
+    private val benchmarkReturns = PriceSeries(maxSize)
+    private val accountReturns = PriceSeries(maxSize)
     private var times = TimeBuffer(maxSize)
 
     init {
