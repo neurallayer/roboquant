@@ -73,6 +73,7 @@ class AggregatorFeed2(
     /**
      * @suppress
      */
+    @Suppress("CyclomaticComplexMethod")
     override suspend fun play(channel: EventChannel) {
         val c = EventChannel(channel.capacity, channel.timeframe)
         val scope = CoroutineScope(Dispatchers.Default + Job())
