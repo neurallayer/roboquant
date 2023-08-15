@@ -18,6 +18,7 @@ package org.roboquant.server
 
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
+import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
 import org.roboquant.common.Logging
 import java.security.MessageDigest
@@ -29,15 +30,23 @@ private fun getMd5Digest(str: String): ByteArray =
     MessageDigest.getInstance("MD5").digest(str.toByteArray(Charsets.UTF_8))
 
 
+private fun Route.addRoutes() {
+    listRuns()
+    getRun()
+    getChart()
+    staticResources("/static", null)
+}
+
 internal fun Application.setup() {
+
+    logger.info { "digest auth disabled"}
+
     routing {
-        listRuns()
-        getRun()
-        getChart()
+       addRoutes()
     }
 }
 
-internal fun Application.setupSecure(username: String, password: String) {
+internal fun Application.secureSetup(username: String, password: String) {
 
     logger.info { "digest auth enabled"}
 
@@ -63,9 +72,7 @@ internal fun Application.setupSecure(username: String, password: String) {
 
     routing {
         authenticate("auth-digest") {
-            listRuns()
-            getRun()
-            getChart()
+            addRoutes()
         }
     }
 

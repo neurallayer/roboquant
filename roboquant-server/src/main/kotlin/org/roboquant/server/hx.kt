@@ -21,31 +21,23 @@ import kotlinx.html.FORM
 import kotlinx.html.HTMLTag
 
 fun HTMLTag.hxGet(value: String) {
-    attributes += "hx-get" to value
+    attributes += "data-hx-get" to value
 }
 fun HTMLTag.hxSwap(value: String) {
-    attributes += "hx-swap" to value
+    attributes += "data-hx-swap" to value
 }
 fun HTMLTag.hxTarget(value: String) {
-    attributes += "hx-target" to value
+    attributes += "data-hx-target" to value
 }
 
 fun FORM.hxPost(value: String) {
-    attributes += "hx-post" to value
+    attributes += "data-hx-post" to value
 }
 
 fun HTMLTag.hxBoost(value: Boolean) {
-    attributes += "hx-boost" to value.toString()
+    attributes += "data-hx-boost" to value.toString()
 }
 
-
-fun HTMLTag.echarts() {
-    attributes += "hx-ext" to "echarts"
-}
-
-
-
-
-fun HTMLTag.hxExt(value: Boolean) {
-    attributes += "hx-ext" to value.toString()
+fun HTMLTag.hxExt(value: String) {
+    attributes += "data-hx-ext" to value
 }

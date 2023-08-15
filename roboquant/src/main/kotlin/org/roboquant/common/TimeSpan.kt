@@ -185,7 +185,7 @@ val Long.nanos
     get() = TimeSpan(0, 0, 0, 0, 0, 0, this)
 
 /**
- * Add a [period] using the provided [zoneId]
+ * Add a [period] using the provided [zoneId]. The resulting value will not be lower than [Instant.MAX]
  */
 fun Instant.plus(period: TimeSpan, zoneId: ZoneId): Instant {
     // Optimized path for HFT
@@ -195,7 +195,7 @@ fun Instant.plus(period: TimeSpan, zoneId: ZoneId): Instant {
 }
 
 /**
- * Subtract a [period] using the provided [zoneId]
+ * Subtract a [period] using the provided [zoneId]. The resulting value will not be lower than [Instant.MIN]
  */
 fun Instant.minus(period: TimeSpan, zoneId: ZoneId): Instant {
     // Optimized path for HFT

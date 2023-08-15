@@ -121,6 +121,13 @@ internal class TimeframeTest {
         assertTrue(tf.end + 4.years in tf2)
         assertFalse(tf.start - 3.years in tf2)
         assertFalse(tf.end + 6.years in tf2)
+
+        // Test for inclusive-flag being propagated
+        val tf3 = Timeframe(Instant.now() - 1.days, Instant.now(), true)
+        assertTrue(tf3.extend(1.days).inclusive)
+
+
+        assertEquals(Timeframe.INFINITE, tf3.extend(500.years))
     }
 
     @Test

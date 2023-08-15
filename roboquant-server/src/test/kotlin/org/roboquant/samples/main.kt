@@ -26,7 +26,7 @@ import org.roboquant.strategies.EMAStrategy
 
 
 fun main() {
-    val server = WebServer("test", "secret", 8081)
+    val server = WebServer("test", "secret", 8080)
     val feed = RandomWalkFeed.lastYears(20)
     feed.delay = 100L
     val jobs = ParallelJobs()

@@ -22,7 +22,6 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 
 internal data class RunInfo(
-    val metric: WebMetric,
     val roboquant: Roboquant,
     val feed: Feed,
     val timeframe: Timeframe,

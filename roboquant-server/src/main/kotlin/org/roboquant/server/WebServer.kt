@@ -45,7 +45,7 @@ class WebServer(username: String, password: String, port:Int = 8080, host:String
         port = port,
         host = host,
         module = {
-            if (username.isNotEmpty()) this.setupSecure(username, password) else this.setup()
+            if (username.isNotEmpty()) this.secureSetup(username, password) else this.setup()
         }
     ).start(wait = false)
 
@@ -71,9 +71,8 @@ class WebServer(username: String, password: String, port:Int = 8080, host:String
      */
     suspend fun runAsync(roboquant: Roboquant, feed: Feed, timeframe: Timeframe, warmup: TimeSpan = TimeSpan.ZERO) {
         val run = getRunName()
-        val metric = WebMetric()
-        val rq = roboquant.copy(metrics = roboquant.metrics + metric, policy = PausablePolicy(roboquant.policy))
-        runs[run] = RunInfo(metric, rq, feed, timeframe, warmup)
+        val rq = roboquant.copy(policy = PausablePolicy(roboquant.policy))
+        runs[run] = RunInfo(rq, feed, timeframe, warmup)
         rq.runAsync(feed, timeframe, run, warmup)
     }
 

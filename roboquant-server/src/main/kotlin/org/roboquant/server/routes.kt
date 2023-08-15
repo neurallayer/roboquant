@@ -24,6 +24,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kotlinx.html.*
+import org.roboquant.brokers.Account
 import org.roboquant.brokers.lines
 import org.roboquant.charts.TimeSeriesChart
 import org.roboquant.charts.renderJson
@@ -61,7 +62,7 @@ fun Route.getChart() {
         val metric = parameters.getOrFail("metric")
         val run = parameters.getOrFail("run")
         val logger = runs.getValue(run).roboquant.logger
-        val data = logger.getMetric(metric)
+        val data = logger.getMetric(metric, run)
         val chart = TimeSeriesChart(data)
         chart.title = metric
         val json = chart.getOption().renderJson()
@@ -91,18 +92,21 @@ fun Route.listRuns() {
                         th { +"run name" }
                         th { +"state" }
                         th { +"events" }
+                        th { +"signals" }
+                        th { +"orders" }
                         th { +"last update" }
                         th { +"actions" }
                     }
                     runs.forEach { (run, info) ->
-                        val acc = info.metric.account!!
                         val policy = info.roboquant.policy as PausablePolicy
                         val state = if (policy.pause) "pause" else "running"
                         tr {
                             td { +run }
                             td { +state }
-                            td { +info.metric.events.toString() }
-                            td { +acc.lastUpdate.toString() }
+                            td { +policy.totalEvents.toString() }
+                            td { +policy.totalSignals.toString() }
+                            td { +policy.totalOrders.toString() }
+                            td { +policy.lastUpdate.toString() }
                             td {
                                 a(href = "/run/$run") {
                                     +"details"
@@ -130,23 +134,8 @@ fun Route.listRuns() {
 private fun FlowContent.echarts(id: String, width: String = "100%", height: String = "800px") {
     div {
         attributes["id"] = id
-        attributes["hx-ext"] = "echarts"
+        hxExt("echarts")
         style = "width:$width;height:$height;"
-    }
-    script(type = ScriptType.textJavaScript) {
-        unsafe {
-            raw(
-                """
-                (function() {    
-                    let elem = document.getElementById('$id')
-                    let chart = echarts.init(elem);
-                    let resizeObserver = new ResizeObserver(() => chart.resize());
-                    resizeObserver.observe(elem);
-                    elem.style.setProperty('display', 'none');
-                })();
-                """.trimIndent()
-            )
-        }
     }
 }
 
@@ -175,17 +164,31 @@ fun List<List<Any>>.takeLastPlusHeader(n: Int): List<List<Any>> {
     return listOf(first()) + drop(1).takeLast(n)
 }
 
+
+private fun getAccountSummary(acc: Account): List<List<Any>> {
+    return listOf(
+        listOf("name", "value"),
+        listOf("last update", acc.lastUpdate),
+        listOf("buying power", acc.buyingPower),
+        listOf("cash", acc.cash),
+        listOf("equity", acc.equity),
+        listOf("open positions", acc.positions.size),
+        listOf("open orders", acc.openOrders.size),
+        listOf("closed orders", acc.closedOrders.size),
+        listOf("trades", acc.trades.size),
+    )
+}
+
 fun Route.getRun() {
     get("/run/{id}") {
         val id = call.parameters["id"] ?: ""
         val info = runs.getValue(id)
-        val metric = info.metric
         val metricNames = info.roboquant.logger.metricNames
-        val acc = info.metric.account!!
+        val acc = info.roboquant.broker.account
         call.respondHtml(HttpStatusCode.OK) {
             page("Details $id") {
                 a(href = "/") { +"Back to overview" }
-                table("account summary", metric.getsummary())
+                table("account summary", getAccountSummary(acc))
                 div(classes = "row my-4") {
                     div(classes = "col-2") {
                         metricForm("#echarts123456", id, metricNames)

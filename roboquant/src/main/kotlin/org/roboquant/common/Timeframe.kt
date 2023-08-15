@@ -365,22 +365,47 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
+     * Ensure an instant is always within the MIN-MAX range
+     */
+    private fun makeValid(time: Instant) = time.coerceAtLeast(MIN).coerceAtMost(MAX)
+
+    /**
      * Subtract a [period] from start- and end-time of this timeframe and return the result.
-     * If the temporalAmount is defined as a [Period], UTC will be used as the ZoneId.
+     * If the period contains timezone dependent values, UTC will be used as the ZoneId.
      * ```
      * val newTimeFrame = timeframe - 2.days
      * ```
      */
-    operator fun minus(period: TimeSpan) = Timeframe(start - period, end - period, inclusive)
+    operator fun minus(period: TimeSpan) : Timeframe {
+        val e = makeValid(end - period)
+        val incl = (end == MAX) || inclusive
+        return Timeframe(makeValid(start - period), e, incl)
+    }
 
     /**
      * Add a [period] to start- and end-time of this timeframe and return the result.
-     * If the temporalAmount is defined as a [Period], UTC will be used as the ZoneId.
+     * If the period contains timezone dependent values, UTC will be used as the ZoneId.
      * ```
      * val newTimeFrame = timeframe + 2.days
      * ```
      */
-    operator fun plus(period: TimeSpan) = Timeframe(start + period, end + period, inclusive)
+    operator fun plus(period: TimeSpan) : Timeframe {
+        val e = makeValid(end + period)
+        val incl = (end == MAX) || inclusive
+        return Timeframe(makeValid(start + period), e, incl)
+    }
+
+    /**
+     * Extend this period with a [before] and [after] period and return the result.
+     * If no [after] period is provided, the same value as for [before] will be used.
+     *
+     * If [before] or [after] contain timezone dependent values, UTC will be used as the ZoneId.
+     */
+    fun extend(before: TimeSpan, after: TimeSpan = before) : Timeframe {
+        val e = makeValid(end + after)
+        val incl = (end == MAX) || inclusive
+        return Timeframe(makeValid(start - before), e, incl)
+    }
 
     /**
      * Annualize a [percentage] based on the duration of this timeframe. So given x percent return
@@ -395,11 +420,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         return (1.0 + percentage).pow(years) - 1.0
     }
 
-    /**
-     * Extend this period with a [before] and [after] period and return the result. If no [after] period is provided
-     * the same value as for [before] will be used.
-     */
-    fun extend(before: TimeSpan, after: TimeSpan = before) = Timeframe(start - before, end + after)
 
 }
 
