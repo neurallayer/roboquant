@@ -19,7 +19,9 @@
 @file:DependsOn("com.google.code.gson:gson:2.9.0")
 
 
-import com.google.gson.*
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import java.io.File
 
 operator fun StringBuffer.plusAssign(str: Any) {
@@ -36,7 +38,7 @@ operator fun StringBuffer.plusAssign(str: Any) {
 class TaLibGenerator(private val root: JsonObject) {
 
      fun JsonObject.getAttr(key: String): String = get(key).asString
-    private fun String.unCapitalize() = get(0).lowercase() + substring(1)
+     private fun String.unCapitalize() = get(0).lowercase() + substring(1)
 
      fun JsonObject.getVariableName(key: String): String {
         var result = get(key).asString
@@ -59,15 +61,15 @@ class TaLibGenerator(private val root: JsonObject) {
         return emptyList()
     }
 
-     val desc = root.getAttr("ShortDescription")
+    val desc = root.getAttr("ShortDescription")
     private val className: String = root.get("CamelCaseName").asString
-     val fnName = className.unCapitalize()
-     val fixedFnName = if (fnName == "cdlStickSandwhich") "cdlStickSandwich" else fnName
-     val inputParams = getInput()
-     val optional = getOptionalInput()
-     val firstInput = getList("RequiredInputArgument").first().getVariableName("Name")
-     val patternRecognition = root.getAttr("GroupId") == "Pattern Recognition"
-     val groupId = root.getAttr("GroupId")
+    val fnName = className.unCapitalize()
+    val fixedFnName = if (fnName == "cdlStickSandwhich") "cdlStickSandwich" else fnName
+    val inputParams = getInput()
+    val optional = getOptionalInput()
+    val firstInput = getList("RequiredInputArgument").first().getVariableName("Name")
+    val patternRecognition = root.getAttr("GroupId") == "Pattern Recognition"
+    val groupId = root.getAttr("GroupId")
 
     private fun getOptionalInput(): String {
         val result = StringBuffer()

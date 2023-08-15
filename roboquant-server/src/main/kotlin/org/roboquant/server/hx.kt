@@ -23,9 +23,11 @@ import kotlinx.html.HTMLTag
 fun HTMLTag.hxGet(value: String) {
     attributes += "data-hx-get" to value
 }
+
 fun HTMLTag.hxSwap(value: String) {
     attributes += "data-hx-swap" to value
 }
+
 fun HTMLTag.hxTarget(value: String) {
     attributes += "data-hx-target" to value
 }

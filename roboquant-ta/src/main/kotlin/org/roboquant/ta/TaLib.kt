@@ -68,8 +68,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.acos(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.acosLookback() + previous
             throw InsufficientData("acos", lookback + 1)
         }
@@ -96,8 +96,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.ad(endIdx, endIdx, high, low, close, volume, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.adLookback() + previous
             throw InsufficientData("ad", lookback + 1)
         }
@@ -125,8 +125,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.add(endIdx, endIdx, data0, data1, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.addLookback() + previous
             throw InsufficientData("add", lookback + 1)
         }
@@ -167,8 +167,8 @@ class TaLib(var core: Core = Core()) {
             output1
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.adOscLookback(fastPeriod, slowPeriod) + previous
             throw InsufficientData("adOsc", lookback + 1)
         }
@@ -196,8 +196,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.adx(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.adxLookback(timePeriod) + previous
             throw InsufficientData("adx", lookback + 1)
         }
@@ -225,8 +225,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.adxr(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.adxrLookback(timePeriod) + previous
             throw InsufficientData("adxr", lookback + 1)
         }
@@ -260,8 +260,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.apo(endIdx, endIdx, data, fastPeriod, slowPeriod, mAType, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.apoLookback(fastPeriod, slowPeriod, mAType) + previous
             throw InsufficientData("apo", lookback + 1)
         }
@@ -295,8 +295,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.aroon(endIdx, endIdx, high, low, timePeriod, startOutput, endOutput, output1, output2)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.aroonLookback(timePeriod) + previous
             throw InsufficientData("aroon", lookback + 1)
         }
@@ -324,8 +324,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.aroonOsc(endIdx, endIdx, high, low, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.aroonOscLookback(timePeriod) + previous
             throw InsufficientData("aroonOsc", lookback + 1)
         }
@@ -353,8 +353,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.asin(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.asinLookback() + previous
             throw InsufficientData("asin", lookback + 1)
         }
@@ -381,8 +381,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.atan(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.atanLookback() + previous
             throw InsufficientData("atan", lookback + 1)
         }
@@ -409,8 +409,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.atr(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.atrLookback(timePeriod) + previous
             throw InsufficientData("atr", lookback + 1)
         }
@@ -444,8 +444,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.avgPrice(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.avgPriceLookback() + previous
             throw InsufficientData("avgPrice", lookback + 1)
         }
@@ -495,8 +495,8 @@ class TaLib(var core: Core = Core()) {
             output3
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.bbandsLookback(timePeriod, deviationsup, deviationsdown, mAType) + previous
             throw InsufficientData("bbands", lookback + 1)
         }
@@ -530,8 +530,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.beta(endIdx, endIdx, data0, data1, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.betaLookback(timePeriod) + previous
             throw InsufficientData("beta", lookback + 1)
         }
@@ -552,8 +552,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.bop(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.bopLookback() + previous
             throw InsufficientData("bop", lookback + 1)
         }
@@ -581,8 +581,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cci(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cciLookback(timePeriod) + previous
             throw InsufficientData("cci", lookback + 1)
         }
@@ -616,8 +616,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdl2Crows(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdl2CrowsLookback() + previous
             throw InsufficientData("cdl2Crows", lookback + 1)
         }
@@ -651,8 +651,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdl3BlackCrows(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdl3BlackCrowsLookback() + previous
             throw InsufficientData("cdl3BlackCrows", lookback + 1)
         }
@@ -686,8 +686,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdl3Inside(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdl3InsideLookback() + previous
             throw InsufficientData("cdl3Inside", lookback + 1)
         }
@@ -721,8 +721,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdl3LineStrike(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdl3LineStrikeLookback() + previous
             throw InsufficientData("cdl3LineStrike", lookback + 1)
         }
@@ -756,8 +756,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdl3Outside(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdl3OutsideLookback() + previous
             throw InsufficientData("cdl3Outside", lookback + 1)
         }
@@ -791,8 +791,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdl3StarsInSouth(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdl3StarsInSouthLookback() + previous
             throw InsufficientData("cdl3StarsInSouth", lookback + 1)
         }
@@ -826,8 +826,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdl3WhiteSoldiers(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdl3WhiteSoldiersLookback() + previous
             throw InsufficientData("cdl3WhiteSoldiers", lookback + 1)
         }
@@ -863,8 +863,8 @@ class TaLib(var core: Core = Core()) {
         val ret =
             core.cdlAbandonedBaby(endIdx, endIdx, open, high, low, close, penetration, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlAbandonedBabyLookback(penetration) + previous
             throw InsufficientData("cdlAbandonedBaby", lookback + 1)
         }
@@ -898,8 +898,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlAdvanceBlock(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlAdvanceBlockLookback() + previous
             throw InsufficientData("cdlAdvanceBlock", lookback + 1)
         }
@@ -933,8 +933,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlBeltHold(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlBeltHoldLookback() + previous
             throw InsufficientData("cdlBeltHold", lookback + 1)
         }
@@ -968,8 +968,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlBreakaway(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlBreakawayLookback() + previous
             throw InsufficientData("cdlBreakaway", lookback + 1)
         }
@@ -1003,8 +1003,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlClosingMarubozu(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlClosingMarubozuLookback() + previous
             throw InsufficientData("cdlClosingMarubozu", lookback + 1)
         }
@@ -1038,8 +1038,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlConcealBabysWall(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlConcealBabysWallLookback() + previous
             throw InsufficientData("cdlConcealBabysWall", lookback + 1)
         }
@@ -1073,8 +1073,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlCounterAttack(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlCounterAttackLookback() + previous
             throw InsufficientData("cdlCounterAttack", lookback + 1)
         }
@@ -1110,8 +1110,8 @@ class TaLib(var core: Core = Core()) {
         val ret =
             core.cdlDarkCloudCover(endIdx, endIdx, open, high, low, close, penetration, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlDarkCloudCoverLookback(penetration) + previous
             throw InsufficientData("cdlDarkCloudCover", lookback + 1)
         }
@@ -1145,8 +1145,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlDoji(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlDojiLookback() + previous
             throw InsufficientData("cdlDoji", lookback + 1)
         }
@@ -1180,8 +1180,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlDojiStar(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlDojiStarLookback() + previous
             throw InsufficientData("cdlDojiStar", lookback + 1)
         }
@@ -1215,8 +1215,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlDragonflyDoji(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlDragonflyDojiLookback() + previous
             throw InsufficientData("cdlDragonflyDoji", lookback + 1)
         }
@@ -1250,8 +1250,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlEngulfing(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlEngulfingLookback() + previous
             throw InsufficientData("cdlEngulfing", lookback + 1)
         }
@@ -1297,8 +1297,8 @@ class TaLib(var core: Core = Core()) {
             output1
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlEveningDojiStarLookback(penetration) + previous
             throw InsufficientData("cdlEveningDojiStar", lookback + 1)
         }
@@ -1334,8 +1334,8 @@ class TaLib(var core: Core = Core()) {
         val ret =
             core.cdlEveningStar(endIdx, endIdx, open, high, low, close, penetration, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlEveningStarLookback(penetration) + previous
             throw InsufficientData("cdlEveningStar", lookback + 1)
         }
@@ -1369,8 +1369,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlGapSideSideWhite(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlGapSideSideWhiteLookback() + previous
             throw InsufficientData("cdlGapSideSideWhite", lookback + 1)
         }
@@ -1404,8 +1404,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlGravestoneDoji(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlGravestoneDojiLookback() + previous
             throw InsufficientData("cdlGravestoneDoji", lookback + 1)
         }
@@ -1439,8 +1439,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlHammer(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlHammerLookback() + previous
             throw InsufficientData("cdlHammer", lookback + 1)
         }
@@ -1474,8 +1474,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlHangingMan(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlHangingManLookback() + previous
             throw InsufficientData("cdlHangingMan", lookback + 1)
         }
@@ -1509,8 +1509,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlHarami(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlHaramiLookback() + previous
             throw InsufficientData("cdlHarami", lookback + 1)
         }
@@ -1544,8 +1544,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlHaramiCross(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlHaramiCrossLookback() + previous
             throw InsufficientData("cdlHaramiCross", lookback + 1)
         }
@@ -1579,8 +1579,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlHignWave(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlHignWaveLookback() + previous
             throw InsufficientData("cdlHignWave", lookback + 1)
         }
@@ -1614,8 +1614,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlHikkake(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlHikkakeLookback() + previous
             throw InsufficientData("cdlHikkake", lookback + 1)
         }
@@ -1649,8 +1649,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlHikkakeMod(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlHikkakeModLookback() + previous
             throw InsufficientData("cdlHikkakeMod", lookback + 1)
         }
@@ -1684,8 +1684,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlHomingPigeon(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlHomingPigeonLookback() + previous
             throw InsufficientData("cdlHomingPigeon", lookback + 1)
         }
@@ -1719,8 +1719,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlIdentical3Crows(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlIdentical3CrowsLookback() + previous
             throw InsufficientData("cdlIdentical3Crows", lookback + 1)
         }
@@ -1754,8 +1754,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlInNeck(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlInNeckLookback() + previous
             throw InsufficientData("cdlInNeck", lookback + 1)
         }
@@ -1789,8 +1789,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlInvertedHammer(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlInvertedHammerLookback() + previous
             throw InsufficientData("cdlInvertedHammer", lookback + 1)
         }
@@ -1824,8 +1824,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlKicking(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlKickingLookback() + previous
             throw InsufficientData("cdlKicking", lookback + 1)
         }
@@ -1859,8 +1859,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlKickingByLength(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlKickingByLengthLookback() + previous
             throw InsufficientData("cdlKickingByLength", lookback + 1)
         }
@@ -1894,8 +1894,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlLadderBottom(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlLadderBottomLookback() + previous
             throw InsufficientData("cdlLadderBottom", lookback + 1)
         }
@@ -1929,8 +1929,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlLongLeggedDoji(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlLongLeggedDojiLookback() + previous
             throw InsufficientData("cdlLongLeggedDoji", lookback + 1)
         }
@@ -1964,8 +1964,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlLongLine(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlLongLineLookback() + previous
             throw InsufficientData("cdlLongLine", lookback + 1)
         }
@@ -1999,8 +1999,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlMarubozu(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlMarubozuLookback() + previous
             throw InsufficientData("cdlMarubozu", lookback + 1)
         }
@@ -2034,8 +2034,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlMatchingLow(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlMatchingLowLookback() + previous
             throw InsufficientData("cdlMatchingLow", lookback + 1)
         }
@@ -2070,8 +2070,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlMatHold(endIdx, endIdx, open, high, low, close, penetration, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlMatHoldLookback(penetration) + previous
             throw InsufficientData("cdlMatHold", lookback + 1)
         }
@@ -2117,8 +2117,8 @@ class TaLib(var core: Core = Core()) {
             output1
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlMorningDojiStarLookback(penetration) + previous
             throw InsufficientData("cdlMorningDojiStar", lookback + 1)
         }
@@ -2154,8 +2154,8 @@ class TaLib(var core: Core = Core()) {
         val ret =
             core.cdlMorningStar(endIdx, endIdx, open, high, low, close, penetration, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlMorningStarLookback(penetration) + previous
             throw InsufficientData("cdlMorningStar", lookback + 1)
         }
@@ -2189,8 +2189,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlOnNeck(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlOnNeckLookback() + previous
             throw InsufficientData("cdlOnNeck", lookback + 1)
         }
@@ -2224,8 +2224,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlPiercing(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlPiercingLookback() + previous
             throw InsufficientData("cdlPiercing", lookback + 1)
         }
@@ -2259,8 +2259,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlRickshawMan(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlRickshawManLookback() + previous
             throw InsufficientData("cdlRickshawMan", lookback + 1)
         }
@@ -2294,8 +2294,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlRiseFall3Methods(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlRiseFall3MethodsLookback() + previous
             throw InsufficientData("cdlRiseFall3Methods", lookback + 1)
         }
@@ -2329,8 +2329,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlSeperatingLines(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlSeperatingLinesLookback() + previous
             throw InsufficientData("cdlSeperatingLines", lookback + 1)
         }
@@ -2364,8 +2364,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlShootingStar(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlShootingStarLookback() + previous
             throw InsufficientData("cdlShootingStar", lookback + 1)
         }
@@ -2399,8 +2399,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlShortLine(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlShortLineLookback() + previous
             throw InsufficientData("cdlShortLine", lookback + 1)
         }
@@ -2434,8 +2434,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlSpinningTop(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlSpinningTopLookback() + previous
             throw InsufficientData("cdlSpinningTop", lookback + 1)
         }
@@ -2469,8 +2469,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlStalledPattern(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlStalledPatternLookback() + previous
             throw InsufficientData("cdlStalledPattern", lookback + 1)
         }
@@ -2504,8 +2504,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlStickSandwhich(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlStickSandwhichLookback() + previous
             throw InsufficientData("cdlStickSandwich", lookback + 1)
         }
@@ -2539,8 +2539,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlTakuri(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlTakuriLookback() + previous
             throw InsufficientData("cdlTakuri", lookback + 1)
         }
@@ -2574,8 +2574,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlTasukiGap(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlTasukiGapLookback() + previous
             throw InsufficientData("cdlTasukiGap", lookback + 1)
         }
@@ -2609,8 +2609,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlThrusting(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlThrustingLookback() + previous
             throw InsufficientData("cdlThrusting", lookback + 1)
         }
@@ -2644,8 +2644,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlTristar(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlTristarLookback() + previous
             throw InsufficientData("cdlTristar", lookback + 1)
         }
@@ -2679,8 +2679,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlUnique3River(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlUnique3RiverLookback() + previous
             throw InsufficientData("cdlUnique3River", lookback + 1)
         }
@@ -2714,8 +2714,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlUpsideGap2Crows(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlUpsideGap2CrowsLookback() + previous
             throw InsufficientData("cdlUpsideGap2Crows", lookback + 1)
         }
@@ -2749,8 +2749,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cdlXSideGap3Methods(endIdx, endIdx, open, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cdlXSideGap3MethodsLookback() + previous
             throw InsufficientData("cdlXSideGap3Methods", lookback + 1)
         }
@@ -2778,8 +2778,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.ceil(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.ceilLookback() + previous
             throw InsufficientData("ceil", lookback + 1)
         }
@@ -2806,8 +2806,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cmo(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cmoLookback(timePeriod) + previous
             throw InsufficientData("cmo", lookback + 1)
         }
@@ -2834,8 +2834,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.correl(endIdx, endIdx, data0, data1, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.correlLookback(timePeriod) + previous
             throw InsufficientData("correl", lookback + 1)
         }
@@ -2856,8 +2856,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cos(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.cosLookback() + previous
             throw InsufficientData("cos", lookback + 1)
         }
@@ -2884,8 +2884,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.cosh(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.coshLookback() + previous
             throw InsufficientData("cosh", lookback + 1)
         }
@@ -2912,8 +2912,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.dema(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.demaLookback(timePeriod) + previous
             throw InsufficientData("dema", lookback + 1)
         }
@@ -2940,8 +2940,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.div(endIdx, endIdx, data0, data1, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.divLookback() + previous
             throw InsufficientData("div", lookback + 1)
         }
@@ -2962,8 +2962,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.dx(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.dxLookback(timePeriod) + previous
             throw InsufficientData("dx", lookback + 1)
         }
@@ -2991,8 +2991,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.ema(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.emaLookback(timePeriod) + previous
             throw InsufficientData("ema", lookback + 1)
         }
@@ -3019,8 +3019,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.exp(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.expLookback() + previous
             throw InsufficientData("exp", lookback + 1)
         }
@@ -3047,8 +3047,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.floor(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.floorLookback() + previous
             throw InsufficientData("floor", lookback + 1)
         }
@@ -3075,8 +3075,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.htDcPeriod(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.htDcPeriodLookback() + previous
             throw InsufficientData("htDcPeriod", lookback + 1)
         }
@@ -3103,8 +3103,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.htDcPhase(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.htDcPhaseLookback() + previous
             throw InsufficientData("htDcPhase", lookback + 1)
         }
@@ -3132,8 +3132,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.htPhasor(endIdx, endIdx, data, startOutput, endOutput, output1, output2)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.htPhasorLookback() + previous
             throw InsufficientData("htPhasor", lookback + 1)
         }
@@ -3161,8 +3161,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.htSine(endIdx, endIdx, data, startOutput, endOutput, output1, output2)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.htSineLookback() + previous
             throw InsufficientData("htSine", lookback + 1)
         }
@@ -3189,8 +3189,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.htTrendline(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.htTrendlineLookback() + previous
             throw InsufficientData("htTrendline", lookback + 1)
         }
@@ -3217,8 +3217,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.htTrendMode(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.htTrendModeLookback() + previous
             throw InsufficientData("htTrendMode", lookback + 1)
         }
@@ -3245,8 +3245,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.kama(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.kamaLookback(timePeriod) + previous
             throw InsufficientData("kama", lookback + 1)
         }
@@ -3273,8 +3273,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.linearReg(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.linearRegLookback(timePeriod) + previous
             throw InsufficientData("linearReg", lookback + 1)
         }
@@ -3302,8 +3302,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.linearRegAngle(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.linearRegAngleLookback(timePeriod) + previous
             throw InsufficientData("linearRegAngle", lookback + 1)
         }
@@ -3331,8 +3331,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.linearRegIntercept(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.linearRegInterceptLookback(timePeriod) + previous
             throw InsufficientData("linearRegIntercept", lookback + 1)
         }
@@ -3360,8 +3360,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.linearRegSlope(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.linearRegSlopeLookback(timePeriod) + previous
             throw InsufficientData("linearRegSlope", lookback + 1)
         }
@@ -3389,8 +3389,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.ln(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.lnLookback() + previous
             throw InsufficientData("ln", lookback + 1)
         }
@@ -3417,8 +3417,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.log10(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.log10Lookback() + previous
             throw InsufficientData("log10", lookback + 1)
         }
@@ -3445,8 +3445,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.movingAverage(endIdx, endIdx, data, timePeriod, mAType, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.movingAverageLookback(timePeriod, mAType) + previous
             throw InsufficientData("movingAverage", lookback + 1)
         }
@@ -3494,8 +3494,8 @@ class TaLib(var core: Core = Core()) {
             output3
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.macdLookback(fastPeriod, slowPeriod, signalPeriod) + previous
             throw InsufficientData("macd", lookback + 1)
         }
@@ -3554,8 +3554,8 @@ class TaLib(var core: Core = Core()) {
             output3
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback =
                 core.macdExtLookback(fastPeriod, fastMA, slowPeriod, slowMA, signalPeriod, signalMA) + previous
             throw InsufficientData("macdExt", lookback + 1)
@@ -3594,8 +3594,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.macdFix(endIdx, endIdx, data, signalPeriod, startOutput, endOutput, output1, output2, output3)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.macdFixLookback(signalPeriod) + previous
             throw InsufficientData("macdFix", lookback + 1)
         }
@@ -3629,8 +3629,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.mama(endIdx, endIdx, data, fastLimit, slowLimit, startOutput, endOutput, output1, output2)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.mamaLookback(fastLimit, slowLimit) + previous
             throw InsufficientData("mama", lookback + 1)
         }
@@ -3680,8 +3680,8 @@ class TaLib(var core: Core = Core()) {
             output1
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.movingAverageVariablePeriodLookback(minimumPeriod, maximumPeriod, mAType) + previous
             throw InsufficientData("movingAverageVariablePeriod", lookback + 1)
         }
@@ -3702,8 +3702,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.max(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.maxLookback(timePeriod) + previous
             throw InsufficientData("max", lookback + 1)
         }
@@ -3730,8 +3730,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.maxIndex(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.maxIndexLookback(timePeriod) + previous
             throw InsufficientData("maxIndex", lookback + 1)
         }
@@ -3759,8 +3759,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.medPrice(endIdx, endIdx, high, low, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.medPriceLookback() + previous
             throw InsufficientData("medPrice", lookback + 1)
         }
@@ -3794,8 +3794,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.mfi(endIdx, endIdx, high, low, close, volume, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.mfiLookback(timePeriod) + previous
             throw InsufficientData("mfi", lookback + 1)
         }
@@ -3823,8 +3823,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.midPoint(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.midPointLookback(timePeriod) + previous
             throw InsufficientData("midPoint", lookback + 1)
         }
@@ -3852,8 +3852,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.midPrice(endIdx, endIdx, high, low, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.midPriceLookback(timePeriod) + previous
             throw InsufficientData("midPrice", lookback + 1)
         }
@@ -3881,8 +3881,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.min(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.minLookback(timePeriod) + previous
             throw InsufficientData("min", lookback + 1)
         }
@@ -3909,8 +3909,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.minIndex(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.minIndexLookback(timePeriod) + previous
             throw InsufficientData("minIndex", lookback + 1)
         }
@@ -3939,8 +3939,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.minMax(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1, output2)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.minMaxLookback(timePeriod) + previous
             throw InsufficientData("minMax", lookback + 1)
         }
@@ -3969,8 +3969,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.minMaxIndex(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1, output2)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.minMaxIndexLookback(timePeriod) + previous
             throw InsufficientData("minMaxIndex", lookback + 1)
         }
@@ -4004,8 +4004,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.minusDI(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.minusDILookback(timePeriod) + previous
             throw InsufficientData("minusDI", lookback + 1)
         }
@@ -4033,8 +4033,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.minusDM(endIdx, endIdx, high, low, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.minusDMLookback(timePeriod) + previous
             throw InsufficientData("minusDM", lookback + 1)
         }
@@ -4062,8 +4062,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.mom(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.momLookback(timePeriod) + previous
             throw InsufficientData("mom", lookback + 1)
         }
@@ -4090,8 +4090,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.mult(endIdx, endIdx, data0, data1, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.multLookback() + previous
             throw InsufficientData("mult", lookback + 1)
         }
@@ -4112,8 +4112,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.natr(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.natrLookback(timePeriod) + previous
             throw InsufficientData("natr", lookback + 1)
         }
@@ -4141,8 +4141,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.obv(endIdx, endIdx, data, volume, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.obvLookback() + previous
             throw InsufficientData("obv", lookback + 1)
         }
@@ -4169,8 +4169,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.plusDI(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.plusDILookback(timePeriod) + previous
             throw InsufficientData("plusDI", lookback + 1)
         }
@@ -4198,8 +4198,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.plusDM(endIdx, endIdx, high, low, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.plusDMLookback(timePeriod) + previous
             throw InsufficientData("plusDM", lookback + 1)
         }
@@ -4233,8 +4233,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.ppo(endIdx, endIdx, data, fastPeriod, slowPeriod, mAType, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.ppoLookback(fastPeriod, slowPeriod, mAType) + previous
             throw InsufficientData("ppo", lookback + 1)
         }
@@ -4267,8 +4267,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.roc(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.rocLookback(timePeriod) + previous
             throw InsufficientData("roc", lookback + 1)
         }
@@ -4295,8 +4295,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.rocP(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.rocPLookback(timePeriod) + previous
             throw InsufficientData("rocP", lookback + 1)
         }
@@ -4323,8 +4323,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.rocR(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.rocRLookback(timePeriod) + previous
             throw InsufficientData("rocR", lookback + 1)
         }
@@ -4351,8 +4351,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.rocR100(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.rocR100Lookback(timePeriod) + previous
             throw InsufficientData("rocR100", lookback + 1)
         }
@@ -4380,8 +4380,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.rsi(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.rsiLookback(timePeriod) + previous
             throw InsufficientData("rsi", lookback + 1)
         }
@@ -4414,8 +4414,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.sar(endIdx, endIdx, high, low, accelerationFactor, aFMaximum, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.sarLookback(accelerationFactor, aFMaximum) + previous
             throw InsufficientData("sar", lookback + 1)
         }
@@ -4475,8 +4475,8 @@ class TaLib(var core: Core = Core()) {
             output1
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.sarExtLookback(
                 startValue,
                 offsetonReverse,
@@ -4535,8 +4535,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.sin(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.sinLookback() + previous
             throw InsufficientData("sin", lookback + 1)
         }
@@ -4563,8 +4563,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.sinh(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.sinhLookback() + previous
             throw InsufficientData("sinh", lookback + 1)
         }
@@ -4591,8 +4591,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.sma(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.smaLookback(timePeriod) + previous
             throw InsufficientData("sma", lookback + 1)
         }
@@ -4619,8 +4619,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.sqrt(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.sqrtLookback() + previous
             throw InsufficientData("sqrt", lookback + 1)
         }
@@ -4647,8 +4647,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.stdDev(endIdx, endIdx, data, timePeriod, deviations, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.stdDevLookback(timePeriod, deviations) + previous
             throw InsufficientData("stdDev", lookback + 1)
         }
@@ -4702,8 +4702,8 @@ class TaLib(var core: Core = Core()) {
             output2
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.stochLookback(fastKPeriod, slowKPeriod, slowKMA, slowDPeriod, slowDMA) + previous
             throw InsufficientData("stoch", lookback + 1)
         }
@@ -4760,8 +4760,8 @@ class TaLib(var core: Core = Core()) {
             output2
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.stochFLookback(fastKPeriod, fastDPeriod, fastDMA) + previous
             throw InsufficientData("stochF", lookback + 1)
         }
@@ -4814,8 +4814,8 @@ class TaLib(var core: Core = Core()) {
             output2
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.stochRsiLookback(timePeriod, fastKPeriod, fastDPeriod, fastDMA) + previous
             throw InsufficientData("stochRsi", lookback + 1)
         }
@@ -4849,8 +4849,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.sub(endIdx, endIdx, data0, data1, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.subLookback() + previous
             throw InsufficientData("sub", lookback + 1)
         }
@@ -4871,8 +4871,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.sum(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.sumLookback(timePeriod) + previous
             throw InsufficientData("sum", lookback + 1)
         }
@@ -4899,8 +4899,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.t3(endIdx, endIdx, data, timePeriod, volumeFactor, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.t3Lookback(timePeriod, volumeFactor) + previous
             throw InsufficientData("t3", lookback + 1)
         }
@@ -4928,8 +4928,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.tan(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.tanLookback() + previous
             throw InsufficientData("tan", lookback + 1)
         }
@@ -4956,8 +4956,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.tanh(endIdx, endIdx, data, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.tanhLookback() + previous
             throw InsufficientData("tanh", lookback + 1)
         }
@@ -4984,8 +4984,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.tema(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.temaLookback(timePeriod) + previous
             throw InsufficientData("tema", lookback + 1)
         }
@@ -5012,8 +5012,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.trueRange(endIdx, endIdx, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.trueRangeLookback() + previous
             throw InsufficientData("trueRange", lookback + 1)
         }
@@ -5041,8 +5041,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.trima(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.trimaLookback(timePeriod) + previous
             throw InsufficientData("trima", lookback + 1)
         }
@@ -5070,8 +5070,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.trix(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.trixLookback(timePeriod) + previous
             throw InsufficientData("trix", lookback + 1)
         }
@@ -5098,8 +5098,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.tsf(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.tsfLookback(timePeriod) + previous
             throw InsufficientData("tsf", lookback + 1)
         }
@@ -5126,8 +5126,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.typPrice(endIdx, endIdx, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.typPriceLookback() + previous
             throw InsufficientData("typPrice", lookback + 1)
         }
@@ -5174,8 +5174,8 @@ class TaLib(var core: Core = Core()) {
             output1
         )
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.ultOscLookback(firstPeriod, secondPeriod, thirdPeriod) + previous
             throw InsufficientData("ultOsc", lookback + 1)
         }
@@ -5208,8 +5208,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.variance(endIdx, endIdx, data, timePeriod, deviations, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.varianceLookback(timePeriod, deviations) + previous
             throw InsufficientData("variance", lookback + 1)
         }
@@ -5237,8 +5237,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.wclPrice(endIdx, endIdx, high, low, close, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.wclPriceLookback() + previous
             throw InsufficientData("wclPrice", lookback + 1)
         }
@@ -5271,8 +5271,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.willR(endIdx, endIdx, high, low, close, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.willRLookback(timePeriod) + previous
             throw InsufficientData("willR", lookback + 1)
         }
@@ -5300,8 +5300,8 @@ class TaLib(var core: Core = Core()) {
         val endOutput = MInteger()
         val ret = core.wma(endIdx, endIdx, data, timePeriod, startOutput, endOutput, output1)
         if (ret != RetCode.Success) throw DoesNotComputeException(ret.toString())
-        val last = endOutput.value - 1
-        if (last < 0) {
+
+        if (endOutput.value <= 0) {
             val lookback = core.wmaLookback(timePeriod) + previous
             throw InsufficientData("wma", lookback + 1)
         }
