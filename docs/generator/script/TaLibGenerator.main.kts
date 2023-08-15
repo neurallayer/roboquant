@@ -302,7 +302,7 @@ class TaLibGenerator(private val root: JsonObject) {
  * Generate the two wrappers for the TA-Lib indicators. It works of the ta_func_api.json file that contains the required
  * metadata for these indicators.
  *
- * This ideally could be a Kotlin script, but it doesn't compile due to some compatibility issues with GSON library.
+ * This ideally could be a Kotlin script, but it doesn't compile due to some compatibility issues with the GSON library.
  * So for now just a plain Kotlin file with a main method.
  */
 fun main() {
