@@ -31,7 +31,7 @@ import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.TestStrategy
-import java.io.FileWriter
+import java.io.File
 import kotlin.test.assertEquals
 
 /**
@@ -86,9 +86,7 @@ object TestData {
         if (url === null) {
             val fullName = "src/test/resources/$fileName"
             val json = chart.getOption().renderJson()
-            val f = FileWriter(fullName)
-            f.write(json)
-            f.close()
+            File(fullName).writeText(json)
         }
 
         val str = loadFile(fileName)

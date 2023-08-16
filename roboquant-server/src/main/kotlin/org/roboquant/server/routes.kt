@@ -24,6 +24,10 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kotlinx.html.*
+import org.icepear.echarts.components.toolbox.Toolbox
+import org.icepear.echarts.components.toolbox.ToolboxDataZoomFeature
+import org.icepear.echarts.components.toolbox.ToolboxMagicTypeFeature
+import org.icepear.echarts.components.toolbox.ToolboxSaveAsImageFeature
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.lines
 import org.roboquant.charts.TimeSeriesChart
@@ -56,6 +60,18 @@ private fun FlowContent.table(caption: String, list: List<List<Any>>) {
     }
 }
 
+/**
+ * Toolbox without the restore option
+ */
+private fun getToolbox(): Toolbox {
+    val features = mutableMapOf(
+        "saveAsImage" to ToolboxSaveAsImageFeature(),
+        "dataZoom" to ToolboxDataZoomFeature().setYAxisIndex("none"),
+        "magicType" to ToolboxMagicTypeFeature().setType(arrayOf("line", "bar")),
+    )
+    return Toolbox().setFeature(features)
+}
+
 
 fun Route.getChart() {
     post("/echarts") {
@@ -66,7 +82,8 @@ fun Route.getChart() {
         val data = logger.getMetric(metric, run)
         val chart = TimeSeriesChart(data)
         chart.title = metric
-        val json = chart.getOption().renderJson()
+        val option = chart.getOption().setToolbox(getToolbox())
+        val json = option.renderJson()
         call.respondText(json)
     }
 }

@@ -205,7 +205,7 @@ abstract class Chart {
     protected fun getToolbox(includeMagicType: Boolean = true): Toolbox {
         val features = mutableMapOf(
             "saveAsImage" to ToolboxSaveAsImageFeature(),
-            "dataView" to ToolboxDataViewFeature().setReadOnly(true),
+            // "dataView" to ToolboxDataViewFeature().setReadOnly(true),
             "dataZoom" to ToolboxDataZoomFeature().setYAxisIndex("none"),
             "magicType" to ToolboxMagicTypeFeature().setType(arrayOf("line", "bar")),
             "restore" to ToolboxRestoreFeature()
