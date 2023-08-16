@@ -29,10 +29,10 @@ import org.roboquant.brokers.lines
 import org.roboquant.charts.TimeSeriesChart
 import org.roboquant.charts.renderJson
 import org.roboquant.orders.lines
-import kotlin.system.exitProcess
+import java.time.temporal.ChronoUnit
 
 private fun FlowContent.table(caption: String, list: List<List<Any>>) {
-    table(classes = "table text-end my-4") {
+    table(classes = "table text-end my-5") {
         caption {
             +caption
         }
@@ -71,6 +71,14 @@ fun Route.getChart() {
     }
 }
 
+fun FlowContent.pauseInfo(pause: Boolean) {
+    if (pause) p(classes = "text-warning") {
+        +"paused"
+    } else p(classes = "text-success") {
+        +"running"
+    }
+}
+
 @Suppress("LongMethod")
 fun Route.listRuns() {
     get("/") {
@@ -78,7 +86,10 @@ fun Route.listRuns() {
 
         if (params.contains("action")) {
             val action = params.getOrFail("action")
-            if (action == "stop") exitProcess(0)
+            if (action == "stop") {
+                // Always exit, so no triggering of shutdown sequence
+                Runtime.getRuntime().halt(1)
+            }
 
             val run = params["run"]!!
             val policy = runs.getValue(run).roboquant.policy as PausablePolicy
@@ -90,7 +101,7 @@ fun Route.listRuns() {
 
         call.respondHtml(HttpStatusCode.OK) {
             page("Overview runs") {
-                table(classes = "table text-end") {
+                table(classes = "table text-end my-5") {
                     tr {
                         th { +"run name" }
                         th { +"state" }
@@ -105,7 +116,7 @@ fun Route.listRuns() {
                         val policy = info.roboquant.policy as PausablePolicy
                         tr {
                             td { +run }
-                            td { +if (policy.pause) "pause" else "running" }
+                            td { pauseInfo(policy.pause) }
                             td { +info.timeframe.toPrettyString() }
                             td {
                                 +"total = ${policy.totalEvents}"
@@ -122,7 +133,7 @@ fun Route.listRuns() {
                                 +"hold = ${policy.holdSignals}"
                             }
                             td { +policy.totalOrders.toString() }
-                            td { +policy.lastUpdate.toString() }
+                            td { +policy.lastUpdate.truncatedTo(ChronoUnit.MILLIS).toString() }
                             td {
                                 a(href = "/run/$run") { +"details" }
                                 br
@@ -203,7 +214,7 @@ fun Route.getRun() {
             page("Details $id") {
                 a(href = "/") { +"Back to overview" }
                 table("account summary", getAccountSummary(acc))
-                div(classes = "row my-4") {
+                div(classes = "row my-5") {
                     div(classes = "col-2 pe-0") {
                         metricForm("#echarts123456", id, info)
                     }
@@ -214,8 +225,8 @@ fun Route.getRun() {
                 // table("cash", metric.getCash())
                 table("open positions", acc.positions.lines())
                 table("open orders", acc.openOrders.lines())
-                table("closed orders (max 10)", acc.closedOrders.lines().takeLastPlusHeader(10))
-                table("trades (max 10)", acc.trades.lines().takeLastPlusHeader(10))
+                table("closed orders (last 10)", acc.closedOrders.lines().takeLastPlusHeader(10))
+                table("trades (last 10)", acc.trades.lines().takeLastPlusHeader(10))
             }
         }
     }

@@ -32,15 +32,15 @@ internal val runs = ConcurrentHashMap<String, RunInfo>()
 /**
  * Create a server with credentials. The website will be protected with digest authentication.
  */
-class WebServer(username: String, password: String, port:Int = 8080, host:String = "127.0.01") {
+class WebServer(username: String, password: String, port: Int = 8080, host: String = "127.0.01") {
 
     /**
      * Create server instance without credentials, so anybody can see the runs and pause them.
      */
-    constructor(port:Int = 8080, host:String = "127.0.01") : this("", "", port, host)
+    constructor(port: Int = 8080, host: String = "127.0.01") : this("", "", port, host)
 
     private var runCounter = 0
-    private val server :  NettyApplicationEngine = embeddedServer(
+    private val server: NettyApplicationEngine = embeddedServer(
         Netty,
         port = port,
         host = host,
@@ -50,27 +50,36 @@ class WebServer(username: String, password: String, port:Int = 8080, host:String
     ).start(wait = false)
 
 
-
     fun stop() {
         server.stop()
     }
 
-
     @Synchronized
-    fun getRunName() : String {
+    fun getRunName(): String {
         return "run-${runCounter++}"
     }
 
-    fun run(roboquant: Roboquant, feed: Feed, timeframe: Timeframe, warmup: TimeSpan = TimeSpan.ZERO) = runBlocking {
-        runAsync(roboquant, feed, timeframe, warmup)
+    fun run(
+        roboquant: Roboquant,
+        feed: Feed,
+        timeframe: Timeframe,
+        run: String = getRunName(),
+        warmup: TimeSpan = TimeSpan.ZERO
+    ) = runBlocking {
+        runAsync(roboquant, feed, timeframe, run, warmup)
     }
 
     /**
      * Start a new run and make core metrics available to the webserver. You can start multiple runs in the same
      * webserver instance. Each run will have its unique name.
      */
-    suspend fun runAsync(roboquant: Roboquant, feed: Feed, timeframe: Timeframe, warmup: TimeSpan = TimeSpan.ZERO) {
-        val run = getRunName()
+    suspend fun runAsync(
+        roboquant: Roboquant,
+        feed: Feed,
+        timeframe: Timeframe,
+        run: String = getRunName(),
+        warmup: TimeSpan = TimeSpan.ZERO
+    ) {
         val rq = roboquant.copy(policy = PausablePolicy(roboquant.policy))
         runs[run] = RunInfo(rq, feed, timeframe, warmup)
         rq.runAsync(feed, timeframe, run, warmup)
