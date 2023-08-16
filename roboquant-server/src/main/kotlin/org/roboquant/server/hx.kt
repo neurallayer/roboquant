@@ -56,6 +56,20 @@ var HTMLTag.hxExt: String
         attributes["data-hx-ext"] = value
     }
 
+
+var HTMLTag.hxGet: String
+    get() = attributes["data-hx-get"] ?: ""
+    set(value) {
+        attributes["data-hx-get"] = value
+    }
+
+
+var HTMLTag.hxConfirm: String
+    get() = attributes["data-hx-confirm"] ?: ""
+    set(value) {
+        attributes["data-hx-confirm"] = value
+    }
+
 var HTMLTag.hxTarget: String
     get() = attributes["data-hx-target"] ?: ""
     set(value) {

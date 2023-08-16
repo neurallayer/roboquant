@@ -23,6 +23,7 @@ import org.roboquant.common.hours
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.metrics.AccountMetric
+import org.roboquant.metrics.PriceMetric
 import org.roboquant.server.WebServer
 import org.roboquant.strategies.EMAStrategy
 import kotlin.random.Random
@@ -46,7 +47,7 @@ fun main() {
     repeat(3) {
         val tf = Timeframe.next(1.hours)
         jobs.add {
-            val rq = Roboquant(EMAStrategy(), AccountMetric())
+            val rq = Roboquant(EMAStrategy(), AccountMetric(), PriceMetric())
             server.runAsync(rq, getFeed(), tf)
         }
     }

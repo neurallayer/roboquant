@@ -29,6 +29,7 @@ import org.roboquant.brokers.lines
 import org.roboquant.charts.TimeSeriesChart
 import org.roboquant.charts.renderJson
 import org.roboquant.orders.lines
+import kotlin.system.exitProcess
 
 private fun FlowContent.table(caption: String, list: List<List<Any>>) {
     table(classes = "table text-end my-4") {
@@ -76,8 +77,10 @@ fun Route.listRuns() {
         val params = call.request.queryParameters
 
         if (params.contains("action")) {
+            val action = params.getOrFail("action")
+            if (action == "stop") exitProcess(0)
+
             val run = params["run"]!!
-            val action = params["action"]!!
             val policy = runs.getValue(run).roboquant.policy as PausablePolicy
             when (action) {
                 "pause" -> policy.pause = true
@@ -131,6 +134,13 @@ fun Route.listRuns() {
                     }
 
                 }
+                div(classes = "row justify-content-md-center mt-5") {
+                    button(classes = "btn btn-danger btn-lg col-lg-2") {
+                        hxGet = "/?action=stop"
+                        hxConfirm = "Are you sure you want to stop the server?"
+                        +"Stop Server"
+                    }
+                }
 
             }
         }
@@ -160,10 +170,7 @@ private fun FlowContent.metricForm(target: String, run: String, info: RunInfo) {
 
         input(type = InputType.hidden, name = "run") { value=run }
 
-        button(type = ButtonType.submit, classes = "btn btn-primary") {
-            +"Update Chart"
-
-        }
+        button(type = ButtonType.submit, classes = "mt-2 btn btn-primary") { +"Update Chart" }
     }
 }
 
@@ -197,7 +204,7 @@ fun Route.getRun() {
                 a(href = "/") { +"Back to overview" }
                 table("account summary", getAccountSummary(acc))
                 div(classes = "row my-4") {
-                    div(classes = "col-2") {
+                    div(classes = "col-2 pe-0") {
                         metricForm("#echarts123456", id, info)
                     }
                     div(classes = "col-10") {
