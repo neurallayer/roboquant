@@ -19,26 +19,40 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.Timeframe
-import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.common.hours
+import org.roboquant.feeds.Feed
+import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.server.WebServer
 import org.roboquant.strategies.EMAStrategy
+import kotlin.random.Random
+import kotlin.system.exitProcess
 
+
+fun getFeed(): Feed {
+    var prev = 100.0
+    val randomPrices = (1..10_000).map {
+        val next = prev + Random.Default.nextDouble() - 0.5
+        prev = next
+        next
+    }
+    return LiveTestFeed(randomPrices, delayInMillis = 200)
+}
 
 fun main() {
     val server = WebServer("test", "secret", 8080)
-    val feed = RandomWalkFeed.lastYears(20)
-    feed.delay = 100L
+
     val jobs = ParallelJobs()
     repeat(3) {
+        val tf = Timeframe.next(1.hours)
         jobs.add {
             val rq = Roboquant(EMAStrategy(), AccountMetric())
-            server.runAsync(rq,feed, Timeframe.INFINITE)
+            server.runAsync(rq, getFeed(), tf)
         }
     }
     jobs.joinAllBlocking()
     server.stop()
-    feed.close()
+    exitProcess(0)
 }
 
 

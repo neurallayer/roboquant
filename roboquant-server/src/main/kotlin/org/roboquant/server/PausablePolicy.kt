@@ -20,22 +20,34 @@ import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.policies.Policy
+import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import java.time.Instant
 
 internal class PausablePolicy(private val policy: Policy, var pause: Boolean = false) : Policy by policy {
 
-    internal var totalSignals = 0
+    internal var sellSignals = 0
+    internal var holdSignals = 0
+    internal var buySignals = 0
     internal var totalOrders = 0
     internal var totalEvents = 0
+    internal var emptyEvents = 0
+    internal var totalActions = 0
+
     internal var lastUpdate: Instant = Instant.MIN
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         // Still invoke the policy so any state can be updated if required.
         val orders = policy.act(signals, account, event)
 
-        totalSignals += signals.size
+
+        buySignals += signals.filter { it.rating.isPositive }.size
+        sellSignals += signals.filter { it.rating.isNegative }.size
+        holdSignals += signals.filter { it.rating == Rating.HOLD }.size
+
         totalEvents++
+        if (event.actions.isEmpty()) emptyEvents++
+        totalActions += event.actions.size
         lastUpdate = event.time
 
         return if (! pause) {

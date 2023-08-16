@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:Suppress("unused")
-
 package org.roboquant.server
 
 import kotlinx.html.FORM
 import kotlinx.html.HTMLTag
 
+/*
 fun HTMLTag.hxGet(value: String) {
     attributes += "data-hx-get" to value
 }
@@ -43,3 +42,22 @@ fun HTMLTag.hxBoost(value: Boolean) {
 fun HTMLTag.hxExt(value: String) {
     attributes += "data-hx-ext" to value
 }
+*/
+
+var FORM.hxPost: String
+    get() = attributes["data-hx-post"] ?: ""
+    set(value) {
+        attributes["data-hx-post"] = value
+    }
+
+var HTMLTag.hxExt: String
+    get() = attributes["data-hx-ext"] ?: ""
+    set(value) {
+        attributes["data-hx-ext"] = value
+    }
+
+var HTMLTag.hxTarget: String
+    get() = attributes["data-hx-target"] ?: ""
+    set(value) {
+        attributes["data-hx-target"] = value
+    }

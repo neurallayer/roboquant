@@ -70,10 +70,10 @@ fun Route.getChart() {
     }
 }
 
+@Suppress("LongMethod")
 fun Route.listRuns() {
     get("/") {
         val params = call.request.queryParameters
-
 
         if (params.contains("action")) {
             val run = params["run"]!!
@@ -91,6 +91,7 @@ fun Route.listRuns() {
                     tr {
                         th { +"run name" }
                         th { +"state" }
+                        th { +"timeframe"}
                         th { +"events" }
                         th { +"signals" }
                         th { +"orders" }
@@ -99,26 +100,32 @@ fun Route.listRuns() {
                     }
                     runs.forEach { (run, info) ->
                         val policy = info.roboquant.policy as PausablePolicy
-                        val state = if (policy.pause) "pause" else "running"
                         tr {
                             td { +run }
-                            td { +state }
-                            td { +policy.totalEvents.toString() }
-                            td { +policy.totalSignals.toString() }
+                            td { +if (policy.pause) "pause" else "running" }
+                            td { +info.timeframe.toPrettyString() }
+                            td {
+                                +"total = ${policy.totalEvents}"
+                                br
+                                +"empty = ${policy.emptyEvents}"
+                                br
+                                +"actions = ${policy.totalActions}"
+                            }
+                            td {
+                                +"buy = ${policy.buySignals}"
+                                br
+                                +"sell = ${policy.sellSignals}"
+                                br
+                                +"hold = ${policy.holdSignals}"
+                            }
                             td { +policy.totalOrders.toString() }
                             td { +policy.lastUpdate.toString() }
                             td {
-                                a(href = "/run/$run") {
-                                    +"details"
-                                }
-                                br {}
-                                a(href = "/?action=pause&run=$run") {
-                                    +"pause"
-                                }
-                                br {}
-                                a(href = "/?action=resume&run=$run") {
-                                    +"resume"
-                                }
+                                a(href = "/run/$run") { +"details" }
+                                br
+                                a(href = "/?action=pause&run=$run") { +"pause" }
+                                br
+                                a(href = "/?action=resume&run=$run") { +"resume" }
                             }
                         }
                     }
@@ -131,18 +138,19 @@ fun Route.listRuns() {
 }
 
 
-private fun FlowContent.echarts(id: String, width: String = "100%", height: String = "800px") {
+private fun FlowContent.echarts(elemId: String, width: String = "100%", height: String = "800px") {
     div {
-        attributes["id"] = id
-        hxExt("echarts")
+        id = elemId
+        hxExt = "echarts"
         style = "width:$width;height:$height;"
     }
 }
 
-fun FlowContent.metricForm(target: String, run: String, metricNames: List<String>) {
+private fun FlowContent.metricForm(target: String, run: String, info: RunInfo) {
+    val metricNames = info.roboquant.logger.metricNames
     form {
-        hxPost("/echarts")
-        hxTarget(target)
+        hxPost = "/echarts"
+        hxTarget = target
         select(classes = "form-select") {
             name = "metric"
             metricNames.forEach {
@@ -153,14 +161,14 @@ fun FlowContent.metricForm(target: String, run: String, metricNames: List<String
         input(type = InputType.hidden, name = "run") { value=run }
 
         button(type = ButtonType.submit, classes = "btn btn-primary") {
-            +"Get Chart"
+            +"Update Chart"
 
         }
     }
 }
 
 
-fun List<List<Any>>.takeLastPlusHeader(n: Int): List<List<Any>> {
+private fun List<List<Any>>.takeLastPlusHeader(n: Int): List<List<Any>> {
     return listOf(first()) + drop(1).takeLast(n)
 }
 
@@ -181,9 +189,8 @@ private fun getAccountSummary(acc: Account): List<List<Any>> {
 
 fun Route.getRun() {
     get("/run/{id}") {
-        val id = call.parameters["id"] ?: ""
+        val id = call.parameters.getOrFail("id")
         val info = runs.getValue(id)
-        val metricNames = info.roboquant.logger.metricNames
         val acc = info.roboquant.broker.account
         call.respondHtml(HttpStatusCode.OK) {
             page("Details $id") {
@@ -191,7 +198,7 @@ fun Route.getRun() {
                 table("account summary", getAccountSummary(acc))
                 div(classes = "row my-4") {
                     div(classes = "col-2") {
-                        metricForm("#echarts123456", id, metricNames)
+                        metricForm("#echarts123456", id, info)
                     }
                     div(classes = "col-10") {
                         echarts("echarts123456", height = "400px")
@@ -200,8 +207,8 @@ fun Route.getRun() {
                 // table("cash", metric.getCash())
                 table("open positions", acc.positions.lines())
                 table("open orders", acc.openOrders.lines())
-                table("closed orders", acc.closedOrders.lines().takeLastPlusHeader(10))
-                table("trades", acc.trades.lines().takeLastPlusHeader(10))
+                table("closed orders (max 10)", acc.closedOrders.lines().takeLastPlusHeader(10))
+                table("trades (max 10)", acc.trades.lines().takeLastPlusHeader(10))
             }
         }
     }

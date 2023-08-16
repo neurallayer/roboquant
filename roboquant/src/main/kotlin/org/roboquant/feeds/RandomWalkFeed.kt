@@ -53,7 +53,7 @@ class RandomWalkFeed(
     private val priceRange: Double = 1.0,
     template: Asset = Asset("ASSET"),
     private val seed: Int = 42,
-    var delay: Long = 0L
+    private var delay: Long = 0L
 ) : HistoricFeed {
 
     /**
