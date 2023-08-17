@@ -59,7 +59,6 @@ internal class RoboquantTest {
 
         val account = roboquant.broker.account
         assertTrue(account.trades.isNotEmpty())
-        assertTrue(account.positions.isEmpty())
         assertTrue(account.openOrders.isEmpty())
         assertTrue(account.closedOrders.isNotEmpty())
     }

@@ -24,7 +24,7 @@ import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.common.USD
-import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger

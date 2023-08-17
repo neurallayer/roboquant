@@ -19,7 +19,7 @@ package org.roboquant.ta
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
-import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.loggers.SilentLogger
 import kotlin.test.assertEquals
 

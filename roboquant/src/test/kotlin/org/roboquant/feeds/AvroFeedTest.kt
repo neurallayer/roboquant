@@ -26,6 +26,7 @@ import org.roboquant.TestData
 import org.roboquant.common.*
 import org.roboquant.feeds.AssetSerializer.deserialize
 import org.roboquant.feeds.AssetSerializer.serialize
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.play
 import java.io.File

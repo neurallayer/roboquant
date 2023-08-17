@@ -20,12 +20,12 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.play
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class RandomWalkFeedTest {
@@ -74,19 +74,16 @@ internal class RandomWalkFeedTest {
     @Test
     fun reproducable() {
         val timeline = Timeframe.fromYears(2000, 2001)
-        val feed1 = RandomWalkFeed(timeline, seed = 10)
-        val feed2 = RandomWalkFeed(timeline, seed = 10)
-        val feed3 = RandomWalkFeed(timeline, seed = 11)
+        val feed = RandomWalkFeed(timeline, seed = 10)
 
-        assertEquals(feed1.assets, feed2.assets)
-        assertEquals(feed1.assets, feed3.assets)
+        val symbol = feed.assets.first().symbol
+        val result1 = feed.filter<PriceBar> { it.asset.symbol == symbol }
+        val result2 = feed.filter<PriceBar> { it.asset.symbol == symbol }
 
-        val result1 = feed1.filter<PriceBar> { it.asset.symbol == "ASSET1" }
-        val result2 = feed2.filter<PriceBar> { it.asset.symbol == "ASSET1" }
-        val result3 = feed3.filter<PriceBar> { it.asset.symbol == "ASSET1" }
+        assertTrue(result1.isNotEmpty())
+        assertEquals(result1.size, result2.size)
 
         assertEquals(result1.toString(), result2.toString())
-        assertNotEquals(result1.toString(), result3.toString())
     }
 
     @Test

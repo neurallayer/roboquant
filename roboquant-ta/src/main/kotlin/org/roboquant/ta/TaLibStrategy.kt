@@ -71,7 +71,7 @@ class TaLibStrategy(initialCapacity: Int = 1) : RecordingStrategy(recording = tr
             require(timePeriods.isNotEmpty()) { "At least one period needs to be provided" }
             require(timePeriods.all { it > 1 }) { "Any provided period needs to be at least of size 2" }
 
-            val strategy = TaLibStrategy(timePeriods.maxOrNull()!!)
+            val strategy = TaLibStrategy(timePeriods.max())
             strategy.buy {
                 val data = it.high
                 timePeriods.any { period -> recordHigh(data, period) }

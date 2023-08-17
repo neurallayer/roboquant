@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.Roboquant
-import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.EMAStrategy
 import java.io.File

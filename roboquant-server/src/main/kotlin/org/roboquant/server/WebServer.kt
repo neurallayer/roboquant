@@ -53,10 +53,18 @@ class WebServer(username: String, password: String, port: Int = 8080, host: Stri
         logger.info { "web server started on $host:$port" }
     }
 
-
+    /**
+     * Stop the web server and close all feeds
+     */
     fun stop() {
         logger.info { "stopping web server" }
         server.stop()
+
+        // Close the feeds
+        runs.forEach {
+            logger.info { "closing feed run=${it.key} " }
+            it.value.feed.close()
+        }
     }
 
     @Synchronized

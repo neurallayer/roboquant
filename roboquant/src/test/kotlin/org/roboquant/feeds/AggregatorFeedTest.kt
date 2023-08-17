@@ -4,6 +4,7 @@ import org.roboquant.common.Timeframe
 import org.roboquant.common.millis
 import org.roboquant.common.minutes
 import org.roboquant.common.seconds
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.LiveTestFeed
 import java.time.Instant
 import java.time.temporal.ChronoUnit

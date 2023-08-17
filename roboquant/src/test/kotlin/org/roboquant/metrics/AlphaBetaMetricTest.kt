@@ -24,7 +24,7 @@ import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Currency
 import org.roboquant.common.Size
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.TradePrice
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.latestRun

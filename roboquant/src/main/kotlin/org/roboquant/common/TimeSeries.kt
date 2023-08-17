@@ -25,6 +25,7 @@ import java.util.*
 
 /**
  * An observation represents a single [value] of the type [Double] at a precise moment in [time].
+ * Observations can be compared by their time.
  *
  * @property time the time the value was observed
  * @property value the value of the observation

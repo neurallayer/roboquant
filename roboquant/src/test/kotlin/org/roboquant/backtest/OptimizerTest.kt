@@ -3,7 +3,7 @@ package org.roboquant.backtest
 import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.common.months
-import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.EMAStrategy

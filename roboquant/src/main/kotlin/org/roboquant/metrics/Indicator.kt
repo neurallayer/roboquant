@@ -40,9 +40,11 @@ fun interface Indicator {
     fun calculate(action: Action, time: Instant): Map<String, Double>
 
     /**
-     * Clear any state
+     * Clear the state, default implementation is to do nothing
      */
-    fun clear() {}
+    fun clear() {
+        // default implementation is to do nothing
+    }
 }
 
 /**

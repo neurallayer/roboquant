@@ -132,6 +132,7 @@ internal class JupyterCore(
             "org.roboquant.orders.*",
             "org.roboquant.feeds.*",
             "org.roboquant.feeds.csv.*",
+            "org.roboquant.feeds.random.*",
             "org.roboquant.brokers.sim.*",
             "org.roboquant.brokers.*",
             "org.roboquant.policies.*",

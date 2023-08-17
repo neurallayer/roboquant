@@ -19,8 +19,8 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.Timeframe
-import org.roboquant.common.hours
-import org.roboquant.feeds.util.LiveTestFeed
+import org.roboquant.common.minutes
+import org.roboquant.feeds.random.RandomWalkLiveFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PriceMetric
@@ -28,9 +28,6 @@ import org.roboquant.server.WebServer
 import org.roboquant.strategies.EMAStrategy
 import kotlin.system.exitProcess
 
-
-private fun getFeed(symbol: String, startPrice: Double) =
-    LiveTestFeed.random(startPrice, 10_000, symbol, 200)
 
 private fun getRoboquant() =
     Roboquant(EMAStrategy(), AccountMetric(), PriceMetric("CLOSE"), logger = MemoryLogger(false))
@@ -40,10 +37,12 @@ fun main() {
 
     val jobs = ParallelJobs()
 
-    val tf = Timeframe.next(1.hours)
-    jobs.add { server.runAsync(getRoboquant(), getFeed("TSLA", 240.0), tf, "run-tsla") }
-    jobs.add { server.runAsync(getRoboquant(), getFeed("AMZN", 140.0), tf, "run-amzn") }
-    jobs.add { server.runAsync(getRoboquant(), getFeed("GOOGL", 120.0), tf, "run-googl") }
+    val tf = Timeframe.next(30.minutes)
+
+    // Start three runs
+    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(nAssets = 3), tf) }
+    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(nAssets = 10), tf) }
+    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(nAssets = 5), tf) }
 
     jobs.joinAllBlocking()
     server.stop()

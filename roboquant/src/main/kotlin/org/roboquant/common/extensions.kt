@@ -17,6 +17,7 @@
 
 package org.roboquant.common
 
+import kotlinx.coroutines.delay
 import java.lang.Integer.max
 import java.lang.Integer.min
 import java.math.BigDecimal
@@ -24,6 +25,7 @@ import java.math.RoundingMode
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
 import kotlin.math.ln
 
@@ -43,6 +45,15 @@ operator fun Instant.compareTo(timeframe: Timeframe): Int {
         false -> if (this >= timeframe.end) 1 else if (this < timeframe.start) -1 else 0
     }
 }
+
+/**
+ * Delay until this time is reached
+ */
+suspend fun Instant.delayUntil() {
+    val now = Instant.now()
+    delay(now.until(this, ChronoUnit.MILLIS).coerceAtLeast(0L))
+}
+
 
 /**
  * Get the instant as ZonedDateTime UTC

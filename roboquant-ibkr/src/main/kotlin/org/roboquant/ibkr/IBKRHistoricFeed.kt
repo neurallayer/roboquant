@@ -125,7 +125,7 @@ class IBKRHistoricFeed(
         private val df = DateTimeFormatter.ofPattern("yyyyMMdd")
 
         override fun historicalData(reqId: Int, bar: Bar) {
-            val asset = subscriptions[reqId]!!
+            val asset = subscriptions.getValue(reqId)
             val action = PriceBar(
                 asset, bar.open(), bar.high(), bar.low(), bar.close(), bar.volume().value().toDouble()
             )

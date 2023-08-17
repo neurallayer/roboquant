@@ -64,7 +64,9 @@ object Config {
      */
     val info: EnvInfo by lazy {
         val prop = Properties()
-        val stream = Config::class.java.getResourceAsStream("/roboquant.properties")!!
+        val stream = Config::class.java.getResourceAsStream("/roboquant.properties")
+            ?: throw ConfigurationException("couldn't load roboquant.properties from class path")
+
         stream.use {
             prop.load(stream)
         }

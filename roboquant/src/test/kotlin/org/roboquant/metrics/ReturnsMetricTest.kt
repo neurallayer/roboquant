@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.common.months
-import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.latestRun

@@ -21,7 +21,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.Roboquant
 import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
-import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test

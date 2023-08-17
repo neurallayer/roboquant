@@ -33,7 +33,9 @@ fun interface TimeParser {
     /**
      * Initialize the parser based on the header. Default is to do nothing.
      */
-    fun init(header: List<String>) {}
+    fun init(header: List<String>) {
+        // Default implementation is to do nothing
+    }
 
     /**
      * Return an [Instant] given the provided [line] of strings and [asset]

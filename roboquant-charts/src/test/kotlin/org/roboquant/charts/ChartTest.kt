@@ -20,7 +20,7 @@ import org.icepear.echarts.Option
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.USD
-import org.roboquant.feeds.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalkFeed
 import java.time.Instant
 import kotlin.test.assertContains
 import kotlin.test.assertEquals

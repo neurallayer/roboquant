@@ -18,6 +18,7 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.feeds.util.play
 import java.time.Instant
