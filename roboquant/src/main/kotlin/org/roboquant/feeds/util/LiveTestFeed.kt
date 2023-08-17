@@ -20,6 +20,7 @@ import kotlinx.coroutines.delay
 import org.roboquant.common.Asset
 import org.roboquant.feeds.*
 import java.time.Instant
+import kotlin.random.Random
 
 /**
  * Feed that will generate events for a series of prices using the system time. It can be used to validate if a
@@ -41,6 +42,21 @@ class LiveTestFeed(
     init {
         require(delayInMillis > 0)
         require(prices.isNotEmpty())
+    }
+
+
+    companion object {
+
+        fun random(start: Double, size: Int, symbol: String = "XYZ", delayInMillis:Int = 1000): LiveTestFeed {
+            var prev = start
+            val randomPrices = (1..size).map {
+                val next = (prev + Random.Default.nextDouble() - 0.5).coerceAtLeast(0.01)
+                prev = next
+                next
+            }
+            return LiveTestFeed(randomPrices, asset = Asset(symbol), delayInMillis = delayInMillis)
+        }
+
     }
 
     private fun getAction(price: Double): Action {

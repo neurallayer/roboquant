@@ -31,19 +31,17 @@ import java.lang.Integer.max
  * This strategy requires [PriceBar] data and common use cases are candlestick patterns and moving average strategies.
  * This strategy assumes all price-bars have the same time-span.
  *
- * It is important that the strategy is initialized with a large enough history window to support the underlying
- * technical indicators you want to use. If the history is too small, it will lead to a runtime exception.
- *
- * @param history the amount of history to track. If not enough history is available to calculate the indicators, the
- * history will be automatically increased until it is able to perform the calculations.
+ * @param initialCapacity the initial capacity to track.
+ * If not enough history is available to calculate the indicators, the capacity will be automatically increased until
+ * it is able to perform the calculations.
  */
-class TaLibStrategy(history: Int = 1) : RecordingStrategy(recording = true) {
+class TaLibStrategy(initialCapacity: Int = 1) : RecordingStrategy(recording = true) {
 
     private var sellFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
     private var buyFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
 
     // Contains the historic PriceBarSeries per Asset
-    private val assetPriceBarSeries = AssetPriceBarSeries(history)
+    private val assetPriceBarSeries = AssetPriceBarSeries(initialCapacity)
 
     /**
      * The underlying TaLib that will be used to run the strategy
@@ -160,7 +158,9 @@ class TaLibStrategy(history: Int = 1) : RecordingStrategy(recording = true) {
     }
 
     /**
-     * Define the buy condition, return true if you want to generate a BUY signal, false otherwise
+     * Define the buy condition, return true if you want to generate a BUY signal, false otherwise.
+     * The provided block will only be called if the initial capacity of historic prices has been filled.
+     *
      * # Example
      * ```
      * strategy.buy { price ->
@@ -173,7 +173,8 @@ class TaLibStrategy(history: Int = 1) : RecordingStrategy(recording = true) {
     }
 
     /**
-     * Define the sell conditions, return true if you want to generate a SELL signal, false otherwise
+     * Define the sell conditions, return true if you want to generate a SELL signal, false otherwise.
+     * The provided block will only be called if the initial capacity of historic prices has been filled.
      *
      * # Example
      * ```

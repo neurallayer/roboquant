@@ -17,30 +17,20 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.common.Asset
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.Timeframe
 import org.roboquant.common.hours
-import org.roboquant.feeds.Feed
 import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PriceMetric
 import org.roboquant.server.WebServer
 import org.roboquant.strategies.EMAStrategy
-import kotlin.random.Random
 import kotlin.system.exitProcess
 
 
-private fun getFeed(symbol: String, startPrice: Double): Feed {
-    var prev = startPrice
-    val randomPrices = (1..10_000).map {
-        val next = (prev + Random.Default.nextDouble() - 0.5).coerceAtLeast(10.0)
-        prev = next
-        next
-    }
-    return LiveTestFeed(randomPrices, asset = Asset(symbol), delayInMillis = 200)
-}
+private fun getFeed(symbol: String, startPrice: Double) =
+    LiveTestFeed.random(startPrice, 10_000, symbol, 200)
 
 private fun getRoboquant() =
     Roboquant(EMAStrategy(), AccountMetric(), PriceMetric("CLOSE"), logger = MemoryLogger(false))

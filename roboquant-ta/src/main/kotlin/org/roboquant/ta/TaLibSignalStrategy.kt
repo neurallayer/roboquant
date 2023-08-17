@@ -33,9 +33,14 @@ import org.roboquant.strategies.Strategy
  *
  * This strategy requires [PriceBar] data and common use cases are candlestick patterns and moving average strategies.
  *
- * @property block the logic that will generate a signal
+ *  @property initialCapacity the initial capacity to track.
+ *  If not enough history is available to calculate the indicators, the capacity will be automatically increased until
+ *  it is able to perform the calculations.
+ *  @property block the logic that will generate a signal.
+ *  The provided block will only be called if the [initialCapacity] of historic prices has been filled.
  */
 class TaLibSignalStrategy(
+    private val initialCapacity: Int = 1,
     private var block: TaLib.(asset: Asset, series: PriceBarSeries) -> Signal?
 ) : Strategy {
 
@@ -115,7 +120,7 @@ class TaLibSignalStrategy(
         val signals = mutableListOf<Signal>()
         for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSeries(1) }
+            val buffer = buffers.getOrPut(asset) { PriceBarSeries(initialCapacity) }
             if (buffer.add(priceAction)) {
                 try {
                     val signal = block.invoke(taLib, asset, buffer)

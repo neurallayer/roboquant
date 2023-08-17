@@ -5,7 +5,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 
 /**
- * Subclass of a `MutableMap<Asset, PriceBarSeries>` that makes it more convenient to track price-bar-series for
+ * Subclass of a `MutableMap<Asset, PriceBarSeries>` that makes it convenient to track price-bar-series for
  * a group of assets.
  * For each asset, the price-bar-series is tracked individually.
  */

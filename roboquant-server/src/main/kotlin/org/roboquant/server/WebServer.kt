@@ -26,7 +26,7 @@ import org.roboquant.feeds.Feed
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
-
+// Store all the instantiated runs
 internal val runs = ConcurrentHashMap<String, RunInfo>()
 
 /**
@@ -45,12 +45,17 @@ class WebServer(username: String, password: String, port: Int = 8080, host: Stri
         port = port,
         host = host,
         module = {
-            if (username.isNotEmpty()) this.secureSetup(username, password) else this.setup()
+            if (username.isNotEmpty()) secureSetup(username, password) else setup()
         }
     ).start(wait = false)
 
+    init {
+        logger.info { "web server started on $host:$port" }
+    }
+
 
     fun stop() {
+        logger.info { "stopping web server" }
         server.stop()
     }
 
@@ -82,6 +87,7 @@ class WebServer(username: String, password: String, port: Int = 8080, host: Stri
     ) {
         val rq = roboquant.copy(policy = PausablePolicy(roboquant.policy))
         runs[run] = RunInfo(rq, feed, timeframe, warmup)
+        logger.info { "Starting new run name=$run timeframe=$timeframe"}
         rq.runAsync(feed, timeframe, run, warmup)
     }
 

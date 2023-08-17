@@ -21,6 +21,9 @@ import io.ktor.server.auth.*
 import io.ktor.server.http.content.*
 import io.ktor.server.routing.*
 import org.roboquant.common.Logging
+import org.roboquant.server.routes.chart
+import org.roboquant.server.routes.details
+import org.roboquant.server.routes.overview
 import java.security.MessageDigest
 
 
@@ -31,9 +34,9 @@ private fun getMd5Digest(str: String): ByteArray =
 
 
 private fun Route.addRoutes() {
-    listRuns()
-    getRun()
-    getChart()
+    overview()
+    details()
+    chart()
     staticResources("/static", null)
 }
 

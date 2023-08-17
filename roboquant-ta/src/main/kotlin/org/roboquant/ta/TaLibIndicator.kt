@@ -29,16 +29,18 @@ import java.time.Instant
  *      mapOf("ema" to ema(it, 20))
  * }
  * ```
- *
- * @param block the function that should return a map containing the indicator values.
- *
+ * @param initialCapacity the initial number of prices to track, default is one.
+ * If not enough prices are available to calculate an indicator, the capacity will be automatically increased until
+ * it is able to perform the calculations.
+ * @property block the function that should return a map containing the indicator values.
  */
 class TaLibIndicator(
+    initialCapacity: Int = 1,
     private val block: TaLib.(series: PriceBarSeries) -> Map<String, Double>
 ) : Indicator {
 
     private val taLib = TaLib()
-    private val series = PriceBarSeries(1)
+    private val series = PriceBarSeries(initialCapacity)
 
     /**
      * @see Indicator.calculate
