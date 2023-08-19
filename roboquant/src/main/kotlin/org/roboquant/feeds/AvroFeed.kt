@@ -32,16 +32,18 @@ import org.apache.avro.util.Utf8
 import org.roboquant.common.*
 import org.roboquant.feeds.AssetSerializer.deserialize
 import org.roboquant.feeds.AssetSerializer.serialize
-import java.io.File
-import java.io.InputStream
+import java.io.*
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
 import java.time.Instant
 import java.util.*
 import kotlin.io.path.isRegularFile
+import kotlin.io.path.pathString
+
 
 /**
  * Read price data from a single file in Avro format. This feed loads data lazy and disposes of it afterwards, so
@@ -85,11 +87,65 @@ class AvroFeed(private val path: Path) : AssetFeed {
         get() = assetLookup.values.toSortedSet()
 
 
+    /**
+     * Serialized object that can be loaded directly to memory for speedy startup times
+     */
+
+    internal class CacheWrapper(
+        val data: Pair<List<Pair<Instant, Long>>, Timeframe>,
+        val assetStrings: List<String>,
+        val hash: String
+    ) : Serializable
+
     init {
         assert(path.isRegularFile()) { "$path is not a file" }
-        val result = buildIndex()
-        index = result.first
-        timeframe = result.second
+
+        val hash = calculateFileHash(path.toFile())
+
+        val cacheFile = File(path.pathString + CACHE_SUFFIX)
+
+        var cacheWrapper: CacheWrapper? = null
+
+        try {
+            if (cacheFile.exists()) {
+                cacheWrapper = FileInputStream(cacheFile).use { fileInputStream ->
+                    ObjectInputStream(fileInputStream).use { objectInputStream ->
+                        logger.info { "loading cache file: $cacheFile" }
+
+                        val result = objectInputStream.readObject() as CacheWrapper
+                        result.assetStrings.forEach {
+                            assetLookup[Utf8(it)] = it.deserialize()
+                        }
+                        if ((hash == result.hash).not()) {
+                            logger.warn { "file hash different from found in cache" }
+                            null
+                        } else {
+                            result
+                        }
+                    }
+                }
+            }
+        } catch (e: Throwable) {
+            logger.warn(e) { "error loading cache" }
+        }
+
+        if (cacheWrapper == null) {
+            logger.warn { "building new cache file: $cacheFile" }
+            val indexData = buildIndex()
+            val assetStrings = assets.map { it.serialize() }
+
+            cacheWrapper = CacheWrapper(indexData, assetStrings, hash).run {
+                FileOutputStream(cacheFile).use { fileOutputStream ->
+                    ObjectOutputStream(fileOutputStream).use { objOutputStream ->
+                        objOutputStream.writeObject(this)
+                    }
+                }
+                this
+            }
+        }
+
+        index = cacheWrapper.data.first
+        timeframe = cacheWrapper.data.second
 
         logger.info { "loaded feed with timeframe=$timeframe" }
     }
@@ -100,6 +156,40 @@ class AvroFeed(private val path: Path) : AssetFeed {
             idx > 0 -> r.seek(index[idx - 1].second)
             idx < -1 -> r.seek(index[-idx - 2].second)
         }
+    }
+
+    /**
+     * Since files can be large, only read the beginning and ends of the file
+     * for creating the hash.
+     */
+    private fun readFirstAndLastBytes(file: File): ByteArray {
+        val bufferSize = 1024 * 1024 // 1 MB
+        val totalBytesToRead = 2 * bufferSize
+        val byteArray = ByteArray(totalBytesToRead)
+
+        FileInputStream(file).use { inputStream ->
+            val bytesRead = inputStream.read(byteArray)
+
+            if (bytesRead < totalBytesToRead) {
+                // The file is smaller than 2 MB, adjust the array size
+                return byteArray.copyOfRange(0, bytesRead)
+            } else {
+                inputStream.skip(file.length() - bufferSize.toLong())
+                inputStream.read(byteArray, bufferSize, bufferSize)
+                return byteArray
+            }
+        }
+    }
+
+    /**
+     * Create hash of the file to detect changes
+     */
+
+    private fun calculateFileHash(file: File): String {
+        val md = MessageDigest.getInstance("SHA-256")
+        val bytes = readFirstAndLastBytes(file)
+        val digest = md.digest(bytes)
+        return digest.fold("", { str, it -> str + "%02x".format(it) })
     }
 
     /**
@@ -209,6 +299,8 @@ class AvroFeed(private val path: Path) : AssetFeed {
         private const val SP500QUOTEFILE = "sp500_pricequote_v5.0.avro"
         private const val FOREXFILE = "forex_pricebar_v5.1.avro"
 
+        internal const val CACHE_SUFFIX = ".cache"
+
         /**
          * Get an AvroFeed containing end-of-day [PriceBar] data for the companies listed in the S&P 500. This feed
          * contains a few years of public data.
@@ -299,6 +391,9 @@ class AvroFeed(private val path: Path) : AssetFeed {
             val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
             val dataFileWriter = DataFileWriter(datumWriter)
             val file = File(fileName)
+
+            val cacheFile = File(fileName + CACHE_SUFFIX)
+            if (cacheFile.exists() && cacheFile.isFile) cacheFile.delete()
 
             if (append) {
                 dataFileWriter.appendTo(file)
