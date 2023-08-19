@@ -356,7 +356,7 @@ class AvroFeed(private val path: Path) : AssetFeed {
 /**
  * Used by AvroFeed to serialize and deserialize Assets to a string. This is optimized for size.
  */
-internal object AssetSerializer {
+object AssetSerializer {
 
     /**
      * Serialize an asset into a short string.

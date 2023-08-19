@@ -30,6 +30,7 @@ import org.roboquant.feeds.*
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
@@ -43,6 +44,7 @@ import org.roboquant.policies.resolve
 import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Signal
+import java.io.File
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -177,7 +179,7 @@ fun simple() {
 
 fun aggregator() {
     val forex = AvroFeed.forex()
-    val feed = AggregatorFeed2(forex, 15.minutes)
+    val feed = AggregatorFeed(forex, 15.minutes)
     feed.apply<PriceAction> { _, time ->
         println(time)
     }
@@ -271,10 +273,48 @@ fun cfd() {
 }
 
 
+fun feed() {
+    val tf = Timeframe.past(1.years)
+    val template = Asset("BTCBUSD", AssetType.CRYPTO, currency = Currency.getInstance("BUSD"))
+    val feed = RandomWalkFeed(tf, 1.seconds, template = template, nAssets = 1, generateBars = false)
+    val t = measureTimeMillis {
+        AvroFeed.record(feed, "/tmp/orig.avro")
+    }
+    val f = File("/tmp/orig.avro")
+    println(t)
+    println(f.length()/1_000_000)
+
+    val t2 = measureTimeMillis {
+        AvroFeed("/tmp/orig.avro")
+    }
+    println(t2)
+}
+
+
+fun feed2() {
+    val tf = Timeframe.past(1.months)
+    println(tf)
+    val template = Asset("BTCBUSD", AssetType.CRYPTO, currency = Currency.getInstance("BUSD"))
+    val feed = RandomWalkFeed(tf, 1.seconds, template = template, nAssets = 1, generateBars = false)
+    val t = measureTimeMillis {
+        AvroFeed2.record(feed, "/tmp/new.avro", compression = true)
+    }
+    val f = File("/tmp/new.avro")
+    // println(t)
+    // println(f.length()/1_000_000)
+
+    val t2 = measureTimeMillis {
+        val feed = AvroFeed2("/tmp/new.avro", buildIndex = true)
+        println(feed.timeframe)
+    }
+    println(t2)
+}
+
 suspend fun main() {
     Config.printInfo()
 
-    when ("AGG") {
+    when ("FEED") {
+        "FEED" -> feed2()
         "SIMPLE" -> simple()
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })

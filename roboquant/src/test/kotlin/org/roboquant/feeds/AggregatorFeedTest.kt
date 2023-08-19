@@ -38,7 +38,7 @@ class AggregatorFeedTest {
         val tf = Timeframe.parse("2022-01-01T12:00:00","2022-01-01T15:00:00" )
         val feed = RandomWalkFeed(tf, 1.minutes, nAssets = 1)
         val ts = 15.minutes
-        val aggFeed = AggregatorFeed2(feed, ts)
+        val aggFeed = AggregatorFeed(feed, ts)
         var lastTime: Instant? = null
         aggFeed.apply<PriceBar> { pb, t ->
             assertEquals(ts, pb.timeSpan)
