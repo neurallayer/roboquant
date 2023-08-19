@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2020-2023 Neural Layer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -73,7 +73,7 @@ class AvroFeedTest {
     @Test
     fun avroStep2() {
         val feed2 = AvroFeed(Path(fileName))
-
+        assertTrue(File(fileName + AvroFeed.CACHE_SUFFIX).isFile)
         runBlocking {
             var past = Instant.MIN
             var cnt = 0

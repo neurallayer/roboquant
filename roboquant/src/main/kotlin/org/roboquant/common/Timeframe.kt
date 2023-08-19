@@ -16,6 +16,7 @@
 
 package org.roboquant.common
 
+import java.io.Serializable
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -39,7 +40,7 @@ import kotlin.random.Random
  * @property end end time of timeframe
  * @property inclusive should te [end] time be inclusive, default is false
  */
-data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolean = false) {
+data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolean = false) : Serializable {
 
     /**
      * Duration of timeframe
