@@ -23,9 +23,9 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Config
 import org.roboquant.common.Size
 import org.roboquant.common.percent
-import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Order
@@ -51,7 +51,7 @@ private fun macd() {
     }
 
     val rq = Roboquant(strategy)
-    val feed = AvroFeed.sp500()
+    val feed = RandomWalkFeed.lastYears(5)
     rq.run(feed)
     println(rq.broker.account.summary())
 
@@ -79,7 +79,7 @@ private fun ta4j() {
     }
 
     val rq = Roboquant(strategy)
-    val feed = AvroFeed.sp500()
+    val feed = RandomWalkFeed.lastYears(5)
     rq.run(feed)
     println(rq.broker.account.summary())
 }
@@ -128,7 +128,7 @@ private fun customPolicy() {
     }
 
     val roboquant = Roboquant(EMAStrategy.PERIODS_12_26, AccountMetric(), policy = SmartLimitPolicy(atrPeriod = 5))
-    val feed = AvroFeed.sp500()
+    val feed = RandomWalkFeed.lastYears(5)
     roboquant.run(feed)
     println(roboquant.broker.account.summary())
 }
@@ -142,7 +142,7 @@ private fun atrPolicy() {
     val broker = SimBroker(accountModel = MarginAccount(minimumEquity = 50_000.0))
     val rq = Roboquant(strategy, broker = broker, policy = policy)
 
-    val feed = AvroFeed.sp500()
+    val feed = RandomWalkFeed.lastYears(5)
     rq.run(feed)
     println(rq.broker.account.summary())
 }
@@ -182,7 +182,7 @@ private fun tenkan() {
     // val feed = AvroFeed.forex()
 
     val rq = Roboquant(strategy, AccountMetric())
-    val feed = AvroFeed.sp500()
+    val feed = RandomWalkFeed.lastYears(5)
 
     println(feed.timeframe)
     rq.run(feed)

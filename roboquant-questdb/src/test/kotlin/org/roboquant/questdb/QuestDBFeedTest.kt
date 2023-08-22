@@ -19,10 +19,10 @@ internal class QuestDBFeedTest {
 
     @Test
     fun basic() {
-        val recorder = QuestDBRecorder("pricebars", folder.toPath())
+        val recorder = QuestDBRecorder(folder.toPath())
         val inputFeed = RandomWalkFeed.lastYears(1)
 
-        recorder.record<PriceBar>(inputFeed)
+        recorder.record<PriceBar>(inputFeed, "pricebars")
 
         val outputFeed = QuestDBFeed("pricebars", folder.toPath())
 
@@ -33,12 +33,12 @@ internal class QuestDBFeedTest {
 
     @Test
     fun append() {
-        val recorder = QuestDBRecorder("pricebars2", folder.toPath())
+        val recorder = QuestDBRecorder(folder.toPath())
         val inputFeed = RandomWalkFeed.lastYears(1)
 
         val tfs = inputFeed.timeframe.split(3.months)
-        recorder.record<PriceBar>(inputFeed, tfs.first())
-        tfs.drop(1).forEach { recorder.record<PriceBar>(inputFeed, it, true) }
+        recorder.record<PriceBar>(inputFeed, "pricebars2", tfs.first())
+        tfs.drop(1).forEach { recorder.record<PriceBar>(inputFeed, "pricebars2", it, true) }
 
         val outputFeed = QuestDBFeed("pricebars2", folder.toPath())
 
@@ -48,13 +48,13 @@ internal class QuestDBFeedTest {
 
     @Test
     fun merge() {
-        val recorder = QuestDBRecorder("pricebars3", folder.toPath())
+        val recorder = QuestDBRecorder(folder.toPath())
         val tf = Timeframe.parse("2020", "2022")
         val feed1 = RandomWalkFeed(tf, nAssets = 1, template = Asset("ABC"))
         val feed2 = RandomWalkFeed(tf, nAssets = 1, template = Asset("XYZ"))
 
-        recorder.record<PriceBar>(feed1, partition = "YEAR")
-        recorder.record<PriceBar>(feed2, append = true)
+        recorder.record<PriceBar>(feed1, "pricebars3", partition = "YEAR")
+        recorder.record<PriceBar>(feed2, "pricebars3", append = true)
 
         val outputFeed = QuestDBFeed("pricebars3", folder.toPath())
 

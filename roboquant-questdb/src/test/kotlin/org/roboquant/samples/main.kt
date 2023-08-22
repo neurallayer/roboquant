@@ -43,8 +43,8 @@ fun create() {
     val f = RandomWalkFeed(Timeframe.past(12.months), nAssets = 3, timeSpan = 1.seconds)
 
    printTimeMillis("create feed") {
-        val g = QuestDBRecorder(TABLE_NAME)
-        g.record<PriceBar>(f)
+        val g = QuestDBRecorder()
+        g.record<PriceBar>(f, TABLE_NAME )
     }
 }
 

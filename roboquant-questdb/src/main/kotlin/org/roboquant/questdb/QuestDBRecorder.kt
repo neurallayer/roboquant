@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.*
 import org.roboquant.feeds.*
-import org.roboquant.feeds.avro.AssetSerializer.serialize
+import org.roboquant.feeds.util.AssetSerializer.serialize
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.div
@@ -35,7 +35,7 @@ import kotlin.io.path.isDirectory
 
 
 /**
- * Record another feed into a QuestDB database and table.
+ * Record another feed into a QuestDB database.
  *
  * - Supports up to micro seconds resolution
  * - Supports very large datasets
@@ -43,7 +43,7 @@ import kotlin.io.path.isDirectory
  * - Limited to a single [PriceAction] type per table
  *
  */
-class QuestDBRecorder(val tableName: String, dbPath: Path = Config.home / "questdb-prices" / "db") {
+class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
 
     val config: CairoConfiguration
     private val logger = Logging.getLogger(this::class)
@@ -73,6 +73,7 @@ class QuestDBRecorder(val tableName: String, dbPath: Path = Config.home / "quest
      * Supported price-actions: [PriceBar], [PriceQuote] and [TradePrice]
      *
      * @param feed the feed you want to record
+     * @param tableName the table to use to store the data
      * @param timeframe the timeframe
      * @param append do you want to append to an existing table, default is false
      * @param partition partition table by specified value. This is required when wanting to insert timestamps
@@ -80,6 +81,7 @@ class QuestDBRecorder(val tableName: String, dbPath: Path = Config.home / "quest
      */
     inline fun <reified T : PriceAction> record(
         feed: Feed,
+        tableName: String,
         timeframe: Timeframe = Timeframe.INFINITE,
         append: Boolean = false,
         partition: String = NONE,

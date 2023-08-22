@@ -19,39 +19,22 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.brokers.Account
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.MarginAccount
-import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
-import org.roboquant.feeds.*
-import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
-import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
-import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
-import org.roboquant.orders.Order
 import org.roboquant.orders.summary
-import org.roboquant.policies.BasePolicy
 import org.roboquant.policies.FlexPolicy
-import org.roboquant.policies.SignalResolution
-import org.roboquant.policies.resolve
-import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
-import org.roboquant.strategies.Signal
-import java.io.File
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.io.path.div
-import kotlin.system.measureTimeMillis
-import kotlin.test.assertEquals
 
 fun multiCurrency() {
     val feed = CSVFeed("data/US") {
@@ -81,40 +64,6 @@ fun multiCurrency() {
     println(broker.account.openOrders.summary())
 }
 
-fun multiRun() {
-    val feed = AvroFeed.sp500()
-    val logger = LastEntryLogger()
-
-    for (fast in 10..20..2) {
-        for (slow in fast * 2..fast * 4..4) {
-            val strategy = EMAStrategy(fast, slow)
-            val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
-            roboquant.run(feed, name = "run $fast-$slow")
-        }
-    }
-    val maxEntry = logger.getMetric("account.equity").flatten().max()
-    println(maxEntry)
-}
-
-suspend fun walkForwardParallel() {
-    val feed = AvroFeed.sp500()
-    val logger = LastEntryLogger()
-    val jobs = ParallelJobs()
-
-    feed.timeframe.split(2.years).forEach {
-        val strategy = EMAStrategy()
-        val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
-        jobs.add {
-            roboquant.runAsync(feed, name = "run-$it")
-        }
-    }
-
-    jobs.joinAll() // Make sure we wait for all jobs to finish
-    val avgEquity = logger.getMetric("account.equity").flatten().average()
-    println(avgEquity)
-}
-
-
 fun testingStrategies() {
     val strategy = EMAStrategy()
     val roboquant = Roboquant(strategy)
@@ -135,100 +84,6 @@ fun testingStrategies() {
         roboquant.run(feed, test)
     }
 
-}
-
-
-fun signalsOnly() {
-    class MyPolicy : BasePolicy(prefix = "") {
-
-        init {
-            enableMetrics = true
-        }
-
-        override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
-            for (signal in signals) {
-                record("signal.${signal.asset.symbol}", signal.rating.value)
-            }
-            return emptyList()
-        }
-
-    }
-
-    val feed = AvroFeed("/tmp/us_full_v3.0.avro")
-    val logger = MemoryLogger()
-
-    val strategy = CombinedStrategy(
-        EMAStrategy.PERIODS_50_200,
-        EMAStrategy.PERIODS_12_26
-    )
-
-    val policy = MyPolicy().resolve(SignalResolution.NO_CONFLICTS)
-
-    val roboquant = Roboquant(strategy, policy = policy, logger = logger)
-    roboquant.run(feed, Timeframe.past(5.years))
-}
-
-
-fun simple() {
-    val strategy = EMAStrategy()
-    val feed = AvroFeed.sp500()
-    val roboquant = Roboquant(strategy)
-    roboquant.run(feed)
-    println(roboquant.broker.account.fullSummary())
-}
-
-
-fun aggregator() {
-    val forex = AvroFeed.forex()
-    val feed = AggregatorFeed(forex, 15.minutes)
-    feed.apply<PriceAction> { _, time ->
-        println(time)
-    }
-}
-
-
-fun forexRun() {
-    val feed = AvroFeed.forex()
-    Currency.increaseDigits(3)
-    val rq = Roboquant(EMAStrategy(), AccountMetric(), broker = SimBroker(pricingEngine = NoCostPricingEngine()))
-    rq.run(feed, timeframe = Timeframe.parse("2022-01-03", "2022-02-10"))
-
-    for (trade in rq.broker.account.trades) {
-        val tf = Timeframe(trade.time, trade.time, true)
-        val pricebar = feed.filter<PriceAction>(timeframe = tf).firstOrNull { it.second.asset == trade.asset }
-        if (pricebar == null) {
-            println(trade)
-            println(feed.filter<PriceAction>(timeframe = tf))
-            throw RoboquantException("couldn't find trade action")
-        } else {
-            assertEquals(pricebar.second.getPrice(), trade.price)
-        }
-    }
-}
-
-
-fun profileTest() {
-    val feed = AvroFeed.sp500()
-    val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = SilentLogger())
-    rq.run(feed)
-}
-
-
-fun performanceTest() {
-    val feed = AvroFeed(Config.home / "all_1962_2023.avro")
-    repeat(3) {
-        val t = measureTimeMillis {
-            val jobs = ParallelJobs()
-            repeat(4) {
-                jobs.add {
-                    val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = SilentLogger())
-                    rq.run(feed)
-                }
-            }
-            jobs.joinAllBlocking()
-        }
-        println(t)
-    }
 }
 
 
@@ -274,41 +129,13 @@ fun cfd() {
 }
 
 
-fun feed() {
-    val tf = Timeframe.past(1.years)
-    val template = Asset("BTCBUSD", AssetType.CRYPTO, currency = Currency.getInstance("BUSD"))
-    val feed = RandomWalkFeed(tf, 1.seconds, template = template, nAssets = 1, generateBars = false)
-    val t = measureTimeMillis {
-        AvroFeed.record(feed, "/tmp/orig.avro")
-    }
-    val f = File("/tmp/orig.avro")
-    println(t)
-    println(f.length()/1_000_000)
-
-    val t2 = measureTimeMillis {
-        AvroFeed("/tmp/orig.avro")
-    }
-    println(t2)
-}
-
-
-
-suspend fun main() {
+fun main() {
     Config.printInfo()
 
     when ("FEED") {
-        "FEED" -> feed()
-        "SIMPLE" -> simple()
-        "MULTI_RUN" -> multiRun()
-        "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()
-        "SIGNALS" -> signalsOnly()
-        "FOREX_RUN" -> forexRun()
-        "PROFILE" -> profileTest()
-        "PERFORMANCE" -> performanceTest()
         "CFD" -> cfd()
-        "AGG" -> aggregator()
     }
 
 }

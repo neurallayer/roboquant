@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds.avro
+package org.roboquant.avro
 
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeSpan

@@ -21,18 +21,14 @@ package org.roboquant.samples
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.assets
 import org.roboquant.common.*
-import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
-import org.roboquant.feeds.toList
 import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRExchangeRates
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
 import org.roboquant.orders.BracketOrder
 import org.roboquant.orders.MarketOrder
-import java.time.DayOfWeek
-import java.time.LocalDate
 
 fun exchangeRates() {
     val exchangeRates = IBKRExchangeRates()
@@ -142,32 +138,6 @@ fun historicFeed() {
 }
 
 
-fun retrieveBatch() {
-    val feed = IBKRHistoricFeed()
-    val symbols = listOf("ABN", "ASML", "KPN")
-    val exchange = Exchange.AEB
-    val assets = symbols.map { Asset(it, AssetType.STOCK, "EUR", exchange.exchangeCode) }
-    var start = LocalDate.parse("2020-01-02")
-    val weekend = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
-
-    repeat(200) {
-        if (start.dayOfWeek !in weekend) {
-            val closingTime = exchange.getClosingTime(start) + 6.hours
-            feed.retrieve(assets, closingTime, "1 D", "1 min")
-            feed.waitTillRetrieved()
-            Thread.sleep(2000)
-
-            println("events=${feed.toList().size} timeline=${feed.timeline.distinct().size} tf=${feed.timeframe.end}")
-        }
-        start = start.plusDays(1)
-    }
-
-    println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
-    feed.disconnect()
-
-    AvroFeed.record(feed, "/tmp/1_minute_aeb.avro")
-}
-
 
 fun historicFeed2() {
     val feed = IBKRHistoricFeed()
@@ -209,7 +179,6 @@ fun main() {
         "HISTORIC" -> historicFeed()
         "HISTORIC2" -> historicFeed2()
         "HISTORIC3" -> historicFuturesFeed()
-        "BATCH" -> retrieveBatch()
         "PLACE_ORDER" -> placeOrder()
     }
 

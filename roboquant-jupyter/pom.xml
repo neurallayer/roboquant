@@ -52,6 +52,12 @@
         <dependency>
             <groupId>org.roboquant</groupId>
             <artifactId>roboquant-charts</artifactId>
+            <version>${version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.roboquant</groupId>
+            <artifactId>roboquant-avro</artifactId>
+            <version>${version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

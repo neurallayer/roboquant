@@ -27,7 +27,7 @@ import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.avro.AssetSerializer.deserialize
+import org.roboquant.feeds.util.AssetSerializer.deserialize
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.div

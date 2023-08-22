@@ -53,6 +53,7 @@
 
     <modules>
         <module>roboquant</module>
+        <module>roboquant-avro</module>
         <module>roboquant-charts</module>
         <module>roboquant-ta</module>
         <module>roboquant-jupyter</module>
@@ -468,12 +469,7 @@
             <dependency>
                 <artifactId>roboquant</artifactId>
                 <groupId>org.roboquant</groupId>
-                <version>2.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <artifactId>roboquant-charts</artifactId>
-                <groupId>org.roboquant</groupId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>${version}</version>
             </dependency>
             <!-- end standard versions -->
         </dependencies>

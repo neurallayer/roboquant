@@ -17,12 +17,12 @@
 package org.roboquant.jupyter
 
 import org.roboquant.Roboquant
+import org.roboquant.avro.AvroFeed
 import org.roboquant.charts.Chart
 import org.roboquant.charts.PriceBarChart
 import org.roboquant.charts.TimeSeriesChart
 import org.roboquant.common.Config
 import org.roboquant.common.months
-import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.EMAStrategy
 

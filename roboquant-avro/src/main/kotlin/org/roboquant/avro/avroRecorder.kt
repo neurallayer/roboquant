@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds.avro
+package org.roboquant.avro
 
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.avro.AssetSerializer.serialize
+import org.roboquant.feeds.util.AssetSerializer.serialize
 import java.io.File
 import kotlin.io.path.Path
 

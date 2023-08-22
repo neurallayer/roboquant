@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds.avro
+package org.roboquant.avro
 
 import org.apache.avro.file.DataFileReader
 import org.apache.avro.generic.GenericDatumReader

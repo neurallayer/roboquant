@@ -18,12 +18,10 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.charts.MetricsReport
-import org.roboquant.common.Config
-import org.roboquant.feeds.avro.AvroFeed
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.metrics.ReturnsMetric2
 import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.strategies.EMAStrategy
-import kotlin.io.path.div
 
 
 fun main() {
@@ -32,8 +30,7 @@ fun main() {
         ReturnsMetric2(),
         ScorecardMetric()
     )
-    val path = Config.home / "all_1962_2023.avro"
-    val feed = AvroFeed(path)
+    val feed = RandomWalkFeed.lastYears(5)
     rq.run(feed)
     val report = MetricsReport(rq)
     report.toHTMLFile("/tmp/test.html")

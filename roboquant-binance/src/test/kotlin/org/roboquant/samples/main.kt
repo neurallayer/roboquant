@@ -23,55 +23,15 @@ import org.roboquant.Roboquant
 import org.roboquant.binance.BinanceHistoricFeed
 import org.roboquant.binance.BinanceLiveFeed
 import org.roboquant.binance.Interval
-import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.common.*
-import org.roboquant.feeds.avro.AvroFeed
+import org.roboquant.common.Amount
+import org.roboquant.common.Timeframe
+import org.roboquant.common.minutes
 import org.roboquant.feeds.toList
 import org.roboquant.loggers.ConsoleLogger
-import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
-
-fun recordBinanceFeed() {
-    val feed = BinanceHistoricFeed()
-    println(feed.availableAssets.summary())
-    val twoYears = Timeframe.parse("2020-01-01", "2022-10-01")
-    for (period in twoYears.split(12.hours)) {
-        feed.retrieve("BTCUST", "ETHUST", timeframe = period, interval = Interval.ONE_MINUTE)
-        println("$period ${feed.timeline.size}")
-        Thread.sleep(10) // Sleep a bit to avoid hitting API limitations
-    }
-
-    // Now store as Avro file
-    val userHomeDir = System.getProperty("user.home")
-    val fileName = "$userHomeDir/tmp/crypto_2years.avro"
-    AvroFeed.record(feed, fileName)
-
-    // Some sanity checks if we stored what we captured
-    val feed2 = AvroFeed(fileName)
-    require(feed2.assets.size == feed.assets.size)
-    println("done")
-}
-
-fun useBinanceFeed() {
-    val userHomeDir = System.getProperty("user.home")
-    val fileName = userHomeDir / "tmp" / "crypto_2years.avro"
-    val feed = AvroFeed(fileName)
-
-    val initialDeposit = Amount("UST", 100_000).toWallet()
-    val marginAccount = MarginAccount()
-    val policy = FlexPolicy {
-        shorting = true
-        fractions = 4
-    }
-    val broker = SimBroker(initialDeposit, accountModel = marginAccount)
-    val roboquant = Roboquant(EMAStrategy.PERIODS_5_15, AccountMetric(), broker = broker, policy = policy)
-    roboquant.run(feed)
-    println(roboquant.broker.account.summary())
-}
-
 
 fun binanceLiveFeed() {
     val feed = BinanceLiveFeed()
@@ -116,8 +76,6 @@ fun binanceBackTest() {
 fun main() {
 
     when ("WEB") {
-        "RECORD" -> recordBinanceFeed()
-        "USE" -> useBinanceFeed()
         "LIVE" -> binanceLiveFeed()
         "HISTORIC" -> binanceBackTest()
         "FORWARD" -> binanceForwardTest()

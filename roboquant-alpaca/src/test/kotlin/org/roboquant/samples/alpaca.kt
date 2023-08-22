@@ -19,16 +19,16 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.alpaca.*
+import org.roboquant.alpaca.AlpacaBroker
+import org.roboquant.alpaca.AlpacaHistoricFeed
+import org.roboquant.alpaca.AlpacaLiveFeed
+import org.roboquant.alpaca.PriceActionType
 import org.roboquant.common.*
-import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.toList
 import org.roboquant.loggers.InfoLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
-import java.time.Instant
-import kotlin.io.path.div
 
 
 private val symbols = listOf(
@@ -106,79 +106,6 @@ private fun alpacaTradeStocks() {
 }
 
 
-/**
- * Alpaca historic feed example where we retrieve 1-minutes price-bars in batches of 1 day for 100 days.
- */
-private fun alpacaHistoricFeed() {
-    val feed = AlpacaHistoricFeed()
-    val tf = Timeframe.past(100.days) - 15.minutes
-    tf.split(1.days).forEach {
-        feed.retrieveStockPriceBars("AAPL", "IBM", timeframe = it, barPeriod = BarPeriod.MINUTE)
-        println("timeline size is ${feed.timeline.size}")
-
-        // Sleep a little to not exceed API call limits
-        Thread.sleep(1000)
-    }
-    println("total timeframe is ${feed.timeframe}")
-
-    // store the result in an Avro feed for future usage
-    AvroFeed.record(feed, "/tmp/alpaca.avro")
-}
-
-/**
- * Alpaca historic feed
- */
-private fun alpacaSP500PriceBar() {
-    val feed = AlpacaHistoricFeed()
-    val now = Instant.now()
-    val tf = Timeframe(Instant.parse("2000-01-01T00:00:00Z"), now)
-
-    val feedSymbols = feed.availableAssets.symbols
-    val symbols = Universe.sp500.getAssets(now).symbols.filter { it in feedSymbols }
-    println("${symbols.size} symbols found")
-
-
-    symbols.forEach {
-        feed.retrieveStockPriceBars(it, timeframe = tf, barPeriod = BarPeriod.DAY)
-        println("symbol=$it")
-
-        // Sleep a little to not exceed API call limits
-        Thread.sleep(200)
-    }
-
-    println("total timeframe is ${feed.timeframe}")
-
-    // save the results in an Avro feed format for future usage
-    val fileName = Config.home / "sp500_pricebar_v5.0.avro"
-    AvroFeed.record(feed, fileName.toString())
-}
-
-/**
- * Alpaca historic feed
- */
-private fun alpacaSP500PriceQuote() {
-    val feed = AlpacaHistoricFeed()
-    val now = Instant.now()
-    val tf = Timeframe.parse("2022-11-14T18:00:00Z", "2022-11-14T18:05:00Z") // five minutes of data
-
-    val feedSymbols = feed.availableAssets.symbols
-    val symbols = Universe.sp500.getAssets(now).symbols.filter { it in feedSymbols }
-    println("${symbols.size} symbols found")
-
-    symbols.forEach {
-        feed.retrieveStockQuotes(it, timeframe = tf)
-        println("symbol=$it")
-
-        // Sleep a little to not exceed API call limits
-        Thread.sleep(200)
-    }
-
-    println("total timeframe is ${feed.timeframe}")
-
-    // save the results in an Avro feed format for future usage
-    val fileName = Config.home / "sp500_pricequote_v5.0.avro"
-    AvroFeed.record(feed, fileName.toString())
-}
 
 
 private fun alpacaHistoricFeed2() {
@@ -217,13 +144,7 @@ fun main() {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
         "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()
-        "ALPACA_HISTORIC_FEED" -> alpacaHistoricFeed()
         "ALPACA_HISTORIC_FEED2" -> alpacaHistoricFeed2()
-        "ALPACA_HISTORIC_SP500_PRICEBAR" -> alpacaSP500PriceBar()
-        "ALPACA_HISTORIC_SP500_PRICEQUOTE" -> alpacaSP500PriceQuote()
         "ALPACA_PAPER_TRADE_STOCKS" -> alpacaPaperTradeStocks()
-        "CREATE_SAMPLE_DATA" -> {
-            alpacaSP500PriceBar(); alpacaSP500PriceQuote()
-        }
     }
 }

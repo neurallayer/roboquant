@@ -108,7 +108,9 @@ internal class JupyterCore(
     override fun Builder.onLoaded() {
         val version = options["version"] ?: Config.info.version
         logger.debug { "version=$version" }
-        val deps = mutableSetOf("org.roboquant:roboquant-ta:$version")
+        val deps = mutableSetOf(
+            "org.roboquant:roboquant-ta:$version"
+        )
         val load = options["modules"] ?: ""
         logger.debug { "modules=$load" }
         load.split(':').forEach {
@@ -141,6 +143,7 @@ internal class JupyterCore(
             "java.time.Instant",
             "java.time.temporal.ChronoUnit",
             "org.roboquant.ta.*",
+            "org.roboquant.avro.*",
         )
 
         // Improve output of exceptions
