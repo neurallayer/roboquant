@@ -72,36 +72,38 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     /**
      * Get all the recorded runs in this logger
      */
-    val runs: Set<String>
+    override val runs: Set<String>
         get() = history.keys.toSortedSet()
 
     /**
      * Get the unique list of metric names that have been captured
      */
-    override val metricNames: List<String>
-        get() = history.values.asSequence().flatten().map { it.metrics.keys }.flatten().distinct().sorted().toList()
+    override fun getMetricNames(run: String) : Set<String> {
+        val values = history[run] ?: return emptySet()
+        return values.map { it.metrics.keys }.flatten().toSortedSet()
+    }
 
     /**
-     * Get results for a metric specified by its [name]. It will include all the runs for that metric.
+     * Get results for a metric specified by its [metricName]. It will include all the runs for that metric.
      */
-    override fun getMetric(name: String): Map<String, TimeSeries> {
+    override fun getMetric(metricName: String): Map<String, TimeSeries> {
         val result = mutableMapOf<String, TimeSeries>()
         for (run in history.keys) {
-            val ts = getMetric(name, run)
+            val ts = getMetric(metricName, run)
             if (ts.isNotEmpty()) result[run] = ts
         }
         return result.toSortedMap()
     }
 
     /**
-     * Get results for a metric specified by its [name] for a single [run]
+     * Get results for a metric specified by its [metricName] for a single [run]
      */
-    override fun getMetric(name: String, run: String): TimeSeries {
+    override fun getMetric(metricName: String, run: String): TimeSeries {
         val entries = history[run] ?: return TimeSeries(emptyList())
         val values = mutableListOf<Double>()
         val times = mutableListOf<Instant>()
         entries.forEach {
-            val e = it.metrics[name]
+            val e = it.metrics[metricName]
             if (e != null) {
                 values.add(e)
                 times.add(it.time)

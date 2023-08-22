@@ -34,15 +34,15 @@ internal class MemoryLoggerTest {
     @Test
     fun memoryLogger() {
         val logger = MemoryLogger(showProgress = false)
-        assertTrue(logger.metricNames.isEmpty())
+        assertTrue(logger.getMetricNames().isEmpty())
 
         val metrics = TestData.getMetrics()
 
         logger.start("test", Timeframe.INFINITE)
         logger.log(metrics, Instant.now(), "test")
         logger.end("test")
-        assertFalse(logger.metricNames.isEmpty())
-        assertEquals(metrics.size, logger.metricNames.size)
+        assertFalse(logger.getMetricNames().isEmpty())
+        assertEquals(metrics.size, logger.getMetricNames().size)
 
         val t = logger.getMetric(metrics.keys.first()).latestRun()
         assertEquals(1, t.size)

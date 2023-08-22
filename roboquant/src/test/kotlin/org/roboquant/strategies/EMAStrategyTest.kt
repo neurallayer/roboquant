@@ -33,7 +33,7 @@ internal class EMAStrategyTest {
         strategy.recording = true
         val roboquant = Roboquant(strategy, logger = MemoryLogger(false))
         roboquant.run(TestData.feed, name = "test")
-        val names = roboquant.logger.metricNames
+        val names = roboquant.logger.getMetricNames()
 
         assertTrue(names.isNotEmpty())
         val metrics = roboquant.logger.getMetric(names.first()).latestRun()

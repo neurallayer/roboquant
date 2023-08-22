@@ -29,7 +29,7 @@ internal class SilentLoggerTest {
         val logger = SilentLogger()
         logger.log(TestData.getMetrics(), Instant.now(), "test")
         assertEquals(1, logger.events)
-        assertTrue(logger.metricNames.isEmpty())
+        assertTrue(logger.getMetricNames().isEmpty())
         assertTrue(logger.getMetric("key1").isEmpty())
 
         logger.log(TestData.getMetrics(), Instant.now(), "test")

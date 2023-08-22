@@ -48,6 +48,13 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         engine = CairoEngine(config)
     }
 
+    /**
+     * Load previous runs already in the database, so they are accessible via [getMetric]
+     */
+    fun loadPreviousRuns() {
+        tables.addAll(engine.tables())
+    }
+
     override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (results.isEmpty()) return
         if (! tables.contains(run)) {
@@ -67,9 +74,12 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
 
     }
 
-    override fun getMetric(name: String, run: String): TimeSeries {
+    /**
+     * Get a metric for a specific [run]
+     */
+    override fun getMetric(metricName: String, run: String): TimeSeries {
         val result = mutableListOf<Observation>()
-        engine.query("select * from '$run' where metric='$name'") {
+        engine.query("select * from '$run' where metric='$metricName'") {
             while (hasNext()) {
                 val r = this.record
                 val o = Observation(ofEpochMicro(r.getTimestamp(1)), r.getDouble(0))
@@ -79,10 +89,31 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         return TimeSeries(result)
     }
 
+    /**
+     * get a specific metric for all runs
+     */
+    override fun getMetric(metricName: String): Map<String, TimeSeries> {
+        val result = mutableMapOf<String, TimeSeries>()
+        for (table in tables) {
+            val v = getMetric(metricName, table)
+            if (v.isNotEmpty()) result[table] = v
+        }
+        return result
+    }
+
     override fun start(run: String, timeframe: Timeframe) {
         // engine.update("drop table $run")
         tables.remove(run)
     }
+
+
+    override fun getMetricNames(run: String): Set<String> {
+        return engine.distictSymbol(run, "name").toSortedSet()
+    }
+
+
+    override val runs: Set<String>
+        get() = engine.tables().toSet()
 
     private fun createTable(name: String) {
         engine.update(

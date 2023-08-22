@@ -45,7 +45,7 @@ internal class ReturnsMetricTest {
         val feed = RandomWalkFeed.lastYears(2)
         val rq = Roboquant(EMAStrategy(), metric, logger = MemoryLogger(showProgress = false))
         rq.run(feed)
-        assertContains(rq.logger.metricNames, "returns.sharperatio")
+        assertContains(rq.logger.getMetricNames(), "returns.sharperatio")
     }
 
     @Test

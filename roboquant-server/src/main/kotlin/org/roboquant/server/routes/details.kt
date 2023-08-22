@@ -62,7 +62,7 @@ private fun FlowContent.echarts(elemId: String, width: String = "100%", height: 
 }
 
 private fun FlowContent.metricForm(target: String, run: String, info: RunInfo) {
-    val metricNames = info.roboquant.logger.metricNames
+    val metricNames = info.roboquant.logger.getMetricNames()
     form {
         hxPost = "/echarts"
         hxTarget = target

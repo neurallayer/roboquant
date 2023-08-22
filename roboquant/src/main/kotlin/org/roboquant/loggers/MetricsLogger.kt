@@ -39,27 +39,50 @@ interface MetricsLogger : Lifecycle {
     fun log(results: Map<String, Double>, time: Instant, run: String)
 
     /**
-     * Get all the logged data for a specific metric identified by its [name].
+     * Get all the logged data for a specific [metricName].
      * The result is a Map with the key being the run-name and the value being the [TimeSeries].
      *
      * This is optional to implement for a MetricsLogger since not all metric-loggers store metrics.
      * Use [metricNames] to see which metrics are available.
      */
-    fun getMetric(name: String): Map<String, TimeSeries> = emptyMap()
+    fun getMetric(metricName: String): Map<String, TimeSeries> = buildMap {
+        runs.forEach {
+            val v = getMetric(metricName,it)
+            if (v.isNotEmpty()) put(it, v)
+        }
+    }
 
     /**
-     * Get the metric identified by its [name] for a single [run]. The result is a [TimeSeries].
+     * Get the metric identified by its [metricName] for a single [run].
+     * The result is a [TimeSeries].
      *
-     *  This is optional to implement for a MetricsLogger since not all metric-loggers store metrics.
-     *  Use [metricNames] to see which metrics are available.
+     * This is optional to implement for a MetricsLogger since not all metric-loggers store metrics.
+     * Use [getMetricNames] to see which metrics are available.
      */
-    fun getMetric(name: String, run: String): TimeSeries = getMetric(name)[run] ?: TimeSeries(emptyList())
+    fun getMetric(metricName: String, run: String): TimeSeries = TimeSeries(emptyList())
 
     /**
-     * The list of metric names that are available and can be retrieved with the [getMetric].
+     * The set of metric names that are available and can be retrieved with the [getMetric].
+     * This across all runs and can be an extensive operation.
      */
-    val metricNames: List<String>
-        get() = emptyList()
+    fun getMetricNames(): Set<String> = buildSet {
+        runs.forEach {
+            val v = getMetricNames(it)
+            addAll(v)
+        }
+    }
+
+
+    /**
+     * Get all available metric-names for a certain [run]
+     */
+    fun getMetricNames(run: String): Set<String> = emptySet()
+
+    /**
+     * The list of runs that are available and can be retrieved with the [getMetric].
+     */
+    val runs: Set<String>
+        get() = emptySet()
 
 }
 

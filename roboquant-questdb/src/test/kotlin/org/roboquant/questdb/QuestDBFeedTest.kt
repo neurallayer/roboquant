@@ -53,6 +53,7 @@ internal class QuestDBFeedTest {
         val feed1 = RandomWalkFeed(tf, nAssets = 1, template = Asset("ABC"))
         val feed2 = RandomWalkFeed(tf, nAssets = 1, template = Asset("XYZ"))
 
+        // Need to partition when adding out-of-order price actions
         recorder.record<PriceBar>(feed1, "pricebars3", partition = "YEAR")
         recorder.record<PriceBar>(feed2, "pricebars3", append = true)
 

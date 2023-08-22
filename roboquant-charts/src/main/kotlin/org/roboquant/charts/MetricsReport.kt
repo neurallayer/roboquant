@@ -41,7 +41,7 @@ class MetricsReport(
         get() = roboquant.logger
 
     private val charts
-        get() = logger.metricNames.map {
+        get() = logger.getMetricNames().map {
             {
                 val data = roboquant.logger.getMetric(it)
                 val chart = TimeSeriesChart(data)
@@ -92,7 +92,7 @@ class MetricsReport(
 
 
     private fun metricsToHTML(): String {
-        val metricsMap = logger.metricNames.map { it to logger.getMetric(it) }
+        val metricsMap = logger.getMetricNames().map { it to logger.getMetric(it) }
         val result = StringBuffer()
         for ((name, metrics) in metricsMap) {
             result += "<div class='flex-item'><table frame=void rules=rows class='table'><caption>$name</caption>"

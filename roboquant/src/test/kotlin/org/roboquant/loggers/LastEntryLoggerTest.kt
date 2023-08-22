@@ -32,15 +32,15 @@ internal class LastEntryLoggerTest {
 
         logger.log(metrics, Instant.now(), "test")
         logger.end("test")
-        assertTrue(logger.metricNames.isNotEmpty())
-        assertContains(logger.metricNames, metrics.keys.first())
+        assertTrue(logger.getMetricNames().isNotEmpty())
+        assertContains(logger.getMetricNames(), metrics.keys.first())
 
-        val m1 = logger.metricNames.first()
+        val m1 = logger.getMetricNames().first()
         val m = logger.getMetric(m1).latestRun()
         assertTrue(m.isNotEmpty())
 
         logger.reset()
-        assertTrue(logger.metricNames.isEmpty())
+        assertTrue(logger.getMetricNames().isEmpty())
     }
 
     @Test
@@ -55,9 +55,9 @@ internal class LastEntryLoggerTest {
         }
 
         logger.end("test")
-        assertTrue(logger.metricNames.isNotEmpty())
+        assertTrue(logger.getMetricNames().isNotEmpty())
 
-        val m1 = logger.metricNames.first()
+        val m1 = logger.getMetricNames().first()
         val m = logger.getMetric(m1).latestRun()
         assertEquals(m.timeline.sorted(), m.timeline)
     }

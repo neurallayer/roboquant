@@ -49,6 +49,9 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
         }
     }
 
+    override val runs: Set<String>
+        get() = history.keys
+
     override fun start(run: String, timeframe: Timeframe) {
         history.remove(run)
         if (showProgress) progressBar.start(run, timeframe)
@@ -68,27 +71,29 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
     /**
      * Get the unique list of metric names that have been captured
      */
-    override val metricNames: List<String>
-        get() = history.values.map { it.keys }.flatten().distinct().sorted()
+    override fun getMetricNames(run: String) : Set<String> {
+        val values = history[run] ?: return emptySet()
+        return values.map { it.key }.distinct().toSortedSet()
+    }
 
     /**
-     * Get results for the metric specified by its [name].
+     * Get results for the metric specified by its [metricName].
      */
-    override fun getMetric(name: String): Map<String, TimeSeries> {
+    override fun getMetric(metricName: String): Map<String, TimeSeries> {
         val result = mutableMapOf<String, TimeSeries>()
         for (run in history.keys) {
-            val ts = getMetric(name, run)
+            val ts = getMetric(metricName, run)
             if (ts.isNotEmpty()) result[run] = ts
         }
         return result
     }
 
     /**
-     * Get results for the metric specified by its [name].
+     * Get results for the metric specified by its [metricName].
      */
-    override fun getMetric(name: String, run: String): TimeSeries {
+    override fun getMetric(metricName: String, run: String): TimeSeries {
         val entries = history[run] ?: return TimeSeries(emptyList())
-        val v = entries[name]
+        val v = entries[metricName]
         val result = if (v == null) emptyList() else listOf(v)
         return TimeSeries(result)
     }

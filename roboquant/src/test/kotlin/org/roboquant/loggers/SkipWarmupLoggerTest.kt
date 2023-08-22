@@ -34,12 +34,12 @@ internal class SkipWarmupLoggerTest {
         repeat(9) {
             logger.log(metrics, Instant.now(), "test")
         }
-        assertTrue(logger.metricNames.isEmpty())
+        assertTrue(logger.getMetricNames().isEmpty())
 
         repeat(4) {
             logger.log(metrics, Instant.now(), "test")
         }
-        assertFalse(logger.metricNames.isEmpty())
+        assertFalse(logger.getMetricNames().isEmpty())
     }
 
 }
