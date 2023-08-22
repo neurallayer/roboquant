@@ -25,8 +25,8 @@ import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
 
 /**
- * Strategy using the Relative Strength MetadataProvider of an asset to generate signals. RSI measures the magnitude of recent
- * price changes to evaluate overbought or oversold conditions in the price of an asset.
+ * Strategy using the Relative Strength MetadataProvider of an asset to generate signals. RSI measures the magnitude
+ * of recent price changes to evaluate overbought or oversold conditions in the price of an asset.
  *
  * If the RSI raises above the configured high threshold (default 70), a sell signal will be generated. And if the RSI
  * falls below the configured low threshold (default 30), a buy signal will be generated.
