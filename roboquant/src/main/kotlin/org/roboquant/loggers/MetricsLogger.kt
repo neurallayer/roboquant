@@ -43,7 +43,7 @@ interface MetricsLogger : Lifecycle {
      * The result is a Map with the key being the run-name and the value being the [TimeSeries].
      *
      * This is optional to implement for a MetricsLogger since not all metric-loggers store metrics.
-     * Use [metricNames] to see which metrics are available.
+     * Use [getMetricNames] to see which metrics are available.
      */
     fun getMetric(metricName: String): Map<String, TimeSeries> = buildMap {
         runs.forEach {
