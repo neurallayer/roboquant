@@ -4,6 +4,6 @@ The roboquant-cypto module contains the additional functionality to integrate wi
 
 # Package org.roboquant.binance
 
-Access the Binance broker and marketdata APIs
+Access the Binance broker and their marketdata APIs.
 
 

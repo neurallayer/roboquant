@@ -13,14 +13,12 @@ comes with several feeds out of the box:
 - csv: for reading historic prices in CSV files
 - random walk: for simulating random walks
 - test: for testing against a predefined set of prices
-- avro: for creating and reading historic prices in AVRO files
 
-If you want to use other brokers and feeds, have a look at the roboquant-extra and roboquant-crypto modules.
+If you want to use other brokers and feeds, have a look at the other `roboquant-...` modules.
 
 # Package org.roboquant.strategies
 
-Strategies contain the logic that interpreted the events in a feed and generates zero or more signals. So a strategy
-doesn't directly generate an Order (that is left to a Policy).
+Contains the `Strategy` interface and several inplementations
 
 
 # Package org.roboquant.policies
@@ -29,10 +27,9 @@ Policies receive zero or more signals and based on these signals create orders.
 
 # Package org.roboquant.brokers
 
-This package has the Broker interface and contains a single implementation, the SimBroker to simulate a broker
-during back tests.
+This package has the `Broker` interface and contains a single implementation, the SimBroker to simulate a broker during back tests.
 
-If you want to use live brokers and paper trading, have a look at the roboquant-extra and roboquant-crypto modules.
+If you want to use live brokers and paper trading, have a look at one of the other modules.
 
 # Package org.roboquant.metrics
 
