@@ -183,7 +183,7 @@ class TaLib(var core: Core = Core()) {
         adOsc(serie.high, serie.low, serie.close, serie.volume, fastPeriod, slowPeriod, previous)
 
     /**
-     * Calculate **Average Directional Movement Index** using the provided input data and by default return the most recent result.
+     * Calculate **Average Directional Movement MetadataProvider** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
@@ -212,7 +212,7 @@ class TaLib(var core: Core = Core()) {
         adx(serie.high, serie.low, serie.close, timePeriod, previous)
 
     /**
-     * Calculate **Average Directional Movement Index Rating** using the provided input data and by default return the most recent result.
+     * Calculate **Average Directional Movement MetadataProvider Rating** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
@@ -568,7 +568,7 @@ class TaLib(var core: Core = Core()) {
         bop(serie.open, serie.high, serie.low, serie.close, previous)
 
     /**
-     * Calculate **Commodity Channel Index** using the provided input data and by default return the most recent result.
+     * Calculate **Commodity Channel MetadataProvider** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
@@ -2949,7 +2949,7 @@ class TaLib(var core: Core = Core()) {
     }
 
     /**
-     * Calculate **Directional Movement Index** using the provided input data and by default return the most recent result.
+     * Calculate **Directional Movement MetadataProvider** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
@@ -3717,7 +3717,7 @@ class TaLib(var core: Core = Core()) {
     fun max(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = max(serie.close, timePeriod, previous)
 
     /**
-     * Calculate **Index of highest value over a specified period** using the provided input data and by default return the most recent result.
+     * Calculate **MetadataProvider of highest value over a specified period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
@@ -3774,7 +3774,7 @@ class TaLib(var core: Core = Core()) {
     fun medPrice(serie: PriceBarSeries, previous: Int = 0) = medPrice(serie.high, serie.low, previous)
 
     /**
-     * Calculate **Money Flow Index** using the provided input data and by default return the most recent result.
+     * Calculate **Money Flow MetadataProvider** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
@@ -3896,7 +3896,7 @@ class TaLib(var core: Core = Core()) {
     fun min(serie: PriceBarSeries, timePeriod: Int = 30, previous: Int = 0) = min(serie.close, timePeriod, previous)
 
     /**
-     * Calculate **Index of lowest value over a specified period** using the provided input data and by default return the most recent result.
+     * Calculate **MetadataProvider of lowest value over a specified period** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
@@ -4367,7 +4367,7 @@ class TaLib(var core: Core = Core()) {
         rocR100(serie.close, timePeriod, previous)
 
     /**
-     * Calculate **Relative Strength Index** using the provided input data and by default return the most recent result.
+     * Calculate **Relative Strength MetadataProvider** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *
@@ -4781,7 +4781,7 @@ class TaLib(var core: Core = Core()) {
     ) = stochF(serie.high, serie.low, serie.close, fastKPeriod, fastDPeriod, fastDMA, previous)
 
     /**
-     * Calculate **Stochastic Relative Strength Index** using the provided input data and by default return the most recent result.
+     * Calculate **Stochastic Relative Strength MetadataProvider** using the provided input data and by default return the most recent result.
      * You can set [previous] if you don't want the most recent result.
      * If there is insufficient data to calculate the indicators, an [InsufficientData] will be thrown.
      *

@@ -21,7 +21,7 @@ package org.roboquant.samples
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.assets
 import org.roboquant.common.*
-import org.roboquant.feeds.AvroFeed
+import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList

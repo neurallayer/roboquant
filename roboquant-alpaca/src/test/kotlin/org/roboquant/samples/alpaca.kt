@@ -21,7 +21,7 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.alpaca.*
 import org.roboquant.common.*
-import org.roboquant.feeds.AvroFeed
+import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.toList
 import org.roboquant.loggers.InfoLogger
 import org.roboquant.metrics.AccountMetric
@@ -159,7 +159,7 @@ private fun alpacaSP500PriceBar() {
 private fun alpacaSP500PriceQuote() {
     val feed = AlpacaHistoricFeed()
     val now = Instant.now()
-    val tf = Timeframe.parse("2022-11-14T18:00:00Z", "2022-11-14T18:05:00Z") // 5 minutes of data
+    val tf = Timeframe.parse("2022-11-14T18:00:00Z", "2022-11-14T18:05:00Z") // five minutes of data
 
     val feedSymbols = feed.availableAssets.symbols
     val symbols = Universe.sp500.getAssets(now).symbols.filter { it in feedSymbols }

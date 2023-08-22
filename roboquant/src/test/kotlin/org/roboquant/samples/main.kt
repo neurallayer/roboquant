@@ -27,6 +27,7 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.*
+import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
@@ -291,30 +292,12 @@ fun feed() {
 }
 
 
-fun feed2() {
-    val tf = Timeframe.past(1.months)
-    println(tf)
-    val template = Asset("BTCBUSD", AssetType.CRYPTO, currency = Currency.getInstance("BUSD"))
-    val feed = RandomWalkFeed(tf, 1.seconds, template = template, nAssets = 1, generateBars = false)
-    val t = measureTimeMillis {
-        AvroFeed2.record(feed, "/tmp/new.avro", compression = true)
-    }
-    val f = File("/tmp/new.avro")
-    // println(t)
-    // println(f.length()/1_000_000)
-
-    val t2 = measureTimeMillis {
-        val feed = AvroFeed2("/tmp/new.avro", buildIndex = true)
-        println(feed.timeframe)
-    }
-    println(t2)
-}
 
 suspend fun main() {
     Config.printInfo()
 
     when ("FEED") {
-        "FEED" -> feed2()
+        "FEED" -> feed()
         "SIMPLE" -> simple()
         "MULTI_RUN" -> multiRun()
         "WALKFORWARD_PARALLEL" -> println(measureTimeMillis { walkForwardParallel() })

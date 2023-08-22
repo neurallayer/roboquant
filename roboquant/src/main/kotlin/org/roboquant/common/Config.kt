@@ -60,7 +60,7 @@ object Config {
     )
 
     /**
-     * Metadata about the build en environment
+     * MetadataProvider about the build en environment
      */
     val info: EnvInfo by lazy {
         val prop = Properties()

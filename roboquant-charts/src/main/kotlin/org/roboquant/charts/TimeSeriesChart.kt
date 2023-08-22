@@ -29,13 +29,6 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
- * Deprecated, use [TimeSeriesChart] instead
- */
-@Deprecated("Renamed to TimeSeriesChart", ReplaceWith("TimeSeriesChart", "org.roboquant.charts.TimeSeriesChart"))
-@Suppress("unused")
-typealias MetricChart = TimeSeriesChart
-
-/**
  * A TimeSeriesChart will plot a metric that is captured during one or more runs. If there is more than one time-series
  * found in the provided [data], each time-series will be plotted as a separate colored line.
  *

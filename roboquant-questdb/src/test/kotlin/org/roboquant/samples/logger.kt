@@ -17,25 +17,18 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.charts.MetricsReport
-import org.roboquant.common.Config
-import org.roboquant.feeds.avro.AvroFeed
-import org.roboquant.metrics.ReturnsMetric2
-import org.roboquant.metrics.ScorecardMetric
+import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.metrics.AccountMetric
+import org.roboquant.questdb.QuestDBMetricsLogger
 import org.roboquant.strategies.EMAStrategy
-import kotlin.io.path.div
 
 
 fun main() {
-    val rq = Roboquant(
-        EMAStrategy(),
-        ReturnsMetric2(),
-        ScorecardMetric()
-    )
-    val path = Config.home / "all_1962_2023.avro"
-    val feed = AvroFeed(path)
-    rq.run(feed)
-    val report = MetricsReport(rq)
-    report.toHTMLFile("/tmp/test.html")
-    println(rq.broker.account.summary())
+    val logger =  QuestDBMetricsLogger()
+    val feed = RandomWalkFeed.lastYears(1)
+    val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = logger)
+    rq.run(feed, name = "myrun")
+    val m = logger.getMetric("account.equity", "myrun")
+    println(m.size)
+    feed.close()
 }

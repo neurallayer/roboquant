@@ -129,7 +129,7 @@ class TaLibStrategy(initialCapacity: Int = 1) : RecordingStrategy(recording = tr
         }
 
         /**
-         * Strategy using the Relative Strength Index of an asset to generate signals. RSI measures the magnitude of
+         * Strategy using the Relative Strength MetadataProvider of an asset to generate signals. RSI measures the magnitude of
          * recent price changes to evaluate overbought or oversold conditions in the price of a stock or other asset.
          *
          * If the RSI rises above the configured high threshold (default 70), a sell signal will be generated. And if

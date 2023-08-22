@@ -189,7 +189,9 @@ operator fun DoubleArray.plus(a: DoubleArray): DoubleArray {
 fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 
 /**
- * Return the returns. The resulting array size will be 1 smaller than the original one. Formula used is:
+ * Return the returns.
+ * The resulting array size will be one smaller than the original.
+ * Formula used is:
  * ```
  * return = new/old - 1.0
  * ```
@@ -245,7 +247,9 @@ fun DoubleArray.indexOfMin(): Int {
 }
 
 /**
- * Return the growth rates. The resulting array size will be 1 smaller than the original one. Formula used is:
+ * Return the growth rates.
+ * The resulting array size will be one smaller than the original.
+ * Formula used is:
  * ```
  * growthRate = new/old
  * ```
@@ -259,7 +263,8 @@ fun DoubleArray.growthRates(): DoubleArray {
 
 
 /**
- * Return the log growth rates. The resulting array size will be 1 smaller than the original one.
+ * Return the log growth rates.
+ * The resulting array size will be one smaller than the original.
  * The used formula is:
  *```
  * logGrowthRate = ln(new/old)

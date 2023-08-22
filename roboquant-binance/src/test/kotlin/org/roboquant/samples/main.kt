@@ -26,7 +26,7 @@ import org.roboquant.binance.Interval
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
-import org.roboquant.feeds.AvroFeed
+import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.toList
 import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.metrics.AccountMetric

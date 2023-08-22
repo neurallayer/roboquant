@@ -23,7 +23,7 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Config
 import org.roboquant.common.Size
 import org.roboquant.common.percent
-import org.roboquant.feeds.AvroFeed
+import org.roboquant.feeds.avro.AvroFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
 import org.roboquant.metrics.AccountMetric

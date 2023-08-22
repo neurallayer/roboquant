@@ -74,6 +74,10 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * @suppress
      */
     companion object {
+
+        @Suppress("ConstPropertyName")
+        private const val serialVersionUID : Long = 129021321L
+
         /**
          * The minimum start date of a timeframe, being 1900-01-01T00:00:00Z
          */

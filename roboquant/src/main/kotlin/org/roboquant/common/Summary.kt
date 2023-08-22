@@ -100,7 +100,7 @@ class Summary(val content: String) {
 }
 
 /**
- * Create a summary for a collection of rows in which each row contains 1 or more columns
+ * Create a summary for a collection of rows in which each row contains one or more columns
  */
 fun Collection<List<Any>>.summary(name: String): Summary {
     val maxSizes = mutableMapOf<Int, Int>()

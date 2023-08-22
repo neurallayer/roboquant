@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.feeds
+package org.roboquant.feeds.avro
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.MethodOrderer.Alphanumeric
@@ -24,8 +24,9 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.TestData
 import org.roboquant.common.*
-import org.roboquant.feeds.AssetSerializer.deserialize
-import org.roboquant.feeds.AssetSerializer.serialize
+import org.roboquant.feeds.*
+import org.roboquant.feeds.avro.AssetSerializer.deserialize
+import org.roboquant.feeds.avro.AssetSerializer.serialize
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.play
@@ -60,6 +61,8 @@ class AvroFeedTest {
         var assets = mutableListOf<Asset>()
     }
 
+
+
     @Test
     fun avroStep1() {
         fileName = File(folder, "test.avro").path
@@ -70,10 +73,10 @@ class AvroFeedTest {
         assertTrue(File(fileName).isFile)
     }
 
+
     @Test
     fun avroStep2() {
         val feed2 = AvroFeed(Path(fileName))
-        assertTrue(File(fileName + AvroFeed.CACHE_SUFFIX).isFile)
         runBlocking {
             var past = Instant.MIN
             var cnt = 0
@@ -85,6 +88,27 @@ class AvroFeedTest {
             }
             assertEquals(size, cnt)
         }
+    }
+
+
+
+    @Test
+    fun cache() {
+        val fileName = File(folder, "test2.avro").path
+        val feed = TestData.feed
+        assets.addAll(feed.assets)
+        size = feed.toList().size
+        AvroFeed.record(feed, fileName)
+        assertTrue(File(fileName).isFile)
+
+
+        AvroFeed(Path(fileName), useCache = true)
+        val file = File(fileName + MetadataProvider.CACHE_SUFFIX)
+        assertTrue(file.isFile)
+        val index = MetadataProvider(Path(fileName))
+        index.clearCache()
+        assertFalse(file.exists())
+
     }
 
     @Test
