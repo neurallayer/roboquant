@@ -39,8 +39,6 @@ import org.roboquant.feeds.Event
  * @property period Over how many events to calculate the beta
  * @property priceType The type of price to use, default is "DEFAULT"
  * @property riskFreeReturn the risk-free return, 1% is 0.01. Default is 0.0
- * @property onlyAfterInitialTrade should we only start measuring after an initial trade has been executed, default is
- * false
  * @constructor
  */
 class AlphaBetaMetric(
@@ -48,7 +46,6 @@ class AlphaBetaMetric(
     private val period: Int,
     private val priceType: String = "DEFAULT",
     private val riskFreeReturn: Double = 0.0,
-    private val onlyAfterInitialTrade: Boolean = false
 ) : Metric {
 
     private val marketData = PriceSeries(period + 1)
@@ -58,38 +55,32 @@ class AlphaBetaMetric(
      * Based on the provided [account] and [event], calculate any metrics and return them.
      */
     override fun calculate(account: Account, event: Event): Map<String, Double> {
-        val action = event.prices[referenceAsset]
+        val action = event.prices[referenceAsset] ?: return emptyMap()
 
-        // Can we already start recording the measures, or do we have to wait for
-        // an initial trade?
-        val start = !onlyAfterInitialTrade || account.trades.isNotEmpty()
+        val price = action.getPrice(priceType)
+        marketData.add(price)
 
-        if (action !== null && start) {
-            val price = action.getPrice(priceType)
-            marketData.add(price)
+        val equity = account.equity
+        val value = account.convert(equity, time = event.time).value
+        portfolioData.add(value)
 
-            val equity = account.equity
-            val value = account.convert(equity, time = event.time).value
-            portfolioData.add(value)
+        if (marketData.isFull() && portfolioData.isFull()) {
+            val x1 = marketData.toDoubleArray()
+            val x2 = portfolioData.toDoubleArray()
 
-            if (marketData.isFull() && portfolioData.isFull()) {
-                val x1 = marketData.toDoubleArray()
-                val x2 = portfolioData.toDoubleArray()
+            val marketReturns = x1.returns()
+            val portfolioReturns = x1.returns()
 
-                val marketReturns = x1.returns()
-                val portfolioReturns = x1.returns()
+            val covariance = Covariance().covariance(portfolioReturns, marketReturns)
+            val variance = Variance().evaluate(marketReturns)
+            val beta = covariance / variance
 
-                val covariance = Covariance().covariance(portfolioReturns, marketReturns)
-                val variance = Variance().evaluate(marketReturns)
-                val beta = covariance / variance
-
-                val alpha =
-                    (x1.totalReturn() - riskFreeReturn) - beta * (x2.totalReturn() - riskFreeReturn)
-                return mapOf(
-                    "account.alpha" to alpha,
-                    "account.beta" to beta
-                )
-            }
+            val alpha =
+                (x1.totalReturn() - riskFreeReturn) - beta * (x2.totalReturn() - riskFreeReturn)
+            return mapOf(
+                "account.alpha" to alpha,
+                "account.beta" to beta
+            )
         }
         return emptyMap()
     }

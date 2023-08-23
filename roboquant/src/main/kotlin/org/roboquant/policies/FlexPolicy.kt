@@ -255,7 +255,7 @@ open class FlexPolicy(
     private operator fun Collection<Order>.contains(asset: Asset) = any { it.asset == asset }
 
     /**
-     * Record basic metrics: `actions`, `signals`, `orders.new`, `orders.open`, `orders.closed`,
+     * Record basic metrics: `actions`, `signals`, `orders.new`, `orders.open`,
      * `positions` and `buyingpower`.
      *
      * The main purpose is to better understand when the policy is not behaving as expected.
@@ -265,7 +265,6 @@ open class FlexPolicy(
         record("signals", signals.size)
         record("orders.new", orders.size)
         record("orders.open", account.openOrders.size)
-        record("orders.closed", account.closedOrders.size)
         record("positions", account.positions.size)
         record("buyingpower", account.buyingPower.value)
     }

@@ -18,6 +18,7 @@ package org.roboquant.questdb
 
 import io.questdb.cairo.CairoEngine
 import io.questdb.cairo.DefaultCairoConfiguration
+import io.questdb.griffin.SqlException
 import org.roboquant.common.*
 import org.roboquant.loggers.MetricsLogger
 import java.nio.file.Files
@@ -79,11 +80,13 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
      */
     override fun getMetric(metricName: String, run: String): TimeSeries {
         val result = mutableListOf<Observation>()
-        engine.query("select * from '$run' where metric='$metricName'") {
-            while (hasNext()) {
-                val r = this.record
-                val o = Observation(ofEpochMicro(r.getTimestamp(1)), r.getDouble(0))
-                result.add(o)
+        if (tables.contains(run)) {
+            engine.query("select time, value from '$run' where metric='$metricName'") {
+                while (hasNext()) {
+                    val r = this.record
+                    val o = Observation(ofEpochMicro(r.getTimestamp(0)), r.getDouble(1))
+                    result.add(o)
+                }
             }
         }
         return TimeSeries(result)
@@ -102,7 +105,11 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
     }
 
     override fun start(run: String, timeframe: Timeframe) {
-        // engine.update("drop table $run")
+        try {
+            engine.dropTable(run)
+        } catch (e: SqlException) {
+            logger.error(e) { "error with drop table $run"}
+        }
         tables.remove(run)
     }
 
@@ -111,24 +118,42 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         return engine.distictSymbol(run, "name").toSortedSet()
     }
 
+    /**
+     * Remove all runs from the database, both current and past runs.
+     * Under the hood, this will drop all the tables in the database.
+     */
+    fun removeAllRuns() {
+        engine.dropAllTables()
+        tables.clear()
+        logger.info { "removed all runs from ${engine.configuration.root}" }
+    }
 
     override val runs: Set<String>
         get() = engine.tables().toSet()
 
-    private fun createTable(name: String) {
+    private fun createTable(tableName: String) {
         engine.update(
-            """CREATE TABLE IF NOT EXISTS '$name' (
+            """CREATE TABLE IF NOT EXISTS '$tableName' (
                 |metric SYMBOL,
                 |value DOUBLE,  
                 |time TIMESTAMP
-                |) timestamp(time)""".trimMargin(),
+                |), INDEX(metric) timestamp(time)""".trimMargin(),
         )
 
-        engine.update("TRUNCATE TABLE '$name'")
+        engine.update("TRUNCATE TABLE '$tableName'")
     }
 
     fun close() {
         engine.close()
+    }
+
+    /**
+     * Reset the state.
+     * It doesn't remove the underlying tables.
+     * Use [removeAllRuns] for that.
+     */
+    override fun reset() {
+        tables.clear()
     }
 
 }

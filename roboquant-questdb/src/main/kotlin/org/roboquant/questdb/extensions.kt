@@ -80,6 +80,15 @@ internal fun CairoEngine.tables(): Set<String> {
     return result
 }
 
+
+internal fun CairoEngine.dropAllTables() {
+    update("DROP ALL TABLES")
+}
+
+internal fun CairoEngine.dropTable(tableName: String) {
+    update("DROP TABLE IF EXISTS '$tableName'")
+}
+
 internal fun CairoEngine.tableColumns(tableName: String): Set<String> {
     val result = mutableSetOf<String>()
     query("select column from table_columns('$tableName')") {

@@ -42,6 +42,10 @@ import kotlin.io.path.isDirectory
  * - Fast random access
  * - Limited to a single [PriceAction] type per table
  *
+ * @param dbPath the path to use for the database.
+ * If it doesn't exist yet, it will be created.
+ * The default value is `~/.roboquant/questdb-prices/db`
+ *
  */
 class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
 
@@ -67,6 +71,16 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
         const val HOUR = "HOUR"
     }
 
+    /**
+     * Remove all the feeds from the database. This cannot be undone, so use this method with care.
+     */
+    fun removeAllFeeds() {
+        CairoEngine(config).use {
+            it.dropAllTables()
+            logger.info { "Dropped all feeds in db=${config.root}" }
+        }
+    }
+
 
     /**
      * Generate a new QuestDB table based on the event in the feed and optional limited to the provided timeframe
@@ -76,8 +90,9 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
      * @param tableName the table to use to store the data
      * @param timeframe the timeframe
      * @param append do you want to append to an existing table, default is false
-     * @param partition partition table by specified value. This is required when wanting to insert timestamps
-     * out of order and might result in better overall performance. The default value is [NONE]
+     * @param partition partition the table using the specified value.
+     * This is required when wanting to append timestamps out of order and might result in better overall performance.
+     * The default value is [NONE]
      */
     inline fun <reified T : PriceAction> record(
         feed: Feed,

@@ -26,6 +26,7 @@ internal class QuestDBFeedTest {
 
         assertEquals(inputFeed.assets, outputFeed.assets)
         assertEquals(inputFeed.timeline.timeframe, outputFeed.timeframe)
+        outputFeed.close()
     }
 
 
@@ -42,6 +43,7 @@ internal class QuestDBFeedTest {
 
         assertEquals(inputFeed.assets, outputFeed.assets)
         assertEquals(inputFeed.timeline.timeframe, outputFeed.timeframe)
+        outputFeed.close()
     }
 
     @Test
@@ -57,9 +59,9 @@ internal class QuestDBFeedTest {
         recorder.record<PriceBar>(feed2, "pricebars3", append = true)
 
         val outputFeed = QuestDBFeed("pricebars3", folder.toPath())
-
         assertEquals(feed1.assets + feed2.assets, outputFeed.assets)
         assertEquals(feed1.timeline.timeframe, outputFeed.timeframe)
+        outputFeed.close()
     }
 
 
