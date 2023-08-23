@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.roboquant</groupId>
             <artifactId>roboquant-charts</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.ktor</groupId>

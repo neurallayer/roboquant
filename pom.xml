@@ -469,7 +469,7 @@
             <dependency>
                 <artifactId>roboquant</artifactId>
                 <groupId>org.roboquant</groupId>
-                <version>${version}</version>
+                <version>${project.version}</version>
             </dependency>
             <!-- end standard versions -->
         </dependencies>

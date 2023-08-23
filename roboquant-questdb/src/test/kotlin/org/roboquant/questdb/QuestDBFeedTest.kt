@@ -2,10 +2,7 @@ package org.roboquant.questdb
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
-import org.roboquant.common.months
-import org.roboquant.common.timeframe
+import org.roboquant.common.*
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.random.RandomWalkFeed
 import java.io.File
@@ -19,6 +16,7 @@ internal class QuestDBFeedTest {
 
     @Test
     fun basic() {
+        Config.getProperty("FULL_COVERAGE") ?: return
         val recorder = QuestDBRecorder(folder.toPath())
         val inputFeed = RandomWalkFeed.lastYears(1)
 
@@ -33,6 +31,7 @@ internal class QuestDBFeedTest {
 
     @Test
     fun append() {
+        Config.getProperty("FULL_COVERAGE") ?: return
         val recorder = QuestDBRecorder(folder.toPath())
         val inputFeed = RandomWalkFeed.lastYears(1)
         val tfs = inputFeed.timeframe.split(3.months)
@@ -47,6 +46,7 @@ internal class QuestDBFeedTest {
 
     @Test
     fun merge() {
+        Config.getProperty("FULL_COVERAGE") ?: return
         val recorder = QuestDBRecorder(folder.toPath())
         val tf = Timeframe.parse("2020", "2022")
         val feed1 = RandomWalkFeed(tf, nAssets = 1, template = Asset("ABC"))
