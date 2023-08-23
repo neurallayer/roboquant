@@ -43,6 +43,7 @@ class QuestDBMetricsLoggerTest {
         logger2.loadPreviousRuns()
         val aaa2 = logger2.getMetric("aaa", "myrun")
         assertEquals(1, aaa2.size)
+        logger2.close()
     }
 
 }
