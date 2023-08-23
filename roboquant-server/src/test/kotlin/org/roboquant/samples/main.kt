@@ -17,9 +17,7 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.common.ParallelJobs
-import org.roboquant.common.Timeframe
-import org.roboquant.common.minutes
+import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalkLiveFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
@@ -40,9 +38,9 @@ fun main() {
     val tf = Timeframe.next(30.minutes)
 
     // Start three runs
-    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(nAssets = 3), tf) }
-    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(nAssets = 10), tf) }
-    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(nAssets = 5), tf) }
+    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(200.millis, nAssets = 3), tf, "run-fast") }
+    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(5.seconds, nAssets = 10), tf, "run-medium") }
+    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(30.seconds, nAssets = 50), tf, "run-slow") }
 
     jobs.joinAllBlocking()
     server.stop()

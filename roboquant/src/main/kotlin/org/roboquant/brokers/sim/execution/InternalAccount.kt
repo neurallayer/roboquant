@@ -30,10 +30,10 @@ import java.time.Instant
 /**
  * Internal Account is meant to be used by broker implementations, like the SimBroker. The broker is the only one with
  * a reference to the InternalAccount and will communicate the state to the outside world (Policy and Metrics) using
- * the immutable [Account] version.
+ * the immutable [Account] object.
  *
  * The Internal Account is designed to eliminate common mistakes, but is completely optional to use. The brokers that
- * come with roboquant use this class under the hood, but that is no hard requirement.
+ * come with roboquant use this class under the hood, but that is not a requirement for third party integrations.
  *
  * @property baseCurrency The base currency to use for things like reporting
  * @constructor Create a new instance of InternalAccount
@@ -84,7 +84,7 @@ class InternalAccount(var baseCurrency: Currency) {
      */
     internal fun removeClosedOrdersAndTrades() {
         // Create new instances since clear() could impact previously returned
-        // accounts since they contain sub-lists of the closedOrders and trades.
+        // accounts since they contain views of the closedOrders and trades.
         closedOrders = mutableListOf()
         trades = mutableListOf()
     }
@@ -94,7 +94,7 @@ class InternalAccount(var baseCurrency: Currency) {
      */
     fun clear() {
         // Create new instances since clear() could impact previously returned
-        // accounts since they contain sub-lists of the closedOrders and trades.
+        // accounts since they contain views of the closedOrders and trades.
         closedOrders = mutableListOf()
         trades = mutableListOf()
 
@@ -181,9 +181,9 @@ class InternalAccount(var baseCurrency: Currency) {
             baseCurrency,
             lastUpdate,
             cash.clone(),
-            trades.toList(),
+            trades.view(), // optimized for large collections
             openOrders.values.toList(),
-            closedOrders.toList(),
+            closedOrders.view(), // optimized for large collections
             portfolio.values.toList(),
             buyingPower
         )

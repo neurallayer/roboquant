@@ -22,7 +22,8 @@ import org.roboquant.feeds.Event
 /**
  * Capture the following high-level statistics about the [Account]:
  *
- * - `account.openorders`  Total number of open orders,
+ * - `account.order`  Total number of orders,
+ * - `account.trades`  Total number of trades,
  * - `account.positions` Total number of open positions
  * - `account.cash` Total cash value
  * - `account.buyingpower` Buying power available
@@ -40,7 +41,8 @@ class AccountMetric : Metric {
     override fun calculate(account: Account, event: Event): Map<String, Double> {
 
         return metricResultsOf(
-            "account.openorders" to account.openOrders.size,
+            "account.orders" to account.openOrders.size + account.closedOrders.size,
+            "account.trades" to account.trades.size,
             "account.positions" to account.positions.size,
             "account.cash" to account.convert(account.cash, event.time).value,
             "account.buyingpower" to account.buyingPower.value,

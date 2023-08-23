@@ -86,7 +86,7 @@ private fun backTest() {
         jobs.add {
             val run = "run-${tf.toPrettyString()}"
             println("starting run=$run")
-            val broker = SimBroker(limitTracking = true) // Set to true to optimize for performance
+            val broker = SimBroker(limitTracking = false) // Set to true to optimize for performance
             val rq = Roboquant(EMAStrategy(), AccountMetric(), broker = broker, logger = logger)
             rq.runAsync(feed, tf, name = run)
             println("done run=$run")

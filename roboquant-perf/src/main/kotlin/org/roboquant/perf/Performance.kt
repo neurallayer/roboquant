@@ -183,7 +183,7 @@ private object Performance {
             val jobs = ParallelJobs()
             repeat(backTests) {
                 jobs.add {
-                    // use lower channel capacity to limit memory bandwidth
+                    // use lower channel capacity to limit memory requirements
                     val roboquant = Roboquant(
                         getStrategy(SKIP),
                         logger = SilentLogger(),
