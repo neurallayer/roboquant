@@ -169,12 +169,21 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
     }
 
     /**
+     * Deposit an [value] of a certain currency
+     */
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun deposit(currency: Currency, value: Double) {
+        val oldValue = data[currency] ?: 0.0
+        val newValue = value + oldValue
+        if (newValue.iszero) data.remove(currency) else data[currency] = newValue
+    }
+
+    /**
      * Deposit the amount hold in an [other] Wallet instance into this one.
      */
     fun deposit(other: Wallet) {
-        for (amount in other.toAmounts()) {
-            deposit(amount)
-        }
+        assert( other !== this)
+        for ((c,v) in other.data) deposit(c,v)
     }
 
     /**
@@ -182,16 +191,15 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      * will be deducted from the existing value, otherwise a new entry will be created.
      */
     fun withdraw(amount: Amount) {
-        deposit(-amount)
+        deposit(amount.currency, -amount.value)
     }
 
     /**
      * Withdraw the amount hold in an [other] Wallet instance into this one.
      */
     fun withdraw(other: Wallet) {
-        for (amount in other.toAmounts()) {
-            withdraw(amount)
-        }
+        assert( other !== this)
+        for ((c,v) in other.data) deposit(c, -v)
     }
 
     /**
@@ -265,6 +273,10 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      * actual conversions. Optional a [time] can be provided, the default is [Instant.now].
      */
     fun convert(currency: Currency, time: Instant = Instant.now()): Amount {
+
+        // Optimization for single currency trading
+        if (data.size == 1 && data.contains(currency)) return Amount(currency, data.getValue(currency))
+
         var sum = 0.0
         for (amount in toAmounts()) {
             sum += amount.convert(currency, time).value

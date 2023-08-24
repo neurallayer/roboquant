@@ -56,6 +56,10 @@ class AggregatorLiveFeed(
         return Instant.ofEpochMilli(adjustedInstantMillis) + aggregationPeriod
     }
 
+    init {
+        require(!aggregationPeriod.isZero)
+    }
+
     /**
      * Provide the timeframe, this can be slightly off since upfront it is not known what the actions are that are
      * in the underlying feed.
@@ -69,7 +73,6 @@ class AggregatorLiveFeed(
         return PriceBar(asset, open, high, low, other.close, volume + other.volume, aggregationPeriod)
     }
 
-
     /**
      * @see Feed.play
      */
@@ -79,10 +82,12 @@ class AggregatorLiveFeed(
         val scope = CoroutineScope(Dispatchers.Default + Job())
 
         val history = mutableMapOf<Asset, PriceBar>()
-        var expiration: Instant = Instant.now().expirationTime()
+        val now = Instant.now()
+        var expiration: Instant = now.expirationTime()
+        assert(expiration > now)
 
         val job2 = scope.launch {
-            while(true) {
+            while (true) {
                 val newEvent = synchronized(history) {
                     val newEvent = Event(history.values.toList(), expiration)
                     history.clear()
@@ -135,13 +140,18 @@ class AggregatorLiveFeed(
         } finally {
 
             // Send remaining
-            if (remaining && history.isNotEmpty()) {
-                val newEvent = Event(history.values.toList(), expiration)
-                channel.send(newEvent)
+            if (remaining) {
+                val newEvent = synchronized(history) {
+                    val newEvent = Event(history.values.toList(), expiration)
+                    history.clear()
+                    newEvent
+                }
+                if (newEvent.actions.isNotEmpty()) channel.send(newEvent)
             }
-            if (job.isActive) job.cancel()
-            if (job2.isActive) job2.cancel()
         }
+        if (job.isActive) job.cancel()
+        if (job2.isActive) job2.cancel()
     }
-
 }
+
+

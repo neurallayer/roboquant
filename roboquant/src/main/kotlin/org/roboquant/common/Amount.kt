@@ -121,6 +121,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
      * should be calculated. If no time is provided, the current time is used.
      */
     fun convert(to: Currency, time: Instant = Instant.now()): Amount {
+        if (currency == to) return this
         return Config.exchangeRates.convert(this, to, time)
     }
 

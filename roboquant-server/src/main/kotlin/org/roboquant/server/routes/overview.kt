@@ -58,44 +58,48 @@ internal fun Route.overview() {
         call.respondHtml(HttpStatusCode.OK) {
             page("Overview runs") {
                 table(classes = "table text-end my-5") {
-                    tr {
-                        th { +"run name" }
-                        th { +"state" }
-                        th { +"timeframe"}
-                        th { +"events" }
-                        th { +"signals" }
-                        th { +"orders" }
-                        th { +"last update" }
-                        th { +"actions" }
-                    }
-                    runs.forEach { (run, info) ->
-                        val policy = info.roboquant.policy as PausablePolicy
+                    thead {
                         tr {
-                            td { +run }
-                            td { pauseInfo(policy.pause) }
-                            td { +info.timeframe.toPrettyString() }
-                            td {
-                                +"total = ${policy.totalEvents}"
-                                br
-                                +"empty = ${policy.emptyEvents}"
-                                br
-                                +"actions = ${policy.totalActions}"
-                            }
-                            td {
-                                +"buy = ${policy.buySignals}"
-                                br
-                                +"sell = ${policy.sellSignals}"
-                                br
-                                +"hold = ${policy.holdSignals}"
-                            }
-                            td { +policy.totalOrders.toString() }
-                            td { +policy.lastUpdate.truncatedTo(ChronoUnit.MILLIS).toString() }
-                            td {
-                                a(href = "/run/$run") { +"details" }
-                                br
-                                a(href = "/?action=pause&run=$run") { +"pause" }
-                                br
-                                a(href = "/?action=resume&run=$run") { +"resume" }
+                            th { +"run" }
+                            th { +"state" }
+                            th { +"timeframe" }
+                            th { +"events" }
+                            th { +"signals" }
+                            th { +"orders" }
+                            th { +"last update" }
+                            th { +"actions" }
+                        }
+                    }
+                    tbody {
+                        runs.forEach { (run, info) ->
+                            val policy = info.roboquant.policy as PausablePolicy
+                            tr {
+                                td { +run }
+                                td { pauseInfo(policy.pause) }
+                                td { +info.timeframe.toPrettyString() }
+                                td {
+                                    +"total = ${policy.totalEvents}"
+                                    br
+                                    +"empty = ${policy.emptyEvents}"
+                                    br
+                                    +"actions = ${policy.totalActions}"
+                                }
+                                td {
+                                    +"buy = ${policy.buySignals}"
+                                    br
+                                    +"sell = ${policy.sellSignals}"
+                                    br
+                                    +"hold = ${policy.holdSignals}"
+                                }
+                                td { +policy.totalOrders.toString() }
+                                td { +policy.lastUpdate.truncatedTo(ChronoUnit.MILLIS).toString() }
+                                td {
+                                    a(href = "/run/$run") { +"details" }
+                                    br
+                                    a(href = "/?action=pause&run=$run") { +"pause" }
+                                    br
+                                    a(href = "/?action=resume&run=$run") { +"resume" }
+                                }
                             }
                         }
                     }

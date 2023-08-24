@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+/*noinspection CssUnresolvedCustomProperty*/
 caption {
     caption-side: top;
     font-size: 150%;
+    text-align: left;
+    color: var(--bs-primary);
 }

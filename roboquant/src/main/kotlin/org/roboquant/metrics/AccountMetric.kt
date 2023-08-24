@@ -38,16 +38,13 @@ class AccountMetric : Metric {
     /**
      * @see Metric.calculate
      */
-    override fun calculate(account: Account, event: Event): Map<String, Double> {
-
-        return metricResultsOf(
-            "account.orders" to account.openOrders.size + account.closedOrders.size,
-            "account.trades" to account.trades.size,
-            "account.positions" to account.positions.size,
-            "account.cash" to account.convert(account.cash, event.time).value,
-            "account.buyingpower" to account.buyingPower.value,
-            "account.equity" to account.convert(account.equity, event.time).value
-        )
+    override fun calculate(account: Account, event: Event) = buildMap {
+        put("account.orders", (account.openOrders.size + account.closedOrders.size).toDouble())
+        put("account.trades", account.trades.size.toDouble())
+        put("account.positions", account.positions.size.toDouble())
+        put("account.cash", account.convert(account.cash, event.time).value)
+        put("account.buyingpower", account.buyingPower.value)
+        put("account.equity", account.convert(account.equity, event.time).value)
     }
 
 

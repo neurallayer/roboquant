@@ -45,6 +45,7 @@ interface ExchangeRates {
      * calculate the exchange rate to use for this conversion.
      */
     fun convert(amount: Amount, to: Currency, time: Instant): Amount {
+        if (amount.currency == to) return amount
         val rate = getRate(amount, to, time)
         return Amount(to, amount.value * rate)
     }

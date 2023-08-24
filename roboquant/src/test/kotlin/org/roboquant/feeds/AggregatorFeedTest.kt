@@ -72,8 +72,6 @@ class AggregatorFeedTest {
 
     }
 
-
-
     @Test
     fun basic2() {
         // 5-seconds window with 1-millisecond resolution

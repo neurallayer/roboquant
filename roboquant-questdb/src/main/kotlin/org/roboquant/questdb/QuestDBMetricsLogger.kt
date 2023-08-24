@@ -18,7 +18,10 @@ package org.roboquant.questdb
 
 import io.questdb.cairo.CairoEngine
 import io.questdb.cairo.DefaultCairoConfiguration
+import io.questdb.cairo.TableWriter
 import io.questdb.griffin.SqlException
+import io.questdb.griffin.SqlExecutionContext
+import io.questdb.griffin.SqlExecutionContextImpl
 import org.roboquant.common.*
 import org.roboquant.loggers.MetricsLogger
 import java.nio.file.Files
@@ -31,10 +34,11 @@ import kotlin.io.path.isDirectory
 /**
  * Log metrics to a QuestDB database
  */
-class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db") : MetricsLogger {
+class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db", workers: Int = 1) : MetricsLogger {
 
     private val logger = Logging.getLogger(this::class)
     private var engine: CairoEngine
+    private val ctx: SqlExecutionContext
 
     private val tables = ConcurrentSkipListSet<String>()
 
@@ -47,6 +51,7 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         require( dbPath.isDirectory() ) { "dbPath needs to be a directory"}
         val config = DefaultCairoConfiguration(dbPath.toString())
         engine = CairoEngine(config)
+        ctx = SqlExecutionContextImpl(engine, workers)
     }
 
     /**
@@ -56,6 +61,14 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         tables.addAll(engine.tables())
     }
 
+    private inline fun CairoEngine.appendRows(tableName: String, block: TableWriter.() -> Unit) {
+        val token = ctx.getTableToken(tableName)
+        getWriter(token, tableName).use {
+            it.block()
+            it.commit()
+        }
+    }
+
     override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (results.isEmpty()) return
         if (! tables.contains(run)) {
@@ -63,7 +76,7 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
             tables.add(run)
         }
 
-        engine.insert(run) {
+        engine.appendRows(run) {
             val t = time.epochMicro
             for ((k,v) in results) {
                 val row = newRow(t)
@@ -145,6 +158,7 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
 
     fun close() {
         engine.close()
+        ctx.close()
     }
 
     /**

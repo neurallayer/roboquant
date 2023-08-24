@@ -60,7 +60,7 @@ internal fun CairoEngine.distictSymbol(tableName: String, column: String) : Set<
 
 
 
-
+@Suppress("UNUSED")
 internal fun CairoEngine.insert(tableName: String, block: TableWriter.() -> Unit) {
     SqlExecutionContextImpl(this, 1).use { ctx ->
         getWriter(ctx.getTableToken(tableName), tableName).use {

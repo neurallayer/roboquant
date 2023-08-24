@@ -16,6 +16,7 @@
 
 package org.roboquant.common
 
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.*
 
 internal class WalletTest {
@@ -69,9 +70,13 @@ internal class WalletTest {
         assertEquals(25.USD, wallet.getAmount(usd))
         assertEquals(13.EUR, wallet.getAmount(eur))
 
-        wallet.withdraw(wallet)
+        wallet.withdraw(wallet.clone())
         assertTrue(wallet.isEmpty())
         assertFalse(wallet.isNotEmpty())
+
+        assertThrows<AssertionError> {
+            wallet.withdraw(wallet)
+        }
     }
 
     @Test
