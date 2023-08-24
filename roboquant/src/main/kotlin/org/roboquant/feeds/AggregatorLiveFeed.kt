@@ -73,6 +73,16 @@ class AggregatorLiveFeed(
         return PriceBar(asset, open, high, low, other.close, volume + other.volume, aggregationPeriod)
     }
 
+    private suspend fun send(channel: EventChannel, time: Instant, history: MutableMap<Asset, PriceBar>) {
+        val newEvent = synchronized(history) {
+            val newEvent = Event(history.values.toList(), time)
+            history.clear()
+            newEvent
+        }
+
+        if (newEvent.actions.isNotEmpty()) channel.send(newEvent)
+    }
+
     /**
      * @see Feed.play
      */
@@ -88,17 +98,10 @@ class AggregatorLiveFeed(
 
         val job2 = scope.launch {
             while (true) {
-                val newEvent = synchronized(history) {
-                    val newEvent = Event(history.values.toList(), expiration)
-                    history.clear()
-                    newEvent
-                }
-
-                if (newEvent.actions.isNotEmpty()) channel.send(newEvent)
+                send(channel,expiration, history)
                 expiration += aggregationPeriod
                 val intervalMillis = Instant.now().until(expiration, ChronoUnit.MILLIS)
                 delay(intervalMillis)
-                // println("wakeup after $intervalMillis millis")
             }
         }
 
@@ -124,30 +127,16 @@ class AggregatorLiveFeed(
                         val pb = getPriceBar(action, aggregationPeriod) ?: continue
                         val asset = pb.asset
                         val entry = history[asset]
-                        if (entry == null) {
-                            history[asset] = pb
-                        } else {
-                            history[asset] = entry + pb
-                        }
+                        if (entry == null) history[asset] = pb else history[asset] = entry + pb
                     }
                 }
 
-
             }
-
         } catch (_: ClosedReceiveChannelException) {
             // NOP
         } finally {
-
             // Send remaining
-            if (remaining) {
-                val newEvent = synchronized(history) {
-                    val newEvent = Event(history.values.toList(), expiration)
-                    history.clear()
-                    newEvent
-                }
-                if (newEvent.actions.isNotEmpty()) channel.send(newEvent)
-            }
+            if (remaining) send(channel ,expiration, history)
         }
         if (job.isActive) job.cancel()
         if (job2.isActive) job2.cancel()
