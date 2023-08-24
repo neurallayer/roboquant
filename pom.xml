@@ -405,10 +405,10 @@
                         </execution>
                     </executions>
                 </plugin>
-                <plugin>
+                <!-- plugin>
                     <groupId>com.github.ozsie</groupId>
                     <artifactId>detekt-maven-plugin</artifactId>
-                    <version>1.22.0</version>
+                    <version>1.23.1</version>
                     <configuration>
                         <config>docs/run/detekt.yml</config>
                     </configuration>
@@ -420,7 +420,7 @@
                             </goals>
                         </execution>
                     </executions>
-                </plugin>
+                </plugin -->
             </plugins>
         </pluginManagement>
 
@@ -438,6 +438,22 @@
                     <execution>
                         <id>default-compile</id>
                         <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.ozsie</groupId>
+                <artifactId>detekt-maven-plugin</artifactId>
+                <version>1.23.1</version>
+                <configuration>
+                    <config>docs/run/detekt.yml</config>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
