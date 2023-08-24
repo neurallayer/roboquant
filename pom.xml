@@ -84,10 +84,6 @@
             <id>mavenCentral</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
     </repositories>
 
     <distributionManagement>
@@ -179,7 +175,13 @@
                             <suppressInheritedMembers>true</suppressInheritedMembers>
                             <includes>
                                 <include>${dokka.includes}/roboquant.md</include>
-                                <include>${dokka.includes}/roboquant-extra.md</include>
+                                <include>${dokka.includes}/roboquant-alpaca.md</include>
+                                <include>${dokka.includes}/roboquant-polygon.md</include>
+                                <include>${dokka.includes}/roboquant-binance.md</include>
+                                <include>${dokka.includes}/roboquant-xchange.md</include>
+                                <include>${dokka.includes}/roboquant-server.md</include>
+                                <include>${dokka.includes}/roboquant-questdb.md</include>
+                                <include>${dokka.includes}/roboquant-avro.md</include>
                                 <include>${dokka.includes}/roboquant-ibkr.md</include>
                                 <include>${dokka.includes}/roboquant-jupyter.md</include>
                                 <include>${dokka.includes}/roboquant-ta.md</include>
@@ -267,7 +269,13 @@
                             <suppressInheritedMembers>true</suppressInheritedMembers>
                             <includes>
                                 <include>${dokka.includes}/roboquant.md</include>
-                                <include>${dokka.includes}/roboquant-extra.md</include>
+                                <include>${dokka.includes}/roboquant-alpaca.md</include>
+                                <include>${dokka.includes}/roboquant-polygon.md</include>
+                                <include>${dokka.includes}/roboquant-binance.md</include>
+                                <include>${dokka.includes}/roboquant-xchange.md</include>
+                                <include>${dokka.includes}/roboquant-server.md</include>
+                                <include>${dokka.includes}/roboquant-questdb.md</include>
+                                <include>${dokka.includes}/roboquant-avro.md</include>
                                 <include>${dokka.includes}/roboquant-ibkr.md</include>
                                 <include>${dokka.includes}/roboquant-jupyter.md</include>
                                 <include>${dokka.includes}/roboquant-ta.md</include>
