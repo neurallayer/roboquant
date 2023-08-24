@@ -210,9 +210,6 @@ private object Performance {
             Combination(5_000, 200, 100),
             Combination(10_000, 500, 100),
             Combination(20_000, 500, 100),
-
-            // Combination(25*3600, 1, 100),
-
         )
 
         val header = String.format(
