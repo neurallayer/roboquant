@@ -91,6 +91,15 @@ open class EventChannel(val capacity: Int = 10, val timeframe: Timeframe = Timef
     }
 
     /**
+     * Send an [event] on this channel if it is not an empty event. If the time of event is before the timeframe
+     * if this channel, it will be silently ignored. And if the event is after the timeframe, the channel
+     * will be [closed].
+     */
+    suspend fun sendNotEmpty(event: Event) {
+        if (event.isNotEmpty()) send(event)
+    }
+
+    /**
      * Receive an event from the channel. This will throw a [ClosedReceiveChannelException] if the channel
      * is [closed].
      *

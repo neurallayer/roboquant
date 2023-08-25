@@ -97,7 +97,7 @@ class AggregatorFeed(
                     expiration = time.expirationTime()
                 } else if (time >= expiration) {
                     val newEvent = Event(history.values.toList(), expiration)
-                    if (newEvent.actions.isNotEmpty()) channel.send(newEvent)
+                    channel.sendNotEmpty(newEvent)
                     history.clear()
                     expiration += aggregationPeriod
                 }
@@ -120,9 +120,9 @@ class AggregatorFeed(
         } finally {
 
             // Send remaining
-            if (remaining && history.isNotEmpty() && expiration != null) {
+            if (remaining && expiration != null) {
                 val newEvent = Event(history.values.toList(), expiration)
-                channel.send(newEvent)
+                channel.sendNotEmpty(newEvent)
             }
             if (job.isActive) job.cancel()
         }

@@ -31,7 +31,7 @@ import kotlin.math.absoluteValue
  * on those types of actions they are interested in.
  *
  * # Example
- *      event.actions.filterByType<PriceBar>(). ...
+ *      event.actions.filterIsInstance<PriceBar>(). ...
  *
  */
 interface Action
@@ -63,7 +63,8 @@ interface PriceAction : Action {
     fun getPriceAmount(type: String = "DEFAULT") = Amount(asset.currency, getPrice(type))
 
     /**
-     * Volume for the price action. If not implemented, it should return [Double.NaN]
+     * Volume for the price action.
+     * If not supported, it returns [Double.NaN].
      *
      * Volume in the context of a PriceAction can mean different things. For example, is can be trade volume but also
      * the total order-book volume, depending on the type of PriceAction.
@@ -154,7 +155,7 @@ class PriceBar(
     }
 
     /**
-     * Get the price for this price bar, default is the closing price.
+     * Get the price for this price bar.
      *
      * The supported types are: CLOSE, OPEN, LOW, HIGH, TYPICAL, with the default type being "CLOSE".
      *
@@ -165,6 +166,7 @@ class PriceBar(
      */
     override fun getPrice(type: String): Double {
         return when (type) {
+            "DEFAULT" -> ohlcv[3]
             "CLOSE" -> ohlcv[3]
             "OPEN" -> ohlcv[0]
             "LOW" -> ohlcv[2]

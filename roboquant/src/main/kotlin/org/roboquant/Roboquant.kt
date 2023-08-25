@@ -114,12 +114,12 @@ data class Roboquant(
 
     /**
      * Start a new run using the provided [feed] as data. If no [timeframe] is provided all the events in the feed
-     * will be processed. You can provide a custom [name] that will help to later identify this run. If none is
-     * provided, the default [name] "run" will be used.
+     * will be processed. You can provide a custom [name] that will help to later identify this run.
+     * If none is provided, the default [name] "run-${timeframe}" will be used that can help to identify the run later.
      * Additionally, you can provide a [warmup] period in which no metrics will be logged or orders placed.
      *
-     * By default, at the beginning of a run, all components (besides the logger) will be [reset] and typically discard
-     * their state. If you don't want this behavior set [reset] to false.
+     * By default, at the beginning of a run, all components (besides the logger) will be [reset] and as a result
+     * discard their state. If you don't want this behavior set [reset] to false.
      *
      * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
      * in parallel, use the [runAsync] method.
@@ -127,7 +127,7 @@ data class Roboquant(
     fun run(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        name: String = "run",
+        name: String = "run-${timeframe.toPrettyString()}",
         warmup: TimeSpan = TimeSpan.ZERO,
         reset: Boolean = true
     ) = runBlocking {
@@ -136,15 +136,15 @@ data class Roboquant(
 
     /**
      * This is the same method as the [run] method but as the name already suggests, asynchronously. This makes it
-     * better suited for running back-test in parallel. Other than that, it behaves exactly the same as the regular
-     * run method.
+     * suited for running back-test in parallel. Other than that, it behaves the same as the regular blocking run
+     * method.
      *
      * @see [run]
      */
     suspend fun runAsync(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
-        name: String = "run",
+        name: String = "run-${timeframe.toPrettyString()}",
         warmup: TimeSpan = TimeSpan.ZERO,
         reset: Boolean = true
     ) {
@@ -220,7 +220,7 @@ data class Roboquant(
      *
      * This method performs the following steps:
      * 1. Cancel existing open orders
-     * 2. Close open positions by placing [MarketOrder] for the required opposite sizes
+     * 2. Close open positions by placing [MarketOrder] for the required opposite sizes.
      * 3. Run and log the metrics
      */
     fun closePositions(time: Instant? = null, runName: String = "close") {

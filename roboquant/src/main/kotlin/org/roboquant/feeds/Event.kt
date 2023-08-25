@@ -69,6 +69,17 @@ class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
      * their chronological order.
      */
     override fun compareTo(other: Event): Int = time.compareTo(other.time)
+
+    /**
+     * Return true if this is event has at least one action, false otherwise
+     */
+    fun isNotEmpty(): Boolean = actions.isNotEmpty()
+
+
+    /**
+     * Return true if this event has no actions, false otherwise
+     */
+    fun isEmpty(): Boolean = actions.isEmpty()
 }
 
 /**

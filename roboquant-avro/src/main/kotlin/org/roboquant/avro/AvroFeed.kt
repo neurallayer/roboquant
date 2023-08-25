@@ -142,7 +142,7 @@ class AvroFeed(private val path: Path, useCache: Boolean = false) : AssetFeed {
                 if (now < timeframe) continue
 
                 if (now != last) {
-                    if (actions.isNotEmpty()) channel.send(Event(actions, last))
+                    channel.sendNotEmpty(Event(actions, last))
                     last = now
                     actions = ArrayList<PriceAction>(actions.size)
                 }
@@ -152,7 +152,7 @@ class AvroFeed(private val path: Path, useCache: Boolean = false) : AssetFeed {
                 val action = recToPriceAction(rec, serializer)
                 actions.add(action)
             }
-            if (actions.isNotEmpty()) channel.send(Event(actions, last))
+            channel.sendNotEmpty(Event(actions, last))
         }
     }
 

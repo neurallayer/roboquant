@@ -80,7 +80,7 @@ class AggregatorLiveFeed(
             newEvent
         }
 
-        if (newEvent.actions.isNotEmpty()) channel.send(newEvent)
+        channel.sendNotEmpty(newEvent)
     }
 
     /**
