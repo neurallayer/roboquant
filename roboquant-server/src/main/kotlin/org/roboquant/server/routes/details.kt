@@ -53,11 +53,17 @@ private fun FlowContent.table(caption: String, list: List<List<Any>>) {
 }
 
 
-private fun FlowContent.echarts(elemId: String, width: String = "100%", height: String = "800px") {
+private fun FlowContent.echarts(
+    elemId: String,
+    height: String = "800px",
+    width: String = "100%",
+    initialHidden: Boolean = true
+) {
     div {
         id = elemId
         hxExt = "echarts"
         style = "width:$width;height:$height;"
+        if (initialHidden) style+="display:None;"
     }
 }
 
@@ -73,7 +79,7 @@ private fun FlowContent.metricForm(target: String, run: String, info: RunInfo) {
             }
         }
 
-        input(type = InputType.hidden, name = "run") { value=run }
+        input(type = InputType.hidden, name = "run") { value = run }
 
         button(type = ButtonType.submit, classes = "mt-2 btn btn-primary") { +"Update Chart" }
     }

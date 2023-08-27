@@ -17,9 +17,13 @@
 package org.roboquant.loggers
 
 import kotlinx.coroutines.launch
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
-import org.roboquant.common.*
+import org.roboquant.common.ParallelJobs
+import org.roboquant.common.Timeframe
+import org.roboquant.common.days
+import org.roboquant.common.plus
 import org.roboquant.metrics.metricResultsOf
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -28,6 +32,42 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+
+/**
+ * Run several methods concurrent to detect possible issues
+ */
+internal fun runConcurrent(logger: MetricsLogger, nThreads: Int, loop: Int) {
+    val jobs = ParallelJobs()
+    val tf = Timeframe.INFINITE
+    repeat(nThreads) {
+        jobs.add {
+            launch {
+                assertDoesNotThrow {
+                    val run = "run-$it"
+                    logger.start(run, tf)
+                    repeat(loop) {
+                        logger.log(mapOf("a" to 100.0), Instant.now(), run)
+                        Thread.sleep(1)
+                    }
+                    logger.getMetric("a")
+                    Thread.sleep(1)
+                    repeat(10) {
+                        logger.getMetricNames()
+                    }
+                    Thread.sleep(1)
+                    logger.getMetric("a")
+                    Thread.sleep(1)
+                    logger.getMetric("a", run)
+                    logger.end(run)
+                }
+            }
+        }
+    }
+    assertEquals(nThreads, jobs.size)
+    jobs.joinAllBlocking()
+
+}
+
 
 internal class MemoryLoggerTest {
 
@@ -63,27 +103,14 @@ internal class MemoryLoggerTest {
     @Test
     fun concurrency() {
         val logger = MemoryLogger(false)
-        val jobs = ParallelJobs()
-        Timeframe.fromYears(2000, 2002).split(1.months).forEach {
-            jobs.add {
-                launch {
-                    it.sample(1.days, 100).forEach { tf ->
-                        val run = "run-$tf"
-                        logger.start(run, tf)
-                        repeat(1000) {
-                            logger.log(mapOf("a" to 100.0 + it), tf.start + it.seconds, run)
-                        }
-                        logger.end(run)
-                    }
-                }
-            }
-
-        }
-        jobs.joinAllBlocking()
+        val nThreads = 100
+        val loop = 10
+        runConcurrent(logger, nThreads, loop)
         val data = logger.getMetric("a")
+        assertEquals(nThreads, data.size)
         for (ts in data.values) {
-            assertEquals(1000, ts.size)
-            assertEquals(100.0, ts.values[0])
+            assertEquals(loop, ts.size)
+            assertTrue(ts.all { it.value == 100.0 })
         }
 
     }

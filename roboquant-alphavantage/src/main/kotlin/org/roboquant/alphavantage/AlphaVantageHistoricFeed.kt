@@ -132,7 +132,7 @@ class AlphaVantageHistoricFeed(
     private fun handleIntraday(response: TimeSeriesResponse) {
         val symbol = response.metaData.symbol
         logger.info { "Received time series response for $symbol" }
-        val asset = subscriptions[symbol]!!
+        val asset = subscriptions.getValue(symbol)
         val tz = response.metaData.timeZone ?: "America/New_York"
         val dtf = getParser(tz)
         println(response.metaData.interval)
@@ -157,7 +157,7 @@ class AlphaVantageHistoricFeed(
     private fun handleDaily(response: TimeSeriesResponse) {
         val symbol = response.metaData.symbol
         logger.info { "Received time series response for $symbol" }
-        val asset = subscriptions[symbol]!!
+        val asset = subscriptions.getValue(symbol)
         response.stockUnits.forEach {
             val action = if (generateSinglePrice) TradePrice(asset, it.close) else
                 PriceBar(asset, it.open, it.high, it.low, it.close, it.volume, 1.days)

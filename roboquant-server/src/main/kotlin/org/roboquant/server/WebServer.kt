@@ -30,12 +30,13 @@ import kotlin.collections.set
 internal val runs = ConcurrentHashMap<String, RunInfo>()
 
 /**
- * Create a server with credentials. The website will be protected with digest authentication.
+ * Create a server with credentials. The website will be protected using digest authentication.
  */
 class WebServer(username: String, password: String, port: Int = 8080, host: String = "127.0.01") {
 
     /**
-     * Create server instance without credentials, so anybody can see the runs and pause them.
+     * Create server instance without credentials.
+     * So, anybody can see the runs, pause them and stop the server.
      */
     constructor(port: Int = 8080, host: String = "127.0.01") : this("", "", port, host)
 
@@ -76,10 +77,10 @@ class WebServer(username: String, password: String, port: Int = 8080, host: Stri
         roboquant: Roboquant,
         feed: Feed,
         timeframe: Timeframe,
-        run: String = getRunName(),
+        name: String = getRunName(),
         warmup: TimeSpan = TimeSpan.ZERO
     ) = runBlocking {
-        runAsync(roboquant, feed, timeframe, run, warmup)
+        runAsync(roboquant, feed, timeframe, name, warmup)
     }
 
     /**
@@ -90,13 +91,14 @@ class WebServer(username: String, password: String, port: Int = 8080, host: Stri
         roboquant: Roboquant,
         feed: Feed,
         timeframe: Timeframe,
-        run: String = getRunName(),
+        name: String = getRunName(),
         warmup: TimeSpan = TimeSpan.ZERO
     ) {
+        require(! runs.contains(name)) { "run name has to be unique, name=$name is already in use by another run."}
         val rq = roboquant.copy(policy = PausablePolicy(roboquant.policy))
-        runs[run] = RunInfo(rq, feed, timeframe, warmup)
-        logger.info { "Starting new run name=$run timeframe=$timeframe"}
-        rq.runAsync(feed, timeframe, run, warmup)
+        runs[name] = RunInfo(rq, feed, timeframe, warmup)
+        logger.info { "Starting new run name=$name timeframe=$timeframe"}
+        rq.runAsync(feed, timeframe, name, warmup)
     }
 
 }

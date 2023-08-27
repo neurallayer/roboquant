@@ -17,21 +17,19 @@
  */
 
 htmx.defineExtension('echarts', {
+
     onEvent: function (name, evt) {
-        console.log(name);
-        if (name === 'htmx:beforeProcessNode') {
-            let elem = evt.detail.elt;
-            let chart = echarts.init(elem);
-            let resizeObserver = new ResizeObserver(() => chart.resize());
-            resizeObserver.observe(elem);
-            elem.style.setProperty('display', 'none');
-        }
 
         if (name === 'htmx:beforeSwap') {
-            let option = JSON.parse(evt.detail.serverResponse);
             let elem = evt.detail.target;
-            elem.style.setProperty('display', 'block');
             let chart = echarts.getInstanceByDom(elem);
+            if (! chart) {
+                chart = echarts.init(elem);
+                let resizeObserver = new ResizeObserver(() => chart.resize());
+                resizeObserver.observe(elem);
+                elem.style.setProperty('display', 'block');
+            }
+            let option = JSON.parse(evt.detail.serverResponse);
             chart.setOption(option);
             return false
         }
@@ -40,3 +38,4 @@ htmx.defineExtension('echarts', {
 });
 
 htmx.config.allowEval = false;
+htmx.config.allowScriptTags = false;

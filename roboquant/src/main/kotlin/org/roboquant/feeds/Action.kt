@@ -24,22 +24,22 @@ import kotlin.math.absoluteValue
 
 /**
  * An action is the lowest level of information contained in an [Event] and can be anything from a price action for an
- * asset to an annual report or a Twitter tweet. An action doesn't have to be linked to a particular asset, price
- * actions are.
+ * asset to an annual report or a Twitter tweet.
+ * An action doesn't have to be linked to a particular asset, although [PriceAction]s are.
  *
  * The content of the action is determined by the class implementing this interface. Strategies are expected to filter
  * on those types of actions they are interested in.
  *
  * # Example
- *      event.actions.filterIsInstance<PriceBar>(). ...
+ * ```
+ * event.actions.filterIsInstance<PriceBar>(). ...
+ * ```
  *
  */
 interface Action
 
 /**
- * PriceAction represents an [Action] that contains pricing information for a single asset.
- *
- * @constructor Create empty Price action
+ * PriceAction represents an [Action] that contains pricing information for a single [Asset].
  */
 interface PriceAction : Action {
 
@@ -131,10 +131,11 @@ class PriceBar(
         get() = ohlcv[3]
 
     /**
-     * Returns the volume
+     * Returns the volume.
+     * This is always greater or equals than zero, or Double.NaN if it is unknown
      */
     override val volume
-        get() = ohlcv[4]
+        get() = ohlcv[4].absoluteValue
 
     /**
      * String representation of this price-bar
@@ -192,10 +193,8 @@ data class TradePrice(override val asset: Asset, val price: Double, override val
     PriceAction {
 
     /**
-     * Return the underlying price. Since this event only holds a single price, the [type] parameter is not used.
-     *
-     * @param type
-     * @return
+     * Returns the underlying [price].
+     * Since this action only holds a single price, the [type] parameter is ignored.
      */
     override fun getPrice(type: String): Double {
         return price
@@ -204,7 +203,7 @@ data class TradePrice(override val asset: Asset, val price: Double, override val
 }
 
 /**
- * Price Quote for an asset. Common use case is that this holds the National Best Bid and Offer and their volumes.
+ * Price Quote for an asset. Common use case is that this holds the National Best Bid and Offer and their sizes.
  *
  * @property asset
  * @property askPrice
@@ -245,7 +244,7 @@ data class PriceQuote(
      * Returns the volume. The volume is defined as total of [askSize] and [bidSize]
      */
     override val volume: Double
-        get() = askSize + bidSize
+        get() = askSize.absoluteValue + bidSize.absoluteValue
 
     /**
      * Returns the spread percentage. The used formula is

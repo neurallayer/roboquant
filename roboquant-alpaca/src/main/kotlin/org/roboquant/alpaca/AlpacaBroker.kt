@@ -243,7 +243,7 @@ class AlpacaBroker(
                     Double.NaN,
                     order.id
                 )
-                _account.trades.add(trade)
+                _account.addTrade(trade)
                 handledTrades.add(activity.id)
             }
         }

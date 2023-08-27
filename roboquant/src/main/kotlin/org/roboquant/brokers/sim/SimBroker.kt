@@ -67,14 +67,17 @@ open class SimBroker(
     private val executionEngine = ExecutionEngine(pricingEngine)
 
     /**
-     * Get the latest state of the account
+     * Get the state of the account since tha last [sync]
      */
-    override val account: Account
-        get() = _account.toAccount()
+    final override var account: Account
+
 
     init {
         this.reset()
+        account = _account.toAccount()
     }
+
+
 
     /**
      * Update the portfolio with the provided [position] and return the realized PNL as a consequence of this position
@@ -144,7 +147,7 @@ open class SimBroker(
     }
 
     /**
-     * Run the simulation given the provided [event] and return the updated account.
+     * Run the simulation given the provided [event].
      */
     override fun sync(event: Event) {
         // Remove all previous closed orders and trades
@@ -154,6 +157,7 @@ open class SimBroker(
         _account.updateMarketPrices(event)
         _account.lastUpdate = event.time
         accountModel.updateAccount(_account)
+        account = _account.toAccount()
     }
 
     /**

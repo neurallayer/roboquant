@@ -22,6 +22,7 @@ import io.ktor.server.html.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kotlinx.html.*
+import org.roboquant.common.RoboquantException
 import org.roboquant.server.*
 import java.time.temporal.ChronoUnit
 
@@ -47,11 +48,13 @@ internal fun Route.overview() {
                 Runtime.getRuntime().halt(1)
             }
 
-            val run = params["run"]!!
-            val policy = runs.getValue(run).roboquant.policy as PausablePolicy
-            when (action) {
-                "pause" -> policy.pause = true
-                "resume" -> policy.pause = false
+            val run = params["run"] ?: throw RoboquantException("Couldn't find parameter for run")
+            val policy = runs.getValue(run).roboquant.policy
+            if (policy is PausablePolicy) {
+                when (action) {
+                    "pause" -> policy.pause = true
+                    "resume" -> policy.pause = false
+                }
             }
         }
 

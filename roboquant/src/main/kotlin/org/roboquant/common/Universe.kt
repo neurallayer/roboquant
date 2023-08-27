@@ -55,9 +55,11 @@ private class SP500 : Universe {
 
     private val startSP500 = LocalDate.parse("1960-01-01")
     private val assets: List<Pair<Asset, Timeframe>>
+    private val fileName = "/sp500.csv"
 
     init {
-        val stream = SP500::class.java.getResourceAsStream("/sp500.csv")!!
+        val stream =
+            SP500::class.java.getResourceAsStream(fileName) ?: throw RoboquantException("Couldn't find file $fileName")
         stream.use { inputStream ->
             val content = String(inputStream.readAllBytes(), StandardCharsets.UTF_8)
             val builder = NamedCsvReader.builder().fieldSeparator(';').build(content)

@@ -107,6 +107,7 @@ class PolygonLiveFeed(
     /**
      * Handle incoming messages
      */
+    @Suppress("CyclomaticComplexMethod")
     private fun handler(message: PolygonWebSocketMessage) {
 
         when (message) {
@@ -129,20 +130,27 @@ class PolygonLiveFeed(
 
             is PolygonWebSocketMessage.StocksMessage.Trade -> {
                 val asset = getSubscribedAsset(message.ticker)
-                val action = TradePrice(asset, message.price!!, message.size ?: Double.NaN)
-                send(Event(listOf(action), getTime(message.timestampMillis)))
+                val price = message.price
+                if (price != null) {
+                    val action = TradePrice(asset, price, message.size ?: Double.NaN)
+                    send(Event(listOf(action), getTime(message.timestampMillis)))
+                }
             }
 
             is PolygonWebSocketMessage.StocksMessage.Quote -> {
                 val asset = getSubscribedAsset(message.ticker)
-                val action = PriceQuote(
-                    asset,
-                    message.askPrice!!,
-                    message.askSize ?: Double.NaN,
-                    message.bidPrice!!,
-                    message.bidSize ?: Double.NaN,
-                )
-                send(Event(listOf(action), getTime(message.timestampMillis)))
+                val askPrice = message.askPrice
+                val bidPrice = message.bidPrice
+                if (askPrice != null && bidPrice != null) {
+                    val action = PriceQuote(
+                        asset,
+                        askPrice,
+                        message.askSize ?: Double.NaN,
+                        bidPrice,
+                        message.bidSize ?: Double.NaN,
+                    )
+                    send(Event(listOf(action), getTime(message.timestampMillis)))
+                }
             }
 
             else -> logger.warn { "received message=$message" }

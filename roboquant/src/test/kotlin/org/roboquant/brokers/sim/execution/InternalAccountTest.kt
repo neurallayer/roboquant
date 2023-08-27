@@ -16,10 +16,15 @@
 package org.roboquant.brokers.sim.execution
 
 
+import kotlinx.coroutines.launch
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
+import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
 import org.roboquant.common.Currency
+import org.roboquant.common.ParallelJobs
+import org.roboquant.common.Size
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
@@ -64,6 +69,38 @@ internal class InternalAccountTest {
         assertThrows<NoSuchElementException> {
             account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED)
         }
+
+    }
+
+    /**
+     * Run several methods concurrent to detect possible issues
+     */
+    @Test
+    fun runConcurrent() {
+        val nThreads = 10
+        val loop = 100
+        val jobs = ParallelJobs()
+        val iAccount = InternalAccount(Currency.USD)
+        repeat(nThreads) {
+            jobs.add {
+                launch {
+                    assertDoesNotThrow {
+                        repeat(loop) {
+                            val trade = Trade(Instant.now(), Asset("ABC$it"), Size(10), 100.0, 0.0, 0.0, it)
+                            iAccount.addTrade(trade)
+                            Thread.sleep(1)
+                        }
+                        Thread.sleep(1)
+                        repeat(10) {
+                            val account = iAccount.toAccount()
+                            for (trade in account.trades) assertEquals(Size(10), trade.size)
+                        }
+                    }
+                }
+            }
+        }
+        assertEquals(nThreads, jobs.size)
+        jobs.joinAllBlocking()
 
     }
 

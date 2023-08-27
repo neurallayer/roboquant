@@ -73,7 +73,7 @@ internal class IBKRExchangeRates(
         return when {
             (to === baseCurrency) -> exchangeRates.getValue(from)
             (from === baseCurrency) -> 1 / exchangeRates.getValue(to)
-            else -> exchangeRates[from]!! * 1 / exchangeRates.getValue(to)
+            else -> exchangeRates.getValue(from) * 1 / exchangeRates.getValue(to)
         }
 
     }

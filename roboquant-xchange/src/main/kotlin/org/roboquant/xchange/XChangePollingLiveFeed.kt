@@ -82,13 +82,14 @@ class XChangePollingLiveFeed(
             var done = false
             while (!done) {
                 for (symbol in symbols) {
-                    val currencyPair = symbol.toCurrencyPair()!!
+                    val currencyPair =
+                        symbol.toCurrencyPair() ?: throw RoboquantException("could determine currency pair for $symbol")
                     val cryptoPair: Instrument =
                         CurrencyPair(currencyPair.first.currencyCode, currencyPair.second.currencyCode)
                     val result = service.getTrades(cryptoPair)
                     for (trade in result.trades) {
                         println(trade)
-                        val asset = assetMap[symbol]!!
+                        val asset = assetMap.getValue(symbol)
                         val item = TradePrice(asset, trade.price.toDouble(), trade.originalAmount.toDouble())
                         val now = trade.timestamp.toInstant()
                         val event = Event(listOf(item), now)
@@ -113,7 +114,8 @@ class XChangePollingLiveFeed(
      * @return
      */
     private fun getAsset(symbol: String): Asset {
-        val currencyPair = symbol.toCurrencyPair()!!
+        val currencyPair =
+            symbol.toCurrencyPair() ?: throw RoboquantException("could determine currency pair for $symbol")
         return Asset(symbol, AssetType.CRYPTO, currencyPair.second.currencyCode, exchangeName)
     }
 

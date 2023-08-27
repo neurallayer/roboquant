@@ -17,6 +17,7 @@
 package org.roboquant.loggers
 
 import org.roboquant.TestData
+import org.roboquant.common.Timeframe
 import org.roboquant.common.millis
 import org.roboquant.common.plus
 import java.time.Instant
@@ -29,7 +30,7 @@ internal class LastEntryLoggerTest {
         val metrics = TestData.getMetrics()
         val logger = LastEntryLogger()
         assertFalse(logger.showProgress)
-
+        logger.start("test", Timeframe.INFINITE)
         logger.log(metrics, Instant.now(), "test")
         logger.end("test")
         assertTrue(logger.getMetricNames().isNotEmpty())
@@ -47,6 +48,7 @@ internal class LastEntryLoggerTest {
     fun testSequence() {
         val metrics = TestData.getMetrics()
         val logger = LastEntryLogger()
+        logger.start("test", Timeframe.INFINITE)
         assertFalse(logger.showProgress)
 
         val now = Instant.now()
@@ -61,5 +63,21 @@ internal class LastEntryLoggerTest {
         val m = logger.getMetric(m1).latestRun()
         assertEquals(m.timeline.sorted(), m.timeline)
     }
+
+    @Test
+    fun concurrency() {
+        val logger = LastEntryLogger(false)
+        val nThreads = 100
+        val loop = 10
+        runConcurrent(logger, nThreads, loop)
+        val data = logger.getMetric("a")
+        assertEquals(nThreads, data.size)
+        for (ts in data.values) {
+            assertEquals(1, ts.size)
+            assertTrue(ts.all { it.value == 100.0 })
+        }
+
+    }
+
 
 }

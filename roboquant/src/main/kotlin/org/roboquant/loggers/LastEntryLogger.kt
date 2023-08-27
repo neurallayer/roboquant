@@ -41,7 +41,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
         if (showProgress) progressBar.update(time)
 
         if (results.isNotEmpty()) {
-            val map = history.getOrPut(run) { mutableMapOf() }
+            val map = history.getValue(run)
             for ((t, u) in results) {
                 val value = Observation(time, u)
                 map[t] = value
@@ -53,7 +53,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
         get() = history.keys
 
     override fun start(run: String, timeframe: Timeframe) {
-        history.remove(run)
+        history[run] = mutableMapOf()
         if (showProgress) progressBar.start(run, timeframe)
     }
 

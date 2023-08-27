@@ -336,11 +336,12 @@ class IBKRBroker(
             val id = commissionReport.execId().substringBeforeLast('.')
             val trade = tradeMap[id]
             if (trade != null) {
-                val i = account.trades.indexOf(trade)
                 val newTrade = trade.copy(
                     feeValue = commissionReport.commission(), pnlValue = commissionReport.realizedPNL()
                 )
-                _account.trades[i] = newTrade
+                // Add this trade as a separate trade
+                _account.addTrade(newTrade)
+                tradeMap.remove(id)
             } else {
                 logger.warn("Commission for none existing trade ${commissionReport.execId()}")
             }
@@ -362,6 +363,7 @@ class IBKRBroker(
             val size = if (execution.side() == "SLD") -execution.cumQty().value() else execution.cumQty().value()
             val order = orderMap[execution.orderId()]
 
+            // PNL and Fee will be filled later
             if (order != null) {
                 val trade = Trade(
                     Instant.now(),
@@ -373,7 +375,6 @@ class IBKRBroker(
                     order.id
                 )
                 tradeMap[id] = trade
-                _account.addTrade(trade)
             }
         }
 
