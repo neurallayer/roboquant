@@ -26,7 +26,7 @@ import kotlin.test.assertEquals
 
 internal class FeeModelTest {
 
-    private val trades = TestData.internalAccount().trades
+    private val trades = TestData.internalAccount().toAccount().trades
 
     @Test
     fun testDefaultCostModel() {

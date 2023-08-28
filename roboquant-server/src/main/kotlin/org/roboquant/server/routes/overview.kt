@@ -59,6 +59,7 @@ internal fun Route.overview() {
         }
 
         call.respondHtml(HttpStatusCode.OK) {
+
             page("Overview runs") {
                 table(classes = "table text-end my-5") {
                     thead {
@@ -95,7 +96,7 @@ internal fun Route.overview() {
                                     +"hold = ${policy.holdSignals}"
                                 }
                                 td { +policy.totalOrders.toString() }
-                                td { +policy.lastUpdate.truncatedTo(ChronoUnit.MILLIS).toString() }
+                                td { +policy.lastUpdate.truncatedTo(ChronoUnit.SECONDS).toString() }
                                 td {
                                     a(href = "/run/$run") { +"details" }
                                     br

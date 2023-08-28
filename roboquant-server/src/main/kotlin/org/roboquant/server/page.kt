@@ -21,7 +21,12 @@ import kotlinx.html.*
 fun HTML.page(title: String, bodyFn: BODY.() -> Unit) {
     lang = "en"
     head {
-        script { src = "https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.4/htmx.min.js" }
+        meta { charset = "utf-8" }
+        meta {
+            name = "viewport"
+            content = "width=device-width, initial-scale=1, shrink-to-fit=no"
+        }
+        script { src = "https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.5/htmx.min.js" }
         script { src = "https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"}
         script { src = "/static/htmx-extensions.js"}
         title { +title }

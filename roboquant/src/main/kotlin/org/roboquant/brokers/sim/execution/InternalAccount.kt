@@ -48,7 +48,7 @@ class InternalAccount(var baseCurrency: Currency) {
     /**
      * The trades that have been executed
      */
-    var trades = mutableListOf<Trade>()
+    private var trades = AppendOnlyList<Trade>()
 
     /**
      * Open orders
@@ -59,7 +59,7 @@ class InternalAccount(var baseCurrency: Currency) {
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
      * closed.
      */
-    private var closedOrders = mutableListOf<OrderState>()
+    private var closedOrders = AppendOnlyList<OrderState>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -85,8 +85,8 @@ class InternalAccount(var baseCurrency: Currency) {
     internal fun removeClosedOrdersAndTrades() {
         // Create new instances since clear() could impact previously returned
         // accounts since they contain views of the closedOrders and trades.
-        closedOrders = mutableListOf()
-        trades = mutableListOf()
+        closedOrders = AppendOnlyList()
+        trades = AppendOnlyList()
     }
 
     /**
@@ -95,8 +95,8 @@ class InternalAccount(var baseCurrency: Currency) {
     fun clear() {
         // Create new instances since clear() could impact previously returned
         // accounts since they contain views of the closedOrders and trades.
-        closedOrders = mutableListOf()
-        trades = mutableListOf()
+        closedOrders = AppendOnlyList()
+        trades = AppendOnlyList()
 
         lastUpdate = Instant.MIN
         openOrders.clear()
