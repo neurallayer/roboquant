@@ -87,8 +87,8 @@ class IBKRBroker(
     /**
      * @see Broker.account
      */
-    override val account: Account
-        get() = _account.toAccount()
+    override var account: Account
+       private set
 
     private val logger = Logging.getLogger(IBKRBroker::class)
     private var orderId = 0
@@ -114,6 +114,7 @@ class IBKRBroker(
         // Only request orders created with this client, so don't use: client.reqAllOpenOrders()
         // client.reqOpenOrders()
         updateAccount()
+        account = _account.toAccount()
     }
 
 
@@ -164,6 +165,7 @@ class IBKRBroker(
     override fun sync(event: Event) {
         client.reqOpenOrders()
         updateAccount()
+        account = _account.toAccount()
     }
 
     /**

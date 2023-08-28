@@ -47,8 +47,8 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
     /**
      * @see Broker.account
      */
-    override val account: Account
-        get() = _account.toAccount()
+    override var account: Account = _account.toAccount()
+        private set
 
     private val logger = Logging.getLogger(XChangeBroker::class)
     private val tradeService = exchange.tradeService
@@ -59,7 +59,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
     init {
         logger.info("Created CryptoBroker for $exchange")
-        updateAccount()
+        sync()
     }
 
     /**
@@ -77,6 +77,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
      */
     override fun sync(event: Event) {
         updateAccount()
+        account = _account.toAccount()
     }
 
     /**

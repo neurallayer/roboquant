@@ -28,7 +28,8 @@ import java.time.Instant
 interface Broker : Lifecycle {
 
     /**
-     * Return a copy of the trading account that is guaranteed not to change after it has been returned.
+     * The state of the trading account since the last [sync]. This is an immutable object.
+     * Only invoking [sync] will result in a new instance of this object.
      */
     val account: Account
 
@@ -40,6 +41,8 @@ interface Broker : Lifecycle {
      *
      * Optionally an [event] can be provided, although normally only the SimBroker requires this to simulate
      * trade executions. If no event is provided, an empty event will be used instead.
+     *
+     * A sync will result in a new instance of the [account] object.
      */
     fun sync(event: Event = Event.empty())
 

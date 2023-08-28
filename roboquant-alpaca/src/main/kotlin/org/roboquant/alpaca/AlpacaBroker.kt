@@ -56,8 +56,8 @@ class AlpacaBroker(
     /**
      * @see Broker.account
      */
-    override val account: Account
-        get() = _account.toAccount()
+    override var account: Account
+        private set
 
     private val alpacaAPI: AlpacaAPI
     private val handledTrades = mutableSetOf<String>()
@@ -74,6 +74,7 @@ class AlpacaBroker(
         syncAccount()
         syncPortfolio()
         loadInitialOrders()
+        account = _account.toAccount()
     }
 
     /**
@@ -249,21 +250,16 @@ class AlpacaBroker(
         }
     }
 
-    /**
-     * Sync the state of the Alpaca broker account with roboquant account state.
-     */
-    fun sync() {
-        syncAccount()
-        syncPortfolio()
-        syncOrders()
-        syncTrades()
-    }
 
     /**
      * @see Broker.sync
      */
     override fun sync(event: Event) {
-        sync()
+        syncAccount()
+        syncPortfolio()
+        syncOrders()
+        syncTrades()
+        account = _account.toAccount()
     }
 
     /**
@@ -310,7 +306,6 @@ class AlpacaBroker(
         )
 
         orderMapping[order] = alpacaOrder.id
-
     }
 
     /**

@@ -67,14 +67,13 @@ open class SimBroker(
     private val executionEngine = ExecutionEngine(pricingEngine)
 
     /**
-     * Get the state of the account since tha last [sync]
+     * Get the state of the account since the last [sync]
      */
-    final override var account: Account
+    override var account: Account = _account.toAccount()
 
 
     init {
         this.reset()
-        account = _account.toAccount()
     }
 
 
@@ -177,6 +176,7 @@ open class SimBroker(
         executionEngine.clear()
         _account.cash.deposit(initialDeposit)
         accountModel.updateAccount(_account)
+        account = _account.toAccount()
     }
 
 }

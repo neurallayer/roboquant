@@ -56,8 +56,8 @@ class BinanceBroker(
     /**
      * @see Broker.account
      */
-    override val account: Account
-        get() = _account.toAccount()
+    override var account: Account = _account.toAccount()
+        private set
 
     private val logger = Logging.getLogger(BinanceBroker::class)
     private val placedOrders = mutableMapOf<Long, Int>()
@@ -70,7 +70,7 @@ class BinanceBroker(
         client = factory.newRestClient()
         logger.info("Created BinanceBroker with client $client")
         assetMap = Binance.retrieveAssets(client)
-        updateAccount()
+        sync()
     }
 
     /**
@@ -113,6 +113,7 @@ class BinanceBroker(
      */
     override fun sync(event: Event) {
         updateAccount()
+        account = _account.toAccount()
     }
 
     /**
