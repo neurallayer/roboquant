@@ -28,8 +28,8 @@ import java.time.Instant
 interface Broker : Lifecycle {
 
     /**
-     * The state of the trading account since the last [sync]. This is an immutable object.
-     * Only invoking [sync] will result in a new instance of this object.
+     * The state of the trading account since the last [sync]. This returns an immutable object.
+     * Only invoking [sync] will result in creating a new instance of this object.
      */
     val account: Account
 

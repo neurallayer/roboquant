@@ -226,15 +226,19 @@ class AlpacaBroker(
      */
     private fun syncTrades() {
         val now = ZonedDateTime.now()
-        val trades = alpacaAPI.accountActivities().get(
+        val accountActivities = alpacaAPI.accountActivities().get(
             now, null, null, SortDirection.ASCENDING, 100, "", ActivityType.FILL
         )
-        logger.debug { "Found ${trades.size} fill activities" }
-        for (activity in trades.filterIsInstance<TradeActivity>()) {
+        logger.debug { "Found ${accountActivities.size} FILL account activities" }
+        for (activity in accountActivities.filterIsInstance<TradeActivity>()) {
             // Only add trades we know the order id of, ignore the rest
             logger.debug { "Found trade $activity" }
             val order = orderMapping.filterValues { it == activity.orderId }.keys.firstOrNull()
-            if (order != null && order is CreateOrder && activity.id !in handledTrades) {
+            if (order == null) {
+                logger.warn { "Couldn't find order for trade=$activity" }
+                continue
+            }
+            if (order is CreateOrder && activity.id !in handledTrades) {
                 val trade = Trade(
                     activity.transactionTime.toInstant(),
                     order.asset,
@@ -292,7 +296,7 @@ class AlpacaBroker(
             else -> throw UnsupportedException("unsupported tif=${entry.tif} for order=$order")
         }
 
-        require(!entry.size.isFractional) { "fractional orders are not supported for barcket orders" }
+        require(!entry.size.isFractional) { "fractional orders are not supported for bracket orders" }
         val qty = entry.size.toBigDecimal().abs().toInt()
 
         val alpacaOrder = api.requestMarketBracketOrder(
@@ -326,14 +330,13 @@ class AlpacaBroker(
         }
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
-        require(order.size.isFractional && order !is LimitOrder) {
+        require(!order.size.isFractional || order is LimitOrder) {
             "fractional orders only supported for limit orders"
         }
 
         val qty = order.size.toBigDecimal().abs()
         val api = alpacaAPI.orders()
 
-        @Suppress("KotlinConstantConditions")
         val alpacaOrder = when (order) {
             is MarketOrder -> api.requestMarketOrder(asset.symbol, qty.toInt(), side, tif)
             is LimitOrder -> api.requestLimitOrder(asset.symbol, qty.toDouble(), side, tif, order.limit, extendedHours)
@@ -357,6 +360,7 @@ class AlpacaBroker(
      * @return the updated account that reflects the latest state
      */
     override fun place(orders: List<Order>, time: Instant) {
+        // Sanity-check that you don't use this broker during back testing.
         if (time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
 
         _account.initializeOrders(orders)

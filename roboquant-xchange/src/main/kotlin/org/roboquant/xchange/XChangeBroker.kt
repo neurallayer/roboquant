@@ -70,6 +70,9 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
         for (wallet in info.wallets) {
             logger.info { "${wallet.key} ${wallet.value}" }
         }
+        for (position in info.openPositions) {
+            logger.info { "$position" }
+        }
     }
 
     /**
@@ -116,7 +119,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
                     else -> {
                         logger.warn {
-                            "only market and limit orders are supported, received ${order::class} instead"
+                            "only market and limit orders are supported, received $order instead"
                         }
                         _account.rejectOrder(order, now)
                     }

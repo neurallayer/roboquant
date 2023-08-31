@@ -46,18 +46,18 @@ private class AccountUpdate {
     var base = Currency.USD
     var buyingPower = Double.NaN
 
-    fun update(account: InternalAccount) {
-        account.lastUpdate = Instant.now()
-        account.baseCurrency = base
-        account.buyingPower = Amount(base, buyingPower)
+    fun update(iAccount: InternalAccount) {
+        iAccount.lastUpdate = Instant.now()
+        iAccount.baseCurrency = base
+        iAccount.buyingPower = Amount(base, buyingPower)
 
         // Fill the cash
-        account.cash.clear()
-        for (c in cash.currencies) account.cash.set(c, cash[c])
+        iAccount.cash.clear()
+        for (c in cash.currencies) iAccount.cash.set(c, cash[c])
 
         // Fill the positions
-        account.portfolio.clear()
-        for (p in positions) account.setPosition(p)
+        iAccount.portfolio.clear()
+        for (p in positions) iAccount.setPosition(p)
     }
 
 }
@@ -174,6 +174,7 @@ class IBKRBroker(
      * @param orders
      */
     override fun place(orders: List<Order>, time: Instant) {
+        // Sanity-check that you don't use this broker during back testing.
         if (time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
 
         // Make sure we store all orders
@@ -339,7 +340,7 @@ class IBKRBroker(
             val trade = tradeMap[id]
             if (trade != null) {
                 val newTrade = trade.copy(
-                    feeValue = commissionReport.commission(), pnlValue = commissionReport.realizedPNL()
+                    feeValue = commissionReport.commission() //, pnlValue = commissionReport.realizedPNL()
                 )
                 // Add this trade as a separate trade
                 _account.addTrade(newTrade)
@@ -381,7 +382,6 @@ class IBKRBroker(
         }
 
         override fun openOrderEnd() {
-            println("openOrderEnd")
             logger.debug("openOrderEnd")
         }
 
@@ -391,9 +391,7 @@ class IBKRBroker(
 
             // Reset to clean state
             accountUpdate = AccountUpdate()
-            // println("waiting")
             synchronized(accountUpdateLock) {
-                // println("notify")
                 accountUpdateLock.notify()
             }
         }

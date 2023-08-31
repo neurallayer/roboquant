@@ -47,7 +47,7 @@
         <dependency>
             <groupId>net.jacobpeterson</groupId>
             <artifactId>alpaca-java</artifactId>
-            <version>9.1.4</version>
+            <version>9.2.0</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

@@ -28,6 +28,7 @@ import org.roboquant.feeds.toList
 import org.roboquant.loggers.InfoLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
+import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy
 
 
@@ -139,12 +140,23 @@ private fun alpacaHistoricFeed2() {
 
 }
 
+private fun singleOrder() {
+    val broker = AlpacaBroker()
+    val order = MarketOrder(Asset("TSLA"), Size.ONE)
+    broker.place(listOf(order))
+    Thread.sleep(5000)
+    broker.sync()
+    println(broker.account.summary())
+}
+
+
 fun main() {
-    when ("PAPER_TRADE") {
+    when ("SINGLE_ORDER") {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
         "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()
         "ALPACA_HISTORIC_FEED2" -> alpacaHistoricFeed2()
         "ALPACA_PAPER_TRADE_STOCKS" -> alpacaPaperTradeStocks()
+        "SINGLE_ORDER" -> singleOrder()
     }
 }

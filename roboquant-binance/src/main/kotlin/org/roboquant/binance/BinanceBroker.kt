@@ -66,6 +66,7 @@ class BinanceBroker(
 
     init {
         config.configure()
+        logger.warn { "This is not a fully functional implementation" }
         val factory = Binance.getFactory(config)
         client = factory.newRestClient()
         logger.info("Created BinanceBroker with client $client")
@@ -78,6 +79,7 @@ class BinanceBroker(
      */
     val availableAssets
         get() = assetMap.values.toSortedSet()
+
 
     private fun updateAccount() {
         val balances = client.account.balances

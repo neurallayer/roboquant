@@ -40,6 +40,7 @@ fun exchangeRates() {
 fun broker() {
     Config.exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.1)
     val broker = IBKRBroker()
+
     println(broker.account.fullSummary())
     Thread.sleep(5000)
     println(broker.account.positions.assets)
@@ -97,6 +98,28 @@ fun placeOrder() {
     broker.disconnect()
     println("done")
 }
+
+
+
+fun placeSimpleOrder() {
+    Config.exchangeRates = IBKRExchangeRates()
+    val broker = IBKRBroker()
+    broker.sync()
+    val account = broker.account
+    println(account.fullSummary())
+
+    val asset = Asset("TSLA", AssetType.STOCK, "USD", "SMART")
+    val order = MarketOrder(asset, Size.ONE)
+
+    broker.place(listOf(order))
+    Thread.sleep(5000)
+    broker.sync()
+    val account2 = broker.account
+    println(account2.fullSummary())
+    broker.disconnect()
+    println("done")
+}
+
 
 
 fun liveFeedEU() {
@@ -169,7 +192,7 @@ fun historicFuturesFeed() {
 
 fun main() {
 
-    when ("PAPER_TRADE") {
+    when ("PLACE_SIMPLE_ORDER") {
         "ACCOUNT" -> showAccount()
         "EXCH" -> exchangeRates()
         "BROKER" -> broker()
@@ -180,6 +203,7 @@ fun main() {
         "HISTORIC2" -> historicFeed2()
         "HISTORIC3" -> historicFuturesFeed()
         "PLACE_ORDER" -> placeOrder()
+        "PLACE_SIMPLE_ORDER" -> placeSimpleOrder()
     }
 
 }
