@@ -16,8 +16,10 @@
 
 package org.roboquant.feeds
 
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.sync.Mutex
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.compareTo
@@ -32,13 +34,18 @@ import org.roboquant.common.compareTo
  *
  * @property capacity The capacity of the channel in the number of events it can store before blocking the sender
  * @property timeframe Limit the events to this timeframe, default is INFINITE, so no limit
+ * @property onBufferOverflow define behaviour when buffer is full, default is [BufferOverflow.SUSPEND]
  * @constructor create a new EventChannel
  */
-open class EventChannel(val capacity: Int = 10, val timeframe: Timeframe = Timeframe.INFINITE) : AutoCloseable,
-    Cloneable {
+class EventChannel(
+    val capacity: Int = 10,
+    val timeframe: Timeframe = Timeframe.INFINITE,
+    private val onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND
+) : AutoCloseable, Cloneable {
 
-    private val channel = Channel<Event>(capacity)
+    private val channel = Channel<Event>(capacity, onBufferOverflow)
     private val logger = Logging.getLogger(EventChannel::class)
+    private val mutex = Mutex(true)
 
     /**
      * True if the event-channel is closed, false otherwise. A closed event-channel cannot be re-opened again and will
@@ -47,33 +54,28 @@ open class EventChannel(val capacity: Int = 10, val timeframe: Timeframe = Timef
     var closed: Boolean = false
         private set
 
-    /**
-     * Add a new [event] to the channel. If the channel is full, it will remove older event first to make room, before
-     * adding the new event. So this is a non-blocking method.
-     *
-     * This method is often preferable over the regular [send] in live market data scenario's since it prioritizes more
-     * recent data over maintaining a large buffer.
-     */
-    fun offer(event: Event) {
-        if (event.time in timeframe) {
-            while (!channel.trySend(event).isSuccess) {
-                // if (closed) return
-                val dropped = channel.tryReceive().getOrNull()
-                if (dropped !== null)
-                    logger.debug { "dropped event for time ${dropped.time}" }
-            }
-        } else {
-            if (event.time > timeframe) {
-                logger.debug { "offer time=${event.time} timeframe=$timeframe, closing channel" }
-                close()
-            }
-        }
-    }
 
     /**
      * Iterate over the events in this channel
      */
     operator fun iterator() = channel.iterator()
+
+
+    /**
+     * Try sending an [event] on this channel.
+     * If the time of event is before the timeframe of this channel, it will be silently ignored.
+     * And if the event is after the timeframe, the channel will be [closed].
+     */
+    fun trySend(event: Event) {
+        if (event.time in timeframe) {
+            channel.trySend(event)
+        } else {
+            if (event.time > timeframe) {
+                logger.debug { "send time=${event.time} timeframe=$timeframe, closing channel" }
+                close()
+            }
+        }
+    }
 
     /**
      * Send an [event] on this channel. If the time of event is before the timeframe of this channel, it will be
@@ -112,16 +114,25 @@ open class EventChannel(val capacity: Int = 10, val timeframe: Timeframe = Timef
     /**
      * Close this [EventChannel] and mark it as [closed]
      */
+    @Synchronized
     override fun close() {
+        if (closed) return
         closed = true
         channel.close()
+        mutex.unlock()
+    }
+
+
+    suspend fun waitOnClose() {
+        if (closed) return
+        mutex.lock()
     }
 
     /**
      * Make a copy. Events on the channel will not be copied, and the new channel will be open by default.
      */
     public override fun clone(): EventChannel {
-        return EventChannel(capacity, timeframe)
+        return EventChannel(capacity, timeframe, onBufferOverflow)
     }
 
 

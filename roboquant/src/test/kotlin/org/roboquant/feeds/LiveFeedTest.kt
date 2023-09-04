@@ -16,10 +16,15 @@
 
 package org.roboquant.feeds
 
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.common.Background
+import org.roboquant.Roboquant
+import org.roboquant.common.*
+import org.roboquant.loggers.LastEntryLogger
+import org.roboquant.metrics.ProgressMetric
+import org.roboquant.strategies.EMAStrategy
+import java.time.Instant
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -46,6 +51,8 @@ internal class LiveFeedTest {
             feed.play(EventChannel())
             assertTrue(feed.isActive)
         }
+
+        assertFalse(feed.isActive)
     }
 
     @Test
@@ -66,5 +73,62 @@ internal class LiveFeedTest {
         }
 
     }
+
+    @Test
+    fun concurrency() {
+
+        class MyLiveFeed : LiveFeed() {
+
+            var stop = false
+
+            fun start(delayInMillis: Long) {
+                val scope = CoroutineScope(Dispatchers.Default + Job())
+
+                scope.launch {
+                    val asset = Asset("ABC")
+                    val actions = listOf(TradePrice(asset, 100.0))
+
+                    while(true) {
+                        try {
+                            send(event = Event(actions, Instant.now()))
+                            delay(delayInMillis)
+                            if (stop) break
+                        } catch (e: Exception) {
+                            println(e)
+                        }
+                    }
+                }
+
+            }
+
+
+        }
+
+        val feed = MyLiveFeed()
+        val tf = Timeframe.next(1.seconds)
+
+        val jobs = ParallelJobs()
+
+        var run = 0
+        tf.sample(200.millis, 10).forEach {
+            val name = "run-${run++}"
+            jobs.add {
+                val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = LastEntryLogger())
+                rq.runAsync(feed, it, name=name)
+                val actions = rq.logger.getMetric("progress.actions", name).values.last()
+                // println("${actions.size} $name $it")
+                assertTrue(actions > 2)
+            }
+            // println("run $name added")
+        }
+
+        feed.start(delayInMillis = 50)
+        // println("feed started")
+
+        jobs.joinAllBlocking()
+        // println("runs are done")
+        feed.stop = true
+    }
+
 
 }

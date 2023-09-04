@@ -18,7 +18,6 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
-import org.roboquant.common.Timeframe
 import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -42,29 +41,5 @@ internal class EventChannelTest {
         }
     }
 
-    @Test
-    fun basicOffer() {
-        val channel = EventChannel(10)
-        val event = Event.empty()
-        repeat(11) {
-            channel.offer(event)
-        }
-        assertFalse(channel.closed)
-        channel.close()
-        assertTrue(channel.closed)
-
-    }
-
-    @Test
-    fun timeframeOffer() {
-        // Create a channel with timeframe in the past
-        val past = Timeframe.fromYears(2015, 2017)
-        val channel = EventChannel(timeframe = past)
-        val event = Event.empty()
-        channel.offer(event)
-        assertTrue(channel.closed)
-        channel.close()
-        assertTrue(channel.closed)
-    }
 
 }

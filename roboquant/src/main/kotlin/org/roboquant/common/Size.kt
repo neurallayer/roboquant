@@ -42,8 +42,9 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
     constructor(value: BigDecimal) : this(value.multiply(BD_FRACTION).longValueExact())
 
     /**
-     * Creates a Size instance based a [Double] [value]. Be careful when using this constructor since a Double is not
-     * always precise. Also overflows and lost of precision don't lead to an exception.
+     * Creates a Size instance based a [Double] [value].
+     * Be careful using this constructor since a Double is not always precise.
+     * Also overflows and lost of precision don't lead to an exception.
      *
      * Better to use the Size constructor with a [String] or [BigDecimal] as its parameter instead:
      * ```
@@ -65,6 +66,7 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
         // We use 8 digits scale
         private const val SCALE = 8
         private const val FRACTION = 100_000_000L
+        private const val DOUBLE_FRACTION = 100_000_000.0
         private val BD_FRACTION = BigDecimal(FRACTION)
 
         /**
@@ -82,7 +84,7 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
     /**
      * Converts this [Size] value to a [Double], this conversion might lose precision
      */
-    fun toDouble() = value / FRACTION.toDouble()
+    fun toDouble() = value / DOUBLE_FRACTION
 
     /**
      * Converts this [Size] value to a [BigDecimal]

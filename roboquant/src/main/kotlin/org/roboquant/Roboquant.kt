@@ -17,6 +17,7 @@
 package org.roboquant
 
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
@@ -51,7 +52,9 @@ import java.time.Instant
  * @property policy The policy to use, default is [FlexPolicy]
  * @property broker the broker to use, default is [SimBroker]
  * @property logger the metrics logger to use, default is [MemoryLogger]
- * @param channelCapacity the max capacity of the event channel, more capacity means more buffering. Default is 10.
+ * @property channelCapacity the max capacity of the event channel, more capacity means more buffering. Default is 10.
+ * @property onChannelFull the behavior when a channel is full, default is [BufferOverflow.SUSPEND].
+ * For live trading, it might be appropriate to set this to [BufferOverflow.DROP_OLDEST]
  */
 data class Roboquant(
     val strategy: Strategy,
@@ -60,6 +63,7 @@ data class Roboquant(
     val broker: Broker = SimBroker(),
     val logger: MetricsLogger = MemoryLogger(),
     private val channelCapacity: Int = 10,
+    private val onChannelFull: BufferOverflow = BufferOverflow.SUSPEND
 ) {
 
     /**
@@ -148,7 +152,7 @@ data class Roboquant(
         warmup: TimeSpan = TimeSpan.ZERO,
         reset: Boolean = true
     ) {
-        val channel = EventChannel(channelCapacity, timeframe)
+        val channel = EventChannel(channelCapacity, timeframe, onChannelFull)
         val scope = CoroutineScope(Dispatchers.Default + Job())
 
         val job = scope.launch {

@@ -25,10 +25,13 @@ import org.roboquant.binance.BinanceLiveFeed
 import org.roboquant.binance.Interval
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Amount
+import org.roboquant.common.ParallelJobs
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
 import org.roboquant.feeds.toList
 import org.roboquant.loggers.ConsoleLogger
+import org.roboquant.loggers.InfoLogger
+import org.roboquant.metrics.ProgressMetric
 import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
@@ -72,12 +75,34 @@ fun binanceBackTest() {
 }
 
 
+fun multiplier() {
+    val feed = BinanceLiveFeed()
+
+    // We ony trade Bitcoin
+    feed.subscribePriceBar("BTCBUSD")
+    val tf = Timeframe.next(5.minutes)
+
+    val jobs = ParallelJobs()
+
+    repeat(3) {
+        jobs.add {
+            val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = InfoLogger())
+            rq.run(feed, tf, name="run-$it")
+        }
+    }
+
+    jobs.joinAllBlocking()
+    println("runs are done")
+    feed.close()
+}
+
 
 fun main() {
 
-    when ("WEB") {
+    when ("MULTI") {
         "LIVE" -> binanceLiveFeed()
         "HISTORIC" -> binanceBackTest()
         "FORWARD" -> binanceForwardTest()
+        "MULTI" -> multiplier()
     }
 }

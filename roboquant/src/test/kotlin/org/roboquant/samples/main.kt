@@ -18,17 +18,23 @@
 
 package org.roboquant.samples
 
+import kotlinx.coroutines.*
 import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
+import org.roboquant.feeds.Event
+import org.roboquant.feeds.LiveFeed
+import org.roboquant.feeds.TradePrice
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
+import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
+import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.summary
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
@@ -129,13 +135,67 @@ fun cfd() {
 }
 
 
+
+
+fun largeTest() {
+
+    class MyLiveFeed : LiveFeed() {
+
+        fun start(delayInMillis: Long) {
+            val scope = CoroutineScope(Dispatchers.Default + Job())
+
+            scope.launch {
+                val asset = Asset("ABC")
+                val actions = listOf(TradePrice(asset, 100.0))
+
+                while(true) {
+                    try {
+                        send(event = Event(actions, Instant.now()))
+                        delay(delayInMillis)
+                    } catch (e: Exception) {
+                        println(e)
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    val feed = MyLiveFeed()
+    val tf = Timeframe.next(20.seconds)
+
+    val jobs = ParallelJobs()
+
+    var run = 0
+    tf.sample(2.seconds, 100).forEach {
+        val name = "run-${run++}"
+        jobs.add {
+            val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
+            rq.runAsync(feed, it, name=name)
+            // val actions = rq.logger.getMetric("progress.actions", name).values.first()
+            // println("$actions $name $it")
+            // assertTrue(actions > 30)
+        }
+        println("run $name added")
+    }
+
+    feed.start(delayInMillis = 50)
+    println("feed started")
+
+    jobs.joinAllBlocking()
+    println("runs are done")
+}
+
+
 fun main() {
     Config.printInfo()
 
-    when ("FEED") {
+    when ("LARGE") {
         "MC" -> multiCurrency()
         "TESTING" -> testingStrategies()
         "CFD" -> cfd()
+        "LARGE" -> largeTest()
     }
 
 }

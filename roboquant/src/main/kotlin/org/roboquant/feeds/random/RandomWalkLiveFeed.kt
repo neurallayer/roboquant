@@ -24,6 +24,7 @@ import java.time.Instant
 
 /**
  * Random walk live feed contains a number of assets with prices that follow a random walk.
+ * When using this feed in multiple runs, each run will receive its own unique random-walk.
  *
  * Internally, it uses a seeded random generator. So while it generates random data, the results can be reproduced if
  * instantiated with the same seed. It can generate [PriceBar] or [TradePrice] prices.
@@ -66,6 +67,7 @@ class RandomWalkLiveFeed(
         val gen = RandomPriceGenerator(assets.toList(), priceChange, volumeRange, timeSpan, generateBars, seed)
         var time = Instant.now()
         while (true) {
+            if (channel.closed) return
             val actions = gen.next()
             val event = Event(actions, time)
             channel.send(event)

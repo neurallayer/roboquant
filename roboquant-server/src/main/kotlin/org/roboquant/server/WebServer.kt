@@ -20,38 +20,50 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
+import org.roboquant.common.Config
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
+
 // Store all the instantiated runs
 internal val runs = ConcurrentHashMap<String, RunInfo>()
 
 /**
+ * Configuration for the webserver
+ */
+data class WebServerConfig(
+    var username: String = Config.getProperty("server.username", ""),
+    var password: String = Config.getProperty("server.password", ""),
+    var port: Int = Config.getProperty("server.port")?.toInt() ?: 8080,
+    var host: String = Config.getProperty("server.host") ?: "127.0.0.1",
+)
+
+/**
  * Create a server with credentials. The website will be protected using digest authentication.
  */
-class WebServer(username: String, password: String, port: Int = 8080, host: String = "127.0.01") {
-
-    /**
-     * Create server instance without credentials.
-     * So, anybody can see the runs, pause them and stop the server.
-     */
-    constructor(port: Int = 8080, host: String = "127.0.01") : this("", "", port, host)
+class WebServer(configure: WebServerConfig.() -> Unit = {}) {
 
     private var runCounter = 0
-    private val server: NettyApplicationEngine = embeddedServer(
-        Netty,
-        port = port,
-        host = host,
-        module = {
-            if (username.isNotEmpty()) secureSetup(username, password) else setup()
-        }
-    ).start(wait = false)
+    private val server: NettyApplicationEngine
 
     init {
-        logger.info { "web server started on $host:$port" }
+        val config = WebServerConfig()
+        config.configure()
+
+        with(config) {
+
+            server = embeddedServer(
+                Netty,
+                port = port,
+                host = host,
+                module = {
+                    if (username.isNotBlank() && password.isNotBlank()) secureSetup(username, password) else setup()
+                }
+            ).start(wait = false)
+        }
     }
 
     /**
@@ -78,9 +90,10 @@ class WebServer(username: String, password: String, port: Int = 8080, host: Stri
         feed: Feed,
         timeframe: Timeframe,
         name: String = getRunName(),
-        warmup: TimeSpan = TimeSpan.ZERO
+        warmup: TimeSpan = TimeSpan.ZERO,
+        paused: Boolean = false
     ) = runBlocking {
-        runAsync(roboquant, feed, timeframe, name, warmup)
+        runAsync(roboquant, feed, timeframe, name, warmup, paused)
     }
 
     /**
@@ -92,12 +105,13 @@ class WebServer(username: String, password: String, port: Int = 8080, host: Stri
         feed: Feed,
         timeframe: Timeframe,
         name: String = getRunName(),
-        warmup: TimeSpan = TimeSpan.ZERO
+        warmup: TimeSpan = TimeSpan.ZERO,
+        paused: Boolean = false
     ) {
-        require(! runs.contains(name)) { "run name has to be unique, name=$name is already in use by another run."}
-        val rq = roboquant.copy(policy = PausablePolicy(roboquant.policy))
+        require(!runs.contains(name)) { "run name has to be unique, name=$name is already in use by another run." }
+        val rq = roboquant.copy(policy = PausablePolicy(roboquant.policy, paused))
         runs[name] = RunInfo(rq, feed, timeframe, warmup)
-        logger.info { "Starting new run name=$name timeframe=$timeframe"}
+        logger.info { "Starting new run name=$name timeframe=$timeframe" }
         rq.runAsync(feed, timeframe, name, warmup)
     }
 

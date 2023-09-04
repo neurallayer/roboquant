@@ -35,7 +35,70 @@ private fun FlowContent.pauseInfo(pause: Boolean) {
     }
 }
 
+private fun TABLE.tableHeader(vararg header: String) {
+    thead {
+        tr {
+           for (elem in header) th { +elem }
+        }
+    }
+}
+
 @Suppress("LongMethod")
+private fun FlowContent.runTable() {
+    table(classes = "table text-end my-5") {
+        caption {
+            +"Runs"
+        }
+        tableHeader("run", "state", "timeframe", "events", "signals", "orders", "last update", "actions")
+        tbody {
+            runs.forEach { (run, info) ->
+                val policy = info.roboquant.policy as PausablePolicy
+                tr {
+                    td { +run }
+                    td { pauseInfo(policy.pause) }
+                    td { +info.timeframe.toPrettyString() }
+                    td {
+                        +"total = ${policy.totalEvents}"
+                        br
+                        +"empty = ${policy.emptyEvents}"
+                        br
+                        +"actions = ${policy.totalActions}"
+                    }
+                    td {
+                        +"buy = ${policy.buySignals}"
+                        br
+                        +"sell = ${policy.sellSignals}"
+                        br
+                        +"hold = ${policy.holdSignals}"
+                    }
+                    td { +policy.totalOrders.toString() }
+                    td { +policy.lastUpdate.truncatedTo(ChronoUnit.SECONDS).toString() }
+                    td {
+                        a(href = "/run/$run") { +"details" }
+                        br
+                        a(href = "/?action=pause&run=$run") { +"pause" }
+                        br
+                        a(href = "/?action=resume&run=$run") { +"resume" }
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+
+private fun FlowContent.stopButton() {
+
+    div(classes = "row justify-content-md-center mt-5") {
+        button(classes = "btn btn-danger btn-lg col-lg-2") {
+            hxGet = "/?action=stop"
+            hxConfirm = "Are you sure you want to stop the server?"
+            +"Stop Server"
+        }
+    }
+}
+
 internal fun Route.overview() {
     get("/") {
         val params = call.request.queryParameters
@@ -59,64 +122,9 @@ internal fun Route.overview() {
         }
 
         call.respondHtml(HttpStatusCode.OK) {
-
-            page("Overview runs") {
-                table(classes = "table text-end my-5") {
-                    thead {
-                        tr {
-                            th { +"run" }
-                            th { +"state" }
-                            th { +"timeframe" }
-                            th { +"events" }
-                            th { +"signals" }
-                            th { +"orders" }
-                            th { +"last update" }
-                            th { +"actions" }
-                        }
-                    }
-                    tbody {
-                        runs.forEach { (run, info) ->
-                            val policy = info.roboquant.policy as PausablePolicy
-                            tr {
-                                td { +run }
-                                td { pauseInfo(policy.pause) }
-                                td { +info.timeframe.toPrettyString() }
-                                td {
-                                    +"total = ${policy.totalEvents}"
-                                    br
-                                    +"empty = ${policy.emptyEvents}"
-                                    br
-                                    +"actions = ${policy.totalActions}"
-                                }
-                                td {
-                                    +"buy = ${policy.buySignals}"
-                                    br
-                                    +"sell = ${policy.sellSignals}"
-                                    br
-                                    +"hold = ${policy.holdSignals}"
-                                }
-                                td { +policy.totalOrders.toString() }
-                                td { +policy.lastUpdate.truncatedTo(ChronoUnit.SECONDS).toString() }
-                                td {
-                                    a(href = "/run/$run") { +"details" }
-                                    br
-                                    a(href = "/?action=pause&run=$run") { +"pause" }
-                                    br
-                                    a(href = "/?action=resume&run=$run") { +"resume" }
-                                }
-                            }
-                        }
-                    }
-
-                }
-                div(classes = "row justify-content-md-center mt-5") {
-                    button(classes = "btn btn-danger btn-lg col-lg-2") {
-                        hxGet = "/?action=stop"
-                        hxConfirm = "Are you sure you want to stop the server?"
-                        +"Stop Server"
-                    }
-                }
-
+            page("Overview") {
+               runTable()
+               stopButton()
             }
         }
     }

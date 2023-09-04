@@ -40,7 +40,7 @@ fun HTML.page(title: String, bodyFn: BODY.() -> Unit) {
         }
     }
     body(classes = "container") {
-        h1 { +title }
+        h1(classes = "my-3 text-center") { +title }
         bodyFn()
     }
 
