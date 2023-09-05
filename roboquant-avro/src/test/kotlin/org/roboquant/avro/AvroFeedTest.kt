@@ -219,6 +219,7 @@ class AvroFeedTest {
 
     @Test
     fun predefinedSP500() {
+        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AvroFeed.sp500()
         assertTrue(feed.assets.size >= 490)
         assertTrue(feed.timeframe.start >= Instant.parse("2016-01-01T00:00:00Z"))
@@ -232,6 +233,7 @@ class AvroFeedTest {
 
     @Test
     fun predefinedQuotes() {
+        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AvroFeed.sp500Quotes()
         assertTrue(feed.assets.size >= 490)
         assertContains(feed.assets.symbols, "AAPL")
@@ -244,6 +246,7 @@ class AvroFeedTest {
 
     @Test
     fun predefinedForex() {
+        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AvroFeed.forex()
         assertEquals(1, feed.assets.size)
         assertContains(feed.assets.symbols, "EUR_USD")

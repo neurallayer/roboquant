@@ -29,19 +29,13 @@ import kotlin.test.assertTrue
 
 internal class LiveFeedTest {
 
-    private class MyLiveFeed : LiveFeed() {
-
-        fun test() {
-            repeat(10) {
-                send(Event.empty())
-            }
-        }
-
-    }
 
 
     @Test
     fun combined() = runBlocking {
+
+        class MyLiveFeed : LiveFeed()
+
         val feed1 = MyLiveFeed()
         feed1.heartbeatInterval = 2
         val feed2 = MyLiveFeed()
