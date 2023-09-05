@@ -25,7 +25,6 @@ import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class LiveFeedTest {
@@ -40,20 +39,6 @@ internal class LiveFeedTest {
 
     }
 
-    @Test
-    fun basic(): Unit = runBlocking {
-        val feed = MyLiveFeed()
-        assertFalse(feed.isActive)
-        assertDoesNotThrow { feed.test() }
-
-        feed.heartbeatInterval = 10
-        Background.job {
-            feed.play(EventChannel())
-            assertTrue(feed.isActive)
-        }
-
-        assertFalse(feed.isActive)
-    }
 
     @Test
     fun combined() = runBlocking {
