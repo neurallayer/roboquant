@@ -25,7 +25,6 @@ internal class BinanceHistoricFeedTestIT {
 
     @Test
     fun test() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = BinanceHistoricFeed()
         assertEquals(1, feed.availableAssets.findBySymbols("BTCUST").size)
 

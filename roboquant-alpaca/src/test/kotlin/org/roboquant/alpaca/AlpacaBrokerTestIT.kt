@@ -17,7 +17,6 @@
 package org.roboquant.alpaca
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.common.Config
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -26,7 +25,6 @@ class AlpacaBrokerTestIT {
 
     @Test
     fun test() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val broker = AlpacaBroker()
         val cash = broker.account.cash
 

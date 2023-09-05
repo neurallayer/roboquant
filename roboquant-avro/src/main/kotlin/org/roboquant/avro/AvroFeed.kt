@@ -204,7 +204,8 @@ class AvroFeed(private val path: Path, useCache: Boolean = false) : AssetFeed {
         private fun download(fileName: String): Path {
             val path: Path = Paths.get(Config.home.toString(), fileName)
             if (Files.notExists(path)) {
-                val url = "https://github.com/neurallayer/roboquant-data/blob/main/avro/$fileName?raw=true"
+                val url = "https://roboquant-public.s3.eu-west-1.amazonaws.com/avro/$fileName"
+                // val url = "https://github.com/neurallayer/roboquant-data/blob/main/avro/$fileName?raw=true"
                 logger.info("Downloading data from $url...")
                 val website = URL(url)
                 website.openStream().use { inputStream: InputStream ->

@@ -28,7 +28,7 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class PolygonTest {
+internal class PolygonTestIT {
 
     @Test
     fun supportedAssets() {
@@ -46,7 +46,6 @@ internal class PolygonTest {
 
     @Test
     fun testHistoricFeed() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = PolygonHistoricFeed()
         val now = Instant.now() - 10.days
         val period = Timeframe(now - 50.days, now)
@@ -79,7 +78,6 @@ internal class PolygonTest {
 
     @Test
     fun testFundamentalsFeed() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = PolygonFundamentalsFeed()
         feed.retrieve("AAPL", "TSLA")
         assertEquals(2, feed.assets.size)

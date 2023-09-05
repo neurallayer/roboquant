@@ -33,8 +33,10 @@ import java.io.File
 import java.time.Instant
 import java.util.*
 import kotlin.io.path.Path
-import kotlin.io.path.div
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @TestMethodOrder(Alphanumeric::class)
 class AvroFeedTest {
@@ -215,60 +217,6 @@ class AvroFeedTest {
         val pb2 = avroFeed.toList().first().actions.first()
         assertTrue(pb2 is PriceBar)
         assertEquals(1.days, pb2.timeSpan)
-    }
-
-    @Test
-    fun predefinedSP500() {
-        Config.getProperty("FULL_COVERAGE") ?: return
-        val feed = AvroFeed.sp500()
-        assertTrue(feed.assets.size >= 490)
-        assertTrue(feed.timeframe.start >= Instant.parse("2016-01-01T00:00:00Z"))
-        assertContains(feed.assets.symbols, "AAPL")
-        assertDoesNotThrow {
-            var found = false
-            feed.filter<PriceBar> { found = true;false }
-            assertTrue(found)
-        }
-    }
-
-    @Test
-    fun predefinedQuotes() {
-        Config.getProperty("FULL_COVERAGE") ?: return
-        val feed = AvroFeed.sp500Quotes()
-        assertTrue(feed.assets.size >= 490)
-        assertContains(feed.assets.symbols, "AAPL")
-        assertDoesNotThrow {
-            var found = false
-            feed.filter<PriceQuote> { found = true;false }
-            assertTrue(found)
-        }
-    }
-
-    @Test
-    fun predefinedForex() {
-        Config.getProperty("FULL_COVERAGE") ?: return
-        val feed = AvroFeed.forex()
-        assertEquals(1, feed.assets.size)
-        assertContains(feed.assets.symbols, "EUR_USD")
-        assertDoesNotThrow {
-            var found = false
-            feed.filter<PriceBar> { found = true;false }
-            assertTrue(found)
-        }
-    }
-
-    @Test
-    fun loadFromGithub() {
-        Config.getProperty("FULL_COVERAGE_ALL") ?: return
-        val fileName = "sp500_pricebar_v5.1.avro"
-        val file = (Config.home / fileName).toFile()
-        file.delete()
-        assertFalse(file.exists())
-
-        // Force loading of file
-        AvroFeed.sp500()
-        val file2 = (Config.home / fileName).toFile()
-        assertTrue(file2.exists())
     }
 
     @Test

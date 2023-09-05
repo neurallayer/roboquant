@@ -17,7 +17,6 @@
 package org.roboquant.alpaca
 
 import org.roboquant.common.AssetType
-import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
 import org.roboquant.common.findByCurrencies
 import org.roboquant.feeds.*
@@ -33,7 +32,6 @@ internal class AlpacaHistoricFeedTestIT {
 
     @Test
     fun testHistoricFeed() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AlpacaHistoricFeed()
         val assets = feed.availableAssets
         assertTrue(assets.isNotEmpty())
@@ -57,7 +55,6 @@ internal class AlpacaHistoricFeedTestIT {
 
     @Test
     fun testHistoricQuotes() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AlpacaHistoricFeed()
         feed.retrieveStockQuotes("A", timeframe = timeframe2)
         testResult<PriceQuote>(feed)
@@ -65,7 +62,6 @@ internal class AlpacaHistoricFeedTestIT {
 
     @Test
     fun testHistoricTrades() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AlpacaHistoricFeed()
         feed.retrieveStockTrades("A", timeframe = timeframe2)
         testResult<TradePrice>(feed)
@@ -73,7 +69,6 @@ internal class AlpacaHistoricFeedTestIT {
 
     @Test
     fun testHistoricBars() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AlpacaHistoricFeed()
         feed.retrieveStockPriceBars("A", timeframe = timeframe)
         testResult<PriceBar>(feed)
@@ -81,7 +76,6 @@ internal class AlpacaHistoricFeedTestIT {
 
     @Test
     fun testHistoricBarsWithDuration() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AlpacaHistoricFeed()
         feed.retrieveStockPriceBars(
             "AAPL",
@@ -96,7 +90,6 @@ internal class AlpacaHistoricFeedTestIT {
 
     @Test
     fun testHistoricBarsWithDurationAndAdjustment() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val feed = AlpacaHistoricFeed()
         feed.retrieveStockPriceBars(
             "AAPL",
