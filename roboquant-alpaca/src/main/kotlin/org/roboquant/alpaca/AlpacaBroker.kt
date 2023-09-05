@@ -195,14 +195,16 @@ class AlpacaBroker(
         val qty = if (order.side == OrderSide.BUY) order.quantity.toBigDecimal() else -order.quantity.toBigDecimal()
         val size = Size(qty)
 
-        if (order.orderClass == OrderClass.SIMPLE) return MarketOrder(asset, size)
-        if (order.orderClass == OrderClass.BRACKET) return BracketOrder(
-            MarketOrder(asset, size),
-            LimitOrder(asset, -size, order.limitPrice.toDouble()),
-            StopLimitOrder(asset, -size, order.stopPrice.toDouble(), order.limitPrice.toDouble())
-        )
-
-        throw UnsupportedException("unsupported order type for order $order")
+        return when {
+            order.type == OrderType.MARKET -> MarketOrder(asset, size)
+            order.type == OrderType.LIMIT -> LimitOrder(asset, size, order.limitPrice.toDouble())
+            order.orderClass == OrderClass.BRACKET -> BracketOrder(
+                MarketOrder(asset, size),
+                LimitOrder(asset, -size, order.limitPrice.toDouble()),
+                StopOrder(asset, -size, order.stopPrice.toDouble())
+            )
+            else -> throw UnsupportedException("unsupported order type for order $order")
+        }
     }
 
     /**

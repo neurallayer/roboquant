@@ -46,7 +46,6 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
 
     fun findByAlapacaId(orderId: String) = orders.filterValues { it == orderId }.keys.firstOrNull()
 
-
     fun placeBracketOrder(order: BracketOrder) {
 
         val api = alpacaAPI.orders()
