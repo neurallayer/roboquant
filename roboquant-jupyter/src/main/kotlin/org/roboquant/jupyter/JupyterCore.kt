@@ -23,6 +23,7 @@ import org.jetbrains.kotlinx.jupyter.api.libraries.resources
 import org.roboquant.charts.Chart
 import org.roboquant.common.Config
 import org.roboquant.common.Logging
+import org.roboquant.common.Size
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -161,11 +162,14 @@ internal class JupyterCore(
             }
         }
 
-        /*
-        createRendererByCompileTimeType<Size> {
-            "hello"
-        }
-         */
+
+        addRenderer(
+            createRendererByCompileTimeType<Size> {
+                val value = it.value as Long
+                Size.fromUnderlyingValue(value).toString()
+            }
+        )
+
 
         render<Welcome> {
             if (NotebookConfig.isolation) HTML(it.asHTMLPage(), true) else HTML(it.asHTML(), false)
