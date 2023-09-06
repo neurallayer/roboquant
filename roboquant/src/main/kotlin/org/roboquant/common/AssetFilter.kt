@@ -60,16 +60,30 @@ fun interface AssetFilter {
          * Include only the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive,
          * and all special characters are replaced with a `.` character before comparing.
          */
-        fun includeSymbols(vararg symbols: String): AssetFilter {
+        fun includeSymbols(vararg symbols: String): AssetFilter = includeSymbols(symbols.toSet())
+
+        /**
+         * Include only the assets that match the provided [symbols].
+         * Matching of symbol names is done case-insensitive, and all special characters are replaced with a
+         * dot character before comparing.
+         */
+        fun includeSymbols(symbols: Collection<String>): AssetFilter {
             val set = symbols.map { it.standardize() }.toSet()
             return AssetFilter { asset: Asset, _: Instant -> asset.symbol.standardize() in set }
         }
 
         /**
+         * Exclude the assets that match the provided [symbols].
+         * Matching of symbol names is done case-insensitive, and all special characters are translated into a
+         * dot character before comparing.
+         */
+        fun excludeSymbols(vararg symbols: String): AssetFilter = excludeSymbols(symbols.toSet())
+
+        /**
          * Exclude the assets that match the provided [symbols]. Matching of symbol names is done case-insensitive,
          * and all special characters are translated into a dot character before comparing.
          */
-        fun excludeSymbols(vararg symbols: String): AssetFilter {
+        fun excludeSymbols(symbols: Collection<String>): AssetFilter {
             val set = symbols.map { it.standardize() }.toSet()
             return AssetFilter { asset: Asset, _: Instant -> asset.symbol.standardize() !in set }
         }

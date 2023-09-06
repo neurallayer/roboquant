@@ -41,10 +41,16 @@ internal class AssetFilterTest {
         a = assets.filter { AssetFilter.excludeSymbols("ABC").filter(it, time) }
         assertFalse(asset1 in a)
 
+        a = assets.filter { AssetFilter.excludeSymbols(listOf("ABC")).filter(it, time) }
+        assertFalse(asset1 in a)
+
         a = assets.filter { AssetFilter.excludeSymbols("aBc").filter(it, time) }
         assertFalse(asset1 in a)
 
         a = assets.filter { AssetFilter.includeSymbols("ABC").filter(it, time) }
+        assertTrue(asset1 in a)
+
+        a = assets.filter { AssetFilter.includeSymbols(listOf("ABC")).filter(it, time) }
         assertTrue(asset1 in a)
 
         a = assets.filter { AssetFilter.includeCurrencies(Currency.USD).filter(it, time) }
