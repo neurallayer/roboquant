@@ -99,7 +99,9 @@ class AggregatorFeed(
                     val newEvent = Event(history.values.toList(), expiration)
                     channel.sendNotEmpty(newEvent)
                     history.clear()
-                    expiration += aggregationPeriod
+                    do {
+                        expiration += aggregationPeriod
+                    } while (expiration < time)
                 }
 
                 for (action in event.actions) {
