@@ -27,14 +27,14 @@ internal class AllocationChartTest {
     fun test() {
         val account = TestData.usAccount()
         val chart = AllocationChart(account.positions)
-        assertTrue(chart.getOption().renderJson().isNotBlank())
+        assertTrue(chart.renderJson().isNotBlank())
     }
 
     @Test
     fun testPerAssetClass() {
         val account = TestData.usAccount()
         val chart = AllocationChart(account.positions, includeAssetClass = true)
-        assertTrue(chart.getOption().renderJson().isNotBlank())
+        assertTrue(chart.renderJson().isNotBlank())
     }
 
     @Test

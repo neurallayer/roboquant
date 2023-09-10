@@ -25,7 +25,7 @@ internal class HistogramChartTest {
     fun test() {
         val data = TestData.data
         val chart = HistogramChart(data)
-        assertTrue(chart.getOption().renderJson().isNotBlank())
+        assertTrue(chart.renderJson().isNotBlank())
     }
 
 }

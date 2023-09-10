@@ -24,7 +24,6 @@ import org.icepear.echarts.Option
 import org.icepear.echarts.components.grid.Grid
 import org.icepear.echarts.components.toolbox.*
 import org.icepear.echarts.components.visualMap.ContinousVisualMap
-import org.roboquant.charts.Chart.Companion.gsonBuilder
 import org.roboquant.common.Amount
 import java.lang.reflect.Type
 import java.time.Instant
@@ -114,6 +113,15 @@ abstract class Chart {
         protected set
 
     /**
+     * Allow for customization of the chart.
+     * This is invoked by [renderJson] before the json is rendered.
+     * Default is no customization.
+     *
+     * Please note, the [getOption] method returns the non-customized option.
+     */
+    var customize : Option.() -> Unit = {}
+
+    /**
      * Height for charts, default being 500 pixels. Subclasses can override this value
      */
     var height = 500
@@ -161,7 +169,7 @@ abstract class Chart {
          */
         var neutralColor: String = "#CC0" // Yellow
 
-        internal val gsonBuilder = GsonBuilder()
+        private val gsonBuilder = GsonBuilder()
 
         init {
             // register the custom type adapters
@@ -257,23 +265,29 @@ abstract class Chart {
      */
     abstract fun getOption(): Option
 
-}
 
-/**
- * Convert the option to a JSON string
- */
-fun Option.renderJson(): String {
-    // Set default transparent background so charts look better with Jupyter Notebooks
-    if (backgroundColor == null) backgroundColor = "rgba(0,0,0,0)"
 
-    // Use UTC, makes it easier to compare charts and values
-    useUTC = true
+    /**
+     * Convert the option of this chart to a JSON string.
+     * Is there is [customize] defined, this will be invoked before the json rendering happens.
+     */
+    fun renderJson(): String {
+        val option = getOption()
+        option.customize()
+        // Set as default, a transparent background. Charts look better with Jupyter Notebooks themes.
+        if (option.backgroundColor == null) option.backgroundColor = "rgba(0,0,0,0)"
 
-    // Set the default grid if none is set already
-    if (grid == null) {
-        val grid = Grid().setContainLabel(true).setRight("3%").setLeft("3%")
-        setGrid(grid)
+        // Use UTC, makes it easier to compare charts and values
+        option.useUTC = true
+
+        // Set the default grid if none is set already
+        if (option.grid == null) {
+            val grid = Grid().setContainLabel(true).setRight("3%").setLeft("3%")
+            option.setGrid(grid)
+        }
+        return gsonBuilder.create().toJson(option)
     }
-    return gsonBuilder.create().toJson(this)
-}
 
+
+
+}

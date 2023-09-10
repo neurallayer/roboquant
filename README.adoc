@@ -140,7 +140,7 @@ The following list includes projects that extend the behavior of roboquant in so
 - Several sample notebooks and a docker container: https://github.com/neurallayer/roboquant-notebook
 
 == Thanks
-Besides all the link:docs/THIRDPARTY.adoc[great open source software] that is powering _roboquant_, also special thanks to JetBrains for making a https://www.jetbrains.com/community/opensource/[license] available for *IntelliJ IDEA*.
+Besides all the link:docs/THIRDPARTY.adoc[great opensource software] that is powering _roboquant_, also special thanks to JetBrains for making a https://www.jetbrains.com/community/opensource/[license] available for *IntelliJ IDEA*.
 
 image:https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png[JetBrains,100,100]
 

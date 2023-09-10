@@ -17,7 +17,6 @@
 package org.roboquant.jupyter
 
 import org.roboquant.charts.Chart
-import org.roboquant.charts.renderJson
 
 
 private var counter = 0
@@ -27,7 +26,7 @@ private var counter = 0
  * and it is suitable to be rendered in the cell output of a Jupyter notebook.
  */
 fun Chart.asHTML(theme: String): String {
-    val fragment = getOption().renderJson().trimStart()
+    val fragment = renderJson().trimStart()
     val id = "roboquant-${counter++}"
     val convertor = if (containsJavaScript)
         "option.tooltip.formatter = new Function('p', option.tooltip.formatter);"

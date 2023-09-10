@@ -27,7 +27,7 @@ internal class BoxChartTest {
         val logger = MemoryLogger()
         val data = logger.getMetric("test")
         val chart = BoxChart(data)
-        assertTrue(chart.getOption().renderJson().isNotBlank())
+        assertTrue(chart.renderJson().isNotBlank())
     }
 
 }

@@ -71,7 +71,7 @@ class MetricsReport(
      * Generates the HTML snippet required to draw a chart.
      */
     private fun Chart.asHTML(id: String): String {
-        var fragment = getOption().renderJson().trimStart()
+        var fragment = renderJson().trimStart()
         if (containsJavaScript) fragment += "option.tooltip.formatter = new Function('p', option.tooltip.formatter);"
 
         return """ 

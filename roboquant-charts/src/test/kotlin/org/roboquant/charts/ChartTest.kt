@@ -19,9 +19,7 @@ package org.roboquant.charts
 import org.icepear.echarts.Option
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.common.USD
 import org.roboquant.feeds.random.RandomWalkFeed
-import java.time.Instant
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -50,27 +48,17 @@ internal class ChartTest {
         val f = RandomWalkFeed.lastYears(1, 1, generateBars = true)
         val asset = f.assets.first()
         val chart = PriceBarChart(f, asset)
-        val html = chart.getOption().renderJson()
+        val html = chart.renderJson()
         assertTrue(html.isNotBlank())
         assertEquals(700, chart.height)
         assertContains(html, asset.symbol)
 
         val chart2 = PriceBarChart(f, asset.symbol)
-        assertEquals(html, chart2.getOption().renderJson())
+        assertEquals(html, chart2.renderJson())
 
 
     }
 
-    @Test
-    fun testGsonAdapters() {
-        val b = Chart.gsonBuilder.create()
-        assertDoesNotThrow {
-            b.toJson(Pair("A", "B"))
-            b.toJson(Triple("A", "B", "C"))
-            b.toJson(Instant.now())
-            b.toJson(100.USD)
-        }
-    }
 
     @Test
     fun testReduced() {
@@ -87,7 +75,7 @@ internal class ChartTest {
         chart.height = 123
 
         assertDoesNotThrow {
-            chart.getOption().renderJson()
+            chart.renderJson()
         }
 
     }

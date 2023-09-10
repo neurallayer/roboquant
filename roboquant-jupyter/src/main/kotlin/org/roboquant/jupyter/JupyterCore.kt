@@ -84,7 +84,8 @@ object NotebookConfig {
 }
 
 /**
- * Integration with Kotlin based Jupyter notebook kernels. Some main features:
+ * Integration with Kotlin-based Jupyter notebook kernels.
+ * Some of the main features include:
  *
  * 1. Support for charts using Apache ECharts library
  * 2. Default imports

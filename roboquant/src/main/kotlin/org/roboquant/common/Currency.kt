@@ -150,7 +150,7 @@ class Currency private constructor(val currencyCode: String) {
          * For all already registered currencies increase the number of display digits with [extraDigits]. This doesn't
          * change calculations, only the way currency amounts are displayed.
          *
-         * TIP: For Forex trading this is often required since otherwise small differences can not be seen in charts
+         * TIP: For Forex trading this is often required since otherwise small differences cannot be seen in charts
          * and reports.
          */
         fun increaseDigits(extraDigits: Int = 3) {

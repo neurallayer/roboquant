@@ -29,10 +29,10 @@ internal class TimeSeriesChartTest {
         val chart = TimeSeriesChart(data)
 
         assertDoesNotThrow {
-            chart.getOption().renderJson()
+            chart.renderJson()
         }
 
-        assertTrue(chart.getOption().renderJson().isNotBlank())
+        assertTrue(chart.renderJson().isNotBlank())
 
         TestData.testFile(chart, "timeserieschart")
     }
@@ -43,10 +43,10 @@ internal class TimeSeriesChartTest {
         val chart = TimeSeriesChart(data.values.first())
 
         assertDoesNotThrow {
-            chart.getOption().renderJson()
+            chart.renderJson()
         }
 
-        assertTrue(chart.getOption().renderJson().isNotBlank())
+        assertTrue(chart.renderJson().isNotBlank())
     }
 
     @Test
@@ -55,10 +55,10 @@ internal class TimeSeriesChartTest {
         val chart = TimeSeriesChart.walkForward(data)
 
         assertDoesNotThrow {
-            chart.getOption().renderJson()
+            chart.renderJson()
         }
 
-        assertTrue(chart.getOption().renderJson().isNotBlank())
+        assertTrue(chart.renderJson().isNotBlank())
     }
 
     @Test
@@ -67,10 +67,10 @@ internal class TimeSeriesChartTest {
         val chart = TimeSeriesChart.walkForward(data)
 
         assertDoesNotThrow {
-            chart.getOption().renderJson()
+            chart.renderJson()
         }
 
-        assertTrue(chart.getOption().renderJson().isNotBlank())
+        assertTrue(chart.renderJson().isNotBlank())
     }
 
 }

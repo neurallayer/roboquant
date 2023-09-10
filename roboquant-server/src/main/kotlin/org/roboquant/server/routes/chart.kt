@@ -24,7 +24,6 @@ import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import org.icepear.echarts.components.toolbox.Toolbox
 import org.roboquant.charts.TimeSeriesChart
-import org.roboquant.charts.renderJson
 import org.roboquant.server.runs
 
 
@@ -38,13 +37,12 @@ internal fun Route.chart() {
         val chart = TimeSeriesChart(data)
         chart.title = metric
 
-        val option = chart.getOption()
-
         // Remove the restore option from the toolbox, since it doesn't work nicely with incremental updates.
-        val toolbox = option.toolbox
-        if (toolbox is Toolbox) toolbox.feature.remove("restore")
+        chart.customize = {
+            (toolbox as? Toolbox)?.feature?.remove("restore")
+        }
 
-        val json = option.renderJson()
+        val json = chart.renderJson()
         call.respondText(json, ContentType.Application.Json)
     }
 }

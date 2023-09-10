@@ -85,12 +85,12 @@ object TestData {
         val url = classloader.getResource(fileName)
         if (url === null) {
             val fullName = "src/test/resources/$fileName"
-            val json = chart.getOption().renderJson()
+            val json = chart.renderJson()
             File(fullName).writeText(json)
         }
 
         val str = loadFile(fileName)
-        assertEquals(str.removeEOL(), chart.getOption().renderJson().removeEOL())
+        assertEquals(str.removeEOL(), chart.renderJson().removeEOL())
     }
 
 }

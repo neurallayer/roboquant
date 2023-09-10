@@ -28,7 +28,7 @@ internal class CorrelationChartTest {
     fun test() {
         val feed = RandomWalkFeed.lastYears(1, 5)
         val chart = CorrelationChart(feed, feed.assets)
-        assertTrue(chart.getOption().renderJson().isNotBlank())
+        assertTrue(chart.renderJson().isNotBlank())
     }
 
     @Test
