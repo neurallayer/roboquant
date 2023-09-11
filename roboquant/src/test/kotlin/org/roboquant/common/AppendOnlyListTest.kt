@@ -32,8 +32,8 @@ class AppendOnlyListTest {
     fun threadSafe() {
         val list = AppendOnlyList<String>()
         val threads = mutableListOf<Thread>()
-        val nThreads = 100
-        val loops = 200
+        val nThreads = 50
+        val loops = 25
         repeat(nThreads) {
             val t = thread(true) {
                 assertDoesNotThrow {

@@ -32,13 +32,19 @@ internal class WelcomeTest {
     }
 
     @Test
-    fun testDemo() {
+    fun testDemo1() {
         val chart1 = Welcome().demo1()
         assertTrue(chart1 is TimeSeriesChart)
+    }
 
+    @Test
+    fun testDemo2() {
         val chart2 = Welcome().demo2()
         assertTrue(chart2 is TimeSeriesChart)
+    }
 
+    @Test
+    fun testDemo3() {
         val chart3 = Welcome().demo3()
         assertTrue(chart3 is PriceBarChart)
     }
