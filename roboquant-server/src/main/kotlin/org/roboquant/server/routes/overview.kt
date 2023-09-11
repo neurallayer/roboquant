@@ -22,10 +22,8 @@ import io.ktor.server.html.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kotlinx.html.*
-import org.roboquant.common.RoboquantException
 import org.roboquant.server.*
 import java.time.temporal.ChronoUnit
-
 
 private fun FlowContent.pauseInfo(pause: Boolean) {
     if (pause) p(classes = "text-warning") {
@@ -35,10 +33,10 @@ private fun FlowContent.pauseInfo(pause: Boolean) {
     }
 }
 
-private fun TABLE.tableHeader(vararg header: String) {
+private fun TABLE.tableHeader(vararg headers: String) {
     thead {
         tr {
-           for (elem in header) th { +elem }
+           for (header in headers) th(scope = ThScope.col) { +header }
         }
     }
 }
@@ -111,7 +109,7 @@ internal fun Route.overview() {
                 Runtime.getRuntime().halt(1)
             }
 
-            val run = params["run"] ?: throw RoboquantException("Couldn't find parameter for run")
+            val run = params.getOrFail("run")
             val policy = runs.getValue(run).roboquant.policy
             if (policy is PausablePolicy) {
                 when (action) {

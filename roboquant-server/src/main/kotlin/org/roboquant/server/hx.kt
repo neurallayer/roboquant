@@ -18,59 +18,33 @@ package org.roboquant.server
 import kotlinx.html.FORM
 import kotlinx.html.HTMLTag
 
-/*
-fun HTMLTag.hxGet(value: String) {
-    attributes += "data-hx-get" to value
-}
-
-fun HTMLTag.hxSwap(value: String) {
-    attributes += "data-hx-swap" to value
-}
-
-fun HTMLTag.hxTarget(value: String) {
-    attributes += "data-hx-target" to value
-}
-
-fun FORM.hxPost(value: String) {
-    attributes += "data-hx-post" to value
-}
-
-fun HTMLTag.hxBoost(value: Boolean) {
-    attributes += "data-hx-boost" to value.toString()
-}
-
-fun HTMLTag.hxExt(value: String) {
-    attributes += "data-hx-ext" to value
-}
-*/
-
-var FORM.hxPost: String
+internal var FORM.hxPost: String
     get() = attributes["data-hx-post"] ?: ""
     set(value) {
         attributes["data-hx-post"] = value
     }
 
-var HTMLTag.hxExt: String
+internal var HTMLTag.hxExt: String
     get() = attributes["data-hx-ext"] ?: ""
     set(value) {
         attributes["data-hx-ext"] = value
     }
 
 
-var HTMLTag.hxGet: String
+internal var HTMLTag.hxGet: String
     get() = attributes["data-hx-get"] ?: ""
     set(value) {
         attributes["data-hx-get"] = value
     }
 
 
-var HTMLTag.hxConfirm: String
+internal var HTMLTag.hxConfirm: String
     get() = attributes["data-hx-confirm"] ?: ""
     set(value) {
         attributes["data-hx-confirm"] = value
     }
 
-var HTMLTag.hxTarget: String
+internal var HTMLTag.hxTarget: String
     get() = attributes["data-hx-target"] ?: ""
     set(value) {
         attributes["data-hx-target"] = value

@@ -27,7 +27,7 @@ import org.roboquant.server.routes.overview
 import java.security.MessageDigest
 
 
-val logger = Logging.getLogger(WebServer::class)
+internal val logger = Logging.getLogger(WebServer::class)
 
 private fun getMd5Digest(str: String): ByteArray =
     MessageDigest.getInstance("MD5").digest(str.toByteArray(Charsets.UTF_8))

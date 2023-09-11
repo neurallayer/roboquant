@@ -18,7 +18,25 @@ package org.roboquant.server
 
 import kotlinx.html.*
 
-fun HTML.page(title: String, bodyFn: BODY.() -> Unit) {
+var SCRIPT.crossorigin
+    get() = attributes["crossorigin"]
+    set(value) {
+        attributes["crossorigin"] = value!!
+    }
+
+var LINK.crossorigin
+    get() = attributes["crossorigin"]
+    set(value) {
+        attributes["crossorigin"] = value!!
+    }
+
+var SCRIPT.referrerpolicy
+    get() = attributes["referrerpolicy"]
+    set(value) {
+        attributes["referrerpolicy"] = value!!
+    }
+
+internal fun HTML.page(title: String, bodyFn: BODY.() -> Unit) {
     lang = "en"
     head {
         meta { charset = "utf-8" }
@@ -26,14 +44,26 @@ fun HTML.page(title: String, bodyFn: BODY.() -> Unit) {
             name = "viewport"
             content = "width=device-width, initial-scale=1, shrink-to-fit=no"
         }
-        script { src = "https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.5/htmx.min.js" }
-        script { src = "https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"}
-        script { src = "/static/htmx-extensions.js"}
-        title { +title }
-        link {
-            href = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-            rel = "stylesheet"
+        script {
+            src = "https://unpkg.com/htmx.org@1.9.5"
+            integrity = "sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO"
+            crossorigin = "anonymous"
         }
+        link {
+            href = "https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+            rel = "stylesheet"
+            integrity = "sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+            crossorigin = "anonymous"
+        }
+        script {
+            src = "https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"
+            integrity =
+                "sha512-EmNxF3E6bM0Xg1zvmkeYD3HDBeGxtsG92IxFt1myNZhXdCav9MzvuH/zNMBU1DmIPN6njrhX1VTbqdJxQ2wHDg=="
+            crossorigin = "anonymous"
+            referrerpolicy = "no-referrer"
+        }
+        script { src = "/static/htmx-extensions.js" }
+        title { +title }
         link {
             href = "/static/custom.css"
             rel = "stylesheet"

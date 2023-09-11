@@ -24,6 +24,9 @@ import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import java.time.Instant
 
+/**
+ * Policy that can be paused and also captures a number of metrics
+ */
 internal class PausablePolicy(private val policy: Policy, var pause: Boolean = false) : Policy by policy {
 
     internal var sellSignals = 0
@@ -39,7 +42,6 @@ internal class PausablePolicy(private val policy: Policy, var pause: Boolean = f
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         // Still invoke the policy so any state can be updated if required.
         val orders = policy.act(signals, account, event)
-
 
         buySignals += signals.filter { it.rating.isPositive }.size
         sellSignals += signals.filter { it.rating.isNegative }.size
@@ -57,6 +59,16 @@ internal class PausablePolicy(private val policy: Policy, var pause: Boolean = f
             emptyList()
         }
 
+    }
+
+    override fun reset() {
+        sellSignals = 0
+        holdSignals = 0
+        buySignals = 0
+        totalOrders = 0
+        totalEvents = 0
+        emptyEvents = 0
+        totalActions = 0
     }
 
 }

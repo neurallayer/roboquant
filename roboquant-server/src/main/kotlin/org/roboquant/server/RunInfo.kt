@@ -21,6 +21,9 @@ import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 
+/**
+ * Stored information about a single run
+ */
 internal data class RunInfo(
     val roboquant: Roboquant,
     val feed: Feed,
