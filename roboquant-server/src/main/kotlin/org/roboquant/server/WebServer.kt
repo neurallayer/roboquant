@@ -33,6 +33,11 @@ internal val runs = ConcurrentHashMap<String, RunInfo>()
 
 /**
  * Configuration for the webserver
+ *
+ * @property username the username in case of authentication, default is empty (so no authentication)
+ * @property password the password in case of authentication, default is empty (so no authentication)
+ * @property port the port, default is 8080
+ * @property host the host, default is 127.0.0.1
  */
 data class WebServerConfig(
     var username: String = Config.getProperty("server.username", ""),
@@ -42,7 +47,8 @@ data class WebServerConfig(
 )
 
 /**
- * Create a server with credentials. The website will be protected using digest authentication.
+ * Create a server, optional with credentials.
+ * The website will be protected using digest authentication if username and password are provided.
  */
 class WebServer(configure: WebServerConfig.() -> Unit = {}) {
 

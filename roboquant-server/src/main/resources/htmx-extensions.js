@@ -37,5 +37,8 @@ htmx.defineExtension('echarts', {
     }
 });
 
+/**
+ * Few extra security measures
+ */
 htmx.config.allowEval = false;
 htmx.config.allowScriptTags = false;
