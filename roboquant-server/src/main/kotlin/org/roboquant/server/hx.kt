@@ -30,13 +30,11 @@ internal var HTMLTag.hxExt: String
         attributes["data-hx-ext"] = value
     }
 
-
 internal var HTMLTag.hxGet: String
     get() = attributes["data-hx-get"] ?: ""
     set(value) {
         attributes["data-hx-get"] = value
     }
-
 
 internal var HTMLTag.hxConfirm: String
     get() = attributes["data-hx-confirm"] ?: ""

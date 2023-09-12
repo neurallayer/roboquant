@@ -81,14 +81,13 @@ class AlpacaBroker(
         orderPlacer = AlpaceOrderPlacer(alpacaAPI, extendedHours)
         availableStocks = Alpaca.getAvailableStocks(alpacaAPI)
         availableCrypto = Alpaca.getAvailableCrypto(alpacaAPI)
-        availableAssets =  (availableStocks.values + availableCrypto.values).toSortedSet()
+        availableAssets = (availableStocks.values + availableCrypto.values).toSortedSet()
         syncAccount()
         syncPositions()
         if (loadExistingOrders) loadExistingOrders()
         account = _account.toAccount()
 
     }
-
 
 
     private fun getAsset(symbol: String, assetClass: String): Asset {
@@ -203,6 +202,7 @@ class AlpacaBroker(
                 LimitOrder(asset, -size, order.limitPrice.toDouble()),
                 StopOrder(asset, -size, order.stopPrice.toDouble())
             )
+
             else -> throw UnsupportedException("unsupported order type for order $order")
         }
     }

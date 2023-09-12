@@ -74,8 +74,6 @@ class AvroFeedTest {
         var assets = mutableListOf<Asset>()
     }
 
-
-
     @Test
     fun avroStep1() {
         fileName = File(folder, "test.avro").path
@@ -85,7 +83,6 @@ class AvroFeedTest {
         AvroFeed.record(feed, fileName)
         assertTrue(File(fileName).isFile)
     }
-
 
     @Test
     fun avroStep2() {
@@ -102,8 +99,6 @@ class AvroFeedTest {
             assertEquals(size, cnt)
         }
     }
-
-
 
     @Test
     fun cache() {

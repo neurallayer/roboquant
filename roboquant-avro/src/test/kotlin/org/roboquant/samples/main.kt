@@ -283,14 +283,13 @@ fun feed() {
     }
     val f = File("/tmp/orig.avro")
     println(t)
-    println(f.length()/1_000_000)
+    println(f.length() / 1_000_000)
 
     val t2 = measureTimeMillis {
         AvroFeed("/tmp/orig.avro")
     }
     println(t2)
 }
-
 
 
 suspend fun main() {

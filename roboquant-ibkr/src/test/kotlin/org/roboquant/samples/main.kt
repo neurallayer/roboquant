@@ -100,7 +100,6 @@ fun placeOrder() {
 }
 
 
-
 fun placeSimpleOrder() {
     Config.exchangeRates = IBKRExchangeRates()
     val broker = IBKRBroker()
@@ -119,7 +118,6 @@ fun placeSimpleOrder() {
     broker.disconnect()
     println("done")
 }
-
 
 
 fun liveFeedEU() {
@@ -159,7 +157,6 @@ fun historicFeed() {
     println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
     feed.disconnect()
 }
-
 
 
 fun historicFeed2() {

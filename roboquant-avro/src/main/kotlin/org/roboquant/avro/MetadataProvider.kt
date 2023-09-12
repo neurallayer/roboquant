@@ -34,10 +34,9 @@ import kotlin.io.path.pathString
  */
 internal class MetadataProvider(private val avroFile: Path) {
 
-
     private val cacheFile = File(avroFile.pathString + CACHE_SUFFIX)
 
-    internal data class Metadata (
+    internal data class Metadata(
         val index: List<Pair<Instant, Long>>,
         val assets: Map<String, Asset>,
         val timeframe: Timeframe
@@ -51,7 +50,7 @@ internal class MetadataProvider(private val avroFile: Path) {
         )
     }
 
-    private fun fromSerializable(data: Triple<List<Pair<Instant, Long>>, List<String>, Timeframe>) : Metadata {
+    private fun fromSerializable(data: Triple<List<Pair<Instant, Long>>, List<String>, Timeframe>): Metadata {
         val assets = data.second.associateWith { it.deserialize() }
         return Metadata(data.first, assets, data.third)
     }
@@ -59,7 +58,7 @@ internal class MetadataProvider(private val avroFile: Path) {
     fun clearCache() {
         if (cacheFile.exists() && cacheFile.isFile) {
             val success = cacheFile.delete()
-            if (! success) throw RoboquantException("Couldn't delete cache file")
+            if (!success) throw RoboquantException("Couldn't delete cache file")
         }
     }
 
@@ -115,7 +114,7 @@ internal class MetadataProvider(private val avroFile: Path) {
         return result
     }
 
-    private fun ObjectInputStream.isValid() : Boolean {
+    private fun ObjectInputStream.isValid(): Boolean {
         val avroFileHash = calculateFileHash(avroFile.toFile())
         val hash = readObject() as String
         if (hash != avroFileHash) {
@@ -139,7 +138,7 @@ internal class MetadataProvider(private val avroFile: Path) {
             ObjectInputStream(fileInputStream).use { objectInputStream ->
                 AvroFeed.logger.info { "loading cache file: $cacheFile" }
 
-                if (! objectInputStream.isValid()) return null
+                if (!objectInputStream.isValid()) return null
 
                 @Suppress("UNCHECKED_CAST")
                 val data = objectInputStream.readObject() as Triple<List<Pair<Instant, Long>>, List<String>, Timeframe>

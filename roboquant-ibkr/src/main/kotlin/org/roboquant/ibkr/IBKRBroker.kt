@@ -88,7 +88,7 @@ class IBKRBroker(
      * @see Broker.account
      */
     override var account: Account
-       private set
+        private set
 
     private val logger = Logging.getLogger(IBKRBroker::class)
     private var orderId = 0

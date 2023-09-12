@@ -55,8 +55,6 @@ internal class PolygonTestIT {
         assertContains(feed.assets.map { it.symbol }, "IBM")
     }
 
-
-
     @Test
     fun testLiveFeed() = runBlocking {
         Config.getProperty("TEST_POLYGON") ?: return@runBlocking
@@ -74,7 +72,6 @@ internal class PolygonTestIT {
         assertTrue(PolygonHistoricFeed().availableAssets.isNotEmpty())
         assertTrue(PolygonFundamentalsFeed().availableAssets.isNotEmpty())
     }
-
 
     @Test
     fun testFundamentalsFeed() {

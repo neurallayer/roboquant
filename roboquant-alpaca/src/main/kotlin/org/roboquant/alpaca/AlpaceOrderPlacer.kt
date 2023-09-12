@@ -31,7 +31,7 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
     private val logger = Logging.getLogger(AlpacaBroker::class)
 
 
-    fun cancelOrder(cancellation: CancelOrder) : Boolean {
+    fun cancelOrder(cancellation: CancelOrder): Boolean {
         return try {
             val orderId = orders[cancellation.order]
             alpacaAPI.orders().cancel(orderId)
@@ -81,7 +81,7 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
      *
      * @param order
      */
-     fun placeSingleOrder(order: SingleOrder) {
+    fun placeSingleOrder(order: SingleOrder) {
         val asset = order.asset
         require(asset.type in setOf(AssetType.STOCK, AssetType.CRYPTO)) {
             "only stocks and crypto supported, received ${asset.type}"

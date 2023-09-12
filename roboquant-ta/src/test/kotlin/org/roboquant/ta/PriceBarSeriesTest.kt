@@ -124,5 +124,4 @@ internal class PriceBarSeriesTest {
     }
 
 
-
 }

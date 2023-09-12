@@ -42,16 +42,16 @@ private fun Route.addRoutes() {
 
 internal fun Application.setup() {
 
-    logger.info { "digest auth disabled"}
+    logger.info { "digest auth disabled" }
 
     routing {
-       addRoutes()
+        addRoutes()
     }
 }
 
 internal fun Application.secureSetup(username: String, password: String) {
 
-    logger.info { "digest auth enabled"}
+    logger.info { "digest auth enabled" }
 
     data class CustomPrincipal(val userName: String, val realm: String) : Principal
 

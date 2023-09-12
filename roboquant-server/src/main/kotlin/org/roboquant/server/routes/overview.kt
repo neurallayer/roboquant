@@ -36,7 +36,7 @@ private fun FlowContent.pauseInfo(pause: Boolean) {
 private fun TABLE.tableHeader(vararg headers: String) {
     thead {
         tr {
-           for (header in headers) th(scope = ThScope.col) { +header }
+            for (header in headers) th(scope = ThScope.col) { +header }
         }
     }
 }
@@ -121,8 +121,8 @@ internal fun Route.overview() {
 
         call.respondHtml(HttpStatusCode.OK) {
             page("Overview") {
-               runTable()
-               stopButton()
+                runTable()
+                stopButton()
             }
         }
     }

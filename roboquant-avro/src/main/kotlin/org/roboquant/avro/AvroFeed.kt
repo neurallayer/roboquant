@@ -167,7 +167,6 @@ class AvroFeed(private val path: Path, useCache: Boolean = false) : AssetFeed {
         private const val SP500QUOTEFILE = "sp500_pricequote_v5.0.avro"
         private const val FOREXFILE = "forex_pricebar_v5.1.avro"
 
-
         /**
          * Get an AvroFeed containing end-of-day [PriceBar] data for the companies listed in the S&P 500. This feed
          * contains a few years of public data.
@@ -218,7 +217,6 @@ class AvroFeed(private val path: Path, useCache: Boolean = false) : AssetFeed {
             return path
         }
 
-
         /**
          * Record the price-actions in a [feed] and store them in an Avro [fileName] that can be later used as input for
          * an AvroFeed. The provided [feed] needs to implement the [AssetFeed] interface.
@@ -236,7 +234,7 @@ class AvroFeed(private val path: Path, useCache: Boolean = false) : AssetFeed {
             timeframe: Timeframe = Timeframe.INFINITE,
             append: Boolean = false,
             assetFilter: AssetFilter = AssetFilter.all()
-        )  {
+        ) {
             recordAvro(feed, fileName, compression, timeframe, append, assetFilter)
         }
     }

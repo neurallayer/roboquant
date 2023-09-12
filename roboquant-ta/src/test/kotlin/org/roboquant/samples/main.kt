@@ -58,8 +58,6 @@ private fun macd() {
 }
 
 
-
-
 private fun ta4j() {
     // How big a look-back period should we use
     val period = 20
@@ -167,7 +165,7 @@ private fun tenkan() {
      */
     fun TaLib.kijun(priceBarSeries: PriceBarSeries) = mma(priceBarSeries, 26)
 
-    val strategy = TaLibSignalStrategy {asset, series ->
+    val strategy = TaLibSignalStrategy { asset, series ->
         val tenkan = tenkan(series)
         val kijun = kijun(series)
         when {

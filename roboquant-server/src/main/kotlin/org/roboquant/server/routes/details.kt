@@ -63,7 +63,7 @@ private fun FlowContent.echarts(
         id = elemId
         hxExt = "echarts"
         style = "width:$width;height:$height;"
-        if (initialHidden) style+="display:None;"
+        if (initialHidden) style += "display:None;"
     }
 }
 

@@ -52,7 +52,7 @@ internal class PausablePolicy(private val policy: Policy, var pause: Boolean = f
         totalActions += event.actions.size
         lastUpdate = event.time
 
-        return if (! pause) {
+        return if (!pause) {
             totalOrders += orders.size
             orders
         } else {

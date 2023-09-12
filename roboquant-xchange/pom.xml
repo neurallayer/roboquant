@@ -29,7 +29,8 @@
     <artifactId>roboquant-xchange</artifactId>
     <packaging>jar</packaging>
     <name>roboquant xchange</name>
-    <description>Cryptocurrency trading support via the XChange library for roboquant algorithmic trading platform</description>
+    <description>Cryptocurrency trading support via the XChange library for roboquant algorithmic trading platform
+    </description>
 
     <properties>
         <xchange.version>5.1.0</xchange.version>

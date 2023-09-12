@@ -107,8 +107,6 @@ private fun alpacaTradeStocks() {
 }
 
 
-
-
 private fun alpacaHistoricFeed2() {
     val symbols = listOf(
         "AAPL",

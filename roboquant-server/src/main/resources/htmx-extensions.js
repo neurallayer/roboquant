@@ -23,7 +23,7 @@ htmx.defineExtension('echarts', {
         if (name === 'htmx:beforeSwap') {
             let elem = evt.detail.target;
             let chart = echarts.getInstanceByDom(elem);
-            if (! chart) {
+            if (!chart) {
                 chart = echarts.init(elem);
                 let resizeObserver = new ResizeObserver(() => chart.resize());
                 resizeObserver.observe(elem);
