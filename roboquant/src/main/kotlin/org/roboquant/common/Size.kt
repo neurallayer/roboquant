@@ -72,7 +72,7 @@ value class Size private constructor(private val value: Long) : Comparable<Size>
         /**
          * This method should normally not be used, but allows to create a new Size from the underlying value
          */
-        fun fromUnderlyingValue(x: Long) : Size = Size(x)
+        fun fromUnderlyingValue(x: Long): Size = Size(x)
 
         /**
          * Size of zero

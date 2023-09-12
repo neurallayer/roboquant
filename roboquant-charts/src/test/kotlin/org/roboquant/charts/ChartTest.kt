@@ -59,7 +59,6 @@ internal class ChartTest {
 
     }
 
-
     @Test
     fun testReduced() {
         val chart = MyChart()

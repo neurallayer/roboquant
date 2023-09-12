@@ -119,7 +119,7 @@ abstract class Chart {
      *
      * Please note, the [getOption] method returns the non-customized option.
      */
-    var customize : Option.() -> Unit = {}
+    var customize: Option.() -> Unit = {}
 
     /**
      * Height for charts, default being 500 pixels. Subclasses can override this value
@@ -209,7 +209,6 @@ abstract class Chart {
         }
     }
 
-
     /**
      * Return a standard toolbox that can be included in a chart
      */
@@ -268,8 +267,6 @@ abstract class Chart {
      */
     abstract fun getOption(): Option
 
-
-
     /**
      * Convert the option of this chart to a JSON string.
      * Is there is [customize] defined, this will be invoked before the json rendering happens.
@@ -290,7 +287,6 @@ abstract class Chart {
         }
         return gsonBuilder.create().toJson(option)
     }
-
 
 
 }

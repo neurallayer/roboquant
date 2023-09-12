@@ -48,7 +48,7 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
             Files.createDirectories(dbPath)
         }
 
-        require( dbPath.isDirectory() ) { "dbPath needs to be a directory"}
+        require(dbPath.isDirectory()) { "dbPath needs to be a directory" }
         val config = DefaultCairoConfiguration(dbPath.toString())
         engine = CairoEngine(config)
         ctx = SqlExecutionContextImpl(engine, workers)
@@ -74,14 +74,14 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
      */
     override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (results.isEmpty()) return
-        if (! tables.contains(run)) {
+        if (!tables.contains(run)) {
             createTable(run)
             tables.add(run)
         }
 
         engine.appendRows(run) {
             val t = time.epochMicro
-            for ((k,v) in results) {
+            for ((k, v) in results) {
                 val row = newRow(t)
                 row.putSym(0, k)
                 row.putDouble(1, v)
@@ -127,7 +127,7 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         try {
             engine.dropTable(run)
         } catch (e: SqlException) {
-            logger.error(e) { "error with drop table $run"}
+            logger.error(e) { "error with drop table $run" }
         }
         tables.remove(run)
     }

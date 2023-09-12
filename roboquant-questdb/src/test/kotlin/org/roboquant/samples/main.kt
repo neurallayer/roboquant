@@ -35,7 +35,7 @@ import kotlin.system.measureTimeMillis
 
 private const val TABLE_NAME = "pricebars"
 
-private fun <T>printTimeMillis(key: String, block: () -> T) : T {
+private fun <T> printTimeMillis(key: String, block: () -> T): T {
     val result: T
     val t = measureTimeMillis { result = block() }
     println("$key time=${t}ms")
@@ -48,7 +48,7 @@ private fun create() {
     printTimeMillis("create feed") {
         val g = QuestDBRecorder()
         g.removeAllFeeds()
-        g.record<PriceBar>(f, TABLE_NAME )
+        g.record<PriceBar>(f, TABLE_NAME)
     }
 }
 

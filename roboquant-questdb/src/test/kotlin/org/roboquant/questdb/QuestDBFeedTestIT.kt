@@ -31,7 +31,6 @@ internal class QuestDBFeedTestIT {
         outputFeed.close()
     }
 
-
     @Test
     fun append() {
         val recorder = QuestDBRecorder(folder.toPath())

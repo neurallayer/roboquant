@@ -4,7 +4,6 @@ import kotlin.test.*
 
 class ViewTest {
 
-
     @Test
     fun basic() {
         val l = (1..100).toMutableList()
@@ -20,11 +19,11 @@ class ViewTest {
     fun index() {
         val l = (100..199).toMutableList()
         val v = View(l)
-        assertEquals(50,v.lastIndexOf(150))
+        assertEquals(50, v.lastIndexOf(150))
         assertEquals(100, v.size)
         assertContains(v, 160)
-        assertTrue(v.containsAll(listOf(101,199)))
-        assertFalse(v.containsAll(listOf(99,199)))
+        assertTrue(v.containsAll(listOf(101, 199)))
+        assertFalse(v.containsAll(listOf(99, 199)))
     }
 
     @Test
@@ -40,8 +39,6 @@ class ViewTest {
 
         assertEquals(cnt, view.size)
     }
-
-
 
 
 }

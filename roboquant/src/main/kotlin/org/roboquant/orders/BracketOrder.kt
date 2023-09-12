@@ -96,7 +96,7 @@ class BracketOrder(
             asset: Asset,
             size: Size,
             limitPrice: Double,
-            trailPercentage: Double =  5.percent, // 5%
+            trailPercentage: Double = 5.percent, // 5%
             stopPercentage: Double = 1.percent // 1%
         ): BracketOrder {
             require(stopPercentage > 0.0) { "stopPercentage should be a positive value, for example 0.05 for 5%" }

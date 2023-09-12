@@ -72,7 +72,6 @@ class AggregatorFeed(
         return PriceBar(asset, open, high, low, other.close, volume + other.volume, aggregationPeriod)
     }
 
-
     /**
      * @suppress
      */

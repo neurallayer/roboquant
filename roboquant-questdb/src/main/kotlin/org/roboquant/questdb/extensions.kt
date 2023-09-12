@@ -38,7 +38,7 @@ internal inline fun CairoEngine.query(query: String, block: RecordCursor.() -> U
 }
 
 
-internal fun CairoEngine.distictSymbol(tableName: String, column: String) : Set<String>{
+internal fun CairoEngine.distictSymbol(tableName: String, column: String): Set<String> {
     SqlExecutionContextImpl(this, 1).use { ctx ->
         sqlCompiler.use {
             val sql = "SELECT DISTINCT $column from '$tableName"
@@ -46,8 +46,8 @@ internal fun CairoEngine.distictSymbol(tableName: String, column: String) : Set<
             fact.use {
                 val result = mutableSetOf<String>()
                 fact.getCursor(ctx).use { cursor ->
-                    while(cursor.hasNext()) {
-                        val r= cursor.record
+                    while (cursor.hasNext()) {
+                        val r = cursor.record
                         val s = r.getSym(0)
                         result.add(s.toString())
                     }
@@ -57,8 +57,6 @@ internal fun CairoEngine.distictSymbol(tableName: String, column: String) : Set<
         }
     }
 }
-
-
 
 @Suppress("UNUSED")
 internal fun CairoEngine.insert(tableName: String, block: TableWriter.() -> Unit) {

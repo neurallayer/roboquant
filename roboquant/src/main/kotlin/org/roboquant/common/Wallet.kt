@@ -182,8 +182,8 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      * Deposit the amount hold in an [other] Wallet instance into this one.
      */
     fun deposit(other: Wallet) {
-        assert( other !== this)
-        for ((c,v) in other.data) deposit(c,v)
+        assert(other !== this)
+        for ((c, v) in other.data) deposit(c, v)
     }
 
     /**
@@ -198,8 +198,8 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      * Withdraw the amount hold in an [other] Wallet instance into this one.
      */
     fun withdraw(other: Wallet) {
-        assert( other !== this)
-        for ((c,v) in other.data) deposit(c, -v)
+        assert(other !== this)
+        for ((c, v) in other.data) deposit(c, -v)
     }
 
     /**

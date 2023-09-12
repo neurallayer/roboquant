@@ -75,7 +75,6 @@ class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
      */
     fun isNotEmpty(): Boolean = actions.isNotEmpty()
 
-
     /**
      * Return true if this event has no actions, false otherwise
      */

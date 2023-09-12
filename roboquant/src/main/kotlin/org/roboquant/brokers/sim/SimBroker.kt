@@ -76,8 +76,6 @@ open class SimBroker(
         this.reset()
     }
 
-
-
     /**
      * Update the portfolio with the provided [position] and return the realized PNL as a consequence of this position
      * change.

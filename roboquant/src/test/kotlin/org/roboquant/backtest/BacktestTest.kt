@@ -19,7 +19,7 @@ class BacktestTest {
         val rq = Roboquant(EMAStrategy.PERIODS_5_15, AccountMetric(), logger = MemoryLogger(false))
         val bt = Backtest(feed, rq)
         bt.singleRun()
-        val data =rq.logger.getMetric("account.equity")
+        val data = rq.logger.getMetric("account.equity")
         assertEquals(1, data.size)
     }
 

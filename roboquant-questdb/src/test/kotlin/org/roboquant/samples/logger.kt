@@ -24,7 +24,7 @@ import org.roboquant.strategies.EMAStrategy
 
 
 fun main() {
-    val logger =  QuestDBMetricsLogger()
+    val logger = QuestDBMetricsLogger()
     val feed = RandomWalkFeed.lastYears(1)
     val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = logger)
     rq.run(feed, name = "myrun")

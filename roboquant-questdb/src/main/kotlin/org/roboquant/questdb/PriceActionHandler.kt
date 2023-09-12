@@ -59,8 +59,8 @@ interface PriceActionHandler<T : PriceAction> {
         }
 
 
-        fun getHandler(type: KClass<*>) : PriceActionHandler<*> {
-            return when(type) {
+        fun getHandler(type: KClass<*>): PriceActionHandler<*> {
+            return when (type) {
                 PriceBar::class -> PriceBarHandler()
                 PriceQuote::class -> PriceQuoteHandler()
                 TradePrice::class -> TradePriceHandler()

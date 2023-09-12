@@ -62,7 +62,7 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
             Files.createDirectories(dbPath)
         }
 
-        require( dbPath.isDirectory() ) { "dbPath needs to be a directory"}
+        require(dbPath.isDirectory()) { "dbPath needs to be a directory" }
         config = DefaultCairoConfiguration(dbPath.toString())
     }
 
@@ -110,7 +110,6 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
         }
     }
 
-
     /**
      * Generate a new QuestDB table based on the event in the feed and optional limited to the provided timeframe
      * Supported price-actions: [PriceBar], [PriceQuote] and [TradePrice]
@@ -131,52 +130,52 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
         partition: String = NONE
     ) = runBlocking {
 
-            require(partition in setOf("YEAR", "MONTH", "DAY", "HOUR", "NONE")) {"invalid partition value"}
+        require(partition in setOf("YEAR", "MONTH", "DAY", "HOUR", "NONE")) { "invalid partition value" }
 
-            @Suppress("UNCHECKED_CAST")
-            val handler = getHandler(T::class) as PriceActionHandler<T>
-            val channel = EventChannel(timeframe = timeframe)
+        @Suppress("UNCHECKED_CAST")
+        val handler = getHandler(T::class) as PriceActionHandler<T>
+        val channel = EventChannel(timeframe = timeframe)
 
-            // Create a new engine, so it can be released once the recording is done and release
-            // any locks it has on the database
-            val engine = createEngine()
-            handler.createTable(tableName, partition, engine)
-            if (!append) engine.update("TRUNCATE TABLE $tableName")
+        // Create a new engine, so it can be released once the recording is done and release
+        // any locks it has on the database
+        val engine = createEngine()
+        handler.createTable(tableName, partition, engine)
+        if (!append) engine.update("TRUNCATE TABLE $tableName")
 
-            val job = launch {
-                feed.play(channel)
-                channel.close()
-            }
-
-            val ctx = SqlExecutionContextImpl(engine, 1).with(AllowAllSecurityContext.INSTANCE, null, null)
-            val writer = engine.getWriter(ctx.getTableToken(tableName), tableName)
-
-            try {
-                val lookupTable = mutableMapOf<Asset, String>()
-                while (true) {
-                    val o = channel.receive()
-                    for (action in o.actions.filterIsInstance<T>()) {
-                        val row = writer.newRow(o.time.epochMicro)
-                        val str = lookupTable.getOrPut(action.asset) { action.asset.serialize() }
-                        row.putSym(0, str)
-                        handler.updateRecord(row, action)
-                        row.append()
-                    }
-                    writer.commit()
-                }
-
-            } catch (_: ClosedReceiveChannelException) {
-                // On purpose left empty, expected exception
-            } finally {
-                writer.commit()
-                channel.close()
-                if (job.isActive) job.cancel()
-                ctx.close()
-                writer.close()
-                engine.close()
-            }
-
+        val job = launch {
+            feed.play(channel)
+            channel.close()
         }
+
+        val ctx = SqlExecutionContextImpl(engine, 1).with(AllowAllSecurityContext.INSTANCE, null, null)
+        val writer = engine.getWriter(ctx.getTableToken(tableName), tableName)
+
+        try {
+            val lookupTable = mutableMapOf<Asset, String>()
+            while (true) {
+                val o = channel.receive()
+                for (action in o.actions.filterIsInstance<T>()) {
+                    val row = writer.newRow(o.time.epochMicro)
+                    val str = lookupTable.getOrPut(action.asset) { action.asset.serialize() }
+                    row.putSym(0, str)
+                    handler.updateRecord(row, action)
+                    row.append()
+                }
+                writer.commit()
+            }
+
+        } catch (_: ClosedReceiveChannelException) {
+            // On purpose left empty, expected exception
+        } finally {
+            writer.commit()
+            channel.close()
+            if (job.isActive) job.cancel()
+            ctx.close()
+            writer.close()
+            engine.close()
+        }
+
+    }
 }
 
 

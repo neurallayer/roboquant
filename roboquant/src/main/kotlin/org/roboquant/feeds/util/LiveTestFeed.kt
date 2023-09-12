@@ -41,7 +41,7 @@ class LiveTestFeed(
 
     init {
         require(delayInMillis > 0) { "delayInMillis should be larger than zero" }
-        require(prices.isNotEmpty()) { "prices cannot be empty"}
+        require(prices.isNotEmpty()) { "prices cannot be empty" }
     }
 
     /**
@@ -52,7 +52,7 @@ class LiveTestFeed(
         /**
          * Create a LiveTestFeed based on random data.
          */
-        fun random(startPrice: Double, size: Int, symbol: String = "XYZ", delayInMillis:Int = 1000): LiveTestFeed {
+        fun random(startPrice: Double, size: Int, symbol: String = "XYZ", delayInMillis: Int = 1000): LiveTestFeed {
             var prev = startPrice
             val randomPrices = (1..size).map {
                 val next = (prev + Random.Default.nextDouble() - 0.5).coerceAtLeast(0.01)

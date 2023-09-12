@@ -43,12 +43,12 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
     private val logger = Logging.getLogger(this::class)
 
     init {
-        require( dbPath.isDirectory() ) { "dbPath needs to be an existing questdb directory"}
+        require(dbPath.isDirectory()) { "dbPath needs to be an existing questdb directory" }
 
         val configuration = DefaultCairoConfiguration(dbPath.toString())
         engine = CairoEngine(configuration)
 
-        require(engine.tables().contains(tableName)) { "Table not found"}
+        require(engine.tables().contains(tableName)) { "Table not found" }
 
         // Add hook to close engine before JVM shutdown
         Runtime.getRuntime().addShutdownHook(Thread {
@@ -56,7 +56,6 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
             engine.close()
         })
     }
-
 
     /**
      * @see AssetFeed.assets
@@ -71,7 +70,6 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
         }
         result.toSortedSet()
     }
-
 
     /**
      * @see AssetFeed.timeframe
@@ -88,7 +86,6 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
         }
         tf
     }
-
 
     /**
      * (Re)play the events of the feed using the provided [channel]

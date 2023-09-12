@@ -135,8 +135,6 @@ fun cfd() {
 }
 
 
-
-
 fun largeTest() {
 
     class MyLiveFeed : LiveFeed() {
@@ -148,7 +146,7 @@ fun largeTest() {
                 val asset = Asset("ABC")
                 val actions = listOf(TradePrice(asset, 100.0))
 
-                while(true) {
+                while (true) {
                     try {
                         send(event = Event(actions, Instant.now()))
                         delay(delayInMillis)
@@ -172,7 +170,7 @@ fun largeTest() {
         val name = "run-${run++}"
         jobs.add {
             val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
-            rq.runAsync(feed, it, name=name)
+            rq.runAsync(feed, it, name = name)
             // val actions = rq.logger.getMetric("progress.actions", name).values.first()
             // println("$actions $name $it")
             // assertTrue(actions > 30)

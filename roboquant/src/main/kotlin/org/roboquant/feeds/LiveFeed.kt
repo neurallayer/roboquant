@@ -34,7 +34,6 @@ import org.roboquant.common.Logging
  */
 abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
 
-
     private val logger = Logging.getLogger(this::class)
     private var channels = mutableSynchronisedListOf<EventChannel>()
 
@@ -53,7 +52,7 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
      * false will be returned.
      */
     @Synchronized
-    protected fun send(event: Event)  {
+    protected fun send(event: Event) {
         for (channel in channels) {
             try {
                 channel.trySend(event)
@@ -61,7 +60,7 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
                 logger.trace { "closed channel" }
             }
         }
-        channels.removeAll {it.closed}
+        channels.removeAll { it.closed }
     }
 
 

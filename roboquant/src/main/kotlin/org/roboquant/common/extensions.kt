@@ -54,7 +54,6 @@ suspend fun Instant.delayUntil() {
     delay(now.until(this, ChronoUnit.MILLIS).coerceAtLeast(0L))
 }
 
-
 /**
  * Get the instant as ZonedDateTime UTC
  */
@@ -260,7 +259,6 @@ fun DoubleArray.growthRates(): DoubleArray {
     for (n in 1..lastIndex) result[n - 1] = get(n) / get(n - 1)
     return result
 }
-
 
 /**
  * Return the log growth rates.

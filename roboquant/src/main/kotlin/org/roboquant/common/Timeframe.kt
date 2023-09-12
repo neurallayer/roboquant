@@ -76,7 +76,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     companion object {
 
         @Suppress("ConstPropertyName")
-        private const val serialVersionUID : Long = 129021321L
+        private const val serialVersionUID: Long = 129021321L
 
         /**
          * The minimum start date of a timeframe, being 1900-01-01T00:00:00Z
@@ -318,20 +318,19 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         }
     }
 
-
     /**
      * Sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation. It uses
      * millisecond resolution for the start of timeframes.
      *
      * The returned list will not contain duplicate timeframes (sampling without replacement).
      */
-    fun sample(period: TimeSpan, samples: Int = 1, random: Random = Config.random) : List<Timeframe> {
-        require(samples >= 1) {"samples need to be >= 1"}
+    fun sample(period: TimeSpan, samples: Int = 1, random: Random = Config.random): List<Timeframe> {
+        require(samples >= 1) { "samples need to be >= 1" }
         require(end - period > start) { "period=$period to large for timeframe=$this" }
         val duration = Timeframe(start, end - period).duration.toMillis()
-        require(duration > samples) { "not enough data to sample $samples"}
+        require(duration > samples) { "not enough data to sample $samples" }
         val result = mutableSetOf<Timeframe>()
-        while(result.size < samples) {
+        while (result.size < samples) {
             val offset = random.nextLong(duration)
             val newStart = start.plusMillis(offset)
             result.add(Timeframe(newStart, newStart + period))
@@ -381,7 +380,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * val newTimeFrame = timeframe - 2.days
      * ```
      */
-    operator fun minus(period: TimeSpan) : Timeframe {
+    operator fun minus(period: TimeSpan): Timeframe {
         val e = makeValid(end - period)
         val incl = (end == MAX) || inclusive
         return Timeframe(makeValid(start - period), e, incl)
@@ -394,7 +393,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * val newTimeFrame = timeframe + 2.days
      * ```
      */
-    operator fun plus(period: TimeSpan) : Timeframe {
+    operator fun plus(period: TimeSpan): Timeframe {
         val e = makeValid(end + period)
         val incl = (end == MAX) || inclusive
         return Timeframe(makeValid(start + period), e, incl)
@@ -406,7 +405,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      *
      * If [before] or [after] contain timezone dependent values, UTC will be used as the ZoneId.
      */
-    fun extend(before: TimeSpan, after: TimeSpan = before) : Timeframe {
+    fun extend(before: TimeSpan, after: TimeSpan = before): Timeframe {
         val e = makeValid(end + after)
         val incl = (end == MAX) || inclusive
         return Timeframe(makeValid(start - before), e, incl)

@@ -8,7 +8,6 @@ import kotlin.test.assertTrue
 
 class AppendOnlyListTest {
 
-
     @Test
     fun basic() {
         val list = AppendOnlyList<String>()
@@ -67,7 +66,7 @@ class AppendOnlyListTest {
         }
         assertEquals(nThreads, threads.size)
         for (t in threads) t.join()
-        assertEquals(nThreads*loops*3, list.size)
+        assertEquals(nThreads * loops * 3, list.size)
     }
 
 

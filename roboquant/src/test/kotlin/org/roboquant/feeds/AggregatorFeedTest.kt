@@ -35,7 +35,7 @@ class AggregatorFeedTest {
 
     @Test
     fun aggregatorFeed2() {
-        val tf = Timeframe.parse("2022-01-01T12:00:00","2022-01-01T15:00:00" )
+        val tf = Timeframe.parse("2022-01-01T12:00:00", "2022-01-01T15:00:00")
         val feed = RandomWalkFeed(tf, 1.minutes, nAssets = 1)
         val ts = 15.minutes
         val aggFeed = AggregatorFeed(feed, ts)
@@ -43,8 +43,8 @@ class AggregatorFeedTest {
         aggFeed.apply<PriceBar> { pb, t ->
             assertEquals(ts, pb.timeSpan)
             if (lastTime != null) {
-                val diff =  lastTime!!.until(t, ChronoUnit.MILLIS)
-                assertEquals(15*60*1000L, diff)
+                val diff = lastTime!!.until(t, ChronoUnit.MILLIS)
+                assertEquals(15 * 60 * 1000L, diff)
             }
             lastTime = t
         }
@@ -54,16 +54,16 @@ class AggregatorFeedTest {
 
     @Test
     fun aggregatorLiveFeed() {
-        val delay=5
+        val delay = 5
         val feed = LiveTestFeed(50..100, delayInMillis = delay)
-        val ts = (delay*10).millis
+        val ts = (delay * 10).millis
         val aggFeed = AggregatorLiveFeed(feed, ts)
         var lastTime: Instant? = null
         aggFeed.apply<PriceBar> { pb, t ->
             assertEquals(ts, pb.timeSpan)
             // println("$t ${Instant.now()}")
             if (lastTime != null) {
-                val diff =  lastTime!!.until(t, ChronoUnit.MILLIS)
+                val diff = lastTime!!.until(t, ChronoUnit.MILLIS)
                 assertEquals(delay * 10L, diff)
             }
             lastTime = t

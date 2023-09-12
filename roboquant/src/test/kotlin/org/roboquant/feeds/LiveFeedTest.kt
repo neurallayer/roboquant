@@ -29,8 +29,6 @@ import kotlin.test.assertTrue
 
 internal class LiveFeedTest {
 
-
-
     @Test
     fun combined() = runBlocking {
 
@@ -67,7 +65,7 @@ internal class LiveFeedTest {
                     val asset = Asset("ABC")
                     val actions = listOf(TradePrice(asset, 100.0))
 
-                    while(true) {
+                    while (true) {
                         try {
                             send(event = Event(actions, Instant.now()))
                             delay(delayInMillis)
@@ -93,7 +91,7 @@ internal class LiveFeedTest {
             val name = "run-${run++}"
             jobs.add {
                 val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = LastEntryLogger())
-                rq.runAsync(feed, it, name=name)
+                rq.runAsync(feed, it, name = name)
                 val actions = rq.logger.getMetric("progress.actions", name).values.last()
                 // println("${actions.size} $name $it")
                 assertTrue(actions > 2)

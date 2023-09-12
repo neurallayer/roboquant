@@ -98,7 +98,7 @@ class AggregatorLiveFeed(
 
         val job2 = scope.launch {
             while (true) {
-                send(channel,expiration, history)
+                send(channel, expiration, history)
                 expiration += aggregationPeriod
                 val intervalMillis = Instant.now().until(expiration, ChronoUnit.MILLIS)
                 delay(intervalMillis)
@@ -136,7 +136,7 @@ class AggregatorLiveFeed(
             // NOP
         } finally {
             // Send remaining
-            if (remaining) send(channel ,expiration, history)
+            if (remaining) send(channel, expiration, history)
         }
         if (job.isActive) job.cancel()
         if (job2.isActive) job2.cancel()

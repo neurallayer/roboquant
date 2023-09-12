@@ -53,7 +53,6 @@ open class Optimizer(
         space, MetricScore(evalMetric), getRoboquant
     )
 
-
     /**
      * Run a walk forward
      */

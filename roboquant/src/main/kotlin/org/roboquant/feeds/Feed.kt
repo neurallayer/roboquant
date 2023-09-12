@@ -246,7 +246,7 @@ fun Collection<PriceAction>.toDoubleArray(type: String = "DEFAULT"): DoubleArray
  * Run a feed in the background using the provided [channel] and close the channel once done.
  * This method returns the corresponding [Job] instance.
  */
-internal fun Feed.runBackgroud(channel: EventChannel) : Job {
+internal fun Feed.runBackgroud(channel: EventChannel): Job {
     val scope = CoroutineScope(Dispatchers.Default + Job())
     return scope.launch {
         channel.use {

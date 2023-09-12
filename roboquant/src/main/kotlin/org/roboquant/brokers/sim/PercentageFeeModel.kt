@@ -33,7 +33,7 @@ class PercentageFeeModel(
 ) : FeeModel {
 
     init {
-        require(fee in 0.0..1.0) {  "Fee should be between zero and one" }
+        require(fee in 0.0..1.0) { "Fee should be between zero and one" }
     }
 
     override fun calculate(execution: Execution, time: Instant, trades: List<Trade>): Double {

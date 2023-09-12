@@ -79,7 +79,6 @@ internal class FeedTest {
         assertEquals(98, actions.filterIsInstance<PriceBar>().size)
     }
 
-
     @Test
     fun background() = runBlocking {
         val feed = TestData.feed()

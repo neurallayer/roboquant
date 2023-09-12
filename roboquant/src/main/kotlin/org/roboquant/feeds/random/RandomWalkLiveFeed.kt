@@ -21,7 +21,6 @@ import org.roboquant.feeds.*
 import java.time.Instant
 
 
-
 /**
  * Random walk live feed contains a number of assets with prices that follow a random walk.
  * When using this feed in multiple runs, each run will receive its own unique random-walk.

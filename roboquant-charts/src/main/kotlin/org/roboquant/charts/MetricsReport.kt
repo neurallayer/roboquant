@@ -66,7 +66,6 @@ class MetricsReport(
         return createCells(name, value)
     }
 
-
     /**
      * Generates the HTML snippet required to draw a chart.
      */

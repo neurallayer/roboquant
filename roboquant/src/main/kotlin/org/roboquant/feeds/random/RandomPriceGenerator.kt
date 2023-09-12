@@ -35,7 +35,7 @@ internal class RandomPriceGenerator(
 
     private val random = SplittableRandom(seed.toLong())
 
-    private fun Double.nextPrice() = this * (1.0  + random.nextDouble(-priceChange, priceChange))
+    private fun Double.nextPrice() = this * (1.0 + random.nextDouble(-priceChange, priceChange))
 
     // Create initial prices for all assets between 50 and 500
     private val prices = assets.map { random.nextDouble(50.0, 500.0) }.toMutableList()
@@ -44,7 +44,7 @@ internal class RandomPriceGenerator(
         val v = DoubleArray(4) { price.nextPrice() }
         v.sort()
 
-        val volume = random.nextInt(volumeRange/2, volumeRange * 2)
+        val volume = random.nextInt(volumeRange / 2, volumeRange * 2)
 
         // Should open be higher than close
         return if (random.nextBoolean()) {
@@ -58,7 +58,7 @@ internal class RandomPriceGenerator(
      * Generate random single price actions
      */
     private fun tradePrice(asset: Asset, price: Double): PriceAction {
-        val volume = random.nextInt(volumeRange/2, volumeRange * 2)
+        val volume = random.nextInt(volumeRange / 2, volumeRange * 2)
         return TradePrice(asset, price, volume.toDouble())
     }
 

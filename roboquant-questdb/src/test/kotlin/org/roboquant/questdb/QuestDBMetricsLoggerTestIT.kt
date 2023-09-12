@@ -20,10 +20,10 @@ class QuestDBMetricsLoggerTestIT {
 
     @Test
     fun basic() {
-        val logger =  QuestDBMetricsLogger(folder.toPath())
+        val logger = QuestDBMetricsLogger(folder.toPath())
         val feed = RandomWalkFeed.lastYears(1)
         val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = logger)
-        rq.run(feed, name="myrun")
+        rq.run(feed, name = "myrun")
         val equity = logger.getMetric("account.equity", "myrun")
         assertTrue(equity.isNotEmpty())
 
@@ -39,7 +39,7 @@ class QuestDBMetricsLoggerTestIT {
 
         logger.close()
 
-        val logger2 =  QuestDBMetricsLogger(folder.toPath())
+        val logger2 = QuestDBMetricsLogger(folder.toPath())
         logger2.loadPreviousRuns()
         val aaa2 = logger2.getMetric("aaa", "myrun")
         assertEquals(1, aaa2.size)

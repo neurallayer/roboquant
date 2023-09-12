@@ -54,12 +54,10 @@ class EventChannel(
     var closed: Boolean = false
         private set
 
-
     /**
      * Iterate over the events in this channel
      */
     operator fun iterator() = channel.iterator()
-
 
     /**
      * Try sending an [event] on this channel.

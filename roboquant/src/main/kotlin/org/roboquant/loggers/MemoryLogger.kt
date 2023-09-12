@@ -79,7 +79,7 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     /**
      * Get the unique list of metric names that have been captured
      */
-    override fun getMetricNames(run: String) : Set<String> {
+    override fun getMetricNames(run: String): Set<String> {
         val values = history[run] ?: return emptySet()
         return values.map { it.metrics.keys }.flatten().toSortedSet()
     }

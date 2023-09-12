@@ -47,7 +47,7 @@ interface MetricsLogger : Lifecycle {
      */
     fun getMetric(metricName: String): Map<String, TimeSeries> = buildMap {
         runs.forEach {
-            val v = getMetric(metricName,it)
+            val v = getMetric(metricName, it)
             if (v.isNotEmpty()) put(it, v)
         }
     }
@@ -71,7 +71,6 @@ interface MetricsLogger : Lifecycle {
             addAll(v)
         }
     }
-
 
     /**
      * Get all available metric-names for a certain [run]

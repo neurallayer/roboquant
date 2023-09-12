@@ -71,7 +71,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
     /**
      * Get the unique list of metric names that have been captured
      */
-    override fun getMetricNames(run: String) : Set<String> {
+    override fun getMetricNames(run: String): Set<String> {
         val values = history[run] ?: return emptySet()
         return values.map { it.key }.distinct().toSortedSet()
     }
