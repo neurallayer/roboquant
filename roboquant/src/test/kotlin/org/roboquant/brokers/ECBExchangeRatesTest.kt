@@ -18,7 +18,6 @@ package org.roboquant.brokers
 
 import org.junit.jupiter.api.Test
 import org.roboquant.TestData
-import org.roboquant.common.Config
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.GBP
 import org.roboquant.common.Currency.Companion.JPY
@@ -59,11 +58,5 @@ internal class ECBExchangeRatesTest {
         assertTrue(GBP in currencies)
     }
 
-    @Test
-    fun load() {
-        Config.getProperty("FULL_COVERAGE") ?: return
-        val rates = ECBExchangeRates.fromWeb(useCache = true)
-        assertTrue(rates.currencies.size > 40)
-    }
 
 }

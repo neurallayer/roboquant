@@ -42,6 +42,9 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
         playAll()
     }
 
+    /**
+     * Return true if this live feed is being used in one or more runs, false otherwise
+     */
     val isActive: Boolean
         get() = channels.isNotEmpty()
 

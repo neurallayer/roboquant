@@ -32,6 +32,9 @@ import java.util.*
  */
 data class Observation(val time: Instant, val value: Double) : Comparable<Observation> {
 
+    /**
+     * Compare to [other] observation based on their [time], and NOT their [value]
+     */
     override fun compareTo(other: Observation): Int {
         return time.compareTo(other.time)
     }

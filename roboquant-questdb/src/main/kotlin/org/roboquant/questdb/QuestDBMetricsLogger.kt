@@ -69,6 +69,9 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         }
     }
 
+    /**
+     * @see MetricsLogger.log
+     */
     override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (results.isEmpty()) return
         if (! tables.contains(run)) {
@@ -117,6 +120,9 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         return result
     }
 
+    /**
+     * @see MetricsLogger.start
+     */
     override fun start(run: String, timeframe: Timeframe) {
         try {
             engine.dropTable(run)
@@ -126,7 +132,9 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         tables.remove(run)
     }
 
-
+    /**
+     * @see MetricsLogger.getMetricNames
+     */
     override fun getMetricNames(run: String): Set<String> {
         return engine.distictSymbol(run, "name").toSortedSet()
     }
@@ -141,6 +149,9 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         logger.info { "removed all runs from ${engine.configuration.root}" }
     }
 
+    /**
+     * @see MetricsLogger.runs
+     */
     override val runs: Set<String>
         get() = engine.tables().toSet()
 
@@ -156,6 +167,9 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         engine.update("TRUNCATE TABLE '$tableName'")
     }
 
+    /**
+     * Close the engine and context
+     */
     fun close() {
         engine.close()
         ctx.close()

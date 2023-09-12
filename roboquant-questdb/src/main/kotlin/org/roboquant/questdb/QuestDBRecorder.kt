@@ -25,9 +25,13 @@ import io.questdb.griffin.SqlExecutionContextImpl
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.roboquant.common.*
+import org.roboquant.common.Asset
+import org.roboquant.common.Config
+import org.roboquant.common.Logging
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.*
 import org.roboquant.feeds.util.AssetSerializer.serialize
+import org.roboquant.questdb.PriceActionHandler.Companion.getHandler
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.div
@@ -49,7 +53,7 @@ import kotlin.io.path.isDirectory
  */
 class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
 
-    val config: CairoConfiguration
+    private val config: CairoConfiguration
     private val logger = Logging.getLogger(this::class)
 
     init {
@@ -62,12 +66,37 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
         config = DefaultCairoConfiguration(dbPath.toString())
     }
 
+    /**
+     * Create a new engine
+     */
+    fun createEngine() = CairoEngine(config)
+
     @Suppress("unused")
     companion object Partition {
+
+        /**
+         * Don't partition
+         */
         const val NONE = "NONE"
+
+        /**
+         * Partition per year
+         */
         const val YEAR = "YEAR"
+
+        /**
+         * Partition per day
+         */
         const val DAY = "DAY"
+
+        /**
+         * Partition per month
+         */
         const val MONTH = "MONTH"
+
+        /**
+         * Partition per hour
+         */
         const val HOUR = "HOUR"
     }
 
@@ -99,24 +128,18 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
         tableName: String,
         timeframe: Timeframe = Timeframe.INFINITE,
         append: Boolean = false,
-        partition: String = NONE,
+        partition: String = NONE
     ) = runBlocking {
 
             require(partition in setOf("YEAR", "MONTH", "DAY", "HOUR", "NONE")) {"invalid partition value"}
 
             @Suppress("UNCHECKED_CAST")
-            val handler: PriceActionHandler<T> = when(T::class) {
-                PriceBar::class -> PriceBarHandler() as PriceActionHandler<T>
-                PriceQuote::class -> PriceQuoteHandler() as PriceActionHandler<T>
-                TradePrice::class -> TradePriceHandler() as PriceActionHandler<T>
-                else -> throw UnsupportedException("PriceAction ${T::class.simpleName} not supported")
-            }
-
+            val handler = getHandler(T::class) as PriceActionHandler<T>
             val channel = EventChannel(timeframe = timeframe)
 
             // Create a new engine, so it can be released once the recording is done and release
             // any locks it has on the database
-            val engine = CairoEngine(config)
+            val engine = createEngine()
             handler.createTable(tableName, partition, engine)
             if (!append) engine.update("TRUNCATE TABLE $tableName")
 

@@ -18,19 +18,19 @@ package org.roboquant.server
 
 import kotlinx.html.*
 
-var SCRIPT.crossorigin
+private var SCRIPT.crossorigin
     get() = attributes["crossorigin"]
     set(value) {
         attributes["crossorigin"] = value!!
     }
 
-var LINK.crossorigin
+private var LINK.crossorigin
     get() = attributes["crossorigin"]
     set(value) {
         attributes["crossorigin"] = value!!
     }
 
-var SCRIPT.referrerpolicy
+private var SCRIPT.referrerpolicy
     get() = attributes["referrerpolicy"]
     set(value) {
         attributes["referrerpolicy"] = value!!

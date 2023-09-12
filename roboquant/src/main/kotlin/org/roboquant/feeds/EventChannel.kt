@@ -122,7 +122,10 @@ class EventChannel(
         mutex.unlock()
     }
 
-
+    /**
+     * Wait for the channel to be closed.
+     * If the channel is already closed when invoking this method, it will return immediately.
+     */
     suspend fun waitOnClose() {
         if (closed) return
         mutex.lock()

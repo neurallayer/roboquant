@@ -44,7 +44,9 @@ class LiveTestFeed(
         require(prices.isNotEmpty()) { "prices cannot be empty"}
     }
 
-
+    /**
+     * utility methods to create instances
+     */
     companion object {
 
         /**

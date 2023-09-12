@@ -140,7 +140,10 @@ abstract class Chart {
         // Which commit of echarts.min.js to use
         private const val COMMIT = "fddcad9e93c1c15495c70f358f1ccbb595f0964f"
 
-        // Use a CDN to cache the JavaScript file
+        /**
+         * The URL of the ECHARTS javascript library to use.
+         * This script includes some roboquant specific functions and is hosted on GitHub
+         */
         const val JSURL =
             "https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@$COMMIT/echarts.min.js?version=$COMMIT"
 

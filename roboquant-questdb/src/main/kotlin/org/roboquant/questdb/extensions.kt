@@ -99,7 +99,9 @@ internal fun CairoEngine.tableColumns(tableName: String): Set<String> {
     return result
 }
 
-
+/**
+ * Perform an update statement
+ */
 fun CairoEngine.update(query: String) {
     SqlExecutionContextImpl(this, 1).with(AllowAllSecurityContext.INSTANCE, null, null).use { ctx ->
         sqlCompiler.use {
@@ -108,7 +110,9 @@ fun CairoEngine.update(query: String) {
     }
 }
 
-
+/**
+ * Convert an Instant to mirco seconds
+ */
 val Instant.epochMicro
     get() : Long = epochSecond * 1_000_000L + nano / 1_000L
 

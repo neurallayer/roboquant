@@ -22,12 +22,17 @@ import io.questdb.cairo.sql.Record
 import org.roboquant.common.Asset
 import org.roboquant.common.ConfigurationException
 import org.roboquant.common.TimeSpan
+import org.roboquant.common.UnsupportedException
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceQuote
 import org.roboquant.feeds.TradePrice
+import kotlin.reflect.KClass
 
 
+/**
+ * Interface for various price action handlers
+ */
 interface PriceActionHandler<T : PriceAction> {
 
     fun updateRecord(row: TableWriter.Row, action: T)
@@ -36,6 +41,9 @@ interface PriceActionHandler<T : PriceAction> {
 
     fun createTable(name: String, partition: String, engine: CairoEngine)
 
+    /**
+     * @suppress
+     */
     companion object {
         /**
          * Detect and return the handler to use for the table.
@@ -49,11 +57,22 @@ interface PriceActionHandler<T : PriceAction> {
                 else -> throw ConfigurationException("unknown table format table=$tableName")
             }
         }
+
+
+        fun getHandler(type: KClass<*>) : PriceActionHandler<*> {
+            return when(type) {
+                PriceBar::class -> PriceBarHandler()
+                PriceQuote::class -> PriceQuoteHandler()
+                TradePrice::class -> TradePriceHandler()
+                else -> throw UnsupportedException("PriceAction ${type.simpleName} not supported")
+            }
+        }
+
     }
 }
 
 
-class PriceBarHandler : PriceActionHandler<PriceBar> {
+private class PriceBarHandler : PriceActionHandler<PriceBar> {
 
     /**
      * Cache time-spans
@@ -88,7 +107,6 @@ class PriceBarHandler : PriceActionHandler<PriceBar> {
     }
 
     override fun getPriceAction(asset: Asset, record: Record): PriceBar {
-        // val agg = record.getStr(6)?.toString()
         val agg = record.getSym(7)?.toString()
         val timeSpan = if (agg == null) null else timeSpans.getOrPut(agg) { TimeSpan.parse(agg) }
         return PriceBar(
@@ -106,7 +124,7 @@ class PriceBarHandler : PriceActionHandler<PriceBar> {
 }
 
 
-class TradePriceHandler : PriceActionHandler<TradePrice> {
+private class TradePriceHandler : PriceActionHandler<TradePrice> {
 
     override fun createTable(name: String, partition: String, engine: CairoEngine) {
         // Let's drop the table first if it already exists
@@ -140,7 +158,7 @@ class TradePriceHandler : PriceActionHandler<TradePrice> {
 }
 
 
-class PriceQuoteHandler : PriceActionHandler<PriceQuote> {
+private class PriceQuoteHandler : PriceActionHandler<PriceQuote> {
 
     override fun createTable(name: String, partition: String, engine: CairoEngine) {
         // Let's drop the table first if it already exists

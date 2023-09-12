@@ -87,10 +87,14 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
     }
 
     @Synchronized
-    fun getRunName(): String {
+    internal fun getRunName(): String {
         return "run-${runCounter++}"
     }
 
+    /**
+     * Start a new run and make core metrics available to the webserver. You can start multiple runs in the same
+     * webserver instance. Each run will have its unique name.
+     */
     fun run(
         roboquant: Roboquant,
         feed: Feed,

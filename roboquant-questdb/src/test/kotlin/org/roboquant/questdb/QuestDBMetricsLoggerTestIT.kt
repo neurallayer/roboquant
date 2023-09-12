@@ -2,7 +2,6 @@ package org.roboquant.questdb
 
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.Roboquant
-import org.roboquant.common.Config
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.metrics.AccountMetric
@@ -14,14 +13,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class QuestDBMetricsLoggerTest {
+class QuestDBMetricsLoggerTestIT {
 
     @TempDir
     lateinit var folder: File
 
     @Test
     fun basic() {
-        Config.getProperty("FULL_COVERAGE") ?: return
         val logger =  QuestDBMetricsLogger(folder.toPath())
         val feed = RandomWalkFeed.lastYears(1)
         val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = logger)
