@@ -19,7 +19,7 @@ package org.roboquant.charts
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
-internal class CalendarChartTest {
+internal class CalendarChartTestIT {
 
     @Test
     fun test() {

@@ -20,43 +20,23 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.assertTrue
 
-internal class TimeSeriesChartTest {
-
+internal class TimeSeriesChartTestIT {
 
     @Test
-    fun single() {
+    fun test() {
         val data = TestData.data
-        val chart = TimeSeriesChart(data.values.first())
+
+        val chart = TimeSeriesChart(data)
 
         assertDoesNotThrow {
             chart.renderJson()
         }
 
         assertTrue(chart.renderJson().isNotBlank())
+
+        TestData.testFile(chart, "timeserieschart")
     }
 
-    @Test
-    fun predefined() {
-        val data = TestData.data
-        val chart = TimeSeriesChart.walkForward(data)
 
-        assertDoesNotThrow {
-            chart.renderJson()
-        }
-
-        assertTrue(chart.renderJson().isNotBlank())
-    }
-
-    @Test
-    fun predefined2() {
-        val data = TestData.data
-        val chart = TimeSeriesChart.walkForward(data)
-
-        assertDoesNotThrow {
-            chart.renderJson()
-        }
-
-        assertTrue(chart.renderJson().isNotBlank())
-    }
 
 }
