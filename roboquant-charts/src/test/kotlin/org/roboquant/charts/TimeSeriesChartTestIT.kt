@@ -38,5 +38,4 @@ internal class TimeSeriesChartTestIT {
     }
 
 
-
 }

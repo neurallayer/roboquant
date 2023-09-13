@@ -28,7 +28,8 @@ typealias Timeline = List<Instant>
 
 /**
  * Draw [random] sampled timeframes of a certain [size] from the historic feed and return
- * the list of timeframes. Default is to return on 1 [samples].
+ * the list of timeframes.
+ * The default is to return one [samples].
  */
 fun Timeline.sample(size: Int, samples: Int = 1, random: Random = Config.random): List<Timeframe> {
     val result = mutableListOf<Timeframe>()

@@ -24,9 +24,9 @@ import java.time.LocalDate
 
 
 /**
- * A `Universe` represents a collection of assets. Where it differs from a regular collection, is that the assets that
- * belong to the collection can change over time. So the assets in the collection at time `t` can be different from
- * the assets in the collection at time `t+1`.
+ * A `Universe` represents a collection of assets.
+ * Where it differs from regular collections, is that the assets that belong to a collection can change over time.
+ * So the assets in the collection at time `t` can be different from the assets in the collection at time `t+1`.
  */
 interface Universe {
 

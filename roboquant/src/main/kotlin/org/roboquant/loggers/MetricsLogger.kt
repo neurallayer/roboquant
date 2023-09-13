@@ -25,6 +25,8 @@ import java.time.Instant
  * Interface that a metrics logger will need to implement. It is called by Roboquant after metrics have been calculated
  * to store and/or log them.
  *
+ * The [log] method is mandatory to implement, all other methods are optional and have a default implementation
+ *
  * A metrics logger also extends the [Lifecycle] interface.
  */
 interface MetricsLogger : Lifecycle {
