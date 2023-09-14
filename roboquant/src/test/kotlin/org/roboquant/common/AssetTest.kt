@@ -19,6 +19,7 @@ package org.roboquant.common
 
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.Month
 import kotlin.test.*
@@ -49,7 +50,7 @@ internal class AssetTest {
 
     @Test
     fun testAssetTypeConstructors() {
-        val a = Asset.optionContract("SPX", LocalDate.parse("2014-11-22"), 'P', "19.50")
+        val a = Asset.optionContract("SPX", LocalDate.parse("2014-11-22"), 'P', BigDecimal("19.50"))
         assertEquals("SPX   141122P00019500", a.symbol)
 
         val b = Asset.futureContract("GC", Month.DECEMBER, 18)

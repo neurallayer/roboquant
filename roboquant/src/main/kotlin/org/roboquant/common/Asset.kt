@@ -86,18 +86,19 @@ data class Asset(
             symbol: String,
             expiration: LocalDate,
             type: Char,
-            price: String,
+            price: BigDecimal,
             multiplier: Double = 100.0,
             currencyCode: String = "USD",
             exchangeCode: String = "",
             id: String = ""
         ): Asset {
+            require(symbol.isNotBlank()) { "Symbol cannot be blank" }
             require(type in setOf('P', 'C')) { "Type should be P or C" }
             val formatter = DateTimeFormatter.ofPattern("yyMMdd")
             val optionSymbol = "%-6s".format(symbol.uppercase()) +
                     expiration.format(formatter) +
                     type.uppercase() +
-                    "%08d".format(BigDecimal(price).multiply(BigDecimal(1000)).toInt())
+                    "%08d".format(price.multiply(BigDecimal(1000)).toInt())
 
             return Asset(optionSymbol, AssetType.OPTION, currencyCode, exchangeCode, multiplier, id)
         }
