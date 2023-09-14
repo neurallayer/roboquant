@@ -49,7 +49,7 @@ class PolygonHistoricFeed(
      * Return the available assets. Due to the number of API calls made, this requires a
      * non-free subscription at Polygon.io
      *
-     * Also, this will only include stocks, and not derivatives like options.
+     * Also, this will only include stocks and not derivatives like options.
      */
     val availableAssets: List<Asset> by lazy {
         availableAssets(client)
