@@ -21,7 +21,10 @@ import net.jacobpeterson.alpaca.model.endpoint.assets.enums.AssetClass
 import net.jacobpeterson.alpaca.model.endpoint.assets.enums.AssetStatus
 import net.jacobpeterson.alpaca.model.properties.DataAPIType
 import net.jacobpeterson.alpaca.model.properties.EndpointAPIType
-import org.roboquant.common.*
+import org.roboquant.common.Asset
+import org.roboquant.common.AssetType
+import org.roboquant.common.Config
+import org.roboquant.common.Exchange
 
 /**
  * Alias for EndpointAPIType
@@ -40,13 +43,16 @@ typealias DataType = DataAPIType
  * @property secretKey the secret key to access the API (property name is alpaca.secret.key)
  * @property accountType account type, either PAPER or LIVE, default is PAPER
  * @property dataType type of data to use, IEX or SIP, default is IEX
+ * @property extendedHours enable extended hours for trading, default is true
+ *
  * @constructor Create a new instance of AlpacaConfig
  */
 data class AlpacaConfig(
     var publicKey: String = Config.getProperty("alpaca.public.key", ""),
     var secretKey: String = Config.getProperty("alpaca.secret.key", ""),
     var accountType: AccountType = AccountType.PAPER,
-    var dataType: DataType = DataType.IEX
+    var dataType: DataType = DataType.IEX,
+    var extendedHours: Boolean = true
 ) {
 
     init {

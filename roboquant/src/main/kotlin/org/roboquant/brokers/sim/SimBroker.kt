@@ -33,7 +33,7 @@ import java.time.Instant
  * exchange behavior. It can be configured with various plug-ins during initiation time that determine its behavior.
  *
  * @property initialDeposit initial deposit, default is 1 million USD
- * @param baseCurrency the base currency to use for reporting values, default is the (first) currency found in the
+ * @param baseCurrency the base currency to use for reporting amounts, default is the (first) currency found in the
  * initial deposit
  * @property feeModel the fee/commission model to use, default is [NoFeeModel]
  * @property accountModel the account model (like cash or margin) to use, default is [CashAccount]

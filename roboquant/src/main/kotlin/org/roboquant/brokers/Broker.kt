@@ -29,7 +29,7 @@ interface Broker : Lifecycle {
 
     /**
      * The state of the trading account since the last [sync]. This returns an immutable object.
-     * Only invoking [sync] will result in creating a new instance of this object.
+     * Invoking [sync] will result in creating a new and updated instance of this object.
      */
     val account: Account
 
@@ -51,6 +51,8 @@ interface Broker : Lifecycle {
      *
      * Optional provide a [time] that can be used by the broker as a safety check to determine you are not submitting
      * back test orders to a real broker.
+     *
+     * Please note that without invoking [sync], the [account] object will not reflect these new orders.
      */
     fun place(orders: List<Order>, time: Instant = Instant.now())
 

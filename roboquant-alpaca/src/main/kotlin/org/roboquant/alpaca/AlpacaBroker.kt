@@ -44,12 +44,10 @@ import net.jacobpeterson.alpaca.model.endpoint.positions.Position as AlpacaPosit
  *
  * See also the Alpaca feed components if you want to use Alpaca also for retrieving market data.
  *
- * @param extendedHours enable extended hours for trading, default is false
  * @param configure additional configuration parameters to connecting to the Alpaca API
  * @constructor Create a new instance of the AlpacaBroker
  */
 class AlpacaBroker(
-    extendedHours: Boolean = false,
     loadExistingOrders: Boolean = true,
     configure: AlpacaConfig.() -> Unit = {}
 ) : Broker {
@@ -78,7 +76,7 @@ class AlpacaBroker(
     init {
         config.configure()
         alpacaAPI = Alpaca.getAPI(config)
-        orderPlacer = AlpaceOrderPlacer(alpacaAPI, extendedHours)
+        orderPlacer = AlpaceOrderPlacer(alpacaAPI, config.extendedHours)
         availableStocks = Alpaca.getAvailableStocks(alpacaAPI)
         availableCrypto = Alpaca.getAvailableCrypto(alpacaAPI)
         availableAssets = (availableStocks.values + availableCrypto.values).toSortedSet()

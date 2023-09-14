@@ -29,6 +29,7 @@ import org.roboquant.feeds.*
 import org.roboquant.polygon.Polygon.availableAssets
 import org.roboquant.polygon.Polygon.getRestClient
 import org.roboquant.polygon.Polygon.getWebSocketClient
+import org.roboquant.polygon.Polygon.toAsset
 import java.time.Instant
 
 /**
@@ -162,9 +163,7 @@ class PolygonLiveFeed(
      */
     suspend fun subscribe(vararg symbols: String, type: PolygonActionType = PolygonActionType.TRADE) {
 
-        // val assets = symbols.map { symbol -> availableAssets.first { it.symbol ==  symbol } }
-        // associateBy { it.symbol }
-        val assets = symbols.map { Asset(it) }.associateBy { it.symbol }
+        val assets = symbols.map { it.toAsset() }.associateBy { it.symbol }
         subscriptions.putAll(assets)
 
         val polygonSubs = when (type) {

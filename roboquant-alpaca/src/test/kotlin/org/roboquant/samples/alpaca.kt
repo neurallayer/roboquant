@@ -24,6 +24,8 @@ import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.alpaca.AlpacaLiveFeed
 import org.roboquant.alpaca.PriceActionType
 import org.roboquant.common.*
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
 import org.roboquant.loggers.InfoLogger
 import org.roboquant.metrics.AccountMetric
@@ -32,7 +34,7 @@ import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy
 
 
-private val symbols = listOf(
+private val symbols = arrayOf(
     "AAPL",
     "IBM",
     "JPM",
@@ -47,7 +49,7 @@ private val symbols = listOf(
     "JNJ",
     "TSM",
     "WMT"
-).toTypedArray()
+)
 
 private fun alpacaBroker() {
     val broker = AlpacaBroker()
@@ -107,8 +109,21 @@ private fun alpacaTradeStocks() {
 }
 
 
+
+private fun alpacaLiveFeed() {
+    val feed = AlpacaLiveFeed()
+    feed.heartbeatInterval = 10_000
+    feed.subscribeStocks(*symbols, type = PriceActionType.QUOTE)
+    feed.filter<PriceAction>(Timeframe.next(5.minutes)) {
+        println(it)
+        false
+    }
+    feed.close()
+}
+
+
 private fun alpacaHistoricFeed2() {
-    val symbols = listOf(
+    val symbols = arrayOf(
         "AAPL",
         "IBM",
         "JPM",
@@ -123,7 +138,7 @@ private fun alpacaHistoricFeed2() {
         "JNJ",
         "TSM",
         "WMT"
-    ).toTypedArray()
+    )
     val feed = AlpacaHistoricFeed()
 
     // We get the data for the last 200 days. The minus 15.minutes is to make sure we only request data that
@@ -149,12 +164,13 @@ private fun singleOrder() {
 
 
 fun main() {
-    when ("SINGLE_ORDER") {
+    when ("LIVE_FEED") {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
         "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()
         "ALPACA_HISTORIC_FEED2" -> alpacaHistoricFeed2()
         "ALPACA_PAPER_TRADE_STOCKS" -> alpacaPaperTradeStocks()
         "SINGLE_ORDER" -> singleOrder()
+        "LIVE_FEED" -> alpacaLiveFeed()
     }
 }

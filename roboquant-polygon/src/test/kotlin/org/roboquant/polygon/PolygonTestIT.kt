@@ -56,6 +56,17 @@ internal class PolygonTestIT {
     }
 
     @Test
+    fun testHistoricOptionsFeed() {
+        val feed = PolygonHistoricFeed()
+        val period = Timeframe.parse("2023-09-01","2023-09-02")
+        feed.retrieve("O:SPY251219C00650000", timeframe = period)
+        assertTrue(feed.timeline.isNotEmpty())
+        assertEquals(1, feed.assets.size)
+        val asset = feed.assets.first()
+        assertEquals("SPY251219C00650000", asset.symbol)
+    }
+
+    @Test
     fun testLiveFeed() = runBlocking {
         Config.getProperty("TEST_POLYGON") ?: return@runBlocking
         val feed = PolygonLiveFeed()

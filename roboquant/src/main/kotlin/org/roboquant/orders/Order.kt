@@ -99,7 +99,7 @@ abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag)
 /**
  * Base class for all types of modify-orders. Two most commonly used subclasses are the [CancelOrder] and [UpdateOrder].
  *
- * Please note that modify orders by design can only modify createOrders
+ * Please note that modify orders by design can only modify createOrders.
  *
  * @property order the (create-)order that will be modified
  * @param tag an optional tag

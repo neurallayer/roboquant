@@ -75,7 +75,7 @@ interface MetricsLogger : Lifecycle {
     }
 
     /**
-     * Get all available metric-names for a certain [run]
+     * Get the available metric-names for a specific [run]
      */
     fun getMetricNames(run: String): Set<String> = emptySet()
 

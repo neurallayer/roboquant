@@ -28,7 +28,7 @@ import org.roboquant.strategies.Signal
 import java.time.Instant
 
 /**
- * Configuration parameters for the [FlexPolicy].
+ * Configuration for the [FlexPolicy] that allows to tune the behavior of the policy.
  *
  * @property orderPercentage The percentage of the equity value to allocate to a single order.
  * The default is 1.percent (0.01).
@@ -40,7 +40,7 @@ import java.time.Instant
  * @property safetyMargin the percentage of the equity value that don't get allocated to orders. This way, you
  * are more likely to stay away from bounced orders and margin calls. Default is same percentage as [orderPercentage]
  * @property minPrice the minimal price for an asset before opening a position, default is null (no minimum). This
- * can be used to avoid trading penny stocks.
+ * can be used to avoid trading penny stock and other high volatile assets.
  */
 open class FlexPolicyConfig(
     var orderPercentage: Double = 1.percent,

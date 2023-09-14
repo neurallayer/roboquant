@@ -100,6 +100,14 @@ internal object Polygon {
         )
     }
 
+
+    internal fun String.toAsset() : Asset {
+        return when {
+            startsWith("O:") -> Asset(drop(2), type = AssetType.OPTION)
+            else -> Asset(this)
+        }
+    }
+
     internal fun availableAssets(client: PolygonRestClient): List<Asset> {
         val assets = mutableListOf<Asset>()
         val params = SupportedTickersParameters(

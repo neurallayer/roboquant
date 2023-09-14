@@ -40,12 +40,12 @@ import kotlin.io.path.notExists
  * Currency converter that uses the exchange reference rates as published by the ECB and that are freely available at
  * [ECB website](https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html)
  *
- * It contains many daily exchange rates, and with this file loaded it is possible to trade in most currencies
+ * It contains daily exchange rates, and with this file loaded it is possible to trade in most currencies
  * in the world. However, please note that:
  *
  * 1. The published rates are all in relationship to the Euro. So they only go back to the introduction date of
  * the Euro and don't cover earlier periods.
- * 2. Cryptocurrencies are not included in this file.
+ * 2. This file does not cover cryptocurrencies.
  *
  * @constructor Create a new ECB Exchange rates converter
  */

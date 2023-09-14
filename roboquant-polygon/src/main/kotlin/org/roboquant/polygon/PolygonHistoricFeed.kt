@@ -24,6 +24,7 @@ import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.polygon.Polygon.availableAssets
 import org.roboquant.polygon.Polygon.getRestClient
+import org.roboquant.polygon.Polygon.toAsset
 import java.time.Instant
 
 
@@ -47,6 +48,8 @@ class PolygonHistoricFeed(
     /**
      * Return the available assets. Due to the number of API calls made, this requires a
      * non-free subscription at Polygon.io
+     *
+     * Also, this will only include stocks, and not derivatives like options.
      */
     val availableAssets: List<Asset> by lazy {
         availableAssets(client)
@@ -83,7 +86,8 @@ class PolygonHistoricFeed(
                 else -> null
             }
 
-            val asset = Asset(symbol)
+            val asset = symbol.toAsset()
+
             for (bar in aggr.results) {
                 val action =
                     PriceBar(asset, doubleArrayOf(bar.open!!, bar.high!!, bar.low!!, bar.close!!, bar.volume!!), tp)
