@@ -28,6 +28,9 @@ import org.roboquant.common.Timeframe
  */
 fun interface Score {
 
+    /**
+     * Calculate the score of a run
+     */
     fun calculate(roboquant: Roboquant, run: String, timeframe: Timeframe): Double
 
     /**
@@ -99,7 +102,9 @@ class MetricScore(private val metricName: String, private val reduce: (TimeSerie
 
     }
 
-
+    /**
+     * @see Score.calculate
+     */
     override fun calculate(roboquant: Roboquant, run: String, timeframe: Timeframe): Double {
         val metrics = roboquant.logger.getMetric(metricName, run)
         return if (metrics.isNotEmpty()) reduce(metrics) else Double.NaN

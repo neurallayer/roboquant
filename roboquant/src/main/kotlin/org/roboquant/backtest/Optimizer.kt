@@ -9,6 +9,13 @@ import org.roboquant.feeds.Feed
 import org.roboquant.loggers.MemoryLogger
 import java.util.*
 
+/**
+ * Contains the result of a run and its score
+ * @param params
+ * @param score
+ * @param timeframe
+ * @param name
+ */
 data class RunResult(val params: Params, val score: Double, val timeframe: Timeframe, val name: String)
 
 /**

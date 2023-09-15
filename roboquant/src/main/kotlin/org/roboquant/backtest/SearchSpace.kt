@@ -49,6 +49,9 @@ interface SearchSpace : Iterable<Params> {
  */
 class EmptySearchSpace : SearchSpace {
 
+    /**
+     * @see SearchSpace.iterator
+     */
     override fun iterator(): Iterator<Params> {
         return listOf(Params()).listIterator()
     }
@@ -98,6 +101,9 @@ class RandomSearch(override val size: Int) : SearchSpace {
 
     }
 
+    /**
+     * @see SearchSpace.iterator
+     */
     override fun iterator(): Iterator<Params> {
         return list.listIterator()
     }
@@ -162,21 +168,30 @@ class GridSearch : SearchSpace {
         params[name] = values.toList()
     }
 
-
+    /**
+     * Add a parameter [name] with [samples] values drawn from the provided [fn]
+     */
     fun add(name: String, samples: Int, fn: () -> Any) {
         params[name] = (1..samples).map { fn() }
     }
 
-
+    /**
+     * @see SearchSpace.size
+     */
     override val size
         get() = params.map { it.value.size }.reduce(Int::times)
 
+    /**
+     * @see SearchSpace.iterator
+     */
     override fun iterator(): Iterator<Params> {
         return list.listIterator()
     }
 }
 
-
+/**
+ * Return an iterable of Double over a closed range with a [step]
+ */
 infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
     require(start.isFinite())
     require(endInclusive.isFinite())
