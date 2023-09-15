@@ -102,6 +102,7 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
 
     /**
      * Remove all the feeds from the database. This cannot be undone, so use this method with care.
+     * This will effectively drop all tables that are currently found in the database.
      */
     fun removeAllFeeds() {
         CairoEngine(config).use {
