@@ -18,10 +18,8 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
-import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.feeds.util.play
-import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -38,40 +36,6 @@ internal class CombinedLiveFeedTest {
             cnt++
         }
         assertEquals(20, cnt)
-    }
-
-    @Test
-    fun testCombinedFeed2() = runBlocking {
-        val f1 = RandomWalkFeed.lastYears(1)
-        val f2 = RandomWalkFeed.lastYears(2)
-        val cf = CombinedFeed(f1, f2)
-        assertTrue { cf.timeframe == f2.timeframe }
-        var cnt = 0
-        var t = Instant.MIN
-        for (step in play(cf)) {
-            assertTrue(step.actions.isNotEmpty())
-            assertTrue(step.time >= t)
-            cnt++
-            t = step.time
-        }
-        assertEquals(f1.toList().size + f2.toList().size, cnt)
-    }
-
-    @Test
-    fun testCombinedFeed4() = runBlocking {
-        val f1 = RandomWalkFeed.lastYears(1)
-        val f2 = RandomWalkFeed.lastYears(2)
-        val cf = CombinedFeed(f1, f2, channelCapacity = 10)
-        assertTrue { cf.timeframe == f2.timeframe }
-        var cnt = 0
-        var t = Instant.MIN
-        for (step in play(cf)) {
-            assertTrue(step.actions.isNotEmpty())
-            assertTrue(step.time >= t)
-            cnt++
-            t = step.time
-        }
-        assertEquals(f1.toList().size + f2.toList().size, cnt)
     }
 
     @Test

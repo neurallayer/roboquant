@@ -22,10 +22,7 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.common.ParallelJobs
-import org.roboquant.common.RoboquantException
-import org.roboquant.common.Timeframe
-import org.roboquant.common.USD
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
@@ -40,6 +37,7 @@ import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -184,13 +182,40 @@ internal class RoboquantTest {
 
         repeat(50) {
             jobs.add {
-                val roboquant = Roboquant(EMAStrategy(), logger = SilentLogger())
-                roboquant.runAsync(feed)
+                val roboquant = Roboquant(EMAStrategy(), ProgressMetric(), logger = LastEntryLogger())
+                val run = "run-$it"
+                roboquant.runAsync(feed, name = run)
+                val metric = roboquant.logger.getMetric("progress.steps", run)
+                assertEquals(1, metric.size)
+                assertEquals(feed.timeline.size.toDouble(), metric.values[0])
             }
         }
         jobs.joinAllBlocking()
 
     }
+
+
+    @Test
+    fun parallelTimeframes() {
+        val feed = TestData.feed
+        val jobs = ParallelJobs()
+
+        feed.timeframe.sample(3.months).forEach {
+            jobs.add {
+                val roboquant = Roboquant(EMAStrategy(), ProgressMetric(), logger = MemoryLogger(false))
+                val run = "run-$it"
+                roboquant.runAsync(feed, it, name = run)
+                val metric = roboquant.logger.getMetric("progress.steps", run)
+                val tf = metric.timeframe
+                assertFalse(tf.isEmpty())
+                assertTrue(tf.start in it)
+                assertTrue(tf.end in it)
+            }
+        }
+        jobs.joinAllBlocking()
+
+    }
+
 
     @Test
     fun prices() {

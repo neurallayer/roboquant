@@ -1,11 +1,11 @@
 package org.roboquant.feeds
 
-import org.roboquant.common.Timeframe
-import org.roboquant.common.millis
-import org.roboquant.common.minutes
-import org.roboquant.common.seconds
+import org.roboquant.Roboquant
+import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.LiveTestFeed
+import org.roboquant.loggers.LastEntryLogger
+import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.test.Test
@@ -90,6 +90,22 @@ class AggregatorFeedTest {
         // assertEquals(feed.timeframe, aggFeed.timeframe)
         assertTrue(items1.first().time <= items1.first().time)
         assertTrue(items1.last().time >= items1.last().time)
+    }
+
+    @Test
+    fun parallel() {
+        // 5-seconds window with 1-millisecond resolution
+        val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
+        val feed = RandomWalkFeed(timeframe, 1.millis, generateBars = false)
+
+        val aggFeed = AggregatorFeed(feed, 1.seconds)
+        val jobs = ParallelJobs()
+        aggFeed.timeframe.split(3.months).forEach {
+            jobs.add {
+                val rq = Roboquant(EMAStrategy(), logger = LastEntryLogger())
+                rq.runAsync(aggFeed, it)
+            }
+        }
     }
 
     @Test

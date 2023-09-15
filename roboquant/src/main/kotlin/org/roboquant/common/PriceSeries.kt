@@ -20,7 +20,7 @@ import org.roboquant.feeds.Event
 
 /**
  * Holds a fix amount of historic prices. When adding a new value while the buffer is full, the oldest one will be
- * removed (aka a circular buffer). This is typically used by strategies for to track rolling windows or replay buffers.
+ * removed (aka a circular buffer). This is typically used by strategies to track rolling windows or replay buffers.
  *
  * Internally, it uses a DoubleArray to hold the price values. Instances of this class are not thread safe during
  * updates.
