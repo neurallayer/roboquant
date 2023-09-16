@@ -49,8 +49,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
         }
     }
 
-    override val runs: Set<String>
-        get() = history.keys
+    override fun getRuns(): Set<String> = history.keys
 
     override fun start(run: String, timeframe: Timeframe) {
         history[run] = mutableMapOf()

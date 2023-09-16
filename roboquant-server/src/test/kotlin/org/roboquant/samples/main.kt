@@ -35,12 +35,14 @@ fun main() {
 
     val jobs = ParallelJobs()
 
-    val tf = Timeframe.next(30.minutes)
+    val tf1 = Timeframe.next(2.minutes)
+    val tf2 = Timeframe.next(30.minutes)
+    val tf3 = Timeframe.next(10.minutes)
 
     // Start three runs
-    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(200.millis, nAssets = 3), tf, "run-fast") }
-    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(5.seconds, nAssets = 10), tf, "run-medium") }
-    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(30.seconds, nAssets = 50), tf, "run-slow") }
+    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(200.millis, nAssets = 3), tf1, "run-fast") }
+    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(5.seconds, nAssets = 10), tf2, "run-medium") }
+    jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(30.seconds, nAssets = 50), tf3, "run-slow") }
 
     jobs.joinAllBlocking()
     server.stop()

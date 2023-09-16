@@ -25,11 +25,13 @@ import kotlinx.html.*
 import org.roboquant.server.*
 import java.time.temporal.ChronoUnit
 
-private fun FlowContent.pauseInfo(pause: Boolean) {
-    if (pause) p(classes = "text-warning") {
-        +"paused"
-    } else p(classes = "text-success") {
-        +"running"
+
+
+private fun FlowContent.state(run: RunInfo, pause: Boolean) {
+    when {
+        run.done -> p(classes = "text-success") { +"done" }
+        pause -> p(classes = "text-warning") {+ "paused" }
+        else ->  p(classes = "text-success") { +"running" }
     }
 }
 
@@ -53,7 +55,7 @@ private fun FlowContent.runTable() {
                 val policy = info.roboquant.policy as PausablePolicy
                 tr {
                     td { +run }
-                    td { pauseInfo(policy.pause) }
+                    td { state(info, policy.pause) }
                     td { +info.timeframe.toPrettyString() }
                     td {
                         +"total = ${policy.totalEvents}"
@@ -73,10 +75,12 @@ private fun FlowContent.runTable() {
                     td { +policy.lastUpdate.truncatedTo(ChronoUnit.SECONDS).toString() }
                     td {
                         a(href = "/run/$run") { +"details" }
-                        br
-                        a(href = "/?action=pause&run=$run") { +"pause" }
-                        br
-                        a(href = "/?action=resume&run=$run") { +"resume" }
+                        if (! info.done) {
+                            br
+                            a(href = "/?action=pause&run=$run") { +"pause" }
+                            br
+                            a(href = "/?action=resume&run=$run") { +"resume" }
+                        }
                     }
                 }
             }

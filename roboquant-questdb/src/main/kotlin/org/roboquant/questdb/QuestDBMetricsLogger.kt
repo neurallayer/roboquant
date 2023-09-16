@@ -150,10 +150,9 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
     }
 
     /**
-     * @see MetricsLogger.runs
+     * @see MetricsLogger.getRuns
      */
-    override val runs: Set<String>
-        get() = engine.tables().toSet()
+    override fun getRuns(): Set<String> = engine.tables().toSet()
 
     private fun createTable(tableName: String) {
         engine.update(

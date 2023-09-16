@@ -48,7 +48,7 @@ interface MetricsLogger : Lifecycle {
      * Use [getMetricNames] to see which metrics are available.
      */
     fun getMetric(metricName: String): Map<String, TimeSeries> = buildMap {
-        runs.forEach {
+        getRuns().forEach {
             val v = getMetric(metricName, it)
             if (v.isNotEmpty()) put(it, v)
         }
@@ -68,7 +68,7 @@ interface MetricsLogger : Lifecycle {
      * This across all runs and can be an extensive operation.
      */
     fun getMetricNames(): Set<String> = buildSet {
-        runs.forEach {
+        getRuns().forEach {
             val v = getMetricNames(it)
             addAll(v)
         }
@@ -82,8 +82,7 @@ interface MetricsLogger : Lifecycle {
     /**
      * The list of runs that are available and can be retrieved with the [getMetric].
      */
-    val runs: Set<String>
-        get() = emptySet()
+    fun getRuns(): Set<String> = emptySet()
 
 }
 

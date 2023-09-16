@@ -119,10 +119,13 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
         paused: Boolean = false
     ) {
         require(!runs.contains(name)) { "run name has to be unique, name=$name is already in use by another run." }
-        val rq = roboquant.copy(policy = PausablePolicy(roboquant.policy, paused))
-        runs[name] = RunInfo(rq, feed, timeframe, warmup)
+        val policy = PausablePolicy(roboquant.policy, paused)
+        val rq = roboquant.copy(policy = policy)
+        val info = RunInfo(rq, feed, timeframe, warmup)
+        runs[name] = info
         logger.info { "Starting new run name=$name timeframe=$timeframe" }
         rq.runAsync(feed, timeframe, name, warmup)
+        info.done = true
     }
 
 }

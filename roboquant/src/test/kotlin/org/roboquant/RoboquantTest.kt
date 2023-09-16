@@ -169,7 +169,7 @@ internal class RoboquantTest {
         val logger = MemoryLogger(showProgress = false)
         val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
         roboquant.run(TestData.feed)
-        assertEquals(1, logger.runs.size)
+        assertEquals(1, logger.getRuns().size)
 
         roboquant.reset()
         assertTrue(logger.history.isEmpty())

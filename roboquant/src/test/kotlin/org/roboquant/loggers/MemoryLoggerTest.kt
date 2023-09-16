@@ -91,7 +91,7 @@ internal class MemoryLoggerTest {
         assertEquals(1, z.size)
 
 
-        assertEquals(1, logger.runs.size)
+        assertEquals(1, logger.getRuns().size)
 
         assertTrue(z.min().value <= z.max().value)
 
