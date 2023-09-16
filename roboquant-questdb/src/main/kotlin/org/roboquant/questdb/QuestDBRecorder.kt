@@ -70,7 +70,7 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
     /**
      * Create a new engine
      */
-    fun createEngine() = CairoEngine(config)
+    private fun createEngine() = CairoEngine(config)
 
     @Suppress("unused")
     /**
