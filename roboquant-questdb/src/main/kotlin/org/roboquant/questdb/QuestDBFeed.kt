@@ -126,6 +126,9 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
         }
     }
 
+    /**
+     * Close the database engine
+     */
     override fun close() {
         engine.close()
     }

@@ -89,13 +89,9 @@ private fun Instant.toPrettyString(): String {
     return if (this == Instant.MAX) "-" else this.truncatedTo(ChronoUnit.SECONDS).toString()
 }
 
-/*
-class Table {
-    var header: List<String> = emptyList()
-    val rows = mutableListOf<List<Any>>()
-}
-*/
-
+/**
+ * Return the collection as table
+ */
 fun Collection<OrderState>.lines(): List<List<Any>> {
     val lines = mutableListOf<List<Any>>()
     lines.add(listOf("symbol", "type", "status", "id", "opened at", "closed at", "details"))

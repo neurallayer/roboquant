@@ -224,7 +224,9 @@ val Collection<Position>.unrealizedPNL: Wallet
 val Collection<Position>.closeSizes: Map<Asset, Size>
     get() = diff(emptyList())
 
-
+/**
+ * Return the collection as table
+ */
 fun Collection<Position>.lines(): List<List<Any>> {
     val lines = mutableListOf<List<Any>>()
     lines.add(

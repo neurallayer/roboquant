@@ -33,9 +33,9 @@ import kotlin.reflect.KClass
 /**
  * Interface for various price action handlers
  */
-interface PriceActionHandler<T : PriceAction> {
+internal interface PriceActionHandler<T : PriceAction> {
 
-    fun updateRecord(row: TableWriter.Row, action: T)
+    fun updateRecord(row: TableWriter.Row, action: PriceAction)
 
     fun getPriceAction(asset: Asset, record: Record): T
 
@@ -95,7 +95,8 @@ private class PriceBarHandler : PriceActionHandler<PriceBar> {
         )
     }
 
-    override fun updateRecord(row: TableWriter.Row, action: PriceBar) {
+    override fun updateRecord(row: TableWriter.Row, action: PriceAction) {
+        if (action !is PriceBar) return
         with(action) {
             row.putDouble(2, open)
             row.putDouble(3, high)
@@ -139,7 +140,8 @@ private class TradePriceHandler : PriceActionHandler<TradePrice> {
     }
 
 
-    override fun updateRecord(row: TableWriter.Row, action: TradePrice) {
+    override fun updateRecord(row: TableWriter.Row, action: PriceAction) {
+        if (action !is TradePrice) return
         with(action) {
             row.putDouble(2, price)
             row.putDouble(3, volume)
@@ -175,7 +177,8 @@ private class PriceQuoteHandler : PriceActionHandler<PriceQuote> {
     }
 
 
-    override fun updateRecord(row: TableWriter.Row, action: PriceQuote) {
+    override fun updateRecord(row: TableWriter.Row, action: PriceAction) {
+        if (action !is PriceQuote) return
         with(action) {
             row.putDouble(2, askPrice)
             row.putDouble(3, askSize)

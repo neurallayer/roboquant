@@ -100,7 +100,7 @@ internal fun CairoEngine.tableColumns(tableName: String): Set<String> {
 /**
  * Perform an update statement
  */
-fun CairoEngine.update(query: String) {
+internal fun CairoEngine.update(query: String) {
     SqlExecutionContextImpl(this, 1).with(AllowAllSecurityContext.INSTANCE, null, null).use { ctx ->
         sqlCompiler.use {
             it.compile(query, ctx)

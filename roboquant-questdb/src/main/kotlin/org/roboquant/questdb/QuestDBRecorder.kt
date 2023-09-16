@@ -36,6 +36,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.div
 import kotlin.io.path.isDirectory
+import kotlin.reflect.KClass
 
 
 /**
@@ -72,6 +73,9 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
     fun createEngine() = CairoEngine(config)
 
     @Suppress("unused")
+    /**
+     * Various database partition schemes
+     */
     companion object Partition {
 
         /**
@@ -116,6 +120,7 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
      * Supported price-actions: [PriceBar], [PriceQuote] and [TradePrice]
      *
      * @param feed the feed you want to record
+     * @param type the type of price-action to capture
      * @param tableName the table to use to store the data
      * @param timeframe the timeframe
      * @param append do you want to append to an existing table, default is false
@@ -123,18 +128,17 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
      * This is required when wanting to append timestamps out of order and might result in better overall performance.
      * The default value is [NONE]
      */
-    inline fun <reified T : PriceAction> record(
+    fun record(
         feed: Feed,
+        type: KClass<*>,
         tableName: String,
         timeframe: Timeframe = Timeframe.INFINITE,
         append: Boolean = false,
-        partition: String = NONE
+        partition: String = NONE,
     ) = runBlocking {
 
         require(partition in setOf("YEAR", "MONTH", "DAY", "HOUR", "NONE")) { "invalid partition value" }
-
-        @Suppress("UNCHECKED_CAST")
-        val handler = getHandler(T::class) as PriceActionHandler<T>
+        val handler = getHandler(type)
         val channel = EventChannel(timeframe = timeframe)
 
         // Create a new engine, so it can be released once the recording is done and release
@@ -155,12 +159,14 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
             val lookupTable = mutableMapOf<Asset, String>()
             while (true) {
                 val o = channel.receive()
-                for (action in o.actions.filterIsInstance<T>()) {
-                    val row = writer.newRow(o.time.epochMicro)
-                    val str = lookupTable.getOrPut(action.asset) { action.asset.serialize() }
-                    row.putSym(0, str)
-                    handler.updateRecord(row, action)
-                    row.append()
+                for (action in o.actions.filterIsInstance<PriceAction>()) {
+                    if (action::class == type) {
+                        val row = writer.newRow(o.time.epochMicro)
+                        val str = lookupTable.getOrPut(action.asset) { action.asset.serialize() }
+                        row.putSym(0, str)
+                        handler.updateRecord(row, action)
+                        row.append()
+                    }
                 }
                 writer.commit()
             }
@@ -177,6 +183,30 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
         }
 
     }
+
+    /**
+     * Generate a new QuestDB table based on the event in the feed and optional limited to the provided timeframe
+     * Supported price-actions: [PriceBar], [PriceQuote] and [TradePrice]
+     *
+     * @param feed the feed you want to record
+     * @param tableName the table to use to store the data
+     * @param timeframe the timeframe
+     * @param append do you want to append to an existing table, default is false
+     * @param partition partition the table using the specified value.
+     * This is required when wanting to append timestamps out of order and might result in better overall performance.
+     * The default value is [NONE]
+     */
+    inline fun <reified T : PriceAction> record(
+      feed: Feed,
+      tableName: String,
+      timeframe: Timeframe = Timeframe.INFINITE,
+      append: Boolean = false,
+      partition: String = NONE,
+    ) {
+        record(feed = feed, T::class, tableName, timeframe, append, partition)
+    }
+
+
 }
 
 
