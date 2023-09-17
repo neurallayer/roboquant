@@ -16,13 +16,14 @@
 
 package org.roboquant.backtest
 
-import org.junit.jupiter.api.Test
+
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.Roboquant
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.EMAStrategy
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class ScoreTest {
