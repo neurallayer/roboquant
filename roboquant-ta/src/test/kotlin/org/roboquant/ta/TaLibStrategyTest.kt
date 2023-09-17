@@ -17,7 +17,7 @@
 package org.roboquant.ta
 
 import com.tictactec.ta.lib.Compatibility
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.Roboquant

@@ -17,7 +17,7 @@
 package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.feeds.util.play
 import kotlin.test.assertEquals

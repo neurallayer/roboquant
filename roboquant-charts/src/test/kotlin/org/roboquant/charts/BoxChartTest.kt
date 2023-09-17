@@ -16,7 +16,7 @@
 
 package org.roboquant.charts
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.loggers.MemoryLogger
 import kotlin.test.assertTrue
 

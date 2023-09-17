@@ -16,7 +16,7 @@
 
 package org.roboquant.strategies
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.TestData
 import kotlin.random.Random
 import kotlin.test.assertEquals

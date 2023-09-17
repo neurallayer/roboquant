@@ -1,6 +1,6 @@
 package org.roboquant.loggers
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe

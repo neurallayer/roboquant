@@ -16,7 +16,7 @@
 
 package org.roboquant.common
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter

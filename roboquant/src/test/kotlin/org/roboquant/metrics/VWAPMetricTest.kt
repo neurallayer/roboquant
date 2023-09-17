@@ -16,7 +16,7 @@
 
 package org.roboquant.metrics
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.TestData
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

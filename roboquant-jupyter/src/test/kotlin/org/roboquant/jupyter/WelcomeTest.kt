@@ -16,7 +16,7 @@
 
 package org.roboquant.jupyter
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.charts.PriceBarChart
 import org.roboquant.charts.TimeSeriesChart
 import kotlin.test.assertTrue

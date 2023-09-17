@@ -16,7 +16,7 @@
 
 package org.roboquant.common
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
 import kotlin.test.*

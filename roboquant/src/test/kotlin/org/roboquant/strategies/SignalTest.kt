@@ -16,7 +16,7 @@
 
 package org.roboquant.strategies
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.common.Asset
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals

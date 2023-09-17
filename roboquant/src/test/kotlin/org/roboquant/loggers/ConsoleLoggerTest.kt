@@ -16,7 +16,7 @@
 
 package org.roboquant.loggers
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
 import java.time.Instant

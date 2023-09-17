@@ -16,7 +16,7 @@
 
 package org.roboquant.brokers.sim.execution
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.common.Size

@@ -17,7 +17,7 @@
 package org.roboquant.jupyter
 
 import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.common.RoboquantException
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

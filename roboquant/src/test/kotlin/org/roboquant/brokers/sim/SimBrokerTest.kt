@@ -16,7 +16,7 @@
 
 package org.roboquant.brokers.sim
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.assets

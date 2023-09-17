@@ -1,6 +1,6 @@
 package org.roboquant.common
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.concurrent.thread
 import kotlin.test.assertEquals

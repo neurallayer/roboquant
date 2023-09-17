@@ -17,7 +17,7 @@
 package org.roboquant.feeds.random
 
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
 import org.roboquant.feeds.*

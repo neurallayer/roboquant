@@ -17,7 +17,7 @@
 package org.roboquant.brokers
 
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*

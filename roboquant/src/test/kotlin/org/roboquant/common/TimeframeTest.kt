@@ -16,7 +16,7 @@
 
 package org.roboquant.common
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.Duration
 import java.time.Instant

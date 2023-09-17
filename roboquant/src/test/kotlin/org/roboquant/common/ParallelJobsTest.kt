@@ -18,7 +18,7 @@ package org.roboquant.common
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class ParallelJobsTest {

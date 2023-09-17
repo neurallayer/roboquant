@@ -18,7 +18,7 @@ package org.roboquant.xchange
 
 import info.bitrich.xchangestream.bitstamp.v2.BitstampStreamingExchange
 import info.bitrich.xchangestream.core.StreamingExchangeFactory
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.knowm.xchange.ExchangeFactory
 import org.knowm.xchange.bitstamp.BitstampExchange
 import org.roboquant.common.AssetType

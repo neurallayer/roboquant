@@ -16,7 +16,7 @@
 
 package org.roboquant.ibkr
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.common.Config
 import kotlin.test.assertTrue
 

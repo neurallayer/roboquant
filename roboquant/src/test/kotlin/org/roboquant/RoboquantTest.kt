@@ -17,7 +17,7 @@
 package org.roboquant
 
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.sim.NoCostPricingEngine

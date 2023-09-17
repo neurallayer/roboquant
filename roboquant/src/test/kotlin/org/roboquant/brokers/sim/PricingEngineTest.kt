@@ -1,6 +1,6 @@
 package org.roboquant.brokers.sim
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.common.bips

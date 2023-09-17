@@ -18,7 +18,7 @@ package org.roboquant.charts
 
 import org.icepear.echarts.charts.pie.PieSeries
 import org.icepear.echarts.origin.util.SeriesOption
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class AllocationChartTest {

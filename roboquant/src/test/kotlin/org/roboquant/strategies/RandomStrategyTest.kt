@@ -16,7 +16,7 @@
 
 package org.roboquant.strategies
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import kotlin.test.assertTrue

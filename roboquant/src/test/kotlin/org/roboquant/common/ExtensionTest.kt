@@ -16,7 +16,7 @@
 
 package org.roboquant.common
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import java.time.Instant
 import kotlin.io.path.Path
 import kotlin.test.assertEquals

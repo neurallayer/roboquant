@@ -17,7 +17,7 @@
 package org.roboquant.charts
 
 import org.icepear.echarts.Option
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.feeds.random.RandomWalkFeed
 import kotlin.test.assertContains

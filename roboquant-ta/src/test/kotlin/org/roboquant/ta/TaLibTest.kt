@@ -16,7 +16,7 @@
 
 package org.roboquant.ta
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.feeds.PriceBar

@@ -16,7 +16,7 @@
 
 package org.roboquant.binance
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.*
 import kotlin.test.assertEquals

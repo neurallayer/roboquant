@@ -1,6 +1,6 @@
 package org.roboquant.backtest
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.Roboquant
 import org.roboquant.common.months
 import org.roboquant.feeds.random.RandomWalkFeed

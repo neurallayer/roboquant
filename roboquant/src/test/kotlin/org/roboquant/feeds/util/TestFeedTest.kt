@@ -17,7 +17,7 @@
 package org.roboquant.feeds.util
 
 import kotlinx.coroutines.*
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.*
 import org.roboquant.TestData
 import org.roboquant.common.Background

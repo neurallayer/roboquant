@@ -16,7 +16,7 @@
 
 package org.roboquant.feeds.csv
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction

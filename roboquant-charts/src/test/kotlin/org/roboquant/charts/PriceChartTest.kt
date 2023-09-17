@@ -16,7 +16,7 @@
 
 package org.roboquant.charts
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.Roboquant
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Action

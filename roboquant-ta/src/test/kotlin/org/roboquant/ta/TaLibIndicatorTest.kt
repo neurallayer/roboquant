@@ -1,6 +1,6 @@
 package org.roboquant.ta
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.Asset
 import org.roboquant.feeds.HistoricFeed

@@ -1,6 +1,6 @@
 package org.roboquant.questdb
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe

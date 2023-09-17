@@ -18,7 +18,7 @@ package org.roboquant.charts
 
 import org.icepear.echarts.charts.heatmap.HeatmapSeries
 import org.icepear.echarts.origin.util.SeriesOption
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.feeds.random.RandomWalkFeed
 import kotlin.test.assertTrue
 

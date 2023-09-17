@@ -16,7 +16,7 @@
 
 package org.roboquant.brokers
 
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.*
 import org.roboquant.TestData
 import org.roboquant.common.Asset

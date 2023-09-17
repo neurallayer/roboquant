@@ -19,7 +19,7 @@ package org.roboquant.xchange
 import org.knowm.xchange.Exchange
 import org.knowm.xchange.ExchangeFactory
 import org.knowm.xchange.bitstamp.BitstampExchange
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertFails
 
 internal class XChangeBrokerTestIT {

@@ -17,7 +17,7 @@
 package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import org.roboquant.Roboquant
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.months
