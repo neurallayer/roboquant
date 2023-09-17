@@ -168,3 +168,33 @@ The output should look something like this:
 NOTE: The main purpose is to test the performance and stability of the back-test engine itself, not any specific feed, strategy or metric. So the overhead of those components is kept to a minimum, while still running full back tests.
 
 
+On a high-end server machine (c7g metal instance on AWS), you can expect even higher performance.
+In a best case scenario, the engine can process over *1.2 billion candle-sticks per second*:
+----
+             _______
+            | $   $ |             roboquant
+            |   o   |             version: 2.0.0
+            |_[___]_|             build: 2023-09-17T12:03:17Z
+        ___ ___|_|___ ___         os: Linux 5.19.0-1025-aws
+       ()___)       ()___)        home: /home/ubuntu/.roboquant
+      /  / |         | \  \       jvm: Java HotSpot(TM) 64-Bit Server VM 20.0.2
+     (___) |_________| (___)      kotlin: 1.9.10
+      | |   __/___\__   | |       memory: 30208MB
+      /_\  |_________|  /_\       cpu cores: 64
+     // \\  |||   |||  // \\
+     \\ //  |||   |||  \\ //
+           ()__) ()__)
+           ///     \\\
+        __///_     _\\\__
+       |______|   |______|
+
+ CANDLES ASSETS EVENTS RUNS    FEED    FULL SEQUENTIAL PARALLEL TRADES CANDLES/S
+ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     1M      10   1000  100     5ms    22ms     140ms      10ms     1K      100M
+     5M      50   1000  100     2ms    13ms     276ms      12ms     5K      416M
+    10M      50   2000  100     5ms    25ms     565ms      15ms    10K      666M
+    50M     100   5000  100     6ms   106ms    2369ms      47ms    50K     1063M
+   100M     200   5000  100    11ms   191ms    3988ms      83ms   100K     1204M
+   500M     500  10000  100    53ms   755ms   21449ms     458ms   500K     1091M
+  1000M     500  20000  100   130ms  1686ms   42971ms     958ms  1000K     1043M
+----
