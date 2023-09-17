@@ -16,7 +16,6 @@
 
 package org.roboquant.ta
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.brokers.Account
 import org.roboquant.common.Amount
@@ -27,11 +26,12 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.util.HistoricTestFeed
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class TaLibMetricTest {
+internal class TaLibMetricTest {
 
     @Test
     fun test() {

@@ -17,10 +17,10 @@
 package org.roboquant.common
 
 
-import kotlin.test.*
 import org.junit.jupiter.api.assertDoesNotThrow
+import kotlin.test.Test
 
-class LoggingTest {
+internal class LoggingTest {
 
     @Test
     fun testBasic() {

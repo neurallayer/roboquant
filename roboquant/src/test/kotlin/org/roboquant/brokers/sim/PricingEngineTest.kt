@@ -1,14 +1,14 @@
 package org.roboquant.brokers.sim
 
-import kotlin.test.Test
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.common.bips
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class PricingEngineTest {
+internal class PricingEngineTest {
 
     private val priceBar = PriceBar(Asset("TEST"), 100.0, 101.0, 99.0, 100.5, 1000)
 

@@ -39,7 +39,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @TestMethodOrder(Alphanumeric::class)
-class AvroFeedTest {
+internal class AvroFeedTest {
 
     private class MyFeed(override val assets: SortedSet<Asset>) : AssetFeed {
 

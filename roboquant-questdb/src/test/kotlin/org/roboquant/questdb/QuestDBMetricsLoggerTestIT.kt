@@ -13,7 +13,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class QuestDBMetricsLoggerTestIT {
+internal class QuestDBMetricsLoggerTestIT {
 
     @TempDir
     lateinit var folder: File

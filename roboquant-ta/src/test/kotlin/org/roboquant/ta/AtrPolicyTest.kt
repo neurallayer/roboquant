@@ -16,7 +16,6 @@
 
 package org.roboquant.ta
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.sim.execution.InternalAccount
@@ -31,10 +30,11 @@ import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class AtrPolicyTest {
+internal class AtrPolicyTest {
 
     private fun usAccount(amount: Amount = 100_000.USD): Account {
         val account = InternalAccount(amount.currency)

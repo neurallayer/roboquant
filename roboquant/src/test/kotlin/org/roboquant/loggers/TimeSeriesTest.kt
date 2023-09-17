@@ -1,13 +1,13 @@
 package org.roboquant.loggers
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
 import org.roboquant.common.days
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TimeSeriesTest {
+internal class TimeSeriesTest {
 
     @Test
     fun test() {

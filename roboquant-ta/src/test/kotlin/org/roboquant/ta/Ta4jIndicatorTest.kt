@@ -1,6 +1,5 @@
 package org.roboquant.ta
 
-import kotlin.test.Test
 import org.roboquant.common.Asset
 import org.roboquant.feeds.HistoricFeed
 import org.roboquant.feeds.util.HistoricTestFeed
@@ -8,10 +7,11 @@ import org.roboquant.metrics.apply
 import org.ta4j.core.indicators.SMAIndicator
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator
 import org.ta4j.core.rules.CrossedUpIndicatorRule
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Ta4jIndicatorTest {
+internal class Ta4jIndicatorTest {
 
     private fun feed(): HistoricFeed {
         return HistoricTestFeed(90..110, 110 downTo 80, 80..125, priceBar = true, asset = Asset("TEST"))

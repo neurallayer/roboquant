@@ -1,15 +1,15 @@
 package org.roboquant.backtest
 
-import kotlin.test.Test
 import org.roboquant.Roboquant
 import org.roboquant.common.months
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.EMAStrategy
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class OptimizerTest {
+internal class OptimizerTest {
 
     @Test
     fun basic() {

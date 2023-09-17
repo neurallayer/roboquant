@@ -10,7 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class BacktestTest {
+internal class BacktestTest {
 
     private val feed = RandomWalkFeed.lastYears(2)
 

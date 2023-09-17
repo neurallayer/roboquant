@@ -16,15 +16,11 @@
 
 package org.roboquant.common
 
-import kotlin.test.Test
 import java.time.Instant
 import kotlin.io.path.Path
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
-class ExtensionTest {
+internal class ExtensionTest {
 
     @Test
     fun returns() {

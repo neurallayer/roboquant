@@ -16,14 +16,14 @@
 
 package org.roboquant.orders
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.Size
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class OCOOrderTest {
+internal class OCOOrderTest {
 
     val asset = TestData.usStock()
 

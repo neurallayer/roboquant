@@ -25,7 +25,7 @@ import org.roboquant.loggers.MemoryLogger
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
 
-class WebServerTestIT {
+internal class WebServerTestIT {
 
     @Test
     fun basic() {

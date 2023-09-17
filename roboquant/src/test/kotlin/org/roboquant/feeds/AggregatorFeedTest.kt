@@ -12,7 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class AggregatorFeedTest {
+internal class AggregatorFeedTest {
 
     @Test
     fun basic() {

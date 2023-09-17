@@ -1,12 +1,12 @@
 package org.roboquant.common
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.concurrent.thread
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class AppendOnlyListTest {
+internal class AppendOnlyListTest {
 
     @Test
     fun basic() {

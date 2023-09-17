@@ -27,7 +27,7 @@ import org.roboquant.strategies.NoSignalStrategy
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class BettingAgainstBetaPolicyTest {
+internal class BettingAgainstBetaPolicyTest {
 
     @Test
     fun test() {

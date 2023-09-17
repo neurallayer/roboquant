@@ -5,7 +5,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class SearchSpaceTest {
+internal class SearchSpaceTest {
 
     @Test
     fun random() {

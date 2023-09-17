@@ -21,7 +21,7 @@ import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
 
-class SignalChartTest {
+internal class SignalChartTest {
 
     @Test
     fun test() {

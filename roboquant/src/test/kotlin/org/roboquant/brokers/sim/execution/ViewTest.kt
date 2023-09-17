@@ -2,7 +2,7 @@ package org.roboquant.brokers.sim.execution
 
 import kotlin.test.*
 
-class ViewTest {
+internal class ViewTest {
 
     @Test
     fun basic() {

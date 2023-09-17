@@ -26,7 +26,7 @@ import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class ScoreTest {
+internal class ScoreTest {
 
     @Test
     fun basic() {

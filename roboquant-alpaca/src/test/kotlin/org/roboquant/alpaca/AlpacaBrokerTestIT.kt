@@ -21,7 +21,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class AlpacaBrokerTestIT {
+internal class AlpacaBrokerTestIT {
 
     @Test
     fun test() {

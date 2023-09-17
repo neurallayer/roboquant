@@ -16,15 +16,15 @@
 
 package org.roboquant.ta
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.apply
 import org.roboquant.feeds.util.HistoricTestFeed
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class TaLibTest {
+internal class TaLibTest {
 
     private fun getSeries(size: Int): PriceBarSeries {
         val feed = HistoricTestFeed(100 until 200, priceBar = true)

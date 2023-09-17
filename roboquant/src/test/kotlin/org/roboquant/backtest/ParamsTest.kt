@@ -1,11 +1,11 @@
 package org.roboquant.backtest
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-class ParamsTest {
+internal class ParamsTest {
 
     @Test
     fun basic() {
