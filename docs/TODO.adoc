@@ -42,7 +42,7 @@ This version is all about adding stabilizing concepts and APIs. Although there i
 * [X] Improve the running of roboquant notebooks on public infra
 
 
-== Version 2 (Q4 2023)
+== Version 2 (Q3 2023)
 
 The topics mentioned here are some of the ideas for the future releases:
 
@@ -58,10 +58,10 @@ The topics mentioned here are some of the ideas for the future releases:
 * [X] More consistent naming of API's
 * [X] Support more CSV file formats out of the box
 * [X] Improved usability of TaLib with auto sizing
-* [X] Sunset no longer suported integrations
+* [X] Sunset no longer suported 3rd party data providers
 * [X] Optimize memory usage for large back tests
 * [X] Improve overall test coverage
-* [ ] Hardening code base
+* [X] Hardening code base
 
 == Version 3 and later (2024 and beyond)
 
@@ -71,9 +71,7 @@ The topics mentioned here are some of the ideas for the future releases:
 * [ ] Add support for reading different types of data feeds besides price actions
 * [ ] Better and more complete integrations with brokers and crypto-exchanges
 * [ ] Advanced policies, like auto re-balancing portfolios
-* [ ] More ready-to-use strategies out of the box
-* [ ] Add more advanced slippage- and fee-models
-* [ ] More complex deep learning strategies
+* [ ] More complex machine-learning-based strategies
 * [ ] Right now messages support the English format only, add L10N/I18N support
 * [ ] Make video(s) that show the steps to develop and test your own strategies
 * [ ] Come up with a way users can easily share strategies, code snippets and other best practices
