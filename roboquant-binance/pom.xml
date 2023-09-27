@@ -29,7 +29,7 @@
     <artifactId>roboquant-binance</artifactId>
     <packaging>jar</packaging>
     <name>roboquant binance</name>
-    <description>Binance support for roboquant algorithmic trading platform</description>
+    <description>Binance support for the roboquant algorithmic trading platform</description>
 
     <build>
         <plugins>

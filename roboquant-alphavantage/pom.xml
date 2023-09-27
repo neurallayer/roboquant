@@ -28,7 +28,7 @@
     <artifactId>roboquant-alphavantage</artifactId>
     <packaging>jar</packaging>
     <name>roboquant alphavantage</name>
-    <description>3rd party integration with brokers and market data providers for roboquant</description>
+    <description>AlphaVantage market data integration for the roboquant algorithmic trading platform</description>
 
     <repositories>
         <repository>

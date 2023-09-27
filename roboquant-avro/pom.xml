@@ -29,7 +29,7 @@
     <artifactId>roboquant-avro</artifactId>
     <packaging>jar</packaging>
     <name>roboquant avro</name>
-    <description>Apache Avro support for roboquant algorithmic trading platform</description>
+    <description>Apache Avro file support for the roboquant algorithmic trading platform</description>
 
     <build>
         <plugins>

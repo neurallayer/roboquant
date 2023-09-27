@@ -29,7 +29,7 @@
     <artifactId>roboquant-questdb</artifactId>
     <packaging>jar</packaging>
     <name>roboquant questdb</name>
-    <description>QuestDB support for roboquant algorithmic trading platform</description>
+    <description>QuestDB support for the roboquant algorithmic trading platform</description>
 
     <build>
         <plugins>

@@ -28,7 +28,7 @@
     <artifactId>roboquant-alpaca</artifactId>
     <packaging>jar</packaging>
     <name>roboquant alpaca</name>
-    <description>Alpaca broker and market data for roboquant</description>
+    <description>Alpaca broker and market data integration for the roboquant algorithmic trading platform</description>
 
     <build>
         <plugins>
