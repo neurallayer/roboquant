@@ -142,7 +142,7 @@ The output should look something like this:
             |   o   |             version: 2.0.0
             |_[___]_|             build: 2023-09-17T09:09:45Z
         ___ ___|_|___ ___         os: Mac OS X 13.5
-       ()___)       ()___)        home: /Users/peter/.roboquant
+       ()___)       ()___)        home: /Users/john/.roboquant
       /  / |         | \  \       jvm: OpenJDK 64-Bit Server VM 19.0.2
      (___) |_________| (___)      kotlin: 1.9.10
       | |   __/___\__   | |       memory: 4096MB
