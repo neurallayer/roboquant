@@ -39,7 +39,10 @@ import org.roboquant.strategies.EMAStrategy
 fun binanceLiveFeed() {
     val feed = BinanceLiveFeed()
     feed.subscribePriceBar("BTCBUSD", "ETHBUSD", interval = Interval.ONE_MINUTE)
-    val events = feed.toList(Timeframe.next(10.minutes)).filter { it.actions.isNotEmpty() }
+    val events = feed.toList(Timeframe.next(10.minutes)).filter {
+        println(it.actions)
+        it.actions.isNotEmpty()
+    }
     println(events.size)
 }
 
@@ -99,7 +102,7 @@ fun multiplier() {
 
 fun main() {
 
-    when ("MULTI") {
+    when ("HISTORIC") {
         "LIVE" -> binanceLiveFeed()
         "HISTORIC" -> binanceBackTest()
         "FORWARD" -> binanceForwardTest()

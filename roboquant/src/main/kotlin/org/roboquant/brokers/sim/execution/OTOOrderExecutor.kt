@@ -26,8 +26,8 @@ internal class OTOOrderExecutor(override val order: OTOOrder) : OrderExecutor<OT
 
     override var status: OrderStatus = OrderStatus.INITIAL
 
-    private val first = ExecutionEngine.getExecutor(order.primary)
-    private val second = ExecutionEngine.getExecutor(order.secondary)
+    private val first = ExecutionEngine.getExecutor(order.primary) as SingleOrderExecutor<*>
+    private val second = ExecutionEngine.getExecutor(order.secondary) as SingleOrderExecutor<*>
 
     /**
      * Cancel the order, return true if successful, false otherwise

@@ -117,9 +117,14 @@ class CorrelationChart(
         val labels = prices.keys.map { it.symbol }.toTypedArray()
         val data = getMatrix(prices)
 
+        val label = SeriesLabel()
+            .setColor("black")
+            .setWidth(1)
+            .setShow(true)
+
         val series = HeatmapSeries()
             .setData(data)
-            .setLabel(SeriesLabel().setShow(true))
+            .setLabel(label)
 
         val chart = Heatmap()
             .setTitle(title ?: "Price correlations")

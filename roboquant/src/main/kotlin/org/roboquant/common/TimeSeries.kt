@@ -56,7 +56,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     )
 
     init {
-        require(timeline.size == values.size)
+        require(timeline.size == values.size) {"timeline and values should be of equal size"}
     }
 
     /**
@@ -90,7 +90,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     }
 
     /**
-     * Return a randomly shuffled copy of this time-series
+     * Return a randomly shuffled copy of this time-series using the [Config.random] random number generator
      */
     fun shuffle(): TimeSeries {
         val newValues = values.copyOf()
@@ -105,10 +105,6 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
         for (i in values.indices) {
             block(timeline[i], values[i])
         }
-    }
-
-    init {
-        require(values.size == timeline.size) { "values and times need to have the same size" }
     }
 
     /**
@@ -132,9 +128,9 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     operator fun div(other: Number) = TimeSeries(timeline, values / other)
 
     /**
-     * Create the returns for all values
+     * Create the [n] returns for all values
      */
-    fun returns() = TimeSeries(timeline.drop(1), values.returns())
+    fun returns(n:Int = 1) = TimeSeries(timeline.drop(n), values.returns(n))
 
     /**
      * Normalize the values by dividing all values by the first value
@@ -181,7 +177,7 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     /**
      * Return the difference for all values
      */
-    fun diff() = TimeSeries(timeline.drop(1), values.diff())
+    fun diff(n: Int = 1) = TimeSeries(timeline.drop(n), values.diff(n))
 
     /**
      * Return the sum over all values
@@ -189,7 +185,8 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     fun sum() = values.sum()
 
     /**
-     * Returns this timeseries grouped by the provided [period]
+     * Returns this timeseries grouped by the provided [period] and optional, the provided [zoneId].
+     * If no [zoneId] is provided, [ZoneOffset.UTC] will be used.
      */
     fun groupBy(
         period: ChronoUnit,

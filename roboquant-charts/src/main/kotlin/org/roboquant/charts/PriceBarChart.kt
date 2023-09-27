@@ -153,7 +153,7 @@ class PriceBarChart(
             .setYAxisIndex(1)
             .setEncode(encode2)
             .setLarge(true)
-            .setColor("#fbe9e")
+            .setColor("#7fbe9e")
 
         val series3 = indicators.toLineSeries(feed, asset, timeframe)
 

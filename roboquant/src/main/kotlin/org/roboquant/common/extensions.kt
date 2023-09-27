@@ -188,27 +188,27 @@ operator fun DoubleArray.plus(a: DoubleArray): DoubleArray {
 fun DoubleArray.clean() = filter { it.isFinite() }.toDoubleArray()
 
 /**
- * Return the returns.
+ * Return the returns over the provided [n] period.
  * The resulting array size will be one smaller than the original.
  * Formula used is:
  * ```
  * return = new/old - 1.0
  * ```
  */
-fun DoubleArray.returns(): DoubleArray {
-    if (size < 2) return DoubleArray(0)
-    val result = DoubleArray(size - 1)
-    for (n in 1..lastIndex) result[n - 1] = get(n) / get(n - 1) - 1.0
+fun DoubleArray.returns(n: Int = 1): DoubleArray {
+    if (size <= n) return DoubleArray(0)
+    val result = DoubleArray(size - n)
+    for (i in n..lastIndex) result[i - n] = get(i) / get(i - n) - 1.0
     return result
 }
 
 /**
- * Returns an array with the difference between the elements
+ * Returns an array with the difference between the elements over the provided [n] period.
  */
-fun DoubleArray.diff(): DoubleArray {
-    if (size < 2) return DoubleArray(0)
-    val result = DoubleArray(size - 1)
-    for (n in 1..lastIndex) result[n - 1] = get(n) - get(n - 1)
+fun DoubleArray.diff(n: Int = 1): DoubleArray {
+    if (size <= n) return DoubleArray(0)
+    val result = DoubleArray(size - n)
+    for (i in n..lastIndex) result[i - n] = get(i) - get(i - n)
     return result
 }
 
@@ -253,10 +253,10 @@ fun DoubleArray.indexOfMin(): Int {
  * growthRate = new/old
  * ```
  */
-fun DoubleArray.growthRates(): DoubleArray {
-    if (size < 2) return DoubleArray(0)
-    val result = DoubleArray(size - 1)
-    for (n in 1..lastIndex) result[n - 1] = get(n) / get(n - 1)
+fun DoubleArray.growthRates(n: Int = 1): DoubleArray {
+    if (size <= n) return DoubleArray(0)
+    val result = DoubleArray(size - n)
+    for (i in n..lastIndex) result[i - n] = get(i) / get(i - n)
     return result
 }
 
@@ -268,10 +268,10 @@ fun DoubleArray.growthRates(): DoubleArray {
  * logGrowthRate = ln(new/old)
  * ```
  */
-fun DoubleArray.logGrowthRates(): DoubleArray {
-    if (size < 2) return DoubleArray(0)
-    val result = DoubleArray(size - 1)
-    for (n in 1..lastIndex) result[n - 1] = ln(get(n) / get(n - 1))
+fun DoubleArray.logGrowthRates(n: Int = 1): DoubleArray {
+    if (size <= n) return DoubleArray(0)
+    val result = DoubleArray(size - n)
+    for (i in 1..lastIndex) result[i - n] = ln(get(i) / get(i - n))
     return result
 }
 

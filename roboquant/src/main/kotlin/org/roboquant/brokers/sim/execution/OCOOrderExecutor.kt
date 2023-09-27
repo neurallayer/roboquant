@@ -24,15 +24,12 @@ import java.time.Instant
 
 internal class OCOOrderExecutor(override val order: OCOOrder) : OrderExecutor<OCOOrder> {
 
-    private val first = ExecutionEngine.getExecutor(order.first)
-    private val second = ExecutionEngine.getExecutor(order.second)
+    private val first = ExecutionEngine.getExecutor(order.first) as SingleOrderExecutor<*>
+    private val second = ExecutionEngine.getExecutor(order.second) as SingleOrderExecutor<*>
     private var active = 0
 
     override var status: OrderStatus = OrderStatus.INITIAL
 
-    /**
-     * Cancel the order, return true if successful, false otherwise
-     */
     /**
      * Cancel the order, return true if successful, false otherwise
      */
@@ -55,6 +52,7 @@ internal class OCOOrderExecutor(override val order: OCOOrder) : OrderExecutor<OC
             if (result.isNotEmpty()) {
                 active = 1
                 status = first.status
+                second.cancel(time)
                 return result
             }
 
@@ -65,6 +63,7 @@ internal class OCOOrderExecutor(override val order: OCOOrder) : OrderExecutor<OC
             if (result.isNotEmpty()) {
                 active = 2
                 status = second.status
+                first.cancel(time)
                 return result
             }
         }

@@ -19,17 +19,23 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <artifactId>roboquant-parent</artifactId>
         <groupId>org.roboquant</groupId>
         <version>2.1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>roboquant-questdb</artifactId>
+    <artifactId>roboquant-ssr</artifactId>
     <packaging>jar</packaging>
-    <name>roboquant questdb</name>
-    <description>QuestDB support for roboquant algorithmic trading platform</description>
+    <name>roboquant ssr</name>
+    <description>
+        Server-side rendering for charts used by the roboquant algorithmic trading platform
+        This is a pure JVM solution using GraalJS + Batik for all the rendering.
+    </description>
+
+    <properties>
+        <graalvm.version>23.1.0</graalvm.version>
+    </properties>
 
     <build>
         <plugins>
@@ -42,16 +48,30 @@
 
     <dependencies>
         <dependency>
-            <artifactId>roboquant</artifactId>
             <groupId>org.roboquant</groupId>
+            <artifactId>roboquant</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>org.questdb</groupId>
-            <artifactId>questdb</artifactId>
-            <version>7.3.2</version>
+            <artifactId>roboquant-charts</artifactId>
+            <groupId>org.roboquant</groupId>
+            <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.graalvm.polyglot</groupId>
+            <artifactId>polyglot</artifactId>
+            <version>${graalvm.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.polyglot</groupId>
+            <artifactId>js</artifactId>
+            <version>${graalvm.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-all</artifactId>
+            <version>1.17</version>
+        </dependency>
     </dependencies>
 
 </project>

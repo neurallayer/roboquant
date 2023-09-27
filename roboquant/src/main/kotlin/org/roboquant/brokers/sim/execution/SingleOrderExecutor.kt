@@ -56,7 +56,7 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
      * Cancel the order, return true if successful, false otherwise. Any open SingleOrder can be cancelled, closed
      * orders not.
      */
-    private fun cancel(time: Instant): Boolean {
+    internal fun cancel(time: Instant): Boolean {
         if (status == OrderStatus.ACCEPTED && expired(time)) status = OrderStatus.EXPIRED
         if (status.closed) return false
         status = OrderStatus.CANCELLED
