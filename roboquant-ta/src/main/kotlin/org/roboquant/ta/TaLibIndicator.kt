@@ -21,7 +21,7 @@ import org.roboquant.metrics.Indicator
 import java.time.Instant
 
 /**
- * This class enables the creation of an Indicator based on TaLib.
+ * This class enables the creation of an [Indicator] based on TaLib.
  *
  * Example:
  * ```

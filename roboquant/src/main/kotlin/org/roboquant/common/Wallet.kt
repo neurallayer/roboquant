@@ -18,6 +18,7 @@ package org.roboquant.common
 
 import java.time.Instant
 import java.util.*
+import kotlin.math.absoluteValue
 
 
 /**
@@ -151,7 +152,7 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      * values
      */
     fun set(currency: Currency, value: Double) {
-        if (value.iszero)
+        if (value.absoluteValue < Config.EPS)
             data.remove(currency)
         else
             data[currency] = value
@@ -162,20 +163,18 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      * will be added to the existing value, otherwise a new entry will be created.
      */
     fun deposit(amount: Amount) {
-        val (currency, value) = amount
-        val oldValue = data[currency] ?: 0.0
-        // data[currency] = oldValue + value
-        set(currency, value + oldValue)
+        val ccy = amount.currency
+        val oldValue = data[ccy] ?: 0.0
+        set(ccy, amount.value + oldValue)
     }
 
     /**
      * Deposit an [value] of a certain currency
      */
-    @Suppress("NOTHING_TO_INLINE")
-    private inline fun deposit(currency: Currency, value: Double) {
+    fun deposit(currency: Currency, value: Double) {
         val oldValue = data[currency] ?: 0.0
         val newValue = value + oldValue
-        if (newValue.iszero) data.remove(currency) else data[currency] = newValue
+        if (newValue.absoluteValue < Config.EPS) data.remove(currency) else data[currency] = newValue
     }
 
     /**
@@ -245,6 +244,7 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
      * A wallet equals another wallet if they hold the same currencies and corresponding amounts.
      */
     override fun equals(other: Any?): Boolean {
+        if (this === other) return true
         return if (other is Wallet) toMap() == other.toMap() else false
     }
 

@@ -25,6 +25,7 @@ import org.roboquant.common.Config
  * Drop first [n] elements from the array and return the result
  */
 fun DoubleArray.drop(n: Int = 1): DoubleArray {
+    if (n == 0) return this
     val newSize = size - n
     val data = DoubleArray(newSize)
     System.arraycopy(this, n, data, 0, newSize)

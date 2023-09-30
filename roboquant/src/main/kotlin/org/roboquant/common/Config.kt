@@ -42,6 +42,9 @@ object Config {
     private const val ONE_MB = 1024 * 1024
     private const val DEFAULT_SEED = 42L
 
+    // Used to handle Double imprecision
+    internal const val EPS = 1e-10
+
     /**
      * @property jvm the JVM name and version
      * @property os the OS name and version

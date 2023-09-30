@@ -18,6 +18,7 @@
 package org.roboquant.common
 
 import kotlinx.coroutines.delay
+import org.roboquant.common.Config.EPS
 import java.lang.Integer.max
 import java.lang.Integer.min
 import java.math.BigDecimal
@@ -288,8 +289,6 @@ fun DoubleArray.totalReturn(): Double {
         last() / first() - 1.0
 }
 
-// Values smaller than this value are considered to be zero
-private const val EPS = 0.0000001
 
 /**
  * Is this value zero, this implementation allows for small rounding errors.

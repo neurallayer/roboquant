@@ -53,7 +53,7 @@ private class AccountUpdate {
 
         // Fill the cash
         iAccount.cash.clear()
-        for (c in cash.currencies) iAccount.cash.set(c, cash[c])
+        iAccount.cash.deposit(cash)
 
         // Fill the positions
         iAccount.portfolio.clear()

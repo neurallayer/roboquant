@@ -32,7 +32,7 @@ import kotlin.math.absoluteValue
  * @property currency the currency of the amount
  * @property value the value of the amount
  */
-data class Amount(val currency: Currency, val value: Double) : Comparable<Number> {
+class Amount(val currency: Currency, val value: Double) : Comparable<Number> {
 
     /**
      * Create an Amount instance based on provided [currency] and [value].
@@ -116,6 +116,7 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
         return value.compareTo(other.value)
     }
 
+
     /**
      * Convert this amount [to] a different currency. Optional you can provide a [time] at which the conversion
      * should be calculated. If no time is provided, the current time is used.
@@ -131,6 +132,18 @@ data class Amount(val currency: Currency, val value: Double) : Comparable<Number
     fun toWallet(): Wallet {
         return Wallet(this)
     }
+
+    /** @suppress **/
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Amount) return false
+        if (currency != other.currency) return false
+        if ((value - other.value).absoluteValue > Config.EPS) return false
+        return true
+    }
+
+    /** @suppress **/
+    override fun hashCode(): Int = 31 * currency.hashCode() + value.hashCode()
 
 }
 

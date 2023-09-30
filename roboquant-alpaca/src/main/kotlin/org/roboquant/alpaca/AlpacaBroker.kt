@@ -109,7 +109,7 @@ class AlpacaBroker(
         _account.buyingPower = Amount(_account.baseCurrency, acc.buyingPower.toDouble())
 
         _account.cash.clear()
-        _account.cash.set(_account.baseCurrency, acc.cash.toDouble())
+        _account.cash.deposit(_account.baseCurrency, acc.cash.toDouble())
         _account.lastUpdate = Instant.now()
     }
 
