@@ -43,6 +43,8 @@ class RegressionStrategy(
         val first = vectors.first()
         assert(first.size() > 0)
         assert(vectors.all { it.size() == first.size() })
+
+        @Suppress("SpreadOperator")
         val df = DataFrame.of(*vectors)
         model = block(df)
     }
@@ -51,6 +53,8 @@ class RegressionStrategy(
         val vectors = features.getLastVectors()
         assert(vectors.isNotEmpty())
         assert(vectors.all { it.size() == 1 })
+
+        @Suppress("SpreadOperator")
         val df = DataFrame.of(*vectors)
         val result = model.predict(df)
         return result.last()
