@@ -18,7 +18,6 @@ package org.roboquant.ml
 
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
-import smile.data.vector.DoubleVector
 
 class PriceFeature(
     override val name: String,
@@ -26,15 +25,10 @@ class PriceFeature(
     private val type: String = "DEFAULT"
 ) : SingelValueFeature() {
 
-    private val data = mutableListOf<Double>()
-
     override fun update(event: Event) {
         val action = event.prices[asset]
-        if (action != null) data.add(action.getPrice(type)) else data.add(Double.NaN)
+        if (action != null) add(action.getPrice(type)) else add(Double.NaN)
     }
 
-    override fun getVector(): DoubleVector {
-        return DoubleVector.of(name, data.toDoubleArray())
-    }
 
 }

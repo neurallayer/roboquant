@@ -29,12 +29,21 @@ interface Feature {
 
     val names: List<String>
 
+    fun clean() {}
+
     fun reset() {}
 
     fun getVectors(): List<DoubleVector>
 
     fun getLast(): List<DoubleVector> {
         return getVectors().map { DoubleVector.of(it.name(), doubleArrayOf(it.array().last())) }
+    }
+
+    operator fun get(i: Int) : List<Double> = getVectors().map { it.array()[i] }
+
+    operator fun get(i: Int, name: String) : Double {
+        val idx = names.indexOf(name)
+        return get(i)[idx]
     }
 }
 
@@ -43,14 +52,25 @@ interface Feature {
  */
 abstract class SingelValueFeature : Feature {
 
+    protected val data = mutableListOf<Double>()
+
+    protected fun add(elem: Double) = data.add(elem)
+
     abstract val name: String
 
     override val names: List<String>
         get() = listOf(name)
 
-    abstract fun getVector(): DoubleVector
 
-    override fun getVectors(): List<DoubleVector> = listOf(getVector())
+    override fun getVectors(): List<DoubleVector> = listOf(DoubleVector.of(name, data.toDoubleArray()))
+
+    override operator fun get(i: Int) = listOf(data[i])
+
+    override fun clean() { data.clear() }
+
+    override fun reset() {
+        data.clear()
+    }
 
 }
 
@@ -60,7 +80,7 @@ abstract class SingelValueFeature : Feature {
  */
 abstract class MultiValueFeature : Feature {
 
-    private val data = mutableListOf<List<Double>>()
+    protected val data = mutableListOf<List<Double>>()
 
     protected fun add(elem: List<Double>) = data.add(elem)
 
@@ -74,6 +94,8 @@ abstract class MultiValueFeature : Feature {
     override fun reset() {
         data.clear()
     }
+
+    override operator fun get(i: Int) : List<Double> = data.map { it[i] }
 
 }
 

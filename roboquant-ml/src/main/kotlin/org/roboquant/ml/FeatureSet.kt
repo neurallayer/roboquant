@@ -16,6 +16,7 @@
 
 package org.roboquant.ml
 
+import org.roboquant.common.Config
 import org.roboquant.feeds.Event
 import smile.data.vector.DoubleVector
 
@@ -24,6 +25,9 @@ class FeatureSet {
 
     private val features = mutableListOf<Feature>()
     var size = 0
+
+    val names
+        get() = features.map { it.names }.flatten()
 
 
     fun add(vararg feature: Feature) {
@@ -37,6 +41,28 @@ class FeatureSet {
         }
         size++
 
+    }
+
+
+    fun sample(n: Int, warmup: Int, future: Int): List<DoubleArray> {
+        val result = mutableListOf<DoubleArray>()
+        var first = true
+        repeat(n) {
+            var idx = 0
+            val s = Config.random.nextInt(size - warmup - future) + warmup
+            for (feature in features) {
+                val offset = if (feature.names.contains("Y")) s + future else s
+                val arrs = feature[offset]
+                for (d in arrs) {
+                    if (first) result.add(DoubleArray(n))
+                    result[idx][n] = d
+                    idx++
+                }
+
+            }
+            first = false
+        }
+        return result
     }
 
     private fun DoubleVector.drop(n: Int): DoubleVector = DoubleVector.of(name(), array().drop(n))

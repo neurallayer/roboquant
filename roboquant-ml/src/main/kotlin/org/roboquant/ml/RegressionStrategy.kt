@@ -35,6 +35,7 @@ class RegressionStrategy(
     val block: (DataFrame) -> DataFrameRegression
 ) : Strategy {
 
+    private var training: Boolean = true
     private lateinit var model: DataFrameRegression
 
     private fun train() {
@@ -76,5 +77,13 @@ class RegressionStrategy(
         return emptyList()
     }
 
+
+    fun warmup() {
+        training = false
+    }
+
+    fun training() {
+        training = true
+    }
 
 }

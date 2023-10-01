@@ -32,7 +32,8 @@ fun main() {
 
     val features = FeatureSet()
     val asset = feed.assets.getBySymbol("TSLA")
-    val y = PriceFeature("Y", asset, "CLOSE").returns()
+    val y = PriceFeature("Y", asset, "CLOSE").returns(5)
+
     val x1 = TaLibSingleFeature("X1", asset) { ema(it, 20) }.returns()
     val x2 = TaLibSingleFeature("X2", asset) { sma(it, 10) }.growthRate()
     val x3 = TaLibSingleFeature("X3", asset) { rsi(it, 20) }

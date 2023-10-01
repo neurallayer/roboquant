@@ -32,7 +32,6 @@ class TaLibSingleFeature(
 
     private val t = TaLib()
     private val history = PriceBarSeries(1)
-    private val data = mutableListOf<Double>()
 
     companion object {
 
@@ -67,17 +66,15 @@ class TaLibSingleFeature(
                 history.increaseCapacity(e.minSize)
             }
         }
-        data.add(d)
+        add(d)
     }
 
     override fun reset() {
+        super.clean()
         history.clear()
-        data.clear()
     }
 
-    override fun getVector(): DoubleVector {
-        return DoubleVector.of(name, data.toDoubleArray())
-    }
+
 
 }
 
