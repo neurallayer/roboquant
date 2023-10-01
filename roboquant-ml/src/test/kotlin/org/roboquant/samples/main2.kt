@@ -17,8 +17,9 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
+import org.roboquant.avro.AvroFeed
 import org.roboquant.common.bips
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.common.getBySymbol
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.ml.*
@@ -27,22 +28,25 @@ import smile.regression.gbm
 
 
 fun main() {
-    val feed = RandomWalkFeed.lastYears(15, nAssets = 1)
+    val feed = AvroFeed.sp500()
 
     val features = FeatureSet()
-    val asset = feed.assets.first()
-    val y = PriceFeature("Y", asset).returns()
+    val asset = feed.assets.getBySymbol("TSLA")
+    val y = PriceFeature("Y", asset, "CLOSE").returns()
     val x1 = TaLibSingleFeature("X1", asset) { ema(it, 20) }.returns()
     val x2 = TaLibSingleFeature("X2", asset) { sma(it, 10) }.growthRate()
     val x3 = TaLibSingleFeature("X3", asset) { rsi(it, 20) }
-    val x4 = TaLibSingleFeature("X4", asset) { if (cdl3StarsInSouth(it)) 1.0 else 0.0 }
+    val x4 = TaLibSingleFeature("X4", asset) { if (cdl3StarsInSouth(it)) 1.0 else -1.0 }
     val x5 = TaLibMultiFeature("X5", "X6", "X7", asset = asset) { bbands(it).toList() }.returns()
+    val x6 = TaLibSingleFeature.obv(asset).returns()
 
-    features.add(y, x1, x2, x3, x4, x5)
+    features.add(y, x1, x2, x3, x4, x5, x6)
 
-    val percentage = 5.bips
+    val percentage = 1.bips
     val myStrat = RegressionStrategy(features, asset, percentage, 500, 50) {
-        gbm(Formula.lhs("Y"), it)
+        val model = gbm(Formula.lhs("Y"), it)
+        println(model.importance().toList())
+        model
     }
 
     val rq = Roboquant(myStrat, ProgressMetric(), logger = MemoryLogger())

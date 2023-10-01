@@ -32,16 +32,28 @@ class TaLibSingleFeature(
 
     private val t = TaLib()
     private val history = PriceBarSeries(1)
-    private val prices = mutableListOf<Double>()
+    private val data = mutableListOf<Double>()
 
     companion object {
 
         fun rsi(asset: Asset, timePeriod: Int = 14): Feature {
-            return TaLibSingleFeature("rsi", asset) {
+            return TaLibSingleFeature("rsi-$timePeriod", asset) {
                 rsi(it, timePeriod)
             }
         }
 
+        fun obv(asset: Asset) : Feature {
+            return TaLibSingleFeature("obv", asset) {
+                obv(it.close, it.volume)
+            }
+        }
+
+        fun ema(asset: Asset, fast: Int = 5, slow: Int = 13) : Feature {
+            return TaLibSingleFeature("ema-$fast-$slow", asset) {
+                val isUP = ema(it, fast) >= ema(it, slow)
+                if (isUP) 1.0 else -1.0
+            }
+        }
 
     }
 
@@ -55,16 +67,16 @@ class TaLibSingleFeature(
                 history.increaseCapacity(e.minSize)
             }
         }
-        prices.add(d)
+        data.add(d)
     }
 
     override fun reset() {
         history.clear()
-        prices.clear()
+        data.clear()
     }
 
     override fun getVector(): DoubleVector {
-        return DoubleVector.of(name, prices.toDoubleArray())
+        return DoubleVector.of(name, data.toDoubleArray())
     }
 
 }

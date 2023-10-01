@@ -16,14 +16,13 @@
 
 package org.roboquant.ml
 
-import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.toList
 import smile.data.vector.DoubleVector
 
 /**
- * A feature is logic that is able to extract one or more named values from a history of events
+ * A feature is logic that is able to extract one or more named values from a series of events
  */
 interface Feature {
     fun update(event: Event)
@@ -39,7 +38,9 @@ interface Feature {
     }
 }
 
-
+/**
+ * Small utlity class that makes it simple to write a feature that is only prducing a simple value
+ */
 abstract class SingelValueFeature : Feature {
 
     abstract val name: String
@@ -53,18 +54,25 @@ abstract class SingelValueFeature : Feature {
 
 }
 
-class PriceFeature(override val name: String, private val asset: Asset, private val type: String = "DEFAULT") :
-    SingelValueFeature() {
 
-    private val prices = mutableListOf<Double>()
+/**
+ * Small utlity class that makes it simple to write a feature that is produce multiple values
+ */
+abstract class MultiValueFeature : Feature {
 
-    override fun update(event: Event) {
-        val action = event.prices[asset]
-        if (action != null) prices.add(action.getPrice(type)) else prices.add(Double.NaN)
+    private val data = mutableListOf<List<Double>>()
+
+    protected fun add(elem: List<Double>) = data.add(elem)
+
+    override fun getVectors(): List<DoubleVector> {
+        return names.mapIndexed { index, name ->
+            val arr = data.map { it[index] }.toDoubleArray()
+            DoubleVector.of(name, arr)
+        }
     }
 
-    override fun getVector(): DoubleVector {
-        return DoubleVector.of(name, prices.toDoubleArray())
+    override fun reset() {
+        data.clear()
     }
 
 }

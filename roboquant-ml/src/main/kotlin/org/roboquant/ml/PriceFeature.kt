@@ -18,41 +18,23 @@ package org.roboquant.ml
 
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceBar
-import org.roboquant.ta.InsufficientData
-import org.roboquant.ta.PriceBarSeries
-import org.roboquant.ta.TaLib
+import smile.data.vector.DoubleVector
 
-class TaLibMultiFeature(
-    vararg names: String,
+class PriceFeature(
+    override val name: String,
     private val asset: Asset,
-    private val block: TaLib.(prices: PriceBarSeries) -> List<Double>
-) : MultiValueFeature() {
+    private val type: String = "DEFAULT"
+) : SingelValueFeature() {
 
-    override val names: List<String> = names.toList()
-
-    private val t = TaLib()
-    private val history = PriceBarSeries(1)
-
+    private val data = mutableListOf<Double>()
 
     override fun update(event: Event) {
         val action = event.prices[asset]
-        var d = List(names.size) { Double.NaN }
-        if (action != null && action is PriceBar && history.add(action)) {
-            try {
-                d = t.block(history)
-            } catch (e: InsufficientData) {
-                history.increaseCapacity(e.minSize)
-            }
-        }
-       add(d)
+        if (action != null) data.add(action.getPrice(type)) else data.add(Double.NaN)
     }
 
-    override fun reset() {
-        super.reset()
-        history.clear()
-
+    override fun getVector(): DoubleVector {
+        return DoubleVector.of(name, data.toDoubleArray())
     }
-
 
 }

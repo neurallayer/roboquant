@@ -30,10 +30,6 @@ class FeatureSet {
         features.addAll(feature)
     }
 
-    fun add(featureSet: FeatureSet) {
-        features.addAll(featureSet.features)
-    }
-
     fun update(event: Event) {
 
         for (feature in features) {
