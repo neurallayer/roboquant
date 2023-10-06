@@ -143,4 +143,16 @@ internal class SimBrokerTest {
     }
 
 
+    @Test
+    fun placeOpenOrderAndCheckWithAccount() {
+        val broker = SimBroker()
+        val asset = Asset("TEST")
+        val order = MarketOrder(asset, 10)
+
+        val openOrders = listOf(order)
+        broker.place(openOrders)
+        val account1 = broker.account
+
+        assertEquals(openOrders.size, account1.openOrders.size)
+    }
 }

@@ -164,6 +164,7 @@ open class SimBroker(
         logger.trace { "Received orders=${orders.size} time=$time" }
         _account.initializeOrders(orders)
         executionEngine.addAll(orders)
+        account = _account.toAccount()
     }
 
     /**
