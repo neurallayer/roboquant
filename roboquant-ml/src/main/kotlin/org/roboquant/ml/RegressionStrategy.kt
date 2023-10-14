@@ -77,11 +77,12 @@ class RegressionStrategy(
         return emptyList()
     }
 
-
+    @Suppress("unused")
     fun warmup() {
         training = false
     }
 
+    @Suppress("unused")
     fun training() {
         training = true
     }

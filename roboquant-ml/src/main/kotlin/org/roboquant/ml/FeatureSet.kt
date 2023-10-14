@@ -44,9 +44,7 @@ class FeatureSet {
 
     }
 
-
-
-
+    @Suppress("unused")
     fun sample2(n: Int, warmup: Int, future: Int): List<DoubleArray> {
         val result = mutableListOf<DoubleArray>()
         var first = true

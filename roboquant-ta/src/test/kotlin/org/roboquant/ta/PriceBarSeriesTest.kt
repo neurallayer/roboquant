@@ -17,6 +17,8 @@
 package org.roboquant.ta
 
 import org.roboquant.common.Asset
+import org.roboquant.common.Timeframe
+import org.roboquant.common.millis
 import org.roboquant.common.plus
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
@@ -46,18 +48,22 @@ internal class PriceBarSeriesTest {
     @Test
     fun test() {
         val pbs = PriceBarSeries(10)
-        repeat(5) { pbs.add(pb, Instant.now() ) }
+        var now =  Instant.now()
+        repeat(5) { pbs.add(pb, now + it.millis) }
         assertFalse(pbs.isFull())
         assertEquals(5, pbs.size)
 
-        repeat(5) { pbs.add(pb, Instant.now()) }
+        now += 100.millis
+        repeat(5) { pbs.add(pb,  now + it.millis) }
         assertTrue(pbs.isFull())
         assertEquals(10, pbs.size)
 
-        repeat(5) { pbs.add(pb, Instant.now()) }
+        now += 100.millis
+        repeat(5) { pbs.add(pb, now + it.millis) }
         assertTrue(pbs.isFull())
         assertEquals(10, pbs.size)
         assertEquals(10, pbs.timeline.size)
+        assertEquals(pbs.size, pbs[Timeframe.INFINITE].size)
 
         assertEquals(10, pbs.open.size)
         assertEquals(10, pbs.typical.size)

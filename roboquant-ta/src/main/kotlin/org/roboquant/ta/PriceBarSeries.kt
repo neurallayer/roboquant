@@ -16,10 +16,7 @@
 
 package org.roboquant.ta
 
-import org.roboquant.common.PriceSeries
-import org.roboquant.common.Timeline
-import org.roboquant.common.div
-import org.roboquant.common.plus
+import org.roboquant.common.*
 import org.roboquant.feeds.Action
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
@@ -126,6 +123,19 @@ class PriceBarSeries(capacity: Int) {
      */
     operator fun get(index: Int): DoubleArray =
         doubleArrayOf(open[index], high[index], low[index], close[index], volume[index])
+
+    /**
+     * Returns a PriceBarSeries that includes all the times within the provided [timeframe]
+     */
+    operator fun get(timeframe: Timeframe): PriceBarSeries {
+        val tl = timeline.toTypedArray()
+        val size = tl.filter { it in timeframe }.size
+        val result = PriceBarSeries(size)
+        for (i in 0..<size) {
+            if (tl[i] in timeframe) result.add(get(i), tl[i])
+        }
+        return result
+    }
 
     /**
      * Returns the OHLCV values at the specified [time] as a [DoubleArray]

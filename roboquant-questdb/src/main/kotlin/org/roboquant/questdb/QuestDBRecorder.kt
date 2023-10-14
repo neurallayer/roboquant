@@ -43,7 +43,7 @@ import kotlin.reflect.KClass
  * Record another feed into a QuestDB database.
  *
  * - Supports up to micro seconds resolution
- * - Supports very large datasets
+ * - Supports large datasets
  * - Fast random access
  * - Limited to a single [PriceAction] type per table
  *

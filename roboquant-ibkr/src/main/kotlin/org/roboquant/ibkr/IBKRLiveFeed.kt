@@ -73,7 +73,7 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed(30_000) {
      * - BID
      * - ASK
      *
-     * Often IBKR platform requires a subscription in order to be able to receive realtime bars. Please check the
+     * Often IBKR platform requires a subscription to be able to receive realtime bars. Please check the
      * documentation on the IBKR website for more details.
      */
     fun subscribe(assets: Collection<Asset>, interval: Int = 5, type: String = "MIDPOINT") {
