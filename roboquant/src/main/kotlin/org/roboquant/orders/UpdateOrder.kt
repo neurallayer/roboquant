@@ -50,6 +50,7 @@ class UpdateOrder(
     init {
         require(order::class == update::class) { "cannot update order type old=${order::class} new=${update::class}" }
         require(order.asset == update.asset) { "cannot update the asset old=${order.asset} new=${update.asset}" }
+        update.id = order.id
     }
 
     override fun info() = update.info() + mapOf("modified-id" to order.id)

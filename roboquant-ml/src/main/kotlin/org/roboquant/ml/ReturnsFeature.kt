@@ -16,22 +16,21 @@
 
 package org.roboquant.ml
 
-import smile.data.vector.DoubleVector
+import org.jetbrains.kotlinx.multik.api.mk
+import org.jetbrains.kotlinx.multik.api.ndarray
+import org.jetbrains.kotlinx.multik.ndarray.data.D1
+import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
+import org.jetbrains.kotlinx.multik.ndarray.operations.div
+import org.jetbrains.kotlinx.multik.ndarray.operations.minus
 
-class ReturnsFeature(private val f: Feature, private val n:Int = 1) : Feature by f {
+class ReturnsFeature(private val f: Feature<D1>, private val n:Int = 1) : Feature<D1> by f {
 
-    private fun DoubleArray.returns2(): DoubleArray {
-        val result = DoubleArray(size)
-        for (i in 0..<n) result[i] = Double.NaN
-        for (i in n..lastIndex) result[i] = get(i) / get(i - n) - 1.0
-        return result
+    override fun get(i: Int): NDArray<Double, D1> {
+        if (i < n) return mk.ndarray(DoubleArray(f.size) {Double.NaN})
+        return f[i] / f[i-n] - 1.0
     }
 
-
-    override fun getVectors(): List<DoubleVector> {
-        return f.getVectors().map { DoubleVector.of(it.name(), it.array().returns2()) }
-    }
 }
 
 
-fun Feature.returns(n: Int = 1) = ReturnsFeature(this, n)
+fun Feature<D1>.returns(n: Int = 1) = ReturnsFeature(this, n)

@@ -16,18 +16,24 @@
 
 package org.roboquant.ml
 
+import org.jetbrains.kotlinx.multik.api.mk
+import org.jetbrains.kotlinx.multik.api.ndarray
+import org.jetbrains.kotlinx.multik.ndarray.data.D1
+import org.jetbrains.kotlinx.multik.ndarray.data.Dimension
+import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.toList
 import smile.data.vector.DoubleVector
 
+
 /**
  * A feature is logic that is able to extract one or more named values from a series of events
  */
-interface Feature {
+interface Feature<D: Dimension> {
     fun update(event: Event)
 
-    val names: List<String>
+    val name: String
 
     fun clean() {}
 
@@ -35,36 +41,35 @@ interface Feature {
 
     fun getVectors(): List<DoubleVector>
 
+    val size: Int
+        get() = 1
+
+    val shape: IntArray
+        get() = intArrayOf(size)
+
     fun getLast(): List<DoubleVector> {
         return getVectors().map { DoubleVector.of(it.name(), doubleArrayOf(it.array().last())) }
     }
 
-    operator fun get(i: Int) : List<Double> = getVectors().map { it.array()[i] }
+    operator fun get(i: Int) : NDArray<Double, D>
 
-    operator fun get(i: Int, name: String) : Double {
-        val idx = names.indexOf(name)
-        return get(i)[idx]
-    }
+
 }
+
+
 
 /**
  * Small utlity class that makes it simple to write a feature that is only prducing a simple value
  */
-abstract class SingelValueFeature : Feature {
+abstract class SingelValueFeature : Feature<D1> {
 
-    protected val data = mutableListOf<Double>()
+    private val data = mutableListOf<Double>()
 
     protected fun add(elem: Double) = data.add(elem)
 
-    abstract val name: String
-
-    override val names: List<String>
-        get() = listOf(name)
-
-
     override fun getVectors(): List<DoubleVector> = listOf(DoubleVector.of(name, data.toDoubleArray()))
 
-    override operator fun get(i: Int) = listOf(data[i])
+    override operator fun get(i: Int) = mk.ndarray(doubleArrayOf(data[i]))
 
     override fun clean() { data.clear() }
 
@@ -78,24 +83,21 @@ abstract class SingelValueFeature : Feature {
 /**
  * Small utlity class that makes it simple to write a feature that is produce multiple values
  */
-abstract class MultiValueFeature : Feature {
+abstract class MultiValueFeature : Feature<D1> {
 
-    protected val data = mutableListOf<List<Double>>()
+    private val data = mutableListOf<DoubleArray>()
 
-    protected fun add(elem: List<Double>) = data.add(elem)
+    protected fun add(elem: DoubleArray) = data.add(elem)
 
     override fun getVectors(): List<DoubleVector> {
-        return names.mapIndexed { index, name ->
-            val arr = data.map { it[index] }.toDoubleArray()
-            DoubleVector.of(name, arr)
-        }
+        return emptyList()
     }
 
     override fun reset() {
         data.clear()
     }
 
-    override operator fun get(i: Int) : List<Double> = data.map { it[i] }
+    override operator fun get(i: Int) = mk.ndarray(data[i])
 
 }
 
@@ -123,7 +125,7 @@ fun main() {
     for (event in feed.toList()) {
         features.update(event)
     }
-    println(features.columns)
+
 
 
 }

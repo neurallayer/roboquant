@@ -22,7 +22,6 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.ta.InsufficientData
 import org.roboquant.ta.PriceBarSeries
 import org.roboquant.ta.TaLib
-import smile.data.vector.DoubleVector
 
 class TaLibSingleFeature(
     override val name: String,
@@ -35,19 +34,19 @@ class TaLibSingleFeature(
 
     companion object {
 
-        fun rsi(asset: Asset, timePeriod: Int = 14): Feature {
+        fun rsi(asset: Asset, timePeriod: Int = 14): TaLibSingleFeature {
             return TaLibSingleFeature("rsi-$timePeriod", asset) {
                 rsi(it, timePeriod)
             }
         }
 
-        fun obv(asset: Asset) : Feature {
+        fun obv(asset: Asset) : TaLibSingleFeature {
             return TaLibSingleFeature("obv", asset) {
                 obv(it.close, it.volume)
             }
         }
 
-        fun ema(asset: Asset, fast: Int = 5, slow: Int = 13) : Feature {
+        fun ema(asset: Asset, fast: Int = 5, slow: Int = 13) : TaLibSingleFeature {
             return TaLibSingleFeature("ema-$fast-$slow", asset) {
                 val isUP = ema(it, fast) >= ema(it, slow)
                 if (isUP) 1.0 else -1.0

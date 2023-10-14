@@ -16,6 +16,7 @@
 
 package org.roboquant.ml
 
+import org.jetbrains.kotlinx.multik.ndarray.operations.first
 import org.roboquant.common.Config
 import org.roboquant.feeds.Event
 import smile.data.vector.DoubleVector
@@ -23,14 +24,14 @@ import smile.data.vector.DoubleVector
 
 class FeatureSet {
 
-    private val features = mutableListOf<Feature>()
+    private val features = mutableListOf<Feature<*>>()
     var size = 0
 
     val names
-        get() = features.map { it.names }.flatten()
+        get() = features.map { it.name }
 
 
-    fun add(vararg feature: Feature) {
+    fun add(vararg feature: Feature<*>) {
         features.addAll(feature)
     }
 
@@ -44,6 +45,29 @@ class FeatureSet {
     }
 
 
+
+
+    fun sample2(n: Int, warmup: Int, future: Int): List<DoubleArray> {
+        val result = mutableListOf<DoubleArray>()
+        var first = true
+        repeat(n) {
+            var idx = 0
+            val s = Config.random.nextInt(size - warmup - future) + warmup
+            for (feature in features) {
+                val offset = if (feature.name.contains("Y")) s + future else s
+                val ndArr = feature[offset]
+                if (ndArr.size == 1) {
+                    if (first) result.add(DoubleArray(n))
+                    result[idx][n] = ndArr.first()
+                    idx++
+                }
+            }
+            first = false
+        }
+        return result
+    }
+
+
     fun sample(n: Int, warmup: Int, future: Int): List<DoubleArray> {
         val result = mutableListOf<DoubleArray>()
         var first = true
@@ -51,7 +75,7 @@ class FeatureSet {
             var idx = 0
             val s = Config.random.nextInt(size - warmup - future) + warmup
             for (feature in features) {
-                val offset = if (feature.names.contains("Y")) s + future else s
+                val offset = if (feature.name.contains("Y")) s + future else s
                 val arrs = feature[offset]
                 for (d in arrs) {
                     if (first) result.add(DoubleArray(n))

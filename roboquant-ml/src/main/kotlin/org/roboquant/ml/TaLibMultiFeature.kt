@@ -24,12 +24,12 @@ import org.roboquant.ta.PriceBarSeries
 import org.roboquant.ta.TaLib
 
 class TaLibMultiFeature(
-    vararg names: String,
+    override val name: String,
+    override val size: Int,
     private val asset: Asset,
     private val block: TaLib.(prices: PriceBarSeries) -> List<Double>
 ) : MultiValueFeature() {
 
-    override val names: List<String> = names.toList()
 
     private val t = TaLib()
     private val history = PriceBarSeries(1)
@@ -37,10 +37,10 @@ class TaLibMultiFeature(
 
     override fun update(event: Event) {
         val action = event.prices[asset]
-        var d = List(names.size) { Double.NaN }
+        var d = DoubleArray(size) { Double.NaN }
         if (action != null && action is PriceBar && history.add(action)) {
             try {
-                d = t.block(history)
+                d = t.block(history).toDoubleArray()
             } catch (e: InsufficientData) {
                 history.increaseCapacity(e.minSize)
             }

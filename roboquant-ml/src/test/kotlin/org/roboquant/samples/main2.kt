@@ -26,8 +26,9 @@ import org.roboquant.ml.*
 import smile.data.formula.Formula
 import smile.regression.gbm
 
-
 fun main() {
+
+
     val feed = AvroFeed.sp500()
 
     val features = FeatureSet()
@@ -38,7 +39,7 @@ fun main() {
     val x2 = TaLibSingleFeature("X2", asset) { sma(it, 10) }.growthRate()
     val x3 = TaLibSingleFeature("X3", asset) { rsi(it, 20) }
     val x4 = TaLibSingleFeature("X4", asset) { if (cdl3StarsInSouth(it)) 1.0 else -1.0 }
-    val x5 = TaLibMultiFeature("X5", "X6", "X7", asset = asset) { bbands(it).toList() }.returns()
+    val x5 = TaLibMultiFeature("X5", 3, asset = asset) { bbands(it).toList() }.returns()
     val x6 = TaLibSingleFeature.obv(asset).returns()
 
     features.add(y, x1, x2, x3, x4, x5, x6)

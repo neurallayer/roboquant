@@ -16,7 +16,6 @@
 
 package org.roboquant.brokers.sim
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.assets
@@ -25,9 +24,12 @@ import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.TradePrice
+import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus
+import org.roboquant.orders.UpdateOrder
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -140,6 +142,29 @@ internal class SimBrokerTest {
         assertEquals(1, account.positions.assets.size)
         assertEquals(1, account.closedOrders.size)
         assertEquals(1, account.trades.size)
+    }
+
+
+    @Test
+    fun updateOrder() {
+        val broker = SimBroker()
+        val asset = Asset("TEST")
+        val order = LimitOrder(asset,Size.ONE, 99.0)
+        val price = TradePrice(asset, 100.0)
+        val now = Instant.now()
+        val event = Event(listOf(price), now)
+
+        broker.place(listOf(order))
+        broker.sync(event)
+        assertEquals(1, broker.account.openOrders.size)
+        val state = broker.account.openOrders.first()
+
+        val order2 = LimitOrder(asset,Size.ONE, 101.0)
+        val updateOrder = UpdateOrder(state, order2)
+        val event2 = Event(listOf(price), now + 1.millis)
+        broker.place(listOf(updateOrder))
+        broker.sync(event2)
+
     }
 
 
