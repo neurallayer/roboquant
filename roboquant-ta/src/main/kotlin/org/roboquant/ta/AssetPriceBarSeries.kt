@@ -3,6 +3,7 @@ package org.roboquant.ta
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
+import java.time.Instant
 
 /**
  * Subclass of a `MutableMap<Asset, PriceBarSeries>` that makes it convenient to track price-bar-series for
@@ -24,9 +25,9 @@ class AssetPriceBarSeries private constructor(
     /**
      * Add a single [priceBar] to this instance and return true of the series for that asset is full.
      */
-    fun add(priceBar: PriceBar): Boolean {
+    fun add(priceBar: PriceBar, time: Instant = Instant.MIN): Boolean {
         val series = map.getOrPut(priceBar.asset) { PriceBarSeries(capacity) }
-        series.add(priceBar)
+        series.add(priceBar, time)
         return series.isFull()
     }
 
@@ -36,7 +37,7 @@ class AssetPriceBarSeries private constructor(
     fun addAll(event: Event) {
         for (action in event.actions.filterIsInstance<PriceBar>()) {
             val series = map.getOrPut(action.asset) { PriceBarSeries(capacity) }
-            series.add(action)
+            series.add(action, event.time)
         }
     }
 

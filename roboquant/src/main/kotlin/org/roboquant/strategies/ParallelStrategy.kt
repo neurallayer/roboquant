@@ -25,7 +25,7 @@ import org.roboquant.feeds.Event
  * as the order of strategies that is provided in the constructor.
  *
  * This will typically improve performance for strategies that are CPU or IO intensive and take some time to complete.
- * For very fast strategies, this might not speed up the overall performance. Only the [generate] method is run in
+ * For fast strategies, this might not speed up the overall performance. Only the [generate] method is run in
  * parallel, other method invocations like reset and getMetrics are run sequential.
  *
  * There is no logic included to resolve conflicting signals, for example, one strategy generates a BUY signal,

@@ -17,10 +17,12 @@
 package org.roboquant.ta
 
 import org.roboquant.common.PriceSeries
+import org.roboquant.common.Timeline
 import org.roboquant.common.div
 import org.roboquant.common.plus
 import org.roboquant.feeds.Action
 import org.roboquant.feeds.PriceBar
+import java.time.Instant
 
 /**
  * PriceBarSeries is a moving window of OHLCV values (PriceBar) of fixed capacity for a single asset.
@@ -40,6 +42,7 @@ class PriceBarSeries(capacity: Int) {
     private val lowBuffer = PriceSeries(capacity)
     private val closeBuffer = PriceSeries(capacity)
     private val volumeBuffer = PriceSeries(capacity)
+    private val timeBuffer = mutableListOf<Instant>()
 
     /**
      * Open prices
@@ -72,40 +75,49 @@ class PriceBarSeries(capacity: Int) {
         get() = volumeBuffer.toDoubleArray()
 
     /**
+     * Timeline
+     */
+    val timeline: Timeline
+        get() = timeBuffer
+
+    /**
      * Typical prices (high + low + close / 3)
      */
     val typical
         get() = (highBuffer.toDoubleArray() + lowBuffer.toDoubleArray() + closeBuffer.toDoubleArray()) / 3.0
 
     /**
-     * Update the buffer with a new [priceBar]
+     * Update the buffer with a new [priceBar] and optional the [time]
+     * Return true if the buffer is full.
      */
-    fun add(priceBar: PriceBar): Boolean {
-        return add(priceBar.ohlcv)
+    fun add(priceBar: PriceBar, time: Instant): Boolean {
+        return add(priceBar.ohlcv, time)
     }
 
     /**
      * Update the buffer with a new [action], but only if the action is a price-bar.
      * Return true if a value has been added and it is full.
      */
-    fun add(action: Action): Boolean {
+    fun add(action: Action, time: Instant): Boolean {
         return if (action is PriceBar) {
-            add(action.ohlcv)
+            add(action.ohlcv, time)
         } else {
             false
         }
     }
 
     /**
-     * Update the buffer with a new [ohlcv] values and true if series is full.
+     * Update the buffer with a new [ohlcv] values and optional the [time]. Return true if series is full.
      */
-    private fun add(ohlcv: DoubleArray): Boolean {
+    private fun add(ohlcv: DoubleArray, time: Instant): Boolean {
         assert(ohlcv.size == 5)
         openBuffer.add(ohlcv[0])
         highBuffer.add(ohlcv[1])
         lowBuffer.add(ohlcv[2])
         closeBuffer.add(ohlcv[3])
         volumeBuffer.add(ohlcv[4])
+        timeBuffer.add(time)
+        while (timeBuffer.size > openBuffer.size) timeBuffer.removeFirst()
         return isFull()
     }
 
@@ -114,6 +126,15 @@ class PriceBarSeries(capacity: Int) {
      */
     operator fun get(index: Int): DoubleArray =
         doubleArrayOf(open[index], high[index], low[index], close[index], volume[index])
+
+    /**
+     * Returns the OHLCV values at the specified [time] as a [DoubleArray]
+     */
+    operator fun get(time: Instant): DoubleArray {
+        val index = timeBuffer.indexOf(time)
+        if (index == -1) throw NoSuchElementException("time not found")
+        return doubleArrayOf(open[index], high[index], low[index], close[index], volume[index])
+    }
 
     /**
      * Return true if there is enough data available.
@@ -137,6 +158,7 @@ class PriceBarSeries(capacity: Int) {
         lowBuffer.clear()
         closeBuffer.clear()
         volumeBuffer.clear()
+        timeBuffer.clear()
     }
 
     /**
@@ -162,8 +184,9 @@ class PriceBarSeries(capacity: Int) {
                 if (high[j] > highest) highest = high[j]
                 total += volume[j]
             }
-            val ohlcv = doubleArrayOf(open, highest, lowest, close[i + n - 1], total)
-            result.add(ohlcv)
+            val last = i + n - 1
+            val ohlcv = doubleArrayOf(open, highest, lowest, close[last], total)
+            result.add(ohlcv, timeline[last])
         }
         return result
     }

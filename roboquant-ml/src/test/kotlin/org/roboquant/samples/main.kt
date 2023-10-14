@@ -80,9 +80,10 @@ class MyStrat(
 
     override fun generate(event: Event): List<Signal> {
         val result = mutableListOf<Signal>()
+        val time = event.time
         event.actions.filterIsInstance<PriceBar>().forEach {
             val h = history.getOrPut(it.asset) { PriceBarSeries(historySize) }
-            h.add(it)
+            h.add(it, time)
             if (h.isFull()) {
                 val c = predict(it.asset, h)
                 val rating = when {

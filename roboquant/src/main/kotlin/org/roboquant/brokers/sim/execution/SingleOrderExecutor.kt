@@ -133,7 +133,7 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
 internal class MarketOrderExecutor(order: MarketOrder) : SingleOrderExecutor<MarketOrder>(order) {
 
     /**
-     * Market orders will always fill completely against the [pricing] provided. It uses [Pricing.marketPrice] to
+     * Market orders will always fill 100% against the [pricing] provided. It uses [Pricing.marketPrice] to
      * get the actual price.
      */
     override fun fill(remaining: Size, pricing: Pricing): Execution =
@@ -181,7 +181,7 @@ internal class LimitOrderExecutor(order: LimitOrder) : SingleOrderExecutor<Limit
 internal class StopOrderExecutor(order: StopOrder) : SingleOrderExecutor<StopOrder>(order) {
 
     /**
-     * Stop orders will fill completely only if the configured stop price is triggered.
+     * Stop orders will fill only if the configured stop price is triggered.
      */
     override fun fill(remaining: Size, pricing: Pricing): Execution? {
         return if (stopTrigger(order.stop, remaining, pricing))

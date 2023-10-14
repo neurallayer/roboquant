@@ -196,8 +196,9 @@ class TaLibStrategy(initialCapacity: Int = 1) : RecordingStrategy(recording = tr
      */
     override fun generate(event: Event): List<Signal> {
         val results = mutableListOf<Signal>()
+        val time = event.time
         for (priceBar in event.actions.filterIsInstance<PriceBar>()) {
-            if (assetPriceBarSeries.add(priceBar)) {
+            if (assetPriceBarSeries.add(priceBar, time)) {
                 val asset = priceBar.asset
                 val priceSerie = assetPriceBarSeries.getValue(asset)
                 try {

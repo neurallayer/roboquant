@@ -148,7 +148,7 @@ abstract class Chart {
             "https://cdn.jsdelivr.net/gh/neurallayer/roboquant-jupyter-js@$COMMIT/echarts.min.js?version=$COMMIT"
 
         /**
-         * Maximum number of samples to plot in a chart. Certain types of charts can become very large and as
+         * Maximum number of samples to plot in a chart. Certain types of charts can become large and as
          * a result make your browser unresponsive. By lowering this value (default is [Int.MAX_VALUE])
          * before serializing the result to the browser, the sample size will first be reduced. A good value might
          * be 100_000, but this depends on your computer.
@@ -198,7 +198,7 @@ abstract class Chart {
     }
 
     /**
-     * Reduce the sample size in order to ensure the browser can display the chart while remaining responsive.
+     * Reduce the sample size to ensure the browser can display the chart while remaining responsive.
      */
     protected fun <T> reduce(data: Collection<T>): Collection<T> {
         return if (data.size > maxSamples) {

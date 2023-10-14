@@ -61,7 +61,7 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
     }
 
     /**
-     * Clear the history that is kept in the logger
+     * Clear the history
      */
     override fun reset() {
         history.clear()

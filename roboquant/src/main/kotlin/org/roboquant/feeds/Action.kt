@@ -77,7 +77,7 @@ interface PriceAction : Action {
  * Provides open, high, low, and close prices and volume for a single asset. If the volume is not available, it
  * will return Double.NaN instead. Often this type of price action is also referred to as a candlestick.
  *
- * In order to optimize memory and reduce GC overhead, internally the values are stored in a DoubleArray.
+ * To optimize memory and reduce GC overhead, internally the values are stored in a DoubleArray.
  *
  * @property asset the asset of the price-bar
  * @property ohlcv contains the values of this price-bar as doubles

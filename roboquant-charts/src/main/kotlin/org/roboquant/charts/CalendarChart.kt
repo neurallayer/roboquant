@@ -30,7 +30,7 @@ import java.time.format.DateTimeFormatter
 import kotlin.collections.*
 
 /**
- * Plots the metrics values on a calendar, so it is easy to visualize if there are days when there are outliers. Next
+ * Plots the metrics values on a calendar, to visualize if there are days when there are outliers. Next
  * to the calendar, a visual map is being plotted that allows filtering days based on the selected range of values.
  *
  * @param timeSeries the data
@@ -56,7 +56,7 @@ class CalendarChart(
         val perYear = metricsData.groupBy { it.time.atZone(zoneId).year }
         val result = mutableMapOf<Int, List<Pair<String, BigDecimal>>>()
         perYear.forEach { (t, u) ->
-            // If there is more than 1 value per day, sum them together.
+            // If there is more than one value per day, sum them together.
             val summed =
                 u.groupBy { timeFormatter.format(it.time) }.mapValues { it.value.sumOf { entry -> entry.value } }
             result[t] = summed.mapValues { it.value.round(fractionDigits) }.toList()

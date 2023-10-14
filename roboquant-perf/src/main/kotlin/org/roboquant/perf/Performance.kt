@@ -92,7 +92,7 @@ private class FastFeed(nAssets: Int, val events: Int) : Feed {
 /**
  * Performance test that runs a number of back-tests scenarios against different feed sizes to measure performance
  * and detect possible performance regressions.
- * Each test is run three times in order to minimize fluctuations caused by outside events like virus scanners.
+ * Each test is run three times to minimize fluctuations caused by outside events like virus scanners.
  *
  * The main purpose is to validate the performance, throughput and stability of the back test engine, not any particular
  * feed, strategy or metric. So the used feed and strategy are optimized for this test and not realistic at all.

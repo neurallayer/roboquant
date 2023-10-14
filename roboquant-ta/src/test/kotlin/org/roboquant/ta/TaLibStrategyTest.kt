@@ -17,7 +17,6 @@
 package org.roboquant.ta
 
 import com.tictactec.ta.lib.Compatibility
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.Roboquant
@@ -27,18 +26,15 @@ import org.roboquant.common.plus
 import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.filter
+import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import java.time.Instant
 import kotlin.collections.set
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class TaLibStrategyTest {
 
@@ -127,7 +123,7 @@ internal class TaLibStrategyTest {
         val result = PriceBarSeries(size)
         repeat(size) {
             val pb = PriceBar(asset, 10.0, 12.0, 8.0, 11.0, 100 + it)
-            result.add(pb)
+            result.add(pb, Instant.now())
         }
         return result
     }

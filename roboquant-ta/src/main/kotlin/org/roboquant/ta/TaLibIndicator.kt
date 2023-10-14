@@ -46,7 +46,7 @@ class TaLibIndicator(
      * @see Indicator.calculate
      */
     override fun calculate(action: Action, time: Instant): Map<String, Double> {
-        if (series.add(action)) {
+        if (series.add(action, time)) {
             try {
                 return block.invoke(taLib, series)
             } catch (ex: InsufficientData) {

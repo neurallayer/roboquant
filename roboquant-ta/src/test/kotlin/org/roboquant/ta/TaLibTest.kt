@@ -21,6 +21,7 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.apply
 import org.roboquant.feeds.util.HistoricTestFeed
+import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -30,7 +31,7 @@ internal class TaLibTest {
         val feed = HistoricTestFeed(100 until 200, priceBar = true)
         val series = PriceBarSeries(size)
         feed.apply<PriceBar> { pb, _ ->
-            series.add(pb)
+            series.add(pb, Instant.now())
         }
         return series
     }

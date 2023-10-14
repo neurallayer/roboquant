@@ -70,7 +70,7 @@ fun Collection<String>.summary(header: String = "values"): Summary {
 }
 
 /**
- * Extension function to allow *numpy* like indexing for lists. In order to stay close to Kotlin, the end value is
+ * Extension function to allow *numpy* like indexing for lists. To stay close to Kotlin, the end value is
  * inclusive. Returns a view on the original list, so no copy is made.
  *
  * ## Example

@@ -28,7 +28,7 @@ import kotlin.random.Random
  * to true the [end] time is inclusive, exclusive otherwise. The default is that the [end] time is exclusive.
  *
  * A timeframe instance is immutable.  Like all time related logic in roboquant, it uses the [Instant] type to define
- * a moment in time, in order to avoid potential timezone inconsistencies.
+ * a moment in time, to avoid potential timezone inconsistencies.
  *
  * All internal trading logic uses nanoseconds as the smallest difference between two times. However, some
  * visualizations and charts might use milliseconds and the smallest time differences.

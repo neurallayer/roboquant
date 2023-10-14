@@ -38,7 +38,7 @@ class TaLibMultiFeature(
     override fun update(event: Event) {
         val action = event.prices[asset]
         var d = DoubleArray(size) { Double.NaN }
-        if (action != null && action is PriceBar && history.add(action)) {
+        if (action != null && action is PriceBar && history.add(action, event.time)) {
             try {
                 d = t.block(history).toDoubleArray()
             } catch (e: InsufficientData) {

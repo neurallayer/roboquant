@@ -50,10 +50,11 @@ class TaLibMetric(
         val metrics = mutableMapOf<String, Double>()
         val actions =
             event.actions.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset, event.time) }
+        val time = event.time
         for (priceAction in actions) {
             val asset = priceAction.asset
             val buffer = buffers.getOrPut(asset) { PriceBarSeries(initialCapacity) }
-            if (buffer.add(priceAction)) {
+            if (buffer.add(priceAction, time)) {
                 try {
                     val postFix = asset.symbol.lowercase()
                     val newMetrics = block.invoke(taLib, buffer).mapKeys { "${it.key}.$postFix" }

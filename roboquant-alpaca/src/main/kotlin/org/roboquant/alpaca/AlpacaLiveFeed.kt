@@ -57,7 +57,7 @@ enum class PriceActionType {
 }
 
 /**
- * Alpaca feed allows you to subscribe to live market data from Alpaca. Alpaca needs a key and secret in order to access
+ * Alpaca feed allows you to subscribe to live market data from Alpaca. Alpaca needs a key and secret to access
  * their API. This live feed supports both stocks and crypto asset classes.
  *
  * You can provide these to the constructor or set them as environment variables.

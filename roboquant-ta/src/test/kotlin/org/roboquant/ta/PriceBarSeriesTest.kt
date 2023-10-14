@@ -16,12 +16,12 @@
 
 package org.roboquant.ta
 
-import kotlin.test.Test
 import org.roboquant.common.Asset
 import org.roboquant.common.plus
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -38,7 +38,7 @@ internal class PriceBarSeriesTest {
             val newOhlcv = ohlvc + it
             newOhlcv[4] = 10000.0
             val pb = PriceBar(Asset("ABC"), newOhlcv)
-            pbs.add(pb)
+            pbs.add(pb, Instant.now())
         }
         return pbs
     }
@@ -46,17 +46,18 @@ internal class PriceBarSeriesTest {
     @Test
     fun test() {
         val pbs = PriceBarSeries(10)
-        repeat(5) { pbs.add(pb) }
+        repeat(5) { pbs.add(pb, Instant.now() ) }
         assertFalse(pbs.isFull())
         assertEquals(5, pbs.size)
 
-        repeat(5) { pbs.add(pb) }
+        repeat(5) { pbs.add(pb, Instant.now()) }
         assertTrue(pbs.isFull())
         assertEquals(10, pbs.size)
 
-        repeat(5) { pbs.add(pb) }
+        repeat(5) { pbs.add(pb, Instant.now()) }
         assertTrue(pbs.isFull())
         assertEquals(10, pbs.size)
+        assertEquals(10, pbs.timeline.size)
 
         assertEquals(10, pbs.open.size)
         assertEquals(10, pbs.typical.size)

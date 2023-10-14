@@ -81,7 +81,7 @@ Roboquant uses Maven wrapper for the build process, so building and installing t
 ./mvnw clean install
 ----
 
-The build and install is tested using JDK 17 runtime. However, the generated libraries are targeted against JDK 11 in order to provide better compatibility for projects that still use older versions of the JDK.
+The build and install is tested using JDK 17 runtime.
 
 TIP: If you plan to make many changes and updates to the source code, checkout the https://github.com/apache/maven-mvnd[Maven Daemon] project that provides faster builds. It is an almost 100% drop-in replacement of the regular maven and is much faster.
 
