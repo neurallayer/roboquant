@@ -125,20 +125,22 @@ class PriceBarSeries(capacity: Int) {
         doubleArrayOf(open[index], high[index], low[index], close[index], volume[index])
 
     /**
-     * Returns a PriceBarSeries that includes all the times within the provided [timeframe]
+     * Returns a PriceBarSeries that includes the data that occured within the provided [timeframe]
      */
     operator fun get(timeframe: Timeframe): PriceBarSeries {
         val tl = timeline.toTypedArray()
         val size = tl.filter { it in timeframe }.size
         val result = PriceBarSeries(size)
         for (i in 0..<size) {
-            if (tl[i] in timeframe) result.add(get(i), tl[i])
+            val time = tl[i]
+            if (time in timeframe) result.add(get(i), time)
         }
         return result
     }
 
     /**
-     * Returns the OHLCV values at the specified [time] as a [DoubleArray]
+     * Returns the OHLCV values at the specified [time] as a [DoubleArray]. Throws [NoSuchElementException] if there
+     * is no data is found at the requested [time]
      */
     operator fun get(time: Instant): DoubleArray {
         val index = timeBuffer.indexOf(time)
