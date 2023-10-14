@@ -16,10 +16,7 @@
 
 package org.roboquant.ta
 
-import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
-import org.roboquant.common.millis
-import org.roboquant.common.plus
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
@@ -62,8 +59,6 @@ internal class PriceBarSeriesTest {
         repeat(5) { pbs.add(pb, now + it.millis) }
         assertTrue(pbs.isFull())
         assertEquals(10, pbs.size)
-        assertEquals(10, pbs.timeline.size)
-        assertEquals(pbs.size, pbs[Timeframe.INFINITE].size)
 
         assertEquals(10, pbs.open.size)
         assertEquals(10, pbs.typical.size)
@@ -72,6 +67,24 @@ internal class PriceBarSeriesTest {
         assertFalse(pbs.isFull())
         assertEquals(0, pbs.open.size)
         assertTrue { pbs.close.all { it.isNaN() } }
+    }
+
+    @Test
+    fun testTime() {
+        val pbs = PriceBarSeries(10)
+        val now =  Instant.now()
+        repeat(20) { pbs.add(pb, now + it.millis) }
+
+        assertEquals(10, pbs.timeline.size)
+        assertEquals(now + 10.millis, pbs.timeline.timeframe.start)
+        assertEquals(now + 19.millis, pbs.timeline.timeframe.end)
+        assertEquals(pbs.timeline.sorted(), pbs.timeline)
+        assertEquals(pbs.size, pbs[Timeframe.INFINITE].size)
+        assertEquals(0, pbs[Timeframe.EMPTY].size)
+
+        pbs.clear()
+        assertFalse(pbs.isFull())
+        assertEquals(0, pbs.timeline.size)
     }
 
     @Test
