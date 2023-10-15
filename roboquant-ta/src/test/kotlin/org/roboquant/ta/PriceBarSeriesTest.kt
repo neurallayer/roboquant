@@ -80,6 +80,7 @@ internal class PriceBarSeriesTest {
         assertEquals(now + 19.millis, pbs.timeline.timeframe.end)
         assertEquals(pbs.timeline.sorted(), pbs.timeline)
         assertEquals(pbs.size, pbs[Timeframe.INFINITE].size)
+        assertEquals(pbs.timeline.last(), pbs.now())
 
         assertTrue(pbs[Timeframe.INFINITE].isFull())
 

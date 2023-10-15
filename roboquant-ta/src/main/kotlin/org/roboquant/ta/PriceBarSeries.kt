@@ -20,6 +20,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.Action
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
+import java.util.*
 
 /**
  * PriceBarSeries is a moving window of OHLCV values (PriceBar) of fixed capacity for a single asset.
@@ -27,7 +28,7 @@ import java.time.Instant
  *
  * You can however increase the capacity using [increaseCapacity].
  *
- * @param capacity the size of buffer
+ * @param capacity the initial capacity of buffer
  *
  * @constructor Create a new instance of PriceBarSeries
  */
@@ -84,7 +85,12 @@ class PriceBarSeries(capacity: Int) {
         get() = (highBuffer.toDoubleArray() + lowBuffer.toDoubleArray() + closeBuffer.toDoubleArray()) / 3.0
 
     /**
-     * Update the buffer with a new [priceBar] and optional the [time]
+     * Return the latest time
+     */
+    fun now() = timeBuffer.last()
+
+    /**
+     * Update the buffer with a new [priceBar] and [time].
      * Return true if the buffer is full.
      */
     fun add(priceBar: PriceBar, time: Instant): Boolean {
@@ -92,7 +98,7 @@ class PriceBarSeries(capacity: Int) {
     }
 
     /**
-     * Update the buffer with a new [action], but only if the action is a price-bar.
+     * Update the buffer with a new [action] and [time], but only if the action is a price-bar.
      * Return true if a value has been added and it is full.
      */
     fun add(action: Action, time: Instant): Boolean {
@@ -104,7 +110,7 @@ class PriceBarSeries(capacity: Int) {
     }
 
     /**
-     * Update the buffer with a new [ohlcv] values and optional the [time]. Return true if series is full.
+     * Update the buffer with a new [ohlcv] values and [time]. Return true if series is full.
      */
     private fun add(ohlcv: DoubleArray, time: Instant): Boolean {
         assert(ohlcv.size == 5)
@@ -143,7 +149,7 @@ class PriceBarSeries(capacity: Int) {
      * is no data is found at the requested [time]
      */
     operator fun get(time: Instant): DoubleArray {
-        val index = timeBuffer.indexOf(time)
+        val index = Collections.binarySearch(timeBuffer, time);
         if (index == -1) throw NoSuchElementException("time not found")
         return doubleArrayOf(open[index], high[index], low[index], close[index], volume[index])
     }
