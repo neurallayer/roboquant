@@ -149,7 +149,7 @@ class PriceBarSeries(capacity: Int) {
      * is no data is found at the requested [time]
      */
     operator fun get(time: Instant): DoubleArray {
-        val index = Collections.binarySearch(timeBuffer, time);
+        val index = Collections.binarySearch(timeBuffer, time)
         if (index == -1) throw NoSuchElementException("time not found")
         return doubleArrayOf(open[index], high[index], low[index], close[index], volume[index])
     }
