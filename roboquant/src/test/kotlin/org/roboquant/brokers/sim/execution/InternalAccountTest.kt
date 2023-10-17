@@ -17,9 +17,7 @@ package org.roboquant.brokers.sim.execution
 
 
 import kotlinx.coroutines.launch
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.Trade
 import org.roboquant.common.Asset
 import org.roboquant.common.Currency
@@ -28,7 +26,10 @@ import org.roboquant.common.Size
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class InternalAccountTest {
 
@@ -58,17 +59,14 @@ internal class InternalAccountTest {
         val order = MarketOrder(Asset("Test"), 100)
 
         // This should fail since the order is unknown
-        assertThrows<NoSuchElementException> {
-            account.updateOrder(order, Instant.now(), OrderStatus.ACCEPTED)
-        }
+        assertFalse(account.updateOrder(order, Instant.now(), OrderStatus.ACCEPTED))
+
 
         account.initializeOrders(listOf(order))
-        account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED)
+        assertTrue(account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED))
 
         // Should fail because order status is closed
-        assertThrows<NoSuchElementException> {
-            account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED)
-        }
+        assertFalse(account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED))
 
     }
 
