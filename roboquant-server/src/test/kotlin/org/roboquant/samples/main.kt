@@ -30,7 +30,10 @@ import kotlin.system.exitProcess
 private fun getRoboquant() =
     Roboquant(EMAStrategy(), AccountMetric(), PriceMetric("CLOSE"), logger = MemoryLogger(false))
 
-fun main() {
+/**
+ * You can run this sample to start a server with three runs
+ */
+internal fun main() {
     val server = WebServer()
 
     val jobs = ParallelJobs()

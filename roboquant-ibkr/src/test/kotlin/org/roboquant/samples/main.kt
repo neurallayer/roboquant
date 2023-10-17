@@ -103,18 +103,27 @@ fun placeOrder() {
 fun placeSimpleOrder() {
     Config.exchangeRates = IBKRExchangeRates()
     val broker = IBKRBroker()
-    broker.sync()
     val account = broker.account
     println(account.fullSummary())
 
     val asset = Asset("TSLA", AssetType.STOCK, "USD", "SMART")
-    val order = MarketOrder(asset, Size.ONE)
 
-    broker.place(listOf(order))
-    Thread.sleep(5000)
-    broker.sync()
-    val account2 = broker.account
-    println(account2.fullSummary())
+    repeat(10) {
+        // Place a buy order
+        val buy = MarketOrder(asset, Size.ONE)
+        broker.place(listOf(buy))
+        Thread.sleep(10_000)
+        broker.sync()
+        println(broker.account.fullSummary())
+
+        // Place a sell order
+        val sell = MarketOrder(asset, -Size.ONE)
+        broker.place(listOf(sell))
+        Thread.sleep(10_000)
+        broker.sync()
+        println(broker.account.fullSummary())
+    }
+
     broker.disconnect()
     println("done")
 }
@@ -187,7 +196,7 @@ fun historicFuturesFeed() {
 }
 
 
-fun main() {
+internal fun main() {
 
     when ("PLACE_SIMPLE_ORDER") {
         "ACCOUNT" -> showAccount()

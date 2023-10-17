@@ -134,10 +134,12 @@ class InternalAccount(var baseCurrency: Currency) {
      * Update an [order] with a new [status] at a certain time. This only successful if order has been already added
      * before and is not yet closed. When an order reaches the close state, it will be moved internally to a
      * different store and is no longer directly accessible.
+     *
+     * In case of failure, this method return false
      */
-    fun updateOrder(order: Order, time: Instant, status: OrderStatus) {
+    fun updateOrder(order: Order, time: Instant, status: OrderStatus) : Boolean {
         val id = order.id
-        val state = openOrders.getValue(id)
+        val state = openOrders[id] ?: return false
         val newState = state.update(status, time, order)
         if (newState.open) {
             openOrders[id] = newState
@@ -146,6 +148,7 @@ class InternalAccount(var baseCurrency: Currency) {
             openOrders.remove(id) ?: throw UnsupportedException("cannot close an order that was not open first")
             closedOrders.add(newState)
         }
+        return true
     }
 
     /**

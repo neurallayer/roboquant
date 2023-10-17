@@ -23,8 +23,10 @@ import java.io.File
  * limitations under the License.
  */
 
-
-fun main() {
+/**
+ * You can run sample to generate a correlation chart
+ */
+internal fun main() {
     val feed = RandomWalkFeed.lastYears(2, nAssets = 5)
     val chart = CorrelationChart(feed, feed.assets)
 

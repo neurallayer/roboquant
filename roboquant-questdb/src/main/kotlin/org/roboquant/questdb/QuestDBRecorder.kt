@@ -74,7 +74,7 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
 
     @Suppress("unused")
     /**
-     * Various database partition schemes
+     * Supported database partition schemes
      */
     companion object Partition {
 

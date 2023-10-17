@@ -37,32 +37,6 @@ import com.ib.client.OrderStatus as IBOrderStatus
 
 
 /**
- * Used to store partial account updates till completed
- */
-private class AccountUpdate {
-
-    val cash = Wallet()
-    val positions = mutableListOf<Position>()
-    var base = Currency.USD
-    var buyingPower = Double.NaN
-
-    fun update(iAccount: InternalAccount) {
-        iAccount.lastUpdate = Instant.now()
-        iAccount.baseCurrency = base
-        iAccount.buyingPower = Amount(base, buyingPower)
-
-        // Fill the cash
-        iAccount.cash.clear()
-        iAccount.cash.deposit(cash)
-
-        // Fill the positions
-        iAccount.portfolio.clear()
-        for (p in positions) iAccount.setPosition(p)
-    }
-
-}
-
-/**
  * Use your Interactive Brokers account for trading. Can be used with live trading or paper trading accounts of
  * Interactive Brokers. It is highly recommended to start with a paper trading account and validate your strategy and
  * policy extensively before moving to live trading.
@@ -81,20 +55,16 @@ class IBKRBroker(
     private val accountId: String?
     private var client: EClientSocket
     private var _account = InternalAccount(Currency.USD)
-    private var accountUpdate = AccountUpdate()
     private var accountUpdateLock = Object()
+    private var orderIds = mutableSetOf<Int>()
 
     /**
      * @see Broker.account
      */
-    override var account: Account
+    override lateinit var account: Account
         private set
 
     private val logger = Logging.getLogger(IBKRBroker::class)
-    private var orderId = 0
-
-    // Track IB orders ids with roboquant orders
-    private val orderMap = mutableMapOf<Int, Order>()
 
     // Track IB Trades and Feed ids with roboquant trades
     private val tradeMap = mutableMapOf<String, Trade>()
@@ -106,29 +76,26 @@ class IBKRBroker(
         logger.info { "using account=$accountId" }
         val wrapper = Wrapper(logger)
         client = IBKR.connect(wrapper, config)
+        Thread.sleep(2_000)
         client.reqCurrentTime()
-        // client.reqAccountUpdates(true, accountId)
-        // client.reqAccountSummary(9004, "All", "\$LEDGER:ALL")
 
-        // Open orders already send as part of connection
-        // Only request orders created with this client, so don't use: client.reqAllOpenOrders()
-        // client.reqOpenOrders()
-        updateAccount()
-        account = _account.toAccount()
-    }
-
-
-    private fun updateAccount() {
-        client.reqAccountUpdates(true, accountId)
         synchronized(accountUpdateLock) {
+            client.reqAccountUpdates(true, accountId)
             accountUpdateLock.wait(IBKR.MAX_RESPONSE_TIME)
         }
+
+        sync()
     }
+
 
     /**
      * Disconnect roboquant from TWS or IB Gateway
      */
-    fun disconnect() = IBKR.disconnect(client)
+    fun disconnect() {
+        client.reqAccountUpdates(false, accountId)
+        Thread.sleep(1_000)
+        IBKR.disconnect(client)
+    }
 
 
     private fun IBOrder.log(contract: Contract) {
@@ -141,10 +108,9 @@ class IBKRBroker(
      * Cancel an order
      */
     private fun cancelOrder(cancellation: CancelOrder) {
-        val id = cancellation.id
-        val ibID = orderMap.filter { it.value.id == id }.keys.first()
-        logger.info("cancelling order with id $ibID")
-        client.cancelOrder(ibID, cancellation.tag)
+        val id = cancellation.order.id
+        logger.info("cancelling order with id $id")
+        client.cancelOrder(id, cancellation.tag)
 
         // There is no easy way to check for the status of a cancellation order.
         // So for we set it always to status completed.
@@ -163,8 +129,6 @@ class IBKRBroker(
     }
 
     override fun sync(event: Event) {
-        client.reqOpenOrders()
-        updateAccount()
         account = _account.toAccount()
     }
 
@@ -228,9 +192,8 @@ class IBKRBroker(
         result.totalQuantity(qty)
 
         if (accountId != null) result.account(accountId)
-        result.orderId(++orderId)
-        orderMap[orderId] = order
-
+        result.orderId(order.id)
+        orderIds.add(order.id)
         return result
     }
 
@@ -264,7 +227,7 @@ class IBKRBroker(
             val asset = contract.toAsset()
             val qty = if (order.action() == Action.BUY) order.totalQuantity() else order.totalQuantity().negate()
             val size = Size(qty.value())
-            return when (order.orderType()) {
+            val result = when (order.orderType()) {
                 OrderType.MKT -> MarketOrder(asset, size)
                 OrderType.LMT -> LimitOrder(asset, size, order.lmtPrice())
                 OrderType.STP -> StopOrder(asset, size, order.auxPrice())
@@ -272,6 +235,8 @@ class IBKRBroker(
                 OrderType.STP_LMT -> StopLimitOrder(asset, size, order.auxPrice(), order.lmtPrice())
                 else -> throw UnsupportedException("$order")
             }
+            result.id = order.orderId()
+            return result
         }
 
         private fun toStatus(status: String): OrderStatus {
@@ -279,6 +244,7 @@ class IBKRBroker(
                 IBOrderStatus.Submitted -> OrderStatus.ACCEPTED
                 IBOrderStatus.Cancelled -> OrderStatus.CANCELLED
                 IBOrderStatus.Filled -> OrderStatus.COMPLETED
+                IBOrderStatus.PreSubmitted -> OrderStatus.INITIAL
                 else -> OrderStatus.INITIAL
             }
         }
@@ -287,28 +253,27 @@ class IBKRBroker(
          * What is the next valid IBKR orderID we can use
          */
         override fun nextValidId(orderId: Int) {
-            this@IBKRBroker.orderId = orderId
-            logger.debug("$orderId")
+            logger.info("settting next valid orderId=$orderId")
+            Order.setId(orderId)
         }
 
 
         override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: IBOrderSate) {
             logger.debug { "orderId=$orderId asset=${contract.symbol()} qty=${order.totalQuantity()} status=${orderState.status}" }
             logger.trace { "$orderId $contract $order $orderState" }
-            val openOrder = orderMap[orderId]
+            val openOrder = _account.getOrder(orderId)
             if (openOrder != null) {
-                println("existing order orderId=$orderId status=${orderState.status}")
+                logger.info {"update order orderId=$orderId status=${orderState.status}" }
                 if (orderState.completedStatus() == "true") {
                     val o = _account.getOrder(openOrder.id)
                     if (o != null) {
                         _account.updateOrder(o, Instant.parse(orderState.completedTime()), OrderStatus.COMPLETED)
                     }
                 }
-            } else {
-                println("new order orderId=$orderId parentId=${order.parentId()} status=${orderState.status}")
+            } else if (orderId !in orderIds){
+                logger.info { "existing order orderId=$orderId parentId=${order.parentId()} status=${orderState.status}" }
                 // if (order.parentId() > 0) return // right now no support for open bracket orders
                 val newOrder = toOrder(order, contract)
-                orderMap[orderId] = newOrder
                 _account.initializeOrders(listOf(newOrder))
                 val newStatus = toStatus(orderState.status)
                 _account.updateOrder(newOrder, Instant.now(), newStatus)
@@ -321,13 +286,14 @@ class IBKRBroker(
             remaining: Decimal?, avgFillPrice: Double, permId: Int, parentId: Int,
             lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
         ) {
-            logger.debug { "orderstatus oderId=$orderId status=$status filled=$filled" }
-            val order = orderMap[orderId]
+            logger.info { "orderstatus oderId=$orderId status=$status filled=$filled" }
+            val order = _account.getOrder(orderId)
             if (order != null) {
                 val newStatus = toStatus(status)
                 _account.updateOrder(order, Instant.now(), newStatus)
+                _account.lastUpdate = Instant.now()
             } else {
-                logger.warn { "Received unknown open order with orderId $orderId" }
+                logger.warn { "Received orderStatus for unknown order with orderId=$orderId" }
             }
         }
 
@@ -335,16 +301,19 @@ class IBKRBroker(
          * This is called with fee and pnl of a trade.
          */
         override fun commissionReport(commissionReport: CommissionReport) {
-            logger.debug { "commissionReport execId=${commissionReport.execId()} currency=${commissionReport.currency()} fee=${commissionReport.commission()} pnl=${commissionReport.realizedPNL()}" }
+            logger.info { "commissionReport execId=${commissionReport.execId()} currency=${commissionReport.currency()} fee=${commissionReport.commission()} pnl=${commissionReport.realizedPNL()}" }
             val id = commissionReport.execId().substringBeforeLast('.')
             val trade = tradeMap[id]
             if (trade != null) {
                 val newTrade = trade.copy(
-                    feeValue = commissionReport.commission() //, pnlValue = commissionReport.realizedPNL()
+                    feeValue = commissionReport.commission()
+                    // Bug in value making it huge
+                    // pnlValue = commissionReport.realizedPNL()
                 )
                 // Add this trade as a separate trade
                 _account.addTrade(newTrade)
                 tradeMap.remove(id)
+                _account.lastUpdate = Instant.now()
             } else {
                 logger.warn("Commission for none existing trade ${commissionReport.execId()}")
             }
@@ -352,7 +321,7 @@ class IBKRBroker(
 
 
         override fun execDetails(reqId: Int, contract: Contract, execution: Execution) {
-            logger.debug { "execDetails execId: ${execution.execId()} asset: ${contract.symbol()} side: ${execution.side()} qty: ${execution.cumQty()} price: ${execution.avgPrice()}" }
+            logger.info { "execDetails execId: ${execution.execId()} asset: ${contract.symbol()} side: ${execution.side()} qty: ${execution.cumQty()} price: ${execution.avgPrice()}" }
 
             // The last number is to correct an existing execution, so not a new execution
             val id = execution.execId().substringBeforeLast('.')
@@ -364,40 +333,33 @@ class IBKRBroker(
 
             // Possible values BOT and SLD
             val size = if (execution.side() == "SLD") -execution.cumQty().value() else execution.cumQty().value()
-            val order = orderMap[execution.orderId()]
 
-            // PNL and Fee will be filled later
-            if (order != null) {
-                val trade = Trade(
-                    Instant.now(),
-                    contract.toAsset(),
-                    Size(size),
-                    execution.avgPrice(),
-                    Double.NaN,
-                    Double.NaN,
-                    order.id
-                )
-                tradeMap[id] = trade
-            }
+            val trade = Trade(
+                Instant.now(),
+                contract.toAsset(),
+                Size(size),
+                execution.avgPrice(),
+                Double.NaN,
+                Double.NaN,
+                execution.orderId()
+            )
+            tradeMap[id] = trade
+
         }
 
         override fun openOrderEnd() {
-            logger.debug("openOrderEnd")
+            logger.info("openOrderEnd")
         }
 
         override fun accountDownloadEnd(accountName: String?) {
-            logger.debug("accountDownloadEnd accountName=$accountName")
-            accountUpdate.update(_account)
-
-            // Reset to clean state
-            accountUpdate = AccountUpdate()
+            logger.info("accountDownloadEnd accountName=$accountName")
             synchronized(accountUpdateLock) {
                 accountUpdateLock.notify()
             }
         }
 
         override fun updateAccountValue(key: String, value: String, currency: String?, accountName: String?) {
-            logger.debug { "updateAccountValue key=$key value=$value currency=$currency account=$accountName" }
+            logger.info { "updateAccountValue key=$key value=$value currency=$currency account=$accountName" }
 
             if (key == "AccountCode") require(value.startsWith('D')) {
                 "currently only paper trading account is supported, found $value"
@@ -407,11 +369,10 @@ class IBKRBroker(
                 val c = Currency.getInstance(currency)
                 when (key) {
                     "BuyingPower" -> {
-                        accountUpdate.base = c
-                        accountUpdate.buyingPower = value.toDouble()
+                        _account.baseCurrency = c
+                        _account.buyingPower = Amount(c, value.toDouble())
                     }
-
-                    "CashBalance" -> accountUpdate.cash.set(c, value.toDouble())
+                    "CashBalance" -> _account.cash.set(c, value.toDouble())
                 }
             }
         }
@@ -426,20 +387,21 @@ class IBKRBroker(
             realizedPNL: Double,
             accountName: String?
         ) {
-            logger.debug { "updatePortfolio asset=${contract.symbol()} position=$position price=$marketPrice cost=$averageCost" }
+            logger.info { "updatePortfolio asset=${contract.symbol()} position=$position price=$marketPrice cost=$averageCost" }
             logger.trace { "updatePortfolio $contract $position $marketPrice $averageCost" }
             val asset = contract.toAsset()
             val size = Size(position.value())
             val p = Position(asset, size, averageCost, marketPrice, Instant.now())
-            accountUpdate.positions.add(p)
+            _account.setPosition(p)
+            _account.lastUpdate = Instant.now()
         }
 
         override fun position(account: String?, contract: Contract?, pos: Decimal?, avgCost: Double) {
-            logger.trace { "$account, $contract, $pos, $avgCost" }
+            logger.info { "$account, $contract, $pos, $avgCost" }
         }
 
         override fun positionEnd() {
-            logger.trace { "positionEnd" }
+            logger.info { "positionEnd" }
         }
 
         override fun updateAccountTime(timeStamp: String?) {

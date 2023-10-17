@@ -53,7 +53,7 @@ internal object IBKR {
     private val connections = mutableMapOf<Int, EClientSocket>()
 
     // Holds mapping between IBKR contract ids and assets.
-    private val assetMap = ConcurrentHashMap<Int, Asset>()
+    private val assetCache = ConcurrentHashMap<Int, Asset>()
 
     fun disconnect(client: EClientSocket) {
         try {
@@ -86,7 +86,7 @@ internal object IBKR {
                 try {
                     reader.processMsgs()
                 } catch (e: Throwable) {
-                    logger.warn("Exception: " + e.message)
+                    logger.warn("exception handling ibkr message", e)
                 }
             }
         }.start()
@@ -125,7 +125,7 @@ internal object IBKR {
         }
         contract.exchange(exchange)
 
-        val id = assetMap.filterValues { it == this }.keys.firstOrNull()
+        val id = assetCache.filterValues { it == this }.keys.firstOrNull()
         if (id != null) contract.conid(id)
         logger.trace { "$this into $contract" }
         return contract
@@ -135,7 +135,7 @@ internal object IBKR {
      * Convert an IBKR contract to a roboquant asset
      */
     internal fun Contract.toAsset(): Asset {
-        val result = assetMap[conid()]
+        val result = assetCache[conid()]
         result != null && return result
 
         val exchangeCode = exchange() ?: primaryExch() ?: ""
@@ -148,7 +148,7 @@ internal object IBKR {
             else -> throw UnsupportedException("Unsupported asset type ${secType()}")
         }
 
-        assetMap[conid()] = asset
+        assetCache[conid()] = asset
         return asset
     }
 

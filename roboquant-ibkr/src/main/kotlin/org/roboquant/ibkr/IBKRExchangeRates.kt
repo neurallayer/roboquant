@@ -23,7 +23,7 @@ import org.roboquant.common.Currency
 import java.time.Instant
 
 /**
- * Currency convertor that will be populated by exchange rates provided by IBKR during
+ * Exchange rates that will be populated by the values provided by IBKR during
  * the retrieval of the account values.
  */
 internal class IBKRExchangeRates(
