@@ -19,10 +19,7 @@ package org.roboquant.ibkr
 
 import com.ib.client.*
 import com.ib.client.Types.Action
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.Broker
-import org.roboquant.brokers.Position
-import org.roboquant.brokers.Trade
+import org.roboquant.brokers.*
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
@@ -51,12 +48,18 @@ class IBKRBroker(
 ) : Broker {
 
     private val config = IBKRConfig()
+    private var initialized = false
 
     private val accountId: String?
     private var client: EClientSocket
     private var _account = InternalAccount(Currency.USD)
     private var accountUpdateLock = Object()
     private var orderIds = mutableSetOf<Int>()
+
+    /**
+     * ExchangeRates as provided during intialization of account.
+     */
+    val exchangeRates = FixedExchangeRates(Currency.USD)
 
     /**
      * @see Broker.account
@@ -179,7 +182,7 @@ class IBKRBroker(
                 }
 
                 is TrailOrder -> {
-                    orderType(OrderType.TRAIL); trailingPercent(order.trailPercentage)
+                    orderType(OrderType.TRAIL); trailingPercent(order.trailPercentage * 100.0)
                 }
 
                 else -> throw UnsupportedException("unsupported order type $order")
@@ -231,7 +234,7 @@ class IBKRBroker(
                 OrderType.MKT -> MarketOrder(asset, size)
                 OrderType.LMT -> LimitOrder(asset, size, order.lmtPrice())
                 OrderType.STP -> StopOrder(asset, size, order.auxPrice())
-                OrderType.TRAIL -> TrailOrder(asset, size, order.trailingPercent())
+                OrderType.TRAIL -> TrailOrder(asset, size, order.trailingPercent() / 100.0)
                 OrderType.STP_LMT -> StopLimitOrder(asset, size, order.auxPrice(), order.lmtPrice())
                 else -> throw UnsupportedException("$order")
             }
@@ -353,6 +356,7 @@ class IBKRBroker(
 
         override fun accountDownloadEnd(accountName: String?) {
             logger.info("accountDownloadEnd accountName=$accountName")
+            initialized = true
             synchronized(accountUpdateLock) {
                 accountUpdateLock.notify()
             }
@@ -369,10 +373,17 @@ class IBKRBroker(
                 val c = Currency.getInstance(currency)
                 when (key) {
                     "BuyingPower" -> {
-                        _account.baseCurrency = c
+                        if (! initialized) {
+                            _account.baseCurrency = c
+                            exchangeRates.baseCurrency = c
+                        }
                         _account.buyingPower = Amount(c, value.toDouble())
+
                     }
                     "CashBalance" -> _account.cash.set(c, value.toDouble())
+                    "ExchangeRate" -> {
+                        exchangeRates.setRate(c,value.toDouble())
+                    }
                 }
             }
         }

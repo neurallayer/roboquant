@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.roboquant.common.Amount
 import org.roboquant.common.Currency
 import java.time.Instant
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Currency converter that supports fixed exchange rates between currencies, so rates that don't change over the
@@ -32,7 +33,9 @@ import java.time.Instant
  *
  * @constructor Create a new fixed currency converter
  */
-class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: Map<Currency, Double>) : ExchangeRates {
+class FixedExchangeRates(var baseCurrency: Currency, exchangeRates: Map<Currency, Double>) : ExchangeRates {
+
+    private val exchangeRates = ConcurrentHashMap(exchangeRates)
 
     constructor(baseCurrency: Currency, vararg rates: Pair<Currency, Double>) : this(baseCurrency, rates.toMap())
 
@@ -49,6 +52,13 @@ class FixedExchangeRates(val baseCurrency: Currency, private val exchangeRates: 
             from === baseCurrency -> 1.0 / exchangeRates.getValue(to)
             else -> exchangeRates.getValue(from) * 1.0 / exchangeRates.getValue(to)
         }
+    }
+
+    /**
+     * Set the exchange [rate] for the [currency]
+     */
+    fun setRate(currency: Currency, rate: Double) {
+        exchangeRates[currency] = rate
     }
 
 }

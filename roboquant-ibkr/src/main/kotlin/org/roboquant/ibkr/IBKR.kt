@@ -55,7 +55,15 @@ internal object IBKR {
     // Holds mapping between IBKR contract ids and assets.
     private val assetCache = ConcurrentHashMap<Int, Asset>()
 
-    fun disconnect(client: EClientSocket) {
+    /**
+     * Register an [asset] to IBKR [conId] value. If this mapping exists, no conversions will be attempted.
+     * This avoids possible ubiquity since the conId uniquely identifies a tradable asset.
+     */
+    fun register(conId: Int, asset: Asset) {
+        if (conId > 0) assetCache[conId] = asset
+    }
+
+    internal fun disconnect(client: EClientSocket) {
         try {
             if (client.isConnected) client.eDisconnect()
         } catch (exception: IOException) {
@@ -67,7 +75,7 @@ internal object IBKR {
      * Connect to a IBKR TWS or Gateway
      */
     @Suppress("TooGenericExceptionCaught")
-    fun connect(wrapper: EWrapper, config: IBKRConfig): EClientSocket {
+    internal fun connect(wrapper: EWrapper, config: IBKRConfig): EClientSocket {
         val oldClient = connections[config.client]
         if (oldClient !== null) disconnect(oldClient)
 
@@ -94,13 +102,26 @@ internal object IBKR {
         return client
     }
 
-    fun getFormattedTime(time: Instant): String = SimpleDateFormat("yyyyMMdd HH:mm:ss").format(Date.from(time))
+    internal fun getFormattedTime(time: Instant): String = SimpleDateFormat("yyyyMMdd HH:mm:ss").format(Date.from(time))
 
     /**
      * Convert a roboquant asset to an IBKR contract.
      */
-    fun Asset.toContract(): Contract {
+    internal fun Asset.toContract(): Contract {
         val contract = Contract()
+        val exchange = when (exchange.exchangeCode) {
+            "NASDAQ" -> "ISLAND"
+            "" -> "SMART"
+            else -> exchange.exchangeCode
+        }
+        contract.exchange(exchange)
+
+        val id = assetCache.filterValues { it == this }.keys.firstOrNull()
+        if (id != null) {
+            contract.conid(id)
+            return contract
+        }
+
         contract.symbol(symbol)
         contract.currency(currency.currencyCode)
         if (multiplier != 1.0) contract.multiplier(multiplier.toString())
@@ -114,20 +135,10 @@ internal object IBKR {
                 contract.localSymbol(symbol)
                 contract.symbol("")
             }
-
             else -> throw UnsupportedException("asset type $type is not yet supported")
         }
 
-        val exchange = when (exchange.exchangeCode) {
-            "NASDAQ" -> "ISLAND"
-            "" -> "SMART"
-            else -> exchange.exchangeCode
-        }
-        contract.exchange(exchange)
-
-        val id = assetCache.filterValues { it == this }.keys.firstOrNull()
-        if (id != null) contract.conid(id)
-        logger.trace { "$this into $contract" }
+        logger.info { "$this into $contract" }
         return contract
     }
 
@@ -139,7 +150,6 @@ internal object IBKR {
         result != null && return result
 
         val exchangeCode = exchange() ?: primaryExch() ?: ""
-
         val asset = when (secType()) {
             Types.SecType.STK -> Asset(symbol(), AssetType.STOCK, currency(), exchangeCode)
             Types.SecType.BOND -> Asset(symbol(), AssetType.BOND, currency(), exchangeCode)

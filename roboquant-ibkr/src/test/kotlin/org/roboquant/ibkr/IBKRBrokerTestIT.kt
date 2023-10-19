@@ -16,19 +16,24 @@
 
 package org.roboquant.ibkr
 
-import kotlin.test.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.summary
 import org.roboquant.common.Config
 import org.roboquant.common.ConfigurationException
+import org.roboquant.common.Currency
+import org.roboquant.common.EUR
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class IBKRBrokerTestIT {
 
+    private val broker by lazy { IBKRBroker() }
+
     @Test
     fun wrongConfig() {
-
+        Config.getProperty("test.ibkr") ?: return
         assertThrows<ConfigurationException> {
             IBKRBroker {
                 port = 87654
@@ -41,12 +46,21 @@ internal class IBKRBrokerTestIT {
     fun test() {
         Config.getProperty("test.ibkr") ?: return
         val past = Instant.now()
-        val broker = IBKRBroker()
         val account = broker.account
         println(account.summary())
         println(account.positions.summary())
         assertTrue(account.lastUpdate >= past)
         broker.disconnect()
+    }
+
+    @Test
+    fun exchangeRates() {
+        Config.getProperty("test.ibkr") ?: return
+        val er = broker.exchangeRates
+        val amount = 1.EUR
+        assertDoesNotThrow {
+            er.convert(amount, Currency.USD, Instant.now())
+        }
     }
 
 }

@@ -28,13 +28,16 @@ import org.roboquant.ibkr.IBKR.toContract
 import java.time.Instant
 
 /**
- * Get realtime bars from IBKR. Please note that often you need paid subscriptions to get this
- * data and additional there are limitations to the frequency of API calls you can make.
+ * Get realtime bars from IBKR. Please note that often you need paid subscriptions to get access to this
+ * data and there are additional limitations to the frequency you can invoke their API's.
+ *
+ * Please note each [Event] will contain only a single asset at a time, even if subscribed to multiple assets.
  *
  * The default settings like the port number are the ones for a paper trading account. It is convenient to
  * share the market data subscriptions between live and paper trading accounts, so it is recommended to
  * use a paper trading account if possible at all.
  *
+ * @param configure additional configuration
  * @constructor
  */
 class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed(30_000) {

@@ -16,13 +16,17 @@
 
 package org.roboquant.brokers
 
-import kotlin.test.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
+import org.roboquant.common.Currency
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.GBP
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.GBP
+import org.roboquant.common.JPY
 import org.roboquant.common.USD
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class FixedExchangeRatesTest {
@@ -42,6 +46,21 @@ internal class FixedExchangeRatesTest {
 
         val r3 = currencyConverter.getRate(100.GBP, EUR, now)
         assertEquals(1.2 / 1.2, r3)
+    }
+
+    @Test
+    fun exceptions() {
+        val currencyConverter = FixedExchangeRates(USD, EUR to 1.2, GBP to 1.2)
+        val now = Instant.now()
+
+        assertThrows<NoSuchElementException> {
+            currencyConverter.getRate(100.JPY, EUR, now)
+        }
+
+        currencyConverter.setRate(Currency.JPY, 100.0)
+        assertDoesNotThrow {
+            currencyConverter.getRate(100.JPY, EUR, now)
+        }
     }
 
 }

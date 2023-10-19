@@ -18,26 +18,20 @@
 
 package org.roboquant.samples
 
+import org.roboquant.brokers.Broker
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.assets
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
+import org.roboquant.ibkr.IBKR
 import org.roboquant.ibkr.IBKRBroker
-import org.roboquant.ibkr.IBKRExchangeRates
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
-import org.roboquant.orders.BracketOrder
-import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.*
 
-fun exchangeRates() {
-    val exchangeRates = IBKRExchangeRates()
-    println(exchangeRates.exchangeRates)
-    exchangeRates.refresh()
-    println(exchangeRates.exchangeRates)
-}
 
-fun broker() {
+private fun broker() {
     Config.exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.1)
     val broker = IBKRBroker()
 
@@ -47,7 +41,7 @@ fun broker() {
     broker.disconnect()
 }
 
-fun closePosition() {
+private fun closePosition() {
     val broker = IBKRBroker()
     val account = broker.account
     println(account.fullSummary())
@@ -61,7 +55,7 @@ fun closePosition() {
     broker.disconnect()
 }
 
-fun showAccount() {
+private fun showAccount() {
 
     // If you have multiple currencies in your trading-account, you need to set up exchange rates
     // Config.exchangeRates = IBKRExchangeRates()
@@ -78,9 +72,9 @@ fun showAccount() {
 }
 
 
-fun placeOrder() {
-    Config.exchangeRates = IBKRExchangeRates()
+private fun placeOrder() {
     val broker = IBKRBroker()
+    Config.exchangeRates = broker.exchangeRates
     val account = broker.account
     println(account.fullSummary())
 
@@ -100,36 +94,47 @@ fun placeOrder() {
 }
 
 
-fun placeSimpleOrder() {
-    Config.exchangeRates = IBKRExchangeRates()
+private fun Broker.place(order: Order) {
+    place(listOf(order))
+    Thread.sleep(5_000)
+    sync()
+    println(account.fullSummary())
+}
+
+private fun placeSimpleOrders() {
+    val asset = Asset("TSLA", AssetType.STOCK, "USD", "NASDAQ")
+
+    // Link the asset to an IBKR contract-id.
+    IBKR.register(76792991, asset)
+
     val broker = IBKRBroker()
+    Config.exchangeRates = broker.exchangeRates
     val account = broker.account
     println(account.fullSummary())
 
-    val asset = Asset("TSLA", AssetType.STOCK, "USD", "SMART")
 
-    repeat(10) {
-        // Place a buy order
-        val buy = MarketOrder(asset, Size.ONE)
-        broker.place(listOf(buy))
-        Thread.sleep(10_000)
-        broker.sync()
-        println(broker.account.fullSummary())
+    // Place a buy order
+    val buy = MarketOrder(asset, Size.ONE)
+    broker.place(buy)
 
-        // Place a sell order
-        val sell = MarketOrder(asset, -Size.ONE)
-        broker.place(listOf(sell))
-        Thread.sleep(10_000)
-        broker.sync()
-        println(broker.account.fullSummary())
-    }
+    // Place a sell order
+    val sell = TrailOrder(asset, -Size.ONE, 1.percent)
+    broker.place(sell)
+
+    // Cancel the sell order
+    val order = broker.account.openOrders.last()
+    val cancel = CancelOrder(order)
+    broker.place(cancel)
+
+    // Place another sell order
+    val sell2 = MarketOrder(asset, -Size.ONE)
+    broker.place(sell2)
 
     broker.disconnect()
     println("done")
 }
 
-
-fun liveFeedEU() {
+private fun liveFeedEU() {
     val feed = IBKRLiveFeed()
     val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
     feed.subscribe(listOf(asset))
@@ -142,7 +147,7 @@ fun liveFeedEU() {
     feed.disconnect()
 }
 
-fun liveFeedUS() {
+private fun liveFeedUS() {
     val feed = IBKRLiveFeed()
     val asset = Asset("TSLA", AssetType.STOCK, "USD")
     feed.subscribe(listOf(asset))
@@ -155,7 +160,7 @@ fun liveFeedUS() {
     feed.disconnect()
 }
 
-fun historicFeed() {
+private fun historicFeed() {
     val feed = IBKRHistoricFeed()
 
     // This assumes you have a valid market subscription for European stocks
@@ -168,7 +173,7 @@ fun historicFeed() {
 }
 
 
-fun historicFeed2() {
+private fun historicFeed2() {
     val feed = IBKRHistoricFeed()
 
     // This assumes you have a valid market subscription for European stocks
@@ -181,7 +186,7 @@ fun historicFeed2() {
 }
 
 
-fun historicFuturesFeed() {
+private fun historicFuturesFeed() {
     val feed = IBKRHistoricFeed()
 
     // This assumes you have a valid market data subscriptions for these futures
@@ -200,7 +205,6 @@ internal fun main() {
 
     when ("PLACE_SIMPLE_ORDER") {
         "ACCOUNT" -> showAccount()
-        "EXCH" -> exchangeRates()
         "BROKER" -> broker()
         "CLOSE_POSITION" -> closePosition()
         "LIVE_FEED_EU" -> liveFeedEU()
@@ -209,7 +213,7 @@ internal fun main() {
         "HISTORIC2" -> historicFeed2()
         "HISTORIC3" -> historicFuturesFeed()
         "PLACE_ORDER" -> placeOrder()
-        "PLACE_SIMPLE_ORDER" -> placeSimpleOrder()
+        "PLACE_SIMPLE_ORDER" -> placeSimpleOrders()
     }
 
 }
