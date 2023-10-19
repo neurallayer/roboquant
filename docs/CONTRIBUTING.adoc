@@ -12,7 +12,7 @@ Submit issues https://github.com/neurallayer/roboquant/issues[here].
 * When submitting a bug report:
 ** Test it against the most recently released version. It might have been already fixed.
 ** Include the code that reproduces the problem or attach the link to the repository with the project which fully reproduces the problem.
-** However, don't put off reporting any weird or rarely appearing issues just because you cannot consistently reproduce them.
+** However, don't put off reporting any unique or rarely appearing issues just because you cannot consistently reproduce them.
 ** If the bug is in behavior, then explain what behavior you've expected and what you've got.
 * When submitting a feature request:
 ** Explain why you need the feature &mdash; what's your use-case, what's your domain.

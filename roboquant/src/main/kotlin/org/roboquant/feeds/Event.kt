@@ -79,6 +79,13 @@ class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
      * Return true if this event has no actions, false otherwise
      */
     fun isEmpty(): Boolean = actions.isEmpty()
+
+    /**
+     * Provide the event time
+     */
+    override fun toString(): String {
+        return "Event(time=$time actions=${actions.size})"
+    }
 }
 
 /**

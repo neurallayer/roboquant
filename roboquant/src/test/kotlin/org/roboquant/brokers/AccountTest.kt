@@ -17,12 +17,12 @@
 package org.roboquant.brokers
 
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.orders.summary
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -71,7 +71,6 @@ internal class AccountTest {
 
         assertTrue(account.summary().content.isNotEmpty())
         assertTrue(account.fullSummary().content.isNotEmpty())
-        assertTrue(account.fullSummary(true).content.isNotEmpty())
     }
 
     @Test

@@ -85,6 +85,7 @@ class IBKRBroker(
         synchronized(accountUpdateLock) {
             client.reqAccountUpdates(true, accountId)
             accountUpdateLock.wait(IBKR.MAX_RESPONSE_TIME)
+            if (! initialized) logger.warn { "not correctly initialized" }
         }
 
         sync()

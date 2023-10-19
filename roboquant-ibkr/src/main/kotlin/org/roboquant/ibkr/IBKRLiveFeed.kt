@@ -84,7 +84,9 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed(30_000) {
             val contract = asset.toContract()
             client.reqRealTimeBars(++reqId, contract, interval, type, false, arrayListOf())
             subscriptions[reqId] = Subscription(asset, interval)
-            logger.info("Added subscription to receive realtime bars for ${contract.symbol()}")
+            logger.info {
+                "Added subscription symbol=${asset.symbol} contractId=${contract.conid()} requestId=$reqId"
+            }
         }
     }
 
@@ -110,12 +112,13 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed(30_000) {
         ) {
             val subscription = subscriptions[reqId]
             if (subscription == null) {
-                logger.warn("unexpected realtimeBar received with request id $reqId")
+                logger.warn("unexpected realtimeBar received requestId=$reqId")
             } else {
                 val v = volume?.value()?.toDouble() ?: Double.NaN
                 val action = PriceBar(subscription.asset, open, high, low, close, v, subscription.interval.seconds)
                 val now = Instant.ofEpochSecond(time) // IBKR uses second-resolution
                 val event = Event(listOf(action), now)
+                logger.trace { "send event=$event" }
                 send(event)
             }
         }

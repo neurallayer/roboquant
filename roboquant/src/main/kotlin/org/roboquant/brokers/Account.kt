@@ -110,13 +110,12 @@ class Account(
 
     /**
      * Returns a summary that contains the high-level account information, the available cash balances and
-     * the open positions. Optionally the summary can convert wallets to a [singleCurrency], default is not.
+     * the open positions.
      */
-    fun summary(singleCurrency: Boolean = false): Summary {
+    fun summary(): Summary {
 
         fun c(w: Wallet): Any {
-            if (w.isEmpty()) return Amount(baseCurrency, 0.0)
-            return if (singleCurrency) convert(w) else w
+            return if (w.isEmpty()) Amount(baseCurrency, 0.0) else w
         }
 
         val s = Summary("account")
@@ -162,8 +161,8 @@ class Account(
      * Provide a full summary of the account that contains all cash, orders, trades and open positions. During back
      * testing this can become a long list of items, so look at [summary] for a shorter summary.
      */
-    fun fullSummary(singleCurrency: Boolean = false): Summary {
-        val s = summary(singleCurrency)
+    fun fullSummary(): Summary {
+        val s = summary()
         s.add(cash.summary())
         s.add(positions.summary())
         s.add(openOrders.summary("open orders"))

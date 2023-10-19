@@ -44,7 +44,7 @@ data class IBKRConfig(
 /**
  * Shared logic for IBKR Broker and Feed classes
  */
-internal object IBKR {
+object IBKR {
 
     // Timeout in millis when waiting for one or more response messages to arrive
     internal const val MAX_RESPONSE_TIME = 5_000L

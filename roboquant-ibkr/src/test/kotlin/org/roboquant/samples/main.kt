@@ -18,6 +18,7 @@
 
 package org.roboquant.samples
 
+import org.roboquant.Roboquant
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.assets
@@ -28,7 +29,11 @@ import org.roboquant.ibkr.IBKR
 import org.roboquant.ibkr.IBKRBroker
 import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
+import org.roboquant.loggers.ConsoleLogger
+import org.roboquant.metrics.AccountMetric
+import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.*
+import org.roboquant.strategies.EMAStrategy
 
 
 private fun broker() {
@@ -102,7 +107,7 @@ private fun Broker.place(order: Order) {
 }
 
 private fun placeSimpleOrders() {
-    val asset = Asset("TSLA", AssetType.STOCK, "USD", "NASDAQ")
+    val asset = Asset("TSLA", AssetType.STOCK, "USD")
 
     // Link the asset to an IBKR contract-id.
     IBKR.register(76792991, asset)
@@ -130,6 +135,30 @@ private fun placeSimpleOrders() {
     val sell2 = MarketOrder(asset, -Size.ONE)
     broker.place(sell2)
 
+    broker.disconnect()
+    println("done")
+}
+
+
+private fun simplePaperTrade() {
+    val asset = Asset("TSLA", AssetType.STOCK, "USD")
+
+    // Link the asset to an IBKR contract-id.
+    IBKR.register(76792991, asset)
+
+    val broker = IBKRBroker()
+    Config.exchangeRates = broker.exchangeRates
+    val account = broker.account
+    println(account.fullSummary())
+
+    val feed = IBKRLiveFeed { client = 3 }
+    feed.subscribe(asset)
+
+    val strategy = EMAStrategy.PERIODS_12_26
+    val rq = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = ConsoleLogger())
+    rq.run(feed, Timeframe.next(2.hours))
+
+    feed.disconnect()
     broker.disconnect()
     println("done")
 }
@@ -203,7 +232,7 @@ private fun historicFuturesFeed() {
 
 internal fun main() {
 
-    when ("PLACE_SIMPLE_ORDER") {
+    when ("SIMPLE_PAPER_TRADE") {
         "ACCOUNT" -> showAccount()
         "BROKER" -> broker()
         "CLOSE_POSITION" -> closePosition()
@@ -214,6 +243,7 @@ internal fun main() {
         "HISTORIC3" -> historicFuturesFeed()
         "PLACE_ORDER" -> placeOrder()
         "PLACE_SIMPLE_ORDER" -> placeSimpleOrders()
+        "SIMPLE_PAPER_TRADE" -> simplePaperTrade()
     }
 
 }
