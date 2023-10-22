@@ -310,6 +310,8 @@ class IBKRBroker(
             val trade = tradeMap[id]
             if (trade != null) {
                 val newTrade = trade.copy(
+                    time = Instant.now(),
+                    size = Size.ZERO,
                     feeValue = commissionReport.commission()
                     // Bug in value making it huge
                     // pnlValue = commissionReport.realizedPNL()
@@ -319,7 +321,7 @@ class IBKRBroker(
                 tradeMap.remove(id)
                 _account.lastUpdate = Instant.now()
             } else {
-                logger.warn("Commission for none existing trade ${commissionReport.execId()}")
+                logger.warn("Ignoring commission for none existing trade ${commissionReport.execId()}")
             }
         }
 

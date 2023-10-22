@@ -162,7 +162,7 @@
                     <plugin>
                         <groupId>org.jetbrains.dokka</groupId>
                         <artifactId>dokka-maven-plugin</artifactId>
-                        <version>1.8.10</version>
+                        <version>1.9.10</version>
                         <executions>
                             <execution>
                                 <phase>prepare-package</phase>
@@ -256,7 +256,7 @@
                     <plugin>
                         <groupId>org.jetbrains.dokka</groupId>
                         <artifactId>dokka-maven-plugin</artifactId>
-                        <version>1.8.10</version>
+                        <version>1.9.10</version>
                         <executions>
                             <execution>
                                 <phase>pre-site</phase>

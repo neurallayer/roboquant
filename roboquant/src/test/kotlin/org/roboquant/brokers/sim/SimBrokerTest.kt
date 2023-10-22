@@ -54,7 +54,7 @@ internal class SimBrokerTest {
         val broker = SimBroker()
 
         val event = TestData.event()
-        broker.place(emptyList())
+        broker.place(emptyList(), event.time)
         broker.sync(event)
         val account = broker.account
         assertTrue(account.openOrders.isEmpty())
@@ -82,7 +82,7 @@ internal class SimBrokerTest {
         val now = Instant.now()
         val event = Event(listOf(price), now)
 
-        broker.place(listOf(order))
+        broker.place(listOf(order), now)
         broker.sync(event)
 
         val account1 = broker.account
@@ -100,7 +100,7 @@ internal class SimBrokerTest {
         val now = Instant.now()
         val event = Event(listOf(price), now)
 
-        broker.place(listOf(order))
+        broker.place(listOf(order), now)
         broker.sync(event)
         val account = broker.account
         assertEquals(1, account.closedOrders.size)
@@ -130,7 +130,7 @@ internal class SimBrokerTest {
         val broker = SimBroker()
         val event = TestData.event()
         val orders = listOf(TestData.euMarketOrder(), TestData.usMarketOrder())
-        broker.place(orders)
+        broker.place(orders, event.time)
         broker.sync(event)
         var account = broker.account
         assertEquals(account.closedOrders.size, account.trades.size)
@@ -154,7 +154,7 @@ internal class SimBrokerTest {
         val now = Instant.now()
         val event = Event(listOf(price), now)
 
-        broker.place(listOf(order))
+        broker.place(listOf(order), event.time)
         broker.sync(event)
         assertEquals(1, broker.account.openOrders.size)
         val state = broker.account.openOrders.first()
@@ -162,7 +162,7 @@ internal class SimBrokerTest {
         val order2 = LimitOrder(asset,Size.ONE, 101.0)
         val updateOrder = UpdateOrder(state, order2)
         val event2 = Event(listOf(price), now + 1.millis)
-        broker.place(listOf(updateOrder))
+        broker.place(listOf(updateOrder), event2.time)
         broker.sync(event2)
 
     }

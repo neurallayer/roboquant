@@ -52,7 +52,7 @@ interface Broker : Lifecycle {
      * Optional provide a [time] that can be used by the broker as a safety check to determine you are not submitting
      * back test orders to a real broker.
      *
-     * Please note that without invoking [sync], the [account] object will not reflect these new orders.
+     * Please note that without invoking [sync], the [account] object will not reflect the changes
      */
     fun place(orders: List<Order>, time: Instant = Instant.now())
 

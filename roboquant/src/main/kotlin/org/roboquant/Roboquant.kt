@@ -236,7 +236,7 @@ data class Roboquant(
         val orders = cancelOrders + changeOrders
         val actions = account.positions.map { TradePrice(it.asset, it.mktPrice) }
         val event = Event(actions, eventTime)
-        broker.place(orders)
+        broker.place(orders, eventTime)
         broker.sync(event)
         val newAccount = broker.account
         val metricResult = getMetrics(newAccount, event)

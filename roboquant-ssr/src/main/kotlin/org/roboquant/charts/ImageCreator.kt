@@ -57,7 +57,7 @@ class ImageCreator {
         fn
     }
 
-    /*
+    /**
      * Render the chart as an SVG image and return the result as a String.
      *
      * The first time this method is invoked, it is slower because the context with all the Echarts code will be loaded.

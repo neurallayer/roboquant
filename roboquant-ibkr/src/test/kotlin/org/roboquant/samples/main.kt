@@ -34,6 +34,7 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.*
 import org.roboquant.strategies.EMAStrategy
+import java.time.Instant
 
 
 private fun broker() {
@@ -54,7 +55,7 @@ private fun closePosition() {
     // Place a new market sell order
     val position = account.positions.first()
     val order = MarketOrder(position.asset, -position.size)
-    broker.place(listOf(order))
+    broker.place(listOf(order), account.lastUpdate)
     Thread.sleep(10_000)
     println(account.fullSummary())
     broker.disconnect()
@@ -90,7 +91,7 @@ private fun placeOrder() {
         185.50
     )
 
-    broker.place(listOf(order))
+    broker.place(listOf(order), Instant.now())
     Thread.sleep(5_000)
     val account2 = broker.account
     println(account2.fullSummary())
@@ -100,7 +101,7 @@ private fun placeOrder() {
 
 
 private fun Broker.place(order: Order) {
-    place(listOf(order))
+    place(listOf(order), Instant.now())
     Thread.sleep(5_000)
     sync()
     println(account.fullSummary())

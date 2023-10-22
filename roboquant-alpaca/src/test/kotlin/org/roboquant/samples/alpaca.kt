@@ -32,6 +32,7 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy
+import java.time.Instant
 
 
 private val symbols = arrayOf(
@@ -156,7 +157,7 @@ private fun alpacaHistoricFeed2() {
 private fun singleOrder() {
     val broker = AlpacaBroker()
     val order = MarketOrder(Asset("TSLA"), Size.ONE)
-    broker.place(listOf(order))
+    broker.place(listOf(order), Instant.now())
     Thread.sleep(5000)
     broker.sync()
     println(broker.account.summary())

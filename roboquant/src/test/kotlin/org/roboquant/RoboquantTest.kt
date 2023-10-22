@@ -17,7 +17,6 @@
 package org.roboquant
 
 import kotlinx.coroutines.runBlocking
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.sim.NoCostPricingEngine
@@ -36,10 +35,7 @@ import org.roboquant.metrics.Metric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class RoboquantTest {
 
@@ -65,7 +61,7 @@ internal class RoboquantTest {
     fun liquidateTest() {
         val broker = SimBroker()
         val event = TestData.event()
-        broker.place(listOf(TestData.usMarketOrder()))
+        broker.place(listOf(TestData.usMarketOrder()), event.time)
         broker.sync(event)
         var account = broker.account
         assertEquals(1, account.positions.size)
