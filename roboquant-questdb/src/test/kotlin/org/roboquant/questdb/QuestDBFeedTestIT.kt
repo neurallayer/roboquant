@@ -1,14 +1,13 @@
 package org.roboquant.questdb
 
-import kotlin.test.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
-import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
-import org.roboquant.common.months
-import org.roboquant.common.timeframe
-import org.roboquant.feeds.PriceBar
+import org.roboquant.common.*
+import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalkFeed
 import java.io.File
+import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
@@ -61,6 +60,57 @@ internal class QuestDBFeedTestIT {
         assertEquals(feed1.assets + feed2.assets, outputFeed.assets)
         assertEquals(feed1.timeline.timeframe, outputFeed.timeframe)
         outputFeed.close()
+    }
+
+
+
+
+    @Test
+    fun priceQuotes() {
+
+        class QuoteFeed: Feed {
+            override suspend fun play(channel: EventChannel) {
+                val asset = Asset("TEST")
+                val now =  Instant.now()
+                repeat(100) {
+                    val action = PriceQuote(asset, 100.0, 10000.0, 100.0, 10000.0)
+                    val event = Event(listOf(action), now + 1.millis)
+                    channel.send(event)
+                }
+            }
+
+        }
+
+        val recorder = QuestDBRecorder(folder.toPath())
+        val feed = QuoteFeed()
+
+        assertDoesNotThrow {
+            recorder.record<PriceQuote>(feed, "quotes")
+        }
+    }
+
+    @Test
+    fun tradePrice() {
+
+        class QuoteFeed: Feed {
+            override suspend fun play(channel: EventChannel) {
+                val asset = Asset("TEST")
+                val now =  Instant.now()
+                repeat(100) {
+                    val action = TradePrice(asset, 100.0, 10000.0)
+                    val event = Event(listOf(action), now + 1.millis)
+                    channel.send(event)
+                }
+            }
+
+        }
+
+        val recorder = QuestDBRecorder(folder.toPath())
+        val feed = QuoteFeed()
+
+        assertDoesNotThrow {
+            recorder.record<TradePrice>(feed, "trades")
+        }
     }
 
 

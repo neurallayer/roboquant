@@ -142,10 +142,15 @@ private fun placeSimpleOrders() {
 
 
 private fun simplePaperTrade() {
-    val asset = Asset("TSLA", AssetType.STOCK, "USD")
+    // Lets trade these 3 tech stock
+    val tsla = Asset("TSLA", AssetType.STOCK, "USD")
+    val msft = Asset("MSFT", AssetType.STOCK, "USD")
+    val googl = Asset("GOOGL", AssetType.STOCK, "USD")
 
     // Link the asset to an IBKR contract-id.
-    IBKR.register(76792991, asset)
+    IBKR.register(76792991, tsla)
+    IBKR.register(272093, msft)
+    IBKR.register(208813719, googl)
 
     val broker = IBKRBroker()
     Config.exchangeRates = broker.exchangeRates
@@ -153,7 +158,7 @@ private fun simplePaperTrade() {
     println(account.fullSummary())
 
     val feed = IBKRLiveFeed { client = 3 }
-    feed.subscribe(asset)
+    feed.subscribe(tsla, msft, googl)
 
     val strategy = EMAStrategy.PERIODS_12_26
     val rq = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = ConsoleLogger())

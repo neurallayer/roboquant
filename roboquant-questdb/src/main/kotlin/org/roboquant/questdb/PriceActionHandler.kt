@@ -134,7 +134,7 @@ private class TradePriceHandler : PriceActionHandler<TradePrice> {
                 |asset SYMBOL,
                 |time TIMESTAMP,
                 |price DOUBLE,  
-                |volume DOUBLE, 
+                |volume DOUBLE 
                 |) timestamp(time) PARTITION BY $partition""".trimMargin(),
         )
     }
