@@ -16,11 +16,11 @@
 
 package org.roboquant.brokers
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.common.*
 import org.roboquant.common.Currency.Companion.USD
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -45,9 +45,13 @@ internal class TradesTest {
 
     @Test
     fun basic() {
-        val trade = Trade(Instant.now(), Asset("TEST"), -Size(10), 100.0, 5.0, 100.0, 1)
-        assertEquals(-995.0, trade.totalCost.value)
-        assertEquals(100.0 / 995.0, trade.pnlPercentage)
+        val trade = Trade(Instant.now(), Asset("TEST"), Size(10), 100.0, 5.0, 100.0, 1)
+        assertEquals(1005.0, trade.totalCost.value)
+        assertEquals(100.0 / 1005.0, trade.pnlPercentage)
+
+        val trade2 = Trade(Instant.now(), Asset("TEST"), -Size(10), 100.0, 5.0, 100.0, 1)
+        assertEquals(-995.0, trade2.totalCost.value)
+        assertEquals(100.0 / 995.0, trade2.pnlPercentage)
     }
 
     @Test
