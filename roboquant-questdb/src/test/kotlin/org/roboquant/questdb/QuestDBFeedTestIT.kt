@@ -62,19 +62,16 @@ internal class QuestDBFeedTestIT {
         outputFeed.close()
     }
 
-
-
-
     @Test
     fun priceQuotes() {
 
-        class QuoteFeed: Feed {
+        class QuoteFeed : Feed {
             override suspend fun play(channel: EventChannel) {
                 val asset = Asset("TEST")
-                val now =  Instant.now()
+                val now = Instant.now()
                 repeat(100) {
                     val action = PriceQuote(asset, 100.0, 10000.0, 100.0, 10000.0)
-                    val event = Event(listOf(action), now + 1.millis)
+                    val event = Event(listOf(action), now + it.millis)
                     channel.send(event)
                 }
             }
@@ -83,22 +80,29 @@ internal class QuestDBFeedTestIT {
 
         val recorder = QuestDBRecorder(folder.toPath())
         val feed = QuoteFeed()
+        val name = "quotes"
 
         assertDoesNotThrow {
-            recorder.record<PriceQuote>(feed, "quotes")
+            recorder.record<PriceQuote>(feed, name)
         }
+
+        val outputFeed = QuestDBFeed(name, folder.toPath())
+        assertEquals(1, outputFeed.assets.size)
+        println(outputFeed.timeframe)
+        assertEquals(99, outputFeed.timeframe.duration.toMillisPart())
+        outputFeed.close()
     }
 
     @Test
     fun tradePrice() {
 
-        class QuoteFeed: Feed {
+        class TradeFeed : Feed {
             override suspend fun play(channel: EventChannel) {
                 val asset = Asset("TEST")
-                val now =  Instant.now()
+                val now = Instant.now()
                 repeat(100) {
                     val action = TradePrice(asset, 100.0, 10000.0)
-                    val event = Event(listOf(action), now + 1.millis)
+                    val event = Event(listOf(action), now + it.millis)
                     channel.send(event)
                 }
             }
@@ -106,11 +110,18 @@ internal class QuestDBFeedTestIT {
         }
 
         val recorder = QuestDBRecorder(folder.toPath())
-        val feed = QuoteFeed()
+        val feed = TradeFeed()
+        val name = "trades"
 
         assertDoesNotThrow {
-            recorder.record<TradePrice>(feed, "trades")
+            recorder.record<TradePrice>(feed, name)
         }
+
+        val outputFeed = QuestDBFeed(name, folder.toPath())
+        assertEquals(1, outputFeed.assets.size)
+        println(outputFeed.timeframe)
+        assertEquals(99, outputFeed.timeframe.duration.toMillisPart())
+        outputFeed.close()
     }
 
 
