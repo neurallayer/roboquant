@@ -18,7 +18,7 @@ package org.roboquant.common
 
 /**
  * Append-only list that is thread safe for adding items and iterating over. Although mutable, it implements a
- * regular List interface since the only added methods are
+ * regular List interface since the only added methods are `add` and `addAll`
  */
 internal class AppendOnlyList<E> private constructor(private val data: ArrayList<E>, private val viewSize: Int) :
     List<E> {

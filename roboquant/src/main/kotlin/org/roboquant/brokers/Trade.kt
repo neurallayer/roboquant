@@ -19,6 +19,7 @@ package org.roboquant.brokers
 import org.roboquant.common.*
 import java.time.Instant
 import java.time.temporal.ChronoUnit
+import kotlin.math.absoluteValue
 
 /**
  * Trade is created once an order has been (partially) filled and records various aspects of a trade like its [size],
@@ -68,7 +69,7 @@ data class Trade(
      * Returns the PNL as a percentage of the total trade
      */
     val pnlPercentage: Double
-        get() = pnlValue / -totalCost.value
+        get() = pnlValue / totalCost.value.absoluteValue
 }
 
 /**
