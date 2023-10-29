@@ -82,7 +82,7 @@ class IBKRHistoricFeed(
      * ```
      *
      * Historical Data requests need to be assembled in such a way that only a few thousand bars are returned at a time
-     * due to API limits of IBKR. So you cannot retrieve short [barSize] for a very long [duration].
+     * due to API limits of IBKR. So you cannot retrieve short [barSize] for a long [duration].
      */
     fun retrieve(
         assets: Collection<Asset>,

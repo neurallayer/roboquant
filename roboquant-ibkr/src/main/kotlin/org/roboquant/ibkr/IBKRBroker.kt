@@ -309,7 +309,7 @@ class IBKRBroker(
             val id = commissionReport.execId().substringBeforeLast('.')
             val trade = tradeMap[id]
             if (trade != null) {
-                val newTrade = trade.copy(
+                val commisionTrade = trade.copy(
                     time = Instant.now(),
                     size = Size.ZERO,
                     feeValue = commissionReport.commission()
@@ -317,7 +317,7 @@ class IBKRBroker(
                     // pnlValue = commissionReport.realizedPNL()
                 )
                 // Add this trade as a separate trade
-                _account.addTrade(newTrade)
+                _account.addTrade(commisionTrade)
                 tradeMap.remove(id)
                 _account.lastUpdate = Instant.now()
             } else {
@@ -333,7 +333,7 @@ class IBKRBroker(
             val id = execution.execId().substringBeforeLast('.')
 
             if (id in tradeMap) {
-                logger.info("trade already handled, no support for corrections currently")
+                logger.info("trade already handled, no support for corrections")
                 return
             }
 
@@ -350,6 +350,7 @@ class IBKRBroker(
                 execution.orderId()
             )
             tradeMap[id] = trade
+            _account.addTrade(trade)
 
         }
 
