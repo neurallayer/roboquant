@@ -36,7 +36,8 @@ import java.time.Instant
  * come with roboquant use this class under the hood, but that is not a requirement for third party integrations.
  *
  * @property baseCurrency The base currency to use for things like reporting
- * @property retention The time to retain trades and closed orders
+ * @property retention The time to retain trades and closed orders, default is 1 year. Setting this value to a shorter
+ * time-span reduces memory usage in large back tests.
  *
  * @constructor Create a new instance of InternalAccount
  */
@@ -50,7 +51,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * The trades that have been executed
      */
-    private var trades = mutableListOf<Trade>()
+    private val trades = mutableListOf<Trade>()
 
     /**
      * Open orders
@@ -61,7 +62,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
      * closed.
      */
-    private var closedOrders = mutableListOf<OrderState>()
+    private val closedOrders = mutableListOf<OrderState>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -81,12 +82,10 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * Clear all the state in this account.
      */
+    @Synchronized
     fun clear() {
-        // Create new instances since clear() could impact previously returned
-        // accounts since they contain views of the closedOrders and trades.
-        closedOrders = mutableListOf()
-        trades = mutableListOf()
-
+        closedOrders.clear()
+        trades.clear()
         lastUpdate = Instant.MIN
         openOrders.clear()
         portfolio.clear()
@@ -96,6 +95,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * Set the [position] a portfolio. If the position is closed, it is removed all together from the [portfolio].
      */
+    @Synchronized
     fun setPosition(position: Position) {
         if (position.closed) {
             portfolio.remove(position.asset)
@@ -114,6 +114,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      * Add [orders] as initial orders. This is the first step a broker should take before further processing
      * the orders. Future updates using the [updateOrder] method will fail if there is no known order already present.
      */
+    @Synchronized
     fun initializeOrders(orders: Collection<Order>) {
         val newOrders = orders.map { OrderState(it) }
         newOrders.forEach { openOrders[it.orderId] = it }
@@ -126,6 +127,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      *
      * In case of failure, this method return false
      */
+    @Synchronized
     fun updateOrder(order: Order, time: Instant, status: OrderStatus) : Boolean {
         val id = order.id
         val state = openOrders[id] ?: return false
@@ -166,6 +168,11 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     }
 
     private fun enforeRetention() {
+        if (retention.isZero) {
+            trades.clear()
+            closedOrders.clear()
+            return
+        }
         if (lastUpdate > Timeframe.MIN) {
             val earliest = lastUpdate - retention
             while (trades.isNotEmpty() && trades.first().time < earliest) {
@@ -191,9 +198,9 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
             baseCurrency,
             lastUpdate,
             cash.clone(),
-            trades.toList(), // optimized for large collections
+            trades.toList(),
             openOrders.values.toList(),
-            closedOrders.toList(), // optimized for large collections
+            closedOrders.toList(),
             portfolio.values.toList(),
             buyingPower
         )

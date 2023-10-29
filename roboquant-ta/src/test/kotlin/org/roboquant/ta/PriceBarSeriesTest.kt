@@ -114,7 +114,7 @@ internal class PriceBarSeriesTest {
         val pbs = getPBS(93)
         assertTrue(pbs.isFull())
 
-        // an aggregate of one is just an expensive copy ;)
+        // an aggregate of one is just an expensive copy
         val agg1 = pbs.aggregate(1)
         assertEquals(agg1.high.toList(), pbs.high.toList())
         assertEquals(agg1.volume.toList(), pbs.volume.toList())

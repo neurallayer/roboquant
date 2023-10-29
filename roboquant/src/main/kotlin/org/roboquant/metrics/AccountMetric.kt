@@ -22,9 +22,9 @@ import org.roboquant.feeds.Event
 /**
  * Capture the following high-level statistics about the [Account]:
  *
- * - `account.order`  Total number of orders,
- * - `account.trades`  Total number of trades,
- * - `account.positions` Total number of open positions
+ * - `account.order`  Number of orders (within retention period),
+ * - `account.trades`  Number of trades (within retention period),
+ * - `account.positions` Number of open positions
  * - `account.cash` Total cash value
  * - `account.buyingpower` Buying power available
  * - `account.equity` the equity value of the account (= cash + positions)
