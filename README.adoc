@@ -1,3 +1,4 @@
+// suppress inspection "Annotator" for whole file
 = Roboquant
 :icons: font
 
