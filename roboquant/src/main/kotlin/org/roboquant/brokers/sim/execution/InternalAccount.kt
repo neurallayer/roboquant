@@ -36,9 +36,11 @@ import java.time.Instant
  * come with roboquant use this class under the hood, but that is not a requirement for third party integrations.
  *
  * @property baseCurrency The base currency to use for things like reporting
+ * @property retention The time to retain trades and closed orders
+ *
  * @constructor Create a new instance of InternalAccount
  */
-class InternalAccount(var baseCurrency: Currency) {
+class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpan = 1.years) {
 
     /**
      * When was the account last updated, default if not set is [Instant.MIN]
@@ -48,7 +50,7 @@ class InternalAccount(var baseCurrency: Currency) {
     /**
      * The trades that have been executed
      */
-    private var trades = AppendOnlyList<Trade>()
+    private var trades = mutableListOf<Trade>()
 
     /**
      * Open orders
@@ -59,7 +61,7 @@ class InternalAccount(var baseCurrency: Currency) {
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
      * closed.
      */
-    private var closedOrders = AppendOnlyList<OrderState>()
+    private var closedOrders = mutableListOf<OrderState>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -77,26 +79,13 @@ class InternalAccount(var baseCurrency: Currency) {
     val portfolio = mutableMapOf<Asset, Position>()
 
     /**
-     * Remove all closed orders and trades.
-     *
-     * This won't impact the functioning of the internal account and speedup large back test with many orders.
-     * However, some metrics that rely on all orders/trades being available won't function properly.
-     */
-    internal fun removeClosedOrdersAndTrades() {
-        // Create new instances since clear() could impact previously returned
-        // accounts since they contain views of the closedOrders and trades.
-        closedOrders = AppendOnlyList()
-        trades = AppendOnlyList()
-    }
-
-    /**
      * Clear all the state in this account.
      */
     fun clear() {
         // Create new instances since clear() could impact previously returned
         // accounts since they contain views of the closedOrders and trades.
-        closedOrders = AppendOnlyList()
-        trades = AppendOnlyList()
+        closedOrders = mutableListOf()
+        trades = mutableListOf()
 
         lastUpdate = Instant.MIN
         openOrders.clear()
@@ -154,6 +143,7 @@ class InternalAccount(var baseCurrency: Currency) {
     /**
      * Add a new [trade] to this internal account
      */
+    @Synchronized
     fun addTrade(trade: Trade) {
         trades.add(trade)
     }
@@ -175,18 +165,35 @@ class InternalAccount(var baseCurrency: Currency) {
         }
     }
 
+    private fun enforeRetention() {
+        if (lastUpdate > Timeframe.MIN) {
+            val earliest = lastUpdate - retention
+            while (trades.isNotEmpty() && trades.first().time < earliest) {
+                trades.removeFirst()
+            }
+
+            while (closedOrders.isNotEmpty() && closedOrders.first().closedAt < earliest) {
+                closedOrders.removeFirst()
+            }
+        }
+    }
+
+
     /**
      * Create an immutable [Account] instance that can be shared with other components (Policy and Metric) and is
      * guaranteed not to change after it has been created.
      */
+    @Synchronized
     fun toAccount(): Account {
+        enforeRetention()
+
         return Account(
             baseCurrency,
             lastUpdate,
             cash.clone(),
-            trades.view(), // optimized for large collections
+            trades.toList(), // optimized for large collections
             openOrders.values.toList(),
-            closedOrders.view(), // optimized for large collections
+            closedOrders.toList(), // optimized for large collections
             portfolio.values.toList(),
             buyingPower
         )

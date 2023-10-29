@@ -17,17 +17,15 @@
 package org.roboquant.metrics
 
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.realizedPNL
 import org.roboquant.brokers.unrealizedPNL
 import org.roboquant.feeds.Event
 
 /**
- * Metric that calculates the realized and unrealized Profit and Loss. The unrealized PNL is calculated based
- * on the open positions and their last known market prices. The realized PNL is based on actual trades
- * and the profit they generated. All amounts are converted to the base currency of the account.
+ * Metric that calculates the realized and unrealized Profit and Loss.
  *
- * This metric can slow down back-tests with many trades, since at each step in a run, this metric iterates over
- * all available trades to calculate the realized PNL.
+ * - The unrealized PNL is calculated based on the open positions and their last known market prices.
+ * - The total PNL is based on growth on equity
+ * - The realized PNL is based on the difference between the above two
  *
  * Metric names used:
  * ```
@@ -39,21 +37,27 @@ import org.roboquant.feeds.Event
  */
 class PNLMetric : Metric {
 
+    var equity = Double.NaN
+
     /**
      * @see Metric.calculate
      */
     override fun calculate(account: Account, event: Event): Map<String, Double> {
-        val pnl = account.trades.realizedPNL
-        val realizedPNL = pnl.convert(account.baseCurrency, event.time).value
+        if (equity.isNaN()) equity = account.equityAmount.value
+        val pnl = account.equityAmount.value - equity
 
         val pnl2 = account.positions.unrealizedPNL
         val unrealizedPNL = pnl2.convert(account.baseCurrency, event.time).value
 
         return mapOf(
-            "pnl.realized" to realizedPNL,
+            "pnl.realized" to pnl - unrealizedPNL,
             "pnl.unrealized" to unrealizedPNL,
-            "pnl.total" to realizedPNL + unrealizedPNL
+            "pnl.total" to pnl
         )
+    }
+
+    override fun reset() {
+        equity = Double.NaN
     }
 
 }

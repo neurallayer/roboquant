@@ -16,9 +16,10 @@
 
 package org.roboquant.metrics
 
-import kotlin.test.Test
-import kotlin.test.*
 import org.roboquant.TestData
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 internal class ProgressMetricTest {
 
@@ -29,10 +30,10 @@ internal class ProgressMetricTest {
         val result = metric.calculate(account, event)
         assertEquals(3, result.size)
         assertContains(result, "progress.actions")
-        assertContains(result, "progress.steps")
+        assertContains(result, "progress.events")
         assertContains(result, "progress.walltime")
 
-        assertEquals(1.0, result["progress.steps"])
+        assertEquals(1.0, result["progress.events"])
         assertEquals(event.actions.size.toDouble(), result["progress.actions"])
     }
 }

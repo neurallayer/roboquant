@@ -38,7 +38,6 @@ import java.time.Instant
  * @property feeModel the fee/commission model to use, default is [NoFeeModel]
  * @property accountModel the account model (like cash or margin) to use, default is [CashAccount]
  * @param pricingEngine the pricing engine to use to calculate trade pricing, default is [SpreadPricingEngine]
- * @property limitTracking only track closed orders and trades from the last step, default is false
  * @constructor Create a new instance of SimBroker
  */
 open class SimBroker(
@@ -47,7 +46,7 @@ open class SimBroker(
     private val feeModel: FeeModel = NoFeeModel(),
     private val accountModel: AccountModel = CashAccount(),
     pricingEngine: PricingEngine = SpreadPricingEngine(),
-    private val limitTracking: Boolean = false
+    retention: TimeSpan = 1.years
 ) : Broker {
 
     /**
@@ -58,7 +57,7 @@ open class SimBroker(
     )
 
     // Internally used account to store the state
-    private val _account = InternalAccount(baseCurrency)
+    private val _account = InternalAccount(baseCurrency, retention)
 
     // Logger to use
     private val logger = Logging.getLogger(SimBroker::class)
@@ -147,9 +146,6 @@ open class SimBroker(
      * Run the simulation given the provided [event].
      */
     override fun sync(event: Event) {
-        // Remove all previous closed orders and trades
-        if (limitTracking) _account.removeClosedOrdersAndTrades()
-
         simulateMarket(event)
         _account.updateMarketPrices(event)
         _account.lastUpdate = event.time

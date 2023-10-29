@@ -187,7 +187,7 @@ private object Performance {
                     val roboquant = Roboquant(
                         getStrategy(SKIP),
                         logger = SilentLogger(),
-                        broker = SimBroker(limitTracking = false),
+                        broker = SimBroker(retention = TimeSpan.ZERO),
                         channelCapacity = 3
                     )
                     roboquant.runAsync(feed)

@@ -24,21 +24,25 @@ import java.time.Instant
  * This metric captures the progress of a run. The captured values are the totals since the start of a phase. The
  * following metrics are captured:
  *
- * - `progress.actions`: The number of actions
+ * - `progress.events`: The number of events
  * - `progress.steps`: The number of steps (or events)
  * - `progress.walltime`: The total wall time in milliseconds
+ * - `progress.trades`: The total trades
+ * - `progress.closedorders`: The total closed orders
  */
 class ProgressMetric : Metric {
 
     private var startTime = Instant.now().toEpochMilli()
-    private var actions = 0
-    private var steps = 0
+    private var actions = 0L
+    private var events = 0L
+
 
     override fun calculate(account: Account, event: Event): Map<String, Double> {
         actions += event.actions.size
+
         return metricResultsOf(
             "progress.actions" to actions,
-            "progress.steps" to ++steps,
+            "progress.events" to ++events,
             "progress.walltime" to (Instant.now().toEpochMilli() - startTime),
         )
     }
@@ -46,7 +50,7 @@ class ProgressMetric : Metric {
     override fun reset() {
         startTime = Instant.now().toEpochMilli()
         actions = 0
-        steps = 0
+        events = 0
     }
 
 }

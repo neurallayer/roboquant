@@ -151,7 +151,7 @@ data class Roboquant(
         name: String = "run-${timeframe.toPrettyString()}",
         warmup: TimeSpan = TimeSpan.ZERO,
         reset: Boolean = true
-    ) {
+    )  {
         val channel = EventChannel(channelCapacity, timeframe, onChannelFull)
         val scope = CoroutineScope(Dispatchers.Default + Job())
 
@@ -171,8 +171,13 @@ data class Roboquant(
                 // Sync with broker and run metrics
                 broker.sync(event)
                 val account = broker.account
+
                 val metricResult = getMetrics(account, event)
-                if (time >= warmupEnd) logger.log(metricResult, time, name) else logger.log(emptyMap(), time, name)
+                if (time >= warmupEnd) {
+                    logger.log(metricResult, time, name)
+                } else {
+                    logger.log(emptyMap(), time, name)
+                }
 
                 // Generate signals and place orders
                 val signals = strategy.generate(event)
@@ -191,7 +196,6 @@ data class Roboquant(
             scope.cancel()
             channel.close()
         }
-
     }
 
     /**

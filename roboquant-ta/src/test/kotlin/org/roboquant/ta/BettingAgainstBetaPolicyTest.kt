@@ -46,8 +46,8 @@ internal class BettingAgainstBetaPolicyTest {
         )
         roboquant.run(feed, name = "test")
         val account = roboquant.broker.account
-        assertTrue(account.closedOrders.isNotEmpty())
         assertTrue(account.positions.size <= 6)
+        assertTrue(account.positions.size > 3)
 
         val positionSizes = roboquant.logger.getMetric("account.positions").latestRun().values
         assertTrue(positionSizes.all { it <= 6.0 })

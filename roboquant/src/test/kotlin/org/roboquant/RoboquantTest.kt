@@ -17,14 +17,12 @@
 package org.roboquant
 
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.filter
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
@@ -35,7 +33,10 @@ import org.roboquant.metrics.Metric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class RoboquantTest {
 
@@ -43,7 +44,9 @@ internal class RoboquantTest {
     fun simpleRun() {
         val strategy = EMAStrategy()
         val roboquant = Roboquant(strategy, AccountMetric(), logger = SilentLogger())
-        roboquant.run(TestData.feed)
+        assertDoesNotThrow {
+            roboquant.run(TestData.feed)
+        }
         val summary = roboquant.toString()
         assertTrue(summary.isNotEmpty())
         assertEquals(
@@ -51,10 +54,6 @@ internal class RoboquantTest {
             summary
         )
 
-        val account = roboquant.broker.account
-        assertTrue(account.trades.isNotEmpty())
-        assertTrue(account.openOrders.isEmpty())
-        assertTrue(account.closedOrders.isNotEmpty())
     }
 
     @Test
@@ -91,14 +90,14 @@ internal class RoboquantTest {
         val timeline = feed.timeline
         val roboquant = Roboquant(strategy, ProgressMetric(), logger = LastEntryLogger())
         roboquant.run(feed, name = "test")
-        val entry = roboquant.logger.getMetric("progress.steps").latestRun().last()
+        val entry = roboquant.logger.getMetric("progress.events").latestRun().last()
         assertEquals(timeline.size, entry.value.toInt())
 
         val offset = 3
         val timeframe = Timeframe(timeline[2], timeline[2 + offset], inclusive = false)
         roboquant.reset()
         roboquant.run(feed, timeframe, name = "test")
-        val step2 = roboquant.logger.getMetric("progress.steps").latestRun().last()
+        val step2 = roboquant.logger.getMetric("progress.events").latestRun().last()
         assertEquals(offset, step2.value.toInt())
     }
 
@@ -111,7 +110,7 @@ internal class RoboquantTest {
 
         val timeframe = Timeframe(timeline[2], timeline[5], inclusive = false)
         roboquant.run(feed, timeframe)
-        val step = roboquant.logger.getMetric("progress.steps").values.last().last()
+        val step = roboquant.logger.getMetric("progress.events").values.last().last()
         assertEquals(3, step.value.toInt())
         assertEquals(timeline[4], step.time)
     }
@@ -155,8 +154,11 @@ internal class RoboquantTest {
         val strategy = EMAStrategy()
 
         val roboquant = Roboquant(strategy, AccountMetric(), logger = SilentLogger())
-        roboquant.runAsync(TestData.feed)
-        assertTrue(roboquant.broker.account.trades.isNotEmpty())
+        assertDoesNotThrow {
+            runBlocking {
+                roboquant.runAsync(TestData.feed)
+            }
+        }
     }
 
     @Test
@@ -181,7 +183,7 @@ internal class RoboquantTest {
                 val roboquant = Roboquant(EMAStrategy(), ProgressMetric(), logger = LastEntryLogger())
                 val run = "run-$it"
                 roboquant.runAsync(feed, name = run)
-                val metric = roboquant.logger.getMetric("progress.steps", run)
+                val metric = roboquant.logger.getMetric("progress.events", run)
                 assertEquals(1, metric.size)
                 assertEquals(feed.timeline.size.toDouble(), metric.values[0])
             }
@@ -201,7 +203,7 @@ internal class RoboquantTest {
                 val roboquant = Roboquant(EMAStrategy(), ProgressMetric(), logger = MemoryLogger(false))
                 val run = "run-$it"
                 roboquant.runAsync(feed, it, name = run)
-                val metric = roboquant.logger.getMetric("progress.steps", run)
+                val metric = roboquant.logger.getMetric("progress.events", run)
                 val tf = metric.timeframe
                 assertFalse(tf.isEmpty())
                 assertTrue(tf.start in it)
@@ -213,21 +215,5 @@ internal class RoboquantTest {
     }
 
 
-    @Test
-    fun prices() {
-        val feed = TestData.feed
-        val rq =
-            Roboquant(EMAStrategy(), broker = SimBroker(pricingEngine = NoCostPricingEngine()), logger = SilentLogger())
-        rq.run(feed)
-
-        val trades = rq.broker.account.trades
-        assertTrue(trades.isNotEmpty())
-        for (trade in trades) {
-            val tf = Timeframe(trade.time, trade.time, true)
-            val pricebar = feed.filter<PriceAction>(timeframe = tf).firstOrNull { it.second.asset == trade.asset }
-            assertNotNull(pricebar)
-            assertEquals(pricebar.second.getPrice(), trade.price)
-        }
-    }
 
 }

@@ -16,12 +16,12 @@
 
 package org.roboquant.jupyter
 
-import kotlin.test.Test
 import org.roboquant.charts.PriceBarChart
 import org.roboquant.charts.TimeSeriesChart
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
-internal class WelcomeTest {
+internal class WelcomeTestIT {
 
     @Test
     fun test() {
