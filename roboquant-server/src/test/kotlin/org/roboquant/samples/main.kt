@@ -38,9 +38,9 @@ internal fun main() {
 
     val jobs = ParallelJobs()
 
-    val tf1 = Timeframe.next(2.minutes)
+    val tf1 = Timeframe.next(10.minutes)
     val tf2 = Timeframe.next(30.minutes)
-    val tf3 = Timeframe.next(10.minutes)
+    val tf3 = Timeframe.next(60.minutes)
 
     // Start three runs
     jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(200.millis, nAssets = 3), tf1, "run-fast") }
