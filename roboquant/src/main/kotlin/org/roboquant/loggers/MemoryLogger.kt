@@ -16,7 +16,6 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.common.AppendOnlyList
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
 import java.time.Instant
@@ -40,9 +39,10 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     internal class Entry(val time: Instant, val metrics: Map<String, Double>)
 
     // Use a ConcurrentHashMap if this logger is used in parallel back-testing
-    internal val history = ConcurrentHashMap<String, AppendOnlyList<Entry>>()
+    internal val history = ConcurrentHashMap<String, MutableList<Entry>>()
     private val progressBar = ProgressBar()
 
+    @Synchronized
     override fun log(results: Map<String, Double>, time: Instant, run: String) {
         if (showProgress) progressBar.update(time)
         if (results.isEmpty()) return
@@ -51,14 +51,16 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
         entries.add(Entry(time, results))
     }
 
+    @Synchronized
     override fun start(run: String, timeframe: Timeframe) {
         if (showProgress) {
             progressBar.start(run, timeframe)
         }
         // Clear any previous run with the same name
-        history[run] = AppendOnlyList()
+        history[run] = mutableListOf()
     }
 
+    @Synchronized
     override fun end(run: String) {
         if (showProgress) progressBar.done()
     }
@@ -66,6 +68,7 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     /**
      * Clear the history
      */
+    @Synchronized
     override fun reset() {
         history.clear()
     }
@@ -73,11 +76,13 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     /**
      * Get all the recorded runs in this logger
      */
+    @Synchronized
     override fun getRuns(): Set<String> = history.keys.toSortedSet()
 
     /**
      * Get the unique list of metric names that have been captured
      */
+    @Synchronized
     override fun getMetricNames(run: String): Set<String> {
         val values = history[run] ?: return emptySet()
         return values.map { it.metrics.keys }.flatten().toSortedSet()
@@ -88,7 +93,7 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
      */
     override fun getMetric(metricName: String): Map<String, TimeSeries> {
         val result = mutableMapOf<String, TimeSeries>()
-        for (run in history.keys) {
+        for (run in getRuns()) {
             val ts = getMetric(metricName, run)
             if (ts.isNotEmpty()) result[run] = ts
         }
@@ -98,6 +103,7 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
     /**
      * Get results for a metric specified by its [metricName] for a single [run]
      */
+    @Synchronized
     override fun getMetric(metricName: String, run: String): TimeSeries {
         val entries = history[run] ?: return TimeSeries(emptyList())
         val values = mutableListOf<Double>()

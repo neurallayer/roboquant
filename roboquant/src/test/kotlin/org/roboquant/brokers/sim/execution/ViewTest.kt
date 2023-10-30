@@ -11,8 +11,6 @@ internal class ViewTest {
         assertEquals(l.size, v.size)
         l.add(101)
         assertNotEquals(l.size, v.size)
-
-
     }
 
     @Test

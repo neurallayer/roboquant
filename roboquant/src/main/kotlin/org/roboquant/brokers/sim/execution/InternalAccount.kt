@@ -49,7 +49,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     var lastUpdate: Instant = Instant.MIN
 
     /**
-     * The trades that have been executed
+     * The trades that have been executed. Trades are only retained based on the [retention] setting.
      */
     private val trades = mutableListOf<Trade>()
 
@@ -60,7 +60,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
 
     /**
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
-     * closed.
+     * closed. ClosedOrders are only retained based on the [retention] setting.
      */
     private val closedOrders = mutableListOf<OrderState>()
 
