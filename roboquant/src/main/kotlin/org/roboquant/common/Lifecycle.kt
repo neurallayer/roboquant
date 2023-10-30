@@ -19,18 +19,16 @@ package org.roboquant.common
 /**
  * Interface implemented by all components used in a run (Strategy, Policy, Broker, Metric, MetricLogger).
  *
- * The component will be informed that a phase has been started or ended. It provides the component with the opportunity
- * to manage its state, so a phase can be started without any state remaining from previous runs.
- *
+ * The component will be informed that a run has been started or ended. It provides the component with the opportunity
+ * to manage its state, so a run can be started without any state remaining from previous runs.
  */
 interface Lifecycle {
 
     /**
-     * Invoked at the start of a [run]. Default implementation is to invoke [reset], which is suitable for
-     * many types of components.
+     * Invoked at the start of a [run]. The default implementation is to take no action.
      */
     fun start(run: String, timeframe: Timeframe) {
-        // reset()
+        // default is to do nothing
     }
 
     /**
@@ -41,9 +39,7 @@ interface Lifecycle {
     }
 
     /**
-     * Reset the state of the component to its initial state, default implementation is to take no action. This is
-     * typically the only method to override when wanting to reset some internal state since by default the [start]
-     * method invokes this method.
+     * Reset the state of the component to its initial state. The default implementation is to take no action.
      */
     fun reset() {
         // default is to do nothing

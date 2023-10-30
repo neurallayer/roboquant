@@ -27,14 +27,14 @@ fun <T> mutableSynchronisedListOf(): MutableList<T> = Collections.synchronizedLi
  * Optimizer that implements different back-test optimization strategies to find a set of optimal parameter
  * values.
  *
- * An optimizing back test has two phases, and each phase has up to two periods.
+ * An optimizing back test has two runs, and each run has up to two periods.
  * The warmup periods are optional and by default [TimeSpan.ZERO].
  *
- * Training phase:
+ * Training run:
  * - warmup period; get required data for strategies, policies and metrics loaded
  * - training period; optimize the hyperparameters
  *
- * Validation phase
+ * Validation run
  * - warmup period; get required data for strategies, policies and metrics loaded
  * - validation period; see how a run is performing, based on unseen data
  *
@@ -122,7 +122,7 @@ open class Optimizer(
     }
 
     /**
-     * The logger to use for training phase. By default, this logger is discarded after the run and score is
+     * The logger to use for training run. By default, this logger is discarded after the run and score is
      * calculated
      */
     open fun getTrainLogger() = MemoryLogger(false)
