@@ -33,6 +33,8 @@ import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.*
+import org.roboquant.policies.FlexPolicy
+import org.roboquant.policies.circuitBreaker
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
 
@@ -118,7 +120,6 @@ private fun placeSimpleOrders() {
     val account = broker.account
     println(account.fullSummary())
 
-
     // Place a buy order
     val buy = MarketOrder(asset, Size.ONE)
     broker.place(buy)
@@ -161,7 +162,15 @@ private fun simplePaperTrade() {
     feed.subscribe(tsla, msft, googl)
 
     val strategy = EMAStrategy.PERIODS_12_26
-    val rq = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = ConsoleLogger())
+    val policy = FlexPolicy().circuitBreaker(2, 5.minutes)
+    val rq = Roboquant(
+        strategy,
+        AccountMetric(),
+        ProgressMetric(),
+        policy = policy,
+        broker = broker,
+        logger = ConsoleLogger()
+    )
     rq.run(feed, Timeframe.next(2.hours))
 
     feed.disconnect()

@@ -17,6 +17,7 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
+import org.roboquant.common.Logging
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.minus
 import org.roboquant.feeds.Event
@@ -26,17 +27,20 @@ import java.time.Instant
 import java.util.*
 
 /**
- * Wraps another [policy] and based on the configured settings throttle the generation of orders.
+ * Wraps another [policy] and based on the configured settings throttle the propagation of orders to the broker.
+ * The logic enforces that all orders send at the same time will be trottled or not.
  *
- * @property policy
- * @constructor Create new Chain Breaker
+ * @property policy the underlying policy
+ * @constructor Create new Circuit Breaker
  */
 internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, private val period: TimeSpan) :
     Policy by policy {
 
     private val history = LinkedList<Pair<Instant, Int>>()
+    private val logger = Logging.getLogger(this::class)
 
     private fun exceeds(newOrders: Int, time: Instant): Boolean {
+        if (newOrders > maxOrders) return false
         val lookbackTime = time - period
         var orders = newOrders
         for (entry in history) {
@@ -49,9 +53,10 @@ internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, pr
 
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = policy.act(signals, account, event)
-        if (orders.isEmpty() || orders.size > maxOrders) return emptyList()
+        if (orders.isEmpty()) return emptyList()
 
         return if (exceeds(orders.size, event.time)) {
+            logger.info { "trottling orders, not sending ${orders.size} orders" }
             emptyList()
         } else {
             history.addFirst(Pair(event.time, orders.size))
