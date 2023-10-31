@@ -419,9 +419,15 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * [percentage] is expected to be provided as a fraction — for example, 1% is 0.01
      */
     fun annualize(percentage: Double): Double {
+        return (1.0 + percentage).pow(toYears()) - 1.0
+    }
+
+    /**
+     * Convert this timeframe to years
+     */
+    fun toYears(): Double {
         val period = duration.toMillis()
-        val years = ONE_YEAR_MILLIS / period
-        return (1.0 + percentage).pow(years) - 1.0
+        return ONE_YEAR_MILLIS / period
     }
 
 

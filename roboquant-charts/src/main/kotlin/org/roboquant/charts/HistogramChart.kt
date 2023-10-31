@@ -33,21 +33,34 @@ import java.math.RoundingMode
 
 
 /**
- * Chart that takes [timeSeries] and creates a histogram of it. The number of [binCount] to display is configurable.
+ * Chart that takes [data] and creates a histogram of it. The number of [binCount] to display is configurable.
  *
- * @property timeSeries
+ * @property data
  * @property binCount
  * @property scale
  * @property minBinSize
  * @constructor Create empty Metric histogram
  */
 class HistogramChart(
-    private val timeSeries: TimeSeries,
+    private val data: DoubleArray,
     private val binCount: Int = 20,
     private val scale: Int = 2,
     private val minBinSize: Int = 0,
 ) : Chart() {
 
+    /**
+     * Chart that takes [timeSeries] and creates a histogram of it.
+     */
+    constructor(
+        timeSeries: TimeSeries,
+        binCount: Int = 20,
+        scale: Int = 2,
+        minBinSize: Int = 0,
+        ) : this(timeSeries.toDoubleArray().clean(), binCount, scale, minBinSize)
+
+    /**
+     * Chart that takes a map of TimeSeries, flatten it and creates a histogram of it.
+     */
     constructor(
         metricData: Map<String, TimeSeries>,
         binCount: Int = 20,
@@ -57,7 +70,6 @@ class HistogramChart(
 
     private fun toSeriesData(): List<Pair<String, Long>> {
         val f = EmpiricalDistribution(binCount)
-        val data = timeSeries.toDoubleArray().clean()
         if (data.isEmpty()) return emptyList()
 
         val result = mutableListOf<Pair<String, Long>>()

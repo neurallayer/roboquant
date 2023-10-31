@@ -18,9 +18,9 @@ package org.roboquant.metrics
 
 import org.roboquant.Roboquant
 import org.roboquant.TestData
+import org.roboquant.backtest.CAGR
 import org.roboquant.common.Timeframe
 import org.roboquant.loggers.SilentLogger
-import org.roboquant.backtest.Score
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -50,8 +50,9 @@ internal class ScorecardMetricTest {
         val rq = Roboquant(EMAStrategy(), logger = SilentLogger())
         rq.run(TestData.feed)
 
-        val score = Score.annualizedEquityGrowth(rq, Timeframe.fromYears(2019, 2020))
-        assertTrue(score.isFinite())
+        val score = CAGR()
+        val result = score.calculate(rq, "run-1", Timeframe.fromYears(2019, 2020))
+        assertTrue(result.isFinite())
     }
 
 }

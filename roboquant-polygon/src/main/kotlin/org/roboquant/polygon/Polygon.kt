@@ -19,10 +19,7 @@ package org.roboquant.polygon
 import io.polygon.kotlin.sdk.rest.PolygonRestClient
 import io.polygon.kotlin.sdk.rest.reference.SupportedTickersParameters
 import io.polygon.kotlin.sdk.rest.reference.TickerDTO
-import io.polygon.kotlin.sdk.websocket.PolygonWebSocketClient
-import io.polygon.kotlin.sdk.websocket.PolygonWebSocketCluster
-import io.polygon.kotlin.sdk.websocket.PolygonWebSocketListener
-import io.polygon.kotlin.sdk.websocket.PolygonWebSocketMessage
+import io.polygon.kotlin.sdk.websocket.*
 import org.roboquant.common.*
 
 
@@ -30,9 +27,11 @@ import org.roboquant.common.*
  * Configuration for Polygon connections
  *
  * @property key the polygon api key to use (property name is polygon.key)
+ * @property delayed use a delayed feed, default is true
  */
 data class PolygonConfig(
-    var key: String = Config.getProperty("polygon.key", "")
+    var key: String = Config.getProperty("polygon.key", ""),
+    var delayed: Boolean =  Config.getProperty("polygon.delayed", true)
 )
 
 /**
@@ -52,9 +51,13 @@ internal object Polygon {
         handler: (message: PolygonWebSocketMessage) -> Unit
     ): PolygonWebSocketClient {
 
+        val feed = if (config.delayed) Feed.Delayed else Feed.RealTime
+        val market = Market.Stocks
+
         val websocketClient = PolygonWebSocketClient(
             config.key,
-            PolygonWebSocketCluster.Stocks,
+            feed,
+            market,
             object : PolygonWebSocketListener {
 
                 override fun onAuthenticated(client: PolygonWebSocketClient) {

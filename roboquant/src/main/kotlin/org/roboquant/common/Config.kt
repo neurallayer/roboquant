@@ -163,6 +163,22 @@ object Config {
     }
 
     /**
+     * @see getProperty
+     */
+    fun getProperty(name: String, default: Boolean): Boolean {
+        logger.trace { "finding property $name" }
+        return getProperty(name)?.toBoolean() ?: default
+    }
+
+    /**
+     * @see getProperty
+     */
+    fun getProperty(name: String, default: Int): Int {
+        logger.trace { "finding property $name" }
+        return getProperty(name)?.toInt() ?: default
+    }
+
+    /**
      * Return property value, or null if not found.
      */
     fun getProperty(name: String): String? {

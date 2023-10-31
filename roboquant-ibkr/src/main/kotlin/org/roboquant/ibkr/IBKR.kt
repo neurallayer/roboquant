@@ -36,9 +36,9 @@ import java.util.concurrent.ConcurrentHashMap
  */
 data class IBKRConfig(
     var host: String = Config.getProperty("ibkr.host", "127.0.0.1"),
-    var port: Int = Config.getProperty("ibkr.port", "4002").toInt(),
+    var port: Int = Config.getProperty("ibkr.port", 4002),
     var account: String = Config.getProperty("ibkr.account", ""),
-    var client: Int = Config.getProperty("ibkr.client", "2").toInt()
+    var client: Int = Config.getProperty("ibkr.client", 2)
 )
 
 /**

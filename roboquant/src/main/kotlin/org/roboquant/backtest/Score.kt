@@ -21,6 +21,7 @@ import org.roboquant.backtest.MetricScore.Companion.last
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
+import kotlin.math.pow
 
 
 /**
@@ -33,27 +34,26 @@ fun interface Score {
      */
     fun calculate(roboquant: Roboquant, run: String, timeframe: Timeframe): Double
 
-    /**
-     * Predefined score functions
-     */
-    companion object {
+}
 
-        /**
-         * The annualized equity growth as a [Score] function.
-         *
-         * This function works best for longer timeframe runs (over 3 months). Otherwise, calculated values can have
-         * large fluctuations.
-         */
-        fun annualizedEquityGrowth(roboquant: Roboquant, timeframe: Timeframe): Double {
-            val broker = roboquant.broker as SimBroker
-            val account = broker.account
-            val startDeposit = broker.initialDeposit.convert(account.baseCurrency, timeframe.start).value
-            val percentage = account.equityAmount.value / startDeposit - 1.0
-            return timeframe.annualize(percentage)
-        }
+
+/**
+ * The CAGR (Compound Annual Growth Rate) as a [Score] function.
+ *
+ * This function works best for longer timeframe runs (over 3 months). Otherwise, calculated values can have
+ * large fluctuations.
+ */
+class CAGR : Score {
+    override fun calculate(roboquant: Roboquant, run: String, timeframe: Timeframe): Double {
+        val broker = roboquant.broker as SimBroker
+        val account = broker.account
+        val startEquity = broker.initialDeposit.convert(account.baseCurrency, timeframe.start).value
+        val endEquity = account.equity.convert(account.baseCurrency, timeframe.end).value
+        return (endEquity / startEquity).pow(timeframe.toYears()) - 1.0
     }
 
 }
+
 
 /**
  * Use a recorded metric as the basis of the score.
@@ -72,27 +72,27 @@ class MetricScore(private val metricName: String, private val reduce: (TimeSerie
     companion object {
 
         /**
-         * Use the last value
+         * Returns the last value
          */
         fun last(ts: TimeSeries) = ts.values.last()
 
         /**
-         * Use the mean of all values
+         * Returns the mean of all values
          */
         fun mean(ts: TimeSeries) = ts.values.average()
 
         /**
-         * Use the max of all values
+         * Returns the max of all values
          */
         fun max(ts: TimeSeries) = ts.values.max()
 
         /**
-         * Use the min of all values
+         * Returns the min of all values
          */
         fun min(ts: TimeSeries) = ts.values.max()
 
         /**
-         * Use the annualized percentage growth
+         * Returns the annualized percentage growth from the first to the last value
          */
         fun annualized(ts: TimeSeries): Double {
             if (ts.size < 2) return Double.NaN

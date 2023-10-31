@@ -76,6 +76,9 @@ class PolygonLiveFeed(
     private val logger = Logging.getLogger(PolygonLiveFeed::class)
     private val subscriptions = mutableMapOf<String, Asset>()
 
+    private val oneMinute = 1.minutes
+    private val oneSecond = 1.seconds
+
     init {
         config.configure()
         require(config.key.isNotBlank()) { "No api key provided" }
@@ -101,8 +104,13 @@ class PolygonLiveFeed(
     /**
      * Get the full asset based on the symbol (aka ticker)
      */
-    private fun getSubscribedAsset(symbol: String?): Asset {
-        return subscriptions.getValue(symbol!!)
+    private fun getSubscribedAsset(symbol: String): Asset {
+        var asset = subscriptions[symbol]
+        if (asset == null) {
+            asset =  symbol.toAsset()
+            subscriptions[symbol] = asset
+        }
+        return asset
     }
 
     /**
@@ -113,11 +121,12 @@ class PolygonLiveFeed(
 
         when (message) {
             is PolygonWebSocketMessage.RawMessage -> logger.info(String(message.data))
+
             is PolygonWebSocketMessage.StocksMessage.Aggregate -> {
-                val asset = getSubscribedAsset(message.ticker)
+                val asset = getSubscribedAsset(message.ticker!!)
                 val timeSpan = when (message.eventType) {
-                    "AM" -> 1.minutes
-                    "A" -> 1.seconds
+                    "AM" -> oneMinute
+                    "A" -> oneSecond
                     else -> null
                 }
 
@@ -130,7 +139,7 @@ class PolygonLiveFeed(
             }
 
             is PolygonWebSocketMessage.StocksMessage.Trade -> {
-                val asset = getSubscribedAsset(message.ticker)
+                val asset = getSubscribedAsset(message.ticker!!)
                 val price = message.price
                 if (price != null) {
                     val action = TradePrice(asset, price, message.size ?: Double.NaN)
@@ -139,7 +148,7 @@ class PolygonLiveFeed(
             }
 
             is PolygonWebSocketMessage.StocksMessage.Quote -> {
-                val asset = getSubscribedAsset(message.ticker)
+                val asset = getSubscribedAsset(message.ticker!!)
                 val askPrice = message.askPrice
                 val bidPrice = message.bidPrice
                 if (askPrice != null && bidPrice != null) {
@@ -159,12 +168,10 @@ class PolygonLiveFeed(
     }
 
     /**
-     * Subscribe to the [symbols] for the specified action [type], default action is `PolygonActionType.TRADE`
+     * Subscribe to the [symbols] for the specified action [type].
+     * The default action is [PolygonActionType.BAR_PER_MINUTE]
      */
-    suspend fun subscribe(vararg symbols: String, type: PolygonActionType = PolygonActionType.TRADE) {
-
-        val assets = symbols.map { it.toAsset() }.associateBy { it.symbol }
-        subscriptions.putAll(assets)
+    suspend fun subscribe(vararg symbols: String, type: PolygonActionType = PolygonActionType.BAR_PER_MINUTE) {
 
         val polygonSubs = when (type) {
 

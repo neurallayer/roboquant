@@ -38,6 +38,7 @@ class PolygonHistoricFeed(
 
     private val config = PolygonConfig()
     private var client: PolygonRestClient
+    private val logger = Logging.getLogger(this::class)
 
     init {
         config.configure()
@@ -78,6 +79,11 @@ class PolygonHistoricFeed(
                     limit.toLong()
                 )
             )
+
+            if (aggr.resultsCount == 0L) {
+                logger.warn { "no aggragate data received symbol=$symbol" }
+                continue
+            }
 
             val tp = when (timespan) {
                 "day" -> multiplier.days

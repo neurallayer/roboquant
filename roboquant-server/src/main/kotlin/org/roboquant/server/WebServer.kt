@@ -42,8 +42,8 @@ internal val runs = ConcurrentHashMap<String, RunInfo>()
 data class WebServerConfig(
     var username: String = Config.getProperty("server.username", ""),
     var password: String = Config.getProperty("server.password", ""),
-    var port: Int = Config.getProperty("server.port")?.toInt() ?: 8080,
-    var host: String = Config.getProperty("server.host") ?: "127.0.0.1",
+    var port: Int = Config.getProperty("server.port", 8080),
+    var host: String = Config.getProperty("server.host", "127.0.0.1")
 )
 
 /**
