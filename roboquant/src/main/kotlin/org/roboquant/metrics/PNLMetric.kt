@@ -37,7 +37,7 @@ import org.roboquant.feeds.Event
  */
 class PNLMetric : Metric {
 
-    var equity = Double.NaN
+    private var equity = Double.NaN
 
     /**
      * @see Metric.calculate

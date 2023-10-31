@@ -68,7 +68,8 @@ class EmptySearchSpace : SearchSpace {
  * Random Search Space
  *
  * In Random Search, we try random combinations of the values of the [Params] and evaluate the trading strategy
- * for these selected combination.
+ * for these selected combinations.
+ *
  * The number of combinations is limited to [size].
  *
  * @property size the total number of samples that will be drawn from this random search space

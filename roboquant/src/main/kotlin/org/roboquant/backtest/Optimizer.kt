@@ -24,11 +24,11 @@ data class RunResult(val params: Params, val score: Double, val timeframe: Timef
 fun <T> mutableSynchronisedListOf(): MutableList<T> = Collections.synchronizedList(mutableListOf<T>())
 
 /**
- * Optimizer that implements different back-test optimization strategies to find a set of optimal parameter
+ * Optimizer implements different back-test optimization strategies to find a set of optimal parameter
  * values.
  *
  * An optimizing back test has two runs, and each run has up to two periods.
- * The warmup periods are optional and by default [TimeSpan.ZERO].
+ * The warmup periods are optional and by default not used ([TimeSpan.ZERO]).
  *
  * Training run:
  * - warmup period; get required data for strategies, policies and metrics loaded
@@ -38,9 +38,8 @@ fun <T> mutableSynchronisedListOf(): MutableList<T> = Collections.synchronizedLi
  * - warmup period; get required data for strategies, policies and metrics loaded
  * - validation period; see how a run is performing, based on unseen data
  *
- *
- * @property space search space
- * @property score scoring function
+ * @property space the search space to sue for determining valid combinaiton of parameters
+ * @property score scoring function to use while determining the optimal parameters
  * @property getRoboquant function that returns an instance of roboquant based on passed parameters
  *
  */
