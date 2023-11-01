@@ -75,6 +75,11 @@ class AlpacaBroker(
 
     init {
         config.configure()
+
+        if (config.accountType == AccountType.LIVE) {
+            logger.warn { "Live accounts are not recommended, use at your own risk" }
+        }
+
         alpacaAPI = Alpaca.getAPI(config)
         orderPlacer = AlpaceOrderPlacer(alpacaAPI, config.extendedHours)
         availableStocks = Alpaca.getAvailableStocks(alpacaAPI)

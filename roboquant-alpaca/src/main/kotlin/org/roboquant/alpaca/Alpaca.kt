@@ -53,13 +53,7 @@ data class AlpacaConfig(
     var accountType: AccountType = AccountType.PAPER,
     var dataType: DataType = DataType.IEX,
     var extendedHours: Boolean = true
-) {
-
-    init {
-        require(accountType == AccountType.PAPER) { "only Paper trading currently supported, received $accountType" }
-    }
-
-}
+)
 
 /**
  * Logic shared between the Alpaca Feeds and Alpaca Broker

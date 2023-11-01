@@ -25,6 +25,9 @@ import org.roboquant.common.Logging
 import org.roboquant.common.UnsupportedException
 import org.roboquant.orders.*
 
+/**
+ * Utility class that translates roboquant orders to alpaca orders
+ */
 internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val extendedHours: Boolean = false) {
 
     private val orders = mutableMapOf<Order, String>()
@@ -46,6 +49,14 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
 
     fun findByAlapacaId(orderId: String) = orders.filterValues { it == orderId }.keys.firstOrNull()
 
+    private fun TimeInForce.toOrderTimeInForce(): OrderTimeInForce {
+        return when (this) {
+            is GTC -> OrderTimeInForce.GOOD_UNTIL_CANCELLED
+            is DAY -> OrderTimeInForce.DAY
+            else -> throw UnsupportedException("unsupported tif=${this}")
+        }
+    }
+
     fun placeBracketOrder(order: BracketOrder) {
         val entry = order.entry
         val tp = order.takeProfit
@@ -59,11 +70,7 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
         val api = alpacaAPI.orders()
         val side = if (order.entry.buy) OrderSide.BUY else OrderSide.SELL
 
-        val tif = when (entry.tif) {
-            is GTC -> OrderTimeInForce.GOOD_UNTIL_CANCELLED
-            is DAY -> OrderTimeInForce.DAY
-            else -> throw UnsupportedException("unsupported tif=${entry.tif} for order=$order")
-        }
+        val tif = entry.tif.toOrderTimeInForce()
 
         val qty = entry.size.toBigDecimal().abs().toInt()
 
@@ -96,11 +103,7 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
             "only stocks and crypto supported, received ${asset.type}"
         }
 
-        val tif = when (order.tif) {
-            is GTC -> OrderTimeInForce.GOOD_UNTIL_CANCELLED
-            is DAY -> OrderTimeInForce.DAY
-            else -> throw UnsupportedException("unsupported tif=${order.tif} for order=$order")
-        }
+        val tif = order.tif.toOrderTimeInForce()
 
         val side = if (order.buy) OrderSide.BUY else OrderSide.SELL
         require(!order.size.isFractional || order is LimitOrder) {
