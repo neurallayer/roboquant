@@ -47,12 +47,17 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
     fun findByAlapacaId(orderId: String) = orders.filterValues { it == orderId }.keys.firstOrNull()
 
     fun placeBracketOrder(order: BracketOrder) {
+        val entry = order.entry
+        val tp = order.takeProfit
+        val sl = order.stopLoss
+
+        require(entry is MarketOrder || entry is LimitOrder) {"unsupported entry type"}
+        require(tp is LimitOrder) {"unsupported take profit type"}
+        require(sl is StopLimitOrder) {"unsupported stop loss type"}
+        require(!entry.size.isFractional) { "fractional orders are not supported for bracket orders" }
 
         val api = alpacaAPI.orders()
         val side = if (order.entry.buy) OrderSide.BUY else OrderSide.SELL
-        val entry = order.entry as MarketOrder
-        val tp = order.takeProfit as LimitOrder
-        val sl = order.stopLoss as StopLimitOrder
 
         val tif = when (entry.tif) {
             is GTC -> OrderTimeInForce.GOOD_UNTIL_CANCELLED
@@ -60,19 +65,23 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
             else -> throw UnsupportedException("unsupported tif=${entry.tif} for order=$order")
         }
 
-        require(!entry.size.isFractional) { "fractional orders are not supported for bracket orders" }
         val qty = entry.size.toBigDecimal().abs().toInt()
 
-        val alpacaOrder = api.requestMarketBracketOrder(
-            entry.asset.symbol,
-            qty,
-            side,
-            tif,
-            tp.limit,
-            sl.stop,
-            sl.limit
-        )
-
+        val alpacaOrder = when(entry) {
+            is MarketOrder -> api.requestMarketBracketOrder(
+                entry.asset.symbol,
+                qty, side, tif,
+                tp.limit,
+                sl.stop, sl.limit)
+            is LimitOrder -> api.requestLimitBracketOrder(
+                entry.asset.symbol,
+                qty, side, tif,
+                entry.limit,
+                extendedHours,
+                tp.limit,
+                sl.stop, sl.limit)
+            else -> throw UnsupportedException("unsupported entry type entry=$entry")
+        }
         orders[order] = alpacaOrder.id
     }
 
@@ -108,11 +117,9 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
             is StopLimitOrder -> api.requestStopLimitOrder(
                 asset.symbol, qty.toInt(), side, tif, order.limit, order.stop, extendedHours
             )
-
             is TrailOrder -> api.requestTrailingStopPercentOrder(
                 asset.symbol, qty.toInt(), side, tif, order.trailPercentage, extendedHours
             )
-
             else -> throw UnsupportedException("unsupported single order type order=$order")
         }
         orders[order] = alpacaOrder.id
