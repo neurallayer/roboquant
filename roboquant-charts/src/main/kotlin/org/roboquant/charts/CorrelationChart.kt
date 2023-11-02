@@ -35,7 +35,8 @@ import java.math.RoundingMode
 import java.util.*
 
 /**
- * Shows the correlation matrix between the prices of two or more [assets] that are present in the provided [feed]
+ * Shows the Pearson correlation matrix between the prices of two or more [assets] that are present in the
+ * provided [feed].
  */
 class CorrelationChart(
     private val feed: Feed,

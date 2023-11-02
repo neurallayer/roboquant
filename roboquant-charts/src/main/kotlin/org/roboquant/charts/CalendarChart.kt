@@ -30,12 +30,12 @@ import java.time.format.DateTimeFormatter
 import kotlin.collections.*
 
 /**
- * Plots the metrics values on a calendar, to visualize if there are days when there are outliers. Next
- * to the calendar, a visual map is being plotted that allows filtering days based on the selected range of values.
+ * Plots the time-series values on a calendar, to visualize if there are days when there are outliers. Next
+ * to the calendar, a visual map is being shown that allows filtering days based on the selected range of values.
  *
- * @param timeSeries the data
+ * @param timeSeries the data to use
  * @property fractionDigits the number of digits to use, default is 2
- * @property zoneId the time zone to use, default is UTC
+ * @property zoneId the time zone to use to determine what day of the year it is, default is UTC
  */
 class CalendarChart(
     timeSeries: TimeSeries,

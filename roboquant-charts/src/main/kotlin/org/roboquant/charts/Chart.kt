@@ -263,7 +263,8 @@ abstract class Chart {
     }
 
     /**
-     * Subclasses will need to return the value of the option attribute.
+     * Returns the ECharts option. This option contains all configuration and data required to render a chart.
+     * Subclasses will need to implement this method and return the value of the option attribute.
      */
     abstract fun getOption(): Option
 

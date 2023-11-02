@@ -32,10 +32,14 @@ import java.time.Instant
 
 
 /**
- * A SignalChart allows you to plot the signals created by a strategy over the events in feed. The result is a
+ * A SignalChart allows you to visualize the signals created by a strategy based on a feed. The result is a
  * scatter plot where each signal is a dot. The value is equivalent to the rating of the signal.
  *
  * The tooltip provides additional details, like the symbol of the underlying asset.
+ *
+ * @param feed the feed to use as input to the strategy
+ * @param strategy the strategy to use to genrate the signals
+ * @param timeframe limit the data to the provided timeframe, default is [Timeframe.INFINITE]
  */
 class SignalChart(
     private val feed: Feed,
@@ -43,6 +47,9 @@ class SignalChart(
     private val timeframe: Timeframe = Timeframe.INFINITE,
 ) : Chart() {
 
+    /**
+     * @see Chart.getOption
+     */
     override fun getOption(): Option {
         val data = signalsToSeriesData()
 
