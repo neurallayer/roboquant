@@ -32,7 +32,7 @@ class AvroFeedIT {
     @Test
     fun predefinedSP500() {
         val feed = AvroFeed.sp500()
-        assertTrue(feed.assets.size >= 490)
+        assertTrue(feed.assets.size > 490)
         assertTrue(feed.timeframe.start >= Instant.parse("2016-01-01T00:00:00Z"))
         assertContains(feed.assets.symbols, "AAPL")
         assertDoesNotThrow {
@@ -68,7 +68,7 @@ class AvroFeedIT {
 
     @Test
     fun loadFromStore() {
-        val fileName = "sp500_pricebar_v5.1.avro"
+        val fileName = "sp500_pricebar_v6.0.avro"
         val file = (Config.home / fileName).toFile()
         file.delete()
         assertFalse(file.exists())

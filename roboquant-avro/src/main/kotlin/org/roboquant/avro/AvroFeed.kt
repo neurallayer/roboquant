@@ -163,7 +163,7 @@ class AvroFeed(private val path: Path, useCache: Boolean = false) : AssetFeed {
     companion object {
 
         internal val logger = Logging.getLogger(AvroFeed::class)
-        private const val SP500FILE = "sp500_pricebar_v5.1.avro"
+        private const val SP500FILE = "sp500_pricebar_v6.0.avro"
         private const val SP500QUOTEFILE = "sp500_pricequote_v5.0.avro"
         private const val FOREXFILE = "forex_pricebar_v5.1.avro"
 

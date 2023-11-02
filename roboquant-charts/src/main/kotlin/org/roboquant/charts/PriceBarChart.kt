@@ -101,7 +101,8 @@ class PriceBarChart(
             val (now, price) = it
             val direction = if (price.close >= price.open) 1 else -1
             val time = if (useTime) now else now.toString()
-            listOf(time, price.open, price.high, price.low, price.close, price.volume, direction)
+            val volume = if (price.volume.isFinite()) price.volume else 0.0
+            listOf(time, price.open, price.high, price.low, price.close, volume, direction)
         }
         return data
     }

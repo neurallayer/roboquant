@@ -155,17 +155,19 @@ private fun alpacaHistoricFeed2() {
 }
 
 private fun singleOrder() {
-    val broker = AlpacaBroker()
-    val order = MarketOrder(Asset("TSLA"), Size.ONE)
+    val broker = AlpacaBroker {
+        extendedHours = true
+    }
+    val order = MarketOrder(Asset("IBM"), Size.ONE)
     broker.place(listOf(order), Instant.now())
     Thread.sleep(5000)
     broker.sync()
-    println(broker.account.summary())
+    println(broker.account.fullSummary())
 }
 
 
 fun main() {
-    when ("LIVE_FEED") {
+    when ("SINGLE_ORDER") {
         "ALPACA_BROKER" -> alpacaBroker()
         "ALPACA_TRADE_CRYPTO" -> alpacaTradeCrypto()
         "ALPACA_TRADE_STOCKS" -> alpacaTradeStocks()

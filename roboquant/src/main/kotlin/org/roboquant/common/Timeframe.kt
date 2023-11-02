@@ -430,6 +430,13 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         return ONE_YEAR_MILLIS / period
     }
 
+    /**
+     * Compare timeframes based on their [duration]
+     */
+    operator fun compareTo(other: TimeSpan): Int {
+        return duration.compareTo(other.duration)
+    }
+
 
 }
 

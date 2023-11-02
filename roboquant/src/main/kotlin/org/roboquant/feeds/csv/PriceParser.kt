@@ -78,6 +78,7 @@ class PriceBarParser(
                     "ADJCLOSE" -> adjustedClose = index
                     "ADJUSTEDCLOSE" -> adjustedClose = index
                     "VOLUME" -> volume = index
+                    "VOL" -> volume = index
                 }
             }
         }

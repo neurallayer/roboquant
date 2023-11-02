@@ -28,9 +28,7 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.*
-import org.roboquant.feeds.csv.CSVFeed
-import org.roboquant.feeds.csv.PriceBarParser
-import org.roboquant.feeds.csv.TimeParser
+import org.roboquant.feeds.csv.*
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
@@ -49,9 +47,11 @@ import java.io.File
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.system.measureTimeMillis
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 fun multiCurrency() {
     val feed = CSVFeed("data/US") {
@@ -292,10 +292,58 @@ fun feed() {
 }
 
 
+fun generateDemoFeed() {
+
+    val pathStr = Config.getProperty("datadir", "/tmp/us")
+
+    val timeframe = Timeframe.fromYears(2018, 2023)
+    val symbols = Universe.sp500.getAssets(timeframe.end).map { it.symbol }.toTypedArray()
+    assertTrue(symbols.size > 490)
+
+    val template = Asset("TEMPLATE")
+    fun file2Symbol(file: File): String {
+        return file.name.removeSuffix(".us.txt").replace('-', '.').uppercase()
+    }
+
+    val config = CSVConfig(
+        filePattern = ".*.txt",
+        timeParser = AutoDetectTimeParser(2),
+        priceParser = PriceBarParser(timeSpan = 1.days),
+        assetBuilder = { file: File -> template.copy(symbol = file2Symbol(file)) }
+    )
+
+    val path = Path(pathStr)
+
+    val path1 = path / "nasdaq stocks"
+    val path2 =  path / "nyse stocks"
+
+    val feed = CSVFeed(path1.toString(), config)
+    val tmp = CSVFeed(path2.toString(), config)
+    feed.merge(tmp)
+
+    val sp500File = "/tmp/sp500_pricebar_v6.0.avro"
+
+
+    AvroFeed.record(
+        feed,
+        sp500File,
+        true,
+        timeframe,
+        assetFilter = AssetFilter.includeSymbols(*symbols)
+    )
+
+    // Some basic sanity checks that recording went ok
+    val avroFeed = AvroFeed(sp500File)
+    assertTrue(avroFeed.assets.size > 490)
+    assertTrue(avroFeed.assets.symbols.contains("AAPL"))
+    assertTrue(avroFeed.timeframe > 4.years)
+
+}
+
 suspend fun main() {
     Config.printInfo()
 
-    when ("FEED") {
+    when ("GEN_DEMO_FEED") {
         "FEED" -> feed()
         "SIMPLE" -> simple()
         "MULTI_RUN" -> multiRun()
@@ -308,6 +356,7 @@ suspend fun main() {
         "PERFORMANCE" -> performanceTest()
         "CFD" -> cfd()
         "AGG" -> aggregator()
+        "GEN_DEMO_FEED" -> generateDemoFeed()
     }
 
 }
