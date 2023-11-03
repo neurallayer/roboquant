@@ -66,4 +66,13 @@ internal class PriceSeriesTest {
         assertEquals(20, series.toDoubleArray().size)
     }
 
+    @Test
+    fun last() {
+        val series = PriceSeries(10)
+        repeat(15) { series.add(it.toDouble()) }
+        assertEquals(14.0, series.last())
+        series.update(20.0)
+        assertEquals(20.0, series.last())
+    }
+
 }

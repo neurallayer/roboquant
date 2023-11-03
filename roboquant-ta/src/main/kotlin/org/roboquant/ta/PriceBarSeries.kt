@@ -32,15 +32,15 @@ import java.util.*
  *
  * @constructor Create a new instance of PriceBarSeries
  */
-class PriceBarSeries(capacity: Int) {
+open class PriceBarSeries(capacity: Int) {
 
     // The individual buffers
-    private val openBuffer = PriceSeries(capacity)
-    private val highBuffer = PriceSeries(capacity)
-    private val lowBuffer = PriceSeries(capacity)
-    private val closeBuffer = PriceSeries(capacity)
-    private val volumeBuffer = PriceSeries(capacity)
-    private val timeBuffer = mutableListOf<Instant>()
+    protected val openBuffer = PriceSeries(capacity)
+    protected val highBuffer = PriceSeries(capacity)
+    protected val lowBuffer = PriceSeries(capacity)
+    protected val closeBuffer = PriceSeries(capacity)
+    protected val volumeBuffer = PriceSeries(capacity)
+    protected val timeBuffer = mutableListOf<Instant>()
 
     /**
      * Open prices
@@ -93,7 +93,7 @@ class PriceBarSeries(capacity: Int) {
      * Update the buffer with a new [priceBar] and [time].
      * Return true if the buffer is full.
      */
-    fun add(priceBar: PriceBar, time: Instant): Boolean {
+    open fun add(priceBar: PriceBar, time: Instant): Boolean {
         return add(priceBar.ohlcv, time)
     }
 
@@ -103,16 +103,17 @@ class PriceBarSeries(capacity: Int) {
      */
     fun add(action: Action, time: Instant): Boolean {
         return if (action is PriceBar) {
-            add(action.ohlcv, time)
+            add(action, time)
         } else {
             false
         }
     }
 
+
     /**
      * Update the buffer with a new [ohlcv] values and [time]. Return true if series is full.
      */
-    private fun add(ohlcv: DoubleArray, time: Instant): Boolean {
+    protected fun add(ohlcv: DoubleArray, time: Instant): Boolean {
         assert(ohlcv.size == 5)
         openBuffer.add(ohlcv[0])
         highBuffer.add(ohlcv[1])

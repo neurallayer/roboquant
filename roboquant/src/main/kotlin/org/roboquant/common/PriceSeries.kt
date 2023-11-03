@@ -47,6 +47,26 @@ open class PriceSeries(private var capacity: Int) {
     }
 
     /**
+     * Uodate the last price with a new [price].
+     * Returns true is the buffer is full, false otherwise
+     */
+    open fun update(price: Double): Boolean {
+        if (counter == 0L) throw NoSuchElementException()
+        val index = ((counter - 1) % capacity).toInt()
+        data[index] = price
+        return isFull()
+    }
+
+    /**
+     * Return the last added price, even if the buffer isn't filled yet
+     */
+    open fun last() : Double {
+        if (counter == 0L) throw NoSuchElementException()
+        val index = ((counter - 1) % capacity).toInt()
+        return data[index]
+    }
+
+    /**
      * Return true if the rolling window is fully filled, so it is ready to be used.
      */
     fun isFull(): Boolean {
