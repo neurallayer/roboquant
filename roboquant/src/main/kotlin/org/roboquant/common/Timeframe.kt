@@ -271,7 +271,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * It returns a [Pair] of timeframes, the first one being the training timeframe and the second being the
      * test timeframe.
      */
-    fun splitTrainTest(testSize: Double): Pair<Timeframe, Timeframe> {
+    fun splitTwoWay(testSize: Double): Pair<Timeframe, Timeframe> {
         require(testSize in 0.0..1.0) { "Test size has to between 0.0 and 1.0" }
         val diff = duration.toMillis()
         val train = (diff * (1.0 - testSize)).toLong()
@@ -286,7 +286,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * It returns a [Pair] of timeframes, the first one being the training timeframe and the second being the
      * test timeframe.
      */
-    fun splitTrainTest(testSize: TimeSpan, overlap: TimeSpan = TimeSpan.ZERO): Pair<Timeframe, Timeframe> {
+    fun splitTwoWay(testSize: TimeSpan, overlap: TimeSpan = TimeSpan.ZERO): Pair<Timeframe, Timeframe> {
         val border = end - testSize
         require(border > start) { "testSize should be smaller than timeframe" }
         return Pair(Timeframe(start, border), Timeframe(border - overlap, end, inclusive))

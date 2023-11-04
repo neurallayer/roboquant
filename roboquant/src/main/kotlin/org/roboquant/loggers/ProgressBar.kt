@@ -43,8 +43,9 @@ internal class ProgressBar {
      * Start a progress bar for the [run] and [timeframe]
      */
     fun start(run: String, timeframe: Timeframe) {
+        val runName = if (run.length > 30) run.substring(0, 27) + "..." else run
         currentPercent = -1
-        post = "| $run"
+        post = "| $runName"
         pre = "${timeframe.toPrettyString()} | "
         nextUpdate = Instant.MIN
         lastOutput = ""

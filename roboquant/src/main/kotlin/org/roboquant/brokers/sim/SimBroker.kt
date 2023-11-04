@@ -76,6 +76,18 @@ open class SimBroker(
     }
 
     /**
+     * Load the state from another [account] into the SimBroker. This includes the cash, open positions, open orders,
+     * closed orders, buying power and trades.
+     *
+     * The initial-deposit, the configured models and retention will not be copied over.
+     */
+    fun load(account: Account) {
+        _account.load(account)
+        this.account = _account.toAccount()
+    }
+
+
+    /**
      * Update the portfolio with the provided [position] and return the realized PNL as a consequence of this position
      * change.
      */

@@ -35,6 +35,7 @@ import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.MetricsLogger
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.Order
 import org.roboquant.orders.createCancelOrders
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.Policy
@@ -120,7 +121,6 @@ data class Roboquant(
      * Start a new run using the provided [feed] as data. If no [timeframe] is provided all the events in the feed
      * will be processed. You can provide a custom [name] that will help to later identify this run.
      * If none is provided, the default [name] "run-${timeframe}" will be used that can help to identify the run later.
-     * Additionally, you can provide a [warmup] period in which no metrics will be logged or orders placed.
      *
      * By default, at the beginning of a run, all components (besides the logger) will be [reset] and as a result
      * discard their state. If you don't want this behavior set [reset] to false.
@@ -132,10 +132,9 @@ data class Roboquant(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
         name: String = "run-${timeframe.toPrettyString()}",
-        warmup: TimeSpan = TimeSpan.ZERO,
         reset: Boolean = true
     ) = runBlocking {
-        runAsync(feed, timeframe, name, warmup, reset)
+        runAsync(feed, timeframe, name, reset)
     }
 
     /**
@@ -149,9 +148,11 @@ data class Roboquant(
         feed: Feed,
         timeframe: Timeframe = feed.timeframe,
         name: String = "run-${timeframe.toPrettyString()}",
-        warmup: TimeSpan = TimeSpan.ZERO,
         reset: Boolean = true
-    )  {
+    ) {
+        // Optimization path
+        if (feed.timeframe.start > timeframe.end) return
+
         val channel = EventChannel(channelCapacity, timeframe, onChannelFull)
         val scope = CoroutineScope(Dispatchers.Default + Job())
 
@@ -161,7 +162,6 @@ data class Roboquant(
 
         if (reset) reset(false)
         start(name, timeframe)
-        val warmupEnd = timeframe.start + warmup
 
         try {
             while (true) {
@@ -173,16 +173,12 @@ data class Roboquant(
                 val account = broker.account
 
                 val metricResult = getMetrics(account, event)
-                if (time >= warmupEnd) {
-                    logger.log(metricResult, time, name)
-                } else {
-                    logger.log(emptyMap(), time, name)
-                }
+                logger.log(metricResult, time, name)
 
                 // Generate signals and place orders
                 val signals = strategy.generate(event)
                 val orders = policy.act(signals, account, event)
-                if (time >= warmupEnd) broker.place(orders, time) else broker.place(emptyList(), time)
+                broker.place(orders, time)
 
                 kotlinLogger.trace {
                     "time=$${event.time} actions=${event.actions.size} signals=${signals.size} orders=${orders.size}"
@@ -247,4 +243,33 @@ data class Roboquant(
         logger.log(metricResult, event.time, runName)
     }
 
+
+    fun warmup(period: TimeSpan) : Roboquant {
+        class WarmupBroker(val broker: Broker) : Broker  {
+
+            var start = Instant.MIN
+            var warmup = true
+
+            override val account: Account
+                get() = broker.account
+
+            override fun sync(event: Event) {
+                if (! warmup) return broker.sync(event)
+            }
+
+            override fun place(orders: List<Order>, time: Instant) {
+                if (start == Instant.MIN) start = time
+                if (warmup && time > (start + period)) warmup = false
+                if (! warmup) return broker.place(orders, time)
+            }
+
+        }
+
+        return copy(broker = WarmupBroker(broker))
+
+    }
+
+
 }
+
+

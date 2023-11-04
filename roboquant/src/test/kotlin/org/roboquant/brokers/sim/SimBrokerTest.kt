@@ -73,8 +73,8 @@ internal class SimBrokerTest {
         assertEquals(Wallet(100_000.USD), broker2.initialDeposit)
     }
 
-    @Test
-    fun logic() {
+
+    private fun getFilledSimbroker(): SimBroker {
         val broker = SimBroker()
         val asset = Asset("TEST")
         val order = MarketOrder(asset, 10)
@@ -84,11 +84,29 @@ internal class SimBrokerTest {
 
         broker.place(listOf(order), now)
         broker.sync(event)
+        return broker
+    }
 
+    @Test
+    fun logic() {
+        val broker = getFilledSimbroker()
         val account1 = broker.account
         val account2 = broker.account
         assertEquals(account1.equity, account2.equity)
     }
+
+
+    @Test
+    fun load() {
+        val broker = getFilledSimbroker()
+        val account1 = broker.account
+
+        val broker2 = SimBroker()
+        broker2.load(account1)
+        val account2 = broker2.account
+        assertEquals(account1.equity, account2.equity)
+    }
+
 
     @Test
     fun placeSingleCurrencyOrder() {

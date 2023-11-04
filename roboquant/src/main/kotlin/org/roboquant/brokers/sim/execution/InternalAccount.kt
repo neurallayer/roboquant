@@ -93,6 +93,22 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     }
 
     /**
+     * Load the state from an account
+     */
+    @Synchronized
+    fun load(account: Account) {
+        clear()
+        buyingPower = account.buyingPower
+        cash.deposit(account.cash)
+        for (p in account.positions) portfolio[p.asset] = p
+        for (o in account.openOrders) openOrders[o.orderId] = o
+        closedOrders.addAll(account.closedOrders)
+        trades.addAll(account.trades)
+        lastUpdate = account.lastUpdate
+        baseCurrency = account.baseCurrency
+    }
+
+    /**
      * Set the [position] a portfolio. If the position is closed, it is removed all together from the [portfolio].
      */
     @Synchronized

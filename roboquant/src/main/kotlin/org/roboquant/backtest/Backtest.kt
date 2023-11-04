@@ -34,46 +34,49 @@ import org.roboquant.feeds.Feed
  */
 class Backtest(val feed: Feed, val roboquant: Roboquant) {
 
+
     init {
         require(roboquant.broker is SimBroker) { "Only a SimBroker can be used for back testing" }
     }
 
     /**
-     * Perform a single run over the provided [timeframe] using the provided [warmup] period. The timeframe is
-     * including the warmup period.
+     * Perform a single run over the provided [timeframe].
      */
-    fun singleRun(timeframe: Timeframe = feed.timeframe, warmup: TimeSpan = TimeSpan.ZERO) {
-        roboquant.run(feed, timeframe, "run-$timeframe", warmup)
+    fun singleRun(timeframe: Timeframe = feed.timeframe) {
+        roboquant.run(feed, timeframe)
     }
 
+
     /**
-     * Run a walk forward using the provided [period] and [warmup].
-     * The [warmup] is optional and will always directly precede the provided [period].
+     * Run a walk forward using the provided [period] and [overlap].
+     * The [overlap] is optional and will always directly precede the provided [period].
      */
     fun walkForward(
         period: TimeSpan,
-        warmup: TimeSpan = TimeSpan.ZERO,
+        overlap: TimeSpan = TimeSpan.ZERO,
+        anchored: Boolean = false,
+        timeframe: Timeframe = feed.timeframe
     ) {
-        require(feed.timeframe.isFinite()) { "feed needs a finite timeframe" }
-        feed.timeframe.split(period, warmup).forEach {
-            roboquant.run(feed, it, "run-$it", warmup)
+        require(timeframe.isFinite()) { "needs a finite timeframe" }
+        if (anchored) require(overlap.isZero) { "Cannot have overlap if anchored"}
+        timeframe.split(period, overlap).forEach {
+            val tf = if (anchored) it.copy(start = timeframe.start) else it
+            roboquant.run(feed, tf, "run-$tf")
         }
     }
 
     /**
      * Run a Monte Carlo simulation of a number of [samples] to find out how metrics of interest are distributed
      * given the provided [period].
-     *
-     * Optional each period can include a [warmup] time-span.
      */
     fun monteCarlo(
         period: TimeSpan,
         samples: Int,
-        warmup: TimeSpan = TimeSpan.ZERO,
+        timeframe: Timeframe = feed.timeframe
     ) {
-        require(feed.timeframe.isFinite()) { "feed needs a finite timeframe" }
-        feed.timeframe.sample(period, samples).forEach {
-            roboquant.run(feed, it, "run-$it", warmup)
+        require(timeframe.isFinite()) { "needs a finite timeframe" }
+        timeframe.sample(period, samples).forEach {
+            roboquant.run(feed, it, "run-$it")
         }
     }
 

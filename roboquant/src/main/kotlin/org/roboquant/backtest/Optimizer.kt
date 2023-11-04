@@ -59,6 +59,14 @@ open class Optimizer(
         space, MetricScore(evalMetric), getRoboquant
     )
 
+
+    private fun getSafeRoboquant(params: Params) : Roboquant {
+        val roboquant = getRoboquant(params)
+        require(roboquant.broker is SimBroker)
+        return roboquant
+    }
+
+
     /**
      * Run a walk forward
      */
@@ -66,19 +74,20 @@ open class Optimizer(
         feed: Feed,
         period: TimeSpan,
         validation: TimeSpan,
-        warmup: TimeSpan = TimeSpan.ZERO,
-        anchored: Boolean = false
+        overlap: TimeSpan = TimeSpan.ZERO,
+        anchored: Boolean = false,
+        timeframe: Timeframe = feed.timeframe
     ): List<RunResult> {
-        val timeframe = feed.timeframe
         require(timeframe.isFinite()) { "feed needs known timeframe" }
-        val feedStart = feed.timeframe.start
+        if (anchored) require(overlap.isZero) { "Cannot have overlap if anchored"}
+        val feedStart = timeframe.start
         val results = mutableListOf<RunResult>()
 
-        val trueValidation = validation + warmup
+        val trueValidation = validation + overlap
         timeframe.split(period + validation, period, false).forEach {
             val tf = if (anchored) it.copy(start = feedStart) else it
-            val (train, valid) = tf.splitTrainTest(trueValidation, warmup)
-            val r = trainAndValidate(feed, train, valid, warmup)
+            val (train, valid) = tf.splitTwoWay(trueValidation, overlap)
+            val r = trainAndValidate(feed, train, valid)
             results.addAll(r)
         }
         return results
@@ -89,13 +98,12 @@ open class Optimizer(
         feed: Feed,
         trainTimeframe: Timeframe,
         validationTimeframe: Timeframe,
-        warmup: TimeSpan
     ): List<RunResult> {
         val results = mutableListOf<RunResult>()
-        val result = train(feed, trainTimeframe, warmup)
+        val result = train(feed, trainTimeframe)
         results.addAll(result)
         val best = result.maxBy { entry -> entry.score }
-        val score = validate(feed, validationTimeframe, best.params, warmup)
+        val score = validate(feed, validationTimeframe, best.params)
         results.add(score)
         return results
     }
@@ -108,13 +116,13 @@ open class Optimizer(
         period: TimeSpan,
         validation: TimeSpan,
         samples: Int,
-        warmup: TimeSpan = TimeSpan.ZERO
+        timeframe: Timeframe = feed.timeframe
     ): List<RunResult> {
         val results = mutableSynchronisedListOf<RunResult>()
-        require(!feed.timeframe.isInfinite()) { "feed needs known timeframe" }
-        feed.timeframe.sample(period + validation, samples).forEach {
-            val (train, valid) = it.splitTrainTest(validation)
-            val r = trainAndValidate(feed, train, valid, warmup)
+        require(timeframe.isFinite()) { "feed needs known timeframe" }
+        timeframe.sample(period + validation, samples).forEach {
+            val (train, valid) = it.splitTwoWay(validation)
+            val r = trainAndValidate(feed, train, valid)
             results.addAll(r)
         }
         return results
@@ -129,15 +137,14 @@ open class Optimizer(
     /**
      * Train the solution in parallel
      */
-    fun train(feed: Feed, tf: Timeframe = Timeframe.INFINITE, warmup: TimeSpan = TimeSpan.ZERO): List<RunResult> {
+    fun train(feed: Feed, tf: Timeframe = Timeframe.INFINITE): List<RunResult> {
         val jobs = ParallelJobs()
         val results = mutableSynchronisedListOf<RunResult>()
         for (params in space) {
             jobs.add {
-                val rq = getRoboquant(params).copy(logger = getTrainLogger())
-                require(rq.broker is SimBroker) { "Only a SimBroker can be used for back testing" }
+                val rq = getSafeRoboquant(params).copy(logger = getTrainLogger())
                 val name = "train-${run++}"
-                rq.runAsync(feed, tf, name, warmup)
+                rq.runAsync(feed, tf, name)
                 val s = score.calculate(rq, name, tf)
                 val result = RunResult(params, s, tf, name)
                 results.add(result)
@@ -149,12 +156,10 @@ open class Optimizer(
     }
 
 
-    private fun validate(feed: Feed, timeframe: Timeframe, params: Params, warmup: TimeSpan): RunResult {
-        val rq = getRoboquant(params)
-        require(rq.broker is SimBroker) { "Only a SimBroker can be used for back testing" }
-
+    private fun validate(feed: Feed, timeframe: Timeframe, params: Params): RunResult {
+        val rq = getSafeRoboquant(params)
         val name = "validate-${run++}"
-        rq.run(feed, timeframe, name, warmup)
+        rq.run(feed, timeframe, name)
         val s = score.calculate(rq, name, timeframe)
         return RunResult(params, s, timeframe, name)
     }

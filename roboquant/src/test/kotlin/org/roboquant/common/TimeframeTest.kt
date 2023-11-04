@@ -219,18 +219,18 @@ internal class TimeframeTest {
     @Test
     fun testTrainTestSplit() {
         val tf = Timeframe.fromYears(2010, 2020)
-        val (a, b) = tf.splitTrainTest(0.5)
+        val (a, b) = tf.splitTwoWay(0.5)
         assertTrue(a.duration - b.duration < Duration.ofDays(2))
 
-        val (c, d) = tf.splitTrainTest(5.years)
+        val (c, d) = tf.splitTwoWay(5.years)
         assertTrue(c.duration - d.duration < Duration.ofDays(2))
 
         assertThrows<java.lang.IllegalArgumentException> {
-            tf.splitTrainTest(11.years)
+            tf.splitTwoWay(11.years)
         }
 
         assertThrows<java.lang.IllegalArgumentException> {
-            tf.splitTrainTest(1.2)
+            tf.splitTwoWay(1.2)
         }
 
     }
