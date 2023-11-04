@@ -24,9 +24,7 @@ import org.roboquant.brokers.Broker
 import org.roboquant.brokers.closeSizes
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Logging
-import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
-import org.roboquant.common.plus
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
@@ -35,7 +33,6 @@ import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.MetricsLogger
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.Order
 import org.roboquant.orders.createCancelOrders
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.Policy
@@ -241,32 +238,6 @@ data class Roboquant(
         val newAccount = broker.account
         val metricResult = getMetrics(newAccount, event)
         logger.log(metricResult, event.time, runName)
-    }
-
-
-    fun warmup(period: TimeSpan) : Roboquant {
-        class WarmupBroker(val broker: Broker) : Broker  {
-
-            var start = Instant.MIN
-            var warmup = true
-
-            override val account: Account
-                get() = broker.account
-
-            override fun sync(event: Event) {
-                if (! warmup) return broker.sync(event)
-            }
-
-            override fun place(orders: List<Order>, time: Instant) {
-                if (start == Instant.MIN) start = time
-                if (warmup && time > (start + period)) warmup = false
-                if (! warmup) return broker.place(orders, time)
-            }
-
-        }
-
-        return copy(broker = WarmupBroker(broker))
-
     }
 
 
