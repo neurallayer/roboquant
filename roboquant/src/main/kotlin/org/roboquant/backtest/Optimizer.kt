@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * @param run the id of the run
  * @param validation is this a validation run
  */
-class RunResult internal constructor(
+data class RunResult internal constructor(
     val params: Params,
     val score: Double,
     val timeframe: Timeframe,
@@ -219,7 +219,7 @@ fun Collection<RunResult>.average(): Map<String, Double> {
 
 
 /**
- * Calculate the correlation between validation and training score for the various runs
+ * Calculate the correlation between validation and training scores for the runs
  */
 fun Collection<RunResult>.correlation(): Double {
     val training = mutableListOf<Double>()
