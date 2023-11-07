@@ -18,8 +18,8 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedSendChannelException
-import org.roboquant.backtest.mutableSynchronisedListOf
 import org.roboquant.common.Logging
+import java.util.*
 
 /**
  * Live feed represents a feed of live data. So data that comes in as it is observed with timestamps
@@ -35,7 +35,7 @@ import org.roboquant.common.Logging
 abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
 
     private val logger = Logging.getLogger(this::class)
-    private var channels = mutableSynchronisedListOf<EventChannel>()
+    private var channels = Collections.synchronizedList(mutableListOf<EventChannel>())
 
     init {
         playAll()

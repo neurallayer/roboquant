@@ -61,7 +61,7 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
         if (anchored) require(overlap.isZero) { "Cannot have overlap if anchored"}
         timeframe.split(period, overlap).forEach {
             val tf = if (anchored) it.copy(start = timeframe.start) else it
-            roboquant.run(feed, tf, "run-$tf")
+            roboquant.run(feed, tf, "wf-$tf")
         }
     }
 
@@ -76,7 +76,7 @@ class Backtest(val feed: Feed, val roboquant: Roboquant) {
     ) {
         require(timeframe.isFinite()) { "needs a finite timeframe" }
         timeframe.sample(period, samples).forEach {
-            roboquant.run(feed, it, "run-$it")
+            roboquant.run(feed, it, "mc-$it")
         }
     }
 

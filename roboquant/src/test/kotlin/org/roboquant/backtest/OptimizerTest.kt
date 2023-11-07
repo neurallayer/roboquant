@@ -26,14 +26,19 @@ internal class OptimizerTest {
 
         val feed = RandomWalkFeed.lastYears(1, nAssets = 1)
 
-        val r1 = opt.train(feed, feed.timeframe)
-        assertTrue(r1.isNotEmpty())
+        val r1 = opt.train(feed, feed.timeframe).maxBy { it.score }
+        assertTrue(r1.score.isFinite())
 
         val r2 = opt.walkForward(feed, 6.months, 2.months)
         assertTrue(r2.isNotEmpty())
 
         val r3 = opt.monteCarlo(feed, 6.months, 3.months, 5)
         assertTrue(r3.isNotEmpty())
+
+        assertTrue(r3.min().containsKey("training"))
+        assertTrue(r3.max().containsKey("training"))
+        assertTrue(r3.average().containsKey("training"))
+        assertTrue(r3.correlation().isFinite())
 
     }
 
@@ -64,8 +69,8 @@ internal class OptimizerTest {
         }
 
         val feed = RandomWalkFeed.lastYears(1, nAssets = 1)
-        val r1 = opt.train(feed, feed.timeframe)
-        assertTrue(r1.isNotEmpty())
+        val r1 = opt.train(feed, feed.timeframe).maxBy { it.score }
+        assertTrue(r1.score.isFinite())
 
     }
 

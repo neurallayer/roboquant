@@ -280,15 +280,14 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Split a timeframe into two parts, one for training and one for test using the provided [testSize]
-     * for determining the size of test. [testSize] period should be smaller than the total duration of the timeframe.
+     * Split a timeframe into two parts, using the [offset] as split. The [offset] period should be smaller than
+     * the total duration of the timeframe. Optionally, an [overlap] can be provided, default is [TimeSpan.ZERO].
      *
-     * It returns a [Pair] of timeframes, the first one being the training timeframe and the second being the
-     * test timeframe.
+     * It returns a [Pair] of timeframes.
      */
-    fun splitTwoWay(testSize: TimeSpan, overlap: TimeSpan = TimeSpan.ZERO): Pair<Timeframe, Timeframe> {
-        val border = end - testSize
-        require(border > start) { "testSize should be smaller than timeframe" }
+    fun splitTwoWay(offset: TimeSpan, overlap: TimeSpan = TimeSpan.ZERO): Pair<Timeframe, Timeframe> {
+        val border = start + offset
+        require(contains(border)) { "offset should be smaller than timeframe" }
         return Pair(Timeframe(start, border), Timeframe(border - overlap, end, inclusive))
     }
 
