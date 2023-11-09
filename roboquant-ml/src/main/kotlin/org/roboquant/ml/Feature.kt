@@ -28,9 +28,13 @@ import smile.data.vector.DoubleVector
 
 
 /**
- * A feature is logic that is able to extract one or more named values from a series of events
+ * A feature contains data that is derived from a series of events
  */
 interface Feature<D: Dimension> {
+
+    /**
+     * Update the feature with a new event
+     */
     fun update(event: Event)
 
     val name: String

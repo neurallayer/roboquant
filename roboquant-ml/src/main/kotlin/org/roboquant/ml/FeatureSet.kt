@@ -21,7 +21,9 @@ import org.roboquant.common.Config
 import org.roboquant.feeds.Event
 import smile.data.vector.DoubleVector
 
-
+/**
+ * FeatureSet contains one or more [features][Feature]
+ */
 class FeatureSet {
 
     private val features = mutableListOf<Feature<*>>()

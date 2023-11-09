@@ -7,6 +7,7 @@ import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class OptimizerTest {
@@ -39,7 +40,7 @@ internal class OptimizerTest {
         assertTrue(r3.max().containsKey("training"))
         assertTrue(r3.average().containsKey("training"))
         assertTrue(r3.correlation().isFinite())
-
+        assertEquals(r3.size, r3.clean().size)
     }
 
     @Test

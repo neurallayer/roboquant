@@ -408,22 +408,6 @@
                         </execution>
                     </executions>
                 </plugin>
-                <!-- plugin>
-                    <groupId>com.github.ozsie</groupId>
-                    <artifactId>detekt-maven-plugin</artifactId>
-                    <version>1.23.1</version>
-                    <configuration>
-                        <config>docs/run/detekt.yml</config>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin -->
             </plugins>
         </pluginManagement>
 

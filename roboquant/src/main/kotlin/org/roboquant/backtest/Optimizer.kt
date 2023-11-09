@@ -198,6 +198,12 @@ fun Collection<RunResult>.max(): Map<String, Double> {
 }
 
 /**
+ * Remove non finite values
+ */
+fun Collection<RunResult>.clean() = filter { it.score.isFinite() }
+
+
+/**
  * Calculate the minimum of all training and validation scores.
  */
 fun Collection<RunResult>.min(): Map<String, Double> {
