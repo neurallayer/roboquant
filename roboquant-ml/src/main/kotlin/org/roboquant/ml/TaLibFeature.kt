@@ -23,58 +23,62 @@ import org.roboquant.ta.InsufficientData
 import org.roboquant.ta.PriceBarSeries
 import org.roboquant.ta.TaLib
 
-class TaLibSingleFeature(
+class TaLibFeature(
     override val name: String,
     private val asset: Asset,
     private val block: TaLib.(prices: PriceBarSeries) -> Double
-) : SingelValueFeature() {
+) : Feature {
 
     private val t = TaLib()
     private val history = PriceBarSeries(1)
 
+    /**
+     * Common
+     */
     companion object {
 
-        fun rsi(asset: Asset, timePeriod: Int = 14): TaLibSingleFeature {
-            return TaLibSingleFeature("rsi-$timePeriod", asset) {
+        fun rsi(asset: Asset, timePeriod: Int = 14): TaLibFeature {
+            return TaLibFeature("${asset.symbol}-RSI-$timePeriod", asset) {
                 rsi(it, timePeriod)
             }
         }
 
-        fun obv(asset: Asset) : TaLibSingleFeature {
-            return TaLibSingleFeature("obv", asset) {
+        fun obv(asset: Asset) : TaLibFeature {
+            return TaLibFeature("${asset.symbol}-OBV", asset) {
                 obv(it.close, it.volume)
             }
         }
 
-        fun ema(asset: Asset, fast: Int = 5, slow: Int = 13) : TaLibSingleFeature {
-            return TaLibSingleFeature("ema-$fast-$slow", asset) {
-                val isUP = ema(it, fast) >= ema(it, slow)
-                if (isUP) 1.0 else -1.0
+        fun ema(asset: Asset, fast: Int = 5, slow: Int = 13) : TaLibFeature {
+            return TaLibFeature("${asset.symbol}-EMA-$fast-$slow", asset) {
+                val f = ema(it, fast)
+                val s = ema(it, slow)
+                when {
+                    f > s -> 1.0
+                    s < f -> -1.0
+                    else -> 0.0
+                }
             }
         }
 
     }
 
-    override fun update(event: Event) {
+    override fun calculate(event: Event): Double {
         val action = event.prices[asset]
-        var d = Double.NaN
         if (action != null && action is PriceBar && history.add(action, event.time)) {
             try {
-                d = t.block(history)
+                return t.block(history)
             } catch (e: InsufficientData) {
                 history.increaseCapacity(e.minSize)
             }
         }
-        add(d)
+        return 0.0
     }
 
     override fun reset() {
-        super.clean()
         history.clear()
     }
 
 
 
 }
-
-

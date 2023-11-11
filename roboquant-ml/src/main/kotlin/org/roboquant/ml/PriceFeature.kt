@@ -20,14 +20,14 @@ import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 
 class PriceFeature(
-    override val name: String,
     private val asset: Asset,
-    private val type: String = "DEFAULT"
-) : SingelValueFeature() {
+    private val type: String = "DEFAULT",
+    override val name: String = "${asset.symbol}-PRICE-$type"
+) : Feature {
 
-    override fun update(event: Event) {
+    override fun calculate(event: Event): Double {
         val action = event.prices[asset]
-        if (action != null) add(action.getPrice(type)) else add(Double.NaN)
+        return action?.getPrice(type) ?: Double.NaN
     }
 
 

@@ -18,7 +18,9 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.avro.AvroFeed
+import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.bips
+import org.roboquant.common.findBySymbols
 import org.roboquant.common.getBySymbol
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.ProgressMetric
@@ -31,27 +33,31 @@ fun main() {
 
     val feed = AvroFeed.sp500()
 
-    val features = FeatureSet()
+    val features = DataFrameFeatureSet(offset = 3)
     val asset = feed.assets.getBySymbol("TSLA")
-    val y = PriceFeature("Y", asset, "CLOSE").returns(5)
+    val y = PriceFeature(asset, "CLOSE", "Y").returns()
+    features.addLabel(y)
 
-    val x1 = TaLibSingleFeature("X1", asset) { ema(it, 20) }.returns()
-    val x2 = TaLibSingleFeature("X2", asset) { sma(it, 10) }.growthRate()
-    val x3 = TaLibSingleFeature("X3", asset) { rsi(it, 20) }
-    val x4 = TaLibSingleFeature("X4", asset) { if (cdl3StarsInSouth(it)) 1.0 else -1.0 }
-    val x5 = TaLibMultiFeature("X5", 3, asset = asset) { bbands(it).toList() }.returns()
-    val x6 = TaLibSingleFeature.obv(asset).returns()
+    val xAssets = feed.assets.findBySymbols("TSLA", "MSFT", "F", "GOOGL")
+    xAssets.forEach {
+        val x1 = PriceFeature(it, "CLOSE").returns()
+        val x2 = TaLibFeature.rsi(it, 10)
+        val x3 = TaLibFeature.obv(it).returns()
+        val x4 = TaLibFeature.ema(it)
+        features.addInput(x1, x2, x3, x4)
+    }
 
-    features.add(y, x1, x2, x3, x4, x5, x6)
+    println(features.names)
 
     val percentage = 1.bips
-    val myStrat = RegressionStrategy(features, asset, percentage, 500, 50) {
-        val model = gbm(Formula.lhs("Y"), it)
+    val myStrat = RegressionStrategy(features, asset, percentage, 500) {
+        val model = gbm(Formula.lhs("Y-RETURNS"), it, ntrees = 100)
         println(model.importance().toList())
         model
     }
 
-    val rq = Roboquant(myStrat, ProgressMetric(), logger = MemoryLogger())
+    val broker = SimBroker()
+    val rq = Roboquant(myStrat, ProgressMetric(), broker= broker,  logger = MemoryLogger(false))
     rq.run(feed)
     println(rq.broker.account.summary())
 

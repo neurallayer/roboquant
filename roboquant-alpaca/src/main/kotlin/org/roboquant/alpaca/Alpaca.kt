@@ -43,7 +43,7 @@ typealias DataType = DataAPIType
  * @property secretKey the secret key to access the API (property name is alpaca.secret.key)
  * @property accountType account type, either PAPER or LIVE, default is PAPER
  * @property dataType type of data to use, IEX or SIP, default is IEX
- * @property extendedHours enable extended hours for trading, default is true
+ * @property extendedHours enable extended hours for trading, default is false
  *
  * @constructor Create a new instance of AlpacaConfig
  */
@@ -52,7 +52,7 @@ data class AlpacaConfig(
     var secretKey: String = Config.getProperty("alpaca.secret.key", ""),
     var accountType: AccountType = AccountType.PAPER,
     var dataType: DataType = DataType.IEX,
-    var extendedHours: Boolean = true
+    var extendedHours: Boolean = Config.getProperty("alpaca.extendedhours", false),
 )
 
 /**

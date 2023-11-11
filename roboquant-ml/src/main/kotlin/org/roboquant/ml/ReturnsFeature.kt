@@ -16,21 +16,32 @@
 
 package org.roboquant.ml
 
-import org.jetbrains.kotlinx.multik.api.mk
-import org.jetbrains.kotlinx.multik.api.ndarray
-import org.jetbrains.kotlinx.multik.ndarray.data.D1
-import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
-import org.jetbrains.kotlinx.multik.ndarray.operations.div
-import org.jetbrains.kotlinx.multik.ndarray.operations.minus
+import org.roboquant.feeds.Event
 
-class ReturnsFeature(private val f: Feature<D1>, private val n:Int = 1) : Feature<D1> by f {
+class ReturnsFeature(private val f: Feature, private val n: Int = 1, private val missing: Double = 0.0) :
+    Feature by f {
 
-    override fun get(i: Int): NDArray<Double, D1> {
-        if (i < n) return mk.ndarray(DoubleArray(f.size) {Double.NaN})
-        return f[i] / f[i-n] - 1.0
+    private val history = mutableListOf<Double>()
+
+    override fun calculate(event: Event): Double {
+        if (history.size > n) history.removeFirst()
+        val v = f.calculate(event)
+        history.add(v)
+        val lastIndex = history.lastIndex
+        if (lastIndex < n) return missing
+        return history[lastIndex] / history[lastIndex - n] - 1.0
+    }
+
+    override val name: String
+        get() = f.name + "-RETURNS"
+
+    override fun reset() {
+        history.clear()
+        f.reset()
     }
 
 }
 
 
-fun Feature<D1>.returns(n: Int = 1) = ReturnsFeature(this, n)
+fun Feature.returns(n: Int = 1) = ReturnsFeature(this, n)
+

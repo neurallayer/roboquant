@@ -64,30 +64,10 @@
             <version>${smile.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>openblas</artifactId>
-            <version>0.3.21-1.5.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>openblas-platform</artifactId>
-            <version>0.3.21-1.5.8</version>
-        </dependency>
-        <dependency>
             <groupId>org.roboquant</groupId>
             <artifactId>roboquant-avro</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>multik-core-jvm</artifactId>
-            <version>0.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>multik-kotlin-jvm</artifactId>
-            <version>0.2.2</version>
         </dependency>
     </dependencies>
 

@@ -18,11 +18,6 @@
 
 package org.roboquant.ml
 
-import org.jetbrains.kotlinx.multik.ndarray.data.Dimension
-import org.jetbrains.kotlinx.multik.ndarray.data.MultiArray
-import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
-import org.jetbrains.kotlinx.multik.ndarray.operations.div
-import org.jetbrains.kotlinx.multik.ndarray.operations.minus
 import org.roboquant.common.Config
 
 
@@ -111,11 +106,6 @@ fun DoubleArray.sampleColumns(size: Int, n: Int = 1) : List<DoubleArray> {
     }
     return result
 }
-
-fun <D : Dimension> MultiArray<Double, D>.returns(other: MultiArray<Double, D>): NDArray<Double, D> {
-    return (other / this) - 1.0
-}
-
 
 /**
  * Drop last [n] elements from the array and return the result

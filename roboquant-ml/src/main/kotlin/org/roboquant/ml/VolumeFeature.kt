@@ -16,24 +16,18 @@
 
 package org.roboquant.ml
 
-import org.jetbrains.kotlinx.multik.api.mk
-import org.jetbrains.kotlinx.multik.api.ndarray
-import org.jetbrains.kotlinx.multik.ndarray.data.D1
-import org.jetbrains.kotlinx.multik.ndarray.data.NDArray
-import org.jetbrains.kotlinx.multik.ndarray.operations.div
+import org.roboquant.common.Asset
+import org.roboquant.feeds.Event
 
-class GrowthRateFeature(private val f: Feature<D1>, private val n: Int = 1) : Feature<D1> by f {
+class VolumeFeature(
+    private val asset: Asset,
+    override val name: String = "${asset.symbol}-VOLUME"
+) : Feature {
 
-    override fun get(i: Int): NDArray<Double, D1> {
-        if (i < n) return mk.ndarray(DoubleArray(f.size) { Double.NaN })
-        return f[i] / f[i - n]
+    override fun calculate(event: Event): Double {
+        val action = event.prices[asset]
+        return action?.volume ?: Double.NaN
     }
 
 
 }
-
-
-
-
-
-fun Feature<D1>.growthRate(n: Int = 1) = GrowthRateFeature(this, n)
