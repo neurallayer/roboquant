@@ -17,54 +17,44 @@
 package org.roboquant.ml
 
 import org.roboquant.common.Asset
+import org.roboquant.common.Logging
 import org.roboquant.common.percent
 import org.roboquant.feeds.Event
 import org.roboquant.strategies.Rating
+import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.Strategy
 import smile.data.DataFrame
 import smile.regression.DataFrameRegression
 
 
 class RegressionStrategy(
-    private val features: FeatureSet,
+    private val features: DataFrameFeatureSet,
     private val asset: Asset,
     private val percentage: Double = 1.percent,
     private val train: Int,
-    private val warmup: Int,
     val block: (DataFrame) -> DataFrameRegression
-) : Strategy {
+) : RecordingStrategy() {
 
-    private var training: Boolean = true
+    val logger = Logging.getLogger(this::class)
+
     private lateinit var model: DataFrameRegression
 
     private fun train() {
-        val vectors = features.getVectors(warmup)
-        assert(vectors.isNotEmpty())
-        val first = vectors.first()
-        assert(first.size() > 0)
-        assert(vectors.all { it.size() == first.size() })
-
-        @Suppress("SpreadOperator")
-        val df = DataFrame.of(*vectors)
+        val df = features.getDataFrame()
         model = block(df)
     }
 
     private fun predict(): Double {
-        val vectors = features.getLastVectors()
-        assert(vectors.isNotEmpty())
-        assert(vectors.all { it.size() == 1 })
-
-        @Suppress("SpreadOperator")
-        val df = DataFrame.of(*vectors)
-        val result = model.predict(df)
-        return result.last()
+        val df = features.getRow()
+        val result = model.predict(df).last()
+        record("prediction", result)
+        return result
     }
 
     override fun generate(event: Event): List<Signal> {
         features.update(event)
-        if (features.size == train) train()
-        if (features.size > train) {
+        if (features.samples == train) train()
+        if (features.samples > train) {
             val g = predict()
             val rating = when {
                 g > percentage -> Rating.BUY
@@ -77,14 +67,8 @@ class RegressionStrategy(
         return emptyList()
     }
 
-    @Suppress("unused")
-    fun warmup() {
-        training = false
-    }
-
-    @Suppress("unused")
-    fun training() {
-        training = true
+    override fun reset() {
+        features.reset()
     }
 
 }
