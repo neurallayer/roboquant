@@ -25,12 +25,18 @@ import org.roboquant.feeds.Event
 interface Feature {
 
     /**
-     * Update the feature with a new event
+     * Update the feature with a new event and return the latest value
      */
     fun calculate(event: Event): Double
 
+    /**
+     * The name of the feature
+     */
     val name: String
 
+    /**
+     * Reset any state in the feature
+     */
     fun reset() {}
 }
 

@@ -23,6 +23,9 @@ import org.roboquant.ta.InsufficientData
 import org.roboquant.ta.PriceBarSeries
 import org.roboquant.ta.TaLib
 
+/**
+ * Use TaLib indicators to create features
+ */
 class TaLibFeature(
     override val name: String,
     private val asset: Asset,
@@ -63,6 +66,9 @@ class TaLibFeature(
 
     }
 
+    /**
+     * @see Feature.calculate
+     */
     override fun calculate(event: Event): Double {
         val action = event.prices[asset]
         if (action != null && action is PriceBar && history.add(action, event.time)) {
@@ -75,6 +81,9 @@ class TaLibFeature(
         return 0.0
     }
 
+    /**
+     * @see Feature.reset
+     */
     override fun reset() {
         history.clear()
     }

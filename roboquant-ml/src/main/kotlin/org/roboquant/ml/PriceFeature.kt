@@ -19,6 +19,9 @@ package org.roboquant.ml
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 
+/**
+ * Extract the price from the event for the provided [asset]
+ */
 class PriceFeature(
     private val asset: Asset,
     private val type: String = "DEFAULT",

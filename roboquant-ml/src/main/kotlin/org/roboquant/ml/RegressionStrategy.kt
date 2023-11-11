@@ -26,35 +26,36 @@ import org.roboquant.strategies.Signal
 import smile.data.DataFrame
 import smile.regression.DataFrameRegression
 
-
+/**
+ * Strategy based on a Smile Regression
+ */
 class RegressionStrategy(
-    private val features: DataFrameFeatureSet,
+    private val featureSet: DataFrameFeatureSet,
     private val asset: Asset,
     private val percentage: Double = 1.percent,
-    private val train: Int,
     val block: (DataFrame) -> DataFrameRegression
 ) : RecordingStrategy() {
 
     val logger = Logging.getLogger(this::class)
+    private var trained = false
 
     private lateinit var model: DataFrameRegression
 
     private fun train() {
-        val df = features.getDataFrame()
+        val df = featureSet.getDataFrame()
         model = block(df)
     }
 
     private fun predict(): Double {
-        val df = features.getRow()
+        val df = featureSet.getRow()
         val result = model.predict(df).last()
-        record("prediction", result)
+        record("prediction.${asset.symbol.lowercase()}", result)
         return result
     }
 
     override fun generate(event: Event): List<Signal> {
-        features.update(event)
-        if (features.samples == train) train()
-        if (features.samples > train) {
+        featureSet.update(event)
+        if (trained) {
             val g = predict()
             val rating = when {
                 g > percentage -> Rating.BUY
@@ -67,8 +68,16 @@ class RegressionStrategy(
         return emptyList()
     }
 
+    override fun end(run: String) {
+        if (! trained) {
+            train()
+            trained = true
+        }
+    }
+
     override fun reset() {
-        features.reset()
+        featureSet.reset()
+        trained = false
     }
 
 }

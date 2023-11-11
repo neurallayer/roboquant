@@ -23,74 +23,66 @@ import smile.data.vector.DoubleVector
 /**
  * FeatureSet contains one or more [features][Feature] and can return it as a dataframe
  */
-class DataFrameFeatureSet(private val offset: Int = 0, private val warmup: Int = 0) {
+class DataFrameFeatureSet(private val historySize: Int = 1_000_000) {
 
     private class Entry(val feature: Feature, val data: DoubleArray, val offset: Int = 0)
 
-    private val input = mutableListOf<Entry>()
-    private val labels = mutableListOf<Entry>()
-    var samples = 0
+    private val features = mutableListOf<Entry>()
+
+    private var samples = 0
 
     val names
-        get() = input.map { it.feature.name }
+        get() = features.map { it.feature.name }
 
+    private val maxOffset
+        get() = features.maxOf { it.offset }
 
-    fun addInput(vararg feature: Feature) {
-        for (f in feature) input.add(Entry(f, DoubleArray(1_000_000)))
+    fun add(vararg feature: Feature, offset: Int = 0) {
+        for (f in feature) {
+            require(f.name !in names) { "duplicate name ${f.name}"}
+            features.add(Entry(f, DoubleArray(historySize), offset))
+        }
     }
 
-    fun addLabel(vararg feature: Feature) {
-        for (f in feature) labels.add(Entry(f, DoubleArray(1_000_000)))
-    }
-
-    private fun DoubleArray.inputData(): DoubleArray {
-        val result = DoubleArray(samples - offset)
-        System.arraycopy(this, 0, result, 0, result.size)
+    private fun Entry.inputData(size: Int): DoubleArray {
+        val result = DoubleArray(size)
+        System.arraycopy(data, 0, result, 0, size)
         return result
     }
 
-    private fun DoubleArray.labelData(): DoubleArray {
-        val result = DoubleArray(samples - offset)
-        System.arraycopy(this, offset, result, 0, result.size)
-        return result
-    }
 
     fun getDataFrame(): DataFrame {
-        val i = input.map { DoubleVector.of(it.feature.name, it.data.inputData()) }
-        val l = labels.map { DoubleVector.of(it.feature.name, it.data.labelData()) }
-        val total = (l + i).toTypedArray()
+        val size = samples - maxOffset
+        val i = features.map { DoubleVector.of(it.feature.name, it.inputData(size)) }
         @Suppress("SpreadOperator")
-        return DataFrame.of(*total)
+        return DataFrame.of(*i.toTypedArray())
     }
 
 
     private fun Entry.getRow(row: Int): DoubleVector {
-        val doubleArr = if (row > data.lastIndex) doubleArrayOf(Double.NaN) else  doubleArrayOf(data[row])
+        val last = samples - offset - 1
+        val doubleArr = if (row > last) doubleArrayOf(Double.NaN) else doubleArrayOf(data[row])
         return DoubleVector.of(feature.name, doubleArr)
     }
 
     fun getRow(row: Int = samples - 1): DataFrame {
-        val i = input.map { it.getRow(row) }
-        val l = labels.map { it.getRow(row) }
-        val total = (l + i).toTypedArray()
+        assert(row >= 0)
+        val i = features.map { it.getRow(row) }
         @Suppress("SpreadOperator")
-        return DataFrame.of(*total)
+        return DataFrame.of(*i.toTypedArray())
     }
 
     fun update(event: Event) {
-        for (entry in input) {
+        for (entry in features) {
             val value = entry.feature.calculate(event)
-            if (samples >= warmup) entry.data[samples] = value
-        }
-        for (entry in labels) {
-            val value = entry.feature.calculate(event)
-            if (samples >= warmup) entry.data[samples] = value
+            val idx = samples - entry.offset
+            if (idx >= 0) entry.data[idx] = value
         }
         samples++
     }
 
     fun reset() {
-        
+        for (f in features) f.feature.reset()
     }
 
 
