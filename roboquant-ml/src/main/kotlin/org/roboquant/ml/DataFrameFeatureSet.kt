@@ -23,37 +23,52 @@ import smile.data.vector.DoubleVector
 /**
  * FeatureSet contains one or more [features][Feature] and can return it as a dataframe
  */
-class DataFrameFeatureSet(private val historySize: Int = 1_000_000) {
+class DataFrameFeatureSet(private val historySize: Int = 1_000_000, private val warmup: Int = 0) {
 
-    private class Entry(val feature: Feature, val data: DoubleArray, val offset: Int = 0)
+    private class Entry(
+        val feature: Feature,
+        val data: DoubleArray,
+        val offset: Int = 0,
+        var mean: Double = Double.NaN
+    )
 
-    private val features = mutableListOf<Entry>()
+    private val entries = mutableListOf<Entry>()
 
     private var samples = 0
+    private var warmupCountdown = warmup
 
+    /**
+     * The names of all the features in this feature set
+     */
     val names
-        get() = features.map { it.feature.name }
+        get() = entries.map { it.feature.name }
 
     private val maxOffset
-        get() = features.maxOf { it.offset }
+        get() = entries.maxOf { it.offset }
 
-    fun add(vararg feature: Feature, offset: Int = 0) {
-        for (f in feature) {
-            require(f.name !in names) { "duplicate name ${f.name}"}
-            features.add(Entry(f, DoubleArray(historySize), offset))
+    /**
+     * Add one or more [features] and optionally provide an [offset]
+     */
+    fun add(vararg features: Feature, offset: Int = 0) {
+        for (f in features) {
+            require(f.name !in names) { "duplicate feature name ${f.name}" }
+            entries.add(Entry(f, DoubleArray(historySize), offset))
         }
     }
 
     private fun Entry.inputData(size: Int): DoubleArray {
         val result = DoubleArray(size)
         System.arraycopy(data, 0, result, 0, size)
+        mean = result.fillNaNMean()
         return result
     }
 
-
-    fun getDataFrame(): DataFrame {
+    /**
+     * Returns the training data as a [DataFrame]
+     */
+    fun getTrainingData(): DataFrame {
         val size = samples - maxOffset
-        val i = features.map { DoubleVector.of(it.feature.name, it.inputData(size)) }
+        val i = entries.map { DoubleVector.of(it.feature.name, it.inputData(size)) }
         @Suppress("SpreadOperator")
         return DataFrame.of(*i.toTypedArray())
     }
@@ -65,24 +80,44 @@ class DataFrameFeatureSet(private val historySize: Int = 1_000_000) {
         return DoubleVector.of(feature.name, doubleArr)
     }
 
-    fun getRow(row: Int = samples - 1): DataFrame {
+    /**
+     * Returns the prediction data as a [DataFrame]
+     */
+    fun getPredictData(row: Int = samples - 1): DataFrame {
         assert(row >= 0)
-        val i = features.map { it.getRow(row) }
+        val i = entries.map { it.getRow(row) }
         @Suppress("SpreadOperator")
         return DataFrame.of(*i.toTypedArray())
     }
 
+    /**
+     * Update all the features in this set the provided [event] and store the results internally
+     */
     fun update(event: Event) {
-        for (entry in features) {
-            val value = entry.feature.calculate(event)
+        if (warmupCountdown > 0) {
+            for (entry in entries) entry.feature.calculate(event)
+            warmupCountdown--
+            return
+        }
+
+        for (entry in entries) {
+            var value = entry.feature.calculate(event)
             val idx = samples - entry.offset
-            if (idx >= 0) entry.data[idx] = value
+            if (idx >= 0) {
+                if (value.isNaN()) value = entry.mean
+                entry.data[idx] = value
+            }
         }
         samples++
     }
 
+    /**
+     * Reset internal state and all features
+     */
     fun reset() {
-        for (f in features) f.feature.reset()
+        for (f in entries) f.feature.reset()
+        samples = 0
+        warmupCountdown = warmup
     }
 
 

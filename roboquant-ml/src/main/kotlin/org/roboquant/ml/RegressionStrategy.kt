@@ -36,20 +36,21 @@ class RegressionStrategy(
     val block: (DataFrame) -> DataFrameRegression
 ) : RecordingStrategy() {
 
-    val logger = Logging.getLogger(this::class)
+    private val logger = Logging.getLogger(this::class)
     private var trained = false
+    private val metricName = "prediction.${asset.symbol.lowercase()}"
 
     private lateinit var model: DataFrameRegression
 
     private fun train() {
-        val df = featureSet.getDataFrame()
+        val df = featureSet.getTrainingData()
         model = block(df)
     }
 
     private fun predict(): Double {
-        val df = featureSet.getRow()
+        val df = featureSet.getPredictData()
         val result = model.predict(df).last()
-        record("prediction.${asset.symbol.lowercase()}", result)
+        record(metricName, result)
         return result
     }
 
@@ -70,6 +71,7 @@ class RegressionStrategy(
 
     override fun end(run: String) {
         if (! trained) {
+            logger.trace { "start training" }
             train()
             trained = true
         }

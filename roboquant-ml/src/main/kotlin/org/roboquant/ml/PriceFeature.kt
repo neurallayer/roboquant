@@ -21,6 +21,10 @@ import org.roboquant.feeds.Event
 
 /**
  * Extract the price from the event for the provided [asset]
+ *
+ * @param asset the asset to use
+ * @param type the type of price to use
+ * @param name the name of the feature
  */
 class PriceFeature(
     private val asset: Asset,
@@ -28,6 +32,9 @@ class PriceFeature(
     override val name: String = "${asset.symbol}-PRICE-$type"
 ) : Feature {
 
+    /**
+     * @see Feature.calculate
+     */
     override fun calculate(event: Event): Double {
         val action = event.prices[asset]
         return action?.getPrice(type) ?: Double.NaN

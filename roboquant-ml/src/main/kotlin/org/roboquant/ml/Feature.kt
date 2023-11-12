@@ -20,7 +20,7 @@ import org.roboquant.feeds.Event
 
 
 /**
- * A feature contains data that is derived from a series of events
+ * A feature generates data that is derived from a series of events
  */
 interface Feature {
 
@@ -30,7 +30,7 @@ interface Feature {
     fun calculate(event: Event): Double
 
     /**
-     * The name of the feature
+     * The name of this feature
      */
     val name: String
 

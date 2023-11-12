@@ -19,11 +19,17 @@ package org.roboquant.ml
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 
+/**
+ * Extract the volume from the price-action for the [asset]
+ */
 class VolumeFeature(
     private val asset: Asset,
     override val name: String = "${asset.symbol}-VOLUME"
 ) : Feature {
 
+    /**
+     * @see Feature.calculate
+     */
     override fun calculate(event: Event): Double {
         val action = event.prices[asset]
         return action?.volume ?: Double.NaN

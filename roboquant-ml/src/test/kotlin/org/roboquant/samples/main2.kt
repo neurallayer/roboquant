@@ -20,7 +20,7 @@ import org.roboquant.Roboquant
 import org.roboquant.avro.AvroFeed
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
-import org.roboquant.loggers.ConsoleLogger
+import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.ml.*
 import org.roboquant.strategies.CombinedStrategy
@@ -30,7 +30,7 @@ import smile.regression.gbm
 
 
 fun getStrategy(x: Asset, assets: Collection<Asset>): Strategy {
-    val features = DataFrameFeatureSet()
+    val features = DataFrameFeatureSet(warmup = 20)
     val y = PriceFeature(x, "CLOSE", "Y").returns()
     features.add(y, offset = 3)
 
@@ -40,14 +40,23 @@ fun getStrategy(x: Asset, assets: Collection<Asset>): Strategy {
         val x3 = TaLibFeature.obv(it).returns()
         val x4 = TaLibFeature.ema(it)
         val x5 = VolumeFeature(it).returns()
-        features.add(x1, x2, x3, x4, x5)
+        val x6 = HistoricPriceFeature(it, 5).returns()
+        features.add(x1, x2, x3, x4, x5, x6)
     }
 
-    println(features.names)
+    assert(features.names.contains("Y-RETURNS"))
 
-    val s = RegressionStrategy(features, x, 1.bips) {
-        val model = gbm(Formula.lhs("Y-RETURNS"), it, ntrees = 500)
-        println(model.importance().toList())
+    /*
+    val s = RegressionStrategy(features, x, 1.percent) {
+        val model = ridge(Formula.lhs("Y-RETURNS"), it, 0.005)
+        println(model)
+        model
+    }
+     */
+
+    val s = RegressionStrategy(features, x, 2.percent) {
+        val model = gbm(Formula.lhs("Y-RETURNS"), it, ntrees = 1_000, shrinkage = 1.0)
+        // println(model.importance().toList())
         model
     }
     s.recording = true
@@ -55,7 +64,7 @@ fun getStrategy(x: Asset, assets: Collection<Asset>): Strategy {
 }
 
 fun main() {
-
+    System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "Warn")
     val feed = AvroFeed.sp500()
 
     val xAssets = feed.assets.findBySymbols("MSFT", "F", "GOOGL")
@@ -64,12 +73,16 @@ fun main() {
     val myStrat = CombinedStrategy(s1, s2)
 
     val broker = SimBroker(retention = 100.years)
-    val rq = Roboquant(myStrat, ProgressMetric(), broker = broker, logger = ConsoleLogger())
-    val (train, valid) = feed.timeframe.splitTwoWay(0.8)
+    val rq = Roboquant(myStrat, ProgressMetric(), broker = broker, logger = MemoryLogger())
+    val (train, valid) = feed.timeframe.splitTwoWay(3.years)
     rq.run(feed, train)
     rq.broker.reset()
     rq.run(feed, valid, reset = false)
     println(rq.broker.account.summary())
-
+    val trades = rq.broker.account.trades
+    println(trades.filter { !it.pnlValue.iszero }.joinToString("\n") {
+        val p = 100.0 * it.pnlPercentage
+        "${it.asset.symbol} $p"
+    })
 
 }

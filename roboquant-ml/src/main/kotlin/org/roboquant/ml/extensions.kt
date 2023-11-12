@@ -37,7 +37,6 @@ fun DoubleArray.drop(n: Int = 1): DoubleArray {
  */
 fun concatenate(vararg arrays: DoubleArray): DoubleArray = concatenate(arrays.toList())
 
-
 /**
  * Concatenate a number of arrays and return the result. The arrays can be of different size
  */
@@ -56,7 +55,6 @@ fun concatenate(arrays: Collection<DoubleArray>): DoubleArray {
     return data
 }
 
-
 /**
  * Sample [n] elements of [size] from the array and return the result. The result is return as a list of rows
  */
@@ -70,7 +68,6 @@ fun DoubleArray.sample(size: Int, n: Int = 1) = buildList {
         add(arr)
     }
 }
-
 
 
 class Sampler(private val data: DoubleArray, private val size: Int) {
@@ -88,9 +85,29 @@ class Sampler(private val data: DoubleArray, private val size: Int) {
 }
 
 /**
+ * Replace all NaN values with the mean.
+ * There should be at least one finite number in the array
+ */
+internal fun DoubleArray.fillNaNMean(size: Int = this.size): Double {
+    var n = 0
+    var sum = 0.0
+    for (idx in 0..<size) {
+        val v = get(idx)
+        if (!v.isNaN()) {
+            n++
+            sum += v
+        }
+    }
+    val avg = sum / n
+    if (n < size) for (idx in 0..<size) if (get(idx).isNaN()) set(idx, avg)
+    return avg
+
+}
+
+/**
  * Sample [n] elements of [size] from the array and return the result as a list of columns
  */
-fun DoubleArray.sampleColumns(size: Int, n: Int = 1) : List<DoubleArray> {
+fun DoubleArray.sampleColumns(size: Int, n: Int = 1): List<DoubleArray> {
     val result = mutableListOf<DoubleArray>()
     val max = this.size - size
     repeat(size) {
@@ -113,7 +130,7 @@ fun DoubleArray.sampleColumns(size: Int, n: Int = 1) : List<DoubleArray> {
 fun DoubleArray.dropLast(n: Int = 1): DoubleArray {
     val newSize = size - n
     val data = DoubleArray(newSize)
-    System.arraycopy(this, 0, data, 0 ,newSize)
+    System.arraycopy(this, 0, data, 0, newSize)
     return data
 }
 
@@ -122,6 +139,6 @@ fun DoubleArray.dropLast(n: Int = 1): DoubleArray {
  */
 fun DoubleArray.takeLast(n: Int = 1): DoubleArray {
     val data = DoubleArray(n)
-    System.arraycopy(this, size - n, data, 0 ,n)
+    System.arraycopy(this, size - n, data, 0, n)
     return data
 }

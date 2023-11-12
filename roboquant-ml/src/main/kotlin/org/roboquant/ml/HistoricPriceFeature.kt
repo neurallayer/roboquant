@@ -16,45 +16,37 @@
 
 package org.roboquant.ml
 
+import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 
 /**
+ * Extract a historic price from the event for the provided [asset]
  *
+ * @param asset the asset to use
+ * @param past how many events in the past should be used
+ * @param type the type of price to use, default is "DEFAULT"
+ * @param name the name of the feature
  */
-class ReturnsFeature(
-    private val f: Feature,
-    private val n: Int = 1,
-    private val missing: Double = Double.NaN,
-    override val name: String = f.name + "-RETURNS"
-) :
-    Feature by f {
+class HistoricPriceFeature(
+    private val asset: Asset,
+    private val past: Int = 1,
+    private val type: String = "DEFAULT",
+    override val name: String = "${asset.symbol}-HISTORIC-PRICE-$past-$type"
+) : Feature {
 
-    private val history = mutableListOf<Double>()
+    private val hist = mutableListOf<Double>()
 
     /**
      * @see Feature.calculate
      */
     override fun calculate(event: Event): Double {
-        val v = f.calculate(event)
-        history.add(v)
-        return if (history.size > n) {
-            val first = history.removeFirst()
-            history.last() / first - 1.0
-        } else {
-            missing
-        }
+        val action = event.prices[asset]
+        hist.add(action?.getPrice(type) ?: Double.NaN)
+        return if (hist.size > past) hist.removeFirst() else Double.NaN
     }
 
-
     override fun reset() {
-        history.clear()
-        f.reset()
+        hist.clear()
     }
 
 }
-
-/**
- * Wrap the feature and calculate the returns
- */
-fun Feature.returns(n: Int = 1) = ReturnsFeature(this, n)
-

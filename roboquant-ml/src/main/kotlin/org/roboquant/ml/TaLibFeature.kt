@@ -24,15 +24,16 @@ import org.roboquant.ta.PriceBarSeries
 import org.roboquant.ta.TaLib
 
 /**
- * Use TaLib indicators to create features
+ * Use any TaLib indicators to create features
  */
 class TaLibFeature(
     override val name: String,
     private val asset: Asset,
+    private val missing: Double = Double.NaN,
     private val block: TaLib.(prices: PriceBarSeries) -> Double
 ) : Feature {
 
-    private val t = TaLib()
+    private val taLib = TaLib()
     private val history = PriceBarSeries(1)
 
     /**
@@ -40,18 +41,27 @@ class TaLibFeature(
      */
     companion object {
 
+        /**
+         * RSI feature
+         */
         fun rsi(asset: Asset, timePeriod: Int = 14): TaLibFeature {
             return TaLibFeature("${asset.symbol}-RSI-$timePeriod", asset) {
                 rsi(it, timePeriod)
             }
         }
 
+        /**
+         * OBV feature
+         */
         fun obv(asset: Asset) : TaLibFeature {
             return TaLibFeature("${asset.symbol}-OBV", asset) {
                 obv(it.close, it.volume)
             }
         }
 
+        /**
+         * EMA feature
+         */
         fun ema(asset: Asset, fast: Int = 5, slow: Int = 13) : TaLibFeature {
             return TaLibFeature("${asset.symbol}-EMA-$fast-$slow", asset) {
                 val f = ema(it, fast)
@@ -73,12 +83,12 @@ class TaLibFeature(
         val action = event.prices[asset]
         if (action != null && action is PriceBar && history.add(action, event.time)) {
             try {
-                return t.block(history)
+                return taLib.block(history)
             } catch (e: InsufficientData) {
                 history.increaseCapacity(e.minSize)
             }
         }
-        return 0.0
+        return missing
     }
 
     /**
