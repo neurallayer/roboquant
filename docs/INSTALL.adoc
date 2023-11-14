@@ -51,7 +51,7 @@ implementation group: 'org.roboquant', name: 'roboquant', version: 'VERSION'
 Next to `roboquant`, the following additional artefacts are available for inclusion in your application:
 
 * *roboquant-crypto* Adds support for many of today's most popular crypto exchanges
-* *roboquant-extra* Adds out-of-the-box integrations with 3rd party brokers and market data providers.
+* *roboquant-extra* Adds out-of-the-box integrations with third party brokers and market data providers.
 * *roboquant-ta* Adds support for technical analysis indicators and strategies
 * *roboquant-jupyter* Adds support for running roboquant inside Jupyter Notebooks
 * *roboquant-ibkr* Adds support for Interactive Brokers
