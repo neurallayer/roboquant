@@ -18,6 +18,7 @@ package org.roboquant.ml
 
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
+import org.roboquant.common.addNotNull
 import org.roboquant.common.percent
 import org.roboquant.feeds.Event
 import org.roboquant.strategies.Rating
@@ -29,7 +30,7 @@ import smile.regression.DataFrameRegression
 /**
  * Strategy based on a Smile Regression
  */
-class RegressionStrategy(
+open class RegressionStrategy(
     private val featureSet: DataFrameFeatureSet,
     private val asset: Asset,
     private val percentage: Double = 1.percent,
@@ -56,17 +57,27 @@ class RegressionStrategy(
 
     override fun generate(event: Event): List<Signal> {
         featureSet.update(event)
+        val results = mutableListOf<Signal>()
         if (trained) {
-            val g = predict()
-            val rating = when {
-                g > percentage -> Rating.BUY
-                g < - percentage -> Rating.SELL
-                else -> null
-            }
-            if (rating != null) return listOf(Signal(asset, rating))
-
+            val pred = predict()
+            val signal = getSignal(asset, pred, event)
+            results.addNotNull(signal)
         }
-        return emptyList()
+        return results
+    }
+
+    /**
+     * Allow custom logic for generating more advanced signals
+     */
+    open fun getSignal(asset: Asset, prediction: Double, event: Event) : Signal? {
+        val price = event.getPrice(asset) ?: Double.NaN
+        val takeProfit = price * (1.0 + prediction)
+        return when {
+            prediction > percentage -> Signal(asset, Rating.BUY, takeProfit = takeProfit)
+            prediction < - percentage ->  Signal(asset, Rating.SELL, takeProfit = takeProfit)
+            else -> null
+        }
+
     }
 
     override fun end(run: String) {

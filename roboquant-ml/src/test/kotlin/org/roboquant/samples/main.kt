@@ -18,139 +18,77 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.avro.AvroFeed
-import org.roboquant.common.Asset
-import org.roboquant.common.percent
-import org.roboquant.common.returns
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceBar
-import org.roboquant.loggers.ConsoleLogger
+import org.roboquant.brokers.sim.SimBroker
+import org.roboquant.brokers.sim.SpreadPricingEngine
+import org.roboquant.common.*
+import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.ProgressMetric
-import org.roboquant.ml.drop
-import org.roboquant.ml.dropLast
-import org.roboquant.ml.takeLast
-import org.roboquant.strategies.Rating
-import org.roboquant.strategies.Signal
+import org.roboquant.ml.*
+import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.Strategy
-import org.roboquant.ta.PriceBarSeries
-import smile.data.DataFrame
 import smile.data.formula.Formula
-import smile.data.vector.DoubleVector
-import smile.regression.GradientTreeBoost
 import smile.regression.gbm
 
 
+private fun getStrategy(asset: Asset): Strategy {
+    val features = DataFrameFeatureSet(warmup = 60) // 45 steps warmup
+    val y = PriceFeature(asset, "CLOSE", "Y").returns(15)
+    features.add(y, offset = 15) // 30 steps in the future
+    assert(features.names.contains("Y-RETURNS"))
+
+    val myFeature = TaLibFeature("custom", asset) {
+        ema((it.close - it.open) * it.volume, 15)
+    }.returns()
+
+    features.add(
+        VolumeFeature(asset).returns(),
+        PriceFeature(asset, "CLOSE").returns(),
+        PriceFeature(asset, "OPEN") / PriceFeature(asset, "CLOSE"),
+        TaLibFeature.rsi(asset, 5),
+        TaLibFeature.rsi(asset, 10),
+        TaLibFeature.rsi(asset, 20),
+        TaLibFeature.ema(asset, 11, 26),
+        TaLibFeature.obv(asset).returns(),
+        myFeature,
+        HistoricPriceFeature(asset, 1, "CLOSE").returns(),
+        HistoricPriceFeature(asset, 5, "CLOSE").returns(),
+        HistoricPriceFeature(asset, 10, "CLOSE").returns(),
+        HistoricPriceFeature(asset, 15, "CLOSE").returns(),
+        HistoricPriceFeature(asset, 30, "CLOSE").returns()
+    )
+
+    val s = RegressionStrategy(features, asset, 2.bips) {
+        // Gradient Tree Boosting model
+        val model = gbm(Formula.lhs("Y-RETURNS"), it, ntrees = 500) //, shrinkage = 1.0)
+        println(model.importance().toList())
+        model
+    }
+    s.recording = true
+    return s
+}
 
 fun main() {
-    test()
-    // graalPy()
-}
+    System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "Warn")
+    // Currency.increaseDigits(4)
+    val feed = AvroFeed.forex() // 1 minute bars for 1 year
+    val asset = feed.assets.first() // EUR_USD
 
-
-class MyStrat(
-    private val historySize: Int,
-    private val foreCastPeriod: Int = 1,
-    private val perc: Double = 5.percent
-) : Strategy {
-
-    private val history = mutableMapOf<Asset, PriceBarSeries>()
-    private var models = mutableMapOf<Asset, GradientTreeBoost>()
-
-
-    private fun predict(asset: Asset, hist: PriceBarSeries): Double {
-        if (asset !in models) {
-            val y = DoubleVector.of("y", hist.close.returns(foreCastPeriod).drop(1))
-            val o = DoubleVector.of("open", hist.open.returns(1).dropLast(foreCastPeriod))
-            val h = DoubleVector.of("high", hist.high.returns(1).dropLast(foreCastPeriod))
-            val l = DoubleVector.of("low", hist.low.returns(1).dropLast(foreCastPeriod))
-            val c = DoubleVector.of("close", hist.close.returns(1).dropLast(foreCastPeriod))
-            val df = DataFrame.of(y, o, h, l, c)
-            models[asset] = gbm(Formula.lhs("y"), df)
-        }
-        val model = models.getValue(asset)
-        val y = DoubleVector.of("y", DoubleArray(1))
-        val o = DoubleVector.of("open", hist.open.takeLast(2).returns())
-        val h = DoubleVector.of("high", hist.open.takeLast(2).returns())
-        val l = DoubleVector.of("low", hist.low.takeLast(2).returns())
-        val c = DoubleVector.of("close", hist.open.takeLast(2).returns())
-        val df = DataFrame.of(y, o, h, l, c)
-        val results = model.predict(df)
-        println(results.last())
-        return results.last()
+    val strategy = getStrategy(asset)
+    val broker = SimBroker(pricingEngine = SpreadPricingEngine(1.5.bips))
+    val policy = FlexPolicy {
+        shorting = true
+        orderPercentage = 50.percent
     }
-
-    override fun generate(event: Event): List<Signal> {
-        val result = mutableListOf<Signal>()
-        val time = event.time
-        event.actions.filterIsInstance<PriceBar>().forEach {
-            val h = history.getOrPut(it.asset) { PriceBarSeries(historySize) }
-            h.add(it, time)
-            if (h.isFull()) {
-                val c = predict(it.asset, h)
-                val rating = when {
-                    c > perc -> Rating.BUY
-                    c < -perc -> Rating.SELL
-                    else -> null
-                }
-
-                if (rating != null) result.add(Signal(it.asset, rating))
-
-            }
-        }
-        return result
-    }
-
-    override fun reset() {
-        models.clear()
-        history.clear()
-    }
-}
-
-
-
-
-
-fun test() {
-
-    val feed = AvroFeed.sp500()
-    val myStrat = MyStrat(250, 10, 5.percent)
-
-    val rq = Roboquant(myStrat, ProgressMetric(), logger = ConsoleLogger())
-    rq.run(feed)
+    val rq = Roboquant(strategy, ProgressMetric(), broker = broker, policy = policy, logger = MemoryLogger())
+    val (train, valid) = feed.timeframe.splitTwoWay(9.months)
+    rq.run(feed, train)
+    rq.broker.reset()
+    rq.run(feed, valid, reset = false)
     println(rq.broker.account.summary())
+    val trades = rq.broker.account.trades
+    println(trades.filter { !it.pnlValue.iszero }.joinToString("\n") {
+        val p = 100.0 * it.pnlPercentage
+        "${it.asset.symbol} $p"
+    })
 
 }
-
-/*
-fun graalPy() {
-
-    val pythonCode = """
-        
-        class Plus:
-            def __init__(self, value):
-                self.value = value
-                
-            def plus(self, v):
-                self.value += v
-                return self.value
-     
-        p = Plus(12)
-        lambda x: p.plus(x)
-    """.trimIndent()
-
-    val ctx = Context.newBuilder("python").
-        allowIO(IOAccess.ALL).
-        option("python.Executable", "").
-        build()
-
-    ctx.use { context ->
-        val function = context.eval("python", pythonCode)
-        assert(function.canExecute())
-
-        repeat(10) {
-            val x: Int = function.execute(41).asInt()
-            println(x)
-        }
-
-    }
-}
-*/

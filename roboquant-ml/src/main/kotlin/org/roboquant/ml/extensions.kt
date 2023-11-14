@@ -142,3 +142,4 @@ fun DoubleArray.takeLast(n: Int = 1): DoubleArray {
     System.arraycopy(this, size - n, data, 0, n)
     return data
 }
+
