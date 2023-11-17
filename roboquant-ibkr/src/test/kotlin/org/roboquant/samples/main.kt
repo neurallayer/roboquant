@@ -217,6 +217,18 @@ private fun historicFeed() {
 }
 
 
+private fun historicFeedUS() {
+    val feed = IBKRHistoricFeed()
+
+    // This assumes you have a valid market subscription for European stocks
+    val symbols = listOf("TSLA", "GOOGL", "JPM")
+    val assets = symbols.map { Asset(it, AssetType.STOCK, "USD", "") }
+    feed.retrieve(assets)
+    feed.waitTillRetrieved()
+    println("historic feed with ${feed.timeline.size} events and ${feed.assets.size} assets")
+    feed.disconnect()
+}
+
 private fun historicFeed2() {
     val feed = IBKRHistoricFeed()
 
@@ -247,13 +259,14 @@ private fun historicFuturesFeed() {
 
 internal fun main() {
 
-    when ("SIMPLE_PAPER_TRADE") {
+    when ("HISTORIC") {
         "ACCOUNT" -> showAccount()
         "BROKER" -> broker()
         "CLOSE_POSITION" -> closePosition()
         "LIVE_FEED_EU" -> liveFeedEU()
         "LIVE_FEED_US" -> liveFeedUS()
         "HISTORIC" -> historicFeed()
+        "HISTORIC_US" -> historicFeedUS()
         "HISTORIC2" -> historicFeed2()
         "HISTORIC3" -> historicFuturesFeed()
         "PLACE_ORDER" -> placeOrder()

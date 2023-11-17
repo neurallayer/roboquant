@@ -26,15 +26,20 @@ import java.time.Instant
 fun interface PricingEngine {
 
     /**
-     * Return a pricing (calculator) for the provided price [action] and [time]. Although most often not used, advanced
-     * pricing calculators can be dependent on the [time]. For example, certain FOREX exchanges might be more
-     * volatile during certain timeframes and this can be reflected in the [PricingEngine].
+     * Return a pricing (calculator) for the provided price [action] and [time].
+     *
+     * Although most often not used, advanced pricing calculators can be dependent on the [time].
+     * For example, certain FOREX exchanges might be more volatile during certain timeframes and this can be
+     * reflected in the [PricingEngine].
      */
     fun getPricing(action: PriceAction, time: Instant): Pricing
 
     /**
-     * Clear any state of the pricing engine. Most [PricingEngine]s are stateless, but advanced engines might
-     * implement some type of ripple-effect pricing behavior. The default implementation is to do nothing.
+     * Clear the state of the pricing engine.
+     * Most [PricingEngines][PricingEngine] are stateless.
+     * But advanced engines might implement some type of ripple-effect pricing behavior where large consecutive orders
+     * for the same asset might impact the price.
+     * The default implementation is to do nothing.
      */
     fun clear() {
         // default is to do nothing

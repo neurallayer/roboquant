@@ -25,8 +25,7 @@ import org.roboquant.common.sumOf
  * You should typically not short positions when using the CashAccount since that is almost never allowed in the real
  * world and also not supported.
  *
- * If you want to do it anyway, tThen the short exposures are for the full 100%
- * deducted from the buying power.
+ * If you want to do it anyway, then the short exposures are for the full 100% deducted from the buying power.
  *
  * So the used calculation is:
  *
@@ -35,7 +34,7 @@ import org.roboquant.common.sumOf
  * Note: currently open orders are not taken into consideration when calculating the total buying power
  *
  * @property minimum the minimum amount of cash balance required to maintain in the account, defaults to 0.0. It is
- * denoted in the base currency of the account (like also the buyingPower is)
+ * denoted in the base currency of the account (similar to the buyingPower).
  */
 class CashAccount(private val minimum: Double = 0.0) : AccountModel {
 

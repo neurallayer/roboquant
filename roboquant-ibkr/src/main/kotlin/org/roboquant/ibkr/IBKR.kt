@@ -102,7 +102,8 @@ object IBKR {
         return client
     }
 
-    internal fun getFormattedTime(time: Instant): String = SimpleDateFormat("yyyyMMdd HH:mm:ss").format(Date.from(time))
+    internal fun getFormattedTime(time: Instant): String = SimpleDateFormat("yyyyMMdd-HH:mm:ss").format(Date.from(time))
+
 
     /**
      * Convert a roboquant asset to an IBKR contract.

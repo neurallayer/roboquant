@@ -29,7 +29,7 @@ import java.time.Instant
  *
  * Depending on the market, spreads can vary a lot.
  * The USD/EUR typically has a very low spread (below 5 bips), while some penny stock might have a spread of well
- * above 10_000 bips.
+ * above 100 bips. So make sure to configure a realistic number based on the market and assets you trade.
  *
  * This engine uses the same price for high, low and market prices. It works with any type of [PriceAction].
  */

@@ -37,7 +37,7 @@ import java.time.Instant
  *
  * @property baseCurrency The base currency to use for things like reporting
  * @property retention The time to retain trades and closed orders, default is 1 year. Setting this value to a shorter
- * time-span reduces memory usage in large back tests.
+ * time-span reduces memory usage and speeds up large back tests.
  *
  * @constructor Create a new instance of InternalAccount
  */
@@ -183,6 +183,13 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
         }
     }
 
+    /**
+     * Closed orders and past trades can grow to larger collections in long back tests. This consumes a lot of memory
+     * and makes the back tests slower since at each step this collection is copied to the immutable account object.
+     *
+     * The retention allows to keep only recent closed orderds and trades in memory, older ones will be discarded. This
+     * saves memory and speed-up back tests.
+     */
     private fun enforeRetention() {
         if (retention.isZero) {
             trades.clear()

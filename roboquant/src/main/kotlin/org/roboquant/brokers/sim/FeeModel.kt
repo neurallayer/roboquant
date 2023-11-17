@@ -26,9 +26,11 @@ import java.time.Instant
 interface FeeModel {
 
     /**
-     * Any fees or commissions applicable for the provided [execution]. The returned value is denoted in the
-     * currency of the underlying asset. More advanced fee models can look at past [trades] to avoid
-     * over-billing in case of a multi-fill order and use [time] to perform relevant currency conversions
+     * Returns the fees or commissions applicable for the provided [execution]. The returned value is denoted in the
+     * currency of the underlying asset.
+     *
+     * More advanced fee models can look at past [trades] to avoid over-billing in case of a multi-fill order and
+     * use [time] to perform relevant currency conversions
      *
      * Typically, a fee should be a positive value, unless you want to model rebates and other rewards.
      */
