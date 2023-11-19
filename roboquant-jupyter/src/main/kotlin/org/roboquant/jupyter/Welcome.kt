@@ -22,7 +22,7 @@ import org.roboquant.charts.Chart
 import org.roboquant.charts.PriceBarChart
 import org.roboquant.charts.TimeSeriesChart
 import org.roboquant.common.Config
-import org.roboquant.common.months
+import org.roboquant.common.years
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.EMAStrategy
 
@@ -118,7 +118,7 @@ class Welcome {
             val roboquant = Roboquant(strategy, metric)
             
             val feed = AvroFeed.sp500()
-            feed.timeframe.split(6.months).forEach {
+            feed.timeframe.split(1.years).forEach {
                 roboquant.run(feed, it)
             }
             
@@ -131,7 +131,7 @@ class Welcome {
         """.trimIndent()
         )
 
-        feed.timeframe.split(6.months).forEach {
+        feed.timeframe.split(1.years).forEach {
             roboquant.run(feed, it)
         }
         val equity = roboquant.logger.getMetric("account.equity")

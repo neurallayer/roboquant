@@ -31,11 +31,12 @@ import smile.regression.gbm
 
 
 private fun getStrategy(asset: Asset): Strategy {
-    val features = DataFrameFeatureSet(warmup = 60) // 45 steps warmup
+    val features = DataFrameFeatureSet(warmup = 60) // 60 steps warmup
     val y = PriceFeature(asset, "CLOSE", "Y").returns(15)
-    features.add(y, offset = 15) // 30 steps in the future
+    features.add(y, offset = 15) // predict 15 steps in the future
     assert(features.names.contains("Y-RETURNS"))
 
+    // Example of custom indicator
     val myFeature = TaLibFeature("custom", asset) {
         ema((it.close - it.open) * it.volume, 15)
     }.returns()
