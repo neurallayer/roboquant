@@ -50,6 +50,11 @@
             <artifactId>avro</artifactId>
             <version>1.11.1</version>
         </dependency>
+        <!-- dependency>
+            <groupId>org.apache.parquet</groupId>
+            <artifactId>parquet-avro</artifactId>
+            <version>1.13.1</version>
+        </dependency -->
         <dependency>
             <groupId>org.xerial.snappy</groupId>
             <artifactId>snappy-java</artifactId>

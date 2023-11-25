@@ -20,7 +20,7 @@ package org.roboquant.common
  * Interface implemented by all components used in a run (Strategy, Policy, Broker, Metric, MetricLogger).
  *
  * The component will be informed that a run has been started or ended. It provides the component with the opportunity
- * to manage its state, so a run can be started without any state remaining from previous runs.
+ * to manage its state or perform certain actions.
  */
 interface Lifecycle {
 

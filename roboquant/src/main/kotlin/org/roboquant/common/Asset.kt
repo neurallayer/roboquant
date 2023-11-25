@@ -38,7 +38,7 @@ import java.time.format.DateTimeFormatter
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currency currency, default is [Currency.USD]
  * @property exchange Exchange this asset is traded on, default is [Exchange.DEFAULT]
- * @property multiplier contract multiplier, default is 1.0
+ * @property multiplier contract size multiplier, default is 1.0.
  * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
  */

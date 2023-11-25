@@ -74,6 +74,11 @@
             <version>${smile.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.deephaven</groupId>
+            <artifactId>SuanShu</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.roboquant</groupId>
             <artifactId>roboquant-avro</artifactId>
             <version>${project.version}</version>
