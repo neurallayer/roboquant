@@ -411,14 +411,14 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Annualize a [percentage] based on the duration of this timeframe. So given x percent return
+     * Annualize a [rate] based on the duration of this timeframe. So given x percent return
      * during a timeframe, what would be the return percentage for a full year (365 days). If this timeframe has higher
      * than millisecond precision, the remaining precision will not be used.
      *
-     * [percentage] is expected to be provided as a fraction — for example, 1% is 0.01
+     * [rate] is expected to be provided as a fraction — for example, 1% is 0.01
      */
-    fun annualize(percentage: Double): Double {
-        return (1.0 + percentage).pow(toYears()) - 1.0
+    fun annualize(rate: Double): Double {
+        return (1.0 + rate).pow(toYears()) - 1.0
     }
 
     /**
