@@ -70,20 +70,12 @@ internal fun CairoEngine.insert(tableName: String, block: TableWriter.() -> Unit
 
 internal fun CairoEngine.tables(): Set<String> {
     val result = mutableSetOf<String>()
-    query("tables()") {
+    query("select table_name from tables()") {
         while (hasNext()) {
-            val tableName = record.getStr(1).toString()
+            val tableName = record.getStr(0).toString()
             result.add(tableName)
         }
     }
-    /*
-    below stopped working in 7.3.5
-    query("select name from tables()") {
-        while (hasNext()) {
-            result.add(record.getStr(0).toString())
-        }
-    }
-    */
     return result
 }
 
