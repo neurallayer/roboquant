@@ -128,11 +128,12 @@ There is a special `doc` profile to generate documentation and see if there is s
 Please note the `release` profile has its own dokka task to generate a javadoc jar file.
 
 == Performance Test
-To run the built-in performance tests, you can use the following maven command:
+To run the built-in performance tests, you can use the following maven commands:
 
 [source, shell]
 ----
-./mvnw compile exec:java -pl roboquant-perf
+./mvnw install
+./mvnw exec:java -pl roboquant-perf
 ----
 
 The output should look something like this:

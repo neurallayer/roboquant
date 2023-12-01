@@ -53,7 +53,7 @@ data class WebServerConfig(
 class WebServer(configure: WebServerConfig.() -> Unit = {}) {
 
     private var runCounter = 0
-    private val server: NettyApplicationEngine
+    private val server: EmbeddedServer<*, *>
 
     init {
         val config = WebServerConfig()
