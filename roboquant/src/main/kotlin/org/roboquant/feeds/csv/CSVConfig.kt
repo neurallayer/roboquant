@@ -69,6 +69,8 @@ data class CSVConfig(
 
         /**
          * Returns a CSVConfig suited for parsing stooq.com CSV files
+         *
+         * @param template the asset template to use to map symbols to assets
          */
         fun stooq(template: Asset = Asset("TEMPLATE")): CSVConfig {
             fun file2Symbol(file: File): String {
@@ -84,6 +86,10 @@ data class CSVConfig(
 
         /**
          * Returns a CSVConfig suited for parsing MT5 CSV files
+         *
+         * @param template the asset template to use to map symbols to assets
+         * @param priceQuote does the CSV file contain quotes, default is false (meaning price-bars are implied)
+         * @param timeSpan the timespan to use when creating price bars, default is null
          */
         fun mt5(
             template: Asset = Asset("TEMPLATE"),
@@ -138,6 +144,8 @@ data class CSVConfig(
 
         /**
          * Returns a CSVConfig suited for parsing Yahoo Finance ASCII CSV files
+         *
+         * @param template the asset template to use to map symbols to assets
          */
         fun yahoo(template: Asset = Asset("TEMPLATE")): CSVConfig {
             val result = CSVConfig(

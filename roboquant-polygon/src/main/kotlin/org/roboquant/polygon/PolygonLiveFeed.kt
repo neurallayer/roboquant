@@ -20,7 +20,6 @@ import io.polygon.kotlin.sdk.websocket.PolygonWebSocketChannel
 import io.polygon.kotlin.sdk.websocket.PolygonWebSocketClient
 import io.polygon.kotlin.sdk.websocket.PolygonWebSocketMessage
 import io.polygon.kotlin.sdk.websocket.PolygonWebSocketSubscription
-import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.minutes
@@ -67,8 +66,8 @@ enum class PolygonActionType {
  * default is true
  */
 class PolygonLiveFeed(
-    configure: PolygonConfig.() -> Unit = {},
-    private val useComputerTime: Boolean = true
+    private val useComputerTime: Boolean = true,
+    configure: PolygonConfig.() -> Unit = {}
 ) : LiveFeed() {
 
     private val config = PolygonConfig()
@@ -83,9 +82,9 @@ class PolygonLiveFeed(
         config.configure()
         require(config.key.isNotBlank()) { "No api key provided" }
         client = getWebSocketClient(config, this::handler)
-        runBlocking {
-            client.connect()
-        }
+
+        logger.info { "trying to connect" }
+        client.connectBlocking()
     }
 
     /**
@@ -114,7 +113,7 @@ class PolygonLiveFeed(
     }
 
     /**
-     * Handle incoming messages
+     * Handle incoming websocket messages
      */
     @Suppress("CyclomaticComplexMethod")
     private fun handler(message: PolygonWebSocketMessage) {

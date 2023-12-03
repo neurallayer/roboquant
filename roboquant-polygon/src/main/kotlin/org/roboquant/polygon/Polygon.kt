@@ -61,7 +61,7 @@ internal object Polygon {
             object : PolygonWebSocketListener {
 
                 override fun onAuthenticated(client: PolygonWebSocketClient) {
-                    logger.trace("Connected")
+                    logger.info("Authenticated")
                 }
 
                 override fun onReceive(client: PolygonWebSocketClient, message: PolygonWebSocketMessage) {
@@ -70,7 +70,7 @@ internal object Polygon {
                 }
 
                 override fun onDisconnect(client: PolygonWebSocketClient) {
-                    logger.trace("Disconnected")
+                    logger.info("Disconnected")
                 }
 
                 override fun onError(client: PolygonWebSocketClient, error: Throwable) {

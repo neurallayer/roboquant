@@ -63,6 +63,11 @@ internal fun Trade.getValue(type: String, currency: Currency): BigDecimal {
  * Trade chart plots the trades of an [trades] that have been generated during a run. By default, the realized pnl of
  * the trades will be plotted but this can be changed. The possible options are pnl, fee, cost and quantity.
  *
+ * @param trades the trades tp plot
+ * @param aspect the trade aspect to plote, default is "pnl"
+ * @param currency the currency to use, default is null
+ * @param perAsset plot per asset, default is false
+ *
  */
 class TradeChart(
     private val trades: List<Trade>,

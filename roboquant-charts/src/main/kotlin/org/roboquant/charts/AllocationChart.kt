@@ -27,10 +27,12 @@ import org.roboquant.common.Currency
 import java.math.BigDecimal
 
 /**
- * Plot the exposure of assets in the provided positions.
+ * Plot the allocation of assets in the provided [positions].
  *
  * @property positions the positions to use
  * @property includeAssetClass group per assetClass, default is false
+ * @property currency the currency to use, default is null. The chart will then use the first currency it encounters
+ * in the positions.
  * @constructor Create a new asset allocation chart
  */
 class AllocationChart(

@@ -24,10 +24,7 @@ import org.roboquant.binance.BinanceHistoricFeed
 import org.roboquant.binance.BinanceLiveFeed
 import org.roboquant.binance.Interval
 import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.common.Amount
-import org.roboquant.common.ParallelJobs
-import org.roboquant.common.Timeframe
-import org.roboquant.common.minutes
+import org.roboquant.common.*
 import org.roboquant.feeds.toList
 import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.loggers.InfoLogger
@@ -67,7 +64,7 @@ fun binanceForwardTest() {
 fun binanceBackTest() {
     val strategy = EMAStrategy()
     val initialDeposit = Amount("BUSD", 100_000).toWallet()
-    val roboquant = Roboquant(strategy, ScorecardMetric(), broker = SimBroker(initialDeposit))
+    val roboquant = Roboquant(strategy, ScorecardMetric(), broker = SimBroker(initialDeposit, retention = 10.years))
 
     val feed = BinanceHistoricFeed()
     val threeYears = Timeframe.parse("2020-01-01", "2023-01-01")

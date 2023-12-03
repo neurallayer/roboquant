@@ -159,7 +159,7 @@ class PriceQuoteParser(
 }
 
 /**
- * Parse lines and create PriceBar
+ * Parse lines and create Trade Prices
  */
 class TradePriceParser(
     private var price: Int = -1,
