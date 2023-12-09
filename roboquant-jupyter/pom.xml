@@ -32,7 +32,7 @@
     </description>
 
     <properties>
-        <jupyter.version>0.12.0-93</jupyter.version>
+        <jupyter.version>0.12.0-97</jupyter.version>
     </properties>
 
     <build>

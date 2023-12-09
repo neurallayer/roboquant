@@ -126,7 +126,7 @@ Some key features of roboquant are:
 * [x] Developed under open source with a permissive Apache license
 * [x] Use Jupyter Notebooks with insightful charts if you prefer interactive development
 * [x] Batteries included, for example, 150+ technical indicators and ready to use datasets
-* [x] Out of the box integration with Alpaca, Interactive Brokers, Yahoo Finance, Alpha Vantage, Polygon, ECB, Binance and most other crypto exchanges
+* [x] Out of the box integration with Alpaca, Interactive Brokers, Alpha Vantage, Polygon, ECB, Binance and most other crypto exchanges
 
 See also https://roboquant.org/background/features.html[Features] for a more extensive feature list and how roboquant compares to some other platforms.
 
@@ -148,4 +148,6 @@ image:https://resources.jetbrains.com/storage/products/company/brand/logos/jb_be
 == Disclaimer
 _Roboquant_ also comes with live trading capabilities. Using this is at your own risk, and there are *NO GUARANTEES* about the correct functioning of the software.
 
-PR are more than welcome, see also the link:/docs/CONTRIBUTING.adoc[Contribution Guide] document. If you're missing some features, you can also open an issue on GitHub. See also the link:/docs/TODO.adoc[todo documentation] for already identified backlog items if you look for something to work on.
+PR are more than welcome, see also the link:/docs/CONTRIBUTING.adoc[Contribution Guide] document.
+
+If you're missing some features, you can also open an issue on GitHub. See also the link:/docs/TODO.adoc[todo documentation] for already identified backlog items if you look for something to work on.
