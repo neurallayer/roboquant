@@ -32,9 +32,9 @@ import java.time.Instant
 
 
 /**
- * A SignalChart allows you to visualize the signals created by a strategy based on a feed. The result is a
- * scatter plot where each signal is a dot. The value is equivalent to the rating of the signal.
+ * A SignalChart allows you to visualize the signals created by a strategy based on a feed.
  *
+ * The result is a scatter plot where each signal is a dot. The value is equivalent to the rating of the signal.
  * The tooltip provides additional details, like the symbol of the underlying asset.
  *
  * @param feed the feed to use as input to the strategy
@@ -80,6 +80,7 @@ class SignalChart(
         |currency: ${asset.currency}<br>
         |time: $time<br>
         |rating: $rating<br>
+        |type: $type<br>
         |tag: $tag""".trimMargin()
     }
 

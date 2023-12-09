@@ -54,10 +54,12 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
 
     private var runCounter = 0
     private val server: EmbeddedServer<*, *>
+    val secured: Boolean
 
     init {
         val config = WebServerConfig()
         config.configure()
+        secured = config.username.isNotBlank() && config.password.isNotBlank()
 
         with(config) {
 
@@ -66,7 +68,7 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
                 port = port,
                 host = host,
                 module = {
-                    if (username.isNotBlank() && password.isNotBlank()) secureSetup(username, password) else setup()
+                    if (secured) secureSetup(username, password) else setup()
                 }
             ).start(wait = false)
         }

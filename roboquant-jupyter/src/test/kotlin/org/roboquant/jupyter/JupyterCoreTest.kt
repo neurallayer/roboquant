@@ -17,8 +17,11 @@
 package org.roboquant.jupyter
 
 import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
-import kotlin.test.Test
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.roboquant.charts.PriceChart
 import org.roboquant.common.RoboquantException
+import org.roboquant.feeds.random.RandomWalkFeed
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -39,6 +42,16 @@ internal class JupyterCoreTest {
         assertTrue { t.accepts(Throwable()) }
         val output = t.render(Exception("Dummy"))
         assertTrue { output is MimeTypedResult }
+    }
+
+    @Test
+    fun extensions() {
+        val feed = RandomWalkFeed.lastYears(1)
+        val chart = PriceChart(feed, feed.assets.first())
+        assertDoesNotThrow {
+            chart.asHTML("dark")
+            chart.asHTMLPage("dark")
+        }
     }
 
 }

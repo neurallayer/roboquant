@@ -23,21 +23,54 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.strategies.EMAStrategy
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 internal class WebServerTestIT {
 
+
+    private fun makeRequest(url: String): Int {
+        val client = HttpClient.newHttpClient()
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .GET()
+            .build()
+
+        val response = client.send(
+            request,
+            HttpResponse.BodyHandlers.discarding()
+        )
+
+        return response.statusCode()
+    }
+
     @Test
     fun basic() {
+        // System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
         val feed = RandomWalkFeed(Timeframe.fromYears(2000, 2001))
         val rq = Roboquant(EMAStrategy(), logger = MemoryLogger(false))
+
 
         assertDoesNotThrow {
             runBlocking {
                 val ws = WebServer {
                     port = 8081
+                    host = "127.0.0.1"
+                    username = ""
+                    password = ""
                 }
-                ws.runAsync(rq, feed, feed.timeframe)
+                assertFalse(ws.secured)
+                ws.runAsync(rq, feed, feed.timeframe, "run-1")
+                val status = makeRequest("http://127.0.0.1:8081/")
+                assertEquals(200, status)
+
+                val status2 = makeRequest("http://127.0.0.1:8081/run/run-1")
+                assertEquals(200, status2)
                 ws.stop()
             }
         }

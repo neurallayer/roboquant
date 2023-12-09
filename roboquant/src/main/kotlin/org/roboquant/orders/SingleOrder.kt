@@ -148,7 +148,8 @@ class StopLimitOrder(
 }
 
 /**
- * Trail order
+ * Trail order.
+ * The [trailPercentage] should always be positive and is automatically compensated based for BUY and SELL orders.
  *
  * @property asset asset of the order
  * @property size size of the order

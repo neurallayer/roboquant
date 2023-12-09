@@ -24,7 +24,8 @@ import java.io.File
  */
 
 /**
- * You can run sample to generate a correlation chart
+ * You can run sample to generate a correlation chart and a price-bar chart.
+ * The output is saved in /tmp/
  */
 internal fun main() {
     val feed = RandomWalkFeed.lastYears(2, nAssets = 5)
