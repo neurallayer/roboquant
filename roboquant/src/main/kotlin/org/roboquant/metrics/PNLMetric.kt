@@ -18,7 +18,10 @@ package org.roboquant.metrics
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.unrealizedPNL
+import org.roboquant.common.Asset
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
+import java.time.Instant
 
 /**
  * Metric that calculates the realized and unrealized Profit and Loss.
@@ -37,7 +40,38 @@ import org.roboquant.feeds.Event
  */
 class PNLMetric : Metric {
 
+    class AssetReturn(val start: Instant, val first: Double, var end: Instant = start, var last: Double = first) {
+
+        val duration
+            get() = Timeframe(start, end, true).duration.toMillis()
+
+        fun calcReturn() = last / first - 1.0
+
+        fun update(time: Instant, value: Double) {
+            end = time
+            last = value
+        }
+
+    }
+
+
     private var equity = Double.NaN
+    private val assetReturns = mutableMapOf<Asset, AssetReturn>()
+
+    /**
+     * Market return of all assets, each weight by how long they are present in the run
+     */
+    private fun marketReturn() : Double {
+        var sum = 0.0
+        var totalWeights = 0.0
+        for (r in assetReturns.values) {
+            val weight = r.duration
+            sum += r.calcReturn() * weight
+            totalWeights += weight
+        }
+        return if (totalWeights > 0.0) sum/totalWeights else 0.0
+    }
+
 
     /**
      * @see Metric.calculate
@@ -49,15 +83,22 @@ class PNLMetric : Metric {
         val pnl2 = account.positions.unrealizedPNL
         val unrealizedPNL = pnl2.convert(account.baseCurrency, event.time).value
 
+        event.prices.values.forEach {
+            val r = assetReturns.getOrPut(it.asset) {  AssetReturn(event.time, it.getPrice()) }
+            r.update(event.time, it.getPrice())
+        }
+
         return mapOf(
             "pnl.realized" to pnl - unrealizedPNL,
             "pnl.unrealized" to unrealizedPNL,
-            "pnl.total" to pnl
+            "pnl.total" to pnl,
+            "pnl.mkt" to marketReturn()
         )
     }
 
     override fun reset() {
         equity = Double.NaN
+        assetReturns.clear()
     }
 
 }

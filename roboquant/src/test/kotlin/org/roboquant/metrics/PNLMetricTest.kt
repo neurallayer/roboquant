@@ -16,8 +16,10 @@
 
 package org.roboquant.metrics
 
-import kotlin.test.*
 import org.roboquant.TestData
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 internal class PNLMetricTest {
 
@@ -26,10 +28,11 @@ internal class PNLMetricTest {
         val metric = PNLMetric()
         val (account, event) = TestData.metricInput()
         val result = metric.calculate(account, event)
-        assertEquals(3, result.size)
+        assertEquals(4, result.size)
         assertContains(result, "pnl.realized")
         assertContains(result, "pnl.unrealized")
         assertContains(result, "pnl.total")
+        assertContains(result, "pnl.mkt")
     }
 
 }
