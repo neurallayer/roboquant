@@ -19,7 +19,7 @@ package org.roboquant.loggers
 import java.time.Instant
 
 /**
- * Silent logger ignores all metrics results and only counts the number of invocations.
+ * Silent logger ignores all metrics results and only counts the number of invocations (aka events).
  * Used mainly during unit tests to suppress the output or memory usage of logging.
  */
 class SilentLogger : MetricsLogger {

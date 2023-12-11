@@ -29,18 +29,28 @@ import java.time.Instant
  * - The unrealized PNL is calculated based on the open positions and their last known market prices.
  * - The total PNL is based on growth on equity
  * - The realized PNL is based on the difference between the above two
+ * - The market PNL is based on the returns of individual assets, so expressed as a percentage
  *
  * Metric names used:
  * ```
  * - pnl.realized
  * - pnl.unrealized
  * - pnl.total (= realized + unrealized)
+ * - pnl.mkt
  * ```
+ *
+ * @param priceType the ype of price to use for market data to determine market PNL, default is "DEFAULT"
  * @constructor Create a new instance of the PNLMetric
+ *
  */
-class PNLMetric : Metric {
+class PNLMetric(private val priceType: String = "DEFAULT") : Metric {
 
-    class AssetReturn(val start: Instant, val first: Double, var end: Instant = start, var last: Double = first) {
+    private class AssetReturn(
+        val start: Instant,
+        val first: Double,
+        var end: Instant = start,
+        var last: Double = first
+    ) {
 
         val duration
             get() = Timeframe(start, end, true).duration.toMillis()
@@ -61,7 +71,7 @@ class PNLMetric : Metric {
     /**
      * Market return of all assets, each weight by how long they are present in the run
      */
-    private fun marketReturn() : Double {
+    private fun marketReturn(): Double {
         var sum = 0.0
         var totalWeights = 0.0
         for (r in assetReturns.values) {
@@ -69,9 +79,8 @@ class PNLMetric : Metric {
             sum += r.calcReturn() * weight
             totalWeights += weight
         }
-        return if (totalWeights > 0.0) sum/totalWeights else 0.0
+        return if (totalWeights > 0.0) sum / totalWeights else 0.0
     }
-
 
     /**
      * @see Metric.calculate
@@ -84,7 +93,7 @@ class PNLMetric : Metric {
         val unrealizedPNL = pnl2.convert(account.baseCurrency, event.time).value
 
         event.prices.values.forEach {
-            val r = assetReturns.getOrPut(it.asset) {  AssetReturn(event.time, it.getPrice()) }
+            val r = assetReturns.getOrPut(it.asset) { AssetReturn(event.time, it.getPrice(priceType)) }
             r.update(event.time, it.getPrice())
         }
 
