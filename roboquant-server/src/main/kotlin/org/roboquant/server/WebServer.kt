@@ -54,6 +54,10 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
 
     private var runCounter = 0
     private val server: EmbeddedServer<*, *>
+
+    /**
+     * Returns true if this webserver is secured with credentials, false otherwise
+     */
     val secured: Boolean
 
     init {

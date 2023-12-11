@@ -27,6 +27,9 @@ data class RunResult internal constructor(
     val validation: Boolean
 ) {
 
+    /**
+     * Returns true if training mode, false otherwise
+     */
     val training
         get() = ! validation
 
