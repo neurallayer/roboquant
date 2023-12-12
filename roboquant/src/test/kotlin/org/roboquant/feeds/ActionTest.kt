@@ -16,9 +16,10 @@
 
 package org.roboquant.feeds
 
-import kotlin.test.Test
-import kotlin.test.*
 import org.roboquant.TestData
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 internal class ActionTest {
 
