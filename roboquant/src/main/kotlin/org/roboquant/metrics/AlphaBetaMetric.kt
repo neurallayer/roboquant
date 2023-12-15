@@ -22,71 +22,107 @@ import org.hipparchus.stat.descriptive.moment.Variance
 import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.PriceSeries
-import org.roboquant.common.returns
-import org.roboquant.common.totalReturn
+import org.roboquant.common.Timeframe
+import org.roboquant.common.percent
 import org.roboquant.feeds.Event
+import java.time.Instant
+import java.util.*
 
 /**
- * Calculates the Alpha and Beta of an account. This implementation not only looks at the portfolio positions, but
- * looks at the returns of the complete account, so including cash balances.
+ * Calculates the Alpha and Beta of the account.
  *
- * - Alpha measures the performance of an investment as compared to the market
- * - Beta measures the volatility (or systematic risk) of the account compared to the market
+ * - Alpha measures the performance as compared to the market (universe)
+ * - Beta measures the volatility (or systematic risk) compared to the market
  *
- * The provided risk-free return should be for the same duration as a period.
+ * This implementation not only looks at the portfolio open positions, but looks at the returns of the equity,
+ * so including cash balances.
  *
- * @property referenceAsset The asset to use as reference for the market volatility and returns
  * @property period Over how many events to calculate the beta
  * @property priceType The type of price to use, default is "DEFAULT"
- * @property riskFreeReturn the risk-free return, 1% is 0.01. Default is 0.0
+ * @property riskFreeReturn the annualized risk-free return, 1% is 0.01. Default is 0.percent
  * @constructor
  */
 class AlphaBetaMetric(
-    private val referenceAsset: Asset,
     private val period: Int,
     private val priceType: String = "DEFAULT",
-    private val riskFreeReturn: Double = 0.0,
+    private val riskFreeReturn: Double = 0.percent,
 ) : Metric {
 
     private val marketData = PriceSeries(period + 1)
-    private val portfolioData = PriceSeries(period + 1)
+    private val equityData = PriceSeries(period + 1)
+    private var oldPrices = mutableMapOf<Asset, Double>()
+    private var initialized = false
+    private var oldEquity = 0.0
+    private var times = LinkedList<Instant>()
+
+    private fun getMarketReturn(prices: Map<Asset, Double>): Double {
+        var sum = 0.0
+        var cnt = 0
+        for (asset in prices.keys) {
+            if (asset in oldPrices) {
+                cnt++
+                sum += prices.getValue(asset) / oldPrices.getValue(asset) - 1.0
+            }
+        }
+        return sum / cnt
+    }
+
+    private val timeframe
+        get() = Timeframe(times.first, times.last, true)
+
+    /**
+     * Calculate total returns over an array of individual returns.
+     */
+    private fun DoubleArray.product() : Double {
+        var result = 1.0
+        for (i in indices) result *= get(i) + 1.0
+        return result - 1.0
+    }
 
     /**
      * Based on the provided [account] and [event], calculate any metrics and return them.
      */
     override fun calculate(account: Account, event: Event): Map<String, Double> {
-        val action = event.prices[referenceAsset] ?: return emptyMap()
+        if (event.prices.isEmpty()) return emptyMap()
 
-        val price = action.getPrice(priceType)
-        marketData.add(price)
+        val prices = event.prices.mapValues { it.value.getPrice(priceType) }
+        val equity = account.equityAmount.value
 
-        val equity = account.equity
-        val value = account.convert(equity, time = event.time).value
-        portfolioData.add(value)
+        if (initialized) {
+            val mr = getMarketReturn(prices)
+            marketData.add(mr)
+            equityData.add(equity / oldEquity -1)
+            times.add(event.time)
+            if (times.size > period + 1) times.removeFirst()
+        }
 
-        if (marketData.isFull() && portfolioData.isFull()) {
-            val x1 = marketData.toDoubleArray()
-            val x2 = portfolioData.toDoubleArray()
+        oldPrices.putAll(prices)
+        oldEquity = equity
+        initialized = true
 
-            val marketReturns = x1.returns()
-            val portfolioReturns = x1.returns()
+        if (marketData.isFull() && equityData.isFull()) {
+            val mr = marketData.toDoubleArray()
+            val pr = equityData.toDoubleArray()
+            val beta = Covariance().covariance(mr, pr) / Variance().evaluate(mr)
 
-            val covariance = Covariance().covariance(portfolioReturns, marketReturns)
-            val variance = Variance().evaluate(marketReturns)
-            val beta = covariance / variance
+            val totalMr = timeframe.annualize(mr.product())
+            val totalPr = timeframe.annualize(pr.product())
+            val alpha = (totalPr - riskFreeReturn) - beta * (totalMr - riskFreeReturn)
 
-            val alpha =
-                (x1.totalReturn() - riskFreeReturn) - beta * (x2.totalReturn() - riskFreeReturn)
             return mapOf(
                 "account.alpha" to alpha,
                 "account.beta" to beta
             )
         }
+
         return emptyMap()
     }
 
     override fun reset() {
-        portfolioData.clear()
+        equityData.clear()
         marketData.clear()
+        oldPrices.clear()
+        times.clear()
+        initialized = false
     }
 }

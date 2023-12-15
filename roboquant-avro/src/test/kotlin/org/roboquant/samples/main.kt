@@ -33,7 +33,9 @@ import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
+import org.roboquant.loggers.latestRun
 import org.roboquant.metrics.AccountMetric
+import org.roboquant.metrics.AlphaBetaMetric
 import org.roboquant.orders.Order
 import org.roboquant.orders.summary
 import org.roboquant.policies.BasePolicy
@@ -340,10 +342,22 @@ fun generateDemoFeed() {
 
 }
 
+
+fun alpha() {
+    val feed = AvroFeed.sp500()
+    val rq = Roboquant(EMAStrategy(), AlphaBetaMetric(250))
+    rq.run(feed)
+    val alpha = rq.logger.getMetric("account.alpha").latestRun()
+    val beta = rq.logger.getMetric("account.beta").latestRun()
+    println("alpha is ${alpha.last()}")
+    println("beta is ${beta.last()}")
+}
+
+@Suppress("CyclomaticComplexMethod")
 suspend fun main() {
     Config.printInfo()
 
-    when ("GEN_DEMO_FEED") {
+    when ("ALPHA") {
         "FEED" -> feed()
         "SIMPLE" -> simple()
         "MULTI_RUN" -> multiRun()
@@ -357,6 +371,7 @@ suspend fun main() {
         "CFD" -> cfd()
         "AGG" -> aggregator()
         "GEN_DEMO_FEED" -> generateDemoFeed()
+        "ALPHA" -> alpha()
     }
 
 }

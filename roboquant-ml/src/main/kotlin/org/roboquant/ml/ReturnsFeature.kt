@@ -26,8 +26,7 @@ class ReturnsFeature(
     private val n: Int = 1,
     private val missing: Double = Double.NaN,
     override val name: String = f.name + "-RETURNS"
-) :
-    Feature by f {
+) : Feature by f {
 
     private val history = mutableListOf<Double>()
 

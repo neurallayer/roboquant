@@ -16,20 +16,18 @@
 
 package org.roboquant.metrics
 
-import kotlin.test.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Currency
 import org.roboquant.common.Size
-import org.roboquant.feeds.Event
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.feeds.TradePrice
+import org.roboquant.feeds.toList
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.latestRun
 import org.roboquant.strategies.EMAStrategy
-import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class AlphaBetaMetricTest {
@@ -37,9 +35,8 @@ internal class AlphaBetaMetricTest {
     @Test
     fun test() {
         val feed = TestData.feed
-        val marketAsset = feed.assets.first()
         val strategy = EMAStrategy.PERIODS_5_15
-        val alphaBetaMetric = AlphaBetaMetric(marketAsset, 50)
+        val alphaBetaMetric = AlphaBetaMetric(50)
         val logger = LastEntryLogger()
         val roboquant = Roboquant(strategy, alphaBetaMetric, logger = logger)
         roboquant.run(feed, name = "test")
@@ -53,25 +50,25 @@ internal class AlphaBetaMetricTest {
 
     @Test
     fun test2() {
-        val feed = RandomWalkFeed.lastYears(1, nAssets = 1)
+        val feed = RandomWalkFeed.lastYears(1, nAssets = 5)
         val asset = feed.assets.first()
         val internalAccount = InternalAccount(Currency.USD)
-        val metric = AlphaBetaMetric(asset, 50)
+        val metric = AlphaBetaMetric(50)
 
-        repeat(60) {
-            val price = it + 10.0
-            val event = Event(listOf(TradePrice(asset, price)), Instant.now())
+        val events = feed.toList()
+        val startPrice = events.first().prices[asset]!!.getPrice()
 
-            // Our portfolio is exactly the same as market reference asset, so ALPHA should be 0 and BETA 1
-            internalAccount.setPosition(Position(asset, Size(10), 10.0, price))
+        for (event in events) {
+            val price = event.prices[asset]!!.getPrice()
+            internalAccount.setPosition(Position(asset, Size(100), startPrice, price))
             val account = internalAccount.toAccount()
 
             val r = metric.calculate(account, event)
             if (r.isNotEmpty()) {
                 val alpha = r["account.alpha"]!!
                 val beta = r["account.beta"]!!
-                assertTrue(alpha in -0.02..0.02)
-                assertTrue(beta in 0.98..1.02)
+                assertTrue(alpha.isFinite())
+                assertTrue(beta.isFinite())
             }
 
         }

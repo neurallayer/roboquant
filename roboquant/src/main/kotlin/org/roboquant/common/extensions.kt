@@ -277,20 +277,6 @@ fun DoubleArray.logGrowthRates(n: Int = 1): DoubleArray {
 }
 
 /**
- * Get the total return. Formula used is
- * ```
- * return = last/first - 1.0
- * ```
- */
-fun DoubleArray.totalReturn(): Double {
-    return if (size < 2)
-        0.0
-    else
-        last() / first() - 1.0
-}
-
-
-/**
  * Is this value zero, this implementation allows for small rounding errors.
  */
 val Double.iszero: Boolean
