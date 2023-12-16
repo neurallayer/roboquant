@@ -28,6 +28,7 @@ import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.latestRun
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
 internal class AlphaBetaMetricTest {
@@ -57,16 +58,22 @@ internal class AlphaBetaMetricTest {
 
         val events = feed.toList()
         val startPrice = events.first().prices[asset]!!.getPrice()
-
+        var cnt = 0
         for (event in events) {
+            cnt++
             val price = event.prices[asset]!!.getPrice()
             internalAccount.setPosition(Position(asset, Size(100), startPrice, price))
             val account = internalAccount.toAccount()
 
             val r = metric.calculate(account, event)
-            if (r.isNotEmpty()) {
-                val alpha = r["account.alpha"]!!
-                val beta = r["account.beta"]!!
+            if (cnt <= 50) {
+                assertTrue(r.isEmpty())
+            } else {
+                assertContains(r, "account.alpha")
+                assertContains(r, "account.beta")
+
+                val alpha = r.getValue("account.alpha")
+                val beta = r.getValue("account.beta")
                 assertTrue(alpha.isFinite())
                 assertTrue(beta.isFinite())
             }
