@@ -34,11 +34,11 @@ import java.util.*
  * - Alpha measures the performance as compared to the market (universe)
  * - Beta measures the volatility (or systematic risk) compared to the market
  *
- * This implementation not only looks at the portfolio open positions, but looks at the returns of the equity,
- * so including cash balances.
+ * Market is defined as all the assets that are in the feed. So there is no need to provide a reference asset like the
+ * S&P500. This implementation uses the returns of the equity as a measure of the portfolio performance.
  *
- * @property period Over how many events to calculate the beta
- * @property priceType The type of price to use, default is "DEFAULT"
+ * @property period Over how many events to calculate the alpha and beta
+ * @property priceType The type of price to use for calculating market performance, default is "DEFAULT"
  * @property riskFreeReturn the annualized risk-free return, 1% is 0.01. Default is 0.percent
  * @constructor
  */
