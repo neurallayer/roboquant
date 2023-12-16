@@ -48,8 +48,8 @@ class AlphaBetaMetric(
     private val riskFreeReturn: Double = 0.percent,
 ) : Metric {
 
-    private val marketData = PriceSeries(period + 1)
-    private val equityData = PriceSeries(period + 1)
+    private val marketData = PriceSeries(period)
+    private val equityData = PriceSeries(period)
     private var oldPrices = mutableMapOf<Asset, Double>()
     private var initialized = false
     private var oldEquity = 0.0
@@ -93,7 +93,8 @@ class AlphaBetaMetric(
             marketData.add(mr)
             equityData.add(equity / oldEquity -1)
             times.add(event.time)
-            if (times.size > period + 1) times.removeFirst()
+            if (times.size > period) times.removeFirst()
+            assert(times.size == marketData.size)
         }
 
         oldPrices.putAll(prices)
@@ -122,6 +123,7 @@ class AlphaBetaMetric(
         equityData.clear()
         marketData.clear()
         oldPrices.clear()
+        oldEquity = 0.0
         times.clear()
         initialized = false
     }
