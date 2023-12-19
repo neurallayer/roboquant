@@ -105,7 +105,7 @@ open class PriceSeries(private var capacity: Int) {
      * Increase the capacity to the [newCapacity]
      */
     fun increaseCapacity(newCapacity: Int) {
-        require(newCapacity > capacity)
+        require(newCapacity > capacity) { "new capcity should be larger than old one, new=$newCapacity old=$capacity"}
         val oldData = toDoubleArray()
         data = DoubleArray(newCapacity)
         System.arraycopy(oldData, 0, data, 0, size)
