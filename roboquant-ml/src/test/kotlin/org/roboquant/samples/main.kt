@@ -55,7 +55,8 @@ private fun getStrategy(asset: Asset): Strategy {
         HistoricPriceFeature(asset, 5, "CLOSE").returns(),
         HistoricPriceFeature(asset, 10, "CLOSE").returns(),
         HistoricPriceFeature(asset, 15, "CLOSE").returns(),
-        HistoricPriceFeature(asset, 30, "CLOSE").returns()
+        HistoricPriceFeature(asset, 30, "CLOSE").returns(),
+        // TestFeature(doubleArrayOf(1.0, 2.0, 3.0))
     )
 
     val s = RegressionStrategy(features, asset, 2.bips) {

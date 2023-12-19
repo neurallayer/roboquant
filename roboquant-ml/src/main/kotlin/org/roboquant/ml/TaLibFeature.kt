@@ -31,7 +31,7 @@ class TaLibFeature(
     private val asset: Asset,
     private val missing: Double = Double.NaN,
     private val block: TaLib.(prices: PriceBarSeries) -> Double
-) : Feature {
+) : SingleValueFeature() {
 
     private val taLib = TaLib()
     private val history = PriceBarSeries(1)
@@ -79,7 +79,7 @@ class TaLibFeature(
     /**
      * @see Feature.calculate
      */
-    override fun calculate(event: Event): Double {
+    override fun calculateValue(event: Event): Double {
         val action = event.prices[asset]
         if (action != null && action is PriceBar && history.add(action, event.time)) {
             try {

@@ -71,7 +71,7 @@ class RSIStrategy(
                         result.add(Signal(asset, Rating.BUY))
                 }
             } catch (ex: InsufficientData) {
-                data.increaeseCapacity(ex.minSize)
+                data.increaseCapacity(ex.minSize)
             }
         }
         return result

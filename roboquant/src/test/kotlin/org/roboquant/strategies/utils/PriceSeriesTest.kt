@@ -55,7 +55,7 @@ internal class PriceSeriesTest {
         val series = PriceSeries(10)
         repeat(5) { series.add(1.0) }
 
-        series.increaeseCapacity(20)
+        series.increaseCapacity(20)
         assertFalse(series.isFull())
         assertEquals(5, series.size)
         assertEquals(5, series.toDoubleArray().size)

@@ -16,6 +16,8 @@
 
 package org.roboquant.ml
 
+import org.roboquant.common.div
+import org.roboquant.common.minus
 import org.roboquant.feeds.Event
 
 /**
@@ -24,16 +26,18 @@ import org.roboquant.feeds.Event
 class ReturnsFeature(
     private val f: Feature,
     private val n: Int = 1,
-    private val missing: Double = Double.NaN,
+    private val missingValue: Double = Double.NaN,
     override val name: String = f.name + "-RETURNS"
-) : Feature by f {
+) : Feature {
 
-    private val history = mutableListOf<Double>()
+    private val history = mutableListOf<DoubleArray>()
+    private val missing = DoubleArray(f.size) { missingValue }
+    override val size = f.size
 
     /**
      * @see Feature.calculate
      */
-    override fun calculate(event: Event): Double {
+    override fun calculate(event: Event): DoubleArray {
         val v = f.calculate(event)
         history.add(v)
         return if (history.size > n) {
@@ -55,5 +59,5 @@ class ReturnsFeature(
 /**
  * Wrap the feature and calculate the returns
  */
-fun Feature.returns(n: Int = 1) = ReturnsFeature(this, n)
+fun SingleValueFeature.returns(n: Int = 1) = ReturnsFeature(this, n)
 

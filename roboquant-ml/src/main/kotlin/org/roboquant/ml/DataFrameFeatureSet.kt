@@ -27,10 +27,23 @@ class DataFrameFeatureSet(private val historySize: Int = 1_000_000, private val 
 
     private class Entry(
         val feature: Feature,
-        val data: DoubleArray,
+        val matrix: Matrix,
         val offset: Int = 0,
-        var mean: Double = Double.NaN
-    )
+        // var mean: Double = Double.NaN
+    ) {
+        fun inputData(lastRow: Int): DoubleArray {
+            val len = lastRow*feature.size
+            val result = DoubleArray(len)
+            System.arraycopy(matrix.data, 0, result, 0, len)
+            // mean = result.fillNaNMean()
+            return result
+        }
+
+        fun toDoubleVector(lastRow: Int): DoubleVector {
+            return DoubleVector.of(feature.name, inputData(lastRow))
+        }
+
+    }
 
     private val entries = mutableListOf<Entry>()
 
@@ -52,23 +65,17 @@ class DataFrameFeatureSet(private val historySize: Int = 1_000_000, private val 
     fun add(vararg features: Feature, offset: Int = 0) {
         for (f in features) {
             require(f.name !in names) { "duplicate feature name ${f.name}" }
-            entries.add(Entry(f, DoubleArray(historySize), offset))
+            entries.add(Entry(f, Matrix(historySize, f.size), offset))
         }
     }
 
-    private fun Entry.inputData(size: Int): DoubleArray {
-        val result = DoubleArray(size)
-        System.arraycopy(data, 0, result, 0, size)
-        mean = result.fillNaNMean()
-        return result
-    }
 
     /**
      * Returns the training data as a [DataFrame]
      */
     fun getTrainingData(): DataFrame {
         val size = samples - maxOffset
-        val i = entries.map { DoubleVector.of(it.feature.name, it.inputData(size)) }
+        val i = entries.map {it.toDoubleVector(size) }
         @Suppress("SpreadOperator")
         return DataFrame.of(*i.toTypedArray())
     }
@@ -76,7 +83,7 @@ class DataFrameFeatureSet(private val historySize: Int = 1_000_000, private val 
 
     private fun Entry.getRow(row: Int): DoubleVector {
         val last = samples - offset - 1
-        val doubleArr = if (row > last) doubleArrayOf(Double.NaN) else doubleArrayOf(data[row])
+        val doubleArr = if (row > last) doubleArrayOf(Double.NaN) else matrix[row]
         return DoubleVector.of(feature.name, doubleArr)
     }
 
@@ -101,11 +108,10 @@ class DataFrameFeatureSet(private val historySize: Int = 1_000_000, private val 
         }
 
         for (entry in entries) {
-            var value = entry.feature.calculate(event)
+            val value = entry.feature.calculate(event)
             val idx = samples - entry.offset
             if (idx >= 0) {
-                if (value.isNaN()) value = entry.mean
-                entry.data[idx] = value
+                entry.matrix[idx] = value
             }
         }
         samples++

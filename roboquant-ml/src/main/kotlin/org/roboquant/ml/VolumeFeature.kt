@@ -25,12 +25,12 @@ import org.roboquant.feeds.Event
 class VolumeFeature(
     private val asset: Asset,
     override val name: String = "${asset.symbol}-VOLUME"
-) : Feature {
+) : SingleValueFeature() {
 
     /**
      * @see Feature.calculate
      */
-    override fun calculate(event: Event): Double {
+    override fun calculateValue(event: Event): Double {
         val action = event.prices[asset]
         return action?.volume ?: Double.NaN
     }

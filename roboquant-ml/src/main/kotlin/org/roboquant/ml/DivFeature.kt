@@ -21,13 +21,13 @@ import org.roboquant.feeds.Event
 /**
  * Create a new feature based on the division of two other features.
  */
-class DivFeature(private val numerator: Feature, private val denominator: Feature) : Feature {
+class DivFeature(private val numerator: SingleValueFeature, private val denominator: SingleValueFeature) : SingleValueFeature() {
 
     /**
      * @see Feature.calculate
      */
-    override fun calculate(event: Event): Double {
-        return numerator.calculate(event) / denominator.calculate(event)
+    override fun calculateValue(event: Event): Double {
+        return numerator.calculateValue(event) / denominator.calculateValue(event)
     }
 
     /**
@@ -53,4 +53,4 @@ class DivFeature(private val numerator: Feature, private val denominator: Featur
  *  ```
  * @see DivFeature
  */
-operator fun Feature.div(denominator: Feature) : Feature = DivFeature(this, denominator)
+operator fun SingleValueFeature.div(denominator: SingleValueFeature) : Feature = DivFeature(this, denominator)

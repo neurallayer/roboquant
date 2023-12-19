@@ -214,11 +214,11 @@ open class PriceBarSeries(capacity: Int) {
      * Set the capacity of the buffers to [newCapacity]. Existing stored values will be retained.
      */
     fun increaseCapacity(newCapacity: Int) {
-        openBuffer.increaeseCapacity(newCapacity)
-        highBuffer.increaeseCapacity(newCapacity)
-        lowBuffer.increaeseCapacity(newCapacity)
-        closeBuffer.increaeseCapacity(newCapacity)
-        volumeBuffer.increaeseCapacity(newCapacity)
+        openBuffer.increaseCapacity(newCapacity)
+        highBuffer.increaseCapacity(newCapacity)
+        lowBuffer.increaseCapacity(newCapacity)
+        closeBuffer.increaseCapacity(newCapacity)
+        volumeBuffer.increaseCapacity(newCapacity)
     }
 
 }

@@ -16,28 +16,24 @@
 
 package org.roboquant.ml
 
-import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 
 /**
- * Extract the price from the event for the provided [asset]
- *
- * @param asset the asset to use
- * @param type the type of price to use
- * @param name the name of the feature
+ * test feature
  */
-class PriceFeature(
-    private val asset: Asset,
-    private val type: String = "DEFAULT",
-    override val name: String = "${asset.symbol}-PRICE-$type"
-) : SingleValueFeature() {
+@Suppress("unused")
+class TestFeature(
+    private val value: DoubleArray,
+    override val name: String = "TEST-FEATURE"
+) : Feature {
+
+    override val size: Int = value.size
 
     /**
-     * @see SingleValueFeature.calculateValue
+     * @see Feature.calculate
      */
-    override fun calculateValue(event: Event): Double {
-        val action = event.prices[asset]
-        return action?.getPrice(type) ?: Double.NaN
+    override fun calculate(event: Event): DoubleArray {
+        return  value
     }
 
 

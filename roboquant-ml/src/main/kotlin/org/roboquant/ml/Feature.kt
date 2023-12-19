@@ -27,7 +27,7 @@ interface Feature {
     /**
      * Update the feature with a new event and return the latest value
      */
-    fun calculate(event: Event): Double
+    fun calculate(event: Event): DoubleArray
 
     /**
      * The name of this feature
@@ -35,8 +35,32 @@ interface Feature {
     val name: String
 
     /**
+     * The size of the returned DoubleArray. This should be the same size at every event.
+     */
+    val size: Int
+
+    /**
      * Reset any state in the feature
      */
     fun reset() {}
+}
+
+
+/**
+ * A feature generates a single value that is derived from a series of events
+ */
+abstract class SingleValueFeature: Feature {
+
+    override val size: Int = 1
+
+    /**
+     * Update the feature with a new event and return the latest value
+     */
+    override fun calculate(event: Event): DoubleArray {
+        return doubleArrayOf(calculateValue(event))
+    }
+
+    abstract fun calculateValue(event: Event): Double
+
 }
 

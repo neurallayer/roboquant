@@ -32,14 +32,14 @@ class HistoricPriceFeature(
     private val past: Int = 1,
     private val type: String = "DEFAULT",
     override val name: String = "${asset.symbol}-HISTORIC-PRICE-$past-$type"
-) : Feature {
+) : SingleValueFeature() {
 
     private val hist = mutableListOf<Double>()
 
     /**
      * @see Feature.calculate
      */
-    override fun calculate(event: Event): Double {
+    override fun calculateValue(event: Event): Double {
         val action = event.prices[asset]
         hist.add(action?.getPrice(type) ?: Double.NaN)
         return if (hist.size > past) hist.removeFirst() else Double.NaN
