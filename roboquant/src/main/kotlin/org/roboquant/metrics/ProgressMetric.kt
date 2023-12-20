@@ -25,10 +25,8 @@ import java.time.Instant
  * following metrics are captured:
  *
  * - `progress.events`: The number of events
- * - `progress.steps`: The number of steps (or events)
+ * - `progress.actions`: The number of actions (like candlesticks)
  * - `progress.walltime`: The total wall time in milliseconds
- * - `progress.trades`: The total trades
- * - `progress.closedorders`: The total closed orders
  */
 class ProgressMetric : Metric {
 

@@ -28,23 +28,39 @@ import org.roboquant.feeds.Event
  * - `account.cash` Total cash value
  * - `account.buyingpower` Buying power available
  * - `account.equity` the equity value of the account (= cash + positions)
+ * - `aacount.mdd` the max drawdown of the account
  *
- * All monetary values are denoted in the base currency of the account
+ * All monetary values are denoted in the base currency of the account.
  *
  * @constructor Create new AccountMetric instance
  */
 class AccountMetric : Metric {
 
+    private var peak = Double.MIN_VALUE
+    private var mdd = Double.MAX_VALUE
+
     /**
      * @see Metric.calculate
      */
     override fun calculate(account: Account, event: Event) = buildMap {
+
+        val equity = account.convert(account.equity, event.time).value
+        if (equity > peak) peak = equity
+        val dd = (equity - peak) / peak
+        if (dd < mdd) mdd = dd
+
         put("account.orders", (account.openOrders.size + account.closedOrders.size).toDouble())
         put("account.trades", account.trades.size.toDouble())
         put("account.positions", account.positions.size.toDouble())
         put("account.cash", account.convert(account.cash, event.time).value)
         put("account.buyingpower", account.buyingPower.value)
-        put("account.equity", account.convert(account.equity, event.time).value)
+        put("account.equity", equity)
+        put("account.mdd", mdd)
+    }
+
+    override fun reset() {
+        peak = Double.MIN_VALUE
+        mdd = Double.MAX_VALUE
     }
 
 

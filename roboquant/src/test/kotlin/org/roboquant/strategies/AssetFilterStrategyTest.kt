@@ -16,11 +16,13 @@
 
 package org.roboquant.strategies
 
-import kotlin.test.*
 import org.roboquant.TestData
 import org.roboquant.common.AssetFilter
 import org.roboquant.feeds.Event
 import java.time.Instant
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class AssetFilterStrategyTest {
 
@@ -39,11 +41,27 @@ internal class AssetFilterStrategyTest {
         val signals = strategy.generate(event)
         assertEquals(1, signals.size)
         assertEquals(Rating.BUY, signals.first().rating)
+    }
 
+    @Test
+    fun test2() {
+        val action = TestData.priceAction()
+        val event = Event(listOf(action), Instant.now())
         val asset = action.asset
-        val strategy2 = AlwaysStrategy().filter(AssetFilter.excludeSymbols(asset.symbol))
-        val signals2 = strategy2.generate(event)
-        assertTrue(signals2.isEmpty())
+        val strategy = AlwaysStrategy().filter(AssetFilter.excludeSymbols(asset.symbol))
+        val signals = strategy.generate(event)
+        assertTrue(signals.isEmpty())
+    }
+
+    @Test
+    fun test3() {
+        val action = TestData.priceAction()
+        val strategy = AlwaysStrategy().filter { asset, _ ->
+            asset.symbol == "DUMMY"
+        }
+        val event = Event(listOf(action), Instant.now())
+        val signals = strategy.generate(event)
+        assertEquals(0, signals.size)
     }
 
 }

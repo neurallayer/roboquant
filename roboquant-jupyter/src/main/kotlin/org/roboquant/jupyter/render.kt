@@ -39,7 +39,10 @@ fun Chart.asHTML(theme: String): String {
             let theme='${theme}'
         """.trimIndent()
 
+    val descr = this::class.simpleName ?: "chart"
+
     return """ 
+        <!-- roboquant $descr -->
         <div style="width:100%;height:${height}px;" class="rqcharts" id="$id">
             <script type="text/javascript">
                 (function () {

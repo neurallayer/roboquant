@@ -35,12 +35,12 @@ import java.time.Instant
 fun interface Indicator {
 
     /**
-     * Calculate the indicator values
+     * Calculate the indicator values and return the result as a map.
      */
     fun calculate(action: Action, time: Instant): Map<String, Double>
 
     /**
-     * Clear the state, default implementation is to do nothing
+     * Clear the state of the indicator, default implementation is to do nothing
      */
     fun clear() {
         // default implementation is to do nothing
