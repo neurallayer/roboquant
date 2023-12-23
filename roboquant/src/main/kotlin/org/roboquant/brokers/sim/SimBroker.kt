@@ -106,7 +106,6 @@ open class SimBroker(
      * 1. Update cash positions
      * 2. Update the portfolio position for the underlying asset
      * 3. Create and add a trade object to the account
-     *
      */
     private fun updateAccount(
         execution: Execution,

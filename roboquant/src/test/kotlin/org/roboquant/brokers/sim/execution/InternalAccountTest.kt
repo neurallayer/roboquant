@@ -23,6 +23,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Currency
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.Size
+import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
@@ -84,6 +85,9 @@ internal class InternalAccountTest {
                 launch {
                     assertDoesNotThrow {
                         repeat(loop) {
+                            iAccount.initializeOrders(
+                                listOf(LimitOrder(Asset("ABC"), Size(3), 40000.0, tag = "my-tag"))
+                            )
                             val trade = Trade(Instant.now(), Asset("ABC$it"), Size(10), 100.0, 0.0, 0.0, it)
                             iAccount.addTrade(trade)
                             Thread.sleep(1)
@@ -92,6 +96,8 @@ internal class InternalAccountTest {
                         repeat(10) {
                             val account = iAccount.toAccount()
                             for (trade in account.trades) assertEquals(Size(10), trade.size)
+                            val result = account.openOrders.firstOrNull { it.order.tag == "doesnt-exist" }
+                            assertTrue(result == null)
                         }
                     }
                 }
