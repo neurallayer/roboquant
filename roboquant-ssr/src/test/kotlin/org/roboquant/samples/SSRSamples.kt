@@ -6,6 +6,7 @@ import org.roboquant.charts.PriceBarChart
 import org.roboquant.charts.transcodeSVG2PNG
 import org.roboquant.feeds.random.RandomWalkFeed
 import java.io.File
+import kotlin.test.Test
 
 /*
  * Copyright 2020-2023 Neural Layer
@@ -23,22 +24,26 @@ import java.io.File
  * limitations under the License.
  */
 
-/**
- * You can run sample to generate a correlation chart and a price-bar chart.
- * The output is saved in /tmp/
- */
-internal fun main() {
-    val feed = RandomWalkFeed.lastYears(2, nAssets = 5)
-    val chart = CorrelationChart(feed, feed.assets)
+class SSRSamples {
+    /**
+     * You can run sample to generate a correlation chart and a price-bar chart.
+     * The output is saved in /tmp/
+     */
+    @Test
+    internal fun run() {
+        val feed = RandomWalkFeed.lastYears(2, nAssets = 5)
+        val chart = CorrelationChart(feed, feed.assets)
 
-    val creator = ImageCreator()
+        val creator = ImageCreator()
 
-    val svg = creator.renderToSVGString(chart)
-    println(svg)
-    transcodeSVG2PNG(svg, File("/tmp/correlation_chart.png"))
+        val svg = creator.renderToSVGString(chart)
+        println(svg)
+        transcodeSVG2PNG(svg, File("/tmp/correlation_chart.png"))
 
-    val asset = feed.assets.first()
-    val chart2 = PriceBarChart(feed, asset)
-    val svg2 = creator.renderToSVGString(chart2)
-    transcodeSVG2PNG(svg2, File("/tmp/${asset.symbol.lowercase()}_pricechart.png"))
+        val asset = feed.assets.first()
+        val chart2 = PriceBarChart(feed, asset)
+        val svg2 = creator.renderToSVGString(chart2)
+        transcodeSVG2PNG(svg2, File("/tmp/${asset.symbol.lowercase()}_pricechart.png"))
+    }
+
 }
