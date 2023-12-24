@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("KotlinConstantConditions")
-
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
@@ -33,6 +31,7 @@ import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 internal class AlpacaSamples {
@@ -55,12 +54,14 @@ internal class AlpacaSamples {
     )
 
     @Test
+    @Ignore
     internal fun alpacaBroker() {
         val broker = AlpacaBroker()
         println(broker.account.fullSummary())
     }
 
     @Test
+    @Ignore
     internal fun alpacaPaperTradeStocks() {
         val broker = AlpacaBroker()
         val account = broker.account
@@ -85,6 +86,7 @@ internal class AlpacaSamples {
 
 
     @Test
+    @Ignore
     internal fun alpacaTradeCrypto() {
         val feed = AlpacaLiveFeed()
         val symbols = feed.availableCrypto.random(10).symbols
@@ -102,6 +104,7 @@ internal class AlpacaSamples {
 
 
     @Test
+    @Ignore
     internal fun alpacaTradeStocks() {
         val feed = AlpacaLiveFeed()
 
@@ -117,6 +120,7 @@ internal class AlpacaSamples {
 
 
     @Test
+    @Ignore
     internal fun alpacaLiveFeed() {
         val feed = AlpacaLiveFeed()
         feed.heartbeatInterval = 10_000
@@ -130,6 +134,7 @@ internal class AlpacaSamples {
 
 
     @Test
+    @Ignore
     internal fun alpacaHistoricFeed2() {
         val symbols = arrayOf(
             "AAPL",
@@ -162,6 +167,7 @@ internal class AlpacaSamples {
     }
 
     @Test
+    @Ignore
     internal fun singleOrder() {
         val broker = AlpacaBroker {
             extendedHours = true

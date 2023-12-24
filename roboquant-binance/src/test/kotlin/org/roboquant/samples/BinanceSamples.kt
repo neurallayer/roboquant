@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("KotlinConstantConditions")
-
 package org.roboquant.samples
 
 
@@ -32,12 +30,14 @@ import org.roboquant.metrics.ProgressMetric
 import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 
 internal class BinanceSamples {
 
     @Test
+    @Ignore
     fun binanceLiveFeed() {
         val feed = BinanceLiveFeed()
         feed.subscribePriceBar("BTCBUSD", "ETHBUSD", interval = Interval.ONE_MINUTE)
@@ -49,6 +49,7 @@ internal class BinanceSamples {
     }
 
     @Test
+    @Ignore
     fun binanceForwardTest() {
         val feed = BinanceLiveFeed()
 
@@ -66,6 +67,7 @@ internal class BinanceSamples {
     }
 
     @Test
+    @Ignore
     fun binanceTestBack() {
         val strategy = EMAStrategy()
         val initialDeposit = Amount("BUSD", 100_000).toWallet()
@@ -80,6 +82,7 @@ internal class BinanceSamples {
     }
 
     @Test
+    @Ignore
     fun multiplier() {
         val feed = BinanceLiveFeed()
 

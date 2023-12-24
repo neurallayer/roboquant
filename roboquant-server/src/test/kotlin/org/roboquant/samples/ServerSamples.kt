@@ -25,6 +25,7 @@ import org.roboquant.metrics.PriceMetric
 import org.roboquant.server.WebServer
 import org.roboquant.strategies.EMAStrategy
 import kotlin.system.exitProcess
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 
@@ -37,6 +38,7 @@ internal class ServerSamples {
      * You can run this sample to start a server with three runs
      */
     @Test
+    @Ignore
     internal fun run() {
         val server = WebServer()
 

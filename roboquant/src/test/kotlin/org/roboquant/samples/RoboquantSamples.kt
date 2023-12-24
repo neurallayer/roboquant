@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("KotlinConstantConditions")
-
 package org.roboquant.samples
 
 import kotlinx.coroutines.*
@@ -41,11 +39,13 @@ import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 internal class RoboquantSamples {
 
     @Test
+    @Ignore
     internal fun multiCurrency() {
         val feed = CSVFeed("data/US") {
             priceParser = PriceBarParser(priceAdjust = true)
@@ -75,6 +75,7 @@ internal class RoboquantSamples {
     }
 
     @Test
+    @Ignore
     internal fun testingStrategies() {
         val strategy = EMAStrategy()
         val roboquant = Roboquant(strategy)
@@ -98,6 +99,7 @@ internal class RoboquantSamples {
     }
 
     @Test
+    @Ignore
     internal fun cfd() {
         val dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
 
@@ -107,7 +109,7 @@ internal class RoboquantSamples {
             return asset.exchange.getInstant(dt)
         }
 
-        val feed = CSVFeed("/tmp/DE40CASH.csv") {
+        val feed = CSVFeed("tmp/DE40CASH.csv") {
             template = Asset("TEMPLATE", AssetType.CFD, Currency.EUR, Exchange.DEX)
             separator = '\t'
             timeParser = TimeParser { a, b -> parse(a, b) }
@@ -140,6 +142,7 @@ internal class RoboquantSamples {
     }
 
     @Test
+    @Ignore
     internal fun largeTest() {
 
         class MyLiveFeed : LiveFeed() {

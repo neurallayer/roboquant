@@ -51,6 +51,7 @@ import java.time.format.DateTimeFormatter
 import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.system.measureTimeMillis
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -58,6 +59,7 @@ import kotlin.test.assertTrue
 internal class AvroSamples {
 
     @Test
+    @Ignore
     internal fun multiCurrency() {
         val feed = CSVFeed("data/US") {
             priceParser = PriceBarParser(priceAdjust = true)
@@ -87,6 +89,7 @@ internal class AvroSamples {
     }
 
     @Test
+    @Ignore
     internal fun multiRun() {
         val feed = AvroFeed.sp500()
         val logger = LastEntryLogger()
@@ -103,6 +106,7 @@ internal class AvroSamples {
     }
 
     @Test
+    @Ignore
     internal fun walkForwardParallel() = runBlocking {
         val feed = AvroFeed.sp500()
         val logger = LastEntryLogger()
@@ -123,6 +127,7 @@ internal class AvroSamples {
 
 
     @Test
+    @Ignore
     internal fun testingStrategies() {
         val strategy = EMAStrategy()
         val roboquant = Roboquant(strategy)

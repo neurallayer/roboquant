@@ -22,22 +22,25 @@ import org.roboquant.common.minutes
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import org.roboquant.polygon.PolygonLiveFeed
+import kotlin.test.Ignore
+import kotlin.test.Test
 
+internal class PolygonSamples {
 
-private fun testLiveFeed() = runBlocking {
-    val feed = PolygonLiveFeed {
-        this.delayed = true
+    @Test
+    @Ignore
+    internal fun testLiveFeed() = runBlocking {
+        System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
+        val feed = PolygonLiveFeed {
+            this.delayed = true
+        }
+        feed.subscribe("IBM", "AAPL")
+        val actions = feed.filter<PriceAction>(timeframe = Timeframe.next(5.minutes)) {
+            println(it)
+            true
+        }
+        assert(actions.isNotEmpty())
+        feed.disconnect()
     }
-    feed.subscribe("IBM", "AAPL")
-    val actions = feed.filter<PriceAction>(timeframe = Timeframe.next(5.minutes)) {
-        println(it)
-        true
-    }
-    assert(actions.isNotEmpty())
-    feed.disconnect()
-}
 
-fun main() {
-    System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
-    testLiveFeed()
 }

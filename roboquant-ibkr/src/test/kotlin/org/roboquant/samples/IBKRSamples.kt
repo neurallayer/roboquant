@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("KotlinConstantConditions")
-
 package org.roboquant.samples
 
 import org.roboquant.Roboquant

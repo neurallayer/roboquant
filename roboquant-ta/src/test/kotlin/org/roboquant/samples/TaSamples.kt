@@ -36,11 +36,13 @@ import org.roboquant.ta.*
 import org.ta4j.core.indicators.bollinger.BollingerBandFacade
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator
 import org.ta4j.core.rules.CrossedUpIndicatorRule
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 internal class TaSamples {
 
     @Test
+    @Ignore
     internal fun macd() {
         val strategy = TaLibSignalStrategy { asset, prices ->
             val (_, _, diff) = macd(prices, 12, 26, 9)
@@ -60,6 +62,7 @@ internal class TaSamples {
     }
 
     @Test
+    @Ignore
     internal fun ta4j() {
         // How big a look-back period should we use
         val period = 20
@@ -85,6 +88,7 @@ internal class TaSamples {
     }
 
     @Test
+    @Ignore
     internal fun customPolicy() {
 
         /**
@@ -136,6 +140,7 @@ internal class TaSamples {
     }
 
     @Test
+    @Ignore
     internal fun atrPolicy() {
         val strategy = EMAStrategy.PERIODS_5_15
         val policy = AtrPolicy(10, 6.0, 3.0, null) {
@@ -152,6 +157,7 @@ internal class TaSamples {
 
     @Suppress("CyclomaticComplexMethod")
     @Test
+    @Ignore
     internal fun tenkan() {
 
         /**
