@@ -214,6 +214,14 @@ fun DoubleArray.diff(n: Int = 1): DoubleArray {
 }
 
 /**
+ * Returns a normalized array
+ */
+fun DoubleArray.normalize(start: Double = 1.0): DoubleArray {
+    val first = (firstOrNull { it.isFinite() } ?: 1.0) / start
+    return this / first
+}
+
+/**
  * Returns the index of the first maximum value
  */
 fun DoubleArray.indexOfMax(): Int {

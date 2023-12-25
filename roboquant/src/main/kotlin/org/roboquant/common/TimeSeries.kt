@@ -133,9 +133,9 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     fun returns(n:Int = 1) = TimeSeries(timeline.drop(n), values.returns(n))
 
     /**
-     * Normalize the values by dividing all values by the first value
+     * Normalize the values by dividing all the values by the first value that is finite
      */
-    fun normalize() = TimeSeries(timeline, values / values.first())
+    fun normalize(start: Double = 1.0) = TimeSeries(timeline, values.normalize(start))
 
     /**
      * Return the observation that contains the maximum value.
@@ -272,6 +272,13 @@ fun Map<String, TimeSeries>.flatten(noOverlap: Boolean = true): TimeSeries {
 
     }
     return TimeSeries(result)
+}
+
+/**
+ * Normalize all the timeseries in his map
+ */
+fun Map<String, TimeSeries>.normalize(start: Double = 1.0): Map<String, TimeSeries> {
+    return mapValues { it.value.normalize(start) }
 }
 
 /**
