@@ -105,11 +105,12 @@ class TimeSeriesChart(
         val xAxis = if (useTime) TimeAxis() else ValueAxis()
         val yAxis = ValueAxis().setScale(true)
 
+        val tooltip = if (data.size > 5) "item" else "axis"
         val chart = Line()
             .setTitle(title)
             .addXAxis(xAxis)
             .addYAxis(yAxis)
-            .setTooltip("axis")
+            .setTooltip(tooltip)
 
         // Every combination of a run and metric name will be its own series
         val suffix = commonSuffix(data.keys)
