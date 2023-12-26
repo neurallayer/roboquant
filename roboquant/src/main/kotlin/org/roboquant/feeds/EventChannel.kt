@@ -60,22 +60,6 @@ class EventChannel(
     operator fun iterator() = channel.iterator()
 
     /**
-     * Try sending an [event] on this channel.
-     * If the time of event is before the timeframe of this channel, it will be silently ignored.
-     * And if the event is after the timeframe, the channel will be [closed].
-     */
-    fun trySend(event: Event) {
-        if (event.time in timeframe) {
-            channel.trySend(event)
-        } else {
-            if (event.time > timeframe) {
-                logger.debug { "send time=${event.time} timeframe=$timeframe, closing channel" }
-                close()
-            }
-        }
-    }
-
-    /**
      * Send an [event] on this channel. If the time of event is before the timeframe of this channel, it will be
      * silently ignored. And if the event is after the timeframe, the channel will be [closed].
      */
