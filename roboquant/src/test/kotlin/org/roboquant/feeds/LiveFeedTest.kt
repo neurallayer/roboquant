@@ -17,7 +17,6 @@
 package org.roboquant.feeds
 
 import kotlinx.coroutines.*
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.Roboquant
 import org.roboquant.common.*
@@ -25,6 +24,8 @@ import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
+import java.time.temporal.ChronoUnit
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class LiveFeedTest {
@@ -87,7 +88,7 @@ internal class LiveFeedTest {
         val jobs = ParallelJobs()
 
         var run = 0
-        tf.sample(200.millis, 10).forEach {
+        tf.sample(200.millis, 10, resolution = ChronoUnit.MILLIS).forEach {
             val name = "run-${run++}"
             jobs.add {
                 val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = LastEntryLogger())

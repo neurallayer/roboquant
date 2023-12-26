@@ -20,6 +20,7 @@ import java.io.Serializable
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalUnit
 import kotlin.math.pow
 import kotlin.random.Random
 
@@ -319,11 +320,17 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
     /**
      * Sample one or more timeframes each of a [period] length. Common use case is a Monte Carlo simulation. It uses
-     * millisecond resolution for the start of timeframes.
+     * [resolution] for the start of timeframes, default being [ChronoUnit.DAYS].
+     * The minimum resolution is milliseconds.
      *
      * The returned list will not contain duplicate timeframes (sampling without replacement).
      */
-    fun sample(period: TimeSpan, samples: Int = 1, random: Random = Config.random): List<Timeframe> {
+    fun sample(
+        period: TimeSpan,
+        samples: Int = 1,
+        resolution: TemporalUnit = ChronoUnit.DAYS,
+        random: Random = Config.random,
+    ): List<Timeframe> {
         require(samples >= 1) { "samples need to be >= 1" }
         require(end - period > start) { "period=$period to large for timeframe=$this" }
         val duration = Timeframe(start, end - period).duration.toMillis()
@@ -331,7 +338,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         val result = mutableSetOf<Timeframe>()
         while (result.size < samples) {
             val offset = random.nextLong(duration)
-            val newStart = start.plusMillis(offset)
+            val newStart = start.plusMillis(offset).truncatedTo(resolution)
             result.add(Timeframe(newStart, newStart + period))
         }
         return result.toList()

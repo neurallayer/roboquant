@@ -128,7 +128,7 @@ class TimeSpan internal constructor(internal val period: Period, internal val du
     override fun hashCode(): Int {
         return period.hashCode() + duration.hashCode()
     }
-
+    
 }
 
 /*********************************************************************************************

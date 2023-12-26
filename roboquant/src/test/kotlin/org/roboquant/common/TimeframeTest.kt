@@ -16,12 +16,13 @@
 
 package org.roboquant.common
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import kotlin.math.absoluteValue
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -93,7 +94,7 @@ internal class TimeframeTest {
             tf.sample(10.millis, 1200)
         }
 
-        val tfs = tf.sample(10.millis, 700)
+        val tfs = tf.sample(10.millis, 700, resolution = ChronoUnit.MILLIS)
         assertEquals(700, tfs.size)
         assertEquals(700, tfs.toSet().size)
     }

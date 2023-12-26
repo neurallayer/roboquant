@@ -105,7 +105,10 @@ class TimeSeriesChart(
         val xAxis = if (useTime) TimeAxis() else ValueAxis()
         val yAxis = ValueAxis().setScale(true)
 
-        val tooltip = if (data.size > 5) "item" else "axis"
+        // Deal with many series on a single chart
+        val showSymbol = data.size > 5
+        val tooltip = if (showSymbol) "item" else "axis"
+
         val chart = Line()
             .setTitle(title)
             .addXAxis(xAxis)
@@ -118,7 +121,7 @@ class TimeSeriesChart(
             val d = reduce(entries.toSeriesData())
             val lineSeries = LineSeries()
                 .setData(d)
-                .setShowSymbol(false)
+                .setShowSymbol(showSymbol)
                 .setName(name.removeSuffix(suffix))
                 .setLineStyle(LineStyle().setWidth(1))
 
