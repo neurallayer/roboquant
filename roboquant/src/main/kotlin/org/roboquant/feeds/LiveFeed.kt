@@ -38,7 +38,7 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
     private var channels = Collections.synchronizedList(mutableListOf<EventChannel>())
 
     init {
-        playAll()
+        startHeartbeats()
     }
 
     /**
@@ -48,23 +48,29 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
         get() = channels.isNotEmpty()
 
     /**
-     * Subclasses should use this method to send an event. If no channel is active, any event sent will be dropped and
-     * false will be returned.
+     * Subclasses should use this method to send an event. If no channel is active, any event sent will be dropped.
+     * This is a blocking call to ensure that events are send to multiple channels are in the order they
+     * where delivered.
      */
-    @Synchronized
-    protected fun send(event: Event) {
+    protected fun send(event: Event) = runBlocking {
         for (channel in channels) {
             try {
-                channel.trySend(event)
+                channel.send(event)
             } catch (_: ClosedSendChannelException) {
                 logger.trace { "closed channel" }
             }
         }
-        channels.removeAll { it.closed }
+        synchronized(this) {
+            channels.removeAll { it.closed }
+        }
+
     }
 
-
-    private fun playAll() {
+    /**
+     * A background routine that sends an empty event at regular intervals. It ensures that a trading strategy can
+     * do something, even if there is no new market data.
+     */
+    private fun startHeartbeats() {
 
         CoroutineScope(Dispatchers.Default + Job()).launch {
             while (true) {
