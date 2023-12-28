@@ -159,8 +159,6 @@ class PriceBarChart(
         val series3 = indicators.toLineSeries(feed, asset, timeframe)
 
         return listOf(series1, series2) + series3
-
-        // return arrayOf(series1, series2)
     }
 
     private fun getVM(): PiecewiseVisualMap {

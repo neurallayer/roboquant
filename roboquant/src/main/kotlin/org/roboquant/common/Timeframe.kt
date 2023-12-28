@@ -429,7 +429,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     }
 
     /**
-     * Convert this timeframe to years
+     * Convert this timeframe to years (using 365 days in a year).
      */
     fun toYears(): Double {
         val period = duration.toMillis()
