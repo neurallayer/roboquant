@@ -40,7 +40,7 @@ class TaLibMetric(
     private var block: TaLib.(series: PriceBarSeries) -> Map<String, Double>
 ) : Metric {
 
-    private val buffers = mutableMapOf<Asset, PriceBarSeries>()
+    private val history = mutableMapOf<Asset, PriceBarSeries>()
     private val taLib = TaLib()
 
     /**
@@ -53,7 +53,7 @@ class TaLibMetric(
         val time = event.time
         for (priceAction in actions) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSeries(initialCapacity) }
+            val buffer = history.getOrPut(asset) { PriceBarSeries(initialCapacity) }
             if (buffer.add(priceAction, time)) {
                 try {
                     val postFix = asset.symbol.lowercase()
@@ -73,7 +73,7 @@ class TaLibMetric(
      */
     override fun reset() {
         super.reset()
-        buffers.clear()
+        history.clear()
     }
 
 }

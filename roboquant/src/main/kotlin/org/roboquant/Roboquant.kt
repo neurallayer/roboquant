@@ -178,7 +178,7 @@ data class Roboquant(
                 broker.place(orders, time)
 
                 kotlinLogger.trace {
-                    "time=$${event.time} actions=${event.actions.size} signals=${signals.size} orders=${orders.size}"
+                    "time=$time actions=${event.actions.size} signals=${signals.size} orders=${orders.size}"
                 }
             }
         } catch (_: ClosedReceiveChannelException) {

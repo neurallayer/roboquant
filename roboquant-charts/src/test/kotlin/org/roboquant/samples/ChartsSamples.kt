@@ -22,17 +22,24 @@ import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.metrics.ReturnsMetric2
 import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.strategies.EMAStrategy
+import kotlin.test.Ignore
+import kotlin.test.Test
 
 
-fun main() {
-    val rq = Roboquant(
-        EMAStrategy(),
-        ReturnsMetric2(),
-        ScorecardMetric()
-    )
-    val feed = RandomWalkFeed.lastYears(5)
-    rq.run(feed)
-    val report = MetricsReport(rq)
-    report.toHTMLFile("/tmp/test.html")
-    println(rq.broker.account.summary())
+internal class ChartsSamples {
+
+    @Test
+    @Ignore
+    internal fun basic() {
+        val rq = Roboquant(
+            EMAStrategy(),
+            ReturnsMetric2(),
+            ScorecardMetric()
+        )
+        val feed = RandomWalkFeed.lastYears(5)
+        rq.run(feed)
+        val report = MetricsReport(rq)
+        report.toHTMLFile("/tmp/test.html")
+        println(rq.broker.account.summary())
+    }
 }

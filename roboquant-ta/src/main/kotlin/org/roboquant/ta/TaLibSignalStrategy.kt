@@ -44,7 +44,7 @@ class TaLibSignalStrategy(
     private var block: TaLib.(asset: Asset, series: PriceBarSeries) -> Signal?
 ) : Strategy {
 
-    private val buffers = mutableMapOf<Asset, PriceBarSeries>()
+    private val history = mutableMapOf<Asset, PriceBarSeries>()
 
     /**
      * The underlying [TaLib] instance that is used when executing this strategy.
@@ -91,7 +91,11 @@ class TaLibSignalStrategy(
         }
 
         /**
-         * Super trend strategy
+         * Super trend strategy. The used formala is:
+         *
+         * ```
+         * super-trend = (high + low) / 2 +  multiplier * ATR
+         * ```
          */
         fun superTrend(period: Int = 14, multiplier: Double = 1.0): TaLibSignalStrategy {
             val strategy = TaLibSignalStrategy { asset, prices ->
@@ -121,7 +125,7 @@ class TaLibSignalStrategy(
         val time = event.time
         for (priceAction in event.prices.values.filterIsInstance<PriceBar>()) {
             val asset = priceAction.asset
-            val buffer = buffers.getOrPut(asset) { PriceBarSeries(initialCapacity) }
+            val buffer = history.getOrPut(asset) { PriceBarSeries(initialCapacity) }
             if (buffer.add(priceAction, time)) {
                 try {
                     val signal = block.invoke(taLib, asset, buffer)
@@ -138,7 +142,7 @@ class TaLibSignalStrategy(
      * Reset all the state
      */
     override fun reset() {
-        buffers.clear()
+        history.clear()
     }
 
     /**

@@ -36,7 +36,7 @@ internal class HistoricPriceStrategyTest {
     }
 
 
-    private class MySubClass2 : HistoricPriceStrategy(10) {
+    private class MySubClass2 : HistoricPriceStrategy(10, priceType = "`CLOSE`") {
         var called = false
 
         override fun generateRating(data: DoubleArray): Rating? {
@@ -67,28 +67,26 @@ internal class HistoricPriceStrategyTest {
     @Test
     fun test2() {
         val c = MySubClass2()
-        val event = TestData.event()
-        val signals = c.generate(event)
+        val signals = c.generate(TestData.event2())
         assertTrue(signals.isEmpty())
         assertFalse(c.called)
 
-        repeat(10) { c.generate(event) }
+        repeat(10) { c.generate(TestData.event2()) }
         assertTrue(c.called)
 
         c.reset()
         c.called = false
-        c.generate(event)
+        c.generate(TestData.event2())
         assertFalse(c.called)
     }
 
     @Test
     fun test3() {
         val c = MySubclass3()
-        val event = TestData.event()
         assertThrows<RoboquantException> {
-            c.generate(event)
-            c.generate(event)
-            c.generate(event)
+            c.generate(TestData.event())
+            c.generate(TestData.event())
+            c.generate(TestData.event())
         }
 
     }

@@ -25,29 +25,27 @@ import org.roboquant.common.summary
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.filter
 import org.roboquant.xchange.XChangePollingLiveFeed
+import kotlin.test.Ignore
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
+internal class XChangeSamples {
 
-fun xchangeFeed() {
-    val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
-    val feed = XChangePollingLiveFeed(exchange)
-    println(feed.availableAssets.summary())
+    @Test
+    @Ignore
+    internal fun liveFeed() {
+        val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
+        val feed = XChangePollingLiveFeed(exchange)
+        println(feed.availableAssets.summary())
 
-    feed.subscribeTrade("BTC_USD", pollingDelayMillis = 30_000)
-    println("Subscribed")
-    assertEquals("BTC_USD", feed.assets.first().symbol)
+        feed.subscribeTrade("BTC_USD", pollingDelayMillis = 30_000)
+        println("Subscribed")
+        assertEquals("BTC_USD", feed.assets.first().symbol)
 
-    /// Run it for 2 minutes
-    val timeframe = Timeframe.next(2.minutes)
-    val result = feed.filter<PriceAction>(timeframe = timeframe)
-    feed.close()
-    assertEquals(AssetType.CRYPTO, result.first().second.asset.type)
-}
-
-fun main() {
-
-    when ("XCHANGE") {
-        "XCHANGE" -> xchangeFeed()
-
+        /// Run it for 2 minutes
+        val timeframe = Timeframe.next(2.minutes)
+        val result = feed.filter<PriceAction>(timeframe = timeframe)
+        feed.close()
+        assertEquals(AssetType.CRYPTO, result.first().second.asset.type)
     }
 }
