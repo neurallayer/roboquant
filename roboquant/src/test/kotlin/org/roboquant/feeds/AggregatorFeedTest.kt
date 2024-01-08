@@ -54,14 +54,13 @@ internal class AggregatorFeedTest {
 
     @Test
     fun aggregatorLiveFeed() {
-        val delay = 5
+        val delay = 2
         val feed = LiveTestFeed(50..100, delayInMillis = delay)
         val ts = (delay * 10).millis
         val aggFeed = AggregatorLiveFeed(feed, ts)
         var lastTime: Instant? = null
         aggFeed.apply<PriceBar> { pb, t ->
             assertEquals(ts, pb.timeSpan)
-            // println("$t ${Instant.now()}")
             if (lastTime != null) {
                 val diff = lastTime!!.until(t, ChronoUnit.MILLIS)
                 assertEquals(delay * 10L, diff)

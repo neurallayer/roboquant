@@ -152,6 +152,7 @@ internal class AvroSamples {
 
 
     @Test
+    @Ignore
     internal fun signalsOnly() {
         class MyPolicy : BasePolicy(prefix = "") {
 
@@ -184,6 +185,7 @@ internal class AvroSamples {
 
 
     @Test
+    @Ignore
     internal fun simple() {
         val strategy = EMAStrategy()
         val feed = AvroFeed.sp500()
@@ -194,6 +196,7 @@ internal class AvroSamples {
 
 
     @Test
+    @Ignore
     internal fun aggregator() {
         val forex = AvroFeed.forex()
         val feed = AggregatorFeed(forex, 15.minutes)
@@ -204,6 +207,7 @@ internal class AvroSamples {
 
 
     @Test
+    @Ignore
     internal fun forexRun() {
         val feed = AvroFeed.forex()
         Currency.increaseDigits(3)
@@ -225,6 +229,7 @@ internal class AvroSamples {
 
 
     @Test
+    @Ignore
     internal fun profileTest() {
         val feed = AvroFeed.sp500()
         val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = SilentLogger())
@@ -233,6 +238,7 @@ internal class AvroSamples {
 
 
     @Test
+    @Ignore
     internal fun performanceTest() {
         val feed = AvroFeed(Config.home / "all_1962_2023.avro")
         repeat(3) {
@@ -252,6 +258,7 @@ internal class AvroSamples {
 
 
     @Test
+    @Ignore
     internal fun cfd() {
         val dtf = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss")
 
@@ -295,25 +302,29 @@ internal class AvroSamples {
 
 
     @Test
-    internal fun feed() {
+    @Ignore
+    internal fun feedRecorder() {
         val tf = Timeframe.past(1.years)
-        val template = Asset("BTCBUSD", AssetType.CRYPTO, currency = Currency.getInstance("BUSD"))
+        val symbol = "BTCBUSD"
+        val template = Asset(symbol, AssetType.CRYPTO, currency = Currency.getInstance("BUSD"))
         val feed = RandomWalkFeed(tf, 1.seconds, template = template, nAssets = 1, generateBars = false)
+        val fileName = "/tmp/${symbol}-1sec.avro"
         val t = measureTimeMillis {
-            AvroFeed.record(feed, "/tmp/orig.avro")
+            AvroFeed.record(feed, fileName)
         }
-        val f = File("/tmp/orig.avro")
+        val f = File(fileName)
         println(t)
         println(f.length() / 1_000_000)
 
         val t2 = measureTimeMillis {
-            AvroFeed("/tmp/orig.avro")
+            AvroFeed(fileName)
         }
         println(t2)
     }
 
 
     @Test
+    @Ignore
     internal fun generateDemoFeed() {
 
         val pathStr = Config.getProperty("datadir", "/tmp/us")
@@ -362,7 +373,8 @@ internal class AvroSamples {
 
     }
 
-
+    @Test
+    @Ignore
     fun alpha() {
         val feed = AvroFeed.sp500()
         val rq = Roboquant(EMAStrategy(), AlphaBetaMetric(250))
