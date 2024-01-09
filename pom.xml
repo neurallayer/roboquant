@@ -61,6 +61,7 @@
         <module>roboquant-alphavantage</module>
         <module>roboquant-alpaca</module>
         <module>roboquant-polygon</module>
+        <module>roboquant-tiingo</module>
         <module>roboquant-xchange</module>
         <module>roboquant-binance</module>
         <module>roboquant-server</module>
