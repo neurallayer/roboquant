@@ -27,7 +27,10 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.*
-import org.roboquant.feeds.csv.*
+import org.roboquant.feeds.csv.CSVConfig
+import org.roboquant.feeds.csv.CSVFeed
+import org.roboquant.feeds.csv.PriceBarParser
+import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
@@ -329,24 +332,12 @@ internal class AvroSamples {
 
         val pathStr = Config.getProperty("datadir", "/tmp/us")
 
-        val timeframe = Timeframe.fromYears(2018, 2023)
+        val timeframe = Timeframe.fromYears(2014, 2024)
         val symbols = Universe.sp500.getAssets(timeframe.end).map { it.symbol }.toTypedArray()
         assertTrue(symbols.size > 490)
 
-        val template = Asset("TEMPLATE")
-        fun file2Symbol(file: File): String {
-            return file.name.removeSuffix(".us.txt").replace('-', '.').uppercase()
-        }
-
-        val config = CSVConfig(
-            filePattern = ".*.txt",
-            timeParser = AutoDetectTimeParser(2),
-            priceParser = PriceBarParser(timeSpan = 1.days),
-            assetBuilder = { file: File -> template.copy(symbol = file2Symbol(file)) }
-        )
-
+        val config = CSVConfig.stooq()
         val path = Path(pathStr)
-
         val path1 = path / "nasdaq stocks"
         val path2 = path / "nyse stocks"
 
@@ -354,8 +345,7 @@ internal class AvroSamples {
         val tmp = CSVFeed(path2.toString(), config)
         feed.merge(tmp)
 
-        val sp500File = "/tmp/sp500_pricebar_v6.0.avro"
-
+        val sp500File = "/tmp/sp500_pricebar_v6.1.avro"
 
         AvroFeed.record(
             feed,

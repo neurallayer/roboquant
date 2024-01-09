@@ -216,7 +216,7 @@ fun DoubleArray.diff(n: Int = 1): DoubleArray {
 /**
  * Returns a normalized array
  */
-fun DoubleArray.normalize(start: Double = 1.0): DoubleArray {
+fun DoubleArray.index(start: Double = 1.0): DoubleArray {
     val first = (firstOrNull { it.isFinite() } ?: 1.0) / start
     return this / first
 }

@@ -68,7 +68,7 @@ data class CSVConfig(
         private val logger = Logging.getLogger(CSVConfig::class)
 
         /**
-         * Returns a CSVConfig suited for parsing stooq.com CSV files
+         * Returns a CSVConfig suited for parsing stooq.pl CSV files
          *
          * @param template the asset template to use to map symbols to assets
          */

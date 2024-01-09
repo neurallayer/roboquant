@@ -41,7 +41,7 @@ internal class TimeSeriesTest {
         assertEquals(ts.size, ts2.size)
         assertEquals(ts.average(), ts2.average())
 
-        val ts3 = ts.normalize()
+        val ts3 = ts.index()
         assertEquals(1.0, ts3.toDoubleArray().first())
         assertEquals(2.0, ts3.toDoubleArray().last())
     }

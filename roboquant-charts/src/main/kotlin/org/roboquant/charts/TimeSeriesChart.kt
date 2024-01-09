@@ -25,6 +25,7 @@ import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.series.LineStyle
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.flatten
+import org.roboquant.loggers.MetricsLogger
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -52,6 +53,24 @@ class TimeSeriesChart(
      * @suppress
      */
     companion object {
+
+        /**
+         * Create a TimeSeriesChart chart for a number of [metrics] that can be found in the [logger].
+         * Each metric will be indexed to 1.0 for its first value.
+         * If there is more than one run recorded by the logger, you need to specify the [run] you want to use.
+         */
+        fun fromMetrics(
+            logger: MetricsLogger,
+            vararg metrics: String,
+            run: String? = null,
+            fractionDigits: Int = 2
+        ): TimeSeriesChart {
+            require(metrics.isNotEmpty()) { "Provide at least 1 metric"}
+            require(run != null || logger.getRuns().size == 1) { "More than 1 run found, please specify a run"}
+            val r = run ?: logger.getRuns().first()
+            val data = metrics.associateWith { it }.mapValues { logger.getMetric(it.key, r).index() }
+            return TimeSeriesChart(data, fractionDigits = fractionDigits)
+        }
 
         /**
          * Return a chart based on multiple runs. Because each run starts fresh, not the absolute values, but the
