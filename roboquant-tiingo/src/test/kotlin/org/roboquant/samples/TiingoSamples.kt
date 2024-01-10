@@ -17,12 +17,14 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
+import org.roboquant.common.Asset
+import org.roboquant.common.AssetType
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
-import org.roboquant.metrics.AccountMetric
+import org.roboquant.loggers.ConsoleLogger
+import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.tiingo.TiingoLiveFeed
-import kotlin.system.exitProcess
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -31,13 +33,32 @@ internal class TiingoSamples {
     @Test
     @Ignore
     internal fun testLiveFeed() {
-        val feed = TiingoLiveFeed()
-        // feed.subscribeIEX()
-        feed.subscribeIEX("AAPL", "TSLA")
-        val rq = Roboquant(EMAStrategy(), AccountMetric())
+        val feed = TiingoLiveFeed.iex()
+        feed.subscribe("AAPL", "TSLA")
+        val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
+        rq.run(feed, Timeframe.next(10.minutes))
+        println(rq.broker.account.fullSummary())
+    }
+
+    @Test
+    @Ignore
+    internal fun testLiveFeedFX() {
+        val feed = TiingoLiveFeed.fx()
+        feed.subscribe("EURUSD")
+        val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
         rq.run(feed, Timeframe.next(1.minutes))
         println(rq.broker.account.fullSummary())
-        exitProcess(0)
+    }
+
+    @Test
+    @Ignore
+    internal fun testLiveFeedCrypto() {
+        val feed = TiingoLiveFeed.crypto()
+        val asset = Asset("BNBFDUSD", AssetType.CRYPTO, "FDUSD")
+        feed.subscribeAssets(asset)
+        val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
+        rq.run(feed, Timeframe.next(1.minutes))
+        println(rq.broker.account.fullSummary())
     }
 
 }
