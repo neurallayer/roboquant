@@ -17,13 +17,13 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Timeframe
-import org.roboquant.common.minutes
+import org.roboquant.common.*
+import org.roboquant.feeds.AggregatorLiveFeed
 import org.roboquant.loggers.ConsoleLogger
+import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
+import org.roboquant.tiingo.TiingoHistoricFeed
 import org.roboquant.tiingo.TiingoLiveFeed
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -37,6 +37,17 @@ internal class TiingoSamples {
         feed.subscribe("AAPL", "TSLA")
         val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
         rq.run(feed, Timeframe.next(10.minutes))
+        println(rq.broker.account.fullSummary())
+    }
+
+    @Test
+    @Ignore
+    internal fun aggregatorLiveFeed() {
+        val iex = TiingoLiveFeed.iex()
+        iex.subscribe()
+        val feed = AggregatorLiveFeed(iex, 5.seconds)
+        val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = MemoryLogger())
+        rq.run(feed, Timeframe.next(3.minutes))
         println(rq.broker.account.fullSummary())
     }
 
@@ -58,6 +69,19 @@ internal class TiingoSamples {
         feed.subscribeAssets(asset)
         val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
         rq.run(feed, Timeframe.next(1.minutes))
+        println(rq.broker.account.fullSummary())
+    }
+
+    @Test
+    @Ignore
+    internal fun historic() {
+        val feed = TiingoHistoricFeed()
+        val tf = Timeframe.past(3.years)
+        feed.retrieve("AAPL", "TSLA", timeframe=tf)
+        println(feed.assets)
+        println(feed.timeframe)
+        val rq = Roboquant(EMAStrategy(), ProgressMetric())
+        rq.run(feed)
         println(rq.broker.account.fullSummary())
     }
 

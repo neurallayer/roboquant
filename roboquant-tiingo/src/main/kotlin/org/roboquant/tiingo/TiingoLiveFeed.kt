@@ -177,10 +177,24 @@ class TiingoLiveFeed private constructor(
     }
 
     /**
+     * Close the connections with Tiingo
+     */
+    override fun close() {
+        when (type) {
+            "iex" -> wsIEX.close(0, "closed called")
+            "fx" -> wsFX.close(0, "closed called")
+            "crypto" -> wsCrypto.close(0, "closed called")
+        }
+    }
+
+    /**
      * Subscribe to quotes for provided [symbols].
      *
      * If no symbols are provided, all available data is subscribed to. That is a lot of data and can impact
      * your monthly quato quickly.
+     *
+     * For crypto and some forex it is challenging to derive the underlying currency from just the symbol name,
+     * so it is better to use [subscribeAssets] instead.
      */
     fun subscribe(vararg symbols: String) {
 
