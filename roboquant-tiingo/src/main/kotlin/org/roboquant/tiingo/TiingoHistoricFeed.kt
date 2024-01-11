@@ -42,10 +42,11 @@ class TiingoHistoricFeed(
         config.configure()
         require(config.key.isNotBlank()) { "no valid key found" }
         api = TiingoApi(config.key)
+        logger.info { "connected to Tiingo" }
     }
 
     /**
-     * Subscribe to quotes for provided [symbols].
+     * Retrieve the historic price-bars for provided [symbols].
      */
     fun retrieve(
         vararg symbols: String,
