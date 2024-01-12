@@ -145,8 +145,8 @@ private class IncrementalReader(val asset: Asset, file: File, val config: CSVCon
 
     private val reader = CsvReader.builder()
         .fieldSeparator(config.separator)
-        .skipEmptyRows(true)
-        .build(FileReader(file)).iterator()
+        .skipEmptyLines(true)
+        .ofCsvRecord(FileReader(file)).iterator()
     var errors = 0L
 
     init {

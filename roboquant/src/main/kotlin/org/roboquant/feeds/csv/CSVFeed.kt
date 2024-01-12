@@ -108,7 +108,7 @@ class CSVFeed internal constructor(
 
     @Suppress("TooGenericExceptionCaught")
     private fun readFile(asset: Asset, file: File): List<PriceEntry> {
-        val reader = CsvReader.builder().fieldSeparator(config.separator).skipEmptyRows(true).build(FileReader(file))
+        val reader = CsvReader.builder().fieldSeparator(config.separator).skipEmptyLines(true).ofCsvRecord(FileReader(file))
         reader.use {
             val result = mutableListOf<PriceEntry>()
             var errors = 0

@@ -77,12 +77,27 @@ internal class TiingoSamples {
     internal fun historic() {
         val feed = TiingoHistoricFeed()
         val tf = Timeframe.past(3.years)
-        feed.retrieve("AAPL", "TSLA", timeframe=tf)
+        feed.retrieve("AAPL", "TSLA", "ERROR_SYMBOL", timeframe=tf)
         println(feed.assets)
         println(feed.timeframe)
         val rq = Roboquant(EMAStrategy(), ProgressMetric())
         rq.run(feed)
         println(rq.broker.account.fullSummary())
     }
+
+    @Test
+    @Ignore
+    internal fun historicIntraDay() {
+        val feed = TiingoHistoricFeed()
+        val tf = Timeframe.past(10.days)
+        feed.retrieveIntraday("AAPL", "TSLA", "ERROR_SYMBOL", timeframe=tf, frequency = "1hour")
+        println(feed.assets)
+        println(feed.timeframe)
+        val rq = Roboquant(EMAStrategy(), ProgressMetric())
+        rq.run(feed)
+        println(rq.broker.account.fullSummary())
+    }
+
+
 
 }

@@ -16,7 +16,7 @@
 
 package org.roboquant.common
 
-import de.siegmar.fastcsv.reader.NamedCsvReader
+import de.siegmar.fastcsv.reader.CsvReader
 import org.roboquant.common.Currency.Companion.USD
 import java.nio.charset.StandardCharsets
 import java.time.Instant
@@ -62,7 +62,7 @@ private class SP500 : Universe {
             SP500::class.java.getResourceAsStream(fileName) ?: throw RoboquantException("Couldn't find file $fileName")
         stream.use { inputStream ->
             val content = String(inputStream.readAllBytes(), StandardCharsets.UTF_8)
-            val builder = NamedCsvReader.builder().fieldSeparator(';').build(content)
+            val builder = CsvReader.builder().fieldSeparator(';').ofNamedCsvRecord(content)
             val us = Exchange.getInstance("US")
             assets = builder.map {
                 val symbol = it.getField("Symbol")

@@ -16,63 +16,200 @@
 
 package org.roboquant.tiingo
 
+import de.siegmar.fastcsv.reader.CsvReader
+import de.siegmar.fastcsv.reader.NamedCsvRecord
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.roboquant.common.*
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
-import top.cptl.tiingo4j.apis.TiingoApi
-import top.cptl.tiingo4j.enums.RESAMPLE_FREQUENCY
-import top.cptl.tiingo4j.requestParameters.PriceParameters
 import java.time.Instant
+import java.time.LocalDate
+import java.util.concurrent.TimeUnit
 
 
 /**
- * Tiingo historic feed
+ * Tiingo historic feed.
  *
- * This feed uses web-sockets for low letency and has nanosecond resolution
+ * This feed uses CSV format for faster processing and less bandwidth usage.
  */
 class TiingoHistoricFeed(
     configure: TiingoConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-    private var api: TiingoApi
     private val config = TiingoConfig()
     private val logger = Logging.getLogger(TiingoHistoricFeed::class)
+
+    private val client: OkHttpClient = OkHttpClient.Builder()
+        .readTimeout(0, TimeUnit.MILLISECONDS)
+        .build()
+
 
     init {
         config.configure()
         require(config.key.isNotBlank()) { "no valid key found" }
-        api = TiingoApi(config.key)
-        logger.info { "connected to Tiingo" }
+    }
+
+
+    private fun getParams(timeframe: Timeframe, frequency: String): Map<String, Any> {
+        return mapOf(
+            "startDate" to Exchange.US.getLocalDate(timeframe.start),
+            "endDate" to Exchange.US.getLocalDate(timeframe.end),
+            "resampleFreq" to frequency,
+            "format" to "csv",
+            "token" to config.key
+        )
+    }
+
+    private fun getDailyUrl(symbol: String, params: Map<String, Any>): HttpUrl {
+        val eodUrl = "https://api.tiingo.com/tiingo/daily/$symbol/prices".toHttpUrl()
+        val urlBuilder = eodUrl.newBuilder()
+        for ((k,v) in params.entries) urlBuilder.addQueryParameter(k,v.toString())
+        return urlBuilder.build()
+    }
+
+    private fun getIntradayUrl(symbol: String, params: Map<String, Any>): HttpUrl {
+        val eodUrl = "https://api.tiingo.com/iex/$symbol/prices".toHttpUrl()
+        val urlBuilder = eodUrl.newBuilder()
+        for ((k,v) in params.entries) urlBuilder.addQueryParameter(k,v.toString())
+        return urlBuilder.build()
     }
 
     /**
-     * Retrieve the historic price-bars for provided [symbols].
+     * Retrieve the historic end-of-day price-bars for provided [symbols] and [timeframe].
+     * If required, the end-of-day prices can be resampled into a lower [frequency] like "weekly" or "monthly"
+     *
+     * The price-bar include the adjusted prices.
      */
     fun retrieve(
         vararg symbols: String,
         timeframe: Timeframe = Timeframe.past(1.years),
-        frequency: String = "DAILY"
+        frequency: String = "daily"
     ) {
-        val from = Exchange.US.getLocalDate(timeframe.start)
-        val to = Exchange.US.getLocalDate(timeframe.end)
-        val freq = RESAMPLE_FREQUENCY.valueOf(frequency)
 
-        val params = PriceParameters()
-            .setStartDate(from.toString())
-            .setEndDate(to.toString())
-            .setResampleFrequency(freq)
+        val params = getParams(timeframe, frequency)
 
         for (symbol in symbols) {
-            val prices = api.getPrices(symbol, params)
             val asset = Asset(symbol)
-            for (price in prices) {
-                val pb = PriceBar(asset, price.adjOpen, price.adjHigh, price.adjLow, price.adjClose, price.adjVolume)
-                val time = Instant.parse(price.date)
-                super.add(time, pb)
+            val url = getDailyUrl(symbol, params)
+
+            val request = Request.Builder().url(url).build()
+            val resp = client.newCall(request).execute()
+            if (! resp.isSuccessful) {
+                logger.warn { "error while retrieving symbol=$symbol message=${resp.message}" }
+                continue
             }
+
+            val reader = resp.body.charStream()
+            var found = false
+            CsvReader.builder().ofNamedCsvRecord(reader).forEach {
+                found = true
+                val pb = PriceBar(
+                    asset,
+                    it.getField("adjOpen").toDouble(),
+                    it.getField("adjHigh").toDouble(),
+                    it.getField("adjLow").toDouble(),
+                    it.getField("adjClose").toDouble(),
+                    it.getField("adjVolume").toDouble()
+                )
+                val date = LocalDate.parse(it.getField("date"))
+                val eodTime = Exchange.US.getClosingTime(date)
+                super.add(eodTime, pb)
+            }
+
+            if (! found) logger.warn { "No entries found for symbol=$symbol" }
+
         }
 
     }
+
+
+    private inline fun HttpUrl.forEach(block: (NamedCsvRecord) -> Unit) {
+        val request = Request.Builder().url(this).build()
+        val resp = client.newCall(request).execute()
+        if (! resp.isSuccessful) {
+            logger.warn { "error while retrieving message=${resp.message}" }
+            return
+        }
+
+        val reader = resp.body.charStream()
+        var found = false
+        CsvReader.builder().ofNamedCsvRecord(reader).forEach {
+            found = true
+            block(it)
+        }
+
+        if (! found) logger.warn { "No entries found" }
+        reader.close()
+
+    }
+
+    /**
+     * Retrieve the historic intraday price-bars for provided [symbols] and [timeframe].
+     * The [frequency] determines the time-span, like `15min` or `4hour`. The default is `5min`
+     *
+     * Note: The price-bar include the un-adjusted prices.
+     */
+    fun retrieveIntraday(
+        vararg symbols: String,
+        timeframe: Timeframe = Timeframe.past(5.days),
+        frequency: String = "5min"
+    ) {
+        require(frequency.endsWith("hour") || frequency.endsWith("min")) {"only hour and min frequencies are allowed"}
+
+        val params = getParams(timeframe, frequency)
+
+        for (symbol in symbols) {
+            val asset = Asset(symbol)
+            val url = getIntradayUrl(symbol, params)
+
+            url.forEach {
+                val pb = PriceBar(
+                    asset,
+                    it.getField("open").toDouble(),
+                    it.getField("high").toDouble(),
+                    it.getField("low").toDouble(),
+                    it.getField("close").toDouble(),
+                    it.getField("volume").toDouble()
+                )
+                val time =  Instant.parse(it.getField("date").replace(' ', 'T'))
+                super.add(time, pb)
+            }
+
+            val request = Request.Builder().url(url).build()
+            val resp = client.newCall(request).execute()
+            if (! resp.isSuccessful) {
+                logger.warn { "error while retrieving symbol=$symbol message=${resp.message}" }
+                continue
+            }
+
+            val reader = resp.body.charStream()
+            var found = false
+            CsvReader.builder().ofNamedCsvRecord(reader).forEach {
+                found = true
+                val pb = PriceBar(
+                    asset,
+                    it.getField("open").toDouble(),
+                    it.getField("high").toDouble(),
+                    it.getField("low").toDouble(),
+                    it.getField("close").toDouble(),
+                    it.getField("volume").toDouble()
+                )
+                val time =  Instant.parse(it.getField("date").replace(' ', 'T'))
+                super.add(time, pb)
+            }
+
+            if (! found) logger.warn { "No entries found for symbol=$symbol" }
+            reader.close()
+
+        }
+
+    }
+
+
+
 
 
 }

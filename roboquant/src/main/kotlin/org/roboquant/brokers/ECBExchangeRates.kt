@@ -142,7 +142,7 @@ class ECBExchangeRates(url: String, compressed: Boolean = false, useCache: Boole
             }
         }
         val inputReader = InputStreamReader(input)
-        val reader = CsvReader.builder().build(inputReader)
+        val reader = CsvReader.builder().ofCsvRecord(inputReader) // build(inputReader)
 
         val lines = reader.map { it.fields } //.toTypedArray() }
         reader.close()
