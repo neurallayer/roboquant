@@ -95,17 +95,7 @@ class TiingoHistoricFeed(
             val asset = Asset(symbol)
             val url = getDailyUrl(symbol, params)
 
-            val request = Request.Builder().url(url).build()
-            val resp = client.newCall(request).execute()
-            if (! resp.isSuccessful) {
-                logger.warn { "error while retrieving symbol=$symbol message=${resp.message}" }
-                continue
-            }
-
-            val reader = resp.body.charStream()
-            var found = false
-            CsvReader.builder().ofNamedCsvRecord(reader).forEach {
-                found = true
+            url.forEach {
                 val pb = PriceBar(
                     asset,
                     it.getField("adjOpen").toDouble(),
@@ -119,12 +109,9 @@ class TiingoHistoricFeed(
                 super.add(eodTime, pb)
             }
 
-            if (! found) logger.warn { "No entries found for symbol=$symbol" }
-
         }
 
     }
-
 
     private inline fun HttpUrl.forEach(block: (NamedCsvRecord) -> Unit) {
         val request = Request.Builder().url(this).build()
@@ -143,7 +130,6 @@ class TiingoHistoricFeed(
 
         if (! found) logger.warn { "No entries found" }
         reader.close()
-
     }
 
     /**
@@ -177,32 +163,6 @@ class TiingoHistoricFeed(
                 val time =  Instant.parse(it.getField("date").replace(' ', 'T'))
                 super.add(time, pb)
             }
-
-            val request = Request.Builder().url(url).build()
-            val resp = client.newCall(request).execute()
-            if (! resp.isSuccessful) {
-                logger.warn { "error while retrieving symbol=$symbol message=${resp.message}" }
-                continue
-            }
-
-            val reader = resp.body.charStream()
-            var found = false
-            CsvReader.builder().ofNamedCsvRecord(reader).forEach {
-                found = true
-                val pb = PriceBar(
-                    asset,
-                    it.getField("open").toDouble(),
-                    it.getField("high").toDouble(),
-                    it.getField("low").toDouble(),
-                    it.getField("close").toDouble(),
-                    it.getField("volume").toDouble()
-                )
-                val time =  Instant.parse(it.getField("date").replace(' ', 'T'))
-                super.add(time, pb)
-            }
-
-            if (! found) logger.warn { "No entries found for symbol=$symbol" }
-            reader.close()
 
         }
 
