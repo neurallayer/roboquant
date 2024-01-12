@@ -77,6 +77,7 @@ class TiingoHistoricFeed(
         return urlBuilder.build()
     }
 
+
     /**
      * Retrieve the historic end-of-day price-bars for provided [symbols] and [timeframe].
      * If required, the end-of-day prices can be resampled into a lower [frequency] like "weekly" or "monthly"

@@ -25,7 +25,6 @@ import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
-import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.LiveFeed
@@ -35,15 +34,6 @@ import java.time.Instant
 import java.util.concurrent.TimeUnit
 import kotlin.collections.set
 
-
-/**
- * Configuration for Tiingo connections
- *
- * @property key the Tiingo api key to use (property name is tiingo.key)
- */
-data class TiingoConfig(
-    var key: String = Config.getProperty("tiingo.key", ""),
-)
 
 private val logger = Logging.getLogger(TiingoLiveFeed::class)
 
