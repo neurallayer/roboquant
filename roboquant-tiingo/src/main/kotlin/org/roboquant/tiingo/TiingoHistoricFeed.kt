@@ -122,14 +122,16 @@ class TiingoHistoricFeed(
         }
 
         val reader = resp.body.charStream()
-        var found = false
-        CsvReader.builder().ofNamedCsvRecord(reader).forEach {
-            found = true
-            block(it)
+        reader.use {
+            var found = false
+            CsvReader.builder().ofNamedCsvRecord(it).forEach { record ->
+                found = true
+                block(record)
+            }
+
+            if (! found) logger.warn { "No entries found" }
         }
 
-        if (! found) logger.warn { "No entries found" }
-        reader.close()
     }
 
     /**
