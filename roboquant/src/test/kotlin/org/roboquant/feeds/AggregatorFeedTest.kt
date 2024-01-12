@@ -54,7 +54,7 @@ internal class AggregatorFeedTest {
 
     @Test
     fun aggregatorLiveFeed() {
-        val delay = 2
+        val delay = 5
         val feed = LiveTestFeed(50..100, delayInMillis = delay)
         val ts = (delay * 10).millis
         val aggFeed = AggregatorLiveFeed(feed, ts)
