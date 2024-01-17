@@ -48,11 +48,17 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
         get() = channels.isNotEmpty()
 
     /**
-     * Subclasses should use this method to send an event. If no channel is active, any event sent will be dropped.
-     * This is a blocking call to ensure that events are send to multiple channels are in the order they
-     * where delivered.
+     * Subclasses should use this method or `sendAsync` to send an event. If no channel is active, any event
+     * sent will be dropped.
      */
     protected fun send(event: Event) = runBlocking {
+        sendAsync(event)
+    }
+
+    /**
+     * Subclasses should use this method to send an event. If no channel is active, any event sent will be dropped.
+     */
+    protected suspend fun sendAsync(event: Event) {
         for (channel in channels) {
             try {
                 channel.send(event)

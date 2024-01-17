@@ -54,7 +54,8 @@ internal class TiingoTestIT {
         Config.getProperty("TEST_TIINGO") ?: return
         val feed = TiingoLiveFeed.crypto()
         val asset = Asset("BNBFDUSD", AssetType.CRYPTO, "FDUSD")
-        feed.subscribeAssets(asset)
+        Config.registerAsset("BNBFDUSD", asset)
+        feed.subscribe("BNBFDUSD")
         val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = LastEntryLogger())
         rq.run(feed, Timeframe.next(1.minutes))
         val actions = rq.logger.getMetric("progress.actions").latestRun()

@@ -23,13 +23,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
-import org.roboquant.common.Logging
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.LiveFeed
-import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.PriceQuote
+import org.roboquant.common.*
+import org.roboquant.feeds.*
 import java.time.Instant
 import java.util.concurrent.TimeUnit
 import kotlin.collections.set
@@ -39,16 +34,18 @@ private val logger = Logging.getLogger(TiingoLiveFeed::class)
 
 private class Handler(private val feed: TiingoLiveFeed) : WebSocketListener() {
 
-    val assets = mutableMapOf<String, Asset>()
-
     private fun handleIEX(data: JsonArray) {
         val type = data[0].asString
+        val symbol = data[3].asString.uppercase()
+        val asset = Config.getOrPutAsset(symbol) { Asset.forexPair(symbol) }
+        val time = Instant.ofEpochMilli(0).plusNanos(data[2].asLong)
+
         if (type == "Q") {
-            val symbol = data[3].asString.uppercase()
-            val asset = assets.getOrPut(symbol) { Asset(symbol) }
             val quote = PriceQuote(asset, data[7].asDouble, data[8].asDouble, data[5].asDouble, data[4].asDouble)
-            val time = Instant.ofEpochMilli(0).plusNanos(data[2].asLong)
             feed.deliver(quote, time)
+        } else if (type == "T") {
+            val trade = TradePrice(asset, data[9].asDouble, data[10].asDouble)
+            feed.deliver(trade, time)
         }
     }
 
@@ -56,7 +53,7 @@ private class Handler(private val feed: TiingoLiveFeed) : WebSocketListener() {
         val type = data[0].asString
         if (type == "Q") {
             val symbol = data[1].asString.uppercase()
-            val asset = assets.getOrPut(symbol) { Asset.forexPair(symbol) }
+            val asset = Config.getOrPutAsset(symbol) { Asset.forexPair(symbol) }
             val quote = PriceQuote(asset, data[7].asDouble, data[6].asDouble, data[4].asDouble, data[3].asDouble)
             val time = Instant.parse(data[2].asString)
             feed.deliver(quote, time)
@@ -65,12 +62,15 @@ private class Handler(private val feed: TiingoLiveFeed) : WebSocketListener() {
 
     private fun handleCrypto(data: JsonArray) {
         val type = data[0].asString
+        val symbol = data[1].asString.uppercase()
+        val asset = Config.getOrPutAsset(symbol) { Asset(symbol, AssetType.CRYPTO, exchange = Exchange.CRYPTO) }
+        val time = Instant.parse(data[2].asString)
         if (type == "Q") {
-            val symbol = data[1].asString.uppercase()
-            val asset = assets.getOrPut(symbol) { Asset(symbol, AssetType.CRYPTO) }
             val quote = PriceQuote(asset, data[8].asDouble, data[7].asDouble, data[5].asDouble, data[4].asDouble)
-            val time = Instant.parse(data[2].asString)
             feed.deliver(quote, time)
+        } else if (type == "T") {
+            val trade = TradePrice(asset, data[5].asDouble, data[4].asDouble)
+            feed.deliver(trade, time)
         }
     }
 
@@ -99,19 +99,21 @@ private class Handler(private val feed: TiingoLiveFeed) : WebSocketListener() {
 }
 
 /**
- * Tiingo live feed
+ * Retrieve real-time data from Tiingo. It has support for US stocks, Forex and Crypto.
  *
- * This feed uses web-sockets for low letency and has nanosecond resolution
+ * This feed uses the Tiingo websocket API for low letency and has nanosecond time resolution
  */
 class TiingoLiveFeed private constructor(
     private val type: String,
-    private val thresholdLevel: Int,
+    private val thresholdLevel: Int = 5,
     configure: TiingoConfig.() -> Unit = {}
 ) : LiveFeed() {
 
     private val config = TiingoConfig()
 
     init {
+        val types = setOf("iex", "crypto", "fx")
+        require(type in types) { "invalid type $type, allowed types are $types"}
         config.configure()
         require(config.key.isNotBlank()) { "no valid key found"}
     }
@@ -178,13 +180,12 @@ class TiingoLiveFeed private constructor(
     }
 
     /**
-     * Subscribe to quotes for provided [symbols].
+     * Subscribe to real-time trades/quotes for provided [symbols].
      *
-     * If no symbols are provided, all available data is subscribed to. That is a lot of data and can impact
-     * your monthly quato quickly.
+     * If no symbols are provided, all available market data is subscribed to. Be aware that this a lot of data.
      *
-     * For crypto and some forex it is challenging to derive the underlying currency from just the symbol name,
-     * so it is better to use [subscribeAssets] instead.
+     * For crypto and some forex it is challenging to derive the underlying [Asset] from just its symbol name.
+     * You can use [Config.registerAsset] to register assets upfront
      */
     fun subscribe(vararg symbols: String) {
 
@@ -206,22 +207,5 @@ class TiingoLiveFeed private constructor(
 
     }
 
-    /**
-     * Subscribe to quotes for the provided [assets].
-     *
-     * If no symbols are provided, all available data is subscribed to. That is a lot of data and can impact
-     * your monthly quato quickly.
-     */
-    fun subscribeAssets(vararg assets: Asset) {
-        val tickers = mutableListOf<String>()
-        for (asset in assets) {
-            val tiingoTicker = asset.symbol.replace("[^a-zA-Z]+".toRegex(), "")
-            this.handler.assets[tiingoTicker] = asset
-            tickers.add(tiingoTicker)
-        }
-
-        @Suppress("SpreadOperator")
-        subscribe(*tickers.toTypedArray())
-    }
 
 }

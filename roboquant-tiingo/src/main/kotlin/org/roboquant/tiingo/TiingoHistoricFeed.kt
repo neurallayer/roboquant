@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Tiingo historic feed.
  *
- * This feed uses CSV format for faster processing and less bandwidth usage.
+ * This feed requests CSV format from Tiingo for faster processing and less bandwidth usage.
  */
 class TiingoHistoricFeed(
     configure: TiingoConfig.() -> Unit = {}

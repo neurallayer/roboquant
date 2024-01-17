@@ -68,7 +68,7 @@ internal class LiveFeedTest {
 
                     while (true) {
                         try {
-                            send(event = Event(actions, Instant.now()))
+                            sendAsync(event = Event(actions, Instant.now()))
                             delay(delayInMillis)
                             if (stop) break
                         } catch (e: Exception) {

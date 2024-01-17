@@ -19,8 +19,9 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.feeds.AggregatorLiveFeed
+import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.filter
 import org.roboquant.loggers.ConsoleLogger
-import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.tiingo.TiingoHistoricFeed
@@ -33,6 +34,7 @@ internal class TiingoSamples {
     @Test
     @Ignore
     internal fun testLiveFeed() {
+        System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
         val feed = TiingoLiveFeed.iex()
         feed.subscribe("AAPL", "TSLA")
         val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
@@ -46,8 +48,8 @@ internal class TiingoSamples {
         val iex = TiingoLiveFeed.iex()
         iex.subscribe()
         val feed = AggregatorLiveFeed(iex, 5.seconds)
-        val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = MemoryLogger())
-        rq.run(feed, Timeframe.next(3.minutes))
+        val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
+        rq.run(feed, Timeframe.next(5.minutes))
         println(rq.broker.account.fullSummary())
     }
 
@@ -65,11 +67,26 @@ internal class TiingoSamples {
     @Ignore
     internal fun testLiveFeedCrypto() {
         val feed = TiingoLiveFeed.crypto()
-        val asset = Asset("BNBFDUSD", AssetType.CRYPTO, "FDUSD")
-        feed.subscribeAssets(asset)
+        val asset = Asset("BNB/FDUSD", AssetType.CRYPTO, "FDUSD")
+        Config.registerAsset("BNBFDUSD", asset)
+
+        feed.subscribe("BNBFDUSD")
         val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
         rq.run(feed, Timeframe.next(1.minutes))
         println(rq.broker.account.fullSummary())
+    }
+
+
+    @Test
+    @Ignore
+    internal fun testLiveFeedCryptoAll() {
+        val feed = TiingoLiveFeed.crypto()
+        feed.subscribe()
+        feed.filter<PriceAction>(Timeframe.next(1.minutes)) {
+            println(it)
+            false
+        }
+        feed.close()
     }
 
     @Test

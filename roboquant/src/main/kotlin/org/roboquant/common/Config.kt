@@ -42,6 +42,9 @@ object Config {
     private const val ONE_MB = 1024 * 1024
     private const val DEFAULT_SEED = 42L
 
+    // Maps a symbol to an asset
+    private val symbolMap = mutableMapOf<String, Asset>()
+
     // Used to handle Double imprecision
     internal const val EPS = 1e-10
 
@@ -61,6 +64,14 @@ object Config {
         val version: String,
         val build: String
     )
+
+    fun registerAsset(symbol: String, asset: Asset) {
+        symbolMap[symbol] = asset
+    }
+
+    fun getOrPutAsset(symbol: String, defaultValue: () -> Asset) : Asset {
+        return symbolMap.getOrPut(symbol, defaultValue)
+    }
 
     /**
      * MetadataProvider about the build en environment
