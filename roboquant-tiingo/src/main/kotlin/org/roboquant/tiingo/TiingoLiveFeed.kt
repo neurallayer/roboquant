@@ -173,9 +173,9 @@ class TiingoLiveFeed private constructor(
      */
     override fun close() {
         when (type) {
-            "iex" -> wsIEX.close(0, "closed called")
-            "fx" -> wsFX.close(0, "closed called")
-            "crypto" -> wsCrypto.close(0, "closed called")
+            "iex" -> wsIEX.close(1000, "closed called")
+            "fx" -> wsFX.close(1000, "closed called")
+            "crypto" -> wsCrypto.close(1000, "closed called")
         }
     }
 

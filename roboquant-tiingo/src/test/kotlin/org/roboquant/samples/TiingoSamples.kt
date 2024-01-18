@@ -20,12 +20,13 @@ import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.feeds.AggregatorLiveFeed
 import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.filter
+import org.roboquant.feeds.apply
 import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.tiingo.TiingoHistoricFeed
 import org.roboquant.tiingo.TiingoLiveFeed
+import java.time.Instant
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -79,14 +80,18 @@ internal class TiingoSamples {
 
     @Test
     @Ignore
-    internal fun testLiveFeedCryptoAll() {
+    internal fun testLiveFeedMeasureDelay() {
         val feed = TiingoLiveFeed.crypto()
-        feed.subscribe()
-        feed.filter<PriceAction>(Timeframe.next(1.minutes)) {
-            println(it)
-            false
+        feed.subscribe() // subscribe to all crypto currencies
+        var n = 0
+        var sum = 0L
+        feed.apply<PriceAction>(Timeframe.next(1.minutes)) { _, time ->
+            val now = Instant.now()
+            sum += now.toEpochMilli() - time.toEpochMilli()
+            n++
         }
         feed.close()
+        println("average delay is ${sum/n}ms")
     }
 
     @Test

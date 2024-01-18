@@ -135,12 +135,12 @@ open class PriceBarSeries(capacity: Int) {
      * Returns a PriceBarSeries that includes the data that occured within the provided [timeframe]
      */
     operator fun get(timeframe: Timeframe): PriceBarSeries {
-        val tl = timeline.toTypedArray()
-        val size = tl.filter { it in timeframe }.size
         val result = PriceBarSeries(size)
-        for (i in 0..<size) {
-            val time = tl[i]
-            if (time in timeframe) result.add(get(i), time)
+        val start = timeframe.start
+        for (idx in timeline.indices) {
+            val time = timeline[idx]
+            if (time < start) continue
+            if (time in timeframe) result.add(get(idx), time) else break
         }
         return result
     }

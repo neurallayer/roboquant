@@ -147,6 +147,21 @@ internal class PriceBarSeriesTest {
         assertEquals(10, pbs2.size) // should have processed the last set
     }
 
+    @Test
+    fun filter() {
+        val pbs = getPBS(100)
+        val now = Instant.now()
+        repeat(100) {
+            pbs.add(pb, now + it.millis)
+        }
+        assertTrue(pbs.isFull())
+        val tf = Timeframe(pbs.timeline[10], pbs.timeline[50], true)
+        val newPbs = pbs[tf]
+        assertEquals(41, newPbs.size)
+        assertEquals(pbs.timeline[10], newPbs.timeline.first())
+        assertEquals(pbs.timeline[50], newPbs.timeline.last())
+    }
+
 
 
 }
