@@ -88,7 +88,7 @@ class AggregatorLiveFeed(
      */
     @Suppress("CyclomaticComplexMethod")
     override suspend fun play(channel: EventChannel) {
-        val inputChannel = EventChannel(channel.capacity, channel.timeframe)
+        val inputChannel = channel.clone()
         val scope = CoroutineScope(Dispatchers.Default + Job())
 
         val history = mutableMapOf<Asset, PriceBar>()

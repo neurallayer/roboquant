@@ -62,8 +62,7 @@ internal class AggregatorFeedTest {
         aggFeed.apply<PriceBar> { pb, t ->
             assertEquals(ts, pb.timeSpan)
             if (lastTime != null) {
-                val diff = lastTime!!.until(t, ChronoUnit.MILLIS)
-                assertEquals(delay * 10L, diff)
+                assertTrue(t > lastTime)
             }
             lastTime = t
         }

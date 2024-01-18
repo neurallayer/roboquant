@@ -33,11 +33,12 @@ internal class PriceBarSeriesTest {
     private fun getPBS(size: Int): PriceBarSeries {
         val pbs = PriceBarSeries(size)
         val ohlvc = doubleArrayOf(100.0, 101.0, 99.0, 100.0, 10000.0)
+        val now = Instant.now()
         repeat(size) {
             val newOhlcv = ohlvc + it
             newOhlcv[4] = 10000.0
             val pb = PriceBar(Asset("ABC"), newOhlcv)
-            pbs.add(pb, Instant.now())
+            pbs.add(pb, now + 1.millis )
         }
         return pbs
     }
