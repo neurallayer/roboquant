@@ -16,11 +16,12 @@
 
 package org.roboquant.samples
 
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
 import org.roboquant.common.*
-import org.roboquant.feeds.AggregatorLiveFeed
-import org.roboquant.feeds.PriceAction
-import org.roboquant.feeds.apply
+import org.roboquant.feeds.*
 import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
@@ -92,6 +93,51 @@ internal class TiingoSamples {
         }
         feed.close()
         println("average delay is ${sum/n}ms")
+    }
+
+
+    private inline fun <reified T : Action> Feed.apply2(
+        timeframe: Timeframe = Timeframe.INFINITE,
+        crossinline block: (T, Instant) -> Unit
+    ) = runBlocking {
+
+        val channel = EventChannel(10_000, timeframe = timeframe)
+
+        val job = launch {
+            play(channel)
+            channel.close()
+        }
+
+        try {
+            while (true) {
+                val o = channel.receive()
+                o.actions.filterIsInstance<T>().forEach { block(it, o.time) }
+            }
+
+        } catch (_: ClosedReceiveChannelException) {
+            // Intentionally left empty
+        } finally {
+            channel.close()
+            if (job.isActive) job.cancel()
+        }
+
+    }
+
+
+    @Test
+    @Ignore
+    internal fun testLiveFeedMeasureKeepUp() {
+        val feed = TiingoLiveFeed.iex(0)
+        feed.subscribe() // subscribe to all iex stocks
+        var n = 0
+        var sum = 0L
+        feed.apply2<PriceAction>(Timeframe.next(1.minutes)) { _, time ->
+            val now = Instant.now()
+            sum += now.toEpochMilli() - time.toEpochMilli()
+            n++
+        }
+        feed.close()
+        println("average delay is ${sum/n}ms events=$n")
     }
 
     @Test

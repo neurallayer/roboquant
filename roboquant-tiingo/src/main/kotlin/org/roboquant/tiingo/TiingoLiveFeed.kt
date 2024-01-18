@@ -37,7 +37,7 @@ private class Handler(private val feed: TiingoLiveFeed) : WebSocketListener() {
     private fun handleIEX(data: JsonArray) {
         val type = data[0].asString
         val symbol = data[3].asString.uppercase()
-        val asset = Config.getOrPutAsset(symbol) { Asset.forexPair(symbol) }
+        val asset = Config.getOrPutAsset(symbol) { Asset(symbol) }
         val time = Instant.ofEpochMilli(0).plusNanos(data[2].asLong)
 
         if (type == "Q") {
@@ -120,16 +120,16 @@ class TiingoLiveFeed private constructor(
 
     companion object {
 
-        fun iex(configure: TiingoConfig.() -> Unit = {}): TiingoLiveFeed {
-            return TiingoLiveFeed("iex", 5, configure)
+        fun iex(thresholdLevel: Int = 5, configure: TiingoConfig.() -> Unit = {}): TiingoLiveFeed {
+            return TiingoLiveFeed("iex", thresholdLevel, configure)
         }
 
-        fun crypto(configure: TiingoConfig.() -> Unit = {}): TiingoLiveFeed {
-            return TiingoLiveFeed("crypto", 2, configure)
+        fun crypto(thresholdLevel: Int = 2, configure: TiingoConfig.() -> Unit = {}): TiingoLiveFeed {
+            return TiingoLiveFeed("crypto", thresholdLevel, configure)
         }
 
-        fun fx(configure: TiingoConfig.() -> Unit = {}): TiingoLiveFeed {
-            return TiingoLiveFeed("fx", 5, configure)
+        fun fx(thresholdLevel: Int = 5, configure: TiingoConfig.() -> Unit = {}): TiingoLiveFeed {
+            return TiingoLiveFeed("fx", thresholdLevel, configure)
         }
 
     }
