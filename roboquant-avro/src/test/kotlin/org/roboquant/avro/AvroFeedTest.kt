@@ -16,7 +16,7 @@
 
 package org.roboquant.avro
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.MethodOrderer.Alphanumeric
 import org.junit.jupiter.api.TestMethodOrder
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -54,11 +54,7 @@ internal class AvroFeedTest {
 
     private fun play(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE): EventChannel {
         val channel = EventChannel(timeframe = timeframe)
-
-        CoroutineScope(Dispatchers.IO + Job()).launch {
-            feed.play(channel)
-            channel.close()
-        }
+        feed.playBackground(channel)
         return channel
     }
 

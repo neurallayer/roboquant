@@ -16,9 +16,9 @@
 
 package org.roboquant
 
-import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.runBlocking
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.closeSizes
@@ -151,11 +151,7 @@ data class Roboquant(
         if (feed.timeframe.start > timeframe.end) return
 
         val channel = EventChannel(channelCapacity, timeframe, onChannelFull)
-        val scope = CoroutineScope(Dispatchers.Default + Job())
-
-        val job = scope.launch {
-            channel.use { feed.play(it) }
-        }
+        val job = feed.playBackground(channel)
 
         if (reset) reset(false)
         start(name, timeframe)
@@ -186,8 +182,6 @@ data class Roboquant(
         } finally {
             end(name)
             if (job.isActive) job.cancel()
-            scope.cancel()
-            channel.close()
         }
     }
 

@@ -41,14 +41,13 @@ internal class LiveFeedTest {
         feed2.heartbeatInterval = 2
         val feed = CombinedLiveFeed(feed1, feed2)
 
-        Background.job {
-            feed.play(EventChannel())
-        }
+        val job = feed.playBackground(EventChannel())
 
         assertDoesNotThrow {
             feed.close()
             feed.close()
         }
+        if (job.isActive) job.cancel()
 
     }
 

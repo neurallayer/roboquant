@@ -56,6 +56,23 @@ interface Feed : AutoCloseable {
         // default is to do nothing
     }
 
+    /**
+     * (Re)play the events of the feed in the background without blocking the current thread and returns
+     * a reference to the coroutine as a [Job].
+     *
+     * The channel will be closed after the replay of events has finished
+     *
+     * @see play
+     */
+    fun playBackground(channel: EventChannel): Job {
+        val scope = CoroutineScope(Dispatchers.Default)
+
+        return scope.launch {
+            channel.use { play(it) }
+        }
+
+    }
+
 }
 
 /**
@@ -81,11 +98,7 @@ inline fun <reified T : Action> Feed.filter(
 
     val channel = EventChannel(timeframe = timeframe)
     val result = mutableListOf<Pair<Instant, T>>()
-
-    val job = launch {
-        play(channel)
-        channel.close()
-    }
+    val job = playBackground(channel)
 
     try {
         while (true) {
@@ -112,11 +125,7 @@ inline fun <reified T : Action> Feed.apply(
 ) = runBlocking {
 
     val channel = EventChannel(timeframe = timeframe)
-
-    val job = launch {
-        play(channel)
-        channel.close()
-    }
+    val job = playBackground(channel)
 
     try {
         while (true) {
@@ -127,7 +136,6 @@ inline fun <reified T : Action> Feed.apply(
     } catch (_: ClosedReceiveChannelException) {
         // Intentionally left empty
     } finally {
-        channel.close()
         if (job.isActive) job.cancel()
     }
 
@@ -142,11 +150,7 @@ inline fun Feed.applyEvents(
 ) = runBlocking {
 
     val channel = EventChannel(timeframe = timeframe)
-
-    val job = launch {
-        play(channel)
-        channel.close()
-    }
+    val job = playBackground(channel)
 
     try {
         while (true) {
@@ -157,7 +161,6 @@ inline fun Feed.applyEvents(
     } catch (_: ClosedReceiveChannelException) {
         // Intentionally left empty
     } finally {
-        channel.close()
         if (job.isActive) job.cancel()
     }
 
@@ -173,10 +176,7 @@ fun Feed.toList(
     val channel = EventChannel(timeframe = timeframe)
     val result = mutableListOf<Event>()
 
-    val job = launch {
-        play(channel)
-        channel.close()
-    }
+    val job = playBackground(channel)
 
     try {
         while (true) {
@@ -203,11 +203,7 @@ fun Feed.validate(
 ): List<Pair<Instant, PriceAction>> = runBlocking {
 
     val channel = EventChannel(timeframe = timeframe)
-
-    val job = launch {
-        play(channel)
-        channel.close()
-    }
+    val job = playBackground(channel)
 
     val lastPrices = mutableMapOf<Asset, Double>()
     val errors = mutableListOf<Pair<Instant, PriceAction>>()
@@ -242,15 +238,3 @@ fun Feed.validate(
 fun Collection<PriceAction>.toDoubleArray(type: String = "DEFAULT"): DoubleArray =
     this.map { it.getPrice(type) }.toDoubleArray()
 
-/**
- * Run a feed in the background using the provided [channel] and close the channel once done.
- * This method returns the corresponding [Job] instance.
- */
-internal fun Feed.runBackgroud(channel: EventChannel): Job {
-    val scope = CoroutineScope(Dispatchers.Default + Job())
-    return scope.launch {
-        channel.use {
-            play(it)
-        }
-    }
-}

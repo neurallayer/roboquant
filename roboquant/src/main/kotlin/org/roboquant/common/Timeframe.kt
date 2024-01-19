@@ -107,8 +107,6 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
         // Different formatters used when displaying a timeframe
         private val dayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        private val minuteFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
-        private val hourFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         private val secondFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         private val milliFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
@@ -361,10 +359,8 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     fun toPrettyString(): String {
         val d = duration.toSeconds()
         val formatter = when {
-            d < 1 -> milliFormatter // less than 1 second
-            d < 60 -> secondFormatter // less than 1 minute
-            d < 3600 -> minuteFormatter // less than 1 hour
-            d < 3600 * 24 -> hourFormatter // less than 1 day
+            d < 10 -> milliFormatter // less than 10 seconds
+            d < 3600 * 24 -> secondFormatter // less than 1 day
             else -> dayFormatter
         }
 

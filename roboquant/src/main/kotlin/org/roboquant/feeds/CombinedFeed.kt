@@ -75,10 +75,7 @@ class CombinedFeed(vararg val feeds: Feed, private val channelCapacity: Int = 1)
         for (feed in feeds) {
             val feedChannel = EventChannel(channelCapacity, channel.timeframe)
             channels.add(feedChannel)
-            jobs.add {
-                feed.play(feedChannel)
-                feedChannel.close()
-            }
+            jobs.add(feed.playBackground(feedChannel))
         }
 
         jobs.add {

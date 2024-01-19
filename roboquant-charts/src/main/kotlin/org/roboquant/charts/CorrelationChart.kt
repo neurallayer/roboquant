@@ -17,7 +17,6 @@
 package org.roboquant.charts
 
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.hipparchus.stat.correlation.PearsonsCorrelation
 import org.icepear.echarts.Heatmap
@@ -70,11 +69,7 @@ class CorrelationChart(
         val channel = EventChannel(timeframe = timeframe)
         val result = TreeMap<Asset, MutableList<Double>>()
 
-        val job = launch {
-            feed.play(channel)
-            channel.close()
-        }
-
+        val job = feed.playBackground(channel)
         try {
             while (true) {
                 val o = channel.receive()

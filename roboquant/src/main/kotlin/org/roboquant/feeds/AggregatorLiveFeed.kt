@@ -105,11 +105,7 @@ class AggregatorLiveFeed(
             }
         }
 
-        val job = scope.launch {
-            inputChannel.use {
-                feed.play(it)
-            }
-        }
+        val job = feed.playBackground(inputChannel)
 
         try {
             while (true) {

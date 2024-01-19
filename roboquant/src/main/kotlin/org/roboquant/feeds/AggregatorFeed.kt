@@ -16,11 +16,7 @@
 
 package org.roboquant.feeds
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.launch
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
@@ -78,12 +74,7 @@ class AggregatorFeed(
     @Suppress("CyclomaticComplexMethod")
     override suspend fun play(channel: EventChannel) {
         val c = EventChannel(channel.capacity, channel.timeframe)
-        val scope = CoroutineScope(Dispatchers.Default + Job())
-        val job = scope.launch {
-            c.use {
-                feed.play(it)
-            }
-        }
+        val job = feed.playBackground(c)
 
         val history = mutableMapOf<Asset, PriceBar>()
         var expiration: Instant? = null

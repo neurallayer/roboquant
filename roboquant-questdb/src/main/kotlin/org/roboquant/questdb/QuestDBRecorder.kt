@@ -23,7 +23,6 @@ import io.questdb.cairo.DefaultCairoConfiguration
 import io.questdb.cairo.security.AllowAllSecurityContext
 import io.questdb.griffin.SqlExecutionContextImpl
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
@@ -147,10 +146,7 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
         handler.createTable(tableName, partition, engine)
         if (!append) engine.update("TRUNCATE TABLE $tableName")
 
-        val job = launch {
-            feed.play(channel)
-            channel.close()
-        }
+        val job = feed.playBackground(channel)
 
         val ctx = SqlExecutionContextImpl(engine, 1).with(AllowAllSecurityContext.INSTANCE, null, null)
         val writer = engine.getWriter(ctx.getTableToken(tableName), tableName)

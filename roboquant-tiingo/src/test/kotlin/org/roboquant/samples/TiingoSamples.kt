@@ -17,7 +17,6 @@
 package org.roboquant.samples
 
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
 import org.roboquant.common.*
@@ -101,11 +100,7 @@ internal class TiingoSamples {
     ) = runBlocking {
         // We need a channel with enough capacity
         val channel = EventChannel(10_000, timeframe = timeframe)
-
-        val job = launch {
-            play(channel)
-            channel.close()
-        }
+        val job = playBackground(channel)
         var sum = 0L
         var n = 0L
 

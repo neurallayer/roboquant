@@ -78,4 +78,11 @@ class ParallelJobs {
         return job
     }
 
+    /**
+     * Add a job
+     */
+    fun add(job: Job) {
+        jobs.add(job)
+    }
+
 }

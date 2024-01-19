@@ -18,12 +18,12 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertFalse
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import java.util.*
+import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -86,7 +86,7 @@ internal class FeedTest {
 
         val channel = EventChannel(100)
         assertFalse(channel.closed)
-        val job = feed.runBackgroud(channel)
+        val job = feed.playBackground(channel)
         job.join()
         assertTrue(channel.closed)
         assertTrue(job.isCompleted)
