@@ -96,22 +96,27 @@ internal class TiingoSamples {
     }
 
 
-    private inline fun <reified T : Action> Feed.apply2(
-        timeframe: Timeframe = Timeframe.INFINITE,
-        crossinline block: (T, Instant) -> Unit
+    private fun Feed.measure(
+        timeframe: Timeframe,
     ) = runBlocking {
-
+        // We need a channel with enough capacity
         val channel = EventChannel(10_000, timeframe = timeframe)
 
         val job = launch {
             play(channel)
             channel.close()
         }
+        var sum = 0L
+        var n = 0L
 
         try {
             while (true) {
                 val o = channel.receive()
-                o.actions.filterIsInstance<T>().forEach { block(it, o.time) }
+                if (o.actions.isNotEmpty()) {
+                    val now = Instant.now()
+                    sum += now.toEpochMilli() - o.time.toEpochMilli()
+                    n++
+                }
             }
 
         } catch (_: ClosedReceiveChannelException) {
@@ -121,23 +126,18 @@ internal class TiingoSamples {
             if (job.isActive) job.cancel()
         }
 
+        println("average delay=${sum/n}ms events=$n")
+
     }
 
 
     @Test
     @Ignore
-    internal fun testLiveFeedMeasureKeepUp() {
+    internal fun testLiveFeedMeasure() {
         val feed = TiingoLiveFeed.iex(0)
-        feed.subscribe() // subscribe to all iex stocks
-        var n = 0
-        var sum = 0L
-        feed.apply2<PriceAction>(Timeframe.next(1.minutes)) { _, time ->
-            val now = Instant.now()
-            sum += now.toEpochMilli() - time.toEpochMilli()
-            n++
-        }
+        feed.subscribe() // subscribe to all IEX quotes and trades
+        feed.measure(Timeframe.next(1.minutes))
         feed.close()
-        println("average delay is ${sum/n}ms events=$n")
     }
 
     @Test
