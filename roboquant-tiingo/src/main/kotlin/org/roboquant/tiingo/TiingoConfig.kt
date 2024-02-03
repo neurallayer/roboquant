@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 Neural Layer
+ * Copyright 2020-2024 Neural Layer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.roboquant.common.Config
 /**
  * Configuration for Tiingo connections
  *
- * @property key the Tiingo api key to use (property name is tiingo.key)
+ * @property key the Tiingo api key to use (property name is `tiingo.key`)
  */
 data class TiingoConfig(
     var key: String = Config.getProperty("tiingo.key", ""),

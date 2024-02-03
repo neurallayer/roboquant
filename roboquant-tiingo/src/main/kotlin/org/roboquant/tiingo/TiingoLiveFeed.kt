@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 Neural Layer
+ * Copyright 2020-2024 Neural Layer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,9 +99,9 @@ private class Handler(private val feed: TiingoLiveFeed) : WebSocketListener() {
 }
 
 /**
- * Retrieve real-time data from Tiingo. It has support for US stocks, Forex and Crypto.
+ * Retrieve real-time data from Tiingo. It has support for retreiving US stocks, Forex and Crypto.
  *
- * This feed uses the Tiingo websocket API for low letency and has nanosecond time resolution
+ * This feed uses the Tiingo websocket API for low letency and has nanosecond time resolution.
  */
 class TiingoLiveFeed private constructor(
     private val type: String,
@@ -169,7 +169,7 @@ class TiingoLiveFeed private constructor(
     }
 
     /**
-     * Close the connections with Tiingo
+     * Close the websocket connection with Tiingo
      */
     override fun close() {
         when (type) {

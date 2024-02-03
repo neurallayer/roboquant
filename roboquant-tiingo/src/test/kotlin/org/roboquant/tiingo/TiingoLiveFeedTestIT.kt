@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 Neural Layer
+ * Copyright 2020-2024 Neural Layer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-internal class TiingoTestIT {
+internal class TiingoLiveFeedTestIT {
 
     @Test
     internal fun testLiveFeed() {

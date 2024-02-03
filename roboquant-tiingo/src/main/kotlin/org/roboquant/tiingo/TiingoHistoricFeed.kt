@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 Neural Layer
+ * Copyright 2020-2024 Neural Layer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,12 @@ import java.util.concurrent.TimeUnit
 
 
 /**
- * Tiingo historic feed.
+ * Tiingo historic feed. Support for retrieving both end-of-day and intra-day prices.
  *
- * This feed requests CSV format from Tiingo for faster processing and less bandwidth usage.
+ * - The end-of-day prices include all exchanges and are close-adjusted.
+ * - The intraday prices use market-data from only IEX and are not close-adjusted.
+ *
+ * This feed uses the CSV format from Tiingo for faster processing and less bandwidth usage.
  */
 class TiingoHistoricFeed(
     configure: TiingoConfig.() -> Unit = {}
@@ -96,7 +99,7 @@ class TiingoHistoricFeed(
             val asset = Asset(symbol)
             val url = getDailyUrl(symbol, params)
 
-            url.forEach {
+            url.forEach(symbol) {
                 val pb = PriceBar(
                     asset,
                     it.getField("adjOpen").toDouble(),
@@ -114,11 +117,11 @@ class TiingoHistoricFeed(
 
     }
 
-    private inline fun HttpUrl.forEach(block: (NamedCsvRecord) -> Unit) {
+    private inline fun HttpUrl.forEach(symbol:String, block: (NamedCsvRecord) -> Unit) {
         val request = Request.Builder().url(this).build()
         val resp = client.newCall(request).execute()
         if (! resp.isSuccessful) {
-            logger.warn { "error while retrieving message=${resp.message}" }
+            logger.warn { "error while retrieving data for symbol=$symbol message=${resp.message}" }
             return
         }
 
@@ -154,7 +157,7 @@ class TiingoHistoricFeed(
             val asset = Asset(symbol)
             val url = getIntradayUrl(symbol, params)
 
-            url.forEach {
+            url.forEach(symbol) {
                 val pb = PriceBar(
                     asset,
                     it.getField("open").toDouble(),

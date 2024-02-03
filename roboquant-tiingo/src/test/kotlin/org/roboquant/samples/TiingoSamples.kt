@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2023 Neural Layer
+ * Copyright 2020-2024 Neural Layer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ internal class TiingoSamples {
     ) = runBlocking {
         // We need a channel with enough capacity
         val channel = EventChannel(10_000, timeframe = timeframe)
-        val job = playBackground(channel)
+        playBackground(channel)
         var sum = 0L
         var n = 0L
 
@@ -108,17 +108,13 @@ internal class TiingoSamples {
             while (true) {
                 val o = channel.receive()
                 if (o.actions.isNotEmpty()) {
-                    val now = Instant.now()
-                    sum += now.toEpochMilli() - o.time.toEpochMilli()
+                    sum += System.currentTimeMillis() - o.time.toEpochMilli()
                     n++
                 }
             }
 
         } catch (_: ClosedReceiveChannelException) {
             // Intentionally left empty
-        } finally {
-            channel.close()
-            if (job.isActive) job.cancel()
         }
 
         println("average delay=${sum/n}ms events=$n")
@@ -129,9 +125,10 @@ internal class TiingoSamples {
     @Test
     @Ignore
     internal fun testLiveFeedMeasure() {
-        val feed = TiingoLiveFeed.iex(0)
+        // This will retrieve a lot of data
+        val feed = TiingoLiveFeed.iex(thresholdLevel = 0)
         feed.subscribe() // subscribe to all IEX quotes and trades
-        feed.measure(Timeframe.next(1.minutes))
+        feed.measure(Timeframe.next(10.minutes))
         feed.close()
     }
 

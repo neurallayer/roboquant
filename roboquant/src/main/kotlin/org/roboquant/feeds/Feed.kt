@@ -1,11 +1,11 @@
 /*
- * Copyright 2020-2023 Neural Layer
+ * Copyright 2020-2024 Neural Layer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -60,11 +60,14 @@ interface Feed : AutoCloseable {
      * (Re)play the events of the feed in the background without blocking the current thread and returns
      * a reference to the coroutine as a [Job].
      *
-     * The channel will be closed after the replay of events has finished
+     * The channel will be closed after the replay of events has finished.
      *
      * @see play
      */
     fun playBackground(channel: EventChannel): Job {
+
+        // The default CoroutineDispatcher is backed by a shared pool of threads.
+        // The maximum number of threads is equal to the number of CPU cores but is at least two.
         val scope = CoroutineScope(Dispatchers.Default)
 
         return scope.launch {
