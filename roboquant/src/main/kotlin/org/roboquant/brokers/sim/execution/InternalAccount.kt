@@ -190,7 +190,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      * The retention allows to keep only recent closed orderds and trades in memory, older ones will be discarded. This
      * saves memory and speed-up back tests.
      */
-    private fun enforeRetention() {
+    private fun enforceRetention() {
         if (retention.isZero) {
             trades.clear()
             closedOrders.clear()
@@ -215,7 +215,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      */
     @Synchronized
     fun toAccount(): Account {
-        enforeRetention()
+        enforceRetention()
 
         return Account(
             baseCurrency,

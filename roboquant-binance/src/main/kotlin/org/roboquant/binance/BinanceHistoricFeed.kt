@@ -18,9 +18,15 @@ package org.roboquant.binance
 
 import com.binance.api.client.BinanceApiClientFactory
 import com.binance.api.client.BinanceApiRestClient
+import com.binance.connector.client.WebSocketApiClient
+import com.binance.connector.client.impl.WebSocketApiClientImpl
+import com.binance.connector.client.utils.websocketcallback.WebSocketMessageCallback
+import com.google.gson.JsonParser
+import org.json.JSONObject
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
+import org.roboquant.common.years
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
@@ -89,6 +95,55 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
 
         }
     }
+
+    fun retrieve2(
+        vararg symbols: String,
+        timeframe: Timeframe = Timeframe.past(1.years),
+        interval: String = "1d",
+        limit: Int = 1_000
+    ) {
+
+        val client: WebSocketApiClient = WebSocketApiClientImpl()
+        client.connect((WebSocketMessageCallback { event: String ->
+            val json = JsonParser.parseString(event).asJsonObject
+            if (json["status"].asInt != 200) {
+                println(json)
+            } else {
+                val symbolId = json["id"].asString
+                val asset = assetMap[symbolId]!!
+                val result = json["result"].asJsonArray
+                for (row in result) {
+                    val arr = row.asJsonArray
+                    val time = Instant.ofEpochMilli(arr[6].asLong) // use the close time
+                    val pb = PriceBar(
+                        asset,
+                        arr[1].asDouble,
+                        arr[2].asDouble,
+                        arr[3].asDouble,
+                        arr[4].asDouble,
+                        arr[5].asDouble
+                    )
+                    add(time, pb)
+
+                }
+            }
+        }))
+
+
+        for (symbol in symbols) {
+            val asset = assetMap[symbol]
+            require(asset != null) { "invalid symbol $symbol" }
+
+            val params = JSONObject()
+            params.put("startTime", timeframe.start.toEpochMilli())
+            params.put("endTime", timeframe.end.toEpochMilli())
+            params.put("limit", limit)
+            params.put("requestId", symbol)
+
+            client.market().klines(symbol, interval, params)
+        }
+    }
+
 
 }
 

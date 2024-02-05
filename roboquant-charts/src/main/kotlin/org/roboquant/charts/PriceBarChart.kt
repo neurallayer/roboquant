@@ -234,7 +234,6 @@ class PriceBarChart(
         return Option()
             .setTitle(Title().setText(title ?: asset.symbol))
             .setGrid(getGrids())
-            .setToolbox(getToolbox())
             .setDataset(dataset)
             .setSeries(getSeries().toTypedArray())
             .setXAxis(getXAxis())
