@@ -138,6 +138,11 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     fun index(start: Double = 1.0) = TimeSeries(timeline, values.index(start))
 
     /**
+     * Normalize the values
+     */
+    fun normalize() = TimeSeries(timeline, values.normalize())
+
+    /**
      * Return the observation that contains the maximum value.
      */
     fun max(): Observation {

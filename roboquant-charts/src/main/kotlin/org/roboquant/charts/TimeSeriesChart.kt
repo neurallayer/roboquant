@@ -56,7 +56,7 @@ class TimeSeriesChart(
 
         /**
          * Create a TimeSeriesChart chart for a number of [metrics] that can be found in the [logger].
-         * Each metric will be indexed to 1.0 for its first value.
+         * Each metric will be normalized so they fit a similar scale.
          * If there is more than one run recorded by the logger, you need to specify the [run] you want to use.
          */
         fun fromMetrics(
@@ -68,7 +68,7 @@ class TimeSeriesChart(
             require(metrics.isNotEmpty()) { "Provide at least 1 metric"}
             require(run != null || logger.getRuns().size == 1) { "More than 1 run found, please specify a run"}
             val r = run ?: logger.getRuns().first()
-            val data = metrics.associateWith { it }.mapValues { logger.getMetric(it.key, r).index() }
+            val data = metrics.associateWith { it }.mapValues { logger.getMetric(it.key, r).normalize() }
             return TimeSeriesChart(data, fractionDigits = fractionDigits)
         }
 

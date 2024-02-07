@@ -119,8 +119,8 @@ internal class BinanceSamples {
                 val result = json["result"].asJsonArray
                 for (row in result) {
                     val arr = row.asJsonArray
-                    val time = Instant.ofEpochMilli(arr[6].asLong) // use the close time
-                    val pb = PriceBar(
+                    Instant.ofEpochMilli(arr[6].asLong) // use the close time
+                    PriceBar(
                         asset,
                         arr[1].asDouble,
                         arr[2].asDouble,

@@ -18,6 +18,7 @@
 package org.roboquant.common
 
 import kotlinx.coroutines.delay
+import org.hipparchus.stat.descriptive.moment.StandardDeviation
 import org.roboquant.common.Config.EPS
 import java.lang.Integer.max
 import java.lang.Integer.min
@@ -219,6 +220,16 @@ fun DoubleArray.diff(n: Int = 1): DoubleArray {
 fun DoubleArray.index(start: Double = 1.0): DoubleArray {
     val first = (firstOrNull { it.isFinite() } ?: 1.0) / start
     return this / first
+}
+
+/**
+ * Returns a normalized array
+ */
+fun DoubleArray.normalize(): DoubleArray {
+    val data = clean()
+    val mean = data.average()
+    val std = StandardDeviation().evaluate(data, mean) + 0.000001
+    return (this - mean) / std
 }
 
 /**

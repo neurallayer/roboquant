@@ -128,7 +128,6 @@ internal class AvroSamples {
         println(avgEquity)
     }
 
-
     @Test
     @Ignore
     internal fun testingStrategies() {
@@ -152,7 +151,6 @@ internal class AvroSamples {
         }
 
     }
-
 
     @Test
     @Ignore
@@ -186,7 +184,6 @@ internal class AvroSamples {
         roboquant.run(feed, Timeframe.past(5.years))
     }
 
-
     @Test
     @Ignore
     internal fun simple() {
@@ -197,7 +194,6 @@ internal class AvroSamples {
         println(roboquant.broker.account.fullSummary())
     }
 
-
     @Test
     @Ignore
     internal fun aggregator() {
@@ -207,7 +203,6 @@ internal class AvroSamples {
             println(time)
         }
     }
-
 
     @Test
     @Ignore
@@ -230,7 +225,6 @@ internal class AvroSamples {
         }
     }
 
-
     @Test
     @Ignore
     internal fun profileTest() {
@@ -238,7 +232,6 @@ internal class AvroSamples {
         val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = SilentLogger())
         rq.run(feed)
     }
-
 
     @Test
     @Ignore
@@ -258,7 +251,6 @@ internal class AvroSamples {
             println(t)
         }
     }
-
 
     @Test
     @Ignore
@@ -303,7 +295,6 @@ internal class AvroSamples {
         println(account.trades.summary())
     }
 
-
     @Test
     @Ignore
     internal fun feedRecorder() {
@@ -324,7 +315,6 @@ internal class AvroSamples {
         }
         println(t2)
     }
-
 
     @Test
     @Ignore
