@@ -107,24 +107,27 @@ class BinanceHistoricFeed(configure: BinanceConfig.() -> Unit = {}) : HistoricPr
         client.connect((WebSocketMessageCallback { event: String ->
             val json = JsonParser.parseString(event).asJsonObject
             if (json["status"].asInt != 200) {
-                println(json)
+                logger.warn { "received unexpected response $json" }
             } else {
-                val symbolId = json["id"].asString
-                val asset = assetMap[symbolId]!!
-                val result = json["result"].asJsonArray
-                for (row in result) {
-                    val arr = row.asJsonArray
-                    val time = Instant.ofEpochMilli(arr[6].asLong) // use the close time
-                    val pb = PriceBar(
-                        asset,
-                        arr[1].asDouble,
-                        arr[2].asDouble,
-                        arr[3].asDouble,
-                        arr[4].asDouble,
-                        arr[5].asDouble
-                    )
-                    add(time, pb)
-
+                val symbol = json["id"].asString
+                val asset = assetMap[symbol]
+                if (asset != null) {
+                    val result = json["result"].asJsonArray
+                    for (row in result) {
+                        val arr = row.asJsonArray
+                        val time = Instant.ofEpochMilli(arr[6].asLong) // use the close time
+                        val pb = PriceBar(
+                            asset,
+                            arr[1].asDouble,
+                            arr[2].asDouble,
+                            arr[3].asDouble,
+                            arr[4].asDouble,
+                            arr[5].asDouble
+                        )
+                        add(time, pb)
+                    }
+                } else {
+                    logger.warn { "received unexpected symbol=$symbol" }
                 }
             }
         }))
