@@ -66,11 +66,5 @@
             <version>2.9.0</version>
         </dependency>
     </dependencies>
-    <repositories>
-        <repository>
-            <id/>
-            <url>https://repo.maven.apache.org/maven2/</url>
-        </repository>
-    </repositories>
 
 </project>
