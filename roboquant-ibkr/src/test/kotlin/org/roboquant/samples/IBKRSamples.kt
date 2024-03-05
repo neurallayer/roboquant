@@ -17,7 +17,6 @@
 package org.roboquant.samples
 
 import org.roboquant.Roboquant
-import org.roboquant.brokers.Broker
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.assets
 import org.roboquant.common.*
@@ -30,7 +29,8 @@ import org.roboquant.ibkr.IBKRLiveFeed
 import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
-import org.roboquant.orders.*
+import org.roboquant.orders.BracketOrder
+import org.roboquant.orders.MarketOrder
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.circuitBreaker
 import org.roboquant.strategies.EMAStrategy
