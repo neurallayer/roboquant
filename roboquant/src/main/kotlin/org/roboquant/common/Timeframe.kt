@@ -330,7 +330,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         random: Random = Config.random,
     ): List<Timeframe> {
         require(samples >= 1) { "samples need to be >= 1" }
-        require(end - period > start) { "period=$period to large for timeframe=$this" }
+        require(end - period > start) { "period=$period too large for timeframe=$this" }
         val duration = Timeframe(start, end - period).duration.toMillis()
         require(duration > samples) { "not enough data to sample $samples" }
         val result = mutableSetOf<Timeframe>()

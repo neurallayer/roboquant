@@ -56,7 +56,7 @@ class TimeSeriesChart(
 
         /**
          * Create a TimeSeriesChart chart for a number of [metrics] that can be found in the [logger].
-         * Each metric will be normalized so they fit a similar scale.
+         * Each metric will be normalized, so they fit a similar scale.
          * If there is more than one run recorded by the logger, you need to specify the [run] you want to use.
          */
         fun fromMetrics(
@@ -76,15 +76,18 @@ class TimeSeriesChart(
          * Return a chart based on multiple runs. Because each run starts fresh, not the absolute values, but the
          * returns are used to flatten runs to a single timeline.
          *
+         * Optionally, a Monte Carlo simulation can be run on the returns to get an impression how the data would look
+         * like if the returns had occurred in a different order.
+         *
          * ```
          * val data = roboquant.logger.getMetric("account.equity")
-         * TimeSeriesChart.walkForward(data, monteCarlo = true)
+         * TimeSeriesChart.walkForward(data, monteCarlo = 100)
          * ```
          */
         fun walkForward(
             metricsData: Map<String, TimeSeries>,
             fractionDigits: Int = 2,
-            monteCarlo: Int = 0
+            monteCarlo: Int = 0,
         ): TimeSeriesChart {
             require(monteCarlo >= 0)
             require(fractionDigits >= 0)
@@ -93,7 +96,7 @@ class TimeSeriesChart(
             var data = d.runningFold(100.0)
             if (monteCarlo == 0) return TimeSeriesChart(mapOf("" to data))
 
-            val result = mutableMapOf("orginal" to data)
+            val result = mutableMapOf("original" to data)
             repeat(monteCarlo) {
                 data = d.shuffle().runningFold(100.0)
                 result["mc-$it"] = data
