@@ -34,7 +34,6 @@ import org.roboquant.orders.*
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.circuitBreaker
 import org.roboquant.strategies.EMAStrategy
-import java.time.Instant
 import kotlin.test.Test
 
 internal class IBKRSamples {
@@ -43,23 +42,24 @@ internal class IBKRSamples {
     internal fun broker() {
         Config.exchangeRates = FixedExchangeRates(Currency.USD, Currency.EUR to 1.1)
         val broker = IBKRBroker()
+        val account = broker.sync()
 
-        println(broker.account.fullSummary())
+        println(account.fullSummary())
         Thread.sleep(5000)
-        println(broker.account.positions.assets)
+        println(account.positions.assets)
         broker.disconnect()
     }
 
     @Test
     internal fun closePosition() {
         val broker = IBKRBroker()
-        val account = broker.account
+        val account = broker.sync()
         println(account.fullSummary())
 
         // Place a new market sell order
         val position = account.positions.first()
         val order = MarketOrder(position.asset, -position.size)
-        broker.place(listOf(order), account.lastUpdate)
+        broker.place(listOf(order))
         Thread.sleep(10_000)
         println(account.fullSummary())
         broker.disconnect()
@@ -73,7 +73,7 @@ internal class IBKRSamples {
 
         // Get the account object from the broker instance
         val broker = IBKRBroker()
-        val account = broker.account
+        val account = broker.sync()
 
         // Print the full summary of the account
         println(account.fullSummary())
@@ -86,7 +86,7 @@ internal class IBKRSamples {
     internal fun placeOrder() {
         val broker = IBKRBroker()
         Config.exchangeRates = broker.exchangeRates
-        val account = broker.account
+        val account = broker.sync()
         println(account.fullSummary())
 
         val asset = Asset("TSLA", AssetType.STOCK, "USD", "SMART")
@@ -96,9 +96,9 @@ internal class IBKRSamples {
             185.50
         )
 
-        broker.place(listOf(order), Instant.now())
+        broker.place(listOf(order))
         Thread.sleep(5_000)
-        val account2 = broker.account
+        val account2 = broker.sync()
         println(account2.fullSummary())
         broker.disconnect()
         println("done")
@@ -106,44 +106,12 @@ internal class IBKRSamples {
 
 
     private fun Broker.place(order: Order) {
-        place(listOf(order), Instant.now())
+        place(listOf(order))
         Thread.sleep(5_000)
-        sync()
+        val account = sync()
         println(account.fullSummary())
     }
 
-    @Test
-    internal fun placeSimpleOrders() {
-        val asset = Asset("TSLA", AssetType.STOCK, "USD")
-
-        // Link the asset to an IBKR contract-id.
-        IBKR.register(76792991, asset)
-
-        val broker = IBKRBroker()
-        Config.exchangeRates = broker.exchangeRates
-        val account = broker.account
-        println(account.fullSummary())
-
-        // Place a buy order
-        val buy = MarketOrder(asset, Size.ONE)
-        broker.place(buy)
-
-        // Place a sell order
-        val sell = TrailOrder(asset, -Size.ONE, 1.percent)
-        broker.place(sell)
-
-        // Cancel the sell order
-        val order = broker.account.openOrders.last()
-        val cancel = CancelOrder(order)
-        broker.place(cancel)
-
-        // Place another sell order
-        val sell2 = MarketOrder(asset, -Size.ONE)
-        broker.place(sell2)
-
-        broker.disconnect()
-        println("done")
-    }
 
     @Test
     internal fun simplePaperTrade() {
@@ -159,7 +127,7 @@ internal class IBKRSamples {
 
         val broker = IBKRBroker()
         Config.exchangeRates = broker.exchangeRates
-        val account = broker.account
+        val account = broker.sync()
         println(account.fullSummary())
 
         val feed = IBKRLiveFeed { client = 3 }

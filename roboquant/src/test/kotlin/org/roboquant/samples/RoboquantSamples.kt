@@ -70,8 +70,8 @@ internal class RoboquantSamples {
         }
 
         val roboquant = Roboquant(strategy, AccountMetric(), policy = policy, broker = broker, logger = MemoryLogger())
-        roboquant.run(feed)
-        println(broker.account.openOrders.summary())
+        val account = roboquant.run(feed)
+        println(account.openOrders.summary())
     }
 
     @Test
@@ -134,9 +134,8 @@ internal class RoboquantSamples {
             safetyMargin = 10.percent
         }
         val roboquant = Roboquant(strategy, AccountMetric(), broker = broker, policy = policy)
-        roboquant.run(feed)
+        val account = roboquant.run(feed)
 
-        val account = roboquant.broker.account
         println(account.summary())
         println(account.trades.summary())
     }

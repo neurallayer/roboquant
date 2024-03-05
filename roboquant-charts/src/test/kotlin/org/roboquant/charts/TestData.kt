@@ -47,8 +47,8 @@ object TestData {
     val fullAccount by lazy {
         val feed = RandomWalkFeed.lastYears()
         val rq = Roboquant(TestStrategy(), logger = SilentLogger())
-        rq.run(feed)
-        rq.broker.account
+        val account = rq.run(feed)
+        account
     }
 
     fun usAccount(): Account {

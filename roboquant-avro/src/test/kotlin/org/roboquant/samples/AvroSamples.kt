@@ -87,8 +87,8 @@ internal class AvroSamples {
         }
 
         val roboquant = Roboquant(strategy, AccountMetric(), policy = policy, broker = broker, logger = MemoryLogger())
-        roboquant.run(feed)
-        println(broker.account.openOrders.summary())
+        val account = roboquant.run(feed)
+        println(account.openOrders.summary())
     }
 
     @Test
@@ -190,8 +190,8 @@ internal class AvroSamples {
         val strategy = EMAStrategy()
         val feed = AvroFeed.sp500()
         val roboquant = Roboquant(strategy)
-        roboquant.run(feed)
-        println(roboquant.broker.account.fullSummary())
+        val account = roboquant.run(feed)
+        println(account.fullSummary())
     }
 
     @Test
@@ -210,9 +210,9 @@ internal class AvroSamples {
         val feed = AvroFeed.forex()
         Currency.increaseDigits(3)
         val rq = Roboquant(EMAStrategy(), AccountMetric(), broker = SimBroker(pricingEngine = NoCostPricingEngine()))
-        rq.run(feed, timeframe = Timeframe.parse("2022-01-03", "2022-02-10"))
+        val account = rq.run(feed, timeframe = Timeframe.parse("2022-01-03", "2022-02-10"))
 
-        for (trade in rq.broker.account.trades) {
+        for (trade in account.trades) {
             val tf = Timeframe(trade.time, trade.time, true)
             val pricebar = feed.filter<PriceAction>(timeframe = tf).firstOrNull { it.second.asset == trade.asset }
             if (pricebar == null) {
@@ -288,9 +288,8 @@ internal class AvroSamples {
             safetyMargin = 10.percent
         }
         val roboquant = Roboquant(strategy, AccountMetric(), broker = broker, policy = policy)
-        roboquant.run(feed)
+        val account = roboquant.run(feed)
 
-        val account = roboquant.broker.account
         println(account.summary())
         println(account.trades.summary())
     }

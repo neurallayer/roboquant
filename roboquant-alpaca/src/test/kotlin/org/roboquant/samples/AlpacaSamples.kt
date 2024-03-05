@@ -30,7 +30,6 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy
-import java.time.Instant
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -57,14 +56,15 @@ internal class AlpacaSamples {
     @Ignore
     internal fun alpacaBroker() {
         val broker = AlpacaBroker()
-        println(broker.account.fullSummary())
+        val account = broker.sync()
+        println(account.fullSummary())
     }
 
     @Test
     @Ignore
     internal fun alpacaPaperTradeStocks() {
         val broker = AlpacaBroker()
-        val account = broker.account
+        val account = broker.sync()
         println(account.fullSummary())
 
         val feed = AlpacaLiveFeed()
@@ -78,10 +78,10 @@ internal class AlpacaSamples {
         val strategy = EMAStrategy(3, 5)
         val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = InfoLogger())
         val tf = Timeframe.next(60.minutes)
-        roboquant.run(feed, tf)
+        val account2 = roboquant.run(feed, tf)
         feed.close()
 
-        println(roboquant.broker.account.fullSummary())
+        println(account2.fullSummary())
     }
 
 
@@ -97,27 +97,10 @@ internal class AlpacaSamples {
         val strategy = EMAStrategy.PERIODS_5_15
         val roboquant = Roboquant(strategy, ProgressMetric())
         val tf = Timeframe.next(10.minutes)
-        roboquant.run(feed, tf)
+        val account = roboquant.run(feed, tf)
         feed.close()
-        println(roboquant.broker.account.summary())
+        println(account.summary())
     }
-
-
-    @Test
-    @Ignore
-    internal fun alpacaTradeStocks() {
-        val feed = AlpacaLiveFeed()
-
-        feed.subscribeStocks(*symbols, type = PriceActionType.QUOTE)
-        feed.heartbeatInterval = 30_000
-        val strategy = EMAStrategy.PERIODS_5_15
-        val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), logger = InfoLogger())
-        val tf = Timeframe.next(10.minutes)
-        roboquant.run(feed, tf)
-        feed.close()
-        println(roboquant.broker.account.summary())
-    }
-
 
     @Test
     @Ignore
@@ -173,10 +156,10 @@ internal class AlpacaSamples {
             extendedHours = true
         }
         val order = MarketOrder(Asset("IBM"), Size.ONE)
-        broker.place(listOf(order), Instant.now())
+        broker.place(listOf(order))
         Thread.sleep(5000)
-        broker.sync()
-        println(broker.account.fullSummary())
+        val account = broker.sync()
+        println(account.fullSummary())
     }
 
 }

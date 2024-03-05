@@ -84,8 +84,8 @@ internal class BinanceSamples {
         val threeYears = Timeframe.parse("2020-01-01", "2023-01-01")
         feed.retrieve("BTCBUSD", "ETHBUSD", timeframe = threeYears, interval = Interval.DAILY)
 
-        roboquant.run(feed)
-        println(roboquant.broker.account.summary())
+        val account = roboquant.run(feed)
+        println(account.summary())
     }
 
     @Test
@@ -100,8 +100,8 @@ internal class BinanceSamples {
         feed.retrieve2("BTCBUSD", "ETHBUSD", timeframe = threeYears, interval = "1d")
         Thread.sleep(3000)
 
-        roboquant.run(feed)
-        println(roboquant.broker.account.summary())
+        val account = roboquant.run(feed)
+        println(account.summary())
     }
 
 

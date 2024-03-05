@@ -55,8 +55,8 @@ internal class TaSamples {
 
         val rq = Roboquant(strategy)
         val feed = RandomWalkFeed.lastYears(5)
-        rq.run(feed)
-        println(rq.broker.account.summary())
+        val account = rq.run(feed)
+        println(account.summary())
 
     }
 
@@ -82,8 +82,8 @@ internal class TaSamples {
 
         val rq = Roboquant(strategy)
         val feed = RandomWalkFeed.lastYears(5)
-        rq.run(feed)
-        println(rq.broker.account.summary())
+        val account = rq.run(feed)
+        println(account.summary())
     }
 
     @Test
@@ -134,8 +134,8 @@ internal class TaSamples {
 
         val roboquant = Roboquant(EMAStrategy.PERIODS_12_26, AccountMetric(), policy = SmartLimitPolicy(atrPeriod = 5))
         val feed = RandomWalkFeed.lastYears(5)
-        roboquant.run(feed)
-        println(roboquant.broker.account.summary())
+        val account = roboquant.run(feed)
+        println(account.summary())
     }
 
     @Test
@@ -150,8 +150,8 @@ internal class TaSamples {
         val rq = Roboquant(strategy, broker = broker, policy = policy)
 
         val feed = RandomWalkFeed.lastYears(5)
-        rq.run(feed)
-        println(rq.broker.account.summary())
+        val account = rq.run(feed)
+        println(account.summary())
     }
 
     @Suppress("CyclomaticComplexMethod")
@@ -193,8 +193,8 @@ internal class TaSamples {
         val feed = RandomWalkFeed.lastYears(5)
 
         println(feed.timeframe)
-        rq.run(feed)
-        println(rq.broker.account.summary())
+        val account = rq.run(feed)
+        println(account.summary())
 
     }
 

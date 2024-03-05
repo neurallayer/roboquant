@@ -204,8 +204,7 @@ internal class TaLibStrategyTest {
         val strategy = TaLibStrategy(30)
         val roboquant = Roboquant(strategy)
         val feed = RandomWalkFeed.lastYears(1, nAssets = 2)
-        roboquant.run(feed)
-        val account = roboquant.broker.account
+        val account = roboquant.run(feed)
         assertTrue(account.closedOrders.isEmpty())
     }
 

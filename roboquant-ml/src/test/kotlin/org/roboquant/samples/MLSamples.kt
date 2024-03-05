@@ -90,9 +90,9 @@ internal class MLSamples {
         val (train, valid) = feed.timeframe.splitTwoWay(9.months)
         rq.run(feed, train)
         rq.broker.reset()
-        rq.run(feed, valid, reset = false)
-        println(rq.broker.account.summary())
-        val trades = rq.broker.account.trades
+        val account = rq.run(feed, valid, reset = false)
+        println(account.summary())
+        val trades = account.trades
         println(trades.filter { !it.pnlValue.iszero }.joinToString("\n") {
             val p = 100.0 * it.pnlPercentage
             "${it.asset.symbol} $p"

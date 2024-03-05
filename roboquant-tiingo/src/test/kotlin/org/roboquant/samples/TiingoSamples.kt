@@ -39,8 +39,8 @@ internal class TiingoSamples {
         val feed = TiingoLiveFeed.iex()
         feed.subscribe("AAPL", "TSLA")
         val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
-        rq.run(feed, Timeframe.next(10.minutes))
-        println(rq.broker.account.fullSummary())
+        val account = rq.run(feed, Timeframe.next(10.minutes))
+        println(account.fullSummary())
     }
 
     @Test
@@ -50,8 +50,8 @@ internal class TiingoSamples {
         iex.subscribe()
         val feed = AggregatorLiveFeed(iex, 5.seconds)
         val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
-        rq.run(feed, Timeframe.next(5.minutes))
-        println(rq.broker.account.fullSummary())
+        val account = rq.run(feed, Timeframe.next(5.minutes))
+        println(account.fullSummary())
     }
 
     @Test
@@ -60,8 +60,8 @@ internal class TiingoSamples {
         val feed = TiingoLiveFeed.fx()
         feed.subscribe("EURUSD")
         val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
-        rq.run(feed, Timeframe.next(1.minutes))
-        println(rq.broker.account.fullSummary())
+        val account = rq.run(feed, Timeframe.next(1.minutes))
+        println(account.fullSummary())
     }
 
     @Test
@@ -73,8 +73,8 @@ internal class TiingoSamples {
 
         feed.subscribe("BNBFDUSD")
         val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
-        rq.run(feed, Timeframe.next(1.minutes))
-        println(rq.broker.account.fullSummary())
+        val account = rq.run(feed, Timeframe.next(1.minutes))
+        println(account.fullSummary())
     }
 
 
@@ -141,8 +141,8 @@ internal class TiingoSamples {
         println(feed.assets)
         println(feed.timeframe)
         val rq = Roboquant(EMAStrategy(), ProgressMetric())
-        rq.run(feed)
-        println(rq.broker.account.fullSummary())
+        val account = rq.run(feed)
+        println(account.fullSummary())
     }
 
     @Test
@@ -154,8 +154,8 @@ internal class TiingoSamples {
         println(feed.assets)
         println(feed.timeframe)
         val rq = Roboquant(EMAStrategy(), ProgressMetric())
-        rq.run(feed)
-        println(rq.broker.account.fullSummary())
+        val account = rq.run(feed)
+        println(account.fullSummary())
     }
 
 

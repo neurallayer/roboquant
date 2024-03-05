@@ -37,9 +37,9 @@ internal class ChartsSamples {
             ScorecardMetric()
         )
         val feed = RandomWalkFeed.lastYears(5)
-        rq.run(feed)
+        val account = rq.run(feed)
         val report = MetricsReport(rq)
         report.toHTMLFile("/tmp/test.html")
-        println(rq.broker.account.summary())
+        println(account.summary())
     }
 }

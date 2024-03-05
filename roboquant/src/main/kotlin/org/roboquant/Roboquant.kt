@@ -130,8 +130,8 @@ data class Roboquant(
         timeframe: Timeframe = feed.timeframe,
         name: String = "run-${timeframe.toPrettyString()}",
         reset: Boolean = true
-    ) = runBlocking {
-        runAsync(feed, timeframe, name, reset)
+    ): Account = runBlocking {
+        return@runBlocking runAsync(feed, timeframe, name, reset)
     }
 
     /**
@@ -146,9 +146,7 @@ data class Roboquant(
         timeframe: Timeframe = feed.timeframe,
         name: String = "run-${timeframe.toPrettyString()}",
         reset: Boolean = true
-    ) {
-        // Optimization path
-        if (feed.timeframe.start > timeframe.end) return
+    ) : Account {
 
         val channel = EventChannel(channelCapacity, timeframe, onChannelFull)
         val job = feed.playBackground(channel)
@@ -162,8 +160,7 @@ data class Roboquant(
                 val time = event.time
 
                 // Sync with broker and run metrics
-                broker.sync(event)
-                val account = broker.account
+                val account = broker.sync(event)
 
                 val metricResult = getMetrics(account, event)
                 logger.log(metricResult, time, name)
@@ -171,7 +168,7 @@ data class Roboquant(
                 // Generate signals and place orders
                 val signals = strategy.generate(event)
                 val orders = policy.act(signals, account, event)
-                broker.place(orders, time)
+                broker.place(orders)
 
                 kotlinLogger.trace {
                     "time=$time actions=${event.actions.size} signals=${signals.size} orders=${orders.size}"
@@ -183,6 +180,7 @@ data class Roboquant(
             end(name)
             if (job.isActive) job.cancel()
         }
+        return broker.sync()
     }
 
     /**
@@ -218,8 +216,8 @@ data class Roboquant(
      * 2. Close open positions by placing [MarketOrder] for the required opposite sizes.
      * 3. Run and log the metrics
      */
-    fun closePositions(time: Instant? = null, runName: String = "close") {
-        val account = broker.account
+    fun closePositions(time: Instant? = null, runName: String = "close"): Account {
+        val account = broker.sync()
         val eventTime = time ?: account.lastUpdate
         val cancelOrders = account.openOrders.createCancelOrders()
         val change = account.positions.closeSizes
@@ -227,11 +225,11 @@ data class Roboquant(
         val orders = cancelOrders + changeOrders
         val actions = account.positions.map { TradePrice(it.asset, it.mktPrice) }
         val event = Event(actions, eventTime)
-        broker.place(orders, eventTime)
-        broker.sync(event)
-        val newAccount = broker.account
+        broker.place(orders)
+        val newAccount = broker.sync(event)
         val metricResult = getMetrics(newAccount, event)
         logger.log(metricResult, event.time, runName)
+        return newAccount
     }
 
 

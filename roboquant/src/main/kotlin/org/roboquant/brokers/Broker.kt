@@ -19,19 +19,12 @@ package org.roboquant.brokers
 import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
-import java.time.Instant
 
 /**
  * Interface for any broker implementation, used for both simulated and real brokers.
  * Brokers can also implement the [Lifecycle] interface that allows them to manage internal state.
  */
 interface Broker : Lifecycle {
-
-    /**
-     * The state of the trading account since the last [sync]. This returns an immutable object.
-     * Invoking [sync] will result in creating a new and updated instance of this object.
-     */
-    val account: Account
 
     /**
      * Sync the state of the roboquant with the broker.
@@ -42,19 +35,14 @@ interface Broker : Lifecycle {
      * Optionally an [event] can be provided, although normally only the SimBroker requires this to simulate
      * trade executions. If no event is provided, an empty event will be used instead.
      *
-     * A sync will result in a new instance of the [account] object.
+     * A sync will result in a new instance of the account object.
      */
-    fun sync(event: Event = Event.empty())
+    fun sync(event: Event = Event.empty()) : Account
 
     /**
      * Place new [orders] at this broker.
-     *
-     * Optional provide a [time] that can be used by the broker as a safety check to determine you are not submitting
-     * back test orders to a real broker.
-     *
-     * Please note that without invoking [sync], the [account] object will not reflect the changes
      */
-    fun place(orders: List<Order>, time: Instant = Instant.now())
+    fun place(orders: List<Order>)
 
     /**
      * This method will be invoked at each step in a run and provides the broker with the opportunity to

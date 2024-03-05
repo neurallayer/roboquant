@@ -124,8 +124,8 @@ private object Performance {
             trades = 0
             repeat(backTests) {
                 val roboquant = Roboquant(getStrategy(SKIP), logger = SilentLogger())
-                roboquant.run(feed)
-                trades += roboquant.broker.account.trades.size
+                val account = roboquant.run(feed)
+                trades += account.trades.size
             }
 
         }

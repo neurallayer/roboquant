@@ -40,7 +40,7 @@ internal class SimBrokerTest {
         val broker = SimBroker()
         assertEquals(Wallet(1_000_000.USD), broker.initialDeposit)
         assertTrue(broker.getMetrics().isEmpty())
-        val account = broker.account
+        val account = broker.sync()
         assertEquals(USD, account.baseCurrency)
         assertEquals(Wallet(1_000_000.USD), account.cash)
         assertTrue(account.positions.isEmpty())
@@ -54,9 +54,8 @@ internal class SimBrokerTest {
         val broker = SimBroker()
 
         val event = TestData.event()
-        broker.place(emptyList(), event.time)
-        broker.sync(event)
-        val account = broker.account
+        broker.place(emptyList())
+        val account = broker.sync(event)
         assertTrue(account.openOrders.isEmpty())
         assertTrue(account.closedOrders.isEmpty())
         assertTrue(account.trades.isEmpty())
@@ -64,7 +63,7 @@ internal class SimBrokerTest {
 
         val broker2 = SimBroker(100_000.00.USD.toWallet())
         assertEquals(Wallet(100_000.USD), broker2.initialDeposit)
-        assertEquals(USD, broker2.account.baseCurrency)
+        assertEquals(USD, broker2.sync().baseCurrency)
 
         val metrics = broker.getMetrics()
         assertTrue(metrics.isEmpty())
@@ -82,7 +81,7 @@ internal class SimBrokerTest {
         val now = Instant.now()
         val event = Event(listOf(price), now)
 
-        broker.place(listOf(order), now)
+        broker.place(listOf(order))
         broker.sync(event)
         return broker
     }
@@ -90,8 +89,8 @@ internal class SimBrokerTest {
     @Test
     fun logic() {
         val broker = getFilledSimbroker()
-        val account1 = broker.account
-        val account2 = broker.account
+        val account1 = broker.sync()
+        val account2 = broker.sync()
         assertEquals(account1.equity, account2.equity)
     }
 
@@ -99,11 +98,11 @@ internal class SimBrokerTest {
     @Test
     fun load() {
         val broker = getFilledSimbroker()
-        val account1 = broker.account
+        val account1 = broker.sync()
 
         val broker2 = SimBroker()
         broker2.load(account1)
-        val account2 = broker2.account
+        val account2 = broker2.sync()
         assertEquals(account1.equity, account2.equity)
     }
 
@@ -118,9 +117,8 @@ internal class SimBrokerTest {
         val now = Instant.now()
         val event = Event(listOf(price), now)
 
-        broker.place(listOf(order), now)
-        broker.sync(event)
-        val account = broker.account
+        broker.place(listOf(order))
+        val account = broker.sync(event)
         assertEquals(1, account.closedOrders.size)
         assertEquals(0, account.openOrders.size)
         val orderState = account.closedOrders.first()
@@ -148,14 +146,12 @@ internal class SimBrokerTest {
         val broker = SimBroker()
         val event = TestData.event()
         val orders = listOf(TestData.euMarketOrder(), TestData.usMarketOrder())
-        broker.place(orders, event.time)
-        broker.sync(event)
-        var account = broker.account
+        broker.place(orders)
+        var account = broker.sync(event)
         assertEquals(account.closedOrders.size, account.trades.size)
         assertEquals(1, account.openOrders.size)
 
-        broker.sync(TestData.event2())
-        account = broker.account
+        account = broker.sync(TestData.event2())
         assertEquals(1, account.openOrders.size)
         assertEquals(1, account.positions.assets.size)
         assertEquals(1, account.closedOrders.size)
@@ -172,15 +168,15 @@ internal class SimBrokerTest {
         val now = Instant.now()
         val event = Event(listOf(price), now)
 
-        broker.place(listOf(order), event.time)
-        broker.sync(event)
-        assertEquals(1, broker.account.openOrders.size)
-        val state = broker.account.openOrders.first()
+        broker.place(listOf(order))
+        val account = broker.sync(event)
+        assertEquals(1, account.openOrders.size)
+        val state = account.openOrders.first()
 
         val order2 = LimitOrder(asset,Size.ONE, 101.0)
         val updateOrder = UpdateOrder(state, order2)
         val event2 = Event(listOf(price), now + 1.millis)
-        broker.place(listOf(updateOrder), event2.time)
+        broker.place(listOf(updateOrder))
         broker.sync(event2)
 
     }

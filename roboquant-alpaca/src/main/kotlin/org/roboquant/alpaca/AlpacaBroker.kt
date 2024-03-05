@@ -55,11 +55,6 @@ class AlpacaBroker(
     private val _account = InternalAccount(Currency.USD)
     private val config = AlpacaConfig()
 
-    /**
-     * @see Broker.account
-     */
-    override var account: Account
-        private set
 
     private val alpacaAPI: AlpacaAPI
     private val handledTrades = mutableSetOf<String>()
@@ -88,8 +83,6 @@ class AlpacaBroker(
         syncAccount()
         syncPositions()
         if (loadExistingOrders) loadExistingOrders()
-        account = _account.toAccount()
-
     }
 
 
@@ -281,12 +274,13 @@ class AlpacaBroker(
     /**
      * @see Broker.sync
      */
-    override fun sync(event: Event) {
+    override fun sync(event: Event): Account {
+        if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
         syncAccount()
         syncPositions()
         syncOrders()
         syncTrades()
-        account = _account.toAccount()
+        return _account.toAccount()
     }
 
     /**
@@ -294,10 +288,10 @@ class AlpacaBroker(
      *
      * @return the updated account that reflects the latest state
      */
-    override fun place(orders: List<Order>, time: Instant) {
+    override fun place(orders: List<Order>) {
         val now = Instant.now()
         // Sanity-check that you don't use this broker during back testing.
-        if (time < now - 1.hours) throw UnsupportedException("cannot place orders in the past")
+
 
         _account.initializeOrders(orders)
         for (order in orders) {

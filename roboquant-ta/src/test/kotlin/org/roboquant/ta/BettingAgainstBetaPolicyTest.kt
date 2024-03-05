@@ -44,8 +44,7 @@ internal class BettingAgainstBetaPolicyTest {
             policy = policy,
             logger = MemoryLogger(false)
         )
-        roboquant.run(feed, name = "test")
-        val account = roboquant.broker.account
+        val account = roboquant.run(feed, name = "test")
         assertTrue(account.positions.size <= 6)
         assertTrue(account.positions.size > 3)
 

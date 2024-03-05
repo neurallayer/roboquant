@@ -17,7 +17,6 @@
 package org.roboquant.alpaca
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -27,22 +26,22 @@ internal class AlpacaBrokerTestIT {
     @Test
     fun test() {
         val broker = AlpacaBroker()
-        val cash = broker.account.cash
+        val account = broker.sync()
+        val cash = account.cash
 
         assertTrue(cash.isNotEmpty())
         assertFalse(cash.isMultiCurrency())
         assertTrue(broker.availableAssets.isNotEmpty())
-        println(broker.account.fullSummary())
+        println(account.fullSummary())
 
         assertDoesNotThrow {
-            broker.place(emptyList(), Instant.now())
+            broker.place(emptyList())
         }
 
         assertDoesNotThrow {
-            broker.sync()
-            val account = broker.account
-            broker.account.fullSummary()
-            assertTrue(account.equity.isNotEmpty())
+            val account2 = broker.sync()
+            account2.fullSummary()
+            assertTrue(account2.equity.isNotEmpty())
         }
 
     }

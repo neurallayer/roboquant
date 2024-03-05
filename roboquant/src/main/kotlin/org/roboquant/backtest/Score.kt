@@ -48,7 +48,7 @@ fun interface Score {
 class CAGR : Score {
     override fun calculate(roboquant: Roboquant, run: String, timeframe: Timeframe): Double {
         val broker = roboquant.broker as SimBroker
-        val account = broker.account
+        val account = broker.sync()
         val startEquity = broker.initialDeposit.convert(account.baseCurrency, timeframe.start).value
         val endEquity = account.equity.convert(account.baseCurrency, timeframe.end).value
         return (endEquity / startEquity).pow(timeframe.toYears()) - 1.0

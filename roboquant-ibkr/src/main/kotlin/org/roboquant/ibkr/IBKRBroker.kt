@@ -61,12 +61,6 @@ class IBKRBroker(
      */
     val exchangeRates = FixedExchangeRates(Currency.USD)
 
-    /**
-     * @see Broker.account
-     */
-    override lateinit var account: Account
-        private set
-
     private val logger = Logging.getLogger(IBKRBroker::class)
 
     // Track IB Trades and Feed ids with roboquant trades
@@ -132,8 +126,9 @@ class IBKRBroker(
         client.placeOrder(ibOrder.orderId(), contract, ibOrder)
     }
 
-    override fun sync(event: Event) {
-        account = _account.toAccount()
+    override fun sync(event: Event): Account {
+        if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+        return _account.toAccount()
     }
 
     /**
@@ -141,9 +136,9 @@ class IBKRBroker(
      *
      * @param orders
      */
-    override fun place(orders: List<Order>, time: Instant) {
+    override fun place(orders: List<Order>) {
         // Sanity-check that you don't use this broker during back testing.
-        if (time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+
 
         // Make sure we store all orders
         _account.initializeOrders(orders)

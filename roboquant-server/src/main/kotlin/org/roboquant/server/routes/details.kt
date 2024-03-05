@@ -108,7 +108,7 @@ internal fun Route.details() {
     get("/run/{id}") {
         val id = call.parameters.getOrFail("id")
         val info = runs.getValue(id)
-        val acc = info.roboquant.broker.account
+        val acc = info.roboquant.broker.sync()
         call.respondHtml(HttpStatusCode.OK) {
             page("Details $id") {
                 a(href = "/") { +"Back to overview" }

@@ -51,7 +51,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * The trades that have been executed. Trades are only retained based on the [retention] setting.
      */
-    private val trades = mutableListOf<Trade>()
+    internal val trades = mutableListOf<Trade>()
 
     /**
      * Open orders

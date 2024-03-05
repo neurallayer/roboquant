@@ -54,7 +54,6 @@ internal class Ta4JStrategyTest {
         val feed = RandomWalkFeed.lastYears(1, nAssets = 2)
         assertDoesNotThrow {
             roboquant.run(feed)
-            roboquant.broker.account
         }
     }
 
@@ -64,8 +63,7 @@ internal class Ta4JStrategyTest {
         val strategy = Ta4jStrategy(maxBarCount = 30)
         val roboquant = Roboquant(strategy)
         val feed = RandomWalkFeed.lastYears(1, nAssets = 2)
-        roboquant.run(feed)
-        val account = roboquant.broker.account
+        val account = roboquant.run(feed)
         assertTrue(account.closedOrders.isEmpty())
     }
 

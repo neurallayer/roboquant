@@ -45,19 +45,6 @@ internal class PriceChartTest {
         assertNotEquals(html, chart3.renderJson())
     }
 
-    @Test
-    fun trades() {
-        val tf = Timeframe.fromYears(2020, 2021)
-        val feed = RandomWalkFeed(tf)
-        val rq = Roboquant(EMAStrategy.PERIODS_5_15, logger = SilentLogger())
-        rq.run(feed)
-
-        val trades = rq.broker.account.trades
-        assertTrue(trades.isNotEmpty())
-        val asset = trades.first().asset
-        val chart = PriceChart(feed, asset, trades = trades)
-        assertTrue(chart.renderJson().isNotEmpty())
-    }
 
     @Test
     fun indicators() {

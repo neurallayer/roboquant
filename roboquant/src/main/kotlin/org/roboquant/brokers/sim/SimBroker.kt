@@ -65,11 +65,6 @@ open class SimBroker(
     // Execution engine used for simulating trades
     private val executionEngine = ExecutionEngine(pricingEngine)
 
-    /**
-     * Get the state of the account since the last [sync]
-     */
-    override var account: Account = _account.toAccount()
-
 
     init {
         this.reset()
@@ -83,7 +78,6 @@ open class SimBroker(
      */
     fun load(account: Account) {
         _account.load(account)
-        this.account = _account.toAccount()
     }
 
 
@@ -115,7 +109,7 @@ open class SimBroker(
         val position = Position(asset, execution.size, execution.price)
 
         // Calculate the fees that apply to this execution
-        val fee = feeModel.calculate(execution, time, this.account.trades)
+        val fee = feeModel.calculate(execution, time, this._account.trades)
 
         // PNL includes the fee
         val pnl = updatePosition(position) - fee
@@ -156,19 +150,19 @@ open class SimBroker(
     /**
      * Run the simulation given the provided [event].
      */
-    override fun sync(event: Event) {
+    override fun sync(event: Event): Account {
         simulateMarket(event)
         _account.updateMarketPrices(event)
         _account.lastUpdate = event.time
         accountModel.updateAccount(_account)
-        account = _account.toAccount()
+        return _account.toAccount()
     }
 
     /**
      * Place the [orders] at the broker.
      */
-    override fun place(orders: List<Order>, time: Instant) {
-        logger.trace { "Received orders=${orders.size} time=$time" }
+    override fun place(orders: List<Order>) {
+        logger.trace { "Received orders=${orders.size}" }
         _account.initializeOrders(orders)
         executionEngine.addAll(orders)
     }
@@ -181,7 +175,6 @@ open class SimBroker(
         executionEngine.clear()
         _account.cash.deposit(initialDeposit)
         accountModel.updateAccount(_account)
-        account = _account.toAccount()
     }
 
 }

@@ -60,9 +60,8 @@ internal class RoboquantTest {
     fun liquidateTest() {
         val broker = SimBroker()
         val event = TestData.event()
-        broker.place(listOf(TestData.usMarketOrder()), event.time)
-        broker.sync(event)
-        var account = broker.account
+        broker.place(listOf(TestData.usMarketOrder()))
+        var account = broker.sync(event)
         assertEquals(1, account.positions.size)
         assertEquals(1, account.trades.size)
         assertEquals(1, account.closedOrders.size)
@@ -72,12 +71,11 @@ internal class RoboquantTest {
         val roboquant = Roboquant(EMAStrategy(), AccountMetric(), broker = broker, logger = logger)
         var equity = roboquant.logger.getMetric("account.equity")
         assertEquals(0, equity.size)
-        roboquant.closePositions(runName = "test")
-        account = broker.account
+        account = roboquant.closePositions(runName = "test")
         assertEquals(0, account.openOrders.size)
         assertEquals(0, account.positions.size)
-        assertEquals(2, account.trades.size)
-        assertEquals(2, account.closedOrders.size)
+        assertEquals(1, account.trades.size)
+        assertEquals(1, account.closedOrders.size)
 
         equity = roboquant.logger.getMetric("account.equity")
         assertEquals(1, equity.size)
@@ -126,7 +124,7 @@ internal class RoboquantTest {
         roboquant.copy(logger = SilentLogger()).run(feed, Timeframe.INFINITE)
         roboquant.broker.reset()
         assertTrue(logger.history.isEmpty())
-        val account = broker.account
+        val account = broker.sync()
         assertTrue(account.trades.isEmpty())
         assertEquals(initial, account.cash)
     }

@@ -46,7 +46,7 @@ internal class IBKRBrokerTestIT {
     fun test() {
         Config.getProperty("test.ibkr") ?: return
         val past = Instant.now()
-        val account = broker.account
+        val account = broker.sync()
         println(account.summary())
         println(account.positions.summary())
         assertTrue(account.lastUpdate >= past)

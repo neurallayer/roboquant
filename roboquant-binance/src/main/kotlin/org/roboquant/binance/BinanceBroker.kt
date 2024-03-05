@@ -53,11 +53,6 @@ class BinanceBroker(
     private val _account = InternalAccount(Currency.getInstance(baseCurrencyCode))
     private val config = BinanceConfig()
 
-    /**
-     * @see Broker.account
-     */
-    override var account: Account = _account.toAccount()
-        private set
 
     private val logger = Logging.getLogger(BinanceBroker::class)
     private val placedOrders = mutableMapOf<Long, Int>()
@@ -113,17 +108,18 @@ class BinanceBroker(
     /**
      * @see Broker.sync
      */
-    override fun sync(event: Event) {
+    override fun sync(event: Event): Account {
+        if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
         updateAccount()
-        account = _account.toAccount()
+        return _account.toAccount()
     }
 
     /**
      * @param orders
      * @return
      */
-    override fun place(orders: List<Order>, time: Instant) {
-        if (time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+    override fun place(orders: List<Order>) {
+
         _account.initializeOrders(orders)
 
         for (order in orders) {

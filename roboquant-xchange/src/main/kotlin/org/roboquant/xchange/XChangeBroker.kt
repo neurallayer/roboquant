@@ -44,12 +44,6 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
     private val _account = InternalAccount(Currency.getInstance(baseCurrencyCode))
 
-    /**
-     * @see Broker.account
-     */
-    override var account: Account = _account.toAccount()
-        private set
-
     private val logger = Logging.getLogger(XChangeBroker::class)
     private val tradeService = exchange.tradeService
     private val accountService = exchange.accountService
@@ -78,9 +72,10 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
     /**
      * @see Broker.sync
      */
-    override fun sync(event: Event) {
+    override fun sync(event: Event): Account {
+        if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
         updateAccount()
-        account = _account.toAccount()
+        return _account.toAccount()
     }
 
     /**
@@ -89,8 +84,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
      * @param orders
      * @return
      */
-    override fun place(orders: List<Order>, time: Instant) {
-        if (time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+    override fun place(orders: List<Order>) {
 
         val now = Instant.now()
         for (order in orders.filterIsInstance<CreateOrder>()) {

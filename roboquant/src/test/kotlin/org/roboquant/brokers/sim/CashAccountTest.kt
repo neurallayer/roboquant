@@ -46,9 +46,8 @@ internal class CashAccountTest {
             val orders = if (orderSize == 0) emptyList() else listOf(MarketOrder(asset, orderSize))
             val action = TradePrice(asset, price.toDouble())
             val event = Event(listOf(action), Instant.now())
-            broker.place(orders, event.time)
-            broker.sync(event)
-            return broker.account
+            broker.place(orders)
+            return broker.sync(event)
         }
 
         internal fun getSimBroker(deposit: Amount, accountModel: AccountModel): SimBroker {
