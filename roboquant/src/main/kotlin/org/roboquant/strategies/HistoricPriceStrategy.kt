@@ -67,9 +67,9 @@ abstract class HistoricPriceStrategy(
     }
 
     /**
-     * Generate a [Rating] based on the provided [data]. If no rating can be provided, this method should return null.
+     * Generate a rating based on the provided [data]. If no rating can be provided, this method should return null.
      */
-    open fun generateRating(data: DoubleArray): Rating? =
+    open fun generateRating(data: DoubleArray): Double? =
         throw RoboquantException("Should override generateSignal or generateRating")
 
     override fun reset() {

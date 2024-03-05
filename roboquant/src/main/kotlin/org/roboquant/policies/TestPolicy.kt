@@ -23,7 +23,6 @@ import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.orders.SingleOrder
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 
 /**
@@ -43,10 +42,10 @@ class TestPolicy(private val size: Size = Size.ONE) : BasePolicy() {
     override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
         val orders = mutableListOf<SingleOrder>()
         for (signal in signals) {
-            val order: MarketOrder? = when (signal.rating) {
-                Rating.BUY, Rating.OUTPERFORM -> MarketOrder(signal.asset, size)
-                Rating.SELL, Rating.UNDERPERFORM -> MarketOrder(signal.asset, -size)
-                Rating.HOLD -> null
+            val order: MarketOrder? = when  {
+                signal.isPositive  -> MarketOrder(signal.asset, size)
+                signal.isNegative -> MarketOrder(signal.asset, -size)
+                else -> null
             }
             orders.addNotNull(order)
         }

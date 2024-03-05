@@ -111,7 +111,7 @@ class EMAStrategy(
                 }
 
                 if (oldDirection != newDirection) {
-                    val rating = if (newDirection) Rating.BUY else Rating.SELL
+                    val rating = if (newDirection) 1.0 else -1.0
                     return Signal(asset, rating)
                 }
             }

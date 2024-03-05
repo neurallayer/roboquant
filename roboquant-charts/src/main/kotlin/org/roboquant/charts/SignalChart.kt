@@ -91,7 +91,7 @@ class SignalChart(
             val signals = strategy.generate(it)
             val time = it.time
             for (signal in signals) {
-                val observation = Triple(time, signal.rating.value.toDouble(), signal.getTooltip(time))
+                val observation = Triple(time, signal.rating, signal.getTooltip(time))
                 result.add(observation)
             }
         }

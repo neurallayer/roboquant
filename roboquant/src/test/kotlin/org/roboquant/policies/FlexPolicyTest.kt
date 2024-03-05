@@ -23,7 +23,6 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceAction
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.test.Test
@@ -76,7 +75,7 @@ internal class FlexPolicyTest {
             minPrice = 10.USD
         }
         val asset = Asset("TEST123")
-        val signals = listOf(Signal(asset, Rating.BUY))
+        val signals = listOf(Signal.buy(asset))
 
         val event1 = Event(listOf(TradePrice(asset, 5.0)), Instant.now())
         val account = TestData.usAccount()
@@ -119,7 +118,7 @@ internal class FlexPolicyTest {
 
     private fun run(policy: FlexPolicy): List<Order> {
         val asset = Asset("TEST123")
-        val signals = listOf(Signal(asset, Rating.BUY))
+        val signals = listOf(Signal.buy(asset))
         val event = Event(listOf(TradePrice(asset, 5.0)), Instant.now())
         val account = TestData.usAccount()
         return policy.act(signals, account, event)

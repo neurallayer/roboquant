@@ -57,7 +57,7 @@ class IBKRBroker(
     private var orderIds = mutableSetOf<Int>()
 
     /**
-     * ExchangeRates as provided during intialization of account.
+     * ExchangeRates as provided during intialization of the account.
      */
     val exchangeRates = FixedExchangeRates(Currency.USD)
 

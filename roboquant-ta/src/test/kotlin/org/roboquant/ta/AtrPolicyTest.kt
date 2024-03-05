@@ -27,7 +27,6 @@ import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Order
 import org.roboquant.orders.StopOrder
 import org.roboquant.policies.FlexPolicy
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.test.Test
@@ -46,7 +45,7 @@ internal class AtrPolicyTest {
 
     private fun run(policy: FlexPolicy): List<Order> {
         val asset = Asset("TEST")
-        val signals = listOf(Signal(asset, Rating.BUY))
+        val signals = listOf(Signal.buy(asset))
         val now = Instant.now()
         val account = usAccount()
         val orders = mutableListOf<Order>()

@@ -21,7 +21,6 @@ import org.roboquant.common.Logging
 import org.roboquant.common.addNotNull
 import org.roboquant.common.percent
 import org.roboquant.feeds.Event
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
 import smile.data.DataFrame
@@ -70,14 +69,11 @@ open class RegressionStrategy(
      * Allow custom logic for generating more advanced signals
      */
     open fun getSignal(asset: Asset, prediction: Double, event: Event) : Signal? {
-        val price = event.getPrice(asset) ?: Double.NaN
-        val takeProfit = price * (1.0 + prediction)
         return when {
-            prediction > percentage -> Signal(asset, Rating.BUY, takeProfit = takeProfit)
-            prediction < - percentage ->  Signal(asset, Rating.SELL, takeProfit = takeProfit)
+            prediction > percentage -> Signal(asset, prediction)
+            prediction < - percentage ->  Signal(asset, prediction)
             else -> null
         }
-
     }
 
     override fun end(run: String) {

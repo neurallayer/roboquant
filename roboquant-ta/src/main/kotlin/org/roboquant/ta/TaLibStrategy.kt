@@ -20,7 +20,6 @@ package org.roboquant.ta
 
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
@@ -202,8 +201,8 @@ class TaLibStrategy(initialCapacity: Int = 1) : RecordingStrategy(recording = tr
                 val asset = priceBar.asset
                 val priceSerie = assetPriceBarSeries.getValue(asset)
                 try {
-                    if (buyFn.invoke(taLib, priceSerie)) results.add(Signal(asset, Rating.BUY))
-                    if (sellFn.invoke(taLib, priceSerie)) results.add(Signal(asset, Rating.SELL))
+                    if (buyFn.invoke(taLib, priceSerie)) results.add(Signal.buy(asset))
+                    if (sellFn.invoke(taLib, priceSerie)) results.add(Signal.sell(asset))
                 } catch (ex: InsufficientData) {
                     priceSerie.increaseCapacity(ex.minSize)
                 }

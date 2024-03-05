@@ -39,7 +39,7 @@ internal class HistoricPriceStrategyTest {
     private class MySubClass2 : HistoricPriceStrategy(10, priceType = "`CLOSE`") {
         var called = false
 
-        override fun generateRating(data: DoubleArray): Rating? {
+        override fun generateRating(data: DoubleArray): Double? {
             called = true
             return null
         }

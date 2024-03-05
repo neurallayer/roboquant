@@ -21,13 +21,13 @@ import org.roboquant.feeds.Event
 
 /**
  * The Strategy is the interface that a trading strategy will need to implement. A strategy receives an
- * [Event] and can generate zero or more [signals][Signal], where each signal provides a [rating][Rating] for a certain
+ * [Event] and can generate zero or more [signals][Signal], where each signal provides a rating for a certain
  * asset.
  *
  * Roboquant makes no assumptions on the type of strategy. It can range from a technical indicator all the way
  * to sentiment analysis using machine learning.
  *
- * A strategy only has access to an event. In case a strategy requires to also have access to the Account,
+ * A strategy only has access to an event. In case a strategy requires also having access to the Account,
  * it should be implemented as a Policy instead.
  */
 interface Strategy : Lifecycle {

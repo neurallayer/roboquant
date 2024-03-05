@@ -29,7 +29,6 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import java.time.Instant
@@ -68,8 +67,8 @@ internal class TaLibStrategyTest {
         val strategy = TaLibSignalStrategy { asset, series ->
             // record("test", 1)
             when {
-                cdlMorningStar(series) -> Signal(asset, Rating.BUY, tag = "Morning Star")
-                cdl3BlackCrows(series) -> Signal(asset, Rating.SELL, tag = "Black Crows")
+                cdlMorningStar(series) -> Signal.buy(asset, tag = "Morning Star")
+                cdl3BlackCrows(series) -> Signal.sell(asset, tag = "Black Crows")
                 else -> null
             }
         }

@@ -27,7 +27,7 @@ import kotlin.math.pow
 /**
  * Functional interface for defining a scoring function that is used during (hyper-)parameter optimizations.
  * A scoring function can be based on many different aspects. For example, some logged metrics.
- * However it should always return a single double value.
+ * However, it should always return a single double value.
  */
 fun interface Score {
 

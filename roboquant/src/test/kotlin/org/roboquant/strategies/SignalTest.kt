@@ -19,7 +19,6 @@ package org.roboquant.strategies
 import kotlin.test.Test
 import org.roboquant.common.Asset
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 internal class SignalTest {
@@ -27,25 +26,15 @@ internal class SignalTest {
     @Test
     fun basic() {
         val c = Asset("AAPL")
-        val s = Signal(c, Rating.BUY)
+        val s = Signal.buy("AAPL")
 
         assertEquals(s.asset, c)
-        assertTrue(s.takeProfit.isNaN())
-        assertTrue(s.takeProfit.isNaN())
-        assertTrue(s.takeProfitAmount.value.isNaN())
 
-        assertTrue(s.stopLoss.isNaN())
-        assertTrue(s.stopLossAmount.value.isNaN())
+        assertEquals(1.0, s.rating)
 
-        assertTrue(s.probability.isNaN())
-        assertEquals(s.rating, Rating.BUY)
-
-        val s2 = Signal(c, Rating.SELL, takeProfit = 110.0)
+        val s2 = Signal.sell("AAPL")
         assertTrue(s2.conflicts(s))
         assertTrue(!s2.conflicts(s2))
-
-        val s3 = Signal(c, Rating.SELL, SignalType.ENTRY)
-        assertNotEquals(s3.type, SignalType.EXIT)
 
     }
 

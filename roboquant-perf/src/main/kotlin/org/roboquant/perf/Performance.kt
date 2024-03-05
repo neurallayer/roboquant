@@ -48,8 +48,7 @@ private class FastStrategy(private val skip: Int) : Strategy {
         for (action in event.actions.filterIsInstance<PriceAction>()) {
             steps++
             if ((steps % (skip + 1)) == 0) {
-                val rating = if (buy) Rating.BUY else Rating.SELL
-                val signal = Signal(action.asset, rating)
+                val signal = if (buy) Signal.buy(action.asset) else Signal.sell(action.asset)
                 signals.add(signal)
                 buy = !buy
             }

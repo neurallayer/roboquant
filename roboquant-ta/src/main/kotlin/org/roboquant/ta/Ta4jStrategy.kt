@@ -20,7 +20,6 @@ import org.roboquant.common.Asset
 import org.roboquant.common.toUTC
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import org.ta4j.core.BarSeries
@@ -66,8 +65,8 @@ class Ta4jStrategy(
             if (price is PriceBar) {
                 val (buyingRule, sellingRule, series) = getRules(asset)
                 series.addBar(time, price.open, price.high, price.low, price.close, price.volume)
-                if (buyingRule.isSatisfied(series.endIndex)) result.add(Signal(asset, Rating.BUY))
-                if (sellingRule.isSatisfied(series.endIndex)) result.add(Signal(asset, Rating.SELL))
+                if (buyingRule.isSatisfied(series.endIndex)) result.add(Signal.buy(asset))
+                if (sellingRule.isSatisfied(series.endIndex)) result.add(Signal.sell(asset))
             }
         }
         return result

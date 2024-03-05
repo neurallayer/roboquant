@@ -30,7 +30,6 @@ import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Order
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.ta.*
 import org.ta4j.core.indicators.bollinger.BollingerBandFacade
@@ -48,8 +47,8 @@ internal class TaSamples {
             val (_, _, diff) = macd(prices, 12, 26, 9)
             val (_, _, diff2) = macd(prices, 12, 26, 9, 1)
             when {
-                diff < 0.0 && diff2 > 0.0 -> Signal(asset, Rating.BUY)
-                diff > 0.0 && diff2 < 0.0 -> Signal(asset, Rating.SELL)
+                diff < 0.0 && diff2 > 0.0 -> Signal.buy(asset)
+                diff > 0.0 && diff2 < 0.0 -> Signal.sell(asset)
                 else -> null
             }
         }
@@ -181,12 +180,11 @@ internal class TaSamples {
             val tenkan = tenkan(series)
             val kijun = kijun(series)
             when {
-                tenkan > kijun && series.open.last() < tenkan && series.close.last() > tenkan -> Signal(
-                    asset,
-                    Rating.BUY
+                tenkan > kijun && series.open.last() < tenkan && series.close.last() > tenkan -> Signal.buy(
+                    asset
                 )
 
-                tenkan < kijun && series.close.last() < kijun -> Signal(asset, Rating.SELL)
+                tenkan < kijun && series.close.last() < kijun -> Signal.sell(asset)
                 else -> null
             }
         }

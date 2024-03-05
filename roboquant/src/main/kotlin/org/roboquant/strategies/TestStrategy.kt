@@ -41,8 +41,7 @@ class TestStrategy(private val skip: Int = 0) : Strategy {
         for (asset in event.prices.keys) {
             var (nSignal, buy) = nSignals.getOrPut(asset) { Pair(0, true) }
             if ((nSignal % (skip + 1)) == 0) {
-                val rating = if (buy) Rating.BUY else Rating.SELL
-                val signal = Signal(asset, rating)
+                val signal = if (buy) Signal.buy(asset) else Signal.sell(asset)
                 signals.add(signal)
                 buy = !buy
             }

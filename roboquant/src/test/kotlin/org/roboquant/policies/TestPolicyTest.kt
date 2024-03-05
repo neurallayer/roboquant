@@ -23,7 +23,6 @@ import org.roboquant.common.Currency
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -50,7 +49,7 @@ internal class TestPolicyTest {
     fun order() {
         val policy = TestPolicy()
 
-        for (rating in listOf(Rating.BUY, Rating.SELL)) {
+        for (rating in listOf(1.0, -1.0)) {
             val signals = listOf(Signal(TestData.usStock(), rating))
             val event = TestData.event2()
             val account = InternalAccount(Currency.USD).toAccount()
@@ -59,7 +58,7 @@ internal class TestPolicyTest {
             assertTrue(policy.getMetrics().isEmpty())
         }
 
-        val signals = listOf(Signal(TestData.usStock(), Rating.HOLD))
+        val signals = listOf(Signal(TestData.usStock(), 0.0))
         val event = TestData.event2()
         val account = InternalAccount(Currency.USD).toAccount()
         val orders = policy.act(signals, account, event)

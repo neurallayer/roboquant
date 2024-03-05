@@ -22,7 +22,6 @@ import org.roboquant.common.Asset
 import org.roboquant.common.addNotNull
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.SignalType
 import org.roboquant.strategies.Strategy
@@ -62,10 +61,10 @@ class TaLibSignalStrategy(
         fun breakout(entryPeriod: Int = 100, exitPeriod: Int = 50): TaLibSignalStrategy {
             return TaLibSignalStrategy { asset, series ->
                 when {
-                    recordHigh(series.high, entryPeriod) -> Signal(asset, Rating.BUY, SignalType.BOTH)
-                    recordLow(series.low, entryPeriod) -> Signal(asset, Rating.SELL, SignalType.BOTH)
-                    recordLow(series.low, exitPeriod) -> Signal(asset, Rating.SELL, SignalType.EXIT)
-                    recordHigh(series.high, exitPeriod) -> Signal(asset, Rating.BUY, SignalType.EXIT)
+                    recordHigh(series.high, entryPeriod) -> Signal.buy(asset, SignalType.BOTH)
+                    recordLow(series.low, entryPeriod) -> Signal.sell(asset, SignalType.BOTH)
+                    recordLow(series.low, exitPeriod) -> Signal.sell(asset, SignalType.EXIT)
+                    recordHigh(series.high, exitPeriod) -> Signal.buy(asset, SignalType.EXIT)
                     else -> null
                 }
             }
@@ -81,8 +80,8 @@ class TaLibSignalStrategy(
                 val (_, _, diff) = macd(prices, 12, 26, 9)
                 val (_, _, diff2) = macd(prices, 12, 26, 9, 1)
                 when {
-                    diff < 0.0 && diff2 >= 0.0 -> Signal(asset, Rating.BUY)
-                    diff > 0.0 && diff2 <= 0.0 -> Signal(asset, Rating.SELL)
+                    diff < 0.0 && diff2 >= 0.0 -> Signal.buy(asset)
+                    diff > 0.0 && diff2 <= 0.0 -> Signal.sell(asset)
                     else -> null
                 }
             }
@@ -103,8 +102,8 @@ class TaLibSignalStrategy(
                 val mid = (prices.high.last() + prices.low.last()) / 2.0
                 val curr = prices.close.last()
                 when {
-                    mid + atr > curr -> Signal(asset, Rating.BUY)
-                    mid - atr < curr -> Signal(asset, Rating.SELL)
+                    mid + atr > curr -> Signal.buy(asset)
+                    mid - atr < curr -> Signal.sell(asset)
                     else -> null
                 }
             }

@@ -16,9 +16,9 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.strategies.SignalType.*
+import kotlin.math.sign
 
 /**
  * This enum class represents the type of signal: [ENTRY], [EXIT] or [BOTH] and can be used by more advanced
@@ -45,7 +45,7 @@ enum class SignalType {
 }
 
 /**
- * Signal provides a [Rating] for an [Asset] and is typically created by a strategy.
+ * Signal provides a rating for an [Asset] and is typically created by a strategy.
  *
  * Besides, the asset and rating, a signal can also optionally provide the following information:
  *
@@ -61,41 +61,42 @@ enum class SignalType {
  *
  * @property asset The asset for which this rating applies
  * @property rating The rating for the asset
- * @property type The type of signal, entry, exit or both. [SignalType.BOTH] is the default
- * @property takeProfit An optional take profit price in the same currency as the asset, default is Double.NaN
- * @property stopLoss An optional stop loss price in the same currency as the asset, default is Double.NaN
- * @property probability Optional the probability (value between 0.0 and 1.0) for the provided rating, default is
- * Double.NaN
+ * @property type The type of signal, entry, exit or both. [SignalType.BOTH] is the default.
  * @property tag Optional extra tag, for example, the strategy name that generated the signal, default is empty String
  * @constructor Create a new Signal
  */
 class Signal(
     val asset: Asset,
-    val rating: Rating,
+    val rating: Double,
     val type: SignalType = BOTH,
-    val takeProfit: Double = Double.NaN,
-    val stopLoss: Double = Double.NaN,
-    val probability: Double = Double.NaN,
     val tag: String = ""
 ) {
+
+    companion object {
+
+        fun buy(symbol: String, type: SignalType = BOTH, tag: String = "") : Signal {
+            return Signal(Asset(symbol), 1.0, type, tag)
+        }
+
+        fun buy(asset: Asset, type: SignalType = BOTH,tag: String = "" ) : Signal {
+            return Signal(asset, 1.0, type, tag)
+        }
+
+        fun sell(symbol: String, type: SignalType = BOTH, tag: String = "") : Signal {
+            return Signal(Asset(symbol), -1.0, type, tag)
+        }
+
+        fun sell(asset: Asset, type: SignalType = BOTH, tag: String = "") : Signal {
+            return Signal(asset, -1.0, type, tag)
+        }
+
+    }
 
     /**
      * Is this signal (also) an exit signal, so to close or decrease a position?
      */
     val exit
         get() = type === EXIT || type === BOTH
-
-    /**
-     * Returns [takeProfit] as an [Amount]
-     */
-    val takeProfitAmount
-        get() = Amount(asset.currency, takeProfit)
-
-    /**
-     * Returns [stopLoss] as an [Amount]
-     */
-    val stopLossAmount
-        get() = Amount(asset.currency, stopLoss)
 
     /**
      * Returns true if this signal can function as an entry signal, false otherwise
@@ -107,7 +108,26 @@ class Signal(
      * Does this signal conflict with an [other] signal. Two signals conflict if they contain the same asset but
      * opposite ratings. So one signal has a positive outlook and the other one is negative.
      */
-    fun conflicts(other: Signal) = asset == other.asset && rating.conflicts(other.rating)
+    fun conflicts(other: Signal) = asset == other.asset && rating.sign != other.rating.sign
 
+    /**
+     * Return the direction of the rating, -1 for negative ratings, 1 for positive ratings and 0 otherwise (HOLD rating)
+     */
+    val direction: Int
+        get() = when {
+            isPositive -> 1
+            isNegative -> -1
+            else -> 0
+        }
+
+    /**
+     * Is this a positive rating, so a BUY or an OUTPERFORM rating
+     */
+    val isPositive: Boolean get() = rating > 0.0
+
+    /**
+     * Is this a negative rating, so a SELL or UNDERPERFORM rating
+     */
+    val isNegative: Boolean get() = rating < 0.0
 
 }

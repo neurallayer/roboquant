@@ -26,7 +26,7 @@ import kotlin.test.assertTrue
 
 internal class AssetFilterStrategyTest {
 
-    private class AlwaysStrategy(private val rating: Rating = Rating.BUY) : Strategy {
+    private class AlwaysStrategy(private val rating: Double = 1.0) : Strategy {
         override fun generate(event: Event): List<Signal> {
             return event.prices.keys.map { Signal(it, rating) }
         }
@@ -40,7 +40,7 @@ internal class AssetFilterStrategyTest {
         val event = Event(listOf(action), Instant.now())
         val signals = strategy.generate(event)
         assertEquals(1, signals.size)
-        assertEquals(Rating.BUY, signals.first().rating)
+        assertEquals(1.0, signals.first().rating)
     }
 
     @Test

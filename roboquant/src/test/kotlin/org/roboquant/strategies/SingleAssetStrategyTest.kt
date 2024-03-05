@@ -28,7 +28,7 @@ internal class SingleAssetStrategyTest {
     private class MyStrategy(asset: Asset) : SingleAssetStrategy(asset) {
 
         override fun generate(priceAction: PriceAction, time: Instant): Signal {
-            return Signal(asset, Rating.BUY)
+            return Signal.buy(asset)
         }
 
     }

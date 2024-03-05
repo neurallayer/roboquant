@@ -196,8 +196,8 @@ open class FlexPolicy(
     private fun reducedPositionSignal(position: Position, signal: Signal): Boolean {
         with(position) {
             if (open && signal.exit) {
-                if (long && signal.rating.isNegative) return true
-                if (short && signal.rating.isPositive) return true
+                if (long && signal.isNegative) return true
+                if (short && signal.isPositive) return true
             }
         }
         return false
@@ -210,7 +210,7 @@ open class FlexPolicy(
      * This method will only be invoked if the signal is not closing a position.
      */
     open fun calcSize(amount: Double, signal: Signal, price: Double): Size {
-        return signal.asset.contractSize(amount, price, config.fractions) * signal.rating.direction
+        return signal.asset.contractSize(amount, price, config.fractions) * signal.direction
     }
 
     /**

@@ -41,7 +41,7 @@ class RandomStrategy(private val probability: Double = 0.05, private val random:
         val signals = mutableListOf<Signal>()
         for (asset in event.prices.keys) {
             if (random.nextDouble() < probability) {
-                val rating = if (random.nextDouble() < 0.5) Rating.SELL else Rating.BUY
+                val rating = if (random.nextDouble() < 0.5) -1.0 else 1.0
                 signals.add(Signal(asset, rating))
             }
         }

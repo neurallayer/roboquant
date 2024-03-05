@@ -20,7 +20,6 @@ import org.roboquant.common.Asset
 import org.roboquant.common.PriceSeries
 import org.roboquant.common.addAll
 import org.roboquant.feeds.Event
-import org.roboquant.strategies.Rating
 import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
 
@@ -66,9 +65,9 @@ class RSIStrategy(
                     val rsi = taLib.rsi(data.toDoubleArray(), windowSize)
                     record(asset.symbol, rsi)
                     if (rsi > highThreshold)
-                        result.add(Signal(asset, Rating.SELL))
+                        result.add(Signal.sell(asset))
                     else if (rsi < lowThreshold)
-                        result.add(Signal(asset, Rating.BUY))
+                        result.add(Signal.buy(asset))
                 }
             } catch (ex: InsufficientData) {
                 data.increaseCapacity(ex.minSize)
