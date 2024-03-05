@@ -104,15 +104,6 @@ internal class IBKRSamples {
         println("done")
     }
 
-
-    private fun Broker.place(order: Order) {
-        place(listOf(order))
-        Thread.sleep(5_000)
-        val account = sync()
-        println(account.fullSummary())
-    }
-
-
     @Test
     internal fun simplePaperTrade() {
         // Lets trade these 3 tech stock

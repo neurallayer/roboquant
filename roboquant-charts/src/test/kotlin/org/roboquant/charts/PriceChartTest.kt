@@ -16,15 +16,12 @@
 
 package org.roboquant.charts
 
-import kotlin.test.Test
-import org.roboquant.Roboquant
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Action
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.Indicator
-import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
