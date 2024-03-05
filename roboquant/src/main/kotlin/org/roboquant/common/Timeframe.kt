@@ -377,7 +377,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
     /**
      * Subtract a [period] from start- and end-time of this timeframe and return the result.
-     * If the period contains timezone dependent values, UTC will be used as the ZoneId.
+     * If the period contains timezone-dependent values, UTC will be used as the ZoneId.
      * ```
      * val newTimeFrame = timeframe - 2.days
      * ```
@@ -390,7 +390,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
 
     /**
      * Add a [period] to start- and end-time of this timeframe and return the result.
-     * If the period contains timezone dependent values, UTC will be used as the ZoneId.
+     * If the period contains timezone-dependent values, UTC will be used as the ZoneId.
      * ```
      * val newTimeFrame = timeframe + 2.days
      * ```
@@ -405,7 +405,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
      * Extend this period with a [before] and [after] period and return the result.
      * If no [after] period is provided, the same value as for [before] will be used.
      *
-     * If [before] or [after] contain timezone dependent values, UTC will be used as the ZoneId.
+     * If [before] or [after] contain timezone-dependent values, UTC will be used as the ZoneId.
      */
     fun extend(before: TimeSpan, after: TimeSpan = before): Timeframe {
         val e = makeValid(end + after)
