@@ -30,13 +30,11 @@ import org.roboquant.loggers.SilentLogger
 import org.roboquant.loggers.latestRun
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.Metric
+import org.roboquant.metrics.PNLMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class RoboquantTest {
 
@@ -157,6 +155,29 @@ internal class RoboquantTest {
                 roboquant.runAsync(TestData.feed)
             }
         }
+    }
+
+
+    @Test
+    fun run2()  {
+        assertDoesNotThrow {
+            val strategy = EMAStrategy()
+            run(TestData.feed, strategy, journal = BasicJournal())
+        }
+    }
+
+    @Test
+    fun run3()  {
+        val mrj = MultiRunJournal { MetricsJournal(PNLMetric()) }
+        val feed = TestData.feed
+        val timeframes  = feed.timeframe.split(1.years)
+        for (tf in timeframes) {
+            val strategy = EMAStrategy()
+            val run = tf.toString()
+            run(TestData.feed, strategy, journal = mrj.getJournal(run), tf)
+        }
+        val m = mrj.getMetric("pnl.equity")
+        assertEquals(timeframes.size, m.size)
     }
 
     @Test

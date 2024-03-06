@@ -108,26 +108,26 @@ class Signal(
      * Does this signal conflict with an [other] signal. Two signals conflict if they contain the same asset but
      * opposite ratings. So one signal has a positive outlook and the other one is negative.
      */
-    fun conflicts(other: Signal) = asset == other.asset && rating.sign != other.rating.sign
+    fun conflicts(other: Signal): Boolean = asset == other.asset && direction != other.direction
 
     /**
      * Return the direction of the rating, -1 for negative ratings, 1 for positive ratings and 0 otherwise (HOLD rating)
      */
     val direction: Int
         get() = when {
-            isPositive -> 1
-            isNegative -> -1
+            isBuy -> 1
+            isSell -> -1
             else -> 0
         }
 
     /**
      * Is this a positive rating, so a BUY or an OUTPERFORM rating
      */
-    val isPositive: Boolean get() = rating > 0.0
+    val isBuy: Boolean get() = rating > 0.0
 
     /**
      * Is this a negative rating, so a SELL or UNDERPERFORM rating
      */
-    val isNegative: Boolean get() = rating < 0.0
+    val isSell: Boolean get() = rating < 0.0
 
 }

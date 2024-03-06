@@ -43,8 +43,8 @@ class TestPolicy(private val size: Size = Size.ONE) : BasePolicy() {
         val orders = mutableListOf<SingleOrder>()
         for (signal in signals) {
             val order: MarketOrder? = when  {
-                signal.isPositive  -> MarketOrder(signal.asset, size)
-                signal.isNegative -> MarketOrder(signal.asset, -size)
+                signal.isBuy  -> MarketOrder(signal.asset, size)
+                signal.isSell -> MarketOrder(signal.asset, -size)
                 else -> null
             }
             orders.addNotNull(order)

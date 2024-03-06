@@ -40,7 +40,6 @@ internal fun Trade.getTooltip(): String {
     val fee = fee.toBigDecimal()
     return """
             |symbol: ${asset.symbol}<br>
-            |currency: ${asset.currency}<br>
             |time: $time<br>
             |size: $size<br>
             |fee: $fee<br>

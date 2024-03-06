@@ -77,7 +77,6 @@ class SignalChart(
     private fun Signal.getTooltip(time: Instant): String {
         return """
         |symbol: ${asset.symbol}<br>
-        |currency: ${asset.currency}<br>
         |time: $time<br>
         |rating: $rating<br>
         |type: $type<br>

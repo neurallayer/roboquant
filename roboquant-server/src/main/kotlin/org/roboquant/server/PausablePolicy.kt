@@ -42,8 +42,8 @@ internal class PausablePolicy(private val policy: Policy, var pause: Boolean = f
         // Still invoke the policy so any state can be updated if required.
         val orders = policy.act(signals, account, event)
 
-        buySignals += signals.filter { it.isPositive }.size
-        sellSignals += signals.filter { it.isNegative }.size
+        buySignals += signals.filter { it.isBuy }.size
+        sellSignals += signals.filter { it.isSell }.size
         holdSignals += signals.filter { it.rating == 0.0 }.size
 
         totalEvents++

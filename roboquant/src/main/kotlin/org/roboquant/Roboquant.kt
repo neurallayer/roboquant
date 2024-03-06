@@ -24,6 +24,7 @@ import org.roboquant.brokers.Broker
 import org.roboquant.brokers.closeSizes
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Logging
+import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
@@ -33,9 +34,11 @@ import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.MetricsLogger
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.MarketOrder
+import org.roboquant.orders.Order
 import org.roboquant.orders.createCancelOrders
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.Policy
+import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import java.time.Instant
 
@@ -146,7 +149,7 @@ data class Roboquant(
         timeframe: Timeframe = feed.timeframe,
         name: String = "run-${timeframe.toPrettyString()}",
         reset: Boolean = true
-    ) : Account {
+    ): Account {
 
         val channel = EventChannel(channelCapacity, timeframe, onChannelFull)
         val job = feed.playBackground(channel)
@@ -235,4 +238,125 @@ data class Roboquant(
 
 }
 
+
+/**
+ * Interface for tracking progress during a run
+ */
+interface Journal {
+
+    /**
+     * track progress
+     */
+    fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>)
+
+}
+
+
+class MetricsJournal(private vararg val metrics: Metric) : Journal {
+
+    private data class Entry(val time: Instant, val values: Map<String, Double>)
+    private val history = mutableListOf<Entry>()
+
+    override fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {
+        val result = mutableMapOf<String, Double>()
+        for (metric in metrics) {
+            val values = metric.calculate(account, event)
+            result.putAll(values)
+        }
+        history.add(Entry(event.time, result))
+    }
+
+    fun getMetric(name: String): TimeSeries {
+        val timeline = mutableListOf<Instant>()
+        val values = mutableListOf<Double>()
+        for ( (t, d) in history) {
+            if (name in d) {
+                timeline.add(t)
+                values.add(d.getValue(name))
+            }
+
+        }
+        return TimeSeries(timeline, values.toDoubleArray())
+    }
+
+}
+
+class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
+
+    private val journals = mutableMapOf<String, MetricsJournal>()
+
+    fun getJournal(run: String): MetricsJournal {
+        if (run !in journals) {
+            val journal = fn(run)
+            journals[run] = journal
+        }
+        return journals.getValue(run)
+    }
+
+    fun getMetric(name: String) : Map<String, TimeSeries> {
+        return journals.mapValues { it.value.getMetric(name) }
+    }
+
+}
+
+
+/**
+ * Print some basic progress to the console
+ */
+class BasicJournal : Journal {
+    override fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {
+        println("time=${event.time} items=${event.actions.size} signals=${signals.size} orders=${orders.size}")
+    }
+}
+
+/**
+ * Blocking version of runAsync
+ */
+fun run(
+    feed: Feed,
+    strategy: Strategy,
+    journal: Journal? = null,
+    timeframe: Timeframe = Timeframe.INFINITE,
+    policy: Policy = FlexPolicy(),
+    broker: Broker = SimBroker(),
+    channel: EventChannel = EventChannel(10, timeframe)
+): Account = runBlocking {
+    return@runBlocking runAsync(feed, strategy, journal, timeframe, policy, broker, channel)
+}
+
+/**
+ * Run async
+ */
+suspend fun runAsync(
+    feed: Feed,
+    strategy: Strategy,
+    journal: Journal? = null,
+    timeframe: Timeframe = Timeframe.INFINITE,
+    policy: Policy = FlexPolicy(),
+    broker: Broker = SimBroker(),
+    channel: EventChannel = EventChannel(10, timeframe)
+): Account {
+    val job = feed.playBackground(channel)
+
+    try {
+        while (true) {
+            val event = channel.receive()
+
+            // Sync with broker
+            val account = broker.sync(event)
+
+            // Generate signals and place orders
+            val signals = strategy.generate(event)
+            val orders = policy.act(signals, account, event)
+            broker.place(orders)
+
+            journal?.track(event, account, signals, orders)
+        }
+    } catch (_: ClosedReceiveChannelException) {
+        // intentionally empty
+    } finally {
+        if (job.isActive) job.cancel()
+    }
+    return broker.sync()
+}
 

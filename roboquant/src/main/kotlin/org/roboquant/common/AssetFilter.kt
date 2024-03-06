@@ -45,14 +45,6 @@ fun interface AssetFilter {
             return AssetFilter { _: Asset, _: Instant -> true }
         }
 
-        /**
-         * Include only the assets that are denoted in the provided [currencies]. For example, only include assets that
-         * are denoted in USD and ignore other currencies.
-         */
-        fun includeCurrencies(vararg currencies: Currency): AssetFilter {
-            return AssetFilter { asset: Asset, _: Instant -> asset.currency in currencies }
-        }
-
         private val regEx = Regex("[^A-Z0-9]")
         private fun String.standardize() = uppercase().replace(regEx, ".")
 
