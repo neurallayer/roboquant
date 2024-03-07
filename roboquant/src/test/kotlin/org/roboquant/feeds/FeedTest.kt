@@ -84,7 +84,7 @@ internal class FeedTest {
         val feed = TestData.feed()
         val size = feed.toList().size
 
-        val channel = EventChannel(100)
+        val channel = EventChannel(capacity = 100)
         assertFalse(channel.closed)
         val job = feed.playBackground(channel)
         job.join()

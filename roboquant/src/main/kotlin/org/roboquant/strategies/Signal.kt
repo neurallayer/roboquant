@@ -18,7 +18,6 @@ package org.roboquant.strategies
 
 import org.roboquant.common.Asset
 import org.roboquant.strategies.SignalType.*
-import kotlin.math.sign
 
 /**
  * This enum class represents the type of signal: [ENTRY], [EXIT] or [BOTH] and can be used by more advanced
@@ -95,13 +94,13 @@ class Signal(
     /**
      * Is this signal (also) an exit signal, so to close or decrease a position?
      */
-    val exit
+    val exit: Boolean
         get() = type === EXIT || type === BOTH
 
     /**
      * Returns true if this signal can function as an entry signal, false otherwise
      */
-    val entry
+    val entry: Boolean
         get() = type === ENTRY || type === BOTH
 
     /**
@@ -123,11 +122,13 @@ class Signal(
     /**
      * Is this a positive rating, so a BUY or an OUTPERFORM rating
      */
-    val isBuy: Boolean get() = rating > 0.0
+    val isBuy: Boolean
+        get() = rating > 0.0
 
     /**
      * Is this a negative rating, so a SELL or UNDERPERFORM rating
      */
-    val isSell: Boolean get() = rating < 0.0
+    val isSell: Boolean
+        get() = rating < 0.0
 
 }

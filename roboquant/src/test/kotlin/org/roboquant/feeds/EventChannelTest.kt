@@ -26,7 +26,7 @@ internal class EventChannelTest {
 
     @Test
     fun basicSend(): Unit = runBlocking {
-        val channel = EventChannel(10)
+        val channel = EventChannel(capacity = 10)
         val event = Event.empty()
         repeat(5) {
             channel.send(event)

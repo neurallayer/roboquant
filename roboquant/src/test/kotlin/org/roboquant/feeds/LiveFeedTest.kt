@@ -36,9 +36,7 @@ internal class LiveFeedTest {
         class MyLiveFeed : LiveFeed()
 
         val feed1 = MyLiveFeed()
-        feed1.heartbeatInterval = 2
         val feed2 = MyLiveFeed()
-        feed2.heartbeatInterval = 2
         val feed = CombinedLiveFeed(feed1, feed2)
 
         val job = feed.playBackground(EventChannel())

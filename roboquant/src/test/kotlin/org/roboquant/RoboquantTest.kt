@@ -24,6 +24,10 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.util.HistoricTestFeed
+import org.roboquant.feeds.util.LiveTestFeed
+import org.roboquant.journals.BasicJournal
+import org.roboquant.journals.MetricsJournal
+import org.roboquant.journals.MultiRunJournal
 import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
@@ -163,6 +167,17 @@ internal class RoboquantTest {
         assertDoesNotThrow {
             val strategy = EMAStrategy()
             run(TestData.feed, strategy, journal = BasicJournal())
+        }
+    }
+
+    @Test
+    fun run4()  {
+        assertDoesNotThrow {
+            val strategy = EMAStrategy()
+            val feed = LiveTestFeed(delayInMillis = 30)
+            val journal = BasicJournal(false)
+            run(feed, strategy, journal, heartbeatTimeout = 10)
+            assertTrue(journal.nItems < journal.nEvents)
         }
     }
 

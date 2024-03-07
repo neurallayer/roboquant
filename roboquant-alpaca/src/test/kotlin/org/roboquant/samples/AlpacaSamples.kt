@@ -69,8 +69,6 @@ internal class AlpacaSamples {
 
         val feed = AlpacaLiveFeed()
 
-        feed.heartbeatInterval = 30_000
-
         // Lets pick 10 random stock symbols to trade
         val symbols = feed.availableStocks.random(10).symbols
         feed.subscribeStocks(*symbols)
@@ -93,7 +91,6 @@ internal class AlpacaSamples {
         println(symbols.toList())
 
         feed.subscribeCrypto(*symbols)
-        feed.heartbeatInterval = 30_000
         val strategy = EMAStrategy.PERIODS_5_15
         val roboquant = Roboquant(strategy, ProgressMetric())
         val tf = Timeframe.next(10.minutes)
@@ -106,7 +103,6 @@ internal class AlpacaSamples {
     @Ignore
     internal fun alpacaLiveFeed() {
         val feed = AlpacaLiveFeed()
-        feed.heartbeatInterval = 10_000
         feed.subscribeStocks(*symbols, type = PriceActionType.QUOTE)
         feed.filter<PriceAction>(Timeframe.next(5.minutes)) {
             println(it)

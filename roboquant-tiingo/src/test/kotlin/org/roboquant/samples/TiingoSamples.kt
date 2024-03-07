@@ -99,7 +99,7 @@ internal class TiingoSamples {
         timeframe: Timeframe,
     ) = runBlocking {
         // We need a channel with enough capacity
-        val channel = EventChannel(10_000, timeframe = timeframe)
+        val channel = EventChannel(timeframe = timeframe, 10_000)
         playBackground(channel)
         var sum = 0L
         var n = 0L

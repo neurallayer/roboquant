@@ -29,17 +29,13 @@ import java.util.*
  * This default implementation generates heartbeat signals to ensure components still have an opportunity
  * to act even if no other data is incoming. A heartbeat is an [empty event][Event.empty].
  *
- * @param heartbeatInterval The interval between heartbeats in milliseconds, default is 10_000 (10 seconds).
  * Changing this value during the play of a feed will not impact the interval of the first coming heartbeat.
  */
-abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
+abstract class LiveFeed : Feed {
 
     private val logger = Logging.getLogger(this::class)
     private var channels = Collections.synchronizedList(mutableListOf<EventChannel>())
 
-    init {
-        startHeartbeats()
-    }
 
     /**
      * Return true if this live feed is being used in one or more runs, false otherwise
@@ -51,7 +47,7 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
      * Subclasses should call this method or [sendAsync] to send an event. If no channel is active, any event
      * sent will be dropped.
      */
-    protected fun send(event: Event) = runBlocking {
+    protected fun send(event: Event): Unit = runBlocking {
         sendAsync(event)
     }
 
@@ -69,22 +65,6 @@ abstract class LiveFeed(var heartbeatInterval: Long = 10_000) : Feed {
         }
         synchronized(this) {
             channels.removeAll { it.closed }
-        }
-
-    }
-
-    /**
-     * A background routine that sends an empty event at regular intervals. It ensures that a trading strategy can
-     * do something, even if there is no new market data.
-     */
-    private fun startHeartbeats() {
-
-        CoroutineScope(Dispatchers.Default + Job()).launch {
-            while (true) {
-                delay(heartbeatInterval)
-                val event = Event.empty()
-                send(event)
-            }
         }
 
     }

@@ -31,8 +31,6 @@ import kotlin.test.assertTrue
 
 internal class CombinedFeedTest {
 
-
-
     @Test
     fun testCombinedFeed2() = runBlocking {
         val f1 = RandomWalkFeed.lastYears(1)

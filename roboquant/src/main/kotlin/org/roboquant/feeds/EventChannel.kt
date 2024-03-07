@@ -16,13 +16,17 @@
 
 package org.roboquant.feeds
 
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ChannelIterator
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withTimeout
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.compareTo
+import java.time.Instant
 
 /**
  * Wrapper around a [Channel] for communicating the [events][Event] of a [Feed]. It uses asynchronous communication
@@ -38,8 +42,8 @@ import org.roboquant.common.compareTo
  * @constructor create a new EventChannel
  */
 class EventChannel(
-    val capacity: Int = 10,
     val timeframe: Timeframe = Timeframe.INFINITE,
+    val capacity: Int = 10,
     private val onBufferOverflow: BufferOverflow = BufferOverflow.SUSPEND
 ) : AutoCloseable, Cloneable {
 
@@ -57,7 +61,7 @@ class EventChannel(
     /**
      * Iterate over the events in this channel
      */
-    operator fun iterator() = channel.iterator()
+    operator fun iterator(): ChannelIterator<Event> = channel.iterator()
 
     /**
      * Send an [event] on this channel. If the time of event is before the timeframe of this channel, it will be
@@ -84,14 +88,31 @@ class EventChannel(
     }
 
     /**
-     * Receive an event from the channel. This will throw a [ClosedReceiveChannelException] if the channel
-     * is [closed].
+     * Receive an event from the channel with an optional timeout. If the timeout occurs within or before the timeframe,
+     * a heartbeat (empty event) will be send.
+     *
+     * This will throw a [ClosedReceiveChannelException] if the channel is [closed].
      *
      * @see Channel.receive
      */
-    suspend fun receive(): Event {
-        return channel.receive()
+    suspend fun receive(timeOutMillis: Long = -1): Event {
+        if (timeOutMillis <= 0) return channel.receive()
+
+        try {
+            return withTimeout(timeOutMillis) {
+                channel.receive()
+            }
+        } catch (err: TimeoutCancellationException) {
+            logger.debug("timeout occured", err)
+            val now = Instant.now()
+            if (now > timeframe) {
+                close()
+                throw ClosedReceiveChannelException("channel closed")
+            }
+            return Event.empty(now)
+        }
     }
+
 
     /**
      * Close this [EventChannel] and mark it as [closed]
@@ -117,7 +138,7 @@ class EventChannel(
      * Make a copy. Events on the channel will not be copied, and the new channel will be open by default.
      */
     public override fun clone(): EventChannel {
-        return EventChannel(capacity, timeframe, onBufferOverflow)
+        return EventChannel(timeframe, capacity, onBufferOverflow)
     }
 
 

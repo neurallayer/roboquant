@@ -89,7 +89,7 @@ class CombinedFeed(vararg val feeds: Feed, private val channelCapacity: Int = 1)
         val jobs = ParallelJobs()
         val channels = mutableListOf<EventChannel>()
         for (feed in feeds) {
-            val feedChannel = EventChannel(channelCapacity, channel.timeframe)
+            val feedChannel = EventChannel(channel.timeframe, channelCapacity)
             channels.add(feedChannel)
             jobs.add(feed.playBackground(feedChannel))
         }

@@ -1,0 +1,27 @@
+package org.roboquant.journals
+
+import org.roboquant.common.TimeSeries
+
+/**
+ *
+ * @property fn Function1<String, MetricsJournal>
+ * @property journals MutableMap<String, MetricsJournal>
+ * @constructor
+ */
+class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
+
+    private val journals = mutableMapOf<String, MetricsJournal>()
+
+    fun getJournal(run: String): MetricsJournal {
+        if (run !in journals) {
+            val journal = fn(run)
+            journals[run] = journal
+        }
+        return journals.getValue(run)
+    }
+
+    fun getMetric(name: String) : Map<String, TimeSeries> {
+        return journals.mapValues { it.value.getMetric(name) }
+    }
+
+}
