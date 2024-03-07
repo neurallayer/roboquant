@@ -123,7 +123,7 @@ class LazyCSVFeed internal constructor(
                         done = true
                     }
                 }
-                val event = Event(items, now)
+                val event = Event(now, items)
                 channel.send(event)
                 last = now
             }

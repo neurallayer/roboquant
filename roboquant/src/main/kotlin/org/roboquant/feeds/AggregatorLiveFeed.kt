@@ -75,7 +75,7 @@ class AggregatorLiveFeed(
 
     private suspend fun send(channel: EventChannel, time: Instant, history: MutableMap<Asset, PriceBar>) {
         val newEvent = synchronized(history) {
-            val newEvent = Event(history.values.toList(), time)
+            val newEvent = Event(time, history.values.toList())
             history.clear()
             newEvent
         }

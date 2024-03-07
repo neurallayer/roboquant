@@ -27,7 +27,7 @@ internal class EventTest {
     @Test
     fun basic() {
         val now = Instant.now()
-        val event = Event(emptyList(), now)
+        val event = Event(now, emptyList())
         assertTrue(event.prices.isEmpty())
         val asset = Asset("Dummy")
         assertTrue(event.getPrice(asset) == null)
@@ -37,8 +37,8 @@ internal class EventTest {
     @Test
     fun comparison() {
         val now = Instant.now()
-        val event = Event(emptyList(), now)
-        val event2 = Event(emptyList(), now.plusMillis(1))
+        val event = Event(now, emptyList())
+        val event2 = Event(now.plusMillis(1), emptyList())
         assertTrue(event2 > event)
     }
 
@@ -53,8 +53,8 @@ internal class EventTest {
     fun prices() {
         val t = Instant.now()
         val event = Event(
-            listOf(TradePrice(Asset("ABC"), 100.0), TradePrice(Asset("CDE"), 50.0)),
-            t
+            t,
+            listOf(TradePrice(Asset("ABC"), 100.0), TradePrice(Asset("CDE"), 50.0))
         )
         assertTrue(event.items.isNotEmpty())
         assertEquals(2, event.prices.size)

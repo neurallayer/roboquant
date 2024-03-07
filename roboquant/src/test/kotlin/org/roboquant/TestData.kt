@@ -92,14 +92,14 @@ internal object TestData {
 
     fun time(): Instant = Instant.parse("2020-01-03T12:00:00Z")
 
-    fun event(time: Instant = time()) = Event(listOf(priceAction()), time)
+    fun event(time: Instant = time()) = Event(time, listOf(priceAction()))
 
-    fun event2(time: Instant = time()) = Event(listOf(priceBar()), time)
+    fun event2(time: Instant = time()) = Event(time, listOf(priceBar()))
 
     fun metricInput(time: Instant = time()): Pair<Account, Event> {
         val account = usAccount()
         val asset1 = account.positions.assets.first()
-        val moment = Event(listOf(TradePrice(asset1, 11.0)), time)
+        val moment = Event(time, listOf(TradePrice(asset1, 11.0)))
         return Pair(account, moment)
     }
 
@@ -112,7 +112,7 @@ internal object TestData {
         val result = mutableListOf<Event>()
         repeat(n) {
             val action = TradePrice(asset, it + 100.0)
-            val event = Event(listOf(action), start + it.days)
+            val event = Event(start + it.days, listOf(action))
             result.add(event)
         }
         return result

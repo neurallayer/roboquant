@@ -136,7 +136,7 @@ internal class TaLibStrategyTest {
         val result = mutableMapOf<Instant, List<Signal>>()
         var now = Instant.now()
         for (event in events) {
-            val signals = s.generate(Event(listOf(event.second), event.first))
+            val signals = s.generate(Event(event.first, listOf(event.second)))
             result[now] = signals
             now += 1.seconds
         }

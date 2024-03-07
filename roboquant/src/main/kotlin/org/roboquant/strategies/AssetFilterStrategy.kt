@@ -33,7 +33,7 @@ class AssetFilterStrategy(private val strategy: Strategy, private val assetFilte
 
     override fun generate(event: Event): List<Signal> {
         val actions = event.items.filterIsInstance<PriceItem>().filter { assetFilter.filter(it.asset, event.time) }
-        val newEvent = Event(actions, event.time)
+        val newEvent = Event(event.time, actions)
         return strategy.generate(newEvent)
     }
 

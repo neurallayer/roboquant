@@ -36,7 +36,7 @@ internal class FlexPolicyTest {
     fun order() {
         val policy = FlexPolicy()
         val signals = mutableListOf<Signal>()
-        val event = Event(emptyList(), Instant.now())
+        val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
@@ -47,7 +47,7 @@ internal class FlexPolicyTest {
         val policy = FlexPolicy()
         policy.enableMetrics = true
         val signals = mutableListOf<Signal>()
-        val event = Event(emptyList(), Instant.now())
+        val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
         policy.act(signals, account, event)
         val metrics = policy.getMetrics()
@@ -77,12 +77,12 @@ internal class FlexPolicyTest {
         val asset = Asset("TEST123")
         val signals = listOf(Signal.buy(asset))
 
-        val event1 = Event(listOf(TradePrice(asset, 5.0)), Instant.now())
+        val event1 = Event(Instant.now(), listOf(TradePrice(asset, 5.0)))
         val account = TestData.usAccount()
         val orders1 = policy.act(signals, account, event1)
         assertTrue(orders1.isEmpty())
 
-        val event2 = Event(listOf(TradePrice(asset, 15.0)), Instant.now())
+        val event2 = Event(Instant.now(), listOf(TradePrice(asset, 15.0)))
         val orders2 = policy.act(signals, account, event2)
         assertTrue(orders2.isNotEmpty())
     }
@@ -108,7 +108,7 @@ internal class FlexPolicyTest {
 
         val policy = MyPolicy()
         val signals = mutableListOf<Signal>()
-        val event = Event(emptyList(), Instant.now())
+        val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())
@@ -119,7 +119,7 @@ internal class FlexPolicyTest {
     private fun run(policy: FlexPolicy): List<Order> {
         val asset = Asset("TEST123")
         val signals = listOf(Signal.buy(asset))
-        val event = Event(listOf(TradePrice(asset, 5.0)), Instant.now())
+        val event = Event(Instant.now(), listOf(TradePrice(asset, 5.0)))
         val account = TestData.usAccount()
         return policy.act(signals, account, event)
     }
@@ -163,7 +163,7 @@ internal class FlexPolicyTest {
             .resolve(SignalResolution.FIRST)
             .circuitBreaker(10, 1.days)
         val signals = mutableListOf<Signal>()
-        val event = Event(emptyList(), Instant.now())
+        val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
         val orders = policy.act(signals, account, event)
         assertTrue(orders.isEmpty())

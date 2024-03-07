@@ -153,7 +153,7 @@ class PolygonFundamentalsFeed(
      */
     override suspend fun play(channel: EventChannel) {
         events.forEach {
-            val event = Event(it.value, it.key)
+            val event = Event(it.key, it.value)
             channel.send(event)
         }
     }

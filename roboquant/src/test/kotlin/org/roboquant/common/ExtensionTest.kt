@@ -95,15 +95,6 @@ internal class ExtensionTest {
         assertNull("dummy".toCurrencyPair())
     }
 
-    @Test
-    fun other() {
-        val i = 1..10..2
-        assertEquals(5, i.toList().size)
-
-        val s = listOf("a", "b", "c")
-        assertTrue(s.summary().content.contains('a'))
-
-    }
 
     @Test
     fun instant() {

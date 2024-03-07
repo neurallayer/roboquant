@@ -82,7 +82,7 @@ private class FastFeed(nAssets: Int, val events: Int) : Feed {
 
     override suspend fun play(channel: EventChannel) {
         repeat(events) {
-            channel.send(Event(actions, start + it.millis))
+            channel.send(Event(start + it.millis, actions))
         }
     }
 

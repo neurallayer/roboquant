@@ -231,7 +231,7 @@ class AlpacaLiveFeed(
                 if (action != null) {
                     val now = Instant.now()
                     logger.trace { "received action=$action time=$now" }
-                    val event = Event(listOf(action), now)
+                    val event = Event(now, listOf(action))
                     send(event)
                 }
             } else if (msg is ErrorMessage) {

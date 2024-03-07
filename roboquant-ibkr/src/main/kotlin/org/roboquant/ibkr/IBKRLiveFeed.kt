@@ -117,7 +117,7 @@ class IBKRLiveFeed(configure: IBKRConfig.() -> Unit = {}) : LiveFeed() {
                 val v = volume?.value()?.toDouble() ?: Double.NaN
                 val action = PriceBar(subscription.asset, open, high, low, close, v, subscription.interval.seconds)
                 val now = Instant.ofEpochSecond(time) // IBKR uses second-resolution
-                val event = Event(listOf(action), now)
+                val event = Event(now, listOf(action))
                 logger.trace { "send event=$event" }
                 send(event)
             }

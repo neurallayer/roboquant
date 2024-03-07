@@ -81,7 +81,7 @@ class LiveTestFeed(
         for (intRange in prices) {
             for (price in intRange) {
                 val action = getAction(price.toDouble())
-                val event = Event(listOf(action), Instant.now())
+                val event = Event(Instant.now(), listOf(action))
                 channel.send(event)
                 delay(delayInMillis.toLong())
             }

@@ -87,7 +87,7 @@ internal class QuestDBFeedTestIT {
                 val now = Instant.now()
                 repeat(100) {
                     val action = PriceQuote(asset, 100.0, 10000.0, 100.0, 10000.0)
-                    val event = Event(listOf(action), now + it.millis)
+                    val event = Event(now + it.millis, listOf(action))
                     channel.send(event)
                 }
             }
@@ -118,7 +118,7 @@ internal class QuestDBFeedTestIT {
                 val now = Instant.now()
                 repeat(100) {
                     val action = TradePrice(asset, 100.0, 10000.0)
-                    val event = Event(listOf(action), now + it.millis)
+                    val event = Event(now + it.millis, listOf(action))
                     channel.send(event)
                 }
             }

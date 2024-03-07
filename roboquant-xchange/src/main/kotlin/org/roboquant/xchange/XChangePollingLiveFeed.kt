@@ -92,7 +92,7 @@ class XChangePollingLiveFeed(
                         val asset = assetMap.getValue(symbol)
                         val item = TradePrice(asset, trade.price.toDouble(), trade.originalAmount.toDouble())
                         val now = trade.timestamp.toInstant()
-                        val event = Event(listOf(item), now)
+                        val event = Event(now, listOf(item))
                         send(event)
                     }
 

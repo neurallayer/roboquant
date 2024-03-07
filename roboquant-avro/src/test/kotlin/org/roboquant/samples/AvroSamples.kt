@@ -93,23 +93,6 @@ internal class AvroSamples {
 
     @Test
     @Ignore
-    internal fun multiRun() {
-        val feed = AvroFeed.sp500()
-        val logger = LastEntryLogger()
-
-        for (fast in 10..20..2) {
-            for (slow in fast * 2..fast * 4..4) {
-                val strategy = EMAStrategy(fast, slow)
-                val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
-                roboquant.run(feed, name = "run $fast-$slow")
-            }
-        }
-        val maxEntry = logger.getMetric("account.equity").flatten().max()
-        println(maxEntry)
-    }
-
-    @Test
-    @Ignore
     internal fun walkForwardParallel() = runBlocking {
         val feed = AvroFeed.sp500()
         val logger = LastEntryLogger()

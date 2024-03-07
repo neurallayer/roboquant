@@ -26,7 +26,7 @@ import java.time.Instant
  * @property items the list of actions that are part of this event
  * @property time the time that the actions in this event became available
  */
-class Event(val items: List<Item>, val time: Instant) : Comparable<Event> {
+class Event(val time: Instant, val items: List<Item>) : Comparable<Event> {
 
     /**
      * Convenience property for accessing the price actions in this event. The result is cached so that accessing
@@ -49,7 +49,7 @@ class Event(val items: List<Item>, val time: Instant) : Comparable<Event> {
         /**
          * Return an event without any [items] with as default [time] the current system time.
          */
-        fun empty(time: Instant = Instant.now()): Event = Event(emptyList(), time)
+        fun empty(time: Instant = Instant.now()): Event = Event(time, emptyList())
 
     }
 

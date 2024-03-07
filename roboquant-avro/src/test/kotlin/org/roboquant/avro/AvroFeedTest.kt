@@ -142,10 +142,10 @@ internal class AvroFeedTest {
         )
         val feed = MyFeed(sortedSetOf(asset))
         val now = Instant.now()
-        feed.events.add(Event(listOf(p1), now + 1.millis))
-        feed.events.add(Event(listOf(p2), now + 2.millis))
-        feed.events.add(Event(listOf(p3), now + 3.millis))
-        feed.events.add(Event(listOf(p4), now + 4.millis))
+        feed.events.add(Event(now + 1.millis, listOf(p1)))
+        feed.events.add(Event(now + 2.millis, listOf(p2)))
+        feed.events.add(Event(now + 3.millis, listOf(p3)))
+        feed.events.add(Event(now + 4.millis, listOf(p4)))
 
         assertDoesNotThrow {
             AvroFeed.record(feed, fileName)
@@ -169,7 +169,7 @@ internal class AvroFeedTest {
         val asset = Asset("DUMMY")
         val p1 = MyPrice(asset, 100.0)
         val feed = MyFeed(sortedSetOf(asset))
-        feed.events.add(Event(listOf(p1), Instant.now()))
+        feed.events.add(Event(Instant.now(), listOf(p1)))
 
         assertThrows<UnsupportedException> {
             AvroFeed.record(feed, fileName)

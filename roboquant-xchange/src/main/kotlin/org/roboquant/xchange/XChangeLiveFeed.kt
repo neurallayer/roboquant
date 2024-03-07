@@ -184,7 +184,7 @@ class XChangeLiveFeed(
         logger.trace { "$trade event for $asset" }
         val item = TradePrice(asset, trade.price.toDouble(), trade.originalAmount.toDouble())
         val now = if (useMachineTime) Instant.now() else trade.timestamp.toInstant()
-        val event = Event(listOf(item), now)
+        val event = Event(now, listOf(item))
         send(event)
     }
 
@@ -204,7 +204,7 @@ class XChangeLiveFeed(
         }
         val item = OrderBook(asset, asks, bids)
         val now = if (useMachineTime) Instant.now() else orderBook.timeStamp.toInstant()
-        val event = Event(listOf(item), now)
+        val event = Event(now, listOf(item))
         send(event)
     }
 
@@ -224,7 +224,7 @@ class XChangeLiveFeed(
             ticker.bidSize.toDouble()
         )
         val now = if (useMachineTime) Instant.now() else ticker.timestamp.toInstant()
-        val event = Event(listOf(item), now)
+        val event = Event(now, listOf(item))
         send(event)
     }
 

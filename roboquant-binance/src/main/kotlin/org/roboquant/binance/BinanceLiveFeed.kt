@@ -131,7 +131,7 @@ class BinanceLiveFeed(
             )
 
             val now = if (useMachineTime) Instant.now() else Instant.ofEpochMilli(resp.eventTime)
-            val event = Event(listOf(action), now)
+            val event = Event(now, listOf(action))
             send(event)
         } else {
             logger.warn { "Received TickerEvent for unsubscribed symbol ${resp.symbol}" }
@@ -157,7 +157,7 @@ class BinanceLiveFeed(
                 timeSpan
             )
             val now = if (useMachineTime) Instant.now() else Instant.ofEpochMilli(resp.closeTime)
-            val event = Event(listOf(action), now)
+            val event = Event(now, listOf(action))
             send(event)
         } else {
             logger.warn { "Received CandlestickEvent for unsubscribed symbol ${resp.symbol}" }

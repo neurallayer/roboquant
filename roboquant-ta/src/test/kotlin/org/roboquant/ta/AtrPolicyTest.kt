@@ -54,7 +54,7 @@ internal class AtrPolicyTest {
         repeat(12) {
             val p = 5.0
             val priceBar = PriceBar(asset, p + it, p + it, p + it, p + it)
-            val event = Event(listOf(priceBar), now + it.millis)
+            val event = Event(now + it.millis, listOf(priceBar))
             val o = policy.act(signals, account, event)
             orders.addAll(o)
         }

@@ -28,6 +28,10 @@ class MetricsJournal(private vararg val metrics: Metric) : Journal {
         history.add(Entry(event.time, result))
     }
 
+    fun getMetricNames() : Set<String> {
+        return history.map { it.values.keys }.flatten().toSet()
+    }
+
     /**
      *
      * @param name String

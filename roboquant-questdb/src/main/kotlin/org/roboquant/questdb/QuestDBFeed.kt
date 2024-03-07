@@ -112,7 +112,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
 
                 val time = record.getTimestamp(1)
                 if (time != last) {
-                    channel.sendNotEmpty(Event(actions, ofEpochMicro(last)))
+                    channel.sendNotEmpty(Event(ofEpochMicro(last), actions))
                     last = time
                     actions = mutableListOf()
                 }
@@ -122,7 +122,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
                 val price = handler.getPriceAction(asset, record)
                 actions.add(price)
             }
-            channel.sendNotEmpty(Event(actions, ofEpochMicro(last)))
+            channel.sendNotEmpty(Event(ofEpochMicro(last), actions))
         }
     }
 

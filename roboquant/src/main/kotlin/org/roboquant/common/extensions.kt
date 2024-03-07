@@ -84,10 +84,6 @@ fun Collection<String>.summary(header: String = "values"): Summary {
  */
 operator fun <T> List<T>.get(range: IntRange): List<T> = subList(max(0, range.first), min(this.size, range.last + 1))
 
-/**
- * Extension function to allow *numpy* like indexing for lists, for example someList[0..10..2]
- */
-operator fun IntRange.rangeTo(i: Int): IntProgression = IntProgression.fromClosedRange(first, last, i)
 
 /**
  * Add an element to a mutable collection, but only if it is not null

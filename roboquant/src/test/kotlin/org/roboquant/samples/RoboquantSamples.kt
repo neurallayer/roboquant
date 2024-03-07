@@ -155,7 +155,7 @@ internal class RoboquantSamples {
 
                     while (true) {
                         try {
-                            send(event = Event(actions, Instant.now()))
+                            send(event = Event(Instant.now(), actions))
                             delay(delayInMillis)
                         } catch (e: Exception) {
                             println(e)

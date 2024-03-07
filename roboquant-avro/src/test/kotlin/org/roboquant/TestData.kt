@@ -21,7 +21,6 @@ import org.roboquant.common.days
 import org.roboquant.common.plus
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.HistoricFeed
-import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
@@ -40,20 +39,16 @@ internal object TestData {
 
     private fun priceAction(asset: Asset = usStock()) = TradePrice(asset, 10.0)
 
-    private fun priceBar(asset: Asset = usStock()) = PriceBar(asset, 10.0, 11.0, 9.0, 10.0, 1000.0)
-
     private fun time(): Instant = Instant.parse("2020-01-03T12:00:00Z")
 
-    fun event(time: Instant = time()) = Event(listOf(priceAction()), time)
-
-    fun event2(time: Instant = time()) = Event(listOf(priceBar()), time)
+    fun event(time: Instant = time()) = Event(time, listOf(priceAction()))
 
     fun events(n: Int = 100, asset: Asset = usStock()): List<Event> {
         val start = time()
         val result = mutableListOf<Event>()
         repeat(n) {
             val action = TradePrice(asset, it + 100.0)
-            val event = Event(listOf(action), start + it.days)
+            val event = Event(start + it.days, listOf(action))
             result.add(event)
         }
         return result

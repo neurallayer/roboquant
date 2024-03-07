@@ -164,7 +164,7 @@ class TiingoLiveFeed private constructor(
 
     @Synchronized
     internal fun deliver(action: PriceItem, time: Instant) {
-        val event = Event(listOf(action), time)
+        val event = Event(time, listOf(action))
         send(event)
     }
 

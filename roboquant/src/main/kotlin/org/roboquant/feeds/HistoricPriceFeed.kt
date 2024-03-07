@@ -42,12 +42,12 @@ open class HistoricPriceFeed : HistoricFeed {
     /**
      * Return the first event in this feed
      */
-    fun first(): Event = Event(events.getValue(events.firstKey()), events.firstKey())
+    fun first(): Event = Event(events.firstKey(), events.getValue(events.firstKey()))
 
     /**
      * Return the last event in this feed
      */
-    fun last(): Event = Event(events.getValue(events.lastKey()), events.lastKey())
+    fun last(): Event = Event(events.lastKey(), events.getValue(events.lastKey()))
 
     /**
      * Remove all events from this feed, releasing claimed memory.
@@ -64,7 +64,7 @@ open class HistoricPriceFeed : HistoricFeed {
      */
     override suspend fun play(channel: EventChannel) {
         events.forEach {
-            val event = Event(it.value, it.key)
+            val event = Event(it.key, it.value)
             channel.send(event)
         }
     }

@@ -50,14 +50,14 @@ internal class TaLibMetricTest {
             Amount(Currency.USD, 0.0)
         )
 
-        val results = metric.calculate(account, Event(emptyList(), Instant.now()))
+        val results = metric.calculate(account, Event(Instant.now(), emptyList()))
         assertTrue(results.isEmpty())
 
         val feed = HistoricTestFeed(100 until 111, priceBar = true)
         val events = feed.filter<PriceBar>()
         var mResult = emptyMap<String, Double>()
         for (event in events) {
-            mResult = metric.calculate(account, Event(listOf(event.second), event.first))
+            mResult = metric.calculate(account, Event(event.first, listOf(event.second)))
         }
         assertTrue(mResult.isNotEmpty())
         assertEquals(feed.assets.size, mResult.size)

@@ -101,7 +101,7 @@ internal class PriceBarSeriesTest {
         var priceBarSerie = pbs.getValue(asset)
         assertFalse(priceBarSerie.isFull())
 
-        val event = Event(listOf(pb), Instant.now())
+        val event = Event(Instant.now(), listOf(pb))
         repeat(5) {
             pbs.addAll(event)
         }

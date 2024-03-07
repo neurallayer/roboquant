@@ -37,7 +37,7 @@ internal class AssetFilterStrategyTest {
     fun test() {
         val action = TestData.priceAction()
         val strategy = AlwaysStrategy().filter(AssetFilter.all())
-        val event = Event(listOf(action), Instant.now())
+        val event = Event(Instant.now(), listOf(action))
         val signals = strategy.generate(event)
         assertEquals(1, signals.size)
         assertEquals(1.0, signals.first().rating)
@@ -46,7 +46,7 @@ internal class AssetFilterStrategyTest {
     @Test
     fun test2() {
         val action = TestData.priceAction()
-        val event = Event(listOf(action), Instant.now())
+        val event = Event(Instant.now(), listOf(action))
         val asset = action.asset
         val strategy = AlwaysStrategy().filter(AssetFilter.excludeSymbols(asset.symbol))
         val signals = strategy.generate(event)
@@ -59,7 +59,7 @@ internal class AssetFilterStrategyTest {
         val strategy = AlwaysStrategy().filter { asset, _ ->
             asset.symbol == "DUMMY"
         }
-        val event = Event(listOf(action), Instant.now())
+        val event = Event(Instant.now(), listOf(action))
         val signals = strategy.generate(event)
         assertEquals(0, signals.size)
     }

@@ -79,7 +79,7 @@ internal class SimBrokerTest {
         val order = MarketOrder(asset, 10)
         val price = TradePrice(asset, 100.0)
         val now = Instant.now()
-        val event = Event(listOf(price), now)
+        val event = Event(now, listOf(price))
 
         broker.place(listOf(order))
         broker.sync(event)
@@ -115,7 +115,7 @@ internal class SimBrokerTest {
         val order = MarketOrder(asset, 10)
         val price = TradePrice(asset, 100.0)
         val now = Instant.now()
-        val event = Event(listOf(price), now)
+        val event = Event(now, listOf(price))
 
         broker.place(listOf(order))
         val account = broker.sync(event)
@@ -166,7 +166,7 @@ internal class SimBrokerTest {
         val order = LimitOrder(asset,Size.ONE, 99.0)
         val price = TradePrice(asset, 100.0)
         val now = Instant.now()
-        val event = Event(listOf(price), now)
+        val event = Event(now, listOf(price))
 
         broker.place(listOf(order))
         val account = broker.sync(event)
@@ -175,7 +175,7 @@ internal class SimBrokerTest {
 
         val order2 = LimitOrder(asset,Size.ONE, 101.0)
         val updateOrder = UpdateOrder(state, order2)
-        val event2 = Event(listOf(price), now + 1.millis)
+        val event2 = Event(now + 1.millis, listOf(price))
         broker.place(listOf(updateOrder))
         broker.sync(event2)
 

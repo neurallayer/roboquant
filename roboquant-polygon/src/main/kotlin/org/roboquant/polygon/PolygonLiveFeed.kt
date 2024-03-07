@@ -134,7 +134,7 @@ class PolygonLiveFeed(
                     message.lowPrice!!, message.closePrice!!, message.volume ?: Double.NaN,
                     timeSpan
                 )
-                send(Event(listOf(action), getTime(message.endTimestampMillis)))
+                send(Event(getTime(message.endTimestampMillis), listOf(action)))
             }
 
             is PolygonWebSocketMessage.StocksMessage.Trade -> {
@@ -142,7 +142,7 @@ class PolygonLiveFeed(
                 val price = message.price
                 if (price != null) {
                     val action = TradePrice(asset, price, message.size ?: Double.NaN)
-                    send(Event(listOf(action), getTime(message.timestampMillis)))
+                    send(Event(getTime(message.timestampMillis), listOf(action)))
                 }
             }
 
@@ -158,7 +158,7 @@ class PolygonLiveFeed(
                         bidPrice,
                         message.bidSize ?: Double.NaN,
                     )
-                    send(Event(listOf(action), getTime(message.timestampMillis)))
+                    send(Event(getTime(message.timestampMillis), listOf(action)))
                 }
             }
 

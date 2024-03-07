@@ -87,7 +87,7 @@ class RandomWalkFeed(
         var time = timeframe.start
         while (timeframe.contains(time)) {
             val actions = gen.next()
-            val event = Event(actions, time)
+            val event = Event(time, actions)
             channel.send(event)
             time += timeSpan
         }

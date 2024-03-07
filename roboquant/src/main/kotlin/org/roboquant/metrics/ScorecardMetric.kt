@@ -48,12 +48,12 @@ class ScorecardMetric : Metric {
         val pnl = account.trades.map { it.pnl.convert(account.baseCurrency, event.time).value }
 
         val winnerList = pnl.filter { it > 0.0 }
-        val winners = winnerList.count()
+        val winners = winnerList.size
         val totalWinning = winnerList.sum()
         val maxWinning = winnerList.maxOrNull() ?: Double.NaN
 
         val loserList = pnl.filter { it < 0.0 }
-        val losers = loserList.count()
+        val losers = loserList.size
         val totalLoosing = loserList.sum()
         val maxLoosing = loserList.minOrNull() ?: Double.NaN
 
