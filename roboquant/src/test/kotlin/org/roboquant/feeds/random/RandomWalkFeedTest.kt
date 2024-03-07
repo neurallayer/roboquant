@@ -48,12 +48,12 @@ internal class RandomWalkFeedTest {
     fun itemTypes() = runBlocking {
         val feed = RandomWalkFeed.lastYears(generateBars = false)
         val event = play(feed).receive()
-        assertTrue(event.actions.first() is TradePrice)
+        assertTrue(event.items.first() is TradePrice)
 
         val tl = Timeframe.fromYears(2010, 2012)
         val feed2 = RandomWalkFeed(tl, generateBars = true)
         val item2 = play(feed2).receive()
-        assertTrue(item2.actions.first() is PriceBar)
+        assertTrue(item2.items.first() is PriceBar)
     }
 
     @Test

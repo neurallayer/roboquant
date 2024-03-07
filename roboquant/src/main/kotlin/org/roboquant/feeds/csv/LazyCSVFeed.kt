@@ -19,7 +19,7 @@ package org.roboquant.feeds.csv
 import de.siegmar.fastcsv.reader.CsvReader
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
-import org.roboquant.feeds.Action
+import org.roboquant.feeds.Item
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
@@ -109,12 +109,12 @@ class LazyCSVFeed internal constructor(
             while (queue.isNotEmpty()) {
                 val now = queue.first().time
                 assert(now > last) { "Found unsorted time $now in ${queue.first().price.asset}" }
-                val actions = mutableListOf<Action>()
+                val items = mutableListOf<Item>()
                 var done = false
                 while (!done) {
                     val entry = queue.firstOrNull()
                     if (entry != null && entry.time == now) {
-                        actions.add(entry.price)
+                        items.add(entry.price)
                         queue.remove()
                         val asset = entry.price.asset
                         val next = readers[asset]?.next()
@@ -123,7 +123,7 @@ class LazyCSVFeed internal constructor(
                         done = true
                     }
                 }
-                val event = Event(actions, now)
+                val event = Event(items, now)
                 channel.send(event)
                 last = now
             }

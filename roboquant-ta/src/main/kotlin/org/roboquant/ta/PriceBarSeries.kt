@@ -17,7 +17,7 @@
 package org.roboquant.ta
 
 import org.roboquant.common.*
-import org.roboquant.feeds.Action
+import org.roboquant.feeds.Item
 import org.roboquant.feeds.PriceBar
 import java.time.Instant
 import java.util.*
@@ -98,12 +98,12 @@ open class PriceBarSeries(capacity: Int) {
     }
 
     /**
-     * Update the buffer with a new [action] and [time], but only if the action is a price-bar.
+     * Update the buffer with a new [item] and [time], but only if the item is a price-bar.
      * Return true if a value has been added and it is full.
      */
-    fun add(action: Action, time: Instant): Boolean {
-        return if (action is PriceBar) {
-            add(action, time)
+    fun add(item: Item, time: Instant): Boolean {
+        return if (item is PriceBar) {
+            add(item, time)
         } else {
             false
         }

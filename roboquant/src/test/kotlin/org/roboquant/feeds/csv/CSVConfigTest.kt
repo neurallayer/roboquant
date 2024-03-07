@@ -83,7 +83,7 @@ internal class CSVConfigTest {
         val feed = CSVFeed(TestData.dataDir() / "KRAKEN", config) {}
         assertEquals(1, feed.assets.size)
         assertEquals(4, feed.timeline.size)
-        assertEquals(20, feed.toList().map { it.actions }.flatten().size)
+        assertEquals(20, feed.toList().map { it.items }.flatten().size)
         assertEquals(Timeframe.parse("2017-08-01T16:03:53Z", "2017-08-01T16:04:00Z").toInclusive(), feed.timeframe)
     }
 
@@ -96,7 +96,7 @@ internal class CSVConfigTest {
         assertEquals("TEST", feed.assets.first().symbol)
         assertEquals(Timeframe.parse("2023-01-03T16:00:00Z", "2023-01-05T17:00:00Z").toInclusive(), feed.timeframe)
 
-        val pb = feed.toList().first().actions.first()
+        val pb = feed.toList().first().items.first()
         assertTrue(pb is PriceBar)
         assertEquals(1.minutes, pb.timeSpan)
     }

@@ -22,7 +22,7 @@ import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.alpaca.AlpacaLiveFeed
 import org.roboquant.alpaca.PriceActionType
 import org.roboquant.common.*
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
 import org.roboquant.loggers.InfoLogger
@@ -104,7 +104,7 @@ internal class AlpacaSamples {
     internal fun alpacaLiveFeed() {
         val feed = AlpacaLiveFeed()
         feed.subscribeStocks(*symbols, type = PriceActionType.QUOTE)
-        feed.filter<PriceAction>(Timeframe.next(5.minutes)) {
+        feed.filter<PriceItem>(Timeframe.next(5.minutes)) {
             println(it)
             false
         }

@@ -22,7 +22,7 @@ import org.roboquant.brokers.exposure
 import org.roboquant.brokers.getPosition
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.orders.*
 import org.roboquant.strategies.Signal
 import java.time.Instant
@@ -144,7 +144,7 @@ open class FlexPolicy(
         ): FlexPolicy {
             class MyPolicy : FlexPolicy(configure = configure) {
 
-                override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order {
+                override fun createOrder(signal: Signal, size: Size, priceAction: PriceItem): Order {
                     val price = priceAction.getPrice(config.priceType)
                     return BracketOrder.marketTrailStop(signal.asset, size, price, trailPercentage, stopPercentage)
                 }
@@ -171,7 +171,7 @@ open class FlexPolicy(
         ): FlexPolicy {
             class MyPolicy : FlexPolicy(configure = configure) {
 
-                override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order {
+                override fun createOrder(signal: Signal, size: Size, priceAction: PriceItem): Order {
                     val price = priceAction.getPrice(config.priceType)
 
                     // BUY orders have a below market price limit, and SELL order above
@@ -220,7 +220,7 @@ open class FlexPolicy(
      *
      * Overwrite this method if you want to create orders other than the default [MarketOrder].
      */
-    open fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order? {
+    open fun createOrder(signal: Signal, size: Size, priceAction: PriceItem): Order? {
         return MarketOrder(signal.asset, size)
     }
 
@@ -262,7 +262,7 @@ open class FlexPolicy(
      * The main purpose is to better understand when the policy is not behaving as expected.
      */
     open fun record(orders: List<Order>, signals: List<Signal>, event: Event, account: Account) {
-        record("actions", event.actions.size)
+        record("actions", event.items.size)
         record("signals", signals.size)
         record("orders.new", orders.size)
         record("orders.open", account.openOrders.size)

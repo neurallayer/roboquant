@@ -26,7 +26,7 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.util.AssetSerializer.deserialize
 import java.nio.file.Path
 import java.util.*
@@ -105,7 +105,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
 
         engine.query(sql) {
             val lookup = mutableMapOf<String, Asset>()
-            var actions = mutableListOf<PriceAction>()
+            var actions = mutableListOf<PriceItem>()
 
             var last = Long.MIN_VALUE
             while (hasNext()) {

@@ -19,7 +19,7 @@ package org.roboquant.strategies
 import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -27,7 +27,7 @@ internal class SingleAssetStrategyTest {
 
     private class MyStrategy(asset: Asset) : SingleAssetStrategy(asset) {
 
-        override fun generate(priceAction: PriceAction, time: Instant): Signal {
+        override fun generate(priceAction: PriceItem, time: Instant): Signal {
             return Signal.buy(asset)
         }
 

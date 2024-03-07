@@ -19,13 +19,13 @@ package org.roboquant.brokers
 import org.roboquant.common.*
 import org.roboquant.common.Currency
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import java.time.Instant
 import java.util.*
 
 /**
- * Use a feed with [PriceAction] to determine currency conversion rates.
+ * Use a feed with [PriceItem] to determine currency conversion rates.
  *
  * @param feed the feed to use
  * @property priceType the type of price, by default "DEFAULT"
@@ -53,7 +53,7 @@ class FeedExchangeRates(
 
 
     private fun setRates(feed: Feed) {
-        val actions = feed.filter<PriceAction> { it.asset.type in assetTypes }
+        val actions = feed.filter<PriceItem> { it.asset.type in assetTypes }
         for ((now, action) in actions) {
             val asset = action.asset
             val rate = action.getPrice(priceType)

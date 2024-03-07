@@ -18,7 +18,7 @@ package org.roboquant.ibkr
 
 import kotlin.test.Test
 import org.roboquant.common.*
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import kotlin.test.assertTrue
 
@@ -36,7 +36,7 @@ internal class IBKRLiveFeedTestIT {
 
         feed.subscribe(Asset("KPN", AssetType.STOCK, "EUR", "AEB"))
 
-        val actions = feed.filter<PriceAction>(Timeframe.next(2.minutes)) {
+        val actions = feed.filter<PriceItem>(Timeframe.next(2.minutes)) {
             logger.info("received price $it")
             true
         }

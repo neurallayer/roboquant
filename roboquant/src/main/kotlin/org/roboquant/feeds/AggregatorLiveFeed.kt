@@ -110,7 +110,7 @@ class AggregatorLiveFeed(
         try {
             while (true) {
                 val event = inputChannel.receive()
-                val actions = event.actions
+                val actions = event.items
 
                 // Send heart beats from the original feed
                 if (actions.isEmpty()) {

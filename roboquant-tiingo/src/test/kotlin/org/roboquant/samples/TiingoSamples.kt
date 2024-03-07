@@ -85,7 +85,7 @@ internal class TiingoSamples {
         feed.subscribe() // subscribe to all crypto currencies
         var n = 0
         var sum = 0L
-        feed.apply<PriceAction>(Timeframe.next(1.minutes)) { _, time ->
+        feed.apply<PriceItem>(Timeframe.next(1.minutes)) { _, time ->
             val now = Instant.now()
             sum += now.toEpochMilli() - time.toEpochMilli()
             n++
@@ -107,7 +107,7 @@ internal class TiingoSamples {
         try {
             while (true) {
                 val o = channel.receive()
-                if (o.actions.isNotEmpty()) {
+                if (o.items.isNotEmpty()) {
                     sum += System.currentTimeMillis() - o.time.toEpochMilli()
                     n++
                 }

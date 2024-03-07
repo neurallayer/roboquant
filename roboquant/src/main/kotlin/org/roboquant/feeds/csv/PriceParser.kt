@@ -18,7 +18,7 @@ package org.roboquant.feeds.csv
 
 import org.roboquant.common.Asset
 import org.roboquant.common.TimeSpan
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceQuote
 import org.roboquant.feeds.TradePrice
@@ -35,9 +35,9 @@ fun interface PriceParser {
     fun init(header: List<String>) {}
 
     /**
-     * Return an [PriceAction] given the provided [line] of strings and [asset]
+     * Return an [PriceItem] given the provided [line] of strings and [asset]
      */
-    fun parse(line: List<String>, asset: Asset): PriceAction
+    fun parse(line: List<String>, asset: Asset): PriceItem
 
 }
 

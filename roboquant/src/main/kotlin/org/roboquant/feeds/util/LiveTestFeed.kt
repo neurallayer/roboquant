@@ -64,7 +64,7 @@ class LiveTestFeed(
 
     }
 
-    private fun getAction(price: Double): Action {
+    private fun getAction(price: Double): Item {
         return if (priceBar) {
             PriceBar(asset, price, price * 1.001, price * 0.999, price, volume)
         } else {

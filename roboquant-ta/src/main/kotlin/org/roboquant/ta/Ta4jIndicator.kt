@@ -17,7 +17,7 @@
 package org.roboquant.ta
 
 import org.roboquant.common.toUTC
-import org.roboquant.feeds.Action
+import org.roboquant.feeds.Item
 import org.roboquant.feeds.PriceBar
 import org.roboquant.metrics.Indicator
 import org.ta4j.core.BarSeries
@@ -42,9 +42,9 @@ class Ta4jIndicator(
     /**
      * @see Indicator.calculate
      */
-    override fun calculate(action: Action, time: Instant): Map<String, Double> {
-        return if (action is PriceBar) {
-            series.addBar(time.toUTC(), action.open, action.high, action.low, action.close, action.volume)
+    override fun calculate(item: Item, time: Instant): Map<String, Double> {
+        return if (item is PriceBar) {
+            series.addBar(time.toUTC(), item.open, item.high, item.low, item.close, item.volume)
             block(series)
         } else {
             emptyMap()

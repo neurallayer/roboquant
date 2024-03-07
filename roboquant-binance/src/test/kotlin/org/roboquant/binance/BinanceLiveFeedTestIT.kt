@@ -21,7 +21,7 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -59,7 +59,7 @@ internal class BinanceLiveFeedTestIT {
         assertTrue { feed.assets.all { it.symbol == symbol } }
 
         val timeframe = Timeframe.next(3.minutes)
-        val prices = feed.filter<PriceAction>(timeframe = timeframe) {
+        val prices = feed.filter<PriceItem>(timeframe = timeframe) {
             true
         }
         feed.close()

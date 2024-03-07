@@ -18,7 +18,7 @@ package org.roboquant.alpaca
 
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.*
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import kotlin.test.Test
@@ -38,7 +38,7 @@ internal class AlpacaLiveFeedTestIT {
         assertContains(assets.map { it.symbol }, "AAPL")
         feed.subscribeStocks("AAPL")
         assertContains(feed.assets.symbols, "AAPL")
-        val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
+        val actions = feed.filter<PriceItem>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
             val action = actions.first()
@@ -55,7 +55,7 @@ internal class AlpacaLiveFeedTestIT {
         val feed = AlpacaLiveFeed()
         feed.subscribeStocks("AAPL")
 
-        val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
+        val actions = feed.filter<PriceItem>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
             val action = actions.first().second
@@ -71,7 +71,7 @@ internal class AlpacaLiveFeedTestIT {
         val feed = AlpacaLiveFeed()
         val symbol = feed.availableAssets.first { it.type == AssetType.CRYPTO }.symbol
         feed.subscribeCrypto(symbol)
-        val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
+        val actions = feed.filter<PriceItem>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
             val action = actions.first().second
@@ -93,7 +93,7 @@ internal class AlpacaLiveFeedTestIT {
         val symbols = feed.availableStocks.take(5).symbols
         feed.subscribeStocks(*symbols)
 
-        val actions = feed.filter<PriceAction>(Timeframe.next(liveTestTime))
+        val actions = feed.filter<PriceItem>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
             val action = actions.first().second

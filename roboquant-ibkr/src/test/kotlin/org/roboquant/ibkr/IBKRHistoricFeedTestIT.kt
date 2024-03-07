@@ -19,7 +19,7 @@ package org.roboquant.ibkr
 import org.roboquant.common.Asset
 import org.roboquant.common.AssetType
 import org.roboquant.common.Config
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -35,7 +35,7 @@ internal class IBKRHistoricFeedTestIT {
         val assets = symbols.map { Asset(it, AssetType.STOCK, "EUR", "AEB") }.toTypedArray()
         feed.retrieve(*assets)
         feed.waitTillRetrieved()
-        val actions = feed.filter<PriceAction>()
+        val actions = feed.filter<PriceItem>()
         assertTrue(actions.isNotEmpty())
 
     }
@@ -50,7 +50,7 @@ internal class IBKRHistoricFeedTestIT {
         val assets = symbols.map { Asset(it, AssetType.STOCK, "USD", "") }.toTypedArray()
         feed.retrieve(*assets)
         feed.waitTillRetrieved()
-        val actions = feed.filter<PriceAction>()
+        val actions = feed.filter<PriceItem>()
         assertTrue(actions.isNotEmpty())
     }
 

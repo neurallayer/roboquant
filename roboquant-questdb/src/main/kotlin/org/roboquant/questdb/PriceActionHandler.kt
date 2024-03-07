@@ -23,7 +23,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.ConfigurationException
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.UnsupportedException
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceQuote
 import org.roboquant.feeds.TradePrice
@@ -33,9 +33,9 @@ import kotlin.reflect.KClass
 /**
  * Interface for various price action handlers
  */
-internal interface PriceActionHandler<T : PriceAction> {
+internal interface PriceActionHandler<T : PriceItem> {
 
-    fun updateRecord(row: TableWriter.Row, action: PriceAction)
+    fun updateRecord(row: TableWriter.Row, action: PriceItem)
 
     fun getPriceAction(asset: Asset, record: Record): T
 
@@ -64,7 +64,7 @@ internal interface PriceActionHandler<T : PriceAction> {
                 PriceBar::class -> PriceBarHandler()
                 PriceQuote::class -> PriceQuoteHandler()
                 TradePrice::class -> TradePriceHandler()
-                else -> throw UnsupportedException("PriceAction ${type.simpleName} not supported")
+                else -> throw UnsupportedException("PriceItem ${type.simpleName} not supported")
             }
         }
 
@@ -95,7 +95,7 @@ private class PriceBarHandler : PriceActionHandler<PriceBar> {
         )
     }
 
-    override fun updateRecord(row: TableWriter.Row, action: PriceAction) {
+    override fun updateRecord(row: TableWriter.Row, action: PriceItem) {
         if (action !is PriceBar) return
         with(action) {
             row.putDouble(2, open)
@@ -140,7 +140,7 @@ private class TradePriceHandler : PriceActionHandler<TradePrice> {
     }
 
 
-    override fun updateRecord(row: TableWriter.Row, action: PriceAction) {
+    override fun updateRecord(row: TableWriter.Row, action: PriceItem) {
         if (action !is TradePrice) return
         with(action) {
             row.putDouble(2, price)
@@ -177,7 +177,7 @@ private class PriceQuoteHandler : PriceActionHandler<PriceQuote> {
     }
 
 
-    override fun updateRecord(row: TableWriter.Row, action: PriceAction) {
+    override fun updateRecord(row: TableWriter.Row, action: PriceItem) {
         if (action !is PriceQuote) return
         with(action) {
             row.putDouble(2, askPrice)

@@ -25,7 +25,7 @@ import kotlin.math.absoluteValue
 /**
  * An action is the lowest level of information contained in an [Event] and can be anything from a price action for an
  * asset to an annual report or a Twitter tweet.
- * An action doesn't have to be linked to a particular asset, although [PriceAction]s are.
+ * An action doesn't have to be linked to a particular asset, although [PriceItem]s are.
  *
  * The content of the action is determined by the class implementing this interface. Strategies are expected to filter
  * on those types of actions they are interested in.
@@ -36,12 +36,12 @@ import kotlin.math.absoluteValue
  * ```
  *
  */
-interface Action
+interface Item
 
 /**
- * PriceAction represents an [Action] that contains pricing information for a single [Asset].
+ * PriceItem represents an [Item] that contains pricing information for a single [Asset].
  */
-interface PriceAction : Action {
+interface PriceItem : Item {
 
     /**
      * The underlying asset of the price action
@@ -49,7 +49,7 @@ interface PriceAction : Action {
     val asset: Asset
 
     /**
-     * Get the price for this PriceAction. If more than one price is available, optionally the
+     * Get the price for this PriceItem. If more than one price is available, optionally the
      * [type] of price can be passed as a parameter. For example, "CLOSE" in case of a candlestick.
      *
      * Any implementation is expected to return a default price if the type is not recognized. This way strategies
@@ -66,8 +66,8 @@ interface PriceAction : Action {
      * Volume for the price action.
      * If not supported, it returns [Double.NaN].
      *
-     * Volume in the context of a PriceAction can mean different things. For example, is can be trade volume but also
-     * the total order-book volume, depending on the type of PriceAction.
+     * Volume in the context of a PriceItem can mean different things. For example, is can be trade volume but also
+     * the total order-book volume, depending on the type of PriceItem.
      */
     val volume: Double
 
@@ -87,7 +87,7 @@ class PriceBar(
     override val asset: Asset,
     val ohlcv: DoubleArray,
     val timeSpan: TimeSpan? = null
-) : PriceAction {
+) : PriceItem {
 
     /**
      * Convenience constructor to allow the instantiation with any type of number.
@@ -190,7 +190,7 @@ class PriceBar(
  * @constructor Create a new instance of Trade Price
  */
 data class TradePrice(override val asset: Asset, val price: Double, override val volume: Double = Double.NaN) :
-    PriceAction {
+    PriceItem {
 
     /**
      * Returns the underlying [price].
@@ -218,7 +218,7 @@ data class PriceQuote(
     val askSize: Double,
     val bidPrice: Double,
     val bidSize: Double
-) : PriceAction {
+) : PriceItem {
 
     /**
      * Return the underlying price. The available [types][type] are:
@@ -271,7 +271,7 @@ data class OrderBook(
     override val asset: Asset,
     val asks: List<OrderBookEntry>,
     val bids: List<OrderBookEntry>
-) : PriceAction {
+) : PriceItem {
 
     /**
      * Returns the total number of entries (asks + bids) in this order book
@@ -360,7 +360,7 @@ data class OrderBook(
  * @property value
  * @constructor Create empty Corporate action
  */
-class CorporateAction(val asset: Asset, val type: String, val value: Double) : Action
+class CorporateItem(val asset: Asset, val type: String, val value: Double) : Item
 
 /**
  * Can contain news items from market news sources or social media like Twitter and Reddit
@@ -369,7 +369,7 @@ class CorporateAction(val asset: Asset, val type: String, val value: Double) : A
  * @property items list of news items
  * @constructor Create new News action
  */
-class NewsAction(val items: List<NewsItem>) : Action {
+class NewsItem(val items: List<NewsItem>) : Item {
 
     /**
      * News item contains a single news item (text) with optionally extra metadata like

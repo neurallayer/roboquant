@@ -22,7 +22,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.ParallelJobs
 import org.roboquant.feeds.HistoricPriceFeed
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import java.io.File
 import java.io.FileReader
 import java.nio.file.Path
@@ -138,7 +138,7 @@ class CSVFeed internal constructor(
 
 }
 
-internal class PriceEntry(val time: Instant, val price: PriceAction) : Comparable<PriceEntry> {
+internal class PriceEntry(val time: Instant, val price: PriceItem) : Comparable<PriceEntry> {
 
     /**
      * Compares this object with the specified object for order. Returns zero if this object is equal

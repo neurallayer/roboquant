@@ -16,7 +16,7 @@
 
 package org.roboquant.ta
 
-import org.roboquant.feeds.Action
+import org.roboquant.feeds.Item
 import org.roboquant.metrics.Indicator
 import java.time.Instant
 
@@ -45,8 +45,8 @@ class TaLibIndicator(
     /**
      * @see Indicator.calculate
      */
-    override fun calculate(action: Action, time: Instant): Map<String, Double> {
-        if (series.add(action, time)) {
+    override fun calculate(item: Item, time: Instant): Map<String, Double> {
+        if (series.add(item, time)) {
             try {
                 return block.invoke(taLib, series)
             } catch (ex: InsufficientData) {

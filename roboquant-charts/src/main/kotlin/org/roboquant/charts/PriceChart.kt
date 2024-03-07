@@ -31,7 +31,7 @@ import org.roboquant.brokers.Trade
 import org.roboquant.common.*
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.metrics.Indicator
 import org.roboquant.metrics.apply
@@ -60,7 +60,7 @@ internal fun Array<out Indicator>.toLineSeries(feed: Feed, asset: Asset, timefra
  * Plot the prices of an [asset] found in the [feed] and optionally the [trades] made for that same asset. When
  * supplying trades, the corresponding [Trade.size] will we plotted as markers.
  *
- * This chart supports any type of PriceAction.
+ * This chart supports any type of PriceItem.
  *
  * If you want to plot a candlestick chart, use the [PriceBarChart] instead.
  */
@@ -91,7 +91,7 @@ class PriceChart(
      * Play the feed and filter the provided asset for price bar data. The output is suitable for candle stock charts
      */
     private fun priceSeries(): LineSeries {
-        val entries = feed.filter<PriceAction>(timeframe) { it.asset == asset }
+        val entries = feed.filter<PriceItem>(timeframe) { it.asset == asset }
         val data = entries.map {
             // val price = it.second.getPriceAmount(priceType)
             // it.first to price.toBigDecimal()

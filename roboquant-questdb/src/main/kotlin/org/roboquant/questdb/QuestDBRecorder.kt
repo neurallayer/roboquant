@@ -44,7 +44,7 @@ import kotlin.reflect.KClass
  * - Supports up to micro seconds resolution
  * - Supports large datasets
  * - Fast random access
- * - Limited to a single [PriceAction] type per table
+ * - Limited to a single [PriceItem] type per table
  *
  * @param dbPath the path to use for the database.
  * If it doesn't exist yet, it will be created.
@@ -155,7 +155,7 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
             val lookupTable = mutableMapOf<Asset, String>()
             while (true) {
                 val o = channel.receive()
-                for (action in o.actions.filterIsInstance<PriceAction>()) {
+                for (action in o.items.filterIsInstance<PriceItem>()) {
                     if (action::class == type) {
                         val row = writer.newRow(o.time.epochMicro)
                         val str = lookupTable.getOrPut(action.asset) { action.asset.serialize() }
@@ -192,7 +192,7 @@ class QuestDBRecorder(dbPath: Path = Config.home / "questdb-prices" / "db") {
      * This is required when wanting to append timestamps out of order and might result in better overall performance.
      * The default value is [NONE]
      */
-    inline fun <reified T : PriceAction> record(
+    inline fun <reified T : PriceItem> record(
       feed: Feed,
       tableName: String,
       timeframe: Timeframe = Timeframe.INFINITE,

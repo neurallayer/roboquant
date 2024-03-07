@@ -19,7 +19,7 @@ package org.roboquant.metrics
 import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.common.Timeframe
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -36,7 +36,7 @@ internal class EventRecorderMetricTest {
         assertEquals(Timeframe(event.time, event.time, true), metric.timeframe)
 
         metric.calculate(account, event)
-        var results = metric.filter<PriceAction>()
+        var results = metric.filter<PriceItem>()
         assertEquals(2, results.size)
 
         metric.reset()

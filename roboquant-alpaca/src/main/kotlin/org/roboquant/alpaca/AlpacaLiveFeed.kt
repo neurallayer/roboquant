@@ -207,7 +207,7 @@ class AlpacaLiveFeed(
             if (msg is SymbolMessage) {
                 val asset = assetMap.getValue(msg.symbol)
 
-                val action: PriceAction? = when (msg) {
+                val action: PriceItem? = when (msg) {
                     is TradeMessage -> TradePrice(asset, msg.price)
                     is QuoteMessage -> PriceQuote(
                         asset,

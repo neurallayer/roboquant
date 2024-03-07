@@ -20,7 +20,7 @@ import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.assets
 import org.roboquant.common.*
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.ibkr.IBKR
 import org.roboquant.ibkr.IBKRBroker
@@ -147,7 +147,7 @@ internal class IBKRSamples {
         val asset = Asset("ABN", AssetType.STOCK, "EUR", "AEB")
         feed.subscribe(listOf(asset))
         val tf = Timeframe.next(10.minutes)
-        val data = feed.filter<PriceAction>(tf) {
+        val data = feed.filter<PriceItem>(tf) {
             println(it)
             true
         }
@@ -161,7 +161,7 @@ internal class IBKRSamples {
         val asset = Asset("TSLA", AssetType.STOCK, "USD")
         feed.subscribe(listOf(asset))
         val tf = Timeframe.next(1.minutes)
-        val data = feed.filter<PriceAction>(tf) {
+        val data = feed.filter<PriceItem>(tf) {
             println(it)
             true
         }

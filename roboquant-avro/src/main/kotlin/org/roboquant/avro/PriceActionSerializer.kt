@@ -22,7 +22,7 @@ import org.roboquant.common.UnsupportedException
 import org.roboquant.feeds.*
 
 /**
- * Used by AvroFeed to serialize and deserialize [PriceAction] to a DoubleArray, so it can be stored in an Avro file.
+ * Used by AvroFeed to serialize and deserialize [PriceItem] to a DoubleArray, so it can be stored in an Avro file.
  */
 internal class PriceActionSerializer {
 
@@ -37,7 +37,7 @@ internal class PriceActionSerializer {
         private const val ORDERBOOK_IDX = 4
     }
 
-    fun serialize(action: PriceAction): Serialization {
+    fun serialize(action: PriceItem): Serialization {
         return when (action) {
             is PriceBar -> Serialization(PRICEBAR_IDX, action.ohlcv.toList(), action.timeSpan?.toString())
             is TradePrice -> Serialization(TRADEPRICE_IDX, listOf(action.price, action.volume))
@@ -61,7 +61,7 @@ internal class PriceActionSerializer {
         return PriceBar(asset, values, timeSpan)
     }
 
-    fun deserialize(asset: Asset, idx: Int, values: List<Double>, other: String?): PriceAction {
+    fun deserialize(asset: Asset, idx: Int, values: List<Double>, other: String?): PriceItem {
         return when (idx) {
             PRICEBAR_IDX -> getPriceBar(asset, values.toDoubleArray(), other)
             TRADEPRICE_IDX -> TradePrice(asset, values[0], values[1])

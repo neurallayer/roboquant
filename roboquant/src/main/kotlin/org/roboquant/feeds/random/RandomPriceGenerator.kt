@@ -19,7 +19,7 @@ package org.roboquant.feeds.random
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.TimeSpan
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
 import java.util.*
@@ -40,7 +40,7 @@ internal class RandomPriceGenerator(
     // Create initial prices for all assets between 50 and 500
     private val prices = assets.map { random.nextDouble(50.0, 500.0) }.toMutableList()
 
-    private fun priceBar(asset: Asset, price: Double): PriceAction {
+    private fun priceBar(asset: Asset, price: Double): PriceItem {
         val v = DoubleArray(4) { price.nextPrice() }
         v.sort()
 
@@ -57,7 +57,7 @@ internal class RandomPriceGenerator(
     /**
      * Generate random single price actions
      */
-    private fun tradePrice(asset: Asset, price: Double): PriceAction {
+    private fun tradePrice(asset: Asset, price: Double): PriceItem {
         val volume = random.nextInt(volumeRange / 2, volumeRange * 2)
         return TradePrice(asset, price, volume.toDouble())
     }

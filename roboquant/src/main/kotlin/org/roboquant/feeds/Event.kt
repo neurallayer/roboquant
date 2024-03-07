@@ -21,23 +21,23 @@ import org.roboquant.common.Timeframe
 import java.time.Instant
 
 /**
- * An event contains a list of [actions] that all happened at the same moment in [time].
+ * An event contains a list of [items] that all happened at the same moment in [time].
  *
- * @property actions the list of actions that are part of this event
+ * @property items the list of actions that are part of this event
  * @property time the time that the actions in this event became available
  */
-class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
+class Event(val items: List<Item>, val time: Instant) : Comparable<Event> {
 
     /**
      * Convenience property for accessing the price actions in this event. The result is cached so that accessing
      * this property multiple times is quick.
      *
      * If there are multiple price actions for a single asset in the event, the last one found will be returned. If
-     * you need access to all prices for an asset, iterate over the [actions] directly.
+     * you need access to all prices for an asset, iterate over the [items] directly.
      */
-    val prices: Map<Asset, PriceAction> by lazy {
-        val result = HashMap<Asset, PriceAction>(actions.size)
-        for (action in actions) if (action is PriceAction) result[action.asset] = action
+    val prices: Map<Asset, PriceItem> by lazy {
+        val result = HashMap<Asset, PriceItem>(items.size)
+        for (action in items) if (action is PriceItem) result[action.asset] = action
         result
     }
 
@@ -47,7 +47,7 @@ class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
     companion object {
 
         /**
-         * Return an event without any [actions] with as default [time] the current system time.
+         * Return an event without any [items] with as default [time] the current system time.
          */
         fun empty(time: Instant = Instant.now()): Event = Event(emptyList(), time)
 
@@ -58,7 +58,7 @@ class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
      * the asset in this event. Optionally you can specify the [type] of price.
      *
      * If there are multiple price actions for a single asset in the event, the last one found will be returned. If
-     * you require access to all prices for an asset, access [actions] directly.
+     * you require access to all prices for an asset, access [items] directly.
      */
     fun getPrice(asset: Asset, type: String = "DEFAULT"): Double? {
         return prices[asset]?.getPrice(type)
@@ -73,18 +73,18 @@ class Event(val actions: List<Action>, val time: Instant) : Comparable<Event> {
     /**
      * Return true if this is event has at least one action, false otherwise
      */
-    fun isNotEmpty(): Boolean = actions.isNotEmpty()
+    fun isNotEmpty(): Boolean = items.isNotEmpty()
 
     /**
      * Return true if this event has no actions, false otherwise
      */
-    fun isEmpty(): Boolean = actions.isEmpty()
+    fun isEmpty(): Boolean = items.isEmpty()
 
     /**
      * Provide the event time
      */
     override fun toString(): String {
-        return "Event(time=$time actions=${actions.size})"
+        return "Event(time=$time actions=${items.size})"
     }
 }
 

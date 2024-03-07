@@ -41,11 +41,11 @@ internal class AlpacaHistoricFeedTestIT {
         feed.close()
     }
 
-    private inline fun <reified T : PriceAction> testResult(feed: AlpacaHistoricFeed) {
+    private inline fun <reified T : PriceItem> testResult(feed: AlpacaHistoricFeed) {
         assertTrue(timeframe.contains(feed.timeline.first()))
         assertTrue(timeframe.contains(feed.timeline.last()))
 
-        val actions = feed.filter<PriceAction>()
+        val actions = feed.filter<PriceItem>()
         val action = actions.first().second
         assertTrue(action is T)
         assertEquals("A", action.asset.symbol)
@@ -84,7 +84,7 @@ internal class AlpacaHistoricFeedTestIT {
             barPeriod = BarPeriod.MINUTE,
             barAdjustment = BarAdjustment.ALL
         )
-        val actions = feed.filter<PriceAction>()
+        val actions = feed.filter<PriceItem>()
         assertEquals(5, Duration.between(actions[0].first, actions[1].first).toMinutes())
     }
 
@@ -98,7 +98,7 @@ internal class AlpacaHistoricFeedTestIT {
             barPeriod = BarPeriod.MINUTE,
             barAdjustment = BarAdjustment.SPLIT
         )
-        val actions = feed.filter<PriceAction>()
+        val actions = feed.filter<PriceItem>()
         assertEquals(15, Duration.between(actions[0].first, actions[1].first).toMinutes())
     }
 }

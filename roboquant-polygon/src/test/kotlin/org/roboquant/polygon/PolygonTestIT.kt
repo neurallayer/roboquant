@@ -19,7 +19,7 @@ package org.roboquant.polygon
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.*
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
 import java.time.Instant
@@ -71,7 +71,7 @@ internal class PolygonTestIT {
         Config.getProperty("TEST_POLYGON") ?: return@runBlocking
         val feed = PolygonLiveFeed()
         feed.subscribe("IBM", "AAPL")
-        val actions = feed.filter<PriceAction>(timeframe = Timeframe.next(5.minutes))
+        val actions = feed.filter<PriceItem>(timeframe = Timeframe.next(5.minutes))
         assertTrue(actions.isNotEmpty())
         feed.disconnect()
     }
@@ -94,6 +94,6 @@ internal class PolygonTestIT {
         assertContains(feed.assets.symbols, "AAPL")
         assertContains(feed.assets.symbols, "TSLA")
 
-        assertTrue(feed.toList().flatMap { it.actions }.all { it is SecFiling })
+        assertTrue(feed.toList().flatMap { it.items }.all { it is SecFiling })
     }
 }

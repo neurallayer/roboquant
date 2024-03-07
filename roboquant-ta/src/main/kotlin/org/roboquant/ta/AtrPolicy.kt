@@ -20,7 +20,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.orders.*
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.FlexPolicyConfig
@@ -141,7 +141,7 @@ open class AtrPolicy(
     /**
      * @see FlexPolicy.createOrder
      */
-    override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order? {
+    override fun createOrder(signal: Signal, size: Size, priceAction: PriceItem): Order? {
         val asset = signal.asset
 
         // Calculate the ATR

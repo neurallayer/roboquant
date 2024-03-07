@@ -166,7 +166,13 @@ internal class RoboquantTest {
     fun run2()  {
         assertDoesNotThrow {
             val strategy = EMAStrategy()
-            run(TestData.feed, strategy, journal = BasicJournal())
+            val journal = BasicJournal()
+            run(TestData.feed, strategy, journal)
+            assertTrue(journal.nEvents > 0)
+            assertTrue(journal.nItems > 0)
+            assertTrue(journal.nSignals > 0)
+            assertTrue(journal.nOrders > 0)
+            assertTrue(journal.lastTime != null)
         }
     }
 

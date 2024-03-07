@@ -18,7 +18,7 @@ class BasicJournal(private val printToConsole: Boolean = false) : Journal {
     var lastTime: Instant? = null
 
     override fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {
-        nItems += event.actions.size
+        nItems += event.items.size
         nSignals += signals.size
         nOrders += orders.size
         nEvents += 1

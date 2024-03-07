@@ -17,7 +17,7 @@
 package org.roboquant.charts
 
 import org.roboquant.common.Timeframe
-import org.roboquant.feeds.Action
+import org.roboquant.feeds.Item
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.metrics.Indicator
 import java.time.Instant
@@ -46,7 +46,7 @@ internal class PriceChartTest {
     @Test
     fun indicators() {
         class MyIndicator : Indicator {
-            override fun calculate(action: Action, time: Instant): Map<String, Double> {
+            override fun calculate(item: Item, time: Instant): Map<String, Double> {
                 return mapOf("one" to 1.0, "two" to 2.0)
             }
         }

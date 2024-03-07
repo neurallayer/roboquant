@@ -25,14 +25,14 @@ import org.icepear.echarts.charts.treemap.TreemapSeriesLabel
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.*
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 /**
  * Use the assets and prices found in the [feed] to plot the assets, their returns and trading volume as a tree map.
- * This chart works on feeds that contain [price actions][PriceAction] that also have [volume][PriceAction.volume]
+ * This chart works on feeds that contain [price actions][PriceItem] that also have [volume][PriceItem.volume]
  * information
  *
  * If you mix different types of price actions in this feed, the result might become less reliable due to the
@@ -64,7 +64,7 @@ class PerformanceChart(
      */
     private fun fromFeed(): List<Map<String, Any>> {
         val result = mutableMapOf<Asset, AssetReturns>()
-        val entries = feed.filter<PriceAction>(timeframe)
+        val entries = feed.filter<PriceItem>(timeframe)
         val finalEntries = entries.filter { assetFilter.filter(it.second.asset, timeframe.start) }
         if (finalEntries.isEmpty()) return emptyList()
 

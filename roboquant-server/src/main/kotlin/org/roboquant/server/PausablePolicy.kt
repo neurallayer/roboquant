@@ -47,8 +47,8 @@ internal class PausablePolicy(private val policy: Policy, var pause: Boolean = f
         holdSignals += signals.filter { it.rating == 0.0 }.size
 
         totalEvents++
-        if (event.actions.isEmpty()) emptyEvents++
-        totalActions += event.actions.size
+        if (event.items.isEmpty()) emptyEvents++
+        totalActions += event.items.size
         lastUpdate = event.time
 
         return if (!pause) {

@@ -163,7 +163,7 @@ class TiingoLiveFeed private constructor(
     private val gsonBuilder = GsonBuilder()
 
     @Synchronized
-    internal fun deliver(action: PriceAction, time: Instant) {
+    internal fun deliver(action: PriceItem, time: Instant) {
         val event = Event(listOf(action), time)
         send(event)
     }

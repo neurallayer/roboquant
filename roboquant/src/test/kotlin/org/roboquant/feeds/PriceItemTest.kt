@@ -24,7 +24,7 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class PriceActionTest {
+internal class PriceItemTest {
 
     @Test
     fun testPriceQuote() {

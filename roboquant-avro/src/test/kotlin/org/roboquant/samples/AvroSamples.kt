@@ -199,7 +199,7 @@ internal class AvroSamples {
     internal fun aggregator() {
         val forex = AvroFeed.forex()
         val feed = AggregatorFeed(forex, 15.minutes)
-        feed.apply<PriceAction> { _, time ->
+        feed.apply<PriceItem> { _, time ->
             println(time)
         }
     }
@@ -214,10 +214,10 @@ internal class AvroSamples {
 
         for (trade in account.trades) {
             val tf = Timeframe(trade.time, trade.time, true)
-            val pricebar = feed.filter<PriceAction>(timeframe = tf).firstOrNull { it.second.asset == trade.asset }
+            val pricebar = feed.filter<PriceItem>(timeframe = tf).firstOrNull { it.second.asset == trade.asset }
             if (pricebar == null) {
                 println(trade)
-                println(feed.filter<PriceAction>(timeframe = tf))
+                println(feed.filter<PriceItem>(timeframe = tf))
                 throw RoboquantException("couldn't find trade action")
             } else {
                 assertEquals(pricebar.second.getPrice(), trade.price)

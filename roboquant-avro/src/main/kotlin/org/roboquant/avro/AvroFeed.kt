@@ -101,9 +101,9 @@ class AvroFeed(private val path: Path, useCache: Boolean = false) : AssetFeed {
     }
 
     /**
-     * Convert a generic Avro record to a [PriceAction]
+     * Convert a generic Avro record to a [PriceItem]
      */
-    private fun recToPriceAction(rec: GenericRecord, serializer: PriceActionSerializer): PriceAction {
+    private fun recToPriceAction(rec: GenericRecord, serializer: PriceActionSerializer): PriceItem {
         val assetStr = rec.get(1).toString()
         val asset = assetLookup.getValue(assetStr)
         val actionType = rec.get(2) as Int
@@ -128,7 +128,7 @@ class AvroFeed(private val path: Path, useCache: Boolean = false) : AssetFeed {
     override suspend fun play(channel: EventChannel) {
         val timeframe = channel.timeframe
         var last = Instant.MIN
-        var actions = ArrayList<PriceAction>()
+        var actions = ArrayList<PriceItem>()
         val serializer = PriceActionSerializer()
 
         getReader().use {
@@ -144,7 +144,7 @@ class AvroFeed(private val path: Path, useCache: Boolean = false) : AssetFeed {
                 if (now != last) {
                     channel.sendNotEmpty(Event(actions, last))
                     last = now
-                    actions = ArrayList<PriceAction>(actions.size)
+                    actions = ArrayList<PriceItem>(actions.size)
                 }
 
                 if (now > timeframe) break

@@ -88,7 +88,7 @@ internal class AvroFeedTest {
             var cnt = 0
             for (event in play(feed2)) {
                 assertTrue(event.time > past)
-                assertEquals(NR_ASSETS, event.actions.size)
+                assertEquals(NR_ASSETS, event.items.size)
                 past = event.time
                 cnt++
             }
@@ -152,7 +152,7 @@ internal class AvroFeedTest {
         }
 
         val feed2 = AvroFeed(fileName)
-        val actions = feed2.filter<PriceAction>().map { it.second }
+        val actions = feed2.filter<PriceItem>().map { it.second }
         assertEquals(4, actions.size)
 
     }
@@ -160,7 +160,7 @@ internal class AvroFeedTest {
     @Test
     fun unsupportedPriceAction() {
 
-        class MyPrice(override val asset: Asset, override val volume: Double) : PriceAction {
+        class MyPrice(override val asset: Asset, override val volume: Double) : PriceItem {
             override fun getPrice(type: String): Double {
                 return 10.0
             }
@@ -197,7 +197,7 @@ internal class AvroFeedTest {
     @Test
     fun timeSpan() {
         val feed = HistoricTestFeed(priceBar = true)
-        val pb = feed.toList().first().actions.first()
+        val pb = feed.toList().first().items.first()
         assertTrue(pb is PriceBar)
         assertEquals(1.days, pb.timeSpan)
 
@@ -205,7 +205,7 @@ internal class AvroFeedTest {
         AvroFeed.record(feed, fileName, compression = true)
 
         val avroFeed = AvroFeed(fileName)
-        val pb2 = avroFeed.toList().first().actions.first()
+        val pb2 = avroFeed.toList().first().items.first()
         assertTrue(pb2 is PriceBar)
         assertEquals(1.days, pb2.timeSpan)
     }

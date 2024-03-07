@@ -18,7 +18,7 @@ package org.roboquant.brokers.sim
 
 import org.roboquant.common.Size
 import org.roboquant.common.bips
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import java.time.Instant
 
 /**
@@ -31,7 +31,7 @@ import java.time.Instant
  * The USD/EUR typically has a very low spread (below 5 bips), while some penny stock might have a spread of well
  * above 100 bips. So make sure to configure a realistic number based on the market and assets you trade.
  *
- * This engine uses the same price for high, low and market prices. It works with any type of [PriceAction].
+ * This engine uses the same price for high, low and market prices. It works with any type of [PriceItem].
  */
 class SpreadPricingEngine(private val spread: Double = 10.bips, private val priceType: String = "DEFAULT") :
     PricingEngine {
@@ -50,7 +50,7 @@ class SpreadPricingEngine(private val spread: Double = 10.bips, private val pric
         }
     }
 
-    override fun getPricing(action: PriceAction, time: Instant): Pricing {
+    override fun getPricing(action: PriceItem, time: Instant): Pricing {
         val spreadPercentage = spread / 2.0
         return SpreadPricing(action.getPrice(priceType), spreadPercentage)
     }

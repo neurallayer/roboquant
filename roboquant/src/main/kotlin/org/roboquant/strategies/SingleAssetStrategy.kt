@@ -19,7 +19,7 @@ package org.roboquant.strategies
 import org.roboquant.common.Asset
 import org.roboquant.common.addNotNull
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import java.time.Instant
 
 /**
@@ -51,6 +51,6 @@ abstract class SingleAssetStrategy(
      * @param time
      * @return
      */
-    abstract fun generate(priceAction: PriceAction, time: Instant): Signal?
+    abstract fun generate(priceAction: PriceItem, time: Instant): Signal?
 
 }

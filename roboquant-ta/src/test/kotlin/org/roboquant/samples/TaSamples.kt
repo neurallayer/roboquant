@@ -23,7 +23,7 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Size
 import org.roboquant.common.percent
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.LimitOrder
@@ -114,7 +114,7 @@ internal class TaSamples {
              * Override the default behavior of creating a simple MarkerOrder. Create limit BUY and SELL orders with the
              * actual limit based on the ATR of the underlying asset.
              */
-            override fun createOrder(signal: Signal, size: Size, priceAction: PriceAction): Order? {
+            override fun createOrder(signal: Signal, size: Size, priceAction: PriceItem): Order? {
                 val metricName = "atr.${signal.asset.symbol.lowercase()}"
                 val value = atrMetrics[metricName]
                 val price = priceAction.getPrice(config.priceType)

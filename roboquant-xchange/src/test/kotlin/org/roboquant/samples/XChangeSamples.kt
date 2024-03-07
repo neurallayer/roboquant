@@ -22,7 +22,7 @@ import org.roboquant.common.AssetType
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
 import org.roboquant.common.summary
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.xchange.XChangePollingLiveFeed
 import kotlin.test.Ignore
@@ -44,7 +44,7 @@ internal class XChangeSamples {
 
         /// Run it for 2 minutes
         val timeframe = Timeframe.next(2.minutes)
-        val result = feed.filter<PriceAction>(timeframe = timeframe)
+        val result = feed.filter<PriceItem>(timeframe = timeframe)
         feed.close()
         assertEquals(AssetType.CRYPTO, result.first().second.asset.type)
     }

@@ -16,12 +16,12 @@
 
 package org.roboquant.brokers.sim
 
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import java.time.Instant
 
 /**
  * Interface that any pricing engine needs to implement. Ideally implementations should be able to support any type
- * of [PriceAction], although they can specialize for certain types of price actions, like a PriceBar or OrderBook.
+ * of [PriceItem], although they can specialize for certain types of price actions, like a PriceBar or OrderBook.
  */
 fun interface PricingEngine {
 
@@ -32,7 +32,7 @@ fun interface PricingEngine {
      * For example, certain FOREX exchanges might be more volatile during certain timeframes and this can be
      * reflected in the [PricingEngine].
      */
-    fun getPricing(action: PriceAction, time: Instant): Pricing
+    fun getPricing(action: PriceItem, time: Instant): Pricing
 
     /**
      * Clear the state of the pricing engine.

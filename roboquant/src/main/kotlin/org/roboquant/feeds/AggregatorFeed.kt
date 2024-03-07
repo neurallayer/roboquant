@@ -94,7 +94,7 @@ class AggregatorFeed(
                     } while (expiration < time)
                 }
 
-                for (action in event.actions) {
+                for (action in event.items) {
                     val pb = getPriceBar(action, aggregationPeriod) ?: continue
                     val asset = pb.asset
                     val entry = history[asset]
@@ -123,28 +123,28 @@ class AggregatorFeed(
 }
 
 
-internal fun getPriceBar(action: Action, timeSpan: TimeSpan?): PriceBar? {
-    return when (action) {
+internal fun getPriceBar(item: Item, timeSpan: TimeSpan?): PriceBar? {
+    return when (item) {
 
         is PriceBar -> {
-            with(action) {
-                PriceBar(action.asset, open, high, low, close, volume, timeSpan)
+            with(item) {
+                PriceBar(item.asset, open, high, low, close, volume, timeSpan)
             }
         }
 
         is TradePrice -> {
-            val price = action.price
-            PriceBar(action.asset, price, price, price, price, action.volume, timeSpan)
+            val price = item.price
+            PriceBar(item.asset, price, price, price, price, item.volume, timeSpan)
         }
 
         is PriceQuote -> {
-            val price = action.getPrice("MIDPOINT")
-            PriceBar(action.asset, price, price, price, price, action.volume, timeSpan)
+            val price = item.getPrice("MIDPOINT")
+            PriceBar(item.asset, price, price, price, price, item.volume, timeSpan)
         }
 
         is OrderBook -> {
-            val price = action.getPrice("MIDPOINT")
-            PriceBar(action.asset, price, price, price, price, action.volume, timeSpan)
+            val price = item.getPrice("MIDPOINT")
+            PriceBar(item.asset, price, price, price, price, item.volume, timeSpan)
         }
 
         else -> null

@@ -34,6 +34,6 @@ internal class ProgressMetricTest {
         assertContains(result, "progress.walltime")
 
         assertEquals(1.0, result["progress.events"])
-        assertEquals(event.actions.size.toDouble(), result["progress.actions"])
+        assertEquals(event.items.size.toDouble(), result["progress.actions"])
     }
 }

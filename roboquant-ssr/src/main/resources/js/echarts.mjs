@@ -29600,7 +29600,7 @@ function (_super) {
       }
 
       each(payloads, function (batchItem) {
-        // Action can specify the event by return it.
+        // Item can specify the event by return it.
         eventObj = actionWrap.action(batchItem, _this._model, _this._api); // Emit event outside
 
         eventObj = eventObj || extend({}, batchItem); // Convert type to eventType
@@ -49110,7 +49110,7 @@ function (_super) {
     this._doUpdateAxisPointerClass(axisModel, api, true);
   };
   /**
-   * Action handler.
+   * Item handler.
    */
 
 
@@ -84541,7 +84541,7 @@ function (_super) {
 
   BrushView.prototype._onBrush = function (eventParam) {
     var modelId = this.model.id;
-    var areas = this.model.brushTargetManager.setOutputRanges(eventParam.areas, this.ecModel); // Action is not dispatched on drag end, because the drag end
+    var areas = this.model.brushTargetManager.setOutputRanges(eventParam.areas, this.ecModel); // Item is not dispatched on drag end, because the drag end
     // emits the same params with the last drag move event, and
     // may have some delay when using touch pad, which makes
     // animation not smooth (when using debounce).

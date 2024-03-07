@@ -21,7 +21,7 @@ import org.roboquant.common.TimeSpan
 import org.roboquant.common.days
 import org.roboquant.common.plus
 import org.roboquant.feeds.HistoricPriceFeed
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.TradePrice
 import java.time.Instant
@@ -53,7 +53,7 @@ class HistoricTestFeed(
         }
     }
 
-    private fun getAction(asset: Asset, price: Double): PriceAction {
+    private fun getAction(asset: Asset, price: Double): PriceItem {
         return if (priceBar) {
             PriceBar(asset, price, price * 1.001, price * 0.999, price, volume, timeSpan)
         } else {

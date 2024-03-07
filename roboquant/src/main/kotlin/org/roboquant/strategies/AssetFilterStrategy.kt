@@ -18,7 +18,7 @@ package org.roboquant.strategies
 
 import org.roboquant.common.AssetFilter
 import org.roboquant.feeds.Event
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 
 /**
  * Only allow price actions that meet the provided [assetFilter] to be passed to the underlying [strategy].
@@ -32,7 +32,7 @@ import org.roboquant.feeds.PriceAction
 class AssetFilterStrategy(private val strategy: Strategy, private val assetFilter: AssetFilter) : Strategy by strategy {
 
     override fun generate(event: Event): List<Signal> {
-        val actions = event.actions.filterIsInstance<PriceAction>().filter { assetFilter.filter(it.asset, event.time) }
+        val actions = event.items.filterIsInstance<PriceItem>().filter { assetFilter.filter(it.asset, event.time) }
         val newEvent = Event(actions, event.time)
         return strategy.generate(newEvent)
     }

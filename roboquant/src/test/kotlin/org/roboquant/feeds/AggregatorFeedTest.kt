@@ -41,7 +41,7 @@ internal class AggregatorFeedTest {
         assertTrue((items2[1].time.epochSecond - items2[0].time.epochSecond) >= (15 * 60))
         // assertEquals(feed.timeframe, aggFeed.timeframe)
 
-        val pb = items2.first().actions.first()
+        val pb = items2.first().items.first()
         assertTrue(pb is PriceBar)
         assertEquals(15.minutes, pb.timeSpan)
 
@@ -131,13 +131,13 @@ internal class AggregatorFeedTest {
 
         val aggFeed1 = AggregatorFeed(rw, 1.seconds)
         assertEquals(5, aggFeed1.toList().size)
-        val pb1 = aggFeed1.toList().first().actions.first()
+        val pb1 = aggFeed1.toList().first().items.first()
         assertTrue(pb1 is PriceBar)
         assertEquals(1.seconds, pb1.timeSpan)
 
         val aggFeed2 = AggregatorFeed(rw, 2.seconds)
         assertEquals(3, aggFeed2.toList().size)
-        val pb2 = aggFeed2.toList().first().actions.first()
+        val pb2 = aggFeed2.toList().first().items.first()
         assertTrue(pb2 is PriceBar)
         assertEquals(2.seconds, pb2.timeSpan)
 

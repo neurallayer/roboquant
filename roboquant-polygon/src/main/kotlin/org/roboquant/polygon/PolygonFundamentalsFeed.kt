@@ -26,7 +26,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.Timeline
-import org.roboquant.feeds.Action
+import org.roboquant.feeds.Item
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.HistoricFeed
@@ -51,7 +51,7 @@ data class SecFiling internal constructor(
     val cashFlowStatement: Map<String, Double>,
     val incomeStatement: Map<String, Double>,
     val comprehensiveIncome: Map<String, Double>
-) : Action
+) : Item
 
 /**
  * This feed provides fundamental data retrieved from Polygon.io.

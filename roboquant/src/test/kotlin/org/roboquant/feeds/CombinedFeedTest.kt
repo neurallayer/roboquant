@@ -40,7 +40,7 @@ internal class CombinedFeedTest {
         var cnt = 0
         var t = Instant.MIN
         for (step in play(cf)) {
-            assertTrue(step.actions.isNotEmpty())
+            assertTrue(step.items.isNotEmpty())
             assertTrue(step.time >= t)
             cnt++
             t = step.time
@@ -57,7 +57,7 @@ internal class CombinedFeedTest {
         var cnt = 0
         var t = Instant.MIN
         for (step in play(cf)) {
-            assertTrue(step.actions.isNotEmpty())
+            assertTrue(step.items.isNotEmpty())
             assertTrue(step.time >= t)
             cnt++
             t = step.time

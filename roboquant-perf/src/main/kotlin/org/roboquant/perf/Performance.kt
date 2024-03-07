@@ -45,7 +45,7 @@ private class FastStrategy(private val skip: Int) : Strategy {
 
     override fun generate(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
-        for (action in event.actions.filterIsInstance<PriceAction>()) {
+        for (action in event.items.filterIsInstance<PriceItem>()) {
             steps++
             if ((steps % (skip + 1)) == 0) {
                 val signal = if (buy) Signal.buy(action.asset) else Signal.sell(action.asset)

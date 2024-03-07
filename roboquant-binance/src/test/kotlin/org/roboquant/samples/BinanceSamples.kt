@@ -49,8 +49,8 @@ internal class BinanceSamples {
         val feed = BinanceLiveFeed()
         feed.subscribePriceBar("BTCBUSD", "ETHBUSD", interval = Interval.ONE_MINUTE)
         val events = feed.toList(Timeframe.next(10.minutes)).filter {
-            println(it.actions)
-            it.actions.isNotEmpty()
+            println(it.items)
+            it.items.isNotEmpty()
         }
         println(events.size)
     }

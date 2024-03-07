@@ -64,7 +64,7 @@ internal class FeedTest {
     fun filter() {
         val feed = TestData.feed()
         assertDoesNotThrow {
-            feed.filter<PriceAction>(timeframe = Timeframe.fromYears(1901, 2000)).filter {
+            feed.filter<PriceItem>(timeframe = Timeframe.fromYears(1901, 2000)).filter {
                 it.second.getPrice() > 0.0
             }
         }
@@ -75,7 +75,7 @@ internal class FeedTest {
         val feed = TestData.feed()
         val l = feed.toList()
         assertEquals(98, l.size)
-        val actions = l.map { it.actions }.flatten()
+        val actions = l.map { it.items }.flatten()
         assertEquals(98, actions.filterIsInstance<PriceBar>().size)
     }
 
@@ -93,7 +93,7 @@ internal class FeedTest {
 
         var e = 0
         for (x in channel) {
-            assertTrue(x.actions.isNotEmpty())
+            assertTrue(x.items.isNotEmpty())
             e++
         }
         assertEquals(size, e)

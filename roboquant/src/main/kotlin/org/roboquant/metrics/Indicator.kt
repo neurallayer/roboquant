@@ -20,9 +20,9 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Observation
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.Timeframe
-import org.roboquant.feeds.Action
+import org.roboquant.feeds.Item
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.apply
 import java.time.Instant
 
@@ -37,7 +37,7 @@ fun interface Indicator {
     /**
      * Calculate the indicator values and return the result as a map.
      */
-    fun calculate(action: Action, time: Instant): Map<String, Double>
+    fun calculate(item: Item, time: Instant): Map<String, Double>
 
     /**
      * Clear the state of the indicator, default implementation is to do nothing
@@ -60,7 +60,7 @@ fun Feed.apply(
     for (asset in assets) {
         indicator.clear()
         val postfix = asset.symbol.lowercase()
-        apply<PriceAction>(timeframe = timeframe) { action, time ->
+        apply<PriceItem>(timeframe = timeframe) { action, time ->
             if (action.asset == asset) {
                 val metric = indicator.calculate(action, time)
                 for ((key, value) in metric) {

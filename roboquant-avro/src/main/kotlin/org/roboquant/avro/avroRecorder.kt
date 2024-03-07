@@ -31,19 +31,19 @@ import org.roboquant.common.AssetFilter
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.util.AssetSerializer.serialize
 import java.io.File
 import kotlin.io.path.Path
 
 /**
- * Schema used to store different types of [PriceAction]
+ * Schema used to store different types of [PriceItem]
  */
 private const val SCHEMA = """
             {
              "namespace": "org.roboquant.avro.schema",
              "type": "record",
-             "name": "PriceAction",
+             "name": "PriceItem",
              "fields": [
                  {"name": "time", "type": "long"},
                  {"name": "asset", "type": "string"},
@@ -92,7 +92,7 @@ internal fun recordAvro(
         while (true) {
             val event = channel.receive()
             val now = event.time.toEpochMilli()
-            for (action in event.actions.filterIsInstance<PriceAction>()
+            for (action in event.items.filterIsInstance<PriceItem>()
                 .filter { assetFilter.filter(it.asset, event.time) }) {
                 val asset = action.asset
                 val assetStr = cache.getOrPut(asset) { asset.serialize() }

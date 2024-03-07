@@ -32,7 +32,7 @@ internal class CombinedLiveFeedTest {
         val cf = CombinedLiveFeed(f1, f2)
         var cnt = 0
         for (step in play(cf)) {
-            assertTrue(step.actions.isNotEmpty())
+            assertTrue(step.items.isNotEmpty())
             cnt++
         }
         assertEquals(20, cnt)
@@ -45,7 +45,7 @@ internal class CombinedLiveFeedTest {
         val cf = CombinedFeed(f1, f2)
         var cnt = 0
         for (step in play(cf)) {
-            assertTrue(step.actions.isNotEmpty())
+            assertTrue(step.items.isNotEmpty())
             cnt++
         }
         assertEquals(20, cnt)

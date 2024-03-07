@@ -51,7 +51,7 @@ class AssetPriceBarSeries private constructor(
      * Add all the [PriceBar] actions found in the [event] to this AssetPriceBarSeries
      */
     fun addAll(event: Event) {
-        for (action in event.actions.filterIsInstance<PriceBar>()) {
+        for (action in event.items.filterIsInstance<PriceBar>()) {
             val series = map.getOrPut(action.asset) { PriceBarSeries(capacity) }
             series.add(action, event.time)
         }

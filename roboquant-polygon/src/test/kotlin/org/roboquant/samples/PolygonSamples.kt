@@ -19,7 +19,7 @@ package org.roboquant.samples
 import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.polygon.PolygonLiveFeed
 import kotlin.test.Ignore
@@ -35,7 +35,7 @@ internal class PolygonSamples {
             this.delayed = true
         }
         feed.subscribe("IBM", "AAPL")
-        val actions = feed.filter<PriceAction>(timeframe = Timeframe.next(5.minutes)) {
+        val actions = feed.filter<PriceItem>(timeframe = Timeframe.next(5.minutes)) {
             println(it)
             true
         }

@@ -24,7 +24,7 @@ import org.roboquant.common.Background
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 
 fun play(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE): EventChannel {
     val channel = EventChannel(timeframe = timeframe)
@@ -54,7 +54,7 @@ internal class TestFeedTest {
         var cnt = 0
         for (step in play(feed)) {
             cnt++
-            assertTrue(step.actions.first() is PriceAction)
+            assertTrue(step.items.first() is PriceItem)
         }
         assertEquals(22, cnt)
     }
@@ -65,7 +65,7 @@ internal class TestFeedTest {
         var cnt = 0
         for (step in play(feed)) {
             cnt++
-            assertTrue(step.actions.first() is PriceAction)
+            assertTrue(step.items.first() is PriceItem)
         }
         assertEquals(22, cnt)
     }

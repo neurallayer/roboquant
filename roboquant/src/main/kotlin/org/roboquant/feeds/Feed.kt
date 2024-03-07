@@ -94,7 +94,7 @@ interface AssetFeed : Feed {
  * Convenience method to play a feed and return the actions of a certain type [T]. Additionally, the feed can be
  * restricted to a certain [timeframe] and if required an additional [filter] can be provided.
  */
-inline fun <reified T : Action> Feed.filter(
+inline fun <reified T : Item> Feed.filter(
     timeframe: Timeframe = Timeframe.INFINITE,
     crossinline filter: (T) -> Boolean = { true }
 ): List<Pair<Instant, T>> = runBlocking {
@@ -106,7 +106,7 @@ inline fun <reified T : Action> Feed.filter(
     try {
         while (true) {
             val o = channel.receive()
-            val newResults = o.actions.filterIsInstance<T>().filter(filter).map { Pair(o.time, it) }
+            val newResults = o.items.filterIsInstance<T>().filter(filter).map { Pair(o.time, it) }
             result.addAll(newResults)
         }
 
@@ -122,7 +122,7 @@ inline fun <reified T : Action> Feed.filter(
 /**
  * Convenience method to apply some logic to a feed
  */
-inline fun <reified T : Action> Feed.apply(
+inline fun <reified T : Item> Feed.apply(
     timeframe: Timeframe = Timeframe.INFINITE,
     crossinline block: (T, Instant) -> Unit
 ) = runBlocking {
@@ -133,7 +133,7 @@ inline fun <reified T : Action> Feed.apply(
     try {
         while (true) {
             val o = channel.receive()
-            o.actions.filterIsInstance<T>().forEach { block(it, o.time) }
+            o.items.filterIsInstance<T>().forEach { block(it, o.time) }
         }
 
     } catch (_: ClosedReceiveChannelException) {
@@ -196,20 +196,20 @@ fun Feed.toList(
 }
 
 /**
- * Validate a feed for possible errors in the prices and return the result in the format Pair<Instant, PriceAction>.
+ * Validate a feed for possible errors in the prices and return the result in the format Pair<Instant, PriceItem>.
  * Optionally provide a [timeframe] and the [maxDiff] value when to flag a change as an error.
  */
 fun Feed.validate(
     timeframe: Timeframe = Timeframe.INFINITE,
     maxDiff: Double = 0.5,
     priceType: String = "DEFAULT"
-): List<Pair<Instant, PriceAction>> = runBlocking {
+): List<Pair<Instant, PriceItem>> = runBlocking {
 
     val channel = EventChannel(timeframe = timeframe)
     val job = playBackground(channel)
 
     val lastPrices = mutableMapOf<Asset, Double>()
-    val errors = mutableListOf<Pair<Instant, PriceAction>>()
+    val errors = mutableListOf<Pair<Instant, PriceItem>>()
 
     try {
         while (true) {
@@ -238,6 +238,6 @@ fun Feed.validate(
 /**
  * Convert a collection of price actions to a double array
  */
-fun Collection<PriceAction>.toDoubleArray(type: String = "DEFAULT"): DoubleArray =
+fun Collection<PriceItem>.toDoubleArray(type: String = "DEFAULT"): DoubleArray =
     this.map { it.getPrice(type) }.toDoubleArray()
 

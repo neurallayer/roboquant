@@ -19,7 +19,7 @@ package org.roboquant.feeds.csv
 import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.common.*
-import org.roboquant.feeds.PriceAction
+import org.roboquant.feeds.PriceItem
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -103,7 +103,7 @@ internal class CSVFeedTest {
         val feed = CSVFeed(path) {
             assetBuilder = DefaultAssetBuilder(template)
         }
-        val first = feed.first().actions.first() as PriceAction
+        val first = feed.first().items.first() as PriceItem
         assertEquals("TEST123", first.asset.exchange.exchangeCode)
     }
 

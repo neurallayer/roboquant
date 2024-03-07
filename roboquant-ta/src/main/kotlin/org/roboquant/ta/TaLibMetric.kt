@@ -49,7 +49,7 @@ class TaLibMetric(
     override fun calculate(account: Account, event: Event): Map<String, Double> {
         val metrics = mutableMapOf<String, Double>()
         val actions =
-            event.actions.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset, event.time) }
+            event.items.filterIsInstance<PriceBar>().filter { assetFilter.filter(it.asset, event.time) }
         val time = event.time
         for (priceAction in actions) {
             val asset = priceAction.asset
