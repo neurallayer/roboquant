@@ -27,6 +27,7 @@ import java.time.temporal.ChronoUnit
 import kotlin.collections.set
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.reflect.KClass
 
 /**
  * Aggregate prices in a live [feed] to a [PriceBar]. The [aggregationPeriod] is configurable. Right now there is
@@ -47,7 +48,9 @@ import kotlin.math.min
 class AggregatorLiveFeed(
     private val feed: LiveFeed,
     private val aggregationPeriod: TimeSpan,
-    private val remaining: Boolean = true
+    private val remaining: Boolean = true,
+    private val continuation: Boolean = true,
+    private val restrictType: KClass<*>? = null
 ) : Feed {
 
     private fun Instant.expirationTime(): Instant {
@@ -75,8 +78,15 @@ class AggregatorLiveFeed(
 
     private suspend fun send(channel: EventChannel, time: Instant, history: MutableMap<Asset, PriceBar>) {
         val newEvent = synchronized(history) {
-            val newEvent = Event(time, history.values.toList())
+            val items = history.values.toList()
+            val newEvent = Event(time, items)
             history.clear()
+            if (continuation)
+               items.forEach {
+                   val c = it.close
+                   val v = if (it.volume.isFinite()) 0.0 else Double.NaN
+                   history[it.asset] = PriceBar(it.asset, c,c,c,c, v, it.timeSpan)
+               }
             newEvent
         }
 
@@ -110,17 +120,18 @@ class AggregatorLiveFeed(
         try {
             while (true) {
                 val event = inputChannel.receive()
-                val actions = event.items
+                val items = event.items
 
                 // Send heart beats from the original feed
-                if (actions.isEmpty()) {
+                if (items.isEmpty()) {
                     channel.send(event)
                     continue
                 }
 
                 synchronized(history) {
-                    for (action in actions) {
-                        val pb = getPriceBar(action, aggregationPeriod) ?: continue
+                    for (item in items) {
+                        if (restrictType != null && ! restrictType.isInstance(item)) continue
+                        val pb = getPriceBar(item, aggregationPeriod) ?: continue
                         val asset = pb.asset
                         val entry = history[asset]
                         if (entry == null) history[asset] = pb else history[asset] = entry + pb

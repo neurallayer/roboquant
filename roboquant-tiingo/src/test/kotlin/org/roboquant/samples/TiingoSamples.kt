@@ -19,8 +19,10 @@ package org.roboquant.samples
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
+import org.roboquant.run
 import org.roboquant.common.*
 import org.roboquant.feeds.*
+import org.roboquant.journals.BasicJournal
 import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
@@ -48,9 +50,9 @@ internal class TiingoSamples {
     internal fun aggregatorLiveFeed() {
         val iex = TiingoLiveFeed.iex()
         iex.subscribe()
-        val feed = AggregatorLiveFeed(iex, 5.seconds)
-        val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
-        val account = rq.run(feed, Timeframe.next(5.minutes))
+        val feed = AggregatorLiveFeed(iex, 5.seconds, restrictType = TradePrice::class)
+        val tf = Timeframe.next(5.minutes)
+        val account = run(feed, EMAStrategy(), BasicJournal(true), tf)
         println(account.fullSummary())
     }
 
