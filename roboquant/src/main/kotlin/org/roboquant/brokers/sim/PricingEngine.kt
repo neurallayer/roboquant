@@ -26,13 +26,13 @@ import java.time.Instant
 fun interface PricingEngine {
 
     /**
-     * Return a pricing (calculator) for the provided price [action] and [time].
+     * Return a pricing (calculator) for the provided price [item] and [time].
      *
      * Although most often not used, advanced pricing calculators can be dependent on the [time].
      * For example, certain FOREX exchanges might be more volatile during certain timeframes and this can be
      * reflected in the [PricingEngine].
      */
-    fun getPricing(action: PriceItem, time: Instant): Pricing
+    fun getPricing(item: PriceItem, time: Instant): Pricing
 
     /**
      * Clear the state of the pricing engine.

@@ -94,7 +94,13 @@ sealed class Order(val asset: Asset, val tag: String) {
  * Base class for all types of create orders. This ranges from a simple [MarketOrder], all the way to advanced order
  * types like a [BracketOrder].
  */
-abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag)
+abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag) {
+
+    fun cancel(order: CreateOrder): CancelOrder {
+        return CancelOrder(order)
+    }
+
+}
 
 /**
  * Base class for all types of modify-orders. Two most commonly used subclasses are the [CancelOrder] and [UpdateOrder].

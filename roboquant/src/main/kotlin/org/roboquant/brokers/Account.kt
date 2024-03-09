@@ -91,6 +91,18 @@ class Account(
     val assets: Set<Asset>
         get() = positions.map { it.asset }.toSet()
 
+
+    fun contractValue(asset: Asset, size: Size, price: Double, time: Instant) : Double {
+        val newPrice = if (asset.currency != baseCurrency) {
+            val amount = Amount(asset.currency, price)
+            amount.convert(baseCurrency, time).value
+        } else {
+            price
+        }
+
+        return size.toDouble() * newPrice * asset.multiplier
+    }
+
     /**
      * Get the associated trades for the provided [orders]. If no orders are provided all [closedOrders] linked to this
      * account instance are used.
@@ -155,6 +167,10 @@ class Account(
         o.add("expired", closedOrders.filter { it.status == OrderStatus.EXPIRED }.size)
         o.add("rejected", closedOrders.filter { it.status == OrderStatus.REJECTED }.size)
         return s
+    }
+
+    override fun toString(): String {
+        return summary().toString()
     }
 
     /**

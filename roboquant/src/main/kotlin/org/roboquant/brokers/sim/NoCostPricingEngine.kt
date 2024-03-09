@@ -29,7 +29,7 @@ class NoCostPricingEngine(private val priceType: String = "DEFAULT") : PricingEn
         override fun marketPrice(size: Size) = price
     }
 
-    override fun getPricing(action: PriceItem, time: Instant): Pricing {
-        return NoCostPricing(action.getPrice(priceType))
+    override fun getPricing(item: PriceItem, time: Instant): Pricing {
+        return NoCostPricing(item.getPrice(priceType))
     }
 }

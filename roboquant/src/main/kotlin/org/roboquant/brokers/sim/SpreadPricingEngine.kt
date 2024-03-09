@@ -50,8 +50,8 @@ class SpreadPricingEngine(private val spread: Double = 10.bips, private val pric
         }
     }
 
-    override fun getPricing(action: PriceItem, time: Instant): Pricing {
+    override fun getPricing(item: PriceItem, time: Instant): Pricing {
         val spreadPercentage = spread / 2.0
-        return SpreadPricing(action.getPrice(priceType), spreadPercentage)
+        return SpreadPricing(item.getPrice(priceType), spreadPercentage)
     }
 }
