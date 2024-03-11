@@ -290,8 +290,6 @@ class AlpacaBroker(
      */
     override fun place(orders: List<Order>) {
         val now = Instant.now()
-        // Sanity-check that you don't use this broker during back testing.
-
 
         _account.initializeOrders(orders)
         for (order in orders) {

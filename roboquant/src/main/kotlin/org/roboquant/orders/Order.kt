@@ -37,37 +37,14 @@ import org.roboquant.common.Asset
 sealed class Order(val asset: Asset, val tag: String) {
 
     /**
-     * The order identifier that is automatically generated and unique per process
+     * The order id is set by broker, before that it is an empty string
      */
     var id = ""
-    var status = OrderStatus.INITIAL
 
     /**
-     * @suppress
+     * Status is set to INITIAL
      */
-    companion object {
-
-        /**
-         * Counter used for creating unique order ids.
-         */
-        private var ID = 0
-
-        /**
-         * Set the order id to its [initial value][initialValue]
-         */
-        @Synchronized
-        fun setId(initialValue: Int) {
-            ID = initialValue
-        }
-
-        /**
-         * Generate the next order id
-         */
-        @Synchronized
-        private fun nextId(): Int {
-            return ID++
-        }
-    }
+    var status = OrderStatus.INITIAL
 
     /**
      * What is the type of order, default is the class name without any order suffix

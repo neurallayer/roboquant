@@ -55,6 +55,7 @@ class IBKRBroker(
     private var _account = InternalAccount(Currency.USD)
     private var accountUpdateLock = Object()
     private var orderIds = mutableSetOf<Int>()
+    private var nextOrderId = 0
 
     /**
      * ExchangeRates as provided during intialization of the account.
@@ -144,6 +145,7 @@ class IBKRBroker(
         _account.initializeOrders(orders)
 
         for (order in orders) {
+            if (order.id.isBlank()) order.id = nextOrderId++.toString()
             logger.info("received order=$order")
             when (order) {
                 is CancelOrder -> cancelOrder(order)
@@ -253,7 +255,7 @@ class IBKRBroker(
          */
         override fun nextValidId(orderId: Int) {
             logger.info("settting next valid orderId=$orderId")
-            Order.setId(orderId)
+            nextOrderId = orderId
         }
 
 

@@ -125,7 +125,7 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
             )
             else -> throw UnsupportedException("unsupported single order type order=$order")
         }
-        orders[order] = alpacaOrder.id
+        order.id = alpacaOrder.id
     }
 
     /**

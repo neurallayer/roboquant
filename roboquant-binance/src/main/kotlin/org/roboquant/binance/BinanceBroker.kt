@@ -55,7 +55,6 @@ class BinanceBroker(
 
 
     private val logger = Logging.getLogger(BinanceBroker::class)
-    private val placedOrders = mutableMapOf<Long, String>()
     private var orderId = 0
     private val assetMap: Map<String, Asset>
 
@@ -83,8 +82,8 @@ class BinanceBroker(
         }
 
         for (order in client.getOpenOrders(OrderRequest(""))) {
-            val orderId = placedOrders[order.orderId] ?: continue
-            val state = _account.getOrder(orderId) ?: continue
+
+            val state = _account.getOrder(orderId.toString()) ?: continue
 
             when (order.status) {
                 BinanceOrderStatus.FILLED ->
@@ -130,13 +129,13 @@ class BinanceBroker(
                 is LimitOrder -> {
                     val symbol = order.asset.symbol
                     val newLimitOrder = trade(symbol, order)
-                    placedOrders[newLimitOrder.orderId] = order.id
+                    order.id = newLimitOrder.orderId.toString()
                 }
 
                 is MarketOrder -> {
                     val symbol = order.asset.symbol
                     val newMarketOrder = trade(symbol, order)
-                    placedOrders[newMarketOrder.orderId] = order.id
+                    order.id = newMarketOrder.orderId.toString()
                 }
 
                 else -> logger.warn {
@@ -156,7 +155,7 @@ class BinanceBroker(
     private fun cancelOrder(cancellation: CancelOrder) {
         val c = cancellation.order
         val order = cancellation.order
-        val r = CancelOrderRequest(order.asset.symbol, c.id.toString())
+        val r = CancelOrderRequest(order.asset.symbol, c.id)
         client.cancelOrder(r)
     }
 
