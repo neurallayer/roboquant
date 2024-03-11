@@ -39,7 +39,8 @@ sealed class Order(val asset: Asset, val tag: String) {
     /**
      * The order identifier that is automatically generated and unique per process
      */
-    var id = nextId()
+    var id = ""
+    var status = OrderStatus.INITIAL
 
     /**
      * @suppress

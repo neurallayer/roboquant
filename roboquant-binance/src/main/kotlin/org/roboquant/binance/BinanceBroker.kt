@@ -55,7 +55,7 @@ class BinanceBroker(
 
 
     private val logger = Logging.getLogger(BinanceBroker::class)
-    private val placedOrders = mutableMapOf<Long, Int>()
+    private val placedOrders = mutableMapOf<Long, String>()
     private var orderId = 0
     private val assetMap: Map<String, Asset>
 

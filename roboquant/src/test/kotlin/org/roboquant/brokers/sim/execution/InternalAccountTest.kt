@@ -88,7 +88,7 @@ internal class InternalAccountTest {
                             iAccount.initializeOrders(
                                 listOf(LimitOrder(Asset("ABC"), Size(3), 40000.0, tag = "my-tag"))
                             )
-                            val trade = Trade(Instant.now(), Asset("ABC$it"), Size(10), 100.0, 0.0, 0.0, it)
+                            val trade = Trade(Instant.now(), Asset("ABC$it"), Size(10), 100.0, 0.0, 0.0, it.toString())
                             iAccount.addTrade(trade)
                             Thread.sleep(1)
                         }

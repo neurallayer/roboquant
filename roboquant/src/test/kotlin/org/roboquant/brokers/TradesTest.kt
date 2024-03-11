@@ -33,11 +33,11 @@ internal class TradesTest {
         val size = Size(10)
         for (i in 1..10) {
             now = now.plusSeconds(60)
-            val trade1 = Trade(now, asset, size, 100.0, 10.0, 0.0, i)
+            val trade1 = Trade(now, asset, size, 100.0, 10.0, 0.0, i.toString())
             trades.add(trade1)
 
             now = now.plusSeconds(60)
-            val trade2 = Trade(now, asset, -size, 100.0, 0.0, 100.0, i)
+            val trade2 = Trade(now, asset, -size, 100.0, 0.0, 100.0, i.toString())
             trades.add(trade2)
         }
         return trades
@@ -45,11 +45,11 @@ internal class TradesTest {
 
     @Test
     fun basic() {
-        val trade = Trade(Instant.now(), Asset("TEST"), Size(10), 100.0, 5.0, 100.0, 1)
+        val trade = Trade(Instant.now(), Asset("TEST"), Size(10), 100.0, 5.0, 100.0, 1.toString())
         assertEquals(1005.0, trade.totalCost.value)
         assertEquals(100.0 / 1005.0, trade.pnlPercentage)
 
-        val trade2 = Trade(Instant.now(), Asset("TEST"), -Size(10), 100.0, 5.0, 100.0, 1)
+        val trade2 = Trade(Instant.now(), Asset("TEST"), -Size(10), 100.0, 5.0, 100.0, 1.toString())
         assertEquals(-995.0, trade2.totalCost.value)
         assertEquals(100.0 / 995.0, trade2.pnlPercentage)
     }

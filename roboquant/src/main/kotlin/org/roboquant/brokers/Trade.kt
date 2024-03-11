@@ -44,7 +44,7 @@ data class Trade(
     val price: Double,
     val feeValue: Double,
     val pnlValue: Double,
-    val orderId: Int,
+    val orderId: String,
 ) {
 
     /**

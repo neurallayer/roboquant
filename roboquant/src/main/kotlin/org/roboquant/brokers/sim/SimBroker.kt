@@ -71,6 +71,33 @@ open class SimBroker(
     }
 
     /**
+     * @suppress
+     */
+    companion object {
+
+        /**
+         * Counter used for creating unique order ids.
+         */
+        private var ID = 0
+
+        /**
+         * Set the order id to its [initial value][initialValue]
+         */
+        @Synchronized
+        fun setId(initialValue: Int) {
+            ID = initialValue
+        }
+
+        /**
+         * Generate the next order id
+         */
+        @Synchronized
+        private fun nextId(): String {
+            return ID++.toString()
+        }
+    }
+
+    /**
      * Load the state from another [account] into the SimBroker. This includes the cash, open positions, open orders,
      * closed orders, buying power and trades.
      *
@@ -163,6 +190,9 @@ open class SimBroker(
      */
     override fun place(orders: List<Order>) {
         logger.trace { "Received orders=${orders.size}" }
+        for (order in orders) {
+            if (order.id.isBlank()) order.id = nextId()
+        }
         _account.initializeOrders(orders)
         executionEngine.addAll(orders)
     }

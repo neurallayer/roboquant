@@ -20,13 +20,10 @@ import org.jetbrains.kotlinx.jupyter.api.*
 import org.jetbrains.kotlinx.jupyter.api.libraries.ColorScheme
 import org.jetbrains.kotlinx.jupyter.api.libraries.JupyterIntegration
 import org.jetbrains.kotlinx.jupyter.api.libraries.resources
-import org.roboquant.brokers.Trade
-import org.roboquant.brokers.summary
 import org.roboquant.charts.Chart
 import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import org.roboquant.common.Size
-import org.roboquant.orders.OrderState
 import java.io.PrintWriter
 import java.io.StringWriter
 

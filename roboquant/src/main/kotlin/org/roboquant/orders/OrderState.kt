@@ -66,7 +66,7 @@ class OrderState private constructor(
     /**
      * Returns the id of the order
      */
-    val orderId: Int
+    val orderId: String
         get() = order.id
 
     /**

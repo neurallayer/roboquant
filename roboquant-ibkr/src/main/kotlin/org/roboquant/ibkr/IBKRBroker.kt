@@ -108,7 +108,7 @@ class IBKRBroker(
     private fun cancelOrder(cancellation: CancelOrder) {
         val id = cancellation.order.id
         logger.info("cancelling order with id $id")
-        client.cancelOrder(id, cancellation.tag)
+        client.cancelOrder(id.toInt(), cancellation.tag)
 
         // There is no easy way to check for the status of a cancellation order.
         // So for we set it always to status completed.
@@ -191,8 +191,8 @@ class IBKRBroker(
         result.totalQuantity(qty)
 
         if (accountId != null) result.account(accountId)
-        result.orderId(order.id)
-        orderIds.add(order.id)
+        result.orderId(order.id.toInt())
+        orderIds.add(order.id.toInt())
         return result
     }
 
@@ -234,7 +234,7 @@ class IBKRBroker(
                 OrderType.STP_LMT -> StopLimitOrder(asset, size, order.auxPrice(), order.lmtPrice())
                 else -> throw UnsupportedException("$order")
             }
-            result.id = order.orderId()
+            result.id = order.orderId().toString()
             return result
         }
 
@@ -260,7 +260,7 @@ class IBKRBroker(
         override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: IBOrderSate) {
             logger.debug { "orderId=$orderId asset=${contract.symbol()} qty=${order.totalQuantity()} status=${orderState.status}" }
             logger.trace { "$orderId $contract $order $orderState" }
-            val openOrder = _account.getOrder(orderId)
+            val openOrder = _account.getOrder(orderId.toString())
             if (openOrder != null) {
                 logger.info {"update order orderId=$orderId status=${orderState.status}" }
                 if (orderState.completedStatus() == "true") {
@@ -286,7 +286,7 @@ class IBKRBroker(
             lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
         ) {
             logger.info { "orderstatus oderId=$orderId status=$status filled=$filled" }
-            val order = _account.getOrder(orderId)
+            val order = _account.getOrder(orderId.toString())
             if (order != null) {
                 val newStatus = toStatus(status)
                 _account.updateOrder(order, Instant.now(), newStatus)
@@ -342,7 +342,7 @@ class IBKRBroker(
                 execution.avgPrice(),
                 Double.NaN,
                 Double.NaN,
-                execution.orderId()
+                execution.orderId().toString()
             )
             tradeMap[id] = trade
             _account.addTrade(trade)

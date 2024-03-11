@@ -82,7 +82,7 @@ internal class AccountTest {
     @Test
     fun trades() {
         val time = Instant.now()
-        val trades = listOf(Trade(time, Asset("ABC"), Size(10), 10.0, 0.0, 0.0, 1))
+        val trades = listOf(Trade(time, Asset("ABC"), Size(10), 10.0, 0.0, 0.0, "1"))
         assertEquals(1, trades.timeline.size)
         assertEquals(Timeframe(time, time, true), trades.timeframe)
     }

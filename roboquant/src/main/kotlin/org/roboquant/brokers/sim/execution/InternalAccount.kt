@@ -56,7 +56,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * Open orders
      */
-    private val openOrders = mutableMapOf<Int, OrderState>()
+    private val openOrders = mutableMapOf<String, OrderState>()
 
     /**
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
@@ -261,7 +261,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * Get an open order with the provided [orderId], or null if not found
      */
-    fun getOrder(orderId: Int): Order? = openOrders[orderId]?.order
+    fun getOrder(orderId: String): Order? = openOrders[orderId]?.order
 
 }
 
