@@ -76,7 +76,9 @@ open class RegressionStrategy(
         }
     }
 
-    override fun end(run: String) {
+
+    @Suppress("unused", "unused")
+    fun eanbleTrain() {
         if (! trained) {
             logger.trace { "start training" }
             train()

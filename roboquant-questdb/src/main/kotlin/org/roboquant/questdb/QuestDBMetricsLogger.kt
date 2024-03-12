@@ -120,10 +120,8 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
         return result
     }
 
-    /**
-     * @see MetricsLogger.start
-     */
-    override fun start(run: String, timeframe: Timeframe) {
+
+    fun removeRun(run: String) {
         try {
             engine.dropTable(run)
         } catch (e: SqlException) {

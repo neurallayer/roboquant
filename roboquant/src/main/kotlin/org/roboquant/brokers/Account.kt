@@ -92,6 +92,7 @@ class Account(
         get() = positions.map { it.asset }.toSet()
 
 
+    @Suppress("unused")
     fun contractValue(asset: Asset, size: Size, price: Double, time: Instant) : Double {
         val newPrice = if (asset.currency != baseCurrency) {
             val amount = Amount(asset.currency, price)

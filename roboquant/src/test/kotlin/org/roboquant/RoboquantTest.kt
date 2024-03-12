@@ -69,7 +69,6 @@ internal class RoboquantTest {
         assertEquals(1, account.closedOrders.size)
 
         val logger = MemoryLogger(showProgress = false)
-        logger.start("test", Timeframe.INFINITE)
         val roboquant = Roboquant(EMAStrategy(), AccountMetric(), broker = broker, logger = logger)
         var equity = roboquant.logger.getMetric("account.equity")
         assertEquals(0, equity.size)
@@ -173,6 +172,15 @@ internal class RoboquantTest {
             assertTrue(journal.nSignals > 0)
             assertTrue(journal.nOrders > 0)
             assertTrue(journal.lastTime != null)
+        }
+    }
+
+    @Test
+    fun run_with_pb()  {
+        assertDoesNotThrow {
+            val strategy = EMAStrategy()
+            val journal = BasicJournal()
+            run(TestData.feed, strategy, journal, progressBar = true)
         }
     }
 

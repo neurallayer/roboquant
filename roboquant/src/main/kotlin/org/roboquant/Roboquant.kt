@@ -32,6 +32,7 @@ import org.roboquant.feeds.TradePrice
 import org.roboquant.journals.Journal
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.MetricsLogger
+import org.roboquant.loggers.ProgressBar
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.createCancelOrders
@@ -87,22 +88,6 @@ data class Roboquant(
     }
 
     /**
-     * Inform components of the start of a new [run] with the provided [timeframe].
-     */
-    private fun start(run: String, timeframe: Timeframe) {
-        kotlinLogger.debug { "starting run=$run timeframe=$timeframe" }
-        for (component in components) component.start(run, timeframe)
-    }
-
-    /**
-     * Inform components of the end of a [run].
-     */
-    private fun end(run: String) {
-        kotlinLogger.debug { "Finished run=$run" }
-        for (component in components) component.end(run)
-    }
-
-    /**
      * Reset the state including that of the used underlying components. This allows starting a fresh run with the same
      * configuration as the original instance.
      *
@@ -153,7 +138,6 @@ data class Roboquant(
         val job = feed.playBackground(channel)
 
         if (reset) reset(false)
-        start(name, timeframe)
 
         try {
             while (true) {
@@ -178,7 +162,6 @@ data class Roboquant(
         } catch (_: ClosedReceiveChannelException) {
             // intentionally empty
         } finally {
-            end(name)
             if (job.isActive) job.cancel()
         }
         return broker.sync()
@@ -247,9 +230,20 @@ fun run(
     policy: Policy = FlexPolicy(),
     broker: Broker = SimBroker(),
     channel: EventChannel = EventChannel(timeframe, 10),
-    heartbeatTimeout: Long = -1
+    heartbeatTimeout: Long = -1,
+    progressBar: Boolean = false
 ): Account = runBlocking {
-    return@runBlocking runAsync(feed, strategy, journal, timeframe, policy, broker, channel, heartbeatTimeout)
+    return@runBlocking runAsync(
+        feed,
+        strategy,
+        journal,
+        timeframe,
+        policy,
+        broker,
+        channel,
+        heartbeatTimeout,
+        progressBar
+    )
 }
 
 /**
@@ -263,14 +257,21 @@ suspend fun runAsync(
     policy: Policy = FlexPolicy(),
     broker: Broker = SimBroker(),
     channel: EventChannel = EventChannel(timeframe, 10),
-    heartbeatTimeout: Long = -1
+    heartbeatTimeout: Long = -1,
+    showProgressBar: Boolean = false
 ): Account {
     val job = feed.playBackground(channel)
+    val progressBar = if (showProgressBar) {
+        val tf = if (timeframe.isFinite()) timeframe else feed.timeframe
+        val pb = ProgressBar(tf)
+        pb.start()
+        pb
+    } else null
 
     try {
         while (true) {
             val event = channel.receive(heartbeatTimeout)
-
+            progressBar?.update(event.time)
             // Sync with broker
             val account = broker.sync(event)
 
@@ -285,6 +286,7 @@ suspend fun runAsync(
         // intentionally empty
     } finally {
         if (job.isActive) job.cancel()
+        progressBar?.stop()
     }
     return broker.sync()
 }

@@ -17,8 +17,6 @@
 package org.roboquant.binance
 
 import kotlin.test.Test
-import org.roboquant.common.Timeframe
-import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
 internal class BinanceBrokerTestIT {
@@ -29,7 +27,6 @@ internal class BinanceBrokerTestIT {
         val broker = BinanceBroker()
         assertTrue(broker.toString().isNotEmpty())
         assertTrue(broker.availableAssets.isNotEmpty())
-        assertFails { broker.start("test", Timeframe.INFINITE) }
     }
 
 }

@@ -18,7 +18,6 @@ package org.roboquant.loggers
 
 import org.roboquant.common.Observation
 import org.roboquant.common.TimeSeries
-import org.roboquant.common.Timeframe
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
@@ -29,19 +28,17 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * If you need access to the metric values at each step, use the [MemoryLogger] instead.
  *
- * @property showProgress display a progress bar, default is false
  */
-class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
+class LastEntryLogger : MetricsLogger {
 
     // The key is runName
     private val history = ConcurrentHashMap<String, MutableMap<String, Observation>>()
-    private val progressBar = ProgressBar()
+
 
     override fun log(results: Map<String, Double>, time: Instant, run: String) {
-        if (showProgress) progressBar.update(time)
 
         if (results.isNotEmpty()) {
-            val map = history.getValue(run)
+            val map = history.getOrPut(run) { mutableMapOf() }
             for ((t, u) in results) {
                 val value = Observation(time, u)
                 map[t] = value
@@ -50,15 +47,6 @@ class LastEntryLogger(var showProgress: Boolean = false) : MetricsLogger {
     }
 
     override fun getRuns(): Set<String> = history.keys
-
-    override fun start(run: String, timeframe: Timeframe) {
-        history[run] = mutableMapOf()
-        if (showProgress) progressBar.start(run, timeframe)
-    }
-
-    override fun end(run: String) {
-        if (showProgress) progressBar.done()
-    }
 
     /**
      * Clear the history

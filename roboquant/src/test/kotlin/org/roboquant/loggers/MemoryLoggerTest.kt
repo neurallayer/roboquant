@@ -21,7 +21,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.ParallelJobs
-import org.roboquant.common.Timeframe
 import org.roboquant.common.days
 import org.roboquant.common.plus
 import org.roboquant.metrics.metricResultsOf
@@ -38,13 +37,11 @@ import kotlin.test.assertTrue
  */
 internal fun runConcurrent(logger: MetricsLogger, nThreads: Int, loop: Int) {
     val jobs = ParallelJobs()
-    val tf = Timeframe.INFINITE
     repeat(nThreads) {
         jobs.add {
             launch {
                 assertDoesNotThrow {
                     val run = "run-$it"
-                    logger.start(run, tf)
                     repeat(loop) {
                         logger.log(mapOf("a" to 100.0), Instant.now(), run)
                         Thread.sleep(1)
@@ -58,7 +55,6 @@ internal fun runConcurrent(logger: MetricsLogger, nThreads: Int, loop: Int) {
                     logger.getMetric("a")
                     Thread.sleep(1)
                     logger.getMetric("a", run)
-                    logger.end(run)
                 }
             }
         }
@@ -78,9 +74,7 @@ internal class MemoryLoggerTest {
 
         val metrics = TestData.getMetrics()
 
-        logger.start("test", Timeframe.INFINITE)
         logger.log(metrics, Instant.now(), "test")
-        logger.end("test")
         assertFalse(logger.getMetricNames().isEmpty())
         assertEquals(metrics.size, logger.getMetricNames().size)
 
@@ -118,7 +112,6 @@ internal class MemoryLoggerTest {
     @Test
     fun testMetricsEntry() {
         val logger = MemoryLogger(showProgress = false)
-        logger.start("test", Timeframe.INFINITE)
         repeat(12) {
             val metrics = metricResultsOf("key1" to it)
             logger.log(metrics, Instant.now(), "test")
@@ -138,7 +131,6 @@ internal class MemoryLoggerTest {
     @Test
     fun groupBy() {
         val logger = MemoryLogger(showProgress = false)
-        logger.start("test", Timeframe.INFINITE)
 
         var start = Instant.parse("2022-01-01T00:00:00Z")
         repeat(50) {
@@ -169,7 +161,6 @@ internal class MemoryLoggerTest {
 
         repeat(50) {
             val run = "run-$it"
-            logger.start(run, Timeframe.INFINITE)
             val metrics = metricResultsOf("key1" to it)
             logger.log(metrics, now + it.days, run)
             logger.log(metrics, now + it.days + 1.days, run)

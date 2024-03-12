@@ -25,20 +25,6 @@ package org.roboquant.common
 interface Lifecycle {
 
     /**
-     * Invoked at the start of a [run]. The default implementation is to take no action.
-     */
-    fun start(run: String, timeframe: Timeframe) {
-        // default is to do nothing
-    }
-
-    /**
-     * Invoked at the end of a [run]. The default implementation is to take no action.
-     */
-    fun end(run: String) {
-        // default is to do nothing
-    }
-
-    /**
      * Reset the state of the component to its initial state. The default implementation is to take no action.
      */
     fun reset() {

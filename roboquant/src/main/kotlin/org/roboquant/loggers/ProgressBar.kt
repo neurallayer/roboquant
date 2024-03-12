@@ -29,9 +29,8 @@ import kotlin.math.roundToInt
  *
  * This implementation avoids unnecessary updates, so overhead is limited.
  */
-internal class ProgressBar {
+internal class ProgressBar(val timeframe: Timeframe) {
 
-    var timeframe: Timeframe = Timeframe.INFINITE
     private var currentPercent = -1
     private val progressChar = getProgressChar()
     private var pre: String = ""
@@ -39,17 +38,19 @@ internal class ProgressBar {
     private var nextUpdate = Instant.MIN
     private var lastOutput = ""
 
-    /**
-     * Start a progress bar for the [run] and [timeframe]
-     */
-    fun start(run: String, timeframe: Timeframe) {
-        val runName = if (run.length > 30) run.substring(0, 27) + "..." else run
-        currentPercent = -1
-        post = "| $runName"
+    init {
+        currentPercent = 0
+        post = ""
         pre = "${timeframe.toPrettyString()} | "
         nextUpdate = Instant.MIN
         lastOutput = ""
-        this.timeframe = timeframe
+    }
+
+    /**
+     * Start a progress bar for the [run] and [timeframe]
+     */
+    fun start() {
+        draw(currentPercent)
     }
 
     /**
@@ -68,9 +69,7 @@ internal class ProgressBar {
         val now = Instant.now()
         if (now < nextUpdate) return
         nextUpdate = now.plusMillis(500)
-
         currentPercent = percent
-
         draw(percent)
     }
 
@@ -98,8 +97,8 @@ internal class ProgressBar {
     /**
      * Signal that the current task is done, so the progress bar can show it has finished.
      */
-    fun done() {
-        if ((currentPercent < 100) && (currentPercent >= 0)) {
+    fun stop() {
+        if (currentPercent < 100) {
             draw(100)
             System.out.flush()
         }

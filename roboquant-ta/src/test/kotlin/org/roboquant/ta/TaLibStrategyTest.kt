@@ -21,7 +21,6 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.Roboquant
 import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
 import org.roboquant.common.plus
 import org.roboquant.common.seconds
 import org.roboquant.feeds.Event
@@ -129,7 +128,6 @@ internal class TaLibStrategyTest {
 
     private fun run(s: Strategy, n: Int = 150): Map<Instant, List<Signal>> {
         s.reset()
-        s.start("test", Timeframe.INFINITE)
         val nHalf = n / 2
         val feed = HistoricTestFeed(100 until 100 + nHalf, 100 + nHalf - 1 downTo 100, priceBar = true)
         val events = feed.filter<PriceBar>()

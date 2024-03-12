@@ -17,7 +17,6 @@
 package org.roboquant.loggers
 
 import org.roboquant.common.TimeSeries
-import org.roboquant.common.Timeframe
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
@@ -40,30 +39,16 @@ class MemoryLogger(var showProgress: Boolean = true) : MetricsLogger {
 
     // Use a ConcurrentHashMap if this logger is used in parallel back-testing
     internal val history = ConcurrentHashMap<String, MutableList<Entry>>()
-    private val progressBar = ProgressBar()
 
     @Synchronized
     override fun log(results: Map<String, Double>, time: Instant, run: String) {
-        if (showProgress) progressBar.update(time)
         if (results.isEmpty()) return
 
-        val entries = history.getValue(run)
+        val entries = history.getOrPut(run) { mutableListOf() }
         entries.add(Entry(time, results))
     }
 
-    @Synchronized
-    override fun start(run: String, timeframe: Timeframe) {
-        if (showProgress) {
-            progressBar.start(run, timeframe)
-        }
-        // Clear any previous run with the same name
-        history[run] = mutableListOf()
-    }
 
-    @Synchronized
-    override fun end(run: String) {
-        if (showProgress) progressBar.done()
-    }
 
     /**
      * Clear the history

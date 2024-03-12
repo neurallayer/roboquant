@@ -40,7 +40,6 @@ internal class EventRecorderMetricTest {
         assertEquals(2, results.size)
 
         metric.reset()
-        metric.start("test", Timeframe.INFINITE)
         results = metric.filter()
         assertTrue(results.isEmpty())
     }
