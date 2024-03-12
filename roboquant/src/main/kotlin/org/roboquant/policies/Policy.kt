@@ -17,7 +17,6 @@
 package org.roboquant.policies
 
 import org.roboquant.brokers.Account
-import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
@@ -34,7 +33,7 @@ import org.roboquant.strategies.Signal
  * Please note that a broker which receives the orders that a Policy created, might not support all the different
  * order types.
  */
-interface Policy : Lifecycle {
+interface Policy  {
 
     /**
      * Act on the received [signals], the latest state of the [account] and the last known [event] to create zero or
@@ -54,5 +53,12 @@ interface Policy : Lifecycle {
      * This map does not mutate after it has been returned by this method.
      */
     fun getMetrics(): Map<String, Double> = emptyMap()
+
+    /**
+     * Reset the state of the component to its initial state. The default implementation is to take no action.
+     */
+    fun reset() {
+        // default is to do nothing
+    }
 
 }

@@ -32,7 +32,6 @@ import org.roboquant.feeds.TradePrice
 import org.roboquant.journals.Journal
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.MetricsLogger
-import org.roboquant.loggers.ProgressBar
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.createCancelOrders
@@ -40,6 +39,9 @@ import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.Policy
 import org.roboquant.strategies.Strategy
 import java.time.Instant
+import java.util.*
+import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * Roboquant is the engine of the platform that ties [strategy], [policy] and [broker] together and caters to a wide
@@ -81,7 +83,7 @@ data class Roboquant(
     ) : this(strategy, metrics.toList(), policy, broker, logger, channelCapacity)
 
     private val kotlinLogger = Logging.getLogger(Roboquant::class)
-    private val components = listOf(strategy, policy, broker, logger) + metrics
+
 
     init {
         kotlinLogger.debug { "Created new roboquant instance=$this" }
@@ -94,10 +96,11 @@ data class Roboquant(
      * By default, also the [logger] will be reset. If you don't want this, set [includeLogger] to false.
      */
     fun reset(includeLogger: Boolean = true) {
-        for (component in components) {
-            if (!includeLogger && component is MetricsLogger) continue
-            component.reset()
-        }
+        strategy.reset()
+        policy.reset()
+        broker.reset()
+        for (metric in metrics) metric.reset()
+        if (includeLogger) logger.reset()
     }
 
     /**
@@ -291,3 +294,88 @@ suspend fun runAsync(
     return broker.sync()
 }
 
+
+private class ProgressBar(val timeframe: Timeframe) {
+
+    private var currentPercent = -1
+    private val progressChar = getProgressChar()
+    private var pre: String = ""
+    private var post: String = ""
+    private var nextUpdate = Instant.MIN
+    private var lastOutput = ""
+
+    init {
+        currentPercent = 0
+        post = ""
+        pre = "${timeframe.toPrettyString()} | "
+        nextUpdate = Instant.MIN
+        lastOutput = ""
+    }
+
+    /**
+     * Start a progress bar for the [run] and [timeframe]
+     */
+    fun start() {
+        draw(currentPercent)
+    }
+
+    /**
+     * Update the progress bar, giving the provided [time]
+     */
+    fun update(time: Instant) {
+
+        // Only if percentage changes we are going to refresh
+        val totalDuration = timeframe.duration
+        val currentDuration = Timeframe(timeframe.start, time).duration
+        var percent = (currentDuration.seconds * 100.0 / totalDuration.seconds).roundToInt()
+        percent = min(percent, 100)
+        if (percent == currentPercent) return
+
+        // Avoid updating the progress meter too often
+        val now = Instant.now()
+        if (now < nextUpdate) return
+        nextUpdate = now.plusMillis(500)
+        currentPercent = percent
+        draw(percent)
+    }
+
+    private fun draw(percent: Int) {
+        val sb = StringBuilder(100)
+        sb.append('\r').append(pre)
+        sb.append(String.format(Locale.ENGLISH, "%3d", percent)).append("% |")
+        val filled = percent * TOTAL_BAR_LENGTH / 100
+        repeat(TOTAL_BAR_LENGTH) {
+            if (it <= filled) sb.append(progressChar) else sb.append(' ')
+        }
+
+        sb.append(post)
+        if (percent == 100) sb.append("\n")
+        val str = sb.toString()
+
+        // Only update if there are some changes to the progress bar
+        if (str != lastOutput) {
+            print(str)
+            lastOutput = str
+            System.out.flush()
+        }
+    }
+
+    /**
+     * Signal that the current task is done, so the progress bar can show it has finished.
+     */
+    fun stop() {
+        if (currentPercent < 100) {
+            draw(100)
+            System.out.flush()
+        }
+    }
+
+    private companion object {
+
+        private const val TOTAL_BAR_LENGTH = 36
+
+        private fun getProgressChar(): Char {
+            return if (System.getProperty("os.name").startsWith("Win")) '=' else '█'
+        }
+    }
+}

@@ -16,7 +16,6 @@
 
 package org.roboquant.loggers
 
-import org.roboquant.common.Lifecycle
 import org.roboquant.common.TimeSeries
 import java.time.Instant
 
@@ -27,9 +26,8 @@ import java.time.Instant
  *
  * The [log] method is mandatory to implement, all other methods are optional and have a default implementation
  *
- * A metrics logger also extends the [Lifecycle] interface.
  */
-interface MetricsLogger : Lifecycle {
+interface MetricsLogger  {
 
     /**
      * Log the [results] of the metric calculations. Also [time] is provided about when these results where captured and
@@ -83,6 +81,13 @@ interface MetricsLogger : Lifecycle {
      * The list of runs that are available and can be retrieved with the [getMetric].
      */
     fun getRuns(): Set<String> = emptySet()
+
+    /**
+     * Reset the state of the component to its initial state. The default implementation is to take no action.
+     */
+    fun reset() {
+        // default is to do nothing
+    }
 
 }
 

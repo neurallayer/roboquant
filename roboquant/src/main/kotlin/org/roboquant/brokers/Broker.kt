@@ -16,15 +16,13 @@
 
 package org.roboquant.brokers
 
-import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
 
 /**
  * Interface for any broker implementation, used for both simulated and real brokers.
- * Brokers can also implement the [Lifecycle] interface that allows them to manage internal state.
  */
-interface Broker : Lifecycle {
+interface Broker {
 
     /**
      * Sync the state of the roboquant with the broker.
@@ -49,5 +47,12 @@ interface Broker : Lifecycle {
      * provide additional metrics. The default implementation returns an empty map.
      */
     fun getMetrics(): Map<String, Double> = emptyMap()
+
+    /**
+     * Reset the state of the component to its initial state. The default implementation is to take no action.
+     */
+    fun reset() {
+        // default is to do nothing
+    }
 
 }

@@ -17,7 +17,6 @@
 package org.roboquant.metrics
 
 import org.roboquant.brokers.Account
-import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
 
 /**
@@ -39,16 +38,21 @@ fun metricResultsOf(vararg metricResults: Pair<String, Number>): Map<String, Dou
  * This is the interface that any metric will have to implement, so it can be invoked during a run. Notice that a metric
  * takes care of the calculations, but the storing of the results is normally done by a MetricsLogger.
  *
- * When metrics rely on state, it is important they override the [Lifecycle] methods to ensure they reset their
- * state when appropriate.
  */
-interface Metric : Lifecycle {
+interface Metric {
 
     /**
      * Calculate the metric given the [account] and [event] and return the results. This method will be invoked at the
      * end of each step in a run.
      */
     fun calculate(account: Account, event: Event): Map<String, Double>
+
+    /**
+     * Reset the state of the component to its initial state. The default implementation is to take no action.
+     */
+    fun reset() {
+        // default is to do nothing
+    }
 
 }
 

@@ -16,7 +16,6 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.common.Lifecycle
 import org.roboquant.feeds.Event
 
 /**
@@ -30,7 +29,7 @@ import org.roboquant.feeds.Event
  * A strategy only has access to an event. In case a strategy requires also having access to the Account,
  * it should be implemented as a Policy instead.
  */
-interface Strategy : Lifecycle {
+interface Strategy  {
 
     /**
      * Generate zero or more [signals][Signal] based on received [event]. Typically, the signals are a result of the
@@ -47,6 +46,13 @@ interface Strategy : Lifecycle {
      * This map should NOT be mutated after it has been returned by this method.
      */
     fun getMetrics(): Map<String, Double> = emptyMap()
+
+    /**
+     * Reset the state of the component to its initial state. The default implementation is to take no action.
+     */
+    fun reset() {
+        // default is to do nothing
+    }
 
 }
 
