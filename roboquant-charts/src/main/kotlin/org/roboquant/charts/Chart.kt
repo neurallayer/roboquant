@@ -51,7 +51,7 @@ private class PairAdapter : JsonSerializer<Pair<*, *>> {
 /**
  * Type adaptor for Gson that allows to use [Amount] that get serialized as a BigDecimal.
  *
- * @constructor Create new Pair adapter
+ * @constructor Create new Amount adapter
  */
 private class AmountAdapter : JsonSerializer<Amount> {
 
@@ -68,7 +68,7 @@ private class AmountAdapter : JsonSerializer<Amount> {
 /**
  * Type adaptor for Gson that allows to use [Instant] that get serialized as a Long
  *
- * @constructor Create new Pair adapter
+ * @constructor Create new Instant adapter
  */
 private class InstantAdapter : JsonSerializer<Instant> {
 
@@ -85,7 +85,7 @@ private class InstantAdapter : JsonSerializer<Instant> {
 /**
  * Type adaptor for Gson that allows to use [Triple] that get serialized as a List
  *
- * @constructor Create new Pair adapter
+ * @constructor Create new Triple adapter
  */
 private class TripleAdapter : JsonSerializer<Triple<*, *, *>> {
 
