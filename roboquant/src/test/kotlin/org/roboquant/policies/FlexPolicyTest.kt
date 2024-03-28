@@ -26,7 +26,6 @@ import org.roboquant.orders.*
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.test.Test
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -42,20 +41,6 @@ internal class FlexPolicyTest {
         assertTrue(orders.isEmpty())
     }
 
-    @Test
-    fun recording() {
-        val policy = FlexPolicy()
-        policy.enableMetrics = true
-        val signals = mutableListOf<Signal>()
-        val event = Event(Instant.now(), emptyList())
-        val account = InternalAccount(Currency.USD).toAccount()
-        policy.act(signals, account, event)
-        val metrics = policy.getMetrics()
-        assertTrue(metrics.isNotEmpty())
-        assertContains(metrics, "policy.actions")
-        assertContains(metrics, "policy.signals")
-        assertContains(metrics, "policy.orders.new")
-    }
 
     @Test
     fun order3() {

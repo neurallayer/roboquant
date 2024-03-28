@@ -46,7 +46,7 @@ class EMAStrategy(
     smoothing: Double = 2.0,
     private val minEvents: Int = slowPeriod,
     priceType: String = "DEFAULT"
-) : PriceStrategy(priceType = priceType, prefix = "strategy.ema.") {
+) : PriceStrategy(priceType = priceType) {
 
     private val fast = 1.0 - (smoothing / (fastPeriod + 1))
     private val slow = 1.0 - (smoothing / (slowPeriod + 1))
@@ -104,11 +104,6 @@ class EMAStrategy(
             calculator.addPrice(price)
             if (calculator.isReady()) {
                 val newDirection = calculator.getDirection()
-
-                if (recording) {
-                    record("${asset.symbol}.fast", calculator.emaFast)
-                    record("${asset.symbol}.slow", calculator.emaSlow)
-                }
 
                 if (oldDirection != newDirection) {
                     val rating = if (newDirection) 1.0 else -1.0

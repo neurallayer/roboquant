@@ -20,7 +20,6 @@ package org.roboquant.ta
 
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
-import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import java.lang.Integer.max
@@ -34,7 +33,7 @@ import java.lang.Integer.max
  * If not enough history is available to calculate the indicators, the capacity will be automatically increased until
  * it is able to perform the calculations.
  */
-class TaLibStrategy(initialCapacity: Int = 1) : RecordingStrategy(recording = true) {
+class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
 
     private var sellFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
     private var buyFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }

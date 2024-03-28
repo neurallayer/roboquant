@@ -21,8 +21,8 @@ import org.roboquant.common.Logging
 import org.roboquant.common.addNotNull
 import org.roboquant.common.percent
 import org.roboquant.feeds.Event
-import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
+import org.roboquant.strategies.Strategy
 import smile.data.DataFrame
 import smile.regression.DataFrameRegression
 
@@ -34,11 +34,10 @@ open class RegressionStrategy(
     private val asset: Asset,
     private val percentage: Double = 1.percent,
     val block: (DataFrame) -> DataFrameRegression
-) : RecordingStrategy() {
+) : Strategy {
 
     private val logger = Logging.getLogger(this::class)
     private var trained = false
-    private val metricName = "prediction.${asset.symbol.lowercase()}"
 
     private lateinit var model: DataFrameRegression
 
@@ -50,7 +49,6 @@ open class RegressionStrategy(
     private fun predict(): Double {
         val df = featureSet.getPredictData()
         val result = model.predict(df).last()
-        record(metricName, result)
         return result
     }
 

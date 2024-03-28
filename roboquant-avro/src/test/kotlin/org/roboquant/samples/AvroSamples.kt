@@ -138,16 +138,9 @@ internal class AvroSamples {
     @Test
     @Ignore
     internal fun signalsOnly() {
-        class MyPolicy : BasePolicy(prefix = "") {
-
-            init {
-                enableMetrics = true
-            }
+        class MyPolicy : BasePolicy() {
 
             override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
-                for (signal in signals) {
-                    record("signal.${signal.asset.symbol}", signal.rating)
-                }
                 return emptyList()
             }
 

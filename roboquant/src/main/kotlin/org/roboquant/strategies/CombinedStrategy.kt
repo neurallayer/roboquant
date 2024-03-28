@@ -44,9 +44,4 @@ open class CombinedStrategy(val strategies: Collection<Strategy>) : Strategy {
         for (strategy in strategies) strategy.reset()
     }
 
-    override fun getMetrics(): Map<String, Double> {
-        val result = mutableMapOf<String, Double>()
-        strategies.forEach { result += it.getMetrics() }
-        return result
-    }
 }

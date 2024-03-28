@@ -22,7 +22,6 @@ import org.roboquant.common.Asset
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.orders.createCancelOrders
-import kotlin.collections.set
 
 /**
  * Contains a number of utility methods that are useful when implementing a new policy.
@@ -30,43 +29,8 @@ import kotlin.collections.set
  * For example, how to deal with conflicting signals or how to handle amounts in a multi-currency environment. It
  * also contains a simple method to record metrics.
  *
- * @property enableMetrics should metrics be exposed, default is false
  */
-abstract class BasePolicy(private val prefix: String = "policy.") : Policy {
-
-    /**
-     * should metrics be exposed, default is false
-     */
-    var enableMetrics: Boolean = false
-
-    private val metrics = mutableMapOf<String, Double>()
-
-    /**
-     * Record a metric
-     *
-     * @param key The name of the metric
-     * @param value The value of the metric
-     */
-    protected fun record(key: String, value: Number) {
-        if (!enableMetrics) return
-        metrics["$prefix$key"] = value.toDouble()
-    }
-
-    /**
-     * Return any recorded metrics
-     */
-    override fun getMetrics(): Map<String, Double> {
-        val result = metrics.toMap()
-        metrics.clear()
-        return result
-    }
-
-    /**
-     * Reset the state, including any recorded metrics.
-     */
-    override fun reset() {
-        metrics.clear()
-    }
+abstract class BasePolicy : Policy {
 
     /**
      * Create a new market-order to close an open position for an [asset] and cancel-orders any open orders for

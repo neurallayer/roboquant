@@ -40,14 +40,6 @@ interface Strategy  {
     fun generate(event: Event): List<Signal>
 
     /**
-     * This will be invoked at each step in a run and provides the implementation with the opportunity to log additional
-     * information. The default implementation is to return an empty map.
-     *
-     * This map should NOT be mutated after it has been returned by this method.
-     */
-    fun getMetrics(): Map<String, Double> = emptyMap()
-
-    /**
      * Reset the state of the component to its initial state. The default implementation is to take no action.
      */
     fun reset() {

@@ -175,9 +175,6 @@ data class Roboquant(
      */
     private fun getMetrics(account: Account, event: Event) = buildMap {
         for (metric in metrics) putAll(metric.calculate(account, event))
-        putAll(strategy.getMetrics())
-        putAll(policy.getMetrics())
-        putAll(broker.getMetrics())
         kotlinLogger.trace { "captured metrics=$size" }
     }
 

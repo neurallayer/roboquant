@@ -68,7 +68,6 @@ open class FlexPolicyConfig(
  * For example, this policy will create [MarketOrder]s by default, but this can be changed by overwriting
  * the [createOrder] method in a subclass.
  *
- * When [enableMetrics] is set to true, it will record the number of `actions`, `signals` and `orders`.
  *
  * @constructor Create a new instance of a FlexPolicy
  * @param configure additional configuration parameters
@@ -255,20 +254,6 @@ open class FlexPolicy(
      */
     private operator fun Collection<Order>.contains(asset: Asset) = any { it.asset == asset }
 
-    /**
-     * Record basic metrics: `actions`, `signals`, `orders.new`, `orders.open`,
-     * `positions` and `buyingpower`.
-     *
-     * The main purpose is to better understand when the policy is not behaving as expected.
-     */
-    open fun record(orders: List<Order>, signals: List<Signal>, event: Event, account: Account) {
-        record("actions", event.items.size)
-        record("signals", signals.size)
-        record("orders.new", orders.size)
-        record("orders.open", account.openOrders.size)
-        record("positions", account.positions.size)
-        record("buyingpower", account.buyingPower.value)
-    }
 
     /**
      * @see Policy.act
@@ -327,7 +312,6 @@ open class FlexPolicy(
 
             }
         }
-        if (enableMetrics) record(orders, signals, event, account)
         return orders
     }
 }

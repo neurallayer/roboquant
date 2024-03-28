@@ -22,19 +22,37 @@ import io.questdb.cairo.TableWriter
 import io.questdb.griffin.SqlException
 import io.questdb.griffin.SqlExecutionContext
 import io.questdb.griffin.SqlExecutionContextImpl
-import org.roboquant.common.*
+import org.roboquant.common.Config
+import org.roboquant.common.Logging
+import org.roboquant.common.Observation
+import org.roboquant.common.TimeSeries
 import org.roboquant.loggers.MetricsLogger
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Instant
 import java.util.concurrent.ConcurrentSkipListSet
+import kotlin.collections.Map
+import kotlin.collections.Set
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.iterator
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
+import kotlin.collections.setOf
+import kotlin.collections.toSet
+import kotlin.collections.toSortedSet
 import kotlin.io.path.div
 import kotlin.io.path.isDirectory
 
 /**
  * Log metrics to a QuestDB database
  */
-class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db", workers: Int = 1) : MetricsLogger {
+class QuestDBMetricsLogger(
+    dbPath: Path = Config.home / "questdb-metrics" / "db",
+    workers: Int = 1,
+    private val partition: String = QuestDBRecorder.NONE
+) : MetricsLogger {
 
     private val logger = Logging.getLogger(this::class)
     private var engine: CairoEngine
@@ -43,6 +61,7 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
     private val tables = ConcurrentSkipListSet<String>()
 
     init {
+        require(partition in setOf("YEAR", "MONTH", "DAY", "HOUR", "NONE")) { "invalid partition value" }
         if (Files.notExists(dbPath)) {
             logger.info { "Creating new database path=$dbPath" }
             Files.createDirectories(dbPath)
@@ -158,7 +177,7 @@ class QuestDBMetricsLogger(dbPath: Path = Config.home / "questdb-metrics" / "db"
                 |metric SYMBOL,
                 |value DOUBLE,  
                 |time TIMESTAMP
-                |), INDEX(metric) timestamp(time)""".trimMargin(),
+                |), INDEX(metric) timestamp(time) PARTITION BY $partition""".trimMargin(),
         )
 
         engine.update("TRUNCATE TABLE '$tableName'")

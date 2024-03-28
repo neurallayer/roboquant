@@ -17,27 +17,19 @@
 package org.roboquant.strategies
 
 import kotlinx.coroutines.runBlocking
-import kotlin.test.Test
 import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.loggers.MemoryLogger
-import org.roboquant.loggers.latestRun
+import kotlin.test.Test
 import kotlin.test.assertNotEquals
-import kotlin.test.assertTrue
 
 internal class EMAStrategyTest {
 
     @Test
     fun simpleTest() = runBlocking {
         val strategy = EMAStrategy()
-        strategy.recording = true
         val roboquant = Roboquant(strategy, logger = MemoryLogger(false))
         roboquant.run(TestData.feed, name = "test")
-        val names = roboquant.logger.getMetricNames()
-
-        assertTrue(names.isNotEmpty())
-        val metrics = roboquant.logger.getMetric(names.first()).latestRun()
-        assertTrue(metrics.isNotEmpty())
     }
 
     @Test
@@ -45,7 +37,6 @@ internal class EMAStrategyTest {
         val strategy1 = EMAStrategy.PERIODS_5_15
         val strategy2 = EMAStrategy.PERIODS_12_26
         val strategy3 = EMAStrategy.PERIODS_50_200
-        assertTrue(!strategy1.recording)
         assertNotEquals(strategy1, strategy2)
         assertNotEquals(strategy2, strategy3)
     }

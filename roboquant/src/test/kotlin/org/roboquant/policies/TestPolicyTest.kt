@@ -42,7 +42,6 @@ internal class TestPolicyTest {
         val account = InternalAccount(Currency.USD).toAccount()
         val orders = policy.act(emptyList(), account, Event.empty())
         assertTrue(orders.isEmpty())
-        assertTrue(policy.getMetrics().isEmpty())
     }
 
     @Test
@@ -55,7 +54,6 @@ internal class TestPolicyTest {
             val account = InternalAccount(Currency.USD).toAccount()
             val orders = policy.act(signals, account, event)
             assertTrue(orders.first() is MarketOrder)
-            assertTrue(policy.getMetrics().isEmpty())
         }
 
         val signals = listOf(Signal(TestData.usStock(), 0.0))

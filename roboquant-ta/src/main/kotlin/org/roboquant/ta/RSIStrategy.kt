@@ -20,8 +20,8 @@ import org.roboquant.common.Asset
 import org.roboquant.common.PriceSeries
 import org.roboquant.common.addAll
 import org.roboquant.feeds.Event
-import org.roboquant.strategies.RecordingStrategy
 import org.roboquant.strategies.Signal
+import org.roboquant.strategies.Strategy
 
 /**
  * Strategy using the Relative Strength MetadataProvider of an asset to generate signals. RSI measures the magnitude
@@ -40,7 +40,7 @@ class RSIStrategy(
     val highThreshold: Double = 70.0,
     private val windowSize: Int = 14,
     private val priceType: String = "DEFAULT"
-) : RecordingStrategy(prefix = "rsi.") {
+) : Strategy {
 
     private val history = mutableMapOf<Asset, PriceSeries>()
     private val taLib = TaLib()
@@ -53,7 +53,6 @@ class RSIStrategy(
     }
 
     /**
-     * @see RecordingStrategy.generate
      */
     override fun generate(event: Event): List<Signal> {
         history.addAll(event, 1, priceType)
@@ -63,7 +62,6 @@ class RSIStrategy(
             try {
                 if (data.isFull()) {
                     val rsi = taLib.rsi(data.toDoubleArray(), windowSize)
-                    record(asset.symbol, rsi)
                     if (rsi > highThreshold)
                         result.add(Signal.sell(asset))
                     else if (rsi < lowThreshold)

@@ -26,13 +26,14 @@ internal class BinanceHistoricFeedTestIT {
     @Test
     fun test() {
         val feed = BinanceHistoricFeed()
-        assertEquals(1, feed.availableAssets.findBySymbols("BTCUST").size)
+        val symbol = "BTCUSDT"
+        assertEquals(1, feed.availableAssets.findBySymbols(symbol).size)
 
-        val asset = feed.availableAssets.getBySymbol("BTCUST")
+        val asset = feed.availableAssets.getBySymbol(symbol)
         assertEquals(asset.type, AssetType.CRYPTO)
 
         val tf = Timeframe.past(100.days)
-        feed.retrieve("BTCBUSD", timeframe = tf)
+        feed.retrieve(symbol, timeframe = tf)
         assertEquals(1, feed.assets.size)
 
         assertThrows<IllegalArgumentException> {

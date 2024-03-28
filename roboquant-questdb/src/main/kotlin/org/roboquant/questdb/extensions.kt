@@ -90,7 +90,7 @@ internal fun CairoEngine.dropTable(tableName: String) {
 
 internal fun CairoEngine.tableColumns(tableName: String): Set<String> {
     val result = mutableSetOf<String>()
-    query("select column from table_columns('$tableName')") {
+    query("select \"column\" from table_columns('$tableName')") {
         while (hasNext()) {
             result.add(record.getStr(0).toString())
         }

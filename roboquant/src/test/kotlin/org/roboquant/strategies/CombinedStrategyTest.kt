@@ -30,9 +30,6 @@ internal class CombinedStrategyTest {
             return emptyList()
         }
 
-        override fun getMetrics(): Map<String, Double> {
-            return emptyMap()
-        }
 
     }
 
@@ -46,7 +43,6 @@ internal class CombinedStrategyTest {
         val signals = mutableListOf<Signal>()
         for (event in TestData.events(10)) signals += s.generate(event)
         assertTrue(signals.isEmpty())
-        assertTrue(s.getMetrics().isEmpty())
     }
 
 }

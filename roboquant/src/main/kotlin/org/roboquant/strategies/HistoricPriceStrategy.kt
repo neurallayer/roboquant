@@ -35,7 +35,7 @@ import org.roboquant.feeds.Event
 abstract class HistoricPriceStrategy(
     private val period: Int,
     private val priceType: String = "DEFAULT",
-) : RecordingStrategy() {
+) : Strategy {
 
     /**
      * Contain the history of all assets

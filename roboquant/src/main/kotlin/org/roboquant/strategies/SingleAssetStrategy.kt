@@ -30,8 +30,7 @@ import java.time.Instant
  */
 abstract class SingleAssetStrategy(
     protected val asset: Asset,
-    prefix: String = "strategy.${asset.symbol}."
-) : RecordingStrategy(prefix = prefix) {
+) : Strategy {
 
     override fun generate(event: Event): List<Signal> {
         val result = mutableListOf<Signal>()

@@ -43,12 +43,6 @@ interface Broker {
     fun place(orders: List<Order>)
 
     /**
-     * This method will be invoked at each step in a run and provides the broker with the opportunity to
-     * provide additional metrics. The default implementation returns an empty map.
-     */
-    fun getMetrics(): Map<String, Double> = emptyMap()
-
-    /**
      * Reset the state of the component to its initial state. The default implementation is to take no action.
      */
     fun reset() {
