@@ -22,62 +22,60 @@ import io.questdb.cairo.TableWriter
 import io.questdb.griffin.SqlException
 import io.questdb.griffin.SqlExecutionContext
 import io.questdb.griffin.SqlExecutionContextImpl
+import org.roboquant.brokers.Account
 import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import org.roboquant.common.Observation
 import org.roboquant.common.TimeSeries
+import org.roboquant.feeds.Event
+import org.roboquant.journals.Journal
 import org.roboquant.loggers.MetricsLogger
+import org.roboquant.metrics.Metric
+import org.roboquant.orders.Order
+import org.roboquant.strategies.Signal
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.Instant
-import java.util.concurrent.ConcurrentSkipListSet
-import kotlin.collections.Map
-import kotlin.collections.Set
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.iterator
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
-import kotlin.collections.set
-import kotlin.collections.setOf
-import kotlin.collections.toSet
-import kotlin.collections.toSortedSet
 import kotlin.io.path.div
 import kotlin.io.path.isDirectory
 
 /**
  * Log metrics to a QuestDB database
  */
-class QuestDBMetricsLogger(
+class QuestDBJournal(
+    private vararg val metrics: Metric,
     dbPath: Path = Config.home / "questdb-metrics" / "db",
+    private val table: String = "metrics",
     workers: Int = 1,
-    private val partition: String = QuestDBRecorder.NONE
-) : MetricsLogger {
+    private val partition: String = QuestDBRecorder.NONE,
+    private val truncate: Boolean = false
+) : Journal {
 
     private val logger = Logging.getLogger(this::class)
     private var engine: CairoEngine
     private val ctx: SqlExecutionContext
 
-    private val tables = ConcurrentSkipListSet<String>()
-
     init {
         require(partition in setOf("YEAR", "MONTH", "DAY", "HOUR", "NONE")) { "invalid partition value" }
-        if (Files.notExists(dbPath)) {
-            logger.info { "Creating new database path=$dbPath" }
-            Files.createDirectories(dbPath)
-        }
-
-        require(dbPath.isDirectory()) { "dbPath needs to be a directory" }
-        val config = DefaultCairoConfiguration(dbPath.toString())
-        engine = CairoEngine(config)
+        engine = getEngine(dbPath)
         ctx = SqlExecutionContextImpl(engine, workers)
+        createTable(table)
     }
 
-    /**
-     * Load previous runs already in the database, so they are accessible via [getMetric]
-     */
-    fun loadPreviousRuns() {
-        tables.addAll(engine.tables())
+
+    companion object {
+
+        fun getEngine(dbPath: Path): CairoEngine {
+            if (Files.notExists(dbPath)) {
+                Files.createDirectories(dbPath)
+            }
+            require(dbPath.isDirectory()) { "dbPath needs to be a directory" }
+            val config = DefaultCairoConfiguration(dbPath.toString())
+            val engine = CairoEngine(config)
+            return engine
+        }
+
     }
 
     private inline fun CairoEngine.appendRows(tableName: String, block: TableWriter.() -> Unit) {
@@ -89,54 +87,20 @@ class QuestDBMetricsLogger(
     }
 
     /**
-     * @see MetricsLogger.log
+     * Get a metric for a specific [table]
      */
-    override fun log(results: Map<String, Double>, time: Instant, run: String) {
-        if (results.isEmpty()) return
-        if (!tables.contains(run)) {
-            createTable(run)
-            tables.add(run)
-        }
-
-        engine.appendRows(run) {
-            val t = time.epochMicro
-            for ((k, v) in results) {
-                val row = newRow(t)
-                row.putSym(0, k)
-                row.putDouble(1, v)
-                row.append()
-            }
-        }
-
-    }
-
-    /**
-     * Get a metric for a specific [run]
-     */
-    override fun getMetric(metricName: String, run: String): TimeSeries {
+    fun getMetric(metricName: String): TimeSeries {
         val result = mutableListOf<Observation>()
-        if (tables.contains(run)) {
-            engine.query("select time, value from '$run' where metric='$metricName'") {
-                while (hasNext()) {
-                    val r = this.record
-                    val o = Observation(ofEpochMicro(r.getTimestamp(0)), r.getDouble(1))
-                    result.add(o)
-                }
+
+        engine.query("select time, value from '$table' where metric='$metricName'") {
+            while (hasNext()) {
+                val r = this.record
+                val o = Observation(ofEpochMicro(r.getTimestamp(0)), r.getDouble(1))
+                result.add(o)
             }
         }
-        return TimeSeries(result)
-    }
 
-    /**
-     * get a specific metric for all runs
-     */
-    override fun getMetric(metricName: String): Map<String, TimeSeries> {
-        val result = mutableMapOf<String, TimeSeries>()
-        for (table in tables) {
-            val v = getMetric(metricName, table)
-            if (v.isNotEmpty()) result[table] = v
-        }
-        return result
+        return TimeSeries(result)
     }
 
 
@@ -146,13 +110,12 @@ class QuestDBMetricsLogger(
         } catch (e: SqlException) {
             logger.error(e) { "error with drop table $run" }
         }
-        tables.remove(run)
     }
 
     /**
      * @see MetricsLogger.getMetricNames
      */
-    override fun getMetricNames(run: String): Set<String> {
+    fun getMetricNames(run: String): Set<String> {
         return engine.distictSymbol(run, "name").toSortedSet()
     }
 
@@ -162,14 +125,13 @@ class QuestDBMetricsLogger(
      */
     fun removeAllRuns() {
         engine.dropAllTables()
-        tables.clear()
         logger.info { "removed all runs from ${engine.configuration.root}" }
     }
 
     /**
      * @see MetricsLogger.getRuns
      */
-    override fun getRuns(): Set<String> = engine.tables().toSet()
+    fun getRuns(): Set<String> = engine.tables().toSet()
 
     private fun createTable(tableName: String) {
         engine.update(
@@ -179,8 +141,7 @@ class QuestDBMetricsLogger(
                 |time TIMESTAMP
                 |), INDEX(metric) timestamp(time) PARTITION BY $partition""".trimMargin(),
         )
-
-        engine.update("TRUNCATE TABLE '$tableName'")
+        if (truncate) engine.update("TRUNCATE TABLE '$tableName'")
     }
 
     /**
@@ -191,13 +152,25 @@ class QuestDBMetricsLogger(
         ctx.close()
     }
 
-    /**
-     * Reset the state.
-     * It doesn't remove the underlying tables.
-     * Use [removeAllRuns] for that.
-     */
-    override fun reset() {
-        tables.clear()
+
+
+    override fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {
+
+        val result = mutableMapOf<String, Double>()
+        for (metric in metrics) {
+            val values = metric.calculate(account, event)
+            result.putAll(values)
+        }
+
+        engine.appendRows(table) {
+            val t = event.time.epochMicro
+            for ((k, v) in result) {
+                val row = newRow(t)
+                row.putSym(0, k)
+                row.putDouble(1, v)
+                row.append()
+            }
+        }
     }
 
 }

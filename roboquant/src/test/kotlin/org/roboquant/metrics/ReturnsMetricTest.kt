@@ -16,16 +16,14 @@
 
 package org.roboquant.metrics
 
-import kotlin.test.Test
-import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.common.months
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
-import org.roboquant.loggers.MemoryLogger
-import org.roboquant.loggers.latestRun
+import org.roboquant.journals.MetricsJournal
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
+import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertTrue
 
@@ -43,9 +41,9 @@ internal class ReturnsMetricTest {
     fun basic2() {
         val metric = ReturnsMetric2(minSize = 250)
         val feed = RandomWalkFeed.lastYears(2)
-        val rq = Roboquant(EMAStrategy(), metric, logger = MemoryLogger(showProgress = false))
-        rq.run(feed)
-        assertContains(rq.logger.getMetricNames(), "returns.sharperatio")
+        val j = MetricsJournal(metric)
+        org.roboquant.run(feed, EMAStrategy(), j)
+        assertContains(j.getMetricNames(), "returns.sharperatio")
     }
 
     @Test
@@ -53,17 +51,16 @@ internal class ReturnsMetricTest {
         val feed = HistoricTestFeed(100..300)
         val strategy = TestStrategy()
         val metric = ReturnsMetric(period = 1.months)
-        val logger = MemoryLogger(false)
-        val roboquant = Roboquant(strategy, metric, logger = logger)
-        roboquant.run(feed, name = "test")
+        val logger = MetricsJournal(metric)
+        org.roboquant.run(feed, strategy, logger)
 
-        val sharpRatio = logger.getMetric("returns.sharperatio").latestRun().last().value
+        val sharpRatio = logger.getMetric("returns.sharperatio").last().value
         assertTrue(!sharpRatio.isNaN())
 
-        val mean = logger.getMetric("returns.mean").latestRun().last().value
+        val mean = logger.getMetric("returns.mean").last().value
         assertTrue(!mean.isNaN())
 
-        val std = logger.getMetric("returns.std").latestRun().last().value
+        val std = logger.getMetric("returns.std").last().value
         assertTrue(!std.isNaN())
     }
 

@@ -16,7 +16,6 @@
 
 package org.roboquant.samples
 
-import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
 import org.roboquant.avro.AvroFeed
 import org.roboquant.brokers.Account
@@ -32,7 +31,6 @@ import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
 import org.roboquant.loggers.latestRun
@@ -91,25 +89,6 @@ internal class AvroSamples {
         println(account.openOrders.summary())
     }
 
-    @Test
-    @Ignore
-    internal fun walkForwardParallel() = runBlocking {
-        val feed = AvroFeed.sp500()
-        val logger = LastEntryLogger()
-        val jobs = ParallelJobs()
-
-        feed.timeframe.split(2.years).forEach {
-            val strategy = EMAStrategy()
-            val roboquant = Roboquant(strategy, AccountMetric(), logger = logger)
-            jobs.add {
-                roboquant.runAsync(feed, name = "run-$it")
-            }
-        }
-
-        jobs.joinAll() // Make sure we wait for all jobs to finish
-        val avgEquity = logger.getMetric("account.equity").flatten().average()
-        println(avgEquity)
-    }
 
     @Test
     @Ignore

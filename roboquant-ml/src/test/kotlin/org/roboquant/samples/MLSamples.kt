@@ -89,7 +89,7 @@ internal class MLSamples {
         val (train, valid) = feed.timeframe.splitTwoWay(9.months)
         rq.run(feed, train)
         rq.broker.reset()
-        val account = rq.run(feed, valid, reset = false)
+        val account = rq.run(feed, valid)
         println(account.summary())
         val trades = account.trades
         println(trades.filter { !it.pnlValue.iszero }.joinToString("\n") {

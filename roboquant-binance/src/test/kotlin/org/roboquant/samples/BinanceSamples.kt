@@ -159,7 +159,7 @@ internal class BinanceSamples {
         repeat(3) {
             jobs.add {
                 val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = InfoLogger())
-                rq.run(feed, tf, name = "run-$it")
+                rq.run(feed, tf)
             }
         }
 

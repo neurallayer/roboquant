@@ -15,6 +15,13 @@ interface Journal {
      */
     fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>)
 
+    /**
+     * reset the state
+     */
+    fun reset() {
+        // NOP
+    }
+
 }
 
 

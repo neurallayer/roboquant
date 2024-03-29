@@ -35,7 +35,7 @@ interface Broker {
      *
      * A sync will result in a new instance of the account object.
      */
-    fun sync(event: Event = Event.empty()) : Account
+    fun sync(event: Event? = null) : Account
 
     /**
      * Place new [orders] at this broker.

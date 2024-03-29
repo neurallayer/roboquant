@@ -177,7 +177,7 @@ internal class RoboquantSamples {
             val name = "run-${run++}"
             jobs.add {
                 val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
-                rq.runAsync(feed, it, name = name)
+                rq.runAsync(feed, it)
                 // val actions = rq.logger.getMetric("progress.actions", name).values.first()
                 // println("$actions $name $it")
                 // assertTrue(actions > 30)

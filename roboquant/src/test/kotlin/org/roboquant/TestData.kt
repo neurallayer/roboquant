@@ -16,21 +16,23 @@
 
 package org.roboquant
 
+import kotlinx.coroutines.runBlocking
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.assets
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.HistoricFeed
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.TradePrice
+import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
+import org.roboquant.feeds.util.play
+import org.roboquant.journals.Journal
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus
+import org.roboquant.strategies.EMAStrategy
 import java.io.File
 import java.time.Instant
+import kotlin.test.assertTrue
 
 /**
  * Test data used in unit tests
@@ -120,4 +122,37 @@ internal object TestData {
 
     val feed = RandomWalkFeed.lastYears(1, 2)
 
+}
+
+internal class FeedTest {
+
+
+    fun simpleRun(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE) = runBlocking {
+        var prev = Instant.MIN
+        for (event in play(feed, timeframe)) {
+            assertTrue(event.time > prev)
+            prev = event.time
+
+            for (price in event.prices.values) {
+                if (price is PriceBar) {
+                    assertTrue(price.low <= price.high)
+                    assertTrue(price.close <= price.high)
+                    assertTrue(price.open <= price.high)
+
+                    assertTrue(price.open >= price.low)
+                    assertTrue(price.close >= price.low)
+                }
+            }
+        }
+    }
+}
+
+
+internal class  JournalTest {
+
+
+    fun simpleRun(journal: Journal) {
+        val feed = RandomWalkFeed.lastYears(1)
+        run(feed, EMAStrategy(), journal)
+    }
 }

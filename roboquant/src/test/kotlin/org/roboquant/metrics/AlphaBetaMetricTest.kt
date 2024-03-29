@@ -16,7 +16,6 @@
 
 package org.roboquant.metrics
 
-import org.roboquant.Roboquant
 import org.roboquant.TestData
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.sim.execution.InternalAccount
@@ -24,8 +23,7 @@ import org.roboquant.common.Currency
 import org.roboquant.common.Size
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.toList
-import org.roboquant.loggers.LastEntryLogger
-import org.roboquant.loggers.latestRun
+import org.roboquant.journals.MetricsJournal
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -38,14 +36,13 @@ internal class AlphaBetaMetricTest {
         val feed = TestData.feed
         val strategy = EMAStrategy.PERIODS_5_15
         val alphaBetaMetric = AlphaBetaMetric(50)
-        val logger = LastEntryLogger()
-        val roboquant = Roboquant(strategy, alphaBetaMetric, logger = logger)
-        roboquant.run(feed, name = "test")
+        val logger = MetricsJournal(alphaBetaMetric)
+        org.roboquant.run(feed, strategy,logger)
 
-        val alpha = logger.getMetric("account.alpha").latestRun().last().value
+        val alpha = logger.getMetric("account.alpha").last().value
         assertTrue(!alpha.isNaN())
 
-        val beta = logger.getMetric("account.beta").latestRun().last().value
+        val beta = logger.getMetric("account.beta").last().value
         assertTrue(!beta.isNaN())
     }
 

@@ -7,6 +7,7 @@ import org.roboquant.metrics.Metric
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
 import java.time.Instant
+import java.util.TreeMap
 
 /**
  *
@@ -16,8 +17,7 @@ import java.time.Instant
  */
 class MetricsJournal(private vararg val metrics: Metric) : Journal {
 
-    private data class Entry(val time: Instant, val values: Map<String, Double>)
-    private val history = mutableListOf<Entry>()
+    private val history = TreeMap<Instant, Map<String, Double>>()
 
     override fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {
         val result = mutableMapOf<String, Double>()
@@ -25,11 +25,15 @@ class MetricsJournal(private vararg val metrics: Metric) : Journal {
             val values = metric.calculate(account, event)
             result.putAll(values)
         }
-        history.add(Entry(event.time, result))
+        history[event.time] = result
+    }
+
+    override fun reset() {
+        history.clear()
     }
 
     fun getMetricNames() : Set<String> {
-        return history.map { it.values.keys }.flatten().toSet()
+        return history.values.map { it.keys }.flatten().toSet()
     }
 
     /**

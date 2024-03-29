@@ -16,20 +16,14 @@
 
 package org.roboquant.samples
 
-import org.roboquant.Roboquant
-import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.common.ParallelJobs
 import org.roboquant.common.Timeframe
 import org.roboquant.common.months
 import org.roboquant.common.seconds
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.metrics.AccountMetric
 import org.roboquant.questdb.QuestDBFeed
-import org.roboquant.questdb.QuestDBMetricsLogger
 import org.roboquant.questdb.QuestDBRecorder
-import org.roboquant.strategies.EMAStrategy
 import kotlin.system.measureTimeMillis
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -45,18 +39,6 @@ internal class QuestDBSamples {
         return result
     }
 
-
-    @Test
-    @Ignore
-    internal fun logging() {
-        val logger = QuestDBMetricsLogger()
-        val feed = RandomWalkFeed.lastYears(1)
-        val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = logger)
-        rq.run(feed, name = "myrun")
-        val m = logger.getMetric("account.equity", "myrun")
-        println(m.size)
-        feed.close()
-    }
 
 
     @Test
@@ -96,28 +78,6 @@ internal class QuestDBSamples {
         f.close()
     }
 
-    @Test
-    @Ignore
-    internal fun backTest() {
-        val feed = QuestDBFeed(tableName)
-        val jobs = ParallelJobs()
-        val logger = QuestDBMetricsLogger()
-        logger.removeAllRuns()
-        feed.timeframe.split(1.months).forEach { tf ->
-            jobs.add {
-                val run = "run-${tf.toPrettyString()}"
-                println("starting run=$run")
-                val broker = SimBroker() // Set to true to optimize for performance
-                val rq = Roboquant(EMAStrategy(), AccountMetric(), broker = broker, logger = logger)
-                rq.runAsync(feed, tf, name = run)
-                println("done run=$run")
-            }
-        }
 
-        jobs.joinAllBlocking()
-
-        feed.close()
-        logger.close()
-    }
 }
 

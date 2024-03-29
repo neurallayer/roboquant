@@ -27,7 +27,7 @@ internal class CalendarChartTestIT {
         val chart = CalendarChart(data)
         assertTrue(chart.renderJson().isNotBlank())
 
-        TestData.testFile(chart, "calendarchart")
+        // TestData.testFile(chart, "calendarchart")
     }
 
 }

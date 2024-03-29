@@ -127,8 +127,10 @@ class IBKRBroker(
         client.placeOrder(ibOrder.orderId(), contract, ibOrder)
     }
 
-    override fun sync(event: Event): Account {
-        if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+    override fun sync(event: Event?): Account {
+        if (event != null) {
+            if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+        }
         return _account.toAccount()
     }
 

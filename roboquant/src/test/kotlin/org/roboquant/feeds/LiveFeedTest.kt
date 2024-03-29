@@ -18,9 +18,8 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.*
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.Roboquant
 import org.roboquant.common.*
-import org.roboquant.loggers.LastEntryLogger
+import org.roboquant.journals.MetricsJournal
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
@@ -84,17 +83,14 @@ internal class LiveFeedTest {
 
         val jobs = ParallelJobs()
 
-        var run = 0
+
         tf.sample(200.millis, 10, resolution = ChronoUnit.MILLIS).forEach {
-            val name = "run-${run++}"
             jobs.add {
-                val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = LastEntryLogger())
-                rq.runAsync(feed, it, name = name)
-                val actions = rq.logger.getMetric("progress.actions", name).values.last()
-                // println("${actions.size} $name $it")
+                val j = MetricsJournal(ProgressMetric())
+                org.roboquant.runAsync(feed, EMAStrategy(), j, it)
+                val actions = j.getMetric("progress.actions").values.last()
                 assertTrue(actions > 2)
             }
-            // println("run $name added")
         }
 
         feed.start(delayInMillis = 50)

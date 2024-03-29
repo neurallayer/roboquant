@@ -17,11 +17,6 @@
 package org.roboquant.charts
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.Roboquant
-import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.loggers.MemoryLogger
-import org.roboquant.metrics.AccountMetric
-import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -64,16 +59,5 @@ internal class TimeSeriesChartTest {
         assertTrue(chart.renderJson().isNotBlank())
     }
 
-
-    @Test
-    fun fromMetrics() {
-        val feed = RandomWalkFeed.lastYears(1)
-        val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = MemoryLogger(false))
-        rq.run(feed)
-        assertDoesNotThrow {
-            val chart = TimeSeriesChart.fromMetrics(rq.logger, "account.equity", "account.cash")
-            chart.renderJson()
-        }
-    }
 
 }

@@ -29,7 +29,7 @@ internal class EMAStrategyTest {
     fun simpleTest() = runBlocking {
         val strategy = EMAStrategy()
         val roboquant = Roboquant(strategy, logger = MemoryLogger(false))
-        roboquant.run(TestData.feed, name = "test")
+        roboquant.run(TestData.feed)
     }
 
     @Test

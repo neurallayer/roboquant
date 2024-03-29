@@ -274,8 +274,11 @@ class AlpacaBroker(
     /**
      * @see Broker.sync
      */
-    override fun sync(event: Event): Account {
-        if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+    override fun sync(event: Event?): Account {
+        if (event != null) {
+            if (event.time < Instant.now() - 1.hours) throw UnsupportedException("cannot place orders in the past")
+        }
+
         syncAccount()
         syncPositions()
         syncOrders()

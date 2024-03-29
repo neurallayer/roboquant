@@ -154,11 +154,13 @@ open class SimBroker(
     /**
      * Run the simulation given the provided [event].
      */
-    override fun sync(event: Event): Account {
-        simulateMarket(event)
-        _account.updateMarketPrices(event)
-        _account.lastUpdate = event.time
-        accountModel.updateAccount(_account)
+    override fun sync(event: Event?): Account {
+        if (event != null) {
+            simulateMarket(event)
+            _account.updateMarketPrices(event)
+            _account.lastUpdate = event.time
+            accountModel.updateAccount(_account)
+        }
         return _account.toAccount()
     }
 

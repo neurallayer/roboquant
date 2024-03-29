@@ -20,6 +20,7 @@ import io.questdb.cairo.CairoEngine
 import io.questdb.cairo.TableWriter
 import io.questdb.cairo.security.AllowAllSecurityContext
 import io.questdb.cairo.sql.RecordCursor
+import io.questdb.griffin.SqlExecutionContext
 import io.questdb.griffin.SqlExecutionContextImpl
 import java.time.Instant
 
@@ -37,6 +38,17 @@ internal inline fun CairoEngine.query(query: String, block: RecordCursor.() -> U
     }
 }
 
+
+internal inline fun SqlExecutionContext.query(query: String, block: RecordCursor.() -> Unit) {
+        cairoEngine.sqlCompiler.use {
+            val fact = it.compile(query, this).recordCursorFactory
+            fact.use {
+                fact.getCursor(this).use { cursor ->
+                    cursor.block()
+                }
+            }
+        }
+}
 
 internal fun CairoEngine.distictSymbol(tableName: String, column: String): Set<String> {
     SqlExecutionContextImpl(this, 1).use { ctx ->

@@ -26,10 +26,11 @@ import org.roboquant.common.Size
 import org.roboquant.common.USD
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
-import org.roboquant.loggers.MemoryLogger
+import org.roboquant.journals.MetricsJournal
 import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
+import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
 import java.io.File
 import kotlin.test.assertEquals
@@ -67,10 +68,13 @@ object TestData {
 
     val data by lazy {
         val feed = HistoricTestFeed(50..150)
-        val rq = Roboquant(TestStrategy(), AccountMetric(), logger = MemoryLogger(false))
-        rq.run(feed, name = "run1")
-        rq.run(feed, name = "run2")
-        rq.logger.getMetric("account.equity")
+        var journal = MetricsJournal(AccountMetric())
+        org.roboquant.run(feed, EMAStrategy(), journal)
+        val run1 = journal.getMetric("account.equity")
+        journal = MetricsJournal(AccountMetric())
+        org.roboquant.run(feed, EMAStrategy(), journal)
+        val run2 = journal.getMetric("account.equity")
+        mapOf("run1" to run1, "run2" to run2)
     }
 
     private fun loadFile(name: String): String {

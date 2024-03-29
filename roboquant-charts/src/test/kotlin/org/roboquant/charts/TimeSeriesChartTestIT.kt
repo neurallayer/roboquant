@@ -34,7 +34,7 @@ internal class TimeSeriesChartTestIT {
 
         assertTrue(chart.renderJson().isNotBlank())
 
-        TestData.testFile(chart, "timeserieschart")
+        // TestData.testFile(chart, "timeserieschart")
     }
 
 

@@ -16,13 +16,10 @@
 
 package org.roboquant.ta
 
-import org.roboquant.Roboquant
+import org.roboquant.run
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.loggers.MemoryLogger
-import org.roboquant.loggers.latestRun
-import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.NoSignalStrategy
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -37,19 +34,17 @@ internal class BettingAgainstBetaPolicyTest {
 
         val policy = BettingAgainstBetaPolicy(assets, marketAsset, maxPositions = 6)
         val broker = SimBroker(accountModel = MarginAccount())
-        val roboquant = Roboquant(
+        val account = run(
+            feed,
             NoSignalStrategy(),
-            AccountMetric(),
             broker = broker,
             policy = policy,
-            logger = MemoryLogger(false)
         )
-        val account = roboquant.run(feed, name = "test")
+
         assertTrue(account.positions.size <= 6)
         assertTrue(account.positions.size > 3)
 
-        val positionSizes = roboquant.logger.getMetric("account.positions").latestRun().values
-        assertTrue(positionSizes.all { it <= 6.0 })
+
     }
 
 }

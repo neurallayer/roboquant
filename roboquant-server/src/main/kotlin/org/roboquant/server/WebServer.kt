@@ -130,7 +130,7 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
         val info = RunInfo(rq, feed, timeframe, warmup)
         runs[name] = info
         logger.info { "Starting new run name=$name timeframe=$timeframe" }
-        rq.runAsync(feed, timeframe, name)
+        rq.runAsync(feed, timeframe)
         info.done = true
     }
 

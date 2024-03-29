@@ -30,7 +30,7 @@ object Logging {
     /**
      * Logger class that extends a SLF4J logger and allows for Kotlin idiomatic usage patterns
      */
-    class Logger(@Suppress("unused") private val slf4jLogger: org.slf4j.Logger) : org.slf4j.Logger by slf4jLogger {
+    class Logger(private val slf4jLogger: org.slf4j.Logger) : org.slf4j.Logger by slf4jLogger {
 
         /**
          * @see org.slf4j.Logger.trace
