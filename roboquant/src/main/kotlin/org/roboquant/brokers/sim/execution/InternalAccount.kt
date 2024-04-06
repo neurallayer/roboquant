@@ -22,6 +22,7 @@ import org.roboquant.brokers.Trade
 import org.roboquant.brokers.marketValue
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
@@ -169,7 +170,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * Update the open positions in the portfolio with the current market prices as found in the [event]
      */
-    fun updateMarketPrices(event: Event, priceType: String = "DEFAULT") {
+    fun updateMarketPrices(event: Event, priceType: PriceType = PriceType.DEFAULT) {
         if (portfolio.isEmpty()) return
 
         val prices = event.prices

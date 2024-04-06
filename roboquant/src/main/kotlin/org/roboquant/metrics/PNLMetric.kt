@@ -21,6 +21,7 @@ import org.roboquant.brokers.unrealizedPNL
 import org.roboquant.common.Asset
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 import java.time.Instant
 
 /**
@@ -43,7 +44,7 @@ import java.time.Instant
  * @constructor Create a new instance of the PNLMetric
  *
  */
-class PNLMetric(private val priceType: String = "DEFAULT") : Metric {
+class PNLMetric(private val priceType: PriceType = PriceType.DEFAULT) : Metric {
 
     private class AssetReturn(
         val start: Instant,

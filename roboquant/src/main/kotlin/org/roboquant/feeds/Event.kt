@@ -60,7 +60,7 @@ class Event(val time: Instant, val items: List<Item>) : Comparable<Event> {
      * If there are multiple price actions for a single asset in the event, the last one found will be returned. If
      * you require access to all prices for an asset, access [items] directly.
      */
-    fun getPrice(asset: Asset, type: String = "DEFAULT"): Double? {
+    fun getPrice(asset: Asset, type: PriceType = PriceType.DEFAULT): Double? {
         return prices[asset]?.getPrice(type)
     }
 

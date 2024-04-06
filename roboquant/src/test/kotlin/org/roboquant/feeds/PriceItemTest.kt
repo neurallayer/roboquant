@@ -38,11 +38,11 @@ internal class PriceItemTest {
         assertEquals(9.5, price)
         assertEquals(9.5.USD, p.getPriceAmount())
 
-        price = p.getPrice("WEIGHTED")
+        price = p.getPrice(PriceType.WEIGHTED)
         assertEquals(9.25, price)
 
-        assertEquals(p.askPrice, p.getPrice("ASK"))
-        assertEquals(p.bidPrice, p.getPrice("BID"))
+        assertEquals(p.askPrice, p.getPrice(PriceType.ASK))
+        assertEquals(p.bidPrice, p.getPrice(PriceType.BID))
         assertEquals(4.0, p.volume)
         assertEquals(0.1, p.spread)
     }
@@ -60,10 +60,10 @@ internal class PriceItemTest {
     fun priceBar() {
         val asset = TestData.euStock()
         val action = PriceBar(asset, 10, 12, 8, 11, 1000)
-        assertEquals(10.0, action.getPrice("OPEN"))
-        assertEquals(12.0, action.getPrice("HIGH"))
-        assertEquals(8.0, action.getPrice("LOW"))
-        assertEquals(11.0, action.getPrice("CLOSE"))
+        assertEquals(10.0, action.getPrice(PriceType.OPEN))
+        assertEquals(12.0, action.getPrice(PriceType.HIGH))
+        assertEquals(8.0, action.getPrice(PriceType.LOW))
+        assertEquals(11.0, action.getPrice(PriceType.CLOSE))
 
         val action2 = PriceBar(asset, 10, 12, 8, 11)
         assertTrue(action2.volume.isNaN())
@@ -116,7 +116,7 @@ internal class PriceItemTest {
     fun testTradePrice() {
         val asset = Asset("DUMMY")
         val p = TradePrice(asset, 10.0, 100.0)
-        assertEquals(10.0, p.getPrice("DEFAULT"))
+        assertEquals(10.0, p.getPrice(PriceType.DEFAULT))
         assertEquals(100.0, p.volume)
         assertEquals(10.0, p.price)
     }
@@ -133,7 +133,7 @@ internal class PriceItemTest {
         var price = p.getPrice()
         assertEquals(10.55, price)
 
-        price = p.getPrice("WEIGHTED")
+        price = p.getPrice(PriceType.WEIGHTED)
         assertEquals(10.4, price)
 
     }

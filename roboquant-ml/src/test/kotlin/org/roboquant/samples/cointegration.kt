@@ -25,6 +25,7 @@ import org.roboquant.avro.AvroFeed
 import org.roboquant.common.*
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 import org.roboquant.feeds.applyEvents
 import org.roboquant.loggers.SilentLogger
 import org.roboquant.strategies.Signal
@@ -52,7 +53,7 @@ private fun getTimeSeriesHighLow(feed: AssetFeed): SimpleMultiVariateTimeSeries 
     val result = mutableListOf<DoubleArray>()
     feed.applyEvents { event ->
         val price = event.prices[apple]
-        if (price != null) result.add(doubleArrayOf(price.getPrice("HIGH"), price.getPrice("LOW")))
+        if (price != null) result.add(doubleArrayOf(price.getPrice(PriceType.HIGH), price.getPrice(PriceType.HIGH)))
 
     }
     return SimpleMultiVariateTimeSeries(*result.toTypedArray())
@@ -77,7 +78,7 @@ fun runJohansenTest(ts: SimpleMultiVariateTimeSeries) {
 
 fun testStrat(feed: AssetFeed) {
 
-    class PairTradingStrategy(val period: Int, val priceType: String = "DEFAULT")  : Strategy {
+    class PairTradingStrategy(val period: Int, val priceType: PriceType = PriceType.DEFAULT)  : Strategy {
 
 
         /**

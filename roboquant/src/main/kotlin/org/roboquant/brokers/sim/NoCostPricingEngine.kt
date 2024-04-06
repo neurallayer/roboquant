@@ -17,13 +17,14 @@ package org.roboquant.brokers.sim
 
 import org.roboquant.common.Size
 import org.roboquant.feeds.PriceItem
+import org.roboquant.feeds.PriceType
 import java.time.Instant
 
 /**
  * Pricing model that uses no additional cost. It calculates the same price for high, low and market prices.
  * It works with any type of PriceItem.
  */
-class NoCostPricingEngine(private val priceType: String = "DEFAULT") : PricingEngine {
+class NoCostPricingEngine(private val priceType: PriceType = PriceType.DEFAULT) : PricingEngine {
 
     private class NoCostPricing(val price: Double) : Pricing {
         override fun marketPrice(size: Size) = price

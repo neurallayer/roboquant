@@ -18,6 +18,7 @@ package org.roboquant.ml
 
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 
 /**
  * Extract a historic price from the event for the provided [asset]
@@ -30,7 +31,7 @@ import org.roboquant.feeds.Event
 class HistoricPriceFeature(
     private val asset: Asset,
     private val past: Int = 1,
-    private val type: String = "DEFAULT",
+    private val type: PriceType = PriceType.DEFAULT,
     override val name: String = "${asset.symbol}-HISTORIC-PRICE-$past-$type"
 ) : SingleValueFeature() {
 

@@ -29,10 +29,7 @@ import org.icepear.echarts.components.series.ItemStyle
 import org.icepear.echarts.components.series.LineStyle
 import org.roboquant.brokers.Trade
 import org.roboquant.common.*
-import org.roboquant.feeds.AssetFeed
-import org.roboquant.feeds.Feed
-import org.roboquant.feeds.PriceItem
-import org.roboquant.feeds.filter
+import org.roboquant.feeds.*
 import org.roboquant.metrics.Indicator
 import org.roboquant.metrics.apply
 
@@ -69,7 +66,7 @@ class PriceChart(
     private val asset: Asset,
     private val trades: Collection<Trade> = emptyList(),
     private val timeframe: Timeframe = Timeframe.INFINITE,
-    private val priceType: String = "DEFAULT",
+    private val priceType: PriceType = PriceType.DEFAULT,
     private vararg val indicators: Indicator
 ) : Chart() {
 
@@ -84,7 +81,7 @@ class PriceChart(
         symbol: String,
         trades: Collection<Trade> = emptyList(),
         timeframe: Timeframe = Timeframe.INFINITE,
-        priceType: String = "DEFAULT"
+        priceType: PriceType = PriceType.DEFAULT
     ) : this(feed, feed.assets.getBySymbol(symbol), trades, timeframe, priceType)
 
     /**

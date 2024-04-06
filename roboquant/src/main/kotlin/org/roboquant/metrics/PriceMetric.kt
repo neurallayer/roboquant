@@ -18,13 +18,14 @@ package org.roboquant.metrics
 
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 
 /**
  * This metric logs the prices found in the event. Only a single value is logged, for example, the CLOSE price.
  *
  * @param priceType the type of price to log, default is "DEFAULT"
  */
-class PriceMetric(private val priceType: String = "DEFAULT") : Metric {
+class PriceMetric(private val priceType: PriceType = PriceType.DEFAULT) : Metric {
 
     /**
      * @see Metric.calculate

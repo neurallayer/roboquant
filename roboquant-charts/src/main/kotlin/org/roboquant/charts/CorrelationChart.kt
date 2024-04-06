@@ -29,6 +29,7 @@ import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
+import org.roboquant.feeds.PriceType
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.util.*
@@ -41,7 +42,7 @@ class CorrelationChart(
     private val feed: Feed,
     private val assets: Collection<Asset>,
     private val timeframe: Timeframe = Timeframe.INFINITE,
-    private val priceType: String = "DEFAULT",
+    private val priceType: PriceType = PriceType.DEFAULT,
     private val scale: Int = 2,
     private val minObservations: Int = 3
 ) : Chart() {

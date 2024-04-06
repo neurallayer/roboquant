@@ -17,6 +17,7 @@
 package org.roboquant.common
 
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 
 /**
  * Holds a fix amount of historic prices. When adding a new value while the buffer is full, the oldest one will be
@@ -125,7 +126,7 @@ open class PriceSeries(private var capacity: Int) {
 /**
  * Add all the prices found in the event. If there is no entry yet, a new PriceSeries will be created
  */
-fun MutableMap<Asset, PriceSeries>.addAll(event: Event, capacity: Int, priceType: String = "DEFAULT") {
+fun MutableMap<Asset, PriceSeries>.addAll(event: Event, capacity: Int, priceType: PriceType = PriceType.DEFAULT) {
     for ((asset, action) in event.prices) {
         val priceSeries = getOrPut(asset) { PriceSeries(capacity) }
         priceSeries.add(action.getPrice(priceType))

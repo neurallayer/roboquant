@@ -202,7 +202,7 @@ fun Feed.toList(
 fun Feed.validate(
     timeframe: Timeframe = Timeframe.INFINITE,
     maxDiff: Double = 0.5,
-    priceType: String = "DEFAULT"
+    priceType: PriceType = PriceType.DEFAULT
 ): List<Pair<Instant, PriceItem>> = runBlocking {
 
     val channel = EventChannel(timeframe = timeframe)
@@ -238,6 +238,6 @@ fun Feed.validate(
 /**
  * Convert a collection of price actions to a double array
  */
-fun Collection<PriceItem>.toDoubleArray(type: String = "DEFAULT"): DoubleArray =
+fun Collection<PriceItem>.toDoubleArray(type: PriceType = PriceType.DEFAULT): DoubleArray =
     this.map { it.getPrice(type) }.toDoubleArray()
 

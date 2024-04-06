@@ -26,6 +26,7 @@ import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.*
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceItem
+import org.roboquant.feeds.PriceType
 import org.roboquant.feeds.filter
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -44,7 +45,7 @@ import java.math.RoundingMode
 class PerformanceChart(
     private val feed: Feed,
     private val timeframe: Timeframe = Timeframe.INFINITE,
-    private val priceType: String = "DEFAULT",
+    private val priceType: PriceType = PriceType.DEFAULT,
     private val compensateVolume: Boolean = true,
     private val currency: Currency? = null,
     private val assetFilter: AssetFilter = AssetFilter.all()

@@ -20,6 +20,7 @@ import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.common.RoboquantException
+import org.roboquant.feeds.PriceType
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -36,7 +37,7 @@ internal class HistoricPriceStrategyTest {
     }
 
 
-    private class MySubClass2 : HistoricPriceStrategy(10, priceType = "`CLOSE`") {
+    private class MySubClass2 : HistoricPriceStrategy(10, priceType = PriceType.CLOSE) {
         var called = false
 
         override fun generateRating(data: DoubleArray): Double? {

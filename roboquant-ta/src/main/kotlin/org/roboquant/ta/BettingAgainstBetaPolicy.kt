@@ -22,6 +22,7 @@ import org.roboquant.brokers.Position
 import org.roboquant.brokers.diff
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Order
 import org.roboquant.policies.BasePolicy
@@ -56,7 +57,7 @@ open class BettingAgainstBetaPolicy(
     private val holdingPeriod: TimeSpan = 20.days,
     private val maxPositions: Int = 20,
     private val windowSize: Int = 120,
-    private val priceType: String = "DEFAULT"
+    private val priceType: PriceType = PriceType.DEFAULT
 ) : BasePolicy() {
 
     private var rebalanceDate = Instant.MIN

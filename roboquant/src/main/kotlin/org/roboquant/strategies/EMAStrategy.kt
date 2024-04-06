@@ -17,6 +17,7 @@
 package org.roboquant.strategies
 
 import org.roboquant.common.Asset
+import org.roboquant.feeds.PriceType
 import java.time.Instant
 
 /**
@@ -45,7 +46,7 @@ class EMAStrategy(
     slowPeriod: Int = 26,
     smoothing: Double = 2.0,
     private val minEvents: Int = slowPeriod,
-    priceType: String = "DEFAULT"
+    priceType: PriceType = PriceType.DEFAULT
 ) : PriceStrategy(priceType = priceType) {
 
     private val fast = 1.0 - (smoothing / (fastPeriod + 1))

@@ -23,6 +23,7 @@ import org.roboquant.brokers.getPosition
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceItem
+import org.roboquant.feeds.PriceType
 import org.roboquant.orders.*
 import org.roboquant.strategies.Signal
 import java.time.Instant
@@ -45,7 +46,7 @@ import java.time.Instant
 open class FlexPolicyConfig(
     var orderPercentage: Double = 1.percent,
     var shorting: Boolean = false,
-    var priceType: String = "DEFAULT",
+    var priceType: PriceType = PriceType.DEFAULT,
     var fractions: Int = 0,
     var oneOrderOnly: Boolean = true,
     var safetyMargin: Double = orderPercentage,

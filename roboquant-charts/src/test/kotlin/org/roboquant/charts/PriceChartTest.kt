@@ -18,6 +18,7 @@ package org.roboquant.charts
 
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Item
+import org.roboquant.feeds.PriceType
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.metrics.Indicator
 import java.time.Instant
@@ -38,7 +39,7 @@ internal class PriceChartTest {
 
         val chart2 = PriceChart(feed, asset.symbol)
         assertEquals(html, chart2.renderJson())
-        val chart3 = PriceChart(feed, asset.symbol, priceType = "OPEN")
+        val chart3 = PriceChart(feed, asset.symbol, priceType = PriceType.OPEN)
         assertNotEquals(html, chart3.renderJson())
     }
 

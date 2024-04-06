@@ -27,6 +27,7 @@ import org.roboquant.common.PriceSeries
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minus
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 import java.time.Instant
 import kotlin.collections.set
 import kotlin.math.sqrt
@@ -60,7 +61,7 @@ class ReturnsMetric2(
     private val minSize: Int = 750, // roughly 3 years
     maxSize: Int = minSize,
     private val riskFreeRate: Double = 0.0,
-    private val priceType: String = "DEFAULT"
+    private val priceType: PriceType = PriceType.DEFAULT
 ) : Metric {
 
     private val prices = mutableMapOf<Asset, Double>()

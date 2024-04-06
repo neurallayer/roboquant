@@ -21,6 +21,7 @@ import org.roboquant.avro.AvroFeed
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.sim.SpreadPricingEngine
 import org.roboquant.common.*
+import org.roboquant.feeds.PriceType
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.ml.*
@@ -35,7 +36,7 @@ internal class MLSamples {
 
     private fun getStrategy(asset: Asset): Strategy {
         val features = DataFrameFeatureSet(warmup = 60) // 60 steps warmup
-        val y = PriceFeature(asset, "CLOSE", "Y").returns(15)
+        val y = PriceFeature(asset, PriceType.CLOSE, "Y").returns(15)
         features.add(y, offset = 15) // predict 15 steps in the future
         assert(features.names.contains("Y-RETURNS"))
 
@@ -46,19 +47,19 @@ internal class MLSamples {
 
         features.add(
             VolumeFeature(asset).returns(),
-            PriceFeature(asset, "CLOSE").returns(),
-            PriceFeature(asset, "OPEN") / PriceFeature(asset, "CLOSE"),
+            PriceFeature(asset, PriceType.CLOSE).returns(),
+            PriceFeature(asset, PriceType.OPEN) / PriceFeature(asset, PriceType.CLOSE),
             TaLibFeature.rsi(asset, 5),
             TaLibFeature.rsi(asset, 10),
             TaLibFeature.rsi(asset, 20),
             TaLibFeature.ema(asset, 11, 26),
             TaLibFeature.obv(asset).returns(),
             myFeature,
-            HistoricPriceFeature(asset, 1, "CLOSE").returns(),
-            HistoricPriceFeature(asset, 5, "CLOSE").returns(),
-            HistoricPriceFeature(asset, 10, "CLOSE").returns(),
-            HistoricPriceFeature(asset, 15, "CLOSE").returns(),
-            HistoricPriceFeature(asset, 30, "CLOSE").returns(),
+            HistoricPriceFeature(asset, 1, PriceType.CLOSE).returns(),
+            HistoricPriceFeature(asset, 5, PriceType.CLOSE).returns(),
+            HistoricPriceFeature(asset, 10, PriceType.CLOSE).returns(),
+            HistoricPriceFeature(asset, 15, PriceType.CLOSE).returns(),
+            HistoricPriceFeature(asset, 30, PriceType.CLOSE).returns(),
             // TestFeature(doubleArrayOf(1.0, 2.0, 3.0))
         )
 

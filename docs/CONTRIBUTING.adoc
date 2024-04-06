@@ -25,8 +25,8 @@ We love PRs. Submit PRs https://github.com/neurallayer/roboquant/pulls[here].
 However, please keep in mind that maintainers will have to support the resulting code of the project,
 so do familiarize yourself with the following guidelines.
 
-* All development (both new features and bug fixes) is performed in the `master` branch.
-** Base PRs against the `master` branch.
+* All development (both new features and bug fixes) is performed in the `main` branch.
+** Base PRs against the `main` branch.
 ** PR should be linked with the issue, excluding minor documentation changes, the addition of unit tests, and fixing typos.
 * If you make any code changes:
 ** Follow the https://kotlinlang.org/docs/reference/coding-conventions.html[Kotlin Coding Conventions].

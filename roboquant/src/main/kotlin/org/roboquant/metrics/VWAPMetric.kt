@@ -20,6 +20,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.PriceType
 import java.time.Instant
 
 /**
@@ -75,7 +76,7 @@ private class VWAPDaily(private val minSteps: Int) {
         if (last != Instant.MIN && !exchange.sameDay(time, last)) clear()
         last = time
         val v = action.volume
-        total.add(action.getPrice("TYPICAL") * v)
+        total.add(action.getPrice(PriceType.TYPICAL) * v)
         volume.add(v)
     }
 

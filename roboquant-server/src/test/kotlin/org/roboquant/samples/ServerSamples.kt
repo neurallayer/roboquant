@@ -18,6 +18,7 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.common.*
+import org.roboquant.feeds.PriceType
 import org.roboquant.feeds.random.RandomWalkLiveFeed
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.AccountMetric
@@ -32,7 +33,7 @@ import kotlin.test.Test
 internal class ServerSamples {
 
     private fun getRoboquant() =
-        Roboquant(EMAStrategy(), AccountMetric(), PriceMetric("CLOSE"), logger = MemoryLogger(false))
+        Roboquant(EMAStrategy(), AccountMetric(), PriceMetric(PriceType.CLOSE), logger = MemoryLogger(false))
 
     /**
      * You can run this sample to start a server with three runs

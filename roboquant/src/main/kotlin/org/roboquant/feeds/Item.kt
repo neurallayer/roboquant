@@ -55,12 +55,12 @@ interface PriceItem : Item {
      * Any implementation is expected to return a default price if the type is not recognized. This way strategies
      * can work on a wide variety of feeds. It is convention to use uppercase strings for different types.
      */
-    fun getPrice(type: String = "DEFAULT"): Double
+    fun getPrice(type: PriceType = PriceType.DEFAULT): Double
 
     /**
      * Same as [getPrice] but returns an [Amount], so this includes the currency of the asset.
      */
-    fun getPriceAmount(type: String = "DEFAULT") = Amount(asset.currency, getPrice(type))
+    fun getPriceAmount(type: PriceType = PriceType.DEFAULT) = Amount(asset.currency, getPrice(type))
 
     /**
      * Volume for the price action.
@@ -71,6 +71,19 @@ interface PriceItem : Item {
      */
     val volume: Double
 
+}
+
+enum class PriceType{
+    DEFAULT,
+    OPEN,
+    HIGH,
+    LOW,
+    CLOSE,
+    MIDPOINT,
+    TYPICAL,
+    WEIGHTED,
+    ASK,
+    BID;
 }
 
 /**
@@ -162,17 +175,17 @@ class PriceBar(
      *
      * Example:
      * ```
-     * val price = action.getPrice("OPEN")
+     * val price = action.getPrice(PriceType.OPEN)
      * ```
      */
-    override fun getPrice(type: String): Double {
+    override fun getPrice(type: PriceType): Double {
         return when (type) {
-            "DEFAULT" -> ohlcv[3]
-            "CLOSE" -> ohlcv[3]
-            "OPEN" -> ohlcv[0]
-            "LOW" -> ohlcv[2]
-            "HIGH" -> ohlcv[1]
-            "TYPICAL" -> (ohlcv[1] + ohlcv[2] + ohlcv[3]) / 3.0
+            PriceType.DEFAULT -> ohlcv[3]
+            PriceType.CLOSE -> ohlcv[3]
+            PriceType.OPEN -> ohlcv[0]
+            PriceType.LOW -> ohlcv[2]
+            PriceType.HIGH -> ohlcv[1]
+            PriceType.TYPICAL -> (ohlcv[1] + ohlcv[2] + ohlcv[3]) / 3.0
             else -> ohlcv[3]
         }
     }
@@ -196,10 +209,9 @@ data class TradePrice(override val asset: Asset, val price: Double, override val
      * Returns the underlying [price].
      * Since this action only holds a single price, the [type] parameter is ignored.
      */
-    override fun getPrice(type: String): Double {
+    override fun getPrice(type: PriceType): Double {
         return price
     }
-
 }
 
 /**
@@ -230,11 +242,11 @@ data class PriceQuote(
      *
      * @return
      */
-    override fun getPrice(type: String): Double {
+    override fun getPrice(type: PriceType): Double {
         val result = when (type) {
-            "WEIGHTED" -> (askPrice * askSize + bidPrice * bidSize) / (askSize + bidSize)
-            "ASK" -> askPrice
-            "BID" -> bidPrice
+            PriceType.WEIGHTED -> (askPrice * askSize + bidPrice * bidSize) / (askSize + bidSize)
+            PriceType.ASK -> askPrice
+            PriceType.BID -> bidPrice
             else -> (askPrice + bidPrice) / 2
         }
         return result
@@ -288,11 +300,11 @@ data class OrderBook(
      * @param type
      * @return
      */
-    override fun getPrice(type: String): Double {
+    override fun getPrice(type: PriceType): Double {
         return when (type) {
-            "ASK" -> bestOffer
-            "BID" -> bestBid
-            "WEIGHTED" -> {
+            PriceType.ASK -> bestOffer
+            PriceType.BID -> bestBid
+            PriceType.WEIGHTED -> {
                 val askVolume = asks.volume()
                 val bidVolume = bids.volume()
                 (asks.min() * askVolume + bids.max() * bidVolume) / (askVolume + bidVolume)
@@ -322,8 +334,8 @@ data class OrderBook(
      */
     val spread: Double
         get() {
-            val ask = getPrice("ASK")
-            val bid = getPrice("BID")
+            val ask = getPrice(PriceType.ASK)
+            val bid = getPrice(PriceType.BID)
             return (ask - bid) / ask
         }
 

@@ -25,6 +25,7 @@ import org.roboquant.common.PriceSeries
 import org.roboquant.common.Timeframe
 import org.roboquant.common.percent
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 import java.time.Instant
 import java.util.*
 
@@ -46,7 +47,7 @@ import java.util.*
  */
 class AlphaBetaMetric(
     private val period: Int,
-    private val priceType: String = "DEFAULT",
+    private val priceType: PriceType = PriceType.DEFAULT,
     private val riskFreeReturn: Double = 0.percent,
 ) : Metric {
 

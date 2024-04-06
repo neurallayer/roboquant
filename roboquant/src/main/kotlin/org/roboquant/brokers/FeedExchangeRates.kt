@@ -20,6 +20,7 @@ import org.roboquant.common.*
 import org.roboquant.common.Currency
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceItem
+import org.roboquant.feeds.PriceType
 import org.roboquant.feeds.filter
 import java.time.Instant
 import java.util.*
@@ -33,7 +34,7 @@ import java.util.*
  */
 class FeedExchangeRates(
     feed: Feed,
-    private val priceType: String = "DEFAULT",
+    private val priceType: PriceType = PriceType.DEFAULT,
     private val assetTypes: Set<AssetType> = setOf(AssetType.CRYPTO, AssetType.FOREX)
 ) : ExchangeRates {
 

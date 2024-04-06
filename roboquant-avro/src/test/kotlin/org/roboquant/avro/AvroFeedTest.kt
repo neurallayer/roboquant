@@ -161,7 +161,7 @@ internal class AvroFeedTest {
     fun unsupportedPriceAction() {
 
         class MyPrice(override val asset: Asset, override val volume: Double) : PriceItem {
-            override fun getPrice(type: String): Double {
+            override fun getPrice(type: PriceType): Double {
                 return 10.0
             }
         }

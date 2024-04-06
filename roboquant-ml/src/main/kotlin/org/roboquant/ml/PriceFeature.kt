@@ -18,6 +18,7 @@ package org.roboquant.ml
 
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 
 /**
  * Extract the price from the event for the provided [asset]
@@ -28,7 +29,7 @@ import org.roboquant.feeds.Event
  */
 class PriceFeature(
     private val asset: Asset,
-    private val type: String = "DEFAULT",
+    private val type: PriceType = PriceType.DEFAULT,
     override val name: String = "${asset.symbol}-PRICE-$type"
 ) : SingleValueFeature() {
 

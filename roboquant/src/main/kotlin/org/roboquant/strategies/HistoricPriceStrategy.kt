@@ -21,6 +21,7 @@ import org.roboquant.common.PriceSeries
 import org.roboquant.common.RoboquantException
 import org.roboquant.common.addNotNull
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 
 /**
  * The base class for strategies that are interested in historic prices. Subclasses should override one of the
@@ -34,7 +35,7 @@ import org.roboquant.feeds.Event
  */
 abstract class HistoricPriceStrategy(
     private val period: Int,
-    private val priceType: String = "DEFAULT",
+    private val priceType: PriceType = PriceType.DEFAULT,
 ) : Strategy {
 
     /**

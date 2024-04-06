@@ -18,13 +18,14 @@ package org.roboquant.strategies
 
 import org.roboquant.common.Asset
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 import java.time.Instant
 
 /**
  * Base class that can be extended by strategies that are only interested in a single price for an asset and not
  * other types of actions.
  */
-abstract class PriceStrategy(private val priceType: String = "DEFAULT") :
+abstract class PriceStrategy(private val priceType: PriceType = PriceType.DEFAULT) :
     Strategy {
 
     override fun generate(event: Event): List<Signal> {

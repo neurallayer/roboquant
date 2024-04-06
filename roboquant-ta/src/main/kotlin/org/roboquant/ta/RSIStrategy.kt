@@ -20,6 +20,7 @@ import org.roboquant.common.Asset
 import org.roboquant.common.PriceSeries
 import org.roboquant.common.addAll
 import org.roboquant.feeds.Event
+import org.roboquant.feeds.PriceType
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 
@@ -39,7 +40,7 @@ class RSIStrategy(
     val lowThreshold: Double = 30.0,
     val highThreshold: Double = 70.0,
     private val windowSize: Int = 14,
-    private val priceType: String = "DEFAULT"
+    private val priceType: PriceType = PriceType.DEFAULT
 ) : Strategy {
 
     private val history = mutableMapOf<Asset, PriceSeries>()
