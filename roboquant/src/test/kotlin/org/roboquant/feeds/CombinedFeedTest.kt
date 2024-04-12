@@ -21,6 +21,7 @@ import kotlin.test.Test
 import org.roboquant.Roboquant
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.months
+import org.roboquant.feedTest
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.play
 import org.roboquant.loggers.SilentLogger
@@ -70,14 +71,7 @@ internal class CombinedFeedTest {
         val f1 = RandomWalkFeed.lastYears(1)
         val f2 = RandomWalkFeed.lastYears(2)
         val cf = CombinedFeed(f1, f2)
-        val jobs = ParallelJobs()
-        cf.timeframe.sample(3.months).forEach {
-            jobs.add {
-                val rq = Roboquant(EMAStrategy(), logger = SilentLogger())
-                rq.run(cf, it)
-            }
-        }
-        jobs.joinAllBlocking()
+        feedTest(cf)
     }
 
 

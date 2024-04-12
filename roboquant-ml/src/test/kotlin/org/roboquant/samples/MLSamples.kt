@@ -21,8 +21,6 @@ import org.roboquant.avro.AvroFeed
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.sim.SpreadPricingEngine
 import org.roboquant.common.*
-import org.roboquant.loggers.MemoryLogger
-import org.roboquant.metrics.ProgressMetric
 import org.roboquant.ml.*
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.Strategy
@@ -85,7 +83,7 @@ internal class MLSamples {
             shorting = true
             orderPercentage = 50.percent
         }
-        val rq = Roboquant(strategy, ProgressMetric(), broker = broker, policy = policy, logger = MemoryLogger())
+        val rq = Roboquant(strategy, policy = policy, broker = broker)
         val (train, valid) = feed.timeframe.splitTwoWay(9.months)
         rq.run(feed, train)
         rq.broker.reset()

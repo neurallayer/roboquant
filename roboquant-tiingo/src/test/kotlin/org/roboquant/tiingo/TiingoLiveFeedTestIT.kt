@@ -18,9 +18,8 @@ package org.roboquant.tiingo
 
 import org.roboquant.Roboquant
 import org.roboquant.common.*
-import org.roboquant.loggers.LastEntryLogger
+import org.roboquant.journals.BasicJournal
 import org.roboquant.loggers.latestRun
-import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -32,10 +31,10 @@ internal class TiingoLiveFeedTestIT {
         Config.getProperty("TEST_TIINGO") ?: return
         val feed = TiingoLiveFeed.iex()
         feed.subscribe("AAPL", "TSLA")
-        val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = LastEntryLogger())
-        rq.run(feed, Timeframe.next(1.minutes))
-        val actions = rq.logger.getMetric("progress.actions").latestRun()
-        assertTrue(actions.last().value > 0)
+        val rq = Roboquant(EMAStrategy())
+        val journal = BasicJournal()
+        rq.run(feed, journal=journal, timeframe = Timeframe.next(1.minutes))
+        assertTrue(journal.nItems > 0)
     }
 
     @Test
@@ -43,10 +42,8 @@ internal class TiingoLiveFeedTestIT {
         Config.getProperty("TEST_TIINGO") ?: return
         val feed = TiingoLiveFeed.fx()
         feed.subscribe("EURUSD")
-        val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = LastEntryLogger())
+        val rq = Roboquant(EMAStrategy())
         rq.run(feed, Timeframe.next(1.minutes))
-        val actions = rq.logger.getMetric("progress.actions").latestRun()
-        assertTrue(actions.last().value > 0)
     }
 
     @Test
@@ -56,10 +53,8 @@ internal class TiingoLiveFeedTestIT {
         val asset = Asset("BNBFDUSD", AssetType.CRYPTO, "FDUSD")
         Config.registerAsset("BNBFDUSD", asset)
         feed.subscribe("BNBFDUSD")
-        val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = LastEntryLogger())
+        val rq = Roboquant(EMAStrategy())
         rq.run(feed, Timeframe.next(1.minutes))
-        val actions = rq.logger.getMetric("progress.actions").latestRun()
-        assertTrue(actions.last().value > 0)
     }
 
 

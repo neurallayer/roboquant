@@ -28,8 +28,6 @@ import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.journals.Journal
 import org.roboquant.loggers.MemoryLogger
-import org.roboquant.loggers.MetricsLogger
-import org.roboquant.metrics.Metric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.Policy
 import org.roboquant.strategies.Strategy
@@ -45,38 +43,15 @@ import kotlin.math.roundToInt
  * optional.
  *
  * @property strategy The strategy to use, there is no default
- * @property metrics the various metrics to calculate during the runs, default is none
  * @property policy The policy to use, default is [FlexPolicy]
  * @property broker the broker to use, default is [SimBroker]
- * @property logger the metrics logger to use, default is [MemoryLogger]
- * @property channelCapacity the max capacity of the event channel, more capacity means more buffering. Default is 10.
- * @property onChannelFull the behavior when a channel is full, default is [BufferOverflow.SUSPEND].
- * For live trading, it might be appropriate to set this to [BufferOverflow.DROP_OLDEST]
  */
-@Deprecated("use run function instead")
 data class Roboquant(
     val strategy: Strategy,
-    val metrics: List<Metric>,
     val policy: Policy = FlexPolicy(),
-    val broker: Broker = SimBroker(),
-    val logger: MetricsLogger = MemoryLogger(),
-    private val channelCapacity: Int = 10,
-    private val onChannelFull: BufferOverflow = BufferOverflow.SUSPEND
+    val broker: Broker = SimBroker()
 ) {
 
-    /**
-     * Convenience constructor that instead on a list of Metrics, accept a vararg of metrics.
-     *
-     * @see Roboquant
-     */
-    constructor(
-        strategy: Strategy,
-        vararg metrics: Metric,
-        policy: Policy = FlexPolicy(),
-        broker: Broker = SimBroker(),
-        logger: MetricsLogger = MemoryLogger(),
-        channelCapacity: Int = 10
-    ) : this(strategy, metrics.toList(), policy, broker, logger, channelCapacity)
 
     private val kotlinLogger = Logging.getLogger(Roboquant::class)
 
@@ -89,14 +64,11 @@ data class Roboquant(
      * Reset the state including that of the used underlying components. This allows starting a fresh run with the same
      * configuration as the original instance.
      *
-     * By default, also the [logger] will be reset. If you don't want this, set [includeLogger] to false.
      */
-    fun reset(includeLogger: Boolean = true) {
+    fun reset() {
         strategy.reset()
         policy.reset()
         broker.reset()
-        for (metric in metrics) metric.reset()
-        if (includeLogger) logger.reset()
     }
 
     /**
@@ -111,9 +83,13 @@ data class Roboquant(
      */
     fun run(
         feed: Feed,
-        timeframe: Timeframe = feed.timeframe
+        timeframe: Timeframe = feed.timeframe,
+        journal: Journal? = null,
+        channel: EventChannel = EventChannel(timeframe, 10),
+        heartbeatTimeout: Long = -1,
+        showProgressBar: Boolean = false
     ): Account = runBlocking {
-        return@runBlocking runAsync(feed, timeframe)
+        return@runBlocking runAsync(feed, timeframe, journal, channel, heartbeatTimeout, showProgressBar)
     }
 
     /**
@@ -125,22 +101,42 @@ data class Roboquant(
      */
     suspend fun runAsync(
         feed: Feed,
-        timeframe: Timeframe = feed.timeframe
+        timeframe: Timeframe = feed.timeframe,
+        journal: Journal? = null,
+        channel: EventChannel = EventChannel(timeframe, 10),
+        heartbeatTimeout: Long = -1,
+        showProgressBar: Boolean = false
     ): Account {
 
-       return runAsync(feed, strategy, timeframe = timeframe, policy = policy, broker = broker)
-    }
+        val job = feed.playBackground(channel)
+        val progressBar = if (showProgressBar) {
+            val tf = if (timeframe.isFinite()) timeframe else feed.timeframe
+            val pb = ProgressBar(tf)
+            pb.start()
+            pb
+        } else null
 
-    /**
-     * Provide a string representation of this roboquant.
-     */
-    override fun toString(): String {
-        val s = strategy::class.simpleName
-        val p = policy::class.simpleName
-        val l = logger::class.simpleName
-        val b = broker::class.simpleName
-        val m = metrics.map { it::class.simpleName }.toString()
-        return "strategy=$s policy=$p logger=$l metrics=$m broker=$b"
+        try {
+            while (true) {
+                val event = channel.receive(heartbeatTimeout)
+                progressBar?.update(event.time)
+                // Sync with broker
+                val account = broker.sync(event)
+
+                // Generate signals and place orders
+                val signals = strategy.generate(event)
+                val orders = policy.act(signals, account, event)
+                broker.place(orders)
+
+                journal?.track(event, account, signals, orders)
+            }
+        } catch (_: ClosedReceiveChannelException) {
+            // intentionally empty
+        } finally {
+            if (job.isActive) job.cancel()
+            progressBar?.stop()
+        }
+        return broker.sync()
     }
 
 }
@@ -175,6 +171,10 @@ fun run(
 
 /**
  * Run async
+ * @param feed the feed to use
+ * @param strategy The strategy to use, there is no default
+ * @param policy The policy to use, default is [FlexPolicy]
+ * @param broker the broker to use, default is [SimBroker]
  */
 suspend fun runAsync(
     feed: Feed,
@@ -240,7 +240,7 @@ private class ProgressBar(val timeframe: Timeframe) {
      * Start a progress bar for the [run] and [timeframe]
      */
     fun start() {
-        draw(currentPercent)
+        draw()
     }
 
     /**
@@ -260,20 +260,20 @@ private class ProgressBar(val timeframe: Timeframe) {
         if (now < nextUpdate) return
         nextUpdate = now.plusMillis(500)
         currentPercent = percent
-        draw(percent)
+        draw()
     }
 
-    private fun draw(percent: Int) {
+    private fun draw() {
         val sb = StringBuilder(100)
         sb.append('\r').append(pre)
-        sb.append(String.format(Locale.ENGLISH, "%3d", percent)).append("% |")
-        val filled = percent * TOTAL_BAR_LENGTH / 100
+        sb.append(String.format(Locale.ENGLISH, "%3d", currentPercent)).append("% |")
+        val filled = currentPercent * TOTAL_BAR_LENGTH / 100
         repeat(TOTAL_BAR_LENGTH) {
             if (it <= filled) sb.append(progressChar) else sb.append(' ')
         }
 
         sb.append(post)
-        if (percent == 100) sb.append("\n")
+        if (currentPercent == 100) sb.append("\n")
         val str = sb.toString()
 
         // Only update if there are some changes to the progress bar
@@ -289,7 +289,8 @@ private class ProgressBar(val timeframe: Timeframe) {
      */
     fun stop() {
         if (currentPercent < 100) {
-            draw(100)
+            currentPercent = 100
+            draw()
             System.out.flush()
         }
     }

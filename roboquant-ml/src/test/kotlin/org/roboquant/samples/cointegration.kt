@@ -131,7 +131,7 @@ fun testStrat(feed: AssetFeed) {
     }
 
     val strat = PairTradingStrategy(60)
-    val rq = Roboquant(strat, logger= SilentLogger())
+    val rq = Roboquant(strat)
     rq.run(feed)
 
 }

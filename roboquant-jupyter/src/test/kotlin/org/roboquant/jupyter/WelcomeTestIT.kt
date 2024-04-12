@@ -16,8 +16,8 @@
 
 package org.roboquant.jupyter
 
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.charts.PriceBarChart
-import org.roboquant.charts.TimeSeriesChart
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -31,22 +31,20 @@ internal class WelcomeTestIT {
         assertTrue { w.asHTMLPage().contains(snippet) }
     }
 
+
     @Test
     fun testDemo1() {
-        val chart1 = Welcome().demo1()
-        assertTrue(chart1 is TimeSeriesChart)
+        assertDoesNotThrow {
+            Welcome().demo1()
+        }
     }
+
 
     @Test
     fun testDemo2() {
         val chart2 = Welcome().demo2()
-        assertTrue(chart2 is TimeSeriesChart)
+        assertTrue(chart2 is PriceBarChart)
     }
 
-    @Test
-    fun testDemo3() {
-        val chart3 = Welcome().demo3()
-        assertTrue(chart3 is PriceBarChart)
-    }
 
 }

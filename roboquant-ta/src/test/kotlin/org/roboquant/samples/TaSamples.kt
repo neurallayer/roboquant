@@ -25,7 +25,6 @@ import org.roboquant.common.percent
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Order
 import org.roboquant.policies.FlexPolicy
@@ -132,7 +131,7 @@ internal class TaSamples {
             }
         }
 
-        val roboquant = Roboquant(EMAStrategy.PERIODS_12_26, AccountMetric(), policy = SmartLimitPolicy(atrPeriod = 5))
+        val roboquant = Roboquant(EMAStrategy.PERIODS_12_26, policy = SmartLimitPolicy(atrPeriod = 5))
         val feed = RandomWalkFeed.lastYears(5)
         val account = roboquant.run(feed)
         println(account.summary())
@@ -189,7 +188,7 @@ internal class TaSamples {
             }
         }
 
-        val rq = Roboquant(strategy, AccountMetric())
+        val rq = Roboquant(strategy)
         val feed = RandomWalkFeed.lastYears(5)
 
         println(feed.timeframe)

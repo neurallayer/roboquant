@@ -128,11 +128,8 @@ internal class IBKRSamples {
         val policy = FlexPolicy().circuitBreaker(2, 5.minutes)
         val rq = Roboquant(
             strategy,
-            AccountMetric(),
-            ProgressMetric(),
             policy = policy,
             broker = broker,
-            logger = ConsoleLogger()
         )
         rq.run(feed, Timeframe.next(2.hours))
 

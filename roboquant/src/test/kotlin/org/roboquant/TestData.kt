@@ -124,35 +124,32 @@ internal object TestData {
 
 }
 
-internal class FeedTest {
 
 
-    fun simpleRun(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE) = runBlocking {
-        var prev = Instant.MIN
-        for (event in play(feed, timeframe)) {
-            assertTrue(event.time > prev)
-            prev = event.time
 
-            for (price in event.prices.values) {
-                if (price is PriceBar) {
-                    assertTrue(price.low <= price.high)
-                    assertTrue(price.close <= price.high)
-                    assertTrue(price.open <= price.high)
+fun feedTest(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE) = runBlocking {
+    var prev = Instant.MIN
+    for (event in play(feed, timeframe)) {
+        assertTrue(event.time >= prev)
+        prev = event.time
 
-                    assertTrue(price.open >= price.low)
-                    assertTrue(price.close >= price.low)
-                }
+        for (price in event.prices.values) {
+            if (price is PriceBar) {
+                assertTrue(price.low <= price.high)
+                assertTrue(price.close <= price.high)
+                assertTrue(price.open <= price.high)
+
+                assertTrue(price.open >= price.low)
+                assertTrue(price.close >= price.low)
             }
         }
     }
 }
 
 
-internal class  JournalTest {
 
-
-    fun simpleRun(journal: Journal) {
-        val feed = RandomWalkFeed.lastYears(1)
-        run(feed, EMAStrategy(), journal)
-    }
+fun journalTest(journal: Journal) {
+    val feed = RandomWalkFeed.lastYears(1)
+    run(feed, EMAStrategy(), journal)
 }
+

@@ -32,10 +32,7 @@ import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.loggers.MemoryLogger
-import org.roboquant.loggers.SilentLogger
 import org.roboquant.loggers.latestRun
-import org.roboquant.metrics.AccountMetric
-import org.roboquant.metrics.AlphaBetaMetric
 import org.roboquant.orders.Order
 import org.roboquant.orders.summary
 import org.roboquant.policies.BasePolicy
@@ -84,7 +81,7 @@ internal class AvroSamples {
             orderPercentage = 0.02
         }
 
-        val roboquant = Roboquant(strategy, AccountMetric(), policy = policy, broker = broker, logger = MemoryLogger())
+        val roboquant = Roboquant(strategy, policy = policy, broker = broker)
         val account = roboquant.run(feed)
         println(account.openOrders.summary())
     }
@@ -108,7 +105,7 @@ internal class AvroSamples {
         // Walk forward learning
         feed.split(2.years).map { it.splitTwoWay(0.2) }.forEach { (train, test) ->
             roboquant.run(feed, train)
-            roboquant.reset(false)
+            roboquant.reset()
             roboquant.run(feed, test)
         }
 
@@ -126,7 +123,6 @@ internal class AvroSamples {
         }
 
         val feed = AvroFeed("/tmp/us_full_v3.0.avro")
-        val logger = MemoryLogger()
 
         val strategy = CombinedStrategy(
             EMAStrategy.PERIODS_50_200,
@@ -135,7 +131,7 @@ internal class AvroSamples {
 
         val policy = MyPolicy().resolve(SignalResolution.NO_CONFLICTS)
 
-        val roboquant = Roboquant(strategy, policy = policy, logger = logger)
+        val roboquant = Roboquant(strategy, policy = policy)
         roboquant.run(feed, Timeframe.past(5.years))
     }
 
@@ -164,7 +160,7 @@ internal class AvroSamples {
     internal fun forexRun() {
         val feed = AvroFeed.forex()
         Currency.increaseDigits(3)
-        val rq = Roboquant(EMAStrategy(), AccountMetric(), broker = SimBroker(pricingEngine = NoCostPricingEngine()))
+        val rq = Roboquant(EMAStrategy(), broker = SimBroker(pricingEngine = NoCostPricingEngine()))
         val account = rq.run(feed, timeframe = Timeframe.parse("2022-01-03", "2022-02-10"))
 
         for (trade in account.trades) {
@@ -184,7 +180,7 @@ internal class AvroSamples {
     @Ignore
     internal fun profileTest() {
         val feed = AvroFeed.sp500()
-        val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = SilentLogger())
+        val rq = Roboquant(EMAStrategy())
         rq.run(feed)
     }
 
@@ -197,7 +193,7 @@ internal class AvroSamples {
                 val jobs = ParallelJobs()
                 repeat(4) {
                     jobs.add {
-                        val rq = Roboquant(EMAStrategy(), AccountMetric(), logger = SilentLogger())
+                        val rq = Roboquant(EMAStrategy())
                         rq.run(feed)
                     }
                 }
@@ -242,7 +238,7 @@ internal class AvroSamples {
             orderPercentage = 90.percent
             safetyMargin = 10.percent
         }
-        val roboquant = Roboquant(strategy, AccountMetric(), broker = broker, policy = policy)
+        val roboquant = Roboquant(strategy, policy = policy, broker = broker)
         val account = roboquant.run(feed)
 
         println(account.summary())
@@ -307,16 +303,5 @@ internal class AvroSamples {
 
     }
 
-    @Test
-    @Ignore
-    fun alpha() {
-        val feed = AvroFeed.sp500()
-        val rq = Roboquant(EMAStrategy(), AlphaBetaMetric(250))
-        rq.run(feed)
-        val alpha = rq.logger.getMetric("account.alpha").latestRun()
-        val beta = rq.logger.getMetric("account.beta").latestRun()
-        println("alpha is ${alpha.last()}")
-        println("beta is ${beta.last()}")
-    }
 }
 

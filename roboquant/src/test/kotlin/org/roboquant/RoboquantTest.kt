@@ -26,12 +26,9 @@ import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.journals.BasicJournal
 import org.roboquant.journals.MetricsJournal
 import org.roboquant.journals.MultiRunJournal
-import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.loggers.MemoryLogger
 import org.roboquant.loggers.SilentLogger
-import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PNLMetric
-import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
 import kotlin.test.Test
@@ -43,16 +40,12 @@ internal class RoboquantTest {
     @Test
     fun simpleRun() {
         val strategy = EMAStrategy()
-        val roboquant = Roboquant(strategy, AccountMetric(), logger = SilentLogger())
+        val roboquant = Roboquant(strategy)
         assertDoesNotThrow {
             roboquant.run(TestData.feed)
         }
         val summary = roboquant.toString()
         assertTrue(summary.isNotEmpty())
-        assertEquals(
-            "strategy=EMAStrategy policy=FlexPolicy logger=SilentLogger metrics=[AccountMetric] broker=SimBroker",
-            summary
-        )
 
     }
 
@@ -64,8 +57,8 @@ internal class RoboquantTest {
         val initial = 101.USD.toWallet()
         val broker = SimBroker(initial)
         val logger = MemoryLogger()
-        val roboquant = Roboquant(strategy, ProgressMetric(), broker = broker, logger = logger)
-        roboquant.copy(logger = SilentLogger()).run(feed, Timeframe.INFINITE)
+        val roboquant = Roboquant(strategy, broker = broker)
+        roboquant.run(feed, Timeframe.INFINITE)
         roboquant.broker.reset()
         assertTrue(logger.history.isEmpty())
         val account = broker.sync()
@@ -77,7 +70,7 @@ internal class RoboquantTest {
     fun runAsync() = runBlocking {
         val strategy = EMAStrategy()
 
-        val roboquant = Roboquant(strategy, AccountMetric(), logger = SilentLogger())
+        val roboquant = Roboquant(strategy)
         assertDoesNotThrow {
             runBlocking {
                 roboquant.runAsync(TestData.feed)
@@ -153,12 +146,8 @@ internal class RoboquantTest {
 
         repeat(50) {
             jobs.add {
-                val roboquant = Roboquant(EMAStrategy(), ProgressMetric(), logger = LastEntryLogger())
-                val run = "run-$it"
+                val roboquant = Roboquant(EMAStrategy())
                 roboquant.runAsync(feed)
-                val metric = roboquant.logger.getMetric("progress.events", run)
-                assertEquals(1, metric.size)
-                assertEquals(feed.timeline.size.toDouble(), metric.values[0])
             }
         }
         jobs.joinAllBlocking()

@@ -20,10 +20,7 @@ import org.roboquant.Roboquant
 import org.roboquant.avro.AvroFeed
 import org.roboquant.charts.Chart
 import org.roboquant.charts.PriceBarChart
-import org.roboquant.charts.TimeSeriesChart
 import org.roboquant.common.Config
-import org.roboquant.common.years
-import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.EMAStrategy
 
 /**
@@ -69,10 +66,9 @@ class Welcome {
     /**
      * Run a small demo back test and display the resulting equity curve
      */
-    fun demo1(): Chart {
+    fun demo1() {
         val strategy = EMAStrategy()
-        val metric = AccountMetric()
-        val roboquant = Roboquant(strategy, metric)
+        val roboquant = Roboquant(strategy)
         val feed = AvroFeed.sp500()
         println(
             """
@@ -80,15 +76,10 @@ class Welcome {
             │     INPUT     │
             └───────────────┘
             val strategy = EMAStrategy()
-            val metric = AccountMetric()
-            val roboquant = Roboquant(strategy, metric)
+            val roboquant = Roboquant(strategy)
             
             val feed = AvroFeed.sp500()
             roboquant.run(feed)
-            
-            val equity = roboquant.logger.getMetric("account.equity")
-            TimeSeriesChart(equity)
-            
             ┌───────────────┐
             │    Output     │
             └───────────────┘
@@ -96,52 +87,13 @@ class Welcome {
         )
 
         roboquant.run(feed)
-        val equity = roboquant.logger.getMetric("account.equity")
-        return TimeSeriesChart(equity)
     }
 
-    /**
-     * Run a small walk-forward test and display the resulting equity curve
-     */
-    fun demo2(): Chart {
-        val strategy = EMAStrategy()
-        val metric = AccountMetric()
-        val roboquant = Roboquant(strategy, metric)
-        val feed = AvroFeed.sp500()
-        println(
-            """
-            ┌───────────────┐
-            │     INPUT     │
-            └───────────────┘
-            val strategy = EMAStrategy()
-            val metric = AccountMetric()
-            val roboquant = Roboquant(strategy, metric)
-            
-            val feed = AvroFeed.sp500()
-            feed.timeframe.split(1.years).forEach {
-                roboquant.run(feed, it)
-            }
-            
-            val equity = roboquant.logger.getMetric("account.equity")
-            TimeSeriesChart(equity)
-            
-            ┌───────────────┐
-            │    Output     │
-            └───────────────┘
-        """.trimIndent()
-        )
-
-        feed.timeframe.split(1.years).forEach {
-            roboquant.run(feed, it)
-        }
-        val equity = roboquant.logger.getMetric("account.equity")
-        return TimeSeriesChart(equity)
-    }
 
     /**
      * View feed data demo
      */
-    fun demo3(): Chart {
+    fun demo2(): Chart {
         println(
             """
             ┌───────────────┐

@@ -31,9 +31,6 @@ import org.roboquant.common.*
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.toList
 import org.roboquant.loggers.ConsoleLogger
-import org.roboquant.loggers.InfoLogger
-import org.roboquant.metrics.ProgressMetric
-import org.roboquant.metrics.ScorecardMetric
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
@@ -66,7 +63,7 @@ internal class BinanceSamples {
         val initialDeposit = Amount("BUSD", 10_000).toWallet()
         val broker = SimBroker(initialDeposit)
         val policy = FlexPolicy.singleAsset()
-        val rq = Roboquant(strategy, broker = broker, policy = policy, logger = ConsoleLogger())
+        val rq = Roboquant(strategy, broker = broker, policy = policy)
 
         // We'll run the forward test for thirty minutes
         val tf = Timeframe.next(30.minutes)
@@ -78,7 +75,7 @@ internal class BinanceSamples {
     fun binanceTestBack() {
         val strategy = EMAStrategy()
         val initialDeposit = Amount("BUSD", 100_000).toWallet()
-        val roboquant = Roboquant(strategy, ScorecardMetric(), broker = SimBroker(initialDeposit, retention = 10.years))
+        val roboquant = Roboquant(strategy, broker = SimBroker(initialDeposit, retention = 10.years))
 
         val feed = BinanceHistoricFeed()
         val threeYears = Timeframe.parse("2020-01-01", "2023-01-01")
@@ -93,7 +90,7 @@ internal class BinanceSamples {
     fun binanceTestBack2() {
         val strategy = EMAStrategy()
         val initialDeposit = Amount("BUSD", 100_000).toWallet()
-        val roboquant = Roboquant(strategy, ScorecardMetric(), broker = SimBroker(initialDeposit, retention = 10.years))
+        val roboquant = Roboquant(strategy, broker = SimBroker(initialDeposit, retention = 10.years))
 
         val feed = BinanceHistoricFeed()
         val threeYears = Timeframe.parse("2020-01-01", "2023-01-01")
@@ -158,7 +155,7 @@ internal class BinanceSamples {
 
         repeat(3) {
             jobs.add {
-                val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = InfoLogger())
+                val rq = Roboquant(EMAStrategy())
                 rq.run(feed, tf)
             }
         }

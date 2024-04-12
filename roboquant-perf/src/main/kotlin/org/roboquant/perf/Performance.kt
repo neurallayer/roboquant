@@ -123,7 +123,7 @@ private object Performance {
             // sequential runs
             trades = 0
             repeat(backTests) {
-                val roboquant = Roboquant(getStrategy(SKIP), logger = SilentLogger())
+                val roboquant = Roboquant(getStrategy(SKIP))
                 val account = roboquant.run(feed)
                 trades += account.trades.size
             }
@@ -163,11 +163,8 @@ private object Performance {
 
             val roboquant = Roboquant(
                 strategy,
-                AccountMetric(),
-                PNLMetric(),
                 broker = broker,
                 policy = policy,
-                logger = LastEntryLogger()
             )
             roboquant.run(feed)
         }
@@ -185,9 +182,7 @@ private object Performance {
                     // use lower channel capacity to limit memory requirements
                     val roboquant = Roboquant(
                         getStrategy(SKIP),
-                        logger = SilentLogger(),
                         broker = SimBroker(retention = TimeSpan.ZERO),
-                        channelCapacity = 3
                     )
                     roboquant.runAsync(feed)
                 }
@@ -249,7 +244,7 @@ private object Memory {
 
     fun test() {
         Config.printInfo()
-        val rq = Roboquant(EMAStrategy(), AccountMetric())
+        val rq = Roboquant(EMAStrategy())
         val feed = RandomWalkFeed.lastYears(5, nAssets = 500)
         rq.run(feed)
         exitProcess(0)

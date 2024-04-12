@@ -23,8 +23,6 @@ import org.roboquant.run
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.journals.BasicJournal
-import org.roboquant.loggers.ConsoleLogger
-import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.tiingo.TiingoHistoricFeed
 import org.roboquant.tiingo.TiingoLiveFeed
@@ -40,7 +38,7 @@ internal class TiingoSamples {
         System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
         val feed = TiingoLiveFeed.iex()
         feed.subscribe("AAPL", "TSLA")
-        val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
+        val rq = Roboquant(EMAStrategy())
         val account = rq.run(feed, Timeframe.next(10.minutes))
         println(account.fullSummary())
     }
@@ -61,7 +59,7 @@ internal class TiingoSamples {
     internal fun testLiveFeedFX() {
         val feed = TiingoLiveFeed.fx()
         feed.subscribe("EURUSD")
-        val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
+        val rq = Roboquant(EMAStrategy())
         val account = rq.run(feed, Timeframe.next(1.minutes))
         println(account.fullSummary())
     }
@@ -74,7 +72,7 @@ internal class TiingoSamples {
         Config.registerAsset("BNBFDUSD", asset)
 
         feed.subscribe("BNBFDUSD")
-        val rq = Roboquant(EMAStrategy(), ProgressMetric(), logger = ConsoleLogger())
+        val rq = Roboquant(EMAStrategy())
         val account = rq.run(feed, Timeframe.next(1.minutes))
         println(account.fullSummary())
     }
@@ -142,7 +140,7 @@ internal class TiingoSamples {
         feed.retrieve("AAPL", "TSLA", "ERROR_SYMBOL", timeframe=tf)
         println(feed.assets)
         println(feed.timeframe)
-        val rq = Roboquant(EMAStrategy(), ProgressMetric())
+        val rq = Roboquant(EMAStrategy())
         val account = rq.run(feed)
         println(account.fullSummary())
     }
@@ -155,7 +153,7 @@ internal class TiingoSamples {
         feed.retrieveIntraday("AAPL", "TSLA", "ERROR_SYMBOL", timeframe=tf, frequency = "1hour")
         println(feed.assets)
         println(feed.timeframe)
-        val rq = Roboquant(EMAStrategy(), ProgressMetric())
+        val rq = Roboquant(EMAStrategy())
         val account = rq.run(feed)
         println(account.fullSummary())
     }

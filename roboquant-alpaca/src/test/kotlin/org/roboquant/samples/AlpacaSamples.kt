@@ -25,8 +25,6 @@ import org.roboquant.common.*
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
-import org.roboquant.loggers.InfoLogger
-import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy
@@ -74,7 +72,7 @@ internal class AlpacaSamples {
         feed.subscribeStocks(*symbols)
 
         val strategy = EMAStrategy(3, 5)
-        val roboquant = Roboquant(strategy, AccountMetric(), ProgressMetric(), broker = broker, logger = InfoLogger())
+        val roboquant = Roboquant(strategy, broker = broker)
         val tf = Timeframe.next(60.minutes)
         val account2 = roboquant.run(feed, tf)
         feed.close()
@@ -92,7 +90,7 @@ internal class AlpacaSamples {
 
         feed.subscribeCrypto(*symbols)
         val strategy = EMAStrategy.PERIODS_5_15
-        val roboquant = Roboquant(strategy, ProgressMetric())
+        val roboquant = Roboquant(strategy)
         val tf = Timeframe.next(10.minutes)
         val account = roboquant.run(feed, tf)
         feed.close()

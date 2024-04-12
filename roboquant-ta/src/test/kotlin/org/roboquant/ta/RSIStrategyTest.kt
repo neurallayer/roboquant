@@ -31,7 +31,7 @@ internal class RSIStrategyTest {
         val s = RSIStrategy()
         assertEquals(30.0, s.lowThreshold)
         assertEquals(70.0, s.highThreshold)
-        val roboquant = Roboquant(s, logger = SilentLogger())
+        val roboquant = Roboquant(s)
         roboquant.run(feed)
 
     }
