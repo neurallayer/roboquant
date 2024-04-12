@@ -215,16 +215,6 @@ val Collection<Position>.unrealizedPNL: Wallet
     get() = sumOf { it.unrealizedPNL }
 
 /**
- * Return the required sizes per asset to close the open positions. This method doesn't close the actual open positions,
- * just provides the information to do so as a Pair<Asset, Size>.
- * ```
- * val orders = positions.close().map { MarketOrder(it.key, it.value) }
- * ```
- */
-val Collection<Position>.closeSizes: Map<Asset, Size>
-    get() = diff(emptyList())
-
-/**
  * Return the collection as table
  */
 fun Collection<Position>.lines(): List<List<Any>> {

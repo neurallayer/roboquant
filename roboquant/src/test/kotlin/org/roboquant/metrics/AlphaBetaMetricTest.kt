@@ -55,15 +55,14 @@ internal class AlphaBetaMetricTest {
 
         val events = feed.toList()
         val startPrice = events.first().prices[asset]!!.getPrice()
-        var cnt = 0
-        for (event in events) {
-            cnt++
+
+        for ((cnt, event) in events.withIndex()) {
             val price = event.prices[asset]!!.getPrice()
             internalAccount.setPosition(Position(asset, Size(100), startPrice, price))
             val account = internalAccount.toAccount()
 
             val r = metric.calculate(account, event)
-            if (cnt <= 50) {
+            if (cnt < 50) {
                 assertTrue(r.isEmpty())
             } else {
                 assertContains(r, "account.alpha")

@@ -90,15 +90,6 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
     }
 
     /**
-     * Return a randomly shuffled copy of this time-series using the [Config.random] random number generator
-     */
-    fun shuffle(): TimeSeries {
-        val newValues = values.copyOf()
-        newValues.shuffle(Config.random)
-        return TimeSeries(timeline, newValues)
-    }
-
-    /**
      * Iterate of this time-series
      */
     inline fun forEach(block: (Instant, Double) -> Unit) {
@@ -215,19 +206,6 @@ class TimeSeries(val timeline: Timeline, val values: DoubleArray) : Iterable<Obs
             formatter.format(date)
         }.mapValues { TimeSeries(it.value) }
     }
-
-    /**
-     * Returns a TimeSeries
-     */
-    fun runningFold(initial: Double): TimeSeries {
-        val newData = values.runningFold(initial) { last, current -> (current + 1.0) * last }.drop(1)
-        return TimeSeries(timeline, newData.toDoubleArray())
-    }
-
-    /**
-     * Returns a TimeSeries containing the growth-rates of the values
-     */
-    fun growthRates() = TimeSeries(timeline.drop(1), values.growthRates())
 
     /**
      * Returns an iterator containing the observations

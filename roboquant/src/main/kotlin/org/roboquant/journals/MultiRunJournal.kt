@@ -28,4 +28,8 @@ class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
         return journals[run]?.getMetric(name) ?: TimeSeries(listOf(), doubleArrayOf())
     }
 
+    fun getMetricNames() : Set<String> {
+        return journals.values.map { it.getMetricNames() }.flatten().toSet()
+    }
+
 }

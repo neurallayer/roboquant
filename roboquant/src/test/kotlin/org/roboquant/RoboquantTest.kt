@@ -86,6 +86,7 @@ internal class RoboquantTest {
             assertTrue(journal.nSignals > 0)
             assertTrue(journal.nOrders > 0)
             assertTrue(journal.lastTime != null)
+            assertTrue(journal.maxPositions > 0)
         }
     }
 

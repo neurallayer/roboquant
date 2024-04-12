@@ -42,6 +42,8 @@ internal class QuestDBJournalTestIT {
         simpleRun(logger)
         val equity = logger.getMetric("account.equity")
         assertTrue(equity.isNotEmpty())
+        logger.removeRun("test-run")
+        logger.removeAllRuns()
         logger.close()
     }
 
