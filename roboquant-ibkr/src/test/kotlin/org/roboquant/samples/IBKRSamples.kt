@@ -128,7 +128,7 @@ internal class IBKRSamples {
             policy = policy,
             broker = broker,
         )
-        rq.run(feed, Timeframe.next(2.hours))
+        rq.run(feed, timeframe = Timeframe.next(2.hours))
 
         feed.disconnect()
         broker.disconnect()

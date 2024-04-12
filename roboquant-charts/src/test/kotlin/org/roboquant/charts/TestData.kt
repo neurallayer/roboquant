@@ -67,13 +67,9 @@ object TestData {
 
     val data by lazy {
         val feed = HistoricTestFeed(50..150)
-        var journal = MetricsJournal(AccountMetric())
+        val journal = MetricsJournal(AccountMetric())
         org.roboquant.run(feed, EMAStrategy(), journal)
-        val run1 = journal.getMetric("account.equity")
-        journal = MetricsJournal(AccountMetric())
-        org.roboquant.run(feed, EMAStrategy(), journal)
-        val run2 = journal.getMetric("account.equity")
-        mapOf("run1" to run1, "run2" to run2)
+        journal.getMetric("account.equity")
     }
 
     private fun loadFile(name: String): String {

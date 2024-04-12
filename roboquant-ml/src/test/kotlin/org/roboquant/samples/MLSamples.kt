@@ -85,9 +85,9 @@ internal class MLSamples {
         }
         val rq = Roboquant(strategy, policy = policy, broker = broker)
         val (train, valid) = feed.timeframe.splitTwoWay(9.months)
-        rq.run(feed, train)
+        rq.run(feed, timeframe = train)
         rq.broker.reset()
-        val account = rq.run(feed, valid)
+        val account = rq.run(feed, timeframe = valid)
         println(account.summary())
         val trades = account.trades
         println(trades.filter { !it.pnlValue.iszero }.joinToString("\n") {

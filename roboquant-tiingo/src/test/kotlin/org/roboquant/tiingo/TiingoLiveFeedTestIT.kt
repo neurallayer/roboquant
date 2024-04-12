@@ -42,7 +42,7 @@ internal class TiingoLiveFeedTestIT {
         val feed = TiingoLiveFeed.fx()
         feed.subscribe("EURUSD")
         val rq = Roboquant(EMAStrategy())
-        rq.run(feed, Timeframe.next(1.minutes))
+        rq.run(feed, timeframe = Timeframe.next(1.minutes))
     }
 
     @Test
@@ -53,7 +53,7 @@ internal class TiingoLiveFeedTestIT {
         Config.registerAsset("BNBFDUSD", asset)
         feed.subscribe("BNBFDUSD")
         val rq = Roboquant(EMAStrategy())
-        rq.run(feed, Timeframe.next(1.minutes))
+        rq.run(feed, timeframe = Timeframe.next(1.minutes))
     }
 
 

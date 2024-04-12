@@ -39,7 +39,7 @@ internal class TiingoSamples {
         val feed = TiingoLiveFeed.iex()
         feed.subscribe("AAPL", "TSLA")
         val rq = Roboquant(EMAStrategy())
-        val account = rq.run(feed, Timeframe.next(10.minutes))
+        val account = rq.run(feed, timeframe = Timeframe.next(10.minutes))
         println(account.fullSummary())
     }
 
@@ -60,7 +60,7 @@ internal class TiingoSamples {
         val feed = TiingoLiveFeed.fx()
         feed.subscribe("EURUSD")
         val rq = Roboquant(EMAStrategy())
-        val account = rq.run(feed, Timeframe.next(1.minutes))
+        val account = rq.run(feed, timeframe = Timeframe.next(1.minutes))
         println(account.fullSummary())
     }
 
@@ -73,7 +73,7 @@ internal class TiingoSamples {
 
         feed.subscribe("BNBFDUSD")
         val rq = Roboquant(EMAStrategy())
-        val account = rq.run(feed, Timeframe.next(1.minutes))
+        val account = rq.run(feed, timeframe = Timeframe.next(1.minutes))
         println(account.fullSummary())
     }
 

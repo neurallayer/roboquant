@@ -16,7 +16,6 @@
 
 package org.roboquant.charts
 
-import org.roboquant.loggers.MemoryLogger
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -24,8 +23,7 @@ internal class BoxChartTest {
 
     @Test
     fun test() {
-        val logger = MemoryLogger()
-        val data = logger.getMetric("test")
+        val data = TestData.data
         val chart = BoxChart(data)
         assertTrue(chart.renderJson().isNotBlank())
     }

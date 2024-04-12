@@ -66,7 +66,7 @@ internal class BinanceSamples {
 
         // We'll run the forward test for thirty minutes
         val tf = Timeframe.next(30.minutes)
-        rq.run(feed, tf)
+        rq.run(feed, timeframe = tf)
     }
 
     @Test
@@ -155,7 +155,7 @@ internal class BinanceSamples {
         repeat(3) {
             jobs.add {
                 val rq = Roboquant(EMAStrategy())
-                rq.run(feed, tf)
+                rq.run(feed, timeframe = tf)
             }
         }
 

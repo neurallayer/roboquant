@@ -97,14 +97,14 @@ internal class AvroSamples {
 
         // Walk forward
         feed.split(2.years).forEach {
-            roboquant.run(feed, it)
+            roboquant.run(feed, timeframe = it)
         }
 
         // Walk forward learning
         feed.split(2.years).map { it.splitTwoWay(0.2) }.forEach { (train, test) ->
-            roboquant.run(feed, train)
+            roboquant.run(feed, timeframe = train)
             roboquant.reset()
-            roboquant.run(feed, test)
+            roboquant.run(feed, timeframe = test)
         }
 
     }
@@ -130,7 +130,7 @@ internal class AvroSamples {
         val policy = MyPolicy().resolve(SignalResolution.NO_CONFLICTS)
 
         val roboquant = Roboquant(strategy, policy = policy)
-        roboquant.run(feed, Timeframe.past(5.years))
+        roboquant.run(feed, timeframe = Timeframe.past(5.years))
     }
 
     @Test

@@ -26,7 +26,7 @@ internal class TimeSeriesChartTest {
     @Test
     fun single() {
         val data = TestData.data
-        val chart = TimeSeriesChart(data.values.first())
+        val chart = TimeSeriesChart(data)
 
         assertDoesNotThrow {
             chart.renderJson()
@@ -35,29 +35,7 @@ internal class TimeSeriesChartTest {
         assertTrue(chart.renderJson().isNotBlank())
     }
 
-    @Test
-    fun predefined() {
-        val data = TestData.data
-        val chart = TimeSeriesChart.walkForward(data)
 
-        assertDoesNotThrow {
-            chart.renderJson()
-        }
-
-        assertTrue(chart.renderJson().isNotBlank())
-    }
-
-    @Test
-    fun predefined2() {
-        val data = TestData.data
-        val chart = TimeSeriesChart.walkForward(data)
-
-        assertDoesNotThrow {
-            chart.renderJson()
-        }
-
-        assertTrue(chart.renderJson().isNotBlank())
-    }
 
 
 }

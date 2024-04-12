@@ -116,7 +116,7 @@ internal class AggregatorFeedTest {
         aggFeed.timeframe.split(3.months).forEach {
             jobs.add {
                 val rq = Roboquant(EMAStrategy())
-                rq.runAsync(aggFeed, it)
+                rq.runAsync(aggFeed, timeframe = it)
             }
         }
     }

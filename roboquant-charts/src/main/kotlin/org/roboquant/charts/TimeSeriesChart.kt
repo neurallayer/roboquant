@@ -24,7 +24,6 @@ import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.series.LineStyle
 import org.roboquant.common.TimeSeries
-import org.roboquant.common.flatten
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -48,45 +47,6 @@ class TimeSeriesChart(
     constructor(timeSeries: TimeSeries, useTime: Boolean = true, fractionDigits: Int = 2) :
             this(mapOf("" to timeSeries), useTime, fractionDigits)
 
-    /**
-     * @suppress
-     */
-    companion object {
-
-        /**
-         * Return a chart based on multiple runs. Because each run starts fresh, not the absolute values, but the
-         * returns are used to flatten runs to a single timeline.
-         *
-         * Optionally, a Monte Carlo simulation can be run on the returns to get an impression how the data would look
-         * like if the returns had occurred in a different order.
-         *
-         * ```
-         * val data = roboquant.logger.getMetric("account.equity")
-         * TimeSeriesChart.walkForward(data, monteCarlo = 100)
-         * ```
-         */
-        fun walkForward(
-            metricsData: Map<String, TimeSeries>,
-            fractionDigits: Int = 2,
-            monteCarlo: Int = 0,
-        ): TimeSeriesChart {
-            require(monteCarlo >= 0)
-            require(fractionDigits >= 0)
-
-            val d = metricsData.mapValues { it.value.returns() }.flatten()
-            var data = d.runningFold(100.0)
-            if (monteCarlo == 0) return TimeSeriesChart(mapOf("" to data))
-
-            val result = mutableMapOf("original" to data)
-            repeat(monteCarlo) {
-                data = d.shuffle().runningFold(100.0)
-                result["mc-$it"] = data
-            }
-            return TimeSeriesChart(result)
-
-        }
-
-    }
 
     /**
      * Identify common suffix (same run), so they can be removed from the series name

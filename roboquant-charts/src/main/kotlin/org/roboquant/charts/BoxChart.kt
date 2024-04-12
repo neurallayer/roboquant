@@ -25,7 +25,6 @@ import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.clean
-import org.roboquant.common.flatten
 import java.math.MathContext
 import java.math.RoundingMode
 import java.time.temporal.ChronoUnit
@@ -50,18 +49,6 @@ class BoxChart(
     private val highPercentile: Double = 75.0,
     private val precision: Int = 8
 ) : Chart() {
-
-    /**
-     * Create box plot from multiple runs
-     */
-    constructor(
-        metricData: Map<String, TimeSeries>,
-        period: ChronoUnit = ChronoUnit.MONTHS,
-        lowPercentile: Double = 25.0,
-        midPercentile: Double = 50.0,
-        highPercentile: Double = 75.0,
-        precision: Int = 8
-    ) : this(metricData.flatten(true), period, lowPercentile, midPercentile, highPercentile, precision)
 
 
     private fun toSeriesData(): List<Pair<String, Any>> {

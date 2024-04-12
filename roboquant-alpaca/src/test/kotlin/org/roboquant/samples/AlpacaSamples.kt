@@ -73,7 +73,7 @@ internal class AlpacaSamples {
         val strategy = EMAStrategy(3, 5)
         val roboquant = Roboquant(strategy, broker = broker)
         val tf = Timeframe.next(60.minutes)
-        val account2 = roboquant.run(feed, tf)
+        val account2 = roboquant.run(feed, timeframe = tf)
         feed.close()
 
         println(account2.fullSummary())
@@ -91,7 +91,7 @@ internal class AlpacaSamples {
         val strategy = EMAStrategy.PERIODS_5_15
         val roboquant = Roboquant(strategy)
         val tf = Timeframe.next(10.minutes)
-        val account = roboquant.run(feed, tf)
+        val account = roboquant.run(feed, timeframe = tf)
         feed.close()
         println(account.summary())
     }

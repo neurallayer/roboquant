@@ -81,13 +81,13 @@ data class Roboquant(
      */
     fun run(
         feed: Feed,
-        timeframe: Timeframe = feed.timeframe,
         journal: Journal? = null,
+        timeframe: Timeframe = feed.timeframe,
         channel: EventChannel = EventChannel(timeframe, 10),
         heartbeatTimeout: Long = -1,
         showProgressBar: Boolean = false
     ): Account = runBlocking {
-        return@runBlocking runAsync(feed, timeframe, journal, channel, heartbeatTimeout, showProgressBar)
+        return@runBlocking runAsync(feed, journal, timeframe, channel, heartbeatTimeout, showProgressBar)
     }
 
     /**
@@ -99,8 +99,8 @@ data class Roboquant(
      */
     suspend fun runAsync(
         feed: Feed,
-        timeframe: Timeframe = feed.timeframe,
         journal: Journal? = null,
+        timeframe: Timeframe = feed.timeframe,
         channel: EventChannel = EventChannel(timeframe, 10),
         heartbeatTimeout: Long = -1,
         showProgressBar: Boolean = false
