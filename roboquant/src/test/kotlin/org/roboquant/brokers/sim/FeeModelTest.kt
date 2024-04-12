@@ -16,12 +16,12 @@
 
 package org.roboquant.brokers.sim
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.Execution
 import org.roboquant.common.Size
 import org.roboquant.common.percent
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class FeeModelTest {

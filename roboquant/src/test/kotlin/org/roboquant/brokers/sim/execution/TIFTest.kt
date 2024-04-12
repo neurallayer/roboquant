@@ -16,14 +16,17 @@
 
 package org.roboquant.brokers.sim.execution
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.Pricing
-import org.roboquant.common.*
+import org.roboquant.common.Size
+import org.roboquant.common.days
+import org.roboquant.common.plus
+import org.roboquant.common.seconds
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class TIFTest {

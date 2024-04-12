@@ -16,11 +16,11 @@
 
 package org.roboquant.orders
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.Size
 import org.roboquant.common.percent
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

@@ -17,16 +17,11 @@
 package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
-import kotlin.test.Test
-import org.roboquant.Roboquant
-import org.roboquant.common.ParallelJobs
-import org.roboquant.common.months
 import org.roboquant.feedTest
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.play
-import org.roboquant.loggers.SilentLogger
-import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

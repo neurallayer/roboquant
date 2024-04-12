@@ -25,7 +25,6 @@ import org.roboquant.common.*
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
-import org.roboquant.metrics.ProgressMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Ignore

@@ -31,8 +31,6 @@ import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.loggers.MemoryLogger
-import org.roboquant.loggers.latestRun
 import org.roboquant.orders.Order
 import org.roboquant.orders.summary
 import org.roboquant.policies.BasePolicy

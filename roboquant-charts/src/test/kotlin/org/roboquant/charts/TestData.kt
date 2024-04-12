@@ -27,7 +27,6 @@ import org.roboquant.common.USD
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.journals.MetricsJournal
-import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy

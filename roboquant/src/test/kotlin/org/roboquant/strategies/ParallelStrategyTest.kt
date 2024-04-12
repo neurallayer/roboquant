@@ -16,9 +16,9 @@
 
 package org.roboquant.strategies
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import kotlin.random.Random
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class ParallelStrategyTest {

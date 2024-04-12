@@ -22,12 +22,11 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.loggers.LastEntryLogger
-import org.roboquant.loggers.SilentLogger
-import org.roboquant.metrics.AccountMetric
-import org.roboquant.metrics.PNLMetric
 import org.roboquant.policies.FlexPolicy
-import org.roboquant.strategies.*
+import org.roboquant.strategies.CombinedStrategy
+import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.Signal
+import org.roboquant.strategies.Strategy
 import java.time.Instant
 import kotlin.math.roundToInt
 import kotlin.system.exitProcess

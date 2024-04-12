@@ -19,8 +19,8 @@ package org.roboquant.feeds.random
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.TimeSpan
-import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.TradePrice
 import java.util.*
 

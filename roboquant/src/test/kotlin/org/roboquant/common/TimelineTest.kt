@@ -16,11 +16,11 @@
 
 package org.roboquant.common
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toDoubleArray
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

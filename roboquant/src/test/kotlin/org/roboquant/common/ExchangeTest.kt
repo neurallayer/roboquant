@@ -17,7 +17,6 @@
 package org.roboquant.common
 
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.time.DayOfWeek
 import java.time.Instant

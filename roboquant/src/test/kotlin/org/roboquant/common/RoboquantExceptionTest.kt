@@ -16,7 +16,8 @@
 
 package org.roboquant.common
 
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertFailsWith
 
 internal class RoboquantExceptionTest {
 

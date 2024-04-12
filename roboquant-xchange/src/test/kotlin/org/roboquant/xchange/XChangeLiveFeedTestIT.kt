@@ -18,7 +18,6 @@ package org.roboquant.xchange
 
 import info.bitrich.xchangestream.bitstamp.v2.BitstampStreamingExchange
 import info.bitrich.xchangestream.core.StreamingExchangeFactory
-import kotlin.test.Test
 import org.knowm.xchange.ExchangeFactory
 import org.knowm.xchange.bitstamp.BitstampExchange
 import org.roboquant.common.AssetType
@@ -27,6 +26,7 @@ import org.roboquant.common.minutes
 import org.roboquant.common.summary
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class XChangeLiveFeedTestIT {

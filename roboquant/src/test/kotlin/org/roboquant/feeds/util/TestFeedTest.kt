@@ -16,15 +16,16 @@
 
 package org.roboquant.feeds.util
 
-import kotlinx.coroutines.*
-import kotlin.test.Test
-import kotlin.test.*
+import kotlinx.coroutines.runBlocking
 import org.roboquant.TestData
 import org.roboquant.common.Background
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.PriceItem
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 fun play(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE): EventChannel {
     val channel = EventChannel(timeframe = timeframe)

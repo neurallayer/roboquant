@@ -16,9 +16,9 @@
 
 package org.roboquant.binance
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.*
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class BinanceHistoricFeedTestIT {

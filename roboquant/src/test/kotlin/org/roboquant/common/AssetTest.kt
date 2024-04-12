@@ -17,7 +17,6 @@
 package org.roboquant.common
 
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import java.time.LocalDate

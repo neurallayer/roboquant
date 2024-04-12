@@ -26,10 +26,8 @@ import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.play
-import org.roboquant.journals.Journal
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus
-import org.roboquant.strategies.EMAStrategy
 import java.io.File
 import java.time.Instant
 import kotlin.test.assertTrue
@@ -147,9 +145,4 @@ fun feedTest(feed: Feed, timeframe: Timeframe = Timeframe.INFINITE) = runBlockin
 }
 
 
-
-fun journalTest(journal: Journal) {
-    val feed = RandomWalkFeed.lastYears(1)
-    run(feed, EMAStrategy(), journal)
-}
 

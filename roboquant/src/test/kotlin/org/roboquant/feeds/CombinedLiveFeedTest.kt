@@ -17,9 +17,9 @@
 package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
-import kotlin.test.Test
 import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.feeds.util.play
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

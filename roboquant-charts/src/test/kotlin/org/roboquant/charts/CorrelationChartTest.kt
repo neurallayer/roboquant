@@ -18,8 +18,8 @@ package org.roboquant.charts
 
 import org.icepear.echarts.charts.heatmap.HeatmapSeries
 import org.icepear.echarts.origin.util.SeriesOption
-import kotlin.test.Test
 import org.roboquant.feeds.random.RandomWalkFeed
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class CorrelationChartTest {

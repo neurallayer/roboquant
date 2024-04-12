@@ -26,7 +26,6 @@ import org.roboquant.common.*
 import org.roboquant.feeds.AssetFeed
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.applyEvents
-import org.roboquant.loggers.SilentLogger
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 

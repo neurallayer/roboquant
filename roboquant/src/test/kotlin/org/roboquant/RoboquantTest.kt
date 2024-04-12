@@ -27,7 +27,6 @@ import org.roboquant.journals.BasicJournal
 import org.roboquant.journals.MetricsJournal
 import org.roboquant.journals.MultiRunJournal
 import org.roboquant.loggers.MemoryLogger
-import org.roboquant.loggers.SilentLogger
 import org.roboquant.metrics.PNLMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy

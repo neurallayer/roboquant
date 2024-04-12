@@ -22,7 +22,7 @@ import java.time.Instant
 import kotlin.math.absoluteValue
 
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LoggingSimilarMessage")
 internal open class BaseWrapper(private val logger: Logging.Logger) : EWrapper {
 
     private val traceMsg = "Not yet implemented"

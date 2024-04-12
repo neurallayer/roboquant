@@ -16,9 +16,9 @@
 
 package org.roboquant.orders
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.common.Size
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertTrue

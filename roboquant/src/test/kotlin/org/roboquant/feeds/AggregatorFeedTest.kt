@@ -20,7 +20,6 @@ import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.LiveTestFeed
-import org.roboquant.loggers.LastEntryLogger
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
 import java.time.temporal.ChronoUnit

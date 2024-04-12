@@ -16,7 +16,6 @@
 
 package org.roboquant.brokers
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Asset
 import org.roboquant.common.CAD
@@ -26,6 +25,7 @@ import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.USD
 import org.roboquant.feeds.util.HistoricTestFeed
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class FeedExchangeRatesTest {

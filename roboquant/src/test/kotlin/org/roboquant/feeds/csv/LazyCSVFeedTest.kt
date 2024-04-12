@@ -16,17 +16,13 @@
 
 package org.roboquant.feeds.csv
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.common.div
 import org.roboquant.common.symbols
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.toList
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class LazyCSVFeedTest {
 

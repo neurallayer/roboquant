@@ -19,7 +19,10 @@ package org.roboquant.metrics
 import org.roboquant.TestData
 import org.roboquant.brokers.assets
 import org.roboquant.feeds.Event
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 internal class PositionMetricTest {
 

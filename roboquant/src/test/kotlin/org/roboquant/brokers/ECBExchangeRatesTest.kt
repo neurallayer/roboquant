@@ -16,7 +16,6 @@
 
 package org.roboquant.brokers
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.GBP
@@ -25,6 +24,7 @@ import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.EUR
 import org.roboquant.common.USD
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

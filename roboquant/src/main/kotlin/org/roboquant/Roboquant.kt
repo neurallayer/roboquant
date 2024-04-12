@@ -16,7 +16,6 @@
 
 package org.roboquant
 
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
 import org.roboquant.brokers.Account
@@ -27,7 +26,6 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.journals.Journal
-import org.roboquant.loggers.MemoryLogger
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.Policy
 import org.roboquant.strategies.Strategy
@@ -38,8 +36,8 @@ import kotlin.math.roundToInt
 
 /**
  * Roboquant is the engine of the platform that ties [strategy], [policy] and [broker] together and caters to a wide
- * variety of testing and live trading scenarios. Through [metrics] and a [logger] it provides insights into the
- * performance of a [run]. Only a strategy is required when instantiating a Roboquant, the other parameters are
+ * variety of testing and live trading scenarios.
+ * Only a strategy is required when instantiating a Roboquant, the other parameters are
  * optional.
  *
  * @property strategy The strategy to use, there is no default

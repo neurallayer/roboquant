@@ -16,13 +16,13 @@
 
 package org.roboquant.brokers
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Currency.Companion.EUR
 import org.roboquant.common.Currency.Companion.USD
 import org.roboquant.common.USD
 import org.roboquant.common.UnsupportedException
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class NoExchangeRatesTest {

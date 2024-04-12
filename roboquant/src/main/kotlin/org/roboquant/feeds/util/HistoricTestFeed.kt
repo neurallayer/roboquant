@@ -21,8 +21,8 @@ import org.roboquant.common.TimeSpan
 import org.roboquant.common.days
 import org.roboquant.common.plus
 import org.roboquant.feeds.HistoricPriceFeed
-import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.TradePrice
 import java.time.Instant
 

@@ -16,8 +16,8 @@
 
 package org.roboquant.strategies
 
-import kotlin.test.Test
 import org.roboquant.common.Asset
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

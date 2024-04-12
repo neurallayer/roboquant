@@ -30,7 +30,6 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.toList
-import org.roboquant.loggers.ConsoleLogger
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant

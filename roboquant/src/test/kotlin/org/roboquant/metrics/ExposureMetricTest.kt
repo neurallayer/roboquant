@@ -16,8 +16,10 @@
 
 package org.roboquant.metrics
 
-import kotlin.test.*
 import org.roboquant.TestData
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 internal class ExposureMetricTest {
 

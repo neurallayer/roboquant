@@ -19,7 +19,6 @@ package org.roboquant.tiingo
 import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.journals.BasicJournal
-import org.roboquant.loggers.latestRun
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
 import kotlin.test.assertTrue

@@ -16,10 +16,10 @@
 
 package org.roboquant.loggers
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
 import java.time.Instant
+import kotlin.test.Test
 
 internal class ConsoleLoggerTest {
 

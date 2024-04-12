@@ -16,8 +16,8 @@
 
 package org.roboquant.orders
 
-import kotlin.test.Test
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class TimeInForceTest {

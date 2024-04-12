@@ -16,13 +16,13 @@
 
 package org.roboquant.binance
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

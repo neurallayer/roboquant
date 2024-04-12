@@ -16,11 +16,11 @@
 
 package org.roboquant.metrics
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

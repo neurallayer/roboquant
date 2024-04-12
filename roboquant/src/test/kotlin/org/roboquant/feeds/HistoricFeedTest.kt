@@ -17,7 +17,6 @@
 package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
@@ -26,10 +25,7 @@ import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import java.time.Instant
 import java.util.*
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 internal class HistoricFeedTest {
 

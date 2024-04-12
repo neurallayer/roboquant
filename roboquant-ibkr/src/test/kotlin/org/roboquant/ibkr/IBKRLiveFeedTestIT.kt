@@ -16,10 +16,10 @@
 
 package org.roboquant.ibkr
 
-import kotlin.test.Test
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class IBKRLiveFeedTestIT {

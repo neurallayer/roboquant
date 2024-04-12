@@ -16,9 +16,9 @@
 
 package org.roboquant.orders
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class CancelOrderTest {

@@ -16,8 +16,8 @@
 
 package org.roboquant.charts
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class TimeSeriesChartTestIT {

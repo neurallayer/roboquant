@@ -23,8 +23,8 @@ import org.roboquant.common.Asset
 import org.roboquant.common.ConfigurationException
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.UnsupportedException
-import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.PriceBar
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.PriceQuote
 import org.roboquant.feeds.TradePrice
 import kotlin.reflect.KClass

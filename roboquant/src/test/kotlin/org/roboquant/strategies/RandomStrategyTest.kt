@@ -16,9 +16,9 @@
 
 package org.roboquant.strategies
 
-import kotlin.test.Test
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class RandomStrategyTest {

@@ -19,7 +19,6 @@ package org.roboquant.strategies
 import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
 import org.roboquant.TestData
-import org.roboquant.loggers.MemoryLogger
 import kotlin.test.Test
 import kotlin.test.assertNotEquals
 

@@ -16,9 +16,9 @@
 
 package org.roboquant.feeds
 
-import kotlin.test.Test
 import org.roboquant.common.Asset
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

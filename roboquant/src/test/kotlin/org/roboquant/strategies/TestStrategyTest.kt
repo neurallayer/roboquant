@@ -16,8 +16,10 @@
 
 package org.roboquant.strategies
 
-import kotlin.test.*
 import org.roboquant.TestData
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 internal class TestStrategyTest {
 

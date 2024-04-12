@@ -16,8 +16,8 @@
 
 package org.roboquant.charts
 
-import kotlin.test.Test
 import org.roboquant.loggers.MemoryLogger
+import kotlin.test.Test
 import kotlin.test.assertTrue
 
 internal class BoxChartTest {

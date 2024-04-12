@@ -16,8 +16,8 @@
 
 package org.roboquant.common
 
-import kotlin.test.Test
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

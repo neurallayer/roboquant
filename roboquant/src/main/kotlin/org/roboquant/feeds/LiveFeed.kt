@@ -16,8 +16,8 @@
 
 package org.roboquant.feeds
 
-import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ClosedSendChannelException
+import kotlinx.coroutines.runBlocking
 import org.roboquant.common.Logging
 import java.util.*
 

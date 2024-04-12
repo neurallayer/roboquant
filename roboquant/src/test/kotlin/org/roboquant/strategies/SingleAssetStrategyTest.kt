@@ -16,11 +16,11 @@
 
 package org.roboquant.strategies
 
-import kotlin.test.Test
 import org.roboquant.TestData
 import org.roboquant.common.Asset
 import org.roboquant.feeds.PriceItem
 import java.time.Instant
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class SingleAssetStrategyTest {

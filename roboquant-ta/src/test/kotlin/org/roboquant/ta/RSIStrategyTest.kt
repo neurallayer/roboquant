@@ -17,10 +17,9 @@
 package org.roboquant.ta
 
 import kotlinx.coroutines.runBlocking
-import kotlin.test.Test
 import org.roboquant.Roboquant
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.loggers.SilentLogger
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class RSIStrategyTest {
