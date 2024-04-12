@@ -20,7 +20,6 @@ import org.roboquant.Roboquant
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
-import org.roboquant.journals.Journal
 import org.roboquant.journals.MetricsJournal
 
 /**

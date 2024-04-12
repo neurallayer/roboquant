@@ -24,7 +24,6 @@ import org.roboquant.common.Config
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
-import org.roboquant.journals.Journal
 import org.roboquant.journals.MetricsJournal
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set

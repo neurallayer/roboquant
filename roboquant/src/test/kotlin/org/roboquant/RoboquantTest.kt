@@ -26,7 +26,6 @@ import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.journals.BasicJournal
 import org.roboquant.journals.MetricsJournal
 import org.roboquant.journals.MultiRunJournal
-import org.roboquant.loggers.MemoryLogger
 import org.roboquant.metrics.PNLMetric
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
@@ -55,11 +54,9 @@ internal class RoboquantTest {
         val feed = HistoricTestFeed()
         val initial = 101.USD.toWallet()
         val broker = SimBroker(initial)
-        val logger = MemoryLogger()
         val roboquant = Roboquant(strategy, broker = broker)
         roboquant.run(feed, timeframe = Timeframe.INFINITE)
         roboquant.broker.reset()
-        assertTrue(logger.history.isEmpty())
         val account = broker.sync()
         assertTrue(account.trades.isEmpty())
         assertEquals(initial, account.cash)
