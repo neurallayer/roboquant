@@ -27,7 +27,6 @@ import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.tooltip.Tooltip
 import org.roboquant.common.TimeSeries
 import org.roboquant.common.clean
-import org.roboquant.common.flatten
 import java.math.BigDecimal
 import java.math.RoundingMode
 
