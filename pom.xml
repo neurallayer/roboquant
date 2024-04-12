@@ -64,7 +64,7 @@
         <module>roboquant-tiingo</module>
         <module>roboquant-xchange</module>
         <module>roboquant-binance</module>
-        <!-- module>roboquant-server</module -->
+        <module>roboquant-server</module>
         <module>roboquant-questdb</module>
         <module>roboquant-ssr</module>
         <module>roboquant-perf</module>

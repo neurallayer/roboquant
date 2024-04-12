@@ -53,7 +53,7 @@ internal class WebServerTestIT {
     fun basic() {
         // System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
         val feed = RandomWalkFeed(Timeframe.fromYears(2000, 2001))
-        val rq = Roboquant(EMAStrategy(), logger = MemoryLogger(false))
+        val rq = Roboquant(EMAStrategy())
 
 
         assertDoesNotThrow {
@@ -65,7 +65,7 @@ internal class WebServerTestIT {
                     password = ""
                 }
                 assertFalse(ws.secured)
-                ws.runAsync(rq, feed, feed.timeframe, "run-1")
+                ws.runAsync(rq, feed, timeframe = feed.timeframe, name="run-1")
                 val status = makeRequest("http://127.0.0.1:8081/")
                 assertEquals(200, status)
 

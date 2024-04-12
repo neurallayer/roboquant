@@ -24,6 +24,8 @@ import org.roboquant.common.Config
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
+import org.roboquant.journals.Journal
+import org.roboquant.journals.MetricsJournal
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
@@ -104,12 +106,13 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
     fun run(
         roboquant: Roboquant,
         feed: Feed,
+        journal: MetricsJournal = MetricsJournal(),
         timeframe: Timeframe,
         name: String = getRunName(),
         warmup: TimeSpan = TimeSpan.ZERO,
         paused: Boolean = false
     ) = runBlocking {
-        runAsync(roboquant, feed, timeframe, name, warmup, paused)
+        runAsync(roboquant, feed, journal, timeframe, name, warmup, paused)
     }
 
     /**
@@ -119,6 +122,7 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
     suspend fun runAsync(
         roboquant: Roboquant,
         feed: Feed,
+        journal: MetricsJournal = MetricsJournal(),
         timeframe: Timeframe,
         name: String = getRunName(),
         warmup: TimeSpan = TimeSpan.ZERO,
@@ -127,10 +131,10 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
         require(!runs.contains(name)) { "run name has to be unique, name=$name is already in use by another run." }
         val policy = PausablePolicy(roboquant.policy, paused)
         val rq = roboquant.copy(policy = policy)
-        val info = RunInfo(rq, feed, timeframe, warmup)
+        val info = RunInfo(rq, feed, journal, timeframe, warmup)
         runs[name] = info
         logger.info { "Starting new run name=$name timeframe=$timeframe" }
-        rq.runAsync(feed, timeframe)
+        rq.runAsync(feed, journal, timeframe)
         info.done = true
     }
 

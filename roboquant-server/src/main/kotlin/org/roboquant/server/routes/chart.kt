@@ -31,8 +31,8 @@ internal fun Route.chart() {
         val parameters = call.receiveParameters()
         val metric = parameters.getOrFail("metric")
         val run = parameters.getOrFail("run")
-        val logger = runs.getValue(run).roboquant.logger
-        val data = logger.getMetric(metric, run)
+        val journal = runs.getValue(run).journal
+        val data = journal.getMetric(metric)
         val chart = TimeSeriesChart(data)
         chart.title = metric
 

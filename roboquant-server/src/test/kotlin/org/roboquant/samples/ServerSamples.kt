@@ -19,6 +19,7 @@ package org.roboquant.samples
 import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalkLiveFeed
+import org.roboquant.journals.MetricsJournal
 import org.roboquant.metrics.PriceMetric
 import org.roboquant.server.WebServer
 import org.roboquant.strategies.EMAStrategy
@@ -30,7 +31,10 @@ import kotlin.test.Test
 internal class ServerSamples {
 
     private fun getRoboquant() =
-        Roboquant(EMAStrategy(), PriceMetric("CLOSE"))
+        Roboquant(EMAStrategy())
+
+    private fun getJournal() =
+        MetricsJournal(PriceMetric("CLOSE"))
 
     /**
      * You can run this sample to start a server with three runs
@@ -47,9 +51,33 @@ internal class ServerSamples {
         val tf3 = Timeframe.next(60.minutes)
 
         // Start three runs
-        jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(200.millis, nAssets = 3), tf1, "run-fast") }
-        jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(5.seconds, nAssets = 10), tf2, "run-medium") }
-        jobs.add { server.runAsync(getRoboquant(), RandomWalkLiveFeed(30.seconds, nAssets = 50), tf3, "run-slow") }
+        jobs.add {
+            server.runAsync(
+                getRoboquant(),
+                RandomWalkLiveFeed(200.millis, nAssets = 3),
+                getJournal(),
+                tf1,
+                "run-fast"
+            )
+        }
+        jobs.add {
+            server.runAsync(
+                getRoboquant(),
+                RandomWalkLiveFeed(5.seconds, nAssets = 10),
+                getJournal(),
+                tf2,
+                "run-medium"
+            )
+        }
+        jobs.add {
+            server.runAsync(
+                getRoboquant(),
+                RandomWalkLiveFeed(30.seconds, nAssets = 50),
+                getJournal(),
+                tf3,
+                "run-slow"
+            )
+        }
 
         jobs.joinAllBlocking()
         server.stop()
