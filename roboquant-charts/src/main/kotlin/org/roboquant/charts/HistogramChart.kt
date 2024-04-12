@@ -58,16 +58,6 @@ class HistogramChart(
         minBinSize: Int = 0,
         ) : this(timeSeries.toDoubleArray().clean(), binCount, scale, minBinSize)
 
-    /**
-     * Chart that takes a map of TimeSeries, flatten it and creates a histogram of it.
-     */
-    constructor(
-        metricData: Map<String, TimeSeries>,
-        binCount: Int = 20,
-        scale: Int = 2,
-        minBinSize: Int = 0,
-    ) : this(metricData.flatten(true), binCount, scale, minBinSize)
-
     private fun toSeriesData(): List<Pair<String, Long>> {
         val f = EmpiricalDistribution(binCount)
         if (data.isEmpty()) return emptyList()

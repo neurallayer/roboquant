@@ -29,7 +29,6 @@ import org.roboquant.common.Observation
 import org.roboquant.common.TimeSeries
 import org.roboquant.feeds.Event
 import org.roboquant.journals.Journal
-import org.roboquant.loggers.MetricsLogger
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
@@ -112,9 +111,7 @@ class QuestDBJournal(
         }
     }
 
-    /**
-     * @see MetricsLogger.getMetricNames
-     */
+
     fun getMetricNames(run: String): Set<String> {
         return engine.distictSymbol(run, "name").toSortedSet()
     }
@@ -129,7 +126,7 @@ class QuestDBJournal(
     }
 
     /**
-     * @see MetricsLogger.getRuns
+     * Get all the runs in this database
      */
     fun getRuns(): Set<String> = engine.tables().toSet()
 
