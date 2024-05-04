@@ -20,11 +20,9 @@ import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderSide
 import net.jacobpeterson.alpaca.openapi.trader.model.PostOrderRequest
 import org.roboquant.common.AssetType
-import org.roboquant.common.Logging
 import org.roboquant.common.UnsupportedException
 import org.roboquant.orders.*
-import java.lang.Exception
-import java.util.UUID
+import java.util.*
 import net.jacobpeterson.alpaca.openapi.trader.model.TimeInForce as OrderTimeInForce
 
 /**
@@ -33,18 +31,14 @@ import net.jacobpeterson.alpaca.openapi.trader.model.TimeInForce as OrderTimeInF
 internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val extendedHours: Boolean = false) {
 
     private val orders = mutableMapOf<Order, String>()
-    private val logger = Logging.getLogger(AlpacaBroker::class)
 
 
     fun cancelOrder(cancellation: CancelOrder): Boolean {
-        return try {
-            val orderId = orders[cancellation.order]
-            alpacaAPI.trader().orders().deleteOrderByOrderID(UUID.fromString(orderId))
-            true
-        } catch (exception: Exception) {
-            logger.trace(exception) { "cancellation failed for order=$cancellation" }
-            false
-        }
+        if (cancellation !in orders) return false
+
+        val orderId = orders[cancellation.order]
+        alpacaAPI.trader().orders().deleteOrderByOrderID(UUID.fromString(orderId))
+    return true
     }
 
     fun get(order: Order) = orders[order]

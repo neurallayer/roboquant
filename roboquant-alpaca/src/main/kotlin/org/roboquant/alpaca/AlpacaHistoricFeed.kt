@@ -31,7 +31,6 @@ import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceQuote
 import org.roboquant.feeds.TradePrice
 import java.time.OffsetDateTime
-import java.time.ZoneId
 import java.time.ZoneOffset
 
 
@@ -69,7 +68,9 @@ class AlpacaHistoricFeed(
         val (start, end) = toOffset(timeframe)
         var nextPageToken: String? = null
         do {
-            val resp = stockData.stockQuotes(symbols, start, end, limit, "", StockFeed.IEX, "USD", nextPageToken, Sort.ASC)
+            val resp = stockData.stockQuotes(
+                symbols, start, end, limit, "", StockFeed.IEX, "USD", nextPageToken, Sort.ASC
+            )
             for ((symbol, quotes) in resp.quotes) {
                 val asset = Asset(symbol)
                 for (quote in quotes) {
@@ -98,7 +99,9 @@ class AlpacaHistoricFeed(
         val (start, end) = toOffset(timeframe)
         var nextPageToken: String? = null
         do {
-            val resp = stockData.stockTrades(symbols, start, end, limit, "", StockFeed.IEX, "USD", nextPageToken, Sort.ASC)
+            val resp = stockData.stockTrades(
+                symbols, start, end, limit, "", StockFeed.IEX, "USD", nextPageToken, Sort.ASC
+            )
             for ((symbol, trades) in resp.trades) {
                 val asset = Asset(symbol)
                 for (trade in trades) {
