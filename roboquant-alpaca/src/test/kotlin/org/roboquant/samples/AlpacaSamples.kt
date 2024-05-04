@@ -16,17 +16,15 @@
 
 package org.roboquant.samples
 
-import org.roboquant.Roboquant
 import org.roboquant.alpaca.AlpacaBroker
 import org.roboquant.alpaca.AlpacaHistoricFeed
 import org.roboquant.alpaca.AlpacaLiveFeed
 import org.roboquant.alpaca.PriceActionType
 import org.roboquant.common.*
-import org.roboquant.feeds.PriceItem
-import org.roboquant.feeds.filter
+import org.roboquant.feeds.applyEvents
 import org.roboquant.feeds.toList
 import org.roboquant.orders.MarketOrder
-import org.roboquant.strategies.EMAStrategy
+import java.time.Instant
 import kotlin.test.Ignore
 import kotlin.test.Test
 
@@ -57,55 +55,31 @@ internal class AlpacaSamples {
         println(account.fullSummary())
     }
 
-    @Test
-    @Ignore
-    internal fun alpacaPaperTradeStocks() {
-        val broker = AlpacaBroker()
-        val account = broker.sync()
-        println(account.fullSummary())
 
-        val feed = AlpacaLiveFeed()
-
-        // Lets pick 10 random stock symbols to trade
-        val symbols = feed.availableStocks.random(10).symbols
-        feed.subscribeStocks(*symbols)
-
-        val strategy = EMAStrategy(3, 5)
-        val roboquant = Roboquant(strategy, broker = broker)
-        val tf = Timeframe.next(60.minutes)
-        val account2 = roboquant.run(feed, timeframe = tf)
-        feed.close()
-
-        println(account2.fullSummary())
-    }
-
-
-    @Test
-    @Ignore
-    internal fun alpacaTradeCrypto() {
-        val feed = AlpacaLiveFeed()
-        val symbols = feed.availableCrypto.random(10).symbols
-        println(symbols.toList())
-
-        feed.subscribeCrypto(*symbols)
-        val strategy = EMAStrategy.PERIODS_5_15
-        val roboquant = Roboquant(strategy)
-        val tf = Timeframe.next(10.minutes)
-        val account = roboquant.run(feed, timeframe = tf)
-        feed.close()
-        println(account.summary())
-    }
 
     @Test
     @Ignore
     internal fun alpacaLiveFeed() {
         val feed = AlpacaLiveFeed()
         feed.subscribeStocks(*symbols, type = PriceActionType.QUOTE)
-        feed.filter<PriceItem>(Timeframe.next(5.minutes)) {
-            println(it)
-            false
+        var events = 0L
+        var items = 0L
+        var delays = 0L
+        val tf = Timeframe.next(1.minutes)
+        feed.applyEvents(tf) {
+            if (it.items.isNotEmpty()) {
+                events++
+                items += it.items.size
+                delays += Instant.now().toEpochMilli() - it.time.toEpochMilli()
+            }
         }
         feed.close()
+        if (events > 0) {
+            val avgDelay = delays / events.toDouble()
+            println("avg-delay=${avgDelay}ms events=$events items=$items")
+        } else {
+            println("no events, perhaps outside trading hours")
+        }
     }
 
 
@@ -133,7 +107,7 @@ internal class AlpacaSamples {
         // We get the data for the last 200 days. The minus 15.minutes is to make sure we only request data that
         // the free subscriptions are entitled to and not the latest 15 minutes.
         val tf = Timeframe.past(200.days) - 15.minutes
-        feed.retrieveStockPriceBars(*symbols, timeframe = tf)
+        feed.retrieveStockPriceBars(symbols.joinToString(","), timeframe = tf)
         val events = feed.toList()
 
         with(events) {

@@ -16,13 +16,13 @@
 
 package org.roboquant.alpaca
 
-import org.junit.jupiter.api.assertThrows
-import org.roboquant.common.*
+import org.roboquant.common.Config
+import org.roboquant.common.Timeframe
+import org.roboquant.common.seconds
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import kotlin.test.Test
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -34,10 +34,8 @@ internal class AlpacaLiveFeedTestIT {
     fun test() {
         Config.getProperty("TEST_ALPACA") ?: return
         val feed = AlpacaLiveFeed()
-        val assets = feed.availableAssets
-        assertContains(assets.map { it.symbol }, "AAPL")
         feed.subscribeStocks("AAPL")
-        assertContains(feed.assets.symbols, "AAPL")
+
         val actions = feed.filter<PriceItem>(Timeframe.next(liveTestTime))
         feed.close()
         if (actions.isNotEmpty()) {
@@ -65,44 +63,7 @@ internal class AlpacaLiveFeedTestIT {
         }
     }
 
-    @Test
-    fun test4() {
-        System.getProperty("TEST_ALPACA") ?: return
-        val feed = AlpacaLiveFeed()
-        val symbol = feed.availableAssets.first { it.type == AssetType.CRYPTO }.symbol
-        feed.subscribeCrypto(symbol)
-        val actions = feed.filter<PriceItem>(Timeframe.next(liveTestTime))
-        feed.close()
-        if (actions.isNotEmpty()) {
-            val action = actions.first().second
-            assertTrue(action is PriceBar)
-        } else {
-            println("No actions found, perhaps exchange is closed")
-        }
-    }
 
-    @Test
-    fun test3() {
-        System.getProperty("TEST_ALPACA") ?: return
-        val feed = AlpacaLiveFeed()
 
-        assertThrows<IllegalArgumentException> {
-            // Already connected
-            feed.connect()
-        }
-        val symbols = feed.availableStocks.take(5).symbols
-        feed.subscribeStocks(*symbols)
-
-        val actions = feed.filter<PriceItem>(Timeframe.next(liveTestTime))
-        feed.close()
-        if (actions.isNotEmpty()) {
-            val action = actions.first().second
-            assertTrue(action is PriceBar)
-            val foundSymbols = actions.map { it.second.asset.symbol }.distinct()
-            assertTrue(foundSymbols.size > 1)
-        } else {
-            println("No actions found, perhaps exchange is closed?")
-        }
-    }
 
 }

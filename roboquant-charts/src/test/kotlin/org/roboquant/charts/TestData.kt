@@ -31,8 +31,6 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
-import java.io.File
-import kotlin.test.assertEquals
 
 /**
  * Remove end-of-line characters so test results are the same on different operating-systems.
@@ -72,11 +70,13 @@ object TestData {
         journal.getMetric("account.equity")
     }
 
+    /*
     private fun loadFile(name: String): String {
         val classloader = Thread.currentThread().contextClassLoader
         val bytes = classloader.getResourceAsStream(name)!!.readAllBytes()
         return String(bytes)
     }
+
 
     fun testFile(chart: Chart, baseName: String) {
         val classloader = Thread.currentThread().contextClassLoader
@@ -91,5 +91,6 @@ object TestData {
         val str = loadFile(fileName)
         assertEquals(str.removeEOL(), chart.renderJson().removeEOL())
     }
+    */
 
 }

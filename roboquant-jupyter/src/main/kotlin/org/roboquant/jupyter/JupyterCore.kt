@@ -130,7 +130,6 @@ internal class JupyterCore(
 
         import(
             "org.roboquant.*",
-            "org.roboquant.loggers.*",
             "org.roboquant.journals.*",
             "org.roboquant.common.*",
             "org.roboquant.metrics.*",

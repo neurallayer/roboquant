@@ -17,31 +17,22 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.common.historical.bar.enums.BarTimePeriod
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.StockBarsResponse
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarAdjustment
-import net.jacobpeterson.alpaca.model.endpoint.marketdata.stock.historical.bar.enums.BarFeed
-import net.jacobpeterson.alpaca.model.properties.DataAPIType
-import net.jacobpeterson.alpaca.rest.endpoint.marketdata.stock.StockMarketDataEndpoint
-import org.roboquant.common.*
+import net.jacobpeterson.alpaca.openapi.marketdata.api.StockApi
+import net.jacobpeterson.alpaca.openapi.marketdata.model.Sort
+import net.jacobpeterson.alpaca.openapi.marketdata.model.StockAdjustment
+import net.jacobpeterson.alpaca.openapi.marketdata.model.StockBar
+import net.jacobpeterson.alpaca.openapi.marketdata.model.StockFeed
+import org.roboquant.common.Asset
+import org.roboquant.common.Logging
+import org.roboquant.common.TimeSpan
+import org.roboquant.common.Timeframe
 import org.roboquant.feeds.HistoricPriceFeed
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceQuote
 import org.roboquant.feeds.TradePrice
-import java.time.Instant
+import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.util.*
-
-/**
- * @see BarTimePeriod
- */
-typealias BarPeriod = BarTimePeriod
-
-/**
- * @see BarAdjustment
- */
-typealias BarAdjustment = BarAdjustment
+import java.time.ZoneOffset
 
 
 /**
@@ -51,162 +42,121 @@ class AlpacaHistoricFeed(
     configure: AlpacaConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-    private val limit = 10_000
+    private val limit = 10_000L
     private val config = AlpacaConfig()
-    private val stockData: StockMarketDataEndpoint
+    private val stockData: StockApi
     private val alpacaAPI: AlpacaAPI
     private val logger = Logging.getLogger(AlpacaHistoricFeed::class)
-    private val zoneId: ZoneId = ZoneId.of("America/New_York")
 
     init {
         config.configure()
         alpacaAPI = Alpaca.getAPI(config)
-        stockData = alpacaAPI.stockMarketData()
+        stockData = alpacaAPI.marketData().stock()
     }
 
-    private val availableStocks: Map<String, Asset> by lazy {
-        Alpaca.getAvailableStocks(alpacaAPI)
-    }
 
-    private val availableCrypto: Map<String, Asset> by lazy {
-        Alpaca.getAvailableCrypto(alpacaAPI)
-    }
-
-    /**
-     * Get the available assets to retrieve
-     */
-    val availableAssets: SortedSet<Asset>
-        get() = (availableStocks.values + availableCrypto.values).toSortedSet()
-
-    private fun getAsset(symbol: String) = availableStocks[symbol] ?: availableCrypto.getValue(symbol)
-
-    private val Instant.zonedDateTime
-        get() = ZonedDateTime.ofInstant(this, zoneId)
-
-
-    private fun validateStockSymbols(symbols: Array<out String>) {
-        require(symbols.isNotEmpty()) { "specify at least one symbol" }
-        symbols.forEach {
-            require(availableStocks[it] != null) { "unknown symbol $it" }
-        }
+    private fun toOffset(timeframe: Timeframe): Pair<OffsetDateTime, OffsetDateTime> {
+        return Pair(
+            timeframe.start.atOffset(ZoneOffset.UTC),
+            timeframe.end.atOffset(ZoneOffset.UTC)
+        )
     }
 
     /**
      * Retrieve the [PriceQuote] for a number of [symbols] and specified [timeframe].
      */
-    fun retrieveStockQuotes(vararg symbols: String, timeframe: Timeframe) {
-        validateStockSymbols(symbols)
-
-        val start = timeframe.start.zonedDateTime
-        val end = timeframe.end.zonedDateTime
-        for (symbol in symbols) {
-            var nextPageToken: String? = null
-            do {
-                val resp = stockData.getQuotes(symbol, start, end, limit, nextPageToken)
-                resp.quotes == null && return
-                val asset = getAsset(symbol)
-                for (quote in resp.quotes) {
+    fun retrieveStockQuotes(symbols: String, timeframe: Timeframe) {
+        val (start, end) = toOffset(timeframe)
+        var nextPageToken: String? = null
+        do {
+            val resp = stockData.stockQuotes(symbols, start, end, limit, "", StockFeed.IEX, "USD", nextPageToken, Sort.ASC)
+            for ((symbol, quotes) in resp.quotes) {
+                val asset = Asset(symbol)
+                for (quote in quotes) {
                     val action = PriceQuote(
                         asset,
-                        quote.askPrice,
-                        quote.askSize.toDouble(),
-                        quote.bidPrice,
-                        quote.bidSize.toDouble()
+                        quote.ap,
+                        quote.`as`.toDouble(),
+                        quote.bp,
+                        quote.bs.toDouble()
                     )
-                    val now = quote.timestamp.toInstant()
+                    val now = quote.t.toInstant()
                     add(now, action)
                 }
-                nextPageToken = resp.nextPageToken
-            } while (nextPageToken != null)
-            logger.debug { "retrieved prices type=quotes symbol=$symbol timeframe=$timeframe" }
-        }
 
+            }
+            nextPageToken = resp.nextPageToken
+        } while (nextPageToken != null)
+        logger.debug { "retrieved prices type=quotes symbol=$symbols timeframe=$timeframe" }
     }
 
     /**
      * Retrieve the [PriceQuote] for a number of [symbols] and specified [timeframe].
      */
-    fun retrieveStockTrades(vararg symbols: String, timeframe: Timeframe) {
-        validateStockSymbols(symbols)
+    fun retrieveStockTrades(symbols: String, timeframe: Timeframe) {
 
-        val start = timeframe.start.zonedDateTime
-        val end = timeframe.end.zonedDateTime
-        for (symbol in symbols) {
-            var nextPageToken: String? = null
-            do {
-                val resp = stockData.getTrades(symbol, start, end, limit, nextPageToken)
-                resp.trades == null && return
-                val asset = getAsset(symbol)
-
-                for (trade in resp.trades) {
-                    val action = TradePrice(asset, trade.price, trade.size.toDouble())
-                    val now = trade.timestamp.toInstant()
+        val (start, end) = toOffset(timeframe)
+        var nextPageToken: String? = null
+        do {
+            val resp = stockData.stockTrades(symbols, start, end, limit, "", StockFeed.IEX, "USD", nextPageToken, Sort.ASC)
+            for ((symbol, trades) in resp.trades) {
+                val asset = Asset(symbol)
+                for (trade in trades) {
+                    val action = TradePrice(asset, trade.p, trade.s.toDouble())
+                    val now = trade.t.toInstant()
                     add(now, action)
                 }
-                nextPageToken = resp.nextPageToken
-            } while (nextPageToken != null)
-            logger.debug { "retrieved prices type=trades symbol=$symbol timeframe=$timeframe" }
-        }
+            }
+            nextPageToken = resp.nextPageToken
+        } while (nextPageToken != null)
+        logger.debug { "retrieved prices type=trades symbols=$symbols timeframe=$timeframe" }
 
     }
 
-    private fun processBars(symbol: String, resp: StockBarsResponse, timeSpan: TimeSpan?) {
-        resp.bars == null && return
-        val asset = getAsset(symbol)
-        for (bar in resp.bars) {
-            val action = PriceBar(asset, bar.open, bar.high, bar.low, bar.close, bar.volume.toDouble(), timeSpan)
-            val now = bar.timestamp.toInstant()
+    private fun processBars(symbol: String, bars: List<StockBar>, timeSpan: TimeSpan?) {
+        val asset = Asset(symbol)
+        for (bar in bars) {
+            val action = PriceBar(asset, bar.o, bar.h, bar.l, bar.c, bar.v.toDouble(), timeSpan)
+            val now = bar.t.toInstant()
             add(now, action)
         }
     }
 
     /**
-     * Retrieve the [PriceBar]  for a number of [symbols] and the specified [timeframe], [barDuration] and [barPeriod].
+     * Retrieve the [PriceBar]  for a number of [symbols] and the specified [timeframe].
      */
     fun retrieveStockPriceBars(
-        vararg symbols: String,
+        symbols: String,
         timeframe: Timeframe,
-        barDuration: Int = 1,
-        barPeriod: BarPeriod = BarPeriod.DAY,
-        barAdjustment: BarAdjustment = BarAdjustment.ALL
+        frequency: String = "1D"
     ) {
-        validateStockSymbols(symbols)
+        val (start, end) = toOffset(timeframe)
 
-        val barFeed = when (config.dataType) {
-            DataAPIType.IEX -> BarFeed.IEX
-            DataAPIType.SIP -> BarFeed.SIP
-        }
-        val start = timeframe.start.zonedDateTime
-        val end = timeframe.end.zonedDateTime
+        var nextPageToken: String? = null
+        do {
+            val resp = stockData.stockBars(
+                symbols,
+                frequency,
+                start,
+                end,
+                limit,
+                StockAdjustment.ALL,
+                "",
+                StockFeed.IEX,
+                "USD",
+                nextPageToken,
+                Sort.ASC
+            )
+            for ((symbol, bars) in resp.bars) {
+                processBars(symbol, bars, null)
 
-        val timeSpan = when (barPeriod) {
-            BarPeriod.DAY -> barDuration.days
-            BarPeriod.MINUTE -> barDuration.minutes
-            BarPeriod.HOUR -> barDuration.hours
-            else -> null
-        }
-
-        for (symbol in symbols) {
-            var nextPageToken: String? = null
-            do {
-                val resp = stockData.getBars(
-                    symbol,
-                    start,
-                    end,
-                    limit,
-                    nextPageToken,
-                    barDuration,
-                    barPeriod,
-                    barAdjustment,
-                    barFeed
-                )
-                processBars(symbol, resp, timeSpan)
-                nextPageToken = resp.nextPageToken
-            } while (nextPageToken != null)
-            logger.debug { "retrieved prices type=bars symbol=$symbol timeframe=$timeframe" }
-        }
+            }
+            nextPageToken = resp.nextPageToken
+        } while (nextPageToken != null)
+        logger.debug { "retrieved prices type=bars symbol=$symbols timeframe=$timeframe" }
     }
-
 }
+
+
 
 

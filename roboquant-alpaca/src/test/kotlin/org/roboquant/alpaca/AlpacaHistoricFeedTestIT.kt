@@ -16,9 +16,7 @@
 
 package org.roboquant.alpaca
 
-import org.roboquant.common.AssetType
 import org.roboquant.common.Timeframe
-import org.roboquant.common.findByCurrencies
 import org.roboquant.feeds.*
 import java.time.Duration
 import kotlin.test.Test
@@ -30,16 +28,7 @@ internal class AlpacaHistoricFeedTestIT {
     private val timeframe = Timeframe.parse("2022-11-14T00:00:00Z", "2022-11-18T23:00:00Z")
     private val timeframe2 = Timeframe.parse("2022-11-18T20:00:00Z", "2022-11-18T20:15:00Z")
 
-    @Test
-    fun testHistoricFeed() {
-        val feed = AlpacaHistoricFeed()
-        val assets = feed.availableAssets
-        assertTrue(assets.isNotEmpty())
-        assertTrue(assets.findByCurrencies("USD").isNotEmpty())
-        assertTrue(assets.any { it.type == AssetType.STOCK })
-        assertTrue(assets.any { it.type == AssetType.CRYPTO })
-        feed.close()
-    }
+
 
     private inline fun <reified T : PriceItem> testResult(feed: AlpacaHistoricFeed) {
         assertTrue(timeframe.contains(feed.timeline.first()))
@@ -80,25 +69,10 @@ internal class AlpacaHistoricFeedTestIT {
         feed.retrieveStockPriceBars(
             "AAPL",
             timeframe = timeframe,
-            barDuration = 5,
-            barPeriod = BarPeriod.MINUTE,
-            barAdjustment = BarAdjustment.ALL
         )
         val actions = feed.filter<PriceItem>()
-        assertEquals(5, Duration.between(actions[0].first, actions[1].first).toMinutes())
+        assertEquals(1440, Duration.between(actions[0].first, actions[1].first).toMinutes())
     }
 
-    @Test
-    fun testHistoricBarsWithDurationAndAdjustment() {
-        val feed = AlpacaHistoricFeed()
-        feed.retrieveStockPriceBars(
-            "AAPL",
-            timeframe = timeframe,
-            barDuration = 15,
-            barPeriod = BarPeriod.MINUTE,
-            barAdjustment = BarAdjustment.SPLIT
-        )
-        val actions = feed.filter<PriceItem>()
-        assertEquals(15, Duration.between(actions[0].first, actions[1].first).toMinutes())
-    }
+
 }

@@ -45,9 +45,9 @@
             <artifactId>roboquant</artifactId>
         </dependency>
         <dependency>
-            <groupId>net.jacobpeterson</groupId>
+            <groupId>net.jacobpeterson.alpaca</groupId>
             <artifactId>alpaca-java</artifactId>
-            <version>9.2.0</version>
+            <version>10.0.1</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

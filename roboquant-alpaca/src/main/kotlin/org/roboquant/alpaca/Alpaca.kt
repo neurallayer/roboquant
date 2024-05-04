@@ -17,24 +17,20 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
-import net.jacobpeterson.alpaca.model.endpoint.assets.enums.AssetClass
-import net.jacobpeterson.alpaca.model.endpoint.assets.enums.AssetStatus
-import net.jacobpeterson.alpaca.model.properties.DataAPIType
-import net.jacobpeterson.alpaca.model.properties.EndpointAPIType
-import org.roboquant.common.Asset
-import org.roboquant.common.AssetType
+import net.jacobpeterson.alpaca.model.util.apitype.MarketDataWebsocketSourceType
+import net.jacobpeterson.alpaca.model.util.apitype.TraderAPIEndpointType
 import org.roboquant.common.Config
 import org.roboquant.common.Exchange
 
 /**
  * Alias for EndpointAPIType
  */
-typealias AccountType = EndpointAPIType
+typealias AccountType = TraderAPIEndpointType
 
 /**
  * Alias for DataAPIType
  */
-typealias DataType = DataAPIType
+typealias DataType = MarketDataWebsocketSourceType
 
 /**
  * Alpaca configuration properties
@@ -74,22 +70,6 @@ internal object Alpaca {
         return AlpacaAPI(config.publicKey, config.secretKey, config.accountType, config.dataType)
     }
 
-    /**
-     * Get the available stocks
-     */
-    internal fun getAvailableStocks(api: AlpacaAPI): Map<String, Asset> {
-        val assets = api.assets().get(AssetStatus.ACTIVE, AssetClass.US_EQUITY).filter { it.exchange != "OTC" }
-        val exchange = Exchange.getInstance("US")
-        return assets.map { Asset(it.symbol, AssetType.STOCK, exchange = exchange) }.associateBy { it.symbol }
-    }
 
-    /**
-     * Get the available crypto assets
-     */
-    internal fun getAvailableCrypto(api: AlpacaAPI): Map<String, Asset> {
-        val assets = api.assets().get(AssetStatus.ACTIVE, AssetClass.CRYPTO)
-        val exchange = Exchange.getInstance("CRYPTO")
-        return assets.map { Asset(it.symbol, AssetType.CRYPTO, exchange = exchange) }.associateBy { it.symbol }
-    }
 
 }
