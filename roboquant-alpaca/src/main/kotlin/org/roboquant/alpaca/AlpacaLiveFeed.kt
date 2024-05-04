@@ -137,6 +137,7 @@ class AlpacaLiveFeed(
     /**
      * Subscribe to crypto market data b based on the passed [symbols] and [type]
      */
+    @Suppress("unused")
     fun subscribeCrypto(vararg symbols: String, type: PriceActionType = PriceActionType.PRICE_BAR) {
         // validateSymbols(symbols, availableCryptoMap)
         val s = symbols.toList()

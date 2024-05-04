@@ -35,6 +35,7 @@ import org.roboquant.strategies.TestStrategy
 /**
  * Remove end-of-line characters so test results are the same on different operating-systems.
  */
+@Suppress("unused")
 internal fun String.removeEOL() = this.replace("\n", "").replace("\r", "")
 
 /**

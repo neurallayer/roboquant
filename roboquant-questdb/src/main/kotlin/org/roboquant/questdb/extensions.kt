@@ -38,7 +38,7 @@ internal inline fun CairoEngine.query(query: String, block: RecordCursor.() -> U
     }
 }
 
-
+@Suppress("unused")
 internal inline fun SqlExecutionContext.query(query: String, block: RecordCursor.() -> Unit) {
         cairoEngine.sqlCompiler.use {
             val fact = it.compile(query, this).recordCursorFactory
