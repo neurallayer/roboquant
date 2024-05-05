@@ -111,7 +111,24 @@ internal class AlpacaSamples {
         val events = feed.toList()
 
         with(events) {
-            println("events=$size start=${first().time} last=${last().time}")
+            println("events=$size start=${first().time} last=${last().time} symbols=${feed.assets.symbols.toList()}")
+        }
+
+    }
+
+    @Test
+    @Ignore
+    internal fun alpacaHistoricFeed3() {
+
+        val feed = AlpacaHistoricFeed()
+
+        // We get minute data
+        val tf = Timeframe.parse("2024-01-04", "2024-01-05")
+        feed.retrieveStockPriceBars("AAPL", timeframe = tf, "1Min")
+        val events = feed.toList()
+
+        with(events) {
+            println("events=$size start=${first().time} last=${last().time} symbols=${feed.assets.symbols.toList()}")
         }
 
     }
@@ -120,7 +137,7 @@ internal class AlpacaSamples {
     @Ignore
     internal fun singleOrder() {
         val broker = AlpacaBroker {
-            extendedHours = true
+            extendedHours = false
         }
         val order = MarketOrder(Asset("IBM"), Size.ONE)
         broker.place(listOf(order))

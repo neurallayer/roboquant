@@ -20,6 +20,8 @@ class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
         return journals.getValue(run)
     }
 
+    fun getRuns() = journals.keys.toList()
+
     fun getMetric(name: String) : Map<String, TimeSeries> {
         return journals.mapValues { it.value.getMetric(name) }
     }

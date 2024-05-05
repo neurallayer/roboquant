@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-@file:DependsOn("org.roboquant:roboquant-perf:2.3.0-SNAPSHOT")
+@file:DependsOn("org.roboquant:roboquant-perf:3.0.0-SNAPSHOT")
 
 org.roboquant.perf.main()

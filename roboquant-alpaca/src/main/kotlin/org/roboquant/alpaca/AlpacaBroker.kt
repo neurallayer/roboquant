@@ -141,7 +141,7 @@ class AlpacaBroker(
      * Closed orders will be ignored all together.
      */
     private fun loadExistingOrders() {
-        val openOrders = alpacaAPI.trader().orders().getAllOrders("OPEN", null, null, null, null, false, "", "")
+        val openOrders = alpacaAPI.trader().orders().getAllOrders(null, 500, null, null, null, false, "", "")
         for (order in openOrders) {
             logger.debug { "received open $order" }
             val rqOrder = toOrder(order)

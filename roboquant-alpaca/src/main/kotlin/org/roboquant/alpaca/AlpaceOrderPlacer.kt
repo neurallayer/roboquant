@@ -18,6 +18,7 @@ package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.openapi.trader.model.OrderSide
+import net.jacobpeterson.alpaca.openapi.trader.model.OrderType
 import net.jacobpeterson.alpaca.openapi.trader.model.PostOrderRequest
 import org.roboquant.common.AssetType
 import org.roboquant.common.UnsupportedException
@@ -71,9 +72,19 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
             .timeInForce(tif)
             .extendedHours(extendedHours)
 
-        if (order is LimitOrder) {
-            result.limitPrice(order.limit.toString())
-        }
+       when (order) {
+
+           is LimitOrder -> {
+               result.type(OrderType.LIMIT)
+               result.limitPrice(order.limit.toString())
+           }
+
+           is MarketOrder -> result.type(OrderType.MARKET)
+
+           else -> throw UnsupportedException("unsupported ordertype $order")
+
+       }
+
         return result
     }
 

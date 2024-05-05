@@ -131,7 +131,7 @@ class AlpacaHistoricFeed(
     fun retrieveStockPriceBars(
         symbols: String,
         timeframe: Timeframe,
-        frequency: String = "1D"
+        frequency: String = "1Day"
     ) {
         val (start, end) = toOffset(timeframe)
 
