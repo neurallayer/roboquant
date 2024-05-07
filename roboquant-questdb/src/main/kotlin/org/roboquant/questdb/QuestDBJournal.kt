@@ -28,7 +28,7 @@ import org.roboquant.common.Logging
 import org.roboquant.common.Observation
 import org.roboquant.common.TimeSeries
 import org.roboquant.feeds.Event
-import org.roboquant.journals.Journal
+import org.roboquant.journals.MetricsJournal
 import org.roboquant.metrics.Metric
 import org.roboquant.orders.Order
 import org.roboquant.strategies.Signal
@@ -49,7 +49,7 @@ class QuestDBJournal(
     workers: Int = 1,
     private val partition: String = QuestDBRecorder.NONE,
     private val truncate: Boolean = false
-) : Journal {
+) : MetricsJournal {
 
     private val logger = Logging.getLogger(this::class)
     private var engine: CairoEngine
@@ -60,19 +60,34 @@ class QuestDBJournal(
         engine = getEngine(dbPath)
         ctx = SqlExecutionContextImpl(engine, workers)
         createTable(table)
+        logger.info { "db=$dbPath table=$table" }
     }
 
 
     companion object {
 
+        private var engines = mutableMapOf<Path, CairoEngine>()
+
+        @Synchronized
         fun getEngine(dbPath: Path): CairoEngine {
-            if (Files.notExists(dbPath)) {
-                Files.createDirectories(dbPath)
+            if (dbPath !in  engines) {
+                if (Files.notExists(dbPath)) {
+                    Files.createDirectories(dbPath)
+                }
+                require(dbPath.isDirectory()) { "dbPath needs to be a directory" }
+                val config = DefaultCairoConfiguration(dbPath.toString())
+                engines[dbPath] = CairoEngine(config)
             }
-            require(dbPath.isDirectory()) { "dbPath needs to be a directory" }
-            val config = DefaultCairoConfiguration(dbPath.toString())
-            val engine = CairoEngine(config)
-            return engine
+            return engines.getValue(dbPath)
+        }
+
+        fun getRuns(dbPath: Path): Set<String> {
+            val engine = getEngine(dbPath)
+            return engine.tables().toSet()
+        }
+
+        fun close(dbPath: Path) {
+            engines[dbPath]?.close()
         }
 
     }
@@ -88,10 +103,10 @@ class QuestDBJournal(
     /**
      * Get a metric for a specific [table]
      */
-    fun getMetric(metricName: String): TimeSeries {
+    override fun getMetric(name: String): TimeSeries {
         val result = mutableListOf<Observation>()
 
-        engine.query("select time, value from '$table' where metric='$metricName'") {
+        engine.query("select time, value from '$table' where metric='$name'") {
             while (hasNext()) {
                 val r = this.record
                 val o = Observation(ofEpochMicro(r.getTimestamp(0)), r.getDouble(1))
@@ -112,8 +127,8 @@ class QuestDBJournal(
     }
 
 
-    fun getMetricNames(run: String): Set<String> {
-        return engine.distictSymbol(run, "name").toSortedSet()
+    override fun getMetricNames(): Set<String> {
+        return engine.distictSymbol(table, "name").toSortedSet()
     }
 
     /**
@@ -142,10 +157,10 @@ class QuestDBJournal(
     }
 
     /**
-     * Close the engine and context
+     * Close the underlying context
      */
     fun close() {
-        engine.close()
+        // engine.close()
         ctx.close()
     }
 

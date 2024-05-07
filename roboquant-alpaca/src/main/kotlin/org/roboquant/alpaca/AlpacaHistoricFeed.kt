@@ -21,7 +21,6 @@ import net.jacobpeterson.alpaca.openapi.marketdata.api.StockApi
 import net.jacobpeterson.alpaca.openapi.marketdata.model.Sort
 import net.jacobpeterson.alpaca.openapi.marketdata.model.StockAdjustment
 import net.jacobpeterson.alpaca.openapi.marketdata.model.StockBar
-import net.jacobpeterson.alpaca.openapi.marketdata.model.StockFeed
 import org.roboquant.common.Asset
 import org.roboquant.common.Logging
 import org.roboquant.common.TimeSpan
@@ -41,7 +40,7 @@ class AlpacaHistoricFeed(
     configure: AlpacaConfig.() -> Unit = {}
 ) : HistoricPriceFeed() {
 
-    private val limit = 10_000L
+    // private val limit = 10_000L
     private val config = AlpacaConfig()
     private val stockData: StockApi
     private val alpacaAPI: AlpacaAPI
@@ -69,7 +68,7 @@ class AlpacaHistoricFeed(
         var nextPageToken: String? = null
         do {
             val resp = stockData.stockQuotes(
-                symbols, start, end, limit, "", StockFeed.IEX, "USD", nextPageToken, Sort.ASC
+                symbols, start, end, null, "", config.stockFeed, "USD", nextPageToken, Sort.ASC
             )
             for ((symbol, quotes) in resp.quotes) {
                 val asset = Asset(symbol)
@@ -100,7 +99,7 @@ class AlpacaHistoricFeed(
         var nextPageToken: String? = null
         do {
             val resp = stockData.stockTrades(
-                symbols, start, end, limit, "", StockFeed.IEX, "USD", nextPageToken, Sort.ASC
+                symbols, start, end, null, "", config.stockFeed, "USD", nextPageToken, Sort.ASC
             )
             for ((symbol, trades) in resp.trades) {
                 val asset = Asset(symbol)
@@ -120,8 +119,8 @@ class AlpacaHistoricFeed(
         val asset = Asset(symbol)
         for (bar in bars) {
             val action = PriceBar(asset, bar.o, bar.h, bar.l, bar.c, bar.v.toDouble(), timeSpan)
-            val now = bar.t.toInstant()
-            add(now, action)
+            val time = bar.t.toInstant()
+            add(time, action)
         }
     }
 
@@ -131,7 +130,8 @@ class AlpacaHistoricFeed(
     fun retrieveStockPriceBars(
         symbols: String,
         timeframe: Timeframe,
-        frequency: String = "1Day"
+        frequency: String = "1Day",
+        adjustment: StockAdjustment = StockAdjustment.ALL
     ) {
         val (start, end) = toOffset(timeframe)
 
@@ -142,17 +142,16 @@ class AlpacaHistoricFeed(
                 frequency,
                 start,
                 end,
-                limit,
-                StockAdjustment.ALL,
-                "",
-                StockFeed.IEX,
+                null,
+                adjustment,
+                null,
+                config.stockFeed,
                 "USD",
                 nextPageToken,
                 Sort.ASC
             )
             for ((symbol, bars) in resp.bars) {
                 processBars(symbol, bars, null)
-
             }
             nextPageToken = resp.nextPageToken
         } while (nextPageToken != null)

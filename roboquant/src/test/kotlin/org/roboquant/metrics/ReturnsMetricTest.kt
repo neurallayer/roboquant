@@ -20,7 +20,7 @@ import org.roboquant.TestData
 import org.roboquant.common.months
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
-import org.roboquant.journals.MetricsJournal
+import org.roboquant.journals.MemoryJournal
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.TestStrategy
 import kotlin.test.Test
@@ -41,7 +41,7 @@ internal class ReturnsMetricTest {
     fun basic2() {
         val metric = ReturnsMetric2(minSize = 250)
         val feed = RandomWalkFeed.lastYears(2)
-        val j = MetricsJournal(metric)
+        val j = MemoryJournal(metric)
         org.roboquant.run(feed, EMAStrategy(), j)
         assertContains(j.getMetricNames(), "returns.sharperatio")
     }
@@ -51,7 +51,7 @@ internal class ReturnsMetricTest {
         val feed = HistoricTestFeed(100..300)
         val strategy = TestStrategy()
         val metric = ReturnsMetric(period = 1.months)
-        val logger = MetricsJournal(metric)
+        val logger = MemoryJournal(metric)
         org.roboquant.run(feed, strategy, logger)
 
         val sharpRatio = logger.getMetric("returns.sharperatio").last().value

@@ -26,7 +26,7 @@ import org.roboquant.common.Size
 import org.roboquant.common.USD
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
-import org.roboquant.journals.MetricsJournal
+import org.roboquant.journals.MemoryJournal
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.strategies.EMAStrategy
@@ -66,7 +66,7 @@ object TestData {
 
     val data by lazy {
         val feed = HistoricTestFeed(50..150)
-        val journal = MetricsJournal(AccountMetric())
+        val journal = MemoryJournal(AccountMetric())
         org.roboquant.run(feed, EMAStrategy(), journal)
         journal.getMetric("account.equity")
     }

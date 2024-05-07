@@ -19,6 +19,7 @@ package org.roboquant.alpaca
 import net.jacobpeterson.alpaca.AlpacaAPI
 import net.jacobpeterson.alpaca.model.util.apitype.MarketDataWebsocketSourceType
 import net.jacobpeterson.alpaca.model.util.apitype.TraderAPIEndpointType
+import net.jacobpeterson.alpaca.openapi.marketdata.model.StockFeed
 import org.roboquant.common.Config
 import org.roboquant.common.Exchange
 
@@ -48,6 +49,7 @@ data class AlpacaConfig(
     var secretKey: String = Config.getProperty("alpaca.secret.key", ""),
     var accountType: AccountType = AccountType.PAPER,
     var dataType: DataType = DataType.IEX,
+    var stockFeed: StockFeed = StockFeed.IEX,
     var extendedHours: Boolean = Config.getProperty("alpaca.extendedhours", false),
 )
 

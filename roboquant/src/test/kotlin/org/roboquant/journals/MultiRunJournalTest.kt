@@ -15,7 +15,7 @@ internal class MultiRunJournalTest {
     fun basic() {
         val feed = RandomWalkFeed.lastYears(5)
         val mrj = MultiRunJournal {
-            MetricsJournal(AccountMetric())
+            MemoryJournal(AccountMetric())
         }
         val tfs = feed.timeframe.split(1.years)
         for (tf in tfs) {

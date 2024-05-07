@@ -24,7 +24,7 @@ import org.roboquant.common.Config
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
-import org.roboquant.journals.MetricsJournal
+import org.roboquant.journals.MemoryJournal
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
@@ -105,7 +105,7 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
     fun run(
         roboquant: Roboquant,
         feed: Feed,
-        journal: MetricsJournal = MetricsJournal(),
+        journal: MemoryJournal = MemoryJournal(),
         timeframe: Timeframe,
         name: String = getRunName(),
         warmup: TimeSpan = TimeSpan.ZERO,
@@ -121,7 +121,7 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
     suspend fun runAsync(
         roboquant: Roboquant,
         feed: Feed,
-        journal: MetricsJournal = MetricsJournal(),
+        journal: MemoryJournal = MemoryJournal(),
         timeframe: Timeframe,
         name: String = getRunName(),
         warmup: TimeSpan = TimeSpan.ZERO,

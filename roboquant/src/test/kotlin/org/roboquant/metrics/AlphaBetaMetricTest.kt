@@ -23,7 +23,7 @@ import org.roboquant.common.Currency
 import org.roboquant.common.Size
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.toList
-import org.roboquant.journals.MetricsJournal
+import org.roboquant.journals.MemoryJournal
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -36,7 +36,7 @@ internal class AlphaBetaMetricTest {
         val feed = TestData.feed
         val strategy = EMAStrategy.PERIODS_5_15
         val alphaBetaMetric = AlphaBetaMetric(50)
-        val logger = MetricsJournal(alphaBetaMetric)
+        val logger = MemoryJournal(alphaBetaMetric)
         org.roboquant.run(feed, strategy,logger)
 
         val alpha = logger.getMetric("account.alpha").last().value

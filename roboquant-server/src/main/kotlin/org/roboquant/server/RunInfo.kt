@@ -20,7 +20,7 @@ import org.roboquant.Roboquant
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
-import org.roboquant.journals.MetricsJournal
+import org.roboquant.journals.MemoryJournal
 
 /**
  * Stored information about a single run
@@ -28,7 +28,7 @@ import org.roboquant.journals.MetricsJournal
 internal data class RunInfo(
     val roboquant: Roboquant,
     val feed: Feed,
-    val journal: MetricsJournal,
+    val journal: MemoryJournal,
     val timeframe: Timeframe,
     val warmup: TimeSpan = TimeSpan.ZERO,
     var done: Boolean = false

@@ -4,15 +4,20 @@ import org.roboquant.common.TimeSeries
 
 /**
  *
- * @property fn Function1<String, MetricsJournal>
- * @property journals MutableMap<String, MetricsJournal>
+ * @property fn Function1<String, MemoryJournal>
+ * @property journals MutableMap<String, MemoryJournal>
  * @constructor
  */
 class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
 
     private val journals = mutableMapOf<String, MetricsJournal>()
 
-    fun getJournal(run: String): MetricsJournal {
+    companion object {
+        private var cnt = 0
+    }
+
+    @Synchronized
+    fun getJournal(run: String = "run-${cnt++}"): MetricsJournal {
         if (run !in journals) {
             val journal = fn(run)
             journals[run] = journal
@@ -20,7 +25,19 @@ class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
         return journals.getValue(run)
     }
 
-    fun getRuns() = journals.keys.toList()
+    /**
+     * Load existing runs
+     * @param runs List<String>
+     */
+    fun load(runs: List<String>) {
+        for (run in runs) {getJournal(run)}
+    }
+
+    /**
+     * Get the currently available runs
+     * @return Set<String>
+     */
+    fun getRuns() : Set<String> = journals.keys
 
     fun getMetric(name: String) : Map<String, TimeSeries> {
         return journals.mapValues { it.value.getMetric(name) }

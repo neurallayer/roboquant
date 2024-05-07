@@ -24,7 +24,7 @@ import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.journals.BasicJournal
-import org.roboquant.journals.MetricsJournal
+import org.roboquant.journals.MemoryJournal
 import org.roboquant.journals.MultiRunJournal
 import org.roboquant.metrics.PNLMetric
 import org.roboquant.strategies.EMAStrategy
@@ -124,7 +124,7 @@ internal class RoboquantTest {
 
     @Test
     fun run3()  {
-        val mrj = MultiRunJournal { MetricsJournal(PNLMetric()) }
+        val mrj = MultiRunJournal { MemoryJournal(PNLMetric()) }
         val feed = TestData.feed
         val timeframes  = feed.timeframe.split(1.years)
         for (tf in timeframes) {

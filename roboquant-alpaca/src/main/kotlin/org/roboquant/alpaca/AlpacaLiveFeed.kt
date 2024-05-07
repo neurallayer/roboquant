@@ -17,9 +17,14 @@
 package org.roboquant.alpaca
 
 import net.jacobpeterson.alpaca.AlpacaAPI
+import net.jacobpeterson.alpaca.model.websocket.marketdata.streams.crypto.model.bar.CryptoBarMessage
+import net.jacobpeterson.alpaca.model.websocket.marketdata.streams.crypto.model.quote.CryptoQuoteMessage
+import net.jacobpeterson.alpaca.model.websocket.marketdata.streams.crypto.model.trade.CryptoTradeMessage
 import net.jacobpeterson.alpaca.model.websocket.marketdata.streams.stock.model.bar.StockBarMessage
 import net.jacobpeterson.alpaca.model.websocket.marketdata.streams.stock.model.quote.StockQuoteMessage
 import net.jacobpeterson.alpaca.model.websocket.marketdata.streams.stock.model.trade.StockTradeMessage
+import net.jacobpeterson.alpaca.websocket.marketdata.streams.crypto.CryptoMarketDataListenerAdapter
+import net.jacobpeterson.alpaca.websocket.marketdata.streams.crypto.CryptoMarketDataWebsocketInterface
 import net.jacobpeterson.alpaca.websocket.marketdata.streams.stock.StockMarketDataListenerAdapter
 import net.jacobpeterson.alpaca.websocket.marketdata.streams.stock.StockMarketDataWebsocketInterface
 import org.roboquant.common.Asset
@@ -67,8 +72,6 @@ class AlpacaLiveFeed(
     private val config = AlpacaConfig()
     private val alpacaAPI: AlpacaAPI
     private val logger = Logging.getLogger(AlpacaLiveFeed::class)
-    private val listener = createStockHandler()
-
 
     init {
         config.configure()
@@ -83,7 +86,7 @@ class AlpacaLiveFeed(
      */
     private fun connect() {
         connectMarket(alpacaAPI.stockMarketDataStream())
-        // connectMarket(alpacaAPI.cryptoMarketDataStream())
+        connectCryptoMarket(alpacaAPI.cryptoMarketDataStream())
     }
 
     /**
@@ -98,7 +101,25 @@ class AlpacaLiveFeed(
         if (!connection.isValid) {
             throw ConfigurationException("couldn't establish $connection")
         } else {
-            connection.setListener(listener)
+            val stockListener = createStockHandler()
+            connection.setListener(stockListener)
+        }
+    }
+
+    /**
+     * Connect to ta market data provider and start listening. This can be the stocks or crypto market data feeds.
+     */
+    private fun connectCryptoMarket(connection: CryptoMarketDataWebsocketInterface) {
+        require(!connection.isConnected) { "already connected, disconnect first" }
+        val timeoutMillis: Long = 5_000
+        connection.setAutomaticallyReconnect(true)
+        connection.connect()
+        connection.waitForAuthorization(timeoutMillis, TimeUnit.MILLISECONDS)
+        if (!connection.isValid) {
+            throw ConfigurationException("couldn't establish $connection")
+        } else {
+            val cryptoListener = createCryptoHandler()
+            connection.setListener(cryptoListener)
         }
     }
 
@@ -125,12 +146,11 @@ class AlpacaLiveFeed(
      * Subscribe to stock market data based on the passed [symbols] and [type]
      */
     fun subscribeStocks(vararg symbols: String, type: PriceActionType = PriceActionType.PRICE_BAR) {
-        // validateSymbols(symbols, availableStocksMap)
-        val s = symbols.toList()
+        val s = symbols.toSet()
         when (type) {
-            PriceActionType.TRADE -> alpacaAPI.stockMarketDataStream().tradeSubscriptions.addAll(s)
-            PriceActionType.QUOTE -> alpacaAPI.stockMarketDataStream().quoteSubscriptions.addAll(s)
-            PriceActionType.PRICE_BAR -> alpacaAPI.stockMarketDataStream().minuteBarSubscriptions.addAll(s)
+            PriceActionType.TRADE -> alpacaAPI.stockMarketDataStream().tradeSubscriptions= s
+            PriceActionType.QUOTE -> alpacaAPI.stockMarketDataStream().quoteSubscriptions= s
+            PriceActionType.PRICE_BAR -> alpacaAPI.stockMarketDataStream().minuteBarSubscriptions= s
         }
     }
 
@@ -139,12 +159,12 @@ class AlpacaLiveFeed(
      */
     @Suppress("unused")
     fun subscribeCrypto(vararg symbols: String, type: PriceActionType = PriceActionType.PRICE_BAR) {
-        // validateSymbols(symbols, availableCryptoMap)
-        val s = symbols.toList()
+
+        val s = symbols.toSet()
         when (type) {
-            PriceActionType.TRADE -> alpacaAPI.cryptoMarketDataStream().tradeSubscriptions.addAll(s)
-            PriceActionType.QUOTE -> alpacaAPI.cryptoMarketDataStream().quoteSubscriptions.addAll(s)
-            PriceActionType.PRICE_BAR -> alpacaAPI.cryptoMarketDataStream().minuteBarSubscriptions.addAll(s)
+            PriceActionType.TRADE -> alpacaAPI.cryptoMarketDataStream().tradeSubscriptions=s
+            PriceActionType.QUOTE -> alpacaAPI.cryptoMarketDataStream().quoteSubscriptions=s
+            PriceActionType.PRICE_BAR -> alpacaAPI.cryptoMarketDataStream().minuteBarSubscriptions=s
         }
     }
 
@@ -178,6 +198,47 @@ class AlpacaLiveFeed(
             }
 
             override fun onMinuteBar(bar: StockBarMessage) {
+                val asset = Asset(bar.symbol)
+                val item = PriceBar(
+                    asset,
+                    bar.open,
+                    bar.high,
+                    bar.low,
+                    bar.close,
+                    bar.tradeCount.toDouble()
+                )
+                val time = bar.timestamp.toInstant()
+                send(time, item)
+            }
+
+
+        }
+    }
+
+    private fun createCryptoHandler(): CryptoMarketDataListenerAdapter {
+        return object : CryptoMarketDataListenerAdapter() {
+
+            override fun onTrade(trade: CryptoTradeMessage) {
+                val asset = Asset(trade.symbol)
+                val item = TradePrice(asset, trade.price)
+                val time = trade.timestamp.toInstant()
+                send(time, item)
+            }
+
+            override fun onQuote(quote: CryptoQuoteMessage) {
+                val asset = Asset(quote.symbol)
+                val item = PriceQuote(
+                    asset,
+                    quote.askPrice,
+                    quote.askSize.toDouble(),
+                    quote.bidPrice,
+                    quote.bidSize.toDouble(),
+                )
+                val time = quote.timestamp.toInstant()
+                send(time, item)
+            }
+
+            override fun onMinuteBar(bar: CryptoBarMessage) {
                 val asset = Asset(bar.symbol)
                 val item = PriceBar(
                     asset,

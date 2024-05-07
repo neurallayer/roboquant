@@ -19,7 +19,7 @@ package org.roboquant.feeds
 import kotlinx.coroutines.*
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.common.*
-import org.roboquant.journals.MetricsJournal
+import org.roboquant.journals.MemoryJournal
 import org.roboquant.metrics.ProgressMetric
 import org.roboquant.strategies.EMAStrategy
 import java.time.Instant
@@ -86,7 +86,7 @@ internal class LiveFeedTest {
 
         tf.sample(200.millis, 10, resolution = ChronoUnit.MILLIS).forEach {
             jobs.add {
-                val j = MetricsJournal(ProgressMetric())
+                val j = MemoryJournal(ProgressMetric())
                 org.roboquant.runAsync(feed, EMAStrategy(), j, it)
                 val actions = j.getMetric("progress.actions").values.last()
                 assertTrue(actions > 2)

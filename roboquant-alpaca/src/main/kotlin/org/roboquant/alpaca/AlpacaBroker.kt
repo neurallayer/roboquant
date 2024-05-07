@@ -126,12 +126,13 @@ class AlpacaBroker(
      */
     private fun syncOrders() {
         _account.orders.forEach {
-            val aOrderId = orderPlacer.get(it.order)
-            if (aOrderId != null) {
+            if (it.open) {
+                val aOrderId = it.order.id
+                logger.info { "open order id=$aOrderId" }
                 val alpacaOrder = alpacaAPI.trader().orders().getOrderByOrderID(UUID.fromString(aOrderId), false)
                 updateIAccountOrder(it.order, alpacaOrder)
             } else {
-                logger.warn("cannot find order ${it.order} in orderMap")
+                logger.warn("cannot find order=${it.order} in orderMap")
             }
         }
     }

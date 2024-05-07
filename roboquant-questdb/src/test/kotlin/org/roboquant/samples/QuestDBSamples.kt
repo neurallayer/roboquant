@@ -16,14 +16,17 @@
 
 package org.roboquant.samples
 
-import org.roboquant.common.Timeframe
-import org.roboquant.common.months
-import org.roboquant.common.seconds
+import kotlinx.coroutines.runBlocking
+import org.roboquant.common.*
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
 import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.journals.MultiRunJournal
 import org.roboquant.questdb.QuestDBFeed
+import org.roboquant.questdb.QuestDBJournal
 import org.roboquant.questdb.QuestDBRecorder
+import org.roboquant.runAsync
+import org.roboquant.strategies.EMAStrategy
 import kotlin.system.measureTimeMillis
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -39,6 +42,24 @@ internal class QuestDBSamples {
         return result
     }
 
+
+    @Test
+    @Ignore
+    internal fun parallel() = runBlocking {
+        val feed = RandomWalkFeed(Timeframe.past(4.years), nAssets = 3)
+        val jobs = ParallelJobs()
+        val mrj = MultiRunJournal { run -> QuestDBJournal(table = run) }
+
+        for (tf in feed.timeframe.split(1.years)) {
+            jobs.add {
+                val acc = runAsync(feed, EMAStrategy(),mrj.getJournal(), timeframe = tf)
+                println(acc)
+            }
+        }
+
+        jobs.joinAll()
+        println("done")
+    }
 
 
     @Test

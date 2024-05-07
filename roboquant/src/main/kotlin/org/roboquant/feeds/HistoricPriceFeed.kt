@@ -94,4 +94,11 @@ open class HistoricPriceFeed : HistoricFeed {
         for (event in feed.events) addAll(event.key, event.value)
     }
 
+    override fun toString(): String {
+        return if (events.isEmpty())
+            "events=${events.size} assets=${assets.size}"
+        else
+            "events=${events.size} start=${events.firstKey()} end=${events.lastKey()} assets=${assets.size}"
+    }
+
 }

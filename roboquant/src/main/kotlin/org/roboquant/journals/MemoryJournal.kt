@@ -9,13 +9,29 @@ import org.roboquant.strategies.Signal
 import java.time.Instant
 import java.util.*
 
+interface MetricsJournal: Journal {
+
+    /**
+     * Return all the metrics that are contained in this journal
+     * @return Set<String>
+     */
+    fun getMetricNames() : Set<String>
+
+    /**
+     * Return a metric
+     * @param name String
+     * @return TimeSeries
+     */
+    fun getMetric(name: String): TimeSeries
+}
+
 /**
+ * This journal stores the results of one or more metrics in memory
  *
  * @property metrics Array<out Metric>
- * @property history MutableList<Entry>
  * @constructor
  */
-class MetricsJournal(private vararg val metrics: Metric) : Journal {
+class MemoryJournal(private vararg val metrics: Metric) : MetricsJournal {
 
     private val history = TreeMap<Instant, Map<String, Double>>()
 
@@ -32,7 +48,7 @@ class MetricsJournal(private vararg val metrics: Metric) : Journal {
         history.clear()
     }
 
-    fun getMetricNames() : Set<String> {
+    override fun getMetricNames() : Set<String> {
         return history.values.map { it.keys }.flatten().toSet()
     }
 
@@ -41,7 +57,7 @@ class MetricsJournal(private vararg val metrics: Metric) : Journal {
      * @param name String
      * @return TimeSeries
      */
-    fun getMetric(name: String): TimeSeries {
+    override fun getMetric(name: String): TimeSeries {
         val timeline = mutableListOf<Instant>()
         val values = mutableListOf<Double>()
         for ( (t, d) in history) {
