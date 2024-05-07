@@ -92,9 +92,9 @@ class QuestDBJournal(
 
     }
 
-    private inline fun CairoEngine.appendRows(tableName: String, block: TableWriter.() -> Unit) {
-        val token = ctx.getTableToken(tableName)
-        getWriter(token, tableName).use {
+    private inline fun appendRows(block: TableWriter.() -> Unit) {
+        val token = ctx.getTableToken(table)
+        ctx.cairoEngine.getWriter(token, table).use {
             it.block()
             it.commit()
         }
@@ -174,7 +174,7 @@ class QuestDBJournal(
             result.putAll(values)
         }
 
-        engine.appendRows(table) {
+        appendRows {
             val t = event.time.epochMicro
             for ((k, v) in result) {
                 val row = newRow(t)

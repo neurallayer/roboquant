@@ -127,12 +127,10 @@ class AlpacaBroker(
     private fun syncOrders() {
         _account.orders.forEach {
             if (it.open) {
-                val aOrderId = it.order.id
-                logger.info { "open order id=$aOrderId" }
-                val alpacaOrder = alpacaAPI.trader().orders().getOrderByOrderID(UUID.fromString(aOrderId), false)
+                val orderId = UUID.fromString(it.order.id)
+                val alpacaOrder = alpacaAPI.trader().orders().getOrderByOrderID(orderId, false)
+                logger.info { "open order id=$orderId alpaca-order=$alpacaOrder" }
                 updateIAccountOrder(it.order, alpacaOrder)
-            } else {
-                logger.warn("cannot find order=${it.order} in orderMap")
             }
         }
     }
@@ -147,7 +145,6 @@ class AlpacaBroker(
             logger.debug { "received open $order" }
             val rqOrder = toOrder(order)
             _account.initializeOrders(listOf(rqOrder))
-            orderPlacer.addExistingOrder(rqOrder, order.id!!)
             updateIAccountOrder(rqOrder, order)
         }
     }
@@ -280,21 +277,16 @@ class AlpacaBroker(
      * @return the updated account that reflects the latest state
      */
     override fun place(orders: List<Order>) {
-        val now = Instant.now()
 
-        _account.initializeOrders(orders)
         for (order in orders) {
             when (order) {
-                is SingleOrder -> orderPlacer.placeSingleOrder(order)
-                is CancelOrder -> {
-                    val sucess = orderPlacer.cancelOrder(order)
-                    val status = if (sucess) OrderStatus.COMPLETED else OrderStatus.REJECTED
-                    _account.updateOrder(order, now, status)
+                is SingleOrder -> {
+                    orderPlacer.placeSingleOrder(order)
+                    _account.initializeOrders(listOf(order))
                 }
-
+                is CancelOrder -> orderPlacer.cancelOrder(order)
                 else -> {
-                    logger.warn { "unsupported order type order=$order" }
-                    _account.updateOrder(order, now, OrderStatus.REJECTED)
+                    logger.warn { "ignoring unsupported order type order=$order" }
                 }
             }
         }

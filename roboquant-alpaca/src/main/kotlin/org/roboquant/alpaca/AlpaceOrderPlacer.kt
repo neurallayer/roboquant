@@ -31,18 +31,12 @@ import net.jacobpeterson.alpaca.openapi.trader.model.TimeInForce as OrderTimeInF
  */
 internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val extendedHours: Boolean = false) {
 
-    private val orders = mutableMapOf<Order, String>()
 
-
-    fun cancelOrder(cancellation: CancelOrder): Boolean {
-        if (cancellation !in orders) return false
-
-        val orderId = orders[cancellation.order]
-        alpacaAPI.trader().orders().deleteOrderByOrderID(UUID.fromString(orderId))
-    return true
+    fun cancelOrder(cancellation: CancelOrder) {
+        val orderId = UUID.fromString(cancellation.id)
+        alpacaAPI.trader().orders().deleteOrderByOrderID(orderId)
     }
 
-    fun get(order: Order) = orders[order]
 
 
     private fun TimeInForce.toOrderTimeInForce(): OrderTimeInForce {
@@ -72,18 +66,18 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
             .timeInForce(tif)
             .extendedHours(extendedHours)
 
-       when (order) {
+        when (order) {
 
-           is LimitOrder -> {
-               result.type(OrderType.LIMIT)
-               result.limitPrice(order.limit.toString())
-           }
+            is LimitOrder -> {
+                result.type(OrderType.LIMIT)
+                result.limitPrice(order.limit.toString())
+            }
 
-           is MarketOrder -> result.type(OrderType.MARKET)
+            is MarketOrder -> result.type(OrderType.MARKET)
 
-           else -> throw UnsupportedException("unsupported ordertype $order")
+            else -> throw UnsupportedException("unsupported ordertype $order")
 
-       }
+        }
 
         return result
     }
@@ -109,12 +103,7 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
 
     }
 
-    /**
-     * Add an order that already existed when starting the broker implementation
-     */
-    fun addExistingOrder(rqOrder: Order, id: String) {
-        orders[rqOrder] = id
-    }
+
 
 
 }
