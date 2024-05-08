@@ -129,7 +129,7 @@ class AlpacaBroker(
             if (it.open) {
                 val orderId = UUID.fromString(it.order.id)
                 val alpacaOrder = alpacaAPI.trader().orders().getOrderByOrderID(orderId, false)
-                logger.info { "open order id=$orderId alpaca-order=$alpacaOrder" }
+                logger.debug { "open order id=$orderId alpaca-order=$alpacaOrder" }
                 updateIAccountOrder(it.order, alpacaOrder)
             }
         }
