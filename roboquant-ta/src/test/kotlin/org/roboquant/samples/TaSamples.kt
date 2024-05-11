@@ -113,10 +113,10 @@ internal class TaSamples {
              * Override the default behavior of creating a simple MarkerOrder. Create limit BUY and SELL orders with the
              * actual limit based on the ATR of the underlying asset.
              */
-            override fun createOrder(signal: Signal, size: Size, priceAction: PriceItem): Order? {
+            override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order? {
                 val metricName = "atr.${signal.asset.symbol.lowercase()}"
                 val value = atrMetrics[metricName]
-                val price = priceAction.getPrice(config.priceType)
+                val price = priceItem.getPrice(config.priceType)
                 return if (value != null) {
                     val limit = price - size.sign * value * atrPercentage
                     LimitOrder(signal.asset, size, limit)

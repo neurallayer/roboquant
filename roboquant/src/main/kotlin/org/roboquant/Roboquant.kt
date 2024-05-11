@@ -152,7 +152,7 @@ fun run(
     broker: Broker = SimBroker(),
     channel: EventChannel = EventChannel(timeframe, 10),
     heartbeatTimeout: Long = -1,
-    progressBar: Boolean = false
+    showProgressBar: Boolean = false
 ): Account = runBlocking {
     return@runBlocking runAsync(
         feed,
@@ -163,7 +163,7 @@ fun run(
         broker,
         channel,
         heartbeatTimeout,
-        progressBar
+        showProgressBar
     )
 }
 

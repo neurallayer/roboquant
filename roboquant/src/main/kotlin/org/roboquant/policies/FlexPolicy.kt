@@ -85,6 +85,7 @@ open class FlexPolicy(
         config.configure()
     }
 
+
     /**
      * Set of predefined FlexPolicies
      */
@@ -143,8 +144,8 @@ open class FlexPolicy(
         ): FlexPolicy {
             class MyPolicy : FlexPolicy(configure = configure) {
 
-                override fun createOrder(signal: Signal, size: Size, priceAction: PriceItem): Order {
-                    val price = priceAction.getPrice(config.priceType)
+                override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order {
+                    val price = priceItem.getPrice(config.priceType)
                     return BracketOrder.marketTrailStop(signal.asset, size, price, trailPercentage, stopPercentage)
                 }
             }
@@ -170,8 +171,8 @@ open class FlexPolicy(
         ): FlexPolicy {
             class MyPolicy : FlexPolicy(configure = configure) {
 
-                override fun createOrder(signal: Signal, size: Size, priceAction: PriceItem): Order {
-                    val price = priceAction.getPrice(config.priceType)
+                override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order {
+                    val price = priceItem.getPrice(config.priceType)
 
                     // BUY orders have a below market price limit, and SELL order above
                     val limitOffset = limitPercentage * size.sign
@@ -214,12 +215,12 @@ open class FlexPolicy(
     }
 
     /**
-     * Create a new order based on the [signal], [size] and current [priceAction].
+     * Create a new order based on the [signal], [size] and current [priceItem].
      * This method should return null to indicate no order should be created at all.
      *
      * Overwrite this method if you want to create orders other than the default [MarketOrder].
      */
-    open fun createOrder(signal: Signal, size: Size, priceAction: PriceItem): Order? {
+    open fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order? {
         return MarketOrder(signal.asset, size)
     }
 
@@ -255,6 +256,10 @@ open class FlexPolicy(
     private operator fun Collection<Order>.contains(asset: Asset) = any { it.asset == asset }
 
 
+    protected fun log(signal: Signal, price: PriceItem?, position:Position, reason: String) {
+        logger.info { "signal=$signal price=$price, position=$position, reason=$reason" }
+    }
+
     /**
      * @see Policy.act
      */
@@ -272,16 +277,24 @@ open class FlexPolicy(
             @Suppress("LoopWithTooManyJumpStatements")
             for (signal in signals) {
                 val asset = signal.asset
-
-                if (config.oneOrderOnly && (account.openOrders.contains(asset) || orders.contains(asset))) continue
-
+                val position = account.positions.getPosition(asset)
+                
                 // Don't create an order if we don't know the current price
-                val priceAction = event.prices[asset] ?: continue
+                val priceAction = event.prices[asset]
+                if (priceAction == null) {
+                    log(signal, null, position, "no price")
+                    continue
+                }
+
+                if (config.oneOrderOnly && (account.openOrders.contains(asset) || orders.contains(asset))) {
+                    log(signal, priceAction, position, "one order only")
+                    continue
+                }
 
                 val price = priceAction.getPrice(config.priceType)
                 logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder action=$priceAction" }
 
-                val position = account.positions.getPosition(asset)
+
                 if (reducedPositionSignal(position, signal)) {
                     val order = createOrder(signal, -position.size, priceAction) // close position
                     orders.addNotNull(order)

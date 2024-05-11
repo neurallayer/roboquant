@@ -6,6 +6,7 @@ import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.strategies.EMAStrategy
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 
@@ -21,7 +22,7 @@ internal class MultiRunJournalTest {
         for (tf in tfs) {
             run(feed, EMAStrategy(), mrj.getJournal(tf.toString()), timeframe=tf)
         }
-
+        assertContains(mrj.getMetricNames(), "account.equity")
         assertEquals(tfs.size, mrj.getRuns().size)
 
     }

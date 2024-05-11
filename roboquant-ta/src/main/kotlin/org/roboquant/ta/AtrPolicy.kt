@@ -141,7 +141,7 @@ open class AtrPolicy(
     /**
      * @see FlexPolicy.createOrder
      */
-    override fun createOrder(signal: Signal, size: Size, priceAction: PriceItem): Order? {
+    override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order? {
         val asset = signal.asset
 
         // Calculate the ATR
@@ -149,7 +149,7 @@ open class AtrPolicy(
         if (!atr.isFinite() || atr == 0.0) return null
 
         // Create the actual orders
-        val price = priceAction.getPrice(config.priceType)
+        val price = priceItem.getPrice(config.priceType)
         val entry = getEntryOrder(asset, size, atr, price)
         val profit = getTakeProfitOrder(asset, -size, atr, price)
         val loss = getStopLossOrder(asset, -size, atr, price)

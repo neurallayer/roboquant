@@ -77,11 +77,11 @@ internal class FlexPolicyTest {
 
         class MyPolicy(val percentage: Double = 0.05) : FlexPolicy() {
 
-            override fun createOrder(signal: Signal, size: Size, priceAction: PriceItem): Order {
+            override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order {
                 val asset = signal.asset
                 val direction = if (size.isPositive) 1.0 else -1.0
                 val percentage = percentage * direction
-                val price = priceAction.getPrice(config.priceType)
+                val price = priceItem.getPrice(config.priceType)
 
                 return BracketOrder(
                     MarketOrder(asset, size),
