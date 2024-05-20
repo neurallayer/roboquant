@@ -16,8 +16,11 @@
 
 package org.roboquant.samples
 
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
 import org.roboquant.avro.AvroFeed
+import org.roboquant.avro.AvroFeed2
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.MarginAccount
@@ -56,6 +59,34 @@ internal class AvroSamples {
 
     @Test
     @Ignore
+    internal fun quotes() = runBlocking {
+        val f = RandomWalkFeed.lastDays(20)
+        val tf1 = f.timeline.timeframe
+        val feed = AvroFeed2("/tmp/test.avro")
+        feed.record(f)
+        assertEquals(tf1, feed.timeframe)
+
+        val channel = EventChannel()
+        feed.playBackground(channel)
+        var cnt = 0
+        val start = Instant.now().toEpochMilli()
+        try {
+            while (true) {
+                val evt = channel.receive()
+                cnt += evt.items.size
+            }
+        } catch (_: ClosedReceiveChannelException) {
+            // On purpose left empty, expected exception
+
+        } finally {
+            println(cnt)
+            println(Instant.now().toEpochMilli() - start)
+        }
+
+    }
+
+    @Test
+    @Ignore
     internal fun multiCurrency() {
         val feed = CSVFeed("data/US") {
             priceParser = PriceBarParser(priceAdjust = true)
@@ -83,7 +114,6 @@ internal class AvroSamples {
         val account = roboquant.run(feed)
         println(account.openOrders.summary())
     }
-
 
     @Test
     @Ignore
