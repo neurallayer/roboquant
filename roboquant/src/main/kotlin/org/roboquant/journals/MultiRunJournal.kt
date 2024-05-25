@@ -14,10 +14,13 @@ class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
 
     companion object {
         private var cnt = 0
+
+        @Synchronized
+        fun nextRun(): String = "run-${cnt++}"
     }
 
     @Synchronized
-    fun getJournal(run: String = "run-${cnt++}"): MetricsJournal {
+    fun getJournal(run: String = nextRun()): MetricsJournal {
         if (run !in journals) {
             val journal = fn(run)
             journals[run] = journal

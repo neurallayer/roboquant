@@ -56,7 +56,6 @@
         <module>roboquant-avro</module>
         <module>roboquant-charts</module>
         <module>roboquant-ta</module>
-        <module>roboquant-ml</module>
         <module>roboquant-jupyter</module>
         <module>roboquant-alphavantage</module>
         <module>roboquant-alpaca</module>

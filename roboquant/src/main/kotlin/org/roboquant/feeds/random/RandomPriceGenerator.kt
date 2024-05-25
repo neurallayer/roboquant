@@ -19,9 +19,7 @@ package org.roboquant.feeds.random
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
 import org.roboquant.common.TimeSpan
-import org.roboquant.feeds.PriceBar
-import org.roboquant.feeds.PriceItem
-import org.roboquant.feeds.TradePrice
+import org.roboquant.feeds.*
 import java.util.*
 
 internal class RandomPriceGenerator(
@@ -29,7 +27,7 @@ internal class RandomPriceGenerator(
     private val priceChange: Double,
     private val volumeRange: Int,
     private val timeSpan: TimeSpan,
-    private val generateBars: Boolean,
+    private val priceType: PriceItemType,
     seed: Int
 ) {
 
@@ -54,6 +52,12 @@ internal class RandomPriceGenerator(
         }
     }
 
+    private fun priceQupte(asset: Asset, price: Double): PriceItem {
+        val midPoint = price.nextPrice()
+        val volume = random.nextInt(volumeRange / 2, volumeRange * 2).toDouble()
+        return PriceQuote(asset, midPoint * 0.99, volume, midPoint * 1.01, volume)
+    }
+
     /**
      * Generate random single price actions
      */
@@ -66,7 +70,13 @@ internal class RandomPriceGenerator(
         for ((idx, asset) in assets.withIndex()) {
             val lastPrice = prices[idx]
             val price = lastPrice.nextPrice().coerceAtLeast(priceChange * 2.0)
-            val action = if (generateBars) priceBar(asset, price) else tradePrice(asset, price)
+            val action = when (priceType) {
+                PriceItemType.BAR -> priceBar(asset, price)
+                PriceItemType.TRADE -> tradePrice(asset, price)
+                PriceItemType.QUOTE -> priceQupte(asset, price)
+                else -> throw UnsupportedOperationException("Unknown price type: $priceType")
+            }
+
             add(action)
             prices[idx] = price
         }

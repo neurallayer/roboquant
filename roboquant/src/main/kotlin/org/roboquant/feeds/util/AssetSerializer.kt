@@ -35,8 +35,6 @@ object AssetSerializer {
         sb.append(SEP)
         if (exchange.exchangeCode != "") sb.append(exchange.exchangeCode)
         sb.append(SEP)
-        if (multiplier != 1.0) sb.append(multiplier)
-        sb.append(SEP)
         if (id.isNotEmpty()) sb.append(id)
         sb.append(SEP)
 
@@ -64,8 +62,7 @@ object AssetSerializer {
             if (l > 1 && e[1].isNotEmpty()) AssetType.valueOf(e[1]) else AssetType.STOCK,
             if (l > 2 && e[2].isNotEmpty()) e[2] else "USD",
             if (l > 3) e[3] else "",
-            if (l > 4 && e[4].isNotEmpty()) e[4].toDouble() else 1.0,
-            if (l > 5) e[5] else "",
+            if (l > 4) e[4] else "",
         )
 
     }

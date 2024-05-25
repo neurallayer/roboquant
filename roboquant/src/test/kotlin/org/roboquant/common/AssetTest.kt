@@ -39,6 +39,8 @@ internal class AssetTest {
         assertNotEquals(c, d)
     }
 
+
+
     @Test
     fun sorting() {
         val a = Asset("ABC")
@@ -48,9 +50,15 @@ internal class AssetTest {
     }
 
     @Test
-    fun testAssetTypeConstructors() {
-        val a = Asset.optionContract("SPX", LocalDate.parse("2014-11-22"), 'P', BigDecimal("19.50"))
+    fun optionContract() {
+        val a = OptionContract.from("SPX", LocalDate.parse("2014-11-22"), 'P', BigDecimal("19.50"))
         assertEquals("SPX   141122P00019500", a.symbol)
+        assertEquals(100.0, a.contractSize)
+    }
+
+
+    @Test
+    fun testAssetTypeConstructors() {
 
         val b = Asset.futureContract("GC", Month.DECEMBER, 18)
         val b2 = Asset.futureContract("GC", Month.DECEMBER, 2018)
@@ -99,21 +107,20 @@ internal class AssetTest {
 
     @Test
     fun contractValue() {
-        val a = Asset("ABC", multiplier = 100.0)
-        assertEquals(25000.0.USD, a.value(Size(10), 25.0))
+        val a = Asset("ABC")
+        assertEquals(250.0.USD, a.value(Size(10), 25.0))
 
-        val b = Asset("ABC")
-        assertEquals((-250.0).USD, b.value(Size(-10), 25.0))
+        assertEquals((-250.0).USD, a.value(Size(-10), 25.0))
     }
 
     @Test
     fun contractSize() {
-        val a = Asset("ABC", multiplier = 100.0)
+        val a = Asset("ABC")
         val s = a.contractSize(1000.0, 1.0)
-        assertEquals(Size(10), s)
+        assertEquals(Size(1000), s)
 
         val s2 = a.contractSize(1000.0, 1.0, 4)
-        assertEquals(Size(10), s2)
+        assertEquals(Size(1000), s2)
 
         // decimal fractions cannot be negative
         assertThrows<java.lang.IllegalArgumentException> { a.contractSize(250.0, 1.0, -1) }

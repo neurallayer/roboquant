@@ -20,6 +20,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.HistoricFeed
+import org.roboquant.feeds.PriceItemType
 import java.time.Instant
 import java.time.LocalDate
 
@@ -39,7 +40,7 @@ import java.time.LocalDate
  * @property timeframe the timeframe of this random walk
  * @property timeSpan the timeSpan between two events, default is `1.days`
  * @param nAssets the number of assets to generate, symbol names will be ASSET1, ASSET2, ..., ASSET<N>. Default is 10.
- * @property generateBars should PriceBars be generated or plain TradePrice, default is true
+ * @property priceType should PriceBars be generated or plain TradePrice, default is true
  * @property volumeRange what is the volume range, default = 1000
  * @property priceChange the price range, the default is 10 bips.
  * @param template template to use when generating assets
@@ -49,7 +50,7 @@ class RandomWalkFeed(
     override val timeframe: Timeframe,
     private val timeSpan: TimeSpan = 1.days,
     nAssets: Int = 10,
-    private val generateBars: Boolean = true,
+    private val priceType: PriceItemType = PriceItemType.BAR,
     private val volumeRange: Int = 1000,
     private val priceChange: Double = 10.bips,
     template: Asset = Asset("%s"),
@@ -83,7 +84,7 @@ class RandomWalkFeed(
      * @see HistoricFeed.play
      */
     override suspend fun play(channel: EventChannel) {
-        val gen = RandomPriceGenerator(assets.toList(), priceChange, volumeRange, timeSpan, generateBars, seed)
+        val gen = RandomPriceGenerator(assets.toList(), priceChange, volumeRange, timeSpan, priceType, seed)
         var time = timeframe.start
         while (timeframe.contains(time)) {
             val actions = gen.next()
@@ -103,20 +104,20 @@ class RandomWalkFeed(
         /**
          * Create a random walk for the last [years], generating daily prices
          */
-        fun lastYears(years: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalkFeed {
+        fun lastYears(years: Int = 1, nAssets: Int = 10, priceType: PriceItemType = PriceItemType.BAR): RandomWalkFeed {
             val lastYear = LocalDate.now().year
             val tf = Timeframe.fromYears(lastYear - years, lastYear)
-            return RandomWalkFeed(tf, 1.days, nAssets, generateBars)
+            return RandomWalkFeed(tf, 1.days, nAssets, priceType)
         }
 
         /**
          * Create a random walk for the last [days], generating minute prices.
          */
-        fun lastDays(days: Int = 1, nAssets: Int = 10, generateBars: Boolean = true): RandomWalkFeed {
+        fun lastDays(days: Int = 1, nAssets: Int = 10, priceType: PriceItemType = PriceItemType.BAR): RandomWalkFeed {
             val last = Instant.now()
             val first = last - days.days
             val tf = Timeframe(first, last)
-            return RandomWalkFeed(tf, 1.minutes, nAssets, generateBars)
+            return RandomWalkFeed(tf, 1.minutes, nAssets, priceType)
         }
     }
 

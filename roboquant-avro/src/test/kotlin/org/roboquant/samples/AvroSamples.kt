@@ -20,16 +20,15 @@ import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
 import org.roboquant.avro.AvroFeed
-import org.roboquant.avro.AvroFeed2
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.MarginAccount
-import org.roboquant.brokers.sim.NoCostPricingEngine
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.brokers.summary
 import org.roboquant.common.*
-import org.roboquant.feeds.*
-import org.roboquant.feeds.csv.CSVConfig
+import org.roboquant.feeds.Event
+import org.roboquant.feeds.EventChannel
+import org.roboquant.feeds.PriceItemType
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
@@ -43,16 +42,13 @@ import org.roboquant.policies.resolve
 import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Signal
-import java.io.File
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.io.path.Path
 import kotlin.io.path.div
 import kotlin.system.measureTimeMillis
 import kotlin.test.Ignore
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class AvroSamples {
@@ -60,11 +56,11 @@ internal class AvroSamples {
     @Test
     @Ignore
     internal fun quotes() = runBlocking {
-        val f = RandomWalkFeed.lastDays(20)
-        val tf1 = f.timeline.timeframe
-        val feed = AvroFeed2("/tmp/test.avro")
-        feed.record(f)
-        assertEquals(tf1, feed.timeframe)
+        val tf = Timeframe.parse("2021-01-01", "2023-01-01")
+        val f = RandomWalkFeed(tf, 1.seconds, nAssets = 1, priceType = PriceItemType.QUOTE)
+        val feed = AvroFeed("/tmp/test.avro")
+        feed.record(f, compress = false)
+        assertTrue(feed.exists())
 
         val channel = EventChannel()
         feed.playBackground(channel)
@@ -163,54 +159,9 @@ internal class AvroSamples {
         roboquant.run(feed, timeframe = Timeframe.past(5.years))
     }
 
-    @Test
-    @Ignore
-    internal fun simple() {
-        val strategy = EMAStrategy()
-        val feed = AvroFeed.sp500()
-        val roboquant = Roboquant(strategy)
-        val account = roboquant.run(feed)
-        println(account.fullSummary())
-    }
 
-    @Test
-    @Ignore
-    internal fun aggregator() {
-        val forex = AvroFeed.forex()
-        val feed = AggregatorFeed(forex, 15.minutes)
-        feed.apply<PriceItem> { _, time ->
-            println(time)
-        }
-    }
 
-    @Test
-    @Ignore
-    internal fun forexRun() {
-        val feed = AvroFeed.forex()
-        Currency.increaseDigits(3)
-        val rq = Roboquant(EMAStrategy(), broker = SimBroker(pricingEngine = NoCostPricingEngine()))
-        val account = rq.run(feed, timeframe = Timeframe.parse("2022-01-03", "2022-02-10"))
 
-        for (trade in account.trades) {
-            val tf = Timeframe(trade.time, trade.time, true)
-            val pricebar = feed.filter<PriceItem>(timeframe = tf).firstOrNull { it.second.asset == trade.asset }
-            if (pricebar == null) {
-                println(trade)
-                println(feed.filter<PriceItem>(timeframe = tf))
-                throw RoboquantException("couldn't find trade action")
-            } else {
-                assertEquals(pricebar.second.getPrice(), trade.price)
-            }
-        }
-    }
-
-    @Test
-    @Ignore
-    internal fun profileTest() {
-        val feed = AvroFeed.sp500()
-        val rq = Roboquant(EMAStrategy())
-        rq.run(feed)
-    }
 
     @Test
     @Ignore
@@ -273,63 +224,8 @@ internal class AvroSamples {
         println(account.trades.summary())
     }
 
-    @Test
-    @Ignore
-    internal fun feedRecorder() {
-        val tf = Timeframe.past(1.years)
-        val symbol = "BTCBUSD"
-        val template = Asset(symbol, AssetType.CRYPTO, currency = Currency.getInstance("BUSD"))
-        val feed = RandomWalkFeed(tf, 1.seconds, template = template, nAssets = 1, generateBars = false)
-        val fileName = "/tmp/${symbol}-1sec.avro"
-        val t = measureTimeMillis {
-            AvroFeed.record(feed, fileName)
-        }
-        val f = File(fileName)
-        println(t)
-        println(f.length() / 1_000_000)
 
-        val t2 = measureTimeMillis {
-            AvroFeed(fileName)
-        }
-        println(t2)
-    }
 
-    @Test
-    @Ignore
-    internal fun generateDemoFeed() {
-
-        val pathStr = Config.getProperty("datadir", "/tmp/us")
-
-        val timeframe = Timeframe.fromYears(2014, 2024)
-        val symbols = Universe.sp500.getAssets(timeframe.end).map { it.symbol }.toTypedArray()
-        assertTrue(symbols.size > 490)
-
-        val config = CSVConfig.stooq()
-        val path = Path(pathStr)
-        val path1 = path / "nasdaq stocks"
-        val path2 = path / "nyse stocks"
-
-        val feed = CSVFeed(path1.toString(), config)
-        val tmp = CSVFeed(path2.toString(), config)
-        feed.merge(tmp)
-
-        val sp500File = "/tmp/sp500_pricebar_v6.1.avro"
-
-        AvroFeed.record(
-            feed,
-            sp500File,
-            true,
-            timeframe,
-            assetFilter = AssetFilter.includeSymbols(*symbols)
-        )
-
-        // Some basic sanity checks that recording went ok
-        val avroFeed = AvroFeed(sp500File)
-        assertTrue(avroFeed.assets.size > 490)
-        assertTrue(avroFeed.assets.symbols.contains("AAPL"))
-        assertTrue(avroFeed.timeframe > 4.years)
-
-    }
 
 }
 

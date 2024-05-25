@@ -92,18 +92,6 @@ class Account(
         get() = positions.map { it.asset }.toSet()
 
 
-    @Suppress("unused")
-    fun contractValue(asset: Asset, size: Size, price: Double, time: Instant) : Double {
-        val newPrice = if (asset.currency != baseCurrency) {
-            val amount = Amount(asset.currency, price)
-            amount.convert(baseCurrency, time).value
-        } else {
-            price
-        }
-
-        return size.toDouble() * newPrice * asset.multiplier
-    }
-
     /**
      * Get the associated trades for the provided [orders]. If no orders are provided all [closedOrders] linked to this
      * account instance are used.

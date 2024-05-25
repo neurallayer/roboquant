@@ -73,6 +73,11 @@ interface PriceItem : Item {
 
 }
 
+enum class PriceItemType {
+    BAR, QUOTE, TRADE, BOOK
+}
+
+
 /**
  * Provides open, high, low, and close prices and volume for a single asset. If the volume is not available, it
  * will return Double.NaN instead. Often this type of price action is also referred to as a candlestick.

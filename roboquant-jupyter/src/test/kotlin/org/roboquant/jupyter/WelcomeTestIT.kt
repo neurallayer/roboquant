@@ -16,8 +16,6 @@
 
 package org.roboquant.jupyter
 
-import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.charts.PriceBarChart
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -30,21 +28,5 @@ internal class WelcomeTestIT {
         assertTrue(snippet.isNotBlank())
         assertTrue { w.asHTMLPage().contains(snippet) }
     }
-
-
-    @Test
-    fun testDemo1() {
-        assertDoesNotThrow {
-            Welcome().demo1()
-        }
-    }
-
-
-    @Test
-    fun testDemo2() {
-        val chart2 = Welcome().demo2()
-        assertTrue(chart2 is PriceBarChart)
-    }
-
 
 }

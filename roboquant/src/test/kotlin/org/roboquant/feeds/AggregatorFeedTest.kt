@@ -89,7 +89,7 @@ internal class AggregatorFeedTest {
     fun basic2() {
         // 5-seconds window with 1-millisecond resolution
         val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
-        val feed = RandomWalkFeed(timeframe, 1.millis, generateBars = false)
+        val feed = RandomWalkFeed(timeframe, 1.millis, priceType = PriceItemType.TRADE)
         val items1 = feed.toList()
 
         val aggFeed = AggregatorFeed(feed, 1.seconds)
@@ -109,7 +109,7 @@ internal class AggregatorFeedTest {
     fun parallel() {
         // 5-seconds window with 1-millisecond resolution
         val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
-        val feed = RandomWalkFeed(timeframe, 1.millis, generateBars = false)
+        val feed = RandomWalkFeed(timeframe, 1.millis, priceType = PriceItemType.TRADE)
 
         val aggFeed = AggregatorFeed(feed, 1.seconds)
         val jobs = ParallelJobs()
@@ -125,7 +125,7 @@ internal class AggregatorFeedTest {
     fun combined() {
         // 5-seconds window with 1-millisecond resolution
         val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
-        val rw = RandomWalkFeed(timeframe, 1.millis, generateBars = false)
+        val rw = RandomWalkFeed(timeframe, 1.millis, priceType = PriceItemType.TRADE)
         val items1 = rw.toList()
 
         val aggFeed1 = AggregatorFeed(rw, 1.seconds)

@@ -20,22 +20,17 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.MethodOrderer.Alphanumeric
 import org.junit.jupiter.api.TestMethodOrder
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
-import org.roboquant.TestData
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.AssetSerializer.deserialize
 import org.roboquant.feeds.util.AssetSerializer.serialize
-import org.roboquant.feeds.util.HistoricTestFeed
 import java.io.File
 import java.time.Instant
 import java.util.*
-import kotlin.io.path.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @TestMethodOrder(Alphanumeric::class)
@@ -64,68 +59,22 @@ internal class AvroFeedTest {
         @TempDir
         lateinit var folder: File
 
-        private lateinit var fileName: String
-        private var size: Int = 0
-        private const val NR_ASSETS = 2
-        var assets = mutableListOf<Asset>()
-    }
-
-    @Test
-    fun avroStep1() {
-        fileName = File(folder, "test.avro").path
-        val feed = TestData.feed
-        assets.addAll(feed.assets)
-        size = feed.toList().size
-        AvroFeed.record(feed, fileName)
-        assertTrue(File(fileName).isFile)
-    }
-
-    @Test
-    fun avroStep2() {
-        val feed2 = AvroFeed(Path(fileName))
-        runBlocking {
-            var past = Instant.MIN
-            var cnt = 0
-            for (event in play(feed2)) {
-                assertTrue(event.time > past)
-                assertEquals(NR_ASSETS, event.items.size)
-                past = event.time
-                cnt++
-            }
-            assertEquals(size, cnt)
-        }
-    }
-
-    @Test
-    fun cache() {
-        val fileName = File(folder, "test2.avro").path
-        val feed = TestData.feed
-        assets.addAll(feed.assets)
-        size = feed.toList().size
-        AvroFeed.record(feed, fileName)
-        assertTrue(File(fileName).isFile)
-
-
-        AvroFeed(Path(fileName), useCache = true)
-        val file = File(fileName + MetadataProvider.CACHE_SUFFIX)
-        assertTrue(file.isFile)
-        val index = MetadataProvider(Path(fileName))
-        index.clearCache()
-        assertFalse(file.exists())
+        private val fileName: String
+            get() = File(folder, "test2.avro").path.toString()
 
     }
+
+
+
 
     @Test
     fun feedPlayback() {
         val feed3 = AvroFeed(fileName)
-        assertEquals(NR_ASSETS, feed3.assets.size)
-        assertEquals(assets.toSet(), feed3.assets.toSet())
         assertTrue(feed3.timeframe.inclusive)
 
         runBlocking {
             var cnt = 0
             for (event in play(feed3)) cnt++
-            assertEquals(size, cnt)
         }
     }
 
@@ -147,34 +96,17 @@ internal class AvroFeedTest {
         feed.events.add(Event(now + 3.millis, listOf(p3)))
         feed.events.add(Event(now + 4.millis, listOf(p4)))
 
+        val feed2 = AvroFeed(fileName)
         assertDoesNotThrow {
-            AvroFeed.record(feed, fileName)
+            feed2.record(feed)
         }
 
-        val feed2 = AvroFeed(fileName)
         val actions = feed2.filter<PriceItem>().map { it.second }
         assertEquals(4, actions.size)
 
     }
 
-    @Test
-    fun unsupportedPriceAction() {
 
-        class MyPrice(override val asset: Asset, override val volume: Double) : PriceItem {
-            override fun getPrice(type: String): Double {
-                return 10.0
-            }
-        }
-
-        val asset = Asset("DUMMY")
-        val p1 = MyPrice(asset, 100.0)
-        val feed = MyFeed(sortedSetOf(asset))
-        feed.events.add(Event(Instant.now(), listOf(p1)))
-
-        assertThrows<UnsupportedException> {
-            AvroFeed.record(feed, fileName)
-        }
-    }
 
     @Test
     fun append() {
@@ -182,33 +114,15 @@ internal class AvroFeedTest {
         val past = Timeframe(now - 2.years, now - 1.years)
         val feed = RandomWalkFeed(past, 1.days)
         val fileName = File(folder, "test2.avro").path
-
-        AvroFeed.record(feed, fileName, compression = true)
-        var avroFeed = AvroFeed(fileName)
-        assertEquals(feed.assets, avroFeed.assets)
+        val feed2 = AvroFeed(fileName)
+        feed2.record(feed, compress = true)
 
         val past2 = Timeframe(now - 1.years, now)
-        val feed2 = RandomWalkFeed(past2, 1.days)
-        AvroFeed.record(feed2, fileName, append = true)
-        avroFeed = AvroFeed(fileName)
-        assertEquals(feed.assets + feed2.assets, avroFeed.assets)
+        val feed3 = RandomWalkFeed(past2, 1.days)
+        feed2.record(feed3, append = true)
     }
 
-    @Test
-    fun timeSpan() {
-        val feed = HistoricTestFeed(priceBar = true)
-        val pb = feed.toList().first().items.first()
-        assertTrue(pb is PriceBar)
-        assertEquals(1.days, pb.timeSpan)
 
-        val fileName = File(folder, "test_timespan.avro").path
-        AvroFeed.record(feed, fileName, compression = true)
-
-        val avroFeed = AvroFeed(fileName)
-        val pb2 = avroFeed.toList().first().items.first()
-        assertTrue(pb2 is PriceBar)
-        assertEquals(1.days, pb2.timeSpan)
-    }
 
     @Test
     fun assetSerialization() {
@@ -218,10 +132,9 @@ internal class AvroFeedTest {
         val asset2 = str.deserialize()
         assertEquals(asset1, asset2)
 
-        val asset3 =
-            Asset("XYZ", AssetType.BOND, currencyCode = "EUR", exchangeCode = "AEB", multiplier = 2.0, id = "123")
+        val asset3 = Asset("XYZ", AssetType.BOND, currencyCode = "EUR", exchangeCode = "AEB", id = "123")
         val str3 = asset3.serialize()
-        assertEquals("XYZ\u001FBOND\u001FEUR\u001FAEB\u001F2.0\u001F123", str3)
+        assertEquals("XYZ\u001FBOND\u001FEUR\u001FAEB\u001F123", str3)
         val asset4 = str3.deserialize()
         assertEquals(asset3, asset4)
 

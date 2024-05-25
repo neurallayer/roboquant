@@ -38,16 +38,14 @@ import java.time.format.DateTimeFormatter
  * @property type type of asset class, default is [AssetType.STOCK]
  * @property currency currency, default is [Currency.USD]
  * @property exchange Exchange this asset is traded on, default is [Exchange.DEFAULT]
- * @property multiplier contract size multiplier, default is 1.0.
  * @property id asset identifier, default is an empty string
  * @constructor Create a new asset
  */
-data class Asset(
+open class Asset(
     val symbol: String,
     val type: AssetType = AssetType.STOCK,
     val currency: Currency = Currency.USD,
     val exchange: Exchange = Exchange.DEFAULT,
-    val multiplier: Double = 1.0,
     val id: String = ""
 ) : Comparable<Asset> {
 
@@ -59,12 +57,15 @@ data class Asset(
         type: AssetType = AssetType.STOCK,
         currencyCode: String,
         exchangeCode: String = "",
-        multiplier: Double = 1.0,
         id: String = ""
-    ) : this(symbol, type, Currency.getInstance(currencyCode), Exchange.getInstance(exchangeCode), multiplier, id)
+    ) : this(symbol, type, Currency.getInstance(currencyCode), Exchange.getInstance(exchangeCode), id)
 
     init {
         require(symbol.isNotBlank()) { "Symbol in an asset cannot be empty or blank" }
+    }
+
+    fun copy(symbol: String = this.symbol): Asset {
+        return Asset(symbol, this.type, this.currency, this.exchange, this.id)
     }
 
     /**
@@ -73,35 +74,6 @@ data class Asset(
      */
     companion object {
 
-        /**
-         * Returns an option contract using the OCC (`Options Clearing Corporation`) option symbol standard.
-         * The OCC option symbol string consists of four parts:
-         *
-         * 1. Uppercase [symbol] of the underlying stock or ETF, padded with trailing spaces to six characters
-         * 2. The [expiration] date, in the format `yymmdd`
-         * 3. The Option [type], single character either P(ut) or C(all)
-         * 4. The strike price, as the [price] x 1000, front padded with zeros to make it eight digits
-         */
-        fun optionContract(
-            symbol: String,
-            expiration: LocalDate,
-            type: Char,
-            price: BigDecimal,
-            multiplier: Double = 100.0,
-            currencyCode: String = "USD",
-            exchangeCode: String = "",
-            id: String = ""
-        ): Asset {
-            require(symbol.isNotBlank()) { "Symbol cannot be blank" }
-            require(type in setOf('P', 'C')) { "Type should be P or C" }
-            val formatter = DateTimeFormatter.ofPattern("yyMMdd")
-            val optionSymbol = "%-6s".format(symbol.uppercase()) +
-                    expiration.format(formatter) +
-                    type.uppercase() +
-                    "%08d".format(price.multiply(BigDecimal(1000)).toInt())
-
-            return Asset(optionSymbol, AssetType.OPTION, currencyCode, exchangeCode, multiplier, id)
-        }
 
         /**
          * Returns a future contract based on the provided parameters. It will generate a [symbol] name using the
@@ -113,14 +85,13 @@ data class Asset(
             year: Int,
             currencyCode: String = "USD",
             exchangeCode: String = "",
-            multiplier: Double = 1.0,
             id: String = ""
         ): Asset {
             val months = arrayOf('F', 'G', 'H', 'J', 'K', 'M', 'N', 'Q', 'U', 'V', 'X', 'Z')
             val monthEncoding = months[month.value - 1]
             val yearCode = year.toString()
             val futureSymbol = "$symbol$monthEncoding${yearCode.takeLast(2)}"
-            return Asset(futureSymbol, AssetType.FUTURES, currencyCode, exchangeCode, multiplier, id)
+            return Asset(futureSymbol, AssetType.FUTURES, currencyCode, exchangeCode, id)
         }
 
         /**
@@ -153,12 +124,11 @@ data class Asset(
     }
 
     /**
-     * Return the value of the asset given the provided [size] and [price]. The calculation takes the [multiplier]
-     * of the asset into account.
+     * Return the value of the asset given the provided [size] and [price].
      */
-    fun value(size: Size, price: Double): Amount {
+    open fun value(size: Size, price: Double): Amount {
         // If size is zero, an unknown price (Double.NanN) is fine
-        return if (size.iszero) Amount(currency, 0.0) else Amount(currency, size.toDouble() * multiplier * price)
+        return if (size.iszero) Amount(currency, 0.0) else Amount(currency, size.toDouble() * price)
     }
 
     /**
@@ -203,8 +173,60 @@ data class Asset(
         if (type != other.type) return false
         if (currency != other.currency) return false
         if (exchange != other.exchange) return false
-        if (multiplier != other.multiplier) return false
         return id == other.id
+    }
+
+}
+
+open class OptionContract(
+    symbol: String,
+    currency: Currency = Currency.USD,
+    exchange: Exchange = Exchange.DEFAULT,
+    val contractSize: Double = 100.0,
+    id: String = ""
+) : Asset(symbol, AssetType.OPTION, currency, exchange, id) {
+
+    override fun value(size: Size, price: Double): Amount {
+        return if (size.iszero) Amount(currency, 0.0) else Amount(currency, size.toDouble() * contractSize * price)
+    }
+
+    companion object {
+
+        /**
+         * Returns an option contract using the OCC (`Options Clearing Corporation`) option symbol standard.
+         * The OCC option symbol string consists of four parts:
+         *
+         * 1. Uppercase [symbol] of the underlying stock or ETF, padded with trailing spaces to six characters
+         * 2. The [expiration] date, in the format `yymmdd`
+         * 3. The Option [type], single character either P(ut) or C(all)
+         * 4. The strike price, as the [price] x 1000, front padded with zeros to make it eight digits
+         */
+        fun from(
+            symbol: String,
+            expiration: LocalDate,
+            type: Char,
+            price: BigDecimal,
+            currencyCode: String = "USD",
+            exchangeCode: String = "",
+            contractSize: Double = 100.0,
+            id: String = ""
+        ): OptionContract {
+            require(symbol.isNotBlank()) { "Symbol cannot be blank" }
+            require(type in setOf('P', 'C')) { "Type should be P or C" }
+            val formatter = DateTimeFormatter.ofPattern("yyMMdd")
+            val optionSymbol = "%-6s".format(symbol.uppercase()) +
+                    expiration.format(formatter) +
+                    type.uppercase() +
+                    "%08d".format(price.multiply(BigDecimal(1000)).toInt())
+
+            return OptionContract(
+                optionSymbol,
+                Currency.getInstance(currencyCode),
+                Exchange.getInstance(exchangeCode),
+                contractSize,
+                id
+            )
+        }
     }
 
 }
@@ -274,7 +296,7 @@ fun Collection<Asset>.summary(name: String = "assets"): Summary {
         lines.add(listOf("symbol", "type", "ccy", "exchange", "multiplier", "id"))
         forEach {
             with(it) {
-                lines.add(listOf(symbol, type, currency.currencyCode, exchange.exchangeCode, multiplier, id))
+                lines.add(listOf(symbol, type, currency.currencyCode, exchange.exchangeCode, id))
             }
         }
         lines.summary(name)

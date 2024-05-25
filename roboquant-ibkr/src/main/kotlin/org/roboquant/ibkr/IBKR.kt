@@ -125,7 +125,7 @@ object IBKR {
 
         contract.symbol(symbol)
         contract.currency(currency.currencyCode)
-        if (multiplier != 1.0) contract.multiplier(multiplier.toString())
+        // if (multiplier != 1.0) contract.multiplier(multiplier.toString())
 
         when (type) {
             AssetType.STOCK -> contract.secType(Types.SecType.STK)

@@ -16,12 +16,7 @@
 
 package org.roboquant.jupyter
 
-import org.roboquant.Roboquant
-import org.roboquant.avro.AvroFeed
-import org.roboquant.charts.Chart
-import org.roboquant.charts.PriceBarChart
 import org.roboquant.common.Config
-import org.roboquant.strategies.EMAStrategy
 
 /**
  * Provides current environment settings in HTML format suitable for displaying in a Jupyter Notebook.
@@ -63,53 +58,5 @@ class Welcome {
         """.trimIndent()
     }
 
-    /**
-     * Run a small demo back test and display the resulting equity curve
-     */
-    fun demo1() {
-        val strategy = EMAStrategy()
-        val roboquant = Roboquant(strategy)
-        val feed = AvroFeed.sp500()
-        println(
-            """
-            ┌───────────────┐
-            │     INPUT     │
-            └───────────────┘
-            val strategy = EMAStrategy()
-            val roboquant = Roboquant(strategy)
-            
-            val feed = AvroFeed.sp500()
-            roboquant.run(feed)
-            ┌───────────────┐
-            │    Output     │
-            └───────────────┘
-        """.trimIndent()
-        )
-
-        roboquant.run(feed)
-    }
-
-
-    /**
-     * View feed data demo
-     */
-    fun demo2(): Chart {
-        println(
-            """
-            ┌───────────────┐
-            │     INPUT     │
-            └───────────────┘
-            val feed = AvroFeed.sp500()
-            PriceBarChart(feed, "AAPL")
-            
-            ┌───────────────┐
-            │    Output     │
-            └───────────────┘
-        """.trimIndent()
-        )
-
-        val feed = AvroFeed.sp500()
-        return PriceBarChart(feed, "AAPL")
-    }
 
 }

@@ -32,7 +32,7 @@ import java.time.Instant
  *
  * @property timeSpan the timeSpan between two events, default is `1.seconds`
  * @param nAssets the number of assets to generate, default is 10.
- * @property generateBars should PriceBars be generated or plain TradePrice, default is true
+ * @property priceItemType should PriceBars be generated or plain TradePrice
  * @property volumeRange what is the volume range, default = 1000
  * @property priceChange the price range, the default is 10 bips (0.1%)
  * @param template template to use when generating assets. The symbol name will be used as a template string
@@ -41,7 +41,7 @@ import java.time.Instant
 class RandomWalkLiveFeed(
     private val timeSpan: TimeSpan = 1.seconds,
     nAssets: Int = 10,
-    private val generateBars: Boolean = true,
+    private val priceItemType: PriceItemType= PriceItemType.BAR,
     private val volumeRange: Int = 1000,
     private val priceChange: Double = 10.bips,
     template: Asset = Asset("%s"),
@@ -63,7 +63,7 @@ class RandomWalkLiveFeed(
      * @see Feed.play
      */
     override suspend fun play(channel: EventChannel) {
-        val gen = RandomPriceGenerator(assets.toList(), priceChange, volumeRange, timeSpan, generateBars, seed)
+        val gen = RandomPriceGenerator(assets.toList(), priceChange, volumeRange, timeSpan, priceItemType, seed)
         var time = Instant.now()
         while (true) {
             if (channel.closed) return

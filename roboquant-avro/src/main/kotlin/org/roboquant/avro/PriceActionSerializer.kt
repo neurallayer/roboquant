@@ -26,27 +26,20 @@ import org.roboquant.feeds.*
  */
 internal class PriceActionSerializer {
 
-    internal class Serialization(val type: Int, val values: List<Double>, val other: String? = null)
+    internal class Serialization(val type: PriceItemType, val values: List<Double>, val other: String? = null)
 
     private val timeSpans = mutableMapOf<String, TimeSpan>()
 
-    private companion object {
-        private const val PRICEBAR_IDX = 1
-        private const val TRADEPRICE_IDX = 2
-        private const val PRICEQUOTE_IDX = 3
-        private const val ORDERBOOK_IDX = 4
-    }
-
     fun serialize(action: PriceItem): Serialization {
         return when (action) {
-            is PriceBar -> Serialization(PRICEBAR_IDX, action.ohlcv.toList(), action.timeSpan?.toString())
-            is TradePrice -> Serialization(TRADEPRICE_IDX, listOf(action.price, action.volume))
+            is PriceBar -> Serialization(PriceItemType.BAR, action.ohlcv.toList(), action.timeSpan?.toString())
+            is TradePrice -> Serialization(PriceItemType.TRADE, listOf(action.price, action.volume))
             is PriceQuote -> Serialization(
-                PRICEQUOTE_IDX,
+                PriceItemType.QUOTE,
                 listOf(action.askPrice, action.askSize, action.bidPrice, action.bidSize)
             )
 
-            is OrderBook -> Serialization(ORDERBOOK_IDX, orderBookToValues(action))
+            is OrderBook -> Serialization(PriceItemType.BOOK, orderBookToValues(action))
             else -> throw UnsupportedException("cannot serialize action=$action")
         }
     }
@@ -61,13 +54,13 @@ internal class PriceActionSerializer {
         return PriceBar(asset, values, timeSpan)
     }
 
-    fun deserialize(asset: Asset, idx: Int, values: List<Double>, other: String?): PriceItem {
-        return when (idx) {
-            PRICEBAR_IDX -> getPriceBar(asset, values.toDoubleArray(), other)
-            TRADEPRICE_IDX -> TradePrice(asset, values[0], values[1])
-            PRICEQUOTE_IDX -> PriceQuote(asset, values[0], values[1], values[2], values[3])
-            ORDERBOOK_IDX -> getOrderBook(asset, values)
-            else -> throw UnsupportedException("cannot deserialize asset=$asset type=$idx")
+    fun deserialize(asset: Asset, type: PriceItemType, values: List<Double>, other: String?): PriceItem {
+        return when (type) {
+            PriceItemType.BAR -> getPriceBar(asset, values.toDoubleArray(), other)
+            PriceItemType.TRADE -> TradePrice(asset, values[0], values[1])
+            PriceItemType.QUOTE -> PriceQuote(asset, values[0], values[1], values[2], values[3])
+            PriceItemType.BOOK -> getOrderBook(asset, values)
+            else -> throw UnsupportedException("cannot deserialize asset=$asset type=$type")
         }
     }
 

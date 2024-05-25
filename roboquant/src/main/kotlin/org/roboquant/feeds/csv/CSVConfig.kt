@@ -226,8 +226,7 @@ data class CSVConfig(
             symbol = config.getOrDefault("symbol", "TEMPLATE"),
             type = AssetType.valueOf(config.getOrDefault("type", "STOCK")),
             currencyCode = config.getOrDefault("currency", "USD"),
-            exchangeCode = config.getOrDefault("exchange", ""),
-            multiplier = config.getOrDefault("multiplier", "1.0").toDouble()
+            exchangeCode = config.getOrDefault("exchange", "")
         )
     }
 
