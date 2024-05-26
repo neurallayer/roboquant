@@ -96,13 +96,11 @@ internal class AssetTest {
         val asset = assets.random(1)
         assertTrue { assets.containsAll(asset) }
 
-        val s = assets.summary()
-        assertTrue { s.content.isNotEmpty() }
-        assertContains(s.toString(), "TEST")
-        assertContains(s.toString(), "TEST2")
+        val s = assets.toString()
+        assertTrue { s.isNotEmpty() }
+        assertContains(s, "TEST")
+        assertContains(s, "TEST2")
 
-        val e = emptyList<Asset>()
-        assertContains(e.summary().toString(), "EMPTY")
     }
 
     @Test

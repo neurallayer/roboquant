@@ -20,7 +20,6 @@ package org.roboquant.brokers
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
-import org.roboquant.orders.summary
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -61,17 +60,6 @@ internal class AccountTest {
         assertTrue(account.trades.isEmpty())
     }
 
-    @Test
-    fun summaries() {
-        val account = TestData.usAccount()
-        assertTrue(account.positions.summary().content.isNotEmpty())
-        assertTrue(account.closedOrders.summary().content.isNotEmpty())
-        assertTrue(account.trades.summary().content.isNotEmpty())
-        assertTrue(account.cash.summary().content.isNotEmpty())
-
-        assertTrue(account.summary().content.isNotEmpty())
-        assertTrue(account.fullSummary().content.isNotEmpty())
-    }
 
     @Test
     fun extensions() {

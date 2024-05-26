@@ -31,7 +31,7 @@ internal class AlpacaBrokerTestIT {
 
         assertTrue(cash.isNotEmpty())
         assertFalse(cash.isMultiCurrency())
-        println(account.fullSummary())
+        println(account)
 
         assertDoesNotThrow {
             broker.place(emptyList())
@@ -39,7 +39,6 @@ internal class AlpacaBrokerTestIT {
 
         assertDoesNotThrow {
             val account2 = broker.sync()
-            account2.fullSummary()
             assertTrue(account2.equity.isNotEmpty())
         }
 

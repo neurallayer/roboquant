@@ -40,7 +40,7 @@ internal class TiingoSamples {
         feed.subscribe("AAPL", "TSLA")
         val rq = Roboquant(EMAStrategy())
         val account = rq.run(feed, timeframe = Timeframe.next(10.minutes))
-        println(account.fullSummary())
+        println(account)
     }
 
     @Test
@@ -51,7 +51,7 @@ internal class TiingoSamples {
         val feed = AggregatorLiveFeed(iex, 5.seconds, restrictType = TradePrice::class)
         val tf = Timeframe.next(5.minutes)
         val account = run(feed, EMAStrategy(), BasicJournal(true), tf)
-        println(account.fullSummary())
+        println(account)
     }
 
     @Test
@@ -61,7 +61,7 @@ internal class TiingoSamples {
         feed.subscribe("EURUSD")
         val rq = Roboquant(EMAStrategy())
         val account = rq.run(feed, timeframe = Timeframe.next(1.minutes))
-        println(account.fullSummary())
+        println(account)
     }
 
     @Test
@@ -74,7 +74,7 @@ internal class TiingoSamples {
         feed.subscribe("BNBFDUSD")
         val rq = Roboquant(EMAStrategy())
         val account = rq.run(feed, timeframe = Timeframe.next(1.minutes))
-        println(account.fullSummary())
+        println(account)
     }
 
 
@@ -142,7 +142,7 @@ internal class TiingoSamples {
         println(feed.timeframe)
         val rq = Roboquant(EMAStrategy())
         val account = rq.run(feed)
-        println(account.fullSummary())
+        println(account)
     }
 
     @Test
@@ -155,7 +155,7 @@ internal class TiingoSamples {
         println(feed.timeframe)
         val rq = Roboquant(EMAStrategy())
         val account = rq.run(feed)
-        println(account.fullSummary())
+        println(account)
     }
 
 

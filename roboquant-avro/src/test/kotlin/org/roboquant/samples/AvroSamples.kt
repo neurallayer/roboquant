@@ -24,7 +24,6 @@ import org.roboquant.brokers.Account
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.brokers.summary
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.EventChannel
@@ -34,11 +33,11 @@ import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.orders.Order
-import org.roboquant.orders.summary
 import org.roboquant.policies.BasePolicy
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.SignalResolution
 import org.roboquant.policies.resolve
+import org.roboquant.run
 import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Signal
@@ -49,6 +48,7 @@ import kotlin.io.path.div
 import kotlin.system.measureTimeMillis
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class AvroSamples {
@@ -56,11 +56,17 @@ internal class AvroSamples {
     @Test
     @Ignore
     internal fun quotes() = runBlocking {
-        val tf = Timeframe.parse("2021-01-01", "2023-01-01")
-        val f = RandomWalkFeed(tf, 1.seconds, nAssets = 1, priceType = PriceItemType.QUOTE)
+        val tf = Timeframe.parse("2021-01-01", "2022-01-01", true)
+        val f = RandomWalkFeed(tf, 1.minutes, nAssets = 1, priceType = PriceItemType.QUOTE)
         val feed = AvroFeed("/tmp/test.avro")
         feed.record(f, compress = false)
         assertTrue(feed.exists())
+        assertEquals(tf, feed.timeframe)
+
+        feed.timeframe.sample(10.days, 5).forEach {
+            val account = run(feed, EMAStrategy(), timeframe = it)
+            println(account)
+        }
 
         val channel = EventChannel()
         feed.playBackground(channel)
@@ -108,7 +114,7 @@ internal class AvroSamples {
 
         val roboquant = Roboquant(strategy, policy = policy, broker = broker)
         val account = roboquant.run(feed)
-        println(account.openOrders.summary())
+        println(account.openOrders)
     }
 
     @Test
@@ -220,8 +226,7 @@ internal class AvroSamples {
         val roboquant = Roboquant(strategy, policy = policy, broker = broker)
         val account = roboquant.run(feed)
 
-        println(account.summary())
-        println(account.trades.summary())
+        println(account)
     }
 
 

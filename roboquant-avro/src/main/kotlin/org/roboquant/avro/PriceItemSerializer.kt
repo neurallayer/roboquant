@@ -24,23 +24,23 @@ import org.roboquant.feeds.*
 /**
  * Used by AvroFeed to serialize and deserialize [PriceItem] to a DoubleArray, so it can be stored in an Avro file.
  */
-internal class PriceActionSerializer {
+internal class PriceItemSerializer {
 
     internal class Serialization(val type: PriceItemType, val values: List<Double>, val other: String? = null)
 
     private val timeSpans = mutableMapOf<String, TimeSpan>()
 
-    fun serialize(action: PriceItem): Serialization {
-        return when (action) {
-            is PriceBar -> Serialization(PriceItemType.BAR, action.ohlcv.toList(), action.timeSpan?.toString())
-            is TradePrice -> Serialization(PriceItemType.TRADE, listOf(action.price, action.volume))
+    fun serialize(item: PriceItem): Serialization {
+        return when (item) {
+            is PriceBar -> Serialization(PriceItemType.BAR, item.ohlcv.toList(), item.timeSpan?.toString())
+            is TradePrice -> Serialization(PriceItemType.TRADE, listOf(item.price, item.volume))
             is PriceQuote -> Serialization(
                 PriceItemType.QUOTE,
-                listOf(action.askPrice, action.askSize, action.bidPrice, action.bidSize)
+                listOf(item.askPrice, item.askSize, item.bidPrice, item.bidSize)
             )
 
-            is OrderBook -> Serialization(PriceItemType.BOOK, orderBookToValues(action))
-            else -> throw UnsupportedException("cannot serialize action=$action")
+            is OrderBook -> Serialization(PriceItemType.BOOK, orderBookToValues(item))
+            else -> throw UnsupportedException("cannot serialize action=$item")
         }
     }
 

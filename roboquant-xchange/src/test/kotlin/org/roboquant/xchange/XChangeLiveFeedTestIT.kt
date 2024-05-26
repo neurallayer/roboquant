@@ -23,7 +23,6 @@ import org.knowm.xchange.bitstamp.BitstampExchange
 import org.roboquant.common.AssetType
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
-import org.roboquant.common.summary
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import kotlin.test.Test
@@ -38,7 +37,7 @@ internal class XChangeLiveFeedTestIT {
         val exchange = StreamingExchangeFactory.INSTANCE.createExchange(BitstampStreamingExchange::class.java)
         exchange.connect().blockingAwait()
         val feed = XChangeLiveFeed(exchange)
-        println(feed.availableAssets.summary())
+        println(feed.availableAssets)
 
         // Mix three kind of price actions in a single feed
         feed.subscribeTrade(Pair("BTC", "USD"))
@@ -61,7 +60,7 @@ internal class XChangeLiveFeedTestIT {
 
         val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
         val feed = XChangePollingLiveFeed(exchange)
-        println(feed.availableAssets.summary())
+        println(feed.availableAssets)
 
         feed.subscribeTrade("BTC_USD", pollingDelayMillis = 30_000)
         println("Subscribed")

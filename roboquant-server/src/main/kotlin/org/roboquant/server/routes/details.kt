@@ -22,8 +22,6 @@ import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kotlinx.html.*
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.lines
-import org.roboquant.orders.lines
 import org.roboquant.server.*
 
 private fun FlowContent.table(caption: String, list: List<List<Any>>) {
@@ -122,10 +120,10 @@ internal fun Route.details() {
                     }
                 }
                 // table("cash", metric.getCash())
-                table("open positions", acc.positions.lines())
-                table("open orders", acc.openOrders.lines())
-                table("closed orders (last 10)", acc.closedOrders.lines().takeLastPlusHeader(10))
-                table("trades (last 10)", acc.trades.lines().takeLastPlusHeader(10))
+                // table("open positions", acc.positions.lines())
+                // table("open orders", acc.openOrders.lines())
+                // table("closed orders (last 10)", acc.closedOrders.lines().takeLastPlusHeader(10))
+                // table("trades (last 10)", acc.trades.lines().takeLastPlusHeader(10))
             }
         }
     }

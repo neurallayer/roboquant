@@ -256,19 +256,6 @@ class Wallet(private val data: IdentityHashMap<Currency, Double> = IdentityHashM
     }
 
     /**
-     * Summary overview of the wallet
-     */
-    fun summary(name: String = "cash"): Summary {
-        val lines = mutableListOf<List<Any>>()
-        lines.add(listOf("ccy", "amount"))
-        for (currency in currencies.sortedBy { it.currencyCode }) {
-            val t = getAmount(currency).formatValue()
-            lines.add(listOf(currency.currencyCode, t))
-        }
-        return lines.summary(name)
-    }
-
-    /**
      * Convert this Wallet into a single [currency] amount. Under the hood is uses [Amount.convert] to perform the
      * actual conversions. Optional a [time] can be provided, the default is [Instant.now].
      */

@@ -103,38 +103,3 @@ fun Collection<Trade>.toPNLPercentageMetrics(): TimeSeries {
     return toTimeSeries { Pair(it.time, it.pnlPercentage) }
 }
 
-/**
- * Return the collection as table
- */
-fun Collection<Trade>.lines(): List<List<Any>> {
-    val lines = mutableListOf<List<Any>>()
-    lines.add(listOf("symbol", "time", "ccy", "size", "cost", "fee", "rlzd p&l", "price"))
-    forEach {
-        with(it) {
-            val currency = asset.currency
-            val cost = totalCost.formatValue()
-            val fee = fee.formatValue()
-            val pnl = pnl.formatValue()
-            val price = Amount(currency, price).formatValue()
-            val t = time.truncatedTo(ChronoUnit.SECONDS)
-            lines.add(listOf(asset.symbol, t, currency.currencyCode, size, cost, fee, pnl, price))
-        }
-    }
-    return lines
-}
-
-/**
- * Create a summary of the trades
- */
-@JvmName("summaryTrades")
-fun Collection<Trade>.summary(name: String = "trades"): Summary {
-    val s = Summary(name)
-    if (isEmpty()) {
-        s.add("EMPTY")
-    } else {
-        val lines = this.lines()
-        return lines.summary(name)
-    }
-    return s
-}
-

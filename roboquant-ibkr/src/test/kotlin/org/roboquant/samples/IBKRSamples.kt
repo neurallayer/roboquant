@@ -41,7 +41,7 @@ internal class IBKRSamples {
         val broker = IBKRBroker()
         val account = broker.sync()
 
-        println(account.fullSummary())
+        println(account)
         Thread.sleep(5000)
         println(account.positions.assets)
         broker.disconnect()
@@ -51,14 +51,14 @@ internal class IBKRSamples {
     internal fun closePosition() {
         val broker = IBKRBroker()
         val account = broker.sync()
-        println(account.fullSummary())
+        println(account)
 
         // Place a new market sell order
         val position = account.positions.first()
         val order = MarketOrder(position.asset, -position.size)
         broker.place(listOf(order))
         Thread.sleep(10_000)
-        println(account.fullSummary())
+        println(account)
         broker.disconnect()
     }
 
@@ -73,7 +73,7 @@ internal class IBKRSamples {
         val account = broker.sync()
 
         // Print the full summary of the account
-        println(account.fullSummary())
+        println(account)
 
         // Disconnect
         broker.disconnect()
@@ -84,7 +84,7 @@ internal class IBKRSamples {
         val broker = IBKRBroker()
         Config.exchangeRates = broker.exchangeRates
         val account = broker.sync()
-        println(account.fullSummary())
+        println(account)
 
         val asset = Asset("TSLA", AssetType.STOCK, "USD", "SMART")
         val order = BracketOrder.limitTrailStop(
@@ -96,7 +96,7 @@ internal class IBKRSamples {
         broker.place(listOf(order))
         Thread.sleep(5_000)
         val account2 = broker.sync()
-        println(account2.fullSummary())
+        println(account2)
         broker.disconnect()
         println("done")
     }
@@ -116,7 +116,7 @@ internal class IBKRSamples {
         val broker = IBKRBroker()
         Config.exchangeRates = broker.exchangeRates
         val account = broker.sync()
-        println(account.fullSummary())
+        println(account)
 
         val feed = IBKRLiveFeed { client = 3 }
         feed.subscribe(tsla, msft, googl)

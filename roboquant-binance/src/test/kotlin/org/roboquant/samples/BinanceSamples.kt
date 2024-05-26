@@ -81,7 +81,7 @@ internal class BinanceSamples {
         feed.retrieve("BTCBUSD", "ETHBUSD", timeframe = threeYears, interval = Interval.DAILY)
 
         val account = roboquant.run(feed)
-        println(account.summary())
+        println(account)
     }
 
     @Test
@@ -97,7 +97,7 @@ internal class BinanceSamples {
         Thread.sleep(3000)
 
         val account = roboquant.run(feed)
-        println(account.summary())
+        println(account)
     }
 
 

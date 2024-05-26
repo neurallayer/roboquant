@@ -61,14 +61,6 @@ suspend fun Instant.delayUntil() {
  */
 fun Instant.toUTC(): ZonedDateTime = atZone(ZoneOffset.UTC)
 
-/**
- * Create a summary for a collection of strings
- */
-fun Collection<String>.summary(header: String = "values"): Summary {
-    val result = Summary(header)
-    forEach { result.add(it) }
-    return result
-}
 
 /**
  * Extension function to allow *numpy* like indexing for lists. To stay close to Kotlin, the end value is

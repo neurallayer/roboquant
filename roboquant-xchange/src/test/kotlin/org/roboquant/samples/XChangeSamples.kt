@@ -21,7 +21,6 @@ import org.knowm.xchange.bitstamp.BitstampExchange
 import org.roboquant.common.AssetType
 import org.roboquant.common.Timeframe
 import org.roboquant.common.minutes
-import org.roboquant.common.summary
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
 import org.roboquant.xchange.XChangePollingLiveFeed
@@ -36,7 +35,7 @@ internal class XChangeSamples {
     internal fun liveFeed() {
         val exchange = ExchangeFactory.INSTANCE.createExchange(BitstampExchange::class.java)
         val feed = XChangePollingLiveFeed(exchange)
-        println(feed.availableAssets.summary())
+        println(feed.availableAssets)
 
         feed.subscribeTrade("BTC_USD", pollingDelayMillis = 30_000)
         println("Subscribed")

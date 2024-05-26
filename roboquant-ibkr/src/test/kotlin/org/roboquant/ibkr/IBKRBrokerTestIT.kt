@@ -18,7 +18,6 @@ package org.roboquant.ibkr
 
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.roboquant.brokers.summary
 import org.roboquant.common.Config
 import org.roboquant.common.ConfigurationException
 import org.roboquant.common.Currency
@@ -47,8 +46,8 @@ internal class IBKRBrokerTestIT {
         Config.getProperty("test.ibkr") ?: return
         val past = Instant.now()
         val account = broker.sync()
-        println(account.summary())
-        println(account.positions.summary())
+        println(account)
+        println(account.positions)
         assertTrue(account.lastUpdate >= past)
         broker.disconnect()
     }

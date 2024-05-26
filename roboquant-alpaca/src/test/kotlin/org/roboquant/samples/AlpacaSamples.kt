@@ -52,7 +52,7 @@ internal class AlpacaSamples {
     internal fun alpacaBroker() {
         val broker = AlpacaBroker()
         val account = broker.sync()
-        println(account.fullSummary())
+        println(account)
     }
 
 
@@ -136,7 +136,7 @@ internal class AlpacaSamples {
             broker.place(listOf(order))
             Thread.sleep(5_000)
             val account = broker.sync()
-            println(account.fullSummary())
+            println(account)
         }
     }
 

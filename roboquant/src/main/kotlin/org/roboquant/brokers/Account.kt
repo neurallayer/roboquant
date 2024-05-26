@@ -18,10 +18,7 @@ package org.roboquant.brokers
 
 import org.roboquant.common.*
 import org.roboquant.orders.OrderState
-import org.roboquant.orders.OrderStatus
-import org.roboquant.orders.summary
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 /**
  * An account represents a brokerage trading account and is unified across all broker implementations.
@@ -109,71 +106,23 @@ class Account(
      */
     fun convert(wallet: Wallet, time: Instant = lastUpdate): Amount = wallet.convert(baseCurrency, time)
 
-    /**
-     * Returns a summary that contains the high-level account information, the available cash balances and
-     * the open positions.
-     */
-    fun summary(): Summary {
-
-        fun c(w: Wallet): Any {
-            return if (w.isEmpty()) Amount(baseCurrency, 0.0) else w
-        }
-
-        val s = Summary("account")
-        val p = Summary("position summary")
-        val t = Summary("trade summary")
-        val o = Summary("order summary")
-
-        s.add("last update", lastUpdate.truncatedTo(ChronoUnit.SECONDS))
-        s.add("base currency", baseCurrency.displayName)
-        s.add("cash", c(cash))
-        s.add("buying power", buyingPower)
-        s.add("equity", c(equity))
-
-        s.add(p)
-        p.add("open", positions.size)
-        p.add("long", positions.long.size)
-        p.add("short", positions.short.size)
-        p.add("total value", c(positions.marketValue))
-        p.add("long value", c(positions.long.marketValue))
-        p.add("short value", c(positions.short.marketValue))
-        p.add("unrealized p&l", c(positions.unrealizedPNL))
-
-        s.add(t)
-        t.add("total", trades.size)
-        t.add("realized p&l", c(trades.realizedPNL))
-        t.add("fee", trades.sumOf { it.fee })
-        t.add("first", trades.firstOrNull()?.time ?: "")
-        t.add("last", trades.lastOrNull()?.time ?: "")
-        t.add("winners", trades.count { it.pnl > 0 })
-        t.add("losers", trades.count { it.pnl < 0 })
-
-        s.add(o)
-        o.add("open", openOrders.size)
-        o.add("closed", closedOrders.size)
-        o.add("completed", closedOrders.filter { it.status == OrderStatus.COMPLETED }.size)
-        o.add("cancelled", closedOrders.filter { it.status == OrderStatus.CANCELLED }.size)
-        o.add("expired", closedOrders.filter { it.status == OrderStatus.EXPIRED }.size)
-        o.add("rejected", closedOrders.filter { it.status == OrderStatus.REJECTED }.size)
-        return s
-    }
 
     override fun toString(): String {
-        return summary().toString()
-    }
 
-    /**
-     * Provide a full summary of the account that contains all cash, orders, trades and open positions. During back
-     * testing this can become a long list of items, so look at [summary] for a shorter summary.
-     */
-    fun fullSummary(): Summary {
-        val s = summary()
-        s.add(cash.summary())
-        s.add(positions.summary())
-        s.add(openOrders.summary("open orders"))
-        s.add(closedOrders.summary("closed orders"))
-        s.add(trades.summary())
-        return s
+        val positionString  = positions.joinToString(limit = 20) { "${it.size}@${it.asset.symbol}" }
+
+        return """
+            last update  : $lastUpdate
+            base currency: $baseCurrency
+            cash         : $cash
+            buying Power : $buyingPower
+            equity       : $equity
+            positions    : ${positionString.ifEmpty { "-" }}
+            open orders  : ${openOrders.size}
+            closed orders: ${closedOrders.size}
+            trades       : ${trades.size}
+        """.trimIndent()
+
     }
 
 

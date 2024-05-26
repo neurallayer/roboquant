@@ -17,8 +17,6 @@
 package org.roboquant.orders
 
 import org.roboquant.common.Asset
-import org.roboquant.common.Summary
-import org.roboquant.common.summary
 import org.roboquant.orders.OrderStatus.INITIAL
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -85,50 +83,6 @@ class OrderState private constructor(
 
 }
 
-private fun Instant.toPrettyString(): String {
-    return if (this == Instant.MAX) "-" else this.truncatedTo(ChronoUnit.SECONDS).toString()
-}
-
-/**
- * Return the collection as table
- */
-fun Collection<OrderState>.lines(): List<List<Any>> {
-    val lines = mutableListOf<List<Any>>()
-    lines.add(listOf("symbol", "type", "status", "id", "opened at", "closed at", "details"))
-    forEach {
-        with(it) {
-            val infoString = order.info().map { entry -> "${entry.key}=${entry.value}" }.joinToString(" ")
-
-            lines.add(
-                listOf(
-                    asset.symbol,
-                    order.type,
-                    status,
-                    order.id,
-                    openedAt.toPrettyString(),
-                    closedAt.toPrettyString(),
-                    infoString
-                )
-            )
-        }
-    }
-    return lines
-}
-
-/**
- * Provide a summary for the collection of OrderState
- */
-@JvmName("summaryOrders")
-fun Collection<OrderState>.summary(name: String = "Orders"): Summary {
-    val s = Summary(name)
-    if (isEmpty()) {
-        s.add("EMPTY")
-    } else {
-        val lines = lines()
-        return lines.summary(name)
-    }
-    return s
-}
 
 /**
  * Returns true is the collection of orderStates contains at least one for [asset], false otherwise.

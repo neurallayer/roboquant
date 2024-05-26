@@ -85,6 +85,15 @@ internal class PositionTest {
     }
 
     @Test
+    fun collection() {
+        val positions = mutableListOf<Position>()
+        repeat(5) { positions.add(Position(Asset("ASSET$it"), Size(10), 10.0, 12.0))}
+        val s = positions.toString()
+        println(s)
+    }
+
+
+    @Test
     fun update2() {
         val contract = TestData.usStock()
         val p1 = Position(contract, Size(10), 10.0, 12.0)

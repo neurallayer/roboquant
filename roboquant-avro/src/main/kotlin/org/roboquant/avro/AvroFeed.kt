@@ -107,9 +107,11 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
         val timeframe = channel.timeframe
         var last = Instant.MIN
         var items = ArrayList<PriceItem>()
-        val serializer = PriceActionSerializer()
+        val serializer = PriceItemSerializer()
         val cache = mutableMapOf<String, Asset>()
         getReader().use {
+            val name = it.schema.fullName
+            assert(name == "org.roboquant.avro.schema.PriceItemV2") { "invalid avro schema $name"}
             if (timeframe.isFinite()) position(it, timeframe.start)
             while (it.hasNext()) {
                 val rec = it.next()
@@ -223,7 +225,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
         val enumSchema = Schema.createArray(Schema.create(Schema.Type.STRING))
         try {
             val record = GenericData.Record(schema)
-            val serializer = PriceActionSerializer()
+            val serializer = PriceItemSerializer()
 
             while (true) {
                 val event = channel.receive()

@@ -105,12 +105,6 @@ internal class WalletTest {
     }
 
     @Test
-    fun summary() {
-        val wallet = Wallet(10.USD, 20.EUR)
-        assertTrue(wallet.summary().content.isNotEmpty())
-    }
-
-    @Test
     fun toStr() {
         val wallet = Wallet(10.USD, 20.101.EUR)
         assertEquals("EUR 20.10 + USD 10.00", wallet.toString())

@@ -68,6 +68,10 @@ open class Asset(
         return Asset(symbol, this.type, this.currency, this.exchange, this.id)
     }
 
+    override fun toString(): String {
+        return symbol
+    }
+
     /**
      * Contains methods to create specific asset types, like options or futures using international standards to
      * generate the appropriate symbol name.
@@ -282,25 +286,3 @@ fun Collection<Asset>.findByExchanges(vararg exchangeCodes: String): List<Asset>
  * collection
  */
 fun Collection<Asset>.random(n: Int): List<Asset> = shuffled().take(n)
-
-/**
- * Provide a [Summary] for a collection of assets
- */
-fun Collection<Asset>.summary(name: String = "assets"): Summary {
-    return if (isEmpty()) {
-        val s = Summary(name)
-        s.add("EMPTY")
-        s
-    } else {
-        val lines = mutableListOf<List<Any>>()
-        lines.add(listOf("symbol", "type", "ccy", "exchange", "multiplier", "id"))
-        forEach {
-            with(it) {
-                lines.add(listOf(symbol, type, currency.currencyCode, exchange.exchangeCode, id))
-            }
-        }
-        lines.summary(name)
-    }
-
-}
-
