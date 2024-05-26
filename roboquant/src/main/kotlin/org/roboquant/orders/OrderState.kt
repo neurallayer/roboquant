@@ -19,7 +19,6 @@ package org.roboquant.orders
 import org.roboquant.common.Asset
 import org.roboquant.orders.OrderStatus.INITIAL
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 /**
  * The order-state keeps track of a placed order. This is a read-only class and any [update] will generate

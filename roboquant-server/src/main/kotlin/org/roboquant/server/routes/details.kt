@@ -83,11 +83,6 @@ private fun FlowContent.metricForm(target: String, run: String, info: RunInfo) {
 }
 
 
-private fun List<List<Any>>.takeLastPlusHeader(n: Int): List<List<Any>> {
-    return listOf(first()) + drop(1).takeLast(n)
-}
-
-
 private fun getAccountSummary(acc: Account): List<List<Any>> {
     return listOf(
         listOf("name", "value"),
