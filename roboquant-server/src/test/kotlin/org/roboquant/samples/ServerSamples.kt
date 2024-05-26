@@ -20,6 +20,7 @@ import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalkLiveFeed
 import org.roboquant.journals.MemoryJournal
+import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PriceMetric
 import org.roboquant.server.WebServer
 import org.roboquant.strategies.EMAStrategy
@@ -34,7 +35,7 @@ internal class ServerSamples {
         Roboquant(EMAStrategy())
 
     private fun getJournal() =
-        MemoryJournal(PriceMetric("CLOSE"))
+        MemoryJournal(PriceMetric("CLOSE"), AccountMetric())
 
     /**
      * You can run this sample to start a server with three runs
