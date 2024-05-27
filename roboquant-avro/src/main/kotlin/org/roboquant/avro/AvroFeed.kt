@@ -45,11 +45,11 @@ internal const val SCHEMA = """{
              "type": "record",
              "name": "PriceItemV2",
              "fields": [
-                 {"name": "timestamp_nanos", "type" : "long"},
+                 {"name": "timestamp", "type" : "string"},
                  {"name": "symbol", "type": "string"},
-                 {"name": "type", "type": { "type": "enum", "name": "item_type", "symbols" : ["BAR", "TRADE", "QUOTE", "BOOK"]}},
+                 {"name": "type", "type": { "type": "enum", "name": "type", "symbols" : ["BAR", "TRADE", "QUOTE", "BOOK"]}},
                  {"name": "values",  "type": {"type": "array", "items" : "double"}},
-                 {"name": "other", "type": ["null", "string"], "default": null}
+                 {"name": "meta", "type": ["null", "string"], "default": null}
              ] 
         }"""
 
@@ -90,13 +90,6 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
         return DataFileReader(path.toFile(), GenericDatumReader())
     }
 
-    private fun ofEpochNano(value: Long): Instant {
-        return if (value >= 0L)
-            Instant.ofEpochSecond(value / 1_000_000_000L, value % 1_000_000_000L)
-        else
-            Instant.ofEpochSecond(value / 1_000_000_000L, -value % 1_000_000_000L)
-    }
-
     /**
      * (Re)play the events of the feed using the provided [EventChannel]
      *
@@ -117,7 +110,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
                 val rec = it.next()
 
                 // Optimize unnecessary parsing of the whole record
-                val now = ofEpochNano(rec[0] as Long)
+                val now = Instant.parse(rec[0] as Utf8)
                 if (now < timeframe) continue
 
                 if (now != last) {
@@ -135,8 +128,8 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
 
                 @Suppress("UNCHECKED_CAST")
                 val values = rec.get(3) as List<Double>
-                val other = rec.get("other") as Utf8?
-                val item = serializer.deserialize(asset, priceItemType, values, other?.toString())
+                val meta = rec.get(4) as Utf8?
+                val item = serializer.deserialize(asset, priceItemType, values, meta?.toString())
                 items.add(item)
             }
             channel.sendNotEmpty(Event(last, items))
@@ -153,14 +146,15 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
         getReader().use {
             while (it.hasNext()) {
                 val position = it.tell()
-                val t = ofEpochNano(it.next().get(0) as Long)
+                val t = it.next().get(0) as Utf8
                 it.seek(position)
                 if (it.hasNext()) {
-                    index.putIfAbsent(t,position)
+                    index.putIfAbsent(Instant.parse(t),position)
                     it.nextBlock()
                 }
             }
         }
+        logger.info { "Index created" }
         return index
     }
 
@@ -169,18 +163,13 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
         val start = index.firstKey()
         getReader().use {
             position(it, index.lastKey())
-            var timestamp = index.lastKey().toEpochNano()
+            var timestamp = index.lastKey()
             while (it.hasNext()) {
-                timestamp = it.next().get(0) as Long
+                timestamp = Instant.parse(it.next().get(0) as Utf8)
             }
-            return Timeframe(start, ofEpochNano(timestamp), true)
+            logger.info { "Timeframe calculated" }
+            return Timeframe(start, timestamp, true)
         }
-    }
-
-    private fun Instant.toEpochNano(): Long {
-        var currentTimeNano = epochSecond * 1_000_000_000L
-        currentTimeNano += if (currentTimeNano > 0) nano  else -nano
-        return currentTimeNano
     }
 
     /**
@@ -211,6 +200,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
             require(exists()) {"File $file doesn't exist yet, cannot append"}
             dataFileWriter.appendTo(file)
         } else {
+            if (exists()) logger.info { "Overwriting existing Avro file $file" }
             if (compress) dataFileWriter.setCodec(CodecFactory.snappyCodec())
             dataFileWriter.setSyncInterval(syncInterval)
             dataFileWriter.create(schema, file)
@@ -229,12 +219,11 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
 
             while (true) {
                 val event = channel.receive()
-                val now = event.time.toEpochNano()
 
                 for (action in event.items.filterIsInstance<PriceItem>()) {
 
                     val asset = action.asset
-                    record.put(0, now)
+                    record.put(0, event.time.toString())
                     record.put(1, asset.symbol)
 
                     val serialization = serializer.serialize(action)
@@ -245,7 +234,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
                     arr.addAll(serialization.values)
                     record.put(3, arr)
 
-                    record.put(4, serialization.other)
+                    record.put(4, serialization.meta)
                     dataFileWriter.append(record)
                 }
 

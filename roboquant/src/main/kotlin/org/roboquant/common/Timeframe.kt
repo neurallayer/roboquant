@@ -326,7 +326,7 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
     fun sample(
         period: TimeSpan,
         samples: Int = 1,
-        resolution: TemporalUnit = ChronoUnit.DAYS,
+        resolution: TemporalUnit? = period.resolution(),
         random: Random = Config.random,
     ): List<Timeframe> {
         require(samples >= 1) { "samples need to be >= 1" }
@@ -336,7 +336,8 @@ data class Timeframe(val start: Instant, val end: Instant, val inclusive: Boolea
         val result = mutableSetOf<Timeframe>()
         while (result.size < samples) {
             val offset = random.nextLong(duration)
-            val newStart = start.plusMillis(offset).truncatedTo(resolution)
+            var newStart = start.plusMillis(offset)
+            if (resolution != null) newStart = newStart.truncatedTo(resolution)
             result.add(Timeframe(newStart, newStart + period))
         }
         return result.toList()

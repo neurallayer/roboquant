@@ -19,6 +19,8 @@
 package org.roboquant.common
 
 import java.time.*
+import java.time.temporal.ChronoUnit
+import java.time.temporal.TemporalUnit
 
 /**
  * Deprecated, use [TimeSpan] instead
@@ -127,6 +129,21 @@ class TimeSpan internal constructor(internal val period: Period, internal val du
      */
     override fun hashCode(): Int {
         return period.hashCode() + duration.hashCode()
+    }
+
+    /**
+     * Resolution based on contained values
+     * @return ChronoUnit
+     */
+    fun resolution() : ChronoUnit {
+        return when  {
+            duration.toNanosPart() != 0 -> ChronoUnit.NANOS
+            duration.toMillisPart() != 0 -> ChronoUnit.MILLIS
+            duration.toSecondsPart() != 0 -> ChronoUnit.SECONDS
+            duration.toMinutesPart() != 0 -> ChronoUnit.MINUTES
+            duration.toHoursPart() != 0 -> ChronoUnit.HOURS
+            else -> ChronoUnit.DAYS
+        }
     }
     
 }

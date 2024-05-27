@@ -26,7 +26,7 @@ import org.roboquant.feeds.*
  */
 internal class PriceItemSerializer {
 
-    internal class Serialization(val type: PriceItemType, val values: List<Double>, val other: String? = null)
+    internal class Serialization(val type: PriceItemType, val values: List<Double>, val meta: String? = null)
 
     private val timeSpans = mutableMapOf<String, TimeSpan>()
 
