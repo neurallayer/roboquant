@@ -20,7 +20,6 @@ package org.roboquant.common
 
 import java.time.*
 import java.time.temporal.ChronoUnit
-import java.time.temporal.TemporalUnit
 
 /**
  * Deprecated, use [TimeSpan] instead
