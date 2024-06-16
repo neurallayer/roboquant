@@ -18,6 +18,7 @@ package org.roboquant.brokers
 
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Order
+import java.time.Instant
 
 /**
  * Interface for any broker implementation, used for both simulated and real brokers.
@@ -31,9 +32,9 @@ interface Broker {
      * trades, cash and buying power.
      *
      * Optionally an [event] can be provided, although normally only the SimBroker requires this to simulate
-     * trade executions. If no event is provided, an empty event will be used instead.
+     * trade executions.
      *
-     * A sync will result in a new instance of the account object.
+     * A sync will return an instance of the account object.
      */
     fun sync(event: Event? = null) : Account
 

@@ -31,12 +31,10 @@ import net.jacobpeterson.alpaca.openapi.trader.model.TimeInForce as OrderTimeInF
  */
 internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val extendedHours: Boolean = false) {
 
-
     fun cancelOrder(cancellation: CancelOrder) {
         val orderId = UUID.fromString(cancellation.id)
         alpacaAPI.trader().orders().deleteOrderByOrderID(orderId)
     }
-
 
 
     private fun TimeInForce.toOrderTimeInForce(): OrderTimeInForce {
@@ -44,6 +42,8 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
         return when (this) {
             is GTC -> OrderTimeInForce.GTC
             is DAY -> OrderTimeInForce.DAY
+            is IOC -> OrderTimeInForce.IOC
+            is FOK -> OrderTimeInForce.FOK
             else -> throw UnsupportedException("unsupported tif=${this}")
         }
     }
@@ -102,8 +102,6 @@ internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val e
         }
 
     }
-
-
 
 
 }

@@ -213,6 +213,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
 
         val arraySchema = Schema.createArray(Schema.create(Schema.Type.DOUBLE))
         val enumSchema = Schema.createArray(Schema.create(Schema.Type.STRING))
+        var count = 0L
         try {
             val record = GenericData.Record(schema)
             val serializer = PriceItemSerializer()
@@ -236,6 +237,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
 
                     record.put(4, serialization.meta)
                     dataFileWriter.append(record)
+                    count++
                 }
 
             }
@@ -247,6 +249,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
             if (job.isActive) job.cancel()
             dataFileWriter.sync()
             dataFileWriter.close()
+            logger.info { "wrote $count records to file $file" }
         }
     }
 
