@@ -74,7 +74,7 @@ open class FlexPolicyConfig(
  */
 open class FlexPolicy(
     configure: FlexPolicyConfig.() -> Unit = {}
-) : BasePolicy() {
+) : Policy {
 
     protected val logger = Logging.getLogger(FlexPolicy::class)
 
