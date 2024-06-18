@@ -34,7 +34,7 @@
     </description>
 
     <properties>
-        <graalvm.version>23.1.2</graalvm.version>
+        <graalvm.version>24.0.1</graalvm.version>
     </properties>
 
     <build>
@@ -73,5 +73,12 @@
             <version>1.17</version>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+    </repositories>
 
 </project>

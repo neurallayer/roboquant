@@ -108,7 +108,7 @@ private class PriceBarHandler : PriceActionHandler<PriceBar> {
     }
 
     override fun getPriceAction(asset: Asset, record: Record): PriceBar {
-        val agg = record.getSym(7)?.toString()
+        val agg = record.getSymA(7)?.toString()
         val timeSpan = if (agg == null) null else timeSpans.getOrPut(agg) { TimeSpan.parse(agg) }
         return PriceBar(
             asset,

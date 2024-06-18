@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.ta4j</groupId>
             <artifactId>ta4j-core</artifactId>
-            <version>0.15</version>
+            <version>0.16</version>
         </dependency>
         <dependency>
             <groupId>com.tictactec</groupId>
@@ -55,5 +55,12 @@
             <version>0.4.0</version>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+    </repositories>
 
 </project>

@@ -78,7 +78,7 @@
         <kotlin.version>1.9.24</kotlin.version>
         <kotlin.compiler.languageVersion>1.9</kotlin.compiler.languageVersion>
         <kotlin.compiler.apiVersion>1.9</kotlin.compiler.apiVersion>
-        <slf4j.version>2.0.9</slf4j.version>
+        <slf4j.version>2.0.13</slf4j.version>
         <ibkr.version>10.19</ibkr.version>
         <surefire.failIfNoSpecifiedTests>false</surefire.failIfNoSpecifiedTests>
         <skipIntegrationTests>true</skipIntegrationTests>

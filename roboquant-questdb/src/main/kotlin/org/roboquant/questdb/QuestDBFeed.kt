@@ -64,7 +64,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
         val result = mutableListOf<Asset>()
         engine.query("SELECT DISTINCT asset FROM $tableName;") {
             while (hasNext()) {
-                val str = record.getSym(0).toString()
+                val str = record.getSymA(0).toString()
                 result.add(str.deserialize())
             }
         }
@@ -117,7 +117,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
                     actions = mutableListOf()
                 }
 
-                val str = record.getSym(0).toString()
+                val str = record.getSymA(0).toString()
                 val asset = lookup.getOrPut(str) { str.deserialize() }
                 val price = handler.getPriceAction(asset, record)
                 actions.add(price)

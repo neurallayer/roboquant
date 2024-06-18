@@ -60,7 +60,7 @@ internal fun CairoEngine.distictSymbol(tableName: String, column: String): Set<S
                 fact.getCursor(ctx).use { cursor ->
                     while (cursor.hasNext()) {
                         val r = cursor.record
-                        val s = r.getSym(0)
+                        val s = r.getSymA(0)
                         result.add(s.toString())
                     }
                 }
@@ -84,7 +84,7 @@ internal fun CairoEngine.tables(): Set<String> {
     val result = mutableSetOf<String>()
     query("select table_name from tables()") {
         while (hasNext()) {
-            val tableName = record.getStr(0).toString()
+            val tableName = record.getStrA(0).toString()
             result.add(tableName)
         }
     }
@@ -104,7 +104,7 @@ internal fun CairoEngine.tableColumns(tableName: String): Set<String> {
     val result = mutableSetOf<String>()
     query("select \"column\" from table_columns('$tableName')") {
         while (hasNext()) {
-            result.add(record.getStr(0).toString())
+            result.add(record.getStrA(0).toString())
         }
     }
     return result
