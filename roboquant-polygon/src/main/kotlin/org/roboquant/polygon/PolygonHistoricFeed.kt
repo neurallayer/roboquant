@@ -76,7 +76,8 @@ class PolygonHistoricFeed(
                     timeframe.start.toEpochMilli().toString(),
                     timeframe.end.toEpochMilli().toString(),
                     !adjusted,
-                    limit.toLong()
+                    limit.toLong(),
+                    "asc"
                 )
             )
 

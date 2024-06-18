@@ -33,7 +33,7 @@
     </description>
 
     <properties>
-        <xchange.version>5.1.1</xchange.version>
+        <xchange.version>5.2.0</xchange.version>
     </properties>
 
     <build>

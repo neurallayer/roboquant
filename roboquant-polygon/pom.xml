@@ -54,7 +54,7 @@
         <dependency>
             <groupId>com.github.polygon-io</groupId>
             <artifactId>client-jvm</artifactId>
-            <version>5.1.0</version>
+            <version>5.1.2</version>
         </dependency>
     </dependencies>
 

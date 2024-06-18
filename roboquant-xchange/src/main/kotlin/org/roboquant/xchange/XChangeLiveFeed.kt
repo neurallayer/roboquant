@@ -18,7 +18,7 @@ package org.roboquant.xchange
 
 import info.bitrich.xchangestream.core.StreamingExchange
 import info.bitrich.xchangestream.core.StreamingMarketDataService
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxjava3.disposables.Disposable
 import org.knowm.xchange.currency.CurrencyPair
 import org.knowm.xchange.dto.marketdata.Ticker
 import org.knowm.xchange.dto.marketdata.Trade
