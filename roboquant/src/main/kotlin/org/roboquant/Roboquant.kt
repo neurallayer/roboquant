@@ -50,12 +50,10 @@ data class Roboquant(
     val broker: Broker = SimBroker()
 ) {
 
-
-    private val kotlinLogger = Logging.getLogger(Roboquant::class)
-
+    private val logger = Logging.getLogger(Roboquant::class)
 
     init {
-        kotlinLogger.debug { "Created new roboquant instance=$this" }
+        logger.debug { "Created new roboquant instance=$this" }
     }
 
     /**
@@ -138,7 +136,6 @@ data class Roboquant(
     }
 
 }
-
 
 /**
  * Blocking version of runAsync

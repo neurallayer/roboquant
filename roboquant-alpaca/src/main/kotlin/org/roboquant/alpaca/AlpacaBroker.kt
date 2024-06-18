@@ -127,6 +127,7 @@ class AlpacaBroker(
     private fun syncOrders() {
         _account.orders.forEach {
             if (it.open) {
+                // println("orderid=${it.order.id}")
                 val orderId = UUID.fromString(it.order.id)
                 val alpacaOrder = alpacaAPI.trader().orders().getOrderByOrderID(orderId, false)
                 logger.debug { "open order id=$orderId alpaca-order=$alpacaOrder" }
@@ -209,7 +210,7 @@ class AlpacaBroker(
             OrderType.TRAILING_STOP -> TrailOrder(asset, Size(qty), order.trailPercent!!.toDouble())
             else -> throw UnsupportedException("unsupported order type for order $order")
         }
-
+        rqOrder.id = order.id ?: throw UnsupportedException("Unsupported order $order because no known id")
         return rqOrder
     }
 
