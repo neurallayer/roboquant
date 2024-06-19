@@ -63,7 +63,6 @@ class QuestDBJournal(
         logger.info { "db=$dbPath table=$table" }
     }
 
-
     companion object {
 
         private var engines = mutableMapOf<Path, CairoEngine>()
@@ -163,7 +162,6 @@ class QuestDBJournal(
         // engine.close()
         ctx.close()
     }
-
 
 
     override fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>) {

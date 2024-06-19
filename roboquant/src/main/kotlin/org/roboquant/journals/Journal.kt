@@ -11,7 +11,7 @@ import org.roboquant.strategies.Signal
 interface Journal {
 
     /**
-     * track progress
+     * track the progress of a particular run
      */
     fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>)
 

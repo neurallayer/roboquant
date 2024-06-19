@@ -56,7 +56,7 @@ internal class AvroSamples {
     @Test
     @Ignore
     internal fun quotes_hft() = runBlocking {
-        val tf = Timeframe.parse("2021-01-01T21:00:00Z", "2021-01-01T22:00:00Z", true)
+        val tf = Timeframe.parse("2021-01-01T16:30:00Z", "2021-01-01T23:00:00Z", true)
         val f = RandomWalkFeed(tf, 10.millis, nAssets = 1, priceType = PriceItemType.QUOTE)
         val feed = AvroFeed("/tmp/test.avro")
         feed.record(f, compress = false)
@@ -64,9 +64,8 @@ internal class AvroSamples {
         assertEquals(tf, feed.timeframe)
 
         feed.timeframe.sample(1.minutes, 5).forEach {
-            println(it)
             val account = run(feed, EMAStrategy(), timeframe = it)
-            println(account)
+            println("$it => ${account.equityAmount}")
         }
 
         val channel = EventChannel()

@@ -3,9 +3,9 @@ package org.roboquant.journals
 import org.roboquant.common.TimeSeries
 
 /**
+ * Utility class to make it easier to use a MetricsJournal in a multi-run setup.
  *
- * @property fn Function1<String, MemoryJournal>
- * @property journals MutableMap<String, MemoryJournal>
+ * @property fn function to return a MetricsJournal based on the run name
  * @constructor
  */
 class MultiRunJournal(private val fn: (String) -> MetricsJournal) {

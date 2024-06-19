@@ -36,8 +36,8 @@ import java.time.Instant
  * It has built in support to limit the events that are being sent to a certain [timeframe]. It is guaranteed that
  * no events outside that timeframe can be delivered to the channel.
  *
- * @property capacity The capacity of the channel in the number of events it can store before blocking the sender
  * @property timeframe Limit the events to this timeframe, default is INFINITE, so no limit
+ * @property capacity The capacity of the channel in the number of events it can store before blocking the sender
  * @property onBufferOverflow define behaviour when buffer is full, default is [BufferOverflow.SUSPEND]
  * @constructor create a new EventChannel
  */
