@@ -37,7 +37,8 @@ import org.roboquant.common.Asset
 sealed class Order(val asset: Asset, val tag: String) {
 
     /**
-     * The order id is set by broker once placed, before that it is an empty string
+     * The order id is set by broker once placed, before that it is an empty string.
+     * The exception are modify and cancel orders that have the id of the underlying order.
      */
     var id = ""
 
