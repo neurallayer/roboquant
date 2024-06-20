@@ -35,17 +35,6 @@ class UpdateOrder(
     tag: String = ""
 ) : ModifyOrder(order, tag) {
 
-    /**
-     * Create instance of UpdateOrder based on the [OrderState] of an open order. This will throw an exception if
-     * the order is not open any more or if the passed state doesn't contain a create-order.
-     */
-    constructor(state: OrderState, update: CreateOrder, tag: String = "") : this(
-        state.order as CreateOrder,
-        update,
-        tag
-    ) {
-        require(state.open) { "only open orders can be updated" }
-    }
 
     init {
         require(order::class == update::class) { "cannot update order type old=${order::class} new=${update::class}" }

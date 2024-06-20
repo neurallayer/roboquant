@@ -111,7 +111,7 @@ class AlpacaBroker(
     }
 
 
-    private fun updateIAccountOrder(rqOrder: Order, order: AlpacaOrder) {
+    private fun updateIAccountOrder(rqOrder: CreateOrder, order: AlpacaOrder) {
         val status = toState(order)
         val time = if (status.open) {
             order.submittedAt ?: order.createdAt ?: ZonedDateTime.now().toOffsetDateTime()
@@ -125,13 +125,13 @@ class AlpacaBroker(
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
     private fun syncOrders() {
-        _account.orders.forEach {
+        _account.openOrders.values.forEach {
             if (it.open) {
                 // println("orderid=${it.order.id}")
-                val orderId = UUID.fromString(it.order.id)
+                val orderId = UUID.fromString(it.id)
                 val alpacaOrder = alpacaAPI.trader().orders().getOrderByOrderID(orderId, false)
                 logger.debug { "open order id=$orderId alpaca-order=$alpacaOrder" }
-                updateIAccountOrder(it.order, alpacaOrder)
+                updateIAccountOrder(it, alpacaOrder)
             }
         }
     }
@@ -145,8 +145,7 @@ class AlpacaBroker(
         for (order in openOrders) {
             logger.debug { "received open $order" }
             val rqOrder = toOrder(order)
-            _account.initializeOrders(listOf(rqOrder))
-            updateIAccountOrder(rqOrder, order)
+            _account.openOrders[rqOrder.id] = rqOrder
         }
     }
 
@@ -171,7 +170,7 @@ class AlpacaBroker(
     /**
      * Supports both regular Market Orders and Bracket Market Order
      */
-    private fun toMarketOrder(order: AlpacaOrder): Order {
+    private fun toMarketOrder(order: AlpacaOrder): CreateOrder {
         val asset = getAsset(order.symbol, order.assetClass)
         val qty = if (order.side == OrderSide.BUY) order.qty!!.toBigDecimal() else -order.qty!!.toBigDecimal()
         val size = Size(qty)
@@ -193,7 +192,7 @@ class AlpacaBroker(
      * Convert an alpaca order to a roboquant order.
      * This is only used during loading of existing orders at startup.
      */
-    private fun toOrder(order: AlpacaOrder): Order {
+    private fun toOrder(order: AlpacaOrder): CreateOrder {
         val asset = getAsset(order.symbol, order.assetClass)
         val qty = if (order.side == OrderSide.BUY) order.qty!!.toBigDecimal() else -order.qty!!.toBigDecimal()
         val rqOrder = when (order.type) {

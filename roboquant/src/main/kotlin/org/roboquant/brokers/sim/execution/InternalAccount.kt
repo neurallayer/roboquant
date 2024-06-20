@@ -22,8 +22,8 @@ import org.roboquant.brokers.Trade
 import org.roboquant.brokers.marketValue
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
+import org.roboquant.orders.CreateOrder
 import org.roboquant.orders.Order
-import org.roboquant.orders.OrderState
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
@@ -56,13 +56,13 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * Open orders
      */
-    private val openOrders = mutableMapOf<String, OrderState>()
+    val openOrders = mutableMapOf<String, CreateOrder>()
 
     /**
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
      * closed. ClosedOrders are only retained based on the [retention] setting.
      */
-    private val closedOrders = mutableListOf<OrderState>()
+    val closedOrders = mutableListOf<CreateOrder>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -101,7 +101,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
         buyingPower = account.buyingPower
         cash.deposit(account.cash)
         for (p in account.positions) portfolio[p.asset] = p
-        for (o in account.openOrders) openOrders[o.orderId] = o
+        for (o in account.openOrders) openOrders[o.id] = o
         closedOrders.addAll(account.closedOrders)
         trades.addAll(account.trades)
         lastUpdate = account.lastUpdate
@@ -123,7 +123,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * Get the open orders
      */
-    val orders: List<OrderState>
+    val orders: List<CreateOrder>
         get() = openOrders.values.toList()
 
     /**
@@ -131,32 +131,11 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      * the orders. Future updates using the [updateOrder] method will fail if there is no known order already present.
      */
     @Synchronized
-    fun initializeOrders(orders: Collection<Order>) {
-        val newOrders = orders.map { OrderState(it) }
-        newOrders.forEach { openOrders[it.orderId] = it }
+    fun initializeOrders(orders: Collection<CreateOrder>) {
+        orders.forEach { openOrders[it.id] = it }
     }
 
-    /**
-     * Update an [order] with a new [status] at a certain time. This only successful if order has been already added
-     * before and is not yet closed. When an order reaches the close state, it will be moved internally to a
-     * different store and is no longer directly accessible.
-     *
-     * In case of failure, this method return false
-     */
-    @Synchronized
-    fun updateOrder(order: Order, time: Instant, status: OrderStatus) : Boolean {
-        val id = order.id
-        val state = openOrders[id] ?: return false
-        val newState = state.update(status, time, order)
-        if (newState.open) {
-            openOrders[id] = newState
-        } else {
-            // The order is closed, so remove it from the open orders
-            openOrders.remove(id) ?: throw UnsupportedException("cannot close an order that was not open first")
-            closedOrders.add(newState)
-        }
-        return true
-    }
+
 
     /**
      * Add a new [trade] to this internal account
@@ -202,9 +181,9 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
                 trades.removeFirst()
             }
 
-            while (closedOrders.isNotEmpty() && closedOrders.first().closedAt < earliest) {
-                closedOrders.removeFirst()
-            }
+            // while (closedOrders.isNotEmpty() && closedOrders.first().closedAt < earliest) {
+            //    closedOrders.removeFirst()
+            // }
         }
     }
 
@@ -215,6 +194,13 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      */
     @Synchronized
     fun toAccount(): Account {
+        for (order in openOrders.values.toList()) {
+            if (order.status.closed) {
+                closedOrders.add(order)
+                openOrders.remove(order.id)
+            }
+        }
+
         enforceRetention()
 
         return Account(
@@ -237,31 +223,17 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
             return portfolio.values.marketValue
         }
 
-    /**
-     * Reject an [order] at the provided [time]
-     */
-    fun rejectOrder(order: Order, time: Instant) {
-        updateOrder(order, time, OrderStatus.REJECTED)
-    }
 
-    /**
-     * Accept an [order] at the provided [time]
-     */
-    fun acceptOrder(order: Order, time: Instant) {
-        updateOrder(order, time, OrderStatus.ACCEPTED)
-    }
-
-    /**
-     * Complete an [order] at the provided [time]
-     */
-    fun completeOrder(order: Order, time: Instant) {
-        updateOrder(order, time, OrderStatus.COMPLETED)
-    }
 
     /**
      * Get an open order with the provided [orderId], or null if not found
      */
-    fun getOrder(orderId: String): Order? = openOrders[orderId]?.order
+    fun getOrder(orderId: String): CreateOrder? = openOrders[orderId]
+
+    fun updateOrder(order: CreateOrder, now: Instant?, status: OrderStatus) {
+        order.status = status
+
+    }
 
 }
 

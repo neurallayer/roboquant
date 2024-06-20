@@ -19,24 +19,22 @@ package org.roboquant.brokers.sim.execution
 import org.roboquant.brokers.sim.Pricing
 import org.roboquant.orders.CreateOrder
 import org.roboquant.orders.ModifyOrder
-import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 
 /**
  * Interface for orders that can generate trades.
  */
-interface OrderExecutor<T : CreateOrder> {
+interface OrderExecutor {
 
     /**
-     * The order to be executed
+     * Access to the order that is executed
      */
-    val order: T
+    val order: CreateOrder
 
-    /**
-     * The current status of the order execution
-     */
-    val status: OrderStatus
+    var status
+        get() = order.status
+        set(value) { order.status = value}
 
     /**
      * Execute the order for the provided [pricing] and [time] and return zero or more [Execution]

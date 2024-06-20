@@ -41,11 +41,9 @@ internal class CustomOrderTest {
     fun state() {
         val asset = TestData.usStock()
         val order = MySpecialOrder(asset)
-        val state = OrderState(order)
-        assertEquals(OrderStatus.INITIAL, state.status)
+        assertEquals(OrderStatus.INITIAL, order.status)
+        assertEquals("", order.id)
 
-        val newState = state.update(OrderStatus.COMPLETED, Instant.now())
-        assertEquals(OrderStatus.COMPLETED, newState.status)
     }
 
 }

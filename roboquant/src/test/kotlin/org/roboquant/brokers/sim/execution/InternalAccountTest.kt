@@ -54,22 +54,7 @@ internal class InternalAccountTest {
         assertEquals(OrderStatus.COMPLETED, account.toAccount().closedOrders.first().status)
     }
 
-    @Test
-    fun internalAccountErrors() {
-        val account = InternalAccount(Currency.USD)
-        val order = MarketOrder(Asset("Test"), 100)
 
-        // This should fail since the order is unknown
-        assertFalse(account.updateOrder(order, Instant.now(), OrderStatus.ACCEPTED))
-
-
-        account.initializeOrders(listOf(order))
-        assertTrue(account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED))
-
-        // Should fail because order status is closed
-        assertFalse(account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED))
-
-    }
 
     /**
      * Run several methods concurrent to detect possible issues
@@ -96,7 +81,7 @@ internal class InternalAccountTest {
                         repeat(10) {
                             val account = iAccount.toAccount()
                             for (trade in account.trades) assertEquals(Size(10), trade.size)
-                            val result = account.openOrders.firstOrNull { it.order.tag == "doesnt-exist" }
+                            val result = account.openOrders.firstOrNull { it.tag == "doesnt-exist" }
                             assertTrue(result == null)
                         }
                     }

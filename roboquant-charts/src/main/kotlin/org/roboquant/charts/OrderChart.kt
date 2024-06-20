@@ -23,7 +23,7 @@ import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.tooltip.Tooltip
-import org.roboquant.orders.OrderState
+import org.roboquant.orders.CreateOrder
 import org.roboquant.orders.OrderStatus
 import org.roboquant.orders.SingleOrder
 import java.math.BigDecimal
@@ -37,7 +37,7 @@ import java.time.Instant
  * provide more insights, since these also cover more advanced order types. You can use the [TradeChart] for that.
  */
 class OrderChart(
-    private val orderStates: List<OrderState>,
+    private val orderStates: List<CreateOrder>,
 ) : Chart() {
 
     private fun getTooltip(order: SingleOrder, openedAt: Instant): String {
@@ -57,12 +57,11 @@ class OrderChart(
     private fun ordersToSeriesData(): List<Triple<Instant, BigDecimal, String>> {
         val states = orderStates.filter { it.status != OrderStatus.INITIAL }
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
-        for (state in states.sortedBy { it.openedAt }) {
-            val order = state.order
+        for (order in states.sortedBy { it.openedAt }) {
             if (order is SingleOrder) {
                 val value = order.size.toBigDecimal()
-                val tooltip = getTooltip(order, state.openedAt)
-                d.add(Triple(state.openedAt, value, tooltip))
+                val tooltip = getTooltip(order, order.openedAt)
+                d.add(Triple(order.openedAt, value, tooltip))
             }
         }
 

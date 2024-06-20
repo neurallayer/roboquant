@@ -22,13 +22,12 @@ import org.roboquant.orders.OCOOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
-internal class OCOOrderExecutor(override val order: OCOOrder) : OrderExecutor<OCOOrder> {
+internal class OCOOrderExecutor(override val order: OCOOrder) : OrderExecutor {
 
-    private val first = ExecutionEngine.getExecutor(order.first) as SingleOrderExecutor<*>
-    private val second = ExecutionEngine.getExecutor(order.second) as SingleOrderExecutor<*>
+    private val first = OrderExecutorFactory.getExecutor(order.first) as SingleOrderExecutor<*>
+    private val second = OrderExecutorFactory.getExecutor(order.second) as SingleOrderExecutor<*>
     private var active = 0
 
-    override var status: OrderStatus = OrderStatus.INITIAL
 
     /**
      * Cancel the order, return true if successful, false otherwise

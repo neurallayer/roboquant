@@ -121,7 +121,6 @@ class BinanceBroker(
      */
     override fun place(orders: List<Order>) {
 
-        _account.initializeOrders(orders)
 
         for (order in orders) {
 

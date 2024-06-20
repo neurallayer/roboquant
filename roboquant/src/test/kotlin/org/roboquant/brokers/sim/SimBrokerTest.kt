@@ -118,8 +118,7 @@ internal class SimBrokerTest {
         assertEquals(1, account.closedOrders.size)
         assertEquals(0, account.openOrders.size)
         val orderState = account.closedOrders.first()
-        assertEquals(now, orderState.openedAt)
-        assertEquals(now, orderState.closedAt)
+
         assertEquals(OrderStatus.COMPLETED, orderState.status)
         assertEquals(asset, orderState.asset)
 

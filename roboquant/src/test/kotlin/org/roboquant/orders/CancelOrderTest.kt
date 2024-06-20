@@ -35,7 +35,7 @@ internal class CancelOrderTest {
     fun state() {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100)
-        val oc = CancelOrder(OrderState(order), "some tag")
+        val oc = CancelOrder(order, "some tag")
         assertEquals(order, oc.order)
         assertEquals("some tag", oc.tag)
     }

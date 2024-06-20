@@ -21,11 +21,12 @@ import org.roboquant.brokers.Broker
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.Trade
 import org.roboquant.brokers.sim.execution.Execution
-import org.roboquant.brokers.sim.execution.ExecutionEngine
 import org.roboquant.brokers.sim.execution.InternalAccount
+import org.roboquant.brokers.sim.execution.OrderExecutor
+import org.roboquant.brokers.sim.execution.OrderExecutorFactory
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
+import org.roboquant.orders.*
 import java.time.Instant
 
 /**
@@ -45,7 +46,7 @@ open class SimBroker(
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val feeModel: FeeModel = NoFeeModel(),
     private val accountModel: AccountModel = CashAccount(),
-    pricingEngine: PricingEngine = SpreadPricingEngine(),
+    private val pricingEngine: PricingEngine = SpreadPricingEngine(),
     retention: TimeSpan = 1.years
 ) : Broker {
 
@@ -62,10 +63,9 @@ open class SimBroker(
     // Logger to use
     private val logger = Logging.getLogger(SimBroker::class)
 
-    // Execution engine used for simulating trades
-    private val executionEngine = ExecutionEngine(pricingEngine)
-
     private var nextOrderId = 0
+
+    private var orderExecutors = mutableMapOf<String, OrderExecutor>()
 
 
     init {
@@ -131,24 +131,21 @@ open class SimBroker(
         _account.cash.withdraw(newTrade.totalCost)
     }
 
-    /**
-     * Invoke the [executionEngine] to simulate the execution of open orders and update the internal account afterwards
-     * with any trades made.
-     */
+
     private fun simulateMarket(event: Event) {
         // Add new orders to the execution engine and run it with the latest events
-        val executions = executionEngine.execute(event)
+        val time = event.time
+        for (orderExecutor in orderExecutors.values) {
+            val item = event.prices[orderExecutor.order.asset]
+            if (item != null) {
+                val pricing = pricingEngine.getPricing(item, time)
+                val executions = orderExecutor.execute(pricing, time)
+                for (execution in executions) updateAccount(execution, event.time)
+            }
 
-        // Process any new executions to be reflected in the trades and cash balance
-        for (execution in executions) updateAccount(execution, event.time)
-
-        // Get the latest state of orders and update the status of internal account
-        executionEngine.orderStates.forEach {
-            _account.updateOrder(it.first, event.time, it.second)
         }
 
-        // Now it is safe to remove closed orders from the execution engine
-        executionEngine.removeClosedOrders()
+        orderExecutors = orderExecutors.filterNot { it.value.status.closed }.toMutableMap()
     }
 
     /**
@@ -170,18 +167,28 @@ open class SimBroker(
     override fun place(orders: List<Order>) {
         logger.trace { "Received orders=${orders.size}" }
         for (order in orders) {
-            if (order.id.isBlank()) order.id = nextOrderId++.toString()
+            when (order) {
+                is CreateOrder -> {
+                    order.id = nextOrderId++.toString()
+                    orderExecutors[order.id] = OrderExecutorFactory.getExecutor(order)
+                    _account.openOrders[order.id] = order
+                }
+                is ModifyOrder -> {
+                    // Modify orders are applied immediatly and not stored
+                    val success = orderExecutors[order.id]?.modify(order, Instant.now()) ?: false
+                    logger.info { "modify order success=$success" }
+                }
+            }
         }
-        _account.initializeOrders(orders)
-        executionEngine.addAll(orders)
+
     }
+
 
     /**
      * Reset all the state and set the cash balance back to the [initialDeposit].
      */
     override fun reset() {
         _account.clear()
-        executionEngine.clear()
         _account.cash.deposit(initialDeposit)
         accountModel.updateAccount(_account)
     }

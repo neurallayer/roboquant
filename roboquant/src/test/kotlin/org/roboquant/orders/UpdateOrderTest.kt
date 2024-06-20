@@ -34,8 +34,8 @@ internal class UpdateOrderTest {
     @Test
     fun state() {
         val originalOrder = TestData.euMarketOrder()
-        val state = OrderState(originalOrder)
-        val updateOrder = UpdateOrder(state, originalOrder)
+        originalOrder.id = "1"
+        val updateOrder = UpdateOrder(originalOrder, originalOrder)
         assertEquals(originalOrder, updateOrder.order)
         assertTrue(updateOrder.toString().isNotBlank())
     }

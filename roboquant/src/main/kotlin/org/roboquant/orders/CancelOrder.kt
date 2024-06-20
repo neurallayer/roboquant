@@ -27,13 +27,6 @@ class CancelOrder(
     tag: String = ""
 ) : ModifyOrder(order, tag) {
 
-    /**
-     * Create instance of CancelOrder based on the [OrderState] of an open order. This will throw an exception if
-     * the order is not open any more or if the passed state doesn't contain a create-order.
-     */
-    constructor(state: OrderState, tag: String = "") : this(state.order as CreateOrder, tag) {
-        require(state.open) { "only open orders can be cancelled" }
-    }
 
     override fun info() = mapOf("modified-id" to order.id)
 }

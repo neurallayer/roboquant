@@ -17,6 +17,7 @@
 package org.roboquant.orders
 
 import org.roboquant.common.Asset
+import java.time.Instant
 
 /**
  * An order is an instruction for a broker to buy or sell an asset or modify an existing order.
@@ -36,16 +37,15 @@ import org.roboquant.common.Asset
  **/
 sealed class Order(val asset: Asset, val tag: String) {
 
+
+
     /**
      * The order id is set by broker once placed, before that it is an empty string.
      * The exception are modify and cancel orders that have the id of the underlying order.
      */
     var id = ""
 
-    /**
-     * Status of the order, set to INITIAL when just created
-     */
-    var status = OrderStatus.INITIAL
+
 
     /**
      * What is the type of order, default is the class name without any order suffix
@@ -58,6 +58,8 @@ sealed class Order(val asset: Asset, val tag: String) {
      * expected to return a map with their additional properties like limit or trailing percentages.
      */
     open fun info(): Map<String, Any> = emptyMap()
+
+
 
     /**
      * Returns a unified string representation for the different order types
@@ -75,6 +77,25 @@ sealed class Order(val asset: Asset, val tag: String) {
  */
 abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag) {
 
+    /**
+     * Status of the order, set to INITIAL when just created
+     */
+    var status = OrderStatus.INITIAL
+
+    /**
+     * Returns true the order status is open, false otherwise
+     */
+    val open: Boolean
+        get() = status.open
+
+    /**
+     * Returns true the order status is closed, false otherwise
+     */
+    val closed: Boolean
+        get() = status.closed
+
+    var openedAt: Instant = Instant.now()
+
     fun cancel(order: CreateOrder): CancelOrder {
         return CancelOrder(order)
     }
@@ -89,7 +110,13 @@ abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag) {
  * @property order the (create-)order that will be modified
  * @param tag an optional tag
  */
-abstract class ModifyOrder(val order: CreateOrder, tag: String) : Order(order.asset, tag)
+abstract class ModifyOrder(val order: CreateOrder, tag: String) : Order(order.asset, tag) {
+    
+    init {
+        id = order.id
+    }
+
+}
 
 
 

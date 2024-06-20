@@ -19,7 +19,9 @@
 package org.roboquant.brokers.sim
 
 import org.roboquant.common.Size
+import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.PriceItem
+import org.roboquant.feeds.PriceQuote
 import java.time.Instant
 
 /**
@@ -50,10 +52,12 @@ fun interface PricingEngine {
 }
 
 
-data class OrderExecution(val size: Size, val price: Double) {
+data class OrderExecution(val triggered: Boolean, val size: Size, val price: Double) {
 
     companion object {
-        fun zero(price:Double=0.0) = OrderExecution(Size.ZERO, price)
+        fun zero() = OrderExecution(true, Size.ZERO, 0.0)
+
+        fun notTriggered() = OrderExecution(false, Size.ZERO, 0.0)
     }
 
 }
@@ -61,29 +65,13 @@ data class OrderExecution(val size: Size, val price: Double) {
 
 interface PriceEngine {
 
-    /**
-     * Would the order be triggered
-     * @param trigger Double
-     * @param priceItem PriceItem
-     * @return Boolean
-     */
-    fun isTriggered(size: Size, trigger: Double, priceItem: PriceItem): Boolean
-
-    /**
-     * Simulate an order execution
-     * @param size Size
-     * @param priceItem PriceItem
-     * @param time Instant
-     * @param limit optional a limit to take ito account
-     * @return OrderExecution
-     */
-    fun execute(size: Size, priceItem: PriceItem, time: Instant, limit: Double? = null): OrderExecution
+    fun execute(size: Size, priceItem: PriceItem, time: Instant, limit: Double? = null, trigger: Double? = null)
+            : OrderExecution
 
 }
 
 abstract class BasePriceEngine : PriceEngine {
-
-    fun isTriggered(size: Size, price: Double, trigger: Double?): Boolean {
+    fun triggered(size: Size, price: Double, trigger: Double?): Boolean {
         if (trigger == null) return true
         if (size.isPositive && price >= trigger) return true
         if (size.isNegative && price <= trigger) return true
@@ -98,38 +86,79 @@ abstract class BasePriceEngine : PriceEngine {
     }
 }
 
-class SimplePriceEngine(private val bidPrice: String = "DEFAULT", private val askPrice: String = "DEFAULT") : PriceEngine {
-
-    companion object {
-
-        fun useQuotes(): SimplePriceEngine {
-            return SimplePriceEngine("ASK", "BID")
-        }
-    }
-
-    override fun isTriggered(size: Size, trigger: Double, priceItem: PriceItem): Boolean {
-        if (size.isPositive) return priceItem.getPrice(bidPrice) <= trigger
-        return priceItem.getPrice(askPrice) >= trigger
-    }
-
+class SimplePriceEngine(val priceType: String = "DEFAULT") : BasePriceEngine() {
     override fun execute(
         size: Size,
         priceItem: PriceItem,
         time: Instant,
         limit: Double?,
+        trigger: Double?
     ): OrderExecution {
-        if (size.isPositive) {
-            val price = priceItem.getPrice(askPrice)
-            if (limit == null || limit >=price) return OrderExecution(size, price)
-        } else {
-            val price = priceItem.getPrice(bidPrice)
-            if (limit == null || limit <= price) return OrderExecution(size, price)
-        }
+        val price = priceItem.getPrice(priceType)
+        val triggered = triggered(size, price, trigger)
+        return if (triggered) OrderExecution(true, getFill(size, price, limit), price) else OrderExecution.notTriggered()
+    }
 
-        return OrderExecution.zero()
+}
+
+
+class QuotePriceEngine : BasePriceEngine() {
+    override fun execute(
+        size: Size,
+        priceItem: PriceItem,
+        time: Instant,
+        limit: Double?,
+        trigger: Double?
+    ): OrderExecution {
+        if (priceItem !is PriceQuote) return OrderExecution.notTriggered()
+        val price = if (size.isPositive) priceItem.askPrice else priceItem.bidPrice
+        val triggered = triggered(size, price, trigger)
+        return if (triggered) OrderExecution(true, getFill(size, price, limit), price) else OrderExecution.notTriggered()
     }
 
 }
 
 
 
+@Suppress("unused")
+class BarPriceEngine : BasePriceEngine() {
+
+    private fun handleOpen(bar: PriceBar, size: Size, trigger: Double?, limit: Double?) : OrderExecution {
+        val openPrice = bar.open
+        val openTriggered = triggered(size, openPrice, trigger)
+        if (openTriggered) {
+            var fill = getFill(size, openPrice, limit)
+            if (fill.nonzero) return OrderExecution(true, fill, openPrice)
+            val bestPrice = if (size.isNegative) bar.high else bar.low
+            fill = getFill(size, bestPrice, limit)
+            return OrderExecution(true, fill, limit!!)
+        }
+        return OrderExecution.notTriggered()
+    }
+
+    private fun handleIntra(bar: PriceBar, size: Size, trigger: Double?, limit: Double?) : OrderExecution {
+        val price = if (size.isNegative) bar.high else bar.low
+        val triggered = triggered(size, price, trigger)
+        if (triggered) {
+            val fill = getFill(size, price, limit)
+            return OrderExecution(true, fill, limit!!)
+        }
+        return OrderExecution.notTriggered()
+    }
+
+
+    override fun execute(
+        size: Size,
+        priceItem: PriceItem,
+        time: Instant,
+        limit: Double?,
+        trigger: Double?
+    ): OrderExecution {
+        if (priceItem !is PriceBar) return OrderExecution.notTriggered()
+        val result = handleOpen(priceItem, size, trigger, limit)
+        if (result.triggered) return result
+
+        return handleIntra(priceItem, size, trigger, limit)
+    }
+
+}

@@ -23,30 +23,29 @@ import org.roboquant.orders.ModifyOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
-internal class BracketOrderExecutor(override val order: BracketOrder) : OrderExecutor<BracketOrder> {
+internal class BracketOrderExecutor(override val order: BracketOrder) : OrderExecutor {
 
-    override var status: OrderStatus = OrderStatus.INITIAL
-    private val entry = ExecutionEngine.getExecutor(order.entry) as SingleOrderExecutor<*>
-    private val profit = ExecutionEngine.getExecutor(order.takeProfit) as SingleOrderExecutor<*>
-    private val loss = ExecutionEngine.getExecutor(order.stopLoss) as SingleOrderExecutor<*>
+    private val entry = OrderExecutorFactory.getExecutor(order.entry) as SingleOrderExecutor<*>
+    private val profit = OrderExecutorFactory.getExecutor(order.takeProfit) as SingleOrderExecutor<*>
+    private val loss = OrderExecutorFactory.getExecutor(order.stopLoss) as SingleOrderExecutor<*>
 
     /**
      * Cancel the order, return true if successful, false otherwise
      */
     private fun cancel(cancelOrder: CancelOrder, time: Instant): Boolean {
-        return if (status.closed) {
+        return if (order.status.closed) {
             false
         } else {
             entry.modify(cancelOrder, time)
             profit.modify(cancelOrder, time)
             loss.modify(cancelOrder, time)
-            status = OrderStatus.CANCELLED
+            order.status = OrderStatus.CANCELLED
             true
         }
     }
 
     override fun execute(pricing: Pricing, time: Instant): List<Execution> {
-        status = OrderStatus.ACCEPTED
+        order.status = OrderStatus.ACCEPTED
         if (entry.status.open) return entry.execute(pricing, time)
 
         val executions = mutableListOf<Execution>()
@@ -55,7 +54,7 @@ internal class BracketOrderExecutor(override val order: BracketOrder) : OrderExe
         if (profit.fill.iszero) executions.addAll(loss.execute(pricing, time))
 
         val remaining = entry.order.size + loss.fill + profit.fill
-        if (remaining.iszero) status = OrderStatus.COMPLETED
+        if (remaining.iszero) order.status = OrderStatus.COMPLETED
         return executions
     }
 

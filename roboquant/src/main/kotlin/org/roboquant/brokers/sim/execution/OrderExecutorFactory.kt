@@ -15,18 +15,59 @@
  */
 package org.roboquant.brokers.sim.execution
 
-import org.roboquant.orders.CreateOrder
+import org.roboquant.orders.*
+import kotlin.reflect.KClass
 
-/**
- * Factory that creates an [OrderExecutor] for an order. The provided executor is responsible for simulating
- * the executing of the order.
- *
- * @param T type of order
- */
-fun interface OrderExecutorFactory<T : CreateOrder> {
+
+
+object OrderExecutorFactory {
+
+
 
     /**
-     * Get an executor for the provided [order]
+     * All the registered [OrderExecutorFactory]
      */
-    fun getExecutor(order: T): OrderExecutor<T>
+    val factories = mutableMapOf<KClass<*>, (CreateOrder) -> OrderExecutor>()
+
+    init {
+        // register all the default included order handlers
+
+        // Single Order types
+        register<MarketOrder> { MarketOrderExecutor(it as MarketOrder) }
+        register<LimitOrder> { LimitOrderExecutor(it as LimitOrder) }
+        register<StopLimitOrder> { StopLimitOrderExecutor(it as StopLimitOrder) }
+        register<StopOrder> { StopOrderExecutor(it as StopOrder) }
+        register<TrailLimitOrder> { TrailLimitOrderExecutor(it as TrailLimitOrder) }
+        register<TrailOrder> { TrailOrderExecutor(it as TrailOrder) }
+
+        // Advanced order types
+        register<BracketOrder> { BracketOrderExecutor(it as BracketOrder) }
+        register<OCOOrder> { OCOOrderExecutor(it as OCOOrder) }
+        register<OTOOrder> { OTOOrderExecutor(it as OTOOrder) }
+
+    }
+
+    /**
+     * Return the order executor for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
+     * is registered for the order::class.
+     */
+    fun getExecutor(order: CreateOrder): OrderExecutor {
+        val fn = factories.getValue(order::class)
+        return fn(order)
+    }
+
+    /**
+     * Unregister the order executor factory for order type [T]
+     */
+    inline fun <reified T : Order> unregister() {
+        factories.remove(T::class)
+    }
+
+    inline fun <reified T : CreateOrder> register(noinline factory: (CreateOrder) -> OrderExecutor) {
+        factories[T::class] = factory
+    }
+
+
+
+
 }

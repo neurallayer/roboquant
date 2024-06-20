@@ -111,10 +111,6 @@ class IBKRBroker(
         logger.info("cancelling order with id $id")
         client.cancelOrder(id.toInt(), cancellation.tag)
 
-        // There is no easy way to check for the status of a cancellation order.
-        // So for we set it always to status completed.
-        val now = Instant.now()
-        _account.completeOrder(cancellation, now)
     }
 
     /**
@@ -124,7 +120,9 @@ class IBKRBroker(
         val contract = order.asset.toContract()
         val ibOrder = createIBOrder(order)
         ibOrder.log(contract)
-        client.placeOrder(ibOrder.orderId(), contract, ibOrder)
+        val id = ibOrder.orderId()
+        client.placeOrder(id, contract, ibOrder)
+        _account.openOrders[id.toString()] = order
     }
 
     override fun sync(event: Event?): Account {
@@ -142,9 +140,6 @@ class IBKRBroker(
     override fun place(orders: List<Order>) {
         // Sanity-check that you don't use this broker during back testing.
 
-
-        // Make sure we store all orders
-        _account.initializeOrders(orders)
 
         for (order in orders) {
             if (order.id.isBlank()) order.id = nextOrderId++.toString()
@@ -226,7 +221,7 @@ class IBKRBroker(
          * Convert an IBOrder to a roboquant Order.
          * This is only used during initial connection when retrieving any open orders linked to the account.
          */
-        private fun toOrder(order: IBOrder, contract: Contract): Order {
+        private fun toOrder(order: IBOrder, contract: Contract): CreateOrder {
             val asset = contract.toAsset()
             val qty = if (order.action() == Action.BUY) order.totalQuantity() else order.totalQuantity().negate()
             val size = Size(qty.value())
@@ -277,7 +272,7 @@ class IBKRBroker(
                 logger.info { "existing order orderId=$orderId parentId=${order.parentId()} status=${orderState.status}" }
                 // if (order.parentId() > 0) return // right now no support for open bracket orders
                 val newOrder = toOrder(order, contract)
-                _account.initializeOrders(listOf(newOrder))
+                _account.openOrders[orderId.toString()] = newOrder
                 val newStatus = toStatus(orderState.status)
                 _account.updateOrder(newOrder, Instant.now(), newStatus)
             }

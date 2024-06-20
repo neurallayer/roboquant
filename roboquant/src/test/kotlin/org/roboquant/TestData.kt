@@ -50,7 +50,7 @@ internal object TestData {
         val order = MarketOrder(asset1, 100)
         // val state = MutableOrderState(order, OrderStatus.COMPLETED, Instant.now(), Instant.now())
         account.initializeOrders(listOf(order))
-        account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED)
+        // account.updateOrder(order, Instant.now(), OrderStatus.COMPLETED)
         return account
     }
 

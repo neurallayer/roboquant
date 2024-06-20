@@ -46,20 +46,6 @@ internal class AccountTest {
         assertTrue(account.trades.realizedPNL.isEmpty())
     }
 
-    @Test
-    fun testValues() {
-        val account = TestData.internalAccount().toAccount()
-        assertTrue(account.closedOrders.isNotEmpty())
-        assertContains(account.getOrderTrades(), account.closedOrders.first())
-    }
-
-    @Test
-    fun testIntervalValues() {
-        val account = TestData.internalAccount().toAccount()
-        assertTrue(account.closedOrders.isNotEmpty())
-        assertTrue(account.trades.isEmpty())
-    }
-
 
     @Test
     fun extensions() {

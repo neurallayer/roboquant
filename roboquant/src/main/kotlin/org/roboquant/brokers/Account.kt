@@ -17,7 +17,7 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.*
-import org.roboquant.orders.OrderState
+import org.roboquant.orders.CreateOrder
 import java.time.Instant
 
 /**
@@ -39,8 +39,8 @@ import java.time.Instant
  * @property lastUpdate time that the account was last updated
  * @property cash cash balances
  * @property trades List of all executed trades
- * @property openOrders List of [OrderState] of all open orders
- * @property closedOrders List of [OrderState] of all closed orders
+ * @property openOrders List of [Order] of all open orders
+ * @property closedOrders List of [Order] of all closed orders
  * @property positions List of all open [Position], with maximum one entry per asset
  * @property buyingPower amount of buying power available for trading
  * @constructor Create a new Account
@@ -50,8 +50,8 @@ class Account(
     val lastUpdate: Instant,
     val cash: Wallet,
     val trades: List<Trade>,
-    val openOrders: List<OrderState>,
-    val closedOrders: List<OrderState>,
+    val openOrders: List<CreateOrder>,
+    val closedOrders: List<CreateOrder>,
     val positions: List<Position>,
     val buyingPower: Amount
 ) {
@@ -89,12 +89,6 @@ class Account(
         get() = positions.map { it.asset }.toSet()
 
 
-    /**
-     * Get the associated trades for the provided [orders]. If no orders are provided all [closedOrders] linked to this
-     * account instance are used.
-     */
-    fun getOrderTrades(orders: Collection<OrderState> = this.closedOrders): Map<OrderState, List<Trade>> =
-        orders.associateWith { order -> trades.filter { it.orderId == order.orderId } }.toMap()
 
     /**
      * Convert an [amount] to the account [baseCurrency] using last update of the account as a timestamp

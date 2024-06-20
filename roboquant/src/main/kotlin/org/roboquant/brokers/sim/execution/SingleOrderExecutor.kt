@@ -30,7 +30,7 @@ import java.time.Instant
  *
  * @property order the single order to execute
  */
-internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var order: T) : OrderExecutor<T> {
+internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var order: T) : OrderExecutor {
 
     /**
      * Fill so far
@@ -47,10 +47,6 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
     // Used by time-in-force policies
     private lateinit var openedAt: Instant
 
-    /**
-     * Order status
-     */
-    override var status: OrderStatus = OrderStatus.INITIAL
 
     /**
      * Cancel the order, return true if successful, false otherwise. Any open SingleOrder can be cancelled, closed
