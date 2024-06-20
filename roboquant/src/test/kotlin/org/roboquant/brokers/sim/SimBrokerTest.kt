@@ -27,7 +27,7 @@ import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.OrderStatus
-import org.roboquant.orders.UpdateOrder
+import org.roboquant.orders.Modification
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -169,7 +169,7 @@ internal class SimBrokerTest {
         val state = account.openOrders.first()
 
         val order2 = LimitOrder(asset,Size.ONE, 101.0)
-        val updateOrder = UpdateOrder(state, order2)
+        val updateOrder = Modification(state.id, order2)
         val event2 = Event(now + 1.millis, listOf(price))
         broker.place(listOf(updateOrder))
         broker.sync(event2)

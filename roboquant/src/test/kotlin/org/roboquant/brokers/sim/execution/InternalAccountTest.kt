@@ -24,36 +24,12 @@ import org.roboquant.common.Currency
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.Size
 import org.roboquant.orders.LimitOrder
-import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderStatus
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 internal class InternalAccountTest {
-
-    @Test
-    fun internalAccountOrders() {
-        val account = InternalAccount(Currency.USD)
-        val order = MarketOrder(Asset("Test"), 100)
-        account.initializeOrders(listOf(order))
-
-        assertEquals(OrderStatus.INITIAL, account.orders.first().status)
-        assertEquals(1, account.orders.size)
-
-        val opened = Instant.now()
-        account.updateOrder(order, opened, OrderStatus.ACCEPTED)
-        assertEquals(OrderStatus.ACCEPTED, account.orders.first().status)
-        assertEquals(1, account.orders.size)
-
-        val closed = Instant.now()
-        account.updateOrder(order, closed, OrderStatus.COMPLETED)
-        assertEquals(0, account.orders.size)
-        assertEquals(OrderStatus.COMPLETED, account.toAccount().closedOrders.first().status)
-    }
-
 
 
     /**

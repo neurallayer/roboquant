@@ -24,7 +24,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.orders.BracketOrder
 import org.roboquant.orders.LimitOrder
-import org.roboquant.orders.Order
+import org.roboquant.orders.Instruction
 import org.roboquant.orders.StopOrder
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.Signal
@@ -43,12 +43,12 @@ internal class AtrPolicyTest {
         return account.toAccount()
     }
 
-    private fun run(policy: FlexPolicy): List<Order> {
+    private fun run(policy: FlexPolicy): List<Instruction> {
         val asset = Asset("TEST")
         val signals = listOf(Signal.buy(asset))
         val now = Instant.now()
         val account = usAccount()
-        val orders = mutableListOf<Order>()
+        val instructions = mutableListOf<Instruction>()
 
         // Create an ATR of $1
         repeat(12) {
@@ -56,9 +56,9 @@ internal class AtrPolicyTest {
             val priceBar = PriceBar(asset, p + it, p + it, p + it, p + it)
             val event = Event(now + it.millis, listOf(priceBar))
             val o = policy.act(signals, account, event)
-            orders.addAll(o)
+            instructions.addAll(o)
         }
-        return orders
+        return instructions
     }
 
     @Test

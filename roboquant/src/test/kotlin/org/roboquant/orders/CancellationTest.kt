@@ -14,23 +14,30 @@
  * limitations under the License.
  */
 
-package org.roboquant.policies
+package org.roboquant.orders
 
-import org.roboquant.brokers.Account
-import org.roboquant.brokers.getPosition
-import org.roboquant.common.Asset
-import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.Order
+import org.junit.jupiter.api.assertDoesNotThrow
+import org.roboquant.TestData
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-/**
- * Contains a number of utility methods that are useful when implementing a new policy.
- *
- * For example, how to deal with conflicting signals or how to handle amounts in a multi-currency environment. It
- * also contains a simple method to record metrics.
- *
- */
-abstract class BasePolicy : Policy {
+internal class CancellationTest {
+
+    @Test
+    fun test() {
+        val asset = TestData.usStock()
+        val order = MarketOrder(asset, 100)
+        val oc = Cancellation(order.id)
+        assertEquals(order.id, oc.id)
+    }
 
 
-
+    @Test
+    fun testFailure() {
+        val asset = TestData.usStock()
+        val order = MarketOrder(asset, 100)
+        assertDoesNotThrow {
+            Cancellation(order.id)
+        }
+    }
 }

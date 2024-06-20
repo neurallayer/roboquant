@@ -22,7 +22,6 @@ import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import java.time.Instant
 import kotlin.test.Test
-import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

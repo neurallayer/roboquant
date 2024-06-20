@@ -23,7 +23,7 @@ package org.roboquant.orders
  *  - [INITIAL] -> [ACCEPTED] -> [COMPLETED] | [CANCELLED] | [EXPIRED]
  *  - [INITIAL] -> [REJECTED]
  *
- *  At any given time an [OrderState] is either [open] or [closed] state. Once an order reaches a [closed] state,
+ *  At any given time an [Order] is either [open] or [closed] state. Once an order reaches a [closed] state,
  *  it cannot be opened again and will not be further processed.
  */
 enum class OrderStatus {
@@ -46,7 +46,7 @@ enum class OrderStatus {
     COMPLETED,
 
     /**
-     * The order was cancelled, normally by a [CancelOrder]. This is an end-state.
+     * The order was cancelled, normally by a [Cancellation]. This is an end-state.
      */
     CANCELLED,
 

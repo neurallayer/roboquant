@@ -21,7 +21,7 @@ import org.roboquant.common.Logging
 import org.roboquant.common.TimeSpan
 import org.roboquant.common.minus
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
+import org.roboquant.orders.Instruction
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import java.util.*
@@ -51,7 +51,7 @@ internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, pr
         return false
     }
 
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         val orders = policy.act(signals, account, event)
         if (orders.isEmpty()) return emptyList()
 

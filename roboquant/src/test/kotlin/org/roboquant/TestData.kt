@@ -27,7 +27,6 @@ import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.play
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.OrderStatus
 import java.io.File
 import java.time.Instant
 import kotlin.test.assertTrue

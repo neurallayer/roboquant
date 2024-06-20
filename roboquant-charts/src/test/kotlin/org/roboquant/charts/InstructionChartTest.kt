@@ -14,30 +14,18 @@
  * limitations under the License.
  */
 
-package org.roboquant.orders
+package org.roboquant.charts
 
-import org.roboquant.TestData
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class UpdateOrderTest {
+internal class InstructionChartTest {
 
     @Test
-    fun basic() {
-        val originalOrder = TestData.euMarketOrder()
-        val updateOrder = UpdateOrder(originalOrder, originalOrder)
-        assertEquals(originalOrder, updateOrder.order)
-        assertTrue(updateOrder.toString().isNotBlank())
-    }
-
-    @Test
-    fun state() {
-        val originalOrder = TestData.euMarketOrder()
-        originalOrder.id = "1"
-        val updateOrder = UpdateOrder(originalOrder, originalOrder)
-        assertEquals(originalOrder, updateOrder.order)
-        assertTrue(updateOrder.toString().isNotBlank())
+    fun test() {
+        val account = TestData.fullAccount
+        val chart = OrderChart(account.closedOrders)
+        assertTrue(chart.renderJson().isNotBlank())
     }
 
 }

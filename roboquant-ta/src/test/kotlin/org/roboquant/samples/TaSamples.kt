@@ -26,7 +26,7 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.random.RandomWalkFeed
 import org.roboquant.orders.LimitOrder
-import org.roboquant.orders.Order
+import org.roboquant.orders.Instruction
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.EMAStrategy
 import org.roboquant.strategies.Signal
@@ -100,7 +100,7 @@ internal class TaSamples {
             private val atr = TaLibMetric { mapOf("atr" to atr(it, atrPeriod)) }
             private var atrMetrics = emptyMap<String, Double>()
 
-            override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+            override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
                 // Update the metrics and store the results, so we have them available when the
                 // createOrder is invoked.
                 atrMetrics = atr.calculate(account, event)
@@ -113,7 +113,7 @@ internal class TaSamples {
              * Override the default behavior of creating a simple MarkerOrder. Create limit BUY and SELL orders with the
              * actual limit based on the ATR of the underlying asset.
              */
-            override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order? {
+            override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction? {
                 val metricName = "atr.${signal.asset.symbol.lowercase()}"
                 val value = atrMetrics[metricName]
                 val price = priceItem.getPrice(config.priceType)

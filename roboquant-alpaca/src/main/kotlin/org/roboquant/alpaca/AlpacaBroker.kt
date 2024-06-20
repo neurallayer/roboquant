@@ -111,7 +111,7 @@ class AlpacaBroker(
     }
 
 
-    private fun updateIAccountOrder(rqOrder: CreateOrder, order: AlpacaOrder) {
+    private fun updateIAccountOrder(rqOrder: Order, order: AlpacaOrder) {
         val status = toState(order)
         val time = if (status.open) {
             order.submittedAt ?: order.createdAt ?: ZonedDateTime.now().toOffsetDateTime()
@@ -168,9 +168,9 @@ class AlpacaBroker(
     }
 
     /**
-     * Supports both regular Market Orders and Bracket Market Order
+     * Supports both regular Market Orders and Bracket Market Instruction
      */
-    private fun toMarketOrder(order: AlpacaOrder): CreateOrder {
+    private fun toMarketOrder(order: AlpacaOrder): Order {
         val asset = getAsset(order.symbol, order.assetClass)
         val qty = if (order.side == OrderSide.BUY) order.qty!!.toBigDecimal() else -order.qty!!.toBigDecimal()
         val size = Size(qty)
@@ -192,7 +192,7 @@ class AlpacaBroker(
      * Convert an alpaca order to a roboquant order.
      * This is only used during loading of existing orders at startup.
      */
-    private fun toOrder(order: AlpacaOrder): CreateOrder {
+    private fun toOrder(order: AlpacaOrder): Order {
         val asset = getAsset(order.symbol, order.assetClass)
         val qty = if (order.side == OrderSide.BUY) order.qty!!.toBigDecimal() else -order.qty!!.toBigDecimal()
         val rqOrder = when (order.type) {
@@ -239,7 +239,7 @@ class AlpacaBroker(
                 logger.warn { "Couldn't find order for trade=$activity" }
                 continue
             }
-            if (order is CreateOrder && activity.id !in handledTrades) {
+            if (order is Order && activity.id !in handledTrades) {
                 val trade = Trade(
                     activity.transactionTime.toInstant(),
                     order.asset,
@@ -272,19 +272,22 @@ class AlpacaBroker(
     }
 
     /**
-     * Place new [orders] at this broker. After any processing, this method returns an instance of Account.
+     * Place new [instructions] at this broker. After any processing, this method returns an instance of Account.
      *
      * @return the updated account that reflects the latest state
      */
-    override fun place(orders: List<Order>) {
+    override fun place(instructions: List<Instruction>) {
 
-        for (order in orders) {
+        for (order in instructions) {
             when (order) {
                 is SingleOrder -> {
                     orderPlacer.placeSingleOrder(order)
                     _account.initializeOrders(listOf(order))
                 }
-                is CancelOrder -> orderPlacer.cancelOrder(order)
+                is Cancellation -> {
+                    val orderId = UUID.fromString(order.id)
+                    alpacaAPI.trader().orders().deleteOrderByOrderID(orderId)
+                }
                 else -> {
                     logger.warn { "ignoring unsupported order type order=$order" }
                 }

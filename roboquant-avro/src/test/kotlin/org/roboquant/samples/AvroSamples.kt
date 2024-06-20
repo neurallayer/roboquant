@@ -32,9 +32,9 @@ import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.orders.Order
-import org.roboquant.policies.BasePolicy
+import org.roboquant.orders.Instruction
 import org.roboquant.policies.FlexPolicy
+import org.roboquant.policies.Policy
 import org.roboquant.policies.SignalResolution
 import org.roboquant.policies.resolve
 import org.roboquant.run
@@ -144,9 +144,9 @@ internal class AvroSamples {
     @Test
     @Ignore
     internal fun signalsOnly() {
-        class MyPolicy : BasePolicy() {
+        class MyPolicy : Policy {
 
-            override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+            override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
                 return emptyList()
             }
 

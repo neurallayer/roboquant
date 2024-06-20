@@ -2,7 +2,7 @@ package org.roboquant.journals
 
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
+import org.roboquant.orders.Instruction
 import org.roboquant.strategies.Signal
 
 /**
@@ -13,7 +13,7 @@ interface Journal {
     /**
      * track the progress of a particular run
      */
-    fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Order>)
+    fun track(event: Event, account: Account, signals: List<Signal>, instructions: List<Instruction>)
 
     /**
      * reset the state

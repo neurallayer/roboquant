@@ -27,12 +27,12 @@ object OrderExecutorFactory {
     /**
      * All the registered [OrderExecutorFactory]
      */
-    val factories = mutableMapOf<KClass<*>, (CreateOrder) -> OrderExecutor>()
+    val factories = mutableMapOf<KClass<*>, (Order) -> OrderExecutor>()
 
     init {
         // register all the default included order handlers
 
-        // Single Order types
+        // Single Instruction types
         register<MarketOrder> { MarketOrderExecutor(it as MarketOrder) }
         register<LimitOrder> { LimitOrderExecutor(it as LimitOrder) }
         register<StopLimitOrder> { StopLimitOrderExecutor(it as StopLimitOrder) }
@@ -51,7 +51,7 @@ object OrderExecutorFactory {
      * Return the order executor for the provided [order]. This will throw an exception if no [OrderExecutorFactory]
      * is registered for the order::class.
      */
-    fun getExecutor(order: CreateOrder): OrderExecutor {
+    fun getExecutor(order: Order): OrderExecutor {
         val fn = factories.getValue(order::class)
         return fn(order)
     }
@@ -59,11 +59,11 @@ object OrderExecutorFactory {
     /**
      * Unregister the order executor factory for order type [T]
      */
-    inline fun <reified T : Order> unregister() {
+    inline fun <reified T : Instruction> unregister() {
         factories.remove(T::class)
     }
 
-    inline fun <reified T : CreateOrder> register(noinline factory: (CreateOrder) -> OrderExecutor) {
+    inline fun <reified T : Order> register(noinline factory: (Order) -> OrderExecutor) {
         factories[T::class] = factory
     }
 

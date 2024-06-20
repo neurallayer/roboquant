@@ -30,7 +30,7 @@ class OCOOrder(
     val first: SingleOrder,
     val second: SingleOrder,
     tag: String = ""
-) : CreateOrder(first.asset, tag) {
+) : Order(first.asset, tag) {
 
     init {
         require(first.asset == second.asset) { "OCO orders can only contain orders for the same asset" }

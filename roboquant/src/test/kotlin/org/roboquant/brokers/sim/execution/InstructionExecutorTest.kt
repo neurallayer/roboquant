@@ -30,7 +30,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertTrue
 
-internal class OrderExecutorTest {
+internal class InstructionExecutorTest {
 
     private val asset = TestData.usStock()
 

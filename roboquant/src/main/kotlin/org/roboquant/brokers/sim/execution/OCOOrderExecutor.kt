@@ -16,8 +16,6 @@
 package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.sim.Pricing
-import org.roboquant.orders.CancelOrder
-import org.roboquant.orders.ModifyOrder
 import org.roboquant.orders.OCOOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
@@ -32,12 +30,12 @@ internal class OCOOrderExecutor(override val order: OCOOrder) : OrderExecutor {
     /**
      * Cancel the order, return true if successful, false otherwise
      */
-    private fun cancel(cancelOrder: CancelOrder, time: Instant): Boolean {
+    override fun cancel(time: Instant): Boolean {
         return if (status.closed) {
             false
         } else {
-            first.modify(cancelOrder, time)
-            second.modify(cancelOrder, time)
+            first.cancel(time)
+            second.cancel(time)
             status = OrderStatus.CANCELLED
             true
         }
@@ -70,10 +68,5 @@ internal class OCOOrderExecutor(override val order: OCOOrder) : OrderExecutor {
         return emptyList()
     }
 
-    override fun modify(modifyOrder: ModifyOrder, time: Instant): Boolean {
-        return when (modifyOrder) {
-            is CancelOrder -> cancel(modifyOrder, time)
-            else -> false
-        }
-    }
+
 }

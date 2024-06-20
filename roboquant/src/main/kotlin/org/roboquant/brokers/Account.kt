@@ -17,7 +17,7 @@
 package org.roboquant.brokers
 
 import org.roboquant.common.*
-import org.roboquant.orders.CreateOrder
+import org.roboquant.orders.Order
 import java.time.Instant
 
 /**
@@ -50,8 +50,8 @@ class Account(
     val lastUpdate: Instant,
     val cash: Wallet,
     val trades: List<Trade>,
-    val openOrders: List<CreateOrder>,
-    val closedOrders: List<CreateOrder>,
+    val openOrders: List<Order>,
+    val closedOrders: List<Order>,
     val positions: List<Position>,
     val buyingPower: Amount
 ) {

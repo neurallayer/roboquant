@@ -17,8 +17,8 @@
 package org.roboquant.brokers.sim.execution
 
 import org.roboquant.brokers.sim.Pricing
-import org.roboquant.orders.CreateOrder
-import org.roboquant.orders.ModifyOrder
+import org.roboquant.orders.Modification
+import org.roboquant.orders.Order
 import java.time.Instant
 
 
@@ -30,7 +30,7 @@ interface OrderExecutor {
     /**
      * Access to the order that is executed
      */
-    val order: CreateOrder
+    val order: Order
 
     var status
         get() = order.status
@@ -44,7 +44,12 @@ interface OrderExecutor {
     /**
      * Modify the order, return true if it was successful, false otherwise. Default is to return false
      */
-    fun modify(modifyOrder: ModifyOrder, time: Instant): Boolean = false
+    fun modify(modification: Modification, time: Instant): Boolean = false
+
+    /**
+     * Modify the order, return true if it was successful, false otherwise. Default is to return false
+     */
+    fun cancel(time: Instant): Boolean = false
 
 }
 

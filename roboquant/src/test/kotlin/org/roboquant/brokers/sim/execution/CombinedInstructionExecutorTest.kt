@@ -26,7 +26,7 @@ import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class CombinedOrderExecutorTest {
+internal class CombinedInstructionExecutorTest {
 
     private val asset = TestData.usStock()
 
@@ -59,8 +59,7 @@ internal class CombinedOrderExecutorTest {
         val order = OCOOrder(order1, order2)
         val exec1 = OCOOrderExecutor(order)
 
-        val cancel = CancelOrder(order)
-        val result = exec1.modify(cancel, Instant.now())
+        val result = exec1.cancel(Instant.now())
         assertEquals(true, result)
         assertEquals(OrderStatus.CANCELLED, exec1.status)
     }
@@ -73,8 +72,7 @@ internal class CombinedOrderExecutorTest {
         val order = OTOOrder(order1, order2)
         val exec1 = OTOOrderExecutor(order)
 
-        val cancel = CancelOrder(order)
-        val result = exec1.modify(cancel, Instant.now())
+        val result = exec1.cancel(Instant.now())
         assertEquals(true, result)
         assertEquals(OrderStatus.CANCELLED, exec1.status)
     }

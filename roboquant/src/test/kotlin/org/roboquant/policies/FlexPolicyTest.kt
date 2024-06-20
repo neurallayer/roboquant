@@ -77,7 +77,7 @@ internal class FlexPolicyTest {
 
         class MyPolicy(val percentage: Double = 0.05) : FlexPolicy() {
 
-            override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order {
+            override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction {
                 val asset = signal.asset
                 val direction = if (size.isPositive) 1.0 else -1.0
                 val percentage = percentage * direction
@@ -101,7 +101,7 @@ internal class FlexPolicyTest {
     }
 
 
-    private fun run(policy: FlexPolicy): List<Order> {
+    private fun run(policy: FlexPolicy): List<Instruction> {
         val asset = Asset("TEST123")
         val signals = listOf(Signal.buy(asset))
         val event = Event(Instant.now(), listOf(TradePrice(asset, 5.0)))

@@ -6,9 +6,13 @@ Roboquant version 3.0 has several changes, several of them are breaking changes 
 
 - Signals are simplified and now use a double value for the rating rather than an enum. This is better suited for more advanced ML type of algos.
 
+- SimBroker order execution simulation simplified.
+
 - Removed the `Lifecycle` interface for all components (Stratyegy, Policy, Broker).
 
-- Order ids are handout by the broker (during the place order method), so not assigned when creating the order. This is more inline how
+- Removed Binance module. It was using an old unsupported API and no available in my country, so difficult to test moving to a newer API.
+
+- Orders are simplified. For example order-ids are handout by the broker (during the place order method), so not assigned when creating the order. This is more inline how
 most brokers work.
 
 - Improved the broker interface. Only the `broker.sync()` call now provides access to the `account` object.

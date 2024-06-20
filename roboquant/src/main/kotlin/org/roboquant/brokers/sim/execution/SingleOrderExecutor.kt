@@ -52,7 +52,7 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
      * Cancel the order, return true if successful, false otherwise. Any open SingleOrder can be cancelled, closed
      * orders not.
      */
-    internal fun cancel(time: Instant): Boolean {
+    override fun cancel(time: Instant): Boolean {
         if (status == OrderStatus.ACCEPTED && expired(time)) status = OrderStatus.EXPIRED
         if (status.closed) return false
         status = OrderStatus.CANCELLED
@@ -95,7 +95,7 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
     }
 
     @Suppress("ReturnCount")
-    fun update(order: CreateOrder, time: Instant): Boolean {
+    fun update(order: Order, time: Instant): Boolean {
         if (status == OrderStatus.ACCEPTED && expired(time)) return false
         if (status.closed) return false
 
@@ -111,12 +111,8 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
 
     }
 
-    override fun modify(modifyOrder: ModifyOrder, time: Instant): Boolean {
-        return when (modifyOrder) {
-            is CancelOrder -> cancel(time)
-            is UpdateOrder -> update(modifyOrder.update, time)
-            else -> false
-        }
+    override fun modify(modification: Modification, time: Instant): Boolean {
+        return update(modification.update, time)
     }
 
     /**

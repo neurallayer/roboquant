@@ -162,19 +162,23 @@ open class SimBroker(
     }
 
     /**
-     * Place the [orders] at the broker.
+     * Place the [instructions] at the broker.
      */
-    override fun place(orders: List<Order>) {
-        logger.trace { "Received orders=${orders.size}" }
-        for (order in orders) {
+    override fun place(instructions: List<Instruction>) {
+        logger.trace { "Received instructions=${instructions.size}" }
+        for (order in instructions) {
             when (order) {
-                is CreateOrder -> {
+                is Order -> {
                     order.id = nextOrderId++.toString()
                     orderExecutors[order.id] = OrderExecutorFactory.getExecutor(order)
                     _account.openOrders[order.id] = order
                 }
-                is ModifyOrder -> {
-                    // Modify orders are applied immediatly and not stored
+                is Cancellation -> {
+                    val success = orderExecutors[order.id]?.cancel(Instant.now()) ?: false
+                    logger.info { "cancel order success=$success" }
+                }
+                is Modification -> {
+                    // Modify instructions are applied immediatly and not stored
                     val success = orderExecutors[order.id]?.modify(order, Instant.now()) ?: false
                     logger.info { "modify order success=$success" }
                 }

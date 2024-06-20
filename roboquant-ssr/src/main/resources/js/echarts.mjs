@@ -7715,7 +7715,7 @@ function quantile(ascArr, p) {
   return e ? v + e * (ascArr[h] - v) : v;
 }
 /**
- * Order intervals asc, and split them when overlap.
+ * Instruction intervals asc, and split them when overlap.
  * expect(numberUtil.reformIntervals([
  *     {interval: [18, 62], close: [1, 1]},
  *     {interval: [-Infinity, -70], close: [0, 0]},
@@ -92677,7 +92677,7 @@ var resetMethods = {
         text: this.formatValueText(cate, true),
         value: cate
       });
-    }, this); // See "Order Rule".
+    }, this); // See "Instruction Rule".
 
     normalizeReverse(thisOption, outPieceList);
   },
@@ -92742,7 +92742,7 @@ var resetMethods = {
 
       item.visual = VisualMapping.retrieveVisuals(pieceListItem);
       outPieceList.push(item);
-    }, this); // See "Order Rule".
+    }, this); // See "Instruction Rule".
 
     normalizeReverse(thisOption, outPieceList); // Only pieces
 
@@ -92901,7 +92901,7 @@ function (_super) {
     var endsText = visualMapModel.get('text'); // Consider orient and inverse.
 
     var orient = visualMapModel.get('orient');
-    var inverse = visualMapModel.get('inverse'); // Order of model pieceList is always [low, ..., high]
+    var inverse = visualMapModel.get('inverse'); // Instruction of model pieceList is always [low, ..., high]
 
     if (orient === 'horizontal' ? inverse : !inverse) {
       viewPieceList.reverse();
@@ -95365,7 +95365,7 @@ function getSeriesTransitionKey(series) {
 
 function convertArraySeriesKeyToString(seriesKey) {
   if (isArray(seriesKey)) {
-    // Order independent.
+    // Instruction independent.
     return seriesKey.sort().join(',');
   }
 

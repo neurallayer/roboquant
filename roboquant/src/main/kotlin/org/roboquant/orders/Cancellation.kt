@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package org.roboquant.charts
+package org.roboquant.orders
 
-import kotlin.test.Test
-import kotlin.test.assertTrue
+/**
+ * Cancel an open create-order.
+ *
+ * @param orderId the id of the order to cancel
+ * @param tag an optional tag
+ */
+class Cancellation(
+    orderId: String,
+    tag: String = ""
+) : Instruction(tag) {
 
-internal class OrderChartTest {
-
-    @Test
-    fun test() {
-        val account = TestData.fullAccount
-        val chart = OrderChart(account.closedOrders)
-        assertTrue(chart.renderJson().isNotBlank())
+    init {
+        id = orderId
     }
 
+    override fun info() = mapOf("modified-id" to id)
 }

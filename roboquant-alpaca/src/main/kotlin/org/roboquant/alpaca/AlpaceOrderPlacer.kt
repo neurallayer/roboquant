@@ -23,7 +23,6 @@ import net.jacobpeterson.alpaca.openapi.trader.model.PostOrderRequest
 import org.roboquant.common.AssetType
 import org.roboquant.common.UnsupportedException
 import org.roboquant.orders.*
-import java.util.*
 import net.jacobpeterson.alpaca.openapi.trader.model.TimeInForce as OrderTimeInForce
 
 /**
@@ -31,10 +30,6 @@ import net.jacobpeterson.alpaca.openapi.trader.model.TimeInForce as OrderTimeInF
  */
 internal class AlpaceOrderPlacer(private val alpacaAPI: AlpacaAPI, private val extendedHours: Boolean = false) {
 
-    fun cancelOrder(cancellation: CancelOrder) {
-        val orderId = UUID.fromString(cancellation.id)
-        alpacaAPI.trader().orders().deleteOrderByOrderID(orderId)
-    }
 
 
     private fun TimeInForce.toOrderTimeInForce(): OrderTimeInForce {

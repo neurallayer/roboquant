@@ -18,14 +18,13 @@ package org.roboquant.orders
 
 import org.roboquant.TestData
 import org.roboquant.common.Asset
-import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class CustomOrderTest {
 
-    private class MySpecialOrder(asset: Asset) : CreateOrder(asset, "")
+    private class MySpecialOrder(asset: Asset) : Order(asset, "")
 
     @Test
     fun basic() {

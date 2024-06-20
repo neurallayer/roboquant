@@ -16,36 +16,28 @@
 
 package org.roboquant.orders
 
-import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.TestData
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-internal class CancelOrderTest {
+internal class UpdateInstructionTest {
 
     @Test
-    fun test() {
-        val asset = TestData.usStock()
-        val order = MarketOrder(asset, 100)
-        val oc = CancelOrder(order)
-        assertEquals(order, oc.order)
+    fun basic() {
+        val originalOrder = TestData.euMarketOrder()
+        val updateOrder = Modification(originalOrder.id, originalOrder)
+        assertEquals(originalOrder, updateOrder.update)
+        assertTrue(updateOrder.toString().isNotBlank())
     }
 
     @Test
     fun state() {
-        val asset = TestData.usStock()
-        val order = MarketOrder(asset, 100)
-        val oc = CancelOrder(order, "some tag")
-        assertEquals(order, oc.order)
-        assertEquals("some tag", oc.tag)
+        val originalOrder = TestData.euMarketOrder()
+        originalOrder.id = "1"
+        val updateOrder = Modification(originalOrder.id, originalOrder)
+        assertEquals(originalOrder, updateOrder.update)
+        assertTrue(updateOrder.toString().isNotBlank())
     }
 
-    @Test
-    fun testFailure() {
-        val asset = TestData.usStock()
-        val order = MarketOrder(asset, 100)
-        assertDoesNotThrow {
-            CancelOrder(order)
-        }
-    }
 }

@@ -285,7 +285,7 @@ data class OrderBook(
         get() = asks.size + bids.size
 
     /**
-     * Order book will by default return the unweighted **MIDPOINT** price. Other [types][type] that are supported are:
+     * Instruction book will by default return the unweighted **MIDPOINT** price. Other [types][type] that are supported are:
      * - lowest **ASK** price
      * - highest **BID** price
      * - **WEIGHTED** midpoint price
@@ -345,11 +345,11 @@ data class OrderBook(
     // override fun toString(): String = "$asset bids:${bids.size} asks:${asks.size}"
 
     /**
-     * Order book entry contains the [size] and [limit] price
+     * Instruction book entry contains the [size] and [limit] price
      *
      * @property size
      * @property limit
-     * @constructor Create new Order book entry
+     * @constructor Create new Instruction book entry
      */
     data class OrderBookEntry(val size: Double, val limit: Double)
 }

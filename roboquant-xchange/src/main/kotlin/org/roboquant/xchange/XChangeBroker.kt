@@ -81,15 +81,14 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
     }
 
     /**
-     * Place orders on a XChange supported exchange using the trade service.
+     * Place instructions on a XChange supported exchange using the trade service.
      *
-     * @param orders
+     * @param instructions
      * @return
      */
-    override fun place(orders: List<Order>) {
+    override fun place(instructions: List<Instruction>) {
 
-        val now = Instant.now()
-        for (order in orders.filterIsInstance<CreateOrder>()) {
+        for (order in instructions.filterIsInstance<Order>()) {
             val asset = order.asset
             if (asset.type == AssetType.CRYPTO) {
 
@@ -115,7 +114,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
 
                     else -> {
                         logger.warn {
-                            "only market and limit orders are supported, received $order instead"
+                            "only market and limit instructions are supported, received $order instead"
                         }
                         order.status = OrderStatus.REJECTED
                         _account.closedOrders.add(order)
@@ -144,7 +143,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
         val limitPrice = BigDecimal(order.limit)
         val limitOrder = CryptoLimitOrder(orderType, amount, currencyPair, orderId, null, limitPrice)
         val returnValue = tradeService.placeLimitOrder(limitOrder)
-        logger.debug { "Limit Order return value: $returnValue" }
+        logger.debug { "Limit Instruction return value: $returnValue" }
     }
 
     /**
@@ -158,7 +157,7 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
         val orderType = if (order.buy) CryptoOrder.OrderType.BID else CryptoOrder.OrderType.ASK
         val marketOrder = CryptoMarketOrder(orderType, amount, currencyPair)
         val returnValue = tradeService.placeMarketOrder(marketOrder)
-        logger.debug { "Market Order return value: $returnValue" }
+        logger.debug { "Market Instruction return value: $returnValue" }
     }
 
 }

@@ -22,7 +22,6 @@ import org.roboquant.brokers.Trade
 import org.roboquant.brokers.marketValue
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
-import org.roboquant.orders.CreateOrder
 import org.roboquant.orders.Order
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
@@ -56,13 +55,13 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * Open orders
      */
-    val openOrders = mutableMapOf<String, CreateOrder>()
+    val openOrders = mutableMapOf<String, Order>()
 
     /**
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
      * closed. ClosedOrders are only retained based on the [retention] setting.
      */
-    val closedOrders = mutableListOf<CreateOrder>()
+    val closedOrders = mutableListOf<Order>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
@@ -123,7 +122,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * Get the open orders
      */
-    val orders: List<CreateOrder>
+    val orders: List<Order>
         get() = openOrders.values.toList()
 
     /**
@@ -131,7 +130,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      * the orders. Future updates using the [updateOrder] method will fail if there is no known order already present.
      */
     @Synchronized
-    fun initializeOrders(orders: Collection<CreateOrder>) {
+    fun initializeOrders(orders: Collection<Order>) {
         orders.forEach { openOrders[it.id] = it }
     }
 
@@ -228,9 +227,9 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
     /**
      * Get an open order with the provided [orderId], or null if not found
      */
-    fun getOrder(orderId: String): CreateOrder? = openOrders[orderId]
+    fun getOrder(orderId: String): Order? = openOrders[orderId]
 
-    fun updateOrder(order: CreateOrder, now: Instant?, status: OrderStatus) {
+    fun updateOrder(order: Order, now: Instant?, status: OrderStatus) {
         order.status = status
 
     }

@@ -21,7 +21,7 @@ import org.roboquant.common.Size
 import org.roboquant.common.addNotNull
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.Order
+import org.roboquant.orders.Instruction
 import org.roboquant.orders.SingleOrder
 import org.roboquant.strategies.Signal
 
@@ -31,7 +31,7 @@ import org.roboquant.strategies.Signal
  * Because of this deterministic behavior, this policy is useful during testing/debugging of a strategy. But it
  * should not be used in live trading or realistic back-tests.
  */
-class TestPolicy(private val size: Size = Size.ONE) : BasePolicy() {
+class TestPolicy(private val size: Size = Size.ONE) : Policy {
 
     /**
      * Create a buys or sells [MarketOrder] for an asset based on the received [signals]. It ignores the [account]
@@ -39,7 +39,7 @@ class TestPolicy(private val size: Size = Size.ONE) : BasePolicy() {
      *
      * @see Policy.act
      */
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         val orders = mutableListOf<SingleOrder>()
         for (signal in signals) {
             val order: MarketOrder? = when  {

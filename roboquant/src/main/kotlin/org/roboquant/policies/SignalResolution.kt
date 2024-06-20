@@ -20,7 +20,7 @@ import org.roboquant.brokers.Account
 import org.roboquant.common.Config
 import org.roboquant.common.Logging
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
+import org.roboquant.orders.Instruction
 import org.roboquant.strategies.Signal
 import kotlin.random.Random
 
@@ -92,7 +92,7 @@ private class SignalResolverPolicy(private val policy: Policy, private val resol
 
     private val logger = Logging.getLogger(this::class)
 
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         val resolvedSignals = signals.resolve(resolution)
         logger.debug { "signals in=${signals.size} out=${resolvedSignals.size}" }
         return policy.act(resolvedSignals, account, event)
@@ -114,7 +114,7 @@ fun Policy.resolve(resolution: SignalResolution): Policy = SignalResolverPolicy(
  */
 private class SignalShufflePolicy(private val policy: Policy, private val random: Random) : Policy by policy {
 
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         return policy.act(signals.shuffled(random), account, event)
     }
 
@@ -134,7 +134,7 @@ fun Policy.shuffleSignals(random: Random = Config.random): Policy = SignalShuffl
  */
 private class SkipSymbolsPolicy(private val policy: Policy, private val symbols: List<String>) : Policy by policy {
 
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         val newSignals = signals.filter { it.asset.symbol !in symbols }
         return policy.act(newSignals, account, event)
     }

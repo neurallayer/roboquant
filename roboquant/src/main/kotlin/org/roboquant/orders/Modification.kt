@@ -18,29 +18,26 @@ package org.roboquant.orders
 
 /**
  * Update an existing open order. It is up to the broker implementation to translate the [update] order to the
- * correct message, so it can be processed. Only an order that is a [CreateOrder] can be updated.
+ * correct message, so it can be processed. Only an order that is a [Order] can be updated.
  *
  * The SimBroker, like real brokers, can only modify open orders. In live trading, only certain parts of an open order
  * can be updated, like the limit price of a limit order. For many other types of changes, an order needs to be
  * cancelled first and then a new order needs to be created.
  *
- * @param order the order you want to update
+ * @param orderId the id of the order you want to update
  * @property update the updated order, of the same type and asset as the original order
  * @param tag an optional tag to link to this order
- * @constructor Create new UpdateOrder
+ * @constructor Create new Modification
  */
-class UpdateOrder(
-    order: CreateOrder,
-    val update: CreateOrder,
+class Modification(
+    orderId: String,
+    val update: Order,
     tag: String = ""
-) : ModifyOrder(order, tag) {
-
+) : Instruction(tag) {
 
     init {
-        require(order::class == update::class) { "cannot update order type old=${order::class} new=${update::class}" }
-        require(order.asset == update.asset) { "cannot update the asset old=${order.asset} new=${update.asset}" }
-        update.id = order.id
+        id = orderId
     }
 
-    override fun info() = update.info() + mapOf("modified-id" to order.id)
+    override fun info() = update.info() + mapOf("modified-id" to id)
 }

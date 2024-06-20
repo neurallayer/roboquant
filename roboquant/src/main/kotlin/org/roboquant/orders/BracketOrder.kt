@@ -43,7 +43,7 @@ class BracketOrder(
     val takeProfit: SingleOrder,
     val stopLoss: SingleOrder,
     tag: String = ""
-) : CreateOrder(entry.asset, tag) {
+) : Order(entry.asset, tag) {
 
     init {
         require(entry.asset == takeProfit.asset && entry.asset == stopLoss.asset) {

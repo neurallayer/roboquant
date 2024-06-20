@@ -144,7 +144,7 @@ open class FlexPolicy(
         ): FlexPolicy {
             class MyPolicy : FlexPolicy(configure = configure) {
 
-                override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order {
+                override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction {
                     val price = priceItem.getPrice(config.priceType)
                     return BracketOrder.marketTrailStop(signal.asset, size, price, trailPercentage, stopPercentage)
                 }
@@ -171,7 +171,7 @@ open class FlexPolicy(
         ): FlexPolicy {
             class MyPolicy : FlexPolicy(configure = configure) {
 
-                override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order {
+                override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction {
                     val price = priceItem.getPrice(config.priceType)
 
                     // BUY orders have a below market price limit, and SELL order above
@@ -220,7 +220,7 @@ open class FlexPolicy(
      *
      * Overwrite this method if you want to create orders other than the default [MarketOrder].
      */
-    open fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order? {
+    open fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction? {
         return MarketOrder(signal.asset, size)
     }
 
@@ -264,8 +264,8 @@ open class FlexPolicy(
      * @see Policy.act
      */
     @Suppress("ComplexMethod")
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
-        val orders = mutableListOf<Order>()
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+        val instructions = mutableListOf<Instruction>()
 
         if (signals.isNotEmpty()) {
             val equityAmount = account.equityAmount
@@ -286,7 +286,7 @@ open class FlexPolicy(
                     continue
                 }
 
-                if (config.oneOrderOnly && (account.openOrders.contains(asset) || orders.contains(asset))) {
+                if (config.oneOrderOnly && account.openOrders.contains(asset)) {
                     log(signal, priceAction, position, "one order only")
                     continue
                 }
@@ -297,7 +297,7 @@ open class FlexPolicy(
 
                 if (reducedPositionSignal(position, signal)) {
                     val order = createOrder(signal, -position.size, priceAction) // close position
-                    orders.addNotNull(order)
+                    instructions.addNotNull(order)
                 } else {
                     if (position.open) continue // we don't increase position sizing
                     if (!signal.entry) continue // signal doesn't allow opening new positions
@@ -317,7 +317,7 @@ open class FlexPolicy(
 
                     val assetExposure = asset.value(size, price).absoluteValue
                     val exposure = assetExposure.convert(buyingPower.currency, time).value
-                    orders.add(order)
+                    instructions.add(order)
                     buyingPower -= exposure // reduce buying power with the exposed amount
                     logger.debug { "buyingPower=$buyingPower exposure=$exposure order=$order" }
 
@@ -325,6 +325,6 @@ open class FlexPolicy(
 
             }
         }
-        return orders
+        return instructions
     }
 }

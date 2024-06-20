@@ -23,21 +23,21 @@ import org.icepear.echarts.components.coord.cartesian.TimeAxis
 import org.icepear.echarts.components.coord.cartesian.ValueAxis
 import org.icepear.echarts.components.dataZoom.DataZoom
 import org.icepear.echarts.components.tooltip.Tooltip
-import org.roboquant.orders.CreateOrder
+import org.roboquant.orders.Order
 import org.roboquant.orders.OrderStatus
 import org.roboquant.orders.SingleOrder
 import java.math.BigDecimal
 import java.time.Instant
 
 /**
- * Order chart plots order sizes over time. The most common use case is to plot the order sizes of a single asset, but
+ * Instruction chart plots order sizes over time. The most common use case is to plot the order sizes of a single asset, but
  * this is not a strict requirement.
  *
  * Please not this chart only displays orders of the type [SingleOrder] and will ignore other order types. Often trades
  * provide more insights, since these also cover more advanced order types. You can use the [TradeChart] for that.
  */
 class OrderChart(
-    private val orderStates: List<CreateOrder>,
+    private val orderStates: List<Order>,
 ) : Chart() {
 
     private fun getTooltip(order: SingleOrder, openedAt: Instant): String {
@@ -81,7 +81,7 @@ class OrderChart(
             .setFormatter(javascriptFunction("return p.value[2];"))
 
         val chart = Scatter()
-            .setTitle(title ?: "Order size")
+            .setTitle(title ?: "Instruction size")
             .addXAxis(TimeAxis())
             .addYAxis(ValueAxis().setScale(true))
             .addSeries(series)

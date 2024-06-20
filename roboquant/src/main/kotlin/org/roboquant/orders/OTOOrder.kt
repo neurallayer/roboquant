@@ -29,7 +29,7 @@ class OTOOrder(
     val primary: SingleOrder,
     val secondary: SingleOrder,
     tag: String = ""
-) : CreateOrder(primary.asset, tag) {
+) : Order(primary.asset, tag) {
 
     init {
         require(primary.asset == secondary.asset) { "OTO orders can only contain orders for the same asset" }

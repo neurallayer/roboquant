@@ -106,8 +106,8 @@ class IBKRBroker(
     /**
      * Cancel an order
      */
-    private fun cancelOrder(cancellation: CancelOrder) {
-        val id = cancellation.order.id
+    private fun cancelOrder(cancellation: Cancellation) {
+        val id = cancellation.id
         logger.info("cancelling order with id $id")
         client.cancelOrder(id.toInt(), cancellation.tag)
 
@@ -133,19 +133,19 @@ class IBKRBroker(
     }
 
     /**
-     * Place zero or more [orders]
+     * Place zero or more [instructions]
      *
-     * @param orders
+     * @param instructions
      */
-    override fun place(orders: List<Order>) {
+    override fun place(instructions: List<Instruction>) {
         // Sanity-check that you don't use this broker during back testing.
 
 
-        for (order in orders) {
+        for (order in instructions) {
             if (order.id.isBlank()) order.id = nextOrderId++.toString()
             logger.info("received order=$order")
             when (order) {
-                is CancelOrder -> cancelOrder(order)
+                is Cancellation -> cancelOrder(order)
                 is SingleOrder -> placeSingleOrder(order)
                 is BracketOrder -> placeBracketOrder(order)
                 else -> {
@@ -218,10 +218,10 @@ class IBKRBroker(
     private inner class Wrapper(logger: Logging.Logger) : BaseWrapper(logger) {
 
         /**
-         * Convert an IBOrder to a roboquant Order.
+         * Convert an IBOrder to a roboquant Instruction.
          * This is only used during initial connection when retrieving any open orders linked to the account.
          */
-        private fun toOrder(order: IBOrder, contract: Contract): CreateOrder {
+        private fun toOrder(order: IBOrder, contract: Contract): Order {
             val asset = contract.toAsset()
             val qty = if (order.action() == Action.BUY) order.totalQuantity() else order.totalQuantity().negate()
             val size = Size(qty.value())

@@ -29,7 +29,7 @@ import org.roboquant.common.Size
  * @property tif the Time In Force policy to use
  */
 abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, tag: String) :
-    CreateOrder(asset, tag) {
+    Order(asset, tag) {
 
 
     init {
@@ -187,7 +187,7 @@ open class TrailOrder(
  * @property limitOffset offset for the limit compared to the stop value, negative value being a lower limit
  * @property tif
  * @property id
- * @constructor Create new Trail limit Order
+ * @constructor Create new Trail limit Instruction
  */
 class TrailLimitOrder(
     asset: Asset,

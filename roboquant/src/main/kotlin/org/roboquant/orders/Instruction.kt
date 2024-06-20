@@ -31,12 +31,10 @@ import java.time.Instant
  * An order doesn't necessary has a size. For example, in case of a cancellation order. But every order is linked to
  * a single asset.
  *
- * @property asset the underlying asset of the order
  * @property id a unique order identifier
  * @property tag an (optional) tag that can be used to store additional information
  **/
-sealed class Order(val asset: Asset, val tag: String) {
-
+sealed class Instruction(val tag: String) {
 
 
     /**
@@ -66,7 +64,7 @@ sealed class Order(val asset: Asset, val tag: String) {
      */
     override fun toString(): String {
         val infoStr = info().toString().removePrefix("{").removeSuffix("}")
-        return "type=$type id=$id asset=${asset.symbol} tag=$tag $infoStr"
+        return "type=$type id=$id tag=$tag $infoStr"
     }
 
 }
@@ -75,7 +73,7 @@ sealed class Order(val asset: Asset, val tag: String) {
  * Base class for all types of create orders. This ranges from a simple [MarketOrder], all the way to advanced order
  * types like a [BracketOrder].
  */
-abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag) {
+abstract class Order(val asset: Asset, tag: String) : Instruction(tag) {
 
     /**
      * Status of the order, set to INITIAL when just created
@@ -96,27 +94,16 @@ abstract class CreateOrder(asset: Asset, tag: String) : Order(asset, tag) {
 
     var openedAt: Instant = Instant.now()
 
-    fun cancel(order: CreateOrder): CancelOrder {
-        return CancelOrder(order)
+    fun cancel(order: Order): Cancellation {
+        return Cancellation(order.id)
+    }
+
+    fun modify(updateOrder: Order) : Modification {
+        return Modification(this.id, updateOrder)
     }
 
 }
 
-/**
- * Base class for all types of modify-orders. Two most commonly used subclasses are the [CancelOrder] and [UpdateOrder].
- *
- * Please note that modify orders by design can only modify createOrders.
- *
- * @property order the (create-)order that will be modified
- * @param tag an optional tag
- */
-abstract class ModifyOrder(val order: CreateOrder, tag: String) : Order(order.asset, tag) {
-    
-    init {
-        id = order.id
-    }
-
-}
 
 
 

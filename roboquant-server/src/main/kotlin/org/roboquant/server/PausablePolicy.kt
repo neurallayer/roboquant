@@ -18,7 +18,7 @@ package org.roboquant.server
 
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
+import org.roboquant.orders.Instruction
 import org.roboquant.policies.Policy
 import org.roboquant.strategies.Signal
 import java.time.Instant
@@ -38,7 +38,7 @@ internal class PausablePolicy(private val policy: Policy, var pause: Boolean = f
 
     internal var lastUpdate: Instant = Instant.MIN
 
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         // Still invoke the policy so any state can be updated if required.
         val orders = policy.act(signals, account, event)
 

@@ -85,7 +85,7 @@ open class AtrPolicy(
     /**
      * @see FlexPolicy.act
      */
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         data.addAll(event)
         return super.act(signals, account, event)
     }
@@ -141,7 +141,7 @@ open class AtrPolicy(
     /**
      * @see FlexPolicy.createOrder
      */
-    override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Order? {
+    override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction? {
         val asset = signal.asset
 
         // Calculate the ATR

@@ -23,7 +23,7 @@ import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class OrderModifierTest {
+internal class InstructionModifierTest {
 
     private val asset = TestData.usStock()
 
@@ -32,8 +32,7 @@ internal class OrderModifierTest {
         val order1 = MarketOrder(asset, 100)
         val exec1 = MarketOrderExecutor(order1)
 
-        val cancel = CancelOrder(order1)
-        val result = exec1.modify(cancel, Instant.now())
+        val result = exec1.cancel(Instant.now())
         assertEquals(true, result)
         assertEquals(OrderStatus.CANCELLED, exec1.status)
     }
@@ -45,7 +44,7 @@ internal class OrderModifierTest {
         assertEquals(OrderStatus.INITIAL, exec1.status)
 
         val order2 = LimitOrder(asset, Size(100), 120.0)
-        val order = UpdateOrder(order1, order2)
+        val order = Modification(order1.id, order2)
 
         val result = exec1.modify(order, Instant.now())
         assertEquals(true, result)

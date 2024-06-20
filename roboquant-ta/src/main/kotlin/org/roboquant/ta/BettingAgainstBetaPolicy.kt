@@ -23,8 +23,8 @@ import org.roboquant.brokers.diff
 import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.Order
-import org.roboquant.policies.BasePolicy
+import org.roboquant.orders.Instruction
+import org.roboquant.policies.Policy
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.math.min
@@ -57,7 +57,7 @@ open class BettingAgainstBetaPolicy(
     private val maxPositions: Int = 20,
     private val windowSize: Int = 120,
     private val priceType: String = "DEFAULT"
-) : BasePolicy() {
+) : Policy {
 
     private var rebalanceDate = Instant.MIN
 
@@ -95,7 +95,7 @@ open class BettingAgainstBetaPolicy(
      * @param account
      * @return
      */
-    private fun rebalance(betas: List<Pair<Asset, Double>>, account: Account, event: Event): List<Order> {
+    private fun rebalance(betas: List<Pair<Asset, Double>>, account: Account, event: Event): List<Instruction> {
         // The maximum number of short and long assets we want to have in the portfolio. Since there cannot be overlap,
         // the maximum number is always equal or smaller than half.
         val max = min(betas.size / 2, maxPositions / 2)
@@ -140,7 +140,7 @@ open class BettingAgainstBetaPolicy(
      * order type like LimitOrders.
      * Return null if you don't want to create an order for a certain asset.
      */
-    open fun createOrder(asset: Asset, size: Size, account: Account, event: Event): Order? {
+    open fun createOrder(asset: Asset, size: Size, account: Account, event: Event): Instruction? {
         return MarketOrder(asset, size)
     }
 
@@ -152,7 +152,7 @@ open class BettingAgainstBetaPolicy(
      * @param event the market data
      * @return
      */
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
 
         // First, we update the buffers
         data.addAll(event, windowSize, priceType)

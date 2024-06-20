@@ -17,7 +17,7 @@
 package org.roboquant.brokers
 
 import org.roboquant.feeds.Event
-import org.roboquant.orders.Order
+import org.roboquant.orders.Instruction
 
 /**
  * Interface for any broker implementation, used for both simulated and real brokers.
@@ -38,9 +38,9 @@ interface Broker {
     fun sync(event: Event? = null) : Account
 
     /**
-     * Place new [orders] at this broker.
+     * Place new [instructions] at this broker.
      */
-    fun place(orders: List<Order>)
+    fun place(instructions: List<Instruction>)
 
     /**
      * Reset the state of the component to its initial state. The default implementation is to take no action.

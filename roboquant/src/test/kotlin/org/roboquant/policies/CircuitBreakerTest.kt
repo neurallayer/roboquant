@@ -24,7 +24,7 @@ import org.roboquant.common.minutes
 import org.roboquant.common.plus
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
-import org.roboquant.orders.Order
+import org.roboquant.orders.Instruction
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.test.Test
@@ -33,7 +33,7 @@ import kotlin.test.assertEquals
 internal class CircuitBreakerTest {
 
     private class MyPolicy : Policy {
-        override fun act(signals: List<Signal>, account: Account, event: Event): List<Order> {
+        override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
             return listOf(
                 MarketOrder(Asset("A"), 10),
                 MarketOrder(Asset("B"), 10),
