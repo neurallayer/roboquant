@@ -43,7 +43,7 @@ sealed class Order(val asset: Asset, val tag: String) {
     var id = ""
 
     /**
-     * Status is set to INITIAL
+     * Status of the order, set to INITIAL when just created
      */
     var status = OrderStatus.INITIAL
 

@@ -1,3 +1,4 @@
+// suppress inspection "Annotator" for whole file
 = Changelog
 
 == Major changes in 3.0
