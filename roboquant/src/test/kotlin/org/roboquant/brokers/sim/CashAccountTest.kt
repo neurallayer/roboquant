@@ -95,7 +95,7 @@ internal class CashAccountTest {
 
         account = update(broker, abc, 100, 40)
         assertEquals(initial, account.equityAmount)
-        assertEquals(4_000.EUR.toWallet(), account.positions.marketValue)
+        assertEquals(4_000.EUR.toWallet(), account.positions.values.marketValue)
         assertEquals(6_000.EUR, account.buyingPower)
 
         account = update(broker, abc, 75)

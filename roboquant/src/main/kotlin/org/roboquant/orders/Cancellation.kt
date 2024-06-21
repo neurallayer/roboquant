@@ -23,13 +23,6 @@ package org.roboquant.orders
  * @param tag an optional tag
  */
 class Cancellation(
-    orderId: String,
-    tag: String = ""
-) : Instruction(tag) {
-
-    init {
-        id = orderId
-    }
-
-    override fun info() = mapOf("modified-id" to id)
-}
+    val orderId: String,
+    val tag: String = ""
+) : Instruction()

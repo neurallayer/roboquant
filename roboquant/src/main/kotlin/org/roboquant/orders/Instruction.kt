@@ -17,25 +17,24 @@
 package org.roboquant.orders
 
 import org.roboquant.common.Asset
+import org.roboquant.common.Timeframe
 import java.time.Instant
 
 /**
- * An order is an instruction for a broker to buy or sell an asset or modify an existing order.
- *
- * An order can cover different of use cases:
+ * An instruction for a broker. An sintruction can cover different of use cases:
  *
  * - A buy- or sell-order (the most common use case), ranging from simple market order to advanced order types
  * - Cancellation of an existing order
  * - Update of an existing order
- *
- * An order doesn't necessary has a size. For example, in case of a cancellation order. But every order is linked to
- * a single asset.
- *
- * @property id a unique order identifier
- * @property tag an (optional) tag that can be used to store additional information
  **/
-sealed class Instruction(val tag: String) {
+sealed class Instruction
 
+
+/**
+ * Base class for all types of create orders. This ranges from a simple [MarketOrder], all the way to advanced order
+ * types like a [BracketOrder].
+ */
+abstract class Order(val asset: Asset, val tag: String) : Instruction() {
 
     /**
      * The order id is set by broker once placed, before that it is an empty string.
@@ -43,37 +42,6 @@ sealed class Instruction(val tag: String) {
      */
     var id = ""
 
-
-
-    /**
-     * What is the type of order, default is the class name without any order suffix
-     */
-    open val type: String
-        get() = this::class.simpleName?.uppercase()?.removeSuffix("ORDER") ?: "UNKNOWN"
-
-    /**
-     * Provide extra info as a map, used in displaying order information. Default is an empty map and subclasses are
-     * expected to return a map with their additional properties like limit or trailing percentages.
-     */
-    open fun info(): Map<String, Any> = emptyMap()
-
-
-
-    /**
-     * Returns a unified string representation for the different order types
-     */
-    override fun toString(): String {
-        val infoStr = info().toString().removePrefix("{").removeSuffix("}")
-        return "type=$type id=$id tag=$tag $infoStr"
-    }
-
-}
-
-/**
- * Base class for all types of create orders. This ranges from a simple [MarketOrder], all the way to advanced order
- * types like a [BracketOrder].
- */
-abstract class Order(val asset: Asset, tag: String) : Instruction(tag) {
 
     /**
      * Status of the order, set to INITIAL when just created
@@ -92,14 +60,35 @@ abstract class Order(val asset: Asset, tag: String) : Instruction(tag) {
     val closed: Boolean
         get() = status.closed
 
-    var openedAt: Instant = Instant.now()
+    var openedAt: Instant = Timeframe.MIN
 
-    fun cancel(order: Order): Cancellation {
-        return Cancellation(order.id)
+    fun cancel(): Cancellation {
+        return Cancellation(id)
     }
 
     fun modify(updateOrder: Order) : Modification {
-        return Modification(this.id, updateOrder)
+        return Modification(id, updateOrder)
+    }
+
+    /**
+     * What is the type of instruction, default is the class name without any order suffix
+     */
+    open val type: String
+        get() = this::class.simpleName?.uppercase()?.removeSuffix("ORDER") ?: "UNKNOWN"
+
+    /**
+     * Provide extra info as a map, used in displaying order information. Default is an empty map and subclasses are
+     * expected to return a map with their additional properties like limit or trailing percentages.
+     */
+    open fun info(): Map<String, Any> = emptyMap()
+
+
+    /**
+     * Returns a unified string representation for the different order types
+     */
+    override fun toString(): String {
+        val infoStr = info().toString().removePrefix("{").removeSuffix("}")
+        return "type=$type id=$id tag=$tag $infoStr"
     }
 
 }

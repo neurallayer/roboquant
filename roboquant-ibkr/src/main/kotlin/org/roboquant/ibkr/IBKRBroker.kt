@@ -107,7 +107,7 @@ class IBKRBroker(
      * Cancel an order
      */
     private fun cancelOrder(cancellation: Cancellation) {
-        val id = cancellation.id
+        val id = cancellation.orderId
         logger.info("cancelling order with id $id")
         client.cancelOrder(id.toInt(), cancellation.tag)
 
@@ -142,7 +142,7 @@ class IBKRBroker(
 
 
         for (order in instructions) {
-            if (order.id.isBlank()) order.id = nextOrderId++.toString()
+            if (order is Order && order.id.isBlank()) order.id = nextOrderId++.toString()
             logger.info("received order=$order")
             when (order) {
                 is Cancellation -> cancelOrder(order)

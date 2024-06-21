@@ -91,21 +91,6 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
         cash.clear()
     }
 
-    /**
-     * Load the state from an account
-     */
-    @Synchronized
-    fun load(account: Account) {
-        clear()
-        buyingPower = account.buyingPower
-        cash.deposit(account.cash)
-        for (p in account.positions) portfolio[p.asset] = p
-        for (o in account.openOrders) openOrders[o.id] = o
-        closedOrders.addAll(account.closedOrders)
-        trades.addAll(account.trades)
-        lastUpdate = account.lastUpdate
-        baseCurrency = account.baseCurrency
-    }
 
     /**
      * Set the [position] a portfolio. If the position is closed, it is removed all together from the [portfolio].
@@ -205,11 +190,11 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
         return Account(
             baseCurrency,
             lastUpdate,
-            cash.clone(),
-            trades.toList(),
+            cash,
+            trades,
             openOrders.values.toList(),
-            closedOrders.toList(),
-            portfolio.values.toList(),
+            closedOrders,
+            portfolio,
             buyingPower
         )
     }
@@ -231,6 +216,7 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
 
     fun updateOrder(order: Order, now: Instant?, status: OrderStatus) {
         order.status = status
+        if (now != null && order.openedAt == Instant.MIN) order.openedAt = now
 
     }
 

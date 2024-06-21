@@ -131,13 +131,20 @@ internal class AlpacaSamples {
     @Ignore
     internal fun singleOrder() {
         val broker = AlpacaBroker { extendedHours = false }
-        repeat(10) {
+        repeat(5) {
             val order = MarketOrder(Asset("IBM"), Size.ONE)
             broker.place(listOf(order))
             Thread.sleep(5_000)
             val account = broker.sync()
             println(account)
         }
+
+        val cancellations = broker.sync().openOrders.map { it.cancel() }
+        broker.place(cancellations)
+        Thread.sleep(5_000)
+        val account = broker.sync()
+        println(account)
+
     }
 
 }

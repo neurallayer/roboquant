@@ -59,7 +59,7 @@ class ScorecardMetric : Metric {
 
         val realizedPNL = pnl.sum()
 
-        val unrealizedPNL = account.positions.unrealizedPNL.convert(account.baseCurrency, event.time).value
+        val unrealizedPNL = account.positions.values.unrealizedPNL.convert(account.baseCurrency, event.time).value
         val equity = account.equity.convert(account.baseCurrency, event.time).value
 
         val cash = account.cash.convert(account.baseCurrency, event.time).value

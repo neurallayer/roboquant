@@ -73,18 +73,6 @@ open class SimBroker(
     }
 
 
-
-    /**
-     * Load the state from another [account] into the SimBroker. This includes the cash, open positions, open orders,
-     * closed orders, buying power and trades.
-     *
-     * The initial-deposit, the configured models and retention will not be copied over.
-     */
-    fun load(account: Account) {
-        _account.load(account)
-    }
-
-
     /**
      * Update the portfolio with the provided [position] and return the realized PNL as a consequence of this position
      * change.
@@ -174,12 +162,12 @@ open class SimBroker(
                     _account.openOrders[order.id] = order
                 }
                 is Cancellation -> {
-                    val success = orderExecutors[order.id]?.cancel(Instant.now()) ?: false
+                    val success = orderExecutors[order.orderId]?.cancel(Instant.now()) ?: false
                     logger.info { "cancel order success=$success" }
                 }
                 is Modification -> {
                     // Modify instructions are applied immediatly and not stored
-                    val success = orderExecutors[order.id]?.modify(order, Instant.now()) ?: false
+                    val success = orderExecutors[order.orderId]?.modify(order, Instant.now()) ?: false
                     logger.info { "modify order success=$success" }
                 }
             }

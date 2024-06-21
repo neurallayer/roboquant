@@ -28,7 +28,7 @@ internal class CancellationTest {
         val asset = TestData.usStock()
         val order = MarketOrder(asset, 100)
         val oc = Cancellation(order.id)
-        assertEquals(order.id, oc.id)
+        assertEquals(order.id, oc.orderId)
     }
 
 

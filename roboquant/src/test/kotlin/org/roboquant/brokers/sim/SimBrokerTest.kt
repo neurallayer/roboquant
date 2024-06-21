@@ -91,17 +91,6 @@ internal class SimBrokerTest {
     }
 
 
-    @Test
-    fun load() {
-        val broker = getFilledSimbroker()
-        val account1 = broker.sync()
-
-        val broker2 = SimBroker()
-        broker2.load(account1)
-        val account2 = broker2.sync()
-        assertEquals(account1.equity, account2.equity)
-    }
-
 
     @Test
     fun placeSingleCurrencyOrder() {
@@ -130,7 +119,7 @@ internal class SimBrokerTest {
         assertEquals(broker.initialDeposit - trade.totalCost, account.cash)
 
         assertEquals(1, account.positions.size)
-        val pos = account.positions.first()
+        val pos = account.positions.values.first()
         assertEquals(Size(10), pos.size)
     }
 
@@ -148,7 +137,7 @@ internal class SimBrokerTest {
 
         account = broker.sync(TestData.event2())
         assertEquals(1, account.openOrders.size)
-        assertEquals(1, account.positions.assets.size)
+        assertEquals(1, account.positions.values.assets.size)
         assertEquals(1, account.closedOrders.size)
         assertEquals(1, account.trades.size)
     }

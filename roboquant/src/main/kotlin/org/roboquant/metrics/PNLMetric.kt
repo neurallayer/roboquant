@@ -89,7 +89,7 @@ class PNLMetric(private val priceType: String = "DEFAULT") : Metric {
         if (equity.isNaN()) equity = account.equityAmount.value
         val pnl = account.equityAmount.value - equity
 
-        val pnl2 = account.positions.unrealizedPNL
+        val pnl2 = account.positions.values.unrealizedPNL
         val unrealizedPNL = pnl2.convert(account.baseCurrency, event.time).value
 
         event.prices.values.forEach {

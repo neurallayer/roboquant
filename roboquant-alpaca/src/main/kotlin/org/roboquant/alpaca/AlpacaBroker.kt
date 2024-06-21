@@ -285,7 +285,7 @@ class AlpacaBroker(
                     _account.initializeOrders(listOf(order))
                 }
                 is Cancellation -> {
-                    val orderId = UUID.fromString(order.id)
+                    val orderId = UUID.fromString(order.orderId)
                     alpacaAPI.trader().orders().deleteOrderByOrderID(orderId)
                 }
                 else -> {

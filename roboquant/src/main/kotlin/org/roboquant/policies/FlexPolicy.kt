@@ -120,7 +120,7 @@ open class FlexPolicy(
         ): FlexPolicy {
             class CapiltalBasedPolicy : FlexPolicy(configure) {
                 override fun amountPerOrder(account: Account): Amount {
-                    val capital = account.positions.exposure + account.buyingPower
+                    val capital = account.positions.values.exposure + account.buyingPower
                     val amount = account.convert(capital)
                     return amount * config.orderPercentage
                 }
@@ -277,7 +277,7 @@ open class FlexPolicy(
             @Suppress("LoopWithTooManyJumpStatements")
             for (signal in signals) {
                 val asset = signal.asset
-                val position = account.positions.getPosition(asset)
+                val position = account.positions.getOrDefault(asset, Position.empty(asset))
                 
                 // Don't create an order if we don't know the current price
                 val priceAction = event.prices[asset]

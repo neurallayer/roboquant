@@ -35,7 +35,7 @@ class PositionMetric : Metric {
     override fun calculate(account: Account, event: Event): Map<String, Double> {
         val result = mutableMapOf<String, Double>()
 
-        for (position in account.positions) {
+        for (position in account.positions.values) {
             val asset = position.asset
             val name = "position.${asset.symbol}"
             result["$name.size"] = position.size.toDouble()

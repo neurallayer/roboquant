@@ -129,7 +129,7 @@ open class BettingAgainstBetaPolicy(
         }
 
         // Get the difference of target portfolio state and the current one
-        val diff = account.positions.diff(targetPortfolio)
+        val diff = account.positions.values.diff(targetPortfolio)
 
         // Transform difference into Orders
         return diff.map { createOrder(it.key, it.value, account, event) }.filterNotNull()

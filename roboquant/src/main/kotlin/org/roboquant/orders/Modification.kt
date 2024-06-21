@@ -26,18 +26,10 @@ package org.roboquant.orders
  *
  * @param orderId the id of the order you want to update
  * @property update the updated order, of the same type and asset as the original order
- * @param tag an optional tag to link to this order
  * @constructor Create new Modification
  */
 class Modification(
-    orderId: String,
+    val orderId: String,
     val update: Order,
-    tag: String = ""
-) : Instruction(tag) {
-
-    init {
-        id = orderId
-    }
-
-    override fun info() = update.info() + mapOf("modified-id" to id)
-}
+    val tag: String = ""
+) : Instruction()

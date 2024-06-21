@@ -2,7 +2,7 @@
 = Changelog
 
 == Major changes in 3.0
-Roboquant version 3.0 has several changes, several of them are breaking changes (but similar or better functionality).
+Roboquant version 3.0 has several changes, several of them are breaking changes. One key reason was to clean-up and simplify areas that had grown in complexity in the past few years and were a hird to maintain and extend.
 
 - Signals are simplified and now use a double value for the rating rather than an enum. This is better suited for more advanced ML type of algos.
 
@@ -10,12 +10,10 @@ Roboquant version 3.0 has several changes, several of them are breaking changes 
 
 - Removed the `Lifecycle` interface for all components (Stratyegy, Policy, Broker).
 
-- Removed Binance module. It was using an old unsupported API and no available in my country, so difficult to test moving to a newer API.
-
-- Orders are simplified. For example order-ids are handout by the broker (during the place order method), so not assigned when creating the order. This is more inline how
+- Order handling is simplified. For example order-ids are handout by the broker (during the place order method), so not assigned when creating the order. This is more inline how
 most brokers work.
 
-- Improved the broker interface. Only the `broker.sync()` call now provides access to the `account` object.
+- Improved the `Broker` interface. Only the `broker.sync()` call now provides access to the `account` object.
 
 - `MetricsLogger` is replaced by `Journal` and `MetricsJournal`. Journal has access to more data (also signals and new orders).
 +
@@ -33,6 +31,8 @@ Also more clear separation of concerns since multi-run logging logic is now hand
 - Better naming convention for many classes/attributes. Main one is event `actions` are now called `items`.
 
 - For the time being removed the machine leanring module. Rethinking what frameworks to use for future ML algo trading.
+
+- Removed Binance module. It was using an old unsupported API and no available in my country, so difficult to test moving to a newer API.
 
 - You can now start a run using the `org.roboquant.run` function. So no need to instantiate a Roboquant class anymore. The `run` also returns the latest `account` object. The run method also displays a progress bar if desired.
 +

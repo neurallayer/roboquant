@@ -52,7 +52,7 @@ class Account(
     val trades: List<Trade>,
     val openOrders: List<Order>,
     val closedOrders: List<Order>,
-    val positions: List<Position>,
+    val positions: Map<Asset, Position>,
     val buyingPower: Amount
 ) {
 
@@ -80,13 +80,13 @@ class Account(
      * Equity is defined as the sum of [cash] balances and the market value of the open [positions].
      */
     val equity: Wallet
-        get() = cash + positions.marketValue
+        get() = cash + positions.values.marketValue
 
     /**
      * Unique set of assets hold in the open [positions]
      */
     val assets: Set<Asset>
-        get() = positions.map { it.asset }.toSet()
+        get() = positions.keys
 
 
 
@@ -103,7 +103,7 @@ class Account(
 
     override fun toString(): String {
 
-        val positionString  = positions.joinToString(limit = 20) { "${it.size}@${it.asset.symbol}" }
+        val positionString  = positions.values.joinToString(limit = 20) { "${it.size}@${it.asset.symbol}" }
 
         return """
             last update  : $lastUpdate

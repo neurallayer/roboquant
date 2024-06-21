@@ -97,7 +97,7 @@ internal object TestData {
 
     fun metricInput(time: Instant = time()): Pair<Account, Event> {
         val account = usAccount()
-        val asset1 = account.positions.assets.first()
+        val asset1 = account.positions.values.assets.first()
         val moment = Event(time, listOf(TradePrice(asset1, 11.0)))
         return Pair(account, moment)
     }
