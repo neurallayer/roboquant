@@ -41,7 +41,6 @@ internal class FlexPolicyTest {
         assertTrue(orders.isEmpty())
     }
 
-
     @Test
     fun order3() {
         val policy = FlexPolicy()
