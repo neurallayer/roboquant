@@ -18,7 +18,6 @@ package org.roboquant.samples
 
 import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.brokers.assets
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.filter
