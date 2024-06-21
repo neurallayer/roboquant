@@ -44,8 +44,6 @@ import org.roboquant.strategies.Signal
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.io.path.div
-import kotlin.system.measureTimeMillis
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -163,29 +161,6 @@ internal class AvroSamples {
 
         val roboquant = Roboquant(strategy, policy = policy)
         roboquant.run(feed, timeframe = Timeframe.past(5.years))
-    }
-
-
-
-
-
-    @Test
-    @Ignore
-    internal fun performanceTest() {
-        val feed = AvroFeed(Config.home / "all_1962_2023.avro")
-        repeat(3) {
-            val t = measureTimeMillis {
-                val jobs = ParallelJobs()
-                repeat(4) {
-                    jobs.add {
-                        val rq = Roboquant(EMAStrategy())
-                        rq.run(feed)
-                    }
-                }
-                jobs.joinAllBlocking()
-            }
-            println(t)
-        }
     }
 
     @Test

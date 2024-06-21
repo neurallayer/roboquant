@@ -17,38 +17,33 @@
 package org.roboquant.brokers.sim.execution
 
 import org.roboquant.TestData
-import org.roboquant.brokers.sim.NoCostPricingEngine
-import org.roboquant.brokers.sim.Pricing
-import org.roboquant.brokers.sim.SpreadPricingEngine
 import org.roboquant.common.Size
-import org.roboquant.common.bips
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class InstructionExecutorTest {
+internal class OrderExecutorTest {
 
     private val asset = TestData.usStock()
 
-    private fun pricing(price: Number): Pricing {
-        val engine = NoCostPricingEngine()
-        return engine.getPricing(TradePrice(asset, price.toDouble()), Instant.now())
+    private fun pricing(price: Number): PriceItem {
+        //val engine = NoCostPricingEngine()
+        // return engine.getPricing(TradePrice(asset, price.toDouble()), Instant.now())
+        return TradePrice(asset, price.toDouble())
     }
 
-    private fun pricing2(price: Number): Pricing {
-        val engine = SpreadPricingEngine(200.bips)
-        return engine.getPricing(TradePrice(asset, price.toDouble()), Instant.now())
-    }
+
 
     @Test
     fun testMarketOrder() {
         val order = MarketOrder(asset, 100)
         val executor = MarketOrderExecutor(order)
-        var executions = executor.execute(pricing(100), Instant.now())
+        val executions = executor.execute(pricing(100), Instant.now())
         assertEquals(1, executions.size)
 
         val execution = executions.first()
@@ -56,10 +51,6 @@ internal class InstructionExecutorTest {
         assertEquals(execution.order.asset.currency, execution.amount.currency)
 
         assertEquals(OrderStatus.COMPLETED, executor.status)
-
-        assertFails {
-            executions = executor.execute(pricing(100), Instant.now())
-        }
     }
 
     @Test
@@ -79,12 +70,12 @@ internal class InstructionExecutorTest {
     fun testStopOrder2() {
         val order = StopOrder(asset, Size(-10), 99.0)
         val executor = StopOrderExecutor(order)
-        var executions = executor.execute(pricing2(102), Instant.now())
+        var executions = executor.execute(pricing(102), Instant.now())
         assertEquals(0, executions.size)
 
-        executions = executor.execute(pricing2(97), Instant.now())
+        executions = executor.execute(pricing(97), Instant.now())
         assertEquals(1, executions.size)
-        assertEquals(97.0 * 0.99, executions.first().price)
+        assertEquals(97.0, executions.first().price)
         assertEquals(OrderStatus.COMPLETED, executor.status)
     }
 
@@ -99,6 +90,20 @@ internal class InstructionExecutorTest {
         executions = executor.execute(pricing(98), Instant.now())
         assertEquals(1, executions.size)
         assertEquals(OrderStatus.COMPLETED, executor.status)
+    }
+
+    @Test
+    fun testLimitTrigger() {
+        val order = StopLimitOrder(asset, Size(-10), 100.0, 98.0)
+        val executor = StopLimitOrderExecutor(order)
+
+        assertFalse(executor.isTriggered(101.0))
+        assertTrue(executor.isTriggered(99.0))
+        assertTrue(executor.isTriggered(98.0))
+
+        assertTrue(executor.reachedLimit(101.0))
+        assertTrue(executor.reachedLimit(99.0))
+        assertFalse(executor.reachedLimit(97.0))
     }
 
     @Test
@@ -122,10 +127,13 @@ internal class InstructionExecutorTest {
     @Test
     fun testTrailOrder() {
         val order = TrailOrder(asset, Size(-10), 0.01)
+        order.status = OrderStatus.ACCEPTED
+        order.openedAt = Instant.now()
+
         val executor = TrailOrderExecutor(order)
         var executions = executor.execute(pricing(90), Instant.now())
         assertEquals(0, executions.size)
-        assertEquals(OrderStatus.ACCEPTED, executor.status)
+        assertEquals(OrderStatus.ACCEPTED, order.status)
 
         executions = executor.execute(pricing(100), Instant.now())
         assertEquals(0, executions.size)

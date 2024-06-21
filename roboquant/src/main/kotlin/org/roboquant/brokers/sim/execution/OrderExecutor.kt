@@ -16,7 +16,7 @@
 
 package org.roboquant.brokers.sim.execution
 
-import org.roboquant.brokers.sim.Pricing
+import org.roboquant.feeds.PriceItem
 import org.roboquant.orders.Modification
 import org.roboquant.orders.Order
 import java.time.Instant
@@ -37,9 +37,9 @@ interface OrderExecutor {
         set(value) { order.status = value}
 
     /**
-     * Execute the order for the provided [pricing] and [time] and return zero or more [Execution]
+     * Execute the order for the provided [item] and [time] and return zero or more [Execution]
      */
-    fun execute(pricing: Pricing, time: Instant): List<Execution>
+    fun execute(item: PriceItem, time: Instant): List<Execution>
 
     /**
      * Modify the order, return true if it was successful, false otherwise. Default is to return false

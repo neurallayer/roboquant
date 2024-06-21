@@ -38,15 +38,13 @@ import java.time.Instant
  * initial deposit
  * @property feeModel the fee/commission model to use, default is [NoFeeModel]
  * @property accountModel the account model (like cash or margin) to use, default is [CashAccount]
- * @param pricingEngine the pricing engine to use to calculate trade pricing, default is [SpreadPricingEngine]
  * @constructor Create a new instance of SimBroker
  */
 open class SimBroker(
     val initialDeposit: Wallet = Wallet(1_000_000.00.USD),
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val feeModel: FeeModel = NoFeeModel(),
-    private val accountModel: AccountModel = CashAccount(),
-    private val pricingEngine: PricingEngine = SpreadPricingEngine()
+    private val accountModel: AccountModel = CashAccount()
 ) : Broker {
 
     /**
@@ -123,10 +121,10 @@ open class SimBroker(
         // Add new orders to the execution engine and run it with the latest events
         val time = event.time
         for (orderExecutor in orderExecutors.values) {
+            if (orderExecutor.status.closed) continue
             val item = event.prices[orderExecutor.order.asset]
             if (item != null) {
-                val pricing = pricingEngine.getPricing(item, time)
-                val executions = orderExecutor.execute(pricing, time)
+                val executions = orderExecutor.execute(item, time)
                 for (execution in executions) updateAccount(execution, event.time)
             }
 

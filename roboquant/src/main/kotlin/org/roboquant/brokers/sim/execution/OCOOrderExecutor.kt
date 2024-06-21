@@ -15,7 +15,7 @@
  */
 package org.roboquant.brokers.sim.execution
 
-import org.roboquant.brokers.sim.Pricing
+import org.roboquant.feeds.PriceItem
 import org.roboquant.orders.OCOOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
@@ -41,11 +41,11 @@ internal class OCOOrderExecutor(override val order: OCOOrder) : OrderExecutor {
         }
     }
 
-    override fun execute(pricing: Pricing, time: Instant): List<Execution> {
+    override fun execute(item: PriceItem, time: Instant): List<Execution> {
         status = OrderStatus.ACCEPTED
 
         if (active == 0 || active == 1) {
-            val result = first.execute(pricing, time)
+            val result = first.execute(item, time)
             if (result.isNotEmpty()) {
                 active = 1
                 status = first.status
@@ -56,7 +56,7 @@ internal class OCOOrderExecutor(override val order: OCOOrder) : OrderExecutor {
         }
 
         if (active == 0 || active == 2) {
-            val result = second.execute(pricing, time)
+            val result = second.execute(item, time)
             if (result.isNotEmpty()) {
                 active = 2
                 status = second.status

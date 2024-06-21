@@ -17,22 +17,20 @@
 package org.roboquant.brokers.sim.execution
 
 import org.roboquant.TestData
-import org.roboquant.brokers.sim.NoCostPricingEngine
-import org.roboquant.brokers.sim.Pricing
 import org.roboquant.common.Size
+import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal class CombinedInstructionExecutorTest {
+internal class CombinedOrderExecutorTest {
 
     private val asset = TestData.usStock()
 
-    private fun pricing(price: Number): Pricing {
-        val engine = NoCostPricingEngine()
-        return engine.getPricing(TradePrice(asset, price.toDouble()), Instant.now())
+    private fun pricing(price: Number): PriceItem {
+        return TradePrice(asset, price.toDouble())
     }
 
     @Test

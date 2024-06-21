@@ -141,7 +141,7 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
      */
     @Synchronized
     fun toAccount(): Account {
-        val newlyClosed = openOrders.filter { it.closed }
+        val newlyClosed = openOrders.filter { it.closed }.toSet()
         closedOrders.addAll(newlyClosed)
         openOrders.removeAll(newlyClosed)
         return this

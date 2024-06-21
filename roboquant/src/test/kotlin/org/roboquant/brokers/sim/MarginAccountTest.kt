@@ -65,7 +65,6 @@ internal class MarginAccountTest {
         return SimBroker(
             wallet,
             accountModel = accountModel,
-            pricingEngine = NoCostPricingEngine(),
             feeModel = NoFeeModel()
         )
     }

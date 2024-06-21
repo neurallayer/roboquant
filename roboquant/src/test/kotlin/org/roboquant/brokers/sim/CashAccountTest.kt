@@ -55,7 +55,6 @@ internal class CashAccountTest {
             return SimBroker(
                 wallet,
                 accountModel = accountModel,
-                pricingEngine = NoCostPricingEngine(),
                 feeModel = NoFeeModel()
             )
         }

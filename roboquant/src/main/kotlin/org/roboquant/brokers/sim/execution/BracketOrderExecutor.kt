@@ -16,7 +16,7 @@
 
 package org.roboquant.brokers.sim.execution
 
-import org.roboquant.brokers.sim.Pricing
+import org.roboquant.feeds.PriceItem
 import org.roboquant.orders.BracketOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
@@ -42,14 +42,14 @@ internal class BracketOrderExecutor(override val order: BracketOrder) : OrderExe
         }
     }
 
-    override fun execute(pricing: Pricing, time: Instant): List<Execution> {
+    override fun execute(item: PriceItem, time: Instant): List<Execution> {
         order.status = OrderStatus.ACCEPTED
-        if (entry.status.open) return entry.execute(pricing, time)
+        if (entry.status.open) return entry.execute(item, time)
 
         val executions = mutableListOf<Execution>()
 
-        if (loss.fill.iszero) executions.addAll(profit.execute(pricing, time))
-        if (profit.fill.iszero) executions.addAll(loss.execute(pricing, time))
+        if (loss.fill.iszero) executions.addAll(profit.execute(item, time))
+        if (profit.fill.iszero) executions.addAll(loss.execute(item, time))
 
         val remaining = entry.order.size + loss.fill + profit.fill
         if (remaining.iszero) order.status = OrderStatus.COMPLETED

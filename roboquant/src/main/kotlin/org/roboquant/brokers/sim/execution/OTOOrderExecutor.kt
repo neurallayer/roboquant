@@ -15,13 +15,12 @@
  */
 package org.roboquant.brokers.sim.execution
 
-import org.roboquant.brokers.sim.Pricing
+import org.roboquant.feeds.PriceItem
 import org.roboquant.orders.OTOOrder
 import org.roboquant.orders.OrderStatus
 import java.time.Instant
 
 internal class OTOOrderExecutor(override val order: OTOOrder) : OrderExecutor {
-
 
     private val first = OrderExecutorFactory.getExecutor(order.primary) as SingleOrderExecutor<*>
     private val second = OrderExecutorFactory.getExecutor(order.secondary) as SingleOrderExecutor<*>
@@ -40,17 +39,17 @@ internal class OTOOrderExecutor(override val order: OTOOrder) : OrderExecutor {
         }
     }
 
-    override fun execute(pricing: Pricing, time: Instant): List<Execution> {
+    override fun execute(item: PriceItem, time: Instant): List<Execution> {
         status = OrderStatus.ACCEPTED
         val result = mutableListOf<Execution>()
 
         if (first.status.open) {
-            result.addAll(first.execute(pricing, time))
+            result.addAll(first.execute(item, time))
             if (first.status.aborted) status = first.status
         }
 
         if (first.status == OrderStatus.COMPLETED) {
-            result.addAll(second.execute(pricing, time))
+            result.addAll(second.execute(item, time))
             status = second.status
         }
 

@@ -31,7 +31,7 @@ import org.roboquant.orders.Order
 class Execution(val order: Order, val size: Size, val price: Double) {
 
     init {
-        require(size.nonzero) { "Execution should have a non-zero size" }
+        require(! size.iszero) { "execution size cannot be zero"}
     }
 
     /**
