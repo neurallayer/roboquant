@@ -143,6 +143,16 @@ internal class FlexPolicyTest {
     }
 
     @Test
+    fun predefined3() {
+        val policy = FlexPolicy.singleAsset()
+        val orders = run(policy)
+        assertTrue(orders.isNotEmpty())
+
+        val first = orders.first()
+        assertTrue(first is MarketOrder)
+    }
+
+    @Test
     fun chaining() {
         val policy = FlexPolicy()
             .resolve(SignalResolution.FIRST)

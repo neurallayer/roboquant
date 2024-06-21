@@ -40,17 +40,14 @@ To demonstrate how easy it is to get started, the following code snippet shows a
 [source,kotlin]
 ----
 val strategy = EMAStrategy() // <1>
-val metric = AccountMetric() // <2>
-val roboquant = Roboquant(strategy, metric) // <3>
-
-val feed = CSVFeed("data/US") // <4>
-roboquant.run(feed) // <5>
+val feed = CSVFeed("data/US") // <2>
+val account = run(feed, strategy) // <3>
+println(account.equity) // <4>
 ----
 <1> Create the strategy that you want to validate
-<2> Define the metrics you want to monitor during the back-test
-<3> Create a Roboquant instance, the engine of the platform
-<4> What data should be used, in this case, CSV files
-<5> Run the back test
+<2> What data should be used, in this case, CSV files
+<3> Run the back test
+<4> Print the equity at the end of the run
 
 You can find out more at the online https://roboquant.org/tutorial/index.html[tutorial^].
 
