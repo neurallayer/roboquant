@@ -17,10 +17,8 @@
 package org.roboquant.ta
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.brokers.Account
-import org.roboquant.common.Amount
+import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Currency
-import org.roboquant.common.Wallet
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
@@ -39,16 +37,8 @@ internal class TaLibMetricTest {
             mapOf("ema10" to ema(series.close, 10))
         }
 
-        val account = Account(
-            Currency.USD,
-            Instant.now(),
-            Wallet(),
-            emptyList(),
-            emptyList(),
-            emptyList(),
-            emptyMap(),
-            Amount(Currency.USD, 0.0)
-        )
+        val account = InternalAccount(Currency.USD).toAccount()
+
 
         val results = metric.calculate(account, Event(Instant.now(), emptyList()))
         assertTrue(results.isEmpty())

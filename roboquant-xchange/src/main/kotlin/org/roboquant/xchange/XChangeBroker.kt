@@ -103,13 +103,13 @@ class XChangeBroker(exchange: Exchange, baseCurrencyCode: String = "USD") : Brok
                     is LimitOrder -> {
                         trade(currencyPair, order, orderId)
                         placedOrders[orderId] = order
-                        _account.openOrders[orderId] = order
+                        _account.openOrders.add(order)
                     }
 
                     is MarketOrder -> {
                         trade(currencyPair, order)
                         placedOrders[orderId] = order
-                        _account.openOrders[orderId] = order
+                        _account.openOrders.add(order)
                     }
 
                     else -> {

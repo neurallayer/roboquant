@@ -46,8 +46,7 @@ open class SimBroker(
     baseCurrency: Currency = initialDeposit.currencies.first(),
     private val feeModel: FeeModel = NoFeeModel(),
     private val accountModel: AccountModel = CashAccount(),
-    private val pricingEngine: PricingEngine = SpreadPricingEngine(),
-    retention: TimeSpan = 1.years
+    private val pricingEngine: PricingEngine = SpreadPricingEngine()
 ) : Broker {
 
     /**
@@ -58,7 +57,7 @@ open class SimBroker(
     )
 
     // Internally used account to store the state
-    private val _account = InternalAccount(baseCurrency, retention)
+    private val account = InternalAccount(baseCurrency)
 
     // Logger to use
     private val logger = Logging.getLogger(SimBroker::class)
@@ -79,7 +78,7 @@ open class SimBroker(
      */
     private fun updatePosition(position: Position): Amount {
         val asset = position.asset
-        val p = _account.portfolio
+        val p = account.positions
         val currentPos = p.getOrDefault(asset, Position.empty(asset))
         val newPosition = currentPos + position
         if (newPosition.closed) p.remove(asset) else p[asset] = newPosition
@@ -101,7 +100,7 @@ open class SimBroker(
         val position = Position(asset, execution.size, execution.price)
 
         // Calculate the fees that apply to this execution
-        val fee = feeModel.calculate(execution, time, this._account.trades)
+        val fee = feeModel.calculate(execution, time, this.account.trades)
 
         // PNL includes the fee
         val pnl = updatePosition(position) - fee
@@ -115,8 +114,8 @@ open class SimBroker(
             execution.order.id
         )
 
-        _account.addTrade(newTrade)
-        _account.cash.withdraw(newTrade.totalCost)
+        account.addTrade(newTrade)
+        account.cash.withdraw(newTrade.totalCost)
     }
 
 
@@ -142,11 +141,11 @@ open class SimBroker(
     override fun sync(event: Event?): Account {
         if (event != null) {
             simulateMarket(event)
-            _account.updateMarketPrices(event)
-            _account.lastUpdate = event.time
-            accountModel.updateAccount(_account)
+            account.updateMarketPrices(event)
+            account.lastUpdate = event.time
+            accountModel.updateAccount(account)
         }
-        return _account.toAccount()
+        return account.toAccount()
     }
 
     /**
@@ -159,7 +158,7 @@ open class SimBroker(
                 is Order -> {
                     order.id = nextOrderId++.toString()
                     orderExecutors[order.id] = OrderExecutorFactory.getExecutor(order)
-                    _account.openOrders[order.id] = order
+                    account.openOrders.add(order)
                 }
                 is Cancellation -> {
                     val success = orderExecutors[order.orderId]?.cancel(Instant.now()) ?: false
@@ -180,9 +179,9 @@ open class SimBroker(
      * Reset all the state and set the cash balance back to the [initialDeposit].
      */
     override fun reset() {
-        _account.clear()
-        _account.cash.deposit(initialDeposit)
-        accountModel.updateAccount(_account)
+        account.clear()
+        account.cash.deposit(initialDeposit)
+        accountModel.updateAccount(account)
     }
 
 }

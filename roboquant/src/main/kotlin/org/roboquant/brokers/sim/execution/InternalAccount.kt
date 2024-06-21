@@ -29,54 +29,50 @@ import java.time.Instant
 /**
  * Internal Account is meant to be used by broker implementations, like the SimBroker. The broker is the only one with
  * a reference to the InternalAccount and will communicate the state to the outside world (Policy and Metrics) using
- * the immutable [Account] object.
- *
- * The Internal Account is designed to eliminate common mistakes, but is completely optional to use. The brokers that
- * come with roboquant use this class under the hood, but that is not a requirement for third party integrations.
+ * the [Account] object.
  *
  * @property baseCurrency The base currency to use for things like reporting
- * @property retention The time to retain trades and closed orders, default is 1 year. Setting this value to a shorter
  * time-span reduces memory usage and speeds up large back tests.
  *
  * @constructor Create a new instance of InternalAccount
  */
-class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpan = 1.years) {
+class InternalAccount(override var baseCurrency: Currency) : Account {
 
     /**
      * When was the account last updated, default if not set is [Instant.MIN]
      */
-    var lastUpdate: Instant = Instant.MIN
+    override var lastUpdate: Instant = Instant.MIN
 
     /**
-     * The trades that have been executed. Trades are only retained based on the [retention] setting.
+     * The trades that have been executed.
      */
-    internal val trades = mutableListOf<Trade>()
+    override val trades = mutableListOf<Trade>()
 
     /**
      * Open orders
      */
-    val openOrders = mutableMapOf<String, Order>()
+    override val openOrders = mutableListOf<Order>()
 
     /**
      * Closed orders. It is private and the only way it gets filled is via the [updateOrder] when the order status is
-     * closed. ClosedOrders are only retained based on the [retention] setting.
+     * closed.
      */
-    val closedOrders = mutableListOf<Order>()
+    override val closedOrders = mutableListOf<Order>()
 
     /**
      * Total cash balance hold in this account. This can be a single currency or multiple currencies.
      */
-    val cash: Wallet = Wallet()
+    override val cash: Wallet = Wallet()
 
     /**
      * Remaining buying power of the account denoted in the [InternalAccount.baseCurrency] of the account.
      */
-    var buyingPower: Amount = Amount(baseCurrency, 0.0)
+    override var buyingPower: Amount = Amount(baseCurrency, 0.0)
 
     /**
      * Portfolio with its open positions. Positions are removed as soon as they are closed
      */
-    val portfolio = mutableMapOf<Asset, Position>()
+    override val positions = mutableMapOf<Asset, Position>()
 
     /**
      * Clear all the state in this account.
@@ -87,28 +83,23 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
         trades.clear()
         lastUpdate = Instant.MIN
         openOrders.clear()
-        portfolio.clear()
+        positions.clear()
         cash.clear()
     }
 
 
     /**
-     * Set the [position] a portfolio. If the position is closed, it is removed all together from the [portfolio].
+     * Set the [position]. If the position is closed, it is removed all together from the [positions].
      */
     @Synchronized
     fun setPosition(position: Position) {
         if (position.closed) {
-            portfolio.remove(position.asset)
+            positions.remove(position.asset)
         } else {
-            portfolio[position.asset] = position
+            positions[position.asset] = position
         }
     }
 
-    /**
-     * Get the open orders
-     */
-    val orders: List<Order>
-        get() = openOrders.values.toList()
 
     /**
      * Add [orders] as initial orders. This is the first step a broker should take before further processing
@@ -116,10 +107,8 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      */
     @Synchronized
     fun initializeOrders(orders: Collection<Order>) {
-        orders.forEach { openOrders[it.id] = it }
+        openOrders.addAll(orders)
     }
-
-
 
     /**
      * Add a new [trade] to this internal account
@@ -133,44 +122,18 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      * Update the open positions in the portfolio with the current market prices as found in the [event]
      */
     fun updateMarketPrices(event: Event, priceType: String = "DEFAULT") {
-        if (portfolio.isEmpty()) return
+        if (positions.isEmpty()) return
 
         val prices = event.prices
-        for ((asset, position) in portfolio) {
+        for ((asset, position) in positions) {
             val priceAction = prices[asset]
             if (priceAction != null) {
                 val price = priceAction.getPrice(priceType)
                 val newPosition = position.copy(mktPrice = price, lastUpdate = event.time)
-                portfolio[asset] = newPosition
+                positions[asset] = newPosition
             }
         }
     }
-
-    /**
-     * Closed orders and past trades can grow to larger collections in long back tests. This consumes a lot of memory
-     * and makes the back tests slower since at each step this collection is copied to the immutable account object.
-     *
-     * The retention allows to keep only recent closed orderds and trades in memory, older ones will be discarded. This
-     * saves memory and speed-up back tests.
-     */
-    private fun enforceRetention() {
-        if (retention.isZero) {
-            trades.clear()
-            closedOrders.clear()
-            return
-        }
-        if (lastUpdate > Timeframe.MIN) {
-            val earliest = lastUpdate - retention
-            while (trades.isNotEmpty() && trades.first().time < earliest) {
-                trades.removeFirst()
-            }
-
-            // while (closedOrders.isNotEmpty() && closedOrders.first().closedAt < earliest) {
-            //    closedOrders.removeFirst()
-            // }
-        }
-    }
-
 
     /**
      * Create an immutable [Account] instance that can be shared with other components (Policy and Metric) and is
@@ -178,25 +141,10 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      */
     @Synchronized
     fun toAccount(): Account {
-        for (order in openOrders.values.toList()) {
-            if (order.status.closed) {
-                closedOrders.add(order)
-                openOrders.remove(order.id)
-            }
-        }
-
-        enforceRetention()
-
-        return Account(
-            baseCurrency,
-            lastUpdate,
-            cash,
-            trades,
-            openOrders.values.toList(),
-            closedOrders,
-            portfolio,
-            buyingPower
-        )
+        val newlyClosed = openOrders.filter { it.closed }
+        closedOrders.addAll(newlyClosed)
+        openOrders.removeAll(newlyClosed)
+        return this
     }
 
     /**
@@ -204,19 +152,39 @@ class InternalAccount(var baseCurrency: Currency, private val retention: TimeSpa
      */
     val marketValue: Wallet
         get() {
-            return portfolio.values.marketValue
+            return positions.values.marketValue
         }
-
 
 
     /**
      * Get an open order with the provided [orderId], or null if not found
      */
-    fun getOrder(orderId: String): Order? = openOrders[orderId]
+    fun getOpenOrder(orderId: String): Order? = openOrders.find { it.id == orderId }
 
     fun updateOrder(order: Order, now: Instant?, status: OrderStatus) {
         order.status = status
-        if (now != null && order.openedAt == Instant.MIN) order.openedAt = now
+        if (now != null) {
+            if (order.openedAt == Timeframe.MIN) order.openedAt = now
+        }
+
+    }
+
+
+    override fun toString(): String {
+
+        val positionString  = positions.values.joinToString(limit = 20) { "${it.size}@${it.asset.symbol}" }
+
+        return """
+            last update  : $lastUpdate
+            base currency: $baseCurrency
+            cash         : $cash
+            buying Power : $buyingPower
+            equity       : $equity
+            positions    : ${positionString.ifEmpty { "-" }}
+            open orders  : ${openOrders.size}
+            closed orders: ${closedOrders.size}
+            trades       : ${trades.size}
+        """.trimIndent()
 
     }
 

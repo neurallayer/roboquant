@@ -45,8 +45,8 @@ class CashAccount(private val minimum: Double = 0.0) : AccountModel {
         var cash = account.cash
 
         // We should not short with a cash account. But if done, this improves behavior.
-        if (account.portfolio.isNotEmpty()) {
-            val shortExposure = account.portfolio.values.filter { it.short }.sumOf { it.exposure }
+        if (account.positions.isNotEmpty()) {
+            val shortExposure = account.positions.values.filter { it.short }.sumOf { it.exposure }
             cash -= shortExposure
         }
 

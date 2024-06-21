@@ -122,7 +122,7 @@ class IBKRBroker(
         ibOrder.log(contract)
         val id = ibOrder.orderId()
         client.placeOrder(id, contract, ibOrder)
-        _account.openOrders[id.toString()] = order
+        _account.openOrders.add(order)
     }
 
     override fun sync(event: Event?): Account {
@@ -259,11 +259,11 @@ class IBKRBroker(
         override fun openOrder(orderId: Int, contract: Contract, order: IBOrder, orderState: IBOrderSate) {
             logger.debug { "orderId=$orderId asset=${contract.symbol()} qty=${order.totalQuantity()} status=${orderState.status}" }
             logger.trace { "$orderId $contract $order $orderState" }
-            val openOrder = _account.getOrder(orderId.toString())
+            val openOrder = _account.getOpenOrder(orderId.toString())
             if (openOrder != null) {
                 logger.info {"update order orderId=$orderId status=${orderState.status}" }
                 if (orderState.completedStatus() == "true") {
-                    val o = _account.getOrder(openOrder.id)
+                    val o = _account.getOpenOrder(openOrder.id)
                     if (o != null) {
                         _account.updateOrder(o, Instant.parse(orderState.completedTime()), OrderStatus.COMPLETED)
                     }
@@ -272,7 +272,7 @@ class IBKRBroker(
                 logger.info { "existing order orderId=$orderId parentId=${order.parentId()} status=${orderState.status}" }
                 // if (order.parentId() > 0) return // right now no support for open bracket orders
                 val newOrder = toOrder(order, contract)
-                _account.openOrders[orderId.toString()] = newOrder
+                _account.openOrders.add(newOrder)
                 val newStatus = toStatus(orderState.status)
                 _account.updateOrder(newOrder, Instant.now(), newStatus)
             }
@@ -285,7 +285,7 @@ class IBKRBroker(
             lastFillPrice: Double, clientId: Int, whyHeld: String?, mktCapPrice: Double
         ) {
             logger.info { "orderstatus oderId=$orderId status=$status filled=$filled" }
-            val order = _account.getOrder(orderId.toString())
+            val order = _account.getOpenOrder(orderId.toString())
             if (order != null) {
                 val newStatus = toStatus(status)
                 _account.updateOrder(order, Instant.now(), newStatus)

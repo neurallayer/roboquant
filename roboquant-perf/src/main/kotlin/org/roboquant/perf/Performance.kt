@@ -181,7 +181,7 @@ private object Performance {
                     // use lower channel capacity to limit memory requirements
                     val roboquant = Roboquant(
                         getStrategy(SKIP),
-                        broker = SimBroker(retention = TimeSpan.ZERO),
+                        broker = SimBroker(),
                     )
                     roboquant.runAsync(feed)
                 }

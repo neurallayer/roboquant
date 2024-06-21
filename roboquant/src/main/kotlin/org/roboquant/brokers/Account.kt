@@ -45,22 +45,17 @@ import java.time.Instant
  * @property buyingPower amount of buying power available for trading
  * @constructor Create a new Account
  */
-class Account(
-    val baseCurrency: Currency,
-    val lastUpdate: Instant,
-    val cash: Wallet,
-    val trades: List<Trade>,
-    val openOrders: List<Order>,
-    val closedOrders: List<Order>,
-    val positions: Map<Asset, Position>,
-    val buyingPower: Amount
-) {
+interface Account {
 
-    init {
-        require(buyingPower.currency == baseCurrency) {
-            "Buying power $buyingPower needs to be expressed in the baseCurrency $baseCurrency"
-        }
-    }
+    val baseCurrency: Currency
+    val lastUpdate: Instant
+    val cash: Wallet
+    val trades: List<Trade>
+    val openOrders: List<Order>
+    val closedOrders: List<Order>
+    val positions: Map<Asset, Position>
+    val buyingPower: Amount
+
 
     /**
      * Cash balances converted to a single amount denoted in the [baseCurrency] of the account. If you want to know
@@ -101,23 +96,6 @@ class Account(
     fun convert(wallet: Wallet, time: Instant = lastUpdate): Amount = wallet.convert(baseCurrency, time)
 
 
-    override fun toString(): String {
-
-        val positionString  = positions.values.joinToString(limit = 20) { "${it.size}@${it.asset.symbol}" }
-
-        return """
-            last update  : $lastUpdate
-            base currency: $baseCurrency
-            cash         : $cash
-            buying Power : $buyingPower
-            equity       : $equity
-            positions    : ${positionString.ifEmpty { "-" }}
-            open orders  : ${openOrders.size}
-            closed orders: ${closedOrders.size}
-            trades       : ${trades.size}
-        """.trimIndent()
-
-    }
 
 
 }

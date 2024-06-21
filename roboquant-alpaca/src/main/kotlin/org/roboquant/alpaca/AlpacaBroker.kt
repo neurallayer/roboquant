@@ -101,7 +101,7 @@ class AlpacaBroker(
      * Sync positions in the portfolio based on positions received from Alpaca.
      */
     private fun syncPositions() {
-        _account.portfolio.clear()
+        _account.positions.clear()
         val positions = alpacaAPI.trader().positions().allOpenPositions
         for (openPosition in positions) {
             logger.debug { "received $openPosition" }
@@ -125,7 +125,7 @@ class AlpacaBroker(
      * Update the status of the open orders in the account with the latest order status from Alpaca
      */
     private fun syncOrders() {
-        _account.openOrders.values.forEach {
+        _account.openOrders.forEach {
             if (it.open) {
                 // println("orderid=${it.order.id}")
                 val orderId = UUID.fromString(it.id)
@@ -145,7 +145,7 @@ class AlpacaBroker(
         for (order in openOrders) {
             logger.debug { "received open $order" }
             val rqOrder = toOrder(order)
-            _account.openOrders[rqOrder.id] = rqOrder
+            _account.openOrders.add(rqOrder)
         }
     }
 

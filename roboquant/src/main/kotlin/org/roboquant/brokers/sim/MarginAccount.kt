@@ -69,7 +69,7 @@ class MarginAccount(
     override fun updateAccount(account: InternalAccount) {
         val time = account.lastUpdate
         val currency = account.baseCurrency
-        val positions = account.portfolio.values
+        val positions = account.positions.values
 
         val excessMargin = account.cash + positions.marketValue
         excessMargin.withdraw(Amount(currency, minimumEquity))
