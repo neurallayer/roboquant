@@ -46,12 +46,6 @@ enum class SignalType {
 /**
  * Signal provides a rating for an [Asset] and is typically created by a strategy.
  *
- * Besides, the asset and rating, a signal can also optionally provide the following information:
- *
- * - Take profit price for that asset
- * - Stop loss price for that asset
- * - The probability, or in other words, how sure the strategy is about the signal
- *
  * It depends on the policy how these signals are translated into actual orders, but possible scenarios are:
  *
  *  - A BUY rating results in going long for that asset. A SELL rating results in going short

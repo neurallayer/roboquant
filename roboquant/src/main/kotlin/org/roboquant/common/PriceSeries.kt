@@ -123,12 +123,16 @@ open class PriceSeries(private var capacity: Int) {
 }
 
 /**
- * Add all the prices found in the event. If there is no entry yet, a new PriceSeries will be created
+ * Add all the prices found in the event. If there is no entry yet, a new PriceSeries will be created.
+ * Returns all the assets that have been added AND have enough data available to be used.
  */
-fun MutableMap<Asset, PriceSeries>.addAll(event: Event, capacity: Int, priceType: String = "DEFAULT") {
+fun MutableMap<Asset, PriceSeries>.addAll(event: Event, capacity: Int, priceType: String = "DEFAULT"): Set<Asset> {
+    val result = mutableSetOf<Asset>()
     for ((asset, action) in event.prices) {
         val priceSeries = getOrPut(asset) { PriceSeries(capacity) }
         priceSeries.add(action.getPrice(priceType))
+        if (priceSeries.isFull()) result.add(asset)
     }
+    return result
 }
 

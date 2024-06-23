@@ -56,7 +56,6 @@ interface Account {
     val positions: Map<Asset, Position>
     val buyingPower: Amount
 
-
     /**
      * Cash balances converted to a single amount denoted in the [baseCurrency] of the account. If you want to know
      * how much cash is available for trading, please use [buyingPower] instead.
@@ -83,8 +82,6 @@ interface Account {
     val assets: Set<Asset>
         get() = positions.keys
 
-
-
     /**
      * Convert an [amount] to the account [baseCurrency] using last update of the account as a timestamp
      */
@@ -94,8 +91,5 @@ interface Account {
      * Convert a [wallet] to the account [baseCurrency] using last update of the account as a timestamp
      */
     fun convert(wallet: Wallet, time: Instant = lastUpdate): Amount = wallet.convert(baseCurrency, time)
-
-
-
 
 }

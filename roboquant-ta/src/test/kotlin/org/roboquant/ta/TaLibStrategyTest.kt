@@ -19,7 +19,7 @@ package org.roboquant.ta
 import com.tictactec.ta.lib.Compatibility
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
-import org.roboquant.Roboquant
+import org.roboquant.run
 import org.roboquant.common.Asset
 import org.roboquant.common.plus
 import org.roboquant.common.seconds
@@ -200,9 +200,8 @@ internal class TaLibStrategyTest {
     fun noRules() {
         // Default rule is false, meaning no signals
         val strategy = TaLibStrategy(30)
-        val roboquant = Roboquant(strategy)
         val feed = RandomWalk.lastYears(1, nAssets = 2)
-        val account = roboquant.run(feed)
+        val account = run(feed, strategy)
         assertTrue(account.closedOrders.isEmpty())
     }
 

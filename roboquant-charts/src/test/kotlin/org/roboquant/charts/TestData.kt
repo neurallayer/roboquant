@@ -16,7 +16,6 @@
 
 package org.roboquant.charts
 
-import org.roboquant.Roboquant
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
 import org.roboquant.brokers.sim.execution.InternalAccount
@@ -29,6 +28,7 @@ import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
+import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.TestStrategy
 
@@ -45,8 +45,7 @@ object TestData {
 
     val fullAccount by lazy {
         val feed = RandomWalk.lastYears()
-        val rq = Roboquant(TestStrategy())
-        val account = rq.run(feed)
+        val account = run(feed, TestStrategy())
         account
     }
 
@@ -67,7 +66,7 @@ object TestData {
     val data by lazy {
         val feed = HistoricTestFeed(50..150)
         val journal = MemoryJournal(AccountMetric())
-        org.roboquant.run(feed, EMACrossover(), journal)
+        run(feed, EMACrossover(), journal)
         journal.getMetric("account.equity")
     }
 

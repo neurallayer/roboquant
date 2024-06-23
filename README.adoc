@@ -39,7 +39,7 @@ To demonstrate how easy it is to get started, the following code snippet shows a
 
 [source,kotlin]
 ----
-val strategy = EMAStrategy() // <1>
+val strategy = EMACrossover() // <1>
 val feed = CSVFeed("data/US") // <2>
 val account = run(feed, strategy) // <3>
 println(account.equity) // <4>

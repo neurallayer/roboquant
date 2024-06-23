@@ -18,17 +18,16 @@ package org.roboquant
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.common.*
+import org.roboquant.common.ParallelJobs
+import org.roboquant.common.months
+import org.roboquant.common.years
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.journals.BasicJournal
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.journals.MultiRunJournal
 import org.roboquant.metrics.PNLMetric
 import org.roboquant.strategies.EMACrossover
-import org.roboquant.strategies.TestStrategy
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -37,39 +36,19 @@ internal class RoboquantTest {
 
     @Test
     fun simpleRun() {
-        val strategy = EMACrossover()
-        val roboquant = Roboquant(strategy)
         assertDoesNotThrow {
-            roboquant.run(TestData.feed)
+            run(TestData.feed, EMACrossover())
         }
-        val summary = roboquant.toString()
-        assertTrue(summary.isNotEmpty())
-
     }
 
 
-    @Test
-    fun testWarmUp() {
-        val strategy = TestStrategy()
-        val feed = HistoricTestFeed()
-        val initial = 101.USD.toWallet()
-        val broker = SimBroker(initial)
-        val roboquant = Roboquant(strategy, broker = broker)
-        roboquant.run(feed, timeframe = Timeframe.INFINITE)
-        roboquant.broker.reset()
-        val account = broker.sync()
-        assertTrue(account.trades.isEmpty())
-        assertEquals(initial, account.cash)
-    }
 
     @Test
-    fun runAsync() = runBlocking {
-        val strategy = EMACrossover()
+    fun runAsyncTest() = runBlocking {
 
-        val roboquant = Roboquant(strategy)
         assertDoesNotThrow {
             runBlocking {
-                roboquant.runAsync(TestData.feed)
+                runAsync(TestData.feed, EMACrossover())
             }
         }
     }

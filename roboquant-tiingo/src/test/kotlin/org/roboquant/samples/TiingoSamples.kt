@@ -18,7 +18,6 @@ package org.roboquant.samples
 
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.runBlocking
-import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.journals.BasicJournal
@@ -38,8 +37,7 @@ internal class TiingoSamples {
         System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
         val feed = TiingoLiveFeed.iex()
         feed.subscribe("AAPL", "TSLA")
-        val rq = Roboquant(EMACrossover())
-        val account = rq.run(feed, timeframe = Timeframe.next(10.minutes))
+        val account = run(feed, EMACrossover(), timeframe = Timeframe.next(1.minutes))
         println(account)
     }
 
@@ -59,8 +57,7 @@ internal class TiingoSamples {
     internal fun testLiveFeedFX() {
         val feed = TiingoLiveFeed.fx()
         feed.subscribe("EURUSD")
-        val rq = Roboquant(EMACrossover())
-        val account = rq.run(feed, timeframe = Timeframe.next(1.minutes))
+        val account = run(feed, EMACrossover(), timeframe = Timeframe.next(1.minutes))
         println(account)
     }
 
@@ -72,8 +69,7 @@ internal class TiingoSamples {
         Config.registerAsset("BNBFDUSD", asset)
 
         feed.subscribe("BNBFDUSD")
-        val rq = Roboquant(EMACrossover())
-        val account = rq.run(feed, timeframe = Timeframe.next(1.minutes))
+        val account = run(feed, EMACrossover(), timeframe = Timeframe.next(1.minutes))
         println(account)
     }
 
@@ -140,8 +136,7 @@ internal class TiingoSamples {
         feed.retrieve("AAPL", "TSLA", "ERROR_SYMBOL", timeframe=tf)
         println(feed.assets)
         println(feed.timeframe)
-        val rq = Roboquant(EMACrossover())
-        val account = rq.run(feed)
+        val account = run(feed, EMACrossover())
         println(account)
     }
 
@@ -153,8 +148,7 @@ internal class TiingoSamples {
         feed.retrieveIntraday("AAPL", "TSLA", "ERROR_SYMBOL", timeframe=tf, frequency = "1hour")
         println(feed.assets)
         println(feed.timeframe)
-        val rq = Roboquant(EMACrossover())
-        val account = rq.run(feed)
+        val account = run(feed, EMACrossover())
         println(account)
     }
 

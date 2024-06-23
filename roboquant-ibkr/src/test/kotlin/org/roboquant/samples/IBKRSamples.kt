@@ -16,7 +16,6 @@
 
 package org.roboquant.samples
 
-import org.roboquant.Roboquant
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceItem
@@ -122,12 +121,7 @@ internal class IBKRSamples {
 
         val strategy = EMACrossover.PERIODS_12_26
         val policy = FlexPolicy().circuitBreaker(2, 5.minutes)
-        val rq = Roboquant(
-            strategy,
-            policy = policy,
-            broker = broker,
-        )
-        rq.run(feed, timeframe = Timeframe.next(2.hours))
+        org.roboquant.run(feed, strategy, policy= policy, timeframe = Timeframe.next(2.hours))
 
         feed.disconnect()
         broker.disconnect()

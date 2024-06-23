@@ -16,9 +16,9 @@
 
 package org.roboquant.tiingo
 
-import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.journals.BasicJournal
+import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -30,9 +30,8 @@ internal class TiingoLiveFeedTestIT {
         Config.getProperty("TEST_TIINGO") ?: return
         val feed = TiingoLiveFeed.iex()
         feed.subscribe("AAPL", "TSLA")
-        val rq = Roboquant(EMACrossover())
         val journal = BasicJournal()
-        rq.run(feed, journal=journal, timeframe = Timeframe.next(1.minutes))
+        run(feed, EMACrossover(), journal=journal, timeframe = Timeframe.next(1.minutes))
         assertTrue(journal.nItems > 0)
     }
 
@@ -41,8 +40,7 @@ internal class TiingoLiveFeedTestIT {
         Config.getProperty("TEST_TIINGO") ?: return
         val feed = TiingoLiveFeed.fx()
         feed.subscribe("EURUSD")
-        val rq = Roboquant(EMACrossover())
-        rq.run(feed, timeframe = Timeframe.next(1.minutes))
+        run(feed, EMACrossover(), timeframe = Timeframe.next(1.minutes))
     }
 
     @Test
@@ -52,8 +50,7 @@ internal class TiingoLiveFeedTestIT {
         val asset = Asset("BNBFDUSD", AssetType.CRYPTO, "FDUSD")
         Config.registerAsset("BNBFDUSD", asset)
         feed.subscribe("BNBFDUSD")
-        val rq = Roboquant(EMACrossover())
-        rq.run(feed, timeframe = Timeframe.next(1.minutes))
+        run(feed, EMACrossover(), timeframe = Timeframe.next(1.minutes))
     }
 
 

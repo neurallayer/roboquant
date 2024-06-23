@@ -17,7 +17,6 @@
 package org.roboquant.ta
 
 import kotlinx.coroutines.runBlocking
-import org.roboquant.Roboquant
 import org.roboquant.feeds.random.RandomWalk
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,8 +29,7 @@ internal class RSIStrategyTest {
         val s = RSIStrategy()
         assertEquals(30.0, s.lowThreshold)
         assertEquals(70.0, s.highThreshold)
-        val roboquant = Roboquant(s)
-        roboquant.run(feed)
+        org.roboquant.run(feed, RSIStrategy())
 
     }
 

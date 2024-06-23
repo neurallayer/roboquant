@@ -16,17 +16,15 @@
 
 package org.roboquant.samples
 
-import org.roboquant.Roboquant
 import org.roboquant.avro.AvroFeed
-import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
-import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
 import org.roboquant.policies.FlexPolicy
+import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 import java.time.Instant
 import java.time.LocalDateTime
@@ -39,61 +37,6 @@ import kotlin.test.assertEquals
 
 internal class AvroSamples {
 
-
-
-    @Test
-    @Ignore
-    internal fun multiCurrency() {
-        val feed = CSVFeed("data/US") {
-            priceParser = PriceBarParser(priceAdjust = true)
-        }
-        val feed2 = CSVFeed("data/EU") {
-            priceParser = PriceBarParser(priceAdjust = true)
-            template = Asset("TEMPLATE", currencyCode = "EUR")
-        }
-        feed.merge(feed2)
-
-        val euro = Currency.getInstance("EUR")
-        val usd = Currency.getInstance("USD")
-        val currencyConverter = FixedExchangeRates(usd, euro to 1.2)
-        Config.exchangeRates = currencyConverter
-
-        val cash = Wallet(100_000.USD)
-        val broker = SimBroker(cash)
-
-        val strategy = EMACrossover.PERIODS_12_26
-        val policy = FlexPolicy {
-            orderPercentage = 0.02
-        }
-
-        val roboquant = Roboquant(strategy, policy = policy, broker = broker)
-        val account = roboquant.run(feed)
-        println(account.openOrders)
-    }
-
-    @Test
-    @Ignore
-    internal fun testingStrategies() {
-        val strategy = EMACrossover()
-        val roboquant = Roboquant(strategy)
-        val feed = CSVFeed("data/US")
-
-        // Basic use case
-        roboquant.run(feed)
-
-        // Walk forward
-        feed.split(2.years).forEach {
-            roboquant.run(feed, timeframe = it)
-        }
-
-        // Walk forward learning
-        feed.split(2.years).map { it.splitTwoWay(0.2) }.forEach { (train, test) ->
-            roboquant.run(feed, timeframe = train)
-            roboquant.reset()
-            roboquant.run(feed, timeframe = test)
-        }
-
-    }
 
 
     @Test
@@ -158,8 +101,8 @@ internal class AvroSamples {
             orderPercentage = 90.percent
             safetyMargin = 10.percent
         }
-        val roboquant = Roboquant(strategy, policy = policy, broker = broker)
-        val account = roboquant.run(feed)
+
+        val account = run(feed, strategy, policy = policy, broker = broker)
 
         println(account)
     }

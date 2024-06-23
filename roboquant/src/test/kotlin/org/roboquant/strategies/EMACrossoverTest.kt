@@ -17,8 +17,8 @@
 package org.roboquant.strategies
 
 import kotlinx.coroutines.runBlocking
-import org.roboquant.Roboquant
 import org.roboquant.TestData
+import org.roboquant.run
 import kotlin.test.Test
 import kotlin.test.assertNotEquals
 
@@ -27,8 +27,7 @@ internal class EMACrossoverTest {
     @Test
     fun simpleTest() = runBlocking {
         val strategy = EMACrossover()
-        val roboquant = Roboquant(strategy)
-        roboquant.run(TestData.feed)
+        run(TestData.feed, strategy)
     }
 
     @Test

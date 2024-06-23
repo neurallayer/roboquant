@@ -55,18 +55,16 @@ class RSIStrategy(
     /**
      */
     override fun generate(event: Event): List<Signal> {
-        history.addAll(event, 1, priceType)
+        val assets = history.addAll(event, 1, priceType)
         val result = mutableListOf<Signal>()
-        for (asset in event.prices.keys) {
+        for (asset in assets) {
             val data = history.getValue(asset)
             try {
-                if (data.isFull()) {
-                    val rsi = taLib.rsi(data.toDoubleArray(), windowSize)
-                    if (rsi > highThreshold)
-                        result.add(Signal.sell(asset))
-                    else if (rsi < lowThreshold)
-                        result.add(Signal.buy(asset))
-                }
+                val rsi = taLib.rsi(data.toDoubleArray(), windowSize)
+                if (rsi > highThreshold)
+                    result.add(Signal.sell(asset))
+                else if (rsi < lowThreshold)
+                    result.add(Signal.buy(asset))
             } catch (ex: InsufficientData) {
                 data.increaseCapacity(ex.minSize)
             }

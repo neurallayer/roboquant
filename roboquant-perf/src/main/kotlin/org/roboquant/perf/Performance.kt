@@ -16,7 +16,8 @@
 
 package org.roboquant.perf
 
-import org.roboquant.Roboquant
+import org.roboquant.run
+import org.roboquant.runAsync
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
@@ -122,8 +123,7 @@ private object Performance {
             // sequential runs
             trades = 0
             repeat(backTests) {
-                val roboquant = Roboquant(getStrategy(SKIP))
-                val account = roboquant.run(feed)
+                val account = run(feed, getStrategy(SKIP))
                 trades += account.trades.size
             }
 
@@ -160,12 +160,7 @@ private object Performance {
                 shorting = true
             }
 
-            val roboquant = Roboquant(
-                strategy,
-                broker = broker,
-                policy = policy,
-            )
-            roboquant.run(feed)
+            run(feed, strategy,  broker = broker, policy = policy)
         }
     }
 
@@ -178,12 +173,7 @@ private object Performance {
             val jobs = ParallelJobs()
             repeat(backTests) {
                 jobs.add {
-                    // use lower channel capacity to limit memory requirements
-                    val roboquant = Roboquant(
-                        getStrategy(SKIP),
-                        broker = SimBroker(),
-                    )
-                    roboquant.runAsync(feed)
+                    runAsync(feed, getStrategy(SKIP), broker = SimBroker())
                 }
             }
             jobs.joinAllBlocking()
@@ -243,9 +233,8 @@ private object Memory {
 
     fun test() {
         Config.printInfo()
-        val rq = Roboquant(EMACrossover())
         val feed = RandomWalk.lastYears(5, nAssets = 500)
-        rq.run(feed)
+        run(feed, EMACrossover())
         exitProcess(0)
     }
 

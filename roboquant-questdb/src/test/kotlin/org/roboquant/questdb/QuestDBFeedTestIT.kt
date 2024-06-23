@@ -38,7 +38,7 @@ internal class QuestDBFeedTestIT {
         val recorder = QuestDBFeed("pricebars", folder.toPath())
         val inputFeed = RandomWalk.lastYears(1)
 
-        recorder.record<PriceBar>(inputFeed, )
+        recorder.record<PriceBar>(inputFeed)
 
         val outputFeed = QuestDBFeed("pricebars", folder.toPath())
 

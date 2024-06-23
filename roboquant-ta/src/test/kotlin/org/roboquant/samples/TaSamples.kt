@@ -16,7 +16,7 @@
 
 package org.roboquant.samples
 
-import org.roboquant.Roboquant
+import org.roboquant.run
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
@@ -52,9 +52,8 @@ internal class TaSamples {
             }
         }
 
-        val rq = Roboquant(strategy)
         val feed = RandomWalk.lastYears(5)
-        val account = rq.run(feed)
+        val account = run(feed, strategy)
         println(account)
 
     }
@@ -79,9 +78,8 @@ internal class TaSamples {
             CrossedUpIndicatorRule(closePrice, b.lower())
         }
 
-        val rq = Roboquant(strategy)
         val feed = RandomWalk.lastYears(5)
-        val account = rq.run(feed)
+        val account = run(feed, strategy)
         println(account)
     }
 
@@ -131,9 +129,9 @@ internal class TaSamples {
             }
         }
 
-        val roboquant = Roboquant(EMACrossover.PERIODS_12_26, policy = SmartLimitPolicy(atrPeriod = 5))
+
         val feed = RandomWalk.lastYears(5)
-        val account = roboquant.run(feed)
+        val account = run(feed, EMACrossover.PERIODS_12_26, policy = SmartLimitPolicy(atrPeriod = 5))
         println(account)
     }
 
@@ -146,10 +144,9 @@ internal class TaSamples {
             shorting = true
         }
         val broker = SimBroker(accountModel = MarginAccount(minimumEquity = 50_000.0))
-        val rq = Roboquant(strategy, broker = broker, policy = policy)
 
         val feed = RandomWalk.lastYears(5)
-        val account = rq.run(feed)
+        val account = run(feed,strategy, broker = broker, policy = policy)
         println(account)
     }
 
@@ -188,11 +185,11 @@ internal class TaSamples {
             }
         }
 
-        val rq = Roboquant(strategy)
+
         val feed = RandomWalk.lastYears(5)
 
         println(feed.timeframe)
-        val account = rq.run(feed)
+        val account = run(feed, strategy)
         println(account)
 
     }

@@ -16,10 +16,7 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.common.Asset
-import org.roboquant.common.PriceSeries
-import org.roboquant.common.RoboquantException
-import org.roboquant.common.addNotNull
+import org.roboquant.common.*
 import org.roboquant.feeds.Event
 
 /**
@@ -43,18 +40,19 @@ abstract class HistoricPriceStrategy(
     private val history = mutableMapOf<Asset, PriceSeries>()
 
     override fun generate(event: Event): List<Signal> {
+        val assets = history.addAll(event, period, priceType)
         val result = mutableListOf<Signal>()
-        for ((asset, action) in event.prices) {
-            val priceSeries = history.getOrPut(asset) { PriceSeries(period) }
-            val price = action.getPrice(priceType)
-            if (priceSeries.add(price)) {
-                val data = priceSeries.toDoubleArray()
-                assert(data.size == period)
-                val signal = generateSignal(asset, priceSeries.toDoubleArray())
-                result.addNotNull(signal)
-            }
+        for (asset in assets) {
+            val data = history.getValue(asset).toDoubleArray()
+            val signal = generateSignal(asset, data)
+            result.addNotNull(signal)
         }
         return result
+    }
+
+    companion object {
+        const val BUY = 1.0
+        const val SELL = -1.0
     }
 
     /**

@@ -17,8 +17,8 @@
 package org.roboquant.ta
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.Roboquant
 import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.run
 import org.ta4j.core.indicators.SMAIndicator
 import org.ta4j.core.indicators.helpers.ClosePriceIndicator
 import org.ta4j.core.rules.CrossedDownIndicatorRule
@@ -50,10 +50,9 @@ internal class Ta4JStrategyTest {
                 .or(StopGainRule(closePrice, 2.0))
         }
 
-        val roboquant = Roboquant(strategy)
         val feed = RandomWalk.lastYears(1, nAssets = 2)
         assertDoesNotThrow {
-            roboquant.run(feed)
+            run(feed, strategy)
         }
     }
 
@@ -61,9 +60,8 @@ internal class Ta4JStrategyTest {
     fun noRules() {
         // Default rule is false, meaning no signals
         val strategy = Ta4jStrategy(maxBarCount = 30)
-        val roboquant = Roboquant(strategy)
         val feed = RandomWalk.lastYears(1, nAssets = 2)
-        val account = roboquant.run(feed)
+        val account = run(feed, strategy)
         assertTrue(account.closedOrders.isEmpty())
     }
 
