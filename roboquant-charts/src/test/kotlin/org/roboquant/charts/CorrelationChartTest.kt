@@ -18,7 +18,7 @@ package org.roboquant.charts
 
 import org.icepear.echarts.charts.heatmap.HeatmapSeries
 import org.icepear.echarts.origin.util.SeriesOption
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -26,14 +26,14 @@ internal class CorrelationChartTest {
 
     @Test
     fun test() {
-        val feed = RandomWalkFeed.lastYears(1, 5)
+        val feed = RandomWalk.lastYears(1, 5)
         val chart = CorrelationChart(feed, feed.assets)
         assertTrue(chart.renderJson().isNotBlank())
     }
 
     @Test
     fun option() {
-        val feed = RandomWalkFeed.lastYears(1, 5)
+        val feed = RandomWalk.lastYears(1, 5)
         val series = CorrelationChart(feed, feed.assets).getOption().series
         assertTrue(series is Array<*> && series.isArrayOf<SeriesOption>())
         assertTrue(series.first() is HeatmapSeries)

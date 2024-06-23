@@ -23,7 +23,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.common.*
 import org.roboquant.feeds.*
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.AssetSerializer.deserialize
 import org.roboquant.feeds.util.AssetSerializer.serialize
 import java.io.File
@@ -112,17 +112,15 @@ internal class AvroFeedTest {
     fun append() {
         val now = Instant.now()
         val past = Timeframe(now - 2.years, now - 1.years)
-        val feed = RandomWalkFeed(past, 1.days)
+        val feed = RandomWalk(past, 1.days)
         val fileName = File(folder, "test2.avro").path
         val feed2 = AvroFeed(fileName)
         feed2.record(feed, compress = true)
 
         val past2 = Timeframe(now - 1.years, now)
-        val feed3 = RandomWalkFeed(past2, 1.days)
+        val feed3 = RandomWalk(past2, 1.days)
         feed2.record(feed3, append = true)
     }
-
-
 
     @Test
     fun assetSerialization() {
@@ -137,7 +135,15 @@ internal class AvroFeedTest {
         assertEquals("XYZ\u001FBOND\u001FEUR\u001FAEB\u001F123", str3)
         val asset4 = str3.deserialize()
         assertEquals(asset3, asset4)
+    }
 
+    @Test
+    fun sp25() {
+        assertDoesNotThrow {
+            val feed = AvroFeed.sp25()
+            assertTrue(feed.exists())
+            assertEquals(Timeframe.parse("2020-01-02T21:00:00Z", "2023-12-29T21:00:00Z", inclusive = true), feed.timeframe)
+        }
     }
 
 }

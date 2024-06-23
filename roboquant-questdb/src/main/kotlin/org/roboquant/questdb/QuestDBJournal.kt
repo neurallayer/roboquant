@@ -47,7 +47,7 @@ class QuestDBJournal(
     dbPath: Path = Config.home / "questdb-metrics" / "db",
     private val table: String = "metrics",
     workers: Int = 1,
-    private val partition: String = QuestDBRecorder.NONE,
+    private val partition: String = QuestDBFeed.NONE,
     private val truncate: Boolean = false
 ) : MetricsJournal {
 
@@ -85,6 +85,7 @@ class QuestDBJournal(
             return engine.tables().toSet()
         }
 
+        @Synchronized
         fun close(dbPath: Path) {
             engines[dbPath]?.close()
         }

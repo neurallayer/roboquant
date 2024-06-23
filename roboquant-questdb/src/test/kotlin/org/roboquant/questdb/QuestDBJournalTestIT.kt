@@ -20,11 +20,11 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.common.ParallelJobs
 import org.roboquant.common.years
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.journals.Journal
 import org.roboquant.journals.MultiRunJournal
 import org.roboquant.metrics.AccountMetric
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -39,8 +39,8 @@ internal class QuestDBJournalTestIT {
     lateinit var folder2: File
 
     private fun simpleRun(journal: Journal) {
-        val feed = RandomWalkFeed.lastYears(1)
-        org.roboquant.run(feed, EMAStrategy(), journal)
+        val feed = RandomWalk.lastYears(1)
+        org.roboquant.run(feed, EMACrossover(), journal)
     }
 
     @Test
@@ -61,13 +61,13 @@ internal class QuestDBJournalTestIT {
         val mrj = MultiRunJournal {
             run -> QuestDBJournal(AccountMetric(), dbPath = folder2.toPath(), table=run)
         }
-        val feed = RandomWalkFeed.lastYears(5)
+        val feed = RandomWalk.lastYears(5)
         val jobs = ParallelJobs()
         val tfs = feed.timeframe.split(1.years)
         for (tf in tfs) {
             jobs.add {
                 val journal = mrj.getJournal()
-                org.roboquant.runAsync(feed, EMAStrategy(), journal, tf)
+                org.roboquant.runAsync(feed, EMACrossover(), journal, tf)
             }
         }
         jobs.joinAll()

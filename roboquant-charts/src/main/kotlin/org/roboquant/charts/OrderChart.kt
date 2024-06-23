@@ -37,7 +37,7 @@ import java.time.Instant
  * provide more insights, since these also cover more advanced order types. You can use the [TradeChart] for that.
  */
 class OrderChart(
-    private val orderStates: List<Order>,
+    private val orders: List<Order>,
 ) : Chart() {
 
     private fun getTooltip(order: SingleOrder, openedAt: Instant): String {
@@ -55,9 +55,9 @@ class OrderChart(
     }
 
     private fun ordersToSeriesData(): List<Triple<Instant, BigDecimal, String>> {
-        val states = orderStates.filter { it.status != OrderStatus.INITIAL }
+        val activedOrders = orders.filter { it.status != OrderStatus.INITIAL }
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
-        for (order in states.sortedBy { it.openedAt }) {
+        for (order in activedOrders.sortedBy { it.openedAt }) {
             if (order is SingleOrder) {
                 val value = order.size.toBigDecimal()
                 val tooltip = getTooltip(order, order.openedAt)

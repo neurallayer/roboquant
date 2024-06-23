@@ -46,7 +46,7 @@ import java.time.LocalDate
  * @param template template to use when generating assets
  * @property seed seed to use for initializing the random generator, default is 42
  */
-class RandomWalkFeed(
+class   RandomWalk(
     override val timeframe: Timeframe,
     private val timeSpan: TimeSpan = 1.days,
     nAssets: Int = 10,
@@ -99,25 +99,25 @@ class RandomWalkFeed(
      */
     companion object {
 
-        private val logger = Logging.getLogger(RandomWalkFeed::class)
+        private val logger = Logging.getLogger(RandomWalk::class)
 
         /**
          * Create a random walk for the last [years], generating daily prices
          */
-        fun lastYears(years: Int = 1, nAssets: Int = 10, priceType: PriceItemType = PriceItemType.BAR): RandomWalkFeed {
+        fun lastYears(years: Int = 1, nAssets: Int = 10, priceType: PriceItemType = PriceItemType.BAR): RandomWalk {
             val lastYear = LocalDate.now().year
             val tf = Timeframe.fromYears(lastYear - years, lastYear)
-            return RandomWalkFeed(tf, 1.days, nAssets, priceType)
+            return RandomWalk(tf, 1.days, nAssets, priceType)
         }
 
         /**
          * Create a random walk for the last [days], generating minute prices.
          */
-        fun lastDays(days: Int = 1, nAssets: Int = 10, priceType: PriceItemType = PriceItemType.BAR): RandomWalkFeed {
+        fun lastDays(days: Int = 1, nAssets: Int = 10, priceType: PriceItemType = PriceItemType.BAR): RandomWalk {
             val last = Instant.now()
             val first = last - days.days
             val tf = Timeframe(first, last)
-            return RandomWalkFeed(tf, 1.minutes, nAssets, priceType)
+            return RandomWalk(tf, 1.minutes, nAssets, priceType)
         }
     }
 

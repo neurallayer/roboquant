@@ -24,12 +24,12 @@ import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Size
 import org.roboquant.common.USD
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.TestStrategy
 
 /**
@@ -44,7 +44,7 @@ internal fun String.removeEOL() = this.replace("\n", "").replace("\r", "")
 object TestData {
 
     val fullAccount by lazy {
-        val feed = RandomWalkFeed.lastYears()
+        val feed = RandomWalk.lastYears()
         val rq = Roboquant(TestStrategy())
         val account = rq.run(feed)
         account
@@ -67,7 +67,7 @@ object TestData {
     val data by lazy {
         val feed = HistoricTestFeed(50..150)
         val journal = MemoryJournal(AccountMetric())
-        org.roboquant.run(feed, EMAStrategy(), journal)
+        org.roboquant.run(feed, EMACrossover(), journal)
         journal.getMetric("account.equity")
     }
 

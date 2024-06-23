@@ -29,7 +29,7 @@ import org.roboquant.orders.BracketOrder
 import org.roboquant.orders.MarketOrder
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.policies.circuitBreaker
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import kotlin.test.Test
 
 internal class IBKRSamples {
@@ -120,7 +120,7 @@ internal class IBKRSamples {
         val feed = IBKRLiveFeed { client = 3 }
         feed.subscribe(tsla, msft, googl)
 
-        val strategy = EMAStrategy.PERIODS_12_26
+        val strategy = EMACrossover.PERIODS_12_26
         val policy = FlexPolicy().circuitBreaker(2, 5.minutes)
         val rq = Roboquant(
             strategy,

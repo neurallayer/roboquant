@@ -20,13 +20,12 @@ import kotlinx.coroutines.runBlocking
 import org.roboquant.common.*
 import org.roboquant.feeds.PriceBar
 import org.roboquant.feeds.filter
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.journals.MultiRunJournal
 import org.roboquant.questdb.QuestDBFeed
 import org.roboquant.questdb.QuestDBJournal
-import org.roboquant.questdb.QuestDBRecorder
 import org.roboquant.runAsync
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import kotlin.system.measureTimeMillis
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -46,13 +45,13 @@ internal class QuestDBSamples {
     @Test
     @Ignore
     internal fun parallel() = runBlocking {
-        val feed = RandomWalkFeed(Timeframe.past(4.years), nAssets = 3)
+        val feed = RandomWalk(Timeframe.past(4.years), nAssets = 3)
         val jobs = ParallelJobs()
         val mrj = MultiRunJournal { run -> QuestDBJournal(table = run) }
 
         for (tf in feed.timeframe.split(1.years)) {
             jobs.add {
-                val acc = runAsync(feed, EMAStrategy(),mrj.getJournal(), timeframe = tf)
+                val acc = runAsync(feed, EMACrossover(),mrj.getJournal(), timeframe = tf)
                 println(acc)
             }
         }
@@ -62,17 +61,6 @@ internal class QuestDBSamples {
     }
 
 
-    @Test
-    @Ignore
-    internal fun create() {
-        val f = RandomWalkFeed(Timeframe.past(12.months), nAssets = 3, timeSpan = 1.seconds)
-
-        printTimeMillis("create feed") {
-            val g = QuestDBRecorder()
-            g.removeAllFeeds()
-            g.record<PriceBar>(f, tableName)
-        }
-    }
 
     @Test
     @Ignore

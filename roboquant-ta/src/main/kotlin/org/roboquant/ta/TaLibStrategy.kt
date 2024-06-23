@@ -114,7 +114,7 @@ class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
         /**
          * Returns an EMA crossover Strategy using the provided [slow] and [fast] times.
          *
-         * See also [org.roboquant.strategies.EMAStrategy] for more efficient implementation.
+         * See also [org.roboquant.strategies.EMACrossover] for more efficient implementation.
          */
         fun emaCrossover(slow: Int, fast: Int): TaLibStrategy {
             require(slow > 0 && fast > 0) { "Periods have to be larger than 0" }

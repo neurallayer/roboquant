@@ -18,7 +18,7 @@ package org.roboquant.charts
 
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Item
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.metrics.Indicator
 import java.time.Instant
 import kotlin.test.Test
@@ -30,7 +30,7 @@ internal class PriceChartTest {
 
     @Test
     fun test() {
-        val feed = RandomWalkFeed.lastYears(1)
+        val feed = RandomWalk.lastYears(1)
         val asset = feed.assets.first()
         val chart = PriceChart(feed, asset)
         val html = chart.renderJson()
@@ -52,7 +52,7 @@ internal class PriceChartTest {
         }
 
         val tf = Timeframe.fromYears(2020, 2021)
-        val feed = RandomWalkFeed(tf)
+        val feed = RandomWalk(tf)
         val asset = feed.assets.first()
         val ind = MyIndicator()
 

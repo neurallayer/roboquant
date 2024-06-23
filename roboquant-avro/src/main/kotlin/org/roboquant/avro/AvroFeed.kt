@@ -30,13 +30,14 @@ import org.apache.avro.generic.GenericDatumWriter
 import org.apache.avro.generic.GenericRecord
 import org.apache.avro.io.DatumWriter
 import org.apache.avro.util.Utf8
-import org.roboquant.common.Asset
-import org.roboquant.common.Logging
-import org.roboquant.common.Timeframe
-import org.roboquant.common.compareTo
+import org.roboquant.common.*
 import org.roboquant.feeds.*
+import java.io.File
+import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.time.Instant
 import java.util.*
 
@@ -60,17 +61,22 @@ internal const val SCHEMA = """{
  *
  * The internal resolution is nanoseconds and stored as a single Long value
  *
- * @property path the path where the Avro file can be found
+ * @property file the Avro file
  * @property template template to use to convert the stored symbols into assets
  *
  * @constructor Create new Avro Feed
  */
-class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMPLATE")) : Feed {
+class AvroFeed(private val file: File, private val template: Asset = Asset("TEMPLATE")) : Feed {
 
     /**
      * Instantiate an Avro Feed based on the Avro file at [path]
      */
-    constructor(path: String) : this(Path.of(path))
+    constructor(path: String) : this(File(path))
+
+    /**
+     * Instantiate an Avro Feed based on the Avro file at [path]
+     */
+    constructor(path: Path) : this(path.toFile())
 
     private val logger = Logging.getLogger(AvroFeed::class)
 
@@ -80,14 +86,14 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
 
 
     init {
-        logger.info { "New AvroFeed path=$path exist=${exists()}" }
+        logger.info { "New AvroFeed file=$file exist=${exists()}" }
     }
 
 
-    fun exists(): Boolean = Files.exists(path)
+    fun exists(): Boolean = file.exists()
 
     private fun getReader(): DataFileReader<GenericRecord> {
-        return DataFileReader(path.toFile(), GenericDatumReader())
+        return DataFileReader(file, GenericDatumReader())
     }
 
     /**
@@ -104,7 +110,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
         val cache = mutableMapOf<String, Asset>()
         getReader().use {
             val name = it.schema.fullName
-            assert(name == "org.roboquant.avro.schema.PriceItemV2") { "invalid avro schema $name"}
+            assert(name == "org.roboquant.avro.schema.PriceItemV2") { "invalid avro schema $name" }
             if (timeframe.isFinite()) position(it, timeframe.start)
             while (it.hasNext()) {
                 val rec = it.next()
@@ -141,7 +147,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
         if (key != null) r.seek(index.getValue(key))
     }
 
-    private fun createIndex() : TreeMap<Instant, Long> {
+    private fun createIndex(): TreeMap<Instant, Long> {
         val index = TreeMap<Instant, Long>()
         getReader().use {
             while (it.hasNext()) {
@@ -149,7 +155,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
                 val t = it.next().get(0) as Utf8
                 it.seek(position)
                 if (it.hasNext()) {
-                    index.putIfAbsent(Instant.parse(t),position)
+                    index.putIfAbsent(Instant.parse(t), position)
                     it.nextBlock()
                 }
             }
@@ -158,7 +164,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
         return index
     }
 
-    private fun calcTimeframe() : Timeframe {
+    private fun calcTimeframe(): Timeframe {
         if (index.isEmpty()) return Timeframe.EMPTY
         val start = index.firstKey()
         getReader().use {
@@ -187,17 +193,17 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
         compress: Boolean = true,
         timeframe: Timeframe = Timeframe.INFINITE,
         append: Boolean = false,
-        syncInterval: Int = DataFileConstants.DEFAULT_SYNC_INTERVAL
+        syncInterval: Int = DataFileConstants.DEFAULT_SYNC_INTERVAL,
+        assetFilter: AssetFilter = AssetFilter.all()
     ) = runBlocking {
 
         val channel = EventChannel(timeframe = timeframe)
         val schema = Schema.Parser().parse(SCHEMA)
         val datumWriter: DatumWriter<GenericRecord> = GenericDatumWriter(schema)
         val dataFileWriter = DataFileWriter(datumWriter)
-        val file = path.toFile()
 
         if (append) {
-            require(exists()) {"File $file doesn't exist yet, cannot append"}
+            require(exists()) { "File $file doesn't exist yet, cannot append" }
             dataFileWriter.appendTo(file)
         } else {
             if (exists()) logger.info { "Overwriting existing Avro file $file" }
@@ -222,6 +228,7 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
                 val event = channel.receive()
 
                 for (action in event.items.filterIsInstance<PriceItem>()) {
+                    if (!assetFilter.filter(action.asset, event.time)) continue
 
                     val asset = action.asset
                     record.put(0, event.time.toString())
@@ -253,6 +260,41 @@ class AvroFeed(private val path: Path, private val template: Asset = Asset("TEMP
         }
     }
 
+    /**
+     * Standard set of Avro feeds that come with roboquant and will be downloaded the first time when invoked. They are
+     * stored at <User.Home>/.roboquant and reused from there later on.
+     */
+    companion object {
+
+        /**
+         * Get an AvroFeed containing end-of-day [PriceBar] data for the 25 largest US stocks. This feed
+         * contains a few years of public data.
+         *
+         * This is sample data and should NOT be relies on for real back testing.
+         */
+        fun sp25(): AvroFeed {
+            val path = copy("/sp25.avro")
+            return AvroFeed(path)
+        }
+
+        /**
+         * Copy file from jar to local filesystem
+         */
+        private fun copy(fileName: String): Path {
+            val path = Paths.get(Config.home.toString(), fileName)
+            if (Files.notExists(path)) {
+                val stream = AvroFeed::class.java.getResourceAsStream(fileName)
+                stream.use { inputStream: InputStream? ->
+                    Files.copy(
+                        inputStream!!, path, StandardCopyOption.REPLACE_EXISTING
+                    )
+                }
+                require(Files.exists(path))
+            }
+            return path
+        }
+
+    }
 
 
 }

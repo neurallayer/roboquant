@@ -22,20 +22,20 @@ import org.roboquant.TestData
 import kotlin.test.Test
 import kotlin.test.assertNotEquals
 
-internal class EMAStrategyTest {
+internal class EMACrossoverTest {
 
     @Test
     fun simpleTest() = runBlocking {
-        val strategy = EMAStrategy()
+        val strategy = EMACrossover()
         val roboquant = Roboquant(strategy)
         roboquant.run(TestData.feed)
     }
 
     @Test
     fun simple2() {
-        val strategy1 = EMAStrategy.PERIODS_5_15
-        val strategy2 = EMAStrategy.PERIODS_12_26
-        val strategy3 = EMAStrategy.PERIODS_50_200
+        val strategy1 = EMACrossover.PERIODS_5_15
+        val strategy2 = EMACrossover.PERIODS_12_26
+        val strategy3 = EMACrossover.PERIODS_50_200
         assertNotEquals(strategy1, strategy2)
         assertNotEquals(strategy2, strategy3)
     }

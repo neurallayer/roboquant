@@ -18,7 +18,7 @@ package org.roboquant.feeds
 
 import kotlinx.coroutines.runBlocking
 import org.roboquant.feedTest
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.play
 import java.time.Instant
 import kotlin.test.Test
@@ -29,8 +29,8 @@ internal class CombinedFeedTest {
 
     @Test
     fun testCombinedFeed2() = runBlocking {
-        val f1 = RandomWalkFeed.lastYears(1)
-        val f2 = RandomWalkFeed.lastYears(2)
+        val f1 = RandomWalk.lastYears(1)
+        val f2 = RandomWalk.lastYears(2)
         val cf = CombinedFeed(f1, f2)
         assertTrue { cf.timeframe == f2.timeframe }
         var cnt = 0
@@ -46,8 +46,8 @@ internal class CombinedFeedTest {
 
     @Test
     fun testCombinedFeed4() = runBlocking {
-        val f1 = RandomWalkFeed.lastYears(1)
-        val f2 = RandomWalkFeed.lastYears(2)
+        val f1 = RandomWalk.lastYears(1)
+        val f2 = RandomWalk.lastYears(2)
         val cf = CombinedFeed(f1, f2, channelCapacity = 10)
         assertTrue { cf.timeframe == f2.timeframe }
         var cnt = 0
@@ -63,8 +63,8 @@ internal class CombinedFeedTest {
 
     @Test
     fun testCombinedFeed5() = runBlocking {
-        val f1 = RandomWalkFeed.lastYears(1)
-        val f2 = RandomWalkFeed.lastYears(2)
+        val f1 = RandomWalk.lastYears(1)
+        val f2 = RandomWalk.lastYears(2)
         val cf = CombinedFeed(f1, f2)
         feedTest(cf)
     }

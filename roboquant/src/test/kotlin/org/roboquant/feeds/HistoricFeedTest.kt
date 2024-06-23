@@ -21,7 +21,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 import org.roboquant.TestData
 import org.roboquant.common.*
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.HistoricTestFeed
 import java.time.Instant
 import java.util.*
@@ -31,7 +31,7 @@ internal class HistoricFeedTest {
 
     @Test
     fun test() {
-        val feed = RandomWalkFeed.lastYears()
+        val feed = RandomWalk.lastYears()
         val tfs = feed.timeframe.split(1.months)
         assertEquals(12, tfs.size)
         assertEquals(10, feed.assets.size)

@@ -18,7 +18,7 @@ package org.roboquant.charts
 
 import org.icepear.echarts.Option
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
@@ -45,7 +45,7 @@ internal class ChartTest {
 
     @Test
     fun test() {
-        val f = RandomWalkFeed.lastYears(1, 1)
+        val f = RandomWalk.lastYears(1, 1)
         val asset = f.assets.first()
         val chart = PriceBarChart(f, asset)
         val html = chart.renderJson()

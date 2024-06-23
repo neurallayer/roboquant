@@ -16,7 +16,7 @@
 
 package org.roboquant.charts
 
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -24,7 +24,7 @@ internal class PerformanceChartTest {
 
     @Test
     fun test() {
-        val feed = RandomWalkFeed.lastYears(1)
+        val feed = RandomWalk.lastYears(1)
         val chart = PerformanceChart(feed)
         assertTrue(chart.renderJson().isNotBlank())
     }

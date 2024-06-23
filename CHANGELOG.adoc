@@ -2,16 +2,17 @@
 = Changelog
 
 == Major changes in 3.0
-Roboquant version 3.0 has several changes, several of them are breaking changes. One key reason was to clean-up and simplify areas that had grown in complexity in the past few years and were a hird to maintain and extend.
+Roboquant version 3.0 has several changes, several of them are breaking changes. One key reason was to clean-up and simplify areas that had grown in complexity in the past few years and were a hard to maintain and extend.
+
+A non-extensive list of the major changes:
 
 - Signals are simplified and now use a double value for the rating rather than an enum. This is better suited for more advanced ML type of algos.
 
-- SimBroker order execution simulation simplified.
-
 - Removed the `Lifecycle` interface for all components (Stratyegy, Policy, Broker).
 
-- Order handling is simplified. For example order-ids are handout by the broker (during the place order method), so not assigned when creating the order. This is more inline how
-most brokers work.
+- Order handling is simplified. For example, order-ids are handout by the broker (during the place order method). So they are no longer assigned when creating the order. This is more inline how most brokers work.
+
+- SimBroker order execution is simplified. Every order type has its own executor that is responsible for the whole execution
 
 - Improved the `Broker` interface. Only the `broker.sync()` call now provides access to the `account` object.
 
@@ -26,13 +27,15 @@ fun track(event: Event, account: Account, signals: List<Signal>, orders: List<Or
 +
 Also more clear separation of concerns since multi-run logging logic is now handled by a seperate class.
 
-- Simplified hearth-beat generation on an event channel (now done at consumer level via a time-out). This avoids a lot of possible errors and complications when nesting feeds.
+- Hearth-beat generation for live feeds now done at consumer level via a time-out. This avoids a lot of possible errors and complications when nesting live feeds.
 
-- Better naming convention for many classes/attributes. Main one is event `actions` are now called `items`.
+- Better naming convention for many classes/attributes. Two main ones are:
+    * Event `actions` are now called `items`.
+    * `Instruction` is now the interface for `Order`, `Cancellation` and `Modification`
 
-- For the time being removed the machine leanring module. Rethinking what frameworks to use for future ML algo trading.
+- For the time being removed the machine learning module. Rethinking what frameworks to use for future ML algo trading.
 
-- Removed Binance module. It was using an old unsupported API and no available in my country, so difficult to test moving to a newer API.
+- Removed `roboquant-binance` module. It was using an old unsupported API. And since they no longer operate in my country, difficult to test when moving to the newer API.
 
 - You can now start a run using the `org.roboquant.run` function. So no need to instantiate a Roboquant class anymore. The `run` also returns the latest `account` object. The run method also displays a progress bar if desired.
 +
@@ -49,10 +52,10 @@ roboquant.run(feed)
 val account = run(feed, strategy)
 ----
 
-- Use the new Alpaca API based on published OpenAPI specification.
+- Use the new Alpaca library based on published OpenAPI specification.
 
 - Simplified AvroFeed (have to see if thsi is not too simple)
 
 - Updated almost all dependencies. Only not yet moved to Kotlin 2.0 since Jupyter Notebooks are not yet supported.
 
-- Removed most of `Summary` funcitonality. This was reletive a lot of maintenance and now replaced with a simpler toString() implementation.
+- Removed most of `Summary` funcitonality. This was reletive a lot of maintenance and now replaced with a much simpler toString() implementation.

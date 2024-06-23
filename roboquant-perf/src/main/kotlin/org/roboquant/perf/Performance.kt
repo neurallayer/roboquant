@@ -21,10 +21,10 @@ import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.*
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.policies.FlexPolicy
 import org.roboquant.strategies.CombinedStrategy
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.Signal
 import org.roboquant.strategies.Strategy
 import java.time.Instant
@@ -243,8 +243,8 @@ private object Memory {
 
     fun test() {
         Config.printInfo()
-        val rq = Roboquant(EMAStrategy())
-        val feed = RandomWalkFeed.lastYears(5, nAssets = 500)
+        val rq = Roboquant(EMACrossover())
+        val feed = RandomWalk.lastYears(5, nAssets = 500)
         rq.run(feed)
         exitProcess(0)
     }

@@ -20,7 +20,7 @@ import org.roboquant.charts.CorrelationChart
 import org.roboquant.charts.ImageCreator
 import org.roboquant.charts.PriceBarChart
 import org.roboquant.charts.transcodeSVG2PNG
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import java.io.File
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -49,7 +49,7 @@ class SSRSamples {
     @Test
     @Ignore
     internal fun run() {
-        val feed = RandomWalkFeed.lastYears(2, nAssets = 5)
+        val feed = RandomWalk.lastYears(2, nAssets = 5)
         val chart = CorrelationChart(feed, feed.assets)
 
         val creator = ImageCreator()

@@ -18,10 +18,10 @@ package org.roboquant.metrics
 
 import org.roboquant.TestData
 import org.roboquant.common.months
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.journals.MemoryJournal
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.TestStrategy
 import kotlin.test.Test
 import kotlin.test.assertContains
@@ -40,9 +40,9 @@ internal class ReturnsMetricTest {
     @Test
     fun basic2() {
         val metric = ReturnsMetric2(minSize = 250)
-        val feed = RandomWalkFeed.lastYears(2)
+        val feed = RandomWalk.lastYears(2)
         val j = MemoryJournal(metric)
-        org.roboquant.run(feed, EMAStrategy(), j)
+        org.roboquant.run(feed, EMACrossover(), j)
         assertContains(j.getMetricNames(), "returns.sharperatio")
     }
 

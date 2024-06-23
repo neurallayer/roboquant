@@ -21,10 +21,10 @@ import org.roboquant.brokers.Position
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.Currency
 import org.roboquant.common.Size
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.toList
 import org.roboquant.journals.MemoryJournal
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertTrue
@@ -34,7 +34,7 @@ internal class AlphaBetaMetricTest {
     @Test
     fun test() {
         val feed = TestData.feed
-        val strategy = EMAStrategy.PERIODS_5_15
+        val strategy = EMACrossover.PERIODS_5_15
         val alphaBetaMetric = AlphaBetaMetric(50)
         val logger = MemoryJournal(alphaBetaMetric)
         org.roboquant.run(feed, strategy,logger)
@@ -48,7 +48,7 @@ internal class AlphaBetaMetricTest {
 
     @Test
     fun test2() {
-        val feed = RandomWalkFeed.lastYears(1, nAssets = 5)
+        val feed = RandomWalk.lastYears(1, nAssets = 5)
         val asset = feed.assets.first()
         val internalAccount = InternalAccount(Currency.USD)
         val metric = AlphaBetaMetric(50)

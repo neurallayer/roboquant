@@ -28,7 +28,7 @@ import java.time.Instant
  * Internally, it uses a seeded random generator. So while it generates random data, the results can be reproduced if
  * instantiated with the same seed. It can generate [PriceBar] or [TradePrice] prices.
  *
- * @see RandomWalkFeed for a historic data random walk
+ * @see RandomWalk for a historic data random walk
  *
  * @property timeSpan the timeSpan between two events, default is `1.seconds`
  * @param nAssets the number of assets to generate, default is 10.

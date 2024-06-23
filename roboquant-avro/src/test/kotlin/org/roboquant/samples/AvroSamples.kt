@@ -16,74 +16,30 @@
 
 package org.roboquant.samples
 
-import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
 import org.roboquant.avro.AvroFeed
-import org.roboquant.brokers.Account
 import org.roboquant.brokers.FixedExchangeRates
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
-import org.roboquant.feeds.Event
-import org.roboquant.feeds.EventChannel
-import org.roboquant.feeds.PriceItemType
+import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.PriceBarParser
 import org.roboquant.feeds.csv.TimeParser
-import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.orders.Instruction
 import org.roboquant.policies.FlexPolicy
-import org.roboquant.policies.Policy
-import org.roboquant.policies.SignalResolution
-import org.roboquant.policies.resolve
-import org.roboquant.run
-import org.roboquant.strategies.CombinedStrategy
-import org.roboquant.strategies.EMAStrategy
-import org.roboquant.strategies.Signal
+import org.roboquant.strategies.EMACrossover
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.io.path.Path
+import kotlin.io.path.div
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 internal class AvroSamples {
 
-    @Test
-    @Ignore
-    internal fun quotes_hft() = runBlocking {
-        val tf = Timeframe.parse("2021-01-01T16:30:00Z", "2021-01-01T23:00:00Z", true)
-        val f = RandomWalkFeed(tf, 10.millis, nAssets = 1, priceType = PriceItemType.QUOTE)
-        val feed = AvroFeed("/tmp/test.avro")
-        feed.record(f, compress = false)
-        assertTrue(feed.exists())
-        assertEquals(tf, feed.timeframe)
 
-        feed.timeframe.sample(1.minutes, 5).forEach {
-            val account = run(feed, EMAStrategy(), timeframe = it)
-            println("$it => ${account.equityAmount}")
-        }
-
-        val channel = EventChannel()
-        feed.playBackground(channel)
-        var cnt = 0
-        val start = Instant.now().toEpochMilli()
-        try {
-            while (true) {
-                val evt = channel.receive()
-                cnt += evt.items.size
-            }
-        } catch (_: ClosedReceiveChannelException) {
-            // On purpose left empty, expected exception
-
-        } finally {
-            println(cnt)
-            println(Instant.now().toEpochMilli() - start)
-        }
-
-    }
 
     @Test
     @Ignore
@@ -105,7 +61,7 @@ internal class AvroSamples {
         val cash = Wallet(100_000.USD)
         val broker = SimBroker(cash)
 
-        val strategy = EMAStrategy.PERIODS_12_26
+        val strategy = EMACrossover.PERIODS_12_26
         val policy = FlexPolicy {
             orderPercentage = 0.02
         }
@@ -118,7 +74,7 @@ internal class AvroSamples {
     @Test
     @Ignore
     internal fun testingStrategies() {
-        val strategy = EMAStrategy()
+        val strategy = EMACrossover()
         val roboquant = Roboquant(strategy)
         val feed = CSVFeed("data/US")
 
@@ -139,28 +95,32 @@ internal class AvroSamples {
 
     }
 
+
     @Test
     @Ignore
-    internal fun signalsOnly() {
-        class MyPolicy : Policy {
+    internal fun generate() {
+        val path = Path("/tmp/us")
+        val path1 = path / "nasdaq stocks"
+        val path2 =  path / "nyse stocks"
 
-            override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
-                return emptyList()
-            }
+        val feed = CSVFeed(path1.toString(), CSVConfig.stooq())
+        val tmp = CSVFeed(path2.toString(), CSVConfig.stooq())
+        feed.merge(tmp)
 
-        }
+        val avroFeed = AvroFeed("/tmp/sp25.avro")
 
-        val feed = AvroFeed("/tmp/us_full_v3.0.avro")
+        val s = "MSFT,NVDA,AAPL,AMZN,META,GOOGL,GOOG,BRK.B,LLY,AVGO,JPM,XOM,TSLA,UNH,V,PG,MA,COST,JNJ,HD,MRK,NFLX,WMT,ABBV,CVX"
+        val symbols = s.split(',').toTypedArray()
+        assertEquals(25, symbols.size)
 
-        val strategy = CombinedStrategy(
-            EMAStrategy.PERIODS_50_200,
-            EMAStrategy.PERIODS_12_26
+        val timeframe = Timeframe.fromYears(2020, 2024)
+        avroFeed.record(
+            feed,
+            true,
+            timeframe,
+            assetFilter = AssetFilter.includeSymbols(*symbols)
         )
 
-        val policy = MyPolicy().resolve(SignalResolution.NO_CONFLICTS)
-
-        val roboquant = Roboquant(strategy, policy = policy)
-        roboquant.run(feed, timeframe = Timeframe.past(5.years))
     }
 
     @Test
@@ -182,7 +142,7 @@ internal class AvroSamples {
 
         require(feed.assets.size == 1)
 
-        val strategy = EMAStrategy()
+        val strategy = EMACrossover()
 
         // We don't want the default initial deposit in USD, since then we need a currency convertor
         val initialDeposit = 10_000.EUR.toWallet()

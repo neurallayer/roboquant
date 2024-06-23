@@ -23,7 +23,7 @@ import org.roboquant.journals.MemoryJournal
 import org.roboquant.metrics.AccountMetric
 import org.roboquant.metrics.PriceMetric
 import org.roboquant.server.WebServer
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import kotlin.system.exitProcess
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -32,7 +32,7 @@ import kotlin.test.Test
 internal class ServerSamples {
 
     private fun getRoboquant() =
-        Roboquant(EMAStrategy())
+        Roboquant(EMACrossover())
 
     private fun getJournal() =
         MemoryJournal(PriceMetric("CLOSE"), AccountMetric())

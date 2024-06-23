@@ -18,7 +18,7 @@ package org.roboquant.ta
 
 import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.run
 import org.roboquant.strategies.NoSignalStrategy
 import kotlin.test.Test
@@ -28,7 +28,7 @@ internal class BettingAgainstBetaPolicyTest {
 
     @Test
     fun test() {
-        val feed = RandomWalkFeed.lastYears(nAssets = 20)
+        val feed = RandomWalk.lastYears(nAssets = 20)
         val assets = feed.assets.toList()
         val marketAsset = assets.first()
 

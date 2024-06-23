@@ -69,7 +69,7 @@ object Config {
         symbolMap[symbol] = asset
     }
 
-    fun getOrPutAsset(symbol: String, defaultValue: () -> Asset) : Asset {
+    fun getOrPutAsset(symbol: String, defaultValue: () -> Asset): Asset {
         return symbolMap.getOrPut(symbol, defaultValue)
     }
 
@@ -145,7 +145,9 @@ object Config {
      * If it does not exist, it will be created the first time this property is called.
      */
     val home: Path by lazy {
-        val path: Path = Paths.get(System.getProperty("user.home"), ".roboquant")
+        val roboquantHome = System.getProperty("roboquant.home")
+        val path: Path = if (roboquantHome != null) Paths.get(roboquantHome) else
+            Paths.get(System.getProperty("user.home"), ".roboquant")
         if (Files.notExists(path)) {
             Files.createDirectory(path)
             logger.trace { "Created new home directory $path" }

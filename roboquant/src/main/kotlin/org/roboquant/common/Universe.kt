@@ -48,6 +48,7 @@ interface Universe {
     }
 }
 
+
 /**
  * SP500 asset collection
  */

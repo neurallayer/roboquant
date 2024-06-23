@@ -23,7 +23,7 @@ import org.roboquant.brokers.assets
 import org.roboquant.brokers.sim.execution.InternalAccount
 import org.roboquant.common.*
 import org.roboquant.feeds.*
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.play
 import org.roboquant.orders.MarketOrder
@@ -113,7 +113,7 @@ internal object TestData {
         return result
     }
 
-    val feed = RandomWalkFeed.lastYears(1, 2)
+    val feed = RandomWalk.lastYears(1, 2)
 
 }
 

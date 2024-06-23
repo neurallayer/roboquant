@@ -20,14 +20,14 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.feeds.util.LiveTestFeed
 import org.roboquant.journals.BasicJournal
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.journals.MultiRunJournal
 import org.roboquant.metrics.PNLMetric
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.TestStrategy
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -37,7 +37,7 @@ internal class RoboquantTest {
 
     @Test
     fun simpleRun() {
-        val strategy = EMAStrategy()
+        val strategy = EMACrossover()
         val roboquant = Roboquant(strategy)
         assertDoesNotThrow {
             roboquant.run(TestData.feed)
@@ -64,7 +64,7 @@ internal class RoboquantTest {
 
     @Test
     fun runAsync() = runBlocking {
-        val strategy = EMAStrategy()
+        val strategy = EMACrossover()
 
         val roboquant = Roboquant(strategy)
         assertDoesNotThrow {
@@ -78,7 +78,7 @@ internal class RoboquantTest {
     @Test
     fun run2()  {
         assertDoesNotThrow {
-            val strategy = EMAStrategy()
+            val strategy = EMACrossover()
             val journal = BasicJournal()
             run(TestData.feed, strategy, journal)
             assertTrue(journal.nEvents > 0)
@@ -93,10 +93,10 @@ internal class RoboquantTest {
 
     @Test
     fun walkforward()  {
-        val feed = RandomWalkFeed.lastYears(10, 2)
+        val feed = RandomWalk.lastYears(10, 2)
         val tfs = feed.timeframe.split(2.years)
         for (tf in tfs) {
-            val strategy = EMAStrategy()
+            val strategy = EMACrossover()
             val journal = BasicJournal()
             run(TestData.feed, strategy, journal, tf)
         }
@@ -105,7 +105,7 @@ internal class RoboquantTest {
     @Test
     fun run_with_pb()  {
         assertDoesNotThrow {
-            val strategy = EMAStrategy()
+            val strategy = EMACrossover()
             val journal = BasicJournal()
             run(TestData.feed, strategy, journal, showProgressBar = true)
         }
@@ -114,7 +114,7 @@ internal class RoboquantTest {
     @Test
     fun run4()  {
         assertDoesNotThrow {
-            val strategy = EMAStrategy()
+            val strategy = EMACrossover()
             val feed = LiveTestFeed(delayInMillis = 30)
             val journal = BasicJournal(false)
             run(feed, strategy, journal, heartbeatTimeout = 10)
@@ -128,7 +128,7 @@ internal class RoboquantTest {
         val feed = TestData.feed
         val timeframes  = feed.timeframe.split(1.years)
         for (tf in timeframes) {
-            val strategy = EMAStrategy()
+            val strategy = EMACrossover()
             val run = tf.toString()
             run(TestData.feed, strategy, journal = mrj.getJournal(run), tf)
         }
@@ -143,7 +143,7 @@ internal class RoboquantTest {
 
         repeat(50) {
             jobs.add {
-                val roboquant = Roboquant(EMAStrategy())
+                val roboquant = Roboquant(EMACrossover())
                 roboquant.runAsync(feed)
             }
         }
@@ -160,7 +160,7 @@ internal class RoboquantTest {
         feed.timeframe.sample(3.months).forEach {
             jobs.add {
                 val tf = it
-                val acc = runAsync(feed, EMAStrategy(), timeframe = tf)
+                val acc = runAsync(feed, EMACrossover(), timeframe = tf)
                 println(acc.lastUpdate)
                 println(tf)
                 assertTrue(acc.lastUpdate in tf)

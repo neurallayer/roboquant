@@ -24,11 +24,11 @@ import org.roboquant.common.Size
 import org.roboquant.common.percent
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceItem
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Instruction
 import org.roboquant.policies.FlexPolicy
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.Signal
 import org.roboquant.ta.*
 import org.ta4j.core.indicators.bollinger.BollingerBandFacade
@@ -53,7 +53,7 @@ internal class TaSamples {
         }
 
         val rq = Roboquant(strategy)
-        val feed = RandomWalkFeed.lastYears(5)
+        val feed = RandomWalk.lastYears(5)
         val account = rq.run(feed)
         println(account)
 
@@ -80,7 +80,7 @@ internal class TaSamples {
         }
 
         val rq = Roboquant(strategy)
-        val feed = RandomWalkFeed.lastYears(5)
+        val feed = RandomWalk.lastYears(5)
         val account = rq.run(feed)
         println(account)
     }
@@ -131,8 +131,8 @@ internal class TaSamples {
             }
         }
 
-        val roboquant = Roboquant(EMAStrategy.PERIODS_12_26, policy = SmartLimitPolicy(atrPeriod = 5))
-        val feed = RandomWalkFeed.lastYears(5)
+        val roboquant = Roboquant(EMACrossover.PERIODS_12_26, policy = SmartLimitPolicy(atrPeriod = 5))
+        val feed = RandomWalk.lastYears(5)
         val account = roboquant.run(feed)
         println(account)
     }
@@ -140,7 +140,7 @@ internal class TaSamples {
     @Test
     @Ignore
     internal fun atrPolicy() {
-        val strategy = EMAStrategy.PERIODS_5_15
+        val strategy = EMACrossover.PERIODS_5_15
         val policy = AtrPolicy(10, 6.0, 3.0, null) {
             orderPercentage = 0.02
             shorting = true
@@ -148,7 +148,7 @@ internal class TaSamples {
         val broker = SimBroker(accountModel = MarginAccount(minimumEquity = 50_000.0))
         val rq = Roboquant(strategy, broker = broker, policy = policy)
 
-        val feed = RandomWalkFeed.lastYears(5)
+        val feed = RandomWalk.lastYears(5)
         val account = rq.run(feed)
         println(account)
     }
@@ -189,7 +189,7 @@ internal class TaSamples {
         }
 
         val rq = Roboquant(strategy)
-        val feed = RandomWalkFeed.lastYears(5)
+        val feed = RandomWalk.lastYears(5)
 
         println(feed.timeframe)
         val account = rq.run(feed)

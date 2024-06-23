@@ -18,9 +18,9 @@ package org.roboquant.feeds
 
 import org.roboquant.Roboquant
 import org.roboquant.common.*
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.LiveTestFeed
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.test.Test
@@ -31,7 +31,7 @@ internal class AggregatorFeedTest {
 
     @Test
     fun basic() {
-        val feed = RandomWalkFeed.lastDays(1)
+        val feed = RandomWalk.lastDays(1)
         val items1 = feed.toList()
 
         val aggFeed = AggregatorFeed(feed, 15.minutes)
@@ -51,7 +51,7 @@ internal class AggregatorFeedTest {
     @Test
     fun aggregatorFeed2() {
         val tf = Timeframe.parse("2022-01-01T12:00:00", "2022-01-01T15:00:00")
-        val feed = RandomWalkFeed(tf, 1.minutes, nAssets = 1)
+        val feed = RandomWalk(tf, 1.minutes, nAssets = 1)
         val ts = 15.minutes
         val aggFeed = AggregatorFeed(feed, ts)
         var lastTime: Instant? = null
@@ -89,7 +89,7 @@ internal class AggregatorFeedTest {
     fun basic2() {
         // 5-seconds window with 1-millisecond resolution
         val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
-        val feed = RandomWalkFeed(timeframe, 1.millis, priceType = PriceItemType.TRADE)
+        val feed = RandomWalk(timeframe, 1.millis, priceType = PriceItemType.TRADE)
         val items1 = feed.toList()
 
         val aggFeed = AggregatorFeed(feed, 1.seconds)
@@ -109,13 +109,13 @@ internal class AggregatorFeedTest {
     fun parallel() {
         // 5-seconds window with 1-millisecond resolution
         val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
-        val feed = RandomWalkFeed(timeframe, 1.millis, priceType = PriceItemType.TRADE)
+        val feed = RandomWalk(timeframe, 1.millis, priceType = PriceItemType.TRADE)
 
         val aggFeed = AggregatorFeed(feed, 1.seconds)
         val jobs = ParallelJobs()
         aggFeed.timeframe.split(3.months).forEach {
             jobs.add {
-                val rq = Roboquant(EMAStrategy())
+                val rq = Roboquant(EMACrossover())
                 rq.runAsync(aggFeed, timeframe = it)
             }
         }
@@ -125,7 +125,7 @@ internal class AggregatorFeedTest {
     fun combined() {
         // 5-seconds window with 1-millisecond resolution
         val timeframe = Timeframe.parse("2022-01-01T00:00:00Z", "2022-01-01T00:00:05Z")
-        val rw = RandomWalkFeed(timeframe, 1.millis, priceType = PriceItemType.TRADE)
+        val rw = RandomWalk(timeframe, 1.millis, priceType = PriceItemType.TRADE)
         val items1 = rw.toList()
 
         val aggFeed1 = AggregatorFeed(rw, 1.seconds)

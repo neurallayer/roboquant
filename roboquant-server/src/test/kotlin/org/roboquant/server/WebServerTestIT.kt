@@ -20,8 +20,8 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.Roboquant
 import org.roboquant.common.Timeframe
-import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.strategies.EMACrossover
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -51,8 +51,8 @@ internal class WebServerTestIT {
     @Test
     fun basic() {
         // System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
-        val feed = RandomWalkFeed(Timeframe.fromYears(2000, 2001))
-        val rq = Roboquant(EMAStrategy())
+        val feed = RandomWalk(Timeframe.fromYears(2000, 2001))
+        val rq = Roboquant(EMACrossover())
 
 
         assertDoesNotThrow {

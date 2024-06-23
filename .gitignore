@@ -3,7 +3,6 @@ build/
 .ipynb_checkpoints
 *.iml
 .DS_Store
-*.avro
 target/
 *.jfr
 *.log

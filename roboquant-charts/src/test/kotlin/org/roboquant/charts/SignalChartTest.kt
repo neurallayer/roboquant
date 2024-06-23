@@ -17,16 +17,16 @@
 package org.roboquant.charts
 
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.feeds.random.RandomWalkFeed
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.strategies.EMACrossover
 import kotlin.test.Test
 
 internal class SignalChartTest {
 
     @Test
     fun test() {
-        val feed = RandomWalkFeed.lastYears(1)
-        val strat = EMAStrategy()
+        val feed = RandomWalk.lastYears(1)
+        val strat = EMACrossover()
         val chart = SignalChart(feed, strat)
         assertDoesNotThrow {
             chart.getOption()

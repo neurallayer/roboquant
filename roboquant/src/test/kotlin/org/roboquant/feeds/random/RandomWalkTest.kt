@@ -28,11 +28,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class RandomWalkFeedTest {
+internal class RandomWalkTest {
 
     @Test
     fun randomly() = runBlocking {
-        val feed = RandomWalkFeed.lastYears(1, 20)
+        val feed = RandomWalk.lastYears(1, 20)
         var cnt = 0
         var now = Instant.MIN
         for (step in play(feed)) {
@@ -46,26 +46,26 @@ internal class RandomWalkFeedTest {
 
     @Test
     fun itemTypes() = runBlocking {
-        val feed = RandomWalkFeed.lastYears(priceType = PriceItemType.TRADE)
+        val feed = RandomWalk.lastYears(priceType = PriceItemType.TRADE)
         val event = play(feed).receive()
         assertTrue(event.items.first() is TradePrice)
 
         val tl = Timeframe.fromYears(2010, 2012)
-        val feed2 = RandomWalkFeed(tl, priceType = PriceItemType.BAR)
+        val feed2 = RandomWalk(tl, priceType = PriceItemType.BAR)
         val item2 = play(feed2).receive()
         assertTrue(item2.items.first() is PriceBar)
     }
 
     @Test
     fun historic() {
-        val feed = RandomWalkFeed.lastYears()
+        val feed = RandomWalk.lastYears()
         val tf2 = feed.timeframe.split(50.days)
         assertTrue(tf2.isNotEmpty())
     }
 
     @Test
     fun toList() {
-        val feed = RandomWalkFeed.lastYears()
+        val feed = RandomWalk.lastYears()
         val list = feed.toList()
         assertTrue(list.isNotEmpty())
         assertEquals(list.size, feed.toList().size)
@@ -74,7 +74,7 @@ internal class RandomWalkFeedTest {
     @Test
     fun reproducable() {
         val timeline = Timeframe.fromYears(2000, 2001)
-        val feed = RandomWalkFeed(timeline, seed = 10)
+        val feed = RandomWalk(timeline, seed = 10)
 
         val symbol = feed.assets.first().symbol
         val result1 = feed.filter<PriceBar> { it.asset.symbol == symbol }
@@ -88,7 +88,7 @@ internal class RandomWalkFeedTest {
 
     @Test
     fun filter() {
-        val feed = RandomWalkFeed.lastYears()
+        val feed = RandomWalk.lastYears()
         val asset = feed.assets.first()
         val result = feed.filter<PriceBar> { it.asset == asset }
         assertEquals(feed.timeline.size, result.size)

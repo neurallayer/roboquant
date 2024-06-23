@@ -20,7 +20,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.io.TempDir
 import org.roboquant.common.*
 import org.roboquant.feeds.*
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import java.io.File
 import java.time.Instant
 import kotlin.test.Test
@@ -32,12 +32,13 @@ internal class QuestDBFeedTestIT {
     @TempDir
     lateinit var folder: File
 
+
     @Test
     fun basic() {
-        val recorder = QuestDBRecorder(folder.toPath())
-        val inputFeed = RandomWalkFeed.lastYears(1)
+        val recorder = QuestDBFeed("pricebars", folder.toPath())
+        val inputFeed = RandomWalk.lastYears(1)
 
-        recorder.record<PriceBar>(inputFeed, "pricebars")
+        recorder.record<PriceBar>(inputFeed, )
 
         val outputFeed = QuestDBFeed("pricebars", folder.toPath())
 
@@ -48,11 +49,11 @@ internal class QuestDBFeedTestIT {
 
     @Test
     fun append() {
-        val recorder = QuestDBRecorder(folder.toPath())
-        val inputFeed = RandomWalkFeed.lastYears(1)
+        val recorder = QuestDBFeed("pricebars2", folder.toPath())
+        val inputFeed = RandomWalk.lastYears(1)
         val tfs = inputFeed.timeframe.split(3.months)
-        recorder.record<PriceBar>(inputFeed, "pricebars2", tfs.first())
-        tfs.drop(1).forEach { recorder.record<PriceBar>(inputFeed, "pricebars2", it, true) }
+        recorder.record<PriceBar>(inputFeed, tfs.first())
+        tfs.drop(1).forEach { recorder.record<PriceBar>(inputFeed, it, true) }
 
         val outputFeed = QuestDBFeed("pricebars2", folder.toPath())
 
@@ -63,14 +64,14 @@ internal class QuestDBFeedTestIT {
 
     @Test
     fun merge() {
-        val recorder = QuestDBRecorder(folder.toPath())
+        val recorder = QuestDBFeed("pricebars3", folder.toPath())
         val tf = Timeframe.parse("2020", "2022")
-        val feed1 = RandomWalkFeed(tf, nAssets = 1, template = Asset("ABC"))
-        val feed2 = RandomWalkFeed(tf, nAssets = 1, template = Asset("XYZ"))
+        val feed1 = RandomWalk(tf, nAssets = 1, template = Asset("ABC"))
+        val feed2 = RandomWalk(tf, nAssets = 1, template = Asset("XYZ"))
 
         // Need to partition when adding out-of-order price actions
-        recorder.record<PriceBar>(feed1, "pricebars3", partition = "YEAR")
-        recorder.record<PriceBar>(feed2, "pricebars3", append = true)
+        recorder.record<PriceBar>(feed1, partition = "YEAR")
+        recorder.record<PriceBar>(feed2, append = true)
 
         val outputFeed = QuestDBFeed("pricebars3", folder.toPath())
         assertEquals(feed1.assets + feed2.assets, outputFeed.assets)
@@ -78,8 +79,10 @@ internal class QuestDBFeedTestIT {
         outputFeed.close()
     }
 
+
+
     @Test
-    fun priceQuotes() {
+    fun record() {
 
         class QuoteFeed : Feed {
             override suspend fun play(channel: EventChannel) {
@@ -94,19 +97,18 @@ internal class QuestDBFeedTestIT {
 
         }
 
-        val recorder = QuestDBRecorder(folder.toPath())
-        val feed = QuoteFeed()
         val name = "quotes"
+        val feed = QuestDBFeed(name, folder.toPath())
+        val origin = QuoteFeed()
 
         assertDoesNotThrow {
-            recorder.record<PriceQuote>(feed, name)
+            feed.record<PriceQuote>(origin)
         }
 
-        val outputFeed = QuestDBFeed(name, folder.toPath())
-        assertEquals(1, outputFeed.assets.size)
-        println(outputFeed.timeframe)
-        assertEquals(99, outputFeed.timeframe.duration.toMillisPart())
-        outputFeed.close()
+        assertEquals(1, feed.assets.size)
+        println(feed.timeframe)
+        assertEquals(99, feed.timeframe.duration.toMillisPart())
+        feed.close()
     }
 
     @Test
@@ -125,19 +127,17 @@ internal class QuestDBFeedTestIT {
 
         }
 
-        val recorder = QuestDBRecorder(folder.toPath())
-        val feed = TradeFeed()
-        val name = "trades"
+        val feed = QuestDBFeed("trades", folder.toPath())
+        val origin = TradeFeed()
 
         assertDoesNotThrow {
-            recorder.record<TradePrice>(feed, name)
+            feed.record<TradePrice>(origin)
         }
 
-        val outputFeed = QuestDBFeed(name, folder.toPath())
-        assertEquals(1, outputFeed.assets.size)
-        println(outputFeed.timeframe)
-        assertEquals(99, outputFeed.timeframe.duration.toMillisPart())
-        outputFeed.close()
+        assertEquals(1, feed.assets.size)
+        println(feed.timeframe)
+        assertEquals(99, feed.timeframe.duration.toMillisPart())
+        feed.close()
     }
 
 

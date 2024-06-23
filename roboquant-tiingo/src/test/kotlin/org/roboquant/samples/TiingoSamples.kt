@@ -23,7 +23,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.journals.BasicJournal
 import org.roboquant.run
-import org.roboquant.strategies.EMAStrategy
+import org.roboquant.strategies.EMACrossover
 import org.roboquant.tiingo.TiingoHistoricFeed
 import org.roboquant.tiingo.TiingoLiveFeed
 import java.time.Instant
@@ -38,7 +38,7 @@ internal class TiingoSamples {
         System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
         val feed = TiingoLiveFeed.iex()
         feed.subscribe("AAPL", "TSLA")
-        val rq = Roboquant(EMAStrategy())
+        val rq = Roboquant(EMACrossover())
         val account = rq.run(feed, timeframe = Timeframe.next(10.minutes))
         println(account)
     }
@@ -50,7 +50,7 @@ internal class TiingoSamples {
         iex.subscribe()
         val feed = AggregatorLiveFeed(iex, 5.seconds, restrictType = TradePrice::class)
         val tf = Timeframe.next(5.minutes)
-        val account = run(feed, EMAStrategy(), BasicJournal(true), tf)
+        val account = run(feed, EMACrossover(), BasicJournal(true), tf)
         println(account)
     }
 
@@ -59,7 +59,7 @@ internal class TiingoSamples {
     internal fun testLiveFeedFX() {
         val feed = TiingoLiveFeed.fx()
         feed.subscribe("EURUSD")
-        val rq = Roboquant(EMAStrategy())
+        val rq = Roboquant(EMACrossover())
         val account = rq.run(feed, timeframe = Timeframe.next(1.minutes))
         println(account)
     }
@@ -72,7 +72,7 @@ internal class TiingoSamples {
         Config.registerAsset("BNBFDUSD", asset)
 
         feed.subscribe("BNBFDUSD")
-        val rq = Roboquant(EMAStrategy())
+        val rq = Roboquant(EMACrossover())
         val account = rq.run(feed, timeframe = Timeframe.next(1.minutes))
         println(account)
     }
@@ -140,7 +140,7 @@ internal class TiingoSamples {
         feed.retrieve("AAPL", "TSLA", "ERROR_SYMBOL", timeframe=tf)
         println(feed.assets)
         println(feed.timeframe)
-        val rq = Roboquant(EMAStrategy())
+        val rq = Roboquant(EMACrossover())
         val account = rq.run(feed)
         println(account)
     }
@@ -153,7 +153,7 @@ internal class TiingoSamples {
         feed.retrieveIntraday("AAPL", "TSLA", "ERROR_SYMBOL", timeframe=tf, frequency = "1hour")
         println(feed.assets)
         println(feed.timeframe)
-        val rq = Roboquant(EMAStrategy())
+        val rq = Roboquant(EMACrossover())
         val account = rq.run(feed)
         println(account)
     }

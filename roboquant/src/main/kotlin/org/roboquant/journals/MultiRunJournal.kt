@@ -29,10 +29,10 @@ class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
     }
 
     /**
-     * Load existing runs
+     * Load potentially existing runs from MetricsJournals that are persistent
      * @param runs List<String>
      */
-    fun load(runs: List<String>) {
+    fun load(runs: Collection<String>) {
         for (run in runs) {getJournal(run)}
     }
 
@@ -52,6 +52,14 @@ class MultiRunJournal(private val fn: (String) -> MetricsJournal) {
 
     fun getMetricNames() : Set<String> {
         return journals.values.map { it.getMetricNames() }.flatten().toSet()
+    }
+
+    /**
+     * Reset the state of this multi-run, removing already registered runs
+     */
+    @Synchronized
+    fun reset() {
+        journals.clear()
     }
 
 }

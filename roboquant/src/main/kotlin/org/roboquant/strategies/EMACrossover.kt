@@ -31,7 +31,7 @@ import java.time.Instant
  *
  * This is a computational and memory efficient implementation since it doesn't store historic prices in memory.
  *
- * @constructor Create a new EMAStrategy strategy
+ * @constructor Create a new EMACrossover strategy
  *
  * @param fastPeriod The shorter (fast) period or fast EMA in number of events, default is 12
  * @param slowPeriod The longer (slow) period or slow EMA in number of events, default is 26
@@ -40,7 +40,7 @@ import java.time.Instant
  * @property priceType the type of price to use, like "CLOSE" or "OPEN", default is "DEFAULT"
  * as the slow period
  */
-class EMAStrategy(
+class EMACrossover(
     fastPeriod: Int = 12,
     slowPeriod: Int = 26,
     smoothing: Double = 2.0,
@@ -59,26 +59,26 @@ class EMAStrategy(
         /**
          * Predefined EMA Crossover with 50 steps for the fast trend and 200 steps for slow trend
          *
-         * @return new EMAStrategy
+         * @return new EMACrossover
          */
-        val PERIODS_50_200: EMAStrategy
-            get() = EMAStrategy(50, 200)
+        val PERIODS_50_200: EMACrossover
+            get() = EMACrossover(50, 200)
 
         /**
          * Predefined EMA Crossover with 12 steps for fast EMA and 26 steps for slow EMA
          *
-         * @return new EMAStrategy
+         * @return new EMACrossover
          */
-        val PERIODS_12_26: EMAStrategy
-            get() = EMAStrategy(12, 26)
+        val PERIODS_12_26: EMACrossover
+            get() = EMACrossover(12, 26)
 
         /**
          * Predefined EMA Crossover with 5 steps for fast EMA and 15 steps for slow EMA
          *
-         * @return new EMAStrategy
+         * @return new EMACrossover
          */
-        val PERIODS_5_15: EMAStrategy
-            get() = EMAStrategy(5, 15)
+        val PERIODS_5_15: EMACrossover
+            get() = EMACrossover(5, 15)
     }
 
     private inner class EMACalculator(initialPrice: Double) {

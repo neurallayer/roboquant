@@ -18,12 +18,12 @@ package org.roboquant.ta
 
 import kotlinx.coroutines.runBlocking
 import org.roboquant.Roboquant
-import org.roboquant.feeds.random.RandomWalkFeed
+import org.roboquant.feeds.random.RandomWalk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class RSIStrategyTest {
-    private val feed = RandomWalkFeed.lastYears(1, 2)
+    private val feed = RandomWalk.lastYears(1, 2)
 
     @Test
     fun test() = runBlocking {
