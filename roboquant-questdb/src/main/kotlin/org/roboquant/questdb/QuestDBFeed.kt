@@ -82,7 +82,7 @@ class QuestDBFeed(private val tableName: String, dbPath: Path = Config.home / "q
         tf
     }
 
-
+    @Suppress("unused")
     companion object Partition {
 
            private val logger = Logging.getLogger(this::class)
