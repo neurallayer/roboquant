@@ -29,8 +29,8 @@ abstract class PriceStrategy(private val priceType: String = "DEFAULT") :
 
     override fun generate(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()
-        for ((asset, priceAction) in event.prices) {
-            val price = priceAction.getPrice(priceType)
+        for ((asset, priceItem) in event.prices) {
+            val price = priceItem.getPrice(priceType)
             val signal = generate(asset, price, event.time)
             if (signal != null) signals.add(signal)
         }

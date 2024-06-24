@@ -74,13 +74,34 @@ interface Account {
      * Equity is defined as the sum of [cash] balances and the market value of the open [positions].
      */
     val equity: Wallet
-        get() = cash + positions.values.marketValue
+        get() = cash + marketValue()
 
     /**
      * Unique set of assets hold in the open [positions]
      */
     val assets: Set<Asset>
         get() = positions.keys
+
+    /**
+     * Return the market value of the open positions, optionally filter by one or more asset.
+     */
+    fun marketValue(vararg assets: Asset): Wallet {
+        return positions.filterValues { assets.isEmpty() || it.asset in assets }.values.marketValue
+    }
+
+    /**
+     * Return the unrealized PNL of the open positions, optionally filter by one or more asset.
+     */
+    fun unrealizedPNL(vararg assets: Asset): Wallet {
+        return positions.filterValues { assets.isEmpty() || it.asset in assets }.values.unrealizedPNL
+    }
+
+    /**
+     * Return the realized PNL of the trades, optionally filter by one or more asset.
+     */
+    fun realizedPNL(vararg assets: Asset): Wallet {
+        return trades.filter { assets.isEmpty() || it.asset in assets }.realizedPNL
+    }
 
     /**
      * Convert an [amount] to the account [baseCurrency] using last update of the account as a timestamp

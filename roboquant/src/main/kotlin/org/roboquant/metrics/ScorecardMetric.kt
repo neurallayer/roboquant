@@ -17,7 +17,6 @@
 package org.roboquant.metrics
 
 import org.roboquant.brokers.Account
-import org.roboquant.brokers.unrealizedPNL
 import org.roboquant.feeds.Event
 import java.time.Instant
 
@@ -59,7 +58,7 @@ class ScorecardMetric : Metric {
 
         val realizedPNL = pnl.sum()
 
-        val unrealizedPNL = account.positions.values.unrealizedPNL.convert(account.baseCurrency, event.time).value
+        val unrealizedPNL = account.unrealizedPNL().convert(account.baseCurrency, event.time).value
         val equity = account.equity.convert(account.baseCurrency, event.time).value
 
         val cash = account.cash.convert(account.baseCurrency, event.time).value

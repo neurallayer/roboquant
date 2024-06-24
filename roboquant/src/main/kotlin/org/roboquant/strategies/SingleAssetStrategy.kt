@@ -34,9 +34,9 @@ abstract class SingleAssetStrategy(
 
     override fun generate(event: Event): List<Signal> {
         val result = mutableListOf<Signal>()
-        val priceAction = event.prices[asset]
-        if (priceAction != null) {
-            val signal = generate(priceAction, event.time)
+        val priceItem = event.prices[asset]
+        if (priceItem != null) {
+            val signal = generate(priceItem, event.time)
             result.addNotNull(signal)
         }
         return result
@@ -46,10 +46,10 @@ abstract class SingleAssetStrategy(
      * Subclasses need to be implemented this method. It will only be invoked if there is
      * a price action for the asset available.
      *
-     * @param priceAction
+     * @param priceItem
      * @param time
      * @return
      */
-    abstract fun generate(priceAction: PriceItem, time: Instant): Signal?
+    abstract fun generate(priceItem: PriceItem, time: Instant): Signal?
 
 }

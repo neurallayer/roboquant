@@ -214,12 +214,12 @@ fun Feed.validate(
     try {
         while (true) {
             val o = channel.receive()
-            for ((asset, priceAction) in o.prices) {
-                val price = priceAction.getPrice(priceType)
+            for ((asset, priceItem) in o.prices) {
+                val price = priceItem.getPrice(priceType)
                 val prev = lastPrices[asset]
                 if (prev != null) {
                     val diff = (price - prev) / prev
-                    if (diff.absoluteValue > maxDiff) errors.add(Pair(o.time, priceAction))
+                    if (diff.absoluteValue > maxDiff) errors.add(Pair(o.time, priceItem))
                 }
                 lastPrices[asset] = price
             }

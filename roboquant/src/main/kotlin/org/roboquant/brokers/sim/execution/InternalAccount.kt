@@ -126,9 +126,9 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
 
         val prices = event.prices
         for ((asset, position) in positions) {
-            val priceAction = prices[asset]
-            if (priceAction != null) {
-                val price = priceAction.getPrice(priceType)
+            val priceItem = prices[asset]
+            if (priceItem != null) {
+                val price = priceItem.getPrice(priceType)
                 val newPosition = position.copy(mktPrice = price, lastUpdate = event.time)
                 positions[asset] = newPosition
             }

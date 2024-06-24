@@ -279,23 +279,23 @@ open class FlexPolicy(
                 val position = account.positions.getOrDefault(asset, Position.empty(asset))
                 
                 // Don't create an order if we don't know the current price
-                val priceAction = event.prices[asset]
-                if (priceAction == null) {
+                val priceItem = event.prices[asset]
+                if (priceItem == null) {
                     log(signal, null, position, "no price")
                     continue
                 }
 
                 if (config.oneOrderOnly && account.openOrders.contains(asset)) {
-                    log(signal, priceAction, position, "one order only")
+                    log(signal, priceItem, position, "one order only")
                     continue
                 }
 
-                val price = priceAction.getPrice(config.priceType)
-                logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder action=$priceAction" }
+                val price = priceItem.getPrice(config.priceType)
+                logger.debug { "signal=${signal} buyingPower=$buyingPower amount=$amountPerOrder action=$priceItem" }
 
 
                 if (reducedPositionSignal(position, signal)) {
-                    val order = createOrder(signal, -position.size, priceAction) // close position
+                    val order = createOrder(signal, -position.size, priceItem) // close position
                     instructions.addNotNull(order)
                 } else {
                     if (position.open) continue // we don't increase position sizing
@@ -308,7 +308,7 @@ open class FlexPolicy(
                     if (size.isNegative && !config.shorting) continue
                     if (!meetsMinPrice(asset, price, time)) continue
 
-                    val order = createOrder(signal, size, priceAction)
+                    val order = createOrder(signal, size, priceItem)
                     if (order == null) {
                         logger.trace { "no order created time=$time signal=$signal" }
                         continue

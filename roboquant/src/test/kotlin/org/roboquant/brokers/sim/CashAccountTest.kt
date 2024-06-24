@@ -20,7 +20,6 @@ import org.roboquant.TestData
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.FixedExchangeRates
-import org.roboquant.brokers.marketValue
 import org.roboquant.common.Amount
 import org.roboquant.common.Asset
 import org.roboquant.common.Config
@@ -94,7 +93,7 @@ internal class CashAccountTest {
 
         account = update(broker, abc, 100, 40)
         assertEquals(initial, account.equityAmount)
-        assertEquals(4_000.EUR.toWallet(), account.positions.values.marketValue)
+        assertEquals(4_000.EUR.toWallet(), account.marketValue())
         assertEquals(6_000.EUR, account.buyingPower)
 
         account = update(broker, abc, 75)

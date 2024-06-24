@@ -24,7 +24,7 @@ import java.util.*
 
 /**
  * Base class that provides a foundation for data feeds that provide historic prices. It uses a sorted map to store
- * for each time one or more PriceActions in memory.
+ * for each time one or more priceItems in memory.
  */
 open class HistoricPriceFeed : HistoricFeed {
 

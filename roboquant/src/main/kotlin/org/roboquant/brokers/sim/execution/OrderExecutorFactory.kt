@@ -33,17 +33,17 @@ object OrderExecutorFactory {
         // register all the default included order handlers
 
         // Single Instruction types
-        register<MarketOrder> { MarketOrderExecutor(it as MarketOrder) }
-        register<LimitOrder> { LimitOrderExecutor(it as LimitOrder) }
-        register<StopLimitOrder> { StopLimitOrderExecutor(it as StopLimitOrder) }
-        register<StopOrder> { StopOrderExecutor(it as StopOrder) }
-        register<TrailLimitOrder> { TrailLimitOrderExecutor(it as TrailLimitOrder) }
-        register<TrailOrder> { TrailOrderExecutor(it as TrailOrder) }
+        register<MarketOrder> { MarketOrderExecutor(it) }
+        register<LimitOrder> { LimitOrderExecutor(it) }
+        register<StopLimitOrder> { StopLimitOrderExecutor(it) }
+        register<StopOrder> { StopOrderExecutor(it) }
+        register<TrailLimitOrder> { TrailLimitOrderExecutor(it) }
+        register<TrailOrder> { TrailOrderExecutor(it) }
 
-        // Advanced order types
-        register<BracketOrder> { BracketOrderExecutor(it as BracketOrder) }
-        register<OCOOrder> { OCOOrderExecutor(it as OCOOrder) }
-        register<OTOOrder> { OTOOrderExecutor(it as OTOOrder) }
+        // Combined order types
+        register<BracketOrder> { BracketOrderExecutor(it) }
+        register<OCOOrder> { OCOOrderExecutor(it) }
+        register<OTOOrder> { OTOOrderExecutor(it) }
 
     }
 
@@ -63,8 +63,9 @@ object OrderExecutorFactory {
         factories.remove(T::class)
     }
 
-    inline fun <reified T : Order> register(noinline factory: (Order) -> OrderExecutor) {
-        factories[T::class] = factory
+    inline fun <reified T : Order> register(noinline factory: (T) -> OrderExecutor) {
+        @Suppress("UNCHECKED_CAST")
+        factories[T::class] = factory as (Order) -> OrderExecutor
     }
 
 
