@@ -48,10 +48,10 @@ private fun FlowContent.runTable() {
         caption {
             +"Runs"
         }
-        tableHeader("run", "state", "timeframe", "events", "signals", "orders", "last update", "actions")
+        tableHeader("run", "state", "timeframe", "events", "signals", "instructions", "last update", "actions")
         tbody {
             runs.forEach { (run, info) ->
-                val policy = info.roboquant.policy as PausablePolicy
+                val policy = info.policy
                 tr {
                     td { +run }
                     td { state(info, policy.pause) }
@@ -113,13 +113,13 @@ internal fun Route.overview() {
             }
 
             val run = params.getOrFail("run")
-            val policy = runs.getValue(run).roboquant.policy
-            if (policy is PausablePolicy) {
-                when (action) {
+            val policy = runs.getValue(run).policy
+
+            when (action) {
                     "pause" -> policy.pause = true
                     "resume" -> policy.pause = false
-                }
             }
+
         }
 
         call.respondHtml(HttpStatusCode.OK) {

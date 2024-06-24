@@ -44,13 +44,15 @@ import kotlin.math.roundToInt
  * @property policy The policy to use, default is [FlexPolicy]
  * @property broker the broker to use, default is [SimBroker]
  */
+@Suppress("MemberVisibilityCanBePrivate")
+@Deprecated("use the standalone run and runAsync functions directly")
 data class Roboquant(
     val strategy: Strategy,
     val policy: Policy = FlexPolicy(),
     val broker: Broker = SimBroker()
 ) {
 
-    private val logger = Logging.getLogger(Roboquant::class)
+    private val logger = Logging.getLogger(this::class)
 
     init {
         logger.debug { "Created new roboquant instance=$this" }
@@ -148,7 +150,7 @@ fun run(
     policy: Policy = FlexPolicy(),
     broker: Broker = SimBroker(),
     channel: EventChannel = EventChannel(timeframe, 10),
-    heartbeatTimeout: Long = -1,
+    timeOutMillis: Long = -1,
     showProgressBar: Boolean = false
 ): Account = runBlocking {
     return@runBlocking runAsync(
@@ -159,7 +161,7 @@ fun run(
         policy,
         broker,
         channel,
-        heartbeatTimeout,
+        timeOutMillis,
         showProgressBar
     )
 }
@@ -179,7 +181,7 @@ suspend fun runAsync(
     policy: Policy = FlexPolicy(),
     broker: Broker = SimBroker(),
     channel: EventChannel = EventChannel(timeframe, 10),
-    heartbeatTimeout: Long = -1,
+    timeOutMillis: Long = -1,
     showProgressBar: Boolean = false
 ): Account {
     val job = feed.playBackground(channel)
@@ -192,7 +194,7 @@ suspend fun runAsync(
 
     try {
         while (true) {
-            val event = channel.receive(heartbeatTimeout)
+            val event = channel.receive(timeOutMillis)
             progressBar?.update(event.time)
             // Sync with broker
             val account = broker.sync(event)
@@ -213,7 +215,9 @@ suspend fun runAsync(
     return broker.sync()
 }
 
-
+/**
+ * Progress bar used during a run
+ */
 private class ProgressBar(val timeframe: Timeframe) {
 
     private var currentPercent = -1

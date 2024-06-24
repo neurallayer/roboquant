@@ -96,7 +96,7 @@ internal class RoboquantTest {
             val strategy = EMACrossover()
             val feed = LiveTestFeed(delayInMillis = 30)
             val journal = BasicJournal(false)
-            run(feed, strategy, journal, heartbeatTimeout = 10)
+            run(feed, strategy, journal, timeOutMillis = 10)
             assertTrue(journal.nItems < journal.nEvents)
         }
     }
@@ -122,8 +122,7 @@ internal class RoboquantTest {
 
         repeat(50) {
             jobs.add {
-                val roboquant = Roboquant(EMACrossover())
-                roboquant.runAsync(feed)
+                runAsync(feed, EMACrossover())
             }
         }
         jobs.joinAllBlocking()

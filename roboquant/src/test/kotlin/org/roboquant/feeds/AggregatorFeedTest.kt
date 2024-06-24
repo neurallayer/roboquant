@@ -16,10 +16,10 @@
 
 package org.roboquant.feeds
 
-import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.LiveTestFeed
+import org.roboquant.runAsync
 import org.roboquant.strategies.EMACrossover
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -115,8 +115,7 @@ internal class AggregatorFeedTest {
         val jobs = ParallelJobs()
         aggFeed.timeframe.split(3.months).forEach {
             jobs.add {
-                val rq = Roboquant(EMACrossover())
-                rq.runAsync(aggFeed, timeframe = it)
+                runAsync(aggFeed, EMACrossover(), timeframe = it)
             }
         }
     }

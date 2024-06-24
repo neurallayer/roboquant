@@ -16,20 +16,17 @@
 
 package org.roboquant.server
 
-import org.roboquant.Roboquant
-import org.roboquant.common.TimeSpan
+import org.roboquant.brokers.Broker
 import org.roboquant.common.Timeframe
-import org.roboquant.feeds.Feed
 import org.roboquant.journals.MemoryJournal
 
 /**
  * Stored information about a single run
  */
 internal data class RunInfo(
-    val roboquant: Roboquant,
-    val feed: Feed,
     val journal: MemoryJournal,
     val timeframe: Timeframe,
-    val warmup: TimeSpan = TimeSpan.ZERO,
+    val policy: PausablePolicy,
+    val broker: Broker,
     var done: Boolean = false
 )

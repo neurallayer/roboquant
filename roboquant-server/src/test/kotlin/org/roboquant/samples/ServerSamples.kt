@@ -16,7 +16,6 @@
 
 package org.roboquant.samples
 
-import org.roboquant.Roboquant
 import org.roboquant.common.*
 import org.roboquant.feeds.random.RandomWalkLiveFeed
 import org.roboquant.journals.MemoryJournal
@@ -31,9 +30,6 @@ import kotlin.test.Test
 
 internal class ServerSamples {
 
-    private fun getRoboquant() =
-        Roboquant(EMACrossover())
-
     private fun getJournal() =
         MemoryJournal(PriceMetric("CLOSE"), AccountMetric())
 
@@ -47,36 +43,32 @@ internal class ServerSamples {
 
         val jobs = ParallelJobs()
 
-        val tf1 = Timeframe.next(10.minutes)
-        val tf2 = Timeframe.next(30.minutes)
-        val tf3 = Timeframe.next(60.minutes)
-
         // Start three runs
         jobs.add {
-            server.runAsync(
-                getRoboquant(),
+            server.addRun(
+                "run-fast",
                 RandomWalkLiveFeed(200.millis, nAssets = 3),
+                EMACrossover(),
                 getJournal(),
-                tf1,
-                "run-fast"
+                Timeframe.next(10.minutes),
             )
         }
         jobs.add {
-            server.runAsync(
-                getRoboquant(),
+            server.addRun(
+                "run-medium",
                 RandomWalkLiveFeed(5.seconds, nAssets = 10),
+                EMACrossover(),
                 getJournal(),
-                tf2,
-                "run-medium"
+                Timeframe.next(30.minutes),
             )
         }
         jobs.add {
-            server.runAsync(
-                getRoboquant(),
+            server.addRun(
+                "run-slow",
                 RandomWalkLiveFeed(30.seconds, nAssets = 50),
+                EMACrossover(),
                 getJournal(),
-                tf3,
-                "run-slow"
+                Timeframe.next(60.minutes),
             )
         }
 

@@ -18,7 +18,6 @@ package org.roboquant.server
 
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.roboquant.Roboquant
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.strategies.EMACrossover
@@ -52,8 +51,6 @@ internal class WebServerTestIT {
     fun basic() {
         // System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE")
         val feed = RandomWalk(Timeframe.fromYears(2000, 2001))
-        val rq = Roboquant(EMACrossover())
-
 
         assertDoesNotThrow {
             runBlocking {
@@ -64,7 +61,7 @@ internal class WebServerTestIT {
                     password = ""
                 }
                 assertFalse(ws.secured)
-                ws.runAsync(rq, feed, timeframe = feed.timeframe, name="run-1")
+                ws.addRun("run-1", feed, EMACrossover(), timeframe = feed.timeframe)
                 val status = makeRequest("http://127.0.0.1:8081/")
                 assertEquals(200, status)
 

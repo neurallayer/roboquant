@@ -18,13 +18,16 @@ package org.roboquant.server
 
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import kotlinx.coroutines.runBlocking
-import org.roboquant.Roboquant
+import org.roboquant.brokers.Broker
+import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.Config
-import org.roboquant.common.TimeSpan
 import org.roboquant.common.Timeframe
+import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.journals.MemoryJournal
+import org.roboquant.policies.FlexPolicy
+import org.roboquant.policies.Policy
+import org.roboquant.strategies.Strategy
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
@@ -85,12 +88,6 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
     fun stop() {
         logger.info { "stopping web server" }
         server.stop()
-
-        // Close the feeds
-        runs.forEach {
-            logger.info { "closing feed run=${it.key} " }
-            it.value.feed.close()
-        }
     }
 
     @Synchronized
@@ -98,43 +95,23 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
         return "run-${runCounter++}"
     }
 
-    /**
-     * Start a new run and make core metrics available to the webserver. You can start multiple runs in the same
-     * webserver instance. Each run will have its unique name.
-     */
-    fun run(
-        roboquant: Roboquant,
-        feed: Feed,
-        journal: MemoryJournal = MemoryJournal(),
-        timeframe: Timeframe,
+    suspend fun addRun(
         name: String = getRunName(),
-        warmup: TimeSpan = TimeSpan.ZERO,
-        paused: Boolean = false
-    ) = runBlocking {
-        runAsync(roboquant, feed, journal, timeframe, name, warmup, paused)
-    }
-
-    /**
-     * Start a new run and make core metrics available to the webserver. You can start multiple runs in the same
-     * webserver instance. Each run will have its unique name.
-     */
-    suspend fun runAsync(
-        roboquant: Roboquant,
         feed: Feed,
+        strategy: Strategy,
         journal: MemoryJournal = MemoryJournal(),
-        timeframe: Timeframe,
-        name: String = getRunName(),
-        warmup: TimeSpan = TimeSpan.ZERO,
-        paused: Boolean = false
+        timeframe: Timeframe = Timeframe.INFINITE,
+        policy: Policy = FlexPolicy(),
+        broker: Broker = SimBroker(),
+        channel: EventChannel = EventChannel(timeframe, 10),
+        timeOutMillis: Long = -1
     ) {
         require(!runs.contains(name)) { "run name has to be unique, name=$name is already in use by another run." }
-        val policy = PausablePolicy(roboquant.policy, paused)
-        val rq = roboquant.copy(policy = policy)
-        val info = RunInfo(rq, feed, journal, timeframe, warmup)
+        val pausubalePolicy = PausablePolicy(policy)
+        val info = RunInfo(journal, timeframe, pausubalePolicy, broker)
         runs[name] = info
         logger.info { "Starting new run name=$name timeframe=$timeframe" }
-        rq.runAsync(feed, journal, timeframe)
-        info.done = true
+        org.roboquant.runAsync(feed, strategy, journal, timeframe, pausubalePolicy, broker, channel, timeOutMillis)
     }
 
 }

@@ -136,6 +136,7 @@ open class SimBroker(
     /**
      * Run the simulation given the provided [event].
      */
+    @Synchronized
     override fun sync(event: Event?): Account {
         if (event != null) {
             simulateMarket(event)
@@ -149,6 +150,7 @@ open class SimBroker(
     /**
      * Place the [instructions] at the broker.
      */
+    @Synchronized
     override fun place(instructions: List<Instruction>) {
         logger.trace { "Received instructions=${instructions.size}" }
         for (order in instructions) {
