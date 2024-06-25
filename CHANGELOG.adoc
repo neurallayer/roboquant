@@ -2,7 +2,7 @@
 = Changelog
 
 == Major changes in 3.0
-Roboquant version 3.0 has several changes, several of them are breaking changes. One key reason was to clean-up and simplify areas that had grown in complexity in the past few years and were a hard to maintain and extend.
+Roboquant version 3.0 has many changes, several of them are breaking changes. One key reason was to clean-up and simplify areas that have grown in complexity in the past few years and were a hard to maintain and/or extend.
 
 A non-extensive list of the major changes:
 
@@ -12,7 +12,9 @@ A non-extensive list of the major changes:
 
 - Order handling is simplified. For example, order-ids are handout by the broker (during the place order method). So they are no longer assigned when creating the order. This is more inline how most brokers work.
 
-- SimBroker order execution is simplified. Every order type has its own executor that is responsible for the whole execution
+- Moved `Roboquant.run` to standalone function `run`. For now `Roboquant` is still there for backwards compatibility (but deprecated)
+
+- SimBroker order execution is simplified. Every order type has its own executor that is responsible for every aspect of the execution. A bit less configurable, but much easier to roll your own implementation.
 
 - Improved the `Broker` interface. Only the `broker.sync()` call now provides access to the `account` object.
 
@@ -52,10 +54,10 @@ roboquant.run(feed)
 val account = run(feed, strategy)
 ----
 
-- Use the new Alpaca library based on published OpenAPI specification.
+- Use the new Alpaca library that is based on published OpenAPI specification.
 
-- Simplified AvroFeed (have to see if thsi is not too simple)
+- Simplified AvroFeed (have to see if this is not too simple). We dropped the `feed.assets` method to make this possible
 
 - Updated almost all dependencies. Only not yet moved to Kotlin 2.0 since Jupyter Notebooks are not yet supported.
 
-- Removed most of `Summary` funcitonality. This was reletive a lot of maintenance and now replaced with a much simpler toString() implementation.
+- Removed most of `Summary` functionality. This required relative a lot of maintenance and now replaced with a much simpler toString() implementation.

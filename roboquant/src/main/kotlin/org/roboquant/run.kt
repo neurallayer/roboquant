@@ -34,6 +34,84 @@ import java.util.*
 import kotlin.math.min
 import kotlin.math.roundToInt
 
+
+/**
+ * Blocking version of runAsync
+ */
+fun run(
+    feed: Feed,
+    strategy: Strategy,
+    journal: Journal? = null,
+    timeframe: Timeframe = Timeframe.INFINITE,
+    policy: Policy = FlexPolicy(),
+    broker: Broker = SimBroker(),
+    channel: EventChannel = EventChannel(timeframe, 10),
+    timeOutMillis: Long = -1,
+    showProgressBar: Boolean = false
+): Account = runBlocking {
+    return@runBlocking runAsync(
+        feed,
+        strategy,
+        journal,
+        timeframe,
+        policy,
+        broker,
+        channel,
+        timeOutMillis,
+        showProgressBar
+    )
+}
+
+/**
+ * Run async
+ * @param feed the feed to use
+ * @param strategy The strategy to use, there is no default
+ * @param journal the journal to use, default is null
+ * @param policy The policy to use, default is [FlexPolicy]
+ * @param broker the broker to use, default is [SimBroker]
+ */
+suspend fun runAsync(
+    feed: Feed,
+    strategy: Strategy,
+    journal: Journal? = null,
+    timeframe: Timeframe = Timeframe.INFINITE,
+    policy: Policy = FlexPolicy(),
+    broker: Broker = SimBroker(),
+    channel: EventChannel = EventChannel(timeframe, 10),
+    timeOutMillis: Long = -1,
+    showProgressBar: Boolean = false
+): Account {
+    val job = feed.playBackground(channel)
+    val progressBar = if (showProgressBar) {
+        val tf = if (timeframe.isFinite()) timeframe else feed.timeframe
+        val pb = ProgressBar(tf)
+        pb.start()
+        pb
+    } else null
+
+    try {
+        while (true) {
+            val event = channel.receive(timeOutMillis)
+            progressBar?.update(event.time)
+            // Sync with broker
+            val account = broker.sync(event)
+
+            // Generate signals and place orders
+            val signals = strategy.generate(event)
+            val orders = policy.act(signals, account, event)
+            broker.place(orders)
+
+            journal?.track(event, account, signals, orders)
+        }
+    } catch (_: ClosedReceiveChannelException) {
+        // intentionally empty
+    } finally {
+        if (job.isActive) job.cancel()
+        progressBar?.stop()
+    }
+    return broker.sync()
+}
+
 /**
  * Roboquant is the engine of the platform that ties [strategy], [policy] and [broker] together and caters to a wide
  * variety of testing and live trading scenarios.
@@ -137,82 +215,6 @@ data class Roboquant(
         return broker.sync()
     }
 
-}
-
-/**
- * Blocking version of runAsync
- */
-fun run(
-    feed: Feed,
-    strategy: Strategy,
-    journal: Journal? = null,
-    timeframe: Timeframe = Timeframe.INFINITE,
-    policy: Policy = FlexPolicy(),
-    broker: Broker = SimBroker(),
-    channel: EventChannel = EventChannel(timeframe, 10),
-    timeOutMillis: Long = -1,
-    showProgressBar: Boolean = false
-): Account = runBlocking {
-    return@runBlocking runAsync(
-        feed,
-        strategy,
-        journal,
-        timeframe,
-        policy,
-        broker,
-        channel,
-        timeOutMillis,
-        showProgressBar
-    )
-}
-
-/**
- * Run async
- * @param feed the feed to use
- * @param strategy The strategy to use, there is no default
- * @param policy The policy to use, default is [FlexPolicy]
- * @param broker the broker to use, default is [SimBroker]
- */
-suspend fun runAsync(
-    feed: Feed,
-    strategy: Strategy,
-    journal: Journal? = null,
-    timeframe: Timeframe = Timeframe.INFINITE,
-    policy: Policy = FlexPolicy(),
-    broker: Broker = SimBroker(),
-    channel: EventChannel = EventChannel(timeframe, 10),
-    timeOutMillis: Long = -1,
-    showProgressBar: Boolean = false
-): Account {
-    val job = feed.playBackground(channel)
-    val progressBar = if (showProgressBar) {
-        val tf = if (timeframe.isFinite()) timeframe else feed.timeframe
-        val pb = ProgressBar(tf)
-        pb.start()
-        pb
-    } else null
-
-    try {
-        while (true) {
-            val event = channel.receive(timeOutMillis)
-            progressBar?.update(event.time)
-            // Sync with broker
-            val account = broker.sync(event)
-
-            // Generate signals and place orders
-            val signals = strategy.generate(event)
-            val orders = policy.act(signals, account, event)
-            broker.place(orders)
-
-            journal?.track(event, account, signals, orders)
-        }
-    } catch (_: ClosedReceiveChannelException) {
-        // intentionally empty
-    } finally {
-        if (job.isActive) job.cancel()
-        progressBar?.stop()
-    }
-    return broker.sync()
 }
 
 /**

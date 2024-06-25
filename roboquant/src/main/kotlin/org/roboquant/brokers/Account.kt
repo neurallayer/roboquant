@@ -89,6 +89,8 @@ interface Account {
         return positions.filterValues { assets.isEmpty() || it.asset in assets }.values.marketValue
     }
 
+    fun getSize(asset: Asset) : Size = positions[asset]?.size ?: Size.ZERO
+
     /**
      * Return the unrealized PNL of the open positions, optionally filter by one or more asset.
      */
