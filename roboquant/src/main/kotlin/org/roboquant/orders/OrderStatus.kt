@@ -20,8 +20,8 @@ package org.roboquant.orders
  * The status an order can be in. The flow is straight forward and is adhered to by all broker implementations, even
  * brokers that have more order statuses.
  *
- *  - [INITIAL] -> [ACCEPTED] -> [COMPLETED] | [CANCELLED] | [EXPIRED]
- *  - [INITIAL] -> [REJECTED]
+ *  - [CREATED] -> [ACCEPTED] -> [COMPLETED] | [CANCELLED] | [EXPIRED]
+ *  - [CREATED] -> [REJECTED]
  *
  *  At any given time an [Order] is either [open] or [closed] state. Once an order reaches a [closed] state,
  *  it cannot be opened again and will not be further processed.
@@ -32,7 +32,7 @@ enum class OrderStatus {
      * State of an order that has just been created. It will remain in this state until it is either
      * [REJECTED] or [ACCEPTED] by the broker.
      */
-    INITIAL,
+    CREATED,
 
     /**
      * The order has been received, validated and accepted by the broker. The order remains in this state until it
@@ -51,7 +51,7 @@ enum class OrderStatus {
     CANCELLED,
 
     /**
-     *  The order has expired, normally triggered by a [TimeInForce] policy. This is an end-state.
+     *  The order has expired, normally triggered by a [TimeInForce] trader. This is an end-state.
      */
     EXPIRED,
 
@@ -80,9 +80,9 @@ enum class OrderStatus {
         get() = this === COMPLETED || this === CANCELLED || this === EXPIRED || this === REJECTED
 
     /**
-     * Returns true if the order in an open state, so either [INITIAL] or [ACCEPTED]
+     * Returns true if the order in an open state, so either [CREATED] or [ACCEPTED]
      */
     val open: Boolean
-        get() = this === INITIAL || this === ACCEPTED
+        get() = this === CREATED || this === ACCEPTED
 
 }

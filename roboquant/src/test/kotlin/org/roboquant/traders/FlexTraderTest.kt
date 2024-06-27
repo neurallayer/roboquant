@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.policies
+package org.roboquant.traders
 
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.InternalAccount
@@ -29,21 +29,21 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class FlexPolicyTest {
+internal class FlexTraderTest {
 
     @Test
     fun order() {
-        val policy = FlexPolicy()
+        val policy = FlexTrader()
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.act(signals, account, event)
+        val orders = policy.create(signals, account, event)
         assertTrue(orders.isEmpty())
     }
 
     @Test
     fun order3() {
-        val policy = FlexPolicy()
+        val policy = FlexTrader()
         val orders = run(policy)
         assertTrue(orders.isNotEmpty())
 
@@ -55,7 +55,7 @@ internal class FlexPolicyTest {
 
     @Test
     fun orderMinPrice() {
-        val policy = FlexPolicy {
+        val policy = FlexTrader {
             minPrice = 10.USD
         }
         val asset = Asset("TEST123")
@@ -63,18 +63,18 @@ internal class FlexPolicyTest {
 
         val event1 = Event(Instant.now(), listOf(TradePrice(asset, 5.0)))
         val account = TestData.usAccount()
-        val orders1 = policy.act(signals, account, event1)
+        val orders1 = policy.create(signals, account, event1)
         assertTrue(orders1.isEmpty())
 
         val event2 = Event(Instant.now(), listOf(TradePrice(asset, 15.0)))
-        val orders2 = policy.act(signals, account, event2)
+        val orders2 = policy.create(signals, account, event2)
         assertTrue(orders2.isNotEmpty())
     }
 
     @Test
     fun order2() {
 
-        class MyPolicy(val percentage: Double = 0.05) : FlexPolicy() {
+        class MyTrader(val percentage: Double = 0.05) : FlexTrader() {
 
             override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction {
                 val asset = signal.asset
@@ -90,27 +90,27 @@ internal class FlexPolicyTest {
             }
         }
 
-        val policy = MyPolicy()
+        val policy = MyTrader()
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.act(signals, account, event)
+        val orders = policy.create(signals, account, event)
         assertTrue(orders.isEmpty())
 
     }
 
 
-    private fun run(policy: FlexPolicy): List<Instruction> {
+    private fun run(policy: FlexTrader): List<Instruction> {
         val asset = Asset("TEST123")
         val signals = listOf(Signal.buy(asset))
         val event = Event(Instant.now(), listOf(TradePrice(asset, 5.0)))
         val account = TestData.usAccount()
-        return policy.act(signals, account, event)
+        return policy.create(signals, account, event)
     }
 
     @Test
     fun predefined() {
-        val policy = FlexPolicy.bracketOrders()
+        val policy = FlexTrader.bracketOrders()
         val orders = run(policy)
         assertTrue(orders.isNotEmpty())
 
@@ -132,7 +132,7 @@ internal class FlexPolicyTest {
 
     @Test
     fun predefined2() {
-        val policy = FlexPolicy.limitOrders()
+        val policy = FlexTrader.limitOrders()
         val orders = run(policy)
         assertTrue(orders.isNotEmpty())
 
@@ -143,7 +143,7 @@ internal class FlexPolicyTest {
 
     @Test
     fun predefined3() {
-        val policy = FlexPolicy.singleAsset()
+        val policy = FlexTrader.singleAsset()
         val orders = run(policy)
         assertTrue(orders.isNotEmpty())
 
@@ -153,13 +153,12 @@ internal class FlexPolicyTest {
 
     @Test
     fun chaining() {
-        val policy = FlexPolicy()
-            .resolve(SignalResolution.FIRST)
+        val policy = FlexTrader()
             .circuitBreaker(10, 1.days)
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.act(signals, account, event)
+        val orders = policy.create(signals, account, event)
         assertTrue(orders.isEmpty())
     }
 

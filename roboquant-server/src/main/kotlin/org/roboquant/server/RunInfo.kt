@@ -26,7 +26,7 @@ import org.roboquant.journals.MemoryJournal
 internal data class RunInfo(
     val journal: MemoryJournal,
     val timeframe: Timeframe,
-    val policy: PausablePolicy,
+    val policy: PausableTrader,
     val broker: Broker,
     var done: Boolean = false
 )

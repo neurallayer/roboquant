@@ -140,7 +140,7 @@ internal class JupyterCore(
             "org.roboquant.feeds.random.*",
             "org.roboquant.brokers.sim.*",
             "org.roboquant.brokers.*",
-            "org.roboquant.policies.*",
+            "org.roboquant.traders.*",
             "org.roboquant.jupyter.*",
             "org.roboquant.charts.*",
             "java.time.Instant",

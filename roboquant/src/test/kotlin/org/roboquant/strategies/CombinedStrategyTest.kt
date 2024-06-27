@@ -39,7 +39,7 @@ internal class CombinedStrategyTest {
         val s2 = MyStrategy()
         val s = CombinedStrategy(s1, s2)
         assertEquals(2, s.strategies.size)
-        s.reset()
+
         val signals = mutableListOf<Signal>()
         for (event in TestData.events(10)) signals += s.generate(event)
         assertTrue(signals.isEmpty())

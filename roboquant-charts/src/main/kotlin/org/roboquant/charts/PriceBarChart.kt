@@ -87,6 +87,21 @@ class PriceBarChart(
     ) : this(feed, feed.assets.getBySymbol(symbol), trades, timeframe, useTime)
 
 
+    /**
+     * Plot the price-bars of a [symbol] found in a [feed] and optionally the [trades] made for that same
+     * asset.
+     *
+     * @see PriceBarChart
+     */
+    constructor(
+        feed: Feed,
+        symbol: String,
+        trades: Collection<Trade> = emptyList(),
+        timeframe: Timeframe = Timeframe.INFINITE,
+        useTime: Boolean = true
+    ) : this(feed, Asset(symbol), trades, timeframe, useTime)
+
+
     init {
         // Default height is not that suitable for this chart type, so we increase it to 700
         height = 700

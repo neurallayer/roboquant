@@ -71,12 +71,12 @@ class ReturnsMetric(
         if (nextTime == Instant.MIN) {
             nextTime = time + period
             lastTime = time
-            lastValue = account.equity.convert(account.baseCurrency, event.time).value
+            lastValue = account.equity().convert(account.baseCurrency, event.time).value
         }
 
         if (time >= nextTime) {
 
-            val value = account.equity.convert(account.baseCurrency, event.time).value
+            val value = account.equity().convert(account.baseCurrency, event.time).value
             val periodReturn = (value - lastValue) / lastValue
             val tf = Timeframe(lastTime, time)
             val returns = if (annualize) tf.annualize(periodReturn) else periodReturn

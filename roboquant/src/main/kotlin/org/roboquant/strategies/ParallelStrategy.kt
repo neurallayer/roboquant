@@ -29,19 +29,23 @@ import org.roboquant.feeds.Event
  * parallel, other method invocations like reset and getMetrics are run sequential.
  *
  * There is no logic included to resolve conflicting signals, for example, one strategy generates a BUY signal,
- * and another strategy generates a SELL signal for the same asset. This is left to the policy to resolve.
+ * and another strategy generates a SELL signal for the same asset. This is left to the trader to resolve.
  *
  * @property strategies The strategies to process in parallel
  * @constructor Create a new parallel strategy
  */
-class ParallelStrategy(strategies: Collection<Strategy>) : CombinedStrategy(strategies) {
+class ParallelStrategy(strategies: Collection<Strategy>, private val signalResolver: SignalResolver? = null) :
+    CombinedStrategy(strategies) {
 
     private val scope = CoroutineScope(Dispatchers.Default + Job())
 
     /**
      * Create a new parallel strategy using the provided [strategies]
      */
-    constructor(vararg strategies: Strategy) : this(strategies.toList())
+    constructor(vararg strategies: Strategy, signalResolver: SignalResolver? = null) : this(
+        strategies.toList(),
+        signalResolver
+    )
 
     /**
      * @see Strategy.generate
@@ -58,7 +62,7 @@ class ParallelStrategy(strategies: Collection<Strategy>) : CombinedStrategy(stra
             }
             deferredList.forEach { signals.addAll(it.await()) }
         }
-        return signals
+        return signalResolver?.let { signals } ?: signals
     }
 
 }

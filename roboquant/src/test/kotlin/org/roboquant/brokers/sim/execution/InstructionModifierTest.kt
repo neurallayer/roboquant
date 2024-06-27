@@ -41,7 +41,7 @@ internal class InstructionModifierTest {
     fun testUpdateOrderExecutor() {
         val order1 = LimitOrder(asset, Size(100), 110.0)
         val exec1 = LimitOrderExecutor(order1)
-        assertEquals(OrderStatus.INITIAL, exec1.status)
+        assertEquals(OrderStatus.CREATED, exec1.status)
 
         val order2 = LimitOrder(asset, Size(100), 120.0)
         val order = Modification(order1.id, order2)

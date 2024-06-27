@@ -89,7 +89,7 @@ private fun getAccountSummary(acc: Account): List<List<Any>> {
         listOf("last update", acc.lastUpdate),
         listOf("buying power", acc.buyingPower),
         listOf("cash", acc.cash),
-        listOf("equity", acc.equity),
+        listOf("equity", acc.equity()),
         listOf("open positions", acc.positions.size),
         listOf("open orders", acc.openOrders.size),
         listOf("closed orders", acc.closedOrders.size),

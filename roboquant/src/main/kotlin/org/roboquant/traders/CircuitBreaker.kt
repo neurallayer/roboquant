@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.policies
+package org.roboquant.traders
 
 import org.roboquant.brokers.Account
 import org.roboquant.common.Logging
@@ -27,14 +27,14 @@ import java.time.Instant
 import java.util.*
 
 /**
- * Wraps another [policy] and based on the configured settings throttle the propagation of orders to the broker.
+ * Wraps another [trader] and based on the configured settings throttle the propagation of orders to the broker.
  * The logic enforces that all orders send at the same time will be trottled or not.
  *
- * @property policy the underlying policy
+ * @property trader the underlying trader
  * @constructor Create new Circuit Breaker
  */
-internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, private val period: TimeSpan) :
-    Policy by policy {
+internal class CircuitBreaker(val trader: Trader, private val maxOrders: Int, private val period: TimeSpan) :
+    Trader by trader {
 
     private val history = LinkedList<Pair<Instant, Int>>()
     private val logger = Logging.getLogger(this::class)
@@ -51,8 +51,8 @@ internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, pr
         return false
     }
 
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
-        val orders = policy.act(signals, account, event)
+    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+        val orders = trader.create(signals, account, event)
         if (orders.isEmpty()) return emptyList()
 
         return if (exceeds(orders.size, event.time)) {
@@ -64,15 +64,10 @@ internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, pr
         }
     }
 
-    override fun reset() {
-        history.clear()
-        policy.reset()
-    }
-
 }
 
 /**
- * Limit the number of orders a policy can generate to [maxOrders] per [period]. All the orders per step will be
+ * Limit the number of orders a trader can generate to [maxOrders] per [period]. All the orders per step will be
  * either added or ignored.
  *
  * Note: this circuit breaker will also block closing-position orders if the [maxOrders] limit is exceeded.
@@ -80,7 +75,7 @@ internal class CircuitBreaker(val policy: Policy, private val maxOrders: Int, pr
  * Usage:
  * ```
  * // For example allow maximum of 5 orders per 8 hours
- * val policy = myPolicy.circuitBreaker(5, 8.hours)
+ * val trader = myPolicy.circuitBreaker(5, 8.hours)
  * ```
  */
-fun Policy.circuitBreaker(maxOrders: Int, period: TimeSpan): Policy = CircuitBreaker(this, maxOrders, period)
+fun Trader.circuitBreaker(maxOrders: Int, period: TimeSpan): Trader = CircuitBreaker(this, maxOrders, period)

@@ -88,7 +88,7 @@ class AlphaBetaMetric(
         if (event.prices.isEmpty()) return emptyMap()
 
         val prices = event.prices.mapValues { it.value.getPrice(priceType) }
-        val equity = account.equityAmount.value
+        val equity = account.equityAmount().value
 
         if (initialized) {
             val mr = getMarketReturn(prices)

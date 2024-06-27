@@ -358,7 +358,7 @@ data class OrderBook(
  * Corporate actions like dividends and splits.
  *
  * It is important to note that this is not an action as defined by roboquant, since a corporate action is not something
- * a policy can create. Rather, it is an action originating from a market and could be included in a feed.
+ * a trader can create. Rather, it is an action originating from a market and could be included in a feed.
  *
  * @property asset
  * @property type

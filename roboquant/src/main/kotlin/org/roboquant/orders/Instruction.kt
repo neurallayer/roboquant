@@ -16,82 +16,14 @@
 
 package org.roboquant.orders
 
-import org.roboquant.common.Asset
-import org.roboquant.common.Timeframe
-import java.time.Instant
-
 /**
- * An instruction for a broker. An sintruction can cover different of use cases:
+ * An instruction for a broker. An instruction covers different use cases:
  *
- * - A buy- or sell-order (the most common use case), ranging from simple market order to advanced order types
+ * - A new order, ranging from simple market order to advanced combination orders
  * - Cancellation of an existing order
- * - Update of an existing order
+ * - Modification of an existing order
  **/
 sealed class Instruction
-
-
-/**
- * Base class for all types of create orders. This ranges from a simple [MarketOrder], all the way to advanced order
- * types like a [BracketOrder].
- */
-abstract class Order(val asset: Asset, val tag: String) : Instruction() {
-
-    /**
-     * The order id is set by broker once placed, before that it is an empty string.
-     * The exception are modify and cancel orders that have the id of the underlying order.
-     */
-    var id = ""
-
-
-    /**
-     * Status of the order, set to INITIAL when just created
-     */
-    var status = OrderStatus.INITIAL
-
-    /**
-     * Returns true the order status is open, false otherwise
-     */
-    val open: Boolean
-        get() = status.open
-
-    /**
-     * Returns true the order status is closed, false otherwise
-     */
-    val closed: Boolean
-        get() = status.closed
-
-    var openedAt: Instant = Timeframe.MIN
-
-    fun cancel(): Cancellation {
-        return Cancellation(id)
-    }
-
-    fun modify(updateOrder: Order) : Modification {
-        return Modification(id, updateOrder)
-    }
-
-    /**
-     * What is the type of instruction, default is the class name without any order suffix
-     */
-    open val type: String
-        get() = this::class.simpleName?.uppercase()?.removeSuffix("ORDER") ?: "UNKNOWN"
-
-    /**
-     * Provide extra info as a map, used in displaying order information. Default is an empty map and subclasses are
-     * expected to return a map with their additional properties like limit or trailing percentages.
-     */
-    open fun info(): Map<String, Any> = emptyMap()
-
-
-    /**
-     * Returns a unified string representation for the different order types
-     */
-    override fun toString(): String {
-        val infoStr = info().toString().removePrefix("{").removeSuffix("}")
-        return "type=$type id=$id tag=$tag $infoStr"
-    }
-
-}
 
 
 

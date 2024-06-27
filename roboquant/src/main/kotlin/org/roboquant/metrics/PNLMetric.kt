@@ -85,8 +85,8 @@ class PNLMetric(private val priceType: String = "DEFAULT") : Metric {
      * @see Metric.calculate
      */
     override fun calculate(account: Account, event: Event): Map<String, Double> {
-        if (equity.isNaN()) equity = account.equityAmount.value
-        val pnl = account.equityAmount.value - equity
+        if (equity.isNaN()) equity = account.equityAmount().value
+        val pnl = account.equityAmount().value - equity
 
         val pnl2 = account.unrealizedPNL()
         val unrealizedPNL = pnl2.convert(account.baseCurrency, event.time).value

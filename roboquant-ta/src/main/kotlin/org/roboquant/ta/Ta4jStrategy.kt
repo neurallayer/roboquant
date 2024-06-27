@@ -86,12 +86,5 @@ class Ta4jStrategy(
         sellingRule = rule
     }
 
-    /**
-     * Reset this strategy and any series data captured so far.
-     */
-    override fun reset() {
-        super.reset()
-        rules.clear()
-    }
 
 }

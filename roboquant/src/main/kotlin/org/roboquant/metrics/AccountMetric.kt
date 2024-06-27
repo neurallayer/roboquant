@@ -44,7 +44,7 @@ class AccountMetric : Metric {
      */
     override fun calculate(account: Account, event: Event) = buildMap {
 
-        val equity = account.convert(account.equity, event.time).value
+        val equity = account.convert(account.equity(), event.time).value
         if (equity > peak) peak = equity
         val dd = (equity - peak) / peak
         if (dd < mdd) mdd = dd

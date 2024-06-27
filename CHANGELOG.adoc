@@ -2,13 +2,13 @@
 = Changelog
 
 == Major changes in 3.0
-Roboquant version 3.0 has many changes, several of them are breaking changes. One key reason was to clean-up and simplify areas that have grown in complexity in the past few years and were a hard to maintain and/or extend.
+Roboquant version 3.0 has many changes, several of them are breaking changes. The key reason was to clean-up and simplify areas that were a hard to maintain and/or extend. More often than not things where generic enough to add a lot of complexity while still not covering many the use cases.
 
 A non-extensive list of the major changes:
 
 - Signals are simplified and now use a double value for the rating rather than an enum. This is better suited for more advanced ML type of algos.
 
-- Removed the `Lifecycle` interface for all components (Stratyegy, Policy, Broker).
+- Removed the `Lifecycle` interface including `reset` for all components (Stratyegy, Policy, Broker).
 
 - Order handling is simplified. For example, order-ids are handout by the broker (during the place order method). So they are no longer assigned when creating the order. This is more inline how most brokers work.
 

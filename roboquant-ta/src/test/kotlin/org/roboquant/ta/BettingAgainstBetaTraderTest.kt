@@ -20,11 +20,10 @@ import org.roboquant.brokers.sim.MarginAccount
 import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.run
-import org.roboquant.strategies.NoSignalStrategy
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-internal class BettingAgainstBetaPolicyTest {
+internal class BettingAgainstBetaTraderTest {
 
     @Test
     fun test() {
@@ -32,13 +31,13 @@ internal class BettingAgainstBetaPolicyTest {
         val assets = feed.assets.toList()
         val marketAsset = assets.first()
 
-        val policy = BettingAgainstBetaPolicy(assets, marketAsset, maxPositions = 6)
+        val policy = BettingAgainstBetaTrader(assets, marketAsset, maxPositions = 6)
         val broker = SimBroker(accountModel = MarginAccount())
         val account = run(
             feed,
-            NoSignalStrategy(),
+            null,
             broker = broker,
-            policy = policy,
+            trader = policy,
         )
 
         assertTrue(account.positions.size <= 6)

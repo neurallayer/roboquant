@@ -127,7 +127,6 @@ internal class TaLibStrategyTest {
     }
 
     private fun run(s: Strategy, n: Int = 150): Map<Instant, List<Signal>> {
-        s.reset()
         val nHalf = n / 2
         val feed = HistoricTestFeed(100 until 100 + nHalf, 100 + nHalf - 1 downTo 100, priceBar = true)
         val events = feed.filter<PriceBar>()

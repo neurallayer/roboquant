@@ -178,7 +178,7 @@ open class SimBroker(
     /**
      * Reset all the state and set the cash balance back to the [initialDeposit].
      */
-    override fun reset() {
+    fun reset() {
         account.clear()
         account.cash.deposit(initialDeposit)
         accountModel.updateAccount(account)

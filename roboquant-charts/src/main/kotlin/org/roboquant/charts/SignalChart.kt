@@ -84,7 +84,6 @@ class SignalChart(
     }
 
     private fun signalsToSeriesData(): Any {
-        strategy.reset()
         val result = mutableListOf<Triple<Any, Any, Any>>()
         feed.applyEvents(timeframe) {
             val signals = strategy.generate(it)

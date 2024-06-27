@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.policies
+package org.roboquant.traders
 
 import org.roboquant.TestData
 import org.roboquant.common.Asset
@@ -30,33 +30,22 @@ import kotlin.test.assertTrue
 internal class SignalResolutionTest {
 
     @Test
-    fun rules() {
-        val asset = TestData.usStock()
-        val signals = listOf(Signal(asset, 1.0), Signal(asset, -1.0), Signal(asset, 1.0))
-        assertEquals(signals.first(), signals.resolve(SignalResolution.FIRST).first())
-        assertEquals(signals.last(), signals.resolve(SignalResolution.LAST).last())
-        assertTrue(signals.resolve(SignalResolution.NO_DUPLICATES).isEmpty())
-        assertTrue(signals.resolve(SignalResolution.NO_CONFLICTS).isEmpty())
-        assertEquals(signals, signals.resolve(SignalResolution.NONE))
-    }
-
-    @Test
     fun testSignalShuffle() {
-        val policy = TestPolicy().shuffleSignals(Random(42))
+        val policy = TestTrader().shuffleSignals(Random(42))
         val account = TestData.usAccount()
         val assets = listOf(Asset("A"), Asset("B"), Asset("C"), Asset("D"))
         val signals = assets.map { Signal(it, 1.0) }
-        val orders = policy.act(signals, account, Event.empty())
+        val orders = policy.create(signals, account, Event.empty())
         assertEquals(signals.size, orders.size)
     }
 
     @Test
     fun testSkipSymbols() {
-        val policy = TestPolicy().skipSymbols("A", "C")
+        val policy = TestTrader().skipSymbols("A", "C")
         val account = TestData.usAccount()
         val assets = listOf(Asset("A"), Asset("B"), Asset("C"), Asset("D"))
         val signals = assets.map { Signal(it, 1.0) }
-        val orders = policy.act(signals, account, Event.empty())
+        val orders = policy.create(signals, account, Event.empty())
         val symbols = orders.filterIsInstance<Order>().map { it.asset.symbol }
         assertTrue(symbols.contains("B"))
         assertFalse(symbols.contains("C"))

@@ -24,7 +24,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.Event
 import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Instruction
-import org.roboquant.policies.Policy
+import org.roboquant.traders.Trader
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.math.min
@@ -36,7 +36,7 @@ import kotlin.math.min
  * It will then hold these positions for a number of days before re-evaluating the strategy. After re-evaluation, the
  * strategy will then generate the market orders required to achieve the desired new portfolio composition.
  *
- * Since this strategy controls the complete portfolio and not just generates signals, it is implemented as a policy
+ * Since this strategy controls the complete portfolio and not just generates signals, it is implemented as a trader
  * and not a strategy. It doesn't use leverage or buying power, when re-balancing it just re-balances the total equity
  * of the account across the long and short positions.
  *
@@ -50,14 +50,14 @@ import kotlin.math.min
  *
  * @constructor Create a new instance of Betting Against Beta
  */
-open class BettingAgainstBetaPolicy(
+open class BettingAgainstBetaTrader(
     assets: Collection<Asset>,
     private val market: Asset,
     private val holdingPeriod: TimeSpan = 20.days,
     private val maxPositions: Int = 20,
     private val windowSize: Int = 120,
     private val priceType: String = "DEFAULT"
-) : Policy {
+) : Trader {
 
     private var rebalanceDate = Instant.MIN
 
@@ -101,7 +101,7 @@ open class BettingAgainstBetaPolicy(
         val max = min(betas.size / 2, maxPositions / 2)
 
         // exposure per position.
-        val exposure = account.equity.convert(account.baseCurrency, time = event.time) / (max * 2)
+        val exposure = account.equity().convert(account.baseCurrency, time = event.time) / (max * 2)
 
         fun getPosition(asset: Asset, price: Double, direction: Int): Position? {
             val assetAmount = exposure.convert(asset.currency, event.time).value
@@ -152,7 +152,7 @@ open class BettingAgainstBetaPolicy(
      * @param event the market data
      * @return
      */
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
 
         // First, we update the buffers
         data.addAll(event, windowSize, priceType)
@@ -168,12 +168,5 @@ open class BettingAgainstBetaPolicy(
         return emptyList()
     }
 
-    /**
-     * Clear any state
-     */
-    override fun reset() {
-        data.clear()
-        rebalanceDate = Instant.MIN
-    }
 
 }

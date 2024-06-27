@@ -28,7 +28,7 @@ import java.time.Instant
 
 /**
  * Internal Account is meant to be used by broker implementations, like the SimBroker. The broker is the only one with
- * a reference to the InternalAccount and will communicate the state to the outside world (Policy and Metrics) using
+ * a reference to the InternalAccount and will communicate the state to the outside world (Trader and Metrics) using
  * the [Account] object.
  *
  * @property baseCurrency The base currency to use for things like reporting
@@ -136,7 +136,7 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
     }
 
     /**
-     * Create an immutable [Account] instance that can be shared with other components (Policy and Metric) and is
+     * Create an immutable [Account] instance that can be shared with other components (Trader and Metric) and is
      * guaranteed not to change after it has been created.
      */
     @Synchronized
@@ -179,7 +179,7 @@ class InternalAccount(override var baseCurrency: Currency) : Account {
             base currency: $baseCurrency
             cash         : $cash
             buying Power : $buyingPower
-            equity       : $equity
+            equity       : ${equity()}
             positions    : ${positionString.ifEmpty { "-" }}
             open orders  : ${openOrders.size}
             closed orders: ${closedOrders.size}

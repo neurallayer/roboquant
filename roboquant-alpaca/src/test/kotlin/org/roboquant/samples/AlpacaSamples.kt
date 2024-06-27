@@ -65,7 +65,7 @@ internal class AlpacaSamples {
         var events = 0L
         var items = 0L
         var delays = 0L
-        val tf = Timeframe.next(1.minutes)
+        val tf = Timeframe.next(10.minutes)
         feed.applyEvents(tf) {
             if (it.items.isNotEmpty()) {
                 events++

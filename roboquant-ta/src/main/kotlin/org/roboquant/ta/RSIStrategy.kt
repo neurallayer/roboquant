@@ -48,7 +48,7 @@ class RSIStrategy(
     /**
      * Reset the history
      */
-    override fun reset() {
+    fun reset() {
         history.clear()
     }
 

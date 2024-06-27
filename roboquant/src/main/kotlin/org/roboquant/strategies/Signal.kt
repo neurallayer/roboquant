@@ -23,7 +23,7 @@ import org.roboquant.strategies.SignalType.*
  * This enum class represents the type of signal: [ENTRY], [EXIT] or [BOTH] and can be used by more advanced
  * strategies that provide different signals for entering and exiting a position.
  *
- * Please note it is up to the policy to use this additional information and simple implementations might ignore it.
+ * Please note it is up to the trader to use this additional information and simple implementations might ignore it.
  */
 enum class SignalType {
 
@@ -46,7 +46,7 @@ enum class SignalType {
 /**
  * Signal provides a rating for an [Asset] and is typically created by a strategy.
  *
- * It depends on the policy how these signals are translated into actual orders, but possible scenarios are:
+ * It depends on the trader how these signals are translated into actual orders, but possible scenarios are:
  *
  *  - A BUY rating results in going long for that asset. A SELL rating results in going short
  *  - The target price will become an additional take profit order

@@ -55,7 +55,7 @@ class OrderChart(
     }
 
     private fun ordersToSeriesData(): List<Triple<Instant, BigDecimal, String>> {
-        val activedOrders = orders.filter { it.status != OrderStatus.INITIAL }
+        val activedOrders = orders.filter { it.status != OrderStatus.CREATED }
         val d = mutableListOf<Triple<Instant, BigDecimal, String>>()
         for (order in activedOrders.sortedBy { it.openedAt }) {
             if (order is SingleOrder) {

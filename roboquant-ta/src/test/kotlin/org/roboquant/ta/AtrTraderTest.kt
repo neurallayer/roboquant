@@ -26,14 +26,14 @@ import org.roboquant.orders.BracketOrder
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Instruction
 import org.roboquant.orders.StopOrder
-import org.roboquant.policies.FlexPolicy
+import org.roboquant.traders.FlexTrader
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class AtrPolicyTest {
+internal class AtrTraderTest {
 
     private fun usAccount(amount: Amount = 100_000.USD): Account {
         val account = InternalAccount(amount.currency)
@@ -43,7 +43,7 @@ internal class AtrPolicyTest {
         return account.toAccount()
     }
 
-    private fun run(policy: FlexPolicy): List<Instruction> {
+    private fun run(policy: FlexTrader): List<Instruction> {
         val asset = Asset("TEST")
         val signals = listOf(Signal.buy(asset))
         val now = Instant.now()
@@ -55,7 +55,7 @@ internal class AtrPolicyTest {
             val p = 5.0
             val priceBar = PriceBar(asset, p + it, p + it, p + it, p + it)
             val event = Event(now + it.millis, listOf(priceBar))
-            val o = policy.act(signals, account, event)
+            val o = policy.create(signals, account, event)
             instructions.addAll(o)
         }
         return instructions
@@ -63,7 +63,7 @@ internal class AtrPolicyTest {
 
     @Test
     fun bracketATR() {
-        val p = AtrPolicy(10, 4.0, 2.0, null) {
+        val p = AtrTrader(10, 4.0, 2.0, null) {
             orderPercentage = 0.02
         }
         val orders = run(p)
@@ -84,7 +84,7 @@ internal class AtrPolicyTest {
 
     @Test
     fun bracketSizingAtr() {
-        val p = AtrPolicy(10, 4.0, 2.0, 0.1) {
+        val p = AtrTrader(10, 4.0, 2.0, 0.1) {
             orderPercentage = 0.02
         }
         val orders = run(p)
@@ -98,7 +98,7 @@ internal class AtrPolicyTest {
     @Test
     fun bracketSizingAtrValidation() {
         assertThrows<IllegalArgumentException> {
-            AtrPolicy(10, 4.0, 2.0, 1.3) {
+            AtrTrader(10, 4.0, 2.0, 1.3) {
                 orderPercentage = 0.02
             }
         }

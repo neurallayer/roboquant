@@ -25,8 +25,8 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.journals.MemoryJournal
-import org.roboquant.policies.FlexPolicy
-import org.roboquant.policies.Policy
+import org.roboquant.traders.FlexTrader
+import org.roboquant.traders.Trader
 import org.roboquant.strategies.Strategy
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
@@ -101,13 +101,13 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
         strategy: Strategy,
         journal: MemoryJournal = MemoryJournal(),
         timeframe: Timeframe = Timeframe.INFINITE,
-        policy: Policy = FlexPolicy(),
+        trader: Trader = FlexTrader(),
         broker: Broker = SimBroker(),
         channel: EventChannel = EventChannel(timeframe, 10),
         timeOutMillis: Long = -1
     ) {
         require(!runs.contains(name)) { "run name has to be unique, name=$name is already in use by another run." }
-        val pausubalePolicy = PausablePolicy(policy)
+        val pausubalePolicy = PausableTrader(trader)
         val info = RunInfo(journal, timeframe, pausubalePolicy, broker)
         runs[name] = info
         logger.info { "Starting new run name=$name timeframe=$timeframe" }

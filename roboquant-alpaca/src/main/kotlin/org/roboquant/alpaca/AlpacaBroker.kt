@@ -154,7 +154,7 @@ class AlpacaBroker(
      */
     private fun toState(order: AlpacaOrder): OrderStatus {
         return when (order.status) {
-            AlpacaOrderStatus.NEW -> OrderStatus.INITIAL
+            AlpacaOrderStatus.NEW -> OrderStatus.CREATED
             AlpacaOrderStatus.CANCELED -> OrderStatus.CANCELLED
             AlpacaOrderStatus.EXPIRED -> OrderStatus.EXPIRED
             AlpacaOrderStatus.FILLED -> OrderStatus.COMPLETED

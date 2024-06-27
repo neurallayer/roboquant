@@ -42,11 +42,4 @@ interface Broker {
      */
     fun place(instructions: List<Instruction>)
 
-    /**
-     * Reset the state of the component to its initial state. The default implementation is to take no action.
-     */
-    fun reset() {
-        // default is to do nothing
-    }
-
 }

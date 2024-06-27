@@ -26,8 +26,8 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.journals.Journal
-import org.roboquant.policies.FlexPolicy
-import org.roboquant.policies.Policy
+import org.roboquant.traders.FlexTrader
+import org.roboquant.traders.Trader
 import org.roboquant.strategies.Strategy
 import java.time.Instant
 import java.util.*
@@ -40,10 +40,10 @@ import kotlin.math.roundToInt
  */
 fun run(
     feed: Feed,
-    strategy: Strategy,
+    strategy: Strategy?,
     journal: Journal? = null,
     timeframe: Timeframe = Timeframe.INFINITE,
-    policy: Policy = FlexPolicy(),
+    trader: Trader = FlexTrader(),
     broker: Broker = SimBroker(),
     channel: EventChannel = EventChannel(timeframe, 10),
     timeOutMillis: Long = -1,
@@ -54,7 +54,7 @@ fun run(
         strategy,
         journal,
         timeframe,
-        policy,
+        trader,
         broker,
         channel,
         timeOutMillis,
@@ -65,17 +65,17 @@ fun run(
 /**
  * Run async
  * @param feed the feed to use
- * @param strategy The strategy to use, there is no default
+ * @param strategy The strategy to use
  * @param journal the journal to use, default is null
- * @param policy The policy to use, default is [FlexPolicy]
+ * @param trader The trader to use, default is [FlexTrader]
  * @param broker the broker to use, default is [SimBroker]
  */
 suspend fun runAsync(
     feed: Feed,
-    strategy: Strategy,
+    strategy: Strategy?,
     journal: Journal? = null,
     timeframe: Timeframe = Timeframe.INFINITE,
-    policy: Policy = FlexPolicy(),
+    trader: Trader = FlexTrader(),
     broker: Broker = SimBroker(),
     channel: EventChannel = EventChannel(timeframe, 10),
     timeOutMillis: Long = -1,
@@ -97,8 +97,8 @@ suspend fun runAsync(
             val account = broker.sync(event)
 
             // Generate signals and place orders
-            val signals = strategy.generate(event)
-            val orders = policy.act(signals, account, event)
+            val signals = strategy?.generate(event) ?: emptyList()
+            val orders = trader.create(signals, account, event)
             broker.place(orders)
 
             journal?.track(event, account, signals, orders)
@@ -113,20 +113,20 @@ suspend fun runAsync(
 }
 
 /**
- * Roboquant is the engine of the platform that ties [strategy], [policy] and [broker] together and caters to a wide
+ * Roboquant is the engine of the platform that ties [strategy], [trader] and [broker] together and caters to a wide
  * variety of testing and live trading scenarios.
  * Only a strategy is required when instantiating a Roboquant, the other parameters are
  * optional.
  *
  * @property strategy The strategy to use, there is no default
- * @property policy The policy to use, default is [FlexPolicy]
+ * @property trader The trader to use, default is [FlexTrader]
  * @property broker the broker to use, default is [SimBroker]
  */
 @Suppress("MemberVisibilityCanBePrivate")
 @Deprecated("use the standalone run and runAsync functions directly")
 data class Roboquant(
     val strategy: Strategy,
-    val policy: Policy = FlexPolicy(),
+    val trader: Trader = FlexTrader(),
     val broker: Broker = SimBroker()
 ) {
 
@@ -136,23 +136,10 @@ data class Roboquant(
         logger.debug { "Created new roboquant instance=$this" }
     }
 
-    /**
-     * Reset the state including that of the used underlying components. This allows starting a fresh run with the same
-     * configuration as the original instance.
-     *
-     */
-    fun reset() {
-        strategy.reset()
-        policy.reset()
-        broker.reset()
-    }
 
     /**
      * Start a new run using the provided [feed] as data. If no [timeframe] is provided all the events in the feed
      * will be processed.
-     *
-     * By default, at the beginning of a run, all components (besides the logger) will be [reset] and as a result
-     * discard their state. If you don't want this behavior set [reset] to false.
      *
      * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
      * in parallel, use the [runAsync] method.
@@ -201,7 +188,7 @@ data class Roboquant(
 
                 // Generate signals and place orders
                 val signals = strategy.generate(event)
-                val orders = policy.act(signals, account, event)
+                val orders = trader.create(signals, account, event)
                 broker.place(orders)
 
                 journal?.track(event, account, signals, orders)

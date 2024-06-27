@@ -22,13 +22,13 @@ import org.roboquant.common.Size
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceItem
 import org.roboquant.orders.*
-import org.roboquant.policies.FlexPolicy
-import org.roboquant.policies.FlexPolicyConfig
+import org.roboquant.traders.FlexTrader
+import org.roboquant.traders.FlexPolicyConfig
 import org.roboquant.strategies.Signal
 
 
 /**
- * This policy is a subclass of [FlexPolicy] and uses ATR (Average True Range) to:
+ * This trader is a subclass of [FlexTrader] and uses ATR (Average True Range) to:
  *
  * - Create a [BracketOrder] with ATR based take profit and stop loss values
  * - Optionally reduce the sizing based on the ATR.
@@ -49,13 +49,13 @@ import org.roboquant.strategies.Signal
  * @property atRisk max percentage of the order value that can be at risk.
  * If null, no risk-based sizing will be applied.
  */
-open class AtrPolicy(
+open class AtrTrader(
     private val atrPeriod: Int = 20,
     private val atrProfit: Double = 4.0,
     private val atrLoss: Double = 2.0,
     private val atRisk: Double? = null,
     configure: FlexPolicyConfig.() -> Unit = {}
-) : FlexPolicy(configure = configure) {
+) : FlexTrader(configure = configure) {
 
 
     init {
@@ -83,11 +83,11 @@ open class AtrPolicy(
     }
 
     /**
-     * @see FlexPolicy.act
+     * @see FlexTrader.create
      */
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         data.addAll(event)
-        return super.act(signals, account, event)
+        return super.create(signals, account, event)
     }
 
     /**
@@ -125,7 +125,7 @@ open class AtrPolicy(
     }
 
     /**
-     * @see FlexPolicy.calcSize
+     * @see FlexTrader.calcSize
      *
      * This implementation adds functionality that if the value at risk is larger than the defined [atRisk] percentage
      * of the total order amount, the size will be reduced accordingly.
@@ -139,7 +139,7 @@ open class AtrPolicy(
     }
 
     /**
-     * @see FlexPolicy.createOrder
+     * @see FlexTrader.createOrder
      */
     override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction? {
         val asset = signal.asset
@@ -158,14 +158,6 @@ open class AtrPolicy(
             BracketOrder(entry, profit, loss)
         else
             null
-    }
-
-    /**
-     * @see FlexPolicy.reset
-     */
-    override fun reset() {
-        super.reset()
-        data.clear()
     }
 
 }

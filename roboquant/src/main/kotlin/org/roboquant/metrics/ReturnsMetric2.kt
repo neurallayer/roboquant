@@ -97,7 +97,7 @@ class ReturnsMetric2(
      * Account return is based on equity value
      */
     private fun updateAccount(account: Account) {
-        val newEquity = account.equity.convert(account.baseCurrency, account.lastUpdate).value
+        val newEquity = account.equity().convert(account.baseCurrency, account.lastUpdate).value
         if (equity.isFinite()) {
             val result = (newEquity - equity) / equity
             accountReturns.add(result)

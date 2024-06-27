@@ -210,13 +210,6 @@ class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
         return results
     }
 
-    /**
-     * Reset all the history state
-     */
-    override fun reset() {
-        assetPriceBarSeries.clear()
-    }
-
 }
 
 /**

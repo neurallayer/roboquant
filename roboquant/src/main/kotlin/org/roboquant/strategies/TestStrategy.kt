@@ -50,7 +50,7 @@ class TestStrategy(private val skip: Int = 0) : Strategy {
         return signals
     }
 
-    override fun reset() {
+    fun reset() {
         nSignals.clear()
     }
 }

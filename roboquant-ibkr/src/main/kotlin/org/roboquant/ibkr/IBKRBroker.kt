@@ -36,7 +36,7 @@ import com.ib.client.OrderStatus as IBOrderStatus
 /**
  * Use your Interactive Brokers account for trading. Can be used with live trading or paper trading accounts of
  * Interactive Brokers. It is highly recommended to start with a paper trading account and validate your strategy and
- * policy extensively before moving to live trading.
+ * trader extensively before moving to live trading.
  *
  * ## Use at your own risk, since there are no guarantees about the correct functioning of the roboquant software.
  *
@@ -242,8 +242,8 @@ class IBKRBroker(
                 IBOrderStatus.Submitted -> OrderStatus.ACCEPTED
                 IBOrderStatus.Cancelled -> OrderStatus.CANCELLED
                 IBOrderStatus.Filled -> OrderStatus.COMPLETED
-                IBOrderStatus.PreSubmitted -> OrderStatus.INITIAL
-                else -> OrderStatus.INITIAL
+                IBOrderStatus.PreSubmitted -> OrderStatus.CREATED
+                else -> OrderStatus.CREATED
             }
         }
 

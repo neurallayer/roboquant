@@ -39,7 +39,7 @@ internal class AlpacaBrokerTestIT {
 
         assertDoesNotThrow {
             val account2 = broker.sync()
-            assertTrue(account2.equity.isNotEmpty())
+            assertTrue(account2.equity().isNotEmpty())
         }
 
     }

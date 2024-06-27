@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.policies
+package org.roboquant.traders
 
 import org.roboquant.brokers.Account
 import org.roboquant.common.Size
@@ -26,20 +26,20 @@ import org.roboquant.orders.SingleOrder
 import org.roboquant.strategies.Signal
 
 /**
- * Policy that buys or sells a fixed [size] of an asset based on the signal. It will always generate [MarketOrder]s
+ * Trader that buys or sells a fixed [size] of an asset based on the signal. It will always generate [MarketOrder]s
  *
- * Because of this deterministic behavior, this policy is useful during testing/debugging of a strategy. But it
+ * Because of this deterministic behavior, this trader is useful during testing/debugging of a strategy. But it
  * should not be used in live trading or realistic back-tests.
  */
-class TestPolicy(private val size: Size = Size.ONE) : Policy {
+class TestTrader(private val size: Size = Size.ONE) : Trader {
 
     /**
      * Create a buys or sells [MarketOrder] for an asset based on the received [signals]. It ignores the [account]
      * and [event] parameters.
      *
-     * @see Policy.act
+     * @see Trader.create
      */
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         val orders = mutableListOf<SingleOrder>()
         for (signal in signals) {
             val order: MarketOrder? = when  {

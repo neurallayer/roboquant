@@ -81,7 +81,7 @@ internal class MarginAccountTest {
 
         account = update(broker, abc, 1000, 500)
         assertEquals(1_700_000.JPY, account.buyingPower)
-        assertEquals(initial, account.equityAmount)
+        assertEquals(initial, account.equityAmount())
 
         account = update(broker, abc, 500)
         assertEquals(1_350_000.JPY, account.buyingPower)
@@ -106,7 +106,7 @@ internal class MarginAccountTest {
 
         var account = update(broker, abc, 200, -50)
         assertEquals(34_000.USD, account.buyingPower)
-        assertEquals(initial, account.equityAmount)
+        assertEquals(initial, account.equityAmount())
 
         account = update(broker, abc, 300)
         assertEquals(Amount(USD, 21_000), account.buyingPower)

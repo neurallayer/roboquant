@@ -30,7 +30,7 @@ import java.time.Instant
  *
  * @property order the single order to execute
  */
-internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var order: T) : OrderExecutor {
+abstract class SingleOrderExecutor<T : SingleOrder>(final override var order: T) : OrderExecutor {
 
     /**
      * Fill so far
@@ -65,21 +65,21 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
     }
 
     /**
-     * Validate TiF policy and return true if the order has expired according to the defined TIF.
+     * Validate TiF trader and return true if the order has expired according to the defined TIF.
      */
-    internal fun expired(time: Instant): Boolean {
+    open fun expired(time: Instant): Boolean {
         return when (val tif = order.tif) {
             is GTC -> time > (openedAt + tif.maxDays.days)
-            is DAY -> !order.asset.exchange.sameDay(openedAt, time)
+            is DAY -> (time.epochSecond - order.openedAt.epochSecond) >= 3600 * 24 // approximation
             is FOK -> remaining.nonzero
             is GTD -> time > tif.date
             is IOC -> time > openedAt
-            else -> throw UnsupportedException("unsupported time-in-force policy tif=$tif")
+            else -> throw UnsupportedException("unsupported time-in-force trader tif=$tif")
         }
     }
 
 
-    internal fun isTriggered(price: Double): Boolean {
+    open fun isTriggered(price: Double): Boolean {
         val trigger = trigger ?: return true
         return when {
             order.buy && price >= trigger -> true
@@ -88,7 +88,7 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
         }
     }
 
-    internal fun reachedLimit(price: Double): Boolean {
+    open fun reachedLimit(price: Double): Boolean {
         val limit = limit ?: return true
         return when {
             order.buy && price <= limit -> true
@@ -101,7 +101,7 @@ internal abstract class SingleOrderExecutor<T : SingleOrder>(final override var 
      * Execute the order, using the provided [item] and [time] as input.
      */
     override fun execute(item: PriceItem, time: Instant): List<Execution> {
-        if (status == OrderStatus.INITIAL) {
+        if (status == OrderStatus.CREATED) {
             status = OrderStatus.ACCEPTED
             order.openedAt = time
         }

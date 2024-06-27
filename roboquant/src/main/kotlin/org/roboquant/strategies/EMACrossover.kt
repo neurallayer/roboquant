@@ -117,8 +117,5 @@ class EMACrossover(
         return null
     }
 
-    override fun reset() {
-        calculators.clear()
-    }
 
 }

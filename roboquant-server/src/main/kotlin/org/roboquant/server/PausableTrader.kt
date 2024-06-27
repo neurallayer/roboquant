@@ -19,14 +19,14 @@ package org.roboquant.server
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Instruction
-import org.roboquant.policies.Policy
+import org.roboquant.traders.Trader
 import org.roboquant.strategies.Signal
 import java.time.Instant
 
 /**
- * Policy that can be paused and also captures a number of metrics
+ * Trader that can be paused and also captures a number of metrics
  */
-internal class PausablePolicy(private val policy: Policy, var pause: Boolean = false) : Policy by policy {
+internal class PausableTrader(private val trader: Trader, var pause: Boolean = false) : Trader by trader {
 
     internal var sellSignals = 0
     internal var holdSignals = 0
@@ -38,9 +38,9 @@ internal class PausablePolicy(private val policy: Policy, var pause: Boolean = f
 
     internal var lastUpdate: Instant = Instant.MIN
 
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
-        // Still invoke the policy so any state can be updated if required.
-        val orders = policy.act(signals, account, event)
+    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+        // Still invoke the trader so any state can be updated if required.
+        val orders = trader.create(signals, account, event)
 
         buySignals += signals.filter { it.isBuy }.size
         sellSignals += signals.filter { it.isSell }.size
@@ -60,14 +60,5 @@ internal class PausablePolicy(private val policy: Policy, var pause: Boolean = f
 
     }
 
-    override fun reset() {
-        sellSignals = 0
-        holdSignals = 0
-        buySignals = 0
-        totalOrders = 0
-        totalEvents = 0
-        emptyEvents = 0
-        totalActions = 0
-    }
 
 }

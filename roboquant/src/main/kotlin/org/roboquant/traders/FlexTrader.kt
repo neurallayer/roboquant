@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.policies
+package org.roboquant.traders
 
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Position
@@ -27,12 +27,12 @@ import org.roboquant.strategies.Signal
 import java.time.Instant
 
 /**
- * Configuration for the [FlexPolicy] that allows to tune the behavior of the policy.
+ * Configuration for the [FlexTrader] that allows to tune the behavior of the trader.
  *
  * @property orderPercentage The percentage of the equity value to allocate to a single order.
  * The default is 1.percent (0.01).
  * In the case of an account with high leverage, this value can be larger than 1 (100%).
- * @property shorting Can the policy create orders that potentially lead to short positions, default is false
+ * @property shorting Can the trader create orders that potentially lead to short positions, default is false
  * @property priceType The type of price to use, default is "DEFAULT"
  * @property fractions For fractional trading, the number of fractions (decimals) to allow for. Default is 0
  * @property oneOrderOnly Only allow one order to be open for a given asset at a given time, default is true
@@ -52,11 +52,11 @@ open class FlexPolicyConfig(
 )
 
 /**
- * This is the default policy that will be used if no other policy is specified.
+ * This is the default trader that will be used if no other trader is specified.
  * There are several properties that can be specified during construction that change the underlying behavior:
  *
  * ```
- * val policy = FlexPolicy {
+ * val trader = FlexTrader {
  *      orderPercentage = 2.percent
  * }
  * ```
@@ -64,18 +64,18 @@ open class FlexPolicyConfig(
  * See also [FlexPolicyConfig] for more details.
  *
  * Also, some methods can be overwritten in a subclass to provide even more flexibility.
- * For example, this policy will create [MarketOrder]s by default, but this can be changed by overwriting
+ * For example, this trader will create [MarketOrder]s by default, but this can be changed by overwriting
  * the [createOrder] method in a subclass.
  *
  *
- * @constructor Create a new instance of a FlexPolicy
+ * @constructor Create a new instance of a FlexTrader
  * @param configure additional configuration parameters
  */
-open class FlexPolicy(
+open class FlexTrader(
     configure: FlexPolicyConfig.() -> Unit = {}
-) : Policy {
+) : Trader {
 
-    protected val logger = Logging.getLogger(FlexPolicy::class)
+    protected val logger = Logging.getLogger(FlexTrader::class)
 
     // Holds all the configuration
     protected val config = FlexPolicyConfig()
@@ -91,7 +91,7 @@ open class FlexPolicy(
     companion object {
 
         /**
-         * This policy uses a percentage of the available buying-power to calculate the order amount (in contrast
+         * This trader uses a percentage of the available buying-power to calculate the order amount (in contrast
          * to the default implementation that uses a percentage of the equity):
          *
          * The used formula is:
@@ -100,48 +100,48 @@ open class FlexPolicy(
          * orderAmount = buyingPower * orderPercentage
          * ```
          */
-        fun singleAsset(configure: FlexPolicyConfig.() -> Unit = {}): FlexPolicy {
-            class SinglePolicy : FlexPolicy(
+        fun singleAsset(configure: FlexPolicyConfig.() -> Unit = {}): FlexTrader {
+            class SingleTrader : FlexTrader(
                 configure
             ) {
                 override fun amountPerOrder(account: Account): Amount {
                     return account.buyingPower * config.orderPercentage
                 }
             }
-            return SinglePolicy()
+            return SingleTrader()
         }
 
         /**
-         * Capital-based flex policy.
+         * Capital-based flex trader.
          */
         fun capitalBased(
             configure: FlexPolicyConfig.() -> Unit = {}
-        ): FlexPolicy {
-            class CapiltalBasedPolicy : FlexPolicy(configure) {
+        ): FlexTrader {
+            class CapiltalBasedTrader : FlexTrader(configure) {
                 override fun amountPerOrder(account: Account): Amount {
                     val capital = account.positions.values.exposure + account.buyingPower
                     val amount = account.convert(capital)
                     return amount * config.orderPercentage
                 }
             }
-            return CapiltalBasedPolicy()
+            return CapiltalBasedTrader()
         }
 
         /**
-         * Return a FlexPolicy that generates bracket orders, with the following characteristics:
+         * Return a FlexTrader that generates bracket orders, with the following characteristics:
          * - a market order for entry
          * - trail-order for take profit with provided [trailPercentage], default is 5%
          * - stop-loss order for limiting loss with provided [stopPercentage], default is 1%
          *
-         * @see FlexPolicy
+         * @see FlexTrader
          * @see BracketOrder.marketTrailStop
          */
         fun bracketOrders(
             trailPercentage: Double = 5.percent,
             stopPercentage: Double = 1.percent,
             configure: FlexPolicyConfig.() -> Unit = {}
-        ): FlexPolicy {
-            class MyPolicy : FlexPolicy(configure = configure) {
+        ): FlexTrader {
+            class MyTrader : FlexTrader(configure = configure) {
 
                 override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction {
                     val price = priceItem.getPrice(config.priceType)
@@ -149,11 +149,11 @@ open class FlexPolicy(
                 }
             }
 
-            return MyPolicy()
+            return MyTrader()
         }
 
         /**
-         * FlexPolicy that generates limit orders for entry orders.
+         * FlexTrader that generates limit orders for entry orders.
          *
          * If [limitPercentage] is a positive value, the following logic applies,
          *
@@ -167,8 +167,8 @@ open class FlexPolicy(
         fun limitOrders(
             limitPercentage: Double = 1.percent,
             configure: FlexPolicyConfig.() -> Unit = {}
-        ): FlexPolicy {
-            class MyPolicy : FlexPolicy(configure = configure) {
+        ): FlexTrader {
+            class MyTrader : FlexTrader(configure = configure) {
 
                 override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction {
                     val price = priceItem.getPrice(config.priceType)
@@ -180,7 +180,7 @@ open class FlexPolicy(
                 }
             }
 
-            return MyPolicy()
+            return MyTrader()
         }
 
     }
@@ -237,7 +237,7 @@ open class FlexPolicy(
      * `account.buyingPower` instead.
      */
     open fun amountPerOrder(account: Account): Amount {
-        return account.equityAmount * config.orderPercentage
+        return account.equityAmount() * config.orderPercentage
     }
 
     /**
@@ -260,14 +260,14 @@ open class FlexPolicy(
     }
 
     /**
-     * @see Policy.act
+     * @see Trader.create
      */
     @Suppress("ComplexMethod")
-    override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         val instructions = mutableListOf<Instruction>()
 
         if (signals.isNotEmpty()) {
-            val equityAmount = account.equityAmount
+            val equityAmount = account.equityAmount()
             val safetyAmount = equityAmount * config.safetyMargin
             val time = event.time
             var buyingPower = account.buyingPower - safetyAmount.value

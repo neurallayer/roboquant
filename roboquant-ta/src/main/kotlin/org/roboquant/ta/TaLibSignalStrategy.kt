@@ -137,12 +137,6 @@ class TaLibSignalStrategy(
         return signals
     }
 
-    /**
-     * Reset all the state
-     */
-    override fun reset() {
-        history.clear()
-    }
 
     /**
      * @suppress

@@ -87,7 +87,7 @@ internal class SimBrokerTest {
         val broker = getFilledSimbroker()
         val account1 = broker.sync()
         val account2 = broker.sync()
-        assertEquals(account1.equity, account2.equity)
+        assertEquals(account1.equity(), account2.equity())
     }
 
 

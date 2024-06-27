@@ -27,7 +27,7 @@ import org.roboquant.feeds.Event
  * to sentiment analysis using machine learning.
  *
  * A strategy only has access to an event. In case a strategy requires also having access to the Account,
- * it should be implemented as a Policy instead.
+ * it should be implemented as a Trader instead.
  */
 interface Strategy  {
 
@@ -39,12 +39,5 @@ interface Strategy  {
      */
     fun generate(event: Event): List<Signal>
 
-    /**
-     * Reset the state of the component to its initial state. The default implementation is to take no action.
-     */
-    fun reset() {
-        // default is to do nothing
-    }
 
 }
-

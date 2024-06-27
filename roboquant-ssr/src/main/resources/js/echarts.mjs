@@ -88141,7 +88141,7 @@ function (_super) {
         symbolKeepAspect: symbolKeepAspect
       }));
     } else {
-      // Use default legend icon policy for most series
+      // Use default legend icon trader for most series
       var rotate = legendIconType === 'inherit' && seriesModel.getData().getVisual('symbol') ? iconRotate === 'inherit' ? seriesModel.getData().getVisual('symbolRotate') : iconRotate : 0; // No rotation for no icon
 
       itemGroup.add(getDefaultLegendIcon({

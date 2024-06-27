@@ -31,15 +31,17 @@ internal class AccountTest {
     fun basis() {
         val iAccount = InternalAccount(Currency.USD)
         val account = iAccount.toAccount()
-        val amount = account.equityAmount.value
+        val amount = account.equityAmount().value
         assertEquals(0.00, amount)
         assertEquals(Amount(Currency.USD, 0.0), account.cashAmount)
 
         assertEquals(Currency.USD, account.baseCurrency)
         assertTrue(account.positions.isEmpty())
 
-        val e = account.equity
+        val e = account.equity()
         assertTrue(e.isEmpty())
+
+        assertEquals(Size.ZERO, account.positionSize(Asset("Dummy")))
 
         assertTrue(account.trades.isEmpty())
         assertTrue(account.trades.realizedPNL.isEmpty())

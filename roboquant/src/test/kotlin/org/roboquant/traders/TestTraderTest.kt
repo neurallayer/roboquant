@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.policies
+package org.roboquant.traders
 
 import org.roboquant.TestData
 import org.roboquant.brokers.Account
@@ -27,10 +27,10 @@ import org.roboquant.strategies.Signal
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-internal class TestPolicyTest {
+internal class TestTraderTest {
 
-    private class MyPolicy : Policy {
-        override fun act(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+    private class MyTrader : Trader {
+        override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
             return emptyList()
         }
 
@@ -38,28 +38,28 @@ internal class TestPolicyTest {
 
     @Test
     fun basic() {
-        val policy = MyPolicy()
+        val policy = MyTrader()
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.act(emptyList(), account, Event.empty())
+        val orders = policy.create(emptyList(), account, Event.empty())
         assertTrue(orders.isEmpty())
     }
 
     @Test
     fun order() {
-        val policy = TestPolicy()
+        val policy = TestTrader()
 
         for (rating in listOf(1.0, -1.0)) {
             val signals = listOf(Signal(TestData.usStock(), rating))
             val event = TestData.event2()
             val account = InternalAccount(Currency.USD).toAccount()
-            val orders = policy.act(signals, account, event)
+            val orders = policy.create(signals, account, event)
             assertTrue(orders.first() is MarketOrder)
         }
 
         val signals = listOf(Signal(TestData.usStock(), 0.0))
         val event = TestData.event2()
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.act(signals, account, event)
+        val orders = policy.create(signals, account, event)
         assertTrue(orders.isEmpty())
     }
 

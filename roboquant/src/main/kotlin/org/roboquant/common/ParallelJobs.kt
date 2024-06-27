@@ -30,7 +30,7 @@ import kotlinx.coroutines.*
  * jobs.joinAll()
  *```
  *  Note that most feeds and metric-loggers can be shared across runs, but that isn't true for the other components
- *  like strategy, policy, metrics and broker.
+ *  like strategy, trader, metrics and broker.
  */
 class ParallelJobs {
 

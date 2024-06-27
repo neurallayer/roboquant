@@ -66,15 +66,13 @@ interface Account {
     /**
      * [equity] converted to a single amount denoted in the [baseCurrency] of the account.
      */
-    val equityAmount: Amount
-        get() = convert(equity)
+    fun equityAmount(): Amount = convert(equity())
 
     /**
      * Total equity hold in the account.
      * Equity is defined as the sum of [cash] balances and the market value of the open [positions].
      */
-    val equity: Wallet
-        get() = cash + marketValue()
+    fun equity(): Wallet = cash + marketValue()
 
     /**
      * Unique set of assets hold in the open [positions]
@@ -89,7 +87,10 @@ interface Account {
         return positions.filterValues { assets.isEmpty() || it.asset in assets }.values.marketValue
     }
 
-    fun getSize(asset: Asset) : Size = positions[asset]?.size ?: Size.ZERO
+    /**
+     * Return the position size for the provided asset
+     */
+    fun positionSize(asset: Asset) : Size = positions[asset]?.size ?: Size.ZERO
 
     /**
      * Return the unrealized PNL of the open positions, optionally filter by one or more asset.
