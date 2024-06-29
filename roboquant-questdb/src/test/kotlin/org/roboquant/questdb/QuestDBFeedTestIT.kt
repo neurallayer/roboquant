@@ -44,6 +44,7 @@ internal class QuestDBFeedTestIT {
 
         assertEquals(inputFeed.assets, outputFeed.assets)
         assertEquals(inputFeed.timeline.timeframe, outputFeed.timeframe)
+
         outputFeed.close()
     }
 

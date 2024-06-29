@@ -24,8 +24,7 @@ import java.time.Instant
  * Base class that can be extended by strategies that are only interested in a single price for an asset and not
  * other types of actions.
  */
-abstract class PriceStrategy(private val priceType: String = "DEFAULT") :
-    Strategy {
+abstract class PriceStrategy(private val priceType: String = "DEFAULT") : Strategy {
 
     override fun generate(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()

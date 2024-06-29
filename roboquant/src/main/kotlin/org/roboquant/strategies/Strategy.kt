@@ -39,5 +39,4 @@ interface Strategy  {
      */
     fun generate(event: Event): List<Signal>
 
-
 }

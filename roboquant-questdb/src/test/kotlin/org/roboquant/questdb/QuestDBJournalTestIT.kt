@@ -61,7 +61,7 @@ internal class QuestDBJournalTestIT {
         val mrj = MultiRunJournal {
             run -> QuestDBJournal(AccountMetric(), dbPath = folder2.toPath(), table=run)
         }
-        val feed = RandomWalk.lastYears(5)
+        val feed = RandomWalk.lastYears(10)
         val jobs = ParallelJobs()
         val tfs = feed.timeframe.split(1.years)
         for (tf in tfs) {
