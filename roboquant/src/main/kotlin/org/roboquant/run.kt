@@ -90,7 +90,7 @@ suspend fun runAsync(
             val account = broker.sync(event)
 
             // Generate signals and place orders
-            val instructions = strategy.create(account, event)
+            val instructions = strategy.create(event, account)
             broker.place(instructions)
 
             journal?.track(event, account, instructions)

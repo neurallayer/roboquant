@@ -35,7 +35,7 @@ import kotlin.math.min
  * It will then hold these positions for a number of days before re-evaluating the strategy. After re-evaluation, the
  * strategy will then generate the market orders required to achieve the desired new portfolio composition.
  *
- * Since this strategy controls the complete portfolio and not just generates signals, it is implemented as a signal2Order
+ * Since this strategy controls the complete portfolio and not just generates signals, it is implemented as a signalConverter
  * and not a strategy. It doesn't use leverage or buying power, when re-balancing it just re-balances the total equity
  * of the account across the long and short positions.
  *
@@ -150,7 +150,7 @@ open class BettingAgainstBetaTrader(
      * @param event the market data
      * @return
      */
-    override fun create(account: Account, event: Event): List<Instruction> {
+    override fun create(event: Event, account: Account): List<Instruction> {
 
         // First, we update the buffers
         data.addAll(event, windowSize, priceType)

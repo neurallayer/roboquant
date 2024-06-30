@@ -20,13 +20,13 @@ import org.roboquant.common.Asset
 import org.roboquant.common.Size
 
 /**
- * SingleOrder types are plain non-combined orders with a pre-defined [size] and [TimeInForce] signal2Order. Many well-known
+ * SingleOrder types are plain non-combined orders with a pre-defined [size] and [TimeInForce] signalConverter. Many well-known
  * order types fall under this category, like Market-, Limit- and Trail-orders.
  *
  * This abstract class contains shared functionality across the different SingleOrder types.
  *
  * @property size the size of the order, use a negative size for a SELL order
- * @property tif the Time In Force signal2Order to use
+ * @property tif the Time In Force signalConverter to use
  */
 abstract class SingleOrder(asset: Asset, val size: Size, val tif: TimeInForce, tag: String) :
     Order(asset, tag) {
@@ -154,7 +154,7 @@ class StopLimitOrder(
  * @property asset asset of the order
  * @property size size of the order
  * @property trailPercentage positive percentage, for example `10.percent` for 10% trail
- * @property tif time in force signal2Order, default is GTC
+ * @property tif time in force signalConverter, default is GTC
  * @property id the order identifier
  * @constructor Create empty Trail order
  */

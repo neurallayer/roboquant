@@ -26,20 +26,19 @@ import java.time.Instant
 import java.util.*
 
 /**
- * Wraps another [signal2Order] and based on the configured settings throttle the propagation of orders to the broker.
+ * Wraps another [Strategy] and based on the configured settings throttle the propagation of orders to the broker.
  * The logic enforces that all orders send at the same time will be trottled or not.
  *
- * @property signal2Order the underlying signal2Order
+ * @property strategy the underlying strategy
  * @constructor Create new Circuit Breaker
  */
-internal class CircuitBreaker(val signal2Order: Signal2Order, private val maxOrders: Int, private val period: TimeSpan) :
-    Signal2Order by signal2Order {
+internal class CircuitBreaker(val strategy: Strategy, private val maxOrders: Int, private val period: TimeSpan) : Strategy {
 
     private val history = LinkedList<Pair<Instant, Int>>()
     private val logger = Logging.getLogger(this::class)
 
     private fun exceeds(newOrders: Int, time: Instant): Boolean {
-        if (newOrders > maxOrders) return false
+        if (newOrders > maxOrders) return true
         val lookbackTime = time - period
         var orders = newOrders
         for (entry in history) {
@@ -50,8 +49,8 @@ internal class CircuitBreaker(val signal2Order: Signal2Order, private val maxOrd
         return false
     }
 
-    override fun transform(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
-        val orders = signal2Order.transform(signals, account, event)
+    override fun create(event: Event, account: Account): List<Instruction> {
+        val orders = strategy.create(event,account)
         if (orders.isEmpty()) return emptyList()
 
         return if (exceeds(orders.size, event.time)) {
@@ -66,7 +65,7 @@ internal class CircuitBreaker(val signal2Order: Signal2Order, private val maxOrd
 }
 
 /**
- * Limit the number of orders a signal2Order can generate to [maxOrders] per [period]. All the orders per step will be
+ * Limit the number of orders a signalConverter can generate to [maxOrders] per [period]. All the orders per step will be
  * either added or ignored.
  *
  * Note: this circuit breaker will also block closing-position orders if the [maxOrders] limit is exceeded.
@@ -74,7 +73,7 @@ internal class CircuitBreaker(val signal2Order: Signal2Order, private val maxOrd
  * Usage:
  * ```
  * // For example allow maximum of 5 orders per 8 hours
- * val signal2Order = myPolicy.circuitBreaker(5, 8.hours)
+ * val signalConverter = myPolicy.circuitBreaker(5, 8.hours)
  * ```
  */
-fun Signal2Order.circuitBreaker(maxOrders: Int, period: TimeSpan): Signal2Order = CircuitBreaker(this, maxOrders, period)
+fun Strategy.circuitBreaker(maxOrders: Int, period: TimeSpan): Strategy = CircuitBreaker(this, maxOrders, period)

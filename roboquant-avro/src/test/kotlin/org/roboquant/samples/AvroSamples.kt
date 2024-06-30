@@ -23,7 +23,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.TimeParser
-import org.roboquant.strategies.FlexTrader
+import org.roboquant.strategies.FlexConverter
 import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 import java.time.Instant
@@ -94,12 +94,12 @@ internal class AvroSamples {
 
         // Since we only trade in one asset and have leverage, we allow up to 1000% of our equity (10k) allocated to
         // one order
-        val policy = FlexTrader.capitalBased {
+        val policy = FlexConverter.capitalBased {
             shorting = true
             orderPercentage = 90.percent
             safetyMargin = 10.percent
         }
-        strategy.signal2Order = policy
+        strategy.signalConverter = policy
 
         val account = run(feed, strategy, broker = broker)
 

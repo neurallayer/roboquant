@@ -16,28 +16,24 @@
 
 package org.roboquant.strategies
 
-import org.roboquant.feeds.random.RandomWalk
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.roboquant.TestData
 import kotlin.test.Test
 
 internal class ParallelSignalStrategyTest {
 
-    private fun getStrategy(r: Int) = RandomWalk.lastDays(10)
-
     @Test
     fun test() {
-        val s1 = getStrategy(1)
-        val s2 = getStrategy(2)
-        /*val s3 = ParallelStrategy(getStrategy(1), getStrategy(2))
+        val s1 = EMACrossover.PERIODS_12_26
+        val s2 =EMACrossover.PERIODS_5_15
+        val s3 = ParallelStrategy(s1, s2)
 
-        for (event in TestData.events(20)) {
+        for (event in TestData.events(100)) {
             val r1 = s1.generate(event)
             val r2 = s2.generate(event)
             val r3 = s3.generate(event)
-            assertEquals(r1.size + r2.size, r3.size)
-            if (r1.isNotEmpty()) assertEquals(r1.first().asset, r3.first().asset)
-            if (r2.isNotEmpty()) assertEquals(r2.last().asset, r3.last().asset)
+            assertEquals(setOf(r1 + r2), setOf(r3))
         }
-*/
     }
 
 }

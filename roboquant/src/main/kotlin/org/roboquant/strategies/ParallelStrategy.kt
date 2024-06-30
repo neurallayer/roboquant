@@ -29,7 +29,7 @@ import org.roboquant.feeds.Event
  * parallel, other method invocations like reset and getMetrics are run sequential.
  *
  * There is no logic included to resolve conflicting signals, for example, one strategy generates a BUY signal,
- * and another strategy generates a SELL signal for the same asset. This is left to the signal2Order to resolve.
+ * and another strategy generates a SELL signal for the same asset. This is left to the signalConverter to resolve.
  *
  * @property strategies The strategies to process in parallel
  * @constructor Create a new parallel strategy

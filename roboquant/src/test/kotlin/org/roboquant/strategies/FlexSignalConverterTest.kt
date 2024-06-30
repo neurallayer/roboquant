@@ -28,21 +28,21 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class FlexSignal2OrderTest {
+internal class FlexSignalConverterTest {
 
     @Test
     fun order() {
-        val policy = FlexTrader()
+        val policy = FlexConverter()
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.transform(signals, account, event)
+        val orders = policy.convert(signals, account, event)
         assertTrue(orders.isEmpty())
     }
 
     @Test
     fun order3() {
-        val policy = FlexTrader()
+        val policy = FlexConverter()
         val orders = run(policy)
         assertTrue(orders.isNotEmpty())
 
@@ -54,7 +54,7 @@ internal class FlexSignal2OrderTest {
 
     @Test
     fun orderMinPrice() {
-        val policy = FlexTrader {
+        val policy = FlexConverter {
             minPrice = 10.USD
         }
         val asset = Asset("TEST123")
@@ -62,18 +62,18 @@ internal class FlexSignal2OrderTest {
 
         val event1 = Event(Instant.now(), listOf(TradePrice(asset, 5.0)))
         val account = TestData.usAccount()
-        val orders1 = policy.transform(signals, account, event1)
+        val orders1 = policy.convert(signals, account, event1)
         assertTrue(orders1.isEmpty())
 
         val event2 = Event(Instant.now(), listOf(TradePrice(asset, 15.0)))
-        val orders2 = policy.transform(signals, account, event2)
+        val orders2 = policy.convert(signals, account, event2)
         assertTrue(orders2.isNotEmpty())
     }
 
     @Test
     fun order2() {
 
-        class MyTrader(val percentage: Double = 0.05) : FlexTrader() {
+        class MyConverter(val percentage: Double = 0.05) : FlexConverter() {
 
             override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction {
                 val asset = signal.asset
@@ -89,27 +89,27 @@ internal class FlexSignal2OrderTest {
             }
         }
 
-        val policy = MyTrader()
+        val policy = MyConverter()
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.transform(signals, account, event)
+        val orders = policy.convert(signals, account, event)
         assertTrue(orders.isEmpty())
 
     }
 
 
-    private fun run(policy: FlexTrader): List<Instruction> {
+    private fun run(policy: FlexConverter): List<Instruction> {
         val asset = Asset("TEST123")
         val signals = listOf(Signal.buy(asset))
         val event = Event(Instant.now(), listOf(TradePrice(asset, 5.0)))
         val account = TestData.usAccount()
-        return policy.transform(signals, account, event)
+        return policy.convert(signals, account, event)
     }
 
     @Test
     fun predefined() {
-        val policy = FlexTrader.bracketOrders()
+        val policy = FlexConverter.bracketOrders()
         val orders = run(policy)
         assertTrue(orders.isNotEmpty())
 
@@ -131,7 +131,7 @@ internal class FlexSignal2OrderTest {
 
     @Test
     fun predefined2() {
-        val policy = FlexTrader.limitOrders()
+        val policy = FlexConverter.limitOrders()
         val orders = run(policy)
         assertTrue(orders.isNotEmpty())
 
@@ -142,7 +142,7 @@ internal class FlexSignal2OrderTest {
 
     @Test
     fun predefined3() {
-        val policy = FlexTrader.singleAsset()
+        val policy = FlexConverter.singleAsset()
         val orders = run(policy)
         assertTrue(orders.isNotEmpty())
 
@@ -150,16 +150,6 @@ internal class FlexSignal2OrderTest {
         assertTrue(first is MarketOrder)
     }
 
-    @Test
-    fun chaining() {
-        val policy = FlexTrader()
-            .circuitBreaker(10, 1.days)
-        val signals = mutableListOf<Signal>()
-        val event = Event(Instant.now(), emptyList())
-        val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.transform(signals, account, event)
-        assertTrue(orders.isEmpty())
-    }
 
 
 }

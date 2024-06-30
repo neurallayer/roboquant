@@ -26,12 +26,12 @@ import org.roboquant.orders.*
 import java.time.Instant
 
 /**
- * Configuration for the [FlexTrader] that allows to tune the behavior of the signal2Order.
+ * Configuration for the [FlexConverter] that allows to tune the behavior of the signalConverter.
  *
  * @property orderPercentage The percentage of the equity value to allocate to a single order.
  * The default is 1.percent (0.01).
  * In the case of an account with high leverage, this value can be larger than 1 (100%).
- * @property shorting Can the signal2Order create orders that potentially lead to short positions, default is false
+ * @property shorting Can the signalConverter create orders that potentially lead to short positions, default is false
  * @property priceType The type of price to use, default is "DEFAULT"
  * @property fractions For fractional trading, the number of fractions (decimals) to allow for. Default is 0
  * @property oneOrderOnly Only allow one order to be open for a given asset at a given time, default is true
@@ -51,11 +51,11 @@ open class FlexPolicyConfig(
 )
 
 /**
- * This is the default signal2Order that will be used if no other signal2Order is specified.
+ * This is the default signalConverter that will be used if no other signalConverter is specified.
  * There are several properties that can be specified during construction that change the underlying behavior:
  *
  * ```
- * val signal2Order = FlexTrader {
+ * val signalConverter = FlexConverter {
  *      orderPercentage = 2.percent
  * }
  * ```
@@ -63,18 +63,18 @@ open class FlexPolicyConfig(
  * See also [FlexPolicyConfig] for more details.
  *
  * Also, some methods can be overwritten in a subclass to provide even more flexibility.
- * For example, this signal2Order will create [MarketOrder]s by default, but this can be changed by overwriting
+ * For example, this signalConverter will create [MarketOrder]s by default, but this can be changed by overwriting
  * the [createOrder] method in a subclass.
  *
  *
- * @constructor Create a new instance of a FlexTrader
+ * @constructor Create a new instance of a FlexConverter
  * @param configure additional configuration parameters
  */
-open class FlexTrader(
+open class FlexConverter(
     configure: FlexPolicyConfig.() -> Unit = {}
-) : Signal2Order {
+) : SignalConverter {
 
-    protected val logger = Logging.getLogger(FlexTrader::class)
+    protected val logger = Logging.getLogger(FlexConverter::class)
 
     // Holds all the configuration
     protected val config = FlexPolicyConfig()
@@ -90,7 +90,7 @@ open class FlexTrader(
     companion object {
 
         /**
-         * This signal2Order uses a percentage of the available buying-power to calculate the order amount (in contrast
+         * This signalConverter uses a percentage of the available buying-power to calculate the order amount (in contrast
          * to the default implementation that uses a percentage of the equity):
          *
          * The used formula is:
@@ -99,48 +99,48 @@ open class FlexTrader(
          * orderAmount = buyingPower * orderPercentage
          * ```
          */
-        fun singleAsset(configure: FlexPolicyConfig.() -> Unit = {}): FlexTrader {
-            class SingleSignal2Order : FlexTrader(
+        fun singleAsset(configure: FlexPolicyConfig.() -> Unit = {}): FlexConverter {
+            class SingleSignalConverter : FlexConverter(
                 configure
             ) {
                 override fun amountPerOrder(account: Account): Amount {
                     return account.buyingPower * config.orderPercentage
                 }
             }
-            return SingleSignal2Order()
+            return SingleSignalConverter()
         }
 
         /**
-         * Capital-based flex signal2Order.
+         * Capital-based flex signalConverter.
          */
         fun capitalBased(
             configure: FlexPolicyConfig.() -> Unit = {}
-        ): FlexTrader {
-            class CapiltalBasedSignal2Order : FlexTrader(configure) {
+        ): FlexConverter {
+            class CapiltalBasedSignalConverter : FlexConverter(configure) {
                 override fun amountPerOrder(account: Account): Amount {
                     val capital = account.positions.values.exposure + account.buyingPower
                     val amount = account.convert(capital)
                     return amount * config.orderPercentage
                 }
             }
-            return CapiltalBasedSignal2Order()
+            return CapiltalBasedSignalConverter()
         }
 
         /**
-         * Return a FlexTrader that generates bracket orders, with the following characteristics:
+         * Return a FlexConverter that generates bracket orders, with the following characteristics:
          * - a market order for entry
          * - trail-order for take profit with provided [trailPercentage], default is 5%
          * - stop-loss order for limiting loss with provided [stopPercentage], default is 1%
          *
-         * @see FlexTrader
+         * @see FlexConverter
          * @see BracketOrder.marketTrailStop
          */
         fun bracketOrders(
             trailPercentage: Double = 5.percent,
             stopPercentage: Double = 1.percent,
             configure: FlexPolicyConfig.() -> Unit = {}
-        ): FlexTrader {
-            class MyTrader : FlexTrader(configure = configure) {
+        ): FlexConverter {
+            class MyConverter : FlexConverter(configure = configure) {
 
                 override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction {
                     val price = priceItem.getPrice(config.priceType)
@@ -148,11 +148,11 @@ open class FlexTrader(
                 }
             }
 
-            return MyTrader()
+            return MyConverter()
         }
 
         /**
-         * FlexTrader that generates limit orders for entry orders.
+         * FlexConverter that generates limit orders for entry orders.
          *
          * If [limitPercentage] is a positive value, the following logic applies,
          *
@@ -166,8 +166,8 @@ open class FlexTrader(
         fun limitOrders(
             limitPercentage: Double = 1.percent,
             configure: FlexPolicyConfig.() -> Unit = {}
-        ): FlexTrader {
-            class MyTrader : FlexTrader(configure = configure) {
+        ): FlexConverter {
+            class MyConverter : FlexConverter(configure = configure) {
 
                 override fun createOrder(signal: Signal, size: Size, priceItem: PriceItem): Instruction {
                     val price = priceItem.getPrice(config.priceType)
@@ -179,7 +179,7 @@ open class FlexTrader(
                 }
             }
 
-            return MyTrader()
+            return MyConverter()
         }
 
     }
@@ -259,10 +259,10 @@ open class FlexTrader(
     }
 
     /**
-     * @see Signal2Order.transform
+     * @see SignalConverter.convert
      */
     @Suppress("ComplexMethod")
-    override fun transform(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+    override fun convert(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         val instructions = mutableListOf<Instruction>()
 
         if (signals.isNotEmpty()) {

@@ -23,7 +23,7 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.strategies.FlexTrader
+import org.roboquant.strategies.FlexConverter
 import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.Signal
@@ -156,10 +156,10 @@ private object Performance {
             )
 
             val broker = SimBroker(accountModel = MarginAccount())
-            val policy = FlexTrader {
+            val policy = FlexConverter {
                 shorting = true
             }
-            strategy.signal2Order = policy
+            strategy.signalConverter = policy
 
             run(feed, strategy,  broker = broker)
         }

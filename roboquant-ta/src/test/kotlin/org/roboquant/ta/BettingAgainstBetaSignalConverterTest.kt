@@ -23,7 +23,7 @@ import org.roboquant.run
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-internal class BettingAgainstBetaSignal2OrderTest {
+internal class BettingAgainstBetaSignalConverterTest {
 
     @Test
     fun test() {

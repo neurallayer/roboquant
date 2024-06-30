@@ -26,14 +26,14 @@ import org.roboquant.orders.BracketOrder
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Instruction
 import org.roboquant.orders.StopOrder
-import org.roboquant.strategies.FlexTrader
+import org.roboquant.strategies.FlexConverter
 import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class AtrSignal2OrderTest {
+internal class AtrSignalConverterTest {
 
     private fun usAccount(amount: Amount = 100_000.USD): Account {
         val account = InternalAccount(amount.currency)
@@ -43,7 +43,7 @@ internal class AtrSignal2OrderTest {
         return account.toAccount()
     }
 
-    private fun run(policy: FlexTrader): List<Instruction> {
+    private fun run(policy: FlexConverter): List<Instruction> {
         val asset = Asset("TEST")
         val signals = listOf(Signal.buy(asset))
         val now = Instant.now()
@@ -55,7 +55,7 @@ internal class AtrSignal2OrderTest {
             val p = 5.0
             val priceBar = PriceBar(asset, p + it, p + it, p + it, p + it)
             val event = Event(now + it.millis, listOf(priceBar))
-            val o = policy.transform(signals, account, event)
+            val o = policy.convert(signals, account, event)
             instructions.addAll(o)
         }
         return instructions
@@ -63,7 +63,7 @@ internal class AtrSignal2OrderTest {
 
     @Test
     fun bracketATR() {
-        val p = AtrSignal2Order(10, 4.0, 2.0, null) {
+        val p = AtrSignalConverter(10, 4.0, 2.0, null) {
             orderPercentage = 0.02
         }
         val orders = run(p)
@@ -84,7 +84,7 @@ internal class AtrSignal2OrderTest {
 
     @Test
     fun bracketSizingAtr() {
-        val p = AtrSignal2Order(10, 4.0, 2.0, 0.1) {
+        val p = AtrSignalConverter(10, 4.0, 2.0, 0.1) {
             orderPercentage = 0.02
         }
         val orders = run(p)
@@ -98,7 +98,7 @@ internal class AtrSignal2OrderTest {
     @Test
     fun bracketSizingAtrValidation() {
         assertThrows<IllegalArgumentException> {
-            AtrSignal2Order(10, 4.0, 2.0, 1.3) {
+            AtrSignalConverter(10, 4.0, 2.0, 1.3) {
                 orderPercentage = 0.02
             }
         }

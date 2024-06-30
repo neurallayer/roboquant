@@ -65,7 +65,7 @@ abstract class SingleOrderExecutor<T : SingleOrder>(final override var order: T)
     }
 
     /**
-     * Validate TiF signal2Order and return true if the order has expired according to the defined TIF.
+     * Validate TiF signalConverter and return true if the order has expired according to the defined TIF.
      */
     open fun expired(time: Instant): Boolean {
         return when (val tif = order.tif) {
@@ -74,7 +74,7 @@ abstract class SingleOrderExecutor<T : SingleOrder>(final override var order: T)
             is FOK -> remaining.nonzero
             is GTD -> time > tif.date
             is IOC -> time > openedAt
-            else -> throw UnsupportedException("unsupported time-in-force signal2Order tif=$tif")
+            else -> throw UnsupportedException("unsupported time-in-force signalConverter tif=$tif")
         }
     }
 

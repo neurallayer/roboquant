@@ -23,44 +23,42 @@ import org.roboquant.common.hours
 import org.roboquant.common.minutes
 import org.roboquant.common.plus
 import org.roboquant.feeds.Event
-import org.roboquant.orders.MarketOrder
 import org.roboquant.orders.Instruction
+import org.roboquant.orders.MarketOrder
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class CircuitBreakerTest {
 
-    private class MySignal2Order : Signal2Order {
-        override fun transform(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
-            return listOf(
-                MarketOrder(Asset("A"), 10),
-                MarketOrder(Asset("B"), 10),
-                MarketOrder(Asset("C"), 10)
-            )
+    private class MyStrat : Strategy {
+        override fun create(event: Event, account: Account): List<Instruction> {
+            val result = mutableListOf<Instruction>()
+            repeat(5) {
+                val order = MarketOrder(Asset("ABC"), 10)
+                result.add(order)
+            }
+            return result
         }
 
     }
 
     @Test
     fun test() {
+
         val account = TestData.usAccount()
         val time = Instant.now()
-        val policy = CircuitBreaker(MySignal2Order(), 8, 1.hours)
-        var orders = policy.transform(emptyList(), account, Event.empty(time))
-        assertEquals(3, orders.size)
+        val strat = MyStrat().circuitBreaker(10, 1.hours)
+        var orders = strat.create(Event.empty(time), account)
+        assertEquals(5, orders.size)
 
-        orders = policy.transform(emptyList(), account, Event.empty(time + 30.minutes))
-        assertEquals(3, orders.size)
+        orders = strat.create(Event.empty(time + 30.minutes), account)
+        assertEquals(5, orders.size)
 
-        orders = policy.transform(emptyList(), account, Event.empty(time + 50.minutes))
+        orders = strat.create(Event.empty(time + 50.minutes), account)
         assertEquals(0, orders.size)
 
-        orders = policy.transform(emptyList(), account, Event.empty(time + 51.minutes))
-        assertEquals(0, orders.size)
-
-        orders = policy.transform(emptyList(), account, Event.empty(time + 120.minutes))
-        assertEquals(3, orders.size)
-
+        orders = strat.create(Event.empty(time + 120.minutes), account)
+        assertEquals(5, orders.size)
     }
 }

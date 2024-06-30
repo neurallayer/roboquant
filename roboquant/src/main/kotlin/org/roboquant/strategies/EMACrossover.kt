@@ -17,7 +17,7 @@
 package org.roboquant.strategies
 
 import org.roboquant.common.Asset
-import java.time.Instant
+import org.roboquant.feeds.Event
 
 /**
  * SignalStrategy that uses the crossover of two Exponential Moving Averages (EMA) to generate a BUY or SELL signal. It is
@@ -45,8 +45,8 @@ class EMACrossover(
     slowPeriod: Int = 26,
     smoothing: Double = 2.0,
     private val minEvents: Int = slowPeriod,
-    priceType: String = "DEFAULT"
-) : PriceStrategy(priceType = priceType) {
+    private val priceType: String = "DEFAULT"
+) : SignalStrategy() {
 
     private val fast = 1.0 - (smoothing / (fastPeriod + 1))
     private val slow = 1.0 - (smoothing / (slowPeriod + 1))
@@ -86,32 +86,41 @@ class EMACrossover(
         var emaFast = initialPrice
         var emaSlow = initialPrice
 
-        fun addPrice(price: Double) {
+        fun addPrice(price: Double): Boolean {
             emaFast = emaFast * fast + (1 - fast) * price
             emaSlow = emaSlow * slow + (1 - slow) * price
             step += 1
+            return step >= minEvents
         }
 
-        fun isReady(): Boolean = step >= minEvents
-
-        fun getDirection(): Boolean = emaFast > emaSlow
+        fun getDirection() = if (emaFast > emaSlow) 1.0 else -1.0
     }
 
-    override fun generate(asset: Asset, price: Double, time: Instant): Signal? {
-        val calculator = calculators[asset]
-        if (calculator != null) {
-            val oldDirection = calculator.getDirection()
-            calculator.addPrice(price)
-            if (calculator.isReady()) {
-                val newDirection = calculator.getDirection()
+    override fun generate(event: Event): List<Signal> {
+        val signals = mutableListOf<Signal>()
+        for ((asset, priceItem) in event.prices) {
+            val price = priceItem.getPrice(priceType)
+            val signal = generate(asset, price)
+            if (signal != null) signals.add(signal)
+        }
+        return signals
+    }
 
-                if (oldDirection != newDirection) {
-                    val rating = if (newDirection) 1.0 else -1.0
-                    return Signal(asset, rating)
-                }
-            }
-        } else {
+    private fun generate(asset: Asset, price: Double): Signal? {
+        val calculator = calculators[asset]
+        if (calculator == null) {
             calculators[asset] = EMACalculator(price)
+            return null
+        }
+
+        val oldDirection = calculator.getDirection()
+        calculator.addPrice(price)
+        if (calculator.addPrice(price)) {
+            val newDirection = calculator.getDirection()
+
+            if (oldDirection != newDirection) {
+                return Signal(asset, newDirection)
+            }
         }
 
         return null
