@@ -87,10 +87,10 @@ internal class TaSamples {
     internal fun customPolicy() {
 
         /**
-         * Custom SignalConverter that extends the FlexConverter and captures the ATR (Average True Range) using the TaLibMetric. It
-         * then uses the ATR to set the limit amount of a LimitOrder.
+         * Custom SignalConverter that extends the FlexConverter and captures the ATR (Average True Range) using the
+         * TaLibMetric. It then uses the ATR to set the limit amount of a LimitOrder.
          */
-        class SmartLimitSignalConverter(private val atrPercentage: Double = 200.percent, private val atrPeriod: Int) :
+        class SmartLimitConverter(private val atrPercentage: Double = 200.percent, private val atrPeriod: Int) :
             FlexConverter() {
 
             // use TaLibMetric to calculate the ATR values
@@ -127,7 +127,7 @@ internal class TaSamples {
 
         val feed = RandomWalk.lastYears(5)
         val strategy = EMACrossover.PERIODS_12_26
-        strategy.signalConverter = SmartLimitSignalConverter(atrPeriod = 5)
+        strategy.signalConverter = SmartLimitConverter(atrPeriod = 5)
         val account = run(feed, EMACrossover.PERIODS_12_26)
         println(account)
     }

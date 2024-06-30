@@ -19,7 +19,7 @@ package org.roboquant.orders
 import java.time.Instant
 
 /**
- * Time in force (TiF) allows you to put an expiration or fill signalConverter on an order. It determines how long an order
+ * Time in force (TiF) allows you to put an expiration or fill policy on an order. It determines how long an order
  * remains active before it expires. There are two triggers that can determine if an order expires:
  *
  * - How much *time* has passed since the order was first placed.
@@ -31,7 +31,7 @@ import java.time.Instant
 interface TimeInForce
 
 /**
- * Good Till Cancelled signalConverter. The order will remain active until fully filled or is cancelled.
+ * Good Till Cancelled policy. The order will remain active until fully filled or is cancelled.
  * In practice, most brokers allow such orders to remain active for a 60-90 day period, so not indefinitely.
  *
  * @property maxDays the maximum number of days an order stays valid, default is 90 calendar days.
@@ -47,7 +47,7 @@ class GTC(val maxDays: Int = 90) : TimeInForce {
 }
 
 /**
- * Good Till Date signalConverter. The order will remain active until fully filled or a specified date.
+ * Good Till Date policy. The order will remain active until fully filled or a specified date.
  *
  * @property date
  * @constructor Create new GTD tif
@@ -62,7 +62,7 @@ class GTD(val date: Instant) : TimeInForce {
 }
 
 /**
- * Immediate or Cancel (IOC) signalConverter. An immediate or cancel order is an order to buy or sell an asset that attempts
+ * Immediate or Cancel (IOC) policy. An immediate or cancel order is an order to buy or sell an asset that attempts
  * to execute all or part immediately and then cancels any unfilled portion of the order.
  *
  * @constructor Create new IOC tif
@@ -93,8 +93,8 @@ class DAY : TimeInForce {
 }
 
 /**
- * Fill Or Kill (FOK) signalConverter. A Fill or Kill signalConverter is to be executed immediately at the market or a specified price
- * or cancelled if not filled.
+ * Fill Or Kill (FOK) policy. A Fill or Kill policy is to be executed immediately at the market or a
+ * specified price or cancelled if not filled.
  *
  * @constructor Create a new FOK tif
  */
