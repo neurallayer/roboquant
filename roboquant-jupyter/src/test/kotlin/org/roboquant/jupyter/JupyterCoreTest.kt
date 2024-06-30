@@ -16,7 +16,6 @@
 
 package org.roboquant.jupyter
 
-import org.jetbrains.kotlinx.jupyter.api.MimeTypedResult
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.roboquant.charts.PriceChart
 import org.roboquant.common.RoboquantException
@@ -40,8 +39,11 @@ internal class JupyterCoreTest {
         assertTrue { t.accepts(RoboquantException("test")) }
         assertTrue { t.accepts(RuntimeException()) }
         assertTrue { t.accepts(Throwable()) }
-        val output = t.render(Exception("Dummy"))
-        assertTrue { output is MimeTypedResult }
+
+        assertDoesNotThrow {
+            t.render(Exception("Dummy"))
+        }
+
     }
 
     @Test

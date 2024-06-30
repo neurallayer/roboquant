@@ -81,7 +81,6 @@
         <ibkr.version>10.19</ibkr.version>
         <surefire.failIfNoSpecifiedTests>false</surefire.failIfNoSpecifiedTests>
         <skipIntegrationTests>true</skipIntegrationTests>
-
     </properties>
 
     <repositories>
