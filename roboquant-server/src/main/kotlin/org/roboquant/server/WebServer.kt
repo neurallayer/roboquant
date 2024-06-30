@@ -25,8 +25,6 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.journals.MemoryJournal
-import org.roboquant.traders.FlexTrader
-import org.roboquant.traders.Trader
 import org.roboquant.strategies.Strategy
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
@@ -54,10 +52,10 @@ data class WebServerConfig(
  * Create a server, optional with credentials.
  * The website will be protected using digest authentication if username and password are provided.
  */
-class WebServer(configure: WebServerConfig.() -> Unit = {}) {
+open class WebServer(configure: WebServerConfig.() -> Unit = {}) {
 
     private var runCounter = 0
-    private val server: EmbeddedServer<*, *>
+    protected val server: EmbeddedServer<*, *>
 
     /**
      * Returns true if this webserver is secured with credentials, false otherwise
@@ -101,17 +99,16 @@ class WebServer(configure: WebServerConfig.() -> Unit = {}) {
         strategy: Strategy,
         journal: MemoryJournal = MemoryJournal(),
         timeframe: Timeframe = Timeframe.INFINITE,
-        trader: Trader = FlexTrader(),
         broker: Broker = SimBroker(),
         channel: EventChannel = EventChannel(timeframe, 10),
         timeOutMillis: Long = -1
     ) {
         require(!runs.contains(name)) { "run name has to be unique, name=$name is already in use by another run." }
-        val pausubalePolicy = PausableTrader(trader)
-        val info = RunInfo(journal, timeframe, pausubalePolicy, broker)
+        val pausubaleStrategy = PausableStrategy(strategy)
+        val info = RunInfo(journal, timeframe, pausubaleStrategy, broker)
         runs[name] = info
         logger.info { "Starting new run name=$name timeframe=$timeframe" }
-        org.roboquant.runAsync(feed, strategy, journal, timeframe, pausubalePolicy, broker, channel, timeOutMillis)
+        org.roboquant.runAsync(feed, pausubaleStrategy, journal, timeframe, broker, channel, timeOutMillis)
     }
 
 }

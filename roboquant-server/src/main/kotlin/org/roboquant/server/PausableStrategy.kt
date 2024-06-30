@@ -19,32 +19,25 @@ package org.roboquant.server
 import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Instruction
-import org.roboquant.traders.Trader
-import org.roboquant.strategies.Signal
+import org.roboquant.strategies.Strategy
 import java.time.Instant
 
 /**
- * Trader that can be paused and also captures a number of metrics
+ * Signal2Order that can be paused and also captures a number of metrics
  */
-internal class PausableTrader(private val trader: Trader, var pause: Boolean = false) : Trader by trader {
+internal class PausableStrategy(private val trader: Strategy, var pause: Boolean = false) : Strategy  {
 
-    internal var sellSignals = 0
-    internal var holdSignals = 0
-    internal var buySignals = 0
-    internal var totalOrders = 0
+
+    internal var totalInstructions = 0
     internal var totalEvents = 0
     internal var emptyEvents = 0
     internal var totalActions = 0
 
     internal var lastUpdate: Instant = Instant.MIN
 
-    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
-        // Still invoke the trader so any state can be updated if required.
-        val orders = trader.create(signals, account, event)
-
-        buySignals += signals.filter { it.isBuy }.size
-        sellSignals += signals.filter { it.isSell }.size
-        holdSignals += signals.filter { it.rating == 0.0 }.size
+    override fun create(account: Account, event: Event): List<Instruction> {
+        // Still invoke the strategy so any state can be updated if required.
+        val orders = trader.create(account, event)
 
         totalEvents++
         if (event.items.isEmpty()) emptyEvents++
@@ -52,7 +45,7 @@ internal class PausableTrader(private val trader: Trader, var pause: Boolean = f
         lastUpdate = event.time
 
         return if (!pause) {
-            totalOrders += orders.size
+            totalInstructions += orders.size
             orders
         } else {
             emptyList()

@@ -26,8 +26,6 @@ import org.roboquant.ibkr.IBKRHistoricFeed
 import org.roboquant.ibkr.IBKRLiveFeed
 import org.roboquant.orders.BracketOrder
 import org.roboquant.orders.MarketOrder
-import org.roboquant.traders.FlexTrader
-import org.roboquant.traders.circuitBreaker
 import org.roboquant.strategies.EMACrossover
 import kotlin.test.Test
 
@@ -120,8 +118,7 @@ internal class IBKRSamples {
         feed.subscribe(tsla, msft, googl)
 
         val strategy = EMACrossover.PERIODS_12_26
-        val policy = FlexTrader().circuitBreaker(2, 5.minutes)
-        org.roboquant.run(feed, strategy, trader= policy, timeframe = Timeframe.next(2.hours))
+        org.roboquant.run(feed, strategy,timeframe = Timeframe.next(2.hours))
 
         feed.disconnect()
         broker.disconnect()

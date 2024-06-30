@@ -24,7 +24,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-internal class HistoricPriceStrategyTest {
+internal class HistoricPriceSignalStrategyTest {
 
     private class MySubClass1 : HistoricPriceStrategy(10) {
         var called = false

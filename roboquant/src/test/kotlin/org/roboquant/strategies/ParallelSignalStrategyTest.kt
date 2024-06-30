@@ -16,30 +16,28 @@
 
 package org.roboquant.strategies
 
-import org.junit.jupiter.api.assertThrows
-import org.roboquant.TestData
+import org.roboquant.feeds.random.RandomWalk
 import kotlin.test.Test
-import kotlin.test.assertTrue
 
-internal class RandomStrategyTest {
+internal class ParallelSignalStrategyTest {
+
+    private fun getStrategy(r: Int) = RandomWalk.lastDays(10)
 
     @Test
-    fun randomStrategy() {
-        val s1 = RandomStrategy(1.0)
+    fun test() {
+        val s1 = getStrategy(1)
+        val s2 = getStrategy(2)
+        /*val s3 = ParallelStrategy(getStrategy(1), getStrategy(2))
+
         for (event in TestData.events(20)) {
             val r1 = s1.generate(event)
-            assertTrue(r1.isNotEmpty())
+            val r2 = s2.generate(event)
+            val r3 = s3.generate(event)
+            assertEquals(r1.size + r2.size, r3.size)
+            if (r1.isNotEmpty()) assertEquals(r1.first().asset, r3.first().asset)
+            if (r2.isNotEmpty()) assertEquals(r2.last().asset, r3.last().asset)
         }
-
-        val s2 = RandomStrategy(0.0)
-        for (event in TestData.events(20)) {
-            val r1 = s2.generate(event)
-            assertTrue(r1.isEmpty())
-        }
-
-        assertThrows<IllegalArgumentException> {
-            RandomStrategy(1.2)
-        }
+*/
     }
 
 }

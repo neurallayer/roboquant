@@ -27,7 +27,7 @@ import org.roboquant.common.Timeframe
 import org.roboquant.feeds.Feed
 import org.roboquant.feeds.applyEvents
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.Strategy
+import org.roboquant.strategies.SignalStrategy
 import java.time.Instant
 
 
@@ -43,7 +43,7 @@ import java.time.Instant
  */
 class SignalChart(
     private val feed: Feed,
-    private val strategy: Strategy,
+    private val strategy: SignalStrategy,
     private val timeframe: Timeframe = Timeframe.INFINITE,
 ) : Chart() {
 

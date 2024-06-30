@@ -23,7 +23,7 @@ import org.roboquant.common.*
 import org.roboquant.feeds.csv.CSVConfig
 import org.roboquant.feeds.csv.CSVFeed
 import org.roboquant.feeds.csv.TimeParser
-import org.roboquant.traders.FlexTrader
+import org.roboquant.strategies.FlexTrader
 import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
 import java.time.Instant
@@ -36,8 +36,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class AvroSamples {
-
-
 
     @Test
     @Ignore
@@ -101,8 +99,9 @@ internal class AvroSamples {
             orderPercentage = 90.percent
             safetyMargin = 10.percent
         }
+        strategy.signal2Order = policy
 
-        val account = run(feed, strategy, trader = policy, broker = broker)
+        val account = run(feed, strategy, broker = broker)
 
         println(account)
     }

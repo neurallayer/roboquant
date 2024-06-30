@@ -21,13 +21,10 @@ import kotlinx.coroutines.runBlocking
 import org.roboquant.brokers.Account
 import org.roboquant.brokers.Broker
 import org.roboquant.brokers.sim.SimBroker
-import org.roboquant.common.Logging
 import org.roboquant.common.Timeframe
 import org.roboquant.feeds.EventChannel
 import org.roboquant.feeds.Feed
 import org.roboquant.journals.Journal
-import org.roboquant.traders.FlexTrader
-import org.roboquant.traders.Trader
 import org.roboquant.strategies.Strategy
 import java.time.Instant
 import java.util.*
@@ -40,10 +37,9 @@ import kotlin.math.roundToInt
  */
 fun run(
     feed: Feed,
-    strategy: Strategy?,
+    strategy: Strategy,
     journal: Journal? = null,
     timeframe: Timeframe = Timeframe.INFINITE,
-    trader: Trader = FlexTrader(),
     broker: Broker = SimBroker(),
     channel: EventChannel = EventChannel(timeframe, 10),
     timeOutMillis: Long = -1,
@@ -54,7 +50,6 @@ fun run(
         strategy,
         journal,
         timeframe,
-        trader,
         broker,
         channel,
         timeOutMillis,
@@ -67,15 +62,13 @@ fun run(
  * @param feed the feed to use
  * @param strategy The strategy to use
  * @param journal the journal to use, default is null
- * @param trader The trader to use, default is [FlexTrader]
  * @param broker the broker to use, default is [SimBroker]
  */
 suspend fun runAsync(
     feed: Feed,
-    strategy: Strategy?,
+    strategy: Strategy,
     journal: Journal? = null,
     timeframe: Timeframe = Timeframe.INFINITE,
-    trader: Trader = FlexTrader(),
     broker: Broker = SimBroker(),
     channel: EventChannel = EventChannel(timeframe, 10),
     timeOutMillis: Long = -1,
@@ -97,11 +90,10 @@ suspend fun runAsync(
             val account = broker.sync(event)
 
             // Generate signals and place orders
-            val signals = strategy?.generate(event) ?: emptyList()
-            val orders = trader.create(signals, account, event)
-            broker.place(orders)
+            val instructions = strategy.create(account, event)
+            broker.place(instructions)
 
-            journal?.track(event, account, signals, orders)
+            journal?.track(event, account, instructions)
         }
     } catch (_: ClosedReceiveChannelException) {
         // intentionally empty
@@ -110,98 +102,6 @@ suspend fun runAsync(
         progressBar?.stop()
     }
     return broker.sync()
-}
-
-/**
- * Roboquant is the engine of the platform that ties [strategy], [trader] and [broker] together and caters to a wide
- * variety of testing and live trading scenarios.
- * Only a strategy is required when instantiating a Roboquant, the other parameters are
- * optional.
- *
- * @property strategy The strategy to use, there is no default
- * @property trader The trader to use, default is [FlexTrader]
- * @property broker the broker to use, default is [SimBroker]
- */
-@Suppress("MemberVisibilityCanBePrivate")
-@Deprecated("use the standalone run and runAsync functions directly")
-data class Roboquant(
-    val strategy: Strategy,
-    val trader: Trader = FlexTrader(),
-    val broker: Broker = SimBroker()
-) {
-
-    private val logger = Logging.getLogger(this::class)
-
-    init {
-        logger.debug { "Created new roboquant instance=$this" }
-    }
-
-
-    /**
-     * Start a new run using the provided [feed] as data. If no [timeframe] is provided all the events in the feed
-     * will be processed.
-     *
-     * This is the synchronous (blocking) method of run that is convenient to use. However, if you want to execute runs
-     * in parallel, use the [runAsync] method.
-     */
-    fun run(
-        feed: Feed,
-        journal: Journal? = null,
-        timeframe: Timeframe = feed.timeframe,
-        channel: EventChannel = EventChannel(timeframe, 10),
-        heartbeatTimeout: Long = -1,
-        showProgressBar: Boolean = false
-    ): Account = runBlocking {
-        return@runBlocking runAsync(feed, journal, timeframe, channel, heartbeatTimeout, showProgressBar)
-    }
-
-    /**
-     * This is the same method as the [run] method but as the name already suggests, asynchronously. This makes it
-     * suited for running back-test in parallel. Other than that, it behaves the same as the regular blocking run
-     * method.
-     *
-     * @see [run]
-     */
-    suspend fun runAsync(
-        feed: Feed,
-        journal: Journal? = null,
-        timeframe: Timeframe = feed.timeframe,
-        channel: EventChannel = EventChannel(timeframe, 10),
-        heartbeatTimeout: Long = -1,
-        showProgressBar: Boolean = false
-    ): Account {
-
-        val job = feed.playBackground(channel)
-        val progressBar = if (showProgressBar) {
-            val tf = if (timeframe.isFinite()) timeframe else feed.timeframe
-            val pb = ProgressBar(tf)
-            pb.start()
-            pb
-        } else null
-
-        try {
-            while (true) {
-                val event = channel.receive(heartbeatTimeout)
-                progressBar?.update(event.time)
-                // Sync with broker
-                val account = broker.sync(event)
-
-                // Generate signals and place orders
-                val signals = strategy.generate(event)
-                val orders = trader.create(signals, account, event)
-                broker.place(orders)
-
-                journal?.track(event, account, signals, orders)
-            }
-        } catch (_: ClosedReceiveChannelException) {
-            // intentionally empty
-        } finally {
-            if (job.isActive) job.cancel()
-            progressBar?.stop()
-        }
-        return broker.sync()
-    }
-
 }
 
 /**

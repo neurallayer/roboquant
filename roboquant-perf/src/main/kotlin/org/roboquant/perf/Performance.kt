@@ -23,11 +23,11 @@ import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.common.*
 import org.roboquant.feeds.*
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.traders.FlexTrader
+import org.roboquant.strategies.FlexTrader
 import org.roboquant.strategies.CombinedStrategy
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.Strategy
+import org.roboquant.strategies.SignalStrategy
 import java.time.Instant
 import kotlin.math.roundToInt
 import kotlin.system.exitProcess
@@ -38,7 +38,7 @@ import kotlin.system.measureTimeMillis
  *
  * Not realistic, but with minimal overhead to ensure we can measure the performance of the engine and not the strategy.
  */
-private class FastStrategy(private val skip: Int) : Strategy {
+private class FastStrategy(private val skip: Int) : SignalStrategy() {
 
     var steps = 0
     var buy = true
@@ -99,7 +99,7 @@ private class FastFeed(nAssets: Int, val events: Int) : Feed {
 private object Performance {
 
     private const val SKIP = 999 // create signal in 1 out of 999 price-action
-    private fun getStrategy(skip: Int): Strategy = FastStrategy(skip)
+    private fun getStrategy(skip: Int): SignalStrategy = FastStrategy(skip)
 
     /**
      * Try to make the results more reproducible by running the code multiple times and take the best time.
@@ -159,8 +159,9 @@ private object Performance {
             val policy = FlexTrader {
                 shorting = true
             }
+            strategy.signal2Order = policy
 
-            run(feed, strategy,  broker = broker, trader = policy)
+            run(feed, strategy,  broker = broker)
         }
     }
 

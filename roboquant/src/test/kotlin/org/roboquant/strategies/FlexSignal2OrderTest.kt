@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.traders
+package org.roboquant.strategies
 
 import org.roboquant.TestData
 import org.roboquant.brokers.sim.execution.InternalAccount
@@ -23,13 +23,12 @@ import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.TradePrice
 import org.roboquant.orders.*
-import org.roboquant.strategies.Signal
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class FlexTraderTest {
+internal class FlexSignal2OrderTest {
 
     @Test
     fun order() {
@@ -37,7 +36,7 @@ internal class FlexTraderTest {
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.create(signals, account, event)
+        val orders = policy.transform(signals, account, event)
         assertTrue(orders.isEmpty())
     }
 
@@ -63,11 +62,11 @@ internal class FlexTraderTest {
 
         val event1 = Event(Instant.now(), listOf(TradePrice(asset, 5.0)))
         val account = TestData.usAccount()
-        val orders1 = policy.create(signals, account, event1)
+        val orders1 = policy.transform(signals, account, event1)
         assertTrue(orders1.isEmpty())
 
         val event2 = Event(Instant.now(), listOf(TradePrice(asset, 15.0)))
-        val orders2 = policy.create(signals, account, event2)
+        val orders2 = policy.transform(signals, account, event2)
         assertTrue(orders2.isNotEmpty())
     }
 
@@ -94,7 +93,7 @@ internal class FlexTraderTest {
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.create(signals, account, event)
+        val orders = policy.transform(signals, account, event)
         assertTrue(orders.isEmpty())
 
     }
@@ -105,7 +104,7 @@ internal class FlexTraderTest {
         val signals = listOf(Signal.buy(asset))
         val event = Event(Instant.now(), listOf(TradePrice(asset, 5.0)))
         val account = TestData.usAccount()
-        return policy.create(signals, account, event)
+        return policy.transform(signals, account, event)
     }
 
     @Test
@@ -158,7 +157,7 @@ internal class FlexTraderTest {
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.create(signals, account, event)
+        val orders = policy.transform(signals, account, event)
         assertTrue(orders.isEmpty())
     }
 

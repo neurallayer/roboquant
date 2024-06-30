@@ -20,7 +20,7 @@ import org.roboquant.common.Asset
 import java.time.Instant
 
 /**
- * Strategy that uses the crossover of two Exponential Moving Averages (EMA) to generate a BUY or SELL signal. It is
+ * SignalStrategy that uses the crossover of two Exponential Moving Averages (EMA) to generate a BUY or SELL signal. It is
  * frequently used in FOREX trading, but can also be applied to other asset classes.
  *
  * The rules are straight forward:

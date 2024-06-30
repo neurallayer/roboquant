@@ -20,7 +20,7 @@ import kotlinx.coroutines.*
 import org.roboquant.feeds.Event
 
 /**
- * Strategy that runs a number of other strategies in parallel and combines the result. The strategies will each run
+ * SignalStrategy that runs a number of other strategies in parallel and combines the result. The strategies will each run
  * in their own coroutine, and the results are aggregated after they are finished. The order of aggregation is the same
  * as the order of strategies that is provided in the constructor.
  *
@@ -29,26 +29,26 @@ import org.roboquant.feeds.Event
  * parallel, other method invocations like reset and getMetrics are run sequential.
  *
  * There is no logic included to resolve conflicting signals, for example, one strategy generates a BUY signal,
- * and another strategy generates a SELL signal for the same asset. This is left to the trader to resolve.
+ * and another strategy generates a SELL signal for the same asset. This is left to the signal2Order to resolve.
  *
  * @property strategies The strategies to process in parallel
  * @constructor Create a new parallel strategy
  */
-class ParallelStrategy(strategies: Collection<Strategy>, private val signalResolver: SignalResolver? = null) :
-    CombinedStrategy(strategies) {
+class ParallelStrategy(val strategies: Collection<SignalStrategy>, private val signalResolver: SignalResolver? = null) :
+    SignalStrategy() {
 
     private val scope = CoroutineScope(Dispatchers.Default + Job())
 
     /**
      * Create a new parallel strategy using the provided [strategies]
      */
-    constructor(vararg strategies: Strategy, signalResolver: SignalResolver? = null) : this(
+    constructor(vararg strategies: SignalStrategy, signalResolver: SignalResolver? = null) : this(
         strategies.toList(),
         signalResolver
     )
 
     /**
-     * @see Strategy.generate
+     * @see SignalStrategy.generate
      */
     override fun generate(event: Event): List<Signal> {
         val signals = mutableListOf<Signal>()

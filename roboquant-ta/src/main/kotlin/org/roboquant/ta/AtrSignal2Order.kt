@@ -22,13 +22,13 @@ import org.roboquant.common.Size
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceItem
 import org.roboquant.orders.*
-import org.roboquant.traders.FlexTrader
-import org.roboquant.traders.FlexPolicyConfig
+import org.roboquant.strategies.FlexTrader
+import org.roboquant.strategies.FlexPolicyConfig
 import org.roboquant.strategies.Signal
 
 
 /**
- * This trader is a subclass of [FlexTrader] and uses ATR (Average True Range) to:
+ * This signal2Order is a subclass of [FlexTrader] and uses ATR (Average True Range) to:
  *
  * - Create a [BracketOrder] with ATR based take profit and stop loss values
  * - Optionally reduce the sizing based on the ATR.
@@ -49,7 +49,7 @@ import org.roboquant.strategies.Signal
  * @property atRisk max percentage of the order value that can be at risk.
  * If null, no risk-based sizing will be applied.
  */
-open class AtrTrader(
+open class AtrSignal2Order(
     private val atrPeriod: Int = 20,
     private val atrProfit: Double = 4.0,
     private val atrLoss: Double = 2.0,
@@ -83,11 +83,11 @@ open class AtrTrader(
     }
 
     /**
-     * @see FlexTrader.create
+     * @see FlexTrader.transform
      */
-    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+    override fun transform(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
         data.addAll(event)
-        return super.create(signals, account, event)
+        return super.transform(signals, account, event)
     }
 
     /**

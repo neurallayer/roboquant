@@ -24,12 +24,12 @@ import org.roboquant.feeds.Event
  * run sequential. For parallel execution see [ParallelStrategy]
  *
  * @property strategies the strategies to combine
- * @constructor Create a new instance of a Combined Strategy
+ * @constructor Create a new instance of a Combined SignalStrategy
  */
-open class CombinedStrategy(val strategies: Collection<Strategy>, private val signalResolver: SignalResolver? = null) :
-    Strategy {
+open class CombinedStrategy(val strategies: Collection<SignalStrategy>, private val signalResolver: SignalResolver? = null) :
+    SignalStrategy() {
 
-    constructor(vararg strategies: Strategy, signalResolver: SignalResolver? = null) : this(
+    constructor(vararg strategies: SignalStrategy, signalResolver: SignalResolver? = null) : this(
         strategies.toList(),
         signalResolver
     )

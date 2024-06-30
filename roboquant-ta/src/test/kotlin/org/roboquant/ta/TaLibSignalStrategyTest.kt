@@ -29,12 +29,12 @@ import org.roboquant.feeds.filter
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.Strategy
+import org.roboquant.strategies.SignalStrategy
 import java.time.Instant
 import kotlin.collections.set
 import kotlin.test.*
 
-internal class TaLibStrategyTest {
+internal class TaLibSignalStrategyTest {
 
     @Test
     fun taCore() {
@@ -126,7 +126,7 @@ internal class TaLibStrategyTest {
         return result
     }
 
-    private fun run(s: Strategy, n: Int = 150): Map<Instant, List<Signal>> {
+    private fun run(s: SignalStrategy, n: Int = 150): Map<Instant, List<Signal>> {
         val nHalf = n / 2
         val feed = HistoricTestFeed(100 until 100 + nHalf, 100 + nHalf - 1 downTo 100, priceBar = true)
         val events = feed.filter<PriceBar>()

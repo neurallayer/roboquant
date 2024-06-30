@@ -30,7 +30,6 @@ import org.roboquant.metrics.AccountMetric
 import org.roboquant.orders.MarketOrder
 import org.roboquant.run
 import org.roboquant.strategies.EMACrossover
-import org.roboquant.strategies.TestStrategy
 
 /**
  * Remove end-of-line characters so test results are the same on different operating-systems.
@@ -45,7 +44,7 @@ object TestData {
 
     val fullAccount by lazy {
         val feed = RandomWalk.lastYears()
-        val account = run(feed, TestStrategy())
+        val account = run(feed, EMACrossover())
         account
     }
 

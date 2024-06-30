@@ -16,20 +16,32 @@
 
 package org.roboquant.ta
 
-import kotlinx.coroutines.runBlocking
+import org.roboquant.brokers.sim.MarginAccount
+import org.roboquant.brokers.sim.SimBroker
 import org.roboquant.feeds.random.RandomWalk
+import org.roboquant.run
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-internal class RSIStrategyTest {
-    private val feed = RandomWalk.lastYears(1, 2)
+internal class BettingAgainstBetaSignal2OrderTest {
 
     @Test
-    fun test() = runBlocking {
-        val s = RSIStrategy()
-        assertEquals(30.0, s.lowThreshold)
-        assertEquals(70.0, s.highThreshold)
-        org.roboquant.run(feed, RSIStrategy())
+    fun test() {
+        val feed = RandomWalk.lastYears(nAssets = 20)
+        val assets = feed.assets.toList()
+        val marketAsset = assets.first()
+
+        val policy = BettingAgainstBetaTrader(assets, marketAsset, maxPositions = 6)
+        val broker = SimBroker(accountModel = MarginAccount())
+        val account = run(
+            feed,
+            policy,
+            broker = broker
+        )
+
+        assertTrue(account.positions.size <= 6)
+        assertTrue(account.positions.size > 3)
+
 
     }
 

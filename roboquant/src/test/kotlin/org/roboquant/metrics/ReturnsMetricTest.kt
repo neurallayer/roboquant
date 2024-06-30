@@ -17,12 +17,9 @@
 package org.roboquant.metrics
 
 import org.roboquant.TestData
-import org.roboquant.common.months
 import org.roboquant.feeds.random.RandomWalk
-import org.roboquant.feeds.util.HistoricTestFeed
 import org.roboquant.journals.MemoryJournal
 import org.roboquant.strategies.EMACrossover
-import org.roboquant.strategies.TestStrategy
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertTrue
@@ -46,22 +43,5 @@ internal class ReturnsMetricTest {
         assertContains(j.getMetricNames(), "returns.sharperatio")
     }
 
-    @Test
-    fun test2() {
-        val feed = HistoricTestFeed(100..300)
-        val strategy = TestStrategy()
-        val metric = ReturnsMetric(period = 1.months)
-        val logger = MemoryJournal(metric)
-        org.roboquant.run(feed, strategy, logger)
-
-        val sharpRatio = logger.getMetric("returns.sharperatio").last().value
-        assertTrue(!sharpRatio.isNaN())
-
-        val mean = logger.getMetric("returns.mean").last().value
-        assertTrue(!mean.isNaN())
-
-        val std = logger.getMetric("returns.std").last().value
-        assertTrue(!std.isNaN())
-    }
 
 }

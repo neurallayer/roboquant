@@ -16,7 +16,9 @@
 
 package org.roboquant.strategies
 
+import org.roboquant.brokers.Account
 import org.roboquant.feeds.Event
+import org.roboquant.orders.Instruction
 
 /**
  * The Strategy is the interface that a trading strategy will need to implement. A strategy receives an
@@ -27,7 +29,7 @@ import org.roboquant.feeds.Event
  * to sentiment analysis using machine learning.
  *
  * A strategy only has access to an event. In case a strategy requires also having access to the Account,
- * it should be implemented as a Trader instead.
+ * it should be implemented as a Signal2Order instead.
  */
 interface Strategy  {
 
@@ -37,6 +39,22 @@ interface Strategy  {
      *
      * If there are no signals detected, this method should return an empty list.
      */
-    fun generate(event: Event): List<Signal>
+    fun create(account: Account, event: Event): List<Instruction>
+
+}
+
+/**
+ *
+ * @property signal2Order Signal2Order
+ * @constructor
+ */
+abstract class SignalStrategy(var signal2Order: Signal2Order = FlexTrader()) : Strategy {
+
+    override fun create(account: Account, event: Event): List<Instruction> {
+        val signals = generate(event)
+        return signal2Order.transform(signals, account, event)
+    }
+
+    abstract fun generate(event: Event): List<Signal>
 
 }

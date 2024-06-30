@@ -141,8 +141,11 @@ object Config {
     }
 
     /**
-     * Returns the roboquant home directory, <USER_HOME>/.roboquant
-     * If it does not exist, it will be created the first time this property is called.
+     * Returns the roboquant home directory, by default <USER_HOME>/.roboquant
+     * If a system property named `roboquant.home` is set, that will be used instead.
+     *
+     * If the directory does not exist yet, it will be created the first time this
+     * method is called.
      */
     val home: Path by lazy {
         val roboquantHome = System.getProperty("roboquant.home")

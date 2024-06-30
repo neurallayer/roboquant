@@ -28,7 +28,7 @@ import org.ta4j.core.rules.StopLossRule
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-internal class Ta4JStrategyTest {
+internal class Ta4JSignalStrategyTest {
 
     @Test
     fun test() {

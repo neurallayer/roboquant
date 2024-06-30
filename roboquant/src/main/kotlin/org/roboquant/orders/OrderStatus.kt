@@ -51,7 +51,7 @@ enum class OrderStatus {
     CANCELLED,
 
     /**
-     *  The order has expired, normally triggered by a [TimeInForce] trader. This is an end-state.
+     *  The order has expired, normally triggered by a [TimeInForce] signal2Order. This is an end-state.
      */
     EXPIRED,
 

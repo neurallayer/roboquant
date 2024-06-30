@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package org.roboquant.strategies
+package org.roboquant.ta
 
-import org.roboquant.TestData
+import kotlinx.coroutines.runBlocking
+import org.roboquant.feeds.random.RandomWalk
 import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
-internal class TestStrategyTest {
+internal class RSISignalStrategyTest {
+    private val feed = RandomWalk.lastYears(1, 2)
 
     @Test
-    fun test() {
-        val strategy = TestStrategy(5)
-        val event = TestData.event()
-        var signals = strategy.generate(event)
-        assertFalse(signals.isEmpty())
-        signals = strategy.generate(event)
-        assertTrue(signals.isEmpty())
+    fun test() = runBlocking {
+        val s = RSIStrategy()
+        assertEquals(30.0, s.lowThreshold)
+        assertEquals(70.0, s.highThreshold)
+        org.roboquant.run(feed, RSIStrategy())
+
     }
+
 }

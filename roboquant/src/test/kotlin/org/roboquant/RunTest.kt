@@ -32,7 +32,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class RoboquantTest {
+internal class RunTest {
 
     @Test
     fun simpleRun() {
@@ -62,7 +62,6 @@ internal class RoboquantTest {
             run(TestData.feed, strategy, journal)
             assertTrue(journal.nEvents > 0)
             assertTrue(journal.nItems > 0)
-            assertTrue(journal.nSignals > 0)
             assertTrue(journal.nOrders > 0)
             assertTrue(journal.lastTime != null)
             assertTrue(journal.maxPositions > 0)

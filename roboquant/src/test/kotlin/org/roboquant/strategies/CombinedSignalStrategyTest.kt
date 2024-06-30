@@ -22,9 +22,9 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-internal class CombinedStrategyTest {
+internal class CombinedSignalStrategyTest {
 
-    class MyStrategy : Strategy {
+    class MyStrategy : SignalStrategy() {
 
         override fun generate(event: Event): List<Signal> {
             return emptyList()
@@ -44,5 +44,18 @@ internal class CombinedStrategyTest {
         for (event in TestData.events(10)) signals += s.generate(event)
         assertTrue(signals.isEmpty())
     }
+
+    @Test
+    fun test2() {
+        val s1 = MyStrategy()
+        val s2 = MyStrategy()
+        val s = ParallelStrategy(s1, s2)
+        assertEquals(2, s.strategies.size)
+
+        val signals = mutableListOf<Signal>()
+        for (event in TestData.events(10)) signals += s.generate(event)
+        assertTrue(signals.isEmpty())
+    }
+
 
 }

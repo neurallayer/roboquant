@@ -27,7 +27,7 @@ import org.roboquant.feeds.PriceItem
 import org.roboquant.feeds.random.RandomWalk
 import org.roboquant.orders.LimitOrder
 import org.roboquant.orders.Instruction
-import org.roboquant.traders.FlexTrader
+import org.roboquant.strategies.FlexTrader
 import org.roboquant.strategies.EMACrossover
 import org.roboquant.strategies.Signal
 import org.roboquant.ta.*
@@ -87,23 +87,23 @@ internal class TaSamples {
     internal fun customPolicy() {
 
         /**
-         * Custom Trader that extends the FlexTrader and captures the ATR (Average True Range) using the TaLibMetric. It
+         * Custom Signal2Order that extends the FlexTrader and captures the ATR (Average True Range) using the TaLibMetric. It
          * then uses the ATR to set the limit amount of a LimitOrder.
          */
-        class SmartLimitTrader(private val atrPercentage: Double = 200.percent, private val atrPeriod: Int) :
+        class SmartLimitSignal2Order(private val atrPercentage: Double = 200.percent, private val atrPeriod: Int) :
             FlexTrader() {
 
             // use TaLibMetric to calculate the ATR values
             private val atr = TaLibMetric { mapOf("atr" to atr(it, atrPeriod)) }
             private var atrMetrics = emptyMap<String, Double>()
 
-            override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+            override fun transform(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
                 // Update the metrics and store the results, so we have them available when the
                 // createOrder is invoked.
                 atrMetrics = atr.calculate(account, event)
 
                 // Call the regular FlexTrader processing
-                return super.create(signals, account, event)
+                return super.transform(signals, account, event)
             }
 
             /**
@@ -126,7 +126,9 @@ internal class TaSamples {
 
 
         val feed = RandomWalk.lastYears(5)
-        val account = run(feed, EMACrossover.PERIODS_12_26, trader = SmartLimitTrader(atrPeriod = 5))
+        val strategy = EMACrossover.PERIODS_12_26
+        strategy.signal2Order = SmartLimitSignal2Order(atrPeriod = 5)
+        val account = run(feed, EMACrossover.PERIODS_12_26)
         println(account)
     }
 
@@ -134,14 +136,15 @@ internal class TaSamples {
     @Ignore
     internal fun atrPolicy() {
         val strategy = EMACrossover.PERIODS_5_15
-        val policy = AtrTrader(10, 6.0, 3.0, null) {
+        val policy = AtrSignal2Order(10, 6.0, 3.0, null) {
             orderPercentage = 0.02
             shorting = true
         }
+        strategy.signal2Order = policy
         val broker = SimBroker(accountModel = MarginAccount(minimumEquity = 50_000.0))
 
         val feed = RandomWalk.lastYears(5)
-        val account = run(feed,strategy, broker = broker, trader = policy)
+        val account = run(feed,strategy, broker = broker)
         println(account)
     }
 

@@ -19,7 +19,7 @@ package org.roboquant.orders
 import java.time.Instant
 
 /**
- * Time in force (TiF) allows you to put an expiration or fill trader on an order. It determines how long an order
+ * Time in force (TiF) allows you to put an expiration or fill signal2Order on an order. It determines how long an order
  * remains active before it expires. There are two triggers that can determine if an order expires:
  *
  * - How much *time* has passed since the order was first placed.
@@ -31,7 +31,7 @@ import java.time.Instant
 interface TimeInForce
 
 /**
- * Good Till Cancelled trader. The order will remain active until fully filled or is cancelled.
+ * Good Till Cancelled signal2Order. The order will remain active until fully filled or is cancelled.
  * In practice, most brokers allow such orders to remain active for a 60-90 day period, so not indefinitely.
  *
  * @property maxDays the maximum number of days an order stays valid, default is 90 calendar days.
@@ -47,7 +47,7 @@ class GTC(val maxDays: Int = 90) : TimeInForce {
 }
 
 /**
- * Good Till Date trader. The order will remain active until fully filled or a specified date.
+ * Good Till Date signal2Order. The order will remain active until fully filled or a specified date.
  *
  * @property date
  * @constructor Create new GTD tif
@@ -62,7 +62,7 @@ class GTD(val date: Instant) : TimeInForce {
 }
 
 /**
- * Immediate or Cancel (IOC) trader. An immediate or cancel order is an order to buy or sell an asset that attempts
+ * Immediate or Cancel (IOC) signal2Order. An immediate or cancel order is an order to buy or sell an asset that attempts
  * to execute all or part immediately and then cancels any unfilled portion of the order.
  *
  * @constructor Create new IOC tif
@@ -93,7 +93,7 @@ class DAY : TimeInForce {
 }
 
 /**
- * Fill Or Kill (FOK) trader. A Fill or Kill trader is to be executed immediately at the market or a specified price
+ * Fill Or Kill (FOK) signal2Order. A Fill or Kill signal2Order is to be executed immediately at the market or a specified price
  * or cancelled if not filled.
  *
  * @constructor Create a new FOK tif

@@ -21,10 +21,10 @@ import org.roboquant.common.PriceSeries
 import org.roboquant.common.addAll
 import org.roboquant.feeds.Event
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.Strategy
+import org.roboquant.strategies.SignalStrategy
 
 /**
- * Strategy using the Relative Strength MetadataProvider of an asset to generate signals. RSI measures the magnitude
+ * SignalStrategy using the Relative Strength MetadataProvider of an asset to generate signals. RSI measures the magnitude
  * of recent price changes to evaluate overbought or oversold conditions in the price of an asset.
  *
  * If the RSI raises above the configured high threshold (default 70), a sell signal will be generated. And if the RSI
@@ -32,7 +32,7 @@ import org.roboquant.strategies.Strategy
  *
  * @property lowThreshold
  * @property highThreshold
- * @constructor Create a new RSI Strategy
+ * @constructor Create a new RSI SignalStrategy
  *
  */
 class RSIStrategy(
@@ -40,7 +40,7 @@ class RSIStrategy(
     val highThreshold: Double = 70.0,
     private val windowSize: Int = 14,
     private val priceType: String = "DEFAULT"
-) : Strategy {
+) : SignalStrategy() {
 
     private val history = mutableMapOf<Asset, PriceSeries>()
     private val taLib = TaLib()

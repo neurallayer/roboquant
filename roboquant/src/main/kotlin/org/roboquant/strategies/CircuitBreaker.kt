@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.roboquant.traders
+package org.roboquant.strategies
 
 import org.roboquant.brokers.Account
 import org.roboquant.common.Logging
@@ -22,19 +22,18 @@ import org.roboquant.common.TimeSpan
 import org.roboquant.common.minus
 import org.roboquant.feeds.Event
 import org.roboquant.orders.Instruction
-import org.roboquant.strategies.Signal
 import java.time.Instant
 import java.util.*
 
 /**
- * Wraps another [trader] and based on the configured settings throttle the propagation of orders to the broker.
+ * Wraps another [signal2Order] and based on the configured settings throttle the propagation of orders to the broker.
  * The logic enforces that all orders send at the same time will be trottled or not.
  *
- * @property trader the underlying trader
+ * @property signal2Order the underlying signal2Order
  * @constructor Create new Circuit Breaker
  */
-internal class CircuitBreaker(val trader: Trader, private val maxOrders: Int, private val period: TimeSpan) :
-    Trader by trader {
+internal class CircuitBreaker(val signal2Order: Signal2Order, private val maxOrders: Int, private val period: TimeSpan) :
+    Signal2Order by signal2Order {
 
     private val history = LinkedList<Pair<Instant, Int>>()
     private val logger = Logging.getLogger(this::class)
@@ -51,8 +50,8 @@ internal class CircuitBreaker(val trader: Trader, private val maxOrders: Int, pr
         return false
     }
 
-    override fun create(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
-        val orders = trader.create(signals, account, event)
+    override fun transform(signals: List<Signal>, account: Account, event: Event): List<Instruction> {
+        val orders = signal2Order.transform(signals, account, event)
         if (orders.isEmpty()) return emptyList()
 
         return if (exceeds(orders.size, event.time)) {
@@ -67,7 +66,7 @@ internal class CircuitBreaker(val trader: Trader, private val maxOrders: Int, pr
 }
 
 /**
- * Limit the number of orders a trader can generate to [maxOrders] per [period]. All the orders per step will be
+ * Limit the number of orders a signal2Order can generate to [maxOrders] per [period]. All the orders per step will be
  * either added or ignored.
  *
  * Note: this circuit breaker will also block closing-position orders if the [maxOrders] limit is exceeded.
@@ -75,7 +74,7 @@ internal class CircuitBreaker(val trader: Trader, private val maxOrders: Int, pr
  * Usage:
  * ```
  * // For example allow maximum of 5 orders per 8 hours
- * val trader = myPolicy.circuitBreaker(5, 8.hours)
+ * val signal2Order = myPolicy.circuitBreaker(5, 8.hours)
  * ```
  */
-fun Trader.circuitBreaker(maxOrders: Int, period: TimeSpan): Trader = CircuitBreaker(this, maxOrders, period)
+fun Signal2Order.circuitBreaker(maxOrders: Int, period: TimeSpan): Signal2Order = CircuitBreaker(this, maxOrders, period)

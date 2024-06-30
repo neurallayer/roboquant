@@ -21,7 +21,7 @@ package org.roboquant.ta
 import org.roboquant.feeds.Event
 import org.roboquant.feeds.PriceBar
 import org.roboquant.strategies.Signal
-import org.roboquant.strategies.Strategy
+import org.roboquant.strategies.SignalStrategy
 import java.lang.Integer.max
 
 /**
@@ -33,7 +33,7 @@ import java.lang.Integer.max
  * If not enough history is available to calculate the indicators, the capacity will be automatically increased until
  * it is able to perform the calculations.
  */
-class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
+class TaLibStrategy(initialCapacity: Int = 1) : SignalStrategy() {
 
     private var sellFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
     private var buyFn: TaLib.(series: PriceBarSeries) -> Boolean = { false }
@@ -112,7 +112,7 @@ class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
         }
 
         /**
-         * Returns an EMA crossover Strategy using the provided [slow] and [fast] times.
+         * Returns an EMA crossover SignalStrategy using the provided [slow] and [fast] times.
          *
          * See also [org.roboquant.strategies.EMACrossover] for more efficient implementation.
          */
@@ -127,7 +127,7 @@ class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
         }
 
         /**
-         * Strategy using the Relative Strength MetadataProvider of an asset to generate signals. RSI measures the
+         * SignalStrategy using the Relative Strength MetadataProvider of an asset to generate signals. RSI measures the
          * magnitude of recent price changes to evaluate overbought or oversold conditions in the price of a stock
          * or other asset.
          *
@@ -190,7 +190,7 @@ class TaLibStrategy(initialCapacity: Int = 1) : Strategy {
      * Based on a [event], return zero or more signals. Typically, they are for the assets in the event,
      * but this is not a strict requirement.
      *
-     * @see Strategy.generate
+     * @see SignalStrategy.generate
      */
     override fun generate(event: Event): List<Signal> {
         val results = mutableListOf<Signal>()
