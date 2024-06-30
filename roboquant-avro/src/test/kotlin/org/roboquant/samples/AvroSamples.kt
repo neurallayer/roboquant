@@ -94,12 +94,12 @@ internal class AvroSamples {
 
         // Since we only trade in one asset and have leverage, we allow up to 1000% of our equity (10k) allocated to
         // one order
-        val policy = FlexConverter.capitalBased {
+        val converter = FlexConverter.capitalBased {
             shorting = true
             orderPercentage = 90.percent
             safetyMargin = 10.percent
         }
-        strategy.signalConverter = policy
+        strategy.signalConverter = converter
 
         val account = run(feed, strategy, broker = broker)
 

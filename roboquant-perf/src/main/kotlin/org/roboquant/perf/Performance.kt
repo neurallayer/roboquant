@@ -156,10 +156,10 @@ private object Performance {
             )
 
             val broker = SimBroker(accountModel = MarginAccount())
-            val policy = FlexConverter {
+            val converter = FlexConverter {
                 shorting = true
             }
-            strategy.signalConverter = policy
+            strategy.signalConverter = converter
 
             run(feed, strategy,  broker = broker)
         }

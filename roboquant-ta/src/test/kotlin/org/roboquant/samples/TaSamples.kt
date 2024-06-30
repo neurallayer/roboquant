@@ -136,11 +136,11 @@ internal class TaSamples {
     @Ignore
     internal fun atrPolicy() {
         val strategy = EMACrossover.PERIODS_5_15
-        val policy = AtrSignalConverter(10, 6.0, 3.0, null) {
+        val converter = AtrSignalConverter(10, 6.0, 3.0, null) {
             orderPercentage = 0.02
             shorting = true
         }
-        strategy.signalConverter = policy
+        strategy.signalConverter = converter
         val broker = SimBroker(accountModel = MarginAccount(minimumEquity = 50_000.0))
 
         val feed = RandomWalk.lastYears(5)

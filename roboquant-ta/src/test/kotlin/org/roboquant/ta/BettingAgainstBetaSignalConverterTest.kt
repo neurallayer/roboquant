@@ -31,11 +31,11 @@ internal class BettingAgainstBetaSignalConverterTest {
         val assets = feed.assets.toList()
         val marketAsset = assets.first()
 
-        val policy = BettingAgainstBetaTrader(assets, marketAsset, maxPositions = 6)
+        val strategy = BettingAgainstBeta(assets, marketAsset, maxPositions = 6)
         val broker = SimBroker(accountModel = MarginAccount())
         val account = run(
             feed,
-            policy,
+            strategy,
             broker = broker
         )
 

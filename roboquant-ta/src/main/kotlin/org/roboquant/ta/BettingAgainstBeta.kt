@@ -49,7 +49,7 @@ import kotlin.math.min
  *
  * @constructor Create a new instance of Betting Against Beta
  */
-open class BettingAgainstBetaTrader(
+open class BettingAgainstBeta(
     assets: Collection<Asset>,
     private val market: Asset,
     private val holdingPeriod: TimeSpan = 20.days,

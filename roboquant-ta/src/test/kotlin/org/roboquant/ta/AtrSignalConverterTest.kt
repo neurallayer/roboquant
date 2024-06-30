@@ -43,7 +43,7 @@ internal class AtrSignalConverterTest {
         return account.toAccount()
     }
 
-    private fun run(policy: FlexConverter): List<Instruction> {
+    private fun run(converter: FlexConverter): List<Instruction> {
         val asset = Asset("TEST")
         val signals = listOf(Signal.buy(asset))
         val now = Instant.now()
@@ -55,7 +55,7 @@ internal class AtrSignalConverterTest {
             val p = 5.0
             val priceBar = PriceBar(asset, p + it, p + it, p + it, p + it)
             val event = Event(now + it.millis, listOf(priceBar))
-            val o = policy.convert(signals, account, event)
+            val o = converter.convert(signals, account, event)
             instructions.addAll(o)
         }
         return instructions

@@ -51,20 +51,20 @@ private fun FlowContent.runTable() {
         tableHeader("run", "state", "timeframe", "events", "instructions", "last update", "actions")
         tbody {
             runs.forEach { (run, info) ->
-                val policy = info.strategy
+                val strategy = info.strategy
                 tr {
                     td { +run }
-                    td { state(info, policy.pause) }
+                    td { state(info, strategy.pause) }
                     td { +info.timeframe.toPrettyString() }
                     td {
-                        +"total = ${policy.totalEvents}"
+                        +"total = ${strategy.totalEvents}"
                         br
-                        +"empty = ${policy.emptyEvents}"
+                        +"empty = ${strategy.emptyEvents}"
                         br
-                        +"actions = ${policy.totalActions}"
+                        +"actions = ${strategy.totalActions}"
                     }
-                    td { +policy.totalInstructions.toString() }
-                    td { +policy.lastUpdate.truncatedTo(ChronoUnit.SECONDS).toString() }
+                    td { +strategy.totalInstructions.toString() }
+                    td { +strategy.lastUpdate.truncatedTo(ChronoUnit.SECONDS).toString() }
                     td {
                         a(href = "/run/$run") { +"details" }
                         if (! info.done) {
@@ -106,11 +106,11 @@ internal fun Route.overview() {
             }
 
             val run = params.getOrFail("run")
-            val policy = runs.getValue(run).strategy
+            val strategy = runs.getValue(run).strategy
 
             when (action) {
-                    "pause" -> policy.pause = true
-                    "resume" -> policy.pause = false
+                    "pause" -> strategy.pause = true
+                    "resume" -> strategy.pause = false
             }
 
         }

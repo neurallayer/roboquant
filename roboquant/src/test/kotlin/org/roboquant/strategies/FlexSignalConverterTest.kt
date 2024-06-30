@@ -32,11 +32,11 @@ internal class FlexSignalConverterTest {
 
     @Test
     fun order() {
-        val policy = FlexConverter()
+        val converter = FlexConverter()
         val signals = mutableListOf<Signal>()
         val event = Event(Instant.now(), emptyList())
         val account = InternalAccount(Currency.USD).toAccount()
-        val orders = policy.convert(signals, account, event)
+        val orders = converter.convert(signals, account, event)
         assertTrue(orders.isEmpty())
     }
 
